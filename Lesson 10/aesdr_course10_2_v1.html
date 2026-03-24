@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR — Course 10.2: Quotas Are Bullshit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#FFFFFF;--black:#000000;--mid:#636060;--lite:#F2EEE9;--lite2:#E5E1DC;
+  
+  /* Course 10.2 Theme: Blueish Grey */
+  --theme: #607D8B; 
+  --theme-text: #263238; 
+  --theme-lt: rgba(96, 125, 139, 0.15);
+  --theme-md: rgba(96, 125, 139, 0.3);
+
+  --lime:#00FF87;--lime-dk:#00CC6A;
+  --cobalt:#0038FF;--cob-lt:rgba(0,56,255,0.07);
+  --green:#00B85A;--grn-lt:rgba(0,184,90,0.09);
+  --coral:#FF3200;--cor-lt:rgba(255,50,0,0.07);
+  --amber:#D94F00;--amb-lt:rgba(217,79,0,0.08);
+  --violet:#5200CC;--vio-lt:rgba(82,0,204,0.07);
+  --line:rgba(0,0,0,0.08);--line2:rgba(0,0,0,0.15);
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#FFD600 34%,#00E5A0 51%,#0099FF 68%,#7B2FFF 85%,#FF006E 100%);
+  --display:'Abril Fatface',Georgia,serif;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;
+  --mono:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--white);color:var(--black);font-family:var(--cond);overflow:hidden}
+.app{display:grid;grid-template-columns:1fr 234px;grid-template-rows:52px 1fr 60px;height:100vh}
+
+/* TOPBAR */
+.topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:2px solid var(--black);background:var(--white);z-index:20}
+.brand{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.22em;text-transform:uppercase}
+.course-badge{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;background:var(--theme);color:var(--white);font-weight:700;padding:4px 10px;margin-left:12px}
+.top-right{display:flex;align-items:center;gap:14px}
+.prog-label{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--mid);text-transform:uppercase}
+.prog-track{width:80px;height:2px;background:var(--lite2)}
+.prog-fill{height:100%;background:var(--iris);background-size:200% 100%;animation:iris 3s linear infinite;transition:width .8s cubic-bezier(.4,0,.2,1)}
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+
+/* MAIN */
+.main{overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;background:var(--white);scrollbar-width:none}
+.main::-webkit-scrollbar{display:none}
+
+/* SIDEBAR */
+.sidebar{border-left:2px solid var(--black);padding:32px 20px;overflow-y:auto;scrollbar-width:none;background:var(--white)}
+.sidebar::-webkit-scrollbar{display:none}
+.sb-course{font-family:var(--display);font-size:22px;color:var(--theme-text);line-height:1;margin-bottom:4px}
+.sb-lesson{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--mid);margin-bottom:24px}
+.sb-divider{height:2px;background:var(--theme);margin-bottom:20px}
+.sb-label{font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--mid);margin-bottom:18px}
+.sb-item{padding:16px 0;border-bottom:1px solid var(--line);cursor:pointer;position:relative;transition:all .2s}
+.sb-item:first-of-type{border-top:1px solid var(--line)}
+.sb-tag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--mid);margin-bottom:7px;text-transform:uppercase;transition:color .2s}
+.sb-name{font-family:var(--cond);font-size:12px;font-weight:700;color:var(--mid);line-height:1.4;text-transform:uppercase;letter-spacing:.04em;transition:color .2s}
+.sb-item.active .sb-tag{color:var(--theme-text)}
+.sb-item.active .sb-name{color:var(--black)}
+.sb-item.active::before{content:'';position:absolute;left:-20px;top:0;bottom:0;width:3px;background:var(--theme)}
+.sb-item:hover .sb-name{color:var(--black)}
+
+/* BOTTOMNAV */
+.bottomnav{grid-column:1/2;display:flex;align-items:center;justify-content:space-between;padding:0 56px;border-top:2px solid var(--black);background:var(--white)}
+.nav-hint{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--mid);font-style:italic}
+.nav-btns{display:flex;gap:8px}
+.btn{font-family:var(--cond);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:10px 22px;border:2px solid var(--black);background:transparent;color:var(--black);cursor:pointer;transition:all .15s}
+.btn:hover{background:var(--black);color:var(--white)}
+.btn-fill{background:var(--black);color:var(--white);position:relative;overflow:hidden}
+.btn-fill::before{content:'';position:absolute;inset:0;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;opacity:0;transition:opacity .2s}
+.btn-fill:hover::before{opacity:1}
+.btn-fill:hover{color:var(--black)}
+.btn-fill span{position:relative;z-index:1}
+.btn-fill:disabled,.btn-fill:disabled:hover{opacity:.28;cursor:not-allowed;background:var(--black);color:var(--white)}
+.btn-fill:disabled::before,.btn-fill:disabled:hover::before{display:none}
+
+/* SCREENS */
+.screen{display:none;flex-direction:column;flex:1;animation:up .42s cubic-bezier(.22,1,.36,1) both}
+.screen.active{display:flex}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* COVER */
+.cover{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.cvl{background:var(--theme);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.cvl::before{content:'10';position:absolute;right:-40px;bottom:-40px;font-family:var(--display);font-size:280px;color:rgba(255,255,255,0.2);line-height:1;pointer-events:none}
+.cv-c2tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:6px}
+.cv-course-num{font-family:var(--display);font-size:80px;color:var(--white);line-height:.85;margin-bottom:12px}
+.cv-big{font-family:var(--display);font-size:clamp(30px,3.6vw,50px);line-height:.97;color:var(--white)}
+.cv-tagline{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.9);line-height:1.7;border-top:1px solid rgba(255,255,255,0.3);padding-top:18px}
+.cvr{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;margin-bottom:16px;display:inline-block;background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:iris 3s linear infinite}
+.hero-h{font-family:var(--display);font-size:clamp(28px,3.8vw,52px);line-height:.97;color:var(--black);margin-bottom:20px}
+.hero-h .irisTxt{background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:iris 3s linear infinite}
+.cv-list{list-style:none;margin-bottom:36px}
+.cv-list li{font-family:var(--cond);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mid);display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.cv-list li:first-child{border-top:1px solid var(--line)}
+.cl-n{font-family:var(--mono);font-size:9px;background:var(--black);color:var(--white);padding:2px 6px;flex-shrink:0}
+
+/* SHARED HEADER */
+.lh{padding:44px 56px 0;position:relative;overflow:hidden}
+.lh-stripe{position:absolute;top:0;left:0;right:0;height:4px;background:var(--iris);background-size:200% 100%;animation:iris 4s linear infinite}
+.ghost-n{position:absolute;right:48px;top:-20px;font-family:var(--display);font-size:200px;line-height:1;color:var(--lite);pointer-events:none;user-select:none}
+.c2-badge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;background:var(--theme);color:var(--white);font-weight:700;padding:3px 10px;margin-bottom:12px}
+.sec-eye{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--theme-text);margin-bottom:14px;display:inline-block;margin-left:10px}
+.lh-title{font-family:var(--display);font-size:clamp(22px,3.2vw,46px);line-height:1.05;color:var(--black);max-width:640px}
+.lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
+.lh-sub b{color:var(--black)}
+.lb{padding:24px 56px 0}
+.lp{font-family:var(--serif);font-size:16px;line-height:1.8;color:var(--black);max-width:580px;margin-bottom:14px}
+.kp{list-style:none;max-width:580px;margin:14px 0}
+.kp li{font-family:var(--serif);font-size:15px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px;align-items:flex-start}
+.kp li:first-child{border-top:1px solid var(--line)}
+.kp-n{font-family:var(--mono);font-size:9px;color:var(--mid);min-width:22px;padding-top:3px;flex-shrink:0}
+.lie{max-width:580px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
+.lie-tab{position:absolute;top:0;left:0;font-family:var(--cond);font-size:9px;letter-spacing:.24em;font-weight:800;text-transform:uppercase;padding:3px 10px;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;color:var(--black)}
+.lie-q{font-family:var(--serif);font-style:italic;font-size:18px;color:#fff;line-height:1.5;margin:12px 0 10px}
+.lie-a{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
+.data-table{width:100%;max-width:600px;border-collapse:collapse;margin:16px 0}
+.data-table th{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;background:var(--black);color:var(--white);padding:9px 14px;text-align:left}
+.data-table td{font-family:var(--serif);font-size:14px;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--black);line-height:1.6;vertical-align:top}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:nth-child(even) td{background:var(--lite)}
+
+/* ── 3-COLUMN SILO SORTER ── */
+.silo-wrap{padding:16px 56px 44px}
+.silo-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:600px;line-height:1.65;margin-bottom:16px}
+.silo-pool-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--black)}
+.silo-pool-cards{display:flex;flex-direction:column;gap:7px;margin-bottom:20px;max-width:700px}
+.silo-card{padding:14px 16px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:13px;color:var(--black);line-height:1.55;cursor:pointer;transition:all .18s;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.silo-card-txt{flex:1}
+.silo-card:hover:not(.placed):not(.locked){border-color:var(--theme-text);background:var(--theme-lt)}
+.silo-card.sel{border-color:var(--theme-text);background:var(--theme);color:var(--white)}
+.silo-card.placed{visibility:hidden;pointer-events:none;height:0;margin:0;padding:0;border:none}
+.silo-card.wrong{border-color:var(--coral);background:var(--cor-lt);animation:shake .35s ease both}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.silo-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;max-width:760px}
+.silo-col{border:2px solid var(--line2);transition:border-color .2s}
+.silo-col.target{border-color:var(--theme-text);border-style:dashed;cursor:pointer}
+.silo-col.target:hover{border-style:solid}
+.silo-col-hdr{padding:11px 14px;border-bottom:2px solid var(--black)}
+.silo-col-name{font-family:var(--cond);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--black)}
+.silo-col-sub{font-family:var(--mono);font-size:9px;color:var(--mid);margin-top:3px;letter-spacing:.06em}
+.silo-dropped{min-height:120px;padding:8px}
+.silo-dropped-card{padding:10px 12px;background:var(--lime);border:none;font-family:var(--serif);font-size:12px;color:var(--black);line-height:1.5;margin-bottom:6px}
+.silo-note{font-family:var(--mono);font-size:8px;letter-spacing:.08em;color:rgba(0,0,0,0.5);margin-top:5px;line-height:1.5}
+.silo-reset{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mid);background:none;border:none;cursor:pointer;text-decoration:underline;margin-top:10px}
+.silo-reset:hover{color:var(--black)}
+
+/* ── BLAME CHAIN BREAKER ── */
+.blame-wrap{padding:16px 56px 44px;max-width:740px}
+.blame-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:22px}
+.blame-chain{display:flex;align-items:center;gap:0;margin-bottom:28px;max-width:680px;overflow:hidden}
+.blame-node{flex:1;background:var(--black);padding:14px 16px;position:relative;text-align:center}
+.blame-node-name{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#fff}
+.blame-node-says{font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:rgba(255,255,255,0.35);margin-top:3px;font-style:italic}
+.blame-arrow{font-size:18px;color:var(--theme-text);flex-shrink:0;padding:0 2px}
+.blame-items{display:flex;flex-direction:column;gap:10px}
+.blame-item{border:1px solid var(--line2);overflow:hidden;transition:all .2s}
+.blame-item.resolved{border-color:var(--lime)}
+.blame-item-q{padding:16px 18px;display:flex;align-items:flex-start;gap:14px}
+.blame-q-tag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;background:var(--theme);color:var(--white);font-weight:700;padding:3px 8px;flex-shrink:0;margin-top:1px}
+.blame-q-txt{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--black);line-height:1.6;flex:1}
+.blame-opts{display:flex;flex-direction:column;gap:6px;padding:0 18px 14px}
+.blame-opt{padding:10px 14px;border:1px solid var(--line2);background:var(--white);font-family:var(--cond);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--black);text-align:left;cursor:pointer;transition:all .15s}
+.blame-opt:hover:not(.locked){border-color:var(--theme-text);background:var(--theme-lt)}
+.blame-opt.correct{background:var(--lime);border-color:var(--lime-dk);color:var(--black);cursor:default}
+.blame-opt.wrong{border-color:var(--coral);background:var(--cor-lt);cursor:default;animation:shake .35s ease both}
+.blame-opt.locked{cursor:default}
+.blame-fix{padding:10px 18px 14px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--mid);display:none;line-height:1.65;border-top:1px solid var(--line)}
+.blame-item.resolved .blame-fix{display:block}
+
+/* ── PLAYBOOK SEQUENCER ── */
+.seq-wrap{padding:16px 56px 44px;max-width:720px}
+.seq-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.seq-pipeline{display:flex;flex-direction:column;gap:6px;margin-bottom:24px}
+.seq-slot{display:flex;align-items:center;gap:14px;min-height:56px}
+.seq-pos{font-family:var(--display);font-size:28px;color:var(--lite2);flex-shrink:0;width:28px;text-align:center;line-height:1;transition:color .3s}
+.seq-slot.correct .seq-pos{color:var(--theme-text)}
+.seq-drop{flex:1;border:1px solid var(--line2);padding:14px 16px;min-height:52px;display:flex;align-items:center;cursor:pointer;transition:all .18s;background:var(--white)}
+.seq-drop.target{border-color:var(--theme-text);border-style:dashed;background:var(--theme-lt)}
+.seq-drop.target:hover{border-style:solid}
+.seq-drop.correct{background:var(--lime);border:2px solid var(--lime-dk);cursor:default}
+.seq-drop.bad{border-color:var(--coral);animation:shake .35s ease both}
+.seq-drop-txt{font-family:var(--cond);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--black)}
+.seq-drop-sub{font-family:var(--serif);font-size:12px;font-style:italic;color:var(--mid);margin-top:3px}
+.seq-pool-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--black)}
+.seq-tiles{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.seq-tile{padding:12px 14px;border:2px solid var(--line2);background:var(--white);font-family:var(--cond);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.3}
+.seq-tile:hover:not(.placed):not(.sel){border-color:var(--black)}
+.seq-tile.sel{border-color:var(--theme-text);background:var(--theme);color:var(--white)}
+.seq-tile.placed{visibility:hidden;pointer-events:none}
+.seq-tile.bad{border-color:var(--coral);background:var(--cor-lt);animation:shake .35s ease both}
+.seq-reset{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mid);background:none;border:none;cursor:pointer;text-decoration:underline;margin-top:10px}
+.seq-reset:hover{color:var(--black)}
+
+/* ── INSIGHTS CLASSIFIER ── */
+.cls-wrap{padding:16px 56px 44px;max-width:720px}
+.cls-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.cls-buckets{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:24px}
+.cls-bucket{border:2px solid var(--line2);transition:border-color .2s}
+.cls-bucket.target{border-color:var(--theme-text);border-style:dashed;cursor:pointer}
+.cls-bucket.target:hover{border-style:solid;border-width:2px}
+.cls-bkt-hdr{padding:10px 14px;border-bottom:1px solid var(--line2)}
+.cls-bkt-name{font-family:var(--cond);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.cls-bkt-name.trap{color:var(--violet)}
+.cls-bkt-name.illusion{color:var(--theme-text)}
+.cls-bkt-name.win{color:var(--amber)}
+.cls-bkt-count{font-family:var(--mono);font-size:9px;color:var(--mid);margin-top:3px;letter-spacing:.08em}
+.cls-bkt-items{min-height:80px;padding:8px;display:flex;flex-direction:column;gap:5px}
+.cls-bkt-item{font-family:var(--serif);font-size:11px;color:var(--black);padding:7px 9px;line-height:1.45;background:var(--lite)}
+.cls-bkt-item.trap-item{border-left:3px solid var(--violet)}
+.cls-bkt-item.illusion-item{border-left:3px solid var(--theme-text)}
+.cls-bkt-item.win-item{border-left:3px solid var(--amber)}
+.cls-stream-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--black)}
+.cls-stream{display:flex;flex-direction:column;gap:6px}
+.cls-obs{display:flex;align-items:stretch;border:1px solid var(--line2);background:var(--white);cursor:pointer;transition:all .2s;overflow:hidden}
+.cls-obs:hover:not(.locked):not(.placed){border-color:var(--theme-text)}
+.cls-obs.sel{border-color:var(--theme-text);background:var(--theme);color:var(--white)}
+.cls-obs.wrong{border-color:var(--coral);background:var(--cor-lt);animation:shake .35s ease both}
+.cls-obs.placed{opacity:0;pointer-events:none;height:0;padding:0;margin:0;border:none;overflow:hidden;transition:opacity .3s,height .3s}
+.cls-obs-icon{font-family:var(--mono);font-size:10px;padding:13px 12px;background:var(--lite);border-right:1px solid var(--line2);display:flex;align-items:center;flex-shrink:0;color:var(--mid)}
+.cls-obs.sel .cls-obs-icon{background:rgba(0,0,0,0.1);border-right-color:rgba(0,0,0,0.15);color:var(--white)}
+.cls-obs-txt{font-family:var(--serif);font-size:13px;color:var(--black);padding:12px 14px;flex:1;line-height:1.55;font-style:italic}
+.cls-obs.sel .cls-obs-txt{color:var(--white)}
+.cls-obs.locked{cursor:default}
+.cls-reset{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mid);background:none;border:none;cursor:pointer;text-decoration:underline;margin-top:10px}
+.cls-reset:hover{color:var(--black)}
+
+/* QUIZ */
+.quiz-banner{margin:16px 56px 0;padding:12px 18px;font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.06em;border-left:4px solid var(--cobalt);background:var(--cob-lt);color:var(--black);display:none}
+.quiz-banner.show{display:block}
+.quiz-banner.pass{border-color:var(--green);background:var(--grn-lt)}
+.quiz-banner.fail{border-color:var(--coral);background:var(--cor-lt)}
+.quiz-body{padding:20px 56px 44px;display:flex;flex-direction:column;gap:28px}
+.q-num{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--theme-text);margin-bottom:9px}
+.q-text{font-family:var(--display);font-size:clamp(13px,1.6vw,18px);color:var(--black);line-height:1.2;margin-bottom:13px}
+.q-opts{display:flex;flex-direction:column;gap:6px}
+.q-opt{padding:11px 16px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:14px;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.5}
+.q-opt:hover:not(.locked){border-color:var(--theme-text);background:var(--theme-lt)}
+.q-opt.chosen{border-color:var(--theme-text);background:var(--theme);color:var(--white)}
+.q-opt.correct{border-color:var(--green);background:var(--grn-lt);color:var(--black)}
+.q-opt.wrong-pick{border-color:var(--coral);background:var(--cor-lt);color:var(--black)}
+.q-opt.locked{cursor:default}
+
+/* TOOLS */
+.tools-blk{padding:20px 56px 44px}
+.t-head{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--black);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--black)}
+.hw-list{list-style:none;max-width:580px;margin-top:8px}
+.hw-list li{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.65;padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
+.hw-list li:first-child{border-top:1px solid var(--line)}
+.hw-box{width:14px;height:14px;border:2px solid var(--black);flex-shrink:0;margin-top:4px}
+
+/* COMPLETE */
+.comp{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.comp-l{background:var(--theme);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.comp-l::before{content:'10';position:absolute;right:-40px;bottom:-40px;font-family:var(--display);font-size:280px;color:rgba(255,255,255,0.2);line-height:1;pointer-events:none}
+.comp-tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.7)}
+.comp-big{font-family:var(--display);font-size:clamp(44px,5.5vw,76px);line-height:.93;color:var(--white)}
+.comp-sub{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.85);line-height:1.7;border-top:1px solid rgba(255,255,255,0.2);padding-top:18px}
+.comp-r{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.comp-h{font-family:var(--display);font-size:clamp(22px,2.8vw,40px);line-height:1.08;color:var(--black);margin-bottom:18px}
+.comp-p{font-family:var(--serif);font-size:15px;color:var(--black);max-width:380px;line-height:1.8;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header class="topbar">
+  <div style="display:flex;align-items:center">
+    <div class="brand">AESDR</div>
+    <div class="course-badge">Course 10</div>
+  </div>
+  <div class="top-right">
+    <span class="prog-label" id="progLabel">Lesson 10.2</span>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+</header>
+
+<main class="main" id="main">
+
+  <div class="screen active" id="s0">
+    <div class="cover" style="flex:1">
+      <div class="cvl">
+        <div>
+          <div class="cv-c2tag">AESDR · Lesson 10.2</div>
+          <div class="cv-course-num">10</div>
+          <div class="cv-big">Quotas Are Bullshit</div>
+        </div>
+        <div class="cv-tagline">Mastering the Rigged System Without Losing Your Sanity.</div>
+      </div>
+      <div class="cvr">
+        <div class="eyebrow">Course 10 · Lesson 2</div>
+        <div class="hero-h">Play the game<br><span class="irisTxt">and still win.</span></div>
+        <ul class="cv-list">
+          <li><span class="cl-n">01</span>The Rigged Reality of Quotas</li>
+          <li><span class="cl-n">02</span>The Pipeline Illusion</li>
+          <li><span class="cl-n">03</span>How to Win the Quota Game</li>
+          <li><span class="cl-n">04</span>Actionable Homework</li>
+        </ul>
+        <button class="btn btn-fill" onclick="go(1)"><span>Begin Lesson →</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="s1">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">01</div>
+      <div><div class="c2-badge">Course 10</div><span class="sec-eye">Section 01 — The Rigged Reality</span></div>
+      <div class="lh-title">Why Quotas Feel Like a Trap</div>
+    </div>
+    <div class="lb">
+      <p class="lp">Every time you crush quota, they move the goalposts. It’s not a reward; it’s a trap. Quotas aren’t about recognition—they’re about stretching you to your limits.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Punishment for Success:</strong> Overperformance often equals higher quotas next quarter.</li>
+        <li><span class="kp-n">02</span><strong>Seasonal Disconnect:</strong> You’re expected to hit unrealistic goals even during dead holiday quarters.</li>
+        <li><span class="kp-n">03</span><strong>Territory Imbalance:</strong> Unequal opportunities mean unfair targets. Your quota doesn’t care if your territory is tapped out.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Mindset Shift</div>
+        <div class="lie-q">"Your quota is an arbitrary number."</div>
+        <div class="lie-a">It often ignores the reality of your job. Treat it like a floor, not a ceiling, and stop letting it dictate your self-worth.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="s2">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">02</div>
+      <div><div class="c2-badge">Course 10</div><span class="sec-eye">Section 02 — Mapping the Game</span></div>
+      <div class="lh-title">Sort the Realities</div>
+      <div class="lh-sub"><b id="siloCount">0</b> / 6 correctly sorted</div>
+    </div>
+    <div class="silo-wrap">
+      <p class="silo-instr">Click a scenario to select it, then match it to the core concept: The Trap, The Illusion, or The Winning Strategy.</p>
+      <div class="silo-pool-lbl">Scenarios — Select One</div>
+      <div class="silo-pool-cards" id="siloPool"></div>
+      <div class="silo-cols" id="siloCols">
+        <div class="silo-col" id="silo-col-trap" onclick="dropSilo('trap')">
+          <div class="silo-col-hdr"><div class="silo-col-name">The Trap</div><div class="silo-col-sub">Rigged Realities</div></div>
+          <div class="silo-dropped" id="silo-dropped-trap"></div>
+        </div>
+        <div class="silo-col" id="silo-col-illusion" onclick="dropSilo('illusion')">
+          <div class="silo-col-hdr"><div class="silo-col-name">Pipeline Illusion</div><div class="silo-col-sub">Fluff vs Real</div></div>
+          <div class="silo-dropped" id="silo-dropped-illusion"></div>
+        </div>
+        <div class="silo-col" id="silo-col-win" onclick="dropSilo('win')">
+          <div class="silo-col-hdr"><div class="silo-col-name">Winning Strategy</div><div class="silo-col-sub">Playing it Smart</div></div>
+          <div class="silo-dropped" id="silo-dropped-win"></div>
+        </div>
+      </div>
+      <button class="silo-reset" onclick="resetSilo()">Reset board</button>
+    </div>
+  </div>
+
+  <div class="screen" id="s3">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">03</div>
+      <div><div class="c2-badge">Course 10</div><span class="sec-eye">Section 02 — The Pipeline Illusion</span></div>
+      <div class="lh-title">Why "More Leads" Isn't the Answer</div>
+    </div>
+    <div class="lb">
+      <p class="lp">Fluff in your pipeline doesn’t help anyone. You’re better off with fewer, stronger deals than a mountain of dead leads.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Bloated Pipelines:</strong> Holding onto dead leads results in low conversion rates and wasted time.</li>
+        <li><span class="kp-n">02</span><strong>Volume vs. Quality:</strong> Focusing on high-volume, low-quality deals makes the numbers look good, but deals don’t close.</li>
+        <li><span class="kp-n">03</span><strong>External Wrecks:</strong> Sometimes deals tank through no fault of yours. Don't build a pipeline so fragile that one lost deal ruins your month.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Action</div>
+        <div class="lie-q">"Audit your pipeline immediately."</div>
+        <div class="lie-a">Remove dead weight. Rank opportunities based on value and likelihood of closing. A lean pipeline has better close rates.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="s4">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div><div class="c2-badge">Course 10</div><span class="sec-eye">Section 03 — Diagnose the Traps</span></div>
+      <div class="lh-title">Break the Quota Excuses</div>
+      <div class="lh-sub"><b id="blameCount">0</b> / 4 traps resolved</div>
+    </div>
+    <div class="blame-wrap">
+      <p class="blame-instr">Each statement below is a common quota frustration. Identify the trap and the real fix to overcome it.</p>
+      <div class="blame-chain">
+        <div class="blame-node"><div class="blame-node-name">Symptom</div><div class="blame-node-says">"What's happening?"</div></div>
+        <div class="blame-arrow">→</div>
+        <div class="blame-node"><div class="blame-node-name">The Trap</div><div class="blame-node-says">"The underlying system."</div></div>
+        <div class="blame-arrow">→</div>
+        <div class="blame-node"><div class="blame-node-name">Real Fix</div><div class="blame-node-says">"How to win anyway."</div></div>
+      </div>
+      <div class="blame-items" id="blameItems"></div>
+    </div>
+  </div>
+
+  <div class="screen" id="s5">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">05</div>
+      <div><div class="c2-badge">Course 10</div><span class="sec-eye">Section 03 — Winning the Game</span></div>
+      <div class="lh-title">Sequence Your Quota Defense</div>
+      <div class="lh-sub"><b id="seqCount">0</b> / 5 correctly sequenced</div>
+    </div>
+    <div class="seq-wrap">
+      <p class="seq-instr">Select a step from the tiles, then click the numbered slot where it belongs to take control of your pipeline and targets.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 44px">
+        <div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);padding-bottom:10px;border-bottom:2px solid var(--black);margin-bottom:10px">Strategy Order</div>
+          <div class="seq-pipeline" id="seqSlots"></div>
+        </div>
+        <div>
+          <div class="seq-pool-lbl">Steps — Select One</div>
+          <div class="seq-tiles" id="seqTiles"></div>
+          <button class="seq-reset" onclick="resetSeq()">Reset board</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="s6">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">05</div>
+      <div><div class="c2-badge">Course 10</div><span class="sec-eye">Section 04 — Actionable Homework</span></div>
+      <div class="lh-title">Classify the Action Items</div>
+      <div class="lh-sub"><b id="clsCount">0</b> / 8 correctly classified</div>
+    </div>
+    <div class="cls-wrap">
+      <p class="cls-instr">Sort each action or strategy into its correct category: Pipeline Health, Data & Metrics, or Pushback Plan.</p>
+      <div class="cls-buckets">
+        <div class="cls-bucket" id="cls-pipeline" onclick="dropCls('pipeline')">
+          <div class="cls-bkt-hdr"><div class="cls-bkt-name pipeline">Pipeline Health</div><div class="cls-bkt-count"><span id="cls-pipeline-count">0</span> / 3 items</div></div>
+          <div class="cls-bkt-items" id="cls-pipeline-items"></div>
+        </div>
+        <div class="cls-bucket" id="cls-data" onclick="dropCls('data')">
+          <div class="cls-bkt-hdr"><div class="cls-bkt-name data">Data & Metrics</div><div class="cls-bkt-count"><span id="cls-data-count">0</span> / 3 items</div></div>
+          <div class="cls-bkt-items" id="cls-data-items"></div>
+        </div>
+        <div class="cls-bucket" id="cls-pushback" onclick="dropCls('pushback')">
+          <div class="cls-bkt-hdr"><div class="cls-bkt-name pushback">Pushback Plan</div><div class="cls-bkt-count"><span id="cls-pushback-count">0</span> / 2 items</div></div>
+          <div class="cls-bkt-items" id="cls-pushback-items"></div>
+        </div>
+      </div>
+      <div class="cls-stream-lbl">Actions — Select One</div>
+      <div class="cls-stream" id="clsStream"></div>
+      <button class="cls-reset" onclick="resetCls()">Reset board</button>
+    </div>
+  </div>
+
+  <div class="screen" id="s7">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div><div class="c2-badge">Course 10</div><span class="sec-eye">Section 05 — Knowledge Check</span></div>
+      <div class="lh-title">Test Your Understanding</div>
+    </div>
+    <div class="quiz-banner" id="quizBanner"></div>
+    <div class="quiz-body" id="quizBody"></div>
+  </div>
+
+  <div class="screen" id="s8">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">06</div>
+      <div><div class="c2-badge">Course 10</div><span class="sec-eye">Section 04 — Homework</span></div>
+      <div class="lh-title">Outsmart the System</div>
+    </div>
+    <div class="tools-blk">
+      <div style="margin-top:20px">
+        <div class="t-head">Task 1: Pipeline Health Assessment</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Audit your current pipeline.</li>
+          <li><div class="hw-box"></div>Remove bad leads and dead weight.</li>
+          <li><div class="hw-box"></div>Rank deals based on value, urgency, and fit.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="t-head">Task 2: Quota Pushback Plan</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Gather historical performance data for your territory.</li>
+          <li><div class="hw-box"></div>Identify external factors (seasonality, product delays).</li>
+          <li><div class="hw-box"></div>Prepare to make a data-driven case for realistic adjustments.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="t-head">Task 3: Performance Documentation Checklist</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Log your weekly calls made and meetings set.</li>
+          <li><div class="hw-box"></div>Log your deals closed.</li>
+          <li><div class="hw-box"></div>Track your personal conversion rates.</li>
+          <li><div class="hw-box"></div>Outcome: Use this leverage to challenge quotas and highlight your value.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="s9">
+    <div class="comp" style="flex:1">
+      <div class="comp-l">
+        <div>
+          <div class="comp-tag">Course 10 · Lesson 2 — Complete</div>
+          <div style="font-family:var(--display);font-size:56px;color:var(--white);line-height:.9;margin:10px 0 0">10</div>
+        </div>
+        <div class="comp-big">Outsmart<br>the system.</div>
+        <div class="comp-sub">Quotas are the system’s way of stretching you—don’t let them define your value. Build a lean pipeline and document your wins.</div>
+      </div>
+      <div class="comp-r">
+        <div class="eyebrow">Course 10 · Lesson 2 Complete</div>
+        <div class="comp-h">Play strategically.</div>
+        <p class="comp-p">Quotas are bullshit, but they’re part of the game. Instead of fighting the system, outsmart it. Push back with data, focus on results, and let the numbers speak for you.</p>
+        <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
+        <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<aside class="sidebar">
+  <div class="sb-course">10</div>
+  <div class="sb-lesson">Lesson 10.2 · Quotas Are Bullshit</div>
+  <div class="sb-divider"></div>
+  <div class="sb-label">Sections</div>
+  <div class="sb-item" id="nav1" onclick="go(1)">
+    <div class="sb-tag">Section 01</div>
+    <div class="sb-name">The Rigged Reality</div>
+  </div>
+  <div class="sb-item" id="nav2" onclick="go(3)">
+    <div class="sb-tag">Section 02</div>
+    <div class="sb-name">Pipeline Illusion</div>
+  </div>
+  <div class="sb-item" id="nav3" onclick="go(5)">
+    <div class="sb-tag">Section 03</div>
+    <div class="sb-name">Winning Strategy</div>
+  </div>
+  <div class="sb-item" id="nav4" onclick="go(8)">
+    <div class="sb-tag">Section 04</div>
+    <div class="sb-name">Homework</div>
+  </div>
+</aside>
+
+<footer class="bottomnav" id="bottomnav" style="display:none">
+  <span class="nav-hint" id="hint"></span>
+  <div class="nav-btns">
+    <button class="btn" id="btnBack" onclick="back()" style="display:none">← Back</button>
+    <button class="btn btn-fill" id="btnNext" onclick="handleNext()"><span id="btnNextLabel">Continue →</span></button>
+  </div>
+</footer>
+
+</div>
+
+<script>
+/* ════════════════════════════════════
+   DATA
+════════════════════════════════════ */
+
+const SILO_CARDS = [
+  { txt:"Success turns into punishment with higher targets.", zone:"trap", note:"Overperformance trap." },
+  { txt:"Holiday quarters ignore reality; targets remain high.", zone:"trap", note:"Seasonal quotas lack context." },
+  { txt:"Bloating CRM with dead leads to look busy.", zone:"illusion", note:"Fluff vs. Real Opportunities." },
+  { txt:"High-volume, low-quality focus where nothing closes.", zone:"illusion", note:"More leads isn't always better." },
+  { txt:"Prioritizing high-value accounts and cutting dead weight.", zone:"win", note:"Building a pipeline that converts." },
+  { txt:"Challenging unfair targets with historical conversion data.", zone:"win", note:"Pushing back with data." }
+];
+const SILO_ORDER = [2,5,0,3,1,4];
+
+const BLAME_ITEMS = [
+  {
+    statement:'"I overperformed last year and now my quota is literally impossible."',
+    opts:["They want you to quit","The Trap: Success is punished with higher quotas. Fix: Document wins and treat quota as a floor.","You should ignore the quota entirely","You need a new territory"],
+    ans:1,
+    fix:"Resolution: The Trap. Success turns into punishment. Treat quota as a floor, not a ceiling, and document all your wins."
+  },
+  {
+    statement:'"My pipeline is massive, but my conversion rate is terrible."',
+    opts:["The leads are inherently bad","You are a bad closer","The Illusion: Bloated pipeline with dead leads. Fix: Qualify hard early and cut dead weight.","Marketing needs to send more leads"],
+    ans:2,
+    fix:"Resolution: The Pipeline Illusion. More leads isn't always better. Qualify hard early and cut the dead weight fast."
+  },
+  {
+    statement:'"Q4 is dead in my industry, but my quota stayed the same."',
+    opts:["The Trap: Seasonal quotas ignore reality. Fix: Push back using historical data.","Work weekends to make up for it","Complain to the SDRs","Offer massive discounts to everyone"],
+    ans:0,
+    fix:"Resolution: The Trap. Seasonal quotas ignore reality. Push back with historical data and external factors to make a case."
+  },
+  {
+    statement:'"I inherited a tapped-out territory and my targets are unfair."',
+    opts:["Quit immediately","The Trap: Unequal territories. Fix: Build a real pipeline and track metrics to prove your value.","Steal leads from other territories","Wait for inbound leads"],
+    ans:1,
+    fix:"Resolution: The Trap. Unequal opportunities mean unfair targets. Track your metrics to create leverage and push back."
+  }
+];
+
+const SEQ_STEPS = [
+  { pos:1, act:"Audit Pipeline", sub:"Remove dead weight and rank deals based on value." },
+  { pos:2, act:"Set Realistic Targets", sub:"Base goals on your pipeline, not arbitrary quotas." },
+  { pos:3, act:"Qualify Hard Early", sub:"Don't waste time on long shots." },
+  { pos:4, act:"Track Your Metrics", sub:"Log meetings, deals, and conversion rates weekly." },
+  { pos:5, act:"Push Back with Data", sub:"Use your performance log to challenge unrealistic targets." }
+];
+const SEQ_TILE_ORDER = [3,0,4,1,2]; 
+
+const CLS_OBS = [
+  { ico:"🧹", txt:"Remove dead weight from your CRM.", zone:"pipeline" },
+  { ico:"🎯", txt:"Prioritize high-value accounts.", zone:"pipeline" },
+  { ico:"🔍", txt:"Qualify hard early to save time.", zone:"pipeline" },
+  { ico:"📊", txt:"Log your weekly calls made and meetings set.", zone:"data" },
+  { ico:"📉", txt:"Track your personal conversion rates.", zone:"data" },
+  { ico:"🏆", txt:"Document every deal closed to showcase results.", zone:"data" },
+  { ico:"📜", txt:"Gather historical performance data for your territory.", zone:"pushback" },
+  { ico:"🌦", txt:"Highlight seasonal trends to leadership.", zone:"pushback" }
+];
+const CLS_ORDER = [4,0,6,2,1,5,3,7];
+
+const QUIZ = [
+  {
+    q:"How does the system often treat overperformance?",
+    opts:["It turns success into punishment by raising quotas","It gives you more vacation time","It guarantees a promotion","It lowers your quota for the next year"],
+    ans:0
+  },
+  {
+    q:"What is the 'Pipeline Illusion'?",
+    opts:["Thinking more leads is always better, even if they are low quality","Believing your pipeline will close itself","Assuming marketing will fill your pipeline","Creating fake deals"],
+    ans:0
+  },
+  {
+    q:"How should you handle a quota that ignores seasonal realities or territory differences?",
+    opts:["Push back with historical data and external factors","Quit your job immediately","Work 80 hours a week to hit it anyway","Complain to the SDRs"],
+    ans:0
+  },
+  {
+    q:"Why is it important to track metrics like meetings set and conversion rates?",
+    opts:["It proves your pipeline quality and demonstrates effort, creating leverage","It looks good on your LinkedIn","HR requires it","It automatically lowers your quota"],
+    ans:0
+  }
+];
+
+/* ════════════════════════════════════
+   STATE
+════════════════════════════════════ */
+const TOTAL=10;
+let cur=0;
+let siloSel=null, siloDone={}, siloCount=0;
+let blameState={}, blameCount=0;
+let seqSel=null, seqDone={};
+let clsSel=null, clsDone={}, clsCount=0;
+let qAns={}, qSubmitted=false, qPassed=false;
+
+/* ════════════════════════════════════
+   INIT
+════════════════════════════════════ */
+function init(){
+  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); render();
+}
+function go(n){
+  document.getElementById('s'+cur).classList.remove('active');
+  cur=n;
+  document.getElementById('s'+cur).classList.add('active');
+  document.getElementById('main').scrollTop=0;
+  render();
+}
+function next(){if(cur<TOTAL-1)go(cur+1);}
+function back(){if(cur>0)go(cur-1);}
+function handleNext(){
+  if(cur===7){if(!qSubmitted)submitQuiz();else if(qPassed)next();else retryQuiz();}
+  else next();
+}
+
+/* ════════════════════════════════════
+   SILO SORTER
+════════════════════════════════════ */
+function buildSilo(){
+  document.getElementById('siloPool').innerHTML=SILO_ORDER.map((ci,di)=>`
+    <div class="silo-card" id="sc${di}" onclick="pickSilo(${di})">
+      <span class="silo-card-txt">${SILO_CARDS[ci].txt}</span>
+    </div>
+  `).join('');
+  ['trap','illusion','win'].forEach(z=>{document.getElementById('silo-dropped-'+z).innerHTML='';});
+}
+function pickSilo(di){
+  if(siloDone[di]) return;
+  if(siloSel===di){siloSel=null;renderSiloUI();return;}
+  siloSel=di;renderSiloUI();
+}
+function dropSilo(zone){
+  if(siloSel===null) return;
+  const di=siloSel,ci=SILO_ORDER[di],correct=SILO_CARDS[ci].zone===zone;
+  const el=document.getElementById('sc'+di);
+  siloSel=null;renderSiloUI();
+  if(correct){
+    siloDone[di]=true;siloCount++;
+    el.classList.add('placed');
+    const d=document.getElementById('silo-dropped-'+zone);
+    d.innerHTML+=`<div class="silo-dropped-card">${SILO_CARDS[ci].txt}<div class="silo-note">${SILO_CARDS[ci].note}</div></div>`;
+    document.getElementById('siloCount').textContent=siloCount;
+    render();
+  } else {
+    el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),400);
+  }
+}
+function renderSiloUI(){
+  SILO_ORDER.forEach((_,di)=>{
+    const el=document.getElementById('sc'+di);if(!el)return;
+    el.classList.toggle('sel',siloSel===di);
+  });
+  ['trap','illusion','win'].forEach(z=>{
+    const col=document.getElementById('silo-col-'+z);
+    col.classList.toggle('target',siloSel!==null);
+  });
+}
+function resetSilo(){
+  siloSel=null;siloDone={};siloCount=0;buildSilo();
+  document.getElementById('siloCount').textContent=0;
+  renderSiloUI();render();
+}
+
+/* ════════════════════════════════════
+   BLAME CHAIN BREAKER
+════════════════════════════════════ */
+function buildBlame(){
+  document.getElementById('blameItems').innerHTML=BLAME_ITEMS.map((b,i)=>`
+    <div class="blame-item" id="bi${i}">
+      <div class="blame-item-q">
+        <div class="blame-q-tag">Symptom ${i+1}</div>
+        <div class="blame-q-txt">${b.statement}</div>
+      </div>
+      <div class="blame-opts">
+        ${b.opts.map((o,oi)=>`<button class="blame-opt" id="bo${i}_${oi}" onclick="pickBlame(${i},${oi})">${o}</button>`).join('')}
+      </div>
+      <div class="blame-fix" id="bf${i}">${b.fix}</div>
+    </div>
+  `).join('');
+}
+function pickBlame(i,oi){
+  if(blameState[i]==='correct') return;
+  const correct=BLAME_ITEMS[i].ans===oi;
+  const opt=document.getElementById('bo'+i+'_'+oi);
+  if(correct){
+    blameState[i]='correct';blameCount++;
+    BLAME_ITEMS[i].opts.forEach((_,x)=>{
+      const el=document.getElementById('bo'+i+'_'+x);
+      el.classList.add('locked');
+      if(x===oi)el.classList.add('correct');
+    });
+    document.getElementById('bi'+i).classList.add('resolved');
+    document.getElementById('bf'+i).style.display='block';
+    document.getElementById('blameCount').textContent=blameCount;
+    render();
+  } else {
+    opt.classList.add('wrong','locked');
+    setTimeout(()=>opt.classList.remove('wrong'),400);
+  }
+}
+
+/* ════════════════════════════════════
+   SEQUENCER
+════════════════════════════════════ */
+function buildSeq(){
+  document.getElementById('seqSlots').innerHTML=SEQ_STEPS.map((s,i)=>`
+    <div class="seq-slot" id="ss${i}">
+      <div class="seq-pos">${i+1}</div>
+      <div class="seq-drop" id="sd${i}" onclick="pickSeqSlot(${i})">
+        <div id="sd-content${i}"><div class="seq-drop-txt" style="color:var(--mid);font-style:italic;font-family:var(--serif);font-weight:400;font-size:13px;letter-spacing:0;text-transform:none">— select step —</div></div>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('seqTiles').innerHTML=SEQ_TILE_ORDER.map(si=>`
+    <button class="seq-tile" id="st${si}" onclick="pickSeqTile(${si})">${SEQ_STEPS[si].act}</button>
+  `).join('');
+}
+function pickSeqTile(si){
+  if(seqDone[si]) return;
+  if(seqSel===si){seqSel=null;renderSeqUI();return;}
+  seqSel=si;renderSeqUI();
+}
+function pickSeqSlot(idx){
+  if(seqDone[idx]||seqSel===null) return;
+  const correct=SEQ_STEPS[idx].pos===idx+1 && seqSel===idx;
+  const tileStep=SEQ_STEPS[seqSel];
+  const slotCorrect=tileStep.pos===idx+1;
+  const slotEl=document.getElementById('sd'+idx);
+  const tileEl=document.getElementById('st'+seqSel);
+  if(slotCorrect){
+    seqDone[idx]=true;
+    slotEl.classList.remove('target','bad');slotEl.classList.add('correct');
+    document.getElementById('sd-content'+idx).innerHTML=`<div><div class="seq-drop-txt">${tileStep.act}</div><div class="seq-drop-sub">${tileStep.sub}</div></div>`;
+    document.getElementById('ss'+idx).classList.add('correct');
+    tileEl.classList.add('placed');seqSel=null;
+    document.getElementById('seqCount').textContent=Object.keys(seqDone).length;
+    renderSeqUI();render();
+  } else {
+    [slotEl,tileEl].forEach(e=>{e.classList.add('bad');setTimeout(()=>e.classList.remove('bad'),400);});
+    seqSel=null;renderSeqUI();
+  }
+}
+function renderSeqUI(){
+  SEQ_STEPS.forEach((_,i)=>{
+    const el=document.getElementById('sd'+i);if(!el||seqDone[i])return;
+    el.classList.toggle('target',seqSel!==null);
+  });
+  SEQ_TILE_ORDER.forEach(si=>{
+    const el=document.getElementById('st'+si);if(!el)return;
+    el.classList.toggle('sel',seqSel===si);
+  });
+}
+function resetSeq(){
+  seqSel=null;seqDone={};buildSeq();
+  document.getElementById('seqCount').textContent=0;
+  renderSeqUI();render();
+}
+
+/* ════════════════════════════════════
+   INSIGHTS CLASSIFIER
+════════════════════════════════════ */
+function buildCls(){
+  document.getElementById('clsStream').innerHTML=CLS_ORDER.map((ci,di)=>`
+    <div class="cls-obs" id="co${di}" onclick="pickCls(${di})">
+      <div class="cls-obs-icon">${CLS_OBS[ci].ico}</div>
+      <div class="cls-obs-txt">${CLS_OBS[ci].txt}</div>
+    </div>
+  `).join('');
+  ['pipeline','data','pushback'].forEach(z=>{
+    document.getElementById('cls-'+z+'-items').innerHTML='';
+    document.getElementById('cls-'+z+'-count').textContent='0';
+  });
+}
+function pickCls(di){
+  if(clsDone[di]) return;
+  if(clsSel===di){clsSel=null;renderClsUI();return;}
+  clsSel=di;renderClsUI();
+}
+function dropCls(zone){
+  if(clsSel===null) return;
+  const di=clsSel,ci=CLS_ORDER[di],correct=CLS_OBS[ci].zone===zone;
+  const el=document.getElementById('co'+di);
+  clsSel=null;renderClsUI();
+  if(correct){
+    clsDone[di]=true;clsCount++;
+    el.classList.add('placed');
+    const items=document.getElementById('cls-'+zone+'-items');
+    items.innerHTML+=`<div class="cls-bkt-item ${zone}-item">${CLS_OBS[ci].txt}</div>`;
+    const zoneCount=CLS_ORDER.filter((_ci,_di)=>clsDone[_di]&&CLS_OBS[_ci].zone===zone).length;
+    document.getElementById('cls-'+zone+'-count').textContent=zoneCount;
+    document.getElementById('clsCount').textContent=clsCount;
+    render();
+  } else {
+    el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),400);
+  }
+}
+function renderClsUI(){
+  CLS_ORDER.forEach((_,di)=>{
+    const el=document.getElementById('co'+di);if(!el||clsDone[di])return;
+    el.classList.toggle('sel',clsSel===di);
+  });
+  ['pipeline','data','pushback'].forEach(z=>{
+    const bkt=document.getElementById('cls-'+z);
+    bkt.classList.toggle('target',clsSel!==null);
+  });
+}
+function resetCls(){
+  clsSel=null;clsDone={};clsCount=0;
+  buildCls();document.getElementById('clsCount').textContent=0;
+  renderClsUI();render();
+}
+
+/* ════════════════════════════════════
+   QUIZ
+════════════════════════════════════ */
+function buildQuiz(){
+  document.getElementById('quizBody').innerHTML=QUIZ.map((q,qi)=>`
+    <div class="q-block">
+      <div class="q-num">Question ${qi+1} of ${QUIZ.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-opts">${q.opts.map((o,oi)=>`<button class="q-opt" id="qo${qi}_${oi}" onclick="pickOpt(${qi},${oi})">${o}</button>`).join('')}</div>
+    </div>
+  `).join('');
+}
+function pickOpt(qi,oi){
+  if(qSubmitted)return;
+  QUIZ[qi].opts.forEach((_,i)=>document.getElementById(`qo${qi}_${i}`).classList.remove('chosen'));
+  document.getElementById(`qo${qi}_${oi}`).classList.add('chosen');
+  qAns[qi]=oi;render();
+}
+function submitQuiz(){
+  qSubmitted=true;let correct=0;
+  QUIZ.forEach((q,qi)=>{
+    const chosen=qAns[qi];
+    q.opts.forEach((_,oi)=>{
+      const el=document.getElementById(`qo${qi}_${oi}`);
+      el.classList.add('locked');el.classList.remove('chosen');
+      if(oi===q.ans)el.classList.add('correct');
+      else if(oi===chosen&&chosen!==q.ans)el.classList.add('wrong-pick');
+    });
+    if(chosen===q.ans)correct++;
+  });
+  qPassed=correct>=3;
+  const b=document.getElementById('quizBanner');
+  b.className='quiz-banner show '+(qPassed?'pass':'fail');
+  b.textContent=qPassed?`✓ ${correct} / ${QUIZ.length} correct — cleared to continue.`:`${correct} / ${QUIZ.length} correct — need 3 to pass. Review and try again.`;
+  render();
+}
+function retryQuiz(){
+  qSubmitted=false;qPassed=false;qAns={};
+  document.getElementById('quizBanner').className='quiz-banner';
+  buildQuiz();render();
+}
+
+/* ════════════════════════════════════
+   RENDER
+════════════════════════════════════ */
+const SEC={1:1,2:2,3:2,4:3,5:3,6:4,7:5,8:4};
+function canContinue(){
+  if(cur===2)return siloCount===6;
+  if(cur===4)return blameCount===4;
+  if(cur===5)return Object.keys(seqDone).length===5;
+  if(cur===6)return clsCount===8;
+  if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  return true;
+}
+function getHint(){
+  const h={
+    1:"Quotas aren't about recognition—they're about stretching you.",
+    2:`${siloCount} / 6 correctly sorted`,
+    3:"Fluff in your pipeline doesn't help anyone.",
+    4:`${blameCount} / 4 traps resolved`,
+    5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
+    6:`${clsCount} / 8 correctly classified`,
+    7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
+    8:"Document every win—your success isn't just about one number.",
+  };
+  return h[cur]||'';
+}
+function getNextLabel(){
+  if(cur===7&&!qSubmitted)return 'Submit Answers';
+  if(cur===7&&!qPassed)return 'Try Again →';
+  if(cur===8)return 'Finish Lesson →';
+  return 'Continue →';
+}
+function render(){
+  const sec=SEC[cur];
+  document.getElementById('progLabel').textContent=sec?`Section 0${sec}`:'Lesson 10.2';
+  const pct=cur===0?0:Math.round((cur/(TOTAL-1))*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  ['nav1','nav2','nav3','nav4'].forEach((id,i)=>
+    document.getElementById(id).classList.toggle('active',SEC[cur]===i+1||(i===1&&SEC[cur]===3)||(i===3&&SEC[cur]===8)));
+  const hide=cur===0||cur===TOTAL-1;
+  const bnav=document.getElementById('bottomnav');
+  bnav.style.display=hide?'none':'flex';
+  if(hide)return;
+  document.getElementById('hint').textContent=getHint();
+  document.getElementById('btnNextLabel').textContent=getNextLabel();
+  document.getElementById('btnBack').style.display=cur<=1?'none':'block';
+  document.getElementById('btnNext').disabled=!canContinue();
+}
+
+// Zone click delegation
+document.addEventListener('click',function(e){
+  if(siloSel!==null){
+    if(e.target.closest('#silo-col-trap')&&!e.target.closest('.silo-card'))dropSilo('trap');
+    if(e.target.closest('#silo-col-illusion')&&!e.target.closest('.silo-card'))dropSilo('illusion');
+    if(e.target.closest('#silo-col-win')&&!e.target.closest('.silo-card'))dropSilo('win');
+  }
+  if(clsSel!==null){
+    if(e.target.closest('#cls-pipeline')&&!e.target.closest('.cls-obs'))dropCls('pipeline');
+    if(e.target.closest('#cls-data')&&!e.target.closest('.cls-obs'))dropCls('data');
+    if(e.target.closest('#cls-pushback')&&!e.target.closest('.cls-obs'))dropCls('pushback');
+  }
+});
+
+init();
+</script>
+</body>
+</html>

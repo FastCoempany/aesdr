@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR — Course 5.3: How to Become Irreplaceable</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#FFFFFF;--black:#000000;--mid:#636060;--lite:#F8F0F2;--lite2:#EDDDDF;
+  --burg:#7B002A;--burg-lt:rgba(123,0,42,0.07);--burg-md:rgba(123,0,42,0.18);
+  --saffron:#FF9900;--saf-lt:rgba(255,153,0,0.10);
+  --cobalt:#0038FF;--cob-lt:rgba(0,56,255,0.07);
+  --green:#00B85A;--grn-lt:rgba(0,184,90,0.09);
+  --coral:#FF3200;--cor-lt:rgba(255,50,0,0.07);
+  --olive:#3D6B00;--oli-lt:rgba(61,107,0,0.08);
+  --lime:#A8FF00;
+  --line:rgba(0,0,0,0.08);--line2:rgba(0,0,0,0.14);
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#FFD600 34%,#00E5A0 51%,#0099FF 68%,#7B2FFF 85%,#FF006E 100%);
+  --display:'Abril Fatface',Georgia,serif;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;
+  --mono:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--white);color:var(--black);font-family:var(--cond);overflow:hidden}
+.app{display:grid;grid-template-columns:1fr 234px;grid-template-rows:52px 1fr 60px;height:100vh}
+
+/* TOPBAR */
+.topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:2px solid var(--black);background:var(--white);z-index:20}
+.brand{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.22em;text-transform:uppercase}
+.course-badge{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;background:var(--burg);color:#fff;padding:4px 10px;margin-left:12px}
+.top-right{display:flex;align-items:center;gap:14px}
+.prog-label{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--mid);text-transform:uppercase}
+.prog-track{width:80px;height:2px;background:var(--lite2)}
+.prog-fill{height:100%;background:var(--iris);background-size:200% 100%;animation:iris 3s linear infinite;transition:width .8s cubic-bezier(.4,0,.2,1)}
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+
+.main{overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;background:var(--white);scrollbar-width:none}
+.main::-webkit-scrollbar{display:none}
+.sidebar{border-left:2px solid var(--black);padding:32px 20px;overflow-y:auto;scrollbar-width:none;background:var(--white)}
+.sidebar::-webkit-scrollbar{display:none}
+.sb-course{font-family:var(--display);font-size:22px;color:var(--burg);line-height:1;margin-bottom:4px}
+.sb-lesson{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--mid);margin-bottom:24px}
+.sb-divider{height:2px;background:var(--burg);margin-bottom:20px}
+.sb-label{font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--mid);margin-bottom:18px}
+.sb-item{padding:16px 0;border-bottom:1px solid var(--line);cursor:pointer;position:relative;transition:all .2s}
+.sb-item:first-of-type{border-top:1px solid var(--line)}
+.sb-tag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--mid);margin-bottom:7px;text-transform:uppercase;transition:color .2s}
+.sb-name{font-family:var(--cond);font-size:12px;font-weight:700;color:var(--mid);line-height:1.4;text-transform:uppercase;letter-spacing:.04em;transition:color .2s}
+.sb-item.active .sb-tag{color:var(--burg)}
+.sb-item.active .sb-name{color:var(--black)}
+.sb-item.active::before{content:'';position:absolute;left:-20px;top:0;bottom:0;width:3px;background:var(--burg)}
+.sb-item:hover .sb-name{color:var(--black)}
+
+.bottomnav{grid-column:1/2;display:flex;align-items:center;justify-content:space-between;padding:0 56px;border-top:2px solid var(--black);background:var(--white)}
+.nav-hint{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--mid);font-style:italic}
+.nav-btns{display:flex;gap:8px}
+.btn{font-family:var(--cond);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:10px 22px;border:2px solid var(--black);background:transparent;color:var(--black);cursor:pointer;transition:all .15s}
+.btn:hover{background:var(--black);color:var(--white)}
+.btn-fill{background:var(--black);color:var(--white);position:relative;overflow:hidden}
+.btn-fill::before{content:'';position:absolute;inset:0;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;opacity:0;transition:opacity .2s}
+.btn-fill:hover::before{opacity:1}
+.btn-fill:hover{color:var(--black)}
+.btn-fill span{position:relative;z-index:1}
+.btn-fill:disabled,.btn-fill:disabled:hover{opacity:.28;cursor:not-allowed;background:var(--black);color:var(--white)}
+.btn-fill:disabled::before,.btn-fill:disabled:hover::before{display:none}
+
+.screen{display:none;flex-direction:column;flex:1;animation:up .42s cubic-bezier(.22,1,.36,1) both}
+.screen.active{display:flex}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* COVER */
+.cover{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.cvl{background:var(--burg);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.cvl::before{content:'5';position:absolute;right:-20px;bottom:-40px;font-family:var(--display);font-size:280px;color:rgba(255,255,255,0.06);line-height:1;pointer-events:none}
+.cv-c5tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px}
+.cv-course-num{font-family:var(--display);font-size:80px;color:#fff;line-height:.85;margin-bottom:12px}
+.cv-big{font-family:var(--display);font-size:clamp(26px,3.2vw,44px);line-height:.97;color:#fff}
+.cv-tagline{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.58);line-height:1.7;border-top:1px solid rgba(255,255,255,0.14);padding-top:18px}
+.cvr{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;margin-bottom:16px;display:inline-block;background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:iris 3s linear infinite}
+.hero-h{font-family:var(--display);font-size:clamp(28px,3.8vw,52px);line-height:.97;color:var(--black);margin-bottom:20px}
+.hero-h .irisTxt{background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:iris 3s linear infinite}
+.cv-list{list-style:none;margin-bottom:36px}
+.cv-list li{font-family:var(--cond);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mid);display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.cv-list li:first-child{border-top:1px solid var(--line)}
+.cl-n{font-family:var(--mono);font-size:9px;background:var(--black);color:var(--white);padding:2px 6px;flex-shrink:0}
+
+/* SHARED */
+.lh{padding:44px 56px 0;position:relative;overflow:hidden}
+.lh-stripe{position:absolute;top:0;left:0;right:0;height:4px;background:var(--iris);background-size:200% 100%;animation:iris 4s linear infinite}
+.ghost-n{position:absolute;right:48px;top:-20px;font-family:var(--display);font-size:200px;line-height:1;color:var(--lite);pointer-events:none;user-select:none}
+.c5-badge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;background:var(--burg);color:#fff;padding:3px 10px;margin-bottom:12px}
+.sec-eye{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--burg);margin-bottom:14px;display:inline-block;margin-left:10px}
+.lh-title{font-family:var(--display);font-size:clamp(22px,3.2vw,46px);line-height:1.05;color:var(--black);max-width:640px}
+.lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
+.lh-sub b{color:var(--black)}
+.lb{padding:24px 56px 0}
+.lp{font-family:var(--serif);font-size:16px;line-height:1.8;color:var(--black);max-width:580px;margin-bottom:14px}
+.kp{list-style:none;max-width:580px;margin:14px 0}
+.kp li{font-family:var(--serif);font-size:15px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px}
+.kp li:first-child{border-top:1px solid var(--line)}
+.kp-n{font-family:var(--mono);font-size:9px;color:var(--mid);min-width:22px;padding-top:3px;flex-shrink:0}
+.lie{max-width:580px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
+.lie-tab{position:absolute;top:0;left:0;font-family:var(--cond);font-size:9px;letter-spacing:.24em;font-weight:800;text-transform:uppercase;padding:3px 10px;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;color:var(--black)}
+.lie-q{font-family:var(--serif);font-style:italic;font-size:18px;color:#fff;line-height:1.5;margin:12px 0 10px}
+.lie-a{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
+.data-table{width:100%;max-width:600px;border-collapse:collapse;margin:16px 0}
+.data-table th{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;background:var(--black);color:var(--white);padding:9px 14px;text-align:left}
+.data-table td{font-family:var(--serif);font-size:14px;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--black);line-height:1.6;vertical-align:top}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:nth-child(even) td{background:var(--lite)}
+
+/* ── REALITY RECKONING ── */
+.rr-wrap{padding:16px 56px 44px;max-width:680px}
+.rr-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:560px;line-height:1.65;margin-bottom:20px}
+.rr-items{display:flex;flex-direction:column;gap:8px}
+.rr-item{border:2px solid var(--line2);overflow:hidden;transition:all .3s;position:relative}
+.rr-item.locked{opacity:.32;pointer-events:none}
+.rr-item.accepted{border-color:var(--burg)}
+.rr-item-top{padding:18px 20px;display:flex;align-items:flex-start;gap:16px}
+.rr-num{font-family:var(--display);font-size:32px;color:var(--lite2);flex-shrink:0;line-height:1;transition:color .3s;width:36px;text-align:center}
+.rr-item.accepted .rr-num{color:var(--burg)}
+.rr-item:not(.locked):not(.accepted) .rr-num{color:var(--burg)}
+.rr-content{flex:1}
+.rr-label{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--black)}
+.rr-truth{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);margin-top:5px;line-height:1.6}
+.rr-status{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;padding:3px 8px;flex-shrink:0;margin-top:4px}
+.rr-status.locked{color:var(--mid);background:var(--lite2)}
+.rr-status.open{color:var(--burg);background:var(--burg-lt)}
+.rr-status.accepted{color:#fff;background:var(--burg)}
+.rr-body{overflow:hidden;max-height:0;transition:max-height .4s cubic-bezier(.4,0,.2,1)}
+.rr-item.open .rr-body,.rr-item.accepted .rr-body{max-height:300px}
+.rr-inner{padding:0 20px 18px 74px}
+.rr-shift-lbl{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--burg);margin-bottom:7px}
+.rr-shift{font-family:var(--serif);font-size:14px;color:var(--black);line-height:1.72;margin-bottom:14px}
+.rr-action{font-family:var(--cond);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--mid);line-height:1.5;padding:10px 14px;background:var(--lite);border-left:3px solid var(--burg);margin-bottom:14px}
+.rr-accept-btn{font-family:var(--cond);font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:8px 18px;border:2px solid var(--burg);background:transparent;color:var(--burg);cursor:pointer;transition:all .15s}
+.rr-accept-btn:hover{background:var(--burg);color:#fff}
+.rr-item.accepted .rr-accept-btn{background:var(--burg);color:#fff;pointer-events:none}
+.rr-item:not(.locked) .rr-item-top{cursor:pointer}
+
+/* ── BENCHMARK BEATER ── */
+.bm-wrap{padding:16px 56px 44px;max-width:640px}
+.bm-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:22px}
+.bm-metrics{display:flex;flex-direction:column;gap:16px;max-width:580px}
+.bm-metric{border:1px solid var(--line2);padding:20px 22px;transition:border-color .2s}
+.bm-metric.passing{border-color:var(--green)}
+.bm-metric.failing{border-color:var(--coral)}
+.bm-metric-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.bm-metric-name{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--black)}
+.bm-verdict{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;display:none}
+.bm-metric.passing .bm-verdict{display:block;background:var(--green);color:#fff}
+.bm-metric.failing .bm-verdict{display:block;background:var(--coral);color:#fff}
+.bm-numbers{display:flex;align-items:center;gap:20px;margin-bottom:14px}
+.bm-num-block{text-align:center}
+.bm-num-label{font-family:var(--mono);font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--mid);margin-bottom:4px}
+.bm-num-val{font-family:var(--display);font-size:32px;color:var(--black);line-height:1}
+.bm-num-val.target{color:var(--burg);transition:color .2s}
+.bm-metric.passing .bm-num-val.target{color:var(--green)}
+.bm-num-val.target.too-low{color:var(--coral)}
+.bm-arrow{font-size:20px;color:var(--mid)}
+.bm-slider-row{display:flex;align-items:center;gap:12px}
+.bm-slider-lbl{font-family:var(--mono);font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--mid);flex-shrink:0}
+.bm-slider{-webkit-appearance:none;appearance:none;width:100%;height:3px;background:var(--lite2);outline:none;transition:background .2s}
+.bm-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--burg);cursor:pointer;transition:background .2s}
+.bm-metric.passing .bm-slider::-webkit-slider-thumb{background:var(--green)}
+.bm-metric.failing .bm-slider::-webkit-slider-thumb{background:var(--coral)}
+.bm-threshold{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--mid);margin-top:8px}
+.bm-threshold b{color:var(--burg)}
+.bm-done-box{max-width:580px;background:var(--black);padding:16px 20px;margin-top:14px;display:none}
+.bm-done-box.show{display:block}
+.bm-done-h{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--saffron);margin-bottom:6px}
+.bm-done-p{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.55);line-height:1.65;font-style:italic}
+
+/* ── TRUST SIGNAL MATCHER ── */
+.ts-wrap{padding:16px 56px 44px;max-width:740px}
+.ts-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.ts-arena{display:grid;grid-template-columns:1fr 1fr;gap:0 40px}
+.ts-col-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);padding-bottom:10px;border-bottom:2px solid var(--black);margin-bottom:10px}
+.ts-items{display:flex;flex-direction:column;gap:7px}
+.ts-btn{width:100%;padding:13px 16px;border:1px solid var(--line2);background:var(--white);text-align:left;cursor:pointer;transition:all .18s;line-height:1.4}
+.ts-btn.left{font-family:var(--cond);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--black)}
+.ts-btn.right{font-family:var(--serif);font-style:italic;font-size:13px;color:var(--black)}
+.ts-btn:hover:not(.matched):not([disabled]){border-color:var(--burg);background:var(--burg-lt)}
+.ts-btn.sel{border-color:var(--burg);background:var(--burg);color:#fff}
+.ts-btn.matched{background:var(--lime);border-color:transparent;cursor:default;color:var(--black)}
+.ts-btn.bad{border-color:var(--coral);background:var(--cor-lt);animation:shake .35s ease both}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.ts-reset{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mid);background:none;border:none;cursor:pointer;text-decoration:underline;margin-top:10px}
+.ts-reset:hover{color:var(--black)}
+
+/* ── IRREPLACEABLE PROFILE ── */
+.ip-wrap{padding:16px 56px 44px;max-width:760px}
+.ip-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.ip-pillars{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:22px}
+.ip-pillar{border:2px solid var(--line2);transition:border-color .2s;overflow:hidden}
+.ip-pillar.target{border-color:var(--burg);border-style:dashed}
+.ip-pillar.target:hover{border-style:solid}
+.ip-pillar-hdr{padding:12px 14px;border-bottom:1px solid var(--line2)}
+.ip-pillar-name{font-family:var(--cond);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.ip-pillar-name.p1{color:var(--burg)}
+.ip-pillar-name.p2{color:var(--cobalt)}
+.ip-pillar-name.p3{color:var(--olive)}
+.ip-pillar-count{font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--mid);margin-top:3px;text-transform:uppercase}
+.ip-pillar-items{min-height:80px;padding:8px;display:flex;flex-direction:column;gap:5px}
+.ip-placed-item{padding:8px 10px;font-family:var(--serif);font-size:12px;color:var(--black);line-height:1.45}
+.ip-placed-item.pp1{background:var(--burg-lt);border-left:3px solid var(--burg)}
+.ip-placed-item.pp2{background:var(--cob-lt);border-left:3px solid var(--cobalt)}
+.ip-placed-item.pp3{background:var(--oli-lt);border-left:3px solid var(--olive)}
+.ip-pool-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--black)}
+.ip-pool{display:flex;flex-direction:column;gap:6px;max-width:440px}
+.ip-tile{padding:11px 14px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:13px;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.45}
+.ip-tile:hover:not(.placed):not(.sel){border-color:var(--burg)}
+.ip-tile.sel{border-color:var(--burg);background:var(--burg);color:#fff}
+.ip-tile.placed{visibility:hidden;pointer-events:none;height:0;margin:0;padding:0;border:none}
+.ip-tile.wrong{border-color:var(--coral);background:var(--cor-lt);animation:shake .35s ease both}
+.ip-reset{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mid);background:none;border:none;cursor:pointer;text-decoration:underline;margin-top:10px}
+.ip-reset:hover{color:var(--black)}
+
+/* ── SELF-AUDIT ── */
+.sa-wrap{padding:16px 56px 44px;max-width:700px}
+.sa-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.sa-items{display:flex;flex-direction:column;gap:12px}
+.sa-item{border:1px solid var(--line2);overflow:hidden;transition:border-color .2s}
+.sa-item.resolved{border-color:var(--burg)}
+.sa-q-block{padding:16px 18px 12px}
+.sa-q-num{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--burg);margin-bottom:7px}
+.sa-q-txt{font-family:var(--display);font-size:clamp(14px,1.8vw,18px);color:var(--black);line-height:1.1}
+.sa-opts{display:flex;flex-direction:column;gap:5px;padding:0 18px 14px}
+.sa-opt{padding:11px 14px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:13px;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.5;display:flex;gap:12px;align-items:flex-start}
+.sa-opt:hover:not(.locked){border-color:var(--burg);background:var(--burg-lt)}
+.sa-opt.correct{border-color:var(--burg);background:var(--burg-lt);cursor:default}
+.sa-opt.wrong{border-color:var(--coral);background:var(--cor-lt);cursor:default;animation:shake .35s ease both}
+.sa-opt.locked{cursor:default}
+.sa-ltr{font-family:var(--mono);font-size:9px;color:var(--mid);flex-shrink:0;margin-top:2px;transition:color .2s}
+.sa-opt.correct .sa-ltr{color:var(--burg)}
+.sa-opt.wrong .sa-ltr{color:var(--coral)}
+.sa-result{padding:8px 18px 12px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;line-height:1.65;display:none;border-top:1px solid var(--line)}
+.sa-item.resolved .sa-result{display:block;color:var(--burg)}
+
+/* QUIZ */
+.quiz-banner{margin:16px 56px 0;padding:12px 18px;font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.06em;border-left:4px solid var(--cobalt);background:var(--cob-lt);color:var(--black);display:none}
+.quiz-banner.show{display:block}
+.quiz-banner.pass{border-color:var(--green);background:var(--grn-lt)}
+.quiz-banner.fail{border-color:var(--coral);background:var(--cor-lt)}
+.quiz-body{padding:20px 56px 44px;display:flex;flex-direction:column;gap:28px}
+.q-num{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--burg);margin-bottom:9px}
+.q-text{font-family:var(--display);font-size:clamp(13px,1.6vw,18px);color:var(--black);line-height:1.2;margin-bottom:13px}
+.q-opts{display:flex;flex-direction:column;gap:6px}
+.q-opt{padding:11px 16px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:14px;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.5}
+.q-opt:hover:not(.locked){border-color:var(--burg);background:var(--burg-lt)}
+.q-opt.chosen{border-color:var(--burg);background:var(--burg);color:#fff}
+.q-opt.correct{border-color:var(--green);background:var(--grn-lt);color:var(--black)}
+.q-opt.wrong-pick{border-color:var(--coral);background:var(--cor-lt);color:var(--black)}
+.q-opt.locked{cursor:default}
+
+/* TOOLS */
+.tools-blk{padding:20px 56px 44px}
+.t-head{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--black);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--black)}
+.hw-list{list-style:none;max-width:580px;margin-top:8px}
+.hw-list li{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.65;padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
+.hw-list li:first-child{border-top:1px solid var(--line)}
+.hw-box{width:14px;height:14px;border:2px solid var(--black);flex-shrink:0;margin-top:4px}
+
+/* COMPLETE */
+.comp{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.comp-l{background:var(--olive);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.comp-l::before{content:'5';position:absolute;right:-20px;bottom:-40px;font-family:var(--display);font-size:280px;color:rgba(255,255,255,0.06);line-height:1;pointer-events:none}
+.comp-tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.35)}
+.comp-big{font-family:var(--display);font-size:clamp(44px,5.5vw,76px);line-height:.93;color:#fff}
+.comp-sub{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7;border-top:1px solid rgba(255,255,255,0.12);padding-top:18px}
+.comp-r{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.comp-h{font-family:var(--display);font-size:clamp(22px,2.8vw,40px);line-height:1.08;color:var(--black);margin-bottom:18px}
+.comp-p{font-family:var(--serif);font-size:15px;color:var(--black);max-width:380px;line-height:1.8;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header class="topbar">
+  <div style="display:flex;align-items:center">
+    <div class="brand">AESDR</div>
+    <div class="course-badge">Course 5</div>
+  </div>
+  <div class="top-right">
+    <span class="prog-label" id="progLabel">Lesson 5.3</span>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+</header>
+
+<main class="main" id="main">
+
+  <!-- 0: COVER -->
+  <div class="screen active" id="s0">
+    <div class="cover" style="flex:1">
+      <div class="cvl">
+        <div>
+          <div class="cv-c5tag">AESDR · Lesson 5.3</div>
+          <div class="cv-course-num">05</div>
+          <div class="cv-big">How to Become Irreplaceable in a Replaceable Role</div>
+        </div>
+        <div class="cv-tagline">Deliver consistent value, stand out, and thrive under the pressure that makes most SDRs quit.</div>
+      </div>
+      <div class="cvr">
+        <div class="eyebrow">Course 5 · Lesson 3 of 3</div>
+        <div class="hero-h">Prove you<br><span class="irisTxt">can't be replaced.</span></div>
+        <ul class="cv-list">
+          <li><span class="cl-n">01</span>The 4 Realities You Must Accept</li>
+          <li><span class="cl-n">02</span>Outperform, Build Trust, Differentiate</li>
+          <li><span class="cl-n">03</span>The Weekly Self-Audit Framework</li>
+        </ul>
+        <button class="btn btn-fill" onclick="go(1)"><span>Begin Lesson →</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1: INTRO -->
+  <div class="screen" id="s1">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">01</div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 01 — The Honest Start</span></div>
+      <div class="lh-title">The Harsh Truth About Being Replaceable</div>
+    </div>
+    <div class="lb">
+      <p class="lp">Companies see SDRs as interchangeable. The tasks are repetitive, the playbooks are documented, and the seat can be filled within a month. That's not cynicism — that's the structure of the role. And pretending otherwise leaves you unprepared for the only game that matters: proving you're the exception.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span>If you're not delivering, someone else can — and will. The pipeline doesn't pause for your learning curve or your off-month.</li>
+        <li><span class="kp-n">02</span>Average performance doesn't make you safe. It makes you invisible. Silent judgment from leadership happens long before anyone says your name in a performance review.</li>
+        <li><span class="kp-n">03</span>Understanding that you're replaceable — truly accepting it — is what makes you dangerous. It stops the entitlement and starts the discipline.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Edge</div>
+        <div class="lie-q">"Being replaceable isn't a threat. It's the starting condition. Irreplaceable is what you build from here."</div>
+        <div class="lie-a">The SDR who accepts the pressure, outperforms the average, and delivers unique value consistently — that person isn't replaceable. They're the one who gets promoted, gets protected, and gets the best accounts. Build toward that.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2: REALITY RECKONING -->
+  <div class="screen" id="s2">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">01</div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 01 — Accept the Realities</span></div>
+      <div class="lh-title">Four Realities You Have to Accept First</div>
+      <div class="lh-sub"><b id="rrCount">0</b> / 4 realities accepted — each unlocks the next</div>
+    </div>
+    <div class="rr-wrap">
+      <p class="rr-instr">Read each reality. Accept it — not by agreeing with how it feels, but by committing to the mindset shift it requires. Each acceptance unlocks the next.</p>
+      <div class="rr-items" id="rrItems"></div>
+    </div>
+  </div>
+
+  <!-- 3: BENCHMARK BEATER -->
+  <div class="screen" id="s3">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">02</div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 02 — Set Your Targets</span></div>
+      <div class="lh-title">Beat the Team Benchmarks by 10–20%</div>
+      <div class="lh-sub"><b id="bmCount">0</b> / 3 targets set above the threshold</div>
+    </div>
+    <div class="bm-wrap">
+      <p class="bm-instr">These are the team averages. Drag each slider to set your personal weekly target. You must commit to beating every benchmark by at least 10% to continue.</p>
+      <div class="bm-metrics" id="bmMetrics"></div>
+      <div class="bm-done-box" id="bmDoneBox">
+        <div class="bm-done-h">✓ All 3 Targets Set — Now Hold Yourself to Them</div>
+        <div class="bm-done-p">Writing this down and looking at it daily is the single highest-leverage thing you can do with these numbers. Continue when ready.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4: TRUST SIGNAL MATCHER -->
+  <div class="screen" id="s4">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 02 — Build Reliability</span></div>
+      <div class="lh-title">Match the Trust Signal to Its Outcome</div>
+      <div class="lh-sub"><b id="tsCount">0</b> / 5 matched</div>
+    </div>
+    <div class="ts-wrap">
+      <p class="ts-instr" style="font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px">Every reliability behavior produces a specific outcome. Click a behavior, then click the outcome it creates. All 5 must be matched to continue.</p>
+      <div class="ts-arena">
+        <div>
+          <div class="ts-col-lbl">Reliability Behavior</div>
+          <div class="ts-items" id="tsLeft"></div>
+        </div>
+        <div>
+          <div class="ts-col-lbl">Outcome It Produces</div>
+          <div class="ts-items" id="tsRight"></div>
+          <button class="ts-reset" onclick="resetTS()">Reset board</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5: IRREPLACEABLE PROFILE BUILDER -->
+  <div class="screen" id="s5">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">03</div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 03 — Build Your Profile</span></div>
+      <div class="lh-title">Assign Each Action to the Right Pillar</div>
+      <div class="lh-sub"><b id="ipCount">0</b> / 6 correctly placed</div>
+    </div>
+    <div class="ip-wrap">
+      <p class="ip-instr" style="font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px">Irreplaceable SDRs operate across three pillars simultaneously. Select an action and place it in the correct pillar. All 6 must be correctly placed to continue.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 40px">
+        <div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);padding-bottom:10px;border-bottom:2px solid var(--black);margin-bottom:10px">The Three Pillars</div>
+          <div class="ip-pillars" id="ipPillars"></div>
+        </div>
+        <div>
+          <div class="ip-pool-lbl">Actions — Select One</div>
+          <div class="ip-pool" id="ipPool"></div>
+          <button class="ip-reset" onclick="resetIP()">Reset board</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6: SELF-AUDIT -->
+  <div class="screen" id="s6">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 03 — Weekly Audit</span></div>
+      <div class="lh-title">The Weekly Self-Audit</div>
+      <div class="lh-sub"><b id="saCount">0</b> / 4 growth responses identified</div>
+    </div>
+    <div class="sa-wrap">
+      <p class="sa-instr">These are the four questions every irreplaceable SDR asks themselves every Friday. For each one, choose the response that a top performer would give — not the comfortable one.</p>
+      <div class="sa-items" id="saItems"></div>
+    </div>
+  </div>
+
+  <!-- 7: QUIZ -->
+  <div class="screen" id="s7">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 03 — Knowledge Check</span></div>
+      <div class="lh-title">Test Your Understanding</div>
+    </div>
+    <div class="quiz-banner" id="quizBanner"></div>
+    <div class="quiz-body" id="quizBody"></div>
+  </div>
+
+  <!-- 8: TOOLS -->
+  <div class="screen" id="s8">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">04</div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 04 — Templates & Homework</span></div>
+      <div class="lh-title">The Irreplaceable Toolkit</div>
+    </div>
+    <div class="tools-blk">
+      <div style="margin-top:20px">
+        <div class="t-head">High-Impact Daily Activity Framework</div>
+        <table class="data-table">
+          <thead><tr><th>Activity</th><th>Team Average</th><th>Your Target (+10–20%)</th></tr></thead>
+          <tbody>
+            <tr><td>Cold Calls</td><td>50 dials/day</td><td>55–60 dials — track connects separately.</td></tr>
+            <tr><td>Personalized Emails</td><td>10–12/day</td><td>12–15 — one real personal detail per email, not a name merge.</td></tr>
+            <tr><td>Follow-Ups Sent</td><td>8–10/day</td><td>10–12 — a follow-up sequence that earns each touch instead of just sending it.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="t-head">Weekly Metrics Self-Audit</div>
+        <table class="data-table">
+          <thead><tr><th>Question</th><th>Growth Response</th></tr></thead>
+          <tbody>
+            <tr><td>Did I exceed team benchmarks?</td><td>If yes: share the number with your manager. If no: identify the one thing that would have changed it.</td></tr>
+            <tr><td>How many meetings did I book vs. last week?</td><td>Trend matters more than any single week. Up is the only acceptable direction.</td></tr>
+            <tr><td>What's one skill I improved or tested?</td><td>Name it specifically. "I tried X and got Y result." Not "I worked on my cold calling."</td></tr>
+            <tr><td>Did I do something tangible for my AE?</td><td>If you can't name it — that's this week's priority. One thing. Specific and delivered.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="t-head">Homework — This Week</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Find your team's average call volume, meetings booked, and email sends this week. Write the numbers down. Set your personal targets at 10–20% above each one.</li>
+          <li><div class="hw-box"></div>Share your results with your manager at the end of this week before they ask. One sentence: "I made X calls, booked X meetings, sent X sequences. Here's what I'll push further next week."</li>
+          <li><div class="hw-box"></div>Post one market insight or prospect intelligence finding in Slack. Not an article — your actual analysis in two sentences. See who responds.</li>
+          <li><div class="hw-box"></div>Run the Friday self-audit on yourself this week. Answer all four questions in writing. If any answer is "I don't know" — that's your priority for next Monday.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9: COMPLETE -->
+  <div class="screen" id="s9">
+    <div class="comp" style="flex:1">
+      <div class="comp-l">
+        <div>
+          <div class="comp-tag">Course 5 · Lesson 3 — Complete</div>
+          <div style="font-family:var(--display);font-size:56px;color:#fff;line-height:.9;margin:10px 0 0">05</div>
+        </div>
+        <div class="comp-big">Build<br>what<br>can't be<br>replaced.</div>
+        <div class="comp-sub">Resilience is the key to long-term success. The SDR who accepts the pressure, outperforms the average, and delivers consistent value — that person wins.</div>
+      </div>
+      <div class="comp-r">
+        <div class="eyebrow">Course 5 · Complete</div>
+        <div class="comp-h">Accept the reality. Beat the benchmarks. Make the work visible.</div>
+        <p class="comp-p">You've accepted the four realities, set your targets above the benchmarks, matched the trust signals, built your irreplaceable profile, and completed the weekly audit. Now run this every single week — not as a lesson, but as the job.</p>
+        <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
+        <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<aside class="sidebar">
+  <div class="sb-course">05</div>
+  <div class="sb-lesson">Lesson 5.3 · Becoming Irreplaceable</div>
+  <div class="sb-divider"></div>
+  <div class="sb-label">Sections</div>
+  <div class="sb-item" id="nav1" onclick="go(1)">
+    <div class="sb-tag">Section 01</div>
+    <div class="sb-name">The Realities</div>
+  </div>
+  <div class="sb-item" id="nav2" onclick="go(3)">
+    <div class="sb-tag">Section 02</div>
+    <div class="sb-name">Benchmarks & Trust</div>
+  </div>
+  <div class="sb-item" id="nav3" onclick="go(5)">
+    <div class="sb-tag">Section 03</div>
+    <div class="sb-name">Profile & Audit</div>
+  </div>
+  <div class="sb-item" id="nav4" onclick="go(8)">
+    <div class="sb-tag">Section 04</div>
+    <div class="sb-name">Templates & Homework</div>
+  </div>
+</aside>
+
+<footer class="bottomnav" id="bottomnav" style="display:none">
+  <span class="nav-hint" id="hint"></span>
+  <div class="nav-btns">
+    <button class="btn" id="btnBack" onclick="back()" style="display:none">← Back</button>
+    <button class="btn btn-fill" id="btnNext" onclick="handleNext()"><span id="btnNextLabel">Continue →</span></button>
+  </div>
+</footer>
+
+</div>
+
+<script>
+/* ════════════════════════════════════
+   DATA
+════════════════════════════════════ */
+
+const REALITIES = [
+  {
+    num:'01', label:'The Interchangeable Truth',
+    truth:'"SDR tasks — cold calls, emails, outreach — are designed to be consistent and repeatable. Companies assume these skills are teachable to anyone."',
+    shift:'The system is built this way. But you\'re not anyone. If you outperform consistently, you prove that you bring something the system can\'t simply reassign.',
+    action:'Write down three things about how you work that a replacement couldn\'t replicate in 30 days. Those are your differentiators.'
+  },
+  {
+    num:'02', label:'Average Isn\'t Enough',
+    truth:'"If you\'re just meeting quota, you\'re not standing out — you\'re blending in. Silent judgment is real."',
+    shift:'Meeting quota means you\'re doing the job. Exceeding it by 10–20% consistently means you\'re building a case that leadership will fight to protect.',
+    action:'Find your team\'s average performance metrics this week and set targets that are 10–20% above each one — written down, not approximate.'
+  },
+  {
+    num:'03', label:'The Risk of Being Disposable',
+    truth:'"If you\'re not hitting your numbers, leadership will look for someone who can. It\'s not personal — it\'s the nature of an output-driven role."',
+    shift:'Understanding this can make you sharper. The pressure is real, but it builds the kind of resilience that stays with you through every role after this one.',
+    action:'Track your number against quota every week — not monthly. Weekly visibility into your own performance is the earliest warning system you have.'
+  },
+  {
+    num:'04', label:'The Role Itself Isn\'t Unique',
+    truth:'"Outreach sequences, cold calling, and follow-ups are systematized to keep results predictable. The job is designed to be interchangeable."',
+    shift:'This doesn\'t mean you can\'t innovate. It means you have to deliver consistency first — and then layer originality on top of a reliable foundation.',
+    action:'Identify one thing in your current workflow you could personalize, test, or own as your signature approach. Not everything — one thing.'
+  },
+];
+
+const BM_METRICS = [
+  { name:"Cold Calls / Day",        avg:50, min:100, max:80, unit:"calls",    threshold:10 },
+  { name:"Personalized Emails / Day",avg:10, min:100, max:18, unit:"emails",   threshold:10 },
+  { name:"Meetings Booked / Week",   avg:4,  min:100, max:8,  unit:"meetings", threshold:10 },
+];
+
+const TS_PAIRS = [
+  { l:"Show up to every 1:1 with your call data already pulled",   r:"Your manager stops micromanaging — you've removed the need" },
+  { l:"Deliver account research to your AE without being asked",   r:"Leadership starts seeing you as someone who thinks beyond their lane" },
+  { l:"Share your weekly results in writing before the AE asks",   r:"Your manager advocates for you in rooms you're not in" },
+  { l:"Hit your daily activity goals every day for 3 weeks",       r:"Consistency builds a track record that outlasts any single bad day" },
+  { l:"Follow through on every commitment, no exceptions",         r:"Your name becomes synonymous with reliability — the highest form of trust" },
+];
+const TS_L_ORDER = [2,4,0,3,1];
+const TS_R_ORDER = [1,3,4,0,2];
+
+const IP_PILLARS = [
+  { name:"Outperform",     cls:"p1", key:"out" },
+  { name:"Build Reliability", cls:"p2", key:"rel" },
+  { name:"Add Unique Value",  cls:"p3", key:"uniq" },
+];
+const IP_ACTIONS = [
+  { txt:"Track team call volume benchmarks and beat them every week",         pillar:"out"  },
+  { txt:"Post a market insight in Slack with your actual take on it",          pillar:"uniq" },
+  { txt:"Always have your numbers ready before anyone asks for them",          pillar:"rel"  },
+  { txt:"Book 10% more meetings than the team average for 3 consecutive weeks",pillar:"out"  },
+  { txt:"Test a new subject line variant and share the open-rate results",     pillar:"uniq" },
+  { txt:"Deliver a research doc to your AE unprompted every week",             pillar:"rel"  },
+];
+const IP_TILE_ORDER = [4,0,2,5,1,3];
+
+const SA_ITEMS = [
+  {
+    q:"You missed your call target by 15% this week. What do you tell your manager on Friday?",
+    opts:[
+      "Nothing — wait to see if they notice. One bad week isn't worth flagging.",
+      "I'll acknowledge it Monday and explain why it happened.",
+      "I proactively tell them Friday: 'I missed my call target by X — here's why and here's what I'm adjusting for Monday.'",
+    ],
+    ans:2,
+    result:"✓ Proactive transparency before they ask. You own the miss, give context, and show a plan. This is the response that builds trust even in a down week."
+  },
+  {
+    q:"Your team's average meetings-booked this week was 4. You booked 4. What's your response?",
+    opts:[
+      "Good — you hit the average. That's what's expected.",
+      "4 is fine for now, but you'll push harder next week.",
+      "Hitting average means blending in. You identify specifically what kept you from 5 or 6 and address that one thing.",
+    ],
+    ans:2,
+    result:"✓ Average is the floor, not the ceiling. The irreplaceable SDR identifies the specific constraint between their current number and 10% higher — and removes it."
+  },
+  {
+    q:"Your AE hasn't given you any coaching this week. What do you do?",
+    opts:[
+      "Wait — it's on them to schedule feedback sessions.",
+      "Mention it in passing that you'd appreciate more guidance soon.",
+      "Ask directly: 'Can we spend 10 minutes on a call I recorded this week? I want specific feedback on my close attempt.'",
+    ],
+    ans:2,
+    result:"✓ You don't wait for coaching to come to you. You bring the specific content — a recording, an email, a number — and ask for the exact feedback you need. That's self-advocacy."
+  },
+  {
+    q:"You've had a strong week — 6 meetings booked, top of the team. What do you do with it?",
+    opts:[
+      "Feel good about it privately. Good work speaks for itself.",
+      "Mention it casually to your AE in conversation.",
+      "Tell your manager explicitly: 'I booked 6 meetings this week — highest on the team. Here's one thing that made the difference.'",
+    ],
+    ans:2,
+    result:"✓ Visibility is a skill. Good work that leadership doesn't see doesn't build your case. Sharing the number with the insight demonstrates both performance and strategic self-awareness."
+  },
+];
+
+const QUIZ = [
+  {
+    q:"What is the core argument for why SDRs should accept that their role is 'replaceable'?",
+    opts:["It motivates SDRs to work longer hours to offset the risk of being let go","Accepting it removes entitlement and installs the discipline required to consistently outperform","It helps SDRs develop realistic career expectations and avoid overconfidence","Understanding replaceability helps SDRs negotiate better compensation packages"],
+    ans:1
+  },
+  {
+    q:"According to this lesson, what does 'average quota performance' signal to leadership?",
+    opts:["Strong performance — meeting expectations consistently demonstrates reliability","That the SDR is on track and only needs minor development to advance","The SDR is blending in, not standing out — invisible rather than protected","That the SDR needs more coaching and support to reach their potential"],
+    ans:2
+  },
+  {
+    q:"Which of these correctly describes the 'outperform' pillar of the irreplaceable profile?",
+    opts:["Testing new outreach strategies and sharing market insights with the team","Delivering account research and tangible deliverables to your AE unprompted","Tracking team benchmarks and consistently beating them by 10–20% week over week","Always showing up prepared with your data pulled and numbers ready before meetings"],
+    ans:2
+  },
+  {
+    q:"The highest-leverage response when you've had a strong week is:",
+    opts:["Let the results speak for themselves — strong numbers are self-evident","Mention it casually in your next 1:1 conversation with your manager","Tell your manager explicitly: the number, the ranking, and one insight about what drove it","Post about it in Slack to build visibility with the broader team"],
+    ans:2
+  },
+];
+
+/* ════════════════════════════════════
+   STATE
+════════════════════════════════════ */
+const TOTAL=10;
+let cur=0;
+let rrDone=new Set(), rrOpen=new Set();
+let bmPassing={};
+let tsSelSide=null, tsSelIdx=null, tsMatched=new Set(), tsCount=0;
+let ipSel=null, ipDone={};
+let saDone={}, saCount=0;
+let qAns={}, qSubmitted=false, qPassed=false;
+
+/* ════════════════════════════════════
+   INIT
+════════════════════════════════════ */
+function init(){
+  buildRR(); buildBM(); buildTS(); buildIP(); buildSA(); buildQuiz(); render();
+}
+function go(n){
+  document.getElementById('s'+cur).classList.remove('active');
+  cur=n; document.getElementById('s'+cur).classList.add('active');
+  document.getElementById('main').scrollTop=0; render();
+}
+function next(){if(cur<TOTAL-1)go(cur+1);}
+function back(){if(cur>0)go(cur-1);}
+function handleNext(){
+  if(cur===7){if(!qSubmitted)submitQuiz();else if(qPassed)next();else retryQuiz();}
+  else next();
+}
+
+/* ════════════════════════════════════
+   REALITY RECKONING
+════════════════════════════════════ */
+function buildRR(){
+  document.getElementById('rrItems').innerHTML=REALITIES.map((r,i)=>`
+    <div class="rr-item ${i===0?'unlocked open':'locked'}" id="rri${i}">
+      <div class="rr-item-top" onclick="toggleRR(${i})">
+        <div class="rr-num">${r.num}</div>
+        <div class="rr-content">
+          <div class="rr-label">${r.label}</div>
+          <div class="rr-truth">${r.truth}</div>
+        </div>
+        <div class="rr-status ${i===0?'open':'locked'}" id="rr-status${i}">${i===0?'OPEN':'LOCKED'}</div>
+      </div>
+      <div class="rr-body">
+        <div class="rr-inner">
+          <div class="rr-shift-lbl">Mindset Shift</div>
+          <div class="rr-shift">${r.shift}</div>
+          <div class="rr-action">Action Step: ${r.action}</div>
+          <button class="rr-accept-btn" id="rr-btn${i}" onclick="acceptRR(event,${i})">Accept This Reality →</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+function toggleRR(i){
+  const el=document.getElementById('rri'+i);
+  if(el.classList.contains('locked')) return;
+  el.classList.toggle('open');
+}
+function acceptRR(e,i){
+  e.stopPropagation();
+  if(rrDone.has(i)) return;
+  rrDone.add(i);
+  const el=document.getElementById('rri'+i);
+  el.classList.add('accepted');
+  el.classList.remove('open');
+  document.getElementById('rr-status'+i).className='rr-status accepted';
+  document.getElementById('rr-status'+i).textContent='ACCEPTED ✓';
+  document.getElementById('rr-btn'+i).textContent='Reality Accepted ✓';
+  if(i<REALITIES.length-1){
+    const next=document.getElementById('rri'+(i+1));
+    next.classList.remove('locked');
+    next.classList.add('unlocked','open');
+    document.getElementById('rr-status'+(i+1)).className='rr-status open';
+    document.getElementById('rr-status'+(i+1)).textContent='OPEN';
+  }
+  document.getElementById('rrCount').textContent=rrDone.size;
+  render();
+}
+
+/* ════════════════════════════════════
+   BENCHMARK BEATER
+════════════════════════════════════ */
+function buildBM(){
+  document.getElementById('bmMetrics').innerHTML=BM_METRICS.map((m,i)=>`
+    <div class="bm-metric" id="bm${i}">
+      <div class="bm-metric-top">
+        <div class="bm-metric-name">${m.name}</div>
+        <div class="bm-verdict" id="bmV${i}">TARGET SET ✓</div>
+      </div>
+      <div class="bm-numbers">
+        <div class="bm-num-block">
+          <div class="bm-num-label">Team Average</div>
+          <div class="bm-num-val">${m.avg}</div>
+        </div>
+        <div class="bm-arrow">→</div>
+        <div class="bm-num-block">
+          <div class="bm-num-label">Your Target</div>
+          <div class="bm-num-val target" id="bmTarget${i}">${m.avg}</div>
+        </div>
+      </div>
+      <div class="bm-slider-row">
+        <div class="bm-slider-lbl">Set Target</div>
+        <input type="range" class="bm-slider" id="bms${i}" min="${m.avg}" max="${m.max}" value="${m.avg}" oninput="updateBM(${i})">
+      </div>
+      <div class="bm-threshold">Minimum to qualify: <b>${Math.ceil(m.avg*(1+m.threshold/100))} ${m.unit}</b> (+${m.threshold}%)</div>
+    </div>
+  `).join('');
+}
+function updateBM(i){
+  const m=BM_METRICS[i];
+  const val=parseInt(document.getElementById('bms'+i).value);
+  const threshold=Math.ceil(m.avg*(1+m.threshold/100));
+  const passing=val>=threshold;
+  const el=document.getElementById('bm'+i);
+  const targetEl=document.getElementById('bmTarget'+i);
+  targetEl.textContent=val;
+  targetEl.className='bm-num-val target'+(passing?'':' too-low');
+  el.classList.toggle('passing',passing);
+  el.classList.toggle('failing',!passing&&val>m.avg);
+  if(passing){ bmPassing[i]=true; } else { delete bmPassing[i]; }
+  document.getElementById('bmCount').textContent=Object.keys(bmPassing).length;
+  const allPassing=Object.keys(bmPassing).length===BM_METRICS.length;
+  document.getElementById('bmDoneBox').classList.toggle('show',allPassing);
+  render();
+}
+
+/* ════════════════════════════════════
+   TRUST SIGNAL MATCHER
+════════════════════════════════════ */
+function buildTS(){
+  document.getElementById('tsLeft').innerHTML=TS_L_ORDER.map((pi,di)=>`
+    <button class="ts-btn left" id="tsl${di}" onclick="pickTS('l',${di})">${TS_PAIRS[pi].l}</button>
+  `).join('');
+  document.getElementById('tsRight').innerHTML=TS_R_ORDER.map((pi,di)=>`
+    <button class="ts-btn right" id="tsr${di}" onclick="pickTS('r',${di})">${TS_PAIRS[pi].r}</button>
+  `).join('');
+}
+function pickTS(side,di){
+  const pi=side==='l'?TS_L_ORDER[di]:TS_R_ORDER[di];
+  if(tsMatched.has(pi)) return;
+  if(tsSelSide===side&&tsSelIdx===di){
+    document.getElementById((side==='l'?'tsl':'tsr')+di).classList.remove('sel');
+    tsSelSide=null;tsSelIdx=null;return;
+  }
+  if(tsSelSide===side){
+    document.getElementById((tsSelSide==='l'?'tsl':'tsr')+tsSelIdx).classList.remove('sel');
+    tsSelSide=side;tsSelIdx=di;
+    document.getElementById((side==='l'?'tsl':'tsr')+di).classList.add('sel');return;
+  }
+  if(tsSelSide===null){tsSelSide=side;tsSelIdx=di;document.getElementById((side==='l'?'tsl':'tsr')+di).classList.add('sel');return;}
+  const lDi=tsSelSide==='l'?tsSelIdx:di,rDi=tsSelSide==='r'?tsSelIdx:di;
+  const lPi=TS_L_ORDER[lDi],rPi=TS_R_ORDER[rDi];
+  const lEl=document.getElementById('tsl'+lDi),rEl=document.getElementById('tsr'+rDi);
+  lEl.classList.remove('sel');rEl.classList.remove('sel');
+  tsSelSide=null;tsSelIdx=null;
+  if(lPi===rPi){
+    tsMatched.add(lPi);tsCount++;
+    lEl.classList.add('matched');lEl.disabled=true;
+    rEl.classList.add('matched');rEl.disabled=true;
+    document.getElementById('tsCount').textContent=tsCount;
+    render();
+  } else {
+    [lEl,rEl].forEach(e=>{e.classList.add('bad');setTimeout(()=>e.classList.remove('bad'),400);});
+  }
+}
+function resetTS(){
+  tsMatched.clear();tsSelSide=null;tsSelIdx=null;tsCount=0;
+  buildTS();document.getElementById('tsCount').textContent=0;render();
+}
+
+/* ════════════════════════════════════
+   IRREPLACEABLE PROFILE
+════════════════════════════════════ */
+function buildIP(){
+  document.getElementById('ipPillars').innerHTML=IP_PILLARS.map((p,pi)=>`
+    <div class="ip-pillar" id="ipp${pi}" onclick="pickIPPillar(${pi})">
+      <div class="ip-pillar-hdr"><div class="ip-pillar-name ${p.cls}">${p.name}</div><div class="ip-pillar-count"><span id="ipc${pi}">0</span> / 2 placed</div></div>
+      <div class="ip-pillar-items" id="ippi${pi}"></div>
+    </div>
+  `).join('');
+  document.getElementById('ipPool').innerHTML=IP_TILE_ORDER.map(ai=>`
+    <button class="ip-tile" id="ipt${ai}" onclick="pickIPTile(${ai})">${IP_ACTIONS[ai].txt}</button>
+  `).join('');
+}
+function pickIPTile(ai){
+  if(ipDone[ai]) return;
+  if(ipSel===ai){ipSel=null;renderIPUI();return;}
+  ipSel=ai;renderIPUI();
+}
+function pickIPPillar(pi){
+  if(ipSel===null) return;
+  const ai=ipSel;
+  const correct=IP_PILLARS[pi].key===IP_ACTIONS[ai].pillar;
+  const tileEl=document.getElementById('ipt'+ai);
+  if(correct){
+    ipDone[ai]=true;
+    tileEl.classList.add('placed');
+    const items=document.getElementById('ippi'+pi);
+    items.innerHTML+=`<div class="ip-placed-item pp${pi+1}">${IP_ACTIONS[ai].txt}</div>`;
+    const cnt=IP_TILE_ORDER.filter((_ai,_)=>ipDone[_ai]&&IP_ACTIONS[_ai].pillar===IP_PILLARS[pi].key).length;
+    document.getElementById('ipc'+pi).textContent=cnt;
+    ipSel=null;
+    document.getElementById('ipCount').textContent=Object.keys(ipDone).length;
+    renderIPUI();render();
+  } else {
+    [tileEl,document.getElementById('ipp'+pi)].forEach(e=>{e.classList.add('wrong');setTimeout(()=>e.classList.remove('wrong'),400);});
+    ipSel=null;renderIPUI();
+  }
+}
+function renderIPUI(){
+  IP_TILE_ORDER.forEach(ai=>{
+    const el=document.getElementById('ipt'+ai);if(!el) return;
+    el.classList.toggle('sel',ipSel===ai);
+  });
+  IP_PILLARS.forEach((_,pi)=>{
+    const el=document.getElementById('ipp'+pi);
+    el.classList.toggle('target',ipSel!==null);
+  });
+}
+function resetIP(){
+  ipSel=null;ipDone={};buildIP();
+  document.getElementById('ipCount').textContent=0;
+  renderIPUI();render();
+}
+
+/* ════════════════════════════════════
+   SELF-AUDIT
+════════════════════════════════════ */
+function buildSA(){
+  document.getElementById('saItems').innerHTML=SA_ITEMS.map((s,i)=>`
+    <div class="sa-item" id="sai${i}">
+      <div class="sa-q-block">
+        <div class="sa-q-num">Audit Question ${i+1} of ${SA_ITEMS.length}</div>
+        <div class="sa-q-txt">${s.q}</div>
+      </div>
+      <div class="sa-opts">
+        ${s.opts.map((o,oi)=>`<div class="sa-opt" id="sao${i}_${oi}" onclick="pickSA(${i},${oi})">
+          <span class="sa-ltr">${String.fromCharCode(65+oi)}.</span>${o}
+        </div>`).join('')}
+      </div>
+      <div class="sa-result" id="sar${i}"></div>
+    </div>
+  `).join('');
+}
+function pickSA(i,oi){
+  if(saDone[i]) return;
+  const correct=SA_ITEMS[i].ans===oi;
+  const opt=document.getElementById('sao'+i+'_'+oi);
+  if(correct){
+    saDone[i]=true;saCount++;
+    SA_ITEMS[i].opts.forEach((_,x)=>{
+      const el=document.getElementById('sao'+i+'_'+x);
+      el.classList.add('locked');
+      if(x===oi)el.classList.add('correct');
+    });
+    document.getElementById('sai'+i).classList.add('resolved');
+    document.getElementById('sar'+i).textContent=SA_ITEMS[i].result;
+    document.getElementById('saCount').textContent=saCount;
+    render();
+  } else {
+    opt.classList.add('wrong','locked');
+    setTimeout(()=>opt.classList.remove('wrong'),400);
+  }
+}
+
+/* ════════════════════════════════════
+   QUIZ
+════════════════════════════════════ */
+function buildQuiz(){
+  document.getElementById('quizBody').innerHTML=QUIZ.map((q,qi)=>`
+    <div class="q-block">
+      <div class="q-num">Question ${qi+1} of ${QUIZ.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-opts">${q.opts.map((o,oi)=>`<button class="q-opt" id="qo${qi}_${oi}" onclick="pickOpt(${qi},${oi})">${o}</button>`).join('')}</div>
+    </div>
+  `).join('');
+}
+function pickOpt(qi,oi){
+  if(qSubmitted) return;
+  QUIZ[qi].opts.forEach((_,i)=>document.getElementById(`qo${qi}_${i}`).classList.remove('chosen'));
+  document.getElementById(`qo${qi}_${oi}`).classList.add('chosen');
+  qAns[qi]=oi;render();
+}
+function submitQuiz(){
+  qSubmitted=true;let correct=0;
+  QUIZ.forEach((q,qi)=>{
+    const chosen=qAns[qi];
+    q.opts.forEach((_,oi)=>{
+      const el=document.getElementById(`qo${qi}_${oi}`);
+      el.classList.add('locked');el.classList.remove('chosen');
+      if(oi===q.ans)el.classList.add('correct');
+      else if(oi===chosen&&chosen!==q.ans)el.classList.add('wrong-pick');
+    });
+    if(chosen===q.ans)correct++;
+  });
+  qPassed=correct>=3;
+  const b=document.getElementById('quizBanner');
+  b.className='quiz-banner show '+(qPassed?'pass':'fail');
+  b.textContent=qPassed?`✓ ${correct} / ${QUIZ.length} correct — cleared to continue.`:`${correct} / ${QUIZ.length} correct — need 3 to pass. Review and try again.`;
+  render();
+}
+function retryQuiz(){
+  qSubmitted=false;qPassed=false;qAns={};
+  document.getElementById('quizBanner').className='quiz-banner';
+  buildQuiz();render();
+}
+
+/* ════════════════════════════════════
+   RENDER
+════════════════════════════════════ */
+const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
+function canContinue(){
+  if(cur===2) return rrDone.size===4;
+  if(cur===3) return Object.keys(bmPassing).length===3;
+  if(cur===4) return tsCount===5;
+  if(cur===5) return Object.keys(ipDone).length===6;
+  if(cur===6) return saCount===4;
+  if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  return true;
+}
+function getHint(){
+  const h={
+    1:"Accepting the reality is the first move. Everything else follows from here.",
+    2:`${rrDone.size} / 4 accepted — each unlocks the next`,
+    3:`${Object.keys(bmPassing).length} / 3 targets set at +10% or above`,
+    4:`${tsCount} / 5 matched`,
+    5:`${Object.keys(ipDone).length} / 6 correctly placed`,
+    6:`${saCount} / 4 growth responses identified`,
+    7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
+    8:"The toolkit only works if you run the audit every single Friday.",
+  };
+  return h[cur]||'';
+}
+function getNextLabel(){
+  if(cur===7&&!qSubmitted)return 'Submit Answers';
+  if(cur===7&&!qPassed)return 'Try Again →';
+  if(cur===8)return 'Finish Lesson →';
+  return 'Continue →';
+}
+function render(){
+  const sec=SEC[cur];
+  document.getElementById('progLabel').textContent=sec?`Section 0${sec}`:'Lesson 5.3';
+  const pct=cur===0?0:Math.round((cur/(TOTAL-1))*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  ['nav1','nav2','nav3','nav4'].forEach((id,i)=>
+    document.getElementById(id).classList.toggle('active',SEC[cur]===i+1));
+  const hide=cur===0||cur===TOTAL-1;
+  document.getElementById('bottomnav').style.display=hide?'none':'flex';
+  if(hide)return;
+  document.getElementById('hint').textContent=getHint();
+  document.getElementById('btnNextLabel').textContent=getNextLabel();
+  document.getElementById('btnBack').style.display=cur<=1?'none':'block';
+  document.getElementById('btnNext').disabled=!canContinue();
+}
+
+// Pillar zone delegation
+document.addEventListener('click',function(e){
+  if(ipSel!==null){
+    IP_PILLARS.forEach((_,pi)=>{
+      if(e.target.closest('#ipp'+pi)&&!e.target.closest('.ip-tile')&&!e.target.closest('.ip-placed-item'))
+        pickIPPillar(pi);
+    });
+  }
+});
+
+init();
+</script>
+</body>
+</html>

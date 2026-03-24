@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR — Course 4.3: Mastering the Async Life</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#FFFFFF;--black:#000000;--mid:#636060;--lite:#EEF2FF;--lite2:#DDE5FF;
+  --cobalt:#0038FF;--cob-lt:rgba(0,56,255,0.07);--cob-md:rgba(0,56,255,0.15);
+  --electric:#4DFFB4;--elec-dk:#00CC8A;
+  --orange:#FF6B00;--ora-lt:rgba(255,107,0,0.08);
+  --coral:#FF3200;--cor-lt:rgba(255,50,0,0.07);
+  --green:#00B85A;--grn-lt:rgba(0,184,90,0.09);
+  --gold:#FFD600;--gold-lt:rgba(255,214,0,0.12);
+  --line:rgba(0,0,0,0.08);--line2:rgba(0,0,0,0.14);
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#FFD600 34%,#00E5A0 51%,#0099FF 68%,#7B2FFF 85%,#FF006E 100%);
+  --display:'Abril Fatface',Georgia,serif;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;
+  --mono:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--white);color:var(--black);font-family:var(--cond);overflow:hidden}
+.app{display:grid;grid-template-columns:1fr 234px;grid-template-rows:52px 1fr 60px;height:100vh}
+
+/* TOPBAR */
+.topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:2px solid var(--black);background:var(--white);z-index:20}
+.brand{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.22em;text-transform:uppercase}
+.course-badge{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;background:var(--cobalt);color:#fff;padding:4px 10px;margin-left:12px}
+.top-right{display:flex;align-items:center;gap:14px}
+.prog-label{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--mid);text-transform:uppercase}
+.prog-track{width:80px;height:2px;background:var(--lite2)}
+.prog-fill{height:100%;background:var(--iris);background-size:200% 100%;animation:iris 3s linear infinite;transition:width .8s cubic-bezier(.4,0,.2,1)}
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+
+/* MAIN / SIDEBAR */
+.main{overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;background:var(--white);scrollbar-width:none}
+.main::-webkit-scrollbar{display:none}
+.sidebar{border-left:2px solid var(--black);padding:32px 20px;overflow-y:auto;scrollbar-width:none;background:var(--white)}
+.sidebar::-webkit-scrollbar{display:none}
+.sb-course{font-family:var(--display);font-size:22px;color:var(--cobalt);line-height:1;margin-bottom:4px}
+.sb-lesson{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--mid);margin-bottom:24px}
+.sb-divider{height:2px;background:var(--cobalt);margin-bottom:20px}
+.sb-label{font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--mid);margin-bottom:18px}
+.sb-item{padding:16px 0;border-bottom:1px solid var(--line);cursor:pointer;position:relative;transition:all .2s}
+.sb-item:first-of-type{border-top:1px solid var(--line)}
+.sb-tag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--mid);margin-bottom:7px;text-transform:uppercase;transition:color .2s}
+.sb-name{font-family:var(--cond);font-size:12px;font-weight:700;color:var(--mid);line-height:1.4;text-transform:uppercase;letter-spacing:.04em;transition:color .2s}
+.sb-item.active .sb-tag{color:var(--cobalt)}
+.sb-item.active .sb-name{color:var(--black)}
+.sb-item.active::before{content:'';position:absolute;left:-20px;top:0;bottom:0;width:3px;background:var(--cobalt)}
+.sb-item:hover .sb-name{color:var(--black)}
+
+/* BOTTOMNAV */
+.bottomnav{grid-column:1/2;display:flex;align-items:center;justify-content:space-between;padding:0 56px;border-top:2px solid var(--black);background:var(--white)}
+.nav-hint{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--mid);font-style:italic}
+.nav-btns{display:flex;gap:8px}
+.btn{font-family:var(--cond);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:10px 22px;border:2px solid var(--black);background:transparent;color:var(--black);cursor:pointer;transition:all .15s}
+.btn:hover{background:var(--black);color:var(--white)}
+.btn-fill{background:var(--black);color:var(--white);position:relative;overflow:hidden}
+.btn-fill::before{content:'';position:absolute;inset:0;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;opacity:0;transition:opacity .2s}
+.btn-fill:hover::before{opacity:1}
+.btn-fill:hover{color:var(--black)}
+.btn-fill span{position:relative;z-index:1}
+.btn-fill:disabled,.btn-fill:disabled:hover{opacity:.28;cursor:not-allowed;background:var(--black);color:var(--white)}
+.btn-fill:disabled::before,.btn-fill:disabled:hover::before{display:none}
+
+/* SCREENS */
+.screen{display:none;flex-direction:column;flex:1;animation:up .42s cubic-bezier(.22,1,.36,1) both}
+.screen.active{display:flex}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* COVER */
+.cover{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.cvl{background:var(--cobalt);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.cvl::before{content:'4';position:absolute;right:-20px;bottom:-40px;font-family:var(--display);font-size:280px;color:rgba(255,255,255,0.06);line-height:1;pointer-events:none}
+.cv-c4tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px}
+.cv-course-num{font-family:var(--display);font-size:80px;color:#fff;line-height:.85;margin-bottom:12px}
+.cv-big{font-family:var(--display);font-size:clamp(28px,3.4vw,46px);line-height:.97;color:#fff}
+.cv-tagline{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.58);line-height:1.7;border-top:1px solid rgba(255,255,255,0.14);padding-top:18px}
+.cvr{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;margin-bottom:16px;display:inline-block;background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:iris 3s linear infinite}
+.hero-h{font-family:var(--display);font-size:clamp(28px,3.8vw,52px);line-height:.97;color:var(--black);margin-bottom:20px}
+.hero-h .irisTxt{background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:iris 3s linear infinite}
+.cv-list{list-style:none;margin-bottom:36px}
+.cv-list li{font-family:var(--cond);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mid);display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.cv-list li:first-child{border-top:1px solid var(--line)}
+.cl-n{font-family:var(--mono);font-size:9px;background:var(--black);color:var(--white);padding:2px 6px;flex-shrink:0}
+
+/* SHARED */
+.lh{padding:44px 56px 0;position:relative;overflow:hidden}
+.lh-stripe{position:absolute;top:0;left:0;right:0;height:4px;background:var(--iris);background-size:200% 100%;animation:iris 4s linear infinite}
+.ghost-n{position:absolute;right:48px;top:-20px;font-family:var(--display);font-size:200px;line-height:1;color:var(--lite);pointer-events:none;user-select:none}
+.c4-badge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;background:var(--cobalt);color:#fff;padding:3px 10px;margin-bottom:12px}
+.sec-eye{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--cobalt);margin-bottom:14px;display:inline-block;margin-left:10px}
+.lh-title{font-family:var(--display);font-size:clamp(22px,3.2vw,46px);line-height:1.05;color:var(--black);max-width:640px}
+.lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
+.lh-sub b{color:var(--black)}
+.lb{padding:24px 56px 0}
+.lp{font-family:var(--serif);font-size:16px;line-height:1.8;color:var(--black);max-width:580px;margin-bottom:14px}
+.kp{list-style:none;max-width:580px;margin:14px 0}
+.kp li{font-family:var(--serif);font-size:15px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px;align-items:flex-start}
+.kp li:first-child{border-top:1px solid var(--line)}
+.kp-n{font-family:var(--mono);font-size:9px;color:var(--mid);min-width:22px;padding-top:3px;flex-shrink:0}
+.lie{max-width:580px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
+.lie-tab{position:absolute;top:0;left:0;font-family:var(--cond);font-size:9px;letter-spacing:.24em;font-weight:800;text-transform:uppercase;padding:3px 10px;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;color:var(--black)}
+.lie-q{font-family:var(--serif);font-style:italic;font-size:18px;color:#fff;line-height:1.5;margin:12px 0 10px}
+.lie-a{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
+.data-table{width:100%;max-width:600px;border-collapse:collapse;margin:16px 0}
+.data-table th{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;background:var(--black);color:var(--white);padding:9px 14px;text-align:left}
+.data-table td{font-family:var(--serif);font-size:14px;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--black);line-height:1.6;vertical-align:top}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:nth-child(even) td{background:var(--lite)}
+
+/* ── MENTALITY FLIP CARDS ── */
+.flip-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 56px 44px;max-width:720px}
+.flip-card{height:160px;perspective:900px;cursor:pointer}
+.flip-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.4,0,.2,1)}
+.flip-card.flipped .flip-inner{transform:rotateY(180deg)}
+.flip-face{position:absolute;inset:0;backface-visibility:hidden;display:flex;flex-direction:column;justify-content:center;padding:20px 22px;border:1px solid var(--line2)}
+.flip-front{background:var(--lite);position:relative;overflow:hidden}
+.flip-front::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,56,255,0.05),transparent)}
+.flip-old-tag{font-family:var(--mono);font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--mid);margin-bottom:8px}
+.flip-old-txt{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--mid);line-height:1.5;text-decoration:line-through;text-decoration-color:rgba(255,50,0,0.4)}
+.flip-tap{font-family:var(--mono);font-size:8px;letter-spacing:.14em;color:rgba(0,56,255,0.4);margin-top:10px;text-transform:uppercase}
+.flip-back{background:var(--cobalt);transform:rotateY(180deg);border-color:var(--cobalt)}
+.flip-new-tag{font-family:var(--mono);font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:8px}
+.flip-new-txt{font-family:var(--display);font-size:clamp(14px,1.8vw,20px);color:#fff;line-height:1.1}
+.flip-new-sub{font-family:var(--serif);font-size:12px;color:rgba(255,255,255,0.55);margin-top:8px;line-height:1.5;font-style:italic}
+
+/* ── CALENDAR AUDIT ── */
+.cal-wrap{padding:16px 56px 44px;max-width:760px}
+.cal-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.cal-arena{display:grid;grid-template-columns:1fr 1fr;gap:0 44px}
+.cal-col-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);padding-bottom:10px;border-bottom:2px solid var(--black);margin-bottom:10px}
+.cal-col-lbl.waste{color:var(--coral)}
+.cal-col-lbl.impact{color:var(--cobalt)}
+.cal-zone{min-height:200px;border:2px dashed var(--line2);padding:8px;transition:border-color .2s}
+.cal-zone.target{border-color:var(--cobalt);background:var(--cob-lt)}
+.cal-zone.waste-zone.target{border-color:var(--coral);background:var(--cor-lt)}
+.cal-item{padding:11px 14px;background:var(--white);border:1px solid var(--line2);margin-bottom:6px;font-family:var(--serif);font-size:13px;color:var(--black);line-height:1.5;cursor:pointer;transition:all .18s}
+.cal-item:hover:not(.placed):not(.locked){border-color:var(--cobalt)}
+.cal-item.sel{border-color:var(--cobalt);background:var(--cobalt);color:#fff}
+.cal-item.wrong{border-color:var(--coral);background:var(--cor-lt);animation:shake .35s ease both}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.cal-item.placed{visibility:hidden;pointer-events:none;height:0;margin:0;padding:0;border:none}
+.cal-dropped{display:flex;flex-direction:column;gap:5px;min-height:80px}
+.cal-dropped-item{padding:9px 12px;font-family:var(--serif);font-size:12px;color:var(--black);line-height:1.45}
+.cal-dropped-item.waste-item{background:var(--cor-lt);border-left:3px solid var(--coral)}
+.cal-dropped-item.impact-item{background:var(--cob-lt);border-left:3px solid var(--cobalt)}
+.cal-pool-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--black)}
+.cal-pool{display:flex;flex-direction:column;gap:6px;max-width:760px;margin-bottom:16px}
+.cal-reset{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mid);background:none;border:none;cursor:pointer;text-decoration:underline;margin-top:10px}
+.cal-reset:hover{color:var(--black)}
+
+/* ── MEETING VERDICT ── */
+.mv-wrap{padding:16px 56px 44px;max-width:720px}
+.mv-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.mv-items{display:flex;flex-direction:column;gap:10px}
+.mv-item{border:1px solid var(--line2);overflow:hidden;transition:border-color .2s}
+.mv-item.verdict-attend{border-color:var(--cobalt);background:var(--cob-lt)}
+.mv-item.verdict-decline{border-color:var(--coral);background:var(--cor-lt)}
+.mv-top{padding:14px 18px;display:flex;align-items:flex-start;gap:14px}
+.mv-title-block{flex:1}
+.mv-mtg-label{font-family:var(--mono);font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--mid);margin-bottom:5px}
+.mv-mtg-name{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--black)}
+.mv-mtg-desc{font-family:var(--serif);font-style:italic;font-size:13px;color:var(--mid);margin-top:4px;line-height:1.55}
+.mv-btns{display:flex;gap:7px;align-items:center;flex-shrink:0;padding-top:2px}
+.mv-btn{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:7px 12px;border:1.5px solid var(--line2);background:var(--white);cursor:pointer;transition:all .15s;color:var(--mid)}
+.mv-btn:hover:not([disabled]){color:var(--black);border-color:var(--black)}
+.mv-btn.attend-sel{border-color:var(--cobalt);background:var(--cobalt);color:#fff}
+.mv-btn.decline-sel{border-color:var(--coral);background:var(--coral);color:#fff}
+.mv-btn[disabled]{cursor:default}
+.mv-result{padding:8px 18px 12px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;line-height:1.65;display:none;border-top:1px solid var(--line)}
+.mv-item.verdict-attend .mv-result{display:block;color:var(--cobalt)}
+.mv-item.verdict-decline .mv-result{display:block;color:var(--coral)}
+
+/* ── ASYNC PLANNER ── */
+.ap-wrap{padding:16px 56px 44px;max-width:700px}
+.ap-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.ap-cal{background:var(--black);max-width:600px;margin-bottom:24px;overflow:hidden}
+.ap-cal-hdr{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between}
+.ap-cal-title{font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,0.4)}
+.ap-cal-pct{font-family:var(--display);font-size:22px;color:var(--electric);line-height:1}
+.ap-slots{display:flex;flex-direction:column;gap:1px;background:rgba(255,255,255,0.05)}
+.ap-slot{display:flex;align-items:stretch;cursor:pointer;transition:background .2s}
+.ap-slot:hover:not(.filled):not(.locked){background:rgba(255,255,255,0.04)}
+.ap-slot.filled{background:rgba(77,255,180,0.08)}
+.ap-slot-time{font-family:var(--mono);font-size:9px;letter-spacing:.1em;padding:13px 14px;color:rgba(255,255,255,0.3);min-width:110px;flex-shrink:0;border-right:1px solid rgba(255,255,255,0.05);display:flex;align-items:center}
+.ap-slot.filled .ap-slot-time{color:rgba(77,255,180,0.6)}
+.ap-slot-content{flex:1;padding:10px 14px;display:flex;align-items:center;gap:10px}
+.ap-slot-placeholder{font-family:var(--mono);font-size:9px;color:rgba(255,255,255,0.15);letter-spacing:.06em;font-style:italic}
+.ap-slot-act{font-family:var(--cond);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--electric)}
+.ap-slot-sub{font-family:var(--serif);font-size:11px;color:rgba(255,255,255,0.4);font-style:italic;margin-top:1px}
+.ap-slot-check{color:var(--electric);font-size:12px;margin-left:auto;opacity:0;transition:opacity .2s}
+.ap-slot.filled .ap-slot-check{opacity:1}
+.ap-options{display:flex;flex-direction:column;gap:6px;max-width:600px}
+.ap-opt{padding:12px 16px;border:1px solid var(--line2);background:var(--white);font-family:var(--cond);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--black);text-align:left;cursor:pointer;transition:all .15s}
+.ap-opt:hover:not(.placed):not(.sel){border-color:var(--cobalt)}
+.ap-opt.sel{border-color:var(--cobalt);background:var(--cobalt);color:#fff}
+.ap-opt.placed{opacity:0;pointer-events:none;height:0;padding:0;margin:0;border:none;overflow:hidden}
+.ap-opt.wrong{border-color:var(--coral);background:var(--cor-lt);animation:shake .35s ease both}
+.ap-reset{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mid);background:none;border:none;cursor:pointer;text-decoration:underline;margin-top:8px}
+.ap-reset:hover{color:var(--black)}
+
+/* ── SKILLS EXPLORER ── */
+.sk-wrap{padding:16px 56px 44px;max-width:700px}
+.sk-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.sk-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px}
+.sk-card{border:1px solid var(--line2);overflow:hidden;cursor:pointer;transition:all .22s;position:relative}
+.sk-card:hover:not(.expanded){border-color:var(--cobalt)}
+.sk-card.expanded{border-color:var(--cobalt);border-width:2px}
+.sk-card-top{padding:14px 16px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.sk-card-icon{font-size:20px;flex-shrink:0}
+.sk-card-name{font-family:var(--cond);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--black);line-height:1.2;flex:1}
+.sk-card-arr{font-size:14px;color:var(--mid);transition:transform .3s;flex-shrink:0}
+.sk-card.expanded .sk-card-arr{transform:rotate(90deg);color:var(--cobalt)}
+.sk-body{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1)}
+.sk-card.expanded .sk-body{max-height:280px}
+.sk-inner{padding:0 14px 14px}
+.sk-desc{font-family:var(--serif);font-size:13px;color:var(--black);line-height:1.65;margin-bottom:10px}
+.sk-platform{font-family:var(--mono);font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--cobalt);margin-bottom:5px}
+.sk-platform-val{font-family:var(--serif);font-style:italic;font-size:12px;color:var(--mid);line-height:1.5}
+.sk-mark-btn{margin-top:10px;font-family:var(--cond);font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:6px 12px;border:2px solid var(--cobalt);background:transparent;color:var(--cobalt);cursor:pointer;transition:all .15s}
+.sk-mark-btn:hover{background:var(--cobalt);color:#fff}
+.sk-card.marked{border-color:var(--electric)}
+.sk-card.marked .sk-mark-btn{background:var(--cobalt);color:#fff}
+.sk-done-box{background:var(--electric);padding:18px 22px;max-width:580px;display:none}
+.sk-done-box.show{display:block}
+.sk-done-h{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--black);margin-bottom:6px}
+.sk-done-p{font-family:var(--serif);font-size:14px;color:rgba(0,0,0,0.55);line-height:1.65;font-style:italic}
+
+/* QUIZ */
+.quiz-banner{margin:16px 56px 0;padding:12px 18px;font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.06em;border-left:4px solid var(--cobalt);background:var(--cob-lt);color:var(--black);display:none}
+.quiz-banner.show{display:block}
+.quiz-banner.pass{border-color:var(--green);background:var(--grn-lt)}
+.quiz-banner.fail{border-color:var(--coral);background:var(--cor-lt)}
+.quiz-body{padding:20px 56px 44px;display:flex;flex-direction:column;gap:28px}
+.q-num{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--cobalt);margin-bottom:9px}
+.q-text{font-family:var(--display);font-size:clamp(13px,1.6vw,18px);color:var(--black);line-height:1.2;margin-bottom:13px}
+.q-opts{display:flex;flex-direction:column;gap:6px}
+.q-opt{padding:11px 16px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:14px;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.5}
+.q-opt:hover:not(.locked){border-color:var(--cobalt);background:var(--cob-lt)}
+.q-opt.chosen{border-color:var(--cobalt);background:var(--cobalt);color:#fff}
+.q-opt.correct{border-color:var(--green);background:var(--grn-lt);color:var(--black)}
+.q-opt.wrong-pick{border-color:var(--coral);background:var(--cor-lt);color:var(--black)}
+.q-opt.locked{cursor:default}
+
+/* TOOLS */
+.tools-blk{padding:20px 56px 44px}
+.t-head{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--black);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--black)}
+.hw-list{list-style:none;max-width:580px;margin-top:8px}
+.hw-list li{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.65;padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
+.hw-list li:first-child{border-top:1px solid var(--line)}
+.hw-box{width:14px;height:14px;border:2px solid var(--black);flex-shrink:0;margin-top:4px}
+
+/* COMPLETE */
+.comp{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.comp-l{background:var(--electric);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.comp-l::before{content:'4';position:absolute;right:-20px;bottom:-40px;font-family:var(--display);font-size:280px;color:rgba(0,0,0,0.06);line-height:1;pointer-events:none}
+.comp-tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(0,0,0,0.35)}
+.comp-big{font-family:var(--display);font-size:clamp(44px,5.5vw,76px);line-height:.93;color:var(--black)}
+.comp-sub{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(0,0,0,0.45);line-height:1.7;border-top:1px solid rgba(0,0,0,0.1);padding-top:18px}
+.comp-r{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.comp-h{font-family:var(--display);font-size:clamp(22px,2.8vw,40px);line-height:1.08;color:var(--black);margin-bottom:18px}
+.comp-p{font-family:var(--serif);font-size:15px;color:var(--black);max-width:380px;line-height:1.8;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header class="topbar">
+  <div style="display:flex;align-items:center">
+    <div class="brand">AESDR</div>
+    <div class="course-badge">Course 4</div>
+  </div>
+  <div class="top-right">
+    <span class="prog-label" id="progLabel">Lesson 4.3</span>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+</header>
+
+<main class="main" id="main">
+
+  <!-- 0: COVER -->
+  <div class="screen active" id="s0">
+    <div class="cover" style="flex:1">
+      <div class="cvl">
+        <div>
+          <div class="cv-c4tag">AESDR · Lesson 4.3</div>
+          <div class="cv-course-num">04</div>
+          <div class="cv-big">Mastering the Async Life in Remote Sales</div>
+        </div>
+        <div class="cv-tagline">How AEs and SDRs can leverage flexibility for maximum productivity — and maximum opportunity.</div>
+      </div>
+      <div class="cvr">
+        <div class="eyebrow">Course 4 · Lesson 3 of 3</div>
+        <div class="hero-h">Work smarter.<br><span class="irisTxt">Own your day.</span></div>
+        <ul class="cv-list">
+          <li><span class="cl-n">01</span>The Async Mindset Shift</li>
+          <li><span class="cl-n">02</span>Calendar Audit & Meeting Verdicts</li>
+          <li><span class="cl-n">03</span>Side Hustle & Skill Monetization</li>
+        </ul>
+        <button class="btn btn-fill" onclick="go(1)"><span>Begin Lesson →</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1: ASYNC IS AN ADVANTAGE -->
+  <div class="screen" id="s1">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">01</div>
+      <div><div class="c4-badge">Course 4</div><span class="sec-eye">Section 01 — The Mindset</span></div>
+      <div class="lh-title">Async Work Isn't a Perk. It's a Competitive Advantage.</div>
+    </div>
+    <div class="lb">
+      <p class="lp">AEs and SDRs are already the most target-driven people in any company. You don't get paid for hours at a desk — you get paid for pipeline generated and deals closed. Which means you are structurally built for async work. The only question is whether you're using that freedom deliberately or letting it dissolve into busywork and unnecessary meetings.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Sales success isn't measured in hours logged.</strong> It's measured in meetings booked, pipeline advanced, and deals closed. Remote work strips the facade and forces you to focus on output.</li>
+        <li><span class="kp-n">02</span><strong>Busywork doesn't close deals.</strong> Eight hours of research that could be automated in 20 minutes is not productivity. High-impact work — pitch refinement, targeted outreach, strategy — is what moves the needle.</li>
+        <li><span class="kp-n">03</span><strong>Flexibility is leverage.</strong> The async SDR who controls their calendar earns the same quota credits as the one sitting in back-to-back meetings all day — and has two hours back to experiment, build, and grow.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Real Question</div>
+        <div class="lie-q">"Are you using remote flexibility — or is it using you?"</div>
+        <div class="lie-a">Async without intentionality looks like constant availability, inbox reactivity, and no deep work. Async with intentionality looks like a protected calendar, purposeful output, and compounding skills. Same schedule. Opposite results.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2: MENTALITY FLIP CARDS -->
+  <div class="screen" id="s2">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">01</div>
+      <div><div class="c4-badge">Course 4</div><span class="sec-eye">Section 01 — Mindset Shift</span></div>
+      <div class="lh-title">Flip the Old Mentality</div>
+      <div class="lh-sub"><b id="flipCount">0</b> / 6 flipped — reveal all cards to continue</div>
+    </div>
+    <div class="flip-grid" id="flipGrid"></div>
+  </div>
+
+  <!-- 3: CALENDAR AUDIT -->
+  <div class="screen" id="s3">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">02</div>
+      <div><div class="c4-badge">Course 4</div><span class="sec-eye">Section 02 — Audit Your Calendar</span></div>
+      <div class="lh-title">Sort Your Calendar: High-Impact vs. Waste</div>
+      <div class="lh-sub"><b id="calCount">0</b> / 8 correctly sorted</div>
+    </div>
+    <div class="cal-wrap">
+      <p class="cal-instr">Click an activity to select it, then click the correct column. Separate the high-impact work from the time-drain. All 8 must be correctly sorted to continue.</p>
+      <div class="cal-pool-lbl">Activities — Select One</div>
+      <div class="cal-pool" id="calPool"></div>
+      <div class="cal-arena">
+        <div>
+          <div class="cal-col-lbl waste">← Busywork / Time Drain</div>
+          <div class="cal-zone waste-zone" id="calWaste"><div class="cal-dropped" id="calDroppedWaste"></div></div>
+        </div>
+        <div>
+          <div class="cal-col-lbl impact">High-Impact Work →</div>
+          <div class="cal-zone" id="calImpact"><div class="cal-dropped" id="calDroppedImpact"></div></div>
+        </div>
+      </div>
+      <button class="cal-reset" onclick="resetCal()">Reset board</button>
+    </div>
+  </div>
+
+  <!-- 4: MEETING VERDICT -->
+  <div class="screen" id="s4">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div><div class="c4-badge">Course 4</div><span class="sec-eye">Section 02 — Meeting Decisions</span></div>
+      <div class="lh-title">Attend or Decline? Your Verdict.</div>
+      <div class="lh-sub"><b id="mvCount">0</b> / 5 verdicts delivered</div>
+    </div>
+    <div class="mv-wrap">
+      <p class="mv-instr" style="font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px">Every meeting is a choice. Make the right call on each one. Your criteria: does this move your numbers or improve your performance? If not, it's a decline.</p>
+      <div class="mv-items" id="mvItems"></div>
+    </div>
+  </div>
+
+  <!-- 5: ASYNC PLANNER -->
+  <div class="screen" id="s5">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">03</div>
+      <div><div class="c4-badge">Course 4</div><span class="sec-eye">Section 03 — Build the Day</span></div>
+      <div class="lh-title">Build Your Async Sales Day</div>
+      <div class="lh-sub"><b id="apCount">0</b> / 5 time blocks assigned</div>
+    </div>
+    <div class="ap-wrap">
+      <p class="ap-instr">Select an activity below, then click the correct time slot on the calendar to place it. Build the optimal async sales day. All 5 must be correctly placed to continue.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 36px">
+        <div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);padding-bottom:10px;border-bottom:2px solid var(--black);margin-bottom:2px">Your Async Calendar</div>
+          <div class="ap-cal">
+            <div class="ap-cal-hdr">
+              <div class="ap-cal-title">Today's Schedule</div>
+              <div class="ap-cal-pct" id="apPct">0%</div>
+            </div>
+            <div class="ap-slots" id="apSlots"></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);padding-bottom:10px;border-bottom:2px solid var(--black);margin-bottom:10px">Activities — Select One</div>
+          <div class="ap-options" id="apOptions"></div>
+          <button class="ap-reset" onclick="resetAP()">Reset calendar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6: SKILLS EXPLORER -->
+  <div class="screen" id="s6">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">04</div>
+      <div><div class="c4-badge">Course 4</div><span class="sec-eye">Section 04 — Monetize Your Skills</span></div>
+      <div class="lh-title">Your Skills Are Already Worth Money</div>
+      <div class="lh-sub"><b id="skCount">0</b> / 6 explored — open and mark all to continue</div>
+    </div>
+    <div class="sk-wrap">
+      <p class="sk-instr">Every skill you've built in SaaS sales has a market outside of your quota. Explore each one and mark it to continue.</p>
+      <div class="sk-grid" id="skGrid"></div>
+      <div class="sk-done-box" id="skDoneBox">
+        <div class="sk-done-h">✓ All 6 Explored — Now Pick One and Start This Week</div>
+        <div class="sk-done-p">Not next quarter. This week. One skill, one platform, one test. The async flexibility you've built is the exact opening you need to start.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7: QUIZ -->
+  <div class="screen" id="s7">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div><div class="c4-badge">Course 4</div><span class="sec-eye">Section 04 — Knowledge Check</span></div>
+      <div class="lh-title">Test Your Understanding</div>
+    </div>
+    <div class="quiz-banner" id="quizBanner"></div>
+    <div class="quiz-body" id="quizBody"></div>
+  </div>
+
+  <!-- 8: TOOLS -->
+  <div class="screen" id="s8">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">05</div>
+      <div><div class="c4-badge">Course 4</div><span class="sec-eye">Section 05 — Templates & Homework</span></div>
+      <div class="lh-title">The Async Toolkit</div>
+    </div>
+    <div class="tools-blk">
+      <div style="margin-top:20px">
+        <div class="t-head">Async Calendar Blueprint</div>
+        <table class="data-table">
+          <thead><tr><th>Time Block</th><th>Purpose</th><th>Protected?</th></tr></thead>
+          <tbody>
+            <tr><td>8:00–10:00 AM</td><td>Deep Work — Cold calls, high-priority outreach</td><td>No meetings. Full block.</td></tr>
+            <tr><td>10:00–12:00 PM</td><td>Pipeline strategy and account planning</td><td>Async only — Slack, not calls.</td></tr>
+            <tr><td>1:00–3:00 PM</td><td>Follow-ups, sequences, LinkedIn activity</td><td>Flexible but focused.</td></tr>
+            <tr><td>3:00–4:00 PM</td><td>Coaching, feedback, pipeline review</td><td>Open for 1:1s here only.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="t-head">Meeting Decline Scripts</div>
+        <table class="data-table">
+          <thead><tr><th>Situation</th><th>Script</th></tr></thead>
+          <tbody>
+            <tr><td>No agenda provided</td><td>"Is there an agenda? If not, can we connect async — I can send a Loom update instead."</td></tr>
+            <tr><td>Meeting not relevant to your role</td><td>"I don't think I need to be live for this — can I get the notes afterwards?"</td></tr>
+            <tr><td>Recurring meeting with no clear value</td><td>"I want to protect my call block — can we shift this to a weekly async update instead?"</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="t-head">Homework — This Week</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Audit your calendar for the past week. Mark every meeting you attended and ask: did it directly move your numbers? If not — it's a candidate for async or decline next time.</li>
+          <li><div class="hw-box"></div>Build a time-blocked async schedule for next week using the blueprint above. Set calendar blocks with titles that protect them. Share your "no-meeting zone" with your manager.</li>
+          <li><div class="hw-box"></div>Identify one skill from the monetization explorer that resonates. Spend 30 minutes this week testing a platform — one LinkedIn post, one Fiverr profile draft, one course outline. Start small and concrete.</li>
+          <li><div class="hw-box"></div>Decline one meeting this week that doesn't serve your numbers. Use one of the scripts above. Notice what happens — and notice what doesn't happen.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9: COMPLETE -->
+  <div class="screen" id="s9">
+    <div class="comp" style="flex:1">
+      <div class="comp-l">
+        <div>
+          <div class="comp-tag">Course 4 · Lesson 3 — Complete</div>
+          <div style="font-family:var(--display);font-size:56px;color:var(--black);line-height:.9;margin:10px 0 0">04</div>
+        </div>
+        <div class="comp-big">Own your<br>time.<br>Own your<br>outcome.</div>
+        <div class="comp-sub">Remote flexibility is only a competitive advantage if you use it deliberately. The async rep who wins is the one whose output is always visible and whose calendar is always intentional.</div>
+      </div>
+      <div class="comp-r">
+        <div class="eyebrow">Course 4 · Complete</div>
+        <div class="comp-h">Purposeful work. Protected time. Compounding skills.</div>
+        <p class="comp-p">You've flipped the old mindset, audited your calendar, delivered meeting verdicts, built your async day, and explored six ways to monetize what you already know. The flexibility was always there. Now you have the framework to use it.</p>
+        <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
+        <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<aside class="sidebar">
+  <div class="sb-course">04</div>
+  <div class="sb-lesson">Lesson 4.3 · Mastering Async Life</div>
+  <div class="sb-divider"></div>
+  <div class="sb-label">Sections</div>
+  <div class="sb-item" id="nav1" onclick="go(1)">
+    <div class="sb-tag">Section 01</div>
+    <div class="sb-name">The Mindset Shift</div>
+  </div>
+  <div class="sb-item" id="nav2" onclick="go(3)">
+    <div class="sb-tag">Section 02</div>
+    <div class="sb-name">Calendar & Meetings</div>
+  </div>
+  <div class="sb-item" id="nav3" onclick="go(5)">
+    <div class="sb-tag">Section 03</div>
+    <div class="sb-name">Build the Async Day</div>
+  </div>
+  <div class="sb-item" id="nav4" onclick="go(6)">
+    <div class="sb-tag">Section 04</div>
+    <div class="sb-name">Skills & Quiz</div>
+  </div>
+  <div class="sb-item" id="nav5" onclick="go(8)">
+    <div class="sb-tag">Section 05</div>
+    <div class="sb-name">Templates & Homework</div>
+  </div>
+</aside>
+
+<footer class="bottomnav" id="bottomnav" style="display:none">
+  <span class="nav-hint" id="hint"></span>
+  <div class="nav-btns">
+    <button class="btn" id="btnBack" onclick="back()" style="display:none">← Back</button>
+    <button class="btn btn-fill" id="btnNext" onclick="handleNext()"><span id="btnNextLabel">Continue →</span></button>
+  </div>
+</footer>
+
+</div>
+
+<script>
+/* ════════════════════════════════════
+   DATA
+════════════════════════════════════ */
+
+const FLIPS = [
+  { old:"8 hours logged = productive day",           newTxt:"Output, not time. One booked meeting beats eight hours of admin.",        sub:"Your quota doesn't care about hours — it cares about pipeline." },
+  { old:"Always be on, always be available",          newTxt:"Always be focused. Availability without boundaries is just distraction.",  sub:"Protecting deep work time is a performance decision, not laziness." },
+  { old:"Research everything before outreaching",     newTxt:"Research enough to personalize. Then outreach. Iteration beats paralysis.", sub:"Endless research without action is sophisticated procrastination." },
+  { old:"More meetings = more collaboration",         newTxt:"Fewer, better-structured touchpoints. Async updates beat status meetings.", sub:"Every unnecessary meeting is a tax on your selling hours." },
+  { old:"Flexibility means working all the time",     newTxt:"Flexibility means working at your peak — and protecting everything else.",  sub:"Remote work without time-blocking becomes a 12-hour reactive day." },
+  { old:"Side projects distract from quota",          newTxt:"Skills built outside quota compound your value and your income.",           sub:"The best SDRs are building something alongside the day job." },
+];
+
+const CAL_ITEMS = [
+  { txt:"Personalizing 10 cold outreach emails with specific company insights", zone:"impact" },
+  { txt:"A 60-minute all-hands status update with no agenda or action items",   zone:"waste"  },
+  { txt:"Practicing your cold call opener for 20 minutes before your call block",zone:"impact" },
+  { txt:"Responding to every Slack notification as it arrives",                 zone:"waste"  },
+  { txt:"Deep research on 3 key accounts before a strategy session",            zone:"impact" },
+  { txt:"An optional team sync that could be covered in a 3-sentence Slack post",zone:"waste" },
+  { txt:"Reviewing and refining your discovery question set for the week",      zone:"impact" },
+  { txt:"Attending a meeting you weren't asked to attend and had no agenda",    zone:"waste"  },
+];
+const CAL_ORDER = [2,5,0,7,3,6,1,4];
+
+const MV_ITEMS = [
+  {
+    name:"Weekly Pipeline Review with Your Manager",
+    desc:"30 minutes, structured agenda, your deal updates + manager feedback. Recurring every Monday.",
+    correct:"attend",
+    result:"✓ Attend — Direct pipeline impact. Structured agenda, your numbers, your growth. This is exactly the kind of meeting worth protecting."
+  },
+  {
+    name:"Company-Wide Product Roadmap All-Hands",
+    desc:"90 minutes, 80 people, recording available afterward. No SDR-specific content on the agenda.",
+    correct:"decline",
+    result:"✗ Decline — Watch the recording at 1.5x speed in 40 minutes on your own time. Your call block is more valuable than being live in a room you don't need to be in."
+  },
+  {
+    name:"1:1 Coaching Session with AE",
+    desc:"15 minutes, you brought one call recording and one email sequence to review. Focused feedback on specific adjustments.",
+    correct:"attend",
+    result:"✓ Attend — This is your growth engine. Specific feedback on real work you prepared. Every 1:1 like this compounds your close rate over time."
+  },
+  {
+    name:"Cross-Functional 'Alignment' Meeting",
+    desc:"60 minutes, no agenda sent, 12 people from 4 teams. Your manager's manager asked 'the whole team' to attend.",
+    correct:"decline",
+    result:"✗ Decline (with tact) — 'Can I get the notes and jump in if anything directly involves my pipeline?' Most alignment meetings are a coordination problem dressed up as a collaboration moment."
+  },
+  {
+    name:"Cold Call Practice Block with a New SDR Peer",
+    desc:"20 minutes, role-play format, they run objections while you practice closes. Weekly habit you're building together.",
+    correct:"attend",
+    result:"✓ Attend — Peer skill-building with a specific format and measurable output. This directly improves your call performance. Protect this time."
+  },
+];
+
+const AP_SLOTS = [
+  { time:"8:00–10:00 AM", act:"Deep Work: Cold Call Block",    sub:"25 dials. No Slack, no email. Full focus.",      idx:0 },
+  { time:"10:00–12:00 PM",act:"Pipeline Strategy",            sub:"Account research and sequence refinement.",       idx:1 },
+  { time:"1:00–2:00 PM",  act:"Outreach & Follow-Ups",        sub:"Email, LinkedIn, call-backs on warm leads.",      idx:2 },
+  { time:"2:00–3:00 PM",  act:"Skill Development Block",      sub:"Pitch practice, course, or side project test.",   idx:3 },
+  { time:"3:00–4:00 PM",  act:"Coaching & Pipeline Review",   sub:"1:1, feedback session, or deal debrief.",         idx:4 },
+];
+const AP_TILE_ORDER = [3,0,4,1,2];
+
+const SKILLS = [
+  { icon:"📞", name:"Cold Call Coaching",     desc:"If you've made 10,000+ dials and can articulate the pattern — that's a teachable skill. SDRs newer than you will pay to hear the mechanics from someone who's lived it.",          platform:"LinkedIn, Clarity.fm, Intro.co",      how:"Offer 30-minute consulting calls. Start at $75/hr. One client a week = $300/month." },
+  { icon:"✉️", name:"Outreach Copywriting",   desc:"Writing cold emails that get replies is a rare skill that most marketers don't have. You've written and tested hundreds of variations. That's a portfolio.",                    platform:"Upwork, Fiverr, LinkedIn outreach",    how:"Offer 5-email sequence audits or rewrites. $150–$300 per sequence. One per week." },
+  { icon:"🎓", name:"Sales Training Content", desc:"You know what new SDRs don't know. A mini-course, a checklist, a Notion doc — any of it packaged and sold is a product. The first one doesn't have to be perfect.",             platform:"Gumroad, Notion, Maven",              how:"Build one practical guide (BANT checklist, cold call framework) and test it at $19–$49." },
+  { icon:"🔍", name:"Prospect List Building", desc:"Finding the right people, in the right roles, at the right companies is a workflow most non-sales teams can't do well. You can. That's a freelance service right now.",           platform:"Fiverr, Upwork, direct LinkedIn DM",  how:"Offer 100-contact lists with role, company, and LinkedIn URL for $75–$200 per list." },
+  { icon:"📊", name:"CRM & Outreach Setup",   desc:"You know Salesforce, HubSpot, or Apollo better than most early-stage founders will ever get to. Setting up sequences and CRM hygiene is a real consulting deliverable.",        platform:"Fiverr, Toptal, local startup network",how:"One-time setup consultation: $200–$500. Positioned as 'get your outreach stack running.'" },
+  { icon:"🎙️", name:"Sales Podcast / Content",desc:"A LinkedIn series, a newsletter, a podcast — consistently sharing what you know builds an audience that opens doors: job offers, consulting leads, brand partnerships, speaking.", platform:"LinkedIn, Substack, Spotify",          how:"Post one insight per day for 30 days. Track follower growth. Monetize at 1,000 followers." },
+];
+
+const QUIZ = [
+  {
+    q:"What is the primary reason AEs and SDRs are structurally well-suited for async work?",
+    opts:["They are comfortable with technology and remote communication tools","They already operate on targets rather than time sheets — output is the only real measure","Their schedules are more flexible than other roles in the company","They have less required face-time with leadership than other business functions"],
+    ans:1
+  },
+  {
+    q:"According to this lesson, 'busywork' in a remote sales context most commonly looks like:",
+    opts:["Spending time on pitch practice and call preparation","Processing every Slack notification as it arrives and attending non-essential meetings","Working longer hours than required to demonstrate commitment","Following up on leads more than the recommended 5-7 times"],
+    ans:1
+  },
+  {
+    q:"When evaluating whether to attend a meeting, the correct filter is:",
+    opts:["Whether your manager explicitly requested your presence","Whether the meeting has a formal calendar invite with a title","Whether it directly moves your numbers or improves your performance","Whether a recording will be available afterward"],
+    ans:2
+  },
+  {
+    q:"The core argument for SDRs exploring side hustles and skill monetization is:",
+    opts:["It provides additional income to offset the risk of missing quota","The skills built in SaaS sales are rare and have market value outside of your day job","Most SDRs will eventually leave their role and need to have built something in parallel","Remote work creates dead time that should be filled with productive activity"],
+    ans:1
+  },
+];
+
+/* ════════════════════════════════════
+   STATE
+════════════════════════════════════ */
+const TOTAL=10;
+let cur=0;
+let flipDone=new Set();
+let calSel=null,calDone={},calCount=0;
+let mvDone={},mvCount=0;
+let apSel=null,apDone={};
+let skOpen=new Set(),skMarked=new Set();
+let qAns={},qSubmitted=false,qPassed=false;
+
+/* ════════════════════════════════════
+   INIT
+════════════════════════════════════ */
+function init(){
+  buildFlips(); buildCal(); buildMV(); buildAP(); buildSK(); buildQuiz(); render();
+}
+function go(n){
+  document.getElementById('s'+cur).classList.remove('active');
+  cur=n;
+  document.getElementById('s'+cur).classList.add('active');
+  document.getElementById('main').scrollTop=0;
+  render();
+}
+function next(){if(cur<TOTAL-1)go(cur+1);}
+function back(){if(cur>0)go(cur-1);}
+function handleNext(){
+  if(cur===7){if(!qSubmitted)submitQuiz();else if(qPassed)next();else retryQuiz();}
+  else next();
+}
+
+/* ════════════════════════════════════
+   MENTALITY FLIPS
+════════════════════════════════════ */
+function buildFlips(){
+  document.getElementById('flipGrid').innerHTML=FLIPS.map((f,i)=>`
+    <div class="flip-card" id="fc${i}" onclick="doFlip(${i})">
+      <div class="flip-inner">
+        <div class="flip-face flip-front">
+          <div class="flip-old-tag">Old Mentality</div>
+          <div class="flip-old-txt">"${f.old}"</div>
+          <div class="flip-tap">Flip to see the shift →</div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="flip-new-tag">Async Mindset</div>
+          <div class="flip-new-txt">${f.newTxt}</div>
+          <div class="flip-new-sub">${f.sub}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+function doFlip(i){
+  document.getElementById('fc'+i).classList.toggle('flipped');
+  flipDone.add(i);
+  document.getElementById('flipCount').textContent=flipDone.size;
+  render();
+}
+
+/* ════════════════════════════════════
+   CALENDAR AUDIT
+════════════════════════════════════ */
+function buildCal(){
+  document.getElementById('calPool').innerHTML=CAL_ORDER.map((ci,di)=>`
+    <div class="cal-item" id="ci${di}" onclick="pickCal(${di})">${CAL_ITEMS[ci].txt}</div>
+  `).join('');
+  document.getElementById('calDroppedWaste').innerHTML='';
+  document.getElementById('calDroppedImpact').innerHTML='';
+}
+function pickCal(di){
+  if(calDone[di]) return;
+  if(calSel===di){calSel=null;renderCalUI();return;}
+  calSel=di;renderCalUI();
+}
+function dropCal(zone){
+  if(calSel===null) return;
+  const di=calSel,ci=CAL_ORDER[di],correct=CAL_ITEMS[ci].zone===zone;
+  const el=document.getElementById('ci'+di);
+  calSel=null;renderCalUI();
+  if(correct){
+    calDone[di]=true;calCount++;
+    el.classList.add('placed');
+    const target=zone==='waste'?'calDroppedWaste':'calDroppedImpact';
+    document.getElementById(target).innerHTML+=`<div class="cal-dropped-item ${zone}-item">${CAL_ITEMS[ci].txt}</div>`;
+    document.getElementById('calCount').textContent=calCount;
+    render();
+  } else {
+    el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),400);
+  }
+}
+function renderCalUI(){
+  CAL_ORDER.forEach((_,di)=>{
+    const el=document.getElementById('ci'+di);if(!el||calDone[di])return;
+    el.classList.toggle('sel',calSel===di);
+  });
+  document.getElementById('calWaste').classList.toggle('target',calSel!==null);
+  document.getElementById('calImpact').classList.toggle('target',calSel!==null);
+}
+function resetCal(){
+  calSel=null;calDone={};calCount=0;
+  buildCal();document.getElementById('calCount').textContent=0;
+  renderCalUI();render();
+}
+
+/* ════════════════════════════════════
+   MEETING VERDICTS
+════════════════════════════════════ */
+function buildMV(){
+  document.getElementById('mvItems').innerHTML=MV_ITEMS.map((m,i)=>`
+    <div class="mv-item" id="mvi${i}">
+      <div class="mv-top">
+        <div class="mv-title-block">
+          <div class="mv-mtg-label">Meeting ${i+1}</div>
+          <div class="mv-mtg-name">${m.name}</div>
+          <div class="mv-mtg-desc">${m.desc}</div>
+        </div>
+        <div class="mv-btns">
+          <button class="mv-btn" id="mvA${i}" onclick="verdictMV(${i},'attend')">Attend</button>
+          <button class="mv-btn" id="mvD${i}" onclick="verdictMV(${i},'decline')">Decline</button>
+        </div>
+      </div>
+      <div class="mv-result" id="mvR${i}"></div>
+    </div>
+  `).join('');
+}
+function verdictMV(i,verdict){
+  if(mvDone[i]) return;
+  const correct=MV_ITEMS[i].correct===verdict;
+  const item=document.getElementById('mvi'+i);
+  const btnA=document.getElementById('mvA'+i);
+  const btnD=document.getElementById('mvD'+i);
+  if(correct){
+    mvDone[i]=true;mvCount++;
+    btnA.disabled=true;btnD.disabled=true;
+    btnA.classList.toggle('attend-sel',verdict==='attend');
+    btnD.classList.toggle('decline-sel',verdict==='decline');
+    item.classList.add('verdict-'+verdict);
+    document.getElementById('mvR'+i).textContent=MV_ITEMS[i].result;
+    document.getElementById('mvCount').textContent=mvCount;
+    render();
+  } else {
+    const btn=verdict==='attend'?btnA:btnD;
+    btn.classList.add('wrong');setTimeout(()=>btn.classList.remove('wrong'),400);
+  }
+}
+
+/* ════════════════════════════════════
+   ASYNC PLANNER
+════════════════════════════════════ */
+function buildAP(){
+  document.getElementById('apSlots').innerHTML=AP_SLOTS.map((s,i)=>`
+    <div class="ap-slot" id="aps${i}" onclick="pickAPSlot(${i})">
+      <div class="ap-slot-time">${s.time}</div>
+      <div class="ap-slot-content" id="apsC${i}">
+        <div class="ap-slot-placeholder">— select activity →</div>
+      </div>
+      <div class="ap-slot-check">✓</div>
+    </div>
+  `).join('');
+  document.getElementById('apOptions').innerHTML=AP_TILE_ORDER.map(si=>`
+    <button class="ap-opt" id="apo${si}" onclick="pickAPTile(${si})">${AP_SLOTS[si].act}</button>
+  `).join('');
+}
+function pickAPTile(si){
+  if(apDone[si]) return;
+  if(apSel===si){apSel=null;renderAPUI();return;}
+  apSel=si;renderAPUI();
+}
+function pickAPSlot(idx){
+  if(apDone[idx]||apSel===null) return;
+  const correct=AP_SLOTS[idx].idx===apSel;
+  const slotEl=document.getElementById('aps'+idx);
+  const tileEl=document.getElementById('apo'+apSel);
+  if(correct){
+    apDone[idx]=true;
+    const s=AP_SLOTS[idx];
+    slotEl.classList.add('filled');
+    document.getElementById('apsC'+idx).innerHTML=`<div><div class="ap-slot-act">${s.act}</div><div class="ap-slot-sub">${s.sub}</div></div>`;
+    tileEl.classList.add('placed');
+    apSel=null;
+    const done=Object.keys(apDone).length;
+    document.getElementById('apCount').textContent=done;
+    document.getElementById('apPct').textContent=Math.round((done/AP_SLOTS.length)*100)+'%';
+    renderAPUI();render();
+  } else {
+    [slotEl,tileEl].forEach(e=>{e.classList.add('wrong');setTimeout(()=>e.classList.remove('wrong'),400);});
+    apSel=null;renderAPUI();
+  }
+}
+function renderAPUI(){
+  AP_SLOTS.forEach((_,i)=>{
+    const el=document.getElementById('aps'+i);if(!el||apDone[i])return;
+    el.style.cursor=apSel!==null?'pointer':'default';
+  });
+  AP_TILE_ORDER.forEach(si=>{
+    const el=document.getElementById('apo'+si);if(!el)return;
+    el.classList.toggle('sel',apSel===si);
+  });
+}
+function resetAP(){
+  apSel=null;apDone={};
+  buildAP();
+  document.getElementById('apCount').textContent=0;
+  document.getElementById('apPct').textContent='0%';
+  renderAPUI();render();
+}
+
+/* ════════════════════════════════════
+   SKILLS EXPLORER
+════════════════════════════════════ */
+function buildSK(){
+  document.getElementById('skGrid').innerHTML=SKILLS.map((s,i)=>`
+    <div class="sk-card" id="skc${i}" onclick="toggleSK(${i})">
+      <div class="sk-card-top">
+        <div class="sk-card-icon">${s.icon}</div>
+        <div class="sk-card-name">${s.name}</div>
+        <div class="sk-card-arr">›</div>
+      </div>
+      <div class="sk-body">
+        <div class="sk-inner">
+          <div class="sk-desc">${s.desc}</div>
+          <div class="sk-platform">Platform</div>
+          <div class="sk-platform-val">${s.platform}</div>
+          <div class="sk-platform" style="margin-top:8px">How to Start</div>
+          <div class="sk-platform-val">${s.how}</div>
+          <button class="sk-mark-btn" id="skb${i}" onclick="markSK(event,${i})">Mark as Explored ✓</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+function toggleSK(i){
+  const el=document.getElementById('skc'+i);
+  el.classList.toggle('expanded');
+  if(el.classList.contains('expanded')) skOpen.add(i);
+}
+function markSK(e,i){
+  e.stopPropagation();
+  skMarked.add(i);
+  document.getElementById('skc'+i).classList.add('marked');
+  document.getElementById('skb'+i).textContent='Explored ✓';
+  document.getElementById('skCount').textContent=skMarked.size;
+  if(skMarked.size===6) document.getElementById('skDoneBox').classList.add('show');
+  render();
+}
+
+/* ════════════════════════════════════
+   QUIZ
+════════════════════════════════════ */
+function buildQuiz(){
+  document.getElementById('quizBody').innerHTML=QUIZ.map((q,qi)=>`
+    <div class="q-block">
+      <div class="q-num">Question ${qi+1} of ${QUIZ.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-opts">${q.opts.map((o,oi)=>`<button class="q-opt" id="qo${qi}_${oi}" onclick="pickOpt(${qi},${oi})">${o}</button>`).join('')}</div>
+    </div>
+  `).join('');
+}
+function pickOpt(qi,oi){
+  if(qSubmitted) return;
+  QUIZ[qi].opts.forEach((_,i)=>document.getElementById(`qo${qi}_${i}`).classList.remove('chosen'));
+  document.getElementById(`qo${qi}_${oi}`).classList.add('chosen');
+  qAns[qi]=oi;render();
+}
+function submitQuiz(){
+  qSubmitted=true;let correct=0;
+  QUIZ.forEach((q,qi)=>{
+    const chosen=qAns[qi];
+    q.opts.forEach((_,oi)=>{
+      const el=document.getElementById(`qo${qi}_${oi}`);
+      el.classList.add('locked');el.classList.remove('chosen');
+      if(oi===q.ans)el.classList.add('correct');
+      else if(oi===chosen&&chosen!==q.ans)el.classList.add('wrong-pick');
+    });
+    if(chosen===q.ans)correct++;
+  });
+  qPassed=correct>=3;
+  const b=document.getElementById('quizBanner');
+  b.className='quiz-banner show '+(qPassed?'pass':'fail');
+  b.textContent=qPassed?`✓ ${correct} / ${QUIZ.length} correct — cleared to continue.`:`${correct} / ${QUIZ.length} correct — need 3 to pass. Review and try again.`;
+  render();
+}
+function retryQuiz(){
+  qSubmitted=false;qPassed=false;qAns={};
+  document.getElementById('quizBanner').className='quiz-banner';
+  buildQuiz();render();
+}
+
+/* ════════════════════════════════════
+   RENDER
+════════════════════════════════════ */
+const SEC={1:1,2:1,3:2,4:2,5:3,6:4,7:4,8:5};
+function canContinue(){
+  if(cur===2) return flipDone.size===6;
+  if(cur===3) return calCount===8;
+  if(cur===4) return mvCount===5;
+  if(cur===5) return Object.keys(apDone).length===5;
+  if(cur===6) return skMarked.size===6;
+  if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  return true;
+}
+function getHint(){
+  const h={
+    1:"Remote flexibility is only a competitive advantage if you use it deliberately.",
+    2:`${flipDone.size} / 6 old mentalities flipped`,
+    3:`${calCount} / 8 correctly sorted`,
+    4:`${mvCount} / 5 verdicts delivered`,
+    5:`${Object.keys(apDone).length} / 5 blocks placed`,
+    6:`${skMarked.size} / 6 skills explored`,
+    7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
+    8:"Decline one meeting this week. See what doesn't fall apart.",
+  };
+  return h[cur]||'';
+}
+function getNextLabel(){
+  if(cur===7&&!qSubmitted)return 'Submit Answers';
+  if(cur===7&&!qPassed)return 'Try Again →';
+  if(cur===8)return 'Finish Lesson →';
+  return 'Continue →';
+}
+function render(){
+  const sec=SEC[cur];
+  document.getElementById('progLabel').textContent=sec?`Section 0${sec}`:'Lesson 4.3';
+  const pct=cur===0?0:Math.round((cur/(TOTAL-1))*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  ['nav1','nav2','nav3','nav4','nav5'].forEach((id,i)=>
+    document.getElementById(id).classList.toggle('active',SEC[cur]===i+1));
+  const hide=cur===0||cur===TOTAL-1;
+  document.getElementById('bottomnav').style.display=hide?'none':'flex';
+  if(hide) return;
+  document.getElementById('hint').textContent=getHint();
+  document.getElementById('btnNextLabel').textContent=getNextLabel();
+  document.getElementById('btnBack').style.display=cur<=1?'none':'block';
+  document.getElementById('btnNext').disabled=!canContinue();
+}
+
+// Zone click delegation
+document.addEventListener('click',function(e){
+  if(calSel!==null){
+    if(e.target.closest('#calWaste')&&!e.target.closest('.cal-item'))dropCal('waste');
+    if(e.target.closest('#calImpact')&&!e.target.closest('.cal-item'))dropCal('impact');
+  }
+});
+
+init();
+</script>
+</body>
+</html>

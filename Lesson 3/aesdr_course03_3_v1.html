@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR — Course 3.3: Surviving AE Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#FFFFFF;--black:#000000;--mid:#636060;--lite:#EFF4F0;--lite2:#E0EAE2;
+  --emerald:#006644;--em-lt:rgba(0,102,68,0.08);--em-md:rgba(0,102,68,0.18);
+  --em-bright:#00C87A;
+  --tangerine:#FF6B00;--tan-lt:rgba(255,107,0,0.08);
+  --cobalt:#0038FF;--cob-lt:rgba(0,56,255,0.07);
+  --green:#00B85A;--grn-lt:rgba(0,184,90,0.09);
+  --coral:#FF3200;--cor-lt:rgba(255,50,0,0.07);
+  --gold:#FFD600;--gold-lt:rgba(255,214,0,0.12);
+  --line:rgba(0,0,0,0.08);--line2:rgba(0,0,0,0.14);
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#FFD600 34%,#00E5A0 51%,#0099FF 68%,#7B2FFF 85%,#FF006E 100%);
+  --display:'Abril Fatface',Georgia,serif;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;
+  --mono:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--white);color:var(--black);font-family:var(--cond);overflow:hidden}
+.app{display:grid;grid-template-columns:1fr 234px;grid-template-rows:52px 1fr 60px;height:100vh}
+
+/* TOPBAR */
+.topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:2px solid var(--black);background:var(--white);z-index:20}
+.brand{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.22em;text-transform:uppercase}
+.course-badge{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;background:var(--emerald);color:#fff;padding:4px 10px;margin-left:12px}
+.top-right{display:flex;align-items:center;gap:14px}
+.prog-label{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--mid);text-transform:uppercase}
+.prog-track{width:80px;height:2px;background:var(--lite2)}
+.prog-fill{height:100%;background:var(--iris);background-size:200% 100%;animation:iris 3s linear infinite;transition:width .8s cubic-bezier(.4,0,.2,1)}
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+
+/* MAIN / SIDEBAR */
+.main{overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;background:var(--white);scrollbar-width:none}
+.main::-webkit-scrollbar{display:none}
+.sidebar{border-left:2px solid var(--black);padding:32px 20px;overflow-y:auto;scrollbar-width:none;background:var(--white)}
+.sidebar::-webkit-scrollbar{display:none}
+.sb-course{font-family:var(--display);font-size:22px;color:var(--emerald);line-height:1;margin-bottom:4px}
+.sb-lesson{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--mid);margin-bottom:24px}
+.sb-divider{height:2px;background:var(--emerald);margin-bottom:20px}
+.sb-label{font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--mid);margin-bottom:18px}
+.sb-item{padding:16px 0;border-bottom:1px solid var(--line);cursor:pointer;position:relative;transition:all .2s}
+.sb-item:first-of-type{border-top:1px solid var(--line)}
+.sb-tag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--mid);margin-bottom:7px;text-transform:uppercase;transition:color .2s}
+.sb-name{font-family:var(--cond);font-size:12px;font-weight:700;color:var(--mid);line-height:1.4;text-transform:uppercase;letter-spacing:.04em;transition:color .2s}
+.sb-item.active .sb-tag{color:var(--emerald)}
+.sb-item.active .sb-name{color:var(--black)}
+.sb-item.active::before{content:'';position:absolute;left:-20px;top:0;bottom:0;width:3px;background:var(--emerald)}
+.sb-item:hover .sb-name{color:var(--black)}
+
+/* BOTTOMNAV */
+.bottomnav{grid-column:1/2;display:flex;align-items:center;justify-content:space-between;padding:0 56px;border-top:2px solid var(--black);background:var(--white)}
+.nav-hint{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--mid);font-style:italic}
+.nav-btns{display:flex;gap:8px}
+.btn{font-family:var(--cond);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:10px 22px;border:2px solid var(--black);background:transparent;color:var(--black);cursor:pointer;transition:all .15s}
+.btn:hover{background:var(--black);color:var(--white)}
+.btn-fill{background:var(--black);color:var(--white);position:relative;overflow:hidden}
+.btn-fill::before{content:'';position:absolute;inset:0;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;opacity:0;transition:opacity .2s}
+.btn-fill:hover::before{opacity:1}
+.btn-fill:hover{color:var(--black)}
+.btn-fill span{position:relative;z-index:1}
+.btn-fill:disabled,.btn-fill:disabled:hover{opacity:.28;cursor:not-allowed;background:var(--black);color:var(--white)}
+.btn-fill:disabled::before,.btn-fill:disabled:hover::before{display:none}
+
+/* SCREENS */
+.screen{display:none;flex-direction:column;flex:1;animation:up .42s cubic-bezier(.22,1,.36,1) both}
+.screen.active{display:flex}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* COVER */
+.cover{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.cvl{background:var(--emerald);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.cvl::before{content:'3';position:absolute;right:-20px;bottom:-40px;font-family:var(--display);font-size:280px;color:rgba(255,255,255,0.06);line-height:1;pointer-events:none}
+.cv-c3tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px}
+.cv-course-num{font-family:var(--display);font-size:80px;color:#fff;line-height:.85;margin-bottom:12px}
+.cv-big{font-family:var(--display);font-size:clamp(28px,3.4vw,46px);line-height:.97;color:#fff}
+.cv-tagline{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.58);line-height:1.7;border-top:1px solid rgba(255,255,255,0.14);padding-top:18px}
+.cvr{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;margin-bottom:16px;display:inline-block;background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:iris 3s linear infinite}
+.hero-h{font-family:var(--display);font-size:clamp(28px,3.8vw,52px);line-height:.97;color:var(--black);margin-bottom:20px}
+.hero-h .irisTxt{background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:iris 3s linear infinite}
+.cv-list{list-style:none;margin-bottom:36px}
+.cv-list li{font-family:var(--cond);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mid);display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.cv-list li:first-child{border-top:1px solid var(--line)}
+.cl-n{font-family:var(--mono);font-size:9px;background:var(--black);color:var(--white);padding:2px 6px;flex-shrink:0}
+
+/* SHARED */
+.lh{padding:44px 56px 0;position:relative;overflow:hidden}
+.lh-stripe{position:absolute;top:0;left:0;right:0;height:4px;background:var(--iris);background-size:200% 100%;animation:iris 4s linear infinite}
+.ghost-n{position:absolute;right:48px;top:-20px;font-family:var(--display);font-size:200px;line-height:1;color:var(--lite);pointer-events:none;user-select:none}
+.c3-badge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;background:var(--emerald);color:#fff;padding:3px 10px;margin-bottom:12px}
+.sec-eye{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--emerald);margin-bottom:14px;display:inline-block;margin-left:10px}
+.lh-title{font-family:var(--display);font-size:clamp(22px,3.2vw,46px);line-height:1.05;color:var(--black);max-width:640px}
+.lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
+.lh-sub b{color:var(--black)}
+.lb{padding:24px 56px 0}
+.lp{font-family:var(--serif);font-size:16px;line-height:1.8;color:var(--black);max-width:580px;margin-bottom:14px}
+.kp{list-style:none;max-width:580px;margin:14px 0}
+.kp li{font-family:var(--serif);font-size:15px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px;align-items:flex-start}
+.kp li:first-child{border-top:1px solid var(--line)}
+.kp-n{font-family:var(--mono);font-size:9px;color:var(--mid);min-width:22px;padding-top:3px;flex-shrink:0}
+.lie{max-width:580px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
+.lie-tab{position:absolute;top:0;left:0;font-family:var(--cond);font-size:9px;letter-spacing:.24em;font-weight:800;text-transform:uppercase;padding:3px 10px;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;color:var(--black)}
+.lie-q{font-family:var(--serif);font-style:italic;font-size:18px;color:#fff;line-height:1.5;margin:12px 0 10px}
+.lie-a{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
+.data-table{width:100%;max-width:600px;border-collapse:collapse;margin:16px 0}
+.data-table th{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;background:var(--black);color:var(--white);padding:9px 14px;text-align:left}
+.data-table td{font-family:var(--serif);font-size:14px;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--black);line-height:1.6;vertical-align:top}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:nth-child(even) td{background:var(--lite)}
+
+/* ── ARCHETYPE FLIP GRID ── */
+.arch-wrap{padding:16px 56px 44px}
+.arch-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-width:760px}
+.arch-card{height:148px;perspective:900px;cursor:pointer}
+.arch-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.4,0,.2,1)}
+.arch-card.flipped .arch-inner{transform:rotateY(180deg)}
+.arch-face{position:absolute;inset:0;backface-visibility:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:12px}
+.arch-front{background:var(--lite);border:1px solid var(--line2)}
+.arch-front-num{position:absolute;top:10px;left:12px;font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--mid)}
+.arch-front-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);font-size:26px;opacity:.35}
+.arch-front-name{font-family:var(--cond);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--black);line-height:1.25}
+.arch-front-tap{font-family:var(--mono);font-size:8px;letter-spacing:.12em;color:var(--mid);margin-top:4px}
+.arch-back{background:var(--emerald);transform:rotateY(180deg);padding:10px 12px;border:1px solid var(--emerald)}
+.arch-back-num{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:rgba(255,255,255,0.4);margin-bottom:4px}
+.arch-back-name{font-family:var(--cond);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--em-bright);line-height:1.2;margin-bottom:6px}
+.arch-back-beh{font-family:var(--serif);font-style:italic;font-size:11px;color:rgba(255,255,255,0.65);line-height:1.5;margin-bottom:5px}
+.arch-back-surv{font-family:var(--cond);font-size:10px;font-weight:700;color:#fff;letter-spacing:.03em;text-transform:uppercase;line-height:1.35}
+
+/* ── IMPACT COST MATCHER ── */
+.impact-wrap{padding:16px 56px 44px;max-width:760px}
+.impact-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.impact-arena{display:grid;grid-template-columns:1fr 1fr;gap:0 40px}
+.impact-col-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);padding-bottom:10px;border-bottom:2px solid var(--black);margin-bottom:10px}
+.impact-items{display:flex;flex-direction:column;gap:7px}
+.impact-btn{width:100%;padding:14px 16px;border:1px solid var(--line2);background:var(--white);font-family:var(--cond);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--black);text-align:left;cursor:pointer;transition:all .18s;line-height:1.35}
+.impact-btn.right{font-family:var(--serif);font-style:italic;font-size:13px;font-weight:400;text-transform:none;letter-spacing:0}
+.impact-btn:hover:not(.matched):not([disabled]){border-color:var(--emerald);background:var(--em-lt)}
+.impact-btn.sel{border-color:var(--emerald);background:var(--emerald);color:#fff}
+.impact-btn.matched{background:var(--em-bright);border-color:transparent;cursor:default;color:var(--black)}
+.impact-btn.bad{border-color:var(--coral);background:var(--cor-lt);animation:shake .35s ease both}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.impact-reset{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mid);background:none;border:none;cursor:pointer;text-decoration:underline;margin-top:10px}
+.impact-reset:hover{color:var(--black)}
+
+/* ── MANAGE-UP SIMULATOR ── */
+.mu-wrap{padding:0 0 44px}
+.mu-prog{display:flex;margin:20px 56px 0;max-width:460px}
+.mu-step{flex:1;display:flex;align-items:center}
+.mu-dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--line2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;color:var(--mid);transition:all .25s;flex-shrink:0;background:var(--white)}
+.mu-dot.active{border-color:var(--emerald);background:var(--emerald);color:#fff}
+.mu-dot.done{border-color:var(--em-bright);background:var(--em-bright);color:var(--black)}
+.mu-line{flex:1;height:1px;background:var(--line2);margin:0 4px}
+.mu-lbl-row{display:flex;margin:6px 56px 0;max-width:460px}
+.mu-lbl{flex:1;font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--mid);transition:color .2s}
+.mu-lbl.cur{color:var(--black)}
+.mu-manager-card{margin:18px 56px 0;max-width:640px;background:var(--black);padding:18px 22px;position:relative}
+.mu-manager-tag{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--em-bright);margin-bottom:8px}
+.mu-manager-name{font-family:var(--cond);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#fff;margin-bottom:6px}
+.mu-manager-says{font-family:var(--serif);font-style:italic;font-size:15px;color:rgba(255,255,255,0.72);line-height:1.65}
+.mu-q{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin:16px 56px 0;max-width:640px}
+.mu-opts{display:flex;flex-direction:column;gap:7px;padding:10px 56px 0;max-width:700px}
+.mu-opt{padding:14px 18px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:14px;color:var(--black);text-align:left;cursor:pointer;transition:all .18s;line-height:1.55;display:flex;gap:14px;align-items:flex-start}
+.mu-opt:hover:not(.locked){border-color:var(--emerald);background:var(--em-lt)}
+.mu-opt.correct{border-color:var(--em-bright);background:var(--em-lt);cursor:default}
+.mu-opt.wrong{border-color:var(--coral);background:var(--cor-lt);cursor:default}
+.mu-opt.locked{cursor:default}
+.mu-ltr{font-family:var(--mono);font-size:10px;color:var(--mid);flex-shrink:0;margin-top:2px;transition:color .2s}
+.mu-opt.correct .mu-ltr{color:var(--emerald)}
+.mu-opt.wrong .mu-ltr{color:var(--coral)}
+.mu-fb{font-family:var(--mono);font-size:9px;letter-spacing:.06em;margin:10px 56px 0;max-width:640px;line-height:1.7;display:none}
+.mu-fb.show{display:block}
+.mu-fb.good{color:var(--emerald)}
+.mu-fb.bad{color:var(--coral)}
+.mu-adv{margin:14px 56px 0;display:none}
+.mu-adv.show{display:block}
+.mu-done-box{margin:22px 56px 0;max-width:580px;background:var(--em-bright);padding:20px 22px}
+.mu-done-h{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--black);margin-bottom:7px}
+.mu-done-p{font-family:var(--serif);font-size:14px;color:rgba(0,0,0,0.55);line-height:1.65;font-style:italic}
+
+/* ── BOUNDARY BUILDER ── */
+.bb-wrap{padding:16px 56px 44px;max-width:700px}
+.bb-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.bb-preview{background:var(--black);padding:0;max-width:580px;margin-bottom:24px}
+.bb-prev-tag{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,0.28);padding:14px 18px 0}
+.bb-prev-body{padding:10px 18px 16px;font-family:var(--serif);font-size:15px;color:#fff;line-height:1.75;min-height:52px}
+.bb-slot{background:rgba(255,255,255,0.07);border-bottom:1px dashed rgba(255,255,255,0.2);padding:1px 6px;font-style:italic;color:rgba(255,255,255,0.3);display:inline}
+.bb-slot.filled{background:transparent;border-bottom:none;color:var(--em-bright);font-style:normal;font-weight:600}
+.bb-sections{display:flex;flex-direction:column;gap:18px}
+.bb-sec-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line2)}
+.bb-choices{display:flex;flex-direction:column;gap:5px}
+.bb-choice{padding:11px 16px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:14px;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.5}
+.bb-choice:hover:not(.locked):not(.chosen){border-color:var(--emerald);background:var(--em-lt)}
+.bb-choice.chosen{border-color:var(--emerald);background:var(--emerald);color:#fff}
+.bb-choice.correct{border-color:var(--green);background:var(--grn-lt);color:var(--black);cursor:default}
+.bb-choice.wrong-reveal{border-color:var(--coral);background:var(--cor-lt);cursor:default}
+.bb-choice.locked{cursor:default}
+.bb-submit{margin-top:18px}
+.bb-result{max-width:580px;background:var(--em-bright);padding:16px 20px;margin-top:14px;display:none}
+.bb-result.show{display:block}
+.bb-result-h{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.bb-result-p{font-family:var(--serif);font-size:14px;color:rgba(0,0,0,0.55);line-height:1.65;font-style:italic}
+.bb-fail{max-width:580px;margin-top:12px;padding:12px 16px;border-left:4px solid var(--coral);background:var(--cor-lt);display:none}
+.bb-fail.show{display:block}
+
+/* QUIZ */
+.quiz-banner{margin:16px 56px 0;padding:12px 18px;font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.06em;border-left:4px solid var(--cobalt);background:var(--cob-lt);color:var(--black);display:none}
+.quiz-banner.show{display:block}
+.quiz-banner.pass{border-color:var(--green);background:var(--grn-lt)}
+.quiz-banner.fail{border-color:var(--coral);background:var(--cor-lt)}
+.quiz-body{padding:20px 56px 44px;display:flex;flex-direction:column;gap:28px}
+.q-num{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--emerald);margin-bottom:9px}
+.q-text{font-family:var(--display);font-size:clamp(13px,1.6vw,18px);color:var(--black);line-height:1.2;margin-bottom:13px}
+.q-opts{display:flex;flex-direction:column;gap:6px}
+.q-opt{padding:11px 16px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:14px;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.5}
+.q-opt:hover:not(.locked){border-color:var(--emerald);background:var(--em-lt)}
+.q-opt.chosen{border-color:var(--emerald);background:var(--emerald);color:#fff}
+.q-opt.correct{border-color:var(--green);background:var(--grn-lt);color:var(--black)}
+.q-opt.wrong-pick{border-color:var(--coral);background:var(--cor-lt);color:var(--black)}
+.q-opt.locked{cursor:default}
+
+/* TOOLS */
+.tools-blk{padding:20px 56px 44px}
+.t-head{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--black);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--black)}
+.hw-list{list-style:none;max-width:580px;margin-top:8px}
+.hw-list li{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.65;padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
+.hw-list li:first-child{border-top:1px solid var(--line)}
+.hw-box{width:14px;height:14px;border:2px solid var(--black);flex-shrink:0;margin-top:4px}
+
+/* COMPLETE */
+.comp{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.comp-l{background:var(--tangerine);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.comp-l::before{content:'3';position:absolute;right:-20px;bottom:-40px;font-family:var(--display);font-size:280px;color:rgba(255,255,255,0.07);line-height:1;pointer-events:none}
+.comp-tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.38)}
+.comp-big{font-family:var(--display);font-size:clamp(44px,5.5vw,76px);line-height:.93;color:#fff}
+.comp-sub{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.52);line-height:1.7;border-top:1px solid rgba(255,255,255,0.12);padding-top:18px}
+.comp-r{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.comp-h{font-family:var(--display);font-size:clamp(22px,2.8vw,40px);line-height:1.08;color:var(--black);margin-bottom:18px}
+.comp-p{font-family:var(--serif);font-size:15px;color:var(--black);max-width:380px;line-height:1.8;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header class="topbar">
+  <div style="display:flex;align-items:center">
+    <div class="brand">AESDR</div>
+    <div class="course-badge">Course 3</div>
+  </div>
+  <div class="top-right">
+    <span class="prog-label" id="progLabel">Lesson 3.3</span>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+</header>
+
+<main class="main" id="main">
+
+  <!-- 0: COVER -->
+  <div class="screen active" id="s0">
+    <div class="cover" style="flex:1">
+      <div class="cvl">
+        <div>
+          <div class="cv-c3tag">AESDR · Lesson 3.3</div>
+          <div class="cv-course-num">03</div>
+          <div class="cv-big">Surviving and Thriving Under AE Management</div>
+        </div>
+        <div class="cv-tagline">How to work with your manager — not against them — even when the circus is in full swing.</div>
+      </div>
+      <div class="cvr">
+        <div class="eyebrow">Course 3 · Lesson 3 of 3</div>
+        <div class="hero-h">Master the<br><span class="irisTxt">circus.</span></div>
+        <ul class="cv-list">
+          <li><span class="cl-n">01</span>The 10 AE Manager Archetypes</li>
+          <li><span class="cl-n">02</span>The Managing-Up Framework</li>
+          <li><span class="cl-n">03</span>Boundary Scripts That Actually Work</li>
+        </ul>
+        <button class="btn btn-fill" onclick="go(1)"><span>Begin Lesson →</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1: WHY MANAGERS ARE THE WAY THEY ARE -->
+  <div class="screen" id="s1">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">01</div>
+      <div><div class="c3-badge">Course 3</div><span class="sec-eye">Section 01 — The Diagnosis</span></div>
+      <div class="lh-title">Why AE Managers Are the Way They Are</div>
+    </div>
+    <div class="lb">
+      <p class="lp">AE Managers sit between two incompatible pressures: leadership demanding numbers and a sales team demanding support. The behaviors that look like circus acts — the obsessive dashboards, the endless meetings, the blame deflections — are all coping mechanisms for that impossible middle position.</p>
+      <p class="lp">Understanding why they behave that way doesn't mean tolerating it. It means you stop reacting emotionally and start managing up strategically.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Their quirks are structural, not personal.</strong> Insecurity, KPI obsession, outdated training — all of it maps back to the pressure they're absorbing from above.</li>
+        <li><span class="kp-n">02</span><strong>You can't change the archetype.</strong> But you can change how you navigate it. The leverage is always in your own behavior, not theirs.</li>
+        <li><span class="kp-n">03</span><strong>The cost of not managing up is yours.</strong> Missed targets, burnout, wasted selling time — you pay that tax whether or not you chose to understand the dynamic.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Reframe</div>
+        <div class="lie-q">"You can't manage the circus, but you can stop being surprised by it."</div>
+        <div class="lie-a">Name the archetype. Map the behavior. Then respond with a strategy instead of a reaction. That's the whole playbook — applied consistently.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2: ARCHETYPE FLIP GRID -->
+  <div class="screen" id="s2">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">01</div>
+      <div><div class="c3-badge">Course 3</div><span class="sec-eye">Section 01 — Know the Archetypes</span></div>
+      <div class="lh-title">The 10 AE Manager Archetypes</div>
+      <div class="lh-sub"><b id="archCount">0</b> / 10 revealed — flip every card to continue</div>
+    </div>
+    <div style="padding:16px 56px 44px">
+      <div class="arch-grid" id="archGrid"></div>
+    </div>
+  </div>
+
+  <!-- 3: IMPACT SECTION -->
+  <div class="screen" id="s3">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">02</div>
+      <div><div class="c3-badge">Course 3</div><span class="sec-eye">Section 02 — Real Costs</span></div>
+      <div class="lh-title">What Bad Management Actually Costs</div>
+    </div>
+    <div class="lb">
+      <p class="lp">Poor management isn't an inconvenience. It has a direct line to productivity loss, pipeline damage, and team churn. Naming the cost turns it from a frustration into a problem you can address.</p>
+      <table class="data-table">
+        <thead><tr><th>Management Problem</th><th>Cost to the Team</th><th>Cost to You Personally</th></tr></thead>
+        <tbody>
+          <tr><td>Overloaded Meetings</td><td>Lost selling time across the whole team</td><td>Blocks compressed into fragmented half-hours that produce nothing</td></tr>
+          <tr><td>Micromanagement</td><td>Low morale, trust erosion, high turnover</td><td>You stop making independent decisions — which stalls your development</td></tr>
+          <tr><td>No Real Solutions</td><td>Missed targets, team frustration compounds</td><td>You're solving problems alone that should be shared</td></tr>
+          <tr><td>Blame Culture</td><td>No shared accountability, repeat failures</td><td>Your work gets attributed elsewhere when it succeeds</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 4: IMPACT COST MATCHER -->
+  <div class="screen" id="s4">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div><div class="c3-badge">Course 3</div><span class="sec-eye">Section 02 — Recognition Check</span></div>
+      <div class="lh-title">Match the Manager Behavior to Its Real Cost</div>
+      <div class="lh-sub"><b id="impactCount">0</b> / 5 matched — select from each column</div>
+    </div>
+    <div class="impact-wrap">
+      <p class="impact-instr">Click a behavior, then click the real downstream cost it produces. All 5 pairs must be matched correctly to continue.</p>
+      <div class="impact-arena">
+        <div>
+          <div class="impact-col-lbl">Manager Behavior</div>
+          <div class="impact-items" id="impactLeft"></div>
+        </div>
+        <div>
+          <div class="impact-col-lbl">Real Downstream Cost</div>
+          <div class="impact-items" id="impactRight"></div>
+          <button class="impact-reset" onclick="resetImpact()">Reset board</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5: MANAGE-UP FRAMEWORK -->
+  <div class="screen" id="s5">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">03</div>
+      <div><div class="c3-badge">Course 3</div><span class="sec-eye">Section 03 — The Framework</span></div>
+      <div class="lh-title">The 3-Step Managing-Up Framework</div>
+    </div>
+    <div class="lb">
+      <p class="lp">Three steps, in order. Skip any one and you're reacting instead of managing.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Identify Their Style.</strong> Write down which archetype your manager fits. Name the specific behaviors that create friction. You can't navigate what you haven't named.</li>
+        <li><span class="kp-n">02</span><strong>Align Goals and Expectations.</strong> Set a weekly 15-minute alignment meeting. Share your KPIs before they ask. Ask one clear question per meeting: "What's the one thing I can do this week that helps you most?"</li>
+        <li><span class="kp-n">03</span><strong>Communicate Upward, Effectively.</strong> Share context alongside every metric. Name your blockers before they surface in a pipeline review. Frame everything as "here's what I'm doing about it" — never just the problem.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Accountability Check</div>
+        <div class="lie-q">"Are you managing up — or just complaining with structure?"</div>
+        <div class="lie-a">Managing up means taking a specific action to change how the dynamic plays out. If you're frustrated but haven't scheduled the alignment meeting, you're not managing up yet. You're describing a problem.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6: MANAGE-UP SIMULATOR -->
+  <div class="screen" id="s6">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div><div class="c3-badge">Course 3</div><span class="sec-eye">Section 03 — Manage-Up Practice</span></div>
+      <div class="lh-title">The Managing-Up Simulator</div>
+    </div>
+    <div class="mu-wrap" id="muWrap"></div>
+  </div>
+
+  <!-- 7: BOUNDARY BUILDER -->
+  <div class="screen" id="s7">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">04</div>
+      <div><div class="c3-badge">Course 3</div><span class="sec-eye">Section 04 — Set the Boundary</span></div>
+      <div class="lh-title">Build the Boundary Script</div>
+      <div class="lh-sub" id="bbSub">3 components to choose — assemble the script that protects your time without damaging the relationship</div>
+    </div>
+    <div class="bb-wrap" id="bbWrap"></div>
+  </div>
+
+  <!-- 8: QUIZ -->
+  <div class="screen" id="s8">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div><div class="c3-badge">Course 3</div><span class="sec-eye">Section 04 — Knowledge Check</span></div>
+      <div class="lh-title">Test Your Understanding</div>
+    </div>
+    <div class="quiz-banner" id="quizBanner"></div>
+    <div class="quiz-body" id="quizBody"></div>
+  </div>
+
+  <!-- 9: TOOLS -->
+  <div class="screen" id="s9">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">05</div>
+      <div><div class="c3-badge">Course 3</div><span class="sec-eye">Section 05 — Templates & Homework</span></div>
+      <div class="lh-title">The Managing-Up Toolkit</div>
+    </div>
+    <div class="tools-blk">
+      <div style="margin-top:20px">
+        <div class="t-head">Weekly Alignment Meeting Template</div>
+        <table class="data-table">
+          <thead><tr><th>Topic</th><th>What to Say</th></tr></thead>
+          <tbody>
+            <tr><td>KPI Check-In</td><td>"Here's what I hit this week, and here's the context behind the numbers."</td></tr>
+            <tr><td>Blockers</td><td>"Here's where I'm stuck — and here's what I've already tried."</td></tr>
+            <tr><td>Solution Ask</td><td>"Can we spend 5 minutes brainstorming X together?"</td></tr>
+            <tr><td>One Priority</td><td>"What's the one thing I can do this week that helps you most?"</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="t-head">Boundary-Setting Script Library</div>
+        <table class="data-table">
+          <thead><tr><th>Situation</th><th>Script</th></tr></thead>
+          <tbody>
+            <tr><td>Meeting without agenda</td><td>"Can we cover this in Slack? I want to protect the time I have for outreach today."</td></tr>
+            <tr><td>After-hours request</td><td>"I'm committed to getting this done — I'll have it first thing in the morning."</td></tr>
+            <tr><td>Unrealistic deadline</td><td>"I can hit that by [date] if I deprioritize [X]. Does that trade-off work for you?"</td></tr>
+            <tr><td>Constant check-ins</td><td>"Can we consolidate this into our weekly sync? That way I can give you a fuller picture."</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="t-head">Homework — This Week</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Identify your AE manager's archetype from the 10 in this lesson. Write down two specific behaviors that create friction for you — be precise, not vague.</li>
+          <li><div class="hw-box"></div>Schedule a 15-minute weekly alignment meeting with your manager this week. Use the template above. If they say no, send a written version via Slack every Friday.</li>
+          <li><div class="hw-box"></div>Implement one boundary script from the library this week. Pick the situation that maps most closely to your current friction point. Use it exactly as written the first time — then adapt.</li>
+          <li><div class="hw-box"></div>Self-reflection: Are you responding emotionally to your manager's quirks, or are you managing up effectively? Write down the last three times you felt frustrated. What specific action could you have taken instead?</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10: COMPLETE -->
+  <div class="screen" id="s10">
+    <div class="comp" style="flex:1">
+      <div class="comp-l">
+        <div>
+          <div class="comp-tag">Course 3 · Lesson 3 — Complete</div>
+          <div style="font-family:var(--display);font-size:56px;color:#fff;line-height:.9;margin:10px 0 0">03</div>
+        </div>
+        <div class="comp-big">Master<br>the<br>circus.</div>
+        <div class="comp-sub">AE managers can be frustrating — but frustration without strategy is just wasted energy. You now have the tools. Use them deliberately.</div>
+      </div>
+      <div class="comp-r">
+        <div class="eyebrow">Course 3 · Complete</div>
+        <div class="comp-h">Proactive strategies. Clear communication. Boundaries that stick.</div>
+        <p class="comp-p">You've named the archetypes, matched the real costs, practiced managing up in live scenarios, and built the boundary scripts. The playbook is in your hands. Now run it every single week.</p>
+        <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
+        <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<aside class="sidebar">
+  <div class="sb-course">03</div>
+  <div class="sb-lesson">Lesson 3.3 · Surviving AE Management</div>
+  <div class="sb-divider"></div>
+  <div class="sb-label">Sections</div>
+  <div class="sb-item" id="nav1" onclick="go(1)">
+    <div class="sb-tag">Section 01</div>
+    <div class="sb-name">The Archetypes</div>
+  </div>
+  <div class="sb-item" id="nav2" onclick="go(3)">
+    <div class="sb-tag">Section 02</div>
+    <div class="sb-name">Real Costs</div>
+  </div>
+  <div class="sb-item" id="nav3" onclick="go(5)">
+    <div class="sb-tag">Section 03</div>
+    <div class="sb-name">Managing Up</div>
+  </div>
+  <div class="sb-item" id="nav4" onclick="go(7)">
+    <div class="sb-tag">Section 04</div>
+    <div class="sb-name">Boundaries & Quiz</div>
+  </div>
+  <div class="sb-item" id="nav5" onclick="go(9)">
+    <div class="sb-tag">Section 05</div>
+    <div class="sb-name">Templates & Homework</div>
+  </div>
+</aside>
+
+<footer class="bottomnav" id="bottomnav" style="display:none">
+  <span class="nav-hint" id="hint"></span>
+  <div class="nav-btns">
+    <button class="btn" id="btnBack" onclick="back()" style="display:none">← Back</button>
+    <button class="btn btn-fill" id="btnNext" onclick="handleNext()"><span id="btnNextLabel">Continue →</span></button>
+  </div>
+</footer>
+
+</div>
+
+<script>
+/* ════════════════════════════════════
+   DATA
+════════════════════════════════════ */
+
+const ARCHETYPES = [
+  { num:'01', icon:'📊', name:'The Data-Obsessed Zombie',       beh:'Lives in dashboards, offers no real context or help.',                           surv:'Own your metrics first — preemptively share KPIs with narrative before they ask.' },
+  { num:'02', icon:'📅', name:'The Meeting Addict',             beh:'Fills calendars with meetings that could be Slack messages.',                     surv:'Ask for agendas upfront. Offer: "Can I cover this in 2 sentences instead of an hour?"' },
+  { num:'03', icon:'🎉', name:'The Pep Talk Guru',              beh:'Delivers motivation instead of actionable solutions.',                            surv:'Redirect: "I appreciate that — here\'s the specific thing I need help with."' },
+  { num:'04', icon:'🚔', name:'The KPI Police',                 beh:'Obsessively tracks metrics, ignores context and quality.',                        surv:'Report weekly proactively. Show quality behind the quantity every single time.' },
+  { num:'05', icon:'🏆', name:'The "I Used to Sell" Legend',    beh:'Glorifies outdated tactics, resists modern approaches.',                          surv:'"How would that approach work today with [specific tool/process]?" Redirect, don\'t argue.' },
+  { num:'06', icon:'🪃', name:'The Blame Deflector',            beh:'Avoids accountability, pushes failures down to the team.',                        surv:'Document everything. Respond with: "I\'ve done X, Y, Z — what else do you recommend?"' },
+  { num:'07', icon:'🚨', name:'The Panic Button Smasher',       beh:'Creates urgency around everything, regardless of actual priority.',               surv:'Stay calm. Always ask: "What\'s the actual priority here?" Make them rank it.' },
+  { num:'08', icon:'💡', name:'The "Let\'s Innovate" Visionary',beh:'Chases new ideas constantly, never finishes anything.',                           surv:'Push back gently: "What results have you seen from this approach before?" Require evidence.' },
+  { num:'09', icon:'📱', name:'The No-Boundaries Leader',       beh:'Expects availability 24/7, blurs work-life lines constantly.',                   surv:'"I\'m committed to this — I\'ll have it first thing in the morning." Say it and mean it.' },
+  { num:'10', icon:'🔮', name:'The Pipeline Fantasy Architect', beh:'Builds unrealistic forecasts, pressures the team to match fiction.',              surv:'"Let\'s focus on quality over volume — here\'s the data on why that matters for close rate."' },
+];
+
+const IMPACT_PAIRS = [
+  { l:"Excessive meetings with no agenda",       r:"2+ hours of fragmented selling time lost per day — permanently" },
+  { l:"KPI micromanagement without context",     r:"Reps stop making independent decisions and wait to be told what to do" },
+  { l:"Manager deflects blame downward",         r:"Team avoids transparency — problems get hidden until they're crises" },
+  { l:"Constant 'let's try something new'",      r:"Processes never stabilize — reps spend energy on adaptation, not selling" },
+  { l:"No real solutions, only motivation",      r:"Real blockers compound silently because no one's actually solving them" },
+];
+const IMPACT_L_ORDER = [2,4,0,3,1];
+const IMPACT_R_ORDER = [1,3,4,0,2];
+
+const MU_SCENARIOS = [
+  {
+    name:'The Data-Obsessed Zombie',
+    says:'"Your call volume is down 18% from last week. I need to understand what happened."',
+    q:'How do you respond?',
+    opts:[
+      "I know — I've been focusing on quality over quantity. Can I walk you through the three accounts I advanced this week and show you why the volume trade-off was worth it?",
+      "I'll make sure to increase my call volume next week to hit the target.",
+      "The leads I was given weren't worth calling — the list quality was low.",
+    ],
+    ans:0,
+    why:"You owned the number, explained the trade-off, and invited them into the evidence. This is managing up — you moved them from metric obsession to business context with one sentence."
+  },
+  {
+    name:'The Meeting Addict',
+    says:'"Can you join our team sync at 2pm? It should only take an hour."',
+    q:'How do you protect your selling time without damaging the relationship?',
+    opts:[
+      "Sure, I'll be there.",
+      "I can't make it — I have calls during that time.",
+      "Can you share an agenda beforehand? If it doesn't need me live, I'd rather get a summary and protect my 2pm call block. Happy to jump in if I'm actually needed.",
+    ],
+    ans:2,
+    why:"You didn't refuse — you asked for information that reveals whether the meeting is necessary. This is boundary-setting with a collaborative framing. Most Meeting Addicts don't have an agenda. The ask itself is the redirect."
+  },
+  {
+    name:'The Blame Deflector',
+    says:'"This deal fell through — what happened on your end?"',
+    q:'How do you respond without absorbing blame you don\'t own?',
+    opts:[
+      "I'm not sure — maybe the prospect wasn't ready.",
+      "I've documented my full activity on this account — every touchpoint, every note. Can we do a debrief together and look at the full picture before we assign a cause?",
+      "It wasn't my fault — the marketing materials they were sent were confusing.",
+    ],
+    ans:1,
+    why:"You didn't get defensive and you didn't absorb the blame. You offered a process — documentation plus joint review — that makes attribution based on evidence, not impression. That's how you protect yourself without creating conflict."
+  },
+];
+
+const BB_SECTIONS = [
+  {
+    label:"Opening — How do you start the boundary?",
+    slot:"[COMMITMENT]",
+    opts:[
+      { txt:"I know this is important,",                                    correct:false },
+      { txt:"I'm fully committed to getting this done —",                   correct:true  },
+      { txt:"I understand you need this urgently,",                         correct:false },
+    ]
+  },
+  {
+    label:"Middle — What's the actual boundary?",
+    slot:"[BOUNDARY]",
+    opts:[
+      { txt:"but I'll need until tomorrow to do it properly.",              correct:false },
+      { txt:"but I need uninterrupted time from 9am–12pm to execute it.",   correct:true  },
+      { txt:"but this is a lot to ask on short notice.",                    correct:false },
+    ]
+  },
+  {
+    label:"Close — How do you land it without resentment?",
+    slot:"[CLOSE]",
+    opts:[
+      { txt:"Let me know if that doesn't work for you.",                    correct:false },
+      { txt:"I'll have it to you by [time] — does that work?",              correct:true  },
+      { txt:"I hope that's okay with you.",                                 correct:false },
+    ]
+  },
+];
+
+const QUIZ = [
+  {
+    q:"According to this lesson, why do AE managers develop difficult behaviors?",
+    opts:["They lack formal management training and coaching","They are caught between leadership pressure and team demands — it's structural, not personal","They prioritize their own career advancement over team performance","Their sales experience didn't translate into effective management skills"],
+    ans:1
+  },
+  {
+    q:"What is the FIRST step in the Managing-Up Framework?",
+    opts:["Schedule a weekly alignment meeting with your manager","Share your KPIs proactively before they're requested","Identify which archetype your manager fits and name specific friction behaviors","Communicate blockers before they surface in a pipeline review"],
+    ans:2
+  },
+  {
+    q:"The Meeting Addict schedules a 1-hour team sync with no agenda. The right response is:",
+    opts:["Attend to maintain the relationship and avoid conflict","Decline — protecting selling time is always the priority","Ask for an agenda and offer to get a summary if you're not needed live","Propose shortening the meeting to 30 minutes instead"],
+    ans:2
+  },
+  {
+    q:"What distinguishes a boundary script that works from one that damages the relationship?",
+    opts:["The length and formality of the language used","Starting with commitment to the outcome before naming the constraint","Framing the boundary as a permanent policy rather than a one-time request","Citing specific data that proves your time is being wasted"],
+    ans:1
+  },
+];
+
+/* ════════════════════════════════════
+   STATE
+════════════════════════════════════ */
+const TOTAL=11;
+let cur=0;
+let archFlipped=new Set();
+let impactSelSide=null, impactSelIdx=null, impactMatched=new Set(), impactCount=0;
+let muStage=0, muDone=false, muPicked=null, muShowFb=false;
+let bbChosen={}, bbSubmitted=false, bbPassed=false;
+let qAns={}, qSubmitted=false, qPassed=false;
+
+/* ════════════════════════════════════
+   INIT
+════════════════════════════════════ */
+function init(){
+  buildArch(); buildImpact(); renderMU(); buildBB(); buildQuiz(); render();
+}
+function go(n){
+  document.getElementById('s'+cur).classList.remove('active');
+  cur=n;
+  document.getElementById('s'+cur).classList.add('active');
+  document.getElementById('main').scrollTop=0;
+  render();
+}
+function next(){if(cur<TOTAL-1)go(cur+1);}
+function back(){if(cur>0)go(cur-1);}
+function handleNext(){
+  if(cur===8){if(!qSubmitted)submitQuiz();else if(qPassed)next();else retryQuiz();}
+  else next();
+}
+
+/* ════════════════════════════════════
+   ARCHETYPE FLIP GRID
+════════════════════════════════════ */
+function buildArch(){
+  document.getElementById('archGrid').innerHTML=ARCHETYPES.map((a,i)=>`
+    <div class="arch-card" id="ac${i}" onclick="flipArch(${i})">
+      <div class="arch-inner">
+        <div class="arch-face arch-front">
+          <div class="arch-front-num">${a.num}</div>
+          <div class="arch-front-icon">${a.icon}</div>
+          <div class="arch-front-name">${a.name}</div>
+          <div class="arch-front-tap">Tap to reveal</div>
+        </div>
+        <div class="arch-face arch-back">
+          <div class="arch-back-num">${a.num}</div>
+          <div class="arch-back-name">${a.name}</div>
+          <div class="arch-back-beh">${a.beh}</div>
+          <div class="arch-back-surv">${a.surv}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+function flipArch(i){
+  document.getElementById('ac'+i).classList.toggle('flipped');
+  archFlipped.add(i);
+  document.getElementById('archCount').textContent=archFlipped.size;
+  render();
+}
+
+/* ════════════════════════════════════
+   IMPACT MATCHER
+════════════════════════════════════ */
+function buildImpact(){
+  document.getElementById('impactLeft').innerHTML=IMPACT_L_ORDER.map((pi,di)=>`
+    <button class="impact-btn" id="il${di}" onclick="pickImpact('l',${di})">${IMPACT_PAIRS[pi].l}</button>
+  `).join('');
+  document.getElementById('impactRight').innerHTML=IMPACT_R_ORDER.map((pi,di)=>`
+    <button class="impact-btn right" id="ir${di}" onclick="pickImpact('r',${di})">${IMPACT_PAIRS[pi].r}</button>
+  `).join('');
+}
+function pickImpact(side,di){
+  const pi=side==='l'?IMPACT_L_ORDER[di]:IMPACT_R_ORDER[di];
+  if(impactMatched.has(pi)) return;
+  if(impactSelSide===side&&impactSelIdx===di){
+    document.getElementById((side==='l'?'il':'ir')+di).classList.remove('sel');
+    impactSelSide=null;impactSelIdx=null;return;
+  }
+  if(impactSelSide===side){
+    document.getElementById((impactSelSide==='l'?'il':'ir')+impactSelIdx).classList.remove('sel');
+    impactSelSide=side;impactSelIdx=di;
+    document.getElementById((side==='l'?'il':'ir')+di).classList.add('sel');
+    return;
+  }
+  if(impactSelSide===null){impactSelSide=side;impactSelIdx=di;document.getElementById((side==='l'?'il':'ir')+di).classList.add('sel');return;}
+  // Attempt match
+  const lDi=impactSelSide==='l'?impactSelIdx:di;
+  const rDi=impactSelSide==='r'?impactSelIdx:di;
+  const lPi=IMPACT_L_ORDER[lDi],rPi=IMPACT_R_ORDER[rDi];
+  const lEl=document.getElementById('il'+lDi),rEl=document.getElementById('ir'+rDi);
+  lEl.classList.remove('sel');rEl.classList.remove('sel');
+  impactSelSide=null;impactSelIdx=null;
+  if(lPi===rPi){
+    impactMatched.add(lPi);impactCount++;
+    lEl.classList.add('matched');lEl.disabled=true;
+    rEl.classList.add('matched');rEl.disabled=true;
+    document.getElementById('impactCount').textContent=impactCount;
+    render();
+  } else {
+    [lEl,rEl].forEach(e=>{e.classList.add('bad');setTimeout(()=>e.classList.remove('bad'),400);});
+  }
+}
+function resetImpact(){
+  impactMatched.clear();impactSelSide=null;impactSelIdx=null;impactCount=0;
+  buildImpact();document.getElementById('impactCount').textContent=0;render();
+}
+
+/* ════════════════════════════════════
+   MANAGE-UP SIMULATOR
+════════════════════════════════════ */
+function renderMU(){
+  const w=document.getElementById('muWrap');if(!w) return;
+  if(muDone){
+    w.innerHTML=`<div class="mu-done-box"><div class="mu-done-h">✓ All Three Scenarios Complete</div><div class="mu-done-p">Data defense, meeting protection, and blame deflection — three of the highest-stakes managing-up moments. You've practiced the moves. Now use them in the wild. Continue when ready.</div></div>`;
+    render();return;
+  }
+  const s=MU_SCENARIOS[muStage];
+  const dotsHtml=MU_SCENARIOS.map((_,i)=>{
+    const cls=i<muStage?'done':i===muStage?'active':'';
+    return `<div class="mu-step"><div class="mu-dot ${cls}">${i<muStage?'✓':i+1}</div>${i<MU_SCENARIOS.length-1?'<div class="mu-line"></div>':''}</div>`;
+  }).join('');
+  const lblsHtml=MU_SCENARIOS.map((_,i)=>`<div class="mu-lbl${i===muStage?' cur':''}">${_.name}</div>`).join('');
+  const optsHtml=s.opts.map((o,oi)=>{
+    let cls='';
+    if(muShowFb){if(oi===s.ans)cls='correct locked';else if(oi===muPicked)cls='wrong locked';else cls='locked';}
+    return `<div class="mu-opt ${cls}" onclick="pickMU(${oi})"><span class="mu-ltr">${String.fromCharCode(65+oi)}.</span>${o}</div>`;
+  }).join('');
+  const fbHtml=muShowFb&&muPicked!==null?`<div class="mu-fb show ${muPicked===s.ans?'good':'bad'}">${muPicked===s.ans?'✓ Right move:':'✗ Why that misses:'} ${s.why}</div>`:'';
+  const showAdv=muShowFb&&muPicked===s.ans;
+  const isLast=muStage===MU_SCENARIOS.length-1;
+  const advHtml=showAdv?`<div class="mu-adv show"><button class="btn btn-fill" onclick="muAdvance()"><span>${isLast?'Complete Scenarios →':'Next Scenario →'}</span></button></div>`:'';
+  w.innerHTML=`<div class="mu-prog">${dotsHtml}</div><div class="mu-lbl-row">${lblsHtml}</div>
+    <div class="mu-manager-card"><div class="mu-manager-tag">AE Manager — ${s.name}</div><div class="mu-manager-says">"${s.says}"</div></div>
+    <div class="mu-q">${s.q}</div><div class="mu-opts">${optsHtml}</div>${fbHtml}${advHtml}`;
+}
+function pickMU(oi){if(muShowFb)return;muPicked=oi;muShowFb=true;renderMU();}
+function muAdvance(){
+  if(muStage<MU_SCENARIOS.length-1){muStage++;muPicked=null;muShowFb=false;renderMU();}
+  else{muDone=true;renderMU();}
+}
+
+/* ════════════════════════════════════
+   BOUNDARY BUILDER
+════════════════════════════════════ */
+function buildBB(){
+  const w=document.getElementById('bbWrap');if(!w)return;
+  const slots=BB_SECTIONS.map((sec,si)=>{
+    const chosen=bbChosen[si];
+    if(chosen!==undefined){return `<span class="bb-slot filled">${sec.opts[chosen].txt}</span>`;}
+    return `<span class="bb-slot">${sec.slot}</span>`;
+  });
+  const previewHtml=`<div class="bb-preview">
+    <div class="bb-prev-tag">Boundary Script Preview</div>
+    <div class="bb-prev-body">${slots.join(' ')}</div>
+  </div>`;
+  const sectionsHtml=BB_SECTIONS.map((sec,si)=>`
+    <div style="margin-bottom:18px">
+      <div class="bb-sec-lbl">${sec.label}</div>
+      <div class="bb-choices">${sec.opts.map((o,oi)=>{
+        let cls='';
+        if(bbSubmitted){if(o.correct)cls='correct locked';else if(bbChosen[si]===oi&&!o.correct)cls='wrong-reveal locked';else cls='locked';}
+        else if(bbChosen[si]===oi)cls='chosen';
+        return `<button class="bb-choice ${cls}" onclick="pickBB(${si},${oi})">${o.txt}</button>`;
+      }).join('')}</div>
+    </div>
+  `).join('');
+  const submitHtml=bbSubmitted?'':`<div class="bb-submit"><button class="btn btn-fill" onclick="submitBB()"><span>Confirm Script →</span></button></div>`;
+  const resultHtml=`<div class="bb-result ${bbSubmitted&&bbPassed?'show':''}">
+    <div class="bb-result-h">✓ Boundary Script Built Correctly</div>
+    <div class="bb-result-p">Commitment first. Specific constraint second. Deadline close. This is the structure that protects your time without damaging the relationship. Continue when ready.</div>
+  </div>`;
+  const failHtml=`<div class="bb-fail ${bbSubmitted&&!bbPassed?'show':''}">
+    <div style="font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--coral);margin-bottom:6px">NOT QUITE</div>
+    <div style="font-family:var(--serif);font-size:14px;color:var(--black);line-height:1.65">The correct choices are highlighted above. <button style="background:none;border:none;cursor:pointer;font-family:var(--serif);font-size:14px;text-decoration:underline;color:var(--emerald)" onclick="resetBB()">Try again.</button></div>
+  </div>`;
+  w.innerHTML=previewHtml+`<div class="bb-sections">${sectionsHtml}</div>`+submitHtml+resultHtml+failHtml;
+}
+function pickBB(si,oi){if(bbSubmitted)return;bbChosen[si]=oi;buildBB();render();}
+function submitBB(){
+  bbSubmitted=true;
+  bbPassed=BB_SECTIONS.every((s,i)=>bbChosen[i]!==undefined&&s.opts[bbChosen[i]].correct);
+  buildBB();render();
+}
+function resetBB(){bbSubmitted=false;bbPassed=false;bbChosen={};buildBB();render();}
+
+/* ════════════════════════════════════
+   QUIZ
+════════════════════════════════════ */
+function buildQuiz(){
+  document.getElementById('quizBody').innerHTML=QUIZ.map((q,qi)=>`
+    <div class="q-block">
+      <div class="q-num">Question ${qi+1} of ${QUIZ.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-opts">${q.opts.map((o,oi)=>`<button class="q-opt" id="qo${qi}_${oi}" onclick="pickOpt(${qi},${oi})">${o}</button>`).join('')}</div>
+    </div>
+  `).join('');
+}
+function pickOpt(qi,oi){
+  if(qSubmitted)return;
+  QUIZ[qi].opts.forEach((_,i)=>document.getElementById(`qo${qi}_${i}`).classList.remove('chosen'));
+  document.getElementById(`qo${qi}_${oi}`).classList.add('chosen');
+  qAns[qi]=oi;render();
+}
+function submitQuiz(){
+  qSubmitted=true;let correct=0;
+  QUIZ.forEach((q,qi)=>{
+    const chosen=qAns[qi];
+    q.opts.forEach((_,oi)=>{
+      const el=document.getElementById(`qo${qi}_${oi}`);
+      el.classList.add('locked');el.classList.remove('chosen');
+      if(oi===q.ans)el.classList.add('correct');
+      else if(oi===chosen&&chosen!==q.ans)el.classList.add('wrong-pick');
+    });
+    if(chosen===q.ans)correct++;
+  });
+  qPassed=correct>=3;
+  const b=document.getElementById('quizBanner');
+  b.className='quiz-banner show '+(qPassed?'pass':'fail');
+  b.textContent=qPassed?`✓ ${correct} / ${QUIZ.length} correct — cleared to continue.`:`${correct} / ${QUIZ.length} correct — need 3 to pass. Review and try again.`;
+  render();
+}
+function retryQuiz(){
+  qSubmitted=false;qPassed=false;qAns={};
+  document.getElementById('quizBanner').className='quiz-banner';
+  buildQuiz();render();
+}
+
+/* ════════════════════════════════════
+   RENDER
+════════════════════════════════════ */
+const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:4,8:4,9:5};
+function canContinue(){
+  if(cur===2) return archFlipped.size===10;
+  if(cur===4) return impactCount===5;
+  if(cur===6) return muDone;
+  if(cur===7) return bbSubmitted&&bbPassed;
+  if(cur===8){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  return true;
+}
+function getHint(){
+  const h={
+    1:"You can't navigate what you haven't named.",
+    2:`${archFlipped.size} / 10 revealed — flip every card`,
+    3:"Name the cost. Then address it.",
+    4:`${impactCount} / 5 matched`,
+    5:"Managing up is an action, not an attitude.",
+    6:muDone?'✓ All scenarios complete — continue below.':`Scenario ${muStage+1} of 3 — ${MU_SCENARIOS[muStage]?.name||''}`,
+    7:!bbSubmitted?`${Object.keys(bbChosen).length} / 3 components chosen`:bbPassed?'✓ Script confirmed — continue below.':'Review the correct choices above.',
+    8:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
+    9:"The templates only work if you actually schedule the meeting.",
+  };
+  return h[cur]||'';
+}
+function getNextLabel(){
+  if(cur===8&&!qSubmitted)return 'Submit Answers';
+  if(cur===8&&!qPassed)return 'Try Again →';
+  if(cur===9)return 'Finish Lesson →';
+  return 'Continue →';
+}
+function render(){
+  const sec=SEC[cur];
+  document.getElementById('progLabel').textContent=sec?`Section 0${sec}`:'Lesson 3.3';
+  const pct=cur===0?0:Math.round((cur/(TOTAL-1))*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  ['nav1','nav2','nav3','nav4','nav5'].forEach((id,i)=>
+    document.getElementById(id).classList.toggle('active',SEC[cur]===i+1));
+  const hide=cur===0||cur===TOTAL-1;
+  document.getElementById('bottomnav').style.display=hide?'none':'flex';
+  if(hide)return;
+  document.getElementById('hint').textContent=getHint();
+  document.getElementById('btnNextLabel').textContent=getNextLabel();
+  document.getElementById('btnBack').style.display=cur<=1?'none':'block';
+  document.getElementById('btnNext').disabled=!canContinue();
+}
+
+init();
+</script>
+</body>
+</html>

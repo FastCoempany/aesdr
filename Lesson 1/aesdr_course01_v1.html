@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR — Course 1.1: Creating Structure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --white:   #FFFFFF;
+  --black:   #000000;
+  --mid:     #636060;
+  --lite:    #F2EEE9;
+  --lite2:   #E5E1DC;
+  --amber:   #D94F00;
+  --cobalt:  #0038FF;
+  --cob-lt:  rgba(0,56,255,0.07);
+  --green:   #00B85A;
+  --grn-lt:  rgba(0,184,90,0.09);
+  --coral:   #FF3200;
+  --cor-lt:  rgba(255,50,0,0.07);
+  --acid:    #C8FF00;
+  --line:    rgba(0,0,0,0.08);
+  --line2:   rgba(0,0,0,0.15);
+  --iris:    linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#FFD600 34%,#00E5A0 51%,#0099FF 68%,#7B2FFF 85%,#FF006E 100%);
+  --display: 'Abril Fatface', Georgia, serif;
+  --serif:   'Cormorant Garamond', Georgia, serif;
+  --cond:    'Barlow Condensed', sans-serif;
+  --mono:    'DM Mono', monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--white);color:var(--black);font-family:var(--cond);overflow:hidden}
+
+/* ── APP GRID ── */
+.app{display:grid;grid-template-columns:1fr 234px;grid-template-rows:52px 1fr 60px;height:100vh}
+
+/* ── TOPBAR ── */
+.topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:2px solid var(--black);background:var(--white);z-index:20}
+.brand{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--black)}
+.top-right{display:flex;align-items:center;gap:14px}
+.prog-label{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--mid);text-transform:uppercase}
+.prog-track{width:80px;height:2px;background:var(--lite2)}
+.prog-fill{height:100%;background:var(--iris);background-size:200% 100%;animation:iris 3s linear infinite;transition:width .8s cubic-bezier(.4,0,.2,1)}
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+
+/* ── MAIN / SIDEBAR / BOTTOMNAV ── */
+.main{overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;background:var(--white);scrollbar-width:none}
+.main::-webkit-scrollbar{display:none}
+.sidebar{border-left:2px solid var(--black);padding:32px 20px;overflow-y:auto;scrollbar-width:none;background:var(--white)}
+.sidebar::-webkit-scrollbar{display:none}
+.sb-label{font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--mid);margin-bottom:24px}
+.sb-item{padding:16px 0;border-bottom:1px solid var(--line);cursor:pointer;position:relative;transition:all .2s}
+.sb-item:first-of-type{border-top:1px solid var(--line)}
+.sb-tag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--mid);margin-bottom:7px;text-transform:uppercase;transition:color .2s}
+.sb-name{font-family:var(--cond);font-size:12px;font-weight:700;color:var(--mid);line-height:1.4;text-transform:uppercase;letter-spacing:.04em;transition:color .2s}
+.sb-item.active .sb-tag{color:var(--amber)}
+.sb-item.active .sb-name{color:var(--black)}
+.sb-item.active::before{content:'';position:absolute;left:-20px;top:0;bottom:0;width:3px;background:var(--amber)}
+.sb-item:hover .sb-name{color:var(--black)}
+.bottomnav{grid-column:1/2;display:flex;align-items:center;justify-content:space-between;padding:0 56px;border-top:2px solid var(--black);background:var(--white)}
+.nav-hint{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--mid);font-style:italic}
+.nav-btns{display:flex;gap:8px}
+.btn{font-family:var(--cond);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:10px 22px;border:2px solid var(--black);background:transparent;color:var(--black);cursor:pointer;transition:all .15s}
+.btn:hover{background:var(--black);color:var(--white)}
+.btn-fill{background:var(--black);color:var(--white);position:relative;overflow:hidden}
+.btn-fill::before{content:'';position:absolute;inset:0;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;opacity:0;transition:opacity .2s}
+.btn-fill:hover::before{opacity:1}
+.btn-fill:hover{color:var(--black)}
+.btn-fill span{position:relative;z-index:1}
+.btn-fill:disabled,.btn-fill:disabled:hover{opacity:.28;cursor:not-allowed;background:var(--black);color:var(--white)}
+.btn-fill:disabled::before,.btn-fill:disabled:hover::before{display:none}
+
+/* ── SCREENS ── */
+.screen{display:none;flex-direction:column;flex:1;animation:up .42s cubic-bezier(.22,1,.36,1) both}
+.screen.active{display:flex}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── COVER ── */
+.cover{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.cvl{background:var(--amber);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.cvl::after{content:'';position:absolute;bottom:-80px;right:-80px;width:320px;height:320px;border-radius:50%;background:rgba(255,255,255,0.04);pointer-events:none}
+.cv-tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.45)}
+.cv-big{font-family:var(--display);font-size:clamp(36px,4.5vw,64px);line-height:.95;color:#fff}
+.cv-tagline{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.62);line-height:1.7;border-top:1px solid rgba(255,255,255,0.14);padding-top:18px}
+.cvr{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;margin-bottom:16px;display:inline-block;background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:iris 3s linear infinite}
+.hero-h{font-family:var(--display);font-size:clamp(28px,3.8vw,52px);line-height:.97;color:var(--black);margin-bottom:20px;letter-spacing:-.01em}
+.hero-h .irisTxt{background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:iris 3s linear infinite}
+.cv-list{list-style:none;margin-bottom:36px}
+.cv-list li{font-family:var(--cond);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mid);display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.cv-list li:first-child{border-top:1px solid var(--line)}
+.cl-n{font-family:var(--mono);font-size:9px;background:var(--black);color:var(--white);padding:2px 6px;flex-shrink:0}
+
+/* ── SHARED CONTENT HEADER ── */
+.lh{padding:44px 56px 0;position:relative;overflow:hidden}
+.lh-stripe{position:absolute;top:0;left:0;right:0;height:4px;background:var(--iris);background-size:200% 100%;animation:iris 4s linear infinite}
+.ghost-n{position:absolute;right:48px;top:-20px;font-family:var(--display);font-size:200px;line-height:1;color:var(--lite);pointer-events:none;user-select:none}
+.sec-eye{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--amber);margin-bottom:14px;display:inline-block}
+.lh-title{font-family:var(--display);font-size:clamp(22px,3.2vw,46px);line-height:1.05;color:var(--black);max-width:640px}
+.lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
+.lh-sub b{color:var(--black)}
+.lb{padding:24px 56px 0}
+.lp{font-family:var(--serif);font-size:16px;line-height:1.8;color:var(--black);max-width:580px;margin-bottom:14px}
+.kp{list-style:none;max-width:580px;margin:14px 0}
+.kp li{font-family:var(--serif);font-size:15px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px;align-items:flex-start}
+.kp li:first-child{border-top:1px solid var(--line)}
+.kp-n{font-family:var(--mono);font-size:9px;color:var(--mid);min-width:22px;padding-top:3px;flex-shrink:0}
+
+/* ── LIE BOX (reusable) ── */
+.lie{max-width:580px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px}
+.lie-tab{position:absolute;top:0;left:0;font-family:var(--cond);font-size:9px;letter-spacing:.24em;font-weight:800;text-transform:uppercase;padding:3px 10px;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;color:var(--black)}
+.lie-q{font-family:var(--serif);font-style:italic;font-size:18px;color:#fff;line-height:1.5;margin:12px 0 10px}
+.lie-a{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
+
+/* ── DAY 1 CHECKLIST ── */
+.cl-area{padding:20px 56px 44px;max-width:660px}
+.cl-item{display:flex;align-items:flex-start;gap:18px;padding:18px 20px;border:1px solid var(--line2);margin-bottom:8px;cursor:pointer;transition:all .2s;background:var(--white)}
+.cl-item:hover:not(.done){border-color:var(--amber);background:rgba(217,79,0,0.04)}
+.cl-item.done{background:var(--acid);border-color:transparent}
+.cl-box{width:20px;height:20px;border:2px solid var(--line2);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .2s}
+.cl-item.done .cl-box{background:var(--black);border-color:var(--black)}
+.cl-check{display:none;color:#fff;font-size:12px;font-weight:800}
+.cl-item.done .cl-check{display:block}
+.cl-label{font-family:var(--cond);font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--black)}
+.cl-desc{font-family:var(--serif);font-size:13px;color:var(--mid);line-height:1.6;margin-top:5px;font-style:italic}
+
+/* ── WEEK TIMELINE ── */
+.tl-wrap{padding:12px 56px 44px;max-width:680px}
+.tl-item{display:flex;position:relative;margin-bottom:0}
+.tl-item::before{content:'';position:absolute;left:16px;top:34px;bottom:0;width:1px;background:var(--line2);z-index:0}
+.tl-item:last-child::before{display:none}
+.tl-dot-col{width:33px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;padding-top:14px;position:relative;z-index:1}
+.tl-dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--line2);background:var(--white);transition:all .25s}
+.tl-item.open .tl-dot{background:var(--amber);border-color:var(--amber);box-shadow:0 0 0 3px rgba(217,79,0,0.15)}
+.tl-card{flex:1;margin-left:12px;margin-bottom:12px;border:1px solid var(--line2);background:var(--white);cursor:pointer;transition:border-color .2s;overflow:hidden}
+.tl-card:hover{border-color:var(--amber)}
+.tl-item.open .tl-card{border-color:var(--amber)}
+.tl-hdr{padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+.tl-dtag{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--mid);transition:color .2s}
+.tl-item.open .tl-dtag{color:var(--amber)}
+.tl-dname{font-family:var(--cond);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--black)}
+.tl-arr{font-size:16px;color:var(--mid);transition:transform .3s}
+.tl-item.open .tl-arr{transform:rotate(90deg);color:var(--amber)}
+.tl-body{max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.4,0,.2,1)}
+.tl-item.open .tl-body{max-height:400px}
+.tl-inner{padding:0 16px 16px}
+.tl-text{font-family:var(--serif);font-size:14px;color:var(--black);line-height:1.72;margin-bottom:12px}
+.tl-tasks{list-style:none}
+.tl-tasks li{font-family:var(--serif);font-size:13px;color:var(--mid);line-height:1.6;padding:7px 0;border-bottom:1px solid var(--line);display:flex;gap:10px}
+.tl-tasks li:last-child{border-bottom:none}
+.tl-tasks li::before{content:'→';color:var(--amber);flex-shrink:0}
+
+/* ── SCHEDULE BUILDER ── */
+.sched-wrap{padding:16px 56px 44px}
+.sched-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.sched-arena{display:grid;grid-template-columns:1fr 1fr;gap:0 44px;max-width:700px}
+.sched-col-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);padding-bottom:10px;border-bottom:2px solid var(--black);margin-bottom:10px}
+.sched-slot{border:1px dashed var(--line2);padding:13px 14px;margin-bottom:8px;min-height:50px;display:flex;align-items:center;gap:12px;transition:all .18s}
+.sched-slot.target{border-color:var(--cobalt);background:var(--cob-lt);cursor:pointer;border-style:solid}
+.sched-slot.target:hover{border-width:2px}
+.sched-slot.correct{border:2px solid var(--black);background:var(--acid);border-style:solid;cursor:default}
+.sched-slot.bad{border-color:var(--coral);border-style:solid;animation:shake .35s ease both}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.slot-time{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--mid);flex-shrink:0;min-width:86px}
+.slot-act{font-family:var(--cond);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--black)}
+.sched-tile{border:2px solid var(--line2);padding:13px 16px;margin-bottom:8px;cursor:pointer;transition:all .18s;background:var(--white);font-family:var(--cond);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--black);text-align:left;width:100%;display:block;line-height:1.3}
+.sched-tile:hover:not(.placed):not(.sel){border-color:var(--black)}
+.sched-tile.sel{border-color:var(--cobalt);background:var(--cobalt);color:#fff}
+.sched-tile.bad{border-color:var(--coral);background:var(--cor-lt);animation:shake .35s ease both}
+.sched-tile.placed{visibility:hidden;pointer-events:none}
+.sched-reset{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mid);background:none;border:none;cursor:pointer;text-decoration:underline;margin-top:4px}
+.sched-reset:hover{color:var(--black)}
+
+/* ── COLD CALL SIMULATOR ── */
+.cc-wrap{padding:0 0 44px}
+.cc-prog-wrap{margin:22px 56px 0;max-width:360px}
+.cc-dots{display:flex;align-items:center}
+.cc-dot-item{display:flex;align-items:center;flex:1}
+.cc-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--line2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;color:var(--mid);transition:all .25s;flex-shrink:0;background:var(--white)}
+.cc-dot.active{border-color:var(--cobalt);background:var(--cobalt);color:#fff}
+.cc-dot.done{border-color:var(--amber);background:var(--amber);color:#fff}
+.cc-line{flex:1;height:1px;background:var(--line2);margin:0 4px}
+.cc-lbls{display:flex;margin-top:6px}
+.cc-lbl{flex:1;font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);transition:color .2s}
+.cc-lbl.cur{color:var(--black)}
+.cc-ctx{margin:20px 56px 0;max-width:620px;background:var(--black);padding:18px 22px}
+.cc-ctx-tag{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);margin-bottom:8px}
+.cc-ctx-text{font-family:var(--serif);font-style:italic;font-size:15px;color:rgba(255,255,255,0.72);line-height:1.65}
+.cc-opts{display:flex;flex-direction:column;gap:8px;padding:16px 56px 0;max-width:660px}
+.cc-opt{padding:15px 20px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:14px;color:var(--black);text-align:left;cursor:pointer;transition:all .18s;line-height:1.55;position:relative}
+.cc-opt:hover:not(.locked){border-color:var(--black);background:var(--lite)}
+.cc-opt.correct{border-color:var(--green);background:var(--grn-lt);cursor:default}
+.cc-opt.wrong{border-color:var(--coral);background:var(--cor-lt);cursor:default}
+.cc-opt.locked{cursor:default}
+.cc-fb{font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--mid);margin-top:8px;padding:0 56px;max-width:660px;line-height:1.65;display:none}
+.cc-fb.show{display:block}
+.cc-fb.good{color:var(--green)}
+.cc-fb.bad{color:var(--coral)}
+.cc-advance{margin:16px 56px 0;display:none}
+.cc-advance.show{display:block}
+.cc-complete-box{margin:20px 56px 0;max-width:580px;background:var(--acid);padding:22px 22px 18px}
+.cc-complete-h{font-family:var(--cond);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--black);margin-bottom:8px}
+.cc-complete-p{font-family:var(--serif);font-size:14px;color:var(--mid);line-height:1.65;font-style:italic}
+
+/* ── QUIZ ── */
+.quiz-banner{margin:16px 56px 0;padding:12px 18px;font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.06em;border-left:4px solid var(--cobalt);background:var(--cob-lt);color:var(--black);display:none}
+.quiz-banner.show{display:block}
+.quiz-banner.pass{border-color:var(--green);background:var(--grn-lt)}
+.quiz-banner.fail{border-color:var(--coral);background:var(--cor-lt)}
+.quiz-body{padding:20px 56px 44px;display:flex;flex-direction:column;gap:28px}
+.q-num{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);margin-bottom:9px}
+.q-text{font-family:var(--display);font-size:clamp(13px,1.6vw,18px);color:var(--black);line-height:1.2;margin-bottom:13px}
+.q-opts{display:flex;flex-direction:column;gap:6px}
+.q-opt{padding:11px 16px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:14px;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.5}
+.q-opt:hover:not(.locked){border-color:var(--amber);background:rgba(217,79,0,0.05)}
+.q-opt.chosen{border-color:var(--amber);background:var(--amber);color:#fff}
+.q-opt.correct{border-color:var(--green);background:var(--grn-lt);color:var(--black)}
+.q-opt.wrong-pick{border-color:var(--coral);background:var(--cor-lt);color:var(--black)}
+.q-opt.locked{cursor:default}
+
+/* ── TOOLS ── */
+.tools-blk{padding:20px 56px 44px}
+.t-head{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--black);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--black)}
+.data-table{width:100%;max-width:600px;border-collapse:collapse;margin:0 0 30px}
+.data-table th{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;background:var(--black);color:var(--white);padding:9px 14px;text-align:left}
+.data-table td{font-family:var(--serif);font-size:14px;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--black);line-height:1.6;vertical-align:top}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:nth-child(even) td{background:var(--lite)}
+.hw-list{list-style:none;max-width:580px;margin-top:8px}
+.hw-list li{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.65;padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
+.hw-list li:first-child{border-top:1px solid var(--line)}
+.hw-box{width:14px;height:14px;border:2px solid var(--black);flex-shrink:0;margin-top:4px}
+
+/* ── COMPLETE ── */
+.comp{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.comp-l{background:var(--cobalt);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between}
+.comp-tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.38)}
+.comp-big{font-family:var(--display);font-size:clamp(44px,5.5vw,76px);line-height:.93;color:#fff}
+.comp-sub{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7;border-top:1px solid rgba(255,255,255,0.12);padding-top:18px}
+.comp-r{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.comp-h{font-family:var(--display);font-size:clamp(22px,2.8vw,40px);line-height:1.08;color:var(--black);margin-bottom:18px}
+.comp-p{font-family:var(--serif);font-size:15px;color:var(--black);max-width:380px;line-height:1.8;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="brand">AESDR</div>
+  <div class="top-right">
+    <span class="prog-label" id="progLabel">Course 1.1</span>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="main" id="main">
+
+  <!-- 0: COVER -->
+  <div class="screen active" id="s0">
+    <div class="cover" style="flex:1">
+      <div class="cvl">
+        <div class="cv-tag">AESDR · Course 1.1</div>
+        <div class="cv-big">Creating Structure in the AE/SDR Relationship</div>
+        <div class="cv-tagline">How to build a framework for success from Day 1 — so no one is guessing, ever.</div>
+      </div>
+      <div class="cvr">
+        <div class="eyebrow">What You'll Build</div>
+        <div class="hero-h">Structure<br><span class="irisTxt">drives results.</span></div>
+        <ul class="cv-list">
+          <li><span class="cl-n">01</span>The Day 1 Foundation Checklist</li>
+          <li><span class="cl-n">02</span>Daily & Weekly Alignment Structure</li>
+          <li><span class="cl-n">03</span>The Cold Call Practice Framework</li>
+        </ul>
+        <button class="btn btn-fill" onclick="go(1)"><span>Begin Course →</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1: WHY STRUCTURE FAILS -->
+  <div class="screen" id="s1">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">01</div>
+      <div class="sec-eye">Section 01 — The Foundation</div>
+      <div class="lh-title">Why Lack of Structure Kills SDR Success</div>
+    </div>
+    <div class="lb">
+      <p class="lp">Without structure, an SDR has no clear understanding of what's expected or where to focus. They end up guessing — which leads to poor results, frustration, and attrition. As an AE, building structure isn't optional. It's the job.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span>Confusion about priorities leads to unfocused outreach and missed opportunities that compound daily.</li>
+        <li><span class="kp-n">02</span>Disengagement follows when SDRs feel lost. Structure removes the guesswork before it becomes resentment.</li>
+        <li><span class="kp-n">03</span>The cost is never just performance — it's attrition. A struggling SDR who isn't supported leaves.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The AE's Responsibility</div>
+        <div class="lie-q">"Structure starts on Day 1. It starts with you."</div>
+        <div class="lie-a">Implement the framework. Align daily. Commit to the process — because no one else will build it for your SDR if you don't.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2: DAY 1 CHECKLIST -->
+  <div class="screen" id="s2">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">01</div>
+      <div class="sec-eye">Section 01 — Day 1 Blueprint</div>
+      <div class="lh-title">Day 1 Onboarding: Everything That Must Happen</div>
+      <div class="lh-sub"><b id="clCount">0</b> / 5 completed — check off each item to continue</div>
+    </div>
+    <div class="cl-area" id="clArea"></div>
+  </div>
+
+  <!-- 3: WEEK TIMELINE -->
+  <div class="screen" id="s3">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="sec-eye">Section 01 — Days 1 Through 5</div>
+      <div class="lh-title">The First Week, Day by Day</div>
+      <div class="lh-sub"><b id="tlCount">0</b> / 5 days revealed — open each day to continue</div>
+    </div>
+    <div class="tl-wrap" id="tlWrap"></div>
+  </div>
+
+  <!-- 4: SCHEDULE BUILDER -->
+  <div class="screen" id="s4">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">02</div>
+      <div class="sec-eye">Section 02 — Daily Structure</div>
+      <div class="lh-title">Build the Structured SDR Day</div>
+      <div class="lh-sub"><b id="schedCount">0</b> / 5 correctly placed</div>
+    </div>
+    <div class="sched-wrap">
+      <p class="sched-instr">Select an activity tile from the right column — then click the time slot where it belongs. All five must be correctly placed before you can continue.</p>
+      <div class="sched-arena">
+        <div>
+          <div class="sched-col-lbl">Time Slot</div>
+          <div id="schedSlots"></div>
+        </div>
+        <div>
+          <div class="sched-col-lbl">Activity — Select One</div>
+          <div id="schedTiles"></div>
+          <button class="sched-reset" onclick="resetSched()">Reset board</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5: COLD CALL SIMULATOR -->
+  <div class="screen" id="s5">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">03</div>
+      <div class="sec-eye">Section 03 — Cold Call Practice</div>
+      <div class="lh-title">The Cold Call Role-Play Simulator</div>
+    </div>
+    <div class="cc-wrap" id="ccWrap"></div>
+  </div>
+
+  <!-- 6: QUIZ -->
+  <div class="screen" id="s6">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="sec-eye">Section 03 — Knowledge Check</div>
+      <div class="lh-title">Test Your Understanding</div>
+    </div>
+    <div class="quiz-banner" id="quizBanner"></div>
+    <div class="quiz-body" id="quizBody"></div>
+  </div>
+
+  <!-- 7: TOOLS + HOMEWORK -->
+  <div class="screen" id="s7">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">04</div>
+      <div class="sec-eye">Section 04 — Tools & Homework</div>
+      <div class="lh-title">The Templates That Make Structure Real</div>
+    </div>
+    <div class="tools-blk">
+      <div style="margin-top:20px">
+        <div class="t-head">The 30-Minute Weekly AE/SDR Alignment Meeting</div>
+        <table class="data-table">
+          <thead><tr><th>Agenda Item</th><th>What to Cover</th></tr></thead>
+          <tbody>
+            <tr><td>Review Last Week</td><td>Walk through activities and actual results. What happened, what didn't — no editing.</td></tr>
+            <tr><td>Troubleshoot Roadblocks</td><td>What's working? Where does the SDR need specific guidance? Be concrete.</td></tr>
+            <tr><td>Set Next Week's Goals</td><td>Lock in call volume, connect targets, and practice session commitments — in writing.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="t-head">Daily SDR Reporting Template</div>
+        <table class="data-table">
+          <thead><tr><th>Field</th><th>What to Log</th></tr></thead>
+          <tbody>
+            <tr><td>Calls Made</td><td>Total dials, connects, and outcomes from today's block.</td></tr>
+            <tr><td>Top Challenge</td><td>The single hardest thing about today's calls — not a list, one thing.</td></tr>
+            <tr><td>Feedback Received</td><td>What the AE said in the debrief and what you'll adjust tomorrow.</td></tr>
+            <tr><td>Tomorrow's Focus</td><td>One specific improvement for the next session. Written commitment.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="t-head">Actionable Homework</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>SDRs: Write out the 3 most common questions you hear about the product. Practice answering them in 3 minutes flat with your AE today.</li>
+          <li><div class="hw-box"></div>SDRs: Log 10 cold calls per day this week. Bring your top challenge — one specific thing — to each feedback session.</li>
+          <li><div class="hw-box"></div>AEs: Schedule 15 minutes daily for call review. Pick one call, give one specific, actionable adjustment. Not five. One.</li>
+          <li><div class="hw-box"></div>AEs: Run the Weekly Alignment Agenda this Friday. Pull last week's numbers before the meeting — not during it.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8: COMPLETE -->
+  <div class="screen" id="s8">
+    <div class="comp" style="flex:1">
+      <div class="comp-l">
+        <div class="comp-tag">Course 1.1 — Complete</div>
+        <div class="comp-big">Structure<br>drives<br>results.</div>
+        <div class="comp-sub">You have the blueprint. The only question left is whether you implement it on Day 1 — or wait and wonder why things aren't working on Day 30.</div>
+      </div>
+      <div class="comp-r">
+        <div class="eyebrow">Mission Accomplished</div>
+        <div class="comp-h">Now go build the structure your SDR actually needs.</div>
+        <p class="comp-p">Product role-plays. Daily call blocks. End-of-day debriefs. Weekly alignment meetings. None of it is complicated — all of it requires showing up consistently.</p>
+        <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
+        <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Course</span></button></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-label">Sections</div>
+  <div class="sb-item" id="nav1" onclick="go(1)">
+    <div class="sb-tag">Section 01</div>
+    <div class="sb-name">The Foundation</div>
+  </div>
+  <div class="sb-item" id="nav2" onclick="go(4)">
+    <div class="sb-tag">Section 02</div>
+    <div class="sb-name">Daily Structure</div>
+  </div>
+  <div class="sb-item" id="nav3" onclick="go(5)">
+    <div class="sb-tag">Section 03</div>
+    <div class="sb-name">Cold Call Practice</div>
+  </div>
+  <div class="sb-item" id="nav4" onclick="go(7)">
+    <div class="sb-tag">Section 04</div>
+    <div class="sb-name">Tools & Homework</div>
+  </div>
+</aside>
+
+<!-- BOTTOM NAV -->
+<footer class="bottomnav" id="bottomnav" style="display:none">
+  <span class="nav-hint" id="hint"></span>
+  <div class="nav-btns">
+    <button class="btn" id="btnBack" onclick="back()" style="display:none">← Back</button>
+    <button class="btn btn-fill" id="btnNext" onclick="handleNext()"><span id="btnNextLabel">Continue →</span></button>
+  </div>
+</footer>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   DATA
+══════════════════════════════════════════ */
+
+const CHECKLIST = [
+  { label:"Set SDR Expectations",         desc:"Define key responsibilities, daily focus areas, and what success actually looks like in week one. Be specific." },
+  { label:"Product Overview — 1 Hour",    desc:"Shadow a live or recorded AE demo. Focus on key questions SDRs need to answer in conversations — not just features." },
+  { label:"Tool & System Walkthrough",    desc:"CRM, outreach tools, and call logging — hands-on, not a slide deck. They should log their first call before EOD." },
+  { label:"Establish Day 1 Daily Goals",  desc:"Start achievable: 10 calls and 5 practice email drafts. Build confidence before you build volume." },
+  { label:"Set the Debrief Habit",        desc:"Walk through the end-of-day structure now: What worked? What didn't? What changes tomorrow? Do this on Day 1." },
+];
+
+const DAYS = [
+  {
+    day:"Day 1", title:"Set the Foundation",
+    text:"Day 1 is about clarity, not output. The SDR should leave knowing exactly what's expected, where to find everything, and what tomorrow looks like.",
+    tasks:["Set expectations: responsibilities, daily focus, definition of week-one success","Product overview: shadow a demo, identify the 5 questions that matter most","Walk through every tool: CRM, outreach platform, call logging","Assign achievable Day 1 goals: 10 dials, 5 practice emails"]
+  },
+  {
+    day:"Day 2", title:"Product Conversations Begin",
+    text:"Move from passive learning to active dialogue. The goal isn't product mastery — it's the ability to hold a 3-minute conversation that earns the next one.",
+    tasks:["30-min daily product conversation practice with AE","Role-play format: AE plays prospect, SDR responds to live questions","Focus on moving from monologue to actual dialogue","End-of-day debrief: what questions stumped the SDR?"]
+  },
+  {
+    day:"Day 3", title:"Cold Call Intro Mastery",
+    text:"The intro is the most important 10 seconds of the call. Master it before adding anything else. Volume means nothing if the open doesn't land.",
+    tasks:["1-hour cold call intro practice block with AE listening","AE provides specific, written feedback after each attempt","Drill format: intro only, no full call yet","Target: 15 clean intro attempts with feedback logged on every one"]
+  },
+  {
+    day:"Day 4", title:"Engage & Close Practice",
+    text:"Stack the engage and close onto the intro. Now we're building a full call sequence — but keep each piece tight before combining them.",
+    tasks:["Combine intro + engage + close into full practice calls","Engage: problem-based question only — no pitching yet","Close: specific time, specific person, specific ask","Debrief: identify the SDR's weakest stage by name"]
+  },
+  {
+    day:"Day 5", title:"Full Call Simulation + Week Debrief",
+    text:"Run three full simulated calls — AE as prospect, SDR as rep. Then do a full week review. What improved? What carries into next week?",
+    tasks:["3 full cold call simulations: AE plays real-world prospect","AE delivers call-by-call written feedback, not just verbal","Week debrief: what worked, what didn't, what adjusts Monday","Set Week 2 goals: call volume, connects, practice sessions — in writing"]
+  },
+];
+
+const SCHED = [
+  { time:"8:00–8:30 AM",   act:"Daily huddle with AE",          goal:"Align on goals and key focus points." },
+  { time:"8:30–10:30 AM",  act:"Cold call blocks",              goal:"Target: 25 calls, 2–3 connects." },
+  { time:"10:30–11:30 AM", act:"Product conversation practice", goal:"Role-play with AE or peer." },
+  { time:"1:00–3:00 PM",   act:"Outreach & follow-ups",         goal:"Email, LinkedIn, and call activity." },
+  { time:"3:00–4:00 PM",   act:"AE/SDR feedback session",       goal:"Debrief on calls and next steps." },
+];
+const TILE_ORDER = [2, 4, 0, 3, 1]; // display order (SCHED indices, scrambled)
+
+const CC = [
+  {
+    name:"The Intro",
+    ctx:"You've just connected. You have about 8 seconds before they start looking for the exit. The intro is the most critical moment of the entire call — and it only gets one chance.",
+    opts:[
+      "Hi [Name], this is [Your Name] from [Company]. We're a leading provider of SDR enablement tools and I wanted to reach out because—",
+      "Hi [Name] — I'll be straight with you, this is a cold call. Worth 30 seconds?",
+      "Hey [Name], I was given your name by my manager who thought you might be a good fit for what we offer—",
+    ],
+    ans: 1,
+    why:[
+      "Opens with a company-first monologue. The prospect checks out in five words. You've announced a pitch, not a conversation.",
+      "Direct, honest, gets a micro-commitment. You've respected their time and earned the right to the next 30 seconds.",
+      "Passive and aimless. No ownership, no reason to stay on the line. The prospect has zero idea why they should care.",
+    ]
+  },
+  {
+    name:"The Engage",
+    ctx:"They said yes. Now you need to open a real conversation — not deliver a pitch. The goal of the engage step is to surface a real problem, not explain your solution.",
+    opts:[
+      "We help SDRs hit quota by providing structured coaching tools. Is that something you're focused on this quarter?",
+      "Most SDR managers I talk to are frustrated that their reps know the product cold but still can't actually sell it. Is that a tension you're seeing?",
+      "Before I go further — can I tell you a bit about what we do and why companies like yours find it valuable?",
+    ],
+    ans: 1,
+    why:[
+      "Too vague. Every SDR tool says this. Nothing specific enough here to trigger real engagement from a busy manager.",
+      "Specific, problem-led, and invites them to share their reality. This is what real discovery sounds like.",
+      "Asking permission to monologue is the fastest way to end the call. You just handed them the exit door.",
+    ]
+  },
+  {
+    name:"The Close",
+    ctx:"The conversation went well. They've engaged with the problem. Now you need to land a next step — something concrete they can actually say yes to. This is the moment most SDRs lose.",
+    opts:[
+      "This sounds like it might be relevant — should I send you some information to look over when you get a chance?",
+      "It sounds like this is worth a deeper conversation. What does Thursday look like for a 20-minute call with my AE?",
+      "Would you be open to learning more about how we've worked with teams like yours?",
+    ],
+    ans: 1,
+    why:[
+      "You've handed control to their inbox. 'When you get a chance' means never. This kills all the momentum you built.",
+      "Specific time. Specific person. Specific duration. You've given them something concrete and easy to commit to.",
+      "A yes/no question with an obvious escape hatch. Almost always ends in 'sure, send me something' — a polite no.",
+    ]
+  },
+];
+
+const QUIZ = [
+  {
+    q:"What is the PRIMARY reason zero structure hurts SDR performance?",
+    opts:["Cold calls become too long and unfocused","SDRs end up guessing, leading to poor results, frustration, and attrition","AEs lose trust in their SDR's product knowledge quickly","CRM data becomes unreliable and pipeline projections fail"],
+    ans: 1
+  },
+  {
+    q:"In the cold call framework, what is the ENGAGE step specifically designed to do?",
+    opts:["Explain the product's key differentiators clearly and concisely","Secure the prospect's contact information for follow-up","Ask a specific, problem-based question to surface a real issue","Schedule the meeting before the prospect has time to object"],
+    ans: 2
+  },
+  {
+    q:"According to the Day 1 blueprint, the product overview should focus on:",
+    opts:["Every feature of the product in exhaustive detail","How the product compares to the top three competitors","Key questions SDRs need to be able to answer in live conversations","The technical specifications and integration requirements for the platform"],
+    ans: 2
+  },
+  {
+    q:"In the 30-minute weekly AE/SDR alignment meeting, what comes LAST?",
+    opts:["Review last week's activities and actual results","Troubleshoot key roadblocks and what's working","Set next week's specific goals and commitments","Run a live product knowledge spot-check"],
+    ans: 2
+  },
+];
+
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
+const TOTAL = 9;
+let cur = 0;
+
+let clDone     = new Set();
+let tlOpen     = new Set();
+let schedSel   = null;
+let schedDone  = {};
+let ccStage    = 0;
+let ccDoneAll  = false;
+let ccPicked   = null;
+let ccShowFb   = false;
+let qAns       = {};
+let qSubmitted = false;
+let qPassed    = false;
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+function init(){
+  buildChecklist();
+  buildTimeline();
+  buildSched();
+  renderCC();
+  buildQuiz();
+  render();
+}
+
+/* ══════════════════════════════════════════
+   NAV
+══════════════════════════════════════════ */
+function go(n){
+  document.getElementById('s'+cur).classList.remove('active');
+  cur=n;
+  document.getElementById('s'+cur).classList.add('active');
+  document.getElementById('main').scrollTop=0;
+  render();
+}
+function next(){ if(cur<TOTAL-1) go(cur+1); }
+function back(){ if(cur>0) go(cur-1); }
+function handleNext(){
+  if(cur===6){
+    if(!qSubmitted) submitQuiz();
+    else if(qPassed) next();
+    else retryQuiz();
+  } else { next(); }
+}
+
+/* ══════════════════════════════════════════
+   CHECKLIST
+══════════════════════════════════════════ */
+function buildChecklist(){
+  document.getElementById('clArea').innerHTML = CHECKLIST.map((c,i)=>`
+    <div class="cl-item" id="cl${i}" onclick="toggleCheck(${i})">
+      <div class="cl-box"><span class="cl-check">✓</span></div>
+      <div>
+        <div class="cl-label">${c.label}</div>
+        <div class="cl-desc">${c.desc}</div>
+      </div>
+    </div>
+  `).join('');
+}
+function toggleCheck(i){
+  const el=document.getElementById('cl'+i);
+  if(clDone.has(i)){ clDone.delete(i); el.classList.remove('done'); }
+  else { clDone.add(i); el.classList.add('done'); }
+  document.getElementById('clCount').textContent=clDone.size;
+  render();
+}
+
+/* ══════════════════════════════════════════
+   TIMELINE
+══════════════════════════════════════════ */
+function buildTimeline(){
+  document.getElementById('tlWrap').innerHTML = DAYS.map((d,i)=>`
+    <div class="tl-item" id="tl${i}" onclick="toggleDay(${i})">
+      <div class="tl-dot-col"><div class="tl-dot"></div></div>
+      <div class="tl-card">
+        <div class="tl-hdr">
+          <div>
+            <div class="tl-dtag">${d.day}</div>
+            <div class="tl-dname">${d.title}</div>
+          </div>
+          <div class="tl-arr">›</div>
+        </div>
+        <div class="tl-body">
+          <div class="tl-inner">
+            <p class="tl-text">${d.text}</p>
+            <ul class="tl-tasks">${d.tasks.map(t=>`<li>${t}</li>`).join('')}</ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+function toggleDay(i){
+  const el=document.getElementById('tl'+i);
+  el.classList.toggle('open');
+  if(el.classList.contains('open')) tlOpen.add(i);
+  document.getElementById('tlCount').textContent=tlOpen.size;
+  render();
+}
+
+/* ══════════════════════════════════════════
+   SCHEDULE BUILDER
+══════════════════════════════════════════ */
+function buildSched(){
+  document.getElementById('schedSlots').innerHTML = SCHED.map((s,i)=>`
+    <div class="sched-slot" id="slot${i}" onclick="pickSlot(${i})">
+      <span class="slot-time">${s.time}</span>
+      <span class="slot-act" id="slotAct${i}"></span>
+    </div>
+  `).join('');
+  document.getElementById('schedTiles').innerHTML = TILE_ORDER.map(si=>`
+    <button class="sched-tile" id="tile${si}" onclick="pickTile(${si})">${SCHED[si].act}</button>
+  `).join('');
+}
+function pickTile(si){
+  if(schedDone[si]) return;
+  if(schedSel===si){ schedSel=null; renderSchedUI(); return; }
+  schedSel=si;
+  renderSchedUI();
+}
+function pickSlot(idx){
+  if(schedDone[idx]) return;
+  if(schedSel===null) return;
+  if(schedSel===idx){
+    // Correct
+    schedDone[idx]=true;
+    const sl=document.getElementById('slot'+idx);
+    sl.classList.remove('target','bad');
+    sl.classList.add('correct');
+    document.getElementById('slotAct'+idx).textContent=SCHED[idx].act;
+    document.getElementById('tile'+schedSel).classList.add('placed');
+    schedSel=null;
+    document.getElementById('schedCount').textContent=Object.keys(schedDone).length;
+    renderSchedUI(); render();
+  } else {
+    // Wrong
+    const sl=document.getElementById('slot'+idx);
+    const tl=document.getElementById('tile'+schedSel);
+    sl.classList.add('bad');
+    tl.classList.add('bad');
+    schedSel=null;
+    setTimeout(()=>{ sl.classList.remove('bad'); tl.classList.remove('bad'); renderSchedUI(); },400);
+  }
+}
+function renderSchedUI(){
+  SCHED.forEach((_,i)=>{
+    const el=document.getElementById('slot'+i);
+    if(!el||schedDone[i]) return;
+    el.classList.toggle('target',schedSel!==null);
+  });
+  TILE_ORDER.forEach(si=>{
+    const el=document.getElementById('tile'+si);
+    if(!el) return;
+    el.classList.toggle('sel',schedSel===si);
+  });
+}
+function resetSched(){
+  schedSel=null; schedDone={};
+  buildSched();
+  document.getElementById('schedCount').textContent=0;
+  render();
+}
+
+/* ══════════════════════════════════════════
+   COLD CALL SIMULATOR
+══════════════════════════════════════════ */
+function renderCC(){
+  const w=document.getElementById('ccWrap');
+  if(!w) return;
+
+  if(ccDoneAll){
+    w.innerHTML=`
+      <div class="cc-complete-box" style="margin-top:22px">
+        <div class="cc-complete-h">✓ All Three Stages Complete</div>
+        <div class="cc-complete-p">Intro. Engage. Close. You've worked through the complete cold call structure — the framework that turns a connection into a conversation, and a conversation into a meeting. Hit Continue when you're ready.</div>
+      </div>
+    `;
+    render(); return;
+  }
+
+  const s=CC[ccStage];
+
+  // Progress dots
+  const dotsHtml=CC.map((c,i)=>{
+    const cls=i<ccStage?'done':i===ccStage?'active':'';
+    const isLast=i===CC.length-1;
+    return `<div class="cc-dot-item">
+      <div class="cc-dot ${cls}">${i<ccStage?'✓':i+1}</div>
+      ${!isLast?'<div class="cc-line"></div>':''}
+    </div>`;
+  }).join('');
+
+  const lblsHtml=CC.map((c,i)=>
+    `<div class="cc-lbl${i===ccStage?' cur':''}">${c.name}</div>`
+  ).join('');
+
+  // Options
+  const optsHtml=s.opts.map((o,oi)=>{
+    let cls='';
+    if(ccShowFb){
+      if(oi===s.ans) cls='correct locked';
+      else if(oi===ccPicked) cls='wrong locked';
+      else cls='locked';
+    }
+    return `<button class="cc-opt ${cls}" onclick="pickCC(${oi})">${String.fromCharCode(65+oi)}. ${o}</button>`;
+  }).join('');
+
+  // Feedback
+  let fbHtml='';
+  if(ccShowFb && ccPicked!==null){
+    const ok=ccPicked===s.ans;
+    fbHtml=`<div class="cc-fb show ${ok?'good':'bad'}">${ok?'✓':'✗'} ${s.why[ccPicked]}</div>`;
+  }
+
+  // Advance button
+  const showAdv=ccShowFb && ccPicked===s.ans;
+  const isLast=ccStage===CC.length-1;
+  const advHtml=showAdv?`<div class="cc-advance show"><button class="btn btn-fill" onclick="ccAdvance()"><span>${isLast?'Complete Stage →':'Next Stage →'}</span></button></div>`:'<div class="cc-advance"></div>';
+
+  w.innerHTML=`
+    <div class="cc-prog-wrap">
+      <div class="cc-dots">${dotsHtml}</div>
+      <div class="cc-lbls">${lblsHtml}</div>
+    </div>
+    <div class="cc-ctx">
+      <div class="cc-ctx-tag">Scenario</div>
+      <div class="cc-ctx-text">${s.ctx}</div>
+    </div>
+    <div class="cc-opts">${optsHtml}</div>
+    ${fbHtml}
+    ${advHtml}
+  `;
+}
+
+function pickCC(oi){
+  if(ccShowFb) return;
+  ccPicked=oi; ccShowFb=true;
+  renderCC();
+}
+function ccAdvance(){
+  if(ccStage<CC.length-1){
+    ccStage++; ccPicked=null; ccShowFb=false; renderCC();
+  } else {
+    ccDoneAll=true; renderCC();
+  }
+}
+
+/* ══════════════════════════════════════════
+   QUIZ
+══════════════════════════════════════════ */
+function buildQuiz(){
+  document.getElementById('quizBody').innerHTML=QUIZ.map((q,qi)=>`
+    <div class="q-block">
+      <div class="q-num">Question ${qi+1} of ${QUIZ.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-opts">${q.opts.map((o,oi)=>`
+        <button class="q-opt" id="qo${qi}_${oi}" onclick="pickOpt(${qi},${oi})">${o}</button>
+      `).join('')}</div>
+    </div>
+  `).join('');
+}
+function pickOpt(qi,oi){
+  if(qSubmitted) return;
+  QUIZ[qi].opts.forEach((_,i)=>document.getElementById(`qo${qi}_${i}`).classList.remove('chosen'));
+  document.getElementById(`qo${qi}_${oi}`).classList.add('chosen');
+  qAns[qi]=oi; render();
+}
+function submitQuiz(){
+  qSubmitted=true;
+  let correct=0;
+  QUIZ.forEach((q,qi)=>{
+    const chosen=qAns[qi];
+    q.opts.forEach((_,oi)=>{
+      const el=document.getElementById(`qo${qi}_${oi}`);
+      el.classList.add('locked'); el.classList.remove('chosen');
+      if(oi===q.ans) el.classList.add('correct');
+      else if(oi===chosen&&chosen!==q.ans) el.classList.add('wrong-pick');
+    });
+    if(chosen===q.ans) correct++;
+  });
+  qPassed=correct>=3;
+  const b=document.getElementById('quizBanner');
+  b.className='quiz-banner show '+(qPassed?'pass':'fail');
+  b.textContent=qPassed
+    ?`✓ ${correct} / ${QUIZ.length} correct — you're cleared to continue.`
+    :`${correct} / ${QUIZ.length} correct — you need 3 to pass. Review the highlighted answers and try again.`;
+  render();
+}
+function retryQuiz(){
+  qSubmitted=false; qPassed=false; qAns={};
+  document.getElementById('quizBanner').className='quiz-banner';
+  buildQuiz(); render();
+}
+
+/* ══════════════════════════════════════════
+   RENDER
+══════════════════════════════════════════ */
+const SEC={1:1,2:1,3:1,4:2,5:3,6:3,7:4};
+
+function canContinue(){
+  if(cur===2) return clDone.size===5;
+  if(cur===3) return tlOpen.size===5;
+  if(cur===4) return Object.keys(schedDone).length===5;
+  if(cur===5) return ccDoneAll;
+  if(cur===6){
+    if(!qSubmitted) return Object.keys(qAns).length===QUIZ.length;
+    return true;
+  }
+  return true;
+}
+
+function getHint(){
+  const h={
+    1:"The absence of structure is always a choice — and it always costs something.",
+    2:`${clDone.size} / 5 items completed`,
+    3:`${tlOpen.size} / 5 days revealed`,
+    4:`${Object.keys(schedDone).length} / 5 correctly placed`,
+    5: ccDoneAll ? "✓ All 3 stages complete — continue below."
+       : `Stage ${ccStage+1} of 3 — ${CC[ccStage]?.name||''}`,
+    6: !qSubmitted ? `${Object.keys(qAns).length} / ${QUIZ.length} answered`
+       : qPassed   ? "✓ Passed — continue below."
+                   : "Need 3 / 4 to advance. Try again.",
+    7:"Templates without commitment are just documents.",
+  };
+  return h[cur]||'';
+}
+
+function getNextLabel(){
+  if(cur===6&&!qSubmitted) return 'Submit Answers';
+  if(cur===6&&!qPassed)    return 'Try Again →';
+  if(cur===7)              return 'Finish Course →';
+  return 'Continue →';
+}
+
+function render(){
+  const sec=SEC[cur];
+  document.getElementById('progLabel').textContent=sec?`Section 0${sec}`:'Course 1.1';
+  const pct=cur===0?0:Math.round((cur/(TOTAL-1))*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  ['nav1','nav2','nav3','nav4'].forEach((id,i)=>
+    document.getElementById(id).classList.toggle('active',SEC[cur]===i+1));
+  const hide=cur===0||cur===TOTAL-1;
+  const bnav=document.getElementById('bottomnav');
+  bnav.style.display=hide?'none':'flex';
+  if(hide) return;
+  document.getElementById('hint').textContent=getHint();
+  document.getElementById('btnNextLabel').textContent=getNextLabel();
+  document.getElementById('btnBack').style.display=cur<=1?'none':'block';
+  document.getElementById('btnNext').disabled=!canContinue();
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR — Course 7.2: Why Self-Sourced Meetings Matter Most</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#FFFFFF;--black:#000000;--mid:#636060;--lite:#F5F0FF;--lite2:#E8DEFF;
+  --plum:#3D0054;--plum-lt:rgba(61,0,84,0.07);--plum-md:rgba(61,0,84,0.15);
+  --charge:#B8FF00;--chg-dk:#86C200;
+  --coral:#FF3200;--cor-lt:rgba(255,50,0,0.07);
+  --cobalt:#0038FF;--cob-lt:rgba(0,56,255,0.07);
+  --green:#00B85A;--grn-lt:rgba(0,184,90,0.09);
+  --amber:#FF9200;--amb-lt:rgba(255,146,0,0.10);
+  --line:rgba(0,0,0,0.08);--line2:rgba(0,0,0,0.14);
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#FFD600 34%,#00E5A0 51%,#0099FF 68%,#7B2FFF 85%,#FF006E 100%);
+  --display:'Abril Fatface',Georgia,serif;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;
+  --mono:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--white);color:var(--black);font-family:var(--cond);overflow:hidden}
+.app{display:grid;grid-template-columns:1fr 234px;grid-template-rows:52px 1fr 60px;height:100vh}
+
+/* TOPBAR */
+.topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:2px solid var(--black);background:var(--white);z-index:20}
+.brand{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.22em;text-transform:uppercase}
+.course-badge{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;background:var(--plum);color:#fff;padding:4px 10px;margin-left:12px}
+.top-right{display:flex;align-items:center;gap:14px}
+.prog-label{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--mid);text-transform:uppercase}
+.prog-track{width:80px;height:2px;background:var(--lite2)}
+.prog-fill{height:100%;background:var(--iris);background-size:200% 100%;animation:iris 3s linear infinite;transition:width .8s cubic-bezier(.4,0,.2,1)}
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+
+.main{overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;background:var(--white);scrollbar-width:none}
+.main::-webkit-scrollbar{display:none}
+.sidebar{border-left:2px solid var(--black);padding:32px 20px;overflow-y:auto;scrollbar-width:none;background:var(--white)}
+.sidebar::-webkit-scrollbar{display:none}
+.sb-course{font-family:var(--display);font-size:22px;color:var(--plum);line-height:1;margin-bottom:4px}
+.sb-lesson{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--mid);margin-bottom:24px}
+.sb-divider{height:2px;background:var(--plum);margin-bottom:20px}
+.sb-label{font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--mid);margin-bottom:18px}
+.sb-item{padding:16px 0;border-bottom:1px solid var(--line);cursor:pointer;position:relative;transition:all .2s}
+.sb-item:first-of-type{border-top:1px solid var(--line)}
+.sb-tag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--mid);margin-bottom:7px;text-transform:uppercase;transition:color .2s}
+.sb-name{font-family:var(--cond);font-size:12px;font-weight:700;color:var(--mid);line-height:1.4;text-transform:uppercase;letter-spacing:.04em;transition:color .2s}
+.sb-item.active .sb-tag{color:var(--plum)}
+.sb-item.active .sb-name{color:var(--black)}
+.sb-item.active::before{content:'';position:absolute;left:-20px;top:0;bottom:0;width:3px;background:var(--plum)}
+.sb-item:hover .sb-name{color:var(--black)}
+
+.bottomnav{grid-column:1/2;display:flex;align-items:center;justify-content:space-between;padding:0 56px;border-top:2px solid var(--black);background:var(--white)}
+.nav-hint{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--mid);font-style:italic}
+.nav-btns{display:flex;gap:8px}
+.btn{font-family:var(--cond);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:10px 22px;border:2px solid var(--black);background:transparent;color:var(--black);cursor:pointer;transition:all .15s}
+.btn:hover{background:var(--black);color:var(--white)}
+.btn-fill{background:var(--black);color:var(--white);position:relative;overflow:hidden}
+.btn-fill::before{content:'';position:absolute;inset:0;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;opacity:0;transition:opacity .2s}
+.btn-fill:hover::before{opacity:1}
+.btn-fill:hover{color:var(--black)}
+.btn-fill span{position:relative;z-index:1}
+.btn-fill:disabled,.btn-fill:disabled:hover{opacity:.28;cursor:not-allowed;background:var(--black);color:var(--white)}
+.btn-fill:disabled::before,.btn-fill:disabled:hover::before{display:none}
+
+.screen{display:none;flex-direction:column;flex:1;animation:up .42s cubic-bezier(.22,1,.36,1) both}
+.screen.active{display:flex}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* COVER */
+.cover{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.cvl{background:var(--plum);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.cvl::before{content:'7';position:absolute;right:-20px;bottom:-40px;font-family:var(--display);font-size:280px;color:rgba(255,255,255,0.06);line-height:1;pointer-events:none}
+.cv-c7tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px}
+.cv-course-num{font-family:var(--display);font-size:80px;color:#fff;line-height:.85;margin-bottom:12px}
+.cv-big{font-family:var(--display);font-size:clamp(26px,3.2vw,44px);line-height:.97;color:#fff}
+.cv-tagline{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.58);line-height:1.7;border-top:1px solid rgba(255,255,255,0.14);padding-top:18px}
+.cvr{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;margin-bottom:16px;display:inline-block;background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:iris 3s linear infinite}
+.hero-h{font-family:var(--display);font-size:clamp(28px,3.8vw,52px);line-height:.97;color:var(--black);margin-bottom:20px}
+.hero-h .irisTxt{background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:iris 3s linear infinite}
+.cv-list{list-style:none;margin-bottom:36px}
+.cv-list li{font-family:var(--cond);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mid);display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.cv-list li:first-child{border-top:1px solid var(--line)}
+.cl-n{font-family:var(--mono);font-size:9px;background:var(--black);color:var(--white);padding:2px 6px;flex-shrink:0}
+
+/* SHARED */
+.lh{padding:44px 56px 0;position:relative;overflow:hidden}
+.lh-stripe{position:absolute;top:0;left:0;right:0;height:4px;background:var(--iris);background-size:200% 100%;animation:iris 4s linear infinite}
+.ghost-n{position:absolute;right:48px;top:-20px;font-family:var(--display);font-size:200px;line-height:1;color:var(--lite);pointer-events:none;user-select:none}
+.c7-badge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;background:var(--plum);color:#fff;padding:3px 10px;margin-bottom:12px}
+.sec-eye{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--plum);margin-bottom:14px;display:inline-block;margin-left:10px}
+.lh-title{font-family:var(--display);font-size:clamp(22px,3.2vw,46px);line-height:1.05;color:var(--black);max-width:640px}
+.lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
+.lh-sub b{color:var(--black)}
+.lb{padding:24px 56px 0}
+.lp{font-family:var(--serif);font-size:16px;line-height:1.8;color:var(--black);max-width:580px;margin-bottom:14px}
+.kp{list-style:none;max-width:580px;margin:14px 0}
+.kp li{font-family:var(--serif);font-size:15px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px}
+.kp li:first-child{border-top:1px solid var(--line)}
+.kp-n{font-family:var(--mono);font-size:9px;color:var(--mid);min-width:22px;padding-top:3px;flex-shrink:0}
+.lie{max-width:580px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
+.lie-tab{position:absolute;top:0;left:0;font-family:var(--cond);font-size:9px;letter-spacing:.24em;font-weight:800;text-transform:uppercase;padding:3px 10px;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;color:var(--black)}
+.lie-q{font-family:var(--serif);font-style:italic;font-size:18px;color:#fff;line-height:1.5;margin:12px 0 10px}
+.lie-a{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
+.data-table{width:100%;max-width:600px;border-collapse:collapse;margin:16px 0}
+.data-table th{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;background:var(--black);color:var(--white);padding:9px 14px;text-align:left}
+.data-table td{font-family:var(--serif);font-size:14px;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--black);line-height:1.6;vertical-align:top}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:nth-child(even) td{background:var(--lite)}
+
+/* ── PIPELINE OWNERSHIP AUDIT ── */
+.po-wrap{padding:16px 56px 44px;max-width:720px}
+.po-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:22px}
+.po-meter-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:600px;margin-bottom:24px}
+.po-meter{background:var(--black);padding:20px 20px 16px}
+.po-meter-tag{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px}
+.po-meter-tag.sdr{color:rgba(255,255,255,0.3)}
+.po-meter-tag.self{color:var(--charge)}
+.po-meter-num{font-family:var(--display);font-size:52px;color:rgba(255,255,255,0.15);line-height:.9;transition:all .5s cubic-bezier(.4,0,.2,1)}
+.po-meter.self .po-meter-num{color:var(--charge)}
+.po-meter-unit{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:rgba(255,255,255,0.3);margin-top:4px;text-transform:uppercase}
+.po-bar-track{height:3px;background:rgba(255,255,255,0.08);margin-top:12px}
+.po-bar-fill{height:100%;background:var(--charge);transition:width .7s cubic-bezier(.4,0,.2,1)}
+.po-deals{display:flex;flex-direction:column;gap:7px;max-width:600px}
+.po-deal{border:1px solid var(--line2);display:flex;align-items:stretch;cursor:pointer;transition:all .18s;overflow:hidden}
+.po-deal:hover:not(.tagged){border-color:var(--plum)}
+.po-deal.tagged-sdr{border-color:var(--mid);background:var(--lite);cursor:default}
+.po-deal.tagged-self{border-color:var(--plum);background:var(--plum-lt);cursor:default}
+.po-deal.wrong{animation:shake .35s ease both}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.po-deal-name{font-family:var(--cond);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--black);flex:1;padding:12px 14px;display:flex;flex-direction:column;justify-content:center}
+.po-deal-sub{font-family:var(--serif);font-style:italic;font-size:12px;color:var(--mid);margin-top:3px;font-weight:400;text-transform:none;letter-spacing:0}
+.po-btns{display:flex;flex-direction:column;gap:0;border-left:1px solid var(--line2);flex-shrink:0}
+.po-btn{font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;padding:0 12px;flex:1;border:none;background:transparent;cursor:pointer;color:var(--mid);transition:all .15s;min-width:80px}
+.po-btn:hover:not([disabled]){background:var(--plum-lt);color:var(--plum)}
+.po-btn.top{border-bottom:1px solid var(--line2)}
+.po-btn[disabled]{cursor:default}
+.po-goal-box{max-width:600px;background:var(--plum);padding:16px 20px;margin-top:14px;display:none}
+.po-goal-box.show{display:block}
+.po-goal-h{font-family:var(--cond);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--charge);margin-bottom:5px}
+.po-goal-p{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.65);line-height:1.65;font-style:italic}
+
+/* ── SDR vs SELF COMPARE ── */
+.cv2-wrap{padding:16px 56px 44px;max-width:760px}
+.cv2-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.cv2-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.cv2-col{border:2px solid var(--line2);transition:border-color .2s}
+.cv2-col.target{border-color:var(--plum);border-style:dashed}
+.cv2-col.target:hover{border-style:solid}
+.cv2-col-hdr{padding:11px 14px;border-bottom:1px solid var(--line2)}
+.cv2-col-name{font-family:var(--cond);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.cv2-col-name.sdr{color:var(--mid)}
+.cv2-col-name.self{color:var(--plum)}
+.cv2-col-items{min-height:100px;padding:8px;display:flex;flex-direction:column;gap:5px}
+.cv2-placed{padding:9px 12px;font-family:var(--serif);font-size:12px;color:var(--black);line-height:1.45}
+.cv2-placed.sdr-item{background:var(--lite);border-left:3px solid var(--mid)}
+.cv2-placed.self-item{background:var(--plum-lt);border-left:3px solid var(--plum)}
+.cv2-pool-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--black)}
+.cv2-pool{display:flex;flex-direction:column;gap:6px;max-width:440px}
+.cv2-tile{padding:12px 14px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:13px;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.45}
+.cv2-tile:hover:not(.placed):not(.sel){border-color:var(--plum)}
+.cv2-tile.sel{border-color:var(--plum);background:var(--plum);color:#fff}
+.cv2-tile.placed{visibility:hidden;pointer-events:none;height:0;margin:0;padding:0;border:none}
+.cv2-tile.wrong{border-color:var(--coral);background:var(--cor-lt);animation:shake .35s ease both}
+.cv2-reset{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mid);background:none;border:none;cursor:pointer;text-decoration:underline;margin-top:10px}
+.cv2-reset:hover{color:var(--black)}
+
+/* ── 4-PART OUTREACH BUILDER ── */
+.ob-wrap{padding:16px 56px 44px;max-width:700px}
+.ob-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.ob-pipeline{display:flex;gap:6px;align-items:stretch;max-width:640px;margin-bottom:22px}
+.ob-stage{flex:1;display:flex;flex-direction:column;align-items:center;position:relative}
+.ob-stage:not(:last-child)::after{content:'→';position:absolute;right:-9px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--mid);z-index:1}
+.ob-slot{width:100%;min-height:80px;border:1px dashed var(--line2);display:flex;flex-direction:column;justify-content:center;padding:10px;text-align:center;transition:all .2s;cursor:pointer}
+.ob-slot.target{border-color:var(--plum);background:var(--plum-lt);border-style:solid}
+.ob-slot.filled{background:var(--charge);border:2px solid var(--chg-dk);cursor:default}
+.ob-slot.bad{border-color:var(--coral);animation:shake .35s ease both}
+.ob-stage-num{font-family:var(--display);font-size:24px;color:var(--plum);line-height:1;margin-bottom:5px;transition:color .3s}
+.ob-slot.filled .ob-stage-num{color:var(--black)}
+.ob-slot-act{font-family:var(--cond);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--black);line-height:1.2}
+.ob-slot-sub{font-family:var(--serif);font-size:10px;color:var(--mid);font-style:italic;margin-top:3px;line-height:1.4}
+.ob-slot-placeholder{font-family:var(--mono);font-size:9px;color:rgba(0,0,0,0.2);font-style:italic;letter-spacing:.06em}
+.ob-pool-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--black)}
+.ob-pool{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-width:640px}
+.ob-tile{padding:12px 14px;border:2px solid var(--line2);background:var(--white);font-family:var(--cond);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.2}
+.ob-tile:hover:not(.placed):not(.sel){border-color:var(--black)}
+.ob-tile.sel{border-color:var(--plum);background:var(--plum);color:#fff}
+.ob-tile.placed{visibility:hidden;pointer-events:none;height:0;margin:0;padding:0;border:none;overflow:hidden}
+.ob-tile.wrong{border-color:var(--coral);background:var(--cor-lt);animation:shake .35s ease both}
+.ob-reset{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mid);background:none;border:none;cursor:pointer;text-decoration:underline;margin-top:10px}
+.ob-reset:hover{color:var(--black)}
+
+/* ── DAILY BLOCK SEQUENCER ── */
+.db-wrap{padding:16px 56px 44px;max-width:720px}
+.db-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.db-clock{background:var(--plum);padding:18px 20px 14px;max-width:580px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
+.db-clock-tag{font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,0.35)}
+.db-clock-num{font-family:var(--display);font-size:44px;color:var(--charge);line-height:.9;transition:all .4s}
+.db-clock-label{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,0.4)}
+.db-blocks{display:flex;flex-direction:column;gap:6px;max-width:580px;margin-bottom:18px}
+.db-block{display:flex;align-items:stretch;border:1px solid var(--line2);transition:border-color .2s;min-height:56px;cursor:pointer}
+.db-block.target{border-color:var(--plum);border-style:dashed}
+.db-block.target:hover{border-style:solid;border-width:2px}
+.db-block.filled{border:2px solid var(--charge);background:var(--lite);cursor:default}
+.db-block.bad{border-color:var(--coral);animation:shake .35s ease both}
+.db-blk-time{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--mid);padding:0 14px;border-right:1px solid var(--line2);display:flex;align-items:center;flex-shrink:0;min-width:90px;background:var(--lite)}
+.db-block.filled .db-blk-time{background:rgba(184,255,0,0.2);border-right-color:rgba(0,0,0,0.08)}
+.db-blk-content{flex:1;padding:10px 14px;display:flex;align-items:center}
+.db-blk-placeholder{font-family:var(--mono);font-size:9px;color:rgba(0,0,0,0.2);font-style:italic}
+.db-blk-act{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--black)}
+.db-blk-sub{font-family:var(--serif);font-size:11px;color:var(--mid);font-style:italic;margin-top:2px}
+.db-blk-check{color:var(--plum);font-size:14px;margin-left:auto;opacity:0;transition:opacity .2s;flex-shrink:0;padding-left:10px}
+.db-block.filled .db-blk-check{opacity:1}
+.db-tiles-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--black)}
+.db-tiles{display:flex;flex-direction:column;gap:6px;max-width:440px}
+.db-tile{padding:11px 14px;border:2px solid var(--line2);background:var(--white);font-family:var(--cond);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.2}
+.db-tile:hover:not(.placed):not(.sel){border-color:var(--black)}
+.db-tile.sel{border-color:var(--plum);background:var(--plum);color:#fff}
+.db-tile.placed{visibility:hidden;pointer-events:none;height:0;padding:0;border:none;margin:0;overflow:hidden}
+.db-tile.wrong{border-color:var(--coral);background:var(--cor-lt);animation:shake .35s ease both}
+.db-reset{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mid);background:none;border:none;cursor:pointer;text-decoration:underline;margin-top:8px}
+.db-reset:hover{color:var(--black)}
+
+/* QUIZ */
+.quiz-banner{margin:16px 56px 0;padding:12px 18px;font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.06em;border-left:4px solid var(--cobalt);background:var(--cob-lt);color:var(--black);display:none}
+.quiz-banner.show{display:block}
+.quiz-banner.pass{border-color:var(--green);background:var(--grn-lt)}
+.quiz-banner.fail{border-color:var(--coral);background:var(--cor-lt)}
+.quiz-body{padding:20px 56px 44px;display:flex;flex-direction:column;gap:28px}
+.q-num{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--plum);margin-bottom:9px}
+.q-text{font-family:var(--display);font-size:clamp(13px,1.6vw,18px);color:var(--black);line-height:1.2;margin-bottom:13px}
+.q-opts{display:flex;flex-direction:column;gap:6px}
+.q-opt{padding:11px 16px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:14px;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.5}
+.q-opt:hover:not(.locked){border-color:var(--plum);background:var(--plum-lt)}
+.q-opt.chosen{border-color:var(--plum);background:var(--plum);color:#fff}
+.q-opt.correct{border-color:var(--green);background:var(--grn-lt);color:var(--black)}
+.q-opt.wrong-pick{border-color:var(--coral);background:var(--cor-lt);color:var(--black)}
+.q-opt.locked{cursor:default}
+
+/* TOOLS */
+.tools-blk{padding:20px 56px 44px}
+.t-head{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--black);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--black)}
+.hw-list{list-style:none;max-width:580px;margin-top:8px}
+.hw-list li{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.65;padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
+.hw-list li:first-child{border-top:1px solid var(--line)}
+.hw-box{width:14px;height:14px;border:2px solid var(--black);flex-shrink:0;margin-top:4px}
+
+/* COMPLETE */
+.comp{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.comp-l{background:var(--amber);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.comp-l::before{content:'7';position:absolute;right:-20px;bottom:-40px;font-family:var(--display);font-size:280px;color:rgba(255,255,255,0.07);line-height:1;pointer-events:none}
+.comp-tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.38)}
+.comp-big{font-family:var(--display);font-size:clamp(44px,5.5vw,76px);line-height:.93;color:#fff}
+.comp-sub{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.52);line-height:1.7;border-top:1px solid rgba(255,255,255,0.12);padding-top:18px}
+.comp-r{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.comp-h{font-family:var(--display);font-size:clamp(22px,2.8vw,40px);line-height:1.08;color:var(--black);margin-bottom:18px}
+.comp-p{font-family:var(--serif);font-size:15px;color:var(--black);max-width:380px;line-height:1.8;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header class="topbar">
+  <div style="display:flex;align-items:center">
+    <div class="brand">AESDR</div>
+    <div class="course-badge">Course 7</div>
+  </div>
+  <div class="top-right">
+    <span class="prog-label" id="progLabel">Lesson 7.2</span>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+</header>
+
+<main class="main" id="main">
+
+  <!-- 0: COVER -->
+  <div class="screen active" id="s0">
+    <div class="cover" style="flex:1">
+      <div class="cvl">
+        <div>
+          <div class="cv-c7tag">AESDR · Lesson 7.2</div>
+          <div class="cv-course-num">07</div>
+          <div class="cv-big">What They Don't Tell You — Why Self-Sourced Meetings Matter Most</div>
+        </div>
+        <div class="cv-tagline">Building ownership, bulletproofing your pipeline, and becoming the AE who doesn't need to wait for anyone.</div>
+      </div>
+      <div class="cvr">
+        <div class="eyebrow">Course 7 · Lesson 2 of 3</div>
+        <div class="hero-h">Own your<br><span class="irisTxt">pipeline.</span></div>
+        <ul class="cv-list">
+          <li><span class="cl-n">01</span>Why Self-Sourced Meetings Hit Differently</li>
+          <li><span class="cl-n">02</span>Building a Bulletproof Pipeline</li>
+          <li><span class="cl-n">03</span>The Daily Prospecting Framework</li>
+        </ul>
+        <button class="btn btn-fill" onclick="go(1)"><span>Begin Lesson →</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1: INTRO -->
+  <div class="screen" id="s1">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">01</div>
+      <div><div class="c7-badge">Course 7</div><span class="sec-eye">Section 01 — The Truth</span></div>
+      <div class="lh-title">Meetings You Set Are Worth More Than Meetings You're Handed</div>
+    </div>
+    <div class="lb">
+      <p class="lp">SDR-sourced meetings are useful. But when you walk into a meeting you booked yourself — off your own research, your own outreach, your own relationship — the dynamic is completely different. You're not catching up on context. You're the context.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>You own the backstory.</strong> You know the pain point that surfaced, the trigger that made them respond, the thing you said that landed. An SDR hand-off gives you a name. A self-sourced meeting gives you leverage.</li>
+        <li><span class="kp-n">02</span><strong>Trust starts before the meeting does.</strong> They already know you did the work. That signals investment — and investment is contagious in a sales conversation.</li>
+        <li><span class="kp-n">03</span><strong>SDR performance fluctuates.</strong> When the pipeline slows — because it will — the AEs who survive are the ones who never stopped building their own. Self-sourced pipeline is your insurance policy.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Hard Truth</div>
+        <div class="lie-q">"The meetings you're handed belong to the company. The meetings you set belong to you."</div>
+        <div class="lie-a">When you're 100% dependent on SDRs, you've handed control of your quota to someone else's activity. Self-sourcing is how you take that control back — not occasionally, but as a non-negotiable part of the job.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2: PIPELINE OWNERSHIP AUDIT -->
+  <div class="screen" id="s2">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">01</div>
+      <div><div class="c7-badge">Course 7</div><span class="sec-eye">Section 01 — Pipeline Audit</span></div>
+      <div class="lh-title">Tag Your Pipeline: SDR-Sourced or Self-Sourced?</div>
+      <div class="lh-sub"><b id="poCount">0</b> / 6 deals tagged — classify every deal in your pipeline</div>
+    </div>
+    <div class="po-wrap">
+      <p class="po-instr">Read each deal description. Tag it as SDR-Sourced or Self-Sourced based on the clues in the context. Your pipeline composition score updates in real time.</p>
+      <div class="po-meter-row">
+        <div class="po-meter">
+          <div class="po-meter-tag sdr">SDR-Sourced</div>
+          <div class="po-meter-num" id="poSDRNum">0</div>
+          <div class="po-meter-unit">deals</div>
+          <div class="po-bar-track"><div class="po-bar-fill" id="poSDRBar" style="width:0%;background:var(--mid)"></div></div>
+        </div>
+        <div class="po-meter self">
+          <div class="po-meter-tag self">Self-Sourced</div>
+          <div class="po-meter-num" id="poSelfNum">0</div>
+          <div class="po-meter-unit">deals</div>
+          <div class="po-bar-track"><div class="po-bar-fill" id="poSelfBar" style="width:0%"></div></div>
+        </div>
+      </div>
+      <div class="po-deals" id="poDeals"></div>
+      <div class="po-goal-box" id="poGoalBox">
+        <div class="po-goal-h">✓ Pipeline Tagged — Here's Your Composition</div>
+        <div class="po-goal-p" id="poGoalP"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3: SDR vs SELF COMPARE -->
+  <div class="screen" id="s3">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">02</div>
+      <div><div class="c7-badge">Course 7</div><span class="sec-eye">Section 02 — The Comparison</span></div>
+      <div class="lh-title">Sort the Realities: SDR-Sourced vs. Self-Sourced</div>
+      <div class="lh-sub"><b id="cv2Count">0</b> / 6 correctly sorted</div>
+    </div>
+    <div class="cv2-wrap">
+      <p class="cv2-instr">Each statement describes the reality of one type of meeting. Click a statement, then click the correct column. All 6 must be correctly sorted to continue.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 40px">
+        <div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);padding-bottom:10px;border-bottom:2px solid var(--black);margin-bottom:10px">Meeting Realities</div>
+          <div class="cv2-cols" id="cv2Cols" style="grid-template-columns:1fr;gap:8px"></div>
+        </div>
+        <div>
+          <div class="cv2-pool-lbl">Statements — Select One</div>
+          <div class="cv2-pool" id="cv2Pool"></div>
+          <button class="cv2-reset" onclick="resetCV2()">Reset board</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4: 4-PART OUTREACH BUILDER -->
+  <div class="screen" id="s4">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div><div class="c7-badge">Course 7</div><span class="sec-eye">Section 02 — Build the Method</span></div>
+      <div class="lh-title">Build the 4-Part Research and Outreach Method</div>
+      <div class="lh-sub"><b id="obCount">0</b> / 4 stages correctly placed</div>
+    </div>
+    <div class="ob-wrap">
+      <p class="ob-instr">Select an activity tile, then click the correct stage slot in the pipeline. The order matters — each stage builds on the last. All 4 must be correctly placed to continue.</p>
+      <div class="ob-pipeline" id="obPipeline"></div>
+      <div style="margin-top:18px">
+        <div class="ob-pool-lbl">Stage Activities — Select One</div>
+        <div class="ob-pool" id="obPool"></div>
+        <button class="ob-reset" onclick="resetOB()">Reset pipeline</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5: DAILY BLOCK SEQUENCER -->
+  <div class="screen" id="s5">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">03</div>
+      <div><div class="c7-badge">Course 7</div><span class="sec-eye">Section 03 — Daily Routine</span></div>
+      <div class="lh-title">Build the AE Daily Prospecting Block</div>
+      <div class="lh-sub"><b id="dbCount">0</b> / 4 blocks correctly placed</div>
+    </div>
+    <div class="db-wrap">
+      <p class="db-instr" style="font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px">Select an activity, then click the correct time block. Build the 60–90 minute daily prospecting routine that puts you ahead of every AE who's waiting for leads.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 40px">
+        <div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);padding-bottom:10px;border-bottom:2px solid var(--black);margin-bottom:8px">Daily Time Blocks</div>
+          <div class="db-clock">
+            <div>
+              <div class="db-clock-tag">Total Prospecting Time</div>
+              <div class="db-clock-label" id="dbClockLabel">Not yet built</div>
+            </div>
+            <div class="db-clock-num" id="dbClockNum">0</div>
+          </div>
+          <div class="db-blocks" id="dbBlocks"></div>
+          <button class="db-reset" onclick="resetDB()">Reset blocks</button>
+        </div>
+        <div>
+          <div class="db-tiles-lbl">Activities — Select One</div>
+          <div class="db-tiles" id="dbTiles"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6: QUIZ -->
+  <div class="screen" id="s6">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div><div class="c7-badge">Course 7</div><span class="sec-eye">Section 03 — Knowledge Check</span></div>
+      <div class="lh-title">Test Your Understanding</div>
+    </div>
+    <div class="quiz-banner" id="quizBanner"></div>
+    <div class="quiz-body" id="quizBody"></div>
+  </div>
+
+  <!-- 7: TOOLS -->
+  <div class="screen" id="s7">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">04</div>
+      <div><div class="c7-badge">Course 7</div><span class="sec-eye">Section 04 — Templates &amp; Homework</span></div>
+      <div class="lh-title">The Pipeline Ownership Toolkit</div>
+    </div>
+    <div class="tools-blk">
+      <div style="margin-top:20px">
+        <div class="t-head">The 4-Part Self-Sourcing Method</div>
+        <table class="data-table">
+          <thead><tr><th>Stage</th><th>Action</th><th>Daily Target</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Identify</strong></td><td>Research 3–5 accounts daily. Use LinkedIn, trigger events, company news, and job postings as signals.</td><td>5 accounts flagged with a reason</td></tr>
+            <tr><td><strong>Personalize</strong></td><td>Find 1–2 specific insights per account. The opener must prove you looked — not "I saw you're at X," but something real.</td><td>1 insight per outreach</td></tr>
+            <tr><td><strong>Outreach</strong></td><td>Combine calls, emails, and LinkedIn in a sequence. Don't single-channel. Multi-touch, multi-channel wins.</td><td>10 calls + 5 emails per day</td></tr>
+            <tr><td><strong>Follow Up</strong></td><td>Reconnect persistently. 5–7 touches minimum. Most AEs give up after 2 — that's where you separate yourself.</td><td>Dedicated 15-min follow-up block</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="t-head">Self-Sourced Pipeline Metrics to Track</div>
+        <table class="data-table">
+          <thead><tr><th>Metric</th><th>What to Measure</th><th>Target</th></tr></thead>
+          <tbody>
+            <tr><td>Pipeline Source Mix</td><td>% of open opportunities that are self-sourced vs. SDR-sourced</td><td>30%+ self-sourced</td></tr>
+            <tr><td>Self-Sourced Close Rate</td><td>Win rate on deals you originated yourself vs. hand-offs</td><td>Track the gap — it should be higher</td></tr>
+            <tr><td>Meetings Set Per Week</td><td>How many self-sourced meetings you book independently</td><td>3 per week minimum</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="t-head">Homework — This Week</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Audit your current pipeline. Calculate what percentage is self-sourced. If it's below 30%, that's your number-one priority to fix this month — not next quarter.</li>
+          <li><div class="hw-box"></div>Block 60–90 minutes daily this week for prospecting. Protect it like a customer meeting. 15 minutes research, 30 minutes outreach, 15 minutes follow-up.</li>
+          <li><div class="hw-box"></div>Identify 3 target accounts to pursue this week. Write personalized outreach for each one — one real insight per contact, not a template. Track: calls made, emails sent, meetings set.</li>
+          <li><div class="hw-box"></div>Run the 4-part method on at least one account this week from start to booked meeting. Document every step. Review it. That's your repeatable system.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8: COMPLETE -->
+  <div class="screen" id="s8">
+    <div class="comp" style="flex:1">
+      <div class="comp-l">
+        <div>
+          <div class="comp-tag">Course 7 · Lesson 2 — Complete</div>
+          <div style="font-family:var(--display);font-size:56px;color:#fff;line-height:.9;margin:10px 0 0">07</div>
+        </div>
+        <div class="comp-big">Stop<br>waiting.<br>Start<br>owning.</div>
+        <div class="comp-sub">Self-sourced pipeline is the only pipeline you fully control. Build it deliberately, every single day, until the 30% becomes 50% and the 50% becomes your actual competitive edge.</div>
+      </div>
+      <div class="comp-r">
+        <div class="eyebrow">Course 7 · Lesson 2 Complete</div>
+        <div class="comp-h">The best AEs don't rely on anyone else.</div>
+        <p class="comp-p">You've audited your pipeline, sorted the realities, built the 4-part outreach method, and sequenced the daily prospecting block. None of it is complicated. All of it requires showing up and doing the work — every day, not just the days the SDR pipeline is looking thin.</p>
+        <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
+        <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<aside class="sidebar">
+  <div class="sb-course">07</div>
+  <div class="sb-lesson">Lesson 7.2 · Self-Sourced Meetings</div>
+  <div class="sb-divider"></div>
+  <div class="sb-label">Sections</div>
+  <div class="sb-item" id="nav1" onclick="go(1)">
+    <div class="sb-tag">Section 01</div>
+    <div class="sb-name">The Ownership Shift</div>
+  </div>
+  <div class="sb-item" id="nav2" onclick="go(3)">
+    <div class="sb-tag">Section 02</div>
+    <div class="sb-name">Bulletproof Pipeline</div>
+  </div>
+  <div class="sb-item" id="nav3" onclick="go(5)">
+    <div class="sb-tag">Section 03</div>
+    <div class="sb-name">Daily Prospecting</div>
+  </div>
+  <div class="sb-item" id="nav4" onclick="go(7)">
+    <div class="sb-tag">Section 04</div>
+    <div class="sb-name">Templates &amp; Homework</div>
+  </div>
+</aside>
+
+<footer class="bottomnav" id="bottomnav" style="display:none">
+  <span class="nav-hint" id="hint"></span>
+  <div class="nav-btns">
+    <button class="btn" id="btnBack" onclick="back()" style="display:none">← Back</button>
+    <button class="btn btn-fill" id="btnNext" onclick="handleNext()"><span id="btnNextLabel">Continue →</span></button>
+  </div>
+</footer>
+
+</div>
+
+<script>
+/* ════════════════════════════════════
+   DATA
+════════════════════════════════════ */
+
+// Pipeline Ownership Audit — each deal tagged as sdr or self
+const PO_DEALS = [
+  { name:"DataPeak — VP of Ops",      sub:"You cold-called after spotting a Series A announcement and connected in 2 days.", correct:"self" },
+  { name:"Orbit SaaS — Head of Sales", sub:"Your SDR booked this from an outbound sequence they ran last week.", correct:"sdr"  },
+  { name:"Helix Corp — RevOps Director",sub:"You found them via a LinkedIn comment on a competitor post and DM'd them directly.", correct:"self" },
+  { name:"Novu Inc — CTO",             sub:"Marketing generated the lead; your SDR followed up and booked the meeting.", correct:"sdr"  },
+  { name:"Traceflow — Founder",        sub:"You built a relationship over 3 months via LinkedIn shares, then asked for 20 minutes.", correct:"self" },
+  { name:"ClearRoute — VP of Revenue", sub:"Inbound from a webinar — your SDR triaged and booked you in.", correct:"sdr"  },
+];
+
+// SDR vs Self Compare Sorter
+const CV2_ITEMS = [
+  { txt:"You start warm — the prospect already knows you did the research.",                         col:"self" },
+  { txt:"You're playing catch-up on context during the first 10 minutes.",                           col:"sdr"  },
+  { txt:"The relationship started before the calendar invite.",                                       col:"self" },
+  { txt:"Trust begins during the meeting — not before it.",                                           col:"sdr"  },
+  { txt:"You control the pain points, the backstory, and the narrative.",                             col:"self" },
+  { txt:"Limited context from the hand-off — you're relying on notes you didn't take.",              col:"sdr"  },
+];
+const CV2_TILE_ORDER = [1,4,0,5,2,3];
+
+// 4-Part Outreach Builder
+const OB_STAGES = [
+  { stage:1, act:"Identify",   sub:"Research 3–5 accounts daily using triggers and signals." },
+  { stage:2, act:"Personalize",sub:"Find 1–2 real insights to tailor the outreach." },
+  { stage:3, act:"Outreach",   sub:"Combine calls, emails, and LinkedIn touchpoints." },
+  { stage:4, act:"Follow Up",  sub:"Reconnect persistently — minimum 5–7 touches." },
+];
+const OB_TILE_ORDER = [2,0,3,1]; // scrambled
+
+// Daily Block Sequencer
+const DB_BLOCKS = [
+  { time:"8:00–8:15 AM", act:"Account Research",   sub:"Identify 3–5 targets with real, specific triggers.",     mins:15 },
+  { time:"8:15–8:45 AM", act:"Outreach Block",     sub:"10 calls + 5 personalized emails. No multitasking.",      mins:30 },
+  { time:"8:45–9:00 AM", act:"Follow-Up Block",    sub:"Reconnect with leads from the past 7 days.",              mins:15 },
+  { time:"9:00–9:00 AM", act:"Review & Adjust",    sub:"What worked? What changes tomorrow? 5-minute debrief.",   mins:5  },
+];
+const DB_TILE_ORDER = [2,0,3,1]; // scrambled
+
+const QUIZ = [
+  {
+    q:"What is the PRIMARY advantage of a self-sourced meeting over an SDR-sourced one?",
+    opts:["Self-sourced meetings are automatically higher quality because they come from AE outreach","You own the context, backstory, and relationship — trust starts before the meeting, not during it","Self-sourced meetings always have a higher close rate than SDR-sourced meetings","The prospect is more likely to be decision-maker level when you source the meeting yourself"],
+    ans:1
+  },
+  {
+    q:"Why does relying solely on SDR-generated pipeline put your quota at risk?",
+    opts:["SDRs typically pass lower-quality leads that take longer to progress through the pipeline","SDR performance fluctuates — when pipeline slows, AEs with no self-sourced deals have no fallback","SDRs don't have enough context to qualify leads properly for AE-level conversations","Companies with SDR teams tend to set higher quotas for AEs who don't self-source"],
+    ans:1
+  },
+  {
+    q:"In the 4-Part Research and Outreach Method, which step comes SECOND?",
+    opts:["Identify — research 3–5 accounts daily using triggers","Personalize — find 1–2 real insights per account to tailor the outreach","Outreach — combine calls, emails, and LinkedIn touchpoints","Follow Up — reconnect persistently across at least 5–7 touches"],
+    ans:1
+  },
+  {
+    q:"According to this lesson, what daily time investment makes an AE a consistent self-sourcer?",
+    opts:["4–6 hours of dedicated prospecting before any customer calls or internal meetings","2–3 hours split between research and outreach in the afternoon only","60–90 minutes structured across research, outreach, and follow-up every morning","As much time as the pipeline situation requires — there's no set minimum"],
+    ans:2
+  },
+];
+
+/* ════════════════════════════════════
+   STATE
+════════════════════════════════════ */
+const TOTAL=9;
+let cur=0;
+let poTagged={}, poCount=0;
+let cv2Sel=null, cv2Done={}, cv2Count=0;
+let obSel=null, obDone={};
+let dbSel=null, dbDone={};
+let qAns={}, qSubmitted=false, qPassed=false;
+
+/* ════════════════════════════════════
+   INIT
+════════════════════════════════════ */
+function init(){
+  buildPO(); buildCV2(); buildOB(); buildDB(); buildQuiz(); render();
+}
+function go(n){
+  document.getElementById('s'+cur).classList.remove('active');
+  cur=n; document.getElementById('s'+cur).classList.add('active');
+  document.getElementById('main').scrollTop=0; render();
+}
+function next(){if(cur<TOTAL-1)go(cur+1);}
+function back(){if(cur>0)go(cur-1);}
+function handleNext(){
+  if(cur===6){if(!qSubmitted)submitQuiz();else if(qPassed)next();else retryQuiz();}
+  else next();
+}
+
+/* ════════════════════════════════════
+   PIPELINE OWNERSHIP AUDIT
+════════════════════════════════════ */
+function buildPO(){
+  document.getElementById('poDeals').innerHTML=PO_DEALS.map((d,i)=>`
+    <div class="po-deal" id="pod${i}">
+      <div class="po-deal-name">${d.name}<div class="po-deal-sub">${d.sub}</div></div>
+      <div class="po-btns">
+        <button class="po-btn top" id="poSDR${i}" onclick="tagPO(${i},'sdr')">SDR-Sourced</button>
+        <button class="po-btn" id="poSelf${i}" onclick="tagPO(${i},'self')">Self-Sourced</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function tagPO(i,tag){
+  if(poTagged[i]) return;
+  const correct=PO_DEALS[i].correct===tag;
+  const el=document.getElementById('pod'+i);
+  if(correct){
+    poTagged[i]=tag; poCount++;
+    document.getElementById('poSDR'+i).disabled=true;
+    document.getElementById('poSelf'+i).disabled=true;
+    el.classList.add('tagged-'+tag);
+    updatePOMeters();
+    document.getElementById('poCount').textContent=poCount;
+    if(poCount===PO_DEALS.length){
+      const selfCount=Object.values(poTagged).filter(v=>v==='self').length;
+      const pct=Math.round((selfCount/PO_DEALS.length)*100);
+      const box=document.getElementById('poGoalBox');
+      box.classList.add('show');
+      document.getElementById('poGoalP').textContent=`${selfCount} of your 6 deals are self-sourced (${pct}%). ${pct>=30?'You\'re at or above the 30% target. Now push toward 50%.':'You\'re below the 30% target. That\'s the first thing to change this month.'}`;
+    }
+    render();
+  } else {
+    el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),400);
+  }
+}
+
+function updatePOMeters(){
+  const sdrC=Object.values(poTagged).filter(v=>v==='sdr').length;
+  const selfC=Object.values(poTagged).filter(v=>v==='self').length;
+  const total=PO_DEALS.length;
+  document.getElementById('poSDRNum').textContent=sdrC;
+  document.getElementById('poSelfNum').textContent=selfC;
+  document.getElementById('poSDRBar').style.width=Math.round((sdrC/total)*100)+'%';
+  document.getElementById('poSelfBar').style.width=Math.round((selfC/total)*100)+'%';
+}
+
+/* ════════════════════════════════════
+   SDR vs SELF COMPARE
+════════════════════════════════════ */
+function buildCV2(){
+  // Two columns
+  document.getElementById('cv2Cols').innerHTML=`
+    <div class="cv2-col" id="cv2c_sdr" onclick="dropCV2('sdr')">
+      <div class="cv2-col-hdr"><div class="cv2-col-name sdr">SDR-Sourced</div></div>
+      <div class="cv2-col-items" id="cv2i_sdr"></div>
+    </div>
+    <div class="cv2-col" id="cv2c_self" onclick="dropCV2('self')">
+      <div class="cv2-col-hdr"><div class="cv2-col-name self">Self-Sourced</div></div>
+      <div class="cv2-col-items" id="cv2i_self"></div>
+    </div>
+  `;
+  document.getElementById('cv2Pool').innerHTML=CV2_TILE_ORDER.map(ai=>`
+    <div class="cv2-tile" id="cv2t${ai}" onclick="pickCV2(${ai})">${CV2_ITEMS[ai].txt}</div>
+  `).join('');
+}
+function pickCV2(ai){
+  if(cv2Done[ai]) return;
+  if(cv2Sel===ai){cv2Sel=null;renderCV2UI();return;}
+  cv2Sel=ai;renderCV2UI();
+}
+function dropCV2(col){
+  if(cv2Sel===null) return;
+  const ai=cv2Sel;
+  const correct=CV2_ITEMS[ai].col===col;
+  const tileEl=document.getElementById('cv2t'+ai);
+  cv2Sel=null;renderCV2UI();
+  if(correct){
+    cv2Done[ai]=true;cv2Count++;
+    tileEl.classList.add('placed');
+    document.getElementById('cv2i_'+col).innerHTML+=`<div class="cv2-placed ${col}-item">${CV2_ITEMS[ai].txt}</div>`;
+    document.getElementById('cv2Count').textContent=cv2Count;
+    render();
+  } else {
+    tileEl.classList.add('wrong');setTimeout(()=>tileEl.classList.remove('wrong'),400);
+  }
+}
+function renderCV2UI(){
+  CV2_TILE_ORDER.forEach(ai=>{
+    const el=document.getElementById('cv2t'+ai);if(!el) return;
+    el.classList.toggle('sel',cv2Sel===ai);
+  });
+  ['sdr','self'].forEach(col=>{
+    const el=document.getElementById('cv2c_'+col);
+    if(el) el.classList.toggle('target',cv2Sel!==null);
+  });
+}
+function resetCV2(){
+  cv2Sel=null;cv2Done={};cv2Count=0;buildCV2();
+  document.getElementById('cv2Count').textContent=0;
+  renderCV2UI();render();
+}
+
+/* ════════════════════════════════════
+   4-PART OUTREACH BUILDER
+════════════════════════════════════ */
+function buildOB(){
+  document.getElementById('obPipeline').innerHTML=OB_STAGES.map((s,i)=>`
+    <div class="ob-stage">
+      <div class="ob-slot" id="obs${i}" onclick="pickOBSlot(${i})">
+        <div class="ob-stage-num">${s.stage}</div>
+        <div class="ob-slot-placeholder">— select —</div>
+      </div>
+    </div>
+    ${i<OB_STAGES.length-1?'<div style="flex-shrink:0;width:18px;display:flex;align-items:center;font-size:16px;color:var(--mid)">→</div>':''}
+  `).join('');
+  document.getElementById('obPool').innerHTML=OB_TILE_ORDER.map(si=>`
+    <button class="ob-tile" id="obt${si}" onclick="pickOBTile(${si})">${OB_STAGES[si].act}</button>
+  `).join('');
+}
+function pickOBTile(si){
+  if(obDone[si]) return;
+  if(obSel===si){obSel=null;renderOBUI();return;}
+  obSel=si;renderOBUI();
+}
+function pickOBSlot(idx){
+  if(obDone[idx]||obSel===null) return;
+  const correct=OB_STAGES[idx].stage===obSel+1;
+  const slotEl=document.getElementById('obs'+idx);
+  const tileEl=document.getElementById('obt'+obSel);
+  if(correct){
+    obDone[idx]=true;
+    const s=OB_STAGES[idx];
+    slotEl.classList.remove('target','bad');slotEl.classList.add('filled');
+    slotEl.innerHTML=`<div class="ob-stage-num">${s.stage}</div><div class="ob-slot-act">${s.act}</div><div class="ob-slot-sub">${s.sub}</div>`;
+    tileEl.classList.add('placed');
+    obSel=null;
+    document.getElementById('obCount').textContent=Object.keys(obDone).length;
+    renderOBUI();render();
+  } else {
+    [slotEl,tileEl].forEach(e=>{e.classList.add('bad','wrong');setTimeout(()=>{e.classList.remove('bad','wrong');},400);});
+    obSel=null;renderOBUI();
+  }
+}
+function renderOBUI(){
+  OB_STAGES.forEach((_,i)=>{
+    const el=document.getElementById('obs'+i);if(!el||obDone[i])return;
+    el.classList.toggle('target',obSel!==null);
+  });
+  OB_TILE_ORDER.forEach(si=>{
+    const el=document.getElementById('obt'+si);if(!el)return;
+    el.classList.toggle('sel',obSel===si);
+  });
+}
+function resetOB(){
+  obSel=null;obDone={};buildOB();
+  document.getElementById('obCount').textContent=0;
+  renderOBUI();render();
+}
+
+/* ════════════════════════════════════
+   DAILY BLOCK SEQUENCER
+════════════════════════════════════ */
+function buildDB(){
+  document.getElementById('dbBlocks').innerHTML=DB_BLOCKS.map((b,i)=>`
+    <div class="db-block" id="dbb${i}" onclick="pickDBSlot(${i})">
+      <div class="db-blk-time">${b.time}</div>
+      <div class="db-blk-content" id="dbbc${i}">
+        <div class="db-blk-placeholder">— select activity →</div>
+      </div>
+      <div class="db-blk-check">✓</div>
+    </div>
+  `).join('');
+  document.getElementById('dbTiles').innerHTML=DB_TILE_ORDER.map(si=>`
+    <button class="db-tile" id="dbt${si}" onclick="pickDBTile(${si})">${DB_BLOCKS[si].act}</button>
+  `).join('');
+  document.getElementById('dbClockNum').textContent='0';
+  document.getElementById('dbClockLabel').textContent='Not yet built';
+}
+function pickDBTile(si){
+  if(dbDone[si]) return;
+  if(dbSel===si){dbSel=null;renderDBUI();return;}
+  dbSel=si;renderDBUI();
+}
+function pickDBSlot(idx){
+  if(dbDone[idx]||dbSel===null) return;
+  const correct=DB_BLOCKS[idx].act===DB_BLOCKS[dbSel].act;
+  const slotEl=document.getElementById('dbb'+idx);
+  const tileEl=document.getElementById('dbt'+dbSel);
+  if(correct){
+    dbDone[idx]=true;
+    const b=DB_BLOCKS[idx];
+    slotEl.classList.add('filled');
+    document.getElementById('dbbc'+idx).innerHTML=`<div><div class="db-blk-act">${b.act}</div><div class="db-blk-sub">${b.sub}</div></div>`;
+    tileEl.classList.add('placed');
+    dbSel=null;
+    const totalMins=Object.keys(dbDone).reduce((acc,i)=>acc+DB_BLOCKS[parseInt(i)].mins,0);
+    document.getElementById('dbClockNum').textContent=totalMins;
+    document.getElementById('dbCount').textContent=Object.keys(dbDone).length;
+    const labels={15:'Just starting',30:'Half-built',45:'Nearly there',65:'Full prospecting block ✓'};
+    document.getElementById('dbClockLabel').textContent=labels[totalMins]||`${totalMins} min`;
+    renderDBUI();render();
+  } else {
+    [slotEl,tileEl].forEach(e=>{e.classList.add('wrong');setTimeout(()=>e.classList.remove('wrong'),400);});
+    dbSel=null;renderDBUI();
+  }
+}
+function renderDBUI(){
+  DB_BLOCKS.forEach((_,i)=>{
+    const el=document.getElementById('dbb'+i);if(!el||dbDone[i])return;
+    el.classList.toggle('target',dbSel!==null);
+  });
+  DB_TILE_ORDER.forEach(si=>{
+    const el=document.getElementById('dbt'+si);if(!el)return;
+    el.classList.toggle('sel',dbSel===si);
+  });
+}
+function resetDB(){
+  dbSel=null;dbDone={};buildDB();
+  document.getElementById('dbCount').textContent=0;
+  renderDBUI();render();
+}
+
+/* ════════════════════════════════════
+   QUIZ
+════════════════════════════════════ */
+function buildQuiz(){
+  document.getElementById('quizBody').innerHTML=QUIZ.map((q,qi)=>`
+    <div class="q-block">
+      <div class="q-num">Question ${qi+1} of ${QUIZ.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-opts">${q.opts.map((o,oi)=>`<button class="q-opt" id="qo${qi}_${oi}" onclick="pickOpt(${qi},${oi})">${o}</button>`).join('')}</div>
+    </div>
+  `).join('');
+}
+function pickOpt(qi,oi){
+  if(qSubmitted) return;
+  QUIZ[qi].opts.forEach((_,i)=>document.getElementById(`qo${qi}_${i}`).classList.remove('chosen'));
+  document.getElementById(`qo${qi}_${oi}`).classList.add('chosen');
+  qAns[qi]=oi;render();
+}
+function submitQuiz(){
+  qSubmitted=true;let correct=0;
+  QUIZ.forEach((q,qi)=>{
+    const chosen=qAns[qi];
+    q.opts.forEach((_,oi)=>{
+      const el=document.getElementById(`qo${qi}_${oi}`);
+      el.classList.add('locked');el.classList.remove('chosen');
+      if(oi===q.ans)el.classList.add('correct');
+      else if(oi===chosen&&chosen!==q.ans)el.classList.add('wrong-pick');
+    });
+    if(chosen===q.ans)correct++;
+  });
+  qPassed=correct>=3;
+  const b=document.getElementById('quizBanner');
+  b.className='quiz-banner show '+(qPassed?'pass':'fail');
+  b.textContent=qPassed?`✓ ${correct} / ${QUIZ.length} correct — cleared to continue.`:`${correct} / ${QUIZ.length} correct — need 3 to pass. Review and try again.`;
+  render();
+}
+function retryQuiz(){
+  qSubmitted=false;qPassed=false;qAns={};
+  document.getElementById('quizBanner').className='quiz-banner';
+  buildQuiz();render();
+}
+
+/* ════════════════════════════════════
+   RENDER
+════════════════════════════════════ */
+const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:4};
+function canContinue(){
+  if(cur===2) return poCount===PO_DEALS.length;
+  if(cur===3) return cv2Count===CV2_ITEMS.length;
+  if(cur===4) return Object.keys(obDone).length===OB_STAGES.length;
+  if(cur===5) return Object.keys(dbDone).length===DB_BLOCKS.length;
+  if(cur===6){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  return true;
+}
+function getHint(){
+  const h={
+    1:"The pipeline you own is the only pipeline you can truly count on.",
+    2:`${poCount} / 6 deals tagged`,
+    3:`${cv2Count} / 6 correctly sorted`,
+    4:`${Object.keys(obDone).length} / 4 stages placed`,
+    5:`${Object.keys(dbDone).length} / 4 blocks placed`,
+    6:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
+    7:"Block the time. Do the work. Own the quarter.",
+  };
+  return h[cur]||'';
+}
+function getNextLabel(){
+  if(cur===6&&!qSubmitted) return 'Submit Answers';
+  if(cur===6&&!qPassed) return 'Try Again →';
+  if(cur===7) return 'Finish Lesson →';
+  return 'Continue →';
+}
+function render(){
+  const sec=SEC[cur];
+  document.getElementById('progLabel').textContent=sec?`Section 0${sec}`:'Lesson 7.2';
+  const pct=cur===0?0:Math.round((cur/(TOTAL-1))*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  ['nav1','nav2','nav3','nav4'].forEach((id,i)=>
+    document.getElementById(id).classList.toggle('active',SEC[cur]===i+1));
+  const hide=cur===0||cur===TOTAL-1;
+  document.getElementById('bottomnav').style.display=hide?'none':'flex';
+  if(hide) return;
+  document.getElementById('hint').textContent=getHint();
+  document.getElementById('btnNextLabel').textContent=getNextLabel();
+  document.getElementById('btnBack').style.display=cur<=1?'none':'block';
+  document.getElementById('btnNext').disabled=!canContinue();
+}
+
+// Zone delegation
+document.addEventListener('click',function(e){
+  if(cv2Sel!==null){
+    ['sdr','self'].forEach(col=>{
+      const el=document.getElementById('cv2c_'+col);
+      if(el&&e.target.closest('#cv2c_'+col)&&!e.target.closest('.cv2-tile')&&!e.target.closest('.cv2-placed'))
+        dropCV2(col);
+    });
+  }
+});
+
+init();
+</script>
+</body>
+</html>

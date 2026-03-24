@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR — Course 5.1: The SDR Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#FFFFFF;--black:#000000;--mid:#636060;--lite:#F8F0F2;--lite2:#EDDDDF;
+  --burg:#7B002A;--burg-lt:rgba(123,0,42,0.07);--burg-md:rgba(123,0,42,0.15);
+  --burg-bright:#FF0047;
+  --saffron:#FF9900;--saf-lt:rgba(255,153,0,0.10);
+  --cobalt:#0038FF;--cob-lt:rgba(0,56,255,0.07);
+  --green:#00B85A;--grn-lt:rgba(0,184,90,0.09);
+  --coral:#FF3200;--cor-lt:rgba(255,50,0,0.07);
+  --gold:#FFD600;--gold-lt:rgba(255,214,0,0.12);
+  --line:rgba(0,0,0,0.08);--line2:rgba(0,0,0,0.14);
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#FFD600 34%,#00E5A0 51%,#0099FF 68%,#7B2FFF 85%,#FF006E 100%);
+  --display:'Abril Fatface',Georgia,serif;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;
+  --mono:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--white);color:var(--black);font-family:var(--cond);overflow:hidden}
+.app{display:grid;grid-template-columns:1fr 234px;grid-template-rows:52px 1fr 60px;height:100vh}
+
+/* TOPBAR */
+.topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:2px solid var(--black);background:var(--white);z-index:20}
+.brand{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.22em;text-transform:uppercase}
+.course-badge{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;background:var(--burg);color:#fff;padding:4px 10px;margin-left:12px}
+.top-right{display:flex;align-items:center;gap:14px}
+.prog-label{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--mid);text-transform:uppercase}
+.prog-track{width:80px;height:2px;background:var(--lite2)}
+.prog-fill{height:100%;background:var(--iris);background-size:200% 100%;animation:iris 3s linear infinite;transition:width .8s cubic-bezier(.4,0,.2,1)}
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+
+/* MAIN / SIDEBAR */
+.main{overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;background:var(--white);scrollbar-width:none}
+.main::-webkit-scrollbar{display:none}
+.sidebar{border-left:2px solid var(--black);padding:32px 20px;overflow-y:auto;scrollbar-width:none;background:var(--white)}
+.sidebar::-webkit-scrollbar{display:none}
+.sb-course{font-family:var(--display);font-size:22px;color:var(--burg);line-height:1;margin-bottom:4px}
+.sb-lesson{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--mid);margin-bottom:24px}
+.sb-divider{height:2px;background:var(--burg);margin-bottom:20px}
+.sb-label{font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--mid);margin-bottom:18px}
+.sb-item{padding:16px 0;border-bottom:1px solid var(--line);cursor:pointer;position:relative;transition:all .2s}
+.sb-item:first-of-type{border-top:1px solid var(--line)}
+.sb-tag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--mid);margin-bottom:7px;text-transform:uppercase;transition:color .2s}
+.sb-name{font-family:var(--cond);font-size:12px;font-weight:700;color:var(--mid);line-height:1.4;text-transform:uppercase;letter-spacing:.04em;transition:color .2s}
+.sb-item.active .sb-tag{color:var(--burg)}
+.sb-item.active .sb-name{color:var(--black)}
+.sb-item.active::before{content:'';position:absolute;left:-20px;top:0;bottom:0;width:3px;background:var(--burg)}
+.sb-item:hover .sb-name{color:var(--black)}
+
+/* BOTTOMNAV */
+.bottomnav{grid-column:1/2;display:flex;align-items:center;justify-content:space-between;padding:0 56px;border-top:2px solid var(--black);background:var(--white)}
+.nav-hint{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--mid);font-style:italic}
+.nav-btns{display:flex;gap:8px}
+.btn{font-family:var(--cond);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:10px 22px;border:2px solid var(--black);background:transparent;color:var(--black);cursor:pointer;transition:all .15s}
+.btn:hover{background:var(--black);color:var(--white)}
+.btn-fill{background:var(--black);color:var(--white);position:relative;overflow:hidden}
+.btn-fill::before{content:'';position:absolute;inset:0;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;opacity:0;transition:opacity .2s}
+.btn-fill:hover::before{opacity:1}
+.btn-fill:hover{color:var(--black)}
+.btn-fill span{position:relative;z-index:1}
+.btn-fill:disabled,.btn-fill:disabled:hover{opacity:.28;cursor:not-allowed;background:var(--black);color:var(--white)}
+.btn-fill:disabled::before,.btn-fill:disabled:hover::before{display:none}
+
+/* SCREENS */
+.screen{display:none;flex-direction:column;flex:1;animation:up .42s cubic-bezier(.22,1,.36,1) both}
+.screen.active{display:flex}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* COVER */
+.cover{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.cvl{background:var(--burg);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.cvl::before{content:'5';position:absolute;right:-20px;bottom:-40px;font-family:var(--display);font-size:280px;color:rgba(255,255,255,0.06);line-height:1;pointer-events:none}
+.cv-c5tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px}
+.cv-course-num{font-family:var(--display);font-size:80px;color:#fff;line-height:.85;margin-bottom:12px}
+.cv-big{font-family:var(--display);font-size:clamp(28px,3.4vw,46px);line-height:.97;color:#fff}
+.cv-tagline{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.58);line-height:1.7;border-top:1px solid rgba(255,255,255,0.14);padding-top:18px}
+.cvr{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;margin-bottom:16px;display:inline-block;background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:iris 3s linear infinite}
+.hero-h{font-family:var(--display);font-size:clamp(28px,3.8vw,52px);line-height:.97;color:var(--black);margin-bottom:20px}
+.hero-h .irisTxt{background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:iris 3s linear infinite}
+.cv-list{list-style:none;margin-bottom:36px}
+.cv-list li{font-family:var(--cond);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mid);display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.cv-list li:first-child{border-top:1px solid var(--line)}
+.cl-n{font-family:var(--mono);font-size:9px;background:var(--black);color:var(--white);padding:2px 6px;flex-shrink:0}
+
+/* SHARED */
+.lh{padding:44px 56px 0;position:relative;overflow:hidden}
+.lh-stripe{position:absolute;top:0;left:0;right:0;height:4px;background:var(--iris);background-size:200% 100%;animation:iris 4s linear infinite}
+.ghost-n{position:absolute;right:48px;top:-20px;font-family:var(--display);font-size:200px;line-height:1;color:var(--lite);pointer-events:none;user-select:none}
+.c5-badge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;background:var(--burg);color:#fff;padding:3px 10px;margin-bottom:12px}
+.sec-eye{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--burg);margin-bottom:14px;display:inline-block;margin-left:10px}
+.lh-title{font-family:var(--display);font-size:clamp(22px,3.2vw,46px);line-height:1.05;color:var(--black);max-width:640px}
+.lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
+.lh-sub b{color:var(--black)}
+.lb{padding:24px 56px 0}
+.lp{font-family:var(--serif);font-size:16px;line-height:1.8;color:var(--black);max-width:580px;margin-bottom:14px}
+.kp{list-style:none;max-width:580px;margin:14px 0}
+.kp li{font-family:var(--serif);font-size:15px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px;align-items:flex-start}
+.kp li:first-child{border-top:1px solid var(--line)}
+.kp-n{font-family:var(--mono);font-size:9px;color:var(--mid);min-width:22px;padding-top:3px;flex-shrink:0}
+.lie{max-width:580px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
+.lie-tab{position:absolute;top:0;left:0;font-family:var(--cond);font-size:9px;letter-spacing:.24em;font-weight:800;text-transform:uppercase;padding:3px 10px;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;color:var(--black)}
+.lie-q{font-family:var(--serif);font-style:italic;font-size:18px;color:#fff;line-height:1.5;margin:12px 0 10px}
+.lie-a{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
+.data-table{width:100%;max-width:600px;border-collapse:collapse;margin:16px 0}
+.data-table th{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;background:var(--black);color:var(--white);padding:9px 14px;text-align:left}
+.data-table td{font-family:var(--serif);font-size:14px;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--black);line-height:1.6;vertical-align:top}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:nth-child(even) td{background:var(--lite)}
+
+/* ── SEQUENTIAL RECIPE ── */
+.recipe-wrap{padding:16px 56px 44px;max-width:660px}
+.recipe-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:560px;line-height:1.65;margin-bottom:20px}
+.recipe-steps{display:flex;flex-direction:column;gap:0}
+.recipe-step{border:1px solid var(--line2);margin-bottom:8px;overflow:hidden;transition:border-color .3s,opacity .3s}
+.recipe-step.locked{opacity:.35;pointer-events:none}
+.recipe-step.unlocked{opacity:1;pointer-events:all}
+.recipe-step.done{border-color:var(--burg)}
+.recipe-step-top{display:flex;align-items:center;gap:0;cursor:pointer;transition:background .18s}
+.recipe-step.unlocked .recipe-step-top:hover{background:var(--burg-lt)}
+.recipe-step.done .recipe-step-top{background:var(--burg-lt)}
+.recipe-num{font-family:var(--display);font-size:28px;color:var(--lite2);flex-shrink:0;width:52px;text-align:center;line-height:1;padding:16px 0;transition:color .3s}
+.recipe-step.done .recipe-num{color:var(--burg)}
+.recipe-step.open .recipe-num{color:var(--burg)}
+.recipe-vdiv{width:1px;background:var(--line2);align-self:stretch;flex-shrink:0}
+.recipe-main{flex:1;padding:14px 18px}
+.recipe-label{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--black)}
+.recipe-sub{font-family:var(--serif);font-style:italic;font-size:12px;color:var(--mid);margin-top:3px}
+.recipe-status{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;flex-shrink:0;margin-right:14px;transition:all .3s}
+.recipe-status.locked{color:var(--mid);background:var(--lite2)}
+.recipe-status.open{color:var(--burg);background:var(--burg-lt)}
+.recipe-status.done{color:#fff;background:var(--burg)}
+.recipe-body{max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.4,0,.2,1)}
+.recipe-step.open .recipe-body{max-height:500px}
+.recipe-inner{padding:0 18px 18px 70px}
+.recipe-desc{font-family:var(--serif);font-size:14px;color:var(--black);line-height:1.75;margin-bottom:14px}
+.recipe-actions{list-style:none}
+.recipe-actions li{font-family:var(--serif);font-size:13px;color:var(--black);line-height:1.65;padding:8px 0;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:flex-start}
+.recipe-actions li:last-child{border-bottom:none}
+.recipe-actions li::before{content:'→';color:var(--burg);flex-shrink:0;margin-top:1px}
+.recipe-unlock-btn{margin-top:14px;font-family:var(--cond);font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:8px 16px;border:2px solid var(--burg);background:transparent;color:var(--burg);cursor:pointer;transition:all .15s}
+.recipe-unlock-btn:hover{background:var(--burg);color:#fff}
+.recipe-step.done .recipe-unlock-btn{background:var(--burg);color:#fff;pointer-events:none}
+
+/* ── SUBJECT LINE SCORER ── */
+.sl-wrap{padding:16px 56px 44px;max-width:720px}
+.sl-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.sl-items{display:flex;flex-direction:column;gap:10px}
+.sl-item{border:1px solid var(--line2);overflow:hidden;transition:border-color .2s}
+.sl-item.scored-high{border-color:var(--green)}
+.sl-item.scored-low{border-color:var(--coral)}
+.sl-top{padding:14px 18px;display:flex;align-items:flex-start;gap:14px}
+.sl-subject{flex:1}
+.sl-tag{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:5px}
+.sl-txt{font-family:var(--cond);font-size:14px;font-weight:700;letter-spacing:.04em;color:var(--black)}
+.sl-context{font-family:var(--serif);font-style:italic;font-size:12px;color:var(--mid);margin-top:3px;line-height:1.5}
+.sl-btns{display:flex;gap:7px;flex-shrink:0;padding-top:2px}
+.sl-btn{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:7px 12px;border:1.5px solid var(--line2);background:var(--white);cursor:pointer;transition:all .15s;color:var(--mid)}
+.sl-btn:hover:not([disabled]){color:var(--black);border-color:var(--black)}
+.sl-btn.high-sel{border-color:var(--green);background:var(--green);color:#000}
+.sl-btn.low-sel{border-color:var(--coral);background:var(--coral);color:#fff}
+.sl-btn[disabled]{cursor:default}
+.sl-result{padding:8px 18px 12px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;line-height:1.65;display:none;border-top:1px solid var(--line)}
+.sl-item.scored-high .sl-result{display:block;color:var(--green)}
+.sl-item.scored-low .sl-result{display:block;color:var(--coral)}
+
+/* ── RAMP WEEK PLANNER ── */
+.ramp-wrap{padding:16px 56px 44px;max-width:760px}
+.ramp-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.ramp-weeks{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:22px}
+.ramp-week{border:2px solid var(--line2);transition:border-color .2s}
+.ramp-week.target{border-color:var(--burg);border-style:dashed;cursor:pointer}
+.ramp-week.target:hover{border-style:solid}
+.ramp-wk-hdr{padding:11px 14px;border-bottom:1px solid var(--line2);background:var(--lite)}
+.ramp-wk-name{font-family:var(--cond);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--black)}
+.ramp-wk-goal{font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--mid);margin-top:3px;text-transform:uppercase}
+.ramp-wk-items{min-height:90px;padding:8px;display:flex;flex-direction:column;gap:5px}
+.ramp-wk-item{padding:8px 10px;font-family:var(--serif);font-size:12px;color:var(--black);line-height:1.45;border-left:3px solid var(--burg);background:var(--burg-lt)}
+.ramp-pool-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--black)}
+.ramp-tiles{display:flex;flex-direction:column;gap:6px;max-width:440px}
+.ramp-tile{padding:12px 16px;border:1px solid var(--line2);background:var(--white);font-family:var(--cond);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.3}
+.ramp-tile:hover:not(.placed):not(.sel){border-color:var(--burg)}
+.ramp-tile.sel{border-color:var(--burg);background:var(--burg);color:#fff}
+.ramp-tile.placed{visibility:hidden;pointer-events:none;height:0;margin:0;padding:0;border:none}
+.ramp-tile.wrong{border-color:var(--coral);background:var(--cor-lt);animation:shake .35s ease both}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.ramp-reset{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mid);background:none;border:none;cursor:pointer;text-decoration:underline;margin-top:10px}
+.ramp-reset:hover{color:var(--black)}
+
+/* ── VISIBILITY SCORE ── */
+.vis-wrap{padding:16px 56px 44px;max-width:700px}
+.vis-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.vis-meter{background:var(--black);padding:22px 24px;max-width:580px;margin-bottom:24px}
+.vis-meter-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px}
+.vis-score-row{display:flex;align-items:baseline;gap:10px;margin-bottom:12px}
+.vis-score-num{font-family:var(--display);font-size:60px;color:var(--saffron);line-height:.9;transition:all .5s cubic-bezier(.4,0,.2,1)}
+.vis-score-label{font-family:var(--cond);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#fff;transition:all .3s}
+.vis-bar{height:4px;background:rgba(255,255,255,0.08);position:relative;overflow:hidden}
+.vis-bar-fill{height:100%;background:var(--iris);background-size:200% 100%;animation:iris 3s linear infinite;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.vis-tip{font-family:var(--serif);font-style:italic;font-size:13px;color:rgba(255,255,255,0.4);margin-top:10px;line-height:1.55;min-height:36px;transition:all .3s}
+.vis-items{display:flex;flex-direction:column;gap:8px;max-width:580px}
+.vis-item{display:flex;align-items:center;gap:16px;padding:14px 18px;border:1px solid var(--line2);cursor:pointer;transition:all .2s;background:var(--white)}
+.vis-item:hover:not(.active){border-color:var(--burg);background:var(--burg-lt)}
+.vis-item.active{border-color:var(--burg);background:var(--burg-lt)}
+.vis-toggle{width:36px;height:20px;border-radius:10px;border:2px solid var(--line2);background:var(--lite2);position:relative;flex-shrink:0;transition:all .25s}
+.vis-toggle::after{content:'';position:absolute;width:12px;height:12px;border-radius:50%;background:var(--mid);top:2px;left:2px;transition:all .25s}
+.vis-item.active .vis-toggle{border-color:var(--burg);background:var(--burg)}
+.vis-item.active .vis-toggle::after{background:#fff;left:18px}
+.vis-item-name{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--black)}
+.vis-item-sub{font-family:var(--serif);font-style:italic;font-size:12px;color:var(--mid);margin-top:2px;line-height:1.45}
+.vis-item-pts{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--burg);margin-left:auto;flex-shrink:0;background:var(--burg-lt);padding:3px 8px;transition:background .2s,color .2s}
+.vis-item.active .vis-item-pts{background:var(--burg);color:#fff}
+.vis-done-box{max-width:580px;background:var(--saffron);padding:18px 22px;margin-top:14px;display:none}
+.vis-done-box.show{display:block}
+.vis-done-h{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;color:var(--black)}
+.vis-done-p{font-family:var(--serif);font-size:14px;color:rgba(0,0,0,0.55);line-height:1.65;font-style:italic}
+
+/* QUIZ */
+.quiz-banner{margin:16px 56px 0;padding:12px 18px;font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.06em;border-left:4px solid var(--cobalt);background:var(--cob-lt);color:var(--black);display:none}
+.quiz-banner.show{display:block}
+.quiz-banner.pass{border-color:var(--green);background:var(--grn-lt)}
+.quiz-banner.fail{border-color:var(--coral);background:var(--cor-lt)}
+.quiz-body{padding:20px 56px 44px;display:flex;flex-direction:column;gap:28px}
+.q-num{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--burg);margin-bottom:9px}
+.q-text{font-family:var(--display);font-size:clamp(13px,1.6vw,18px);color:var(--black);line-height:1.2;margin-bottom:13px}
+.q-opts{display:flex;flex-direction:column;gap:6px}
+.q-opt{padding:11px 16px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:14px;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.5}
+.q-opt:hover:not(.locked){border-color:var(--burg);background:var(--burg-lt)}
+.q-opt.chosen{border-color:var(--burg);background:var(--burg);color:#fff}
+.q-opt.correct{border-color:var(--green);background:var(--grn-lt);color:var(--black)}
+.q-opt.wrong-pick{border-color:var(--coral);background:var(--cor-lt);color:var(--black)}
+.q-opt.locked{cursor:default}
+
+/* TOOLS */
+.tools-blk{padding:20px 56px 44px}
+.t-head{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--black);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--black)}
+.hw-list{list-style:none;max-width:580px;margin-top:8px}
+.hw-list li{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.65;padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
+.hw-list li:first-child{border-top:1px solid var(--line)}
+.hw-box{width:14px;height:14px;border:2px solid var(--black);flex-shrink:0;margin-top:4px}
+
+/* COMPLETE */
+.comp{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.comp-l{background:var(--saffron);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.comp-l::before{content:'5';position:absolute;right:-20px;bottom:-40px;font-family:var(--display);font-size:280px;color:rgba(0,0,0,0.06);line-height:1;pointer-events:none}
+.comp-tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(0,0,0,0.35)}
+.comp-big{font-family:var(--display);font-size:clamp(44px,5.5vw,76px);line-height:.93;color:var(--black)}
+.comp-sub{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(0,0,0,0.45);line-height:1.7;border-top:1px solid rgba(0,0,0,0.1);padding-top:18px}
+.comp-r{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.comp-h{font-family:var(--display);font-size:clamp(22px,2.8vw,40px);line-height:1.08;color:var(--black);margin-bottom:18px}
+.comp-p{font-family:var(--serif);font-size:15px;color:var(--black);max-width:380px;line-height:1.8;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header class="topbar">
+  <div style="display:flex;align-items:center">
+    <div class="brand">AESDR</div>
+    <div class="course-badge">Course 5</div>
+  </div>
+  <div class="top-right">
+    <span class="prog-label" id="progLabel">Lesson 5.1</span>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+</header>
+
+<main class="main" id="main">
+
+  <!-- 0: COVER -->
+  <div class="screen active" id="s0">
+    <div class="cover" style="flex:1">
+      <div class="cvl">
+        <div>
+          <div class="cv-c5tag">AESDR · Lesson 5.1</div>
+          <div class="cv-course-num">05</div>
+          <div class="cv-big">The SDR Playbook — Leveling Up to Senior SDR</div>
+        </div>
+        <div class="cv-tagline">A step-by-step framework to stand out, hustle harder, and get promoted.</div>
+      </div>
+      <div class="cvr">
+        <div class="eyebrow">Course 5 · Lesson 1 of 3</div>
+        <div class="hero-h">Earn the<br><span class="irisTxt">title.</span></div>
+        <ul class="cv-list">
+          <li><span class="cl-n">01</span>The 6-Step Promotion Recipe</li>
+          <li><span class="cl-n">02</span>Sequences, Subjects & Ramp Planning</li>
+          <li><span class="cl-n">03</span>Your Senior SDR Visibility Score</li>
+        </ul>
+        <button class="btn btn-fill" onclick="go(1)"><span>Begin Lesson →</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1: WHY SENIOR SDR MATTERS -->
+  <div class="screen" id="s1">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">01</div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 01 — The Opportunity</span></div>
+      <div class="lh-title">Why the Senior SDR Role Actually Matters</div>
+    </div>
+    <div class="lb">
+      <p class="lp">Senior SDR isn't a participation trophy. It's the first signal in your career that leadership sees you as someone who performs without being managed — someone building toward AE or a leadership track, not just hitting a number.</p>
+      <p class="lp">The move from SDR to Senior SDR isn't magic. It's a recipe. Six specific moves, executed consistently, that make you impossible to ignore.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Higher visibility with leadership.</strong> Senior SDRs get pulled into conversations that regular SDRs aren't in. That's the value of the title beyond the pay bump.</li>
+        <li><span class="kp-n">02</span><strong>More challenging, more rewarding work.</strong> The best accounts, the most complex sequences, the real feedback loops — those go to the people who've proven they can handle them.</li>
+        <li><span class="kp-n">03</span><strong>Fastest path to AE or management.</strong> If you want to be an AE or a team lead in 18 months, Senior SDR is the checkpoint you must hit first. There's no shortcut around it.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Real Standard</div>
+        <div class="lie-q">"Senior SDRs aren't just top performers — they make the people around them perform better."</div>
+        <div class="lie-a">The promotion isn't for the person who quietly hits quota. It's for the person who out-hustles, shares what they know, elevates the AE relationship, and makes their impact visible. All six steps in the recipe point to this.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2: THE RECIPE (SEQUENTIAL) -->
+  <div class="screen" id="s2">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">01</div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 01 — The 6-Step Recipe</span></div>
+      <div class="lh-title">The Promotion Recipe — Unlock Each Step</div>
+      <div class="lh-sub"><b id="recipeCount">0</b> / 6 steps unlocked — complete each step in sequence to continue</div>
+    </div>
+    <div class="recipe-wrap">
+      <p class="recipe-instr">Each step unlocks the next. Read it, absorb it, mark it done. The order matters — this is the actual sequence that gets you promoted.</p>
+      <div class="recipe-steps" id="recipeSteps"></div>
+    </div>
+  </div>
+
+  <!-- 3: SUBJECT LINE SCORER -->
+  <div class="screen" id="s3">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">02</div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 02 — Sequence Mastery</span></div>
+      <div class="lh-title">Score the Subject Lines</div>
+      <div class="lh-sub"><b id="slCount">0</b> / 6 correctly scored</div>
+    </div>
+    <div class="sl-wrap">
+      <p class="sl-instr">Rate each subject line as High-Performing (57%+ open rate territory) or Low-Performing. Every correct verdict unlocks the reasoning behind it. All 6 required to continue.</p>
+      <div class="sl-items" id="slItems"></div>
+    </div>
+  </div>
+
+  <!-- 4: RAMP WEEK PLANNER -->
+  <div class="screen" id="s4">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 02 — Ramp Planning</span></div>
+      <div class="lh-title">Assign Activities to the Right Ramp Week</div>
+      <div class="lh-sub"><b id="rampCount">0</b> / 6 correctly placed</div>
+    </div>
+    <div class="ramp-wrap">
+      <p class="ramp-instr" style="font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px">Select an activity tile, then click the correct ramp week to place it. The sequencing matters — some things belong in week 1, others only make sense once you've done the work before them.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 44px">
+        <div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);padding-bottom:10px;border-bottom:2px solid var(--black);margin-bottom:10px">Ramp Weeks</div>
+          <div class="ramp-weeks" id="rampWeeks"></div>
+        </div>
+        <div>
+          <div class="ramp-pool-lbl">Activities — Select One</div>
+          <div class="ramp-tiles" id="rampTiles"></div>
+          <button class="ramp-reset" onclick="resetRamp()">Reset board</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5: VISIBILITY SCORE -->
+  <div class="screen" id="s5">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">03</div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 03 — Make It Visible</span></div>
+      <div class="lh-title">Build Your Senior SDR Visibility Score</div>
+      <div class="lh-sub">Toggle on every action you'll commit to this week. Get to 100 to continue.</div>
+    </div>
+    <div class="vis-wrap" id="visWrap"></div>
+  </div>
+
+  <!-- 6: QUIZ -->
+  <div class="screen" id="s6">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 03 — Knowledge Check</span></div>
+      <div class="lh-title">Test Your Understanding</div>
+    </div>
+    <div class="quiz-banner" id="quizBanner"></div>
+    <div class="quiz-body" id="quizBody"></div>
+  </div>
+
+  <!-- 7: TOOLS -->
+  <div class="screen" id="s7">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">04</div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 04 — Templates & Homework</span></div>
+      <div class="lh-title">The Promotion Toolkit</div>
+    </div>
+    <div class="tools-blk">
+      <div style="margin-top:20px">
+        <div class="t-head">SDR Ramp Activity Plan</div>
+        <table class="data-table">
+          <thead><tr><th>Week</th><th>Primary Goal</th><th>Visibility Action</th></tr></thead>
+          <tbody>
+            <tr><td>Week 1</td><td>Master product + persona. Write down 3 pain points and 3 benefits cold.</td><td>Book 1 meeting. Tell your manager you booked it before they ask.</td></tr>
+            <tr><td>Week 2</td><td>Book 2 meetings from outbound. Start calls — don't wait for perfect prep.</td><td>Post one market insight in Slack. Not an article — a 2-sentence take.</td></tr>
+            <tr><td>Week 3</td><td>Build and test your own sequence variant. Show the 70/30 split.</td><td>Deliver one tangible value-add to your AE — account research or an objection guide.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="t-head">Sequence Review Template</div>
+        <table class="data-table">
+          <thead><tr><th>Element</th><th>What to Look For</th><th>How to Build Your Own</th></tr></thead>
+          <tbody>
+            <tr><td>Subject Line</td><td>Open rate over 57% — does it create curiosity without clickbait?</td><td>Use it as inspiration. Change the angle. Test your version for 2 weeks.</td></tr>
+            <tr><td>Personalization</td><td>Is there one specific, researched detail that proves you looked?</td><td>Add one unique line per contact. It doesn't need to be long — just real.</td></tr>
+            <tr><td>Call to Action</td><td>Is it one ask? Is it specific? Is it easy to say yes to?</td><td>"What does Thursday look like for 20 minutes?" — specific, committal, clear.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="t-head">Homework — This Week</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Write down 3 product pain points and 3 benefits you can deliver confidently on a cold call — from memory. If you can't, that's your week-one priority before anything else.</li>
+          <li><div class="hw-box"></div>Book at least 1 meeting this week and tell your manager before they see it in the CRM. Proactive visibility is the whole point.</li>
+          <li><div class="hw-box"></div>Post one market insight in the team Slack this week. Two sentences, your take on a trend, relevant to positioning. Not a shared article with no comment — your actual perspective.</li>
+          <li><div class="hw-box"></div>Build one tangible value-add for your AE: a 5-account research doc, a rebuttal guide for the top 3 objections, or a list of 10 high-fit leads with a one-line rationale for each.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8: COMPLETE -->
+  <div class="screen" id="s8">
+    <div class="comp" style="flex:1">
+      <div class="comp-l">
+        <div>
+          <div class="comp-tag">Course 5 · Lesson 1 — Complete</div>
+          <div style="font-family:var(--display);font-size:56px;color:var(--black);line-height:.9;margin:10px 0 0">05</div>
+        </div>
+        <div class="comp-big">Follow<br>the<br>recipe.</div>
+        <div class="comp-sub">The path to Senior SDR is simple but not easy. Six moves, done consistently, executed visibly. That's it. Now go do them.</div>
+      </div>
+      <div class="comp-r">
+        <div class="eyebrow">Course 5 · Lesson 1 Complete</div>
+        <div class="comp-h">Work smarter. Hustle harder. Make it visible.</div>
+        <p class="comp-p">You've unlocked all six steps of the recipe, scored subject lines, planned your ramp, and built your visibility score. The promotion doesn't come from knowing what to do — it comes from doing it every single week until the title follows.</p>
+        <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
+        <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<aside class="sidebar">
+  <div class="sb-course">05</div>
+  <div class="sb-lesson">Lesson 5.1 · The SDR Playbook</div>
+  <div class="sb-divider"></div>
+  <div class="sb-label">Sections</div>
+  <div class="sb-item" id="nav1" onclick="go(1)">
+    <div class="sb-tag">Section 01</div>
+    <div class="sb-name">The Recipe</div>
+  </div>
+  <div class="sb-item" id="nav2" onclick="go(3)">
+    <div class="sb-tag">Section 02</div>
+    <div class="sb-name">Sequences & Ramp</div>
+  </div>
+  <div class="sb-item" id="nav3" onclick="go(5)">
+    <div class="sb-tag">Section 03</div>
+    <div class="sb-name">Visibility & Quiz</div>
+  </div>
+  <div class="sb-item" id="nav4" onclick="go(7)">
+    <div class="sb-tag">Section 04</div>
+    <div class="sb-name">Templates & Homework</div>
+  </div>
+</aside>
+
+<footer class="bottomnav" id="bottomnav" style="display:none">
+  <span class="nav-hint" id="hint"></span>
+  <div class="nav-btns">
+    <button class="btn" id="btnBack" onclick="back()" style="display:none">← Back</button>
+    <button class="btn btn-fill" id="btnNext" onclick="handleNext()"><span id="btnNextLabel">Continue →</span></button>
+  </div>
+</footer>
+
+</div>
+
+<script>
+/* ════════════════════════════════════
+   DATA
+════════════════════════════════════ */
+
+const RECIPE_STEPS = [
+  { num:'01', label:'Master Product & Persona',    sub:'Skip the onboarding fluff',
+    desc:'Before you make a single call, burn two things into your memory: what the product solves and who it\'s for. Not a feature list — a problem list.',
+    actions:['Write down the 3 biggest problems your product solves — in the prospect\'s language, not the marketing deck\'s.','Research your persona: their job, their pressures, what a bad quarter looks like for them.','Practice delivering those pain points and benefits out loud until you don\'t need to think about them.']
+  },
+  { num:'02', label:'Start Prospecting During Ramp', sub:'Don\'t wait — book early',
+    desc:'The SDRs who stand out don\'t wait for permission to start performing. Every meeting booked during ramp is a signal to leadership that you\'re here to produce, not to observe.',
+    actions:['Target low-risk or recycled accounts to build confidence without high-stakes pressure.','Aim for 1–3 meetings booked before ramp officially ends.','Tell your manager you booked it — proactively — before they see it in the CRM.']
+  },
+  { num:'03', label:'Build Your Own Sequence Style', sub:'70% proven, 30% original',
+    desc:'Every high-performing SDR has a voice. Use existing sequences to understand what works mechanically, then build on top of them — don\'t clone them.',
+    actions:['Study subject lines with 57%+ open rates. What emotion or curiosity do they create?','Apply a 70/30 rule: 70% battle-tested structure, 30% your own framing and personality.','Run your sequence against the existing one for two weeks. Track open rate and reply rate. Let data decide.']
+  },
+  { num:'04', label:'Add Value in Slack',           sub:'Culture and visibility matter',
+    desc:'The people who get promoted are the ones who are seen — not just producing in private. Sharing insights in Slack signals strategic thinking and team investment.',
+    actions:['Post one relevant market insight or trend per week — not just a link, your actual take on it.','Keep it short: "Saw this trend in [industry] — could shift how we position X. Thoughts?"','Consistency over time builds a reputation. One good post per week for 8 weeks = visible contributor.']
+  },
+  { num:'05', label:'Do Something Tangible for Your AE', sub:'Prove you see the bigger picture',
+    desc:'SDRs who make their AE\'s job easier get prioritized. It\'s not politics — it\'s partnership. And it signals readiness for the AE role itself.',
+    actions:['Research 5 key accounts and deliver insights your AE can use on calls — not generic company facts.','Build an objection rebuttal guide: the top 3 objections and a specific counter for each.','Proactively identify and prioritize the 10 highest-fit accounts in the current territory.']
+  },
+  { num:'06', label:'Out-Hustle on Calls — Publicly',  sub:'Make leadership notice your numbers',
+    desc:'Activity matters. But activity that\'s visible to leadership matters more. You\'re not just executing — you\'re building a track record that management can point to.',
+    actions:['Find the highest call count made by any SDR last week. Beat it every week for 3 consecutive weeks.','Track your own numbers and share them with your AE in writing: "X calls, X connects, X meetings."','Ask for a public shoutout when you earn it: "I hit X this week — can you mention it in the team meeting?"']
+  },
+];
+
+const SL_ITEMS = [
+  { tag:"Cold outreach — RevOps target",      txt:'"Quick question about your SDR ramp time"',               correct:'high', why:'✓ High — Short, specific, problem-led. "Quick question" lowers the barrier. "SDR ramp time" signals it\'s relevant to their exact role. Open rate will be well above average.' },
+  { tag:"Generic SaaS outreach",              txt:'"Introducing [Company] — Transform Your Sales Process!"',  correct:'low',  why:'✗ Low — Announcement format, benefit-claim opener, exclamation mark. Every inbox has five of these. This communicates "I wrote this for everyone." Immediate delete.' },
+  { tag:"Timely trigger outreach",            txt:'"Saw the Series B announcement — one question"',           correct:'high', why:'✓ High — References a real, recent event. Creates the sense that this is personal and timely, not a mass sequence. The trailing "one question" creates irresistible curiosity.' },
+  { tag:"Benefit-first cold email",           txt:'"How we helped [Company] increase revenue by 40%"',        correct:'low',  why:'✗ Low — Leading with your result, not their problem. The prospect doesn\'t know that company and doesn\'t care yet. Feels like a case study forwarded to a stranger.' },
+  { tag:"Role-specific tension opener",       txt:'"Do your SDRs know what happens if they miss month 3?"',   correct:'high', why:'✓ High — Creates a specific, uncomfortable tension that only the right persona will recognize. If it lands, it lands hard. Open rates on provocative relevance consistently outperform generic benefit claims.' },
+  { tag:"Feature announcement outreach",     txt:'"[Product] Now Integrates With Salesforce — Try It Today"',correct:'low',  why:'✗ Low — Product-first, feature-centric, no pain. You\'ve told them what you built but given them no reason to care about it before they know if it solves their problem.' },
+];
+
+const RAMP_WEEKS = [
+  { name:"Week 1", goal:"Foundation — learn and start moving" },
+  { name:"Week 2", goal:"Build — start performing visibly" },
+  { name:"Week 3", goal:"Differentiate — stand out with originality" },
+];
+const RAMP_ACTIVITIES = [
+  { txt:"Write down 3 pain points and 3 product benefits cold from memory",  week:0 },
+  { txt:"Shadow one AE call and take notes on objection handling",           week:0 },
+  { txt:"Book 2 outbound meetings and share results with your manager",      week:1 },
+  { txt:"Post one market insight in Slack and see who engages",              week:1 },
+  { txt:"Build and test your own sequence variant using the 70/30 rule",     week:2 },
+  { txt:"Deliver a research doc or objection guide to your AE unprompted",   week:2 },
+];
+const RAMP_TILE_ORDER = [4,0,2,5,1,3];
+
+const VIS_ITEMS = [
+  { name:"Book a meeting during ramp",                sub:"Before ramp officially ends. Tell your manager before they see it.",     pts:20 },
+  { name:"Post a market insight in Slack",            sub:"Your take — two sentences, weekly. Not a forwarded article.",            pts:15 },
+  { name:"Out-hustle on call volume for 3 weeks",     sub:"Beat the team's highest caller. Track it, share it publicly.",           pts:20 },
+  { name:"Deliver a tangible AE value-add",           sub:"Account research, objection guide, or prioritized lead list.",           pts:15 },
+  { name:"Share weekly results with your AE in writing", sub:"'X calls, X connects, X meetings booked.' Every week.",              pts:15 },
+  { name:"Ask for a public shoutout when you earn it",sub:"'I hit X this week — can you mention it in the standup?'",               pts:15 },
+];
+
+const VIS_TIPS = [
+  "Start here: just one of these, done this week, starts building the track record.",
+  "Two actions running simultaneously. You're starting to look like someone who takes initiative.",
+  "Three habits active. This is the zone where managers start to notice.",
+  "Four running. Leadership is noticing. Your name comes up in conversations you're not in.",
+  "Five active behaviors. You're running the Senior SDR playbook in full.",
+  "All six. You're not asking for the title at this point — you're proving it's already yours.",
+];
+
+const QUIZ = [
+  {
+    q:"What is the PRIMARY strategic reason to start prospecting during ramp — not after?",
+    opts:["It helps you learn the product faster by testing messaging in real calls","It signals to leadership that you're here to perform, not observe — proactively","It builds confidence before you're held accountable to real quota numbers","It gives your manager more data to work with during your 30-day review"],
+    ans:1
+  },
+  {
+    q:"According to the 70/30 sequence rule, what does the '30' represent?",
+    opts:["30% of your emails should be personalized to the individual prospect","30% of your sequences should be built from scratch without referencing existing ones","30% of your sequence should reflect your own original style, framing, and voice","30% of your outreach should go to accounts not in the official territory list"],
+    ans:2
+  },
+  {
+    q:"Which subject line strategy consistently produces the highest open rates?",
+    opts:["Benefit-first: leading with the outcome the prospect will achieve","Feature-led: referencing a new integration or product capability","Tension and specificity: naming a real problem or role-specific pressure point","Social proof: referencing a well-known company you've helped"],
+    ans:2
+  },
+  {
+    q:"What distinguishes visibility-building from simply hitting quota?",
+    opts:["Visibility requires booking more meetings than any other SDR on the team","Visibility means sharing results, insights, and contributions so leadership can see the work — not just the number","Visibility is about having more 1:1 time with your manager than your peers","Visibility means attending more team events and being socially present in the office"],
+    ans:1
+  },
+];
+
+/* ════════════════════════════════════
+   STATE
+════════════════════════════════════ */
+const TOTAL=9;
+let cur=0;
+let recipeOpen=new Set(), recipeDone=new Set();
+let slDone={}, slCount=0;
+let rampSel=null, rampDone={};
+let visActive=new Set(), visScore=0;
+let qAns={}, qSubmitted=false, qPassed=false;
+
+/* ════════════════════════════════════
+   INIT
+════════════════════════════════════ */
+function init(){
+  buildRecipe(); buildSL(); buildRamp(); buildVis(); buildQuiz(); render();
+}
+function go(n){
+  document.getElementById('s'+cur).classList.remove('active');
+  cur=n; document.getElementById('s'+cur).classList.add('active');
+  document.getElementById('main').scrollTop=0; render();
+}
+function next(){if(cur<TOTAL-1)go(cur+1);}
+function back(){if(cur>0)go(cur-1);}
+function handleNext(){
+  if(cur===6){if(!qSubmitted)submitQuiz();else if(qPassed)next();else retryQuiz();}
+  else next();
+}
+
+/* ════════════════════════════════════
+   SEQUENTIAL RECIPE
+════════════════════════════════════ */
+function buildRecipe(){
+  document.getElementById('recipeSteps').innerHTML=RECIPE_STEPS.map((s,i)=>`
+    <div class="recipe-step ${i===0?'unlocked':'locked'}" id="rs${i}">
+      <div class="recipe-step-top" onclick="toggleRecipe(${i})">
+        <div class="recipe-num">${s.num}</div>
+        <div class="recipe-vdiv"></div>
+        <div class="recipe-main">
+          <div class="recipe-label">${s.label}</div>
+          <div class="recipe-sub">${s.sub}</div>
+        </div>
+        <div class="recipe-status ${i===0?'open':'locked'}" id="rs-status${i}">${i===0?'OPEN':'LOCKED'}</div>
+      </div>
+      <div class="recipe-body">
+        <div class="recipe-inner">
+          <div class="recipe-desc">${s.desc}</div>
+          <ul class="recipe-actions">${s.actions.map(a=>`<li>${a}</li>`).join('')}</ul>
+          <button class="recipe-unlock-btn" id="rsbtn${i}" onclick="completeRecipeStep(event,${i})">Complete Step ${i+1} — Unlock Next →</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  // Open first step
+  document.getElementById('rs0').classList.add('open');
+}
+function toggleRecipe(i){
+  if(document.getElementById('rs'+i).classList.contains('locked')) return;
+  document.getElementById('rs'+i).classList.toggle('open');
+}
+function completeRecipeStep(e,i){
+  e.stopPropagation();
+  if(recipeDone.has(i)) return;
+  recipeDone.add(i);
+  const el=document.getElementById('rs'+i);
+  el.classList.add('done');
+  el.classList.remove('open');
+  document.getElementById('rs-status'+i).className='recipe-status done';
+  document.getElementById('rs-status'+i).textContent='DONE ✓';
+  document.getElementById('rsbtn'+i).textContent='Step Complete ✓';
+  // Unlock next
+  if(i<RECIPE_STEPS.length-1){
+    const next=document.getElementById('rs'+(i+1));
+    next.classList.remove('locked');
+    next.classList.add('unlocked','open');
+    document.getElementById('rs-status'+(i+1)).className='recipe-status open';
+    document.getElementById('rs-status'+(i+1)).textContent='OPEN';
+  }
+  document.getElementById('recipeCount').textContent=recipeDone.size;
+  render();
+}
+
+/* ════════════════════════════════════
+   SUBJECT LINE SCORER
+════════════════════════════════════ */
+function buildSL(){
+  document.getElementById('slItems').innerHTML=SL_ITEMS.map((s,i)=>`
+    <div class="sl-item" id="sli${i}">
+      <div class="sl-top">
+        <div class="sl-subject">
+          <div class="sl-tag">${s.tag}</div>
+          <div class="sl-txt">${s.txt}</div>
+        </div>
+        <div class="sl-btns">
+          <button class="sl-btn" id="slH${i}" onclick="scoreSL(${i},'high')">↑ High</button>
+          <button class="sl-btn" id="slL${i}" onclick="scoreSL(${i},'low')">↓ Low</button>
+        </div>
+      </div>
+      <div class="sl-result" id="slR${i}"></div>
+    </div>
+  `).join('');
+}
+function scoreSL(i,verdict){
+  if(slDone[i]) return;
+  const correct=SL_ITEMS[i].correct===verdict;
+  const item=document.getElementById('sli'+i);
+  if(correct){
+    slDone[i]=true; slCount++;
+    document.getElementById('slH'+i).disabled=true;
+    document.getElementById('slL'+i).disabled=true;
+    document.getElementById('slH'+i).classList.toggle('high-sel',verdict==='high');
+    document.getElementById('slL'+i).classList.toggle('low-sel',verdict==='low');
+    item.classList.add('scored-'+verdict);
+    document.getElementById('slR'+i).textContent=SL_ITEMS[i].why;
+    document.getElementById('slCount').textContent=slCount;
+    render();
+  } else {
+    const btn=verdict==='high'?document.getElementById('slH'+i):document.getElementById('slL'+i);
+    btn.classList.add('wrong');setTimeout(()=>btn.classList.remove('wrong'),400);
+  }
+}
+
+/* ════════════════════════════════════
+   RAMP PLANNER
+════════════════════════════════════ */
+function buildRamp(){
+  document.getElementById('rampWeeks').innerHTML=RAMP_WEEKS.map((w,wi)=>`
+    <div class="ramp-week" id="rw${wi}" onclick="pickRampWeek(${wi})">
+      <div class="ramp-wk-hdr"><div class="ramp-wk-name">${w.name}</div><div class="ramp-wk-goal">${w.goal}</div></div>
+      <div class="ramp-wk-items" id="rwItems${wi}"></div>
+    </div>
+  `).join('');
+  document.getElementById('rampTiles').innerHTML=RAMP_TILE_ORDER.map(ai=>`
+    <button class="ramp-tile" id="rt${ai}" onclick="pickRampTile(${ai})">${RAMP_ACTIVITIES[ai].txt}</button>
+  `).join('');
+}
+function pickRampTile(ai){
+  if(rampDone[ai]) return;
+  if(rampSel===ai){rampSel=null;renderRampUI();return;}
+  rampSel=ai;renderRampUI();
+}
+function pickRampWeek(wi){
+  if(rampSel===null) return;
+  const ai=rampSel;
+  const correct=RAMP_ACTIVITIES[ai].week===wi;
+  const tileEl=document.getElementById('rt'+ai);
+  if(correct){
+    rampDone[ai]=true;
+    tileEl.classList.add('placed');
+    document.getElementById('rwItems'+wi).innerHTML+=`<div class="ramp-wk-item">${RAMP_ACTIVITIES[ai].txt}</div>`;
+    rampSel=null;
+    document.getElementById('rampCount').textContent=Object.keys(rampDone).length;
+    renderRampUI();render();
+  } else {
+    const wkEl=document.getElementById('rw'+wi);
+    [tileEl,wkEl].forEach(e=>{e.classList.add('wrong');setTimeout(()=>e.classList.remove('wrong'),400);});
+    rampSel=null;renderRampUI();
+  }
+}
+function renderRampUI(){
+  RAMP_TILE_ORDER.forEach(ai=>{
+    const el=document.getElementById('rt'+ai);if(!el) return;
+    el.classList.toggle('sel',rampSel===ai);
+  });
+  RAMP_WEEKS.forEach((_,wi)=>{
+    const el=document.getElementById('rw'+wi);
+    el.classList.toggle('target',rampSel!==null);
+  });
+}
+function resetRamp(){
+  rampSel=null;rampDone={};
+  buildRamp();document.getElementById('rampCount').textContent=0;
+  renderRampUI();render();
+}
+
+/* ════════════════════════════════════
+   VISIBILITY SCORE
+════════════════════════════════════ */
+function buildVis(){
+  const w=document.getElementById('visWrap');
+  if(!w) return;
+  const scoreLabel=()=>{
+    if(visScore===0) return "Not Yet Started";
+    if(visScore<=30) return "Just Getting Going";
+    if(visScore<=55) return "Building Presence";
+    if(visScore<=75) return "On the Radar";
+    if(visScore<=90) return "Senior SDR Candidate";
+    return "Senior SDR Behavior — Full Stack";
+  };
+  const tipIdx=Math.min(visActive.size, VIS_TIPS.length-1);
+  w.innerHTML=`
+    <p class="vis-instr">Toggle on every action you'll commit to this week. Build your score to 100 to continue.</p>
+    <div class="vis-meter">
+      <div class="vis-meter-lbl">Senior SDR Visibility Score</div>
+      <div class="vis-score-row">
+        <div class="vis-score-num" id="visNum">${visScore}</div>
+        <div class="vis-score-label" id="visLabel">${scoreLabel()}</div>
+      </div>
+      <div class="vis-bar"><div class="vis-bar-fill" id="visBarFill" style="width:${visScore}%"></div></div>
+      <div class="vis-tip" id="visTip">${VIS_TIPS[tipIdx]}</div>
+    </div>
+    <div class="vis-items">
+      ${VIS_ITEMS.map((v,i)=>`
+        <div class="vis-item${visActive.has(i)?' active':''}" id="vi${i}" onclick="toggleVis(${i})">
+          <div class="vis-toggle"></div>
+          <div style="flex:1">
+            <div class="vis-item-name">${v.name}</div>
+            <div class="vis-item-sub">${v.sub}</div>
+          </div>
+          <div class="vis-item-pts">+${v.pts} pts</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="vis-done-box ${visScore>=100?'show':''}" id="visDoneBox">
+      <div class="vis-done-h">✓ Full Visibility Score — You're Running the Senior SDR Playbook</div>
+      <div class="vis-done-p">Now the only remaining question is whether you execute this every week — not just this one. Continue when ready.</div>
+    </div>
+  `;
+}
+function toggleVis(i){
+  if(visActive.has(i)) visActive.delete(i);
+  else visActive.add(i);
+  visScore=0;
+  visActive.forEach(idx=>visScore+=VIS_ITEMS[idx].pts);
+  buildVis();render();
+}
+
+/* ════════════════════════════════════
+   QUIZ
+════════════════════════════════════ */
+function buildQuiz(){
+  document.getElementById('quizBody').innerHTML=QUIZ.map((q,qi)=>`
+    <div class="q-block">
+      <div class="q-num">Question ${qi+1} of ${QUIZ.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-opts">${q.opts.map((o,oi)=>`<button class="q-opt" id="qo${qi}_${oi}" onclick="pickOpt(${qi},${oi})">${o}</button>`).join('')}</div>
+    </div>
+  `).join('');
+}
+function pickOpt(qi,oi){
+  if(qSubmitted) return;
+  QUIZ[qi].opts.forEach((_,i)=>document.getElementById(`qo${qi}_${i}`).classList.remove('chosen'));
+  document.getElementById(`qo${qi}_${oi}`).classList.add('chosen');
+  qAns[qi]=oi; render();
+}
+function submitQuiz(){
+  qSubmitted=true; let correct=0;
+  QUIZ.forEach((q,qi)=>{
+    const chosen=qAns[qi];
+    q.opts.forEach((_,oi)=>{
+      const el=document.getElementById(`qo${qi}_${oi}`);
+      el.classList.add('locked'); el.classList.remove('chosen');
+      if(oi===q.ans) el.classList.add('correct');
+      else if(oi===chosen&&chosen!==q.ans) el.classList.add('wrong-pick');
+    });
+    if(chosen===q.ans) correct++;
+  });
+  qPassed=correct>=3;
+  const b=document.getElementById('quizBanner');
+  b.className='quiz-banner show '+(qPassed?'pass':'fail');
+  b.textContent=qPassed?`✓ ${correct} / ${QUIZ.length} correct — cleared to continue.`:`${correct} / ${QUIZ.length} correct — need 3 to pass. Review and try again.`;
+  render();
+}
+function retryQuiz(){
+  qSubmitted=false; qPassed=false; qAns={};
+  document.getElementById('quizBanner').className='quiz-banner';
+  buildQuiz(); render();
+}
+
+/* ════════════════════════════════════
+   RENDER
+════════════════════════════════════ */
+const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:4};
+function canContinue(){
+  if(cur===2) return recipeDone.size===6;
+  if(cur===3) return slCount===6;
+  if(cur===4) return Object.keys(rampDone).length===6;
+  if(cur===5) return visScore>=100;
+  if(cur===6){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length; return true;}
+  return true;
+}
+function getHint(){
+  const h={
+    1:"The promotion doesn't come from knowing the recipe. It comes from following it.",
+    2:`${recipeDone.size} / 6 steps completed — each step unlocks the next`,
+    3:`${slCount} / 6 correctly scored`,
+    4:`${Object.keys(rampDone).length} / 6 correctly placed`,
+    5:visScore>=100?'✓ Full score — continue below.':`Score: ${visScore} / 100 — toggle on what you'll commit to`,
+    6:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
+    7:"The template only works if you actually do the homework.",
+  };
+  return h[cur]||'';
+}
+function getNextLabel(){
+  if(cur===6&&!qSubmitted) return 'Submit Answers';
+  if(cur===6&&!qPassed) return 'Try Again →';
+  if(cur===7) return 'Finish Lesson →';
+  return 'Continue →';
+}
+function render(){
+  const sec=SEC[cur];
+  document.getElementById('progLabel').textContent=sec?`Section 0${sec}`:'Lesson 5.1';
+  const pct=cur===0?0:Math.round((cur/(TOTAL-1))*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  ['nav1','nav2','nav3','nav4'].forEach((id,i)=>
+    document.getElementById(id).classList.toggle('active',SEC[cur]===i+1));
+  const hide=cur===0||cur===TOTAL-1;
+  document.getElementById('bottomnav').style.display=hide?'none':'flex';
+  if(hide) return;
+  document.getElementById('hint').textContent=getHint();
+  document.getElementById('btnNextLabel').textContent=getNextLabel();
+  document.getElementById('btnBack').style.display=cur<=1?'none':'block';
+  document.getElementById('btnNext').disabled=!canContinue();
+}
+
+// Ramp zone delegation
+document.addEventListener('click',function(e){
+  if(rampSel!==null){
+    RAMP_WEEKS.forEach((_,wi)=>{
+      const el=document.getElementById('rw'+wi);
+      if(el&&e.target.closest('#rw'+wi)&&!e.target.closest('.ramp-tile')&&!e.target.closest('.ramp-wk-item'))
+        pickRampWeek(wi);
+    });
+  }
+});
+
+init();
+</script>
+</body>
+</html>

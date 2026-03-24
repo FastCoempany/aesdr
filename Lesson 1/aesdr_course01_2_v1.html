@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR — Course 1.2: Building Real Camaraderie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --white:  #FFFFFF;
+  --black:  #000000;
+  --mid:    #636060;
+  --lite:   #F2EEE9;
+  --lite2:  #E5E1DC;
+  --teal:   #006E5A;
+  --teal-lt:rgba(0,110,90,0.08);
+  --teal-md:rgba(0,110,90,0.18);
+  --pink:   #FF006E;
+  --pink-lt:rgba(255,0,110,0.08);
+  --cobalt: #0038FF;
+  --cob-lt: rgba(0,56,255,0.07);
+  --green:  #00B85A;
+  --grn-lt: rgba(0,184,90,0.09);
+  --coral:  #FF3200;
+  --cor-lt: rgba(255,50,0,0.07);
+  --acid:   #C8FF00;
+  --line:   rgba(0,0,0,0.08);
+  --line2:  rgba(0,0,0,0.15);
+  --iris:   linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#FFD600 34%,#00E5A0 51%,#0099FF 68%,#7B2FFF 85%,#FF006E 100%);
+  --display:'Abril Fatface',Georgia,serif;
+  --serif:  'Cormorant Garamond',Georgia,serif;
+  --cond:   'Barlow Condensed',sans-serif;
+  --mono:   'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--white);color:var(--black);font-family:var(--cond);overflow:hidden}
+
+.app{display:grid;grid-template-columns:1fr 234px;grid-template-rows:52px 1fr 60px;height:100vh}
+
+/* TOPBAR */
+.topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:2px solid var(--black);background:var(--white);z-index:20}
+.brand{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.22em;text-transform:uppercase}
+.top-right{display:flex;align-items:center;gap:14px}
+.prog-label{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--mid);text-transform:uppercase}
+.prog-track{width:80px;height:2px;background:var(--lite2)}
+.prog-fill{height:100%;background:var(--iris);background-size:200% 100%;animation:iris 3s linear infinite;transition:width .8s cubic-bezier(.4,0,.2,1)}
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+
+/* MAIN */
+.main{overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;background:var(--white);scrollbar-width:none}
+.main::-webkit-scrollbar{display:none}
+
+/* SIDEBAR */
+.sidebar{border-left:2px solid var(--black);padding:32px 20px;overflow-y:auto;scrollbar-width:none;background:var(--white)}
+.sidebar::-webkit-scrollbar{display:none}
+.sb-label{font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--mid);margin-bottom:24px}
+.sb-item{padding:16px 0;border-bottom:1px solid var(--line);cursor:pointer;position:relative;transition:all .2s}
+.sb-item:first-of-type{border-top:1px solid var(--line)}
+.sb-tag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--mid);margin-bottom:7px;text-transform:uppercase;transition:color .2s}
+.sb-name{font-family:var(--cond);font-size:12px;font-weight:700;color:var(--mid);line-height:1.4;text-transform:uppercase;letter-spacing:.04em;transition:color .2s}
+.sb-item.active .sb-tag{color:var(--teal)}
+.sb-item.active .sb-name{color:var(--black)}
+.sb-item.active::before{content:'';position:absolute;left:-20px;top:0;bottom:0;width:3px;background:var(--teal)}
+.sb-item:hover .sb-name{color:var(--black)}
+
+/* BOTTOMNAV */
+.bottomnav{grid-column:1/2;display:flex;align-items:center;justify-content:space-between;padding:0 56px;border-top:2px solid var(--black);background:var(--white)}
+.nav-hint{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--mid);font-style:italic}
+.nav-btns{display:flex;gap:8px}
+.btn{font-family:var(--cond);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:10px 22px;border:2px solid var(--black);background:transparent;color:var(--black);cursor:pointer;transition:all .15s}
+.btn:hover{background:var(--black);color:var(--white)}
+.btn-fill{background:var(--black);color:var(--white);position:relative;overflow:hidden}
+.btn-fill::before{content:'';position:absolute;inset:0;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;opacity:0;transition:opacity .2s}
+.btn-fill:hover::before{opacity:1}
+.btn-fill:hover{color:var(--black)}
+.btn-fill span{position:relative;z-index:1}
+.btn-fill:disabled,.btn-fill:disabled:hover{opacity:.28;cursor:not-allowed;background:var(--black);color:var(--white)}
+.btn-fill:disabled::before,.btn-fill:disabled:hover::before{display:none}
+
+/* SCREENS */
+.screen{display:none;flex-direction:column;flex:1;animation:up .42s cubic-bezier(.22,1,.36,1) both}
+.screen.active{display:flex}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* COVER */
+.cover{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.cvl{background:var(--teal);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.cvl::after{content:'';position:absolute;bottom:-80px;right:-80px;width:320px;height:320px;border-radius:50%;background:rgba(255,255,255,0.04);pointer-events:none}
+.cv-tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.45)}
+.cv-big{font-family:var(--display);font-size:clamp(36px,4.2vw,60px);line-height:.95;color:#fff}
+.cv-tagline{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.6);line-height:1.7;border-top:1px solid rgba(255,255,255,0.14);padding-top:18px}
+.cvr{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;margin-bottom:16px;display:inline-block;background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:iris 3s linear infinite}
+.hero-h{font-family:var(--display);font-size:clamp(28px,3.8vw,52px);line-height:.97;color:var(--black);margin-bottom:20px}
+.hero-h .irisTxt{background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:iris 3s linear infinite}
+.cv-list{list-style:none;margin-bottom:36px}
+.cv-list li{font-family:var(--cond);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mid);display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.cv-list li:first-child{border-top:1px solid var(--line)}
+.cl-n{font-family:var(--mono);font-size:9px;background:var(--black);color:var(--white);padding:2px 6px;flex-shrink:0}
+
+/* SHARED HEADER */
+.lh{padding:44px 56px 0;position:relative;overflow:hidden}
+.lh-stripe{position:absolute;top:0;left:0;right:0;height:4px;background:var(--iris);background-size:200% 100%;animation:iris 4s linear infinite}
+.ghost-n{position:absolute;right:48px;top:-20px;font-family:var(--display);font-size:200px;line-height:1;color:var(--lite);pointer-events:none;user-select:none}
+.sec-eye{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--teal);margin-bottom:14px;display:inline-block}
+.lh-title{font-family:var(--display);font-size:clamp(22px,3.2vw,46px);line-height:1.05;color:var(--black);max-width:640px}
+.lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
+.lh-sub b{color:var(--black)}
+.lb{padding:24px 56px 0}
+.lp{font-family:var(--serif);font-size:16px;line-height:1.8;color:var(--black);max-width:580px;margin-bottom:14px}
+.kp{list-style:none;max-width:580px;margin:14px 0}
+.kp li{font-family:var(--serif);font-size:15px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px;align-items:flex-start}
+.kp li:first-child{border-top:1px solid var(--line)}
+.kp-n{font-family:var(--mono);font-size:9px;color:var(--mid);min-width:22px;padding-top:3px;flex-shrink:0}
+.lie{max-width:580px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
+.lie-tab{position:absolute;top:0;left:0;font-family:var(--cond);font-size:9px;letter-spacing:.24em;font-weight:800;text-transform:uppercase;padding:3px 10px;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;color:var(--black)}
+.lie-q{font-family:var(--serif);font-style:italic;font-size:18px;color:#fff;line-height:1.5;margin:12px 0 10px}
+.lie-a{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
+
+/* ── COG vs PARTNER SORT ── */
+.sort-wrap{padding:16px 56px 44px}
+.sort-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.sort-arena{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:720px}
+.sort-zone{border:2px solid var(--line2);padding:14px;min-height:260px}
+.sort-zone-lbl{font-family:var(--cond);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;padding-bottom:10px;border-bottom:2px solid var(--black)}
+.sort-zone-lbl.cog-lbl{color:var(--coral)}
+.sort-zone-lbl.partner-lbl{color:var(--teal)}
+.sort-dropped{display:flex;flex-direction:column;gap:6px;min-height:180px}
+.sort-card{padding:13px 14px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:13px;color:var(--black);line-height:1.5;cursor:pointer;transition:all .18s;position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sort-card .sc-txt{flex:1}
+.sort-card .sc-ico{font-size:16px;flex-shrink:0;opacity:0;transition:opacity .2s}
+.sort-card.correct .sc-ico{opacity:1}
+.sort-card:hover:not(.locked){border-color:var(--teal);background:var(--teal-lt)}
+.sort-card.sel{border-color:var(--teal);background:var(--teal);color:#fff}
+.sort-card.sel .sc-ico{display:none}
+.sort-card.correct{background:var(--acid);border-color:transparent;cursor:default}
+.sort-card.correct .sc-ico{color:var(--black)}
+.sort-card.wrong{border-color:var(--coral);background:var(--cor-lt);animation:shake .35s ease both}
+.sort-card.locked{cursor:default}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.sort-pool{display:flex;flex-direction:column;gap:6px;max-width:720px;margin-bottom:16px}
+.sort-pool-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;padding-bottom:10px;border-bottom:2px solid var(--black)}
+.drop-zone-card{padding:13px 14px;border:2px dashed var(--line2);background:var(--white);font-family:var(--cond);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mid);text-align:center;cursor:pointer;transition:all .18s;min-height:46px;display:flex;align-items:center;justify-content:center}
+.drop-zone-card.target{border-color:var(--teal);background:var(--teal-lt);color:var(--teal);border-style:solid}
+.drop-zone-card.target:hover{border-width:3px}
+.sort-reset{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mid);background:none;border:none;cursor:pointer;text-decoration:underline;margin-top:6px}
+.sort-reset:hover{color:var(--black)}
+
+/* ── CONVERSATION SIMULATOR ── */
+.conv-wrap{padding:0 0 44px}
+.conv-prog{display:flex;gap:0;margin:22px 56px 0;max-width:440px}
+.conv-step{flex:1;display:flex;align-items:center}
+.conv-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--line2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;color:var(--mid);transition:all .25s;flex-shrink:0;background:var(--white)}
+.conv-dot.active{border-color:var(--teal);background:var(--teal);color:#fff}
+.conv-dot.done{border-color:var(--pink);background:var(--pink);color:#fff}
+.conv-line{flex:1;height:1px;background:var(--line2);margin:0 4px}
+.conv-lbl-row{display:flex;margin:6px 56px 0;max-width:440px}
+.conv-lbl{flex:1;font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--mid);transition:color .2s}
+.conv-lbl.cur{color:var(--black)}
+.conv-scene{margin:18px 56px 0;max-width:640px}
+.conv-who{font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+.conv-bubble{background:var(--black);padding:18px 22px;font-family:var(--serif);font-style:italic;font-size:15px;color:rgba(255,255,255,0.75);line-height:1.7;position:relative}
+.conv-bubble::after{content:'';position:absolute;bottom:-8px;left:28px;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid var(--black)}
+.conv-q{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin:20px 56px 10px;max-width:640px}
+.conv-opts{display:flex;flex-direction:column;gap:7px;padding:0 56px;max-width:700px}
+.conv-opt{padding:14px 18px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:14px;color:var(--black);text-align:left;cursor:pointer;transition:all .18s;line-height:1.55;display:flex;gap:14px;align-items:flex-start}
+.conv-opt:hover:not(.locked){border-color:var(--teal);background:var(--teal-lt)}
+.conv-opt.correct{border-color:var(--teal);background:var(--teal-lt);cursor:default}
+.conv-opt.wrong{border-color:var(--coral);background:var(--cor-lt);cursor:default}
+.conv-opt.locked{cursor:default}
+.co-ltr{font-family:var(--mono);font-size:10px;color:var(--mid);flex-shrink:0;margin-top:2px;transition:color .2s}
+.conv-opt.correct .co-ltr{color:var(--teal)}
+.conv-opt.wrong .co-ltr{color:var(--coral)}
+.conv-fb{font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--mid);margin:10px 56px 0;max-width:640px;line-height:1.7;display:none}
+.conv-fb.show{display:block}
+.conv-fb.good{color:var(--teal)}
+.conv-fb.bad{color:var(--coral)}
+.conv-adv{margin:14px 56px 0;display:none}
+.conv-adv.show{display:block}
+.conv-done-box{margin:20px 56px 0;max-width:580px;background:var(--teal);padding:22px 22px 18px;color:#fff}
+.conv-done-h{font-family:var(--cond);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.conv-done-p{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.7);line-height:1.65}
+
+/* ── TRUST AUDIT ── */
+.audit-wrap{padding:16px 56px 44px;max-width:680px}
+.audit-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:22px}
+.audit-item{border:1px solid var(--line2);margin-bottom:10px;overflow:hidden;transition:border-color .2s}
+.audit-item.done{border-color:var(--teal)}
+.audit-trigger{width:100%;display:flex;align-items:center;gap:16px;padding:16px 18px;background:none;border:none;cursor:pointer;text-align:left;transition:background .18s}
+.audit-trigger:hover{background:var(--teal-lt)}
+.audit-item.done .audit-trigger{background:var(--teal-lt)}
+.audit-ico{width:22px;height:22px;border-radius:50%;border:2px solid var(--line2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;transition:all .25s}
+.audit-item.done .audit-ico{background:var(--teal);border-color:var(--teal);color:#fff}
+.audit-label{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--black)}
+.audit-arr{margin-left:auto;color:var(--mid);font-size:16px;transition:transform .3s;flex-shrink:0}
+.audit-item.open .audit-arr{transform:rotate(90deg)}
+.audit-body{max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.4,0,.2,1)}
+.audit-item.open .audit-body{max-height:300px}
+.audit-inner{padding:0 18px 18px 56px}
+.audit-p{font-family:var(--serif);font-size:14px;color:var(--black);line-height:1.75;margin-bottom:10px}
+.audit-example{background:var(--black);padding:12px 16px;font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.65);line-height:1.6;position:relative}
+.audit-eg-tag{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);margin-bottom:6px}
+.audit-done-btn{margin-top:12px;font-family:var(--cond);font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:8px 16px;border:2px solid var(--teal);background:transparent;color:var(--teal);cursor:pointer;transition:all .15s}
+.audit-done-btn:hover{background:var(--teal);color:#fff}
+.audit-item.done .audit-done-btn{background:var(--teal);color:#fff}
+
+/* ── ACKNOWLEDGMENT BUILDER ── */
+.ack-wrap{padding:16px 56px 44px;max-width:700px}
+.ack-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:22px}
+.ack-preview{background:var(--black);padding:22px 24px;margin-bottom:24px;position:relative;max-width:580px}
+.ack-prev-tag{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px}
+.ack-prev-from{font-family:var(--mono);font-size:9px;color:var(--pink);letter-spacing:.1em;margin-bottom:6px}
+.ack-prev-body{font-family:var(--serif);font-size:15px;color:#fff;line-height:1.7;min-height:48px}
+.ack-prev-body .slot{background:rgba(255,255,255,0.08);border-bottom:1px dashed rgba(255,255,255,0.25);padding:1px 4px;font-style:italic;color:rgba(255,255,255,0.35)}
+.ack-prev-body .slot.filled{background:transparent;border-bottom:none;color:#fff;font-style:normal}
+.ack-sections{display:flex;flex-direction:column;gap:16px}
+.ack-section-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px}
+.ack-choices{display:flex;flex-direction:column;gap:6px}
+.ack-choice{padding:11px 16px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:14px;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.5}
+.ack-choice:hover:not(.locked):not(.chosen){border-color:var(--teal);background:var(--teal-lt)}
+.ack-choice.chosen{border-color:var(--teal);background:var(--teal);color:#fff}
+.ack-choice.correct{border-color:var(--green);background:var(--grn-lt);color:var(--black);cursor:default}
+.ack-choice.wrong-reveal{border-color:var(--coral);background:var(--cor-lt);color:var(--black);cursor:default}
+.ack-choice.locked{cursor:default}
+.ack-submit{margin-top:18px}
+.ack-done-box{max-width:580px;background:var(--acid);padding:18px 22px;margin-top:16px;display:none}
+.ack-done-box.show{display:block}
+.ack-done-h{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.ack-done-p{font-family:var(--serif);font-size:14px;color:var(--mid);line-height:1.65;font-style:italic}
+
+/* QUIZ */
+.quiz-banner{margin:16px 56px 0;padding:12px 18px;font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.06em;border-left:4px solid var(--cobalt);background:var(--cob-lt);color:var(--black);display:none}
+.quiz-banner.show{display:block}
+.quiz-banner.pass{border-color:var(--green);background:var(--grn-lt)}
+.quiz-banner.fail{border-color:var(--coral);background:var(--cor-lt)}
+.quiz-body{padding:20px 56px 44px;display:flex;flex-direction:column;gap:28px}
+.q-num{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);margin-bottom:9px}
+.q-text{font-family:var(--display);font-size:clamp(13px,1.6vw,18px);color:var(--black);line-height:1.2;margin-bottom:13px}
+.q-opts{display:flex;flex-direction:column;gap:6px}
+.q-opt{padding:11px 16px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:14px;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.5}
+.q-opt:hover:not(.locked){border-color:var(--teal);background:var(--teal-lt)}
+.q-opt.chosen{border-color:var(--teal);background:var(--teal);color:#fff}
+.q-opt.correct{border-color:var(--green);background:var(--grn-lt);color:var(--black)}
+.q-opt.wrong-pick{border-color:var(--coral);background:var(--cor-lt);color:var(--black)}
+.q-opt.locked{cursor:default}
+
+/* TOOLS */
+.tools-blk{padding:20px 56px 44px}
+.t-head{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--black);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--black)}
+.data-table{width:100%;max-width:600px;border-collapse:collapse;margin:0 0 30px}
+.data-table th{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;background:var(--black);color:var(--white);padding:9px 14px;text-align:left}
+.data-table td{font-family:var(--serif);font-size:14px;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--black);line-height:1.6;vertical-align:top}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:nth-child(even) td{background:var(--lite)}
+.hw-list{list-style:none;max-width:580px;margin-top:8px}
+.hw-list li{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.65;padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
+.hw-list li:first-child{border-top:1px solid var(--line)}
+.hw-box{width:14px;height:14px;border:2px solid var(--black);flex-shrink:0;margin-top:4px}
+
+/* COMPLETE */
+.comp{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.comp-l{background:var(--pink);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between}
+.comp-tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.38)}
+.comp-big{font-family:var(--display);font-size:clamp(44px,5.5vw,76px);line-height:.93;color:#fff}
+.comp-sub{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7;border-top:1px solid rgba(255,255,255,0.12);padding-top:18px}
+.comp-r{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.comp-h{font-family:var(--display);font-size:clamp(22px,2.8vw,40px);line-height:1.08;color:var(--black);margin-bottom:18px}
+.comp-p{font-family:var(--serif);font-size:15px;color:var(--black);max-width:380px;line-height:1.8;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="brand">AESDR</div>
+  <div class="top-right">
+    <span class="prog-label" id="progLabel">Course 1.2</span>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+</header>
+
+<main class="main" id="main">
+
+  <!-- 0: COVER -->
+  <div class="screen active" id="s0">
+    <div class="cover" style="flex:1">
+      <div class="cvl">
+        <div class="cv-tag">AESDR · Course 1.2</div>
+        <div class="cv-big">Building Real Camaraderie in SaaS Sales Teams</div>
+        <div class="cv-tagline">From "clock-in, clock-out" to actually working with each other.</div>
+      </div>
+      <div class="cvr">
+        <div class="eyebrow">What You'll Build</div>
+        <div class="hero-h">From cog<br><span class="irisTxt">to partner.</span></div>
+        <ul class="cv-list">
+          <li><span class="cl-n">01</span>Why Camaraderie Is a Performance Variable</li>
+          <li><span class="cl-n">02</span>The 3 Principles That Build Real Trust</li>
+          <li><span class="cl-n">03</span>Practical Tools for This Week</li>
+        </ul>
+        <button class="btn btn-fill" onclick="go(1)"><span>Begin Course →</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1: WHY CAMARADERIE -->
+  <div class="screen" id="s1">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">01</div>
+      <div class="sec-eye">Section 01 — The Foundation</div>
+      <div class="lh-title">Camaraderie Isn't a Buzzword. It's a Performance Variable.</div>
+    </div>
+    <div class="lb">
+      <p class="lp">Camaraderie isn't about forced happy hours or icebreakers. It's about showing up for your SDR as a real person who understands their challenges — and treats them as a partner with skin in the same game.</p>
+      <p class="lp">When camaraderie exists, SDRs don't just hit numbers. They think smarter, hustle harder, and take creative ownership because they feel like part of something real.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span>It is foundational for trust, alignment, and sustained performance — not a nice-to-have on top of structure.</li>
+        <li><span class="kp-n">02</span>Without it, SDRs see their role as purely transactional: hit the number and clock out. Nothing more.</li>
+        <li><span class="kp-n">03</span>AEs are the ones who decide how this dynamic plays out. It doesn't happen on its own.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Trap</div>
+        <div class="lie-q">"Camaraderie just happens naturally if the team is good."</div>
+        <div class="lie-a">It doesn't. It's built through specific, intentional behaviors — honesty, acknowledgment, and the willingness to step off the pedestal. None of that is accidental.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2: COG vs PARTNER SORT -->
+  <div class="screen" id="s2">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">01</div>
+      <div class="sec-eye">Section 01 — Recognition Check</div>
+      <div class="lh-title">Cog or Partner? Sort the Behaviors.</div>
+      <div class="lh-sub"><b id="sortCount">0</b> / 8 correctly sorted — select a card, then click the correct column</div>
+    </div>
+    <div class="sort-wrap">
+      <p class="sort-instr">Click a behavior card to select it (it will highlight), then click the column it belongs in. Get all 8 right to continue.</p>
+      <div class="sort-pool" id="sortPool">
+        <div class="sort-pool-lbl">Behavior Cards — Select One</div>
+        <div id="sortPoolCards"></div>
+      </div>
+      <div class="sort-arena">
+        <div class="sort-zone" id="zCog">
+          <div class="sort-zone-lbl cog-lbl">← Cog Mindset</div>
+          <div class="sort-dropped" id="droppedCog"></div>
+        </div>
+        <div class="sort-zone" id="zPartner">
+          <div class="sort-zone-lbl partner-lbl">Partner Mindset →</div>
+          <div class="sort-dropped" id="droppedPartner"></div>
+        </div>
+      </div>
+      <button class="sort-reset" onclick="resetSort()">Reset board</button>
+    </div>
+  </div>
+
+  <!-- 3: PRINCIPLES -->
+  <div class="screen" id="s3">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">02</div>
+      <div class="sec-eye">Section 02 — The 3 Principles</div>
+      <div class="lh-title">What Actually Builds Camaraderie</div>
+    </div>
+    <div class="lb">
+      <p class="lp">Three principles, none of them complicated. All of them requiring consistency to land.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Meet Them Where They Are.</strong> SDRs are at Level 1 — entry-level, high-stakes, no roadmap. Acknowledge that. Be transparent about what no one else tells them: quota realities, turnover, AE priorities. That honesty is the first brick of trust.</li>
+        <li><span class="kp-n">02</span><strong>Be Real About Priorities and Promotion.</strong> Share what actually matters: performance, the closing pipeline, the path to moving up. SDRs who understand the game play it better — and respect you for explaining it rather than hiding it.</li>
+        <li><span class="kp-n">03</span><strong>Give Genuine Acknowledgment.</strong> Public praise builds confidence. Private encouragement builds trust. Both are required. Celebrating small wins signals that you see the work, not just the outcome.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Honest Ask</div>
+        <div class="lie-q">"Do your SDRs know what happens if they miss quota in the first 7 months?"</div>
+        <div class="lie-a">If they don't, that's on you. Sharing that truth — before they find out the hard way — is the most trust-building thing you can do in week one.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4: CONVERSATION SIMULATOR -->
+  <div class="screen" id="s4">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="sec-eye">Section 02 — Conversation Practice</div>
+      <div class="lh-title">The AE/SDR Camaraderie Simulator</div>
+    </div>
+    <div class="conv-wrap" id="convWrap"></div>
+  </div>
+
+  <!-- 5: ACKNOWLEDGMENT BUILDER -->
+  <div class="screen" id="s5">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">03</div>
+      <div class="sec-eye">Section 03 — Acknowledgment Practice</div>
+      <div class="lh-title">Build the Perfect Public Shoutout</div>
+      <div class="lh-sub" id="ackSub">Select the right choice for each section — then submit</div>
+    </div>
+    <div class="ack-wrap" id="ackWrap"></div>
+  </div>
+
+  <!-- 6: TRUST AUDIT -->
+  <div class="screen" id="s6">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">03</div>
+      <div class="sec-eye">Section 03 — Self-Audit</div>
+      <div class="lh-title">The AE Camaraderie Audit</div>
+      <div class="lh-sub"><b id="auditCount">0</b> / 4 reviewed — open and mark each item to continue</div>
+    </div>
+    <div class="audit-wrap" id="auditWrap"></div>
+  </div>
+
+  <!-- 7: QUIZ -->
+  <div class="screen" id="s7">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="sec-eye">Section 03 — Knowledge Check</div>
+      <div class="lh-title">Test Your Understanding</div>
+    </div>
+    <div class="quiz-banner" id="quizBanner"></div>
+    <div class="quiz-body" id="quizBody"></div>
+  </div>
+
+  <!-- 8: TOOLS -->
+  <div class="screen" id="s8">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">04</div>
+      <div class="sec-eye">Section 04 — This Week</div>
+      <div class="lh-title">What You Do on Monday</div>
+    </div>
+    <div class="tools-blk">
+      <div style="margin-top:20px">
+        <div class="t-head">AE Camaraderie Checklist — Week One</div>
+        <table class="data-table">
+          <thead><tr><th>Action</th><th>What It Looks Like</th></tr></thead>
+          <tbody>
+            <tr><td>Start a Real Conversation</td><td>Ask: "What's one part of this job you feel great about? What's frustrating you?" — then actually listen.</td></tr>
+            <tr><td>Be Transparent</td><td>Share one hard truth about quotas, turnover, or your own priorities. Not to scare them — to respect them.</td></tr>
+            <tr><td>Post a Public Shoutout</td><td>In Slack, this week: "[Name] stepped up and booked a tough meeting today. That's the work." Done.</td></tr>
+            <tr><td>Sit in on a Cold Call</td><td>As a peer, not a judge. Offer coaching with them — not at them.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="t-head">SDR Reflection Homework</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Think of a time when an AE made you feel genuinely supported. Write down why it mattered — and bring it to your next 1:1 to share.</li>
+          <li><div class="hw-box"></div>Identify one challenge you've been sitting on alone. This week, go to your AE and say: "Can you help me brainstorm a solution for this?" — then see what happens.</li>
+          <li><div class="hw-box"></div>Track acknowledgment: for one week, every time a manager or AE recognizes your effort (public or private), write it down. Notice what builds you up.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9: COMPLETE -->
+  <div class="screen" id="s9">
+    <div class="comp" style="flex:1">
+      <div class="comp-l">
+        <div class="comp-tag">Course 1.2 — Complete</div>
+        <div class="comp-big">Step off<br>the<br>pedestal.</div>
+        <div class="comp-sub">Meet your SDR where they are. Watch them step up with confidence, creativity, and results — because they finally feel like part of something real.</div>
+      </div>
+      <div class="comp-r">
+        <div class="eyebrow">You've earned this</div>
+        <div class="comp-h">Camaraderie is built in the small moments.</div>
+        <p class="comp-p">Honesty about the job. A genuine shoutout. A conversation where you ask and actually listen. None of it is complicated. All of it is deliberate.</p>
+        <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
+        <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Course</span></button></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-label">Sections</div>
+  <div class="sb-item" id="nav1" onclick="go(1)">
+    <div class="sb-tag">Section 01</div>
+    <div class="sb-name">The Foundation</div>
+  </div>
+  <div class="sb-item" id="nav2" onclick="go(3)">
+    <div class="sb-tag">Section 02</div>
+    <div class="sb-name">The 3 Principles</div>
+  </div>
+  <div class="sb-item" id="nav3" onclick="go(5)">
+    <div class="sb-tag">Section 03</div>
+    <div class="sb-name">Practice & Audit</div>
+  </div>
+  <div class="sb-item" id="nav4" onclick="go(8)">
+    <div class="sb-tag">Section 04</div>
+    <div class="sb-name">This Week</div>
+  </div>
+</aside>
+
+<!-- BOTTOM NAV -->
+<footer class="bottomnav" id="bottomnav" style="display:none">
+  <span class="nav-hint" id="hint"></span>
+  <div class="nav-btns">
+    <button class="btn" id="btnBack" onclick="back()" style="display:none">← Back</button>
+    <button class="btn btn-fill" id="btnNext" onclick="handleNext()"><span id="btnNextLabel">Continue →</span></button>
+  </div>
+</footer>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   DATA
+══════════════════════════════════════════ */
+
+// Each card: text, correct zone ('cog' or 'partner')
+const SORT_CARDS = [
+  { txt:"Treats meetings like a checkbox — shows up, says nothing meaningful.", zone:"cog" },
+  { txt:"Asks the SDR what's frustrating them — then addresses it directly.", zone:"partner" },
+  { txt:"Monitors call counts without ever listening to an actual call.", zone:"cog" },
+  { txt:"Shares the hard truth about quota reality in week one.", zone:"partner" },
+  { txt:"Only gives feedback when something goes wrong.", zone:"cog" },
+  { txt:"Posts a public shoutout for a small win that no one else noticed.", zone:"partner" },
+  { txt:"Tells the SDR to 'figure it out' when they're stuck.", zone:"cog" },
+  { txt:"Sits in on a cold call as a peer — coaching with them, not at them.", zone:"partner" },
+];
+const SORT_DISPLAY_ORDER = [2,5,0,7,3,6,1,4];
+
+// Conversation simulator — 3 scenarios
+const CONV = [
+  {
+    name:"The First Week Check-In",
+    who:"Your SDR, end of Day 3",
+    bubble:"I'm kind of just... doing what I'm told. I don't really know what you actually care about or what's going to get me in trouble here.",
+    q:"What do you say?",
+    opts:[
+      "Just keep doing what you're doing — you're new, it takes time to find your footing.",
+      "Let me be straight with you: I care about connecting people to real conversations, not logging calls for the sake of it. And here's what you actually need to know about how this place works...",
+      "That's normal! Everyone feels that way at first. You'll get the hang of it.",
+    ],
+    ans: 1,
+    why:[
+      "Dismissive. You've sent them back to guessing with a pat on the head. Nothing changed.",
+      "Honest, direct, and builds the kind of trust that can't be manufactured. You just treated them like a real person.",
+      "Validating the feeling but giving nothing to work with. They leave the conversation exactly where they started.",
+    ]
+  },
+  {
+    name:"The Public Win Moment",
+    who:"Team Slack channel, Monday morning",
+    bubble:"SDR just booked their first cold outbound meeting after 4 days of grinding through rejections.",
+    q:"How do you acknowledge it?",
+    opts:[
+      "Say nothing publicly — you don't want to set a precedent that every meeting gets a shoutout.",
+      "Send them a private message: 'Nice work today.'",
+      "Post in Slack: 'I need to call this out — [Name] ground through 4 days of no's and booked their first cold outbound meeting this morning. That's the work. Well done.'",
+    ],
+    ans: 2,
+    why:[
+      "The silence costs you. They worked hard, no one saw it. That erodes trust faster than a bad piece of feedback.",
+      "Appreciated — but private recognition doesn't build the team dynamic that makes others want to step up too.",
+      "Specific, public, and tells them exactly what you valued. This is how confidence compounds across a team.",
+    ]
+  },
+  {
+    name:"The Hard Conversation",
+    who:"SDR, end of Week 2",
+    bubble:"Am I doing okay? I honestly don't know if I'm on track or if I'm about to get fired.",
+    q:"What's the right move here?",
+    opts:[
+      "Reassure them: 'You're doing great, don't worry about it.' Keep the energy positive.",
+      "Give them the real picture: here's what the numbers look like, here's what needs to move, and here's exactly what I'm going to do to help you get there.",
+      "Tell them you'll set up a formal review next week to go through their metrics in detail.",
+    ],
+    ans: 1,
+    why:[
+      "Empty reassurance burns trust. They already know something's up — this confirms you won't be straight with them.",
+      "This is camaraderie. Honest assessment + concrete plan + personal commitment. You're in it together.",
+      "Bureaucratic deflection. They need an answer now, not a scheduled anxiety session.",
+    ]
+  },
+];
+
+// Acknowledgment Builder
+// 3 slots, each has 3 options, one correct
+const ACK = {
+  preview_template: ["[OPENING]", " ", "[RECOGNITION]", " ", "[CLOSE]"],
+  sections: [
+    {
+      label:"Opening — How do you start a public shoutout?",
+      opts:[
+        { txt:"FYI everyone —",          correct:false },
+        { txt:"I want to call this out —", correct:true  },
+        { txt:"Just a heads up —",         correct:false },
+      ]
+    },
+    {
+      label:"Recognition — What do you recognize?",
+      opts:[
+        { txt:"[Name] hit their number this week.",                                         correct:false },
+        { txt:"[Name] worked through 40 rejections and booked their first cold meeting. That's the work.", correct:true  },
+        { txt:"[Name] has been showing up consistently and we appreciate the effort.",       correct:false },
+      ]
+    },
+    {
+      label:"Close — How do you land it?",
+      opts:[
+        { txt:"Keep it up!",                             correct:false },
+        { txt:"This is what building looks like. Well done.", correct:true  },
+        { txt:"Excited to see where this goes.",         correct:false },
+      ]
+    },
+  ]
+};
+
+// Trust Audit
+const AUDIT_ITEMS = [
+  {
+    label:"Have I been honest about quota reality?",
+    body:"SDRs starting at Level 1 are running blind if you don't tell them what missing quota in months 1–7 actually means. That's not brutal — it's respectful. The alternative is they find out when it's too late.",
+    example:"What to say: 'Here's what the company expects in the first 90 days, here's where most new SDRs struggle, and here's what we're going to do together to make sure you're not one of them.'"
+  },
+  {
+    label:"Do I explain my priorities — or just act on them?",
+    body:"When you disappear to close a deal, your SDR doesn't know if they did something wrong or if you're just doing your job. A 30-second explanation changes how they interpret your absence.",
+    example:"What to say: 'I'm deep in deal mode this week — this isn't about you. Here's what I need from you while I'm heads-down, and here's when I'll be back in full coaching mode.'"
+  },
+  {
+    label:"Am I recognizing effort — not just outcomes?",
+    body:"SDRs who only get acknowledgment when they book meetings learn that their daily grind is invisible. Recognizing the process — the consistency, the adjustments, the resilience — is what builds confidence before the results arrive.",
+    example:"What to say: 'I saw how you handled that rejection sequence today and adjusted your approach. That's not a small thing — that's the actual skill.'"
+  },
+  {
+    label:"Have I shown up as a teammate — not a boss?",
+    body:"Sitting in on calls as a peer, asking for their perspective on a problem, sharing a moment where you struggled early in your career — these signals tell your SDR that the relationship goes both ways.",
+    example:"What to say: 'Can I sit in on your next block? I want to hear what you're running into — not to grade it, just to understand it better.'"
+  },
+];
+
+const QUIZ = [
+  {
+    q:"According to this lesson, camaraderie primarily affects which performance outcome?",
+    opts:["CRM data quality and pipeline accuracy","SDR confidence on calls, creative hustle, and voluntary effort","Activity metrics like dials and email volume","Manager credibility with leadership"],
+    ans: 1
+  },
+  {
+    q:"What is the FIRST principle of building real camaraderie with an SDR?",
+    opts:["Establish performance expectations early and clearly","Set up a recurring weekly alignment meeting","Meet them where they are — acknowledge their reality honestly","Post consistent public recognition in team channels"],
+    ans: 2
+  },
+  {
+    q:"An SDR asks if they're on track and they're clearly nervous. The RIGHT response is:",
+    opts:["Reassure them positively to maintain their energy and motivation","Give them the real picture: numbers, gaps, and your concrete plan to help","Schedule a formal review next week to go through metrics properly","Tell them to trust the process — it takes 90 days to see results"],
+    ans: 1
+  },
+  {
+    q:"What distinguishes a cog-mindset dynamic from a partner-mindset dynamic?",
+    opts:["The number of meetings scheduled between the AE and SDR each week","Whether the SDR has been formally trained on the company's sales methodology","Whether the SDR feels seen as a strategic collaborator or a quota-hitting instrument","How long the AE has been with the company and their personal coaching style"],
+    ans: 2
+  },
+];
+
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
+const TOTAL = 10;
+let cur = 0;
+
+// Sort
+let sortSel    = null; // index into SORT_DISPLAY_ORDER
+let sortDone   = {};   // si → true when correctly placed
+let sortCount  = 0;
+
+// Conv
+let convStage  = 0;
+let convDone   = false;
+let convPicked = null;
+let convShowFb = false;
+
+// Ack builder
+let ackChosen  = {};   // section index → option index
+let ackSubmitted = false;
+let ackPassed  = false;
+
+// Audit
+let auditOpen  = new Set();
+let auditDone  = new Set();
+
+// Quiz
+let qAns       = {};
+let qSubmitted = false;
+let qPassed    = false;
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+function init(){
+  buildSort();
+  renderConv();
+  buildAck();
+  buildAudit();
+  buildQuiz();
+  render();
+}
+
+/* ══════════════════════════════════════════
+   NAV
+══════════════════════════════════════════ */
+function go(n){
+  document.getElementById('s'+cur).classList.remove('active');
+  cur=n;
+  document.getElementById('s'+cur).classList.add('active');
+  document.getElementById('main').scrollTop=0;
+  render();
+}
+function next(){ if(cur<TOTAL-1) go(cur+1); }
+function back(){ if(cur>0) go(cur-1); }
+function handleNext(){
+  if(cur===7){
+    if(!qSubmitted) submitQuiz();
+    else if(qPassed) next();
+    else retryQuiz();
+  } else { next(); }
+}
+
+/* ══════════════════════════════════════════
+   COG vs PARTNER SORT
+══════════════════════════════════════════ */
+function buildSort(){
+  document.getElementById('sortPoolCards').innerHTML = SORT_DISPLAY_ORDER.map((ci,di)=>{
+    const c=SORT_CARDS[ci];
+    return `<div class="sort-card" id="sc${di}" onclick="pickSortCard(${di})">
+      <span class="sc-txt">${c.txt}</span>
+      <span class="sc-ico">✓</span>
+    </div>`;
+  }).join('');
+  document.getElementById('droppedCog').innerHTML='';
+  document.getElementById('droppedPartner').innerHTML='';
+}
+
+function pickSortCard(di){
+  if(sortDone[di]) return;
+  if(sortSel===di){ sortSel=null; renderSortUI(); return; }
+  sortSel=di;
+  renderSortUI();
+}
+
+function dropInto(zone){ // 'cog' or 'partner'
+  if(sortSel===null) return;
+  const di=sortSel;
+  const ci=SORT_DISPLAY_ORDER[di];
+  const correct=SORT_CARDS[ci].zone===zone;
+  const cardEl=document.getElementById('sc'+di);
+  sortSel=null; renderSortUI();
+  if(correct){
+    sortDone[di]=true; sortCount++;
+    cardEl.classList.add('correct','locked');
+    cardEl.classList.remove('sel');
+    // Move into zone
+    const targetDiv=document.getElementById('dropped'+zone.charAt(0).toUpperCase()+zone.slice(1));
+    const clone=cardEl.cloneNode(true);
+    clone.onclick=null;
+    targetDiv.appendChild(clone);
+    cardEl.style.visibility='hidden';
+    document.getElementById('sortCount').textContent=sortCount;
+  } else {
+    cardEl.classList.add('wrong');
+    setTimeout(()=>cardEl.classList.remove('wrong'),400);
+  }
+  render();
+}
+
+function renderSortUI(){
+  SORT_DISPLAY_ORDER.forEach((_,di)=>{
+    const el=document.getElementById('sc'+di);
+    if(!el) return;
+    el.classList.toggle('sel',sortSel===di);
+  });
+  // Highlight drop zones when something is selected
+  document.getElementById('zCog').style.background    = sortSel!==null ? 'rgba(255,50,0,0.03)' : '';
+  document.getElementById('zPartner').style.background= sortSel!==null ? 'rgba(0,110,90,0.04)' : '';
+}
+
+function resetSort(){
+  sortSel=null; sortDone={}; sortCount=0;
+  buildSort();
+  document.getElementById('sortCount').textContent=0;
+  renderSortUI(); render();
+}
+
+/* ══════════════════════════════════════════
+   CONVERSATION SIMULATOR
+══════════════════════════════════════════ */
+function renderConv(){
+  const w=document.getElementById('convWrap');
+  if(!w) return;
+
+  if(convDone){
+    w.innerHTML=`<div class="conv-done-box">
+      <div class="conv-done-h">✓ All Three Scenarios Complete</div>
+      <div class="conv-done-p">Honest check-in. Public recognition. The hard conversation done right. You've worked through all three moments where camaraderie is actually built — or lost. Continue when you're ready.</div>
+    </div>`;
+    render(); return;
+  }
+
+  const s=CONV[convStage];
+  const dotsHtml=CONV.map((c,i)=>{
+    const cls=i<convStage?'done':i===convStage?'active':'';
+    return `<div class="conv-step">
+      <div class="conv-dot ${cls}">${i<convStage?'✓':i+1}</div>
+      ${i<CONV.length-1?'<div class="conv-line"></div>':''}
+    </div>`;
+  }).join('');
+  const lblsHtml=CONV.map((c,i)=>`<div class="conv-lbl${i===convStage?' cur':''}">${c.name}</div>`).join('');
+  const optsHtml=s.opts.map((o,oi)=>{
+    let cls='';
+    if(convShowFb){
+      if(oi===s.ans) cls='correct locked';
+      else if(oi===convPicked) cls='wrong locked';
+      else cls='locked';
+    }
+    return `<div class="conv-opt ${cls}" onclick="pickConv(${oi})">
+      <span class="co-ltr">${String.fromCharCode(65+oi)}.</span>${o}
+    </div>`;
+  }).join('');
+
+  let fbHtml='';
+  if(convShowFb && convPicked!==null){
+    const ok=convPicked===s.ans;
+    fbHtml=`<div class="conv-fb show ${ok?'good':'bad'}">${ok?'✓ Right move:':'✗ Why that misses:'} ${s.why[convPicked]}</div>`;
+  }
+  const showAdv=convShowFb && convPicked===s.ans;
+  const isLast=convStage===CONV.length-1;
+  const advHtml=showAdv?`<div class="conv-adv show"><button class="btn btn-fill" onclick="convAdvance()"><span>${isLast?'Complete Scenarios →':'Next Scenario →'}</span></button></div>`:'<div class="conv-adv"></div>';
+
+  w.innerHTML=`
+    <div class="conv-prog">${dotsHtml}</div>
+    <div class="conv-lbl-row">${lblsHtml}</div>
+    <div class="conv-scene">
+      <div class="conv-who">${s.who}</div>
+      <div class="conv-bubble">"${s.bubble}"</div>
+    </div>
+    <div class="conv-q">${s.q}</div>
+    <div class="conv-opts">${optsHtml}</div>
+    ${fbHtml}
+    ${advHtml}
+  `;
+}
+
+function pickConv(oi){
+  if(convShowFb) return;
+  convPicked=oi; convShowFb=true; renderConv();
+}
+function convAdvance(){
+  if(convStage<CONV.length-1){
+    convStage++; convPicked=null; convShowFb=false; renderConv();
+  } else {
+    convDone=true; renderConv();
+  }
+}
+
+/* ══════════════════════════════════════════
+   ACKNOWLEDGMENT BUILDER
+══════════════════════════════════════════ */
+function buildAck(){
+  const w=document.getElementById('ackWrap');
+  if(!w) return;
+
+  // Preview
+  const slots=['[OPENING]','[RECOGNITION]','[CLOSE]'];
+  const slotHtml=slots.map((s,i)=>{
+    const chosen=ackChosen[i];
+    if(chosen!==undefined && ackSubmitted){
+      const opt=ACK.sections[i].opts[chosen];
+      return `<span class="slot filled">${opt.txt}</span>`;
+    }
+    if(chosen!==undefined){
+      return `<span class="slot filled">${ACK.sections[i].opts[chosen].txt}</span>`;
+    }
+    return `<span class="slot">${s}</span>`;
+  });
+
+  const previewHtml=`
+    <div class="ack-preview">
+      <div class="ack-prev-tag">Slack Preview</div>
+      <div class="ack-prev-from">@you · #sales-team</div>
+      <div class="ack-prev-body">${slotHtml.join(' ')}</div>
+    </div>`;
+
+  const sectionsHtml=ACK.sections.map((sec,si)=>`
+    <div class="ack-sections">
+      <div class="ack-section-lbl">${sec.label}</div>
+      <div class="ack-choices">${sec.opts.map((o,oi)=>{
+        let cls='';
+        if(ackSubmitted){
+          if(o.correct) cls='correct locked';
+          else if(ackChosen[si]===oi && !o.correct) cls='wrong-reveal locked';
+          else cls='locked';
+        } else if(ackChosen[si]===oi){
+          cls='chosen';
+        }
+        return `<button class="ack-choice ${cls}" onclick="pickAck(${si},${oi})">${o.txt}</button>`;
+      }).join('')}</div>
+    </div>
+  `).join('');
+
+  const submitHtml=ackSubmitted?'':`<div class="ack-submit"><button class="btn btn-fill" id="ackSubmitBtn" onclick="submitAck()"><span>Build This Shoutout →</span></button></div>`;
+
+  const doneHtml=`<div class="ack-done-box ${ackSubmitted&&ackPassed?'show':''}">
+    <div class="ack-done-h">✓ Perfect Shoutout Built</div>
+    <div class="ack-done-p">Specific, public, and outcome-focused. This is the format that builds team confidence — not just the recipient's. Continue when ready.</div>
+  </div>`;
+
+  const failHtml=ackSubmitted&&!ackPassed?`<div style="max-width:580px;margin-top:14px;padding:12px 16px;border-left:4px solid var(--coral);background:var(--cor-lt)">
+    <div style="font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--coral);margin-bottom:6px">NOT QUITE</div>
+    <div style="font-family:var(--serif);font-size:14px;color:var(--black);line-height:1.65">The highlighted choices above show the strongest version. Review them, then <button style="background:none;border:none;cursor:pointer;font-family:var(--serif);font-size:14px;text-decoration:underline;color:var(--teal)" onclick="resetAck()">try again</button>.</div>
+  </div>`:'';
+
+  w.innerHTML=previewHtml+sectionsHtml+submitHtml+doneHtml+failHtml;
+}
+
+function pickAck(si,oi){
+  if(ackSubmitted) return;
+  ackChosen[si]=oi;
+  buildAck();
+  render();
+}
+function submitAck(){
+  ackSubmitted=true;
+  ackPassed=ACK.sections.every((s,i)=>{
+    const chosen=ackChosen[i];
+    return chosen!==undefined && s.opts[chosen].correct;
+  });
+  buildAck(); render();
+}
+function resetAck(){
+  ackSubmitted=false; ackPassed=false; ackChosen={};
+  buildAck(); render();
+}
+
+/* ══════════════════════════════════════════
+   TRUST AUDIT
+══════════════════════════════════════════ */
+function buildAudit(){
+  document.getElementById('auditWrap').innerHTML=AUDIT_ITEMS.map((a,i)=>`
+    <div class="audit-item" id="aud${i}">
+      <button class="audit-trigger" onclick="toggleAudit(${i})">
+        <div class="audit-ico" id="audIco${i}">?</div>
+        <div class="audit-label">${a.label}</div>
+        <span class="audit-arr">›</span>
+      </button>
+      <div class="audit-body">
+        <div class="audit-inner">
+          <p class="audit-p">${a.body}</p>
+          <div class="audit-example">
+            <div class="audit-eg-tag">Script Example</div>
+            ${a.example}
+          </div>
+          <button class="audit-done-btn" id="audBtn${i}" onclick="markAuditDone(${i})">Mark as Reviewed ✓</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleAudit(i){
+  const el=document.getElementById('aud'+i);
+  el.classList.toggle('open');
+  auditOpen.add(i);
+}
+function markAuditDone(i){
+  auditDone.add(i);
+  const el=document.getElementById('aud'+i);
+  el.classList.add('done');
+  document.getElementById('audIco'+i).textContent='✓';
+  document.getElementById('audBtn'+i).textContent='Reviewed ✓';
+  document.getElementById('auditCount').textContent=auditDone.size;
+  render();
+}
+
+/* ══════════════════════════════════════════
+   QUIZ
+══════════════════════════════════════════ */
+function buildQuiz(){
+  document.getElementById('quizBody').innerHTML=QUIZ.map((q,qi)=>`
+    <div class="q-block">
+      <div class="q-num">Question ${qi+1} of ${QUIZ.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-opts">${q.opts.map((o,oi)=>`
+        <button class="q-opt" id="qo${qi}_${oi}" onclick="pickOpt(${qi},${oi})">${o}</button>
+      `).join('')}</div>
+    </div>
+  `).join('');
+}
+function pickOpt(qi,oi){
+  if(qSubmitted) return;
+  QUIZ[qi].opts.forEach((_,i)=>document.getElementById(`qo${qi}_${i}`).classList.remove('chosen'));
+  document.getElementById(`qo${qi}_${oi}`).classList.add('chosen');
+  qAns[qi]=oi; render();
+}
+function submitQuiz(){
+  qSubmitted=true;
+  let correct=0;
+  QUIZ.forEach((q,qi)=>{
+    const chosen=qAns[qi];
+    q.opts.forEach((_,oi)=>{
+      const el=document.getElementById(`qo${qi}_${oi}`);
+      el.classList.add('locked'); el.classList.remove('chosen');
+      if(oi===q.ans) el.classList.add('correct');
+      else if(oi===chosen&&chosen!==q.ans) el.classList.add('wrong-pick');
+    });
+    if(chosen===q.ans) correct++;
+  });
+  qPassed=correct>=3;
+  const b=document.getElementById('quizBanner');
+  b.className='quiz-banner show '+(qPassed?'pass':'fail');
+  b.textContent=qPassed
+    ?`✓ ${correct} / ${QUIZ.length} correct — you're cleared to continue.`
+    :`${correct} / ${QUIZ.length} correct — need 3 to pass. Review the highlighted answers and try again.`;
+  render();
+}
+function retryQuiz(){
+  qSubmitted=false; qPassed=false; qAns={};
+  document.getElementById('quizBanner').className='quiz-banner';
+  buildQuiz(); render();
+}
+
+/* ══════════════════════════════════════════
+   RENDER
+══════════════════════════════════════════ */
+const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
+
+function canContinue(){
+  if(cur===2) return sortCount===8;
+  if(cur===4) return convDone;
+  if(cur===5) return ackSubmitted && ackPassed;
+  if(cur===6) return auditDone.size===4;
+  if(cur===7){
+    if(!qSubmitted) return Object.keys(qAns).length===QUIZ.length;
+    return true;
+  }
+  return true;
+}
+
+function getHint(){
+  const h={
+    1:"The dynamic you build in week one is very hard to undo in month six.",
+    2:`${sortCount} / 8 correctly sorted`,
+    3:"These aren't soft skills. They're performance infrastructure.",
+    4: convDone ? "✓ All scenarios complete — continue below."
+       : `Scenario ${convStage+1} of 3 — ${CONV[convStage]?.name||''}`,
+    5: !ackSubmitted ? `${Object.keys(ackChosen).length} / 3 sections chosen`
+       : ackPassed   ? "✓ Perfect — continue below."
+                     : "Review the correct choices above — then try again.",
+    6:`${auditDone.size} / 4 reviewed`,
+    7: !qSubmitted ? `${Object.keys(qAns).length} / ${QUIZ.length} answered`
+       : qPassed   ? "✓ Passed — continue below."
+                   : "Need 3 / 4 to advance. Try again.",
+    8:"Homework without a plan is just good intentions.",
+  };
+  return h[cur]||'';
+}
+
+function getNextLabel(){
+  if(cur===7&&!qSubmitted) return 'Submit Answers';
+  if(cur===7&&!qPassed)    return 'Try Again →';
+  if(cur===8)              return 'Finish Course →';
+  return 'Continue →';
+}
+
+function render(){
+  const sec=SEC[cur];
+  document.getElementById('progLabel').textContent=sec?`Section 0${sec}`:'Course 1.2';
+  const pct=cur===0?0:Math.round((cur/(TOTAL-1))*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  ['nav1','nav2','nav3','nav4'].forEach((id,i)=>
+    document.getElementById(id).classList.toggle('active',SEC[cur]===i+1));
+  const hide=cur===0||cur===TOTAL-1;
+  const bnav=document.getElementById('bottomnav');
+  bnav.style.display=hide?'none':'flex';
+  if(hide) return;
+  document.getElementById('hint').textContent=getHint();
+  document.getElementById('btnNextLabel').textContent=getNextLabel();
+  document.getElementById('btnBack').style.display=cur<=1?'none':'block';
+  document.getElementById('btnNext').disabled=!canContinue();
+}
+
+// Hook sort zone clicks
+document.addEventListener('click',function(e){
+  const zc=e.target.closest('#zCog');
+  const zp=e.target.closest('#zPartner');
+  if(zc && sortSel!==null) dropInto('cog');
+  if(zp && sortSel!==null) dropInto('partner');
+});
+
+init();
+</script>
+</body>
+</html>

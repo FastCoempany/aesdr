@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR — Course 1.3: Mastering Coaching</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#FFFFFF;--black:#000000;--mid:#636060;--lite:#F2EEE9;--lite2:#E5E1DC;
+  --violet:#5200CC;--vio-lt:rgba(82,0,204,0.07);--vio-md:rgba(82,0,204,0.15);
+  --green:#00B85A;--grn-lt:rgba(0,184,90,0.09);
+  --coral:#FF3200;--cor-lt:rgba(255,50,0,0.07);
+  --gold:#FFD600;--gold-lt:rgba(255,214,0,0.12);
+  --cobalt:#0038FF;--cob-lt:rgba(0,56,255,0.07);
+  --acid:#C8FF00;
+  --line:rgba(0,0,0,0.08);--line2:rgba(0,0,0,0.15);
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#FFD600 34%,#00E5A0 51%,#0099FF 68%,#7B2FFF 85%,#FF006E 100%);
+  --display:'Abril Fatface',Georgia,serif;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;
+  --mono:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--white);color:var(--black);font-family:var(--cond);overflow:hidden}
+.app{display:grid;grid-template-columns:1fr 234px;grid-template-rows:52px 1fr 60px;height:100vh}
+
+/* TOPBAR */
+.topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:2px solid var(--black);background:var(--white);z-index:20}
+.brand{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.22em;text-transform:uppercase}
+.top-right{display:flex;align-items:center;gap:14px}
+.prog-label{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--mid);text-transform:uppercase}
+.prog-track{width:80px;height:2px;background:var(--lite2)}
+.prog-fill{height:100%;background:var(--iris);background-size:200% 100%;animation:iris 3s linear infinite;transition:width .8s cubic-bezier(.4,0,.2,1)}
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+
+/* MAIN / SIDEBAR */
+.main{overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;background:var(--white);scrollbar-width:none}
+.main::-webkit-scrollbar{display:none}
+.sidebar{border-left:2px solid var(--black);padding:32px 20px;overflow-y:auto;scrollbar-width:none;background:var(--white)}
+.sidebar::-webkit-scrollbar{display:none}
+.sb-label{font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--mid);margin-bottom:24px}
+.sb-item{padding:16px 0;border-bottom:1px solid var(--line);cursor:pointer;position:relative;transition:all .2s}
+.sb-item:first-of-type{border-top:1px solid var(--line)}
+.sb-tag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--mid);margin-bottom:7px;text-transform:uppercase;transition:color .2s}
+.sb-name{font-family:var(--cond);font-size:12px;font-weight:700;color:var(--mid);line-height:1.4;text-transform:uppercase;letter-spacing:.04em;transition:color .2s}
+.sb-item.active .sb-tag{color:var(--violet)}
+.sb-item.active .sb-name{color:var(--black)}
+.sb-item.active::before{content:'';position:absolute;left:-20px;top:0;bottom:0;width:3px;background:var(--violet)}
+.sb-item:hover .sb-name{color:var(--black)}
+
+/* BOTTOMNAV */
+.bottomnav{grid-column:1/2;display:flex;align-items:center;justify-content:space-between;padding:0 56px;border-top:2px solid var(--black);background:var(--white)}
+.nav-hint{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--mid);font-style:italic}
+.nav-btns{display:flex;gap:8px}
+.btn{font-family:var(--cond);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:10px 22px;border:2px solid var(--black);background:transparent;color:var(--black);cursor:pointer;transition:all .15s}
+.btn:hover{background:var(--black);color:var(--white)}
+.btn-fill{background:var(--black);color:var(--white);position:relative;overflow:hidden}
+.btn-fill::before{content:'';position:absolute;inset:0;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;opacity:0;transition:opacity .2s}
+.btn-fill:hover::before{opacity:1}
+.btn-fill:hover{color:var(--black)}
+.btn-fill span{position:relative;z-index:1}
+.btn-fill:disabled,.btn-fill:disabled:hover{opacity:.28;cursor:not-allowed;background:var(--black);color:var(--white)}
+.btn-fill:disabled::before,.btn-fill:disabled:hover::before{display:none}
+
+/* SCREENS */
+.screen{display:none;flex-direction:column;flex:1;animation:up .42s cubic-bezier(.22,1,.36,1) both}
+.screen.active{display:flex}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* COVER */
+.cover{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.cvl{background:var(--violet);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.cvl::after{content:'';position:absolute;bottom:-80px;right:-80px;width:320px;height:320px;border-radius:50%;background:rgba(255,255,255,0.04);pointer-events:none}
+.cv-tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.4)}
+.cv-big{font-family:var(--display);font-size:clamp(36px,4.2vw,60px);line-height:.95;color:#fff}
+.cv-tagline{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.58);line-height:1.7;border-top:1px solid rgba(255,255,255,0.14);padding-top:18px}
+.cvr{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;margin-bottom:16px;display:inline-block;background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:iris 3s linear infinite}
+.hero-h{font-family:var(--display);font-size:clamp(28px,3.8vw,52px);line-height:.97;color:var(--black);margin-bottom:20px}
+.hero-h .irisTxt{background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:iris 3s linear infinite}
+.cv-list{list-style:none;margin-bottom:36px}
+.cv-list li{font-family:var(--cond);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mid);display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.cv-list li:first-child{border-top:1px solid var(--line)}
+.cl-n{font-family:var(--mono);font-size:9px;background:var(--black);color:var(--white);padding:2px 6px;flex-shrink:0}
+
+/* SHARED HEADER */
+.lh{padding:44px 56px 0;position:relative;overflow:hidden}
+.lh-stripe{position:absolute;top:0;left:0;right:0;height:4px;background:var(--iris);background-size:200% 100%;animation:iris 4s linear infinite}
+.ghost-n{position:absolute;right:48px;top:-20px;font-family:var(--display);font-size:200px;line-height:1;color:var(--lite);pointer-events:none;user-select:none}
+.sec-eye{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--violet);margin-bottom:14px;display:inline-block}
+.lh-title{font-family:var(--display);font-size:clamp(22px,3.2vw,46px);line-height:1.05;color:var(--black);max-width:640px}
+.lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
+.lh-sub b{color:var(--black)}
+.lb{padding:24px 56px 0}
+.lp{font-family:var(--serif);font-size:16px;line-height:1.8;color:var(--black);max-width:580px;margin-bottom:14px}
+.kp{list-style:none;max-width:580px;margin:14px 0}
+.kp li{font-family:var(--serif);font-size:15px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px;align-items:flex-start}
+.kp li:first-child{border-top:1px solid var(--line)}
+.kp-n{font-family:var(--mono);font-size:9px;color:var(--mid);min-width:22px;padding-top:3px;flex-shrink:0}
+.lie{max-width:580px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
+.lie-tab{position:absolute;top:0;left:0;font-family:var(--cond);font-size:9px;letter-spacing:.24em;font-weight:800;text-transform:uppercase;padding:3px 10px;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;color:var(--black)}
+.lie-q{font-family:var(--serif);font-style:italic;font-size:18px;color:#fff;line-height:1.5;margin:12px 0 10px}
+.lie-a{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
+
+/* ── FAILURE MODE TAGGER ── */
+.fm-wrap{padding:16px 56px 44px;max-width:740px}
+.fm-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.fm-legend{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.fm-tag-pill{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;padding:5px 12px;border:2px solid;display:inline-flex;align-items:center;gap:6px;flex-shrink:0}
+.fm-tag-pill.time{border-color:var(--coral);color:var(--coral)}
+.fm-tag-pill.onesz{border-color:var(--cobalt);color:var(--cobalt)}
+.fm-tag-pill.fear{border-color:var(--violet);color:var(--violet)}
+.fm-cards{display:flex;flex-direction:column;gap:8px}
+.fm-card{border:1px solid var(--line2);background:var(--white);overflow:hidden;transition:border-color .2s}
+.fm-card.resolved{pointer-events:none}
+.fm-card-body{padding:16px 18px}
+.fm-scenario{font-family:var(--serif);font-size:14px;color:var(--black);line-height:1.65;margin-bottom:12px;font-style:italic}
+.fm-btns{display:flex;gap:8px;flex-wrap:wrap}
+.fm-btn{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:6px 12px;border:1.5px solid var(--line2);background:var(--white);cursor:pointer;transition:all .15s;color:var(--mid)}
+.fm-btn:hover{border-color:var(--black);color:var(--black)}
+.fm-btn.sel-time{border-color:var(--coral);background:var(--cor-lt);color:var(--coral)}
+.fm-btn.sel-onesz{border-color:var(--cobalt);background:var(--cob-lt);color:var(--cobalt)}
+.fm-btn.sel-fear{border-color:var(--violet);background:var(--vio-lt);color:var(--violet)}
+.fm-result{padding:10px 18px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;display:none}
+.fm-result.show{display:block}
+.fm-result.correct{background:var(--acid);color:var(--black)}
+.fm-result.wrong{background:var(--cor-lt);color:var(--coral);animation:shake .35s ease both}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+/* ── 60-MIN PLANNER ── */
+.plan-wrap{padding:16px 56px 44px;max-width:680px}
+.plan-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.plan-timeline{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.plan-slot{display:flex;align-items:stretch;border:1px solid var(--line2);transition:border-color .2s;min-height:60px}
+.plan-slot.target{border-color:var(--violet);border-style:dashed;cursor:pointer}
+.plan-slot.target:hover{border-style:solid;border-width:2px}
+.plan-slot.correct{border:2px solid var(--black);background:var(--acid)}
+.plan-slot.bad{border-color:var(--coral);animation:shake .35s ease both}
+.plan-time{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--mid);padding:12px 14px;border-right:1px solid var(--line2);min-width:110px;display:flex;align-items:center;flex-shrink:0;background:var(--lite)}
+.plan-slot.correct .plan-time{background:rgba(200,255,0,0.35);border-right-color:rgba(0,0,0,0.1)}
+.plan-content{flex:1;padding:12px 16px;display:flex;align-items:center}
+.plan-placeholder{font-family:var(--mono);font-size:9px;color:var(--mid);letter-spacing:.08em;font-style:italic}
+.plan-filled-act{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--black)}
+.plan-filled-goal{font-family:var(--serif);font-size:12px;color:var(--mid);font-style:italic;margin-top:2px}
+.plan-pool{display:flex;flex-direction:column;gap:7px}
+.plan-pool-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;padding-bottom:10px;border-bottom:2px solid var(--black)}
+.plan-tile{width:100%;padding:13px 16px;border:2px solid var(--line2);background:var(--white);font-family:var(--cond);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--black);text-align:left;cursor:pointer;transition:all .18s;line-height:1.3}
+.plan-tile:hover:not(.placed):not(.sel){border-color:var(--black)}
+.plan-tile.sel{border-color:var(--violet);background:var(--violet);color:#fff}
+.plan-tile.placed{visibility:hidden;pointer-events:none}
+.plan-tile.bad{border-color:var(--coral);background:var(--cor-lt);animation:shake .35s ease both}
+.plan-reset{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mid);background:none;border:none;cursor:pointer;text-decoration:underline;margin-top:8px}
+.plan-reset:hover{color:var(--black)}
+
+/* ── CALL TRANSCRIPT TAGGER ── */
+.tx-wrap{padding:16px 56px 44px;max-width:700px}
+.tx-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.tx-legend{display:flex;gap:10px;margin-bottom:16px}
+.tx-pill{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;padding:4px 12px;border:2px solid}
+.tx-pill.strong{border-color:var(--green);color:var(--green)}
+.tx-pill.needs{border-color:var(--coral);color:var(--coral)}
+.tx-lines{display:flex;flex-direction:column;gap:0}
+.tx-line{border-bottom:1px solid var(--line);overflow:hidden;transition:background .2s}
+.tx-line:first-child{border-top:1px solid var(--line)}
+.tx-line-inner{display:flex;align-items:stretch;cursor:pointer}
+.tx-line.resolved .tx-line-inner{cursor:default}
+.tx-speaker{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:13px 14px;min-width:70px;flex-shrink:0;display:flex;align-items:center;border-right:1px solid var(--line)}
+.tx-speaker.ae{color:var(--violet)}
+.tx-speaker.prospect{color:var(--mid)}
+.tx-text{font-family:var(--serif);font-size:14px;color:var(--black);padding:13px 16px;flex:1;line-height:1.6}
+.tx-tag-col{display:flex;align-items:center;gap:6px;padding:0 12px;flex-shrink:0}
+.tx-tag-btn{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;border:1.5px solid var(--line2);background:var(--white);cursor:pointer;transition:all .15s;color:var(--mid)}
+.tx-tag-btn:hover:not([disabled]){border-color:var(--black);color:var(--black)}
+.tx-tag-btn[disabled]{cursor:default}
+.tx-line.correct-strong{background:var(--grn-lt)}
+.tx-line.correct-needs{background:var(--cor-lt)}
+.tx-line.wrong{animation:shake .35s ease both}
+.tx-line .tx-verdict{font-family:var(--mono);font-size:9px;letter-spacing:.1em;display:none;padding:4px 16px 8px;color:var(--mid)}
+.tx-line.resolved .tx-verdict{display:block}
+.tx-line.correct-strong .tx-verdict{color:var(--green)}
+.tx-line.correct-needs .tx-verdict{color:var(--coral)}
+
+/* ── EMAIL REPAIR ── */
+.email-wrap{padding:16px 56px 44px;max-width:700px}
+.email-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.email-preview{background:var(--black);padding:0;margin-bottom:24px;max-width:580px}
+.ep-header{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.ep-field{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,0.28);margin-bottom:4px}
+.ep-field span{color:rgba(255,255,255,0.65)}
+.ep-body{padding:18px 20px;display:flex;flex-direction:column;gap:10px}
+.ep-seg{font-family:var(--serif);font-size:14px;line-height:1.7}
+.ep-seg.blank{background:rgba(255,255,255,0.05);border-left:2px dashed rgba(255,255,255,0.2);padding:8px 12px;font-style:italic;color:rgba(255,255,255,0.3)}
+.ep-seg.filled{color:#fff;border-left:2px solid var(--violet);padding:8px 12px}
+.ep-seg.static{color:rgba(255,255,255,0.55)}
+.email-sections{display:flex;flex-direction:column;gap:20px}
+.email-sec-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px}
+.email-issue{font-family:var(--cond);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--coral);margin-bottom:10px;padding:7px 12px;border-left:3px solid var(--coral);background:var(--cor-lt)}
+.email-opts{display:flex;flex-direction:column;gap:6px}
+.email-opt{padding:12px 16px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:14px;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.55}
+.email-opt:hover:not(.locked):not(.chosen){border-color:var(--violet);background:var(--vio-lt)}
+.email-opt.chosen{border-color:var(--violet);background:var(--violet);color:#fff}
+.email-opt.correct{border-color:var(--green);background:var(--grn-lt);color:var(--black);cursor:default}
+.email-opt.wrong-reveal{border-color:var(--coral);background:var(--cor-lt);cursor:default}
+.email-opt.locked{cursor:default}
+.email-submit{margin-top:18px}
+.email-done{max-width:580px;background:var(--acid);padding:18px 22px;margin-top:16px;display:none}
+.email-done.show{display:block}
+.email-done-h{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.email-done-p{font-family:var(--serif);font-size:14px;color:var(--mid);line-height:1.65;font-style:italic}
+
+/* QUIZ */
+.quiz-banner{margin:16px 56px 0;padding:12px 18px;font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.06em;border-left:4px solid var(--cobalt);background:var(--cob-lt);color:var(--black);display:none}
+.quiz-banner.show{display:block}
+.quiz-banner.pass{border-color:var(--green);background:var(--grn-lt)}
+.quiz-banner.fail{border-color:var(--coral);background:var(--cor-lt)}
+.quiz-body{padding:20px 56px 44px;display:flex;flex-direction:column;gap:28px}
+.q-num{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--violet);margin-bottom:9px}
+.q-text{font-family:var(--display);font-size:clamp(13px,1.6vw,18px);color:var(--black);line-height:1.2;margin-bottom:13px}
+.q-opts{display:flex;flex-direction:column;gap:6px}
+.q-opt{padding:11px 16px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:14px;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.5}
+.q-opt:hover:not(.locked){border-color:var(--violet);background:var(--vio-lt)}
+.q-opt.chosen{border-color:var(--violet);background:var(--violet);color:#fff}
+.q-opt.correct{border-color:var(--green);background:var(--grn-lt);color:var(--black)}
+.q-opt.wrong-pick{border-color:var(--coral);background:var(--cor-lt);color:var(--black)}
+.q-opt.locked{cursor:default}
+
+/* TOOLS */
+.tools-blk{padding:20px 56px 44px}
+.t-head{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--black);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--black)}
+.data-table{width:100%;max-width:600px;border-collapse:collapse;margin:0 0 30px}
+.data-table th{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;background:var(--black);color:var(--white);padding:9px 14px;text-align:left}
+.data-table td{font-family:var(--serif);font-size:14px;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--black);line-height:1.6;vertical-align:top}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:nth-child(even) td{background:var(--lite)}
+.hw-list{list-style:none;max-width:580px;margin-top:8px}
+.hw-list li{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.65;padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
+.hw-list li:first-child{border-top:1px solid var(--line)}
+.hw-box{width:14px;height:14px;border:2px solid var(--black);flex-shrink:0;margin-top:4px}
+
+/* COMPLETE */
+.comp{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.comp-l{background:var(--gold);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between}
+.comp-tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(0,0,0,0.35)}
+.comp-big{font-family:var(--display);font-size:clamp(44px,5.5vw,76px);line-height:.93;color:var(--black)}
+.comp-sub{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(0,0,0,0.48);line-height:1.7;border-top:1px solid rgba(0,0,0,0.1);padding-top:18px}
+.comp-r{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.comp-h{font-family:var(--display);font-size:clamp(22px,2.8vw,40px);line-height:1.08;color:var(--black);margin-bottom:18px}
+.comp-p{font-family:var(--serif);font-size:15px;color:var(--black);max-width:380px;line-height:1.8;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header class="topbar">
+  <div class="brand">AESDR</div>
+  <div class="top-right">
+    <span class="prog-label" id="progLabel">Course 1.3</span>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+</header>
+
+<main class="main" id="main">
+
+  <!-- 0: COVER -->
+  <div class="screen active" id="s0">
+    <div class="cover" style="flex:1">
+      <div class="cvl">
+        <div class="cv-tag">AESDR · Course 1.3</div>
+        <div class="cv-big">Mastering Coaching in the AE/SDR Relationship</div>
+        <div class="cv-tagline">From generic scripts to human-centered coaching that actually moves performance.</div>
+      </div>
+      <div class="cvr">
+        <div class="eyebrow">What You'll Build</div>
+        <div class="hero-h">Real coaching.<br><span class="irisTxt">Real results.</span></div>
+        <ul class="cv-list">
+          <li><span class="cl-n">01</span>The 3 Reasons Coaching Fails</li>
+          <li><span class="cl-n">02</span>The 60-Minute Coaching Framework</li>
+          <li><span class="cl-n">03</span>Call, Email & Feedback Tools</li>
+        </ul>
+        <button class="btn btn-fill" onclick="go(1)"><span>Begin Course →</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1: WHY COACHING FAILS -->
+  <div class="screen" id="s1">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">01</div>
+      <div class="sec-eye">Section 01 — The Diagnosis</div>
+      <div class="lh-title">Why Most Coaching Fails Before It Starts</div>
+    </div>
+    <div class="lb">
+      <p class="lp">Most companies under $50M ARR don't have the time or budget for real coaching. You get training modules, quarterly reviews that never happen, and managers distracted by bad numbers. Real coaching doesn't exist unless AEs and SDRs decide to make it happen themselves.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Lack of Time.</strong> AEs are overwhelmed and deprioritize coaching — even though an hour a week saves 20+ hours of bad meetings downstream.</li>
+        <li><span class="kp-n">02</span><strong>One-Size-Fits-All.</strong> Generic coaching doesn't move the needle. An SDR great at cold calls but struggling with emails needs a different approach than one who's the inverse.</li>
+        <li><span class="kp-n">03</span><strong>Fear of Competition.</strong> A misplaced belief that coaching your SDR somehow threatens your position. It doesn't. It scales your success.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Brutal Truth</div>
+        <div class="lie-q">"Real coaching doesn't exist unless you and your SDR decide to build it."</div>
+        <div class="lie-a">No manager, no process, and no training module will fill the gap. The only people who can make this real are you and the person next to you in the org chart.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2: FAILURE MODE TAGGER -->
+  <div class="screen" id="s2">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">01</div>
+      <div class="sec-eye">Section 01 — Pattern Recognition</div>
+      <div class="lh-title">Diagnose the Failure Mode</div>
+      <div class="lh-sub"><b id="fmCount">0</b> / 6 correctly diagnosed</div>
+    </div>
+    <div class="fm-wrap">
+      <p class="fm-instr">Read each coaching failure scenario. Tag it with the correct failure mode. All 6 must be correctly tagged before you can continue.</p>
+      <div class="fm-legend">
+        <span class="fm-tag-pill time">⏱ Lack of Time</span>
+        <span class="fm-tag-pill onesz">≡ One-Size-Fits-All</span>
+        <span class="fm-tag-pill fear">⚡ Fear of Competition</span>
+      </div>
+      <div class="fm-cards" id="fmCards"></div>
+    </div>
+  </div>
+
+  <!-- 3: WHAT REAL COACHING IS -->
+  <div class="screen" id="s3">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">02</div>
+      <div class="sec-eye">Section 02 — What Real Looks Like</div>
+      <div class="lh-title">What Coaching Actually Is</div>
+    </div>
+    <div class="lb">
+      <p class="lp">Real coaching is human-centered and tactical. Not a generic script. Not a quarterly review. It's specific, consistent, and calibrated to the individual in front of you.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Human-Centered.</strong> Understand this SDR's specific strengths and weaknesses. What's their natural style? Where does confidence break down? Start there.</li>
+        <li><span class="kp-n">02</span><strong>Tactical.</strong> Break down specific areas: call intros, objection handling, email structure, qualification. Not vibes — mechanics.</li>
+        <li><span class="kp-n">03</span><strong>Consistent.</strong> Weekly feedback and small, achievable adjustments. The compound effect of consistent small improvements outperforms any single big coaching session.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Frame</div>
+        <div class="lie-q">"Coaching your SDR doesn't mean you're building competition. It means you're scaling your success."</div>
+        <div class="lie-a">Great SDRs get you more qualified meetings. More qualified meetings get you better close rates. Their success is your pipeline.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4: 60-MIN PLANNER -->
+  <div class="screen" id="s4">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="sec-eye">Section 02 — Build the Framework</div>
+      <div class="lh-title">Build the 60-Minute Coaching Session</div>
+      <div class="lh-sub"><b id="planCount">0</b> / 4 correctly placed</div>
+    </div>
+    <div class="plan-wrap">
+      <p class="plan-instr">Select an activity tile, then click the correct time block to place it. 60 minutes, 4 blocks, zero wasted time. All 4 must be correctly placed to continue.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 44px">
+        <div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);padding-bottom:10px;border-bottom:2px solid var(--black);margin-bottom:10px">Time Block</div>
+          <div class="plan-timeline" id="planSlots"></div>
+        </div>
+        <div>
+          <div class="plan-pool-lbl">Activity — Select One</div>
+          <div class="plan-pool" id="planTiles"></div>
+          <button class="plan-reset" onclick="resetPlan()">Reset board</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5: CALL TRANSCRIPT TAGGER -->
+  <div class="screen" id="s5">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">03</div>
+      <div class="sec-eye">Section 03 — Live Call Review</div>
+      <div class="lh-title">Tag the Call Transcript</div>
+      <div class="lh-sub"><b id="txCount">0</b> / 6 correctly tagged</div>
+    </div>
+    <div class="tx-wrap">
+      <p class="tx-instr">Read each line of this cold call transcript. Tag every line as either "Strong" or "Needs Work." All 6 must be correct to continue.</p>
+      <div class="tx-legend">
+        <span class="tx-pill strong">✓ Strong</span>
+        <span class="tx-pill needs">✗ Needs Work</span>
+      </div>
+      <div class="tx-lines" id="txLines"></div>
+    </div>
+  </div>
+
+  <!-- 6: EMAIL REPAIR -->
+  <div class="screen" id="s6">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="sec-eye">Section 03 — Email Coaching</div>
+      <div class="lh-title">Repair the Broken Cold Email</div>
+      <div class="lh-sub" id="emailSub">3 sections to fix — select the right version of each</div>
+    </div>
+    <div class="email-wrap" id="emailWrap"></div>
+  </div>
+
+  <!-- 7: QUIZ -->
+  <div class="screen" id="s7">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="sec-eye">Section 03 — Knowledge Check</div>
+      <div class="lh-title">Test Your Understanding</div>
+    </div>
+    <div class="quiz-banner" id="quizBanner"></div>
+    <div class="quiz-body" id="quizBody"></div>
+  </div>
+
+  <!-- 8: TOOLS + HW -->
+  <div class="screen" id="s8">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">04</div>
+      <div class="sec-eye">Section 04 — Templates & Homework</div>
+      <div class="lh-title">The Coaching Toolkit</div>
+    </div>
+    <div class="tools-blk">
+      <div style="margin-top:20px">
+        <div class="t-head">Call Coaching Template</div>
+        <table class="data-table">
+          <thead><tr><th>Call Aspect</th><th>What Went Well</th><th>What to Improve</th></tr></thead>
+          <tbody>
+            <tr><td>Call Opening</td><td>Clear, direct, earned 30 seconds</td><td>Add a pattern interrupt for colder accounts</td></tr>
+            <tr><td>Objection Handling</td><td>Handled first objection smoothly</td><td>Stumbled on the second — have a bridge ready</td></tr>
+            <tr><td>Closing Statement</td><td>Confident ask for next steps</td><td>Clarify the value prop before asking for time</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="t-head">Email Review Checklist</div>
+        <table class="data-table">
+          <thead><tr><th>Check</th><th>What to Look For</th></tr></thead>
+          <tbody>
+            <tr><td>Clarity</td><td>Is the point of this email obvious in the first sentence? If not, cut until it is.</td></tr>
+            <tr><td>Personalization</td><td>Does anything in this email prove you looked at this person specifically? One real detail is enough.</td></tr>
+            <tr><td>Pain Point</td><td>Does it address a problem they actually have — not a feature you want to pitch?</td></tr>
+            <tr><td>Call to Action</td><td>Is the ask specific? One action, one sentence, no weasel language.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="t-head">Homework — This Week</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>AEs: Schedule 1 hour for coaching this week. Review 2 SDR calls and deliver written, not verbal, feedback on each.</li>
+          <li><div class="hw-box"></div>AEs: Ask your SDR: "What's one area where you feel you need the most coaching right now?" — then actually address it.</li>
+          <li><div class="hw-box"></div>SDRs: Bring 1 call recording and 1 email sequence to your next 1:1. Walk your AE through what you think went wrong before they tell you.</li>
+          <li><div class="hw-box"></div>SDRs: Self-evaluate in writing before every feedback session. What went well? Where do you need help? Don't wait for the AE to set the agenda.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9: COMPLETE -->
+  <div class="screen" id="s9">
+    <div class="comp" style="flex:1">
+      <div class="comp-l">
+        <div class="comp-tag">Course 1.3 — Complete</div>
+        <div class="comp-big">Coaching<br>isn't<br>optional.</div>
+        <div class="comp-sub">Consistent, tactical, human-centered. When AEs commit to coaching and SDRs own their growth, both roles win. There is no other path to sustainable performance.</div>
+      </div>
+      <div class="comp-r">
+        <div class="eyebrow">Mission Complete</div>
+        <div class="comp-h">60 minutes a week. Real results by month two.</div>
+        <p class="comp-p">Call review. Email feedback. Role-plays. A direct answer to "what do I need to improve?" None of it is complicated. All of it requires showing up every single week without exception.</p>
+        <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
+        <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Course</span></button></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<aside class="sidebar">
+  <div class="sb-label">Sections</div>
+  <div class="sb-item" id="nav1" onclick="go(1)">
+    <div class="sb-tag">Section 01</div>
+    <div class="sb-name">Why Coaching Fails</div>
+  </div>
+  <div class="sb-item" id="nav2" onclick="go(3)">
+    <div class="sb-tag">Section 02</div>
+    <div class="sb-name">The Framework</div>
+  </div>
+  <div class="sb-item" id="nav3" onclick="go(5)">
+    <div class="sb-tag">Section 03</div>
+    <div class="sb-name">Call & Email Tools</div>
+  </div>
+  <div class="sb-item" id="nav4" onclick="go(8)">
+    <div class="sb-tag">Section 04</div>
+    <div class="sb-name">Templates & Homework</div>
+  </div>
+</aside>
+
+<footer class="bottomnav" id="bottomnav" style="display:none">
+  <span class="nav-hint" id="hint"></span>
+  <div class="nav-btns">
+    <button class="btn" id="btnBack" onclick="back()" style="display:none">← Back</button>
+    <button class="btn btn-fill" id="btnNext" onclick="handleNext()"><span id="btnNextLabel">Continue →</span></button>
+  </div>
+</footer>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   DATA
+══════════════════════════════════════════ */
+
+// 6 scenarios → each tagged with failure mode: 'time' | 'onesz' | 'fear'
+const FM_SCENARIOS = [
+  { txt:"An AE hasn't listened to a single SDR call in 6 weeks. 'I'm just slammed with my own pipeline right now.'", ans:'time', why:"Classic time excuse. Coaching is deprioritized the moment deal pressure increases." },
+  { txt:"An AE deliberately avoids teaching their SDR the discovery framework they use because they don't want them getting promoted into AE territory too fast.", ans:'fear', why:"Fear of competition. The AE is treating the SDR as a threat instead of a partner." },
+  { txt:"Every SDR on the team gets the same cold call script and same email sequence regardless of industry vertical, deal size, or their personal communication style.", ans:'onesz', why:"One-size-fits-all. No personalization to the individual SDR or their specific buyer context." },
+  { txt:"An AE gives feedback in the 1:1 by reading from the same coaching template every single week, word for word, regardless of what actually happened that week.", ans:'onesz', why:"Same template every week is one-size-fits-all coaching — it's not responding to the individual at all." },
+  { txt:"The AE is genuinely interested in coaching but books a 1:1 with their SDR every three weeks because 'something more urgent always comes up.'", ans:'time', why:"Lack of time — more precisely, lack of prioritization. Coaching loses to everything else." },
+  { txt:"An experienced AE refuses to share their best objection-handling script with their SDR, saying 'you need to find your own voice' — but really doesn't want anyone else landing meetings with their technique.", ans:'fear', why:"Fear of competition wrapped in mentorship language. The rationalization doesn't change the behavior." },
+];
+
+// 60-min planner: 4 slots, 4 activities
+const PLAN_SLOTS = [
+  { time:"0:00 – 15 min", act:"Call Review & Feedback",    goal:"Assess call intros and closes with written notes." },
+  { time:"15 – 30 min",   act:"Email Review & Coaching",   goal:"Edit and personalize outreach sequences together." },
+  { time:"30 – 45 min",   act:"Role-Play Conversations",   goal:"Build SDR confidence through live practice reps." },
+  { time:"45 – 60 min",   act:"SDR Q&A and Roadblocks",    goal:"Address the hardest challenges — directly, not vaguely." },
+];
+const PLAN_TILE_ORDER = [2, 0, 3, 1]; // scrambled
+
+// Call transcript: 6 lines, each tagged strong or needs
+const TX_LINES = [
+  { speaker:'AE',       role:'ae',       txt:'"Hey [Name] — I\'ll keep this quick, cold call. Worth 20 seconds?"',                                        ans:'strong', note:'Direct, respectful of time, earns permission to continue.' },
+  { speaker:'Prospect', role:'prospect', txt:'"Uh, sure. Go ahead."',                                                                                    ans:null },
+  { speaker:'AE',       role:'ae',       txt:'"We work with a lot of SaaS orgs — we basically help companies grow revenue and improve their processes."', ans:'needs',  note:'Too vague. Every vendor says this. Zero specificity to earn the next question.' },
+  { speaker:'Prospect', role:'prospect', txt:'"Okay... what does that actually mean?"',                                                                   ans:null },
+  { speaker:'AE',       role:'ae',       txt:'"Most RevOps leads I talk to tell me their SDR ramp time is killing their Q3 number. Is that anywhere near your reality?"', ans:'strong', note:'Specific problem, named role, tied to a real business consequence.' },
+  { speaker:'Prospect', role:'prospect', txt:'"Yeah, actually. We just hired four new SDRs and they\'re three months in with almost nothing booked."',    ans:null },
+  { speaker:'AE',       role:'ae',       txt:'"That\'s actually exactly what we help with. Want to hear more about what we do?"',                         ans:'needs',  note:'Asking permission to pitch after they\'ve shown interest. Too passive — ask for time now.' },
+  { speaker:'AE',       role:'ae',       txt:'"What does Thursday look like for a 20-minute call with someone who\'s solved this three times this quarter?"', ans:'strong', note:'Specific, confident, tied to credibility. This is how you close for the meeting.' },
+];
+// Only the AE lines with ans !== null are taggable
+const TAGGABLE = TX_LINES.map((l,i)=>({...l,idx:i})).filter(l=>l.ans!==null && l.role==='ae');
+
+// Email repair: 3 broken sections
+const EMAIL_SECTIONS = [
+  {
+    label:"Opening Line",
+    issue:"No clear reason to keep reading — this could be anyone's email",
+    broken:"Hi [Name], I hope this email finds you well! My name is Jordan and I work at Accel Sales Platform. We help companies like yours with sales enablement.",
+    opts:[
+      { txt:"Hi [Name], we're one of the top-rated sales enablement platforms on G2 and I wanted to introduce myself.", correct:false },
+      { txt:"Hi [Name] — most SDR managers I talk to tell me their new reps are three months in before they book their first qualified meeting. Is that anywhere near what you're seeing?", correct:true },
+      { txt:"Hi [Name], I noticed you recently posted about SDR hiring on LinkedIn and wanted to reach out with a relevant resource.", correct:false },
+    ],
+    correctFilled:"Hi [Name] — most SDR managers I tell me their new reps are 3 months in before they book their first meeting. Is that near your reality?"
+  },
+  {
+    label:"The Ask",
+    issue:"Vague ask with no specificity — 'learn more' is a soft no",
+    broken:"I'd love to connect and share how we've helped companies like yours achieve their goals. Would you be open to learning more about our solution?",
+    opts:[
+      { txt:"I'd love to set up a quick demo when you have a chance to see if we'd be a good fit for your team.", correct:false },
+      { txt:"What does Thursday look like for a 20-minute call? I can walk you through exactly how we cut SDR ramp time in half for a team your size.", correct:true },
+      { txt:"If you're interested, feel free to book some time on my calendar using the link below.", correct:false },
+    ],
+    correctFilled:"What does Thursday look like for a 20-minute call? I can show you exactly how we cut SDR ramp time in half for a team your size."
+  },
+  {
+    label:"Sign-Off",
+    issue:"Generic close that adds nothing and asks for nothing",
+    broken:"Thank you so much for your time! I look forward to hearing from you. Have a great day!",
+    opts:[
+      { txt:"Thanks for reading — I know your time is valuable and I appreciate the consideration.", correct:false },
+      { txt:"Either way, worth a reply? If the timing's off, just say so — I'd rather know.", correct:true },
+      { txt:"Looking forward to connecting and discussing how we can help your team reach the next level!", correct:false },
+    ],
+    correctFilled:"Either way, worth a reply? If the timing's off, just say so — I'd rather know."
+  },
+];
+
+const QUIZ = [
+  {
+    q:"According to this lesson, which is the MOST common reason coaching fails in SaaS companies?",
+    opts:["Fear of competition between AEs and SDRs","Lack of budget for formal coaching programs","AEs deprioritizing coaching time in favor of their own pipeline","SDRs failing to self-advocate for feedback"],
+    ans:2
+  },
+  {
+    q:"What does 'human-centered coaching' specifically mean in this context?",
+    opts:["Coaching sessions that prioritize mental health and wellbeing over performance","Tailoring coaching to the individual SDR's strengths, weaknesses, and communication style","Using empathetic language when delivering constructive criticism","Ensuring coaching covers personal development goals alongside sales metrics"],
+    ans:1
+  },
+  {
+    q:"In the 60-minute coaching framework, which block comes LAST?",
+    opts:["Call Review & Feedback","Role-Play Conversations","Email Review & Coaching","SDR Q&A and Roadblocks"],
+    ans:3
+  },
+  {
+    q:"An SDR wants to self-advocate for better coaching. The RIGHT approach is:",
+    opts:["Wait for the next quarterly review and raise coaching quality as a formal concern","Ask for specific feedback on a named area and bring a call recording to the conversation","Send their AE a list of all the areas they feel unsupported in","Mention in passing that they'd appreciate more guidance on their next 1:1"],
+    ans:1
+  },
+];
+
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
+const TOTAL=10;
+let cur=0;
+
+// Failure mode tagger
+let fmState={};  // idx → 'correct' | 'wrong' | null
+let fmCount=0;
+
+// Planner
+let planSel=null;
+let planDone={};
+
+// Transcript tagger
+let txState={};  // taggable index → tagged value
+let txCount=0;
+
+// Email repair
+let emailChosen={};
+let emailSubmitted=false;
+let emailPassed=false;
+
+// Quiz
+let qAns={};
+let qSubmitted=false;
+let qPassed=false;
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+function init(){
+  buildFM();
+  buildPlan();
+  buildTx();
+  buildEmail();
+  buildQuiz();
+  render();
+}
+
+function go(n){
+  document.getElementById('s'+cur).classList.remove('active');
+  cur=n;
+  document.getElementById('s'+cur).classList.add('active');
+  document.getElementById('main').scrollTop=0;
+  render();
+}
+function next(){if(cur<TOTAL-1)go(cur+1);}
+function back(){if(cur>0)go(cur-1);}
+function handleNext(){
+  if(cur===7){
+    if(!qSubmitted)submitQuiz();
+    else if(qPassed)next();
+    else retryQuiz();
+  } else { next(); }
+}
+
+/* ══════════════════════════════════════════
+   FAILURE MODE TAGGER
+══════════════════════════════════════════ */
+function buildFM(){
+  document.getElementById('fmCards').innerHTML=FM_SCENARIOS.map((s,i)=>`
+    <div class="fm-card" id="fmc${i}">
+      <div class="fm-card-body">
+        <div class="fm-scenario">${s.txt}</div>
+        <div class="fm-btns">
+          <button class="fm-btn" id="fmb${i}_time" onclick="tagFM(${i},'time')">⏱ Lack of Time</button>
+          <button class="fm-btn" id="fmb${i}_onesz" onclick="tagFM(${i},'onesz')">≡ One-Size-Fits-All</button>
+          <button class="fm-btn" id="fmb${i}_fear" onclick="tagFM(${i},'fear')">⚡ Fear of Competition</button>
+        </div>
+      </div>
+      <div class="fm-result" id="fmr${i}"></div>
+    </div>
+  `).join('');
+}
+
+function tagFM(i,tag){
+  if(fmState[i]==='correct') return;
+  // Clear previous wrong state
+  ['time','onesz','fear'].forEach(t=>{
+    document.getElementById(`fmb${i}_${t}`).className='fm-btn';
+  });
+  document.getElementById(`fmb${i}_${tag}`).className=`fm-btn sel-${tag}`;
+
+  const correct=FM_SCENARIOS[i].ans===tag;
+  const res=document.getElementById(`fmr${i}`);
+  const card=document.getElementById(`fmc${i}`);
+
+  if(correct){
+    fmState[i]='correct';
+    fmCount++;
+    card.classList.add('resolved');
+    res.className='fm-result show correct';
+    res.textContent=`✓ Correct — ${FM_SCENARIOS[i].why}`;
+    ['time','onesz','fear'].forEach(t=>document.getElementById(`fmb${i}_${t}`).disabled=true);
+    document.getElementById('fmCount').textContent=fmCount;
+  } else {
+    res.className='fm-result show wrong';
+    res.textContent=`✗ Not quite — look more closely at the core reason this scenario fails.`;
+    card.classList.add('wrong');
+    setTimeout(()=>card.classList.remove('wrong'),400);
+    setTimeout(()=>{res.className='fm-result';},1800);
+  }
+  render();
+}
+
+/* ══════════════════════════════════════════
+   60-MIN PLANNER
+══════════════════════════════════════════ */
+function buildPlan(){
+  document.getElementById('planSlots').innerHTML=PLAN_SLOTS.map((s,i)=>`
+    <div class="plan-slot" id="pslot${i}" onclick="pickPlanSlot(${i})">
+      <div class="plan-time">${s.time}</div>
+      <div class="plan-content" id="pslotContent${i}">
+        <div class="plan-placeholder">— select activity —</div>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('planTiles').innerHTML=PLAN_TILE_ORDER.map(si=>`
+    <button class="plan-tile" id="ptile${si}" onclick="pickPlanTile(${si})">${PLAN_SLOTS[si].act}</button>
+  `).join('');
+}
+
+function pickPlanTile(si){
+  if(planDone[si]) return;
+  if(planSel===si){planSel=null;renderPlanUI();return;}
+  planSel=si;
+  renderPlanUI();
+}
+
+function pickPlanSlot(idx){
+  if(planDone[idx]||planSel===null) return;
+  const correct=planSel===idx;
+  const slotEl=document.getElementById('pslot'+idx);
+  const tileEl=document.getElementById('ptile'+planSel);
+  if(correct){
+    planDone[idx]=true;
+    slotEl.classList.remove('target','bad');
+    slotEl.classList.add('correct');
+    const s=PLAN_SLOTS[idx];
+    document.getElementById('pslotContent'+idx).innerHTML=`<div><div class="plan-filled-act">${s.act}</div><div class="plan-filled-goal">${s.goal}</div></div>`;
+    tileEl.classList.add('placed');
+    planSel=null;
+    document.getElementById('planCount').textContent=Object.keys(planDone).length;
+    renderPlanUI();render();
+  } else {
+    [slotEl,tileEl].forEach(e=>{e.classList.add('bad');setTimeout(()=>e.classList.remove('bad'),400);});
+    planSel=null;renderPlanUI();
+  }
+}
+
+function renderPlanUI(){
+  PLAN_SLOTS.forEach((_,i)=>{
+    const el=document.getElementById('pslot'+i);
+    if(!el||planDone[i]) return;
+    el.classList.toggle('target',planSel!==null);
+  });
+  PLAN_TILE_ORDER.forEach(si=>{
+    const el=document.getElementById('ptile'+si);
+    if(!el) return;
+    el.classList.toggle('sel',planSel===si);
+  });
+}
+
+function resetPlan(){
+  planSel=null;planDone={};
+  buildPlan();
+  document.getElementById('planCount').textContent=0;
+  renderPlanUI();render();
+}
+
+/* ══════════════════════════════════════════
+   CALL TRANSCRIPT TAGGER
+══════════════════════════════════════════ */
+function buildTx(){
+  document.getElementById('txLines').innerHTML=TX_LINES.map((l,i)=>{
+    const taggable=l.ans!==null && l.role==='ae';
+    return `<div class="tx-line" id="txl${i}">
+      <div class="tx-line-inner">
+        <div class="tx-speaker ${l.role}">${l.speaker}</div>
+        <div class="tx-text">${l.txt}</div>
+        ${taggable?`<div class="tx-tag-col">
+          <button class="tx-tag-btn" id="txbS${i}" onclick="tagTx(${i},'strong')">Strong</button>
+          <button class="tx-tag-btn" id="txbN${i}" onclick="tagTx(${i},'needs')">Needs Work</button>
+        </div>`:''}
+      </div>
+      ${taggable?`<div class="tx-verdict" id="txv${i}"></div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function tagTx(i,tag){
+  const l=TX_LINES[i];
+  if(txState[i]==='correct') return;
+  const correct=l.ans===tag;
+  const lineEl=document.getElementById('txl'+i);
+  const verdict=document.getElementById('txv'+i);
+  if(correct){
+    txState[i]='correct';
+    txCount++;
+    lineEl.classList.add('resolved','correct-'+tag);
+    verdict.textContent=(tag==='strong'?'✓ Strong — ':'✗ Needs Work — ')+l.note;
+    document.getElementById('txbS'+i).disabled=true;
+    document.getElementById('txbN'+i).disabled=true;
+    document.getElementById('txCount').textContent=txCount;
+  } else {
+    lineEl.classList.add('wrong');
+    setTimeout(()=>lineEl.classList.remove('wrong'),400);
+  }
+  render();
+}
+
+/* ══════════════════════════════════════════
+   EMAIL REPAIR
+══════════════════════════════════════════ */
+function buildEmail(){
+  const w=document.getElementById('emailWrap');
+  if(!w) return;
+
+  // Preview
+  const previewSegs=EMAIL_SECTIONS.map((sec,si)=>{
+    const chosen=emailChosen[si];
+    if(chosen!==undefined && emailSubmitted){
+      const opt=sec.opts[chosen];
+      return `<div class="ep-seg ${opt.correct?'filled':'filled'}" style="${opt.correct?'':'border-left-color:var(--coral);'}${opt.correct?'':'color:rgba(255,50,0,0.7);'}">${opt.correct?sec.correctFilled:opt.txt}</div>`;
+    }
+    if(chosen!==undefined){
+      return `<div class="ep-seg filled">${sec.opts[chosen].txt}</div>`;
+    }
+    return `<div class="ep-seg blank">[${sec.label}]</div>`;
+  });
+
+  const preview=`<div class="email-preview">
+    <div class="ep-header">
+      <div class="ep-field">Subject: <span>SDR ramp time — worth 20 min?</span></div>
+      <div class="ep-field">To: <span>[Name], RevOps Lead</span></div>
+    </div>
+    <div class="ep-body">
+      ${previewSegs.join('')}
+      <div class="ep-seg static">Best,<br>Jordan</div>
+    </div>
+  </div>`;
+
+  const sections=EMAIL_SECTIONS.map((sec,si)=>`
+    <div style="margin-bottom:20px">
+      <div class="email-sec-lbl">${sec.label}</div>
+      <div class="email-issue">Issue: ${sec.issue}</div>
+      <div class="email-opts">${sec.opts.map((o,oi)=>{
+        let cls='';
+        if(emailSubmitted){
+          if(o.correct) cls='correct locked';
+          else if(emailChosen[si]===oi&&!o.correct) cls='wrong-reveal locked';
+          else cls='locked';
+        } else if(emailChosen[si]===oi) cls='chosen';
+        return `<button class="email-opt ${cls}" onclick="pickEmail(${si},${oi})">${o.txt}</button>`;
+      }).join('')}</div>
+    </div>
+  `).join('');
+
+  const submitHtml=emailSubmitted?'':`<div class="email-submit"><button class="btn btn-fill" id="emailSubmitBtn" onclick="submitEmail()"><span>Repair This Email →</span></button></div>`;
+
+  const doneHtml=`<div class="email-done ${emailSubmitted&&emailPassed?'show':''}">
+    <div class="email-done-h">✓ Email Repaired — This One Actually Gets Replies</div>
+    <div class="email-done-p">Specific open, a real problem, a hard ask, and a respectful close. That's the whole framework. Continue when ready.</div>
+  </div>`;
+
+  const failHtml=emailSubmitted&&!emailPassed?`<div style="max-width:580px;margin-top:14px;padding:12px 16px;border-left:4px solid var(--coral);background:var(--cor-lt)">
+    <div style="font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--coral);margin-bottom:6px">NOT QUITE</div>
+    <div style="font-family:var(--serif);font-size:14px;color:var(--black);line-height:1.65">The correct versions are highlighted above. Review them and <button style="background:none;border:none;cursor:pointer;font-family:var(--serif);font-size:14px;text-decoration:underline;color:var(--violet)" onclick="resetEmail()">try again</button>.</div>
+  </div>`:'';
+
+  w.innerHTML=preview+`<div class="email-sections">${sections}</div>`+submitHtml+doneHtml+failHtml;
+}
+
+function pickEmail(si,oi){
+  if(emailSubmitted) return;
+  emailChosen[si]=oi;
+  buildEmail();render();
+}
+function submitEmail(){
+  emailSubmitted=true;
+  emailPassed=EMAIL_SECTIONS.every((s,i)=>{
+    return emailChosen[i]!==undefined && s.opts[emailChosen[i]].correct;
+  });
+  buildEmail();render();
+}
+function resetEmail(){
+  emailSubmitted=false;emailPassed=false;emailChosen={};
+  buildEmail();render();
+}
+
+/* ══════════════════════════════════════════
+   QUIZ
+══════════════════════════════════════════ */
+function buildQuiz(){
+  document.getElementById('quizBody').innerHTML=QUIZ.map((q,qi)=>`
+    <div class="q-block">
+      <div class="q-num">Question ${qi+1} of ${QUIZ.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-opts">${q.opts.map((o,oi)=>`
+        <button class="q-opt" id="qo${qi}_${oi}" onclick="pickOpt(${qi},${oi})">${o}</button>
+      `).join('')}</div>
+    </div>
+  `).join('');
+}
+function pickOpt(qi,oi){
+  if(qSubmitted) return;
+  QUIZ[qi].opts.forEach((_,i)=>document.getElementById(`qo${qi}_${i}`).classList.remove('chosen'));
+  document.getElementById(`qo${qi}_${oi}`).classList.add('chosen');
+  qAns[qi]=oi;render();
+}
+function submitQuiz(){
+  qSubmitted=true;let correct=0;
+  QUIZ.forEach((q,qi)=>{
+    const chosen=qAns[qi];
+    q.opts.forEach((_,oi)=>{
+      const el=document.getElementById(`qo${qi}_${oi}`);
+      el.classList.add('locked');el.classList.remove('chosen');
+      if(oi===q.ans) el.classList.add('correct');
+      else if(oi===chosen&&chosen!==q.ans) el.classList.add('wrong-pick');
+    });
+    if(chosen===q.ans) correct++;
+  });
+  qPassed=correct>=3;
+  const b=document.getElementById('quizBanner');
+  b.className='quiz-banner show '+(qPassed?'pass':'fail');
+  b.textContent=qPassed?`✓ ${correct} / ${QUIZ.length} correct — cleared to continue.`:`${correct} / ${QUIZ.length} correct — need 3 to pass. Review and try again.`;
+  render();
+}
+function retryQuiz(){
+  qSubmitted=false;qPassed=false;qAns={};
+  document.getElementById('quizBanner').className='quiz-banner';
+  buildQuiz();render();
+}
+
+/* ══════════════════════════════════════════
+   RENDER
+══════════════════════════════════════════ */
+const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
+
+function canContinue(){
+  if(cur===2) return fmCount===6;
+  if(cur===4) return Object.keys(planDone).length===4;
+  if(cur===5) return txCount===4; // 4 taggable AE lines
+  if(cur===6) return emailSubmitted&&emailPassed;
+  if(cur===7){
+    if(!qSubmitted) return Object.keys(qAns).length===QUIZ.length;
+    return true;
+  }
+  return true;
+}
+
+function getHint(){
+  const h={
+    1:"Every bad meeting you clean up costs you three times more than the coaching would have.",
+    2:`${fmCount} / 6 correctly diagnosed`,
+    3:"60 minutes a week. That's the whole investment.",
+    4:`${Object.keys(planDone).length} / 4 correctly placed`,
+    5:`${txCount} / 4 correctly tagged`,
+    6:!emailSubmitted?`${Object.keys(emailChosen).length} / 3 sections chosen`:emailPassed?'✓ Email repaired — continue below.':'Review the correct versions and try again.',
+    7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
+    8:"The templates only work if you actually open them.",
+  };
+  return h[cur]||'';
+}
+
+function getNextLabel(){
+  if(cur===7&&!qSubmitted) return 'Submit Answers';
+  if(cur===7&&!qPassed) return 'Try Again →';
+  if(cur===8) return 'Finish Course →';
+  return 'Continue →';
+}
+
+function render(){
+  const sec=SEC[cur];
+  document.getElementById('progLabel').textContent=sec?`Section 0${sec}`:'Course 1.3';
+  const pct=cur===0?0:Math.round((cur/(TOTAL-1))*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  ['nav1','nav2','nav3','nav4'].forEach((id,i)=>
+    document.getElementById(id).classList.toggle('active',SEC[cur]===i+1));
+  const hide=cur===0||cur===TOTAL-1;
+  const bnav=document.getElementById('bottomnav');
+  bnav.style.display=hide?'none':'flex';
+  if(hide) return;
+  document.getElementById('hint').textContent=getHint();
+  document.getElementById('btnNextLabel').textContent=getNextLabel();
+  document.getElementById('btnBack').style.display=cur<=1?'none':'block';
+  document.getElementById('btnNext').disabled=!canContinue();
+}
+
+init();
+</script>
+</body>
+</html>

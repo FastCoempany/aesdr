@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR — Course 3.1: SDR Performance Pitfalls</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#FFFFFF;--black:#000000;--mid:#636060;--lite:#EFF4F0;--lite2:#E0EAE2;
+  --emerald:#006644;--em-lt:rgba(0,102,68,0.08);--em-md:rgba(0,102,68,0.18);
+  --em-bright:#00C87A;
+  --magenta:#CC0066;--mag-lt:rgba(204,0,102,0.08);
+  --gold:#FFD600;--gold-lt:rgba(255,214,0,0.14);
+  --cobalt:#0038FF;--cob-lt:rgba(0,56,255,0.07);
+  --green:#00B85A;--grn-lt:rgba(0,184,90,0.09);
+  --coral:#FF3200;--cor-lt:rgba(255,50,0,0.07);
+  --line:rgba(0,0,0,0.08);--line2:rgba(0,0,0,0.14);
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#FFD600 34%,#00E5A0 51%,#0099FF 68%,#7B2FFF 85%,#FF006E 100%);
+  --display:'Abril Fatface',Georgia,serif;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;
+  --mono:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--white);color:var(--black);font-family:var(--cond);overflow:hidden}
+.app{display:grid;grid-template-columns:1fr 234px;grid-template-rows:52px 1fr 60px;height:100vh}
+
+/* TOPBAR */
+.topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:2px solid var(--black);background:var(--white);z-index:20}
+.brand{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.22em;text-transform:uppercase}
+.course-badge{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;background:var(--emerald);color:#fff;padding:4px 10px;margin-left:12px}
+.top-right{display:flex;align-items:center;gap:14px}
+.prog-label{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--mid);text-transform:uppercase}
+.prog-track{width:80px;height:2px;background:var(--lite2)}
+.prog-fill{height:100%;background:var(--iris);background-size:200% 100%;animation:iris 3s linear infinite;transition:width .8s cubic-bezier(.4,0,.2,1)}
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+
+/* MAIN / SIDEBAR */
+.main{overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;background:var(--white);scrollbar-width:none}
+.main::-webkit-scrollbar{display:none}
+.sidebar{border-left:2px solid var(--black);padding:32px 20px;overflow-y:auto;scrollbar-width:none;background:var(--white)}
+.sidebar::-webkit-scrollbar{display:none}
+.sb-course{font-family:var(--display);font-size:22px;color:var(--emerald);line-height:1;margin-bottom:4px}
+.sb-lesson{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--mid);margin-bottom:24px}
+.sb-divider{height:2px;background:var(--emerald);margin-bottom:20px}
+.sb-label{font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--mid);margin-bottom:18px}
+.sb-item{padding:16px 0;border-bottom:1px solid var(--line);cursor:pointer;position:relative;transition:all .2s}
+.sb-item:first-of-type{border-top:1px solid var(--line)}
+.sb-tag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--mid);margin-bottom:7px;text-transform:uppercase;transition:color .2s}
+.sb-name{font-family:var(--cond);font-size:12px;font-weight:700;color:var(--mid);line-height:1.4;text-transform:uppercase;letter-spacing:.04em;transition:color .2s}
+.sb-item.active .sb-tag{color:var(--emerald)}
+.sb-item.active .sb-name{color:var(--black)}
+.sb-item.active::before{content:'';position:absolute;left:-20px;top:0;bottom:0;width:3px;background:var(--emerald)}
+.sb-item:hover .sb-name{color:var(--black)}
+
+/* BOTTOMNAV */
+.bottomnav{grid-column:1/2;display:flex;align-items:center;justify-content:space-between;padding:0 56px;border-top:2px solid var(--black);background:var(--white)}
+.nav-hint{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--mid);font-style:italic}
+.nav-btns{display:flex;gap:8px}
+.btn{font-family:var(--cond);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:10px 22px;border:2px solid var(--black);background:transparent;color:var(--black);cursor:pointer;transition:all .15s}
+.btn:hover{background:var(--black);color:var(--white)}
+.btn-fill{background:var(--black);color:var(--white);position:relative;overflow:hidden}
+.btn-fill::before{content:'';position:absolute;inset:0;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;opacity:0;transition:opacity .2s}
+.btn-fill:hover::before{opacity:1}
+.btn-fill:hover{color:var(--black)}
+.btn-fill span{position:relative;z-index:1}
+.btn-fill:disabled,.btn-fill:disabled:hover{opacity:.28;cursor:not-allowed;background:var(--black);color:var(--white)}
+.btn-fill:disabled::before,.btn-fill:disabled:hover::before{display:none}
+
+/* SCREENS */
+.screen{display:none;flex-direction:column;flex:1;animation:up .42s cubic-bezier(.22,1,.36,1) both}
+.screen.active{display:flex}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* COVER */
+.cover{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.cvl{background:var(--emerald);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.cvl::before{content:'3';position:absolute;right:-20px;bottom:-40px;font-family:var(--display);font-size:280px;color:rgba(255,255,255,0.06);line-height:1;pointer-events:none}
+.cv-c3tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px}
+.cv-course-num{font-family:var(--display);font-size:80px;color:#fff;line-height:.85;margin-bottom:12px}
+.cv-big{font-family:var(--display);font-size:clamp(28px,3.4vw,48px);line-height:.97;color:#fff}
+.cv-tagline{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.58);line-height:1.7;border-top:1px solid rgba(255,255,255,0.14);padding-top:18px}
+.cvr{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;margin-bottom:16px;display:inline-block;background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:iris 3s linear infinite}
+.hero-h{font-family:var(--display);font-size:clamp(28px,3.8vw,52px);line-height:.97;color:var(--black);margin-bottom:20px}
+.hero-h .irisTxt{background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:iris 3s linear infinite}
+.cv-list{list-style:none;margin-bottom:36px}
+.cv-list li{font-family:var(--cond);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mid);display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.cv-list li:first-child{border-top:1px solid var(--line)}
+.cl-n{font-family:var(--mono);font-size:9px;background:var(--black);color:var(--white);padding:2px 6px;flex-shrink:0}
+
+/* SHARED HEADER */
+.lh{padding:44px 56px 0;position:relative;overflow:hidden}
+.lh-stripe{position:absolute;top:0;left:0;right:0;height:4px;background:var(--iris);background-size:200% 100%;animation:iris 4s linear infinite}
+.ghost-n{position:absolute;right:48px;top:-20px;font-family:var(--display);font-size:200px;line-height:1;color:var(--lite);pointer-events:none;user-select:none}
+.c3-badge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;background:var(--emerald);color:#fff;padding:3px 10px;margin-bottom:12px}
+.sec-eye{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--emerald);margin-bottom:14px;display:inline-block;margin-left:10px}
+.lh-title{font-family:var(--display);font-size:clamp(22px,3.2vw,46px);line-height:1.05;color:var(--black);max-width:640px}
+.lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
+.lh-sub b{color:var(--black)}
+.lb{padding:24px 56px 0}
+.lp{font-family:var(--serif);font-size:16px;line-height:1.8;color:var(--black);max-width:580px;margin-bottom:14px}
+.kp{list-style:none;max-width:580px;margin:14px 0}
+.kp li{font-family:var(--serif);font-size:15px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px;align-items:flex-start}
+.kp li:first-child{border-top:1px solid var(--line)}
+.kp-n{font-family:var(--mono);font-size:9px;color:var(--mid);min-width:22px;padding-top:3px;flex-shrink:0}
+.lie{max-width:580px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
+.lie-tab{position:absolute;top:0;left:0;font-family:var(--cond);font-size:9px;letter-spacing:.24em;font-weight:800;text-transform:uppercase;padding:3px 10px;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;color:var(--black)}
+.lie-q{font-family:var(--serif);font-style:italic;font-size:18px;color:#fff;line-height:1.5;margin:12px 0 10px}
+.lie-a{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
+.data-table{width:100%;max-width:600px;border-collapse:collapse;margin:16px 0}
+.data-table th{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;background:var(--black);color:var(--white);padding:9px 14px;text-align:left}
+.data-table td{font-family:var(--serif);font-size:14px;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--black);line-height:1.6;vertical-align:top}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:nth-child(even) td{background:var(--lite)}
+
+/* ── PITFALL RANKER ── */
+.rank-wrap{padding:16px 56px 44px;max-width:660px}
+.rank-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:560px;line-height:1.65;margin-bottom:22px}
+.rank-cards{display:flex;flex-direction:column;gap:8px}
+.rank-card{border:1px solid var(--line2);background:var(--white);overflow:hidden;transition:border-color .2s;cursor:pointer}
+.rank-card.expanded{border-color:var(--emerald)}
+.rank-card-top{display:flex;align-items:center;gap:0;padding:0}
+.rank-num{font-family:var(--display);font-size:32px;color:var(--lite2);flex-shrink:0;width:52px;text-align:center;line-height:1;padding:14px 0;transition:color .3s}
+.rank-card.expanded .rank-num{color:var(--emerald)}
+.rank-divider{width:1px;background:var(--line2);align-self:stretch}
+.rank-main{flex:1;padding:14px 18px}
+.rank-pitfall{font-family:var(--cond);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--black)}
+.rank-sub{font-family:var(--serif);font-style:italic;font-size:13px;color:var(--mid);margin-top:3px}
+.rank-chevron{font-size:16px;color:var(--mid);padding:0 16px;transition:transform .3s;flex-shrink:0}
+.rank-card.expanded .rank-chevron{transform:rotate(90deg);color:var(--emerald)}
+.rank-body{max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.4,0,.2,1)}
+.rank-card.expanded .rank-body{max-height:400px}
+.rank-inner{padding:0 18px 18px 70px}
+.rank-desc{font-family:var(--serif);font-size:14px;color:var(--black);line-height:1.75;margin-bottom:12px}
+.rank-fix-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--emerald);margin-bottom:8px}
+.rank-fix-item{font-family:var(--serif);font-size:13px;color:var(--black);line-height:1.65;padding:8px 0;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:flex-start}
+.rank-fix-item:last-child{border-bottom:none}
+.rank-fix-item::before{content:'→';color:var(--emerald);flex-shrink:0;margin-top:1px}
+.rank-mark-btn{margin-top:12px;font-family:var(--cond);font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:7px 14px;border:2px solid var(--emerald);background:transparent;color:var(--emerald);cursor:pointer;transition:all .15s}
+.rank-mark-btn:hover{background:var(--emerald);color:#fff}
+.rank-card.marked .rank-mark-btn{background:var(--emerald);color:#fff}
+.rank-card.marked{border-color:var(--em-bright)}
+.rank-card.marked .rank-num{color:var(--em-bright)}
+
+/* ── BANT QUALIFIER ── */
+.bant-wrap{padding:0 0 44px}
+.bant-prog{display:flex;gap:0;margin:20px 56px 0;max-width:480px}
+.bant-step{flex:1;display:flex;align-items:center}
+.bant-dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--line2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;color:var(--mid);transition:all .25s;flex-shrink:0;background:var(--white)}
+.bant-dot.active{border-color:var(--emerald);background:var(--emerald);color:#fff}
+.bant-dot.done{border-color:var(--em-bright);background:var(--em-bright);color:var(--black)}
+.bant-line{flex:1;height:1px;background:var(--line2);margin:0 4px}
+.bant-lbl-row{display:flex;margin:6px 56px 0;max-width:480px}
+.bant-lbl{flex:1;font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--mid);transition:color .2s}
+.bant-lbl.cur{color:var(--black)}
+.bant-lead{margin:18px 56px 0;max-width:640px;background:var(--lite);border-left:4px solid var(--emerald);padding:18px 22px}
+.bant-lead-tag{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--emerald);margin-bottom:8px}
+.bant-lead-name{font-family:var(--cond);font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--black);margin-bottom:4px}
+.bant-lead-detail{font-family:var(--serif);font-size:14px;color:var(--mid);line-height:1.65;font-style:italic}
+.bant-q{font-family:var(--display);font-size:clamp(16px,2vw,24px);color:var(--black);line-height:1.1;margin:16px 56px 0;max-width:640px}
+.bant-criterion{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--emerald);margin:6px 56px 0;max-width:640px}
+.bant-opts{display:flex;flex-direction:column;gap:7px;padding:14px 56px 0;max-width:680px}
+.bant-opt{padding:14px 18px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:14px;color:var(--black);text-align:left;cursor:pointer;transition:all .18s;line-height:1.55;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.bant-opt:hover:not(.locked){border-color:var(--emerald);background:var(--em-lt)}
+.bant-opt.correct{border-color:var(--em-bright);background:var(--em-lt);cursor:default}
+.bant-opt.wrong{border-color:var(--coral);background:var(--cor-lt);cursor:default}
+.bant-opt.locked{cursor:default}
+.bant-verdict{font-family:var(--mono);font-size:9px;letter-spacing:.1em;padding:0;flex-shrink:0;opacity:0;transition:opacity .2s;margin-top:2px}
+.bant-opt.correct .bant-verdict{opacity:1;color:var(--emerald)}
+.bant-opt.wrong .bant-verdict{opacity:1;color:var(--coral)}
+.bant-fb{font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--mid);margin:10px 56px 0;max-width:640px;line-height:1.7;display:none}
+.bant-fb.show{display:block}
+.bant-fb.good{color:var(--emerald)}
+.bant-fb.bad{color:var(--coral)}
+.bant-adv{margin:14px 56px 0;display:none}
+.bant-adv.show{display:block}
+.bant-result{margin:20px 56px 0;max-width:580px;padding:20px 22px;background:var(--black)}
+.bant-result-h{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.bant-result-p{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.6);line-height:1.65;font-style:italic}
+.bant-pass{border-left:4px solid var(--em-bright)}
+.bant-pass .bant-result-h{color:var(--em-bright)}
+.bant-fail{border-left:4px solid var(--coral)}
+.bant-fail .bant-result-h{color:var(--coral)}
+.bant-done-box{margin:20px 56px 0;max-width:580px;background:var(--em-bright);padding:20px 22px}
+.bant-done-h{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--black);margin-bottom:7px}
+.bant-done-p{font-family:var(--serif);font-size:14px;color:rgba(0,0,0,0.6);line-height:1.65;font-style:italic}
+
+/* ── FEEDBACK DECODER ── */
+.fd-wrap{padding:16px 56px 44px;max-width:680px}
+.fd-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.fd-scenario{background:var(--black);padding:18px 22px;max-width:600px;margin-bottom:22px}
+.fd-who{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px}
+.fd-quote{font-family:var(--serif);font-style:italic;font-size:16px;color:#fff;line-height:1.6}
+.fd-items{display:flex;flex-direction:column;gap:10px}
+.fd-item{border:1px solid var(--line2);overflow:hidden;transition:border-color .2s}
+.fd-item.resolved{border-color:var(--em-bright)}
+.fd-item-q{font-family:var(--serif);font-size:14px;color:var(--black);padding:14px 18px;line-height:1.6;border-bottom:1px solid var(--line)}
+.fd-item-q strong{font-weight:600}
+.fd-response-tag{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--mid);padding:0 18px;margin-top:10px;display:block}
+.fd-opts{display:flex;flex-direction:column;gap:5px;padding:8px 18px 14px}
+.fd-opt{padding:10px 14px;border:1px solid var(--line2);background:var(--white);font-family:var(--cond);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--black);text-align:left;cursor:pointer;transition:all .15s}
+.fd-opt:hover:not(.locked){border-color:var(--emerald);background:var(--em-lt)}
+.fd-opt.correct{background:var(--em-bright);border-color:var(--em-bright);color:var(--black);cursor:default}
+.fd-opt.wrong{border-color:var(--coral);background:var(--cor-lt);cursor:default;animation:shake .35s ease both}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.fd-opt.locked{cursor:default}
+.fd-result{padding:10px 18px 14px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--mid);display:none;line-height:1.65;border-top:1px solid var(--line)}
+.fd-item.resolved .fd-result{display:block}
+
+/* ── SCRIPT ADAPTATION ── */
+.sa-wrap{padding:16px 56px 44px;max-width:700px}
+.sa-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.sa-items{display:flex;flex-direction:column;gap:16px}
+.sa-item{border:1px solid var(--line2);overflow:hidden}
+.sa-item.resolved{border-color:var(--em-bright)}
+.sa-item-top{padding:16px 18px 14px}
+.sa-exchange{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.sa-bubble{padding:11px 14px;font-family:var(--serif);font-style:italic;font-size:14px;line-height:1.6}
+.sa-bubble.script{background:var(--lite);border-left:3px solid var(--line2);color:var(--mid)}
+.sa-bubble.prospect{background:var(--black);color:rgba(255,255,255,0.75);border-left:3px solid var(--emerald)}
+.sa-who{font-family:var(--mono);font-size:8px;letter-spacing:.16em;text-transform:uppercase;margin-bottom:4px;display:block}
+.sa-who.script{color:var(--mid)}
+.sa-who.prospect{color:var(--emerald)}
+.sa-q{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--mid);margin-bottom:10px}
+.sa-opts{display:flex;flex-direction:column;gap:5px;padding:0 18px 14px}
+.sa-opt{padding:11px 14px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:13px;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.55}
+.sa-opt:hover:not(.locked){border-color:var(--emerald);background:var(--em-lt)}
+.sa-opt.correct{border-color:var(--em-bright);background:var(--em-lt);cursor:default}
+.sa-opt.wrong{border-color:var(--coral);background:var(--cor-lt);cursor:default;animation:shake .35s ease both}
+.sa-opt.locked{cursor:default}
+.sa-verdict{padding:10px 18px 12px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;line-height:1.65;display:none;border-top:1px solid var(--line)}
+.sa-item.resolved .sa-verdict{display:block}
+.sa-verdict.good{color:var(--emerald)}
+.sa-verdict.bad{color:var(--coral)}
+
+/* HABIT BUILDER */
+.hb-wrap{padding:16px 56px 44px;max-width:700px}
+.hb-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.hb-day{border:2px solid var(--black);margin-bottom:16px}
+.hb-day-hdr{background:var(--black);padding:12px 18px;display:flex;align-items:center;justify-content:space-between}
+.hb-day-label{font-family:var(--cond);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#fff}
+.hb-day-pct{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,0.4)}
+.hb-blocks{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--line2)}
+.hb-block{background:var(--white);padding:14px 16px;cursor:pointer;transition:all .2s;position:relative}
+.hb-block:hover:not(.done){background:var(--em-lt)}
+.hb-block.done{background:var(--em-bright)}
+.hb-block-time{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--mid);margin-bottom:5px;transition:color .2s}
+.hb-block.done .hb-block-time{color:rgba(0,0,0,0.45)}
+.hb-block-act{font-family:var(--cond);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--black);line-height:1.25}
+.hb-block-goal{font-family:var(--serif);font-size:11px;color:var(--mid);font-style:italic;margin-top:3px;line-height:1.5;transition:color .2s}
+.hb-block.done .hb-block-goal{color:rgba(0,0,0,0.45)}
+.hb-block-check{position:absolute;top:8px;right:10px;font-size:12px;font-weight:800;color:var(--black);opacity:0;transition:opacity .2s}
+.hb-block.done .hb-block-check{opacity:1}
+.hb-done-box{max-width:580px;background:var(--em-bright);padding:18px 22px;margin-top:4px;display:none}
+.hb-done-box.show{display:block}
+.hb-done-h{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--black);margin-bottom:6px}
+.hb-done-p{font-family:var(--serif);font-size:14px;color:rgba(0,0,0,0.55);line-height:1.65;font-style:italic}
+
+/* QUIZ */
+.quiz-banner{margin:16px 56px 0;padding:12px 18px;font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.06em;border-left:4px solid var(--cobalt);background:var(--cob-lt);color:var(--black);display:none}
+.quiz-banner.show{display:block}
+.quiz-banner.pass{border-color:var(--green);background:var(--grn-lt)}
+.quiz-banner.fail{border-color:var(--coral);background:var(--cor-lt)}
+.quiz-body{padding:20px 56px 44px;display:flex;flex-direction:column;gap:28px}
+.q-num{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--emerald);margin-bottom:9px}
+.q-text{font-family:var(--display);font-size:clamp(13px,1.6vw,18px);color:var(--black);line-height:1.2;margin-bottom:13px}
+.q-opts{display:flex;flex-direction:column;gap:6px}
+.q-opt{padding:11px 16px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:14px;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.5}
+.q-opt:hover:not(.locked){border-color:var(--emerald);background:var(--em-lt)}
+.q-opt.chosen{border-color:var(--emerald);background:var(--emerald);color:#fff}
+.q-opt.correct{border-color:var(--green);background:var(--grn-lt);color:var(--black)}
+.q-opt.wrong-pick{border-color:var(--coral);background:var(--cor-lt);color:var(--black)}
+.q-opt.locked{cursor:default}
+
+/* TOOLS */
+.tools-blk{padding:20px 56px 44px}
+.t-head{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--black);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--black)}
+.hw-list{list-style:none;max-width:580px;margin-top:8px}
+.hw-list li{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.65;padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
+.hw-list li:first-child{border-top:1px solid var(--line)}
+.hw-box{width:14px;height:14px;border:2px solid var(--black);flex-shrink:0;margin-top:4px}
+
+/* COMPLETE */
+.comp{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.comp-l{background:var(--magenta);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.comp-l::before{content:'3';position:absolute;right:-20px;bottom:-40px;font-family:var(--display);font-size:280px;color:rgba(255,255,255,0.06);line-height:1;pointer-events:none}
+.comp-tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.35)}
+.comp-big{font-family:var(--display);font-size:clamp(44px,5.5vw,76px);line-height:.93;color:#fff}
+.comp-sub{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7;border-top:1px solid rgba(255,255,255,0.12);padding-top:18px}
+.comp-r{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.comp-h{font-family:var(--display);font-size:clamp(22px,2.8vw,40px);line-height:1.08;color:var(--black);margin-bottom:18px}
+.comp-p{font-family:var(--serif);font-size:15px;color:var(--black);max-width:380px;line-height:1.8;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header class="topbar">
+  <div style="display:flex;align-items:center">
+    <div class="brand">AESDR</div>
+    <div class="course-badge">Course 3</div>
+  </div>
+  <div class="top-right">
+    <span class="prog-label" id="progLabel">Lesson 3.1</span>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+</header>
+
+<main class="main" id="main">
+
+  <!-- 0: COVER -->
+  <div class="screen active" id="s0">
+    <div class="cover" style="flex:1">
+      <div class="cvl">
+        <div>
+          <div class="cv-c3tag">AESDR · Lesson 3.1</div>
+          <div class="cv-course-num">03</div>
+          <div class="cv-big">SDR Performance Pitfalls and How to Overcome Them</div>
+        </div>
+        <div class="cv-tagline">Turning challenges into growth and success in SaaS sales — starting with honest self-diagnosis.</div>
+      </div>
+      <div class="cvr">
+        <div class="eyebrow">Course 3 · Lesson 1 of 3</div>
+        <div class="hero-h">Struggles into<br><span class="irisTxt">strengths.</span></div>
+        <ul class="cv-list">
+          <li><span class="cl-n">01</span>The 4 Most Common SDR Pitfalls</li>
+          <li><span class="cl-n">02</span>The BANT Qualification Game</li>
+          <li><span class="cl-n">03</span>The Proactivity Habit Builder</li>
+        </ul>
+        <button class="btn btn-fill" onclick="go(1)"><span>Begin Lesson →</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1: WHY IT MATTERS -->
+  <div class="screen" id="s1">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">01</div>
+      <div><div class="c3-badge">Course 3</div><span class="sec-eye">Section 01 — The Diagnosis</span></div>
+      <div class="lh-title">Why Addressing SDR Challenges Matters</div>
+    </div>
+    <div class="lb">
+      <p class="lp">SDRs are the backbone of the sales pipeline — every opportunity an AE closes started as an SDR conversation. Which means unresolved SDR challenges don't stay contained. They cascade: missed targets, wasted AE time, and eroded team confidence.</p>
+      <p class="lp">Addressing performance pitfalls isn't about blame. It's about identifying the gaps between where an SDR is and where they need to be — and closing them systematically.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Poor qualification</strong> passes weak leads to AEs who then spend hours on conversations that go nowhere.</li>
+        <li><span class="kp-n">02</span><strong>Lack of proactivity</strong> means fewer opportunities generated — the pipeline thins quietly before anyone notices.</li>
+        <li><span class="kp-n">03</span><strong>Generic outreach</strong> returns low engagement. Low engagement produces low ROI on every hour of outreach effort.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Growth Frame</div>
+        <div class="lie-q">"Every SDR pitfall is a solvable problem — not a fixed trait."</div>
+        <div class="lie-a">The SDR who acknowledges where they're stuck and attacks one thing at a time will outgrow the one who waits for conditions to improve. Growth starts with awareness and gets done through action.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2: PITFALL EXPLORER -->
+  <div class="screen" id="s2">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">01</div>
+      <div><div class="c3-badge">Course 3</div><span class="sec-eye">Section 01 — Know the Pitfalls</span></div>
+      <div class="lh-title">The 4 Performance Pitfalls — Explore All of Them</div>
+      <div class="lh-sub"><b id="rankCount">0</b> / 4 explored — open and mark each pitfall to continue</div>
+    </div>
+    <div class="rank-wrap" id="rankWrap"></div>
+  </div>
+
+  <!-- 3: BANT QUALIFIER -->
+  <div class="screen" id="s3">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">02</div>
+      <div><div class="c3-badge">Course 3</div><span class="sec-eye">Section 02 — Qualification Practice</span></div>
+      <div class="lh-title">The BANT Lead Qualifier</div>
+    </div>
+    <div class="bant-wrap" id="bantWrap"></div>
+  </div>
+
+  <!-- 4: FEEDBACK DECODER -->
+  <div class="screen" id="s4">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div><div class="c3-badge">Course 3</div><span class="sec-eye">Section 02 — Feedback Practice</span></div>
+      <div class="lh-title">Decode the Feedback</div>
+      <div class="lh-sub"><b id="fdCount">0</b> / 4 decoded — pick the right response to each piece of coaching</div>
+    </div>
+    <div class="fd-wrap">
+      <p class="fd-instr">Your AE just gave you feedback. Choose how a growth-mindset SDR responds versus a stuck one. All 4 must be correctly decoded to continue.</p>
+      <div class="fd-items" id="fdItems"></div>
+    </div>
+  </div>
+
+  <!-- 5: SCRIPT ADAPTATION -->
+  <div class="screen" id="s5">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">03</div>
+      <div><div class="c3-badge">Course 3</div><span class="sec-eye">Section 03 — Script Flexibility</span></div>
+      <div class="lh-title">Adapt the Script to the Moment</div>
+      <div class="lh-sub"><b id="saCount">0</b> / 4 adapted correctly</div>
+    </div>
+    <div class="sa-wrap">
+      <p class="sa-instr" style="font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px">The SDR says the script line. The prospect responds. Choose the adaptation that best uses what the prospect just said — not the one that ignores it.</p>
+      <div class="sa-items" id="saItems"></div>
+    </div>
+  </div>
+
+  <!-- 6: HABIT BUILDER -->
+  <div class="screen" id="s6">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">03</div>
+      <div><div class="c3-badge">Course 3</div><span class="sec-eye">Section 03 — Build the Habit</span></div>
+      <div class="lh-title">Build Your Proactivity Day</div>
+      <div class="lh-sub"><b id="hbCount">0</b> / 6 blocks activated — click each block to commit to it</div>
+    </div>
+    <div class="hb-wrap" id="hbWrap"></div>
+  </div>
+
+  <!-- 7: QUIZ -->
+  <div class="screen" id="s7">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div><div class="c3-badge">Course 3</div><span class="sec-eye">Section 03 — Knowledge Check</span></div>
+      <div class="lh-title">Test Your Understanding</div>
+    </div>
+    <div class="quiz-banner" id="quizBanner"></div>
+    <div class="quiz-body" id="quizBody"></div>
+  </div>
+
+  <!-- 8: TOOLS -->
+  <div class="screen" id="s8">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">04</div>
+      <div><div class="c3-badge">Course 3</div><span class="sec-eye">Section 04 — Templates & Homework</span></div>
+      <div class="lh-title">Your Growth Toolkit</div>
+    </div>
+    <div class="tools-blk">
+      <div style="margin-top:20px">
+        <div class="t-head">BANT Qualification Checklist</div>
+        <table class="data-table">
+          <thead><tr><th>Criterion</th><th>Question to Ask</th><th>Pass If...</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Budget</strong></td><td>"Do they have the budget allocated for this?"</td><td>They have a budget range and it covers your minimum deal size.</td></tr>
+            <tr><td><strong>Authority</strong></td><td>"Are we speaking with the decision-maker or an influencer?"</td><td>You're talking to someone who can champion or approve the deal.</td></tr>
+            <tr><td><strong>Need</strong></td><td>"What specific problem are we solving for them?"</td><td>They've articulated a real, pressing business problem — not just curiosity.</td></tr>
+            <tr><td><strong>Timeline</strong></td><td>"When do they need a solution in place?"</td><td>They have an active initiative with a real deadline in the next 90 days.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="t-head">Personalization Framework</div>
+        <table class="data-table">
+          <thead><tr><th>Element</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Personal Opening</td><td>"Saw you just raised Series B funding and are building out your sales team..."</td></tr>
+            <tr><td>Problem-Based Question</td><td>"Are you finding that new SDRs take longer than 90 days to ramp before they book anything?"</td></tr>
+            <tr><td>Social Proof Tie-In</td><td>"We helped three other Series B SaaS companies cut ramp time in half last quarter."</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="t-head">Homework — This Week</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>SDRs: Write down the one pitfall from the four explored in this lesson that you recognize most in yourself. Be honest. Then implement one specific fix from the toolkit this week.</li>
+          <li><div class="hw-box"></div>SDRs: Use the BANT checklist on every lead you're about to pass to your AE this week. If you can't answer all four, don't pass it — ask for more information first.</li>
+          <li><div class="hw-box"></div>SDRs: Add one genuine, research-based personalization element to every outreach sequence you send this week. Not "I saw you're at [Company]" — something specific.</li>
+          <li><div class="hw-box"></div>AEs: Schedule a feedback session with your SDR this week. Pick one area. Give specific, written feedback — not general encouragement. Track whether they implement it.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9: COMPLETE -->
+  <div class="screen" id="s9">
+    <div class="comp" style="flex:1">
+      <div class="comp-l">
+        <div>
+          <div class="comp-tag">Course 3 · Lesson 1 — Complete</div>
+          <div style="font-family:var(--display);font-size:56px;color:#fff;line-height:.9;margin:10px 0 0">03</div>
+        </div>
+        <div class="comp-big">Struggle<br>is just<br>data.</div>
+        <div class="comp-sub">Every pitfall has a pattern. Every pattern has a fix. The SDRs who grow fastest are the ones who name the problem before it names them.</div>
+      </div>
+      <div class="comp-r">
+        <div class="eyebrow">Course 3 · Lesson 1 Complete</div>
+        <div class="comp-h">Growth starts with awareness. Gets done through action.</div>
+        <p class="comp-p">You've identified the four pitfalls, qualified leads with BANT, practiced adapting scripts in real time, and built your proactivity day. Now execute one thing from this lesson this week — not all four. One thing, done well.</p>
+        <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
+        <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<aside class="sidebar">
+  <div class="sb-course">03</div>
+  <div class="sb-lesson">Lesson 3.1 · SDR Performance Pitfalls</div>
+  <div class="sb-divider"></div>
+  <div class="sb-label">Sections</div>
+  <div class="sb-item" id="nav1" onclick="go(1)">
+    <div class="sb-tag">Section 01</div>
+    <div class="sb-name">The Diagnosis</div>
+  </div>
+  <div class="sb-item" id="nav2" onclick="go(3)">
+    <div class="sb-tag">Section 02</div>
+    <div class="sb-name">Qualification & Feedback</div>
+  </div>
+  <div class="sb-item" id="nav3" onclick="go(5)">
+    <div class="sb-tag">Section 03</div>
+    <div class="sb-name">Script & Habits</div>
+  </div>
+  <div class="sb-item" id="nav4" onclick="go(8)">
+    <div class="sb-tag">Section 04</div>
+    <div class="sb-name">Templates & Homework</div>
+  </div>
+</aside>
+
+<footer class="bottomnav" id="bottomnav" style="display:none">
+  <span class="nav-hint" id="hint"></span>
+  <div class="nav-btns">
+    <button class="btn" id="btnBack" onclick="back()" style="display:none">← Back</button>
+    <button class="btn btn-fill" id="btnNext" onclick="handleNext()"><span id="btnNextLabel">Continue →</span></button>
+  </div>
+</footer>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   DATA
+══════════════════════════════════════════ */
+
+const PITFALLS = [
+  {
+    num:'01', label:'Lack of Proactivity', sub:'Waiting for instructions instead of owning the day',
+    desc:'SDRs who hesitate or wait for step-by-step direction miss opportunities that never come back. The prospect window closes. The follow-up never lands. The AE never knew it existed.',
+    fixes:['Start each day with a written plan: 3 accounts to research, 20 contacts to follow up, 1 skill to improve.','Don\'t wait for the AE to ask — bring your own questions, ideas, and results to every interaction.','Follow up 5–7 times across multiple channels before calling a prospect cold. Persistence isn\'t annoying — silence is.']
+  },
+  {
+    num:'02', label:'Poor Qualification Skills', sub:'Passing unqualified leads that waste AE time',
+    desc:'Every unqualified lead passed to an AE costs them 45–90 minutes of discovery time that goes nowhere. Multiply that by four weak leads a week and you\'ve just erased half an AE\'s productive pipeline work.',
+    fixes:['Apply BANT or MEDDIC to every lead before passing it. If you can\'t answer all four criteria, ask more questions first.','Qualify need and timeline especially hard — those are the two that most frequently lie.','When in doubt, have a 10-minute qualification call yourself before booking the AE meeting.']
+  },
+  {
+    num:'03', label:'Resistance to Feedback', sub:'Avoiding or deflecting constructive criticism',
+    desc:'The SDR who treats feedback as an attack stops growing the moment they\'re challenged. The one who treats it as data compounds every session into measurable improvement.',
+    fixes:['After every feedback session, implement exactly one change — not five. One, done well, tracked.','Ask for feedback before the AE offers it. "What\'s one thing I can adjust this week?" — every 1:1.','Measure the change. Track the before and after. Feedback without evidence of improvement is just conversation.']
+  },
+  {
+    num:'04', label:'Overreliance on Scripts', sub:'Sounding robotic and losing authenticity on calls',
+    desc:'Scripts are a starting point, not a guardrail. An SDR who follows a script word-for-word while the prospect is signaling a different direction has stopped listening — and the prospect can hear it.',
+    fixes:['Use scripts to internalize the structure and intent — then forget the exact words. You\'re having a conversation.','When the prospect says something unexpected, acknowledge it directly: "That\'s exactly the situation we help with..."','Practice script adaptation in your 1:1: AE plays an off-script prospect, you adapt in real time. Do this weekly.']
+  },
+];
+
+const BANT_LEADS = [
+  {
+    name:"Priya Mehta, VP of Sales — CloudRoute Inc.",
+    detail:"Series B SaaS, 45 employees, just opened 8 SDR roles. Priya attended your webinar last week. No clear budget mentioned. She asked about pricing range on the call.",
+    criterion:"BUDGET",
+    q:"Priya says: 'We're definitely interested but I'd need to bring it to our CFO.' What does this tell you about budget authority?",
+    opts:[
+      {txt:"She has the budget — she's VP of Sales, she controls her headcount costs.",verdict:"PASS",correct:false},
+      {txt:"Budget is unclear and authority is limited — she's an influencer, not a final approver.",verdict:"QUALIFY",correct:true},
+      {txt:"No budget exists — she's deflecting by mentioning the CFO.",verdict:"NO PASS",correct:false},
+    ],
+    ans:1,why:"VP titles don't mean final budget authority. When someone says 'bring it to the CFO,' that's a signal to qualify further — not to pass or discard. Map the stakeholder chain before booking the AE demo."
+  },
+  {
+    name:"Marcus Chen, Director of RevOps — Datavault",
+    detail:"Enterprise company, 800 employees. Marcus reached out inbound after seeing a case study. He needs 'something in place before end of Q2.' Q2 ends in 6 weeks.",
+    criterion:"TIMELINE",
+    q:"Marcus says: 'We need this done before Q2 closes — the board is watching our pipeline metrics.' What's the right read on timeline?",
+    opts:[
+      {txt:"Timeline is urgent and real — there's a board-level business driver behind it.",verdict:"PASS",correct:true},
+      {txt:"6 weeks is too short — this deal can't close in time, skip it.",verdict:"NO PASS",correct:false},
+      {txt:"The timeline sounds real but it's probably aspirational — probe more.",verdict:"QUALIFY",correct:false},
+    ],
+    ans:0,why:"A board-level deadline tied to a specific metric is a hard timeline — not an aspiration. This is exactly what qualified urgency looks like. Timeline: confirmed. Pass this one."
+  },
+  {
+    name:"Jordan Rivera, SDR Manager — Foundry AI",
+    detail:"Jordan manages a team of 12 SDRs. He's asking about your product out of curiosity after a conference. 'We might explore this next year.' No active initiative mentioned.",
+    criterion:"NEED",
+    q:"Jordan seems interested but says 'next year.' What's the right qualification call here?",
+    opts:[
+      {txt:"He's interested — book the AE demo and let the AE qualify need.",verdict:"PASS",correct:false},
+      {txt:"No active need and no timeline — nurture, don't pass.",verdict:"QUALIFY",correct:true},
+      {txt:"'Next year' means dead — remove from the sequence.",verdict:"NO PASS",correct:false},
+    ],
+    ans:1,why:"'Might explore next year' is curiosity, not need. Passing this to an AE wastes their time and your relationship capital. Add Jordan to a long-cycle nurture sequence and check back in 60 days with a business case hook."
+  },
+];
+
+const FD_ITEMS = [
+  {
+    quote:'"Your call openers need work — you\'re starting with your company name and it\'s killing the first 10 seconds."',
+    who:"AE Feedback",
+    q:"You got this feedback in your weekly 1:1. Which response moves you forward?",
+    opts:[
+      {txt:"Defensive — Reframe: 'But most of my calls still get past 30 seconds though'",correct:false},
+      {txt:"Dismissive — 'Okay, I'll think about it'",correct:false},
+      {txt:"Growth — 'Got it. Can you show me a strong opener I can practice this week?'",correct:true},
+    ],
+    ans:2,result:"Asking for a specific example to practice immediately turns feedback into action. The only thing better than receiving feedback is implementing it before the next 1:1."
+  },
+  {
+    quote:'"Your emails are too long. Three paragraphs before you ask for anything — prospects are checking out after the first one."',
+    who:"AE Email Review",
+    q:"How do you respond to this?",
+    opts:[
+      {txt:"Growth — 'Can you show me one of yours that converts? I want to see the structure you use.'",correct:true},
+      {txt:"Defensive — 'I read that longer emails actually perform better for enterprise'",correct:false},
+      {txt:"Deflection — 'I thought more context would help justify the ask'",correct:false},
+    ],
+    ans:0,result:"Asking to see a working example is the highest-leverage response to email feedback. You're not just accepting the criticism — you're acquiring a model to work from immediately."
+  },
+  {
+    quote:'"You passed me three leads this week that weren\'t qualified. Two of them didn\'t even have the budget for a pilot."',
+    who:"AE Pipeline Review",
+    q:"What\'s the constructive response?",
+    opts:[
+      {txt:"Deflection — 'They seemed interested on the call though'",correct:false},
+      {txt:"Blame — 'They told me they had budget, I can\'t know everything'",correct:false},
+      {txt:"Growth — 'I need to dig harder on budget before I pass. Can we review the BANT checklist together this week?'",correct:true},
+    ],
+    ans:2,result:"Owning the miss AND proposing a specific solution in the same breath. That's the growth response. You've turned a criticism into a coaching request — which is exactly what self-advocacy looks like."
+  },
+  {
+    quote:'"You\'re not following up enough. I\'m seeing one touch on most of your sequences and then silence."',
+    who:"AE Outreach Review",
+    q:"How does a proactive SDR respond to this?",
+    opts:[
+      {txt:"Growth — 'I\'ll rebuild my sequences to hit 6 touches across three channels. Can I show you before I send?'",correct:true},
+      {txt:"Defensive — 'I don\'t want to seem too pushy'",correct:false},
+      {txt:"Passive — 'I\'ll add more follow-ups to future sequences'",correct:false},
+    ],
+    ans:0,result:"Specific commitment + showing your work before sending = accountability in action. 'I'll try to do better' is noise. 'Here's the rebuilt sequence, tell me what to fix' is how you grow fast."
+  },
+];
+
+const SA_ITEMS = [
+  {
+    script:"Does this resonate with you?",
+    prospect:"Actually yes — we just lost two SDRs last month and our pipeline has basically stalled.",
+    q:"What's the best adaptation?",
+    opts:[
+      "That's great to hear. Let me tell you a bit more about how we've helped companies like yours...",
+      "That's exactly the situation we built this for — pipeline stalls after SDR turnover are one of the three scenarios where our impact is fastest. What does a 30-day stall actually cost you?",
+      "Sorry to hear that. Would you be open to a quick 20-minute call to learn more about our solution?",
+    ],
+    ans:1,
+    verdict:"good",
+    why:"✓ Right — You echoed their specific situation back, named why you're relevant to it, then asked a business-impact question that deepens the conversation. No generic pivot, no pitch."
+  },
+  {
+    script:"I'm reaching out because I think we could be a great fit for your team.",
+    prospect:"How did you find me? I don't remember opting in to anything.",
+    q:"What's the right adaptation to a skeptical open?",
+    opts:[
+      "I found you on LinkedIn through your role — I research SDR managers actively. Is this a bad time?",
+      "I apologize for the interruption. I can remove you from my list if you prefer.",
+      "We help companies like yours and I thought you'd benefit from hearing about what we do.",
+    ],
+    ans:0,
+    verdict:"good",
+    why:"✓ Right — Transparent about your sourcing, no apology for doing your job, and a respectful out. Honesty disarms skepticism faster than politeness. The question redirects without abandoning the call."
+  },
+  {
+    script:"When do you typically evaluate new tools like this?",
+    prospect:"We're actually mid-implementation of a new CRM right now — everything is on hold until that's done.",
+    q:"How do you adapt to this timing objection?",
+    opts:[
+      "Understood — I'll reach out in a few months when things settle down for you.",
+      "Got it. How long until the CRM goes live? The reason I ask is we've helped three teams use a CRM transition as the trigger to reset their SDR structure at the same time — so the timing might actually be right.",
+      "That's okay! Our platform actually integrates with most CRMs so it could still work.",
+    ],
+    ans:1,
+    verdict:"good",
+    why:"✓ Right — You asked a clarifying question and reframed the objection as a potential opportunity. 'We've helped teams use this transition' turns a door-close into a door-open."
+  },
+  {
+    script:"What problem are you trying to solve right now?",
+    prospect:"Honestly we're pretty happy with how things are going. I don't see a big gap.",
+    q:"How do you handle 'we're doing fine'?",
+    opts:[
+      "Totally understand — I'll leave you my info in case anything changes.",
+      "That's great to hear! Most people say that before they see our benchmarks. Would you be open to a quick comparison?",
+      "I hear that. Most SDR managers I talk to say the same thing until I ask them about their ramp time — how long does it take a new SDR on your team to book their first qualified meeting?",
+    ],
+    ans:2,
+    verdict:"good",
+    why:"✓ Right — You respected their position, didn't argue, and asked a single diagnostic question that opens the door to a real problem without triggering defensiveness. That's the whole art of the engage step."
+  },
+];
+
+const HB_DAYS = [
+  {
+    label:"Morning Block", time:"8:00–9:00 AM",
+    blocks:[
+      {time:"8:00–8:30", act:"Account Research", goal:"3 accounts — LinkedIn, news, company site. Find one real insight per account."},
+      {time:"8:30–9:00", act:"Sequence Planning", goal:"Map outreach for each researched account. Personalize line 1 of every email."},
+    ]
+  },
+  {
+    label:"Core Outreach Block", time:"9:00–11:30 AM",
+    blocks:[
+      {time:"9:00–10:30", act:"Cold Call Block", goal:"25 dials. No multitasking. Log outcome on every single one."},
+      {time:"10:30–11:30", act:"Email & LinkedIn", goal:"20+ follow-up touches. One new personalized sequence launched."},
+    ]
+  },
+  {
+    label:"Afternoon Block", time:"1:00–4:00 PM",
+    blocks:[
+      {time:"1:00–3:00", act:"Follow-Up & Nurture", goal:"Work your existing sequences. Respond to any replies within the hour."},
+      {time:"3:00–4:00", act:"AE Feedback + Debrief", goal:"Share today's top challenge. Implement one thing from the feedback before EOD."},
+    ]
+  },
+];
+
+const QUIZ = [
+  {
+    q:"Which SDR pitfall directly results in AEs wasting the most time?",
+    opts:["Overreliance on scripts during cold calls","Resistance to feedback in coaching sessions","Passing unqualified leads without running a qualification framework","Lack of proactivity in daily outreach planning"],
+    ans:2
+  },
+  {
+    q:"In the BANT framework, which criterion is MOST commonly overlooked by new SDRs?",
+    opts:["Budget — whether they can afford the solution","Authority — whether you're talking to a decision-maker","Need — whether they have a real business problem","Timeline — whether they have an active initiative with a real deadline"],
+    ans:3
+  },
+  {
+    q:"A prospect says 'We might explore this next year.' The right qualification response is:",
+    opts:["Book the AE demo — interest now could convert by Q4","Add them to nurture, don't pass — there's no active need or timeline","Push harder on timeline to create urgency in the conversation","Remove them from your sequence — no current budget means no deal"],
+    ans:1
+  },
+  {
+    q:"An SDR receives feedback that their call openers need improvement. The highest-leverage response is:",
+    opts:["Thank the AE and commit to improving future calls generally","Ask the AE for one specific example to practice before the next block","Research best practices online and present a summary at the next 1:1","Accept the feedback but push back with data showing current connect rates"],
+    ans:1
+  },
+];
+
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
+const TOTAL=10;
+let cur=0;
+let rankOpen=new Set(), rankMarked=new Set();
+let bantStage=0, bantDone=false, bantPicked=null, bantShowFb=false;
+let fdState={}, fdCount=0;
+let saState={}, saCount=0;
+let hbDone=new Set();
+let qAns={}, qSubmitted=false, qPassed=false;
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+function init(){
+  buildRank(); renderBant(); buildFD(); buildSA(); buildHB(); buildQuiz(); render();
+}
+function go(n){
+  document.getElementById('s'+cur).classList.remove('active');
+  cur=n;
+  document.getElementById('s'+cur).classList.add('active');
+  document.getElementById('main').scrollTop=0;
+  render();
+}
+function next(){if(cur<TOTAL-1)go(cur+1);}
+function back(){if(cur>0)go(cur-1);}
+function handleNext(){
+  if(cur===7){if(!qSubmitted)submitQuiz();else if(qPassed)next();else retryQuiz();}
+  else next();
+}
+
+/* ══════════════════════════════════════════
+   PITFALL RANKER
+══════════════════════════════════════════ */
+function buildRank(){
+  document.getElementById('rankWrap').innerHTML=PITFALLS.map((p,i)=>`
+    <div class="rank-card" id="rc${i}" onclick="toggleRank(${i})">
+      <div class="rank-card-top">
+        <div class="rank-num">${p.num}</div>
+        <div class="rank-divider"></div>
+        <div class="rank-main">
+          <div class="rank-pitfall">${p.label}</div>
+          <div class="rank-sub">${p.sub}</div>
+        </div>
+        <div class="rank-chevron">›</div>
+      </div>
+      <div class="rank-body">
+        <div class="rank-inner">
+          <div class="rank-desc">${p.desc}</div>
+          <div class="rank-fix-lbl">How to Fix It</div>
+          ${p.fixes.map(f=>`<div class="rank-fix-item">${f}</div>`).join('')}
+          <button class="rank-mark-btn" id="rmb${i}" onclick="markRank(event,${i})">Mark as Read ✓</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+function toggleRank(i){
+  const el=document.getElementById('rc'+i);
+  el.classList.toggle('expanded');
+  if(el.classList.contains('expanded')) rankOpen.add(i);
+}
+function markRank(e,i){
+  e.stopPropagation();
+  rankMarked.add(i);
+  document.getElementById('rc'+i).classList.add('marked');
+  document.getElementById('rmb'+i).textContent='Reviewed ✓';
+  document.getElementById('rankCount').textContent=rankMarked.size;
+  render();
+}
+
+/* ══════════════════════════════════════════
+   BANT QUALIFIER
+══════════════════════════════════════════ */
+function renderBant(){
+  const w=document.getElementById('bantWrap');
+  if(!w) return;
+  if(bantDone){
+    w.innerHTML=`<div class="bant-done-box" style="margin-top:22px">
+      <div class="bant-done-h">✓ All Three Leads Qualified</div>
+      <div class="bant-done-p">You've worked through budget authority, timeline urgency, and active need — the three most commonly misread qualification signals. Now apply this to every lead before you pass it. Continue when ready.</div>
+    </div>`;
+    render();return;
+  }
+  const s=BANT_LEADS[bantStage];
+  const dotsHtml=BANT_LEADS.map((_,i)=>{
+    const cls=i<bantStage?'done':i===bantStage?'active':'';
+    return `<div class="bant-step"><div class="bant-dot ${cls}">${i<bantStage?'✓':i+1}</div>${i<BANT_LEADS.length-1?'<div class="bant-line"></div>':''}</div>`;
+  }).join('');
+  const lblsHtml=BANT_LEADS.map((_,i)=>`<div class="bant-lbl${i===bantStage?' cur':''}">${_.criterion}</div>`).join('');
+  const optsHtml=s.opts.map((o,oi)=>{
+    let cls='';
+    if(bantShowFb){
+      if(o.correct) cls='correct locked';
+      else if(oi===bantPicked) cls='wrong locked';
+      else cls='locked';
+    }
+    return `<div class="bant-opt ${cls}" onclick="pickBant(${oi})">
+      <span>${o.txt}</span>
+      <span class="bant-verdict">${bantShowFb?(o.correct?'✓':oi===bantPicked?'✗':''):'→ '+o.verdict}</span>
+    </div>`;
+  }).join('');
+  const fbHtml=bantShowFb&&bantPicked!==null?`<div class="bant-fb show ${bantPicked===s.opts.findIndex(o=>o.correct)?'good':'bad'}">${bantPicked===s.opts.findIndex(o=>o.correct)?'✓':'✗'} ${s.why}</div>`:'';
+  const showAdv=bantShowFb&&bantPicked===s.opts.findIndex(o=>o.correct);
+  const isLast=bantStage===BANT_LEADS.length-1;
+  const advHtml=showAdv?`<div class="bant-adv show"><button class="btn btn-fill" onclick="bantAdvance()"><span>${isLast?'Complete Qualification →':'Next Lead →'}</span></button></div>`:'';
+
+  w.innerHTML=`
+    <div class="bant-prog">${dotsHtml}</div>
+    <div class="bant-lbl-row">${lblsHtml}</div>
+    <div class="bant-lead"><div class="bant-lead-tag">Lead Profile</div><div class="bant-lead-name">${s.name}</div><div class="bant-lead-detail">${s.detail}</div></div>
+    <div class="bant-criterion">BANT Criterion: ${s.criterion}</div>
+    <div class="bant-q">${s.q}</div>
+    <div class="bant-opts">${optsHtml}</div>
+    ${fbHtml}${advHtml}
+  `;
+}
+function pickBant(oi){
+  if(bantShowFb) return;
+  bantPicked=oi; bantShowFb=true; renderBant();
+}
+function bantAdvance(){
+  if(bantStage<BANT_LEADS.length-1){bantStage++;bantPicked=null;bantShowFb=false;renderBant();}
+  else{bantDone=true;renderBant();}
+}
+
+/* ══════════════════════════════════════════
+   FEEDBACK DECODER
+══════════════════════════════════════════ */
+function buildFD(){
+  document.getElementById('fdItems').innerHTML=FD_ITEMS.map((f,i)=>`
+    <div class="fd-item" id="fdi${i}">
+      <div class="fd-scenario"><div class="fd-who">${f.who}</div><div class="fd-quote">"${f.quote}"</div></div>
+      <div class="fd-item-q">${f.q}</div>
+      <span class="fd-response-tag">Choose the Growth Response</span>
+      <div class="fd-opts">${f.opts.map((o,oi)=>`<button class="fd-opt" id="fdo${i}_${oi}" onclick="pickFD(${i},${oi})">${o}</button>`).join('')}</div>
+      <div class="fd-result" id="fdr${i}"></div>
+    </div>
+  `).join('');
+}
+function pickFD(i,oi){
+  if(fdState[i]==='correct') return;
+  const correct=FD_ITEMS[i].ans===oi;
+  const opt=document.getElementById('fdo'+i+'_'+oi);
+  if(correct){
+    fdState[i]='correct'; fdCount++;
+    FD_ITEMS[i].opts.forEach((_,x)=>{
+      const el=document.getElementById('fdo'+i+'_'+x);
+      el.classList.add('locked');
+      if(x===oi)el.classList.add('correct');
+    });
+    document.getElementById('fdi'+i).classList.add('resolved');
+    const r=document.getElementById('fdr'+i);
+    r.style.color='var(--emerald)';
+    r.textContent=FD_ITEMS[i].result;
+    document.getElementById('fdCount').textContent=fdCount;
+    render();
+  } else {
+    opt.classList.add('wrong','locked');
+    setTimeout(()=>opt.classList.remove('wrong'),400);
+  }
+}
+
+/* ══════════════════════════════════════════
+   SCRIPT ADAPTATION
+══════════════════════════════════════════ */
+function buildSA(){
+  document.getElementById('saItems').innerHTML=SA_ITEMS.map((s,i)=>`
+    <div class="sa-item" id="sai${i}">
+      <div class="sa-item-top">
+        <div class="sa-exchange">
+          <div class="sa-bubble script"><span class="sa-who script">SDR Script</span>"${s.script}"</div>
+          <div class="sa-bubble prospect"><span class="sa-who prospect">Prospect</span>"${s.prospect}"</div>
+        </div>
+        <div class="sa-q">${s.q}</div>
+      </div>
+      <div class="sa-opts">${s.opts.map((o,oi)=>`<button class="sa-opt" id="sao${i}_${oi}" onclick="pickSA(${i},${oi})">${o}</button>`).join('')}</div>
+      <div class="sa-verdict" id="sav${i}"></div>
+    </div>
+  `).join('');
+}
+function pickSA(i,oi){
+  if(saState[i]==='correct') return;
+  const correct=SA_ITEMS[i].ans===oi;
+  const opt=document.getElementById('sao'+i+'_'+oi);
+  if(correct){
+    saState[i]='correct'; saCount++;
+    SA_ITEMS[i].opts.forEach((_,x)=>{
+      const el=document.getElementById('sao'+i+'_'+x);
+      el.classList.add('locked');
+      if(x===oi)el.classList.add('correct');
+    });
+    document.getElementById('sai'+i).classList.add('resolved');
+    const v=document.getElementById('sav'+i);
+    v.className='sa-verdict good';
+    v.textContent=SA_ITEMS[i].why;
+    document.getElementById('saCount').textContent=saCount;
+    render();
+  } else {
+    opt.classList.add('wrong','locked');
+    setTimeout(()=>opt.classList.remove('wrong'),400);
+  }
+}
+
+/* ══════════════════════════════════════════
+   HABIT BUILDER
+══════════════════════════════════════════ */
+function buildHB(){
+  document.getElementById('hbWrap').innerHTML=HB_DAYS.map((day,di)=>`
+    <div class="hb-day">
+      <div class="hb-day-hdr">
+        <div class="hb-day-label">${day.label} — ${day.time}</div>
+        <div class="hb-day-pct" id="hbDayPct${di}">0 / 2 committed</div>
+      </div>
+      <div class="hb-blocks">
+        ${day.blocks.map((b,bi)=>{
+          const key=`${di}_${bi}`;
+          return `<div class="hb-block" id="hbb_${key}" onclick="toggleHB('${key}',${di})">
+            <div class="hb-block-time">${b.time}</div>
+            <div class="hb-block-act">${b.act}</div>
+            <div class="hb-block-goal">${b.goal}</div>
+            <div class="hb-block-check">✓</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  `).join('')+`<div class="hb-done-box" id="hbDoneBox">
+    <div class="hb-done-h">✓ Proactivity Day Built — Commit to Running It Tomorrow</div>
+    <div class="hb-done-p">This isn't a schedule. It's a promise to yourself. Every block you skip has a downstream cost. Continue when ready.</div>
+  </div>`;
+}
+function toggleHB(key,di){
+  if(hbDone.has(key)){hbDone.delete(key);document.getElementById('hbb_'+key).classList.remove('done');}
+  else{hbDone.add(key);document.getElementById('hbb_'+key).classList.add('done');}
+  const dayCount=HB_DAYS[di].blocks.filter((_,bi)=>hbDone.has(`${di}_${bi}`)).length;
+  document.getElementById('hbDayPct'+di).textContent=`${dayCount} / ${HB_DAYS[di].blocks.length} committed`;
+  document.getElementById('hbCount').textContent=hbDone.size;
+  const done=document.getElementById('hbDoneBox');
+  if(done){done.classList.toggle('show',hbDone.size===6);}
+  render();
+}
+
+/* ══════════════════════════════════════════
+   QUIZ
+══════════════════════════════════════════ */
+function buildQuiz(){
+  document.getElementById('quizBody').innerHTML=QUIZ.map((q,qi)=>`
+    <div class="q-block">
+      <div class="q-num">Question ${qi+1} of ${QUIZ.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-opts">${q.opts.map((o,oi)=>`<button class="q-opt" id="qo${qi}_${oi}" onclick="pickOpt(${qi},${oi})">${o}</button>`).join('')}</div>
+    </div>
+  `).join('');
+}
+function pickOpt(qi,oi){
+  if(qSubmitted)return;
+  QUIZ[qi].opts.forEach((_,i)=>document.getElementById(`qo${qi}_${i}`).classList.remove('chosen'));
+  document.getElementById(`qo${qi}_${oi}`).classList.add('chosen');
+  qAns[qi]=oi;render();
+}
+function submitQuiz(){
+  qSubmitted=true;let correct=0;
+  QUIZ.forEach((q,qi)=>{
+    const chosen=qAns[qi];
+    q.opts.forEach((_,oi)=>{
+      const el=document.getElementById(`qo${qi}_${oi}`);
+      el.classList.add('locked');el.classList.remove('chosen');
+      if(oi===q.ans)el.classList.add('correct');
+      else if(oi===chosen&&chosen!==q.ans)el.classList.add('wrong-pick');
+    });
+    if(chosen===q.ans)correct++;
+  });
+  qPassed=correct>=3;
+  const b=document.getElementById('quizBanner');
+  b.className='quiz-banner show '+(qPassed?'pass':'fail');
+  b.textContent=qPassed?`✓ ${correct} / ${QUIZ.length} correct — cleared to continue.`:`${correct} / ${QUIZ.length} correct — need 3 to pass. Review and try again.`;
+  render();
+}
+function retryQuiz(){
+  qSubmitted=false;qPassed=false;qAns={};
+  document.getElementById('quizBanner').className='quiz-banner';
+  buildQuiz();render();
+}
+
+/* ══════════════════════════════════════════
+   RENDER
+══════════════════════════════════════════ */
+const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
+function canContinue(){
+  if(cur===2) return rankMarked.size===4;
+  if(cur===3) return bantDone;
+  if(cur===4) return fdCount===4;
+  if(cur===5) return saCount===4;
+  if(cur===6) return hbDone.size===6;
+  if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  return true;
+}
+function getHint(){
+  const h={
+    1:"Every pitfall has a pattern — patterns have fixes.",
+    2:`${rankMarked.size} / 4 pitfalls explored`,
+    3:bantDone?'✓ All leads qualified — continue below.':`Lead ${bantStage+1} of ${BANT_LEADS.length} — ${BANT_LEADS[bantStage]?.criterion||''}`,
+    4:`${fdCount} / 4 decoded`,
+    5:`${saCount} / 4 adapted`,
+    6:`${hbDone.size} / 6 blocks committed`,
+    7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
+    8:"One thing implemented well beats four things started.",
+  };
+  return h[cur]||'';
+}
+function getNextLabel(){
+  if(cur===7&&!qSubmitted)return 'Submit Answers';
+  if(cur===7&&!qPassed)return 'Try Again →';
+  if(cur===8)return 'Finish Lesson →';
+  return 'Continue →';
+}
+function render(){
+  const sec=SEC[cur];
+  document.getElementById('progLabel').textContent=sec?`Section 0${sec}`:'Lesson 3.1';
+  const pct=cur===0?0:Math.round((cur/(TOTAL-1))*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  ['nav1','nav2','nav3','nav4'].forEach((id,i)=>
+    document.getElementById(id).classList.toggle('active',SEC[cur]===i+1));
+  const hide=cur===0||cur===TOTAL-1;
+  document.getElementById('bottomnav').style.display=hide?'none':'flex';
+  if(hide)return;
+  document.getElementById('hint').textContent=getHint();
+  document.getElementById('btnNextLabel').textContent=getNextLabel();
+  document.getElementById('btnBack').style.display=cur<=1?'none':'block';
+  document.getElementById('btnNext').disabled=!canContinue();
+}
+
+init();
+</script>
+</body>
+</html>

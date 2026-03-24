@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR — Course 6.2: Redefining Networking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#FFFFFF;--black:#000000;--mid:#636060;--lite:#EEF2F8;--lite2:#DCE3F0;
+  --navy:#001A4E;--navy-lt:rgba(0,26,78,0.07);--navy-md:rgba(0,26,78,0.15);
+  --lemon:#FFE500;--lem-dk:#D4BF00;
+  --coral:#FF4438;--cor-lt:rgba(255,68,56,0.07);
+  --electric:#00D4FF;--elec-lt:rgba(0,212,255,0.08);
+  --cobalt:#0038FF;--cob-lt:rgba(0,56,255,0.07);
+  --green:#00B85A;--grn-lt:rgba(0,184,90,0.09);
+  --red:#FF3200;--red-lt:rgba(255,50,0,0.07);
+  --line:rgba(0,0,0,0.08);--line2:rgba(0,0,0,0.14);
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#FFD600 34%,#00E5A0 51%,#0099FF 68%,#7B2FFF 85%,#FF006E 100%);
+  --display:'Abril Fatface',Georgia,serif;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;
+  --mono:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--white);color:var(--black);font-family:var(--cond);overflow:hidden}
+.app{display:grid;grid-template-columns:1fr 234px;grid-template-rows:52px 1fr 60px;height:100vh}
+
+.topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:2px solid var(--black);background:var(--white);z-index:20}
+.brand{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.22em;text-transform:uppercase}
+.course-badge{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;background:var(--navy);color:#fff;padding:4px 10px;margin-left:12px}
+.top-right{display:flex;align-items:center;gap:14px}
+.prog-label{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--mid);text-transform:uppercase}
+.prog-track{width:80px;height:2px;background:var(--lite2)}
+.prog-fill{height:100%;background:var(--iris);background-size:200% 100%;animation:iris 3s linear infinite;transition:width .8s cubic-bezier(.4,0,.2,1)}
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+
+.main{overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;background:var(--white);scrollbar-width:none}
+.main::-webkit-scrollbar{display:none}
+.sidebar{border-left:2px solid var(--black);padding:32px 20px;overflow-y:auto;scrollbar-width:none;background:var(--white)}
+.sidebar::-webkit-scrollbar{display:none}
+.sb-course{font-family:var(--display);font-size:22px;color:var(--navy);line-height:1;margin-bottom:4px}
+.sb-lesson{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--mid);margin-bottom:24px}
+.sb-divider{height:2px;background:var(--navy);margin-bottom:20px}
+.sb-label{font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--mid);margin-bottom:18px}
+.sb-item{padding:16px 0;border-bottom:1px solid var(--line);cursor:pointer;position:relative;transition:all .2s}
+.sb-item:first-of-type{border-top:1px solid var(--line)}
+.sb-tag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--mid);margin-bottom:7px;text-transform:uppercase;transition:color .2s}
+.sb-name{font-family:var(--cond);font-size:12px;font-weight:700;color:var(--mid);line-height:1.4;text-transform:uppercase;letter-spacing:.04em;transition:color .2s}
+.sb-item.active .sb-tag{color:var(--navy)}
+.sb-item.active .sb-name{color:var(--black)}
+.sb-item.active::before{content:'';position:absolute;left:-20px;top:0;bottom:0;width:3px;background:var(--navy)}
+.sb-item:hover .sb-name{color:var(--black)}
+
+.bottomnav{grid-column:1/2;display:flex;align-items:center;justify-content:space-between;padding:0 56px;border-top:2px solid var(--black);background:var(--white)}
+.nav-hint{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--mid);font-style:italic}
+.nav-btns{display:flex;gap:8px}
+.btn{font-family:var(--cond);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:10px 22px;border:2px solid var(--black);background:transparent;color:var(--black);cursor:pointer;transition:all .15s}
+.btn:hover{background:var(--black);color:var(--white)}
+.btn-fill{background:var(--black);color:var(--white);position:relative;overflow:hidden}
+.btn-fill::before{content:'';position:absolute;inset:0;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;opacity:0;transition:opacity .2s}
+.btn-fill:hover::before{opacity:1}
+.btn-fill:hover{color:var(--black)}
+.btn-fill span{position:relative;z-index:1}
+.btn-fill:disabled,.btn-fill:disabled:hover{opacity:.28;cursor:not-allowed;background:var(--black);color:var(--white)}
+.btn-fill:disabled::before,.btn-fill:disabled:hover::before{display:none}
+
+.screen{display:none;flex-direction:column;flex:1;animation:up .42s cubic-bezier(.22,1,.36,1) both}
+.screen.active{display:flex}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* COVER */
+.cover{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.cvl{background:var(--navy);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.cvl::before{content:'6';position:absolute;right:-20px;bottom:-40px;font-family:var(--display);font-size:280px;color:rgba(255,255,255,0.06);line-height:1;pointer-events:none}
+.cv-c6tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px}
+.cv-course-num{font-family:var(--display);font-size:80px;color:#fff;line-height:.85;margin-bottom:12px}
+.cv-big{font-family:var(--display);font-size:clamp(26px,3.2vw,44px);line-height:.97;color:#fff}
+.cv-tagline{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.58);line-height:1.7;border-top:1px solid rgba(255,255,255,0.14);padding-top:18px}
+.cvr{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;margin-bottom:16px;display:inline-block;background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:iris 3s linear infinite}
+.hero-h{font-family:var(--display);font-size:clamp(28px,3.8vw,52px);line-height:.97;color:var(--black);margin-bottom:20px}
+.hero-h .irisTxt{background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% 100%;animation:iris 3s linear infinite}
+.cv-list{list-style:none;margin-bottom:36px}
+.cv-list li{font-family:var(--cond);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mid);display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.cv-list li:first-child{border-top:1px solid var(--line)}
+.cl-n{font-family:var(--mono);font-size:9px;background:var(--black);color:var(--white);padding:2px 6px;flex-shrink:0}
+
+/* SHARED */
+.lh{padding:44px 56px 0;position:relative;overflow:hidden}
+.lh-stripe{position:absolute;top:0;left:0;right:0;height:4px;background:var(--iris);background-size:200% 100%;animation:iris 4s linear infinite}
+.ghost-n{position:absolute;right:48px;top:-20px;font-family:var(--display);font-size:200px;line-height:1;color:var(--lite);pointer-events:none;user-select:none}
+.c6-badge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;background:var(--navy);color:#fff;padding:3px 10px;margin-bottom:12px}
+.sec-eye{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--navy);margin-bottom:14px;display:inline-block;margin-left:10px}
+.lh-title{font-family:var(--display);font-size:clamp(22px,3.2vw,46px);line-height:1.05;color:var(--black);max-width:640px}
+.lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
+.lh-sub b{color:var(--black)}
+.lb{padding:24px 56px 0}
+.lp{font-family:var(--serif);font-size:16px;line-height:1.8;color:var(--black);max-width:580px;margin-bottom:14px}
+.kp{list-style:none;max-width:580px;margin:14px 0}
+.kp li{font-family:var(--serif);font-size:15px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px}
+.kp li:first-child{border-top:1px solid var(--line)}
+.kp-n{font-family:var(--mono);font-size:9px;color:var(--mid);min-width:22px;padding-top:3px;flex-shrink:0}
+.lie{max-width:580px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
+.lie-tab{position:absolute;top:0;left:0;font-family:var(--cond);font-size:9px;letter-spacing:.24em;font-weight:800;text-transform:uppercase;padding:3px 10px;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;color:var(--black)}
+.lie-q{font-family:var(--serif);font-style:italic;font-size:18px;color:#fff;line-height:1.5;margin:12px 0 10px}
+.lie-a{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
+.data-table{width:100%;max-width:600px;border-collapse:collapse;margin:16px 0}
+.data-table th{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;background:var(--black);color:var(--white);padding:9px 14px;text-align:left}
+.data-table td{font-family:var(--serif);font-size:14px;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--black);line-height:1.6;vertical-align:top}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:nth-child(even) td{background:var(--lite)}
+
+/* ── VALUE INVENTORY ── */
+.vi-wrap{padding:16px 56px 44px;max-width:700px}
+.vi-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.vi-preview{background:var(--navy);padding:22px 24px;max-width:580px;margin-bottom:22px}
+.vi-preview-tag{font-family:var(--mono);font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px}
+.vi-preview-text{font-family:var(--serif);font-size:15px;color:#fff;line-height:1.75;min-height:56px}
+.vi-slot{color:rgba(255,255,255,0.3);font-style:italic}
+.vi-slot.filled{color:var(--lemon);font-style:normal;font-weight:600}
+.vi-sections{display:flex;flex-direction:column;gap:18px}
+.vi-sec-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line2)}
+.vi-choices{display:flex;flex-direction:column;gap:6px}
+.vi-choice{padding:12px 16px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:14px;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.5}
+.vi-choice:hover:not(.locked):not(.chosen){border-color:var(--navy);background:var(--navy-lt)}
+.vi-choice.chosen{border-color:var(--navy);background:var(--navy);color:#fff}
+.vi-choice.correct{border-color:var(--green);background:var(--grn-lt);color:var(--black);cursor:default}
+.vi-choice.wrong-reveal{border-color:var(--red);background:var(--red-lt);cursor:default}
+.vi-choice.locked{cursor:default}
+.vi-submit{margin-top:18px}
+.vi-done{max-width:580px;background:var(--lemon);padding:18px 22px;margin-top:14px;display:none}
+.vi-done.show{display:block}
+.vi-done-h{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--black);margin-bottom:6px}
+.vi-done-p{font-family:var(--serif);font-size:14px;color:rgba(0,0,0,0.55);line-height:1.65;font-style:italic}
+.vi-fail{max-width:580px;margin-top:10px;padding:12px 16px;border-left:4px solid var(--red);background:var(--red-lt);display:none}
+.vi-fail.show{display:block}
+
+/* ── MOTHERBOARD MAPPER ── */
+.mb-wrap{padding:16px 56px 44px;max-width:760px}
+.mb-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.mb-legend{display:flex;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+.mb-pill{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;padding:4px 12px;border:2px solid}
+.mb-pill.cog{border-color:var(--mid);color:var(--mid)}
+.mb-pill.mb{border-color:var(--navy);color:var(--navy)}
+.mb-cards{display:flex;flex-direction:column;gap:8px}
+.mb-card{border:1px solid var(--line2);overflow:hidden;transition:all .2s}
+.mb-card.resolved.is-mb{border-color:var(--navy);background:var(--navy-lt)}
+.mb-card.resolved.is-cog{border-color:var(--mid);background:var(--lite)}
+.mb-top{padding:14px 18px;display:flex;align-items:flex-start;gap:14px}
+.mb-scenario{flex:1;font-family:var(--serif);font-style:italic;font-size:14px;color:var(--black);line-height:1.6}
+.mb-btns{display:flex;gap:7px;flex-shrink:0;padding-top:2px}
+.mb-btn{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:7px 12px;border:1.5px solid var(--line2);background:var(--white);cursor:pointer;transition:all .15s;color:var(--mid)}
+.mb-btn:hover:not([disabled]){color:var(--black);border-color:var(--black)}
+.mb-btn.mb-sel{border-color:var(--navy);background:var(--navy);color:#fff}
+.mb-btn.cog-sel{border-color:var(--mid);background:var(--mid);color:#fff}
+.mb-btn[disabled]{cursor:default}
+.mb-result{padding:8px 18px 12px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;line-height:1.65;display:none;border-top:1px solid var(--line)}
+.mb-card.resolved.is-mb .mb-result{display:block;color:var(--navy)}
+.mb-card.resolved.is-cog .mb-result{display:block;color:var(--mid)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.mb-btn.wrong{animation:shake .35s ease both}
+
+/* ── NETWORK CIRCLE SORTER ── */
+.nc-wrap{padding:16px 56px 44px;max-width:780px}
+.nc-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:18px}
+.nc-circles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px}
+.nc-circle{border:2px solid var(--line2);transition:border-color .2s}
+.nc-circle.target{border-color:var(--navy);border-style:dashed;cursor:pointer}
+.nc-circle.target:hover{border-style:solid}
+.nc-circle-hdr{padding:11px 14px;border-bottom:1px solid var(--line2)}
+.nc-circle-name{font-family:var(--cond);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.nc-circle-name.inner{color:var(--navy)}
+.nc-circle-name.growth{color:var(--electric)}
+.nc-circle-name.expand{color:var(--coral)}
+.nc-circle-desc{font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--mid);margin-top:3px;text-transform:uppercase}
+.nc-circle-items{min-height:90px;padding:8px;display:flex;flex-direction:column;gap:5px}
+.nc-placed{padding:8px 10px;font-family:var(--serif);font-size:12px;color:var(--black);line-height:1.45}
+.nc-placed.inner-item{background:var(--navy-lt);border-left:3px solid var(--navy)}
+.nc-placed.growth-item{background:var(--elec-lt);border-left:3px solid var(--electric)}
+.nc-placed.expand-item{background:var(--cor-lt);border-left:3px solid var(--coral)}
+.nc-pool-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--black)}
+.nc-pool{display:flex;flex-direction:column;gap:6px;max-width:440px}
+.nc-tile{padding:12px 14px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:13px;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.45}
+.nc-tile:hover:not(.placed):not(.sel){border-color:var(--navy)}
+.nc-tile.sel{border-color:var(--navy);background:var(--navy);color:#fff}
+.nc-tile.placed{visibility:hidden;pointer-events:none;height:0;margin:0;padding:0;border:none}
+.nc-tile.wrong{border-color:var(--red);background:var(--red-lt);animation:shake .35s ease both}
+.nc-reset{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mid);background:none;border:none;cursor:pointer;text-decoration:underline;margin-top:10px}
+.nc-reset:hover{color:var(--black)}
+
+/* ── KNOWLEDGE THREAD BUILDER ── */
+.kt-wrap{padding:16px 56px 44px;max-width:720px}
+.kt-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.kt-trend-card{background:var(--navy);padding:18px 22px;max-width:600px;margin-bottom:20px}
+.kt-trend-tag{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px}
+.kt-trend-name{font-family:var(--cond);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--lemon);margin-bottom:6px}
+.kt-trend-body{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.65);line-height:1.65}
+.kt-q{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--mid);margin-bottom:12px;max-width:600px}
+.kt-opts{display:flex;flex-direction:column;gap:7px;max-width:660px}
+.kt-opt{padding:14px 18px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:14px;color:var(--black);text-align:left;cursor:pointer;transition:all .18s;line-height:1.55;display:flex;gap:14px;align-items:flex-start}
+.kt-opt:hover:not(.locked){border-color:var(--navy);background:var(--navy-lt)}
+.kt-opt.correct{border-color:var(--navy);background:var(--navy-lt);cursor:default}
+.kt-opt.wrong{border-color:var(--red);background:var(--red-lt);cursor:default}
+.kt-opt.locked{cursor:default}
+.kt-ltr{font-family:var(--mono);font-size:10px;color:var(--mid);flex-shrink:0;margin-top:2px;transition:color .2s}
+.kt-opt.correct .kt-ltr{color:var(--navy)}
+.kt-opt.wrong .kt-ltr{color:var(--red)}
+.kt-fb{font-family:var(--mono);font-size:9px;letter-spacing:.06em;margin:10px 0 0;max-width:640px;line-height:1.7;display:none}
+.kt-fb.show{display:block}
+.kt-fb.good{color:var(--navy)}
+.kt-fb.bad{color:var(--red)}
+.kt-adv{margin:14px 0 0;display:none}
+.kt-adv.show{display:block}
+.kt-done-box{max-width:600px;background:var(--lemon);padding:18px 22px}
+.kt-done-h{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--black);margin-bottom:7px}
+.kt-done-p{font-family:var(--serif);font-size:14px;color:rgba(0,0,0,0.55);line-height:1.65;font-style:italic}
+
+/* QUIZ */
+.quiz-banner{margin:16px 56px 0;padding:12px 18px;font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.06em;border-left:4px solid var(--cobalt);background:var(--cob-lt);color:var(--black);display:none}
+.quiz-banner.show{display:block}
+.quiz-banner.pass{border-color:var(--green);background:var(--grn-lt)}
+.quiz-banner.fail{border-color:var(--red);background:var(--red-lt)}
+.quiz-body{padding:20px 56px 44px;display:flex;flex-direction:column;gap:28px}
+.q-num{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--navy);margin-bottom:9px}
+.q-text{font-family:var(--display);font-size:clamp(13px,1.6vw,18px);color:var(--black);line-height:1.2;margin-bottom:13px}
+.q-opts{display:flex;flex-direction:column;gap:6px}
+.q-opt{padding:11px 16px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:14px;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.5}
+.q-opt:hover:not(.locked){border-color:var(--navy);background:var(--navy-lt)}
+.q-opt.chosen{border-color:var(--navy);background:var(--navy);color:#fff}
+.q-opt.correct{border-color:var(--green);background:var(--grn-lt);color:var(--black)}
+.q-opt.wrong-pick{border-color:var(--red);background:var(--red-lt);color:var(--black)}
+.q-opt.locked{cursor:default}
+
+/* TOOLS */
+.tools-blk{padding:20px 56px 44px}
+.t-head{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--black);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--black)}
+.hw-list{list-style:none;max-width:580px;margin-top:8px}
+.hw-list li{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.65;padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
+.hw-list li:first-child{border-top:1px solid var(--line)}
+.hw-box{width:14px;height:14px;border:2px solid var(--black);flex-shrink:0;margin-top:4px}
+
+/* COMPLETE */
+.comp{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
+.comp-l{background:var(--coral);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.comp-l::before{content:'6';position:absolute;right:-20px;bottom:-40px;font-family:var(--display);font-size:280px;color:rgba(255,255,255,0.07);line-height:1;pointer-events:none}
+.comp-tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.38)}
+.comp-big{font-family:var(--display);font-size:clamp(44px,5.5vw,76px);line-height:.93;color:#fff}
+.comp-sub{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.52);line-height:1.7;border-top:1px solid rgba(255,255,255,0.12);padding-top:18px}
+.comp-r{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.comp-h{font-family:var(--display);font-size:clamp(22px,2.8vw,40px);line-height:1.08;color:var(--black);margin-bottom:18px}
+.comp-p{font-family:var(--serif);font-size:15px;color:var(--black);max-width:380px;line-height:1.8;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header class="topbar">
+  <div style="display:flex;align-items:center">
+    <div class="brand">AESDR</div>
+    <div class="course-badge">Course 6</div>
+  </div>
+  <div class="top-right">
+    <span class="prog-label" id="progLabel">Lesson 6.2</span>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+</header>
+
+<main class="main" id="main">
+
+  <!-- 0: COVER -->
+  <div class="screen active" id="s0">
+    <div class="cover" style="flex:1">
+      <div class="cvl">
+        <div>
+          <div class="cv-c6tag">AESDR · Lesson 6.2</div>
+          <div class="cv-course-num">06</div>
+          <div class="cv-big">Beyond the Sales Playbook — Redefining Networking in SaaS</div>
+        </div>
+        <div class="cv-tagline">Building real value, genuine connections, and a reputation that makes people come to you.</div>
+      </div>
+      <div class="cvr">
+        <div class="eyebrow">Course 6 · Lesson 2 of 3</div>
+        <div class="hero-h">Be worth<br><span class="irisTxt">knowing.</span></div>
+        <ul class="cv-list">
+          <li><span class="cl-n">01</span>Know Yourself Before Networking Anyone Else</li>
+          <li><span class="cl-n">02</span>Be the Motherboard — Not Another Cog</li>
+          <li><span class="cl-n">03</span>Leverage Real Connections &amp; Industry Knowledge</li>
+        </ul>
+        <button class="btn btn-fill" onclick="go(1)"><span>Begin Lesson →</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1: WHY TRADITIONAL NETWORKING FAILS -->
+  <div class="screen" id="s1">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">01</div>
+      <div><div class="c6-badge">Course 6</div><span class="sec-eye">Section 01 — The Diagnosis</span></div>
+      <div class="lh-title">Why Traditional Networking Is a Waste of Time</div>
+    </div>
+    <div class="lb">
+      <p class="lp">Networking events, LinkedIn spray-and-pray, business card exchanges — almost all of it is hollow. It's transactional before there's any reason for either side to transact. The contacts you collect at a random event aren't your network. They're a list.</p>
+      <p class="lp">Real networking isn't about being in the right room. It's about being the kind of person others actively want to know. That's a reputation you build — not a strategy you execute.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Collecting names doesn't create opportunities.</strong> What creates opportunities is having something genuine to offer — knowledge, insight, connections — before you ask for anything.</li>
+        <li><span class="kp-n">02</span><strong>Most SDRs network as if it's a transaction.</strong> "I want access to your network." Real networking builds mutual value first, then earns the access over time.</li>
+        <li><span class="kp-n">03</span><strong>The goal is to be found.</strong> The strongest professional reputations are built so that people seek you out — not from rooms you crashed, but from value you consistently created.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Frame Shift</div>
+        <div class="lie-q">"Stop chasing rooms. Start becoming someone worth inviting into them."</div>
+        <div class="lie-a">When you know what you bring, can articulate it confidently, and genuinely help others with it — you stop networking and start connecting. That's the whole game.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2: VALUE INVENTORY BUILDER -->
+  <div class="screen" id="s2">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">01</div>
+      <div><div class="c6-badge">Course 6</div><span class="sec-eye">Section 01 — Know Yourself First</span></div>
+      <div class="lh-title">Build Your Professional Value Statement</div>
+      <div class="lh-sub" id="viSub">3 components to choose — construct the introduction you'd actually be proud to give</div>
+    </div>
+    <div class="vi-wrap" id="viWrap"></div>
+  </div>
+
+  <!-- 3: MOTHERBOARD MAPPER -->
+  <div class="screen" id="s3">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">02</div>
+      <div><div class="c6-badge">Course 6</div><span class="sec-eye">Section 02 — Motherboard or Cog</span></div>
+      <div class="lh-title">Motherboard or Cog? Classify the Behavior.</div>
+      <div class="lh-sub"><b id="mbCount">0</b> / 5 correctly classified</div>
+    </div>
+    <div class="mb-wrap">
+      <p class="mb-instr" style="font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:18px">A Motherboard connects, synthesizes, and creates value across the system. A Cog performs their function and waits for instructions. For each scenario, call it correctly — all 5 required.</p>
+      <div class="mb-legend">
+        <span class="mb-pill mb">◉ Motherboard — connects and adds value</span>
+        <span class="mb-pill cog">○ Cog — performs task, stays in lane</span>
+      </div>
+      <div class="mb-cards" id="mbCards"></div>
+    </div>
+  </div>
+
+  <!-- 4: NETWORK CIRCLE SORTER -->
+  <div class="screen" id="s4">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">02</div>
+      <div><div class="c6-badge">Course 6</div><span class="sec-eye">Section 02 — Map Your Network</span></div>
+      <div class="lh-title">Sort Your Contacts Into the Right Circles</div>
+      <div class="lh-sub"><b id="ncCount">0</b> / 6 correctly placed</div>
+    </div>
+    <div class="nc-wrap">
+      <p class="nc-instr">Three network circles — each requires different engagement. Click a contact description, then click the correct circle. All 6 must be correctly placed to continue.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 40px">
+        <div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);padding-bottom:10px;border-bottom:2px solid var(--black);margin-bottom:10px">Network Circles</div>
+          <div class="nc-circles" id="ncCircles"></div>
+        </div>
+        <div>
+          <div class="nc-pool-lbl">Contacts — Select One</div>
+          <div class="nc-pool" id="ncPool"></div>
+          <button class="nc-reset" onclick="resetNC()">Reset board</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5: KNOWLEDGE THREAD BUILDER -->
+  <div class="screen" id="s5">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">03</div>
+      <div><div class="c6-badge">Course 6</div><span class="sec-eye">Section 03 — Industry Knowledge</span></div>
+      <div class="lh-title">Turn Industry Trends Into Conversations</div>
+    </div>
+    <div class="kt-wrap">
+      <p class="kt-instr" style="font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px">Each SaaS trend below is real. Choose the response that positions you as a Motherboard — someone who connects the trend to a prospect's or leader's actual world. All 4 required to continue.</p>
+      <div id="ktWrap"></div>
+    </div>
+  </div>
+
+  <!-- 6: QUIZ -->
+  <div class="screen" id="s6">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div><div class="c6-badge">Course 6</div><span class="sec-eye">Section 03 — Knowledge Check</span></div>
+      <div class="lh-title">Test Your Understanding</div>
+    </div>
+    <div class="quiz-banner" id="quizBanner"></div>
+    <div class="quiz-body" id="quizBody"></div>
+  </div>
+
+  <!-- 7: TOOLS -->
+  <div class="screen" id="s7">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="ghost-n">04</div>
+      <div><div class="c6-badge">Course 6</div><span class="sec-eye">Section 04 — Templates &amp; Homework</span></div>
+      <div class="lh-title">The Real Networking Toolkit</div>
+    </div>
+    <div class="tools-blk">
+      <div style="margin-top:20px">
+        <div class="t-head">The Value-First Network Checklist</div>
+        <table class="data-table">
+          <thead><tr><th>Action</th><th>Why It Matters</th></tr></thead>
+          <tbody>
+            <tr><td>Know your 3 core professional strengths cold</td><td>You can't communicate value you haven't defined. Do this before the next conversation.</td></tr>
+            <tr><td>Research 3 SaaS thought leaders this week</td><td>Leaders connect with people who understand the bigger picture, not just their pipeline.</td></tr>
+            <tr><td>Share one insight proactively — no ask attached</td><td>Value-first creates the kind of trust that eventually opens doors without forcing them.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="t-head">SaaS Knowledge Development Plan</div>
+        <table class="data-table">
+          <thead><tr><th>Step</th><th>Action</th><th>Time Required</th></tr></thead>
+          <tbody>
+            <tr><td>Follow 3 thought leaders</td><td>Identify 3 LinkedIn voices whose content intersects with your prospects' pain points.</td><td>20 minutes, once</td></tr>
+            <tr><td>Read one SaaS report monthly</td><td>Gartner, Forrester, or category-specific reports. Extract 2 insights you can use in conversation.</td><td>30 minutes/month</td></tr>
+            <tr><td>Test an insight this week</td><td>Share it in Slack, use it in a cold call opener, or bring it to a 1:1. See what lands.</td><td>5 minutes</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="t-head">Homework — This Week</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Write down 3 strengths or skills that make you worth knowing as a professional. Practice introducing yourself using all three — out loud, not just in your head.</li>
+          <li><div class="hw-box"></div>Identify 3 people in your existing circle who challenge you to grow. Schedule a check-in with one of them this week. Ask: "What are you learning and how can we help each other?"</li>
+          <li><div class="hw-box"></div>Spend 30 minutes reading one SaaS industry report. Write down 1 insight and use it in a conversation with a prospect, colleague, or AE this week.</li>
+          <li><div class="hw-box"></div>Post one industry insight in Slack or LinkedIn with your actual take — not a forwarded article. Two sentences. Your perspective on why it matters.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8: COMPLETE -->
+  <div class="screen" id="s8">
+    <div class="comp" style="flex:1">
+      <div class="comp-l">
+        <div>
+          <div class="comp-tag">Course 6 · Lesson 2 — Complete</div>
+          <div style="font-family:var(--display);font-size:56px;color:#fff;line-height:.9;margin:10px 0 0">06</div>
+        </div>
+        <div class="comp-big">Stop<br>chasing<br>rooms.</div>
+        <div class="comp-sub">Real networking starts with knowing what you bring. The rest follows from there — consistently, over time, without forcing it.</div>
+      </div>
+      <div class="comp-r">
+        <div class="eyebrow">Course 6 · Lesson 2 Complete</div>
+        <div class="comp-h">Be the person others are glad they know.</div>
+        <p class="comp-p">You've built your value statement, mapped the motherboard behaviors, sorted your real network, and practiced turning industry trends into actual conversations. This isn't a one-week strategy — it's a career-long habit.</p>
+        <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
+        <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<aside class="sidebar">
+  <div class="sb-course">06</div>
+  <div class="sb-lesson">Lesson 6.2 · Redefining Networking</div>
+  <div class="sb-divider"></div>
+  <div class="sb-label">Sections</div>
+  <div class="sb-item" id="nav1" onclick="go(1)">
+    <div class="sb-tag">Section 01</div>
+    <div class="sb-name">Know Yourself First</div>
+  </div>
+  <div class="sb-item" id="nav2" onclick="go(3)">
+    <div class="sb-tag">Section 02</div>
+    <div class="sb-name">Motherboard &amp; Network</div>
+  </div>
+  <div class="sb-item" id="nav3" onclick="go(5)">
+    <div class="sb-tag">Section 03</div>
+    <div class="sb-name">Knowledge &amp; Quiz</div>
+  </div>
+  <div class="sb-item" id="nav4" onclick="go(7)">
+    <div class="sb-tag">Section 04</div>
+    <div class="sb-name">Templates &amp; Homework</div>
+  </div>
+</aside>
+
+<footer class="bottomnav" id="bottomnav" style="display:none">
+  <span class="nav-hint" id="hint"></span>
+  <div class="nav-btns">
+    <button class="btn" id="btnBack" onclick="back()" style="display:none">← Back</button>
+    <button class="btn btn-fill" id="btnNext" onclick="handleNext()"><span id="btnNextLabel">Continue →</span></button>
+  </div>
+</footer>
+
+</div>
+
+<script>
+/* ════════════════════════════════════
+   DATA
+════════════════════════════════════ */
+
+// Value Inventory — 3 sections, best option correct
+const VI = {
+  sections:[
+    {
+      label:"What you bring to any conversation:",
+      slot:"[WHAT YOU KNOW]",
+      opts:[
+        { txt:"someone who's been in sales for a while",                                      correct:false },
+        { txt:"a practitioner in SaaS sales — I work at the front lines of enterprise pipeline building", correct:true },
+        { txt:"an SDR at a SaaS company looking to make connections",                          correct:false },
+      ]
+    },
+    {
+      label:"Your unique differentiator:",
+      slot:"[WHAT MAKES YOU DIFFERENT]",
+      opts:[
+        { txt:"I have good people skills and I'm very motivated to grow",                      correct:false },
+        { txt:"I specialize in translating prospect objections into product insights — I build the bridge between what buyers say and what teams build", correct:true },
+        { txt:"I'm reliable, hard-working, and always willing to help",                        correct:false },
+      ]
+    },
+    {
+      label:"What you offer to people you meet:",
+      slot:"[YOUR OFFER]",
+      opts:[
+        { txt:"a strong work ethic and a genuine desire to connect with people",               correct:false },
+        { txt:"If there's ever a pattern I'm seeing from buyers in your space, I'll share it — no ask attached", correct:true },
+        { txt:"my time and attention whenever you need to talk through something",             correct:false },
+      ]
+    },
+  ]
+};
+
+// Motherboard vs Cog
+const MB_ITEMS = [
+  {
+    scenario:"An SDR hears the same objection 40 times in a month. They log it and move on.",
+    correct:"cog",
+    result:"○ Cog — Executed the task. Didn't synthesize the signal into insight or share it with Product or Marketing. A Motherboard would have turned 40 data points into a report."
+  },
+  {
+    scenario:"An AE reads a Gartner report and shares two findings in Slack with a note on how they affect current positioning — before any meeting.",
+    correct:"mb",
+    result:"◉ Motherboard — Proactively connected an external signal to the team's current work. Adds context before anyone asks for it. This is what leaders notice."
+  },
+  {
+    scenario:"An SDR attends team standup, answers their questions, and returns to their call block.",
+    correct:"cog",
+    result:"○ Cog — Functional participation. Not wrong — but not adding connective tissue either. A Motherboard brings one piece of field intelligence to standup every time."
+  },
+  {
+    scenario:"An SDR notices that three different prospects in the same vertical asked about the same integration — and messages the Product Manager directly with the pattern.",
+    correct:"mb",
+    result:"◉ Motherboard — Closed the loop between field signal and internal decision-making. Didn't wait for someone to ask. This is exactly the behavior that builds cross-functional reputation."
+  },
+  {
+    scenario:"An AE prepares for a discovery call by researching the prospect's LinkedIn, a recent press release, and one relevant trend — then crafts an opener from that synthesis.",
+    correct:"mb",
+    result:"◉ Motherboard — Combined multiple signals into one insight that earns the call. Not using a template. Not following a script. Connecting dots that the prospect didn't expect you to connect."
+  },
+];
+
+// Network Circle Sorter
+const NC_CIRCLES = [
+  { name:"Inner Circle",    cls:"inner",  key:"inner",  desc:"People who know your grind and push you forward" },
+  { name:"Growth Network",  cls:"growth", key:"growth", desc:"People who challenge your thinking and expand your lens" },
+  { name:"Expand & Explore",cls:"expand", key:"expand", desc:"People to build toward — not yet close, but worth investing in" },
+];
+const NC_CONTACTS = [
+  { txt:"A colleague at your company who shares field insights and checks in on your progress weekly",  circle:"inner"  },
+  { txt:"A mentor or senior AE who regularly challenges how you think about deals and prospects",       circle:"growth" },
+  { txt:"A SaaS founder you follow on LinkedIn whose content consistently sharpens your thinking",     circle:"expand" },
+  { txt:"A friend who is also in SDR/AE who holds you accountable and celebrates your wins honestly",  circle:"inner"  },
+  { txt:"A leader in your company in a different function whose perspective on customers differs from yours", circle:"growth" },
+  { txt:"A VP of Sales at a company you admire who you've engaged with once — and want to earn the right to know", circle:"expand" },
+];
+const NC_TILE_ORDER = [2,4,0,5,1,3];
+
+// Knowledge Thread Builder
+const KT_ITEMS = [
+  {
+    tag:"SaaS Trend",
+    name:"AI-powered SDR tools are replacing early-stage prospecting workflows",
+    body:"Gartner predicts that by 2026, 40% of all initial prospect research tasks will be AI-assisted. The human value-add shifts from volume to judgment.",
+    q:"How does a Motherboard use this trend in a conversation with a VP of Sales?",
+    opts:[
+      "I mention that AI tools are getting better and our product integrates with some of them.",
+      "I lead with: 'With AI handling early-stage research, the premium is shifting to SDRs who can qualify judgment calls that tools can't make — is your team positioned for that shift?'",
+      "I ask if they've heard of the Gartner report and offer to send it over.",
+    ],
+    ans:1,
+    why:"✓ Right — You connected the trend to their specific operational reality and asked a question that only a well-read, strategically minded person would ask. That's Motherboard behavior in a conversation."
+  },
+  {
+    tag:"SaaS Trend",
+    name:"Buyer committee size in enterprise deals has grown from 5 to 11 members since 2020",
+    body:"Gartner data shows enterprise decisions increasingly require consensus across more stakeholders — legal, IT, finance, and end-users — all with different success criteria.",
+    q:"How do you use this in a cold call to a Director of Sales?",
+    opts:[
+      "That's a tough market trend — I'd ask if they want to book time with our enterprise specialist.",
+      "I'd use it as an opener: 'Most directors I talk to tell me their deal cycles are getting longer because they're suddenly navigating security, legal, and finance alongside the actual buyer. Is that showing up in your Q3 pipeline?'",
+      "I'd mention we have case studies from enterprise deals and offer to send them over.",
+    ],
+    ans:1,
+    why:"✓ Right — You turned a macro trend into a micro-relevant question that names their likely pain point. You showed you understand their world, not just your product."
+  },
+  {
+    tag:"SaaS Trend",
+    name:"SaaS churn is accelerating as CFOs demand faster time-to-value from every purchase",
+    body:"Post-2022 budget cuts have made CFOs active participants in SaaS renewals. Vendors who can't show measurable value within 90 days are being cut — even on multi-year deals.",
+    q:"What's the Motherboard conversation starter for a VP of Customer Success?",
+    opts:[
+      "Has your team been dealing with more renewal risk lately? We have a solution that helps with that.",
+      "I'd share the stat and ask: 'We're seeing more CS teams get pulled into pre-sale conversations to make 90-day ROI commitments real before the deal closes — are you being asked to do that more?'",
+      "I mention that our platform has a fast onboarding experience and ask if they want to see a demo.",
+    ],
+    ans:1,
+    why:"✓ Right — You brought a specific industry signal and translated it into a question about their actual changing role. The CS leader feels seen. That's how trust gets built in a first conversation."
+  },
+  {
+    tag:"SaaS Trend",
+    name:"LinkedIn engagement rates for SDR-generated content are 3x higher than company page content",
+    body:"Edelman research shows B2B buyers engage far more with individual voices than brand accounts — especially for early awareness and trust-building in complex sales cycles.",
+    q:"How does a Motherboard use this insight to start building their personal brand this week?",
+    opts:[
+      "Share the stat with their team and suggest the company should post more on LinkedIn.",
+      "Post one piece of genuine insight on LinkedIn — a trend, an observation from their calls, or a framework they've found useful. Tag it as professional perspective, not company content.",
+      "Ask their manager if the company has a social media content budget they could use.",
+    ],
+    ans:1,
+    why:"✓ Right — The Motherboard acts on the insight immediately. They don't wait for company approval or a better moment. One post, published, is worth 1,000 strategies that stay in a notes app."
+  },
+];
+
+const QUIZ = [
+  {
+    q:"According to this lesson, the primary failure of traditional networking is:",
+    opts:["It happens in environments that attract the wrong type of professionals","It's transactional before either party has established genuine value — names collected, no real trust built","Most people don't follow up after networking events consistently enough","The events themselves are poorly organized and lack structure for meaningful conversation"],
+    ans:1
+  },
+  {
+    q:"What distinguishes a 'Motherboard' professional from a 'Cog' in the context of this lesson?",
+    opts:["A Motherboard works longer hours and produces more output than their peers","A Motherboard connects insights across departments and creates value proactively, rather than just executing tasks","A Motherboard has more formal education and industry certifications than a typical SDR","A Motherboard has a larger social media following and more visible personal brand presence"],
+    ans:1
+  },
+  {
+    q:"The 'Value First' networking principle requires that you:",
+    opts:["Attend more industry events to maximize your exposure to potential contacts","Define what you bring to a relationship before seeking anything from it","Collect at least 50 LinkedIn connections per week from your target industry","Ask for introductions from your current contacts before building anything new"],
+    ans:1
+  },
+  {
+    q:"When using an industry trend in a professional conversation, the Motherboard approach is:",
+    opts:["Share the raw statistic and let the other person draw their own conclusions from it","Forward the original report with a note suggesting they read it when they have time","Connect the trend to the other person's specific operational reality and ask a question that proves you've thought it through","Mention the trend casually to signal that you stay current with industry news"],
+    ans:2
+  },
+];
+
+/* ════════════════════════════════════
+   STATE
+════════════════════════════════════ */
+const TOTAL=9;
+let cur=0;
+let viChosen={}, viSubmitted=false, viPassed=false;
+let mbDone={}, mbCount=0;
+let ncSel=null, ncDone={}, ncCount=0;
+let ktStage=0, ktDone=false, ktPicked=null, ktShowFb=false;
+let qAns={}, qSubmitted=false, qPassed=false;
+
+/* ════════════════════════════════════
+   INIT
+════════════════════════════════════ */
+function init(){
+  buildVI(); buildMB(); buildNC(); renderKT(); buildQuiz(); render();
+}
+function go(n){
+  document.getElementById('s'+cur).classList.remove('active');
+  cur=n; document.getElementById('s'+cur).classList.add('active');
+  document.getElementById('main').scrollTop=0; render();
+}
+function next(){if(cur<TOTAL-1)go(cur+1);}
+function back(){if(cur>0)go(cur-1);}
+function handleNext(){
+  if(cur===6){if(!qSubmitted)submitQuiz();else if(qPassed)next();else retryQuiz();}
+  else next();
+}
+
+/* ════════════════════════════════════
+   VALUE INVENTORY
+════════════════════════════════════ */
+function buildVI(){
+  const w=document.getElementById('viWrap');
+  if(!w) return;
+  const slots=VI.sections.map((sec,si)=>{
+    const chosen=viChosen[si];
+    if(chosen!==undefined) return `<span class="vi-slot filled">${sec.opts[chosen].txt}</span>`;
+    return `<span class="vi-slot">${sec.slot}</span>`;
+  });
+  const preview=`<div class="vi-preview">
+    <div class="vi-preview-tag">Your Professional Introduction — Draft</div>
+    <div class="vi-preview-text">"I'm ${slots[0]||'<span class="vi-slot">[WHAT YOU KNOW]</span>'}. ${slots[1]||'<span class="vi-slot">[WHAT MAKES YOU DIFFERENT]</span>'}. ${slots[2]||'<span class="vi-slot">[YOUR OFFER]</span>'}"</div>
+  </div>`;
+  const sections=VI.sections.map((sec,si)=>`
+    <div style="margin-bottom:18px">
+      <div class="vi-sec-lbl">${sec.label}</div>
+      <div class="vi-choices">${sec.opts.map((o,oi)=>{
+        let cls='';
+        if(viSubmitted){if(o.correct)cls='correct locked';else if(viChosen[si]===oi&&!o.correct)cls='wrong-reveal locked';else cls='locked';}
+        else if(viChosen[si]===oi)cls='chosen';
+        return `<button class="vi-choice ${cls}" onclick="pickVI(${si},${oi})">${o.txt}</button>`;
+      }).join('')}</div>
+    </div>
+  `).join('');
+  const submitHtml=viSubmitted?'':`<div class="vi-submit"><button class="btn btn-fill" onclick="submitVI()"><span>Build This Introduction →</span></button></div>`;
+  const doneHtml=`<div class="vi-done ${viSubmitted&&viPassed?'show':''}">
+    <div class="vi-done-h">✓ Professional Value Statement Built</div>
+    <div class="vi-done-p">This is the foundation every conversation you have should rest on. Not a pitch — a clear articulation of what you actually bring. Memorize it, then make it your own.</div>
+  </div>`;
+  const failHtml=`<div class="vi-fail ${viSubmitted&&!viPassed?'show':''}">
+    <div style="font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--red);margin-bottom:6px">NOT QUITE</div>
+    <div style="font-family:var(--serif);font-size:14px;color:var(--black);line-height:1.65">The strongest choices are highlighted above. <button style="background:none;border:none;cursor:pointer;font-family:var(--serif);font-size:14px;text-decoration:underline;color:var(--navy)" onclick="resetVI()">Try again.</button></div>
+  </div>`;
+  w.innerHTML=preview+`<div class="vi-sections">${sections}</div>`+submitHtml+doneHtml+failHtml;
+}
+function pickVI(si,oi){if(viSubmitted)return;viChosen[si]=oi;buildVI();render();}
+function submitVI(){
+  viSubmitted=true;
+  viPassed=VI.sections.every((s,i)=>viChosen[i]!==undefined&&s.opts[viChosen[i]].correct);
+  buildVI();render();
+}
+function resetVI(){viSubmitted=false;viPassed=false;viChosen={};buildVI();render();}
+
+/* ════════════════════════════════════
+   MOTHERBOARD MAPPER
+════════════════════════════════════ */
+function buildMB(){
+  document.getElementById('mbCards').innerHTML=MB_ITEMS.map((m,i)=>`
+    <div class="mb-card" id="mbc${i}">
+      <div class="mb-top">
+        <div class="mb-scenario">${m.scenario}</div>
+        <div class="mb-btns">
+          <button class="mb-btn" id="mbMB${i}" onclick="verdictMB(${i},'mb')">◉ Motherboard</button>
+          <button class="mb-btn" id="mbCog${i}" onclick="verdictMB(${i},'cog')">○ Cog</button>
+        </div>
+      </div>
+      <div class="mb-result" id="mbR${i}"></div>
+    </div>
+  `).join('');
+}
+function verdictMB(i,verdict){
+  if(mbDone[i]) return;
+  const correct=MB_ITEMS[i].correct===verdict;
+  const card=document.getElementById('mbc'+i);
+  if(correct){
+    mbDone[i]=true;mbCount++;
+    document.getElementById('mbMB'+i).disabled=true;
+    document.getElementById('mbCog'+i).disabled=true;
+    document.getElementById('mbMB'+i).classList.toggle('mb-sel',verdict==='mb');
+    document.getElementById('mbCog'+i).classList.toggle('cog-sel',verdict==='cog');
+    card.classList.add('resolved','is-'+verdict);
+    document.getElementById('mbR'+i).textContent=MB_ITEMS[i].result;
+    document.getElementById('mbCount').textContent=mbCount;
+    render();
+  } else {
+    const btn=verdict==='mb'?document.getElementById('mbMB'+i):document.getElementById('mbCog'+i);
+    btn.classList.add('wrong');setTimeout(()=>btn.classList.remove('wrong'),400);
+  }
+}
+
+/* ════════════════════════════════════
+   NETWORK CIRCLE SORTER
+════════════════════════════════════ */
+function buildNC(){
+  document.getElementById('ncCircles').innerHTML=NC_CIRCLES.map((c,ci)=>`
+    <div class="nc-circle" id="ncc${ci}" onclick="pickNCCircle(${ci})">
+      <div class="nc-circle-hdr"><div class="nc-circle-name ${c.cls}">${c.name}</div><div class="nc-circle-desc">${c.desc}</div></div>
+      <div class="nc-circle-items" id="ncci${ci}"></div>
+    </div>
+  `).join('');
+  document.getElementById('ncPool').innerHTML=NC_TILE_ORDER.map(ai=>`
+    <div class="nc-tile" id="nct${ai}" onclick="pickNCTile(${ai})">${NC_CONTACTS[ai].txt}</div>
+  `).join('');
+}
+function pickNCTile(ai){
+  if(ncDone[ai]) return;
+  if(ncSel===ai){ncSel=null;renderNCUI();return;}
+  ncSel=ai;renderNCUI();
+}
+function pickNCCircle(ci){
+  if(ncSel===null) return;
+  const ai=ncSel;
+  const correct=NC_CIRCLES[ci].key===NC_CONTACTS[ai].circle;
+  const tileEl=document.getElementById('nct'+ai);
+  if(correct){
+    ncDone[ai]=true;ncCount++;
+    tileEl.classList.add('placed');
+    document.getElementById('ncci'+ci).innerHTML+=`<div class="nc-placed ${NC_CIRCLES[ci].key}-item">${NC_CONTACTS[ai].txt}</div>`;
+    ncSel=null;
+    document.getElementById('ncCount').textContent=ncCount;
+    renderNCUI();render();
+  } else {
+    [tileEl,document.getElementById('ncc'+ci)].forEach(e=>{e.classList.add('wrong');setTimeout(()=>e.classList.remove('wrong'),400);});
+    ncSel=null;renderNCUI();
+  }
+}
+function renderNCUI(){
+  NC_TILE_ORDER.forEach(ai=>{
+    const el=document.getElementById('nct'+ai);if(!el) return;
+    el.classList.toggle('sel',ncSel===ai);
+  });
+  NC_CIRCLES.forEach((_,ci)=>{
+    const el=document.getElementById('ncc'+ci);
+    el.classList.toggle('target',ncSel!==null);
+  });
+}
+function resetNC(){
+  ncSel=null;ncDone={};ncCount=0;buildNC();
+  document.getElementById('ncCount').textContent=0;
+  renderNCUI();render();
+}
+
+/* ════════════════════════════════════
+   KNOWLEDGE THREAD BUILDER
+════════════════════════════════════ */
+function renderKT(){
+  const w=document.getElementById('ktWrap');if(!w) return;
+  if(ktDone){
+    w.innerHTML=`<div class="kt-done-box">
+      <div class="kt-done-h">✓ All 4 Trend Conversations Mastered</div>
+      <div class="kt-done-p">AI tools, buyer committees, CFO pressure, personal brand — four of the most relevant SaaS conversations happening right now. You can start any of them with a question that earns the conversation. Continue when ready.</div>
+    </div>`;
+    render();return;
+  }
+  const s=KT_ITEMS[ktStage];
+  const dotsHtml=KT_ITEMS.map((_,i)=>{
+    const cls=i<ktStage?'done':i===ktStage?'active':'';
+    const dotStyle=cls==='done'?`background:var(--navy);border-color:var(--navy);color:#fff`:cls==='active'?`background:var(--navy);border-color:var(--navy);color:#fff`:'border-color:var(--line2);color:var(--mid)';
+    return `<div style="display:flex;align-items:center;flex:1">
+      <div style="width:26px;height:26px;border-radius:50%;border:2px solid;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;flex-shrink:0;${dotStyle}">${i<ktStage?'✓':i+1}</div>
+      ${i<KT_ITEMS.length-1?'<div style="flex:1;height:1px;background:var(--line2);margin:0 4px"></div>':''}
+    </div>`;
+  }).join('');
+
+  const optsHtml=s.opts.map((o,oi)=>{
+    let cls='';
+    if(ktShowFb){if(oi===s.ans)cls='correct locked';else if(oi===ktPicked)cls='wrong locked';else cls='locked';}
+    return `<div class="kt-opt ${cls}" onclick="pickKT(${oi})"><span class="kt-ltr">${String.fromCharCode(65+oi)}.</span>${o}</div>`;
+  }).join('');
+  const fbHtml=ktShowFb&&ktPicked!==null?`<div class="kt-fb show ${ktPicked===s.ans?'good':'bad'}">${ktPicked===s.ans?'✓ Right move:':'✗ Why that misses:'} ${s.why}</div>`:'';
+  const showAdv=ktShowFb&&ktPicked===s.ans;
+  const isLast=ktStage===KT_ITEMS.length-1;
+  const advHtml=showAdv?`<div class="kt-adv show"><button class="btn btn-fill" onclick="ktAdvance()"><span>${isLast?'Complete Thread →':'Next Trend →'}</span></button></div>`:'';
+
+  w.innerHTML=`
+    <div style="display:flex;gap:0;max-width:440px;margin-bottom:20px">${dotsHtml}</div>
+    <div class="kt-trend-card"><div class="kt-trend-tag">SaaS Trend ${ktStage+1} of 4</div><div class="kt-trend-name">${s.name}</div><div class="kt-trend-body">${s.body}</div></div>
+    <div class="kt-q" style="margin-top:16px">${s.q}</div>
+    <div class="kt-opts">${optsHtml}</div>
+    ${fbHtml}${advHtml}
+  `;
+}
+function pickKT(oi){if(ktShowFb)return;ktPicked=oi;ktShowFb=true;renderKT();}
+function ktAdvance(){
+  if(ktStage<KT_ITEMS.length-1){ktStage++;ktPicked=null;ktShowFb=false;renderKT();}
+  else{ktDone=true;renderKT();}
+}
+
+/* ════════════════════════════════════
+   QUIZ
+════════════════════════════════════ */
+function buildQuiz(){
+  document.getElementById('quizBody').innerHTML=QUIZ.map((q,qi)=>`
+    <div class="q-block">
+      <div class="q-num">Question ${qi+1} of ${QUIZ.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-opts">${q.opts.map((o,oi)=>`<button class="q-opt" id="qo${qi}_${oi}" onclick="pickOpt(${qi},${oi})">${o}</button>`).join('')}</div>
+    </div>
+  `).join('');
+}
+function pickOpt(qi,oi){
+  if(qSubmitted)return;
+  QUIZ[qi].opts.forEach((_,i)=>document.getElementById(`qo${qi}_${i}`).classList.remove('chosen'));
+  document.getElementById(`qo${qi}_${oi}`).classList.add('chosen');
+  qAns[qi]=oi;render();
+}
+function submitQuiz(){
+  qSubmitted=true;let correct=0;
+  QUIZ.forEach((q,qi)=>{
+    const chosen=qAns[qi];
+    q.opts.forEach((_,oi)=>{
+      const el=document.getElementById(`qo${qi}_${oi}`);
+      el.classList.add('locked');el.classList.remove('chosen');
+      if(oi===q.ans)el.classList.add('correct');
+      else if(oi===chosen&&chosen!==q.ans)el.classList.add('wrong-pick');
+    });
+    if(chosen===q.ans)correct++;
+  });
+  qPassed=correct>=3;
+  const b=document.getElementById('quizBanner');
+  b.className='quiz-banner show '+(qPassed?'pass':'fail');
+  b.textContent=qPassed?`✓ ${correct} / ${QUIZ.length} correct — cleared to continue.`:`${correct} / ${QUIZ.length} correct — need 3 to pass. Review and try again.`;
+  render();
+}
+function retryQuiz(){
+  qSubmitted=false;qPassed=false;qAns={};
+  document.getElementById('quizBanner').className='quiz-banner';
+  buildQuiz();render();
+}
+
+/* ════════════════════════════════════
+   RENDER
+════════════════════════════════════ */
+const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:4};
+function canContinue(){
+  if(cur===2) return viSubmitted&&viPassed;
+  if(cur===3) return mbCount===5;
+  if(cur===4) return ncCount===6;
+  if(cur===5) return ktDone;
+  if(cur===6){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  return true;
+}
+function getHint(){
+  const h={
+    1:"Stop chasing rooms. Start building value worth inviting into them.",
+    2:!viSubmitted?`${Object.keys(viChosen).length} / 3 components chosen`:viPassed?'✓ Value statement built — continue below.':'Review the correct choices above.',
+    3:`${mbCount} / 5 correctly classified`,
+    4:`${ncCount} / 6 correctly placed`,
+    5:ktDone?'✓ All 4 trends completed — continue below.':`Trend ${ktStage+1} of 4 — ${KT_ITEMS[ktStage]?.name?.slice(0,30)||''}...`,
+    6:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
+    7:"The homework only works if you share one insight before Friday.",
+  };
+  return h[cur]||'';
+}
+function getNextLabel(){
+  if(cur===6&&!qSubmitted)return 'Submit Answers';
+  if(cur===6&&!qPassed)return 'Try Again →';
+  if(cur===7)return 'Finish Lesson →';
+  return 'Continue →';
+}
+function render(){
+  const sec=SEC[cur];
+  document.getElementById('progLabel').textContent=sec?`Section 0${sec}`:'Lesson 6.2';
+  const pct=cur===0?0:Math.round((cur/(TOTAL-1))*100);
+  document.getElementById('progFill').style.width=pct+'%';
+  ['nav1','nav2','nav3','nav4'].forEach((id,i)=>
+    document.getElementById(id).classList.toggle('active',SEC[cur]===i+1));
+  const hide=cur===0||cur===TOTAL-1;
+  document.getElementById('bottomnav').style.display=hide?'none':'flex';
+  if(hide)return;
+  document.getElementById('hint').textContent=getHint();
+  document.getElementById('btnNextLabel').textContent=getNextLabel();
+  document.getElementById('btnBack').style.display=cur<=1?'none':'block';
+  document.getElementById('btnNext').disabled=!canContinue();
+}
+
+// Zone delegation
+document.addEventListener('click',function(e){
+  if(ncSel!==null){
+    NC_CIRCLES.forEach((_,ci)=>{
+      if(e.target.closest('#ncc'+ci)&&!e.target.closest('.nc-tile')&&!e.target.closest('.nc-placed'))
+        pickNCCircle(ci);
+    });
+  }
+});
+
+init();
+</script>
+</body>
+</html>
