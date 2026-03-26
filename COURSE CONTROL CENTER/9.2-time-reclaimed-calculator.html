@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR | Time Reclaimed ROI Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* AESDR Dark Theme */
+  --bg-main: #020617; 
+  --bg-panel: #0F172A;
+  --bg-card: #1E293B;
+  --bg-hover: #334155;
+  
+  --text-main: #F8FAFC;
+  --text-muted: #94A3B8;
+  
+  /* Asset Theme: Neon Green & Alert Red */
+  --theme: #10B981; 
+  --theme-text: #059669;
+  --theme-glow: rgba(16, 185, 129, 0.3);
+  --coral: #EF4444; 
+  --cor-glow: rgba(239, 68, 68, 0.3);
+  --cobalt: #38BDF8; 
+  
+  --line: rgba(255,255,255,0.1);
+  --line2: rgba(255,255,255,0.2);
+  
+  --display: 'Abril Fatface', Georgia, serif;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --cond: 'Barlow Condensed', sans-serif;
+  --mono: 'DM Mono', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: var(--bg-main); color: var(--text-main); font-family: var(--serif); line-height: 1.6; }
+
+/* TOPBAR */
+.topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 40px; border-bottom: 1px solid var(--line); background: var(--bg-panel); }
+.brand { font-family: var(--cond); font-size: 16px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; display: flex; align-items: center; gap: 12px; }
+.badge { font-family: var(--mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; background: var(--cobalt); color: var(--bg-main); font-weight: 800; padding: 4px 10px; border-radius: 2px; }
+
+/* CONTAINER */
+.container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+
+/* HEADER INFO */
+.header-info { margin-bottom: 40px; text-align: center; }
+.eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--theme); margin-bottom: 12px; display: inline-block; padding: 4px 10px; background: var(--theme-glow); border-radius: 2px; }
+.h1 { font-family: var(--display); font-size: 42px; line-height: 1.1; margin-bottom: 12px; color: var(--text-main); }
+.sub { font-size: 18px; color: var(--text-muted); max-width: 600px; margin: 0 auto; }
+
+/* CALCULATOR GRID */
+.calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; background: var(--bg-panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+
+/* LEFT: INPUTS */
+.inputs-col { padding: 40px; border-right: 1px solid var(--line); background: var(--bg-panel); }
+.input-group { margin-bottom: 32px; }
+.input-group:last-child { margin-bottom: 0; }
+.input-label { font-family: var(--cond); font-size: 15px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--text-main); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.val-readout { font-family: var(--mono); color: var(--cobalt); font-size: 18px; }
+
+/* TEXT INPUT */
+.input-field { width: 100%; background: var(--bg-main); border: 1px solid var(--line2); color: var(--text-main); font-family: var(--mono); font-size: 20px; padding: 16px; border-radius: 4px; outline: none; transition: border-color .2s; }
+.input-field:focus { border-color: var(--theme); }
+
+/* SHINY 3D MARBLE METALLIC SLIDERS */
+input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; padding: 10px 0; }
+input[type=range]:focus { outline: none; }
+
+input[type=range]::-webkit-slider-thumb { 
+  -webkit-appearance: none; 
+  height: 32px; 
+  width: 32px; 
+  border-radius: 50%; 
+  
+  /* 3D Marble Metallic Effect */
+  background: radial-gradient(circle at 30% 30%, #ffffff 0%, #cbd5e1 20%, #94a3b8 60%, #475569 100%);
+  box-shadow: 
+    inset 0 3px 5px rgba(255, 255, 255, 0.9), 
+    inset 0 -3px 6px rgba(0, 0, 0, 0.6), 
+    0 5px 10px rgba(0, 0, 0, 0.8);
+  border: 1px solid #e2e8f0;
+  
+  cursor: pointer; 
+  margin-top: -12px; 
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1); 
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+input[type=range]::-webkit-slider-thumb:active { transform: scale(0.95); }
+
+input[type=range]::-webkit-slider-runnable-track { 
+  width: 100%; 
+  height: 8px; 
+  cursor: pointer; 
+  /* Deep recessed track */
+  background: linear-gradient(to bottom, #020617, #1e293b); 
+  border-radius: 4px; 
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.8), 0 1px 1px rgba(255,255,255,0.05);
+  border: 1px solid #0f172a; 
+}
+
+/* RIGHT: OUTPUTS */
+.outputs-col { padding: 40px; background: var(--bg-card); display: flex; flex-direction: column; justify-content: center; position: relative; }
+
+/* Background geometric blur for the glassmorphism to pop against */
+.outputs-col::before {
+  content: '';
+  position: absolute;
+  top: 10%;
+  right: 10%;
+  width: 200px;
+  height: 200px;
+  background: var(--coral);
+  filter: blur(100px);
+  opacity: 0.15;
+  border-radius: 50%;
+  pointer-events: none;
+  transition: background 0.4s ease;
+}
+.outputs-col.saved-state::before { background: var(--theme); }
+
+.stat-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; border-bottom: 1px solid var(--line); padding-bottom: 12px; position: relative; z-index: 1;}
+.stat-lbl { font-family: var(--cond); font-size: 14px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--text-muted); }
+.stat-val { font-family: var(--mono); font-size: 20px; color: var(--text-main); }
+.stat-val.bad { color: var(--coral); }
+
+/* GLASS WINDOW EFFECT */
+.bleed-box { 
+  margin-top: 20px; 
+  text-align: center; 
+  padding: 40px 20px; 
+  border-radius: 12px; 
+  position: relative;
+  z-index: 1;
+  transition: all 0.4s ease;
+  
+  /* Glassmorphism CSS */
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.bleed-box.alert { 
+  border-color: rgba(239, 68, 68, 0.4); 
+  background: rgba(239, 68, 68, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), 
+              0 0 20px rgba(239, 68, 68, 0.15), 
+              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.bleed-box.saved { 
+  border-color: rgba(16, 185, 129, 0.4); 
+  background: rgba(16, 185, 129, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), 
+              0 0 20px rgba(16, 185, 129, 0.15), 
+              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.bleed-lbl { font-family: var(--cond); font-size: 16px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--text-main); margin-bottom: 10px; }
+.bleed-val { font-family: var(--display); font-size: 64px; line-height: 1; transition: color 0.4s ease; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+.bleed-val.alert { color: var(--coral); }
+.bleed-val.saved { color: var(--theme); }
+.bleed-sub { font-size: 14px; color: var(--text-muted); margin-top: 12px; font-style: italic; }
+
+/* BUTTON */
+.btn-reclaim { width: 100%; margin-top: 30px; font-family: var(--cond); font-size: 16px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; padding: 18px; border: none; background: var(--theme); color: var(--bg-main); cursor: pointer; border-radius: 4px; transition: all .2s; box-shadow: 0 4px 15px var(--theme-glow); position: relative; z-index: 1;}
+.btn-reclaim:hover { background: var(--theme-text); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
+.btn-reclaim:active { transform: translateY(0); }
+
+.success-msg { text-align: center; font-family: var(--cond); font-size: 16px; font-weight: 700; color: var(--theme); letter-spacing: .05em; text-transform: uppercase; margin-top: 16px; opacity: 0; transition: opacity 0.3s; height: 0; }
+.success-msg.show { opacity: 1; height: auto; margin-top: 16px; }
+
+@media(max-width: 800px) {
+  .calc-grid { grid-template-columns: 1fr; }
+  .inputs-col { border-right: none; border-bottom: 1px solid var(--line); }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">AESDR <span class="badge">Tool: C9.2</span></div>
+</header>
+
+<div class="container">
+  
+  <div class="header-info">
+    <div class="eyebrow">Interactive Assessment</div>
+    <h1 class="h1">The "Time Reclaimed" Calculator</h1>
+    <p class="sub">You think checking Slack and updating CRM fields is just "part of the job." Plug in your numbers to see exactly how much selling time you are throwing away.</p>
+  </div>
+
+  <div class="calc-grid">
+    
+    <div class="inputs-col">
+      <div class="input-group">
+        <label class="input-label">Target OTE ($)</label>
+        <input type="number" id="oteInput" class="input-field" value="150000" oninput="calculate()">
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">
+          Slack / Email Distractions
+          <span class="val-readout"><span id="slackVal">5</span> hrs/wk</span>
+        </label>
+        <input type="range" id="slackSlider" min="0" max="20" value="5" step="1" oninput="calculate()">
+        <p style="font-size:12px; color:var(--text-muted); margin-top:6px; font-style:italic">Time spent reading non-essential channels or writing vague emails.</p>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">
+          CRM / Admin Bloat
+          <span class="val-readout"><span id="crmVal">5</span> hrs/wk</span>
+        </label>
+        <input type="range" id="crmSlider" min="0" max="20" value="5" step="1" oninput="calculate()">
+        <p style="font-size:12px; color:var(--text-muted); margin-top:6px; font-style:italic">Time spent logging calls, fixing data, or building useless reports.</p>
+      </div>
+    </div>
+
+    <div class="outputs-col" id="outputCol">
+      
+      <div class="stat-row">
+        <div class="stat-lbl">Your True Hourly Rate</div>
+        <div class="stat-val" id="hourlyRate">$72/hr</div>
+      </div>
+      
+      <div class="stat-row">
+        <div class="stat-lbl">Total Weekly Hours Lost</div>
+        <div class="stat-val bad" id="weeklyLost" style="transition: color 0.4s">10 hrs</div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-lbl">Annual Selling Time Burned</div>
+        <div class="stat-val bad" id="annualLost" style="transition: color 0.4s">520 hrs</div>
+      </div>
+
+      <div class="bleed-box alert" id="bleedBox">
+        <div class="bleed-lbl">Annual Financial Bleed</div>
+        <div class="bleed-val alert" id="financialBleed">$37,500</div>
+        <div class="bleed-sub" id="bleedSub">The monetary value of the selling time you are throwing away this year.</div>
+      </div>
+
+      <button class="btn-reclaim" onclick="reclaimTime()">Reclaim My Time</button>
+      <div class="success-msg" id="successMsg">✓ TIME RECLAIMED. GET BACK TO THE PIPELINE.</div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Formatting Utility
+const formatMoney = (num) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(num);
+
+// Core Calculation Logic
+function calculate() {
+  // Hide success message if visible
+  document.getElementById('successMsg').classList.remove('show');
+  
+  // Get values
+  const ote = parseFloat(document.getElementById('oteInput').value) || 0;
+  const slackHrs = parseInt(document.getElementById('slackSlider').value) || 0;
+  const crmHrs = parseInt(document.getElementById('crmSlider').value) || 0;
+
+  // Update slider labels
+  document.getElementById('slackVal').textContent = slackHrs;
+  document.getElementById('crmVal').textContent = crmHrs;
+
+  // Math (Assuming 2080 working hours in a year: 40 hrs * 52 weeks)
+  const hourlyRate = ote / 2080;
+  const weeklyLost = slackHrs + crmHrs;
+  const annualLost = weeklyLost * 52;
+  const financialBleed = annualLost * hourlyRate;
+
+  // Update DOM
+  document.getElementById('hourlyRate').textContent = formatMoney(hourlyRate) + '/hr';
+  document.getElementById('weeklyLost').textContent = weeklyLost + ' hrs';
+  document.getElementById('annualLost').textContent = annualLost + ' hrs';
+  
+  const bleedEl = document.getElementById('financialBleed');
+  const bleedBox = document.getElementById('bleedBox');
+  const bleedSub = document.getElementById('bleedSub');
+  const outputCol = document.getElementById('outputCol');
+  
+  bleedEl.textContent = formatMoney(financialBleed);
+  
+  // Visual states based on whether they are bleeding money
+  if (financialBleed > 0) {
+    bleedBox.className = 'bleed-box alert';
+    bleedEl.className = 'bleed-val alert';
+    outputCol.className = 'outputs-col';
+    document.getElementById('weeklyLost').className = 'stat-val bad';
+    document.getElementById('annualLost').className = 'stat-val bad';
+    bleedSub.textContent = "The monetary value of the selling time you are throwing away this year.";
+  } else {
+    bleedBox.className = 'bleed-box saved';
+    bleedEl.className = 'bleed-val saved';
+    outputCol.className = 'outputs-col saved-state';
+    document.getElementById('weeklyLost').className = 'stat-val';
+    document.getElementById('annualLost').className = 'stat-val';
+    bleedSub.textContent = "Zero bleed. Your time is locked in on revenue.";
+  }
+}
+
+// Reclaim Button Action (Dopamine Hit)
+function reclaimTime() {
+  const slackSlider = document.getElementById('slackSlider');
+  const crmSlider = document.getElementById('crmSlider');
+  
+  // Smoothly animate sliders to zero
+  let sVal = parseInt(slackSlider.value);
+  let cVal = parseInt(crmSlider.value);
+  
+  if (sVal === 0 && cVal === 0) return; // Already at 0
+  
+  const interval = setInterval(() => {
+    if (sVal > 0) sVal--;
+    if (cVal > 0) cVal--;
+    
+    slackSlider.value = sVal;
+    crmSlider.value = cVal;
+    
+    calculate(); // Recalculate each frame
+    
+    if (sVal === 0 && cVal === 0) {
+      clearInterval(interval);
+      // Trigger Success UI
+      document.getElementById('successMsg').classList.add('show');
+    }
+  }, 20); // Speed of slider reset
+}
+
+// Initial calculation on load
+calculate();
+</script>
+</body>
+</html>

@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR — GTM Execution Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-main: #0B0F19; 
+  --bg-panel: #151A2A;
+  --bg-hover: #1E2638;
+  --text-main: #F8FAFC;
+  --text-muted: #94A3B8;
+  
+  --theme: #00E5A0; /* Neon Mint / Dopamine Green */
+  --theme-text: #34D399; 
+  --theme-lt: rgba(0, 229, 160, 0.15);
+  
+  --cobalt: #38BDF8; 
+  --cob-lt: rgba(56, 189, 248, 0.15);
+  --coral: #FF006E; 
+  --cor-lt: rgba(255, 0, 110, 0.15);
+  
+  --line: rgba(255,255,255,0.08);
+  --line2: rgba(255,255,255,0.15);
+  
+  --iris: linear-gradient(90deg, #FF006E 0%, #F59E0B 33%, #00E5A0 66%, #38BDF8 100%);
+  
+  --display: 'Abril Fatface', Georgia, serif;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --cond: 'Barlow Condensed', sans-serif;
+  --mono: 'DM Mono', monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg-main);color:var(--text-main);font-family:var(--cond);overflow:hidden}
+.app{display:grid;grid-template-columns:1fr 260px;grid-template-rows:56px 1fr 60px;height:100vh}
+
+/* TOPBAR */
+.topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:1px solid var(--line);background:var(--bg-panel);z-index:20;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
+.brand{font-family:var(--cond);font-size:14px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--text-main)}
+.course-badge{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;background:var(--theme);color:var(--bg-main);font-weight:800;padding:4px 10px;margin-left:12px;border-radius:2px;box-shadow:0 0 10px var(--theme-lt)}
+.top-right{display:flex;align-items:center;gap:16px}
+.prog-label{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--text-muted);text-transform:uppercase}
+.prog-track{width:150px;height:6px;background:var(--bg-hover);border-radius:3px;overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,0.5)}
+.prog-fill{height:100%;background:var(--iris);background-size:200% 100%;animation:iris 3s linear infinite;transition:width .5s cubic-bezier(.4,0,.2,1);box-shadow:0 0 10px var(--theme)}
+
+/* MAIN */
+.main{overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;background:var(--bg-main);scrollbar-width:none}
+.main::-webkit-scrollbar{display:none}
+
+/* SIDEBAR */
+.sidebar{border-left:1px solid var(--line);padding:32px 20px;overflow-y:auto;scrollbar-width:none;background:var(--bg-panel)}
+.sidebar::-webkit-scrollbar{display:none}
+.sb-course{font-family:var(--display);font-size:24px;color:var(--theme);line-height:1;margin-bottom:4px}
+.sb-lesson{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-muted);margin-bottom:24px}
+.sb-divider{height:2px;background:var(--theme);margin-bottom:20px;opacity:0.3}
+.sb-label{font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--text-muted);margin-bottom:18px}
+.sb-item{padding:14px 0;border-bottom:1px solid var(--line);cursor:pointer;position:relative;transition:all .2s}
+.sb-item:first-of-type{border-top:1px solid var(--line)}
+.sb-tag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;transition:color .2s}
+.sb-name{font-family:var(--cond);font-size:13px;font-weight:700;color:var(--text-muted);line-height:1.4;text-transform:uppercase;letter-spacing:.04em;transition:color .2s}
+.sb-item.active .sb-tag{color:var(--theme)}
+.sb-item.active .sb-name{color:var(--text-main)}
+.sb-item.active::before{content:'';position:absolute;left:-20px;top:0;bottom:0;width:3px;background:var(--theme);box-shadow:0 0 10px var(--theme)}
+.sb-item:hover .sb-name{color:var(--text-main)}
+
+/* BOTTOMNAV */
+.bottomnav{grid-column:1/2;display:flex;align-items:center;justify-content:space-between;padding:0 56px;border-top:1px solid var(--line);background:var(--bg-panel)}
+.nav-hint{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--text-muted);font-style:italic}
+.nav-btns{display:flex;gap:12px}
+.btn{font-family:var(--cond);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:12px 24px;border:1px solid var(--line2);background:var(--bg-hover);color:var(--text-main);cursor:pointer;transition:all .15s;border-radius:2px}
+.btn:hover{background:var(--text-main);color:var(--bg-main)}
+.btn-fill{background:var(--theme);color:var(--bg-main);border:none;position:relative;overflow:hidden;box-shadow:0 0 15px var(--theme-lt)}
+.btn-fill:hover{background:var(--text-main);box-shadow:0 0 20px var(--theme)}
+
+/* SCREENS */
+.screen{display:none;flex-direction:column;flex:1;animation:up .4s cubic-bezier(.22,1,.36,1) both}
+.screen.active{display:flex}
+@keyframes up{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+
+/* HEADER */
+.lh{padding:44px 56px 0;position:relative;overflow:hidden}
+.lh-stripe{position:absolute;top:0;left:0;right:0;height:3px;background:var(--iris);background-size:200% 100%;animation:iris 4s linear infinite}
+.sec-eye{font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--theme);margin-bottom:16px;display:inline-block;background:var(--theme-lt);padding:4px 10px;border-radius:2px;border:1px solid var(--theme)}
+.lh-title{font-family:var(--display);font-size:clamp(32px,4vw,56px);line-height:1.05;color:var(--text-main);margin-bottom:12px}
+.lh-sub{font-family:var(--serif);font-size:18px;color:var(--text-muted);font-style:italic;max-width:700px;line-height:1.6}
+
+/* CHECKLISTS (THE DOPAMINE ENGINE) */
+.chk-wrap{padding:32px 56px 44px;max-width:900px;display:grid;grid-template-columns:1fr;gap:32px}
+.chk-group{background:var(--bg-panel);border:1px solid var(--line);border-radius:6px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.2)}
+.chk-hdr{background:var(--bg-hover);padding:16px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.chk-title{font-family:var(--cond);font-size:15px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text-main);display:flex;align-items:center;gap:10px}
+.chk-icon{font-size:18px}
+.chk-prog{font-family:var(--mono);font-size:12px;color:var(--theme);background:rgba(0,0,0,0.3);padding:4px 10px;border-radius:12px}
+.chk-item{padding:20px 24px;border-bottom:1px solid var(--line);display:flex;gap:18px;align-items:flex-start;cursor:pointer;transition:all .25s ease;position:relative;overflow:hidden}
+.chk-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:var(--theme-lt);transition:width .3s ease;z-index:0}
+.chk-item:last-child{border-bottom:none}
+.chk-item:hover{background:rgba(255,255,255,0.03)}
+.chk-box{width:24px;height:24px;border:2px solid var(--text-muted);border-radius:4px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .3s cubic-bezier(.4,0,.2,1);position:relative;z-index:1;background:var(--bg-main)}
+.chk-item.done .chk-box{background:var(--theme);border-color:var(--theme);box-shadow:0 0 12px var(--theme)}
+.chk-item.done .chk-box::after{content:'✓';color:var(--bg-main);font-family:sans-serif;font-size:16px;font-weight:900}
+.chk-item.done::before{width:100%}
+.chk-txt-wrap{flex:1;position:relative;z-index:1}
+.chk-label{font-family:var(--cond);font-size:16px;font-weight:700;letter-spacing:.04em;color:var(--text-main);margin-bottom:6px;transition:all .3s}
+.chk-item.done .chk-label{color:var(--theme);text-decoration:line-through;opacity:0.8}
+.chk-sub{font-family:var(--serif);font-size:15px;color:var(--text-muted);line-height:1.55;transition:opacity .3s}
+.chk-item.done .chk-sub{opacity:0.5}
+.chk-tag{display:inline-block;font-family:var(--mono);font-size:9px;padding:3px 8px;border-radius:2px;margin-top:10px;text-transform:uppercase;letter-spacing:.1em;border:1px solid var(--line2)}
+
+/* SUCCESS BANNER */
+.success-banner{margin:0 56px 0;padding:20px 24px;background:linear-gradient(90deg, var(--theme-lt), transparent);border-left:4px solid var(--theme);border-radius:0 4px 4px 0;display:flex;align-items:center;gap:16px;transform:translateX(-20px);opacity:0;transition:all .4s cubic-bezier(.4,0,.2,1);display:none;box-shadow:0 4px 20px rgba(0,0,0,0.2)}
+.success-banner.show{display:flex;transform:translateX(0);opacity:1}
+.suc-icon{font-size:28px;filter:drop-shadow(0 0 8px var(--theme))}
+.suc-txt{font-family:var(--cond);font-size:18px;font-weight:800;color:var(--theme);text-transform:uppercase;letter-spacing:.05em}
+
+@media(max-width: 768px) {
+  .app{grid-template-columns:1fr}
+  .sidebar{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header class="topbar">
+  <div style="display:flex;align-items:center">
+    <div class="brand">AESDR</div>
+    <div class="course-badge">GTM Execution Engine</div>
+  </div>
+  <div class="top-right">
+    <span class="prog-label" id="progLabel">Master Progress</span>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <span class="prog-label" id="progPct" style="margin-left:8px;color:var(--theme);font-weight:800;font-size:12px">0%</span>
+  </div>
+</header>
+
+<main class="main" id="main">
+
+  <div class="screen active" id="s0">
+    <div class="lh" style="padding-top:100px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1">
+      <div class="lh-stripe"></div>
+      <div class="sec-eye" style="font-size:12px;padding:6px 16px">The Anti-Cringe Strategy</div>
+      <h1 class="lh-title" style="font-size:clamp(40px,6vw,80px);margin-bottom:24px">Zero LinkedIn.<br><span style="background:var(--iris);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Maximum Intent.</span></h1>
+      <p class="lh-sub" style="font-size:20px;max-width:600px;margin-bottom:40px">We target reps where they actually vent, complain, and look for real solutions when their managers aren't watching. Every frontend ad is tied to a mandatory backend action.</p>
+      <button class="btn btn-fill" style="font-size:16px;padding:16px 40px" onclick="go(1)"><span>Initialize Week 1 →</span></button>
+    </div>
+  </div>
+
+  <div class="screen" id="s1">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="sec-eye">Week 01 Execution</div>
+      <div class="lh-title">The "Paycheck Shock" Campaign</div>
+      <div class="lh-sub"><strong>The Trigger:</strong> Mid-month commission check hits. After clawbacks and taxes, it's half of their fake $150k OTE. They are furious.</div>
+    </div>
+    
+    <div class="success-banner" id="suc1">
+      <div class="suc-icon">🎯</div>
+      <div class="suc-txt">Week 1 Locked. Financial Hook Deployed.</div>
+    </div>
+
+    <div class="chk-wrap">
+      <div class="chk-group">
+        <div class="chk-hdr">
+          <div class="chk-title"><span class="chk-icon">👁️</span> Frontend: Ad Creative</div>
+          <div class="chk-prog" id="prog-p1f">0 / 2</div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p1f', 0, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Deploy Reddit/YT Shorts Campaign</div>
+            <div class="chk-sub">Target r/sales and r/financialindependence. Demographic: 24-35, mobile users.</div>
+            <div class="chk-tag" style="color:var(--cobalt);border-color:var(--cobalt)">Targeting Set</div>
+          </div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p1f', 1, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Upload "Offer Letter vs Reality" Visual</div>
+            <div class="chk-sub">Image: Bank deposit notification ($4,102) next to an offer letter claiming "$150k OTE". Copy: "OTE is a fantasy. Protect your paycheck."</div>
+            <div class="chk-tag" style="color:var(--theme);border-color:var(--theme)">Creative Uploaded</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chk-group">
+        <div class="chk-hdr">
+          <div class="chk-title"><span class="chk-icon">⚙️</span> Backend: Infrastructure</div>
+          <div class="chk-prog" id="prog-p1b">0 / 3</div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p1b', 0, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Build Lead Magnet Landing Page</div>
+            <div class="chk-sub">Host the "Commission Defense Tracker" Google Sheet. Force users to "Make a Copy" upon email entry.</div>
+          </div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p1b', 1, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Connect ESP (Email Service Provider)</div>
+            <div class="chk-sub">Ensure the form successfully routes emails to ConvertKit/ActiveCampaign with the correct "Commission_Lead" tag.</div>
+          </div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p1b', 2, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Activate Email Sequence #1</div>
+            <div class="chk-sub">Day 0: Delivery. Day 1: "Why your manager ignores clawbacks." Day 2: Hard pitch to the 12-Course Framework.</div>
+            <div class="chk-tag" style="color:var(--amber);border-color:var(--amber)">Automation Live</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="s2">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="sec-eye">Week 02 Execution</div>
+      <div class="lh-title">The "PIP Threat" Campaign</div>
+      <div class="lh-sub"><strong>The Trigger:</strong> Friday 4 PM vague "Alignment Chat" scheduled. Existential dread and panic sets in.</div>
+    </div>
+    
+    <div class="success-banner" id="suc2">
+      <div class="suc-icon">🛡️</div>
+      <div class="suc-txt">Week 2 Locked. Panic Intercepted.</div>
+    </div>
+
+    <div class="chk-wrap">
+      <div class="chk-group">
+        <div class="chk-hdr">
+          <div class="chk-title"><span class="chk-icon">👁️</span> Frontend: Ad Creative</div>
+          <div class="chk-prog" id="prog-p2f">0 / 2</div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p2f', 0, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Deploy YouTube Pre-Roll Campaign</div>
+            <div class="chk-sub">Target high-intent search terms: "Put on PIP," "How to beat a PIP," "SaaS firing."</div>
+            <div class="chk-tag" style="color:var(--cobalt);border-color:var(--cobalt)">High Intent</div>
+          </div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p2f', 1, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Upload Raw "Car Confessional" Video</div>
+            <div class="chk-sub">Script: "A PIP is not a coaching plan—it’s a paper trail to fire you. Sending 500 more spam emails won't save you. Get the 72-Hour Strike Plan."</div>
+            <div class="chk-tag" style="color:var(--theme);border-color:var(--theme)">Creative Uploaded</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chk-group">
+        <div class="chk-hdr">
+          <div class="chk-title"><span class="chk-icon">⚙️</span> Backend: Infrastructure</div>
+          <div class="chk-prog" id="prog-p2b">0 / 2</div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p2b', 0, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Optimize Mobile Checkout (Stripe)</div>
+            <div class="chk-sub">Activate Apple Pay / Google Pay. Anxious buyers staring down a PIP need 1-click frictionless checkout.</div>
+          </div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p2b', 1, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Build Cart Abandonment Flow</div>
+            <div class="chk-sub">Trigger email 2 hours post-abandon: "Still staring at that PIP? The pipeline won't fix itself. Get back in here."</div>
+            <div class="chk-tag" style="color:var(--coral);border-color:var(--coral)">Revenue Recovery</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="s3">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="sec-eye">Week 03 Execution</div>
+      <div class="lh-title">The "Monday Overload" Campaign</div>
+      <div class="lh-sub"><strong>The Trigger:</strong> 8:30 AM Monday. 45 Slack pings and a bloated Salesforce dashboard. Admin paralysis.</div>
+    </div>
+    
+    <div class="success-banner" id="suc3">
+      <div class="suc-icon">⚡</div>
+      <div class="suc-txt">Week 3 Locked. Workflow Streamlined.</div>
+    </div>
+
+    <div class="chk-wrap">
+      <div class="chk-group">
+        <div class="chk-hdr">
+          <div class="chk-title"><span class="chk-icon">👁️</span> Frontend: Ad Creative</div>
+          <div class="chk-prog" id="prog-p3f">0 / 2</div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p3f', 0, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Deploy TikTok/IG Reels Campaign</div>
+            <div class="chk-sub">Targeting lookalike audiences based on Week 1 & 2 email lists.</div>
+          </div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p3f', 1, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Upload "Slack Ping" POV Video</div>
+            <div class="chk-sub">Rapid Slack knock sounds over messy CRM. Script: "You aren't selling. You're doing admin work for a system that hates you. Take back your time."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chk-group">
+        <div class="chk-hdr">
+          <div class="chk-title"><span class="chk-icon">⚙️</span> Backend: Infrastructure</div>
+          <div class="chk-prog" id="prog-p3b">0 / 2</div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p3b', 0, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Verify LMS State-Saving</div>
+            <div class="chk-sub">If they buy on mobile from TikTok, ensure their progress saves automatically when they log in on their desktop on Tuesday.</div>
+            <div class="chk-tag" style="color:var(--theme);border-color:var(--theme)">Database Sync</div>
+          </div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p3b', 1, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Establish CS Intake Mechanism</div>
+            <div class="chk-sub">Set up a simple Typeform or Zendesk alias (support@aesdr.com) for fast password resets and login issues.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="s4">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="sec-eye">Week 04 Execution</div>
+      <div class="lh-title">The "Goalpost Moved" Campaign</div>
+      <div class="lh-sub"><strong>The Trigger:</strong> SDR crushes quota for 8 months. Manager says, "Just one more quarter before AE."</div>
+    </div>
+    
+    <div class="success-banner" id="suc4">
+      <div class="suc-icon">🔥</div>
+      <div class="suc-txt">Week 4 Locked. Illusion Broken.</div>
+    </div>
+
+    <div class="chk-wrap">
+      <div class="chk-group">
+        <div class="chk-hdr">
+          <div class="chk-title"><span class="chk-icon">👁️</span> Frontend: Ad Creative</div>
+          <div class="chk-prog" id="prog-p4f">0 / 2</div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p4f', 0, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Deploy Text-Based Reddit Ad</div>
+            <div class="chk-sub">Style exactly like a native r/sales text post to blend into the feed.</div>
+          </div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p4f', 1, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Upload "Force Their Hand" Copy</div>
+            <div class="chk-sub">"They aren't promoting you. You are feeding their pipeline. Stop waiting for permission to level up."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chk-group">
+        <div class="chk-hdr">
+          <div class="chk-title"><span class="chk-icon">⚙️</span> Backend: Infrastructure</div>
+          <div class="chk-prog" id="prog-p4b">0 / 2</div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p4b', 0, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Deploy Interactive "Blame Chain" Lead Magnet</div>
+            <div class="chk-sub">Extract the Course 4/8 diagnostic widget to the landing page. "Is your manager the problem? Take the 2-min diagnostic."</div>
+            <div class="chk-tag" style="color:var(--cobalt);border-color:var(--cobalt)">UI Widget Live</div>
+          </div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p4b', 1, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Test "Dopamine Hit" UI Events</div>
+            <div class="chk-sub">Ensure that when a user completes a module, the visual UI updates smoothly and triggers a database log.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="s5">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="sec-eye">Week 05 Execution</div>
+      <div class="lh-title">The "Conference Hangover" Campaign</div>
+      <div class="lh-sub"><strong>The Trigger:</strong> Returning from SaaStr. Partied hard, slept 3 hours, zero actual pipeline generated.</div>
+    </div>
+    
+    <div class="success-banner" id="suc5">
+      <div class="suc-icon">🥃</div>
+      <div class="suc-txt">Week 5 Locked. Culture Checked.</div>
+    </div>
+
+    <div class="chk-wrap">
+      <div class="chk-group">
+        <div class="chk-hdr">
+          <div class="chk-title"><span class="chk-icon">👁️</span> Frontend: Ad Creative</div>
+          <div class="chk-prog" id="prog-p5f">0 / 2</div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p5f', 0, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Deploy Niche Newsletter Sponsorships</div>
+            <div class="chk-sub">Target GTMnow, Sales Hacker, etc. Reaching AEs reading industry news.</div>
+          </div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p5f', 1, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Upload "Sober Selling" Copy</div>
+            <div class="chk-sub">"While you were taking tequila shots, the top 10% were drinking sparkling water and stealing your prospects. Get the playbook."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chk-group">
+        <div class="chk-hdr">
+          <div class="chk-title"><span class="chk-icon">⚙️</span> Backend: Infrastructure</div>
+          <div class="chk-prog" id="prog-p5b">0 / 2</div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p5b', 0, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Launch Private Customer Community</div>
+            <div class="chk-sub">Set up a gated Discord/Circle.so environment. Integrate the join link into the post-purchase "Success" page.</div>
+            <div class="chk-tag" style="color:var(--theme);border-color:var(--theme)">Community Hub</div>
+          </div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p5b', 1, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Seed Initial Community Threads</div>
+            <div class="chk-sub">Post 3-4 discussion prompts regarding "Sober Selling" and "Happy Hour Escapes" so early buyers don't walk into an empty room.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="s6">
+    <div class="lh">
+      <div class="lh-stripe"></div>
+      <div class="sec-eye">Week 06 Execution</div>
+      <div class="lh-title">The "Home Office Disconnect" Campaign</div>
+      <div class="lh-sub"><strong>The Trigger:</strong> Snapping at a spouse at 7 PM because of stress over an outbound email sequence.</div>
+    </div>
+    
+    <div class="success-banner" id="suc6">
+      <div class="suc-icon">🚀</div>
+      <div class="suc-txt">ALL SYSTEMS GO. READY FOR LAUNCH.</div>
+    </div>
+
+    <div class="chk-wrap">
+      <div class="chk-group">
+        <div class="chk-hdr">
+          <div class="chk-title"><span class="chk-icon">👁️</span> Frontend: Ad Creative</div>
+          <div class="chk-prog" id="prog-p6f">0 / 2</div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p6f', 0, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Deploy Meta Ads (Evening/Weekend Focus)</div>
+            <div class="chk-sub">Target married/partnered sales reps aged 28-40 when they are likely off-the-clock but still stressed.</div>
+          </div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p6f', 1, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Upload "Pipeline vs Marriage" Video</div>
+            <div class="chk-sub">"If you are mentally tweaking subject lines at the dinner table, you are failing your most important partnership. Your pipeline will wait."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chk-group">
+        <div class="chk-hdr">
+          <div class="chk-title"><span class="chk-icon">⚙️</span> Backend: Infrastructure</div>
+          <div class="chk-prog" id="prog-p6b">0 / 3</div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p6b', 0, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Final Curriculum QA</div>
+            <div class="chk-sub">Verify all 12 courses, interactive HTML widgets, and downloadable PDFs open flawlessly across all devices.</div>
+            <div class="chk-tag" style="color:var(--amber);border-color:var(--amber)">Quality Assurance</div>
+          </div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p6b', 1, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Set Up Post-Course Review Sequence</div>
+            <div class="chk-sub">Trigger an automated email 14 days after purchase asking for a raw, honest review of the curriculum.</div>
+          </div>
+        </div>
+        <div class="chk-item" onclick="toggleTask('p6b', 2, this)">
+          <div class="chk-box"></div>
+          <div class="chk-txt-wrap">
+            <div class="chk-label">Open Cart & Ignite Ad Spend</div>
+            <div class="chk-sub">Remove passwords from the live environment. Flip campaigns from draft to active. Collect the first dollar.</div>
+            <div class="chk-tag" style="color:var(--theme);border-color:var(--theme);background:var(--theme-lt)">LAUNCH</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<aside class="sidebar">
+  <div class="sb-course">A-Z</div>
+  <div class="sb-lesson">GTM Execution Engine</div>
+  <div class="sb-divider"></div>
+  <div class="sb-label">6-Week Plan</div>
+  <div class="sb-item active" id="nav1" onclick="go(1)">
+    <div class="sb-tag">Week 01</div>
+    <div class="sb-name">Paycheck Shock</div>
+  </div>
+  <div class="sb-item" id="nav2" onclick="go(2)">
+    <div class="sb-tag">Week 02</div>
+    <div class="sb-name">PIP Threat</div>
+  </div>
+  <div class="sb-item" id="nav3" onclick="go(3)">
+    <div class="sb-tag">Week 03</div>
+    <div class="sb-name">Monday Overload</div>
+  </div>
+  <div class="sb-item" id="nav4" onclick="go(4)">
+    <div class="sb-tag">Week 04</div>
+    <div class="sb-name">Goalpost Moved</div>
+  </div>
+  <div class="sb-item" id="nav5" onclick="go(5)">
+    <div class="sb-tag">Week 05</div>
+    <div class="sb-name">Conference Hangover</div>
+  </div>
+  <div class="sb-item" id="nav6" onclick="go(6)">
+    <div class="sb-tag">Week 06</div>
+    <div class="sb-name">Home Office</div>
+  </div>
+</aside>
+
+<footer class="bottomnav" id="bottomnav" style="display:none">
+  <span class="nav-hint" id="hint">Check off items to trigger dopamine sequence.</span>
+  <div class="nav-btns">
+    <button class="btn" id="btnBack" onclick="back()" style="display:none">← Back</button>
+    <button class="btn btn-fill" id="btnNext" onclick="handleNext()"><span id="btnNextLabel">Next Week →</span></button>
+  </div>
+</footer>
+
+</div>
+
+<script>
+/* ════════════════════════════════════
+   STATE MANAGEMENT
+════════════════════════════════════ */
+const TOTAL_SCREENS = 7;
+let cur = 0;
+
+// Task tracking for checkboxes (Frontend & Backend for 6 weeks)
+const tasks = {
+  'p1f': [false, false], 'p1b': [false, false, false],
+  'p2f': [false, false], 'p2b': [false, false],
+  'p3f': [false, false], 'p3b': [false, false],
+  'p4f': [false, false], 'p4b': [false, false],
+  'p5f': [false, false], 'p5b': [false, false],
+  'p6f': [false, false], 'p6b': [false, false, false]
+};
+
+/* ════════════════════════════════════
+   INIT & NAVIGATION
+════════════════════════════════════ */
+function init() {
+  updateGlobalProgress();
+  render();
+}
+
+function go(n) {
+  document.getElementById('s'+cur).classList.remove('active');
+  cur = n;
+  document.getElementById('s'+cur).classList.add('active');
+  document.getElementById('main').scrollTop = 0;
+  render();
+}
+function next() { if(cur < TOTAL_SCREENS-1) go(cur+1); }
+function back() { if(cur > 0) go(cur-1); }
+function handleNext() { next(); }
+
+/* ════════════════════════════════════
+   CHECKLIST LOGIC (DOPAMINE ENGINE)
+════════════════════════════════════ */
+function toggleTask(groupId, taskIdx, el) {
+  tasks[groupId][taskIdx] = !tasks[groupId][taskIdx];
+  
+  if(tasks[groupId][taskIdx]) {
+    // Add satisfying pop effect
+    el.style.transform = 'scale(0.98)';
+    setTimeout(()=> el.style.transform = 'scale(1)', 150);
+  }
+  
+  el.classList.toggle('done', tasks[groupId][taskIdx]);
+  
+  // Update local group progress text
+  const total = tasks[groupId].length;
+  const completed = tasks[groupId].filter(Boolean).length;
+  document.getElementById('prog-' + groupId).textContent = `${completed} / ${total}`;
+  
+  checkPhaseSuccess();
+  updateGlobalProgress();
+  render();
+}
+
+/* ════════════════════════════════════
+   PROGRESS & RENDERING
+════════════════════════════════════ */
+function checkPhaseSuccess() {
+  for(let i=1; i<=6; i++) {
+    const fDone = tasks[`p${i}f`].every(Boolean);
+    const bDone = tasks[`p${i}b`].every(Boolean);
+    const sucBanner = document.getElementById('suc'+i);
+    if(sucBanner) {
+      sucBanner.classList.toggle('show', fDone && bDone);
+    }
+  }
+}
+
+function getPhaseCompletion(weekNum) {
+  if(weekNum < 1 || weekNum > 6) return true;
+  return tasks[`p${weekNum}f`].every(Boolean) && tasks[`p${weekNum}b`].every(Boolean);
+}
+
+function updateGlobalProgress() {
+  let totalTasks = 0;
+  let completedTasks = 0;
+  
+  Object.keys(tasks).forEach(key => {
+    totalTasks += tasks[key].length;
+    completedTasks += tasks[key].filter(Boolean).length;
+  });
+    
+  let pct = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progPct').textContent = pct + '%';
+  
+  if (pct === 100) {
+    document.getElementById('progPct').style.color = 'var(--theme)';
+    document.getElementById('progFill').style.background = 'var(--theme)';
+    document.getElementById('progFill').style.boxShadow = '0 0 15px var(--theme)';
+  }
+}
+
+function render() {
+  const isCover = cur === 0;
+  
+  document.getElementById('bottomnav').style.display = isCover ? 'none' : 'flex';
+  
+  if(!isCover) {
+    document.getElementById('btnBack').style.display = cur === 1 ? 'none' : 'block';
+    
+    // Check if current week is finished to enable "Next"
+    const canGo = getPhaseCompletion(cur);
+    document.getElementById('btnNext').disabled = !canGo;
+    
+    document.getElementById('btnNextLabel').textContent = cur === 6 ? 'All Systems Go' : 'Next Week →';
+    if(cur === 6 && canGo) {
+       document.getElementById('btnNext').style.background = 'var(--theme)';
+       document.getElementById('btnNextLabel').textContent = 'Launch Sequence Ready';
+    }
+    
+    let hint = "Execute all frontend and backend tasks to advance.";
+    if (canGo) hint = "✓ Execution complete. Ready for next phase.";
+    document.getElementById('hint').textContent = hint;
+    document.getElementById('hint').style.color = canGo ? 'var(--theme)' : 'var(--text-muted)';
+  }
+  
+  // Sidebar Highlights
+  for(let i=1; i<=6; i++) {
+    const el = document.getElementById('nav'+i);
+    if(el) el.classList.toggle('active', cur === i);
+  }
+}
+
+init();
+</script>
+</body>
+</html>

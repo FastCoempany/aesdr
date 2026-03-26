@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR | AE-SDR Alignment Contract Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* AESDR Dark Theme */
+  --bg-main: #020617; 
+  --bg-panel: #0F172A;
+  --bg-card: #1E293B;
+  --bg-hover: #334155;
+  
+  --text-main: #F8FAFC;
+  --text-muted: #94A3B8;
+  
+  /* Brand Accents */
+  --theme: #F59E0B; /* Gold for Alignment/Course 3 */
+  --theme-glow: rgba(245, 158, 11, 0.2);
+  --theme-text: #D97706;
+  --cobalt: #38BDF8; 
+  --coral: #EF4444; 
+  
+  --line: rgba(255,255,255,0.1);
+  --line2: rgba(255,255,255,0.2);
+  
+  --display: 'Abril Fatface', Georgia, serif;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --cond: 'Barlow Condensed', sans-serif;
+  --mono: 'DM Mono', monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg-main);color:var(--text-main);font-family:var(--serif);line-height:1.6}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:1px solid var(--line);background:var(--bg-panel);position:sticky;top:0;z-index:100}
+.brand{font-family:var(--cond);font-size:16px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;display:flex;align-items:center;gap:12px}
+.badge{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;background:var(--theme);color:var(--bg-main);font-weight:800;padding:4px 10px;border-radius:2px;box-shadow:0 0 10px var(--theme-glow)}
+.btn-print{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:10px 24px;border:none;background:var(--theme);color:var(--bg-main);cursor:pointer;border-radius:2px;transition:all .2s;box-shadow:0 0 15px var(--theme-glow)}
+.btn-print:hover{background:var(--theme-text);transform:translateY(-2px)}
+
+/* LAYOUT */
+.builder-layout{display:grid;grid-template-columns:400px 1fr;height:calc(100vh - 65px);overflow:hidden}
+
+/* LEFT: CONTROLS */
+.controls-col{background:var(--bg-panel);border-right:1px solid var(--line);padding:32px;overflow-y:auto}
+.ctrl-hdr{margin-bottom:32px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--theme);margin-bottom:12px;display:inline-block}
+.ctrl-title{font-family:var(--display);font-size:32px;line-height:1.1;margin-bottom:12px;color:var(--text-main)}
+.ctrl-sub{font-size:15px;color:var(--text-muted);line-height:1.5}
+
+.input-group{margin-bottom:24px}
+.input-label{display:block;font-family:var(--cond);font-size:14px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px}
+.input-field{width:100%;background:var(--bg-main);border:1px solid var(--line2);color:var(--text-main);font-family:var(--serif);font-size:16px;padding:12px;border-radius:4px;outline:none;transition:border-color .2s}
+.input-field:focus{border-color:var(--theme)}
+select.input-field{font-family:var(--cond);font-size:15px;text-transform:uppercase;cursor:pointer}
+textarea.input-field{resize:vertical;min-height:80px}
+
+.section-divider{height:1px;background:var(--line);margin:32px 0}
+
+/* RIGHT: PREVIEW (THE CONTRACT) */
+.preview-col{background:var(--bg-main);padding:40px;overflow-y:auto;display:flex;justify-content:center}
+.document-paper{background:#FFFFFF;width:100%;max-width:850px;min-height:1100px;padding:60px 80px;box-shadow:0 20px 50px rgba(0,0,0,0.5);color:#000000;font-family:var(--serif)}
+
+/* DOCUMENT STYLING */
+.doc-header{text-align:center;border-bottom:2px solid #000;padding-bottom:24px;margin-bottom:40px}
+.doc-title{font-family:var(--display);font-size:36px;margin-bottom:8px;color:#000}
+.doc-subtitle{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#555}
+
+.doc-section{margin-bottom:32px}
+.doc-sec-title{font-family:var(--cond);font-size:18px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#000;border-bottom:1px solid #CCC;padding-bottom:8px;margin-bottom:16px}
+.doc-text{font-size:16px;line-height:1.7;color:#222;margin-bottom:16px}
+.doc-list{list-style-type:none;margin-bottom:16px}
+.doc-list li{font-size:16px;line-height:1.7;color:#222;margin-bottom:8px;display:flex;gap:12px}
+.doc-list li::before{content:'■';color:#000;font-size:10px;margin-top:6px}
+
+.live-val{font-weight:700;color:#000;background:rgba(245, 158, 11, 0.2);padding:2px 6px;border-radius:2px;transition:background 0.3s}
+
+/* SIGNATURES */
+.sig-block{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:60px;page-break-inside:avoid}
+.sig-line{border-top:1px solid #000;padding-top:8px;margin-top:40px}
+.sig-name{font-family:var(--cond);font-size:16px;font-weight:800;text-transform:uppercase}
+.sig-role{font-family:var(--mono);font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-top:4px}
+
+/* PRINT MEDIA QUERIES */
+@media print {
+  @page { margin: 0.5in; size: portrait; }
+  body { background: #FFFFFF; }
+  .topbar, .controls-col { display: none !important; }
+  .builder-layout { display: block; height: auto; overflow: visible; }
+  .preview-col { padding: 0; background: #FFFFFF; display: block; }
+  .document-paper { box-shadow: none; padding: 0; min-height: auto; max-width: 100%; width: 100%; }
+  .live-val { background: transparent; padding: 0; }
+}
+
+@media(max-width: 900px) {
+  .builder-layout { grid-template-columns: 1fr; overflow: auto; height: auto; }
+  .preview-col { display: none; /* Hide preview on mobile to save space */ }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">AESDR <span class="badge">Tool: C3.4</span></div>
+  <button class="btn-print" onclick="window.print()">🖨️ Export Contract</button>
+</header>
+
+<div class="builder-layout">
+  
+  <div class="controls-col">
+    <div class="ctrl-hdr">
+      <div class="eyebrow">Alignment Engine</div>
+      <h1 class="ctrl-title">The SLA Builder</h1>
+      <p class="ctrl-sub">Enter the terms of your partnership. The document will update in real-time. Export it, bring it to your 1:1, and sign it.</p>
+    </div>
+
+    <div class="input-group">
+      <label class="input-label">Account Executive Name</label>
+      <input type="text" id="in_aeName" class="input-field" value="Jane Doe" onkeyup="updateDoc()">
+    </div>
+    <div class="input-group">
+      <label class="input-label">SDR Name</label>
+      <input type="text" id="in_sdrName" class="input-field" value="John Smith" onkeyup="updateDoc()">
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div class="input-group">
+      <label class="input-label">Meeting Cadence</label>
+      <select id="in_cadence" class="input-field" onchange="updateDoc()">
+        <option value="Weekly (30 Minutes)">Weekly (30 Minutes)</option>
+        <option value="Bi-Weekly (45 Minutes)">Bi-Weekly (45 Minutes)</option>
+        <option value="Twice a Week (15 Min Standups)">Twice a Week (15 Min Standups)</option>
+      </select>
+    </div>
+    
+    <div class="input-group">
+      <label class="input-label">Qualification Framework</label>
+      <select id="in_framework" class="input-field" onchange="updateDoc()">
+        <option value="BANT (Budget, Authority, Need, Timeline)">BANT (Budget, Authority, Need, Timeline)</option>
+        <option value="MEDDPICC">MEDDPICC</option>
+        <option value="CHAMP (Challenges, Authority, Money, Prioritization)">CHAMP</option>
+        <option value="Custom (Defined Below)">Custom</option>
+      </select>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div class="input-group">
+      <label class="input-label">SDR Monthly Quota Commitment (Meetings)</label>
+      <input type="number" id="in_sdrQuota" class="input-field" value="12" onkeyup="updateDoc()">
+    </div>
+
+    <div class="input-group">
+      <label class="input-label">AE CRM Update SLA (Hours post-meeting)</label>
+      <select id="in_aeSla" class="input-field" onchange="updateDoc()">
+        <option value="24 Hours">24 Hours</option>
+        <option value="48 Hours">48 Hours</option>
+        <option value="End of Day">End of Day</option>
+      </select>
+    </div>
+    
+    <div class="input-group">
+      <label class="input-label">Custom Rules of Engagement</label>
+      <textarea id="in_custom" class="input-field" onkeyup="updateDoc()">Accounts over $50k ARR require AE approval before booking. SDR has autonomy on accounts under $50k.</textarea>
+    </div>
+
+  </div>
+
+  <div class="preview-col">
+    <div class="document-paper">
+      
+      <div class="doc-header">
+        <h1 class="doc-title">Service Level Agreement (SLA)</h1>
+        <div class="doc-subtitle">Account Executive & Sales Development Alignment</div>
+      </div>
+
+      <div class="doc-section">
+        <p class="doc-text">This agreement outlines the operational standards, mutual expectations, and rules of engagement between the Account Executive, <span class="live-val" id="out_aeName1">Jane Doe</span>, and the Sales Development Representative, <span class="live-val" id="out_sdrName1">John Smith</span>. The purpose of this document is to eliminate friction, establish clear boundaries, and maximize revenue generation.</p>
+      </div>
+
+      <div class="doc-section">
+        <h2 class="doc-sec-title">I. Communication & Cadence</h2>
+        <ul class="doc-list">
+          <li><strong>Alignment Meetings:</strong> We agree to a <span class="live-val" id="out_cadence">Weekly (30 Minutes)</span> sync. This time is protected and will not be canceled unless mutually agreed upon.</li>
+          <li><strong>Feedback Loop:</strong> Feedback on calls and meetings will be delivered directly, constructively, and within 48 hours of the event.</li>
+        </ul>
+      </div>
+
+      <div class="doc-section">
+        <h2 class="doc-sec-title">II. SDR Commitments</h2>
+        <ul class="doc-list">
+          <li><strong>Pipeline Generation:</strong> The SDR commits to sourcing and handing over <span class="live-val" id="out_sdrQuota">12</span> highly qualified meetings per month.</li>
+          <li><strong>Qualification Standard:</strong> All handed-over meetings must meet the minimum criteria defined by the <span class="live-val" id="out_framework">BANT (Budget, Authority, Need, Timeline)</span> framework.</li>
+          <li><strong>Pre-Meeting Briefs:</strong> The SDR will provide CRM notes outlining the prospect's pain points and goals prior to the AE taking the discovery call.</li>
+        </ul>
+      </div>
+
+      <div class="doc-section">
+        <h2 class="doc-sec-title">III. Account Executive Commitments</h2>
+        <ul class="doc-list">
+          <li><strong>CRM Accountability:</strong> The AE commits to updating the CRM status of an SDR-sourced meeting within <span class="live-val" id="out_aeSla">24 Hours</span> of the call concluding, ensuring the SDR receives accurate commission credit.</li>
+          <li><strong>Mentorship:</strong> The AE agrees to spend time reviewing cold calls, offering strategic account insights, and actively aiding in the SDR's professional development.</li>
+          <li><strong>No "Ghosting":</strong> The AE will not no-show an SDR-sourced meeting without securing a qualified backup to run the call.</li>
+        </ul>
+      </div>
+
+      <div class="doc-section">
+        <h2 class="doc-sec-title">IV. Rules of Engagement</h2>
+        <p class="doc-text live-val" id="out_custom" style="display:inline-block">Accounts over $50k ARR require AE approval before booking. SDR has autonomy on accounts under $50k.</p>
+      </div>
+
+      <div class="sig-block">
+        <div>
+          <div class="sig-line"></div>
+          <div class="sig-name" id="out_aeName2">Jane Doe</div>
+          <div class="sig-role">Account Executive</div>
+        </div>
+        <div>
+          <div class="sig-line"></div>
+          <div class="sig-name" id="out_sdrName2">John Smith</div>
+          <div class="sig-role">Sales Development Rep</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+function updateDoc() {
+  // Get values
+  const aeName = document.getElementById('in_aeName').value || '[AE Name]';
+  const sdrName = document.getElementById('in_sdrName').value || '[SDR Name]';
+  const cadence = document.getElementById('in_cadence').value;
+  const framework = document.getElementById('in_framework').value;
+  const sdrQuota = document.getElementById('in_sdrQuota').value || '[X]';
+  const aeSla = document.getElementById('in_aeSla').value;
+  const custom = document.getElementById('in_custom').value || 'Standard rules apply.';
+
+  // Update DOM
+  document.getElementById('out_aeName1').textContent = aeName;
+  document.getElementById('out_aeName2').textContent = aeName;
+  document.getElementById('out_sdrName1').textContent = sdrName;
+  document.getElementById('out_sdrName2').textContent = sdrName;
+  
+  document.getElementById('out_cadence').textContent = cadence;
+  document.getElementById('out_framework').textContent = framework;
+  document.getElementById('out_sdrQuota').textContent = sdrQuota;
+  document.getElementById('out_aeSla').textContent = aeSla;
+  document.getElementById('out_custom').textContent = custom;
+  
+  // Optional: Briefly flash the background to show it updated
+  const liveVals = document.querySelectorAll('.live-val');
+  liveVals.forEach(el => {
+    el.style.backgroundColor = 'rgba(245, 158, 11, 0.5)';
+    setTimeout(() => {
+      el.style.backgroundColor = 'rgba(245, 158, 11, 0.2)';
+    }, 200);
+  });
+}
+
+// Initial render
+updateDoc();
+</script>
+</body>
+</html>

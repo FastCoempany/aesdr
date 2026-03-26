@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR | The "I Don't Know" Framework</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* AESDR Dark Theme */
+  --bg-main: #020617; 
+  --bg-panel: #0F172A;
+  --bg-card: #1E293B;
+  
+  --text-main: #F8FAFC;
+  --text-muted: #94A3B8;
+  
+  /* Asset Theme: Cyber Blue & Gold */
+  --theme: #38BDF8; 
+  --theme-lt: rgba(56, 189, 248, 0.15);
+  --gold: #F59E0B;
+  --gold-lt: rgba(245, 158, 11, 0.15);
+  --coral: #EF4444; 
+  --cor-lt: rgba(239, 68, 68, 0.15);
+  
+  --line: rgba(255,255,255,0.1);
+  --line2: rgba(255,255,255,0.2);
+  
+  --display: 'Abril Fatface', Georgia, serif;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --cond: 'Barlow Condensed', sans-serif;
+  --mono: 'DM Mono', monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg-main);color:var(--text-main);font-family:var(--serif);line-height:1.6}
+
+/* TOPBAR (Hide on Print) */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:1px solid var(--line);background:var(--bg-panel);position:sticky;top:0;z-index:100}
+.brand{font-family:var(--cond);font-size:16px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;display:flex;align-items:center;gap:12px}
+.badge{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;background:var(--theme);color:var(--bg-main);font-weight:800;padding:4px 10px;border-radius:2px;box-shadow:0 0 10px var(--theme-lt)}
+.btn{font-family:var(--cond);font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:10px 20px;border:1px solid var(--theme);background:var(--theme-lt);color:var(--theme);cursor:pointer;border-radius:2px;transition:all .2s;}
+.btn:hover{background:var(--theme);color:var(--bg-main);box-shadow:0 0 15px var(--theme-lt)}
+
+/* PAGE CONTAINER (A4 Proportions for Screen) */
+.sheet-container{max-width:850px;margin:40px auto;padding:50px;background:var(--bg-panel);border:1px solid var(--line);border-radius:4px;box-shadow:0 20px 50px rgba(0,0,0,0.5)}
+
+/* HEADER */
+.sheet-header{text-align:center;margin-bottom:40px;padding-bottom:30px;border-bottom:2px solid var(--line)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;display:inline-block}
+.title{font-family:var(--display);font-size:52px;line-height:1;margin-bottom:16px;color:var(--text-main)}
+.subtitle{font-size:18px;color:var(--text-muted);max-width:600px;margin:0 auto;font-style:italic}
+
+/* THE RULE */
+.golden-rule{background:var(--gold-lt);border-left:4px solid var(--gold);padding:20px 24px;margin-bottom:40px;border-radius:0 4px 4px 0}
+.gr-title{font-family:var(--cond);font-size:16px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.gr-text{font-size:16px;color:var(--text-main);line-height:1.5}
+
+/* THE 3-STEP PIVOT */
+.step-section-title{font-family:var(--cond);font-size:20px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;margin-bottom:20px;color:var(--theme);border-bottom:1px solid var(--line);padding-bottom:10px}
+.pivot-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:40px}
+.pivot-card{background:var(--bg-card);border:1px solid var(--line);padding:24px;border-radius:4px;position:relative}
+.p-num{font-family:var(--display);font-size:40px;color:var(--line2);position:absolute;top:10px;right:16px;line-height:1}
+.p-title{font-family:var(--cond);font-size:18px;font-weight:700;text-transform:uppercase;color:var(--text-main);margin-bottom:12px;position:relative;z-index:1}
+.p-text{font-size:15px;color:var(--text-muted);position:relative;z-index:1}
+
+/* SCRIPTS */
+.scripts-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:40px}
+.script-box{background:var(--bg-main);border:1px solid var(--theme);padding:24px;border-radius:4px;border-left:4px solid var(--theme)}
+.s-context{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px}
+.s-script{font-size:18px;font-weight:600;color:var(--text-main);line-height:1.5;font-style:italic}
+.s-script strong{color:var(--theme)}
+
+/* RED FLAGS */
+.red-flags{background:var(--cor-lt);border:1px solid var(--coral);padding:24px;border-radius:4px}
+.rf-title{font-family:var(--cond);font-size:16px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--coral);margin-bottom:16px}
+.rf-list{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rf-list li{font-family:var(--mono);font-size:13px;color:var(--text-main);display:flex;gap:10px;align-items:flex-start}
+.rf-list li::before{content:'✕';color:var(--coral);font-weight:bold}
+
+/* PRINT MEDIA QUERIES (Saves ink, turns into clean white 1-pager) */
+@media print {
+  @page { margin: 0.5in; }
+  body { background: #FFFFFF; color: #000000; }
+  .topbar { display: none; }
+  .sheet-container { border: none; box-shadow: none; margin: 0; padding: 0; max-width: 100%; background: #FFFFFF; }
+  .title { color: #000000; }
+  .subtitle { color: #444444; }
+  .golden-rule { background: #FFFBEB; border-left-color: #D97706; }
+  .gr-title { color: #D97706; }
+  .gr-text { color: #000000; }
+  .step-section-title { color: #0284C7; border-bottom-color: #E2E8F0; }
+  .pivot-card { background: #F8FAFC; border-color: #E2E8F0; }
+  .p-title { color: #000000; }
+  .p-text { color: #333333; }
+  .p-num { color: #CBD5E1; }
+  .script-box { background: #FFFFFF; border-color: #0284C7; border-left-color: #0284C7; }
+  .s-context { color: #64748B; }
+  .s-script { color: #000000; }
+  .s-script strong { color: #0284C7; }
+  .red-flags { background: #FEF2F2; border-color: #EF4444; }
+  .rf-title { color: #DC2626; }
+  .rf-list li { color: #000000; }
+}
+
+@media(max-width: 768px) {
+  .pivot-grid, .scripts-grid, .rf-list { grid-template-columns: 1fr; }
+  .sheet-container { padding: 24px; margin: 20px; }
+  .title { font-size: 36px; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">AESDR <span class="badge">Tool: C6.3</span></div>
+  <button class="btn" onclick="window.print()">🖨️ Print Cheat Sheet</button>
+</header>
+
+<div class="sheet-container">
+  
+  <div class="sheet-header">
+    <div class="eyebrow">Desk Asset · Course 6.3</div>
+    <h1 class="title">The "I Don't Know" Framework</h1>
+    <p class="subtitle">Panic ruins deals. Honesty builds trust. Tape this to your monitor and use these scripts when a prospect asks a question you don't know the answer to.</p>
+  </div>
+
+  <div class="golden-rule">
+    <div class="gr-title">The Golden Rule of the Unknown</div>
+    <div class="gr-text">"I don't know" is not a weakness. It is a bridge to a follow-up. Guessing destroys credibility instantly. Owning the gap and pivoting to action proves you are a professional who values accuracy over ego.</div>
+  </div>
+
+  <div class="step-section-title">The 3-Step Pivot Mechanism</div>
+  
+  <div class="pivot-grid">
+    <div class="pivot-card">
+      <div class="p-num">1</div>
+      <div class="p-title">Validate</div>
+      <div class="p-text">Do not freeze. Acknowledge that the question is highly relevant and important. Validate the prospect's intelligence for asking it.</div>
+    </div>
+    <div class="pivot-card">
+      <div class="p-num">2</div>
+      <div class="p-title">Own It</div>
+      <div class="p-text">State clearly that you do not have the exact, 100% accurate answer in front of you. Frame this as a commitment to accuracy, not a lack of knowledge.</div>
+    </div>
+    <div class="pivot-card">
+      <div class="p-num">3</div>
+      <div class="p-title">The Pivot</div>
+      <div class="p-text">Take control. Give a precise deadline for when you will deliver the answer, or pivot the question to schedule a follow-up meeting with a specialist.</div>
+    </div>
+  </div>
+
+  <div class="step-section-title">Word-For-Word Scripts</div>
+
+  <div class="scripts-grid">
+    <div class="script-box">
+      <div class="s-context">Scenario: Deep Technical Question</div>
+      <div class="s-script">"That is a great question. I want to make sure I give you the <strong>exact technical specs</strong> on that integration. Let me grab that documentation from my Solutions Engineer and I will email it to you <strong>by EOD today.</strong>"</div>
+    </div>
+
+    <div class="script-box">
+      <div class="s-context">Scenario: Product Roadmap / Future Feature</div>
+      <div class="s-script">"That's actually a popular request. I know our product team is evaluating it, but let me <strong>verify the exact timeline</strong> with them so I don't give you bad intel. I'll circle back on our <strong>next call.</strong>"</div>
+    </div>
+
+    <div class="script-box">
+      <div class="s-context">Scenario: Hyper-Specific Pricing/Discounting</div>
+      <div class="s-script">"Before we lock in a specific number, I need to take this back to my desk to see <strong>what levers we can pull</strong> based on your timeline. I will have a firm, approved number for you <strong>by tomorrow morning.</strong>"</div>
+    </div>
+
+    <div class="script-box">
+      <div class="s-context">Scenario: Obscure Competitor Comparison</div>
+      <div class="s-script">"I’ll be honest, I haven't seen them used in that specific use-case recently, so I don't want to guess. <strong>What is it about their approach</strong> that stood out to you?" <br><br><span style="font-size:14px;color:var(--text-muted)">(Note: Pivot back with a discovery question).</span></div>
+    </div>
+  </div>
+
+  <div class="red-flags">
+    <div class="rf-title">Never Say These Things</div>
+    <ul class="rf-list">
+      <li>"Umm... I think we do that..."</li>
+      <li>"Yes, we probably support that feature."</li>
+      <li>"I'm pretty sure that's how it works."</li>
+      <li>"To be honest, I'm new here so I don't know."</li>
+      <li>"That's a good question... [Dead Silence]"</li>
+      <li>"I'll have to ask my manager." (Makes you sound junior)</li>
+    </ul>
+  </div>
+
+</div>
+
+</body>
+</html>
