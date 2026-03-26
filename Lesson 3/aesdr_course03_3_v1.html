@@ -469,6 +469,37 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <li><div class="hw-box"></div>Self-reflection: Are you responding emotionally to your manager's quirks, or are you managing up effectively? Write down the last three times you felt frustrated. What specific action could you have taken instead?</li>
         </ul>
       </div>
+      <!-- ═══ EMBEDDED SLA BUILDER ═══ -->
+      <div style="margin-top:24px;background:#020617;border-radius:8px;padding:28px;color:#F8FAFC">
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#38BDF8;margin-bottom:10px;display:inline-block;padding:4px 10px;background:rgba(56,189,248,0.1);border-radius:2px">Interactive Tool</div>
+        <div style="font-family:var(--display);font-size:28px;line-height:1.1;margin-bottom:8px;color:#F8FAFC">AE-SDR Alignment Contract</div>
+        <p style="font-family:var(--serif);font-size:14px;color:#94A3B8;margin-bottom:20px;max-width:600px">Fill in the fields. The document updates live. Print it and bring it to your next 1:1.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div><div style="font-family:var(--cond);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px">AE Name</div><input type="text" id="slaAE" value="Jane Doe" oninput="slaUpdate()" style="width:100%;background:#0F172A;border:1px solid rgba(255,255,255,0.2);color:#F8FAFC;font-family:var(--mono);font-size:13px;padding:10px;border-radius:2px;outline:none"></div>
+            <div><div style="font-family:var(--cond);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px">SDR Name</div><input type="text" id="slaSDR" value="John Smith" oninput="slaUpdate()" style="width:100%;background:#0F172A;border:1px solid rgba(255,255,255,0.2);color:#F8FAFC;font-family:var(--mono);font-size:13px;padding:10px;border-radius:2px;outline:none"></div>
+            <div><div style="font-family:var(--cond);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px">Meeting Cadence</div><select id="slaCadence" onchange="slaUpdate()" style="width:100%;background:#0F172A;border:1px solid rgba(255,255,255,0.2);color:#F8FAFC;font-family:var(--mono);font-size:13px;padding:10px;border-radius:2px;outline:none"><option>Weekly (30 Minutes)</option><option>Bi-Weekly (45 Minutes)</option><option>Twice a Week (15 Min Standups)</option></select></div>
+            <div><div style="font-family:var(--cond);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px">Qualification Framework</div><select id="slaFramework" onchange="slaUpdate()" style="width:100%;background:#0F172A;border:1px solid rgba(255,255,255,0.2);color:#F8FAFC;font-family:var(--mono);font-size:13px;padding:10px;border-radius:2px;outline:none"><option>BANT (Budget, Authority, Need, Timeline)</option><option>MEDDPICC</option><option>CHAMP</option></select></div>
+            <div><div style="font-family:var(--cond);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px">SDR Monthly Quota (Meetings)</div><input type="number" id="slaQuota" value="12" oninput="slaUpdate()" style="width:100%;background:#0F172A;border:1px solid rgba(255,255,255,0.2);color:#F8FAFC;font-family:var(--mono);font-size:13px;padding:10px;border-radius:2px;outline:none"></div>
+            <div><div style="font-family:var(--cond);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px">AE CRM Update SLA</div><select id="slaCRM" onchange="slaUpdate()" style="width:100%;background:#0F172A;border:1px solid rgba(255,255,255,0.2);color:#F8FAFC;font-family:var(--mono);font-size:13px;padding:10px;border-radius:2px;outline:none"><option>24 Hours</option><option>48 Hours</option><option>End of Day</option></select></div>
+          </div>
+          <div id="slaDoc" style="background:#FFFFF5;color:#1a1a1a;padding:24px;border-radius:4px;font-family:Georgia,serif;font-size:13px;line-height:1.7;max-height:480px;overflow-y:auto">
+            <div style="text-align:center;border-bottom:2px solid #1a1a1a;padding-bottom:12px;margin-bottom:16px"><div style="font-family:var(--cond);font-size:18px;font-weight:800;letter-spacing:.08em;text-transform:uppercase">Service Level Agreement</div><div style="font-size:11px;color:#666;margin-top:4px">AE & SDR Alignment Contract</div></div>
+            <p id="slaIntro" style="margin-bottom:14px">This agreement outlines the standards between AE <strong>Jane Doe</strong> and SDR <strong>John Smith</strong> to eliminate friction and maximize revenue.</p>
+            <p style="font-weight:bold;margin-bottom:6px;font-family:var(--cond);text-transform:uppercase;font-size:12px;letter-spacing:.05em">I. Communication</p>
+            <p id="slaC1" style="margin-bottom:14px">Alignment meetings: <strong>Weekly (30 Minutes)</strong>. Protected time — no cancellations without mutual agreement.</p>
+            <p style="font-weight:bold;margin-bottom:6px;font-family:var(--cond);text-transform:uppercase;font-size:12px;letter-spacing:.05em">II. SDR Commitments</p>
+            <p id="slaC2" style="margin-bottom:14px">Source <strong>12</strong> qualified meetings/month using <strong>BANT</strong>. Pre-meeting CRM notes required.</p>
+            <p style="font-weight:bold;margin-bottom:6px;font-family:var(--cond);text-transform:uppercase;font-size:12px;letter-spacing:.05em">III. AE Commitments</p>
+            <p id="slaC3" style="margin-bottom:14px">Update CRM within <strong>24 Hours</strong> post-meeting. No ghosting SDR-sourced meetings.</p>
+            <div style="display:flex;gap:40px;margin-top:24px;border-top:1px solid #ccc;padding-top:16px">
+              <div><div style="border-bottom:1px solid #1a1a1a;width:140px;margin-bottom:4px"></div><div id="slaSigAE" style="font-size:12px;font-weight:bold">Jane Doe</div><div style="font-size:10px;color:#666">Account Executive</div></div>
+              <div><div style="border-bottom:1px solid #1a1a1a;width:140px;margin-bottom:4px"></div><div id="slaSigSDR" style="font-size:12px;font-weight:bold">John Smith</div><div style="font-size:10px;color:#666">SDR</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ═══ END SLA BUILDER ═══ -->
     </div>
   </div>
 
@@ -929,6 +960,18 @@ function render(){
 }
 
 init();
+
+/* ═══ SLA BUILDER (embedded tool) ═══ */
+function slaUpdate(){
+  const ae=document.getElementById('slaAE').value||'[AE]',sdr=document.getElementById('slaSDR').value||'[SDR]',cad=document.getElementById('slaCadence').value,fw=document.getElementById('slaFramework').value,q=document.getElementById('slaQuota').value||'X',crm=document.getElementById('slaCRM').value;
+  document.getElementById('slaIntro').innerHTML='This agreement outlines the standards between AE <strong>'+ae+'</strong> and SDR <strong>'+sdr+'</strong> to eliminate friction and maximize revenue.';
+  document.getElementById('slaC1').innerHTML='Alignment meetings: <strong>'+cad+'</strong>. Protected time — no cancellations without mutual agreement.';
+  document.getElementById('slaC2').innerHTML='Source <strong>'+q+'</strong> qualified meetings/month using <strong>'+fw+'</strong>. Pre-meeting CRM notes required.';
+  document.getElementById('slaC3').innerHTML='Update CRM within <strong>'+crm+'</strong> post-meeting. No ghosting SDR-sourced meetings.';
+  document.getElementById('slaSigAE').textContent=ae;
+  document.getElementById('slaSigSDR').textContent=sdr;
+}
+slaUpdate();
 </script>
 </body>
 </html>

@@ -499,6 +499,32 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <li><div class="hw-box"></div>Be direct in every Slack message. Instead of "Let's follow up later," use "Follow up with XYZ prospect by 3 PM today."</li>
         </ul>
       </div>
+      <!-- ═══ EMBEDDED TIME RECLAIMED CALCULATOR ═══ -->
+      <div style="margin-top:24px;background:#020617;border-radius:8px;padding:28px;color:#F8FAFC">
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#38BDF8;margin-bottom:10px;display:inline-block;padding:4px 10px;background:rgba(56,189,248,0.1);border-radius:2px">Interactive Tool</div>
+        <div style="font-family:var(--display);font-size:28px;line-height:1.1;margin-bottom:8px;color:#F8FAFC">Time Reclaimed Calculator</div>
+        <p style="font-family:var(--serif);font-size:14px;color:#94A3B8;margin-bottom:20px;max-width:600px">Plug in your numbers to see exactly how much selling time you're throwing away.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid rgba(255,255,255,0.1);overflow:hidden;border-radius:4px;max-width:860px">
+          <div style="padding:24px;border-right:1px solid rgba(255,255,255,0.1);background:#0F172A">
+            <div style="margin-bottom:24px"><div style="font-family:var(--cond);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px">Target OTE ($)</div><input type="number" id="trcOTE" value="150000" oninput="trcCalc()" style="width:100%;background:#020617;border:1px solid rgba(255,255,255,0.2);color:#F8FAFC;font-family:var(--mono);font-size:14px;padding:10px;border-radius:2px;outline:none"></div>
+            <div style="margin-bottom:24px"><div style="font-family:var(--cond);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px;display:flex;justify-content:space-between">Slack/Email Distractions <span style="font-family:var(--mono);color:#38BDF8" id="trcSlackV">5 hrs/wk</span></div><input type="range" id="trcSlack" min="0" max="20" value="5" oninput="trcCalc()" style="width:100%;accent-color:#10B981"></div>
+            <div><div style="font-family:var(--cond);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px;display:flex;justify-content:space-between">CRM/Admin Bloat <span style="font-family:var(--mono);color:#38BDF8" id="trcCrmV">5 hrs/wk</span></div><input type="range" id="trcCrm" min="0" max="20" value="5" oninput="trcCalc()" style="width:100%;accent-color:#10B981"></div>
+          </div>
+          <div style="padding:24px;background:#0F172A;display:flex;flex-direction:column;justify-content:center">
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:10px"><span style="font-family:var(--cond);font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#94A3B8">Hourly Rate</span><span id="trcRate" style="font-family:var(--mono);font-size:18px;color:#F8FAFC">$72/hr</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:10px"><span style="font-family:var(--cond);font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#94A3B8">Weekly Lost</span><span id="trcWeek" style="font-family:var(--mono);font-size:18px;color:#EF4444">10 hrs</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:10px"><span style="font-family:var(--cond);font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#94A3B8">Annual Hours Burned</span><span id="trcYear" style="font-family:var(--mono);font-size:18px;color:#EF4444">520 hrs</span></div>
+            <div style="margin-top:8px;text-align:center;padding:24px 16px;border:1px solid rgba(239,68,68,0.4);background:rgba(239,68,68,0.05);border-radius:8px" id="trcBox">
+              <div style="font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#F8FAFC;margin-bottom:6px">Annual Financial Bleed</div>
+              <div id="trcBleed" style="font-family:var(--display);font-size:44px;line-height:1;color:#EF4444">$37,500</div>
+              <div id="trcSub" style="font-family:var(--serif);font-size:12px;color:#94A3B8;margin-top:8px;font-style:italic">Selling time you're throwing away this year.</div>
+            </div>
+            <button onclick="trcReclaim()" style="width:100%;margin-top:16px;font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:14px;border:none;background:#10B981;color:#020617;cursor:pointer;border-radius:4px">Reclaim My Time</button>
+            <div id="trcSuccess" style="text-align:center;font-family:var(--cond);font-size:12px;font-weight:700;color:#10B981;letter-spacing:.05em;text-transform:uppercase;margin-top:10px;opacity:0;transition:opacity .3s">✓ TIME RECLAIMED. GET BACK TO THE PIPELINE.</div>
+          </div>
+        </div>
+      </div>
+      <!-- ═══ END TIME RECLAIMED CALCULATOR ═══ -->
     </div>
   </div>
 
@@ -976,6 +1002,32 @@ document.addEventListener('click',function(e){
 });
 
 init();
+
+/* ═══ TIME RECLAIMED CALCULATOR (embedded tool) ═══ */
+const trcFmt=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(n);
+function trcCalc(){
+  document.getElementById('trcSuccess').style.opacity='0';
+  const ote=parseFloat(document.getElementById('trcOTE').value)||0;
+  const s=parseInt(document.getElementById('trcSlack').value)||0;
+  const c=parseInt(document.getElementById('trcCrm').value)||0;
+  document.getElementById('trcSlackV').textContent=s+' hrs/wk';
+  document.getElementById('trcCrmV').textContent=c+' hrs/wk';
+  const rate=ote/2080,wk=s+c,yr=wk*52,bleed=yr*rate;
+  document.getElementById('trcRate').textContent=trcFmt(rate)+'/hr';
+  document.getElementById('trcWeek').textContent=wk+' hrs';
+  document.getElementById('trcWeek').style.color=wk>0?'#EF4444':'#F8FAFC';
+  document.getElementById('trcYear').textContent=yr+' hrs';
+  document.getElementById('trcYear').style.color=yr>0?'#EF4444':'#F8FAFC';
+  document.getElementById('trcBleed').textContent=trcFmt(bleed);
+  if(bleed>0){document.getElementById('trcBleed').style.color='#EF4444';document.getElementById('trcBox').style.borderColor='rgba(239,68,68,0.4)';document.getElementById('trcBox').style.background='rgba(239,68,68,0.05)';document.getElementById('trcSub').textContent="Selling time you're throwing away this year."}
+  else{document.getElementById('trcBleed').style.color='#10B981';document.getElementById('trcBox').style.borderColor='rgba(16,185,129,0.4)';document.getElementById('trcBox').style.background='rgba(16,185,129,0.05)';document.getElementById('trcSub').textContent='Zero bleed. Your time is locked in on revenue.'}
+}
+function trcReclaim(){
+  let s=parseInt(document.getElementById('trcSlack').value),c=parseInt(document.getElementById('trcCrm').value);
+  if(s===0&&c===0)return;
+  const iv=setInterval(()=>{if(s>0)s--;if(c>0)c--;document.getElementById('trcSlack').value=s;document.getElementById('trcCrm').value=c;trcCalc();if(s===0&&c===0){clearInterval(iv);document.getElementById('trcSuccess').style.opacity='1'}},20);
+}
+trcCalc();
 </script>
 </body>
 </html>

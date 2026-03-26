@@ -491,6 +491,23 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <li><div class="hw-box"></div>Plan a solo trip or dive into a hobby that excites you. Build a life you enjoy on your own terms.</li>
         </ul>
       </div>
+      <!-- ═══ EMBEDDED 72-HOUR STRIKE PLAN ═══ -->
+      <div style="margin-top:24px;background:#020617;border-radius:8px;padding:28px;color:#F8FAFC">
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#38BDF8;margin-bottom:10px;display:inline-block;padding:4px 10px;background:rgba(56,189,248,0.1);border-radius:2px">Final Capstone</div>
+        <div style="font-family:var(--display);font-size:28px;line-height:1.1;margin-bottom:8px;color:#F8FAFC">The 72-Hour Strike Plan</div>
+        <p style="font-family:var(--serif);font-size:14px;color:#94A3B8;margin-bottom:16px;max-width:600px">Don't close this until they're done. Check off these 5 actions right now.</p>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-family:var(--cond);font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8">Execution Status</span><span id="spPct" style="font-family:var(--mono);font-size:14px;color:#10B981">0%</span></div>
+        <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;margin-bottom:20px;overflow:hidden"><div id="spBar" style="height:100%;width:0%;background:#10B981;transition:width .4s ease;border-radius:2px"></div></div>
+        <div id="spList" style="display:flex;flex-direction:column;gap:10px">
+          <div class="sp-item" onclick="spToggle(0,this)" style="display:flex;gap:14px;align-items:flex-start;padding:16px;background:#0F172A;border:1px solid rgba(255,255,255,0.1);border-radius:4px;cursor:pointer;transition:all .2s"><div class="sp-box" style="width:22px;height:22px;border:2px solid rgba(255,255,255,0.3);border-radius:3px;flex-shrink:0;margin-top:2px;transition:all .2s;display:flex;align-items:center;justify-content:center"></div><div><div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px">Course 9: Tech Boundaries</div><div style="font-family:var(--cond);font-size:15px;font-weight:700;color:#F8FAFC">Turn off Slack/Email notifications on your phone.</div><div style="font-size:12px;color:#94A3B8;margin-top:4px;font-style:italic">Stop letting other people's emergencies dictate your attention.</div></div></div>
+          <div class="sp-item" onclick="spToggle(1,this)" style="display:flex;gap:14px;align-items:flex-start;padding:16px;background:#0F172A;border:1px solid rgba(255,255,255,0.1);border-radius:4px;cursor:pointer;transition:all .2s"><div class="sp-box" style="width:22px;height:22px;border:2px solid rgba(255,255,255,0.3);border-radius:3px;flex-shrink:0;margin-top:2px;transition:all .2s;display:flex;align-items:center;justify-content:center"></div><div><div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px">Course 9: CRM Cleanup</div><div style="font-family:var(--cond);font-size:15px;font-weight:700;color:#F8FAFC">Purge 5 "dead" leads from your pipeline right now.</div><div style="font-size:12px;color:#94A3B8;margin-top:4px;font-style:italic">Clean data creates clarity. Move stale deals to Closed Lost.</div></div></div>
+          <div class="sp-item" onclick="spToggle(2,this)" style="display:flex;gap:14px;align-items:flex-start;padding:16px;background:#0F172A;border:1px solid rgba(255,255,255,0.1);border-radius:4px;cursor:pointer;transition:all .2s"><div class="sp-box" style="width:22px;height:22px;border:2px solid rgba(255,255,255,0.3);border-radius:3px;flex-shrink:0;margin-top:2px;transition:all .2s;display:flex;align-items:center;justify-content:center"></div><div><div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px">Course 10: Financials</div><div style="font-family:var(--cond);font-size:15px;font-weight:700;color:#F8FAFC">Initialize your Commission Defense Tracker.</div><div style="font-size:12px;color:#94A3B8;margin-top:4px;font-style:italic">Input your base salary and top 3 deals. Know your real take-home.</div></div></div>
+          <div class="sp-item" onclick="spToggle(3,this)" style="display:flex;gap:14px;align-items:flex-start;padding:16px;background:#0F172A;border:1px solid rgba(255,255,255,0.1);border-radius:4px;cursor:pointer;transition:all .2s"><div class="sp-box" style="width:22px;height:22px;border:2px solid rgba(255,255,255,0.3);border-radius:3px;flex-shrink:0;margin-top:2px;transition:all .2s;display:flex;align-items:center;justify-content:center"></div><div><div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px">Course 3: Alignment</div><div style="font-family:var(--cond);font-size:15px;font-weight:700;color:#F8FAFC">Send the AE/SDR Alignment Contract.</div><div style="font-size:12px;color:#94A3B8;margin-top:4px;font-style:italic">Slack your AE: "Let's review this 1-pager on our 1:1 today."</div></div></div>
+          <div class="sp-item" onclick="spToggle(4,this)" style="display:flex;gap:14px;align-items:flex-start;padding:16px;background:#0F172A;border:1px solid rgba(255,255,255,0.1);border-radius:4px;cursor:pointer;transition:all .2s"><div class="sp-box" style="width:22px;height:22px;border:2px solid rgba(255,255,255,0.3);border-radius:3px;flex-shrink:0;margin-top:2px;transition:all .2s;display:flex;align-items:center;justify-content:center"></div><div><div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px">Course 12: Work-Life Balance</div><div style="font-family:var(--cond);font-size:15px;font-weight:700;color:#F8FAFC">Block 2 hours on your calendar for personal time.</div><div style="font-size:12px;color:#94A3B8;margin-top:4px;font-style:italic">Block Wed & Fri evenings as "Busy". Treat it like a client meeting.</div></div></div>
+        </div>
+        <div id="spModal" style="display:none;margin-top:20px;text-align:center;padding:28px;background:rgba(16,185,129,0.1);border:1px solid #10B981;border-radius:8px"><div style="font-size:32px;margin-bottom:8px">🏆</div><div style="font-family:var(--display);font-size:22px;color:#F8FAFC;margin-bottom:8px">System Locked. Pipeline Secured.</div><div style="font-family:var(--serif);font-size:14px;color:#94A3B8">The AESDR playbook is officially active.</div></div>
+      </div>
+      <!-- ═══ END 72-HOUR STRIKE PLAN ═══ -->
     </div>
   </div>
 
@@ -966,6 +983,22 @@ document.addEventListener('click',function(e){
     if(e.target.closest('#cls-financials')&&!e.target.closest('.cls-obs'))dropCls('financials');
   }
 });
+
+/* ── 72-Hour Strike Plan ── */
+const spChecked=[false,false,false,false,false];
+function spToggle(idx,el){
+  spChecked[idx]=!spChecked[idx];
+  el.textContent=spChecked[idx]?'✅':'⬜';
+  const done=spChecked.filter(Boolean).length;
+  const pct=Math.round((done/spChecked.length)*100);
+  document.getElementById('spPct').textContent=pct+'%';
+  document.getElementById('spBar').style.width=pct+'%';
+  if(done===spChecked.length){
+    document.getElementById('spModal').style.display='block';
+  } else {
+    document.getElementById('spModal').style.display='none';
+  }
+}
 
 init();
 </script>

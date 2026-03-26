@@ -486,6 +486,48 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <li><div class="hw-box"></div>Include: Deal Name, Close Date, Commission Earned, Adjustments, Final Payout.</li>
           <li><div class="hw-box"></div>Never rely solely on finance's numbers.</li>
         </ul>
+        <!-- ═══ EMBEDDED COMMISSION TRACKER ═══ -->
+        <div class="ct-embed" style="margin-top:24px;background:#020617;border-radius:8px;padding:28px;color:#F8FAFC">
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#38BDF8;margin-bottom:10px;display:inline-block;padding:4px 10px;background:rgba(56,189,248,0.1);border-radius:2px">Interactive Tool</div>
+          <div style="font-family:var(--display);font-size:28px;line-height:1.1;margin-bottom:8px;color:#F8FAFC">Commission Defense Tracker</div>
+          <p style="font-family:var(--serif);font-size:14px;color:#94A3B8;margin-bottom:20px;max-width:600px">Plug your numbers in to see the difference between "Fantasy OTE" and reality after taxes and clawbacks.</p>
+          <div style="background:rgba(239,68,68,0.15);border-left:4px solid #EF4444;padding:12px 16px;display:flex;gap:12px;align-items:center;margin-bottom:20px;border-radius:0 4px 4px 0">
+            <span>⚠️</span>
+            <div><div style="font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#EF4444">The 30% Rule</div><div style="font-family:var(--serif);font-size:13px;color:#94A3B8">Taxes eat ~30% of commission. If a deal churns within 90 days, you lose 100%.</div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+            <div><div style="font-family:var(--cond);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px">Base Salary ($)</div><input type="number" id="ctBase" value="75000" oninput="ctCalc()" style="width:100%;background:#0F172A;border:1px solid rgba(255,255,255,0.2);color:#F8FAFC;font-family:var(--mono);font-size:14px;padding:10px;border-radius:2px;outline:none"></div>
+            <div><div style="font-family:var(--cond);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px">Tax Rate (%)</div><input type="number" id="ctTax" value="30" oninput="ctCalc()" style="width:100%;background:#0F172A;border:1px solid rgba(255,255,255,0.2);color:#F8FAFC;font-family:var(--mono);font-size:14px;padding:10px;border-radius:2px;outline:none"></div>
+            <div><div style="font-family:var(--cond);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px">Fantasy OTE ($)</div><input type="number" id="ctOTE" value="150000" oninput="ctCalc()" style="width:100%;background:#0F172A;border:1px solid rgba(255,255,255,0.2);color:#F8FAFC;font-family:var(--mono);font-size:14px;padding:10px;border-radius:2px;outline:none"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">
+            <div style="background:#0F172A;border:1px solid rgba(255,255,255,0.1);padding:16px;border-radius:4px;border-left:4px solid #10B981"><div style="font-family:var(--cond);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:6px">Net Take-Home</div><div id="ctNet" style="font-family:var(--mono);font-size:22px;color:#10B981">$0</div></div>
+            <div style="background:#0F172A;border:1px solid rgba(255,255,255,0.1);padding:16px;border-radius:4px;border-left:4px solid #F59E0B"><div style="font-family:var(--cond);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:6px">At Risk</div><div id="ctRisk" style="font-family:var(--mono);font-size:22px;color:#F59E0B">$0</div></div>
+            <div style="background:#0F172A;border:1px solid rgba(255,255,255,0.1);padding:16px;border-radius:4px;border-left:4px solid #EF4444"><div style="font-family:var(--cond);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:6px">Bleeding</div><div id="ctBleed" style="font-family:var(--mono);font-size:22px;color:#EF4444">$0</div></div>
+            <div style="background:#0F172A;border:1px solid rgba(255,255,255,0.1);padding:16px;border-radius:4px;border-left:4px solid #38BDF8"><div style="font-family:var(--cond);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:6px">Reality vs OTE</div><div id="ctPace" style="font-family:var(--mono);font-size:18px;color:#F8FAFC">0%</div></div>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:flex-end">
+            <div style="flex:1;min-width:140px"><div style="font-family:var(--cond);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px">Deal Name</div><input type="text" id="ctDealName" placeholder="e.g. Acme Corp" style="width:100%;background:#0F172A;border:1px solid rgba(255,255,255,0.2);color:#F8FAFC;font-family:var(--mono);font-size:13px;padding:10px;border-radius:2px;outline:none"></div>
+            <div style="flex:1;min-width:100px"><div style="font-family:var(--cond);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px">ARR ($)</div><input type="number" id="ctDealARR" placeholder="50000" style="width:100%;background:#0F172A;border:1px solid rgba(255,255,255,0.2);color:#F8FAFC;font-family:var(--mono);font-size:13px;padding:10px;border-radius:2px;outline:none"></div>
+            <div style="width:80px"><div style="font-family:var(--cond);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px">Rate (%)</div><input type="number" id="ctDealRate" value="10" style="width:100%;background:#0F172A;border:1px solid rgba(255,255,255,0.2);color:#F8FAFC;font-family:var(--mono);font-size:13px;padding:10px;border-radius:2px;outline:none"></div>
+            <button onclick="ctAdd()" style="font-family:var(--cond);font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:10px 20px;border:none;background:#10B981;color:#020617;cursor:pointer;border-radius:2px;height:39px">+ Log Deal</button>
+          </div>
+          <div style="background:#0F172A;border:1px solid rgba(255,255,255,0.1);border-radius:4px;overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;text-align:left">
+              <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.1)">
+                <th style="font-family:var(--cond);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;padding:12px 14px">Deal</th>
+                <th style="font-family:var(--cond);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;padding:12px 14px">ARR</th>
+                <th style="font-family:var(--cond);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;padding:12px 14px">Gross</th>
+                <th style="font-family:var(--cond);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;padding:12px 14px">Status</th>
+                <th style="font-family:var(--cond);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;padding:12px 14px">Net</th>
+                <th style="padding:12px 8px"></th>
+              </tr></thead>
+              <tbody id="ctBody"></tbody>
+            </table>
+            <div id="ctEmpty" style="padding:24px;text-align:center;font-family:var(--serif);color:#94A3B8;font-style:italic">No deals logged yet. Stop hoping. Start tracking.</div>
+          </div>
+        </div>
+        <!-- ═══ END COMMISSION TRACKER ═══ -->
       </div>
       <div>
         <div class="t-head">Task 3: Financial Planning Exercise</div>
@@ -971,6 +1013,45 @@ document.addEventListener('click',function(e){
 });
 
 init();
+
+/* ═══ COMMISSION TRACKER (embedded tool) ═══ */
+let ctDeals=[
+  {id:1,name:"Stark Industries",arr:120000,rate:10,status:"cleared"},
+  {id:2,name:"Wayne Enterprises",arr:45000,rate:10,status:"pending"},
+  {id:3,name:"Pied Piper",arr:20000,rate:8,status:"clawback"}
+];
+const ctFmt=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(n);
+function ctCalc(){
+  const tax=(parseFloat(document.getElementById('ctTax').value)||0)/100;
+  const base=parseFloat(document.getElementById('ctBase').value)||0;
+  const ote=parseFloat(document.getElementById('ctOTE').value)||1;
+  let clearedG=0,pendG=0,clawG=0;
+  const tb=document.getElementById('ctBody');tb.innerHTML='';
+  document.getElementById('ctEmpty').style.display=ctDeals.length?'none':'block';
+  ctDeals.forEach(d=>{
+    const g=d.arr*(d.rate/100);let t=0,n=0;
+    if(d.status==='cleared'){t=g*tax;n=g-t;clearedG+=g}
+    else if(d.status==='pending'){t=g*tax;n=g-t;pendG+=g}
+    else{clawG+=g}
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="font-family:var(--cond);font-weight:700;font-size:13px;color:#F8FAFC;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.06)">${d.name}</td><td style="font-family:var(--mono);font-size:12px;color:#F8FAFC;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.06)">${ctFmt(d.arr)}</td><td style="font-family:var(--mono);font-size:12px;color:#F8FAFC;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.06)">${ctFmt(g)}</td><td style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.06)"><select onchange="ctStatus(${d.id},this.value)" style="background:#020617;border:1px solid ${d.status==='cleared'?'#10B981':d.status==='pending'?'#F59E0B':'#EF4444'};color:${d.status==='cleared'?'#10B981':d.status==='pending'?'#F59E0B':'#EF4444'};font-family:var(--cond);font-size:11px;font-weight:700;text-transform:uppercase;padding:4px 8px;border-radius:2px;outline:none;cursor:pointer"><option value="pending" ${d.status==='pending'?'selected':''}>At Risk</option><option value="cleared" ${d.status==='cleared'?'selected':''}>Cleared</option><option value="clawback" ${d.status==='clawback'?'selected':''}>Clawed Back</option></select></td><td style="font-family:var(--mono);font-size:12px;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.06);color:${d.status==='cleared'?'#10B981':d.status==='clawback'?'#94A3B8':'#F59E0B'}">${d.status==='clawback'?'$0':ctFmt(n)}</td><td style="padding:10px 8px;border-bottom:1px solid rgba(255,255,255,0.06)"><button onclick="ctDel(${d.id})" style="background:none;border:none;color:#94A3B8;cursor:pointer;font-size:14px">✕</button></td>`;
+    tb.appendChild(tr);
+  });
+  const totalTax=clearedG*tax,netCl=clearedG-totalTax,bleed=totalTax+clawG,reality=base+netCl;
+  document.getElementById('ctNet').textContent=ctFmt(netCl);
+  document.getElementById('ctRisk').textContent=ctFmt(pendG);
+  document.getElementById('ctBleed').textContent=ctFmt(bleed);
+  document.getElementById('ctPace').textContent=ctFmt(reality)+' ('+((reality/ote)*100).toFixed(1)+'%)';
+}
+function ctAdd(){
+  const n=document.getElementById('ctDealName'),a=document.getElementById('ctDealARR'),r=document.getElementById('ctDealRate');
+  if(!n.value||!a.value){alert('Enter Deal Name and ARR.');return}
+  ctDeals.push({id:Date.now(),name:n.value,arr:parseFloat(a.value),rate:parseFloat(r.value)||10,status:'pending'});
+  n.value='';a.value='';ctCalc();
+}
+function ctDel(id){ctDeals=ctDeals.filter(d=>d.id!==id);ctCalc()}
+function ctStatus(id,s){const d=ctDeals.find(x=>x.id===id);if(d){d.status=s;ctCalc()}}
+ctCalc();
 </script>
 </body>
 </html>
