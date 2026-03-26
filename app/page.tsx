@@ -1,65 +1,150 @@
-import Image from "next/image";
+import Link from "next/link";
 
-export default function Home() {
+import { createClient } from "@/utils/supabase/server";
+import { LESSONS } from "@/utils/progress/types";
+import type { LessonProgressSummary } from "@/utils/progress/types";
+
+export default async function Dashboard() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let progressMap: Record<string, LessonProgressSummary> = {};
+
+  if (user) {
+    const { data } = await supabase
+      .from("course_progress")
+      .select("lesson_id, is_completed, last_screen")
+      .eq("user_id", user.id);
+
+    if (data) {
+      for (const row of data) {
+        progressMap[row.lesson_id] = row;
+      }
+    }
+  }
+
+  // Find the first incomplete lesson to highlight as "next"
+  const nextLessonId = LESSONS.find(
+    (l) => !progressMap[l.id]?.is_completed
+  )?.id;
+
+  const completedCount = LESSONS.filter(
+    (l) => progressMap[l.id]?.is_completed
+  ).length;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main className="min-h-screen bg-[linear-gradient(180deg,_#020617_0%,_#0f172a_55%,_#111827_100%)] px-6 py-14 text-white">
+      <div className="mx-auto w-full max-w-5xl space-y-10">
+        {/* Header */}
+        <header className="space-y-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.38em] text-emerald-300/80">
+            AESDR Course
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+            Your Lessons
+          </h1>
+          {user ? (
+            <div className="flex items-center gap-4">
+              <div className="h-2 w-48 rounded-full bg-white/10">
+                <div
+                  className="h-full rounded-full bg-emerald-500 transition-all duration-700"
+                  style={{
+                    width: `${Math.round((completedCount / LESSONS.length) * 100)}%`,
+                  }}
+                />
+              </div>
+              <span className="text-sm text-slate-400">
+                {completedCount} / {LESSONS.length} completed
+              </span>
+            </div>
+          ) : (
+            <p className="text-sm text-slate-400">
+              Sign in to save and restore your progress across sessions.
+            </p>
+          )}
+        </header>
+
+        {/* Lesson Grid */}
+        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {LESSONS.map((lesson) => {
+            const progress = progressMap[lesson.id];
+            const isCompleted = progress?.is_completed ?? false;
+            const lastScreen = progress?.last_screen ?? 0;
+            const isNext = lesson.id === nextLessonId;
+            const screenPct =
+              lesson.totalScreens > 1
+                ? Math.round(
+                    (lastScreen / (lesson.totalScreens - 1)) * 100
+                  )
+                : 0;
+
+            return (
+              <Link
+                key={lesson.id}
+                href={`/course/${lesson.id}`}
+                className={`group relative flex flex-col gap-3 rounded-2xl border p-6 transition-all hover:scale-[1.02] hover:shadow-lg ${
+                  isCompleted
+                    ? "border-emerald-500/30 bg-emerald-500/5"
+                    : isNext
+                      ? "border-emerald-400/50 bg-white/[0.04] shadow-[0_0_24px_rgba(16,185,129,0.12)]"
+                      : "border-white/10 bg-white/[0.02]"
+                }`}
+              >
+                {/* Lesson number */}
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
+                    Lesson {lesson.id}
+                  </span>
+                  {isCompleted && (
+                    <span className="text-xs font-semibold uppercase tracking-wider text-emerald-400">
+                      Completed
+                    </span>
+                  )}
+                  {!isCompleted && isNext && (
+                    <span className="text-xs font-semibold uppercase tracking-wider text-emerald-300">
+                      Up Next
+                    </span>
+                  )}
+                </div>
+
+                {/* Title */}
+                <h2 className="text-lg font-semibold leading-snug tracking-tight">
+                  {lesson.title}
+                </h2>
+                <p className="text-sm leading-relaxed text-slate-400">
+                  {lesson.subtitle}
+                </p>
+
+                {/* Progress bar */}
+                {user && !isCompleted && lastScreen > 0 && (
+                  <div className="mt-auto pt-2">
+                    <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-slate-500">
+                      <span>Progress</span>
+                      <span>{screenPct}%</span>
+                    </div>
+                    <div className="mt-1 h-1 rounded-full bg-white/10">
+                      <div
+                        className="h-full rounded-full bg-emerald-500/60 transition-all"
+                        style={{ width: `${screenPct}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Completed checkmark overlay */}
+                {isCompleted && (
+                  <div className="pointer-events-none absolute right-4 bottom-4 text-2xl text-emerald-500/40">
+                    &#10003;
+                  </div>
+                )}
+              </Link>
+            );
+          })}
+        </section>
+      </div>
+    </main>
   );
 }
