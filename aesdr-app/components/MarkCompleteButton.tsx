@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 
 import { markLessonComplete } from "@/app/actions/progress";
+import { saveProgressLocally } from "@/utils/progress/local-storage";
 
 interface MarkCompleteButtonProps {
   lessonId: string;
@@ -17,11 +18,12 @@ export default function MarkCompleteButton({
   const [isCompleted, setIsCompleted] = useState(initialIsCompleted);
 
   const handleComplete = () => {
-    if (isCompleted) {
-      return;
-    }
+    if (isCompleted) return;
 
     setIsCompleted(true);
+
+    // Save to localStorage immediately as backup
+    saveProgressLocally(lessonId, { is_completed: true });
 
     startTransition(() => {
       void markLessonComplete(lessonId).catch((error) => {
