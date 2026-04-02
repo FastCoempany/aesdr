@@ -27,26 +27,27 @@ export default function MarkCompleteButton({
     });
   };
 
+  const baseStyle = {
+    fontFamily: "var(--mono)",
+    fontSize: "9px",
+    letterSpacing: ".12em",
+    textTransform: "uppercase" as const,
+    padding: "6px 14px",
+    cursor: isCompleted ? "default" : "pointer",
+  };
+
   if (isCompleted) {
     return (
-      <button
-        disabled
-        className="w-full max-w-sm cursor-not-allowed"
+      <span
         style={{
-          fontFamily: "var(--cond)",
-          fontSize: "13px",
-          fontWeight: 800,
-          letterSpacing: ".15em",
-          textTransform: "uppercase" as const,
-          padding: "14px 28px",
-          border: "2px solid var(--theme)",
-          background: "var(--theme)",
-          color: "var(--bg-main)",
-          boxShadow: "0 0 24px rgba(16,185,129,0.3)",
+          ...baseStyle,
+          color: "var(--theme)",
+          border: "1px solid var(--theme)",
+          background: "rgba(16,185,129,0.1)",
         }}
       >
-        Lesson Completed
-      </button>
+        Completed
+      </span>
     );
   }
 
@@ -54,20 +55,14 @@ export default function MarkCompleteButton({
     <button
       onClick={handleComplete}
       disabled={isPending}
-      className="w-full max-w-sm cursor-pointer transition disabled:cursor-wait disabled:opacity-70"
       style={{
-        fontFamily: "var(--cond)",
-        fontSize: "13px",
-        fontWeight: 800,
-        letterSpacing: ".15em",
-        textTransform: "uppercase" as const,
-        padding: "14px 28px",
-        border: "2px solid var(--text-main)",
+        ...baseStyle,
+        color: "var(--text-muted)",
+        border: "1px solid var(--line)",
         background: "transparent",
-        color: "var(--text-main)",
       }}
     >
-      {isPending ? "Saving..." : "Mark Lesson Complete"}
+      {isPending ? "Saving..." : "Mark Complete"}
     </button>
   );
 }
