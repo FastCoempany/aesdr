@@ -17,12 +17,8 @@ export default function MarkCompleteButton({
   const [isCompleted, setIsCompleted] = useState(initialIsCompleted);
 
   const handleComplete = () => {
-    if (isCompleted) {
-      return;
-    }
-
+    if (isCompleted) return;
     setIsCompleted(true);
-
     startTransition(() => {
       void markLessonComplete(lessonId).catch((error) => {
         setIsCompleted(false);
@@ -35,7 +31,19 @@ export default function MarkCompleteButton({
     return (
       <button
         disabled
-        className="w-full max-w-sm rounded border-2 border-emerald-500 bg-emerald-500 px-6 py-4 font-bold uppercase tracking-[0.24em] text-slate-950 shadow-[0_0_18px_rgba(16,185,129,0.38)] transition-all cursor-not-allowed"
+        className="w-full max-w-sm cursor-not-allowed"
+        style={{
+          fontFamily: "var(--cond)",
+          fontSize: "13px",
+          fontWeight: 800,
+          letterSpacing: ".15em",
+          textTransform: "uppercase" as const,
+          padding: "14px 28px",
+          border: "2px solid var(--theme)",
+          background: "var(--theme)",
+          color: "var(--bg-main)",
+          boxShadow: "0 0 24px rgba(16,185,129,0.3)",
+        }}
       >
         Lesson Completed
       </button>
@@ -46,7 +54,18 @@ export default function MarkCompleteButton({
     <button
       onClick={handleComplete}
       disabled={isPending}
-      className="w-full max-w-sm rounded border-2 border-white/90 bg-transparent px-6 py-4 font-bold uppercase tracking-[0.24em] text-white transition hover:bg-white hover:text-slate-950 disabled:cursor-wait disabled:opacity-70"
+      className="w-full max-w-sm cursor-pointer transition disabled:cursor-wait disabled:opacity-70"
+      style={{
+        fontFamily: "var(--cond)",
+        fontSize: "13px",
+        fontWeight: 800,
+        letterSpacing: ".15em",
+        textTransform: "uppercase" as const,
+        padding: "14px 28px",
+        border: "2px solid var(--text-main)",
+        background: "transparent",
+        color: "var(--text-main)",
+      }}
     >
       {isPending ? "Saving..." : "Mark Lesson Complete"}
     </button>

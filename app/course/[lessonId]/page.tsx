@@ -73,85 +73,220 @@ export default async function LessonPage({
     : null;
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.16),_transparent_28%),linear-gradient(180deg,_#020617_0%,_#0f172a_55%,_#111827_100%)] px-6 py-14 text-white">
+    <main
+      className="min-h-screen px-6 py-0"
+      style={{ background: "var(--bg-main)" }}
+    >
       <ProgressSaver lessonId={lessonId} isAuthenticated={true} />
 
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-10">
-        <nav>
-          <Link
-            href="/"
-            className="text-sm text-slate-400 transition hover:text-white"
-          >
-            &larr; Back to Lessons
+      {/* Top nav */}
+      <nav
+        className="sticky top-0 z-50 -mx-6 flex items-center justify-between border-b px-[5%] py-5"
+        style={{
+          borderColor: "var(--line)",
+          background: "rgba(2,6,23,0.9)",
+          backdropFilter: "blur(10px)",
+        }}
+      >
+        <div
+          className="flex items-center gap-3"
+          style={{
+            fontFamily: "var(--cond)",
+            fontSize: "18px",
+            fontWeight: 800,
+            letterSpacing: ".2em",
+            textTransform: "uppercase" as const,
+          }}
+        >
+          <Link href="/">
+            <span
+              style={{
+                background: "var(--iris)",
+                backgroundSize: "200% 100%",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                animation: "iris 3s linear infinite",
+              }}
+            >
+              AESDR
+            </span>
           </Link>
-        </nav>
+        </div>
+        <Link
+          href="/"
+          style={{
+            fontFamily: "var(--cond)",
+            fontWeight: 600,
+            fontSize: "13px",
+            letterSpacing: ".1em",
+            textTransform: "uppercase" as const,
+            color: "var(--text-muted)",
+          }}
+        >
+          &larr; Back to Lessons
+        </Link>
+      </nav>
 
-        <section className="space-y-6">
-          <p className="text-sm font-semibold uppercase tracking-[0.38em] text-emerald-300/80">
-            AESDR Course
+      <div
+        className="mx-auto w-full max-w-6xl py-10"
+        style={{ color: "var(--text-main)" }}
+      >
+        {/* Lesson header */}
+        <header className="mb-8 space-y-4">
+          <p
+            style={{
+              fontFamily: "var(--mono)",
+              fontSize: "11px",
+              letterSpacing: ".3em",
+              textTransform: "uppercase" as const,
+              color: "var(--theme)",
+              display: "inline-block",
+              border: "1px solid var(--theme)",
+              padding: "4px 12px",
+            }}
+          >
+            Lesson {lessonId}
           </p>
-          <div className="space-y-4">
-            <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-              Lesson {lessonId}
-              {lesson ? `: ${lesson.title}` : ""}
-            </h1>
-            {lesson && (
-              <p className="max-w-3xl text-base leading-7 text-slate-300 sm:text-lg">
-                {lesson.subtitle}
-              </p>
-            )}
-          </div>
-        </section>
+          <h1
+            style={{
+              fontFamily: "var(--display)",
+              fontSize: "clamp(28px, 4vw, 48px)",
+              lineHeight: ".95",
+              color: "var(--text-main)",
+            }}
+          >
+            {lesson ? lesson.title : `Lesson ${lessonId}`}
+          </h1>
+          {lesson && (
+            <p
+              style={{
+                fontFamily: "var(--serif)",
+                fontSize: "18px",
+                color: "var(--text-muted)",
+                maxWidth: "600px",
+              }}
+            >
+              {lesson.subtitle}
+            </p>
+          )}
+        </header>
 
+        {/* Restored progress notice */}
         {!isCompleted && selectedUnit && restoreScreen > 0 && (
-          <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-5 py-4">
-            <p className="text-sm text-emerald-300">
-              Welcome back - your progress was saved in Unit{" "}
+          <div
+            className="mb-8 px-5 py-4"
+            style={{
+              borderLeft: "3px solid var(--theme)",
+              background: "rgba(16,185,129,0.05)",
+            }}
+          >
+            <p
+              style={{
+                fontFamily: "var(--serif)",
+                fontSize: "15px",
+                color: "var(--theme)",
+              }}
+            >
+              Welcome back — your progress was saved in Unit{" "}
               <strong>{selectedUnit.unitId}</strong>, screen{" "}
               <strong>{restoreScreen}</strong>.
             </p>
           </div>
         )}
 
-        <section className="grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)]">
-          <aside className="space-y-6 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-[0_20px_80px_rgba(2,6,23,0.35)] backdrop-blur">
-            <div className="space-y-3">
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-slate-400">
+        {/* Main layout: sidebar + iframe */}
+        <section className="grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
+          {/* Sidebar */}
+          <aside
+            className="space-y-6 p-6"
+            style={{
+              background: "var(--bg-panel)",
+              border: "1px solid var(--line)",
+            }}
+          >
+            <div className="space-y-4">
+              <p
+                style={{
+                  fontFamily: "var(--mono)",
+                  fontSize: "9px",
+                  letterSpacing: ".24em",
+                  textTransform: "uppercase" as const,
+                  color: "var(--text-muted)",
+                }}
+              >
                 Units
               </p>
               {units.length > 0 ? (
                 <div className="space-y-3">
                   {units.map((unit) => {
                     const isActive = unit.unitId === selectedUnit?.unitId;
-
                     return (
                       <Link
                         key={unit.unitId}
                         href={`/course/${lessonId}?unit=${unit.unitId}`}
-                        className={`block rounded-2xl border px-4 py-4 transition ${
-                          isActive
-                            ? "border-emerald-400/50 bg-emerald-500/10 text-white"
-                            : "border-white/10 bg-white/[0.03] text-slate-300 hover:border-white/20 hover:text-white"
-                        }`}
+                        className="relative block px-4 py-4 transition"
+                        style={{
+                          background: isActive ? "rgba(16,185,129,0.08)" : "transparent",
+                          borderLeft: isActive ? "3px solid var(--amber)" : "3px solid transparent",
+                        }}
                       >
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400">
+                        <p
+                          style={{
+                            fontFamily: "var(--mono)",
+                            fontSize: "9px",
+                            letterSpacing: ".14em",
+                            textTransform: "uppercase" as const,
+                            color: isActive ? "var(--amber)" : "var(--text-muted)",
+                          }}
+                        >
                           Unit {unit.unitId}
                         </p>
-                        <p className="mt-2 text-sm leading-6">{unit.title}</p>
+                        <p
+                          className="mt-2"
+                          style={{
+                            fontFamily: "var(--cond)",
+                            fontSize: "13px",
+                            fontWeight: 700,
+                            letterSpacing: ".04em",
+                            textTransform: "uppercase" as const,
+                            lineHeight: "1.4",
+                            color: isActive ? "var(--text-main)" : "var(--text-muted)",
+                          }}
+                        >
+                          {unit.title}
+                        </p>
                       </Link>
                     );
                   })}
                 </div>
               ) : (
-                <p className="text-sm leading-6 text-slate-400">
+                <p
+                  style={{
+                    fontFamily: "var(--serif)",
+                    fontSize: "14px",
+                    color: "var(--text-muted)",
+                  }}
+                >
                   No lesson files were found for this module yet.
                 </p>
               )}
             </div>
 
+            {/* Related tools */}
             {tools.length > 0 && (
-              <div className="space-y-3 border-t border-white/10 pt-6">
-                <p className="text-sm font-semibold uppercase tracking-[0.28em] text-slate-400">
+              <div
+                className="space-y-4 pt-6"
+                style={{ borderTop: "1px solid var(--line)" }}
+              >
+                <p
+                  style={{
+                    fontFamily: "var(--mono)",
+                    fontSize: "9px",
+                    letterSpacing: ".24em",
+                    textTransform: "uppercase" as const,
+                    color: "var(--text-muted)",
+                  }}
+                >
                   Related Tools
                 </p>
                 <div className="space-y-3">
@@ -160,7 +295,16 @@ export default async function LessonPage({
                       key={tool.slug}
                       href={`/tools/${tool.slug}`}
                       target="_blank"
-                      className="block rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4 text-sm text-slate-300 transition hover:border-white/20 hover:text-white"
+                      className="block px-4 py-4 transition"
+                      style={{
+                        border: "1px solid var(--line)",
+                        fontFamily: "var(--cond)",
+                        fontSize: "12px",
+                        fontWeight: 600,
+                        letterSpacing: ".04em",
+                        textTransform: "uppercase" as const,
+                        color: "var(--text-muted)",
+                      }}
                     >
                       {tool.title}
                     </Link>
@@ -170,13 +314,41 @@ export default async function LessonPage({
             )}
           </aside>
 
-          <section className="space-y-5 rounded-3xl border border-white/10 bg-white/5 p-5 shadow-[0_20px_80px_rgba(2,6,23,0.35)] backdrop-blur">
-            <div className="flex flex-col gap-3 border-b border-white/10 px-3 pb-5 sm:flex-row sm:items-end sm:justify-between">
+          {/* Iframe content area */}
+          <section
+            className="space-y-5 p-5"
+            style={{
+              background: "var(--bg-panel)",
+              border: "1px solid var(--line)",
+            }}
+          >
+            <div
+              className="flex flex-col gap-3 border-b px-3 pb-5 sm:flex-row sm:items-end sm:justify-between"
+              style={{ borderColor: "var(--line)" }}
+            >
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.28em] text-slate-400">
+                <p
+                  style={{
+                    fontFamily: "var(--mono)",
+                    fontSize: "9px",
+                    letterSpacing: ".24em",
+                    textTransform: "uppercase" as const,
+                    color: "var(--text-muted)",
+                  }}
+                >
                   Live Lesson
                 </p>
-                <h2 className="mt-2 text-2xl font-semibold tracking-tight">
+                <h2
+                  className="mt-2"
+                  style={{
+                    fontFamily: "var(--cond)",
+                    fontSize: "20px",
+                    fontWeight: 700,
+                    letterSpacing: ".04em",
+                    textTransform: "uppercase" as const,
+                    color: "var(--text-main)",
+                  }}
+                >
                   {selectedUnit
                     ? `Unit ${selectedUnit.unitId}: ${selectedUnit.title}`
                     : "Lesson content unavailable"}
@@ -186,9 +358,15 @@ export default async function LessonPage({
                 <Link
                   href={iframeSrc ?? "#"}
                   target="_blank"
-                  className="text-sm text-emerald-300 transition hover:text-emerald-200"
+                  style={{
+                    fontFamily: "var(--mono)",
+                    fontSize: "10px",
+                    letterSpacing: ".1em",
+                    textTransform: "uppercase" as const,
+                    color: "var(--theme)",
+                  }}
                 >
-                  Open unit in a new tab
+                  Open in new tab
                 </Link>
               )}
             </div>
@@ -197,18 +375,37 @@ export default async function LessonPage({
               <iframe
                 key={iframeSrc}
                 src={iframeSrc}
-                title={`Lesson ${lessonId} unit ${selectedUnit?.unitId}`}
-                className="h-[78vh] w-full rounded-2xl border border-white/10 bg-white"
+                className="w-full border-0"
+                style={{
+                  minHeight: "80vh",
+                  background: "var(--bg-card)",
+                }}
+                title={
+                  selectedUnit
+                    ? `Unit ${selectedUnit.unitId}: ${selectedUnit.title}`
+                    : "Lesson content"
+                }
               />
             ) : (
-              <div className="rounded-2xl border border-dashed border-white/15 px-6 py-12 text-slate-400">
-                This module is not wired to lesson HTML yet.
+              <div
+                className="flex items-center justify-center py-20"
+                style={{
+                  fontFamily: "var(--serif)",
+                  fontSize: "16px",
+                  color: "var(--text-muted)",
+                }}
+              >
+                Select a unit from the sidebar to begin.
               </div>
             )}
           </section>
         </section>
 
-        <section className="flex justify-center border-t border-white/10 pt-8">
+        {/* Completion button */}
+        <section
+          className="mt-10 flex justify-center pt-8"
+          style={{ borderTop: "1px solid var(--line)" }}
+        >
           <MarkCompleteButton
             lessonId={lessonId}
             initialIsCompleted={isCompleted}

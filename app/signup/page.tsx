@@ -31,11 +31,9 @@ export default function SignupPage() {
       return;
     }
 
-    // If email confirmations are disabled, user is signed in immediately
     setSuccess(true);
     setLoading(false);
 
-    // Redirect to dashboard after short delay
     setTimeout(() => {
       router.push("/");
       router.refresh();
@@ -43,20 +41,60 @@ export default function SignupPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[linear-gradient(180deg,_#020617_0%,_#0f172a_55%,_#111827_100%)] px-6 text-white">
-      <div className="w-full max-w-sm space-y-8">
-        <div className="space-y-2 text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.38em] text-emerald-300/80">
-            AESDR Course
+    <main
+      className="flex min-h-screen items-center justify-center px-6"
+      style={{ background: "var(--bg-main)" }}
+    >
+      <div className="w-full max-w-sm space-y-10">
+        <div className="space-y-4 text-center">
+          <p
+            style={{
+              fontFamily: "var(--cond)",
+              fontSize: "18px",
+              fontWeight: 800,
+              letterSpacing: ".2em",
+              textTransform: "uppercase" as const,
+            }}
+          >
+            <span
+              style={{
+                background: "var(--iris)",
+                backgroundSize: "200% 100%",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                animation: "iris 3s linear infinite",
+              }}
+            >
+              AESDR
+            </span>
           </p>
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1
+            style={{
+              fontFamily: "var(--display)",
+              fontSize: "32px",
+              lineHeight: "1",
+              color: "var(--text-main)",
+            }}
+          >
             Create Account
           </h1>
         </div>
 
         {success ? (
-          <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-5 py-6 text-center">
-            <p className="text-sm text-emerald-300">
+          <div
+            className="px-5 py-6 text-center"
+            style={{
+              borderLeft: "3px solid var(--theme)",
+              background: "rgba(16,185,129,0.05)",
+            }}
+          >
+            <p
+              style={{
+                fontFamily: "var(--serif)",
+                fontSize: "16px",
+                color: "var(--theme)",
+              }}
+            >
               Account created. Redirecting to your dashboard...
             </p>
           </div>
@@ -66,7 +104,13 @@ export default function SignupPage() {
               <div className="space-y-2">
                 <label
                   htmlFor="email"
-                  className="block text-sm text-slate-400"
+                  style={{
+                    fontFamily: "var(--mono)",
+                    fontSize: "10px",
+                    letterSpacing: ".14em",
+                    textTransform: "uppercase" as const,
+                    color: "var(--text-muted)",
+                  }}
                 >
                   Email
                 </label>
@@ -76,7 +120,14 @@ export default function SignupPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition focus:border-emerald-400/50 focus:ring-1 focus:ring-emerald-400/30"
+                  className="w-full px-4 py-3 outline-none transition"
+                  style={{
+                    fontFamily: "var(--serif)",
+                    fontSize: "16px",
+                    background: "var(--bg-panel)",
+                    border: "1px solid var(--line)",
+                    color: "var(--text-main)",
+                  }}
                   placeholder="you@company.com"
                 />
               </div>
@@ -84,7 +135,13 @@ export default function SignupPage() {
               <div className="space-y-2">
                 <label
                   htmlFor="password"
-                  className="block text-sm text-slate-400"
+                  style={{
+                    fontFamily: "var(--mono)",
+                    fontSize: "10px",
+                    letterSpacing: ".14em",
+                    textTransform: "uppercase" as const,
+                    color: "var(--text-muted)",
+                  }}
                 >
                   Password
                 </label>
@@ -95,32 +152,63 @@ export default function SignupPage() {
                   minLength={6}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition focus:border-emerald-400/50 focus:ring-1 focus:ring-emerald-400/30"
+                  className="w-full px-4 py-3 outline-none transition"
+                  style={{
+                    fontFamily: "var(--serif)",
+                    fontSize: "16px",
+                    background: "var(--bg-panel)",
+                    border: "1px solid var(--line)",
+                    color: "var(--text-main)",
+                  }}
                   placeholder="Min 6 characters"
                 />
               </div>
 
               {error && (
-                <p className="rounded-lg bg-red-500/10 px-4 py-3 text-sm text-red-300">
+                <div
+                  className="px-4 py-3"
+                  style={{
+                    fontFamily: "var(--serif)",
+                    fontSize: "14px",
+                    borderLeft: "3px solid var(--coral)",
+                    background: "rgba(239,68,68,0.05)",
+                    color: "var(--coral)",
+                  }}
+                >
                   {error}
-                </p>
+                </div>
               )}
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-xl bg-emerald-500 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-emerald-400 disabled:cursor-wait disabled:opacity-70"
+                className="relative w-full overflow-hidden cursor-pointer disabled:cursor-wait disabled:opacity-50"
+                style={{
+                  fontFamily: "var(--cond)",
+                  fontSize: "13px",
+                  fontWeight: 800,
+                  letterSpacing: ".15em",
+                  textTransform: "uppercase" as const,
+                  padding: "14px 28px",
+                  background: "var(--text-main)",
+                  color: "var(--bg-main)",
+                  border: "none",
+                }}
               >
                 {loading ? "Creating account..." : "Create Account"}
               </button>
             </form>
 
-            <p className="text-center text-sm text-slate-400">
+            <p
+              className="text-center"
+              style={{
+                fontFamily: "var(--serif)",
+                fontSize: "16px",
+                color: "var(--text-muted)",
+              }}
+            >
               Already have an account?{" "}
-              <Link
-                href="/login"
-                className="text-emerald-300 transition hover:text-emerald-200"
-              >
+              <Link href="/login" style={{ color: "var(--theme)" }}>
                 Sign in
               </Link>
             </p>
