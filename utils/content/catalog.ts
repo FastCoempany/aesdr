@@ -14,8 +14,8 @@ export interface ToolAsset {
   title: string;
 }
 
-const CONTENT_ROOT = path.join(process.cwd(), "..", "content", "lessons", "html");
-const TOOLS_ROOT = path.join(process.cwd(), "..", "tools", "standalone-html");
+const CONTENT_ROOT = path.join(process.cwd(), "content", "lessons", "html");
+const TOOLS_ROOT = path.join(process.cwd(), "tools", "standalone-html");
 
 /**
  * Map of lesson ID → array of tool assets associated with that lesson.
