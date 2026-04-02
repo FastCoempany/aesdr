@@ -69,86 +69,22 @@ export default async function LessonPage({
     : null;
 
   return (
-    <main className="flex h-screen flex-col" style={{ background: "var(--bg-main)" }}>
+    <>
       <ProgressSaver lessonId={lessonId} isAuthenticated={true} />
 
-      {/* Minimal top bar — just navigation and unit switcher */}
-      <nav
-        className="flex shrink-0 items-center justify-between px-5 py-2"
-        style={{
-          background: "var(--bg-panel)",
-          borderBottom: "1px solid var(--line)",
-        }}
-      >
-        <div className="flex items-center gap-6">
-          <Link
-            href="/"
-            style={{
-              fontFamily: "var(--cond)",
-              fontSize: "13px",
-              fontWeight: 700,
-              letterSpacing: ".1em",
-              textTransform: "uppercase" as const,
-              color: "var(--text-muted)",
-            }}
-          >
-            &larr; Lessons
-          </Link>
-          <span
-            style={{
-              fontFamily: "var(--mono)",
-              fontSize: "10px",
-              letterSpacing: ".14em",
-              textTransform: "uppercase" as const,
-              color: "var(--theme)",
-            }}
-          >
-            {lesson ? `${lesson.title}` : `Lesson ${lessonId}`}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-4">
-          {/* Unit tabs */}
-          {units.length > 1 && (
-            <div className="flex items-center gap-1">
-              {units.map((unit) => {
-                const isActive = unit.unitId === selectedUnit?.unitId;
-                return (
-                  <Link
-                    key={unit.unitId}
-                    href={`/course/${lessonId}?unit=${unit.unitId}`}
-                    className="px-3 py-1 transition"
-                    style={{
-                      fontFamily: "var(--mono)",
-                      fontSize: "10px",
-                      letterSpacing: ".1em",
-                      textTransform: "uppercase" as const,
-                      color: isActive ? "var(--text-main)" : "var(--text-muted)",
-                      background: isActive ? "rgba(255,255,255,0.08)" : "transparent",
-                    }}
-                  >
-                    {unit.unitId}
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Completion state */}
-          <MarkCompleteButton
-            lessonId={lessonId}
-            initialIsCompleted={isCompleted}
-          />
-        </div>
-      </nav>
-
-      {/* Full-screen iframe — the course content IS the page */}
+      {/* Full-screen iframe — course content owns the entire viewport */}
       {iframeSrc ? (
         <iframe
           key={iframeSrc}
           src={iframeSrc}
-          className="w-full flex-1 border-0"
-          style={{ background: "#fff" }}
+          style={{
+            position: "fixed",
+            inset: 0,
+            width: "100vw",
+            height: "100vh",
+            border: "none",
+            background: "#fff",
+          }}
           title={
             selectedUnit
               ? `Unit ${selectedUnit.unitId}: ${selectedUnit.title}`
@@ -156,17 +92,96 @@ export default async function LessonPage({
           }
         />
       ) : (
-        <div
-          className="flex flex-1 items-center justify-center"
+        <main
+          className="flex h-screen items-center justify-center"
           style={{
+            background: "var(--bg-main)",
             fontFamily: "var(--serif)",
             fontSize: "18px",
             color: "var(--text-muted)",
           }}
         >
           No lesson content found for this module.
-        </div>
+        </main>
       )}
-    </main>
+
+      {/* Floating controls — top-left: back, top-right: units + complete */}
+      <div
+        style={{
+          position: "fixed",
+          top: "12px",
+          left: "12px",
+          zIndex: 9999,
+        }}
+      >
+        <Link
+          href="/"
+          style={{
+            fontFamily: "var(--mono)",
+            fontSize: "10px",
+            letterSpacing: ".1em",
+            textTransform: "uppercase" as const,
+            color: "#fff",
+            background: "rgba(0,0,0,0.6)",
+            backdropFilter: "blur(8px)",
+            padding: "6px 12px",
+            textDecoration: "none",
+          }}
+        >
+          &larr; Lessons
+        </Link>
+      </div>
+
+      <div
+        style={{
+          position: "fixed",
+          top: "12px",
+          right: "12px",
+          zIndex: 9999,
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+        }}
+      >
+        {/* Unit tabs */}
+        {units.length > 1 &&
+          units.map((unit) => {
+            const isActive = unit.unitId === selectedUnit?.unitId;
+            return (
+              <Link
+                key={unit.unitId}
+                href={`/course/${lessonId}?unit=${unit.unitId}`}
+                style={{
+                  fontFamily: "var(--mono)",
+                  fontSize: "10px",
+                  letterSpacing: ".1em",
+                  textTransform: "uppercase" as const,
+                  color: "#fff",
+                  background: isActive
+                    ? "rgba(0,0,0,0.8)"
+                    : "rgba(0,0,0,0.4)",
+                  backdropFilter: "blur(8px)",
+                  padding: "6px 10px",
+                  textDecoration: "none",
+                }}
+              >
+                {unit.unitId}
+              </Link>
+            );
+          })}
+
+        <div
+          style={{
+            background: "rgba(0,0,0,0.6)",
+            backdropFilter: "blur(8px)",
+          }}
+        >
+          <MarkCompleteButton
+            lessonId={lessonId}
+            initialIsCompleted={isCompleted}
+          />
+        </div>
+      </div>
+    </>
   );
 }
