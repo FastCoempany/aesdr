@@ -69,17 +69,12 @@ export default async function Dashboard() {
           style={{ fontFamily: "var(--cond)", fontWeight: 600, fontSize: "13px", letterSpacing: ".1em", textTransform: "uppercase" as const }}
         >
           {user ? (
-            <form action="/api/auth/signout" method="post">
-              <button
-                type="button"
-                className="transition"
-                style={{ color: "var(--text-muted)" }}
-                onMouseOver={(e) => (e.currentTarget.style.color = "var(--theme)")}
-                onMouseOut={(e) => (e.currentTarget.style.color = "var(--text-muted)")}
-              >
-                Sign Out
-              </button>
-            </form>
+            <Link
+              href="/login"
+              style={{ color: "var(--text-muted)" }}
+            >
+              Sign Out
+            </Link>
           ) : (
             <Link href="/login" style={{ color: "var(--theme)" }}>
               Sign In
