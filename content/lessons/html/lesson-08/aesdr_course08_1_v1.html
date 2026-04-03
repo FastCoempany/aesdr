@@ -32,7 +32,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:var(--white);color:var(--black);font-family:var(--cond);overflow:hidden}
-.app{display:grid;grid-template-columns:1fr 234px;grid-template-rows:52px 1fr 60px;height:100vh}
+.app{display:grid;grid-template-columns:1fr 200px;grid-template-rows:52px 1fr 60px;height:100vh}
 
 /* TOPBAR */
 .topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:2px solid var(--black);background:var(--white);z-index:20}
@@ -106,16 +106,16 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .ghost-n{position:absolute;right:48px;top:-20px;font-family:var(--display);font-size:200px;line-height:1;color:var(--lite);pointer-events:none;user-select:none}
 .c2-badge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;background:var(--theme);color:var(--black);font-weight:700;padding:3px 10px;margin-bottom:12px}
 .sec-eye{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--theme-text);margin-bottom:14px;display:inline-block;margin-left:10px}
-.lh-title{font-family:var(--display);font-size:clamp(22px,3.2vw,46px);line-height:1.05;color:var(--black);max-width:640px}
+.lh-title{font-family:var(--display);font-size:clamp(22px,3.2vw,46px);line-height:1.05;color:var(--black);max-width:900px}
 .lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
 .lh-sub b{color:var(--black)}
 .lb{padding:24px 56px 0}
-.lp{font-family:var(--serif);font-size:16px;line-height:1.8;color:var(--black);max-width:580px;margin-bottom:14px}
-.kp{list-style:none;max-width:580px;margin:14px 0}
-.kp li{font-family:var(--serif);font-size:15px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px;align-items:flex-start}
+.lp{font-family:var(--serif);font-size:19px;line-height:1.8;color:var(--black);max-width:820px;margin-bottom:14px}
+.kp{list-style:none;max-width:820px;margin:14px 0}
+.kp li{font-family:var(--serif);font-size:18px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px;align-items:flex-start}
 .kp li:first-child{border-top:1px solid var(--line)}
 .kp-n{font-family:var(--mono);font-size:9px;color:var(--mid);min-width:22px;padding-top:3px;flex-shrink:0}
-.lie{max-width:580px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
+.lie{max-width:820px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
 .lie-tab{position:absolute;top:0;left:0;font-family:var(--cond);font-size:9px;letter-spacing:.24em;font-weight:800;text-transform:uppercase;padding:3px 10px;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;color:var(--black)}
 .lie-q{font-family:var(--serif);font-style:italic;font-size:18px;color:#fff;line-height:1.5;margin:12px 0 10px}
 .lie-a{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
@@ -152,7 +152,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── BLAME CHAIN BREAKER ── */
 .blame-wrap{padding:16px 56px 44px;max-width:740px}
-.blame-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:22px}
+.blame-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:22px}
 .blame-chain{display:flex;align-items:center;gap:0;margin-bottom:28px;max-width:680px;overflow:hidden}
 .blame-node{flex:1;background:var(--black);padding:14px 16px;position:relative;text-align:center}
 .blame-node-name{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#fff}
@@ -175,7 +175,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── PLAYBOOK SEQUENCER ── */
 .seq-wrap{padding:16px 56px 44px;max-width:720px}
-.seq-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.seq-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
 .seq-pipeline{display:flex;flex-direction:column;gap:6px;margin-bottom:24px}
 .seq-slot{display:flex;align-items:center;gap:14px;min-height:56px}
 .seq-pos{font-family:var(--display);font-size:28px;color:var(--lite2);flex-shrink:0;width:28px;text-align:center;line-height:1;transition:color .3s}
@@ -199,7 +199,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── INSIGHTS CLASSIFIER ── */
 .cls-wrap{padding:16px 56px 44px;max-width:720px}
-.cls-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.cls-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
 .cls-buckets{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:24px}
 .cls-bucket{border:2px solid var(--line2);transition:border-color .2s}
 .cls-bucket.target{border-color:var(--theme-text);border-style:dashed;cursor:pointer}
@@ -248,7 +248,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 /* TOOLS */
 .tools-blk{padding:20px 56px 44px}
 .t-head{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--black);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--black)}
-.hw-list{list-style:none;max-width:580px;margin-top:8px}
+.hw-list{list-style:none;max-width:820px;margin-top:8px}
 .hw-list li{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.65;padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
 .hw-list li:first-child{border-top:1px solid var(--line)}
 .hw-box{width:14px;height:14px;border:2px solid var(--black);flex-shrink:0;margin-top:4px}

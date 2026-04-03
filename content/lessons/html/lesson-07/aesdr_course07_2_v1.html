@@ -25,7 +25,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:var(--white);color:var(--black);font-family:var(--cond);overflow:hidden}
-.app{display:grid;grid-template-columns:1fr 234px;grid-template-rows:52px 1fr 60px;height:100vh}
+.app{display:grid;grid-template-columns:1fr 200px;grid-template-rows:52px 1fr 60px;height:100vh}
 
 /* TOPBAR */
 .topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:2px solid var(--black);background:var(--white);z-index:20}
@@ -94,16 +94,16 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .ghost-n{position:absolute;right:48px;top:-20px;font-family:var(--display);font-size:200px;line-height:1;color:var(--lite);pointer-events:none;user-select:none}
 .c7-badge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;background:var(--plum);color:#fff;padding:3px 10px;margin-bottom:12px}
 .sec-eye{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--plum);margin-bottom:14px;display:inline-block;margin-left:10px}
-.lh-title{font-family:var(--display);font-size:clamp(22px,3.2vw,46px);line-height:1.05;color:var(--black);max-width:640px}
+.lh-title{font-family:var(--display);font-size:clamp(22px,3.2vw,46px);line-height:1.05;color:var(--black);max-width:900px}
 .lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
 .lh-sub b{color:var(--black)}
 .lb{padding:24px 56px 0}
-.lp{font-family:var(--serif);font-size:16px;line-height:1.8;color:var(--black);max-width:580px;margin-bottom:14px}
-.kp{list-style:none;max-width:580px;margin:14px 0}
-.kp li{font-family:var(--serif);font-size:15px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px}
+.lp{font-family:var(--serif);font-size:19px;line-height:1.8;color:var(--black);max-width:820px;margin-bottom:14px}
+.kp{list-style:none;max-width:820px;margin:14px 0}
+.kp li{font-family:var(--serif);font-size:18px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px}
 .kp li:first-child{border-top:1px solid var(--line)}
 .kp-n{font-family:var(--mono);font-size:9px;color:var(--mid);min-width:22px;padding-top:3px;flex-shrink:0}
-.lie{max-width:580px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
+.lie{max-width:820px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
 .lie-tab{position:absolute;top:0;left:0;font-family:var(--cond);font-size:9px;letter-spacing:.24em;font-weight:800;text-transform:uppercase;padding:3px 10px;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;color:var(--black)}
 .lie-q{font-family:var(--serif);font-style:italic;font-size:18px;color:#fff;line-height:1.5;margin:12px 0 10px}
 .lie-a{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
@@ -115,7 +115,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── PIPELINE OWNERSHIP AUDIT ── */
 .po-wrap{padding:16px 56px 44px;max-width:720px}
-.po-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:22px}
+.po-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:22px}
 .po-meter-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:600px;margin-bottom:24px}
 .po-meter{background:var(--black);padding:20px 20px 16px}
 .po-meter-tag{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px}
@@ -147,7 +147,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── SDR vs SELF COMPARE ── */
 .cv2-wrap{padding:16px 56px 44px;max-width:760px}
-.cv2-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
+.cv2-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
 .cv2-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
 .cv2-col{border:2px solid var(--line2);transition:border-color .2s}
 .cv2-col.target{border-color:var(--plum);border-style:dashed}
@@ -172,8 +172,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── 4-PART OUTREACH BUILDER ── */
 .ob-wrap{padding:16px 56px 44px;max-width:700px}
-.ob-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
-.ob-pipeline{display:flex;gap:6px;align-items:stretch;max-width:640px;margin-bottom:22px}
+.ob-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
+.ob-pipeline{display:flex;gap:6px;align-items:stretch;max-width:900px;margin-bottom:22px}
 .ob-stage{flex:1;display:flex;flex-direction:column;align-items:center;position:relative}
 .ob-stage:not(:last-child)::after{content:'→';position:absolute;right:-9px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--mid);z-index:1}
 .ob-slot{width:100%;min-height:80px;border:1px dashed var(--line2);display:flex;flex-direction:column;justify-content:center;padding:10px;text-align:center;transition:all .2s;cursor:pointer}
@@ -186,7 +186,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .ob-slot-sub{font-family:var(--serif);font-size:10px;color:var(--mid);font-style:italic;margin-top:3px;line-height:1.4}
 .ob-slot-placeholder{font-family:var(--mono);font-size:9px;color:rgba(0,0,0,0.2);font-style:italic;letter-spacing:.06em}
 .ob-pool-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--black)}
-.ob-pool{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-width:640px}
+.ob-pool{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-width:900px}
 .ob-tile{padding:12px 14px;border:2px solid var(--line2);background:var(--white);font-family:var(--cond);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.2}
 .ob-tile:hover:not(.placed):not(.sel){border-color:var(--black)}
 .ob-tile.sel{border-color:var(--plum);background:var(--plum);color:#fff}
@@ -197,12 +197,12 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── DAILY BLOCK SEQUENCER ── */
 .db-wrap{padding:16px 56px 44px;max-width:720px}
-.db-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px}
-.db-clock{background:var(--plum);padding:18px 20px 14px;max-width:580px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
+.db-instr{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
+.db-clock{background:var(--plum);padding:18px 20px 14px;max-width:820px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
 .db-clock-tag{font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,0.35)}
 .db-clock-num{font-family:var(--display);font-size:44px;color:var(--charge);line-height:.9;transition:all .4s}
 .db-clock-label{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,0.4)}
-.db-blocks{display:flex;flex-direction:column;gap:6px;max-width:580px;margin-bottom:18px}
+.db-blocks{display:flex;flex-direction:column;gap:6px;max-width:820px;margin-bottom:18px}
 .db-block{display:flex;align-items:stretch;border:1px solid var(--line2);transition:border-color .2s;min-height:56px;cursor:pointer}
 .db-block.target{border-color:var(--plum);border-style:dashed}
 .db-block.target:hover{border-style:solid;border-width:2px}
@@ -245,7 +245,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 /* TOOLS */
 .tools-blk{padding:20px 56px 44px}
 .t-head{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--black);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--black)}
-.hw-list{list-style:none;max-width:580px;margin-top:8px}
+.hw-list{list-style:none;max-width:820px;margin-top:8px}
 .hw-list li{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.65;padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
 .hw-list li:first-child{border-top:1px solid var(--line)}
 .hw-box{width:14px;height:14px;border:2px solid var(--black);flex-shrink:0;margin-top:4px}
@@ -412,7 +412,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-sub"><b id="dbCount">0</b> / 4 blocks correctly placed</div>
     </div>
     <div class="db-wrap">
-      <p class="db-instr" style="font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:580px;line-height:1.65;margin-bottom:20px">Select an activity, then click the correct time block. Build the 60–90 minute daily prospecting routine that puts you ahead of every AE who's waiting for leads.</p>
+      <p class="db-instr" style="font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px">Select an activity, then click the correct time block. Build the 60–90 minute daily prospecting routine that puts you ahead of every AE who's waiting for leads.</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 40px">
         <div>
           <div style="font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);padding-bottom:10px;border-bottom:2px solid var(--black);margin-bottom:8px">Daily Time Blocks</div>
