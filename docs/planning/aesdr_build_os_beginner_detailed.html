@@ -4389,7 +4389,14 @@ a { color: inherit; }
 
 <script>
 const STORAGE_KEY = 'aesdr_build_os_checks_v2';
-const checks = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+const PRESEEDED = [
+  "02-05","02-07",
+  "04-09",
+  "05-01","05-02","05-03","05-04","05-05","05-06","05-07","05-08","05-09",
+  "06-01","06-03","06-08"
+];
+const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+const checks = new Set([...saved, ...PRESEEDED]);
 let showUndoneOnly = false;
 
 function syncChecks() {
@@ -4422,6 +4429,7 @@ function updateProgress() {
 function persistChecks() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify([...checks]));
 }
+persistChecks();
 
 function toggleCard(card, forceOpen) {
   const isOpen = card.classList.contains('open');
