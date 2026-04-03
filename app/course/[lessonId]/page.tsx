@@ -30,7 +30,7 @@ export default async function LessonPage({
   } = await supabase.auth.getUser();
 
   if (authError || !user) {
-    redirect("/");
+    redirect("/login");
   }
 
   const { data: progress, error: progressError } = await supabase
@@ -115,7 +115,7 @@ export default async function LessonPage({
         }}
       >
         <Link
-          href="/"
+          href="/dashboard"
           style={{
             fontFamily: "var(--mono)",
             fontSize: "10px",

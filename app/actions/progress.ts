@@ -35,7 +35,7 @@ export async function markLessonComplete(lessonId: string) {
     throw new Error("Database error");
   }
 
-  revalidatePath("/");
+  revalidatePath("/dashboard");
   revalidatePath(`/course/${lessonId}`);
   return { success: true };
 }
@@ -83,7 +83,7 @@ export async function saveLessonProgress(
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  revalidatePath("/");
+  revalidatePath("/dashboard");
 }
 
 /**
