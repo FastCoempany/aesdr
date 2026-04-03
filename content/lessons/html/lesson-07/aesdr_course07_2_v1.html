@@ -630,6 +630,7 @@ function init(){
   buildPO(); buildCV2(); buildOB(); buildDB(); buildQuiz(); render();
 }
 function go(n){
+  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:{}},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n; document.getElementById('s'+cur).classList.add('active');
   document.getElementById('main').scrollTop=0; render();

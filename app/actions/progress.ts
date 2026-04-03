@@ -78,6 +78,15 @@ export async function saveLessonProgress(
 }
 
 /**
+ * Sign the current user out.
+ */
+export async function signOut() {
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  revalidatePath("/");
+}
+
+/**
  * Fetch progress summaries for ALL lessons (used on the dashboard).
  */
 export async function getAllProgress(): Promise<LessonProgressSummary[]> {

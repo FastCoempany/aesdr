@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import SignOutButton from "@/components/SignOutButton";
 import { createClient } from "@/utils/supabase/server";
 import { LESSONS } from "@/utils/progress/types";
 import type { LessonProgressSummary } from "@/utils/progress/types";
@@ -69,12 +70,7 @@ export default async function Dashboard() {
           style={{ fontFamily: "var(--cond)", fontWeight: 600, fontSize: "13px", letterSpacing: ".1em", textTransform: "uppercase" as const }}
         >
           {user ? (
-            <Link
-              href="/login"
-              style={{ color: "var(--text-muted)" }}
-            >
-              Sign Out
-            </Link>
+            <SignOutButton />
           ) : (
             <Link href="/login" style={{ color: "var(--theme)" }}>
               Sign In

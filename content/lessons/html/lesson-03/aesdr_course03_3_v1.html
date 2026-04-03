@@ -670,6 +670,7 @@ function init(){
   buildArch(); buildImpact(); renderMU(); buildBB(); buildQuiz(); render();
 }
 function go(n){
+  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:{}},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;
   document.getElementById('s'+cur).classList.add('active');
