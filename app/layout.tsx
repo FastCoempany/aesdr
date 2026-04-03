@@ -21,9 +21,9 @@ export const metadata: Metadata = {
     url: "https://aesdr.com",
     images: [
       {
-        url: "/ceramic-bunny-mask.png",
-        width: 768,
-        height: 768,
+        url: "/ceramic-bunny-mask-cutout.png",
+        width: 858,
+        height: 1024,
         alt: "Ceramic humanoid bunny holding a mask",
       },
     ],
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "AESDR",
     description: "AEs & SDRs rule this world.",
-    images: ["/ceramic-bunny-mask.png"],
+    images: ["/ceramic-bunny-mask-cutout.png"],
   },
 };
 
