@@ -1,13 +1,20 @@
-import { type NextRequest } from "next/server";
-import { updateSession } from "@/utils/supabase/middleware";
+import { NextResponse, type NextRequest } from "next/server";
 
-export async function proxy(request: NextRequest) {
-  return await updateSession(request);
+export function proxy(request: NextRequest) {
+  if (request.nextUrl.pathname === "/") {
+    return NextResponse.next();
+  }
+
+  const landingUrl = request.nextUrl.clone();
+  landingUrl.pathname = "/";
+  landingUrl.search = "";
+
+  // Temporary hold-page redirect while the rest of the product stays private.
+  return NextResponse.redirect(landingUrl, 302);
 }
 
 export const config = {
   matcher: [
-    // Run on all routes except static files and _next internals
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\..*).*)",
   ],
 };
