@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import SignOutButton from "@/components/SignOutButton";
+import { getToolAssetsForLesson } from "@/utils/content/catalog";
 import { createClient } from "@/utils/supabase/server";
 import { LESSONS } from "@/utils/progress/types";
 import type { LessonProgressSummary } from "@/utils/progress/types";
@@ -110,7 +111,7 @@ export default async function Dashboard() {
           {user ? (
             <div className="flex items-center gap-5 pt-2">
               <div
-                className="h-[2px] w-48"
+                className="h-[2px] w-32 sm:w-48"
                 style={{ background: "var(--bg-card)" }}
               >
                 <div

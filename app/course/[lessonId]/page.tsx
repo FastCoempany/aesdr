@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import MarkCompleteButton from "@/components/MarkCompleteButton";
 import ProgressSaver from "@/components/ProgressSaver";
-import { listLessonUnits } from "@/utils/content/catalog";
+import { listLessonUnits, getToolAssetsForLesson } from "@/utils/content/catalog";
 import { LESSONS } from "@/utils/progress/types";
 import { createClient } from "@/utils/supabase/server";
 
@@ -53,6 +53,7 @@ export default async function LessonPage({
 
   const lesson = LESSONS.find((entry) => entry.id === lessonId);
   const units = await listLessonUnits(lessonId);
+  const tools = getToolAssetsForLesson(lessonId);
 
   const selectedUnit =
     units.find((entry) => entry.unitId === requestedUnitId) ??
@@ -124,8 +125,11 @@ export default async function LessonPage({
             color: "#fff",
             background: "rgba(0,0,0,0.6)",
             backdropFilter: "blur(8px)",
-            padding: "6px 12px",
+            padding: "8px 12px",
             textDecoration: "none",
+            display: "inline-block",
+            minHeight: "32px",
+            lineHeight: "16px",
           }}
         >
           &larr; Lessons
@@ -141,6 +145,9 @@ export default async function LessonPage({
           display: "flex",
           alignItems: "center",
           gap: "6px",
+          flexWrap: "wrap" as const,
+          justifyContent: "flex-end",
+          maxWidth: "calc(100vw - 120px)",
         }}
       >
         {/* Unit tabs */}
@@ -181,6 +188,30 @@ export default async function LessonPage({
             initialIsCompleted={isCompleted}
           />
         </div>
+
+        {isCompleted &&
+          tools.map((tool) => (
+            <a
+              key={tool.slug}
+              href={`/tools/${encodeURIComponent(tool.slug)}/download`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontFamily: "var(--mono)",
+                fontSize: "9px",
+                letterSpacing: ".12em",
+                textTransform: "uppercase" as const,
+                padding: "6px 14px",
+                color: "#fff",
+                background: "rgba(16,185,129,0.7)",
+                backdropFilter: "blur(8px)",
+                textDecoration: "none",
+                display: "inline-block",
+              }}
+            >
+              ↓ {tool.title}
+            </a>
+          ))}
       </div>
     </>
   );

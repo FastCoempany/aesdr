@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
-const TOOLS_ROOT = path.join(process.cwd(), "..", "tools", "standalone-html");
+const TOOLS_ROOT = path.join(process.cwd(), "tools", "standalone-html");
 
 /**
  * Serves standalone tool HTML files.
