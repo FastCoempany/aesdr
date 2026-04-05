@@ -1,7 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+const PUBLIC_PATHS = ["/", "/terms", "/privacy", "/refund-policy"];
+
 export function proxy(request: NextRequest) {
-  if (request.nextUrl.pathname === "/") {
+  if (PUBLIC_PATHS.includes(request.nextUrl.pathname)) {
     return NextResponse.next();
   }
 
