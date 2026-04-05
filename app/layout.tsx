@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://aesdr.com"),
+  metadataBase: new URL(process.env.SITE_URL || "https://aesdr.com"),
   title: "AESDR",
-  description: "A private launch hold page for AESDR.",
+  description: "AEs & SDRs rule this world.",
   robots: {
     index: false,
     follow: false,

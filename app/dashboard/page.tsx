@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import SignOutButton from "@/components/SignOutButton";
-import { getToolAssetsForLesson } from "@/utils/content/catalog";
 import { createClient } from "@/utils/supabase/server";
 import { LESSONS } from "@/utils/progress/types";
 import type { LessonProgressSummary } from "@/utils/progress/types";
