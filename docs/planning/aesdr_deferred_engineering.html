@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR Deferred Engineering</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #05070c;
+  --panel: #0b1019;
+  --panel-2: #0f1622;
+  --panel-3: #131d2d;
+  --line: #223149;
+  --line-2: #314766;
+  --text: #e8eef7;
+  --muted: #95a6bd;
+  --soft: #6f8199;
+  --green: #00e5a0;
+  --green-2: rgba(0,229,160,.14);
+  --blue: #57b8ff;
+  --blue-2: rgba(87,184,255,.12);
+  --gold: #f6c34b;
+  --danger: #ff5d7d;
+  --shadow: 0 18px 50px rgba(0,0,0,.35);
+  --radius: 18px;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'Inter', system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--sans);
+  background:
+    radial-gradient(circle at top left, rgba(87,184,255,.09), transparent 25%),
+    radial-gradient(circle at top right, rgba(0,229,160,.08), transparent 22%),
+    var(--bg);
+  color: var(--text);
+}
+a { color: inherit; }
+.app {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  min-height: 100vh;
+}
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: auto;
+  padding: 24px 20px 28px;
+  border-right: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(11,16,25,.98), rgba(6,9,14,.98));
+}
+.brand {
+  padding: 10px 10px 18px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 18px;
+}
+.brand .kicker {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: .14em;
+  color: var(--green);
+  text-transform: uppercase;
+}
+.brand h1 {
+  margin: 8px 0 8px;
+  font-size: 28px;
+  line-height: 1.05;
+}
+.brand p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.progress-panel {
+  margin: 18px 0;
+  padding: 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+.progress-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.progress-row:last-child { margin-bottom: 0; }
+.progress-label {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.progress-bar {
+  height: 10px;
+  width: 100%;
+  background: #09111d;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-bar > span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--blue), var(--green));
+  box-shadow: 0 0 24px rgba(0,229,160,.35);
+}
+.search-wrap {
+  margin: 16px 0 18px;
+}
+.search-wrap input {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--text);
+  border-radius: 14px;
+  padding: 14px 14px;
+  font: inherit;
+}
+.ctrls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.ctrls button, .nav-btn, .toggle-btn, .ghost-btn {
+  font: inherit;
+}
+.ctrls button {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.ctrls button:hover, .nav-btn:hover, .toggle-btn:hover, .ghost-btn:hover {
+  border-color: var(--line-2);
+  background: var(--panel-2);
+}
+.nav-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.nav-btn {
+  text-align: left;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  color: var(--text);
+  padding: 12px 12px;
+  cursor: pointer;
+}
+.nav-btn span {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .12em;
+  color: var(--green);
+  margin-bottom: 6px;
+}
+.nav-btn strong {
+  display: block;
+  font-size: 14px;
+  line-height: 1.35;
+}
+.main {
+  padding: 28px 34px 80px;
+}
+.hero {
+  display: grid;
+  grid-template-columns: 1.25fr .75fr;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+.hero-card, .order-card {
+  background: linear-gradient(180deg, rgba(15,22,34,.94), rgba(9,14,23,.98));
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+.hero-card .eyebrow, .order-card .eyebrow {
+  font-family: var(--mono);
+  color: var(--green);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+}
+.hero-card h2 {
+  margin: 10px 0 12px;
+  font-size: clamp(32px, 4vw, 54px);
+  line-height: 1;
+}
+.hero-card p {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.65;
+  max-width: 80ch;
+}
+.callout {
+  margin-top: 18px;
+  padding: 14px 16px;
+  border: 1px solid rgba(246,195,75,.25);
+  background: rgba(246,195,75,.08);
+  border-radius: 14px;
+  color: #f5ddb0;
+  line-height: 1.55;
+}
+.order-list {
+  margin: 14px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+.order-list li strong { color: var(--text); }
+.section-jump {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.ghost-btn {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.category {
+  margin-top: 26px;
+  padding-top: 10px;
+}
+.category-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+.category-top h2 {
+  margin: 10px 0 10px;
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1.05;
+}
+.category-top p {
+  margin: 0;
+  color: var(--muted);
+  max-width: 80ch;
+  line-height: 1.65;
+}
+.cat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--green);
+  background: var(--green-2);
+  border: 1px solid rgba(0,229,160,.25);
+  padding: 8px 10px;
+  border-radius: 999px;
+}
+.cat-stats {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.cat-stats > div {
+  min-width: 110px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 12px 14px;
+}
+.stat-num {
+  display: block;
+  font-size: 30px;
+  font-weight: 800;
+}
+.stat-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+.tasks-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.task-card {
+  background: linear-gradient(180deg, rgba(11,16,25,.96), rgba(8,12,19,.98));
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  overflow: hidden;
+}
+.task-card.is-done {
+  border-color: rgba(0,229,160,.45);
+  box-shadow: 0 0 0 1px rgba(0,229,160,.08), 0 0 32px rgba(0,229,160,.06);
+}
+.task-card.hidden {
+  display: none;
+}
+.task-head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 18px 18px;
+}
+.task-check {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+.task-check input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.task-check .box {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--line-2);
+  border-radius: 8px;
+  background: #0a111b;
+  display: grid;
+  place-items: center;
+}
+.task-check input:checked + .box {
+  background: var(--green);
+  border-color: var(--green);
+}
+.task-check input:checked + .box::after {
+  content: "✓";
+  font-weight: 900;
+  color: #03120d;
+}
+.task-head-copy .eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .12em;
+  color: var(--blue);
+  margin-bottom: 6px;
+}
+.task-head-copy h3 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  line-height: 1.15;
+}
+.task-head-copy p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+.toggle-btn {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.task-body {
+  display: none;
+  padding: 0 18px 18px;
+}
+.task-card.open .task-body {
+  display: block;
+}
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 12px;
+  margin: 0 0 14px;
+}
+.meta-card {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+}
+.meta-card-wide {
+  grid-column: span 4;
+}
+.meta-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.meta-value {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1.4fr .8fr .8fr;
+  gap: 12px;
+}
+.detail-card {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+}
+.detail-card h4 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  letter-spacing: .02em;
+}
+.detail-card ol, .detail-card ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.detail-card li + li {
+  margin-top: 8px;
+}
+.footer-note {
+  margin-top: 32px;
+  padding: 18px 20px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.small {
+  font-size: 13px;
+  color: var(--soft);
+}
+@media (max-width: 1180px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar {
+    position: relative;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero { grid-template-columns: 1fr; }
+}
+@media (max-width: 900px) {
+  .main { padding: 18px 16px 60px; }
+  .meta-grid, .detail-grid {
+    grid-template-columns: 1fr;
+  }
+  .meta-card-wide {
+    grid-column: auto;
+  }
+  .task-head {
+    grid-template-columns: auto 1fr;
+  }
+  .toggle-btn {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+  .category-top {
+    flex-direction: column;
+  }
+}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="kicker">AESDR</div>
+      <h1>AESDR Deferred Engineering</h1>
+      <p>Remaining technical tasks split into what Claude can complete now and what requires external setup.</p>
+    </div>
+    <div class="progress-panel">
+      <div class="progress-row">
+        <div class="progress-label">Global completion</div>
+        <div id="globalPct" class="progress-label">0%</div>
+      </div>
+      <div class="progress-bar"><span id="globalBar"></span></div>
+      <div class="progress-row" style="margin-top:12px;">
+        <div class="progress-label">Tasks completed</div>
+        <div id="globalCount" class="progress-label">0 / 0</div>
+      </div>
+    </div>
+    <div class="search-wrap">
+      <input id="searchInput" type="text" placeholder="Search tasks">
+    </div>
+    <div class="ctrls">
+      <button id="expandAllBtn" type="button">Expand all</button>
+      <button id="collapseAllBtn" type="button">Collapse all</button>
+      <button id="showOnlyOpenBtn" type="button">Show undone</button>
+      <button id="resetChecksBtn" type="button">Reset checks</button>
+    </div>
+    <div class="nav-block">
+      <button class="nav-btn" type="button" data-target="cat-A"><span>CAT A</span><strong>Claude Can Complete</strong></button>
+<button class="nav-btn" type="button" data-target="cat-B"><span>CAT B</span><strong>Requires External Setup</strong></button>
+    </div>
+  </aside>
+  <main class="main">
+
+    <section class="category" id="cat-A">
+      <div class="category-top">
+        <div>
+          <div class="cat-pill">CAT A <span data-cat-progress="A">0%</span></div>
+          <h2>Engineering Tasks Claude Can Fully Complete</h2>
+          <p>These can be built right now with no external accounts, keys, or founder decisions needed.</p>
+        </div>
+      </div>
+      <div class="tasks-wrap">
+    <article class="task-card" data-title="add page-specific metadata (seo)" data-summary="each page needs its own title and description for search engines and social sharing." data-cat="A">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="A-01">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK A.01</div>
+          <h3>Add Page-Specific Metadata (SEO)</h3>
+          <p>Each page needs its own title and description for search engines and social sharing.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Add metadata export to app/dashboard/page.tsx<ul><li>Title: &quot;Your Lessons | AESDR&quot;, description about 12-course curriculum</li><li>Add OpenGraph tags matching root layout pattern</li></ul></li><li>Add metadata to app/login/page.tsx<ul><li>Title: &quot;Sign In | AESDR&quot;</li></ul></li><li>Add metadata to app/signup/page.tsx<ul><li>Title: &quot;Sign Up | AESDR&quot;</li></ul></li><li>Add dynamic metadata to app/course/[lessonId]/page.tsx<ul><li>Create generateMetadata that reads lessonId param</li><li>Format as &quot;Lesson X: Title | AESDR&quot;</li></ul></li><li>Add metadata to legal pages (terms, privacy, refund-policy)<ul><li>Each gets &quot;Terms of Service | AESDR&quot; etc.</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Every page has a unique browser tab title</li><li>Sharing any URL on social shows proper title and description</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Forgetting to test og:image paths</li><li>Duplicate metadata conflicting with layout.tsx defaults</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="add accessibility improvements" data-summary="add aria-labels, skip-to-content link, and verify alt text across the app." data-cat="A">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="A-02">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK A.02</div>
+          <h3>Add Accessibility Improvements</h3>
+          <p>Add aria-labels, skip-to-content link, and verify alt text across the app.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Add aria-labels to navigation buttons<ul><li>Dashboard nav: aria-label=&quot;Main navigation&quot;</li><li>Course page back button: aria-label=&quot;Back to lessons&quot;</li><li>Tool download buttons: aria-label=&quot;Download [tool name]&quot;</li></ul></li><li>Add skip-to-content link in layout.tsx<ul><li>Visually hidden link visible on focus</li><li>Target main content with id=&quot;main-content&quot;</li><li>Style with position absolute, clip-path, focus:visible</li></ul></li><li>Verify all images have alt text<ul><li>Landing page bunny image</li><li>Any other images in course pages</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Tab key reaches main content in 2 presses (skip link + first element)</li><li>Screen reader announces button purposes correctly</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Adding generic aria-labels like &quot;button&quot; that add no value</li><li>Breaking visual layout with the skip link</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="add loading state skeletons" data-summary="add shimmer loading states for dashboard and course pages to prevent layout shift." data-cat="A">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="A-03">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK A.03</div>
+          <h3>Add Loading State Skeletons</h3>
+          <p>Add shimmer loading states for dashboard and course pages to prevent layout shift.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Create app/dashboard/loading.tsx<ul><li>Build skeleton grid matching lesson card layout (3 columns)</li><li>Use CSS animation pulse for loading shimmer</li><li>Match dashboard colors: var(--bg-panel), var(--line)</li></ul></li><li>Create app/course/[lessonId]/loading.tsx<ul><li>Full-page loading indicator matching course page layout</li><li>Show header skeleton + iframe placeholder rectangle</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Dashboard shows shimmer cards before real data loads</li><li>Course page shows placeholder before iframe loads</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Making loading state look nothing like the real page (causes jarring shift)</li><li>Forgetting to match the grid layout of the actual dashboard</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="replace console.error with proper error handling" data-summary="remove debug console.error calls from production code and handle errors gracefully." data-cat="A">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="A-04">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK A.04</div>
+          <h3>Replace console.error With Proper Error Handling</h3>
+          <p>Remove debug console.error calls from production code and handle errors gracefully.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Fix app/actions/progress.ts (3 instances)<ul><li>Line ~34: saveCompletion — return { error: true } instead of console.error</li><li>Line ~73: saveProgress — same pattern</li><li>Line ~110: loadAllProgress — return empty array on failure</li></ul></li><li>Fix app/course/[lessonId]/page.tsx<ul><li>Line ~44: loadLessonProgress — handle gracefully, show default state</li></ul></li><li>Fix components/ProgressSaver.tsx<ul><li>Line ~40: silent fail is acceptable for background saves, remove console.error</li></ul></li><li>Fix components/MarkCompleteButton.tsx<ul><li>Line ~25: show user-facing error message instead of console.error</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Zero console.error calls in production code</li><li>Errors fail gracefully with user-visible feedback where appropriate</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Removing error handling entirely instead of replacing it</li><li>Showing raw error messages to users</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="build /about page with instructor placeholder" data-summary="create an about page with instructor bio placeholder and contact info." data-cat="A">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="A-05">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK A.05</div>
+          <h3>Build /about Page With Instructor Placeholder</h3>
+          <p>Create an About page with instructor bio placeholder and contact info.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Create app/about/page.tsx<ul><li>Use same styling pattern as legal pages (terms/privacy)</li><li>Sections: Who Built This, Philosophy, Experience placeholder, Contact</li><li>Include support@aesdr.com as contact</li></ul></li><li>Add /about to proxy.ts PUBLIC_PATHS array</li><li>Add &quot;About&quot; link to landing page footer next to Terms, Privacy, Refunds</li><li>Add metadata: title &quot;About | AESDR&quot;</li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>/about page loads with placeholder content</li><li>Footer has About link</li><li>Page accessible without login</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Writing a full bio before the founder provides one</li><li>Forgetting to add to proxy allowlist</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="build /contact page" data-summary="create a simple contact page with support email prominently displayed." data-cat="A">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="A-06">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK A.06</div>
+          <h3>Build /contact Page</h3>
+          <p>Create a simple contact page with support email prominently displayed.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Create app/contact/page.tsx<ul><li>Show support@aesdr.com prominently</li><li>Include expected response time: &quot;within 48 hours&quot;</li><li>Match legal page styling</li></ul></li><li>Add /contact to proxy.ts PUBLIC_PATHS</li><li>Add &quot;Contact&quot; link to landing page footer</li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>/contact page shows email and response time</li><li>Footer has Contact link</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Adding a form without a backend to process it</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="prepare robots.txt for launch" data-summary="document when and how to flip robots.txt from blocking to allowing indexing." data-cat="A">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="A-07">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK A.07</div>
+          <h3>Prepare robots.txt for Launch</h3>
+          <p>Document when and how to flip robots.txt from blocking to allowing indexing.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Read current app/robots.ts<ul><li>Currently blocks all indexing (disallow: &quot;/&quot;)</li><li>Correct for pre-launch phase</li></ul></li><li>Add comment in robots.ts noting this should be flipped before launch<ul><li>Allow: /, /about, /terms, /privacy, /refund-policy</li><li>Disallow: /dashboard, /course, /login, /signup, /api</li></ul></li><li>Create app/sitemap.ts template (returns empty for now)<ul><li>Will list public URLs after launch</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>robots.ts has clear comments for launch-day flip</li><li>sitemap.ts template exists and is ready to populate</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Accidentally flipping to allow before launch</li><li>Forgetting to submit sitemap to Google Search Console after flip</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>
+      </div>
+    </section>
+
+    <section class="category" id="cat-B">
+      <div class="category-top">
+        <div>
+          <div class="cat-pill">CAT B <span data-cat-progress="B">0%</span></div>
+          <h2>Engineering Tasks Requiring External Setup</h2>
+          <p>These need Stripe accounts, email providers, Discord servers, or other external services the founder must set up first.</p>
+        </div>
+      </div>
+      <div class="tasks-wrap">
+    <article class="task-card" data-title="stripe integration — products &amp; checkout" data-summary="create stripe products, checkout sessions, and wire payment flow." data-cat="B">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="B-01">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK B.01</div>
+          <h3>Stripe Integration — Products &amp; Checkout</h3>
+          <p>Create Stripe products, checkout sessions, and wire payment flow.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Create Stripe account and get API keys<ul><li>Sign up at stripe.com</li><li>Get publishable key and secret key</li><li>Add STRIPE_SECRET_KEY and NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY to .env.local</li><li>Add same keys to Vercel environment variables</li></ul></li><li>Create Stripe products<ul><li>Individual tier: $199 one-time payment</li><li>Team tier: $999 one-time payment (up to 10 seats)</li><li>Get price IDs for each</li></ul></li><li>Create app/api/checkout/route.ts<ul><li>Accept priceId and tier in request body</li><li>Create Stripe checkout session with success_url and cancel_url</li><li>Return session URL for redirect</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Stripe test mode checkout completes successfully</li><li>Success and cancel URLs redirect correctly</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Using live keys in development</li><li>Hardcoding price IDs instead of using env vars</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="stripe webhook endpoint" data-summary="handle payment confirmations and grant course access automatically." data-cat="B">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="B-02">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK B.02</div>
+          <h3>Stripe Webhook Endpoint</h3>
+          <p>Handle payment confirmations and grant course access automatically.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Create app/api/webhooks/stripe/route.ts<ul><li>Verify webhook signature using STRIPE_WEBHOOK_SECRET</li><li>Handle checkout.session.completed event</li><li>Extract customer email and purchased tier</li></ul></li><li>Write webhook DB logic<ul><li>Create purchases table in Supabase (user_id, stripe_session_id, tier, created_at)</li><li>On successful payment, insert row</li><li>Grant course access by updating user metadata or access table</li></ul></li><li>Configure webhook in Stripe dashboard<ul><li>Point to https://aesdr.com/api/webhooks/stripe</li><li>Select checkout.session.completed event</li><li>Copy webhook signing secret to env vars</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Test webhook fires in Stripe CLI and creates DB row</li><li>User gets course access after payment</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Not verifying webhook signature (security risk)</li><li>Not handling duplicate webhook deliveries (Stripe retries)</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="post-purchase redirect flow" data-summary="build success and cancel pages for after stripe checkout." data-cat="B">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="B-03">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK B.03</div>
+          <h3>Post-Purchase Redirect Flow</h3>
+          <p>Build success and cancel pages for after Stripe checkout.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Create app/purchase/success/page.tsx<ul><li>Show &quot;Welcome to AESDR&quot; confirmation</li><li>Auto-redirect to /dashboard after 5 seconds</li><li>Show Lesson 1 CTA button</li></ul></li><li>Create app/purchase/cancel/page.tsx<ul><li>Show &quot;Purchase cancelled&quot; message</li><li>Link back to landing page</li></ul></li><li>Wire success/cancel URLs into Stripe checkout session</li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Successful payment shows welcome page then redirects to dashboard</li><li>Cancelled payment returns to landing page</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Hardcoding redirect URLs instead of using environment-based URLs</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="cart abandonment tracking" data-summary="track started-but-incomplete checkouts for follow-up emails." data-cat="B">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="B-04">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK B.04</div>
+          <h3>Cart Abandonment Tracking</h3>
+          <p>Track started-but-incomplete checkouts for follow-up emails.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Set up Resend email provider<ul><li>Verify domain aesdr.com in Resend dashboard</li><li>Get RESEND_API_KEY and add to env vars</li></ul></li><li>Track abandoned checkouts<ul><li>Log checkout_started events in Supabase when session is created</li><li>Mark as completed when webhook fires</li><li>Query uncompleted checkouts older than 1 hour</li></ul></li><li>Trigger abandonment emails<ul><li>Supabase edge function or cron job</li><li>Send via Resend API</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Abandoned checkouts are logged</li><li>Abandonment emails send after 1 hour</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Sending abandonment email after successful purchase</li><li>Not deduplicating — sending multiple emails for same abandonment</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="discord community setup" data-summary="create and configure a gated discord server for course students." data-cat="B">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="B-05">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK B.05</div>
+          <h3>Discord Community Setup</h3>
+          <p>Create and configure a gated Discord server for course students.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Create Discord server<ul><li>Name: &quot;AESDR Community&quot;</li><li>Channels: #welcome, #introductions, #wins, #questions, #resources</li><li>Roles: Student, AE, SDR, Instructor</li></ul></li><li>Gate access<ul><li>Generate invite link tied to purchase</li><li>Or use Discord bot to verify purchase via email</li></ul></li><li>Seed initial content<ul><li>Pin welcome message with community rules</li><li>Post 3-5 discussion starters</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Discord server exists with proper channels and roles</li><li>Access requires purchase verification</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Leaving server public (anyone can join without purchase)</li><li>Empty server with no seeded content</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="welcome &amp; drip email sequence" data-summary="build automated emails after purchase: welcome, check-in, nudge." data-cat="B">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="B-06">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK B.06</div>
+          <h3>Welcome &amp; Drip Email Sequence</h3>
+          <p>Build automated emails after purchase: welcome, check-in, nudge.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Build welcome email template<ul><li>Subject: &quot;Welcome to AESDR — Start here&quot;</li><li>Body: link to Lesson 1, what to expect, support contact</li></ul></li><li>Trigger on successful purchase webhook<ul><li>In Stripe webhook handler, after DB insert, call Resend API</li><li>Send welcome email to customer email</li></ul></li><li>Build drip sequence<ul><li>Day 3: &quot;How&#x27;s Lesson 1 going?&quot;</li><li>Day 7: &quot;Ready for the next course?&quot;</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Welcome email sends within 1 minute of purchase</li><li>Drip emails fire on schedule</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Sending drip emails to users who already completed courses</li><li>Not including unsubscribe link (legal requirement)</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="analytics &amp; drop-off tracking" data-summary="add analytics to track user engagement and lesson completion patterns." data-cat="B">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="B-07">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK B.07</div>
+          <h3>Analytics &amp; Drop-Off Tracking</h3>
+          <p>Add analytics to track user engagement and lesson completion patterns.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Add Vercel Analytics or Plausible<ul><li>Install @vercel/analytics package</li><li>Add Analytics component to layout.tsx</li></ul></li><li>Track lesson engagement<ul><li>Log lesson_started and lesson_completed events</li><li>Query course_progress for drop-off patterns</li></ul></li><li>Build admin dashboard (optional)<ul><li>Protected /admin route</li><li>Show total users, completion rates per lesson, revenue</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Page views tracked across all routes</li><li>Lesson completion funnel visible in analytics</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Tracking too many events (noise vs. signal)</li><li>Not filtering out your own traffic</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="payment plans / installments" data-summary="offer installment payment options for both tiers." data-cat="B">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="B-08">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK B.08</div>
+          <h3>Payment Plans / Installments</h3>
+          <p>Offer installment payment options for both tiers.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Configure Stripe payment links with installments<ul><li>$199 individual: option for 3x $70 payments</li><li>$999 team: option for 3x $350 payments</li></ul></li><li>Handle subscription lifecycle<ul><li>Track payment status in Supabase</li><li>Revoke access on failed payments</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Users can select installment option at checkout</li><li>Failed installment payments trigger access review</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Not handling what happens when installment fails</li><li>Granting full access before all installments are paid</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>
+      </div>
+    </section>
+
+    <div class="footer-note">
+      <div class="small" style="margin-top:10px;">Local browser only: task completion states save to your browser using localStorage.</div>
+    </div>
+  </main>
+</div>
+<script>
+const STORAGE_KEY = 'aesdr_eng_checks_v1';
+const PRESEEDED = [];
+const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+const checks = new Set([...saved, ...PRESEEDED]);
+let showUndoneOnly = false;
+
+function syncChecks() {
+  document.querySelectorAll('.task-done').forEach(cb => {
+    cb.checked = checks.has(cb.dataset.taskid);
+    const card = cb.closest('.task-card');
+    card.classList.toggle('is-done', cb.checked);
+  });
+  updateProgress();
+  applyFilters();
+}
+
+function updateProgress() {
+  const total = document.querySelectorAll('.task-done').length;
+  const done = [...checks].filter(c => document.querySelector(`.task-done[data-taskid="${c}"]`)).length;
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  document.getElementById('globalPct').textContent = pct + '%';
+  document.getElementById('globalCount').textContent = `${done} / ${total}`;
+  document.getElementById('globalBar').style.width = pct + '%';
+  document.querySelectorAll('[data-cat-progress]').forEach(el => {
+    const cat = el.dataset.catProgress;
+    const boxes = [...document.querySelectorAll(`.task-done[data-taskid^="${cat}-"]`)];
+    const catDone = boxes.filter(b => checks.has(b.dataset.taskid)).length;
+    const catPct = boxes.length ? Math.round((catDone / boxes.length) * 100) : 0;
+    el.textContent = catPct + '%';
+  });
+}
+
+function persistChecks() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify([...checks]));
+}
+persistChecks();
+
+function toggleCard(card, forceOpen) {
+  const isOpen = card.classList.contains('open');
+  const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : !isOpen;
+  card.classList.toggle('open', shouldOpen);
+  const btn = card.querySelector('.toggle-btn');
+  if (btn) {
+    btn.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+    btn.textContent = shouldOpen ? 'Close Protocol' : 'Open Protocol';
+  }
+}
+
+document.querySelectorAll('.toggle-btn').forEach(btn => {
+  btn.addEventListener('click', e => {
+    const card = e.currentTarget.closest('.task-card');
+    toggleCard(card);
+  });
+});
+document.querySelectorAll('.task-done').forEach(cb => {
+  cb.addEventListener('change', e => {
+    const id = e.currentTarget.dataset.taskid;
+    if (e.currentTarget.checked) checks.add(id);
+    else checks.delete(id);
+    persistChecks();
+    syncChecks();
+  });
+});
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.getElementById(btn.dataset.target)?.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+});
+document.querySelectorAll('[data-jump]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.getElementById(btn.dataset.jump)?.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+});
+document.getElementById('expandAllBtn').addEventListener('click', () => {
+  document.querySelectorAll('.task-card').forEach(card => toggleCard(card, true));
+});
+document.getElementById('collapseAllBtn').addEventListener('click', () => {
+  document.querySelectorAll('.task-card').forEach(card => toggleCard(card, false));
+});
+document.getElementById('showOnlyOpenBtn').addEventListener('click', e => {
+  showUndoneOnly = !showUndoneOnly;
+  e.currentTarget.textContent = showUndoneOnly ? 'Show all' : 'Show undone';
+  applyFilters();
+});
+document.getElementById('resetChecksBtn').addEventListener('click', () => {
+  if (!confirm('Clear all saved completion checks for this browser?')) return;
+  checks.clear();
+  persistChecks();
+  syncChecks();
+});
+document.getElementById('searchInput').addEventListener('input', applyFilters);
+
+function applyFilters() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  document.querySelectorAll('.task-card').forEach(card => {
+    const text = (card.dataset.title + ' ' + card.dataset.summary + ' ' + card.closest('.category').querySelector('h2').textContent.toLowerCase());
+    const matchesSearch = !q || text.includes(q);
+    const done = card.classList.contains('is-done');
+    const matchesDone = !showUndoneOnly || !done;
+    card.classList.toggle('hidden', !(matchesSearch && matchesDone));
+  });
+}
+syncChecks();
+</script>
+</body>
+</html>

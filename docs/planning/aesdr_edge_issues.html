@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR Edge Issues</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #05070c;
+  --panel: #0b1019;
+  --panel-2: #0f1622;
+  --panel-3: #131d2d;
+  --line: #223149;
+  --line-2: #314766;
+  --text: #e8eef7;
+  --muted: #95a6bd;
+  --soft: #6f8199;
+  --green: #00e5a0;
+  --green-2: rgba(0,229,160,.14);
+  --blue: #57b8ff;
+  --blue-2: rgba(87,184,255,.12);
+  --gold: #f6c34b;
+  --danger: #ff5d7d;
+  --shadow: 0 18px 50px rgba(0,0,0,.35);
+  --radius: 18px;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'Inter', system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--sans);
+  background:
+    radial-gradient(circle at top left, rgba(87,184,255,.09), transparent 25%),
+    radial-gradient(circle at top right, rgba(0,229,160,.08), transparent 22%),
+    var(--bg);
+  color: var(--text);
+}
+a { color: inherit; }
+.app {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  min-height: 100vh;
+}
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: auto;
+  padding: 24px 20px 28px;
+  border-right: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(11,16,25,.98), rgba(6,9,14,.98));
+}
+.brand {
+  padding: 10px 10px 18px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 18px;
+}
+.brand .kicker {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: .14em;
+  color: var(--green);
+  text-transform: uppercase;
+}
+.brand h1 {
+  margin: 8px 0 8px;
+  font-size: 28px;
+  line-height: 1.05;
+}
+.brand p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.progress-panel {
+  margin: 18px 0;
+  padding: 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+.progress-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.progress-row:last-child { margin-bottom: 0; }
+.progress-label {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.progress-bar {
+  height: 10px;
+  width: 100%;
+  background: #09111d;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-bar > span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--blue), var(--green));
+  box-shadow: 0 0 24px rgba(0,229,160,.35);
+}
+.search-wrap {
+  margin: 16px 0 18px;
+}
+.search-wrap input {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--text);
+  border-radius: 14px;
+  padding: 14px 14px;
+  font: inherit;
+}
+.ctrls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.ctrls button, .nav-btn, .toggle-btn, .ghost-btn {
+  font: inherit;
+}
+.ctrls button {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.ctrls button:hover, .nav-btn:hover, .toggle-btn:hover, .ghost-btn:hover {
+  border-color: var(--line-2);
+  background: var(--panel-2);
+}
+.nav-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.nav-btn {
+  text-align: left;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  color: var(--text);
+  padding: 12px 12px;
+  cursor: pointer;
+}
+.nav-btn span {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .12em;
+  color: var(--green);
+  margin-bottom: 6px;
+}
+.nav-btn strong {
+  display: block;
+  font-size: 14px;
+  line-height: 1.35;
+}
+.main {
+  padding: 28px 34px 80px;
+}
+.hero {
+  display: grid;
+  grid-template-columns: 1.25fr .75fr;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+.hero-card, .order-card {
+  background: linear-gradient(180deg, rgba(15,22,34,.94), rgba(9,14,23,.98));
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+.hero-card .eyebrow, .order-card .eyebrow {
+  font-family: var(--mono);
+  color: var(--green);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+}
+.hero-card h2 {
+  margin: 10px 0 12px;
+  font-size: clamp(32px, 4vw, 54px);
+  line-height: 1;
+}
+.hero-card p {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.65;
+  max-width: 80ch;
+}
+.callout {
+  margin-top: 18px;
+  padding: 14px 16px;
+  border: 1px solid rgba(246,195,75,.25);
+  background: rgba(246,195,75,.08);
+  border-radius: 14px;
+  color: #f5ddb0;
+  line-height: 1.55;
+}
+.order-list {
+  margin: 14px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+.order-list li strong { color: var(--text); }
+.section-jump {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.ghost-btn {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.category {
+  margin-top: 26px;
+  padding-top: 10px;
+}
+.category-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+.category-top h2 {
+  margin: 10px 0 10px;
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1.05;
+}
+.category-top p {
+  margin: 0;
+  color: var(--muted);
+  max-width: 80ch;
+  line-height: 1.65;
+}
+.cat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--green);
+  background: var(--green-2);
+  border: 1px solid rgba(0,229,160,.25);
+  padding: 8px 10px;
+  border-radius: 999px;
+}
+.cat-stats {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.cat-stats > div {
+  min-width: 110px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 12px 14px;
+}
+.stat-num {
+  display: block;
+  font-size: 30px;
+  font-weight: 800;
+}
+.stat-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+.tasks-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.task-card {
+  background: linear-gradient(180deg, rgba(11,16,25,.96), rgba(8,12,19,.98));
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  overflow: hidden;
+}
+.task-card.is-done {
+  border-color: rgba(0,229,160,.45);
+  box-shadow: 0 0 0 1px rgba(0,229,160,.08), 0 0 32px rgba(0,229,160,.06);
+}
+.task-card.hidden {
+  display: none;
+}
+.task-head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 18px 18px;
+}
+.task-check {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+.task-check input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.task-check .box {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--line-2);
+  border-radius: 8px;
+  background: #0a111b;
+  display: grid;
+  place-items: center;
+}
+.task-check input:checked + .box {
+  background: var(--green);
+  border-color: var(--green);
+}
+.task-check input:checked + .box::after {
+  content: "✓";
+  font-weight: 900;
+  color: #03120d;
+}
+.task-head-copy .eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .12em;
+  color: var(--blue);
+  margin-bottom: 6px;
+}
+.task-head-copy h3 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  line-height: 1.15;
+}
+.task-head-copy p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+.toggle-btn {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.task-body {
+  display: none;
+  padding: 0 18px 18px;
+}
+.task-card.open .task-body {
+  display: block;
+}
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 12px;
+  margin: 0 0 14px;
+}
+.meta-card {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+}
+.meta-card-wide {
+  grid-column: span 4;
+}
+.meta-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.meta-value {
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+}
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1.4fr .8fr .8fr;
+  gap: 12px;
+}
+.detail-card {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+}
+.detail-card h4 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  letter-spacing: .02em;
+}
+.detail-card ol, .detail-card ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.detail-card li + li {
+  margin-top: 8px;
+}
+.footer-note {
+  margin-top: 32px;
+  padding: 18px 20px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.small {
+  font-size: 13px;
+  color: var(--soft);
+}
+@media (max-width: 1180px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar {
+    position: relative;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero { grid-template-columns: 1fr; }
+}
+@media (max-width: 900px) {
+  .main { padding: 18px 16px 60px; }
+  .meta-grid, .detail-grid {
+    grid-template-columns: 1fr;
+  }
+  .meta-card-wide {
+    grid-column: auto;
+  }
+  .task-head {
+    grid-template-columns: auto 1fr;
+  }
+  .toggle-btn {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+  .category-top {
+    flex-direction: column;
+  }
+}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="kicker">AESDR</div>
+      <h1>AESDR Edge Issues</h1>
+      <p>Known risks, future gotchas, and edge cases not in the current task set that will bite you later.</p>
+    </div>
+    <div class="progress-panel">
+      <div class="progress-row"><div class="progress-label">Global completion</div><div id="globalPct" class="progress-label">0%</div></div>
+      <div class="progress-bar"><span id="globalBar"></span></div>
+      <div class="progress-row" style="margin-top:12px;"><div class="progress-label">Tasks completed</div><div id="globalCount" class="progress-label">0 / 0</div></div>
+    </div>
+    <div class="search-wrap"><input id="searchInput" type="text" placeholder="Search tasks"></div>
+    <div class="ctrls">
+      <button id="expandAllBtn" type="button">Expand all</button>
+      <button id="collapseAllBtn" type="button">Collapse all</button>
+      <button id="showOnlyOpenBtn" type="button">Show undone</button>
+      <button id="resetChecksBtn" type="button">Reset checks</button>
+    </div>
+    <div class="nav-block"><button class="nav-btn" type="button" data-target="cat-1"><span>CAT 1</span><strong>Security &amp; Auth</strong></button>
+<button class="nav-btn" type="button" data-target="cat-2"><span>CAT 2</span><strong>Data &amp; Infrastructure</strong></button>
+<button class="nav-btn" type="button" data-target="cat-3"><span>CAT 3</span><strong>Content &amp; UX</strong></button>
+<button class="nav-btn" type="button" data-target="cat-4"><span>CAT 4</span><strong>Launch &amp; Post-Launch</strong></button></div>
+  </aside>
+  <main class="main">
+
+    <section class="category" id="cat-1">
+      <div class="category-top">
+        <div>
+          <div class="cat-pill">CAT 1 <span data-cat-progress="1">0%</span></div>
+          <h2>Security &amp; Auth Edge Cases</h2>
+          <p>Authentication gaps, access control bypasses, and account abuse scenarios.</p>
+        </div>
+      </div>
+      <div class="tasks-wrap">
+    <article class="task-card" data-title="session expiry during lesson" data-summary="supabase token expires mid-lesson, progress saves fail silently." data-cat="1">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="1-01">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK 1.01</div>
+          <h3>Session Expiry During Lesson</h3>
+          <p>Supabase token expires mid-lesson, progress saves fail silently.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Test what happens when session expires mid-lesson<ul><li>User is in iframe, session token expires (default 1 hour)</li><li>postMessage bridge fires, server action fails silently</li><li>User clicks &quot;Mark Complete&quot; and gets cryptic error</li></ul></li><li>Mitigation<ul><li>Add session refresh logic in ProgressSaver component</li><li>Show &quot;Session expired — please sign in again&quot; toast instead of silent fail</li><li>Preserve lesson position in localStorage as backup</li></ul></li><li>Test the fix<ul><li>Manually expire session in Supabase dashboard</li><li>Verify graceful error message appears</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Session expiry shows clear user-facing message</li><li>Progress is not silently lost</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Refreshing token too aggressively (unnecessary API calls)</li><li>Redirecting to login mid-lesson (loses context)</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="shared team account abuse" data-summary="team tier could be shared via one login with no seat tracking." data-cat="1">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="1-02">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK 1.02</div>
+          <h3>Shared Team Account Abuse</h3>
+          <p>Team tier could be shared via one login with no seat tracking.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Identify the risk<ul><li>Team tier ($999 for 10 seats) shared via one login</li><li>No seat tracking = unlimited users on one account</li></ul></li><li>Mitigation options<ul><li>Track unique IPs/devices per user_id in course_progress</li><li>Add team_members table linking team_id to individual accounts</li><li>Flag accounts with 10+ distinct IPs in 24 hours</li></ul></li><li>Decision<ul><li>Not worth building before launch — monitor first</li><li>Revisit after first team sale</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Risk documented and acknowledged</li><li>Monitoring plan in place for post-launch</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Over-engineering DRM before having any team customers</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="url manipulation for premium content" data-summary="users could guess /course/5 url and access lessons without paying." data-cat="1">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="1-03">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK 1.03</div>
+          <h3>URL Manipulation for Premium Content</h3>
+          <p>Users could guess /course/5 URL and access lessons without paying.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Identify the risk<ul><li>Currently proxy.ts blocks all non-public paths</li><li>After launch, course pages only check auth — not purchase status</li><li>Any signed-up user could access lessons without paying</li></ul></li><li>Audit the flow<ul><li>app/course/[lessonId]/page.tsx checks Supabase auth only</li><li>No purchase verification exists yet</li></ul></li><li>Mitigation (after Stripe integration)<ul><li>Add purchase check: query purchases table for user_id</li><li>If no purchase row, redirect to landing page</li><li>Show &quot;Purchase required&quot; message</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Course pages verify both auth AND purchase status</li><li>Unpaid users cannot access lesson content</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Forgetting to add purchase check when Stripe goes live</li><li>Blocking admin/founder accounts from their own content</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="pdf tool download bypass" data-summary="tool html files served at /tools/[slug] have no auth check — only the /download route is gated." data-cat="1">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="1-04">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK 1.04</div>
+          <h3>PDF Tool Download Bypass</h3>
+          <p>Tool HTML files served at /tools/[slug] have no auth check — only the /download route is gated.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Identify the risk<ul><li>/tools/[slug]/route.ts serves raw HTML with no auth</li><li>/tools/[slug]/download/route.ts checks completion (gated)</li><li>User could view tool content at /tools/[slug] directly</li></ul></li><li>Decision needed<ul><li>Is viewing OK but downloading gated? (current behavior)</li><li>Or should viewing also require auth + completion?</li></ul></li><li>If gating both<ul><li>Add auth + purchase check to /tools/[slug]/route.ts</li><li>Return 401/redirect for unauthenticated users</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Decision documented on whether viewing is gated</li><li>If yes, auth check added to tool view route</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Breaking standalone tool URLs that might be shared</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>
+      </div>
+    </section>
+
+    <section class="category" id="cat-2">
+      <div class="category-top">
+        <div>
+          <div class="cat-pill">CAT 2 <span data-cat-progress="2">0%</span></div>
+          <h2>Data &amp; Infrastructure Risks</h2>
+          <p>Database security, migration strategy, backups, and environment management.</p>
+        </div>
+      </div>
+      <div class="tasks-wrap">
+    <article class="task-card" data-title="supabase row-level security gaps" data-summary="without rls, any authenticated user can read all users&#x27; progress data." data-cat="2">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="2-01">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK 2.01</div>
+          <h3>Supabase Row-Level Security Gaps</h3>
+          <p>Without RLS, any authenticated user can read ALL users&#x27; progress data.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Verify RLS is enabled on course_progress table<ul><li>Check Supabase dashboard: Tables &gt; course_progress &gt; RLS toggle</li><li>Verify policy: users can only SELECT/INSERT/UPDATE their own rows</li><li>Without RLS, any auth user can read all progress</li></ul></li><li>Verify RLS on future tables<ul><li>purchases table (when created) needs RLS</li><li>team_members table (when created) needs RLS</li></ul></li><li>Test<ul><li>Log in as User A, try to query User B&#x27;s progress</li><li>Should return empty results, not data</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>RLS enabled and policies verified on all tables</li><li>Cross-user data access returns empty</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Enabling RLS without adding policies (blocks ALL access)</li><li>Forgetting to add RLS to new tables</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="database migration strategy" data-summary="no migration runner or versioning beyond one manual sql file." data-cat="2">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="2-02">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK 2.02</div>
+          <h3>Database Migration Strategy</h3>
+          <p>No migration runner or versioning beyond one manual SQL file.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Current state<ul><li>One migration file: 20260403_add_unique_constraint.sql</li><li>No runner or versioning system</li></ul></li><li>Options<ul><li>Supabase CLI migrations (supabase db push)</li><li>Manual SQL scripts with YYYYMMDD_description.sql naming</li><li>Keep migrations idempotent (IF NOT EXISTS)</li></ul></li><li>Document the process<ul><li>Add migration instructions to README or CONTRIBUTING.md</li><li>List all required tables and constraints</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Migration strategy documented</li><li>All existing schemas have corresponding migration files</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Running destructive migrations without backup</li><li>Non-idempotent migrations that fail on re-run</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="backup strategy" data-summary="know what&#x27;s backed up, where, and how to recover." data-cat="2">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="2-03">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK 2.03</div>
+          <h3>Backup Strategy</h3>
+          <p>Know what&#x27;s backed up, where, and how to recover.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Supabase automatic backups<ul><li>Free tier: daily backups, 7-day retention</li><li>Pro tier: point-in-time recovery</li><li>Know which tier you&#x27;re on</li></ul></li><li>Content backups<ul><li>36 lesson HTML files in git — covered</li><li>Tool HTML files in git — covered</li><li>User data in Supabase — covered by their backups</li></ul></li><li>Disaster recovery<ul><li>Supabase outage: site shows empty progress, doesn&#x27;t crash</li><li>Vercel outage: nothing you can do — accept the dependency</li><li>Git repo: push to GitHub — that&#x27;s your backup</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Backup status documented for each data store</li><li>Recovery plan exists for each failure scenario</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Assuming backups exist without verifying</li><li>Not testing restore from backup at least once</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="environment variable audit" data-summary="track all env vars needed across development, preview, and production." data-cat="2">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="2-04">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK 2.04</div>
+          <h3>Environment Variable Audit</h3>
+          <p>Track all env vars needed across development, preview, and production.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>List all env vars<ul><li>NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY (exist)</li><li>STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET (future)</li><li>RESEND_API_KEY (future)</li><li>SITE_URL (just added)</li></ul></li><li>Verify Vercel has them<ul><li>Check Vercel dashboard: Settings &gt; Environment Variables</li><li>Ensure production, preview, development scopes are correct</li></ul></li><li>Rotate if exposed<ul><li>If any key ends up in git, rotate immediately</li><li>Check git history for accidental commits</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>All env vars documented with their scopes</li><li>Vercel environment matches documentation</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Committing .env.local to git</li><li>Using production keys in preview deployments</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>
+      </div>
+    </section>
+
+    <section class="category" id="cat-3">
+      <div class="category-top">
+        <div>
+          <div class="cat-pill">CAT 3 <span data-cat-progress="3">0%</span></div>
+          <h2>Content &amp; UX Edge Cases</h2>
+          <p>iframe security, navigation quirks, concurrent access, and scalability gaps.</p>
+        </div>
+      </div>
+      <div class="tasks-wrap">
+    <article class="task-card" data-title="lesson html injection via postmessage" data-summary="if lesson html is modified, malicious postmessages could be sent to the parent." data-cat="3">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="3-01">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK 3.01</div>
+          <h3>Lesson HTML Injection via postMessage</h3>
+          <p>If lesson HTML is modified, malicious postMessages could be sent to the parent.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Identify the risk<ul><li>Lesson HTML in iframes uses postMessage to communicate</li><li>If HTML is tampered, it could send malicious messages</li></ul></li><li>Current state<ul><li>Check: does ProgressSaver.tsx verify event.origin?</li><li>Does it validate message structure?</li></ul></li><li>Hardening<ul><li>Add origin whitelist to message listener</li><li>Validate message type is &quot;aesdr:progress&quot;</li><li>Sanitize stateData before storing in DB</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>postMessage listener validates origin and message structure</li><li>Invalid messages are silently rejected</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Blocking legitimate messages by being too strict on origin</li><li>Logging rejected messages to console (information leak)</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="browser back button breaks lesson state" data-summary="hitting back during a lesson may exit to dashboard instead of previous screen." data-cat="3">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="3-02">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK 3.02</div>
+          <h3>Browser Back Button Breaks Lesson State</h3>
+          <p>Hitting back during a lesson may exit to dashboard instead of previous screen.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Identify the behavior<ul><li>User on screen 7, hits browser back</li><li>iframe navigates: does it go to screen 6 or exit entirely?</li></ul></li><li>Test it<ul><li>Open a lesson, navigate to screen 5, hit browser back</li><li>Document actual behavior</li></ul></li><li>Mitigation if needed<ul><li>Lesson HTML manages its own state (go/back functions)</li><li>Browser back exits iframe entirely — expected behavior</li><li>Progress saved via postMessage on each screen change — no data loss</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Behavior documented</li><li>No silent data loss on back button</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Trying to intercept browser back (bad UX pattern)</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="concurrent device access" data-summary="user on phone and laptop both save progress — last write wins." data-cat="3">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="3-03">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK 3.03</div>
+          <h3>Concurrent Device Access</h3>
+          <p>User on phone and laptop both save progress — last write wins.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Identify the risk<ul><li>User opens same lesson on phone AND laptop</li><li>Both save progress — Supabase upsert means last write wins</li><li>Dashboard reload shows latest state</li></ul></li><li>Severity: LOW<ul><li>Unique constraint handles conflicts correctly</li><li>No real-time sync needed for MVP</li></ul></li><li>Future option<ul><li>Supabase realtime subscriptions for live sync</li><li>Only build if users complain</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Risk acknowledged and severity assessed</li><li>No action needed for launch</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Building real-time sync before anyone asks for it</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="large team onboarding (50+ users)" data-summary="corporate client needs to onboard many reps — no bulk import or admin panel exists." data-cat="3">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="3-04">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK 3.04</div>
+          <h3>Large Team Onboarding (50+ Users)</h3>
+          <p>Corporate client needs to onboard many reps — no bulk import or admin panel exists.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Identify the gap<ul><li>Current signup is manual (email + password)</li><li>No bulk import, no SSO, no admin panel</li></ul></li><li>Minimum viable solution<ul><li>CSV import script that creates Supabase users in batch</li><li>Admin page listing team members and their progress</li></ul></li><li>Decision<ul><li>Not a launch blocker — handle manually for first teams</li><li>Build when first corporate client asks</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Gap documented</li><li>Manual onboarding process written for first teams</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Building admin panel before having any team customers</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>
+      </div>
+    </section>
+
+    <section class="category" id="cat-4">
+      <div class="category-top">
+        <div>
+          <div class="cat-pill">CAT 4 <span data-cat-progress="4">0%</span></div>
+          <h2>Launch &amp; Post-Launch Risks</h2>
+          <p>Proxy removal, monitoring, refund workflow, and SEO timing.</p>
+        </div>
+      </div>
+      <div class="tasks-wrap">
+    <article class="task-card" data-title="proxy removal plan for launch day" data-summary="proxy.ts currently locks the entire site — needs a documented plan to open it." data-cat="4">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="4-01">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK 4.01</div>
+          <h3>Proxy Removal Plan for Launch Day</h3>
+          <p>proxy.ts currently locks the entire site — needs a documented plan to open it.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Current state<ul><li>proxy.ts redirects all non-public paths to &quot;/&quot;</li><li>This locks the site behind the landing page</li></ul></li><li>Launch day plan<ul><li>Update proxy.ts to allow authenticated users through</li><li>Or remove the lock entirely</li><li>Test locally before deploying to Vercel</li></ul></li><li>Rollback plan<ul><li>If something breaks, revert proxy.ts to lock state</li><li>Keep current proxy.ts committed as known-good state</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Launch-day proxy changes documented step by step</li><li>Rollback command ready to run</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Removing proxy in production without testing locally first</li><li>Not having a one-command rollback</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="first 24 hours monitoring" data-summary="what to watch and how to respond in the first day after launch." data-cat="4">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="4-02">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK 4.02</div>
+          <h3>First 24 Hours Monitoring</h3>
+          <p>What to watch and how to respond in the first day after launch.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>What to watch<ul><li>Vercel deployment logs for errors</li><li>Supabase dashboard for auth failures</li><li>Stripe dashboard for failed payments</li><li>support@aesdr.com for user complaints</li></ul></li><li>Common launch issues<ul><li>DNS propagation delays (already handled)</li><li>Webhook failures (Stripe retries automatically)</li><li>Rate limiting on Supabase free tier (150 concurrent connections)</li></ul></li><li>Kill switch<ul><li>Catastrophic: re-enable proxy lock</li><li>Stripe issues: pause product, add &quot;coming soon&quot;</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Monitoring checklist printed and ready</li><li>Kill switch commands documented</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Not checking Stripe webhooks in first hour</li><li>Going to sleep right after launch</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="refund processing workflow" data-summary="how to actually issue refunds and revoke access after one." data-cat="4">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="4-03">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK 4.03</div>
+          <h3>Refund Processing Workflow</h3>
+          <p>How to actually issue refunds and revoke access after one.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Current policy<ul><li>14-day no-questions-asked for individual ($199)</li><li>14-day for team ($999) if fewer than 3 members accessed</li></ul></li><li>Process needed<ul><li>How to issue refund in Stripe dashboard</li><li>How to revoke course access after refund</li><li>Automatic (webhook) vs. manual revocation</li></ul></li><li>Edge case<ul><li>User completes all 12 courses in 13 days, requests refund</li><li>Policy says honor it — but track the pattern</li><li>If frequent, consider policy change</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Refund process documented step by step</li><li>Access revocation method decided</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Not revoking access after issuing refund</li><li>Taking refund requests personally</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>    <article class="task-card" data-title="seo flip timing" data-summary="robots.txt blocks all crawling — need a plan for when and how to flip it." data-cat="4">
+      <div class="task-head">
+        <label class="task-check">
+          <input type="checkbox" class="task-done" data-taskid="4-04">
+          <span class="box"></span>
+        </label>
+        <div class="task-head-copy">
+          <div class="eyebrow">TASK 4.04</div>
+          <h3>SEO Flip Timing</h3>
+          <p>robots.txt blocks all crawling — need a plan for when and how to flip it.</p>
+        </div>
+        <button class="toggle-btn" type="button" aria-expanded="false">Open Protocol</button>
+      </div>
+      <div class="task-body">
+        <div class="detail-grid">
+          <section class="detail-card">
+            <h4>Step-by-Step Execution</h4>
+            <ol><li>Current state<ul><li>robots.ts returns disallow: &quot;/&quot; for all agents</li><li>Correct for pre-launch</li></ul></li><li>When to flip<ul><li>After launch: allow /, /about, /terms, /privacy, /refund-policy</li><li>Keep blocking: /dashboard, /course/*, /login, /signup, /api</li></ul></li><li>Submit to Google<ul><li>After flipping, submit sitemap to Google Search Console</li><li>Create app/sitemap.ts listing public URLs</li></ul></li></ol>
+          </section>
+          <section class="detail-card">
+            <h4>Done When</h4>
+            <ul><li>Flip plan documented with specific allow/disallow list</li><li>Google Search Console account ready</li></ul>
+          </section>
+          <section class="detail-card">
+            <h4>Common Mistakes</h4>
+            <ul><li>Accidentally allowing indexing of /dashboard or /course pages</li><li>Forgetting to create and submit sitemap</li></ul>
+          </section>
+        </div>
+      </div>
+    </article>
+      </div>
+    </section>
+
+    <div class="footer-note"><div class="small" style="margin-top:10px;">Local browser only: task completion states save to your browser using localStorage.</div></div>
+  </main>
+</div>
+<script>
+const STORAGE_KEY = 'aesdr_edge_issues_v1';
+const PRESEEDED = [];
+const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+const checks = new Set([...saved, ...PRESEEDED]);
+let showUndoneOnly = false;
+function syncChecks() { document.querySelectorAll('.task-done').forEach(cb => { cb.checked = checks.has(cb.dataset.taskid); const card = cb.closest('.task-card'); card.classList.toggle('is-done', cb.checked); }); updateProgress(); applyFilters(); }
+function updateProgress() { const total = document.querySelectorAll('.task-done').length; const done = [...checks].filter(c => document.querySelector(`.task-done[data-taskid="${c}"]`)).length; const pct = total ? Math.round((done / total) * 100) : 0; document.getElementById('globalPct').textContent = pct + '%'; document.getElementById('globalCount').textContent = `${done} / ${total}`; document.getElementById('globalBar').style.width = pct + '%'; document.querySelectorAll('[data-cat-progress]').forEach(el => { const cat = el.dataset.catProgress; const boxes = [...document.querySelectorAll(`.task-done[data-taskid^="${cat}-"]`)]; const catDone = boxes.filter(b => checks.has(b.dataset.taskid)).length; const catPct = boxes.length ? Math.round((catDone / boxes.length) * 100) : 0; el.textContent = catPct + '%'; }); }
+function persistChecks() { localStorage.setItem(STORAGE_KEY, JSON.stringify([...checks])); } persistChecks();
+function toggleCard(card, forceOpen) { const isOpen = card.classList.contains('open'); const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : !isOpen; card.classList.toggle('open', shouldOpen); const btn = card.querySelector('.toggle-btn'); if (btn) { btn.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false'); btn.textContent = shouldOpen ? 'Close Protocol' : 'Open Protocol'; } }
+document.querySelectorAll('.toggle-btn').forEach(btn => { btn.addEventListener('click', e => { toggleCard(e.currentTarget.closest('.task-card')); }); });
+document.querySelectorAll('.task-done').forEach(cb => { cb.addEventListener('change', e => { const id = e.currentTarget.dataset.taskid; if (e.currentTarget.checked) checks.add(id); else checks.delete(id); persistChecks(); syncChecks(); }); });
+document.querySelectorAll('.nav-btn').forEach(btn => { btn.addEventListener('click', () => { document.getElementById(btn.dataset.target)?.scrollIntoView({behavior:'smooth', block:'start'}); }); });
+document.querySelectorAll('[data-jump]').forEach(btn => { btn.addEventListener('click', () => { document.getElementById(btn.dataset.jump)?.scrollIntoView({behavior:'smooth', block:'start'}); }); });
+document.getElementById('expandAllBtn').addEventListener('click', () => { document.querySelectorAll('.task-card').forEach(card => toggleCard(card, true)); });
+document.getElementById('collapseAllBtn').addEventListener('click', () => { document.querySelectorAll('.task-card').forEach(card => toggleCard(card, false)); });
+document.getElementById('showOnlyOpenBtn').addEventListener('click', e => { showUndoneOnly = !showUndoneOnly; e.currentTarget.textContent = showUndoneOnly ? 'Show all' : 'Show undone'; applyFilters(); });
+document.getElementById('resetChecksBtn').addEventListener('click', () => { if (!confirm('Clear all checks?')) return; checks.clear(); persistChecks(); syncChecks(); });
+document.getElementById('searchInput').addEventListener('input', applyFilters);
+function applyFilters() { const q = document.getElementById('searchInput').value.trim().toLowerCase(); document.querySelectorAll('.task-card').forEach(card => { const text = (card.dataset.title + ' ' + card.dataset.summary + ' ' + card.closest('.category').querySelector('h2').textContent.toLowerCase()); const matchesSearch = !q || text.includes(q); const done = card.classList.contains('is-done'); const matchesDone = !showUndoneOnly || !done; card.classList.toggle('hidden', !(matchesSearch && matchesDone)); }); }
+syncChecks();
+</script>
+</body>
+</html>
