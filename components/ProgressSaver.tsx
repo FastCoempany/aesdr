@@ -36,9 +36,7 @@ export default function ProgressSaver({
       if (debounceRef.current) clearTimeout(debounceRef.current);
       debounceRef.current = setTimeout(() => {
         if (isAuthenticated) {
-          saveLessonProgress(lessonId, screen, stateData).catch((err) =>
-            console.error("Failed to save progress to server:", err)
-          );
+          saveLessonProgress(lessonId, screen, stateData).catch(() => {});
         }
       }, 1500);
     },

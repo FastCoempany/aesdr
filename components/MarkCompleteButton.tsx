@@ -20,9 +20,8 @@ export default function MarkCompleteButton({
     if (isCompleted) return;
     setIsCompleted(true);
     startTransition(() => {
-      void markLessonComplete(lessonId).catch((error) => {
+      void markLessonComplete(lessonId).catch(() => {
         setIsCompleted(false);
-        console.error("Failed to mark lesson complete", error);
       });
     });
   };

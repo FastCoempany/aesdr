@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import SignOutButton from "@/components/SignOutButton";
 import { createClient } from "@/utils/supabase/server";
 import { LESSONS } from "@/utils/progress/types";
+
+export const metadata: Metadata = {
+  title: "Your Lessons | AESDR",
+  description: "Access your 12-course AESDR curriculum. Track progress, complete lessons, and download tools.",
+};
 import type { LessonProgressSummary } from "@/utils/progress/types";
 
 export default async function Dashboard() {
@@ -42,6 +48,7 @@ export default async function Dashboard() {
     >
       {/* Top nav bar */}
       <nav
+        aria-label="Main navigation"
         className="sticky top-0 z-50 -mx-6 flex items-center justify-between border-b px-[5%] py-5"
         style={{
           borderColor: "var(--line)",

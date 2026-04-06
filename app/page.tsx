@@ -62,6 +62,8 @@ export default function LandingPage() {
         <a href="/terms" style={{ color: "var(--text-muted)", textDecoration: "none", opacity: 0.7 }}>Terms</a>
         <a href="/privacy" style={{ color: "var(--text-muted)", textDecoration: "none", opacity: 0.7 }}>Privacy</a>
         <a href="/refund-policy" style={{ color: "var(--text-muted)", textDecoration: "none", opacity: 0.7 }}>Refunds</a>
+        <a href="/about" style={{ color: "var(--text-muted)", textDecoration: "none", opacity: 0.7 }}>About</a>
+        <a href="/contact" style={{ color: "var(--text-muted)", textDecoration: "none", opacity: 0.7 }}>Contact</a>
       </footer>
     </main>
   );

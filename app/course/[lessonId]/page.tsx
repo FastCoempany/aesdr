@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -6,6 +7,19 @@ import ProgressSaver from "@/components/ProgressSaver";
 import { listLessonUnits, getToolAssetsForLesson } from "@/utils/content/catalog";
 import { LESSONS } from "@/utils/progress/types";
 import { createClient } from "@/utils/supabase/server";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lessonId: string }>;
+}): Promise<Metadata> {
+  const { lessonId } = await params;
+  const lesson = LESSONS.find((l) => l.id === lessonId);
+  return {
+    title: lesson ? `Lesson ${lesson.id}: ${lesson.title} | AESDR` : "Lesson | AESDR",
+    description: lesson?.subtitle ?? "AESDR course lesson.",
+  };
+}
 
 interface LessonPageProps {
   params: Promise<{
@@ -41,7 +55,6 @@ export default async function LessonPage({
     .maybeSingle();
 
   if (progressError) {
-    console.error("Failed to load lesson progress:", progressError);
     throw new Error("Could not load lesson progress.");
   }
 
@@ -132,7 +145,7 @@ export default async function LessonPage({
             lineHeight: "16px",
           }}
         >
-          &larr; Lessons
+          <span aria-hidden="true">&larr;</span> Lessons
         </Link>
       </div>
 
@@ -209,7 +222,7 @@ export default async function LessonPage({
                 display: "inline-block",
               }}
             >
-              ↓ {tool.title}
+              <span aria-hidden="true">↓</span> Download {tool.title}
             </a>
           ))}
       </div>

@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Terms of Service | AESDR",
+  description: "AESDR terms of service — usage rights, limitations, and legal agreement.",
+};
+
 export default function TermsPage() {
   return (
     <main

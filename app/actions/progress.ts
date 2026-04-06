@@ -31,8 +31,7 @@ export async function markLessonComplete(lessonId: string) {
   );
 
   if (error) {
-    console.error("Failed to save completion:", error);
-    throw new Error("Database error");
+    throw new Error("Failed to save completion");
   }
 
   revalidatePath("/dashboard");
@@ -70,8 +69,7 @@ export async function saveLessonProgress(
   );
 
   if (error) {
-    console.error("Failed to save progress:", error);
-    throw new Error("Database error");
+    throw new Error("Failed to save progress");
   }
 
   return { success: true };
@@ -107,7 +105,6 @@ export async function getAllProgress(): Promise<LessonProgressSummary[]> {
     .eq("user_id", user.id);
 
   if (error) {
-    console.error("Failed to load all progress:", error);
     return [];
   }
 

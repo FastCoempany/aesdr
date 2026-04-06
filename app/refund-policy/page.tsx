@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Refund Policy | AESDR",
+  description: "AESDR 14-day no-questions-asked refund policy for individual and team plans.",
+};
+
 export default function RefundPolicyPage() {
   return (
     <main

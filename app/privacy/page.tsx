@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy | AESDR",
+  description: "How AESDR collects, uses, and protects your personal data.",
+};
+
 export default function PrivacyPage() {
   return (
     <main
