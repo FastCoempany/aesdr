@@ -11,24 +11,34 @@ interface Testimonial {
   role: string;
 }
 
+// FAUX TESTIMONIALS — Replace with real quotes from beta testers before launch.
+// See docs/content/A09-testimonials.md for the full set and guidelines.
 const TESTIMONIALS: Testimonial[] = [
-  // Uncomment and replace with real testimonials when ready:
-  //
-  // {
-  //   quote: "This course completely changed how I approach my pipeline.",
-  //   name: "J.R.",
-  //   role: "Enterprise AE",
-  // },
-  // {
-  //   quote: "I went from dreading Mondays to owning them.",
-  //   name: "A.K.",
-  //   role: "SDR, Series B SaaS",
-  // },
-  // {
-  //   quote: "The 72-Hour Strike Plan paid for itself in week one.",
-  //   name: "M.T.",
-  //   role: "Mid-Market AE",
-  // },
+  {
+    quote: "I've been an SDR for 14 months and nobody taught me half of what's in Course 1. The manager archetypes alone changed how I handle my 1:1s.",
+    name: "Jordan M.",
+    role: "SDR, Series B SaaS",
+  },
+  {
+    quote: "No motivational BS. No 'crush your quota' energy. Just practical frameworks I use every week. That's rare.",
+    name: "Taylor H.",
+    role: "BDR Lead",
+  },
+  {
+    quote: "I used the AE/SDR Alignment Contract from Course 3 in my actual job. My AE and I went from passive-aggressive Slack messages to a real working relationship.",
+    name: "Marcus T.",
+    role: "SDR, recently promoted to AE",
+  },
+  {
+    quote: "The 72-hour strike plan in Course 12 saved my quarter. I was spiraling after losing two big deals and this framework gave me a concrete plan instead of panic.",
+    name: "David L.",
+    role: "AE, Series C Startup",
+  },
+  {
+    quote: "I bought the team license for my 6 SDRs. The interactive format actually kept them engaged — I've never seen my team finish a training program before.",
+    name: "Sarah W.",
+    role: "SDR Manager",
+  },
 ];
 
 export default function Testimonials() {
