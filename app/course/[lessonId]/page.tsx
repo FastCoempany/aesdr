@@ -91,6 +91,7 @@ export default async function LessonPage({
         <iframe
           key={iframeSrc}
           src={iframeSrc}
+          sandbox="allow-scripts allow-same-origin allow-forms"
           style={{
             position: "fixed",
             inset: 0,
