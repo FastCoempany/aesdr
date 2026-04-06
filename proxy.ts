@@ -7,6 +7,11 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Bypass lock if founder cookie is set
+  if (request.cookies.get("aesdr_bypass")?.value === "1") {
+    return NextResponse.next();
+  }
+
   const landingUrl = request.nextUrl.clone();
   landingUrl.pathname = "/";
   landingUrl.search = "";

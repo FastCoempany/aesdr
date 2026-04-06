@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import GhostButton from "@/components/GhostButton";
 import Testimonials from "@/components/Testimonials";
 import styles from "./page.module.css";
 
@@ -36,6 +37,7 @@ export default function LandingPage() {
       </section>
 
       <Testimonials />
+      <GhostButton />
 
       <footer
         style={{
