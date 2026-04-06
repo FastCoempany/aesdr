@@ -15,17 +15,18 @@ export default function GhostButton() {
       aria-hidden="true"
       tabIndex={-1}
       style={{
-        position: "fixed",
-        bottom: "52px",
-        right: "24px",
-        width: "12px",
-        height: "12px",
+        position: "absolute",
+        top: "1.4rem",
+        right: "1.8rem",
+        width: "10px",
+        height: "10px",
         borderRadius: "50%",
-        border: "none",
-        background: "rgba(255,255,255,0.04)",
+        border: "1px solid rgba(255,255,255,0.12)",
+        background: "transparent",
         cursor: "default",
         padding: 0,
         zIndex: 10,
+        animation: "ghostPulse 4s ease-in-out infinite",
       }}
     />
   );
