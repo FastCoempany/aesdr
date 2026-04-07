@@ -72,7 +72,7 @@ export default function ContactPage() {
               support@aesdr.com
             </a>
             <a
-              href="https://tally.so/r/EkD7V2"
+              href="https://tally.so/r/KYDb7X"
               target="_blank"
               rel="noopener noreferrer"
               style={{
