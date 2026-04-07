@@ -1,5 +1,5 @@
-const TOKEN = 'MTQ5MDc4MjI2Njg2MjA3NTkzNA.GN7At5.4ee6V315u_cLt69uoKDluJwMfXSPEbhcpwSVjQ';
-const GUILD_ID = '1489672034085507316';
+const TOKEN = process.env.DISCORD_BOT_TOKEN;
+const GUILD_ID = process.env.DISCORD_GUILD_ID;
 
 const BASE = `https://discord.com/api/v10/guilds/${GUILD_ID}/channels`;
 
