@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
-import RedditPixel from "./components/RedditPixel";
+import RedditPixel from "@/components/RedditPixel";
 import "./globals.css";
 
 export const metadata: Metadata = {
