@@ -53,23 +53,44 @@ export default function ContactPage() {
             feedback? Reach out directly.
           </p>
 
-          <a
-            href="mailto:support@aesdr.com"
-            style={{
-              display: "inline-block",
-              fontFamily: "var(--cond)",
-              fontSize: "16px",
-              fontWeight: 700,
-              letterSpacing: ".08em",
-              textTransform: "uppercase",
-              color: "var(--theme)",
-              border: "1px solid var(--theme)",
-              padding: "14px 28px",
-              textDecoration: "none",
-            }}
-          >
-            support@aesdr.com
-          </a>
+          <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", marginBottom: "24px" }}>
+            <a
+              href="mailto:support@aesdr.com"
+              style={{
+                display: "inline-block",
+                fontFamily: "var(--cond)",
+                fontSize: "16px",
+                fontWeight: 700,
+                letterSpacing: ".08em",
+                textTransform: "uppercase",
+                color: "var(--theme)",
+                border: "1px solid var(--theme)",
+                padding: "14px 28px",
+                textDecoration: "none",
+              }}
+            >
+              support@aesdr.com
+            </a>
+            <a
+              href="https://tally.so/r/EkD7V2"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "inline-block",
+                fontFamily: "var(--cond)",
+                fontSize: "16px",
+                fontWeight: 700,
+                letterSpacing: ".08em",
+                textTransform: "uppercase",
+                color: "var(--text-main)",
+                border: "1px solid var(--line)",
+                padding: "14px 28px",
+                textDecoration: "none",
+              }}
+            >
+              Submit a Support Ticket
+            </a>
+          </div>
 
           <p
             style={{
