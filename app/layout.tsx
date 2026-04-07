@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
+import RedditPixel from "./components/RedditPixel";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -64,8 +65,9 @@ export default function RootLayout({
         </a>
         <div id="main-content">{children}</div>
         
-        {/* Vercel Analytics */}
+        {/* Analytics & Tracking */}
         <Analytics />
+        <RedditPixel />
       </body>
     </html>
   );
