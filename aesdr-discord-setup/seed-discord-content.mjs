@@ -191,6 +191,19 @@ My own answer:
 Most reps think they have a closing problem when they actually have a discovery-quality problem upstream. Weak discovery writes weak proposals and creates fake late-stage hope.`,
     },
   ],
+
+  'support-tickets': [
+    {
+      pin: true,
+      content: `# Need help? Submit a support ticket.
+
+If you have an access issue, billing question, bug report, or anything else — submit a ticket and we will get back to you within 48 hours.
+
+**→ Submit a support ticket:** https://tally.so/r/KYDb7X
+
+You can also email **support@aesdr.com** directly.`,
+    },
+  ],
 };
 
 async function run() {
