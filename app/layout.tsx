@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/react";
 import RedditPixel from "@/components/RedditPixel";
 import "./globals.css";
@@ -67,7 +68,9 @@ export default function RootLayout({
         
         {/* Analytics & Tracking */}
         <Analytics />
-        <RedditPixel />
+        <Suspense fallback={null}>
+          <RedditPixel />
+        </Suspense>
       </body>
     </html>
   );
