@@ -22,7 +22,7 @@ export async function GET(request: Request) {
 
   const { data: day3Users } = await supabase
     .from('purchases')
-    .select('user_email, plan')
+    .select('user_email, plan, customer_name')
     .eq('status', 'active')
     .eq('day3_sent', false)
     .gte('purchased_at', fourDaysAgo)
@@ -31,7 +31,7 @@ export async function GET(request: Request) {
   if (day3Users) {
     for (const user of day3Users) {
       try {
-        await sendDay3Email(user.user_email, 'there');
+        await sendDay3Email(user.user_email, user.customer_name || 'there');
         await supabase
           .from('purchases')
           .update({ day3_sent: true })
@@ -49,7 +49,7 @@ export async function GET(request: Request) {
 
   const { data: day7Users } = await supabase
     .from('purchases')
-    .select('user_email, plan')
+    .select('user_email, plan, customer_name')
     .eq('status', 'active')
     .eq('day7_sent', false)
     .gte('purchased_at', eightDaysAgo)
@@ -58,7 +58,7 @@ export async function GET(request: Request) {
   if (day7Users) {
     for (const user of day7Users) {
       try {
-        await sendDay7Email(user.user_email, 'there');
+        await sendDay7Email(user.user_email, user.customer_name || 'there');
         await supabase
           .from('purchases')
           .update({ day7_sent: true })

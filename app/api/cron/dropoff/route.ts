@@ -21,7 +21,7 @@ export async function GET(request: Request) {
 
   const { data: dropoff5 } = await supabase
     .from('purchases')
-    .select('user_email, user_id')
+    .select('user_email, user_id, customer_name')
     .eq('status', 'active')
     .eq('dropoff_5d_sent', false)
     .lte('purchased_at', fiveDaysAgo);
@@ -53,7 +53,7 @@ export async function GET(request: Request) {
       const lastLesson = progress?.[0]?.lesson_id || '1';
 
       try {
-        await sendDropoff5d(user.user_email, 'there', lastLesson, `Lesson ${lastLesson}`);
+        await sendDropoff5d(user.user_email, user.customer_name || 'there', lastLesson, `Lesson ${lastLesson}`);
         await supabase
           .from('purchases')
           .update({ dropoff_5d_sent: true })
@@ -70,7 +70,7 @@ export async function GET(request: Request) {
 
   const { data: dropoff10 } = await supabase
     .from('purchases')
-    .select('user_email, user_id')
+    .select('user_email, user_id, customer_name')
     .eq('status', 'active')
     .eq('dropoff_10d_sent', false)
     .lte('purchased_at', tenDaysAgo);
@@ -98,7 +98,7 @@ export async function GET(request: Request) {
       if (count && count >= 12) continue;
 
       try {
-        await sendDropoff10d(user.user_email, 'there');
+        await sendDropoff10d(user.user_email, user.customer_name || 'there');
         await supabase
           .from('purchases')
           .update({ dropoff_10d_sent: true })
@@ -115,7 +115,7 @@ export async function GET(request: Request) {
 
   const { data: dropoff21 } = await supabase
     .from('purchases')
-    .select('user_email, user_id')
+    .select('user_email, user_id, customer_name')
     .eq('status', 'active')
     .eq('dropoff_21d_sent', false)
     .lte('purchased_at', twentyOneDaysAgo);
@@ -145,7 +145,7 @@ export async function GET(request: Request) {
       const lastLesson = progress?.[0]?.lesson_id || '1';
 
       try {
-        await sendDropoff21d(user.user_email, 'there', lastLesson);
+        await sendDropoff21d(user.user_email, user.customer_name || 'there', lastLesson);
         await supabase
           .from('purchases')
           .update({ dropoff_21d_sent: true })

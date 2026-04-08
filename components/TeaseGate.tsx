@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 
 const COOKIE_NAME = "aesdr_gate";
-const CODE = "741407";
+const CODE = process.env.NEXT_PUBLIC_BYPASS_CODE || "";
 
 function hasCookie() {
   return document.cookie.split(";").some((c) => c.trim().startsWith(`${COOKIE_NAME}=`));

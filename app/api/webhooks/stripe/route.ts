@@ -35,11 +35,23 @@ export async function POST(request: Request) {
 
     const supabase = createAdminClient();
 
+    // Look up Supabase auth user by email to link purchase to user_id
+    let userId: string | null = null;
+    if (email) {
+      const { data: userList } = await supabase.auth.admin.listUsers();
+      const matchedUser = userList?.users?.find(
+        (u) => u.email?.toLowerCase() === email.toLowerCase()
+      );
+      if (matchedUser) userId = matchedUser.id;
+    }
+
     // Record purchase (idempotent via upsert on stripe_session_id)
     await supabase.from('purchases').upsert(
       {
         stripe_session_id: session.id,
         user_email: email,
+        user_id: userId,
+        customer_name: name !== 'there' ? name : null,
         plan: tier,
         amount_cents: amountCents,
         status: 'active',

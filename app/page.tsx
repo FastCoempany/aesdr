@@ -57,7 +57,7 @@ const FAQ = [
   },
   {
     q: "I've been in sales for 5+ years. Is this too basic?",
-    a: "Courses 1–5 cover fundamentals. Courses 6–12 go deep on prospecting strategy, pipeline math, financial resilience, and career-level relationship building. Experienced reps consistently say Courses 8–12 are worth the price alone.",
+    a: "Lessons 1–5 cover fundamentals. Lessons 6–12 go deep on prospecting strategy, pipeline math, financial resilience, and career-level relationship building. Experienced reps consistently say Lessons 8–12 are worth the price alone.",
   },
   {
     q: "Can my company expense this?",

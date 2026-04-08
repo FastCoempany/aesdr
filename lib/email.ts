@@ -6,6 +6,10 @@ function getResend() {
 
 const FROM = 'AESDR <hello@aesdr.com>';
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://aesdr.com';
+const UNSUBSCRIBE_HEADERS = {
+  'List-Unsubscribe': '<mailto:support@aesdr.com?subject=UNSUBSCRIBE>',
+  'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+};
 
 // ─── Welcome Email (immediate after purchase) ───
 
@@ -13,6 +17,7 @@ export async function sendWelcomeEmail(to: string, name: string) {
   return getResend().emails.send({
     from: FROM,
     to,
+    headers: UNSUBSCRIBE_HEADERS,
     subject: "You're in. Start here.",
     html: welcomeHtml(name),
   });
@@ -23,8 +28,8 @@ function welcomeHtml(name: string) {
 <div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
   <p>Welcome to AESDR.</p>
   <p>No long onboarding. No orientation video. Here's what matters:</p>
-  <p><strong><a href="${SITE}/dashboard" style="color:#10B981">Start here → Lesson 1: The SDR Reality Check</a></strong></p>
-  <p>Course 1 covers what nobody tells you in your first 90 days — the manager archetypes, the metrics that actually matter, and how to protect your time before meetings eat it alive.</p>
+  <p><strong><a href="${SITE}/dashboard" style="color:#10B981">Start here → Lesson 1</a></strong></p>
+  <p>Course 1 covers the fundamentals — creating structure, building real camaraderie with your AE, and setting up your first 90 days the right way.</p>
   <p><strong>A few things to know:</strong></p>
   <ul>
     <li>There are 12 courses. Each has 3 lessons with interactive exercises.</li>
@@ -45,6 +50,7 @@ export async function sendDay3Email(to: string, name: string) {
   return getResend().emails.send({
     from: FROM,
     to,
+    headers: UNSUBSCRIBE_HEADERS,
     subject: "How's Course 1 going?",
     html: day3Html(name),
   });
@@ -70,6 +76,7 @@ export async function sendDay7Email(to: string, name: string) {
   return getResend().emails.send({
     from: FROM,
     to,
+    headers: UNSUBSCRIBE_HEADERS,
     subject: "The tool in Course 3 is worth the entire price",
     html: day7Html(name),
   });
@@ -96,6 +103,7 @@ export async function sendAbandon1hr(to: string) {
   return getResend().emails.send({
     from: FROM,
     to,
+    headers: UNSUBSCRIBE_HEADERS,
     subject: "Still thinking it over?",
     html: abandon1hrHtml(),
   });
@@ -133,6 +141,7 @@ export async function sendAbandon24hr(to: string) {
   return getResend().emails.send({
     from: FROM,
     to,
+    headers: UNSUBSCRIBE_HEADERS,
     subject: "Quick question before I stop following up",
     html: abandon24hrHtml(),
   });
@@ -160,6 +169,7 @@ export async function sendDropoff5d(to: string, name: string, lessonId: string, 
   return getResend().emails.send({
     from: FROM,
     to,
+    headers: UNSUBSCRIBE_HEADERS,
     subject: "No rush — but your next lesson is ready",
     html: dropoff5dHtml(name, lessonId, lessonTitle),
   });
@@ -184,6 +194,7 @@ export async function sendDropoff10d(to: string, name: string) {
   return getResend().emails.send({
     from: FROM,
     to,
+    headers: UNSUBSCRIBE_HEADERS,
     subject: "10 minutes. One framework. Worth it.",
     html: dropoff10dHtml(name),
   });
@@ -217,6 +228,7 @@ export async function sendDropoff21d(to: string, name: string, lessonId: string)
   return getResend().emails.send({
     from: FROM,
     to,
+    headers: UNSUBSCRIBE_HEADERS,
     subject: "Last check-in from us",
     html: dropoff21dHtml(name, lessonId),
   });
@@ -248,6 +260,7 @@ export async function sendReviewRequest(to: string, name: string) {
   return getResend().emails.send({
     from: FROM,
     to,
+    headers: UNSUBSCRIBE_HEADERS,
     subject: "You finished all 12. How was it?",
     html: reviewRequestHtml(name),
   });
@@ -275,6 +288,7 @@ export async function sendReviewNudge(to: string, name: string) {
   return getResend().emails.send({
     from: FROM,
     to,
+    headers: UNSUBSCRIBE_HEADERS,
     subject: "30 seconds — that's all I need",
     html: reviewNudgeHtml(name),
   });
