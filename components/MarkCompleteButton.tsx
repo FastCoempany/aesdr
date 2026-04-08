@@ -43,6 +43,9 @@ export default function MarkCompleteButton({
           color: "var(--theme)",
           border: "1px solid var(--theme)",
           background: "rgba(16,185,129,0.1)",
+          display: "inline-block",
+          lineHeight: "1",
+          boxSizing: "border-box" as const,
         }}
       >
         Completed
@@ -59,6 +62,8 @@ export default function MarkCompleteButton({
         color: "var(--text-muted)",
         border: "1px solid var(--line)",
         background: "transparent",
+        lineHeight: "1",
+        boxSizing: "border-box" as const,
       }}
     >
       {isPending ? "Saving..." : "Mark Complete"}

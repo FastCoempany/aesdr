@@ -115,7 +115,7 @@ export default async function LessonPage({
             position: "fixed",
             inset: 0,
             width: "100vw",
-            height: "100vh",
+            height: "100dvh",
             border: "none",
             background: "#fff",
           }}
@@ -180,7 +180,8 @@ export default async function LessonPage({
           gap: "6px",
           flexWrap: "wrap" as const,
           justifyContent: "flex-end",
-          maxWidth: "calc(100vw - 120px)",
+          maxWidth: "calc(100vw - 100px)",
+          rowGap: "4px",
         }}
       >
         {/* Unit tabs */}
@@ -203,6 +204,9 @@ export default async function LessonPage({
                   backdropFilter: "blur(8px)",
                   padding: "6px 10px",
                   textDecoration: "none",
+                  minWidth: "28px",
+                  textAlign: "center" as const,
+                  flexShrink: 0,
                 }}
               >
                 {unit.unitId}
@@ -214,6 +218,10 @@ export default async function LessonPage({
           style={{
             background: "rgba(0,0,0,0.6)",
             backdropFilter: "blur(8px)",
+            flexShrink: 0,
+            lineHeight: 0,
+            display: "flex",
+            alignItems: "center",
           }}
         >
           <MarkCompleteButton
