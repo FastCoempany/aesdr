@@ -4,7 +4,7 @@ function getResend() {
   return new Resend(process.env.RESEND_API_KEY);
 }
 
-const FROM = 'AESDR <support@aesdr.com>';
+const FROM = 'AESDR <hello@aesdr.com>';
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://aesdr.com';
 
 // ─── Welcome Email (immediate after purchase) ───
