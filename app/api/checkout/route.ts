@@ -27,7 +27,7 @@ export async function POST(request: Request) {
       line_items: [{ price: priceId, quantity: 1 }],
       mode: 'payment',
       success_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://aesdr.com'}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://aesdr.com'}/#pricing`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://aesdr.com'}/purchase/cancel`,
       customer_email: email || undefined,
       metadata: { tier },
     });

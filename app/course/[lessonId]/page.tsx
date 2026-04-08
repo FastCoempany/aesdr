@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import MarkCompleteButton from "@/components/MarkCompleteButton";
@@ -45,6 +46,24 @@ export default async function LessonPage({
 
   if (authError || !user) {
     redirect("/login");
+  }
+
+  // Purchase gate — bypass for founder (GhostButton cookie)
+  const cookieStore = await cookies();
+  const hasBypass = cookieStore.get("aesdr_bypass")?.value === "1";
+
+  if (!hasBypass) {
+    const { data: purchase } = await supabase
+      .from("purchases")
+      .select("id")
+      .eq("user_email", user.email)
+      .eq("status", "active")
+      .limit(1)
+      .maybeSingle();
+
+    if (!purchase) {
+      redirect("/#pricing");
+    }
   }
 
   const { data: progress, error: progressError } = await supabase
