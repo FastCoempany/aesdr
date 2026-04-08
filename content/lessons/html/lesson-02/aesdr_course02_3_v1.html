@@ -312,7 +312,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <p class="lp">AE ego isn't always intentional, but it is incredibly damaging. From micromanagement to blaming SDRs for failures, these behaviors create toxic dynamics that hurt productivity, trust, and team morale.</p>
       <ul class="kp">
         <li><span class="kp-n">01</span><strong>Why It Exists:</strong> High-pressure roles can breed ego and defensiveness. AEs often feel undervalued or misunderstood, leading them to overcompensate.</li>
-        <li><span class="kp-n">02</span><strong>Impact on SDRs:</strong> SDRs feel disrespected, frustrated, and burnt out[cite: 151, 173].</li>
+        <li><span class="kp-n">02</span><strong>Impact on SDRs:</strong> SDRs feel disrespected, frustrated, and burnt out.</li>
         <li><span class="kp-n">03</span><strong>Impact on Results:</strong> Collaboration and trust break down. Leads are lost due to misalignment and distrust. Poor collaboration equals poor results.</li>
       </ul>
       <div class="lie">
@@ -364,7 +364,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <p class="lp">Step 1 is recognizing the problem. AEs and SDRs need to identify specific behaviors—without assigning blame—so you can begin to address them together.</p>
       <ul class="kp">
         <li><span class="kp-n">01</span><strong>Diagnose the Behavior:</strong> Identify micromanaging, undermining teams, or skipping meetings.</li>
-        <li><span class="kp-n">02</span><strong>Open Honest Communication:</strong> SDRs should use "I" statements and focus on impact[cite: 185, 186]. AEs should ask for input and acknowledge mistakes[cite: 188, 189].</li>
+        <li><span class="kp-n">02</span><strong>Open Honest Communication:</strong> SDRs should use "I" statements and focus on impact. AEs should ask for input and acknowledge mistakes.</li>
         <li><span class="kp-n">03</span><strong>Establish Mutual Expectations:</strong> AEs must collaborate, trust SDR qualification, and attend meetings. SDRs must own prospecting, share feedback, and communicate proactively.</li>
       </ul>
       <div class="lie">
@@ -562,7 +562,7 @@ const SILO_CARDS = [
   { txt:"Suggesting Product Roadmaps while ignoring real customer feedback .", zone:"know", note:"The Know-It-All Syndrome." },
   { txt:"Treating SDRs like assistants, which lowers morale .", zone:"micro", note:"Micromanaging and Blaming." },
   { txt:"Second-guessing SDR qualification, wasting time and eroding trust .", zone:"micro",   note:"Micromanaging and Blaming." },
-  { txt:"Skipping SDR meetings and believing prospecting is beneath them [cite: 166, 167].", zone:"fail", note:"Failure to Collaborate." },
+  { txt:"Skipping SDR meetings and believing prospecting is beneath them .", zone:"fail", note:"Failure to Collaborate." },
   { txt:"Not trusting SDR qualification or performance .", zone:"fail", note:"Failure to Collaborate." },
 ];
 const SILO_ORDER = [2,5,0,3,1,4];
@@ -576,7 +576,7 @@ const BLAME_ITEMS = [
   },
   {
     statement:'An AE publicly criticizes the Marketing team.',
-    opts:["Marketing needs better alignment","SDRs should defend Marketing","Undermining Teams (Know-It-All Syndrome) [cite: 155, 180]","Product is actually at fault"],
+    opts:["Marketing needs better alignment","SDRs should defend Marketing","Undermining Teams (Know-It-All Syndrome) ","Product is actually at fault"],
     ans:2,
     fix:"Real fix: Diagnose the behavior without assigning blame and address it collaboratively."
   },
@@ -590,23 +590,23 @@ const BLAME_ITEMS = [
     statement:'An AE blames their SDR for a failed deal.',
     opts:["The SDR didn't qualify well enough","The prospect was never going to buy","Blaming SDRs creates a toxic environment ","Sales is just a tough job"],
     ans:2,
-    fix:"Real fix: Use the AE Self-Awareness Checklist to offer constructive feedback instead of blame[cite: 197, 200]."
+    fix:"Real fix: Use the AE Self-Awareness Checklist to offer constructive feedback instead of blame."
   },
 ];
 
 const SEQ_STEPS = [
   { pos:1, act:"Diagnose the Behavior ",       sub:"Identify specific behaviors without assigning blame." },
   { pos:2, act:"Schedule a 1:1 ", sub:"Propose a conversation to share feedback constructively." },
-  { pos:3, act:"Identify and Share Impact ", sub:"Use 'I' statements to explain how the behavior affects you[cite: 185, 202]." },
-  { pos:4, act:"Propose Solution / Ask Input [cite: 188, 202]", sub:"Say 'Let's commit to attending' or 'What can I do to support you?'[cite: 188, 202]." },
-  { pos:5, act:"Establish Mutual Expectations ",  sub:"Set boundaries and clear roles for AEs and SDRs[cite: 191, 192]." },
+  { pos:3, act:"Identify and Share Impact ", sub:"Use 'I' statements to explain how the behavior affects you." },
+  { pos:4, act:"Propose Solution / Ask Input ", sub:"Say 'Let's commit to attending' or 'What can I do to support you?'." },
+  { pos:5, act:"Establish Mutual Expectations ",  sub:"Set boundaries and clear roles for AEs and SDRs." },
 ];
 const SEQ_TILE_ORDER = [3,0,4,1,2];
 
 const CLS_OBS = [
   { ico:"🤝", txt:'Collaborate, trust SDR qualification, and attend meetings.',                     zone:"ae"     },
   { ico:"🛠", txt:'Acknowledge mistakes and build trust.',                                           zone:"ae"      },
-  { ico:"🔍", txt:'Self-assess behaviors and commit to one improvement[cite: 208, 209].',        zone:"ae" },
+  { ico:"🔍", txt:'Self-assess behaviors and commit to one improvement.',        zone:"ae" },
   { ico:"🗣", txt:'Own prospecting, share feedback, and communicate proactively.',                       zone:"sdr"     },
   { ico:"📝", txt:'Track key pain points (2-3 examples of AE behaviors).', zone:"sdr" },
   { ico:"🛡", txt:'Advocate for yourself without conflict.', zone:"sdr" },
@@ -618,7 +618,7 @@ const CLS_ORDER = [4,0,6,2,1,5,3,7];
 const QUIZ = [
   {
     q:"Why does AE ego often exist? ",
-    opts:["Because AEs are naturally superior","High-pressure roles breed defensiveness, and AEs feel undervalued [cite: 148, 149]","SDRs push them too hard","The commission structure demands it"],
+    opts:["Because AEs are naturally superior","High-pressure roles breed defensiveness, and AEs feel undervalued ","SDRs push them too hard","The commission structure demands it"],
     ans:1
   },
   {
