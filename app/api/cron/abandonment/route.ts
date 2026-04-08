@@ -1,0 +1,90 @@
+export const dynamic = 'force-dynamic';
+
+import { NextResponse } from 'next/server';
+import { createAdminClient } from '@/utils/supabase/admin';
+import { sendAbandon1hr, sendAbandon24hr } from '@/lib/email';
+
+export async function GET(request: Request) {
+  const authHeader = request.headers.get('authorization');
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const supabase = createAdminClient();
+  const now = new Date();
+  let hr1Sent = 0;
+  let hr24Sent = 0;
+
+  // ── 1-hour abandonment emails ──
+  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000).toISOString();
+  const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString();
+
+  const { data: abandon1hr } = await supabase
+    .from('checkout_sessions')
+    .select('user_email, session_id')
+    .eq('completed', false)
+    .is('abandon_1hr_sent', null)
+    .gte('started_at', twoHoursAgo)
+    .lte('started_at', oneHourAgo);
+
+  if (abandon1hr) {
+    for (const row of abandon1hr) {
+      // Double-check it's still incomplete
+      const { data: check } = await supabase
+        .from('checkout_sessions')
+        .select('completed')
+        .eq('session_id', row.session_id)
+        .single();
+
+      if (check?.completed) continue;
+
+      try {
+        await sendAbandon1hr(row.user_email);
+        await supabase
+          .from('checkout_sessions')
+          .update({ abandon_1hr_sent: now.toISOString() })
+          .eq('session_id', row.session_id);
+        hr1Sent++;
+      } catch (err) {
+        console.error(`Abandon 1hr email failed for ${row.user_email}:`, err);
+      }
+    }
+  }
+
+  // ── 24-hour abandonment emails ──
+  const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
+  const twoDaysAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000).toISOString();
+
+  const { data: abandon24hr } = await supabase
+    .from('checkout_sessions')
+    .select('user_email, session_id')
+    .eq('completed', false)
+    .is('abandon_24hr_sent', null)
+    .gte('started_at', twoDaysAgo)
+    .lte('started_at', oneDayAgo);
+
+  if (abandon24hr) {
+    for (const row of abandon24hr) {
+      const { data: check } = await supabase
+        .from('checkout_sessions')
+        .select('completed')
+        .eq('session_id', row.session_id)
+        .single();
+
+      if (check?.completed) continue;
+
+      try {
+        await sendAbandon24hr(row.user_email);
+        await supabase
+          .from('checkout_sessions')
+          .update({ abandon_24hr_sent: now.toISOString() })
+          .eq('session_id', row.session_id);
+        hr24Sent++;
+      } catch (err) {
+        console.error(`Abandon 24hr email failed for ${row.user_email}:`, err);
+      }
+    }
+  }
+
+  return NextResponse.json({ hr1Sent, hr24Sent });
+}
