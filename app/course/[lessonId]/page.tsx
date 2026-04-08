@@ -177,10 +177,10 @@ export default async function LessonPage({
           zIndex: 9999,
           display: "flex",
           alignItems: "center",
-          gap: "6px",
+          gap: "4px",
           flexWrap: "wrap" as const,
           justifyContent: "flex-end",
-          maxWidth: "calc(100vw - 100px)",
+          maxWidth: "calc(100vw - 90px)",
           rowGap: "4px",
         }}
       >
@@ -219,9 +219,10 @@ export default async function LessonPage({
             background: "rgba(0,0,0,0.6)",
             backdropFilter: "blur(8px)",
             flexShrink: 0,
-            lineHeight: 0,
+            lineHeight: "normal",
             display: "flex",
             alignItems: "center",
+            overflow: "visible",
           }}
         >
           <MarkCompleteButton
