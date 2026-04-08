@@ -547,6 +547,8 @@
   text-decoration: none;
   transition: background 0.2s, transform 0.15s;
   box-sizing: border-box;
+  border: none;
+  cursor: pointer;
 }
 
 .priceCta:hover {
