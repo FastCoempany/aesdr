@@ -9,8 +9,8 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Let all API routes through (checkout, webhooks, crons)
-  if (pathname.startsWith("/api/")) {
+  // Let API routes, dashboard, and course pages through
+  if (pathname.startsWith("/api/") || pathname.startsWith("/dashboard") || pathname.startsWith("/course") || pathname.startsWith("/tools/")) {
     return NextResponse.next();
   }
 
