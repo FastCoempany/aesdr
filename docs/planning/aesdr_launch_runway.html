@@ -7,542 +7,972 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
---black:#000;--bg:#030303;--surface:#0a0a0a;--card:#0e0e0e;--card-hover:#151515;
---border:#1a1a1a;--border-lit:#2a2a2a;--border-hot:#3a3a3a;
---green:#00ff88;--green-dim:rgba(0,255,136,.08);--green-mid:rgba(0,255,136,.2);--green-glow:rgba(0,255,136,.5);
---cyan:#00e5ff;--cyan-dim:rgba(0,229,255,.06);
---amber:#ffb800;--amber-dim:rgba(255,184,0,.08);
---red:#ff3366;--red-dim:rgba(255,51,102,.08);
---white:#eee;--muted:#555;--soft:#888;
+--black:#000;--bg:#050505;--surface:#0a0a0a;--card:#111;--card-hover:#1a1a1a;
+--border:#222;--border-lit:#333;
+--green:#00ff88;--green-dim:rgba(0,255,136,.12);--green-glow:rgba(0,255,136,.4);
+--cyan:#00e5ff;--cyan-dim:rgba(0,229,255,.08);
+--amber:#ffb800;--amber-dim:rgba(255,184,0,.1);
+--red:#ff3366;--white:#f0f0f0;--muted:#666;--soft:#999;
 --mono:'SF Mono',SFMono-Regular,ui-monospace,'Cascadia Code','Fira Code',Menlo,monospace;
 --sans:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 }
-html{background:var(--bg);color:var(--white);font-family:var(--sans);scroll-behavior:smooth;overflow-x:hidden}
-body{min-height:100vh}
-::selection{background:var(--green);color:var(--black)}
+html{background:var(--bg);color:var(--white);font-family:var(--sans);scroll-behavior:smooth}
+body{min-height:100vh;padding-bottom:300px}
 
-/* ── COST TICKER (fixed top-right) ── */
-.ticker{position:fixed;top:16px;right:16px;z-index:900;display:flex;gap:12px;align-items:center;padding:8px 14px;background:rgba(5,5,5,.92);backdrop-filter:blur(12px);border:1px solid var(--border)}
-.tick-item{display:flex;flex-direction:column;align-items:flex-end}
-.tick-label{font-family:var(--mono);font-size:7px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
-.tick-val{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.05em}
-.tick-val.cost-monthly{color:var(--amber)}
-.tick-val.cost-once{color:var(--cyan)}
-
-/* ── FLOATING FUEL RAIL (fixed left) ── */
-.rail{position:fixed;left:0;top:0;bottom:0;width:48px;z-index:800;background:rgba(3,3,3,.95);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:60px 0}
-.rail-pct{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--green);letter-spacing:.05em}
-.rail-tube{width:6px;height:50vh;max-height:300px;background:var(--border);border-radius:99px;overflow:hidden;position:relative}
-.rail-fill{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,var(--green),var(--cyan));border-radius:99px;transition:height .8s cubic-bezier(.25,.46,.45,.94)}
-.rail-done{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;writing-mode:vertical-lr;transform:rotate(180deg)}
-
-/* ── MAIN CONTENT ── */
-.main{margin-left:48px;padding:0 24px 300px;max-width:920px;margin-right:auto}
+/* ── FLOATING FUEL GAUGE ── */
+.fuel{position:fixed;right:20px;top:50%;transform:translateY(-50%);z-index:1000;display:flex;flex-direction:column;align-items:center;gap:8px}
+.fuel-tube{width:14px;height:260px;background:#111;border:1px solid var(--border);border-radius:99px;overflow:hidden;position:relative}
+.fuel-level{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,var(--green),var(--cyan));border-radius:0 0 99px 99px;transition:height .6s cubic-bezier(.4,0,.2,1);box-shadow:0 0 20px var(--green-glow)}
+.fuel-pct{font-family:var(--mono);font-size:11px;color:var(--green);letter-spacing:.1em;writing-mode:horizontal-tb}
+.fuel-label{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
 
 /* ── HEADER ── */
-.hdr{padding:70px 0 50px;text-align:left;position:relative}
-.hdr::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--green),transparent 60%)}
-.hdr h1{font-family:var(--mono);font-size:clamp(28px,5vw,52px);font-weight:900;letter-spacing:.25em;text-transform:uppercase;line-height:1;margin-bottom:12px}
-.hdr h1 .g{background:linear-gradient(135deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hdr .sub{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase;margin-bottom:28px}
-.hdr .stats{display:flex;gap:32px}
-.stat{display:flex;flex-direction:column}
-.stat-num{font-family:var(--mono);font-size:36px;font-weight:200;color:var(--green)}
-.stat-label{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase;margin-top:2px}
+.runway-header{text-align:center;padding:80px 20px 60px;position:relative;overflow:hidden}
+.runway-header::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:1px;height:60px;background:linear-gradient(180deg,transparent,var(--green))}
+.runway-header h1{font-family:var(--mono);font-size:clamp(32px,6vw,64px);font-weight:900;letter-spacing:.3em;text-transform:uppercase;background:linear-gradient(135deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px}
+.runway-header .sub{font-family:var(--mono);font-size:13px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase}
+.runway-header .counter{font-family:var(--mono);font-size:48px;font-weight:200;color:var(--green);margin-top:30px;letter-spacing:.05em}
+.runway-header .counter span{font-size:20px;color:var(--muted)}
 
-/* ── MANIFESTO ── */
-.manifesto{margin:40px 0;padding:20px 24px;border-left:3px solid var(--red);background:var(--red-dim)}
-.manifesto p{font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.8;letter-spacing:.03em}
-.manifesto strong{color:var(--red)}
+/* ── PHASE SECTIONS ── */
+.phase{max-width:860px;margin:0 auto 60px;padding:0 24px}
+.phase-head{display:flex;align-items:center;gap:16px;padding:20px 0;border-bottom:1px solid var(--border);margin-bottom:24px;position:relative}
+.phase-num{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.2em;color:var(--black);background:var(--green);padding:4px 10px;border-radius:2px}
+.phase-title{font-family:var(--mono);font-size:18px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;flex:1}
+.phase-cost{font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:.08em;background:var(--amber-dim);padding:4px 12px;border-radius:2px}
+.phase-pct{font-family:var(--mono);font-size:13px;color:var(--green);letter-spacing:.05em;min-width:40px;text-align:right}
+.phase-bar{height:2px;background:var(--border);margin-bottom:28px;border-radius:99px;overflow:hidden}
+.phase-bar-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--cyan));transition:width .5s ease;border-radius:99px}
 
-/* ── PHASE GATES ── */
-.phase{margin:48px 0;position:relative}
-.phase.locked{opacity:.35;pointer-events:none;filter:grayscale(.5)}
-.phase.locked .phase-lock{display:flex}
-.phase-lock{display:none;position:absolute;top:0;left:0;right:0;bottom:0;z-index:10;align-items:flex-start;justify-content:center;padding-top:60px}
-.phase-lock span{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);background:var(--bg);padding:6px 16px;border:1px solid var(--border)}
+/* ── TASK STRIPS ── */
+.strip{background:var(--card);border:1px solid var(--border);margin-bottom:8px;transition:all .2s ease;cursor:pointer;position:relative;overflow:hidden}
+.strip:hover{border-color:var(--border-lit);background:var(--card-hover)}
+.strip.done{border-color:rgba(0,255,136,.2)}
+.strip.done::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--green)}
+.strip-head{display:flex;align-items:center;gap:14px;padding:14px 18px}
+.strip-toggle{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s ease;flex-shrink:0;position:relative;overflow:hidden}
+.strip-toggle::after{content:'✓';font-size:14px;color:var(--black);opacity:0;transition:opacity .2s;font-weight:900}
+.strip.done .strip-toggle{border-color:var(--green);background:var(--green);box-shadow:0 0 16px var(--green-glow);animation:togglePop .4s ease}
+.strip.done .strip-toggle::after{opacity:1}
+@keyframes togglePop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
+.strip-info{flex:1;min-width:0}
+.strip-name{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.04em;line-height:1.4}
+.strip-desc{font-family:var(--sans);font-size:12px;color:var(--muted);margin-top:2px;line-height:1.4}
+.strip-meta{display:flex;gap:10px;flex-shrink:0;align-items:center}
+.tag{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:2px}
+.tag-cost{color:var(--amber);background:var(--amber-dim)}
+.tag-time{color:var(--cyan);background:var(--cyan-dim)}
+.tag-eng{color:var(--green);background:var(--green-dim);font-size:8px}
+.chevron{color:var(--muted);font-size:16px;transition:transform .2s;flex-shrink:0}
+.strip.open .chevron{transform:rotate(90deg)}
 
-.phase-gate{display:flex;align-items:center;gap:14px;padding:18px 0;border-bottom:1px solid var(--border);margin-bottom:6px}
-.phase-badge{font-family:var(--mono);font-size:10px;font-weight:800;letter-spacing:.18em;color:var(--black);background:var(--green);padding:5px 12px;white-space:nowrap}
-.phase-badge.complete{background:var(--green);box-shadow:0 0 20px var(--green-glow);animation:badgePulse 2s ease infinite}
-@keyframes badgePulse{0%,100%{box-shadow:0 0 20px var(--green-glow)}50%{box-shadow:0 0 40px var(--green-glow)}}
-.phase-name{font-family:var(--mono);font-size:16px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;flex:1}
-.phase-est{font-family:var(--mono);font-size:10px;color:var(--amber);letter-spacing:.08em;background:var(--amber-dim);padding:4px 10px}
-.phase-score{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--green);min-width:44px;text-align:right;letter-spacing:.05em}
-
-/* ── TASK NODE (vertical pipeline) ── */
-.pipeline{position:relative;padding-left:28px}
-.pipeline::before{content:'';position:absolute;left:9px;top:0;bottom:0;width:1px;background:var(--border)}
-.node{position:relative;margin-bottom:4px}
-.node-dot{position:absolute;left:-28px;top:18px;width:19px;height:19px;border-radius:50%;border:2px solid var(--border);background:var(--bg);z-index:2;transition:all .35s ease;display:flex;align-items:center;justify-content:center}
-.node-dot::after{content:'';width:5px;height:5px;border-radius:50%;background:var(--border);transition:all .3s}
-.node.done .node-dot{border-color:var(--green);background:var(--green);box-shadow:0 0 14px var(--green-glow)}
-.node.done .node-dot::after{background:var(--black);width:7px;height:7px;clip-path:polygon(28% 48%,42% 65%,72% 32%,80% 40%,42% 78%,20% 55%)}
-.node-card{background:var(--card);border:1px solid var(--border);padding:14px 18px;transition:all .2s;cursor:pointer}
-.node-card:hover{border-color:var(--border-lit);background:var(--card-hover)}
-.node.done .node-card{border-color:var(--green-dim)}
-.node-top{display:flex;align-items:center;gap:12px}
-.node-title{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.04em;flex:1}
-.node.done .node-title{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--border-lit)}
-.node-tags{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
-.tag{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px}
-.t-cost{color:var(--amber);background:var(--amber-dim)}
-.t-time{color:var(--cyan);background:var(--cyan-dim)}
-.t-claude{color:var(--green);background:var(--green-dim)}
-.node-desc{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5;font-family:var(--sans)}
-.node-expand{color:var(--muted);font-family:var(--mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;margin-top:8px;display:inline-block;transition:color .2s}
-.node-card:hover .node-expand{color:var(--soft)}
-.node.open .node-expand{color:var(--green)}
-
-/* ── STEPS (inside node) ── */
-.steps-wrap{max-height:0;overflow:hidden;transition:max-height .5s ease}
-.node.open .steps-wrap{max-height:5000px}
-.steps{padding:12px 0 4px;display:flex;flex-direction:column;gap:2px}
-.step{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;background:var(--surface);border:1px solid transparent;cursor:pointer;transition:all .15s;position:relative}
-.step:hover{border-color:var(--border-lit)}
-.step-num{font-family:var(--mono);font-size:9px;color:var(--muted);min-width:18px;padding-top:1px;text-align:right}
-.step-box{width:14px;height:14px;border:1.5px solid var(--border);border-radius:2px;flex-shrink:0;margin-top:1px;transition:all .25s;position:relative;overflow:hidden}
-.step.done .step-box{border-color:var(--green);background:var(--green)}
-.step.done .step-box::after{content:'✓';position:absolute;top:-1px;left:1px;font-size:10px;color:var(--black);font-weight:900}
-.step-text{font-family:var(--mono);font-size:10.5px;color:var(--soft);line-height:1.6;letter-spacing:.02em;flex:1}
-.step.done .step-text{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--border)}
-
-/* ── BURST PARTICLES ── */
-.burst{position:fixed;pointer-events:none;z-index:9999}
-.particle{position:absolute;border-radius:50%;animation:particleFly .7s ease-out forwards}
-@keyframes particleFly{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0)}}
-
-/* ── PHASE COMPLETE SWEEP ── */
-.sweep{position:fixed;top:0;left:0;right:0;height:3px;z-index:9000;background:linear-gradient(90deg,transparent,var(--green),transparent);transform:translateX(-100%);animation:sweepAcross .8s ease-out forwards}
-@keyframes sweepAcross{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+/* ── EXPANDED SUB-STEPS ── */
+.strip-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.strip.open .strip-body{max-height:2000px}
+.substeps{padding:0 18px 18px 60px;display:flex;flex-direction:column;gap:6px}
+.substep{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);cursor:pointer;transition:all .15s}
+.substep:hover{border-color:var(--border-lit)}
+.substep.done{border-color:rgba(0,255,136,.15)}
+.sub-check{width:16px;height:16px;border:1.5px solid var(--border);border-radius:3px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.sub-check::after{content:'✓';font-size:9px;color:var(--black);opacity:0;font-weight:900}
+.substep.done .sub-check{border-color:var(--green);background:var(--green)}
+.substep.done .sub-check::after{opacity:1}
+.sub-text{font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.5;letter-spacing:.02em}
+.substep.done .sub-text{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--border)}
 
 /* ── GO BUTTON ── */
-.go-zone{text-align:center;padding:100px 20px 140px;position:relative}
-.go-zone::before{content:'';position:absolute;left:50%;top:0;transform:translateX(-50%);width:1px;height:80px;background:linear-gradient(180deg,var(--border),transparent)}
-.go-wrap{perspective:600px;display:inline-block}
-.go-btn{width:240px;height:240px;border-radius:50%;border:none;background:radial-gradient(ellipse at 35% 30%,#1a1a1a 0%,#080808 60%,#000 100%);color:var(--muted);font-family:var(--mono);font-size:32px;font-weight:900;letter-spacing:.25em;cursor:not-allowed;position:relative;transition:all .8s cubic-bezier(.25,.46,.45,.94);display:inline-flex;align-items:center;justify-content:center;text-transform:uppercase;box-shadow:0 4px 0 #000,0 8px 30px rgba(0,0,0,.8),inset 0 2px 4px rgba(255,255,255,.03);transform:rotateX(8deg);transform-style:preserve-3d}
-.go-btn::before{content:'';position:absolute;top:8%;left:20%;width:50%;height:25%;border-radius:50%;background:linear-gradient(180deg,rgba(255,255,255,.04),transparent);pointer-events:none}
-.go-btn::after{content:'';position:absolute;inset:0;border-radius:50%;border:2px solid var(--border);pointer-events:none;transition:border-color .8s}
-.go-btn.armed{cursor:pointer;color:var(--green);background:radial-gradient(ellipse at 35% 30%,#0a2a15 0%,#041a0a 60%,#000 100%);box-shadow:0 4px 0 #001a0a,0 8px 40px rgba(0,255,136,.15),0 0 80px rgba(0,255,136,.1),inset 0 2px 4px rgba(0,255,136,.05);animation:goHover 3s ease-in-out infinite}
-.go-btn.armed::after{border-color:var(--green)}
-.go-btn.armed::before{background:linear-gradient(180deg,rgba(0,255,136,.06),transparent)}
-@keyframes goHover{0%,100%{transform:rotateX(8deg) translateY(0);box-shadow:0 4px 0 #001a0a,0 8px 40px rgba(0,255,136,.15),0 0 80px rgba(0,255,136,.1)}50%{transform:rotateX(8deg) translateY(-4px);box-shadow:0 8px 0 #001a0a,0 16px 50px rgba(0,255,136,.2),0 0 100px rgba(0,255,136,.15)}}
-.go-btn.armed:active{transform:rotateX(8deg) translateY(2px);box-shadow:0 1px 0 #001a0a,0 2px 20px rgba(0,255,136,.1)}
-.go-btn.launched{animation:goSlam .6s ease forwards;color:var(--black);background:radial-gradient(ellipse at 35% 30%,#00ff88,#00cc6a 60%,#009950 100%)}
-.go-btn.launched::after{border-color:transparent}
-@keyframes goSlam{0%{transform:rotateX(8deg) translateY(0) scale(1)}20%{transform:rotateX(8deg) translateY(4px) scale(.95)}100%{transform:rotateX(0) translateY(0) scale(1.15);box-shadow:0 0 100px var(--green-glow),0 0 200px rgba(0,255,136,.2)}}
-.go-status{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase;margin-top:28px}
-.go-remain{font-family:var(--mono);font-size:12px;color:var(--amber);margin-top:8px;letter-spacing:.05em}
+.go-zone{text-align:center;padding:80px 20px 120px;position:relative}
+.go-zone::before{content:'';position:absolute;left:50%;top:0;transform:translateX(-50%);width:1px;height:60px;background:linear-gradient(180deg,var(--border),transparent)}
+.go-btn{width:220px;height:220px;border-radius:50%;border:3px solid var(--border);background:radial-gradient(circle at 40% 35%,#1a1a1a,#000);color:var(--muted);font-family:var(--mono);font-size:28px;font-weight:900;letter-spacing:.2em;cursor:not-allowed;position:relative;transition:all .6s ease;display:inline-flex;align-items:center;justify-content:center;text-transform:uppercase}
+.go-btn.armed{border-color:var(--green);color:var(--green);cursor:pointer;box-shadow:0 0 60px var(--green-glow),0 0 120px rgba(0,255,136,.15);animation:goPulse 2s ease-in-out infinite;background:radial-gradient(circle at 40% 35%,#0a2a15,#000)}
+@keyframes goPulse{0%,100%{box-shadow:0 0 60px var(--green-glow),0 0 120px rgba(0,255,136,.15)}50%{box-shadow:0 0 80px var(--green-glow),0 0 160px rgba(0,255,136,.25)}}
+.go-btn.launched{animation:goLaunch 1s ease forwards;border-color:var(--green);color:var(--black);background:var(--green)}
+@keyframes goLaunch{0%{transform:scale(1)}30%{transform:scale(.9)}100%{transform:scale(1.2);box-shadow:0 0 200px var(--green-glow)}}
+.go-status{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;margin-top:24px}
+.go-remaining{font-family:var(--mono);font-size:13px;color:var(--amber);margin-top:8px}
 
 /* ── CONFETTI ── */
-.confetti{position:fixed;z-index:9999;pointer-events:none}
-.confetti-p{position:absolute;animation:confDrop var(--dur) cubic-bezier(.25,.46,.45,.94) forwards}
-@keyframes confDrop{0%{opacity:1;transform:translateY(0) rotate(0deg) scale(1)}80%{opacity:1}100%{opacity:0;transform:translateY(var(--fall)) rotate(var(--spin)) scale(.3)}}
+.confetti-piece{position:fixed;width:8px;height:8px;z-index:9999;pointer-events:none;animation:confettiFall 3s ease-out forwards}
+@keyframes confettiFall{0%{opacity:1;transform:translateY(0) rotate(0deg)}100%{opacity:0;transform:translateY(100vh) rotate(720deg)}}
+
+/* ── ANTI-LINKEDIN BANNER ── */
+.manifesto{max-width:860px;margin:0 auto 40px;padding:0 24px}
+.manifesto-box{border:1px solid var(--red);padding:20px 24px;position:relative;overflow:hidden}
+.manifesto-box::before{content:'NO LINKEDIN';position:absolute;right:-10px;top:50%;transform:translateY(-50%) rotate(-12deg);font-family:var(--mono);font-size:64px;font-weight:900;color:rgba(255,51,102,.04);letter-spacing:.1em;white-space:nowrap;pointer-events:none}
+.manifesto-box p{font-family:var(--mono);font-size:11px;color:var(--soft);line-height:1.7;letter-spacing:.03em}
+.manifesto-box strong{color:var(--red)}
 
 /* ── RESPONSIVE ── */
 @media(max-width:700px){
-.rail{width:36px}.main{margin-left:36px;padding:0 14px 300px}
-.ticker{top:auto;bottom:12px;right:12px;left:48px;justify-content:center}
-.node-tags{display:none}.phase-est{display:none}
-.go-btn{width:180px;height:180px;font-size:24px}
-.hdr h1{letter-spacing:.15em}.hdr .stats{gap:20px}
+.fuel{right:8px}.fuel-tube{height:160px;width:10px}
+.strip-head{padding:12px 14px;gap:10px}.strip-meta{display:none}
+.substeps{padding-left:42px}
+.phase{padding:0 14px}
+.go-btn{width:160px;height:160px;font-size:20px}
 }
 </style>
 </head>
 <body>
 
-<!-- COST TICKER -->
-<div class="ticker">
-  <div class="tick-item"><span class="tick-label">Monthly</span><span class="tick-val cost-monthly" id="costMo">$0</span></div>
-  <div class="tick-item"><span class="tick-label">One-Time</span><span class="tick-val cost-once" id="costOnce">$0</span></div>
+<!-- FUEL GAUGE -->
+<div class="fuel">
+  <div class="fuel-pct" id="fuelPct">0%</div>
+  <div class="fuel-tube"><div class="fuel-level" id="fuelLevel"></div></div>
+  <div class="fuel-label">Fuel</div>
 </div>
 
-<!-- FUEL RAIL -->
-<div class="rail">
-  <div class="rail-pct" id="railPct">0%</div>
-  <div class="rail-tube"><div class="rail-fill" id="railFill"></div></div>
-  <div class="rail-done" id="railDone">0 done</div>
-</div>
-
-<!-- MAIN -->
-<div class="main">
-
-<header class="hdr">
-  <div class="sub">Every step between built & live — nothing deferred, nothing left to chance</div>
-  <h1><span class="g">Launch</span> Runway</h1>
-  <div class="stats">
-    <div class="stat"><span class="stat-num" id="tasksDone">0</span><span class="stat-label">Tasks Complete</span></div>
-    <div class="stat"><span class="stat-num" id="tasksTotal">0</span><span class="stat-label">Total Tasks</span></div>
-    <div class="stat"><span class="stat-num" id="stepsDone">0</span><span class="stat-label">Steps Done</span></div>
-  </div>
+<!-- HEADER -->
+<header class="runway-header">
+  <h1>Launch Runway</h1>
+  <div class="sub">Every step between built and live</div>
+  <div class="counter"><span id="doneCount">0</span> <span>/ <span id="totalCount">0</span> tasks</span></div>
 </header>
 
+<!-- ANTI-LINKEDIN MANIFESTO -->
 <div class="manifesto">
-  <p><strong>LinkedIn is not on this runway.</strong> It's a theatre for virtue-signaling snakes and scoundrels faking expertise for the quick buck. Everyone's an "expert." Nobody's closing. AESDR lives where real reps live: Reddit threads at midnight, Discord DMs between dials, podcast earbuds on the commute, TikToks in the parking lot before standup. We go where the pain is honest and the advice isn't performative. Every channel on this runway was chosen because real AEs and SDRs actually spend time there — not because some growth hacker said it was "best practice."</p>
+  <div class="manifesto-box">
+    <p><strong>LinkedIn is not on this runway.</strong> It's a theatre for virtue-signaling snakes and scoundrels faking it for the quick buck — everyone's an expert, nobody's closing. AESDR lives where real reps live: Reddit threads at midnight, Discord DMs between dials, podcast earbuds on the commute, TikToks in the parking lot before standup. We go where the pain is honest and the advice isn't performative.</p>
+  </div>
 </div>
 
+<!-- PHASES RENDERED BY JS -->
 <div id="runway"></div>
-
-</div><!-- /main -->
 
 <!-- GO BUTTON -->
 <div class="go-zone">
-  <div class="go-wrap">
-    <button class="go-btn" id="goBtn" disabled>GO</button>
-  </div>
-  <div class="go-status" id="goStatus">LOCKED — COMPLETE ALL 8 PHASES</div>
-  <div class="go-remain" id="goRemain"></div>
+  <button class="go-btn" id="goBtn" disabled>GO</button>
+  <div class="go-status" id="goStatus">LOCKED — COMPLETE ALL PHASES</div>
+  <div class="go-remaining" id="goRemaining"></div>
 </div>
 
 <script>
-const PHASES=[
-{id:"pay",num:"01",title:"Payment Engineering",est:"$0/mo + 2.9% per sale",
-tasks:[
-{id:"p1",name:"Create Stripe Account",desc:"Founder identity required — bank account, tax ID, government ID upload.",cost:"Free",time:"20 min",claude:false,costMo:0,costOnce:0,
-steps:[
-"Open your browser and go to stripe.com",
-"Click 'Start now' in the top right corner",
-"Enter your email address, full legal name, and create a password — click 'Create account'",
-"You'll land on the onboarding wizard. Select your country (United States)",
-"Business type: select 'Individual / Sole Proprietor' unless you have an LLC — if you do, select 'LLC'",
-"Legal business name: enter your full legal name (or LLC name if applicable)",
-"Doing business as (DBA): enter 'AESDR'",
-"Business website: enter 'aesdr.com'",
-"Industry: scroll down and select 'Education' → 'Online Courses'",
-"Product description: type 'Sales training course for account executives and sales development reps'",
-"Business address: enter your real address (required for tax/compliance)",
-"Add your bank account: click 'Add bank account' → enter routing number and account number",
-"Verify your identity: upload a photo of your driver's license or passport — front and back",
-"Review everything on the summary screen → click 'Submit'",
-"Verification usually completes within minutes. Sometimes it takes 24-48 hours — check email for status",
-"Once verified: bookmark your Stripe Dashboard URL — you'll live here"
-]},
-{id:"p2",name:"Create Products & Prices in Stripe",desc:"Two products: Individual ($199) and Team ($999). Get the Price IDs.",cost:"Free",time:"10 min",claude:false,costMo:0,costOnce:0,
-steps:[
-"In Stripe Dashboard → click 'Products' in the left sidebar",
-"Click '+ Add product' button in the top right",
-"Product name: type 'AESDR Individual'",
-"Description: type '12-course sales training curriculum — individual access'",
-"Scroll down to Pricing → select 'One time'",
-"Price: enter 199.00 → Currency: USD",
-"Click 'Save product'",
-"You'll see the product page. Under Pricing, find the Price ID — it starts with 'price_'. Click to copy it.",
-"Open a text file or note. Paste it and label it: STRIPE_PRICE_ID_INDIVIDUAL=price_xxxxx",
-"Go back to Products → click '+ Add product' again",
-"Product name: type 'AESDR Team (10 Seats)'",
-"Description: type '12-course sales training curriculum — up to 10 team members'",
-"Pricing → One time → enter 999.00 USD",
-"Click 'Save product'",
-"Copy the Team Price ID. Paste into your note: STRIPE_PRICE_ID_TEAM=price_xxxxx",
-"You now have both Price IDs saved. Keep this note open — you'll need them in the next steps."
-]},
-{id:"p3",name:"Get API Keys & Configure Webhook",desc:"Three secrets you need: publishable key, secret key, webhook signing secret.",cost:"Free",time:"15 min",claude:false,costMo:0,costOnce:0,
-steps:[
-"In Stripe Dashboard → click 'Developers' in the left sidebar",
-"Click 'API keys' tab",
-"You'll see 'Publishable key' (starts with pk_test_) — click 'Reveal test key' → copy it",
-"Paste into your note: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxxxx",
-"Below it, find 'Secret key' (starts with sk_test_) — click 'Reveal test key' → copy it",
-"Paste into your note: STRIPE_SECRET_KEY=sk_test_xxxxx",
-"Now set up the webhook: click 'Webhooks' tab in the left sidebar under Developers",
-"Click '+ Add endpoint'",
-"Endpoint URL: enter https://aesdr.com/api/webhooks/stripe",
-"Under 'Select events to listen to' → click '+ Select events'",
-"Search for 'checkout.session.completed' → check the box → click 'Add events'",
-"Click 'Add endpoint'",
-"On the endpoint page, you'll see 'Signing secret' — click 'Reveal' → copy it",
-"Paste into your note: STRIPE_WEBHOOK_SECRET=whsec_xxxxx",
-"Now open your project's .env.local file and add ALL 5 values from your note (the 2 Price IDs + 3 keys)",
-"Open Vercel Dashboard → your project → Settings → Environment Variables → add all 5, scope: Production + Preview",
-"Double-check: no trailing spaces, no quote marks around values, all 5 present"
-]},
-{id:"p4",name:"Install Stripe SDK & Build Checkout Route",desc:"npm install stripe, then create the API route that starts a checkout session.",cost:"Free",time:"30 min",claude:true,costMo:0,costOnce:0,
-steps:[
-"Open terminal in your aesdr project root",
-"Run: npm install stripe",
-"Verify it installed: check package.json for '\"stripe\": \"^x.x.x\"'",
-"Create the directory: mkdir -p app/api/checkout",
-"Create the file: app/api/checkout/route.ts",
-"Import Stripe: import Stripe from 'stripe'",
-"Initialize: const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)",
-"Export async function POST(request: Request) { ... }",
-"Parse the request body: const { priceId } = await request.json()",
-"Validate priceId is one of your two allowed Price IDs — reject others with 400",
-"Create the session: const session = await stripe.checkout.sessions.create({ line_items: [{ price: priceId, quantity: 1 }], mode: 'payment', success_url: process.env.SITE_URL + '/purchase/success?session_id={CHECKOUT_SESSION_ID}', cancel_url: process.env.SITE_URL + '/purchase/cancel', metadata: { tier: priceId === process.env.STRIPE_PRICE_ID_TEAM ? 'team' : 'individual' } })",
-"Return: NextResponse.json({ url: session.url })",
-"Test locally: run npm run dev, then use curl or Postman to POST to http://localhost:3000/api/checkout with body { \"priceId\": \"price_xxxxx\" }",
-"Verify it returns a Stripe checkout URL that opens in browser"
-]},
-{id:"p5",name:"Build Webhook Handler",desc:"Receives payment confirmation from Stripe. Creates purchase record. Grants access.",cost:"Free",time:"45 min",claude:true,costMo:0,costOnce:0,
-steps:[
-"Create directory: mkdir -p app/api/webhooks/stripe",
-"Create file: app/api/webhooks/stripe/route.ts",
-"Import Stripe and headers from next/headers",
-"Read raw body: const body = await request.text()",
-"Get signature: const sig = request.headers.get('stripe-signature')!",
-"Construct event: const event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!) — wrap in try/catch, return 400 on failure",
-"Check event type: if (event.type === 'checkout.session.completed') { ... }",
-"Extract session: const session = event.data.object as Stripe.Checkout.Session",
-"Get customer email: session.customer_details?.email",
-"Get tier from metadata: session.metadata?.tier",
-"Get amount: session.amount_total (in cents)",
-"Look up user in Supabase by email: const { data: user } = await supabase.from('auth.users')... — or use the Supabase admin client to find user by email",
-"Insert purchase row: await supabase.from('purchases').insert({ user_id: user.id, stripe_session_id: session.id, plan: tier, amount_cents: session.amount_total, status: 'active' })",
-"Handle idempotency: use .upsert() with onConflict: 'stripe_session_id' so duplicate webhook deliveries don't create duplicate rows",
-"Return NextResponse.json({ received: true }, { status: 200 })",
-"Test with Stripe CLI: stripe listen --forward-to localhost:3000/api/webhooks/stripe",
-"Trigger a test payment and verify the webhook fires + purchase row appears in Supabase"
-]},
-{id:"p6",name:"Create Purchases Table in Supabase",desc:"SQL table + RLS policies. Run in Supabase SQL Editor.",cost:"Free",time:"10 min",claude:false,costMo:0,costOnce:0,
-steps:[
-"Open Supabase Dashboard → click 'SQL Editor' in the left sidebar",
-"Click 'New query'",
-"Paste this SQL and click 'Run': CREATE TABLE IF NOT EXISTS purchases (id uuid DEFAULT gen_random_uuid() PRIMARY KEY, user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL, stripe_customer_id text, stripe_session_id text UNIQUE, plan text NOT NULL CHECK (plan IN ('individual', 'team')), amount_cents integer NOT NULL, currency text DEFAULT 'usd', status text DEFAULT 'active' CHECK (status IN ('pending', 'active', 'refunded')), purchased_at timestamptz DEFAULT now());",
-"Click 'New query' again. Paste and run: CREATE INDEX idx_purchases_user_id ON purchases(user_id);",
-"New query: ALTER TABLE purchases ENABLE ROW LEVEL SECURITY;",
-"New query: CREATE POLICY \"Users read own purchases\" ON purchases FOR SELECT USING (auth.uid() = user_id);",
-"Verify: go to Table Editor → you should see 'purchases' in the table list",
-"Click on it → verify columns match what you created",
-"Test RLS: go to SQL Editor → run SELECT * FROM purchases; — should return 0 rows (no data yet, but no error means RLS is working)"
-]},
-{id:"p7",name:"Add Purchase Gate to Course Pages",desc:"Users must have an active purchase to access lessons. Founder bypass stays.",cost:"Free",time:"25 min",claude:true,costMo:0,costOnce:0,
-steps:[
-"Open app/course/[lessonId]/page.tsx",
-"After the existing auth check (line ~44-48 where it checks for user), add a purchase query:",
-"const { data: purchase } = await supabase.from('purchases').select('id, plan, status').eq('user_id', user.id).eq('status', 'active').maybeSingle()",
-"Add bypass logic: const isFounder = request.cookies.get('aesdr_bypass')?.value === '1' — or hardcode your user ID",
-"If no purchase AND not founder: redirect to landing page with a message, or show a 'Purchase required' page",
-"Do NOT redirect to /login — they're already authenticated, they just haven't paid",
-"Test: create a new Supabase user (no purchase row) → visit /course/01 → verify they're blocked",
-"Test: add a purchase row for that user → visit /course/01 → verify they get through",
-"Test: verify your founder bypass still works"
-]},
-{id:"p8",name:"Build Success Page",desc:"Buyer lands here after Stripe checkout. Clear next steps. No confusion.",cost:"Free",time:"20 min",claude:true,costMo:0,costOnce:0,
-steps:[
-"Create directory: mkdir -p app/purchase/success",
-"Create file: app/purchase/success/page.tsx",
-"Add metadata: export const metadata = { title: 'Welcome | AESDR' }",
-"Build the page content: centered layout matching site theme",
-"Headline: 'You're in.' or 'Welcome to AESDR.'",
-"Show 3 numbered next steps: (1) Start with Lesson 1 [link to /dashboard], (2) Join the community [Discord invite link], (3) Check your email for login details",
-"Add a big primary CTA button: 'Go to Your Lessons →' linking to /dashboard",
-"Add support line at bottom: 'Questions? Email support@aesdr.com'",
-"Style matches site theme — dark bg, green accents, mono fonts",
-"Test: visit /purchase/success directly — verify it renders correctly"
-]},
-{id:"p9",name:"Build Cancel Page",desc:"Graceful exit. No guilt. Link back to landing page.",cost:"Free",time:"10 min",claude:true,costMo:0,costOnce:0,
-steps:[
-"Create directory: mkdir -p app/purchase/cancel",
-"Create file: app/purchase/cancel/page.tsx",
-"Add metadata: export const metadata = { title: 'Purchase Cancelled | AESDR' }",
-"Headline: 'No worries.' — not guilt-tripping, not desperate",
-"Short copy: 'Your card was not charged. If you have questions, reach out at support@aesdr.com.'",
-"CTA: 'Back to Home →' linking to /",
-"Optional: add a small FAQ section addressing common objections (Is it worth it? Can I get a refund?)",
-"Test: visit /purchase/cancel directly — verify it renders"
-]},
-{id:"p10",name:"Configure Stripe Tax Settings",desc:"Sales tax and VAT collection setup. Legal requirement.",cost:"Free",time:"15 min",claude:false,costMo:0,costOnce:0,
-steps:[
-"In Stripe Dashboard → Settings → Tax",
-"Enable Stripe Tax (or at minimum, understand your obligations)",
-"For digital products sold in the US: most states don't tax digital goods, but some do (e.g., Texas, Pennsylvania, Washington)",
-"If you're US-based selling primarily to US customers: you can start without tax collection and add it later when revenue justifies an accountant",
-"If selling internationally: Stripe Tax handles VAT automatically — toggle it on",
-"Add your business address as your tax origin",
-"For launch: at minimum, document your decision (collecting or not) so you can revisit with an accountant after first $10K revenue",
-"Save your settings"
-]},
-{id:"p11",name:"Test Full Purchase Flow — Test Mode",desc:"End-to-end with Stripe test cards. Every step of the buyer journey.",cost:"Free",time:"30 min",claude:false,costMo:0,costOnce:0,
-steps:[
-"Confirm Stripe is in TEST mode — look at the toggle in the top-right of Stripe Dashboard. It should say 'Test mode' with an orange badge.",
-"Open aesdr.com in an incognito window",
-"Create a new account (signup with a test email)",
-"On the landing page, click the buy button for Individual ($199)",
-"Verify: Stripe Checkout opens showing 'AESDR Individual — $199.00'",
-"Enter test card: Number: 4242 4242 4242 4242 / Exp: any future date (e.g. 12/28) / CVC: any 3 digits (e.g. 123) / Name: Test Buyer / ZIP: any 5 digits",
-"Click 'Pay $199.00'",
-"Verify: you're redirected to /purchase/success",
-"Verify: success page shows the 3 next steps",
-"Click 'Go to Your Lessons' → verify /dashboard loads with all 12 lessons",
-"Click into Lesson 1 → verify the iframe loads",
-"Check Stripe Dashboard → Payments → verify the test charge appears",
-"Check Supabase → Table Editor → purchases → verify a row exists with the correct user_id, plan, and status",
-"Check your email → verify the welcome email arrived (if email system is wired)",
-"Refund the test charge: Stripe Dashboard → click the payment → click 'Refund' → full refund → confirm",
-"Repeat with the Team tier ($999) to verify that flow also works"
-]},
-{id:"p12",name:"Switch Stripe to Live Mode",desc:"Flip from test to live keys. Real money. No going back.",cost:"Free",time:"15 min",claude:false,costMo:0,costOnce:0,
-steps:[
-"In Stripe Dashboard → click the 'Test mode' toggle in the top-right → switch to Live mode",
-"You're now in the live dashboard. Go to Developers → API keys",
-"Copy the LIVE Publishable key (starts with pk_live_) → paste into your note",
-"Copy the LIVE Secret key (starts with sk_live_) → paste into your note",
-"Go to Products → verify your products exist in live mode. If not, re-create them (some products auto-copy, some don't)",
-"Copy the LIVE Price IDs if they changed",
-"Go to Developers → Webhooks → verify your endpoint exists in live mode. If not, re-create it with the same URL and events",
-"Copy the LIVE Signing secret",
-"Open Vercel Dashboard → Settings → Environment Variables",
-"Update EACH variable with the LIVE value: STRIPE_SECRET_KEY, NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY, STRIPE_WEBHOOK_SECRET, and both Price IDs if changed",
-"Trigger a Vercel redeploy: go to Deployments → click '...' on latest → Redeploy",
-"Wait for deploy to complete"
-]},
-{id:"p13",name:"First Real Purchase — $1 Test",desc:"Create a temporary $1 product. Buy it with your real card. Verify everything.",cost:"$1 (refund after)",time:"10 min",claude:false,costMo:0,costOnce:1,
-steps:[
-"In Stripe Dashboard (LIVE mode) → Products → Add Product",
-"Name: 'Test Purchase — DELETE ME' → One-time → $1.00 USD → Save",
-"Copy the $1 Price ID",
-"Temporarily update your STRIPE_PRICE_ID_INDIVIDUAL env var in Vercel to this $1 Price ID",
-"Redeploy on Vercel",
-"Go to aesdr.com → click buy → complete checkout with your REAL credit card for $1",
-"Verify: redirect to success page",
-"Verify: purchase row appears in Supabase",
-"Verify: welcome email arrives",
-"Verify: course access works",
-"Go to Stripe Dashboard → Payments → find the $1 charge → click 'Refund' → full refund",
-"Delete the $1 test product in Stripe",
-"Restore the real STRIPE_PRICE_ID_INDIVIDUAL ($199) in Vercel env vars",
-"Redeploy on Vercel",
-"Done — your entire payment pipeline is verified with real money"
-]}
-]},
-{id:"email",num:"02",title:"Email Infrastructure",est:"$0–20/mo",
-tasks:[
-{id:"e1",name:"Set Up support@aesdr.com",desc:"Domain email that forwards to your real inbox. Buyers need somewhere to reach you.",cost:"$0–6/mo",time:"15 min",claude:false,costMo:6,costOnce:0,
-steps:[
-"Decide: Option A (free) = email forwarding from your domain registrar. Option B ($6/mo) = Google Workspace for a real inbox.",
-"OPTION A — Forwarding: Log in to your domain registrar (GoDaddy, Namecheap, Cloudflare — wherever aesdr.com is registered)",
-"Find 'Email' or 'Email Forwarding' in the settings menu",
-"Create a forward: From: support@aesdr.com → To: your personal Gmail/email",
-"Save the forwarding rule",
-"OPTION B — Google Workspace: Go to workspace.google.com → click 'Get started'",
-"Enter your business name (AESDR), number of employees (Just you), your aesdr.com domain",
-"Create your admin user: support@aesdr.com with a strong password",
-"Google will ask you to verify domain ownership — they'll give you a TXT record to add to your DNS",
-"Add the TXT record in your DNS provider → wait for verification (can take 10–60 minutes)",
-"Once verified, you have a real inbox at support@aesdr.com that works with Gmail",
-"TEST IT: Send an email from your personal account to support@aesdr.com → verify it arrives",
-"Set up an auto-responder: In Gmail → Settings → See all settings → Vacation responder → turn on → Subject: 'We got your message' → Body: 'Thanks for reaching out to AESDR. We respond within 48 hours.'",
-"Reply-test: Reply to the test email FROM support@aesdr.com to confirm sending works too"
-]},
-{id:"e2",name:"Create Resend Account & Verify Domain",desc:"Transactional email service for automated sends (welcome, drip, cart abandonment).",cost:"Free tier: 100/day",time:"25 min",claude:false,costMo:0,costOnce:0,
-steps:[
-"Open resend.com in your browser → click 'Get Started'",
-"Sign up with your email → verify your email address via the confirmation link they send",
-"Once logged in, you'll see the Resend Dashboard",
-"In the left sidebar → click 'Domains'",
-"Click 'Add Domain' → type aesdr.com → click 'Add'",
-"Resend will show you 2–4 DNS records to add. You'll see a table with columns: Type, Name, Value",
-"Open a NEW browser tab → log in to your DNS provider (Cloudflare, GoDaddy, Namecheap, etc.)",
-"Go to the DNS management page for aesdr.com",
-"For EACH record Resend shows: click 'Add Record' in your DNS provider → set Type to what Resend says (usually TXT or CNAME) → copy the Name field EXACTLY → copy the Value field EXACTLY",
-"IMPORTANT: If your DNS provider auto-appends your domain to the Name field, you may need to adjust. Example: if Resend says Name is 'resend._domainkey.aesdr.com' and your provider auto-appends '.aesdr.com', enter just 'resend._domainkey'",
-"Save each record. Double-check for typos — one wrong character means verification fails.",
-"Go back to Resend → click 'Verify' on your domain. If it fails, wait 10–30 minutes (DNS propagation) then try again.",
-"Once verified: the status will change to a green 'Verified' badge",
-"Now get your API key: Left sidebar → 'API Keys' → click 'Create API Key'",
-"Name it 'aesdr-production' → Full access → click 'Create'",
-"Copy the API key (starts with 're_') — you will ONLY see this once. Paste it immediately.",
-"Add to .env.local: RESEND_API_KEY=re_xxxxx",
-"Add to Vercel env vars: same key, Production + Preview scope",
-"Send a test email: In Resend Dashboard → 'Emails' → 'Send test email' → send to yourself → verify it arrives in your inbox (check spam folder too)"
-]},
-{id:"e3",name:"Build & Wire Welcome Email",desc:"First email a buyer gets. Triggered automatically by Stripe webhook.",cost:"Free",time:"40 min",claude:true,costMo:0,costOnce:0,
-steps:[
-"In your project terminal: run npm install resend",
-"Create directory: mkdir -p lib",
-"Create file: lib/resend.ts → import { Resend } from 'resend'; export const resend = new Resend(process.env.RESEND_API_KEY);",
-"Create file: lib/emails.ts — this is where all email send functions live",
-"Write the sendWelcomeEmail function: export async function sendWelcomeEmail(to: string, name: string) { ... }",
-"Inside: call resend.emails.send({ from: 'AESDR <welcome@aesdr.com>', to, subject: 'Welcome to AESDR — Start here', html: `...` })",
-"The HTML email body — keep it SIMPLE. No fancy templates. Plain-looking emails convert better. Content: 'Hey {name}, You're in. Here's what to do next: 1. Start Lesson 1: [link to /dashboard] 2. Join the community: [Discord invite link] 3. Questions? Reply to this email or hit support@aesdr.com. Let's go. — AESDR'",
-"Use inline styles only (email clients don't support CSS classes). font-family: system-ui, sans-serif; color: #333; background: #fff;",
-"Include an unsubscribe line at the bottom (CAN-SPAM compliance): 'You're receiving this because you purchased AESDR. To unsubscribe, reply with UNSUBSCRIBE.'",
-"Now wire it into the webhook: Open app/api/webhooks/stripe/route.ts",
-"After the purchase row is inserted, add: await sendWelcomeEmail(session.customer_details.email, session.customer_details.name || 'there')",
-"Wrap in try/catch — don't let email failures break the webhook response (Stripe needs a 200)",
-"Test: trigger a test purchase → verify the welcome email arrives within 60 seconds",
-"Check the email on both desktop and mobile — does it render cleanly? Are the links clickable?"
-]},
-{id:"e4",name:"Build Drip Sequence (Day 3 + Day 7)",desc:"Automated check-in emails to maintain momentum.",cost:"Free",time:"45 min",claude:true,costMo:0,costOnce:0,
-steps:[
-"Use the copy from docs/content/A03-welcome-email-sequence.md (Day 3 and Day 7 emails are already written)",
-"Create two more functions in lib/emails.ts: sendDay3Email(to, name) and sendDay7Email(to, name)",
-"Day 3 subject: 'How's Lesson 1 going?' — body links to /dashboard, mentions specific benefit of continuing",
-"Day 7 subject: 'Ready for the deep stuff?' — body highlights a standout lesson (Lesson 5 or 8), links directly to it",
-"Include unsubscribe footer in both",
-"For triggering: create a Supabase Edge Function or a Next.js cron API route",
-"Create app/api/cron/drip/route.ts — this will run on a schedule",
-"Logic: query purchases table WHERE purchased_at is 3 days ago AND a day3_sent flag is false",
-"Send the Day 3 email → update the flag: ALTER TABLE purchases ADD COLUMN IF NOT EXISTS day3_sent boolean DEFAULT false; (run in Supabase SQL Editor)",
-"Same logic for Day 7: day7_sent flag",
-"For scheduling: use Vercel Cron Jobs — add to vercel.json: { \"crons\": [{ \"path\": \"/api/cron/drip\", \"schedule\": \"0 14 * * *\" }] } — runs daily at 2pm UTC",
-"Add a secret header check so the cron route can't be called by random visitors: check for Authorization header matching a CRON_SECRET env var",
-"Test: manually insert a purchase row with purchased_at set to 3 days ago → call the cron endpoint → verify email sends",
-"Test Day 7 the same way"
-]},
-{id:"e5",name:"Build Cart Abandonment Emails",desc:"1-hour and 24-hour follow-ups for started-but-incomplete checkouts.",cost:"Free",time:"40 min",claude:true,costMo:0,costOnce:0,
-steps:[
-"Use the copy from docs/content/A02-cart-abandonment-emails.md (2 emails already written with 3 subject variants each)",
-"First: track checkout starts. In app/api/checkout/route.ts, after creating the Stripe session, log it: insert into a checkout_sessions table (session_id, user_email, tier, started_at, completed boolean default false)",
-"Create that table in Supabase SQL Editor: CREATE TABLE checkout_sessions (id uuid DEFAULT gen_random_uuid() PRIMARY KEY, session_id text UNIQUE, user_email text, tier text, started_at timestamptz DEFAULT now(), completed boolean DEFAULT false);",
-"In the Stripe webhook handler: when checkout.session.completed fires, also UPDATE checkout_sessions SET completed = true WHERE session_id = session.id",
-"Create lib/emails.ts functions: sendAbandon1hr(to) and sendAbandon24hr(to)",
-"Create app/api/cron/abandonment/route.ts",
-"Logic: query checkout_sessions WHERE completed = false AND started_at < 1 hour ago AND abandon_1hr_sent IS NULL",
-"Send the 1-hour email → mark abandon_1hr_sent = now()",
-"Same for 24-hour: WHERE completed = false AND started_at < 24 hours ago AND abandon_24hr_sent IS NULL",
-"Add the extra columns: ALTER TABLE checkout_sessions ADD COLUMN abandon_1hr_sent timestamptz, ADD COLUMN abandon_24hr_sent timestamptz;",
-"CRITICAL: Before sending ANY abandonment email, re-check that checkout is still incomplete. Stripe webhooks can be delayed.",
-"Add to vercel.json crons: { \"path\": \"/api/cron/abandonment\", \"schedule\": \"0 * * * *\" } — runs every hour",
-"Test: create a checkout session but don't complete it → wait (or manually call the cron) → verify email arrives"
-]},
-{id:"e6",name:"Build Drop-Off Prevention Emails",desc:"Re-engage buyers who stall mid-course at 5, 10, and 21 days.",cost:"Free",time:"30 min",claude:true,costMo:0,costOnce:0,
-steps:[
-"Use copy from docs/content/A07-dropoff-prevention-emails.md (3 emails at 5/10/21 day triggers)",
-"Create functions: sendDropoff5d(to, name), sendDropoff10d(to, name), sendDropoff21d(to, name)",
-"Create app/api/cron/dropoff/route.ts",
-"Logic: Join purchases + course_progress tables. Find users where: purchased 5+ days ago, AND last_screen hasn't advanced in 5 days, AND dropoff_5d_sent is false",
-"Add columns to purchases: dropoff_5d_sent, dropoff_10d_sent, dropoff_21d_sent (all boolean DEFAULT false)",
-"For 10-day: same logic but 10 days inactive AND completed fewer than 4 lessons",
-"For 21-day: same logic but 21 days AND completed 6+ lessons but not finished (they were into it but stopped)",
-"Each email links DIRECTLY to the lesson they left off on: /course/{lessonId}",
-"Add to vercel.json crons: { \"path\": \"/api/cron/dropoff\", \"schedule\": \"0 15 * * *\" } — daily at 3pm UTC",
-"Test: create a purchase row backdated to 5 days ago with stalled progress → trigger cron → verify email"
-]},
-{id:"e7",name:"Build Review Request Emails",desc:"Ask for testimonials after course completion. Rating + quote.",cost:"Free",time:"20 min",claude:true,costMo:0,costOnce:0,
-steps:[
-"Use copy from docs/content/A08-review-request-sequence.md (2 emails with rating branching)",
-"Create function: sendReviewRequest(to, name)",
-"Trigger: when a user has is_completed = true for ALL 12 lessons in course_progress",
-"Send 2 days after the 12th lesson completion (not immediately — let it sink in)",
-"Email asks: 'Reply with a number 1–5: How useful was AESDR?' and 'In 1–2 sentences, what changed for you?'",
-"Include permission line: 'Can we use your words on our site? (Just reply yes/no)'",
-"For now: replies come to support@aesdr.com and you manually add good ones to Testimonials.tsx",
-"Later: you can automate with a rating form that writes to a Supabase testimonials table",
-"Add review_requested boolean to purchases table",
-"Add to the daily drip cron so it checks on the same schedule"
-]},
-{id:"e8",name:"Email Deliverability Warm-Up",desc:"New sending domains get flagged as spam. Warm it up before launch.",cost:"Free",time:"15 min + 1 week passive",claude:false,costMo:0,costOnce:0,
-steps:[
-"Resend handles most deliverability out of the box, but a brand-new domain needs warming",
-"Week 1 before launch: send 5–10 emails per day to real addresses (yourself, friends, team)",
-"Ask recipients to: (1) open the email, (2) reply to it, (3) move it to Primary if it lands in Promotions/Spam",
-"These engagement signals tell Gmail/Outlook that your domain is legitimate",
-"Check your Resend dashboard → look at bounce rate and complaint rate. Both should be 0% during warm-up.",
-"Run your domain through mail-tester.com: send an email to the address they provide → they'll score your setup out of 10. Aim for 8+.",
-"If score is low: check that SPF, DKIM, and DMARC records are all properly set in your DNS",
-"By launch day your domain has ~50+ successful sends with good engagement — enough for Gmail to trust you"
-]},
-{id:"e9",name:"CAN-SPAM Compliance Check",desc:"Legal requirements for commercial email. Fines up to $50K per violation.",cost:"Free",time:"10 min",claude:false,costMo:0,costOnce:0,
-steps:[
-"Every commercial email you send MUST include: (1) your physical mailing address, (2) a way to unsubscribe, (3) accurate From/Subject lines",
-"Open each email template you've created and verify ALL three are present",
-"Physical address: add your business address (or PO Box) to the footer of every email template",
-"Unsubscribe: include 'Reply UNSUBSCRIBE to stop receiving emails' or a proper unsubscribe link",
-"If using Resend: they can handle unsubscribe lists — check their docs for the unsubscribe header feature",
-"From line: must be 'AESDR' or similar — not misleading",
-"Subject lines: must accurately reflect the email content — no bait-and-switch",
-"Transactional emails (purchase confirmations) are exempt from some rules but including address/unsub anyway is best practice",
-"Document your compliance: note in a doc that you've reviewed CAN-SPAM requirements and when"
-]}
-]},
+// ═══════════════════════════════════════════════════
+// TASK DATA — 8 PHASES, ~50 TASKS, 200+ SUB-STEPS
+// ═══════════════════════════════════════════════════
+const PHASES = [
+{
+  id:"pay",num:"01",title:"Payment Engineering",cost:"~$0/mo + 2.9%/txn",
+  tasks:[
+    {id:"pay-01",name:"Create Stripe Account",desc:"Founder identity, bank, tax info — nobody else can do this",cost:"Free",time:"20 min",eng:false,
+     subs:[
+       "Go to stripe.com → click Start Now",
+       "Enter your email and create a password",
+       "Business type → Individual / Sole Proprietor (or LLC if you have one)",
+       "Legal business name → your name or LLC name",
+       "Business website → aesdr.com",
+       "Industry → Education / Online Courses",
+       "Add your bank account for payouts (routing + account number)",
+       "Upload government ID for identity verification",
+       "Wait for verification (usually instant, sometimes 24-48 hrs)",
+       "Save your Dashboard URL bookmark"
+     ]},
+    {id:"pay-02",name:"Create Stripe Products & Prices",desc:"Individual ($199) and Team ($999) one-time products",cost:"Free",time:"10 min",eng:false,
+     subs:[
+       "In Stripe Dashboard → Products → Add Product",
+       "Name: 'AESDR Individual' — One-time price: $199.00 USD",
+       "Copy the Price ID (starts with price_) — save it",
+       "Add Product again → 'AESDR Team (10 seats)' — One-time price: $999.00 USD",
+       "Copy the Team Price ID — save it",
+       "Add both Price IDs to .env.local as STRIPE_PRICE_ID_INDIVIDUAL and STRIPE_PRICE_ID_TEAM",
+       "Add both to Vercel environment variables"
+     ]},
+    {id:"pay-03",name:"Get API Keys & Webhook Secret",desc:"Secret key, publishable key, webhook signing secret",cost:"Free",time:"5 min",eng:false,
+     subs:[
+       "Stripe Dashboard → Developers → API Keys",
+       "Copy Publishable key → add to .env.local as NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
+       "Copy Secret key → add to .env.local as STRIPE_SECRET_KEY",
+       "Go to Developers → Webhooks → Add Endpoint",
+       "Endpoint URL: https://aesdr.com/api/webhooks/stripe",
+       "Select event: checkout.session.completed",
+       "Copy Signing Secret → add to .env.local as STRIPE_WEBHOOK_SECRET",
+       "Add all 3 to Vercel environment variables (Production scope)"
+     ]},
+    {id:"pay-04",name:"Build Checkout API Route",desc:"Server route that creates a Stripe checkout session",cost:"Free",time:"30 min",eng:true,
+     subs:[
+       "Install stripe package: npm install stripe",
+       "Create app/api/checkout/route.ts",
+       "Accept POST with { priceId, tier } in request body",
+       "Initialize Stripe with STRIPE_SECRET_KEY",
+       "Create checkout session with line_items, mode: 'payment', success_url, cancel_url",
+       "Include customer_email from authenticated user if available",
+       "Return session.url in JSON response",
+       "Test locally with curl or Postman"
+     ]},
+    {id:"pay-05",name:"Build Webhook Handler",desc:"Receive payment confirmations, grant course access",cost:"Free",time:"45 min",eng:true,
+     subs:[
+       "Create app/api/webhooks/stripe/route.ts",
+       "Read raw body and Stripe-Signature header",
+       "Verify signature using stripe.webhooks.constructEvent()",
+       "Handle checkout.session.completed event",
+       "Extract customer_email and metadata from session",
+       "Create row in Supabase purchases table (user_id, stripe_session_id, tier, amount, status)",
+       "Return 200 OK on success, 400 on verification failure",
+       "Handle duplicate deliveries gracefully (Stripe retries — use stripe_session_id as idempotency key)"
+     ]},
+    {id:"pay-06",name:"Create Purchases Table",desc:"Supabase table + RLS policies for purchase records",cost:"Free",time:"15 min",eng:true,
+     subs:[
+       "Open Supabase SQL Editor",
+       "Run: CREATE TABLE purchases (id uuid DEFAULT gen_random_uuid() PRIMARY KEY, user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL, stripe_customer_id text, stripe_session_id text UNIQUE, plan text NOT NULL, amount_cents integer NOT NULL, currency text DEFAULT 'usd', status text DEFAULT 'active', purchased_at timestamptz DEFAULT now())",
+       "Run: ALTER TABLE purchases ENABLE ROW LEVEL SECURITY",
+       "Run: CREATE POLICY 'Users read own purchases' ON purchases FOR SELECT USING (auth.uid() = user_id)",
+       "Test: insert a dummy row, query it as different user — should return empty"
+     ]},
+    {id:"pay-07",name:"Add Purchase Gate to Course Pages",desc:"Check purchases table before allowing lesson access",cost:"Free",time:"30 min",eng:true,
+     subs:[
+       "Open app/course/[lessonId]/page.tsx",
+       "After auth check, query purchases table for user_id with status = 'active'",
+       "If no purchase row → redirect to landing page or show 'Purchase required' message",
+       "Add bypass for founder account (your user_id or the aesdr_bypass cookie)",
+       "Test: create a new user without purchase → verify they can't access lessons",
+       "Test: create a purchase row → verify they can access lessons"
+     ]},
+    {id:"pay-08",name:"Build Success Page",desc:"Post-purchase confirmation with next steps",cost:"Free",time:"20 min",eng:true,
+     subs:[
+       "Create app/purchase/success/page.tsx",
+       "Show 'Welcome to AESDR' confirmation message",
+       "Display 3 clear next steps: 1) Start Lesson 1, 2) Join Discord, 3) Check email",
+       "Add direct CTA button to /dashboard",
+       "Add metadata: title 'Welcome | AESDR'",
+       "Style to match site theme"
+     ]},
+    {id:"pay-09",name:"Build Cancel Page",desc:"Graceful exit when someone abandons checkout",cost:"Free",time:"10 min",eng:true,
+     subs:[
+       "Create app/purchase/cancel/page.tsx",
+       "Show 'No worries' message — non-guilt-tripping",
+       "Link back to landing page",
+       "Optional: include a 'Still thinking?' section with FAQ",
+       "Wire cancel_url in checkout session to this page"
+     ]},
+    {id:"pay-10",name:"Test Full Purchase Flow (Test Mode)",desc:"End-to-end test with Stripe test card before going live",cost:"Free",time:"30 min",eng:false,
+     subs:[
+       "Confirm Stripe is still in TEST mode (toggle in dashboard header)",
+       "Create a new account on aesdr.com",
+       "Click buy → verify checkout session opens",
+       "Use test card: 4242 4242 4242 4242, any future date, any CVC",
+       "Verify redirect to success page",
+       "Check Supabase: purchases table has a new row",
+       "Navigate to /dashboard → verify lessons are accessible",
+       "Check Stripe Dashboard → Payments → verify test charge appears",
+       "Refund the test charge in Stripe"
+     ]},
+    {id:"pay-11",name:"Switch Stripe to Live Mode",desc:"Flip from test to live — real money flows",cost:"Free",time:"10 min",eng:false,
+     subs:[
+       "In Stripe Dashboard → toggle from 'Test mode' to 'Live mode'",
+       "Copy the LIVE publishable key and secret key",
+       "Update Vercel environment variables with live keys",
+       "Update webhook endpoint to use live signing secret",
+       "Re-create products in live mode (or copy from test)",
+       "Update Price IDs in Vercel env vars if they changed",
+       "Trigger a Vercel redeploy"
+     ]},
+    {id:"pay-12",name:"First Real Purchase Test",desc:"$1 charge with your own card to verify the full live flow",cost:"$1 (refund after)",time:"10 min",eng:false,
+     subs:[
+       "Temporarily create a $1 test product in Stripe live mode",
+       "Go through full purchase flow with your real card",
+       "Verify: payment appears in Stripe, purchase row in Supabase, course access granted",
+       "Refund the $1 charge in Stripe Dashboard",
+       "Delete the test product",
+       "Switch back to real pricing"
+     ]}
+  ]
+},
+{
+  id:"email",num:"02",title:"Email Infrastructure",cost:"~$0-20/mo",
+  tasks:[
+    {id:"email-01",name:"Set Up support@aesdr.com",desc:"Domain email that routes to your real inbox",cost:"$0-6/mo",time:"15 min",eng:false,
+     subs:[
+       "Option A (Free): Go to your domain registrar (GoDaddy, Namecheap, Cloudflare) → Email Forwarding",
+       "Create forward: support@aesdr.com → your personal email",
+       "Option B ($6/mo): Set up Google Workspace → create support@aesdr.com as a real inbox",
+       "Send a test email to support@aesdr.com from a different account",
+       "Verify it arrives in your inbox",
+       "Set up an auto-responder: 'Thanks for reaching out. We respond within 48 hours.'"
+     ]},
+    {id:"email-02",name:"Create Resend Account & Verify Domain",desc:"Transactional email provider for automated sends",cost:"Free (100/day)",time:"20 min",eng:false,
+     subs:[
+       "Go to resend.com → Create account",
+       "Dashboard → Domains → Add Domain → enter aesdr.com",
+       "Resend shows DNS records to add (TXT for verification, DKIM/SPF)",
+       "Open your DNS provider (Cloudflare, GoDaddy, etc.)",
+       "Add each record EXACTLY as shown — double check every character",
+       "Return to Resend → click Verify",
+       "If it doesn't verify immediately, wait 10-30 minutes and retry",
+       "Once verified: go to API Keys → Create API Key → copy it",
+       "Add RESEND_API_KEY to .env.local and Vercel env vars",
+       "Send a test email from Resend dashboard to yourself"
+     ]},
+    {id:"email-03",name:"Build Welcome Email",desc:"First email a buyer gets — what to do next",cost:"Free",time:"30 min",eng:true,
+     subs:[
+       "Install Resend SDK: npm install resend",
+       "Create lib/email.ts with Resend client initialization",
+       "Write welcome email HTML template (keep it SIMPLE — plain text style)",
+       "Content: greeting, what they bought, link to Lesson 1, Discord invite, support@aesdr.com",
+       "Create a sendWelcomeEmail(email, name) function",
+       "Wire it into the Stripe webhook handler — call after purchase row is created",
+       "Test: trigger a test purchase → verify welcome email arrives"
+     ]},
+    {id:"email-04",name:"Build Drip Sequence (Day 3 + Day 7)",desc:"Check-in emails to keep momentum",cost:"Free",time:"30 min",eng:true,
+     subs:[
+       "Write Day 3 email: 'How's Lesson 1 going?' — link to where they left off",
+       "Write Day 7 email: 'Ready for the deep stuff?' — highlight a standout lesson",
+       "Create a Supabase edge function or cron job to check purchase dates",
+       "Query: users where purchased_at is 3 or 7 days ago AND not already emailed",
+       "Send via Resend API",
+       "Add a drip_emails_sent jsonb column to purchases (or a separate email_log table)",
+       "Test with a backdated purchase row"
+     ]},
+    {id:"email-05",name:"Build Cart Abandonment Emails",desc:"Follow up on started-but-incomplete checkouts",cost:"Free",time:"30 min",eng:true,
+     subs:[
+       "Log checkout_started events when creating Stripe sessions (new column or table)",
+       "Mark as completed when webhook fires for that session",
+       "Cron job: find sessions started 1+ hours ago with no completion",
+       "Send 1-hour email (soft reminder) using copy from docs/content/A02-cart-abandonment-emails.md",
+       "Send 24-hour email (urgency) if still not completed",
+       "Never send abandonment email after a successful purchase — check first"
+     ]},
+    {id:"email-06",name:"Build Drop-Off Prevention Emails",desc:"Re-engage buyers who stall mid-course",cost:"Free",time:"20 min",eng:true,
+     subs:[
+       "Use copy from docs/content/A07-dropoff-prevention-emails.md",
+       "Trigger 1: user hasn't logged in for 5 days after purchase",
+       "Trigger 2: user hasn't progressed past lesson 2 after 10 days",
+       "Trigger 3: user completed 6+ lessons but stalled for 21 days",
+       "Query course_progress + purchases tables to identify stalled users",
+       "Send via Resend with direct lesson link"
+     ]},
+    {id:"email-07",name:"Build Review Request Emails",desc:"Ask for testimonials after course completion",cost:"Free",time:"15 min",eng:true,
+     subs:[
+       "Use copy from docs/content/A08-review-request-sequence.md",
+       "Trigger: user completes all 12 lessons (count is_completed = true rows)",
+       "Send 'How was it?' email 2 days after completion",
+       "Include simple rating (reply with 1-5) and testimonial ask",
+       "Store responses in a testimonials doc or Supabase table",
+       "Replace faux testimonials on landing page as real ones come in"
+     ]}
+  ]
+},
+{
+  id:"ops",num:"03",title:"Community & Support Ops",cost:"~$0-6/mo",
+  tasks:[
+    {id:"ops-01",name:"Create Discord Server",desc:"Private members-only community for paying buyers",cost:"Free",time:"20 min",eng:false,
+     subs:[
+       "Open Discord → click the + icon → Create My Own → For a club or community",
+       "Name it: AESDR Members",
+       "Upload server icon (use AESDR branding — green on black)",
+       "Server Settings → Roles → create: Admin (you), Buyer Verified, Team Buyer",
+       "Create categories: START HERE, MEMBER FLOOR, RESOURCES, SUPPORT",
+       "Create channels: #welcome, #introductions, #wins, #pipeline-help, #questions, #resources, #support-tickets",
+       "Lock all channels except #welcome from @everyone",
+       "Grant Buyer Verified access to all channels",
+       "Create a private invite link (do NOT make it public)"
+     ]},
+    {id:"ops-02",name:"Create Verification Form",desc:"How buyers prove they paid and get access",cost:"Free",time:"10 min",eng:false,
+     subs:[
+       "Go to tally.so → Create New Form (free, no account needed for basic)",
+       "Fields: Purchase email, Discord username, Product tier (Individual/Team)",
+       "Enable email notifications so you get alerted on each submission",
+       "Copy the form URL",
+       "Add form link to: success page, welcome email, Discord #welcome channel"
+     ]},
+    {id:"ops-03",name:"Seed Discord Channels",desc:"Make the server look alive before the first buyer arrives",cost:"Free",time:"30 min",eng:false,
+     subs:[
+       "In #welcome: post a pinned welcome message explaining what the server is and how to get started",
+       "In #wins: post 2-3 example win formats ('Booked 3 meetings today using the cold call framework from Lesson 3')",
+       "In #pipeline-help: post a thread asking 'What's the biggest bottleneck in your pipeline right now?'",
+       "In #resources: share 2-3 links to free resources that complement the course",
+       "In #questions: post a starter question and answer it yourself to set the tone",
+       "Pin the most useful post in each channel",
+       "Look at the server from a first-timer's perspective — would you know what to do?"
+     ]},
+    {id:"ops-04",name:"Build Customer Support Form",desc:"Structured intake for bugs, lockouts, and access issues",cost:"Free",time:"10 min",eng:false,
+     subs:[
+       "Create another Tally form (or use Typeform)",
+       "Fields: Name, Email (purchase email), Issue type (dropdown: Access issue, Bug report, Billing, Other), Description",
+       "Enable notifications to support@aesdr.com",
+       "Link from: contact page footer, welcome email, Discord #support-tickets",
+       "Submit a test response and verify you receive it"
+     ]},
+    {id:"ops-05",name:"Record Instructor Intro Video",desc:"60-90 seconds. Who you are, why you built this, who it's for.",cost:"Free",time:"2-3 hrs",eng:false,
+     subs:[
+       "Script it first (60-90 seconds max): who you are, why you built AESDR, who it's for, what makes it different",
+       "Keep the anti-guru energy — no fake smiling, no corporate backdrop",
+       "Record on your phone with good lighting (natural light near a window works)",
+       "Edit with CapCut (free), iMovie, or Descript",
+       "Upload to YouTube as Unlisted",
+       "Embed on the About page or landing page"
+     ]},
+    {id:"ops-06",name:"Design & Deploy Favicon",desc:"The tiny icon in the browser tab",cost:"Free",time:"15 min",eng:true,
+     subs:[
+       "Create a simple 32x32 and 16x16 icon (favicon.io or realfavicongenerator.net)",
+       "Keep it simple — AESDR monogram or just 'A' in green on black",
+       "Download the generated files (favicon.ico, apple-touch-icon.png, etc.)",
+       "Place favicon.ico in /public/",
+       "Add apple-touch-icon and manifest references in app/layout.tsx if needed",
+       "Verify: deploy and check the browser tab"
+     ]}
+  ]
+},
+{
+  id:"analytics",num:"04",title:"Analytics & Tracking",cost:"~$0-9/mo",
+  tasks:[
+    {id:"trk-01",name:"Install Site Analytics",desc:"Know who visits, from where, and what they do",cost:"$0-9/mo",time:"15 min",eng:true,
+     subs:[
+       "Option A (Free): Install Vercel Analytics — npm install @vercel/analytics",
+       "Add <Analytics /> component to app/layout.tsx",
+       "Option B ($9/mo): Sign up for Plausible Analytics (plausible.io) — privacy-friendly, no cookie banner needed",
+       "Add Plausible script tag to app/layout.tsx <head>",
+       "Deploy and verify: visit your site, check analytics dashboard shows the hit",
+       "Bookmark your analytics dashboard"
+     ]},
+    {id:"trk-02",name:"Set Up Google Search Console",desc:"See how Google indexes your site after launch",cost:"Free",time:"15 min",eng:false,
+     subs:[
+       "Go to search.google.com/search-console",
+       "Add property → enter aesdr.com",
+       "Verify ownership via DNS TXT record (add to your DNS provider)",
+       "Once verified, submit sitemap URL: https://aesdr.com/sitemap.xml",
+       "You won't see data until after robots.txt is flipped and site is public — but the account is ready"
+     ]},
+    {id:"trk-03",name:"Install Reddit Pixel",desc:"Track conversions from Reddit ads",cost:"Free",time:"15 min",eng:true,
+     subs:[
+       "Reddit Ads Manager → Events Manager → Reddit Pixel",
+       "Copy the base pixel code",
+       "Create app/components/RedditPixel.tsx (client component with Script tag)",
+       "Add to app/layout.tsx",
+       "Add conversion event on success page: rdt('track', 'Purchase')",
+       "Verify with Reddit Pixel Helper Chrome extension"
+     ]},
+    {id:"trk-04",name:"Install Google Ads Tag",desc:"Track conversions from YouTube pre-roll ads",cost:"Free",time:"15 min",eng:true,
+     subs:[
+       "Google Ads → Tools → Conversions → New conversion action",
+       "Create 'Purchase' conversion with value = dynamic",
+       "Copy the Global Site Tag (gtag.js snippet)",
+       "Add to app/layout.tsx via next/script",
+       "Add conversion tracking on success page",
+       "Verify with Google Tag Assistant Chrome extension"
+     ]},
+    {id:"trk-05",name:"Build UTM Architecture",desc:"Standardized links so you can read your traffic data later",cost:"Free",time:"20 min",eng:false,
+     subs:[
+       "Create a Google Sheet or Notion table with columns: source, medium, campaign, content, full_url",
+       "Define your naming convention: source = platform (reddit, youtube, newsletter-name), medium = channel type (paid-social, video, sponsorship, organic), campaign = angle (pip-threat-v1, paycheck-shock-a)",
+       "Pre-build URLs for every channel you plan to use (see Phase 5 + 6)",
+       "Use a UTM builder (utmbuilder.com or Google's campaign URL builder)",
+       "Save all generated URLs in the sheet — never hand-type UTMs in ad platforms",
+       "Bookmark the sheet"
+     ]}
+  ]
+},
+{
+  id:"presence",num:"05",title:"Channel Presence — The Non-Traditional 13",cost:"~$0",
+  tasks:[
+    {id:"ch-01",name:"X / Twitter",desc:"Create @aesdr. Anti-guru sales voice. Where sales Twitter actually lives.",cost:"Free",time:"1 hr",eng:false,
+     subs:[
+       "Create account: twitter.com/signup — handle: @aesdr (or closest available)",
+       "Profile pic: AESDR logo or monogram (green on black)",
+       "Bio: something sharp and real, not corporate. 'Sales training for reps who actually close.' or similar",
+       "Header image: simple dark branded banner",
+       "Link: aesdr.com",
+       "Write and post 5 pieces of content. Repurpose key course insights in the anti-guru voice.",
+       "Follow 50 accounts in sales Twitter (search 'SDR', 'AE', 'cold calling', 'sales tips')",
+       "Reply to 10 posts with genuine value — not 'great post!' but actual insight",
+       "Pin your best tweet"
+     ]},
+    {id:"ch-02",name:"Reddit Organic Presence",desc:"r/sales (250K+), r/salesforce, r/InsideSales — where reps actually vent",cost:"Free",time:"Ongoing",eng:false,
+     subs:[
+       "Create a Reddit account (or use existing personal one — authenticity matters more than branding here)",
+       "Join: r/sales, r/salesforce, r/startups, r/Entrepreneur, r/InsideSales",
+       "Read the top 20 posts in r/sales this month — understand the vibe",
+       "Write 3 genuinely helpful comments on posts about struggling AEs/SDRs. Link NOTHING yet.",
+       "After 1-2 weeks of genuine participation, post a value-first thread: 'I built a course for AEs/SDRs who are tired of guru nonsense. Here's what I learned...'",
+       "Never hard-sell. Reddit will destroy you for it. Be the person who actually helps.",
+       "Save threads where people ask for sales training recommendations — those are future organic placements"
+     ]},
+    {id:"ch-03",name:"Bravado",desc:"The anti-LinkedIn for sales professionals. Your exact audience lives here.",cost:"Free",time:"30 min",eng:false,
+     subs:[
+       "Go to bravado.co → sign up",
+       "Complete your profile: real photo, real background, real title",
+       "Join relevant War Rooms (their version of topic groups)",
+       "Post 2-3 insights from your course content — the kind of thing that makes people go 'damn, that's actually useful'",
+       "Engage with other posts. Build reputation before promoting.",
+       "Bravado is VERIFIED sales professionals only — high-quality, high-intent audience"
+     ]},
+    {id:"ch-04",name:"RevGenius Slack Community",desc:"13K+ revenue professionals. High signal, active.",cost:"Free",time:"30 min",eng:false,
+     subs:[
+       "Go to revgenius.com → Join the community (free Slack)",
+       "Complete your Slack profile with AESDR info",
+       "Find channels related to SDR/AE development, sales training, career growth",
+       "Share one genuinely useful framework or insight per week",
+       "Do NOT spam your product link. Build trust first.",
+       "After 2-3 weeks of contribution, share AESDR as a resource when someone asks for training recommendations"
+     ]},
+    {id:"ch-05",name:"Pavilion (formerly Sales Hacker)",desc:"Premium sales community. Content placement + community engagement.",cost:"Free to join community",time:"30 min",eng:false,
+     subs:[
+       "Go to joinpavilion.com → explore free community tier",
+       "Also visit saleshacker.com — they publish articles and have forums",
+       "Pitch a guest article to Sales Hacker: 'The Anti-Guru Playbook: What Actually Works for New AEs'",
+       "Engage in forum discussions with real insights",
+       "Cross-pollinate: share Sales Hacker content on your X account to build relationship"
+     ]},
+    {id:"ch-06",name:"Indie Hackers",desc:"Founder community. Build-in-public crossover audience.",cost:"Free",time:"30 min",eng:false,
+     subs:[
+       "Go to indiehackers.com → create account",
+       "Post your build-in-public story: 'I built a sales training platform because LinkedIn advice is killing reps'",
+       "Share real numbers: development timeline, first customers, revenue (when you have it)",
+       "Indie Hackers audience overlaps with founders who HIRE AEs/SDRs — potential team plan buyers",
+       "Engage with other builders' posts — the community rewards genuine participation"
+     ]},
+    {id:"ch-07",name:"Product Hunt",desc:"Launch day presence. Course/education category.",cost:"Free",time:"1 hr prep",eng:false,
+     subs:[
+       "Go to producthunt.com → sign up → go to 'Post a Product'",
+       "Prepare launch assets: logo, 3-5 screenshots/mockups, tagline, description",
+       "Tagline: something punchy — 'Sales training for reps who close, not reps who post about closing'",
+       "Write the description: what it is, who it's for, what makes it different",
+       "Get 5-10 friends/contacts to upvote on launch day",
+       "Schedule launch for a Tuesday or Wednesday (best PH engagement days)",
+       "DO NOT launch here until Stripe is live and the product is ready for strangers"
+     ]},
+    {id:"ch-08",name:"TikTok / Reels",desc:"Raw, unfiltered sales advice clips. Car confessional energy.",cost:"Free",time:"2 hrs",eng:false,
+     subs:[
+       "Create TikTok account: @aesdr",
+       "Record 3 short clips (30-60 seconds each) — raw, real, no production value needed",
+       "Ideas: 'The cold call script nobody teaches you', 'What your VP of Sales won't say out loud', 'The pipeline math that determines your paycheck'",
+       "Use CapCut for quick edits + captions (captions are critical for engagement)",
+       "Post with hashtags: #sales #sdr #ae #coldcalling #salestraining #b2bsales",
+       "Repurpose same clips to Instagram Reels and YouTube Shorts",
+       "The anti-guru energy IS the content strategy. Don't polish it."
+     ]},
+    {id:"ch-09",name:"Passionfroot",desc:"Marketplace to buy creator sponsorships. Find newsletter/podcast sponsors directly.",cost:"Varies by creator",time:"30 min",eng:false,
+     subs:[
+       "Go to passionfroot.me → create an account",
+       "Browse creators in: business, startups, sales, careers, tech categories",
+       "Filter by audience size and price range",
+       "Shortlist 5-10 creators whose audience overlaps with AEs/SDRs",
+       "Send sponsorship inquiries with your budget and creative (use docs/content/A04-newsletter-placement-copy.md)",
+       "Compare CPM across creators — target < $30 CPM for newsletter placements",
+       "Book 1-2 test placements before committing larger budget"
+     ]},
+    {id:"ch-10",name:"SparkLoop",desc:"Newsletter cross-promotion and recommendation engine.",cost:"Free to start",time:"20 min",eng:false,
+     subs:[
+       "Go to sparkloop.app → sign up",
+       "If you start an AESDR newsletter: list it on SparkLoop for cross-promotion with other newsletters",
+       "If not running your own newsletter yet: use SparkLoop's partner network to find newsletters that recommend products to their audience",
+       "Set cost-per-subscriber or flat fee for recommendations",
+       "Track referral quality — not all newsletter subscribers convert"
+     ]},
+    {id:"ch-11",name:"Sales Podcast Guest Circuit",desc:"Pitch yourself to 10 shows. Get on 3. Massive credibility.",cost:"Free",time:"2 hrs",eng:false,
+     subs:[
+       "Research 10 podcasts in the sales space. Start with: Sales Gravy, The Sales Evangelist, Sell or Die, Make It Happen Mondays, The Brutal Truth About Sales, Surf and Sales, Sales Hacker Podcast, SDR Game, B2B Revenue Leaders, Modern Sales Pros Podcast",
+       "For each: find the host's email or DM (check show notes, Twitter, website)",
+       "Write a pitch email: who you are, your unique angle (anti-guru, real-rep training), 3 topic ideas you could discuss",
+       "Make the pitch about THEIR audience, not your product",
+       "Follow up once after 5-7 days if no response",
+       "When booked: prepare 2-3 talking points, mention aesdr.com naturally, don't hard-sell",
+       "Track: podcast name, host, pitch date, status, air date"
+     ]},
+    {id:"ch-12",name:"Quora",desc:"Answer the top SDR/AE questions. SEO long-game + authority.",cost:"Free",time:"1 hr",eng:false,
+     subs:[
+       "Create a Quora account with your real name + AESDR credential",
+       "Search for: 'how to succeed as an SDR', 'AE tips', 'cold calling advice', 'sales career', 'SDR burnout'",
+       "Find the 10 most-viewed questions in these topics",
+       "Write genuinely thorough answers (200-400 words each) — the kind that actually help",
+       "At the end of each answer, include one natural mention: 'I built aesdr.com for exactly this situation' with a link",
+       "Quora answers rank in Google — this is an SEO play that compounds over time"
+     ]},
+    {id:"ch-13",name:"Facebook Groups",desc:"SDR Nation, Sales Professionals, Modern Sales Pros — surprisingly active.",cost:"Free",time:"30 min",eng:false,
+     subs:[
+       "Search Facebook for groups: 'SDR', 'Sales Development', 'B2B Sales', 'Account Executive'",
+       "Join 3-5 of the largest active groups (look for daily post activity, not dead groups)",
+       "Read the group rules — most ban self-promotion but allow 'value posts' with links",
+       "Post 1-2 genuinely helpful insights per week. Same anti-guru voice.",
+       "When someone asks for training recommendations → mention AESDR naturally in comments",
+       "DO NOT drop links in your first post. Build presence first."
+     ]}
+  ]
+},
+{
+  id:"gtm",num:"06",title:"Paid Acquisition & Lead Magnets",cost:"~$300-800 test budget",
+  tasks:[
+    {id:"gtm-01",name:"Deploy Lead Magnet: Sales Diagnostic Quiz",desc:"Turn the quiz from docs/content/A01 into a live lead-capture page",cost:"Free",time:"2 hrs",eng:true,
+     subs:[
+       "Use the quiz content from docs/content/A01-lead-magnet-quiz.md",
+       "Build as a standalone page: app/quiz/page.tsx or a separate HTML file",
+       "10 questions → 4 outcome profiles (Burnout Rep, Operator, Survivor, Climber)",
+       "Gate results behind email capture: 'Enter your email to see your results'",
+       "Store emails in a Supabase leads table or Resend audience",
+       "Result page shows their profile + CTA to buy AESDR",
+       "Add UTM-friendly link to this page for all ad campaigns"
+     ]},
+    {id:"gtm-02",name:"Deploy Lead Magnet: 72-Hour Survival Guide",desc:"Free PDF download gated behind email",cost:"Free",time:"1 hr",eng:true,
+     subs:[
+       "Use content from docs/content/A01-lead-magnet-survival-guide.md",
+       "Convert to a clean PDF (use markdown-to-pdf tool or design in Canva/Figma)",
+       "Create a landing page: app/free/survival-guide/page.tsx",
+       "Email capture form → on submit, email the PDF via Resend and redirect to thank-you page",
+       "Thank-you page includes CTA for the full AESDR course",
+       "Add link to this page from: X bio, Reddit profile, podcast mentions"
+     ]},
+    {id:"gtm-03",name:"Set Up Reddit Ads Account",desc:"Platform ready for campaign creation",cost:"Free (account)",time:"15 min",eng:false,
+     subs:[
+       "Log into Reddit → go to ads.reddit.com",
+       "Complete advertiser profile: business name, website, industry",
+       "Add billing: credit/debit card",
+       "Set timezone correctly (affects reporting)",
+       "Create a campaign naming convention: aesdr_reddit_{angle}_{version} (e.g. aesdr_reddit_pip-threat_v1)",
+       "Verify account is active and can create campaigns"
+     ]},
+    {id:"gtm-04",name:"Upload Reddit Text Ads",desc:"Native-feeling ads targeting sales subreddits",cost:"$10-20/day test",time:"30 min",eng:false,
+     subs:[
+       "Use ad copy from docs/content/A05-reddit-ad-copy.md",
+       "Create campaign → objective: Traffic or Conversions",
+       "Target subreddits: r/sales, r/salesforce, r/startups, r/Entrepreneur",
+       "Start with ONE angle (Paycheck Shock or PIP Threat — highest urgency)",
+       "Set daily budget: $10-20 to start",
+       "Destination URL: aesdr.com landing page with UTMs (?utm_source=reddit&utm_medium=paid-social&utm_campaign=pip-threat-v1)",
+       "Review ad preview — does it look like a native Reddit post? If it looks like an ad, rewrite it.",
+       "Submit for review (Reddit reviews in 24-48 hours)"
+     ]},
+    {id:"gtm-05",name:"Set Up Google Ads Account",desc:"Required for YouTube pre-roll campaigns",cost:"Free (account)",time:"15 min",eng:false,
+     subs:[
+       "Go to ads.google.com → Start Now",
+       "Skip the 'Smart Campaign' wizard — go to Expert Mode",
+       "Complete business info and billing",
+       "Link your YouTube channel (Settings → Linked accounts → YouTube)",
+       "Create campaign naming convention: aesdr_yt_{angle}_{version}"
+     ]},
+    {id:"gtm-06",name:"Upload YouTube Pre-Roll Ad",desc:"15-30 second video ad targeting sales-intent audiences",cost:"$10-20/day test",time:"1 hr",eng:false,
+     subs:[
+       "You need a VIDEO first — record using scripts from docs/content/A06-youtube-preroll-scripts.md",
+       "Keep it raw and real — car confessional, desk setup, or walk-and-talk. NOT polished corporate.",
+       "Upload to YouTube (can be Unlisted — still works for ads)",
+       "In Google Ads → New Campaign → Video → Brand awareness or Consideration",
+       "Targeting: Custom intent audiences (keywords: 'SDR training', 'AE tips', 'sales career', 'cold calling help')",
+       "Also target: In-market audiences for Business Services, Job Training",
+       "Set daily budget: $10-20",
+       "Add companion banner if possible (300x60 image)",
+       "Destination URL: aesdr.com with UTMs"
+     ]},
+    {id:"gtm-07",name:"Secure Newsletter Placements",desc:"Paid sponsorships in newsletters where your audience reads",cost:"$50-500/placement",time:"2 hrs",eng:false,
+     subs:[
+       "Use target list from docs/content/A04-newsletter-placement-copy.md",
+       "Research each newsletter: audience size, open rates, pricing (check Passionfroot, direct websites, or email them)",
+       "Create a Google Sheet: newsletter name, contact, audience size, price, CPM, status, dates",
+       "Write outreach email: 'I run AESDR, a sales training platform. We'd like to sponsor a placement in [newsletter]. What does your sponsorship inventory look like?'",
+       "Send to 8-10 newsletters",
+       "Follow up after 5 days if no reply",
+       "Book 1-2 placements for launch week",
+       "Provide them copy from docs/content/A04 — both 50-word and 100-word versions"
+     ]},
+    {id:"gtm-08",name:"Ignite First Campaigns",desc:"Turn the budget on. Start learning what works.",cost:"$10-20/day per channel",time:"30 min",eng:false,
+     subs:[
+       "Verify ALL destination URLs work and have correct UTMs",
+       "Verify tracking pixels fire on landing page and success page",
+       "Turn on Reddit campaign",
+       "Turn on YouTube campaign (if video is ready)",
+       "Create a reporting spreadsheet: date, channel, spend, clicks, CPC, leads, purchases, ROAS",
+       "Check campaigns after 4 hours for: delivery issues, disapprovals, broken links",
+       "Check again at 24 hours: is spend pacing correctly? Any clicks converting?",
+       "DO NOT optimize in the first 48 hours — let the platforms learn",
+       "After 5-7 days: pause what's not working, double down on what is"
+     ]}
+  ]
+},
+{
+  id:"landing",num:"07",title:"Landing Page & Content",cost:"$0",
+  tasks:[
+    {id:"lp-01",name:"Build the Real Sales Landing Page",desc:"The current page is a teaser. This is the page that sells.",cost:"Free",time:"4-6 hrs",eng:true,
+     subs:[
+       "Replace the current teaser page (bunny + slogan) with a real sales page",
+       "Structure: Hero (headline + subhead + CTA) → Pain agitation → What you get (12 lessons + tools) → Pricing (Individual + Team) → Testimonials → FAQ → Final CTA",
+       "Headline should hit the core pain: quota pressure, career uncertainty, bad advice",
+       "Include the 5 downloadable tools as visual proof of value",
+       "Pricing section: two cards (Individual $199 / Team $999) with buy buttons wired to Stripe checkout",
+       "FAQ: 6-8 common objections (Is this for me? What if I want a refund? How long do I have access?)",
+       "Testimonials section: use faux for now, replace with real when you have them",
+       "Mobile-responsive — test on phone",
+       "Keep the GhostButton for founder access during development"
+     ]},
+    {id:"lp-02",name:"Audit Course Readability",desc:"Every lesson readable on desktop + mobile, high contrast, not exhausting",cost:"Free",time:"1 hr",eng:false,
+     subs:[
+       "Open 4-5 different lessons on desktop — check text contrast, font size, line height",
+       "Open same lessons on mobile (real phone, not just Chrome devtools)",
+       "Check: body text readable? Labels not too tiny? Buttons obvious?",
+       "Fix any gray-on-gray crimes against readability",
+       "Check: sidebar content (if any) behaves on mobile (hidden or collapsible)",
+       "Verify all interactive elements (checkboxes, navigation) work on touch"
+     ]},
+    {id:"lp-03",name:"Replace Faux Testimonials",desc:"Swap in real quotes as they come from beta testers",cost:"Free",time:"30 min",eng:true,
+     subs:[
+       "As beta testers and early buyers provide feedback, collect the best quotes",
+       "Update components/Testimonials.tsx — replace faux entries with real ones",
+       "Each testimonial needs: name (or first name + last initial), role, quote",
+       "Keep the FAUX comment markers until you have at least 5 real testimonials",
+       "If launching before real testimonials: keep faux but add a small disclaimer or remove entirely"
+     ]}
+  ]
+},
+{
+  id:"launch",num:"08",title:"Launch Sequence — Final 48 Hours",cost:"$0",
+  tasks:[
+    {id:"fin-01",name:"Recruit 5-10 Beta Testers",desc:"Real reps who test the course and give honest feedback",cost:"Free",time:"1-2 days",eng:false,
+     subs:[
+       "Identify 5-10 people in your network: current/former SDRs, AEs, sales managers",
+       "Send each a personal message: 'I built a sales training course and I need honest feedback before launch. Free access in exchange for telling me what sucks.'",
+       "Create Supabase accounts for them (or send signup links + bypass the purchase gate)",
+       "Ask them to complete at least 3 lessons",
+       "Give them 5-7 days",
+       "Collect feedback via a short form: what worked, what confused you, would you pay for this, can I quote you?"
+     ]},
+    {id:"fin-02",name:"Full QA Pass",desc:"Click every link, test every page, break everything you can",cost:"Free",time:"2-3 hrs",eng:false,
+     subs:[
+       "Test every public page: /, /about, /contact, /terms, /privacy, /refund-policy",
+       "Test auth flow: signup → login → dashboard → course → progress → logout",
+       "Test purchase flow: landing page → buy button → Stripe → success page → dashboard access",
+       "Test all 12 lesson iframes load correctly",
+       "Test all 5 tool downloads work after lesson completion",
+       "Test on mobile (real phone)",
+       "Test in incognito (no cached state)",
+       "Test: what happens if you visit /course/01 without purchasing? (should be blocked)",
+       "Test: what happens if you visit /dashboard without logging in? (should redirect to login)",
+       "Check all emails fire: welcome, drip, cart abandonment (trigger each manually)"
+     ]},
+    {id:"fin-03",name:"Verify Environment Variables",desc:"Make sure Vercel production matches what the app needs",cost:"Free",time:"10 min",eng:false,
+     subs:[
+       "Open Vercel → Project → Settings → Environment Variables",
+       "Check each var exists and has correct value for Production scope:",
+       "NEXT_PUBLIC_SUPABASE_URL — matches Supabase dashboard",
+       "NEXT_PUBLIC_SUPABASE_ANON_KEY — matches Supabase dashboard",
+       "SITE_URL — https://aesdr.com",
+       "STRIPE_SECRET_KEY — LIVE key (not test)",
+       "STRIPE_WEBHOOK_SECRET — LIVE webhook secret",
+       "STRIPE_PRICE_ID_INDIVIDUAL — live price ID",
+       "STRIPE_PRICE_ID_TEAM — live price ID",
+       "RESEND_API_KEY — production key"
+     ]},
+    {id:"fin-04",name:"Remove Proxy Gate",desc:"Open the site to the world",cost:"Free",time:"2 min",eng:true,
+     subs:[
+       "Delete proxy.ts from project root",
+       "Remove GhostButton import from app/page.tsx",
+       "Remove ghostPulse keyframe from app/globals.css",
+       "Git commit: 'Launch: remove proxy gate'"
+     ]},
+    {id:"fin-05",name:"Flip Robots.txt & Submit Sitemap",desc:"Let Google index your public pages",cost:"Free",time:"5 min",eng:true,
+     subs:[
+       "Edit app/robots.ts — replace disallow: '/' with the documented launch-day rules",
+       "Allow: /, /about, /terms, /privacy, /refund-policy, /contact",
+       "Disallow: /dashboard, /course, /login, /signup, /api",
+       "Deploy the change",
+       "Go to Google Search Console → Sitemaps → submit https://aesdr.com/sitemap.xml"
+     ]},
+    {id:"fin-06",name:"Announce Everywhere",desc:"Post across all 13 channels simultaneously",cost:"Free",time:"2 hrs",eng:false,
+     subs:[
+       "X/Twitter: launch announcement thread",
+       "Reddit: post in r/sales (value-first, not salesy)",
+       "Product Hunt: click 'Launch' on your prepared page",
+       "Discord: post in your own server + relevant other servers",
+       "Indie Hackers: 'We're live' post with real numbers",
+       "TikTok/Reels: launch day video",
+       "Email: send to any leads captured via lead magnets",
+       "Newsletter placements: confirm they go out this week",
+       "Facebook Groups: share naturally in relevant threads",
+       "Text/DM your beta testers: 'We're live! Would love your support — share if you found it useful'"
+     ]},
+    {id:"fin-07",name:"Monitor First 24 Hours",desc:"Watch everything. Fix fast. Don't sleep immediately.",cost:"Free",time:"24 hrs",eng:false,
+     subs:[
+       "Hour 0: Verify site loads, login works, purchase completes, emails fire",
+       "Hour 1: Check Vercel logs for 500 errors",
+       "Hour 1: Check Stripe for failed charges",
+       "Hour 1: Check Supabase for auth errors",
+       "Hour 2: Check support@aesdr.com for user emails",
+       "Hour 6: Full check — signups, purchases, lesson starts",
+       "Hour 12: Same checks + look for patterns",
+       "Hour 24: Full review — count signups, purchases, completed lessons, support tickets",
+       "If anything breaks: re-enable proxy (git checkout HEAD~1 -- proxy.ts) as emergency kill switch"
+     ]}
+  ]
+}
+];
+
+// ═══════════════════════════════════════════════════
+// ENGINE — Renders, state, animations, GO button
+// ═══════════════════════════════════════════════════
+const STORAGE_KEY = 'aesdr_runway_v1';
+const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+// saved = { "pay-01-0": true, "pay-01-1": true, ... } — substep level
+
+function persist() { localStorage.setItem(STORAGE_KEY, JSON.stringify(saved)); }
+
+function isSubDone(taskId, i) { return !!saved[taskId + '-' + i]; }
+function isTaskDone(task) { return task.subs.every((_, i) => isSubDone(task.id, i)); }
+function totalSubs() { return PHASES.reduce((a, p) => a + p.tasks.reduce((b, t) => b + t.subs.length, 0), 0); }
+function doneSubs() { return Object.keys(saved).filter(k => saved[k]).length; }
+function totalTasks() { return PHASES.reduce((a, p) => a + p.tasks.length, 0); }
+function doneTasks() { return PHASES.reduce((a, p) => a + p.tasks.filter(t => isTaskDone(t)).length, 0); }
+
+// Render
+const runway = document.getElementById('runway');
+
+PHASES.forEach(phase => {
+  const sec = document.createElement('section');
+  sec.className = 'phase';
+  sec.id = 'phase-' + phase.id;
+
+  const doneInPhase = () => phase.tasks.filter(t => isTaskDone(t)).length;
+  const phasePct = () => Math.round((doneInPhase() / phase.tasks.length) * 100);
+
+  sec.innerHTML = `
+    <div class="phase-head">
+      <span class="phase-num">${phase.num}</span>
+      <span class="phase-title">${phase.title}</span>
+      <span class="phase-cost">${phase.cost}</span>
+      <span class="phase-pct" data-phase-pct="${phase.id}">${phasePct()}%</span>
+    </div>
+    <div class="phase-bar"><div class="phase-bar-fill" data-phase-bar="${phase.id}" style="width:${phasePct()}%"></div></div>
+  `;
+
+  phase.tasks.forEach(task => {
+    const strip = document.createElement('div');
+    strip.className = 'strip' + (isTaskDone(task) ? ' done' : '');
+    strip.dataset.taskId = task.id;
+
+    const tags = [];
+    if (task.cost && task.cost !== 'Free') tags.push(`<span class="tag tag-cost">${task.cost}</span>`);
+    if (task.time) tags.push(`<span class="tag tag-time">${task.time}</span>`);
+    if (task.eng) tags.push(`<span class="tag tag-eng">Claude can help</span>`);
+
+    strip.innerHTML = `
+      <div class="strip-head">
+        <div class="strip-toggle"></div>
+        <div class="strip-info">
+          <div class="strip-name">${task.name}</div>
+          <div class="strip-desc">${task.desc}</div>
+        </div>
+        <div class="strip-meta">${tags.join('')}</div>
+        <div class="chevron">›</div>
+      </div>
+      <div class="strip-body">
+        <div class="substeps">
+          ${task.subs.map((s, i) => `
+            <div class="substep${isSubDone(task.id, i) ? ' done' : ''}" data-task="${task.id}" data-sub="${i}">
+              <div class="sub-check"></div>
+              <div class="sub-text">${s}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+
+    // Click strip head to expand/collapse
+    strip.querySelector('.strip-head').addEventListener('click', (e) => {
+      if (e.target.closest('.strip-toggle')) return;
+      strip.classList.toggle('open');
+    });
+
+    // Click toggle to mark ALL subs done/undone
+    strip.querySelector('.strip-toggle').addEventListener('click', () => {
+      const allDone = isTaskDone(task);
+      task.subs.forEach((_, i) => {
+        if (allDone) delete saved[task.id + '-' + i];
+        else saved[task.id + '-' + i] = true;
+      });
+      persist();
+      refreshStrip(strip, task);
+      refreshGlobal(phase);
+    });
+
+    // Click individual substep
+    strip.querySelectorAll('.substep').forEach(sub => {
+      sub.addEventListener('click', () => {
+        const key = sub.dataset.task + '-' + sub.dataset.sub;
+        if (saved[key]) delete saved[key];
+        else saved[key] = true;
+        persist();
+        sub.classList.toggle('done', !!saved[key]);
+        refreshStrip(strip, task);
+        refreshGlobal(phase);
+      });
+    });
+
+    sec.appendChild(strip);
+  });
+
+  runway.appendChild(sec);
+});
+
+function refreshStrip(strip, task) {
+  const done = isTaskDone(task);
+  strip.classList.toggle('done', done);
+  strip.querySelectorAll('.substep').forEach(sub => {
+    const key = sub.dataset.task + '-' + sub.dataset.sub;
+    sub.classList.toggle('done', !!saved[key]);
+  });
+}
+
+function refreshGlobal(changedPhase) {
+  // Update phase progress
+  PHASES.forEach(phase => {
+    const doneInPhase = phase.tasks.filter(t => isTaskDone(t)).length;
+    const pct = Math.round((doneInPhase / phase.tasks.length) * 100);
+    const pctEl = document.querySelector(`[data-phase-pct="${phase.id}"]`);
+    const barEl = document.querySelector(`[data-phase-bar="${phase.id}"]`);
+    if (pctEl) pctEl.textContent = pct + '%';
+    if (barEl) barEl.style.width = pct + '%';
+  });
+
+  // Update global
+  const done = doneTasks();
+  const total = totalTasks();
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('doneCount').textContent = done;
+  document.getElementById('totalCount').textContent = total;
+  document.getElementById('fuelPct').textContent = pct + '%';
+  document.getElementById('fuelLevel').style.height = pct + '%';
+
+  // GO button
+  const goBtn = document.getElementById('goBtn');
+  const goStatus = document.getElementById('goStatus');
+  const goRemaining = document.getElementById('goRemaining');
+
+  if (pct === 100) {
+    goBtn.classList.add('armed');
+    goBtn.disabled = false;
+    goStatus.textContent = 'ALL SYSTEMS GO';
+    goStatus.style.color = 'var(--green)';
+    goRemaining.textContent = '';
+  } else {
+    goBtn.classList.remove('armed');
+    goBtn.disabled = true;
+    goStatus.textContent = 'LOCKED — COMPLETE ALL PHASES';
+    goStatus.style.color = 'var(--muted)';
+    goRemaining.textContent = (total - done) + ' tasks remaining';
+  }
+}
+
+// GO button click
+document.getElementById('goBtn').addEventListener('click', () => {
+  const btn = document.getElementById('goBtn');
+  if (!btn.classList.contains('armed')) return;
+  btn.classList.remove('armed');
+  btn.classList.add('launched');
+  btn.textContent = 'LIVE';
+  document.getElementById('goStatus').textContent = 'AESDR IS LIVE. GO MAKE MONEY.';
+  document.getElementById('goStatus').style.color = 'var(--green)';
+  // Confetti
+  for (let i = 0; i < 80; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + 'vw';
+    piece.style.top = '-10px';
+    piece.style.background = ['var(--green)', 'var(--cyan)', 'var(--amber)', 'var(--white)'][Math.floor(Math.random() * 4)];
+    piece.style.animationDelay = Math.random() * 2 + 's';
+    piece.style.animationDuration = (2 + Math.random() * 2) + 's';
+    piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+    piece.style.width = (4 + Math.random() * 8) + 'px';
+    piece.style.height = piece.style.width;
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 5000);
+  }
+});
+
+// Init
+refreshGlobal();
+</script>
+</body>
+</html>
