@@ -10,18 +10,17 @@ function getStripe() {
 
 export async function POST(request: Request) {
   try {
-    const { priceId, email } = await request.json();
+    const { tier, email } = await request.json();
 
-    const allowedPrices = new Set([
-      process.env.STRIPE_PRICE_ID_INDIVIDUAL,
-      process.env.STRIPE_PRICE_ID_TEAM,
-    ]);
+    const priceMap: Record<string, string | undefined> = {
+      individual: process.env.STRIPE_PRICE_ID_INDIVIDUAL,
+      team: process.env.STRIPE_PRICE_ID_TEAM,
+    };
 
-    if (!priceId || !allowedPrices.has(priceId)) {
-      return NextResponse.json({ error: 'Invalid price' }, { status: 400 });
+    const priceId = priceMap[tier];
+    if (!priceId) {
+      return NextResponse.json({ error: 'Invalid tier' }, { status: 400 });
     }
-
-    const tier = priceId === process.env.STRIPE_PRICE_ID_TEAM ? 'team' : 'individual';
 
     const stripe = getStripe();
     const session = await stripe.checkout.sessions.create({

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import CheckoutButton from "@/components/CheckoutButton";
 import GhostButton from "@/components/GhostButton";
 import TeaseGate from "@/components/TeaseGate";
 import Testimonials from "@/components/Testimonials";
@@ -231,9 +232,7 @@ export default function LandingPage() {
               <li>Future curriculum updates</li>
               <li>14-day refund guarantee</li>
             </ul>
-            <a href="#" className={styles.priceCta} data-tier="individual">
-              Buy Individual
-            </a>
+            <CheckoutButton tier="individual" label="Buy Individual" className={styles.priceCta} />
           </div>
 
           {/* Team */}
@@ -251,9 +250,7 @@ export default function LandingPage() {
               <li>Priority support</li>
               <li>Invoice + receipt for L&amp;D</li>
             </ul>
-            <a href="#" className={styles.priceCta} data-tier="team">
-              Buy Team
-            </a>
+            <CheckoutButton tier="team" label="Buy Team" className={styles.priceCta} />
           </div>
         </div>
       </section>
