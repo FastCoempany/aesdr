@@ -14,7 +14,6 @@ export default function CheckoutButton({
   const [loading, setLoading] = useState(false);
 
   async function handleClick() {
-    console.log("[CheckoutButton] clicked, tier:", tier);
     setLoading(true);
     try {
       const res = await fetch("/api/checkout", {

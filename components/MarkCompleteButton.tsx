@@ -42,7 +42,13 @@ export default function MarkCompleteButton({
           ...baseStyle,
           color: "var(--theme)",
           border: "1px solid var(--theme)",
-          background: "rgba(16,185,129,0.1)",
+          background: "rgba(16,185,129,0.15)",
+          display: "inline-flex",
+          alignItems: "center",
+          lineHeight: "1",
+          boxSizing: "border-box" as const,
+          minHeight: "28px",
+          whiteSpace: "nowrap" as const,
         }}
       >
         Completed
@@ -59,6 +65,10 @@ export default function MarkCompleteButton({
         color: "var(--text-muted)",
         border: "1px solid var(--line)",
         background: "transparent",
+        lineHeight: "1",
+        boxSizing: "border-box" as const,
+        minHeight: "28px",
+        whiteSpace: "nowrap" as const,
       }}
     >
       {isPending ? "Saving..." : "Mark Complete"}

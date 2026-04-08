@@ -4,7 +4,7 @@ function getResend() {
   return new Resend(process.env.RESEND_API_KEY);
 }
 
-const FROM = 'AESDR <support@aesdr.com>';
+const FROM = 'AESDR <hello@aesdr.com>';
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://aesdr.com';
 
 // ─── Welcome Email (immediate after purchase) ───
@@ -31,7 +31,7 @@ function welcomeHtml(name: string) {
     <li>Your progress saves automatically. Pick up where you left off anytime.</li>
     <li>Five courses come with downloadable tools (commission tracker, alignment contracts, etc.) — they unlock when you complete the lesson.</li>
   </ul>
-  <p><strong>Join the community:</strong> <a href="https://discord.gg/aesdr" style="color:#10B981">AESDR Discord</a></p>
+  <p><strong>Join the community:</strong> <a href="https://discord.gg/uEpAz3yw" style="color:#10B981">AESDR Discord</a></p>
   <p><strong>If you need help:</strong> Reply to this email or reach out at <a href="mailto:support@aesdr.com" style="color:#10B981">support@aesdr.com</a>. Real person, real inbox, 48-hour response time.</p>
   <p>Go.</p>
   <p>— AESDR</p>

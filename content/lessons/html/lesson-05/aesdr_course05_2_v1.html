@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AESDR — Course 5.2: The SDR Playbook</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,7 +26,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:var(--white);color:var(--black);font-family:var(--cond);overflow:hidden}
-.app{display:grid;grid-template-columns:1fr 200px;grid-template-rows:52px 1fr 60px;height:100vh}
+.app{display:grid;grid-template-columns:1fr 200px;grid-template-rows:52px 1fr 60px;height:100vh;height:100dvh}
 
 /* TOPBAR */
 .topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:2px solid var(--black);background:var(--white);z-index:20}
@@ -81,7 +81,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .cover{display:grid;grid-template-columns:1fr 1fr;flex:1;min-height:0}
 .cvl{background:var(--red);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
 .cvl::before{content:'5';position:absolute;right:-20px;bottom:-40px;font-family:var(--display);font-size:280px;color:rgba(255,255,255,0.06);line-height:1;pointer-events:none}
-.cv-c2tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:6px}
+.cv-c5tag{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:6px}
 .cv-course-num{font-family:var(--display);font-size:80px;color:#fff;line-height:.85;margin-bottom:12px}
 .cv-big{font-family:var(--display);font-size:clamp(30px,3.6vw,50px);line-height:.97;color:#fff}
 .cv-tagline{font-family:var(--serif);font-style:italic;font-size:14px;color:rgba(255,255,255,0.6);line-height:1.7;border-top:1px solid rgba(255,255,255,0.14);padding-top:18px}
@@ -98,7 +98,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .lh{padding:44px 56px 0;position:relative;overflow:hidden}
 .lh-stripe{position:absolute;top:0;left:0;right:0;height:4px;background:var(--iris);background-size:200% 100%;animation:iris 4s linear infinite}
 .ghost-n{position:absolute;right:48px;top:-20px;font-family:var(--display);font-size:200px;line-height:1;color:var(--lite);pointer-events:none;user-select:none}
-.c2-badge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;background:var(--red);color:#fff;padding:3px 10px;margin-bottom:12px}
+.c5-badge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;background:var(--red);color:#fff;padding:3px 10px;margin-bottom:12px}
 .sec-eye{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--red);margin-bottom:14px;display:inline-block;margin-left:10px}
 .lh-title{font-family:var(--display);font-size:clamp(22px,3.2vw,46px);line-height:1.05;color:var(--black);max-width:900px}
 .lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
@@ -258,7 +258,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .comp-r{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
 .comp-h{font-family:var(--display);font-size:clamp(22px,2.8vw,40px);line-height:1.08;color:var(--black);margin-bottom:18px}
 .comp-p{font-family:var(--serif);font-size:15px;color:var(--black);max-width:380px;line-height:1.8;margin-bottom:12px}
-@media(max-width:768px){.app{grid-template-columns:1fr;grid-template-rows:44px 1fr 52px}.sidebar,.sb{display:none}.topbar{padding:0 16px;font-size:11px}.bottomnav{padding:0 16px}.lh{padding:24px 16px 0}.lb{padding:16px 16px 0}.lp{font-size:16px}.kp li{font-size:15px}.cl-area,.tl-wrap,.quiz-body,.tools-blk,.sched-wrap,.cc-opts,.cc-fb{padding-left:16px;padding-right:16px}.cover,.comp{grid-template-columns:1fr}.sched-arena{grid-template-columns:1fr}.rank-wrap{padding:12px 16px 32px}.hb-blocks{grid-template-columns:1fr}}
+@media(max-width:768px){.app{grid-template-columns:1fr;grid-template-rows:44px 1fr 52px}.sidebar,.sb{display:none}.topbar{padding:0 16px;font-size:11px}.bottomnav{padding:0 16px}.lh{padding:24px 16px 0}.lb{padding:16px 16px 0}.lp{font-size:16px}.kp li{font-size:15px}.cl-area,.tl-wrap,.quiz-body,.tools-blk,.sched-wrap,.cc-opts,.cc-fb{padding-left:16px;padding-right:16px}.cover,.comp{grid-template-columns:1fr}.sched-arena{grid-template-columns:1fr}.rank-wrap{padding:12px 16px 32px}.hb-blocks{grid-template-columns:1fr}.ghost-n{font-size:80px;top:0;right:16px;opacity:0.4}.bottomnav{padding-bottom:env(safe-area-inset-bottom,8px)}.main{padding-bottom:24px}.cover .cvl{padding:28px 16px}.cover .cvr{padding:28px 16px}.cv-list li{font-size:10px}.btn{padding:10px 16px;font-size:10px}.comp-l{padding:28px 16px}.comp-r{padding:28px 16px}.cc-ctx{margin:20px 16px 0}.cc-prog-wrap{margin:22px 16px 0}}
 </style>
 </head>
 <body>
@@ -281,14 +281,14 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
     <div class="cover" style="flex:1">
       <div class="cvl">
         <div>
-          <div class="cv-c2tag">AESDR · Lesson 5.2</div>
+          <div class="cv-c5tag">AESDR · Lesson 5.2</div>
           <div class="cv-course-num">05</div>
           <div class="cv-big">The SDR Playbook</div>
         </div>
         <div class="cv-tagline">Trusting Yourself and Navigating Career Noise to Build a Real Career.</div>
       </div>
       <div class="cvr">
-        <div class="eyebrow">Course 5 · Lesson 2 of X</div>
+        <div class="eyebrow">Course 5 · Lesson 2 of 3</div>
         <div class="hero-h">Filter the noise,<br><span class="irisTxt">build the career.</span></div>
         <ul class="cv-list">
           <li><span class="cl-n">01</span>Why Career Advice is Overrated</li>
@@ -305,20 +305,20 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
     <div class="lh">
       <div class="lh-stripe"></div>
       <div class="ghost-n">01</div>
-      <div><div class="c2-badge">Course 5</div><span class="sec-eye">Section 01 — The Reality</span></div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 01 — The Reality</span></div>
       <div class="lh-title">Stop Listening to Noise—Trust Yourself</div>
     </div>
     <div class="lb">
-      <p class="lp">As an SDR, you’ve entered the hardest entry point in SaaS. Most advice-givers haven’t lived your life, and that’s okay. But you don’t need noise—you need focus. Trust yourself, keep learning, and let the numbers prove your value.</p>
+      <p class="lp">As an SDR, you've entered the hardest entry point in SaaS. Most advice-givers haven't lived your life, and that's okay. But you don't need noise—you need focus. Trust yourself, keep learning, and let the numbers prove your value.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>The Grind is Unique:</strong> Most advice comes from people who don’t understand the daily SDR grind.</li>
-        <li><span class="kp-n">02</span><strong>You Have the Grit:</strong> You’ve already proven you have the smarts, courage, and grit to succeed by taking the role.</li>
+        <li><span class="kp-n">01</span><strong>The Grind is Unique:</strong> Most advice comes from people who don't understand the daily SDR grind.</li>
+        <li><span class="kp-n">02</span><strong>You Have the Grit:</strong> You've already proven you have the smarts, courage, and grit to succeed by taking the role.</li>
         <li><span class="kp-n">03</span><strong>Results > Opinions:</strong> The only career advice you need comes from results, not opinions or generic posts.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Reality Check</div>
-        <div class="lie-q">"Most career advice comes from people who’ve never done your job."</div>
-        <div class="lie-a">VPs and leaders might know the numbers, but they don’t know the grind. Choose carefully who you listen to.</div>
+        <div class="lie-q">"Most career advice comes from people who've never done your job."</div>
+        <div class="lie-a">VPs and leaders might know the numbers, but they don't know the grind. Choose carefully who you listen to.</div>
       </div>
     </div>
   </div>
@@ -327,7 +327,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
     <div class="lh">
       <div class="lh-stripe"></div>
       <div class="ghost-n">01</div>
-      <div><div class="c2-badge">Course 5</div><span class="sec-eye">Section 01 — Filter the Noise</span></div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 01 — Filter the Noise</span></div>
       <div class="lh-title">The Advice-Giver Filter</div>
       <div class="lh-sub"><b id="siloCount">0</b> / 6 correctly sorted</div>
     </div>
@@ -357,7 +357,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
     <div class="lh">
       <div class="lh-stripe"></div>
       <div class="ghost-n">02</div>
-      <div><div class="c2-badge">Course 5</div><span class="sec-eye">Section 02 — The Six Principles</span></div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 02 — The Six Principles</span></div>
       <div class="lh-title">Six Principles to Own Your Journey</div>
     </div>
     <div class="lb">
@@ -367,7 +367,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <li><span class="kp-n">P2</span><strong>Out-Earn the Advice-Givers:</strong> First-year SDRs hitting quota often out-earn other professionals. Success speaks louder than opinions.</li>
         <li><span class="kp-n">P3</span><strong>Follow Those in the Trenches:</strong> Listen only to top-performing SDRs and kick-ass AEs who still hustle.</li>
         <li><span class="kp-n">P4</span><strong>Own Your Role as a Trench Warrior:</strong> You create the numbers leadership uses. Without you, the pipeline dies.</li>
-        <li><span class="kp-n">P5</span><strong>Dress Like You Mean Business:</strong> Look professional, confident, and sharp. You’re here to be taken seriously.</li>
+        <li><span class="kp-n">P5</span><strong>Dress Like You Mean Business:</strong> Look professional, confident, and sharp. You're here to be taken seriously.</li>
         <li><span class="kp-n">P6</span><strong>Play for the Long Game:</strong> The SDR role builds skills for six-figure AE roles. Grit + consistency = unlimited potential.</li>
       </ul>
     </div>
@@ -376,7 +376,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
   <div class="screen" id="s4">
     <div class="lh">
       <div class="lh-stripe"></div>
-      <div><div class="c2-badge">Course 5</div><span class="sec-eye">Section 02 — Diagnose the Advice</span></div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 02 — Diagnose the Advice</span></div>
       <div class="lh-title">Filtering the Noise</div>
       <div class="lh-sub"><b id="blameCount">0</b> / 4 bad tips filtered</div>
     </div>
@@ -397,7 +397,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
     <div class="lh">
       <div class="lh-stripe"></div>
       <div class="ghost-n">03</div>
-      <div><div class="c2-badge">Course 5</div><span class="sec-eye">Section 03 — Career Frameworks</span></div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 03 — Career Frameworks</span></div>
       <div class="lh-title">Sequence the SDR Growth Framework</div>
       <div class="lh-sub"><b id="seqCount">0</b> / 5 correctly sequenced</div>
     </div>
@@ -421,7 +421,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
     <div class="lh">
       <div class="lh-stripe"></div>
       <div class="ghost-n">03</div>
-      <div><div class="c2-badge">Course 5</div><span class="sec-eye">Section 03 — Focus Areas</span></div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 03 — Focus Areas</span></div>
       <div class="lh-title">Classify the Career Focus Areas</div>
       <div class="lh-sub"><b id="clsCount">0</b> / 8 correctly classified</div>
     </div>
@@ -450,7 +450,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
   <div class="screen" id="s7">
     <div class="lh">
       <div class="lh-stripe"></div>
-      <div><div class="c2-badge">Course 5</div><span class="sec-eye">Section 03 — Knowledge Check</span></div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 03 — Knowledge Check</span></div>
       <div class="lh-title">Test Your Understanding</div>
     </div>
     <div class="quiz-banner" id="quizBanner"></div>
@@ -461,7 +461,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
     <div class="lh">
       <div class="lh-stripe"></div>
       <div class="ghost-n">04</div>
-      <div><div class="c2-badge">Course 5</div><span class="sec-eye">Section 04 — Toolkit</span></div>
+      <div><div class="c5-badge">Course 5</div><span class="sec-eye">Section 04 — Toolkit</span></div>
       <div class="lh-title">Tools and Frameworks to Stay Focused</div>
     </div>
     <div class="tools-blk">
@@ -491,7 +491,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div class="t-head">Actionable Homework for SDRs</div>
         <ul class="hw-list">
           <li><div class="hw-box"></div>Identify 3 people worth learning from (e.g., top AEs, Senior SDRs).</li>
-          <li><div class="hw-box"></div>Write down 1 skill you’ll improve this week (e.g., call openings, rebuttals).</li>
+          <li><div class="hw-box"></div>Write down 1 skill you'll improve this week (e.g., call openings, rebuttals).</li>
           <li><div class="hw-box"></div>Filter any new career advice you get using the "Advice Filter Checklist."</li>
         </ul>
       </div>
@@ -506,7 +506,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <div style="font-family:var(--display);font-size:56px;color:var(--black);line-height:.9;margin:10px 0 0">05</div>
         </div>
         <div class="comp-big">Be Your Own<br>Career Coach.</div>
-        <div class="comp-sub">The SDR role is the hardest grind in SaaS, and you’re built for it. Trust yourself, master your craft, and ignore bad advice.</div>
+        <div class="comp-sub">The SDR role is the hardest grind in SaaS, and you're built for it. Trust yourself, master your craft, and ignore bad advice.</div>
       </div>
       <div class="comp-r">
         <div class="eyebrow">Course 5 · Lesson 2 Complete</div>
