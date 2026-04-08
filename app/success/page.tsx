@@ -137,7 +137,7 @@ export default function SuccessPage() {
                   marginBottom: "4px",
                 }}
               >
-                Join the Discord
+                <a href="https://discord.gg/uEpAz3yw" style={{ color: "inherit", textDecoration: "none" }}>Join the Discord</a>
               </p>
               <p
                 style={{
@@ -147,7 +147,8 @@ export default function SuccessPage() {
                   lineHeight: "1.6",
                 }}
               >
-                Real reps, real problems, real accountability. No guru energy.
+                Real reps, real problems, real accountability. No guru energy.{" "}
+                <a href="https://discord.gg/uEpAz3yw" style={{ color: "var(--theme)" }}>Join here &rarr;</a>
               </p>
             </div>
           </div>
