@@ -1,9 +1,16 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/", "/terms", "/privacy", "/refund-policy", "/about", "/contact"];
+const PUBLIC_PATHS = ["/", "/terms", "/privacy", "/refund-policy", "/about", "/contact", "/success", "/purchase/cancel", "/login", "/signup"];
 
 export function proxy(request: NextRequest) {
-  if (PUBLIC_PATHS.includes(request.nextUrl.pathname)) {
+  const { pathname } = request.nextUrl;
+
+  if (PUBLIC_PATHS.includes(pathname)) {
+    return NextResponse.next();
+  }
+
+  // Let all API routes through (checkout, webhooks, crons)
+  if (pathname.startsWith("/api/")) {
     return NextResponse.next();
   }
 
