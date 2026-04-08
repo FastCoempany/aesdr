@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import GhostButton from "@/components/GhostButton";
+import TeaseGate from "@/components/TeaseGate";
 import Testimonials from "@/components/Testimonials";
 import styles from "./page.module.css";
 
@@ -65,6 +66,7 @@ const FAQ = [
 
 export default function LandingPage() {
   return (
+    <TeaseGate>
     <main className={styles.page}>
       <div aria-hidden="true" className={styles.atmosphere} />
       <GhostButton />
@@ -299,5 +301,6 @@ export default function LandingPage() {
         <Link href="/contact">Contact</Link>
       </footer>
     </main>
+    </TeaseGate>
   );
 }
