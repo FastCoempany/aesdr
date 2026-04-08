@@ -33,12 +33,17 @@ export default function TeaseGate({ children }: { children: React.ReactNode }) {
     }
   }
 
-  // Don't render anything until we've checked the cookie (prevents flash)
-  if (!loaded) return null;
-
-  if (!gated) return <>{children}</>;
-
+  // Always render children so they exist in server HTML.
+  // Gate overlay sits on top and hides content until unlocked.
   return (
+    <>
+      {/* Page content — always rendered (SSR-safe) */}
+      <div style={loaded && !gated ? undefined : { visibility: "hidden", position: "fixed", inset: 0 }}>
+        {children}
+      </div>
+
+      {/* Gate overlay — shown until cookie or code entry */}
+      {(!loaded || gated) && (
     <div
       style={{
         position: "fixed",
@@ -219,5 +224,7 @@ export default function TeaseGate({ children }: { children: React.ReactNode }) {
         </span>
       </h1>
     </div>
+      )}
+    </>
   );
 }
