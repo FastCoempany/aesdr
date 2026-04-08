@@ -50,10 +50,10 @@ export async function GET(request: Request) {
 
       if (count && count >= 12) continue; // Completed everything, skip
 
-      const lastLesson = progress?.[0]?.lesson_id || 'lesson-01';
+      const lastLesson = progress?.[0]?.lesson_id || '1';
 
       try {
-        await sendDropoff5d(user.user_email, 'there', lastLesson, `Lesson ${lastLesson.replace('lesson-', '')}`);
+        await sendDropoff5d(user.user_email, 'there', lastLesson, `Lesson ${lastLesson}`);
         await supabase
           .from('purchases')
           .update({ dropoff_5d_sent: true })
@@ -142,7 +142,7 @@ export async function GET(request: Request) {
 
       if (count && count >= 12) continue;
 
-      const lastLesson = progress?.[0]?.lesson_id || 'lesson-01';
+      const lastLesson = progress?.[0]?.lesson_id || '1';
 
       try {
         await sendDropoff21d(user.user_email, 'there', lastLesson);

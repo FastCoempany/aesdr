@@ -83,7 +83,7 @@ function day7Html(name: string) {
   <p>Course 3 is where you build the <strong>AE/SDR Alignment Contract</strong> — a one-page document that gets you and your AE on the same page about handoffs, expectations, and accountability. It's the single most downloaded tool in the program.</p>
   <p>If you're ahead of that: great. Courses 4–6 get into manager dynamics, career pathing, and network building.</p>
   <p>If you're behind: that's fine too. This isn't a race. It's a system. Come back to it when you have 20 minutes.</p>
-  <p><strong><a href="${SITE}/course/lesson-03" style="color:#10B981">Jump to Course 3 →</a></strong></p>
+  <p><strong><a href="${SITE}/course/3" style="color:#10B981">Jump to Course 3 →</a></strong></p>
   <p>— AESDR</p>
   <p style="font-size:13px;color:#666"><em>P.S. — If something about the course isn't working for you, reply and tell me. I'd rather fix it than have you quietly disengage.</em></p>
   ${footer()}
