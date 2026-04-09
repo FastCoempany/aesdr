@@ -981,6 +981,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <li><div class="hw-box"></div>Identify 3 target accounts to pursue this week. Write personalized outreach for each one — one real insight per contact, not a template. Track: calls made, emails sent, meetings set.</li>
           <li><div class="hw-box"></div>Run the 4-part method on at least one account this week from start to booked meeting. Document every step. Review it. That's your repeatable system.</li>
         </ul>
+      <!-- Accountability Gate -->
+      <div id="gate7" data-gate-screen="7"></div>
       </div>
     </div>
   </div>
@@ -1123,7 +1125,12 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildPO(); buildCV2(); buildOB(); buildDB(); buildQuiz(); render();
+  buildPO(); buildCV2(); buildOB(); buildDB(); buildQuiz(); 
+  // Register accountability gate
+  var _role = document.documentElement.getAttribute('data-role') || 'sdr';
+  var _gatePrompt = _role === 'ae' ? 'Paste your actual pipeline report or deal list. For each deal: source (self-sourced vs inbound vs SDR), stage, and next action. Identify which deals need self-sourced replacements.' : 'Paste your actual meeting log from the past 2 weeks: date, account, outcome, and whether the meeting was qualified. Identify patterns in what\'s converting vs what\'s not.';
+  AESDR.gate(7, { type:'evidence', prompt: _gatePrompt, minChars: 100 });
+  render();
 }
 function go(n){
   if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
@@ -1415,6 +1422,7 @@ function canContinue(){
   if(cur===4) return Object.keys(obDone).length===OB_STAGES.length;
   if(cur===5) return Object.keys(dbDone).length===DB_BLOCKS.length;
   if(cur===6){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 function getHint(){
@@ -1425,7 +1433,7 @@ function getHint(){
     4:`${Object.keys(obDone).length} / 4 stages placed`,
     5:`${Object.keys(dbDone).length} / 4 blocks placed`,
     6:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    7:"Block the time. Do the work. Own the quarter.",
+    7: AESDR.gateHint(7) || "Block the time. Do the work. Own the quarter.",
   };
   return h[cur]||'';
 }
@@ -1445,6 +1453,7 @@ function render(){
   const hide=cur===0||cur===TOTAL-1;
   document.getElementById('bottomnav').style.display=hide?'none':'flex';
   if(hide) return;
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';

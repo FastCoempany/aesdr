@@ -986,6 +986,9 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <li><div class="hw-box"></div>Run the Friday self-audit on yourself this week. Answer all four questions in writing. If any answer is "I don't know" — that's your priority for next Monday.</li>
         </ul>
       </div>
+
+      <!-- Accountability Gate -->
+      <div id="gate8" data-gate-screen="8"></div>
     </div>
   </div>
 
@@ -1190,7 +1193,12 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildRR(); buildBM(); buildTS(); buildIP(); buildSA(); buildQuiz(); render();
+  buildRR(); buildBM(); buildTS(); buildIP(); buildSA(); buildQuiz(); 
+  // Register accountability gate
+  var _role = document.documentElement.getAttribute('data-role') || 'sdr';
+  var _gatePrompt = _role === 'ae' ? 'Build your personal visibility plan: 3 specific metrics you track, how you make your results visible to leadership, and one initiative that makes you irreplaceable on your team.' : 'Build your personal visibility plan: 3 specific metrics you track, how you make your results visible to your manager, and one initiative that makes you irreplaceable on your team.';
+  AESDR.gate(8, { type:'application', prompt: _gatePrompt, minChars: 120 });
+  render();
 }
 function go(n){
   if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
@@ -1495,6 +1503,7 @@ function canContinue(){
   if(cur===5) return Object.keys(ipDone).length===6;
   if(cur===6) return saCount===4;
   if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 function getHint(){
@@ -1506,7 +1515,7 @@ function getHint(){
     5:`${Object.keys(ipDone).length} / 6 correctly placed`,
     6:`${saCount} / 4 growth responses identified`,
     7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    8:"The toolkit only works if you run the audit every single Friday.",
+    8: AESDR.gateHint(8) || "The toolkit only works if you run the audit every single Friday.",
   };
   return h[cur]||'';
 }
@@ -1526,6 +1535,7 @@ function render(){
   const hide=cur===0||cur===TOTAL-1;
   document.getElementById('bottomnav').style.display=hide?'none':'flex';
   if(hide)return;
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';

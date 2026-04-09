@@ -936,6 +936,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <li><div class="hw-box"></div>Post one market insight in the team Slack this week. Two sentences, your take on a trend, relevant to positioning. Not a shared article with no comment — your actual perspective.</li>
           <li><div class="hw-box"></div>Build one tangible value-add for your AE: a 5-account research doc, a rebuttal guide for the top 3 objections, or a list of 10 high-fit leads with a one-line rationale for each.</li>
         </ul>
+      <!-- Accountability Gate -->
+      <div id="gate7" data-gate-screen="7"></div>
       </div>
     </div>
   </div>
@@ -1108,7 +1110,12 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildRecipe(); buildSL(); buildRamp(); buildVis(); buildQuiz(); render();
+  buildRecipe(); buildSL(); buildRamp(); buildVis(); buildQuiz(); 
+  // Register accountability gate
+  var _role = document.documentElement.getAttribute('data-role') || 'sdr';
+  var _gatePrompt = _role === 'ae' ? 'Paste a real outreach sequence you\'ve used or reviewed (3+ touchpoints). Self-grade each touchpoint against the framework: is the subject line specific? Is the ask concrete?' : 'Paste a real outreach sequence you\'ve sent (3+ emails/touches). Self-grade each one against the framework from this lesson: subject line, opening, ask, and close.';
+  AESDR.gate(7, { type:'evidence', prompt: _gatePrompt, minChars: 150 });
+  render();
 }
 function go(n){
   if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
@@ -1373,6 +1380,7 @@ function canContinue(){
   if(cur===4) return Object.keys(rampDone).length===6;
   if(cur===5) return visScore>=100;
   if(cur===6){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length; return true;}
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 function getHint(){
@@ -1383,7 +1391,7 @@ function getHint(){
     4:`${Object.keys(rampDone).length} / 6 correctly placed`,
     5:visScore>=100?'✓ Full score — continue below.':`Score: ${visScore} / 100 — toggle on what you'll commit to`,
     6:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    7:"The template only works if you actually do the homework.",
+    7: AESDR.gateHint(7) || "The template only works if you actually do the homework.",
   };
   return h[cur]||'';
 }
@@ -1403,6 +1411,7 @@ function render(){
   const hide=cur===0||cur===TOTAL-1;
   document.getElementById('bottomnav').style.display=hide?'none':'flex';
   if(hide) return;
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';

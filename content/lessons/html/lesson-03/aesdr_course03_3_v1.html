@@ -965,6 +965,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <li><div class="hw-box"></div>Self-reflection: Are you responding emotionally to your manager's quirks, or are you managing up effectively? Write down the last three times you felt frustrated. What specific action could you have taken instead?</li>
         </ul>
       </div>
+      <!-- Accountability Gate -->
+      <div id="gate9" data-gate-screen="9"></div>
     </div>
   </div>
 
@@ -1163,7 +1165,10 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildArch(); buildImpact(); renderMU(); buildBB(); buildQuiz(); render();
+  buildArch(); buildImpact(); renderMU(); buildBB(); buildQuiz();
+  var _role=document.documentElement.getAttribute('data-role')||'sdr';
+  AESDR.gate(9,{type:'application',prompt:_role==='ae'?'Pick one of the manager archetypes from this lesson. Write a script for how you\'d coach an SDR who reports to that archetype — what specific advice would you give them?':'Identify which manager archetype best matches your current manager. Write a specific plan for managing up — what will you do differently starting this week?',minChars:120,rubric:['I identified a specific manager archetype','I wrote concrete actions, not vague intentions','My plan addresses a real situation I face']});
+  render();
 }
 function go(n){
   if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
@@ -1387,6 +1392,7 @@ function canContinue(){
   if(cur===6) return muDone;
   if(cur===7) return bbSubmitted&&bbPassed;
   if(cur===8){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 function getHint(){
@@ -1399,7 +1405,7 @@ function getHint(){
     6:muDone?'✓ All scenarios complete — continue below.':`Scenario ${muStage+1} of 3 — ${MU_SCENARIOS[muStage]?.name||''}`,
     7:!bbSubmitted?`${Object.keys(bbChosen).length} / 3 components chosen`:bbPassed?'✓ Script confirmed — continue below.':'Review the correct choices above.',
     8:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    9:"The templates only work if you actually schedule the meeting.",
+    9:AESDR.gateHint(9)||"The templates only work if you actually schedule the meeting.",
   };
   return h[cur]||'';
 }
@@ -1423,6 +1429,7 @@ function render(){
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';
   document.getElementById('btnNext').disabled=!canContinue();
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
 }
 
 init();

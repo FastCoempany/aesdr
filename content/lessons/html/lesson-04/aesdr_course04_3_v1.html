@@ -984,6 +984,9 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <li><div class="hw-box"></div>Decline one meeting this week that doesn't serve your numbers. Use one of the scripts above. Notice what happens — and notice what doesn't happen.</li>
         </ul>
       </div>
+
+      <!-- Accountability Gate -->
+      <div id="gate8" data-gate-screen="8"></div>
     </div>
   </div>
 
@@ -1163,7 +1166,12 @@ let qAns={},qSubmitted=false,qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildFlips(); buildCal(); buildMV(); buildAP(); buildSK(); buildQuiz(); render();
+  buildFlips(); buildCal(); buildMV(); buildAP(); buildSK(); buildQuiz(); 
+  // Register accountability gate
+  var _role = document.documentElement.getAttribute('data-role') || 'sdr';
+  var _gatePrompt = _role === 'ae' ? 'Paste or describe your actual time-blocked calendar for this week. Include call blocks, deal work, coaching time, and async blocks. Be honest about what\'s scheduled vs. what actually happens.' : 'Paste or describe your actual time-blocked calendar for this week. Include call blocks, outreach time, practice sessions, and breaks. Be honest about what\'s scheduled vs. what actually happens.';
+  AESDR.gate(8, { type:'evidence', prompt: _gatePrompt, minChars: 100 });
+  render();
 }
 function go(n){
   if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
@@ -1448,6 +1456,7 @@ function canContinue(){
   if(cur===5) return Object.keys(apDone).length===5;
   if(cur===6) return skMarked.size===6;
   if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 function getHint(){
@@ -1459,7 +1468,7 @@ function getHint(){
     5:`${Object.keys(apDone).length} / 5 blocks placed`,
     6:`${skMarked.size} / 6 skills explored`,
     7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    8:"Decline one meeting this week. See what doesn't fall apart.",
+    8: AESDR.gateHint(8) || "Decline one meeting this week. See what doesn't fall apart.",
   };
   return h[cur]||'';
 }
@@ -1479,6 +1488,7 @@ function render(){
   const hide=cur===0||cur===TOTAL-1;
   document.getElementById('bottomnav').style.display=hide?'none':'flex';
   if(hide) return;
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';

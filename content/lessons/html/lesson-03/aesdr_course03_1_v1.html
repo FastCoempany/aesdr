@@ -972,6 +972,9 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <li><div class="hw-box"></div>AEs: Schedule a feedback session with your SDR this week. Pick one area. Give specific, written feedback — not general encouragement. Track whether they implement it.</li>
         </ul>
       </div>
+
+      <!-- Accountability Gate -->
+      <div id="gate8" data-gate-screen="8"></div>
     </div>
   </div>
 
@@ -1263,7 +1266,12 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ══════════════════════════════════════════ */
 function init(){
-  buildRank(); renderBant(); buildFD(); buildSA(); buildHB(); buildQuiz(); render();
+  buildRank(); renderBant(); buildFD(); buildSA(); buildHB(); buildQuiz(); 
+  // Register accountability gate
+  var _role = document.documentElement.getAttribute('data-role') || 'sdr';
+  var _gatePrompt = _role === 'ae' ? 'Write a coaching note for a specific SDR call: identify 3 qualification gaps (BANT or similar framework) and provide concrete suggestions for each.' : 'Given a recent call you made, identify 3 qualification gaps using BANT (Budget, Authority, Need, Timeline). For each gap, write what you should have asked instead.';
+  AESDR.gate(8, { type:'application', prompt: _gatePrompt, minChars: 120 });
+  render();
 }
 function go(n){
   if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
@@ -1544,6 +1552,7 @@ function canContinue(){
   if(cur===5) return saCount===4;
   if(cur===6) return hbDone.size===6;
   if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 function getHint(){
@@ -1555,7 +1564,7 @@ function getHint(){
     5:`${saCount} / 4 adapted`,
     6:`${hbDone.size} / 6 blocks committed`,
     7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    8:"One thing implemented well beats four things started.",
+    8: AESDR.gateHint(8) || "One thing implemented well beats four things started.",
   };
   return h[cur]||'';
 }
@@ -1575,6 +1584,7 @@ function render(){
   const hide=cur===0||cur===TOTAL-1;
   document.getElementById('bottomnav').style.display=hide?'none':'flex';
   if(hide)return;
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';
