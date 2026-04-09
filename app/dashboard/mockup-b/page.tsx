@@ -43,6 +43,9 @@ export default async function MockupB() {
     }
   }
 
+  // Dev preview: no auth required, shows fresh-user state
+  const isPreview = !user;
+
   const completedCount = LESSONS.filter((l) => progressMap[l.id]?.is_completed).length;
   const currentLesson = LESSONS.find((l) => !progressMap[l.id]?.is_completed) || LESSONS[0];
   const currentIdx = LESSONS.findIndex((l) => l.id === currentLesson.id);

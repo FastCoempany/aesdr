@@ -78,6 +78,9 @@ export default async function MockupA() {
     }
   }
 
+  // Dev preview: no auth required, shows fresh-user state
+  const isPreview = !user;
+
   const completedCount = LESSONS.filter((l) => progressMap[l.id]?.is_completed).length;
   const currentLesson = LESSONS.find((l) => !progressMap[l.id]?.is_completed) || LESSONS[0];
   const briefing = BRIEFINGS[currentLesson.id] || BRIEFINGS["1"];

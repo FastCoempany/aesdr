@@ -85,11 +85,14 @@ export default async function MockupC() {
     }
   }
 
+  // Dev preview: no auth required, shows fresh-user state
+  const isPreview = !user;
+
   const completedCount = LESSONS.filter((l) => progressMap[l.id]?.is_completed).length;
   const currentLesson = LESSONS.find((l) => !progressMap[l.id]?.is_completed) || LESSONS[0];
   const brief = MISSION_BRIEFS[currentLesson.id] || MISSION_BRIEFS["1"];
   const lastCompleted = [...LESSONS].reverse().find((l) => progressMap[l.id]?.is_completed);
-  const displayName = user?.user_metadata?.full_name?.split(" ")[0] || null;
+  const displayName = user?.user_metadata?.full_name?.split(" ")[0] || (isPreview ? "Rep" : null);
 
   const now = new Date();
   const dateStr = now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
