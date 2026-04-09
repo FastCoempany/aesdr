@@ -99,7 +99,7 @@ export default function SuccessPage() {
                   lineHeight: "1.6",
                 }}
               >
-                The SDR Reality Check — what nobody tells you in your first 90 days.
+                Start with the fundamentals — what actually matters in your first 90 days.
               </p>
             </div>
           </div>

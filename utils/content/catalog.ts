@@ -25,7 +25,7 @@ const TOOL_MAP: Record<string, ToolAsset[]> = {
   "3":  [{ slug: "3.3-aesdr-alignment-contract", title: "AE/SDR Alignment Contract Builder" }],
   "6":  [{ slug: "6.3-idk-framework", title: "\"I Don't Know\" Framework" }],
   "9":  [{ slug: "9.2-time-reclaimed-calculator", title: "Time Reclaimed Calculator" }],
-  "10": [{ slug: "10.1-ROI-commission defense tracker", title: "ROI & Commission Defense Tracker" }],
+  "10": [{ slug: "10.1-ROI-commission-defense-tracker", title: "ROI & Commission Defense Tracker" }],
   "12": [{ slug: "12.3-72-hr-strike-plan", title: "72-Hour Strike Plan" }],
 };
 

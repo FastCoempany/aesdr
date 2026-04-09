@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 
 const COOKIE_NAME = "aesdr_gate";
-const CODE = "741407";
+const CODE = process.env.NEXT_PUBLIC_BYPASS_CODE ?? null;
 
 function hasCookie() {
   return document.cookie.split(";").some((c) => c.trim().startsWith(`${COOKIE_NAME}=`));
@@ -27,7 +27,7 @@ export default function TeaseGate({ children }: { children: React.ReactNode }) {
 
   function handleGhost() {
     const code = prompt("");
-    if (code === CODE) {
+    if (CODE && code === CODE) {
       setCookie();
       setGated(false);
     }

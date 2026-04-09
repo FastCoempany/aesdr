@@ -18,7 +18,7 @@ export default function CourseLoading() {
             fontSize: "11px",
             letterSpacing: ".1em",
             textTransform: "uppercase",
-            color: "#94A3B8",
+            color: "var(--text-muted, #94A3B8)",
           }}
         >
           Loading lesson...

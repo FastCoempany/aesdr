@@ -5,7 +5,7 @@ import RedditPixel from "@/components/RedditPixel";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.SITE_URL || "https://aesdr.com"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com"),
   title: "AESDR",
   description: "AEs & SDRs rule this world.",
   robots: {

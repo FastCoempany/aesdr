@@ -3,7 +3,7 @@
 export default function GhostButton() {
   function handleClick() {
     const code = prompt("");
-    if (code === "741407") {
+    if (process.env.NEXT_PUBLIC_BYPASS_CODE && code === process.env.NEXT_PUBLIC_BYPASS_CODE) {
       document.cookie = "aesdr_bypass=1; path=/; max-age=31536000; SameSite=Lax";
       window.location.href = "/dashboard";
     }

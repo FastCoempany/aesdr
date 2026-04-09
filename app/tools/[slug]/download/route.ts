@@ -12,7 +12,7 @@ const TOOL_LESSON_GATE: Record<string, string> = {
   "3.3-aesdr-alignment-contract": "3",
   "6.3-idk-framework": "6",
   "9.2-time-reclaimed-calculator": "9",
-  "10.1-ROI-commission defense tracker": "10",
+  "10.1-ROI-commission-defense-tracker": "10",
   "12.3-72-hr-strike-plan": "12",
 };
 

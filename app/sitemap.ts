@@ -5,7 +5,7 @@ import type { MetadataRoute } from "next";
  * Populate with public URLs after launch and submit to Google Search Console.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.SITE_URL || "https://aesdr.com";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com";
 
   return [
     { url: baseUrl, lastModified: new Date() },
