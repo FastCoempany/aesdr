@@ -24,6 +24,11 @@ export default async function Dashboard() {
     redirect("/account/set-password");
   }
 
+  // Force role selection before accessing courses
+  if (user && !user.user_metadata?.role) {
+    redirect("/account/select-role");
+  }
+
   let progressMap: Record<string, LessonProgressSummary> = {};
 
   if (user) {

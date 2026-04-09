@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import SignOutButton from "@/components/SignOutButton";
 import ChangePasswordForm from "@/components/ChangePasswordForm";
+import RoleSwitcher from "@/components/RoleSwitcher";
 import { createClient } from "@/utils/supabase/server";
 
 export const metadata: Metadata = {
@@ -181,6 +182,23 @@ export default async function AccountPage() {
             </p>
           </section>
         )}
+
+        {/* Role */}
+        <section className="mb-10">
+          <h2
+            style={{
+              fontFamily: "var(--mono)",
+              fontSize: "10px",
+              letterSpacing: ".2em",
+              textTransform: "uppercase" as const,
+              color: "var(--text-muted)",
+              marginBottom: "8px",
+            }}
+          >
+            Course Role
+          </h2>
+          <RoleSwitcher currentRole={user.user_metadata?.role ?? null} />
+        </section>
 
         {/* Change password */}
         <section className="mb-10">
