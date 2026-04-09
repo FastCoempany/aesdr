@@ -173,11 +173,11 @@ function SuccessContent() {
               >
                 {displayEmail ? (
                   <>
-                    We sent a login link to <strong style={{ color: "var(--text-main)" }}>{displayEmail}</strong>.
-                    Click it to access your courses — no password needed.
+                    We sent your login credentials to <strong style={{ color: "var(--text-main)" }}>{displayEmail}</strong>.
+                    Use them to sign in and start your courses.
                   </>
                 ) : (
-                  "We're sending you a login link. Click it to access your courses — no password needed."
+                  "We're sending your login credentials now. Check your inbox to sign in."
                 )}
               </p>
             </div>

@@ -9,6 +9,15 @@ function getStripe() {
   return new Stripe(process.env.STRIPE_SECRET_KEY!);
 }
 
+function generatePassword(): string {
+  const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+  let result = '';
+  const bytes = new Uint8Array(12);
+  crypto.getRandomValues(bytes);
+  for (const b of bytes) result += chars[b % chars.length];
+  return result;
+}
+
 export async function POST(request: Request) {
   const body = await request.text();
   const sig = request.headers.get('stripe-signature');
@@ -37,7 +46,7 @@ export async function POST(request: Request) {
 
     // Look up or create Supabase auth user by email
     let userId: string | null = null;
-    let magicLink: string | null = null;
+    let tempPassword: string | null = null;
 
     if (email) {
       // Check if user already exists
@@ -49,8 +58,8 @@ export async function POST(request: Request) {
       if (existingUser) {
         userId = existingUser.id;
       } else {
-        // Auto-create auth user with a random password (they'll use magic link)
-        const tempPassword = crypto.randomUUID() + crypto.randomUUID();
+        // Auto-create auth user with a readable temporary password
+        tempPassword = generatePassword();
         const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
           email,
           password: tempPassword,
@@ -60,24 +69,10 @@ export async function POST(request: Request) {
 
         if (createError) {
           console.error('Failed to create auth user:', createError);
+          tempPassword = null;
         } else if (newUser?.user) {
           userId = newUser.user.id;
         }
-      }
-
-      // Generate magic link for the welcome email
-      const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
-        type: 'magiclink',
-        email,
-        options: {
-          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://aesdr.com'}/auth/callback?next=/dashboard`,
-        },
-      });
-
-      if (linkError) {
-        console.error('Failed to generate magic link:', linkError);
-      } else if (linkData?.properties?.action_link) {
-        magicLink = linkData.properties.action_link;
       }
     }
 
@@ -105,7 +100,7 @@ export async function POST(request: Request) {
     // Send emails (don't let failures break the webhook)
     if (email) {
       try {
-        await sendWelcomeEmail(email, name, magicLink);
+        await sendWelcomeEmail(email, name, tempPassword);
       } catch (err) {
         console.error('Welcome email failed:', err);
       }
