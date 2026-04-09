@@ -782,9 +782,10 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">01</div>
       <div class="sec-eye">Section 01 — The Foundation</div>
-      <div class="lh-title">Why Lack of Structure Kills SDR Success</div>
+      <div class="lh-title ae-only">Why Lack of Structure Kills SDR Success</div>
+      <div class="lh-title sdr-only">Why Structure Is the Difference Between Surviving and Succeeding</div>
     </div>
-    <div class="lb">
+    <div class="lb ae-only">
       <p class="lp">Without structure, an SDR has no clear understanding of what's expected or where to focus. They end up guessing — which leads to poor results, frustration, and attrition. As an AE, building structure isn't optional. It's the job.</p>
       <ul class="kp">
         <li><span class="kp-n">01</span>Confusion about priorities leads to unfocused outreach and missed opportunities that compound daily.</li>
@@ -797,6 +798,19 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div class="lie-a">Implement the framework. Align daily. Commit to the process — because no one else will build it for your SDR if you don't.</div>
       </div>
     </div>
+    <div class="lb sdr-only">
+      <p class="lp">Without structure, you're guessing — what to prioritize, what "good" looks like, and whether you're actually on track. Nobody hands you a playbook that works. The best SDRs don't wait for one. They build it.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span>No clear daily structure means scattered effort — 50 dials with no plan behind them won't convert to meetings.</li>
+        <li><span class="kp-n">02</span>Without a system for self-evaluation, you can't improve what you can't measure. You need to own your own feedback loop.</li>
+        <li><span class="kp-n">03</span>The SDRs who survive past month 3 aren't the most talented — they're the ones who built structure before anyone told them to.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">Your Responsibility</div>
+        <div class="lie-q">"Don't wait for your AE to hand you the playbook. Build it yourself."</div>
+        <div class="lie-a">Own your schedule. Track your numbers. Ask for feedback before it's offered. The SDRs who take initiative with structure are the ones who get promoted.</div>
+      </div>
+    </div>
   </div>
 
   <!-- 2: DAY 1 CHECKLIST -->
@@ -805,7 +819,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">01</div>
       <div class="sec-eye">Section 01 — Day 1 Blueprint</div>
-      <div class="lh-title">Day 1 Onboarding: Everything That Must Happen</div>
+      <div class="lh-title ae-only">Day 1 Onboarding: Everything That Must Happen</div>
+      <div class="lh-title sdr-only">Day 1 Orientation: Your Survival Checklist</div>
       <div class="lh-sub"><b id="clCount">0</b> / 5 completed — check off each item to continue</div>
     </div>
     <div class="cl-area" id="clArea"></div>
@@ -816,7 +831,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
     <div class="lh">
       <div class="lh-stripe"></div>
       <div class="sec-eye">Section 01 — Days 1 Through 5</div>
-      <div class="lh-title">The First Week, Day by Day</div>
+      <div class="lh-title ae-only">The First Week, Day by Day</div>
+      <div class="lh-title sdr-only">Your First Week Playbook</div>
       <div class="lh-sub"><b id="tlCount">0</b> / 5 days revealed — open each day to continue</div>
     </div>
     <div class="tl-wrap" id="tlWrap"></div>
@@ -910,6 +926,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <li><div class="hw-box"></div>AEs: Run the Weekly Alignment Agenda this Friday. Pull last week's numbers before the meeting — not during it.</li>
         </ul>
       </div>
+      <!-- Accountability Gate -->
+      <div id="gate7" data-gate-screen="7"></div>
     </div>
   </div>
 
@@ -970,7 +988,9 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
    DATA
 ══════════════════════════════════════════ */
 
-const CHECKLIST = [
+const _role = document.documentElement.getAttribute('data-role') || 'sdr';
+
+const CHECKLIST_AE = [
   { label:"Set SDR Expectations",         desc:"Define key responsibilities, daily focus areas, and what success actually looks like in week one. Be specific." },
   { label:"Product Overview — 1 Hour",    desc:"Shadow a live or recorded AE demo. Focus on key questions SDRs need to answer in conversations — not just features." },
   { label:"Tool & System Walkthrough",    desc:"CRM, outreach tools, and call logging — hands-on, not a slide deck. They should log their first call before EOD." },
@@ -978,7 +998,17 @@ const CHECKLIST = [
   { label:"Set the Debrief Habit",        desc:"Walk through the end-of-day structure now: What worked? What didn't? What changes tomorrow? Do this on Day 1." },
 ];
 
-const DAYS = [
+const CHECKLIST_SDR = [
+  { label:"Learn the CRM Inside Out",     desc:"Don't just watch a walkthrough — log a test call, create a test contact, and run a test sequence before EOD. Hands beat eyes." },
+  { label:"Shadow a Live AE Demo",        desc:"Sit in on a real AE demo or recorded call. Write down the 5 questions prospects ask most — you'll hear these on cold calls." },
+  { label:"Map Your Outreach Tools",      desc:"Open every tool you'll use daily: dialer, email sequencer, LinkedIn. Send a test email. Make a test call. Know where everything lives." },
+  { label:"Set Your Own Day 1 Goals",     desc:"Write down specific targets: 10 dials, 5 practice email drafts. Don't wait for someone to assign them — own them." },
+  { label:"Start a Daily Log",            desc:"Before you leave today, write: What did I learn? What confused me? What do I need to ask tomorrow? Do this every day, starting now." },
+];
+
+const CHECKLIST = _role === 'ae' ? CHECKLIST_AE : CHECKLIST_SDR;
+
+const DAYS_AE = [
   {
     day:"Day 1", title:"Set the Foundation",
     text:"Day 1 is about clarity, not output. The SDR should leave knowing exactly what's expected, where to find everything, and what tomorrow looks like.",
@@ -1005,6 +1035,36 @@ const DAYS = [
     tasks:["3 full cold call simulations: AE plays real-world prospect","AE delivers call-by-call written feedback, not just verbal","Week debrief: what worked, what didn't, what adjusts Monday","Set Week 2 goals: call volume, connects, practice sessions — in writing"]
   },
 ];
+
+const DAYS_SDR = [
+  {
+    day:"Day 1", title:"Own Your Orientation",
+    text:"Day 1 is about absorbing everything you can — not performing. Your goal is to leave knowing where to find things, what's expected, and what tomorrow looks like.",
+    tasks:["Write down your daily responsibilities and what 'success' looks like this week — ask your AE if it's unclear","Shadow an AE demo or recorded call — note the 5 questions prospects ask most","Get hands-on with every tool: CRM, dialer, email platform — log your first test call before EOD","Set your own Day 1 targets: 10 practice dials, 5 draft emails"]
+  },
+  {
+    day:"Day 2", title:"Start Real Conversations",
+    text:"Move from watching to doing. You don't need to know the product perfectly — you need to hold a 3-minute conversation that earns the next one.",
+    tasks:["Practice a 3-minute product conversation with your AE or a peer","Focus on asking questions, not delivering a monologue","Write down the 3 questions that stumped you — research them before tomorrow","End-of-day log: what clicked, what didn't, what changes tomorrow"]
+  },
+  {
+    day:"Day 3", title:"Nail the Cold Call Intro",
+    text:"The intro is the most important 10 seconds. Master it before adding anything else. Volume without a clean open is wasted effort.",
+    tasks:["Block 1 hour for intro-only practice — record yourself if possible","Run 15 intro attempts and self-evaluate each one","Ask your AE to listen to 3 of your best and give specific feedback","Write down the exact words that worked — that's your opening script"]
+  },
+  {
+    day:"Day 4", title:"Build the Full Call",
+    text:"Stack engage and close onto your intro. Each piece has a specific job. Practice them separately, then combine.",
+    tasks:["Practice intro → engage → close as a complete sequence","Engage: ask one specific, problem-based question — no pitching","Close: specific time, specific person, specific ask — practice the exact words","Self-evaluate: which stage is your weakest? Write it down."]
+  },
+  {
+    day:"Day 5", title:"Simulate + Review Your Week",
+    text:"Run 3 full simulated calls and do an honest week review. What improved? What needs work? What carries into Week 2?",
+    tasks:["Run 3 full call simulations with a peer or AE playing the prospect","Record at least 1 and listen back — note what you'd change","Write your week-in-review: what worked, what didn't, what adjusts Monday","Set your own Week 2 goals: call volume, connect targets, practice reps — in writing"]
+  },
+];
+
+const DAYS = _role === 'ae' ? DAYS_AE : DAYS_SDR;
 
 const SCHED = [
   { time:"8:00–8:30 AM",   act:"Daily huddle with AE",          goal:"Align on goals and key focus points." },
@@ -1113,6 +1173,13 @@ function init(){
   buildSched();
   renderCC();
   buildQuiz();
+
+  // Register accountability gate on homework screen
+  var gatePrompt = _role === 'ae'
+    ? 'Paste your actual Day 1 onboarding checklist for your SDR — the one you use (or will build) in your real role. Include specific tasks, time blocks, and goals.'
+    : 'Paste your actual Day 1 orientation plan — the schedule, goals, and tasks you committed to (or will commit to) for your first week. Be specific.';
+  AESDR.gate(7, { type:'evidence', prompt: gatePrompt, minChars: 120, placeholder: 'Paste or write your real checklist here...' });
+
   render();
 }
 
@@ -1400,10 +1467,12 @@ function canContinue(){
     if(!qSubmitted) return Object.keys(qAns).length===QUIZ.length;
     return true;
   }
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 
 function getHint(){
+  var gateHint = AESDR.gateHint(cur);
   const h={
     1:"The absence of structure is always a choice — and it always costs something.",
     2:`${clDone.size} / 5 items completed`,
@@ -1414,7 +1483,7 @@ function getHint(){
     6: !qSubmitted ? `${Object.keys(qAns).length} / ${QUIZ.length} answered`
        : qPassed   ? "✓ Passed — continue below."
                    : "Need 3 / 4 to advance. Try again.",
-    7:"Templates without commitment are just documents.",
+    7: gateHint || "Templates without commitment are just documents.",
   };
   return h[cur]||'';
 }
@@ -1437,6 +1506,8 @@ function render(){
   const bnav=document.getElementById('bottomnav');
   bnav.style.display=hide?'none':'flex';
   if(hide) return;
+  // Render any accountability gate on current screen
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';

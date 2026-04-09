@@ -947,12 +947,15 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div>
         <div class="t-head">Homework — This Week</div>
         <ul class="hw-list">
-          <li><div class="hw-box"></div>AEs: Schedule 1 hour for coaching this week. Review 2 SDR calls and deliver written, not verbal, feedback on each.</li>
-          <li><div class="hw-box"></div>AEs: Ask your SDR: "What's one area where you feel you need the most coaching right now?" — then actually address it.</li>
-          <li><div class="hw-box"></div>SDRs: Bring 1 call recording and 1 email sequence to your next 1:1. Walk your AE through what you think went wrong before they tell you.</li>
-          <li><div class="hw-box"></div>SDRs: Self-evaluate in writing before every feedback session. What went well? Where do you need help? Don't wait for the AE to set the agenda.</li>
+          <li class="ae-only"><div class="hw-box"></div>Schedule 1 hour for coaching this week. Review 2 SDR calls and deliver written, not verbal, feedback on each.</li>
+          <li class="ae-only"><div class="hw-box"></div>Ask your SDR: "What's one area where you feel you need the most coaching right now?" — then actually address it.</li>
+          <li class="sdr-only"><div class="hw-box"></div>Bring 1 call recording and 1 email sequence to your next 1:1. Walk your AE through what you think went wrong before they tell you.</li>
+          <li class="sdr-only"><div class="hw-box"></div>Self-evaluate in writing before every feedback session. What went well? Where do you need help? Don't wait for the AE to set the agenda.</li>
+          <li><div class="hw-box"></div>Run the 60-minute coaching framework this week — call review, email feedback, role-play, Q&A.</li>
         </ul>
       </div>
+      <!-- Accountability Gate -->
+      <div id="gate8" data-gate-screen="8"></div>
     </div>
   </div>
 
@@ -1141,6 +1144,18 @@ function init(){
   buildTx();
   buildEmail();
   buildQuiz();
+
+  // Register application gate on homework screen
+  var _role = document.documentElement.getAttribute('data-role') || 'sdr';
+  var gatePrompt = _role === 'ae'
+    ? 'Write specific, written feedback for a real or simulated SDR call. Include: what the opening did well, one thing to change about the engage, and whether the close was strong enough.'
+    : 'Self-evaluate a recent call or practice call. Write: what your opening did well, where your engage lost momentum, and whether your close was specific enough. Be honest.';
+  AESDR.gate(8, { type:'application', prompt: gatePrompt, minChars: 100, rubric: [
+    'I addressed the call opening specifically',
+    'I identified one concrete improvement for the engage step',
+    'I evaluated the close with a specific recommendation'
+  ]});
+
   render();
 }
 
@@ -1454,6 +1469,7 @@ function canContinue(){
     if(!qSubmitted) return Object.keys(qAns).length===QUIZ.length;
     return true;
   }
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 
@@ -1466,7 +1482,7 @@ function getHint(){
     5:`${txCount} / 4 correctly tagged`,
     6:!emailSubmitted?`${Object.keys(emailChosen).length} / 3 sections chosen`:emailPassed?'✓ Email repaired — continue below.':'Review the correct versions and try again.',
     7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    8:"The templates only work if you actually open them.",
+    8: AESDR.gateHint(8) || "The templates only work if you actually open them.",
   };
   return h[cur]||'';
 }
@@ -1489,6 +1505,8 @@ function render(){
   const bnav=document.getElementById('bottomnav');
   bnav.style.display=hide?'none':'flex';
   if(hide) return;
+  // Render any accountability gate on current screen
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';
