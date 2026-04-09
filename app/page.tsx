@@ -14,7 +14,7 @@ const LESSONS = [
   { num: "04", title: "Navigating Manager Madness", desc: "Surviving toxic managers, bad coaching, and political games" },
   { num: "05", title: "The Sales Playbook", desc: "A real operating system for daily execution — not motivational noise" },
   { num: "06", title: "Beyond the Sales Playbook", desc: "What to do when the playbook breaks and you have to think for yourself" },
-  { num: "07", title: "Prospecting Is Your Job Too", desc: "AEs who prospect outperform AEs who wait. Here's how." },
+  { num: "07", title: "Prospecting & Pipeline", desc: "Building self-sourced pipeline that gives you leverage and career options." },
   { num: "08", title: "The 30% Rule", desc: "The math behind pipeline health that most reps never learn" },
   { num: "09", title: "Salesforce Survival Guide", desc: "CRM hygiene that protects your deals and your credibility" },
   { num: "10", title: "Breaking Down the Commission Myth", desc: "Financial resilience on variable comp — before it breaks you" },
