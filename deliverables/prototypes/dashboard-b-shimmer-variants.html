@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR — Dashboard B Shimmer Variants</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #020617;
+    --bg-panel: #0F172A;
+    --bg-card: #1E293B;
+    --text-main: #F8FAFC;
+    --text-muted: #94A3B8;
+    --theme: #10B981;
+    --amber: #F59E0B;
+    --line: rgba(255,255,255,0.1);
+    --iris: linear-gradient(90deg, #FF006E 0%, #FF6B00 17%, #F59E0B 34%, #10B981 51%, #38BDF8 68%, #8B5CF6 85%, #FF006E 100%);
+    --display: 'Abril Fatface', Georgia, serif;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --cond: 'Barlow Condensed', sans-serif;
+    --mono: 'DM Mono', monospace;
+  }
+
+  @keyframes iris {
+    from { background-position: 0% 50%; }
+    to   { background-position: 200% 50%; }
+  }
+
+  @keyframes iris-underline {
+    from { background-position: 0% 50%; }
+    to   { background-position: 300% 50%; }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { text-shadow: 0 0 8px rgba(16,185,129,0.3); }
+    50%      { text-shadow: 0 0 24px rgba(16,185,129,0.7), 0 0 48px rgba(56,189,248,0.3); }
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg-main); color: var(--text-main); font-family: var(--serif); }
+
+  .page { max-width: 800px; margin: 0 auto; padding: 40px 24px; }
+
+  .variant-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--bg-main);
+    background: var(--theme);
+    display: inline-block;
+    padding: 4px 12px;
+    margin-bottom: 32px;
+  }
+
+  .variant-block {
+    margin-bottom: 64px;
+    padding-bottom: 64px;
+    border-bottom: 1px solid var(--line);
+  }
+  .variant-block:last-child { border-bottom: none; }
+
+  /* ─── Shared lesson row styles ─── */
+  .lesson-row {
+    position: relative;
+    padding-left: 48px;
+  }
+  .lesson-row .timeline {
+    position: absolute; left: 15px; top: 32px; bottom: -40px;
+    width: 1px; background: var(--line);
+  }
+  .lesson-row .node {
+    position: absolute; left: 8px; top: 8px;
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid var(--text-main);
+    box-shadow: 0 0 12px rgba(248,250,252,0.15);
+  }
+  .lesson-num {
+    font-family: var(--mono);
+    font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 6px;
+  }
+  .lesson-title {
+    font-family: var(--cond);
+    font-size: 22px; font-weight: 700;
+    letter-spacing: .04em; text-transform: uppercase;
+    color: var(--text-main); margin-bottom: 8px; line-height: 1.2;
+    text-decoration: none; display: inline-block;
+  }
+  .lesson-title .arrow { margin-left: 12px; font-size: 14px; color: var(--theme); }
+  .teaser {
+    font-family: var(--serif);
+    font-size: 16px; font-style: italic;
+    line-height: 1.6; color: var(--text-muted);
+    max-width: 480px;
+  }
+
+  /* ─── VARIANT 1: Last phrase gets full iris text shimmer ─── */
+  .v1-shimmer {
+    font-style: normal;
+    font-weight: 600;
+    background: var(--iris);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: iris 3s linear infinite;
+  }
+
+  /* ─── VARIANT 2: Iris shimmer underline beneath the phrase ─── */
+  .v2-phrase {
+    font-style: normal;
+    font-weight: 600;
+    color: var(--text-main);
+    position: relative;
+    display: inline;
+  }
+  .v2-phrase::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: -2px;
+    height: 2px;
+    background: var(--iris);
+    background-size: 300% 100%;
+    animation: iris-underline 4s linear infinite;
+  }
+
+  /* ─── VARIANT 3: Glowing pulse on the phrase, emerald-to-cobalt ─── */
+  .v3-phrase {
+    font-style: normal;
+    font-weight: 600;
+    color: var(--theme);
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  /* ─── Header ─── */
+  .header {
+    margin-bottom: 48px;
+  }
+  .header-tag {
+    font-family: var(--mono);
+    font-size: 10px; letter-spacing: .3em; text-transform: uppercase;
+    color: var(--theme); margin-bottom: 16px;
+  }
+  .header-title {
+    font-family: var(--display);
+    font-size: 44px; line-height: 1;
+  }
+
+  /* ─── Page title ─── */
+  .page-title {
+    font-family: var(--display);
+    font-size: 28px; line-height: 1;
+    text-align: center;
+    margin-bottom: 12px;
+    background: var(--iris);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: iris 3s linear infinite;
+  }
+  .page-subtitle {
+    font-family: var(--mono);
+    font-size: 10px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--text-muted); text-align: center;
+    margin-bottom: 64px;
+  }
+
+  /* Locked rows */
+  .locked { opacity: 0.2; filter: blur(2px); }
+  .locked .node { border: 1px solid var(--line); }
+  .faded { opacity: 0.5; }
+  .faded .node { border: 1px solid var(--line); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <p class="page-title">AESDR</p>
+  <p class="page-subtitle">Dashboard B — Shimmer Variants &middot; Pick one</p>
+
+  <!-- ════════════════════════════════════════════
+       VARIANT 1 — Iris rainbow text on the phrase
+  ════════════════════════════════════════════ -->
+  <div class="variant-block">
+    <div class="variant-label">Variant 1 — Iris Text</div>
+
+    <div class="header">
+      <p class="header-tag">The Journey</p>
+      <h1 class="header-title">It starts now.</h1>
+    </div>
+
+    <!-- Current lesson -->
+    <div class="lesson-row" style="padding-bottom: 40px;">
+      <div class="timeline"></div>
+      <div class="node"></div>
+      <p class="lesson-num">Lesson 1</p>
+      <a class="lesson-title" href="#">Creating Structure <span class="arrow">&rarr;</span></a>
+      <p class="teaser">You think you&rsquo;re ready. You&rsquo;re not. <span class="v1-shimmer">But we start here anyway.</span></p>
+    </div>
+
+    <!-- Next visible -->
+    <div class="lesson-row faded" style="padding-bottom: 40px;">
+      <div class="timeline"></div>
+      <div class="node" style="border-color: var(--line);"></div>
+      <p class="lesson-num">Lesson 2</p>
+      <p class="lesson-title" style="color: var(--text-muted);">Aligning Departments</p>
+      <p class="teaser">Your own team is working against you and they don&rsquo;t even know it.</p>
+    </div>
+
+    <!-- Locked -->
+    <div class="lesson-row locked" style="padding-bottom: 0;">
+      <div class="node"></div>
+      <p class="lesson-num">Lesson 3</p>
+      <p class="lesson-title" style="color: var(--text-muted);">???</p>
+      <p class="teaser">You haven&rsquo;t earned this yet.</p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       VARIANT 2 — Iris shimmer underline
+  ════════════════════════════════════════════ -->
+  <div class="variant-block">
+    <div class="variant-label">Variant 2 — Iris Underline</div>
+
+    <div class="header">
+      <p class="header-tag">The Journey</p>
+      <h1 class="header-title">It starts now.</h1>
+    </div>
+
+    <div class="lesson-row" style="padding-bottom: 40px;">
+      <div class="timeline"></div>
+      <div class="node"></div>
+      <p class="lesson-num">Lesson 1</p>
+      <a class="lesson-title" href="#">Creating Structure <span class="arrow">&rarr;</span></a>
+      <p class="teaser">You think you&rsquo;re ready. You&rsquo;re not. <span class="v2-phrase">But we start here anyway.</span></p>
+    </div>
+
+    <div class="lesson-row faded" style="padding-bottom: 40px;">
+      <div class="timeline"></div>
+      <div class="node" style="border-color: var(--line);"></div>
+      <p class="lesson-num">Lesson 2</p>
+      <p class="lesson-title" style="color: var(--text-muted);">Aligning Departments</p>
+      <p class="teaser">Your own team is working against you and they don&rsquo;t even know it.</p>
+    </div>
+
+    <div class="lesson-row locked" style="padding-bottom: 0;">
+      <div class="node"></div>
+      <p class="lesson-num">Lesson 3</p>
+      <p class="lesson-title" style="color: var(--text-muted);">???</p>
+      <p class="teaser">You haven&rsquo;t earned this yet.</p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       VARIANT 3 — Emerald glow pulse
+  ════════════════════════════════════════════ -->
+  <div class="variant-block">
+    <div class="variant-label">Variant 3 — Emerald Glow Pulse</div>
+
+    <div class="header">
+      <p class="header-tag">The Journey</p>
+      <h1 class="header-title">It starts now.</h1>
+    </div>
+
+    <div class="lesson-row" style="padding-bottom: 40px;">
+      <div class="timeline"></div>
+      <div class="node"></div>
+      <p class="lesson-num">Lesson 1</p>
+      <a class="lesson-title" href="#">Creating Structure <span class="arrow">&rarr;</span></a>
+      <p class="teaser">You think you&rsquo;re ready. You&rsquo;re not. <span class="v3-phrase">But we start here anyway.</span></p>
+    </div>
+
+    <div class="lesson-row faded" style="padding-bottom: 40px;">
+      <div class="timeline"></div>
+      <div class="node" style="border-color: var(--line);"></div>
+      <p class="lesson-num">Lesson 2</p>
+      <p class="lesson-title" style="color: var(--text-muted);">Aligning Departments</p>
+      <p class="teaser">Your own team is working against you and they don&rsquo;t even know it.</p>
+    </div>
+
+    <div class="lesson-row locked" style="padding-bottom: 0;">
+      <div class="node"></div>
+      <p class="lesson-num">Lesson 3</p>
+      <p class="lesson-title" style="color: var(--text-muted);">???</p>
+      <p class="teaser">You haven&rsquo;t earned this yet.</p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
