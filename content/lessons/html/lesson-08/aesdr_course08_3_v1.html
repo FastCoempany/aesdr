@@ -994,10 +994,11 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">04</div>
       <div><div class="c8-badge">Course 8</div><span class="sec-eye">Section 04 — Homework</span></div>
-      <div class="lh-title">Audit Yourself as an AE</div>
+      <div class="lh-title ae-only">Audit Yourself as an AE</div>
+      <div class="lh-title sdr-only">Break Your Bad Habits This Week</div>
     </div>
     <div class="tools-blk">
-      <div style="margin-top:20px">
+      <div class="ae-only" style="margin-top:20px">
         <div class="t-head">Task 1: Audit Yourself</div>
         <table class="data-table">
           <thead><tr><th>Self-Reflection Area</th><th>Key Questions</th></tr></thead>
@@ -1008,7 +1009,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           </tbody>
         </table>
       </div>
-      <div>
+      <div class="ae-only">
         <div class="t-head">Task 2: Set a Plan to Level Up</div>
         <ul class="hw-list">
           <li><div class="hw-box"></div>Identify one area you've been avoiding (prospecting, self-sourcing, or taking feedback).</li>
@@ -1016,12 +1017,39 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <li><div class="hw-box"></div>Track your progress daily.</li>
         </ul>
       </div>
-      <div>
+      <div class="ae-only">
         <div class="t-head">Task 3: Ask for Real Feedback</div>
         <ul class="hw-list">
           <li><div class="hw-box"></div>Schedule a pipeline review with your manager or SDR.</li>
           <li><div class="hw-box"></div>Ask: "Where am I underperforming right now?"</li>
           <li><div class="hw-box"></div>Ask: "What's one thing I need to change immediately?"</li>
+        </ul>
+      </div>
+      <div class="sdr-only" style="margin-top:20px">
+        <div class="t-head">Task 1: Identify Your Self-Sabotage</div>
+        <table class="data-table">
+          <thead><tr><th>Bad Habit</th><th>Honest Check</th></tr></thead>
+          <tbody>
+            <tr><td>Phone Avoidance</td><td>How many hours did I spend emailing vs. calling this week? What's my connect rate?</td></tr>
+            <tr><td>Lead Cherry-Picking</td><td>How long do I spend researching before I dial? Am I using "research" to avoid calling?</td></tr>
+            <tr><td>Complaining vs. Adapting</td><td>Write down the last 3 complaints you made (to peers, in Slack, in your head). What action could replace each one?</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sdr-only">
+        <div class="t-head">Task 2: The 5-Day Challenge</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>For 5 consecutive days, hit 110% of your call target — no excuses, no adjustments.</li>
+          <li><div class="hw-box"></div>After each day, write one sentence: "Today I improved at ___."</li>
+          <li><div class="hw-box"></div>At the end of the week, bring your 5 sentences to your manager and ask for feedback on your trajectory.</li>
+        </ul>
+      </div>
+      <div class="sdr-only">
+        <div class="t-head">Task 3: Manage Up With a Purpose</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Schedule a 15-minute meeting with your manager. Come with: your numbers for the week, one thing you're working to improve, and one question about what top performers do differently.</li>
+          <li><div class="hw-box"></div>Ask: "What's one habit I should build to get promoted faster?"</li>
+          <li><div class="hw-box"></div>Follow through on whatever they say — and report back next week.</li>
         </ul>
       </div>
 
@@ -1037,13 +1065,17 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <div class="comp-tag">Course 8 · Lesson 3 — Complete</div>
           <div style="font-family:var(--display);font-size:56px;color:var(--black);line-height:.9;margin:10px 0 0">08</div>
         </div>
-        <div class="comp-big">Be<br>Irreplaceable.</div>
-        <div class="comp-sub">If you want to stay in SaaS sales—and thrive—you need to level up. Stop pointing fingers, start looking in the mirror, and do the work.</div>
+        <div class="comp-big ae-only">Be<br>Irreplaceable.</div>
+        <div class="comp-big sdr-only">Get out of<br>your own<br>way.</div>
+        <div class="comp-sub ae-only">If you want to stay in SaaS sales—and thrive—you need to level up. Stop pointing fingers, start looking in the mirror, and do the work.</div>
+        <div class="comp-sub sdr-only">The biggest obstacle to your promotion isn't your manager, the leads, or the territory. It's the habits you refuse to change. Fix them and the career follows.</div>
       </div>
       <div class="comp-r">
         <div class="eyebrow">Course 8 · Lesson 3 Complete</div>
-        <div class="comp-h">The choice is yours.</div>
-        <p class="comp-p">At the end of the day, you're either in the top 30% or you're at risk of being replaced. Success starts with accountability, action, and improvement.</p>
+        <div class="comp-h ae-only">The choice is yours.</div>
+        <div class="comp-h sdr-only">Own your growth.</div>
+        <p class="comp-p ae-only">At the end of the day, you're either in the top 30% or you're at risk of being replaced. Success starts with accountability, action, and improvement.</p>
+        <p class="comp-p sdr-only">The SDRs who get promoted are the ones who stop blaming, start adapting, and take radical ownership of their own development. Your career is your responsibility — act like it.</p>
         <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
         <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
       </div>
@@ -1054,7 +1086,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 <aside class="sidebar">
   <div class="sb-course">08</div>
-  <div class="sb-lesson">Lesson 8.3 · Are You the Problem?</div>
+  <div class="sb-lesson ae-only">Lesson 8.3 · Are You the Problem?</div>
+  <div class="sb-lesson sdr-only">Lesson 8.3 · Getting Out of Your Own Way</div>
   <div class="sb-divider"></div>
   <div class="sb-label">Sections</div>
   <div class="sb-item" id="nav1" onclick="go(1)">
@@ -1103,25 +1136,25 @@ const SILO_ORDER = [2,5,0,3,1,4];
 const BLAME_ITEMS = [
   {
     statement:'"My pipeline is weak right now because my SDR isn\'t booking enough."',
-    opts:["Diagnosis: You need a better SDR","Excuse: Blaming SDRs for pipeline issues. Fix: Own your pipeline and start self-sourcing.","You should complain to marketing","Excuse: Uncoachable. Fix: Take a training class."],
+    opts:["Excuse: Overworked. Fix: Reduce your account load to focus on fewer deals.","Excuse: Blaming SDRs for pipeline issues. Fix: Own your pipeline and start self-sourcing.","Excuse: Misaligned targets. Fix: Renegotiate your quota with leadership.","Excuse: Uncoachable. Fix: Take a training class."],
     ans:1,
     fix:"Resolution: Excuse: Blaming SDRs. Real Fix: Own your pipeline and self-source. Relying 100% on SDRs makes you vulnerable."
   },
   {
     statement:'"These coaching meetings are a waste of time. I know what I\'m doing."',
-    opts:["Excuse: Uncoachable. Fix: The top 30% crave feedback and adapt fast. Open yourself to coaching.","Diagnosis: The meetings actually are a waste of time","Excuse: Wasting energy. Fix: Focus on closing deals instead.","You should skip the meetings"],
+    opts:["Excuse: Uncoachable. Fix: The top 30% crave feedback and adapt fast. Open yourself to coaching.","Excuse: Time management. Fix: Restructure meetings to be shorter and more focused.","Excuse: Wasting energy. Fix: Focus on closing deals instead.","Excuse: Self-sufficient. Fix: Replace group coaching with self-directed learning."],
     ans:0,
     fix:"Resolution: Excuse: Uncoachable. Real Fix: The top 30% crave feedback and adapt fast. Stop ignoring coaching."
   },
   {
     statement:'"I\'m chasing these low-quality deals because the inbound leads are terrible."',
-    opts:["Blame the SDRs for bad qualification","Excuse: Wasting energy on the wrong things. Fix: Qualify harder and focus on high-value leads.","Close the low-quality deals anyway","Excuse: Uncoachable. Fix: Listen to your manager."],
+    opts:["Excuse: Under-resourced. Fix: Ask for better marketing collateral to improve lead quality.","Excuse: Wasting energy on the wrong things. Fix: Qualify harder and focus on high-value leads.","Excuse: Process gap. Fix: Build a stricter lead scoring framework with the SDR team.","Excuse: Uncoachable. Fix: Listen to your manager."],
     ans:1,
     fix:"Resolution: Excuse: Wasting energy. Real Fix: Qualify harder and focus on high-value leads instead of chasing bad-fit deals to look busy."
   },
   {
     statement:'"I don\'t need to prospect, I\'m an AE. My job is to close."',
-    opts:["Diagnosis: You are absolutely right","Excuse: Avoiding tough tasks. Fix: Pick up the phone and own your results. Top AEs self-source.","You should just send automated emails","Excuse: Blaming marketing. Fix: Create better collateral."],
+    opts:["Excuse: Role clarity. Fix: Specialize fully in closing to maximize your win rate.","Excuse: Avoiding tough tasks. Fix: Pick up the phone and own your results. Top AEs self-source.","Excuse: Efficiency-focused. Fix: Automate outbound sequences to prospect without manual effort.","Excuse: Blaming marketing. Fix: Create better collateral."],
     ans:1,
     fix:"Resolution: Excuse: Avoiding tough tasks. Real Fix: Pick up the phone and own your results. Top AEs build their own pipeline."
   }
@@ -1166,7 +1199,7 @@ const QUIZ = [
   },
   {
     q:"What should an AE do if they catch themselves chasing bad-fit deals just to look busy?",
-    opts:["Keep chasing them to maintain high activity metrics","Blame marketing for sending bad leads","Qualify harder and focus their energy on high-value leads","Pass the bad-fit deals back to the SDR"],
+    opts:["Increase outreach volume to compensate for lower conversion rates","Adjust the ideal customer profile to include those deals","Qualify harder and focus their energy on high-value leads","Move those deals to a nurture sequence and revisit next quarter"],
     ans:2
   }
 ];
