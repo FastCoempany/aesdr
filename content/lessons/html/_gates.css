@@ -1,0 +1,217 @@
+/* ══════════════════════════════════════════
+   AESDR Accountability Gates — Styles v1
+   Matches lesson design system vars:
+     --black, --white, --mid, --lite, --lite2,
+     --amber, --cobalt, --green, --line, --iris,
+     --cond, --serif, --mono
+══════════════════════════════════════════ */
+
+/* ── Gate container ── */
+.gate-box {
+  margin: 28px 0 12px;
+  padding: 28px 32px 24px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  position: relative;
+}
+.gate-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+}
+
+/* ── Label / tag ── */
+.gate-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 14px;
+}
+
+/* ── Prompt text ── */
+.gate-prompt {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--black);
+  margin-bottom: 18px;
+}
+
+/* ── Textarea ── */
+.gate-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px 16px;
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--black);
+  background: var(--lite);
+  border: 1px solid var(--line2);
+  resize: vertical;
+  outline: none;
+  transition: border-color .2s;
+}
+.gate-textarea:focus {
+  border-color: var(--amber);
+}
+.gate-textarea.gate-evidence {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  min-height: 100px;
+}
+.gate-textarea::placeholder {
+  color: var(--mid);
+  opacity: .6;
+}
+
+/* ── Footer (counter + submit) ── */
+.gate-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  gap: 12px;
+}
+
+/* ── Character counter ── */
+.gate-counter {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+
+/* ── Submit button ── */
+.gate-submit {
+  font-family: var(--cond);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border: 2px solid var(--black);
+  background: var(--black);
+  color: var(--white);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all .15s;
+}
+.gate-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 2s linear infinite;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.gate-submit:hover::before {
+  opacity: 1;
+}
+.gate-submit:hover {
+  color: var(--black);
+}
+.gate-submit span {
+  position: relative;
+  z-index: 1;
+}
+.gate-submit:disabled,
+.gate-submit:disabled:hover {
+  opacity: .28;
+  cursor: not-allowed;
+  background: var(--black);
+  color: var(--white);
+}
+.gate-submit:disabled::before,
+.gate-submit:disabled:hover::before {
+  display: none;
+}
+
+/* ── Rubric checklist ── */
+.gate-rubric {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.gate-rubric-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 10px;
+}
+.gate-rubric-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--black);
+}
+.gate-rubric-item input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--amber);
+  flex-shrink: 0;
+}
+
+/* ── Time gate ── */
+.gate-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 20px 0 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--line2);
+  background: var(--lite);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+.gate-time-icon {
+  font-size: 14px;
+}
+.gate-time-num {
+  font-weight: 700;
+  color: var(--amber);
+  font-size: 13px;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* ── Completed state ── */
+.gate-done {
+  margin: 24px 0 8px;
+  padding: 20px 24px;
+  border: 2px solid var(--green);
+  background: var(--grn-lt);
+}
+.gate-done-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.gate-done-preview {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--mid);
+  font-style: italic;
+}

@@ -18,6 +18,485 @@
 [data-role="ae"] .sdr-text { display: none !important; }
 [data-role="sdr"] .ae-text { display: none !important; }
 </style>
+<!-- AESDR Accountability Gates -->
+<style>
+/* ══════════════════════════════════════════
+   AESDR Accountability Gates — Styles v1
+   Matches lesson design system vars:
+     --black, --white, --mid, --lite, --lite2,
+     --amber, --cobalt, --green, --line, --iris,
+     --cond, --serif, --mono
+══════════════════════════════════════════ */
+
+/* ── Gate container ── */
+.gate-box {
+  margin: 28px 0 12px;
+  padding: 28px 32px 24px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  position: relative;
+}
+.gate-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+}
+
+/* ── Label / tag ── */
+.gate-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 14px;
+}
+
+/* ── Prompt text ── */
+.gate-prompt {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--black);
+  margin-bottom: 18px;
+}
+
+/* ── Textarea ── */
+.gate-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px 16px;
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--black);
+  background: var(--lite);
+  border: 1px solid var(--line2);
+  resize: vertical;
+  outline: none;
+  transition: border-color .2s;
+}
+.gate-textarea:focus {
+  border-color: var(--amber);
+}
+.gate-textarea.gate-evidence {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  min-height: 100px;
+}
+.gate-textarea::placeholder {
+  color: var(--mid);
+  opacity: .6;
+}
+
+/* ── Footer (counter + submit) ── */
+.gate-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  gap: 12px;
+}
+
+/* ── Character counter ── */
+.gate-counter {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+
+/* ── Submit button ── */
+.gate-submit {
+  font-family: var(--cond);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border: 2px solid var(--black);
+  background: var(--black);
+  color: var(--white);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all .15s;
+}
+.gate-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 2s linear infinite;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.gate-submit:hover::before {
+  opacity: 1;
+}
+.gate-submit:hover {
+  color: var(--black);
+}
+.gate-submit span {
+  position: relative;
+  z-index: 1;
+}
+.gate-submit:disabled,
+.gate-submit:disabled:hover {
+  opacity: .28;
+  cursor: not-allowed;
+  background: var(--black);
+  color: var(--white);
+}
+.gate-submit:disabled::before,
+.gate-submit:disabled:hover::before {
+  display: none;
+}
+
+/* ── Rubric checklist ── */
+.gate-rubric {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.gate-rubric-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 10px;
+}
+.gate-rubric-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--black);
+}
+.gate-rubric-item input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--amber);
+  flex-shrink: 0;
+}
+
+/* ── Time gate ── */
+.gate-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 20px 0 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--line2);
+  background: var(--lite);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+.gate-time-icon {
+  font-size: 14px;
+}
+.gate-time-num {
+  font-weight: 700;
+  color: var(--amber);
+  font-size: 13px;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* ── Completed state ── */
+.gate-done {
+  margin: 24px 0 8px;
+  padding: 20px 24px;
+  border: 2px solid var(--green);
+  background: var(--grn-lt);
+}
+.gate-done-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.gate-done-preview {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--mid);
+  font-style: italic;
+}
+
+</style>
+<script>
+/*  AESDR Accountability Gates v1
+ *  Inject into lesson HTML files alongside role-detection.
+ *
+ *  Usage in lesson JS:
+ *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
+ *    AESDR.gate(1, { type:'time', seconds:60 });
+ *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
+ *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
+ *
+ *  In canContinue():
+ *    if (!AESDR.gateReady(cur)) return false;
+ *
+ *  Gate state auto-saves via postMessage when completed.
+ */
+window.AESDR = window.AESDR || {};
+
+(function(A) {
+  var gates = {};      // screenNum -> config
+  var gateState = {};  // screenNum -> { completed, value, ... }
+  var timers = {};     // screenNum -> { started, remaining }
+
+  /* ── Register a gate ── */
+  A.gate = function(screen, cfg) {
+    gates[screen] = cfg;
+    gateState[screen] = { completed: false, value: '' };
+  };
+
+  /* ── Check if gate is satisfied ── */
+  A.gateReady = function(screen) {
+    if (!gates[screen]) return true;
+    return gateState[screen] && gateState[screen].completed;
+  };
+
+  /* ── Get gate hint text ── */
+  A.gateHint = function(screen) {
+    var g = gates[screen];
+    if (!g) return '';
+    var s = gateState[screen];
+    if (s.completed) return '\u2713 Gate complete';
+
+    if (g.type === 'time') {
+      var r = timers[screen] ? timers[screen].remaining : g.seconds;
+      return r > 0 ? 'Unlocks in ' + r + 's' : '';
+    }
+    if (g.type === 'reflection' || g.type === 'evidence') {
+      var len = (s.value || '').length;
+      return len + ' / ' + g.minChars + ' characters';
+    }
+    if (g.type === 'application') {
+      var len2 = (s.value || '').length;
+      var checks = s.rubricChecked || 0;
+      var total = (g.rubric || []).length;
+      return len2 + ' chars \u00B7 ' + checks + '/' + total + ' rubric items';
+    }
+    return '';
+  };
+
+  /* ── Get all gate data for stateData (progress saving) ── */
+  A.gateData = function() {
+    var out = {};
+    for (var k in gateState) {
+      if (gateState[k].completed) {
+        out['gate_' + k] = {
+          type: gates[k].type,
+          value: gateState[k].value,
+          completedAt: gateState[k].completedAt
+        };
+      }
+    }
+    return out;
+  };
+
+  /* ── Render gate UI into a container ── */
+  A.renderGate = function(screen, containerId) {
+    var g = gates[screen];
+    if (!g) return;
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    var s = gateState[screen];
+
+    if (s.completed) {
+      el.innerHTML = _completedHTML(g, s);
+      return;
+    }
+
+    switch(g.type) {
+      case 'reflection': el.innerHTML = _reflectionHTML(screen, g, s); break;
+      case 'application': el.innerHTML = _applicationHTML(screen, g, s); break;
+      case 'evidence': el.innerHTML = _evidenceHTML(screen, g, s); break;
+      case 'time': _startTimer(screen, g); el.innerHTML = _timeHTML(screen, g); break;
+    }
+  };
+
+  /* ── Completed state ── */
+  function _completedHTML(g, s) {
+    var typeLabel = { reflection:'Reflection', application:'Response', evidence:'Evidence', time:'Time' };
+    return '<div class="gate-done">' +
+      '<div class="gate-done-tag">\u2713 ' + (typeLabel[g.type]||'Gate') + ' Submitted</div>' +
+      (g.type !== 'time' ? '<div class="gate-done-preview">' + _esc(s.value).substring(0,200) + (s.value.length > 200 ? '...' : '') + '</div>' : '') +
+    '</div>';
+  }
+
+  /* ── Reflection Gate ── */
+  function _reflectionHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Reflection Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your reflection here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Reflection</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Application Gate ── */
+  function _applicationHTML(screen, g) {
+    var rubricHTML = (g.rubric || []).map(function(r, i) {
+      return '<label class="gate-rubric-item">' +
+        '<input type="checkbox" onchange="AESDR._onRubric(' + screen + ',' + i + ',this.checked)">' +
+        '<span>' + r + '</span></label>';
+    }).join('');
+
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Application Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your response...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-counter" id="gateCtr' + screen + '">0 / ' + (g.minChars || 50) + ' characters</div>' +
+      (rubricHTML ? '<div class="gate-rubric"><div class="gate-rubric-label">Self-evaluate your response:</div>' + rubricHTML + '</div>' : '') +
+      '<div class="gate-footer">' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Response</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Evidence Gate ── */
+  function _evidenceHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Evidence Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea gate-evidence" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Paste your evidence here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Evidence</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Time Gate ── */
+  function _timeHTML(screen, g) {
+    var r = timers[screen] ? timers[screen].remaining : g.seconds;
+    if (r <= 0) return '';
+    return '<div class="gate-time" id="gateTime' + screen + '">' +
+      '<span class="gate-time-icon">\u23F3</span> ' +
+      '<span class="gate-time-num" id="gateTimeCtr' + screen + '">' + r + '</span>s remaining' +
+    '</div>';
+  }
+
+  function _startTimer(screen, g) {
+    if (timers[screen]) return;
+    timers[screen] = { remaining: g.seconds };
+    var iv = setInterval(function() {
+      timers[screen].remaining--;
+      var el = document.getElementById('gateTimeCtr' + screen);
+      if (el) el.textContent = timers[screen].remaining;
+      if (timers[screen].remaining <= 0) {
+        clearInterval(iv);
+        gateState[screen].completed = true;
+        gateState[screen].completedAt = new Date().toISOString();
+        var timeEl = document.getElementById('gateTime' + screen);
+        if (timeEl) timeEl.style.display = 'none';
+        // Trigger render if the lesson exposes it
+        if (typeof window.render === 'function') window.render();
+      }
+    }, 1000);
+  }
+
+  /* ── Internal handlers ── */
+  A._onInput = function(screen, val) {
+    gateState[screen].value = val;
+    var g = gates[screen];
+    var min = g.minChars || 50;
+    var ctr = document.getElementById('gateCtr' + screen);
+    if (ctr) ctr.textContent = val.length + ' / ' + min + (g.type === 'application' ? ' characters' : '');
+
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      var ready = val.length >= min;
+      if (g.type === 'application' && g.rubric) {
+        var checks = gateState[screen].rubricChecked || 0;
+        ready = ready && checks >= g.rubric.length;
+      }
+      btn.disabled = !ready;
+    }
+  };
+
+  A._onRubric = function(screen, idx, checked) {
+    if (!gateState[screen]._rubric) gateState[screen]._rubric = {};
+    gateState[screen]._rubric[idx] = checked;
+    var count = 0;
+    for (var k in gateState[screen]._rubric) {
+      if (gateState[screen]._rubric[k]) count++;
+    }
+    gateState[screen].rubricChecked = count;
+
+    // Re-check submit button
+    var g = gates[screen];
+    var val = gateState[screen].value || '';
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      btn.disabled = !(val.length >= (g.minChars || 50) && count >= (g.rubric || []).length);
+    }
+  };
+
+  A._submit = function(screen) {
+    var s = gateState[screen];
+    s.completed = true;
+    s.completedAt = new Date().toISOString();
+
+    // Re-render the gate as completed
+    var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
+    containers.forEach(function(el) { A.renderGate(screen, el.id); });
+
+    // Save progress via postMessage
+    if (window.parent !== window) {
+      try {
+        window.parent.postMessage({
+          type: 'aesdr:progress',
+          screen: screen,
+          stateData: A.gateData()
+        }, '*');
+      } catch(e) {}
+    }
+
+    // Trigger render if available
+    if (typeof window.render === 'function') window.render();
+  };
+
+  /* ── Escape helper ── */
+  function _esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+})(window.AESDR);
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AESDR — Course 7.3: Is Working in SaaS Even Worth It?</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -677,7 +1156,7 @@ function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); render();
 }
 function go(n){
-  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:{}},"*")}catch(e){}}
+  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;
   document.getElementById('s'+cur).classList.add('active');
