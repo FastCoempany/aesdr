@@ -56,6 +56,21 @@
   animation: iris 4.5s linear infinite;
 }
 
+.navLink {
+  font-family: var(--cond);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.navLink:hover {
+  color: var(--text-main);
+}
+
 .navCta {
   font-family: var(--cond);
   font-size: 13px;

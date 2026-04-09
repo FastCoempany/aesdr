@@ -75,7 +75,10 @@ export default function LandingPage() {
       {/* ─── NAV ─── */}
       <header className={styles.nav}>
         <span className={styles.brand}>AESDR</span>
-        <a href="#pricing" className={styles.navCta}>Get Access</a>
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          <Link href="/login" className={styles.navLink}>Sign In</Link>
+          <a href="#pricing" className={styles.navCta}>Get Access</a>
+        </div>
       </header>
 
       {/* ═══════════════════════════════════════════════
