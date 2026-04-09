@@ -40,7 +40,7 @@ function welcomeHtml(name: string, email: string, tempPassword: string | null) {
   <p>No long onboarding. No orientation video. Here's what matters:</p>
   ${credentialsBlock}
   <p style="margin:24px 0"><a href="${loginUrl}" style="display:inline-block;padding:14px 28px;background:#10B981;color:#fff;font-weight:700;text-decoration:none;font-size:16px">Sign In & Start →</a></p>
-  <p>Course 1 covers the fundamentals — creating structure, building real camaraderie with your AE, and setting up your first 90 days the right way.</p>
+  <p>Course 1 covers the fundamentals — creating structure, building real camaraderie in your AE/SDR partnership, and setting up your first 90 days the right way.</p>
   <p><strong>A few things to know:</strong></p>
   <ul>
     <li>There are 12 courses. Each has 3 lessons with interactive exercises.</li>
@@ -106,7 +106,7 @@ function day3Html(name: string) {
   <p>Hey ${name},</p>
   <p>Day 3. If you've started Course 1 — nice. If you haven't, no guilt. Open it when you're ready.</p>
   <p><strong>One thing from Course 2 to keep in your back pocket:</strong></p>
-  <p>The "blame chain" is a pattern where SDRs blame their manager, their manager blames marketing, and marketing blames the product. Everyone's pointing fingers. Nobody's fixing anything.</p>
+  <p>The "blame chain" is a pattern where everyone points fingers — reps blame their manager, managers blame marketing, and marketing blames the product. Nobody's fixing anything.</p>
   <p>Course 2 gives you a framework to break the chain — not by being a hero, but by asking the right questions in the right meetings.</p>
   <p><strong><a href="${SITE}/dashboard" style="color:#10B981">Continue where you left off →</a></strong></p>
   <p>— AESDR</p>
@@ -131,7 +131,7 @@ function day7Html(name: string) {
 <div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
   <p>Hey ${name},</p>
   <p>Week 1. Here's where most AESDR students are right now: finishing Course 3.</p>
-  <p>Course 3 is where you build the <strong>AE/SDR Alignment Contract</strong> — a one-page document that gets you and your AE on the same page about handoffs, expectations, and accountability. It's the single most downloaded tool in the program.</p>
+  <p>Course 3 is where you build the <strong>AE/SDR Alignment Contract</strong> — a one-page document that gets both sides on the same page about handoffs, expectations, and accountability. It's the single most downloaded tool in the program.</p>
   <p>If you're ahead of that: great. Courses 4–6 get into manager dynamics, career pathing, and network building.</p>
   <p>If you're behind: that's fine too. This isn't a race. It's a system. Come back to it when you have 20 minutes.</p>
   <p><strong><a href="${SITE}/course/3" style="color:#10B981">Jump to Course 3 →</a></strong></p>

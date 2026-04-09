@@ -44,6 +44,8 @@ export default async function Dashboard() {
     }
   }
 
+  const userRole = user?.user_metadata?.role as string | undefined;
+
   const nextLessonId = LESSONS.find(
     (l) => !progressMap[l.id]?.is_completed
   )?.id;
@@ -212,6 +214,8 @@ export default async function Dashboard() {
             const isCompleted = progress?.is_completed ?? false;
             const lastScreen = progress?.last_screen ?? 0;
             const isNext = lesson.id === nextLessonId;
+            const displayTitle = userRole === 'ae' && lesson.titleAe ? lesson.titleAe : lesson.title;
+            const displaySubtitle = userRole === 'ae' && lesson.subtitleAe ? lesson.subtitleAe : lesson.subtitle;
             const screenPct =
               lesson.totalScreens > 1
                 ? Math.round(
@@ -289,7 +293,7 @@ export default async function Dashboard() {
                     color: "var(--text-main)",
                   }}
                 >
-                  {lesson.title}
+                  {displayTitle}
                 </h2>
                 <p
                   style={{
@@ -299,7 +303,7 @@ export default async function Dashboard() {
                     lineHeight: "1.5",
                   }}
                 >
-                  {lesson.subtitle}
+                  {displaySubtitle}
                 </p>
 
                 {user && !isCompleted && lastScreen > 0 && (
