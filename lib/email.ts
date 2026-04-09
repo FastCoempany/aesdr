@@ -13,22 +13,24 @@ const UNSUBSCRIBE_HEADERS = {
 
 // ─── Welcome Email (immediate after purchase) ───
 
-export async function sendWelcomeEmail(to: string, name: string) {
+export async function sendWelcomeEmail(to: string, name: string, magicLink: string | null) {
   return getResend().emails.send({
     from: FROM,
     to,
     headers: UNSUBSCRIBE_HEADERS,
     subject: "You're in. Start here.",
-    html: welcomeHtml(name),
+    html: welcomeHtml(name, magicLink),
   });
 }
 
-function welcomeHtml(name: string) {
+function welcomeHtml(name: string, magicLink: string | null) {
+  const ctaUrl = magicLink || `${SITE}/login`;
+  const ctaLabel = magicLink ? 'Access Your Courses' : 'Sign in to start';
   return `
 <div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
-  <p>Welcome to AESDR.</p>
+  <p>Welcome to AESDR${name !== 'there' ? `, ${name}` : ''}.</p>
   <p>No long onboarding. No orientation video. Here's what matters:</p>
-  <p><strong><a href="${SITE}/dashboard" style="color:#10B981">Start here → Lesson 1</a></strong></p>
+  <p style="margin:24px 0"><a href="${ctaUrl}" style="display:inline-block;padding:14px 28px;background:#10B981;color:#fff;font-weight:700;text-decoration:none;font-size:16px">${ctaLabel} →</a></p>
   <p>Course 1 covers the fundamentals — creating structure, building real camaraderie with your AE, and setting up your first 90 days the right way.</p>
   <p><strong>A few things to know:</strong></p>
   <ul>
@@ -39,6 +41,39 @@ function welcomeHtml(name: string) {
   <p><strong>Join the community:</strong> <a href="https://discord.gg/uEpAz3yw" style="color:#10B981">AESDR Discord</a></p>
   <p><strong>If you need help:</strong> Reply to this email or reach out at <a href="mailto:support@aesdr.com" style="color:#10B981">support@aesdr.com</a>. Real person, real inbox, 48-hour response time.</p>
   <p>Go.</p>
+  <p>— AESDR</p>
+  ${footer()}
+</div>`;
+}
+
+// ─── Purchase Receipt Email ───
+
+export async function sendReceiptEmail(to: string, name: string, tier: string, amountCents: number) {
+  return getResend().emails.send({
+    from: FROM,
+    to,
+    headers: UNSUBSCRIBE_HEADERS,
+    subject: 'AESDR — Purchase Confirmation',
+    html: receiptHtml(name, tier, amountCents),
+  });
+}
+
+function receiptHtml(name: string, tier: string, amountCents: number) {
+  const amount = (amountCents / 100).toFixed(2);
+  const planLabel = tier === 'team' ? 'Team' : 'Individual';
+  const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  return `
+<div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
+  <p style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#10B981;margin-bottom:4px">Purchase Confirmed</p>
+  <p>Hey ${name},</p>
+  <p>This confirms your AESDR purchase. Keep this email for your records.</p>
+  <div style="background:#f8f9fa;padding:16px 20px;margin:16px 0;border-left:3px solid #10B981">
+    <p style="margin:0 0 4px"><strong>Plan:</strong> AESDR ${planLabel}</p>
+    <p style="margin:0 0 4px"><strong>Amount:</strong> $${amount}</p>
+    <p style="margin:0 0 4px"><strong>Date:</strong> ${date}</p>
+    <p style="margin:0"><strong>Refund window:</strong> 14 days from purchase</p>
+  </div>
+  <p>If you need a formal invoice or have billing questions, reply to this email.</p>
   <p>— AESDR</p>
   ${footer()}
 </div>`;

@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createAdminClient } from '@/utils/supabase/admin';
-import { sendWelcomeEmail } from '@/lib/email';
+import { sendWelcomeEmail, sendReceiptEmail } from '@/lib/email';
 
 function getStripe() {
   return new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -35,14 +35,50 @@ export async function POST(request: Request) {
 
     const supabase = createAdminClient();
 
-    // Look up Supabase auth user by email to link purchase to user_id
+    // Look up or create Supabase auth user by email
     let userId: string | null = null;
+    let magicLink: string | null = null;
+
     if (email) {
+      // Check if user already exists
       const { data: users } = await supabase.auth.admin.listUsers({ perPage: 1000 });
-      const matched = users?.users?.find(
+      const existingUser = users?.users?.find(
         (u) => u.email?.toLowerCase() === email.toLowerCase()
       );
-      if (matched) userId = matched.id;
+
+      if (existingUser) {
+        userId = existingUser.id;
+      } else {
+        // Auto-create auth user with a random password (they'll use magic link)
+        const tempPassword = crypto.randomUUID() + crypto.randomUUID();
+        const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
+          email,
+          password: tempPassword,
+          email_confirm: true,
+          user_metadata: { full_name: name !== 'there' ? name : undefined },
+        });
+
+        if (createError) {
+          console.error('Failed to create auth user:', createError);
+        } else if (newUser?.user) {
+          userId = newUser.user.id;
+        }
+      }
+
+      // Generate magic link for the welcome email
+      const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
+        type: 'magiclink',
+        email,
+        options: {
+          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://aesdr.com'}/auth/callback?next=/dashboard`,
+        },
+      });
+
+      if (linkError) {
+        console.error('Failed to generate magic link:', linkError);
+      } else if (linkData?.properties?.action_link) {
+        magicLink = linkData.properties.action_link;
+      }
     }
 
     // Record purchase (idempotent via upsert on stripe_session_id)
@@ -66,12 +102,18 @@ export async function POST(request: Request) {
       .update({ completed: true })
       .eq('session_id', session.id);
 
-    // Send welcome email (don't let failure break the webhook)
+    // Send emails (don't let failures break the webhook)
     if (email) {
       try {
-        await sendWelcomeEmail(email, name);
+        await sendWelcomeEmail(email, name, magicLink);
       } catch (err) {
         console.error('Welcome email failed:', err);
+      }
+
+      try {
+        await sendReceiptEmail(email, name, tier, amountCents);
+      } catch (err) {
+        console.error('Receipt email failed:', err);
       }
     }
   }

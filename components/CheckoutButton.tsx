@@ -12,14 +12,17 @@ export default function CheckoutButton({
   className?: string;
 }) {
   const [loading, setLoading] = useState(false);
+  const [showEmail, setShowEmail] = useState(false);
+  const [email, setEmail] = useState("");
 
-  async function handleClick() {
+  async function handleCheckout() {
+    if (!email || !email.includes("@")) return;
     setLoading(true);
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tier }),
+        body: JSON.stringify({ tier, email }),
       });
 
       const data = await res.json();
@@ -35,14 +38,46 @@ export default function CheckoutButton({
     }
   }
 
+  if (showEmail) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%" }}>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleCheckout()}
+          placeholder="Your work email"
+          autoFocus
+          style={{
+            fontFamily: "var(--serif)",
+            fontSize: "16px",
+            padding: "14px 16px",
+            background: "var(--bg-panel, #0F172A)",
+            border: "1px solid var(--line, #1E293B)",
+            color: "var(--text-main, #F8FAFC)",
+            width: "100%",
+            outline: "none",
+          }}
+        />
+        <button
+          onClick={handleCheckout}
+          className={className}
+          disabled={loading || !email.includes("@")}
+          style={loading ? { opacity: 0.6, cursor: "wait" } : undefined}
+        >
+          {loading ? "Loading..." : "Continue to Payment"}
+        </button>
+      </div>
+    );
+  }
+
   return (
     <button
-      onClick={handleClick}
+      onClick={() => setShowEmail(true)}
       className={className}
       disabled={loading}
-      style={loading ? { opacity: 0.6, cursor: "wait" } : undefined}
     >
-      {loading ? "Loading..." : label}
+      {label}
     </button>
   );
 }
