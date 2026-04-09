@@ -64,7 +64,10 @@ export async function POST(request: Request) {
           email,
           password: tempPassword,
           email_confirm: true,
-          user_metadata: { full_name: name !== 'there' ? name : undefined },
+          user_metadata: {
+            full_name: name !== 'there' ? name : undefined,
+            needs_password_change: true,
+          },
         });
 
         if (createError) {

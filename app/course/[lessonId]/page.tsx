@@ -48,6 +48,11 @@ export default async function LessonPage({
     redirect("/login");
   }
 
+  // Force password change for users with temp passwords
+  if (user.user_metadata?.needs_password_change) {
+    redirect("/account/set-password");
+  }
+
   // Purchase gate — bypass for founder (GhostButton cookie)
   const cookieStore = await cookies();
   const hasBypass = cookieStore.get("aesdr_bypass")?.value === "1";

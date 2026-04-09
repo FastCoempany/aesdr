@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { redirect } from "next/navigation";
 import SignOutButton from "@/components/SignOutButton";
 import { createClient } from "@/utils/supabase/server";
 import { LESSONS } from "@/utils/progress/types";
@@ -17,6 +18,11 @@ export default async function Dashboard() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  // Force password change for users with temp passwords
+  if (user?.user_metadata?.needs_password_change) {
+    redirect("/account/set-password");
+  }
 
   let progressMap: Record<string, LessonProgressSummary> = {};
 
