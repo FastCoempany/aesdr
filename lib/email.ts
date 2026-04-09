@@ -13,24 +13,33 @@ const UNSUBSCRIBE_HEADERS = {
 
 // ─── Welcome Email (immediate after purchase) ───
 
-export async function sendWelcomeEmail(to: string, name: string, magicLink: string | null) {
+export async function sendWelcomeEmail(to: string, name: string, tempPassword: string | null) {
   return getResend().emails.send({
     from: FROM,
     to,
     headers: UNSUBSCRIBE_HEADERS,
     subject: "You're in. Start here.",
-    html: welcomeHtml(name, magicLink),
+    html: welcomeHtml(name, to, tempPassword),
   });
 }
 
-function welcomeHtml(name: string, magicLink: string | null) {
-  const ctaUrl = magicLink || `${SITE}/login`;
-  const ctaLabel = magicLink ? 'Access Your Courses' : 'Sign in to start';
+function welcomeHtml(name: string, email: string, tempPassword: string | null) {
+  const loginUrl = `${SITE}/login`;
+  const credentialsBlock = tempPassword
+    ? `
+  <div style="background:#f8f9fa;padding:16px 20px;margin:20px 0;border-left:3px solid #10B981">
+    <p style="margin:0 0 6px;font-weight:700">Your login credentials:</p>
+    <p style="margin:0 0 4px"><strong>Email:</strong> ${email}</p>
+    <p style="margin:0 0 4px"><strong>Temporary password:</strong> <code style="background:#e8e8e8;padding:2px 6px;font-size:15px">${tempPassword}</code></p>
+    <p style="margin:8px 0 0;font-size:13px;color:#666">Change your password after signing in at Account → Change Password.</p>
+  </div>`
+    : '';
   return `
 <div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
   <p>Welcome to AESDR${name !== 'there' ? `, ${name}` : ''}.</p>
   <p>No long onboarding. No orientation video. Here's what matters:</p>
-  <p style="margin:24px 0"><a href="${ctaUrl}" style="display:inline-block;padding:14px 28px;background:#10B981;color:#fff;font-weight:700;text-decoration:none;font-size:16px">${ctaLabel} →</a></p>
+  ${credentialsBlock}
+  <p style="margin:24px 0"><a href="${loginUrl}" style="display:inline-block;padding:14px 28px;background:#10B981;color:#fff;font-weight:700;text-decoration:none;font-size:16px">Sign In & Start →</a></p>
   <p>Course 1 covers the fundamentals — creating structure, building real camaraderie with your AE, and setting up your first 90 days the right way.</p>
   <p><strong>A few things to know:</strong></p>
   <ul>
