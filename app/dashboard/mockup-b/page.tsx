@@ -11,19 +11,20 @@ export const metadata: Metadata = {
 };
 
 /* ─── Rowan Pope energy. Each line is cryptic, sharp, slightly menacing. ─── */
-const TEASERS: Record<string, string> = {
-  "1": "You think you're ready. You're not. But we start here anyway.",
-  "2": "Your own team is working against you and they don't even know it.",
-  "3": "Nobody is coming to save you. Learn to save yourself.",
-  "4": "Fear is a choice. A poor one. This is where you stop choosing it.",
-  "5": "Your outreach is a confession letter. Let's make it a weapon.",
-  "6": "They will say no. The question is what you do in the next four seconds.",
-  "7": "Hope is not a pipeline strategy. Math is. Learn the math.",
-  "8": "You're talking too much. That's not an opinion — it's a diagnosis.",
-  "9": "Eleven hours yesterday. Four of them were selling. Do the arithmetic.",
-  "10": "They will change your comp plan. The only question is whether you're ready.",
-  "11": "One thread. One champion. One prayer. That's not strategy — that's religion.",
-  "12": "This is where you stop reading and start executing. 72 hours. No mercy.",
+/* `lead` stays muted italic. `kicker` gets the iris shimmer. */
+const TEASERS: Record<string, { lead: string; kicker: string }> = {
+  "1":  { lead: "You think you\u2019re ready. You\u2019re not.", kicker: "But we start here anyway." },
+  "2":  { lead: "Your own team is working against you.", kicker: "And they don\u2019t even know it." },
+  "3":  { lead: "Nobody is coming to save you.", kicker: "Learn to save yourself." },
+  "4":  { lead: "Fear is a choice. A poor one.", kicker: "This is where you stop choosing it." },
+  "5":  { lead: "Your outreach is a confession letter.", kicker: "Let\u2019s make it a weapon." },
+  "6":  { lead: "They will say no.", kicker: "The question is what you do in the next four seconds." },
+  "7":  { lead: "Hope is not a pipeline strategy.", kicker: "Math is. Learn the math." },
+  "8":  { lead: "You\u2019re talking too much.", kicker: "That\u2019s not an opinion \u2014 it\u2019s a diagnosis." },
+  "9":  { lead: "Eleven hours yesterday. Four of them were selling.", kicker: "Do the arithmetic." },
+  "10": { lead: "They will change your comp plan.", kicker: "The only question is whether you\u2019re ready." },
+  "11": { lead: "One thread. One champion. One prayer.", kicker: "That\u2019s not strategy \u2014 that\u2019s religion." },
+  "12": { lead: "This is where you stop reading.", kicker: "72 hours. No mercy." },
 };
 
 export default async function MockupB() {
@@ -87,8 +88,11 @@ export default async function MockupB() {
           </p>
           <h1
             style={{
-              fontFamily: "var(--display)",
-              fontSize: "clamp(28px, 4vw, 44px)",
+              fontFamily: "var(--cond)",
+              fontSize: "clamp(32px, 5vw, 48px)",
+              fontWeight: 800,
+              letterSpacing: ".06em",
+              textTransform: "uppercase" as const,
               lineHeight: "1",
               marginBottom: "12px",
             }}
@@ -237,11 +241,28 @@ export default async function MockupB() {
                       maxWidth: "480px",
                     }}
                   >
-                    {isVisible
-                      ? TEASERS[lesson.id]
-                      : isLocked
-                        ? "You haven't earned this yet."
-                        : ""}
+                    {isVisible && TEASERS[lesson.id] ? (
+                      <>
+                        {TEASERS[lesson.id].lead}{" "}
+                        <span
+                          style={{
+                            fontStyle: "normal",
+                            fontWeight: 600,
+                            background: "var(--iris)",
+                            backgroundSize: "200% 100%",
+                            WebkitBackgroundClip: "text",
+                            WebkitTextFillColor: "transparent",
+                            animation: "iris 3s linear infinite",
+                          }}
+                        >
+                          {TEASERS[lesson.id].kicker}
+                        </span>
+                      </>
+                    ) : isLocked ? (
+                      "You haven't earned this yet."
+                    ) : (
+                      ""
+                    )}
                   </p>
                 </div>
               </div>
