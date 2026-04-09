@@ -38,11 +38,8 @@ export async function POST(request: Request) {
     // Look up Supabase auth user by email to link purchase to user_id
     let userId: string | null = null;
     if (email) {
-      const { data: userList } = await supabase.auth.admin.listUsers();
-      const matchedUser = userList?.users?.find(
-        (u) => u.email?.toLowerCase() === email.toLowerCase()
-      );
-      if (matchedUser) userId = matchedUser.id;
+      const { data } = await supabase.auth.admin.getUserByEmail(email);
+      if (data?.user) userId = data.user.id;
     }
 
     // Record purchase (idempotent via upsert on stripe_session_id)
