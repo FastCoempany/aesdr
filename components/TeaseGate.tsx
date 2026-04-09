@@ -10,6 +10,15 @@ function hasCookie() {
   return document.cookie.split(";").some((c) => c.trim().startsWith(`${COOKIE_NAME}=`));
 }
 
+function hasBypassCookie() {
+  return document.cookie.split(";").some((c) => c.trim().startsWith("aesdr_bypass="));
+}
+
+function hasAuthSession() {
+  // Supabase auth cookies start with sb- and contain auth-token
+  return document.cookie.split(";").some((c) => c.trim().match(/^sb-.*-auth-token/));
+}
+
 function setCookie() {
   document.cookie = `${COOKIE_NAME}=1; path=/; max-age=31536000; SameSite=Lax`;
 }
@@ -19,7 +28,7 @@ export default function TeaseGate({ children }: { children: React.ReactNode }) {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    if (hasCookie()) {
+    if (hasCookie() || hasBypassCookie() || hasAuthSession()) {
       setGated(false);
     }
     setLoaded(true);

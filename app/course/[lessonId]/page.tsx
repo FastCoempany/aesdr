@@ -53,6 +53,7 @@ export default async function LessonPage({
   const hasBypass = cookieStore.get("aesdr_bypass")?.value === "1";
 
   if (!hasBypass) {
+    // Check by email first, then by user_id as fallback
     const { data: purchase } = await supabase
       .from("purchases")
       .select("id")
@@ -62,7 +63,18 @@ export default async function LessonPage({
       .maybeSingle();
 
     if (!purchase) {
-      redirect("/#pricing");
+      // Fallback: check by user_id (handles email mismatch scenarios)
+      const { data: purchaseById } = await supabase
+        .from("purchases")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("status", "active")
+        .limit(1)
+        .maybeSingle();
+
+      if (!purchaseById) {
+        redirect("/login?reason=no_purchase");
+      }
     }
   }
 

@@ -77,7 +77,12 @@ export default async function Dashboard() {
           style={{ fontFamily: "var(--cond)", fontWeight: 600, fontSize: "13px", letterSpacing: ".1em", textTransform: "uppercase" as const }}
         >
           {user ? (
-            <SignOutButton />
+            <div className="flex items-center gap-4">
+              <Link href="/account" style={{ color: "var(--text-muted)", textDecoration: "none" }}>
+                Account
+              </Link>
+              <SignOutButton />
+            </div>
           ) : (
             <Link href="/login" style={{ color: "var(--theme)" }}>
               Sign In
@@ -87,6 +92,43 @@ export default async function Dashboard() {
       </nav>
 
       <div className="mx-auto w-full max-w-5xl py-16" style={{ color: "var(--text-main)" }}>
+        {/* Welcome banner for brand-new users */}
+        {user && completedCount === 0 && !Object.keys(progressMap).length && (
+          <div
+            className="mb-8"
+            style={{
+              padding: "20px 24px",
+              background: "rgba(16,185,129,0.06)",
+              border: "1px solid rgba(16,185,129,0.15)",
+            }}
+          >
+            <p
+              style={{
+                fontFamily: "var(--cond)",
+                fontSize: "16px",
+                fontWeight: 700,
+                letterSpacing: ".04em",
+                textTransform: "uppercase" as const,
+                color: "var(--theme)",
+                marginBottom: "6px",
+              }}
+            >
+              Welcome to AESDR
+            </p>
+            <p
+              style={{
+                fontFamily: "var(--serif)",
+                fontSize: "15px",
+                color: "var(--text-muted)",
+                lineHeight: "1.6",
+                margin: 0,
+              }}
+            >
+              You have access to all 12 lessons and 5 downloadable tools. Start with Lesson 1 below — it&apos;s marked &quot;Up Next&quot; for you.
+            </p>
+          </div>
+        )}
+
         {/* Header */}
         <header className="mb-14 space-y-5">
           <p

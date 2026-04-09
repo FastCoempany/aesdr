@@ -1,15 +1,67 @@
 'use client';
 
-import { useEffect } from 'react';
+import { Suspense, useEffect, useState, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function SuccessPage() {
+interface PurchaseInfo {
+  confirmed: boolean;
+  email?: string;
+  name?: string;
+  plan?: string;
+}
+
+function SuccessContent() {
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get('session_id');
+  const [purchase, setPurchase] = useState<PurchaseInfo | null>(null);
+  const [polling, setPolling] = useState(true);
+
+  const checkPurchase = useCallback(async () => {
+    if (!sessionId) {
+      setPolling(false);
+      return;
+    }
+    try {
+      const res = await fetch(`/api/purchase-status?session_id=${sessionId}`);
+      const data: PurchaseInfo = await res.json();
+      if (data.confirmed) {
+        setPurchase(data);
+        setPolling(false);
+      }
+    } catch {
+      // Retry on next interval
+    }
+  }, [sessionId]);
 
   useEffect(() => {
+    // Fire Reddit pixel
     if (typeof window !== 'undefined' && (window as any).rdt) {
       (window as any).rdt('track', 'Purchase');
     }
-  }, []);
+
+    // Initial check
+    checkPurchase();
+
+    // Poll every 2s until confirmed (max 30s)
+    const interval = setInterval(() => {
+      if (polling) checkPurchase();
+    }, 2000);
+
+    const timeout = setTimeout(() => {
+      setPolling(false);
+      clearInterval(interval);
+    }, 30000);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
+  }, [checkPurchase, polling]);
+
+  const displayName = purchase?.name || null;
+  const displayEmail = purchase?.email || null;
+  const confirmed = purchase?.confirmed ?? false;
 
   return (
     <main
@@ -18,17 +70,33 @@ export default function SuccessPage() {
     >
       <div className="mx-auto max-w-2xl" style={{ color: "var(--text-main)" }}>
 
+        {/* Status badge */}
         <p
           style={{
             fontFamily: "var(--mono)",
             fontSize: "10px",
             letterSpacing: ".2em",
             textTransform: "uppercase",
-            color: "var(--theme)",
+            color: confirmed ? "var(--theme)" : "var(--amber, #F59E0B)",
             marginBottom: "12px",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
           }}
         >
-          Purchase confirmed
+          {confirmed ? (
+            "Purchase confirmed"
+          ) : polling ? (
+            <>
+              <span
+                className="inline-block h-3 w-3 animate-spin rounded-full border"
+                style={{ borderColor: "var(--line)", borderTopColor: "var(--amber, #F59E0B)" }}
+              />
+              Confirming your purchase...
+            </>
+          ) : (
+            "Purchase processing"
+          )}
         </p>
 
         <h1
@@ -39,7 +107,9 @@ export default function SuccessPage() {
             marginBottom: "24px",
           }}
         >
-          Welcome to AESDR.
+          {displayName && displayName !== 'there'
+            ? `Welcome, ${displayName}.`
+            : "Welcome to AESDR."}
         </h1>
 
         <p
@@ -56,6 +126,8 @@ export default function SuccessPage() {
 
         {/* Next steps */}
         <div style={{ display: "flex", flexDirection: "column", gap: "20px", marginBottom: "48px" }}>
+
+          {/* Step 1: Check email */}
           <div
             style={{
               padding: "20px 24px",
@@ -89,7 +161,7 @@ export default function SuccessPage() {
                   marginBottom: "4px",
                 }}
               >
-                Start Lesson 1
+                Check your email
               </p>
               <p
                 style={{
@@ -99,11 +171,19 @@ export default function SuccessPage() {
                   lineHeight: "1.6",
                 }}
               >
-                Start with the fundamentals — what actually matters in your first 90 days.
+                {displayEmail ? (
+                  <>
+                    We sent a login link to <strong style={{ color: "var(--text-main)" }}>{displayEmail}</strong>.
+                    Click it to access your courses — no password needed.
+                  </>
+                ) : (
+                  "We're sending you a login link. Click it to access your courses — no password needed."
+                )}
               </p>
             </div>
           </div>
 
+          {/* Step 2: Start Lesson 1 */}
           <div
             style={{
               padding: "20px 24px",
@@ -137,7 +217,7 @@ export default function SuccessPage() {
                   marginBottom: "4px",
                 }}
               >
-                <a href="https://discord.gg/uEpAz3yw" style={{ color: "inherit", textDecoration: "none" }}>Join the Discord</a>
+                Start Lesson 1
               </p>
               <p
                 style={{
@@ -147,12 +227,12 @@ export default function SuccessPage() {
                   lineHeight: "1.6",
                 }}
               >
-                Real reps, real problems, real accountability. No guru energy.{" "}
-                <a href="https://discord.gg/uEpAz3yw" style={{ color: "var(--theme)" }}>Join here &rarr;</a>
+                Start with the fundamentals — what actually matters in your first 90 days.
               </p>
             </div>
           </div>
 
+          {/* Step 3: Discord */}
           <div
             style={{
               padding: "20px 24px",
@@ -186,7 +266,7 @@ export default function SuccessPage() {
                   marginBottom: "4px",
                 }}
               >
-                Check your email
+                <a href="https://discord.gg/uEpAz3yw" style={{ color: "inherit", textDecoration: "none" }}>Join the Discord</a>
               </p>
               <p
                 style={{
@@ -196,29 +276,37 @@ export default function SuccessPage() {
                   lineHeight: "1.6",
                 }}
               >
-                Your welcome email has everything you need to get started.
+                Real reps, real problems, real accountability. No guru energy.{" "}
+                <a href="https://discord.gg/uEpAz3yw" style={{ color: "var(--theme)" }}>Join here &rarr;</a>
               </p>
             </div>
           </div>
         </div>
 
-        <Link
-          href="/dashboard"
+        {/* Didn't get email fallback */}
+        <div
           style={{
-            display: "inline-block",
-            fontFamily: "var(--cond)",
-            fontSize: "16px",
-            fontWeight: 700,
-            letterSpacing: ".06em",
-            textTransform: "uppercase",
-            color: "var(--bg-main)",
-            background: "var(--theme)",
-            padding: "16px 36px",
-            textDecoration: "none",
+            padding: "16px 20px",
+            background: "rgba(255,255,255,0.02)",
+            border: "1px solid rgba(255,255,255,0.04)",
+            marginBottom: "48px",
           }}
         >
-          Go to Your Dashboard
-        </Link>
+          <p
+            style={{
+              fontFamily: "var(--serif)",
+              fontSize: "14px",
+              color: "var(--text-muted)",
+              lineHeight: "1.6",
+              margin: 0,
+            }}
+          >
+            Didn&apos;t get the email? Check spam, or{" "}
+            <Link href="/signup" style={{ color: "var(--theme)" }}>create an account manually</Link>{" "}
+            using the same email you purchased with. Need help?{" "}
+            <a href="mailto:support@aesdr.com" style={{ color: "var(--theme)" }}>support@aesdr.com</a>
+          </p>
+        </div>
 
         <footer
           style={{
@@ -238,5 +326,13 @@ export default function SuccessPage() {
         </footer>
       </div>
     </main>
+  );
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense>
+      <SuccessContent />
+    </Suspense>
   );
 }
