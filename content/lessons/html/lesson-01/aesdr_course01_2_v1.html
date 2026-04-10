@@ -449,6 +449,46 @@ window.AESDR = window.AESDR || {};
   var gateState = {};  // screenNum -> { completed, value, _attest, ... }
   var timers = {};     // screenNum -> { started, remaining }
 
+  /* ── localStorage persistence ── */
+  var _storageKey = 'aesdr_gate_' + location.pathname.replace(/[^a-z0-9]/gi, '_');
+
+  function _persistState() {
+    try {
+      var save = {};
+      for (var k in gateState) {
+        var s = gateState[k];
+        save[k] = { completed: s.completed, value: s.value || '', _attest: s._attest || {} };
+        if (s._hwDone)   save[k]._hwDone   = s._hwDone;
+        if (s._hwText)   save[k]._hwText   = s._hwText;
+        if (s._hwAttest) save[k]._hwAttest = s._hwAttest;
+        if (s.completedAt) save[k].completedAt = s.completedAt;
+        if (s.rubricChecked) save[k].rubricChecked = s.rubricChecked;
+      }
+      localStorage.setItem(_storageKey, JSON.stringify(save));
+    } catch(e) {}
+  }
+
+  function _restoreState() {
+    try {
+      var raw = localStorage.getItem(_storageKey);
+      if (!raw) return;
+      var save = JSON.parse(raw);
+      for (var k in save) {
+        if (!gateState[k]) gateState[k] = { completed: false, value: '', _attest: {} };
+        var s = save[k];
+        gateState[k].completed    = s.completed || false;
+        gateState[k].value        = s.value || '';
+        gateState[k]._attest      = s._attest || {};
+        if (s._hwDone)   gateState[k]._hwDone   = s._hwDone;
+        if (s._hwText)   gateState[k]._hwText   = s._hwText;
+        if (s._hwAttest) gateState[k]._hwAttest = s._hwAttest;
+        if (s.completedAt) gateState[k].completedAt = s.completedAt;
+        if (s.rubricChecked) gateState[k].rubricChecked = s.rubricChecked;
+      }
+    } catch(e) {}
+  }
+
+  A.restoreState = function() { _restoreState(); };
   /* ── Attestation phrases (unique per checkbox, never repeat across app) ── */
   var ATTEST = [
     "I showed up for this because my future self needs me to be honest right now",
@@ -922,8 +962,9 @@ window.AESDR = window.AESDR || {};
     if (typeof window.render === 'function') window.render();
   };
 
-  /* ── Save progress via postMessage ── */
+  /* ── Save progress via postMessage + localStorage ── */
   function _saveProgress(screen) {
+    _persistState();
     if (window.parent !== window) {
       try {
         window.parent.postMessage({
@@ -1762,6 +1803,10 @@ function init(){
       { task:'Write down one hard question you\'ve been avoiding asking your AE. Why have you avoided it? When this week will you ask it? What do you expect to hear?', placeholder:'The question, why you\'ve avoided it, when you\'ll ask, and what you expect...', minChars: 80 }
     ]
   });
+  // Restore saved gate state from localStorage
+  AESDR.restoreState();
+
+
 
   // Build UI components — wrapped so a failure can't prevent gate rendering
   try { buildSort(); } catch(e) { console.error('buildSort:', e); }
@@ -1770,6 +1815,19 @@ function init(){
   try { buildAudit(); } catch(e) { console.error('buildAudit:', e); }
   try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
 
+  // Restore saved screen position
+
+
+  var _savedScreen = 0;
+
+
+  try { _savedScreen = parseInt(localStorage.getItem('aesdr_screen_' + location.pathname.replace(/[^a-z0-9]/gi, '_'))) || 0; } catch(e) {}
+
+
+  if (_savedScreen > 0 && _savedScreen < TOTAL) { cur = _savedScreen; document.getElementById('s0').classList.remove('active'); document.getElementById('s'+cur).classList.add('active'); }
+
+
+
   render();
 }
 
@@ -1777,6 +1835,7 @@ function init(){
    NAV
 ══════════════════════════════════════════ */
 function go(n){
+  try{localStorage.setItem('aesdr_screen_'+location.pathname.replace(/[^a-z0-9]/gi,'_'),n)}catch(e){}
   if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;

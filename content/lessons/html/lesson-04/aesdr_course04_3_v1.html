@@ -449,6 +449,46 @@ window.AESDR = window.AESDR || {};
   var gateState = {};  // screenNum -> { completed, value, _attest, ... }
   var timers = {};     // screenNum -> { started, remaining }
 
+  /* ── localStorage persistence ── */
+  var _storageKey = 'aesdr_gate_' + location.pathname.replace(/[^a-z0-9]/gi, '_');
+
+  function _persistState() {
+    try {
+      var save = {};
+      for (var k in gateState) {
+        var s = gateState[k];
+        save[k] = { completed: s.completed, value: s.value || '', _attest: s._attest || {} };
+        if (s._hwDone)   save[k]._hwDone   = s._hwDone;
+        if (s._hwText)   save[k]._hwText   = s._hwText;
+        if (s._hwAttest) save[k]._hwAttest = s._hwAttest;
+        if (s.completedAt) save[k].completedAt = s.completedAt;
+        if (s.rubricChecked) save[k].rubricChecked = s.rubricChecked;
+      }
+      localStorage.setItem(_storageKey, JSON.stringify(save));
+    } catch(e) {}
+  }
+
+  function _restoreState() {
+    try {
+      var raw = localStorage.getItem(_storageKey);
+      if (!raw) return;
+      var save = JSON.parse(raw);
+      for (var k in save) {
+        if (!gateState[k]) gateState[k] = { completed: false, value: '', _attest: {} };
+        var s = save[k];
+        gateState[k].completed    = s.completed || false;
+        gateState[k].value        = s.value || '';
+        gateState[k]._attest      = s._attest || {};
+        if (s._hwDone)   gateState[k]._hwDone   = s._hwDone;
+        if (s._hwText)   gateState[k]._hwText   = s._hwText;
+        if (s._hwAttest) gateState[k]._hwAttest = s._hwAttest;
+        if (s.completedAt) gateState[k].completedAt = s.completedAt;
+        if (s.rubricChecked) gateState[k].rubricChecked = s.rubricChecked;
+      }
+    } catch(e) {}
+  }
+
+  A.restoreState = function() { _restoreState(); };
   /* ── Attestation phrases (unique per checkbox, never repeat across app) ── */
   var ATTEST = [
     "I made this count because mediocrity is a choice I'm actively refusing right now",
@@ -922,8 +962,9 @@ window.AESDR = window.AESDR || {};
     if (typeof window.render === 'function') window.render();
   };
 
-  /* ── Save progress via postMessage ── */
+  /* ── Save progress via postMessage + localStorage ── */
   function _saveProgress(screen) {
+    _persistState();
     if (window.parent !== window) {
       try {
         window.parent.postMessage({
@@ -1690,6 +1731,10 @@ function init(){
     { task:'Identify one skill from the monetization explorer that matches your SDR experience. Name the skill, the platform you\'ll test it on, and what you\'ll create or do in a 30-minute session this week. Include the specific date.', placeholder:'e.g. "Skill: Cold outreach consulting. Platform: Upwork. Session on Saturday from 10–10:30am. I\'ll create a profile highlighting my cold calling experience (200+ dials/week, 8% conversion rate) and browse 5 relevant gigs to understand pricing. Goal: see if there\'s demand for SDR outreach expertise."', minChars:100 },
     { task:'Calculate your \'async ratio\' from last week: what percentage of your working hours were spent in meetings or reactive tasks vs. focused prospecting? Write the actual numbers, then set a specific target ratio for next week and describe the one change that will get you there.', placeholder:'e.g. "Last week: 12 hours in meetings/reactive tasks, 28 hours focused prospecting = 30% sync / 70% async. Target: 20% sync / 80% async. Change: Decline the Thursday product sync and move my 1:1 from 10am to 3pm so I don\'t break my morning call block. That saves 1.5 hours of prime selling time."', minChars:100 }
   ] });
+  // Restore saved gate state from localStorage
+  AESDR.restoreState();
+
+
 
   // Build UI components — wrapped so a failure can't prevent gate rendering
   try { buildFlips(); } catch(e) { console.error('buildFlips:', e); }
@@ -1699,9 +1744,23 @@ function init(){
   try { buildSK(); } catch(e) { console.error('buildSK:', e); }
   try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
 
+  // Restore saved screen position
+
+
+  var _savedScreen = 0;
+
+
+  try { _savedScreen = parseInt(localStorage.getItem('aesdr_screen_' + location.pathname.replace(/[^a-z0-9]/gi, '_'))) || 0; } catch(e) {}
+
+
+  if (_savedScreen > 0 && _savedScreen < TOTAL) { cur = _savedScreen; document.getElementById('s0').classList.remove('active'); document.getElementById('s'+cur).classList.add('active'); }
+
+
+
   render();
 }
 function go(n){
+  try{localStorage.setItem('aesdr_screen_'+location.pathname.replace(/[^a-z0-9]/gi,'_'),n)}catch(e){}
   if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;

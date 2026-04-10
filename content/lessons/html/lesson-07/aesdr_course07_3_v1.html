@@ -449,6 +449,46 @@ window.AESDR = window.AESDR || {};
   var gateState = {};  // screenNum -> { completed, value, _attest, ... }
   var timers = {};     // screenNum -> { started, remaining }
 
+  /* ── localStorage persistence ── */
+  var _storageKey = 'aesdr_gate_' + location.pathname.replace(/[^a-z0-9]/gi, '_');
+
+  function _persistState() {
+    try {
+      var save = {};
+      for (var k in gateState) {
+        var s = gateState[k];
+        save[k] = { completed: s.completed, value: s.value || '', _attest: s._attest || {} };
+        if (s._hwDone)   save[k]._hwDone   = s._hwDone;
+        if (s._hwText)   save[k]._hwText   = s._hwText;
+        if (s._hwAttest) save[k]._hwAttest = s._hwAttest;
+        if (s.completedAt) save[k].completedAt = s.completedAt;
+        if (s.rubricChecked) save[k].rubricChecked = s.rubricChecked;
+      }
+      localStorage.setItem(_storageKey, JSON.stringify(save));
+    } catch(e) {}
+  }
+
+  function _restoreState() {
+    try {
+      var raw = localStorage.getItem(_storageKey);
+      if (!raw) return;
+      var save = JSON.parse(raw);
+      for (var k in save) {
+        if (!gateState[k]) gateState[k] = { completed: false, value: '', _attest: {} };
+        var s = save[k];
+        gateState[k].completed    = s.completed || false;
+        gateState[k].value        = s.value || '';
+        gateState[k]._attest      = s._attest || {};
+        if (s._hwDone)   gateState[k]._hwDone   = s._hwDone;
+        if (s._hwText)   gateState[k]._hwText   = s._hwText;
+        if (s._hwAttest) gateState[k]._hwAttest = s._hwAttest;
+        if (s.completedAt) gateState[k].completedAt = s.completedAt;
+        if (s.rubricChecked) gateState[k].rubricChecked = s.rubricChecked;
+      }
+    } catch(e) {}
+  }
+
+  A.restoreState = function() { _restoreState(); };
   /* ── Attestation phrases (unique per checkbox, never repeat across app) ── */
   var ATTEST = [
     "I did the work that matters here because I'm choosing to be the person who does the hard thing",
@@ -922,8 +962,9 @@ window.AESDR = window.AESDR || {};
     if (typeof window.render === 'function') window.render();
   };
 
-  /* ── Save progress via postMessage ── */
+  /* ── Save progress via postMessage + localStorage ── */
   function _saveProgress(screen) {
+    _persistState();
     if (window.parent !== window) {
       try {
         window.parent.postMessage({
@@ -1706,6 +1747,10 @@ function init(){
     { task:'Name one specific AE who started as an SDR — their full name, company, and how you know them. Write the exact message you will send asking what they did differently to earn promotion. Include the date you will send it. The question must reference this lesson\'s framework about treating the grind as training, not punishment.', placeholder:'Example: [Full name] at [company], [how I know them]. Message on [date]: "Hey [name], I\'m in month [X] of my SDR role and working toward AE. This lesson I took talks about treating the grind as training. When you were an SDR, what specific habit or mindset shift..."', minChars:100 },
     { task:'Using this lesson\'s decision framework, write your final honest assessment: is the SDR path right for you? Reference at least 2 specific points from the lesson (e.g., the promise vs. reality gap, the traits that thrive, the red flags) and apply them to your own situation with concrete evidence. If the answer is "I\'m not sure," that counts — but explain what specific information or milestone would help you decide, and by what date.', placeholder:'Example: Assessment: Yes, the SDR path is right for me. Evidence: 1) The lesson lists [trait] as essential — I demonstrated this when [specific example]. 2) Red flag about [topic] does NOT apply because [evidence]. However, I need to watch for [concern] and will reassess by [date]...', minChars:100 }
   ] });
+  // Restore saved gate state from localStorage
+  AESDR.restoreState();
+
+
 
   // Build UI components — wrapped so a failure can't prevent gate rendering
   try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
@@ -1714,9 +1759,23 @@ function init(){
   try { buildCls(); } catch(e) { console.error('buildCls:', e); }
   try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
 
+  // Restore saved screen position
+
+
+  var _savedScreen = 0;
+
+
+  try { _savedScreen = parseInt(localStorage.getItem('aesdr_screen_' + location.pathname.replace(/[^a-z0-9]/gi, '_'))) || 0; } catch(e) {}
+
+
+  if (_savedScreen > 0 && _savedScreen < TOTAL) { cur = _savedScreen; document.getElementById('s0').classList.remove('active'); document.getElementById('s'+cur).classList.add('active'); }
+
+
+
   render();
 }
 function go(n){
+  try{localStorage.setItem('aesdr_screen_'+location.pathname.replace(/[^a-z0-9]/gi,'_'),n)}catch(e){}
   if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;

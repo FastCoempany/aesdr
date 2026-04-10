@@ -261,6 +261,33 @@ for (const dir of lessonDirs) {
       changes++;
     }
 
+    // ── 4f. Add screen position save in go() if not already present ──
+    if (!html.includes('aesdr_screen_')) {
+      html = html.replace(
+        /function go\(n\)\{\s*if\(window\.parent!==window\)/,
+        'function go(n){\n  try{localStorage.setItem(\'aesdr_screen_\'+location.pathname.replace(/[^a-z0-9]/gi,\'_\'),n)}catch(e){}\n  if(window.parent!==window)'
+      );
+      changes++;
+    }
+
+    // ── 4g. Add AESDR.restoreState() before build calls in init() ──
+    if (!html.includes('AESDR.restoreState()')) {
+      html = html.replace(
+        /(\s*\/\/ Build UI components[^\n]*\n)/,
+        '\n  // Restore saved gate state from localStorage\n  AESDR.restoreState();\n\n$1'
+      );
+      changes++;
+    }
+
+    // ── 4h. Add screen position restore before render() at end of init ──
+    if (!html.includes('_savedScreen')) {
+      html = html.replace(
+        /(\s*)(render\(\);\s*\n\})/,
+        '$1// Restore saved screen position\n$1var _savedScreen = 0;\n$1try { _savedScreen = parseInt(localStorage.getItem(\'aesdr_screen_\' + location.pathname.replace(/[^a-z0-9]/gi, \'_\'))) || 0; } catch(e) {}\n$1if (_savedScreen > 0 && _savedScreen < TOTAL) { cur = _savedScreen; document.getElementById(\'s0\').classList.remove(\'active\'); document.getElementById(\'s\'+cur).classList.add(\'active\'); }\n\n$1$2'
+      );
+      changes++;
+    }
+
     if (changes === 0) {
       skipped.push(`${dir}/${file} — no changes needed`);
       continue;

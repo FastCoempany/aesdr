@@ -449,6 +449,46 @@ window.AESDR = window.AESDR || {};
   var gateState = {};  // screenNum -> { completed, value, _attest, ... }
   var timers = {};     // screenNum -> { started, remaining }
 
+  /* ── localStorage persistence ── */
+  var _storageKey = 'aesdr_gate_' + location.pathname.replace(/[^a-z0-9]/gi, '_');
+
+  function _persistState() {
+    try {
+      var save = {};
+      for (var k in gateState) {
+        var s = gateState[k];
+        save[k] = { completed: s.completed, value: s.value || '', _attest: s._attest || {} };
+        if (s._hwDone)   save[k]._hwDone   = s._hwDone;
+        if (s._hwText)   save[k]._hwText   = s._hwText;
+        if (s._hwAttest) save[k]._hwAttest = s._hwAttest;
+        if (s.completedAt) save[k].completedAt = s.completedAt;
+        if (s.rubricChecked) save[k].rubricChecked = s.rubricChecked;
+      }
+      localStorage.setItem(_storageKey, JSON.stringify(save));
+    } catch(e) {}
+  }
+
+  function _restoreState() {
+    try {
+      var raw = localStorage.getItem(_storageKey);
+      if (!raw) return;
+      var save = JSON.parse(raw);
+      for (var k in save) {
+        if (!gateState[k]) gateState[k] = { completed: false, value: '', _attest: {} };
+        var s = save[k];
+        gateState[k].completed    = s.completed || false;
+        gateState[k].value        = s.value || '';
+        gateState[k]._attest      = s._attest || {};
+        if (s._hwDone)   gateState[k]._hwDone   = s._hwDone;
+        if (s._hwText)   gateState[k]._hwText   = s._hwText;
+        if (s._hwAttest) gateState[k]._hwAttest = s._hwAttest;
+        if (s.completedAt) gateState[k].completedAt = s.completedAt;
+        if (s.rubricChecked) gateState[k].rubricChecked = s.rubricChecked;
+      }
+    } catch(e) {}
+  }
+
+  A.restoreState = function() { _restoreState(); };
   /* ── Attestation phrases (unique per checkbox, never repeat across app) ── */
   var ATTEST = [
     "I kept it real here because I owe it to the people who bet on me to take this seriously",
@@ -922,8 +962,9 @@ window.AESDR = window.AESDR || {};
     if (typeof window.render === 'function') window.render();
   };
 
-  /* ── Save progress via postMessage ── */
+  /* ── Save progress via postMessage + localStorage ── */
   function _saveProgress(screen) {
+    _persistState();
     if (window.parent !== window) {
       try {
         window.parent.postMessage({
@@ -1698,6 +1739,10 @@ function init(){
     { task:'Define two Slack-Free Zones in your weekly schedule — specific days and times for peak calling hours. Put them on your calendar now and describe what you blocked and how many additional dials you expect to make.', placeholder:'e.g., "Zone 1: Mon-Fri 9-11 AM — power calling block, no Slack. Zone 2: Mon-Fri 2-4 PM — afternoon dials. Estimate: 15-20 additional dials per day by eliminating Slack checks during these windows..."', minChars:100 },
     { task:'Write a direct, action-oriented Slack message template you will use instead of vague messages. Give 3 before-and-after examples showing how you will lead every DM with context and a clear ask, especially when messaging your AE about lead handoffs.', placeholder:'e.g., "Before: \'Hey, got a sec?\' After: \'Lead handoff — Jane Smith at TechCorp, confirmed budget + pain point, meeting booked for Thursday. Notes in Salesforce.\' Before: \'Quick question\' After: \'Need your input on Acme objection — they said X, should I try Y?\'"', minChars:100 }
   ] });
+  // Restore saved gate state from localStorage
+  AESDR.restoreState();
+
+
 
   // Build UI components — wrapped so a failure can't prevent gate rendering
   try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
@@ -1706,9 +1751,23 @@ function init(){
   try { buildCls(); } catch(e) { console.error('buildCls:', e); }
   try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
 
+  // Restore saved screen position
+
+
+  var _savedScreen = 0;
+
+
+  try { _savedScreen = parseInt(localStorage.getItem('aesdr_screen_' + location.pathname.replace(/[^a-z0-9]/gi, '_'))) || 0; } catch(e) {}
+
+
+  if (_savedScreen > 0 && _savedScreen < TOTAL) { cur = _savedScreen; document.getElementById('s0').classList.remove('active'); document.getElementById('s'+cur).classList.add('active'); }
+
+
+
   render();
 }
 function go(n){
+  try{localStorage.setItem('aesdr_screen_'+location.pathname.replace(/[^a-z0-9]/gi,'_'),n)}catch(e){}
   if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;
