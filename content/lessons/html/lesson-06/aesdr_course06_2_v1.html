@@ -1432,10 +1432,21 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildVI(); buildMB(); buildNC(); renderKT(); buildQuiz(); 
-  // Register accountability gate
+  // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Share one LinkedIn post, industry insight, or piece of content you\'ve published (or draft one right now). Include the text and explain what signal it sends about your expertise.' : 'Share one LinkedIn post, industry insight, or piece of content you\'ve published (or draft one right now). Include the text and explain what signal it sends about your professional brand.';
-  AESDR.gate(7, { type:'evidence', prompt: _gatePrompt, minChars: 80 });
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Name one person in your network who has sent you a real deal referral in the last 6 months. What did you do to earn that referral — or if you can\'t name anyone, why not?' : 'Name one person at your company (AE, manager, peer) who actively advocates for you. What did you do to earn that — or if no one comes to mind, what does that tell you?', minChars: 50 });
+  // Homework gate
+  AESDR.gate(7, { type:'homework', items: _role === 'ae' ? [
+    { task:'Write down 3 strengths that make you worth partnering with as an AE. Practice introducing yourself using all three to a new stakeholder this week.', placeholder:'List your 3 strengths and describe the introduction...', minChars:40 },
+    { task:'Identify 3 people in your network who challenge you to grow. Schedule a check-in with one.', placeholder:'Who are they and what did you discuss?', minChars:40 },
+    { task:'Spend 30 minutes reading one SaaS industry report relevant to your top accounts. Write down 1 insight and use it.', placeholder:'Which report, what insight, and how did you use it?', minChars:40 },
+    { task:'Post one industry insight on LinkedIn with your actual take — not a forwarded article.', placeholder:'Paste or describe what you posted...', minChars:40 }
+  ] : [
+    { task:'Write down 3 strengths or skills that make you worth knowing as a professional. Practice introducing yourself using all three — out loud.', placeholder:'List your 3 strengths and describe the practice...', minChars:40 },
+    { task:'Identify 3 people in your circle who challenge you to grow. Schedule a check-in with one this week.', placeholder:'Who are they and what did you discuss?', minChars:40 },
+    { task:'Spend 30 minutes reading one SaaS industry report. Write down 1 insight and use it in a cold call opener or email.', placeholder:'Which report, what insight, and how did you use it?', minChars:40 },
+    { task:'Post one industry insight in Slack or LinkedIn with your actual take — your perspective on why it matters.', placeholder:'Paste or describe what you posted...', minChars:40 }
+  ] });
   render();
 }
 function go(n){
@@ -1678,6 +1689,7 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
   if(cur===2) return viSubmitted&&viPassed;
   if(cur===3) return mbCount===5;
   if(cur===4) return ncCount===6;
@@ -1688,7 +1700,7 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Stop chasing rooms. Start building value worth inviting into them.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:!viSubmitted?`${Object.keys(viChosen).length} / 3 components chosen`:viPassed?'✓ Value statement built — continue below.':'Review the correct choices above.',
     3:`${mbCount} / 5 correctly classified`,
     4:`${ncCount} / 6 correctly placed`,

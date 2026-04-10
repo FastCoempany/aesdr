@@ -1473,10 +1473,21 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildRR(); buildBM(); buildTS(); buildIP(); buildSA(); buildQuiz(); 
-  // Register accountability gate
+  // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Build your personal visibility plan: 3 specific metrics you track, how you make your results visible to leadership, and one initiative that makes you irreplaceable on your team.' : 'Build your personal visibility plan: 3 specific metrics you track, how you make your results visible to your manager, and one initiative that makes you irreplaceable on your team.';
-  AESDR.gate(8, { type:'application', prompt: _gatePrompt, minChars: 120 });
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'If your territory were reassigned tomorrow, what would the next AE struggle with that only you currently know? That\'s your leverage — or your vulnerability. Explain.' : 'If you were let go tomorrow, how long would it take to replace you — honestly? What do you do that no other SDR on the team does?', minChars: 50 });
+  // Homework gate
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
+    { task:'Review your pipeline: identify average close rate, deal size, and cycle length for your team. Set personal targets at 10-20% above each.', placeholder:'List the team benchmarks and your targets...', minChars:40 },
+    { task:'Proactively brief your manager on your top 3 deals before the weekly forecast call.', placeholder:'What did you brief and what support did you request?', minChars:40 },
+    { task:'Share one competitive intelligence finding or deal insight with your team in Slack — your analysis, not a forwarded article.', placeholder:'Paste or describe what you shared...', minChars:40 },
+    { task:'Run the Friday deal self-audit. Answer all four questions in writing.', placeholder:'Paste your four answers here...', minChars:40 }
+  ] : [
+    { task:'Find your team\'s average call volume, meetings booked, and email sends. Set personal targets at 10-20% above each.', placeholder:'List the team averages and your targets...', minChars:40 },
+    { task:'Share your results with your manager at the end of this week before they ask.', placeholder:'What did you share and how?', minChars:40 },
+    { task:'Post one market insight or prospect intelligence finding in Slack — your actual analysis in two sentences.', placeholder:'Paste or describe what you posted...', minChars:40 },
+    { task:'Run the Friday self-audit. Answer all four questions in writing.', placeholder:'Paste your four answers here...', minChars:40 }
+  ] });
   render();
 }
 function go(n){
@@ -1776,6 +1787,7 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
   if(cur===2) return rrDone.size===4;
   if(cur===3) return Object.keys(bmPassing).length===3;
   if(cur===4) return tsCount===5;
@@ -1787,7 +1799,7 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Accepting the reality is the first move. Everything else follows from here.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${rrDone.size} / 4 accepted — each unlocks the next`,
     3:`${Object.keys(bmPassing).length} / 3 targets set at +10% or above`,
     4:`${tsCount} / 5 matched`,

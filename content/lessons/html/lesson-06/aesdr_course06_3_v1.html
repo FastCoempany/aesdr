@@ -1414,10 +1414,20 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
-  // Register accountability gate
+  // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Write your honest response to \'I don\'t know\' for 3 common prospect questions in your industry. Include: the question, your response, and how you\'d redirect to value.' : 'Write your honest response to \'I don\'t know\' for 3 common prospect questions you hear on cold calls. Include: the question, your response, and how you\'d redirect to book a meeting.';
-  AESDR.gate(8, { type:'application', prompt: _gatePrompt, minChars: 120 });
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Think about your last lost deal. Was the problem too little product knowledge — or too little understanding of the buyer\'s actual problem? Be specific about what you missed.' : 'Think about a meeting you failed to book last week. Was the problem too little product knowledge — or too little understanding of the prospect\'s pain? Be specific.', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'List the 3 pain points your buyers actually raise most often. Now ask: do you lead with these in discovery, or do you still default to a feature tour? What will you change this week?' : 'List the 3 pain points your prospects actually care about. Now ask: do you lead with these on cold calls, or do you still default to pitching features? What will you change this week?', minChars: 50 });
+  // Homework gate
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
+    { task:'Build Your Deal Cheat Sheet: List the 3-5 pain points your buyers actually raise, the 3 features that map to those pains, and 3 industry trends.', placeholder:'Paste or describe your cheat sheet...', minChars:40 },
+    { task:'Practice Handling Unknowns: Use the "I Don\'t Know" Framework in 3 mock demos or discovery calls.', placeholder:'Describe the scenarios and how you handled them...', minChars:40 },
+    { task:'Sharpen Your Discovery: Write 3 business-level questions focused on outcomes, not features.', placeholder:'List your 3 questions...', minChars:40 }
+  ] : [
+    { task:'Build Your Cheat Sheet: List 3-5 core pain points your prospects have, 3 features that solve them, and 3 industry trends for cold call openers.', placeholder:'Paste or describe your cheat sheet...', minChars:40 },
+    { task:'Practice Handling Unknowns: Use the "I Don\'t Know" Framework in 3 mock conversations.', placeholder:'Describe the scenarios and how you handled them...', minChars:40 },
+    { task:'Connect With Problems: Write 3 smart questions about prospect challenges and use one in your next dial block.', placeholder:'List your 3 questions and which one you used...', minChars:40 }
+  ] });
   render();
 }
 function go(n){
@@ -1679,6 +1689,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1689,9 +1701,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Trying to learn every detail is a massive drain on your mental energy.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"Learn a little about a lot. Rely on resourcefulness.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 traps identified`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

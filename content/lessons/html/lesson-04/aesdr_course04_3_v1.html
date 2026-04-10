@@ -1445,10 +1445,21 @@ let qAns={},qSubmitted=false,qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildFlips(); buildCal(); buildMV(); buildAP(); buildSK(); buildQuiz(); 
-  // Register accountability gate
+  // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Paste or describe your actual time-blocked calendar for this week. Include call blocks, deal work, coaching time, and async blocks. Be honest about what\'s scheduled vs. what actually happens.' : 'Paste or describe your actual time-blocked calendar for this week. Include call blocks, outreach time, practice sessions, and breaks. Be honest about what\'s scheduled vs. what actually happens.';
-  AESDR.gate(8, { type:'evidence', prompt: _gatePrompt, minChars: 100 });
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Look at your calendar from last week. How many hours went to meetings that didn\'t advance a single deal? Name the biggest time thief and what you\'ll do about it.' : 'Look at your calendar from last week. How many hours went to meetings or tasks that didn\'t move your numbers? Name the biggest time thief and what you\'ll do about it.', minChars: 50 });
+  // Homework gate
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
+    { task:'Audit your calendar for the past week. Mark every meeting: did it advance a deal or improve your close rate?', placeholder:'List the meetings and your verdict for each...', minChars:40 },
+    { task:'Build a time-blocked async schedule for next week. Protect morning deep work for demo prep and deal strategy.', placeholder:'Describe your time blocks and what you protected...', minChars:40 },
+    { task:'Identify one skill from the monetization explorer that resonates. Spend 30 minutes testing it.', placeholder:'Which skill and what did you test?', minChars:40 },
+    { task:'Decline or reschedule one internal meeting during your prime selling hours. Use a script from the lesson.', placeholder:'Which meeting, what script, and what happened?', minChars:40 }
+  ] : [
+    { task:'Audit your calendar for the past week. Mark every meeting: did it directly move your numbers?', placeholder:'List the meetings and your verdict for each...', minChars:40 },
+    { task:'Build a time-blocked async schedule for next week. Protect your morning call block like it\'s pipeline.', placeholder:'Describe your time blocks and what you protected...', minChars:40 },
+    { task:'Identify one skill from the monetization explorer. Spend 30 minutes testing a platform.', placeholder:'Which skill and what did you test?', minChars:40 },
+    { task:'Decline one meeting this week that doesn\'t serve your numbers. Use a script from the lesson.', placeholder:'Which meeting, what script, and what happened?', minChars:40 }
+  ] });
   render();
 }
 function go(n){
@@ -1728,6 +1739,7 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:4,7:4,8:5};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
   if(cur===2) return flipDone.size===6;
   if(cur===3) return calCount===8;
   if(cur===4) return mvCount===5;
@@ -1739,7 +1751,7 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Remote flexibility is only a competitive advantage if you use it deliberately.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${flipDone.size} / 6 old mentalities flipped`,
     3:`${calCount} / 8 correctly sorted`,
     4:`${mvCount} / 5 verdicts delivered`,

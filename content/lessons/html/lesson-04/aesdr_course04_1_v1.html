@@ -1440,10 +1440,22 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
-  // Register accountability gate
+  // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Identify which manager archetype best describes your leadership style. Write a specific plan for how you\'ll adjust your approach with your SDR team this week.' : 'Identify your current manager\'s archetype from this lesson. Write a specific plan for managing up: what you\'ll say, when, and what outcome you want.';
-  AESDR.gate(8, { type:'application', prompt: _gatePrompt, minChars: 120 });
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Name the one recurring friction point between you and your sales leader right now. What pressure of theirs is driving it — and what have you done (or failed to do) to get ahead of it?' : 'Name the one recurring friction point between you and your SDR manager right now. What pressure of theirs is driving it — and what have you done (or failed to do) to manage up around it?', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Pick one deal in your current pipeline where your manager is hovering. What context have you failed to proactively share — and what will you send them before your next 1:1?' : 'What is one specific situation where your manager micromanaged you this month? What context could you have shared proactively to prevent it?', minChars: 50 });
+  // Homework gate
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
+    { task:'Identify your sales leader\'s management style — forecast hawk, deal-stage enforcer, or hands-off delegator?', placeholder:'Describe their style and specific behaviors you\'ve observed...', minChars:40 },
+    { task:'Send a proactive pipeline update before your next 1:1 with deal narratives, not just numbers.', placeholder:'Paste or describe the update you sent...', minChars:40 },
+    { task:'Ask for one specific resource or piece of support on your top deal this week.', placeholder:'What did you ask for and what was the response?', minChars:40 },
+    { task:'Self-Reflection: Where are you letting your manager fill gaps with assumptions instead of giving them context?', placeholder:'Be specific about the gap and your plan to close it...', minChars:40 }
+  ] : [
+    { task:'Identify your SDR manager\'s archetype.', placeholder:'Which archetype and what behaviors confirm it?', minChars:40 },
+    { task:'Plan your weekly alignment meeting using the template.', placeholder:'Describe your agenda and what you\'ll cover...', minChars:40 },
+    { task:'Share one actionable idea to improve a process or metric this week.', placeholder:'What idea did you share and with whom?', minChars:40 },
+    { task:'Self-Reflection: What frustrations can you manage better with proactive communication?', placeholder:'Name the frustration and your communication plan...', minChars:40 }
+  ] });
   render();
 }
 function go(n){
@@ -1705,6 +1717,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:2,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1715,9 +1729,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"You can work with them instead of against them.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"Identify the pain points and share context.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 archetypes resolved`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

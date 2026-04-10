@@ -1390,10 +1390,21 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildRecipe(); buildSL(); buildRamp(); buildVis(); buildQuiz(); 
-  // Register accountability gate
+  // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Paste a real outreach sequence you\'ve used or reviewed (3+ touchpoints). Self-grade each touchpoint against the framework: is the subject line specific? Is the ask concrete?' : 'Paste a real outreach sequence you\'ve sent (3+ emails/touches). Self-grade each one against the framework from this lesson: subject line, opening, ask, and close.';
-  AESDR.gate(7, { type:'evidence', prompt: _gatePrompt, minChars: 150 });
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Think about the last SDR who booked you a meeting that went nowhere. What specific coaching could you have given them beforehand to make that meeting close-ready?' : 'Which of the six promotion recipe steps are you weakest on right now? Be specific — what would your manager say if asked?', minChars: 50 });
+  // Homework gate
+  AESDR.gate(7, { type:'homework', items: _role === 'ae' ? [
+    { task:'Schedule a 15-minute coaching sync with your SDR. Review their top 3 target accounts with specific positioning guidance.', placeholder:'When did you meet and what guidance did you give?', minChars:40 },
+    { task:'Share one piece of deal intelligence with your SDR they can use in outreach this week.', placeholder:'What intel did you share and how will they use it?', minChars:40 },
+    { task:'Review your SDR\'s meeting quality from last week. Give specific feedback on what converted and what didn\'t.', placeholder:'Describe the feedback you gave...', minChars:40 },
+    { task:'Update your pipeline forecast and proactively brief your manager with deal context before they ask.', placeholder:'What did you brief and what support did you request?', minChars:40 }
+  ] : [
+    { task:'Write down 3 product pain points and 3 benefits you can deliver confidently on a cold call — from memory.', placeholder:'List them here without looking at notes...', minChars:40 },
+    { task:'Book at least 1 meeting this week and tell your manager before they see it in the CRM.', placeholder:'What meeting did you book and how did you communicate it?', minChars:40 },
+    { task:'Post one market insight in the team Slack this week — your actual perspective, not a shared article.', placeholder:'Paste or describe what you posted...', minChars:40 },
+    { task:'Build one tangible value-add for your AE: research doc, rebuttal guide, or high-fit lead list.', placeholder:'What did you build and deliver?', minChars:40 }
+  ] });
   render();
 }
 function go(n){
@@ -1654,6 +1665,7 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
   if(cur===2) return recipeDone.size===6;
   if(cur===3) return slCount===6;
   if(cur===4) return Object.keys(rampDone).length===6;
@@ -1664,7 +1676,7 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"The promotion doesn't come from knowing the recipe. It comes from following it.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${recipeDone.size} / 6 steps completed — each step unlocks the next`,
     3:`${slCount} / 6 correctly scored`,
     4:`${Object.keys(rampDone).length} / 6 correctly placed`,

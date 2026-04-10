@@ -1440,10 +1440,22 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
-  // Register accountability gate
+  // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Describe one cultural norm at your company that either helps or hurts your team\'s performance. Be specific about the behavior, who does it, and what it costs or creates.' : 'Describe one cultural norm at your company that either helps or hurts your daily performance. Be specific about the behavior, how it affects your work, and what you\'d change.';
-  AESDR.gate(8, { type:'reflection', prompt: _gatePrompt, minChars: 100 });
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Describe one specific moment this quarter where the AE-SDR relationship on your team visibly helped or hurt pipeline. What happened, and what was your role in it?' : 'Describe one specific moment this quarter where your relationship with your AE directly affected your results. What happened, and what did you do — or fail to do?', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Which of the three small acts (acknowledge, helper doc, step into the dirt) have you never done for your SDR? Why not — and what would change if you started this week?' : 'Which of the three small acts have you never initiated with your AE? What is stopping you, and what would you say to start one this week?', minChars: 50 });
+  // Homework gate
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
+    { task:'Create a helper document for your SDR this week — email frameworks, objection rebuttals, and account priorities.', placeholder:'Describe what you included and shared...', minChars:40 },
+    { task:'Cold call alongside your SDR for 15 minutes. Hand off a booked meeting if you can.', placeholder:'When did you do it and what happened?', minChars:40 },
+    { task:'Send one specific piece of deal feedback to your SDR: "That meeting converted because of X."', placeholder:'Paste or describe the feedback you sent...', minChars:40 },
+    { task:'Self-Reflection: When was the last time you invested in your SDR\'s development? What would change if you did it weekly?', placeholder:'Be honest about your current investment level...', minChars:40 }
+  ] : [
+    { task:'Start the day with a quick acknowledgment to your AE — make it specific.', placeholder:'What did you say and when?', minChars:40 },
+    { task:'Share one prospect insight or blocker you\'re facing. Align on what you\'re hearing in the market.', placeholder:'What insight did you share?', minChars:40 },
+    { task:'Ask your AE to cold call with you for 15 minutes this week.', placeholder:'How did you frame the ask and what happened?', minChars:40 },
+    { task:'Self-Reflection: What do you know from your calls this week that your AE doesn\'t? How can you share that proactively?', placeholder:'Name the insight and your plan to share it...', minChars:40 }
+  ] });
   render();
 }
 function go(n){
@@ -1705,6 +1717,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:2,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1715,9 +1729,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Culture isn't a vibe you brainstorm in Slack threads.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"Three small acts that create big culture.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 myths busted`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

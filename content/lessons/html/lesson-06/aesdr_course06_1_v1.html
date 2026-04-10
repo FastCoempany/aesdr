@@ -1427,10 +1427,20 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
-  // Register accountability gate
+  // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Describe a recent deal or discovery call where your instinct told you something was off. What was the signal? Did you act on it? What happened?' : 'Describe a recent cold call or outreach attempt where your instinct told you something was off about the prospect or your approach. What was the signal? Did you adjust?';
-  AESDR.gate(8, { type:'reflection', prompt: _gatePrompt, minChars: 100 });
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Name one sales book or methodology you followed that actually made your pipeline worse or wasted your selling time. What did you do differently once you dropped it?' : 'Name one sales book, framework, or script you tried that made your outreach worse or wasted your call time. What did you do differently once you stopped using it?', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Describe one deal instinct you had recently — a gut feeling about a prospect, a champion, or a deal going sideways. Were you right? What did the outcome teach you?' : 'Describe one call or sequence where your instinct told you to go off-script. What did you do, and did it work? What did you learn about trusting yourself?', minChars: 50 });
+  // Homework gate
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
+    { task:'Start a daily "Deal Debrief" journal — after every demo or close attempt, write what worked and what you\'d change.', placeholder:'Paste your first entry or describe your setup...', minChars:40 },
+    { task:'Identify one area to improve each week (multi-threading, executive presentations, handling procurement objections).', placeholder:'Which area and what\'s your plan?', minChars:40 },
+    { task:'Lean into your deal instincts — experiment with your discovery flow and trust what the pipeline is teaching you.', placeholder:'What experiment did you run and what did you learn?', minChars:40 }
+  ] : [
+    { task:'Start a daily "What I Learned" journal — after every dial block and outreach session, write what landed and what fell flat.', placeholder:'Paste your first entry or describe your setup...', minChars:40 },
+    { task:'Identify one area to improve each week (cold call openers, handling gatekeepers, subject lines that get replies).', placeholder:'Which area and what\'s your plan?', minChars:40 },
+    { task:'Lean into your own instincts — experiment with your sequences and trust the patterns you\'re seeing.', placeholder:'What experiment did you run and what did you learn?', minChars:40 }
+  ] });
   render();
 }
 function go(n){
@@ -1692,6 +1702,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1702,9 +1714,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Books sell a dream. Experience builds a reality.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"Success in SaaS comes from real-time adaptation.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 symptoms resolved`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

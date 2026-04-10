@@ -1443,10 +1443,20 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
-  // Register accountability gate
+  // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Write your honest assessment of your professional presence: LinkedIn profile strength, how you show up in meetings, and one specific thing you\'ll improve this month.' : 'Write your honest assessment of your professional presence: LinkedIn profile strength, how you show up in 1:1s, and one specific thing you\'ll improve this month.';
-  AESDR.gate(8, { type:'reflection', prompt: _gatePrompt, minChars: 100 });
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Name one piece of sales advice you followed in the last 6 months that actually hurt your pipeline or wasted your time. Who gave it, and what did you learn?' : 'Name one piece of career advice you received recently that felt wrong for your situation. Who gave it, why was it bad, and what did you do instead?', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Pick two of the six principles. For each, give a specific example from your last quarter where you either followed it or violated it — and what the pipeline impact was.' : 'Pick two of the six principles. For each, give a specific example from your last month where you either followed it or ignored it — and what happened to your numbers.', minChars: 50 });
+  // Homework gate
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
+    { task:'Identify 3 top closers in your org or network worth studying. Watch how they run discovery, not just how they close.', placeholder:'Name them and what you plan to observe...', minChars:40 },
+    { task:'Write down 1 skill you\'ll sharpen this week (multi-threading, negotiation, executive presentation, etc.).', placeholder:'Which skill and what\'s your practice plan?', minChars:40 },
+    { task:'Filter any new sales methodology or coaching advice using the Sales Advice Filter Checklist.', placeholder:'What advice did you filter and what was the verdict?', minChars:40 }
+  ] : [
+    { task:'Identify 3 people worth learning from (top AEs, Senior SDRs, etc.).', placeholder:'Name them and what you\'ll learn from each...', minChars:40 },
+    { task:'Write down 1 skill you\'ll improve this week (call openings, rebuttals, etc.).', placeholder:'Which skill and what\'s your practice plan?', minChars:40 },
+    { task:'Filter any new career advice you get using the Advice Filter Checklist.', placeholder:'What advice did you filter and what was the verdict?', minChars:40 }
+  ] });
   render();
 }
 function go(n){
@@ -1708,6 +1718,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1718,9 +1730,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Most advice comes from people who don't understand the grind.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"Success speaks louder than unproven opinions.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 bad tips filtered`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,
