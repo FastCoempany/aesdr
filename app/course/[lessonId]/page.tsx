@@ -3,7 +3,6 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-import MarkCompleteButton from "@/components/MarkCompleteButton";
 import ProgressSaver from "@/components/ProgressSaver";
 import { listLessonUnits, getToolAssetsForLesson } from "@/utils/content/catalog";
 import { LESSONS } from "@/utils/progress/types";
@@ -167,7 +166,7 @@ export default async function LessonPage({
         </main>
       )}
 
-      {/* Floating controls — top-left: back, top-right: units + complete */}
+      {/* Floating controls — top-left: back, top-right: tool downloads */}
       <div
         style={{
           position: "fixed",
@@ -212,54 +211,6 @@ export default async function LessonPage({
           rowGap: "4px",
         }}
       >
-        {/* Unit tabs */}
-        {units.length > 1 &&
-          units.map((unit) => {
-            const isActive = unit.unitId === selectedUnit?.unitId;
-            return (
-              <Link
-                key={unit.unitId}
-                href={`/course/${lessonId}?unit=${unit.unitId}`}
-                style={{
-                  fontFamily: "var(--mono)",
-                  fontSize: "10px",
-                  letterSpacing: ".1em",
-                  textTransform: "uppercase" as const,
-                  color: "#fff",
-                  background: isActive
-                    ? "rgba(0,0,0,0.95)"
-                    : "rgba(0,0,0,0.85)",
-                  backdropFilter: "blur(8px)",
-                  padding: "6px 10px",
-                  textDecoration: "none",
-                  minWidth: "28px",
-                  textAlign: "center" as const,
-                  flexShrink: 0,
-                }}
-              >
-                {unit.unitId}
-              </Link>
-            );
-          })}
-
-        <div
-          style={{
-            background: "rgba(0,0,0,0.9)",
-            backdropFilter: "blur(8px)",
-            flexShrink: 0,
-            lineHeight: "normal",
-            display: "flex",
-            alignItems: "center",
-            overflow: "visible",
-          }}
-        >
-          <MarkCompleteButton
-            lessonId={lessonId}
-            initialIsCompleted={isCompleted}
-          />
-        </div>
-
-
         {isCompleted &&
           tools.map((tool) => (
             <a
