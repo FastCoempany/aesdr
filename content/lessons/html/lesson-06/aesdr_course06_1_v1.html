@@ -2,6 +2,501 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- AESDR Role Detection -->
+<script>
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  var role = p.get('role') || 'sdr';
+  document.documentElement.setAttribute('data-role', role);
+})();
+</script>
+<style>
+/* Role-conditional content: hide content not matching current role */
+[data-role="ae"] .sdr-only { display: none !important; }
+[data-role="sdr"] .ae-only { display: none !important; }
+/* Softer variant: swap text content visibility */
+[data-role="ae"] .sdr-text { display: none !important; }
+[data-role="sdr"] .ae-text { display: none !important; }
+</style>
+<!-- AESDR Accountability Gates -->
+<style>
+/* ══════════════════════════════════════════
+   AESDR Accountability Gates — Styles v1
+   Matches lesson design system vars:
+     --black, --white, --mid, --lite, --lite2,
+     --amber, --cobalt, --green, --line, --iris,
+     --cond, --serif, --mono
+══════════════════════════════════════════ */
+
+/* ── Gate container ── */
+.gate-box {
+  margin: 28px 0 12px;
+  padding: 28px 32px 24px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  position: relative;
+}
+.gate-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+}
+
+/* ── Label / tag ── */
+.gate-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 14px;
+}
+
+/* ── Prompt text ── */
+.gate-prompt {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--black);
+  margin-bottom: 18px;
+}
+
+/* ── Textarea ── */
+.gate-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px 16px;
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--black);
+  background: var(--lite);
+  border: 1px solid var(--line2);
+  resize: vertical;
+  outline: none;
+  transition: border-color .2s;
+}
+.gate-textarea:focus {
+  border-color: var(--amber);
+}
+.gate-textarea.gate-evidence {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  min-height: 100px;
+}
+.gate-textarea::placeholder {
+  color: var(--mid);
+  opacity: .6;
+}
+
+/* ── Footer (counter + submit) ── */
+.gate-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  gap: 12px;
+}
+
+/* ── Character counter ── */
+.gate-counter {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+
+/* ── Submit button ── */
+.gate-submit {
+  font-family: var(--cond);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border: 2px solid var(--black);
+  background: var(--black);
+  color: var(--white);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all .15s;
+}
+.gate-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 2s linear infinite;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.gate-submit:hover::before {
+  opacity: 1;
+}
+.gate-submit:hover {
+  color: var(--black);
+}
+.gate-submit span {
+  position: relative;
+  z-index: 1;
+}
+.gate-submit:disabled,
+.gate-submit:disabled:hover {
+  opacity: .28;
+  cursor: not-allowed;
+  background: var(--black);
+  color: var(--white);
+}
+.gate-submit:disabled::before,
+.gate-submit:disabled:hover::before {
+  display: none;
+}
+
+/* ── Rubric checklist ── */
+.gate-rubric {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.gate-rubric-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 10px;
+}
+.gate-rubric-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--black);
+}
+.gate-rubric-item input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--amber);
+  flex-shrink: 0;
+}
+
+/* ── Time gate ── */
+.gate-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 20px 0 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--line2);
+  background: var(--lite);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+.gate-time-icon {
+  font-size: 14px;
+}
+.gate-time-num {
+  font-weight: 700;
+  color: var(--amber);
+  font-size: 13px;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* ── Completed state ── */
+.gate-done {
+  margin: 24px 0 8px;
+  padding: 20px 24px;
+  border: 2px solid var(--green);
+  background: var(--grn-lt);
+}
+.gate-done-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.gate-done-preview {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--mid);
+  font-style: italic;
+}
+
+</style>
+<script>
+/*  AESDR Accountability Gates v1
+ *  Inject into lesson HTML files alongside role-detection.
+ *
+ *  Usage in lesson JS:
+ *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
+ *    AESDR.gate(1, { type:'time', seconds:60 });
+ *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
+ *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
+ *
+ *  In canContinue():
+ *    if (!AESDR.gateReady(cur)) return false;
+ *
+ *  Gate state auto-saves via postMessage when completed.
+ */
+window.AESDR = window.AESDR || {};
+
+(function(A) {
+  var gates = {};      // screenNum -> config
+  var gateState = {};  // screenNum -> { completed, value, ... }
+  var timers = {};     // screenNum -> { started, remaining }
+
+  /* ── Register a gate ── */
+  A.gate = function(screen, cfg) {
+    gates[screen] = cfg;
+    gateState[screen] = { completed: false, value: '' };
+  };
+
+  /* ── Check if gate is satisfied ── */
+  A.gateReady = function(screen) {
+    if (!gates[screen]) return true;
+    return gateState[screen] && gateState[screen].completed;
+  };
+
+  /* ── Get gate hint text ── */
+  A.gateHint = function(screen) {
+    var g = gates[screen];
+    if (!g) return '';
+    var s = gateState[screen];
+    if (s.completed) return '\u2713 Gate complete';
+
+    if (g.type === 'time') {
+      var r = timers[screen] ? timers[screen].remaining : g.seconds;
+      return r > 0 ? 'Unlocks in ' + r + 's' : '';
+    }
+    if (g.type === 'reflection' || g.type === 'evidence') {
+      var len = (s.value || '').length;
+      return len + ' / ' + g.minChars + ' characters';
+    }
+    if (g.type === 'application') {
+      var len2 = (s.value || '').length;
+      var checks = s.rubricChecked || 0;
+      var total = (g.rubric || []).length;
+      return len2 + ' chars \u00B7 ' + checks + '/' + total + ' rubric items';
+    }
+    return '';
+  };
+
+  /* ── Get all gate data for stateData (progress saving) ── */
+  A.gateData = function() {
+    var out = {};
+    for (var k in gateState) {
+      if (gateState[k].completed) {
+        out['gate_' + k] = {
+          type: gates[k].type,
+          value: gateState[k].value,
+          completedAt: gateState[k].completedAt
+        };
+      }
+    }
+    return out;
+  };
+
+  /* ── Render gate UI into a container ── */
+  A.renderGate = function(screen, containerId) {
+    var g = gates[screen];
+    if (!g) return;
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    var s = gateState[screen];
+
+    if (s.completed) {
+      el.innerHTML = _completedHTML(g, s);
+      return;
+    }
+
+    switch(g.type) {
+      case 'reflection': el.innerHTML = _reflectionHTML(screen, g, s); break;
+      case 'application': el.innerHTML = _applicationHTML(screen, g, s); break;
+      case 'evidence': el.innerHTML = _evidenceHTML(screen, g, s); break;
+      case 'time': _startTimer(screen, g); el.innerHTML = _timeHTML(screen, g); break;
+    }
+  };
+
+  /* ── Completed state ── */
+  function _completedHTML(g, s) {
+    var typeLabel = { reflection:'Reflection', application:'Response', evidence:'Evidence', time:'Time' };
+    return '<div class="gate-done">' +
+      '<div class="gate-done-tag">\u2713 ' + (typeLabel[g.type]||'Gate') + ' Submitted</div>' +
+      (g.type !== 'time' ? '<div class="gate-done-preview">' + _esc(s.value).substring(0,200) + (s.value.length > 200 ? '...' : '') + '</div>' : '') +
+    '</div>';
+  }
+
+  /* ── Reflection Gate ── */
+  function _reflectionHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Reflection Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your reflection here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Reflection</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Application Gate ── */
+  function _applicationHTML(screen, g) {
+    var rubricHTML = (g.rubric || []).map(function(r, i) {
+      return '<label class="gate-rubric-item">' +
+        '<input type="checkbox" onchange="AESDR._onRubric(' + screen + ',' + i + ',this.checked)">' +
+        '<span>' + r + '</span></label>';
+    }).join('');
+
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Application Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your response...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-counter" id="gateCtr' + screen + '">0 / ' + (g.minChars || 50) + ' characters</div>' +
+      (rubricHTML ? '<div class="gate-rubric"><div class="gate-rubric-label">Self-evaluate your response:</div>' + rubricHTML + '</div>' : '') +
+      '<div class="gate-footer">' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Response</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Evidence Gate ── */
+  function _evidenceHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Evidence Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea gate-evidence" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Paste your evidence here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Evidence</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Time Gate ── */
+  function _timeHTML(screen, g) {
+    var r = timers[screen] ? timers[screen].remaining : g.seconds;
+    if (r <= 0) return '';
+    return '<div class="gate-time" id="gateTime' + screen + '">' +
+      '<span class="gate-time-icon">\u23F3</span> ' +
+      '<span class="gate-time-num" id="gateTimeCtr' + screen + '">' + r + '</span>s remaining' +
+    '</div>';
+  }
+
+  function _startTimer(screen, g) {
+    if (timers[screen]) return;
+    timers[screen] = { remaining: g.seconds };
+    var iv = setInterval(function() {
+      timers[screen].remaining--;
+      var el = document.getElementById('gateTimeCtr' + screen);
+      if (el) el.textContent = timers[screen].remaining;
+      if (timers[screen].remaining <= 0) {
+        clearInterval(iv);
+        gateState[screen].completed = true;
+        gateState[screen].completedAt = new Date().toISOString();
+        var timeEl = document.getElementById('gateTime' + screen);
+        if (timeEl) timeEl.style.display = 'none';
+        // Trigger render if the lesson exposes it
+        if (typeof window.render === 'function') window.render();
+      }
+    }, 1000);
+  }
+
+  /* ── Internal handlers ── */
+  A._onInput = function(screen, val) {
+    gateState[screen].value = val;
+    var g = gates[screen];
+    var min = g.minChars || 50;
+    var ctr = document.getElementById('gateCtr' + screen);
+    if (ctr) ctr.textContent = val.length + ' / ' + min + (g.type === 'application' ? ' characters' : '');
+
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      var ready = val.length >= min;
+      if (g.type === 'application' && g.rubric) {
+        var checks = gateState[screen].rubricChecked || 0;
+        ready = ready && checks >= g.rubric.length;
+      }
+      btn.disabled = !ready;
+    }
+  };
+
+  A._onRubric = function(screen, idx, checked) {
+    if (!gateState[screen]._rubric) gateState[screen]._rubric = {};
+    gateState[screen]._rubric[idx] = checked;
+    var count = 0;
+    for (var k in gateState[screen]._rubric) {
+      if (gateState[screen]._rubric[k]) count++;
+    }
+    gateState[screen].rubricChecked = count;
+
+    // Re-check submit button
+    var g = gates[screen];
+    var val = gateState[screen].value || '';
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      btn.disabled = !(val.length >= (g.minChars || 50) && count >= (g.rubric || []).length);
+    }
+  };
+
+  A._submit = function(screen) {
+    var s = gateState[screen];
+    s.completed = true;
+    s.completedAt = new Date().toISOString();
+
+    // Re-render the gate as completed
+    var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
+    containers.forEach(function(el) { A.renderGate(screen, el.id); });
+
+    // Save progress via postMessage
+    if (window.parent !== window) {
+      try {
+        window.parent.postMessage({
+          type: 'aesdr:progress',
+          screen: screen,
+          stateData: A.gateData()
+        }, '*');
+      } catch(e) {}
+    }
+
+    // Trigger render if available
+    if (typeof window.render === 'function') window.render();
+  };
+
+  /* ── Escape helper ── */
+  function _esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+})(window.AESDR);
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AESDR — Course 6.1: Beyond the Sales Playbook</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -287,9 +782,11 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div>
           <div class="cv-c2tag">AESDR · Lesson 6.1</div>
           <div class="cv-course-num">06</div>
-          <div class="cv-big">Beyond the Sales Playbook</div>
+          <div class="cv-big ae-only">Learning Habits</div>
+          <div class="cv-big sdr-only">Learning Habits</div>
         </div>
-        <div class="cv-tagline">Learning by Doing, Building Confidence, and Writing Your Own Playbook.</div>
+        <div class="cv-tagline ae-only">The AEs who keep closing are the ones who never stop learning. Build the habit.</div>
+        <div class="cv-tagline sdr-only">The SDRs who get promoted are the ones who learn faster than everyone else.</div>
       </div>
       <div class="cvr">
         <div class="eyebrow">Course 6 · Lesson 1 of 3</div>
@@ -310,19 +807,33 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">01</div>
       <div><div class="c6-badge">Course 6</div><span class="sec-eye">Section 01 — The Flaws</span></div>
-      <div class="lh-title">Why Sales Books Are Holding You Back</div>
+      <div class="lh-title ae-only">Why Sales Books Won't Close Your Deals</div>
+      <div class="lh-title sdr-only">Why Sales Books Won't Book Your Meetings</div>
     </div>
-    <div class="lb">
-      <p class="lp">The people crushing it in SaaS aren't quoting sales books—they're in the trenches, putting in the work. Books might offer ideas, but your experience is your best teacher. Stop looking for someone else's formula and start trusting yourself.</p>
+    <div class="lb ae-only">
+      <p class="lp">The AEs closing the biggest deals in SaaS aren't quoting sales books — they're running live discovery, navigating buying committees, and adapting in the moment. Books might offer frameworks, but your pipeline is your real classroom. Stop borrowing someone else's playbook and start building your own from the deals you've actually worked.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>The Recycling Loop:</strong> Most sales books recycle the same advice: scripts, frameworks, and tips. Most authors aren't living the dream—they're selling you one.</li>
-        <li><span class="kp-n">02</span><strong>Outdated Techniques:</strong> Legacy processes worked when sales was a checklist. Today, prospects see through robotic pitches and rigid scripts.</li>
-        <li><span class="kp-n">03</span><strong>Clouded Instincts:</strong> Relying on theory clouds your instincts and slows real growth. You can't sell like it's 1985.</li>
+        <li><span class="kp-n">01</span><strong>The Recycling Loop:</strong> Most sales books recycle the same advice: qualification frameworks, closing techniques, and negotiation scripts. Most authors haven't carried a quota in years — they're selling you a dream they stopped living.</li>
+        <li><span class="kp-n">02</span><strong>Outdated Techniques:</strong> Legacy playbooks worked when buyers had fewer options. Today, your champion has already read the same book. Rigid demo scripts and canned discovery questions get spotted instantly.</li>
+        <li><span class="kp-n">03</span><strong>Clouded Instincts:</strong> Over-relying on methodology dulls the deal instincts you've built from hundreds of conversations. You can't navigate a multi-threaded enterprise deal with a 1985 framework.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Reality Check</div>
         <div class="lie-q">"Most sales books are just noise."</div>
-        <div class="lie-a">They package old advice from people who aren't even following their own methods. Modern SaaS requires agility and adaptation, not a rigid script.</div>
+        <div class="lie-a">They package old advice from people who haven't closed a deal in a decade. Modern deal cycles require reading the room, managing stakeholders, and adapting your pitch in real time — not following a rigid script.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">The SDRs booking the most meetings in SaaS aren't quoting sales books — they're in the trenches, testing subject lines, iterating on cold call openers, and learning from every rejection. Books might offer ideas, but your daily call volume is your best teacher. Stop looking for someone else's formula and start trusting what you're learning every single day.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>The Recycling Loop:</strong> Most sales books recycle the same advice: scripts, sequences, and prospecting tips. Most authors haven't made a cold call in years — they're selling you a framework they don't use.</li>
+        <li><span class="kp-n">02</span><strong>Outdated Techniques:</strong> Legacy prospecting playbooks worked when inboxes were empty and phones got answered. Today, prospects see through robotic outreach and templated sequences in seconds.</li>
+        <li><span class="kp-n">03</span><strong>Clouded Instincts:</strong> Relying on theory clouds the instincts you're building from dozens of conversations a day. You can't prospect like it's 1985 — the game has changed completely.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Reality Check</div>
+        <div class="lie-q">"Most sales books are just noise."</div>
+        <div class="lie-a">They package old advice from people who aren't even doing outbound anymore. Modern SDR work requires creativity, speed, and real-time adaptation — not a rigid script someone wrote before your CRM existed.</div>
       </div>
     </div>
   </div>
@@ -362,19 +873,33 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">02</div>
       <div><div class="c6-badge">Course 6</div><span class="sec-eye">Section 02 — The Real Teacher</span></div>
-      <div class="lh-title">Learning by Doing: Trust Your Instincts</div>
+      <div class="lh-title ae-only">Learning by Closing: Trust Your Deal Instincts</div>
+      <div class="lh-title sdr-only">Learning by Dialing: Trust Your Outbound Instincts</div>
     </div>
-    <div class="lb">
-      <p class="lp">Forget theory. Real sales pros trust their instincts and learn as they go. Every time you speak to a prospect, you're learning.</p>
+    <div class="lb ae-only">
+      <p class="lp">Forget theory. The AEs who consistently hit quota trust their instincts and learn from every deal — won or lost. Every discovery call, every demo, every negotiation teaches you something no book can.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>Every Call is Training:</strong> Document what worked and what didn't. Use real feedback from prospects, not theories from books.</li>
-        <li><span class="kp-n">02</span><strong>Trust Yourself to Adapt:</strong> You've already proven you have instinct—you got the job. Every failure teaches you something critical for the next attempt.</li>
-        <li><span class="kp-n">03</span><strong>Personalize the Interaction:</strong> Success in SaaS comes from real-time adaptation, focusing on connecting, not performing.</li>
+        <li><span class="kp-n">01</span><strong>Every Deal is Training:</strong> Document what worked and what didn't after every demo and close attempt. Real buyer feedback — objections, hesitations, what made them lean in — is worth more than any framework chapter.</li>
+        <li><span class="kp-n">02</span><strong>Trust Yourself to Adapt:</strong> You've already proven you can read a room — you earned this seat. Every lost deal teaches you something critical about your next negotiation, your next multi-thread, your next executive presentation.</li>
+        <li><span class="kp-n">03</span><strong>Personalize the Interaction:</strong> Success in enterprise SaaS comes from real-time adaptation. Reading your champion's body language, adjusting your demo on the fly, connecting the product to their specific pain — that's not in a book.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Benefit</div>
-        <div class="lie-q">"Real experiences build confidence and skill faster than any book ever will."</div>
-        <div class="lie-a">You already know more than you think—start trusting yourself and writing your own playbook.</div>
+        <div class="lie-q">"Real deal experience builds close instincts faster than any book ever will."</div>
+        <div class="lie-a">You already know more than you think. Every pipeline review, every lost deal debrief, every surprise objection — that's your curriculum. Start trusting it and writing your own playbook.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">Forget theory. The SDRs booking the most qualified meetings trust their instincts and learn from every conversation — connected or not. Every cold call, every sequence reply, every objection teaches you something no book can.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Every Call is Training:</strong> Document what worked and what didn't after every dial block. Real prospect reactions — what openers landed, what got you hung up on, what earned a laugh — are worth more than any scripting guide.</li>
+        <li><span class="kp-n">02</span><strong>Trust Yourself to Adapt:</strong> You've already proven you have instinct — you got the job and you're making the dials. Every rejection teaches you something critical about your next opener, your next sequence, your next voicemail.</li>
+        <li><span class="kp-n">03</span><strong>Personalize the Interaction:</strong> Success in outbound comes from real-time adaptation. Reading a prospect's tone, pivoting your pitch in the first 10 seconds, connecting their LinkedIn activity to a relevant pain point — that's not in a book.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Benefit</div>
+        <div class="lie-q">"Real outbound experience builds prospecting instincts faster than any book ever will."</div>
+        <div class="lie-a">You already know more than you think. Every dial block, every reply, every meeting that stuck or didn't — that's your curriculum. Start trusting it and writing your own playbook.</div>
       </div>
     </div>
   </div>
@@ -484,19 +1009,28 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div>
         <div class="t-head">Developing the Skills That Matter</div>
         <ul class="hw-list">
-          <li><div class="hw-box"></div><strong>Character:</strong> Integrity builds trust with prospects.</li>
-          <li><div class="hw-box"></div><strong>Likability:</strong> People buy from people they like.</li>
-          <li><div class="hw-box"></div><strong>Grit:</strong> Resilience helps you push through rejection.</li>
+          <li class="ae-only"><div class="hw-box"></div><strong>Character:</strong> Integrity builds trust with buyers and champions. When you do what you say, deals close cleaner.</li>
+          <li class="ae-only"><div class="hw-box"></div><strong>Likability:</strong> People buy from people they trust and enjoy working with. Your relationships are your pipeline's immune system.</li>
+          <li class="ae-only"><div class="hw-box"></div><strong>Grit:</strong> Resilience helps you push through stalled deals, ghosted champions, and quarters that start slow.</li>
+          <li class="sdr-only"><div class="hw-box"></div><strong>Character:</strong> Integrity builds trust with prospects from the very first touch. Be the SDR they actually want to talk to.</li>
+          <li class="sdr-only"><div class="hw-box"></div><strong>Likability:</strong> People take meetings with people they like. Your energy on the phone is your biggest differentiator.</li>
+          <li class="sdr-only"><div class="hw-box"></div><strong>Grit:</strong> Resilience helps you push through rejection, bad dial blocks, and weeks where nothing seems to connect.</li>
         </ul>
       </div>
       <div>
         <div class="t-head">Actionable Homework</div>
         <ul class="hw-list">
-          <li><div class="hw-box"></div>Start a daily "What I Learned" journal after calls and outreach.</li>
-          <li><div class="hw-box"></div>Identify one area to improve each week (e.g., handling objections).</li>
-          <li><div class="hw-box"></div>Lean into your own instincts—experiment and trust your voice.</li>
+          <li class="ae-only"><div class="hw-box"></div>Start a daily "Deal Debrief" journal — after every demo or close attempt, write what worked and what you'd change.</li>
+          <li class="ae-only"><div class="hw-box"></div>Identify one area to improve each week (e.g., multi-threading, executive presentations, handling procurement objections).</li>
+          <li class="ae-only"><div class="hw-box"></div>Lean into your deal instincts — experiment with your discovery flow and trust what the pipeline is teaching you.</li>
+          <li class="sdr-only"><div class="hw-box"></div>Start a daily "What I Learned" journal — after every dial block and outreach session, write what landed and what fell flat.</li>
+          <li class="sdr-only"><div class="hw-box"></div>Identify one area to improve each week (e.g., cold call openers, handling gatekeepers, subject lines that get replies).</li>
+          <li class="sdr-only"><div class="hw-box"></div>Lean into your own instincts — experiment with your sequences and trust the patterns you're seeing in real conversations.</li>
         </ul>
       </div>
+
+      <!-- Accountability Gate -->
+      <div id="gate8" data-gate-screen="8"></div>
     </div>
   </div>
 
@@ -507,13 +1041,17 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <div class="comp-tag">Course 6 · Lesson 1 — Complete</div>
           <div style="font-family:var(--display);font-size:56px;color:var(--black);line-height:.9;margin:10px 0 0">06</div>
         </div>
-        <div class="comp-big">Stop Quoting.<br>Start Creating.</div>
-        <div class="comp-sub">Sales books won't make you a top performer—your experience will. Real learning comes from action: calls, outreach, and interactions.</div>
+        <div class="comp-big ae-only">Stop Quoting.<br>Start Closing.</div>
+        <div class="comp-big sdr-only">Stop Quoting.<br>Start Dialing.</div>
+        <div class="comp-sub ae-only">Sales books won't close your deals — your deal instincts will. Real learning comes from discovery calls, demos, negotiations, and the pipeline you build yourself.</div>
+        <div class="comp-sub sdr-only">Sales books won't book your meetings — your outbound instincts will. Real learning comes from cold calls, sequences, objections handled, and the conversations you earn yourself.</div>
       </div>
       <div class="comp-r">
         <div class="eyebrow">Course 6 · Lesson 1 Complete</div>
-        <div class="comp-h">Write your own story through action.</div>
-        <p class="comp-p">Success doesn't come from reading—it comes from doing. Trust yourself, refine through experience, and focus on becoming someone worth quoting. Let others read books while you write your own sales playbook.</p>
+        <div class="comp-h ae-only">Your pipeline is your playbook. Write it through every deal.</div>
+        <div class="comp-h sdr-only">Your call log is your playbook. Write it through every conversation.</div>
+        <p class="comp-p ae-only">Success doesn't come from reading — it comes from running deals. Trust your instincts, refine through every win and loss, and focus on becoming the AE others study. Let someone else read books while you build the playbook from your own pipeline.</p>
+        <p class="comp-p sdr-only">Success doesn't come from reading — it comes from doing the reps. Trust your instincts, refine through every dial block, and focus on becoming the SDR others try to copy. Let someone else read books while you write your own outbound playbook.</p>
         <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
         <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
       </div>
@@ -524,7 +1062,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 <aside class="sidebar">
   <div class="sb-course">06</div>
-  <div class="sb-lesson">Lesson 6.1 · Experience Beats Books</div>
+  <div class="sb-lesson ae-only">Lesson 6.1 · Learning Habits</div>
+  <div class="sb-lesson sdr-only">Lesson 6.1 · Learning Habits</div>
   <div class="sb-divider"></div>
   <div class="sb-label">Sections</div>
   <div class="sb-item" id="nav1" onclick="go(1)">
@@ -656,10 +1195,15 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); render();
+  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register accountability gate
+  var _role = document.documentElement.getAttribute('data-role') || 'sdr';
+  var _gatePrompt = _role === 'ae' ? 'Describe a recent deal or discovery call where your instinct told you something was off. What was the signal? Did you act on it? What happened?' : 'Describe a recent cold call or outreach attempt where your instinct told you something was off about the prospect or your approach. What was the signal? Did you adjust?';
+  AESDR.gate(8, { type:'reflection', prompt: _gatePrompt, minChars: 100 });
+  render();
 }
 function go(n){
-  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:{}},"*")}catch(e){}}
+  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;
   document.getElementById('s'+cur).classList.add('active');
@@ -922,6 +1466,7 @@ function canContinue(){
   if(cur===5)return Object.keys(seqDone).length===5;
   if(cur===6)return clsCount===8;
   if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 function getHint(){
@@ -933,7 +1478,7 @@ function getHint(){
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,
     7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    8:"Trust your instincts and write your own playbook.",
+    8: AESDR.gateHint(8) || "Trust your instincts and write your own playbook.",
   };
   return h[cur]||'';
 }
@@ -954,6 +1499,7 @@ function render(){
   const bnav=document.getElementById('bottomnav');
   bnav.style.display=hide?'none':'flex';
   if(hide)return;
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';

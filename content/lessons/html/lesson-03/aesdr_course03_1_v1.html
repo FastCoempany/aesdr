@@ -2,6 +2,501 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- AESDR Role Detection -->
+<script>
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  var role = p.get('role') || 'sdr';
+  document.documentElement.setAttribute('data-role', role);
+})();
+</script>
+<style>
+/* Role-conditional content: hide content not matching current role */
+[data-role="ae"] .sdr-only { display: none !important; }
+[data-role="sdr"] .ae-only { display: none !important; }
+/* Softer variant: swap text content visibility */
+[data-role="ae"] .sdr-text { display: none !important; }
+[data-role="sdr"] .ae-text { display: none !important; }
+</style>
+<!-- AESDR Accountability Gates -->
+<style>
+/* ══════════════════════════════════════════
+   AESDR Accountability Gates — Styles v1
+   Matches lesson design system vars:
+     --black, --white, --mid, --lite, --lite2,
+     --amber, --cobalt, --green, --line, --iris,
+     --cond, --serif, --mono
+══════════════════════════════════════════ */
+
+/* ── Gate container ── */
+.gate-box {
+  margin: 28px 0 12px;
+  padding: 28px 32px 24px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  position: relative;
+}
+.gate-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+}
+
+/* ── Label / tag ── */
+.gate-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 14px;
+}
+
+/* ── Prompt text ── */
+.gate-prompt {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--black);
+  margin-bottom: 18px;
+}
+
+/* ── Textarea ── */
+.gate-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px 16px;
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--black);
+  background: var(--lite);
+  border: 1px solid var(--line2);
+  resize: vertical;
+  outline: none;
+  transition: border-color .2s;
+}
+.gate-textarea:focus {
+  border-color: var(--amber);
+}
+.gate-textarea.gate-evidence {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  min-height: 100px;
+}
+.gate-textarea::placeholder {
+  color: var(--mid);
+  opacity: .6;
+}
+
+/* ── Footer (counter + submit) ── */
+.gate-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  gap: 12px;
+}
+
+/* ── Character counter ── */
+.gate-counter {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+
+/* ── Submit button ── */
+.gate-submit {
+  font-family: var(--cond);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border: 2px solid var(--black);
+  background: var(--black);
+  color: var(--white);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all .15s;
+}
+.gate-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 2s linear infinite;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.gate-submit:hover::before {
+  opacity: 1;
+}
+.gate-submit:hover {
+  color: var(--black);
+}
+.gate-submit span {
+  position: relative;
+  z-index: 1;
+}
+.gate-submit:disabled,
+.gate-submit:disabled:hover {
+  opacity: .28;
+  cursor: not-allowed;
+  background: var(--black);
+  color: var(--white);
+}
+.gate-submit:disabled::before,
+.gate-submit:disabled:hover::before {
+  display: none;
+}
+
+/* ── Rubric checklist ── */
+.gate-rubric {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.gate-rubric-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 10px;
+}
+.gate-rubric-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--black);
+}
+.gate-rubric-item input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--amber);
+  flex-shrink: 0;
+}
+
+/* ── Time gate ── */
+.gate-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 20px 0 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--line2);
+  background: var(--lite);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+.gate-time-icon {
+  font-size: 14px;
+}
+.gate-time-num {
+  font-weight: 700;
+  color: var(--amber);
+  font-size: 13px;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* ── Completed state ── */
+.gate-done {
+  margin: 24px 0 8px;
+  padding: 20px 24px;
+  border: 2px solid var(--green);
+  background: var(--grn-lt);
+}
+.gate-done-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.gate-done-preview {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--mid);
+  font-style: italic;
+}
+
+</style>
+<script>
+/*  AESDR Accountability Gates v1
+ *  Inject into lesson HTML files alongside role-detection.
+ *
+ *  Usage in lesson JS:
+ *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
+ *    AESDR.gate(1, { type:'time', seconds:60 });
+ *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
+ *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
+ *
+ *  In canContinue():
+ *    if (!AESDR.gateReady(cur)) return false;
+ *
+ *  Gate state auto-saves via postMessage when completed.
+ */
+window.AESDR = window.AESDR || {};
+
+(function(A) {
+  var gates = {};      // screenNum -> config
+  var gateState = {};  // screenNum -> { completed, value, ... }
+  var timers = {};     // screenNum -> { started, remaining }
+
+  /* ── Register a gate ── */
+  A.gate = function(screen, cfg) {
+    gates[screen] = cfg;
+    gateState[screen] = { completed: false, value: '' };
+  };
+
+  /* ── Check if gate is satisfied ── */
+  A.gateReady = function(screen) {
+    if (!gates[screen]) return true;
+    return gateState[screen] && gateState[screen].completed;
+  };
+
+  /* ── Get gate hint text ── */
+  A.gateHint = function(screen) {
+    var g = gates[screen];
+    if (!g) return '';
+    var s = gateState[screen];
+    if (s.completed) return '\u2713 Gate complete';
+
+    if (g.type === 'time') {
+      var r = timers[screen] ? timers[screen].remaining : g.seconds;
+      return r > 0 ? 'Unlocks in ' + r + 's' : '';
+    }
+    if (g.type === 'reflection' || g.type === 'evidence') {
+      var len = (s.value || '').length;
+      return len + ' / ' + g.minChars + ' characters';
+    }
+    if (g.type === 'application') {
+      var len2 = (s.value || '').length;
+      var checks = s.rubricChecked || 0;
+      var total = (g.rubric || []).length;
+      return len2 + ' chars \u00B7 ' + checks + '/' + total + ' rubric items';
+    }
+    return '';
+  };
+
+  /* ── Get all gate data for stateData (progress saving) ── */
+  A.gateData = function() {
+    var out = {};
+    for (var k in gateState) {
+      if (gateState[k].completed) {
+        out['gate_' + k] = {
+          type: gates[k].type,
+          value: gateState[k].value,
+          completedAt: gateState[k].completedAt
+        };
+      }
+    }
+    return out;
+  };
+
+  /* ── Render gate UI into a container ── */
+  A.renderGate = function(screen, containerId) {
+    var g = gates[screen];
+    if (!g) return;
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    var s = gateState[screen];
+
+    if (s.completed) {
+      el.innerHTML = _completedHTML(g, s);
+      return;
+    }
+
+    switch(g.type) {
+      case 'reflection': el.innerHTML = _reflectionHTML(screen, g, s); break;
+      case 'application': el.innerHTML = _applicationHTML(screen, g, s); break;
+      case 'evidence': el.innerHTML = _evidenceHTML(screen, g, s); break;
+      case 'time': _startTimer(screen, g); el.innerHTML = _timeHTML(screen, g); break;
+    }
+  };
+
+  /* ── Completed state ── */
+  function _completedHTML(g, s) {
+    var typeLabel = { reflection:'Reflection', application:'Response', evidence:'Evidence', time:'Time' };
+    return '<div class="gate-done">' +
+      '<div class="gate-done-tag">\u2713 ' + (typeLabel[g.type]||'Gate') + ' Submitted</div>' +
+      (g.type !== 'time' ? '<div class="gate-done-preview">' + _esc(s.value).substring(0,200) + (s.value.length > 200 ? '...' : '') + '</div>' : '') +
+    '</div>';
+  }
+
+  /* ── Reflection Gate ── */
+  function _reflectionHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Reflection Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your reflection here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Reflection</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Application Gate ── */
+  function _applicationHTML(screen, g) {
+    var rubricHTML = (g.rubric || []).map(function(r, i) {
+      return '<label class="gate-rubric-item">' +
+        '<input type="checkbox" onchange="AESDR._onRubric(' + screen + ',' + i + ',this.checked)">' +
+        '<span>' + r + '</span></label>';
+    }).join('');
+
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Application Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your response...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-counter" id="gateCtr' + screen + '">0 / ' + (g.minChars || 50) + ' characters</div>' +
+      (rubricHTML ? '<div class="gate-rubric"><div class="gate-rubric-label">Self-evaluate your response:</div>' + rubricHTML + '</div>' : '') +
+      '<div class="gate-footer">' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Response</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Evidence Gate ── */
+  function _evidenceHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Evidence Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea gate-evidence" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Paste your evidence here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Evidence</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Time Gate ── */
+  function _timeHTML(screen, g) {
+    var r = timers[screen] ? timers[screen].remaining : g.seconds;
+    if (r <= 0) return '';
+    return '<div class="gate-time" id="gateTime' + screen + '">' +
+      '<span class="gate-time-icon">\u23F3</span> ' +
+      '<span class="gate-time-num" id="gateTimeCtr' + screen + '">' + r + '</span>s remaining' +
+    '</div>';
+  }
+
+  function _startTimer(screen, g) {
+    if (timers[screen]) return;
+    timers[screen] = { remaining: g.seconds };
+    var iv = setInterval(function() {
+      timers[screen].remaining--;
+      var el = document.getElementById('gateTimeCtr' + screen);
+      if (el) el.textContent = timers[screen].remaining;
+      if (timers[screen].remaining <= 0) {
+        clearInterval(iv);
+        gateState[screen].completed = true;
+        gateState[screen].completedAt = new Date().toISOString();
+        var timeEl = document.getElementById('gateTime' + screen);
+        if (timeEl) timeEl.style.display = 'none';
+        // Trigger render if the lesson exposes it
+        if (typeof window.render === 'function') window.render();
+      }
+    }, 1000);
+  }
+
+  /* ── Internal handlers ── */
+  A._onInput = function(screen, val) {
+    gateState[screen].value = val;
+    var g = gates[screen];
+    var min = g.minChars || 50;
+    var ctr = document.getElementById('gateCtr' + screen);
+    if (ctr) ctr.textContent = val.length + ' / ' + min + (g.type === 'application' ? ' characters' : '');
+
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      var ready = val.length >= min;
+      if (g.type === 'application' && g.rubric) {
+        var checks = gateState[screen].rubricChecked || 0;
+        ready = ready && checks >= g.rubric.length;
+      }
+      btn.disabled = !ready;
+    }
+  };
+
+  A._onRubric = function(screen, idx, checked) {
+    if (!gateState[screen]._rubric) gateState[screen]._rubric = {};
+    gateState[screen]._rubric[idx] = checked;
+    var count = 0;
+    for (var k in gateState[screen]._rubric) {
+      if (gateState[screen]._rubric[k]) count++;
+    }
+    gateState[screen].rubricChecked = count;
+
+    // Re-check submit button
+    var g = gates[screen];
+    var val = gateState[screen].value || '';
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      btn.disabled = !(val.length >= (g.minChars || 50) && count >= (g.rubric || []).length);
+    }
+  };
+
+  A._submit = function(screen) {
+    var s = gateState[screen];
+    s.completed = true;
+    s.completedAt = new Date().toISOString();
+
+    // Re-render the gate as completed
+    var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
+    containers.forEach(function(el) { A.renderGate(screen, el.id); });
+
+    // Save progress via postMessage
+    if (window.parent !== window) {
+      try {
+        window.parent.postMessage({
+          type: 'aesdr:progress',
+          screen: screen,
+          stateData: A.gateData()
+        }, '*');
+      } catch(e) {}
+    }
+
+    // Trigger render if available
+    if (typeof window.render === 'function') window.render();
+  };
+
+  /* ── Escape helper ── */
+  function _esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+})(window.AESDR);
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AESDR — Course 3.1: SDR Performance Pitfalls</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -320,9 +815,11 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div>
           <div class="cv-c3tag">AESDR · Lesson 3.1</div>
           <div class="cv-course-num">03</div>
-          <div class="cv-big">SDR Performance Pitfalls and How to Overcome Them</div>
+          <div class="cv-big ae-only">Performance Pitfalls and How to Coach Through Them</div>
+          <div class="cv-big sdr-only">SDR Performance Pitfalls and How to Overcome Them</div>
         </div>
-        <div class="cv-tagline">Turning challenges into growth and success in SaaS sales — starting with honest self-diagnosis.</div>
+        <div class="cv-tagline ae-only">Recognizing the pitfalls that erode pipeline quality — and how to coach your SDR (and yourself) through them.</div>
+        <div class="cv-tagline sdr-only">Turning challenges into growth and success in SaaS sales — starting with honest self-diagnosis.</div>
       </div>
       <div class="cvr">
         <div class="eyebrow">Course 3 · Lesson 1 of 3</div>
@@ -343,19 +840,34 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">01</div>
       <div><div class="c3-badge">Course 3</div><span class="sec-eye">Section 01 — The Diagnosis</span></div>
-      <div class="lh-title">Why Addressing SDR Challenges Matters</div>
+      <div class="lh-title ae-only">Why Performance Pitfalls Hit Your Pipeline</div>
+      <div class="lh-title sdr-only">Why Addressing SDR Challenges Matters</div>
     </div>
-    <div class="lb">
-      <p class="lp">SDRs are the backbone of the sales pipeline — every opportunity an AE closes started as an SDR conversation. Which means unresolved SDR challenges don't stay contained. They cascade: missed targets, wasted AE time, and eroded team confidence.</p>
-      <p class="lp">Addressing performance pitfalls isn't about blame. It's about identifying the gaps between where an SDR is and where they need to be — and closing them systematically.</p>
+    <div class="lb ae-only">
+      <p class="lp">Every deal in your pipeline started as an SDR conversation — which means SDR performance pitfalls aren't just their problem. They're your problem. Weak qualification wastes your prep time. Low proactivity thins your pipeline. Generic outreach produces meetings that go nowhere.</p>
+      <p class="lp">But these pitfalls hit AEs directly too. Over-reliance on inbound, sloppy discovery, and failure to adapt your demo to what the prospect actually said — these are the AE versions of the same patterns. This lesson is about recognizing them in yourself and in your team.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>Poor qualification</strong> passes weak leads to AEs who then spend hours on conversations that go nowhere.</li>
+        <li><span class="kp-n">01</span><strong>Poor qualification</strong> — whether from your SDR or your own discovery — means hours spent on deals that were never going to close.</li>
+        <li><span class="kp-n">02</span><strong>Lack of proactivity</strong> means you're waiting for pipeline to come to you instead of building it. That's how quarters go sideways.</li>
+        <li><span class="kp-n">03</span><strong>Generic approach</strong> — running the same demo for every prospect, the same follow-up for every deal — produces mediocre results at scale.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Growth Frame</div>
+        <div class="lie-q">"The best AEs don't just close well — they diagnose pipeline problems before they compound."</div>
+        <div class="lie-a">Understanding these pitfalls makes you a better closer and a better partner to your SDR. When you can name the pattern, you can fix it — in yourself and in your team.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">SDRs are the backbone of the sales pipeline — every opportunity an AE closes started as an SDR conversation. Which means unresolved SDR challenges don't stay contained. They cascade: missed targets, wasted AE time, and eroded team confidence.</p>
+      <p class="lp">Addressing performance pitfalls isn't about blame. It's about identifying the gaps between where you are and where you need to be — and closing them systematically.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Poor qualification</strong> passes weak leads to AEs who then spend hours on conversations that go nowhere. That erodes their trust in you.</li>
         <li><span class="kp-n">02</span><strong>Lack of proactivity</strong> means fewer opportunities generated — the pipeline thins quietly before anyone notices.</li>
         <li><span class="kp-n">03</span><strong>Generic outreach</strong> returns low engagement. Low engagement produces low ROI on every hour of outreach effort.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Growth Frame</div>
-        <div class="lie-q">"Every SDR pitfall is a solvable problem — not a fixed trait."</div>
+        <div class="lie-q">"Every pitfall is a solvable problem — not a fixed trait."</div>
         <div class="lie-a">The SDR who acknowledges where they're stuck and attacks one thing at a time will outgrow the one who waits for conditions to improve. Growth starts with awareness and gets done through action.</div>
       </div>
     </div>
@@ -469,14 +981,24 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         </table>
       </div>
       <div>
-        <div class="t-head">Homework — This Week</div>
-        <ul class="hw-list">
-          <li><div class="hw-box"></div>SDRs: Write down the one pitfall from the four explored in this lesson that you recognize most in yourself. Be honest. Then implement one specific fix from the toolkit this week.</li>
-          <li><div class="hw-box"></div>SDRs: Use the BANT checklist on every lead you're about to pass to your AE this week. If you can't answer all four, don't pass it — ask for more information first.</li>
-          <li><div class="hw-box"></div>SDRs: Add one genuine, research-based personalization element to every outreach sequence you send this week. Not "I saw you're at [Company]" — something specific.</li>
-          <li><div class="hw-box"></div>AEs: Schedule a feedback session with your SDR this week. Pick one area. Give specific, written feedback — not general encouragement. Track whether they implement it.</li>
+        <div class="t-head ae-only">Homework — This Week (AE)</div>
+        <ul class="hw-list ae-only">
+          <li><div class="hw-box"></div>Identify which of the four pitfalls you see most in your own deal management — not just in your SDR. Be honest about where your process gets lazy.</li>
+          <li><div class="hw-box"></div>Review the last 5 leads your SDR passed you against the BANT checklist. Score each one. Share the results with your SDR — with specifics, not just "these were weak."</li>
+          <li><div class="hw-box"></div>Schedule a feedback session with your SDR this week. Pick one area. Give specific, written feedback — not general encouragement. Track whether they implement it.</li>
+          <li><div class="hw-box"></div>Personalize your next 3 follow-up emails with specific references to what each prospect said in discovery. Not templates — actual listening applied in writing.</li>
+        </ul>
+        <div class="t-head sdr-only">Homework — This Week (SDR)</div>
+        <ul class="hw-list sdr-only">
+          <li><div class="hw-box"></div>Write down the one pitfall from the four explored in this lesson that you recognize most in yourself. Be honest. Then implement one specific fix from the toolkit this week.</li>
+          <li><div class="hw-box"></div>Use the BANT checklist on every lead you're about to pass to your AE this week. If you can't answer all four, don't pass it — ask for more information first.</li>
+          <li><div class="hw-box"></div>Add one genuine, research-based personalization element to every outreach sequence you send this week. Not "I saw you're at [Company]" — something specific.</li>
+          <li><div class="hw-box"></div>Ask your AE for one specific piece of feedback on your qualification quality this week. Not "how am I doing" — "what's one thing I could improve about the leads I pass you?"</li>
         </ul>
       </div>
+
+      <!-- Accountability Gate -->
+      <div id="gate8" data-gate-screen="8"></div>
     </div>
   </div>
 
@@ -488,13 +1010,17 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <div class="comp-tag">Course 3 · Lesson 1 — Complete</div>
           <div style="font-family:var(--display);font-size:56px;color:#fff;line-height:.9;margin:10px 0 0">03</div>
         </div>
-        <div class="comp-big">Struggle<br>is just<br>data.</div>
-        <div class="comp-sub">Every pitfall has a pattern. Every pattern has a fix. The SDRs who grow fastest are the ones who name the problem before it names them.</div>
+        <div class="comp-big ae-only">Diagnose<br>the<br>pattern.</div>
+        <div class="comp-big sdr-only">Struggle<br>is just<br>data.</div>
+        <div class="comp-sub ae-only">Every pipeline problem has a root cause. The AEs who diagnose them — in their own process and in their team — close more and waste less.</div>
+        <div class="comp-sub sdr-only">Every pitfall has a pattern. Every pattern has a fix. The SDRs who grow fastest are the ones who name the problem before it names them.</div>
       </div>
       <div class="comp-r">
         <div class="eyebrow">Course 3 · Lesson 1 Complete</div>
-        <div class="comp-h">Growth starts with awareness. Gets done through action.</div>
-        <p class="comp-p">You've identified the four pitfalls, qualified leads with BANT, practiced adapting scripts in real time, and built your proactivity day. Now execute one thing from this lesson this week — not all four. One thing, done well.</p>
+        <div class="comp-h ae-only">Better diagnosis. Better pipeline. Better coaching.</div>
+        <div class="comp-h sdr-only">Growth starts with awareness. Gets done through action.</div>
+        <p class="comp-p ae-only">You've explored the four pitfalls that erode pipeline quality, practiced BANT evaluation, and built a framework for giving actionable feedback. Now pick one thing — in your own process or your SDR's — and fix it this week.</p>
+        <p class="comp-p sdr-only">You've identified the four pitfalls, qualified leads with BANT, practiced adapting scripts in real time, and built your proactivity day. Now execute one thing from this lesson this week — not all four. One thing, done well.</p>
         <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
         <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
       </div>
@@ -505,7 +1031,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 <aside class="sidebar">
   <div class="sb-course">03</div>
-  <div class="sb-lesson">Lesson 3.1 · SDR Performance Pitfalls</div>
+  <div class="sb-lesson ae-only">Lesson 3.1 · Performance Pitfalls</div>
+  <div class="sb-lesson sdr-only">Lesson 3.1 · SDR Performance Pitfalls</div>
   <div class="sb-divider"></div>
   <div class="sb-label">Sections</div>
   <div class="sb-item" id="nav1" onclick="go(1)">
@@ -768,10 +1295,15 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ══════════════════════════════════════════ */
 function init(){
-  buildRank(); renderBant(); buildFD(); buildSA(); buildHB(); buildQuiz(); render();
+  buildRank(); renderBant(); buildFD(); buildSA(); buildHB(); buildQuiz(); 
+  // Register accountability gate
+  var _role = document.documentElement.getAttribute('data-role') || 'sdr';
+  var _gatePrompt = _role === 'ae' ? 'Write a coaching note for a specific SDR call: identify 3 qualification gaps (BANT or similar framework) and provide concrete suggestions for each.' : 'Given a recent call you made, identify 3 qualification gaps using BANT (Budget, Authority, Need, Timeline). For each gap, write what you should have asked instead.';
+  AESDR.gate(8, { type:'application', prompt: _gatePrompt, minChars: 120 });
+  render();
 }
 function go(n){
-  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:{}},"*")}catch(e){}}
+  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;
   document.getElementById('s'+cur).classList.add('active');
@@ -1049,6 +1581,7 @@ function canContinue(){
   if(cur===5) return saCount===4;
   if(cur===6) return hbDone.size===6;
   if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 function getHint(){
@@ -1060,7 +1593,7 @@ function getHint(){
     5:`${saCount} / 4 adapted`,
     6:`${hbDone.size} / 6 blocks committed`,
     7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    8:"One thing implemented well beats four things started.",
+    8: AESDR.gateHint(8) || "One thing implemented well beats four things started.",
   };
   return h[cur]||'';
 }
@@ -1080,6 +1613,7 @@ function render(){
   const hide=cur===0||cur===TOTAL-1;
   document.getElementById('bottomnav').style.display=hide?'none':'flex';
   if(hide)return;
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';

@@ -2,6 +2,501 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- AESDR Role Detection -->
+<script>
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  var role = p.get('role') || 'sdr';
+  document.documentElement.setAttribute('data-role', role);
+})();
+</script>
+<style>
+/* Role-conditional content: hide content not matching current role */
+[data-role="ae"] .sdr-only { display: none !important; }
+[data-role="sdr"] .ae-only { display: none !important; }
+/* Softer variant: swap text content visibility */
+[data-role="ae"] .sdr-text { display: none !important; }
+[data-role="sdr"] .ae-text { display: none !important; }
+</style>
+<!-- AESDR Accountability Gates -->
+<style>
+/* ══════════════════════════════════════════
+   AESDR Accountability Gates — Styles v1
+   Matches lesson design system vars:
+     --black, --white, --mid, --lite, --lite2,
+     --amber, --cobalt, --green, --line, --iris,
+     --cond, --serif, --mono
+══════════════════════════════════════════ */
+
+/* ── Gate container ── */
+.gate-box {
+  margin: 28px 0 12px;
+  padding: 28px 32px 24px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  position: relative;
+}
+.gate-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+}
+
+/* ── Label / tag ── */
+.gate-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 14px;
+}
+
+/* ── Prompt text ── */
+.gate-prompt {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--black);
+  margin-bottom: 18px;
+}
+
+/* ── Textarea ── */
+.gate-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px 16px;
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--black);
+  background: var(--lite);
+  border: 1px solid var(--line2);
+  resize: vertical;
+  outline: none;
+  transition: border-color .2s;
+}
+.gate-textarea:focus {
+  border-color: var(--amber);
+}
+.gate-textarea.gate-evidence {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  min-height: 100px;
+}
+.gate-textarea::placeholder {
+  color: var(--mid);
+  opacity: .6;
+}
+
+/* ── Footer (counter + submit) ── */
+.gate-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  gap: 12px;
+}
+
+/* ── Character counter ── */
+.gate-counter {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+
+/* ── Submit button ── */
+.gate-submit {
+  font-family: var(--cond);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border: 2px solid var(--black);
+  background: var(--black);
+  color: var(--white);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all .15s;
+}
+.gate-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 2s linear infinite;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.gate-submit:hover::before {
+  opacity: 1;
+}
+.gate-submit:hover {
+  color: var(--black);
+}
+.gate-submit span {
+  position: relative;
+  z-index: 1;
+}
+.gate-submit:disabled,
+.gate-submit:disabled:hover {
+  opacity: .28;
+  cursor: not-allowed;
+  background: var(--black);
+  color: var(--white);
+}
+.gate-submit:disabled::before,
+.gate-submit:disabled:hover::before {
+  display: none;
+}
+
+/* ── Rubric checklist ── */
+.gate-rubric {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.gate-rubric-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 10px;
+}
+.gate-rubric-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--black);
+}
+.gate-rubric-item input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--amber);
+  flex-shrink: 0;
+}
+
+/* ── Time gate ── */
+.gate-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 20px 0 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--line2);
+  background: var(--lite);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+.gate-time-icon {
+  font-size: 14px;
+}
+.gate-time-num {
+  font-weight: 700;
+  color: var(--amber);
+  font-size: 13px;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* ── Completed state ── */
+.gate-done {
+  margin: 24px 0 8px;
+  padding: 20px 24px;
+  border: 2px solid var(--green);
+  background: var(--grn-lt);
+}
+.gate-done-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.gate-done-preview {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--mid);
+  font-style: italic;
+}
+
+</style>
+<script>
+/*  AESDR Accountability Gates v1
+ *  Inject into lesson HTML files alongside role-detection.
+ *
+ *  Usage in lesson JS:
+ *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
+ *    AESDR.gate(1, { type:'time', seconds:60 });
+ *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
+ *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
+ *
+ *  In canContinue():
+ *    if (!AESDR.gateReady(cur)) return false;
+ *
+ *  Gate state auto-saves via postMessage when completed.
+ */
+window.AESDR = window.AESDR || {};
+
+(function(A) {
+  var gates = {};      // screenNum -> config
+  var gateState = {};  // screenNum -> { completed, value, ... }
+  var timers = {};     // screenNum -> { started, remaining }
+
+  /* ── Register a gate ── */
+  A.gate = function(screen, cfg) {
+    gates[screen] = cfg;
+    gateState[screen] = { completed: false, value: '' };
+  };
+
+  /* ── Check if gate is satisfied ── */
+  A.gateReady = function(screen) {
+    if (!gates[screen]) return true;
+    return gateState[screen] && gateState[screen].completed;
+  };
+
+  /* ── Get gate hint text ── */
+  A.gateHint = function(screen) {
+    var g = gates[screen];
+    if (!g) return '';
+    var s = gateState[screen];
+    if (s.completed) return '\u2713 Gate complete';
+
+    if (g.type === 'time') {
+      var r = timers[screen] ? timers[screen].remaining : g.seconds;
+      return r > 0 ? 'Unlocks in ' + r + 's' : '';
+    }
+    if (g.type === 'reflection' || g.type === 'evidence') {
+      var len = (s.value || '').length;
+      return len + ' / ' + g.minChars + ' characters';
+    }
+    if (g.type === 'application') {
+      var len2 = (s.value || '').length;
+      var checks = s.rubricChecked || 0;
+      var total = (g.rubric || []).length;
+      return len2 + ' chars \u00B7 ' + checks + '/' + total + ' rubric items';
+    }
+    return '';
+  };
+
+  /* ── Get all gate data for stateData (progress saving) ── */
+  A.gateData = function() {
+    var out = {};
+    for (var k in gateState) {
+      if (gateState[k].completed) {
+        out['gate_' + k] = {
+          type: gates[k].type,
+          value: gateState[k].value,
+          completedAt: gateState[k].completedAt
+        };
+      }
+    }
+    return out;
+  };
+
+  /* ── Render gate UI into a container ── */
+  A.renderGate = function(screen, containerId) {
+    var g = gates[screen];
+    if (!g) return;
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    var s = gateState[screen];
+
+    if (s.completed) {
+      el.innerHTML = _completedHTML(g, s);
+      return;
+    }
+
+    switch(g.type) {
+      case 'reflection': el.innerHTML = _reflectionHTML(screen, g, s); break;
+      case 'application': el.innerHTML = _applicationHTML(screen, g, s); break;
+      case 'evidence': el.innerHTML = _evidenceHTML(screen, g, s); break;
+      case 'time': _startTimer(screen, g); el.innerHTML = _timeHTML(screen, g); break;
+    }
+  };
+
+  /* ── Completed state ── */
+  function _completedHTML(g, s) {
+    var typeLabel = { reflection:'Reflection', application:'Response', evidence:'Evidence', time:'Time' };
+    return '<div class="gate-done">' +
+      '<div class="gate-done-tag">\u2713 ' + (typeLabel[g.type]||'Gate') + ' Submitted</div>' +
+      (g.type !== 'time' ? '<div class="gate-done-preview">' + _esc(s.value).substring(0,200) + (s.value.length > 200 ? '...' : '') + '</div>' : '') +
+    '</div>';
+  }
+
+  /* ── Reflection Gate ── */
+  function _reflectionHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Reflection Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your reflection here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Reflection</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Application Gate ── */
+  function _applicationHTML(screen, g) {
+    var rubricHTML = (g.rubric || []).map(function(r, i) {
+      return '<label class="gate-rubric-item">' +
+        '<input type="checkbox" onchange="AESDR._onRubric(' + screen + ',' + i + ',this.checked)">' +
+        '<span>' + r + '</span></label>';
+    }).join('');
+
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Application Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your response...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-counter" id="gateCtr' + screen + '">0 / ' + (g.minChars || 50) + ' characters</div>' +
+      (rubricHTML ? '<div class="gate-rubric"><div class="gate-rubric-label">Self-evaluate your response:</div>' + rubricHTML + '</div>' : '') +
+      '<div class="gate-footer">' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Response</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Evidence Gate ── */
+  function _evidenceHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Evidence Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea gate-evidence" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Paste your evidence here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Evidence</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Time Gate ── */
+  function _timeHTML(screen, g) {
+    var r = timers[screen] ? timers[screen].remaining : g.seconds;
+    if (r <= 0) return '';
+    return '<div class="gate-time" id="gateTime' + screen + '">' +
+      '<span class="gate-time-icon">\u23F3</span> ' +
+      '<span class="gate-time-num" id="gateTimeCtr' + screen + '">' + r + '</span>s remaining' +
+    '</div>';
+  }
+
+  function _startTimer(screen, g) {
+    if (timers[screen]) return;
+    timers[screen] = { remaining: g.seconds };
+    var iv = setInterval(function() {
+      timers[screen].remaining--;
+      var el = document.getElementById('gateTimeCtr' + screen);
+      if (el) el.textContent = timers[screen].remaining;
+      if (timers[screen].remaining <= 0) {
+        clearInterval(iv);
+        gateState[screen].completed = true;
+        gateState[screen].completedAt = new Date().toISOString();
+        var timeEl = document.getElementById('gateTime' + screen);
+        if (timeEl) timeEl.style.display = 'none';
+        // Trigger render if the lesson exposes it
+        if (typeof window.render === 'function') window.render();
+      }
+    }, 1000);
+  }
+
+  /* ── Internal handlers ── */
+  A._onInput = function(screen, val) {
+    gateState[screen].value = val;
+    var g = gates[screen];
+    var min = g.minChars || 50;
+    var ctr = document.getElementById('gateCtr' + screen);
+    if (ctr) ctr.textContent = val.length + ' / ' + min + (g.type === 'application' ? ' characters' : '');
+
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      var ready = val.length >= min;
+      if (g.type === 'application' && g.rubric) {
+        var checks = gateState[screen].rubricChecked || 0;
+        ready = ready && checks >= g.rubric.length;
+      }
+      btn.disabled = !ready;
+    }
+  };
+
+  A._onRubric = function(screen, idx, checked) {
+    if (!gateState[screen]._rubric) gateState[screen]._rubric = {};
+    gateState[screen]._rubric[idx] = checked;
+    var count = 0;
+    for (var k in gateState[screen]._rubric) {
+      if (gateState[screen]._rubric[k]) count++;
+    }
+    gateState[screen].rubricChecked = count;
+
+    // Re-check submit button
+    var g = gates[screen];
+    var val = gateState[screen].value || '';
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      btn.disabled = !(val.length >= (g.minChars || 50) && count >= (g.rubric || []).length);
+    }
+  };
+
+  A._submit = function(screen) {
+    var s = gateState[screen];
+    s.completed = true;
+    s.completedAt = new Date().toISOString();
+
+    // Re-render the gate as completed
+    var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
+    containers.forEach(function(el) { A.renderGate(screen, el.id); });
+
+    // Save progress via postMessage
+    if (window.parent !== window) {
+      try {
+        window.parent.postMessage({
+          type: 'aesdr:progress',
+          screen: screen,
+          stateData: A.gateData()
+        }, '*');
+      } catch(e) {}
+    }
+
+    // Trigger render if available
+    if (typeof window.render === 'function') window.render();
+  };
+
+  /* ── Escape helper ── */
+  function _esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+})(window.AESDR);
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AESDR — Course 2.1: Breaking Down Silos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -284,9 +779,11 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div>
           <div class="cv-c2tag">AESDR · Lesson 2.1</div>
           <div class="cv-course-num">02</div>
-          <div class="cv-big">Breaking Down Silos</div>
+          <div class="cv-big ae-only">Breaking Down Silos</div>
+          <div class="cv-big sdr-only">Caught in the Crossfire</div>
         </div>
-        <div class="cv-tagline">How AEs and SDRs can tackle internal sabotage to improve communication, alignment, and results.</div>
+        <div class="cv-tagline ae-only">You're the one with deal context. Break the silos that cost you pipeline.</div>
+        <div class="cv-tagline sdr-only">You're caught in the middle. Learn to bridge the gap without getting crushed.</div>
       </div>
       <div class="cvr">
         <div class="eyebrow">Course 2 · Lesson 1 of 3</div>
@@ -309,17 +806,30 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div><div class="c2-badge">Course 2</div><span class="sec-eye">Section 01 — The Diagnosis</span></div>
       <div class="lh-title">The Silent Killer: Internal Sabotage</div>
     </div>
-    <div class="lb">
-      <p class="lp">Silos aren't just a corporate culture problem. For AEs and SDRs, they translate directly into missed quotas, confusion in front of prospects, and churn. They're called silent killers because the damage accumulates invisibly — until the pipeline is already broken.</p>
+    <div class="lb ae-only">
+      <p class="lp">Silos aren't just a corporate culture problem. For AEs, they translate directly into blown demos, confused prospects, and deals that die in committee because your pitch didn't match what Marketing promised. The damage accumulates invisibly — until the quarter is already gone.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>Confused Messaging → Lost Deals.</strong> When Marketing promises features that Product hasn't shipped, Sales gets caught in the middle holding a pitch that doesn't match reality.</li>
-        <li><span class="kp-n">02</span><strong>Wasted Efforts → Reduced Productivity.</strong> Teams solve the same problems independently. SDR field insights never reach Marketing. AEs get blindsided by campaigns they didn't know existed.</li>
-        <li><span class="kp-n">03</span><strong>Finger-Pointing → Poor Morale.</strong> When nobody owns the problem, blame becomes the default. Real opportunities get buried under the noise.</li>
+        <li><span class="kp-n">01</span><strong>Confused Messaging → Lost Deals.</strong> Marketing launches a campaign promising features Product hasn't shipped. You're the one on the call when the prospect asks about it. That's your credibility on the line.</li>
+        <li><span class="kp-n">02</span><strong>Wasted Efforts → Reduced Productivity.</strong> You build a custom demo for a vertical that Marketing is already targeting with different messaging. Nobody told you. Two teams, same goal, zero coordination.</li>
+        <li><span class="kp-n">03</span><strong>Finger-Pointing → Poor Morale.</strong> When the deal falls apart, Product says you overpromised. Marketing says the lead was warm. You're holding the bag because nobody owns the handoff.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Real Cost</div>
         <div class="lie-q">"Silos don't feel like sabotage — but they perform like it."</div>
-        <div class="lie-a">Every misaligned campaign, every dropped insight, every blame conversation is a tax on your quota. It compounds quietly until the quarter is already gone.</div>
+        <div class="lie-a">Every misaligned campaign is a deal you have to rescue. Every dropped insight is a competitor who got there first. It compounds quietly until the forecast is already fiction.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">Silos aren't just a corporate culture problem. For SDRs, they mean sending outbound that contradicts the latest campaign, pitching features that don't exist yet, and watching your hard-earned meetings fall apart because nobody told you the messaging changed. The damage accumulates invisibly — until your connect rate is already broken.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Confused Messaging → Wasted Outreach.</strong> Marketing launches a campaign and you're still running last month's sequences. The prospect got one message from the ad and a different one from you. That's trust lost on the first touch.</li>
+        <li><span class="kp-n">02</span><strong>Wasted Efforts → Invisible Work.</strong> You've tracked the same three objections for six months. Nobody in Marketing has heard them. Your field intelligence dies in your call notes because there's no path for it to travel.</li>
+        <li><span class="kp-n">03</span><strong>Finger-Pointing → You Get Blamed.</strong> When lead quality drops, Sales blames Marketing, Marketing blames targeting, and you're the one whose activity metrics get scrutinized. The silo created the problem; you absorb the cost.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Real Cost</div>
+        <div class="lie-q">"Silos don't feel like sabotage — but they perform like it."</div>
+        <div class="lie-a">Every misaligned campaign is a cold call that starts from a deficit. Every ignored insight is an objection you'll hear again tomorrow. It compounds quietly until your pipeline is already hollow.</div>
       </div>
     </div>
   </div>
@@ -363,17 +873,30 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div><div class="c2-badge">Course 2</div><span class="sec-eye">Section 02 — The Playbook</span></div>
       <div class="lh-title">The Silo-Busting Playbook for AEs and SDRs</div>
     </div>
-    <div class="lb">
-      <p class="lp">Three steps. None require executive buy-in. All of them can be started this week by any AE or SDR who decides the status quo isn't working.</p>
+    <div class="lb ae-only">
+      <p class="lp">Three steps. None require executive buy-in. All of them can be started this week by any AE who decides the status quo isn't working. You have the deal context, the prospect relationships, and the credibility to drive this.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>Align Sales and Marketing Messaging.</strong> Weekly meeting. AEs, SDRs, and Marketing align on product updates, campaign messaging, and talking points. Stop selling what hasn't shipped.</li>
-        <li><span class="kp-n">02</span><strong>Build a Cross-Functional Feedback Loop.</strong> Close the gap. SDRs and AEs bring field intel. Marketing shares campaign performance. Product shares the roadmap. Actual information, in one room, every week.</li>
-        <li><span class="kp-n">03</span><strong>Proactively Share Customer Insights with Product.</strong> Track the top 5 objections and feature requests from the field. Build a one-page report. Share it monthly. Become the bridge, not the bottleneck.</li>
+        <li><span class="kp-n">01</span><strong>Own the Sales-Marketing Sync.</strong> Schedule it yourself. Weekly. Bring your pipeline data, your prospect objections, and your campaign feedback. Don't wait for Marketing to invite you — you have the information they need.</li>
+        <li><span class="kp-n">02</span><strong>Build the Cross-Functional Feedback Loop.</strong> You sit between the prospect and the product. Use that position. Bring real deal intelligence to every meeting — what prospects actually say, not what the CRM categorizes.</li>
+        <li><span class="kp-n">03</span><strong>Share Customer Insights with Product — Monthly.</strong> Track the top 5 objections and feature requests from your deals. Build a one-page report. Send it to Product leadership. You become the bridge between what the market wants and what gets built.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Ownership Question</div>
         <div class="lie-q">"Who is supposed to fix the silo problem?"</div>
-        <div class="lie-a">You are. Not your VP, not the company, not a future process. You. Start with one meeting this week. The playbook is simple — the only variable is whether you execute it.</div>
+        <div class="lie-a">You are. You're the one who loses the deal when messaging is wrong. You're the one who explains the gap to the prospect. That pain gives you the standing to fix it. Start with one meeting this week.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">Three steps. None require executive buy-in. All of them can be started this week by any SDR who decides the status quo isn't working. You have something nobody else has: raw, unfiltered field intelligence from dozens of conversations a day.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Earn Your Seat at the Sales-Marketing Sync.</strong> If you're not in that room yet, ask. Bring documented objections, not opinions. Show up with data from your calls — the exact words prospects use. That's your ticket in.</li>
+        <li><span class="kp-n">02</span><strong>Build the Cross-Functional Feedback Loop.</strong> You're on the front line every day. Track what prospects actually say — the objections, the confusion, the questions about features that don't exist. Document it. That raw signal is gold if it reaches the right people.</li>
+        <li><span class="kp-n">03</span><strong>Share Customer Insights — Don't Hoard Them.</strong> Build a simple weekly doc: top 5 things prospects said this week. Share it with your AEs, your manager, and Marketing. When your insights start changing campaigns, you stop being an activity machine and become a strategic asset.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Ownership Question</div>
+        <div class="lie-q">"Who is supposed to fix the silo problem?"</div>
+        <div class="lie-a">You are. You talk to more prospects in a day than most people do in a month. That gives you intelligence nobody else has. The only question is whether you document it and share it, or let it die in your call notes.</div>
       </div>
     </div>
   </div>
@@ -503,12 +1026,14 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div>
         <div class="t-head">Homework — This Week</div>
         <ul class="hw-list">
-          <li><div class="hw-box"></div>AEs: Schedule a Sales-Marketing Sync for this week. Use the template above. If Marketing won't come, start without them — bring your own field data.</li>
-          <li><div class="hw-box"></div>AEs: Begin your Customer Insights Report using call notes from the past 30 days. Find the top 5 objections. Write them down in one document.</li>
-          <li><div class="hw-box"></div>SDRs: Track 5 objections or prospect trends from your calls this week. Tag them in your CRM or in a simple doc. Come to the Sync meeting with evidence, not impressions.</li>
-          <li><div class="hw-box"></div>SDRs: Share your field insights at the Sales-Marketing Sync. If you're not in that meeting yet, ask to be. You have information Marketing needs.</li>
+          <li class="ae-only"><div class="hw-box"></div>Schedule a Sales-Marketing Sync for this week. Use the template above. If Marketing won't come, start without them — bring your own field data.</li>
+          <li class="ae-only"><div class="hw-box"></div>Begin your Customer Insights Report using call notes from the past 30 days. Find the top 5 objections. Write them down in one document.</li>
+          <li class="sdr-only"><div class="hw-box"></div>Track 5 objections or prospect trends from your calls this week. Tag them in your CRM or in a simple doc. Come to the Sync meeting with evidence, not impressions.</li>
+          <li class="sdr-only"><div class="hw-box"></div>Share your field insights at the Sales-Marketing Sync. If you're not in that meeting yet, ask to be. You have information Marketing needs.</li>
         </ul>
       </div>
+      <!-- Accountability Gate -->
+      <div id="gate8" data-gate-screen="8"></div>
     </div>
   </div>
 
@@ -520,13 +1045,17 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <div class="comp-tag">Course 2 · Lesson 1 — Complete</div>
           <div style="font-family:var(--display);font-size:56px;color:var(--black);line-height:.9;margin:10px 0 0">02</div>
         </div>
-        <div class="comp-big">Silos<br>fall when<br>you push.</div>
-        <div class="comp-sub">Align messaging. Build feedback loops. Become the bridge. None of it requires permission — it requires showing up with information and a calendar invite.</div>
+        <div class="comp-big ae-only">Own the<br>outcome.<br>Own the<br>alignment.</div>
+        <div class="comp-big sdr-only">Bridge<br>the gap.<br>Own the<br>intel.</div>
+        <div class="comp-sub ae-only">You're the one who loses the deal when messaging is wrong. That means you're the one with standing to fix it. Schedule the sync. Share the insights. Lead from the middle.</div>
+        <div class="comp-sub sdr-only">You talk to more prospects than anyone. That's not just activity — it's intelligence. Document it, share it, and earn your seat at the table.</div>
       </div>
       <div class="comp-r">
         <div class="eyebrow">Course 2 · Lesson 1 Complete</div>
-        <div class="comp-h">From synchronized teams come real results.</div>
-        <p class="comp-p">Silos are a silent killer — but they're not invincible. The AEs and SDRs who break them don't wait for leadership to fix the org chart. They start one weekly meeting, one shared report, one honest conversation.</p>
+        <div class="comp-h ae-only">You own the deal. Own the alignment too.</div>
+        <div class="comp-h sdr-only">The best SDRs don't just prospect — they bridge.</div>
+        <p class="comp-p ae-only">Silos are a silent killer — but you have the leverage to break them. You sit between the prospect, the product, and the campaign. Start one weekly sync, build one shared report, and watch the pipeline respond.</p>
+        <p class="comp-p sdr-only">Silos are a silent killer — but you have something nobody else has: raw field intelligence from dozens of conversations a day. The SDRs who break silos don't wait for an invitation. They show up with evidence and earn their seat.</p>
         <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
         <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
       </div>
@@ -537,7 +1066,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 <aside class="sidebar">
   <div class="sb-course">02</div>
-  <div class="sb-lesson">Lesson 2.1 · Breaking Down Silos</div>
+  <div class="sb-lesson ae-only">Lesson 2.1 · Breaking Down Silos</div>
+  <div class="sb-lesson sdr-only">Lesson 2.1 · Caught in the Crossfire</div>
   <div class="sb-divider"></div>
   <div class="sb-label">Sections</div>
   <div class="sb-item" id="nav1" onclick="go(1)">
@@ -669,10 +1199,17 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); render();
+  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz();
+  // Reflection gate
+  var _role = document.documentElement.getAttribute('data-role') || 'sdr';
+  var prompt = _role === 'ae'
+    ? 'Describe a specific silo in your current org — between Sales, Marketing, Product, or CS — and explain how it directly impacts your pipeline or deal flow. Be concrete: name the teams, the disconnect, and the cost.'
+    : 'Describe a specific silo you\'ve experienced between your SDR team and another department (Marketing, AEs, Product). How does it affect your daily outreach or prospecting? Name the disconnect and one thing you could do about it.';
+  AESDR.gate(8, { type:'reflection', prompt: prompt, minChars: 120 });
+  render();
 }
 function go(n){
-  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:{}},"*")}catch(e){}}
+  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;
   document.getElementById('s'+cur).classList.add('active');
@@ -938,6 +1475,7 @@ function canContinue(){
   if(cur===5)return Object.keys(seqDone).length===5;
   if(cur===6)return clsCount===8;
   if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 function getHint(){
@@ -949,7 +1487,7 @@ function getHint(){
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,
     7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    8:"The templates only work if someone actually schedules the meeting.",
+    8: AESDR.gateHint(8) || "The templates only work if someone actually schedules the meeting.",
   };
   return h[cur]||'';
 }
@@ -970,6 +1508,7 @@ function render(){
   const bnav=document.getElementById('bottomnav');
   bnav.style.display=hide?'none':'flex';
   if(hide)return;
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';

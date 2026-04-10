@@ -2,6 +2,501 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- AESDR Role Detection -->
+<script>
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  var role = p.get('role') || 'sdr';
+  document.documentElement.setAttribute('data-role', role);
+})();
+</script>
+<style>
+/* Role-conditional content: hide content not matching current role */
+[data-role="ae"] .sdr-only { display: none !important; }
+[data-role="sdr"] .ae-only { display: none !important; }
+/* Softer variant: swap text content visibility */
+[data-role="ae"] .sdr-text { display: none !important; }
+[data-role="sdr"] .ae-text { display: none !important; }
+</style>
+<!-- AESDR Accountability Gates -->
+<style>
+/* ══════════════════════════════════════════
+   AESDR Accountability Gates — Styles v1
+   Matches lesson design system vars:
+     --black, --white, --mid, --lite, --lite2,
+     --amber, --cobalt, --green, --line, --iris,
+     --cond, --serif, --mono
+══════════════════════════════════════════ */
+
+/* ── Gate container ── */
+.gate-box {
+  margin: 28px 0 12px;
+  padding: 28px 32px 24px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  position: relative;
+}
+.gate-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+}
+
+/* ── Label / tag ── */
+.gate-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 14px;
+}
+
+/* ── Prompt text ── */
+.gate-prompt {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--black);
+  margin-bottom: 18px;
+}
+
+/* ── Textarea ── */
+.gate-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px 16px;
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--black);
+  background: var(--lite);
+  border: 1px solid var(--line2);
+  resize: vertical;
+  outline: none;
+  transition: border-color .2s;
+}
+.gate-textarea:focus {
+  border-color: var(--amber);
+}
+.gate-textarea.gate-evidence {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  min-height: 100px;
+}
+.gate-textarea::placeholder {
+  color: var(--mid);
+  opacity: .6;
+}
+
+/* ── Footer (counter + submit) ── */
+.gate-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  gap: 12px;
+}
+
+/* ── Character counter ── */
+.gate-counter {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+
+/* ── Submit button ── */
+.gate-submit {
+  font-family: var(--cond);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border: 2px solid var(--black);
+  background: var(--black);
+  color: var(--white);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all .15s;
+}
+.gate-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 2s linear infinite;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.gate-submit:hover::before {
+  opacity: 1;
+}
+.gate-submit:hover {
+  color: var(--black);
+}
+.gate-submit span {
+  position: relative;
+  z-index: 1;
+}
+.gate-submit:disabled,
+.gate-submit:disabled:hover {
+  opacity: .28;
+  cursor: not-allowed;
+  background: var(--black);
+  color: var(--white);
+}
+.gate-submit:disabled::before,
+.gate-submit:disabled:hover::before {
+  display: none;
+}
+
+/* ── Rubric checklist ── */
+.gate-rubric {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.gate-rubric-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 10px;
+}
+.gate-rubric-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--black);
+}
+.gate-rubric-item input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--amber);
+  flex-shrink: 0;
+}
+
+/* ── Time gate ── */
+.gate-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 20px 0 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--line2);
+  background: var(--lite);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+.gate-time-icon {
+  font-size: 14px;
+}
+.gate-time-num {
+  font-weight: 700;
+  color: var(--amber);
+  font-size: 13px;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* ── Completed state ── */
+.gate-done {
+  margin: 24px 0 8px;
+  padding: 20px 24px;
+  border: 2px solid var(--green);
+  background: var(--grn-lt);
+}
+.gate-done-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.gate-done-preview {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--mid);
+  font-style: italic;
+}
+
+</style>
+<script>
+/*  AESDR Accountability Gates v1
+ *  Inject into lesson HTML files alongside role-detection.
+ *
+ *  Usage in lesson JS:
+ *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
+ *    AESDR.gate(1, { type:'time', seconds:60 });
+ *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
+ *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
+ *
+ *  In canContinue():
+ *    if (!AESDR.gateReady(cur)) return false;
+ *
+ *  Gate state auto-saves via postMessage when completed.
+ */
+window.AESDR = window.AESDR || {};
+
+(function(A) {
+  var gates = {};      // screenNum -> config
+  var gateState = {};  // screenNum -> { completed, value, ... }
+  var timers = {};     // screenNum -> { started, remaining }
+
+  /* ── Register a gate ── */
+  A.gate = function(screen, cfg) {
+    gates[screen] = cfg;
+    gateState[screen] = { completed: false, value: '' };
+  };
+
+  /* ── Check if gate is satisfied ── */
+  A.gateReady = function(screen) {
+    if (!gates[screen]) return true;
+    return gateState[screen] && gateState[screen].completed;
+  };
+
+  /* ── Get gate hint text ── */
+  A.gateHint = function(screen) {
+    var g = gates[screen];
+    if (!g) return '';
+    var s = gateState[screen];
+    if (s.completed) return '\u2713 Gate complete';
+
+    if (g.type === 'time') {
+      var r = timers[screen] ? timers[screen].remaining : g.seconds;
+      return r > 0 ? 'Unlocks in ' + r + 's' : '';
+    }
+    if (g.type === 'reflection' || g.type === 'evidence') {
+      var len = (s.value || '').length;
+      return len + ' / ' + g.minChars + ' characters';
+    }
+    if (g.type === 'application') {
+      var len2 = (s.value || '').length;
+      var checks = s.rubricChecked || 0;
+      var total = (g.rubric || []).length;
+      return len2 + ' chars \u00B7 ' + checks + '/' + total + ' rubric items';
+    }
+    return '';
+  };
+
+  /* ── Get all gate data for stateData (progress saving) ── */
+  A.gateData = function() {
+    var out = {};
+    for (var k in gateState) {
+      if (gateState[k].completed) {
+        out['gate_' + k] = {
+          type: gates[k].type,
+          value: gateState[k].value,
+          completedAt: gateState[k].completedAt
+        };
+      }
+    }
+    return out;
+  };
+
+  /* ── Render gate UI into a container ── */
+  A.renderGate = function(screen, containerId) {
+    var g = gates[screen];
+    if (!g) return;
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    var s = gateState[screen];
+
+    if (s.completed) {
+      el.innerHTML = _completedHTML(g, s);
+      return;
+    }
+
+    switch(g.type) {
+      case 'reflection': el.innerHTML = _reflectionHTML(screen, g, s); break;
+      case 'application': el.innerHTML = _applicationHTML(screen, g, s); break;
+      case 'evidence': el.innerHTML = _evidenceHTML(screen, g, s); break;
+      case 'time': _startTimer(screen, g); el.innerHTML = _timeHTML(screen, g); break;
+    }
+  };
+
+  /* ── Completed state ── */
+  function _completedHTML(g, s) {
+    var typeLabel = { reflection:'Reflection', application:'Response', evidence:'Evidence', time:'Time' };
+    return '<div class="gate-done">' +
+      '<div class="gate-done-tag">\u2713 ' + (typeLabel[g.type]||'Gate') + ' Submitted</div>' +
+      (g.type !== 'time' ? '<div class="gate-done-preview">' + _esc(s.value).substring(0,200) + (s.value.length > 200 ? '...' : '') + '</div>' : '') +
+    '</div>';
+  }
+
+  /* ── Reflection Gate ── */
+  function _reflectionHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Reflection Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your reflection here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Reflection</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Application Gate ── */
+  function _applicationHTML(screen, g) {
+    var rubricHTML = (g.rubric || []).map(function(r, i) {
+      return '<label class="gate-rubric-item">' +
+        '<input type="checkbox" onchange="AESDR._onRubric(' + screen + ',' + i + ',this.checked)">' +
+        '<span>' + r + '</span></label>';
+    }).join('');
+
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Application Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your response...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-counter" id="gateCtr' + screen + '">0 / ' + (g.minChars || 50) + ' characters</div>' +
+      (rubricHTML ? '<div class="gate-rubric"><div class="gate-rubric-label">Self-evaluate your response:</div>' + rubricHTML + '</div>' : '') +
+      '<div class="gate-footer">' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Response</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Evidence Gate ── */
+  function _evidenceHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Evidence Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea gate-evidence" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Paste your evidence here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Evidence</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Time Gate ── */
+  function _timeHTML(screen, g) {
+    var r = timers[screen] ? timers[screen].remaining : g.seconds;
+    if (r <= 0) return '';
+    return '<div class="gate-time" id="gateTime' + screen + '">' +
+      '<span class="gate-time-icon">\u23F3</span> ' +
+      '<span class="gate-time-num" id="gateTimeCtr' + screen + '">' + r + '</span>s remaining' +
+    '</div>';
+  }
+
+  function _startTimer(screen, g) {
+    if (timers[screen]) return;
+    timers[screen] = { remaining: g.seconds };
+    var iv = setInterval(function() {
+      timers[screen].remaining--;
+      var el = document.getElementById('gateTimeCtr' + screen);
+      if (el) el.textContent = timers[screen].remaining;
+      if (timers[screen].remaining <= 0) {
+        clearInterval(iv);
+        gateState[screen].completed = true;
+        gateState[screen].completedAt = new Date().toISOString();
+        var timeEl = document.getElementById('gateTime' + screen);
+        if (timeEl) timeEl.style.display = 'none';
+        // Trigger render if the lesson exposes it
+        if (typeof window.render === 'function') window.render();
+      }
+    }, 1000);
+  }
+
+  /* ── Internal handlers ── */
+  A._onInput = function(screen, val) {
+    gateState[screen].value = val;
+    var g = gates[screen];
+    var min = g.minChars || 50;
+    var ctr = document.getElementById('gateCtr' + screen);
+    if (ctr) ctr.textContent = val.length + ' / ' + min + (g.type === 'application' ? ' characters' : '');
+
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      var ready = val.length >= min;
+      if (g.type === 'application' && g.rubric) {
+        var checks = gateState[screen].rubricChecked || 0;
+        ready = ready && checks >= g.rubric.length;
+      }
+      btn.disabled = !ready;
+    }
+  };
+
+  A._onRubric = function(screen, idx, checked) {
+    if (!gateState[screen]._rubric) gateState[screen]._rubric = {};
+    gateState[screen]._rubric[idx] = checked;
+    var count = 0;
+    for (var k in gateState[screen]._rubric) {
+      if (gateState[screen]._rubric[k]) count++;
+    }
+    gateState[screen].rubricChecked = count;
+
+    // Re-check submit button
+    var g = gates[screen];
+    var val = gateState[screen].value || '';
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      btn.disabled = !(val.length >= (g.minChars || 50) && count >= (g.rubric || []).length);
+    }
+  };
+
+  A._submit = function(screen) {
+    var s = gateState[screen];
+    s.completed = true;
+    s.completedAt = new Date().toISOString();
+
+    // Re-render the gate as completed
+    var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
+    containers.forEach(function(el) { A.renderGate(screen, el.id); });
+
+    // Save progress via postMessage
+    if (window.parent !== window) {
+      try {
+        window.parent.postMessage({
+          type: 'aesdr:progress',
+          screen: screen,
+          stateData: A.gateData()
+        }, '*');
+      } catch(e) {}
+    }
+
+    // Trigger render if available
+    if (typeof window.render === 'function') window.render();
+  };
+
+  /* ── Escape helper ── */
+  function _esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+})(window.AESDR);
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AESDR — Course 9.3: Mastering the SaaS Sales Tools</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -289,9 +784,11 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div>
           <div class="cv-c2tag">AESDR · Lesson 9.3</div>
           <div class="cv-course-num">09</div>
-          <div class="cv-big">Mastering the SaaS Sales Tools</div>
+          <div class="cv-big ae-only">Mastering the SaaS Sales Tools</div>
+          <div class="cv-big sdr-only">Mastering the SaaS Sales Tools</div>
         </div>
-        <div class="cv-tagline">How to Use Email, CRM, and Dialers Without Letting Them Ruin Your Selling.</div>
+        <div class="cv-tagline ae-only">Your tech stack is your competitive advantage. Know it cold or lose to the rep who does.</div>
+        <div class="cv-tagline sdr-only">Your tech stack is your productivity multiplier. Know it cold or fall behind.</div>
       </div>
       <div class="cvr">
         <div class="eyebrow">Course 9 · Lesson 3 of 3</div>
@@ -314,17 +811,30 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div><div class="c9-badge">Course 9</div><span class="sec-eye">Section 01 — The Unholy Trinity</span></div>
       <div class="lh-title">Why Tools Alone Won't Save You</div>
     </div>
-    <div class="lb">
-      <p class="lp">Sales tools are meant to amplify your skills, but too many reps use them to hide bad selling habits. If you're sending lazy emails, logging garbage data, or making bad calls, no tech stack in the world can save you.</p>
+    <div class="lb ae-only">
+      <p class="lp">Sales tools are meant to amplify your skills, but too many AEs use them to hide lazy habits. If your sequences are generic, your CRM data is stale, and your presentations are templated, no tech stack can save your close rate.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>Email (Spam):</strong> "Quick Question" and "Touching Base" templates scream "You're just another name." Open rates don't pay bills; meetings do.</li>
-        <li><span class="kp-n">02</span><strong>CRM (Garbage Data):</strong> Incomplete leads, vague notes, and untouched deals turn your CRM into a time suck instead of a power tool.</li>
-        <li><span class="kp-n">03</span><strong>Dialers (Speed vs Quality):</strong> High call volume means nothing if connection rates are low and you're reading a script like a robot.</li>
+        <li><span class="kp-n">01</span><strong>Email (Lazy Follow-Up):</strong> "Just circling back" and "Checking in" emails signal that you have nothing new to offer. Post-demo follow-ups need to reference specific pain points discussed — not templates.</li>
+        <li><span class="kp-n">02</span><strong>CRM (Garbage Pipeline):</strong> Stale opportunities, missing next steps, and vague stage definitions turn your pipeline into a fiction. Your forecast is only as good as your data discipline.</li>
+        <li><span class="kp-n">03</span><strong>Presentation Tools (Deck Dependency):</strong> A polished deck doesn't close deals — discovery does. If your demo is a feature walkthrough instead of a conversation, the tool is masking a selling gap.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Fundamental Problem</div>
+        <div class="lie-q">"Automation amplifies bad selling."</div>
+        <div class="lie-a">Fix your discovery process, your follow-up cadence, and your deal hygiene before you automate any of it. Scaling a broken process just breaks it faster.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">Sales tools are meant to amplify your skills, but too many SDRs use them to hide bad prospecting habits. If you're blasting generic sequences, logging garbage data, or speed-dialing without purpose, no tech stack in the world can save your connect rate.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Email (Spam):</strong> "Quick Question" and "Touching Base" templates scream "You're just another name on my list." Open rates don't pay bills; booked meetings do.</li>
+        <li><span class="kp-n">02</span><strong>CRM (Garbage Data):</strong> Incomplete leads, vague notes, and untouched contacts turn your CRM into a time suck instead of a prospecting engine.</li>
+        <li><span class="kp-n">03</span><strong>Dialers (Speed vs Quality):</strong> High call volume means nothing if connection rates are low and you're reading a script like a robot. Quality conversations book meetings; raw dials don't.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Fundamental Problem</div>
         <div class="lie-q">"Automation amplifies bad messaging."</div>
-        <div class="lie-a">You have to fix the foundational selling habit before you scale it. Automation gets you to the door; effort gets you through it.</div>
+        <div class="lie-a">Fix your cold call opener, your email personalization, and your qualifying questions before you scale any of it. Automation gets you to the door; effort gets you through it.</div>
       </div>
     </div>
   </div>
@@ -366,17 +876,30 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div><div class="c9-badge">Course 9</div><span class="sec-eye">Section 02 — Mastering the Fundamentals</span></div>
       <div class="lh-title">The Skills That Matter More Than Tools</div>
     </div>
-    <div class="lb">
-      <p class="lp">You can have the most advanced tech stack in the industry, but if your fundamentals are broken, your pipeline will be too. Start with the core skills.</p>
+    <div class="lb ae-only">
+      <p class="lp">You can have the most advanced tech stack in the industry, but if your deal fundamentals are broken, your close rate will be too. Start with the core skills that actually move pipeline.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>Understanding Prospects:</strong> Why curiosity wins. Ask better questions and listen more than you speak.</li>
-        <li><span class="kp-n">02</span><strong>Building Conversations:</strong> Stop being a robot. Focus on having real conversations over rigidly following cadences.</li>
-        <li><span class="kp-n">03</span><strong>Aligning Tools to Process:</strong> Tools support your process, but your process leads. Create repeatable processes first, then automate.</li>
+        <li><span class="kp-n">01</span><strong>Deep Discovery:</strong> Why curiosity wins deals. The best AEs ask better questions, uncover real pain, and listen more than they pitch. No tool replaces this.</li>
+        <li><span class="kp-n">02</span><strong>Consultative Selling:</strong> Stop running feature demos. Focus on connecting your solution to the prospect's specific business problem. That's a human skill, not a software feature.</li>
+        <li><span class="kp-n">03</span><strong>Aligning Tools to Your Deal Process:</strong> Map your sales stages first, then configure tools to support them. Your CRM, your sequencer, and your presentation software should follow your process — not define it.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Mindset Shift</div>
-        <div class="lie-q">"Tools enhance great selling—they don't replace it."</div>
-        <div class="lie-a">Stop hiding behind email blasts, CRM updates, and call volumes. When you master the fundamentals, tools amplify your success.</div>
+        <div class="lie-q">"Tools enhance great selling — they don't replace it."</div>
+        <div class="lie-a">Stop hiding behind polished decks and automated follow-ups. When your discovery is sharp and your deal management is tight, tools amplify your close rate. When they're not, tools just scale your mistakes.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">You can have the most advanced tech stack in the industry, but if your prospecting fundamentals are broken, your meeting rate will be too. Start with the core skills.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Understanding Prospects:</strong> Why curiosity wins. Ask better qualifying questions and listen more than you pitch. The intel you gather determines whether the meeting sticks.</li>
+        <li><span class="kp-n">02</span><strong>Building Conversations:</strong> Stop being a robot. Focus on having real cold-call conversations over rigidly reading scripts. Prospects can hear the difference.</li>
+        <li><span class="kp-n">03</span><strong>Aligning Tools to Process:</strong> Build your outbound cadence first, then automate it. Your sequencer, dialer, and CRM should follow your process — not define it.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Mindset Shift</div>
+        <div class="lie-q">"Tools enhance great prospecting — they don't replace it."</div>
+        <div class="lie-a">Stop hiding behind email blasts, CRM activity logs, and raw dial counts. When you master the fundamentals of cold outreach, tools amplify your meeting rate. When you don't, tools just scale bad habits.</div>
       </div>
     </div>
   </div>
@@ -473,30 +996,57 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-title">Tools in Action: Audit Your Stack</div>
     </div>
     <div class="tools-blk">
-      <div style="margin-top:20px">
-        <div class="t-head">Task 1: Email Audit</div>
+      <div style="margin-top:20px" class="ae-only">
+        <div class="t-head">Task 1: Follow-Up Email Audit</div>
         <ul class="hw-list">
-          <li><div class="hw-box"></div>Review your last 10 automated emails.</li>
-          <li><div class="hw-box"></div>Rewrite them with stronger personalization and relevance. Focus on prospect pain points.</li>
-          <li><div class="hw-box"></div>Craft 5 unique subject lines to test for a single campaign.</li>
+          <li><div class="hw-box"></div>Review your last 10 post-demo or post-meeting follow-up emails.</li>
+          <li><div class="hw-box"></div>Rewrite them to reference specific pain points discussed in discovery. Kill every "just checking in."</li>
+          <li><div class="hw-box"></div>Create 3 follow-up templates tied to different deal stages (post-demo, post-proposal, stalled deal).</li>
         </ul>
       </div>
-      <div>
+      <div style="margin-top:20px" class="sdr-only">
+        <div class="t-head">Task 1: Outbound Email Audit</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Review your last 10 automated outbound emails.</li>
+          <li><div class="hw-box"></div>Rewrite them with stronger personalization and relevance. Focus on prospect pain points, not your product features.</li>
+          <li><div class="hw-box"></div>Craft 5 unique subject lines to A/B test for a single sequence.</li>
+        </ul>
+      </div>
+      <div class="ae-only">
+        <div class="t-head">Task 2: Pipeline Clean-Up</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Audit every open opportunity. Remove anything with no activity in 30+ days or no clear next step.</li>
+          <li><div class="hw-box"></div>Update every deal with an accurate stage, close date, and documented next step.</li>
+          <li><div class="hw-box"></div>Set a 15-minute daily window for CRM updates — treat it like a non-negotiable.</li>
+        </ul>
+      </div>
+      <div class="sdr-only">
         <div class="t-head">Task 2: CRM Clean-Up</div>
         <ul class="hw-list">
-          <li><div class="hw-box"></div>Deduplicate leads and remove stalled deals.</li>
-          <li><div class="hw-box"></div>Clean up all incomplete notes this week. Ensure every note includes a next step and outcome.</li>
-          <li><div class="hw-box"></div>Set a 15-minute daily limit for updating your CRM.</li>
+          <li><div class="hw-box"></div>Deduplicate leads and remove contacts with no valid info.</li>
+          <li><div class="hw-box"></div>Clean up all incomplete call notes. Ensure every note includes what was discussed, the outcome, and the next step.</li>
+          <li><div class="hw-box"></div>Set a 15-minute daily limit for updating your CRM — then get back on the phones.</li>
         </ul>
       </div>
-      <div>
+      <div class="ae-only">
+        <div class="t-head">Task 3: Presentation & Demo Skills Test</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Record your next demo or presentation and watch it back.</li>
+          <li><div class="hw-box"></div>Identify 3 moments where you pitched features instead of connecting to the prospect's stated pain.</li>
+          <li><div class="hw-box"></div>Rewrite your demo flow to lead with discovery questions before showing any product.</li>
+        </ul>
+      </div>
+      <div class="sdr-only">
         <div class="t-head">Task 3: Dialer Skill Test</div>
         <ul class="hw-list">
           <li><div class="hw-box"></div>Record 5 cold calls and listen back.</li>
-          <li><div class="hw-box"></div>Identify 3 areas for improvement in tone, delivery, or pivoting.</li>
-          <li><div class="hw-box"></div>Write down 3 new alternative ways to handle objections naturally.</li>
+          <li><div class="hw-box"></div>Identify 3 areas for improvement in tone, delivery, or pivoting past objections.</li>
+          <li><div class="hw-box"></div>Write down 3 new ways to handle the most common objection you hear naturally, without sounding scripted.</li>
         </ul>
       </div>
+
+      <!-- Accountability Gate -->
+      <div id="gate8" data-gate-screen="8"></div>
     </div>
   </div>
 
@@ -507,13 +1057,17 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <div class="comp-tag">Course 9 · Lesson 3 — Complete</div>
           <div style="font-family:var(--display);font-size:56px;color:var(--white);line-height:.9;margin:10px 0 0">09</div>
         </div>
-        <div class="comp-big">Tools Don't Sell.<br>You Do.</div>
-        <div class="comp-sub">If you're sending lazy emails, logging garbage data, or making bad calls, no tech in the world can save you.</div>
+        <div class="comp-big ae-only">Tools don't<br>close deals.<br>You do.</div>
+        <div class="comp-big sdr-only">Tools don't<br>book meetings.<br>You do.</div>
+        <div class="comp-sub ae-only">If your discovery is shallow, your follow-ups are generic, and your pipeline data is fiction, no tech stack can save your close rate. Fix the selling first. Then let the tools amplify it.</div>
+        <div class="comp-sub sdr-only">If you're blasting generic sequences, logging garbage data, or speed-dialing without purpose, no tech in the world can save your connect rate. Fix the prospecting first. Then let the tools amplify it.</div>
       </div>
       <div class="comp-r">
         <div class="eyebrow">Course 9 · Lesson 3 Complete</div>
-        <div class="comp-h">Let the tools amplify your greatness.</div>
-        <p class="comp-p">Own your process, master your craft, and focus on quality and results. Build conversations, understand your prospects, and stop hiding behind the tech stack.</p>
+        <div class="comp-h ae-only">Master the deal. Then master the tools.</div>
+        <div class="comp-h sdr-only">Master the conversation. Then master the tools.</div>
+        <p class="comp-p ae-only">Own your deal process, sharpen your discovery, and focus on consultative selling. Your CRM and your sequences should follow your process — not define it. When the fundamentals are right, the tech stack becomes a force multiplier.</p>
+        <p class="comp-p sdr-only">Own your outbound process, master your cold-call craft, and focus on quality conversations over raw volume. Build real rapport, understand your prospects, and stop hiding behind the dialer and the sequencer.</p>
         <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
         <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
       </div>
@@ -524,7 +1078,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 <aside class="sidebar">
   <div class="sb-course">09</div>
-  <div class="sb-lesson">Lesson 9.3 · Mastering Sales Tools</div>
+  <div class="sb-lesson ae-only">Lesson 9.3 · Mastering Sales Tools</div>
+  <div class="sb-lesson sdr-only">Lesson 9.3 · Mastering Sales Tools</div>
   <div class="sb-divider"></div>
   <div class="sb-label">Sections</div>
   <div class="sb-item" id="nav1" onclick="go(1)">
@@ -626,7 +1181,7 @@ const QUIZ = [
   },
   {
     q:"How should you fix a 'Garbage In, Garbage Out' CRM?",
-    opts:["Standardize notes, clean data, and limit update time to 15 mins/day","Delete all your accounts and start over","Hire an assistant to log your calls","Blame marketing for the bad data"],
+    opts:["Standardize notes, clean data, and limit update time to 15 mins/day","Migrate to a different CRM platform with better automation","Schedule a weekly hour-long data cleanup session every Friday","Reduce the number of fields you track to simplify data entry"],
     ans:0
   },
   {
@@ -656,10 +1211,15 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); render();
+  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register accountability gate
+  var _role = document.documentElement.getAttribute('data-role') || 'sdr';
+  var _gatePrompt = _role === 'ae' ? 'Audit your tools stack: list each tool you use daily, what you use it for, and rate your proficiency 1-5. Identify one tool you\'re underusing.' : 'Audit your tools stack: list each tool you use daily, what you use it for, and rate your proficiency 1-5. Identify one tool you\'re underusing.';
+  AESDR.gate(8, { type:'evidence', prompt: _gatePrompt, minChars: 100 });
+  render();
 }
 function go(n){
-  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:{}},"*")}catch(e){}}
+  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;
   document.getElementById('s'+cur).classList.add('active');
@@ -922,6 +1482,7 @@ function canContinue(){
   if(cur===5)return Object.keys(seqDone).length===5;
   if(cur===6)return clsCount===8;
   if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 function getHint(){
@@ -933,7 +1494,7 @@ function getHint(){
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,
     7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    8:"Audit your stack to ensure quality over quantity.",
+    8: AESDR.gateHint(8) || "Audit your stack to ensure quality over quantity.",
   };
   return h[cur]||'';
 }
@@ -954,6 +1515,7 @@ function render(){
   const bnav=document.getElementById('bottomnav');
   bnav.style.display=hide?'none':'flex';
   if(hide)return;
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';

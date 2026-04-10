@@ -2,6 +2,501 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- AESDR Role Detection -->
+<script>
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  var role = p.get('role') || 'sdr';
+  document.documentElement.setAttribute('data-role', role);
+})();
+</script>
+<style>
+/* Role-conditional content: hide content not matching current role */
+[data-role="ae"] .sdr-only { display: none !important; }
+[data-role="sdr"] .ae-only { display: none !important; }
+/* Softer variant: swap text content visibility */
+[data-role="ae"] .sdr-text { display: none !important; }
+[data-role="sdr"] .ae-text { display: none !important; }
+</style>
+<!-- AESDR Accountability Gates -->
+<style>
+/* ══════════════════════════════════════════
+   AESDR Accountability Gates — Styles v1
+   Matches lesson design system vars:
+     --black, --white, --mid, --lite, --lite2,
+     --amber, --cobalt, --green, --line, --iris,
+     --cond, --serif, --mono
+══════════════════════════════════════════ */
+
+/* ── Gate container ── */
+.gate-box {
+  margin: 28px 0 12px;
+  padding: 28px 32px 24px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  position: relative;
+}
+.gate-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+}
+
+/* ── Label / tag ── */
+.gate-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 14px;
+}
+
+/* ── Prompt text ── */
+.gate-prompt {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--black);
+  margin-bottom: 18px;
+}
+
+/* ── Textarea ── */
+.gate-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px 16px;
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--black);
+  background: var(--lite);
+  border: 1px solid var(--line2);
+  resize: vertical;
+  outline: none;
+  transition: border-color .2s;
+}
+.gate-textarea:focus {
+  border-color: var(--amber);
+}
+.gate-textarea.gate-evidence {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  min-height: 100px;
+}
+.gate-textarea::placeholder {
+  color: var(--mid);
+  opacity: .6;
+}
+
+/* ── Footer (counter + submit) ── */
+.gate-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  gap: 12px;
+}
+
+/* ── Character counter ── */
+.gate-counter {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+
+/* ── Submit button ── */
+.gate-submit {
+  font-family: var(--cond);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border: 2px solid var(--black);
+  background: var(--black);
+  color: var(--white);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all .15s;
+}
+.gate-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 2s linear infinite;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.gate-submit:hover::before {
+  opacity: 1;
+}
+.gate-submit:hover {
+  color: var(--black);
+}
+.gate-submit span {
+  position: relative;
+  z-index: 1;
+}
+.gate-submit:disabled,
+.gate-submit:disabled:hover {
+  opacity: .28;
+  cursor: not-allowed;
+  background: var(--black);
+  color: var(--white);
+}
+.gate-submit:disabled::before,
+.gate-submit:disabled:hover::before {
+  display: none;
+}
+
+/* ── Rubric checklist ── */
+.gate-rubric {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.gate-rubric-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 10px;
+}
+.gate-rubric-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--black);
+}
+.gate-rubric-item input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--amber);
+  flex-shrink: 0;
+}
+
+/* ── Time gate ── */
+.gate-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 20px 0 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--line2);
+  background: var(--lite);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+.gate-time-icon {
+  font-size: 14px;
+}
+.gate-time-num {
+  font-weight: 700;
+  color: var(--amber);
+  font-size: 13px;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* ── Completed state ── */
+.gate-done {
+  margin: 24px 0 8px;
+  padding: 20px 24px;
+  border: 2px solid var(--green);
+  background: var(--grn-lt);
+}
+.gate-done-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.gate-done-preview {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--mid);
+  font-style: italic;
+}
+
+</style>
+<script>
+/*  AESDR Accountability Gates v1
+ *  Inject into lesson HTML files alongside role-detection.
+ *
+ *  Usage in lesson JS:
+ *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
+ *    AESDR.gate(1, { type:'time', seconds:60 });
+ *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
+ *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
+ *
+ *  In canContinue():
+ *    if (!AESDR.gateReady(cur)) return false;
+ *
+ *  Gate state auto-saves via postMessage when completed.
+ */
+window.AESDR = window.AESDR || {};
+
+(function(A) {
+  var gates = {};      // screenNum -> config
+  var gateState = {};  // screenNum -> { completed, value, ... }
+  var timers = {};     // screenNum -> { started, remaining }
+
+  /* ── Register a gate ── */
+  A.gate = function(screen, cfg) {
+    gates[screen] = cfg;
+    gateState[screen] = { completed: false, value: '' };
+  };
+
+  /* ── Check if gate is satisfied ── */
+  A.gateReady = function(screen) {
+    if (!gates[screen]) return true;
+    return gateState[screen] && gateState[screen].completed;
+  };
+
+  /* ── Get gate hint text ── */
+  A.gateHint = function(screen) {
+    var g = gates[screen];
+    if (!g) return '';
+    var s = gateState[screen];
+    if (s.completed) return '\u2713 Gate complete';
+
+    if (g.type === 'time') {
+      var r = timers[screen] ? timers[screen].remaining : g.seconds;
+      return r > 0 ? 'Unlocks in ' + r + 's' : '';
+    }
+    if (g.type === 'reflection' || g.type === 'evidence') {
+      var len = (s.value || '').length;
+      return len + ' / ' + g.minChars + ' characters';
+    }
+    if (g.type === 'application') {
+      var len2 = (s.value || '').length;
+      var checks = s.rubricChecked || 0;
+      var total = (g.rubric || []).length;
+      return len2 + ' chars \u00B7 ' + checks + '/' + total + ' rubric items';
+    }
+    return '';
+  };
+
+  /* ── Get all gate data for stateData (progress saving) ── */
+  A.gateData = function() {
+    var out = {};
+    for (var k in gateState) {
+      if (gateState[k].completed) {
+        out['gate_' + k] = {
+          type: gates[k].type,
+          value: gateState[k].value,
+          completedAt: gateState[k].completedAt
+        };
+      }
+    }
+    return out;
+  };
+
+  /* ── Render gate UI into a container ── */
+  A.renderGate = function(screen, containerId) {
+    var g = gates[screen];
+    if (!g) return;
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    var s = gateState[screen];
+
+    if (s.completed) {
+      el.innerHTML = _completedHTML(g, s);
+      return;
+    }
+
+    switch(g.type) {
+      case 'reflection': el.innerHTML = _reflectionHTML(screen, g, s); break;
+      case 'application': el.innerHTML = _applicationHTML(screen, g, s); break;
+      case 'evidence': el.innerHTML = _evidenceHTML(screen, g, s); break;
+      case 'time': _startTimer(screen, g); el.innerHTML = _timeHTML(screen, g); break;
+    }
+  };
+
+  /* ── Completed state ── */
+  function _completedHTML(g, s) {
+    var typeLabel = { reflection:'Reflection', application:'Response', evidence:'Evidence', time:'Time' };
+    return '<div class="gate-done">' +
+      '<div class="gate-done-tag">\u2713 ' + (typeLabel[g.type]||'Gate') + ' Submitted</div>' +
+      (g.type !== 'time' ? '<div class="gate-done-preview">' + _esc(s.value).substring(0,200) + (s.value.length > 200 ? '...' : '') + '</div>' : '') +
+    '</div>';
+  }
+
+  /* ── Reflection Gate ── */
+  function _reflectionHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Reflection Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your reflection here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Reflection</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Application Gate ── */
+  function _applicationHTML(screen, g) {
+    var rubricHTML = (g.rubric || []).map(function(r, i) {
+      return '<label class="gate-rubric-item">' +
+        '<input type="checkbox" onchange="AESDR._onRubric(' + screen + ',' + i + ',this.checked)">' +
+        '<span>' + r + '</span></label>';
+    }).join('');
+
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Application Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your response...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-counter" id="gateCtr' + screen + '">0 / ' + (g.minChars || 50) + ' characters</div>' +
+      (rubricHTML ? '<div class="gate-rubric"><div class="gate-rubric-label">Self-evaluate your response:</div>' + rubricHTML + '</div>' : '') +
+      '<div class="gate-footer">' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Response</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Evidence Gate ── */
+  function _evidenceHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Evidence Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea gate-evidence" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Paste your evidence here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Evidence</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Time Gate ── */
+  function _timeHTML(screen, g) {
+    var r = timers[screen] ? timers[screen].remaining : g.seconds;
+    if (r <= 0) return '';
+    return '<div class="gate-time" id="gateTime' + screen + '">' +
+      '<span class="gate-time-icon">\u23F3</span> ' +
+      '<span class="gate-time-num" id="gateTimeCtr' + screen + '">' + r + '</span>s remaining' +
+    '</div>';
+  }
+
+  function _startTimer(screen, g) {
+    if (timers[screen]) return;
+    timers[screen] = { remaining: g.seconds };
+    var iv = setInterval(function() {
+      timers[screen].remaining--;
+      var el = document.getElementById('gateTimeCtr' + screen);
+      if (el) el.textContent = timers[screen].remaining;
+      if (timers[screen].remaining <= 0) {
+        clearInterval(iv);
+        gateState[screen].completed = true;
+        gateState[screen].completedAt = new Date().toISOString();
+        var timeEl = document.getElementById('gateTime' + screen);
+        if (timeEl) timeEl.style.display = 'none';
+        // Trigger render if the lesson exposes it
+        if (typeof window.render === 'function') window.render();
+      }
+    }, 1000);
+  }
+
+  /* ── Internal handlers ── */
+  A._onInput = function(screen, val) {
+    gateState[screen].value = val;
+    var g = gates[screen];
+    var min = g.minChars || 50;
+    var ctr = document.getElementById('gateCtr' + screen);
+    if (ctr) ctr.textContent = val.length + ' / ' + min + (g.type === 'application' ? ' characters' : '');
+
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      var ready = val.length >= min;
+      if (g.type === 'application' && g.rubric) {
+        var checks = gateState[screen].rubricChecked || 0;
+        ready = ready && checks >= g.rubric.length;
+      }
+      btn.disabled = !ready;
+    }
+  };
+
+  A._onRubric = function(screen, idx, checked) {
+    if (!gateState[screen]._rubric) gateState[screen]._rubric = {};
+    gateState[screen]._rubric[idx] = checked;
+    var count = 0;
+    for (var k in gateState[screen]._rubric) {
+      if (gateState[screen]._rubric[k]) count++;
+    }
+    gateState[screen].rubricChecked = count;
+
+    // Re-check submit button
+    var g = gates[screen];
+    var val = gateState[screen].value || '';
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      btn.disabled = !(val.length >= (g.minChars || 50) && count >= (g.rubric || []).length);
+    }
+  };
+
+  A._submit = function(screen) {
+    var s = gateState[screen];
+    s.completed = true;
+    s.completedAt = new Date().toISOString();
+
+    // Re-render the gate as completed
+    var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
+    containers.forEach(function(el) { A.renderGate(screen, el.id); });
+
+    // Save progress via postMessage
+    if (window.parent !== window) {
+      try {
+        window.parent.postMessage({
+          type: 'aesdr:progress',
+          screen: screen,
+          stateData: A.gateData()
+        }, '*');
+      } catch(e) {}
+    }
+
+    // Trigger render if available
+    if (typeof window.render === 'function') window.render();
+  };
+
+  /* ── Escape helper ── */
+  function _esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+})(window.AESDR);
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AESDR — Course 11.1: Sober Selling</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -289,9 +784,11 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div>
           <div class="cv-c2tag">AESDR · Lesson 11.1</div>
           <div class="cv-course-num">11</div>
-          <div class="cv-big">Sober Selling</div>
+          <div class="cv-big ae-only">Sober Selling</div>
+          <div class="cv-big sdr-only">Sober Selling</div>
         </div>
-        <div class="cv-tagline">How Saying No to Alcohol Sets You Up for Success and Redefines the "Work Hard, Play Hard" Mantra.</div>
+        <div class="cv-tagline ae-only">Client dinners, deal celebrations, executive events — alcohol is everywhere. Own the edge.</div>
+        <div class="cv-tagline sdr-only">Team happy hours, quota pressure, promotion politics — alcohol is everywhere. Stay sharp.</div>
       </div>
       <div class="cvr">
         <div class="eyebrow">Course 11 · Lesson 1</div>
@@ -314,17 +811,30 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div><div class="c11-badge">Course 11</div><span class="sec-eye">Section 01 — The Culture Problem</span></div>
       <div class="lh-title">Work Hard, Drink Harder?</div>
     </div>
-    <div class="lb">
-      <p class="lp">For years, alcohol has been an unspoken cornerstone of sales culture. Happy hours, closing celebrations, and client dinners are all centered on drinking. But the sharpest sales reps are realizing that booze isn't helping them close deals—it's holding them back.</p>
+    <div class="lb ae-only">
+      <p class="lp">For years, alcohol has been woven into AE culture. Client dinners, closing celebrations, and executive happy hours all revolve around drinks. But the AEs who consistently crush quota are realizing that booze isn't sealing deals—it's sabotaging them. Every foggy morning is a demo you're not sharp for. Every sloppy dinner is a relationship you damaged.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>The Old Way:</strong> Bonding happens over drinks. Alcohol is the ultimate social lubricant. Burnout is just the norm.</li>
-        <li><span class="kp-n">02</span><strong>The New Way:</strong> Bonding happens through mutual success. Clarity is a competitive advantage. Longevity matters more.</li>
-        <li><span class="kp-n">03</span><strong>The Reality:</strong> Authentic relationships don't need alcohol. Value, respect, and shared goals matter more than shots at midnight.</li>
+        <li><span class="kp-n">01</span><strong>The Old Way:</strong> Bond over bourbon with the VP of Sales. Close the deal at the steakhouse bar. Celebrate every signed contract with rounds.</li>
+        <li><span class="kp-n">02</span><strong>The New Way:</strong> Bond through delivered value and consistent follow-through. Clarity during negotiations is a competitive weapon. Longevity in the role beats burning bright and flaming out.</li>
+        <li><span class="kp-n">03</span><strong>The Reality:</strong> Your best client relationships are built on trust, not tequila. The deals that stick come from preparation and presence, not liquid courage at dinner.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Mindset Shift</div>
         <div class="lie-q">"Clients trust you more if you drink with them."</div>
-        <div class="lie-a">False. Trust comes from value and delivery, not alcohol. Drinking feels like a shortcut to building relationships, but it's just a crutch.</div>
+        <div class="lie-a">False. Clients trust you when you remember what they said, follow up on time, and deliver what you promised. Alcohol makes all of that harder.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">For years, alcohol has been baked into SDR culture. Team happy hours after hitting dials, post-SKO bar crawls, and "you earned it" drinks on Friday. But the SDRs who actually get promoted are realizing that booze isn't fueling their grind—it's draining it. Every hungover morning is a call block you're sleepwalking through.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>The Old Way:</strong> Celebrate every booking with the team at the bar. Drinks are how you bond with your pod. Burnout is just part of the grind.</li>
+        <li><span class="kp-n">02</span><strong>The New Way:</strong> Bond through shared wins and friendly competition. Clarity on cold calls is your edge. Longevity in the role means you actually get promoted instead of burning out.</li>
+        <li><span class="kp-n">03</span><strong>The Reality:</strong> Your best outbound days happen when you're sharp, hydrated, and locked in. Nobody ever booked a meeting because they were hungover.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Mindset Shift</div>
+        <div class="lie-q">"The team bonds better over drinks."</div>
+        <div class="lie-a">False. Teams bond over shared wins and mutual respect. Drinking together might feel like connection, but it's just a shortcut that doesn't build real trust.</div>
       </div>
     </div>
   </div>
@@ -366,17 +876,30 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div><div class="c11-badge">Course 11</div><span class="sec-eye">Section 02 & 03 — Focus and Longevity</span></div>
       <div class="lh-title">Sharper Thinking and The Long Game</div>
     </div>
-    <div class="lb">
-      <p class="lp">Alcohol might loosen you up, but it kills your clarity. Reps who stay sharp outperform their hungover competition every time. A sharp mind catches details that close deals.</p>
+    <div class="lb ae-only">
+      <p class="lp">Alcohol might loosen you up before a client dinner, but it kills your clarity during the conversation that matters. AEs who stay sharp catch the buying signals, navigate objections cleanly, and remember every detail for the follow-up. That's the edge.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>Sober Selling = Sharper Thinking:</strong> Nuanced insights and stronger pitches replace sloppy conversations. Energized days beat sluggish mornings.</li>
-        <li><span class="kp-n">02</span><strong>Longevity Over Burnout:</strong> The 'play hard' lifestyle catches up eventually. Prioritize health, energy, and resilience for consistent performance over years.</li>
-        <li><span class="kp-n">03</span><strong>Playing the Long Game:</strong> Sobriety isn't about saying no to fun; it's about saying yes to long-term dominance. Short-term wins aren't worth long-term burnout.</li>
+        <li><span class="kp-n">01</span><strong>Sober Selling = Sharper Demos:</strong> You catch the subtle hesitation in a prospect's voice. You pivot your pitch in real time. You remember exactly what the CFO said about budget timing. None of that happens hungover.</li>
+        <li><span class="kp-n">02</span><strong>Longevity Over Burnout:</strong> The AEs who hit President's Club year after year aren't the ones closing deals at the bar—they're the ones who show up energized, prepared, and consistent. The 'work hard, play hard' crowd flames out by year three.</li>
+        <li><span class="kp-n">03</span><strong>Playing the Long Game:</strong> Sobriety isn't about missing the celebration dinner. It's about being the one who remembers the conversation, sends the recap email at 7 AM, and closes the deal Monday morning.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Bottom Line</div>
+        <div class="lie-q">"Client dinners require drinking to build rapport."</div>
+        <div class="lie-a">The best rapport comes from being genuinely present—listening, asking sharp questions, and following through. The AE who remembers the details always beats the one who bought the rounds.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">Alcohol might take the edge off after a brutal day of cold calls, but it wrecks the next morning. SDRs who stay sharp hit their dials with energy, handle objections with precision, and maintain the consistency that gets them promoted. That's the real edge.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Sober Selling = Sharper Outreach:</strong> Your voice has energy on cold calls. Your sequences are tighter. You personalize emails instead of copy-pasting because your brain is actually working. That's the difference between booking and bombing.</li>
+        <li><span class="kp-n">02</span><strong>Longevity Over Burnout:</strong> The SDRs who get promoted aren't the ones closing out the bar on Thursday—they're the ones who show up Friday with energy, hit their numbers consistently, and earn the AE seat. The party crew washes out in six months.</li>
+        <li><span class="kp-n">03</span><strong>Playing the Long Game:</strong> Sobriety isn't about skipping team happy hour. It's about being the SDR who's still sharp at 4 PM on a Friday, booking that last meeting while everyone else is mentally checked out.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Bottom Line</div>
         <div class="lie-q">"Team camaraderie happens at the bar."</div>
-        <div class="lie-a">Actually, team bonds are built through shared wins and mutual success, not forced drinking sessions.</div>
+        <div class="lie-a">Real camaraderie comes from hitting targets together and celebrating wins that matter. The SDR pod that pushes each other to grow will always outperform the one that just drinks together.</div>
       </div>
     </div>
   </div>
@@ -476,25 +999,33 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div style="margin-top:20px">
         <div class="t-head">Task 1: Identify Alcohol Pressure Points</div>
         <ul class="hw-list">
-          <li><div class="hw-box"></div>Write down the scenarios where you're most likely to feel pressured to drink (e.g., happy hours, client dinners, SKO).</li>
-          <li><div class="hw-box"></div>Acknowledge these triggers ahead of time.</li>
+          <li class="ae-only"><div class="hw-box"></div>Write down the scenarios where you feel most pressured to drink (e.g., client dinners, closing celebrations, executive happy hours, SKO events).</li>
+          <li class="ae-only"><div class="hw-box"></div>For each scenario, note whether the drinking actually helped close a deal or build a relationship—or just felt expected.</li>
+          <li class="sdr-only"><div class="hw-box"></div>Write down the scenarios where you feel most pressured to drink (e.g., team happy hours, post-blitz celebrations, pod outings, SKO events).</li>
+          <li class="sdr-only"><div class="hw-box"></div>For each scenario, note whether the drinking helped your performance or team bond—or just felt like the default.</li>
         </ul>
       </div>
       <div>
         <div class="t-head">Task 2: Craft Your Go-To Response</div>
         <ul class="hw-list">
           <li><div class="hw-box"></div>Come up with a confident, simple line for turning down alcohol.</li>
-          <li><div class="hw-box"></div>Example: "I'm taking a break tonight—sparkling water's perfect for me."</li>
+          <li class="ae-only"><div class="hw-box"></div>Example: "I've got an early client call—sparkling water tonight."</li>
+          <li class="sdr-only"><div class="hw-box"></div>Example: "Morning call block starts at 8—I'm staying sharp tonight."</li>
           <li><div class="hw-box"></div>Practice delivering it without apologizing.</li>
         </ul>
       </div>
       <div>
         <div class="t-head">Task 3: Suggest an Alternative</div>
         <ul class="hw-list">
-          <li><div class="hw-box"></div>Plan 1-2 team bonding activities or client meetings that don't involve alcohol.</li>
-          <li><div class="hw-box"></div>Suggest coffee, lunch, or an activity-based event instead of drinks.</li>
+          <li class="ae-only"><div class="hw-box"></div>Plan 1-2 client meetings or team bonding activities that don't involve alcohol. Suggest a coffee meeting, a working lunch, or an activity-based outing.</li>
+          <li class="ae-only"><div class="hw-box"></div>For your next client dinner, decide your drink limit before you arrive. Write it down and commit.</li>
+          <li class="sdr-only"><div class="hw-box"></div>Suggest a team bonding activity that doesn't revolve around drinking. Pitch it to your manager or pod—lunch, bowling, a group workout, or a competitive outing.</li>
+          <li class="sdr-only"><div class="hw-box"></div>Next time the team celebrates a win, suggest a non-alcohol option. See how it goes.</li>
         </ul>
       </div>
+
+      <!-- Accountability Gate -->
+      <div id="gate8" data-gate-screen="8"></div>
     </div>
   </div>
 
@@ -505,13 +1036,17 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <div class="comp-tag">Course 11 · Lesson 1 — Complete</div>
           <div style="font-family:var(--display);font-size:56px;color:var(--white);line-height:.9;margin:10px 0 0">11</div>
         </div>
-        <div class="comp-big">Sober selling<br>is your<br>edge.</div>
-        <div class="comp-sub">Being sober isn't a weakness—it's your competitive advantage. It's about staying sharp, closing more deals, and thriving in the long run.</div>
+        <div class="comp-big ae-only">Sober selling<br>is your<br>closing edge.</div>
+        <div class="comp-big sdr-only">Sober selling<br>is your<br>outbound edge.</div>
+        <div class="comp-sub ae-only">Being sober isn't a weakness—it's the competitive advantage that lets you catch buying signals, nail follow-ups, and close with clarity. The AEs who last are the ones who show up sharp.</div>
+        <div class="comp-sub sdr-only">Being sober isn't a weakness—it's the edge that keeps your energy high on call blocks, your sequences tight, and your consistency unbreakable. The SDRs who get promoted are the ones who show up sharp.</div>
       </div>
       <div class="comp-r">
         <div class="eyebrow">Course 11 · Lesson 1 Complete</div>
-        <div class="comp-h">Show up ready to perform.</div>
-        <p class="comp-p">In sales, the reps who win are the ones who show up focused and energized. So next time someone asks why you're not drinking, just smile and say, "Because I'm here to win."</p>
+        <div class="comp-h ae-only">Show up ready to close.</div>
+        <div class="comp-h sdr-only">Show up ready to dial.</div>
+        <p class="comp-p ae-only">The AEs who win aren't the ones buying rounds at the steakhouse—they're the ones who remember every detail from dinner and send the perfect follow-up at 7 AM. Next time someone asks why you're not drinking, smile and say, "Because I'm here to close."</p>
+        <p class="comp-p sdr-only">The SDRs who get promoted aren't the ones closing out the bar—they're the ones who show up Friday morning with energy and book the meeting nobody else could. Next time someone asks why you're not drinking, smile and say, "Because I'm here to book."</p>
         <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
         <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
       </div>
@@ -522,7 +1057,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 <aside class="sidebar">
   <div class="sb-course">11</div>
-  <div class="sb-lesson">Lesson 11.1 · Sober Selling</div>
+  <div class="sb-lesson ae-only">Lesson 11.1 · Sober Selling</div>
+  <div class="sb-lesson sdr-only">Lesson 11.1 · Sober Selling</div>
   <div class="sb-divider"></div>
   <div class="sb-label">Sections</div>
   <div class="sb-item" id="nav1" onclick="go(1)">
@@ -654,10 +1190,15 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); render();
+  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register accountability gate
+  var _role = document.documentElement.getAttribute('data-role') || 'sdr';
+  var _gatePrompt = _role === 'ae' ? 'Write your go-to response when offered a drink at a client dinner or work event. Make it confident, natural, and conversation-continuing. Practice it out loud.' : 'Write your go-to response when offered a drink at a team event or company outing. Make it confident, natural, and conversation-continuing. Practice it out loud.';
+  AESDR.gate(8, { type:'reflection', prompt: _gatePrompt, minChars: 60 });
+  render();
 }
 function go(n){
-  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:{}},"*")}catch(e){}}
+  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;
   document.getElementById('s'+cur).classList.add('active');
@@ -920,6 +1461,7 @@ function canContinue(){
   if(cur===5)return Object.keys(seqDone).length===5;
   if(cur===6)return clsCount===8;
   if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 function getHint(){
@@ -931,7 +1473,7 @@ function getHint(){
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,
     7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    8:"Being sober isn't a weakness—it's your edge.",
+    8: AESDR.gateHint(8) || "Being sober isn't a weakness—it's your edge.",
   };
   return h[cur]||'';
 }
@@ -952,6 +1494,7 @@ function render(){
   const bnav=document.getElementById('bottomnav');
   bnav.style.display=hide?'none':'flex';
   if(hide)return;
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';

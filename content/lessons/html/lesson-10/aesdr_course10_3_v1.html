@@ -2,6 +2,501 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- AESDR Role Detection -->
+<script>
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  var role = p.get('role') || 'sdr';
+  document.documentElement.setAttribute('data-role', role);
+})();
+</script>
+<style>
+/* Role-conditional content: hide content not matching current role */
+[data-role="ae"] .sdr-only { display: none !important; }
+[data-role="sdr"] .ae-only { display: none !important; }
+/* Softer variant: swap text content visibility */
+[data-role="ae"] .sdr-text { display: none !important; }
+[data-role="sdr"] .ae-text { display: none !important; }
+</style>
+<!-- AESDR Accountability Gates -->
+<style>
+/* ══════════════════════════════════════════
+   AESDR Accountability Gates — Styles v1
+   Matches lesson design system vars:
+     --black, --white, --mid, --lite, --lite2,
+     --amber, --cobalt, --green, --line, --iris,
+     --cond, --serif, --mono
+══════════════════════════════════════════ */
+
+/* ── Gate container ── */
+.gate-box {
+  margin: 28px 0 12px;
+  padding: 28px 32px 24px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  position: relative;
+}
+.gate-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+}
+
+/* ── Label / tag ── */
+.gate-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 14px;
+}
+
+/* ── Prompt text ── */
+.gate-prompt {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--black);
+  margin-bottom: 18px;
+}
+
+/* ── Textarea ── */
+.gate-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px 16px;
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--black);
+  background: var(--lite);
+  border: 1px solid var(--line2);
+  resize: vertical;
+  outline: none;
+  transition: border-color .2s;
+}
+.gate-textarea:focus {
+  border-color: var(--amber);
+}
+.gate-textarea.gate-evidence {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  min-height: 100px;
+}
+.gate-textarea::placeholder {
+  color: var(--mid);
+  opacity: .6;
+}
+
+/* ── Footer (counter + submit) ── */
+.gate-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  gap: 12px;
+}
+
+/* ── Character counter ── */
+.gate-counter {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+
+/* ── Submit button ── */
+.gate-submit {
+  font-family: var(--cond);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border: 2px solid var(--black);
+  background: var(--black);
+  color: var(--white);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all .15s;
+}
+.gate-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 2s linear infinite;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.gate-submit:hover::before {
+  opacity: 1;
+}
+.gate-submit:hover {
+  color: var(--black);
+}
+.gate-submit span {
+  position: relative;
+  z-index: 1;
+}
+.gate-submit:disabled,
+.gate-submit:disabled:hover {
+  opacity: .28;
+  cursor: not-allowed;
+  background: var(--black);
+  color: var(--white);
+}
+.gate-submit:disabled::before,
+.gate-submit:disabled:hover::before {
+  display: none;
+}
+
+/* ── Rubric checklist ── */
+.gate-rubric {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.gate-rubric-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 10px;
+}
+.gate-rubric-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--black);
+}
+.gate-rubric-item input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--amber);
+  flex-shrink: 0;
+}
+
+/* ── Time gate ── */
+.gate-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 20px 0 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--line2);
+  background: var(--lite);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+.gate-time-icon {
+  font-size: 14px;
+}
+.gate-time-num {
+  font-weight: 700;
+  color: var(--amber);
+  font-size: 13px;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* ── Completed state ── */
+.gate-done {
+  margin: 24px 0 8px;
+  padding: 20px 24px;
+  border: 2px solid var(--green);
+  background: var(--grn-lt);
+}
+.gate-done-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.gate-done-preview {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--mid);
+  font-style: italic;
+}
+
+</style>
+<script>
+/*  AESDR Accountability Gates v1
+ *  Inject into lesson HTML files alongside role-detection.
+ *
+ *  Usage in lesson JS:
+ *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
+ *    AESDR.gate(1, { type:'time', seconds:60 });
+ *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
+ *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
+ *
+ *  In canContinue():
+ *    if (!AESDR.gateReady(cur)) return false;
+ *
+ *  Gate state auto-saves via postMessage when completed.
+ */
+window.AESDR = window.AESDR || {};
+
+(function(A) {
+  var gates = {};      // screenNum -> config
+  var gateState = {};  // screenNum -> { completed, value, ... }
+  var timers = {};     // screenNum -> { started, remaining }
+
+  /* ── Register a gate ── */
+  A.gate = function(screen, cfg) {
+    gates[screen] = cfg;
+    gateState[screen] = { completed: false, value: '' };
+  };
+
+  /* ── Check if gate is satisfied ── */
+  A.gateReady = function(screen) {
+    if (!gates[screen]) return true;
+    return gateState[screen] && gateState[screen].completed;
+  };
+
+  /* ── Get gate hint text ── */
+  A.gateHint = function(screen) {
+    var g = gates[screen];
+    if (!g) return '';
+    var s = gateState[screen];
+    if (s.completed) return '\u2713 Gate complete';
+
+    if (g.type === 'time') {
+      var r = timers[screen] ? timers[screen].remaining : g.seconds;
+      return r > 0 ? 'Unlocks in ' + r + 's' : '';
+    }
+    if (g.type === 'reflection' || g.type === 'evidence') {
+      var len = (s.value || '').length;
+      return len + ' / ' + g.minChars + ' characters';
+    }
+    if (g.type === 'application') {
+      var len2 = (s.value || '').length;
+      var checks = s.rubricChecked || 0;
+      var total = (g.rubric || []).length;
+      return len2 + ' chars \u00B7 ' + checks + '/' + total + ' rubric items';
+    }
+    return '';
+  };
+
+  /* ── Get all gate data for stateData (progress saving) ── */
+  A.gateData = function() {
+    var out = {};
+    for (var k in gateState) {
+      if (gateState[k].completed) {
+        out['gate_' + k] = {
+          type: gates[k].type,
+          value: gateState[k].value,
+          completedAt: gateState[k].completedAt
+        };
+      }
+    }
+    return out;
+  };
+
+  /* ── Render gate UI into a container ── */
+  A.renderGate = function(screen, containerId) {
+    var g = gates[screen];
+    if (!g) return;
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    var s = gateState[screen];
+
+    if (s.completed) {
+      el.innerHTML = _completedHTML(g, s);
+      return;
+    }
+
+    switch(g.type) {
+      case 'reflection': el.innerHTML = _reflectionHTML(screen, g, s); break;
+      case 'application': el.innerHTML = _applicationHTML(screen, g, s); break;
+      case 'evidence': el.innerHTML = _evidenceHTML(screen, g, s); break;
+      case 'time': _startTimer(screen, g); el.innerHTML = _timeHTML(screen, g); break;
+    }
+  };
+
+  /* ── Completed state ── */
+  function _completedHTML(g, s) {
+    var typeLabel = { reflection:'Reflection', application:'Response', evidence:'Evidence', time:'Time' };
+    return '<div class="gate-done">' +
+      '<div class="gate-done-tag">\u2713 ' + (typeLabel[g.type]||'Gate') + ' Submitted</div>' +
+      (g.type !== 'time' ? '<div class="gate-done-preview">' + _esc(s.value).substring(0,200) + (s.value.length > 200 ? '...' : '') + '</div>' : '') +
+    '</div>';
+  }
+
+  /* ── Reflection Gate ── */
+  function _reflectionHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Reflection Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your reflection here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Reflection</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Application Gate ── */
+  function _applicationHTML(screen, g) {
+    var rubricHTML = (g.rubric || []).map(function(r, i) {
+      return '<label class="gate-rubric-item">' +
+        '<input type="checkbox" onchange="AESDR._onRubric(' + screen + ',' + i + ',this.checked)">' +
+        '<span>' + r + '</span></label>';
+    }).join('');
+
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Application Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your response...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-counter" id="gateCtr' + screen + '">0 / ' + (g.minChars || 50) + ' characters</div>' +
+      (rubricHTML ? '<div class="gate-rubric"><div class="gate-rubric-label">Self-evaluate your response:</div>' + rubricHTML + '</div>' : '') +
+      '<div class="gate-footer">' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Response</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Evidence Gate ── */
+  function _evidenceHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Evidence Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea gate-evidence" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Paste your evidence here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Evidence</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Time Gate ── */
+  function _timeHTML(screen, g) {
+    var r = timers[screen] ? timers[screen].remaining : g.seconds;
+    if (r <= 0) return '';
+    return '<div class="gate-time" id="gateTime' + screen + '">' +
+      '<span class="gate-time-icon">\u23F3</span> ' +
+      '<span class="gate-time-num" id="gateTimeCtr' + screen + '">' + r + '</span>s remaining' +
+    '</div>';
+  }
+
+  function _startTimer(screen, g) {
+    if (timers[screen]) return;
+    timers[screen] = { remaining: g.seconds };
+    var iv = setInterval(function() {
+      timers[screen].remaining--;
+      var el = document.getElementById('gateTimeCtr' + screen);
+      if (el) el.textContent = timers[screen].remaining;
+      if (timers[screen].remaining <= 0) {
+        clearInterval(iv);
+        gateState[screen].completed = true;
+        gateState[screen].completedAt = new Date().toISOString();
+        var timeEl = document.getElementById('gateTime' + screen);
+        if (timeEl) timeEl.style.display = 'none';
+        // Trigger render if the lesson exposes it
+        if (typeof window.render === 'function') window.render();
+      }
+    }, 1000);
+  }
+
+  /* ── Internal handlers ── */
+  A._onInput = function(screen, val) {
+    gateState[screen].value = val;
+    var g = gates[screen];
+    var min = g.minChars || 50;
+    var ctr = document.getElementById('gateCtr' + screen);
+    if (ctr) ctr.textContent = val.length + ' / ' + min + (g.type === 'application' ? ' characters' : '');
+
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      var ready = val.length >= min;
+      if (g.type === 'application' && g.rubric) {
+        var checks = gateState[screen].rubricChecked || 0;
+        ready = ready && checks >= g.rubric.length;
+      }
+      btn.disabled = !ready;
+    }
+  };
+
+  A._onRubric = function(screen, idx, checked) {
+    if (!gateState[screen]._rubric) gateState[screen]._rubric = {};
+    gateState[screen]._rubric[idx] = checked;
+    var count = 0;
+    for (var k in gateState[screen]._rubric) {
+      if (gateState[screen]._rubric[k]) count++;
+    }
+    gateState[screen].rubricChecked = count;
+
+    // Re-check submit button
+    var g = gates[screen];
+    var val = gateState[screen].value || '';
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      btn.disabled = !(val.length >= (g.minChars || 50) && count >= (g.rubric || []).length);
+    }
+  };
+
+  A._submit = function(screen) {
+    var s = gateState[screen];
+    s.completed = true;
+    s.completedAt = new Date().toISOString();
+
+    // Re-render the gate as completed
+    var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
+    containers.forEach(function(el) { A.renderGate(screen, el.id); });
+
+    // Save progress via postMessage
+    if (window.parent !== window) {
+      try {
+        window.parent.postMessage({
+          type: 'aesdr:progress',
+          screen: screen,
+          stateData: A.gateData()
+        }, '*');
+      } catch(e) {}
+    }
+
+    // Trigger render if available
+    if (typeof window.render === 'function') window.render();
+  };
+
+  /* ── Escape helper ── */
+  function _esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+})(window.AESDR);
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AESDR — Course 10.3: Living the Feast-or-Famine Life</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -289,9 +784,11 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div>
           <div class="cv-c2tag">AESDR · Lesson 10.3</div>
           <div class="cv-course-num">10</div>
-          <div class="cv-big">Living the Feast-or-Famine Life</div>
+          <div class="cv-big ae-only">Living the Feast-or-Famine Life</div>
+          <div class="cv-big sdr-only">Living the Feast-or-Famine Life</div>
         </div>
-        <div class="cv-tagline">Turning Commission Chaos into Financial Stability.</div>
+        <div class="cv-tagline ae-only">Commission swings will test your financial discipline. Build the system before the drought.</div>
+        <div class="cv-tagline sdr-only">Variable income will test your patience. Build the buffer before you need it.</div>
       </div>
       <div class="cvr">
         <div class="eyebrow">Course 10 · Lesson 3 of 3</div>
@@ -314,17 +811,30 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div><div class="c10-badge">Course 10</div><span class="sec-eye">Section 01 — Introduction</span></div>
       <div class="lh-title">Why Sales Income Feels Like a Rollercoaster</div>
     </div>
-    <div class="lb">
-      <p class="lp">The feast-or-famine cycle is inevitable in sales. Some months, you feel like you've made it; others, you're googling 'how to budget $10 for groceries.' Learning to handle the swings is what keeps you in the game.</p>
+    <div class="lb ae-only">
+      <p class="lp">The feast-or-famine cycle is the defining financial reality of an AE's life. One quarter you close a whale deal and feel invincible; the next, your pipeline dries up and you're staring at a bare commission statement wondering where it all went. Learning to handle these swings is what separates career AEs from burnouts.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>Feast Months:</strong> Big commission checks lead to overconfidence, and overspending happens fast.</li>
-        <li><span class="kp-n">02</span><strong>Famine Months:</strong> Deals stall or fall apart, bringing stress, panic, and self-doubt. You regret every dollar wasted during the feast.</li>
-        <li><span class="kp-n">03</span><strong>The Goal:</strong> Handle the income swings like a pro by building financial habits that last.</li>
+        <li><span class="kp-n">01</span><strong>Feast Quarters:</strong> A big closed-won deal hits your account. Suddenly you're upgrading your car, eating out every night, and spending like this is the new normal. It's not.</li>
+        <li><span class="kp-n">02</span><strong>Famine Quarters:</strong> Deals push to next quarter. A champion leaves. Budget freezes. Three months of pipeline work evaporates. The stress compounds because you spent the feast like it would last forever.</li>
+        <li><span class="kp-n">03</span><strong>The Goal:</strong> Build financial discipline that smooths out the rollercoaster. Your lifestyle should match your base salary, not your best quarter.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Reality Check</div>
-        <div class="lie-q">"Commission is not your paycheck—it's a bonus."</div>
-        <div class="lie-a">If you spend every dollar you earn during a feast month, you'll suffer when the famine hits. Keep your base salary as your baseline.</div>
+        <div class="lie-q">"That $40K commission check is not your new normal — it's a windfall."</div>
+        <div class="lie-a">AEs who spend their commission the month it arrives are one bad quarter from financial panic. Build the habit now: base salary funds your life, commissions fund your future.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">The feast-or-famine cycle hits SDRs hard — especially when your comp is tied to meetings that may or may not convert. Some months, your commissions land and you feel like you've made it; others, meetings get cancelled, leads go cold, and you're staring at a base-salary-only paycheck. Learning to handle the swings is what keeps you in the game.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Feast Months:</strong> You had a hot month — meetings booked left and right, bonuses hitting your account. Overconfidence kicks in and spending creeps up fast.</li>
+        <li><span class="kp-n">02</span><strong>Famine Months:</strong> Connect rates drop. Leads dry up. Meetings get no-showed. Your variable comp disappears and you regret every dollar wasted during the feast.</li>
+        <li><span class="kp-n">03</span><strong>The Goal:</strong> Handle the income swings like a pro by building financial habits that outlast any single hot or cold month.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Reality Check</div>
+        <div class="lie-q">"Commission is not your paycheck — it's a bonus."</div>
+        <div class="lie-a">If you spend every dollar you earn during a feast month, you'll suffer when the famine hits. Live off your base. Bank the variable. Build a buffer.</div>
       </div>
     </div>
   </div>
@@ -366,17 +876,30 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div><div class="c10-badge">Course 10</div><span class="sec-eye">Section 03 & 04 — Knowing Numbers</span></div>
       <div class="lh-title">Stop Living in Delusion</div>
     </div>
-    <div class="lb">
-      <p class="lp">OTE is a fantasy. Your real income is your base salary plus realistic commission. By tracking your numbers, you can stop guessing and plan smart.</p>
+    <div class="lb ae-only">
+      <p class="lp">OTE is a fantasy. Your real income is your base salary plus a conservative commission estimate based on historical performance — not your best quarter ever. Stop guessing and start tracking.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>Track Your Earnings:</strong> Log everything to find your average monthly income over 6 months.</li>
-        <li><span class="kp-n">02</span><strong>Plan for the Worst:</strong> Budget your lifestyle off your base salary alone. Don't upgrade your life based on a hot quarter.</li>
-        <li><span class="kp-n">03</span><strong>Build Stability:</strong> Diversify your income. A small side hustle or passive income stream makes the famine months less terrifying without causing burnout.</li>
+        <li><span class="kp-n">01</span><strong>Track Your Earnings:</strong> Log every deal, every payout, and every clawback for at least 6 months. Find your actual average monthly income — not the one you tell yourself about.</li>
+        <li><span class="kp-n">02</span><strong>Plan for the Worst:</strong> Budget your lifestyle off your base salary alone. That whale deal was great — but it's not repeatable every quarter. Don't upgrade your life based on one close.</li>
+        <li><span class="kp-n">03</span><strong>Build Stability:</strong> Create a financial buffer that covers 3-6 months of expenses. When you're not financially desperate, you negotiate better, walk away from bad deals easier, and sell from a position of confidence.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Bottom Line</div>
+        <div class="lie-q">"Famine quarters are when you feel the feast quarter mistakes."</div>
+        <div class="lie-a">The AEs who survive long-term in this game are the ones who save aggressively during hot quarters and live lean when the pipeline dries up. Financial stability makes you a better closer — desperation does the opposite.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">OTE is a fantasy. Your real income is your base salary plus realistic commission based on your actual conversion rates — not the number HR quoted in the offer letter. By tracking your numbers, you can stop guessing and plan smart.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Track Your Earnings:</strong> Log every meeting booked, its conversion status, and your actual payout for at least 3 months. Find your real average monthly income.</li>
+        <li><span class="kp-n">02</span><strong>Plan for the Worst:</strong> Budget your lifestyle off your base salary alone. Don't upgrade your spending based on a hot month of bookings.</li>
+        <li><span class="kp-n">03</span><strong>Build Stability:</strong> Start an emergency fund. Even a small buffer makes the famine months less terrifying and keeps you from making desperate decisions — like taking a bad role just for the paycheck.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Bottom Line</div>
         <div class="lie-q">"Famine months are when you feel the feast mistakes."</div>
-        <div class="lie-a">Build a safety net so you can survive dry spells without breaking a sweat. It's about creating stability, not replacing your main job.</div>
+        <div class="lie-a">Build a safety net so you can survive dry spells without panic. When you're not worried about rent, you prospect with more confidence and make better career decisions.</div>
       </div>
     </div>
   </div>
@@ -473,28 +996,53 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-title">Building Your Safety Net</div>
     </div>
     <div class="tools-blk">
-      <div style="margin-top:20px">
+      <div style="margin-top:20px" class="ae-only">
         <div class="t-head">Task 1: Track Your Numbers</div>
         <ul class="hw-list">
-          <li><div class="hw-box"></div>Use a spreadsheet to log all earnings for the past 3 months.</li>
-          <li><div class="hw-box"></div>Identify your average monthly income.</li>
-          <li><div class="hw-box"></div>Factor in deductions like taxes and clawbacks.</li>
+          <li><div class="hw-box"></div>Log all earnings for the past 6 months: base, commissions, clawbacks, splits, and bonuses.</li>
+          <li><div class="hw-box"></div>Calculate your real average monthly income — not your OTE, your actual take-home.</li>
+          <li><div class="hw-box"></div>Identify your worst month and build your budget around that floor, not your ceiling.</li>
         </ul>
       </div>
-      <div>
+      <div style="margin-top:20px" class="sdr-only">
+        <div class="t-head">Task 1: Track Your Numbers</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Use a spreadsheet to log all earnings for the past 3 months: base salary, meeting bonuses, and variable payouts.</li>
+          <li><div class="hw-box"></div>Identify your average monthly income and your worst month.</li>
+          <li><div class="hw-box"></div>Factor in deductions: taxes, any clawbacks for meetings that didn't convert, and payout delays.</li>
+        </ul>
+      </div>
+      <div class="ae-only">
+        <div class="t-head">Task 2: Build a Safety Net</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Target an emergency fund covering 6 months of living expenses — AE income swings are bigger and less predictable than most roles.</li>
+          <li><div class="hw-box"></div>During feast quarters, redirect at least 50% of commission to savings before spending a dollar on lifestyle upgrades.</li>
+        </ul>
+      </div>
+      <div class="sdr-only">
         <div class="t-head">Task 2: Build a Safety Net</div>
         <ul class="hw-list">
           <li><div class="hw-box"></div>Start building an emergency fund with at least 3 months of living expenses.</li>
-          <li><div class="hw-box"></div>Slash the fat: Cut non-essential spending during dry spells.</li>
+          <li><div class="hw-box"></div>Slash the fat: Identify non-essential spending you can cut immediately during dry months.</li>
         </ul>
       </div>
-      <div>
+      <div class="ae-only">
         <div class="t-head">Task 3: Set Spending Rules</div>
         <ul class="hw-list">
-          <li><div class="hw-box"></div>Cap your commission spending to 20% max.</li>
-          <li><div class="hw-box"></div>Allocate the rest to savings, investments, or paying off debt.</li>
+          <li><div class="hw-box"></div>Cap commission spending at 20% max. No new car, no vacation upgrade, no lifestyle inflation until the safety net is funded.</li>
+          <li><div class="hw-box"></div>Allocate the remaining 80% to: emergency fund (until fully funded), investments, and debt payoff — in that order.</li>
         </ul>
       </div>
+      <div class="sdr-only">
+        <div class="t-head">Task 3: Set Spending Rules</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Cap your commission spending to 20% max. The rest goes to savings, debt payoff, or investments.</li>
+          <li><div class="hw-box"></div>Set a rule: no lifestyle upgrades based on a single good month. Wait for 3 consecutive months of hitting target before adjusting your budget upward.</li>
+        </ul>
+      </div>
+
+      <!-- Accountability Gate -->
+      <div id="gate8" data-gate-screen="8"></div>
     </div>
   </div>
 
@@ -505,13 +1053,17 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <div class="comp-tag">Course 10 · Lesson 3 — Complete</div>
           <div style="font-family:var(--display);font-size:56px;color:var(--white);line-height:.9;margin:10px 0 0">10</div>
         </div>
-        <div class="comp-big">Steady success<br>in an unsteady<br>game.</div>
-        <div class="comp-sub">The feast-or-famine cycle is part of the game, but you don't have to let it control your life. Build smart habits and prepare for the worst.</div>
+        <div class="comp-big ae-only">Sell from<br>stability,<br>not desperation.</div>
+        <div class="comp-big sdr-only">Steady hustle<br>in an unsteady<br>game.</div>
+        <div class="comp-sub ae-only">The feast-or-famine cycle is part of being an AE. But the closers who last aren't the ones with the biggest deals — they're the ones with the smartest financial habits. Save during the feast. Survive the famine. Sell from confidence.</div>
+        <div class="comp-sub sdr-only">The feast-or-famine cycle is part of the game, but you don't have to let it control your life. Build smart habits, save during hot months, and create a buffer so famine months don't break your spirit or your bank account.</div>
       </div>
       <div class="comp-r">
         <div class="eyebrow">Course 10 · Lesson 3 Complete</div>
-        <div class="comp-h">Be ready for anything.</div>
-        <p class="comp-p">By living off your base salary, saving during feast months, and planning for the famine, you'll build financial stability that protects you from sales volatility.</p>
+        <div class="comp-h ae-only">Financial discipline is a closing skill.</div>
+        <div class="comp-h sdr-only">Be ready for anything.</div>
+        <p class="comp-p ae-only">By living off your base salary, saving aggressively during feast quarters, and building a 6-month buffer, you'll sell from a position of strength. Financially stable AEs don't discount out of desperation. They negotiate from confidence.</p>
+        <p class="comp-p sdr-only">By living off your base salary, saving during feast months, and planning for the famine, you'll build financial stability that protects you from sales volatility — and frees you to focus on doing your best work instead of panicking about your next paycheck.</p>
         <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
         <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
       </div>
@@ -522,7 +1074,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 <aside class="sidebar">
   <div class="sb-course">10</div>
-  <div class="sb-lesson">Lesson 10.3 · Feast-or-Famine</div>
+  <div class="sb-lesson ae-only">Lesson 10.3 · Feast-or-Famine</div>
+  <div class="sb-lesson sdr-only">Lesson 10.3 · Feast-or-Famine</div>
   <div class="sb-divider"></div>
   <div class="sb-label">Sections</div>
   <div class="sb-item" id="nav1" onclick="go(1)">
@@ -577,7 +1130,7 @@ const BLAME_ITEMS = [
   },
   {
     statement:'"I am panicking because my deals stalled this month and I can\'t pay my rent."',
-    opts:["Ask your manager for a loan","Trap: No Safety Net. Fix: Save 3-6 months of living expenses during the feast months to survive the famine.","Complain to HR","Blame your prospects"],
+    opts:["Ramp up outbound activity to close more deals this month","Trap: No Safety Net. Fix: Save 3-6 months of living expenses during the feast months to survive the famine.","Adjust your quota expectations for the rest of the quarter","Restructure your pipeline to prioritize quick-close deals"],
     ans:1,
     fix:"Resolution: Trap: No Safety Net. Fix: Famine months happen. Build an emergency fund of 3-6 months' expenses to avoid panic."
   },
@@ -589,7 +1142,7 @@ const BLAME_ITEMS = [
   },
   {
     statement:'"I lost my sales job unexpectedly and now I have zero income coming in."',
-    opts:["Move back in with your parents","Blame the economy","Trap: Single Point of Failure. Fix: Build stability with diversified income streams like a side hustle.","Find a new sales job immediately"],
+    opts:["Rely on your network to find a new role quickly","Negotiate a severance package with your former employer","Trap: Single Point of Failure. Fix: Build stability with diversified income streams like a side hustle.","Use your savings to cover expenses while you search for a similar role"],
     ans:2,
     fix:"Resolution: Trap: Single Point of Failure. Fix: If 100% of your income relies on sales, you're vulnerable. Diversify your income streams."
   }
@@ -654,10 +1207,15 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); render();
+  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register accountability gate
+  var _role = document.documentElement.getAttribute('data-role') || 'sdr';
+  var _gatePrompt = _role === 'ae' ? 'Build your personal emergency fund plan with real numbers: monthly expenses, target fund size (3 months), current savings, and a specific monthly savings commitment.' : 'Build your personal emergency fund plan with real numbers: monthly expenses, target fund size (3 months), current savings, and a specific monthly savings commitment.';
+  AESDR.gate(8, { type:'application', prompt: _gatePrompt, minChars: 100 });
+  render();
 }
 function go(n){
-  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:{}},"*")}catch(e){}}
+  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;
   document.getElementById('s'+cur).classList.add('active');
@@ -920,6 +1478,7 @@ function canContinue(){
   if(cur===5)return Object.keys(seqDone).length===5;
   if(cur===6)return clsCount===8;
   if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 function getHint(){
@@ -931,7 +1490,7 @@ function getHint(){
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,
     7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    8:"Turn feast-or-famine into steady success.",
+    8: AESDR.gateHint(8) || "Turn feast-or-famine into steady success.",
   };
   return h[cur]||'';
 }
@@ -952,6 +1511,7 @@ function render(){
   const bnav=document.getElementById('bottomnav');
   bnav.style.display=hide?'none':'flex';
   if(hide)return;
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';

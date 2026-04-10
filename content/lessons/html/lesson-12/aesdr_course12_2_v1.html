@@ -2,6 +2,501 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- AESDR Role Detection -->
+<script>
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  var role = p.get('role') || 'sdr';
+  document.documentElement.setAttribute('data-role', role);
+})();
+</script>
+<style>
+/* Role-conditional content: hide content not matching current role */
+[data-role="ae"] .sdr-only { display: none !important; }
+[data-role="sdr"] .ae-only { display: none !important; }
+/* Softer variant: swap text content visibility */
+[data-role="ae"] .sdr-text { display: none !important; }
+[data-role="sdr"] .ae-text { display: none !important; }
+</style>
+<!-- AESDR Accountability Gates -->
+<style>
+/* ══════════════════════════════════════════
+   AESDR Accountability Gates — Styles v1
+   Matches lesson design system vars:
+     --black, --white, --mid, --lite, --lite2,
+     --amber, --cobalt, --green, --line, --iris,
+     --cond, --serif, --mono
+══════════════════════════════════════════ */
+
+/* ── Gate container ── */
+.gate-box {
+  margin: 28px 0 12px;
+  padding: 28px 32px 24px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  position: relative;
+}
+.gate-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+}
+
+/* ── Label / tag ── */
+.gate-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 14px;
+}
+
+/* ── Prompt text ── */
+.gate-prompt {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--black);
+  margin-bottom: 18px;
+}
+
+/* ── Textarea ── */
+.gate-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px 16px;
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--black);
+  background: var(--lite);
+  border: 1px solid var(--line2);
+  resize: vertical;
+  outline: none;
+  transition: border-color .2s;
+}
+.gate-textarea:focus {
+  border-color: var(--amber);
+}
+.gate-textarea.gate-evidence {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  min-height: 100px;
+}
+.gate-textarea::placeholder {
+  color: var(--mid);
+  opacity: .6;
+}
+
+/* ── Footer (counter + submit) ── */
+.gate-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  gap: 12px;
+}
+
+/* ── Character counter ── */
+.gate-counter {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+
+/* ── Submit button ── */
+.gate-submit {
+  font-family: var(--cond);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border: 2px solid var(--black);
+  background: var(--black);
+  color: var(--white);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all .15s;
+}
+.gate-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 2s linear infinite;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.gate-submit:hover::before {
+  opacity: 1;
+}
+.gate-submit:hover {
+  color: var(--black);
+}
+.gate-submit span {
+  position: relative;
+  z-index: 1;
+}
+.gate-submit:disabled,
+.gate-submit:disabled:hover {
+  opacity: .28;
+  cursor: not-allowed;
+  background: var(--black);
+  color: var(--white);
+}
+.gate-submit:disabled::before,
+.gate-submit:disabled:hover::before {
+  display: none;
+}
+
+/* ── Rubric checklist ── */
+.gate-rubric {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.gate-rubric-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 10px;
+}
+.gate-rubric-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--black);
+}
+.gate-rubric-item input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--amber);
+  flex-shrink: 0;
+}
+
+/* ── Time gate ── */
+.gate-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 20px 0 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--line2);
+  background: var(--lite);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+.gate-time-icon {
+  font-size: 14px;
+}
+.gate-time-num {
+  font-weight: 700;
+  color: var(--amber);
+  font-size: 13px;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* ── Completed state ── */
+.gate-done {
+  margin: 24px 0 8px;
+  padding: 20px 24px;
+  border: 2px solid var(--green);
+  background: var(--grn-lt);
+}
+.gate-done-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.gate-done-preview {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--mid);
+  font-style: italic;
+}
+
+</style>
+<script>
+/*  AESDR Accountability Gates v1
+ *  Inject into lesson HTML files alongside role-detection.
+ *
+ *  Usage in lesson JS:
+ *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
+ *    AESDR.gate(1, { type:'time', seconds:60 });
+ *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
+ *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
+ *
+ *  In canContinue():
+ *    if (!AESDR.gateReady(cur)) return false;
+ *
+ *  Gate state auto-saves via postMessage when completed.
+ */
+window.AESDR = window.AESDR || {};
+
+(function(A) {
+  var gates = {};      // screenNum -> config
+  var gateState = {};  // screenNum -> { completed, value, ... }
+  var timers = {};     // screenNum -> { started, remaining }
+
+  /* ── Register a gate ── */
+  A.gate = function(screen, cfg) {
+    gates[screen] = cfg;
+    gateState[screen] = { completed: false, value: '' };
+  };
+
+  /* ── Check if gate is satisfied ── */
+  A.gateReady = function(screen) {
+    if (!gates[screen]) return true;
+    return gateState[screen] && gateState[screen].completed;
+  };
+
+  /* ── Get gate hint text ── */
+  A.gateHint = function(screen) {
+    var g = gates[screen];
+    if (!g) return '';
+    var s = gateState[screen];
+    if (s.completed) return '\u2713 Gate complete';
+
+    if (g.type === 'time') {
+      var r = timers[screen] ? timers[screen].remaining : g.seconds;
+      return r > 0 ? 'Unlocks in ' + r + 's' : '';
+    }
+    if (g.type === 'reflection' || g.type === 'evidence') {
+      var len = (s.value || '').length;
+      return len + ' / ' + g.minChars + ' characters';
+    }
+    if (g.type === 'application') {
+      var len2 = (s.value || '').length;
+      var checks = s.rubricChecked || 0;
+      var total = (g.rubric || []).length;
+      return len2 + ' chars \u00B7 ' + checks + '/' + total + ' rubric items';
+    }
+    return '';
+  };
+
+  /* ── Get all gate data for stateData (progress saving) ── */
+  A.gateData = function() {
+    var out = {};
+    for (var k in gateState) {
+      if (gateState[k].completed) {
+        out['gate_' + k] = {
+          type: gates[k].type,
+          value: gateState[k].value,
+          completedAt: gateState[k].completedAt
+        };
+      }
+    }
+    return out;
+  };
+
+  /* ── Render gate UI into a container ── */
+  A.renderGate = function(screen, containerId) {
+    var g = gates[screen];
+    if (!g) return;
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    var s = gateState[screen];
+
+    if (s.completed) {
+      el.innerHTML = _completedHTML(g, s);
+      return;
+    }
+
+    switch(g.type) {
+      case 'reflection': el.innerHTML = _reflectionHTML(screen, g, s); break;
+      case 'application': el.innerHTML = _applicationHTML(screen, g, s); break;
+      case 'evidence': el.innerHTML = _evidenceHTML(screen, g, s); break;
+      case 'time': _startTimer(screen, g); el.innerHTML = _timeHTML(screen, g); break;
+    }
+  };
+
+  /* ── Completed state ── */
+  function _completedHTML(g, s) {
+    var typeLabel = { reflection:'Reflection', application:'Response', evidence:'Evidence', time:'Time' };
+    return '<div class="gate-done">' +
+      '<div class="gate-done-tag">\u2713 ' + (typeLabel[g.type]||'Gate') + ' Submitted</div>' +
+      (g.type !== 'time' ? '<div class="gate-done-preview">' + _esc(s.value).substring(0,200) + (s.value.length > 200 ? '...' : '') + '</div>' : '') +
+    '</div>';
+  }
+
+  /* ── Reflection Gate ── */
+  function _reflectionHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Reflection Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your reflection here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Reflection</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Application Gate ── */
+  function _applicationHTML(screen, g) {
+    var rubricHTML = (g.rubric || []).map(function(r, i) {
+      return '<label class="gate-rubric-item">' +
+        '<input type="checkbox" onchange="AESDR._onRubric(' + screen + ',' + i + ',this.checked)">' +
+        '<span>' + r + '</span></label>';
+    }).join('');
+
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Application Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your response...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-counter" id="gateCtr' + screen + '">0 / ' + (g.minChars || 50) + ' characters</div>' +
+      (rubricHTML ? '<div class="gate-rubric"><div class="gate-rubric-label">Self-evaluate your response:</div>' + rubricHTML + '</div>' : '') +
+      '<div class="gate-footer">' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Response</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Evidence Gate ── */
+  function _evidenceHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Evidence Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea gate-evidence" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Paste your evidence here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Evidence</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Time Gate ── */
+  function _timeHTML(screen, g) {
+    var r = timers[screen] ? timers[screen].remaining : g.seconds;
+    if (r <= 0) return '';
+    return '<div class="gate-time" id="gateTime' + screen + '">' +
+      '<span class="gate-time-icon">\u23F3</span> ' +
+      '<span class="gate-time-num" id="gateTimeCtr' + screen + '">' + r + '</span>s remaining' +
+    '</div>';
+  }
+
+  function _startTimer(screen, g) {
+    if (timers[screen]) return;
+    timers[screen] = { remaining: g.seconds };
+    var iv = setInterval(function() {
+      timers[screen].remaining--;
+      var el = document.getElementById('gateTimeCtr' + screen);
+      if (el) el.textContent = timers[screen].remaining;
+      if (timers[screen].remaining <= 0) {
+        clearInterval(iv);
+        gateState[screen].completed = true;
+        gateState[screen].completedAt = new Date().toISOString();
+        var timeEl = document.getElementById('gateTime' + screen);
+        if (timeEl) timeEl.style.display = 'none';
+        // Trigger render if the lesson exposes it
+        if (typeof window.render === 'function') window.render();
+      }
+    }, 1000);
+  }
+
+  /* ── Internal handlers ── */
+  A._onInput = function(screen, val) {
+    gateState[screen].value = val;
+    var g = gates[screen];
+    var min = g.minChars || 50;
+    var ctr = document.getElementById('gateCtr' + screen);
+    if (ctr) ctr.textContent = val.length + ' / ' + min + (g.type === 'application' ? ' characters' : '');
+
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      var ready = val.length >= min;
+      if (g.type === 'application' && g.rubric) {
+        var checks = gateState[screen].rubricChecked || 0;
+        ready = ready && checks >= g.rubric.length;
+      }
+      btn.disabled = !ready;
+    }
+  };
+
+  A._onRubric = function(screen, idx, checked) {
+    if (!gateState[screen]._rubric) gateState[screen]._rubric = {};
+    gateState[screen]._rubric[idx] = checked;
+    var count = 0;
+    for (var k in gateState[screen]._rubric) {
+      if (gateState[screen]._rubric[k]) count++;
+    }
+    gateState[screen].rubricChecked = count;
+
+    // Re-check submit button
+    var g = gates[screen];
+    var val = gateState[screen].value || '';
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      btn.disabled = !(val.length >= (g.minChars || 50) && count >= (g.rubric || []).length);
+    }
+  };
+
+  A._submit = function(screen) {
+    var s = gateState[screen];
+    s.completed = true;
+    s.completedAt = new Date().toISOString();
+
+    // Re-render the gate as completed
+    var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
+    containers.forEach(function(el) { A.renderGate(screen, el.id); });
+
+    // Save progress via postMessage
+    if (window.parent !== window) {
+      try {
+        window.parent.postMessage({
+          type: 'aesdr:progress',
+          screen: screen,
+          stateData: A.gateData()
+        }, '*');
+      } catch(e) {}
+    }
+
+    // Trigger render if available
+    if (typeof window.render === 'function') window.render();
+  };
+
+  /* ── Escape helper ── */
+  function _esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+})(window.AESDR);
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AESDR — Course 12.2: Navigating the Home Office Trap</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -289,9 +784,11 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div>
           <div class="cv-c2tag">AESDR · Lesson 12.2</div>
           <div class="cv-course-num">12</div>
-          <div class="cv-big">Navigating the Home Office Trap</div>
+          <div class="cv-big ae-only">The Home Office Trap</div>
+          <div class="cv-big sdr-only">The Home Office Trap</div>
         </div>
-        <div class="cv-tagline">Setting Boundaries to Save Your Marriage (and Your Sanity).</div>
+        <div class="cv-tagline ae-only">The line between deal strategy and family dinner is one Slack notification. Build boundaries.</div>
+        <div class="cv-tagline sdr-only">The line between call blocks and being present is one headset. Build boundaries.</div>
       </div>
       <div class="cvr">
         <div class="eyebrow">Course 12 · Lesson 2</div>
@@ -314,17 +811,30 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div><div class="c12-badge">Course 12</div><span class="sec-eye">Section 01 — The Disconnect</span></div>
       <div class="lh-title">Presence vs. Proximity</div>
     </div>
-    <div class="lb">
-      <p class="lp">Working from home gives the illusion of availability. You're in the house all day, so your spouse assumes they'll see more of you. But when your attention is locked into Zoom calls and Slack threads, your physical presence means nothing.</p>
+    <div class="lb ae-only">
+      <p class="lp">As an AE working from home, you're technically "there" all day. But between back-to-back Zoom demos, deal strategy sessions, and CRM updates, your partner sees you in the house without ever actually having you present. The illusion of availability creates more resentment than the office ever did.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>The Illusion:</strong> Home for lunch breaks, sitting in the same room, sharing a workspace.</li>
-        <li><span class="kp-n">02</span><strong>The Reality:</strong> Too distracted to engage, glued to notifications, rarely sharing meaningful moments.</li>
-        <li><span class="kp-n">03</span><strong>The Cost:</strong> Being physically close doesn't matter if you're not emotionally present.</li>
+        <li><span class="kp-n">01</span><strong>The Illusion:</strong> You're home for lunch, sitting at the kitchen table, theoretically available. But your mind is on the deal you just pitched and the follow-up you need to send.</li>
+        <li><span class="kp-n">02</span><strong>The Reality:</strong> Your partner sees you physically present but mentally gone. Every notification pulls you back to pipeline. Every "one more email" steals another five minutes of connection.</li>
+        <li><span class="kp-n">03</span><strong>The Cost:</strong> Your spouse starts to resent the laptop more than they'd resent a commute. At least with an office, there was a clear boundary. Now there's none.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Reality Check</div>
         <div class="lie-q">"Working from home should make life easier, right?"</div>
-        <div class="lie-a">The always-on culture bulldozes through those benefits. The result? You're physically there but emotionally absent.</div>
+        <div class="lie-a">It should—but the AE's always-on culture erases the boundary between deal mode and home mode. You're physically there, emotionally absent, and your partner feels it every day.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">As an SDR working from home, you're in the house all day making calls, sending sequences, and grinding through your activity numbers. Your partner sees you sitting right there—but you might as well be in another zip code. The illusion of availability creates more friction than the office ever did.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>The Illusion:</strong> You're home all day. Your partner assumes that means more time together. But your headset is on from 8 AM to 5 PM and you're mentally replaying objections at dinner.</li>
+        <li><span class="kp-n">02</span><strong>The Reality:</strong> Between call blocks, CRM logging, and Slack messages from your manager, there's no actual break. Your partner gets the exhausted, depleted version of you.</li>
+        <li><span class="kp-n">03</span><strong>The Cost:</strong> Your partner starts to resent the headset, the "hold on one sec" interruptions, and the fact that you're always half-listening. Proximity without presence is worse than distance.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Reality Check</div>
+        <div class="lie-q">"Working from home should make life easier, right?"</div>
+        <div class="lie-a">It should—but the SDR grind doesn't stop just because you're in sweatpants. The activity pressure follows you from the desk to the couch. Your partner feels invisible.</div>
       </div>
     </div>
   </div>
@@ -366,17 +876,30 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div><div class="c12-badge">Course 12</div><span class="sec-eye">Section 02 & 03 — The Burnout Trap</span></div>
       <div class="lh-title">The Emotional Black Hole & Digital Overload</div>
     </div>
-    <div class="lb">
-      <p class="lp">Your job demands constant emotional energy. Every pitch, demo, and rejection takes something out of you. By the time you're done, you have nothing left for your partner.</p>
+    <div class="lb ae-only">
+      <p class="lp">As an AE, your job demands massive emotional output. Every demo requires energy. Every negotiation requires focus. Every lost deal takes something out of you. By the time you close the laptop, you've given your best self to prospects—and your partner gets whatever's left.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>The Leftovers:</strong> You give your best self to prospects, leaving your spouse with the exhausted, disengaged version of you.</li>
-        <li><span class="kp-n">02</span><strong>The Perception:</strong> To them, it feels like a choice—like work comes first and they're just an afterthought.</li>
-        <li><span class="kp-n">03</span><strong>The Digital Thief:</strong> Slack messages, LinkedIn updates, and CRM tasks never stop. Every digital distraction steals time and attention from your spouse.</li>
+        <li><span class="kp-n">01</span><strong>The Leftovers:</strong> You spent an hour on a high-stakes demo, handled a tense negotiation, and dealt with a churning account. Your partner asks about dinner and you can barely form a sentence. They get the depleted version of you.</li>
+        <li><span class="kp-n">02</span><strong>The Perception:</strong> To them, it feels like the deal always wins. Like the prospect's needs matter more than theirs. Like your pipeline is your real relationship.</li>
+        <li><span class="kp-n">03</span><strong>The Digital Thief:</strong> After hours, you're still checking if the prospect opened your proposal. Slack pings from your SE. A LinkedIn message from a champion. Every notification steals another moment from your partner.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Bottom Line</div>
-        <div class="lie-q">"When you're always half-plugged into work, it sends the message that they're not your priority."</div>
-        <div class="lie-a">Even if that's not your intention, the constant pings and scrolling erode the connection you should be building at home.</div>
+        <div class="lie-q">"When you're always half-plugged into the deal, your partner feels like they're losing."</div>
+        <div class="lie-a">Even if the deal is worth six figures, your relationship is worth more. The constant pings, the "let me just check this one thing," and the mental replay of negotiations erode the connection you need at home.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">As an SDR, your job is an emotional grinder. Rejection after rejection, objection after objection, and the constant pressure to hit activity numbers. By the time you pull off the headset, you've spent your entire emotional tank on strangers who hung up on you—and your partner gets the fumes.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>The Leftovers:</strong> You made 60 calls, got rejected 50 times, and booked 2 meetings. You should be proud, but you're just drained. Your partner asks how your day was and you can barely engage. They get the empty version of you.</li>
+        <li><span class="kp-n">02</span><strong>The Perception:</strong> To them, it feels like your job matters more than they do. Like your manager's approval is more important than theirs. Like those calls drain you more than they should.</li>
+        <li><span class="kp-n">03</span><strong>The Digital Thief:</strong> After hours, you're checking if your sequence emails got replies. Slack messages from your pod. Your manager asking about tomorrow's targets. Every notification steals another moment from your partner.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Bottom Line</div>
+        <div class="lie-q">"When you're always replaying calls and checking metrics, your partner feels invisible."</div>
+        <div class="lie-a">Even if you're grinding toward promotion, your relationship needs investment too. The constant scrolling, the mental replays, and the "sorry, one more thing" erode the connection your partner needs.</div>
       </div>
     </div>
   </div>
@@ -477,14 +1000,16 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div class="t-head">Task 1: Write Your Shutdown Ritual</div>
         <ul class="hw-list">
           <li><div class="hw-box"></div>What's one action you'll take to signal the end of your workday?</li>
-          <li><div class="hw-box"></div>Examples: closing the laptop, leaving the office, changing clothes.</li>
+          <li class="ae-only"><div class="hw-box"></div>Examples: closing the laptop after sending your last follow-up, leaving the home office, changing out of "deal mode" clothes. Make it physical and visible so your partner sees the transition.</li>
+          <li class="sdr-only"><div class="hw-box"></div>Examples: taking off the headset, closing the laptop, walking around the block. Make it physical and visible so your partner sees the transition from call mode to present mode.</li>
         </ul>
       </div>
       <div>
         <div class="t-head">Task 2: Set Non-Negotiable Quality Time</div>
         <ul class="hw-list">
           <li><div class="hw-box"></div>Identify two blocks of time each week where you'll be 100% present with your spouse.</li>
-          <li><div class="hw-box"></div>Treat it with the same level of importance as a client meeting.</li>
+          <li class="ae-only"><div class="hw-box"></div>Treat it with the same level of importance as your biggest client meeting. Put it on your calendar. Protect it like pipeline.</li>
+          <li class="sdr-only"><div class="hw-box"></div>Treat it with the same level of importance as your morning call block. Put it on your calendar. Protect it like your activity numbers.</li>
         </ul>
       </div>
       <div>
@@ -492,8 +1017,13 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <ul class="hw-list">
           <li><div class="hw-box"></div>Commit to disabling Slack, email, and LinkedIn notifications during personal time.</li>
           <li><div class="hw-box"></div>Discuss these rules with your spouse and ask for feedback.</li>
+          <li class="ae-only"><div class="hw-box"></div>If a deal is genuinely urgent, communicate it to your partner upfront: "I need 15 minutes for this—then I'm all yours." Transparency beats silent scrolling.</li>
+          <li class="sdr-only"><div class="hw-box"></div>If your manager messages after hours, it can wait until morning. Your call metrics won't suffer from responding at 8 AM instead of 8 PM. Set the boundary.</li>
         </ul>
       </div>
+
+      <!-- Accountability Gate -->
+      <div id="gate8" data-gate-screen="8"></div>
     </div>
   </div>
 
@@ -504,13 +1034,17 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <div class="comp-tag">Course 12 · Lesson 2 — Complete</div>
           <div style="font-family:var(--display);font-size:56px;color:var(--white);line-height:.9;margin:10px 0 0">12</div>
         </div>
-        <div class="comp-big">Show up<br>where it<br>matters.</div>
-        <div class="comp-sub">The home office can either strengthen your life or drain it. The difference lies in your boundaries.</div>
+        <div class="comp-big ae-only">Close the<br>laptop.<br>Show up.</div>
+        <div class="comp-big sdr-only">Take off<br>the headset.<br>Be present.</div>
+        <div class="comp-sub ae-only">The home office can either strengthen your life or drain your relationship. The AEs who thrive long-term are the ones who protect their personal life with the same discipline they bring to their pipeline.</div>
+        <div class="comp-sub sdr-only">The home office can either strengthen your life or drain your relationship. The SDRs who thrive long-term are the ones who set boundaries and show up for the people who matter—not just the prospects.</div>
       </div>
       <div class="comp-r">
         <div class="eyebrow">Course 12 · Lesson 2 Complete</div>
-        <div class="comp-h">Your marriage is worth more than your pipeline.</div>
-        <p class="comp-p">Your pipeline will always need work, but your relationship won't always wait. Set boundaries, prioritize your spouse, and be truly present. Take control, log off, and show up.</p>
+        <div class="comp-h ae-only">Your marriage is worth more than your pipeline.</div>
+        <div class="comp-h sdr-only">Your relationship is worth more than your activity numbers.</div>
+        <p class="comp-p ae-only">Your pipeline will always need work, but your partner won't always wait. Close the laptop, silence Slack, and show up like the deal depends on it—because this one actually matters more than any deal in your forecast.</p>
+        <p class="comp-p sdr-only">Your call metrics will always need attention, but your partner won't always wait. Pull off the headset, silence the notifications, and be present—because this is the one relationship where your activity numbers don't matter.</p>
         <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
         <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
       </div>
@@ -521,7 +1055,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 <aside class="sidebar">
   <div class="sb-course">12</div>
-  <div class="sb-lesson">Lesson 12.2 · Navigating the Home Office Trap</div>
+  <div class="sb-lesson ae-only">Lesson 12.2 · The Home Office Trap</div>
+  <div class="sb-lesson sdr-only">Lesson 12.2 · The Home Office Trap</div>
   <div class="sb-divider"></div>
   <div class="sb-label">Sections</div>
   <div class="sb-item" id="nav1" onclick="go(1)">
@@ -588,7 +1123,7 @@ const BLAME_ITEMS = [
   },
   {
     statement:'"I\'ll just do one last task before dinner."',
-    opts:["This is how you crush quota","Myth: The pipeline needs me right now. Fix: Physically leave the office space. Your relationship won't always wait.","Your partner should understand","Do the task at the dinner table"],
+    opts:["Finishing it quickly shows good time management","Myth: The pipeline needs me right now. Fix: Physically leave the office space. Your relationship won't always wait.","A supportive partner will appreciate your work ethic","Set a timer and complete it before sitting down to eat"],
     ans:1,
     fix:"Real fix: Myth: 'The pipeline needs me right now.' Fix: Physically leave the office space. Your pipeline will wait; your relationship won't."
   }
@@ -653,10 +1188,15 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); render();
+  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register accountability gate
+  var _role = document.documentElement.getAttribute('data-role') || 'sdr';
+  var _gatePrompt = _role === 'ae' ? 'Write your specific shutdown ritual: exact time, the physical action that signals \'done,\' which notifications you turn off, and what you do in the first 30 minutes after shutdown.' : 'Write your specific shutdown ritual: exact time, the physical action that signals \'done,\' which notifications you turn off, and what you do in the first 30 minutes after shutdown.';
+  AESDR.gate(8, { type:'evidence', prompt: _gatePrompt, minChars: 80 });
+  render();
 }
 function go(n){
-  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:{}},"*")}catch(e){}}
+  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;
   document.getElementById('s'+cur).classList.add('active');
@@ -919,6 +1459,7 @@ function canContinue(){
   if(cur===5)return Object.keys(seqDone).length===5;
   if(cur===6)return clsCount===8;
   if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 function getHint(){
@@ -930,7 +1471,7 @@ function getHint(){
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,
     7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    8:"Your pipeline will wait, but your relationship won't.",
+    8: AESDR.gateHint(8) || "Your pipeline will wait, but your relationship won't.",
   };
   return h[cur]||'';
 }
@@ -951,6 +1492,7 @@ function render(){
   const bnav=document.getElementById('bottomnav');
   bnav.style.display=hide?'none':'flex';
   if(hide)return;
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';

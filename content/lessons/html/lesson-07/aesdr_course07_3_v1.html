@@ -2,6 +2,501 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- AESDR Role Detection -->
+<script>
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  var role = p.get('role') || 'sdr';
+  document.documentElement.setAttribute('data-role', role);
+})();
+</script>
+<style>
+/* Role-conditional content: hide content not matching current role */
+[data-role="ae"] .sdr-only { display: none !important; }
+[data-role="sdr"] .ae-only { display: none !important; }
+/* Softer variant: swap text content visibility */
+[data-role="ae"] .sdr-text { display: none !important; }
+[data-role="sdr"] .ae-text { display: none !important; }
+</style>
+<!-- AESDR Accountability Gates -->
+<style>
+/* ══════════════════════════════════════════
+   AESDR Accountability Gates — Styles v1
+   Matches lesson design system vars:
+     --black, --white, --mid, --lite, --lite2,
+     --amber, --cobalt, --green, --line, --iris,
+     --cond, --serif, --mono
+══════════════════════════════════════════ */
+
+/* ── Gate container ── */
+.gate-box {
+  margin: 28px 0 12px;
+  padding: 28px 32px 24px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  position: relative;
+}
+.gate-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+}
+
+/* ── Label / tag ── */
+.gate-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 14px;
+}
+
+/* ── Prompt text ── */
+.gate-prompt {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--black);
+  margin-bottom: 18px;
+}
+
+/* ── Textarea ── */
+.gate-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px 16px;
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--black);
+  background: var(--lite);
+  border: 1px solid var(--line2);
+  resize: vertical;
+  outline: none;
+  transition: border-color .2s;
+}
+.gate-textarea:focus {
+  border-color: var(--amber);
+}
+.gate-textarea.gate-evidence {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  min-height: 100px;
+}
+.gate-textarea::placeholder {
+  color: var(--mid);
+  opacity: .6;
+}
+
+/* ── Footer (counter + submit) ── */
+.gate-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  gap: 12px;
+}
+
+/* ── Character counter ── */
+.gate-counter {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+
+/* ── Submit button ── */
+.gate-submit {
+  font-family: var(--cond);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border: 2px solid var(--black);
+  background: var(--black);
+  color: var(--white);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all .15s;
+}
+.gate-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 2s linear infinite;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.gate-submit:hover::before {
+  opacity: 1;
+}
+.gate-submit:hover {
+  color: var(--black);
+}
+.gate-submit span {
+  position: relative;
+  z-index: 1;
+}
+.gate-submit:disabled,
+.gate-submit:disabled:hover {
+  opacity: .28;
+  cursor: not-allowed;
+  background: var(--black);
+  color: var(--white);
+}
+.gate-submit:disabled::before,
+.gate-submit:disabled:hover::before {
+  display: none;
+}
+
+/* ── Rubric checklist ── */
+.gate-rubric {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.gate-rubric-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 10px;
+}
+.gate-rubric-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--black);
+}
+.gate-rubric-item input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--amber);
+  flex-shrink: 0;
+}
+
+/* ── Time gate ── */
+.gate-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 20px 0 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--line2);
+  background: var(--lite);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+.gate-time-icon {
+  font-size: 14px;
+}
+.gate-time-num {
+  font-weight: 700;
+  color: var(--amber);
+  font-size: 13px;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* ── Completed state ── */
+.gate-done {
+  margin: 24px 0 8px;
+  padding: 20px 24px;
+  border: 2px solid var(--green);
+  background: var(--grn-lt);
+}
+.gate-done-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.gate-done-preview {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--mid);
+  font-style: italic;
+}
+
+</style>
+<script>
+/*  AESDR Accountability Gates v1
+ *  Inject into lesson HTML files alongside role-detection.
+ *
+ *  Usage in lesson JS:
+ *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
+ *    AESDR.gate(1, { type:'time', seconds:60 });
+ *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
+ *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
+ *
+ *  In canContinue():
+ *    if (!AESDR.gateReady(cur)) return false;
+ *
+ *  Gate state auto-saves via postMessage when completed.
+ */
+window.AESDR = window.AESDR || {};
+
+(function(A) {
+  var gates = {};      // screenNum -> config
+  var gateState = {};  // screenNum -> { completed, value, ... }
+  var timers = {};     // screenNum -> { started, remaining }
+
+  /* ── Register a gate ── */
+  A.gate = function(screen, cfg) {
+    gates[screen] = cfg;
+    gateState[screen] = { completed: false, value: '' };
+  };
+
+  /* ── Check if gate is satisfied ── */
+  A.gateReady = function(screen) {
+    if (!gates[screen]) return true;
+    return gateState[screen] && gateState[screen].completed;
+  };
+
+  /* ── Get gate hint text ── */
+  A.gateHint = function(screen) {
+    var g = gates[screen];
+    if (!g) return '';
+    var s = gateState[screen];
+    if (s.completed) return '\u2713 Gate complete';
+
+    if (g.type === 'time') {
+      var r = timers[screen] ? timers[screen].remaining : g.seconds;
+      return r > 0 ? 'Unlocks in ' + r + 's' : '';
+    }
+    if (g.type === 'reflection' || g.type === 'evidence') {
+      var len = (s.value || '').length;
+      return len + ' / ' + g.minChars + ' characters';
+    }
+    if (g.type === 'application') {
+      var len2 = (s.value || '').length;
+      var checks = s.rubricChecked || 0;
+      var total = (g.rubric || []).length;
+      return len2 + ' chars \u00B7 ' + checks + '/' + total + ' rubric items';
+    }
+    return '';
+  };
+
+  /* ── Get all gate data for stateData (progress saving) ── */
+  A.gateData = function() {
+    var out = {};
+    for (var k in gateState) {
+      if (gateState[k].completed) {
+        out['gate_' + k] = {
+          type: gates[k].type,
+          value: gateState[k].value,
+          completedAt: gateState[k].completedAt
+        };
+      }
+    }
+    return out;
+  };
+
+  /* ── Render gate UI into a container ── */
+  A.renderGate = function(screen, containerId) {
+    var g = gates[screen];
+    if (!g) return;
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    var s = gateState[screen];
+
+    if (s.completed) {
+      el.innerHTML = _completedHTML(g, s);
+      return;
+    }
+
+    switch(g.type) {
+      case 'reflection': el.innerHTML = _reflectionHTML(screen, g, s); break;
+      case 'application': el.innerHTML = _applicationHTML(screen, g, s); break;
+      case 'evidence': el.innerHTML = _evidenceHTML(screen, g, s); break;
+      case 'time': _startTimer(screen, g); el.innerHTML = _timeHTML(screen, g); break;
+    }
+  };
+
+  /* ── Completed state ── */
+  function _completedHTML(g, s) {
+    var typeLabel = { reflection:'Reflection', application:'Response', evidence:'Evidence', time:'Time' };
+    return '<div class="gate-done">' +
+      '<div class="gate-done-tag">\u2713 ' + (typeLabel[g.type]||'Gate') + ' Submitted</div>' +
+      (g.type !== 'time' ? '<div class="gate-done-preview">' + _esc(s.value).substring(0,200) + (s.value.length > 200 ? '...' : '') + '</div>' : '') +
+    '</div>';
+  }
+
+  /* ── Reflection Gate ── */
+  function _reflectionHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Reflection Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your reflection here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Reflection</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Application Gate ── */
+  function _applicationHTML(screen, g) {
+    var rubricHTML = (g.rubric || []).map(function(r, i) {
+      return '<label class="gate-rubric-item">' +
+        '<input type="checkbox" onchange="AESDR._onRubric(' + screen + ',' + i + ',this.checked)">' +
+        '<span>' + r + '</span></label>';
+    }).join('');
+
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Application Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your response...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-counter" id="gateCtr' + screen + '">0 / ' + (g.minChars || 50) + ' characters</div>' +
+      (rubricHTML ? '<div class="gate-rubric"><div class="gate-rubric-label">Self-evaluate your response:</div>' + rubricHTML + '</div>' : '') +
+      '<div class="gate-footer">' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Response</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Evidence Gate ── */
+  function _evidenceHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Evidence Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea gate-evidence" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Paste your evidence here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Evidence</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Time Gate ── */
+  function _timeHTML(screen, g) {
+    var r = timers[screen] ? timers[screen].remaining : g.seconds;
+    if (r <= 0) return '';
+    return '<div class="gate-time" id="gateTime' + screen + '">' +
+      '<span class="gate-time-icon">\u23F3</span> ' +
+      '<span class="gate-time-num" id="gateTimeCtr' + screen + '">' + r + '</span>s remaining' +
+    '</div>';
+  }
+
+  function _startTimer(screen, g) {
+    if (timers[screen]) return;
+    timers[screen] = { remaining: g.seconds };
+    var iv = setInterval(function() {
+      timers[screen].remaining--;
+      var el = document.getElementById('gateTimeCtr' + screen);
+      if (el) el.textContent = timers[screen].remaining;
+      if (timers[screen].remaining <= 0) {
+        clearInterval(iv);
+        gateState[screen].completed = true;
+        gateState[screen].completedAt = new Date().toISOString();
+        var timeEl = document.getElementById('gateTime' + screen);
+        if (timeEl) timeEl.style.display = 'none';
+        // Trigger render if the lesson exposes it
+        if (typeof window.render === 'function') window.render();
+      }
+    }, 1000);
+  }
+
+  /* ── Internal handlers ── */
+  A._onInput = function(screen, val) {
+    gateState[screen].value = val;
+    var g = gates[screen];
+    var min = g.minChars || 50;
+    var ctr = document.getElementById('gateCtr' + screen);
+    if (ctr) ctr.textContent = val.length + ' / ' + min + (g.type === 'application' ? ' characters' : '');
+
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      var ready = val.length >= min;
+      if (g.type === 'application' && g.rubric) {
+        var checks = gateState[screen].rubricChecked || 0;
+        ready = ready && checks >= g.rubric.length;
+      }
+      btn.disabled = !ready;
+    }
+  };
+
+  A._onRubric = function(screen, idx, checked) {
+    if (!gateState[screen]._rubric) gateState[screen]._rubric = {};
+    gateState[screen]._rubric[idx] = checked;
+    var count = 0;
+    for (var k in gateState[screen]._rubric) {
+      if (gateState[screen]._rubric[k]) count++;
+    }
+    gateState[screen].rubricChecked = count;
+
+    // Re-check submit button
+    var g = gates[screen];
+    var val = gateState[screen].value || '';
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      btn.disabled = !(val.length >= (g.minChars || 50) && count >= (g.rubric || []).length);
+    }
+  };
+
+  A._submit = function(screen) {
+    var s = gateState[screen];
+    s.completed = true;
+    s.completedAt = new Date().toISOString();
+
+    // Re-render the gate as completed
+    var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
+    containers.forEach(function(el) { A.renderGate(screen, el.id); });
+
+    // Save progress via postMessage
+    if (window.parent !== window) {
+      try {
+        window.parent.postMessage({
+          type: 'aesdr:progress',
+          screen: screen,
+          stateData: A.gateData()
+        }, '*');
+      } catch(e) {}
+    }
+
+    // Trigger render if available
+    if (typeof window.render === 'function') window.render();
+  };
+
+  /* ── Escape helper ── */
+  function _esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+})(window.AESDR);
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AESDR — Course 7.3: Is Working in SaaS Even Worth It?</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -288,9 +783,11 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div>
           <div class="cv-c2tag">AESDR · Lesson 7.3</div>
           <div class="cv-course-num">07</div>
-          <div class="cv-big">Is Working in SaaS Even Worth It?</div>
+          <div class="cv-big ae-only">Is Working in SaaS Even Worth It?</div>
+          <div class="cv-big sdr-only">Is the SDR Grind Actually Worth It?</div>
         </div>
-        <div class="cv-tagline">The Harsh Truth, Who Thrives Here, and Deciding If It's Right for You.</div>
+        <div class="cv-tagline ae-only">The Harsh Truth, Who Thrives Here, and Deciding If It's Right for You.</div>
+        <div class="cv-tagline sdr-only">The Real Cost of Entry, Who Makes It to AE, and How to Decide If This Path Is Yours.</div>
       </div>
       <div class="cvr">
         <div class="eyebrow">Course 7 · Lesson 3 of 3</div>
@@ -311,9 +808,10 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">01</div>
       <div><div class="c7-badge">Course 7</div><span class="sec-eye">Section 01 — The Overview</span></div>
-      <div class="lh-title">The Dream Job That Isn't for Everyone</div>
+      <div class="lh-title ae-only">The Dream Job That Isn't for Everyone</div>
+      <div class="lh-title sdr-only">The Entry-Level Grind That Breaks Most People</div>
     </div>
-    <div class="lb">
+    <div class="lb ae-only">
       <p class="lp">SaaS sales promises high earnings, career flexibility, and prestige. But beneath the surface lies relentless pressure, rejection, and unpredictability. The real question: Is the grind worth the reward for you?</p>
       <ul class="kp">
         <li><span class="kp-n">01</span><strong>The Gloss:</strong> Big money, remote flexibility, and working with cutting-edge technology.</li>
@@ -324,6 +822,19 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div class="lie-tab">The Reality Check</div>
         <div class="lie-q">"SaaS sales sounds like the perfect career on paper."</div>
         <div class="lie-a">But when you step into the role, you realize the reality requires navigating an environment where output dictates your survival.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">The SDR role is sold as a launchpad — fast money, quick promotion to AE, and a career in tech. But the reality is 50+ cold calls a day, constant rejection, and a 12–18 month grind before you even get a shot at closing deals. The question is whether you can handle the entry fee.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>The Promise:</strong> A clear path from SDR to AE, six-figure earnings potential, and valuable sales skills that transfer everywhere.</li>
+        <li><span class="kp-n">02</span><strong>The Reality:</strong> High-volume rejection, intense metrics pressure, and a role most people leave within a year.</li>
+        <li><span class="kp-n">03</span><strong>The Truth:</strong> The SDRs who make it to AE are the ones who treat the grind as training, not punishment. Everyone else burns out.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Reality Check</div>
+        <div class="lie-q">"Everyone says the SDR role is just a stepping stone."</div>
+        <div class="lie-a">But the stepping stone is made of rejection, cold calls, and daily activity targets that never let up. If you can embrace that, the career growth is real. If you can't, you'll know within 90 days.</div>
       </div>
     </div>
   </div>
@@ -363,9 +874,10 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">02</div>
       <div><div class="c7-badge">Course 7</div><span class="sec-eye">Section 02 — The Breakdown</span></div>
-      <div class="lh-title">The Balance: Potential vs Pressure</div>
+      <div class="lh-title ae-only">The Balance: Potential vs Pressure</div>
+      <div class="lh-title sdr-only">The Balance: Growth vs Grind</div>
     </div>
-    <div class="lb">
+    <div class="lb ae-only">
       <p class="lp">Few careers offer this level of financial potential without an advanced degree. But the freedom and money come with strings attached.</p>
       <ul class="kp">
         <li><span class="kp-n">01</span><strong>The Earnings:</strong> Entry-Level SDRs can expect $60k-$90k OTE, Mid-Level AEs scale to $100k+, and Senior AEs can clear $150k-$200k+.</li>
@@ -376,6 +888,19 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div class="lie-tab">The Cost of Success</div>
         <div class="lie-q">"If you're hitting quota, the money flows."</div>
         <div class="lie-a">If you're not? The pressure kicks in fast. Most people don't last because they underestimate the grind.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">The SDR role pays decently for entry-level — but the real value is the career trajectory, not the starting salary. The question is whether you can survive long enough to unlock it.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>The Earnings:</strong> SDR OTE ranges from $60k–$90k. That's solid for entry-level, but the real money comes when you promote to AE at $100k–$200k+.</li>
+        <li><span class="kp-n">02</span><strong>The Timeline:</strong> Most SDRs need 12–18 months before they're considered for AE. Many don't make it — average SDR tenure is under 14 months.</li>
+        <li><span class="kp-n">03</span><strong>The Mental Load:</strong> 50+ dials a day, constant rejection, and metrics that are reviewed weekly. The flexibility is real, but so is the pressure.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Cost of Growth</div>
+        <div class="lie-q">"If you're hitting activity targets and booking qualified meetings, the promotion path opens up."</div>
+        <div class="lie-a">If you're not? You'll be on a performance plan within weeks. The SDR role rewards consistency above everything else — and punishes inconsistency just as fast.</div>
       </div>
     </div>
   </div>
@@ -469,10 +994,11 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">04</div>
       <div><div class="c7-badge">Course 7</div><span class="sec-eye">Section 04 — Homework</span></div>
-      <div class="lh-title">Actionable Homework: Evaluate Your Fit</div>
+      <div class="lh-title ae-only">Actionable Homework: Evaluate Your Fit</div>
+      <div class="lh-title sdr-only">Actionable Homework: Is the SDR Path Right for You?</div>
     </div>
     <div class="tools-blk">
-      <div style="margin-top:20px">
+      <div class="ae-only" style="margin-top:20px">
         <div class="t-head">Self-Assessment Questionnaire</div>
         <table class="data-table">
           <thead><tr><th>Question</th><th>Reflection Focus</th></tr></thead>
@@ -483,7 +1009,18 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           </tbody>
         </table>
       </div>
-      <div>
+      <div class="sdr-only" style="margin-top:20px">
+        <div class="t-head">SDR Self-Assessment Questionnaire</div>
+        <table class="data-table">
+          <thead><tr><th>Question</th><th>Reflection Focus</th></tr></thead>
+          <tbody>
+            <tr><td>Can I handle 50+ rejections a day?</td><td>Cold calling means hearing "no" more than "yes" — every single day.</td></tr>
+            <tr><td>Am I motivated by a clear promotion path?</td><td>The SDR role is a means to AE. If you don't want to close deals eventually, the grind won't feel worth it.</td></tr>
+            <tr><td>Can I stay consistent when no one is watching?</td><td>Remote SDR work means self-discipline is everything. No one will make you dial.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="ae-only">
         <div class="t-head">Task 1: Reflect on Your Motivations</div>
         <ul class="hw-list">
           <li><div class="hw-box"></div>Write down what truly motivates you (Money, growth, challenges?).</li>
@@ -491,7 +1028,15 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <li><div class="hw-box"></div>Ask yourself if you are willing to work in an unpredictable environment.</li>
         </ul>
       </div>
-      <div>
+      <div class="sdr-only">
+        <div class="t-head">Task 1: Map Your Career Timeline</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Write down your 12-month goal: Is it promotion to AE, hitting President's Club, or something else?</li>
+          <li><div class="hw-box"></div>List the 3 biggest obstacles between you and that goal (skill gaps, consistency, qualification quality).</li>
+          <li><div class="hw-box"></div>Ask yourself honestly: Am I willing to grind through 12–18 months of cold calls to earn my shot?</li>
+        </ul>
+      </div>
+      <div class="ae-only">
         <div class="t-head">Task 2: Talk to the Trenches</div>
         <ul class="hw-list">
           <li><div class="hw-box"></div>Reach out to 1 AE or SDR you know.</li>
@@ -499,6 +1044,17 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <li><div class="hw-box"></div>Ask: "Would you still recommend SaaS sales today?"</li>
         </ul>
       </div>
+      <div class="sdr-only">
+        <div class="t-head">Task 2: Talk to Someone Who Made It</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Reach out to 1 AE who started as an SDR.</li>
+          <li><div class="hw-box"></div>Ask: "What did you do differently as an SDR that earned you the promotion?"</li>
+          <li><div class="hw-box"></div>Ask: "What would you tell your SDR self on day one knowing what you know now?"</li>
+        </ul>
+      </div>
+
+      <!-- Accountability Gate -->
+      <div id="gate8" data-gate-screen="8"></div>
     </div>
   </div>
 
@@ -509,13 +1065,17 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <div class="comp-tag">Course 7 · Lesson 3 — Complete</div>
           <div style="font-family:var(--display);font-size:56px;color:var(--black);line-height:.9;margin:10px 0 0">07</div>
         </div>
-        <div class="comp-big">Brutal.<br>Lucrative.<br>Exclusive.</div>
-        <div class="comp-sub">SaaS sales offers massive rewards—but only for those willing to endure the grind. If you need stability and predictability, it's not for you.</div>
+        <div class="comp-big ae-only">Brutal.<br>Lucrative.<br>Exclusive.</div>
+        <div class="comp-big sdr-only">Relentless.<br>Rewarding.<br>Earned.</div>
+        <div class="comp-sub ae-only">SaaS sales offers massive rewards—but only for those willing to endure the grind. If you need stability and predictability, it's not for you.</div>
+        <div class="comp-sub sdr-only">The SDR grind is the price of entry to a career that can change your life. If you can survive the rejection and stay consistent, the path to AE is yours.</div>
       </div>
       <div class="comp-r">
         <div class="eyebrow">Course 7 · Lesson 3 Complete</div>
-        <div class="comp-h">Embrace the chaos.</div>
-        <p class="comp-p">SaaS sales is brutal, but for the right people, it's worth every rejection, every high-pressure quarter, and every long day. If you can embrace the chaos, the rewards are waiting for you.</p>
+        <div class="comp-h ae-only">Embrace the chaos.</div>
+        <div class="comp-h sdr-only">Earn the next seat.</div>
+        <p class="comp-p ae-only">SaaS sales is brutal, but for the right people, it's worth every rejection, every high-pressure quarter, and every long day. If you can embrace the chaos, the rewards are waiting for you.</p>
+        <p class="comp-p sdr-only">The SDR role isn't glamorous, and it isn't easy. But every AE you admire started exactly where you are — dialing, qualifying, and proving they could handle the grind. If you want AE, earn it one cold call at a time.</p>
         <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
         <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
       </div>
@@ -526,7 +1086,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 <aside class="sidebar">
   <div class="sb-course">07</div>
-  <div class="sb-lesson">Lesson 7.3 · Is SaaS Worth It?</div>
+  <div class="sb-lesson ae-only">Lesson 7.3 · Is SaaS Worth It?</div>
+  <div class="sb-lesson sdr-only">Lesson 7.3 · Is the SDR Grind Worth It?</div>
   <div class="sb-divider"></div>
   <div class="sb-label">Sections</div>
   <div class="sb-item" id="nav1" onclick="go(1)">
@@ -658,10 +1219,15 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); render();
+  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register accountability gate
+  var _role = document.documentElement.getAttribute('data-role') || 'sdr';
+  var _gatePrompt = _role === 'ae' ? 'Write an honest assessment: is SaaS sales the right career for you? What specifically makes you say yes or no? What would need to change for you to stay 5 more years?' : 'Write an honest assessment: is SaaS sales the right career for you? What specifically makes you say yes or no? What would need to change for you to stay in this role 12 more months?';
+  AESDR.gate(8, { type:'reflection', prompt: _gatePrompt, minChars: 120 });
+  render();
 }
 function go(n){
-  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:{}},"*")}catch(e){}}
+  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;
   document.getElementById('s'+cur).classList.add('active');
@@ -924,6 +1490,7 @@ function canContinue(){
   if(cur===5)return Object.keys(seqDone).length===5;
   if(cur===6)return clsCount===8;
   if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 function getHint(){
@@ -935,7 +1502,7 @@ function getHint(){
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,
     7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    8:"Reflect on your fit before committing.",
+    8: AESDR.gateHint(8) || "Reflect on your fit before committing.",
   };
   return h[cur]||'';
 }
@@ -956,6 +1523,7 @@ function render(){
   const bnav=document.getElementById('bottomnav');
   bnav.style.display=hide?'none':'flex';
   if(hide)return;
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';

@@ -2,6 +2,501 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- AESDR Role Detection -->
+<script>
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  var role = p.get('role') || 'sdr';
+  document.documentElement.setAttribute('data-role', role);
+})();
+</script>
+<style>
+/* Role-conditional content: hide content not matching current role */
+[data-role="ae"] .sdr-only { display: none !important; }
+[data-role="sdr"] .ae-only { display: none !important; }
+/* Softer variant: swap text content visibility */
+[data-role="ae"] .sdr-text { display: none !important; }
+[data-role="sdr"] .ae-text { display: none !important; }
+</style>
+<!-- AESDR Accountability Gates -->
+<style>
+/* ══════════════════════════════════════════
+   AESDR Accountability Gates — Styles v1
+   Matches lesson design system vars:
+     --black, --white, --mid, --lite, --lite2,
+     --amber, --cobalt, --green, --line, --iris,
+     --cond, --serif, --mono
+══════════════════════════════════════════ */
+
+/* ── Gate container ── */
+.gate-box {
+  margin: 28px 0 12px;
+  padding: 28px 32px 24px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  position: relative;
+}
+.gate-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+}
+
+/* ── Label / tag ── */
+.gate-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 14px;
+}
+
+/* ── Prompt text ── */
+.gate-prompt {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--black);
+  margin-bottom: 18px;
+}
+
+/* ── Textarea ── */
+.gate-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px 16px;
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--black);
+  background: var(--lite);
+  border: 1px solid var(--line2);
+  resize: vertical;
+  outline: none;
+  transition: border-color .2s;
+}
+.gate-textarea:focus {
+  border-color: var(--amber);
+}
+.gate-textarea.gate-evidence {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  min-height: 100px;
+}
+.gate-textarea::placeholder {
+  color: var(--mid);
+  opacity: .6;
+}
+
+/* ── Footer (counter + submit) ── */
+.gate-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  gap: 12px;
+}
+
+/* ── Character counter ── */
+.gate-counter {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+
+/* ── Submit button ── */
+.gate-submit {
+  font-family: var(--cond);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border: 2px solid var(--black);
+  background: var(--black);
+  color: var(--white);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all .15s;
+}
+.gate-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 2s linear infinite;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.gate-submit:hover::before {
+  opacity: 1;
+}
+.gate-submit:hover {
+  color: var(--black);
+}
+.gate-submit span {
+  position: relative;
+  z-index: 1;
+}
+.gate-submit:disabled,
+.gate-submit:disabled:hover {
+  opacity: .28;
+  cursor: not-allowed;
+  background: var(--black);
+  color: var(--white);
+}
+.gate-submit:disabled::before,
+.gate-submit:disabled:hover::before {
+  display: none;
+}
+
+/* ── Rubric checklist ── */
+.gate-rubric {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.gate-rubric-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 10px;
+}
+.gate-rubric-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--black);
+}
+.gate-rubric-item input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--amber);
+  flex-shrink: 0;
+}
+
+/* ── Time gate ── */
+.gate-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 20px 0 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--line2);
+  background: var(--lite);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+.gate-time-icon {
+  font-size: 14px;
+}
+.gate-time-num {
+  font-weight: 700;
+  color: var(--amber);
+  font-size: 13px;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* ── Completed state ── */
+.gate-done {
+  margin: 24px 0 8px;
+  padding: 20px 24px;
+  border: 2px solid var(--green);
+  background: var(--grn-lt);
+}
+.gate-done-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.gate-done-preview {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--mid);
+  font-style: italic;
+}
+
+</style>
+<script>
+/*  AESDR Accountability Gates v1
+ *  Inject into lesson HTML files alongside role-detection.
+ *
+ *  Usage in lesson JS:
+ *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
+ *    AESDR.gate(1, { type:'time', seconds:60 });
+ *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
+ *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
+ *
+ *  In canContinue():
+ *    if (!AESDR.gateReady(cur)) return false;
+ *
+ *  Gate state auto-saves via postMessage when completed.
+ */
+window.AESDR = window.AESDR || {};
+
+(function(A) {
+  var gates = {};      // screenNum -> config
+  var gateState = {};  // screenNum -> { completed, value, ... }
+  var timers = {};     // screenNum -> { started, remaining }
+
+  /* ── Register a gate ── */
+  A.gate = function(screen, cfg) {
+    gates[screen] = cfg;
+    gateState[screen] = { completed: false, value: '' };
+  };
+
+  /* ── Check if gate is satisfied ── */
+  A.gateReady = function(screen) {
+    if (!gates[screen]) return true;
+    return gateState[screen] && gateState[screen].completed;
+  };
+
+  /* ── Get gate hint text ── */
+  A.gateHint = function(screen) {
+    var g = gates[screen];
+    if (!g) return '';
+    var s = gateState[screen];
+    if (s.completed) return '\u2713 Gate complete';
+
+    if (g.type === 'time') {
+      var r = timers[screen] ? timers[screen].remaining : g.seconds;
+      return r > 0 ? 'Unlocks in ' + r + 's' : '';
+    }
+    if (g.type === 'reflection' || g.type === 'evidence') {
+      var len = (s.value || '').length;
+      return len + ' / ' + g.minChars + ' characters';
+    }
+    if (g.type === 'application') {
+      var len2 = (s.value || '').length;
+      var checks = s.rubricChecked || 0;
+      var total = (g.rubric || []).length;
+      return len2 + ' chars \u00B7 ' + checks + '/' + total + ' rubric items';
+    }
+    return '';
+  };
+
+  /* ── Get all gate data for stateData (progress saving) ── */
+  A.gateData = function() {
+    var out = {};
+    for (var k in gateState) {
+      if (gateState[k].completed) {
+        out['gate_' + k] = {
+          type: gates[k].type,
+          value: gateState[k].value,
+          completedAt: gateState[k].completedAt
+        };
+      }
+    }
+    return out;
+  };
+
+  /* ── Render gate UI into a container ── */
+  A.renderGate = function(screen, containerId) {
+    var g = gates[screen];
+    if (!g) return;
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    var s = gateState[screen];
+
+    if (s.completed) {
+      el.innerHTML = _completedHTML(g, s);
+      return;
+    }
+
+    switch(g.type) {
+      case 'reflection': el.innerHTML = _reflectionHTML(screen, g, s); break;
+      case 'application': el.innerHTML = _applicationHTML(screen, g, s); break;
+      case 'evidence': el.innerHTML = _evidenceHTML(screen, g, s); break;
+      case 'time': _startTimer(screen, g); el.innerHTML = _timeHTML(screen, g); break;
+    }
+  };
+
+  /* ── Completed state ── */
+  function _completedHTML(g, s) {
+    var typeLabel = { reflection:'Reflection', application:'Response', evidence:'Evidence', time:'Time' };
+    return '<div class="gate-done">' +
+      '<div class="gate-done-tag">\u2713 ' + (typeLabel[g.type]||'Gate') + ' Submitted</div>' +
+      (g.type !== 'time' ? '<div class="gate-done-preview">' + _esc(s.value).substring(0,200) + (s.value.length > 200 ? '...' : '') + '</div>' : '') +
+    '</div>';
+  }
+
+  /* ── Reflection Gate ── */
+  function _reflectionHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Reflection Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your reflection here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Reflection</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Application Gate ── */
+  function _applicationHTML(screen, g) {
+    var rubricHTML = (g.rubric || []).map(function(r, i) {
+      return '<label class="gate-rubric-item">' +
+        '<input type="checkbox" onchange="AESDR._onRubric(' + screen + ',' + i + ',this.checked)">' +
+        '<span>' + r + '</span></label>';
+    }).join('');
+
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Application Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your response...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-counter" id="gateCtr' + screen + '">0 / ' + (g.minChars || 50) + ' characters</div>' +
+      (rubricHTML ? '<div class="gate-rubric"><div class="gate-rubric-label">Self-evaluate your response:</div>' + rubricHTML + '</div>' : '') +
+      '<div class="gate-footer">' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Response</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Evidence Gate ── */
+  function _evidenceHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Evidence Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea gate-evidence" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Paste your evidence here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Evidence</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Time Gate ── */
+  function _timeHTML(screen, g) {
+    var r = timers[screen] ? timers[screen].remaining : g.seconds;
+    if (r <= 0) return '';
+    return '<div class="gate-time" id="gateTime' + screen + '">' +
+      '<span class="gate-time-icon">\u23F3</span> ' +
+      '<span class="gate-time-num" id="gateTimeCtr' + screen + '">' + r + '</span>s remaining' +
+    '</div>';
+  }
+
+  function _startTimer(screen, g) {
+    if (timers[screen]) return;
+    timers[screen] = { remaining: g.seconds };
+    var iv = setInterval(function() {
+      timers[screen].remaining--;
+      var el = document.getElementById('gateTimeCtr' + screen);
+      if (el) el.textContent = timers[screen].remaining;
+      if (timers[screen].remaining <= 0) {
+        clearInterval(iv);
+        gateState[screen].completed = true;
+        gateState[screen].completedAt = new Date().toISOString();
+        var timeEl = document.getElementById('gateTime' + screen);
+        if (timeEl) timeEl.style.display = 'none';
+        // Trigger render if the lesson exposes it
+        if (typeof window.render === 'function') window.render();
+      }
+    }, 1000);
+  }
+
+  /* ── Internal handlers ── */
+  A._onInput = function(screen, val) {
+    gateState[screen].value = val;
+    var g = gates[screen];
+    var min = g.minChars || 50;
+    var ctr = document.getElementById('gateCtr' + screen);
+    if (ctr) ctr.textContent = val.length + ' / ' + min + (g.type === 'application' ? ' characters' : '');
+
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      var ready = val.length >= min;
+      if (g.type === 'application' && g.rubric) {
+        var checks = gateState[screen].rubricChecked || 0;
+        ready = ready && checks >= g.rubric.length;
+      }
+      btn.disabled = !ready;
+    }
+  };
+
+  A._onRubric = function(screen, idx, checked) {
+    if (!gateState[screen]._rubric) gateState[screen]._rubric = {};
+    gateState[screen]._rubric[idx] = checked;
+    var count = 0;
+    for (var k in gateState[screen]._rubric) {
+      if (gateState[screen]._rubric[k]) count++;
+    }
+    gateState[screen].rubricChecked = count;
+
+    // Re-check submit button
+    var g = gates[screen];
+    var val = gateState[screen].value || '';
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      btn.disabled = !(val.length >= (g.minChars || 50) && count >= (g.rubric || []).length);
+    }
+  };
+
+  A._submit = function(screen) {
+    var s = gateState[screen];
+    s.completed = true;
+    s.completedAt = new Date().toISOString();
+
+    // Re-render the gate as completed
+    var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
+    containers.forEach(function(el) { A.renderGate(screen, el.id); });
+
+    // Save progress via postMessage
+    if (window.parent !== window) {
+      try {
+        window.parent.postMessage({
+          type: 'aesdr:progress',
+          screen: screen,
+          stateData: A.gateData()
+        }, '*');
+      } catch(e) {}
+    }
+
+    // Trigger render if available
+    if (typeof window.render === 'function') window.render();
+  };
+
+  /* ── Escape helper ── */
+  function _esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+})(window.AESDR);
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AESDR — Course 10.1: Breaking Down the Commission Myth</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -289,9 +784,11 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div>
           <div class="cv-c2tag">AESDR · Lesson 10.1</div>
           <div class="cv-course-num">10</div>
-          <div class="cv-big">Breaking Down the Commission Myth</div>
+          <div class="cv-big ae-only">Breaking Down the Commission Myth</div>
+          <div class="cv-big sdr-only">Breaking Down the Commission Myth</div>
         </div>
-        <div class="cv-tagline">Why OTE Is a Fantasy and How to Manage Your Earnings Like a Pro.</div>
+        <div class="cv-tagline ae-only">Your OTE is a contract. Understand the math or get played by it.</div>
+        <div class="cv-tagline sdr-only">Your variable comp is your first taste of sales economics. Understand it early.</div>
       </div>
       <div class="cvr">
         <div class="eyebrow">Course 10 · Lesson 1</div>
@@ -314,17 +811,30 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div><div class="c10-badge">Course 10</div><span class="sec-eye">Section 01 — The Anatomy of Your OTE</span></div>
       <div class="lh-title">What OTE Really Means</div>
     </div>
-    <div class="lb">
-      <p class="lp">OTE (On-Target Earnings) is a fantasy. Base pay is your reality. The recruiter dangled $150K OTE, but your take-home pay might look very different once variables and deductions hit.</p>
+    <div class="lb ae-only">
+      <p class="lp">OTE (On-Target Earnings) is a fantasy. Base pay is your reality. The recruiter dangled $250K OTE, but your actual take-home might look very different once clawbacks, split deals, and quota accelerators (or decelerators) hit. AE comp plans are designed to look generous — and to claw back aggressively.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>Base Salary:</strong> 50% (or less) of your OTE. This is the only guaranteed paycheck.</li>
-        <li><span class="kp-n">02</span><strong>Variable Pay:</strong> Performance-based commission dependent entirely on hitting your quota.</li>
-        <li><span class="kp-n">03</span><strong>Hidden Deductions:</strong> Clawbacks (if a deal churns, you lose it), Quota Inflation, Taxes & Delays.</li>
+        <li><span class="kp-n">01</span><strong>Base Salary:</strong> Often 50% or less of your OTE. This is the only guaranteed paycheck — everything else is a bet on your pipeline.</li>
+        <li><span class="kp-n">02</span><strong>Variable Pay:</strong> Commission tied to closed-won revenue. But the payout depends on quota attainment, deal size thresholds, and whether the deal sticks past the clawback window.</li>
+        <li><span class="kp-n">03</span><strong>Hidden Deductions:</strong> Clawbacks if a customer churns within 90 days, multi-year deal discounting, split credits with overlay reps, and quota inflation every quarter you overperform.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Reality Check</div>
-        <div class="lie-q">"You're promised $150K, but pocketing $95K."</div>
-        <div class="lie-a">This is why you must plan around your base salary and see commissions as bonuses—not guaranteed income.</div>
+        <div class="lie-q">"You're promised $250K, but pocketing $160K."</div>
+        <div class="lie-a">AEs who budget around their OTE are one bad quarter from financial stress. Plan around your base. Commissions are a bonus — not a paycheck.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">OTE (On-Target Earnings) is a fantasy. Base pay is your reality. The recruiter dangled $75K OTE, but your take-home pay might look very different once variables and deductions hit. SDR comp plans are structured to motivate volume — but the fine print often works against you.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Base Salary:</strong> 60-70% of your OTE if you're lucky. This is the only guaranteed paycheck — everything else depends on booking meetings that actually convert.</li>
+        <li><span class="kp-n">02</span><strong>Variable Pay:</strong> Commission tied to meetings set, qualified opportunities, or even downstream revenue you can't control. If your AE can't close the deal, your commission might still be at risk.</li>
+        <li><span class="kp-n">03</span><strong>Hidden Deductions:</strong> Meetings that don't convert get clawed back. Quota inflation punishes your best months. And payout delays mean you might wait 60-90 days to see the cash.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Reality Check</div>
+        <div class="lie-q">"You're promised $75K, but pocketing $52K."</div>
+        <div class="lie-a">SDRs who plan their life around OTE are one slow month from scrambling. Budget around your base salary and treat commissions as bonuses — not guaranteed income.</div>
       </div>
     </div>
   </div>
@@ -366,17 +876,30 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div><div class="c10-badge">Course 10</div><span class="sec-eye">Section 02 — Understanding Your Comp Plan</span></div>
       <div class="lh-title">Read the Fine Print</div>
     </div>
-    <div class="lb">
-      <p class="lp">Before you assume you are getting paid, you need to understand the mechanics of your comp plan. SDRs often get the short end of the stick when meetings are tied to closures.</p>
+    <div class="lb ae-only">
+      <p class="lp">Before you assume you're getting paid on that deal, you need to understand the mechanics of your comp plan. AE plans are complex by design — accelerators, decelerators, splits, clawbacks, and thresholds all exist to protect the company, not you.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>Payout Timelines:</strong> Are commissions paid monthly? Quarterly? When do you actually see the cash?</li>
-        <li><span class="kp-n">02</span><strong>Clawback Rules:</strong> How long does a client need to stay before your commission is secure? What's the cancellation window?</li>
-        <li><span class="kp-n">03</span><strong>Commission Caps:</strong> Is there a limit on what you can earn if you overperform? What is the upside?</li>
+        <li><span class="kp-n">01</span><strong>Payout Timelines:</strong> Is commission paid on booking or on cash collected? Some plans don't pay until the customer pays — that could be 60-90 days after you sign the deal.</li>
+        <li><span class="kp-n">02</span><strong>Clawback Rules:</strong> How long does a customer need to stay before your commission is secure? If they churn in 90 days, you might owe the money back. Know the cancellation window cold.</li>
+        <li><span class="kp-n">03</span><strong>Accelerators & Caps:</strong> What happens when you exceed quota? Some plans have generous accelerators; others cap your upside. Know whether overperformance actually rewards you — or just raises next quarter's target.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Bottom Line</div>
+        <div class="lie-q">"Know every line of your comp plan — or it will cost you."</div>
+        <div class="lie-a">The AEs who get surprised by their paychecks are the ones who never read the fine print. Budget around your base. Commissions are earned twice: once when you close, and again when the customer stays.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">Before you assume you're getting paid on that meeting, you need to understand the mechanics of your comp plan. SDRs often get the short end of the stick — especially when meetings are tied to downstream closures you can't control.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Payout Timelines:</strong> Are commissions paid monthly? Quarterly? When do you actually see the cash? Some plans don't pay until the AE closes — which could be months after your meeting.</li>
+        <li><span class="kp-n">02</span><strong>Clawback Rules:</strong> Does your meeting need to convert to a qualified opportunity to count? What happens if the AE disqualifies it? Understand what "qualified" actually means in your plan.</li>
+        <li><span class="kp-n">03</span><strong>Commission Caps:</strong> Is there a limit on what you can earn if you overperform? If you're crushing it, does the plan actually reward you — or does it just raise next month's target?</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Bottom Line</div>
         <div class="lie-q">"Treat your base like gold."</div>
-        <div class="lie-a">Stop planning your life around potential earnings. Budget your base salary. Anything else is a bonus.</div>
+        <div class="lie-a">Stop planning your life around potential earnings. Budget your base salary. Ask your manager to walk through every detail of your comp plan until you understand exactly what gets paid and when.</div>
       </div>
     </div>
   </div>
@@ -473,28 +996,53 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-title">Own Your Earnings</div>
     </div>
     <div class="tools-blk">
-      <div style="margin-top:20px">
+      <div style="margin-top:20px" class="ae-only">
         <div class="t-head">Task 1: Comp Plan Deep-Dive</div>
         <ul class="hw-list">
-          <li><div class="hw-box"></div>Review your compensation plan and highlight any confusing sections.</li>
+          <li><div class="hw-box"></div>Pull up your full comp plan document. Highlight every section on clawbacks, accelerators, deal splits, and payout timelines.</li>
+          <li><div class="hw-box"></div>Write down at least 3 questions to clarify with your manager this week — especially around multi-year deals and overlay splits.</li>
+        </ul>
+      </div>
+      <div style="margin-top:20px" class="sdr-only">
+        <div class="t-head">Task 1: Comp Plan Deep-Dive</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Review your compensation plan and highlight anything confusing — especially what counts as a "qualified" meeting and when you actually get paid.</li>
           <li><div class="hw-box"></div>Write down at least 3 questions to clarify with your manager this week.</li>
         </ul>
       </div>
-      <div>
+      <div class="ae-only">
         <div class="t-head">Task 2: Build Your Commission Tracker</div>
         <ul class="hw-list">
           <li><div class="hw-box"></div>Create a tracker to log every deal, payout, and deduction.</li>
-          <li><div class="hw-box"></div>Include: Deal Name, Close Date, Commission Earned, Adjustments, Final Payout.</li>
-          <li><div class="hw-box"></div>Never rely solely on finance's numbers.</li>
+          <li><div class="hw-box"></div>Include: Deal Name, Close Date, ACV, Commission Rate, Split %, Clawback Window, Adjustments, Final Payout.</li>
+          <li><div class="hw-box"></div>Cross-reference finance's numbers against your own tracker every pay cycle. Trust, but verify.</li>
         </ul>
       </div>
-      <div>
+      <div class="sdr-only">
+        <div class="t-head">Task 2: Build Your Commission Tracker</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Create a tracker to log every meeting booked, its status, and your expected payout.</li>
+          <li><div class="hw-box"></div>Include: Meeting Date, Account, AE Assigned, Meeting Status, Commission Earned, Adjustments.</li>
+          <li><div class="hw-box"></div>Never rely solely on finance's numbers. Track your own and flag discrepancies immediately.</li>
+        </ul>
+      </div>
+      <div class="ae-only">
         <div class="t-head">Task 3: Financial Planning Exercise</div>
         <ul class="hw-list">
-          <li><div class="hw-box"></div>Build a budget based on your base salary alone.</li>
-          <li><div class="hw-box"></div>Determine how you'll allocate commissions as "bonus" income for savings, debt repayment, or investments.</li>
+          <li><div class="hw-box"></div>Build a monthly budget based on your base salary alone — no commission included.</li>
+          <li><div class="hw-box"></div>Create a commission allocation plan: savings, debt repayment, investments. Treat every commission check as bonus money, not expected income.</li>
         </ul>
       </div>
+      <div class="sdr-only">
+        <div class="t-head">Task 3: Financial Planning Exercise</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Build a budget based on your base salary alone — assume zero commission.</li>
+          <li><div class="hw-box"></div>Determine how you'll allocate commissions as "bonus" income: savings, debt payoff, or investments. Don't let a hot month inflate your lifestyle.</li>
+        </ul>
+      </div>
+
+      <!-- Accountability Gate -->
+      <div id="gate8" data-gate-screen="8"></div>
     </div>
   </div>
 
@@ -505,13 +1053,17 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <div class="comp-tag">Course 10 · Lesson 1 — Complete</div>
           <div style="font-family:var(--display);font-size:56px;color:var(--white);line-height:.9;margin:10px 0 0">10</div>
         </div>
-        <div class="comp-big">Stop hoping,<br>start managing.</div>
-        <div class="comp-sub">Your company plays the commission game to motivate you. Now it's time to flip the script. Manage your income strategically.</div>
+        <div class="comp-big ae-only">Know the<br>fine print.<br>Own your<br>income.</div>
+        <div class="comp-big sdr-only">Stop hoping,<br>start<br>managing.</div>
+        <div class="comp-sub ae-only">Your comp plan is designed to motivate you — and to protect the company. Clawbacks, splits, and accelerators all have fine print. The AEs who manage their money are the ones who read every line and track every dollar.</div>
+        <div class="comp-sub sdr-only">Your comp plan is designed to motivate volume — but the fine print works against you when meetings don't convert. Manage your income strategically. Budget the base. Track the variable. Stop hoping.</div>
       </div>
       <div class="comp-r">
         <div class="eyebrow">Course 10 · Lesson 1 Complete</div>
-        <div class="comp-h">Play the game smarter.</div>
-        <p class="comp-p">Budget around your base pay, and treat commissions like the bonus they are. Track your earnings, know the fine print, and own your financial future.</p>
+        <div class="comp-h ae-only">Deals close twice: once on the call, once on the payout.</div>
+        <div class="comp-h sdr-only">Play the game smarter.</div>
+        <p class="comp-p ae-only">Budget around your base pay. Track every deal against your comp plan. Know your clawback windows, your split rules, and your accelerator thresholds. Your financial future depends on details, not just deal flow.</p>
+        <p class="comp-p sdr-only">Budget around your base pay, and treat commissions like the bonus they are. Track your meetings, know what qualifies, and own your financial future instead of hoping for the best.</p>
         <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
         <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
       </div>
@@ -522,7 +1074,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 <aside class="sidebar">
   <div class="sb-course">10</div>
-  <div class="sb-lesson">Lesson 10.1 · The Commission Myth</div>
+  <div class="sb-lesson ae-only">Lesson 10.1 · The Commission Myth</div>
+  <div class="sb-lesson sdr-only">Lesson 10.1 · The Commission Myth</div>
   <div class="sb-divider"></div>
   <div class="sb-label">Sections</div>
   <div class="sb-item" id="nav1" onclick="go(1)">
@@ -654,10 +1207,15 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); render();
+  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register accountability gate
+  var _role = document.documentElement.getAttribute('data-role') || 'sdr';
+  var _gatePrompt = _role === 'ae' ? 'Build a personal commission tracker with real numbers: your base salary, OTE, current attainment %, expected payout this quarter, and a monthly budget based ONLY on base.' : 'Build a personal compensation plan with real numbers: your base salary, variable target, current attainment %, and a monthly budget based ONLY on base salary. No commission assumptions.';
+  AESDR.gate(8, { type:'application', prompt: _gatePrompt, minChars: 100 });
+  render();
 }
 function go(n){
-  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:{}},"*")}catch(e){}}
+  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;
   document.getElementById('s'+cur).classList.add('active');
@@ -920,6 +1478,7 @@ function canContinue(){
   if(cur===5)return Object.keys(seqDone).length===5;
   if(cur===6)return clsCount===8;
   if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 function getHint(){
@@ -931,7 +1490,7 @@ function getHint(){
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,
     7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    8:"Build a budget based on your base salary alone.",
+    8: AESDR.gateHint(8) || "Build a budget based on your base salary alone.",
   };
   return h[cur]||'';
 }
@@ -952,6 +1511,7 @@ function render(){
   const bnav=document.getElementById('bottomnav');
   bnav.style.display=hide?'none':'flex';
   if(hide)return;
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';

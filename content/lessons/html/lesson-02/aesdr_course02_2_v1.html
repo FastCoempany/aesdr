@@ -2,6 +2,501 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- AESDR Role Detection -->
+<script>
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  var role = p.get('role') || 'sdr';
+  document.documentElement.setAttribute('data-role', role);
+})();
+</script>
+<style>
+/* Role-conditional content: hide content not matching current role */
+[data-role="ae"] .sdr-only { display: none !important; }
+[data-role="sdr"] .ae-only { display: none !important; }
+/* Softer variant: swap text content visibility */
+[data-role="ae"] .sdr-text { display: none !important; }
+[data-role="sdr"] .ae-text { display: none !important; }
+</style>
+<!-- AESDR Accountability Gates -->
+<style>
+/* ══════════════════════════════════════════
+   AESDR Accountability Gates — Styles v1
+   Matches lesson design system vars:
+     --black, --white, --mid, --lite, --lite2,
+     --amber, --cobalt, --green, --line, --iris,
+     --cond, --serif, --mono
+══════════════════════════════════════════ */
+
+/* ── Gate container ── */
+.gate-box {
+  margin: 28px 0 12px;
+  padding: 28px 32px 24px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  position: relative;
+}
+.gate-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+}
+
+/* ── Label / tag ── */
+.gate-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 14px;
+}
+
+/* ── Prompt text ── */
+.gate-prompt {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--black);
+  margin-bottom: 18px;
+}
+
+/* ── Textarea ── */
+.gate-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px 16px;
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--black);
+  background: var(--lite);
+  border: 1px solid var(--line2);
+  resize: vertical;
+  outline: none;
+  transition: border-color .2s;
+}
+.gate-textarea:focus {
+  border-color: var(--amber);
+}
+.gate-textarea.gate-evidence {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  min-height: 100px;
+}
+.gate-textarea::placeholder {
+  color: var(--mid);
+  opacity: .6;
+}
+
+/* ── Footer (counter + submit) ── */
+.gate-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  gap: 12px;
+}
+
+/* ── Character counter ── */
+.gate-counter {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+
+/* ── Submit button ── */
+.gate-submit {
+  font-family: var(--cond);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border: 2px solid var(--black);
+  background: var(--black);
+  color: var(--white);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all .15s;
+}
+.gate-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 2s linear infinite;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.gate-submit:hover::before {
+  opacity: 1;
+}
+.gate-submit:hover {
+  color: var(--black);
+}
+.gate-submit span {
+  position: relative;
+  z-index: 1;
+}
+.gate-submit:disabled,
+.gate-submit:disabled:hover {
+  opacity: .28;
+  cursor: not-allowed;
+  background: var(--black);
+  color: var(--white);
+}
+.gate-submit:disabled::before,
+.gate-submit:disabled:hover::before {
+  display: none;
+}
+
+/* ── Rubric checklist ── */
+.gate-rubric {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.gate-rubric-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 10px;
+}
+.gate-rubric-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--black);
+}
+.gate-rubric-item input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--amber);
+  flex-shrink: 0;
+}
+
+/* ── Time gate ── */
+.gate-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 20px 0 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--line2);
+  background: var(--lite);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+.gate-time-icon {
+  font-size: 14px;
+}
+.gate-time-num {
+  font-weight: 700;
+  color: var(--amber);
+  font-size: 13px;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* ── Completed state ── */
+.gate-done {
+  margin: 24px 0 8px;
+  padding: 20px 24px;
+  border: 2px solid var(--green);
+  background: var(--grn-lt);
+}
+.gate-done-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.gate-done-preview {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--mid);
+  font-style: italic;
+}
+
+</style>
+<script>
+/*  AESDR Accountability Gates v1
+ *  Inject into lesson HTML files alongside role-detection.
+ *
+ *  Usage in lesson JS:
+ *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
+ *    AESDR.gate(1, { type:'time', seconds:60 });
+ *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
+ *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
+ *
+ *  In canContinue():
+ *    if (!AESDR.gateReady(cur)) return false;
+ *
+ *  Gate state auto-saves via postMessage when completed.
+ */
+window.AESDR = window.AESDR || {};
+
+(function(A) {
+  var gates = {};      // screenNum -> config
+  var gateState = {};  // screenNum -> { completed, value, ... }
+  var timers = {};     // screenNum -> { started, remaining }
+
+  /* ── Register a gate ── */
+  A.gate = function(screen, cfg) {
+    gates[screen] = cfg;
+    gateState[screen] = { completed: false, value: '' };
+  };
+
+  /* ── Check if gate is satisfied ── */
+  A.gateReady = function(screen) {
+    if (!gates[screen]) return true;
+    return gateState[screen] && gateState[screen].completed;
+  };
+
+  /* ── Get gate hint text ── */
+  A.gateHint = function(screen) {
+    var g = gates[screen];
+    if (!g) return '';
+    var s = gateState[screen];
+    if (s.completed) return '\u2713 Gate complete';
+
+    if (g.type === 'time') {
+      var r = timers[screen] ? timers[screen].remaining : g.seconds;
+      return r > 0 ? 'Unlocks in ' + r + 's' : '';
+    }
+    if (g.type === 'reflection' || g.type === 'evidence') {
+      var len = (s.value || '').length;
+      return len + ' / ' + g.minChars + ' characters';
+    }
+    if (g.type === 'application') {
+      var len2 = (s.value || '').length;
+      var checks = s.rubricChecked || 0;
+      var total = (g.rubric || []).length;
+      return len2 + ' chars \u00B7 ' + checks + '/' + total + ' rubric items';
+    }
+    return '';
+  };
+
+  /* ── Get all gate data for stateData (progress saving) ── */
+  A.gateData = function() {
+    var out = {};
+    for (var k in gateState) {
+      if (gateState[k].completed) {
+        out['gate_' + k] = {
+          type: gates[k].type,
+          value: gateState[k].value,
+          completedAt: gateState[k].completedAt
+        };
+      }
+    }
+    return out;
+  };
+
+  /* ── Render gate UI into a container ── */
+  A.renderGate = function(screen, containerId) {
+    var g = gates[screen];
+    if (!g) return;
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    var s = gateState[screen];
+
+    if (s.completed) {
+      el.innerHTML = _completedHTML(g, s);
+      return;
+    }
+
+    switch(g.type) {
+      case 'reflection': el.innerHTML = _reflectionHTML(screen, g, s); break;
+      case 'application': el.innerHTML = _applicationHTML(screen, g, s); break;
+      case 'evidence': el.innerHTML = _evidenceHTML(screen, g, s); break;
+      case 'time': _startTimer(screen, g); el.innerHTML = _timeHTML(screen, g); break;
+    }
+  };
+
+  /* ── Completed state ── */
+  function _completedHTML(g, s) {
+    var typeLabel = { reflection:'Reflection', application:'Response', evidence:'Evidence', time:'Time' };
+    return '<div class="gate-done">' +
+      '<div class="gate-done-tag">\u2713 ' + (typeLabel[g.type]||'Gate') + ' Submitted</div>' +
+      (g.type !== 'time' ? '<div class="gate-done-preview">' + _esc(s.value).substring(0,200) + (s.value.length > 200 ? '...' : '') + '</div>' : '') +
+    '</div>';
+  }
+
+  /* ── Reflection Gate ── */
+  function _reflectionHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Reflection Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your reflection here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Reflection</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Application Gate ── */
+  function _applicationHTML(screen, g) {
+    var rubricHTML = (g.rubric || []).map(function(r, i) {
+      return '<label class="gate-rubric-item">' +
+        '<input type="checkbox" onchange="AESDR._onRubric(' + screen + ',' + i + ',this.checked)">' +
+        '<span>' + r + '</span></label>';
+    }).join('');
+
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Application Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your response...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-counter" id="gateCtr' + screen + '">0 / ' + (g.minChars || 50) + ' characters</div>' +
+      (rubricHTML ? '<div class="gate-rubric"><div class="gate-rubric-label">Self-evaluate your response:</div>' + rubricHTML + '</div>' : '') +
+      '<div class="gate-footer">' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Response</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Evidence Gate ── */
+  function _evidenceHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Evidence Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea gate-evidence" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Paste your evidence here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Evidence</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Time Gate ── */
+  function _timeHTML(screen, g) {
+    var r = timers[screen] ? timers[screen].remaining : g.seconds;
+    if (r <= 0) return '';
+    return '<div class="gate-time" id="gateTime' + screen + '">' +
+      '<span class="gate-time-icon">\u23F3</span> ' +
+      '<span class="gate-time-num" id="gateTimeCtr' + screen + '">' + r + '</span>s remaining' +
+    '</div>';
+  }
+
+  function _startTimer(screen, g) {
+    if (timers[screen]) return;
+    timers[screen] = { remaining: g.seconds };
+    var iv = setInterval(function() {
+      timers[screen].remaining--;
+      var el = document.getElementById('gateTimeCtr' + screen);
+      if (el) el.textContent = timers[screen].remaining;
+      if (timers[screen].remaining <= 0) {
+        clearInterval(iv);
+        gateState[screen].completed = true;
+        gateState[screen].completedAt = new Date().toISOString();
+        var timeEl = document.getElementById('gateTime' + screen);
+        if (timeEl) timeEl.style.display = 'none';
+        // Trigger render if the lesson exposes it
+        if (typeof window.render === 'function') window.render();
+      }
+    }, 1000);
+  }
+
+  /* ── Internal handlers ── */
+  A._onInput = function(screen, val) {
+    gateState[screen].value = val;
+    var g = gates[screen];
+    var min = g.minChars || 50;
+    var ctr = document.getElementById('gateCtr' + screen);
+    if (ctr) ctr.textContent = val.length + ' / ' + min + (g.type === 'application' ? ' characters' : '');
+
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      var ready = val.length >= min;
+      if (g.type === 'application' && g.rubric) {
+        var checks = gateState[screen].rubricChecked || 0;
+        ready = ready && checks >= g.rubric.length;
+      }
+      btn.disabled = !ready;
+    }
+  };
+
+  A._onRubric = function(screen, idx, checked) {
+    if (!gateState[screen]._rubric) gateState[screen]._rubric = {};
+    gateState[screen]._rubric[idx] = checked;
+    var count = 0;
+    for (var k in gateState[screen]._rubric) {
+      if (gateState[screen]._rubric[k]) count++;
+    }
+    gateState[screen].rubricChecked = count;
+
+    // Re-check submit button
+    var g = gates[screen];
+    var val = gateState[screen].value || '';
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      btn.disabled = !(val.length >= (g.minChars || 50) && count >= (g.rubric || []).length);
+    }
+  };
+
+  A._submit = function(screen) {
+    var s = gateState[screen];
+    s.completed = true;
+    s.completedAt = new Date().toISOString();
+
+    // Re-render the gate as completed
+    var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
+    containers.forEach(function(el) { A.renderGate(screen, el.id); });
+
+    // Save progress via postMessage
+    if (window.parent !== window) {
+      try {
+        window.parent.postMessage({
+          type: 'aesdr:progress',
+          screen: screen,
+          stateData: A.gateData()
+        }, '*');
+      } catch(e) {}
+    }
+
+    // Trigger render if available
+    if (typeof window.render === 'function') window.render();
+  };
+
+  /* ── Escape helper ── */
+  function _esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+})(window.AESDR);
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AESDR — Course 2.2: The Ultimate Home Office Setup</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -283,9 +778,11 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div>
           <div class="cv-c2tag">AESDR · Lesson 2.2</div>
           <div class="cv-course-num">02</div>
-          <div class="cv-big">The Ultimate Home Office Setup</div>
+          <div class="cv-big ae-only">Your Deal Room at Home</div>
+          <div class="cv-big sdr-only">Your Outbound Factory at Home</div>
         </div>
-        <div class="cv-tagline">Mastering the AE/SDR remote work environment for focus, productivity, and sanity.</div>
+        <div class="cv-tagline ae-only">Your home office is your deal room. Optimize for demos, pipeline, and focus.</div>
+        <div class="cv-tagline sdr-only">Your home office is your outbound factory. Optimize for volume and energy.</div>
       </div>
       <div class="cvr">
         <div class="eyebrow">Course 2 · Lesson 2 of 3</div>
@@ -307,17 +804,30 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div><div class="c2-badge">Course 2</div><span class="sec-eye">Section 01 — The Environment</span></div>
       <div class="lh-title">Why Your Home Office Setup Matters</div>
     </div>
-    <div class="lb">
-      <p class="lp">Your home office isn't just a workspace—it's the foundation of your performance. The wrong setup leads to distractions, fatigue, and burnout. A smart, intentional setup will keep you focused, healthy, and crushing your AE or SDR goals.</p>
+    <div class="lb ae-only">
+      <p class="lp">Your home office isn't just a workspace — it's where deals get won or lost. When you're running demos, managing a complex pipeline, and jumping between discovery calls and proposal reviews, your environment either supports you or sabotages you. The wrong setup leads to fumbled screen shares, missed follow-ups, and the slow burn of fatigue that kills your close rate by Thursday.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>Focus:</strong> A chaotic space leads to distracted work and low performance.</li>
-        <li><span class="kp-n">02</span><strong>Physical Health:</strong> Poor posture and long hours destroy your body.</li>
-        <li><span class="kp-n">03</span><strong>Mental Clarity:</strong> A cluttered setup equals a cluttered mind.</li>
+        <li><span class="kp-n">01</span><strong>Focus:</strong> You need to run CRM, demo software, email, and Slack simultaneously. On a single laptop screen, something always gets lost.</li>
+        <li><span class="kp-n">02</span><strong>Physical Health:</strong> Back-to-back calls for 6+ hours in a bad chair means you're physically depleted before your biggest deal of the day.</li>
+        <li><span class="kp-n">03</span><strong>Mental Clarity:</strong> A cluttered desk mirrors a cluttered pipeline. When your environment is chaotic, your deal management gets sloppy.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Reality Check</div>
-        <div class="lie-q">"Remote work comes with unique challenges: distractions at home, physical fatigue, and the pressure to always be 'on.'"</div>
-        <div class="lie-a">To succeed long-term, you need to fix these problems with a rock-solid home office setup. You cannot outwork a bad environment.</div>
+        <div class="lie-q">"Your prospect sees your background on video. Your energy level shows in your voice. Your setup is part of your pitch."</div>
+        <div class="lie-a">To close at the top of your team long-term, you need an environment built for sustained performance. You cannot outwork a bad setup.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">Your home office isn't just a workspace — it's your outbound factory. When you're pushing through 50+ dials, managing parallel email sequences, and trying to stay sharp on call #47, your environment either fuels you or drains you. The wrong setup leads to dropped cadences, vocal fatigue, and the mental fog that turns your afternoon block into dead air.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Focus:</strong> You need your dialer, CRM, sequences, and research tabs open simultaneously. On one screen, every context switch costs you a rep.</li>
+        <li><span class="kp-n">02</span><strong>Physical Health:</strong> 6 hours of cold calling in a bad chair with bad posture means your energy craters by the time your prospects are actually available.</li>
+        <li><span class="kp-n">03</span><strong>Mental Clarity:</strong> A cluttered desk and a chaotic screen layout mean you're fighting your environment instead of focusing on the conversation.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Reality Check</div>
+        <div class="lie-q">"Your energy on call #50 is what separates top SDRs from the middle of the pack. That energy starts with your setup."</div>
+        <div class="lie-a">To sustain high-volume outbound long-term, you need an environment built for endurance. You cannot outwork a bad setup.</div>
       </div>
     </div>
   </div>
@@ -357,19 +867,33 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">02</div>
       <div><div class="c2-badge">Course 2</div><span class="sec-eye">Section 02 — Setup & Blueprint</span></div>
-      <div class="lh-title">The Ultimate AE/SDR Blueprint</div>
+      <div class="lh-title ae-only">The Ultimate AE Blueprint</div>
+      <div class="lh-title sdr-only">The Ultimate SDR Blueprint</div>
     </div>
-    <div class="lb">
-      <p class="lp">Building your ideal workspace requires intentionally selecting core furniture, dialing in your tech, and prioritizing your physical health.</p>
+    <div class="lb ae-only">
+      <p class="lp">Building your ideal workspace requires intentionally selecting core furniture, dialing in your tech, and prioritizing your physical health. As an AE, your setup needs to support demo delivery, pipeline management, and marathon call days.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>Core Furniture:</strong> Standing desk (alternate standing and sitting), ergonomic chair with lumbar support, and 2-4 monitors raised on a desk hutch for eye-level alignment.</li>
-        <li><span class="kp-n">02</span><strong>Technology Setup:</strong> Stockpile extra cables (HDMI, USB-C, Ethernet), add a multi-plug hub, and use a physical clock for time awareness without digital distractions.</li>
-        <li><span class="kp-n">03</span><strong>Health and Mindset:</strong> Keep protein-packed snacks like mixed nuts, improve lighting with monitor lights or natural light, and take a short walk every 90 minutes.</li>
+        <li><span class="kp-n">01</span><strong>Core Furniture:</strong> Standing desk (alternate standing and sitting), ergonomic chair with lumbar support, and 2-4 monitors — CRM on one, demo/presentation on another, email and Slack on a third. Raised on a desk hutch for eye-level alignment.</li>
+        <li><span class="kp-n">02</span><strong>Technology Setup:</strong> Stockpile extra cables (HDMI, USB-C, Ethernet), add a multi-plug hub, invest in a quality webcam and ring light for demos. Use a physical clock for time awareness between calls.</li>
+        <li><span class="kp-n">03</span><strong>Health and Mindset:</strong> Keep protein-packed snacks like mixed nuts, improve lighting with monitor lights or natural light, and take a short walk every 90 minutes. Your energy on the 4 PM demo matters as much as the 10 AM one.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Goal</div>
-        <div class="lie-q">"Snacking smart, moving regularly, and having the right lighting keeps your energy high and your mind sharp."</div>
-        <div class="lie-a">Don't let physical fatigue kill your performance. Your environment is your competitive edge. Build a workspace that supports you, not one that distracts you.</div>
+        <div class="lie-q">"Your prospect can hear fatigue in your voice and see a messy background on Zoom. Your setup is part of your credibility."</div>
+        <div class="lie-a">Don't let physical fatigue kill your close rate. Your environment is your competitive edge. Build a workspace that supports deal execution, not one that distracts from it.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">Building your ideal workspace requires intentionally selecting core furniture, dialing in your tech, and prioritizing your physical health. As an SDR, your setup needs to support high-volume outbound, rapid research, and sustained energy across long dial blocks.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Core Furniture:</strong> Standing desk (alternate standing and sitting), ergonomic chair with lumbar support, and 2-4 monitors — dialer on one, CRM on another, LinkedIn/research on a third. Raised on a desk hutch for eye-level alignment.</li>
+        <li><span class="kp-n">02</span><strong>Technology Setup:</strong> Stockpile extra cables (HDMI, USB-C, Ethernet), add a multi-plug hub, invest in a quality headset with noise cancellation. Use a physical clock for time-blocking your dial sessions.</li>
+        <li><span class="kp-n">03</span><strong>Health and Mindset:</strong> Keep protein-packed snacks like mixed nuts, improve lighting with monitor lights or natural light, and take a short walk every 90 minutes. Your energy on dial #50 matters as much as dial #1.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Goal</div>
+        <div class="lie-q">"Your prospect can hear fatigue in your voice. The difference between a connected call and a dead one is often just your energy level."</div>
+        <div class="lie-a">Don't let physical fatigue kill your connect rate. Your environment is your competitive edge. Build a workspace that supports sustained outbound, not one that drains you by 2 PM.</div>
       </div>
     </div>
   </div>
@@ -478,14 +1002,23 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         </table>
       </div>
       <div>
-        <div class="t-head">Work From Home Self-Assessment</div>
-        <ul class="hw-list">
-          <li><div class="hw-box"></div><strong>Focus check:</strong> Do you feel distracted or physically uncomfortable during outreach blocks?</li>
-          <li><div class="hw-box"></div><strong>Setup gap:</strong> What's missing from your current setup that could significantly improve productivity?</li>
-          <li><div class="hw-box"></div><strong>Boundary check:</strong> Do you have clear work-life boundaries with a defined shutdown process?</li>
-          <li><div class="hw-box"></div><strong>Action Task:</strong> Spend 2 hours this week upgrading one part of your home office—start with the desk setup or tech essentials.</li>
+        <div class="t-head ae-only">AE Work-From-Home Self-Assessment</div>
+        <ul class="hw-list ae-only">
+          <li><div class="hw-box"></div><strong>Demo readiness:</strong> Can you share your screen, run your CRM, and reference notes simultaneously without fumbling between windows?</li>
+          <li><div class="hw-box"></div><strong>Setup gap:</strong> What's missing from your current setup that would make back-to-back discovery and demo calls less draining?</li>
+          <li><div class="hw-box"></div><strong>Boundary check:</strong> Do you have a defined shutdown process, or do you find yourself checking pipeline updates at 9 PM?</li>
+          <li><div class="hw-box"></div><strong>Action Task:</strong> Spend 2 hours this week upgrading one part of your home office — start with monitor layout for demo delivery or webcam/lighting quality.</li>
+        </ul>
+        <div class="t-head sdr-only">SDR Work-From-Home Self-Assessment</div>
+        <ul class="hw-list sdr-only">
+          <li><div class="hw-box"></div><strong>Outbound readiness:</strong> Can you see your dialer, CRM, and research simultaneously without switching tabs mid-call?</li>
+          <li><div class="hw-box"></div><strong>Setup gap:</strong> What's missing from your current setup that would help you maintain energy through a full afternoon dial block?</li>
+          <li><div class="hw-box"></div><strong>Boundary check:</strong> Do you have a defined shutdown process, or does your laptop stay open on the kitchen counter past 7 PM?</li>
+          <li><div class="hw-box"></div><strong>Action Task:</strong> Spend 2 hours this week upgrading one part of your home office — start with headset quality or multi-monitor layout for your dial workflow.</li>
         </ul>
       </div>
+      <!-- Accountability Gate -->
+      <div id="gate8" data-gate-screen="8"></div>
     </div>
   </div>
 
@@ -496,13 +1029,17 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <div class="comp-tag">Course 2 · Lesson 2 — Complete</div>
           <div style="font-family:var(--display);font-size:56px;color:var(--black);line-height:.9;margin:10px 0 0">02</div>
         </div>
-        <div class="comp-big">Turn your<br>environment<br>into an asset.</div>
-        <div class="comp-sub">Your setup determines your focus, health, and long-term trajectory as an AE or SDR. Master the environment, master the workflow.</div>
+        <div class="comp-big ae-only">Your setup<br>is part of<br>your pitch.</div>
+        <div class="comp-big sdr-only">Outwork<br>your setup<br>problem.</div>
+        <div class="comp-sub ae-only">Your prospects see your background, hear your energy, and sense your focus. An intentional environment isn't a luxury — it's pipeline infrastructure.</div>
+        <div class="comp-sub sdr-only">Your energy on call #50 is what separates you from every other SDR. That energy starts with a setup built for endurance, not just availability.</div>
       </div>
       <div class="comp-r">
         <div class="eyebrow">Course 2 · Lesson 2 Complete</div>
-        <div class="comp-h">A foundation built for high performance.</div>
-        <p class="comp-p">The ultimate setup isn't about luxury—it's about creating an intentional foundation for your success. Eliminate the distractions, protect your physical health, and define your boundaries.</p>
+        <div class="comp-h ae-only">Built for demos. Built for deals.</div>
+        <div class="comp-h sdr-only">Built for volume. Built for endurance.</div>
+        <p class="comp-p ae-only">The ultimate setup isn't about luxury — it's about creating an environment where you can run demos, manage pipeline, and close deals without your workspace working against you.</p>
+        <p class="comp-p sdr-only">The ultimate setup isn't about luxury — it's about creating an environment where you can sustain high-volume outbound without burning out by Thursday.</p>
         <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
         <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
       </div>
@@ -513,7 +1050,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 <aside class="sidebar">
   <div class="sb-course">02</div>
-  <div class="sb-lesson">Lesson 2.2 · The Ultimate Home Office Setup</div>
+  <div class="sb-lesson ae-only">Lesson 2.2 · Your Deal Room at Home</div>
+  <div class="sb-lesson sdr-only">Lesson 2.2 · Your Outbound Factory at Home</div>
   <div class="sb-divider"></div>
   <div class="sb-label">Sections</div>
   <div class="sb-item" id="nav1" onclick="go(1)">
@@ -562,25 +1100,25 @@ const SILO_ORDER = [2,5,0,3,1,4];
 const BLAME_ITEMS = [
   {
     statement:'"I lose my rhythm during outreach blocks because my internet drops or a monitor cable fails."',
-    opts:["I need to complain to my IT department","I need to stockpile backup cables and a multi-plug hub","I should take the day off when tech fails","I need a more expensive computer"],
+    opts:["I should switch to a fully wireless setup to avoid cable issues","I need to stockpile backup cables and a multi-plug hub","I should schedule my outreach blocks around peak internet hours","I need to upgrade to a higher-end single monitor"],
     ans:1,
     fix:"Real fix: Stockpile essential cables (HDMI, USB-C, Ethernet CAT12) and a multi-plug hub to prevent technical downtime when something inevitably breaks."
   },
   {
     statement:'"I spend the first hour of my day just trying to figure out who I should be calling."',
-    opts:["I am not working hard enough","The CRM data is too messy to use properly","I am missing a dedicated Morning Kickoff framework","I need to wait for my manager to send a list"],
+    opts:["I am not working hard enough","The CRM data is too messy to use properly","I am missing a dedicated Morning Kickoff framework","I need to build a bigger prospect database first"],
     ans:2,
     fix:"Real fix: Implement a Morning Kickoff. From 8:00–8:30, review tasks and priorities to set daily goals before opening any outreach windows."
   },
   {
     statement:'"I feel mentally exhausted and my body hurts, but my step count is under 500 for the day."',
-    opts:["I need to drink more energy drinks","I am stuck in a static position and need scheduled movement","I should work from the couch to be more comfortable","Remote work is just naturally exhausting"],
+    opts:["I need to shorten my work hours to conserve energy","I am stuck in a static position and need scheduled movement","I should invest in a more supportive office chair","I need to increase my caffeine intake throughout the day"],
     ans:1,
     fix:"Real fix: Alternate between a sitting and standing desk, and take a 15-minute walk or stretch break every 90 minutes to keep energy high."
   },
   {
     statement:'"I can\'t focus on complex research because my phone keeps buzzing on my desk."',
-    opts:["I should turn my phone completely off during the day","I lack a physical desk clock and digital boundary","I need to tell my friends not to text me","I need to buy noise-canceling headphones"],
+    opts:["I should keep my phone in another room all day","I lack a physical desk clock and digital boundary","I need to set my phone to Do Not Disturb mode","I need to use a focus app to block social media"],
     ans:1,
     fix:"Real fix: Put a physical clock on your desk. Using your phone for time awareness inevitably leads to digital distractions and broken focus."
   },
@@ -610,7 +1148,7 @@ const CLS_ORDER = [4,0,6,2,1,5,3,7];
 const QUIZ = [
   {
     q:"Why is a physical desk clock recommended over just using your smartphone to check the time?",
-    opts:["A physical clock is cheaper than a smartphone","It creates better time awareness without opening the door to digital distractions","It looks more professional on video calls","Smartphones interfere with the multi-plug hub connections"],
+    opts:["A physical clock is cheaper than a smartphone","It creates better time awareness without opening the door to digital distractions","It looks more professional on video calls","Smartphones drain battery too quickly when used as a clock"],
     ans:1
   },
   {
@@ -620,12 +1158,12 @@ const QUIZ = [
   },
   {
     q:"What is the final, crucial step in the Evening Shutdown Process?",
-    opts:["Sending one last email to your manager","Turning off devices to set clear work boundaries","Eating a protein-packed snack to recover from the day","Reviewing tomorrow's tasks for an hour"],
+    opts:["Sending one last email to your manager","Turning off devices to set clear work boundaries","Logging all completed calls in the CRM","Reviewing tomorrow's tasks for an hour"],
     ans:1
   },
   {
     q:"How does the framework suggest handling 'Tech & Accessories' to avoid lost productivity?",
-    opts:["Rely exclusively on Bluetooth and wireless devices to reduce clutter","Keep the IT department's phone number on a sticky note","Stockpile extra essential cables (HDMI, USB-C, Ethernet) and use a multi-plug hub","Only replace cables once they have completely broken to save money"],
+    opts:["Rely exclusively on Bluetooth and wireless devices to reduce clutter","Purchase extended warranty plans for all tech accessories","Stockpile extra essential cables (HDMI, USB-C, Ethernet) and use a multi-plug hub","Only replace cables once they have completely broken to save money"],
     ans:2
   },
 ];
@@ -645,10 +1183,12 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); render();
+  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz();
+  AESDR.gate(8, { type:'evidence', prompt:'Take a photo or describe your current home office setup in detail: desk, chair, monitor(s), lighting, and one thing you know needs upgrading. Be honest about what\'s working and what isn\'t.', minChars: 100 });
+  render();
 }
 function go(n){
-  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:{}},"*")}catch(e){}}
+  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;
   document.getElementById('s'+cur).classList.add('active');
@@ -911,6 +1451,7 @@ function canContinue(){
   if(cur===5)return Object.keys(seqDone).length===5;
   if(cur===6)return clsCount===8;
   if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 function getHint(){
@@ -922,7 +1463,7 @@ function getHint(){
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,
     7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    8:"A proper setup requires immediate action.",
+    8: AESDR.gateHint(8) || "A proper setup requires immediate action.",
   };
   return h[cur]||'';
 }
@@ -943,6 +1484,7 @@ function render(){
   const bnav=document.getElementById('bottomnav');
   bnav.style.display=hide?'none':'flex';
   if(hide)return;
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';

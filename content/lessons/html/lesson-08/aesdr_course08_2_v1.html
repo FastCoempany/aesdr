@@ -2,6 +2,501 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- AESDR Role Detection -->
+<script>
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  var role = p.get('role') || 'sdr';
+  document.documentElement.setAttribute('data-role', role);
+})();
+</script>
+<style>
+/* Role-conditional content: hide content not matching current role */
+[data-role="ae"] .sdr-only { display: none !important; }
+[data-role="sdr"] .ae-only { display: none !important; }
+/* Softer variant: swap text content visibility */
+[data-role="ae"] .sdr-text { display: none !important; }
+[data-role="sdr"] .ae-text { display: none !important; }
+</style>
+<!-- AESDR Accountability Gates -->
+<style>
+/* ══════════════════════════════════════════
+   AESDR Accountability Gates — Styles v1
+   Matches lesson design system vars:
+     --black, --white, --mid, --lite, --lite2,
+     --amber, --cobalt, --green, --line, --iris,
+     --cond, --serif, --mono
+══════════════════════════════════════════ */
+
+/* ── Gate container ── */
+.gate-box {
+  margin: 28px 0 12px;
+  padding: 28px 32px 24px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  position: relative;
+}
+.gate-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+}
+
+/* ── Label / tag ── */
+.gate-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 14px;
+}
+
+/* ── Prompt text ── */
+.gate-prompt {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--black);
+  margin-bottom: 18px;
+}
+
+/* ── Textarea ── */
+.gate-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px 16px;
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--black);
+  background: var(--lite);
+  border: 1px solid var(--line2);
+  resize: vertical;
+  outline: none;
+  transition: border-color .2s;
+}
+.gate-textarea:focus {
+  border-color: var(--amber);
+}
+.gate-textarea.gate-evidence {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  min-height: 100px;
+}
+.gate-textarea::placeholder {
+  color: var(--mid);
+  opacity: .6;
+}
+
+/* ── Footer (counter + submit) ── */
+.gate-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  gap: 12px;
+}
+
+/* ── Character counter ── */
+.gate-counter {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+
+/* ── Submit button ── */
+.gate-submit {
+  font-family: var(--cond);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border: 2px solid var(--black);
+  background: var(--black);
+  color: var(--white);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all .15s;
+}
+.gate-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 2s linear infinite;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.gate-submit:hover::before {
+  opacity: 1;
+}
+.gate-submit:hover {
+  color: var(--black);
+}
+.gate-submit span {
+  position: relative;
+  z-index: 1;
+}
+.gate-submit:disabled,
+.gate-submit:disabled:hover {
+  opacity: .28;
+  cursor: not-allowed;
+  background: var(--black);
+  color: var(--white);
+}
+.gate-submit:disabled::before,
+.gate-submit:disabled:hover::before {
+  display: none;
+}
+
+/* ── Rubric checklist ── */
+.gate-rubric {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.gate-rubric-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 10px;
+}
+.gate-rubric-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--black);
+}
+.gate-rubric-item input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--amber);
+  flex-shrink: 0;
+}
+
+/* ── Time gate ── */
+.gate-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 20px 0 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--line2);
+  background: var(--lite);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+.gate-time-icon {
+  font-size: 14px;
+}
+.gate-time-num {
+  font-weight: 700;
+  color: var(--amber);
+  font-size: 13px;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* ── Completed state ── */
+.gate-done {
+  margin: 24px 0 8px;
+  padding: 20px 24px;
+  border: 2px solid var(--green);
+  background: var(--grn-lt);
+}
+.gate-done-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.gate-done-preview {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--mid);
+  font-style: italic;
+}
+
+</style>
+<script>
+/*  AESDR Accountability Gates v1
+ *  Inject into lesson HTML files alongside role-detection.
+ *
+ *  Usage in lesson JS:
+ *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
+ *    AESDR.gate(1, { type:'time', seconds:60 });
+ *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
+ *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
+ *
+ *  In canContinue():
+ *    if (!AESDR.gateReady(cur)) return false;
+ *
+ *  Gate state auto-saves via postMessage when completed.
+ */
+window.AESDR = window.AESDR || {};
+
+(function(A) {
+  var gates = {};      // screenNum -> config
+  var gateState = {};  // screenNum -> { completed, value, ... }
+  var timers = {};     // screenNum -> { started, remaining }
+
+  /* ── Register a gate ── */
+  A.gate = function(screen, cfg) {
+    gates[screen] = cfg;
+    gateState[screen] = { completed: false, value: '' };
+  };
+
+  /* ── Check if gate is satisfied ── */
+  A.gateReady = function(screen) {
+    if (!gates[screen]) return true;
+    return gateState[screen] && gateState[screen].completed;
+  };
+
+  /* ── Get gate hint text ── */
+  A.gateHint = function(screen) {
+    var g = gates[screen];
+    if (!g) return '';
+    var s = gateState[screen];
+    if (s.completed) return '\u2713 Gate complete';
+
+    if (g.type === 'time') {
+      var r = timers[screen] ? timers[screen].remaining : g.seconds;
+      return r > 0 ? 'Unlocks in ' + r + 's' : '';
+    }
+    if (g.type === 'reflection' || g.type === 'evidence') {
+      var len = (s.value || '').length;
+      return len + ' / ' + g.minChars + ' characters';
+    }
+    if (g.type === 'application') {
+      var len2 = (s.value || '').length;
+      var checks = s.rubricChecked || 0;
+      var total = (g.rubric || []).length;
+      return len2 + ' chars \u00B7 ' + checks + '/' + total + ' rubric items';
+    }
+    return '';
+  };
+
+  /* ── Get all gate data for stateData (progress saving) ── */
+  A.gateData = function() {
+    var out = {};
+    for (var k in gateState) {
+      if (gateState[k].completed) {
+        out['gate_' + k] = {
+          type: gates[k].type,
+          value: gateState[k].value,
+          completedAt: gateState[k].completedAt
+        };
+      }
+    }
+    return out;
+  };
+
+  /* ── Render gate UI into a container ── */
+  A.renderGate = function(screen, containerId) {
+    var g = gates[screen];
+    if (!g) return;
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    var s = gateState[screen];
+
+    if (s.completed) {
+      el.innerHTML = _completedHTML(g, s);
+      return;
+    }
+
+    switch(g.type) {
+      case 'reflection': el.innerHTML = _reflectionHTML(screen, g, s); break;
+      case 'application': el.innerHTML = _applicationHTML(screen, g, s); break;
+      case 'evidence': el.innerHTML = _evidenceHTML(screen, g, s); break;
+      case 'time': _startTimer(screen, g); el.innerHTML = _timeHTML(screen, g); break;
+    }
+  };
+
+  /* ── Completed state ── */
+  function _completedHTML(g, s) {
+    var typeLabel = { reflection:'Reflection', application:'Response', evidence:'Evidence', time:'Time' };
+    return '<div class="gate-done">' +
+      '<div class="gate-done-tag">\u2713 ' + (typeLabel[g.type]||'Gate') + ' Submitted</div>' +
+      (g.type !== 'time' ? '<div class="gate-done-preview">' + _esc(s.value).substring(0,200) + (s.value.length > 200 ? '...' : '') + '</div>' : '') +
+    '</div>';
+  }
+
+  /* ── Reflection Gate ── */
+  function _reflectionHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Reflection Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your reflection here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Reflection</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Application Gate ── */
+  function _applicationHTML(screen, g) {
+    var rubricHTML = (g.rubric || []).map(function(r, i) {
+      return '<label class="gate-rubric-item">' +
+        '<input type="checkbox" onchange="AESDR._onRubric(' + screen + ',' + i + ',this.checked)">' +
+        '<span>' + r + '</span></label>';
+    }).join('');
+
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Application Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your response...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-counter" id="gateCtr' + screen + '">0 / ' + (g.minChars || 50) + ' characters</div>' +
+      (rubricHTML ? '<div class="gate-rubric"><div class="gate-rubric-label">Self-evaluate your response:</div>' + rubricHTML + '</div>' : '') +
+      '<div class="gate-footer">' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Response</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Evidence Gate ── */
+  function _evidenceHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Evidence Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea gate-evidence" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Paste your evidence here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Evidence</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Time Gate ── */
+  function _timeHTML(screen, g) {
+    var r = timers[screen] ? timers[screen].remaining : g.seconds;
+    if (r <= 0) return '';
+    return '<div class="gate-time" id="gateTime' + screen + '">' +
+      '<span class="gate-time-icon">\u23F3</span> ' +
+      '<span class="gate-time-num" id="gateTimeCtr' + screen + '">' + r + '</span>s remaining' +
+    '</div>';
+  }
+
+  function _startTimer(screen, g) {
+    if (timers[screen]) return;
+    timers[screen] = { remaining: g.seconds };
+    var iv = setInterval(function() {
+      timers[screen].remaining--;
+      var el = document.getElementById('gateTimeCtr' + screen);
+      if (el) el.textContent = timers[screen].remaining;
+      if (timers[screen].remaining <= 0) {
+        clearInterval(iv);
+        gateState[screen].completed = true;
+        gateState[screen].completedAt = new Date().toISOString();
+        var timeEl = document.getElementById('gateTime' + screen);
+        if (timeEl) timeEl.style.display = 'none';
+        // Trigger render if the lesson exposes it
+        if (typeof window.render === 'function') window.render();
+      }
+    }, 1000);
+  }
+
+  /* ── Internal handlers ── */
+  A._onInput = function(screen, val) {
+    gateState[screen].value = val;
+    var g = gates[screen];
+    var min = g.minChars || 50;
+    var ctr = document.getElementById('gateCtr' + screen);
+    if (ctr) ctr.textContent = val.length + ' / ' + min + (g.type === 'application' ? ' characters' : '');
+
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      var ready = val.length >= min;
+      if (g.type === 'application' && g.rubric) {
+        var checks = gateState[screen].rubricChecked || 0;
+        ready = ready && checks >= g.rubric.length;
+      }
+      btn.disabled = !ready;
+    }
+  };
+
+  A._onRubric = function(screen, idx, checked) {
+    if (!gateState[screen]._rubric) gateState[screen]._rubric = {};
+    gateState[screen]._rubric[idx] = checked;
+    var count = 0;
+    for (var k in gateState[screen]._rubric) {
+      if (gateState[screen]._rubric[k]) count++;
+    }
+    gateState[screen].rubricChecked = count;
+
+    // Re-check submit button
+    var g = gates[screen];
+    var val = gateState[screen].value || '';
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      btn.disabled = !(val.length >= (g.minChars || 50) && count >= (g.rubric || []).length);
+    }
+  };
+
+  A._submit = function(screen) {
+    var s = gateState[screen];
+    s.completed = true;
+    s.completedAt = new Date().toISOString();
+
+    // Re-render the gate as completed
+    var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
+    containers.forEach(function(el) { A.renderGate(screen, el.id); });
+
+    // Save progress via postMessage
+    if (window.parent !== window) {
+      try {
+        window.parent.postMessage({
+          type: 'aesdr:progress',
+          screen: screen,
+          stateData: A.gateData()
+        }, '*');
+      } catch(e) {}
+    }
+
+    // Trigger render if available
+    if (typeof window.render === 'function') window.render();
+  };
+
+  /* ── Escape helper ── */
+  function _esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+})(window.AESDR);
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AESDR — Course 8.2: Stop Chasing the Illusion of Potential</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -291,9 +786,11 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div>
           <div class="cv-c2tag">AESDR · Lesson 8.2</div>
           <div class="cv-course-num">08</div>
-          <div class="cv-big">Stop Chasing the Illusion of Potential</div>
+          <div class="cv-big ae-only">Stop Chasing the Illusion of Potential</div>
+          <div class="cv-big sdr-only">Don't Be the Illusion — Be the Real Thing</div>
         </div>
-        <div class="cv-tagline">How to Identify Real Potential, Avoid the Enthusiasm Trap, and Focus on Performers.</div>
+        <div class="cv-tagline ae-only">How to Identify Real Potential, Avoid the Enthusiasm Trap, and Focus on Performers.</div>
+        <div class="cv-tagline sdr-only">How Managers Spot Fake Potential — and How to Prove Yours Is Real.</div>
       </div>
       <div class="cvr">
         <div class="eyebrow">Course 8 · Lesson 2 of 3</div>
@@ -314,9 +811,10 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">01</div>
       <div><div class="c8-badge">Course 8</div><span class="sec-eye">Section 01 — The Illusion</span></div>
-      <div class="lh-title">Potential Isn't What It Looks Like</div>
+      <div class="lh-title ae-only">Potential Isn't What It Looks Like</div>
+      <div class="lh-title sdr-only">Enthusiasm Alone Won't Save You</div>
     </div>
-    <div class="lb">
+    <div class="lb ae-only">
       <p class="lp">Managers often get fooled by enthusiastic SDRs who seem promising but fail to deliver. It's easy to see an SDR who's loud, confident, and eager in meetings and think, 'They've got it.' But potential without action is just noise.</p>
       <ul class="kp">
         <li><span class="kp-n">01</span><strong>The Enthusiasm Trap:</strong> Enthusiasm is not a substitute for competence or results.</li>
@@ -327,6 +825,19 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div class="lie-tab">The Mindset Shift</div>
         <div class="lie-q">"Don't confuse noise with effort."</div>
         <div class="lie-a">Results—not personality—should drive your focus. Enthusiasm is great, but it doesn't book meetings.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">Being excited about the role is great. But if that's all you bring, you're in danger. Managers have seen dozens of SDRs who light up in team meetings but go dark when it's time to dial. Enthusiasm without execution is the fastest way to lose your manager's trust — and their investment in your growth.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Energy Isn't Enough:</strong> Showing up excited but missing quota is worse than showing up quiet and delivering.</li>
+        <li><span class="kp-n">02</span><strong>Actions Speak Loudest:</strong> Your manager measures potential by what you produce, not what you promise in 1:1s.</li>
+        <li><span class="kp-n">03</span><strong>The Danger Zone:</strong> If you're the SDR who "seems great" but can't point to results, your manager is already recategorizing you.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Mindset Shift</div>
+        <div class="lie-q">"Don't be the SDR who talks a big game and delivers nothing."</div>
+        <div class="lie-a">Your manager isn't fooled by enthusiasm. They're measuring bookings, follow-through, and coachability. Make sure the numbers back up the energy.</div>
       </div>
     </div>
   </div>
@@ -366,9 +877,10 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">02</div>
       <div><div class="c8-badge">Course 8</div><span class="sec-eye">Section 02 — Red Flags</span></div>
-      <div class="lh-title">How to Spot Fake Potential</div>
+      <div class="lh-title ae-only">How to Spot Fake Potential</div>
+      <div class="lh-title sdr-only">Are You Faking It Without Knowing It?</div>
     </div>
-    <div class="lb">
+    <div class="lb ae-only">
       <p class="lp">A great SDR finds a way to make it work. A mediocre one finds excuses. If the reasons for missed metrics sound polished and rehearsed, you're being played.</p>
       <ul class="kp">
         <li><span class="kp-n">01</span><strong>Role-Play Heroes:</strong> Training scenarios are controlled and safe. If your SDR sounds polished in role-plays but flops in the wild, they're not delivering where it counts.</li>
@@ -379,6 +891,19 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div class="lie-tab">The Fix</div>
         <div class="lie-q">"Real potential isn't loud—it's visible in results."</div>
         <div class="lie-a">The best SDRs ask smart questions, take action, and hold themselves accountable. They don't need to talk about potential; they prove it.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">Here's the uncomfortable truth: you might be faking it and not even realize it. Killing it in role-plays but freezing on live calls. Talking big in team meetings but spending half your day "strategizing" instead of dialing. Your manager sees through all of it.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Role-Plays Aren't Real:</strong> Sounding good in practice doesn't count. Your manager is measuring live calls, real bookings, and actual follow-through.</li>
+        <li><span class="kp-n">02</span><strong>Excuses Are Transparent:</strong> "The leads are bad" and "It's a slow quarter" are phrases that scream bottom 30%. Replace them with: "Here's what I tried and here's what I'll adjust."</li>
+        <li><span class="kp-n">03</span><strong>Strategizing = Stalling:</strong> If you're spending more time planning calls than making them, you're hiding from the work.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Fix</div>
+        <div class="lie-q">"Prove it with results, not promises."</div>
+        <div class="lie-a">Stop narrating what you're going to do and start doing it. Your manager doesn't need a strategy deck — they need bookings on the board.</div>
       </div>
     </div>
   </div>
@@ -472,10 +997,11 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">04</div>
       <div><div class="c8-badge">Course 8</div><span class="sec-eye">Section 04 — Homework</span></div>
-      <div class="lh-title">Audit Your Team for Real Potential</div>
+      <div class="lh-title ae-only">Audit Your Team for Real Potential</div>
+      <div class="lh-title sdr-only">Audit Yourself for Real Potential</div>
     </div>
     <div class="tools-blk">
-      <div style="margin-top:20px">
+      <div class="ae-only" style="margin-top:20px">
         <div class="t-head">Task 1: Audit Your Team</div>
         <table class="data-table">
           <thead><tr><th>Category</th><th>Description</th></tr></thead>
@@ -485,20 +1011,48 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           </tbody>
         </table>
       </div>
-      <div>
+      <div class="ae-only">
         <div class="t-head">Task 2: Set Clear Benchmarks</div>
         <ul class="hw-list">
           <li><div class="hw-box"></div>Establish performance KPIs: Calls per day, Meetings booked per week, Follow-ups completed.</li>
           <li><div class="hw-box"></div>Measure against the KPIs over two weeks and identify who steps up.</li>
         </ul>
       </div>
-      <div>
+      <div class="ae-only">
         <div class="t-head">Task 3: Commit to Action-Takers</div>
         <ul class="hw-list">
           <li><div class="hw-box"></div>Choose 2 SDRs from your top 30%.</li>
           <li><div class="hw-box"></div>Create a personalized coaching plan and stretch goals for the next month.</li>
         </ul>
       </div>
+      <div class="sdr-only" style="margin-top:20px">
+        <div class="t-head">Task 1: Honest Self-Audit</div>
+        <table class="data-table">
+          <thead><tr><th>Question</th><th>Honest Answer</th></tr></thead>
+          <tbody>
+            <tr><td>Am I hitting my call/email volume targets daily?</td><td>Write your actual numbers vs. target for the last 5 days.</td></tr>
+            <tr><td>When I miss a metric, do I explain why or fix it?</td><td>Write down the last excuse you gave and what you could do instead.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sdr-only">
+        <div class="t-head">Task 2: Replace Excuses With Actions</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Write down 3 excuses you've used in the last month (e.g., "bad leads," "slow quarter").</li>
+          <li><div class="hw-box"></div>Next to each excuse, write the action you'll take instead.</li>
+          <li><div class="hw-box"></div>Share at least one of these with your manager proactively: "I noticed I was doing X, so I'm changing to Y."</li>
+        </ul>
+      </div>
+      <div class="sdr-only">
+        <div class="t-head">Task 3: Prove It This Week</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Set a personal stretch goal for this week (e.g., 5 extra calls per day, 2 additional bookings).</li>
+          <li><div class="hw-box"></div>Track your progress daily and share it with your manager at end of week — without being asked.</li>
+        </ul>
+      </div>
+
+      <!-- Accountability Gate -->
+      <div id="gate8" data-gate-screen="8"></div>
     </div>
   </div>
 
@@ -509,13 +1063,17 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <div class="comp-tag">Course 8 · Lesson 2 — Complete</div>
           <div style="font-family:var(--display);font-size:56px;color:var(--black);line-height:.9;margin:10px 0 0">08</div>
         </div>
-        <div class="comp-big">Results<br>over<br>personality.</div>
-        <div class="comp-sub">Potential is meaningless without execution. Stop chasing illusions, stop falling for noise, and start measuring results.</div>
+        <div class="comp-big ae-only">Results<br>over<br>personality.</div>
+        <div class="comp-big sdr-only">Prove it.<br>Don't<br>promise it.</div>
+        <div class="comp-sub ae-only">Potential is meaningless without execution. Stop chasing illusions, stop falling for noise, and start measuring results.</div>
+        <div class="comp-sub sdr-only">Enthusiasm gets you noticed. Execution gets you invested in. Stop talking about what you'll do and start showing what you've done.</div>
       </div>
       <div class="comp-r">
         <div class="eyebrow">Course 8 · Lesson 2 Complete</div>
-        <div class="comp-h">Invest in the action-takers.</div>
-        <p class="comp-p">Your energy belongs to the top performers—the ones who show up, grind, and deliver. That's how you build a team that wins.</p>
+        <div class="comp-h ae-only">Invest in the action-takers.</div>
+        <div class="comp-h sdr-only">Be the action-taker.</div>
+        <p class="comp-p ae-only">Your energy belongs to the top performers—the ones who show up, grind, and deliver. That's how you build a team that wins.</p>
+        <p class="comp-p sdr-only">Your manager is watching for results, not energy. Back up every ounce of enthusiasm with bookings, follow-through, and accountability. That's how you earn coaching and career momentum.</p>
         <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
         <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
       </div>
@@ -526,7 +1084,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 <aside class="sidebar">
   <div class="sb-course">08</div>
-  <div class="sb-lesson">Lesson 8.2 · Illusion of Potential</div>
+  <div class="sb-lesson ae-only">Lesson 8.2 · Illusion of Potential</div>
+  <div class="sb-lesson sdr-only">Lesson 8.2 · Be the Real Thing</div>
   <div class="sb-divider"></div>
   <div class="sb-label">Sections</div>
   <div class="sb-item" id="nav1" onclick="go(1)">
@@ -658,10 +1217,15 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); render();
+  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register accountability gate
+  var _role = document.documentElement.getAttribute('data-role') || 'sdr';
+  var _gatePrompt = _role === 'ae' ? 'Describe a time when you (or someone you managed) showed \'illusion of potential\' — looking busy without producing results. What were the warning signs? What would you do differently?' : 'Describe a time when you felt like you were working hard but not producing results. What were the warning signs that effort wasn\'t translating to outcomes? What did you change (or need to change)?';
+  AESDR.gate(8, { type:'reflection', prompt: _gatePrompt, minChars: 120 });
+  render();
 }
 function go(n){
-  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:{}},"*")}catch(e){}}
+  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;
   document.getElementById('s'+cur).classList.add('active');
@@ -924,6 +1488,7 @@ function canContinue(){
   if(cur===5)return Object.keys(seqDone).length===5;
   if(cur===6)return clsCount===8;
   if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 function getHint(){
@@ -935,7 +1500,7 @@ function getHint(){
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,
     7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    8:"Focus your time on the SDRs who prove themselves through action.",
+    8: AESDR.gateHint(8) || "Focus your time on the SDRs who prove themselves through action.",
   };
   return h[cur]||'';
 }
@@ -956,6 +1521,7 @@ function render(){
   const bnav=document.getElementById('bottomnav');
   bnav.style.display=hide?'none':'flex';
   if(hide)return;
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';

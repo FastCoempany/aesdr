@@ -10,11 +10,11 @@ import styles from "./page.module.css";
 const LESSONS = [
   { num: "01", title: "Building Real Camaraderie", desc: "How to build genuine relationships in sales orgs that actually last" },
   { num: "02", title: "Breaking Down Silos", desc: "Cross-functional alignment that makes your deals move faster" },
-  { num: "03", title: "SDR Performance Pitfalls", desc: "The traps that kill SDR careers — and how to avoid every one" },
-  { num: "04", title: "Navigating SDR Manager Madness", desc: "Surviving toxic managers, bad coaching, and political games" },
-  { num: "05", title: "The SDR Playbook", desc: "A real operating system for daily execution — not motivational noise" },
+  { num: "03", title: "Performance Pitfalls", desc: "The traps that kill sales careers — and how to avoid every one" },
+  { num: "04", title: "Navigating Manager Madness", desc: "Surviving toxic managers, bad coaching, and political games" },
+  { num: "05", title: "The Sales Playbook", desc: "A real operating system for daily execution — not motivational noise" },
   { num: "06", title: "Beyond the Sales Playbook", desc: "What to do when the playbook breaks and you have to think for yourself" },
-  { num: "07", title: "Prospecting Is Your Job Too", desc: "AEs who prospect outperform AEs who wait. Here's how." },
+  { num: "07", title: "Prospecting & Pipeline", desc: "Building self-sourced pipeline that gives you leverage and career options." },
   { num: "08", title: "The 30% Rule", desc: "The math behind pipeline health that most reps never learn" },
   { num: "09", title: "Salesforce Survival Guide", desc: "CRM hygiene that protects your deals and your credibility" },
   { num: "10", title: "Breaking Down the Commission Myth", desc: "Financial resilience on variable comp — before it breaks you" },
@@ -49,7 +49,7 @@ const FAQ = [
   },
   {
     q: "What's the difference between Individual and Team?",
-    a: "Individual is one seat, one login. Team gives you up to 10 seats with a shared admin dashboard — built for SDR managers who want their whole pod on the same page.",
+    a: "Individual is one seat, one login. Team gives you up to 10 seats with a shared admin dashboard — built for sales managers who want their whole team on the same page.",
   },
   {
     q: "Is there a community or is this self-paced only?",
@@ -141,7 +141,7 @@ export default function LandingPage() {
           <div className={styles.painCard}>
             <span className={styles.painIcon}>&#x25CB;</span>
             <p className={styles.painText}>
-              <strong>Career uncertainty is real.</strong> You&apos;re 14 months in and still not sure if you&apos;re building a career or just surviving one. The &ldquo;SDR to AE&rdquo; path feels like a myth your manager tells you to keep you dialing.
+              <strong>Career uncertainty is real.</strong> You&apos;re months in and still not sure if you&apos;re building a career or just surviving one. The next promotion feels like a myth your manager tells you to keep you grinding.
             </p>
           </div>
           <div className={styles.painCard}>

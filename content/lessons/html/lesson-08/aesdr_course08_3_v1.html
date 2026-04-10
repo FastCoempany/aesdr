@@ -2,6 +2,501 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- AESDR Role Detection -->
+<script>
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  var role = p.get('role') || 'sdr';
+  document.documentElement.setAttribute('data-role', role);
+})();
+</script>
+<style>
+/* Role-conditional content: hide content not matching current role */
+[data-role="ae"] .sdr-only { display: none !important; }
+[data-role="sdr"] .ae-only { display: none !important; }
+/* Softer variant: swap text content visibility */
+[data-role="ae"] .sdr-text { display: none !important; }
+[data-role="sdr"] .ae-text { display: none !important; }
+</style>
+<!-- AESDR Accountability Gates -->
+<style>
+/* ══════════════════════════════════════════
+   AESDR Accountability Gates — Styles v1
+   Matches lesson design system vars:
+     --black, --white, --mid, --lite, --lite2,
+     --amber, --cobalt, --green, --line, --iris,
+     --cond, --serif, --mono
+══════════════════════════════════════════ */
+
+/* ── Gate container ── */
+.gate-box {
+  margin: 28px 0 12px;
+  padding: 28px 32px 24px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  position: relative;
+}
+.gate-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+}
+
+/* ── Label / tag ── */
+.gate-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 14px;
+}
+
+/* ── Prompt text ── */
+.gate-prompt {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--black);
+  margin-bottom: 18px;
+}
+
+/* ── Textarea ── */
+.gate-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px 16px;
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--black);
+  background: var(--lite);
+  border: 1px solid var(--line2);
+  resize: vertical;
+  outline: none;
+  transition: border-color .2s;
+}
+.gate-textarea:focus {
+  border-color: var(--amber);
+}
+.gate-textarea.gate-evidence {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  min-height: 100px;
+}
+.gate-textarea::placeholder {
+  color: var(--mid);
+  opacity: .6;
+}
+
+/* ── Footer (counter + submit) ── */
+.gate-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  gap: 12px;
+}
+
+/* ── Character counter ── */
+.gate-counter {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+
+/* ── Submit button ── */
+.gate-submit {
+  font-family: var(--cond);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border: 2px solid var(--black);
+  background: var(--black);
+  color: var(--white);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all .15s;
+}
+.gate-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 2s linear infinite;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.gate-submit:hover::before {
+  opacity: 1;
+}
+.gate-submit:hover {
+  color: var(--black);
+}
+.gate-submit span {
+  position: relative;
+  z-index: 1;
+}
+.gate-submit:disabled,
+.gate-submit:disabled:hover {
+  opacity: .28;
+  cursor: not-allowed;
+  background: var(--black);
+  color: var(--white);
+}
+.gate-submit:disabled::before,
+.gate-submit:disabled:hover::before {
+  display: none;
+}
+
+/* ── Rubric checklist ── */
+.gate-rubric {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.gate-rubric-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 10px;
+}
+.gate-rubric-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--black);
+}
+.gate-rubric-item input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--amber);
+  flex-shrink: 0;
+}
+
+/* ── Time gate ── */
+.gate-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 20px 0 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--line2);
+  background: var(--lite);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+.gate-time-icon {
+  font-size: 14px;
+}
+.gate-time-num {
+  font-weight: 700;
+  color: var(--amber);
+  font-size: 13px;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* ── Completed state ── */
+.gate-done {
+  margin: 24px 0 8px;
+  padding: 20px 24px;
+  border: 2px solid var(--green);
+  background: var(--grn-lt);
+}
+.gate-done-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.gate-done-preview {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--mid);
+  font-style: italic;
+}
+
+</style>
+<script>
+/*  AESDR Accountability Gates v1
+ *  Inject into lesson HTML files alongside role-detection.
+ *
+ *  Usage in lesson JS:
+ *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
+ *    AESDR.gate(1, { type:'time', seconds:60 });
+ *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
+ *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
+ *
+ *  In canContinue():
+ *    if (!AESDR.gateReady(cur)) return false;
+ *
+ *  Gate state auto-saves via postMessage when completed.
+ */
+window.AESDR = window.AESDR || {};
+
+(function(A) {
+  var gates = {};      // screenNum -> config
+  var gateState = {};  // screenNum -> { completed, value, ... }
+  var timers = {};     // screenNum -> { started, remaining }
+
+  /* ── Register a gate ── */
+  A.gate = function(screen, cfg) {
+    gates[screen] = cfg;
+    gateState[screen] = { completed: false, value: '' };
+  };
+
+  /* ── Check if gate is satisfied ── */
+  A.gateReady = function(screen) {
+    if (!gates[screen]) return true;
+    return gateState[screen] && gateState[screen].completed;
+  };
+
+  /* ── Get gate hint text ── */
+  A.gateHint = function(screen) {
+    var g = gates[screen];
+    if (!g) return '';
+    var s = gateState[screen];
+    if (s.completed) return '\u2713 Gate complete';
+
+    if (g.type === 'time') {
+      var r = timers[screen] ? timers[screen].remaining : g.seconds;
+      return r > 0 ? 'Unlocks in ' + r + 's' : '';
+    }
+    if (g.type === 'reflection' || g.type === 'evidence') {
+      var len = (s.value || '').length;
+      return len + ' / ' + g.minChars + ' characters';
+    }
+    if (g.type === 'application') {
+      var len2 = (s.value || '').length;
+      var checks = s.rubricChecked || 0;
+      var total = (g.rubric || []).length;
+      return len2 + ' chars \u00B7 ' + checks + '/' + total + ' rubric items';
+    }
+    return '';
+  };
+
+  /* ── Get all gate data for stateData (progress saving) ── */
+  A.gateData = function() {
+    var out = {};
+    for (var k in gateState) {
+      if (gateState[k].completed) {
+        out['gate_' + k] = {
+          type: gates[k].type,
+          value: gateState[k].value,
+          completedAt: gateState[k].completedAt
+        };
+      }
+    }
+    return out;
+  };
+
+  /* ── Render gate UI into a container ── */
+  A.renderGate = function(screen, containerId) {
+    var g = gates[screen];
+    if (!g) return;
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    var s = gateState[screen];
+
+    if (s.completed) {
+      el.innerHTML = _completedHTML(g, s);
+      return;
+    }
+
+    switch(g.type) {
+      case 'reflection': el.innerHTML = _reflectionHTML(screen, g, s); break;
+      case 'application': el.innerHTML = _applicationHTML(screen, g, s); break;
+      case 'evidence': el.innerHTML = _evidenceHTML(screen, g, s); break;
+      case 'time': _startTimer(screen, g); el.innerHTML = _timeHTML(screen, g); break;
+    }
+  };
+
+  /* ── Completed state ── */
+  function _completedHTML(g, s) {
+    var typeLabel = { reflection:'Reflection', application:'Response', evidence:'Evidence', time:'Time' };
+    return '<div class="gate-done">' +
+      '<div class="gate-done-tag">\u2713 ' + (typeLabel[g.type]||'Gate') + ' Submitted</div>' +
+      (g.type !== 'time' ? '<div class="gate-done-preview">' + _esc(s.value).substring(0,200) + (s.value.length > 200 ? '...' : '') + '</div>' : '') +
+    '</div>';
+  }
+
+  /* ── Reflection Gate ── */
+  function _reflectionHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Reflection Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your reflection here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Reflection</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Application Gate ── */
+  function _applicationHTML(screen, g) {
+    var rubricHTML = (g.rubric || []).map(function(r, i) {
+      return '<label class="gate-rubric-item">' +
+        '<input type="checkbox" onchange="AESDR._onRubric(' + screen + ',' + i + ',this.checked)">' +
+        '<span>' + r + '</span></label>';
+    }).join('');
+
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Application Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your response...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-counter" id="gateCtr' + screen + '">0 / ' + (g.minChars || 50) + ' characters</div>' +
+      (rubricHTML ? '<div class="gate-rubric"><div class="gate-rubric-label">Self-evaluate your response:</div>' + rubricHTML + '</div>' : '') +
+      '<div class="gate-footer">' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Response</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Evidence Gate ── */
+  function _evidenceHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Evidence Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea gate-evidence" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Paste your evidence here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Evidence</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Time Gate ── */
+  function _timeHTML(screen, g) {
+    var r = timers[screen] ? timers[screen].remaining : g.seconds;
+    if (r <= 0) return '';
+    return '<div class="gate-time" id="gateTime' + screen + '">' +
+      '<span class="gate-time-icon">\u23F3</span> ' +
+      '<span class="gate-time-num" id="gateTimeCtr' + screen + '">' + r + '</span>s remaining' +
+    '</div>';
+  }
+
+  function _startTimer(screen, g) {
+    if (timers[screen]) return;
+    timers[screen] = { remaining: g.seconds };
+    var iv = setInterval(function() {
+      timers[screen].remaining--;
+      var el = document.getElementById('gateTimeCtr' + screen);
+      if (el) el.textContent = timers[screen].remaining;
+      if (timers[screen].remaining <= 0) {
+        clearInterval(iv);
+        gateState[screen].completed = true;
+        gateState[screen].completedAt = new Date().toISOString();
+        var timeEl = document.getElementById('gateTime' + screen);
+        if (timeEl) timeEl.style.display = 'none';
+        // Trigger render if the lesson exposes it
+        if (typeof window.render === 'function') window.render();
+      }
+    }, 1000);
+  }
+
+  /* ── Internal handlers ── */
+  A._onInput = function(screen, val) {
+    gateState[screen].value = val;
+    var g = gates[screen];
+    var min = g.minChars || 50;
+    var ctr = document.getElementById('gateCtr' + screen);
+    if (ctr) ctr.textContent = val.length + ' / ' + min + (g.type === 'application' ? ' characters' : '');
+
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      var ready = val.length >= min;
+      if (g.type === 'application' && g.rubric) {
+        var checks = gateState[screen].rubricChecked || 0;
+        ready = ready && checks >= g.rubric.length;
+      }
+      btn.disabled = !ready;
+    }
+  };
+
+  A._onRubric = function(screen, idx, checked) {
+    if (!gateState[screen]._rubric) gateState[screen]._rubric = {};
+    gateState[screen]._rubric[idx] = checked;
+    var count = 0;
+    for (var k in gateState[screen]._rubric) {
+      if (gateState[screen]._rubric[k]) count++;
+    }
+    gateState[screen].rubricChecked = count;
+
+    // Re-check submit button
+    var g = gates[screen];
+    var val = gateState[screen].value || '';
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      btn.disabled = !(val.length >= (g.minChars || 50) && count >= (g.rubric || []).length);
+    }
+  };
+
+  A._submit = function(screen) {
+    var s = gateState[screen];
+    s.completed = true;
+    s.completedAt = new Date().toISOString();
+
+    // Re-render the gate as completed
+    var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
+    containers.forEach(function(el) { A.renderGate(screen, el.id); });
+
+    // Save progress via postMessage
+    if (window.parent !== window) {
+      try {
+        window.parent.postMessage({
+          type: 'aesdr:progress',
+          screen: screen,
+          stateData: A.gateData()
+        }, '*');
+      } catch(e) {}
+    }
+
+    // Trigger render if available
+    if (typeof window.render === 'function') window.render();
+  };
+
+  /* ── Escape helper ── */
+  function _esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+})(window.AESDR);
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AESDR — Course 8.3: Are You the Problem?</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -288,9 +783,11 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div>
           <div class="cv-c2tag">AESDR · Lesson 8.3</div>
           <div class="cv-course-num">08</div>
-          <div class="cv-big">Are You the Problem?</div>
+          <div class="cv-big ae-only">Are You the Problem?</div>
+          <div class="cv-big sdr-only">Are You Getting in Your Own Way?</div>
         </div>
-        <div class="cv-tagline">Self-Reflection, Accountability, and Becoming an Irreplaceable AE.</div>
+        <div class="cv-tagline ae-only">Self-Reflection, Accountability, and Becoming an Irreplaceable AE.</div>
+        <div class="cv-tagline sdr-only">Self-Awareness, Accountability, and Building the Resilience That Gets You Promoted.</div>
       </div>
       <div class="cvr">
         <div class="eyebrow">Course 8 · Lesson 3 of 3</div>
@@ -311,9 +808,10 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">01</div>
       <div><div class="c8-badge">Course 8</div><span class="sec-eye">Section 01 — Introduction</span></div>
-      <div class="lh-title">The 30% Rule Applies to You Too</div>
+      <div class="lh-title ae-only">The 30% Rule Applies to You Too</div>
+      <div class="lh-title sdr-only">The Biggest Threat to Your Career Is You</div>
     </div>
-    <div class="lb">
+    <div class="lb ae-only">
       <p class="lp">Most AEs think they're above average. Newsflash: if you're not consistently delivering, you're just another replaceable cog. The same principles that apply to SDRs—coachability, effort, and results—apply to AEs.</p>
       <ul class="kp">
         <li><span class="kp-n">01</span><strong>The Reality:</strong> If you're not in the top 30% of AEs, you're replaceable.</li>
@@ -324,6 +822,19 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div class="lie-tab">The Mirror Test</div>
         <div class="lie-q">"If you're not self-sourcing, coachable, and driving results, you're at risk."</div>
         <div class="lie-a">The 30% rule isn't just a management tool for SDRs. It's the standard you must hold yourself to as an AE.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">It's easy to blame the leads, the territory, or your manager. But the hardest question is: are you getting in your own way? The SDRs who make it to AE are the ones who look in the mirror first and fix what they find.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>The Comfort Trap:</strong> If you're doing just enough to not get fired, you're already falling behind.</li>
+        <li><span class="kp-n">02</span><strong>The Blame Reflex:</strong> Every time you blame leads, timing, or territory, you give away control of your own career.</li>
+        <li><span class="kp-n">03</span><strong>The Growth Question:</strong> Are you actively getting better every week — or just surviving?</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Mirror Test</div>
+        <div class="lie-q">"If you can't point to specific ways you've improved this month, you're stalling."</div>
+        <div class="lie-a">The SDR role is a proving ground. The ones who self-reflect, self-correct, and push themselves are the ones who get promoted. Everyone else gets recycled.</div>
       </div>
     </div>
   </div>
@@ -363,9 +874,10 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">02</div>
       <div><div class="c8-badge">Course 8</div><span class="sec-eye">Section 02 — The Breakdown</span></div>
-      <div class="lh-title">Are You the Problem?</div>
+      <div class="lh-title ae-only">Are You the Problem?</div>
+      <div class="lh-title sdr-only">The Habits That Hold You Back</div>
     </div>
-    <div class="lb">
+    <div class="lb ae-only">
       <p class="lp">It's easy to point fingers at SDRs when your pipeline is weak. But if your entire strategy relies on SDR-set meetings, that's on you.</p>
       <ul class="kp">
         <li><span class="kp-n">01</span><strong>Are You Uncoachable?</strong> Uncoachable AEs think they've figured it all out. They say "I know what I'm doing" and blow off pipeline reviews. The top 30% crave feedback, adapt fast, and improve constantly.</li>
@@ -376,6 +888,19 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div class="lie-tab">The Fix</div>
         <div class="lie-q">"Top AEs don't wait for success—they create it."</div>
         <div class="lie-a">The top AEs source their own meetings, drive their own success, and partner with SDRs—not blame them.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">Nobody is going to tell you this in a team meeting, so hear it now: many SDRs sabotage themselves with habits they don't even recognize. Avoiding the phone, cherry-picking leads, venting instead of adjusting — these are career killers disguised as normal frustrations.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Avoiding the Phone:</strong> "I work better over email" is code for "I'm afraid of rejection." The phone is where bookings happen. Stop avoiding it.</li>
+        <li><span class="kp-n">02</span><strong>Cherry-Picking Leads:</strong> Spending 30 minutes researching each prospect to avoid dialing is procrastination in disguise. Volume creates learning; learning creates quality.</li>
+        <li><span class="kp-n">03</span><strong>Venting Instead of Adapting:</strong> Complaining about bad leads or bad managers in Slack might feel good, but it signals to everyone that you're in the bottom 30%.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Fix</div>
+        <div class="lie-q">"Replace every complaint with an action."</div>
+        <div class="lie-a">The SDRs who get promoted don't waste energy venting. They take the same bad leads, the same tough territory, and find a way to make it work. That's the difference.</div>
       </div>
     </div>
   </div>
@@ -469,10 +994,11 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">04</div>
       <div><div class="c8-badge">Course 8</div><span class="sec-eye">Section 04 — Homework</span></div>
-      <div class="lh-title">Audit Yourself as an AE</div>
+      <div class="lh-title ae-only">Audit Yourself as an AE</div>
+      <div class="lh-title sdr-only">Break Your Bad Habits This Week</div>
     </div>
     <div class="tools-blk">
-      <div style="margin-top:20px">
+      <div class="ae-only" style="margin-top:20px">
         <div class="t-head">Task 1: Audit Yourself</div>
         <table class="data-table">
           <thead><tr><th>Self-Reflection Area</th><th>Key Questions</th></tr></thead>
@@ -483,7 +1009,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           </tbody>
         </table>
       </div>
-      <div>
+      <div class="ae-only">
         <div class="t-head">Task 2: Set a Plan to Level Up</div>
         <ul class="hw-list">
           <li><div class="hw-box"></div>Identify one area you've been avoiding (prospecting, self-sourcing, or taking feedback).</li>
@@ -491,7 +1017,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <li><div class="hw-box"></div>Track your progress daily.</li>
         </ul>
       </div>
-      <div>
+      <div class="ae-only">
         <div class="t-head">Task 3: Ask for Real Feedback</div>
         <ul class="hw-list">
           <li><div class="hw-box"></div>Schedule a pipeline review with your manager or SDR.</li>
@@ -499,6 +1025,36 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <li><div class="hw-box"></div>Ask: "What's one thing I need to change immediately?"</li>
         </ul>
       </div>
+      <div class="sdr-only" style="margin-top:20px">
+        <div class="t-head">Task 1: Identify Your Self-Sabotage</div>
+        <table class="data-table">
+          <thead><tr><th>Bad Habit</th><th>Honest Check</th></tr></thead>
+          <tbody>
+            <tr><td>Phone Avoidance</td><td>How many hours did I spend emailing vs. calling this week? What's my connect rate?</td></tr>
+            <tr><td>Lead Cherry-Picking</td><td>How long do I spend researching before I dial? Am I using "research" to avoid calling?</td></tr>
+            <tr><td>Complaining vs. Adapting</td><td>Write down the last 3 complaints you made (to peers, in Slack, in your head). What action could replace each one?</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sdr-only">
+        <div class="t-head">Task 2: The 5-Day Challenge</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>For 5 consecutive days, hit 110% of your call target — no excuses, no adjustments.</li>
+          <li><div class="hw-box"></div>After each day, write one sentence: "Today I improved at ___."</li>
+          <li><div class="hw-box"></div>At the end of the week, bring your 5 sentences to your manager and ask for feedback on your trajectory.</li>
+        </ul>
+      </div>
+      <div class="sdr-only">
+        <div class="t-head">Task 3: Manage Up With a Purpose</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Schedule a 15-minute meeting with your manager. Come with: your numbers for the week, one thing you're working to improve, and one question about what top performers do differently.</li>
+          <li><div class="hw-box"></div>Ask: "What's one habit I should build to get promoted faster?"</li>
+          <li><div class="hw-box"></div>Follow through on whatever they say — and report back next week.</li>
+        </ul>
+      </div>
+
+      <!-- Accountability Gate -->
+      <div id="gate8" data-gate-screen="8"></div>
     </div>
   </div>
 
@@ -509,13 +1065,17 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <div class="comp-tag">Course 8 · Lesson 3 — Complete</div>
           <div style="font-family:var(--display);font-size:56px;color:var(--black);line-height:.9;margin:10px 0 0">08</div>
         </div>
-        <div class="comp-big">Be<br>Irreplaceable.</div>
-        <div class="comp-sub">If you want to stay in SaaS sales—and thrive—you need to level up. Stop pointing fingers, start looking in the mirror, and do the work.</div>
+        <div class="comp-big ae-only">Be<br>Irreplaceable.</div>
+        <div class="comp-big sdr-only">Get out of<br>your own<br>way.</div>
+        <div class="comp-sub ae-only">If you want to stay in SaaS sales—and thrive—you need to level up. Stop pointing fingers, start looking in the mirror, and do the work.</div>
+        <div class="comp-sub sdr-only">The biggest obstacle to your promotion isn't your manager, the leads, or the territory. It's the habits you refuse to change. Fix them and the career follows.</div>
       </div>
       <div class="comp-r">
         <div class="eyebrow">Course 8 · Lesson 3 Complete</div>
-        <div class="comp-h">The choice is yours.</div>
-        <p class="comp-p">At the end of the day, you're either in the top 30% or you're at risk of being replaced. Success starts with accountability, action, and improvement.</p>
+        <div class="comp-h ae-only">The choice is yours.</div>
+        <div class="comp-h sdr-only">Own your growth.</div>
+        <p class="comp-p ae-only">At the end of the day, you're either in the top 30% or you're at risk of being replaced. Success starts with accountability, action, and improvement.</p>
+        <p class="comp-p sdr-only">The SDRs who get promoted are the ones who stop blaming, start adapting, and take radical ownership of their own development. Your career is your responsibility — act like it.</p>
         <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
         <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
       </div>
@@ -526,7 +1086,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 <aside class="sidebar">
   <div class="sb-course">08</div>
-  <div class="sb-lesson">Lesson 8.3 · Are You the Problem?</div>
+  <div class="sb-lesson ae-only">Lesson 8.3 · Are You the Problem?</div>
+  <div class="sb-lesson sdr-only">Lesson 8.3 · Getting Out of Your Own Way</div>
   <div class="sb-divider"></div>
   <div class="sb-label">Sections</div>
   <div class="sb-item" id="nav1" onclick="go(1)">
@@ -575,25 +1136,25 @@ const SILO_ORDER = [2,5,0,3,1,4];
 const BLAME_ITEMS = [
   {
     statement:'"My pipeline is weak right now because my SDR isn\'t booking enough."',
-    opts:["Diagnosis: You need a better SDR","Excuse: Blaming SDRs for pipeline issues. Fix: Own your pipeline and start self-sourcing.","You should complain to marketing","Excuse: Uncoachable. Fix: Take a training class."],
+    opts:["Excuse: Overworked. Fix: Reduce your account load to focus on fewer deals.","Excuse: Blaming SDRs for pipeline issues. Fix: Own your pipeline and start self-sourcing.","Excuse: Misaligned targets. Fix: Renegotiate your quota with leadership.","Excuse: Uncoachable. Fix: Take a training class."],
     ans:1,
     fix:"Resolution: Excuse: Blaming SDRs. Real Fix: Own your pipeline and self-source. Relying 100% on SDRs makes you vulnerable."
   },
   {
     statement:'"These coaching meetings are a waste of time. I know what I\'m doing."',
-    opts:["Excuse: Uncoachable. Fix: The top 30% crave feedback and adapt fast. Open yourself to coaching.","Diagnosis: The meetings actually are a waste of time","Excuse: Wasting energy. Fix: Focus on closing deals instead.","You should skip the meetings"],
+    opts:["Excuse: Uncoachable. Fix: The top 30% crave feedback and adapt fast. Open yourself to coaching.","Excuse: Time management. Fix: Restructure meetings to be shorter and more focused.","Excuse: Wasting energy. Fix: Focus on closing deals instead.","Excuse: Self-sufficient. Fix: Replace group coaching with self-directed learning."],
     ans:0,
     fix:"Resolution: Excuse: Uncoachable. Real Fix: The top 30% crave feedback and adapt fast. Stop ignoring coaching."
   },
   {
     statement:'"I\'m chasing these low-quality deals because the inbound leads are terrible."',
-    opts:["Blame the SDRs for bad qualification","Excuse: Wasting energy on the wrong things. Fix: Qualify harder and focus on high-value leads.","Close the low-quality deals anyway","Excuse: Uncoachable. Fix: Listen to your manager."],
+    opts:["Excuse: Under-resourced. Fix: Ask for better marketing collateral to improve lead quality.","Excuse: Wasting energy on the wrong things. Fix: Qualify harder and focus on high-value leads.","Excuse: Process gap. Fix: Build a stricter lead scoring framework with the SDR team.","Excuse: Uncoachable. Fix: Listen to your manager."],
     ans:1,
     fix:"Resolution: Excuse: Wasting energy. Real Fix: Qualify harder and focus on high-value leads instead of chasing bad-fit deals to look busy."
   },
   {
     statement:'"I don\'t need to prospect, I\'m an AE. My job is to close."',
-    opts:["Diagnosis: You are absolutely right","Excuse: Avoiding tough tasks. Fix: Pick up the phone and own your results. Top AEs self-source.","You should just send automated emails","Excuse: Blaming marketing. Fix: Create better collateral."],
+    opts:["Excuse: Role clarity. Fix: Specialize fully in closing to maximize your win rate.","Excuse: Avoiding tough tasks. Fix: Pick up the phone and own your results. Top AEs self-source.","Excuse: Efficiency-focused. Fix: Automate outbound sequences to prospect without manual effort.","Excuse: Blaming marketing. Fix: Create better collateral."],
     ans:1,
     fix:"Resolution: Excuse: Avoiding tough tasks. Real Fix: Pick up the phone and own your results. Top AEs build their own pipeline."
   }
@@ -638,7 +1199,7 @@ const QUIZ = [
   },
   {
     q:"What should an AE do if they catch themselves chasing bad-fit deals just to look busy?",
-    opts:["Keep chasing them to maintain high activity metrics","Blame marketing for sending bad leads","Qualify harder and focus their energy on high-value leads","Pass the bad-fit deals back to the SDR"],
+    opts:["Increase outreach volume to compensate for lower conversion rates","Adjust the ideal customer profile to include those deals","Qualify harder and focus their energy on high-value leads","Move those deals to a nurture sequence and revisit next quarter"],
     ans:2
   }
 ];
@@ -658,10 +1219,15 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); render();
+  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register accountability gate
+  var _role = document.documentElement.getAttribute('data-role') || 'sdr';
+  var _gatePrompt = _role === 'ae' ? 'Write a brutally honest self-assessment: 3 things you do well as an AE, 3 things you need to improve, and a specific 30-day plan for the #1 improvement area.' : 'Write a brutally honest self-assessment: 3 things you do well as an SDR, 3 things you need to improve, and a specific 30-day plan for the #1 improvement area.';
+  AESDR.gate(8, { type:'application', prompt: _gatePrompt, minChars: 150 });
+  render();
 }
 function go(n){
-  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:{}},"*")}catch(e){}}
+  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;
   document.getElementById('s'+cur).classList.add('active');
@@ -924,6 +1490,7 @@ function canContinue(){
   if(cur===5)return Object.keys(seqDone).length===5;
   if(cur===6)return clsCount===8;
   if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 function getHint(){
@@ -935,7 +1502,7 @@ function getHint(){
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,
     7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    8:"Evaluate your own performance and address your bad habits.",
+    8: AESDR.gateHint(8) || "Evaluate your own performance and address your bad habits.",
   };
   return h[cur]||'';
 }
@@ -956,6 +1523,7 @@ function render(){
   const bnav=document.getElementById('bottomnav');
   bnav.style.display=hide?'none':'flex';
   if(hide)return;
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';

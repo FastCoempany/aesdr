@@ -2,6 +2,501 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- AESDR Role Detection -->
+<script>
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  var role = p.get('role') || 'sdr';
+  document.documentElement.setAttribute('data-role', role);
+})();
+</script>
+<style>
+/* Role-conditional content: hide content not matching current role */
+[data-role="ae"] .sdr-only { display: none !important; }
+[data-role="sdr"] .ae-only { display: none !important; }
+/* Softer variant: swap text content visibility */
+[data-role="ae"] .sdr-text { display: none !important; }
+[data-role="sdr"] .ae-text { display: none !important; }
+</style>
+<!-- AESDR Accountability Gates -->
+<style>
+/* ══════════════════════════════════════════
+   AESDR Accountability Gates — Styles v1
+   Matches lesson design system vars:
+     --black, --white, --mid, --lite, --lite2,
+     --amber, --cobalt, --green, --line, --iris,
+     --cond, --serif, --mono
+══════════════════════════════════════════ */
+
+/* ── Gate container ── */
+.gate-box {
+  margin: 28px 0 12px;
+  padding: 28px 32px 24px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  position: relative;
+}
+.gate-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+}
+
+/* ── Label / tag ── */
+.gate-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 14px;
+}
+
+/* ── Prompt text ── */
+.gate-prompt {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--black);
+  margin-bottom: 18px;
+}
+
+/* ── Textarea ── */
+.gate-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px 16px;
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--black);
+  background: var(--lite);
+  border: 1px solid var(--line2);
+  resize: vertical;
+  outline: none;
+  transition: border-color .2s;
+}
+.gate-textarea:focus {
+  border-color: var(--amber);
+}
+.gate-textarea.gate-evidence {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  min-height: 100px;
+}
+.gate-textarea::placeholder {
+  color: var(--mid);
+  opacity: .6;
+}
+
+/* ── Footer (counter + submit) ── */
+.gate-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  gap: 12px;
+}
+
+/* ── Character counter ── */
+.gate-counter {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+
+/* ── Submit button ── */
+.gate-submit {
+  font-family: var(--cond);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border: 2px solid var(--black);
+  background: var(--black);
+  color: var(--white);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all .15s;
+}
+.gate-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 2s linear infinite;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.gate-submit:hover::before {
+  opacity: 1;
+}
+.gate-submit:hover {
+  color: var(--black);
+}
+.gate-submit span {
+  position: relative;
+  z-index: 1;
+}
+.gate-submit:disabled,
+.gate-submit:disabled:hover {
+  opacity: .28;
+  cursor: not-allowed;
+  background: var(--black);
+  color: var(--white);
+}
+.gate-submit:disabled::before,
+.gate-submit:disabled:hover::before {
+  display: none;
+}
+
+/* ── Rubric checklist ── */
+.gate-rubric {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.gate-rubric-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 10px;
+}
+.gate-rubric-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--black);
+}
+.gate-rubric-item input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--amber);
+  flex-shrink: 0;
+}
+
+/* ── Time gate ── */
+.gate-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 20px 0 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--line2);
+  background: var(--lite);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+.gate-time-icon {
+  font-size: 14px;
+}
+.gate-time-num {
+  font-weight: 700;
+  color: var(--amber);
+  font-size: 13px;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* ── Completed state ── */
+.gate-done {
+  margin: 24px 0 8px;
+  padding: 20px 24px;
+  border: 2px solid var(--green);
+  background: var(--grn-lt);
+}
+.gate-done-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.gate-done-preview {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--mid);
+  font-style: italic;
+}
+
+</style>
+<script>
+/*  AESDR Accountability Gates v1
+ *  Inject into lesson HTML files alongside role-detection.
+ *
+ *  Usage in lesson JS:
+ *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
+ *    AESDR.gate(1, { type:'time', seconds:60 });
+ *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
+ *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
+ *
+ *  In canContinue():
+ *    if (!AESDR.gateReady(cur)) return false;
+ *
+ *  Gate state auto-saves via postMessage when completed.
+ */
+window.AESDR = window.AESDR || {};
+
+(function(A) {
+  var gates = {};      // screenNum -> config
+  var gateState = {};  // screenNum -> { completed, value, ... }
+  var timers = {};     // screenNum -> { started, remaining }
+
+  /* ── Register a gate ── */
+  A.gate = function(screen, cfg) {
+    gates[screen] = cfg;
+    gateState[screen] = { completed: false, value: '' };
+  };
+
+  /* ── Check if gate is satisfied ── */
+  A.gateReady = function(screen) {
+    if (!gates[screen]) return true;
+    return gateState[screen] && gateState[screen].completed;
+  };
+
+  /* ── Get gate hint text ── */
+  A.gateHint = function(screen) {
+    var g = gates[screen];
+    if (!g) return '';
+    var s = gateState[screen];
+    if (s.completed) return '\u2713 Gate complete';
+
+    if (g.type === 'time') {
+      var r = timers[screen] ? timers[screen].remaining : g.seconds;
+      return r > 0 ? 'Unlocks in ' + r + 's' : '';
+    }
+    if (g.type === 'reflection' || g.type === 'evidence') {
+      var len = (s.value || '').length;
+      return len + ' / ' + g.minChars + ' characters';
+    }
+    if (g.type === 'application') {
+      var len2 = (s.value || '').length;
+      var checks = s.rubricChecked || 0;
+      var total = (g.rubric || []).length;
+      return len2 + ' chars \u00B7 ' + checks + '/' + total + ' rubric items';
+    }
+    return '';
+  };
+
+  /* ── Get all gate data for stateData (progress saving) ── */
+  A.gateData = function() {
+    var out = {};
+    for (var k in gateState) {
+      if (gateState[k].completed) {
+        out['gate_' + k] = {
+          type: gates[k].type,
+          value: gateState[k].value,
+          completedAt: gateState[k].completedAt
+        };
+      }
+    }
+    return out;
+  };
+
+  /* ── Render gate UI into a container ── */
+  A.renderGate = function(screen, containerId) {
+    var g = gates[screen];
+    if (!g) return;
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    var s = gateState[screen];
+
+    if (s.completed) {
+      el.innerHTML = _completedHTML(g, s);
+      return;
+    }
+
+    switch(g.type) {
+      case 'reflection': el.innerHTML = _reflectionHTML(screen, g, s); break;
+      case 'application': el.innerHTML = _applicationHTML(screen, g, s); break;
+      case 'evidence': el.innerHTML = _evidenceHTML(screen, g, s); break;
+      case 'time': _startTimer(screen, g); el.innerHTML = _timeHTML(screen, g); break;
+    }
+  };
+
+  /* ── Completed state ── */
+  function _completedHTML(g, s) {
+    var typeLabel = { reflection:'Reflection', application:'Response', evidence:'Evidence', time:'Time' };
+    return '<div class="gate-done">' +
+      '<div class="gate-done-tag">\u2713 ' + (typeLabel[g.type]||'Gate') + ' Submitted</div>' +
+      (g.type !== 'time' ? '<div class="gate-done-preview">' + _esc(s.value).substring(0,200) + (s.value.length > 200 ? '...' : '') + '</div>' : '') +
+    '</div>';
+  }
+
+  /* ── Reflection Gate ── */
+  function _reflectionHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Reflection Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your reflection here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Reflection</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Application Gate ── */
+  function _applicationHTML(screen, g) {
+    var rubricHTML = (g.rubric || []).map(function(r, i) {
+      return '<label class="gate-rubric-item">' +
+        '<input type="checkbox" onchange="AESDR._onRubric(' + screen + ',' + i + ',this.checked)">' +
+        '<span>' + r + '</span></label>';
+    }).join('');
+
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Application Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your response...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-counter" id="gateCtr' + screen + '">0 / ' + (g.minChars || 50) + ' characters</div>' +
+      (rubricHTML ? '<div class="gate-rubric"><div class="gate-rubric-label">Self-evaluate your response:</div>' + rubricHTML + '</div>' : '') +
+      '<div class="gate-footer">' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Response</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Evidence Gate ── */
+  function _evidenceHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Evidence Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea gate-evidence" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Paste your evidence here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Evidence</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Time Gate ── */
+  function _timeHTML(screen, g) {
+    var r = timers[screen] ? timers[screen].remaining : g.seconds;
+    if (r <= 0) return '';
+    return '<div class="gate-time" id="gateTime' + screen + '">' +
+      '<span class="gate-time-icon">\u23F3</span> ' +
+      '<span class="gate-time-num" id="gateTimeCtr' + screen + '">' + r + '</span>s remaining' +
+    '</div>';
+  }
+
+  function _startTimer(screen, g) {
+    if (timers[screen]) return;
+    timers[screen] = { remaining: g.seconds };
+    var iv = setInterval(function() {
+      timers[screen].remaining--;
+      var el = document.getElementById('gateTimeCtr' + screen);
+      if (el) el.textContent = timers[screen].remaining;
+      if (timers[screen].remaining <= 0) {
+        clearInterval(iv);
+        gateState[screen].completed = true;
+        gateState[screen].completedAt = new Date().toISOString();
+        var timeEl = document.getElementById('gateTime' + screen);
+        if (timeEl) timeEl.style.display = 'none';
+        // Trigger render if the lesson exposes it
+        if (typeof window.render === 'function') window.render();
+      }
+    }, 1000);
+  }
+
+  /* ── Internal handlers ── */
+  A._onInput = function(screen, val) {
+    gateState[screen].value = val;
+    var g = gates[screen];
+    var min = g.minChars || 50;
+    var ctr = document.getElementById('gateCtr' + screen);
+    if (ctr) ctr.textContent = val.length + ' / ' + min + (g.type === 'application' ? ' characters' : '');
+
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      var ready = val.length >= min;
+      if (g.type === 'application' && g.rubric) {
+        var checks = gateState[screen].rubricChecked || 0;
+        ready = ready && checks >= g.rubric.length;
+      }
+      btn.disabled = !ready;
+    }
+  };
+
+  A._onRubric = function(screen, idx, checked) {
+    if (!gateState[screen]._rubric) gateState[screen]._rubric = {};
+    gateState[screen]._rubric[idx] = checked;
+    var count = 0;
+    for (var k in gateState[screen]._rubric) {
+      if (gateState[screen]._rubric[k]) count++;
+    }
+    gateState[screen].rubricChecked = count;
+
+    // Re-check submit button
+    var g = gates[screen];
+    var val = gateState[screen].value || '';
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      btn.disabled = !(val.length >= (g.minChars || 50) && count >= (g.rubric || []).length);
+    }
+  };
+
+  A._submit = function(screen) {
+    var s = gateState[screen];
+    s.completed = true;
+    s.completedAt = new Date().toISOString();
+
+    // Re-render the gate as completed
+    var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
+    containers.forEach(function(el) { A.renderGate(screen, el.id); });
+
+    // Save progress via postMessage
+    if (window.parent !== window) {
+      try {
+        window.parent.postMessage({
+          type: 'aesdr:progress',
+          screen: screen,
+          stateData: A.gateData()
+        }, '*');
+      } catch(e) {}
+    }
+
+    // Trigger render if available
+    if (typeof window.render === 'function') window.render();
+  };
+
+  /* ── Escape helper ── */
+  function _esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+})(window.AESDR);
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AESDR — Course 12.3: Why SDRs Should Stay Single</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -288,9 +783,11 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div>
           <div class="cv-c2tag">AESDR · Lesson 12.3</div>
           <div class="cv-course-num">12</div>
-          <div class="cv-big">Why SDRs Should Stay Single</div>
+          <div class="cv-big ae-only">Why AEs Should Stay Single</div>
+          <div class="cv-big sdr-only">Why SDRs Should Stay Single</div>
         </div>
-        <div class="cv-tagline">Focus on the Grind, Not the Distractions. Prioritizing Career Growth Before Relationships.</div>
+        <div class="cv-tagline ae-only">Dating while closing enterprise deals is a distraction calculus. Do the math.</div>
+        <div class="cv-tagline sdr-only">Dating while grinding through the SDR role is a timing question. Do the math.</div>
       </div>
       <div class="cvr">
         <div class="eyebrow">Course 12 · Lesson 3</div>
@@ -311,19 +808,33 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">01</div>
       <div><div class="c12-badge">Course 12</div><span class="sec-eye">Section 01 — The Reality Check</span></div>
-      <div class="lh-title">Dating While Being an SDR? Think Twice.</div>
+      <div class="lh-title ae-only">Dating While Closing Deals? Think Twice.</div>
+      <div class="lh-title sdr-only">Dating While Being an SDR? Think Twice.</div>
     </div>
-    <div class="lb">
+    <div class="lb ae-only">
+      <p class="lp">The AE life is high-octane—travel weeks, late-night proposal revisions, client dinners, and the constant mental pressure of managing a multi-million dollar pipeline. It's not that relationships are bad; they're just hard to sustain when your career demands everything. If you're single right now, there's a case for staying that way—at least until you've built the foundation.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Your calendar is brutal:</strong> Back-to-back demos, QBRs, travel days, and deal reviews leave almost no white space. A new relationship needs time you don't have.</li>
+        <li><span class="kp-n">02</span><strong>Your mental energy is committed:</strong> You're replaying negotiation tactics at dinner, strategizing your next move on the weekend, and worrying about pipeline coverage at 11 PM. That's not fair to a partner.</li>
+        <li><span class="kp-n">03</span><strong>The income swings are real:</strong> A massive commission check one quarter, a drought the next. Financial unpredictability adds stress to a new relationship that doesn't need it.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Mindset Shift</div>
+        <div class="lie-q">"This season of life is for building. Stay single, stay focused."</div>
+        <div class="lie-a">Hit President's Club. Build the pipeline mastery that cements your career. Relationships will come when you've built a life that has room for them.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
       <p class="lp">The life of an SDR is pure chaos—relentless schedules, unpredictable commissions, and a career that demands everything from you. It's not that relationships are bad; they're just not built to thrive in the SDR grind. Right now, your focus needs to be on building yourself, not splitting your energy.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>Your schedule comes first:</strong> Call blocks, sequences, and quota stress dominate your time.</li>
-        <li><span class="kp-n">02</span><strong>Your mental energy is spoken for:</strong> You are always replaying calls and strategizing outreach.</li>
-        <li><span class="kp-n">03</span><strong>The commission rollercoaster is stressful:</strong> Financial unpredictability adds unnecessary friction to new relationships.</li>
+        <li><span class="kp-n">01</span><strong>Your schedule comes first:</strong> Call blocks, sequences, and quota stress dominate your time. A new relationship needs attention you can't afford to give.</li>
+        <li><span class="kp-n">02</span><strong>Your mental energy is spoken for:</strong> You're always replaying calls, tweaking subject lines, and strategizing outreach. By the time you're off the clock, you're mentally empty.</li>
+        <li><span class="kp-n">03</span><strong>The commission rollercoaster is stressful:</strong> Financial unpredictability adds unnecessary friction to new relationships. Hard to plan dates when your paycheck varies by thousands.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Mindset Shift</div>
         <div class="lie-q">"This season of life is for building. Stay single, stay hungry."</div>
-        <div class="lie-a">Crush your quota. Build the skills that'll take you to the next level. Relationships will come when you're ready—when your life is built for it.</div>
+        <div class="lie-a">Crush your quota. Build the skills that'll take you to AE. Relationships will come when you're ready—when your life is built for it.</div>
       </div>
     </div>
   </div>
@@ -333,7 +844,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">01</div>
       <div><div class="c12-badge">Course 12</div><span class="sec-eye">Section 01 & 02 — The Realities</span></div>
-      <div class="lh-title">Sort the SDR Realities</div>
+      <div class="lh-title ae-only">Sort the AE Realities</div>
+      <div class="lh-title sdr-only">Sort the SDR Realities</div>
       <div class="lh-sub"><b id="siloCount">0</b> / 6 correctly sorted</div>
     </div>
     <div class="silo-wrap">
@@ -363,19 +875,33 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">02</div>
       <div><div class="c12-badge">Course 12</div><span class="sec-eye">Section 02 — Playing the Long Game</span></div>
-      <div class="lh-title">Career Over Romance</div>
+      <div class="lh-title ae-only">Career Over Romance — For Now</div>
+      <div class="lh-title sdr-only">Career Over Romance</div>
     </div>
-    <div class="lb">
-      <p class="lp">You're not just working a job—you're building a career. The SDR role is a launchpad for bigger things. But climbing that ladder takes total focus.</p>
+    <div class="lb ae-only">
+      <p class="lp">You're not just managing a book of business—you're building a career that compounds. Every deal you close, every skill you sharpen, every relationship you build with a champion moves you closer to enterprise AE, management, or VP of Sales. But climbing that ladder takes everything you've got.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>Relationships Demand Time/Stability:</strong> They require your attention and consistent presence.</li>
-        <li><span class="kp-n">02</span><strong>Careers Demand Relentless Focus:</strong> SDR life is a chaotic, high-pressure environment that requires constant growth.</li>
-        <li><span class="kp-n">03</span><strong>Solo Hustle to Prove Yourself:</strong> You don't have the time or energy to juggle both relationships and ambition right now.</li>
+        <li><span class="kp-n">01</span><strong>Relationships Demand Presence:</strong> A partner needs your attention, your emotional energy, and your time. Right now, those resources are committed to your pipeline and your professional growth.</li>
+        <li><span class="kp-n">02</span><strong>Careers Demand Relentless Focus:</strong> The jump from mid-market to enterprise, from AE to Director—those windows are narrow. Distraction costs you the trajectory.</li>
+        <li><span class="kp-n">03</span><strong>Solo Hustle Builds the Foundation:</strong> Use this time to invest in yourself. Skills, savings, fitness, mindset. When you do enter a relationship, you'll bring more to it than most people can imagine.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Bottom Line</div>
+        <div class="lie-q">"Relationships can wait, but your career trajectory can't."</div>
+        <div class="lie-a">Even when you're "off," you're rehearsing your pitch, reviewing your pipeline, or strategizing your next move. If you can't show up fully for someone, it's better to show up fully for yourself.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">You're not just working a job—you're building a career. The SDR role is a launchpad for bigger things: AE, management, leadership. But climbing that ladder takes total focus. Splitting your energy between a new relationship and quota attainment means you'll be mediocre at both.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Relationships Demand Time/Stability:</strong> They require your attention and consistent presence. Right now, your attention belongs to your call blocks and your growth.</li>
+        <li><span class="kp-n">02</span><strong>Careers Demand Relentless Focus:</strong> SDR life is a chaotic, high-pressure environment that requires constant learning, adaptation, and resilience. That's where your energy needs to go.</li>
+        <li><span class="kp-n">03</span><strong>Solo Hustle to Prove Yourself:</strong> Use this time to become undeniable. Crush quota, learn the craft, build the habits. When you get promoted to AE, you'll have the time, money, and stability to invest in a relationship.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Bottom Line</div>
         <div class="lie-q">"Relationships can wait, but your career can't."</div>
-        <div class="lie-a">Even when you're 'off,' you're not really off. If you can't show up fully in a relationship, it's better to focus on yourself first.</div>
+        <div class="lie-a">Even when you're "off," you're replaying calls, tweaking sequences, and worrying about tomorrow's numbers. If you can't show up fully in a relationship, it's better to focus on yourself first.</div>
       </div>
     </div>
   </div>
@@ -475,23 +1001,29 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div style="margin-top:20px">
         <div class="t-head">Task 1: Goal Setting</div>
         <ul class="hw-list">
-          <li><div class="hw-box"></div>Write down three personal and professional goals you want to accomplish in the next six months.</li>
+          <li class="ae-only"><div class="hw-box"></div>Write down three personal and professional goals for the next six months. Think: President's Club, a specific deal size milestone, a skill you want to master, or a savings target.</li>
+          <li class="sdr-only"><div class="hw-box"></div>Write down three personal and professional goals for the next six months. Think: getting promoted to AE, hitting a specific booking number, building a new skill, or a savings target.</li>
         </ul>
       </div>
       <div>
         <div class="t-head">Task 2: Eliminate Distractions</div>
         <ul class="hw-list">
           <li><div class="hw-box"></div>List out the distractions (including dating) that are holding you back from hitting those goals.</li>
-          <li><div class="hw-box"></div>Be honest about where your time and emotional energy are leaking.</li>
+          <li class="ae-only"><div class="hw-box"></div>Be honest about where your time and emotional energy are leaking. Is it dating apps between demos? Late nights out that wreck your morning prep? Social obligations that drain your weekend recovery time?</li>
+          <li class="sdr-only"><div class="hw-box"></div>Be honest about where your time and emotional energy are leaking. Is it dating apps between call blocks? Late nights that wreck your morning energy? Relationship drama that kills your focus during sequences?</li>
         </ul>
       </div>
       <div>
         <div class="t-head">Task 3: Commit to Self-Care</div>
         <ul class="hw-list">
           <li><div class="hw-box"></div>Commit to hitting the gym or maintaining a health routine. A strong body builds a strong mind.</li>
-          <li><div class="hw-box"></div>Plan a solo trip or dive into a hobby that excites you. Build a life you enjoy on your own terms.</li>
+          <li class="ae-only"><div class="hw-box"></div>Plan a solo trip or dive into a hobby that has nothing to do with sales. Build a life you enjoy on your own terms—so when you do date, you bring a full life to the table, not just a pipeline.</li>
+          <li class="sdr-only"><div class="hw-box"></div>Plan a solo trip or dive into a hobby that excites you. Build a life you enjoy on your own terms—so when you do date, you bring something real to the table, not just quota stress.</li>
         </ul>
       </div>
+
+      <!-- Accountability Gate -->
+      <div id="gate8" data-gate-screen="8"></div>
     </div>
   </div>
 
@@ -502,13 +1034,17 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <div class="comp-tag">Course 12 · Lesson 3 — Complete</div>
           <div style="font-family:var(--display);font-size:56px;color:var(--white);line-height:.9;margin:10px 0 0">12</div>
         </div>
-        <div class="comp-big">Close deals,<br>not<br>distractions.</div>
-        <div class="comp-sub">This season of life is for building. Stay single, stay hungry, and invest in yourself.</div>
+        <div class="comp-big ae-only">Close deals,<br>build<br>yourself.</div>
+        <div class="comp-big sdr-only">Close deals,<br>not<br>distractions.</div>
+        <div class="comp-sub ae-only">This season is for building. President's Club, career mastery, and a foundation that makes you an incredible partner—when the time is right.</div>
+        <div class="comp-sub sdr-only">This season of life is for building. Stay single, stay hungry, and invest in yourself. The AE seat, the skills, the stability—that's what you're building toward.</div>
       </div>
       <div class="comp-r">
         <div class="eyebrow">Course 12 · Lesson 3 Complete</div>
-        <div class="comp-h">Build your foundation.</div>
-        <p class="comp-p">When the time is right, you'll bring more to a relationship than you ever thought possible. Until then? Love can wait. The pipeline can't.</p>
+        <div class="comp-h ae-only">Build your empire first.</div>
+        <div class="comp-h sdr-only">Build your foundation first.</div>
+        <p class="comp-p ae-only">When the time is right, you'll bring more to a relationship than you ever thought possible—financial stability, emotional maturity, and a life worth sharing. Until then? Love can wait. The pipeline can't.</p>
+        <p class="comp-p sdr-only">When the time is right, you'll bring more to a relationship than you ever thought possible—career stability, confidence, and a life built on your own terms. Until then? Love can wait. The promotion can't.</p>
         <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
         <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
       </div>
@@ -519,12 +1055,14 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 <aside class="sidebar">
   <div class="sb-course">12</div>
-  <div class="sb-lesson">Lesson 12.3 · Why SDRs Should Stay Single</div>
+  <div class="sb-lesson ae-only">Lesson 12.3 · Why AEs Should Stay Single</div>
+  <div class="sb-lesson sdr-only">Lesson 12.3 · Why SDRs Should Stay Single</div>
   <div class="sb-divider"></div>
   <div class="sb-label">Sections</div>
   <div class="sb-item" id="nav1" onclick="go(1)">
     <div class="sb-tag">Section 01</div>
-    <div class="sb-name">The SDR Life</div>
+    <div class="sb-name ae-only">The AE Life</div>
+    <div class="sb-name sdr-only">The SDR Life</div>
   </div>
   <div class="sb-item" id="nav2" onclick="go(3)">
     <div class="sb-tag">Section 02</div>
@@ -580,7 +1118,7 @@ const BLAME_ITEMS = [
   },
   {
     statement:'"I\'m mentally exhausted on dates and end up staring at my phone."',
-    opts:["Myth: 'I can easily switch off the SDR brain.' Fix: Accept that your mental energy is tapped. Build yourself first.","Drink an energy drink before the date","Complain about your manager to them","Only go on dates in the morning"],
+    opts:["Myth: 'I can easily switch off the SDR brain.' Fix: Accept that your mental energy is tapped. Build yourself first.","Practice mindfulness techniques to compartmentalize work stress","Share your work challenges openly so they understand your world","Schedule dates right after a win to bring positive energy"],
     ans:0,
     fix:"Real fix: Myth: 'I can easily switch off the SDR brain.' Fix: Accept that your mental energy is tapped. Build yourself first."
   },
@@ -651,10 +1189,15 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); render();
+  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register accountability gate
+  var _role = document.documentElement.getAttribute('data-role') || 'sdr';
+  var _gatePrompt = _role === 'ae' ? 'Write your 6-month personal development plan: 3 professional goals, 3 personal goals, specific weekly actions for each, and how you\'ll measure progress. This is your final exam.' : 'Write your 6-month personal development plan: 3 professional goals, 3 personal goals, specific weekly actions for each, and how you\'ll measure progress. This is your final exam.';
+  AESDR.gate(8, { type:'application', prompt: _gatePrompt, minChars: 200 });
+  render();
 }
 function go(n){
-  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:{}},"*")}catch(e){}}
+  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;
   document.getElementById('s'+cur).classList.add('active');
@@ -917,6 +1460,7 @@ function canContinue(){
   if(cur===5)return Object.keys(seqDone).length===5;
   if(cur===6)return clsCount===8;
   if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 function getHint(){
@@ -928,7 +1472,7 @@ function getHint(){
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,
     7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    8:"Close deals, not distractions.",
+    8: AESDR.gateHint(8) || "Close deals, not distractions.",
   };
   return h[cur]||'';
 }
@@ -949,6 +1493,7 @@ function render(){
   const bnav=document.getElementById('bottomnav');
   bnav.style.display=hide?'none':'flex';
   if(hide)return;
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';

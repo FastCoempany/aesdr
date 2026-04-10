@@ -53,6 +53,13 @@ export default async function LessonPage({
     redirect("/account/set-password");
   }
 
+  // Force role selection before accessing courses
+  if (!user.user_metadata?.role) {
+    redirect("/account/select-role");
+  }
+
+  const userRole: string = user.user_metadata.role;
+
   // Purchase gate — bypass for founder (GhostButton cookie)
   const cookieStore = await cookies();
   const hasBypass = cookieStore.get("aesdr_bypass")?.value === "1";
@@ -113,9 +120,13 @@ export default async function LessonPage({
     selectedUnit && savedUnitId === selectedUnit.unitId ? lastScreen : 0;
 
   const iframeSrc = selectedUnit
-    ? `/course/${lessonId}/units/${selectedUnit.unitId}${
-        restoreScreen > 0 ? `?screen=${restoreScreen}` : ""
-      }`
+    ? (() => {
+        const params = new URLSearchParams();
+        if (restoreScreen > 0) params.set("screen", String(restoreScreen));
+        params.set("role", userRole);
+        const qs = params.toString();
+        return `/course/${lessonId}/units/${selectedUnit.unitId}${qs ? `?${qs}` : ""}`;
+      })()
     : null;
 
   return (

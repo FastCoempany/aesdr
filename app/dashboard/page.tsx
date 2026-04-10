@@ -40,6 +40,13 @@ export default async function Dashboard() {
     redirect("/account/set-password");
   }
 
+  // Force role selection if not yet chosen
+  if (user && !user.user_metadata?.role) {
+    redirect("/account/select-role");
+  }
+
+  const userRole = user?.user_metadata?.role as string | undefined;
+
   let progressMap: Record<string, LessonProgressSummary> = {};
   if (user) {
     const { data } = await supabase
@@ -125,6 +132,7 @@ export default async function Dashboard() {
 
             const isVisible = isCompleted || isCurrent || isNextVisible;
             const isLocked = isFuture && !isNextVisible;
+            const displayTitle = userRole === "ae" && lesson.titleAe ? lesson.titleAe : lesson.title;
 
             return (
               <div
@@ -216,7 +224,7 @@ export default async function Dashboard() {
                         lineHeight: "1.2",
                       }}
                     >
-                      {lesson.title}
+                      {displayTitle}
                       {isCurrent && (
                         <span style={{ marginLeft: "12px", fontSize: "14px", color: "var(--theme)" }}>&rarr;</span>
                       )}
@@ -234,7 +242,7 @@ export default async function Dashboard() {
                         lineHeight: "1.2",
                       }}
                     >
-                      {isVisible ? lesson.title : "???"}
+                      {isVisible ? displayTitle : "???"}
                     </p>
                   )}
 

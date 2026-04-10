@@ -2,6 +2,501 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- AESDR Role Detection -->
+<script>
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  var role = p.get('role') || 'sdr';
+  document.documentElement.setAttribute('data-role', role);
+})();
+</script>
+<style>
+/* Role-conditional content: hide content not matching current role */
+[data-role="ae"] .sdr-only { display: none !important; }
+[data-role="sdr"] .ae-only { display: none !important; }
+/* Softer variant: swap text content visibility */
+[data-role="ae"] .sdr-text { display: none !important; }
+[data-role="sdr"] .ae-text { display: none !important; }
+</style>
+<!-- AESDR Accountability Gates -->
+<style>
+/* ══════════════════════════════════════════
+   AESDR Accountability Gates — Styles v1
+   Matches lesson design system vars:
+     --black, --white, --mid, --lite, --lite2,
+     --amber, --cobalt, --green, --line, --iris,
+     --cond, --serif, --mono
+══════════════════════════════════════════ */
+
+/* ── Gate container ── */
+.gate-box {
+  margin: 28px 0 12px;
+  padding: 28px 32px 24px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  position: relative;
+}
+.gate-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+}
+
+/* ── Label / tag ── */
+.gate-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 14px;
+}
+
+/* ── Prompt text ── */
+.gate-prompt {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--black);
+  margin-bottom: 18px;
+}
+
+/* ── Textarea ── */
+.gate-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px 16px;
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--black);
+  background: var(--lite);
+  border: 1px solid var(--line2);
+  resize: vertical;
+  outline: none;
+  transition: border-color .2s;
+}
+.gate-textarea:focus {
+  border-color: var(--amber);
+}
+.gate-textarea.gate-evidence {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  min-height: 100px;
+}
+.gate-textarea::placeholder {
+  color: var(--mid);
+  opacity: .6;
+}
+
+/* ── Footer (counter + submit) ── */
+.gate-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  gap: 12px;
+}
+
+/* ── Character counter ── */
+.gate-counter {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+
+/* ── Submit button ── */
+.gate-submit {
+  font-family: var(--cond);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border: 2px solid var(--black);
+  background: var(--black);
+  color: var(--white);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all .15s;
+}
+.gate-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 2s linear infinite;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.gate-submit:hover::before {
+  opacity: 1;
+}
+.gate-submit:hover {
+  color: var(--black);
+}
+.gate-submit span {
+  position: relative;
+  z-index: 1;
+}
+.gate-submit:disabled,
+.gate-submit:disabled:hover {
+  opacity: .28;
+  cursor: not-allowed;
+  background: var(--black);
+  color: var(--white);
+}
+.gate-submit:disabled::before,
+.gate-submit:disabled:hover::before {
+  display: none;
+}
+
+/* ── Rubric checklist ── */
+.gate-rubric {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.gate-rubric-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 10px;
+}
+.gate-rubric-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--black);
+}
+.gate-rubric-item input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--amber);
+  flex-shrink: 0;
+}
+
+/* ── Time gate ── */
+.gate-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 20px 0 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--line2);
+  background: var(--lite);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+.gate-time-icon {
+  font-size: 14px;
+}
+.gate-time-num {
+  font-weight: 700;
+  color: var(--amber);
+  font-size: 13px;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* ── Completed state ── */
+.gate-done {
+  margin: 24px 0 8px;
+  padding: 20px 24px;
+  border: 2px solid var(--green);
+  background: var(--grn-lt);
+}
+.gate-done-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.gate-done-preview {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--mid);
+  font-style: italic;
+}
+
+</style>
+<script>
+/*  AESDR Accountability Gates v1
+ *  Inject into lesson HTML files alongside role-detection.
+ *
+ *  Usage in lesson JS:
+ *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
+ *    AESDR.gate(1, { type:'time', seconds:60 });
+ *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
+ *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
+ *
+ *  In canContinue():
+ *    if (!AESDR.gateReady(cur)) return false;
+ *
+ *  Gate state auto-saves via postMessage when completed.
+ */
+window.AESDR = window.AESDR || {};
+
+(function(A) {
+  var gates = {};      // screenNum -> config
+  var gateState = {};  // screenNum -> { completed, value, ... }
+  var timers = {};     // screenNum -> { started, remaining }
+
+  /* ── Register a gate ── */
+  A.gate = function(screen, cfg) {
+    gates[screen] = cfg;
+    gateState[screen] = { completed: false, value: '' };
+  };
+
+  /* ── Check if gate is satisfied ── */
+  A.gateReady = function(screen) {
+    if (!gates[screen]) return true;
+    return gateState[screen] && gateState[screen].completed;
+  };
+
+  /* ── Get gate hint text ── */
+  A.gateHint = function(screen) {
+    var g = gates[screen];
+    if (!g) return '';
+    var s = gateState[screen];
+    if (s.completed) return '\u2713 Gate complete';
+
+    if (g.type === 'time') {
+      var r = timers[screen] ? timers[screen].remaining : g.seconds;
+      return r > 0 ? 'Unlocks in ' + r + 's' : '';
+    }
+    if (g.type === 'reflection' || g.type === 'evidence') {
+      var len = (s.value || '').length;
+      return len + ' / ' + g.minChars + ' characters';
+    }
+    if (g.type === 'application') {
+      var len2 = (s.value || '').length;
+      var checks = s.rubricChecked || 0;
+      var total = (g.rubric || []).length;
+      return len2 + ' chars \u00B7 ' + checks + '/' + total + ' rubric items';
+    }
+    return '';
+  };
+
+  /* ── Get all gate data for stateData (progress saving) ── */
+  A.gateData = function() {
+    var out = {};
+    for (var k in gateState) {
+      if (gateState[k].completed) {
+        out['gate_' + k] = {
+          type: gates[k].type,
+          value: gateState[k].value,
+          completedAt: gateState[k].completedAt
+        };
+      }
+    }
+    return out;
+  };
+
+  /* ── Render gate UI into a container ── */
+  A.renderGate = function(screen, containerId) {
+    var g = gates[screen];
+    if (!g) return;
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    var s = gateState[screen];
+
+    if (s.completed) {
+      el.innerHTML = _completedHTML(g, s);
+      return;
+    }
+
+    switch(g.type) {
+      case 'reflection': el.innerHTML = _reflectionHTML(screen, g, s); break;
+      case 'application': el.innerHTML = _applicationHTML(screen, g, s); break;
+      case 'evidence': el.innerHTML = _evidenceHTML(screen, g, s); break;
+      case 'time': _startTimer(screen, g); el.innerHTML = _timeHTML(screen, g); break;
+    }
+  };
+
+  /* ── Completed state ── */
+  function _completedHTML(g, s) {
+    var typeLabel = { reflection:'Reflection', application:'Response', evidence:'Evidence', time:'Time' };
+    return '<div class="gate-done">' +
+      '<div class="gate-done-tag">\u2713 ' + (typeLabel[g.type]||'Gate') + ' Submitted</div>' +
+      (g.type !== 'time' ? '<div class="gate-done-preview">' + _esc(s.value).substring(0,200) + (s.value.length > 200 ? '...' : '') + '</div>' : '') +
+    '</div>';
+  }
+
+  /* ── Reflection Gate ── */
+  function _reflectionHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Reflection Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your reflection here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Reflection</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Application Gate ── */
+  function _applicationHTML(screen, g) {
+    var rubricHTML = (g.rubric || []).map(function(r, i) {
+      return '<label class="gate-rubric-item">' +
+        '<input type="checkbox" onchange="AESDR._onRubric(' + screen + ',' + i + ',this.checked)">' +
+        '<span>' + r + '</span></label>';
+    }).join('');
+
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Application Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your response...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-counter" id="gateCtr' + screen + '">0 / ' + (g.minChars || 50) + ' characters</div>' +
+      (rubricHTML ? '<div class="gate-rubric"><div class="gate-rubric-label">Self-evaluate your response:</div>' + rubricHTML + '</div>' : '') +
+      '<div class="gate-footer">' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Response</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Evidence Gate ── */
+  function _evidenceHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Evidence Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea gate-evidence" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Paste your evidence here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Evidence</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Time Gate ── */
+  function _timeHTML(screen, g) {
+    var r = timers[screen] ? timers[screen].remaining : g.seconds;
+    if (r <= 0) return '';
+    return '<div class="gate-time" id="gateTime' + screen + '">' +
+      '<span class="gate-time-icon">\u23F3</span> ' +
+      '<span class="gate-time-num" id="gateTimeCtr' + screen + '">' + r + '</span>s remaining' +
+    '</div>';
+  }
+
+  function _startTimer(screen, g) {
+    if (timers[screen]) return;
+    timers[screen] = { remaining: g.seconds };
+    var iv = setInterval(function() {
+      timers[screen].remaining--;
+      var el = document.getElementById('gateTimeCtr' + screen);
+      if (el) el.textContent = timers[screen].remaining;
+      if (timers[screen].remaining <= 0) {
+        clearInterval(iv);
+        gateState[screen].completed = true;
+        gateState[screen].completedAt = new Date().toISOString();
+        var timeEl = document.getElementById('gateTime' + screen);
+        if (timeEl) timeEl.style.display = 'none';
+        // Trigger render if the lesson exposes it
+        if (typeof window.render === 'function') window.render();
+      }
+    }, 1000);
+  }
+
+  /* ── Internal handlers ── */
+  A._onInput = function(screen, val) {
+    gateState[screen].value = val;
+    var g = gates[screen];
+    var min = g.minChars || 50;
+    var ctr = document.getElementById('gateCtr' + screen);
+    if (ctr) ctr.textContent = val.length + ' / ' + min + (g.type === 'application' ? ' characters' : '');
+
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      var ready = val.length >= min;
+      if (g.type === 'application' && g.rubric) {
+        var checks = gateState[screen].rubricChecked || 0;
+        ready = ready && checks >= g.rubric.length;
+      }
+      btn.disabled = !ready;
+    }
+  };
+
+  A._onRubric = function(screen, idx, checked) {
+    if (!gateState[screen]._rubric) gateState[screen]._rubric = {};
+    gateState[screen]._rubric[idx] = checked;
+    var count = 0;
+    for (var k in gateState[screen]._rubric) {
+      if (gateState[screen]._rubric[k]) count++;
+    }
+    gateState[screen].rubricChecked = count;
+
+    // Re-check submit button
+    var g = gates[screen];
+    var val = gateState[screen].value || '';
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      btn.disabled = !(val.length >= (g.minChars || 50) && count >= (g.rubric || []).length);
+    }
+  };
+
+  A._submit = function(screen) {
+    var s = gateState[screen];
+    s.completed = true;
+    s.completedAt = new Date().toISOString();
+
+    // Re-render the gate as completed
+    var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
+    containers.forEach(function(el) { A.renderGate(screen, el.id); });
+
+    // Save progress via postMessage
+    if (window.parent !== window) {
+      try {
+        window.parent.postMessage({
+          type: 'aesdr:progress',
+          screen: screen,
+          stateData: A.gateData()
+        }, '*');
+      } catch(e) {}
+    }
+
+    // Trigger render if available
+    if (typeof window.render === 'function') window.render();
+  };
+
+  /* ── Escape helper ── */
+  function _esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+})(window.AESDR);
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AESDR — Course 1.2: Building Real Camaraderie</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -290,8 +785,10 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
     <div class="cover" style="flex:1">
       <div class="cvl">
         <div class="cv-tag">AESDR · Course 1.2</div>
-        <div class="cv-big">Building Real Camaraderie in SaaS Sales Teams</div>
-        <div class="cv-tagline">From "clock-in, clock-out" to actually working with each other.</div>
+        <div class="cv-big ae-only">Building Real Camaraderie With Your SDR</div>
+        <div class="cv-big sdr-only">Building Real Camaraderie With Your AE</div>
+        <div class="cv-tagline ae-only">From managing tasks to building a real partnership that drives performance.</div>
+        <div class="cv-tagline sdr-only">From "clock-in, clock-out" to earning real partnership.</div>
       </div>
       <div class="cvr">
         <div class="eyebrow">What You'll Build</div>
@@ -312,9 +809,10 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">01</div>
       <div class="sec-eye">Section 01 — The Foundation</div>
-      <div class="lh-title">Camaraderie Isn't a Buzzword. It's a Performance Variable.</div>
+      <div class="lh-title ae-only">Camaraderie Isn't Optional. It's a Performance Variable.</div>
+      <div class="lh-title sdr-only">Camaraderie Isn't a Buzzword. It's a Performance Variable.</div>
     </div>
-    <div class="lb">
+    <div class="lb ae-only">
       <p class="lp">Camaraderie isn't about forced happy hours or icebreakers. It's about showing up for your SDR as a real person who understands their challenges — and treats them as a partner with skin in the same game.</p>
       <p class="lp">When camaraderie exists, SDRs don't just hit numbers. They think smarter, hustle harder, and take creative ownership because they feel like part of something real.</p>
       <ul class="kp">
@@ -328,6 +826,20 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div class="lie-a">It doesn't. It's built through specific, intentional behaviors — honesty, acknowledgment, and the willingness to step off the pedestal. None of that is accidental.</div>
       </div>
     </div>
+    <div class="lb sdr-only">
+      <p class="lp">Camaraderie with your AE isn't about being buddies. It's about building a working relationship where you're treated as a partner — not a dial machine. That dynamic doesn't happen by accident. You have to earn it and shape it.</p>
+      <p class="lp">When real camaraderie exists, you get better coaching, honest feedback, and the kind of support that actually moves your career forward. Without it, you're just another number on a spreadsheet.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span>A strong AE/SDR partnership is the single biggest factor in whether you ramp fast or struggle alone for months.</li>
+        <li><span class="kp-n">02</span>Without it, you get surface-level feedback, zero advocacy, and no one in your corner when quota pressure hits.</li>
+        <li><span class="kp-n">03</span>You can influence this dynamic. The SDRs who build real partnerships with their AEs are the ones who get promoted.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Trap</div>
+        <div class="lie-q">"My AE should just naturally invest in me because it's their job."</div>
+        <div class="lie-a">It doesn't work that way. AEs are drowning in their own pipeline. You have to earn their attention by showing initiative, asking smart questions, and proving you're worth their time.</div>
+      </div>
+    </div>
   </div>
 
   <!-- 2: COG vs PARTNER SORT -->
@@ -336,7 +848,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">01</div>
       <div class="sec-eye">Section 01 — Recognition Check</div>
-      <div class="lh-title">Cog or Partner? Sort the Behaviors.</div>
+      <div class="lh-title ae-only">Cog or Partner? Sort the Behaviors.</div>
+      <div class="lh-title sdr-only">Recognize the Pattern: Is Your AE a Cog or a Partner?</div>
       <div class="lh-sub"><b id="sortCount">0</b> / 8 correctly sorted — select a card, then click the correct column</div>
     </div>
     <div class="sort-wrap">
@@ -367,7 +880,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="sec-eye">Section 02 — The 3 Principles</div>
       <div class="lh-title">What Actually Builds Camaraderie</div>
     </div>
-    <div class="lb">
+    <div class="lb ae-only">
       <p class="lp">Three principles, none of them complicated. All of them requiring consistency to land.</p>
       <ul class="kp">
         <li><span class="kp-n">01</span><strong>Meet Them Where They Are.</strong> SDRs are at Level 1 — entry-level, high-stakes, no roadmap. Acknowledge that. Be transparent about what no one else tells them: quota realities, turnover, AE priorities. That honesty is the first brick of trust.</li>
@@ -380,6 +893,19 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div class="lie-a">If they don't, that's on you. Sharing that truth — before they find out the hard way — is the most trust-building thing you can do in week one.</div>
       </div>
     </div>
+    <div class="lb sdr-only">
+      <p class="lp">Three principles for building a real partnership with your AE. None of them are complicated. All of them separate the SDRs who get promoted from the ones who stay stuck.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Show Initiative Before Being Asked.</strong> Don't wait for your AE to set the agenda. Bring a call recording to your 1:1. Ask a specific question about a deal. Propose an idea for outreach. Initiative earns investment.</li>
+        <li><span class="kp-n">02</span><strong>Ask the Hard Questions Early.</strong> "What does missing quota in month 3 actually mean?" "What do I need to do to get promoted?" "What's the real priority right now?" These questions signal maturity and build trust.</li>
+        <li><span class="kp-n">03</span><strong>Acknowledge Your AE's Reality.</strong> Your AE has their own quota pressure, deals closing, and management demands. Showing that you understand their world — not just demanding from it — is how you become a priority instead of an obligation.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Honest Ask</div>
+        <div class="lie-q">"Do you know what your AE's biggest pressure is right now?"</div>
+        <div class="lie-a">If you don't, find out. Understanding their world is the fastest way to earn their time. The SDRs who get the best coaching are the ones who make it easy for their AE to invest.</div>
+      </div>
+    </div>
   </div>
 
   <!-- 4: CONVERSATION SIMULATOR -->
@@ -387,7 +913,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
     <div class="lh">
       <div class="lh-stripe"></div>
       <div class="sec-eye">Section 02 — Conversation Practice</div>
-      <div class="lh-title">The AE/SDR Camaraderie Simulator</div>
+      <div class="lh-title ae-only">The AE/SDR Camaraderie Simulator</div>
+      <div class="lh-title sdr-only">What Should Your AE Say? Spot the Right Moves.</div>
     </div>
     <div class="conv-wrap" id="convWrap"></div>
   </div>
@@ -410,7 +937,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">03</div>
       <div class="sec-eye">Section 03 — Self-Audit</div>
-      <div class="lh-title">The AE Camaraderie Audit</div>
+      <div class="lh-title ae-only">The AE Camaraderie Audit</div>
+      <div class="lh-title sdr-only">The SDR Partnership Audit</div>
       <div class="lh-sub"><b id="auditCount">0</b> / 4 reviewed — open and mark each item to continue</div>
     </div>
     <div class="audit-wrap" id="auditWrap"></div>
@@ -436,7 +964,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-title">What You Do on Monday</div>
     </div>
     <div class="tools-blk">
-      <div style="margin-top:20px">
+      <div class="ae-only" style="margin-top:20px">
         <div class="t-head">AE Camaraderie Checklist — Week One</div>
         <table class="data-table">
           <thead><tr><th>Action</th><th>What It Looks Like</th></tr></thead>
@@ -448,7 +976,19 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           </tbody>
         </table>
       </div>
-      <div>
+      <div class="sdr-only" style="margin-top:20px">
+        <div class="t-head">SDR Partnership Checklist — Week One</div>
+        <table class="data-table">
+          <thead><tr><th>Action</th><th>What It Looks Like</th></tr></thead>
+          <tbody>
+            <tr><td>Ask a Specific Question</td><td>Not "how am I doing?" but "Can you listen to this call and tell me what I should change about my close?"</td></tr>
+            <tr><td>Show You Did the Work</td><td>Before your 1:1, prepare: one call you're proud of, one you struggled with, and what you think went wrong.</td></tr>
+            <tr><td>Acknowledge Your AE</td><td>When they help — say so. "That feedback on my intro actually changed how I open calls. Thank you."</td></tr>
+            <tr><td>Be Transparent About Struggles</td><td>Don't hide that you're stuck. Say: "I'm having trouble with X — can we spend 10 minutes on it?"</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="ae-only">
         <div class="t-head">SDR Reflection Homework</div>
         <ul class="hw-list">
           <li><div class="hw-box"></div>Think of a time when an AE made you feel genuinely supported. Write down why it mattered — and bring it to your next 1:1 to share.</li>
@@ -456,6 +996,16 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <li><div class="hw-box"></div>Track acknowledgment: for one week, every time a manager or AE recognizes your effort (public or private), write it down. Notice what builds you up.</li>
         </ul>
       </div>
+      <div class="sdr-only">
+        <div class="t-head">SDR Initiative Homework</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Before your next 1:1, prepare one call recording and one email. Walk your AE through what you think went wrong before they tell you.</li>
+          <li><div class="hw-box"></div>Ask your AE: "What's the single biggest thing I should focus on improving this week?" Write down the answer and act on it.</li>
+          <li><div class="hw-box"></div>Acknowledge your AE publicly: "My AE spent 20 minutes breaking down my cold call approach today. That's the kind of investment that compounds."</li>
+        </ul>
+      </div>
+      <!-- Accountability Gate -->
+      <div id="gate8" data-gate-screen="8"></div>
     </div>
   </div>
 
@@ -464,8 +1014,10 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
     <div class="comp" style="flex:1">
       <div class="comp-l">
         <div class="comp-tag">Course 1.2 — Complete</div>
-        <div class="comp-big">Step off<br>the<br>pedestal.</div>
-        <div class="comp-sub">Meet your SDR where they are. Watch them step up with confidence, creativity, and results — because they finally feel like part of something real.</div>
+        <div class="comp-big ae-only">Step off<br>the<br>pedestal.</div>
+        <div class="comp-big sdr-only">Earn<br>the<br>partnership.</div>
+        <div class="comp-sub ae-only">Meet your SDR where they are. Watch them step up with confidence, creativity, and results — because they finally feel like part of something real.</div>
+        <div class="comp-sub sdr-only">Show initiative, ask hard questions, and prove you're worth investing in. The best AE/SDR partnerships aren't given — they're built by the SDR who steps up first.</div>
       </div>
       <div class="comp-r">
         <div class="eyebrow">You've earned this</div>
@@ -482,6 +1034,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 <!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="sb-label">Sections</div>
+  <div class="sb-lesson ae-only">Lesson 1.2 · Camaraderie With Your SDR</div>
+  <div class="sb-lesson sdr-only">Lesson 1.2 · Camaraderie With Your AE</div>
   <div class="sb-item" id="nav1" onclick="go(1)">
     <div class="sb-tag">Section 01</div>
     <div class="sb-name">The Foundation</div>
@@ -617,7 +1171,9 @@ const ACK = {
 };
 
 // Trust Audit
-const AUDIT_ITEMS = [
+const _role = document.documentElement.getAttribute('data-role') || 'sdr';
+
+const AUDIT_AE = [
   {
     label:"Have I been honest about quota reality?",
     body:"SDRs starting at Level 1 are running blind if you don't tell them what missing quota in months 1–7 actually means. That's not brutal — it's respectful. The alternative is they find out when it's too late.",
@@ -639,6 +1195,31 @@ const AUDIT_ITEMS = [
     example:"What to say: 'Can I sit in on your next block? I want to hear what you're running into — not to grade it, just to understand it better.'"
   },
 ];
+
+const AUDIT_SDR = [
+  {
+    label:"Am I showing initiative — or waiting to be told?",
+    body:"The SDRs who get the best AE relationships are the ones who come prepared. Bring a call recording to your 1:1. Propose an idea. Ask a specific question. Initiative is the currency that earns investment.",
+    example:"What to do: Before every 1:1, prepare one call you want feedback on and one specific question. Never show up empty-handed."
+  },
+  {
+    label:"Have I asked the hard questions?",
+    body:"'What does missing quota actually mean?' 'What do I need to do to get promoted?' 'What's the real priority right now?' These questions signal maturity. AEs respect SDRs who ask them.",
+    example:"What to ask: 'Can you be straight with me about where I stand? I'd rather know now than find out the hard way in month 6.'"
+  },
+  {
+    label:"Do I acknowledge when my AE invests time?",
+    body:"Your AE has their own quota, deals closing, and management pressure. When they take time to coach you, that's a choice. Acknowledging it — publicly or privately — makes them want to do it again.",
+    example:"What to say: 'That 15 minutes you spent on my call approach yesterday genuinely changed how I open. I wanted you to know that.'"
+  },
+  {
+    label:"Am I transparent about where I'm struggling?",
+    body:"Hiding problems doesn't protect you — it isolates you. The AEs who invest most are the ones whose SDRs are honest about what's not working. Vulnerability earns trust faster than fake confidence.",
+    example:"What to say: 'I'm struggling with objection handling on calls. Can we spend 10 minutes on it this week? I have a specific call I want to walk through.'"
+  },
+];
+
+const AUDIT_ITEMS = _role === 'ae' ? AUDIT_AE : AUDIT_SDR;
 
 const QUIZ = [
   {
@@ -703,6 +1284,13 @@ function init(){
   buildAck();
   buildAudit();
   buildQuiz();
+
+  // Register reflection gate on homework screen
+  var gatePrompt = _role === 'ae'
+    ? 'Describe one specific thing you will change about how you show up for your SDR this week. Be concrete — name the behavior, the situation, and what you\'ll do differently.'
+    : 'Describe one specific thing you will do this week to build a stronger partnership with your AE. Be concrete — name the action, when you\'ll do it, and what you expect to learn.';
+  AESDR.gate(8, { type:'reflection', prompt: gatePrompt, minChars: 100 });
+
   render();
 }
 
@@ -710,7 +1298,7 @@ function init(){
    NAV
 ══════════════════════════════════════════ */
 function go(n){
-  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:{}},"*")}catch(e){}}
+  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;
   document.getElementById('s'+cur).classList.add('active');
@@ -1043,6 +1631,7 @@ function canContinue(){
     if(!qSubmitted) return Object.keys(qAns).length===QUIZ.length;
     return true;
   }
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 
@@ -1060,7 +1649,7 @@ function getHint(){
     7: !qSubmitted ? `${Object.keys(qAns).length} / ${QUIZ.length} answered`
        : qPassed   ? "✓ Passed — continue below."
                    : "Need 3 / 4 to advance. Try again.",
-    8:"Homework without a plan is just good intentions.",
+    8: AESDR.gateHint(8) || "Homework without a plan is just good intentions.",
   };
   return h[cur]||'';
 }
@@ -1083,6 +1672,8 @@ function render(){
   const bnav=document.getElementById('bottomnav');
   bnav.style.display=hide?'none':'flex';
   if(hide) return;
+  // Render any accountability gate on current screen
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';

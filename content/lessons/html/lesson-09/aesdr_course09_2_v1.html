@@ -2,6 +2,501 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- AESDR Role Detection -->
+<script>
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  var role = p.get('role') || 'sdr';
+  document.documentElement.setAttribute('data-role', role);
+})();
+</script>
+<style>
+/* Role-conditional content: hide content not matching current role */
+[data-role="ae"] .sdr-only { display: none !important; }
+[data-role="sdr"] .ae-only { display: none !important; }
+/* Softer variant: swap text content visibility */
+[data-role="ae"] .sdr-text { display: none !important; }
+[data-role="sdr"] .ae-text { display: none !important; }
+</style>
+<!-- AESDR Accountability Gates -->
+<style>
+/* ══════════════════════════════════════════
+   AESDR Accountability Gates — Styles v1
+   Matches lesson design system vars:
+     --black, --white, --mid, --lite, --lite2,
+     --amber, --cobalt, --green, --line, --iris,
+     --cond, --serif, --mono
+══════════════════════════════════════════ */
+
+/* ── Gate container ── */
+.gate-box {
+  margin: 28px 0 12px;
+  padding: 28px 32px 24px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  position: relative;
+}
+.gate-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+}
+
+/* ── Label / tag ── */
+.gate-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 14px;
+}
+
+/* ── Prompt text ── */
+.gate-prompt {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--black);
+  margin-bottom: 18px;
+}
+
+/* ── Textarea ── */
+.gate-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px 16px;
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--black);
+  background: var(--lite);
+  border: 1px solid var(--line2);
+  resize: vertical;
+  outline: none;
+  transition: border-color .2s;
+}
+.gate-textarea:focus {
+  border-color: var(--amber);
+}
+.gate-textarea.gate-evidence {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  min-height: 100px;
+}
+.gate-textarea::placeholder {
+  color: var(--mid);
+  opacity: .6;
+}
+
+/* ── Footer (counter + submit) ── */
+.gate-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  gap: 12px;
+}
+
+/* ── Character counter ── */
+.gate-counter {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+
+/* ── Submit button ── */
+.gate-submit {
+  font-family: var(--cond);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border: 2px solid var(--black);
+  background: var(--black);
+  color: var(--white);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all .15s;
+}
+.gate-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 2s linear infinite;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.gate-submit:hover::before {
+  opacity: 1;
+}
+.gate-submit:hover {
+  color: var(--black);
+}
+.gate-submit span {
+  position: relative;
+  z-index: 1;
+}
+.gate-submit:disabled,
+.gate-submit:disabled:hover {
+  opacity: .28;
+  cursor: not-allowed;
+  background: var(--black);
+  color: var(--white);
+}
+.gate-submit:disabled::before,
+.gate-submit:disabled:hover::before {
+  display: none;
+}
+
+/* ── Rubric checklist ── */
+.gate-rubric {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.gate-rubric-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 10px;
+}
+.gate-rubric-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--black);
+}
+.gate-rubric-item input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--amber);
+  flex-shrink: 0;
+}
+
+/* ── Time gate ── */
+.gate-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 20px 0 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--line2);
+  background: var(--lite);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+.gate-time-icon {
+  font-size: 14px;
+}
+.gate-time-num {
+  font-weight: 700;
+  color: var(--amber);
+  font-size: 13px;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* ── Completed state ── */
+.gate-done {
+  margin: 24px 0 8px;
+  padding: 20px 24px;
+  border: 2px solid var(--green);
+  background: var(--grn-lt);
+}
+.gate-done-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.gate-done-preview {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--mid);
+  font-style: italic;
+}
+
+</style>
+<script>
+/*  AESDR Accountability Gates v1
+ *  Inject into lesson HTML files alongside role-detection.
+ *
+ *  Usage in lesson JS:
+ *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
+ *    AESDR.gate(1, { type:'time', seconds:60 });
+ *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
+ *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
+ *
+ *  In canContinue():
+ *    if (!AESDR.gateReady(cur)) return false;
+ *
+ *  Gate state auto-saves via postMessage when completed.
+ */
+window.AESDR = window.AESDR || {};
+
+(function(A) {
+  var gates = {};      // screenNum -> config
+  var gateState = {};  // screenNum -> { completed, value, ... }
+  var timers = {};     // screenNum -> { started, remaining }
+
+  /* ── Register a gate ── */
+  A.gate = function(screen, cfg) {
+    gates[screen] = cfg;
+    gateState[screen] = { completed: false, value: '' };
+  };
+
+  /* ── Check if gate is satisfied ── */
+  A.gateReady = function(screen) {
+    if (!gates[screen]) return true;
+    return gateState[screen] && gateState[screen].completed;
+  };
+
+  /* ── Get gate hint text ── */
+  A.gateHint = function(screen) {
+    var g = gates[screen];
+    if (!g) return '';
+    var s = gateState[screen];
+    if (s.completed) return '\u2713 Gate complete';
+
+    if (g.type === 'time') {
+      var r = timers[screen] ? timers[screen].remaining : g.seconds;
+      return r > 0 ? 'Unlocks in ' + r + 's' : '';
+    }
+    if (g.type === 'reflection' || g.type === 'evidence') {
+      var len = (s.value || '').length;
+      return len + ' / ' + g.minChars + ' characters';
+    }
+    if (g.type === 'application') {
+      var len2 = (s.value || '').length;
+      var checks = s.rubricChecked || 0;
+      var total = (g.rubric || []).length;
+      return len2 + ' chars \u00B7 ' + checks + '/' + total + ' rubric items';
+    }
+    return '';
+  };
+
+  /* ── Get all gate data for stateData (progress saving) ── */
+  A.gateData = function() {
+    var out = {};
+    for (var k in gateState) {
+      if (gateState[k].completed) {
+        out['gate_' + k] = {
+          type: gates[k].type,
+          value: gateState[k].value,
+          completedAt: gateState[k].completedAt
+        };
+      }
+    }
+    return out;
+  };
+
+  /* ── Render gate UI into a container ── */
+  A.renderGate = function(screen, containerId) {
+    var g = gates[screen];
+    if (!g) return;
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    var s = gateState[screen];
+
+    if (s.completed) {
+      el.innerHTML = _completedHTML(g, s);
+      return;
+    }
+
+    switch(g.type) {
+      case 'reflection': el.innerHTML = _reflectionHTML(screen, g, s); break;
+      case 'application': el.innerHTML = _applicationHTML(screen, g, s); break;
+      case 'evidence': el.innerHTML = _evidenceHTML(screen, g, s); break;
+      case 'time': _startTimer(screen, g); el.innerHTML = _timeHTML(screen, g); break;
+    }
+  };
+
+  /* ── Completed state ── */
+  function _completedHTML(g, s) {
+    var typeLabel = { reflection:'Reflection', application:'Response', evidence:'Evidence', time:'Time' };
+    return '<div class="gate-done">' +
+      '<div class="gate-done-tag">\u2713 ' + (typeLabel[g.type]||'Gate') + ' Submitted</div>' +
+      (g.type !== 'time' ? '<div class="gate-done-preview">' + _esc(s.value).substring(0,200) + (s.value.length > 200 ? '...' : '') + '</div>' : '') +
+    '</div>';
+  }
+
+  /* ── Reflection Gate ── */
+  function _reflectionHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Reflection Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your reflection here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Reflection</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Application Gate ── */
+  function _applicationHTML(screen, g) {
+    var rubricHTML = (g.rubric || []).map(function(r, i) {
+      return '<label class="gate-rubric-item">' +
+        '<input type="checkbox" onchange="AESDR._onRubric(' + screen + ',' + i + ',this.checked)">' +
+        '<span>' + r + '</span></label>';
+    }).join('');
+
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Application Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your response...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-counter" id="gateCtr' + screen + '">0 / ' + (g.minChars || 50) + ' characters</div>' +
+      (rubricHTML ? '<div class="gate-rubric"><div class="gate-rubric-label">Self-evaluate your response:</div>' + rubricHTML + '</div>' : '') +
+      '<div class="gate-footer">' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Response</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Evidence Gate ── */
+  function _evidenceHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Evidence Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea gate-evidence" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Paste your evidence here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Evidence</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Time Gate ── */
+  function _timeHTML(screen, g) {
+    var r = timers[screen] ? timers[screen].remaining : g.seconds;
+    if (r <= 0) return '';
+    return '<div class="gate-time" id="gateTime' + screen + '">' +
+      '<span class="gate-time-icon">\u23F3</span> ' +
+      '<span class="gate-time-num" id="gateTimeCtr' + screen + '">' + r + '</span>s remaining' +
+    '</div>';
+  }
+
+  function _startTimer(screen, g) {
+    if (timers[screen]) return;
+    timers[screen] = { remaining: g.seconds };
+    var iv = setInterval(function() {
+      timers[screen].remaining--;
+      var el = document.getElementById('gateTimeCtr' + screen);
+      if (el) el.textContent = timers[screen].remaining;
+      if (timers[screen].remaining <= 0) {
+        clearInterval(iv);
+        gateState[screen].completed = true;
+        gateState[screen].completedAt = new Date().toISOString();
+        var timeEl = document.getElementById('gateTime' + screen);
+        if (timeEl) timeEl.style.display = 'none';
+        // Trigger render if the lesson exposes it
+        if (typeof window.render === 'function') window.render();
+      }
+    }, 1000);
+  }
+
+  /* ── Internal handlers ── */
+  A._onInput = function(screen, val) {
+    gateState[screen].value = val;
+    var g = gates[screen];
+    var min = g.minChars || 50;
+    var ctr = document.getElementById('gateCtr' + screen);
+    if (ctr) ctr.textContent = val.length + ' / ' + min + (g.type === 'application' ? ' characters' : '');
+
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      var ready = val.length >= min;
+      if (g.type === 'application' && g.rubric) {
+        var checks = gateState[screen].rubricChecked || 0;
+        ready = ready && checks >= g.rubric.length;
+      }
+      btn.disabled = !ready;
+    }
+  };
+
+  A._onRubric = function(screen, idx, checked) {
+    if (!gateState[screen]._rubric) gateState[screen]._rubric = {};
+    gateState[screen]._rubric[idx] = checked;
+    var count = 0;
+    for (var k in gateState[screen]._rubric) {
+      if (gateState[screen]._rubric[k]) count++;
+    }
+    gateState[screen].rubricChecked = count;
+
+    // Re-check submit button
+    var g = gates[screen];
+    var val = gateState[screen].value || '';
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      btn.disabled = !(val.length >= (g.minChars || 50) && count >= (g.rubric || []).length);
+    }
+  };
+
+  A._submit = function(screen) {
+    var s = gateState[screen];
+    s.completed = true;
+    s.completedAt = new Date().toISOString();
+
+    // Re-render the gate as completed
+    var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
+    containers.forEach(function(el) { A.renderGate(screen, el.id); });
+
+    // Save progress via postMessage
+    if (window.parent !== window) {
+      try {
+        window.parent.postMessage({
+          type: 'aesdr:progress',
+          screen: screen,
+          stateData: A.gateData()
+        }, '*');
+      } catch(e) {}
+    }
+
+    // Trigger render if available
+    if (typeof window.render === 'function') window.render();
+  };
+
+  /* ── Escape helper ── */
+  function _esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+})(window.AESDR);
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AESDR — Course 9.2: Slack Survival Guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -289,9 +784,11 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div>
           <div class="cv-c2tag">AESDR · Lesson 9.2</div>
           <div class="cv-course-num">09</div>
-          <div class="cv-big">Slack Survival Guide</div>
+          <div class="cv-big ae-only">Slack Survival Guide</div>
+          <div class="cv-big sdr-only">Slack Survival Guide</div>
         </div>
-        <div class="cv-tagline">How to Stay Productive in the Noise. Streamline Communication, Cut Distractions, and Take Back Control.</div>
+        <div class="cv-tagline ae-only">Slack is where deals move or die. Control the signal, cut the noise.</div>
+        <div class="cv-tagline sdr-only">Slack is where you get noticed or ignored. Control the signal, cut the noise.</div>
       </div>
       <div class="cvr">
         <div class="eyebrow">Course 9 · Lesson 2 of 3</div>
@@ -314,17 +811,30 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div><div class="c9-badge">Course 9</div><span class="sec-eye">Section 01 — When Slack Becomes the Problem</span></div>
       <div class="lh-title">The Productivity Killer in Disguise</div>
     </div>
-    <div class="lb">
-      <p class="lp">Slack promises to be the ultimate collaboration tool. But when your day is hijacked by endless pings, off-topic channels, and constant DMs, it becomes a productivity-killing nightmare. The problem isn't Slack—it's how we use it. Let's fix that.</p>
+    <div class="lb ae-only">
+      <p class="lp">Slack promises seamless collaboration. But when your day is hijacked by pings from every department, deal-update requests in DMs, and channels you never asked to join, it becomes a focus-killing nightmare. Every interruption pulls you out of deal prep, proposal writing, or follow-up calls. The problem isn't Slack — it's how we let it run our day.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>The Initial Goal:</strong> Slack was built for seamless collaboration.</li>
-        <li><span class="kp-n">02</span><strong>The Reality:</strong> It's become a chaotic vortex of notifications, messages, and channels.</li>
-        <li><span class="kp-n">03</span><strong>The Cost:</strong> Used poorly, Slack drains focus, distracts teams, and kills morale.</li>
+        <li><span class="kp-n">01</span><strong>The Initial Goal:</strong> Slack was built to keep cross-functional teams aligned without endless meetings.</li>
+        <li><span class="kp-n">02</span><strong>The Reality:</strong> It's become a chaotic vortex where everyone expects instant responses — your manager, your SE, Marketing, and your SDR all competing for your attention at once.</li>
+        <li><span class="kp-n">03</span><strong>The Cost:</strong> Every context switch costs you 20+ minutes of focus. That's demo prep time, proposal time, and closing time you never get back.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Mindset Shift</div>
         <div class="lie-q">"Slack is a tool, not a mandatory meeting."</div>
-        <div class="lie-a">Treat it as a communication utility that you control, rather than an always-on portal that controls you.</div>
+        <div class="lie-a">The best AEs treat Slack like email — batched, not real-time. Your deals don't close faster because you replied to a Slack message in 30 seconds.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">Slack promises seamless collaboration. But when your day is hijacked by endless pings, off-topic channels, and constant DMs asking "got a sec?", it becomes the biggest threat to your outbound volume. Every notification pulls you off the phones. The problem isn't Slack — it's how we let it run our day.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>The Initial Goal:</strong> Slack was built for seamless collaboration between teams.</li>
+        <li><span class="kp-n">02</span><strong>The Reality:</strong> It's become a chaotic vortex of notifications, memes, and messages that destroy your calling blocks.</li>
+        <li><span class="kp-n">03</span><strong>The Cost:</strong> Every Slack check during a cold-call block costs you 3-5 dials. Over a day, that's 20+ lost calls — and the meetings that could have come from them.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Mindset Shift</div>
+        <div class="lie-q">"Slack is a tool, not a mandatory meeting."</div>
+        <div class="lie-a">The best SDRs go dark on Slack during calling blocks. Your connect rate doesn't care about your Slack response time. Protect your outbound hours ruthlessly.</div>
       </div>
     </div>
   </div>
@@ -366,17 +876,30 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div><div class="c9-badge">Course 9</div><span class="sec-eye">Section 02 & 03 — Channels, DMs, Notifications</span></div>
       <div class="lh-title">Identifying Slack Overload</div>
     </div>
-    <div class="lb">
-      <p class="lp">You can't get through a single task without checking Slack. Your workflow feels reactive instead of proactive. Notifications leave you mentally drained by noon. These are the signs you are drowning.</p>
+    <div class="lb ae-only">
+      <p class="lp">You can't get through proposal writing without checking Slack. Your workflow feels reactive instead of strategic. Notifications from deal channels, SE requests, and manager pings leave you mentally drained by noon. These are the signs you're drowning.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>Channels - The Good, Bad, and WTF:</strong> Sales-tactics channels add value. Watercooler channels turn into noise. Rogue meme channels should be archived or exited entirely.</li>
-        <li><span class="kp-n">02</span><strong>DMs - Where Productivity Dies:</strong> Vague "Got a sec?" or "Hey!" messages with no context waste time. Always provide context immediately. Solve simple issues directly in Slack instead of jumping to a Zoom call.</li>
-        <li><span class="kp-n">03</span><strong>Notifications - Death by Ping:</strong> Every ping feels urgent—but it's not. Notifications disrupt focus. Mute what doesn't matter and set alerts only for keywords like "pipeline" or "lead".</li>
+        <li><span class="kp-n">01</span><strong>Channels — The Good, Bad, and WTF:</strong> Deal-room channels and #sales-strategy add value. Company-wide announcements and meme channels are noise. Exit anything that doesn't help you close.</li>
+        <li><span class="kp-n">02</span><strong>DMs — Where Deal Momentum Dies:</strong> Vague "Got a sec?" messages from SEs, SDRs, and managers pull you out of deep work. Train your team to lead with context: "Deal X — need pricing by 3 PM." Solve simple issues in-thread instead of jumping to Zoom.</li>
+        <li><span class="kp-n">03</span><strong>Notifications — Death by Ping:</strong> Every ping feels urgent — but it's not. Mute what doesn't matter and set keyword alerts for things like your deal names, "contract," or "close date."</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Bottom Line</div>
         <div class="lie-q">"Curating your Slack experience starts with ruthless organization."</div>
-        <div class="lie-a">Set boundaries using your status, and don't hesitate to ask, 'Can this wait until our next team sync?'</div>
+        <div class="lie-a">Protect your selling hours. Set your status to "In Deal Prep" during focus blocks, and don't hesitate to say: "Can this wait until our next pipeline sync?"</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">You can't get through a single call block without checking Slack. Your workflow feels reactive instead of proactive. Notifications leave you mentally drained by noon. These are the signs you're drowning.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>Channels — The Good, Bad, and WTF:</strong> #sdr-tactics and #lead-strategy channels add value. Watercooler channels and company-wide announcements are noise during calling hours. Exit or mute anything that doesn't help you book meetings.</li>
+        <li><span class="kp-n">02</span><strong>DMs — Where Dials Go to Die:</strong> Vague "Got a sec?" or "Hey!" messages with no context waste time. When you DM someone, lead with context. When someone DMs you during a calling block, it can wait.</li>
+        <li><span class="kp-n">03</span><strong>Notifications — Death by Ping:</strong> Every ping feels urgent — but it's not. Mute what doesn't matter and set alerts only for keywords like "lead," "meeting booked," or your name.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Bottom Line</div>
+        <div class="lie-q">"Curating your Slack experience starts with ruthless organization."</div>
+        <div class="lie-a">Set your status to "On Calls — Back at [time]" during outbound blocks. Don't hesitate to say: "Can this wait until after my call block?"</div>
       </div>
     </div>
   </div>
@@ -484,22 +1007,41 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           </tbody>
         </table>
       </div>
-      <div>
+      <div class="ae-only">
         <div class="t-head">Task 1: Audit Your Slack Use</div>
         <ul class="hw-list">
-          <li><div class="hw-box"></div><strong>Leave Channels:</strong> Identify and exit any channel that doesn't directly serve your role.</li>
-          <li><div class="hw-box"></div><strong>Mute Notifications:</strong> Turn off non-essential alerts.</li>
-          <li><div class="hw-box"></div><strong>Set Keywords:</strong> Add notifications for critical terms like "pipeline" or "lead."</li>
+          <li><div class="hw-box"></div><strong>Leave Channels:</strong> Exit any channel that doesn't directly impact your deals, pipeline, or cross-functional alignment.</li>
+          <li><div class="hw-box"></div><strong>Mute Notifications:</strong> Turn off alerts from company-wide channels during deal prep and proposal hours.</li>
+          <li><div class="hw-box"></div><strong>Set Keywords:</strong> Add notifications for deal names, "contract," "close date," and "pricing."</li>
         </ul>
       </div>
-      <div>
+      <div class="sdr-only">
+        <div class="t-head">Task 1: Audit Your Slack Use</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div><strong>Leave Channels:</strong> Exit any channel that doesn't directly serve your prospecting, sequences, or team alignment.</li>
+          <li><div class="hw-box"></div><strong>Mute Notifications:</strong> Turn off non-essential alerts, especially during calling blocks.</li>
+          <li><div class="hw-box"></div><strong>Set Keywords:</strong> Add notifications for "lead," "meeting booked," and your name.</li>
+        </ul>
+      </div>
+      <div class="ae-only">
         <div class="t-head">Task 2 & 3: Boundaries and Messages</div>
         <ul class="hw-list">
-          <li><div class="hw-box"></div>Set your Slack status to "Do Not Disturb" during focused work hours.</li>
-          <li><div class="hw-box"></div>Create "Slack-Free Zones" during your day (e.g., 9-11 AM or post-6 PM).</li>
+          <li><div class="hw-box"></div>Set your Slack status to "In Deal Prep" or "Do Not Disturb" during proposal writing and demo prep.</li>
+          <li><div class="hw-box"></div>Create Slack-Free Zones for your highest-leverage activities (e.g., 9-11 AM for follow-ups, post-lunch for demos).</li>
+          <li><div class="hw-box"></div>Be direct in every Slack message. Instead of "Let's circle back," use "Need pricing for Deal X by 3 PM today."</li>
+        </ul>
+      </div>
+      <div class="sdr-only">
+        <div class="t-head">Task 2 & 3: Boundaries and Messages</div>
+        <ul class="hw-list">
+          <li><div class="hw-box"></div>Set your Slack status to "On Calls — Back at [time]" during your outbound blocks.</li>
+          <li><div class="hw-box"></div>Create Slack-Free Zones during your peak calling hours (e.g., 9-11 AM and 2-4 PM).</li>
           <li><div class="hw-box"></div>Be direct in every Slack message. Instead of "Let's follow up later," use "Follow up with XYZ prospect by 3 PM today."</li>
         </ul>
       </div>
+
+      <!-- Accountability Gate -->
+      <div id="gate8" data-gate-screen="8"></div>
     </div>
   </div>
 
@@ -510,13 +1052,17 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <div class="comp-tag">Course 9 · Lesson 2 — Complete</div>
           <div style="font-family:var(--display);font-size:56px;color:var(--white);line-height:.9;margin:10px 0 0">09</div>
         </div>
-        <div class="comp-big">Fix the noise,<br>soar in<br>productivity.</div>
-        <div class="comp-sub">Slack can be a game-changer, but only if you control it—not the other way around. Streamline your channels, tame your notifications, and focus on clarity and action.</div>
+        <div class="comp-big ae-only">Protect your<br>selling hours.</div>
+        <div class="comp-big sdr-only">Protect your<br>calling blocks.</div>
+        <div class="comp-sub ae-only">Slack can accelerate deal velocity — but only if you control it. Curate your channels around active deals, batch your responses, and defend your deep-work time. Your close rate depends on focus, not response time.</div>
+        <div class="comp-sub sdr-only">Slack can be a game-changer — but only if you control it, not the other way around. Go dark during calling blocks, mute the noise, and protect the hours that produce meetings.</div>
       </div>
       <div class="comp-r">
         <div class="eyebrow">Course 9 · Lesson 2 Complete</div>
-        <div class="comp-h">Use Slack as a tool for action.</div>
-        <p class="comp-p">The real noise isn't in your pipeline—it's in your Slack. Curate your channels and set boundaries to stop Slack from running your day.</p>
+        <div class="comp-h ae-only">Your deals close in focus time, not in Slack.</div>
+        <div class="comp-h sdr-only">Your meetings are booked on the phone, not in Slack.</div>
+        <p class="comp-p ae-only">The real noise isn't in your pipeline — it's in your Slack. Curate deal-room channels, set keyword alerts, and stop letting pings interrupt demo prep and proposal writing.</p>
+        <p class="comp-p sdr-only">The real noise isn't in your sequence — it's in your Slack. Curate your channels, set boundaries during outbound hours, and stop letting pings steal your dials.</p>
         <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
         <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
       </div>
@@ -527,7 +1073,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 <aside class="sidebar">
   <div class="sb-course">09</div>
-  <div class="sb-lesson">Lesson 9.2 · Slack Survival Guide</div>
+  <div class="sb-lesson ae-only">Lesson 9.2 · Slack Survival Guide</div>
+  <div class="sb-lesson sdr-only">Lesson 9.2 · Slack Survival Guide</div>
   <div class="sb-divider"></div>
   <div class="sb-label">Sections</div>
   <div class="sb-item" id="nav1" onclick="go(1)">
@@ -659,10 +1206,15 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); render();
+  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register accountability gate
+  var _role = document.documentElement.getAttribute('data-role') || 'sdr';
+  var _gatePrompt = _role === 'ae' ? 'List your current Slack channels. For each: do you actually need it? Which ones should you mute, leave, or add? Be honest about your notification hygiene.' : 'List your current Slack channels. For each: do you actually need it? Which ones should you mute, leave, or add? Be honest about your notification hygiene.';
+  AESDR.gate(8, { type:'evidence', prompt: _gatePrompt, minChars: 80 });
+  render();
 }
 function go(n){
-  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:{}},"*")}catch(e){}}
+  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;
   document.getElementById('s'+cur).classList.add('active');
@@ -925,6 +1477,7 @@ function canContinue(){
   if(cur===5)return Object.keys(seqDone).length===5;
   if(cur===6)return clsCount===8;
   if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 function getHint(){
@@ -936,7 +1489,7 @@ function getHint(){
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,
     7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    8:"Turn Slack from a distraction vortex into a tool for focused collaboration.",
+    8: AESDR.gateHint(8) || "Turn Slack from a distraction vortex into a tool for focused collaboration.",
   };
   return h[cur]||'';
 }
@@ -957,6 +1510,7 @@ function render(){
   const bnav=document.getElementById('bottomnav');
   bnav.style.display=hide?'none':'flex';
   if(hide)return;
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';

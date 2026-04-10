@@ -2,6 +2,501 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- AESDR Role Detection -->
+<script>
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  var role = p.get('role') || 'sdr';
+  document.documentElement.setAttribute('data-role', role);
+})();
+</script>
+<style>
+/* Role-conditional content: hide content not matching current role */
+[data-role="ae"] .sdr-only { display: none !important; }
+[data-role="sdr"] .ae-only { display: none !important; }
+/* Softer variant: swap text content visibility */
+[data-role="ae"] .sdr-text { display: none !important; }
+[data-role="sdr"] .ae-text { display: none !important; }
+</style>
+<!-- AESDR Accountability Gates -->
+<style>
+/* ══════════════════════════════════════════
+   AESDR Accountability Gates — Styles v1
+   Matches lesson design system vars:
+     --black, --white, --mid, --lite, --lite2,
+     --amber, --cobalt, --green, --line, --iris,
+     --cond, --serif, --mono
+══════════════════════════════════════════ */
+
+/* ── Gate container ── */
+.gate-box {
+  margin: 28px 0 12px;
+  padding: 28px 32px 24px;
+  border: 2px solid var(--black);
+  background: var(--white);
+  position: relative;
+}
+.gate-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+}
+
+/* ── Label / tag ── */
+.gate-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 14px;
+}
+
+/* ── Prompt text ── */
+.gate-prompt {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--black);
+  margin-bottom: 18px;
+}
+
+/* ── Textarea ── */
+.gate-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px 16px;
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--black);
+  background: var(--lite);
+  border: 1px solid var(--line2);
+  resize: vertical;
+  outline: none;
+  transition: border-color .2s;
+}
+.gate-textarea:focus {
+  border-color: var(--amber);
+}
+.gate-textarea.gate-evidence {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  min-height: 100px;
+}
+.gate-textarea::placeholder {
+  color: var(--mid);
+  opacity: .6;
+}
+
+/* ── Footer (counter + submit) ── */
+.gate-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  gap: 12px;
+}
+
+/* ── Character counter ── */
+.gate-counter {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+
+/* ── Submit button ── */
+.gate-submit {
+  font-family: var(--cond);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border: 2px solid var(--black);
+  background: var(--black);
+  color: var(--white);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all .15s;
+}
+.gate-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 2s linear infinite;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.gate-submit:hover::before {
+  opacity: 1;
+}
+.gate-submit:hover {
+  color: var(--black);
+}
+.gate-submit span {
+  position: relative;
+  z-index: 1;
+}
+.gate-submit:disabled,
+.gate-submit:disabled:hover {
+  opacity: .28;
+  cursor: not-allowed;
+  background: var(--black);
+  color: var(--white);
+}
+.gate-submit:disabled::before,
+.gate-submit:disabled:hover::before {
+  display: none;
+}
+
+/* ── Rubric checklist ── */
+.gate-rubric {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.gate-rubric-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 10px;
+}
+.gate-rubric-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--black);
+}
+.gate-rubric-item input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--amber);
+  flex-shrink: 0;
+}
+
+/* ── Time gate ── */
+.gate-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 20px 0 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--line2);
+  background: var(--lite);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  color: var(--mid);
+}
+.gate-time-icon {
+  font-size: 14px;
+}
+.gate-time-num {
+  font-weight: 700;
+  color: var(--amber);
+  font-size: 13px;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* ── Completed state ── */
+.gate-done {
+  margin: 24px 0 8px;
+  padding: 20px 24px;
+  border: 2px solid var(--green);
+  background: var(--grn-lt);
+}
+.gate-done-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.gate-done-preview {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--mid);
+  font-style: italic;
+}
+
+</style>
+<script>
+/*  AESDR Accountability Gates v1
+ *  Inject into lesson HTML files alongside role-detection.
+ *
+ *  Usage in lesson JS:
+ *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
+ *    AESDR.gate(1, { type:'time', seconds:60 });
+ *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
+ *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
+ *
+ *  In canContinue():
+ *    if (!AESDR.gateReady(cur)) return false;
+ *
+ *  Gate state auto-saves via postMessage when completed.
+ */
+window.AESDR = window.AESDR || {};
+
+(function(A) {
+  var gates = {};      // screenNum -> config
+  var gateState = {};  // screenNum -> { completed, value, ... }
+  var timers = {};     // screenNum -> { started, remaining }
+
+  /* ── Register a gate ── */
+  A.gate = function(screen, cfg) {
+    gates[screen] = cfg;
+    gateState[screen] = { completed: false, value: '' };
+  };
+
+  /* ── Check if gate is satisfied ── */
+  A.gateReady = function(screen) {
+    if (!gates[screen]) return true;
+    return gateState[screen] && gateState[screen].completed;
+  };
+
+  /* ── Get gate hint text ── */
+  A.gateHint = function(screen) {
+    var g = gates[screen];
+    if (!g) return '';
+    var s = gateState[screen];
+    if (s.completed) return '\u2713 Gate complete';
+
+    if (g.type === 'time') {
+      var r = timers[screen] ? timers[screen].remaining : g.seconds;
+      return r > 0 ? 'Unlocks in ' + r + 's' : '';
+    }
+    if (g.type === 'reflection' || g.type === 'evidence') {
+      var len = (s.value || '').length;
+      return len + ' / ' + g.minChars + ' characters';
+    }
+    if (g.type === 'application') {
+      var len2 = (s.value || '').length;
+      var checks = s.rubricChecked || 0;
+      var total = (g.rubric || []).length;
+      return len2 + ' chars \u00B7 ' + checks + '/' + total + ' rubric items';
+    }
+    return '';
+  };
+
+  /* ── Get all gate data for stateData (progress saving) ── */
+  A.gateData = function() {
+    var out = {};
+    for (var k in gateState) {
+      if (gateState[k].completed) {
+        out['gate_' + k] = {
+          type: gates[k].type,
+          value: gateState[k].value,
+          completedAt: gateState[k].completedAt
+        };
+      }
+    }
+    return out;
+  };
+
+  /* ── Render gate UI into a container ── */
+  A.renderGate = function(screen, containerId) {
+    var g = gates[screen];
+    if (!g) return;
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    var s = gateState[screen];
+
+    if (s.completed) {
+      el.innerHTML = _completedHTML(g, s);
+      return;
+    }
+
+    switch(g.type) {
+      case 'reflection': el.innerHTML = _reflectionHTML(screen, g, s); break;
+      case 'application': el.innerHTML = _applicationHTML(screen, g, s); break;
+      case 'evidence': el.innerHTML = _evidenceHTML(screen, g, s); break;
+      case 'time': _startTimer(screen, g); el.innerHTML = _timeHTML(screen, g); break;
+    }
+  };
+
+  /* ── Completed state ── */
+  function _completedHTML(g, s) {
+    var typeLabel = { reflection:'Reflection', application:'Response', evidence:'Evidence', time:'Time' };
+    return '<div class="gate-done">' +
+      '<div class="gate-done-tag">\u2713 ' + (typeLabel[g.type]||'Gate') + ' Submitted</div>' +
+      (g.type !== 'time' ? '<div class="gate-done-preview">' + _esc(s.value).substring(0,200) + (s.value.length > 200 ? '...' : '') + '</div>' : '') +
+    '</div>';
+  }
+
+  /* ── Reflection Gate ── */
+  function _reflectionHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Reflection Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your reflection here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Reflection</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Application Gate ── */
+  function _applicationHTML(screen, g) {
+    var rubricHTML = (g.rubric || []).map(function(r, i) {
+      return '<label class="gate-rubric-item">' +
+        '<input type="checkbox" onchange="AESDR._onRubric(' + screen + ',' + i + ',this.checked)">' +
+        '<span>' + r + '</span></label>';
+    }).join('');
+
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Application Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Write your response...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-counter" id="gateCtr' + screen + '">0 / ' + (g.minChars || 50) + ' characters</div>' +
+      (rubricHTML ? '<div class="gate-rubric"><div class="gate-rubric-label">Self-evaluate your response:</div>' + rubricHTML + '</div>' : '') +
+      '<div class="gate-footer">' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Response</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Evidence Gate ── */
+  function _evidenceHTML(screen, g) {
+    return '<div class="gate-box">' +
+      '<div class="gate-label">Evidence Required</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea gate-evidence" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Paste your evidence here...') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Submit Evidence</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Time Gate ── */
+  function _timeHTML(screen, g) {
+    var r = timers[screen] ? timers[screen].remaining : g.seconds;
+    if (r <= 0) return '';
+    return '<div class="gate-time" id="gateTime' + screen + '">' +
+      '<span class="gate-time-icon">\u23F3</span> ' +
+      '<span class="gate-time-num" id="gateTimeCtr' + screen + '">' + r + '</span>s remaining' +
+    '</div>';
+  }
+
+  function _startTimer(screen, g) {
+    if (timers[screen]) return;
+    timers[screen] = { remaining: g.seconds };
+    var iv = setInterval(function() {
+      timers[screen].remaining--;
+      var el = document.getElementById('gateTimeCtr' + screen);
+      if (el) el.textContent = timers[screen].remaining;
+      if (timers[screen].remaining <= 0) {
+        clearInterval(iv);
+        gateState[screen].completed = true;
+        gateState[screen].completedAt = new Date().toISOString();
+        var timeEl = document.getElementById('gateTime' + screen);
+        if (timeEl) timeEl.style.display = 'none';
+        // Trigger render if the lesson exposes it
+        if (typeof window.render === 'function') window.render();
+      }
+    }, 1000);
+  }
+
+  /* ── Internal handlers ── */
+  A._onInput = function(screen, val) {
+    gateState[screen].value = val;
+    var g = gates[screen];
+    var min = g.minChars || 50;
+    var ctr = document.getElementById('gateCtr' + screen);
+    if (ctr) ctr.textContent = val.length + ' / ' + min + (g.type === 'application' ? ' characters' : '');
+
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      var ready = val.length >= min;
+      if (g.type === 'application' && g.rubric) {
+        var checks = gateState[screen].rubricChecked || 0;
+        ready = ready && checks >= g.rubric.length;
+      }
+      btn.disabled = !ready;
+    }
+  };
+
+  A._onRubric = function(screen, idx, checked) {
+    if (!gateState[screen]._rubric) gateState[screen]._rubric = {};
+    gateState[screen]._rubric[idx] = checked;
+    var count = 0;
+    for (var k in gateState[screen]._rubric) {
+      if (gateState[screen]._rubric[k]) count++;
+    }
+    gateState[screen].rubricChecked = count;
+
+    // Re-check submit button
+    var g = gates[screen];
+    var val = gateState[screen].value || '';
+    var btn = document.getElementById('gateSub' + screen);
+    if (btn) {
+      btn.disabled = !(val.length >= (g.minChars || 50) && count >= (g.rubric || []).length);
+    }
+  };
+
+  A._submit = function(screen) {
+    var s = gateState[screen];
+    s.completed = true;
+    s.completedAt = new Date().toISOString();
+
+    // Re-render the gate as completed
+    var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
+    containers.forEach(function(el) { A.renderGate(screen, el.id); });
+
+    // Save progress via postMessage
+    if (window.parent !== window) {
+      try {
+        window.parent.postMessage({
+          type: 'aesdr:progress',
+          screen: screen,
+          stateData: A.gateData()
+        }, '*');
+      } catch(e) {}
+    }
+
+    // Trigger render if available
+    if (typeof window.render === 'function') window.render();
+  };
+
+  /* ── Escape helper ── */
+  function _esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+})(window.AESDR);
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AESDR — Course 12.1: Leveling Up SaaS Relationships</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -289,9 +784,11 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div>
           <div class="cv-c2tag">AESDR · Lesson 12.1</div>
           <div class="cv-course-num">12</div>
-          <div class="cv-big">Leveling Up SaaS Relationships</div>
+          <div class="cv-big ae-only">Relationships & Success</div>
+          <div class="cv-big sdr-only">Relationships & Success</div>
         </div>
-        <div class="cv-tagline">Navigating Growth, Ambition, and Modern Partnerships.</div>
+        <div class="cv-tagline ae-only">Six-figure OTE changes relationships. Learn to navigate the gap before it breaks something.</div>
+        <div class="cv-tagline sdr-only">The grind changes relationships. Learn to grow together or grow apart.</div>
       </div>
       <div class="cvr">
         <div class="eyebrow">Course 12 · Lesson 1</div>
@@ -314,17 +811,30 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div><div class="c12-badge">Course 12</div><span class="sec-eye">Section 01 — Introduction</span></div>
       <div class="lh-title">The SaaS Success Gap</div>
     </div>
-    <div class="lb">
-      <p class="lp">SaaS sales professionals—especially women—are growing fast. Financially, intellectually, and socially, their success is measurable. But success comes with its own challenges, and relationships often get caught in the crossfire. This lesson explores why growth gaps form, how they breed resentment, and what you can do to build relationships that thrive alongside your success.</p>
+    <div class="lb ae-only">
+      <p class="lp">As an AE, your life is accelerating. Six-figure OTE, President's Club trips, executive dinners, and a career trajectory that most people outside SaaS can't even comprehend. But success at this velocity comes with a hidden cost: relationships struggle to keep up. This lesson explores why growth gaps form between you and your partner, how they breed resentment, and what you can do about it.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>The High-Velocity Lifestyle:</strong> SaaS demands ambition, intelligence, and adaptability.</li>
-        <li><span class="kp-n">02</span><strong>The Gap Widens:</strong> When one partner is growing rapidly and the other is standing still, tension builds.</li>
-        <li><span class="kp-n">03</span><strong>Beyond Money:</strong> It's about experiences, opportunities, and mindset alignment.</li>
+        <li><span class="kp-n">01</span><strong>The High-Velocity Lifestyle:</strong> Enterprise deals, cross-country travel, strategic thinking at a pace that few jobs demand. You're growing fast—financially, intellectually, and socially.</li>
+        <li><span class="kp-n">02</span><strong>The Gap Widens:</strong> You're negotiating a $500K deal while your partner is complaining about office politics. The gap isn't just about money—it's about mindset, ambition, and what excites you.</li>
+        <li><span class="kp-n">03</span><strong>Beyond Money:</strong> It's the travel, the executive dinners, the intellectual challenge, the network. When your partner can't relate to any of it, the disconnect compounds silently.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Reality Check</div>
         <div class="lie-q">"A strong relationship requires alignment in growth."</div>
-        <div class="lie-a">When growth stops on one side of a relationship, friction begins. Resentment naturally creeps in if both partners aren't pushing forward.</div>
+        <div class="lie-a">When you're leveling up every quarter and your partner is standing still, resentment creeps in from both sides. You feel unsupported; they feel left behind.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">As an SDR, you're in one of the fastest-growing career tracks in tech. You're learning, earning, and evolving at a pace that most of your friends outside SaaS don't understand. But that rapid growth creates friction in relationships—especially when your partner doesn't get the grind, the income swings, or why you're always mentally somewhere else. This lesson explores why that gap forms and what to do about it.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>The High-Velocity Lifestyle:</strong> Cold calls, quota pressure, continuous learning, and a career path that rewards relentless hustle. You're developing skills and resilience that most people your age aren't.</li>
+        <li><span class="kp-n">02</span><strong>The Gap Widens:</strong> You're obsessing over your pipeline while your partner is coasting at a 9-to-5. The conversations start to feel mismatched. They don't understand why you're stressed about a number.</li>
+        <li><span class="kp-n">03</span><strong>Beyond Money:</strong> It's the ambition, the hunger, the constant self-improvement. When your partner doesn't share that drive, the gap isn't just financial—it's emotional and intellectual.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Reality Check</div>
+        <div class="lie-q">"A strong relationship requires alignment in growth."</div>
+        <div class="lie-a">When you're grinding to hit quota and your partner thinks your job is "just making calls," resentment creeps in. The gap isn't about the paycheck—it's about the mindset.</div>
       </div>
     </div>
   </div>
@@ -366,17 +876,30 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div><div class="c12-badge">Course 12</div><span class="sec-eye">Section 02 & 03 — Growth Compatibility</span></div>
       <div class="lh-title">Money Represents Freedom & Drive</div>
     </div>
-    <div class="lb">
-      <p class="lp">Financial success in SaaS isn't just about numbers—it's about freedom. The ability to live life on your terms, invest in experiences, and plan for the future. When partners aren't aligned, this freedom highlights disparities.</p>
+    <div class="lb ae-only">
+      <p class="lp">Financial success as an AE isn't just about the commission checks—it's about freedom, experiences, and options. President's Club in Cabo. A network of ambitious peers. The ability to invest, travel, and plan a future. But when your partner can't match that trajectory, the freedom becomes a source of friction.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>The Comparison Problem:</strong> Peers and coworkers at the same financial level can highlight disparities in your own relationship.</li>
-        <li><span class="kp-n">02</span><strong>The Message Sent:</strong> If one partner thrives financially while the other lags, it signals a lack of drive or ambition—whether intentional or not.</li>
-        <li><span class="kp-n">03</span><strong>Growth Mismatch:</strong> This is the silent relationship killer. Mismatches in ambition, social experiences, and intellectual challenges create a gap that is impossible to ignore.</li>
+        <li><span class="kp-n">01</span><strong>The Comparison Problem:</strong> You're at a team dinner with couples who both earn six figures and speak the same language of ambition. Your partner feels out of place—and you notice.</li>
+        <li><span class="kp-n">02</span><strong>The Message Sent:</strong> When you're funding vacations, dinners, and experiences alone, it creates an unspoken power imbalance—even if you don't intend it. They feel dependent; you feel unsupported.</li>
+        <li><span class="kp-n">03</span><strong>Growth Mismatch:</strong> This is the silent killer. You're thinking about career moves, investment strategies, and scaling your income. They're thinking about getting through the week. The conversations stop aligning.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Bottom Line</div>
         <div class="lie-q">"If your partner isn't growing alongside you, resentment can grow."</div>
-        <div class="lie-a">You're out strategizing multimillion-dollar deals while they complain about minor office politics. You're pushing limits; they are content standing still.</div>
+        <div class="lie-a">You're strategizing a seven-figure pipeline while they complain about a coworker. You're negotiating enterprise deals; they're avoiding hard conversations about their own career. The gap widens quietly.</div>
+      </div>
+    </div>
+    <div class="lb sdr-only">
+      <p class="lp">Financial success as an SDR is real—even if it's volatile. Variable comp, accelerators, and the trajectory toward an AE role mean you're building toward something bigger. But when your partner doesn't understand the grind or share the ambition, the growth gap becomes a wedge.</p>
+      <ul class="kp">
+        <li><span class="kp-n">01</span><strong>The Comparison Problem:</strong> Your SDR pod is full of hungry, ambitious people pushing each other. You go home and your partner doesn't understand why you care so much about hitting a number. The energy mismatch is draining.</li>
+        <li><span class="kp-n">02</span><strong>The Message Sent:</strong> When you're investing in books, courses, and self-development while your partner is content with the status quo, it sends an unspoken message about different priorities.</li>
+        <li><span class="kp-n">03</span><strong>Growth Mismatch:</strong> This is the silent killer. You're thinking about getting promoted to AE and doubling your income. They're thinking about the weekend. The conversations stop connecting.</li>
+      </ul>
+      <div class="lie">
+        <div class="lie-tab">The Bottom Line</div>
+        <div class="lie-q">"If your partner isn't growing alongside you, resentment can grow."</div>
+        <div class="lie-a">You're obsessing over call frameworks and career progression while they think your job is "just cold calling." You're building a career; they don't see the vision. The gap compounds.</div>
       </div>
     </div>
   </div>
@@ -477,14 +1000,17 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div class="t-head">Task 1: Self-Reflection Exercise</div>
         <ul class="hw-list">
           <li><div class="hw-box"></div>Write down where you're currently excelling and where you feel stagnant.</li>
-          <li><div class="hw-box"></div>Write down what personal growth looks like for you right now.</li>
+          <li class="ae-only"><div class="hw-box"></div>Reflect honestly: has your AE success created distance in your relationship? Where do you see the gap—financial, intellectual, social, or emotional?</li>
+          <li class="sdr-only"><div class="hw-box"></div>Reflect honestly: has the SDR grind created distance in your relationship? Where do you see the gap—ambition, energy, social circles, or emotional availability?</li>
         </ul>
       </div>
       <div>
         <div class="t-head">Task 2: Set Career & Personal Goals</div>
         <ul class="hw-list">
-          <li><div class="hw-box"></div><strong>SaaS Pro:</strong> How can you better support your partner's growth?</li>
-          <li><div class="hw-box"></div><strong>Partner:</strong> What steps can you take to push yourself out of your comfort zone?</li>
+          <li class="ae-only"><div class="hw-box"></div><strong>As the AE:</strong> How can you better support your partner's growth without being condescending? Can you share resources, make introductions, or simply make space for their ambition?</li>
+          <li class="ae-only"><div class="hw-box"></div><strong>For your partner:</strong> What one step could they take this month to push beyond their comfort zone?</li>
+          <li class="sdr-only"><div class="hw-box"></div><strong>As the SDR:</strong> How can you help your partner understand your career trajectory and why it matters? Can you share your goals in a way that invites them into the vision?</li>
+          <li class="sdr-only"><div class="hw-box"></div><strong>For your partner:</strong> What one step could they take this month to invest in their own growth—professionally or personally?</li>
         </ul>
       </div>
       <div>
@@ -492,8 +1018,13 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <ul class="hw-list">
           <li><div class="hw-box"></div>Align on long-term visions: career, financial, and personal.</li>
           <li><div class="hw-box"></div>Commit to ONE action step each partner will take this month to close the gap.</li>
+          <li class="ae-only"><div class="hw-box"></div>Schedule a real conversation—not after a stressful deal day—to talk about where you both want to be in two years.</li>
+          <li class="sdr-only"><div class="hw-box"></div>Schedule a real conversation—not after a brutal call block—to talk about where you both want to be in two years.</li>
         </ul>
       </div>
+
+      <!-- Accountability Gate -->
+      <div id="gate8" data-gate-screen="8"></div>
     </div>
   </div>
 
@@ -504,13 +1035,17 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <div class="comp-tag">Course 12 · Lesson 1 — Complete</div>
           <div style="font-family:var(--display);font-size:56px;color:var(--white);line-height:.9;margin:10px 0 0">12</div>
         </div>
-        <div class="comp-big">Closing the<br>Gap, Together.</div>
-        <div class="comp-sub">Resentment dies when growth aligns. You deserve a partner who strives, grows, and pushes for more alongside you.</div>
+        <div class="comp-big ae-only">Close the gap.<br>Build<br>together.</div>
+        <div class="comp-big sdr-only">Grow together<br>or grow<br>apart.</div>
+        <div class="comp-sub ae-only">Resentment dies when growth aligns. You deserve a partner who matches your ambition, understands the grind, and strives alongside you—not someone you have to carry.</div>
+        <div class="comp-sub sdr-only">Resentment dies when growth aligns. You deserve a partner who shares your hunger, respects the hustle, and builds alongside you—not someone who holds you back.</div>
       </div>
       <div class="comp-r">
         <div class="eyebrow">Course 12 · Lesson 1 Complete</div>
-        <div class="comp-h">Growth is a non-negotiable.</div>
-        <p class="comp-p">The gap doesn't have to widen—it can close with effort, ambition, and shared goals. Resentment isn't about income or status; it's about mindset. Build a partnership that thrives.</p>
+        <div class="comp-h ae-only">Growth is a non-negotiable.</div>
+        <div class="comp-h sdr-only">Shared ambition is a non-negotiable.</div>
+        <p class="comp-p ae-only">The gap doesn't have to widen—it can close with honest conversation, mutual effort, and shared goals. The best AEs don't just manage pipelines; they manage partnerships with the same intentionality.</p>
+        <p class="comp-p sdr-only">The gap doesn't have to widen—it can close with honest conversation, mutual ambition, and shared goals. The best SDRs bring the same discipline to their relationships that they bring to their outbound.</p>
         <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
         <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
       </div>
@@ -521,7 +1056,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 <aside class="sidebar">
   <div class="sb-course">12</div>
-  <div class="sb-lesson">Lesson 12.1 · Leveling Up Relationships</div>
+  <div class="sb-lesson ae-only">Lesson 12.1 · Relationships & Success</div>
+  <div class="sb-lesson sdr-only">Lesson 12.1 · Relationships & Success</div>
   <div class="sb-divider"></div>
   <div class="sb-label">Sections</div>
   <div class="sb-item" id="nav1" onclick="go(1)">
@@ -653,10 +1189,15 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); render();
+  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register accountability gate
+  var _role = document.documentElement.getAttribute('data-role') || 'sdr';
+  var _gatePrompt = _role === 'ae' ? 'Write honestly about how your sales career has affected one personal relationship. What changed? What would you do differently? What\'s one specific action you\'ll take this week?' : 'Write honestly about how your SDR role has affected one personal relationship or your personal life. What changed? What would you do differently? What\'s one specific action you\'ll take this week?';
+  AESDR.gate(8, { type:'reflection', prompt: _gatePrompt, minChars: 120 });
+  render();
 }
 function go(n){
-  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:{}},"*")}catch(e){}}
+  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;
   document.getElementById('s'+cur).classList.add('active');
@@ -919,6 +1460,7 @@ function canContinue(){
   if(cur===5)return Object.keys(seqDone).length===5;
   if(cur===6)return clsCount===8;
   if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
+  if(!AESDR.gateReady(cur)) return false;
   return true;
 }
 function getHint(){
@@ -930,7 +1472,7 @@ function getHint(){
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,
     7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    8:"Resentment dies when growth aligns.",
+    8: AESDR.gateHint(8) || "Resentment dies when growth aligns.",
   };
   return h[cur]||'';
 }
@@ -951,6 +1493,7 @@ function render(){
   const bnav=document.getElementById('bottomnav');
   bnav.style.display=hide?'none':'flex';
   if(hide)return;
+  if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
   document.getElementById('hint').textContent=getHint();
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';
