@@ -184,7 +184,7 @@ export default async function LessonPage({
             letterSpacing: ".1em",
             textTransform: "uppercase" as const,
             color: "#fff",
-            background: "rgba(0,0,0,0.6)",
+            background: "rgba(0,0,0,0.9)",
             backdropFilter: "blur(8px)",
             padding: "8px 12px",
             textDecoration: "none",
@@ -227,8 +227,8 @@ export default async function LessonPage({
                   textTransform: "uppercase" as const,
                   color: "#fff",
                   background: isActive
-                    ? "rgba(0,0,0,0.8)"
-                    : "rgba(0,0,0,0.4)",
+                    ? "rgba(0,0,0,0.95)"
+                    : "rgba(0,0,0,0.85)",
                   backdropFilter: "blur(8px)",
                   padding: "6px 10px",
                   textDecoration: "none",
@@ -244,7 +244,7 @@ export default async function LessonPage({
 
         <div
           style={{
-            background: "rgba(0,0,0,0.6)",
+            background: "rgba(0,0,0,0.9)",
             backdropFilter: "blur(8px)",
             flexShrink: 0,
             lineHeight: "normal",
@@ -258,6 +258,7 @@ export default async function LessonPage({
             initialIsCompleted={isCompleted}
           />
         </div>
+
 
         {isCompleted &&
           tools.map((tool) => (
