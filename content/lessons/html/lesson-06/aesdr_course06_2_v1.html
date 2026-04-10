@@ -1436,18 +1436,46 @@ function init(){
   buildVI(); buildMB(); buildNC(); renderKT(); buildQuiz(); 
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Name one person in your network who has sent you a real deal referral in the last 6 months. What did you do to earn that referral — or if you can\'t name anyone, why not?' : 'Name one person at your company (AE, manager, peer) who actively advocates for you. What did you do to earn that — or if no one comes to mind, what does that tell you?', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson says "stop chasing rooms — start becoming someone worth referring deals to." It argues that real networking is about offering deal intelligence, market insight, and partnership value before asking for anything. Name one specific person (first name and title) who has sent you a real deal referral in the last 6 months. What exactly did you offer them first — deal intelligence, an introduction, market insight — that earned that referral? If you can\'t name anyone, explain what the "Motherboard vs. Cog" framework from this lesson tells you about why.'
+      : 'This lesson says "stop chasing rooms — start becoming someone worth inviting into them." It argues that real networking for SDRs means building a reputation through value, not collecting contacts. Name one specific person at your company (first name and role — AE, manager, or peer) who actively advocates for you or requests to work with you. What exactly did you do to earn that advocacy — field intelligence you shared, meetings you booked, insights you contributed? If no one comes to mind, use the "Motherboard vs. Cog" concept from this lesson to explain what you need to change.',
+    minChars: 120
+  });
   // Homework gate
   AESDR.gate(7, { type:'homework', items: _role === 'ae' ? [
-    { task:'Write down 3 strengths that make you worth partnering with as an AE. Practice introducing yourself using all three to a new stakeholder this week.', placeholder:'List your 3 strengths and describe the introduction...', minChars:40 },
-    { task:'Identify 3 people in your network who challenge you to grow. Schedule a check-in with one.', placeholder:'Who are they and what did you discuss?', minChars:40 },
-    { task:'Spend 30 minutes reading one SaaS industry report relevant to your top accounts. Write down 1 insight and use it.', placeholder:'Which report, what insight, and how did you use it?', minChars:40 },
-    { task:'Post one industry insight on LinkedIn with your actual take — not a forwarded article.', placeholder:'Paste or describe what you posted...', minChars:40 }
+    { task:'Write your Professional Value Statement: List 3 specific strengths that make you worth partnering with as an AE (e.g., vertical expertise, deal structuring, executive access). Then write the exact words you\'ll use to introduce yourself to a new stakeholder this week — include the stakeholder\'s name and company.',
+      placeholder:'Example: "My 3 strengths: 1) Deep healthcare SaaS expertise 2) Multi-threaded deal management 3) C-suite relationship building. This week I\'ll introduce myself to Lisa Chen, VP Ops at Acme Health: \'Lisa, I specialize in helping healthcare ops leaders like you reduce vendor sprawl...\'..."',
+      minChars:120 },
+    { task:'Identify 3 specific people in your network by name and title (a champion, a partner, an industry peer) who challenge you to grow. Schedule a check-in with one this week and write the date, their name, and the one question you\'ll ask them.',
+      placeholder:'Example: "1. Maria Torres, VP Sales at Dataflow (champion) 2. James Lee, Partner at Accenture (partner) 3. Priya Shah, AE at Gong (peer). Check-in scheduled with Maria for Thursday 4/15. Question: \'What trends are you seeing in procurement cycles this quarter?\'..."',
+      minChars:100 },
+    { task:'Read one SaaS industry report this week (name the specific report and source — Gartner, Forrester, or similar). Write down 1 insight and describe exactly how you used it in a discovery call or executive presentation, including the account name.',
+      placeholder:'Example: "Read Gartner\'s 2026 Magic Quadrant for CRM. Insight: 73% of mid-market buyers now require AI-native features. Used it in my discovery call with Initech on Tuesday: \'Your competitors are already evaluating AI-native CRM — how is your team thinking about this?\'..."',
+      minChars:100 },
+    { task:'Post one industry insight on LinkedIn with your actual take — not a forwarded article. Write at least two sentences positioning yourself as someone who understands the market. Paste the text of your post here.',
+      placeholder:'Example: "Posted on LinkedIn 4/10: \'The SaaS consolidation wave isn\'t slowing down. I\'m seeing 3 of my top accounts actively cutting vendors this quarter. If you\'re not positioned as essential infrastructure, you\'re on the chopping block. Here\'s what I\'m telling my buyers...\'"',
+      minChars:100 },
+    { task:'Using the "Motherboard vs. Cog" framework from this lesson, audit your last 5 networking interactions. List each one (date, person, context) and classify it as Motherboard behavior (creating value, connecting others) or Cog behavior (asking for something, transactional). What\'s your ratio and what will you change?',
+      placeholder:'Example: "1. 4/3 — Messaged VP at prospect asking for intro (Cog) 2. 4/5 — Shared market report with champion unprompted (Motherboard) 3. 4/7 — Asked partner for referral without offering value first (Cog). Ratio: 1 Motherboard / 4 Cog. This week I\'ll..."',
+      minChars:100 }
   ] : [
-    { task:'Write down 3 strengths or skills that make you worth knowing as a professional. Practice introducing yourself using all three — out loud.', placeholder:'List your 3 strengths and describe the practice...', minChars:40 },
-    { task:'Identify 3 people in your circle who challenge you to grow. Schedule a check-in with one this week.', placeholder:'Who are they and what did you discuss?', minChars:40 },
-    { task:'Spend 30 minutes reading one SaaS industry report. Write down 1 insight and use it in a cold call opener or email.', placeholder:'Which report, what insight, and how did you use it?', minChars:40 },
-    { task:'Post one industry insight in Slack or LinkedIn with your actual take — your perspective on why it matters.', placeholder:'Paste or describe what you posted...', minChars:40 }
+    { task:'Write your Professional Value Statement: List 3 specific strengths that make you worth knowing as an SDR (e.g., industry knowledge, prospecting creativity, meeting quality). Then write the exact words you\'ll use to introduce yourself to a new contact this week — practice it out loud and describe how it went.',
+      placeholder:'Example: "My 3 strengths: 1) Deep fintech prospecting knowledge 2) Creative multi-channel sequences 3) High meeting-to-opportunity conversion. I practiced introducing myself to a new AE: \'Hey, I\'m the SDR who books meetings that actually close — here\'s how I research accounts...\'..."',
+      minChars:120 },
+    { task:'Identify 3 specific people in your circle by name and role (an AE you admire, a peer who\'s crushing it, a manager who gives real feedback) who challenge you to grow. Schedule a check-in with one this week — write the date, their name, and the one question you\'ll ask.',
+      placeholder:'Example: "1. Sarah Kim, Senior AE (admire her discovery skills) 2. Marcus Johnson, fellow SDR (highest connect rate on team) 3. David Park, my manager (gives brutally honest feedback). Check-in with Marcus scheduled for Wednesday 4/14. Question: \'What\'s your opening line when a gatekeeper pushes back?\'..."',
+      minChars:100 },
+    { task:'Read one SaaS industry report this week (name the specific report and source). Write down 1 insight and describe exactly how you used it in a cold call opener or prospecting email, including what you said and how the prospect reacted.',
+      placeholder:'Example: "Read Forrester\'s 2026 B2B Buying Report. Insight: 68% of buyers prefer vendors who understand their industry before the first call. Used it in my cold call to a fintech prospect: \'I just read that 68% of buyers like you want vendors who get fintech before the first meeting — that\'s why I\'m calling with a specific take on...\'..."',
+      minChars:100 },
+    { task:'Post one industry insight in Slack or LinkedIn with your actual take — not a forwarded article. Two sentences minimum. Your perspective on why it matters to the prospects you\'re calling. Paste the text here.',
+      placeholder:'Example: "Posted in team Slack 4/10: \'Just read that mid-market SaaS churn hit 18% this quarter. That means every prospect I\'m calling has budget pressure and vendor consolidation on their mind. I\'m rewriting my opener to lead with cost savings instead of features.\'"',
+      minChars:100 },
+    { task:'Using the "Motherboard vs. Cog" framework from this lesson, audit your last 5 interactions with AEs, managers, or peers. List each one (date, person, context) and classify it as Motherboard behavior (sharing insights, adding value) or Cog behavior (asking for something, being transactional). What\'s your ratio and what will you change?',
+      placeholder:'Example: "1. 4/3 — Asked my AE for better leads without sharing call intel first (Cog) 2. 4/5 — Shared 3 objections I\'m hearing with the team in Slack (Motherboard) 3. 4/8 — Asked manager for a territory change (Cog). Ratio: 1 Motherboard / 4 Cog. This week I\'ll..."',
+      minChars:100 }
   ] });
   render();
 }

@@ -1445,8 +1445,20 @@ function init(){
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'How many times did you check Slack during your last demo prep or proposal writing block? Estimate the number and calculate how many minutes of focus you lost.' : 'How many dials did you lose yesterday because you checked Slack during a calling block? Estimate the number and be honest about what pulled you away.', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'List 3 Slack channels you are in right now that do not directly help you close deals. Why are you still in them?' : 'When was the last time you set your Slack status to "On Calls" and actually went dark during a call block? If never, what is really stopping you?', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson explained that every Slack context switch costs 20+ minutes of focus — stealing time from demo prep, proposal writing, and follow-up calls. Think about your last proposal writing or demo prep block: how many times did you check Slack, what specifically pulled you away each time (name the channel or DM sender), and calculate the total minutes of deep work you lost? Then describe the exact Slack status message and DND schedule you will implement this week to protect your next two deal-prep blocks. Be specific about days and times.'
+      : 'This lesson explained that every Slack check during a cold-call block costs 3-5 dials — potentially 20+ lost calls per day and the meetings that come with them. Think about yesterday\'s calling block: how many times did you check Slack, what specifically pulled you away (name the channel, DM, or notification), and how many dials did you lose? Then describe the exact Slack status message you will set during your next calling block, the specific hours you will go dark, and what you will tell teammates who DM you during that window.',
+    minChars: 120
+  });
+  AESDR.gate(3, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'The lesson identified three categories of Slack overload: noisy channels that don\'t help close deals, vague DMs that pull you from deep work, and constant notifications that create false urgency. Open your Slack right now and list 3 specific channels you are in that do not directly impact your pipeline or deals. For each one, state its name and why you originally joined. Then describe your plan for keyword notifications — which exact deal names and trigger words (like "contract," "close date," "pricing") will you set up, and which alerts will you mute? Include how you will coach your SDR to lead DMs with context instead of "Got a sec?"'
+      : 'The lesson identified three categories of Slack overload: noisy channels that don\'t help book meetings, vague DMs that interrupt calling blocks, and constant notifications that destroy focus. Open your Slack right now and list 3 specific channels you are in that do not serve your prospecting, sequences, or AE alignment. For each, state its name and why you joined. Then describe your keyword notification plan — which exact terms (like "lead," "meeting booked," your name) will you alert on, and which channels will you mute? Include the exact words you will use to tell your AE or manager that DMs during your calling block will wait until afterward.',
+    minChars: 120
+  });
   // Homework gate
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
     { task:'Leave any channel that does not directly impact your deals, pipeline, or cross-functional alignment.', placeholder:'List channels you will leave or mute', minChars:40 },

@@ -1446,8 +1446,20 @@ function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Describe one specific moment this quarter where the AE-SDR relationship on your team visibly helped or hurt pipeline. What happened, and what was your role in it?' : 'Describe one specific moment this quarter where your relationship with your AE directly affected your results. What happened, and what did you do — or fail to do?', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Which of the three small acts (acknowledge, helper doc, step into the dirt) have you never done for your SDR? Why not — and what would change if you started this week?' : 'Which of the three small acts have you never initiated with your AE? What is stopping you, and what would you say to start one this week?', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson argues that culture is built or destroyed in the AE-SDR handoff — not in offsites or Slack channels. Name your SDR partner and describe one specific moment in the past 30 days where your treatment of them (sharing credit, handling a loss, responding to a bad lead) either strengthened or damaged the pipeline. What exactly did you say or do, and how did it ripple into deal quality or team morale?'
+      : 'This lesson argues that culture lives in the daily interactions between SDRs and AEs — not in mission statements or team BBQs. Name your AE partner and describe one specific moment in the past 30 days where your working relationship directly affected your results. What happened (a handoff, a piece of feedback, a missed alignment), what was your role in it, and how did it affect your confidence or meeting conversion rate?',
+    minChars: 120
+  });
+  AESDR.gate(3, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'The lesson names three small acts that build culture: (1) Acknowledge your SDR, (2) Build a Helper Document, and (3) Step Into the Dirt by cold calling alongside them. Which of these three have you never done for your current SDR? Be honest about why — is it time, ego, or not seeing the ROI? Then write the exact words you would say or send this week to start that act, and explain how it could change lead quality or meeting conversion in the next 30 days.'
+      : 'The lesson names three small acts that build culture: (1) Start with acknowledgments, (2) Share what you\'re hearing from prospects, and (3) Ask your AE to step into the dirt and cold call with you. Which of these three have you never initiated? Be honest about what\'s stopping you — is it fear of overstepping, not knowing what to say, or assuming it won\'t matter? Write the exact words you would use to initiate that act this week, and explain how it could change your AE\'s investment in your partnership.',
+    minChars: 120
+  });
   // Homework gate
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
     { task:'Create a helper document for your SDR this week — email frameworks, objection rebuttals, and account priorities.', placeholder:'Describe what you included and shared...', minChars:40 },

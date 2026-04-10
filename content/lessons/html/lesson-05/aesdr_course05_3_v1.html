@@ -1477,7 +1477,13 @@ function init(){
   buildRR(); buildBM(); buildTS(); buildIP(); buildSA(); buildQuiz(); 
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'If your territory were reassigned tomorrow, what would the next AE struggle with that only you currently know? That\'s your leverage — or your vulnerability. Explain.' : 'If you were let go tomorrow, how long would it take to replace you — honestly? What do you do that no other SDR on the team does?', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson presents four realities about being replaceable and argues that AEs who only hit number are interchangeable — the ones who over-deliver, forecast accurately, and build relationships across the org get protected. If your territory were reassigned tomorrow, name 3 specific things (relationship with a key champion, deal context, competitive intel) the next AE would lose. For each, explain whether you\'ve documented it or it lives only in your head — and what that says about your replaceability right now.'
+      : 'This lesson says companies see SDRs as interchangeable and the seat can be filled within a month. It argues that average performance makes you invisible and silent judgment from leadership happens before anyone says your name. If you were let go tomorrow, name 3 specific things you do that no other SDR on your team does — a research method, a call technique, a relationship with a specific AE. For each, explain the evidence that it actually moves your numbers, not just feels differentiated.',
+    minChars: 120
+  });
   // Homework gate
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
     { task:'Review your pipeline: identify average close rate, deal size, and cycle length for your team. Set personal targets at 10-20% above each.', placeholder:'List the team benchmarks and your targets...', minChars:40 },

@@ -1428,8 +1428,20 @@ function init(){
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Think about your last sales conference. Did you advance more pipeline at the bar or at the 8 AM breakfast? Be specific about what you gained — or lost — each night.' : 'At your last company event or SKO, who saw you at the end of the night — and what impression did you leave? Would that person promote you based on it?', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Name one relationship with a champion or executive sponsor that cooled off after a conference. Was alcohol involved? What would you do differently?' : 'Has a manager or AE ever seen you act unprofessionally at an event? What did it cost you in trust or opportunity — even if nobody said anything?', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson warns that "free drinks aren\'t really free — they cost you deals, credibility, and executive trust." Think about your last sales conference or SKO. Name the event, the dates, and the specific pipeline you were there to advance. Did you advance more pipeline at the bar or at the 8 AM executive breakfast? Describe one specific conversation from each setting and what it actually produced in deal progress.'
+      : 'This lesson says "free drinks cost you credibility with the people who decide your next promotion." At your last company event or SKO, name the event and who specifically saw you at the end of the night — your manager, an AE lead, a VP? What impression did you leave? Would that specific person recommend you for promotion based on what they saw? Be honest and name names.',
+    minChars: 120
+  });
+  AESDR.gate(3, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'Screen 3 described the "Domino Effect" — embarrassing behavior, burned relationships, and missed opportunities from conference drinking. Name one specific champion or executive sponsor relationship that cooled off after a conference. What exactly happened — did you overshare deal details, get too casual, or miss the morning follow-up? Describe the deal stage it was in and how much pipeline was affected. What would your exit strategy have been?'
+      : 'Screen 3 warned about the "Domino Effect" for SDRs — embarrassing behavior in front of leadership, burned reputation, and missed morning sessions. Describe a specific conference or team event where you either (a) stayed too late and missed an opportunity the next day, or (b) saw another SDR make this mistake. Name the event, what was missed, and how it changed leadership\'s perception. What would you do differently with a written exit strategy?',
+    minChars: 120
+  });
   // Homework gate
   var _hwAE = [
     { task: 'Write down your max drink limit for networking events before you arrive', placeholder: 'State your limit...', minChars: 40 },

@@ -1450,8 +1450,20 @@ function init(){
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Name one tool in your stack that you use as a crutch to avoid doing real selling work. What would happen to your close rate if that tool disappeared tomorrow?' : 'Which of your daily tools are you hiding behind instead of picking up the phone? Be specific — name the tool and the activity you use it to avoid.', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'When was the last time you ran a discovery call that was truly consultative — not just a feature demo? What question did you ask that changed the direction of the deal?' : 'Record yourself on your next cold call in your head: are you having a conversation or reading a script? What is one thing you would change about your opener right now?', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson called out three "unholy trinity" tool traps for AEs: lazy follow-up emails ("just checking in"), garbage pipeline data with fictional stages and dates, and deck dependency where demos become feature walkthroughs instead of conversations. Which of these three traps is your biggest weakness right now? Name the specific tool you hide behind (e.g., your sequencer, your CRM, your slide deck), describe a real deal where this crutch hurt your close rate, and explain what fundamental selling skill — deep discovery, consultative selling, or deal hygiene — you need to strengthen before you can use that tool effectively. What would happen to your pipeline if that tool disappeared tomorrow?'
+      : 'This lesson called out three tool traps for SDRs: spammy email sequences with generic subject lines, garbage CRM data with incomplete notes, and speed-dialing without real conversations. Which of these three is your biggest weakness right now? Name the specific tool you hide behind (e.g., your sequencer, your CRM, your dialer), describe a real situation this week where using that tool as a crutch cost you a meeting or a quality conversation, and explain what fundamental prospecting skill — personalized outreach, call note discipline, or genuine cold-call conversations — you need to build before you can scale with that tool. What would change about your connect rate if that tool vanished tomorrow?',
+    minChars: 120
+  });
+  AESDR.gate(3, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'The lesson taught that tools enhance great selling but amplify bad selling — and that the fix is mastering deep discovery, consultative selling, and aligning tools to your deal process (not the other way around). Describe the last discovery call you ran: What question did you ask that uncovered real pain and changed the direction of the deal? If you can\'t name one, that\'s the problem. Now map your current sales stages to your tool stack — does your CRM follow your deal process, or are you bending your process to fit the CRM? Name one specific misalignment and the exact change you will make this week. Explain how you will coach your SDR to provide better pre-call intel so your discovery starts stronger.'
+      : 'The lesson taught that tools amplify bad messaging and that the fix is mastering your cold-call opener, email personalization, and qualifying questions before you automate. Describe your current cold-call opener word for word. Now honestly evaluate it: are you having a conversation or reading a script? What is one specific change you will make to your opener this week to sound more human? Then look at your outbound sequences: does your sequencer follow your prospecting process, or have you just copied a template someone else built? Name one sequence you are running right now, describe what is broken about it, and explain the exact changes you will make to align it with the qualifying questions you should be asking. How will you confirm with your AE that these changes lead to better-quality meetings?',
+    minChars: 120
+  });
   // Homework gate
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
     { task:'Review your last 10 post-demo follow-up emails. Rewrite them to reference specific pain points discussed.', placeholder:'Describe the patterns you found and changes you will make', minChars:40 },

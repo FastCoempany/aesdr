@@ -1429,7 +1429,10 @@ function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz();
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Which ego behavior from the intro (micromanaging, taking credit, skipping syncs) have you done in the last month? Be specific about the situation and what it cost your SDR.' : 'Describe a specific moment when your AE\'s ego made your job harder. What was the behavior, and how did you respond — or wish you had responded?', minChars: 50 });
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae'
+    ? 'This lesson names three ego behaviors: micromanaging SDR outreach, taking credit for meetings you didn\'t source, and skipping syncs. It says "the SDR who stops going above and beyond for you didn\'t get lazy — they got tired of being dismissed." Which of these three have you done in the last month? Don\'t pick the easiest one to admit. Name your SDR, describe the specific situation, and explain what it cost them — their motivation, their trust in you, or the quality of leads they brought you afterward. What was the direct pipeline impact?'
+    : 'This lesson names three AE ego behaviors: micromanaging your outreach, taking credit for your sourced meetings, and skipping your syncs. It says "you can\'t control your AE\'s ego — but you can control how you respond to it." Describe the most recent situation where one of these three behaviors directly affected your work. Name the behavior, describe what happened in that specific meeting or interaction, how it made you feel, and — honestly — did you address it or just absorb it? What did it cost your performance or motivation that week?',
+    minChars: 120 });
   AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Of the three framework steps (Diagnose, Ask for Feedback, Establish Expectations), which one scares you most? What would your SDR say if you actually asked them what to change?' : 'Have you ever used an impact statement instead of an accusation with your AE? Write one now for a real situation: "When [X happens], it affects [Y]."', minChars: 50 });
   // Homework gate
   AESDR.gate(8, { type:'homework', prompt: _role === 'ae'

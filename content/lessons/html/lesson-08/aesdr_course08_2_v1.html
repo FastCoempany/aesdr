@@ -1456,8 +1456,20 @@ function init(){
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Name one SDR on your team who talks a great game but consistently underdelivers. What specific results gap made you realize enthusiasm was masking a performance problem?' : 'Be brutally honest: are your results matching your energy level? List your actual bookings from last week next to how hard you felt you were working.', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Think about the last SDR who gave you a polished excuse for missing metrics. What did they say, and what was the real issue underneath?' : 'Write down the last excuse you gave for missing a target — "bad leads," "slow quarter," whatever it was. Now write what you could have done differently instead.', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson distinguishes real potential from fake potential. Name one SDR on your team (first name) who consistently shows high enthusiasm but underdelivers on measurable results. Write their specific numbers from last month (calls, meetings booked, pipeline) next to the team average, and identify which "fake potential" trait from the lesson — polished excuses, performative hustle, or selective metric reporting — they rely on most.'
+      : 'The lesson warns that enthusiasm without results is a trap. Write your actual numbers from last week — calls made, meetings booked, pipeline generated — next to what the top performer on your team hit. Then honestly assess: are you confusing effort with output? Identify one specific "fake potential" behavior from the lesson that you recognize in yourself.',
+    minChars: 120
+  });
+  AESDR.gate(3, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'The lesson teaches that polished excuses are the #1 indicator of fake potential. Write the exact words the last SDR used when explaining a missed target to you. Then apply the "traits vs. noise" framework: what real trait (coachability, ownership, pattern recognition) was missing beneath that excuse, and what specific question will you ask next time to cut through the noise and diagnose the real gap?'
+      : 'Write the last excuse you gave your AE or manager for missing a number — the exact words you used, not a summary. Now apply the "traits vs. noise" classifier from this lesson: was your excuse noise (deflection, external blame, vague effort claims) or did it contain a real trait (specific self-diagnosis, ownership, concrete corrective action)? Write what you should have said instead, word for word.',
+    minChars: 120
+  });
   // Homework gate
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
     { task:'Establish performance KPIs: calls per day, meetings booked per week, follow-ups completed.', placeholder:'List the specific KPIs and benchmarks', minChars:40 },

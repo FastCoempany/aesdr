@@ -1417,7 +1417,13 @@ function init(){
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gate
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Think about the last meeting you self-sourced versus one handed to you by an SDR. What was different about your preparation, confidence, and close rate?' : 'What percentage of your booked meetings actually converted to qualified opportunities last month? If you don\'t know the number, why not?', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson argues that self-sourced meetings give you leverage because you own the backstory, trust starts before the meeting, and you\'re not dependent on SDR activity fluctuations. Name a specific self-sourced meeting from the past 3 months — the account, the date, and the research that got you in the door. Compare your preparation, confidence, and close rate on that meeting versus a recent SDR-handed meeting. Which of the three advantages (backstory ownership, pre-meeting trust, pipeline insurance) was most evident, and what does that tell you about your current pipeline source mix?'
+      : 'This lesson states that qualification is everything, context is your currency, and volume without quality is a trap. Calculate your exact meeting-to-qualified-opportunity conversion rate for the past month — write the numbers. Then describe one specific meeting you booked that failed to convert: name the prospect, explain what qualification step you skipped (pain, authority, or timeline), and describe what context you failed to provide in your handoff notes that would have helped your AE.',
+    minChars: 120
+  });
   // Homework gate
   AESDR.gate(7, { type:'homework', items: _role === 'ae' ? [
     { task:'Audit your current pipeline. Calculate what percentage is self-sourced. If below 30%, make it your top priority this month.', placeholder:'List your pipeline breakdown with real numbers', minChars:40 },

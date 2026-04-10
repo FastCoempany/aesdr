@@ -1446,8 +1446,20 @@ function init(){
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Think about your last big commission check. How much of it did you spend within 30 days — and what would happen to your lifestyle if the next quarter was a total miss?' : 'What did you spend your last bonus or variable payout on? If that payout disappeared for three months straight, which bills would you struggle to cover?', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'What is your actual average monthly income over the last 6 months — not your OTE, your real take-home? If you don\'t know, that\'s the problem.' : 'Can you name your real average monthly income over the last 3 months — after clawbacks and payout delays? If not, what does that tell you about your financial planning?', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson exposed the feast-or-famine rollercoaster and the financial strategies to survive it. Name your highest and lowest commission months in the last 6 months — the actual dollar amounts. How much of your last big commission check did you spend within 30 days, and on what specifically? Describe how this pattern affects your ability to coach your SDRs on financial discipline when they see your lifestyle swings.'
+      : 'This lesson broke down why sales income feels like a rollercoaster and how to stop living paycheck to paycheck. Name the exact dollar amount of your last three variable payouts. Which one was the lowest, and what caused the drop — was it fewer qualified meetings, clawbacks, or payout delays? List the specific bills or expenses that would be at risk if you had three consecutive months at that lowest level.',
+    minChars: 120
+  });
+  AESDR.gate(3, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'The lesson introduced the Financial Health Plan: logging real earnings, budgeting on your worst month, and the 50/20 commission rule. Calculate your actual average monthly take-home over the last 6 months (base + commissions - clawbacks - taxes). Name the specific month that was your floor. Describe the exact budget you would build around that floor number — list your fixed expenses by name and amount. What percentage of your last commission check went to savings versus lifestyle spending?'
+      : 'The lesson taught you to calculate real average income, build an emergency fund, and apply the 20% commission spending cap. Write down your actual take-home pay for each of the last 3 months (not what you expected — what hit your bank account). What was your worst month and why? Name three specific non-essential expenses you would cut immediately if you had two bad months in a row. What is your current emergency fund balance, and how many months of base-salary-level expenses does it cover?',
+    minChars: 120
+  });
   // Homework gate
   var _hwAE = [
     { task: 'Log all earnings for the past 6 months: base, commissions, clawbacks, splits, and bonuses', placeholder: 'List your monthly earnings...', minChars: 40 },

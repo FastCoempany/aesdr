@@ -1427,8 +1427,20 @@ function init(){
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'What did you order at your last client dinner or partner event — and what message did it send to the executive across the table? Be brutally honest.' : 'What was in your hand at the last team event? If your VP of Sales saw it, would they think "future AE" or "not ready"?', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Have you ever ordered something at a client event that undermined your executive presence — even slightly? What would you order differently now?' : 'If you had to order a drink right now at a conference with your entire leadership team watching, what would it be and why?', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson taught that "your drink order is a micro-signal" — executives form opinions on small details, and ordering an umbrella drink at a partner dinner signals you don\'t belong in the room. Name your last client dinner or partner event, who was at the table, and exactly what you ordered. Using the lesson\'s framework of "What You Think It Says" vs. "What It Actually Says," analyze your order honestly. What would you order differently now and why?'
+      : 'This lesson taught that "at team events and conferences, leaders are always watching" and that shots or dessert cocktails make you look like you\'re at spring break. Name your last team event, who from leadership was there, and exactly what was in your hand. Using the lesson\'s "What You Think It Says" vs. "What It Actually Says" framework, would your VP of Sales think "future AE" or "not ready"? Be specific about the drink and the person watching.',
+    minChars: 120
+  });
+  AESDR.gate(3, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'Screen 3 gave a specific Professional Event Drink Guide: safe choices (Old Fashioned, gin and tonic, club soda with lime) vs. drinks to avoid (Mai Tai, Jägerbombs, Appletini, craft beers >9% ABV). Have you ever ordered something from the "avoid" list — or close to it — at a client event? Name the event, the drink, and who noticed. Using the guide, write out your exact go-to order for your next client dinner and explain how it signals confidence and control.'
+      : 'Screen 3 listed safe choices (light lager, gin and tonic, club soda with lime) vs. drinks to avoid (shots, umbrella drinks, dessert cocktails, craft beers >9% ABV). If you had to order right now at a conference with your entire leadership team and your AE watching, what exactly would you order and why? Name a specific upcoming event or team gathering, who will be there, and write out the exact words you\'d say to the bartender. Explain how your choice signals professional maturity.',
+    minChars: 120
+  });
   // Homework gate
   var _hwAE = [
     { task: 'Write down your go-to safe drink option for client-facing events', placeholder: 'Name your drink and why...', minChars: 40 },
