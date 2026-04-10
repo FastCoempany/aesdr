@@ -1432,13 +1432,13 @@ function init(){
     ? 'Honestly assess: which of the ego behaviors from this lesson do you recognize in yourself? Describe one specific situation where ego affected your AE/SDR dynamic, and what you\'d do differently now.'
     : 'Describe a specific situation where an AE\'s ego (or team dynamics) negatively affected your work. What was the behavior, how did it impact you, and how did you (or could you) address it constructively?',
     items: _role === 'ae' ? [
-      { label:'Do I trust my SDR\'s qualification, or am I reworking their leads before I even read the notes?', minChars: 30 },
-      { label:'Am I showing up to every scheduled SDR sync this week — not just the ones that feel convenient?', minChars: 30 },
-      { label:'When my SDR sources a great meeting, do I give them public credit — or just close the deal and move on?', minChars: 30 }
+      { task:'Do I trust my SDR\'s qualification, or am I reworking their leads before I even read the notes?', minChars: 30 },
+      { task:'Am I showing up to every scheduled SDR sync this week — not just the ones that feel convenient?', minChars: 30 },
+      { task:'When my SDR sources a great meeting, do I give them public credit — or just close the deal and move on?', minChars: 30 }
     ] : [
-      { label:'Name the specific AE behavior causing friction — without defaulting to "they just don\'t care"', minChars: 30 },
-      { label:'Propose a solution (standup, shared doc, feedback format) instead of just expressing frustration', minChars: 30 },
-      { label:'Document your sourced meetings and lead quality so you have data, not just feelings', minChars: 30 }
+      { task:'Name the specific AE behavior causing friction — without defaulting to "they just don\'t care"', minChars: 30 },
+      { task:'Propose a solution (standup, shared doc, feedback format) instead of just expressing frustration', minChars: 30 },
+      { task:'Document your sourced meetings and lead quality so you have data, not just feelings', minChars: 30 }
     ]
   });
   render();

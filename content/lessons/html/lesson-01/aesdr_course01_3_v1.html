@@ -1424,13 +1424,13 @@ function init(){
     ? 'Write specific, written feedback for a real or simulated SDR call. Include: what the opening did well, one thing to change about the engage, and whether the close was strong enough.'
     : 'Self-evaluate a recent call or practice call. Write: what your opening did well, where your engage lost momentum, and whether your close was specific enough. Be honest.',
     items: _role === 'ae' ? [
-      { label:'Schedule 1 hour for coaching this week — review 2 SDR calls and deliver written feedback on each', minChars: 40 },
-      { label:'Ask your SDR what area they need the most coaching on right now — then actually address it', minChars: 30 },
-      { label:'Run the 60-minute coaching framework: call review, email feedback, role-play, Q&A', minChars: 40 }
+      { task:'Schedule 1 hour for coaching this week — review 2 SDR calls and deliver written feedback on each', minChars: 40 },
+      { task:'Ask your SDR what area they need the most coaching on right now — then actually address it', minChars: 30 },
+      { task:'Run the 60-minute coaching framework: call review, email feedback, role-play, Q&A', minChars: 40 }
     ] : [
-      { label:'Bring 1 call recording and 1 email sequence to your next 1:1 — walk your AE through what went wrong first', minChars: 40 },
-      { label:'Self-evaluate in writing before every feedback session: what went well, where do you need help', minChars: 30 },
-      { label:'Prepare for the 60-minute coaching framework: bring a call, an email draft, and one specific question', minChars: 40 }
+      { task:'Bring 1 call recording and 1 email sequence to your next 1:1 — walk your AE through what went wrong first', minChars: 40 },
+      { task:'Self-evaluate in writing before every feedback session: what went well, where do you need help', minChars: 30 },
+      { task:'Prepare for the 60-minute coaching framework: bring a call, an email draft, and one specific question', minChars: 40 }
     ]
   });
 

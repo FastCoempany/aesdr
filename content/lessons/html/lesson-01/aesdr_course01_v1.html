@@ -1044,7 +1044,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div id="gate1" data-gate-screen="1"></div>
   </div>
 
-  <!-- 2: DAY 1 CHECKLIST -->
+  <!-- 2: DAY 1 CHECKLIST (enforced) -->
   <div class="screen" id="s2">
     <div class="lh">
       <div class="lh-stripe"></div>
@@ -1052,9 +1052,9 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="sec-eye">Section 01 — Day 1 Blueprint</div>
       <div class="lh-title ae-only">Day 1 Onboarding: Everything That Must Happen</div>
       <div class="lh-title sdr-only">Day 1 Orientation: Your Survival Checklist</div>
-      <div class="lh-sub"><b id="clCount">0</b> / 5 completed — check off each item to continue</div>
+      <div class="lh-sub">Complete each item below — no shortcuts</div>
     </div>
-    <div class="cl-area" id="clArea"></div>
+    <div id="gate2" data-gate-screen="2" style="padding:20px 56px 44px;max-width:700px"></div>
   </div>
 
   <!-- 3: WEEK TIMELINE -->
@@ -1067,8 +1067,6 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-sub"><b id="tlCount">0</b> / 5 days revealed — open each day to continue</div>
     </div>
     <div class="tl-wrap" id="tlWrap"></div>
-      <!-- Narrative Gate -->
-      <div id="gate3" data-gate-screen="3"></div>
   </div>
 
   <!-- 4: SCHEDULE BUILDER -->
@@ -1211,6 +1209,9 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
   <div class="sb-item" id="nav4" onclick="go(7)">
     <div class="sb-tag">Section 04</div>
     <div class="sb-name">Tools & Homework</div>
+  </div>
+  <div style="margin-top:32px;padding:16px 0;border-top:1px solid var(--line)">
+    <p style="font-family:var(--serif);font-size:13px;font-style:italic;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">You can treat this like just another course if you want. Or you can not lie and complete this survival checklist legitimately. What you do when no one is watching makes all the difference in the end.</p>
   </div>
 </aside>
 
@@ -1419,18 +1420,38 @@ function init(){
   // Narrative gates
   AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Name one SDR who struggled on your team because structure was missing. What specifically fell apart — and what would you build differently now?' : 'Describe one week where you had no clear plan and your outreach suffered. What did you waste time on, and what structure would have saved you?', minChars: 50 });
 
+  // Day 1 Checklist — enforced with text input per item
+  AESDR.gate(2, { type:'homework',
+    prompt: _role === 'ae'
+      ? 'This is your SDR\'s Day 1. Every item below must be completed with a real, specific response. No clicking through.'
+      : 'This is your Day 1. Every item below must be completed with a real, specific response. No clicking through.',
+    items: _role === 'ae' ? [
+      { task:'Set SDR Expectations — Define key responsibilities, daily focus areas, and what success looks like in week one.', placeholder:'Write the specific expectations you will set...', minChars: 40 },
+      { task:'Product Overview (1 Hour) — Shadow a live or recorded AE demo. Focus on key questions SDRs need to answer.', placeholder:'What are the 3 key questions your SDR must answer?', minChars: 40 },
+      { task:'Tool & System Walkthrough — CRM, outreach tools, call logging. Hands-on, not a slide deck.', placeholder:'Which tools will you walk through and what will they log first?', minChars: 40 },
+      { task:'Establish Day 1 Daily Goals — Start achievable: 10 calls and 5 practice email drafts.', placeholder:'Write the exact goals you will assign for Day 1...', minChars: 30 },
+      { task:'Set the Debrief Habit — Walk through the end-of-day structure: What worked? What didn\'t? What changes tomorrow?', placeholder:'Describe how you will run the first debrief...', minChars: 40 }
+    ] : [
+      { task:'Learn the CRM Inside Out — Log a test call, create a test contact, run a test sequence before EOD.', placeholder:'Describe exactly what you will log and create...', minChars: 40 },
+      { task:'Shadow a Live AE Demo — Write down the 5 questions prospects ask most.', placeholder:'List the questions you heard or expect to hear...', minChars: 40 },
+      { task:'Map Your Outreach Tools — Open every tool: dialer, email sequencer, LinkedIn. Send a test email. Make a test call.', placeholder:'Which tools did you open and what did you test?', minChars: 40 },
+      { task:'Set Your Own Day 1 Goals — Write specific targets: 10 dials, 5 practice email drafts.', placeholder:'Write your exact targets for today...', minChars: 30 },
+      { task:'Start a Daily Log — What did I learn? What confused me? What do I need to ask tomorrow?', placeholder:'Write your first daily log entry right now...', minChars: 40 }
+    ]
+  });
+
   // Register accountability gate on homework screen
   AESDR.gate(7, { type:'homework', prompt: _role === 'ae'
     ? 'Paste your actual Day 1 onboarding checklist for your SDR — the one you use (or will build) in your real role. Include specific tasks, time blocks, and goals.'
     : 'Paste your actual Day 1 orientation plan — the schedule, goals, and tasks you committed to (or will commit to) for your first week. Be specific.',
     items: _role === 'ae' ? [
-      { label:'Schedule 15 min daily for call review — pick one call, give one specific adjustment', minChars: 30 },
-      { label:'Run the Weekly Alignment Agenda this Friday with last week\'s numbers pulled beforehand', minChars: 30 },
-      { label:'Write the 3 most common product questions your SDR hears and review their answers', minChars: 30 }
+      { task:'Schedule 15 min daily for call review — pick one call, give one specific adjustment', minChars: 30 },
+      { task:'Run the Weekly Alignment Agenda this Friday with last week\'s numbers pulled beforehand', minChars: 30 },
+      { task:'Write the 3 most common product questions your SDR hears and review their answers', minChars: 30 }
     ] : [
-      { label:'Write the 3 most common product questions you hear and practice answering in 3 min flat', minChars: 30 },
-      { label:'Log 10 cold calls per day this week — bring your top challenge to each feedback session', minChars: 30 },
-      { label:'Start your daily log: What did I learn? What confused me? What do I need to ask tomorrow?', minChars: 30 }
+      { task:'Write the 3 most common product questions you hear and practice answering in 3 min flat', minChars: 30 },
+      { task:'Log 10 cold calls per day this week — bring your top challenge to each feedback session', minChars: 30 },
+      { task:'Start your daily log: What did I learn? What confused me? What do I need to ask tomorrow?', minChars: 30 }
     ]
   });
 
@@ -1714,7 +1735,7 @@ const SEC={1:1,2:1,3:1,4:2,5:3,6:3,7:4};
 
 function canContinue(){
   if(cur===1)return AESDR.gateReady(1);
-  if(cur===2) return clDone.size===5;
+  if(cur===2) return AESDR.gateReady(2);
   if(cur===3) return tlOpen.size===5;
   if(cur===4) return Object.keys(schedDone).length===5;
   if(cur===5) return ccDoneAll;
@@ -1730,7 +1751,7 @@ function getHint(){
   var gateHint = AESDR.gateHint(cur);
   const h={
     1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
-    2:`${clDone.size} / 5 items completed`,
+    2: AESDR.gateHint(2) || 'Complete every item. No shortcuts.',
     3:`${tlOpen.size} / 5 days revealed`,
     4:`${Object.keys(schedDone).length} / 5 correctly placed`,
     5: ccDoneAll ? "✓ All 3 stages complete — continue below."

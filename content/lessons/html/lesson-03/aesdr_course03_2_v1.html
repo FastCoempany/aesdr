@@ -1428,13 +1428,13 @@ function init(){
     ? 'Which of the 10 Commandments do you struggle with most as an AE? Describe a specific situation where you broke it and what it cost you.'
     : 'Which of the 10 Commandments do you struggle with most as an SDR? Describe a specific situation where you broke it and what it cost you.',
     items: _role === 'ae' ? [
-      { label:'Publicly shout out your SDR\'s contribution in a team meeting this week — name the specific deal or meeting they sourced', minChars: 30 },
-      { label:'Identify one commandment you\'ve been breaking — write down one specific behavior change for this week', minChars: 30 },
-      { label:'Schedule or restart the daily 10-minute huddle with your SDR — show up every day this week, no cancellations', minChars: 30 }
+      { task:'Publicly shout out your SDR\'s contribution in a team meeting this week — name the specific deal or meeting they sourced', minChars: 30 },
+      { task:'Identify one commandment you\'ve been breaking — write down one specific behavior change for this week', minChars: 30 },
+      { task:'Schedule or restart the daily 10-minute huddle with your SDR — show up every day this week, no cancellations', minChars: 30 }
     ] : [
-      { label:'Share feedback with your AE using an impact statement: "When X happens, it affects Y"', minChars: 30 },
-      { label:'Propose one structural fix (daily huddle, shared doc, feedback format) — come with a calendar invite, not a complaint', minChars: 30 },
-      { label:'Reflect on one commandment you\'ve been breaking from your side — hold yourself accountable too', minChars: 30 }
+      { task:'Share feedback with your AE using an impact statement: "When X happens, it affects Y"', minChars: 30 },
+      { task:'Propose one structural fix (daily huddle, shared doc, feedback format) — come with a calendar invite, not a complaint', minChars: 30 },
+      { task:'Reflect on one commandment you\'ve been breaking from your side — hold yourself accountable too', minChars: 30 }
     ]
   });
   render();

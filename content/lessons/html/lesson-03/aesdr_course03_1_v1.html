@@ -1123,8 +1123,6 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-title">The BANT Lead Qualifier</div>
     </div>
     <div class="bant-wrap" id="bantWrap"></div>
-      <!-- Narrative Gate -->
-      <div id="gate3" data-gate-screen="3"></div>
   </div>
 
   <!-- 4: FEEDBACK DECODER -->
@@ -1535,15 +1533,15 @@ function init(){
     ? 'Write a coaching note for a specific SDR call: identify 3 qualification gaps (BANT or similar framework) and provide concrete suggestions for each.'
     : 'Given a recent call you made, identify 3 qualification gaps using BANT (Budget, Authority, Need, Timeline). For each gap, write what you should have asked instead.',
     items: _role === 'ae' ? [
-      { label:'Identify which of the four pitfalls you see most in your own deal management — be honest about where your process gets lazy', minChars: 30 },
-      { label:'Review the last 5 leads your SDR passed against BANT — score each one and share specific results with your SDR', minChars: 30 },
-      { label:'Schedule a feedback session with your SDR — pick one area, give specific written feedback, track implementation', minChars: 30 },
-      { label:'Personalize your next 3 follow-up emails with specific references to what each prospect said in discovery', minChars: 30 }
+      { task:'Identify which of the four pitfalls you see most in your own deal management — be honest about where your process gets lazy', minChars: 30 },
+      { task:'Review the last 5 leads your SDR passed against BANT — score each one and share specific results with your SDR', minChars: 30 },
+      { task:'Schedule a feedback session with your SDR — pick one area, give specific written feedback, track implementation', minChars: 30 },
+      { task:'Personalize your next 3 follow-up emails with specific references to what each prospect said in discovery', minChars: 30 }
     ] : [
-      { label:'Write down the one pitfall you recognize most in yourself — then implement one specific fix from the toolkit', minChars: 30 },
-      { label:'Use the BANT checklist on every lead you pass to your AE this week — if you can\'t answer all four, don\'t pass it', minChars: 30 },
-      { label:'Add one genuine research-based personalization element to every outreach sequence you send this week', minChars: 30 },
-      { label:'Ask your AE for one specific piece of feedback on your qualification quality — not "how am I doing" but one concrete improvement', minChars: 30 }
+      { task:'Write down the one pitfall you recognize most in yourself — then implement one specific fix from the toolkit', minChars: 30 },
+      { task:'Use the BANT checklist on every lead you pass to your AE this week — if you can\'t answer all four, don\'t pass it', minChars: 30 },
+      { task:'Add one genuine research-based personalization element to every outreach sequence you send this week', minChars: 30 },
+      { task:'Ask your AE for one specific piece of feedback on your qualification quality — not "how am I doing" but one concrete improvement', minChars: 30 }
     ]
   });
   render();

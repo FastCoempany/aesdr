@@ -1440,11 +1440,11 @@ function init(){
     ? 'Describe a specific silo in your current org — between Sales, Marketing, Product, or CS — and explain how it directly impacts your pipeline or deal flow. Be concrete: name the teams, the disconnect, and the cost.'
     : 'Describe a specific silo you\'ve experienced between your SDR team and another department (Marketing, AEs, Product). How does it affect your daily outreach or prospecting? Name the disconnect and one thing you could do about it.',
     items: _role === 'ae' ? [
-      { label:'Schedule a Sales-Marketing Sync for this week — bring your own field data even if Marketing won\'t come', minChars: 30 },
-      { label:'Begin your Customer Insights Report from the past 30 days — find the top 5 objections', minChars: 30 }
+      { task:'Schedule a Sales-Marketing Sync for this week — bring your own field data even if Marketing won\'t come', minChars: 30 },
+      { task:'Begin your Customer Insights Report from the past 30 days — find the top 5 objections', minChars: 30 }
     ] : [
-      { label:'Track 5 objections or prospect trends from your calls this week — tag them with evidence, not impressions', minChars: 30 },
-      { label:'Share your field insights at the Sales-Marketing Sync — or ask to be in that meeting', minChars: 30 }
+      { task:'Track 5 objections or prospect trends from your calls this week — tag them with evidence, not impressions', minChars: 30 },
+      { task:'Share your field insights at the Sales-Marketing Sync — or ask to be in that meeting', minChars: 30 }
     ]
   });
   render();

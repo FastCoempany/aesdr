@@ -1447,15 +1447,15 @@ function init(){
   // Homework gate
   AESDR.gate(9,{type:'homework',prompt:_role==='ae'?'Pick one of the manager archetypes from this lesson. Write a script for how you\'d coach an SDR who reports to that archetype — what specific advice would you give them?':'Identify which manager archetype best matches your current manager. Write a specific plan for managing up — what will you do differently starting this week?',
     items: _role === 'ae' ? [
-      { label:'Identify your own manager archetype — which one do you default to under pressure? Write down two specific behaviors your team notices', minChars: 35 },
-      { label:'Ask one team member: "What\'s one thing I could do differently that would make your job easier?" Listen without defending', minChars: 35 },
-      { label:'Replace one status-check meeting with a structured alignment meeting focused on removing blockers', minChars: 35 },
-      { label:'Self-reflection: Write down the last three times you micromanaged, blame-shifted, or called an unnecessary meeting', minChars: 35 }
+      { task:'Identify your own manager archetype — which one do you default to under pressure? Write down two specific behaviors your team notices', minChars: 35 },
+      { task:'Ask one team member: "What\'s one thing I could do differently that would make your job easier?" Listen without defending', minChars: 35 },
+      { task:'Replace one status-check meeting with a structured alignment meeting focused on removing blockers', minChars: 35 },
+      { task:'Self-reflection: Write down the last three times you micromanaged, blame-shifted, or called an unnecessary meeting', minChars: 35 }
     ] : [
-      { label:'Identify your AE manager\'s archetype — write down two specific behaviors that create friction for you', minChars: 35 },
-      { label:'Schedule a 15-minute weekly alignment meeting with your manager this week using the template', minChars: 35 },
-      { label:'Implement one boundary script from the library — pick the situation closest to your current friction point', minChars: 35 },
-      { label:'Self-reflection: Write down the last three times you felt frustrated and what specific action you could have taken instead', minChars: 35 }
+      { task:'Identify your AE manager\'s archetype — write down two specific behaviors that create friction for you', minChars: 35 },
+      { task:'Schedule a 15-minute weekly alignment meeting with your manager this week using the template', minChars: 35 },
+      { task:'Implement one boundary script from the library — pick the situation closest to your current friction point', minChars: 35 },
+      { task:'Self-reflection: Write down the last three times you felt frustrated and what specific action you could have taken instead', minChars: 35 }
     ]
   });
   render();
