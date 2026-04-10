@@ -449,19 +449,31 @@ window.AESDR = window.AESDR || {};
   var gateState = {};  // screenNum -> { completed, value, _attest, ... }
   var timers = {};     // screenNum -> { started, remaining }
 
-  /* ── Attestation phrases (rotated per screen, never repeat on same page) ── */
+  /* ── Attestation phrases (unique per checkbox, never repeat across app) ── */
   var ATTEST = [
-    "I shared this with someone on the team because I know it\u0027s important to make my voice and my thoughts familiar around this place",
-    "I did this because I don\u0027t just write shit down that I don\u0027t care about",
-    "I completed this because what I do when no one is watching makes all the difference",
-    "I did this because I know my growth depends on making my thoughts known",
-    "I completed this because I refuse to be the person who clicks through and learns nothing",
-    "I did this because accountability isn\u0027t a buzzword \u2014 it\u0027s how I operate"
-  ];
+    "I refused to fake this because complacency kills careers faster than failure ever could",
+    "I did the work that matters here because complacency kills careers faster than failure ever could",
+    "I respected my own time here because my reputation is built one honest action at a time",
+    "I leaned into the work here because complacency kills careers faster than failure ever could",
+    "I wrestled with this honestly because real professionals do the uncomfortable work first",
+    "I made this count because half-effort produces half-results and I\'m done with half",
+    "I stayed honest here because I\'m choosing to be the person who does the hard thing",
+    "I went deep on this because the small moments define who I actually am",
+    "I went all in on this because excellence isn\'t a single act, it\'s a habit I\'m building right now",
+    "I completed this because my reputation is built one honest action at a time",
+    "I leaned into the work here because my word matters even when it\'s just between me and this page",
+    "I did the work that matters here because accountability starts with what I write when no one reads it",
+    "I respected my own time here because the gap between knowing and doing is exactly this kind of work",
+    "I kept it real here because the difference between good and great is follow-through",
+    "I invested in this because integrity is doing the right thing when it\'s easier not to"
+  ]
 
+  var _attestAssign = {};
+  var _attestNext = 0;
   function _getAttest(screen, idx) {
-    var offset = (screen * 7 + (idx || 0)) % ATTEST.length;
-    return ATTEST[offset];
+    var key = 's' + screen + '_' + (idx || 0);
+    if (!(key in _attestAssign)) _attestAssign[key] = _attestNext++;
+    return ATTEST[_attestAssign[key] % ATTEST.length];
   }
 
   /* ── Register a gate ── */
@@ -648,7 +660,7 @@ window.AESDR = window.AESDR || {};
       '<div class="gate-footer">' +
         '<span class="gate-counter" id="gateCtr' + screen + '">' + prevVal.length + ' / ' + g.minChars + '</span>' +
         '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
-          'onclick="AESDR._submit(' + screen + ')">Continue</button>' +
+          'onclick="AESDR._submit(' + screen + ')">Submit</button>' +
       '</div>' +
       _attestHTML(screen, phrase, '') +
     '</div>';
@@ -666,7 +678,7 @@ window.AESDR = window.AESDR || {};
       '<div class="gate-label">Accountability Checklist</div>' +
       '<p class="gate-prompt">' + (g.prompt || 'Complete each item below. No shortcuts.') + '</p>' +
       '<div class="gate-conscience">' +
-        '<p class="gate-conscience-text">You can treat this like just another course if you want. Or you can not lie and complete this survival checklist legitimately. What you do when no one is watching makes all the difference in the end.</p>' +
+        '<p class="gate-conscience-text">' + (g.conscience || 'You can treat this like just another course if you want. Or you can not lie and complete each item here with real thought. What you do when no one is watching makes all the difference in the end.') + '</p>' +
       '</div>' +
       '<div class="hw-gate-items">';
 
@@ -1644,7 +1656,8 @@ function init(){
     : 'The framework for navigating AE ego has three steps: Diagnose the Behavior, Use Impact Statements Not Accusations, and Propose Solutions Not Complaints. The lesson says "the SDRs who manage AE ego effectively don\'t fight it — they redirect it." Write a real impact statement for a current situation with your AE using the exact format: "When [specific behavior], it affects [specific outcome]." Then write the specific solution you\'d propose — not a complaint, but an actual proposal like "Can we do a 15-minute standup Mondays so I know your priority accounts?" Make both the impact statement and the proposal specific to your real situation.',
     minChars: 120 });
   // Homework gate
-  AESDR.gate(8, { type:'homework', prompt: _role === 'ae'
+  AESDR.gate(8, { type:'homework',
+    conscience: 'Ego kills more deals than bad product ever will. Every honest answer here is a step toward the kind of partnership that actually produces revenue.', prompt: _role === 'ae'
     ? 'This lesson taught that AE ego — micromanaging, taking credit, skipping syncs — silently destroys the AE-SDR partnership that feeds your pipeline. You learned a three-step framework: Diagnose, Ask for Feedback, and Establish Expectations. Now prove you\'ll act on it this week. Each item below requires your SDR\'s name, specific dates, and exact words you\'ll use.'
     : 'This lesson taught you how to identify and navigate AE ego behaviors — micromanaging, taking credit, skipping syncs. You learned to use impact statements instead of accusations and propose solutions instead of complaints. Now prove you\'ll act on it this week. Each item below requires specific names, situations, and exact language you\'ll use.',
     items: _role === 'ae' ? [

@@ -449,19 +449,31 @@ window.AESDR = window.AESDR || {};
   var gateState = {};  // screenNum -> { completed, value, _attest, ... }
   var timers = {};     // screenNum -> { started, remaining }
 
-  /* ── Attestation phrases (rotated per screen, never repeat on same page) ── */
+  /* ── Attestation phrases (unique per checkbox, never repeat across app) ── */
   var ATTEST = [
-    "I shared this with someone on the team because I know it\u0027s important to make my voice and my thoughts familiar around this place",
-    "I did this because I don\u0027t just write shit down that I don\u0027t care about",
-    "I completed this because what I do when no one is watching makes all the difference",
-    "I did this because I know my growth depends on making my thoughts known",
-    "I completed this because I refuse to be the person who clicks through and learns nothing",
-    "I did this because accountability isn\u0027t a buzzword \u2014 it\u0027s how I operate"
-  ];
+    "I confronted the hard part here because I\'m not here to perform productivity — I\'m here to actually grow",
+    "I owned this moment because what I do when no one checks matters more than what I do when they\'re watching",
+    "I honored the process here because the difference between good and great is follow-through",
+    "I completed this because my future self needs me to be honest right now",
+    "I treated this like it matters because my reputation is built one honest action at a time",
+    "I took this seriously because I know the difference between completing a task and actually learning",
+    "I held myself accountable here because what I do when no one checks matters more than what I do when they\'re watching",
+    "I held myself accountable here because this is where the real ones separate from the pretenders",
+    "I didn\'t phone this in because this is how trust gets built — one kept promise at a time",
+    "I wrestled with this honestly because I\'m investing in the version of me that wins",
+    "I did the work that matters here because I know the difference between completing a task and actually learning",
+    "I went deep on this because the people who make it do the work others skip",
+    "I put real thought into this because I know that consistency is the only real competitive advantage",
+    "I dug into this because I don\'t want to be the person who clicks through and learns nothing",
+    "I owned this moment because my future self needs me to be honest right now"
+  ]
 
+  var _attestAssign = {};
+  var _attestNext = 0;
   function _getAttest(screen, idx) {
-    var offset = (screen * 7 + (idx || 0)) % ATTEST.length;
-    return ATTEST[offset];
+    var key = 's' + screen + '_' + (idx || 0);
+    if (!(key in _attestAssign)) _attestAssign[key] = _attestNext++;
+    return ATTEST[_attestAssign[key] % ATTEST.length];
   }
 
   /* ── Register a gate ── */
@@ -648,7 +660,7 @@ window.AESDR = window.AESDR || {};
       '<div class="gate-footer">' +
         '<span class="gate-counter" id="gateCtr' + screen + '">' + prevVal.length + ' / ' + g.minChars + '</span>' +
         '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
-          'onclick="AESDR._submit(' + screen + ')">Continue</button>' +
+          'onclick="AESDR._submit(' + screen + ')">Submit</button>' +
       '</div>' +
       _attestHTML(screen, phrase, '') +
     '</div>';
@@ -666,7 +678,7 @@ window.AESDR = window.AESDR || {};
       '<div class="gate-label">Accountability Checklist</div>' +
       '<p class="gate-prompt">' + (g.prompt || 'Complete each item below. No shortcuts.') + '</p>' +
       '<div class="gate-conscience">' +
-        '<p class="gate-conscience-text">You can treat this like just another course if you want. Or you can not lie and complete this survival checklist legitimately. What you do when no one is watching makes all the difference in the end.</p>' +
+        '<p class="gate-conscience-text">' + (g.conscience || 'You can treat this like just another course if you want. Or you can not lie and complete each item here with real thought. What you do when no one is watching makes all the difference in the end.') + '</p>' +
       '</div>' +
       '<div class="hw-gate-items">';
 
@@ -1655,7 +1667,8 @@ function init(){
     minChars: 120
   });
   // Homework gate
-  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
+  AESDR.gate(8, { type:'homework',
+    conscience: 'The playbook gets you started — what you do beyond it is what gets you promoted. Every answer here pushes you past the safe and into the strategic.', items: _role === 'ae' ? [
     { task:'Start a daily "Deal Debrief" journal. After your next demo or close attempt, write the account name, what you adapted in real time, the buyer\'s reaction, and one thing you\'d change next time.',
       placeholder:'Example: "Acme Corp demo 4/10 — I skipped the feature walkthrough and led with their CFO\'s budget pain. The VP of Ops leaned in when I... I\'d change..."',
       minChars:120 },

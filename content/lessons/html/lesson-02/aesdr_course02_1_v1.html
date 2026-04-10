@@ -449,19 +449,31 @@ window.AESDR = window.AESDR || {};
   var gateState = {};  // screenNum -> { completed, value, _attest, ... }
   var timers = {};     // screenNum -> { started, remaining }
 
-  /* ── Attestation phrases (rotated per screen, never repeat on same page) ── */
+  /* ── Attestation phrases (unique per checkbox, never repeat across app) ── */
   var ATTEST = [
-    "I shared this with someone on the team because I know it\u0027s important to make my voice and my thoughts familiar around this place",
-    "I did this because I don\u0027t just write shit down that I don\u0027t care about",
-    "I completed this because what I do when no one is watching makes all the difference",
-    "I did this because I know my growth depends on making my thoughts known",
-    "I completed this because I refuse to be the person who clicks through and learns nothing",
-    "I did this because accountability isn\u0027t a buzzword \u2014 it\u0027s how I operate"
-  ];
+    "I challenged myself here because being real with myself is the only way forward",
+    "I treated this like it matters because my word matters even when it\'s just between me and this page",
+    "I took this seriously because saying I care means nothing if I don\'t act like it",
+    "I leaned into the work here because the difference between good and great is follow-through",
+    "I put my name on this because the small moments define who I actually am",
+    "I put real thought into this because my reputation is built one honest action at a time",
+    "I went deep on this because effort compounds — every honest answer builds on the last",
+    "I completed this because effort compounds — every honest answer builds on the last",
+    "I pushed through this because accountability starts with what I write when no one reads it",
+    "I held myself accountable here because the gap between knowing and doing is exactly this kind of work",
+    "I treated this like it matters because real professionals do the uncomfortable work first",
+    "I wrote this because integrity is doing the right thing when it\'s easier not to",
+    "I completed this because I know that consistency is the only real competitive advantage",
+    "I put real thought into this because this is how trust gets built — one kept promise at a time",
+    "I faced this head on because the best version of tomorrow starts with what I write today"
+  ]
 
+  var _attestAssign = {};
+  var _attestNext = 0;
   function _getAttest(screen, idx) {
-    var offset = (screen * 7 + (idx || 0)) % ATTEST.length;
-    return ATTEST[offset];
+    var key = 's' + screen + '_' + (idx || 0);
+    if (!(key in _attestAssign)) _attestAssign[key] = _attestNext++;
+    return ATTEST[_attestAssign[key] % ATTEST.length];
   }
 
   /* ── Register a gate ── */
@@ -648,7 +660,7 @@ window.AESDR = window.AESDR || {};
       '<div class="gate-footer">' +
         '<span class="gate-counter" id="gateCtr' + screen + '">' + prevVal.length + ' / ' + g.minChars + '</span>' +
         '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
-          'onclick="AESDR._submit(' + screen + ')">Continue</button>' +
+          'onclick="AESDR._submit(' + screen + ')">Submit</button>' +
       '</div>' +
       _attestHTML(screen, phrase, '') +
     '</div>';
@@ -666,7 +678,7 @@ window.AESDR = window.AESDR || {};
       '<div class="gate-label">Accountability Checklist</div>' +
       '<p class="gate-prompt">' + (g.prompt || 'Complete each item below. No shortcuts.') + '</p>' +
       '<div class="gate-conscience">' +
-        '<p class="gate-conscience-text">You can treat this like just another course if you want. Or you can not lie and complete this survival checklist legitimately. What you do when no one is watching makes all the difference in the end.</p>' +
+        '<p class="gate-conscience-text">' + (g.conscience || 'You can treat this like just another course if you want. Or you can not lie and complete each item here with real thought. What you do when no one is watching makes all the difference in the end.') + '</p>' +
       '</div>' +
       '<div class="hw-gate-items">';
 
@@ -1653,7 +1665,8 @@ function init(){
     : 'The Silo-Busting Playbook says SDRs should Earn a Seat at the Sales-Marketing Sync, Build the Feedback Loop, and Share Customer Insights weekly. The lesson says "your field intelligence dies in your call notes because there\'s no path for it to travel." Have you ever documented and shared prospect objections with Marketing or your AE in a structured way — not just mentioned it in passing? Name the top 3 objections you\'ve heard this week. Which one would change a Marketing campaign if they actually heard it? What format would you use to share it?',
     minChars: 120 });
   // Homework gate
-  AESDR.gate(8, { type:'homework', prompt: _role === 'ae'
+  AESDR.gate(8, { type:'homework',
+    conscience: 'Silos don\'t announce themselves — they silently destroy pipeline. Every answer you write here exposes a gap you can actually fix this week.', prompt: _role === 'ae'
     ? 'This lesson taught that silos between Sales, Marketing, and Product silently destroy pipeline. You learned three playbook steps: Own the Sync, Build the Feedback Loop, and Share Insights with Product. Now prove you\'ll act. Each item below requires a specific name, date, or plan — not intentions.'
     : 'This lesson taught that silos between your SDR team, Marketing, and AEs silently destroy your outreach effectiveness. You learned three steps: Earn Your Seat, Build the Feedback Loop, and Share Insights. Now prove you\'ll act. Each item below requires a specific name, date, or plan — not intentions.',
     items: _role === 'ae' ? [

@@ -449,19 +449,31 @@ window.AESDR = window.AESDR || {};
   var gateState = {};  // screenNum -> { completed, value, _attest, ... }
   var timers = {};     // screenNum -> { started, remaining }
 
-  /* ── Attestation phrases (rotated per screen, never repeat on same page) ── */
+  /* ── Attestation phrases (unique per checkbox, never repeat across app) ── */
   var ATTEST = [
-    "I shared this with someone on the team because I know it\u0027s important to make my voice and my thoughts familiar around this place",
-    "I did this because I don\u0027t just write shit down that I don\u0027t care about",
-    "I completed this because what I do when no one is watching makes all the difference",
-    "I did this because I know my growth depends on making my thoughts known",
-    "I completed this because I refuse to be the person who clicks through and learns nothing",
-    "I did this because accountability isn\u0027t a buzzword \u2014 it\u0027s how I operate"
-  ];
+    "I stayed honest here because I\'m not here to perform productivity — I\'m here to actually grow",
+    "I went all in on this because I refuse to be the person who shows up unprepared",
+    "I was real with myself here because this is the work that separates thinkers from doers",
+    "I earned this checkmark because the best version of tomorrow starts with what I write today",
+    "I made this count because my career is built on what I do in moments like this",
+    "I did this because half-effort produces half-results and I\'m done with half",
+    "I honored the process here because I owe it to the people who bet on me to take this seriously",
+    "I told the truth here because integrity is doing the right thing when it\'s easier not to",
+    "I dug into this because the small moments define who I actually am",
+    "I respected my own time here because effort compounds — every honest answer builds on the last",
+    "I wrote this because my reputation is built one honest action at a time",
+    "I put real thought into this because the small moments define who I actually am",
+    "I told the truth here because I\'m not here to perform productivity — I\'m here to actually grow",
+    "I went deep on this because I owe it to the people who bet on me to take this seriously",
+    "I followed through on this because I\'m building discipline, not just completing a task"
+  ]
 
+  var _attestAssign = {};
+  var _attestNext = 0;
   function _getAttest(screen, idx) {
-    var offset = (screen * 7 + (idx || 0)) % ATTEST.length;
-    return ATTEST[offset];
+    var key = 's' + screen + '_' + (idx || 0);
+    if (!(key in _attestAssign)) _attestAssign[key] = _attestNext++;
+    return ATTEST[_attestAssign[key] % ATTEST.length];
   }
 
   /* ── Register a gate ── */
@@ -648,7 +660,7 @@ window.AESDR = window.AESDR || {};
       '<div class="gate-footer">' +
         '<span class="gate-counter" id="gateCtr' + screen + '">' + prevVal.length + ' / ' + g.minChars + '</span>' +
         '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
-          'onclick="AESDR._submit(' + screen + ')">Continue</button>' +
+          'onclick="AESDR._submit(' + screen + ')">Submit</button>' +
       '</div>' +
       _attestHTML(screen, phrase, '') +
     '</div>';
@@ -666,7 +678,7 @@ window.AESDR = window.AESDR || {};
       '<div class="gate-label">Accountability Checklist</div>' +
       '<p class="gate-prompt">' + (g.prompt || 'Complete each item below. No shortcuts.') + '</p>' +
       '<div class="gate-conscience">' +
-        '<p class="gate-conscience-text">You can treat this like just another course if you want. Or you can not lie and complete this survival checklist legitimately. What you do when no one is watching makes all the difference in the end.</p>' +
+        '<p class="gate-conscience-text">' + (g.conscience || 'You can treat this like just another course if you want. Or you can not lie and complete each item here with real thought. What you do when no one is watching makes all the difference in the end.') + '</p>' +
       '</div>' +
       '<div class="hw-gate-items">';
 
@@ -1671,7 +1683,8 @@ function init(){
     minChars: 120
   });
   // Homework gate
-  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
+  AESDR.gate(8, { type:'homework',
+    conscience: 'Execution separates SDRs who get promoted from SDRs who get managed out. Every answer here is a rep that builds the muscle memory winners rely on.', items: _role === 'ae' ? [
     { task:'Name 3 top closers in your org or network worth studying — people who consistently hit President\'s Club, not LinkedIn commentators. For each, write their name, the specific discovery or deal mechanic you\'ll observe, and when you\'ll shadow or debrief them.', placeholder:'List each closer by name, the specific mechanic you plan to observe (e.g., how they multi-thread, how they handle procurement), and the date you\'ll shadow or debrief them...', minChars:100 },
     { task:'Pick 1 skill to sharpen this week: multi-threading, negotiation, executive presentation, or forecasting accuracy. Write your practice plan with specific days, activities, and how you\'ll measure improvement.', placeholder:'Name the skill, describe your day-by-day practice plan (e.g., Monday: role-play negotiation with [name], Wednesday: run executive demo dry run), and state the metric you\'ll use to measure progress...', minChars:100 },
     { task:'Take one piece of sales methodology or coaching advice you received this week and run it through the Sales Advice Filter Checklist from this lesson. Answer each filter question and write your verdict: adopt, adapt, or reject.', placeholder:'State the advice, who gave it, then answer each filter question (Has this person carried a quota like mine? etc.). Write your final verdict and why...', minChars:100 },

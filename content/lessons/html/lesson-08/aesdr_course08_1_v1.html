@@ -449,19 +449,31 @@ window.AESDR = window.AESDR || {};
   var gateState = {};  // screenNum -> { completed, value, _attest, ... }
   var timers = {};     // screenNum -> { started, remaining }
 
-  /* ── Attestation phrases (rotated per screen, never repeat on same page) ── */
+  /* ── Attestation phrases (unique per checkbox, never repeat across app) ── */
   var ATTEST = [
-    "I shared this with someone on the team because I know it\u0027s important to make my voice and my thoughts familiar around this place",
-    "I did this because I don\u0027t just write shit down that I don\u0027t care about",
-    "I completed this because what I do when no one is watching makes all the difference",
-    "I did this because I know my growth depends on making my thoughts known",
-    "I completed this because I refuse to be the person who clicks through and learns nothing",
-    "I did this because accountability isn\u0027t a buzzword \u2014 it\u0027s how I operate"
-  ];
+    "I told the truth here because the difference between good and great is follow-through",
+    "I chose substance over shortcuts here because effort compounds — every honest answer builds on the last",
+    "I took this seriously because I don\'t want to be the person who clicks through and learns nothing",
+    "I put my name on this because I know the difference between completing a task and actually learning",
+    "I respected my own time here because this is where the real ones separate from the pretenders",
+    "I chose substance over shortcuts here because I\'m building discipline, not just completing a task",
+    "I made this count because the small moments define who I actually am",
+    "I proved something to myself here because saying I care means nothing if I don\'t act like it",
+    "I stayed honest here because saying I care means nothing if I don\'t act like it",
+    "I built something real here because I\'m not here to perform productivity — I\'m here to actually grow",
+    "I leaned into the work here because this is where the real ones separate from the pretenders",
+    "I proved something to myself here because complacency kills careers faster than failure ever could",
+    "I took this seriously because the people who make it do the work others skip",
+    "I faced this head on because shortcuts only cheat the person in the mirror",
+    "I followed through on this because saying I care means nothing if I don\'t act like it"
+  ]
 
+  var _attestAssign = {};
+  var _attestNext = 0;
   function _getAttest(screen, idx) {
-    var offset = (screen * 7 + (idx || 0)) % ATTEST.length;
-    return ATTEST[offset];
+    var key = 's' + screen + '_' + (idx || 0);
+    if (!(key in _attestAssign)) _attestAssign[key] = _attestNext++;
+    return ATTEST[_attestAssign[key] % ATTEST.length];
   }
 
   /* ── Register a gate ── */
@@ -648,7 +660,7 @@ window.AESDR = window.AESDR || {};
       '<div class="gate-footer">' +
         '<span class="gate-counter" id="gateCtr' + screen + '">' + prevVal.length + ' / ' + g.minChars + '</span>' +
         '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
-          'onclick="AESDR._submit(' + screen + ')">Continue</button>' +
+          'onclick="AESDR._submit(' + screen + ')">Submit</button>' +
       '</div>' +
       _attestHTML(screen, phrase, '') +
     '</div>';
@@ -666,7 +678,7 @@ window.AESDR = window.AESDR || {};
       '<div class="gate-label">Accountability Checklist</div>' +
       '<p class="gate-prompt">' + (g.prompt || 'Complete each item below. No shortcuts.') + '</p>' +
       '<div class="gate-conscience">' +
-        '<p class="gate-conscience-text">You can treat this like just another course if you want. Or you can not lie and complete this survival checklist legitimately. What you do when no one is watching makes all the difference in the end.</p>' +
+        '<p class="gate-conscience-text">' + (g.conscience || 'You can treat this like just another course if you want. Or you can not lie and complete each item here with real thought. What you do when no one is watching makes all the difference in the end.') + '</p>' +
       '</div>' +
       '<div class="hw-gate-items">';
 
@@ -1679,7 +1691,8 @@ function init(){
     minChars: 120
   });
   // Homework gate
-  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
+  AESDR.gate(8, { type:'homework',
+    conscience: 'The 30% Rule exposes the math most salespeople ignore. What you write here forces you to confront reality instead of hiding behind optimism.', items: _role === 'ae' ? [
     { task:'Name your top 30% SDRs by first name. For each, write one stretch goal with a measurable target (e.g., "Sarah — book 3 director-level meetings this week instead of 2") and the date you will assign it.', placeholder:'e.g., "Sarah — stretch goal: book 3 director-level meetings by Friday. I will assign this in our 1-on-1 on Tuesday at 2pm."', minChars:100 },
     { task:'Identify one advanced skill (multi-threading, executive messaging, objection handling) you will coach your top performer on this week. Write the exact day, time, and format (live call review, role-play, etc.).', placeholder:'e.g., "I will coach Marcus on multi-threading via a 20-min role-play session Wednesday at 10am using his Acme Corp deal."', minChars:100 },
     { task:'Write the specific public recognition you will give your top SDR after their next win — the channel (Slack, team meeting, email to VP), the exact words, and the timeline.', placeholder:'e.g., "After Sarah\'s next closed meeting, I will post in #sales-wins: \'Sarah just booked a VP of Ops at Acme — that\'s 3 director+ meetings this week.\' Doing this by Friday."', minChars:100 },

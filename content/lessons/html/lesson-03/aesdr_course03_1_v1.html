@@ -449,19 +449,31 @@ window.AESDR = window.AESDR || {};
   var gateState = {};  // screenNum -> { completed, value, _attest, ... }
   var timers = {};     // screenNum -> { started, remaining }
 
-  /* ── Attestation phrases (rotated per screen, never repeat on same page) ── */
+  /* ── Attestation phrases (unique per checkbox, never repeat across app) ── */
   var ATTEST = [
-    "I shared this with someone on the team because I know it\u0027s important to make my voice and my thoughts familiar around this place",
-    "I did this because I don\u0027t just write shit down that I don\u0027t care about",
-    "I completed this because what I do when no one is watching makes all the difference",
-    "I did this because I know my growth depends on making my thoughts known",
-    "I completed this because I refuse to be the person who clicks through and learns nothing",
-    "I did this because accountability isn\u0027t a buzzword \u2014 it\u0027s how I operate"
-  ];
+    "I was real with myself here because no one successful ever half-assed the fundamentals",
+    "I put real thought into this because accountability starts with what I write when no one reads it",
+    "I faced this head on because saying I care means nothing if I don\'t act like it",
+    "I honored the process here because the gap between knowing and doing is exactly this kind of work",
+    "I earned this checkmark because saying I care means nothing if I don\'t act like it",
+    "I pushed through this because the best version of tomorrow starts with what I write today",
+    "I gave this my real attention because the people who make it do the work others skip",
+    "I was real with myself here because the difference between good and great is follow-through",
+    "I told the truth here because accountability starts with what I write when no one reads it",
+    "I kept it real here because this is how trust gets built — one kept promise at a time",
+    "I did this because the best version of tomorrow starts with what I write today",
+    "I showed up for this because the small moments define who I actually am",
+    "I did this because I\'m investing in the version of me that wins",
+    "I showed up for this because I don\'t want to be the person who clicks through and learns nothing",
+    "I held myself accountable here because I know the difference between completing a task and actually learning"
+  ]
 
+  var _attestAssign = {};
+  var _attestNext = 0;
   function _getAttest(screen, idx) {
-    var offset = (screen * 7 + (idx || 0)) % ATTEST.length;
-    return ATTEST[offset];
+    var key = 's' + screen + '_' + (idx || 0);
+    if (!(key in _attestAssign)) _attestAssign[key] = _attestNext++;
+    return ATTEST[_attestAssign[key] % ATTEST.length];
   }
 
   /* ── Register a gate ── */
@@ -648,7 +660,7 @@ window.AESDR = window.AESDR || {};
       '<div class="gate-footer">' +
         '<span class="gate-counter" id="gateCtr' + screen + '">' + prevVal.length + ' / ' + g.minChars + '</span>' +
         '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
-          'onclick="AESDR._submit(' + screen + ')">Continue</button>' +
+          'onclick="AESDR._submit(' + screen + ')">Submit</button>' +
       '</div>' +
       _attestHTML(screen, phrase, '') +
     '</div>';
@@ -666,7 +678,7 @@ window.AESDR = window.AESDR || {};
       '<div class="gate-label">Accountability Checklist</div>' +
       '<p class="gate-prompt">' + (g.prompt || 'Complete each item below. No shortcuts.') + '</p>' +
       '<div class="gate-conscience">' +
-        '<p class="gate-conscience-text">You can treat this like just another course if you want. Or you can not lie and complete this survival checklist legitimately. What you do when no one is watching makes all the difference in the end.</p>' +
+        '<p class="gate-conscience-text">' + (g.conscience || 'You can treat this like just another course if you want. Or you can not lie and complete each item here with real thought. What you do when no one is watching makes all the difference in the end.') + '</p>' +
       '</div>' +
       '<div class="hw-gate-items">';
 
@@ -1743,7 +1755,8 @@ function init(){
     : 'This lesson says "every pitfall is a solvable problem — not a fixed trait." Pick the one pitfall — poor qualification, lack of proactivity, or generic outreach — that most accurately describes your current weakness. Describe a specific outreach sequence or lead handoff from this week where that pitfall showed up. What exactly went wrong, and which specific fix from this lesson would you apply starting tomorrow?',
     minChars: 120 });
   // Homework gate
-  AESDR.gate(8, { type:'homework', prompt: _role === 'ae'
+  AESDR.gate(8, { type:'homework',
+    conscience: 'Performance pitfalls don\'t fix themselves — they compound. What you identify here is the first step to breaking a pattern before it breaks your pipeline.', prompt: _role === 'ae'
     ? 'You just learned the 4 SDR pitfalls and the BANT qualification framework. Now apply them: review a real SDR call, score it against BANT, and write coaching notes that reference specific moments in the conversation. No generic feedback — cite what was said and what should have been asked instead.'
     : 'You just learned the 4 SDR pitfalls and the BANT qualification framework. Now apply them to your own pipeline: score your recent leads against BANT, identify where your outreach is generic, and build a concrete improvement plan for this week with specific names, dates, and actions.',
     items: _role === 'ae' ? [

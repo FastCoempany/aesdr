@@ -449,19 +449,31 @@ window.AESDR = window.AESDR || {};
   var gateState = {};  // screenNum -> { completed, value, _attest, ... }
   var timers = {};     // screenNum -> { started, remaining }
 
-  /* ── Attestation phrases (rotated per screen, never repeat on same page) ── */
+  /* ── Attestation phrases (unique per checkbox, never repeat across app) ── */
   var ATTEST = [
-    "I shared this with someone on the team because I know it\u0027s important to make my voice and my thoughts familiar around this place",
-    "I did this because I don\u0027t just write shit down that I don\u0027t care about",
-    "I completed this because what I do when no one is watching makes all the difference",
-    "I did this because I know my growth depends on making my thoughts known",
-    "I completed this because I refuse to be the person who clicks through and learns nothing",
-    "I did this because accountability isn\u0027t a buzzword \u2014 it\u0027s how I operate"
-  ];
+    "I owned this moment because I owe it to the people who bet on me to take this seriously",
+    "I didn\'t phone this in because being real with myself is the only way forward",
+    "I put real thought into this because the gap between knowing and doing is exactly this kind of work",
+    "I wrote this because real professionals do the uncomfortable work first",
+    "I owned this moment because this is the work that separates thinkers from doers",
+    "I pushed through this because I don\'t want to be the person who clicks through and learns nothing",
+    "I put my name on this because effort compounds — every honest answer builds on the last",
+    "I did this because I know that consistency is the only real competitive advantage",
+    "I committed to this because accountability starts with what I write when no one reads it",
+    "I sat with the discomfort of this because excellence isn\'t a single act, it\'s a habit I\'m building right now",
+    "I sat with the discomfort of this because I\'m not here to perform productivity — I\'m here to actually grow",
+    "I told the truth here because effort compounds — every honest answer builds on the last",
+    "I put in the effort here because this is the work that separates thinkers from doers",
+    "I completed this because I\'m not here to perform productivity — I\'m here to actually grow",
+    "I owned this moment because half-effort produces half-results and I\'m done with half"
+  ]
 
+  var _attestAssign = {};
+  var _attestNext = 0;
   function _getAttest(screen, idx) {
-    var offset = (screen * 7 + (idx || 0)) % ATTEST.length;
-    return ATTEST[offset];
+    var key = 's' + screen + '_' + (idx || 0);
+    if (!(key in _attestAssign)) _attestAssign[key] = _attestNext++;
+    return ATTEST[_attestAssign[key] % ATTEST.length];
   }
 
   /* ── Register a gate ── */
@@ -648,7 +660,7 @@ window.AESDR = window.AESDR || {};
       '<div class="gate-footer">' +
         '<span class="gate-counter" id="gateCtr' + screen + '">' + prevVal.length + ' / ' + g.minChars + '</span>' +
         '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
-          'onclick="AESDR._submit(' + screen + ')">Continue</button>' +
+          'onclick="AESDR._submit(' + screen + ')">Submit</button>' +
       '</div>' +
       _attestHTML(screen, phrase, '') +
     '</div>';
@@ -666,7 +678,7 @@ window.AESDR = window.AESDR || {};
       '<div class="gate-label">Accountability Checklist</div>' +
       '<p class="gate-prompt">' + (g.prompt || 'Complete each item below. No shortcuts.') + '</p>' +
       '<div class="gate-conscience">' +
-        '<p class="gate-conscience-text">You can treat this like just another course if you want. Or you can not lie and complete this survival checklist legitimately. What you do when no one is watching makes all the difference in the end.</p>' +
+        '<p class="gate-conscience-text">' + (g.conscience || 'You can treat this like just another course if you want. Or you can not lie and complete each item here with real thought. What you do when no one is watching makes all the difference in the end.') + '</p>' +
       '</div>' +
       '<div class="hw-gate-items">';
 
@@ -1641,7 +1653,8 @@ function init(){
     : 'The lesson says "you teach people how to treat you." Pick the commandment your AE violates most — Drop the Ego, Communicate Like Adults, Demand Autonomy, Refuse the Blame Game, or Protect Your Self-Awareness. Describe the last specific instance where they broke it. Now write the exact sentence — using the framework from this lesson — that you would actually say to your AE this week to address it. Not a vague wish. The actual words.',
     minChars: 120 });
   // Homework gate
-  AESDR.gate(8, { type:'homework', prompt: _role === 'ae'
+  AESDR.gate(8, { type:'homework',
+    conscience: 'Survival in SaaS sales isn\'t dramatic — it\'s daily. Every answer here builds the habits that keep you off the layoff list.', prompt: _role === 'ae'
     ? 'You just studied the 10 Commandments of the AE-SDR relationship. Now prove you can apply them: name the commandments you break, plan specific behavior changes, and schedule the structures (huddles, shout-outs, post-mortems) that make these rules operational — not aspirational. Include names, dates, and exact words you\'ll say.'
     : 'You just studied the 10 Commandments of the AE-SDR relationship. Now prove you can apply them: name the commandments being broken (by you and your AE), draft the exact words you\'ll use to address it, and schedule the structures that make these rules real. Include names, dates, and specific scripts.',
     items: _role === 'ae' ? [
