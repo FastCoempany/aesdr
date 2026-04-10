@@ -1428,8 +1428,20 @@ function init(){
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Be honest: is there someone you are half-dating or half-interested in right now who is draining energy you should be putting into your pipeline? What would change if you went all-in on your career for the next 6 months?' : 'Is there a relationship or situationship right now that is eating into your call blocks, your energy, or your sleep? What would your numbers look like if you redirected that time?', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'What career milestone are you 6-12 months away from — and what happens to that timeline if you keep splitting your focus between dating and closing?' : 'What does your path to AE look like — and how many months does a distracting relationship add to that timeline? Be specific.', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson says your calendar is brutal — back-to-back demos, QBRs, travel days, and deal reviews leave almost no white space. Map out your actual schedule from last week: how many hours were committed to work, how many to personal time, and how many to dating or a situationship? Be specific with numbers. Now honestly answer: is there someone draining energy that should go into your pipeline? What would your close rate or deal velocity look like if you redirected those hours for 6 months?'
+      : 'This lesson says your SDR schedule leaves almost no room for a healthy relationship — early morning prep, back-to-back call blocks, CRM updates, and evening study. Map out your actual schedule from last week: how many hours went to work, how many to personal time, and how many to a relationship or dating apps? Be specific with numbers. What would your booking rate or activity numbers look like if you redirected that time for 6 months?',
+    minChars: 120
+  });
+  AESDR.gate(3, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'The lesson argues "relationships can wait, but your career trajectory can\'t" — the jump from mid-market to enterprise, from AE to Director, happens in narrow windows. Name the specific career milestone you are targeting in the next 6-12 months (title, company, income level). How many hours per week does dating or a relationship currently cost you? Calculate the impact: what specific deals, skills, or opportunities are you leaving on the table by splitting focus? What would "going all-in on yourself" look like for the next two quarters?'
+      : 'The lesson argues that the SDR role is a launchpad — but splitting energy between a new relationship and quota attainment means you\'ll be mediocre at both. Name your specific next career milestone (AE promotion, target company, income goal) and your realistic timeline. How many hours per week does a relationship or dating currently cost you? What specific metrics (calls, meetings booked, pipeline generated) would improve if you redirected those hours? Write your honest "build yourself first" plan for the next two quarters.',
+    minChars: 120
+  });
   // Homework gate
   var _hwAE = [
     { task: 'Write down three personal and professional goals for the next six months (President\'s Club, deal size milestone, skill mastery, savings target)', placeholder: 'List your 6-month goals...', minChars: 40 },

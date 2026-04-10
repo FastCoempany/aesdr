@@ -1436,13 +1436,37 @@ function init(){
   });
   // Homework gate
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
-    { task:'Build Your Deal Cheat Sheet: List the 3-5 pain points your buyers actually raise, the 3 features that map to those pains, and 3 industry trends.', placeholder:'Paste or describe your cheat sheet...', minChars:40 },
-    { task:'Practice Handling Unknowns: Use the "I Don\'t Know" Framework in 3 mock demos or discovery calls.', placeholder:'Describe the scenarios and how you handled them...', minChars:40 },
-    { task:'Sharpen Your Discovery: Write 3 business-level questions focused on outcomes, not features.', placeholder:'List your 3 questions...', minChars:40 }
+    { task:'Build Your Deal Cheat Sheet now. List your top 3-5 buyer pain points by name, the specific product feature that maps to each pain, and 3 industry trends relevant to your top accounts this quarter. This is your "Just Enough" arsenal.',
+      placeholder:'Example: "Pain 1: Manual reporting eating 10+ hrs/week → Feature: Automated dashboard builder. Pain 2: No visibility into pipeline health → Feature: AI forecasting. Trend 1: Gartner says 60% of mid-market will consolidate vendors by Q3..."',
+      minChars:120 },
+    { task:'Practice the "I Don\'t Know" Framework from this lesson in 3 real or mock scenarios this week. For each one, write what the buyer asked, the exact words you used to acknowledge the gap, and how you committed to follow-up (including who you looped in).',
+      placeholder:'Example: "1. Buyer asked about SOC 2 compliance details. I said: \'That\'s a great question — I want to make sure you get the precise answer. I\'ll have our security lead Sarah send you our compliance docs by Thursday.\' Followed up same day..."',
+      minChars:100 },
+    { task:'Write 3 business-level discovery questions focused on buyer outcomes — not features. For each question, name the specific account where you\'ll use it this week and explain why that question matters for that buyer.',
+      placeholder:'Example: "1. \'What happens to your team\'s forecast accuracy when reps skip CRM updates?\' — Using with Initech because their VP mentioned forecast misses on our last call. 2. ..."',
+      minChars:100 },
+    { task:'Name your top deal this week. Write down everything you know about the buyer\'s problem using ONLY "Just Enough" knowledge (pain points, mapped features, industry context). Then list what you DON\'T know and your plan to handle those gaps using the "I Don\'t Know" Framework.',
+      placeholder:'Example: "Top deal: Acme Corp. I know: Their VP hates manual reporting (Pain 1), they\'re evaluating 3 vendors (context), our dashboard builder maps directly. I DON\'T know: Their security requirements, their integration stack. Plan: Loop in SE Mike for technical deep dive by Wednesday..."',
+      minChars:100 },
+    { task:'Coach one SDR on your team this week using the "Just Enough" framework. Write their name, the specific mistake they\'re making (feature-dumping, over-studying product docs, etc.), and the exact feedback you gave them with the alternative approach.',
+      placeholder:'Example: "Coached Alex this week. Mistake: He spent 2 hours studying API docs before his calls instead of researching prospect pain points. I told him: \'Alex, you don\'t need to know the API — you need to know that CFOs hate manual data entry. Lead with that pain and let the AE handle technical questions.\'..."',
+      minChars:100 }
   ] : [
-    { task:'Build Your Cheat Sheet: List 3-5 core pain points your prospects have, 3 features that solve them, and 3 industry trends for cold call openers.', placeholder:'Paste or describe your cheat sheet...', minChars:40 },
-    { task:'Practice Handling Unknowns: Use the "I Don\'t Know" Framework in 3 mock conversations.', placeholder:'Describe the scenarios and how you handled them...', minChars:40 },
-    { task:'Connect With Problems: Write 3 smart questions about prospect challenges and use one in your next dial block.', placeholder:'List your 3 questions and which one you used...', minChars:40 }
+    { task:'Build Your Prospecting Cheat Sheet now. List your top 3-5 prospect pain points by name, the specific product capability that addresses each pain, and 3 industry trends you can drop into cold call openers this week. This is your "Just Enough" arsenal.',
+      placeholder:'Example: "Pain 1: Reps spending 5+ hrs/week on manual reporting → Capability: Automated dashboards. Pain 2: No pipeline visibility for managers → Capability: AI forecasting. Trend 1: Forrester says 68% of mid-market cutting SaaS vendors this year..."',
+      minChars:120 },
+    { task:'Practice the "I Don\'t Know" Framework from this lesson in 3 real or mock cold calls this week. For each one, write what the prospect asked, the exact words you used to handle it confidently, and how you redirected to your AE.',
+      placeholder:'Example: "1. Prospect asked about pricing tiers on a cold call. I said: \'Great question — pricing depends on your team size and use case, which is exactly what my AE specializes in. If I can get 15 minutes on your calendar, they\'ll walk you through options tailored to your setup.\' Booked the meeting..."',
+      minChars:100 },
+    { task:'Write 3 pain-based cold call openers that lead with prospect problems — not product features. For each opener, name a specific prospect company where you\'ll test it this week and explain why that pain matters to them.',
+      placeholder:'Example: "1. \'I noticed your team posted 4 new sales roles — are you scaling faster than your pipeline can keep up?\' — Testing with Dataflow Inc. because they\'re hiring aggressively. 2. ..."',
+      minChars:100 },
+    { task:'Pick your hardest-to-reach prospect this week by name and company. Write down everything you know about their pain using ONLY "Just Enough" knowledge. Then list what you DON\'T know and explain how you\'ll handle those gaps on the call using the "I Don\'t Know" Framework.',
+      placeholder:'Example: "Prospect: Jamie Rivera, VP Sales at TechCorp. I know: They\'re losing deals to faster competitors (Pain 1), their team uses Salesforce (context). I DON\'T know: Their budget cycle, their current vendor. Plan: If they ask about pricing, I\'ll say \'That depends on your setup — my AE can walk through options tailored to your team on a quick call...\'..."',
+      minChars:100 },
+    { task:'Ask your AE partner (name them) what the #1 mistake SDRs make when trying to sound knowledgeable on calls. Write their exact answer and describe how you\'ll apply the "Just Enough" framework to fix that mistake in your own outreach this week.',
+      placeholder:'Example: "Asked my AE Sarah. She said: \'SDRs try to answer technical questions they don\'t need to answer and it kills the meeting.\' This week I\'m applying \'Just Enough\' by only prepping 3 pain points per account and using the \'I Don\'t Know\' redirect for everything else..."',
+      minChars:100 }
   ] });
   render();
 }

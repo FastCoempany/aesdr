@@ -1449,7 +1449,13 @@ function init(){
   buildFlips(); buildCal(); buildMV(); buildAP(); buildSK(); buildQuiz(); 
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Look at your calendar from last week. How many hours went to meetings that didn\'t advance a single deal? Name the biggest time thief and what you\'ll do about it.' : 'Look at your calendar from last week. How many hours went to meetings or tasks that didn\'t move your numbers? Name the biggest time thief and what you\'ll do about it.', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson argues that every minute in a meeting that doesn\'t advance a deal is a minute stolen from pipeline. Pull up your actual calendar from last week. Count the total hours spent in internal meetings (status updates, all-hands, team syncs) vs. external prospect-facing activities. Name the single biggest time thief by meeting name, explain why it doesn\'t advance any deal in your pipeline, and write the specific decline script from this lesson you\'ll use to reclaim that time next week.'
+      : 'This lesson argues that SDRs are structurally built for async work but most waste their flexibility on busywork and unnecessary meetings. Pull up your actual calendar from last week. Count the total hours spent in meetings or tasks that didn\'t directly generate pipeline (team huddles, research rabbit holes, optional syncs). Name the single biggest time thief by meeting name, explain why it doesn\'t move your numbers, and describe what high-impact activity (cold calls, personalized sequences, strategic prospecting) you\'ll replace it with next week.',
+    minChars: 120
+  });
   // Homework gate
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
     { task:'Audit your calendar for the past week. Mark every meeting: did it advance a deal or improve your close rate?', placeholder:'List the meetings and your verdict for each...', minChars:40 },

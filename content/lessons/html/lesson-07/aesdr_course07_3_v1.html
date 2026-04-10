@@ -1458,8 +1458,20 @@ function init(){
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'What is the single hardest part of SaaS sales for you right now — and are you honest with yourself about whether you can sustain it for 5 more years?' : 'Be honest: when you hear "50+ cold calls a day for 12-18 months," does that excite you or terrify you? What does your gut reaction tell you about your fit?', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'What is your current OTE, and is the pressure you endure actually worth that number? If your comp dropped 20%, would you still stay in this role?' : 'Map out the math: your current OTE, your promotion timeline, and the daily grind required. Is the 12-18 month investment worth the AE payoff for you personally?', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson separates the promise of SaaS sales (big money, remote flexibility, cutting-edge tech) from the trenches (brutal competition, unforgiving quotas, constant rejection). Identify which of those "trench" realities hits you hardest right now — name a specific situation from the past 3 months where the pressure felt unsustainable. Then honestly assess: using the lesson\'s framework of "output dictates your survival," are you currently producing enough output to justify staying in this role for 5 more years, or are you coasting on past success?'
+      : 'This lesson describes the SDR role as 50+ cold calls a day, constant rejection, and a 12-18 month grind before you get a shot at AE — and warns that most people leave within a year. Describe your honest gut reaction to those numbers. Then reference the lesson\'s point that "the SDRs who make it to AE treat the grind as training, not punishment." Give a specific example from the past month where you treated rejection as training (what you learned from it) versus a time you treated it as punishment (how it affected your next call).',
+    minChars: 120
+  });
+  AESDR.gate(3, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This section lays out the earnings ladder: SDRs at $60k-$90k OTE, mid-level AEs at $100k+, seniors at $150k-$200k+. Write your current OTE and your actual W-2 earnings last year. Then apply the lesson\'s "cost of success" framework: if your comp dropped 20% tomorrow due to a bad quarter, would you still stay in SaaS sales? Be specific about what would change — would you cut expenses, find a new role, or grind harder? The lesson warns that "most people don\'t last because they underestimate the grind." Are you underestimating it right now?'
+      : 'This section states that SDR OTE ranges from $60k-$90k, the real money comes at AE ($100k-$200k+), and most SDRs need 12-18 months before promotion consideration. Write your current OTE and your realistic promotion timeline based on your performance so far. Then calculate the math: your monthly take-home pay now vs. projected AE comp divided by the months of grind remaining. Using the lesson\'s warning that "average SDR tenure is under 14 months," assess whether you are on track to beat that average or become another statistic — and cite specific evidence (activity numbers, meetings booked, manager feedback) to support your answer.',
+    minChars: 120
+  });
   // Homework gate
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
     { task:'Write down what truly motivates you (money, growth, challenges?).', placeholder:'Be specific about your real drivers', minChars:40 },

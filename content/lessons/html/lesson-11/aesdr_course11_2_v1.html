@@ -1444,20 +1444,18 @@ function init(){
   });
   // Homework gate
   var _hwAE = [
-    { task: 'Write down your max drink limit for networking events before you arrive', placeholder: 'State your limit...', minChars: 40 },
-    { task: 'Commit to sticking to it, no matter what', placeholder: 'Describe your commitment plan...', minChars: 40 },
-    { task: 'Define 2-3 specific pipeline outcomes you want from your next event', placeholder: 'List your goals...', minChars: 40 },
-    { task: 'Identify the 3-5 people you must meet and prepare a relevant opening question for each', placeholder: 'List names and questions...', minChars: 40 },
-    { task: 'Prepare conversation starter: "What\'s the biggest challenge in your buying process this year?"', placeholder: 'Write your personalized version...', minChars: 40 },
-    { task: 'Plan your exit strategy: decide when you\'ll leave and how to politely excuse yourself', placeholder: 'Describe your exit plan...', minChars: 40 }
+    { task: 'Name your next upcoming conference or networking event (name, dates, location). Write your max drink limit and your accountability plan — who will hold you to it and how will you enforce it when the after-party pressure hits?', placeholder: 'Event: [Name, dates, city]. Max drinks: [Number]. Accountability: [Who holds me to it and how — e.g., text my manager, leave by X time].', minChars: 100 },
+    { task: 'List 3 specific pipeline outcomes you need from this event. For each, name the account, the current deal stage, and the exact next step you need to advance (e.g., "Get VP of Ops at Acme to agree to a technical review").', placeholder: 'Outcome 1: Account [Name], Stage [X], Next step: [Exact action]. Outcome 2: ... Outcome 3: ...', minChars: 120 },
+    { task: 'Identify 3-5 specific people you must meet at this event by name and title. For each, write a relevant opening question that references their business (not "How\'s it going?" — something that shows you did research).', placeholder: 'Person 1: [Name, Title, Company]. Opening: "I saw your team just [specific thing] — how is that affecting [X]?" Person 2: ...', minChars: 120 },
+    { task: 'Write your conference exit strategy: the exact time you\'ll leave each evening, the phrase you\'ll use to excuse yourself, and what you\'ll do instead (e.g., review notes, prep for the 8 AM breakfast). Be specific about each night.', placeholder: 'Night 1: Leave at [time]. I\'ll say: "[Exact words]." Then I\'ll [specific action]. Night 2: Leave at [time]...', minChars: 100 },
+    { task: 'Describe one specific past conference where alcohol cost you a deal, a relationship, or a morning meeting. Name the event, what happened, and write out the "Domino Effect" — how one sloppy night cascaded into lost pipeline or credibility.', placeholder: 'Event: [Name, date]. What happened: [Specific incident]. The domino effect: [How it cascaded — deal went cold, champion stopped responding, etc.].', minChars: 100 }
   ];
   var _hwSDR = [
-    { task: 'Write down your max drink limit for networking events before you arrive', placeholder: 'State your limit...', minChars: 40 },
-    { task: 'Commit to sticking to it, no matter what', placeholder: 'Describe your commitment plan...', minChars: 40 },
-    { task: 'Define 2-3 specific growth outcomes you want from your next event', placeholder: 'List your goals...', minChars: 40 },
-    { task: 'Identify 3-5 people you want to connect with and prepare a smart question for each', placeholder: 'List names and questions...', minChars: 40 },
-    { task: 'Prepare conversation starter: "How did you move from SDR to AE?" for senior reps', placeholder: 'Write your personalized version...', minChars: 40 },
-    { task: 'Plan your exit strategy: decide when you\'ll leave and how to politely excuse yourself', placeholder: 'Describe your exit plan...', minChars: 40 }
+    { task: 'Name your next upcoming team event, SKO, or conference (name, dates, location). Write your max drink limit and your accountability plan — who will hold you to it and what will you do when teammates pressure you for "one more round"?', placeholder: 'Event: [Name, dates, city]. Max drinks: [Number]. Accountability: [Who holds me to it]. When pressured, I\'ll say: "[Exact words]."', minChars: 100 },
+    { task: 'List 3 specific growth outcomes you need from this event. For each, name the person you want to connect with (by name/title), what you want to learn or achieve, and why it matters for your SDR-to-AE path.', placeholder: 'Outcome 1: Connect with [Name, Title]. Goal: [What I\'ll learn/achieve]. Why: [How it helps my promotion]. Outcome 2: ...', minChars: 120 },
+    { task: 'Identify 3-5 specific people you want face time with — AE leads, managers, VPs, or top performers. For each, write a smart opening question that isn\'t "How did you become an AE?" but shows you\'ve done your homework on their career or wins.', placeholder: 'Person 1: [Name, Title]. Opening: "I noticed you [specific achievement] — what was the turning point that made that possible?" Person 2: ...', minChars: 120 },
+    { task: 'Write your event exit strategy: the exact time you\'ll leave each evening, the phrase you\'ll use when your pod says "stay for one more," and what you\'ll do instead to prepare for the next morning\'s sessions.', placeholder: 'Night 1: Leave at [time]. When pressured: "[Exact words]." Instead I\'ll [prep for morning session/review notes/etc.]. Night 2: ...', minChars: 100 },
+    { task: 'Describe one specific event where you (or an SDR you observed) stayed too late and it hurt their reputation or next-day performance. Name the event, what happened, and who from leadership noticed. What would a written exit plan have changed?', placeholder: 'Event: [Name, date]. What happened: [Specific incident]. Who noticed: [Name/title]. Impact: [How it changed perception]. With an exit plan: ...', minChars: 100 }
   ];
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? _hwAE : _hwSDR });
   render();
