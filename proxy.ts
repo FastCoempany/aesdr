@@ -3,7 +3,7 @@ import { createServerClient } from "@supabase/ssr";
 
 const PUBLIC_PATHS = ["/", "/terms", "/privacy", "/refund-policy", "/about", "/contact", "/success", "/purchase/cancel", "/login", "/signup"];
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // --- Supabase session refresh (required for server components to read auth) ---
@@ -30,8 +30,8 @@ export function proxy(request: NextRequest) {
     }
   );
 
-  // Refresh the auth token — do not remove
-  supabase.auth.getUser();
+  // Refresh the auth token — must be awaited for cookies to sync
+  await supabase.auth.getUser();
 
   // --- Route access control ---
   if (PUBLIC_PATHS.includes(pathname)) {
