@@ -1445,20 +1445,18 @@ function init(){
   });
   // Homework gate
   var _hwAE = [
-    { task: 'Write down scenarios where you feel most pressured to drink (client dinners, celebrations, SKO events)', placeholder: 'List your pressure scenarios...', minChars: 40 },
-    { task: 'For each scenario, note whether drinking actually helped close a deal or just felt expected', placeholder: 'Be honest about each one...', minChars: 40 },
-    { task: 'Come up with a confident, simple line for turning down alcohol', placeholder: 'Write your go-to response...', minChars: 40 },
-    { task: 'Practice delivering it without apologizing', placeholder: 'Describe how you practiced...', minChars: 40 },
-    { task: 'Plan 1-2 client meetings or team activities that don\'t involve alcohol', placeholder: 'Describe your alcohol-free alternatives...', minChars: 40 },
-    { task: 'For your next client dinner, decide your drink limit before you arrive and commit', placeholder: 'State your limit and commitment...', minChars: 40 }
+    { task: 'List your top 3 highest-pressure drinking scenarios by name (e.g., "Q4 close dinner at Morton\'s with VP of Ops at Acme Corp"). For each, state whether alcohol actually helped close the deal or just felt expected — cite the specific outcome.', placeholder: 'Scenario 1: [Event name, client, who was there]. Outcome: [Did drinking help or hurt the deal? What specifically happened?] Scenario 2: ...', minChars: 120 },
+    { task: 'Write the exact words you will say next time a client or colleague pressures you to drink — no apologizing, no hedging. Include the specific setting you\'ll use it in (e.g., "At the Dreamforce after-party when my VP says let\'s do shots, I\'ll say...").', placeholder: 'Setting: [Specific event/person]. My exact words: "..." — delivered with confidence, no apology, no explanation needed.', minChars: 100 },
+    { task: 'Name your next upcoming client dinner or partner event (date, location, attendees). Write your pre-event plan: exact drink limit, what you\'ll order, and what time you\'ll leave.', placeholder: 'Event: [Name, date, location]. Attendees: [Names/titles]. Drink limit: [Number]. I\'ll order: [Exact drink]. Departure time: [Time].', minChars: 100 },
+    { task: 'Identify one deal in your current pipeline where staying sharp after a client event could make or break the outcome. Name the account, the stage, and the dollar amount. Describe how showing up at 100% for the follow-up meeting could change the result.', placeholder: 'Account: [Name]. Stage: [Discovery/Negotiation/etc.]. Value: [$X]. The follow-up meeting is on [date] and if I\'m sharp I can...', minChars: 100 },
+    { task: 'Plan two specific client meetings or team activities in the next 30 days that don\'t involve alcohol. Name dates, who you\'ll invite, the activity, and why it builds stronger relationships than a bar outing.', placeholder: 'Activity 1: [Date, who, what activity, why it\'s better]. Activity 2: [Date, who, what activity, why it\'s better].', minChars: 100 }
   ];
   var _hwSDR = [
-    { task: 'Write down scenarios where you feel most pressured to drink (team happy hours, post-blitz celebrations, pod outings)', placeholder: 'List your pressure scenarios...', minChars: 40 },
-    { task: 'For each scenario, note whether drinking helped your performance or just felt like the default', placeholder: 'Be honest about each one...', minChars: 40 },
-    { task: 'Come up with a confident, simple line for turning down alcohol', placeholder: 'Write your go-to response...', minChars: 40 },
-    { task: 'Practice delivering it without apologizing', placeholder: 'Describe how you practiced...', minChars: 40 },
-    { task: 'Suggest a team bonding activity that doesn\'t revolve around drinking', placeholder: 'Describe your alcohol-free idea...', minChars: 40 },
-    { task: 'Next time the team celebrates a win, suggest a non-alcohol option', placeholder: 'What will you suggest?', minChars: 40 }
+    { task: 'List your top 3 highest-pressure drinking scenarios by name (e.g., "Friday post-blitz happy hour at the brewery with the pod" or "SKO after-party"). For each, state honestly whether drinking helped your next-day performance or just felt like the default.', placeholder: 'Scenario 1: [Event, who was there, what happened]. Next-day impact: [How many dials/meetings were affected?] Scenario 2: ...', minChars: 120 },
+    { task: 'Write the exact words you will say next time a teammate or AE pressures you to drink — no apologizing, no hedging. Include the specific person and setting (e.g., "When my pod lead says \'one more round\' at Thursday happy hour, I\'ll say...").', placeholder: 'Setting: [Specific event/person]. My exact words: "..." — delivered with confidence, no apology, no over-explaining.', minChars: 100 },
+    { task: 'Name your next upcoming team event or company gathering (date, location, who\'ll be there). Write your pre-event plan: exact drink limit, what you\'ll order, and what time you\'ll leave.', placeholder: 'Event: [Name, date, location]. Who\'ll see me: [Manager/AE names]. Drink limit: [Number]. I\'ll order: [Exact drink]. Leaving at: [Time].', minChars: 100 },
+    { task: 'Think about your current call block performance. Name a specific day this month where you were running at less than 100% energy. How many fewer dials did you make? How many meetings did you miss booking? What was the root cause and what will you change?', placeholder: 'Date: [Specific day]. Target dials: [X]. Actual dials: [Y]. Meetings missed: [Z]. Root cause: [Honest answer]. My change: ...', minChars: 100 },
+    { task: 'Propose a specific non-alcohol team bonding activity for your pod — name the date, the activity, and pitch it in the exact words you\'d use in Slack or at standup. Explain why this builds stronger team trust than bar outings.', placeholder: 'Activity: [What]. Date: [When]. My Slack message: "Hey team, ..." Why it\'s better: [Because shared wins and real connection beat...]', minChars: 100 }
   ];
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? _hwAE : _hwSDR });
   render();

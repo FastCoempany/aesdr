@@ -1462,20 +1462,18 @@ function init(){
   });
   // Homework gate
   var _hwAE = [
-    { task: 'Pull up your full comp plan and highlight clawbacks, accelerators, deal splits, and payout timelines', placeholder: 'Paste the key clauses you found...', minChars: 40 },
-    { task: 'Write down 3+ questions to clarify with your manager about multi-year deals and overlay splits', placeholder: 'List your questions...', minChars: 40 },
-    { task: 'Create a tracker logging every deal, payout, and deduction', placeholder: 'Describe your tracker columns...', minChars: 40 },
-    { task: 'Cross-reference finance numbers against your own tracker every pay cycle', placeholder: 'Describe your verification process...', minChars: 40 },
-    { task: 'Build a monthly budget based on base salary alone — no commission included', placeholder: 'Share your base-only budget...', minChars: 40 },
-    { task: 'Create a commission allocation plan: savings, debt repayment, investments', placeholder: 'Break down your allocation %s...', minChars: 40 }
+    { task: 'Open your comp plan and paste the exact clawback clause, accelerator threshold, and payout timeline for multi-year deals. Name the page or section number where each appears.', placeholder: 'e.g. "Section 4.2 — Clawback: If a deal churns within 12 months, 100% of commission is clawed back. Accelerator kicks in at 110% attainment per Section 5.1..."', minChars: 120 },
+    { task: 'Write 3 specific questions you will ask your manager this week about deal splits, overlay credits, and ramped quota rules. Include the date and time of the meeting you will schedule.', placeholder: 'e.g. "Meeting scheduled for Thursday 4/17 at 2pm. Q1: How are overlay splits calculated when two AEs touch the same account?..."', minChars: 100 },
+    { task: 'Build a deal-level tracker with columns for deal name, ACV, commission %, expected payout date, clawback risk, and verification status. Describe at least 3 current deals in this format.', placeholder: 'e.g. "Acme Corp | $85K ACV | 8% commission = $6,800 | Expected payout: May 15 | Clawback risk: 12-month churn clause | Status: Verified against April statement..."', minChars: 100 },
+    { task: 'Cross-reference your last commission statement line by line. Name at least one discrepancy or surprise you found — or confirm every line matched and explain how you verified.', placeholder: 'e.g. "April statement showed $4,200 for Deal X but my tracker had $4,800. Difference was the 60/40 split with the overlay rep — I had assumed 100%. Verified with finance on 4/8..."', minChars: 100 },
+    { task: 'Build a monthly budget using ONLY your base salary. List every fixed expense by name and amount. Show the math proving your base covers essentials with zero commission.', placeholder: 'e.g. "Base salary: $5,400/mo after tax. Rent: $1,800, Car: $450, Insurance: $320, Groceries: $500, Utilities: $180, Phone: $85... Total fixed: $4,135. Surplus: $1,265..."', minChars: 100 }
   ];
   var _hwSDR = [
-    { task: 'Review your comp plan and highlight what counts as a "qualified" meeting and when you get paid', placeholder: 'Paste what you found...', minChars: 40 },
-    { task: 'Write down 3+ questions to clarify with your manager this week', placeholder: 'List your questions...', minChars: 40 },
-    { task: 'Create a tracker to log every meeting booked, its status, and expected payout', placeholder: 'Describe your tracker columns...', minChars: 40 },
-    { task: 'Track your own numbers and flag discrepancies with finance immediately', placeholder: 'Describe your verification process...', minChars: 40 },
-    { task: 'Build a budget based on base salary alone — assume zero commission', placeholder: 'Share your base-only budget...', minChars: 40 },
-    { task: 'Determine how you will allocate commissions as bonus income: savings, debt payoff, or investments', placeholder: 'Break down your allocation plan...', minChars: 40 }
+    { task: 'Open your comp plan and paste the exact definition of a "qualified meeting" and the rule for when you get paid. Name the section or page number.', placeholder: 'e.g. "Per Section 3.1 — A qualified meeting requires: decision-maker present, budget confirmed, timeline under 6 months. Payout triggers when AE marks \'qualified\' in Salesforce..."', minChars: 120 },
+    { task: 'Write 3 specific questions about your comp plan you will ask your manager this week. Include the exact date and time you will have this conversation.', placeholder: 'e.g. "Scheduled for Wednesday 4/16 at 10am. Q1: If my AE no-shows a meeting I booked, does it still count as qualified? Q2: What happens to my payout if a meeting is rescheduled twice?..."', minChars: 100 },
+    { task: 'Create a meeting tracker with columns for prospect name, date booked, AE assigned, qualification status, expected payout, and actual payout. Log your last 5 meetings in this format.', placeholder: 'e.g. "1. Jane Smith at Acme | Booked 4/3 | AE: Mike T. | Status: Qualified 4/5 | Expected: $150 | Actual: $150 (paid 4/15)..."', minChars: 100 },
+    { task: 'Compare your meeting tracker against your last pay stub. Name any meeting where the payout was missing, delayed, or different than expected — or confirm all matched.', placeholder: 'e.g. "5 meetings booked in March, 4 marked qualified. Pay stub showed payout for only 3. Missing: Sarah Lee meeting from 3/12 — AE marked \'not qualified\' but never told me. Following up with manager on 4/17..."', minChars: 100 },
+    { task: 'Write your monthly budget based on base salary only — zero commission. List each expense by name and amount, and show you can cover essentials on base alone.', placeholder: 'e.g. "Base: $3,200/mo after tax. Rent: $1,100, Car insurance: $180, Phone: $65, Groceries: $400, Student loan: $350... Total: $2,795. Remaining: $405 for variable costs..."', minChars: 100 }
   ];
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? _hwAE : _hwSDR });
   render();

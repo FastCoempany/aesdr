@@ -1427,8 +1427,20 @@ function init(){
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'How many times this week did your partner talk to you while you were mentally running a deal in your head? Name the last time and what you missed.' : 'When was the last time your partner asked how your day was and you gave a real answer instead of "fine" or "busy"? What were you actually thinking about?', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'What time did you actually stop working last night — not close the laptop, but truly stop thinking about deals? How did your partner experience that gap?' : 'Last night after your last call block, how many times did you check Slack or email before bed? What did your partner see you doing instead of being present?', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson describes the "Illusion of Availability" — you\'re home all day but your mind is on the deal you just pitched and the follow-up you need to send. Describe a specific moment this week where your partner tried to connect with you and you were mentally in a deal. What exactly were they saying? What deal were you thinking about? What expression did you see on their face when they realized you weren\'t listening?'
+      : 'This lesson describes how your partner "gets the empty version of you" after a full day of call blocks and rejections. Recall a specific evening this week where your partner tried to talk to you and you gave a one-word answer or checked out. How many calls had you made that day? What were you mentally replaying? What did your partner actually need from you in that moment?',
+    minChars: 120
+  });
+  AESDR.gate(3, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'The lesson calls your phone notifications "The Digital Thief" — after hours, you\'re still checking if the prospect opened your proposal while Slack pings from your SE. Describe last night specifically: what time did you close the laptop, how many times did you check your phone after that, what apps pulled you back in, and what was your partner doing while you were "just checking one thing"? What would applying the shutdown ritual from this lesson look like for you tomorrow?'
+      : 'The lesson says that after pulling off the headset, you\'ve spent your entire emotional tank on strangers who hung up on you. Describe your after-work routine last night in detail: what time did you stop working, how many times did you check Slack or email, what apps did you open, and what was your partner doing while you scrolled? Using the boundary-setting framework from this lesson, write the exact shutdown ritual you will implement starting tomorrow.',
+    minChars: 120
+  });
   // Homework gate
   var _hwAE = [
     { task: 'Write one physical action you will take to signal the end of your workday', placeholder: 'Describe your shutdown action...', minChars: 40 },

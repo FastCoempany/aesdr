@@ -1420,8 +1420,20 @@ function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Think about your last lost deal. Was the problem too little product knowledge — or too little understanding of the buyer\'s actual problem? Be specific about what you missed.' : 'Think about a meeting you failed to book last week. Was the problem too little product knowledge — or too little understanding of the prospect\'s pain? Be specific.', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'List the 3 pain points your buyers actually raise most often. Now ask: do you lead with these in discovery, or do you still default to a feature tour? What will you change this week?' : 'List the 3 pain points your prospects actually care about. Now ask: do you lead with these on cold calls, or do you still default to pitching features? What will you change this week?', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson identifies three traps: wasting time memorizing features, feature-dumping on buyers who don\'t care, and trying to demo everything instead of diagnosing problems. Think about your last lost deal — name the account. Which of these three traps did you fall into? Be specific: what did you spend time on that didn\'t matter, what did the buyer actually need to hear, and what would you tell an SDR on your team to focus on instead of product memorization?'
+      : 'This lesson identifies three traps: wasting time memorizing features, pitching products to prospects who only care about their pain, and trying to teach instead of booking the meeting. Think about a meeting you failed to book last week — name the company. Which of these three traps did you fall into? What did you say on the call that focused on product instead of pain, and what would your AE tell you to say differently?',
+    minChars: 120
+  });
+  AESDR.gate(3, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'Screen 3 teaches the "Just Enough" strategy: know 3-5 buyer pain points, the features that map to those pains, and 3 industry trends — then use the "I Don\'t Know" Framework for everything else. List YOUR actual top 3 buyer pain points by name. For each one, write the discovery question you\'d ask to uncover it. Then honestly answer: in your last 3 demos, did you lead with these pain points or default to a feature tour? What specific change will you make in your next deal this week?'
+      : 'Screen 3 teaches the "Just Enough" strategy: know 3-5 prospect pain points, the features that solve them, and 3 industry trends — then use the "I Don\'t Know" Framework for everything else. List YOUR actual top 3 prospect pain points by name. For each one, write the cold call opener you\'d use to surface it. Then honestly answer: in your last 10 dials, did you lead with pain or default to pitching features? What specific change will you make in your next dial block?',
+    minChars: 120
+  });
   // Homework gate
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
     { task:'Build Your Deal Cheat Sheet: List the 3-5 pain points your buyers actually raise, the 3 features that map to those pains, and 3 industry trends.', placeholder:'Paste or describe your cheat sheet...', minChars:40 },
