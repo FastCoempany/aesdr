@@ -1067,6 +1067,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-sub"><b id="tlCount">0</b> / 5 days revealed — open each day to continue</div>
     </div>
     <div class="tl-wrap" id="tlWrap"></div>
+    <!-- Post-Timeline Reflection Gate -->
+    <div id="gate3" data-gate-screen="3"></div>
   </div>
 
   <!-- 4: SCHEDULE BUILDER -->
@@ -1418,40 +1420,53 @@ function init(){
   buildQuiz();
 
   // Narrative gates
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Name one SDR who struggled on your team because structure was missing. What specifically fell apart — and what would you build differently now?' : 'Describe one week where you had no clear plan and your outreach suffered. What did you waste time on, and what structure would have saved you?', minChars: 50 });
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae'
+    ? 'This lesson says SDRs without structure "end up guessing — and guessing leads to frustration, missed targets, and attrition." Name a specific SDR you\'ve managed (or observed) who struggled because onboarding structure was missing. What broke first — their confidence, their pipeline, or their trust in you? What would you build differently starting Day 1?'
+    : 'This lesson says zero structure means "guessing — and guessing leads to frustration, missed targets, and attrition." Describe a specific week in your career where you had no plan and your outreach suffered. What did you waste time on? What specific daily structure from this lesson would have saved you — and why?',
+    minChars: 120 });
 
   // Day 1 Checklist — enforced with text input per item
   AESDR.gate(2, { type:'homework',
     prompt: _role === 'ae'
-      ? 'This is your SDR\'s Day 1. Every item below must be completed with a real, specific response. No clicking through.'
-      : 'This is your Day 1. Every item below must be completed with a real, specific response. No clicking through.',
+      ? 'This is your SDR\'s Day 1 survival checklist. Each item requires a real, specific response that proves you\'ve thought through the plan — not a vague summary. Write as if you\'re handing this to your SDR tomorrow morning.'
+      : 'This is your Day 1 survival checklist. Each item requires a real, specific response that proves you\'ve engaged with the material — not filler. Write as if someone is going to hold you to every word.',
     items: _role === 'ae' ? [
-      { task:'Set SDR Expectations — Define key responsibilities, daily focus areas, and what success looks like in week one.', placeholder:'Write the specific expectations you will set...', minChars: 40 },
-      { task:'Product Overview (1 Hour) — Shadow a live or recorded AE demo. Focus on key questions SDRs need to answer.', placeholder:'What are the 3 key questions your SDR must answer?', minChars: 40 },
-      { task:'Tool & System Walkthrough — CRM, outreach tools, call logging. Hands-on, not a slide deck.', placeholder:'Which tools will you walk through and what will they log first?', minChars: 40 },
-      { task:'Establish Day 1 Daily Goals — Start achievable: 10 calls and 5 practice email drafts.', placeholder:'Write the exact goals you will assign for Day 1...', minChars: 30 },
-      { task:'Set the Debrief Habit — Walk through the end-of-day structure: What worked? What didn\'t? What changes tomorrow?', placeholder:'Describe how you will run the first debrief...', minChars: 40 }
+      { task:'Set SDR Expectations — Define the exact responsibilities, daily focus areas, and measurable definition of success for week one. Be specific enough that your SDR could read this and know exactly what\'s expected without asking.', placeholder:'Write the specific expectations you will set for Day 1 — responsibilities, focus areas, and what "success" looks like by Friday...', minChars: 80 },
+      { task:'Product Overview (1 Hour) — Shadow a real AE demo. Identify the 5 questions prospects ask most frequently, and explain why each one matters for cold call conversations.', placeholder:'List the 5 most common prospect questions and why they matter for SDR conversations...', minChars: 80 },
+      { task:'Tool & System Walkthrough — Walk through every tool hands-on: CRM, outreach platform, call logging. Your SDR must log their first test call before EOD. Describe the specific walkthrough you\'ll run.', placeholder:'Describe the hands-on walkthrough: which tools, in what order, what they will log/create first...', minChars: 80 },
+      { task:'Establish Day 1 Daily Goals — Set achievable targets (10 calls, 5 practice emails). Explain WHY these numbers matter and how you\'ll track them.', placeholder:'Write the exact goals, why you chose those numbers, and how you will track completion...', minChars: 60 },
+      { task:'Set the Debrief Habit — Design the end-of-day debrief structure you\'ll use on Day 1. Include the exact questions you\'ll ask and what you expect back.', placeholder:'Write your debrief script: exact questions, expected format, what you will do with the answers...', minChars: 80 }
     ] : [
-      { task:'Learn the CRM Inside Out — Log a test call, create a test contact, run a test sequence before EOD.', placeholder:'Describe exactly what you will log and create...', minChars: 40 },
-      { task:'Shadow a Live AE Demo — Write down the 5 questions prospects ask most.', placeholder:'List the questions you heard or expect to hear...', minChars: 40 },
-      { task:'Map Your Outreach Tools — Open every tool: dialer, email sequencer, LinkedIn. Send a test email. Make a test call.', placeholder:'Which tools did you open and what did you test?', minChars: 40 },
-      { task:'Set Your Own Day 1 Goals — Write specific targets: 10 dials, 5 practice email drafts.', placeholder:'Write your exact targets for today...', minChars: 30 },
-      { task:'Start a Daily Log — What did I learn? What confused me? What do I need to ask tomorrow?', placeholder:'Write your first daily log entry right now...', minChars: 40 }
+      { task:'Learn the CRM Inside Out — Don\'t just watch. Log a test call, create a test contact, and run a test sequence before EOD. Describe exactly what you did and what you learned about the system.', placeholder:'Describe what you logged, created, and ran in the CRM — be specific about what you found...', minChars: 80 },
+      { task:'Shadow a Live AE Demo — Write down the 5 questions prospects asked most. For each one, explain why it matters and how you\'d reference it on a cold call.', placeholder:'List the 5 prospect questions and explain why each one matters for your outreach...', minChars: 80 },
+      { task:'Map Your Outreach Tools — Open every tool: dialer, email sequencer, LinkedIn. Send a test email. Make a test call. Describe what you tested and what you need to learn next.', placeholder:'Which tools did you open, what did you test, and what do you still need to learn?', minChars: 80 },
+      { task:'Set Your Own Day 1 Goals — Write specific targets: 10 dials, 5 practice email drafts. Don\'t wait for someone to assign them. Explain why you chose these numbers.', placeholder:'Write your exact targets and explain why these are the right goals for Day 1...', minChars: 60 },
+      { task:'Start a Daily Log — Answer honestly: What did I learn today? What confused me? What do I need to ask tomorrow? This habit starts now and doesn\'t stop.', placeholder:'Write your first daily log entry — what you learned, what confused you, what you need to ask...', minChars: 80 }
     ]
   });
 
+  // Post-timeline reflection gate — must write after expanding all 5 days
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae'
+    ? 'You\'ve now seen the full Day 1–5 blueprint. Which single day will be the hardest to execute with your SDR — and why? What specifically about that day\'s tasks will require the most preparation from you as the AE?'
+    : 'You\'ve now seen the full Day 1–5 playbook. Which single day intimidates you most — and why? What specifically about that day\'s tasks feels like it will stretch you the furthest?',
+    minChars: 120 });
+
   // Register accountability gate on homework screen
   AESDR.gate(7, { type:'homework', prompt: _role === 'ae'
-    ? 'Paste your actual Day 1 onboarding checklist for your SDR — the one you use (or will build) in your real role. Include specific tasks, time blocks, and goals.'
-    : 'Paste your actual Day 1 orientation plan — the schedule, goals, and tasks you committed to (or will commit to) for your first week. Be specific.',
+    ? 'This is your real commitment. Write your actual Day 1 onboarding plan for your SDR — specific tasks, time blocks, and measurable goals. If you can\'t be specific, you haven\'t internalized the lesson.'
+    : 'This is your real commitment. Write the Day 1 plan you will actually follow — specific tasks, time blocks, and measurable goals. If you can\'t be specific, go back and re-read.',
     items: _role === 'ae' ? [
-      { task:'Schedule 15 min daily for call review — pick one call, give one specific adjustment', minChars: 30 },
-      { task:'Run the Weekly Alignment Agenda this Friday with last week\'s numbers pulled beforehand', minChars: 30 },
-      { task:'Write the 3 most common product questions your SDR hears and review their answers', minChars: 30 }
+      { task:'Schedule 15 min daily for call review this week. Pick one call per day, give one specific written adjustment. Describe which call format you\'ll use and when in the day you\'ll do this.', placeholder:'Describe your daily call review plan: when, which calls, what format for written feedback...', minChars: 80 },
+      { task:'Run the Weekly Alignment Agenda this Friday. Pull last week\'s numbers beforehand. Write the exact agenda you\'ll use including the 4 sections from the lesson.', placeholder:'Write your Friday alignment agenda: activities review, roadblocks, goals, spot-check...', minChars: 80 },
+      { task:'Write the 3 most common product questions your SDR hears from prospects. For each, write the answer you expect your SDR to deliver — and grade their current version.', placeholder:'List the 3 questions, the ideal answer for each, and how your SDR currently answers them...', minChars: 100 },
+      { task:'Design your SDR\'s first cold call practice session using the Intro → Engage → Close framework from this lesson. Include the scenario, the role you\'ll play, and the specific feedback you\'ll give.', placeholder:'Describe the practice session: scenario, your role, what you\'ll listen for, feedback format...', minChars: 80 },
+      { task:'Write a specific commitment: What is the one structural change you will make to your SDR onboarding process based on this lesson? Be concrete — name the change, the timeline, and how you\'ll measure it.', placeholder:'Name the specific change, when you will implement it, and how you will know it worked...', minChars: 80 }
     ] : [
-      { task:'Write the 3 most common product questions you hear and practice answering in 3 min flat', minChars: 30 },
-      { task:'Log 10 cold calls per day this week — bring your top challenge to each feedback session', minChars: 30 },
-      { task:'Start your daily log: What did I learn? What confused me? What do I need to ask tomorrow?', minChars: 30 }
+      { task:'Write the 3 most common product questions prospects will ask you. For each, write your answer in under 60 seconds of spoken time. Practice saying them out loud before writing.', placeholder:'List the 3 questions and write your answer for each as if you\'re saying it on a call...', minChars: 100 },
+      { task:'Commit to logging 10 cold calls per day this week. For each day, write the specific time block you\'ll use and what you\'ll track (dials, connects, conversations, meetings booked).', placeholder:'Write your daily call block schedule and exactly what you will track each day...', minChars: 80 },
+      { task:'Write your first daily log entry RIGHT NOW. Answer honestly: What did I learn from this lesson? What still confuses me? What specific question will I ask my AE tomorrow?', placeholder:'Write your first daily log: what you learned, what confused you, what you will ask tomorrow...', minChars: 80 },
+      { task:'Design your own cold call intro using the Intro → Engage → Close framework. Write the exact words you\'d say for each stage — not a template, YOUR words for YOUR product.', placeholder:'Write your actual intro script: the exact words for Intro, Engage, and Close...', minChars: 100 },
+      { task:'Write a specific commitment: What is the one habit from this lesson you will start this week? Name the habit, when you\'ll do it daily, and how you\'ll hold yourself accountable.', placeholder:'Name the habit, the daily time, and your accountability method...', minChars: 80 }
     ]
   });
 
@@ -1736,7 +1751,7 @@ const SEC={1:1,2:1,3:1,4:2,5:3,6:3,7:4};
 function canContinue(){
   if(cur===1)return AESDR.gateReady(1);
   if(cur===2) return AESDR.gateReady(2);
-  if(cur===3) return tlOpen.size===5;
+  if(cur===3) return tlOpen.size===5 && AESDR.gateReady(3);
   if(cur===4) return Object.keys(schedDone).length===5;
   if(cur===5) return ccDoneAll;
   if(cur===6){
@@ -1752,7 +1767,7 @@ function getHint(){
   const h={
     1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2: AESDR.gateHint(2) || 'Complete every item. No shortcuts.',
-    3:`${tlOpen.size} / 5 days revealed`,
+    3: tlOpen.size<5 ? `${tlOpen.size} / 5 days revealed` : (AESDR.gateHint(3) || 'Reflect on the week ahead.'),
     4:`${Object.keys(schedDone).length} / 5 correctly placed`,
     5: ccDoneAll ? "✓ All 3 stages complete — continue below."
        : `Stage ${ccStage+1} of 3 — ${CC[ccStage]?.name||''}`,

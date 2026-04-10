@@ -1420,21 +1420,31 @@ function init(){
 
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Think about the last SDR call you heard that made you cringe. What was the specific coaching failure — lack of time, one-size-fits-all, or fear? What did it cost you?' : 'Describe the last time you got feedback that was completely generic and unhelpful. What did they say, and what would actually useful coaching have looked like?', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'How many minutes per week do you currently spend coaching your SDR — honestly? What specific area (calls, emails, objection handling) are you neglecting most?' : 'When was the last time you self-evaluated a call before your AE gave feedback? What did you miss that you should have caught yourself?', minChars: 50 });
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae'
+    ? 'This lesson identifies three coaching failure modes: "Lack of Time," "One-Size-Fits-All," and "Fear of Honest Feedback." Think about the last SDR call you heard that made you cringe. Which failure mode was responsible? Describe the specific call, what went wrong, and what coaching you should have delivered but didn\'t. What did that failure actually cost — in pipeline, in confidence, in trust?'
+    : 'This lesson says most coaching fails before it starts — through lack of time, generic advice, or fear. Describe the last time you received feedback that was completely generic and unhelpful. What exactly did they say? What would genuinely useful, specific coaching have sounded like? What did the generic version cost you in actual performance?',
+    minChars: 120 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae'
+    ? 'The lesson lays out a 60-minute coaching framework: Call Review, Email Feedback, Role-Play, and Q&A. How many minutes per week do you ACTUALLY spend coaching your SDR right now — be honest? Which of the four blocks are you neglecting most, and what specific impact is that having on their calls, emails, or confidence? Don\'t generalize — name the gap.'
+    : 'The lesson describes what good coaching actually looks like: specific, structured, and tied to real performance data. When was the last time you self-evaluated your own call BEFORE your AE gave feedback? What did you miss that you should have caught yourself? If you\'ve never done this, explain why — and describe what a written self-evaluation would include for your last call.',
+    minChars: 120 });
 
   // Register homework gate
   AESDR.gate(8, { type:'homework', prompt: _role === 'ae'
-    ? 'Write specific, written feedback for a real or simulated SDR call. Include: what the opening did well, one thing to change about the engage, and whether the close was strong enough.'
-    : 'Self-evaluate a recent call or practice call. Write: what your opening did well, where your engage lost momentum, and whether your close was specific enough. Be honest.',
+    ? 'This is real coaching work, not a checkbox. Write specific, written feedback for a real or simulated SDR call using the framework from this lesson. Include: what the opening did well, one concrete thing to change about the engage, whether the close was specific enough, and what you\'d drill in role-play next session.'
+    : 'This is real self-coaching work, not a checkbox. Self-evaluate a recent call or practice call using the framework from this lesson. Write: what your opening did well, where your engage lost momentum, whether your close was specific enough, and what you\'d drill in practice next.',
     items: _role === 'ae' ? [
-      { task:'Schedule 1 hour for coaching this week — review 2 SDR calls and deliver written feedback on each', minChars: 40 },
-      { task:'Ask your SDR what area they need the most coaching on right now — then actually address it', minChars: 30 },
-      { task:'Run the 60-minute coaching framework: call review, email feedback, role-play, Q&A', minChars: 40 }
+      { task:'Schedule 1 hour for coaching this week. Review 2 real SDR calls and write specific, structured feedback for each using the Call Review block format: what worked, what to change, and one drill for next time.', placeholder:'Write your coaching plan: which 2 calls, when you\'ll review them, and your feedback framework...', minChars: 100 },
+      { task:'Ask your SDR this exact question: "What area do you need the most coaching on right now?" Write their answer here, then write the specific coaching plan you\'ll execute to address it this week.', placeholder:'Their answer, and your specific coaching plan to address it...', minChars: 80 },
+      { task:'Design a complete 60-minute coaching session using the framework from this lesson. Write the agenda: Call Review (15 min), Email Feedback (15 min), Role-Play (20 min), Q&A (10 min). For each block, name the specific material you\'ll use.', placeholder:'Write the full 60-minute agenda with specific calls, emails, and scenarios for each block...', minChars: 120 },
+      { task:'Write the actual feedback you would deliver on a call where the SDR\'s intro was too long, the engage was product-focused instead of problem-focused, and the close was vague. Be specific — write the words.', placeholder:'Write your exact feedback for each stage: intro, engage, close — specific corrections, not generalities...', minChars: 100 },
+      { task:'What is your single biggest coaching blind spot as an AE? Name it honestly, explain how it shows up in your SDR\'s performance, and describe one specific change you\'ll make starting this week.', placeholder:'Name the blind spot, how it impacts your SDR, and the specific change starting this week...', minChars: 80 }
     ] : [
-      { task:'Bring 1 call recording and 1 email sequence to your next 1:1 — walk your AE through what went wrong first', minChars: 40 },
-      { task:'Self-evaluate in writing before every feedback session: what went well, where do you need help', minChars: 30 },
-      { task:'Prepare for the 60-minute coaching framework: bring a call, an email draft, and one specific question', minChars: 40 }
+      { task:'Bring 1 real call recording and 1 email sequence to your next 1:1. Before the meeting, write a self-evaluation of each: what you did well, where you lost momentum, and what specific help you need. Don\'t wait for feedback — lead with your own assessment.', placeholder:'Your self-evaluation of the call and email: what worked, what didn\'t, what help you need...', minChars: 100 },
+      { task:'Self-evaluate your last 3 calls in writing. For each: grade your intro (1-5), grade your engage (1-5), grade your close (1-5). Write one specific thing to improve for each call. Be honest — inflated grades help no one.', placeholder:'Call 1: intro grade, engage grade, close grade, one improvement. Call 2: ... Call 3: ...', minChars: 100 },
+      { task:'Prepare for the 60-minute coaching framework by writing down: one call you want reviewed, one email draft you need feedback on, one objection you want to role-play, and one specific question you need answered. Have all four ready before the session.', placeholder:'Your call, your email draft, your role-play scenario, and your specific question...', minChars: 80 },
+      { task:'Write a self-coaching script for your weakest call stage (intro, engage, or close). Include: what you currently say, what\'s wrong with it, and the improved version. Practice the new version 5 times and note what changed.', placeholder:'Current version, what\'s wrong, improved version, and what changed after practice...', minChars: 100 },
+      { task:'What is the single hardest piece of feedback you\'ve received (or avoided receiving) about your sales skills? Write it down honestly, explain whether you agree with it, and describe what you\'re doing about it.', placeholder:'The feedback, whether you agree, and what you\'re doing about it...', minChars: 80 }
     ]
   });
 

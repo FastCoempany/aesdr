@@ -1521,21 +1521,31 @@ function init(){
   buildQuiz();
 
   // Narrative gates
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Think about your current SDR. Do they see you as a partner or a taskmaster? Name one specific behavior of yours that signals which one — and be honest about it.' : 'Think about your current AE. Is the relationship transactional or a real partnership? Name one specific interaction that proves it.', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Which of the three principles (Meet Them Where They Are, Be Real, Give Acknowledgment) do you fail at most? Describe one specific moment you dropped the ball.' : 'Which of the three principles (Show Initiative, Ask Hard Questions, Acknowledge Their Reality) do you avoid most? Describe the last time you chose silence over action.', minChars: 50 });
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae'
+    ? 'This lesson draws a hard line between treating your SDR as a "cog" vs. a "partner." Be honest: does your SDR see you as a partner or a taskmaster right now? Name one specific behavior of yours from the last two weeks — a thing you said, a meeting you skipped, a moment you rushed — that signals which one. What would the partner version of you have done instead?'
+    : 'This lesson says the difference between a cog and a partner determines whether you survive your first year. Think about your current AE relationship. Is it transactional or a real partnership? Name one specific interaction from the last two weeks that proves it — describe what happened, how it felt, and what the "partner" version of that interaction would have looked like.',
+    minChars: 120 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae'
+    ? 'The lesson names three principles: "Meet Them Where They Are," "Be Real About What\'s Hard," and "Give Acknowledgment That Means Something." Which one do you fail at most consistently? Don\'t just name it — describe a specific moment in the last month where you dropped the ball on this principle. What happened, what did your SDR see, and what should you have done?'
+    : 'The lesson names three principles: "Show Initiative Before Being Asked," "Ask the Hard Questions," and "Acknowledge Their Reality." Which one do you avoid most? Don\'t just name it — describe the last specific moment you chose silence over action. What were you afraid of, and what would showing up differently have looked like?',
+    minChars: 120 });
 
   // Register homework gate
   AESDR.gate(8, { type:'homework', prompt: _role === 'ae'
-    ? 'Describe one specific thing you will change about how you show up for your SDR this week. Be concrete — name the behavior, the situation, and what you\'ll do differently.'
-    : 'Describe one specific thing you will do this week to build a stronger partnership with your AE. Be concrete — name the action, when you\'ll do it, and what you expect to learn.',
+    ? 'This is your accountability contract. Each item below requires proof that you\'ve internalized the lesson — not a summary, but a specific plan with names, dates, and actions. Write as if your SDR is going to read every word.'
+    : 'This is your accountability contract. Each item below requires proof that you\'ve internalized the lesson — not a summary, but a specific plan with names, dates, and actions. Write as if your AE is going to read every word.',
     items: _role === 'ae' ? [
-      { task:'Think of a time you made an SDR feel supported — write down why it mattered and bring it to your next 1:1', minChars: 30 },
-      { task:'Identify one challenge you\'ve been sitting on — go to your SDR and brainstorm a solution together', minChars: 30 },
-      { task:'Track acknowledgment for one week — every time you recognize your SDR\'s effort, write it down', minChars: 30 }
+      { task:'Think of a specific time you made your SDR feel supported. Write down exactly what you did, why it mattered, and how you\'ll bring that same energy to your next 1:1. Include the date you\'ll do this.', placeholder:'Describe the moment, why it mattered, and your specific plan for the next 1:1...', minChars: 80 },
+      { task:'Identify one challenge your SDR is facing that you\'ve been avoiding or sitting on. Write down the problem, why you\'ve been avoiding it, and the specific conversation you\'ll have this week to brainstorm a solution together.', placeholder:'Name the challenge, why you\'ve avoided it, and your plan for the conversation...', minChars: 80 },
+      { task:'Track acknowledgment for one week: every time you recognize your SDR\'s effort, write it down with the date and what you said. Start by writing the first acknowledgment you\'ll deliver tomorrow.', placeholder:'Write the specific acknowledgment you will deliver tomorrow: what effort, what words, how you\'ll deliver it...', minChars: 80 },
+      { task:'Write a specific public shoutout for your SDR using the format from the lesson (specific behavior, not just outcomes). Include the exact words you\'d post in Slack or say in a team meeting.', placeholder:'Write the full shoutout: opening, specific recognition of effort/behavior, and close...', minChars: 100 },
+      { task:'From the Trust Audit in this lesson, which question hit you hardest? Write your honest answer to that question and one concrete action you\'ll take this week because of it.', placeholder:'Name the audit question, your honest answer, and your specific action this week...', minChars: 80 }
     ] : [
-      { task:'Prepare one call recording and one email for your next 1:1 — walk your AE through what went wrong before they tell you', minChars: 30 },
-      { task:'Ask your AE: what\'s the single biggest thing I should focus on improving this week?', minChars: 30 },
-      { task:'Acknowledge your AE publicly this week — name a specific thing they invested time in', minChars: 30 }
+      { task:'Prepare one call recording and one email for your next 1:1 with your AE. Walk through what went wrong BEFORE they tell you. Write your self-evaluation now — what specifically needs fixing and why.', placeholder:'Describe the call and email you\'ll bring, what went wrong in each, and what you need help with...', minChars: 80 },
+      { task:'Ask your AE this exact question this week: "What\'s the single biggest thing I should focus on improving right now?" Write down when you\'ll ask it and how you\'ll implement their answer.', placeholder:'When will you ask this question? How will you track and implement the answer?', minChars: 60 },
+      { task:'Acknowledge your AE publicly this week. Name the specific thing they invested time in — not "thanks for your help" but the actual behavior, effort, or skill they demonstrated. Write the exact words.', placeholder:'Write the specific public acknowledgment: what they did, where you\'ll say it, exact words...', minChars: 80 },
+      { task:'From the SDR Partnership Audit, which question hit you hardest? Write your honest answer and one concrete action you\'ll take this week because of it.', placeholder:'Name the audit question, your honest answer, and your specific action this week...', minChars: 80 },
+      { task:'Write down one hard question you\'ve been avoiding asking your AE. Why have you avoided it? When this week will you ask it? What do you expect to hear?', placeholder:'The question, why you\'ve avoided it, when you\'ll ask, and what you expect...', minChars: 80 }
     ]
   });
 
