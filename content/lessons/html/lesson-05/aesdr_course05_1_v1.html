@@ -1394,18 +1394,26 @@ function init(){
   buildRecipe(); buildSL(); buildRamp(); buildVis(); buildQuiz(); 
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Think about the last SDR who booked you a meeting that went nowhere. What specific coaching could you have given them beforehand to make that meeting close-ready?' : 'Which of the six promotion recipe steps are you weakest on right now? Be specific — what would your manager say if asked?', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'The lesson names six specific promotion recipe steps that turn an SDR into a Senior SDR — and argues that AEs who coach those steps get better pipeline quality, stronger deal support, and leadership visibility. Pick the two recipe steps your current SDR is weakest on. For each, describe the exact coaching conversation you\'d run: what question you\'d open with, what specific account or deal you\'d reference, and what measurable behavior change you\'d expect within one week.'
+      : 'The six-step promotion recipe says Senior SDRs must master product knowledge, consistent metrics, AE partnership, market insight, proactive communication, and visible value-adds. Pick the two steps where your manager would rank you lowest today. For each, name a specific recent situation (an account, a call, a week of numbers) that proves the gap — and describe the concrete action you\'ll take in the next five business days to close it.',
+    minChars: 120
+  });
   // Homework gate
   AESDR.gate(7, { type:'homework', items: _role === 'ae' ? [
-    { task:'Schedule a 15-minute coaching sync with your SDR. Review their top 3 target accounts with specific positioning guidance.', placeholder:'When did you meet and what guidance did you give?', minChars:40 },
-    { task:'Share one piece of deal intelligence with your SDR they can use in outreach this week.', placeholder:'What intel did you share and how will they use it?', minChars:40 },
-    { task:'Review your SDR\'s meeting quality from last week. Give specific feedback on what converted and what didn\'t.', placeholder:'Describe the feedback you gave...', minChars:40 },
-    { task:'Update your pipeline forecast and proactively brief your manager with deal context before they ask.', placeholder:'What did you brief and what support did you request?', minChars:40 }
+    { task:'Schedule a 15-minute coaching sync with your SDR this week. Review their top 3 target accounts by name and give specific positioning guidance for each — which pain point to lead with and which stakeholder to call first.', placeholder:'Write the date/time of the sync, the 3 account names, and the exact positioning guidance you gave for each account...', minChars:100 },
+    { task:'Share one piece of deal intelligence (competitor pricing, org-chart insight, or trigger event) with your SDR that they can reference in outreach this week. Include the account name and exact intel.', placeholder:'Name the account, describe the intel you shared, and explain exactly how your SDR will use it in their next touch...', minChars:100 },
+    { task:'Review your SDR\'s last 5 booked meetings. Identify which ones converted to pipeline and which didn\'t. Write the specific feedback you delivered — what made the good ones work and what was missing from the bad ones.', placeholder:'List each meeting by account name, whether it converted, and the exact feedback you gave your SDR on each...', minChars:100 },
+    { task:'Run a 10-minute ramp-planning conversation with your SDR using the Ramp Week framework from this lesson. Assign at least 2 activities to specific weeks and explain why the sequencing matters.', placeholder:'Describe which ramp activities you assigned, to which weeks, and what your SDR committed to executing first...', minChars:100 },
+    { task:'Proactively brief your manager on your top 3 pipeline deals before the next forecast call. Include deal stage, next step, and one risk per deal — don\'t wait to be asked.', placeholder:'List each deal by name, the stage, the next step you communicated, the risk you flagged, and your manager\'s response...', minChars:100 }
   ] : [
-    { task:'Write down 3 product pain points and 3 benefits you can deliver confidently on a cold call — from memory.', placeholder:'List them here without looking at notes...', minChars:40 },
-    { task:'Book at least 1 meeting this week and tell your manager before they see it in the CRM.', placeholder:'What meeting did you book and how did you communicate it?', minChars:40 },
-    { task:'Post one market insight in the team Slack this week — your actual perspective, not a shared article.', placeholder:'Paste or describe what you posted...', minChars:40 },
-    { task:'Build one tangible value-add for your AE: research doc, rebuttal guide, or high-fit lead list.', placeholder:'What did you build and deliver?', minChars:40 }
+    { task:'Write down 3 product pain points and 3 benefits you can deliver confidently on a cold call — from memory, without looking at any notes. Then test yourself by leaving a 30-second voicemail using one pain point.', placeholder:'List all 6 items from memory here, then describe the voicemail you left: who you called, which pain point you used, and the exact words you said...', minChars:100 },
+    { task:'Book at least 1 qualified meeting this week. Before it shows up in the CRM, message your manager with the account name, why it\'s a fit, and the meeting date/time.', placeholder:'Write the account name, the prospect\'s title, why the account is qualified, the meeting date/time, and exactly how you communicated it to your manager...', minChars:100 },
+    { task:'Post one original market insight in your team Slack channel — your own analysis of a trend, competitor move, or buyer pattern you\'ve noticed. No shared articles, no reposts.', placeholder:'Paste the exact text you posted in Slack and explain what data or pattern from your outreach led you to that insight...', minChars:100 },
+    { task:'Build one tangible value-add deliverable for your AE: a named-account research doc, a rebuttal guide for a specific competitor, or a high-fit lead list with 10+ contacts. Deliver it before they ask.', placeholder:'Describe exactly what you built, which AE you delivered it to (by name), when you delivered it, and how they responded...', minChars:100 },
+    { task:'Using the Visibility Score framework from this lesson, rate yourself honestly on each component. Identify your lowest-scoring area and write a specific 5-day plan to raise it by at least 10 points.', placeholder:'List your score for each visibility component, identify the lowest one, and describe your day-by-day plan to improve it this week...', minChars:100 }
   ] });
   render();
 }

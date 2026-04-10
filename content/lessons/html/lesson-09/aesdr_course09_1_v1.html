@@ -1458,8 +1458,20 @@ function init(){
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'How many stale opportunities are sitting in your Salesforce pipeline right now that you know should be closed-lost? What is stopping you from cleaning them out today?' : 'When was the last time you logged a call in Salesforce with detailed notes — not just "left voicemail"? What does your typical call log actually look like?', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'If your manager pulled your pipeline report right now, would the close dates and stages be accurate? Name one deal where you know the data is wrong and why you haven\'t fixed it.' : 'How many duplicate or stale leads are clogging your Salesforce views right now? Estimate the number and explain why you haven\'t cleaned them yet.', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson described how dirty pipeline data — stale opportunities, vague stages, and fictional close dates — destroys forecast accuracy and credibility in QBR. Open your Salesforce pipeline right now: how many opportunities have a close date in the past or a stage that no longer reflects reality? List at least two specific deal names, state what is wrong with each, and explain what has stopped you from coaching your SDRs to provide cleaner handoff data that prevents this mess upstream.'
+      : 'This lesson explained how incomplete lead data and sloppy call notes lead to bad AE handoffs and meetings that don\'t convert. Open your Salesforce lead views right now: pick your two most recent call logs and honestly evaluate them. Did you include what was discussed, the prospect\'s specific pain point, and a clear next step — or just "left voicemail"? Paste or describe both entries and explain exactly what you would rewrite to make your AE confident in taking the handoff cold.',
+    minChars: 120
+  });
+  AESDR.gate(3, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'The lesson covered four specific Salesforce hygiene practices: deduplicating accounts, enforcing pipeline discipline with accurate stages and next steps, using Quick Actions to speed up logging, and building custom dashboards. Which of these four practices is the biggest gap in your current workflow? Name a specific deal or account where that gap has cost you time or credibility, describe the concrete steps you will take this week to fix it, and explain how you will hold your SDR accountable for maintaining data quality on leads they pass to you.'
+      : 'The lesson covered four Salesforce hygiene practices: deduplicating leads, enforcing contact completeness with standardized notes, using Quick Actions to speed up logging, and organizing lead views by priority. Which of these four is your biggest weakness right now? Give a specific example — name the lead or describe the situation — where this weakness slowed you down or caused a bad handoff to your AE. What exact changes will you make to your Salesforce workflow this week, and how will you confirm with your AE that the quality of your handoffs has actually improved?',
+    minChars: 120
+  });
   // Homework gate
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
     { task:'Are your opportunities updated with accurate stages and close dates?', placeholder:'Audit your pipeline and report findings', minChars:40 },

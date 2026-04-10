@@ -1429,8 +1429,20 @@ function init(){
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Name one deal or client relationship that was actually damaged — even subtly — because alcohol was involved. What happened the morning after?' : 'Think about your last team happy hour. Did the drinking make you sharper or slower the next morning? How many dials did it cost you?', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'When was the last time you showed up to a demo or client call at less than 100% because of the night before? What did that cost you in pipeline or credibility?' : 'When was the last time a hangover wrecked your call block? How many meetings did you miss booking because you were running at 60% energy?', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson contrasts the "Old Way" (bonding over bourbon, closing at the steakhouse bar) with the "New Way" (delivering value, clarity in negotiations). Name a specific client dinner or closing celebration where alcohol was present. Did it help or hurt the deal? What happened the next morning — did you send the recap email at 7 AM or sleep through it? Be specific about the deal name, the dollar amount at stake, and what you\'d do differently.'
+      : 'This lesson says the "Old Way" is celebrating every booking at the bar, while the "New Way" is bonding through shared wins and friendly competition. Think about your last team happy hour or post-blitz celebration. How many dials did you make the next morning versus a normal day? Name the specific day, how many calls you skipped, and how many meetings you didn\'t book because you were running at 60% energy.',
+    minChars: 120
+  });
+  AESDR.gate(3, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'Screen 3 taught that "Sober Selling = Sharper Demos" — catching buying signals, pivoting pitches in real time, and remembering what the CFO said about budget timing. Describe a specific demo or client call where you showed up at less than 100% because of the night before. What buying signal did you miss? What detail did you forget to follow up on? Name the account and estimate the pipeline dollars it cost you.'
+      : 'Screen 3 taught that "Sober Selling = Sharper Outreach" — having energy on cold calls, tighter sequences, and personalizing emails instead of copy-pasting. Describe a specific call block where a hangover wrecked your performance. How many calls did you actually make versus your target? Did your manager or AE notice? Name the date and the exact number of meetings you missed booking that day.',
+    minChars: 120
+  });
   // Homework gate
   var _hwAE = [
     { task: 'Write down scenarios where you feel most pressured to drink (client dinners, celebrations, SKO events)', placeholder: 'List your pressure scenarios...', minChars: 40 },

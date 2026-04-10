@@ -1449,8 +1449,20 @@ function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Name one piece of sales advice you followed in the last 6 months that actually hurt your pipeline or wasted your time. Who gave it, and what did you learn?' : 'Name one piece of career advice you received recently that felt wrong for your situation. Who gave it, why was it bad, and what did you do instead?', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Pick two of the six principles. For each, give a specific example from your last quarter where you either followed it or violated it — and what the pipeline impact was.' : 'Pick two of the six principles. For each, give a specific example from your last month where you either followed it or ignored it — and what happened to your numbers.', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson argues that most sales advice comes from people who haven\'t carried a quota in years — and that AEs should filter advice through their own deal data, not someone else\'s stage presence. Name one specific piece of sales methodology or coaching advice you followed in the last two quarters that measurably hurt your pipeline (lower close rate, longer cycle, lost deal). Who gave it, what was their quota-carrying experience, and what did your numbers look like before vs. after you followed it?'
+      : 'This lesson says most career advice comes from people who\'ve never done your job — Former Teachers lacking SaaS experience, Skipped-SDR Leaders who never faced the grind, and Generic Gurus with cookie-cutter templates. Name one specific piece of career advice you received in the last 60 days that fits one of those three archetypes. Who gave it, which archetype do they match, what did you do instead, and what happened to your numbers or confidence as a result?',
+    minChars: 120
+  });
+  AESDR.gate(3, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'The six AE principles are: (1) You Close What You Build, (2) Let Your Numbers Do the Talking, (3) Learn from Top Closers Not Commentators, (4) Own Your Pipeline Like a Business, (5) Show Up Like You Belong in the Room, (6) Play for Enterprise. Pick two principles by number. For each, describe a specific deal or week from last quarter — name the account or situation, what you did or failed to do, and the exact pipeline dollar impact. Then state what you\'ll do differently this quarter based on that principle.'
+      : 'The six SDR principles are: (1) You\'ve Got the Smarts and Guts, (2) Out-Earn the Advice-Givers, (3) Follow Those in the Trenches, (4) Own Your Role as a Trench Warrior, (5) Dress Like You Mean Business, (6) Play for the Long Game. Pick two principles by number. For each, describe a specific week or situation from the last 30 days — name the account, the call, or the metric — where you either lived the principle or ignored it. What happened to your numbers, your confidence, or your AE relationship? What will you do differently starting Monday?',
+    minChars: 120
+  });
   // Homework gate
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
     { task:'Identify 3 top closers in your org or network worth studying. Watch how they run discovery, not just how they close.', placeholder:'Name them and what you plan to observe...', minChars:40 },

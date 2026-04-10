@@ -1425,8 +1425,14 @@ function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz();
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Be honest: when was the last time you skipped a daily huddle with your SDR or dismissed their qualification? What was the downstream cost to your pipeline?' : 'What\'s the one rule from the intro (drop ego, communicate like adults, stop micromanaging) that your AE breaks most often? Describe a specific instance and how it affected your work.', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Pick one commandment you know you break regularly. Describe the last time you broke it — what was the situation, and what did it cost your SDR\'s trust or your pipeline?' : 'Which commandment gives you the most standing to push back? Write one sentence you would actually say to your AE this week using the framework.', minChars: 50 });
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae'
+    ? 'This lesson says "your default behaviors under pressure — micromanaging, blaming, going solo — actively damage the partnership that feeds your pipeline." Be brutally honest: when was the last time you skipped a daily huddle, dismissed your SDR\'s qualification, or let ego drive a handoff? Name the specific date, what happened, and the downstream cost to your pipeline. What commandment from this lesson would have prevented it?'
+    : 'This lesson says "unchecked egos, poor communication, and blame culture make it impossible to do your best prospecting work." Which of the three problems from the intro — ego, poor communication, or micromanaging — does your AE exhibit most? Describe a specific incident from the last two weeks: what exactly did they do, how did it affect your outreach or pipeline, and what language from this lesson would you use to address it?',
+    minChars: 120 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae'
+    ? 'The lesson lists five commandments that apply directly to you: Drop the Ego, Communicate Like Adults, Stop Micromanaging, Avoid the Blame Game, and Develop Self-Awareness. Pick the one you break most regularly. Describe the last specific situation where you broke it — what triggered it, what you did, and what it cost your SDR\'s trust or your pipeline. Then write the exact behavior change you\'ll implement this week to stop the pattern.'
+    : 'The lesson says "you teach people how to treat you." Pick the commandment your AE violates most — Drop the Ego, Communicate Like Adults, Demand Autonomy, Refuse the Blame Game, or Protect Your Self-Awareness. Describe the last specific instance where they broke it. Now write the exact sentence — using the framework from this lesson — that you would actually say to your AE this week to address it. Not a vague wish. The actual words.',
+    minChars: 120 });
   // Homework gate
   AESDR.gate(8, { type:'homework', prompt: _role === 'ae'
     ? 'Which of the 10 Commandments do you struggle with most as an AE? Describe a specific situation where you broke it and what it cost you.'

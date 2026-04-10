@@ -1457,20 +1457,33 @@ function init(){
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Name one SDR on your team you have been over-investing in despite poor results. What made you keep trying, and what would change if you redirected that energy to a top performer?' : 'Right now, which tier does your manager most likely put you in — top, middle, or bottom 30%? What specific evidence from this week supports your answer?', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Describe the last time you gave personalized coaching to a top-performing SDR versus a struggling one. Where did you see a bigger return on your time?' : 'When was the last time you proactively asked your manager for feedback without being prompted? If you can\'t remember, what does that tell you about your tier?', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'Using the 30/40/30 framework from this lesson, name one specific SDR on your team you have been over-investing coaching time in despite them sitting in the bottom 30%. Write their first name, how many hours per week you spend coaching them versus your top performer, and what measurable results gap (meetings booked, pipeline generated) proves the ROI is upside-down.'
+      : 'Based on the 30/40/30 breakdown, which tier would your AE or manager most likely place you in right now — top 30%, middle 40%, or bottom 30%? Cite three specific data points from this week (call volume, meetings booked, pipeline created, follow-up rate) that support your honest self-placement, and explain what the top 30% on your team does differently from you.',
+    minChars: 120
+  });
+  AESDR.gate(3, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson says the biggest coaching mistake is giving equal time to all SDRs. Think about last week: write the exact number of minutes you spent in 1-on-1 coaching with your top performer versus your weakest SDR. Then describe one stretch goal or advanced skill you could assign your top 30% SDR this week that you have been neglecting because you were busy firefighting the bottom 30%.'
+      : 'The lesson teaches that top-30% SDRs proactively seek coaching rather than waiting for it. Write the exact date of the last time you asked your AE or manager for specific call feedback without being prompted. If you cannot recall a date, explain what that gap reveals about your current tier, and describe the exact words you will use tomorrow to request coaching on a specific skill.',
+    minChars: 120
+  });
   // Homework gate
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
-    { task:'Choose 2 SDRs in the top 30%. Write out one stretch goal to challenge them.', placeholder:'Name the SDRs and their stretch goals', minChars:40 },
-    { task:'Identify one area of focus for improvement (e.g., tone, pacing, objection-handling).', placeholder:'Be specific about the skill and your coaching plan', minChars:40 },
-    { task:'Create a plan to celebrate their next big win publicly.', placeholder:'Describe what you will do and when', minChars:40 },
-    { task:'Stop chasing uncoachable SDRs. Write a process for addressing poor performance objectively.', placeholder:'Outline your process for boundary-setting', minChars:40 }
+    { task:'Name your top 30% SDRs by first name. For each, write one stretch goal with a measurable target (e.g., "Sarah — book 3 director-level meetings this week instead of 2") and the date you will assign it.', placeholder:'e.g., "Sarah — stretch goal: book 3 director-level meetings by Friday. I will assign this in our 1-on-1 on Tuesday at 2pm."', minChars:100 },
+    { task:'Identify one advanced skill (multi-threading, executive messaging, objection handling) you will coach your top performer on this week. Write the exact day, time, and format (live call review, role-play, etc.).', placeholder:'e.g., "I will coach Marcus on multi-threading via a 20-min role-play session Wednesday at 10am using his Acme Corp deal."', minChars:100 },
+    { task:'Write the specific public recognition you will give your top SDR after their next win — the channel (Slack, team meeting, email to VP), the exact words, and the timeline.', placeholder:'e.g., "After Sarah\'s next closed meeting, I will post in #sales-wins: \'Sarah just booked a VP of Ops at Acme — that\'s 3 director+ meetings this week.\' Doing this by Friday."', minChars:100 },
+    { task:'Name one bottom-30% SDR you have been over-coaching. Write the exact boundary you will set: how many coaching minutes per week you will cap, and what objective metric triggers a performance conversation instead.', placeholder:'e.g., "I will cap coaching time with Jake at 15 min/week. If he books fewer than 2 meetings for 2 consecutive weeks, I escalate to a formal PIP conversation by the 15th."', minChars:100 },
+    { task:'Write your rebalanced coaching calendar for next week: exact time blocks for top-30% coaching vs. bottom-30% check-ins, with names and days. Top 30% must get 2x the minutes.', placeholder:'e.g., "Mon 2-2:30pm Sarah 1-on-1, Tue 10-10:30am Marcus call review, Wed 3-3:15pm Jake status check. Top: 60 min, Bottom: 15 min."', minChars:100 }
   ] : [
-    { task:'Identify one behavior you can start this week that signals top-tier effort (e.g., asking for call feedback daily).', placeholder:'Name the specific behavior and your plan', minChars:40 },
-    { task:'Track your own metrics for 5 straight days before your manager asks.', placeholder:'List which metrics you will track and how', minChars:40 },
-    { task:'After your next rejection, write down what you will change on the next call — then do it.', placeholder:'Describe your approach to learning from rejection', minChars:40 },
-    { task:'Schedule a 15-minute check-in with your manager to ask: "What do your top performers do differently?"', placeholder:'When will you schedule this and what will you ask?', minChars:40 },
-    { task:'Ask your manager for one specific thing you can improve this week — then follow through and report back.', placeholder:'Describe your commitment to follow-through', minChars:40 }
+    { task:'Using the 30/40/30 framework, write which tier you honestly belong in today. List three specific metrics from this week (calls made, meetings booked, follow-up rate) that prove your placement.', placeholder:'e.g., "I am in the middle 40%. This week: 42 calls (team avg 45), 2 meetings booked (top SDRs book 4+), 60% follow-up rate (top is 85%)."', minChars:100 },
+    { task:'Name one top-30% behavior from the lesson you will start doing every day this week. Write the exact daily action, the time you will do it, and how you will track it for 5 days.', placeholder:'e.g., "I will review my call recordings for 15 minutes at 8:45am before dialing. I will log my takeaway each day in a Google Doc and share it with my AE on Friday."', minChars:100 },
+    { task:'Write the exact sentence you will say to your AE or manager tomorrow to proactively request coaching: include the specific skill, the meeting time, and why you chose that skill.', placeholder:'e.g., "Tomorrow at our 1-on-1 I will say: \'Can you listen to my Acme call from Tuesday and coach me on my objection handling? I lost the prospect at the budget question.\'"', minChars:100 },
+    { task:'Track your own metrics for 5 consecutive days before your manager asks. List the exact metrics, your tracking method, and the date you will share results without being prompted.', placeholder:'e.g., "Metrics: calls made, talk time, meetings booked, follow-ups sent. Tracked in my spreadsheet daily at 5pm. Sharing results with my AE Friday at 3pm unprompted."', minChars:80 },
+    { task:'After your very next rejection call, write down the prospect\'s objection word-for-word, what you said in response, and the specific alternative response you will use next time. Commit to a date.', placeholder:'e.g., "Prospect said \'We already have a vendor.\' I said \'Oh okay, sorry to bother you.\' Next time I will say: \'Totally understand — most of our clients had a vendor before switching. What made you evaluate them originally?\' Using this tomorrow."', minChars:100 }
   ] });
   render();
 }

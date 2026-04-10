@@ -1433,17 +1433,53 @@ function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Name one sales book or methodology you followed that actually made your pipeline worse or wasted your selling time. What did you do differently once you dropped it?' : 'Name one sales book, framework, or script you tried that made your outreach worse or wasted your call time. What did you do differently once you stopped using it?', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Describe one deal instinct you had recently — a gut feeling about a prospect, a champion, or a deal going sideways. Were you right? What did the outcome teach you?' : 'Describe one call or sequence where your instinct told you to go off-script. What did you do, and did it work? What did you learn about trusting yourself?', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson argues that most sales books recycle outdated advice from authors who haven\'t carried a quota in years — the Recycling Loop. Name a specific sales methodology or book you\'ve used (e.g., MEDDIC, Challenger, Sandler). Describe one deal where following that framework actually hurt your pipeline or clouded your instincts. What did you coach your SDRs to do differently once you recognized the damage?'
+      : 'This lesson argues that most sales books recycle outdated scripts from authors who haven\'t made a cold call in years — the Recycling Loop. Name a specific sales book, framework, or scripting guide you tried in your outreach. Describe one sequence or dial block where following it made your results worse. What did your AE or manager say when you told them you were dropping it, and what did you do instead?',
+    minChars: 120
+  });
+  AESDR.gate(3, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'Screen 3 says "every deal is training" and urges you to trust your close instincts over rigid methodology. Describe a specific recent deal where you read the room and adapted in real time — adjusting your demo flow, pivoting your discovery, or changing your multi-threading approach mid-cycle. What was the buyer\'s reaction, what was the outcome, and how are you coaching your SDRs to develop similar instincts?'
+      : 'Screen 3 says "every call is training" and urges you to trust your outbound instincts over rigid scripts. Describe a specific recent cold call or email sequence where your gut told you to go off-script — you changed your opener, skipped the template, or personalized on the fly. What exactly did you say, how did the prospect respond, and what did the outcome teach you about trusting yourself vs. following the playbook?',
+    minChars: 120
+  });
   // Homework gate
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
-    { task:'Start a daily "Deal Debrief" journal — after every demo or close attempt, write what worked and what you\'d change.', placeholder:'Paste your first entry or describe your setup...', minChars:40 },
-    { task:'Identify one area to improve each week (multi-threading, executive presentations, handling procurement objections).', placeholder:'Which area and what\'s your plan?', minChars:40 },
-    { task:'Lean into your deal instincts — experiment with your discovery flow and trust what the pipeline is teaching you.', placeholder:'What experiment did you run and what did you learn?', minChars:40 }
+    { task:'Start a daily "Deal Debrief" journal. After your next demo or close attempt, write the account name, what you adapted in real time, the buyer\'s reaction, and one thing you\'d change next time.',
+      placeholder:'Example: "Acme Corp demo 4/10 — I skipped the feature walkthrough and led with their CFO\'s budget pain. The VP of Ops leaned in when I... I\'d change..."',
+      minChars:120 },
+    { task:'Identify one specific area to improve this week from the lesson\'s playbook framework (multi-threading, executive presentations, procurement objections, or discovery flow). Write your improvement plan with a measurable goal and deadline.',
+      placeholder:'Example: "This week I\'m improving multi-threading. By Friday I will have mapped 3 additional stakeholders in my top deal and sent personalized outreach to each..."',
+      minChars:100 },
+    { task:'Name one SDR on your team by name. Describe a specific moment where a book methodology clouded their instincts, and write the exact coaching feedback you gave (or will give) them this week.',
+      placeholder:'Example: "Jordan was rigidly following Sandler\'s pain funnel in discovery and missing buying signals. I told them: \'When the prospect says X, that\'s your cue to...\'..."',
+      minChars:100 },
+    { task:'Run one discovery experiment this week: change your demo flow, try a new opening question, or skip a section you normally include. Name the account, describe the experiment, and report the result.',
+      placeholder:'Example: "On my call with Initech, I opened with \'What keeps your VP up at night?\' instead of my standard intro. The prospect said... and the meeting ran 15 minutes longer because..."',
+      minChars:100 },
+    { task:'Write down the 3 most common objections you hear in your deals right now. For each one, write the exact words you use to handle it — not a book\'s suggested response, but YOUR instinct-based response.',
+      placeholder:'Example: "1. \'We\'re locked into a contract\' — I say: \'Totally understand. When does that renewal come up? Because what I\'m hearing from your team is...\' 2. ..."',
+      minChars:100 }
   ] : [
-    { task:'Start a daily "What I Learned" journal — after every dial block and outreach session, write what landed and what fell flat.', placeholder:'Paste your first entry or describe your setup...', minChars:40 },
-    { task:'Identify one area to improve each week (cold call openers, handling gatekeepers, subject lines that get replies).', placeholder:'Which area and what\'s your plan?', minChars:40 },
-    { task:'Lean into your own instincts — experiment with your sequences and trust the patterns you\'re seeing.', placeholder:'What experiment did you run and what did you learn?', minChars:40 }
+    { task:'Start a daily "What I Learned" journal. After your next dial block, write the date, how many dials you made, which opener got the best reaction, and one thing you\'d change tomorrow.',
+      placeholder:'Example: "4/10 — 47 dials, 6 connects. My best opener was \'I saw your company just expanded into EMEA...\' which got 2 conversations past 30 seconds. Tomorrow I\'ll change..."',
+      minChars:120 },
+    { task:'Identify one specific area to improve this week from the lesson\'s playbook framework (cold call openers, handling gatekeepers, subject lines, or voicemail scripts). Write your plan with a measurable goal and deadline.',
+      placeholder:'Example: "This week I\'m improving cold call openers. By Friday I will have tested 3 new pain-based openers across 50+ dials and tracked which one books the most meetings..."',
+      minChars:100 },
+    { task:'Name your AE partner. Describe one piece of feedback they gave you about your prospecting approach, and write how you\'re changing your outreach based on that coaching this week.',
+      placeholder:'Example: "My AE Sarah told me my emails are too feature-heavy and don\'t mention the prospect\'s pain. This week I\'m rewriting my top 3 templates to lead with..."',
+      minChars:100 },
+    { task:'Run one outbound experiment this week: change your opener, rewrite a sequence step, or try a completely new channel. Describe exactly what you changed and what happened.',
+      placeholder:'Example: "I replaced my standard \'Hi, I\'m calling from...\' opener with \'I noticed your team just posted 3 new AE roles — are you scaling faster than your pipeline can keep up?\' Result: ..."',
+      minChars:100 },
+    { task:'Write down the 3 most common objections you hear on cold calls right now. For each one, write the exact words you use to handle it — not a script from a book, but YOUR instinct-based response.',
+      placeholder:'Example: "1. \'I\'m not interested\' — I say: \'Totally fair. Quick question before I let you go — is pipeline generation something your team is actively solving right now?\' 2. ..."',
+      minChars:100 }
   ] });
   render();
 }

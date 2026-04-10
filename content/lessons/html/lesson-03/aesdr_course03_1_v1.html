@@ -1531,21 +1531,26 @@ function init(){
   buildRank(); renderBant(); buildFD(); buildSA(); buildHB(); buildQuiz();
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Which of the three pitfalls (poor qualification, lack of proactivity, generic approach) is costing you the most pipeline right now? Describe a specific deal where it showed up.' : 'Which of the three pitfalls (poor qualification, lack of proactivity, generic outreach) describes your biggest weakness right now? Give a specific example from this week.', minChars: 50 });
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae'
+    ? 'This lesson says SDR pitfalls "cascade: missed targets, wasted AE time, and eroded team confidence." Name one specific SDR on your team whose qualification, proactivity, or personalization is weakest right now. Which of the three pitfalls — poor qualification, lack of proactivity, or generic approach — applies to them? Describe a specific deal from the last 30 days where that pitfall cost you pipeline or prep time. What concrete coaching step would you take this week to address it?'
+    : 'This lesson says "every pitfall is a solvable problem — not a fixed trait." Pick the one pitfall — poor qualification, lack of proactivity, or generic outreach — that most accurately describes your current weakness. Describe a specific outreach sequence or lead handoff from this week where that pitfall showed up. What exactly went wrong, and which specific fix from this lesson would you apply starting tomorrow?',
+    minChars: 120 });
   // Homework gate
   AESDR.gate(8, { type:'homework', prompt: _role === 'ae'
-    ? 'Write a coaching note for a specific SDR call: identify 3 qualification gaps (BANT or similar framework) and provide concrete suggestions for each.'
-    : 'Given a recent call you made, identify 3 qualification gaps using BANT (Budget, Authority, Need, Timeline). For each gap, write what you should have asked instead.',
+    ? 'You just learned the 4 SDR pitfalls and the BANT qualification framework. Now apply them: review a real SDR call, score it against BANT, and write coaching notes that reference specific moments in the conversation. No generic feedback — cite what was said and what should have been asked instead.'
+    : 'You just learned the 4 SDR pitfalls and the BANT qualification framework. Now apply them to your own pipeline: score your recent leads against BANT, identify where your outreach is generic, and build a concrete improvement plan for this week with specific names, dates, and actions.',
     items: _role === 'ae' ? [
-      { task:'Identify which of the four pitfalls you see most in your own deal management — be honest about where your process gets lazy', minChars: 30 },
-      { task:'Review the last 5 leads your SDR passed against BANT — score each one and share specific results with your SDR', minChars: 30 },
-      { task:'Schedule a feedback session with your SDR — pick one area, give specific written feedback, track implementation', minChars: 30 },
-      { task:'Personalize your next 3 follow-up emails with specific references to what each prospect said in discovery', minChars: 30 }
+      { task:'Name the specific pitfall (poor qualification, lack of proactivity, generic approach, or reactive pipeline management) that you see most in your own deal management. Describe the last deal where it cost you — company name, what happened, and what you\'d do differently.', placeholder:'Name the pitfall, the deal, and what broke...', minChars: 100 },
+      { task:'Pull up the last 5 leads your SDR passed you. Score each one against BANT (Budget, Authority, Need, Timeline). Write the company name, which BANT criteria were missing, and the exact feedback you\'ll share with your SDR in your next huddle.', placeholder:'Lead 1: [company] — Budget: ?, Authority: ?, Need: ?, Timeline: ?...', minChars: 120 },
+      { task:'Schedule a 15-minute feedback session with your SDR this week. Pick one qualification gap from the BANT review above. Write the specific talking points you\'ll use — not "qualify better" but exact questions they should have asked on that specific call.', placeholder:'Date/time of session, which gap, and your exact coaching points...', minChars: 100 },
+      { task:'Write three personalized follow-up emails for three real prospects in your pipeline right now. Each must reference something specific the prospect said in discovery — not a template, not their job title, but actual words from the conversation.', placeholder:'Prospect 1: [name] — what they said, your personalized follow-up...', minChars: 100 },
+      { task:'Build a proactivity plan for next week: which day will you review pipeline health, when will you coach your SDR on outreach quality, and what specific metric will you track to measure improvement? Include exact days and times.', placeholder:'Monday: [time] — pipeline review. Tuesday: [time] — SDR coaching on...', minChars: 80 }
     ] : [
-      { task:'Write down the one pitfall you recognize most in yourself — then implement one specific fix from the toolkit', minChars: 30 },
-      { task:'Use the BANT checklist on every lead you pass to your AE this week — if you can\'t answer all four, don\'t pass it', minChars: 30 },
-      { task:'Add one genuine research-based personalization element to every outreach sequence you send this week', minChars: 30 },
-      { task:'Ask your AE for one specific piece of feedback on your qualification quality — not "how am I doing" but one concrete improvement', minChars: 30 }
+      { task:'Name the one pitfall from the four in this lesson that describes your biggest current weakness. Describe the last time it showed up — which prospect, what you did wrong, and the specific fix from the toolkit you\'ll implement starting tomorrow morning.', placeholder:'My biggest pitfall is [X]. Last week with [prospect name], I...', minChars: 100 },
+      { task:'Pull up every lead you plan to pass to your AE this week. Score each one against BANT (Budget, Authority, Need, Timeline). For any lead missing a criterion, write the exact question you\'ll ask to fill the gap before passing it.', placeholder:'Lead 1: [company] — Budget: known/unknown, question I\'ll ask: "..."', minChars: 120 },
+      { task:'Take your last 3 outreach emails and rewrite the opening line of each with genuine, research-based personalization. Reference something specific about the prospect\'s company, recent news, or role — not their name and job title.', placeholder:'Email 1 (to [name]): Old opening: "..." / New opening: "..."', minChars: 100 },
+      { task:'Write the exact message you\'ll send to your AE this week asking for specific feedback on your qualification quality. Not "how am I doing" — ask them to review one specific lead you passed and tell you what BANT criteria you missed.', placeholder:'Exact message: "Hey [AE name], I\'d like your feedback on..."', minChars: 80 },
+      { task:'Build your proactivity schedule for next week: block specific times for outreach, call review, and pipeline cleanup. Name the days, the time blocks, and what you\'ll do in each block. If it\'s not on your calendar, it won\'t happen.', placeholder:'Monday 9-10am: cold outreach block. Monday 4-4:30pm: call review...', minChars: 80 }
     ]
   });
   render();

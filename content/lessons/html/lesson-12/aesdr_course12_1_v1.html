@@ -1428,8 +1428,20 @@ function init(){
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'When was the last time your partner said something about your career that stung — not because it was wrong, but because it was true? What was it?' : 'Has anyone close to you ever said "you care more about your job than about us"? Were they wrong — or were they seeing something you refuse to admit?', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Is the income gap between you and your partner creating a silent power imbalance? Name one specific moment where you felt it — even if you never said anything.' : 'Does your partner understand why you are obsessed with hitting quota — or do they just see stress? What have you actually explained to them about your career trajectory?', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson describes the "SaaS Success Gap" — your six-figure OTE, President\'s Club trips, and executive dinners accelerating you away from your partner. Name a specific recent moment where you felt that gap widening (a dinner, a trip, a conversation about money) and describe exactly what your partner said or did that revealed they feel left behind. What did you do — or fail to do — in response?'
+      : 'This lesson describes the growth gap between SDRs chasing promotion and partners who don\'t understand the grind. Think about the last time you talked about your quota, your path to AE, or your variable comp with your partner. Did their eyes glaze over? Did they dismiss it? Describe that exact moment and what it revealed about how disconnected your worlds have become.',
+    minChars: 120
+  });
+  AESDR.gate(3, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'The lesson warns that funding vacations, dinners, and experiences alone creates an unspoken power imbalance — even if you don\'t intend it. Describe one specific situation where your income advantage made your partner feel dependent or inferior. What was the dollar amount involved, what happened, and what would you do differently now using the "growth compatibility" framework from this lesson?'
+      : 'The lesson says "if your partner isn\'t growing alongside you, resentment can grow." Identify one specific area — financial, intellectual, social, or ambition — where you are outpacing your partner right now. What does that gap look like in a typical week? Using the alignment plan from this lesson, describe the exact conversation you would have with your partner to address it.',
+    minChars: 120
+  });
   // Homework gate
   var _hwAE = [
     { task: 'Write down where you are currently excelling and where you feel stagnant', placeholder: 'Be honest about both...', minChars: 40 },

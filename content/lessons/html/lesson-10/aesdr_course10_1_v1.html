@@ -1446,8 +1446,20 @@ function init(){
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'What line in your comp plan have you never actually read — and what would it cost you if it said something different than you assumed?' : 'How much of your last paycheck can you actually explain line by line — and what happens to your budget if the variable piece disappears next month?', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Name one clawback or payout rule in your current plan that could blindside you this quarter. What are you doing about it?' : 'If your AE disqualifies your next three meetings, what happens to your paycheck? Do you even know the rule?', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson covered OTE traps like clawbacks, accelerators, deal splits, and payout timelines. Open your actual comp plan right now. Name the specific clawback clause, the exact accelerator threshold, and the payout timeline for multi-year deals. Then describe how you are coaching your SDRs to understand which of their meetings actually qualify for payout under your plan\'s rules — cite the specific qualification criteria.'
+      : 'This lesson broke down how OTE is structured and where SDRs lose money they thought they earned. Pull up your last two pay stubs. What is your base versus variable split? Name the exact rule that determines whether a meeting you booked counts as "qualified." Describe a specific meeting you booked recently and whether it would survive your company\'s qualification criteria — and what that means for your actual take-home.',
+    minChars: 120
+  });
+  AESDR.gate(3, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'The lesson introduced the Financial Defense Plan: reading the fine print, tracking every payout, and budgeting on base alone. Name the specific clawback or deal-split rule in your current comp plan that you were unaware of or had wrong. What is the exact dollar amount you could lose this quarter if that rule triggers? Describe how you will verify your next commission statement line by line against your own tracker.'
+      : 'The lesson taught you to read your comp plan\'s fine print and cross-reference finance numbers. Name the specific rule in your plan that determines when you get paid for a booked meeting — is it at booking, at qualification, or at AE acceptance? Describe what happened with a specific recent meeting where the payout was delayed or denied, and what you will do differently to verify your numbers before the next pay cycle.',
+    minChars: 120
+  });
   // Homework gate
   var _hwAE = [
     { task: 'Pull up your full comp plan and highlight clawbacks, accelerators, deal splits, and payout timelines', placeholder: 'Paste the key clauses you found...', minChars: 40 },

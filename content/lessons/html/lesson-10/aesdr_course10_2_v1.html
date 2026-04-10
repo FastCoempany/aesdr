@@ -1454,8 +1454,20 @@ function init(){
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'When was the last time you hit quota and felt punished for it — with a higher target the next quarter? What did that teach you about how the game actually works?' : 'When did you last crush your meeting target only to see it raised the following month? How did that change the way you approach your daily grind?', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'How many deals in your current pipeline would survive a brutal audit right now — and what are you telling yourself about the ones that wouldn\'t?' : 'If your manager audited your meeting list today, how many would actually convert? Be honest about the fluff.', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson exposed why quotas feel like a trap and why "more leads" is never the answer. Name your exact quota number this quarter and your current attainment percentage. Then describe specifically how the ratchet effect has hit you — what was your quota two quarters ago versus now, and what changed in your territory to justify (or not justify) the increase? As someone managing SDRs, explain how you communicate quota realities to your team without killing morale.'
+      : 'This lesson showed why meeting targets keep rising and why volume alone won\'t save you. State your exact meeting target this month and how many you\'ve booked so far. Then describe a specific week where you hit your number but felt like you were running on a treadmill — what was your connect rate, how many dials or emails did it take, and what would break if that pace isn\'t sustainable? Name what your AE actually needs from your meetings versus what you\'re currently delivering.',
+    minChars: 120
+  });
+  AESDR.gate(3, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'The lesson taught you to build a data-driven quota defense: auditing pipeline, stack-ranking deals, and documenting external factors. Open your pipeline right now. How many total opportunities do you have, and how many have had zero activity in the last 30 days? Name your top 3 deals by ACV and state the exact next step and close date for each. What is one external factor (seasonality, product delay, territory change) that impacts your number this quarter, and what specific data would you bring to your manager to make the case?'
+      : 'The lesson walked through building a data-backed case for realistic targets: tracking conversion rates, identifying external factors, and documenting experiments. Pull up your activity numbers from last week. How many calls did you make, how many connects, how many meetings booked? What is your current connect-to-meeting conversion rate? Name one external factor (lead quality change, territory shift, seasonal dip) hurting your numbers right now, and describe the exact data you would show your manager to prove it\'s real, not an excuse.',
+    minChars: 120
+  });
   // Homework gate
   var _hwAE = [
     { task: 'Audit every open opportunity — kill anything with no activity in 30+ days or no champion', placeholder: 'List deals you killed and why...', minChars: 40 },

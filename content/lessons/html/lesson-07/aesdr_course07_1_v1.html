@@ -1458,8 +1458,20 @@ function init(){
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
-  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'When was the last time you personally cold-called a prospect instead of waiting for an SDR handoff? What stopped you from doing it more often?' : 'How many cold calls did you make yesterday versus your target? What specific excuse did you use to justify the gap?', minChars: 50 });
-  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Name one deal you lost in the last 6 months because your pipeline was too thin. What would have been different if you had self-sourced 3 more opportunities?' : 'Think about a week where your outbound activity dropped. What happened to your pipeline 2 weeks later, and what excuse did you tell yourself at the time?', minChars: 50 });
+  AESDR.gate(1, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This lesson argues that no AE gets a free pass on prospecting and that relying solely on SDR handoffs makes you a liability. Name the last time you personally cold-called or emailed a prospect you identified yourself — include the date, the account, and the outcome. Then explain which of the three dangers from this section (pipeline gaps, skill decline, or loss of SDR respect) you are most guilty of right now, and what specific behavior change you will make this week to address it.'
+      : 'This lesson states that volume is non-negotiable and that quality follows quantity. Write your exact cold call and email numbers from yesterday compared to your daily targets. Then describe the specific excuse you used to justify any gap — referencing the lesson\'s point that inconsistency kills momentum — and explain what happened to your pipeline the last time you let activity drop for more than two consecutive days.',
+    minChars: 120
+  });
+  AESDR.gate(3, {
+    type:'narrative',
+    prompt: _role === 'ae'
+      ? 'This section teaches that coasting kills careers — pipeline gaps, skill decline, and loss of respect are the three consequences. Identify a specific deal you lost or nearly lost in the past 6 months because your pipeline was too thin. Name the account, the approximate deal size, and explain which of the three consequences (pipeline gaps, skill decline, loss of SDR respect) was the root cause. Then describe the exact daily prospecting routine from the lesson (10-20 targeted dials, 5 personalized emails, 1-2 hours weekly research) and which part you will commit to starting tomorrow.'
+      : 'This section warns that inconsistency kills momentum — every day you skip prospecting is a day without meetings two weeks later. Describe a specific week in the past 3 months where your outbound activity dropped below target. State the exact numbers (dials made vs. target, emails sent vs. target) and explain what happened to your booked meetings in the following two weeks. Then reference the lesson\'s point about cold calling being a muscle and describe one specific talk track or technique that got rusty during your downtime.',
+    minChars: 120
+  });
   // Homework gate
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
     { task:'How many opportunities am I self-sourcing each month?', placeholder:'Be specific with numbers and pipeline data', minChars:40 },
