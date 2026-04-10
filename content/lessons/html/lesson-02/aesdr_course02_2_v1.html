@@ -1301,6 +1301,10 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
     <div class="sb-tag">Section 04</div>
     <div class="sb-name">Toolkit & Homework</div>
   </div>
+
+  <div style="margin-top:32px;padding:16px 0;border-top:1px solid var(--line)">
+    <p style="font-family:var(--serif);font-size:13px;font-style:italic;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">You can treat this like just another course if you want. Or you can not lie and complete this survival checklist legitimately. What you do when no one is watching makes all the difference in the end.</p>
+  </div>
 </aside>
 
 <footer class="bottomnav" id="bottomnav" style="display:none">
@@ -1420,7 +1424,7 @@ function init(){
   AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Describe your current home office setup in one honest sentence. What\'s the weakest link — and when did it last cost you on a demo or client call?' : 'Describe your current home office setup in one honest sentence. What\'s the weakest link — and when did it last drain your energy during a dial block?', minChars: 50 });
   AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'From the blueprint (furniture, tech, health): which category is your biggest gap right now? What specific upgrade would improve your demo delivery this week?' : 'From the blueprint (furniture, tech, health): which category is your biggest gap right now? What specific upgrade would help you sustain energy through afternoon dials?', minChars: 50 });
   // Homework gate
-  AESDR.gate(8, { type:'homework', prompt:'Take a photo or describe your current home office setup in detail: desk, chair, monitor(s), lighting, and one thing you know needs upgrading. Be honest about what\'s working and what isn\'t.',
+  AESDR.gate(8, { type:'homework', prompt: _role === 'ae' ? 'Describe your current home office setup honestly: desk, monitors, chair, lighting. What\'s the one thing costing you demo quality or deal preparation time?' : 'Describe your current home office setup honestly: desk, monitors, chair, lighting. What\'s the one thing costing you energy or focus during long dial blocks?',
     items: _role === 'ae' ? [
       { task:'Demo readiness: Can you share your screen, run your CRM, and reference notes simultaneously without fumbling?', minChars: 30 },
       { task:'Setup gap: What\'s missing that would make back-to-back discovery and demo calls less draining?', minChars: 30 },
