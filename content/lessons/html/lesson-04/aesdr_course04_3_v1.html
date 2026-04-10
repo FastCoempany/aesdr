@@ -238,6 +238,128 @@
   font-style: italic;
 }
 
+/* ══════════════════════════════════════════
+   Narrative Gate — lighter variant for reading screens
+══════════════════════════════════════════ */
+.gate-narrative {
+  margin: 24px 0 8px;
+  padding: 20px 24px 18px;
+  border-width: 1px;
+  border-color: var(--line2);
+  background: var(--lite);
+}
+.gate-narrative .gate-label {
+  color: var(--mid);
+  font-size: 8px;
+}
+.gate-narrative .gate-prompt {
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+.gate-textarea-sm {
+  min-height: 72px;
+  font-size: 14px;
+}
+
+/* ══════════════════════════════════════════
+   Homework Gate — enforceable sub-checklist
+══════════════════════════════════════════ */
+.gate-homework {
+  padding: 24px 28px 20px;
+}
+.hw-gate-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.hw-gate-item {
+  display: flex;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: flex-start;
+}
+.hw-gate-item:last-child {
+  border-bottom: none;
+}
+.hw-gate-check {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--mid);
+  border: 2px solid var(--line);
+  background: var(--white);
+  transition: all .3s;
+}
+.hw-gate-done .hw-gate-check {
+  background: var(--black);
+  border-color: var(--black);
+  color: var(--white);
+}
+.hw-gate-body {
+  flex: 1;
+  min-width: 0;
+}
+.hw-gate-task {
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--black);
+  margin-bottom: 10px;
+}
+.hw-gate-done .hw-gate-task {
+  color: var(--mid);
+}
+.hw-gate-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  gap: 12px;
+}
+.gate-submit-sm {
+  font-size: 9px;
+  padding: 6px 16px;
+  min-height: auto;
+}
+.hw-gate-submitted {
+  font-family: var(--serif);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--mid);
+  font-style: italic;
+  padding: 6px 0;
+}
+
+/* ══════════════════════════════════════════
+   Conscience Sidebar — iris shimmer text
+══════════════════════════════════════════ */
+.gate-conscience {
+  margin: 0 0 20px;
+  padding: 16px 20px;
+  border-left: 3px solid transparent;
+  border-image: var(--iris) 1;
+  background: var(--lite);
+}
+.gate-conscience-text {
+  font-family: var(--serif);
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.65;
+  background: var(--iris);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: iris 3s linear infinite;
+}
+
 </style>
 <script>
 /*  AESDR Accountability Gates v1
@@ -284,7 +406,7 @@ window.AESDR = window.AESDR || {};
       var r = timers[screen] ? timers[screen].remaining : g.seconds;
       return r > 0 ? 'Unlocks in ' + r + 's' : '';
     }
-    if (g.type === 'reflection' || g.type === 'evidence') {
+    if (g.type === 'reflection' || g.type === 'evidence' || g.type === 'narrative') {
       var len = (s.value || '').length;
       return len + ' / ' + g.minChars + ' characters';
     }
@@ -293,6 +415,13 @@ window.AESDR = window.AESDR || {};
       var checks = s.rubricChecked || 0;
       var total = (g.rubric || []).length;
       return len2 + ' chars \u00B7 ' + checks + '/' + total + ' rubric items';
+    }
+    if (g.type === 'homework') {
+      var done = 0;
+      for (var j = 0; j < (g.items || []).length; j++) {
+        if (s._hwDone && s._hwDone[j]) done++;
+      }
+      return done + ' / ' + (g.items || []).length + ' items completed';
     }
     return '';
   };
@@ -329,13 +458,15 @@ window.AESDR = window.AESDR || {};
       case 'reflection': el.innerHTML = _reflectionHTML(screen, g, s); break;
       case 'application': el.innerHTML = _applicationHTML(screen, g, s); break;
       case 'evidence': el.innerHTML = _evidenceHTML(screen, g, s); break;
+      case 'narrative': el.innerHTML = _narrativeHTML(screen, g, s); break;
+      case 'homework': el.innerHTML = _homeworkHTML(screen, g, s); break;
       case 'time': _startTimer(screen, g); el.innerHTML = _timeHTML(screen, g); break;
     }
   };
 
   /* ── Completed state ── */
   function _completedHTML(g, s) {
-    var typeLabel = { reflection:'Reflection', application:'Response', evidence:'Evidence', time:'Time' };
+    var typeLabel = { reflection:'Reflection', application:'Response', evidence:'Evidence', time:'Time', narrative:'Reflection', homework:'Checklist' };
     return '<div class="gate-done">' +
       '<div class="gate-done-tag">\u2713 ' + (typeLabel[g.type]||'Gate') + ' Submitted</div>' +
       (g.type !== 'time' ? '<div class="gate-done-preview">' + _esc(s.value).substring(0,200) + (s.value.length > 200 ? '...' : '') + '</div>' : '') +
@@ -400,6 +531,63 @@ window.AESDR = window.AESDR || {};
     '</div>';
   }
 
+  /* ── Narrative Gate (lightweight reflection on reading screens) ── */
+  function _narrativeHTML(screen, g) {
+    return '<div class="gate-box gate-narrative">' +
+      '<div class="gate-label">Before You Continue</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea gate-textarea-sm" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Be specific. One real example.') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Continue</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Homework Gate (enforceable checkbox sub-gates) ── */
+  function _homeworkHTML(screen, g) {
+    var items = g.items || [];
+    var s = gateState[screen];
+    if (!s._hwDone) s._hwDone = {};
+    if (!s._hwText) s._hwText = {};
+
+    var html = '<div class="gate-box gate-homework">' +
+      '<div class="gate-label">Accountability Checklist</div>' +
+      '<p class="gate-prompt">' + (g.prompt || 'Complete each item below. No shortcuts.') + '</p>' +
+      '<div class="gate-conscience">' +
+        '<p class="gate-conscience-text">You can treat this like just another course if you want. Or you can not lie and complete this survival checklist legitimately. What you do when no one is watching makes all the difference in the end.</p>' +
+      '</div>' +
+      '<div class="hw-gate-items">';
+
+    for (var i = 0; i < items.length; i++) {
+      var done = s._hwDone[i];
+      html += '<div class="hw-gate-item' + (done ? ' hw-gate-done' : '') + '" id="hwItem' + screen + '_' + i + '">' +
+        '<div class="hw-gate-check">' + (done ? '\u2713' : (i + 1)) + '</div>' +
+        '<div class="hw-gate-body">' +
+          '<p class="hw-gate-task">' + items[i].task + '</p>' +
+          (done
+            ? '<div class="hw-gate-submitted">' + _esc(s._hwText[i]).substring(0,200) + '</div>'
+            : '<textarea class="gate-textarea gate-textarea-sm" id="hwTA' + screen + '_' + i + '" ' +
+                'placeholder="' + _esc(items[i].placeholder || 'Your response...') + '" ' +
+                'oninput="AESDR._onHwInput(' + screen + ',' + i + ',this.value)"></textarea>' +
+              '<div class="hw-gate-row">' +
+                '<span class="gate-counter" id="hwCtr' + screen + '_' + i + '">0 / ' + (items[i].minChars || 30) + '</span>' +
+                '<button class="gate-submit gate-submit-sm" id="hwSub' + screen + '_' + i + '" disabled ' +
+                  'onclick="AESDR._submitHw(' + screen + ',' + i + ')">Done</button>' +
+              '</div>'
+          ) +
+        '</div>' +
+      '</div>';
+    }
+
+    html += '</div></div>';
+    return html;
+  }
+
   /* ── Time Gate ── */
   function _timeHTML(screen, g) {
     var r = timers[screen] ? timers[screen].remaining : g.seconds;
@@ -446,6 +634,44 @@ window.AESDR = window.AESDR || {};
       }
       btn.disabled = !ready;
     }
+  };
+
+  /* ── Homework sub-gate input handler ── */
+  A._onHwInput = function(screen, idx, val) {
+    var s = gateState[screen];
+    if (!s._hwText) s._hwText = {};
+    s._hwText[idx] = val;
+    var g = gates[screen];
+    var min = (g.items && g.items[idx] && g.items[idx].minChars) || 30;
+    var ctr = document.getElementById('hwCtr' + screen + '_' + idx);
+    if (ctr) ctr.textContent = val.length + ' / ' + min;
+    var btn = document.getElementById('hwSub' + screen + '_' + idx);
+    if (btn) btn.disabled = val.length < min;
+  };
+
+  /* ── Homework sub-gate submit handler ── */
+  A._submitHw = function(screen, idx) {
+    var s = gateState[screen];
+    if (!s._hwDone) s._hwDone = {};
+    s._hwDone[idx] = true;
+    var g = gates[screen];
+    var allDone = true;
+    for (var i = 0; i < g.items.length; i++) {
+      if (!s._hwDone[i]) { allDone = false; break; }
+    }
+    if (allDone) {
+      s.completed = true;
+      s.completedAt = new Date().toISOString();
+      s.value = JSON.stringify(s._hwText);
+    }
+    // Re-render the gate
+    var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
+    containers.forEach(function(el) { A.renderGate(screen, el.id); });
+    // Save progress
+    if (window.parent !== window) {
+      try { window.parent.postMessage({ type: 'aesdr:progress', screen: screen, stateData: A.gateData() }, '*'); } catch(e) {}
+    }
+    if (typeof window.render === 'function') window.render();
   };
 
   A._onRubric = function(screen, idx, checked) {
@@ -496,6 +722,7 @@ window.AESDR = window.AESDR || {};
   }
 
 })(window.AESDR);
+
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AESDR — Course 4.3: Mastering the Async Life</title>
@@ -842,6 +1069,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div class="lie-a">Async without intentionality looks like constant availability, inbox reactivity, and no deep work. Async with intentionality looks like a protected call block, purposeful sequences, and compounding skills. Same schedule. Opposite results.</div>
       </div>
     </div>
+      <!-- Narrative Gate -->
+      <div id="gate1" data-gate-screen="1"></div>
   </div>
 
   <!-- 2: MENTALITY FLIP CARDS -->
@@ -881,6 +1110,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       </div>
       <button class="cal-reset" onclick="resetCal()">Reset board</button>
     </div>
+      <!-- Narrative Gate -->
+      <div id="gate3" data-gate-screen="3"></div>
   </div>
 
   <!-- 4: MEETING VERDICT -->

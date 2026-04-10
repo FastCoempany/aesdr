@@ -215,3 +215,125 @@
   color: var(--mid);
   font-style: italic;
 }
+
+/* ══════════════════════════════════════════
+   Narrative Gate — lighter variant for reading screens
+══════════════════════════════════════════ */
+.gate-narrative {
+  margin: 24px 0 8px;
+  padding: 20px 24px 18px;
+  border-width: 1px;
+  border-color: var(--line2);
+  background: var(--lite);
+}
+.gate-narrative .gate-label {
+  color: var(--mid);
+  font-size: 8px;
+}
+.gate-narrative .gate-prompt {
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+.gate-textarea-sm {
+  min-height: 72px;
+  font-size: 14px;
+}
+
+/* ══════════════════════════════════════════
+   Homework Gate — enforceable sub-checklist
+══════════════════════════════════════════ */
+.gate-homework {
+  padding: 24px 28px 20px;
+}
+.hw-gate-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.hw-gate-item {
+  display: flex;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: flex-start;
+}
+.hw-gate-item:last-child {
+  border-bottom: none;
+}
+.hw-gate-check {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--mid);
+  border: 2px solid var(--line);
+  background: var(--white);
+  transition: all .3s;
+}
+.hw-gate-done .hw-gate-check {
+  background: var(--black);
+  border-color: var(--black);
+  color: var(--white);
+}
+.hw-gate-body {
+  flex: 1;
+  min-width: 0;
+}
+.hw-gate-task {
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--black);
+  margin-bottom: 10px;
+}
+.hw-gate-done .hw-gate-task {
+  color: var(--mid);
+}
+.hw-gate-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  gap: 12px;
+}
+.gate-submit-sm {
+  font-size: 9px;
+  padding: 6px 16px;
+  min-height: auto;
+}
+.hw-gate-submitted {
+  font-family: var(--serif);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--mid);
+  font-style: italic;
+  padding: 6px 0;
+}
+
+/* ══════════════════════════════════════════
+   Conscience Sidebar — iris shimmer text
+══════════════════════════════════════════ */
+.gate-conscience {
+  margin: 0 0 20px;
+  padding: 16px 20px;
+  border-left: 3px solid transparent;
+  border-image: var(--iris) 1;
+  background: var(--lite);
+}
+.gate-conscience-text {
+  font-family: var(--serif);
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.65;
+  background: var(--iris);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: iris 3s linear infinite;
+}

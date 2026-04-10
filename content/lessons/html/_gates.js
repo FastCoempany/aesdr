@@ -42,7 +42,7 @@ window.AESDR = window.AESDR || {};
       var r = timers[screen] ? timers[screen].remaining : g.seconds;
       return r > 0 ? 'Unlocks in ' + r + 's' : '';
     }
-    if (g.type === 'reflection' || g.type === 'evidence') {
+    if (g.type === 'reflection' || g.type === 'evidence' || g.type === 'narrative') {
       var len = (s.value || '').length;
       return len + ' / ' + g.minChars + ' characters';
     }
@@ -51,6 +51,13 @@ window.AESDR = window.AESDR || {};
       var checks = s.rubricChecked || 0;
       var total = (g.rubric || []).length;
       return len2 + ' chars \u00B7 ' + checks + '/' + total + ' rubric items';
+    }
+    if (g.type === 'homework') {
+      var done = 0;
+      for (var j = 0; j < (g.items || []).length; j++) {
+        if (s._hwDone && s._hwDone[j]) done++;
+      }
+      return done + ' / ' + (g.items || []).length + ' items completed';
     }
     return '';
   };
@@ -87,13 +94,15 @@ window.AESDR = window.AESDR || {};
       case 'reflection': el.innerHTML = _reflectionHTML(screen, g, s); break;
       case 'application': el.innerHTML = _applicationHTML(screen, g, s); break;
       case 'evidence': el.innerHTML = _evidenceHTML(screen, g, s); break;
+      case 'narrative': el.innerHTML = _narrativeHTML(screen, g, s); break;
+      case 'homework': el.innerHTML = _homeworkHTML(screen, g, s); break;
       case 'time': _startTimer(screen, g); el.innerHTML = _timeHTML(screen, g); break;
     }
   };
 
   /* ── Completed state ── */
   function _completedHTML(g, s) {
-    var typeLabel = { reflection:'Reflection', application:'Response', evidence:'Evidence', time:'Time' };
+    var typeLabel = { reflection:'Reflection', application:'Response', evidence:'Evidence', time:'Time', narrative:'Reflection', homework:'Checklist' };
     return '<div class="gate-done">' +
       '<div class="gate-done-tag">\u2713 ' + (typeLabel[g.type]||'Gate') + ' Submitted</div>' +
       (g.type !== 'time' ? '<div class="gate-done-preview">' + _esc(s.value).substring(0,200) + (s.value.length > 200 ? '...' : '') + '</div>' : '') +
@@ -158,6 +167,63 @@ window.AESDR = window.AESDR || {};
     '</div>';
   }
 
+  /* ── Narrative Gate (lightweight reflection on reading screens) ── */
+  function _narrativeHTML(screen, g) {
+    return '<div class="gate-box gate-narrative">' +
+      '<div class="gate-label">Before You Continue</div>' +
+      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<textarea class="gate-textarea gate-textarea-sm" id="gateTA' + screen + '" ' +
+        'placeholder="' + _esc(g.placeholder || 'Be specific. One real example.') + '" ' +
+        'oninput="AESDR._onInput(' + screen + ',this.value)">' +
+      '</textarea>' +
+      '<div class="gate-footer">' +
+        '<span class="gate-counter" id="gateCtr' + screen + '">0 / ' + g.minChars + '</span>' +
+        '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
+          'onclick="AESDR._submit(' + screen + ')">Continue</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Homework Gate (enforceable checkbox sub-gates) ── */
+  function _homeworkHTML(screen, g) {
+    var items = g.items || [];
+    var s = gateState[screen];
+    if (!s._hwDone) s._hwDone = {};
+    if (!s._hwText) s._hwText = {};
+
+    var html = '<div class="gate-box gate-homework">' +
+      '<div class="gate-label">Accountability Checklist</div>' +
+      '<p class="gate-prompt">' + (g.prompt || 'Complete each item below. No shortcuts.') + '</p>' +
+      '<div class="gate-conscience">' +
+        '<p class="gate-conscience-text">You can treat this like just another course if you want. Or you can not lie and complete this survival checklist legitimately. What you do when no one is watching makes all the difference in the end.</p>' +
+      '</div>' +
+      '<div class="hw-gate-items">';
+
+    for (var i = 0; i < items.length; i++) {
+      var done = s._hwDone[i];
+      html += '<div class="hw-gate-item' + (done ? ' hw-gate-done' : '') + '" id="hwItem' + screen + '_' + i + '">' +
+        '<div class="hw-gate-check">' + (done ? '\u2713' : (i + 1)) + '</div>' +
+        '<div class="hw-gate-body">' +
+          '<p class="hw-gate-task">' + items[i].task + '</p>' +
+          (done
+            ? '<div class="hw-gate-submitted">' + _esc(s._hwText[i]).substring(0,200) + '</div>'
+            : '<textarea class="gate-textarea gate-textarea-sm" id="hwTA' + screen + '_' + i + '" ' +
+                'placeholder="' + _esc(items[i].placeholder || 'Your response...') + '" ' +
+                'oninput="AESDR._onHwInput(' + screen + ',' + i + ',this.value)"></textarea>' +
+              '<div class="hw-gate-row">' +
+                '<span class="gate-counter" id="hwCtr' + screen + '_' + i + '">0 / ' + (items[i].minChars || 30) + '</span>' +
+                '<button class="gate-submit gate-submit-sm" id="hwSub' + screen + '_' + i + '" disabled ' +
+                  'onclick="AESDR._submitHw(' + screen + ',' + i + ')">Done</button>' +
+              '</div>'
+          ) +
+        '</div>' +
+      '</div>';
+    }
+
+    html += '</div></div>';
+    return html;
+  }
+
   /* ── Time Gate ── */
   function _timeHTML(screen, g) {
     var r = timers[screen] ? timers[screen].remaining : g.seconds;
@@ -204,6 +270,44 @@ window.AESDR = window.AESDR || {};
       }
       btn.disabled = !ready;
     }
+  };
+
+  /* ── Homework sub-gate input handler ── */
+  A._onHwInput = function(screen, idx, val) {
+    var s = gateState[screen];
+    if (!s._hwText) s._hwText = {};
+    s._hwText[idx] = val;
+    var g = gates[screen];
+    var min = (g.items && g.items[idx] && g.items[idx].minChars) || 30;
+    var ctr = document.getElementById('hwCtr' + screen + '_' + idx);
+    if (ctr) ctr.textContent = val.length + ' / ' + min;
+    var btn = document.getElementById('hwSub' + screen + '_' + idx);
+    if (btn) btn.disabled = val.length < min;
+  };
+
+  /* ── Homework sub-gate submit handler ── */
+  A._submitHw = function(screen, idx) {
+    var s = gateState[screen];
+    if (!s._hwDone) s._hwDone = {};
+    s._hwDone[idx] = true;
+    var g = gates[screen];
+    var allDone = true;
+    for (var i = 0; i < g.items.length; i++) {
+      if (!s._hwDone[i]) { allDone = false; break; }
+    }
+    if (allDone) {
+      s.completed = true;
+      s.completedAt = new Date().toISOString();
+      s.value = JSON.stringify(s._hwText);
+    }
+    // Re-render the gate
+    var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
+    containers.forEach(function(el) { A.renderGate(screen, el.id); });
+    // Save progress
+    if (window.parent !== window) {
+      try { window.parent.postMessage({ type: 'aesdr:progress', screen: screen, stateData: A.gateData() }, '*'); } catch(e) {}
+    }
+    if (typeof window.render === 'function') window.render();
   };
 
   A._onRubric = function(screen, idx, checked) {
