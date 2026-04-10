@@ -449,6 +449,47 @@ window.AESDR = window.AESDR || {};
   var gateState = {};  // screenNum -> { completed, value, _attest, ... }
   var timers = {};     // screenNum -> { started, remaining }
 
+  /* ── localStorage persistence ── */
+  var _storageKey = 'aesdr_gate_' + location.pathname.replace(/[^a-z0-9]/gi, '_');
+
+  function _persistState() {
+    try {
+      var data = {};
+      for (var k in gateState) {
+        var s = gateState[k];
+        data[k] = { completed: s.completed, value: s.value || '',
+          completedAt: s.completedAt || null,
+          _hwDone: s._hwDone || {}, _hwText: s._hwText || {},
+          _hwAttest: s._hwAttest || {}, _attest: s._attest || {} };
+      }
+      localStorage.setItem(_storageKey, JSON.stringify(data));
+    } catch(e) {}
+  }
+
+  function _restoreState() {
+    try {
+      var raw = localStorage.getItem(_storageKey);
+      if (!raw) return;
+      var data = JSON.parse(raw);
+      for (var k in data) {
+        if (gateState[k]) {
+          // Merge saved state into registered gate state
+          var saved = data[k];
+          gateState[k].completed = saved.completed || false;
+          gateState[k].value = saved.value || '';
+          gateState[k].completedAt = saved.completedAt || null;
+          if (saved._hwDone) gateState[k]._hwDone = saved._hwDone;
+          if (saved._hwText) gateState[k]._hwText = saved._hwText;
+          if (saved._hwAttest) gateState[k]._hwAttest = saved._hwAttest;
+          if (saved._attest) gateState[k]._attest = saved._attest;
+        }
+      }
+    } catch(e) {}
+  }
+
+  /* ── Called after all gates are registered to restore saved state ── */
+  A.restoreState = function() { _restoreState(); };
+
   /* ── Attestation phrases (rotated per screen, never repeat on same page) ── */
   var ATTEST = [
     "I shared this with someone on the team because I know it\u0027s important to make my voice and my thoughts familiar around this place",
@@ -648,7 +689,7 @@ window.AESDR = window.AESDR || {};
       '<div class="gate-footer">' +
         '<span class="gate-counter" id="gateCtr' + screen + '">' + prevVal.length + ' / ' + g.minChars + '</span>' +
         '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
-          'onclick="AESDR._submit(' + screen + ')">Continue</button>' +
+          'onclick="AESDR._submit(' + screen + ')">Submit</button>' +
       '</div>' +
       _attestHTML(screen, phrase, '') +
     '</div>';
@@ -796,8 +837,7 @@ window.AESDR = window.AESDR || {};
   A._editGate = function(screen) {
     var s = gateState[screen];
     s.completed = false;
-    // Keep existing value so textarea is pre-filled
-    // Re-render
+    _persistState();
     var el = document.getElementById('gate' + screen);
     if (el) A.renderGate(screen, 'gate' + screen);
     var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
@@ -811,9 +851,8 @@ window.AESDR = window.AESDR || {};
     if (!s._hwDone) s._hwDone = {};
     s._hwDone[idx] = false;
     if (s._hwAttest) s._hwAttest[idx] = false;
-    // If gate was fully completed, uncomplete it
     s.completed = false;
-    // Re-render
+    _persistState();
     var el = document.getElementById('gate' + screen);
     if (el) A.renderGate(screen, 'gate' + screen);
     var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
@@ -910,8 +949,9 @@ window.AESDR = window.AESDR || {};
     if (typeof window.render === 'function') window.render();
   };
 
-  /* ── Save progress via postMessage ── */
+  /* ── Save progress via postMessage + localStorage ── */
   function _saveProgress(screen) {
+    _persistState();
     if (window.parent !== window) {
       try {
         window.parent.postMessage({
@@ -1693,6 +1733,10 @@ function init(){
     { task:'Name your AE and describe the last handoff note you wrote for a meeting you booked. Include what context you provided (pain points, budget signals, decision-makers, next steps). Then ask your AE for feedback on that specific handoff and write the exact question you will ask them.', placeholder:'Example: AE is [name]. Last handoff for [Company] included [details]. I will ask: "[exact feedback question]"...', minChars:100 },
     { task:'Describe your current system for tracking meetings booked and deals sourced. If you don\'t have one, design one now: specify the tool, the columns/fields you will track, and when you will review it each week. Include the date you will start using it.', placeholder:'Example: I use [tool/spreadsheet]. Columns: date, prospect, company, meeting outcome, deal stage. Weekly review every Friday at 4pm. Starting [date]...', minChars:100 }
   ] });
+  // Restore saved gate state from localStorage
+  AESDR.restoreState();
+
+
 
   // Build UI components — wrapped so a failure can't prevent gate rendering
   try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
@@ -1701,9 +1745,23 @@ function init(){
   try { buildCls(); } catch(e) { console.error('buildCls:', e); }
   try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
 
+  // Restore saved screen position
+
+
+  var _savedScreen = 0;
+
+
+  try { _savedScreen = parseInt(localStorage.getItem('aesdr_screen_' + location.pathname.replace(/[^a-z0-9]/gi, '_'))) || 0; } catch(e) {}
+
+
+  if (_savedScreen > 0 && _savedScreen < TOTAL) { cur = _savedScreen; document.getElementById('s0').classList.remove('active'); document.getElementById('s'+cur).classList.add('active'); }
+
+
+
   render();
 }
 function go(n){
+  try{localStorage.setItem('aesdr_screen_'+location.pathname.replace(/[^a-z0-9]/gi,'_'),n)}catch(e){}
   if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;

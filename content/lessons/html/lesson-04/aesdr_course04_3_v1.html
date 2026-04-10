@@ -449,6 +449,47 @@ window.AESDR = window.AESDR || {};
   var gateState = {};  // screenNum -> { completed, value, _attest, ... }
   var timers = {};     // screenNum -> { started, remaining }
 
+  /* ── localStorage persistence ── */
+  var _storageKey = 'aesdr_gate_' + location.pathname.replace(/[^a-z0-9]/gi, '_');
+
+  function _persistState() {
+    try {
+      var data = {};
+      for (var k in gateState) {
+        var s = gateState[k];
+        data[k] = { completed: s.completed, value: s.value || '',
+          completedAt: s.completedAt || null,
+          _hwDone: s._hwDone || {}, _hwText: s._hwText || {},
+          _hwAttest: s._hwAttest || {}, _attest: s._attest || {} };
+      }
+      localStorage.setItem(_storageKey, JSON.stringify(data));
+    } catch(e) {}
+  }
+
+  function _restoreState() {
+    try {
+      var raw = localStorage.getItem(_storageKey);
+      if (!raw) return;
+      var data = JSON.parse(raw);
+      for (var k in data) {
+        if (gateState[k]) {
+          // Merge saved state into registered gate state
+          var saved = data[k];
+          gateState[k].completed = saved.completed || false;
+          gateState[k].value = saved.value || '';
+          gateState[k].completedAt = saved.completedAt || null;
+          if (saved._hwDone) gateState[k]._hwDone = saved._hwDone;
+          if (saved._hwText) gateState[k]._hwText = saved._hwText;
+          if (saved._hwAttest) gateState[k]._hwAttest = saved._hwAttest;
+          if (saved._attest) gateState[k]._attest = saved._attest;
+        }
+      }
+    } catch(e) {}
+  }
+
+  /* ── Called after all gates are registered to restore saved state ── */
+  A.restoreState = function() { _restoreState(); };
+
   /* ── Attestation phrases (rotated per screen, never repeat on same page) ── */
   var ATTEST = [
     "I shared this with someone on the team because I know it\u0027s important to make my voice and my thoughts familiar around this place",
@@ -648,7 +689,7 @@ window.AESDR = window.AESDR || {};
       '<div class="gate-footer">' +
         '<span class="gate-counter" id="gateCtr' + screen + '">' + prevVal.length + ' / ' + g.minChars + '</span>' +
         '<button class="gate-submit" id="gateSub' + screen + '" disabled ' +
-          'onclick="AESDR._submit(' + screen + ')">Continue</button>' +
+          'onclick="AESDR._submit(' + screen + ')">Submit</button>' +
       '</div>' +
       _attestHTML(screen, phrase, '') +
     '</div>';
@@ -796,8 +837,7 @@ window.AESDR = window.AESDR || {};
   A._editGate = function(screen) {
     var s = gateState[screen];
     s.completed = false;
-    // Keep existing value so textarea is pre-filled
-    // Re-render
+    _persistState();
     var el = document.getElementById('gate' + screen);
     if (el) A.renderGate(screen, 'gate' + screen);
     var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
@@ -811,9 +851,8 @@ window.AESDR = window.AESDR || {};
     if (!s._hwDone) s._hwDone = {};
     s._hwDone[idx] = false;
     if (s._hwAttest) s._hwAttest[idx] = false;
-    // If gate was fully completed, uncomplete it
     s.completed = false;
-    // Re-render
+    _persistState();
     var el = document.getElementById('gate' + screen);
     if (el) A.renderGate(screen, 'gate' + screen);
     var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
@@ -910,8 +949,9 @@ window.AESDR = window.AESDR || {};
     if (typeof window.render === 'function') window.render();
   };
 
-  /* ── Save progress via postMessage ── */
+  /* ── Save progress via postMessage + localStorage ── */
   function _saveProgress(screen) {
+    _persistState();
     if (window.parent !== window) {
       try {
         window.parent.postMessage({
@@ -1677,6 +1717,10 @@ function init(){
     { task:'Identify one skill from the monetization explorer that matches your SDR experience. Name the skill, the platform you\'ll test it on, and what you\'ll create or do in a 30-minute session this week. Include the specific date.', placeholder:'e.g. "Skill: Cold outreach consulting. Platform: Upwork. Session on Saturday from 10–10:30am. I\'ll create a profile highlighting my cold calling experience (200+ dials/week, 8% conversion rate) and browse 5 relevant gigs to understand pricing. Goal: see if there\'s demand for SDR outreach expertise."', minChars:100 },
     { task:'Calculate your \'async ratio\' from last week: what percentage of your working hours were spent in meetings or reactive tasks vs. focused prospecting? Write the actual numbers, then set a specific target ratio for next week and describe the one change that will get you there.', placeholder:'e.g. "Last week: 12 hours in meetings/reactive tasks, 28 hours focused prospecting = 30% sync / 70% async. Target: 20% sync / 80% async. Change: Decline the Thursday product sync and move my 1:1 from 10am to 3pm so I don\'t break my morning call block. That saves 1.5 hours of prime selling time."', minChars:100 }
   ] });
+  // Restore saved gate state from localStorage
+  AESDR.restoreState();
+
+
 
   // Build UI components — wrapped so a failure can't prevent gate rendering
   try { buildFlips(); } catch(e) { console.error('buildFlips:', e); }
@@ -1686,9 +1730,23 @@ function init(){
   try { buildSK(); } catch(e) { console.error('buildSK:', e); }
   try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
 
+  // Restore saved screen position
+
+
+  var _savedScreen = 0;
+
+
+  try { _savedScreen = parseInt(localStorage.getItem('aesdr_screen_' + location.pathname.replace(/[^a-z0-9]/gi, '_'))) || 0; } catch(e) {}
+
+
+  if (_savedScreen > 0 && _savedScreen < TOTAL) { cur = _savedScreen; document.getElementById('s0').classList.remove('active'); document.getElementById('s'+cur).classList.add('active'); }
+
+
+
   render();
 }
 function go(n){
+  try{localStorage.setItem('aesdr_screen_'+location.pathname.replace(/[^a-z0-9]/gi,'_'),n)}catch(e){}
   if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;
