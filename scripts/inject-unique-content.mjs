@@ -4,6 +4,9 @@
  * 1. Propagate IIFE v2 from L1U1 prototype (collision-free _getAttest)
  * 2. Replace ATTEST array per file with unique phrases (zero repeats across app)
  * 3. Add conscience: property to every homework gate
+ * 4. Replace sidebar conscience text with lesson-specific text
+ * 5. Fix old time-slot references in SCHED arrays
+ * 6. Update IIFE fallback conscience text
  *
  * Run: node scripts/inject-unique-content.mjs
  */
@@ -22,8 +25,8 @@ const iifeEnd = protoHTML.indexOf(iifeEndMarker, iifeStart) + iifeEndMarker.leng
 if (iifeStart === -1 || iifeEnd === -1) { console.error('IIFE not found in prototype'); process.exit(1); }
 const NEW_IIFE = protoHTML.substring(iifeStart, iifeEnd);
 
-// ─── STEP 2: Generate 540 unique attestation phrases ───
-// All phrases follow "[prefix] because [reason]" pattern for iris shimmer split
+// ─── STEP 2: Generate 540+ unique attestation phrases ───
+// All phrases follow "[prefix] because [reason]" — the "because " split drives iris shimmer
 const PREFIXES = [
   "I did this",
   "I completed this",
@@ -128,6 +131,7 @@ const SHUFFLED = seededShuffle(ALL_PHRASES, 42);
 console.log(`Generated ${SHUFFLED.length} unique attest phrases`);
 
 // ─── STEP 3: Conscience texts per lesson (keyed by dir/file pattern) ───
+// These appear in two places: (A) sidebar paragraph, (B) homework gate conscience: property
 const CONSCIENCE = {
   'lesson-01/aesdr_course01_v1': 'Structure is the difference between surviving and flaming out. Every answer you write here is a promise to the person who hired you that you take Day 1 seriously.',
   'lesson-01/aesdr_course01_2_v1': 'Camaraderie isn\u0027t built by hoping it happens. Every answer here is a concrete step toward earning trust from the people you work with every single day.',
@@ -173,9 +177,6 @@ let updated = 0;
 let skipped = [];
 let phraseIdx = 0; // Global index into SHUFFLED — ensures no repeats across files
 
-// Track L1U1 separately since it's the prototype
-let fileIndex = 0;
-
 for (const dir of lessonDirs) {
   const dirPath = path.join(ROOT, dir);
   const files = fs.readdirSync(dirPath).filter(f => f.endsWith('.html')).sort();
@@ -184,10 +185,11 @@ for (const dir of lessonDirs) {
     const filePath = path.join(dirPath, file);
     let html = fs.readFileSync(filePath, 'utf-8');
     let changes = 0;
+    const fileKey = dir + '/' + file.replace('.html', '');
+    const conscience = CONSCIENCE[fileKey];
 
     // ── 4a. Replace IIFE (propagate from prototype) ──
     if (filePath !== PROTOTYPE) {
-      // Find old IIFE (v1 or v2)
       let oldStart = html.indexOf('/*  AESDR Accountability Gates v2');
       if (oldStart === -1) oldStart = html.indexOf('/*  AESDR Accountability Gates v1');
       if (oldStart !== -1) {
@@ -202,43 +204,69 @@ for (const dir of lessonDirs) {
     // ── 4b. Replace ATTEST array with file-specific unique phrases ──
     const attestStart = html.indexOf('var ATTEST = [');
     if (attestStart !== -1) {
-      const attestEnd = html.indexOf('];', attestStart) + 2;
-      // Assign 15 unique phrases from the shuffled pool
-      const fileAttest = SHUFFLED.slice(phraseIdx, phraseIdx + 15);
-      phraseIdx += 15;
+      // Find the matching ] by counting brackets from the opening [
+      const bracketOpen = html.indexOf('[', attestStart);
+      let depth = 0;
+      let attestEnd = -1;
+      for (let ci = bracketOpen; ci < html.length; ci++) {
+        if (html[ci] === '[') depth++;
+        if (html[ci] === ']') { depth--; if (depth === 0) { attestEnd = ci + 1; break; } }
+      }
+      // Include trailing semicolon if present
+      if (attestEnd !== -1 && html[attestEnd] === ';') attestEnd++;
 
-      const newAttest = 'var ATTEST = [\n' +
-        fileAttest.map(p => "    \"" + p.replace(/'/g, "\\'").replace(/"/g, '\\"') + "\"").join(',\n') +
-        '\n  ]';
-      html = html.substring(0, attestStart) + newAttest + html.substring(attestEnd);
-      changes++;
+      if (attestEnd !== -1) {
+        // Assign 15 unique phrases from the shuffled pool
+        const fileAttest = SHUFFLED.slice(phraseIdx, phraseIdx + 15);
+        phraseIdx += 15;
+
+        const newAttest = 'var ATTEST = [\n' +
+          fileAttest.map(p => '    "' + p.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"').join(',\n') +
+          '\n  ];';
+        html = html.substring(0, attestStart) + newAttest + html.substring(attestEnd);
+        changes++;
+      }
     }
 
-    // ── 4c. Add conscience: to homework gates ──
-    const fileKey = dir + '/' + file.replace('.html', '');
-    const conscience = CONSCIENCE[fileKey];
+    // ── 4c. Add conscience: to homework gates (if not already present) ──
     if (conscience && !html.includes("conscience:")) {
-      // Find homework gate: type:'homework' pattern and add conscience after it
       const hwRe = /type:\s*'homework'\s*,/g;
       let hwMatch;
-      let offset = 0;
       while ((hwMatch = hwRe.exec(html)) !== null) {
         const insertPos = hwMatch.index + hwMatch[0].length;
         const conscienceStr = "\n    conscience: '" + conscience.replace(/'/g, "\\'") + "',";
         html = html.substring(0, insertPos) + conscienceStr + html.substring(insertPos);
-        // Adjust regex lastIndex for the inserted text
         hwRe.lastIndex = insertPos + conscienceStr.length;
         changes++;
       }
     }
 
+    // ── 4d. Replace sidebar conscience text ──
+    // Old pattern: <p style="font-family:var(--serif);font-size:13px;font-style:italic;...iris...">You can treat this like just another course...
+    // New pattern: <p style="font-family:'Inter',...;font-weight:700;...">lesson-specific text</p>
+    if (conscience) {
+      const sidebarRe = /<p style="[^"]*iris[^"]*">[^<]*You can treat this like just another course[^<]*<\/p>/;
+      if (sidebarRe.test(html)) {
+        html = html.replace(sidebarRe,
+          `<p style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">${conscience}</p>`);
+        changes++;
+      }
+    }
+
+    // ── 4e. Fix old font-style:italic on sidebar text (if sidebar was already partially changed) ──
+    // Also catch the old pattern with var(--serif) + italic
+    const oldSidebarStyle = /(<p style="font-family:var\(--serif\);font-size:13px;)font-style:italic;(line-height)/;
+    if (oldSidebarStyle.test(html)) {
+      html = html.replace(oldSidebarStyle, "$1font-weight:700;$2");
+      changes++;
+    }
+
     if (changes === 0) {
       skipped.push(`${dir}/${file} — no changes needed`);
-      fileIndex++;
       continue;
     }
 
-    // ── 4d. Validate JS syntax ──
+    // ── 4f. Validate JS syntax ──
     const scripts = [];
     const re = /<script>([\s\S]*?)<\/script>/g;
     let m;
@@ -251,12 +279,11 @@ for (const dir of lessonDirs) {
         break;
       }
     }
-    if (!valid) { skipped.push(`${dir}/${file} — syntax error`); fileIndex++; continue; }
+    if (!valid) { skipped.push(`${dir}/${file} — syntax error`); continue; }
 
     fs.writeFileSync(filePath, html, 'utf-8');
     updated++;
     console.log(`\u2713 ${dir}/${file} (${changes} changes)`);
-    fileIndex++;
   }
 }
 

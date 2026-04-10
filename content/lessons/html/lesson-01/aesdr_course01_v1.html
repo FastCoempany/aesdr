@@ -451,21 +451,21 @@ window.AESDR = window.AESDR || {};
   /* ── Attestation phrases (unique per checkbox, never repeat across app) ── */
   var ATTEST = [
     "I honored the process here because this is where the real ones separate from the pretenders",
-    "I brought my best here because I\'m choosing to be the person who does the hard thing",
-    "I did this because saying I care means nothing if I don\'t act like it",
+    "I brought my best here because I'm choosing to be the person who does the hard thing",
+    "I did this because saying I care means nothing if I don't act like it",
     "I built something real here because accountability starts with what I write when no one reads it",
     "I dug into this because the people who make it do the work others skip",
     "I refused to fake this because I refuse to be the person who shows up unprepared",
     "I gave this my real attention because real professionals do the uncomfortable work first",
     "I stayed honest here because the gap between knowing and doing is exactly this kind of work",
-    "I faced this head on because integrity is doing the right thing when it\'s easier not to",
+    "I faced this head on because integrity is doing the right thing when it's easier not to",
     "I sat with the discomfort of this because this is the work that separates thinkers from doers",
     "I pushed through this because the people who make it do the work others skip",
     "I earned this checkmark because accountability starts with what I write when no one reads it",
-    "I told the truth here because what I do when no one checks matters more than what I do when they\'re watching",
+    "I told the truth here because what I do when no one checks matters more than what I do when they're watching",
     "I earned this checkmark because complacency kills careers faster than failure ever could",
-    "I held myself accountable here because I\'m building discipline, not just completing a task"
-  ]
+    "I held myself accountable here because I'm building discipline, not just completing a task"
+  ];
 
   var _attestAssign = {};
   var _attestNext = 0;
@@ -1304,14 +1304,14 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">02</div>
       <div class="sec-eye">Section 02 — Daily Structure</div>
-      <div class="lh-title">Build the Structured SDR Day</div>
+      <div class="lh-title">Build Your Day by Priority</div>
       <div class="lh-sub"><b id="schedCount">0</b> / 5 correctly placed</div>
     </div>
     <div class="sched-wrap">
-      <p class="sched-instr">Select an activity tile from the right column — then click the time slot where it belongs. All five must be correctly placed before you can continue.</p>
+      <p class="sched-instr">No two days in SaaS look the same — but your priorities stay constant. Match each activity to the energy window where it belongs. All five must be placed before you can continue.</p>
       <div class="sched-arena">
         <div>
-          <div class="sched-col-lbl">Time Slot</div>
+          <div class="sched-col-lbl">Priority Block</div>
           <div id="schedSlots"></div>
         </div>
         <div>
@@ -1440,7 +1440,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
     <div class="sb-name">Tools & Homework</div>
   </div>
   <div style="margin-top:32px;padding:16px 0;border-top:1px solid var(--line)">
-    <p style="font-family:var(--serif);font-size:13px;font-style:italic;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">You can treat this like just another course if you want. Or you can not lie and complete this survival checklist legitimately. What you do when no one is watching makes all the difference in the end.</p>
+    <p style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">Structure is the difference between surviving and flaming out. Every answer you write here is a promise to the person who hired you that you take Day 1 seriously.</p>
   </div>
 </aside>
 
@@ -1589,11 +1589,11 @@ const DAYS_SDR = [
 const DAYS = _role === 'ae' ? DAYS_AE : DAYS_SDR;
 
 const SCHED = [
-  { time:"8:00–8:30 AM",   act:"Daily huddle with AE",          goal:"Align on goals and key focus points." },
-  { time:"8:30–10:30 AM",  act:"Cold call blocks",              goal:"Target: 25 calls, 2–3 connects." },
-  { time:"10:30–11:30 AM", act:"Product conversation practice", goal:"Role-play with AE or peer." },
-  { time:"1:00–3:00 PM",   act:"Outreach & follow-ups",         goal:"Email, LinkedIn, and call activity." },
-  { time:"3:00–4:00 PM",   act:"AE/SDR feedback session",       goal:"Debrief on calls and next steps." },
+  { time:"First thing",       act:"Daily huddle with AE",          goal:"Align before anything else hits." },
+  { time:"Highest energy",    act:"Cold call blocks",              goal:"Outbound when you\u0027re sharpest." },
+  { time:"Mid-morning",       act:"Product conversation practice", goal:"Role-play with AE or peer." },
+  { time:"After lunch",       act:"Outreach & follow-ups",         goal:"Email, LinkedIn, and multi-touch." },
+  { time:"Before you leave",  act:"AE/SDR feedback session",       goal:"Debrief and plan tomorrow." },
 ];
 const TILE_ORDER = [2, 4, 0, 3, 1]; // display order (SCHED indices, scrambled)
 
