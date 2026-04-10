@@ -1453,7 +1453,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register gates FIRST so they're always available for rendering
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
@@ -1485,6 +1485,14 @@ function init(){
     { task:'Track your own metrics for 5 consecutive days before your manager asks. List the exact metrics, your tracking method, and the date you will share results without being prompted.', placeholder:'e.g., "Metrics: calls made, talk time, meetings booked, follow-ups sent. Tracked in my spreadsheet daily at 5pm. Sharing results with my AE Friday at 3pm unprompted."', minChars:80 },
     { task:'After your very next rejection call, write down the prospect\'s objection word-for-word, what you said in response, and the specific alternative response you will use next time. Commit to a date.', placeholder:'e.g., "Prospect said \'We already have a vendor.\' I said \'Oh okay, sorry to bother you.\' Next time I will say: \'Totally understand — most of our clients had a vendor before switching. What made you evaluate them originally?\' Using this tomorrow."', minChars:100 }
   ] });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
+  try { buildBlame(); } catch(e) { console.error('buildBlame:', e); }
+  try { buildSeq(); } catch(e) { console.error('buildSeq:', e); }
+  try { buildCls(); } catch(e) { console.error('buildCls:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

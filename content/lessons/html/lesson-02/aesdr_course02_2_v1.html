@@ -1418,7 +1418,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz();
+  // Register gates FIRST so they're always available for rendering
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   AESDR.gate(1, { type:'narrative', prompt: _role === 'ae'
@@ -1447,6 +1447,14 @@ function init(){
       { task:'Boundary commitment: Does your laptop stay open past 7 PM? Write your exact shutdown ritual — what time, what steps, and how you\'ll resist the pull to check one more sequence or respond to one more Slack message. Be specific about what you\'ll do instead.', placeholder:'Shutdown at 5:30 PM: log final call notes, update sequences for tomorrow, close laptop lid, phone goes in drawer. When tempted to check results: "My connect rate won\'t improve at 9 PM — rest will make tomorrow\'s calls better..."', minChars: 80 }
     ]
   });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
+  try { buildBlame(); } catch(e) { console.error('buildBlame:', e); }
+  try { buildSeq(); } catch(e) { console.error('buildSeq:', e); }
+  try { buildCls(); } catch(e) { console.error('buildCls:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

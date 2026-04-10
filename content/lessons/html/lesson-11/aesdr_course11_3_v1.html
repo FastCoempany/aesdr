@@ -1366,7 +1366,7 @@ const BLAME_ITEMS = [
 
 const SEQ_STEPS = [
   { pos:1, act:"Set Your Limit", sub:"Decide beforehand how many drinks you'll have—then stick to it." },
-  { pos:2, act:"Choose Your Drink", sub:"Write down your safe "go-to" option (e.g., Club Soda with lime)." },
+  { pos:2, act:"Choose Your Drink", sub:"Write down your safe \u201Cgo-to\u201D option (e.g., Club Soda with lime)." },
   { pos:3, act:"Plan for Situations", sub:"Practice what you'll say if pressured to do shots." },
   { pos:4, act:"Craft Your Exit Line", sub:"Prepare a polite phrase for when you need to leave early." },
   { pos:5, act:"Execute and Leave", sub:"Stay sharp and excuse yourself when the room gets sloppy." }
@@ -1423,7 +1423,6 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
@@ -1457,6 +1456,12 @@ function init(){
     { task: 'Create a pre-event checklist you\'ll review before every team outing or conference for the next 90 days. Include: drink choice, drink limit, switch-to-water trigger, exit time, pressure response phrase, and the one leader you want to leave a strong impression on.', placeholder: 'Pre-event checklist: [ ] Drink choice: [X]. [ ] Limit: [N]. [ ] Switch to water after: [trigger]. [ ] Leave by: [time]. [ ] Pressure response: "[words]." [ ] Leader to impress: [Name] with [impression].', minChars: 100 }
   ];
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? _hwAE : _hwSDR });
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
+  try { buildBlame(); } catch(e) { console.error('buildBlame:', e); }
+  try { buildSeq(); } catch(e) { console.error('buildSeq:', e); }
+  try { buildCls(); } catch(e) { console.error('buildCls:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
   render();
 }
 function go(n){

@@ -1454,7 +1454,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register gates FIRST so they're always available for rendering
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
@@ -1486,6 +1486,14 @@ function init(){
     { task:'Identify the #1 bad habit from this lesson\'s framework that applies to you. Write the habit, how many times you did it last week, the exact trigger that causes it, and the replacement behavior you will install starting tomorrow.', placeholder:'e.g., "Bad habit: checking Slack/email between every call. Did it ~25 times last week. Trigger: after any call that doesn\'t go well, I seek distraction. Replacement: after a bad call, I immediately dial the next number within 10 seconds. Starting tomorrow 9am."', minChars:100 },
     { task:'Write the exact question you will ask your AE or manager: "What is one habit I should build to get promoted faster?" Include when you will ask (date, meeting), and write a 2-week action plan for whatever they answer — even before you hear it.', placeholder:'e.g., "Asking in my Thursday 1-on-1 April 16. Pre-committed action plan: whatever they say, I will practice it daily for 2 weeks, track it in my improvement log, and report back at our April 30 1-on-1 with data on whether it moved my numbers."', minChars:80 }
   ] });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
+  try { buildBlame(); } catch(e) { console.error('buildBlame:', e); }
+  try { buildSeq(); } catch(e) { console.error('buildSeq:', e); }
+  try { buildCls(); } catch(e) { console.error('buildCls:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

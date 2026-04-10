@@ -1413,18 +1413,12 @@ let qPassed    = false;
    INIT
 ══════════════════════════════════════════ */
 function init(){
-  buildTimeline();
-  buildSched();
-  renderCC();
-  buildQuiz();
-
-  // Narrative gates
+  // Register gates FIRST so they're always available for rendering
   AESDR.gate(1, { type:'narrative', prompt: _role === 'ae'
     ? 'This lesson says SDRs without structure "end up guessing — and guessing leads to frustration, missed targets, and attrition." Name a specific SDR you\'ve managed (or observed) who struggled because onboarding structure was missing. What broke first — their confidence, their pipeline, or their trust in you? What would you build differently starting Day 1?'
     : 'This lesson says zero structure means "guessing — and guessing leads to frustration, missed targets, and attrition." Describe a specific week in your career where you had no plan and your outreach suffered. What did you waste time on? What specific daily structure from this lesson would have saved you — and why?',
     minChars: 120 });
 
-  // Day 1 Checklist — enforced with text input per item
   AESDR.gate(2, { type:'homework',
     prompt: _role === 'ae'
       ? 'This is your SDR\'s Day 1 survival checklist. Each item requires a real, specific response that proves you\'ve thought through the plan — not a vague summary. Write as if you\'re handing this to your SDR tomorrow morning.'
@@ -1444,13 +1438,11 @@ function init(){
     ]
   });
 
-  // Post-timeline reflection gate — must write after expanding all 5 days
   AESDR.gate(3, { type:'narrative', prompt: _role === 'ae'
     ? 'You\'ve now seen the full Day 1–5 blueprint. Which single day will be the hardest to execute with your SDR — and why? What specifically about that day\'s tasks will require the most preparation from you as the AE?'
     : 'You\'ve now seen the full Day 1–5 playbook. Which single day intimidates you most — and why? What specifically about that day\'s tasks feels like it will stretch you the furthest?',
     minChars: 120 });
 
-  // Register accountability gate on homework screen
   AESDR.gate(7, { type:'homework', prompt: _role === 'ae'
     ? 'This is your real commitment. Write your actual Day 1 onboarding plan for your SDR — specific tasks, time blocks, and measurable goals. If you can\'t be specific, you haven\'t internalized the lesson.'
     : 'This is your real commitment. Write the Day 1 plan you will actually follow — specific tasks, time blocks, and measurable goals. If you can\'t be specific, go back and re-read.',
@@ -1468,6 +1460,12 @@ function init(){
       { task:'Write a specific commitment: What is the one habit from this lesson you will start this week? Name the habit, when you\'ll do it daily, and how you\'ll hold yourself accountable.', placeholder:'Name the habit, the daily time, and your accountability method...', minChars: 80 }
     ]
   });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildTimeline(); } catch(e) { console.error('buildTimeline:', e); }
+  try { buildSched(); } catch(e) { console.error('buildSched:', e); }
+  try { renderCC(); } catch(e) { console.error('renderCC:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
 
   render();
 }

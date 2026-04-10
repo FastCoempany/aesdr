@@ -1425,7 +1425,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register gates FIRST so they're always available for rendering
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
@@ -1459,6 +1459,14 @@ function init(){
     { task: 'Propose a specific non-alcohol team bonding activity for your pod — name the date, the activity, and pitch it in the exact words you\'d use in Slack or at standup. Explain why this builds stronger team trust than bar outings.', placeholder: 'Activity: [What]. Date: [When]. My Slack message: "Hey team, ..." Why it\'s better: [Because shared wins and real connection beat...]', minChars: 100 }
   ];
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? _hwAE : _hwSDR });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
+  try { buildBlame(); } catch(e) { console.error('buildBlame:', e); }
+  try { buildSeq(); } catch(e) { console.error('buildSeq:', e); }
+  try { buildCls(); } catch(e) { console.error('buildCls:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

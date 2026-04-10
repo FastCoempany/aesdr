@@ -1443,7 +1443,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register gates FIRST so they're always available for rendering
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   AESDR.gate(1, {
@@ -1474,6 +1474,14 @@ function init(){
     { task:'Identify one qualification question your AE wishes you\'d ask on every call but you currently don\'t. Name your AE, describe how you\'ll find out what they need (ask directly or review past feedback), and write the exact question you\'ll start using this week.', placeholder:'e.g. "Lisa mentioned last week that deals stall when I don\'t ask about timeline. New qualification question I\'ll add to every call: \'What\'s driving your timeline on this? Is there a specific event or deadline that makes this quarter important?\' I\'ll start using it Monday."', minChars:100 },
     { task:'Honest self-assessment: Rate your current AE-SDR partnership from 1–10 and explain why. Then write one specific action you\'ll take this week to move it up by one point, with a date you\'ll do it and how you\'ll know it worked.', placeholder:'e.g. "Current rating: 5/10 — Lisa and I rarely talk outside of handoff notes. We don\'t align on target accounts or share prospect intel. Action: By Wednesday I\'ll send her a summary of the top 3 objections I heard this week and ask for 10 minutes to align on messaging. I\'ll know it worked if she references my intel in her next demo."', minChars:100 }
   ] });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
+  try { buildBlame(); } catch(e) { console.error('buildBlame:', e); }
+  try { buildSeq(); } catch(e) { console.error('buildSeq:', e); }
+  try { buildCls(); } catch(e) { console.error('buildCls:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

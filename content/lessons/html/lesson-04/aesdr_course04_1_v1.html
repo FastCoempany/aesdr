@@ -1443,7 +1443,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register gates FIRST so they're always available for rendering
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   AESDR.gate(1, {
@@ -1474,6 +1474,14 @@ function init(){
     { task:'Write the exact message you\'ll send your manager before your next 1:1 that proactively shares context on your numbers. Include your current metrics for the week, why they moved up or down, and what you plan to do differently next week.', placeholder:'e.g. "Hi James — ahead of our Thursday 1:1. This week: 52 dials (up from 44), 5 meetings booked. Dials went up because I protected my morning call block. Meetings booked dropped one from target because the Healthcare list has gone cold — plan to swap to FinServ next week..."', minChars:100 },
     { task:'Name one specific process or metric you want to improve and pitch it to your manager in writing. Include what you want to change, how long you\'ll test it, and how you\'ll measure success.', placeholder:'e.g. "I want to test LinkedIn voice notes for the SaaS vertical for two weeks. I\'ll track reply rate vs. my current email-only sequence. If voice notes get 2x replies, I\'ll pitch scaling it to the team. I\'ll share results with James by Friday the 25th..."', minChars:100 }
   ] });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
+  try { buildBlame(); } catch(e) { console.error('buildBlame:', e); }
+  try { buildSeq(); } catch(e) { console.error('buildSeq:', e); }
+  try { buildCls(); } catch(e) { console.error('buildCls:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

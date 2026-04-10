@@ -1441,7 +1441,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register gates FIRST so they're always available for rendering
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
@@ -1478,6 +1478,14 @@ function init(){
     { task:'Define two Slack-Free Zones in your weekly schedule — specific days and times for peak calling hours. Put them on your calendar now and describe what you blocked and how many additional dials you expect to make.', placeholder:'e.g., "Zone 1: Mon-Fri 9-11 AM — power calling block, no Slack. Zone 2: Mon-Fri 2-4 PM — afternoon dials. Estimate: 15-20 additional dials per day by eliminating Slack checks during these windows..."', minChars:100 },
     { task:'Write a direct, action-oriented Slack message template you will use instead of vague messages. Give 3 before-and-after examples showing how you will lead every DM with context and a clear ask, especially when messaging your AE about lead handoffs.', placeholder:'e.g., "Before: \'Hey, got a sec?\' After: \'Lead handoff — Jane Smith at TechCorp, confirmed budget + pain point, meeting booked for Thursday. Notes in Salesforce.\' Before: \'Quick question\' After: \'Need your input on Acme objection — they said X, should I try Y?\'"', minChars:100 }
   ] });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
+  try { buildBlame(); } catch(e) { console.error('buildBlame:', e); }
+  try { buildSeq(); } catch(e) { console.error('buildSeq:', e); }
+  try { buildCls(); } catch(e) { console.error('buildCls:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

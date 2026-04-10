@@ -1368,7 +1368,7 @@ const SILO_ORDER = [2,5,0,3,1,4];
 
 const BLAME_ITEMS = [
   {
-    statement:'"It's a bad time of year."',
+    statement:'"It\'s a bad time of year."',
     opts:["Diagnosis: They need more vacation time","Excuse: I'm not putting in the effort. Fix: Measure results, not promises.","They just need better CRM tools","They are top 30% material"],
     ans:1,
     fix:"Resolution: Excuse translated to 'I'm not putting in effort.' Fix by measuring actual results and effort over empty promises."
@@ -1380,7 +1380,7 @@ const BLAME_ITEMS = [
     fix:"Resolution: Polished excuse for avoiding outreach. Fix by setting clear KPIs like dials/day and seeing who actually steps up."
   },
   {
-    statement:'"I'm strategizing my calls right now."',
+    statement:'"I\'m strategizing my calls right now."',
     opts:["Excuse: I'm procrastinating. Fix: Stop pouring energy into those who talk but don't deliver.","They are ready for Enterprise sales","Give them 3 hours of strategy time","They just need a quiet space"],
     ans:0,
     fix:"Resolution: Excuse for procrastination. Stop pouring energy into 'strategizers' who avoid the grind."
@@ -1452,7 +1452,6 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
@@ -1484,6 +1483,12 @@ function init(){
     { task:'Identify one "performative hustle" behavior you do that looks busy but doesn\'t produce results. Write what it is, how many minutes per day it wastes, and what you will replace it with starting tomorrow.', placeholder:'e.g., "I spend 45 min/day reorganizing my CRM notes to look productive. Starting tomorrow, I will use that time for 15 additional cold calls. Setting a phone alarm at 1pm as a trigger."', minChars:80 },
     { task:'At the end of this week, write a self-audit using the traits-vs-noise classifier: list 3 things you did that showed real traits (ownership, coachability, results) and be honest if any were noise. Share this with your manager unprompted by Friday.', placeholder:'e.g., "Real: asked for call feedback Tue, hit 110% call target Wed-Thu, self-corrected my opener after reviewing recordings. Noise: sent a long Slack update about \'research\' that produced 0 calls. Sharing with my AE at Friday 3pm standup."', minChars:100 }
   ] });
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
+  try { buildBlame(); } catch(e) { console.error('buildBlame:', e); }
+  try { buildSeq(); } catch(e) { console.error('buildSeq:', e); }
+  try { buildCls(); } catch(e) { console.error('buildCls:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
   render();
 }
 function go(n){

@@ -1412,12 +1412,7 @@ let qPassed=false;
    INIT
 ══════════════════════════════════════════ */
 function init(){
-  buildFM();
-  buildPlan();
-  buildTx();
-  buildEmail();
-  buildQuiz();
-
+  // Register gates FIRST so they're always available for rendering
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   AESDR.gate(1, { type:'narrative', prompt: _role === 'ae'
@@ -1428,7 +1423,6 @@ function init(){
     ? 'The lesson lays out a 60-minute coaching framework: Call Review, Email Feedback, Role-Play, and Q&A. How many minutes per week do you ACTUALLY spend coaching your SDR right now — be honest? Which of the four blocks are you neglecting most, and what specific impact is that having on their calls, emails, or confidence? Don\'t generalize — name the gap.'
     : 'The lesson describes what good coaching actually looks like: specific, structured, and tied to real performance data. When was the last time you self-evaluated your own call BEFORE your AE gave feedback? What did you miss that you should have caught yourself? If you\'ve never done this, explain why — and describe what a written self-evaluation would include for your last call.',
     minChars: 120 });
-
   // Register homework gate
   AESDR.gate(8, { type:'homework', prompt: _role === 'ae'
     ? 'This is real coaching work, not a checkbox. Write specific, written feedback for a real or simulated SDR call using the framework from this lesson. Include: what the opening did well, one concrete thing to change about the engage, whether the close was specific enough, and what you\'d drill in role-play next session.'
@@ -1447,6 +1441,13 @@ function init(){
       { task:'What is the single hardest piece of feedback you\'ve received (or avoided receiving) about your sales skills? Write it down honestly, explain whether you agree with it, and describe what you\'re doing about it.', placeholder:'The feedback, whether you agree, and what you\'re doing about it...', minChars: 80 }
     ]
   });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildFM(); } catch(e) { console.error('buildFM:', e); }
+  try { buildPlan(); } catch(e) { console.error('buildPlan:', e); }
+  try { buildTx(); } catch(e) { console.error('buildTx:', e); }
+  try { buildEmail(); } catch(e) { console.error('buildEmail:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
 
   render();
 }

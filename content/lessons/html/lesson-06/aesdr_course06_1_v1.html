@@ -1430,7 +1430,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register gates FIRST so they're always available for rendering
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   AESDR.gate(1, {
@@ -1481,6 +1481,14 @@ function init(){
       placeholder:'Example: "1. \'I\'m not interested\' — I say: \'Totally fair. Quick question before I let you go — is pipeline generation something your team is actively solving right now?\' 2. ..."',
       minChars:100 }
   ] });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
+  try { buildBlame(); } catch(e) { console.error('buildBlame:', e); }
+  try { buildSeq(); } catch(e) { console.error('buildSeq:', e); }
+  try { buildCls(); } catch(e) { console.error('buildCls:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

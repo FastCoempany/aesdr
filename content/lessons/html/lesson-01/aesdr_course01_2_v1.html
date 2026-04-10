@@ -1514,12 +1514,7 @@ let qPassed    = false;
    INIT
 ══════════════════════════════════════════ */
 function init(){
-  buildSort();
-  renderConv();
-  buildAck();
-  buildAudit();
-  buildQuiz();
-
+  // Register gates FIRST so they're always available for rendering
   // Narrative gates
   AESDR.gate(1, { type:'narrative', prompt: _role === 'ae'
     ? 'This lesson draws a hard line between treating your SDR as a "cog" vs. a "partner." Be honest: does your SDR see you as a partner or a taskmaster right now? Name one specific behavior of yours from the last two weeks — a thing you said, a meeting you skipped, a moment you rushed — that signals which one. What would the partner version of you have done instead?'
@@ -1529,7 +1524,6 @@ function init(){
     ? 'The lesson names three principles: "Meet Them Where They Are," "Be Real About What\'s Hard," and "Give Acknowledgment That Means Something." Which one do you fail at most consistently? Don\'t just name it — describe a specific moment in the last month where you dropped the ball on this principle. What happened, what did your SDR see, and what should you have done?'
     : 'The lesson names three principles: "Show Initiative Before Being Asked," "Ask the Hard Questions," and "Acknowledge Their Reality." Which one do you avoid most? Don\'t just name it — describe the last specific moment you chose silence over action. What were you afraid of, and what would showing up differently have looked like?',
     minChars: 120 });
-
   // Register homework gate
   AESDR.gate(8, { type:'homework', prompt: _role === 'ae'
     ? 'This is your accountability contract. Each item below requires proof that you\'ve internalized the lesson — not a summary, but a specific plan with names, dates, and actions. Write as if your SDR is going to read every word.'
@@ -1548,6 +1542,13 @@ function init(){
       { task:'Write down one hard question you\'ve been avoiding asking your AE. Why have you avoided it? When this week will you ask it? What do you expect to hear?', placeholder:'The question, why you\'ve avoided it, when you\'ll ask, and what you expect...', minChars: 80 }
     ]
   });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildSort(); } catch(e) { console.error('buildSort:', e); }
+  try { renderConv(); } catch(e) { console.error('renderConv:', e); }
+  try { buildAck(); } catch(e) { console.error('buildAck:', e); }
+  try { buildAudit(); } catch(e) { console.error('buildAudit:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
 
   render();
 }

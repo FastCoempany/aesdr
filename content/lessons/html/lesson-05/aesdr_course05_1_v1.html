@@ -1391,7 +1391,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildRecipe(); buildSL(); buildRamp(); buildVis(); buildQuiz(); 
+  // Register gates FIRST so they're always available for rendering
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   AESDR.gate(1, {
@@ -1415,6 +1415,14 @@ function init(){
     { task:'Build one tangible value-add deliverable for your AE: a named-account research doc, a rebuttal guide for a specific competitor, or a high-fit lead list with 10+ contacts. Deliver it before they ask.', placeholder:'Describe exactly what you built, which AE you delivered it to (by name), when you delivered it, and how they responded...', minChars:100 },
     { task:'Using the Visibility Score framework from this lesson, rate yourself honestly on each component. Identify your lowest-scoring area and write a specific 5-day plan to raise it by at least 10 points.', placeholder:'List your score for each visibility component, identify the lowest one, and describe your day-by-day plan to improve it this week...', minChars:100 }
   ] });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildRecipe(); } catch(e) { console.error('buildRecipe:', e); }
+  try { buildSL(); } catch(e) { console.error('buildSL:', e); }
+  try { buildRamp(); } catch(e) { console.error('buildRamp:', e); }
+  try { buildVis(); } catch(e) { console.error('buildVis:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

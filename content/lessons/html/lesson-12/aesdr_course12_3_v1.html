@@ -1424,7 +1424,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register gates FIRST so they're always available for rendering
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
@@ -1458,6 +1458,14 @@ function init(){
     { task: 'Plan one solo investment in yourself that has nothing to do with sales or dating: a trip, a course, a creative hobby, a certification. Write what it is, when you will start, how much it costs, and why it matters for your growth.', placeholder: 'Investment: [specific activity/trip/course]. Start date: [when]. Cost: $[amount]. Why this matters: [how it builds the version of you that will be ready for a relationship when the time is right]...', minChars: 100 }
   ];
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? _hwAE : _hwSDR });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
+  try { buildBlame(); } catch(e) { console.error('buildBlame:', e); }
+  try { buildSeq(); } catch(e) { console.error('buildSeq:', e); }
+  try { buildCls(); } catch(e) { console.error('buildCls:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

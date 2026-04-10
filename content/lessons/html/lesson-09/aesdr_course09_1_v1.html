@@ -1454,7 +1454,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register gates FIRST so they're always available for rendering
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
@@ -1491,6 +1491,14 @@ function init(){
     { task:'Spend 30 minutes learning Quick Actions or reorganizing your Lead Views for priority-based follow-up. Describe exactly what you set up, how it changed your workflow, and how many clicks it saves per logged call.', placeholder:'e.g., "Set up Quick Action for \'Log Call\' with pre-filled fields: call outcome, next step date, and notes. Saves 4 clicks per call. Also reorganized lead view to sort by last activity date..."', minChars:100 },
     { task:'Write a message to your AE describing the Salesforce standards you will follow for every lead handoff going forward. Include the exact fields you will always fill in and the note format you will use. State when you will send this message.', placeholder:'e.g., "Will send to my AE Sarah by Friday 4/12. Standards: every handoff includes company size, pain point discussed, budget timeline, and decision-maker confirmed. Note format: Date | Summary | Pain | Next Step..."', minChars:100 }
   ] });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
+  try { buildBlame(); } catch(e) { console.error('buildBlame:', e); }
+  try { buildSeq(); } catch(e) { console.error('buildSeq:', e); }
+  try { buildCls(); } catch(e) { console.error('buildCls:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

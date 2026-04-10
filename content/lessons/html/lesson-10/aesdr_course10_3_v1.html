@@ -1442,7 +1442,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register gates FIRST so they're always available for rendering
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
@@ -1476,6 +1476,14 @@ function init(){
     { task: 'Write your personal commission spending rule: max 20% on wants, remainder to savings and debt. Show the exact math for your next expected variable payout.', placeholder: 'e.g. "Next expected meeting bonus: ~$400. Rule: 20% lifestyle = $80 max. Remaining $320: $200 to emergency fund, $120 to credit card ($2,400 balance). No budget increase until I hit target 3 months in a row. Current streak: 1 month..."', minChars: 80 }
   ];
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? _hwAE : _hwSDR });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
+  try { buildBlame(); } catch(e) { console.error('buildBlame:', e); }
+  try { buildSeq(); } catch(e) { console.error('buildSeq:', e); }
+  try { buildCls(); } catch(e) { console.error('buildCls:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

@@ -1433,7 +1433,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildVI(); buildMB(); buildNC(); renderKT(); buildQuiz(); 
+  // Register gates FIRST so they're always available for rendering
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   AESDR.gate(1, {
@@ -1477,6 +1477,14 @@ function init(){
       placeholder:'Example: "1. 4/3 — Asked my AE for better leads without sharing call intel first (Cog) 2. 4/5 — Shared 3 objections I\'m hearing with the team in Slack (Motherboard) 3. 4/8 — Asked manager for a territory change (Cog). Ratio: 1 Motherboard / 4 Cog. This week I\'ll..."',
       minChars:100 }
   ] });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildVI(); } catch(e) { console.error('buildVI:', e); }
+  try { buildMB(); } catch(e) { console.error('buildMB:', e); }
+  try { buildNC(); } catch(e) { console.error('buildNC:', e); }
+  try { renderKT(); } catch(e) { console.error('renderKT:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

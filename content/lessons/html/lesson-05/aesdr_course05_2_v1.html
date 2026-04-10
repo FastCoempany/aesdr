@@ -1446,7 +1446,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register gates FIRST so they're always available for rendering
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   AESDR.gate(1, {
@@ -1477,6 +1477,14 @@ function init(){
     { task:'Using Principle 4 (Own Your Role as a Trench Warrior), audit your last week of activity. Write your exact call volume, emails sent, meetings booked, and compare each to team averages. Where did you beat the average and where did you fall short?', placeholder:'List your exact numbers for calls, emails, and meetings booked last week. Compare each to the team average. For each metric where you fell short, write what you\'ll change this week...', minChars:100 },
     { task:'Sequence your own SDR Growth Framework from this lesson. Write out your 5 career stages in order, identify which stage you\'re in now with specific evidence, and name the one action that moves you to the next stage fastest.', placeholder:'List your 5 growth stages in order, identify your current stage, cite evidence (metrics, feedback, milestones), and name the single highest-leverage action for your next promotion...', minChars:80 }
   ] });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
+  try { buildBlame(); } catch(e) { console.error('buildBlame:', e); }
+  try { buildSeq(); } catch(e) { console.error('buildSeq:', e); }
+  try { buildCls(); } catch(e) { console.error('buildCls:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

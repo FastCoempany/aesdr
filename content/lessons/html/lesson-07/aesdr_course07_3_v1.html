@@ -1454,7 +1454,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register gates FIRST so they're always available for rendering
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
@@ -1486,6 +1486,14 @@ function init(){
     { task:'Name one specific AE who started as an SDR — their full name, company, and how you know them. Write the exact message you will send asking what they did differently to earn promotion. Include the date you will send it. The question must reference this lesson\'s framework about treating the grind as training, not punishment.', placeholder:'Example: [Full name] at [company], [how I know them]. Message on [date]: "Hey [name], I\'m in month [X] of my SDR role and working toward AE. This lesson I took talks about treating the grind as training. When you were an SDR, what specific habit or mindset shift..."', minChars:100 },
     { task:'Using this lesson\'s decision framework, write your final honest assessment: is the SDR path right for you? Reference at least 2 specific points from the lesson (e.g., the promise vs. reality gap, the traits that thrive, the red flags) and apply them to your own situation with concrete evidence. If the answer is "I\'m not sure," that counts — but explain what specific information or milestone would help you decide, and by what date.', placeholder:'Example: Assessment: Yes, the SDR path is right for me. Evidence: 1) The lesson lists [trait] as essential — I demonstrated this when [specific example]. 2) Red flag about [topic] does NOT apply because [evidence]. However, I need to watch for [concern] and will reassess by [date]...', minChars:100 }
   ] });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
+  try { buildBlame(); } catch(e) { console.error('buildBlame:', e); }
+  try { buildSeq(); } catch(e) { console.error('buildSeq:', e); }
+  try { buildCls(); } catch(e) { console.error('buildCls:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

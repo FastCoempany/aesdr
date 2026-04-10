@@ -1446,7 +1446,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register gates FIRST so they're always available for rendering
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
@@ -1483,6 +1483,14 @@ function init(){
     { task:'Record or mentally replay 5 of your recent cold calls. For each, rate yourself honestly: were you having a conversation or reading a script? Identify 3 specific areas for improvement and write the exact new opener you will use on your next call block.', placeholder:'e.g., "Call 1: Script-reading, prospect hung up at 15 sec. Call 2: Decent conversation but fumbled the ask. ... 3 improvements: 1) Stop leading with company name and title. 2) Ask a question in first 10 seconds. 3) New opener: \'Hi [Name], we haven\'t spoken — I noticed [trigger]. Quick question about...\'"', minChars:120 },
     { task:'Write 3 new ways to handle your most common objection without sounding scripted. Name the exact objection, write all 3 responses word for word, and describe how you will practice them before your next calling block. Include how you will report improved results to your AE.', placeholder:'e.g., "Objection: \'We already have a solution.\' 1) \'Totally fair — most of our clients did too. Curious, what would need to change for you to evaluate alternatives?\' 2) \'Got it. What\'s one thing you wish your current solution did better?\' ... Will practice with roleplay partner Wed AM. Will track conversion rate and share with AE in Friday sync."', minChars:100 }
   ] });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
+  try { buildBlame(); } catch(e) { console.error('buildBlame:', e); }
+  try { buildSeq(); } catch(e) { console.error('buildSeq:', e); }
+  try { buildCls(); } catch(e) { console.error('buildCls:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

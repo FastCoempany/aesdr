@@ -1434,7 +1434,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz();
+  // Register gates FIRST so they're always available for rendering
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   AESDR.gate(1, { type:'narrative', prompt: _role === 'ae'
@@ -1463,6 +1463,14 @@ function init(){
       { task:'Name your AE by name and describe one specific insight from your calls this week that would help them close a deal faster. What prospect language or objection pattern have you noticed that they haven\'t heard yet?', placeholder:'AE: [name]. Insight: 3 of my prospects this week mentioned they\'re evaluating [competitor] specifically because of [feature]. My AE hasn\'t adjusted their demo to address this...', minChars: 80 }
     ]
   });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
+  try { buildBlame(); } catch(e) { console.error('buildBlame:', e); }
+  try { buildSeq(); } catch(e) { console.error('buildSeq:', e); }
+  try { buildCls(); } catch(e) { console.error('buildCls:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

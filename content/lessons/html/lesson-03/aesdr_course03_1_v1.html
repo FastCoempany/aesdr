@@ -1528,7 +1528,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ══════════════════════════════════════════ */
 function init(){
-  buildRank(); renderBant(); buildFD(); buildSA(); buildHB(); buildQuiz();
+  // Register gates FIRST so they're always available for rendering
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   AESDR.gate(1, { type:'narrative', prompt: _role === 'ae'
@@ -1553,6 +1553,15 @@ function init(){
       { task:'Build your proactivity schedule for next week: block specific times for outreach, call review, and pipeline cleanup. Name the days, the time blocks, and what you\'ll do in each block. If it\'s not on your calendar, it won\'t happen.', placeholder:'Monday 9-10am: cold outreach block. Monday 4-4:30pm: call review...', minChars: 80 }
     ]
   });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildRank(); } catch(e) { console.error('buildRank:', e); }
+  try { renderBant(); } catch(e) { console.error('renderBant:', e); }
+  try { buildFD(); } catch(e) { console.error('buildFD:', e); }
+  try { buildSA(); } catch(e) { console.error('buildSA:', e); }
+  try { buildHB(); } catch(e) { console.error('buildHB:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

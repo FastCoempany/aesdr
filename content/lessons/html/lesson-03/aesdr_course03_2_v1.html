@@ -1422,7 +1422,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz();
+  // Register gates FIRST so they're always available for rendering
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   AESDR.gate(1, { type:'narrative', prompt: _role === 'ae'
@@ -1451,6 +1451,14 @@ function init(){
       { task:'Schedule a weekly check-in with your AE using the communication framework from the lesson. Write the proposed day and time, the three agenda items you\'ll bring to the first meeting, and the exact message you\'ll send to propose it. Send it before the end of this week.', placeholder:'Proposed time: [day] at [time]. Agenda: 1) ... 2) ... 3) ... Message: "Hey [AE name],..."', minChars: 80 }
     ]
   });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
+  try { buildBlame(); } catch(e) { console.error('buildBlame:', e); }
+  try { buildSeq(); } catch(e) { console.error('buildSeq:', e); }
+  try { buildCls(); } catch(e) { console.error('buildCls:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

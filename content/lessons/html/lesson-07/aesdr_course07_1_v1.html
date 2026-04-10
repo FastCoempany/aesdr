@@ -1454,7 +1454,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register gates FIRST so they're always available for rendering
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
@@ -1486,6 +1486,14 @@ function init(){
     { task:'Name your AE and describe the last handoff note you wrote for a meeting you booked. Include what context you provided (pain points, budget signals, decision-makers, next steps). Then ask your AE for feedback on that specific handoff and write the exact question you will ask them.', placeholder:'Example: AE is [name]. Last handoff for [Company] included [details]. I will ask: "[exact feedback question]"...', minChars:100 },
     { task:'Describe your current system for tracking meetings booked and deals sourced. If you don\'t have one, design one now: specify the tool, the columns/fields you will track, and when you will review it each week. Include the date you will start using it.', placeholder:'Example: I use [tool/spreadsheet]. Columns: date, prospect, company, meeting outcome, deal stage. Weekly review every Friday at 4pm. Starting [date]...', minChars:100 }
   ] });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
+  try { buildBlame(); } catch(e) { console.error('buildBlame:', e); }
+  try { buildSeq(); } catch(e) { console.error('buildSeq:', e); }
+  try { buildCls(); } catch(e) { console.error('buildCls:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

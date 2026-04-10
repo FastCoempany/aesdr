@@ -1443,7 +1443,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildArch(); buildImpact(); renderMU(); buildBB(); buildQuiz();
+  // Register gates FIRST so they're always available for rendering
   // Narrative gates
   var _role=document.documentElement.getAttribute('data-role')||'sdr';
   AESDR.gate(1, { type:'narrative', prompt: _role === 'ae'
@@ -1472,6 +1472,14 @@ function init(){
       { task:'Answer the lesson\'s accountability question: "Are you managing up — or just complaining with structure?" Write an honest assessment of where you are today. Then write one specific, measurable commitment for the next 30 days: what will you do differently, how often, and how will you track whether it\'s working?', placeholder:'Honest assessment: I\'m currently [managing up / complaining]. My 30-day commitment: I will [action] every [frequency]...', minChars: 100 }
     ]
   });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildArch(); } catch(e) { console.error('buildArch:', e); }
+  try { buildImpact(); } catch(e) { console.error('buildImpact:', e); }
+  try { renderMU(); } catch(e) { console.error('renderMU:', e); }
+  try { buildBB(); } catch(e) { console.error('buildBB:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

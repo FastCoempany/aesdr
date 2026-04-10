@@ -1376,7 +1376,7 @@ const BLAME_ITEMS = [
     fix:"Real fix: Commission caps limit even the best performers. Understand your upside and negotiate."
   },
   {
-    statement:'"I'm budgeting for a new car based on my OTE."',
+    statement:'"I\'m budgeting for a new car based on my OTE."',
     opts:["Base pay is your reality. Treat commissions as a bonus.","Take out a loan.","Ask for an advance.","Work weekends to hit 150%."],
     ans:0,
     fix:"Real fix: OTE is a fantasy. Base pay is reality. Budget based only on your guaranteed income."
@@ -1442,7 +1442,6 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
@@ -1476,6 +1475,12 @@ function init(){
     { task: 'Write your monthly budget based on base salary only — zero commission. List each expense by name and amount, and show you can cover essentials on base alone.', placeholder: 'e.g. "Base: $3,200/mo after tax. Rent: $1,100, Car insurance: $180, Phone: $65, Groceries: $400, Student loan: $350... Total: $2,795. Remaining: $405 for variable costs..."', minChars: 100 }
   ];
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? _hwAE : _hwSDR });
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
+  try { buildBlame(); } catch(e) { console.error('buildBlame:', e); }
+  try { buildSeq(); } catch(e) { console.error('buildSeq:', e); }
+  try { buildCls(); } catch(e) { console.error('buildCls:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
   render();
 }
 function go(n){

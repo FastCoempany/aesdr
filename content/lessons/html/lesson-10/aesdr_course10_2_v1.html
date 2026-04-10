@@ -1450,7 +1450,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
+  // Register gates FIRST so they're always available for rendering
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gates
@@ -1484,6 +1484,14 @@ function init(){
     { task: 'Describe one outbound experiment you will run this week to improve conversion. Name the exact channel, the new approach, the number of prospects, and how you will measure results.', placeholder: 'e.g. "This week I\'m testing personalized video messages via LinkedIn on 20 VP-level prospects in my territory. Current LinkedIn response rate: 4%. Target: 10%+. I\'ll send all 20 by Friday, track replies through Monday, and compare to my baseline email sequence..."', minChars: 100 }
   ];
   AESDR.gate(8, { type:'homework', items: _role === 'ae' ? _hwAE : _hwSDR });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildSilo(); } catch(e) { console.error('buildSilo:', e); }
+  try { buildBlame(); } catch(e) { console.error('buildBlame:', e); }
+  try { buildSeq(); } catch(e) { console.error('buildSeq:', e); }
+  try { buildCls(); } catch(e) { console.error('buildCls:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

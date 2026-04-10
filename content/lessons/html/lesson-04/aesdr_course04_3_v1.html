@@ -1446,7 +1446,7 @@ let qAns={},qSubmitted=false,qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildFlips(); buildCal(); buildMV(); buildAP(); buildSK(); buildQuiz(); 
+  // Register gates FIRST so they're always available for rendering
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   AESDR.gate(1, {
@@ -1470,6 +1470,15 @@ function init(){
     { task:'Identify one skill from the monetization explorer that matches your SDR experience. Name the skill, the platform you\'ll test it on, and what you\'ll create or do in a 30-minute session this week. Include the specific date.', placeholder:'e.g. "Skill: Cold outreach consulting. Platform: Upwork. Session on Saturday from 10–10:30am. I\'ll create a profile highlighting my cold calling experience (200+ dials/week, 8% conversion rate) and browse 5 relevant gigs to understand pricing. Goal: see if there\'s demand for SDR outreach expertise."', minChars:100 },
     { task:'Calculate your \'async ratio\' from last week: what percentage of your working hours were spent in meetings or reactive tasks vs. focused prospecting? Write the actual numbers, then set a specific target ratio for next week and describe the one change that will get you there.', placeholder:'e.g. "Last week: 12 hours in meetings/reactive tasks, 28 hours focused prospecting = 30% sync / 70% async. Target: 20% sync / 80% async. Change: Decline the Thursday product sync and move my 1:1 from 10am to 3pm so I don\'t break my morning call block. That saves 1.5 hours of prime selling time."', minChars:100 }
   ] });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildFlips(); } catch(e) { console.error('buildFlips:', e); }
+  try { buildCal(); } catch(e) { console.error('buildCal:', e); }
+  try { buildMV(); } catch(e) { console.error('buildMV:', e); }
+  try { buildAP(); } catch(e) { console.error('buildAP:', e); }
+  try { buildSK(); } catch(e) { console.error('buildSK:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

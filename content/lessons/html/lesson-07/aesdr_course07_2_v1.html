@@ -1413,7 +1413,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildPO(); buildCV2(); buildOB(); buildDB(); buildQuiz(); 
+  // Register gates FIRST so they're always available for rendering
   // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   // Narrative gate
@@ -1438,6 +1438,14 @@ function init(){
     { task:'Run the 4-part qualification method on every prospect call this week. Pick one call from today or yesterday and walk through each stage: what research you did, how you qualified (pain/authority/timeline), what documentation you created, and what follow-through you planned. Be specific with names and details.', placeholder:'Example: Prospect: [Name] at [Company]. Research: found [insight]. Qualify: confirmed pain ([detail]), authority ([title]), timeline ([months]). Document: wrote notes on [details]. Follow-through: scheduled [next step] on [date]...', minChars:100 },
     { task:'Design your weekly conversion review ritual: what day and time will you review meeting outcomes? What specific data will you analyze (meetings booked, converted, lost, and why)? Write the exact template you will use and commit to a start date this week.', placeholder:'Example: Every Friday at 3pm. Template: Meeting date | Prospect | Company | Converted? | If no, why (pain/authority/timeline/other). Starting this Friday [date]. Will share results with AE [name] in Monday sync...', minChars:100 }
   ] });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildPO(); } catch(e) { console.error('buildPO:', e); }
+  try { buildCV2(); } catch(e) { console.error('buildCV2:', e); }
+  try { buildOB(); } catch(e) { console.error('buildOB:', e); }
+  try { buildDB(); } catch(e) { console.error('buildDB:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){

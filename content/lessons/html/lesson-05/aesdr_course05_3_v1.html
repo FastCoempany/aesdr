@@ -1474,7 +1474,7 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildRR(); buildBM(); buildTS(); buildIP(); buildSA(); buildQuiz(); 
+  // Register gates FIRST so they're always available for rendering
   // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
   AESDR.gate(1, {
@@ -1498,6 +1498,15 @@ function init(){
     { task:'Run the Friday self-audit from this lesson. Answer all four self-audit questions in writing with specific numbers, account names, and honest assessments — not generic "I did well" statements.', placeholder:'Answer each of the four audit questions here. For each, reference specific numbers or accounts. Example: "Did I beat the benchmark this week?" — Calls: 57 vs. 50 avg (yes). Meetings: 2 vs. 3 target (no, missed because...)...', minChars:120 },
     { task:'Using the Three Pillars framework (Outperform, Build Trust, Differentiate) from this lesson, identify one specific action per pillar you\'ll execute next week. Each action must name a person, a date, and a measurable outcome.', placeholder:'List each pillar with your planned action. Example: "Outperform — hit 60 calls/day Mon-Fri (vs. 50 avg). Build Trust — send [manager name] my weekly numbers by Friday 4pm before standup. Differentiate — deliver account research doc to [AE name] by Wednesday on [account name]"...', minChars:100 }
   ] });
+
+  // Build UI components — wrapped so a failure can't prevent gate rendering
+  try { buildRR(); } catch(e) { console.error('buildRR:', e); }
+  try { buildBM(); } catch(e) { console.error('buildBM:', e); }
+  try { buildTS(); } catch(e) { console.error('buildTS:', e); }
+  try { buildIP(); } catch(e) { console.error('buildIP:', e); }
+  try { buildSA(); } catch(e) { console.error('buildSA:', e); }
+  try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+
   render();
 }
 function go(n){
