@@ -1451,10 +1451,24 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
-  // Register accountability gate
+  // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Write a brutally honest self-assessment: 3 things you do well as an AE, 3 things you need to improve, and a specific 30-day plan for the #1 improvement area.' : 'Write a brutally honest self-assessment: 3 things you do well as an SDR, 3 things you need to improve, and a specific 30-day plan for the #1 improvement area.';
-  AESDR.gate(8, { type:'application', prompt: _gatePrompt, minChars: 150 });
+  // Narrative gates
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'If your VP reviewed your pipeline right now, what would they flag as your biggest weakness? Be specific — deals, stages, self-sourced percentage.' : 'Name one habit you have right now that you know is holding you back as an SDR. Not a vague one — the specific thing you do (or avoid) every day.', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Are you blaming your SDR for a weak pipeline, or have you self-sourced enough to not need them? Give your honest self-sourced meeting count from last month.' : 'How many hours did you spend on the phone versus email last week? If email won, what are you really avoiding?', minChars: 50 });
+  // Homework gate
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
+    { task:'Identify one area you have been avoiding (prospecting, self-sourcing, or taking feedback).', placeholder:'Name the area honestly and why you avoid it', minChars:40 },
+    { task:'Set a 2-week measurable goal to address it. Track your progress daily.', placeholder:'State the goal with specific metrics', minChars:40 },
+    { task:'Schedule a pipeline review with your manager or SDR. Ask: "Where am I underperforming right now?"', placeholder:'When will you schedule this and what will you ask?', minChars:40 },
+    { task:'Ask: "What is one thing I need to change immediately?" and commit to acting on it.', placeholder:'Describe your commitment to follow through', minChars:40 }
+  ] : [
+    { task:'For 5 consecutive days, hit 110% of your call target — no excuses, no adjustments.', placeholder:'State your daily target and commitment', minChars:40 },
+    { task:'After each day, write one sentence: "Today I improved at ___."', placeholder:'Write your first sentence now as a template', minChars:40 },
+    { task:'At end of week, bring your 5 sentences to your manager and ask for feedback on your trajectory.', placeholder:'Describe when you will do this', minChars:40 },
+    { task:'Schedule a 15-minute meeting with your manager. Come with: your numbers, one improvement area, and one question.', placeholder:'What numbers and question will you bring?', minChars:40 },
+    { task:'Ask: "What is one habit I should build to get promoted faster?" Follow through and report back next week.', placeholder:'Describe your plan to act on their answer', minChars:40 }
+  ] });
   render();
 }
 function go(n){
@@ -1716,6 +1730,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1726,9 +1742,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"If you're not consistently delivering, you're just another replaceable cog.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"Top AEs don't wait for success—they create it.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 excuses resolved`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

@@ -1451,10 +1451,25 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
-  // Register accountability gate
+  // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Write an honest assessment: is SaaS sales the right career for you? What specifically makes you say yes or no? What would need to change for you to stay 5 more years?' : 'Write an honest assessment: is SaaS sales the right career for you? What specifically makes you say yes or no? What would need to change for you to stay in this role 12 more months?';
-  AESDR.gate(8, { type:'reflection', prompt: _gatePrompt, minChars: 120 });
+  // Narrative gates
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'What is the single hardest part of SaaS sales for you right now — and are you honest with yourself about whether you can sustain it for 5 more years?' : 'Be honest: when you hear "50+ cold calls a day for 12-18 months," does that excite you or terrify you? What does your gut reaction tell you about your fit?', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'What is your current OTE, and is the pressure you endure actually worth that number? If your comp dropped 20%, would you still stay in this role?' : 'Map out the math: your current OTE, your promotion timeline, and the daily grind required. Is the 12-18 month investment worth the AE payoff for you personally?', minChars: 50 });
+  // Homework gate
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
+    { task:'Write down what truly motivates you (money, growth, challenges?).', placeholder:'Be specific about your real drivers', minChars:40 },
+    { task:'Analyze how you historically handle rejection and pressure.', placeholder:'Give a concrete example from your career', minChars:40 },
+    { task:'Ask yourself if you are willing to work in an unpredictable environment.', placeholder:'Describe how unpredictability affects you', minChars:40 },
+    { task:'Reach out to 1 AE or SDR you know and ask what the hardest part of the job is.', placeholder:'Name who you will contact and what you will ask', minChars:40 },
+    { task:'Ask them: "Would you still recommend SaaS sales today?"', placeholder:'Describe their likely answer or your plan to ask', minChars:40 }
+  ] : [
+    { task:'Write down your 12-month goal: promotion to AE, President\'s Club, or something else?', placeholder:'State your specific goal and timeline', minChars:40 },
+    { task:'List the 3 biggest obstacles between you and that goal.', placeholder:'Be specific: skill gaps, consistency, qualification quality', minChars:40 },
+    { task:'Ask yourself honestly: Am I willing to grind through 12-18 months of cold calls?', placeholder:'Give an honest answer with reasoning', minChars:40 },
+    { task:'Reach out to 1 AE who started as an SDR. Ask what they did differently to earn promotion.', placeholder:'Name who you will contact and your question', minChars:40 },
+    { task:'Ask them: "What would you tell your SDR self on day one knowing what you know now?"', placeholder:'Describe your plan to have this conversation', minChars:40 }
+  ] });
   render();
 }
 function go(n){
@@ -1716,6 +1731,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1726,9 +1743,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"It's not a path for everyone.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"The freedom and money come with strings attached.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 statements resolved`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

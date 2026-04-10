@@ -1450,10 +1450,24 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
-  // Register accountability gate
+  // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Apply the 30% rule to yourself: which category are you in as an AE? Provide 3 specific examples from your last quarter that support your self-assessment.' : 'Apply the 30% framework to your own performance: are you in the top, middle, or bottom third? Provide 3 specific examples from your last month that support your honest self-assessment.';
-  AESDR.gate(8, { type:'reflection', prompt: _gatePrompt, minChars: 150 });
+  // Narrative gates
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Name one SDR on your team you have been over-investing in despite poor results. What made you keep trying, and what would change if you redirected that energy to a top performer?' : 'Right now, which tier does your manager most likely put you in — top, middle, or bottom 30%? What specific evidence from this week supports your answer?', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Describe the last time you gave personalized coaching to a top-performing SDR versus a struggling one. Where did you see a bigger return on your time?' : 'When was the last time you proactively asked your manager for feedback without being prompted? If you can\'t remember, what does that tell you about your tier?', minChars: 50 });
+  // Homework gate
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
+    { task:'Choose 2 SDRs in the top 30%. Write out one stretch goal to challenge them.', placeholder:'Name the SDRs and their stretch goals', minChars:40 },
+    { task:'Identify one area of focus for improvement (e.g., tone, pacing, objection-handling).', placeholder:'Be specific about the skill and your coaching plan', minChars:40 },
+    { task:'Create a plan to celebrate their next big win publicly.', placeholder:'Describe what you will do and when', minChars:40 },
+    { task:'Stop chasing uncoachable SDRs. Write a process for addressing poor performance objectively.', placeholder:'Outline your process for boundary-setting', minChars:40 }
+  ] : [
+    { task:'Identify one behavior you can start this week that signals top-tier effort (e.g., asking for call feedback daily).', placeholder:'Name the specific behavior and your plan', minChars:40 },
+    { task:'Track your own metrics for 5 straight days before your manager asks.', placeholder:'List which metrics you will track and how', minChars:40 },
+    { task:'After your next rejection, write down what you will change on the next call — then do it.', placeholder:'Describe your approach to learning from rejection', minChars:40 },
+    { task:'Schedule a 15-minute check-in with your manager to ask: "What do your top performers do differently?"', placeholder:'When will you schedule this and what will you ask?', minChars:40 },
+    { task:'Ask your manager for one specific thing you can improve this week — then follow through and report back.', placeholder:'Describe your commitment to follow-through', minChars:40 }
+  ] });
   render();
 }
 function go(n){
@@ -1715,6 +1729,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:2,3:2,4:3,5:3,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1725,9 +1741,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Focus on those who want to succeed, not those who need to be dragged.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"The top 30% will far outperform. Invest in them.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 behaviors diagnosed`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

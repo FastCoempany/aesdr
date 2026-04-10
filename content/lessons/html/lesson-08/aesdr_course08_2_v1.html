@@ -1449,10 +1449,22 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
-  // Register accountability gate
+  // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Describe a time when you (or someone you managed) showed \'illusion of potential\' — looking busy without producing results. What were the warning signs? What would you do differently?' : 'Describe a time when you felt like you were working hard but not producing results. What were the warning signs that effort wasn\'t translating to outcomes? What did you change (or need to change)?';
-  AESDR.gate(8, { type:'reflection', prompt: _gatePrompt, minChars: 120 });
+  // Narrative gates
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Name one SDR on your team who talks a great game but consistently underdelivers. What specific results gap made you realize enthusiasm was masking a performance problem?' : 'Be brutally honest: are your results matching your energy level? List your actual bookings from last week next to how hard you felt you were working.', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Think about the last SDR who gave you a polished excuse for missing metrics. What did they say, and what was the real issue underneath?' : 'Write down the last excuse you gave for missing a target — "bad leads," "slow quarter," whatever it was. Now write what you could have done differently instead.', minChars: 50 });
+  // Homework gate
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
+    { task:'Establish performance KPIs: calls per day, meetings booked per week, follow-ups completed.', placeholder:'List the specific KPIs and benchmarks', minChars:40 },
+    { task:'Measure against KPIs over two weeks and identify who steps up.', placeholder:'Describe your tracking plan and timeline', minChars:40 },
+    { task:'Choose 2 SDRs from your top 30%. Create a personalized coaching plan and stretch goals.', placeholder:'Name the SDRs and their coaching plans', minChars:40 }
+  ] : [
+    { task:'Write down 3 excuses you have used in the last month and the action you will take instead of each.', placeholder:'List each excuse paired with a replacement action', minChars:40 },
+    { task:'Share at least one of these with your manager proactively: "I noticed I was doing X, so I am changing to Y."', placeholder:'Describe what you will say and when', minChars:40 },
+    { task:'Set a personal stretch goal for this week (e.g., 5 extra calls per day, 2 additional bookings).', placeholder:'State your stretch goal with specific numbers', minChars:40 },
+    { task:'Track your progress daily and share it with your manager at end of week — without being asked.', placeholder:'Describe how you will track and share results', minChars:40 }
+  ] });
   render();
 }
 function go(n){
@@ -1714,6 +1726,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1724,9 +1738,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Enthusiasm is not a substitute for competence or results.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"Real potential isn't loud—it's visible in results.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 behaviors diagnosed`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

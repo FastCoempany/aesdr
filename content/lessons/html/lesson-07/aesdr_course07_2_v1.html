@@ -1412,10 +1412,22 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildPO(); buildCV2(); buildOB(); buildDB(); buildQuiz(); 
-  // Register accountability gate
+  // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Paste your actual pipeline report or deal list. For each deal: source (self-sourced vs inbound vs SDR), stage, and next action. Identify which deals need self-sourced replacements.' : 'Paste your actual meeting log from the past 2 weeks: date, account, outcome, and whether the meeting was qualified. Identify patterns in what\'s converting vs what\'s not.';
-  AESDR.gate(7, { type:'evidence', prompt: _gatePrompt, minChars: 100 });
+  // Narrative gate
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Think about the last meeting you self-sourced versus one handed to you by an SDR. What was different about your preparation, confidence, and close rate?' : 'What percentage of your booked meetings actually converted to qualified opportunities last month? If you don\'t know the number, why not?', minChars: 50 });
+  // Homework gate
+  AESDR.gate(7, { type:'homework', items: _role === 'ae' ? [
+    { task:'Audit your current pipeline. Calculate what percentage is self-sourced. If below 30%, make it your top priority this month.', placeholder:'List your pipeline breakdown with real numbers', minChars:40 },
+    { task:'Block 60-90 minutes daily this week for prospecting. 15 min research, 30 min outreach, 15 min follow-up.', placeholder:'Describe your calendar block and commitment', minChars:40 },
+    { task:'Identify 3 target accounts to pursue this week. Write personalized outreach for each — one real insight per contact.', placeholder:'Name the accounts and your angle for each', minChars:40 },
+    { task:'Run the 4-part method on at least one account from start to booked meeting. Document every step.', placeholder:'Describe the account and your step-by-step plan', minChars:40 }
+  ] : [
+    { task:'Review your last 10 meetings booked. How many converted to qualified opportunities? If below 60%, fix your qualification process.', placeholder:'Share your conversion numbers and diagnosis', minChars:40 },
+    { task:'Ask your AE for honest feedback on your last 3 hand-offs. What context was missing?', placeholder:'Describe the feedback or what you plan to ask', minChars:40 },
+    { task:'Build a pre-call research checklist and use it before every cold call this week.', placeholder:'List your checklist items', minChars:40 },
+    { task:'Run the 4-part qualification method on every prospect this week. Document notes and review conversion on Friday.', placeholder:'Describe your plan for applying the method', minChars:40 }
+  ] });
   render();
 }
 function go(n){
@@ -1703,6 +1715,7 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
   if(cur===2) return poCount===PO_DEALS.length;
   if(cur===3) return cv2Count===CV2_ITEMS.length;
   if(cur===4) return Object.keys(obDone).length===OB_STAGES.length;
@@ -1713,7 +1726,7 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"The pipeline you own is the only pipeline you can truly count on.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${poCount} / 6 deals tagged`,
     3:`${cv2Count} / 6 correctly sorted`,
     4:`${Object.keys(obDone).length} / 4 stages placed`,

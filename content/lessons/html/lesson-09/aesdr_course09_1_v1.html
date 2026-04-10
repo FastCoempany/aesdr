@@ -1451,10 +1451,27 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
-  // Register accountability gate
+  // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Describe your current Salesforce setup: dashboards you use, reports you run, and one thing you know needs cleaning up. Be specific about your pipeline view.' : 'Describe your current CRM workflow: how you log calls, track sequences, and manage leads. What\'s one thing about your setup that wastes time every day?';
-  AESDR.gate(8, { type:'evidence', prompt: _gatePrompt, minChars: 100 });
+  // Narrative gates
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'How many stale opportunities are sitting in your Salesforce pipeline right now that you know should be closed-lost? What is stopping you from cleaning them out today?' : 'When was the last time you logged a call in Salesforce with detailed notes — not just "left voicemail"? What does your typical call log actually look like?', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'If your manager pulled your pipeline report right now, would the close dates and stages be accurate? Name one deal where you know the data is wrong and why you haven\'t fixed it.' : 'How many duplicate or stale leads are clogging your Salesforce views right now? Estimate the number and explain why you haven\'t cleaned them yet.', minChars: 50 });
+  // Homework gate
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
+    { task:'Are your opportunities updated with accurate stages and close dates?', placeholder:'Audit your pipeline and report findings', minChars:40 },
+    { task:'Does your pipeline reflect reality — or is it stuffed with stale deals?', placeholder:'Count stale deals and describe cleanup plan', minChars:40 },
+    { task:'Can your manager trust your forecast based on what is in Salesforce right now?', placeholder:'Give an honest assessment of forecast accuracy', minChars:40 },
+    { task:'Spend 30 minutes learning Pipeline Dashboards or Opportunity Reports.', placeholder:'Describe what you learned and will apply', minChars:40 },
+    { task:'Purge dead opportunities and update every deal with an accurate next step.', placeholder:'List deals purged or updated', minChars:40 },
+    { task:'Dedicate 15 minutes each week to a pipeline cleanup session.', placeholder:'When will you schedule this weekly block?', minChars:40 }
+  ] : [
+    { task:'Are your leads updated with complete contact info and status?', placeholder:'Audit your lead data and report findings', minChars:40 },
+    { task:'Are your call notes clear enough for an AE to take the handoff cold?', placeholder:'Review recent notes and assess quality', minChars:40 },
+    { task:'How many duplicate or stale leads are clogging your views?', placeholder:'Count them and describe your cleanup plan', minChars:40 },
+    { task:'Spend 30 minutes learning Quick Actions or Lead Views to speed up your workflow.', placeholder:'Describe what you learned and will apply', minChars:40 },
+    { task:'Share your Salesforce standards with your SDR team for consistency.', placeholder:'What standards will you share and when?', minChars:40 },
+    { task:'Dedicate 15 minutes each week to deduplicating leads and cleaning notes.', placeholder:'When will you schedule this weekly block?', minChars:40 }
+  ] });
   render();
 }
 function go(n){
@@ -1716,6 +1733,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1726,9 +1745,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Salesforce isn't out to get you—it's just misunderstood.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"Learn the shortcuts and keep your data clean.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 excuses resolved`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

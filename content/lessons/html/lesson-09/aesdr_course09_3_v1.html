@@ -1443,10 +1443,27 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
-  // Register accountability gate
+  // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Audit your tools stack: list each tool you use daily, what you use it for, and rate your proficiency 1-5. Identify one tool you\'re underusing.' : 'Audit your tools stack: list each tool you use daily, what you use it for, and rate your proficiency 1-5. Identify one tool you\'re underusing.';
-  AESDR.gate(8, { type:'evidence', prompt: _gatePrompt, minChars: 100 });
+  // Narrative gates
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Name one tool in your stack that you use as a crutch to avoid doing real selling work. What would happen to your close rate if that tool disappeared tomorrow?' : 'Which of your daily tools are you hiding behind instead of picking up the phone? Be specific — name the tool and the activity you use it to avoid.', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'When was the last time you ran a discovery call that was truly consultative — not just a feature demo? What question did you ask that changed the direction of the deal?' : 'Record yourself on your next cold call in your head: are you having a conversation or reading a script? What is one thing you would change about your opener right now?', minChars: 50 });
+  // Homework gate
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
+    { task:'Review your last 10 post-demo follow-up emails. Rewrite them to reference specific pain points discussed.', placeholder:'Describe the patterns you found and changes you will make', minChars:40 },
+    { task:'Create 3 follow-up templates tied to different deal stages (post-demo, post-proposal, stalled deal).', placeholder:'Outline your template strategy for each stage', minChars:40 },
+    { task:'Audit every open opportunity. Remove anything with no activity in 30+ days or no clear next step.', placeholder:'How many deals will you purge and what is your criteria?', minChars:40 },
+    { task:'Update every deal with an accurate stage, close date, and documented next step.', placeholder:'Describe your pipeline update plan', minChars:40 },
+    { task:'Record your next demo and identify 3 moments where you pitched features instead of connecting to pain.', placeholder:'Describe your plan to review and improve', minChars:40 },
+    { task:'Rewrite your demo flow to lead with discovery questions before showing any product.', placeholder:'List the discovery questions you will lead with', minChars:40 }
+  ] : [
+    { task:'Review your last 10 automated outbound emails. Rewrite them with stronger personalization.', placeholder:'Describe the patterns you found and changes you will make', minChars:40 },
+    { task:'Craft 5 unique subject lines to A/B test for a single sequence.', placeholder:'List your 5 subject lines', minChars:40 },
+    { task:'Deduplicate leads and remove contacts with no valid info. Clean up all incomplete call notes.', placeholder:'Estimate how many leads need cleanup and your plan', minChars:40 },
+    { task:'Set a 15-minute daily limit for CRM updates — then get back on the phones.', placeholder:'When in your day will you do this?', minChars:40 },
+    { task:'Record 5 cold calls and listen back. Identify 3 areas for improvement.', placeholder:'Describe what you expect to find and improve', minChars:40 },
+    { task:'Write 3 new ways to handle your most common objection naturally, without sounding scripted.', placeholder:'List the objection and your 3 new approaches', minChars:40 }
+  ] });
   render();
 }
 function go(n){
@@ -1708,6 +1725,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1718,9 +1737,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Tools enhance great selling—they don't replace it.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"Start with the core skills before relying on tools.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 excuses resolved`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

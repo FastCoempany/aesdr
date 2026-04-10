@@ -1438,10 +1438,25 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
-  // Register accountability gate
+  // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'List your current Slack channels. For each: do you actually need it? Which ones should you mute, leave, or add? Be honest about your notification hygiene.' : 'List your current Slack channels. For each: do you actually need it? Which ones should you mute, leave, or add? Be honest about your notification hygiene.';
-  AESDR.gate(8, { type:'evidence', prompt: _gatePrompt, minChars: 80 });
+  // Narrative gates
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'How many times did you check Slack during your last demo prep or proposal writing block? Estimate the number and calculate how many minutes of focus you lost.' : 'How many dials did you lose yesterday because you checked Slack during a calling block? Estimate the number and be honest about what pulled you away.', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'List 3 Slack channels you are in right now that do not directly help you close deals. Why are you still in them?' : 'When was the last time you set your Slack status to "On Calls" and actually went dark during a call block? If never, what is really stopping you?', minChars: 50 });
+  // Homework gate
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
+    { task:'Leave any channel that does not directly impact your deals, pipeline, or cross-functional alignment.', placeholder:'List channels you will leave or mute', minChars:40 },
+    { task:'Turn off alerts from company-wide channels during deal prep and proposal hours.', placeholder:'Describe your notification changes', minChars:40 },
+    { task:'Add keyword notifications for deal names, "contract," "close date," and "pricing."', placeholder:'List the keywords you will add', minChars:40 },
+    { task:'Set your Slack status to "In Deal Prep" or DND during proposal writing and demo prep.', placeholder:'Describe your focus block schedule', minChars:40 },
+    { task:'Create Slack-Free Zones for your highest-leverage activities. Be direct in every message.', placeholder:'List your Slack-free time blocks', minChars:40 }
+  ] : [
+    { task:'Leave any channel that does not directly serve your prospecting, sequences, or team alignment.', placeholder:'List channels you will leave or mute', minChars:40 },
+    { task:'Turn off non-essential alerts, especially during calling blocks.', placeholder:'Describe your notification changes', minChars:40 },
+    { task:'Add keyword notifications for "lead," "meeting booked," and your name.', placeholder:'List the keywords you will add', minChars:40 },
+    { task:'Set your Slack status to "On Calls — Back at [time]" during your outbound blocks.', placeholder:'Describe your status update plan', minChars:40 },
+    { task:'Create Slack-Free Zones during peak calling hours. Be direct in every Slack message.', placeholder:'List your Slack-free time blocks', minChars:40 }
+  ] });
   render();
 }
 function go(n){
@@ -1703,6 +1718,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:3,5:3,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1713,9 +1730,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Slack is a tool, not a mandatory meeting.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"Curating your Slack experience starts with ruthless organization.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 overloads resolved`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,
