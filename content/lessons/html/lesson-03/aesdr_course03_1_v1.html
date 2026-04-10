@@ -1526,11 +1526,26 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ══════════════════════════════════════════ */
 function init(){
-  buildRank(); renderBant(); buildFD(); buildSA(); buildHB(); buildQuiz(); 
-  // Register accountability gate
+  buildRank(); renderBant(); buildFD(); buildSA(); buildHB(); buildQuiz();
+  // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Write a coaching note for a specific SDR call: identify 3 qualification gaps (BANT or similar framework) and provide concrete suggestions for each.' : 'Given a recent call you made, identify 3 qualification gaps using BANT (Budget, Authority, Need, Timeline). For each gap, write what you should have asked instead.';
-  AESDR.gate(8, { type:'application', prompt: _gatePrompt, minChars: 120 });
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Which of the three pitfalls (poor qualification, lack of proactivity, generic approach) is costing you the most pipeline right now? Describe a specific deal where it showed up.' : 'Which of the three pitfalls (poor qualification, lack of proactivity, generic outreach) describes your biggest weakness right now? Give a specific example from this week.', minChars: 50 });
+  // Homework gate
+  AESDR.gate(8, { type:'homework', prompt: _role === 'ae'
+    ? 'Write a coaching note for a specific SDR call: identify 3 qualification gaps (BANT or similar framework) and provide concrete suggestions for each.'
+    : 'Given a recent call you made, identify 3 qualification gaps using BANT (Budget, Authority, Need, Timeline). For each gap, write what you should have asked instead.',
+    items: _role === 'ae' ? [
+      { label:'Identify which of the four pitfalls you see most in your own deal management — be honest about where your process gets lazy', minChars: 30 },
+      { label:'Review the last 5 leads your SDR passed against BANT — score each one and share specific results with your SDR', minChars: 30 },
+      { label:'Schedule a feedback session with your SDR — pick one area, give specific written feedback, track implementation', minChars: 30 },
+      { label:'Personalize your next 3 follow-up emails with specific references to what each prospect said in discovery', minChars: 30 }
+    ] : [
+      { label:'Write down the one pitfall you recognize most in yourself — then implement one specific fix from the toolkit', minChars: 30 },
+      { label:'Use the BANT checklist on every lead you pass to your AE this week — if you can\'t answer all four, don\'t pass it', minChars: 30 },
+      { label:'Add one genuine research-based personalization element to every outreach sequence you send this week', minChars: 30 },
+      { label:'Ask your AE for one specific piece of feedback on your qualification quality — not "how am I doing" but one concrete improvement', minChars: 30 }
+    ]
+  });
   render();
 }
 function go(n){
@@ -1806,6 +1821,7 @@ function retryQuiz(){
 ══════════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
   if(cur===2) return rankMarked.size===4;
   if(cur===3) return bantDone;
   if(cur===4) return fdCount===4;
@@ -1817,7 +1833,7 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Every pitfall has a pattern — patterns have fixes.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${rankMarked.size} / 4 pitfalls explored`,
     3:bantDone?'✓ All leads qualified — continue below.':`Lead ${bantStage+1} of ${BANT_LEADS.length} — ${BANT_LEADS[bantStage]?.criterion||''}`,
     4:`${fdCount} / 4 decoded`,

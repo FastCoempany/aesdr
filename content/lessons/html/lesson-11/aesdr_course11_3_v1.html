@@ -1420,10 +1420,29 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
-  // Register accountability gate
+  // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Write your personal policy on alcohol at work events: your limit (if any), your go-to drink, your exit strategy, and how you protect your professional reputation.' : 'Write your personal policy on alcohol at work events: your limit (if any), your go-to drink, your exit strategy, and how you protect your professional reputation.';
-  AESDR.gate(8, { type:'reflection', prompt: _gatePrompt, minChars: 80 });
+  // Narrative gates
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'What did you order at your last client dinner or partner event — and what message did it send to the executive across the table? Be brutally honest.' : 'What was in your hand at the last team event? If your VP of Sales saw it, would they think "future AE" or "not ready"?', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Have you ever ordered something at a client event that undermined your executive presence — even slightly? What would you order differently now?' : 'If you had to order a drink right now at a conference with your entire leadership team watching, what would it be and why?', minChars: 50 });
+  // Homework gate
+  var _hwAE = [
+    { task: 'Write down your go-to safe drink option for client-facing events', placeholder: 'Name your drink and why...', minChars: 40 },
+    { task: 'Ensure it reflects executive-level composure (sparkling water, classic cocktail, or wine matching the setting)', placeholder: 'Explain your choice...', minChars: 40 },
+    { task: 'Prepare a polite phrase for declining a shot or leaving early', placeholder: 'Write your exit line...', minChars: 40 },
+    { task: 'What will you say if someone pressures you to drink? Practice it.', placeholder: 'Write your pressure response...', minChars: 40 },
+    { task: 'Decide beforehand exactly how many drinks you\'ll have — then stick to it', placeholder: 'State your limit and commitment...', minChars: 40 },
+    { task: 'Before your next client dinner or conference, write down your drink limit and top 3 conversation goals', placeholder: 'List your limit and goals...', minChars: 40 }
+  ];
+  var _hwSDR = [
+    { task: 'Write down your go-to safe drink option for team events', placeholder: 'Name your drink and why...', minChars: 40 },
+    { task: 'Ensure it reflects professional maturity (sparkling water, light beer, or club soda with lime)', placeholder: 'Explain your choice...', minChars: 40 },
+    { task: 'Prepare a polite phrase for declining a shot or leaving early', placeholder: 'Write your exit line...', minChars: 40 },
+    { task: 'What will you say if someone pressures you to drink? Practice it.', placeholder: 'Write your pressure response...', minChars: 40 },
+    { task: 'Decide beforehand exactly how many drinks you\'ll have — then stick to it', placeholder: 'State your limit and commitment...', minChars: 40 },
+    { task: 'Before your next team event or conference, write down your drink limit and one person you want to impress', placeholder: 'List your limit and target...', minChars: 40 }
+  ];
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? _hwAE : _hwSDR });
   render();
 }
 function go(n){
@@ -1685,6 +1704,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1695,9 +1716,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Your drink is part of your personal brand. Choose wisely.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"Safe drink choices reflect confidence and control.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 scenarios resolved`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

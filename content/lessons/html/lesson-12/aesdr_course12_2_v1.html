@@ -1420,10 +1420,31 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
-  // Register accountability gate
+  // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Write your specific shutdown ritual: exact time, the physical action that signals \'done,\' which notifications you turn off, and what you do in the first 30 minutes after shutdown.' : 'Write your specific shutdown ritual: exact time, the physical action that signals \'done,\' which notifications you turn off, and what you do in the first 30 minutes after shutdown.';
-  AESDR.gate(8, { type:'evidence', prompt: _gatePrompt, minChars: 80 });
+  // Narrative gates
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'How many times this week did your partner talk to you while you were mentally running a deal in your head? Name the last time and what you missed.' : 'When was the last time your partner asked how your day was and you gave a real answer instead of "fine" or "busy"? What were you actually thinking about?', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'What time did you actually stop working last night — not close the laptop, but truly stop thinking about deals? How did your partner experience that gap?' : 'Last night after your last call block, how many times did you check Slack or email before bed? What did your partner see you doing instead of being present?', minChars: 50 });
+  // Homework gate
+  var _hwAE = [
+    { task: 'Write one physical action you will take to signal the end of your workday', placeholder: 'Describe your shutdown action...', minChars: 40 },
+    { task: 'Make it visible so your partner sees the transition from deal mode to home mode', placeholder: 'How will your partner know you are done?', minChars: 40 },
+    { task: 'Identify two blocks of time each week where you will be 100% present with your spouse', placeholder: 'Name the days and times...', minChars: 40 },
+    { task: 'Treat it with the same importance as your biggest client meeting — put it on your calendar', placeholder: 'Confirm it is calendared...', minChars: 40 },
+    { task: 'Commit to disabling Slack, email, and LinkedIn notifications during personal time', placeholder: 'List which apps you will silence...', minChars: 40 },
+    { task: 'Discuss these rules with your spouse and ask for feedback', placeholder: 'What did they say?', minChars: 40 },
+    { task: 'If a deal is urgent, communicate it upfront: "I need 15 minutes — then I\'m all yours"', placeholder: 'Write your transparency script...', minChars: 40 }
+  ];
+  var _hwSDR = [
+    { task: 'Write one physical action you will take to signal the end of your workday', placeholder: 'Describe your shutdown action...', minChars: 40 },
+    { task: 'Make it visible so your partner sees the transition from call mode to present mode', placeholder: 'How will your partner know you are done?', minChars: 40 },
+    { task: 'Identify two blocks of time each week where you will be 100% present with your spouse', placeholder: 'Name the days and times...', minChars: 40 },
+    { task: 'Treat it with the same importance as your morning call block — put it on your calendar', placeholder: 'Confirm it is calendared...', minChars: 40 },
+    { task: 'Commit to disabling Slack, email, and LinkedIn notifications during personal time', placeholder: 'List which apps you will silence...', minChars: 40 },
+    { task: 'Discuss these rules with your spouse and ask for feedback', placeholder: 'What did they say?', minChars: 40 },
+    { task: 'If your manager messages after hours, it can wait until morning — set the boundary', placeholder: 'Write your boundary commitment...', minChars: 40 }
+  ];
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? _hwAE : _hwSDR });
   render();
 }
 function go(n){
@@ -1685,6 +1706,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1695,9 +1718,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Working from home gives the illusion of availability.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"Every digital distraction steals time and attention.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 myths resolved`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

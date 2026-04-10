@@ -1439,10 +1439,29 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
-  // Register accountability gate
+  // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Build a personal commission tracker with real numbers: your base salary, OTE, current attainment %, expected payout this quarter, and a monthly budget based ONLY on base.' : 'Build a personal compensation plan with real numbers: your base salary, variable target, current attainment %, and a monthly budget based ONLY on base salary. No commission assumptions.';
-  AESDR.gate(8, { type:'application', prompt: _gatePrompt, minChars: 100 });
+  // Narrative gates
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'What line in your comp plan have you never actually read — and what would it cost you if it said something different than you assumed?' : 'How much of your last paycheck can you actually explain line by line — and what happens to your budget if the variable piece disappears next month?', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Name one clawback or payout rule in your current plan that could blindside you this quarter. What are you doing about it?' : 'If your AE disqualifies your next three meetings, what happens to your paycheck? Do you even know the rule?', minChars: 50 });
+  // Homework gate
+  var _hwAE = [
+    { task: 'Pull up your full comp plan and highlight clawbacks, accelerators, deal splits, and payout timelines', placeholder: 'Paste the key clauses you found...', minChars: 40 },
+    { task: 'Write down 3+ questions to clarify with your manager about multi-year deals and overlay splits', placeholder: 'List your questions...', minChars: 40 },
+    { task: 'Create a tracker logging every deal, payout, and deduction', placeholder: 'Describe your tracker columns...', minChars: 40 },
+    { task: 'Cross-reference finance numbers against your own tracker every pay cycle', placeholder: 'Describe your verification process...', minChars: 40 },
+    { task: 'Build a monthly budget based on base salary alone — no commission included', placeholder: 'Share your base-only budget...', minChars: 40 },
+    { task: 'Create a commission allocation plan: savings, debt repayment, investments', placeholder: 'Break down your allocation %s...', minChars: 40 }
+  ];
+  var _hwSDR = [
+    { task: 'Review your comp plan and highlight what counts as a "qualified" meeting and when you get paid', placeholder: 'Paste what you found...', minChars: 40 },
+    { task: 'Write down 3+ questions to clarify with your manager this week', placeholder: 'List your questions...', minChars: 40 },
+    { task: 'Create a tracker to log every meeting booked, its status, and expected payout', placeholder: 'Describe your tracker columns...', minChars: 40 },
+    { task: 'Track your own numbers and flag discrepancies with finance immediately', placeholder: 'Describe your verification process...', minChars: 40 },
+    { task: 'Build a budget based on base salary alone — assume zero commission', placeholder: 'Share your base-only budget...', minChars: 40 },
+    { task: 'Determine how you will allocate commissions as bonus income: savings, debt payoff, or investments', placeholder: 'Break down your allocation plan...', minChars: 40 }
+  ];
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? _hwAE : _hwSDR });
   render();
 }
 function go(n){
@@ -1704,6 +1723,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1714,9 +1735,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"OTE is a fantasy. Base pay is your reality.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"Understand the mechanics of your comp plan.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 myths resolved`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

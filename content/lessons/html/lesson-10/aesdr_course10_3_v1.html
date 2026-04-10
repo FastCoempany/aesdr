@@ -1439,10 +1439,31 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
-  // Register accountability gate
+  // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Build your personal emergency fund plan with real numbers: monthly expenses, target fund size (3 months), current savings, and a specific monthly savings commitment.' : 'Build your personal emergency fund plan with real numbers: monthly expenses, target fund size (3 months), current savings, and a specific monthly savings commitment.';
-  AESDR.gate(8, { type:'application', prompt: _gatePrompt, minChars: 100 });
+  // Narrative gates
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Think about your last big commission check. How much of it did you spend within 30 days — and what would happen to your lifestyle if the next quarter was a total miss?' : 'What did you spend your last bonus or variable payout on? If that payout disappeared for three months straight, which bills would you struggle to cover?', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'What is your actual average monthly income over the last 6 months — not your OTE, your real take-home? If you don\'t know, that\'s the problem.' : 'Can you name your real average monthly income over the last 3 months — after clawbacks and payout delays? If not, what does that tell you about your financial planning?', minChars: 50 });
+  // Homework gate
+  var _hwAE = [
+    { task: 'Log all earnings for the past 6 months: base, commissions, clawbacks, splits, and bonuses', placeholder: 'List your monthly earnings...', minChars: 40 },
+    { task: 'Calculate your real average monthly income — your actual take-home, not OTE', placeholder: 'Share the number and how you calculated it...', minChars: 40 },
+    { task: 'Identify your worst month and build your budget around that floor', placeholder: 'Name the month and the budget...', minChars: 40 },
+    { task: 'Target an emergency fund covering 6 months of living expenses', placeholder: 'Share your target amount and timeline...', minChars: 40 },
+    { task: 'During feast quarters, redirect at least 50% of commission to savings', placeholder: 'Describe your savings commitment...', minChars: 40 },
+    { task: 'Cap commission spending at 20% max — no lifestyle inflation until the safety net is funded', placeholder: 'State your spending cap rule...', minChars: 40 },
+    { task: 'Allocate remaining 80% to: emergency fund, investments, debt payoff — in that order', placeholder: 'Break down your allocation...', minChars: 40 }
+  ];
+  var _hwSDR = [
+    { task: 'Log all earnings for the past 3 months: base salary, meeting bonuses, and variable payouts', placeholder: 'List your monthly earnings...', minChars: 40 },
+    { task: 'Identify your average monthly income and your worst month', placeholder: 'Share both numbers...', minChars: 40 },
+    { task: 'Factor in deductions: taxes, clawbacks for unconverted meetings, and payout delays', placeholder: 'List the deductions you found...', minChars: 40 },
+    { task: 'Start building an emergency fund with at least 3 months of living expenses', placeholder: 'Share your target and plan...', minChars: 40 },
+    { task: 'Slash the fat: identify non-essential spending you can cut immediately during dry months', placeholder: 'List what you will cut...', minChars: 40 },
+    { task: 'Cap commission spending to 20% max — rest goes to savings, debt payoff, or investments', placeholder: 'State your spending cap rule...', minChars: 40 },
+    { task: 'Wait for 3 consecutive months of hitting target before adjusting budget upward', placeholder: 'Commit to your rule...', minChars: 40 }
+  ];
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? _hwAE : _hwSDR });
   render();
 }
 function go(n){
@@ -1704,6 +1725,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1714,9 +1737,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Commission is not your paycheck—it's a bonus.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"Budget your lifestyle off your base salary alone.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 traps resolved`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

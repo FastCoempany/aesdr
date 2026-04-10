@@ -1421,10 +1421,27 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
-  // Register accountability gate
+  // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Write your 6-month personal development plan: 3 professional goals, 3 personal goals, specific weekly actions for each, and how you\'ll measure progress. This is your final exam.' : 'Write your 6-month personal development plan: 3 professional goals, 3 personal goals, specific weekly actions for each, and how you\'ll measure progress. This is your final exam.';
-  AESDR.gate(8, { type:'application', prompt: _gatePrompt, minChars: 200 });
+  // Narrative gates
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Be honest: is there someone you are half-dating or half-interested in right now who is draining energy you should be putting into your pipeline? What would change if you went all-in on your career for the next 6 months?' : 'Is there a relationship or situationship right now that is eating into your call blocks, your energy, or your sleep? What would your numbers look like if you redirected that time?', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'What career milestone are you 6-12 months away from — and what happens to that timeline if you keep splitting your focus between dating and closing?' : 'What does your path to AE look like — and how many months does a distracting relationship add to that timeline? Be specific.', minChars: 50 });
+  // Homework gate
+  var _hwAE = [
+    { task: 'Write down three personal and professional goals for the next six months (President\'s Club, deal size milestone, skill mastery, savings target)', placeholder: 'List your 6-month goals...', minChars: 40 },
+    { task: 'List distractions (including dating) holding you back from hitting those goals', placeholder: 'Be honest about your distractions...', minChars: 40 },
+    { task: 'Identify where your time and emotional energy are leaking — dating apps between demos? Late nights wrecking prep?', placeholder: 'Name the specific leaks...', minChars: 40 },
+    { task: 'Commit to hitting the gym or maintaining a health routine', placeholder: 'Describe your fitness commitment...', minChars: 40 },
+    { task: 'Plan a solo trip or dive into a hobby that has nothing to do with sales', placeholder: 'What will you do?', minChars: 40 }
+  ];
+  var _hwSDR = [
+    { task: 'Write down three personal and professional goals for the next six months (promotion to AE, booking number, new skill, savings target)', placeholder: 'List your 6-month goals...', minChars: 40 },
+    { task: 'List distractions (including dating) holding you back from hitting those goals', placeholder: 'Be honest about your distractions...', minChars: 40 },
+    { task: 'Identify where your time and emotional energy are leaking — dating apps between call blocks? Late nights killing focus?', placeholder: 'Name the specific leaks...', minChars: 40 },
+    { task: 'Commit to hitting the gym or maintaining a health routine', placeholder: 'Describe your fitness commitment...', minChars: 40 },
+    { task: 'Plan a solo trip or dive into a hobby that excites you', placeholder: 'What will you do?', minChars: 40 }
+  ];
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? _hwAE : _hwSDR });
   render();
 }
 function go(n){
@@ -1686,6 +1703,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:4,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1696,9 +1715,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Relationships require stability, but your schedule is anything but stable.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"Even when you're 'off,' you're not really off.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 distractions diagnosed`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

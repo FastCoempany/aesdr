@@ -1447,10 +1447,35 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
-  // Register accountability gate
+  // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Write your specific plan for when you\'re behind quota: what changes in your daily routine, what stays the same, and how you communicate with leadership. Be concrete.' : 'Write your specific plan for when you\'re behind on meetings booked: what changes in your daily routine, what stays the same, and how you communicate with your manager. Be concrete.';
-  AESDR.gate(8, { type:'reflection', prompt: _gatePrompt, minChars: 120 });
+  // Narrative gates
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'When was the last time you hit quota and felt punished for it — with a higher target the next quarter? What did that teach you about how the game actually works?' : 'When did you last crush your meeting target only to see it raised the following month? How did that change the way you approach your daily grind?', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'How many deals in your current pipeline would survive a brutal audit right now — and what are you telling yourself about the ones that wouldn\'t?' : 'If your manager audited your meeting list today, how many would actually convert? Be honest about the fluff.', minChars: 50 });
+  // Homework gate
+  var _hwAE = [
+    { task: 'Audit every open opportunity — kill anything with no activity in 30+ days or no champion', placeholder: 'List deals you killed and why...', minChars: 40 },
+    { task: 'Rank remaining deals by ACV, close probability, and timeline — stack-rank your top 10', placeholder: 'Share your ranked list...', minChars: 40 },
+    { task: 'Document the next step for every active deal', placeholder: 'List each deal and its next step...', minChars: 40 },
+    { task: 'Gather 3+ quarters of historical performance data for your territory', placeholder: 'Share win rates, deal size, cycle length...', minChars: 40 },
+    { task: 'Identify external factors impacting your number: seasonality, product delays, territory changes', placeholder: 'List the factors...', minChars: 40 },
+    { task: 'Build a one-page data-driven case for realistic quota adjustment', placeholder: 'Outline your case with specific asks...', minChars: 40 },
+    { task: 'Log weekly: demos run, proposals sent, deals advanced, deals closed', placeholder: 'Describe your tracking system...', minChars: 40 },
+    { task: 'Track personal win rate and average deal cycle length', placeholder: 'Share your current metrics...', minChars: 40 },
+    { task: 'Document competitive wins and strategic deals requiring extra effort', placeholder: 'Describe your documentation approach...', minChars: 40 }
+  ];
+  var _hwSDR = [
+    { task: 'Audit your prospect list — remove anyone not matching ICP or unresponsive after 5+ touches', placeholder: 'Describe what you removed...', minChars: 40 },
+    { task: 'Prioritize leads showing buying signals (website visits, content downloads, job changes)', placeholder: 'List your prioritized signals...', minChars: 40 },
+    { task: 'Track your meeting-to-qualified-opp conversion rate', placeholder: 'Share your current rate...', minChars: 40 },
+    { task: 'Gather 3+ months of connect rates, meeting rates, and conversion data by lead source', placeholder: 'Share your data breakdown...', minChars: 40 },
+    { task: 'Identify external factors: seasonality, lead quality changes, territory adjustments', placeholder: 'List the factors...', minChars: 40 },
+    { task: 'Prepare a data-backed conversation with your manager about realistic targets', placeholder: 'Outline your case with numbers...', minChars: 40 },
+    { task: 'Log weekly: calls made, emails sent, meetings booked, meetings converted to qualified opps', placeholder: 'Describe your tracking system...', minChars: 40 },
+    { task: 'Track personal connect-to-meeting and meeting-to-opp conversion rates', placeholder: 'Share your current metrics...', minChars: 40 },
+    { task: 'Note outbound experiments that worked (new openers, channels, sequences)', placeholder: 'Describe what worked...', minChars: 40 }
+  ];
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? _hwAE : _hwSDR });
   render();
 }
 function go(n){
@@ -1712,6 +1737,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1722,9 +1749,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Quotas aren't about recognition—they're about stretching you.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"Fluff in your pipeline doesn't help anyone.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 traps resolved`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

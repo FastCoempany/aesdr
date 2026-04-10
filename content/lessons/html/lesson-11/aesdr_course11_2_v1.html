@@ -1421,10 +1421,29 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
-  // Register accountability gate
+  // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Write 3 conversation starters for networking events that don\'t involve alcohol. For each: the opener, a follow-up question, and how you\'d transition to business value.' : 'Write 3 conversation starters for industry events or team gatherings that don\'t involve alcohol. For each: the opener, a follow-up question, and how you\'d make a genuine connection.';
-  AESDR.gate(8, { type:'application', prompt: _gatePrompt, minChars: 100 });
+  // Narrative gates
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Think about your last sales conference. Did you advance more pipeline at the bar or at the 8 AM breakfast? Be specific about what you gained — or lost — each night.' : 'At your last company event or SKO, who saw you at the end of the night — and what impression did you leave? Would that person promote you based on it?', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Name one relationship with a champion or executive sponsor that cooled off after a conference. Was alcohol involved? What would you do differently?' : 'Has a manager or AE ever seen you act unprofessionally at an event? What did it cost you in trust or opportunity — even if nobody said anything?', minChars: 50 });
+  // Homework gate
+  var _hwAE = [
+    { task: 'Write down your max drink limit for networking events before you arrive', placeholder: 'State your limit...', minChars: 40 },
+    { task: 'Commit to sticking to it, no matter what', placeholder: 'Describe your commitment plan...', minChars: 40 },
+    { task: 'Define 2-3 specific pipeline outcomes you want from your next event', placeholder: 'List your goals...', minChars: 40 },
+    { task: 'Identify the 3-5 people you must meet and prepare a relevant opening question for each', placeholder: 'List names and questions...', minChars: 40 },
+    { task: 'Prepare conversation starter: "What\'s the biggest challenge in your buying process this year?"', placeholder: 'Write your personalized version...', minChars: 40 },
+    { task: 'Plan your exit strategy: decide when you\'ll leave and how to politely excuse yourself', placeholder: 'Describe your exit plan...', minChars: 40 }
+  ];
+  var _hwSDR = [
+    { task: 'Write down your max drink limit for networking events before you arrive', placeholder: 'State your limit...', minChars: 40 },
+    { task: 'Commit to sticking to it, no matter what', placeholder: 'Describe your commitment plan...', minChars: 40 },
+    { task: 'Define 2-3 specific growth outcomes you want from your next event', placeholder: 'List your goals...', minChars: 40 },
+    { task: 'Identify 3-5 people you want to connect with and prepare a smart question for each', placeholder: 'List names and questions...', minChars: 40 },
+    { task: 'Prepare conversation starter: "How did you move from SDR to AE?" for senior reps', placeholder: 'Write your personalized version...', minChars: 40 },
+    { task: 'Plan your exit strategy: decide when you\'ll leave and how to politely excuse yourself', placeholder: 'Describe your exit plan...', minChars: 40 }
+  ];
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? _hwAE : _hwSDR });
   render();
 }
 function go(n){
@@ -1686,6 +1705,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1696,9 +1717,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Alcohol feels like a shortcut to bonding, but it's a trap.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"Professionalism builds trust, not whiskey.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 myths resolved`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

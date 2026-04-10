@@ -1418,11 +1418,25 @@ let qAns={}, qSubmitted=false, qPassed=false;
    INIT
 ════════════════════════════════════ */
 function init(){
-  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
-  // Register accountability gate
+  buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz();
+  // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Which of the 10 Commandments do you struggle with most as an AE? Describe a specific situation where you broke it and what it cost you.' : 'Which of the 10 Commandments do you struggle with most as an SDR? Describe a specific situation where you broke it and what it cost you.';
-  AESDR.gate(8, { type:'reflection', prompt: _gatePrompt, minChars: 100 });
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Be honest: when was the last time you skipped a daily huddle with your SDR or dismissed their qualification? What was the downstream cost to your pipeline?' : 'What\'s the one rule from the intro (drop ego, communicate like adults, stop micromanaging) that your AE breaks most often? Describe a specific instance and how it affected your work.', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Pick one commandment you know you break regularly. Describe the last time you broke it — what was the situation, and what did it cost your SDR\'s trust or your pipeline?' : 'Which commandment gives you the most standing to push back? Write one sentence you would actually say to your AE this week using the framework.', minChars: 50 });
+  // Homework gate
+  AESDR.gate(8, { type:'homework', prompt: _role === 'ae'
+    ? 'Which of the 10 Commandments do you struggle with most as an AE? Describe a specific situation where you broke it and what it cost you.'
+    : 'Which of the 10 Commandments do you struggle with most as an SDR? Describe a specific situation where you broke it and what it cost you.',
+    items: _role === 'ae' ? [
+      { label:'Publicly shout out your SDR\'s contribution in a team meeting this week — name the specific deal or meeting they sourced', minChars: 30 },
+      { label:'Identify one commandment you\'ve been breaking — write down one specific behavior change for this week', minChars: 30 },
+      { label:'Schedule or restart the daily 10-minute huddle with your SDR — show up every day this week, no cancellations', minChars: 30 }
+    ] : [
+      { label:'Share feedback with your AE using an impact statement: "When X happens, it affects Y"', minChars: 30 },
+      { label:'Propose one structural fix (daily huddle, shared doc, feedback format) — come with a calendar invite, not a complaint', minChars: 30 },
+      { label:'Reflect on one commandment you\'ve been breaking from your side — hold yourself accountable too', minChars: 30 }
+    ]
+  });
   render();
 }
 function go(n){
@@ -1684,6 +1698,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:2,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1694,9 +1710,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Sales isn't easy, and neither is collaboration.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"The rules keep the relationship productive and sane.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 violations resolved`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

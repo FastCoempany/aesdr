@@ -1440,8 +1440,24 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildArch(); buildImpact(); renderMU(); buildBB(); buildQuiz();
+  // Narrative gates
   var _role=document.documentElement.getAttribute('data-role')||'sdr';
-  AESDR.gate(9,{type:'application',prompt:_role==='ae'?'Pick one of the manager archetypes from this lesson. Write a script for how you\'d coach an SDR who reports to that archetype — what specific advice would you give them?':'Identify which manager archetype best matches your current manager. Write a specific plan for managing up — what will you do differently starting this week?',minChars:120,rubric:['I identified a specific manager archetype','I wrote concrete actions, not vague intentions','My plan addresses a real situation I face']});
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Which of your management behaviors do you think your team talks about behind closed doors? Name the specific pattern and one situation where it showed up this month.' : 'Which manager archetype from the intro best describes your current manager? Name one specific behavior you observed this week that confirms it.', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Look at the cost table: which management problem (overloaded meetings, micromanagement, no real solutions, blame culture) applies most to you? What has it cost your team this quarter?' : 'From the cost table, which management problem hits you hardest personally? Describe the last time it wasted your selling time or eroded your motivation.', minChars: 50 });
+  // Homework gate
+  AESDR.gate(9,{type:'homework',prompt:_role==='ae'?'Pick one of the manager archetypes from this lesson. Write a script for how you\'d coach an SDR who reports to that archetype — what specific advice would you give them?':'Identify which manager archetype best matches your current manager. Write a specific plan for managing up — what will you do differently starting this week?',
+    items: _role === 'ae' ? [
+      { label:'Identify your own manager archetype — which one do you default to under pressure? Write down two specific behaviors your team notices', minChars: 35 },
+      { label:'Ask one team member: "What\'s one thing I could do differently that would make your job easier?" Listen without defending', minChars: 35 },
+      { label:'Replace one status-check meeting with a structured alignment meeting focused on removing blockers', minChars: 35 },
+      { label:'Self-reflection: Write down the last three times you micromanaged, blame-shifted, or called an unnecessary meeting', minChars: 35 }
+    ] : [
+      { label:'Identify your AE manager\'s archetype — write down two specific behaviors that create friction for you', minChars: 35 },
+      { label:'Schedule a 15-minute weekly alignment meeting with your manager this week using the template', minChars: 35 },
+      { label:'Implement one boundary script from the library — pick the situation closest to your current friction point', minChars: 35 },
+      { label:'Self-reflection: Write down the last three times you felt frustrated and what specific action you could have taken instead', minChars: 35 }
+    ]
+  });
   render();
 }
 function go(n){
@@ -1661,6 +1677,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:4,8:4,9:5};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2) return archFlipped.size===10;
   if(cur===4) return impactCount===5;
   if(cur===6) return muDone;
@@ -1671,9 +1689,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"You can't navigate what you haven't named.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${archFlipped.size} / 10 revealed — flip every card`,
-    3:"Name the cost. Then address it.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${impactCount} / 5 matched`,
     5:"Managing up is an action, not an attitude.",
     6:muDone?'✓ All scenarios complete — continue below.':`Scenario ${muStage+1} of 3 — ${MU_SCENARIOS[muStage]?.name||''}`,

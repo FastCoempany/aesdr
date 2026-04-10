@@ -1423,11 +1423,24 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz();
+  // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var prompt = _role === 'ae'
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Which ego behavior from the intro (micromanaging, taking credit, skipping syncs) have you done in the last month? Be specific about the situation and what it cost your SDR.' : 'Describe a specific moment when your AE\'s ego made your job harder. What was the behavior, and how did you respond — or wish you had responded?', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Of the three framework steps (Diagnose, Ask for Feedback, Establish Expectations), which one scares you most? What would your SDR say if you actually asked them what to change?' : 'Have you ever used an impact statement instead of an accusation with your AE? Write one now for a real situation: "When [X happens], it affects [Y]."', minChars: 50 });
+  // Homework gate
+  AESDR.gate(8, { type:'homework', prompt: _role === 'ae'
     ? 'Honestly assess: which of the ego behaviors from this lesson do you recognize in yourself? Describe one specific situation where ego affected your AE/SDR dynamic, and what you\'d do differently now.'
-    : 'Describe a specific situation where an AE\'s ego (or team dynamics) negatively affected your work. What was the behavior, how did it impact you, and how did you (or could you) address it constructively?';
-  AESDR.gate(8, { type:'reflection', prompt: prompt, minChars: 120 });
+    : 'Describe a specific situation where an AE\'s ego (or team dynamics) negatively affected your work. What was the behavior, how did it impact you, and how did you (or could you) address it constructively?',
+    items: _role === 'ae' ? [
+      { label:'Do I trust my SDR\'s qualification, or am I reworking their leads before I even read the notes?', minChars: 30 },
+      { label:'Am I showing up to every scheduled SDR sync this week — not just the ones that feel convenient?', minChars: 30 },
+      { label:'When my SDR sources a great meeting, do I give them public credit — or just close the deal and move on?', minChars: 30 }
+    ] : [
+      { label:'Name the specific AE behavior causing friction — without defaulting to "they just don\'t care"', minChars: 30 },
+      { label:'Propose a solution (standup, shared doc, feedback format) instead of just expressing frustration', minChars: 30 },
+      { label:'Document your sourced meetings and lead quality so you have data, not just feelings', minChars: 30 }
+    ]
+  });
   render();
 }
 function go(n){
@@ -1689,6 +1702,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:2,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1699,9 +1714,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Blame doesn't fix anything—communication does.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"Identify specific behaviors without assigning blame.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 root causes identified`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

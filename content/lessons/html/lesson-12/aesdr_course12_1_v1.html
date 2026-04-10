@@ -1421,10 +1421,31 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
-  // Register accountability gate
+  // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Write honestly about how your sales career has affected one personal relationship. What changed? What would you do differently? What\'s one specific action you\'ll take this week?' : 'Write honestly about how your SDR role has affected one personal relationship or your personal life. What changed? What would you do differently? What\'s one specific action you\'ll take this week?';
-  AESDR.gate(8, { type:'reflection', prompt: _gatePrompt, minChars: 120 });
+  // Narrative gates
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'When was the last time your partner said something about your career that stung — not because it was wrong, but because it was true? What was it?' : 'Has anyone close to you ever said "you care more about your job than about us"? Were they wrong — or were they seeing something you refuse to admit?', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Is the income gap between you and your partner creating a silent power imbalance? Name one specific moment where you felt it — even if you never said anything.' : 'Does your partner understand why you are obsessed with hitting quota — or do they just see stress? What have you actually explained to them about your career trajectory?', minChars: 50 });
+  // Homework gate
+  var _hwAE = [
+    { task: 'Write down where you are currently excelling and where you feel stagnant', placeholder: 'Be honest about both...', minChars: 40 },
+    { task: 'Reflect: has your AE success created distance in your relationship? Where is the gap?', placeholder: 'Identify the gap: financial, intellectual, social, or emotional...', minChars: 40 },
+    { task: 'How can you support your partner\'s growth without being condescending?', placeholder: 'List specific actions...', minChars: 40 },
+    { task: 'What one step could your partner take this month to push beyond their comfort zone?', placeholder: 'Name the step...', minChars: 40 },
+    { task: 'Align on long-term visions: career, financial, and personal', placeholder: 'Describe your aligned vision...', minChars: 40 },
+    { task: 'Commit to ONE action step each partner will take this month to close the gap', placeholder: 'Name both action steps...', minChars: 40 },
+    { task: 'Schedule a real conversation — not after a stressful deal day — about where you both want to be in two years', placeholder: 'When will you have this conversation?', minChars: 40 }
+  ];
+  var _hwSDR = [
+    { task: 'Write down where you are currently excelling and where you feel stagnant', placeholder: 'Be honest about both...', minChars: 40 },
+    { task: 'Reflect: has the SDR grind created distance in your relationship? Where is the gap?', placeholder: 'Identify the gap: ambition, energy, social circles, or emotional availability...', minChars: 40 },
+    { task: 'How can you help your partner understand your career trajectory and why it matters?', placeholder: 'Describe your approach...', minChars: 40 },
+    { task: 'What one step could your partner take this month to invest in their own growth?', placeholder: 'Name the step...', minChars: 40 },
+    { task: 'Align on long-term visions: career, financial, and personal', placeholder: 'Describe your aligned vision...', minChars: 40 },
+    { task: 'Commit to ONE action step each partner will take this month to close the gap', placeholder: 'Name both action steps...', minChars: 40 },
+    { task: 'Schedule a real conversation — not after a brutal call block — about where you both want to be in two years', placeholder: 'When will you have this conversation?', minChars: 40 }
+  ];
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? _hwAE : _hwSDR });
   render();
 }
 function go(n){
@@ -1686,6 +1707,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1696,9 +1719,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"A strong relationship requires alignment in growth.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"Money isn't just about numbers—it's about freedom.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 mismatches resolved`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

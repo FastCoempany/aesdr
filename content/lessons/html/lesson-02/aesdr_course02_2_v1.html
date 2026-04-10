@@ -1415,7 +1415,24 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz();
-  AESDR.gate(8, { type:'evidence', prompt:'Take a photo or describe your current home office setup in detail: desk, chair, monitor(s), lighting, and one thing you know needs upgrading. Be honest about what\'s working and what isn\'t.', minChars: 100 });
+  // Narrative gates
+  var _role = document.documentElement.getAttribute('data-role') || 'sdr';
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Describe your current home office setup in one honest sentence. What\'s the weakest link — and when did it last cost you on a demo or client call?' : 'Describe your current home office setup in one honest sentence. What\'s the weakest link — and when did it last drain your energy during a dial block?', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'From the blueprint (furniture, tech, health): which category is your biggest gap right now? What specific upgrade would improve your demo delivery this week?' : 'From the blueprint (furniture, tech, health): which category is your biggest gap right now? What specific upgrade would help you sustain energy through afternoon dials?', minChars: 50 });
+  // Homework gate
+  AESDR.gate(8, { type:'homework', prompt:'Take a photo or describe your current home office setup in detail: desk, chair, monitor(s), lighting, and one thing you know needs upgrading. Be honest about what\'s working and what isn\'t.',
+    items: _role === 'ae' ? [
+      { label:'Demo readiness: Can you share your screen, run your CRM, and reference notes simultaneously without fumbling?', minChars: 30 },
+      { label:'Setup gap: What\'s missing that would make back-to-back discovery and demo calls less draining?', minChars: 30 },
+      { label:'Boundary check: Do you have a defined shutdown process, or are you checking pipeline at 9 PM?', minChars: 30 },
+      { label:'Action: Spend 2 hours this week upgrading one part of your home office', minChars: 30 }
+    ] : [
+      { label:'Outbound readiness: Can you see your dialer, CRM, and research simultaneously without switching tabs mid-call?', minChars: 30 },
+      { label:'Setup gap: What\'s missing that would help maintain energy through a full afternoon dial block?', minChars: 30 },
+      { label:'Boundary check: Do you have a defined shutdown process, or does your laptop stay open past 7 PM?', minChars: 30 },
+      { label:'Action: Spend 2 hours this week upgrading one part of your home office', minChars: 30 }
+    ]
+  });
   render();
 }
 function go(n){
@@ -1677,6 +1694,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1687,9 +1706,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"You cannot outwork a bad environment.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"The goal is high energy and sharp focus.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 root causes identified`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

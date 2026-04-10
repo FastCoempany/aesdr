@@ -1422,10 +1422,29 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz(); 
-  // Register accountability gate
+  // Register accountability gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var _gatePrompt = _role === 'ae' ? 'Write your go-to response when offered a drink at a client dinner or work event. Make it confident, natural, and conversation-continuing. Practice it out loud.' : 'Write your go-to response when offered a drink at a team event or company outing. Make it confident, natural, and conversation-continuing. Practice it out loud.';
-  AESDR.gate(8, { type:'reflection', prompt: _gatePrompt, minChars: 60 });
+  // Narrative gates
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Name one deal or client relationship that was actually damaged — even subtly — because alcohol was involved. What happened the morning after?' : 'Think about your last team happy hour. Did the drinking make you sharper or slower the next morning? How many dials did it cost you?', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'When was the last time you showed up to a demo or client call at less than 100% because of the night before? What did that cost you in pipeline or credibility?' : 'When was the last time a hangover wrecked your call block? How many meetings did you miss booking because you were running at 60% energy?', minChars: 50 });
+  // Homework gate
+  var _hwAE = [
+    { task: 'Write down scenarios where you feel most pressured to drink (client dinners, celebrations, SKO events)', placeholder: 'List your pressure scenarios...', minChars: 40 },
+    { task: 'For each scenario, note whether drinking actually helped close a deal or just felt expected', placeholder: 'Be honest about each one...', minChars: 40 },
+    { task: 'Come up with a confident, simple line for turning down alcohol', placeholder: 'Write your go-to response...', minChars: 40 },
+    { task: 'Practice delivering it without apologizing', placeholder: 'Describe how you practiced...', minChars: 40 },
+    { task: 'Plan 1-2 client meetings or team activities that don\'t involve alcohol', placeholder: 'Describe your alcohol-free alternatives...', minChars: 40 },
+    { task: 'For your next client dinner, decide your drink limit before you arrive and commit', placeholder: 'State your limit and commitment...', minChars: 40 }
+  ];
+  var _hwSDR = [
+    { task: 'Write down scenarios where you feel most pressured to drink (team happy hours, post-blitz celebrations, pod outings)', placeholder: 'List your pressure scenarios...', minChars: 40 },
+    { task: 'For each scenario, note whether drinking helped your performance or just felt like the default', placeholder: 'Be honest about each one...', minChars: 40 },
+    { task: 'Come up with a confident, simple line for turning down alcohol', placeholder: 'Write your go-to response...', minChars: 40 },
+    { task: 'Practice delivering it without apologizing', placeholder: 'Describe how you practiced...', minChars: 40 },
+    { task: 'Suggest a team bonding activity that doesn\'t revolve around drinking', placeholder: 'Describe your alcohol-free idea...', minChars: 40 },
+    { task: 'Next time the team celebrates a win, suggest a non-alcohol option', placeholder: 'What will you suggest?', minChars: 40 }
+  ];
+  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? _hwAE : _hwSDR });
   render();
 }
 function go(n){
@@ -1687,6 +1706,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1697,9 +1718,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Authentic relationships don't need alcohol.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"Prioritize health and energy over short-term wins.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 scenarios resolved`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

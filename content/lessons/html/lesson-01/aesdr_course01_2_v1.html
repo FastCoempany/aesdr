@@ -1516,11 +1516,24 @@ function init(){
   buildAudit();
   buildQuiz();
 
-  // Register reflection gate on homework screen
-  var gatePrompt = _role === 'ae'
+  // Narrative gates
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Think about your current SDR. Do they see you as a partner or a taskmaster? Name one specific behavior of yours that signals which one — and be honest about it.' : 'Think about your current AE. Is the relationship transactional or a real partnership? Name one specific interaction that proves it.', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Which of the three principles (Meet Them Where They Are, Be Real, Give Acknowledgment) do you fail at most? Describe one specific moment you dropped the ball.' : 'Which of the three principles (Show Initiative, Ask Hard Questions, Acknowledge Their Reality) do you avoid most? Describe the last time you chose silence over action.', minChars: 50 });
+
+  // Register homework gate
+  AESDR.gate(8, { type:'homework', prompt: _role === 'ae'
     ? 'Describe one specific thing you will change about how you show up for your SDR this week. Be concrete — name the behavior, the situation, and what you\'ll do differently.'
-    : 'Describe one specific thing you will do this week to build a stronger partnership with your AE. Be concrete — name the action, when you\'ll do it, and what you expect to learn.';
-  AESDR.gate(8, { type:'reflection', prompt: gatePrompt, minChars: 100 });
+    : 'Describe one specific thing you will do this week to build a stronger partnership with your AE. Be concrete — name the action, when you\'ll do it, and what you expect to learn.',
+    items: _role === 'ae' ? [
+      { label:'Think of a time you made an SDR feel supported — write down why it mattered and bring it to your next 1:1', minChars: 30 },
+      { label:'Identify one challenge you\'ve been sitting on — go to your SDR and brainstorm a solution together', minChars: 30 },
+      { label:'Track acknowledgment for one week — every time you recognize your SDR\'s effort, write it down', minChars: 30 }
+    ] : [
+      { label:'Prepare one call recording and one email for your next 1:1 — walk your AE through what went wrong before they tell you', minChars: 30 },
+      { label:'Ask your AE: what\'s the single biggest thing I should focus on improving this week?', minChars: 30 },
+      { label:'Acknowledge your AE publicly this week — name a specific thing they invested time in', minChars: 30 }
+    ]
+  });
 
   render();
 }
@@ -1854,6 +1867,8 @@ function retryQuiz(){
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
 
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2) return sortCount===8;
   if(cur===4) return convDone;
   if(cur===5) return ackSubmitted && ackPassed;
@@ -1868,9 +1883,9 @@ function canContinue(){
 
 function getHint(){
   const h={
-    1:"The dynamic you build in week one is very hard to undo in month six.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${sortCount} / 8 correctly sorted`,
-    3:"These aren't soft skills. They're performance infrastructure.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4: convDone ? "✓ All scenarios complete — continue below."
        : `Scenario ${convStage+1} of 3 — ${CONV[convStage]?.name||''}`,
     5: !ackSubmitted ? `${Object.keys(ackChosen).length} / 3 sections chosen`

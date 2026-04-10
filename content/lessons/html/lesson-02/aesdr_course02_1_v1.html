@@ -1431,12 +1431,22 @@ let qAns={}, qSubmitted=false, qPassed=false;
 ════════════════════════════════════ */
 function init(){
   buildSilo(); buildBlame(); buildSeq(); buildCls(); buildQuiz();
-  // Reflection gate
+  // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var prompt = _role === 'ae'
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Name one specific meeting this week where a silo cost your team a deal or a lead. What was the disconnect between Sales, Marketing, or Product?' : 'Describe the last time your outreach contradicted what Marketing was saying. What happened on the call, and how did the prospect react?', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'Which of the three playbook steps (Own the Sync, Build the Feedback Loop, Share Insights with Product) have you never done? What stopped you?' : 'Have you ever shared prospect objections or field intelligence with Marketing or Product? If not, what specific insight from this week would be worth sharing?', minChars: 50 });
+  // Homework gate
+  AESDR.gate(8, { type:'homework', prompt: _role === 'ae'
     ? 'Describe a specific silo in your current org — between Sales, Marketing, Product, or CS — and explain how it directly impacts your pipeline or deal flow. Be concrete: name the teams, the disconnect, and the cost.'
-    : 'Describe a specific silo you\'ve experienced between your SDR team and another department (Marketing, AEs, Product). How does it affect your daily outreach or prospecting? Name the disconnect and one thing you could do about it.';
-  AESDR.gate(8, { type:'reflection', prompt: prompt, minChars: 120 });
+    : 'Describe a specific silo you\'ve experienced between your SDR team and another department (Marketing, AEs, Product). How does it affect your daily outreach or prospecting? Name the disconnect and one thing you could do about it.',
+    items: _role === 'ae' ? [
+      { label:'Schedule a Sales-Marketing Sync for this week — bring your own field data even if Marketing won\'t come', minChars: 30 },
+      { label:'Begin your Customer Insights Report from the past 30 days — find the top 5 objections', minChars: 30 }
+    ] : [
+      { label:'Track 5 objections or prospect trends from your calls this week — tag them with evidence, not impressions', minChars: 30 },
+      { label:'Share your field insights at the Sales-Marketing Sync — or ask to be in that meeting', minChars: 30 }
+    ]
+  });
   render();
 }
 function go(n){
@@ -1701,6 +1711,8 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:2,6:3,7:3,8:4};
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;
   if(cur===4)return blameCount===4;
   if(cur===5)return Object.keys(seqDone).length===5;
@@ -1711,9 +1723,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1:"Silos don't announce themselves — they just quietly cost you the quarter.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${siloCount} / 6 correctly sorted`,
-    3:"Three steps. No permission required.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${blameCount} / 4 root causes identified`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

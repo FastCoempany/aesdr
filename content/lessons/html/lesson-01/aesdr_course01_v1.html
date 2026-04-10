@@ -1416,11 +1416,23 @@ function init(){
   renderCC();
   buildQuiz();
 
+  // Narrative gates
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Name one SDR who struggled on your team because structure was missing. What specifically fell apart — and what would you build differently now?' : 'Describe one week where you had no clear plan and your outreach suffered. What did you waste time on, and what structure would have saved you?', minChars: 50 });
+
   // Register accountability gate on homework screen
-  var gatePrompt = _role === 'ae'
+  AESDR.gate(7, { type:'homework', prompt: _role === 'ae'
     ? 'Paste your actual Day 1 onboarding checklist for your SDR — the one you use (or will build) in your real role. Include specific tasks, time blocks, and goals.'
-    : 'Paste your actual Day 1 orientation plan — the schedule, goals, and tasks you committed to (or will commit to) for your first week. Be specific.';
-  AESDR.gate(7, { type:'evidence', prompt: gatePrompt, minChars: 120, placeholder: 'Paste or write your real checklist here...' });
+    : 'Paste your actual Day 1 orientation plan — the schedule, goals, and tasks you committed to (or will commit to) for your first week. Be specific.',
+    items: _role === 'ae' ? [
+      { label:'Schedule 15 min daily for call review — pick one call, give one specific adjustment', minChars: 30 },
+      { label:'Run the Weekly Alignment Agenda this Friday with last week\'s numbers pulled beforehand', minChars: 30 },
+      { label:'Write the 3 most common product questions your SDR hears and review their answers', minChars: 30 }
+    ] : [
+      { label:'Write the 3 most common product questions you hear and practice answering in 3 min flat', minChars: 30 },
+      { label:'Log 10 cold calls per day this week — bring your top challenge to each feedback session', minChars: 30 },
+      { label:'Start your daily log: What did I learn? What confused me? What do I need to ask tomorrow?', minChars: 30 }
+    ]
+  });
 
   render();
 }
@@ -1701,6 +1713,7 @@ function retryQuiz(){
 const SEC={1:1,2:1,3:1,4:2,5:3,6:3,7:4};
 
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
   if(cur===2) return clDone.size===5;
   if(cur===3) return tlOpen.size===5;
   if(cur===4) return Object.keys(schedDone).length===5;
@@ -1716,7 +1729,7 @@ function canContinue(){
 function getHint(){
   var gateHint = AESDR.gateHint(cur);
   const h={
-    1:"The absence of structure is always a choice — and it always costs something.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${clDone.size} / 5 items completed`,
     3:`${tlOpen.size} / 5 days revealed`,
     4:`${Object.keys(schedDone).length} / 5 correctly placed`,

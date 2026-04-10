@@ -1414,16 +1414,25 @@ function init(){
   buildEmail();
   buildQuiz();
 
-  // Register application gate on homework screen
+  // Narrative gates
   var _role = document.documentElement.getAttribute('data-role') || 'sdr';
-  var gatePrompt = _role === 'ae'
+  AESDR.gate(1, { type:'narrative', prompt: _role === 'ae' ? 'Think about the last SDR call you heard that made you cringe. What was the specific coaching failure — lack of time, one-size-fits-all, or fear? What did it cost you?' : 'Describe the last time you got feedback that was completely generic and unhelpful. What did they say, and what would actually useful coaching have looked like?', minChars: 50 });
+  AESDR.gate(3, { type:'narrative', prompt: _role === 'ae' ? 'How many minutes per week do you currently spend coaching your SDR — honestly? What specific area (calls, emails, objection handling) are you neglecting most?' : 'When was the last time you self-evaluated a call before your AE gave feedback? What did you miss that you should have caught yourself?', minChars: 50 });
+
+  // Register homework gate
+  AESDR.gate(8, { type:'homework', prompt: _role === 'ae'
     ? 'Write specific, written feedback for a real or simulated SDR call. Include: what the opening did well, one thing to change about the engage, and whether the close was strong enough.'
-    : 'Self-evaluate a recent call or practice call. Write: what your opening did well, where your engage lost momentum, and whether your close was specific enough. Be honest.';
-  AESDR.gate(8, { type:'application', prompt: gatePrompt, minChars: 100, rubric: [
-    'I addressed the call opening specifically',
-    'I identified one concrete improvement for the engage step',
-    'I evaluated the close with a specific recommendation'
-  ]});
+    : 'Self-evaluate a recent call or practice call. Write: what your opening did well, where your engage lost momentum, and whether your close was specific enough. Be honest.',
+    items: _role === 'ae' ? [
+      { label:'Schedule 1 hour for coaching this week — review 2 SDR calls and deliver written feedback on each', minChars: 40 },
+      { label:'Ask your SDR what area they need the most coaching on right now — then actually address it', minChars: 30 },
+      { label:'Run the 60-minute coaching framework: call review, email feedback, role-play, Q&A', minChars: 40 }
+    ] : [
+      { label:'Bring 1 call recording and 1 email sequence to your next 1:1 — walk your AE through what went wrong first', minChars: 40 },
+      { label:'Self-evaluate in writing before every feedback session: what went well, where do you need help', minChars: 30 },
+      { label:'Prepare for the 60-minute coaching framework: bring a call, an email draft, and one specific question', minChars: 40 }
+    ]
+  });
 
   render();
 }
@@ -1730,6 +1739,8 @@ function retryQuiz(){
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
 
 function canContinue(){
+  if(cur===1)return AESDR.gateReady(1);
+  if(cur===3)return AESDR.gateReady(3);
   if(cur===2) return fmCount===6;
   if(cur===4) return Object.keys(planDone).length===4;
   if(cur===5) return txCount===4; // 4 taggable AE lines
@@ -1744,9 +1755,9 @@ function canContinue(){
 
 function getHint(){
   const h={
-    1:"Every bad meeting you clean up costs you three times more than the coaching would have.",
+    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
     2:`${fmCount} / 6 correctly diagnosed`,
-    3:"60 minutes a week. That's the whole investment.",
+    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${Object.keys(planDone).length} / 4 correctly placed`,
     5:`${txCount} / 4 correctly tagged`,
     6:!emailSubmitted?`${Object.keys(emailChosen).length} / 3 sections chosen`:emailPassed?'✓ Email repaired — continue below.':'Review the correct versions and try again.',
