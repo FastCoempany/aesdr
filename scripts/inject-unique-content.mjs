@@ -398,9 +398,12 @@ for (const dir of lessonDirs) {
       changes++;
     }
 
-    // ── 7f. CSS max-width removal (600-820px range) ──
+    // ── 7f. CSS max-width removal (all content areas) ──
     const before7f = html;
-    html = html.replace(/max-width:\s*(6\d\d|7\d\d|8[012]\d)px;\s*/g, '');
+    // Pass 1: max-width with trailing semicolon (mid-rule), skip POW popup box
+    html = html.replace(/max-width:\s*\d+px;\s*(?!animation:powBounce)/g, '');
+    // Pass 2: max-width as last property before } (no trailing semicolon)
+    html = html.replace(/;max-width:\s*\d+px(?=\})/g, '');
     if (html !== before7f) changes++;
 
     // ── 7g. Inject SIDEBAR_TEXTS array ──
