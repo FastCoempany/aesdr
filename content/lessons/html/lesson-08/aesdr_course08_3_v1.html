@@ -433,7 +433,7 @@
  *
  *  Usage in lesson JS:
  *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
- *    AESDR.gate(1, { type:'narrative', prompt:'...', minChars:120, attest:'I shared this with someone on the team because I know it\u0027s important to make my voice and my thoughts familiar around this place' });
+ *    AESDR.gate(1, { type:'narrative', prompt:'...', minChars:120, attest:'I shared this with someone on the team because my standards don’t lower just because no one is checking' });
  *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
  *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
  *
@@ -1092,16 +1092,16 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
 .lh-sub b{color:var(--black)}
 .lb{padding:24px 56px 0}
-.lp{font-family:var(--serif);font-size:19px;line-height:1.8;color:var(--black);max-width:820px;margin-bottom:14px}
-.kp{list-style:none;max-width:820px;margin:14px 0}
+.lp{font-family:var(--serif);font-size:19px;line-height:1.8;color:var(--black);margin-bottom:14px}
+.kp{list-style:none;margin:14px 0}
 .kp li{font-family:var(--serif);font-size:18px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px;align-items:flex-start}
 .kp li:first-child{border-top:1px solid var(--line)}
 .kp-n{font-family:var(--mono);font-size:9px;color:var(--mid);min-width:22px;padding-top:3px;flex-shrink:0}
-.lie{max-width:820px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
+.lie{background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
 .lie-tab{position:absolute;top:0;left:0;font-family:var(--cond);font-size:9px;letter-spacing:.24em;font-weight:800;text-transform:uppercase;padding:3px 10px;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;color:var(--black)}
 .lie-q{font-family:var(--serif);font-style:italic;font-size:18px;color:#fff;line-height:1.5;margin:12px 0 10px}
 .lie-a{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
-.data-table{width:100%;max-width:600px;border-collapse:collapse;margin:16px 0}
+.data-table{width:100%;border-collapse:collapse;margin:16px 0}
 .data-table th{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;background:var(--black);color:var(--white);padding:9px 14px;text-align:left}
 .data-table td{font-family:var(--serif);font-size:14px;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--black);line-height:1.6;vertical-align:top}
 .data-table tr:last-child td{border-bottom:none}
@@ -1109,7 +1109,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── 3-COLUMN SILO SORTER ── */
 .silo-wrap{padding:16px 56px 44px}
-.silo-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:600px;line-height:1.65;margin-bottom:16px}
+.silo-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:16px}
 .silo-pool-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--black)}
 .silo-pool-cards{display:flex;flex-direction:column;gap:7px;margin-bottom:20px;max-width:700px}
 .silo-card{padding:14px 16px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:13px;color:var(--black);line-height:1.55;cursor:pointer;transition:all .18s;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
@@ -1134,8 +1134,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── BLAME CHAIN BREAKER ── */
 .blame-wrap{padding:16px 56px 44px;max-width:740px}
-.blame-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:22px}
-.blame-chain{display:flex;align-items:center;gap:0;margin-bottom:28px;max-width:680px;overflow:hidden}
+.blame-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:22px}
+.blame-chain{display:flex;align-items:center;gap:0;margin-bottom:28px;overflow:hidden}
 .blame-node{flex:1;background:var(--black);padding:14px 16px;position:relative;text-align:center}
 .blame-node-name{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#fff}
 .blame-node-says{font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:rgba(255,255,255,0.35);margin-top:3px;font-style:italic}
@@ -1157,7 +1157,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── PLAYBOOK SEQUENCER ── */
 .seq-wrap{padding:16px 56px 44px;max-width:720px}
-.seq-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
+.seq-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px}
 .seq-pipeline{display:flex;flex-direction:column;gap:6px;margin-bottom:24px}
 .seq-slot{display:flex;align-items:center;gap:14px;min-height:56px}
 .seq-pos{font-family:var(--display);font-size:28px;color:var(--lite2);flex-shrink:0;width:28px;text-align:center;line-height:1;transition:color .3s}
@@ -1181,7 +1181,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── INSIGHTS CLASSIFIER ── */
 .cls-wrap{padding:16px 56px 44px;max-width:720px}
-.cls-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
+.cls-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px}
 .cls-buckets{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:24px}
 .cls-bucket{border:2px solid var(--line2);transition:border-color .2s}
 .cls-bucket.target{border-color:var(--theme-text);border-style:dashed;cursor:pointer}
@@ -1230,7 +1230,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 /* TOOLS */
 .tools-blk{padding:20px 56px 44px}
 .t-head{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--black);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--black)}
-.hw-list{list-style:none;max-width:820px;margin-top:8px}
+.hw-list{list-style:none;margin-top:8px}
 .hw-list li{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.65;padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
 .hw-list li:first-child{border-top:1px solid var(--line)}
 .hw-box{width:14px;height:14px;border:2px solid var(--black);flex-shrink:0;margin-top:4px}
@@ -1599,7 +1599,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
   </div>
 
   <div style="margin-top:32px;padding:16px 0;border-top:1px solid var(--line)">
-    <p style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">The hardest question in sales is whether you're the problem. What you write here requires a level of honesty most people avoid their entire career.</p>
+    <p id="sidebarMotto" style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">The hardest question in sales is whether you're the problem. What you write here requires a level of honesty most people avoid their entire career.</p>
   </div>
 </aside>
 
@@ -1713,6 +1713,14 @@ let qAns={}, qSubmitted=false, qPassed=false;
 /* ════════════════════════════════════
    INIT
 ════════════════════════════════════ */
+const SIDEBAR_TEXTS = [
+  "Are you the problem? Only honest people ask.",
+  "Am I the problem? That’s the first sign you’re not. But keep checking.",
+  "The mirror never lies. Your CRM might.",
+  "Self-awareness is a competitive advantage nobody teaches.",
+  "The hardest deal to close is the one with yourself."
+];
+
 function init(){
   // Register gates FIRST so they're always available for rendering
   // Register accountability gates
@@ -1742,10 +1750,10 @@ function init(){
     { task:'Build a weekly self-audit checklist with 5 specific behaviors from this lesson that separate irreplaceable AEs from replaceable ones. Write each behavior, how you will measure it, and your honest score for last week (1-5).', placeholder:'e.g., "1) Self-sourced outreach daily — measured by CRM log — last week: 1/5. 2) Gave SDR coaching feedback within 24hrs — measured by Slack timestamps — last week: 2/5. 3) Updated pipeline notes same day..."', minChars:100 }
   ] : [
     { task:'For 5 consecutive days starting tomorrow, hit 110% of your daily call target. Write your current target number, the 110% number, and the exact time blocks you will use each day to ensure you hit it.', placeholder:'e.g., "Current target: 40 calls/day. 110% = 44 calls. Time blocks: 9-11am (20 calls), 1-2:30pm (15 calls), 3:30-4:30pm (9 calls). No email before 11am. Starting Tuesday April 11."', minChars:100 },
-    { task:'After each of the 5 days, write one sentence: "Today I improved at ___." Write your Day 1 sentence now as a template, and describe where you will log all 5 sentences (doc, notebook, Slack DM to self).', placeholder:'e.g., "Day 1 template: \'Today I improved at staying on the phone through the 2pm slump — I made 8 calls between 2-3pm instead of my usual 3.\' Logging in a Google Doc titled \'Daily Improvement Log\' shared with my AE."', minChars:100 },
+    { task:'After each of the 5 days, write one sentence: "Today I improved at ___." Write your Day 1 sentence now as a template, and describe where you will log all 5 sentences (doc, notebook, Slack DM to self).', placeholder:'e.g., "Day 1 template: \'Today I improved at staying on the phone through the 2pm slump — I made 8 calls between 2-3pm instead of my usual 3.\' Logging in a Google Doc titled \'Daily Improvement Log\' shared with someone you trust."', minChars:100 },
     { task:'Write the exact date and time you will bring your 5 improvement sentences to your manager. Include the 3 things you will present: your numbers, your biggest improvement, and one specific question about your trajectory.', placeholder:'e.g., "Friday April 15 at 3pm 1-on-1. I will present: 1) my daily call/meeting numbers for the week, 2) my biggest improvement (e.g., call-to-meeting conversion went from 4% to 6%), 3) question: \'Based on this trajectory, what would you change about my approach?\'"', minChars:100 },
     { task:'Identify the #1 bad habit from this lesson\'s framework that applies to you. Write the habit, how many times you did it last week, the exact trigger that causes it, and the replacement behavior you will install starting tomorrow.', placeholder:'e.g., "Bad habit: checking Slack/email between every call. Did it ~25 times last week. Trigger: after any call that doesn\'t go well, I seek distraction. Replacement: after a bad call, I immediately dial the next number within 10 seconds. Starting tomorrow 9am."', minChars:100 },
-    { task:'Write the exact question you will ask your AE or manager: "What is one habit I should build to get promoted faster?" Include when you will ask (date, meeting), and write a 2-week action plan for whatever they answer — even before you hear it.', placeholder:'e.g., "Asking in my Thursday 1-on-1 April 16. Pre-committed action plan: whatever they say, I will practice it daily for 2 weeks, track it in my improvement log, and report back at our April 30 1-on-1 with data on whether it moved my numbers."', minChars:80 }
+    { task:'Write the exact question you will ask a peer or manager: "What is one habit I should build to get promoted faster?" Include when you will ask (date, meeting), and write a 2-week action plan for whatever they answer — even before you hear it.', placeholder:'e.g., "Asking in my Thursday 1-on-1 April 16. Pre-committed action plan: whatever they say, I will practice it daily for 2 weeks, track it in my improvement log, and report back at our April 30 1-on-1 with data on whether it moved my numbers."', minChars:80 }
   ] });
   // Restore saved gate state from localStorage
   AESDR.restoreState();
@@ -2079,6 +2087,8 @@ function render(){
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';
   document.getElementById('btnNext').disabled=!canContinue();
+  var sbp=document.getElementById('sidebarMotto');
+  if(sbp&&typeof SIDEBAR_TEXTS!=='undefined'){var si=SEC[cur]||0;sbp.textContent=SIDEBAR_TEXTS[si]||SIDEBAR_TEXTS[0];}
 }
 
 // Zone click delegation

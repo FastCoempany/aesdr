@@ -433,7 +433,7 @@
  *
  *  Usage in lesson JS:
  *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
- *    AESDR.gate(1, { type:'narrative', prompt:'...', minChars:120, attest:'I shared this with someone on the team because I know it\u0027s important to make my voice and my thoughts familiar around this place' });
+ *    AESDR.gate(1, { type:'narrative', prompt:'...', minChars:120, attest:'I shared this with someone on the team because small actions compound into big results' });
  *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
  *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
  *
@@ -1084,16 +1084,16 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
 .lh-sub b{color:var(--black)}
 .lb{padding:24px 56px 0}
-.lp{font-family:var(--serif);font-size:19px;line-height:1.8;color:var(--black);max-width:820px;margin-bottom:14px}
-.kp{list-style:none;max-width:820px;margin:14px 0}
+.lp{font-family:var(--serif);font-size:19px;line-height:1.8;color:var(--black);margin-bottom:14px}
+.kp{list-style:none;margin:14px 0}
 .kp li{font-family:var(--serif);font-size:18px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px;align-items:flex-start}
 .kp li:first-child{border-top:1px solid var(--line)}
 .kp-n{font-family:var(--mono);font-size:9px;color:var(--mid);min-width:22px;padding-top:3px;flex-shrink:0}
-.lie{max-width:820px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
+.lie{background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
 .lie-tab{position:absolute;top:0;left:0;font-family:var(--cond);font-size:9px;letter-spacing:.24em;font-weight:800;text-transform:uppercase;padding:3px 10px;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;color:var(--black)}
 .lie-q{font-family:var(--serif);font-style:italic;font-size:18px;color:#fff;line-height:1.5;margin:12px 0 10px}
 .lie-a{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
-.data-table{width:100%;max-width:600px;border-collapse:collapse;margin:16px 0}
+.data-table{width:100%;border-collapse:collapse;margin:16px 0}
 .data-table th{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;background:var(--black);color:var(--white);padding:9px 14px;text-align:left}
 .data-table td{font-family:var(--serif);font-size:14px;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--black);line-height:1.6;vertical-align:top}
 .data-table tr:last-child td{border-bottom:none}
@@ -1119,7 +1119,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── IMPACT COST MATCHER ── */
 .impact-wrap{padding:16px 56px 44px;max-width:760px}
-.impact-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
+.impact-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px}
 .impact-arena{display:grid;grid-template-columns:1fr 1fr;gap:0 40px}
 .impact-col-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);padding-bottom:10px;border-bottom:2px solid var(--black);margin-bottom:10px}
 .impact-items{display:flex;flex-direction:column;gap:7px}
@@ -1164,14 +1164,14 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .mu-fb.bad{color:var(--coral)}
 .mu-adv{margin:14px 56px 0;display:none}
 .mu-adv.show{display:block}
-.mu-done-box{margin:22px 56px 0;max-width:820px;background:var(--em-bright);padding:20px 22px}
+.mu-done-box{margin:22px 56px 0;background:var(--em-bright);padding:20px 22px}
 .mu-done-h{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--black);margin-bottom:7px}
 .mu-done-p{font-family:var(--serif);font-size:14px;color:rgba(0,0,0,0.55);line-height:1.65;font-style:normal}
 
 /* ── BOUNDARY BUILDER ── */
 .bb-wrap{padding:16px 56px 44px;max-width:700px}
-.bb-instr{font-family:'Inter',-apple-system,sans-serif;font-style:normal;font-size:14px;font-weight:400;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
-.bb-preview{background:var(--black);padding:0;max-width:820px;margin-bottom:24px}
+.bb-instr{font-family:'Inter',-apple-system,sans-serif;font-style:normal;font-size:14px;font-weight:400;color:var(--mid);line-height:1.65;margin-bottom:20px}
+.bb-preview{background:var(--black);padding:0;margin-bottom:24px}
 .bb-prev-tag{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,0.28);padding:14px 18px 0}
 .bb-prev-body{padding:10px 18px 16px;font-family:var(--serif);font-size:15px;color:#fff;line-height:1.75;min-height:52px}
 .bb-slot{background:rgba(255,255,255,0.07);border-bottom:1px dashed rgba(255,255,255,0.2);padding:1px 6px;font-style:italic;color:rgba(255,255,255,0.3);display:inline}
@@ -1186,11 +1186,11 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .bb-choice.wrong-reveal{border-color:var(--coral);background:var(--cor-lt);cursor:default}
 .bb-choice.locked{cursor:default}
 .bb-submit{margin-top:18px}
-.bb-result{max-width:820px;background:var(--em-bright);padding:16px 20px;margin-top:14px;display:none}
+.bb-result{background:var(--em-bright);padding:16px 20px;margin-top:14px;display:none}
 .bb-result.show{display:block}
 .bb-result-h{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
 .bb-result-p{font-family:'Inter',-apple-system,sans-serif;font-size:14px;font-weight:400;color:rgba(0,0,0,0.55);line-height:1.65;font-style:normal}
-.bb-fail{max-width:820px;margin-top:12px;padding:12px 16px;border-left:4px solid var(--coral);background:var(--cor-lt);display:none}
+.bb-fail{margin-top:12px;padding:12px 16px;border-left:4px solid var(--coral);background:var(--cor-lt);display:none}
 .bb-fail.show{display:block}
 
 /* QUIZ */
@@ -1212,7 +1212,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 /* TOOLS */
 .tools-blk{padding:20px 56px 44px}
 .t-head{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--black);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--black)}
-.hw-list{list-style:none;max-width:820px;margin-top:8px}
+.hw-list{list-style:none;margin-top:8px}
 .hw-list li{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.65;padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
 .hw-list li:first-child{border-top:1px solid var(--line)}
 .hw-box{width:14px;height:14px;border:2px solid var(--black);flex-shrink:0;margin-top:4px}
@@ -1554,7 +1554,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
   </div>
 
   <div style="margin-top:32px;padding:16px 0;border-top:1px solid var(--line)">
-    <p style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">Managing up isn't optional — it's a survival skill. What you write here determines whether you control your career or let someone else control it for you.</p>
+    <p id="sidebarMotto" style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">Managing up isn't optional — it's a survival skill. What you write here determines whether you control your career or let someone else control it for you.</p>
   </div>
 </aside>
 
@@ -1702,6 +1702,14 @@ let qAns={}, qSubmitted=false, qPassed=false;
 /* ════════════════════════════════════
    INIT
 ════════════════════════════════════ */
+const SIDEBAR_TEXTS = [
+  "Managing up isn’t optional. It’s a survival skill.",
+  "The only person you can control is yourself. Start there.",
+  "My philosophy is basically this: know what you know. And know what you don’t.",
+  "Your manager has a manager. Act accordingly.",
+  "Nobody advocates for you louder than you. Nobody."
+];
+
 function init(){
   // Register gates FIRST so they're always available for rendering
   // Narrative gates
@@ -1726,7 +1734,7 @@ function init(){
       { task:'Write down the last three specific times you micromanaged, blame-shifted, or called an unnecessary meeting. For each, include the date, what you did, who was affected, and what you should have done instead according to the Self-Assessment Framework.', placeholder:'1) [Date]: I [micromanaged/blamed/met unnecessarily] when... Affected: [who]. Should have...', minChars: 120 },
       { task:'Answer the lesson\'s accountability question honestly: "If your SDRs could choose any AE manager, would they choose you?" Write your answer and your evidence. Then write one specific, measurable commitment for the next 30 days that would change that answer. What will you do, how often, and how will you know it\'s working?', placeholder:'Honest answer: [yes/no]. Evidence: [specific reasons]. My 30-day commitment: I will [action] every [frequency]...', minChars: 100 }
     ] : [
-      { task:'Name your AE manager\'s archetype from the 10 in this lesson (Dashboard Addict, Monday-Morning Quarterback, Blame Deflector, Meeting Hoarder, etc.). Write down two specific behaviors that create friction for you. For each, describe the last time it happened — the date, what they did, and how it directly impacted your work.', placeholder:'My manager\'s archetype: [name]. Behavior 1: On [date], they [specific action], which caused...', minChars: 120 },
+      { task:'Name someone you trust manager\'s archetype from the 10 in this lesson (Dashboard Addict, Monday-Morning Quarterback, Blame Deflector, Meeting Hoarder, etc.). Write down two specific behaviors that create friction for you. For each, describe the last time it happened — the date, what they did, and how it directly impacted your work.', placeholder:'My manager\'s archetype: [name]. Behavior 1: On [date], they [specific action], which caused...', minChars: 120 },
       { task:'Schedule a 15-minute weekly alignment meeting with your manager using the template from this lesson. Write the exact day and time you\'ll propose, the four agenda items (KPI Check-In, Blockers, Solution Ask, One Priority), and the exact message you\'ll send to propose it. Send the calendar invite this week.', placeholder:'Proposed: [day] at [time]. Message: "Hi [manager name], I\'d like to propose..." Agenda: 1)...', minChars: 100 },
       { task:'Pick one boundary script from the library that matches your most common friction point (meeting without agenda, after-hours request, unrealistic deadline, or constant check-ins). Write the situation you\'ll use it in this week, the exact words from the script you\'ll say, and when you expect the opportunity to arise.', placeholder:'Friction: [situation]. Script I\'ll use: "..." Expected opportunity: [day/context]...', minChars: 100 },
       { task:'Write down the last three times you felt frustrated with your manager and did nothing about it. For each, describe what happened, what you felt, and — using the Managing-Up Framework — what specific action you could have taken instead. Be honest about your own passivity.', placeholder:'1) [Date]: Manager [did X]. I felt [Y]. I should have [specific action from framework]...', minChars: 120 },
@@ -2022,6 +2030,8 @@ function render(){
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';
   document.getElementById('btnNext').disabled=!canContinue();
+  var sbp=document.getElementById('sidebarMotto');
+  if(sbp&&typeof SIDEBAR_TEXTS!=='undefined'){var si=SEC[cur]||0;sbp.textContent=SIDEBAR_TEXTS[si]||SIDEBAR_TEXTS[0];}
   if(document.getElementById('gate'+cur)) AESDR.renderGate(cur,'gate'+cur);
 }
 

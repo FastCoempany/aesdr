@@ -1083,14 +1083,14 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
 .lh-sub b{color:var(--black)}
 .lb{padding:24px 56px 0}
-.lp{font-family:var(--serif);font-size:19px;line-height:1.8;color:var(--black);max-width:820px;margin-bottom:14px}
-.kp{list-style:none;max-width:820px;margin:14px 0}
+.lp{font-family:var(--serif);font-size:19px;line-height:1.8;color:var(--black);margin-bottom:14px}
+.kp{list-style:none;margin:14px 0}
 .kp li{font-family:var(--serif);font-size:18px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px;align-items:flex-start}
 .kp li:first-child{border-top:1px solid var(--line)}
 .kp-n{font-family:var(--mono);font-size:9px;color:var(--mid);min-width:22px;padding-top:3px;flex-shrink:0}
 
 /* ── LIE BOX (reusable) ── */
-.lie{max-width:820px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px}
+.lie{background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px}
 .lie-tab{position:absolute;top:0;left:0;font-family:var(--cond);font-size:9px;letter-spacing:.24em;font-weight:800;text-transform:uppercase;padding:3px 10px;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;color:var(--black)}
 .lie-q{font-family:var(--serif);font-style:italic;font-size:18px;color:#fff;line-height:1.5;margin:12px 0 10px}
 .lie-a{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
@@ -1144,7 +1144,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── SCHEDULE BUILDER ── */
 .sched-wrap{padding:16px 56px 44px}
-.sched-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
+.sched-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px}
 .sched-arena{display:grid;grid-template-columns:1fr 1fr;gap:0 44px;max-width:700px}
 .sched-col-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);padding-bottom:10px;border-bottom:2px solid var(--black);margin-bottom:10px}
 .sched-slot{border:1px dashed var(--line2);padding:13px 14px;margin-bottom:8px;min-height:50px;display:flex;align-items:center;gap:12px;transition:all .18s}
@@ -1175,22 +1175,32 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .cc-lbls{display:flex;margin-top:6px}
 .cc-lbl{flex:1;font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);transition:color .2s}
 .cc-lbl.cur{color:var(--black)}
-.cc-ctx{margin:20px 56px 0;max-width:620px;background:var(--black);padding:18px 22px}
+.cc-ctx{margin:20px 56px 0;background:var(--black);padding:18px 22px}
 .cc-ctx-tag{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);margin-bottom:8px}
 .cc-ctx-text{font-family:var(--serif);font-style:normal;font-size:15px;color:rgba(255,255,255,0.72);line-height:1.65}
-.cc-opts{display:flex;flex-direction:column;gap:8px;padding:16px 56px 0;max-width:660px}
+.cc-opts{display:flex;flex-direction:column;gap:8px;padding:16px 56px 0}
 .cc-opt{padding:15px 20px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:14px;color:var(--black);text-align:left;cursor:pointer;transition:all .18s;line-height:1.55;position:relative}
 .cc-opt:hover:not(.locked){border-color:var(--black);background:var(--lite)}
 .cc-opt.correct{border-color:var(--green);background:var(--grn-lt);cursor:default}
 .cc-opt.wrong{border-color:var(--coral);background:var(--cor-lt);cursor:default}
 .cc-opt.locked{cursor:default}
-.cc-fb{font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--mid);margin-top:8px;padding:0 56px;max-width:660px;line-height:1.65;display:none}
+.cc-fb{font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--mid);margin-top:8px;padding:0 56px;line-height:1.65;display:none}
 .cc-fb.show{display:block}
 .cc-fb.good{color:var(--green)}
 .cc-fb.bad{color:var(--coral)}
 .cc-advance{margin:16px 56px 0;display:none}
 .cc-advance.show{display:block}
-.cc-complete-box{margin:20px 56px 0;max-width:820px;background:var(--acid);padding:22px 22px 18px}
+
+/* ── POW! Comic Popup ── */
+.cc-pow-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.75);animation:powFadeIn .2s ease-out}
+.cc-pow-box{background:#fff;border:6px solid #000;padding:36px 44px;text-align:center;transform:rotate(-2deg);box-shadow:8px 8px 0 rgba(0,0,0,0.8);max-width:420px;animation:powBounce .35s cubic-bezier(.175,.885,.32,1.275)}
+.cc-pow-word{font-family:var(--display);font-size:clamp(56px,8vw,80px);color:var(--coral);text-transform:uppercase;letter-spacing:-.02em;text-shadow:3px 3px 0 #000;line-height:1}
+.cc-pow-msg{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.6;margin:16px 0 24px;font-style:italic}
+.cc-pow-btn{font-family:var(--cond);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:12px 28px;border:2px solid var(--black);background:var(--black);color:#fff;cursor:pointer;transition:all .15s}
+.cc-pow-btn:hover{background:var(--coral);border-color:var(--coral)}
+@keyframes powFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes powBounce{from{transform:scale(0) rotate(15deg)}to{transform:scale(1) rotate(-2deg)}}
+.cc-complete-box{margin:20px 56px 0;background:var(--acid);padding:22px 22px 18px}
 .cc-complete-h{font-family:var(--cond);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--black);margin-bottom:8px}
 .cc-complete-p{font-family:var(--serif);font-size:14px;color:var(--mid);line-height:1.65;font-style:normal}
 
@@ -1213,12 +1223,12 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 /* ── TOOLS ── */
 .tools-blk{padding:20px 56px 44px}
 .t-head{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--black);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--black)}
-.data-table{width:100%;max-width:600px;border-collapse:collapse;margin:0 0 30px}
+.data-table{width:100%;border-collapse:collapse;margin:0 0 30px}
 .data-table th{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;background:var(--black);color:var(--white);padding:9px 14px;text-align:left}
 .data-table td{font-family:var(--serif);font-size:14px;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--black);line-height:1.6;vertical-align:top}
 .data-table tr:last-child td{border-bottom:none}
 .data-table tr:nth-child(even) td{background:var(--lite)}
-.hw-list{list-style:none;max-width:820px;margin-top:8px}
+.hw-list{list-style:none;margin-top:8px}
 .hw-list li{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.65;padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
 .hw-list li:first-child{border-top:1px solid var(--line)}
 .hw-box{width:14px;height:14px;border:2px solid var(--black);flex-shrink:0;margin-top:4px}
@@ -1425,7 +1435,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <li class="ae-only"><div class="hw-box"></div>Schedule 15 minutes daily for call review. Pick one call, give one specific, actionable adjustment. Not five. One.</li>
           <li class="ae-only"><div class="hw-box"></div>Run the Weekly Alignment Agenda this Friday. Pull last week's numbers before the meeting — not during it.</li>
           <li class="ae-only"><div class="hw-box"></div>Write out the 3 most common product questions your SDR hears. Review their answers — are they sharp enough to earn a meeting?</li>
-          <li class="sdr-only"><div class="hw-box"></div>Write out the 3 most common questions you hear about the product. Practice answering them in 3 minutes flat with your AE today.</li>
+          <li class="sdr-only"><div class="hw-box"></div>Write out the 3 most common questions you hear about the product. Practice answering them in 3 minutes flat with a partner today.</li>
           <li class="sdr-only"><div class="hw-box"></div>Log 10 cold calls per day this week. Bring your top challenge — one specific thing — to each feedback session.</li>
           <li class="sdr-only"><div class="hw-box"></div>Start your daily log today: What did I learn? What confused me? What do I need to ask tomorrow?</li>
         </ul>
@@ -1481,7 +1491,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
     <div class="sb-name">Tools & Homework</div>
   </div>
   <div style="margin-top:32px;padding:16px 0;border-top:1px solid var(--line)">
-    <p style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">Structure is the difference between surviving and flaming out. Every answer you write here is a promise to the person who hired you that you take Day 1 seriously.</p>
+    <p id="sidebarMotto" style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">Structure is the difference between surviving and flaming out. Every answer you write here is a promise to the person who hired you that you take Day 1 seriously.</p>
   </div>
 </aside>
 
@@ -1526,50 +1536,50 @@ const DAYS_AE = [
     day:"Day 1", title:"Set the Foundation",
     text:"Day 1 is about clarity, not output. The SDR should leave knowing exactly what\u2019s expected, where to find everything, and what tomorrow looks like.",
     tasks:[
-      {task:"Sit down with your SDR and define their daily responsibilities, focus areas, and what success looks like this week. Have them repeat it back to you in their own words.", minChars:70, attest:"I walked my SDR through this because I don\u2019t just write shit down that I don\u2019t care about"},
-      {task:"Walk your SDR through one live or recorded demo. Identify at least one key question prospects ask, and discuss with your SDR why it matters for cold calls.", minChars:70, attest:"I discussed this with my SDR because what I do when no one is watching makes all the difference"},
-      {task:"Walk through every tool hands-on with your SDR: CRM, outreach platform, call logging. Have them log a test call while you watch \u2014 don\u2019t just tell them how.", minChars:60, attest:"I did this with my SDR because accountability isn\u2019t a buzzword \u2014 it\u2019s how I operate"},
-      {task:"Set achievable Day 1 goals together with your SDR. Ask them what they think is realistic before you assign numbers, then align on targets.", minChars:60, attest:"I talked to my SDR about this because I know my growth depends on making my thoughts known"}
+      {task:"Sit down with your SDR and define their daily responsibilities, focus areas, and what success looks like this week. Have them repeat it back to you in their own words.", minChars:70, attest:"I walked my SDR through this because growth doesn\u2019t happen by accident"},
+      {task:"Walk your SDR through one live or recorded demo. Identify at least one key question prospects ask, and discuss with your SDR why it matters for cold calls.", minChars:70, attest:"I discussed this with my SDR because shortcuts only cheat the person in the mirror"},
+      {task:"Walk through every tool hands-on with your SDR: CRM, outreach platform, call logging. Have them log a test call while you watch \u2014 don\u2019t just tell them how.", minChars:60, attest:"I did this with my SDR because real professionals do the uncomfortable work first"},
+      {task:"Set achievable Day 1 goals together with your SDR. Ask them what they think is realistic before you assign numbers, then align on targets.", minChars:60, attest:"I talked to my SDR about this because the difference between good and great is follow-through"}
     ]
   },
   {
     day:"Day 2", title:"Product Conversations Begin",
     text:"Move from passive learning to active dialogue. The goal isn\u2019t product mastery \u2014 it\u2019s the ability to hold a 3-minute conversation that earns the next one.",
     tasks:[
-      {task:"Run a 30-minute product conversation practice session with your SDR today. You play the prospect. Tell them afterwards which moment felt most natural.", minChars:70, attest:"I ran this practice with my SDR because I refuse to be the person who clicks through and learns nothing"},
-      {task:"During the role-play, focus on whether the SDR asks questions or delivers a monologue. Give them one specific piece of written feedback on dialogue vs. pitching.", minChars:70, attest:"I gave this feedback to my SDR because what I do when no one is watching makes all the difference"},
-      {task:"After practice, ask your SDR which question stumped them most. Research the answer together before EOD.", minChars:60, attest:"I researched this with my SDR because I don\u2019t just write shit down that I don\u2019t care about"},
-      {task:"Run an end-of-day debrief with your SDR: what clicked, what didn\u2019t, what changes tomorrow. Write down the one adjustment you\u2019ll both focus on.", minChars:60, attest:"I debriefed with my SDR because accountability isn\u2019t a buzzword \u2014 it\u2019s how I operate"}
+      {task:"Run a 30-minute product conversation practice session with your SDR today. You play the prospect. Tell them afterwards which moment felt most natural.", minChars:70, attest:"I ran this practice with my SDR because saying I care means nothing if I don\u2019t act like it"},
+      {task:"During the role-play, focus on whether the SDR asks questions or delivers a monologue. Give them one specific piece of written feedback on dialogue vs. pitching.", minChars:70, attest:"I gave this feedback to my SDR because excellence isn\u2019t a single act \u2014 it\u2019s a habit I\u2019m building"},
+      {task:"After practice, ask your SDR which question stumped them most. Research the answer together before EOD.", minChars:60, attest:"I researched this with my SDR because no one successful ever half-assed the fundamentals"},
+      {task:"Run an end-of-day debrief with your SDR: what clicked, what didn\u2019t, what changes tomorrow. Write down the one adjustment you\u2019ll both focus on.", minChars:60, attest:"I debriefed with my SDR because my future self needs me to be honest right now"}
     ]
   },
   {
     day:"Day 3", title:"Cold Call Intro Mastery",
     text:"The intro is the most important 10 seconds of the call. Master it before adding anything else. Volume means nothing if the open doesn\u2019t land.",
     tasks:[
-      {task:"Block one hour for intro-only practice with your SDR. Listen to each attempt and give specific, written feedback \u2014 not just \u2018that was good.\u2019", minChars:70, attest:"I practiced this with my SDR because I know my growth depends on making my thoughts known"},
-      {task:"After at least five intro attempts, identify the one thing your SDR does best and the one thing that needs the most work. Tell them both directly.", minChars:70, attest:"I told my SDR this because I don\u2019t just write shit down that I don\u2019t care about"},
-      {task:"Have your SDR write down the exact words that worked in their best intro attempt. Review it together and confirm it\u2019s their opening script.", minChars:60, attest:"I reviewed this with my SDR because I refuse to be the person who clicks through and learns nothing"},
-      {task:"Debrief Day 3 with your SDR: is the intro landing? What needs to change before you add the engage step tomorrow? Write down one specific adjustment.", minChars:60, attest:"I debriefed with my SDR because what I do when no one is watching makes all the difference"}
+      {task:"Block one hour for intro-only practice with your SDR. Listen to each attempt and give specific, written feedback \u2014 not just \u2018that was good.\u2019", minChars:70, attest:"I practiced this with my SDR because the best version of tomorrow starts with what I do today"},
+      {task:"After at least five intro attempts, identify the one thing your SDR does best and the one thing that needs the most work. Tell them both directly.", minChars:70, attest:"I told my SDR this because effort compounds \u2014 every honest session builds on the last"},
+      {task:"Have your SDR write down the exact words that worked in their best intro attempt. Review it together and confirm it\u2019s their opening script.", minChars:60, attest:"I reviewed this with my SDR because the gap between knowing and doing is exactly this kind of work"},
+      {task:"Debrief Day 3 with your SDR: is the intro landing? What needs to change before you add the engage step tomorrow? Write down one specific adjustment.", minChars:60, attest:"I debriefed with my SDR because I\u2019m not here to perform leadership \u2014 I\u2019m here to actually lead"}
     ]
   },
   {
     day:"Day 4", title:"Engage & Close Practice",
     text:"Stack the engage and close onto the intro. Now we\u2019re building a full call sequence \u2014 but keep each piece tight before combining them.",
     tasks:[
-      {task:"Run combined intro + engage + close practice with your SDR. After each attempt, identify which stage broke down and tell them specifically.", minChars:70, attest:"I practiced this with my SDR because accountability isn\u2019t a buzzword \u2014 it\u2019s how I operate"},
-      {task:"Focus the engage step: is your SDR asking one specific, problem-based question \u2014 or pitching? Give them one written example of a better question.", minChars:70, attest:"I gave this feedback to my SDR because I know my growth depends on making my thoughts known"},
-      {task:"Drill the close: specific time, specific person, specific ask. Have your SDR practice the exact words at least three times, then tell them which version was strongest.", minChars:60, attest:"I drilled this with my SDR because I don\u2019t just write shit down that I don\u2019t care about"},
-      {task:"End-of-day debrief: name your SDR\u2019s weakest stage by name (intro, engage, or close). Write down the plan for how you\u2019ll address it on Day 5.", minChars:60, attest:"I debriefed with my SDR because I refuse to be the person who clicks through and learns nothing"}
+      {task:"Run combined intro + engage + close practice with your SDR. After each attempt, identify which stage broke down and tell them specifically.", minChars:70, attest:"I practiced this with my SDR because this is where the real ones separate from the pretenders"},
+      {task:"Focus the engage step: is your SDR asking one specific, problem-based question \u2014 or pitching? Give them one written example of a better question.", minChars:70, attest:"I gave this feedback to my SDR because integrity is doing the right thing when it\u2019s easier not to"},
+      {task:"Drill the close: specific time, specific person, specific ask. Have your SDR practice the exact words at least three times, then tell them which version was strongest.", minChars:60, attest:"I drilled this with my SDR because half-effort produces half-results and I\u2019m done with half"},
+      {task:"End-of-day debrief: name your SDR\u2019s weakest stage by name (intro, engage, or close). Write down the plan for how you\u2019ll address it on Day 5.", minChars:60, attest:"I debriefed with my SDR because complacency kills careers faster than failure ever could"}
     ]
   },
   {
     day:"Day 5", title:"Full Call Simulation + Week Debrief",
     text:"Run full simulated calls \u2014 you as prospect, SDR as rep. Then do a full week review. What improved? What carries into next week?",
     tasks:[
-      {task:"Run at least two full cold call simulations with your SDR. Play a realistic prospect \u2014 push back, ask hard questions. Give written feedback after each call.", minChars:80, attest:"I ran these simulations with my SDR because what I do when no one is watching makes all the difference"},
-      {task:"After simulations, sit down with your SDR and review the week together. Name one thing that improved and one thing that still needs work.", minChars:70, attest:"I reviewed the week with my SDR because accountability isn\u2019t a buzzword \u2014 it\u2019s how I operate"},
-      {task:"Together with your SDR, write specific Week 2 goals: call volume, connect targets, and practice sessions. Have them tell you why each number matters.", minChars:70, attest:"I set goals with my SDR because I know my growth depends on making my thoughts known"},
-      {task:"Ask your SDR: \u2018What\u2019s the one thing from this week you\u2019ll carry into Monday?\u2019 Write down their answer and your own.", minChars:60, attest:"I asked my SDR this because I don\u2019t just write shit down that I don\u2019t care about"}
+      {task:"Run at least two full cold call simulations with your SDR. Play a realistic prospect \u2014 push back, ask hard questions. Give written feedback after each call.", minChars:80, attest:"I ran these simulations with my SDR because mediocrity is a choice I\u2019m actively refusing right now"},
+      {task:"After simulations, sit down with your SDR and review the week together. Name one thing that improved and one thing that still needs work.", minChars:70, attest:"I reviewed the week with my SDR because my career is built on what I do in moments like this"},
+      {task:"Together with your SDR, write specific Week 2 goals: call volume, connect targets, and practice sessions. Have them tell you why each number matters.", minChars:70, attest:"I set goals with my SDR because consistency is the only real competitive advantage"},
+      {task:"Ask your SDR: \u2018What\u2019s the one thing from this week you\u2019ll carry into Monday?\u2019 Write down their answer and your own.", minChars:60, attest:"I asked my SDR this because I owe it to the people who bet on me to take this seriously"}
     ]
   },
 ];
@@ -1579,50 +1589,50 @@ const DAYS_SDR = [
     day:"Day 1", title:"Own Your Orientation",
     text:"Day 1 is about absorbing everything you can \u2014 not performing. Your goal is to leave knowing where to find things, what\u2019s expected, and what tomorrow looks like.",
     tasks:[
-      {task:"Write down your daily responsibilities and what \u2018success\u2019 looks like this week. Then walk your AE through it and ask them to confirm or correct it.", minChars:70, attest:"I talked to my AE about this because I don\u2019t just write shit down that I don\u2019t care about"},
-      {task:"Shadow one live AE demo or recorded call. Note at least one question the prospect asks that interests you, then tell your AE about it.", minChars:70, attest:"I discussed this with my AE because what I do when no one is watching makes all the difference"},
-      {task:"Get hands-on with every tool you\u2019ll use daily: CRM, dialer, email platform. Log your first test call before EOD, then show your AE what you logged.", minChars:60, attest:"I showed my AE this because accountability isn\u2019t a buzzword \u2014 it\u2019s how I operate"},
-      {task:"Set your own Day 1 targets and write them down. Share them with your AE and ask if the numbers are realistic.", minChars:60, attest:"I shared this with my AE because I know my growth depends on making my thoughts known"}
+      {task:"Write down your daily responsibilities and what \u2018success\u2019 looks like this week. Then walk someone on the team through it and ask them to confirm or correct it.", minChars:70, attest:"I walked someone through this because I don\u2019t wait for permission to get better"},
+      {task:"Shadow one live demo or recorded call. Note at least one question the prospect asks that interests you, then tell a teammate about it.", minChars:70, attest:"I talked to a teammate about this because being curious enough to ask is how trust gets built"},
+      {task:"Get hands-on with every tool you\u2019ll use daily: CRM, dialer, email platform. Log your first test call before EOD, then show someone on the team what you logged.", minChars:60, attest:"I showed someone my work because proving I\u2019m not just going through the motions matters"},
+      {task:"Set your own Day 1 targets and write them down. Share them with someone you respect and ask if the numbers are realistic.", minChars:60, attest:"I shared this with someone I respect because vulnerability with the right people is how I get stronger"}
     ]
   },
   {
     day:"Day 2", title:"Start Real Conversations",
     text:"Move from watching to doing. You don\u2019t need to know the product perfectly \u2014 you need to hold a 3-minute conversation that earns the next one.",
     tasks:[
-      {task:"Practice a 3-minute product conversation with your AE or a peer. Focus on asking questions, not delivering a monologue. Tell your AE which moment felt hardest.", minChars:70, attest:"I practiced this with my AE because I refuse to be the person who clicks through and learns nothing"},
-      {task:"Write down the one question that stumped you most during practice. Research the answer, then share what you found with your AE before EOD.", minChars:70, attest:"I shared this with my AE because what I do when no one is watching makes all the difference"},
-      {task:"Ask your AE for one specific piece of feedback on your conversation style today. Write it down word for word.", minChars:60, attest:"I asked my AE this because I don\u2019t just write shit down that I don\u2019t care about"},
-      {task:"Write your end-of-day log: what clicked, what didn\u2019t, what changes tomorrow. Share it with your AE or a peer.", minChars:60, attest:"I shared my log because accountability isn\u2019t a buzzword \u2014 it\u2019s how I operate"}
+      {task:"Practice a 3-minute product conversation with a partner or peer. Focus on asking questions, not delivering a monologue. Tell them which moment felt hardest.", minChars:70, attest:"I practiced this with a partner because repetition is the mother of mastery"},
+      {task:"Write down the one question that stumped you most during practice. Research the answer, then share what you found with a teammate before EOD.", minChars:70, attest:"I shared my findings with a teammate because sharing what I struggle with is braver than hiding it"},
+      {task:"Ask someone you respect for one specific piece of feedback on your conversation style today. Write it down word for word.", minChars:60, attest:"I asked for feedback because feedback only works if I\u2019m brave enough to ask for it"},
+      {task:"Write your end-of-day log: what clicked, what didn\u2019t, what changes tomorrow. Share it with a teammate or peer.", minChars:60, attest:"I shared my log because documenting my growth is how I hold myself accountable"}
     ]
   },
   {
     day:"Day 3", title:"Nail the Cold Call Intro",
     text:"The intro is the most important 10 seconds. Master it before adding anything else. Volume without a clean open is wasted effort.",
     tasks:[
-      {task:"Block one hour for intro-only practice. Record yourself or practice with a peer. After at least five attempts, pick the one that felt most natural.", minChars:70, attest:"I practiced this because I know my growth depends on making my thoughts known"},
-      {task:"Ask your AE to listen to your best intro attempt and give you one specific piece of feedback. Write it down.", minChars:70, attest:"I asked my AE this because I don\u2019t just write shit down that I don\u2019t care about"},
-      {task:"Write down the exact words that worked in your best intro. That\u2019s your opening script. Read it to your AE and ask if it sounds natural.", minChars:60, attest:"I shared my script with my AE because I refuse to be the person who clicks through and learns nothing"},
-      {task:"End-of-day check: is your intro landing? Tell your AE what you\u2019ll change before adding the engage step tomorrow.", minChars:60, attest:"I told my AE this because what I do when no one is watching makes all the difference"}
+      {task:"Block one hour for intro-only practice. Record yourself or practice with a peer. After at least five attempts, pick the one that felt most natural.", minChars:70, attest:"I practiced this because drilling the basics until they\u2019re automatic is how champions train"},
+      {task:"Ask someone you trust to listen to your best intro attempt and give you one specific piece of feedback. Write it down.", minChars:70, attest:"I asked for honest feedback because honest feedback is the fastest shortcut to improvement"},
+      {task:"Write down the exact words that worked in your best intro. That\u2019s your opening script. Read it to a teammate and ask if it sounds natural.", minChars:60, attest:"I shared my script with a teammate because putting my words out there is how I find out if they work"},
+      {task:"End-of-day check: is your intro landing? Tell someone on the team what you\u2019ll change before adding the engage step tomorrow.", minChars:60, attest:"I told someone what I\u2019ll change because telling someone makes it real"}
     ]
   },
   {
     day:"Day 4", title:"Build the Full Call",
     text:"Stack engage and close onto your intro. Each piece has a specific job. Practice them separately, then combine.",
     tasks:[
-      {task:"Practice intro \u2192 engage \u2192 close as a complete sequence with a peer or your AE. After each attempt, name which stage broke down.", minChars:70, attest:"I practiced this with my AE because accountability isn\u2019t a buzzword \u2014 it\u2019s how I operate"},
-      {task:"For the engage step: write down one specific, problem-based question you\u2019ll ask instead of pitching. Test it with your AE and get feedback.", minChars:70, attest:"I tested this with my AE because I know my growth depends on making my thoughts known"},
-      {task:"For the close: practice the exact words \u2014 specific time, specific person, specific ask. Say it out loud to your AE at least once.", minChars:60, attest:"I practiced this with my AE because I don\u2019t just write shit down that I don\u2019t care about"},
-      {task:"Self-evaluate: which stage is your weakest \u2014 intro, engage, or close? Write it down, then tell your AE and ask what they\u2019d focus on.", minChars:60, attest:"I told my AE this because I refuse to be the person who clicks through and learns nothing"}
+      {task:"Practice intro \u2192 engage \u2192 close as a complete sequence with a partner or peer. After each attempt, name which stage broke down.", minChars:70, attest:"I practiced the full sequence because building a full call takes reps, not just theory"},
+      {task:"For the engage step: write down one specific, problem-based question you\u2019ll ask instead of pitching. Test it with a partner and get feedback.", minChars:70, attest:"I tested this with a partner because testing my approach with someone I trust makes it sharper"},
+      {task:"For the close: practice the exact words \u2014 specific time, specific person, specific ask. Say it out loud to a teammate at least once.", minChars:60, attest:"I said this out loud because saying it out loud exposes the gaps writing never reveals"},
+      {task:"Self-evaluate: which stage is your weakest \u2014 intro, engage, or close? Write it down, then tell a partner and ask what they\u2019d focus on.", minChars:60, attest:"I named my weakness out loud because naming it out loud is the first step to fixing it"}
     ]
   },
   {
     day:"Day 5", title:"Simulate + Review Your Week",
     text:"Run full simulated calls and do an honest week review. What improved? What needs work? What carries into Week 2?",
     tasks:[
-      {task:"Run at least two full call simulations with a peer or AE playing the prospect. Record one if possible and listen back together.", minChars:80, attest:"I ran these with my AE because what I do when no one is watching makes all the difference"},
-      {task:"After simulations, ask your AE: \u2018What\u2019s the one thing I improved most this week and the one thing I need to fix?\u2019 Write down their answer.", minChars:70, attest:"I asked my AE this because accountability isn\u2019t a buzzword \u2014 it\u2019s how I operate"},
-      {task:"Write your week-in-review: what worked, what didn\u2019t, what adjusts Monday. Share it with your AE.", minChars:70, attest:"I shared this with my AE because I know my growth depends on making my thoughts known"},
-      {task:"Set your own Week 2 goals: call volume, connect targets, practice reps. Tell your AE why you chose these numbers.", minChars:60, attest:"I told my AE this because I don\u2019t just write shit down that I don\u2019t care about"}
+      {task:"Run at least two full call simulations with a partner or peer playing the prospect. Record one if possible and listen back together.", minChars:80, attest:"I ran these simulations because simulation is the closest thing to the real thing without the stakes"},
+      {task:"After simulations, ask someone you respect: \u2018What\u2019s the one thing I improved most this week and the one thing I need to fix?\u2019 Write down their answer.", minChars:70, attest:"I asked what I need to fix because asking takes more courage than assuming I\u2019m fine"},
+      {task:"Write your week-in-review: what worked, what didn\u2019t, what adjusts Monday. Share it with a teammate.", minChars:70, attest:"I shared my review because writing my review honestly is how I avoid repeating mistakes"},
+      {task:"Set your own Week 2 goals: call volume, connect targets, practice reps. Tell someone who challenges you why you chose these numbers.", minChars:60, attest:"I told someone my goals because setting goals publicly makes me accountable to more than just myself"}
     ]
   },
 ];
@@ -1630,11 +1640,11 @@ const DAYS_SDR = [
 const DAYS = _role === 'ae' ? DAYS_AE : DAYS_SDR;
 
 const SCHED = [
-  { time:"First thing",       act:"Daily huddle with AE",          goal:"Align before anything else hits." },
+  { time:"First thing",       act:"Daily team huddle",              goal:"Align before anything else hits." },
   { time:"Highest energy",    act:"Cold call blocks",              goal:"Outbound when you\u0027re sharpest." },
-  { time:"Mid-morning",       act:"Product conversation practice", goal:"Role-play with AE or peer." },
+  { time:"Mid-morning",       act:"Product conversation practice", goal:"Role-play with a partner or peer." },
   { time:"After lunch",       act:"Outreach & follow-ups",         goal:"Email, LinkedIn, and multi-touch." },
-  { time:"Before you leave",  act:"AE/SDR feedback session",       goal:"Debrief and plan tomorrow." },
+  { time:"Before you leave",  act:"Feedback & debrief session",    goal:"Debrief and plan tomorrow." },
 ];
 const TILE_ORDER = [2, 4, 0, 3, 1]; // display order (SCHED indices, scrambled)
 
@@ -1684,6 +1694,14 @@ const CC = [
       "A yes/no question with an obvious escape hatch. Almost always ends in 'sure, send me something' — a polite no.",
     ]
   },
+];
+
+const SIDEBAR_TEXTS = [
+  "Structure is the difference between surviving and flaming out.",
+  "You have to be twice as good to get half of what they have. That is not a request.",
+  "Would I rather be feared or loved? Both. I want people afraid of how much they love my pipeline.",
+  "Cold call carelessly.",
+  "I declare... PIPELINE!",
 ];
 
 const QUIZ = [
@@ -1737,7 +1755,7 @@ function init(){
     ? 'This lesson says SDRs without structure "end up guessing — and guessing leads to frustration, missed targets, and attrition." Name a specific SDR you\'ve managed (or observed) who struggled because onboarding structure was missing. What broke first — their confidence, their pipeline, or their trust in you? What would you build differently starting Day 1?'
     : 'This lesson says zero structure means "guessing — and guessing leads to frustration, missed targets, and attrition." Describe a specific week in your career where you had no plan and your outreach suffered. What did you waste time on? What specific daily structure from this lesson would have saved you — and why?',
     minChars: 120,
-    attest: 'I shared this with someone on the team because I know it\'s important to make my voice and my thoughts familiar around this place' });
+    attest: 'I shared this with someone on the team because making my perspective known is how I earn my seat at the table' });
 
   AESDR.gate(2, { type:'homework',
     conscience: 'Structure is the difference between surviving and flaming out. Every answer you write here is a promise to the person who hired you that you take Day 1 seriously.',
@@ -1763,7 +1781,7 @@ function init(){
     ? 'You\'ve now seen the full Day 1–5 blueprint. Which single day will be the hardest to execute with your SDR — and why? What specifically about that day\'s tasks will require the most preparation from you as the AE?'
     : 'You\'ve now seen the full Day 1–5 playbook. Which single day intimidates you most — and why? What specifically about that day\'s tasks feels like it will stretch you the furthest?',
     minChars: 120,
-    attest: 'I shared this with someone on the team because I know my growth depends on making my thoughts known' });
+    attest: 'I shared this with someone on the team because the people who make it are the ones who don\u2019t hide from the hard questions' });
 
   AESDR.gate(7, { type:'homework', conscience: 'The plan you write here is the plan you execute tomorrow. If you phone this in, your first week phones itself in.',
     prompt: _role === 'ae'
@@ -1778,7 +1796,7 @@ function init(){
     ] : [
       { task:'Write the 3 most common product questions prospects will ask you. For each, write your answer in under 60 seconds of spoken time. Practice saying them out loud before writing.', placeholder:'List the 3 questions and write your answer for each as if you\'re saying it on a call...', minChars: 100 },
       { task:'Commit to logging 10 cold calls per day this week. For each day, write the specific time block you\'ll use and what you\'ll track (dials, connects, conversations, meetings booked).', placeholder:'Write your daily call block schedule and exactly what you will track each day...', minChars: 80 },
-      { task:'Write your first daily log entry RIGHT NOW. Answer honestly: What did I learn from this lesson? What still confuses me? What specific question will I ask my AE tomorrow?', placeholder:'Write your first daily log: what you learned, what confused you, what you will ask tomorrow...', minChars: 80 },
+      { task:'Write your first daily log entry RIGHT NOW. Answer honestly: What did I learn from this lesson? What still confuses me? What specific question will I ask someone on the team tomorrow?', placeholder:'Write your first daily log: what you learned, what confused you, what you will ask tomorrow...', minChars: 80 },
       { task:'Design your own cold call intro using the Intro → Engage → Close framework. Write the exact words you\'d say for each stage — not a template, YOUR words for YOUR product.', placeholder:'Write your actual intro script: the exact words for Intro, Engage, and Close...', minChars: 100 },
       { task:'Write a specific commitment: What is the one habit from this lesson you will start this week? Name the habit, when you\'ll do it daily, and how you\'ll hold yourself accountable.', placeholder:'Name the habit, the daily time, and your accountability method...', minChars: 80 }
     ]
@@ -2105,6 +2123,22 @@ function pickCC(oi){
   if(ccShowFb) return;
   ccPicked=oi; ccShowFb=true;
   renderCC();
+  if(oi!==CC[ccStage].ans) showPow();
+}
+function showPow(){
+  var ov=document.createElement('div');
+  ov.className='cc-pow-overlay'; ov.id='ccPowOverlay';
+  ov.innerHTML='<div class="cc-pow-box">'+
+    '<div class="cc-pow-word">POW!</div>'+
+    '<div class="cc-pow-msg">Nobody cares who you are when you\u2019re cold calling them!</div>'+
+    '<button class="cc-pow-btn" onclick="closePow()">Try Again</button>'+
+  '</div>';
+  document.body.appendChild(ov);
+}
+function closePow(){
+  var el=document.getElementById('ccPowOverlay');
+  if(el) el.remove();
+  ccPicked=null; ccShowFb=false; renderCC();
 }
 function ccAdvance(){
   if(ccStage<CC.length-1){
@@ -2224,6 +2258,9 @@ function render(){
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';
   document.getElementById('btnNext').disabled=!canContinue();
+  // Dynamic sidebar motto per section
+  var sbp=document.getElementById('sidebarMotto');
+  if(sbp&&typeof SIDEBAR_TEXTS!=='undefined'){var si=SEC[cur]||0;sbp.textContent=SIDEBAR_TEXTS[si]||SIDEBAR_TEXTS[0];}
 }
 
 init();

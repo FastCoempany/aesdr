@@ -433,7 +433,7 @@
  *
  *  Usage in lesson JS:
  *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
- *    AESDR.gate(1, { type:'narrative', prompt:'...', minChars:120, attest:'I shared this with someone on the team because I know it\u0027s important to make my voice and my thoughts familiar around this place' });
+ *    AESDR.gate(1, { type:'narrative', prompt:'...', minChars:120, attest:'I shared this with someone on the team because real progress starts where comfort ends' });
  *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
  *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
  *
@@ -1084,16 +1084,16 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
 .lh-sub b{color:var(--black)}
 .lb{padding:24px 56px 0}
-.lp{font-family:var(--serif);font-size:19px;line-height:1.8;color:var(--black);max-width:820px;margin-bottom:14px}
-.kp{list-style:none;max-width:820px;margin:14px 0}
+.lp{font-family:var(--serif);font-size:19px;line-height:1.8;color:var(--black);margin-bottom:14px}
+.kp{list-style:none;margin:14px 0}
 .kp li{font-family:var(--serif);font-size:18px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px;align-items:flex-start}
 .kp li:first-child{border-top:1px solid var(--line)}
 .kp-n{font-family:var(--mono);font-size:9px;color:var(--mid);min-width:22px;padding-top:3px;flex-shrink:0}
-.lie{max-width:820px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
+.lie{background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
 .lie-tab{position:absolute;top:0;left:0;font-family:var(--cond);font-size:9px;letter-spacing:.24em;font-weight:800;text-transform:uppercase;padding:3px 10px;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;color:var(--black)}
 .lie-q{font-family:var(--serif);font-style:italic;font-size:18px;color:#fff;line-height:1.5;margin:12px 0 10px}
 .lie-a{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
-.data-table{width:100%;max-width:600px;border-collapse:collapse;margin:16px 0}
+.data-table{width:100%;border-collapse:collapse;margin:16px 0}
 .data-table th{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;background:var(--black);color:var(--white);padding:9px 14px;text-align:left}
 .data-table td{font-family:var(--serif);font-size:14px;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--black);line-height:1.6;vertical-align:top}
 .data-table tr:last-child td{border-bottom:none}
@@ -1160,21 +1160,21 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .bant-fb.bad{color:var(--coral)}
 .bant-adv{margin:14px 56px 0;display:none}
 .bant-adv.show{display:block}
-.bant-result{margin:20px 56px 0;max-width:820px;padding:20px 22px;background:var(--black)}
+.bant-result{margin:20px 56px 0;padding:20px 22px;background:var(--black)}
 .bant-result-h{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
 .bant-result-p{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.6);line-height:1.65;font-style:normal}
 .bant-pass{border-left:4px solid var(--em-bright)}
 .bant-pass .bant-result-h{color:var(--em-bright)}
 .bant-fail{border-left:4px solid var(--coral)}
 .bant-fail .bant-result-h{color:var(--coral)}
-.bant-done-box{margin:20px 56px 0;max-width:820px;background:var(--em-bright);padding:20px 22px}
+.bant-done-box{margin:20px 56px 0;background:var(--em-bright);padding:20px 22px}
 .bant-done-h{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--black);margin-bottom:7px}
 .bant-done-p{font-family:var(--serif);font-size:14px;color:rgba(0,0,0,0.6);line-height:1.65;font-style:normal}
 
 /* ── FEEDBACK DECODER ── */
 .fd-wrap{padding:16px 56px 44px;max-width:680px}
-.fd-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
-.fd-scenario{background:var(--black);padding:18px 22px;max-width:600px;margin-bottom:22px}
+.fd-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px}
+.fd-scenario{background:var(--black);padding:18px 22px;margin-bottom:22px}
 .fd-who{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px}
 .fd-quote{font-family:var(--serif);font-style:italic;font-size:16px;color:#fff;line-height:1.6}
 .fd-items{display:flex;flex-direction:column;gap:10px}
@@ -1195,7 +1195,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── SCRIPT ADAPTATION ── */
 .sa-wrap{padding:16px 56px 44px;max-width:700px}
-.sa-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
+.sa-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px}
 .sa-items{display:flex;flex-direction:column;gap:16px}
 .sa-item{border:1px solid var(--line2);overflow:hidden}
 .sa-item.resolved{border-color:var(--em-bright)}
@@ -1221,7 +1221,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* HABIT BUILDER */
 .hb-wrap{padding:16px 56px 44px;max-width:700px}
-.hb-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
+.hb-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px}
 .hb-day{border:2px solid var(--black);margin-bottom:16px}
 .hb-day-hdr{background:var(--black);padding:12px 18px;display:flex;align-items:center;justify-content:space-between}
 .hb-day-label{font-family:var(--cond);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#fff}
@@ -1237,7 +1237,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .hb-block.done .hb-block-goal{color:rgba(0,0,0,0.45)}
 .hb-block-check{position:absolute;top:8px;right:10px;font-size:12px;font-weight:800;color:var(--black);opacity:0;transition:opacity .2s}
 .hb-block.done .hb-block-check{opacity:1}
-.hb-done-box{max-width:820px;background:var(--em-bright);padding:18px 22px;margin-top:4px;display:none}
+.hb-done-box{background:var(--em-bright);padding:18px 22px;margin-top:4px;display:none}
 .hb-done-box.show{display:block}
 .hb-done-h{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--black);margin-bottom:6px}
 .hb-done-p{font-family:var(--serif);font-size:14px;color:rgba(0,0,0,0.55);line-height:1.65;font-style:normal}
@@ -1261,7 +1261,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 /* TOOLS */
 .tools-blk{padding:20px 56px 44px}
 .t-head{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--black);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--black)}
-.hw-list{list-style:none;max-width:820px;margin-top:8px}
+.hw-list{list-style:none;margin-top:8px}
 .hw-list li{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.65;padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
 .hw-list li:first-child{border-top:1px solid var(--line)}
 .hw-box{width:14px;height:14px;border:2px solid var(--black);flex-shrink:0;margin-top:4px}
@@ -1409,7 +1409,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-sub"><b id="saCount">0</b> / 4 adapted correctly</div>
     </div>
     <div class="sa-wrap">
-      <p class="sa-instr" style="font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px">The SDR says the script line. The prospect responds. Choose the adaptation that best uses what the prospect just said — not the one that ignores it.</p>
+      <p class="sa-instr" style="font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px">The SDR says the script line. The prospect responds. Choose the adaptation that best uses what the prospect just said — not the one that ignores it.</p>
       <div class="sa-items" id="saItems"></div>
     </div>
   </div>
@@ -1542,7 +1542,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
   </div>
 
   <div style="margin-top:32px;padding:16px 0;border-top:1px solid var(--line)">
-    <p style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">Performance pitfalls don't fix themselves — they compound. What you identify here is the first step to breaking a pattern before it breaks your pipeline.</p>
+    <p id="sidebarMotto" style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">Performance pitfalls don't fix themselves — they compound. What you identify here is the first step to breaking a pattern before it breaks your pipeline.</p>
   </div>
 </aside>
 
@@ -1787,6 +1787,14 @@ let qAns={}, qSubmitted=false, qPassed=false;
 /* ══════════════════════════════════════════
    INIT
 ══════════════════════════════════════════ */
+const SIDEBAR_TEXTS = [
+  "Patterns don’t fix themselves. They compound.",
+  "Do not test me. I don’t do well when tested.",
+  "The definition of insanity is doing the same call and expecting a different meeting.",
+  "If you keep falling into the same pitfall, eventually it becomes your grave.",
+  "Your pipeline doesn’t lie. It just whispers truths you ignore."
+];
+
 function init(){
   // Register gates FIRST so they're always available for rendering
   // Narrative gates
@@ -1808,9 +1816,9 @@ function init(){
       { task:'Build a proactivity plan for next week: which day will you review pipeline health, when will you coach your SDR on outreach quality, and what specific metric will you track to measure improvement? Include exact days and times.', placeholder:'Monday: [time] — pipeline review. Tuesday: [time] — SDR coaching on...', minChars: 80 }
     ] : [
       { task:'Name the one pitfall from the four in this lesson that describes your biggest current weakness. Describe the last time it showed up — which prospect, what you did wrong, and the specific fix from the toolkit you\'ll implement starting tomorrow morning.', placeholder:'My biggest pitfall is [X]. Last week with [prospect name], I...', minChars: 100 },
-      { task:'Pull up every lead you plan to pass to your AE this week. Score each one against BANT (Budget, Authority, Need, Timeline). For any lead missing a criterion, write the exact question you\'ll ask to fill the gap before passing it.', placeholder:'Lead 1: [company] — Budget: known/unknown, question I\'ll ask: "..."', minChars: 120 },
+      { task:'Pull up every lead you plan to pass to a peer this week. Score each one against BANT (Budget, Authority, Need, Timeline). For any lead missing a criterion, write the exact question you\'ll ask to fill the gap before passing it.', placeholder:'Lead 1: [company] — Budget: known/unknown, question I\'ll ask: "..."', minChars: 120 },
       { task:'Take your last 3 outreach emails and rewrite the opening line of each with genuine, research-based personalization. Reference something specific about the prospect\'s company, recent news, or role — not their name and job title.', placeholder:'Email 1 (to [name]): Old opening: "..." / New opening: "..."', minChars: 100 },
-      { task:'Write the exact message you\'ll send to your AE this week asking for specific feedback on your qualification quality. Not "how am I doing" — ask them to review one specific lead you passed and tell you what BANT criteria you missed.', placeholder:'Exact message: "Hey [AE name], I\'d like your feedback on..."', minChars: 80 },
+      { task:'Write the exact message you\'ll send to someone on the team this week asking for specific feedback on your qualification quality. Not "how am I doing" — ask them to review one specific lead you passed and tell you what BANT criteria you missed.', placeholder:'Exact message: "Hey [AE name], I\'d like your feedback on..."', minChars: 80 },
       { task:'Build your proactivity schedule for next week: block specific times for outreach, call review, and pipeline cleanup. Name the days, the time blocks, and what you\'ll do in each block. If it\'s not on your calendar, it won\'t happen.', placeholder:'Monday 9-10am: cold outreach block. Monday 4-4:30pm: call review...', minChars: 80 }
     ]
   });
@@ -2160,6 +2168,8 @@ function render(){
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';
   document.getElementById('btnNext').disabled=!canContinue();
+  var sbp=document.getElementById('sidebarMotto');
+  if(sbp&&typeof SIDEBAR_TEXTS!=='undefined'){var si=SEC[cur]||0;sbp.textContent=SIDEBAR_TEXTS[si]||SIDEBAR_TEXTS[0];}
 }
 
 init();

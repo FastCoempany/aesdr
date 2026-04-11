@@ -433,7 +433,7 @@
  *
  *  Usage in lesson JS:
  *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
- *    AESDR.gate(1, { type:'narrative', prompt:'...', minChars:120, attest:'I shared this with someone on the team because I know it\u0027s important to make my voice and my thoughts familiar around this place' });
+ *    AESDR.gate(1, { type:'narrative', prompt:'...', minChars:120, attest:'I shared this with someone on the team because I’m not here to perform growth — I’m here to actually grow' });
  *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
  *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
  *
@@ -1083,16 +1083,16 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
 .lh-sub b{color:var(--black)}
 .lb{padding:24px 56px 0}
-.lp{font-family:var(--serif);font-size:19px;line-height:1.8;color:var(--black);max-width:820px;margin-bottom:14px}
-.kp{list-style:none;max-width:820px;margin:14px 0}
+.lp{font-family:var(--serif);font-size:19px;line-height:1.8;color:var(--black);margin-bottom:14px}
+.kp{list-style:none;margin:14px 0}
 .kp li{font-family:var(--serif);font-size:18px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px;align-items:flex-start}
 .kp li:first-child{border-top:1px solid var(--line)}
 .kp-n{font-family:var(--mono);font-size:9px;color:var(--mid);min-width:22px;padding-top:3px;flex-shrink:0}
-.lie{max-width:820px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
+.lie{background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
 .lie-tab{position:absolute;top:0;left:0;font-family:var(--cond);font-size:9px;letter-spacing:.24em;font-weight:800;text-transform:uppercase;padding:3px 10px;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;color:var(--black)}
 .lie-q{font-family:var(--serif);font-style:italic;font-size:18px;color:#fff;line-height:1.5;margin:12px 0 10px}
 .lie-a{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
-.data-table{width:100%;max-width:600px;border-collapse:collapse;margin:16px 0}
+.data-table{width:100%;border-collapse:collapse;margin:16px 0}
 .data-table th{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;background:var(--black);color:var(--white);padding:9px 14px;text-align:left}
 .data-table td{font-family:var(--serif);font-size:14px;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--black);line-height:1.6;vertical-align:top}
 .data-table tr:last-child td{border-bottom:none}
@@ -1116,7 +1116,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── CALENDAR AUDIT ── */
 .cal-wrap{padding:16px 56px 44px;max-width:760px}
-.cal-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
+.cal-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px}
 .cal-arena{display:grid;grid-template-columns:1fr 1fr;gap:0 44px}
 .cal-col-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);padding-bottom:10px;border-bottom:2px solid var(--black);margin-bottom:10px}
 .cal-col-lbl.waste{color:var(--coral)}
@@ -1135,13 +1135,13 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .cal-dropped-item.waste-item{background:var(--cor-lt);border-left:3px solid var(--coral)}
 .cal-dropped-item.impact-item{background:var(--cob-lt);border-left:3px solid var(--cobalt)}
 .cal-pool-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--black)}
-.cal-pool{display:flex;flex-direction:column;gap:6px;max-width:760px;margin-bottom:16px}
+.cal-pool{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
 .cal-reset{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mid);background:none;border:none;cursor:pointer;text-decoration:underline;margin-top:10px}
 .cal-reset:hover{color:var(--black)}
 
 /* ── MEETING VERDICT ── */
 .mv-wrap{padding:16px 56px 44px;max-width:720px}
-.mv-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
+.mv-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px}
 .mv-items{display:flex;flex-direction:column;gap:10px}
 .mv-item{border:1px solid var(--line2);overflow:hidden;transition:border-color .2s}
 .mv-item.verdict-attend{border-color:var(--cobalt);background:var(--cob-lt)}
@@ -1163,8 +1163,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── ASYNC PLANNER ── */
 .ap-wrap{padding:16px 56px 44px;max-width:700px}
-.ap-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
-.ap-cal{background:var(--black);max-width:600px;margin-bottom:24px;overflow:hidden}
+.ap-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px}
+.ap-cal{background:var(--black);margin-bottom:24px;overflow:hidden}
 .ap-cal-hdr{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between}
 .ap-cal-title{font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,0.4)}
 .ap-cal-pct{font-family:var(--display);font-size:22px;color:var(--electric);line-height:1}
@@ -1191,7 +1191,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── SKILLS EXPLORER ── */
 .sk-wrap{padding:16px 56px 44px;max-width:700px}
-.sk-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
+.sk-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px}
 .sk-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px}
 .sk-card{border:1px solid var(--line2);overflow:hidden;cursor:pointer;transition:all .22s;position:relative}
 .sk-card:hover:not(.expanded){border-color:var(--cobalt)}
@@ -1211,7 +1211,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .sk-mark-btn:hover{background:var(--cobalt);color:#fff}
 .sk-card.marked{border-color:var(--electric)}
 .sk-card.marked .sk-mark-btn{background:var(--cobalt);color:#fff}
-.sk-done-box{background:var(--electric);padding:18px 22px;max-width:820px;display:none}
+.sk-done-box{background:var(--electric);padding:18px 22px;display:none}
 .sk-done-box.show{display:block}
 .sk-done-h{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--black);margin-bottom:6px}
 .sk-done-p{font-family:var(--serif);font-size:14px;color:rgba(0,0,0,0.55);line-height:1.65;font-style:normal}
@@ -1235,7 +1235,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 /* TOOLS */
 .tools-blk{padding:20px 56px 44px}
 .t-head{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--black);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--black)}
-.hw-list{list-style:none;max-width:820px;margin-top:8px}
+.hw-list{list-style:none;margin-top:8px}
 .hw-list li{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.65;padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
 .hw-list li:first-child{border-top:1px solid var(--line)}
 .hw-box{width:14px;height:14px;border:2px solid var(--black);flex-shrink:0;margin-top:4px}
@@ -1381,7 +1381,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-sub"><b id="mvCount">0</b> / 5 verdicts delivered</div>
     </div>
     <div class="mv-wrap">
-      <p class="mv-instr" style="font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px">Every meeting is a choice. Make the right call on each one. Your criteria: does this move your numbers or improve your performance? If not, it's a decline.</p>
+      <p class="mv-instr" style="font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px">Every meeting is a choice. Make the right call on each one. Your criteria: does this move your numbers or improve your performance? If not, it's a decline.</p>
       <div class="mv-items" id="mvItems"></div>
     </div>
   </div>
@@ -1576,7 +1576,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
   </div>
 
   <div style="margin-top:32px;padding:16px 0;border-top:1px solid var(--line)">
-    <p style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">Async work either sets you free or lets you disappear. Every answer here is a commitment to being visible and valuable without anyone watching over your shoulder.</p>
+    <p id="sidebarMotto" style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">Async work either sets you free or lets you disappear. Every answer here is a commitment to being visible and valuable without anyone watching over your shoulder.</p>
   </div>
 </aside>
 
@@ -1705,6 +1705,14 @@ let qAns={},qSubmitted=false,qPassed=false;
 /* ════════════════════════════════════
    INIT
 ════════════════════════════════════ */
+const SIDEBAR_TEXTS = [
+  "Async either sets you free or lets you disappear.",
+  "Visibility is not vanity. It is survival.",
+  "If you’re not visible when you’re remote, you’re optional.",
+  "An email at 6 PM doesn’t make you dedicated. Shipping results does.",
+  "Out of sight, out of mind, out of a job."
+];
+
 function init(){
   // Register gates FIRST so they're always available for rendering
   // Narrative gates
@@ -2081,6 +2089,8 @@ function render(){
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';
   document.getElementById('btnNext').disabled=!canContinue();
+  var sbp=document.getElementById('sidebarMotto');
+  if(sbp&&typeof SIDEBAR_TEXTS!=='undefined'){var si=SEC[cur]||0;sbp.textContent=SIDEBAR_TEXTS[si]||SIDEBAR_TEXTS[0];}
 }
 
 // Zone click delegation

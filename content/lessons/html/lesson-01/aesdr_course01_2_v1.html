@@ -433,7 +433,7 @@
  *
  *  Usage in lesson JS:
  *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
- *    AESDR.gate(1, { type:'narrative', prompt:'...', minChars:120, attest:'I shared this with someone on the team because I know it\u0027s important to make my voice and my thoughts familiar around this place' });
+ *    AESDR.gate(1, { type:'narrative', prompt:'...', minChars:120, attest:'I shared this with someone on the team because the version of me that wins starts right here' });
  *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
  *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
  *
@@ -1091,19 +1091,19 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
 .lh-sub b{color:var(--black)}
 .lb{padding:24px 56px 0}
-.lp{font-family:var(--serif);font-size:19px;line-height:1.8;color:var(--black);max-width:820px;margin-bottom:14px}
-.kp{list-style:none;max-width:820px;margin:14px 0}
+.lp{font-family:var(--serif);font-size:19px;line-height:1.8;color:var(--black);margin-bottom:14px}
+.kp{list-style:none;margin:14px 0}
 .kp li{font-family:var(--serif);font-size:18px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px;align-items:flex-start}
 .kp li:first-child{border-top:1px solid var(--line)}
 .kp-n{font-family:var(--mono);font-size:9px;color:var(--mid);min-width:22px;padding-top:3px;flex-shrink:0}
-.lie{max-width:820px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
+.lie{background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
 .lie-tab{position:absolute;top:0;left:0;font-family:var(--cond);font-size:9px;letter-spacing:.24em;font-weight:800;text-transform:uppercase;padding:3px 10px;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;color:var(--black)}
 .lie-q{font-family:var(--serif);font-style:italic;font-size:18px;color:#fff;line-height:1.5;margin:12px 0 10px}
 .lie-a{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
 
 /* ── COG vs PARTNER SORT ── */
 .sort-wrap{padding:16px 56px 44px}
-.sort-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
+.sort-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px}
 .sort-arena{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:720px}
 .sort-zone{border:2px solid var(--line2);padding:14px;min-height:260px}
 .sort-zone-lbl{font-family:var(--cond);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;padding-bottom:10px;border-bottom:2px solid var(--black)}
@@ -1122,7 +1122,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .sort-card.wrong{border-color:var(--coral);background:var(--cor-lt);animation:shake .35s ease both}
 .sort-card.locked{cursor:default}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.sort-pool{display:flex;flex-direction:column;gap:6px;max-width:720px;margin-bottom:16px}
+.sort-pool{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
 .sort-pool-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;padding-bottom:10px;border-bottom:2px solid var(--black)}
 .drop-zone-card{padding:13px 14px;border:2px dashed var(--line2);background:var(--white);font-family:var(--cond);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mid);text-align:center;cursor:pointer;transition:all .18s;min-height:46px;display:flex;align-items:center;justify-content:center}
 .drop-zone-card.target{border-color:var(--teal);background:var(--teal-lt);color:var(--teal);border-style:solid}
@@ -1161,13 +1161,13 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .conv-fb.bad{color:var(--coral)}
 .conv-adv{margin:14px 56px 0;display:none}
 .conv-adv.show{display:block}
-.conv-done-box{margin:20px 56px 0;max-width:820px;background:var(--teal);padding:22px 22px 18px;color:#fff}
+.conv-done-box{margin:20px 56px 0;background:var(--teal);padding:22px 22px 18px;color:#fff}
 .conv-done-h{font-family:var(--cond);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
 .conv-done-p{font-family:var(--serif);font-style:normal;font-size:14px;color:rgba(255,255,255,0.7);line-height:1.65}
 
 /* ── TRUST AUDIT ── */
 .audit-wrap{padding:16px 56px 44px;max-width:680px}
-.audit-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:22px}
+.audit-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:22px}
 .audit-item{border:1px solid var(--line2);margin-bottom:10px;overflow:hidden;transition:border-color .2s}
 .audit-item.done{border-color:var(--teal)}
 .audit-trigger{width:100%;display:flex;align-items:center;gap:16px;padding:16px 18px;background:none;border:none;cursor:pointer;text-align:left;transition:background .18s}
@@ -1190,7 +1190,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── ACKNOWLEDGMENT BUILDER ── */
 .ack-wrap{padding:16px 56px 44px;max-width:700px}
-.ack-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:22px}
+.ack-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:22px}
 .ack-preview{background:var(--black);padding:22px 24px;margin-bottom:24px;position:relative;max-width:820px}
 .ack-prev-tag{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px}
 .ack-prev-from{font-family:var(--mono);font-size:9px;color:var(--pink);letter-spacing:.1em;margin-bottom:6px}
@@ -1207,7 +1207,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .ack-choice.wrong-reveal{border-color:var(--coral);background:var(--cor-lt);color:var(--black);cursor:default}
 .ack-choice.locked{cursor:default}
 .ack-submit{margin-top:18px}
-.ack-done-box{max-width:820px;background:var(--acid);padding:18px 22px;margin-top:16px;display:none}
+.ack-done-box{background:var(--acid);padding:18px 22px;margin-top:16px;display:none}
 .ack-done-box.show{display:block}
 .ack-done-h{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
 .ack-done-p{font-family:var(--serif);font-size:14px;color:var(--mid);line-height:1.65;font-style:normal}
@@ -1231,12 +1231,12 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 /* TOOLS */
 .tools-blk{padding:20px 56px 44px}
 .t-head{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--black);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--black)}
-.data-table{width:100%;max-width:600px;border-collapse:collapse;margin:0 0 30px}
+.data-table{width:100%;border-collapse:collapse;margin:0 0 30px}
 .data-table th{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;background:var(--black);color:var(--white);padding:9px 14px;text-align:left}
 .data-table td{font-family:var(--serif);font-size:14px;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--black);line-height:1.6;vertical-align:top}
 .data-table tr:last-child td{border-bottom:none}
 .data-table tr:nth-child(even) td{background:var(--lite)}
-.hw-list{list-style:none;max-width:820px;margin-top:8px}
+.hw-list{list-style:none;margin-top:8px}
 .hw-list li{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.65;padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
 .hw-list li:first-child{border-top:1px solid var(--line)}
 .hw-box{width:14px;height:14px;border:2px solid var(--black);flex-shrink:0;margin-top:4px}
@@ -1545,7 +1545,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
   </div>
 
   <div style="margin-top:32px;padding:16px 0;border-top:1px solid var(--line)">
-    <p style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">Camaraderie isn't built by hoping it happens. Every answer here is a concrete step toward earning trust from the people you work with every single day.</p>
+    <p id="sidebarMotto" style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">Camaraderie isn't built by hoping it happens. Every answer here is a concrete step toward earning trust from the people you work with every single day.</p>
   </div>
 </aside>
 
@@ -1773,6 +1773,14 @@ let qPassed    = false;
 /* ══════════════════════════════════════════
    INIT
 ══════════════════════════════════════════ */
+const SIDEBAR_TEXTS = [
+  "Camaraderie isn’t a vibe. It’s a strategy.",
+  "You don’t get to be liked. You get to be respected. Then liked.",
+  "I knew exactly what you wanted before you said it. That’s partnership.",
+  "Friends first, colleagues second. Wait, reverse that.",
+  "Trust is earned in drops and lost in buckets."
+];
+
 function init(){
   // Register gates FIRST so they're always available for rendering
   // Narrative gates
@@ -1796,11 +1804,11 @@ function init(){
       { task:'Write a specific public shoutout for your SDR using the format from the lesson (specific behavior, not just outcomes). Include the exact words you\'d post in Slack or say in a team meeting.', placeholder:'Write the full shoutout: opening, specific recognition of effort/behavior, and close...', minChars: 100 },
       { task:'From the Trust Audit in this lesson, which question hit you hardest? Write your honest answer to that question and one concrete action you\'ll take this week because of it.', placeholder:'Name the audit question, your honest answer, and your specific action this week...', minChars: 80 }
     ] : [
-      { task:'Prepare one call recording and one email for your next 1:1 with your AE. Walk through what went wrong BEFORE they tell you. Write your self-evaluation now — what specifically needs fixing and why.', placeholder:'Describe the call and email you\'ll bring, what went wrong in each, and what you need help with...', minChars: 80 },
-      { task:'Ask your AE this exact question this week: "What\'s the single biggest thing I should focus on improving right now?" Write down when you\'ll ask it and how you\'ll implement their answer.', placeholder:'When will you ask this question? How will you track and implement the answer?', minChars: 60 },
-      { task:'Acknowledge your AE publicly this week. Name the specific thing they invested time in — not "thanks for your help" but the actual behavior, effort, or skill they demonstrated. Write the exact words.', placeholder:'Write the specific public acknowledgment: what they did, where you\'ll say it, exact words...', minChars: 80 },
+      { task:'Prepare one call recording and one email for your next 1:1 with a partner. Walk through what went wrong BEFORE they tell you. Write your self-evaluation now — what specifically needs fixing and why.', placeholder:'Describe the call and email you\'ll bring, what went wrong in each, and what you need help with...', minChars: 80 },
+      { task:'Ask a teammate this exact question this week: "What\'s the single biggest thing I should focus on improving right now?" Write down when you\'ll ask it and how you\'ll implement their answer.', placeholder:'When will you ask this question? How will you track and implement the answer?', minChars: 60 },
+      { task:'Acknowledge someone on the team publicly this week. Name the specific thing they invested time in — not "thanks for your help" but the actual behavior, effort, or skill they demonstrated. Write the exact words.', placeholder:'Write the specific public acknowledgment: what they did, where you\'ll say it, exact words...', minChars: 80 },
       { task:'From the SDR Partnership Audit, which question hit you hardest? Write your honest answer and one concrete action you\'ll take this week because of it.', placeholder:'Name the audit question, your honest answer, and your specific action this week...', minChars: 80 },
-      { task:'Write down one hard question you\'ve been avoiding asking your AE. Why have you avoided it? When this week will you ask it? What do you expect to hear?', placeholder:'The question, why you\'ve avoided it, when you\'ll ask, and what you expect...', minChars: 80 }
+      { task:'Write down one hard question you\'ve been avoiding asking a partner. Why have you avoided it? When this week will you ask it? What do you expect to hear?', placeholder:'The question, why you\'ve avoided it, when you\'ll ask, and what you expect...', minChars: 80 }
     ]
   });
   // Restore saved gate state from localStorage
@@ -2041,7 +2049,7 @@ function buildAck(){
     <div class="ack-done-p">Specific, public, and outcome-focused. This is the format that builds team confidence — not just the recipient's. Continue when ready.</div>
   </div>`;
 
-  const failHtml=ackSubmitted&&!ackPassed?`<div style="max-width:820px;margin-top:14px;padding:12px 16px;border-left:4px solid var(--coral);background:var(--cor-lt)">
+  const failHtml=ackSubmitted&&!ackPassed?`<div style="margin-top:14px;padding:12px 16px;border-left:4px solid var(--coral);background:var(--cor-lt)">
     <div style="font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--coral);margin-bottom:6px">NOT QUITE</div>
     <div style="font-family:var(--serif);font-size:14px;color:var(--black);line-height:1.65">The highlighted choices above show the strongest version. Review them, then <button style="background:none;border:none;cursor:pointer;font-family:var(--serif);font-size:14px;text-decoration:underline;color:var(--teal)" onclick="resetAck()">try again</button>.</div>
   </div>`:'';
@@ -2218,6 +2226,8 @@ function render(){
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';
   document.getElementById('btnNext').disabled=!canContinue();
+  var sbp=document.getElementById('sidebarMotto');
+  if(sbp&&typeof SIDEBAR_TEXTS!=='undefined'){var si=SEC[cur]||0;sbp.textContent=SIDEBAR_TEXTS[si]||SIDEBAR_TEXTS[0];}
 }
 
 // Hook sort zone clicks

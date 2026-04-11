@@ -145,6 +145,7 @@ export default async function LessonPage({
             height: "100dvh",
             border: "none",
             background: "#fff",
+            zIndex: 1,
           }}
           title={
             selectedUnit

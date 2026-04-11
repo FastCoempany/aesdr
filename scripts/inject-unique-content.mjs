@@ -171,11 +171,147 @@ const CONSCIENCE = {
   'lesson-12/aesdr_course12_3_v1': 'Staying single-threaded on your craft is the most counterintuitive career advice that actually works. What you write here proves you understand why focus wins.',
 };
 
-// ─── STEP 4: Process all files ───
+// ─── STEP 4: Per-section sidebar texts (Rowan Pope + Michael Scott style) ───
+const SIDEBAR_MAP = {
+  'lesson-01/aesdr_course01_v1': ["Structure is the difference between surviving and flaming out.","You have to be twice as good to get half of what they have. That is not a request.","Would I rather be feared or loved? Both. I want people afraid of how much they love my pipeline.","Cold call carelessly.","I declare... PIPELINE!"],
+  'lesson-01/aesdr_course01_2_v1': ["Camaraderie isn\u2019t a vibe. It\u2019s a strategy.","You don\u2019t get to be liked. You get to be respected. Then liked.","I knew exactly what you wanted before you said it. That\u2019s partnership.","Friends first, colleagues second. Wait, reverse that.","Trust is earned in drops and lost in buckets."],
+  'lesson-01/aesdr_course01_3_v1': ["Coaching is not optional. It\u2019s the whole job.","I run things. Things don\u2019t run me.","A good manager makes their people better. A great one makes them dangerous.","Sometimes I\u2019ll start a sentence and I don\u2019t even know where it\u2019s going. I just hope I find it along the way.","Your SDR doesn\u2019t need a cheerleader. They need a mirror."],
+  'lesson-02/aesdr_course02_1_v1': ["Silos are where pipeline goes to die.","I am the wall. And I am the one who takes them down.","If you have a silo, you have a problem. If you don\u2019t know you have a silo, you are the problem.","Cross-functional is not a buzzword. It\u2019s a survival skill.","Information hoarding is just fear wearing a suit."],
+  'lesson-02/aesdr_course02_2_v1': ["Your workspace is either a weapon or a coffin.","Control your environment or it will control you.","I am fast. To give you a reference point, I am somewhere between a snake and a mongoose.","Clean desk, clean mind. Messy desk, messy pipeline.","Your setup should sell for you even when you\u2019re not selling."],
+  'lesson-02/aesdr_course02_3_v1': ["Ego kills more deals than bad product ever will.","You think you\u2019re the smartest person in the room? Wrong room.","I don\u2019t have a problem with ego. I just leave mine at the door.","Nobody ever got promoted by proving they were right in an argument.","Check your ego or your pipeline will check it for you."],
+  'lesson-03/aesdr_course03_1_v1': ["Patterns don\u2019t fix themselves. They compound.","Do not test me. I don\u2019t do well when tested.","The definition of insanity is doing the same call and expecting a different meeting.","If you keep falling into the same pitfall, eventually it becomes your grave.","Your pipeline doesn\u2019t lie. It just whispers truths you ignore."],
+  'lesson-03/aesdr_course03_2_v1': ["Survival isn\u2019t dramatic. It\u2019s daily.","I made them. And I can unmake them.","Layoffs don\u2019t target the person who ships. They target the person who hides.","The first person cut is always the last person who spoke up.","Survive this quarter. Then survive the next one. That\u2019s the whole playbook."],
+  'lesson-03/aesdr_course03_3_v1': ["Managing up isn\u2019t optional. It\u2019s a survival skill.","The only person you can control is yourself. Start there.","My philosophy is basically this: know what you know. And know what you don\u2019t.","Your manager has a manager. Act accordingly.","Nobody advocates for you louder than you. Nobody."],
+  'lesson-04/aesdr_course04_1_v1': ["Your manager can make or break you. Navigate accordingly.","Power is not something that is given. It is taken.","Would I rather have a good boss or a good salary? Trick question. Both.","Politics isn\u2019t dirty. Ignoring politics is naive.","The person who controls the narrative controls the outcome."],
+  'lesson-04/aesdr_course04_2_v1': ["Culture isn\u2019t the ping pong table. It\u2019s the hard decisions.","You want to know what happens in this room? Everything.","People will forget what you said. They\u2019ll never forget how you made them feel at the Keurig.","Culture eats strategy for breakfast. Sales eats everything else.","The vibe check is never about the vibe. It\u2019s about the work."],
+  'lesson-04/aesdr_course04_3_v1': ["Async either sets you free or lets you disappear.","Visibility is not vanity. It is survival.","If you\u2019re not visible when you\u2019re remote, you\u2019re optional.","An email at 6 PM doesn\u2019t make you dedicated. Shipping results does.","Out of sight, out of mind, out of a job."],
+  'lesson-05/aesdr_course05_1_v1': ["The playbook gets you started. What you do beyond it gets you promoted.","I don\u2019t follow rules. I make them.","There\u2019s no such thing as a natural-born closer. Just a well-practiced one.","The playbook is the floor, not the ceiling.","Run the play. Then make one up."],
+  'lesson-05/aesdr_course05_2_v1': ["Execution separates promoted from managed out.","The speed of the leader is the speed of the gang.","Talk is cheap. Pipeline is expensive.","Plans are worthless. Planning is everything.","Don\u2019t tell me what you\u2019re going to do. Show me what you did."],
+  'lesson-05/aesdr_course05_3_v1': ["Be the person no one can afford to lose.","I am not a toy. I am not a thing to be toyed with.","Make yourself so useful that firing you would be more expensive than keeping you.","Irreplaceable people don\u2019t ask for promotions. They get offered them.","You\u2019re either a line item or an asset. Choose."],
+  'lesson-06/aesdr_course06_1_v1': ["Past the playbook is where the real growth starts.","There are things you can fix, and things you can fight.","The comfort zone is beautiful. But nothing grows there.","Innovation isn\u2019t invention. It\u2019s iteration on what already works.","The best reps steal from everyone and credit no one."],
+  'lesson-06/aesdr_course06_2_v1': ["Your network is your net worth. Build it before you need it.","Connections without context are just contacts.","Every person in your life is a door. Or a wall. Learn the difference.","LinkedIn is not networking. Coffee is networking.","The person you help today hires you tomorrow."],
+  'lesson-06/aesdr_course06_3_v1': ["Know just enough to be dangerous. Then learn the rest.","Knowledge is power. But only if you use it.","You don\u2019t need to know everything. You need to know the one thing they care about.","The gray area is where deals happen.","Confidence is not knowing it all. It\u2019s knowing you can figure it out."],
+  'lesson-07/aesdr_course07_1_v1': ["Prospecting is everyone\u2019s job. Full stop.","I will not be purged. I will not be outworked.","Waiting for inbound is just unemployment with extra steps.","The phone is not your enemy. Silence is.","Your pipeline is a garden. Neglect it and weeds win."],
+  'lesson-07/aesdr_course07_2_v1': ["Self-sourced is self-made. Own your pipeline.","Sometimes you have to take matters into your own hands.","Every meeting you book yourself is a meeting nobody can take from you.","Dependency is fragility. Self-sourcing is armor.","The reps who own their pipeline own their career."],
+  'lesson-07/aesdr_course07_3_v1': ["SaaS is worth it. But only for the version of you that works.","The question was never whether this was hard. It was whether you were harder.","Do I need to be liked? Absolutely not. I like to be liked. But it\u2019s not necessary.","The money is real. The grind is real. Your choice.","SaaS will eat you alive if you let it. Don\u2019t let it."],
+  'lesson-08/aesdr_course08_1_v1': ["The math doesn\u2019t lie. You might.","The truth will set you free. But first, it will make you miserable.","Optimism without math is just denial with better vibes.","Hope is not a strategy. Neither is wishful thinking.","Your forecast is a mirror. Look harder."],
+  'lesson-08/aesdr_course08_2_v1': ["Potential is the most expensive lie in sales.","If wishes were pipeline, reps would never miss quota.","Potential energy does zero work. Kinetic energy closes deals.","Stop telling yourself what could happen. Look at what is happening.","Your story doesn\u2019t matter. Your numbers do."],
+  'lesson-08/aesdr_course08_3_v1': ["Are you the problem? Only honest people ask.","Am I the problem? That\u2019s the first sign you\u2019re not. But keep checking.","The mirror never lies. Your CRM might.","Self-awareness is a competitive advantage nobody teaches.","The hardest deal to close is the one with yourself."],
+  'lesson-09/aesdr_course09_1_v1': ["Salesforce isn\u2019t the enemy. Your habits are.","Discipline is the bridge between goals and accomplishment.","Bad CRM hygiene is just lying with extra steps.","Your Salesforce is your r\u00e9sum\u00e9. Act like it.","Data in, deals out. Garbage in, unemployment out."],
+  'lesson-09/aesdr_course09_2_v1': ["Slack is a weapon or a distraction. You decide.","Focus is saying no to the other hundred things.","Every notification is someone else\u2019s priority disguised as yours.","DND is not rude. It\u2019s professional.","The best reps are terrible at Slack. On purpose."],
+  'lesson-09/aesdr_course09_3_v1': ["Tools don\u2019t close deals. People who master them do.","A sword is only as sharp as the person wielding it.","You don\u2019t get credit for knowing where the button is. You get credit for clicking it.","Fluency beats fumbling. Every single time.","Master your tools or they will master your calendar."],
+  'lesson-10/aesdr_course10_1_v1': ["Commission math is the math no one teaches you. Until it\u2019s too late.","Money doesn\u2019t grow on trees. It grows on closed-won.","Know your comp plan better than your manager knows it.","If you can\u2019t calculate your check, you can\u2019t optimize it.","OTE means on target. Are you on target?"],
+  'lesson-10/aesdr_course10_2_v1': ["Quotas push you. They don\u2019t define you.","A number is just a number. Until it\u2019s your number.","Missing quota doesn\u2019t make you a failure. Accepting it does.","The number is the mountain. Your habits are the legs.","Quota is a conversation with the future version of you."],
+  'lesson-10/aesdr_course10_3_v1': ["Feast or famine is the ride nobody prepares you for.","Emotional discipline is the skill they never put in the job description.","Celebrate the wins. Grieve the losses. Never for longer than 24 hours.","The rollercoaster doesn\u2019t stop. You just get better at holding on.","Consistency is boring. Consistency also pays your rent."],
+  'lesson-11/aesdr_course11_1_v1': ["Show up as yourself. That\u2019s the whole strategy.","Presence is not performance. It\u2019s power.","I don\u2019t need a drink to be interesting. My pipeline speaks for itself.","Being real in a room full of performers is the ultimate power move.","Sobriety isn\u2019t a limitation. It\u2019s a competitive advantage."],
+  'lesson-11/aesdr_course11_2_v1': ["Conferences can accelerate or derail you. In one night.","Your reputation arrives before you do. And stays after you leave.","What happens at the conference absolutely does not stay at the conference.","Network before noon. Everything after midnight is a liability.","The goal is connections, not confessions."],
+  'lesson-11/aesdr_course11_3_v1': ["Presence isn\u2019t about looking the part. It\u2019s being the part.","Walk into every room like you belong there. Because you do.","Dress for the job you want. But also close for the job you have.","Your brand follows you between companies. Build it intentionally.","People buy from people they trust. Be trustworthy."],
+  'lesson-12/aesdr_course12_1_v1': ["Relationships outlast every job. Every quota. Every company.","The network you build today is the career you live tomorrow.","People forget deals. They never forget how you treated them.","Relationships are compound interest. Start depositing now.","Your Rolodex is your safety net."],
+  'lesson-12/aesdr_course12_2_v1': ["Your home office is a fortress or a prison. You\u2019re building one.","Where you work shapes how you work.","Working from home is not a vacation. It\u2019s a test.","The commute is gone. The excuses should be too.","Boundaries don\u2019t build themselves. Neither does discipline."],
+  'lesson-12/aesdr_course12_3_v1': ["Focus wins. Every time.","Multi-tasking is just failing at two things simultaneously.","The person who chases two rabbits catches neither.","Single-threaded focus is the most counterintuitive hack that works.","Depth beats breadth. Always."],
+};
+
+// ─── STEP 5: Custom attest reason pool (unique per checkbox, no repeats) ───
+const CUSTOM_REASONS = [
+  "the version of me that wins starts right here",
+  "discipline is the bridge between goals and achievement",
+  "what I build today becomes my foundation tomorrow",
+  "the gap between intention and impact is execution",
+  "showing up matters more than showing off",
+  "real progress starts where comfort ends",
+  "the person I\u2019m becoming depends on what I do right now",
+  "small actions compound into big results",
+  "this is the work most people skip \u2014 and that\u2019s exactly why it matters",
+  "words without action are just wishes",
+  "I\u2019m not here to perform growth \u2014 I\u2019m here to actually grow",
+  "the scoreboard doesn\u2019t care about my excuses",
+  "every rep counts even when no one is watching",
+  "talent without discipline is just wasted potential",
+  "I\u2019d rather be uncomfortable and improving than comfortable and stuck",
+  "this moment is the only one I can control",
+  "the best time to start was yesterday \u2014 the second best time is right now",
+  "average is a choice and I\u2019m choosing differently",
+  "the work I do in private determines the success I earn in public",
+  "honesty with myself is the most valuable skill I can develop",
+  "being good isn\u2019t good enough when you can be great",
+  "consistency beats intensity every single day",
+  "my standards don\u2019t lower just because no one is checking",
+  "the path to mastery runs through moments exactly like this",
+  "I refuse to let today\u2019s comfort steal tomorrow\u2019s success",
+  "the only person I need to outwork is the version of me from yesterday",
+  "results don\u2019t lie and neither should I",
+  "every moment of practice is a deposit in my future",
+  "progress isn\u2019t always visible but it\u2019s always happening when I show up",
+  "I\u2019m building a reputation one action at a time",
+  "the person who does the boring work always beats the person who waits for the exciting work",
+  "this is where the difference gets made \u2014 not in the big moments, in these ones",
+  "self-discipline is just self-respect in action",
+  "I don\u2019t need motivation \u2014 I need commitment",
+  "the work speaks louder than the intention ever could",
+  "my trajectory changes every time I choose effort over ease",
+  "there is no substitute for doing the actual work",
+  "I\u2019m investing in competence, not just confidence",
+  "the details others skip are the details that separate winners",
+  "this isn\u2019t about being perfect \u2014 it\u2019s about being relentless",
+  "ownership starts with the small things",
+  "the gap between where I am and where I want to be is filled with work exactly like this",
+  "excuses are just dreams I\u2019ve given up on",
+  "the grind is the gift \u2014 I just don\u2019t always see it yet",
+  "my commitment to this process is my commitment to myself",
+  "every challenge I face honestly makes the next one easier",
+  "I\u2019m not cutting corners because I\u2019m not building something I want to fall apart",
+  "professionalism isn\u2019t a switch \u2014 it\u2019s a habit",
+  "what separates good from great is exactly this kind of effort",
+  "I\u2019m writing the story of my career with every response I give here",
+  "preparation is the unsexy secret behind every great performance",
+  "I\u2019m choosing substance over speed",
+  "the person who shows up every day beats the person who shows up when they feel like it",
+  "growth requires friction and I\u2019m leaning into it",
+  "my word to myself matters even more than my word to others",
+  "the uncomfortable work is the only work that actually changes me",
+  "being honest about my gaps is the first step to closing them",
+  "I\u2019m trading short-term comfort for long-term capability",
+  "the version of me that does this well is the version that gets ahead",
+  "real learning happens in the doing, not the reading",
+  "I don\u2019t get to skip the fundamentals and still expect expert results",
+  "the standard I accept is the standard I\u2019ll become",
+  "my actions here are a preview of my actions under pressure",
+  "there are no shortcuts to anywhere worth going",
+  "the habits I set today become the results I measure tomorrow",
+  "I trust the process because I\u2019ve seen what happens when I don\u2019t",
+  "discipline isn\u2019t punishment \u2014 it\u2019s freedom",
+  "the best investment I can make is in my own competence",
+  "I refuse to be the weakest link in my own story",
+  "every challenge I take on honestly makes me harder to replace",
+  "commitment is doing the thing long after the feeling has left",
+  "I\u2019m not here for participation credit \u2014 I\u2019m here for real improvement",
+  "the work no one sees is the work that matters most",
+  "my future self is counting on what I do right now",
+  "progress is built on honest reps, not perfect ones",
+  "I\u2019m earning my confidence through action, not affirmation",
+  "there\u2019s no version of success that doesn\u2019t include this kind of effort",
+  "what I practice in private I perform in public",
+  "being deliberate beats being busy every single time",
+  "the bridge between who I am and who I want to be is built with work like this",
+];
+
+// ─── STEP 6: AE replacement pools ───
+const AE_ATTEST_POOL = [
+  "someone I trust","a teammate","a partner","someone on the team",
+  "someone I respect","a colleague","someone who challenges me",
+];
+const AE_TASK_POOL = [
+  "a partner","a teammate","someone on the team","someone you trust",
+  "someone you respect","a colleague","a peer",
+];
+
+// ─── STEP 7: Process all files ───
 const lessonDirs = fs.readdirSync(ROOT).filter(d => d.startsWith('lesson-')).sort();
 let updated = 0;
 let skipped = [];
-let phraseIdx = 0; // Global index into SHUFFLED — ensures no repeats across files
+let phraseIdx = 0;
+let customReasonIdx = 0;
+let aeCounter = 0;
 
 for (const dir of lessonDirs) {
   const dirPath = path.join(ROOT, dir);
@@ -187,9 +323,10 @@ for (const dir of lessonDirs) {
     let changes = 0;
     const fileKey = dir + '/' + file.replace('.html', '');
     const conscience = CONSCIENCE[fileKey];
+    const isProto = filePath === PROTOTYPE;
 
-    // ── 4a. Replace IIFE (propagate from prototype) ──
-    if (filePath !== PROTOTYPE) {
+    // ── 7a. Replace IIFE (propagate from prototype) ──
+    if (!isProto) {
       let oldStart = html.indexOf('/*  AESDR Accountability Gates v2');
       if (oldStart === -1) oldStart = html.indexOf('/*  AESDR Accountability Gates v1');
       if (oldStart !== -1) {
@@ -201,25 +338,19 @@ for (const dir of lessonDirs) {
       }
     }
 
-    // ── 4b. Replace ATTEST array with file-specific unique phrases ──
+    // ── 7b. Replace ATTEST array with file-specific unique phrases ──
     const attestStart = html.indexOf('var ATTEST = [');
     if (attestStart !== -1) {
-      // Find the matching ] by counting brackets from the opening [
       const bracketOpen = html.indexOf('[', attestStart);
-      let depth = 0;
-      let attestEnd = -1;
+      let depth = 0, attestEnd = -1;
       for (let ci = bracketOpen; ci < html.length; ci++) {
         if (html[ci] === '[') depth++;
         if (html[ci] === ']') { depth--; if (depth === 0) { attestEnd = ci + 1; break; } }
       }
-      // Include trailing semicolon if present
       if (attestEnd !== -1 && html[attestEnd] === ';') attestEnd++;
-
       if (attestEnd !== -1) {
-        // Assign 15 unique phrases from the shuffled pool
         const fileAttest = SHUFFLED.slice(phraseIdx, phraseIdx + 15);
         phraseIdx += 15;
-
         const newAttest = 'var ATTEST = [\n' +
           fileAttest.map(p => '    "' + p.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"').join(',\n') +
           '\n  ];';
@@ -228,7 +359,7 @@ for (const dir of lessonDirs) {
       }
     }
 
-    // ── 4c. Add conscience: to homework gates (if not already present) ──
+    // ── 7c. Add conscience: to homework gates ──
     if (conscience && !html.includes("conscience:")) {
       const hwRe = /type:\s*'homework'\s*,/g;
       let hwMatch;
@@ -241,27 +372,113 @@ for (const dir of lessonDirs) {
       }
     }
 
-    // ── 4d. Replace sidebar conscience text ──
-    // Old pattern: <p style="font-family:var(--serif);font-size:13px;font-style:italic;...iris...">You can treat this like just another course...
-    // New pattern: <p style="font-family:'Inter',...;font-weight:700;...">lesson-specific text</p>
+    // ── 7d. Replace sidebar text and add id="sidebarMotto" ──
     if (conscience) {
+      // Replace old "You can treat this..." pattern
       const sidebarRe = /<p style="[^"]*iris[^"]*">[^<]*You can treat this like just another course[^<]*<\/p>/;
       if (sidebarRe.test(html)) {
         html = html.replace(sidebarRe,
-          `<p style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">${conscience}</p>`);
+          `<p id="sidebarMotto" style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">${conscience}</p>`);
+        changes++;
+      }
+      // Add id to existing sidebar <p> without id
+      if (!html.includes('id="sidebarMotto"')) {
+        html = html.replace(
+          /<p style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700/,
+          '<p id="sidebarMotto" style="font-family:\'Inter\',-apple-system,sans-serif;font-size:13px;font-weight:700'
+        );
         changes++;
       }
     }
 
-    // ── 4e. Fix old font-style:italic on sidebar text (if sidebar was already partially changed) ──
-    // Also catch the old pattern with var(--serif) + italic
+    // ── 7e. Fix old font-style:italic ──
     const oldSidebarStyle = /(<p style="font-family:var\(--serif\);font-size:13px;)font-style:italic;(line-height)/;
     if (oldSidebarStyle.test(html)) {
       html = html.replace(oldSidebarStyle, "$1font-weight:700;$2");
       changes++;
     }
 
-    // ── 4f. Add screen position save in go() if not already present ──
+    // ── 7f. CSS max-width removal (600-820px range) ──
+    const before7f = html;
+    html = html.replace(/max-width:\s*(6\d\d|7\d\d|8[012]\d)px;\s*/g, '');
+    if (html !== before7f) changes++;
+
+    // ── 7g. Inject SIDEBAR_TEXTS array ──
+    const sidebarTexts = SIDEBAR_MAP[fileKey];
+    if (sidebarTexts && !html.includes('SIDEBAR_TEXTS')) {
+      const sidebarJS = 'const SIDEBAR_TEXTS = [\n' +
+        sidebarTexts.map(t => '  "' + t.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"').join(',\n') +
+        '\n];\n\n';
+      html = html.replace('function init(){', sidebarJS + 'function init(){');
+      changes++;
+    }
+
+    // ── 7h. Add dynamic sidebar update in render() ──
+    if (!html.includes("getElementById('sidebarMotto')")) {
+      html = html.replace(
+        "document.getElementById('btnNext').disabled=!canContinue();",
+        "document.getElementById('btnNext').disabled=!canContinue();\n  var sbp=document.getElementById('sidebarMotto');\n  if(sbp&&typeof SIDEBAR_TEXTS!=='undefined'){var si=SEC[cur]||0;sbp.textContent=SIDEBAR_TEXTS[si]||SIDEBAR_TEXTS[0];}"
+      );
+      changes++;
+    }
+
+    // ── 7i. Replace AE language in task/attest/placeholder strings (skip prototype) ──
+    // Separate passes for single-quoted and double-quoted strings to avoid
+    // the " inside '...' problem (e.g. task:'...the "I Don\'t Know"...your AE...')
+    if (!isProto) {
+      const before7i = html;
+      // SQ = single-quote string interior, DQ = double-quote
+      const SQ = String.raw`(?:[^'\\]|\\.)*?`;
+      const DQ = String.raw`(?:[^"\\]|\\.)*?`;
+
+      function aeReplace(prop, aePhrase, pool) {
+        for (const [qo, qc, S] of [["'", "'", SQ], ['"', '"', DQ]]) {
+          const escaped = aePhrase.replace(/\s/g, '\\s');
+          const re = new RegExp(`(${prop}:\\s*${qo})(${S})\\b${escaped}\\b(${S})(${qc})`, 'g');
+          html = html.replace(re, (m, p1, before, after, q) => {
+            const rep = pool[aeCounter++ % pool.length];
+            // Preserve "with " prefix when replacing "with your AE" / "with my AE"
+            if (aePhrase.startsWith('with ')) return p1 + before + 'with ' + rep + after + q;
+            return p1 + before + rep + after + q;
+          });
+        }
+      }
+
+      // attest: values
+      for (const phrase of ['my AE', 'your AE']) aeReplace('attest', phrase, AE_ATTEST_POOL);
+
+      // task: values — "with ..." first, then bare
+      for (const phrase of ['with your AE', 'with my AE', 'your AE', 'my AE']) aeReplace('task', phrase, AE_TASK_POOL);
+
+      // placeholder: values
+      for (const phrase of ['with my AE', 'with your AE', 'my AE', 'your AE']) aeReplace('placeholder', phrase, AE_TASK_POOL);
+
+      if (html !== before7i) changes++;
+    }
+
+    // ── 7j. Make custom attest "because" reasons unique (skip prototype) ──
+    if (!isProto) {
+      const before7j = html;
+      const SQ2 = String.raw`(?:[^'\\]|\\.)*?`;
+      const DQ2 = String.raw`(?:[^"\\]|\\.)*?`;
+      for (const [qo, qc, S] of [["'", "'", SQ2], ['"', '"', DQ2]]) {
+        html = html.replace(new RegExp(`(attest:\\s*${qo})(${S})\\bbecause\\s(${S})(${qc})`, 'g'), (m, p1, prefix, reason, q) => {
+          const newReason = CUSTOM_REASONS[customReasonIdx % CUSTOM_REASONS.length];
+          customReasonIdx++;
+          return p1 + prefix + 'because ' + newReason + q;
+        });
+      }
+      if (html !== before7j) changes++;
+    }
+
+    // ── 7k. Replace AE in SCHED-like arrays ──
+    if (!isProto) {
+      html = html.replace(/act:\s*"Daily huddle with AE"/g, 'act:"Daily team huddle"');
+      html = html.replace(/goal:\s*"Role-play with AE or peer\."/g, 'goal:"Role-play with a partner or peer."');
+      html = html.replace(/act:\s*"AE\/SDR feedback session"/g, 'act:"Feedback & debrief session"');
+    }
+
+    // ── 7l. Persistence: screen position save in go() ──
     if (!html.includes('aesdr_screen_')) {
       html = html.replace(
         /function go\(n\)\{\s*if\(window\.parent!==window\)/,
@@ -270,7 +487,7 @@ for (const dir of lessonDirs) {
       changes++;
     }
 
-    // ── 4g. Add AESDR.restoreState() before build calls in init() ──
+    // ── 7m. Persistence: AESDR.restoreState() in init() ──
     if (!html.includes('AESDR.restoreState()')) {
       html = html.replace(
         /(\s*\/\/ Build UI components[^\n]*\n)/,
@@ -279,7 +496,7 @@ for (const dir of lessonDirs) {
       changes++;
     }
 
-    // ── 4h. Add screen position restore before render() at end of init ──
+    // ── 7n. Persistence: screen position restore ──
     if (!html.includes('_savedScreen')) {
       html = html.replace(
         /(\s*)(render\(\);\s*\n\})/,
@@ -293,7 +510,7 @@ for (const dir of lessonDirs) {
       continue;
     }
 
-    // ── 4f. Validate JS syntax ──
+    // ── Validate JS syntax ──
     const scripts = [];
     const re = /<script>([\s\S]*?)<\/script>/g;
     let m;
@@ -316,16 +533,18 @@ for (const dir of lessonDirs) {
 
 console.log(`\nDone: ${updated} files updated.`);
 console.log(`Total unique attest phrases assigned: ${phraseIdx}`);
+console.log(`Total custom attest reasons assigned: ${customReasonIdx}`);
+console.log(`Total AE replacements: ${aeCounter}`);
 if (skipped.length) {
   console.log(`Skipped ${skipped.length}:`);
   skipped.forEach(s => console.log(`  ${s}`));
 }
 
-// Verify no duplicate phrases across files
+// Verify no duplicate ATTEST phrases
 const allAssigned = SHUFFLED.slice(0, phraseIdx);
 const uniqueCheck = new Set(allAssigned);
 if (uniqueCheck.size !== allAssigned.length) {
-  console.error('WARNING: Duplicate phrases detected!');
+  console.error('WARNING: Duplicate ATTEST phrases detected!');
 } else {
-  console.log(`\u2713 All ${allAssigned.length} assigned phrases are unique across entire app`);
+  console.log(`\u2713 All ${allAssigned.length} ATTEST phrases are unique across entire app`);
 }

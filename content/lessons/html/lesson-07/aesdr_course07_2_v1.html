@@ -433,7 +433,7 @@
  *
  *  Usage in lesson JS:
  *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
- *    AESDR.gate(1, { type:'narrative', prompt:'...', minChars:120, attest:'I shared this with someone on the team because I know it\u0027s important to make my voice and my thoughts familiar around this place' });
+ *    AESDR.gate(1, { type:'narrative', prompt:'...', minChars:120, attest:'I shared this with someone on the team because the work I do in private determines the success I earn in public' });
  *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
  *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
  *
@@ -1080,16 +1080,16 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
 .lh-sub b{color:var(--black)}
 .lb{padding:24px 56px 0}
-.lp{font-family:var(--serif);font-size:19px;line-height:1.8;color:var(--black);max-width:820px;margin-bottom:14px}
-.kp{list-style:none;max-width:820px;margin:14px 0}
+.lp{font-family:var(--serif);font-size:19px;line-height:1.8;color:var(--black);margin-bottom:14px}
+.kp{list-style:none;margin:14px 0}
 .kp li{font-family:var(--serif);font-size:18px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px}
 .kp li:first-child{border-top:1px solid var(--line)}
 .kp-n{font-family:var(--mono);font-size:9px;color:var(--mid);min-width:22px;padding-top:3px;flex-shrink:0}
-.lie{max-width:820px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
+.lie{background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
 .lie-tab{position:absolute;top:0;left:0;font-family:var(--cond);font-size:9px;letter-spacing:.24em;font-weight:800;text-transform:uppercase;padding:3px 10px;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;color:var(--black)}
 .lie-q{font-family:var(--serif);font-style:italic;font-size:18px;color:#fff;line-height:1.5;margin:12px 0 10px}
 .lie-a{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
-.data-table{width:100%;max-width:600px;border-collapse:collapse;margin:16px 0}
+.data-table{width:100%;border-collapse:collapse;margin:16px 0}
 .data-table th{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;background:var(--black);color:var(--white);padding:9px 14px;text-align:left}
 .data-table td{font-family:var(--serif);font-size:14px;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--black);line-height:1.6;vertical-align:top}
 .data-table tr:last-child td{border-bottom:none}
@@ -1097,8 +1097,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── PIPELINE OWNERSHIP AUDIT ── */
 .po-wrap{padding:16px 56px 44px;max-width:720px}
-.po-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:22px}
-.po-meter-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:600px;margin-bottom:24px}
+.po-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:22px}
+.po-meter-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
 .po-meter{background:var(--black);padding:20px 20px 16px}
 .po-meter-tag{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px}
 .po-meter-tag.sdr{color:rgba(255,255,255,0.3)}
@@ -1122,14 +1122,14 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .po-btn:hover:not([disabled]){background:var(--plum-lt);color:var(--plum)}
 .po-btn.top{border-bottom:1px solid var(--line2)}
 .po-btn[disabled]{cursor:default}
-.po-goal-box{max-width:600px;background:var(--plum);padding:16px 20px;margin-top:14px;display:none}
+.po-goal-box{background:var(--plum);padding:16px 20px;margin-top:14px;display:none}
 .po-goal-box.show{display:block}
 .po-goal-h{font-family:var(--cond);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--charge);margin-bottom:5px}
 .po-goal-p{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.65);line-height:1.65;font-style:normal}
 
 /* ── SDR vs SELF COMPARE ── */
 .cv2-wrap{padding:16px 56px 44px;max-width:760px}
-.cv2-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
+.cv2-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px}
 .cv2-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
 .cv2-col{border:2px solid var(--line2);transition:border-color .2s}
 .cv2-col.target{border-color:var(--plum);border-style:dashed}
@@ -1154,7 +1154,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── 4-PART OUTREACH BUILDER ── */
 .ob-wrap{padding:16px 56px 44px;max-width:700px}
-.ob-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
+.ob-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px}
 .ob-pipeline{display:flex;gap:6px;align-items:stretch;max-width:900px;margin-bottom:22px}
 .ob-stage{flex:1;display:flex;flex-direction:column;align-items:center;position:relative}
 .ob-stage:not(:last-child)::after{content:'→';position:absolute;right:-9px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--mid);z-index:1}
@@ -1179,12 +1179,12 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── DAILY BLOCK SEQUENCER ── */
 .db-wrap{padding:16px 56px 44px;max-width:720px}
-.db-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
-.db-clock{background:var(--plum);padding:18px 20px 14px;max-width:820px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
+.db-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px}
+.db-clock{background:var(--plum);padding:18px 20px 14px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
 .db-clock-tag{font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,0.35)}
 .db-clock-num{font-family:var(--display);font-size:44px;color:var(--charge);line-height:.9;transition:all .4s}
 .db-clock-label{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,0.4)}
-.db-blocks{display:flex;flex-direction:column;gap:6px;max-width:820px;margin-bottom:18px}
+.db-blocks{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
 .db-block{display:flex;align-items:stretch;border:1px solid var(--line2);transition:border-color .2s;min-height:56px;cursor:pointer}
 .db-block.target{border-color:var(--plum);border-style:dashed}
 .db-block.target:hover{border-style:solid;border-width:2px}
@@ -1227,7 +1227,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 /* TOOLS */
 .tools-blk{padding:20px 56px 44px}
 .t-head{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--black);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--black)}
-.hw-list{list-style:none;max-width:820px;margin-top:8px}
+.hw-list{list-style:none;margin-top:8px}
 .hw-list li{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.65;padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
 .hw-list li:first-child{border-top:1px solid var(--line)}
 .hw-box{width:14px;height:14px;border:2px solid var(--black);flex-shrink:0;margin-top:4px}
@@ -1413,7 +1413,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-sub"><b id="dbCount">0</b> / 4 blocks correctly placed</div>
     </div>
     <div class="db-wrap">
-      <p class="db-instr" style="font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px">Select an activity, then click the correct time block. Build the 60–90 minute daily prospecting routine that puts you ahead of every AE who's waiting for leads.</p>
+      <p class="db-instr" style="font-family:var(--serif);font-style:italic;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px">Select an activity, then click the correct time block. Build the 60–90 minute daily prospecting routine that puts you ahead of every AE who's waiting for leads.</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 40px">
         <div>
           <div style="font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);padding-bottom:10px;border-bottom:2px solid var(--black);margin-bottom:8px">Daily Time Blocks</div>
@@ -1577,7 +1577,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
   </div>
 
   <div style="margin-top:32px;padding:16px 0;border-top:1px solid var(--line)">
-    <p style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">Self-sourced meetings are the only meetings you fully control. What you commit to here determines whether you own your pipeline or rent someone else's.</p>
+    <p id="sidebarMotto" style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">Self-sourced meetings are the only meetings you fully control. What you commit to here determines whether you own your pipeline or rent someone else's.</p>
   </div>
 </aside>
 
@@ -1672,6 +1672,14 @@ let qAns={}, qSubmitted=false, qPassed=false;
 /* ════════════════════════════════════
    INIT
 ════════════════════════════════════ */
+const SIDEBAR_TEXTS = [
+  "Self-sourced is self-made. Own your pipeline.",
+  "Sometimes you have to take matters into your own hands.",
+  "Every meeting you book yourself is a meeting nobody can take from you.",
+  "Dependency is fragility. Self-sourcing is armor.",
+  "The reps who own their pipeline own their career."
+];
+
 function init(){
   // Register gates FIRST so they're always available for rendering
   // Register accountability gates
@@ -1694,7 +1702,7 @@ function init(){
     { task:'Name your SDR partner. Describe the last time you discussed pipeline strategy together — the date and what was covered. Then write a specific agenda for a 15-minute pipeline sync you will schedule this week: what accounts to discuss, what signals to share, and what you need from each other.', placeholder:'Example: SDR is [name]. Last sync was [date] — we covered [topics]. This week\'s agenda: 1) Review [3 target accounts], 2) Share trigger events from [source], 3) Align on [specific action]...', minChars:100 }
   ] : [
     { task:'Review your last 10 meetings booked by name. For each, write whether it converted to a qualified opportunity or not. Calculate your conversion rate. If below the 60% target from this lesson, identify the #1 qualification gap (pain, authority, or timeline) that caused the most failures.', placeholder:'Example: 1) [Name/Company] — converted. 2) [Name/Company] — not converted (no authority). ... Rate: 5/10 = 50%. Biggest gap: failed to confirm authority on 3 meetings...', minChars:120 },
-    { task:'Name your AE and write the exact feedback question you will ask them about your last 3 handoffs. Then describe the handoff notes you provided for one specific recent meeting — what context did you include (pain points, budget, decision-makers, next steps) and what was missing?', placeholder:'Example: AE is [name]. I will ask: "On the [Company] meeting, what context would have helped you most?" Last handoff for [Company]: included pain (budget cuts), missed authority (didn\'t confirm decision-maker)...', minChars:100 },
+    { task:'Name someone you trust and write the exact feedback question you will ask them about your last 3 handoffs. Then describe the handoff notes you provided for one specific recent meeting — what context did you include (pain points, budget, decision-makers, next steps) and what was missing?', placeholder:'Example: AE is [name]. I will ask: "On the [Company] meeting, what context would have helped you most?" Last handoff for [Company]: included pain (budget cuts), missed authority (didn\'t confirm decision-maker)...', minChars:100 },
     { task:'Build a pre-call research checklist using the lesson\'s 4-part qualification method (Research, Qualify, Document, Follow Through). List every item you will check before making a cold call this week — minimum 6 items. Include where you will find each piece of information (LinkedIn, company site, CRM, etc.).', placeholder:'Example: 1) Prospect title & tenure (LinkedIn). 2) Company size & funding (Crunchbase). 3) Recent news or job postings (Google). 4) Existing CRM notes (Salesforce). 5) Tech stack signals (BuiltWith). 6) Mutual connections (LinkedIn)...', minChars:100 },
     { task:'Run the 4-part qualification method on every prospect call this week. Pick one call from today or yesterday and walk through each stage: what research you did, how you qualified (pain/authority/timeline), what documentation you created, and what follow-through you planned. Be specific with names and details.', placeholder:'Example: Prospect: [Name] at [Company]. Research: found [insight]. Qualify: confirmed pain ([detail]), authority ([title]), timeline ([months]). Document: wrote notes on [details]. Follow-through: scheduled [next step] on [date]...', minChars:100 },
     { task:'Design your weekly conversion review ritual: what day and time will you review meeting outcomes? What specific data will you analyze (meetings booked, converted, lost, and why)? Write the exact template you will use and commit to a start date this week.', placeholder:'Example: Every Friday at 3pm. Template: Meeting date | Prospect | Company | Converted? | If no, why (pain/authority/timeline/other). Starting this Friday [date]. Will share results with AE [name] in Monday sync...', minChars:100 }
@@ -2054,6 +2062,8 @@ function render(){
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';
   document.getElementById('btnNext').disabled=!canContinue();
+  var sbp=document.getElementById('sidebarMotto');
+  if(sbp&&typeof SIDEBAR_TEXTS!=='undefined'){var si=SEC[cur]||0;sbp.textContent=SIDEBAR_TEXTS[si]||SIDEBAR_TEXTS[0];}
 }
 
 // Zone delegation

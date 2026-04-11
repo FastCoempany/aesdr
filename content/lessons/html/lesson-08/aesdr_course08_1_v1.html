@@ -433,7 +433,7 @@
  *
  *  Usage in lesson JS:
  *    AESDR.gate(3, { type:'reflection', prompt:'...', minChars:100 });
- *    AESDR.gate(1, { type:'narrative', prompt:'...', minChars:120, attest:'I shared this with someone on the team because I know it\u0027s important to make my voice and my thoughts familiar around this place' });
+ *    AESDR.gate(1, { type:'narrative', prompt:'...', minChars:120, attest:'I shared this with someone on the team because being good isn’t good enough when you can be great' });
  *    AESDR.gate(7, { type:'application', prompt:'...', rubric:['Did X','Did Y'], minChars:80 });
  *    AESDR.gate(8, { type:'evidence', prompt:'Paste your...', minChars:50 });
  *
@@ -1092,16 +1092,16 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
 .lh-sub b{color:var(--black)}
 .lb{padding:24px 56px 0}
-.lp{font-family:var(--serif);font-size:19px;line-height:1.8;color:var(--black);max-width:820px;margin-bottom:14px}
-.kp{list-style:none;max-width:820px;margin:14px 0}
+.lp{font-family:var(--serif);font-size:19px;line-height:1.8;color:var(--black);margin-bottom:14px}
+.kp{list-style:none;margin:14px 0}
 .kp li{font-family:var(--serif);font-size:18px;line-height:1.65;color:var(--black);border-bottom:1px solid var(--line);padding:14px 0;display:flex;gap:14px;align-items:flex-start}
 .kp li:first-child{border-top:1px solid var(--line)}
 .kp-n{font-family:var(--mono);font-size:9px;color:var(--mid);min-width:22px;padding-top:3px;flex-shrink:0}
-.lie{max-width:820px;background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
+.lie{background:var(--black);padding:26px 26px 22px;position:relative;margin-top:24px;margin-bottom:40px}
 .lie-tab{position:absolute;top:0;left:0;font-family:var(--cond);font-size:9px;letter-spacing:.24em;font-weight:800;text-transform:uppercase;padding:3px 10px;background:var(--iris);background-size:200% 100%;animation:iris 2s linear infinite;color:var(--black)}
 .lie-q{font-family:var(--serif);font-style:italic;font-size:18px;color:#fff;line-height:1.5;margin:12px 0 10px}
 .lie-a{font-family:var(--serif);font-size:14px;color:rgba(255,255,255,0.5);line-height:1.7}
-.data-table{width:100%;max-width:600px;border-collapse:collapse;margin:16px 0}
+.data-table{width:100%;border-collapse:collapse;margin:16px 0}
 .data-table th{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;background:var(--black);color:var(--white);padding:9px 14px;text-align:left}
 .data-table td{font-family:var(--serif);font-size:14px;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--black);line-height:1.6;vertical-align:top}
 .data-table tr:last-child td{border-bottom:none}
@@ -1109,7 +1109,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── 3-COLUMN SILO SORTER ── */
 .silo-wrap{padding:16px 56px 44px}
-.silo-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:600px;line-height:1.65;margin-bottom:16px}
+.silo-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:16px}
 .silo-pool-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--black)}
 .silo-pool-cards{display:flex;flex-direction:column;gap:7px;margin-bottom:20px;max-width:700px}
 .silo-card{padding:14px 16px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:13px;color:var(--black);line-height:1.55;cursor:pointer;transition:all .18s;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
@@ -1134,8 +1134,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── BLAME CHAIN BREAKER ── */
 .blame-wrap{padding:16px 56px 44px;max-width:740px}
-.blame-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:22px}
-.blame-chain{display:flex;align-items:center;gap:0;margin-bottom:28px;max-width:680px;overflow:hidden}
+.blame-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:22px}
+.blame-chain{display:flex;align-items:center;gap:0;margin-bottom:28px;overflow:hidden}
 .blame-node{flex:1;background:var(--black);padding:14px 16px;position:relative;text-align:center}
 .blame-node-name{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#fff}
 .blame-node-says{font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:rgba(255,255,255,0.35);margin-top:3px;font-style:italic}
@@ -1157,7 +1157,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── PLAYBOOK SEQUENCER ── */
 .seq-wrap{padding:16px 56px 44px;max-width:720px}
-.seq-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
+.seq-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px}
 .seq-pipeline{display:flex;flex-direction:column;gap:6px;margin-bottom:24px}
 .seq-slot{display:flex;align-items:center;gap:14px;min-height:56px}
 .seq-pos{font-family:var(--display);font-size:28px;color:var(--lite2);flex-shrink:0;width:28px;text-align:center;line-height:1;transition:color .3s}
@@ -1181,7 +1181,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 /* ── INSIGHTS CLASSIFIER ── */
 .cls-wrap{padding:16px 56px 44px;max-width:720px}
-.cls-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);max-width:820px;line-height:1.65;margin-bottom:20px}
+.cls-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px}
 .cls-buckets{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:24px}
 .cls-bucket{border:2px solid var(--line2);transition:border-color .2s}
 .cls-bucket.target{border-color:var(--theme-text);border-style:dashed;cursor:pointer}
@@ -1230,7 +1230,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 /* TOOLS */
 .tools-blk{padding:20px 56px 44px}
 .t-head{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--black);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--black)}
-.hw-list{list-style:none;max-width:820px;margin-top:8px}
+.hw-list{list-style:none;margin-top:8px}
 .hw-list li{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.65;padding:13px 0;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
 .hw-list li:first-child{border-top:1px solid var(--line)}
 .hw-box{width:14px;height:14px;border:2px solid var(--black);flex-shrink:0;margin-top:4px}
@@ -1598,7 +1598,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
   </div>
 
   <div style="margin-top:32px;padding:16px 0;border-top:1px solid var(--line)">
-    <p style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">The 30% Rule exposes the math most salespeople ignore. What you write here forces you to confront reality instead of hiding behind optimism.</p>
+    <p id="sidebarMotto" style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">The 30% Rule exposes the math most salespeople ignore. What you write here forces you to confront reality instead of hiding behind optimism.</p>
   </div>
 </aside>
 
@@ -1712,6 +1712,14 @@ let qAns={}, qSubmitted=false, qPassed=false;
 /* ════════════════════════════════════
    INIT
 ════════════════════════════════════ */
+const SIDEBAR_TEXTS = [
+  "The math doesn’t lie. You might.",
+  "The truth will set you free. But first, it will make you miserable.",
+  "Optimism without math is just denial with better vibes.",
+  "Hope is not a strategy. Neither is wishful thinking.",
+  "Your forecast is a mirror. Look harder."
+];
+
 function init(){
   // Register gates FIRST so they're always available for rendering
   // Register accountability gates
@@ -1741,9 +1749,9 @@ function init(){
     { task:'Write your rebalanced coaching calendar for next week: exact time blocks for top-30% coaching vs. bottom-30% check-ins, with names and days. Top 30% must get 2x the minutes.', placeholder:'e.g., "Mon 2-2:30pm Sarah 1-on-1, Tue 10-10:30am Marcus call review, Wed 3-3:15pm Jake status check. Top: 60 min, Bottom: 15 min."', minChars:100 }
   ] : [
     { task:'Using the 30/40/30 framework, write which tier you honestly belong in today. List three specific metrics from this week (calls made, meetings booked, follow-up rate) that prove your placement.', placeholder:'e.g., "I am in the middle 40%. This week: 42 calls (team avg 45), 2 meetings booked (top SDRs book 4+), 60% follow-up rate (top is 85%)."', minChars:100 },
-    { task:'Name one top-30% behavior from the lesson you will start doing every day this week. Write the exact daily action, the time you will do it, and how you will track it for 5 days.', placeholder:'e.g., "I will review my call recordings for 15 minutes at 8:45am before dialing. I will log my takeaway each day in a Google Doc and share it with my AE on Friday."', minChars:100 },
-    { task:'Write the exact sentence you will say to your AE or manager tomorrow to proactively request coaching: include the specific skill, the meeting time, and why you chose that skill.', placeholder:'e.g., "Tomorrow at our 1-on-1 I will say: \'Can you listen to my Acme call from Tuesday and coach me on my objection handling? I lost the prospect at the budget question.\'"', minChars:100 },
-    { task:'Track your own metrics for 5 consecutive days before your manager asks. List the exact metrics, your tracking method, and the date you will share results without being prompted.', placeholder:'e.g., "Metrics: calls made, talk time, meetings booked, follow-ups sent. Tracked in my spreadsheet daily at 5pm. Sharing results with my AE Friday at 3pm unprompted."', minChars:80 },
+    { task:'Name one top-30% behavior from the lesson you will start doing every day this week. Write the exact daily action, the time you will do it, and how you will track it for 5 days.', placeholder:'e.g., "I will review my call recordings for 15 minutes at 8:45am before dialing. I will log my takeaway each day in a Google Doc and share it with a partner on Friday."', minChars:100 },
+    { task:'Write the exact sentence you will say to someone you respect or manager tomorrow to proactively request coaching: include the specific skill, the meeting time, and why you chose that skill.', placeholder:'e.g., "Tomorrow at our 1-on-1 I will say: \'Can you listen to my Acme call from Tuesday and coach me on my objection handling? I lost the prospect at the budget question.\'"', minChars:100 },
+    { task:'Track your own metrics for 5 consecutive days before your manager asks. List the exact metrics, your tracking method, and the date you will share results without being prompted.', placeholder:'e.g., "Metrics: calls made, talk time, meetings booked, follow-ups sent. Tracked in my spreadsheet daily at 5pm. Sharing results with a teammate Friday at 3pm unprompted."', minChars:80 },
     { task:'After your very next rejection call, write down the prospect\'s objection word-for-word, what you said in response, and the specific alternative response you will use next time. Commit to a date.', placeholder:'e.g., "Prospect said \'We already have a vendor.\' I said \'Oh okay, sorry to bother you.\' Next time I will say: \'Totally understand — most of our clients had a vendor before switching. What made you evaluate them originally?\' Using this tomorrow."', minChars:100 }
   ] });
   // Restore saved gate state from localStorage
@@ -2078,6 +2086,8 @@ function render(){
   document.getElementById('btnNextLabel').textContent=getNextLabel();
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';
   document.getElementById('btnNext').disabled=!canContinue();
+  var sbp=document.getElementById('sidebarMotto');
+  if(sbp&&typeof SIDEBAR_TEXTS!=='undefined'){var si=SEC[cur]||0;sbp.textContent=SIDEBAR_TEXTS[si]||SIDEBAR_TEXTS[0];}
 }
 
 // Zone click delegation
