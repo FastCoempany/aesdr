@@ -454,15 +454,17 @@ window.AESDR = window.AESDR || {};
 
   function _persistState() {
     try {
-      var data = {};
+      var save = {};
       for (var k in gateState) {
         var s = gateState[k];
-        data[k] = { completed: s.completed, value: s.value || '',
-          completedAt: s.completedAt || null,
-          _hwDone: s._hwDone || {}, _hwText: s._hwText || {},
-          _hwAttest: s._hwAttest || {}, _attest: s._attest || {} };
+        save[k] = { completed: s.completed, value: s.value || '', _attest: s._attest || {} };
+        if (s._hwDone)   save[k]._hwDone   = s._hwDone;
+        if (s._hwText)   save[k]._hwText   = s._hwText;
+        if (s._hwAttest) save[k]._hwAttest = s._hwAttest;
+        if (s.completedAt) save[k].completedAt = s.completedAt;
+        if (s.rubricChecked) save[k].rubricChecked = s.rubricChecked;
       }
-      localStorage.setItem(_storageKey, JSON.stringify(data));
+      localStorage.setItem(_storageKey, JSON.stringify(save));
     } catch(e) {}
   }
 
@@ -470,39 +472,48 @@ window.AESDR = window.AESDR || {};
     try {
       var raw = localStorage.getItem(_storageKey);
       if (!raw) return;
-      var data = JSON.parse(raw);
-      for (var k in data) {
-        if (gateState[k]) {
-          // Merge saved state into registered gate state
-          var saved = data[k];
-          gateState[k].completed = saved.completed || false;
-          gateState[k].value = saved.value || '';
-          gateState[k].completedAt = saved.completedAt || null;
-          if (saved._hwDone) gateState[k]._hwDone = saved._hwDone;
-          if (saved._hwText) gateState[k]._hwText = saved._hwText;
-          if (saved._hwAttest) gateState[k]._hwAttest = saved._hwAttest;
-          if (saved._attest) gateState[k]._attest = saved._attest;
-        }
+      var save = JSON.parse(raw);
+      for (var k in save) {
+        if (!gateState[k]) gateState[k] = { completed: false, value: '', _attest: {} };
+        var s = save[k];
+        gateState[k].completed    = s.completed || false;
+        gateState[k].value        = s.value || '';
+        gateState[k]._attest      = s._attest || {};
+        if (s._hwDone)   gateState[k]._hwDone   = s._hwDone;
+        if (s._hwText)   gateState[k]._hwText   = s._hwText;
+        if (s._hwAttest) gateState[k]._hwAttest = s._hwAttest;
+        if (s.completedAt) gateState[k].completedAt = s.completedAt;
+        if (s.rubricChecked) gateState[k].rubricChecked = s.rubricChecked;
       }
     } catch(e) {}
   }
 
-  /* ── Called after all gates are registered to restore saved state ── */
   A.restoreState = function() { _restoreState(); };
-
-  /* ── Attestation phrases (rotated per screen, never repeat on same page) ── */
+  /* ── Attestation phrases (unique per checkbox, never repeat across app) ── */
   var ATTEST = [
-    "I shared this with someone on the team because I know it\u0027s important to make my voice and my thoughts familiar around this place",
-    "I did this because I don\u0027t just write shit down that I don\u0027t care about",
-    "I completed this because what I do when no one is watching makes all the difference",
-    "I did this because I know my growth depends on making my thoughts known",
-    "I completed this because I refuse to be the person who clicks through and learns nothing",
-    "I did this because accountability isn\u0027t a buzzword \u2014 it\u0027s how I operate"
+    "I told the truth here because my reputation is built one honest action at a time",
+    "I confronted the hard part here because I'm building discipline, not just completing a task",
+    "I took this seriously because mediocrity is a choice I'm actively refusing right now",
+    "I proved something to myself here because I know that consistency is the only real competitive advantage",
+    "I brought my best here because growth doesn't happen by accident",
+    "I made this count because real professionals do the uncomfortable work first",
+    "I gave this my real attention because mediocrity is a choice I'm actively refusing right now",
+    "I committed to this because I'm investing in the version of me that wins",
+    "I went deep on this because mediocrity is a choice I'm actively refusing right now",
+    "I gave this my real attention because shortcuts only cheat the person in the mirror",
+    "I invested in this because the small moments define who I actually am",
+    "I owned this moment because saying I care means nothing if I don't act like it",
+    "I faced this head on because this is the work that separates thinkers from doers",
+    "I wrestled with this honestly because I refuse to be the person who shows up unprepared",
+    "I treated this like it matters because what I do when no one checks matters more than what I do when they're watching"
   ];
 
+  var _attestAssign = {};
+  var _attestNext = 0;
   function _getAttest(screen, idx) {
-    var offset = (screen * 7 + (idx || 0)) % ATTEST.length;
-    return ATTEST[offset];
+    var key = 's' + screen + '_' + (idx || 0);
+    if (!(key in _attestAssign)) _attestAssign[key] = _attestNext++;
+    return ATTEST[_attestAssign[key] % ATTEST.length];
   }
 
   /* ── Register a gate ── */
@@ -707,7 +718,7 @@ window.AESDR = window.AESDR || {};
       '<div class="gate-label">Accountability Checklist</div>' +
       '<p class="gate-prompt">' + (g.prompt || 'Complete each item below. No shortcuts.') + '</p>' +
       '<div class="gate-conscience">' +
-        '<p class="gate-conscience-text">You can treat this like just another course if you want. Or you can not lie and complete this survival checklist legitimately. What you do when no one is watching makes all the difference in the end.</p>' +
+        '<p class="gate-conscience-text">' + (g.conscience || 'You can treat this like just another course if you want. Or you can not lie and complete each item here with real thought. What you do when no one is watching makes all the difference in the end.') + '</p>' +
       '</div>' +
       '<div class="hw-gate-items">';
 
@@ -837,7 +848,8 @@ window.AESDR = window.AESDR || {};
   A._editGate = function(screen) {
     var s = gateState[screen];
     s.completed = false;
-    _persistState();
+    // Keep existing value so textarea is pre-filled
+    // Re-render
     var el = document.getElementById('gate' + screen);
     if (el) A.renderGate(screen, 'gate' + screen);
     var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
@@ -851,8 +863,9 @@ window.AESDR = window.AESDR || {};
     if (!s._hwDone) s._hwDone = {};
     s._hwDone[idx] = false;
     if (s._hwAttest) s._hwAttest[idx] = false;
+    // If gate was fully completed, uncomplete it
     s.completed = false;
-    _persistState();
+    // Re-render
     var el = document.getElementById('gate' + screen);
     if (el) A.renderGate(screen, 'gate' + screen);
     var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
@@ -1564,7 +1577,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
   </div>
 
   <div style="margin-top:32px;padding:16px 0;border-top:1px solid var(--line)">
-    <p style="font-family:var(--serif);font-size:13px;font-style:italic;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">You can treat this like just another course if you want. Or you can not lie and complete this survival checklist legitimately. What you do when no one is watching makes all the difference in the end.</p>
+    <p style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">Self-sourced meetings are the only meetings you fully control. What you commit to here determines whether you own your pipeline or rent someone else's.</p>
   </div>
 </aside>
 
@@ -1615,10 +1628,10 @@ const OB_TILE_ORDER = [2,0,3,1]; // scrambled
 
 // Daily Block Sequencer
 const DB_BLOCKS = [
-  { time:"8:00–8:15 AM", act:"Account Research",   sub:"Identify 3–5 targets with real, specific triggers.",     mins:15 },
-  { time:"8:15–8:45 AM", act:"Outreach Block",     sub:"10 calls + 5 personalized emails. No multitasking.",      mins:30 },
-  { time:"8:45–9:00 AM", act:"Follow-Up Block",    sub:"Reconnect with leads from the past 7 days.",              mins:15 },
-  { time:"9:00–9:00 AM", act:"Review & Adjust",    sub:"What worked? What changes tomorrow? 5-minute debrief.",   mins:5  },
+  { time:"First thing",     act:"Account Research",   sub:"Identify 3–5 targets with real, specific triggers.",     mins:15 },
+  { time:"Peak energy",     act:"Outreach Block",     sub:"10 calls + 5 personalized emails. No multitasking.",      mins:30 },
+  { time:"Mid-morning",     act:"Follow-Up Block",    sub:"Reconnect with leads from the past 7 days.",              mins:15 },
+  { time:"Before you move on", act:"Review & Adjust", sub:"What worked? What changes tomorrow? 5-minute debrief.",   mins:5  },
 ];
 const DB_TILE_ORDER = [2,0,3,1]; // scrambled
 
@@ -1672,7 +1685,8 @@ function init(){
     minChars: 120
   });
   // Homework gate
-  AESDR.gate(7, { type:'homework', items: _role === 'ae' ? [
+  AESDR.gate(7, { type:'homework',
+    conscience: 'Self-sourced meetings are the only meetings you fully control. What you commit to here determines whether you own your pipeline or rent someone else\'s.', items: _role === 'ae' ? [
     { task:'Audit your current pipeline right now: list every open opportunity by name, deal size, and source (self-sourced or SDR-sourced). Calculate the exact percentage that is self-sourced. If below the 30% target from this lesson, write the specific number of self-sourced deals you will add this month.', placeholder:'Example: 15 open opps — [Account A] $40k self, [Account B] $25k SDR... Self-sourced: 4/15 = 27%. Will add 2 more by targeting [accounts]...', minChars:120 },
     { task:'Create your daily prospecting calendar block for this week using the lesson\'s framework: 15 min research, 30 min outreach, 15 min follow-up. Write the exact time slot for each day (Mon-Fri), and describe what you will do if a meeting conflicts — will you move the block or skip it? Be specific.', placeholder:'Example: Mon-Fri 8:00-9:00am. Research: identify 3 accounts. Outreach: 10 calls + 5 emails. Follow-up: re-engage 3 prospects. If conflict, I will move to [time]...', minChars:100 },
     { task:'Run the 4-part self-sourcing method (Identify, Personalize, Outreach, Follow Up) on one specific account this week. Name the account and contact. Write your personalized opener — the exact words you will use — that includes a real insight proving you did research, not generic flattery.', placeholder:'Example: Account: [Company]. Contact: [Name, Title]. Opener: "I noticed [specific insight from their LinkedIn/news]. I\'m reaching out because [connection to their pain]..."', minChars:100 },

@@ -454,15 +454,17 @@ window.AESDR = window.AESDR || {};
 
   function _persistState() {
     try {
-      var data = {};
+      var save = {};
       for (var k in gateState) {
         var s = gateState[k];
-        data[k] = { completed: s.completed, value: s.value || '',
-          completedAt: s.completedAt || null,
-          _hwDone: s._hwDone || {}, _hwText: s._hwText || {},
-          _hwAttest: s._hwAttest || {}, _attest: s._attest || {} };
+        save[k] = { completed: s.completed, value: s.value || '', _attest: s._attest || {} };
+        if (s._hwDone)   save[k]._hwDone   = s._hwDone;
+        if (s._hwText)   save[k]._hwText   = s._hwText;
+        if (s._hwAttest) save[k]._hwAttest = s._hwAttest;
+        if (s.completedAt) save[k].completedAt = s.completedAt;
+        if (s.rubricChecked) save[k].rubricChecked = s.rubricChecked;
       }
-      localStorage.setItem(_storageKey, JSON.stringify(data));
+      localStorage.setItem(_storageKey, JSON.stringify(save));
     } catch(e) {}
   }
 
@@ -470,39 +472,48 @@ window.AESDR = window.AESDR || {};
     try {
       var raw = localStorage.getItem(_storageKey);
       if (!raw) return;
-      var data = JSON.parse(raw);
-      for (var k in data) {
-        if (gateState[k]) {
-          // Merge saved state into registered gate state
-          var saved = data[k];
-          gateState[k].completed = saved.completed || false;
-          gateState[k].value = saved.value || '';
-          gateState[k].completedAt = saved.completedAt || null;
-          if (saved._hwDone) gateState[k]._hwDone = saved._hwDone;
-          if (saved._hwText) gateState[k]._hwText = saved._hwText;
-          if (saved._hwAttest) gateState[k]._hwAttest = saved._hwAttest;
-          if (saved._attest) gateState[k]._attest = saved._attest;
-        }
+      var save = JSON.parse(raw);
+      for (var k in save) {
+        if (!gateState[k]) gateState[k] = { completed: false, value: '', _attest: {} };
+        var s = save[k];
+        gateState[k].completed    = s.completed || false;
+        gateState[k].value        = s.value || '';
+        gateState[k]._attest      = s._attest || {};
+        if (s._hwDone)   gateState[k]._hwDone   = s._hwDone;
+        if (s._hwText)   gateState[k]._hwText   = s._hwText;
+        if (s._hwAttest) gateState[k]._hwAttest = s._hwAttest;
+        if (s.completedAt) gateState[k].completedAt = s.completedAt;
+        if (s.rubricChecked) gateState[k].rubricChecked = s.rubricChecked;
       }
     } catch(e) {}
   }
 
-  /* ── Called after all gates are registered to restore saved state ── */
   A.restoreState = function() { _restoreState(); };
-
-  /* ── Attestation phrases (rotated per screen, never repeat on same page) ── */
+  /* ── Attestation phrases (unique per checkbox, never repeat across app) ── */
   var ATTEST = [
-    "I shared this with someone on the team because I know it\u0027s important to make my voice and my thoughts familiar around this place",
-    "I did this because I don\u0027t just write shit down that I don\u0027t care about",
-    "I completed this because what I do when no one is watching makes all the difference",
-    "I did this because I know my growth depends on making my thoughts known",
-    "I completed this because I refuse to be the person who clicks through and learns nothing",
-    "I did this because accountability isn\u0027t a buzzword \u2014 it\u0027s how I operate"
+    "I was real with myself here because no one successful ever half-assed the fundamentals",
+    "I put real thought into this because accountability starts with what I write when no one reads it",
+    "I faced this head on because saying I care means nothing if I don't act like it",
+    "I honored the process here because the gap between knowing and doing is exactly this kind of work",
+    "I earned this checkmark because saying I care means nothing if I don't act like it",
+    "I pushed through this because the best version of tomorrow starts with what I write today",
+    "I gave this my real attention because the people who make it do the work others skip",
+    "I was real with myself here because the difference between good and great is follow-through",
+    "I told the truth here because accountability starts with what I write when no one reads it",
+    "I kept it real here because this is how trust gets built — one kept promise at a time",
+    "I did this because the best version of tomorrow starts with what I write today",
+    "I showed up for this because the small moments define who I actually am",
+    "I did this because I'm investing in the version of me that wins",
+    "I showed up for this because I don't want to be the person who clicks through and learns nothing",
+    "I held myself accountable here because I know the difference between completing a task and actually learning"
   ];
 
+  var _attestAssign = {};
+  var _attestNext = 0;
   function _getAttest(screen, idx) {
-    var offset = (screen * 7 + (idx || 0)) % ATTEST.length;
-    return ATTEST[offset];
+    var key = 's' + screen + '_' + (idx || 0);
+    if (!(key in _attestAssign)) _attestAssign[key] = _attestNext++;
+    return ATTEST[_attestAssign[key] % ATTEST.length];
   }
 
   /* ── Register a gate ── */
@@ -707,7 +718,7 @@ window.AESDR = window.AESDR || {};
       '<div class="gate-label">Accountability Checklist</div>' +
       '<p class="gate-prompt">' + (g.prompt || 'Complete each item below. No shortcuts.') + '</p>' +
       '<div class="gate-conscience">' +
-        '<p class="gate-conscience-text">You can treat this like just another course if you want. Or you can not lie and complete this survival checklist legitimately. What you do when no one is watching makes all the difference in the end.</p>' +
+        '<p class="gate-conscience-text">' + (g.conscience || 'You can treat this like just another course if you want. Or you can not lie and complete each item here with real thought. What you do when no one is watching makes all the difference in the end.') + '</p>' +
       '</div>' +
       '<div class="hw-gate-items">';
 
@@ -837,7 +848,8 @@ window.AESDR = window.AESDR || {};
   A._editGate = function(screen) {
     var s = gateState[screen];
     s.completed = false;
-    _persistState();
+    // Keep existing value so textarea is pre-filled
+    // Re-render
     var el = document.getElementById('gate' + screen);
     if (el) A.renderGate(screen, 'gate' + screen);
     var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
@@ -851,8 +863,9 @@ window.AESDR = window.AESDR || {};
     if (!s._hwDone) s._hwDone = {};
     s._hwDone[idx] = false;
     if (s._hwAttest) s._hwAttest[idx] = false;
+    // If gate was fully completed, uncomplete it
     s.completed = false;
-    _persistState();
+    // Re-render
     var el = document.getElementById('gate' + screen);
     if (el) A.renderGate(screen, 'gate' + screen);
     var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
@@ -1529,7 +1542,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
   </div>
 
   <div style="margin-top:32px;padding:16px 0;border-top:1px solid var(--line)">
-    <p style="font-family:var(--serif);font-size:13px;font-style:italic;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">You can treat this like just another course if you want. Or you can not lie and complete this survival checklist legitimately. What you do when no one is watching makes all the difference in the end.</p>
+    <p style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">Performance pitfalls don't fix themselves — they compound. What you identify here is the first step to breaking a pattern before it breaks your pipeline.</p>
   </div>
 </aside>
 
@@ -1714,24 +1727,24 @@ const SA_ITEMS = [
 
 const HB_DAYS = [
   {
-    label:"Morning Block", time:"8:00–9:00 AM",
+    label:"Morning Block", time:"First thing",
     blocks:[
-      {time:"8:00–8:30", act:"Account Research", goal:"3 accounts — LinkedIn, news, company site. Find one real insight per account."},
-      {time:"8:30–9:00", act:"Sequence Planning", goal:"Map outreach for each researched account. Personalize line 1 of every email."},
+      {time:"First 30 min", act:"Account Research", goal:"3 accounts — LinkedIn, news, company site. Find one real insight per account."},
+      {time:"Next 30 min", act:"Sequence Planning", goal:"Map outreach for each researched account. Personalize line 1 of every email."},
     ]
   },
   {
-    label:"Core Outreach Block", time:"9:00–11:30 AM",
+    label:"Core Outreach Block", time:"Peak energy",
     blocks:[
-      {time:"9:00–10:30", act:"Cold Call Block", goal:"25 dials. No multitasking. Log outcome on every single one."},
-      {time:"10:30–11:30", act:"Email & LinkedIn", goal:"20+ follow-up touches. One new personalized sequence launched."},
+      {time:"Primary block", act:"Cold Call Block", goal:"25 dials. No multitasking. Log outcome on every single one."},
+      {time:"Second block", act:"Email & LinkedIn", goal:"20+ follow-up touches. One new personalized sequence launched."},
     ]
   },
   {
-    label:"Afternoon Block", time:"1:00–4:00 PM",
+    label:"Afternoon Block", time:"After lunch",
     blocks:[
-      {time:"1:00–3:00", act:"Follow-Up & Nurture", goal:"Work your existing sequences. Respond to any replies within the hour."},
-      {time:"3:00–4:00", act:"AE Feedback + Debrief", goal:"Share today's top challenge. Implement one thing from the feedback before EOD."},
+      {time:"Early afternoon", act:"Follow-Up & Nurture", goal:"Work your existing sequences. Respond to any replies within the hour."},
+      {time:"End of day", act:"AE Feedback + Debrief", goal:"Share today's top challenge. Implement one thing from the feedback before EOD."},
     ]
   },
 ];
@@ -1783,7 +1796,8 @@ function init(){
     : 'This lesson says "every pitfall is a solvable problem — not a fixed trait." Pick the one pitfall — poor qualification, lack of proactivity, or generic outreach — that most accurately describes your current weakness. Describe a specific outreach sequence or lead handoff from this week where that pitfall showed up. What exactly went wrong, and which specific fix from this lesson would you apply starting tomorrow?',
     minChars: 120 });
   // Homework gate
-  AESDR.gate(8, { type:'homework', prompt: _role === 'ae'
+  AESDR.gate(8, { type:'homework',
+    conscience: 'Performance pitfalls don\'t fix themselves — they compound. What you identify here is the first step to breaking a pattern before it breaks your pipeline.', prompt: _role === 'ae'
     ? 'You just learned the 4 SDR pitfalls and the BANT qualification framework. Now apply them: review a real SDR call, score it against BANT, and write coaching notes that reference specific moments in the conversation. No generic feedback — cite what was said and what should have been asked instead.'
     : 'You just learned the 4 SDR pitfalls and the BANT qualification framework. Now apply them to your own pipeline: score your recent leads against BANT, identify where your outreach is generic, and build a concrete improvement plan for this week with specific names, dates, and actions.',
     items: _role === 'ae' ? [

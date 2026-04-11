@@ -454,15 +454,17 @@ window.AESDR = window.AESDR || {};
 
   function _persistState() {
     try {
-      var data = {};
+      var save = {};
       for (var k in gateState) {
         var s = gateState[k];
-        data[k] = { completed: s.completed, value: s.value || '',
-          completedAt: s.completedAt || null,
-          _hwDone: s._hwDone || {}, _hwText: s._hwText || {},
-          _hwAttest: s._hwAttest || {}, _attest: s._attest || {} };
+        save[k] = { completed: s.completed, value: s.value || '', _attest: s._attest || {} };
+        if (s._hwDone)   save[k]._hwDone   = s._hwDone;
+        if (s._hwText)   save[k]._hwText   = s._hwText;
+        if (s._hwAttest) save[k]._hwAttest = s._hwAttest;
+        if (s.completedAt) save[k].completedAt = s.completedAt;
+        if (s.rubricChecked) save[k].rubricChecked = s.rubricChecked;
       }
-      localStorage.setItem(_storageKey, JSON.stringify(data));
+      localStorage.setItem(_storageKey, JSON.stringify(save));
     } catch(e) {}
   }
 
@@ -470,39 +472,48 @@ window.AESDR = window.AESDR || {};
     try {
       var raw = localStorage.getItem(_storageKey);
       if (!raw) return;
-      var data = JSON.parse(raw);
-      for (var k in data) {
-        if (gateState[k]) {
-          // Merge saved state into registered gate state
-          var saved = data[k];
-          gateState[k].completed = saved.completed || false;
-          gateState[k].value = saved.value || '';
-          gateState[k].completedAt = saved.completedAt || null;
-          if (saved._hwDone) gateState[k]._hwDone = saved._hwDone;
-          if (saved._hwText) gateState[k]._hwText = saved._hwText;
-          if (saved._hwAttest) gateState[k]._hwAttest = saved._hwAttest;
-          if (saved._attest) gateState[k]._attest = saved._attest;
-        }
+      var save = JSON.parse(raw);
+      for (var k in save) {
+        if (!gateState[k]) gateState[k] = { completed: false, value: '', _attest: {} };
+        var s = save[k];
+        gateState[k].completed    = s.completed || false;
+        gateState[k].value        = s.value || '';
+        gateState[k]._attest      = s._attest || {};
+        if (s._hwDone)   gateState[k]._hwDone   = s._hwDone;
+        if (s._hwText)   gateState[k]._hwText   = s._hwText;
+        if (s._hwAttest) gateState[k]._hwAttest = s._hwAttest;
+        if (s.completedAt) gateState[k].completedAt = s.completedAt;
+        if (s.rubricChecked) gateState[k].rubricChecked = s.rubricChecked;
       }
     } catch(e) {}
   }
 
-  /* ── Called after all gates are registered to restore saved state ── */
   A.restoreState = function() { _restoreState(); };
-
-  /* ── Attestation phrases (rotated per screen, never repeat on same page) ── */
+  /* ── Attestation phrases (unique per checkbox, never repeat across app) ── */
   var ATTEST = [
-    "I shared this with someone on the team because I know it\u0027s important to make my voice and my thoughts familiar around this place",
-    "I did this because I don\u0027t just write shit down that I don\u0027t care about",
-    "I completed this because what I do when no one is watching makes all the difference",
-    "I did this because I know my growth depends on making my thoughts known",
-    "I completed this because I refuse to be the person who clicks through and learns nothing",
-    "I did this because accountability isn\u0027t a buzzword \u2014 it\u0027s how I operate"
+    "I went deep on this because I'm not here to perform productivity — I'm here to actually grow",
+    "I told the truth here because I refuse to be the person who shows up unprepared",
+    "I put real thought into this because half-effort produces half-results and I'm done with half",
+    "I put in the effort here because complacency kills careers faster than failure ever could",
+    "I told the truth here because this is how trust gets built — one kept promise at a time",
+    "I wrote this because the people who make it do the work others skip",
+    "I stayed honest here because the people who make it do the work others skip",
+    "I wrote this because the small moments define who I actually am",
+    "I told the truth here because the small moments define who I actually am",
+    "I refused to fake this because I don't want to be the person who clicks through and learns nothing",
+    "I put real thought into this because effort compounds — every honest answer builds on the last",
+    "I gave this my real attention because excellence isn't a single act, it's a habit I'm building right now",
+    "I honored the process here because no one successful ever half-assed the fundamentals",
+    "I refused to fake this because real professionals do the uncomfortable work first",
+    "I went deep on this because what I do when no one checks matters more than what I do when they're watching"
   ];
 
+  var _attestAssign = {};
+  var _attestNext = 0;
   function _getAttest(screen, idx) {
-    var offset = (screen * 7 + (idx || 0)) % ATTEST.length;
-    return ATTEST[offset];
+    var key = 's' + screen + '_' + (idx || 0);
+    if (!(key in _attestAssign)) _attestAssign[key] = _attestNext++;
+    return ATTEST[_attestAssign[key] % ATTEST.length];
   }
 
   /* ── Register a gate ── */
@@ -707,7 +718,7 @@ window.AESDR = window.AESDR || {};
       '<div class="gate-label">Accountability Checklist</div>' +
       '<p class="gate-prompt">' + (g.prompt || 'Complete each item below. No shortcuts.') + '</p>' +
       '<div class="gate-conscience">' +
-        '<p class="gate-conscience-text">You can treat this like just another course if you want. Or you can not lie and complete this survival checklist legitimately. What you do when no one is watching makes all the difference in the end.</p>' +
+        '<p class="gate-conscience-text">' + (g.conscience || 'You can treat this like just another course if you want. Or you can not lie and complete each item here with real thought. What you do when no one is watching makes all the difference in the end.') + '</p>' +
       '</div>' +
       '<div class="hw-gate-items">';
 
@@ -837,7 +848,8 @@ window.AESDR = window.AESDR || {};
   A._editGate = function(screen) {
     var s = gateState[screen];
     s.completed = false;
-    _persistState();
+    // Keep existing value so textarea is pre-filled
+    // Re-render
     var el = document.getElementById('gate' + screen);
     if (el) A.renderGate(screen, 'gate' + screen);
     var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
@@ -851,8 +863,9 @@ window.AESDR = window.AESDR || {};
     if (!s._hwDone) s._hwDone = {};
     s._hwDone[idx] = false;
     if (s._hwAttest) s._hwAttest[idx] = false;
+    // If gate was fully completed, uncomplete it
     s.completed = false;
-    _persistState();
+    // Re-render
     var el = document.getElementById('gate' + screen);
     if (el) A.renderGate(screen, 'gate' + screen);
     var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
@@ -1549,7 +1562,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
   </div>
 
   <div style="margin-top:32px;padding:16px 0;border-top:1px solid var(--line)">
-    <p style="font-family:var(--serif);font-size:13px;font-style:italic;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">You can treat this like just another course if you want. Or you can not lie and complete this survival checklist legitimately. What you do when no one is watching makes all the difference in the end.</p>
+    <p style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">Knowing just enough to be dangerous is the sweet spot between ignorance and analysis paralysis. What you write here proves you can operate in the gray.</p>
   </div>
 </aside>
 
@@ -1682,7 +1695,8 @@ function init(){
     minChars: 120
   });
   // Homework gate
-  AESDR.gate(8, { type:'homework', items: _role === 'ae' ? [
+  AESDR.gate(8, { type:'homework',
+    conscience: 'Knowing just enough to be dangerous is the sweet spot between ignorance and analysis paralysis. What you write here proves you can operate in the gray.', items: _role === 'ae' ? [
     { task:'Build Your Deal Cheat Sheet now. List your top 3-5 buyer pain points by name, the specific product feature that maps to each pain, and 3 industry trends relevant to your top accounts this quarter. This is your "Just Enough" arsenal.',
       placeholder:'Example: "Pain 1: Manual reporting eating 10+ hrs/week → Feature: Automated dashboard builder. Pain 2: No visibility into pipeline health → Feature: AI forecasting. Trend 1: Gartner says 60% of mid-market will consolidate vendors by Q3..."',
       minChars:120 },

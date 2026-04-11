@@ -453,15 +453,17 @@ window.AESDR = window.AESDR || {};
 
   function _persistState() {
     try {
-      var data = {};
+      var save = {};
       for (var k in gateState) {
         var s = gateState[k];
-        data[k] = { completed: s.completed, value: s.value || '',
-          completedAt: s.completedAt || null,
-          _hwDone: s._hwDone || {}, _hwText: s._hwText || {},
-          _hwAttest: s._hwAttest || {}, _attest: s._attest || {} };
+        save[k] = { completed: s.completed, value: s.value || '', _attest: s._attest || {} };
+        if (s._hwDone)   save[k]._hwDone   = s._hwDone;
+        if (s._hwText)   save[k]._hwText   = s._hwText;
+        if (s._hwAttest) save[k]._hwAttest = s._hwAttest;
+        if (s.completedAt) save[k].completedAt = s.completedAt;
+        if (s.rubricChecked) save[k].rubricChecked = s.rubricChecked;
       }
-      localStorage.setItem(_storageKey, JSON.stringify(data));
+      localStorage.setItem(_storageKey, JSON.stringify(save));
     } catch(e) {}
   }
 
@@ -469,39 +471,48 @@ window.AESDR = window.AESDR || {};
     try {
       var raw = localStorage.getItem(_storageKey);
       if (!raw) return;
-      var data = JSON.parse(raw);
-      for (var k in data) {
-        if (gateState[k]) {
-          // Merge saved state into registered gate state
-          var saved = data[k];
-          gateState[k].completed = saved.completed || false;
-          gateState[k].value = saved.value || '';
-          gateState[k].completedAt = saved.completedAt || null;
-          if (saved._hwDone) gateState[k]._hwDone = saved._hwDone;
-          if (saved._hwText) gateState[k]._hwText = saved._hwText;
-          if (saved._hwAttest) gateState[k]._hwAttest = saved._hwAttest;
-          if (saved._attest) gateState[k]._attest = saved._attest;
-        }
+      var save = JSON.parse(raw);
+      for (var k in save) {
+        if (!gateState[k]) gateState[k] = { completed: false, value: '', _attest: {} };
+        var s = save[k];
+        gateState[k].completed    = s.completed || false;
+        gateState[k].value        = s.value || '';
+        gateState[k]._attest      = s._attest || {};
+        if (s._hwDone)   gateState[k]._hwDone   = s._hwDone;
+        if (s._hwText)   gateState[k]._hwText   = s._hwText;
+        if (s._hwAttest) gateState[k]._hwAttest = s._hwAttest;
+        if (s.completedAt) gateState[k].completedAt = s.completedAt;
+        if (s.rubricChecked) gateState[k].rubricChecked = s.rubricChecked;
       }
     } catch(e) {}
   }
 
-  /* ── Called after all gates are registered to restore saved state ── */
   A.restoreState = function() { _restoreState(); };
-
-  /* ── Attestation phrases (rotated per screen, never repeat on same page) ── */
+  /* ── Attestation phrases (unique per checkbox, never repeat across app) ── */
   var ATTEST = [
-    "I shared this with someone on the team because I know it\u0027s important to make my voice and my thoughts familiar around this place",
-    "I did this because I don\u0027t just write shit down that I don\u0027t care about",
-    "I completed this because what I do when no one is watching makes all the difference",
-    "I did this because I know my growth depends on making my thoughts known",
-    "I completed this because I refuse to be the person who clicks through and learns nothing",
-    "I did this because accountability isn\u0027t a buzzword \u2014 it\u0027s how I operate"
+    "I honored the process here because this is where the real ones separate from the pretenders",
+    "I brought my best here because I'm choosing to be the person who does the hard thing",
+    "I did this because saying I care means nothing if I don't act like it",
+    "I built something real here because accountability starts with what I write when no one reads it",
+    "I dug into this because the people who make it do the work others skip",
+    "I refused to fake this because I refuse to be the person who shows up unprepared",
+    "I gave this my real attention because real professionals do the uncomfortable work first",
+    "I stayed honest here because the gap between knowing and doing is exactly this kind of work",
+    "I faced this head on because integrity is doing the right thing when it's easier not to",
+    "I sat with the discomfort of this because this is the work that separates thinkers from doers",
+    "I pushed through this because the people who make it do the work others skip",
+    "I earned this checkmark because accountability starts with what I write when no one reads it",
+    "I told the truth here because what I do when no one checks matters more than what I do when they're watching",
+    "I earned this checkmark because complacency kills careers faster than failure ever could",
+    "I held myself accountable here because I'm building discipline, not just completing a task"
   ];
 
+  var _attestAssign = {};
+  var _attestNext = 0;
   function _getAttest(screen, idx) {
-    var offset = (screen * 7 + (idx || 0)) % ATTEST.length;
-    return ATTEST[offset];
+    var key = 's' + screen + '_' + (idx || 0);
+    if (!(key in _attestAssign)) _attestAssign[key] = _attestNext++;
+    return ATTEST[_attestAssign[key] % ATTEST.length];
   }
 
   /* ── Register a gate ── */
@@ -706,7 +717,7 @@ window.AESDR = window.AESDR || {};
       '<div class="gate-label">Accountability Checklist</div>' +
       '<p class="gate-prompt">' + (g.prompt || 'Complete each item below. No shortcuts.') + '</p>' +
       '<div class="gate-conscience">' +
-        '<p class="gate-conscience-text">You can treat this like just another course if you want. Or you can not lie and complete this survival checklist legitimately. What you do when no one is watching makes all the difference in the end.</p>' +
+        '<p class="gate-conscience-text">' + (g.conscience || 'You can treat this like just another course if you want. Or you can not lie and complete each item here with real thought. What you do when no one is watching makes all the difference in the end.') + '</p>' +
       '</div>' +
       '<div class="hw-gate-items">';
 
@@ -836,7 +847,8 @@ window.AESDR = window.AESDR || {};
   A._editGate = function(screen) {
     var s = gateState[screen];
     s.completed = false;
-    _persistState();
+    // Keep existing value so textarea is pre-filled
+    // Re-render
     var el = document.getElementById('gate' + screen);
     if (el) A.renderGate(screen, 'gate' + screen);
     var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
@@ -850,8 +862,9 @@ window.AESDR = window.AESDR || {};
     if (!s._hwDone) s._hwDone = {};
     s._hwDone[idx] = false;
     if (s._hwAttest) s._hwAttest[idx] = false;
+    // If gate was fully completed, uncomplete it
     s.completed = false;
-    _persistState();
+    // Re-render
     var el = document.getElementById('gate' + screen);
     if (el) A.renderGate(screen, 'gate' + screen);
     var containers = document.querySelectorAll('[data-gate-screen="' + screen + '"]');
@@ -1332,14 +1345,14 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div class="ghost-n">02</div>
       <div class="sec-eye">Section 02 — Daily Structure</div>
-      <div class="lh-title">Build the Structured SDR Day</div>
+      <div class="lh-title">Build Your Day by Priority</div>
       <div class="lh-sub"><b id="schedCount">0</b> / 5 correctly placed</div>
     </div>
     <div class="sched-wrap">
-      <p class="sched-instr">Select an activity tile from the right column — then click the time slot where it belongs. All five must be correctly placed before you can continue.</p>
+      <p class="sched-instr">No two days in SaaS look the same — but your priorities stay constant. Match each activity to the energy window where it belongs. All five must be placed before you can continue.</p>
       <div class="sched-arena">
         <div>
-          <div class="sched-col-lbl">Time Slot</div>
+          <div class="sched-col-lbl">Priority Block</div>
           <div id="schedSlots"></div>
         </div>
         <div>
@@ -1468,7 +1481,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
     <div class="sb-name">Tools & Homework</div>
   </div>
   <div style="margin-top:32px;padding:16px 0;border-top:1px solid var(--line)">
-    <p style="font-family:var(--serif);font-size:13px;font-style:italic;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">You can treat this like just another course if you want. Or you can not lie and complete this survival checklist legitimately. What you do when no one is watching makes all the difference in the end.</p>
+    <p style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">Structure is the difference between surviving and flaming out. Every answer you write here is a promise to the person who hired you that you take Day 1 seriously.</p>
   </div>
 </aside>
 
@@ -1617,11 +1630,11 @@ const DAYS_SDR = [
 const DAYS = _role === 'ae' ? DAYS_AE : DAYS_SDR;
 
 const SCHED = [
-  { time:"8:00–8:30 AM",   act:"Daily huddle with AE",          goal:"Align on goals and key focus points." },
-  { time:"8:30–10:30 AM",  act:"Cold call blocks",              goal:"Target: 25 calls, 2–3 connects." },
-  { time:"10:30–11:30 AM", act:"Product conversation practice", goal:"Role-play with AE or peer." },
-  { time:"1:00–3:00 PM",   act:"Outreach & follow-ups",         goal:"Email, LinkedIn, and call activity." },
-  { time:"3:00–4:00 PM",   act:"AE/SDR feedback session",       goal:"Debrief on calls and next steps." },
+  { time:"First thing",       act:"Daily huddle with AE",          goal:"Align before anything else hits." },
+  { time:"Highest energy",    act:"Cold call blocks",              goal:"Outbound when you\u0027re sharpest." },
+  { time:"Mid-morning",       act:"Product conversation practice", goal:"Role-play with AE or peer." },
+  { time:"After lunch",       act:"Outreach & follow-ups",         goal:"Email, LinkedIn, and multi-touch." },
+  { time:"Before you leave",  act:"AE/SDR feedback session",       goal:"Debrief and plan tomorrow." },
 ];
 const TILE_ORDER = [2, 4, 0, 3, 1]; // display order (SCHED indices, scrambled)
 
@@ -1727,6 +1740,7 @@ function init(){
     attest: 'I shared this with someone on the team because I know it\'s important to make my voice and my thoughts familiar around this place' });
 
   AESDR.gate(2, { type:'homework',
+    conscience: 'Structure is the difference between surviving and flaming out. Every answer you write here is a promise to the person who hired you that you take Day 1 seriously.',
     prompt: _role === 'ae'
       ? 'This is your SDR\'s Day 1 survival checklist. Each item requires a real, specific response that proves you\'ve thought through the plan — not a vague summary. Write as if you\'re handing this to your SDR tomorrow morning.'
       : 'This is your Day 1 survival checklist. Each item requires a real, specific response that proves you\'ve engaged with the material — not filler. Write as if someone is going to hold you to every word.',
@@ -1751,7 +1765,8 @@ function init(){
     minChars: 120,
     attest: 'I shared this with someone on the team because I know my growth depends on making my thoughts known' });
 
-  AESDR.gate(7, { type:'homework', prompt: _role === 'ae'
+  AESDR.gate(7, { type:'homework', conscience: 'The plan you write here is the plan you execute tomorrow. If you phone this in, your first week phones itself in.',
+    prompt: _role === 'ae'
     ? 'This is your real commitment. Write your actual Day 1 onboarding plan for your SDR — specific tasks, time blocks, and measurable goals. If you can\'t be specific, you haven\'t internalized the lesson.'
     : 'This is your real commitment. Write the Day 1 plan you will actually follow — specific tasks, time blocks, and measurable goals. If you can\'t be specific, go back and re-read.',
     items: _role === 'ae' ? [
@@ -1790,8 +1805,8 @@ function init(){
    NAV
 ══════════════════════════════════════════ */
 function go(n){
-  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   try{localStorage.setItem('aesdr_screen_'+location.pathname.replace(/[^a-z0-9]/gi,'_'),n)}catch(e){}
+  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;
   document.getElementById('s'+cur).classList.add('active');
