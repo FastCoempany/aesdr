@@ -130,7 +130,7 @@ export default async function LessonPage({
 
   return (
     <>
-      <ProgressSaver lessonId={lessonId} isAuthenticated={true} />
+      <ProgressSaver lessonId={lessonId} isAuthenticated={true} savedStateData={stateData} />
 
       {/* Full-screen iframe — course content owns the entire viewport */}
       {iframeSrc ? (
@@ -193,7 +193,7 @@ export default async function LessonPage({
             lineHeight: "16px",
           }}
         >
-          <span aria-hidden="true">&larr;</span> Lessons
+          <span aria-hidden="true">&larr;</span> Save &amp; Exit
         </Link>
       </div>
 

@@ -2,12 +2,14 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { saveLessonProgress } from "@/app/actions/progress";
+import { markLessonComplete, saveLessonProgress } from "@/app/actions/progress";
 import { saveProgressLocally } from "@/utils/progress/local-storage";
 
 interface ProgressSaverProps {
   lessonId: string;
   isAuthenticated: boolean;
+  /** Saved state_data from Supabase, sent to iframe for cross-device restoration */
+  savedStateData?: Record<string, unknown>;
 }
 
 /**
@@ -15,16 +17,20 @@ interface ProgressSaverProps {
  * dispatched by the lesson iframe via postMessage, then persists progress
  * to Supabase (if authenticated) and localStorage (always).
  *
- * Lesson HTML files dispatch:
- *   window.parent.postMessage({ type: 'aesdr:progress', screen, stateData }, '*')
+ * Also handles:
+ * - `aesdr:complete`  → marks lesson as completed in Supabase
+ * - `aesdr:navigate`  → redirects parent to a given href (e.g. /dashboard)
+ * - Sends `aesdr:restore` to iframe on load with saved state from Supabase
  */
 export default function ProgressSaver({
   lessonId,
   isAuthenticated,
+  savedStateData,
 }: ProgressSaverProps) {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const failCountRef = useRef(0);
   const [sessionExpired, setSessionExpired] = useState(false);
+  const restoredRef = useRef(false);
 
   const save = useCallback(
     (screen: number, stateData: Record<string, unknown>) => {
@@ -55,14 +61,31 @@ export default function ProgressSaver({
     function handleMessage(event: MessageEvent) {
       // Only accept messages from our own origin (iframe security)
       if (event.origin !== window.location.origin) return;
-      if (event.data?.type !== "aesdr:progress") return;
-      const { screen, stateData } = event.data as {
-        screen: number;
-        stateData: Record<string, unknown>;
-      };
-      // Reset fail counter on new valid message
-      failCountRef.current = 0;
-      save(screen, stateData ?? {});
+
+      const { type } = event.data ?? {};
+
+      if (type === "aesdr:progress") {
+        const { screen, stateData } = event.data as {
+          screen: number;
+          stateData: Record<string, unknown>;
+        };
+        failCountRef.current = 0;
+        save(screen, stateData ?? {});
+      }
+
+      if (type === "aesdr:complete") {
+        if (isAuthenticated) {
+          markLessonComplete(lessonId).catch(() => {});
+          saveProgressLocally(lessonId, { is_completed: true });
+        }
+      }
+
+      if (type === "aesdr:navigate") {
+        const href = event.data?.href;
+        if (typeof href === "string" && href.startsWith("/")) {
+          window.location.href = href;
+        }
+      }
     }
 
     window.addEventListener("message", handleMessage);
@@ -70,7 +93,24 @@ export default function ProgressSaver({
       window.removeEventListener("message", handleMessage);
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [save]);
+  }, [save, lessonId, isAuthenticated]);
+
+  // Send saved state to iframe for cross-device restoration
+  useEffect(() => {
+    if (restoredRef.current || !savedStateData) return;
+    // Wait for iframe to load, then send state
+    const timer = setTimeout(() => {
+      const iframe = document.querySelector("iframe");
+      if (iframe?.contentWindow) {
+        iframe.contentWindow.postMessage(
+          { type: "aesdr:restore", stateData: savedStateData },
+          window.location.origin
+        );
+        restoredRef.current = true;
+      }
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [savedStateData]);
 
   if (sessionExpired) {
     return (

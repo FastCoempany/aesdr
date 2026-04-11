@@ -207,8 +207,8 @@ export default async function Dashboard() {
                     {isCompleted ? "Completed" : `Lesson ${lesson.id}`}
                   </p>
 
-                  {/* Title — linked if accessible */}
-                  {isCompleted || isCurrent ? (
+                  {/* Title — linked if accessible (completed, current, or next) */}
+                  {isCompleted || isCurrent || isNextVisible ? (
                     <Link
                       href={`/course/${lesson.id}`}
                       style={{
@@ -227,6 +227,9 @@ export default async function Dashboard() {
                       {displayTitle}
                       {isCurrent && (
                         <span style={{ marginLeft: "12px", fontSize: "14px", color: "var(--theme)" }}>&rarr;</span>
+                      )}
+                      {isNextVisible && !isCompleted && (
+                        <span style={{ marginLeft: "12px", fontSize: "11px", color: "var(--text-muted)", fontWeight: 400, fontFamily: "var(--mono)", letterSpacing: ".06em" }}>up next</span>
                       )}
                     </Link>
                   ) : (

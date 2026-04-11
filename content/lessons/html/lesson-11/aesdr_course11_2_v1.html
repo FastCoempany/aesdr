@@ -970,11 +970,60 @@ window.AESDR = window.AESDR || {};
         window.parent.postMessage({
           type: 'aesdr:progress',
           screen: screen,
-          stateData: A.gateData()
+          stateData: A.fullState()
         }, '*');
       } catch(e) {}
     }
   }
+
+  /* ── Expose persistNow so go() can call it ── */
+  A.persistNow = function() { _persistState(); };
+
+  /* ── Full state export (includes incomplete gates for Supabase persistence) ── */
+  A.fullState = function() {
+    var out = {};
+    for (var k in gateState) {
+      var s = gateState[k];
+      var entry = { completed: s.completed, value: s.value || '', _attest: s._attest || {} };
+      if (s._hwDone)   entry._hwDone   = s._hwDone;
+      if (s._hwText)   entry._hwText   = s._hwText;
+      if (s._hwAttest) entry._hwAttest = s._hwAttest;
+      if (s.completedAt) entry.completedAt = s.completedAt;
+      if (s.rubricChecked) entry.rubricChecked = s.rubricChecked;
+      out['gate_' + k] = entry;
+    }
+    return out;
+  };
+
+  /* ── Restore state from parent-provided data (cross-device / cleared localStorage) ── */
+  A.restoreFromParent = function(data) {
+    if (!data || typeof data !== 'object') return;
+    for (var k in data) {
+      var screenNum = k.replace('gate_', '');
+      if (!gateState[screenNum]) gateState[screenNum] = { completed: false, value: '', _attest: {} };
+      var s = data[k];
+      if (s.completed) gateState[screenNum].completed = true;
+      if (s.value) gateState[screenNum].value = s.value;
+      if (s._attest) gateState[screenNum]._attest = s._attest;
+      if (s._hwDone)   gateState[screenNum]._hwDone   = s._hwDone;
+      if (s._hwText)   gateState[screenNum]._hwText   = s._hwText;
+      if (s._hwAttest) gateState[screenNum]._hwAttest = s._hwAttest;
+      if (s.completedAt) gateState[screenNum].completedAt = s.completedAt;
+      if (s.rubricChecked) gateState[screenNum].rubricChecked = s.rubricChecked;
+    }
+    _persistState(); // Save to localStorage for future visits
+  };
+
+  /* ── Listen for state restoration from parent ── */
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'aesdr:restore' && e.data.stateData) {
+      A.restoreFromParent(e.data.stateData);
+      if (typeof window.render === 'function') window.render();
+    }
+  });
+
+  /* ── Persist on page unload (catches typed-but-not-submitted text) ── */
+  window.addEventListener('beforeunload', function() { _persistState(); });
 
   /* ── Escape helper ── */
   function _esc(s) {
@@ -1538,7 +1587,10 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <p class="comp-p ae-only">Sales conferences are where pipeline gets accelerated and executive relationships get built. The AEs who win aren't the ones closing the bar—they're the ones who close the deal the next morning because they showed up sharp.</p>
         <p class="comp-p sdr-only">Sales conferences are where careers get accelerated and reputations get built. The SDRs who get promoted aren't the ones doing shots with the team—they're the ones who showed up to the breakfast meeting, asked great questions, and left an impression that lasted.</p>
         <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
-        <div style="margin-top:28px"><button class="btn btn-fill" onclick="go(0)"><span>↩ Restart Lesson</span></button></div>
+        <div style="margin-top:28px;display:flex;gap:12px;flex-wrap:wrap">
+          <button class="btn btn-fill" onclick="if(window.parent!==window){window.parent.postMessage({type:'aesdr:navigate',href:'/dashboard'},'*')}else{location.href='/dashboard'}"><span>Continue to Journey &rarr;</span></button>
+          <button class="btn" onclick="go(0)" style="border:1px solid var(--mid);color:var(--mid)"><span>↩ Restart</span></button>
+        </div>
       </div>
     </div>
   </div>
@@ -1756,7 +1808,9 @@ function init(){
 }
 function go(n){
   try{localStorage.setItem('aesdr_screen_'+location.pathname.replace(/[^a-z0-9]/gi,'_'),n)}catch(e){}
-  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.gateData?AESDR.gateData():{})},"*")}catch(e){}}
+  if(window.AESDR&&AESDR.persistNow) AESDR.persistNow();
+  if(n===TOTAL-1&&window.parent!==window){try{window.parent.postMessage({type:"aesdr:complete"},"*")}catch(e){}}
+  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.fullState?AESDR.fullState():{})},"*")}catch(e){}}
   document.getElementById('s'+cur).classList.remove('active');
   cur=n;
   document.getElementById('s'+cur).classList.add('active');

@@ -487,7 +487,44 @@ for (const dir of lessonDirs) {
       changes++;
     }
 
-    // ── 7m. Persistence: AESDR.restoreState() in init() ──
+    // ── 7m-a. Update go(n) to persist state, send fullState, and signal completion ──
+    {
+      const before7ma = html;
+      // Replace gateData() with fullState() everywhere in the file
+      if (html.includes('AESDR.gateData')) {
+        html = html.replace(/AESDR\.gateData\b/g, 'AESDR.fullState');
+      }
+      // Add persistNow() call in go(n) if not already present
+      if (!html.includes('AESDR.persistNow') && html.includes('function go(n)')) {
+        html = html.replace(
+          /(try\{localStorage\.setItem\('aesdr_screen_'\+location\.pathname\.replace\(\/\[\^a-z0-9\]\/gi,'_'\),n\)\}catch\(e\)\{\})\s*\n/,
+          "$1\n  if(window.AESDR&&AESDR.persistNow) AESDR.persistNow();\n"
+        );
+      }
+      // Add aesdr:complete postMessage when reaching final screen
+      if (!html.includes('aesdr:complete') && html.includes('function go(n)')) {
+        html = html.replace(
+          /if\(window\.parent!==window\)\{try\{window\.parent\.postMessage\(\{type:"aesdr:progress"/,
+          'if(n===TOTAL-1&&window.parent!==window){try{window.parent.postMessage({type:"aesdr:complete"},"*")}catch(e){}}\n  if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress"'
+        );
+      }
+      if (html !== before7ma) changes++;
+    }
+
+    // ── 7m-b. Add "Continue to Journey" button on completion screen ──
+    if (!html.includes('Continue to Journey')) {
+      // Match both "Restart Course" and "Restart Lesson" button variants
+      html = html.replace(
+        /<div style="margin-top:28px"><button class="btn btn-fill" onclick="go\(0\)"><span>↩ Restart (?:Course|Lesson)<\/span><\/button><\/div>/,
+        '<div style="margin-top:28px;display:flex;gap:12px;flex-wrap:wrap">\n' +
+        '          <button class="btn btn-fill" onclick="if(window.parent!==window){window.parent.postMessage({type:\'aesdr:navigate\',href:\'/dashboard\'},\'*\')}else{location.href=\'/dashboard\'}"><span>Continue to Journey &rarr;</span></button>\n' +
+        '          <button class="btn" onclick="go(0)" style="border:1px solid var(--mid);color:var(--mid)"><span>↩ Restart</span></button>\n' +
+        '        </div>'
+      );
+      changes++;
+    }
+
+    // ── 7n. Persistence: AESDR.restoreState() in init() ──
     if (!html.includes('AESDR.restoreState()')) {
       html = html.replace(
         /(\s*\/\/ Build UI components[^\n]*\n)/,
@@ -496,7 +533,7 @@ for (const dir of lessonDirs) {
       changes++;
     }
 
-    // ── 7n. Persistence: screen position restore ──
+    // ── 7o. Persistence: screen position restore ──
     if (!html.includes('_savedScreen')) {
       html = html.replace(
         /(\s*)(render\(\);\s*\n\})/,
