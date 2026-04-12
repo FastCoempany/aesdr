@@ -1,10 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 
 export default function SaveExitButton() {
-  const router = useRouter();
   const [exiting, setExiting] = useState(false);
 
   const handleExit = useCallback(
@@ -13,9 +11,9 @@ export default function SaveExitButton() {
       if (exiting) return;
       setExiting(true);
       // Brief fade-to-black before navigating
-      setTimeout(() => router.push("/dashboard"), 300);
+      setTimeout(() => { window.location.href = "/dashboard"; }, 300);
     },
-    [exiting, router],
+    [exiting],
   );
 
   return (

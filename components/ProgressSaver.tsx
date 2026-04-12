@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 
 import { markLessonComplete, saveLessonProgress } from "@/app/actions/progress";
 import { saveProgressLocally } from "@/utils/progress/local-storage";
@@ -28,7 +27,6 @@ export default function ProgressSaver({
   isAuthenticated,
   savedStateData,
 }: ProgressSaverProps) {
-  const router = useRouter();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const failCountRef = useRef(0);
   const [sessionExpired, setSessionExpired] = useState(false);
@@ -87,7 +85,7 @@ export default function ProgressSaver({
         const href = event.data?.href;
         if (typeof href === "string" && href.startsWith("/")) {
           setNavigating(true);
-          setTimeout(() => router.push(href), 300);
+          setTimeout(() => { window.location.href = href; }, 300);
         }
       }
     }
