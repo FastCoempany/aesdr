@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup — The Two Voices</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Barlow+Condensed:wght@600;700;800&family=Lora:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;600&display=swap');
+
+  :root {
+    --bg: #020617;
+    --bg-panel: #0F172A;
+    --bg-card: #1E293B;
+    --text: #F8FAFC;
+    --muted: #94A3B8;
+    --theme: #10B981;
+    --theme-glow: rgba(16, 185, 129, 0.4);
+    --iris: linear-gradient(90deg, #FF006E 0%, #FF6B00 17%, #F59E0B 34%, #10B981 51%, #38BDF8 68%, #8B5CF6 85%, #FF006E 100%);
+    --line: rgba(255,255,255,0.06);
+    --amber: rgba(245, 158, 11, 0.7);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+  }
+
+  @keyframes iris {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulseBar {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 72px 24px 56px;
+    animation: fadeIn 0.8s ease-out;
+  }
+
+  .header-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .header h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(28px, 5vw, 50px);
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    line-height: 1.15;
+    margin-bottom: 14px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .header h1 .iris-text {
+    background: var(--iris);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: iris 4s linear infinite;
+  }
+
+  .header .sub {
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--muted);
+  }
+
+  /* Split container */
+  .split-section {
+    display: flex;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    gap: 0;
+    position: relative;
+    margin-bottom: 0;
+  }
+
+  .split-section::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    transform: translateX(-50%);
+    background: var(--iris);
+    background-size: 100% 200%;
+    animation: iris 4s linear infinite, pulseBar 3s ease-in-out infinite;
+  }
+
+  @media (max-width: 768px) {
+    .split-section { flex-direction: column; }
+    .split-section::after { display: none; }
+    .voice { width: 100% !important; }
+    .voice-command { border-bottom: 1px solid var(--line); padding-bottom: 48px; }
+    .voice-chaos { padding-top: 48px; }
+  }
+
+  .voice {
+    width: 50%;
+    padding: 48px 40px 56px;
+  }
+
+  /* Voice labels */
+  .voice-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    margin-bottom: 36px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .voice-command .voice-label {
+    color: var(--theme);
+  }
+
+  .voice-command .voice-label::before {
+    content: '';
+    width: 8px; height: 2px;
+    background: var(--theme);
+  }
+
+  .voice-chaos .voice-label {
+    color: var(--amber);
+  }
+
+  .voice-chaos .voice-label::before {
+    content: '';
+    width: 8px; height: 2px;
+    background: var(--amber);
+  }
+
+  /* Command voice entries */
+  .cmd-entry {
+    margin-bottom: 36px;
+    animation: fadeIn 0.6s ease-out both;
+  }
+
+  .cmd-entry:nth-child(2) { animation-delay: 0.05s; }
+  .cmd-entry:nth-child(3) { animation-delay: 0.1s; }
+  .cmd-entry:nth-child(4) { animation-delay: 0.15s; }
+  .cmd-entry:nth-child(5) { animation-delay: 0.2s; }
+  .cmd-entry:nth-child(6) { animation-delay: 0.25s; }
+  .cmd-entry:nth-child(7) { animation-delay: 0.3s; }
+  .cmd-entry:nth-child(8) { animation-delay: 0.35s; }
+
+  .cmd-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: .15em;
+    color: rgba(16,185,129,0.3);
+    margin-bottom: 6px;
+  }
+
+  .cmd-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(18px, 2.2vw, 24px);
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    line-height: 1.3;
+    color: rgba(248,250,252,0.9);
+  }
+
+  .cmd-sub {
+    font-family: 'Lora', serif;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--muted);
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  /* Chaos voice entries */
+  .chaos-entry {
+    margin-bottom: 36px;
+    animation: fadeIn 0.6s ease-out both;
+  }
+
+  .chaos-entry:nth-child(2) { animation-delay: 0.05s; }
+  .chaos-entry:nth-child(3) { animation-delay: 0.1s; }
+  .chaos-entry:nth-child(4) { animation-delay: 0.15s; }
+  .chaos-entry:nth-child(5) { animation-delay: 0.2s; }
+  .chaos-entry:nth-child(6) { animation-delay: 0.25s; }
+  .chaos-entry:nth-child(7) { animation-delay: 0.3s; }
+  .chaos-entry:nth-child(8) { animation-delay: 0.35s; }
+
+  .chaos-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: .15em;
+    color: rgba(245, 158, 11, 0.25);
+    margin-bottom: 6px;
+  }
+
+  .chaos-text {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(18px, 2.2vw, 22px);
+    color: var(--amber);
+    line-height: 1.4;
+  }
+
+  .chaos-sub {
+    font-family: 'Lora', serif;
+    font-size: 12px;
+    font-style: italic;
+    color: rgba(148,163,184,0.4);
+    margin-top: 4px;
+  }
+
+  /* Merge section */
+  .merge {
+    text-align: center;
+    padding: 64px 24px 48px;
+    position: relative;
+  }
+
+  .merge-bar {
+    width: 100%;
+    max-width: 1100px;
+    height: 3px;
+    margin: 0 auto 48px;
+    background: var(--iris);
+    background-size: 200% 100%;
+    animation: iris 4s linear infinite;
+    position: relative;
+  }
+
+  .merge-bar::after {
+    content: 'THE TWO BECOME ONE';
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: .3em;
+    color: var(--muted);
+    white-space: nowrap;
+    background: var(--bg);
+    padding: 0 16px;
+  }
+
+  .merge h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(22px, 3.5vw, 36px);
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    line-height: 1.25;
+    max-width: 600px;
+    margin: 0 auto 16px;
+  }
+
+  .merge h2 .iris-text {
+    background: var(--iris);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: iris 4s linear infinite;
+  }
+
+  .merge-desc {
+    font-family: 'Lora', serif;
+    font-size: 15px;
+    font-style: italic;
+    color: var(--muted);
+    max-width: 480px;
+    margin: 0 auto 12px;
+    line-height: 1.6;
+  }
+
+  .merge-scrawl {
+    font-family: 'Caveat', cursive;
+    font-size: 18px;
+    color: rgba(245, 158, 11, 0.45);
+    margin-bottom: 36px;
+  }
+
+  .cta {
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--theme);
+    border: none;
+    padding: 16px 48px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .cta:hover {
+    background: #0d9668;
+    box-shadow: 0 0 24px var(--theme-glow);
+  }
+
+  /* Count bar */
+  .count-bar {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    margin: 48px auto 0;
+    max-width: 400px;
+  }
+
+  .count-block {
+    flex: 1;
+    height: 4px;
+    background: var(--bg-card);
+    border-radius: 1px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .count-block::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--iris);
+    background-size: 400% 100%;
+    animation: iris 4s linear infinite;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .count-block:hover::after {
+    opacity: 1;
+  }
+
+  .count-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7px;
+    letter-spacing: .15em;
+    color: rgba(148,163,184,0.25);
+    text-align: center;
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-tag">Two voices. One program. 12 lessons.</div>
+  <h1>Every great rep has <span class="iris-text">two people inside them.</span></h1>
+  <p class="sub">One commands the room. The other can barely command their morning routine. We train both.</p>
+</div>
+
+<div class="split-section">
+
+  <!-- LEFT: The Command Voice (Rowan Pope) -->
+  <div class="voice voice-command">
+    <div class="voice-label">The Voice That Closes</div>
+
+    <div class="cmd-entry">
+      <div class="cmd-num">01</div>
+      <div class="cmd-text">You will build a system. Not a wish list.</div>
+      <div class="cmd-sub">Structure is not optional. It is the only thing between you and chaos.</div>
+    </div>
+
+    <div class="cmd-entry">
+      <div class="cmd-num">02</div>
+      <div class="cmd-text">Your environment is a weapon. Sharpen it or it cuts you.</div>
+      <div class="cmd-sub">The space you work in either accelerates you or buries you. There is no neutral.</div>
+    </div>
+
+    <div class="cmd-entry">
+      <div class="cmd-num">03</div>
+      <div class="cmd-text">Rejection is not a feeling. It is a data point. Treat it accordingly.</div>
+      <div class="cmd-sub">The ones who win are not tougher. They are more precise.</div>
+    </div>
+
+    <div class="cmd-entry">
+      <div class="cmd-num">04</div>
+      <div class="cmd-text">The phone does not care about your mood. Pick it up.</div>
+      <div class="cmd-sub">Discipline is doing the thing when every cell in your body says don't.</div>
+    </div>
+
+    <div class="cmd-entry">
+      <div class="cmd-num">05</div>
+      <div class="cmd-text">Your pipeline is your reputation. Every number in it is a promise you made.</div>
+      <div class="cmd-sub">Break those promises and you are not unlucky. You are unreliable.</div>
+    </div>
+
+    <div class="cmd-entry">
+      <div class="cmd-num">06</div>
+      <div class="cmd-text">Nobody is coming to save you. That is not a tragedy. That is a competitive advantage.</div>
+      <div class="cmd-sub">The moment you stop waiting is the moment you start winning.</div>
+    </div>
+  </div>
+
+  <!-- RIGHT: The Chaos Voice (Michael Scott) -->
+  <div class="voice voice-chaos">
+    <div class="voice-label">The Voice at 2am</div>
+
+    <div class="chaos-entry">
+      <div class="chaos-num">01</div>
+      <div class="chaos-text">I literally had a system. It was a Google Doc called "THE PLAN" in all caps. It had three bullet points and a motivational quote from Dwayne Johnson. That was the whole system.</div>
+    </div>
+
+    <div class="chaos-entry">
+      <div class="chaos-num">02</div>
+      <div class="chaos-text">My "home office" was my bed. With a laptop. And a bag of pretzels I'd been eating since Tuesday. Tuesday of the previous week.</div>
+    </div>
+
+    <div class="chaos-entry">
+      <div class="chaos-num">03</div>
+      <div class="chaos-text">A prospect told me "this is the worst cold call I've ever received" and I said "thank you" because my brain broke. Then I went to lunch. At 10:30am.</div>
+    </div>
+
+    <div class="chaos-entry">
+      <div class="chaos-num">04</div>
+      <div class="chaos-text">I once pretended my phone was dead so I didn't have to dial. My phone was plugged in. On my desk. With the screen on. My manager was standing right there.</div>
+    </div>
+
+    <div class="chaos-entry">
+      <div class="chaos-num">05</div>
+      <div class="chaos-text">My pipeline had 47 "opportunities" in it. Three of them were real. One was my cousin's company. He didn't know I'd added him.</div>
+    </div>
+
+    <div class="chaos-entry">
+      <div class="chaos-num">06</div>
+      <div class="chaos-text">I spent an entire Thursday writing the perfect LinkedIn message. Sent it to 200 people. Got one reply. It said "unsubscribe." That's not even how LinkedIn works.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Merge -->
+<div class="merge">
+  <div class="merge-bar"></div>
+  <h2>The program doesn't kill one voice and keep the other. <span class="iris-text">It teaches them to work together.</span></h2>
+  <p class="merge-desc">The authority without the honesty is a sociopath. The honesty without the authority is a blog post. You need both. We build both.</p>
+  <p class="merge-scrawl">I came in as Voice #2. I left as Voice #1 who still remembers what Voice #2 felt like. That's the whole thing.</p>
+  <a href="#" class="cta">Let Both Voices In &rarr;</a>
+
+  <div class="count-bar">
+    <div class="count-block"></div>
+    <div class="count-block"></div>
+    <div class="count-block"></div>
+    <div class="count-block"></div>
+    <div class="count-block"></div>
+    <div class="count-block"></div>
+    <div class="count-block"></div>
+    <div class="count-block"></div>
+    <div class="count-block"></div>
+    <div class="count-block"></div>
+    <div class="count-block"></div>
+    <div class="count-block"></div>
+  </div>
+  <div class="count-label">12 Lessons &bull; 12 Weeks &bull; 2 Voices &bull; 1 You</div>
+</div>
+
+</body>
+</html>
