@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR — The Wreck</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=Caveat:wght@400;600&display=swap');
+
+  :root {
+    --bg: #020617;
+    --text: #F8FAFC;
+    --muted: #94A3B8;
+    --theme: #10B981;
+    --amber: rgba(245,158,11,0.7);
+    --iris: linear-gradient(90deg, #FF006E, #FF6B00, #F59E0B, #10B981, #38BDF8, #8B5CF6, #FF006E);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Each panel is 100vh, overflow hidden, position relative */
+  .panel {
+    width: 100vw;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* THE MASSIVE WORD — fills viewport */
+  .mega {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 0.85;
+    letter-spacing: -0.02em;
+    position: absolute;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.6s ease, transform 0.8s cubic-bezier(.23,1,.32,1);
+  }
+
+  .mega.visible { opacity: 1; transform: translate(0,0) rotate(0deg) !important; }
+
+  /* Scattered annotations — Michael Scott */
+  .note {
+    font-family: 'Caveat', cursive;
+    color: var(--amber);
+    position: absolute;
+    opacity: 0;
+    transition: opacity 0.5s ease 0.3s, transform 0.6s ease 0.3s;
+    line-height: 1.3;
+    max-width: 280px;
+    pointer-events: none;
+  }
+
+  .note.visible { opacity: 1; transform: translate(0,0) !important; }
+
+  /* Sub text — Rowan Pope quieter */
+  .sub-line {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    color: var(--muted);
+    position: absolute;
+    opacity: 0;
+    transition: opacity 0.6s ease 0.5s;
+    font-size: clamp(14px, 1.8vw, 20px);
+    max-width: 400px;
+    line-height: 1.6;
+  }
+
+  .sub-line.visible { opacity: 1; }
+
+  /* Iris accent */
+  .iris-text {
+    background: var(--iris);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 4s linear infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+  }
+
+  .theme-text { color: var(--theme); }
+
+  /* Diagonal slash */
+  .slash {
+    position: absolute;
+    width: 200vw;
+    height: 2px;
+    background: var(--iris);
+    background-size: 300% 100%;
+    animation: shimmer 4s linear infinite;
+    opacity: 0.15;
+  }
+
+  /* ============ PANEL-SPECIFIC STYLES ============ */
+
+  /* Panel 1: NUMBNESS */
+  #p1 .mega {
+    font-size: clamp(100px, 22vw, 280px);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-3deg);
+    color: rgba(248,250,252,0.04);
+    -webkit-text-stroke: 1px rgba(248,250,252,0.15);
+  }
+  #p1 .mega.visible { transform: translate(-50%, -50%) rotate(-3deg) !important; opacity: 1; }
+
+  #p1 .mega-front {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(32px, 5vw, 64px);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.8s ease 0.3s;
+    z-index: 2;
+  }
+  #p1 .mega-front.visible { opacity: 1; }
+
+  #p1 .note {
+    font-size: clamp(16px, 2.2vw, 22px);
+    bottom: 12%;
+    right: 8%;
+    transform: rotate(3deg) translateY(20px);
+    text-align: right;
+  }
+
+  /* Panel 2: VERDICT — rotated, clipped */
+  #p2 { background: #030820; }
+  #p2 .mega {
+    font-size: clamp(120px, 28vw, 360px);
+    color: var(--text);
+    top: 50%;
+    left: -5%;
+    transform: translateY(-50%) rotate(-8deg);
+    opacity: 0.03;
+  }
+  #p2 .mega.visible { opacity: 0.06; transform: translateY(-50%) rotate(-8deg) !important; }
+
+  #p2 .mega-overlay {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(48px, 9vw, 120px);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    position: absolute;
+    top: 35%;
+    left: 8%;
+    transform: rotate(-2deg);
+    opacity: 0;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    z-index: 2;
+    line-height: 1;
+  }
+  #p2 .mega-overlay.visible { opacity: 1; transform: rotate(-2deg) translateX(0) !important; }
+
+  #p2 .verdict-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(15px, 2vw, 22px);
+    font-weight: 400;
+    color: rgba(248,250,252,0.5);
+    position: absolute;
+    top: 58%;
+    left: 8%;
+    max-width: 500px;
+    line-height: 1.7;
+    opacity: 0;
+    transition: opacity 0.6s ease 0.4s;
+  }
+  #p2 .verdict-sub.visible { opacity: 1; }
+
+  #p2 .note {
+    font-size: clamp(18px, 2.5vw, 26px);
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%) rotate(-1deg) translateY(20px);
+    text-align: center;
+    max-width: 500px;
+  }
+
+  #p2 .slash {
+    top: 30%;
+    left: -50%;
+    transform: rotate(-12deg);
+  }
+
+  /* Panel 3: THE DRINK — diagonal text */
+  #p3 .mega {
+    font-size: clamp(60px, 14vw, 180px);
+    top: 15%;
+    right: -5%;
+    transform: rotate(6deg) translateX(100px);
+    color: rgba(248,250,252,0.08);
+  }
+  #p3 .mega.visible { transform: rotate(6deg) translateX(0) !important; }
+
+  #p3 .phrase-stack {
+    position: absolute;
+    left: 6%;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+  }
+
+  #p3 .phrase-line {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(18px, 3vw, 36px);
+    font-weight: 700;
+    line-height: 2;
+    opacity: 0;
+    transform: translateX(-40px) rotate(-1deg);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  #p3 .phrase-line.visible { opacity: 1; transform: translateX(0) rotate(0deg); }
+  #p3 .phrase-line:nth-child(2) { transition-delay: 0.15s; }
+  #p3 .phrase-line:nth-child(3) { transition-delay: 0.3s; }
+
+  #p3 .note {
+    font-size: clamp(15px, 2vw, 20px);
+    bottom: 15%;
+    right: 6%;
+    transform: rotate(2deg) translateY(20px);
+    text-align: right;
+    max-width: 320px;
+  }
+
+  /* Panel 4: RELATIONSHIP — overlapping text */
+  #p4 { background: #020617; }
+
+  #p4 .bg-word {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(140px, 30vw, 400px);
+    text-transform: uppercase;
+    position: absolute;
+    color: rgba(248,250,252,0.02);
+    line-height: 0.8;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+  #p4 .bg-word.visible { opacity: 1; }
+  #p4 .bg-word:nth-child(1) { top: -5%; left: -10%; transform: rotate(-4deg); }
+  #p4 .bg-word:nth-child(2) { bottom: -8%; right: -15%; transform: rotate(3deg); }
+
+  #p4 .center-block {
+    position: relative;
+    z-index: 2;
+    max-width: 600px;
+    padding: 0 24px;
+  }
+
+  #p4 .center-block .cmd {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(28px, 5vw, 56px);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    line-height: 1.2;
+    margin-bottom: 24px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  #p4 .center-block .cmd.visible { opacity: 1; transform: translateY(0); }
+
+  #p4 .note {
+    font-size: clamp(16px, 2.2vw, 22px);
+    position: relative;
+    transform: rotate(-1deg) translateY(10px);
+    margin-top: 32px;
+    max-width: 100%;
+    text-align: left;
+  }
+
+  /* Panel 5: ALL CONNECTED — scatter field */
+  #p5 {
+    min-height: 120vh;
+  }
+
+  .float-word {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    position: absolute;
+    opacity: 0;
+    transition: opacity 0.6s ease, transform 0.8s cubic-bezier(.23,1,.32,1);
+    color: rgba(248,250,252,0.12);
+  }
+  .float-word.visible { opacity: 1; transform: translate(0,0) !important; }
+
+  #p5 .center-reveal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.8s ease 0.5s;
+  }
+  #p5 .center-reveal.visible { opacity: 1; }
+
+  #p5 .center-reveal .big {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(36px, 7vw, 80px);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+
+  #p5 .center-reveal .small {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(18px, 2.5vw, 28px);
+    color: var(--amber);
+    margin-top: 16px;
+  }
+
+  /* Panel 6: BRAND — massive AESDR */
+  #p6 {
+    background: var(--bg);
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  #p6 .brand {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(80px, 20vw, 260px);
+    font-weight: 900;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    opacity: 0;
+    transform: scale(1.5);
+    transition: opacity 0.8s ease, transform 1s cubic-bezier(.23,1,.32,1);
+  }
+  #p6 .brand.visible { opacity: 1; transform: scale(1); }
+
+  #p6 .tagline {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(13px, 1.6vw, 18px);
+    color: var(--muted);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity 0.6s ease 0.6s;
+  }
+  #p6 .tagline.visible { opacity: 1; }
+
+  #p6 .note {
+    position: relative;
+    font-size: clamp(16px, 2vw, 22px);
+    transform: rotate(-1deg);
+    margin-top: 24px;
+    text-align: center;
+  }
+
+  #p6 .cta-wrap {
+    margin-top: 40px;
+    opacity: 0;
+    transition: opacity 0.6s ease 0.9s;
+  }
+  #p6 .cta-wrap.visible { opacity: 1; }
+
+  .cta {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--theme);
+    padding: 18px 56px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+  .cta:hover {
+    background: #0d9668;
+    box-shadow: 0 0 30px rgba(16,185,129,0.4);
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 768px) {
+    .note { font-size: 15px !important; max-width: 200px !important; }
+    #p2 .mega-overlay { left: 5% !important; }
+    #p3 .phrase-stack { left: 5% !important; }
+    #p4 .center-block .cmd { font-size: 28px !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PANEL 1: NUMBNESS -->
+<div class="panel" id="p1">
+  <div class="mega">NUMBNESS</div>
+  <div class="mega-front">When was the last time<br>you felt <span class="theme-text">anything</span><br>about your number?</div>
+  <div class="note">I stared at my pipeline for 40 minutes last Tuesday. Didn't click anything. Just stared. Like it was modern art. It kind of is, if the art is about failure.</div>
+</div>
+
+<!-- PANEL 2: VERDICT -->
+<div class="panel" id="p2">
+  <div class="mega">VERDICT</div>
+  <div class="slash"></div>
+  <div class="mega-overlay">Your commission<br>check is not<br><span class="iris-text">income.</span></div>
+  <div class="verdict-sub">It is a verdict on how you lived the last 30 days. Your apartment. Your discipline. Your 2pm slump. All of it — confessed in a number on the 15th.</div>
+  <div class="note">Last month: $8,200. Bought a jacket. This month: $2,100. Wearing the jacket to eat ramen. The jacket is doing great. I am not.</div>
+</div>
+
+<!-- PANEL 3: THE DRINK -->
+<div class="panel" id="p3">
+  <div class="mega">CONFERENCE</div>
+  <div class="phrase-stack">
+    <div class="phrase-line">The drink in your hand.</div>
+    <div class="phrase-line">The room reading your <span class="theme-text">body language.</span></div>
+    <div class="phrase-line">Every event is an <span class="iris-text">audition.</span></div>
+  </div>
+  <div class="note">I did 4 tequila shots at the SKO and told the VP my "real thoughts." I no longer work at that company. The thoughts were good though. Delivery needed work.</div>
+</div>
+
+<!-- PANEL 4: RELATIONSHIP -->
+<div class="panel" id="p4">
+  <div class="bg-word">LEFT</div>
+  <div class="bg-word">STAYED</div>
+  <div class="center-block">
+    <div class="cmd">The person at home keeping score while you "grind" <span class="theme-text">will not wait forever.</span></div>
+    <div class="note visible" style="opacity:0; transition: opacity 0.6s ease 0.5s;">My girlfriend asked what I do all day. I said "pipeline." She said that's not a real answer. She was right. We broke up. I still don't have a better answer. Pipeline. It's pipeline.</div>
+  </div>
+</div>
+
+<!-- PANEL 5: ALL CONNECTED -->
+<div class="panel" id="p5">
+  <div class="float-word" style="font-size:clamp(20px,4vw,48px); top:10%; left:5%; transform:translate(-40px,-20px) rotate(-8deg);">apartment</div>
+  <div class="float-word" style="font-size:clamp(16px,3vw,36px); top:25%; right:10%; transform:translate(60px,-10px) rotate(5deg);">conference</div>
+  <div class="float-word" style="font-size:clamp(24px,5vw,56px); bottom:30%; left:15%; transform:translate(-30px,40px) rotate(-3deg);">commission</div>
+  <div class="float-word" style="font-size:clamp(18px,3.5vw,40px); top:60%; right:20%; transform:translate(50px,20px) rotate(7deg);">relationship</div>
+  <div class="float-word" style="font-size:clamp(14px,2.5vw,30px); top:15%; left:55%; transform:translate(0,-30px) rotate(-12deg);">identity</div>
+  <div class="float-word" style="font-size:clamp(22px,4.5vw,52px); bottom:15%; right:5%; transform:translate(40px,30px) rotate(4deg);">pipeline</div>
+  <div class="float-word" style="font-size:clamp(16px,3vw,34px); bottom:45%; left:3%; transform:translate(-50px,10px) rotate(-6deg);">bar tab</div>
+  <div class="float-word" style="font-size:clamp(18px,3vw,38px); top:40%; left:40%; transform:translate(-20px,-40px) rotate(9deg);">burnout</div>
+
+  <div class="center-reveal">
+    <div class="big"><span class="iris-text">It's all connected.</span></div>
+    <div class="small">I came for cold call scripts. I stayed because someone finally explained why I was lonely, broke, and eating cereal at midnight.</div>
+  </div>
+</div>
+
+<!-- PANEL 6: BRAND -->
+<div class="panel" id="p6">
+  <div class="brand iris-text">AESDR</div>
+  <div class="tagline">12 lessons. Not about sales. About the person who sells.</div>
+  <div class="note visible" style="opacity:0;">The curriculum is classified. My life before it is embarrassing. Same program fixed both.</div>
+  <div class="cta-wrap"><a href="#" class="cta">Get Access &rarr;</a></div>
+</div>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      // Activate all animatable children
+      entry.target.querySelectorAll('.mega, .mega-front, .mega-overlay, .verdict-sub, .note, .phrase-line, .cmd, .bg-word, .float-word, .center-reveal, .brand, .tagline, .cta-wrap').forEach(el => {
+        el.classList.add('visible');
+      });
+    }
+  });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.panel').forEach(p => observer.observe(p));
+</script>
+
+</body>
+</html>
