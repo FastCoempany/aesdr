@@ -448,6 +448,7 @@ window.AESDR = window.AESDR || {};
   var gates = {};      // screenNum -> config
   var gateState = {};  // screenNum -> { completed, value, _attest, ... }
   var timers = {};     // screenNum -> { started, remaining }
+  var _lessonExtra = {}; // arbitrary lesson-specific state (persisted alongside gates)
 
   /* ── localStorage persistence ── */
   var _storageKey = 'aesdr_gate_' + location.pathname.replace(/[^a-z0-9]/gi, '_');
@@ -463,7 +464,9 @@ window.AESDR = window.AESDR || {};
         if (s._hwAttest) save[k]._hwAttest = s._hwAttest;
         if (s.completedAt) save[k].completedAt = s.completedAt;
         if (s.rubricChecked) save[k].rubricChecked = s.rubricChecked;
+        if (s._editing) save[k]._editing = true;
       }
+      save._extra = _lessonExtra;
       localStorage.setItem(_storageKey, JSON.stringify(save));
     } catch(e) {}
   }
@@ -473,7 +476,9 @@ window.AESDR = window.AESDR || {};
       var raw = localStorage.getItem(_storageKey);
       if (!raw) return;
       var save = JSON.parse(raw);
+      if (save._extra) _lessonExtra = save._extra;
       for (var k in save) {
+        if (k === '_extra') continue;
         if (!gateState[k]) gateState[k] = { completed: false, value: '', _attest: {} };
         var s = save[k];
         gateState[k].completed    = s.completed || false;
@@ -484,11 +489,14 @@ window.AESDR = window.AESDR || {};
         if (s._hwAttest) gateState[k]._hwAttest = s._hwAttest;
         if (s.completedAt) gateState[k].completedAt = s.completedAt;
         if (s.rubricChecked) gateState[k].rubricChecked = s.rubricChecked;
+        if (s._editing) gateState[k]._editing = true;
       }
     } catch(e) {}
   }
 
   A.restoreState = function() { _restoreState(); };
+  A.setExtra = function(key, val) { _lessonExtra[key] = val; };
+  A.getExtra = function(key) { return _lessonExtra[key]; };
   /* ── Attestation phrases (unique per checkbox, never repeat across app) ── */
   var ATTEST = [
     "I completed this because I'm choosing to be the person who does the hard thing",
@@ -583,7 +591,7 @@ window.AESDR = window.AESDR || {};
     if (!el) return;
     var s = gateState[screen];
 
-    if (s.completed) {
+    if (s.completed && !s._editing) {
       el.innerHTML = _completedHTML(g, s, screen);
       return;
     }
@@ -595,6 +603,26 @@ window.AESDR = window.AESDR || {};
       case 'narrative': el.innerHTML = _narrativeHTML(screen, g, s); break;
       case 'homework': el.innerHTML = _homeworkHTML(screen, g, s); break;
       case 'time': _startTimer(screen, g); el.innerHTML = _timeHTML(screen, g); break;
+    }
+
+    // When editing a previously completed gate, pre-enable attestation + submit
+    if (s._editing && s.completed) {
+      var _attest = document.getElementById('gateAttest' + screen);
+      if (_attest) { _attest.disabled = false; _attest.checked = true; }
+      var _btn = document.getElementById('gateSub' + screen);
+      if (_btn) _btn.disabled = false;
+      // For homework sub-items that are being re-edited
+      if (g.type === 'homework' && g.items) {
+        for (var _i = 0; _i < g.items.length; _i++) {
+          if (s._hwDone && s._hwDone[_i]) continue;
+          var _ha = document.getElementById('gateAttest' + screen + '_' + _i);
+          if (_ha && s._hwAttest && s._hwAttest[_i]) { _ha.disabled = false; _ha.checked = true; }
+          var _hb = document.getElementById('hwSub' + screen + '_' + _i);
+          var _ht = (s._hwText && s._hwText[_i]) || '';
+          var _hm = (g.items[_i] && g.items[_i].minChars) || 30;
+          if (_hb && _ht.length >= _hm && _ha && _ha.checked) _hb.disabled = false;
+        }
+      }
     }
   };
 
@@ -847,8 +875,8 @@ window.AESDR = window.AESDR || {};
   /* ── Edit completed gate ── */
   A._editGate = function(screen) {
     var s = gateState[screen];
-    s.completed = false;
-    // Keep existing value so textarea is pre-filled
+    s._editing = true;
+    // Keep completed=true for navigation; _editing shows form instead of summary
     // Re-render
     var el = document.getElementById('gate' + screen);
     if (el) A.renderGate(screen, 'gate' + screen);
@@ -863,8 +891,8 @@ window.AESDR = window.AESDR || {};
     if (!s._hwDone) s._hwDone = {};
     s._hwDone[idx] = false;
     if (s._hwAttest) s._hwAttest[idx] = false;
-    // If gate was fully completed, uncomplete it
-    s.completed = false;
+    // Keep completed=true for navigation; _editing shows form
+    if (s.completed) s._editing = true;
     // Re-render
     var el = document.getElementById('gate' + screen);
     if (el) A.renderGate(screen, 'gate' + screen);
@@ -911,6 +939,7 @@ window.AESDR = window.AESDR || {};
     }
     if (allDone) {
       s.completed = true;
+      s._editing = false;
       s.completedAt = new Date().toISOString();
       s.value = JSON.stringify(s._hwText);
     }
@@ -950,6 +979,7 @@ window.AESDR = window.AESDR || {};
     if (attestEl && !attestEl.checked) return;
 
     s.completed = true;
+    s._editing = false;
     s.completedAt = new Date().toISOString();
 
     // Re-render the gate as completed
@@ -992,13 +1022,16 @@ window.AESDR = window.AESDR || {};
       if (s.rubricChecked) entry.rubricChecked = s.rubricChecked;
       out['gate_' + k] = entry;
     }
+    out._extra = _lessonExtra;
     return out;
   };
 
   /* ── Restore state from parent-provided data (cross-device / cleared localStorage) ── */
   A.restoreFromParent = function(data) {
     if (!data || typeof data !== 'object') return;
+    if (data._extra) _lessonExtra = data._extra;
     for (var k in data) {
+      if (k === '_extra') continue;
       var screenNum = k.replace('gate_', '');
       if (!gateState[screenNum]) gateState[screenNum] = { completed: false, value: '', _attest: {} };
       var s = data[k];
@@ -1633,19 +1666,19 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
   <div class="sb-lesson sdr-only">Lesson 7.1 · Outbound Is the Foundation</div>
   <div class="sb-divider"></div>
   <div class="sb-label">Sections</div>
-  <div class="sb-item" id="nav1" onclick="go(1)">
+  <div class="sb-item" id="nav1" onclick="goSafe(1)">
     <div class="sb-tag">Section 01</div>
     <div class="sb-name">The AE Mindset</div>
   </div>
-  <div class="sb-item" id="nav2" onclick="go(3)">
+  <div class="sb-item" id="nav2" onclick="goSafe(3)">
     <div class="sb-tag">Section 02</div>
     <div class="sb-name">Coasting Kills Careers</div>
   </div>
-  <div class="sb-item" id="nav3" onclick="go(5)">
+  <div class="sb-item" id="nav3" onclick="goSafe(5)">
     <div class="sb-tag">Section 03</div>
     <div class="sb-name">Winning Strategy</div>
   </div>
-  <div class="sb-item" id="nav4" onclick="go(8)">
+  <div class="sb-item" id="nav4" onclick="goSafe(8)">
     <div class="sb-tag">Section 04</div>
     <div class="sb-name">Homework</div>
   </div>
@@ -1756,11 +1789,13 @@ const QUIZ = [
 ════════════════════════════════════ */
 const TOTAL=10;
 let cur=0;
+let maxReached=0;
 let siloSel=null, siloDone={}, siloCount=0;
 let blameState={}, blameCount=0;
 let seqSel=null, seqDone={};
 let clsSel=null, clsDone={}, clsCount=0;
 let qAns={}, qSubmitted=false, qPassed=false;
+function _saveQuizState(){AESDR.setExtra('quiz',{ans:qAns,submitted:qSubmitted,passed:qPassed});}
 
 /* ════════════════════════════════════
    INIT
@@ -1815,6 +1850,8 @@ function init(){
   ] });
   // Restore saved gate state from localStorage
   AESDR.restoreState();
+  var _navExtra=AESDR.getExtra('nav')||{};maxReached=_navExtra.maxReached||0;
+  var _qExtra=AESDR.getExtra('quiz')||{};if(_qExtra.ans)qAns=_qExtra.ans;if(_qExtra.submitted)qSubmitted=_qExtra.submitted;if(_qExtra.passed)qPassed=_qExtra.passed;
 
 
 
@@ -1824,6 +1861,7 @@ function init(){
   try { buildSeq(); } catch(e) { console.error('buildSeq:', e); }
   try { buildCls(); } catch(e) { console.error('buildCls:', e); }
   try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
+  if(Object.keys(qAns).length>0){var _ws=qSubmitted;qSubmitted=false;for(var _qi in qAns){try{document.getElementById('qo'+_qi+'_'+qAns[_qi]).classList.add('chosen');}catch(e){}}if(_ws)submitQuiz();}
 
   // Restore saved screen position
 
@@ -1835,11 +1873,13 @@ function init(){
 
 
   if (_savedScreen > 0 && _savedScreen < TOTAL) { cur = _savedScreen; document.getElementById('s0').classList.remove('active'); document.getElementById('s'+cur).classList.add('active'); }
+  if(_savedScreen>maxReached)maxReached=_savedScreen;
 
 
 
   render();
 }
+function goSafe(n){if(n>maxReached)return;go(n);}
 function go(n){
   try{localStorage.setItem('aesdr_screen_'+location.pathname.replace(/[^a-z0-9]/gi,'_'),n)}catch(e){}
   if(window.AESDR&&AESDR.persistNow) AESDR.persistNow();
@@ -1849,6 +1889,8 @@ function go(n){
   cur=n;
   document.getElementById('s'+cur).classList.add('active');
   document.getElementById('main').scrollTop=0;
+  _saveQuizState();
+  AESDR.setExtra('nav',{maxReached:maxReached});
   render();
 }
 function next(){if(cur<TOTAL-1)go(cur+1);}
@@ -2071,7 +2113,7 @@ function pickOpt(qi,oi){
   if(qSubmitted)return;
   QUIZ[qi].opts.forEach((_,i)=>document.getElementById(`qo${qi}_${i}`).classList.remove('chosen'));
   document.getElementById(`qo${qi}_${oi}`).classList.add('chosen');
-  qAns[qi]=oi;render();
+  qAns[qi]=oi;_saveQuizState();AESDR.persistNow();render();
 }
 function submitQuiz(){
   qSubmitted=true;let correct=0;
@@ -2086,13 +2128,15 @@ function submitQuiz(){
     if(chosen===q.ans)correct++;
   });
   qPassed=correct>=3;
+  _saveQuizState();AESDR.persistNow();
   const b=document.getElementById('quizBanner');
   b.className='quiz-banner show '+(qPassed?'pass':'fail');
-  b.textContent=qPassed?`✓ ${correct} / ${QUIZ.length} correct — cleared to continue.`:`${correct} / ${QUIZ.length} correct — need 3 to pass. Review and try again.`;
+  b.innerHTML=qPassed?`✓ ${correct} / ${QUIZ.length} correct — cleared to continue. <button class="gate-edit-btn" style="margin-left:12px" onclick="retryQuiz()">Reset Quiz</button>`:`${correct} / ${QUIZ.length} correct — need 3 to pass. Review and try again.`;
   render();
 }
 function retryQuiz(){
   qSubmitted=false;qPassed=false;qAns={};
+  _saveQuizState();AESDR.persistNow();
   document.getElementById('quizBanner').className='quiz-banner';
   buildQuiz();render();
 }
@@ -2102,6 +2146,7 @@ function retryQuiz(){
 ════════════════════════════════════ */
 const SEC={1:1,2:1,3:2,4:2,5:3,6:3,7:3,8:4};
 function canContinue(){
+  if(cur<maxReached)return true;
   if(cur===1)return AESDR.gateReady(1);
   if(cur===3)return AESDR.gateReady(3);
   if(cur===2)return siloCount===6;

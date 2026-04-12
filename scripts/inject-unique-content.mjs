@@ -573,6 +573,134 @@ for (const dir of lessonDirs) {
       changes++;
     }
 
+    // ── 7p. maxReached variable ──
+    if (!html.includes('maxReached')) {
+      html = html.replace(/let cur\s*=\s*0;/, 'let cur=0;\nlet maxReached=0;');
+      changes++;
+    }
+
+    // ── 7q. goSafe function ──
+    if (!html.includes('goSafe')) {
+      html = html.replace(
+        /\nfunction go\(n\)\{/,
+        '\nfunction goSafe(n){if(n>maxReached)return;go(n);}\nfunction go(n){'
+      );
+      changes++;
+    }
+
+    // ── 7r. go() maxReached tracking at start ──
+    if (!html.includes('if(n>maxReached)')) {
+      html = html.replace(
+        /function go\(n\)\{\n(\s*)try\{localStorage/,
+        'function go(n){\n$1if(n>maxReached)maxReached=n;\n$1try{localStorage'
+      );
+      changes++;
+    }
+
+    // ── 7r-b. Quiz state save + nav setExtra in go() before render() ──
+    if (!html.includes("setExtra('nav'")) {
+      html = html.replace(
+        /document\.getElementById\('main'\)\.scrollTop=0;\n(\s*)render\(\);\n\}/,
+        "document.getElementById('main').scrollTop=0;\n$1_saveQuizState();\n$1AESDR.setExtra('nav',{maxReached:maxReached});\n$1render();\n}"
+      );
+      changes++;
+    }
+
+    // ── 7s. canContinue() bypass for previously visited screens ──
+    if (!html.includes('cur<maxReached')) {
+      html = html.replace(
+        /function canContinue\(\)\{/,
+        'function canContinue(){\n  if(cur<maxReached)return true;'
+      );
+      changes++;
+    }
+
+    // ── 7t. Sidebar onclick: go() → goSafe() ──
+    {
+      const before7t = html;
+      html = html.replace(/(<div class="sb-item"[^>]*)onclick="go\(/g, '$1onclick="goSafe(');
+      if (html !== before7t) changes++;
+    }
+
+    // ── 7u. Nav + quiz state restore in init() after restoreState ──
+    if (!html.includes("getExtra('nav')") && !html.includes("getExtra('lesson')")) {
+      html = html.replace(
+        'AESDR.restoreState();',
+        "AESDR.restoreState();\n  var _navExtra=AESDR.getExtra('nav')||{};maxReached=_navExtra.maxReached||0;\n  var _qExtra=AESDR.getExtra('quiz')||{};if(_qExtra.ans)qAns=_qExtra.ans;if(_qExtra.submitted)qSubmitted=_qExtra.submitted;if(_qExtra.passed)qPassed=_qExtra.passed;"
+      );
+      changes++;
+    }
+
+    // ── 7v. _saveQuizState helper (skip prototype — it uses _saveLessonState) ──
+    if (!isProto && !html.includes('function _saveQuizState') && !html.includes('_saveLessonState')) {
+      const saveQuizFn = "\nfunction _saveQuizState(){AESDR.setExtra('quiz',{ans:qAns,submitted:qSubmitted,passed:qPassed});}";
+      // Format A: compact single-line declaration
+      const replaced = html.replace(
+        /let qAns=\{\},?\s*qSubmitted=false,?\s*qPassed=false;/,
+        "let qAns={}, qSubmitted=false, qPassed=false;" + saveQuizFn
+      );
+      if (replaced !== html) { html = replaced; changes++; }
+      else {
+        // Format B: separate-line declarations (lesson-01 files)
+        html = html.replace(
+          /(let qPassed\s*=\s*false;)/,
+          "$1" + saveQuizFn
+        );
+        changes++;
+      }
+    }
+
+    // ── 7w. Quiz state save in pickOpt (skip prototype) ──
+    if (!isProto && html.includes('qAns[qi]=oi;render()') && !html.includes('_saveQuizState();AESDR.persistNow();render()')) {
+      html = html.replace('qAns[qi]=oi;render()', 'qAns[qi]=oi;_saveQuizState();AESDR.persistNow();render()');
+      changes++;
+    }
+
+    // ── 7w-b. Quiz state save in submitQuiz (skip prototype) ──
+    if (!isProto && html.includes('qPassed=correct>=3;') && !html.includes('_saveQuizState();AESDR.persistNow();\n')) {
+      html = html.replace(
+        /qPassed=correct>=3;\n(\s*)const b=/,
+        'qPassed=correct>=3;\n$1_saveQuizState();AESDR.persistNow();\n$1const b='
+      );
+      changes++;
+    }
+
+    // ── 7w-c. Quiz state save in retryQuiz (skip prototype) ──
+    if (!isProto && html.includes('qSubmitted=false;qPassed=false;qAns={};')) {
+      html = html.replace(
+        /qSubmitted=false;qPassed=false;qAns=\{\};\n(\s*)document\.getElementById\('quizBanner'\)/,
+        "qSubmitted=false;qPassed=false;qAns={};\n$1_saveQuizState();AESDR.persistNow();\n$1document.getElementById('quizBanner')"
+      );
+      changes++;
+    }
+
+    // ── 7x. Quiz reset button (textContent → innerHTML + reset button) ──
+    if (html.includes('b.textContent=qPassed')) {
+      html = html.replace(
+        /b\.textContent=(qPassed\?`[^`]+)(`)(:`.+`;)/,
+        'b.innerHTML=$1 <button class="gate-edit-btn" style="margin-left:12px" onclick="retryQuiz()">Reset Quiz</button>$2$3'
+      );
+      changes++;
+    }
+
+    // ── 7y. Quiz state restore after buildQuiz in init() ──
+    if (!html.includes('_ws=qSubmitted') && !html.includes('_wasSubmitted')) {
+      html = html.replace(
+        /(try \{ buildQuiz\(\); \} catch\(e\) \{ console\.error\('[^']*', e\); \})/,
+        "$1\n  if(Object.keys(qAns).length>0){var _ws=qSubmitted;qSubmitted=false;for(var _qi in qAns){try{document.getElementById('qo'+_qi+'_'+qAns[_qi]).classList.add('chosen');}catch(e){}}if(_ws)submitQuiz();}"
+      );
+      changes++;
+    }
+
+    // ── 7z. savedScreen maxReached sync ──
+    if (!html.includes('_savedScreen>maxReached')) {
+      html = html.replace(
+        /(if \(_savedScreen > 0 && _savedScreen < TOTAL\) \{[^}]+\})/,
+        "$1\n  if(_savedScreen>maxReached)maxReached=_savedScreen;"
+      );
+      changes++;
+    }
+
     if (changes === 0) {
       skipped.push(`${dir}/${file} — no changes needed`);
       continue;
