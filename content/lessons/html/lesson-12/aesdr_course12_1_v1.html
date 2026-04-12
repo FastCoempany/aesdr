@@ -1137,7 +1137,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .ghost-n{position:absolute;right:48px;top:-20px;font-family:var(--display);font-size:200px;line-height:1;color:var(--lite);opacity:0.35;pointer-events:none;user-select:none;z-index:0}
 .c12-badge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;background:var(--theme);color:var(--white);font-weight:700;padding:3px 10px;margin-bottom:12px}
 .sec-eye{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--theme-text);margin-bottom:14px;display:inline-block;margin-left:10px}
-.lh-title{font-family:var(--display);font-size:clamp(22px,3.2vw,46px);line-height:1.05;color:var(--black);max-width:900px}
+.lh-title{font-family:var(--display);font-size:clamp(22px,3.2vw,46px);line-height:1.05;color:var(--black)}
 .lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
 .lh-sub b{color:var(--black)}
 .lb{padding:24px 56px 0}
@@ -1160,7 +1160,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .silo-wrap{padding:16px 56px 44px}
 .silo-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:16px}
 .silo-pool-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--black)}
-.silo-pool-cards{display:flex;flex-direction:column;gap:7px;margin-bottom:20px;max-width:700px}
+.silo-pool-cards{display:flex;flex-direction:column;gap:7px;margin-bottom:20px}
 .silo-card{padding:14px 16px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:13px;color:var(--black);line-height:1.55;cursor:pointer;transition:all .18s;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
 .silo-card-txt{flex:1}
 .silo-card:hover:not(.placed):not(.locked){border-color:var(--theme-text);background:var(--theme-lt)}
@@ -1168,7 +1168,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .silo-card.placed{visibility:hidden;pointer-events:none;height:0;margin:0;padding:0;border:none}
 .silo-card.wrong{border-color:var(--coral);background:var(--cor-lt);animation:shake .35s ease both}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
-.silo-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;max-width:760px}
+.silo-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 .silo-col{border:2px solid var(--line2);transition:border-color .2s}
 .silo-col.target{border-color:var(--theme-text);border-style:dashed;cursor:pointer}
 .silo-col.target:hover{border-style:solid}
@@ -1182,7 +1182,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .silo-reset:hover{color:var(--black)}
 
 /* ── BLAME CHAIN BREAKER ── */
-.blame-wrap{padding:16px 56px 44px;max-width:740px}
+.blame-wrap{padding:16px 56px 44px}
 .blame-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:22px}
 .blame-chain{display:flex;align-items:center;gap:0;margin-bottom:28px;overflow:hidden}
 .blame-node{flex:1;background:var(--black);padding:14px 16px;position:relative;text-align:center}
@@ -1205,7 +1205,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .blame-item.resolved .blame-fix{display:block}
 
 /* ── PLAYBOOK SEQUENCER ── */
-.seq-wrap{padding:16px 56px 44px;max-width:720px}
+.seq-wrap{padding:16px 56px 44px}
 .seq-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px}
 .seq-pipeline{display:flex;flex-direction:column;gap:6px;margin-bottom:24px}
 .seq-slot{display:flex;align-items:center;gap:14px;min-height:56px}
@@ -1229,7 +1229,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .seq-reset:hover{color:var(--black)}
 
 /* ── INSIGHTS CLASSIFIER ── */
-.cls-wrap{padding:16px 56px 44px;max-width:720px}
+.cls-wrap{padding:16px 56px 44px}
 .cls-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px}
 .cls-buckets{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:24px}
 .cls-bucket{border:2px solid var(--line2);transition:border-color .2s}
@@ -1294,7 +1294,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .comp-sub{font-family:var(--serif);font-style:normal;font-size:14px;color:rgba(255,255,255,0.9);line-height:1.7;border-top:1px solid rgba(255,255,255,0.2);padding-top:18px}
 .comp-r{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
 .comp-h{font-family:var(--display);font-size:clamp(22px,2.8vw,40px);line-height:1.08;color:var(--black);margin-bottom:18px}
-.comp-p{font-family:var(--serif);font-size:15px;color:var(--black);max-width:380px;line-height:1.8;margin-bottom:12px}
+.comp-p{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.8;margin-bottom:12px}
 @media(max-width:768px){.app{grid-template-columns:1fr;grid-template-rows:44px 1fr 52px}.sidebar,.sb{display:none}.topbar{padding:0 16px;font-size:11px}.bottomnav{padding:0 16px}.lh{padding:24px 16px 0}.lb{padding:16px 16px 0}.lp{font-size:16px}.kp li{font-size:15px}.cl-area,.tl-wrap,.quiz-body,.tools-blk,.sched-wrap,.cc-opts,.cc-fb{padding-left:16px;padding-right:16px}.cover,.comp{grid-template-columns:1fr}.sched-arena{grid-template-columns:1fr}.rank-wrap{padding:12px 16px 32px}.hb-blocks{grid-template-columns:1fr}.ghost-n{font-size:80px;top:0;right:16px;opacity:0.4}.bottomnav{padding-bottom:env(safe-area-inset-bottom,8px)}.main{padding-bottom:24px}.cover .cvl{padding:28px 16px}.cover .cvr{padding:28px 16px}.cv-list li{font-size:10px}.btn{padding:14px 16px;font-size:10px}.comp-l{padding:28px 16px}.comp-r{padding:28px 16px}.cc-ctx{margin:20px 16px 0}.cc-prog-wrap{margin:22px 16px 0}}
 </style>
 </head>
@@ -1740,7 +1740,13 @@ const SIDEBAR_TEXTS = [
   "The network you build today is the career you live tomorrow.",
   "People forget deals. They never forget how you treated them.",
   "Relationships are compound interest. Start depositing now.",
-  "Your Rolodex is your safety net."
+  "Your Rolodex is your safety net.",
+  "The person who burned a bridge is the person who needed it most.",
+  "Generosity in sales is not weakness. It’s strategy with a longer horizon.",
+  "Your reputation is the resume they read before your actual resume.",
+  "Invest in people when you don’t need them. That’s when it counts.",
+  "A referral is a relationship’s dividend.",
+  "Loyalty is rare. Be rare."
 ];
 
 function init(){
@@ -2114,7 +2120,7 @@ function render(){
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';
   document.getElementById('btnNext').disabled=!canContinue();
   var sbp=document.getElementById('sidebarMotto');
-  if(sbp&&typeof SIDEBAR_TEXTS!=='undefined'){var si=SEC[cur]||0;sbp.textContent=SIDEBAR_TEXTS[si]||SIDEBAR_TEXTS[0];}
+  if(sbp&&typeof SIDEBAR_TEXTS!=='undefined'){sbp.textContent=SIDEBAR_TEXTS[cur%SIDEBAR_TEXTS.length]||SIDEBAR_TEXTS[0];}
 }
 
 // Zone click delegation

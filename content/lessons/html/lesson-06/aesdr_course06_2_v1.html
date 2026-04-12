@@ -1125,7 +1125,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .ghost-n{position:absolute;right:48px;top:-20px;font-family:var(--display);font-size:200px;line-height:1;color:var(--lite);opacity:0.35;pointer-events:none;user-select:none;z-index:0}
 .c6-badge{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;background:var(--navy);color:#fff;padding:3px 10px;margin-bottom:12px}
 .sec-eye{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--navy);margin-bottom:14px;display:inline-block;margin-left:10px}
-.lh-title{font-family:var(--display);font-size:clamp(22px,3.2vw,46px);line-height:1.05;color:var(--black);max-width:900px}
+.lh-title{font-family:var(--display);font-size:clamp(22px,3.2vw,46px);line-height:1.05;color:var(--black)}
 .lh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--mid);margin-top:10px}
 .lh-sub b{color:var(--black)}
 .lb{padding:24px 56px 0}
@@ -1145,7 +1145,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .data-table tr:nth-child(even) td{background:var(--lite)}
 
 /* ── VALUE INVENTORY ── */
-.vi-wrap{padding:16px 56px 44px;max-width:700px}
+.vi-wrap{padding:16px 56px 44px}
 .vi-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px}
 .vi-preview{background:var(--navy);padding:22px 24px;margin-bottom:22px}
 .vi-preview-tag{font-family:var(--mono);font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px}
@@ -1170,7 +1170,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .vi-fail.show{display:block}
 
 /* ── MOTHERBOARD MAPPER ── */
-.mb-wrap{padding:16px 56px 44px;max-width:760px}
+.mb-wrap{padding:16px 56px 44px}
 .mb-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px}
 .mb-legend{display:flex;gap:14px;margin-bottom:16px;flex-wrap:wrap}
 .mb-pill{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;padding:4px 12px;border:2px solid}
@@ -1195,7 +1195,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .mb-btn.wrong{animation:shake .35s ease both}
 
 /* ── NETWORK CIRCLE SORTER ── */
-.nc-wrap{padding:16px 56px 44px;max-width:780px}
+.nc-wrap{padding:16px 56px 44px}
 .nc-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:18px}
 .nc-circles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px}
 .nc-circle{border:2px solid var(--line2);transition:border-color .2s}
@@ -1213,7 +1213,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .nc-placed.growth-item{background:var(--elec-lt);border-left:3px solid var(--electric)}
 .nc-placed.expand-item{background:var(--cor-lt);border-left:3px solid var(--coral)}
 .nc-pool-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--black)}
-.nc-pool{display:flex;flex-direction:column;gap:6px;max-width:440px}
+.nc-pool{display:flex;flex-direction:column;gap:6px}
 .nc-tile{padding:12px 14px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:13px;color:var(--black);text-align:left;cursor:pointer;transition:all .15s;line-height:1.45}
 .nc-tile:hover:not(.placed):not(.sel){border-color:var(--navy)}
 .nc-tile.sel{border-color:var(--navy);background:var(--navy);color:#fff}
@@ -1223,14 +1223,14 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .nc-reset:hover{color:var(--black)}
 
 /* ── KNOWLEDGE THREAD BUILDER ── */
-.kt-wrap{padding:16px 56px 44px;max-width:720px}
+.kt-wrap{padding:16px 56px 44px}
 .kt-instr{font-family:var(--serif);font-style:normal;font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:20px}
 .kt-trend-card{background:var(--navy);padding:18px 22px;margin-bottom:20px}
 .kt-trend-tag{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px}
 .kt-trend-name{font-family:var(--cond);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--lemon);margin-bottom:6px}
 .kt-trend-body{font-family:var(--serif);font-style:normal;font-size:14px;color:rgba(255,255,255,0.65);line-height:1.65}
-.kt-q{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--mid);margin-bottom:12px;max-width:600px}
-.kt-opts{display:flex;flex-direction:column;gap:7px;max-width:660px}
+.kt-q{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--mid);margin-bottom:12px}
+.kt-opts{display:flex;flex-direction:column;gap:7px}
 .kt-opt{padding:14px 18px;border:1px solid var(--line2);background:var(--white);font-family:var(--serif);font-size:14px;color:var(--black);text-align:left;cursor:pointer;transition:all .18s;line-height:1.55;display:flex;gap:14px;align-items:flex-start}
 .kt-opt:hover:not(.locked){border-color:var(--navy);background:var(--navy-lt)}
 .kt-opt.correct{border-color:var(--navy);background:var(--navy-lt);cursor:default}
@@ -1239,7 +1239,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .kt-ltr{font-family:var(--mono);font-size:10px;color:var(--mid);flex-shrink:0;margin-top:2px;transition:color .2s}
 .kt-opt.correct .kt-ltr{color:var(--navy)}
 .kt-opt.wrong .kt-ltr{color:var(--red)}
-.kt-fb{font-family:var(--mono);font-size:9px;letter-spacing:.06em;margin:10px 0 0;max-width:900px;line-height:1.7;display:none}
+.kt-fb{font-family:var(--mono);font-size:9px;letter-spacing:.06em;margin:10px 0 0;line-height:1.7;display:none}
 .kt-fb.show{display:block}
 .kt-fb.good{color:var(--navy)}
 .kt-fb.bad{color:var(--red)}
@@ -1282,7 +1282,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .comp-sub{font-family:var(--serif);font-style:normal;font-size:14px;color:rgba(255,255,255,0.52);line-height:1.7;border-top:1px solid rgba(255,255,255,0.12);padding-top:18px}
 .comp-r{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
 .comp-h{font-family:var(--display);font-size:clamp(22px,2.8vw,40px);line-height:1.08;color:var(--black);margin-bottom:18px}
-.comp-p{font-family:var(--serif);font-size:15px;color:var(--black);max-width:380px;line-height:1.8;margin-bottom:12px}
+.comp-p{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.8;margin-bottom:12px}
 @media(max-width:768px){.app{grid-template-columns:1fr;grid-template-rows:44px 1fr 52px}.sidebar,.sb{display:none}.topbar{padding:0 16px;font-size:11px}.bottomnav{padding:0 16px}.lh{padding:24px 16px 0}.lb{padding:16px 16px 0}.lp{font-size:16px}.kp li{font-size:15px}.cl-area,.tl-wrap,.quiz-body,.tools-blk,.sched-wrap,.cc-opts,.cc-fb{padding-left:16px;padding-right:16px}.cover,.comp{grid-template-columns:1fr}.sched-arena{grid-template-columns:1fr}.rank-wrap{padding:12px 16px 32px}.hb-blocks{grid-template-columns:1fr}.ghost-n{font-size:80px;top:0;right:16px;opacity:0.4}.bottomnav{padding-bottom:env(safe-area-inset-bottom,8px)}.main{padding-bottom:24px}.cover .cvl{padding:28px 16px}.cover .cvr{padding:28px 16px}.cv-list li{font-size:10px}.btn{padding:14px 16px;font-size:10px}.comp-l{padding:28px 16px}.comp-r{padding:28px 16px}.cc-ctx{margin:20px 16px 0}.cc-prog-wrap{margin:22px 16px 0}}
 </style>
 </head>
@@ -1749,7 +1749,13 @@ const SIDEBAR_TEXTS = [
   "Connections without context are just contacts.",
   "Every person in your life is a door. Or a wall. Learn the difference.",
   "LinkedIn is not networking. Coffee is networking.",
-  "The person you help today hires you tomorrow."
+  "The person you help today hires you tomorrow.",
+  "A weak network is a career without a safety net.",
+  "Give before you ask. That’s the only networking rule.",
+  "Your next job comes from someone you already know.",
+  "Networking is not a transaction. It’s a long game.",
+  "The best networkers never call it networking.",
+  "Every handshake is a deposit or a withdrawal. Choose wisely."
 ];
 
 function init(){
@@ -2008,7 +2014,7 @@ function renderKT(){
   const advHtml=showAdv?`<div class="kt-adv show"><button class="btn btn-fill" onclick="ktAdvance()"><span>${isLast?'Complete Thread →':'Next Trend →'}</span></button></div>`:'';
 
   w.innerHTML=`
-    <div style="display:flex;gap:0;max-width:440px;margin-bottom:20px">${dotsHtml}</div>
+    <div style="display:flex;gap:0;margin-bottom:20px">${dotsHtml}</div>
     <div class="kt-trend-card"><div class="kt-trend-tag">SaaS Trend ${ktStage+1} of 4</div><div class="kt-trend-name">${s.name}</div><div class="kt-trend-body">${s.body}</div></div>
     <div class="kt-q" style="margin-top:16px">${s.q}</div>
     <div class="kt-opts">${optsHtml}</div>
@@ -2111,7 +2117,7 @@ function render(){
   document.getElementById('btnBack').style.display=cur<=1?'none':'block';
   document.getElementById('btnNext').disabled=!canContinue();
   var sbp=document.getElementById('sidebarMotto');
-  if(sbp&&typeof SIDEBAR_TEXTS!=='undefined'){var si=SEC[cur]||0;sbp.textContent=SIDEBAR_TEXTS[si]||SIDEBAR_TEXTS[0];}
+  if(sbp&&typeof SIDEBAR_TEXTS!=='undefined'){sbp.textContent=SIDEBAR_TEXTS[cur%SIDEBAR_TEXTS.length]||SIDEBAR_TEXTS[0];}
 }
 
 // Zone delegation
