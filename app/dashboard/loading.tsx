@@ -2,8 +2,12 @@ export default function DashboardLoading() {
   return (
     <main
       className="min-h-screen px-6 py-0"
-      style={{ background: "var(--bg-main)" }}
+      style={{
+        background: "var(--bg-main)",
+        animation: "dashFadeIn 500ms ease-out forwards",
+      }}
     >
+      <style>{`@keyframes dashFadeIn{from{opacity:0}to{opacity:1}}`}</style>
       <div
         className="sticky top-0 z-50 -mx-6 flex items-center justify-between border-b px-[5%] py-5"
         style={{
