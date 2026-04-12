@@ -65,8 +65,12 @@ export default async function Dashboard() {
   return (
     <main
       className="min-h-screen"
-      style={{ background: "var(--bg-main)" }}
+      style={{
+        background: "var(--bg-main)",
+        animation: "dashFadeIn 500ms ease-out forwards",
+      }}
     >
+      <style>{`@keyframes dashFadeIn{from{opacity:0}to{opacity:1}}`}</style>
       {/* Nav */}
       <nav
         className="sticky top-0 z-50 flex items-center justify-between px-[5%] py-5"
