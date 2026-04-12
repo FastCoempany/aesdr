@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { markLessonComplete, saveLessonProgress } from "@/app/actions/progress";
 import { saveProgressLocally } from "@/utils/progress/local-storage";
@@ -27,9 +28,11 @@ export default function ProgressSaver({
   isAuthenticated,
   savedStateData,
 }: ProgressSaverProps) {
+  const router = useRouter();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const failCountRef = useRef(0);
   const [sessionExpired, setSessionExpired] = useState(false);
+  const [navigating, setNavigating] = useState(false);
   const restoredRef = useRef(false);
 
   const save = useCallback(
@@ -83,7 +86,8 @@ export default function ProgressSaver({
       if (type === "aesdr:navigate") {
         const href = event.data?.href;
         if (typeof href === "string" && href.startsWith("/")) {
-          window.location.href = href;
+          setNavigating(true);
+          setTimeout(() => router.push(href), 300);
         }
       }
     }
@@ -111,6 +115,22 @@ export default function ProgressSaver({
     }, 1500);
     return () => clearTimeout(timer);
   }, [savedStateData]);
+
+  if (navigating) {
+    return (
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          background: "#000",
+          zIndex: 99999,
+          animation: "fadeIn 300ms ease-out forwards",
+        }}
+      >
+        <style>{`@keyframes fadeIn{from{opacity:0}to{opacity:1}}`}</style>
+      </div>
+    );
+  }
 
   if (sessionExpired) {
     return (

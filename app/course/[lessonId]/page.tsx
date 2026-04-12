@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import ProgressSaver from "@/components/ProgressSaver";
+import SaveExitButton from "@/components/SaveExitButton";
 import { listLessonUnits, getToolAssetsForLesson } from "@/utils/content/catalog";
 import { LESSONS } from "@/utils/progress/types";
 import { createClient } from "@/utils/supabase/server";
@@ -176,25 +177,7 @@ export default async function LessonPage({
           zIndex: 9999,
         }}
       >
-        <Link
-          href="/dashboard"
-          style={{
-            fontFamily: "var(--mono)",
-            fontSize: "10px",
-            letterSpacing: ".1em",
-            textTransform: "uppercase" as const,
-            color: "#fff",
-            background: "rgba(0,0,0,0.9)",
-            backdropFilter: "blur(8px)",
-            padding: "8px 12px",
-            textDecoration: "none",
-            display: "inline-block",
-            minHeight: "32px",
-            lineHeight: "16px",
-          }}
-        >
-          <span aria-hidden="true">&larr;</span> Save &amp; Exit
-        </Link>
+        <SaveExitButton />
       </div>
 
       <div
