@@ -14,7 +14,7 @@ export default function SignOutButton() {
       onClick={() => {
         startTransition(async () => {
           await signOut();
-          router.push("/login");
+          window.location.href = "/";
         });
       }}
       disabled={isPending}
