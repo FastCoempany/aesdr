@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hero — The Interrupted Warning</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;600&display=swap');
+
+  :root {
+    --bg: #020617;
+    --text: #F8FAFC;
+    --muted: #94A3B8;
+    --theme: #10B981;
+    --amber: rgba(245,158,11,0.7);
+    --red: rgba(239,68,68,0.5);
+    --iris: linear-gradient(90deg, #FF006E, #FF6B00, #F59E0B, #10B981, #38BDF8, #8B5CF6, #FF006E);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+  }
+
+  .hero {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  /* Warning box — starts centered */
+  .warning-box {
+    border: 1px solid rgba(248,250,252,0.08);
+    padding: clamp(32px, 5vw, 56px) clamp(28px, 5vw, 64px);
+    max-width: 640px;
+    width: 90%;
+    position: relative;
+    z-index: 5;
+    opacity: 0;
+    animation: boxReveal 0.6s ease 0.3s forwards;
+    transition: transform 0.8s cubic-bezier(.23,1,.32,1), opacity 0.8s ease, filter 0.6s ease;
+  }
+
+  .warning-box.pushed {
+    transform: translateY(-28vh) scale(0.55);
+    opacity: 0.12;
+    filter: blur(3px);
+  }
+
+  @keyframes boxReveal {
+    0% { opacity: 0; transform: scale(0.96); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  .warning-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeIn 0.4s ease 0.7s forwards;
+  }
+
+  .warning-icon {
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid var(--red);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: rgba(239,68,68,0.7);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .warning-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--red);
+  }
+
+  .warning-body {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(16px, 2.5vw, 22px);
+    font-weight: 500;
+    line-height: 1.7;
+    color: rgba(248,250,252,0.7);
+    opacity: 0;
+    animation: fadeIn 0.5s ease 1s forwards;
+  }
+
+  .warning-body .highlight {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .warning-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: rgba(148,163,184,0.3);
+    margin-top: 28px;
+    opacity: 0;
+    animation: fadeIn 0.4s ease 1.5s forwards;
+  }
+
+  /* Confession types OVER the warning — from the center, growing */
+  .confession-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+  }
+
+  .confession-layer.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .typing-area {
+    max-width: 680px;
+    width: 90%;
+    text-align: left;
+  }
+
+  .typed-line {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(22px, 3.5vw, 38px);
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--text);
+    min-height: 3em;
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.1em;
+    background: var(--theme);
+    vertical-align: text-bottom;
+    margin-left: 2px;
+    animation: blink 0.8s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* The slam replaces EVERYTHING */
+  .slam-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 30;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .slam-layer.visible {
+    opacity: 1;
+  }
+
+  .slam {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(80px, 18vw, 240px);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+    line-height: 0.9;
+    color: var(--text);
+  }
+
+  .slam-layer.visible .slam {
+    animation: slamIn 0.2s cubic-bezier(.23,1,.32,1);
+  }
+
+  @keyframes slamIn {
+    0% { transform: scale(2.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* After slam — everything clears, just michael + scroll hint */
+  .aftermath {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 40;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.8s ease;
+    gap: 0;
+  }
+
+  .aftermath.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .aftermath .slam-echo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(60px, 12vw, 140px);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+    line-height: 0.9;
+    color: var(--text);
+    margin-bottom: 36px;
+  }
+
+  .michael-note {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(20px, 3vw, 30px);
+    color: var(--amber);
+    text-align: center;
+    max-width: 520px;
+    line-height: 1.4;
+    transform: rotate(-0.5deg);
+    opacity: 0;
+  }
+
+  .michael-note.visible {
+    opacity: 1;
+    animation: fadeUp 0.6s ease;
+  }
+
+  .michael-review {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(15px, 2vw, 19px);
+    color: rgba(245,158,11,0.3);
+    text-align: center;
+    max-width: 400px;
+    line-height: 1.4;
+    margin-top: 28px;
+    transform: rotate(0.5deg);
+    opacity: 0;
+  }
+
+  .michael-review.visible {
+    opacity: 1;
+    animation: fadeUp 0.5s ease;
+  }
+
+  @keyframes fadeUp {
+    0% { opacity: 0; transform: translateY(12px) rotate(-0.5deg); }
+    100% { opacity: 1; transform: translateY(0) rotate(-0.5deg); }
+  }
+
+  /* Scroll indicator */
+  .scroll-hint {
+    position: absolute;
+    bottom: 44px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    z-index: 50;
+    opacity: 0;
+  }
+
+  .scroll-hint.visible {
+    animation: fadeIn 0.5s ease forwards;
+  }
+
+  .scroll-hint .text {
+    font-family: 'Caveat', cursive;
+    font-size: 16px;
+    color: rgba(245,158,11,0.35);
+  }
+
+  .scroll-hint .bar {
+    width: 1px;
+    height: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scroll-hint .bar::after {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    background: var(--iris);
+    background-size: 100% 300%;
+    animation: shimmer 4s linear infinite, drop 1.5s ease-in-out infinite;
+  }
+
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes drop {
+    0% { top: -100%; }
+    50% { top: 0; }
+    100% { top: 100%; }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+  }
+
+  /* Flash effect on slam */
+  .flash {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    z-index: 35;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .flash.fire {
+    animation: flashFire 0.4s ease;
+  }
+
+  @keyframes flashFire {
+    0% { opacity: 0; }
+    10% { opacity: 0.15; }
+    100% { opacity: 0; }
+  }
+
+  /* Ambient line */
+  .ambient-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: var(--iris);
+    background-size: 300% 100%;
+    animation: shimmer 4s linear infinite;
+    opacity: 0.1;
+    z-index: 50;
+  }
+
+  /* Corner accents */
+  .corner {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-color: rgba(248,250,252,0.04);
+    border-style: solid;
+    border-width: 0;
+    z-index: 2;
+  }
+  .corner.tl { top: 20px; left: 20px; border-top-width: 1px; border-left-width: 1px; }
+  .corner.tr { top: 20px; right: 20px; border-top-width: 1px; border-right-width: 1px; }
+  .corner.bl { bottom: 20px; left: 20px; border-bottom-width: 1px; border-left-width: 1px; }
+  .corner.br { bottom: 20px; right: 20px; border-bottom-width: 1px; border-right-width: 1px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="ambient-line"></div>
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+
+  <!-- Layer 1: Warning box -->
+  <div class="warning-box" id="warning-box">
+    <div class="warning-header">
+      <div class="warning-icon">!</div>
+      <div class="warning-title">Content Warning</div>
+    </div>
+    <div class="warning-body">
+      This page contains uncomfortable truths about your <span class="highlight">pipeline</span>, your <span class="highlight">apartment</span>, your <span class="highlight">bar tab</span>, your <span class="highlight">commission check</span>, and your <span class="highlight">relationship status</span>.<br><br>Scroll at your own risk.
+    </div>
+    <div class="warning-tag">AESDR — 12 lessons / 12 weeks / classified</div>
+  </div>
+
+  <!-- Layer 2: Confession types over -->
+  <div class="confession-layer" id="confession-layer">
+    <div class="typing-area">
+      <div class="typed-line" id="typed"></div>
+    </div>
+  </div>
+
+  <!-- Layer 3: SLAM -->
+  <div class="slam-layer" id="slam-layer">
+    <div class="slam">You lied.</div>
+  </div>
+
+  <!-- Flash -->
+  <div class="flash" id="flash"></div>
+
+  <!-- Layer 4: Aftermath — clean slate -->
+  <div class="aftermath" id="aftermath">
+    <div class="slam-echo">You lied.</div>
+    <div class="michael-note" id="michael-note">...it's fine. We all lied. That's why we're here.<br>Scroll down. It doesn't get more comfortable, but it gets more honest.</div>
+    <div class="michael-review" id="michael-review">I scrolled. I cried a little. Then I enrolled. 10/10 would cry again.</div>
+  </div>
+
+  <div class="scroll-hint" id="scroll-hint">
+    <span class="text">↓ the truth is below</span>
+    <div class="bar"></div>
+  </div>
+</div>
+
+<script>
+const warningBox = document.getElementById('warning-box');
+const confessionLayer = document.getElementById('confession-layer');
+const typedEl = document.getElementById('typed');
+const slamLayer = document.getElementById('slam-layer');
+const flash = document.getElementById('flash');
+const aftermath = document.getElementById('aftermath');
+const michaelNote = document.getElementById('michael-note');
+const michaelReview = document.getElementById('michael-review');
+const scrollHint = document.getElementById('scroll-hint');
+
+// After 3s of warning soaking in — the confession starts typing OVER it
+setTimeout(() => {
+  // Push warning up and fade it
+  warningBox.classList.add('pushed');
+
+  // Show confession layer
+  setTimeout(() => {
+    confessionLayer.classList.add('active');
+    setTimeout(startTyping, 400);
+  }, 300);
+}, 3000);
+
+const lines = [
+  { text: "The last time someone asked how sales was going,", delay: 32 },
+  { text: "\nyou said ", delay: 42 },
+  { text: "\"good.\"", delay: 65 },
+];
+
+let chars = [];
+lines.forEach(line => {
+  for (let i = 0; i < line.text.length; i++) {
+    chars.push({ ch: line.text[i], delay: line.delay });
+  }
+  chars.push({ ch: '', delay: 280 });
+});
+
+let ci = 0;
+let html = '';
+
+function startTyping() {
+  typeNext();
+}
+
+function typeNext() {
+  if (ci >= chars.length) {
+    // Done — SLAM
+    setTimeout(doSlam, 700);
+    return;
+  }
+
+  const { ch, delay } = chars[ci];
+  if (ch === '\n') html += '<br>';
+  else if (ch !== '') html += ch;
+  typedEl.innerHTML = html + '<span class="cursor"></span>';
+  ci++;
+  setTimeout(typeNext, ch === '' ? delay : delay + Math.random() * 18);
+}
+
+function doSlam() {
+  typedEl.innerHTML = html; // remove cursor
+
+  // Flash
+  flash.classList.add('fire');
+
+  // Slam
+  slamLayer.classList.add('visible');
+
+  // Hide warning + confession
+  confessionLayer.style.opacity = '0';
+  warningBox.style.opacity = '0';
+
+  // After slam holds for a beat — transition to aftermath
+  setTimeout(() => {
+    slamLayer.style.transition = 'opacity 0.6s ease';
+    slamLayer.style.opacity = '0';
+
+    aftermath.classList.add('visible');
+
+    setTimeout(() => {
+      michaelNote.classList.add('visible');
+    }, 400);
+
+    setTimeout(() => {
+      michaelReview.classList.add('visible');
+    }, 1000);
+
+    setTimeout(() => {
+      scrollHint.classList.add('visible');
+    }, 1600);
+  }, 1200);
+}
+</script>
+
+</body>
+</html>
