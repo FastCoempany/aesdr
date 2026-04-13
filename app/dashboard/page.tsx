@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import SignOutButton from "@/components/SignOutButton";
@@ -43,6 +44,34 @@ export default async function Dashboard() {
   // Force role selection if not yet chosen
   if (user && !user.user_metadata?.role) {
     redirect("/account/select-role");
+  }
+
+  // Purchase gate — bypass for founder (GhostButton cookie)
+  const cookieStore = await cookies();
+  const hasBypass = cookieStore.get("aesdr_bypass")?.value === "1";
+
+  if (user && !hasBypass) {
+    const { data: purchase } = await supabase
+      .from("purchases")
+      .select("id")
+      .eq("user_email", user.email)
+      .eq("status", "active")
+      .limit(1)
+      .maybeSingle();
+
+    if (!purchase) {
+      const { data: purchaseById } = await supabase
+        .from("purchases")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("status", "active")
+        .limit(1)
+        .maybeSingle();
+
+      if (!purchaseById) {
+        redirect("/login?reason=no_purchase");
+      }
+    }
   }
 
   const userRole = user?.user_metadata?.role as string | undefined;
