@@ -84,15 +84,21 @@ export async function generateArtifacts(
     ])
   );
 
+  const cachedDiag = cachedMap.get("diagnostic");
+  const cachedPlay = cachedMap.get("playbook");
+  const cachedMirr = cachedMap.get("mirror");
+
   const allCached =
-    cachedMap.size === 3 &&
-    [...cachedMap.values()].every((row) => row.source_hash === sourceHash);
+    cachedDiag && cachedPlay && cachedMirr &&
+    cachedDiag.source_hash === sourceHash &&
+    cachedPlay.source_hash === sourceHash &&
+    cachedMirr.source_hash === sourceHash;
 
   if (allCached) {
     return {
-      diagnostic: cachedMap.get("diagnostic")!.artifact_data as DiagnosticData,
-      playbook: cachedMap.get("playbook")!.artifact_data as PlaybookData,
-      mirror: cachedMap.get("mirror")!.artifact_data as MirrorData,
+      diagnostic: cachedDiag.artifact_data as DiagnosticData,
+      playbook: cachedPlay.artifact_data as PlaybookData,
+      mirror: cachedMirr.artifact_data as MirrorData,
       cached: true,
     };
   }

@@ -60,8 +60,11 @@ export async function extractWithLLM(
     throw new Error(`Claude API call failed: ${detail}`);
   }
 
-  const text =
-    response.content[0].type === "text" ? response.content[0].text : "";
+  const firstBlock = response.content[0];
+  if (!firstBlock || firstBlock.type !== "text") {
+    throw new Error("Claude API returned unexpected response format");
+  }
+  const text = firstBlock.text;
 
   if (text.length > 100_000) {
     throw new Error("LLM response exceeds size limit");
