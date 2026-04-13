@@ -390,6 +390,71 @@
   .corner.tr { top: 20px; right: 20px; border-top-width: 1px; border-right-width: 1px; }
   .corner.bl { bottom: 20px; left: 20px; border-bottom-width: 1px; border-left-width: 1px; }
   .corner.br { bottom: 20px; right: 20px; border-bottom-width: 1px; border-right-width: 1px; }
+
+  /* Re-read link — appears during confession */
+  .reread-link {
+    position: absolute;
+    top: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 15;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: rgba(239,68,68,0.35);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.5s ease, color 0.3s ease;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .reread-link.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .reread-link:hover {
+    color: rgba(239,68,68,0.7);
+  }
+
+  .reread-link .reread-icon {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    position: relative;
+    font-size: 8px;
+    line-height: 14px;
+    text-align: center;
+  }
+
+  /* Continue link — appears on restored warning */
+  .continue-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: rgba(148,163,184,0.4);
+    cursor: pointer;
+    margin-top: 20px;
+    opacity: 0;
+    transition: opacity 0.4s ease, color 0.3s ease;
+    pointer-events: none;
+  }
+
+  .continue-link.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .continue-link:hover {
+    color: rgba(148,163,184,0.7);
+  }
 </style>
 </head>
 <body>
@@ -411,6 +476,12 @@
       This page contains uncomfortable truths about your <span class="highlight">pipeline</span>, your <span class="highlight">apartment</span>, your <span class="highlight">bar tab</span>, your <span class="highlight">commission check</span>, and your <span class="highlight">relationship status</span>.<br><br>Scroll at your own risk.
     </div>
     <div class="warning-tag">AESDR — 12 lessons / 12 weeks / classified</div>
+    <div class="continue-link" id="continue-link">continue →</div>
+  </div>
+
+  <!-- Re-read link -->
+  <div class="reread-link" id="reread-link">
+    <span class="reread-icon">!</span> re-read warning
   </div>
 
   <!-- Layer 2: Confession types over -->
@@ -451,20 +522,14 @@ const aftermath = document.getElementById('aftermath');
 const michaelNote = document.getElementById('michael-note');
 const michaelReview = document.getElementById('michael-review');
 const scrollHint = document.getElementById('scroll-hint');
+const rereadLink = document.getElementById('reread-link');
+const continueLink = document.getElementById('continue-link');
 
-// Warning body fades in at ~1.5s, ~30 words at avg reading speed = ~7.5s of reading time
-// Total: 9s lets the reader fully absorb the warning before the confession interrupts
-setTimeout(() => {
-  // Push warning up and fade it
-  warningBox.classList.add('pushed');
+let paused = false;
+let slamDone = false;
+let typingTimer = null;
 
-  // Show confession layer
-  setTimeout(() => {
-    confessionLayer.classList.add('active');
-    setTimeout(startTyping, 400);
-  }, 300);
-}, 9000);
-
+// --- Confession typing setup ---
 const lines = [
   { text: "The last time someone asked how sales was going,", delay: 32 },
   { text: "\nyou said ", delay: 42 },
@@ -482,14 +547,30 @@ lines.forEach(line => {
 let ci = 0;
 let html = '';
 
+// --- Phase transitions ---
+function beginConfession() {
+  warningBox.classList.add('pushed');
+
+  setTimeout(() => {
+    confessionLayer.classList.add('active');
+    rereadLink.classList.add('visible');
+    setTimeout(startTyping, 400);
+  }, 300);
+}
+
+// 6s — enough to read, short enough to feel like an interruption
+setTimeout(beginConfession, 6000);
+
 function startTyping() {
+  if (paused) return;
   typeNext();
 }
 
 function typeNext() {
+  if (paused || slamDone) return;
+
   if (ci >= chars.length) {
-    // Done — SLAM
-    setTimeout(doSlam, 700);
+    typingTimer = setTimeout(doSlam, 700);
     return;
   }
 
@@ -498,42 +579,69 @@ function typeNext() {
   else if (ch !== '') html += ch;
   typedEl.innerHTML = html + '<span class="cursor"></span>';
   ci++;
-  setTimeout(typeNext, ch === '' ? delay : delay + Math.random() * 18);
+  typingTimer = setTimeout(typeNext, ch === '' ? delay : delay + Math.random() * 18);
 }
 
 function doSlam() {
-  typedEl.innerHTML = html; // remove cursor
+  if (paused) return;
+  slamDone = true;
+  typedEl.innerHTML = html;
 
-  // Flash
+  // Hide re-read link
+  rereadLink.classList.remove('visible');
+
   flash.classList.add('fire');
-
-  // Slam
   slamLayer.classList.add('visible');
 
-  // Hide warning + confession
   confessionLayer.style.opacity = '0';
   warningBox.style.opacity = '0';
 
-  // After slam holds for a beat — transition to aftermath
   setTimeout(() => {
     slamLayer.style.transition = 'opacity 0.6s ease';
     slamLayer.style.opacity = '0';
 
     aftermath.classList.add('visible');
 
-    setTimeout(() => {
-      michaelNote.classList.add('visible');
-    }, 400);
-
-    setTimeout(() => {
-      michaelReview.classList.add('visible');
-    }, 1000);
-
-    setTimeout(() => {
-      scrollHint.classList.add('visible');
-    }, 1600);
+    setTimeout(() => { michaelNote.classList.add('visible'); }, 400);
+    setTimeout(() => { michaelReview.classList.add('visible'); }, 1000);
+    setTimeout(() => { scrollHint.classList.add('visible'); }, 1600);
   }, 1200);
 }
+
+// --- Re-read: pause typing, restore warning ---
+rereadLink.addEventListener('click', () => {
+  if (slamDone) return;
+
+  paused = true;
+  clearTimeout(typingTimer);
+
+  // Hide confession + re-read link
+  confessionLayer.classList.remove('active');
+  rereadLink.classList.remove('visible');
+
+  // Restore warning to center
+  warningBox.classList.remove('pushed');
+
+  // Show continue link after warning settles back
+  setTimeout(() => {
+    continueLink.classList.add('visible');
+  }, 600);
+});
+
+// --- Continue: resume from where we left off ---
+continueLink.addEventListener('click', () => {
+  continueLink.classList.remove('visible');
+  paused = false;
+
+  // Push warning back out, resume confession
+  warningBox.classList.add('pushed');
+
+  setTimeout(() => {
+    confessionLayer.classList.add('active');
+    rereadLink.classList.add('visible');
+    setTimeout(startTyping, 300);
+  }, 300);
+});
 </script>
 
 </body>
