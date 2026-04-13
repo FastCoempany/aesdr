@@ -1783,7 +1783,15 @@ let blameState={}, blameCount=0;
 let seqSel=null, seqDone={};
 let clsSel=null, clsDone={}, clsCount=0;
 let qAns={}, qSubmitted=false, qPassed=false;
-function _saveQuizState(){AESDR.setExtra('quiz',{ans:qAns,submitted:qSubmitted,passed:qPassed});}
+function _saveQuizState()_saveExerciseScores();{AESDR.setExtra('quiz',{ans:qAns,submitted:qSubmitted,passed:qPassed}
+function _saveExerciseScores(){
+  var scores = {};
+  if(typeof siloCount!=='undefined'&&typeof SILO_CARDS!=='undefined') scores.silo={correct:siloCount,total:SILO_CARDS.length};
+  if(typeof blameCount!=='undefined'&&typeof BLAME_ITEMS!=='undefined') scores.blame={correct:blameCount,total:BLAME_ITEMS.length};
+  if(typeof seqDone!=='undefined'&&typeof SEQ_STEPS!=='undefined') scores.seq={correct:Object.keys(seqDone).length,total:SEQ_STEPS.length};
+  if(typeof clsCount!=='undefined'&&typeof CLS_ITEMS!=='undefined') scores.cls={correct:clsCount,total:CLS_ITEMS.length};
+  if(Object.keys(scores).length>0) AESDR.setExtra('exercises',scores);
+});}
 
 /* ════════════════════════════════════
    INIT
@@ -1872,7 +1880,7 @@ function go(n){
   cur=n;
   document.getElementById('s'+cur).classList.add('active');
   document.getElementById('main').scrollTop=0;
-  _saveQuizState();
+  _saveQuizState();_saveExerciseScores();
   AESDR.setExtra('nav',{maxReached:maxReached});
   render();
 }
@@ -1905,7 +1913,7 @@ function dropSilo(zone){
   const el=document.getElementById('sc'+di);
   siloSel=null;renderSiloUI();
   if(correct){
-    siloDone[di]=true;siloCount++;
+    siloDone[di]=true;siloCount++;_saveExerciseScores();
     el.classList.add('placed');
     const d=document.getElementById('silo-dropped-'+zone);
     d.innerHTML+=`<div class="silo-dropped-card">${SILO_CARDS[ci].txt}<div class="silo-note">${SILO_CARDS[ci].note}</div></div>`;
@@ -1953,7 +1961,7 @@ function pickBlame(i,oi){
   const correct=BLAME_ITEMS[i].ans===oi;
   const opt=document.getElementById('bo'+i+'_'+oi);
   if(correct){
-    blameState[i]='correct';blameCount++;
+    blameState[i]='correct';blameCount++;_saveExerciseScores();
     BLAME_ITEMS[i].opts.forEach((_,x)=>{
       const el=document.getElementById('bo'+i+'_'+x);
       el.classList.add('locked');
@@ -1998,7 +2006,7 @@ function pickSeqSlot(idx){
   const slotEl=document.getElementById('sd'+idx);
   const tileEl=document.getElementById('st'+seqSel);
   if(slotCorrect){
-    seqDone[idx]=true;
+    seqDone[idx]=true;_saveExerciseScores();
     slotEl.classList.remove('target','bad');slotEl.classList.add('correct');
     document.getElementById('sd-content'+idx).innerHTML=`<div><div class="seq-drop-txt">${tileStep.act}</div><div class="seq-drop-sub">${tileStep.sub}</div></div>`;
     document.getElementById('ss'+idx).classList.add('correct');
@@ -2052,7 +2060,7 @@ function dropCls(zone){
   const el=document.getElementById('co'+di);
   clsSel=null;renderClsUI();
   if(correct){
-    clsDone[di]=true;clsCount++;
+    clsDone[di]=true;clsCount++;_saveExerciseScores();
     el.classList.add('placed');
     const items=document.getElementById('cls-'+zone+'-items');
     items.innerHTML+=`<div class="cls-bkt-item ${zone}-item">${CLS_OBS[ci].txt}</div>`;
@@ -2096,7 +2104,7 @@ function pickOpt(qi,oi){
   if(qSubmitted)return;
   QUIZ[qi].opts.forEach((_,i)=>document.getElementById(`qo${qi}_${i}`).classList.remove('chosen'));
   document.getElementById(`qo${qi}_${oi}`).classList.add('chosen');
-  qAns[qi]=oi;_saveQuizState();AESDR.persistNow();render();
+  qAns[qi]=oi;_saveQuizState();_saveExerciseScores();AESDR.persistNow();render();
 }
 function submitQuiz(){
   qSubmitted=true;let correct=0;
@@ -2111,7 +2119,7 @@ function submitQuiz(){
     if(chosen===q.ans)correct++;
   });
   qPassed=correct>=3;
-  _saveQuizState();AESDR.persistNow();
+  _saveQuizState();_saveExerciseScores();AESDR.persistNow();
   const b=document.getElementById('quizBanner');
   b.className='quiz-banner show '+(qPassed?'pass':'fail');
   b.innerHTML=qPassed?`✓ ${correct} / ${QUIZ.length} correct — cleared to continue. <button class="gate-edit-btn" style="margin-left:12px" onclick="retryQuiz()">Reset Quiz</button>`:`${correct} / ${QUIZ.length} correct — need 3 to pass. Review and try again.`;
@@ -2119,7 +2127,7 @@ function submitQuiz(){
 }
 function retryQuiz(){
   qSubmitted=false;qPassed=false;qAns={};
-  _saveQuizState();AESDR.persistNow();
+  _saveQuizState();_saveExerciseScores();AESDR.persistNow();
   document.getElementById('quizBanner').className='quiz-banner';
   buildQuiz();render();
 }
