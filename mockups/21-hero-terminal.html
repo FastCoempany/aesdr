@@ -49,8 +49,8 @@
   }
   .warning-box.pushed {
     transform: translateY(-28vh) scale(0.55);
-    opacity: 0.12;
-    filter: blur(3px);
+    opacity: 0.04;
+    filter: blur(5px);
   }
   @keyframes boxReveal {
     0% { opacity: 0; transform: scale(0.96); }
@@ -188,12 +188,22 @@
     border-top: 1px solid rgba(248,250,252,0.06);
     font-family: 'Inter', sans-serif;
     font-size: clamp(14px, 2vw, 19px);
-    font-weight: 600;
+    font-weight: 700;
     line-height: 1.7;
-    color: rgba(248,250,252,0.8);
     letter-spacing: .01em;
     opacity: 0;
     transition: opacity 0.6s ease;
+    background: linear-gradient(90deg, #fff, #ffe0ec, #e0ecff, #fff, #ece0ff, #e0fff5, #fff, #ffe0ec, #e0ecff, #fff);
+    background-size: 500% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: pearlShift 5s ease-in-out infinite;
+  }
+  @keyframes pearlShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
   .term-output.visible { opacity: 1; }
 
@@ -251,9 +261,9 @@
       <div class="warning-title">Content Warning</div>
     </div>
     <div class="warning-body">
-      This page contains uncomfortable truths about your <span class="highlight">pipeline</span>, your <span class="highlight">apartment</span>, your <span class="highlight">bar tab</span>, your <span class="highlight">commission check</span>, and your <span class="highlight">relationship status</span>.<br><br>Scroll at your own risk.
+      This course contains uncomfortable truths about your <span class="highlight">pipeline</span>, your <span class="highlight">apartment</span>, your <span class="highlight">bar tab</span>, your <span class="highlight">commission check</span>, and your <span class="highlight">relationship status</span>.<br><br>Keep scrolling. It has to get worse before it gets better.
     </div>
-    <div class="warning-tag">AESDR — 12 lessons / 12 weeks / classified</div>
+    <div class="warning-tag">AESDR — 12 lessons / your pace / classified</div>
     <div class="continue-link" id="continue-link">continue &rarr;</div>
   </div>
 
