@@ -56,7 +56,8 @@ export default async function AccountPage() {
           backdropFilter: "blur(10px)",
         }}
       >
-        <div
+        <Link
+          href="/"
           className="flex items-center gap-3"
           style={{
             fontFamily: "var(--cond)",
@@ -64,6 +65,7 @@ export default async function AccountPage() {
             fontWeight: 800,
             letterSpacing: ".2em",
             textTransform: "uppercase" as const,
+            textDecoration: "none",
           }}
         >
           <span
@@ -77,7 +79,7 @@ export default async function AccountPage() {
           >
             AESDR
           </span>
-        </div>
+        </Link>
         <div
           className="flex items-center gap-4"
           style={{

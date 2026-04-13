@@ -105,9 +105,9 @@ export default async function Dashboard() {
         className="sticky top-0 z-50 flex items-center justify-between px-[5%] py-5"
         style={{ borderBottom: "1px solid var(--line)", background: "rgba(2,6,23,0.9)", backdropFilter: "blur(10px)" }}
       >
-        <span style={{ fontFamily: "var(--cond)", fontSize: "18px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase" }}>
+        <Link href="/" style={{ fontFamily: "var(--cond)", fontSize: "18px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", textDecoration: "none" }}>
           <span style={{ background: "var(--iris)", backgroundSize: "200% 100%", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", animation: "iris 3s linear infinite" }}>AESDR</span>
-        </span>
+        </Link>
         <div className="flex items-center gap-4" style={{ fontFamily: "var(--cond)", fontWeight: 600, fontSize: "13px", letterSpacing: ".1em", textTransform: "uppercase" }}>
           {user ? (
             <>

@@ -65,7 +65,7 @@ export default function SignupPage() {
                 animation: "iris 3s linear infinite",
               }}
             >
-              AESDR
+              <Link href="/" style={{ textDecoration: "none" }}>AESDR</Link>
             </span>
           </p>
           <h1

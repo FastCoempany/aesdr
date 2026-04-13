@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -68,7 +69,7 @@ export default function SetPasswordPage() {
                 animation: "iris 3s linear infinite",
               }}
             >
-              AESDR
+              <Link href="/" style={{ textDecoration: "none" }}>AESDR</Link>
             </span>
           </p>
           <h1
