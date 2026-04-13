@@ -113,6 +113,10 @@ ${html}
   });
 }
 
+function escHtml(str: string): string {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
 function gatePage(message: string, showBackLink: boolean): string {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -135,7 +139,7 @@ function gatePage(message: string, showBackLink: boolean): string {
 <body>
 <div>
   <div class="lock">🔒</div>
-  <div class="msg">${message}</div>
+  <div class="msg">${escHtml(message)}</div>
   ${showBackLink ? '<p style="margin-top:24px"><a href="/dashboard">← Back to Dashboard</a></p>' : '<p style="margin-top:24px"><a href="/login">Sign In</a></p>'}
 </div>
 </body>

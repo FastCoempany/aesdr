@@ -48,9 +48,14 @@ function LoginForm() {
     setError(null);
     const supabase = createClient();
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com";
-    await supabase.auth.resetPasswordForEmail(email, {
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${siteUrl}/auth/callback?next=/account/reset-password`,
     });
+    if (resetError) {
+      setError("Failed to send reset email. Please try again.");
+      setResetLoading(false);
+      return;
+    }
     setResetSent(true);
     setResetLoading(false);
   }
