@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hero — Evidence Board Variant</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #020617;
+    --text: #F8FAFC;
+    --muted: #94A3B8;
+    --theme: #10B981;
+    --red: rgba(239,68,68,0.5);
+    --iris: linear-gradient(90deg, #FF006E, #FF6B00, #F59E0B, #10B981, #38BDF8, #8B5CF6, #FF006E);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+  }
+
+  .hero {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  /* === WARNING BOX === */
+  .warning-box {
+    border: 1px solid rgba(248,250,252,0.08);
+    padding: clamp(32px, 5vw, 56px) clamp(28px, 5vw, 64px);
+    max-width: 640px; width: 90%; position: relative; z-index: 5;
+    opacity: 0; animation: boxReveal 0.6s ease 0.3s forwards;
+    transition: transform 0.8s cubic-bezier(.23,1,.32,1), opacity 0.8s ease, filter 0.6s ease;
+  }
+  .warning-box.pushed { transform: translateY(-28vh) scale(0.55); opacity: 0.12; filter: blur(3px); }
+  @keyframes boxReveal { 0% { opacity: 0; transform: scale(0.96); } 100% { opacity: 1; transform: scale(1); } }
+  .warning-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
+    opacity: 0; animation: fadeIn 0.4s ease 0.7s forwards;
+  }
+  .warning-icon {
+    width: 20px; height: 20px; border: 1.5px solid var(--red); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: rgba(239,68,68,0.7); font-weight: 700;
+  }
+  .warning-title {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: .3em; text-transform: uppercase; color: var(--red);
+  }
+  .warning-body {
+    font-size: clamp(16px, 2.5vw, 22px); font-weight: 500; line-height: 1.7;
+    color: rgba(248,250,252,0.7); opacity: 0; animation: fadeIn 0.5s ease 1s forwards;
+  }
+  .warning-body .highlight { color: var(--text); font-weight: 700; }
+  .warning-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 8px;
+    letter-spacing: .2em; text-transform: uppercase;
+    color: rgba(148,163,184,0.3); margin-top: 28px;
+    opacity: 0; animation: fadeIn 0.4s ease 1.5s forwards;
+  }
+  .continue-link {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: .2em; text-transform: uppercase;
+    color: rgba(148,163,184,0.4); cursor: pointer; margin-top: 20px;
+    opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
+  }
+  .continue-link.visible { opacity: 1; pointer-events: auto; }
+  .continue-link:hover { color: rgba(148,163,184,0.7); }
+
+  /* === RE-READ === */
+  .reread-link {
+    position: absolute; top: 36px; left: 50%; transform: translateX(-50%); z-index: 25;
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: .2em; text-transform: uppercase; color: rgba(239,68,68,0.35);
+    cursor: pointer; opacity: 0; transition: opacity 0.5s ease;
+    pointer-events: none; display: flex; align-items: center; gap: 6px;
+  }
+  .reread-link.visible { opacity: 1; pointer-events: auto; }
+  .reread-link:hover { color: rgba(239,68,68,0.7); }
+  .reread-link .ri {
+    display: inline-block; width: 14px; height: 14px;
+    border: 1px solid currentColor; border-radius: 50%;
+    font-size: 8px; line-height: 14px; text-align: center;
+  }
+
+  /* === CONFESSION LAYER === */
+  .confession-layer {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10; opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
+  }
+  .confession-layer.active { opacity: 1; }
+  .typing-area { max-width: 720px; width: 90%; text-align: left; pointer-events: auto; }
+  .tline {
+    font-family: 'Inter', sans-serif; font-size: clamp(22px, 3.5vw, 38px);
+    font-weight: 600; line-height: 1.5; color: var(--text); min-height: 1.6em;
+    transition: opacity 0.6s ease, filter 0.6s ease, transform 0.6s ease;
+  }
+  .tline.fade-out { opacity: 0; transform: translateY(-4px); }
+  .tline.dissolve { opacity: 0; filter: blur(12px); transform: scale(1.04); }
+  .iris-text {
+    background: var(--iris); background-size: 300% 100%;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; animation: shimmer 4s linear infinite;
+  }
+  .cursor {
+    display: inline-block; width: 2px; height: 1.1em; background: var(--theme);
+    vertical-align: text-bottom; margin-left: 2px; animation: blink 0.8s step-end infinite;
+  }
+
+  /* === EVIDENCE BOARD === */
+  .evidence-layer {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 15; opacity: 0; pointer-events: none; transition: opacity 0.6s ease;
+  }
+  .evidence-layer.active { opacity: 1; pointer-events: auto; }
+
+  .board {
+    max-width: 720px; width: 90%;
+    display: flex; flex-direction: column; align-items: center; gap: 0;
+    position: relative;
+  }
+
+  .evidence-card {
+    background: rgba(248,250,252,0.03);
+    border: 1px solid rgba(248,250,252,0.06);
+    padding: clamp(16px, 2.5vw, 28px) clamp(20px, 3vw, 36px);
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(14px, 2vw, 19px);
+    font-weight: 500;
+    color: rgba(248,250,252,0.55);
+    line-height: 1.6;
+    width: fit-content;
+    max-width: 100%;
+    opacity: 0;
+    position: relative;
+    margin-bottom: -4px;
+  }
+
+  /* Each card arrives from a different direction */
+  .evidence-card.from-left {
+    transform: translateX(-120px) rotate(-2deg);
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(.23,1,.32,1);
+  }
+  .evidence-card.from-right {
+    transform: translateX(120px) rotate(1.5deg);
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(.23,1,.32,1);
+  }
+  .evidence-card.from-top {
+    transform: translateY(-80px) rotate(-1deg);
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(.23,1,.32,1);
+  }
+  .evidence-card.from-bottom {
+    transform: translateY(80px) rotate(2deg);
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(.23,1,.32,1);
+  }
+
+  .evidence-card.pinned {
+    opacity: 1;
+  }
+  .evidence-card.from-left.pinned { transform: translateX(0) rotate(-1.2deg); }
+  .evidence-card.from-right.pinned { transform: translateX(0) rotate(0.8deg); }
+  .evidence-card.from-top.pinned { transform: translateY(0) rotate(-0.5deg); }
+  .evidence-card.from-bottom.pinned { transform: translateY(0) rotate(1.3deg); }
+
+  /* Pin icon */
+  .evidence-card::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(248,250,252,0.15);
+    box-shadow: 0 0 6px 2px rgba(248,250,252,0.05);
+  }
+  .evidence-card:nth-child(odd)::before { left: 20px; }
+  .evidence-card:nth-child(even)::before { right: 20px; }
+
+  .evidence-card .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7px; letter-spacing: .2em; text-transform: uppercase;
+    color: rgba(248,250,252,0.2); margin-bottom: 8px; display: block;
+  }
+
+  /* Big number card */
+  .evidence-card.big-num {
+    text-align: center;
+    font-size: clamp(32px, 6vw, 56px);
+    font-weight: 800;
+    color: rgba(248,250,252,0.7);
+    padding: clamp(12px, 2vw, 20px) clamp(32px, 5vw, 56px);
+  }
+
+  /* Statement — rises clean beneath */
+  .board-statement {
+    margin-top: 36px;
+    text-align: center;
+    max-width: 540px;
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(14px, 2vw, 19px);
+    font-weight: 600;
+    line-height: 1.7;
+    color: rgba(248,250,252,0.8);
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .board-statement.visible { opacity: 1; transform: translateY(0); }
+
+  /* Connector lines between cards */
+  .board .connector {
+    width: 1px; height: 20px;
+    background: var(--iris); background-size: 100% 300%;
+    animation: shimmer 4s linear infinite;
+    opacity: 0.08;
+  }
+
+  /* === SCROLL HINT === */
+  .scroll-hint {
+    position: absolute; bottom: 44px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    z-index: 50; opacity: 0;
+  }
+  .scroll-hint.visible { animation: fadeIn 0.5s ease forwards; }
+  .scroll-hint .text {
+    font-family: 'JetBrains Mono', monospace; font-size: 8px;
+    letter-spacing: .25em; text-transform: uppercase; color: rgba(148,163,184,0.25);
+  }
+  .scroll-hint .bar {
+    width: 1px; height: 28px; position: relative; overflow: hidden;
+  }
+  .scroll-hint .bar::after {
+    content: ''; position: absolute; top: -100%; left: 0;
+    width: 1px; height: 100%; background: var(--iris); background-size: 100% 300%;
+    animation: shimmer 4s linear infinite, drop 1.5s ease-in-out infinite;
+  }
+
+  /* === AMBIENT === */
+  .ambient-line {
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 1px;
+    background: var(--iris); background-size: 300% 100%;
+    animation: shimmer 4s linear infinite; opacity: 0.1; z-index: 50;
+  }
+  .corner {
+    position: absolute; width: 20px; height: 20px;
+    border-color: rgba(248,250,252,0.04); border-style: solid; border-width: 0; z-index: 2;
+  }
+  .corner.tl { top: 20px; left: 20px; border-top-width: 1px; border-left-width: 1px; }
+  .corner.tr { top: 20px; right: 20px; border-top-width: 1px; border-right-width: 1px; }
+  .corner.bl { bottom: 20px; left: 20px; border-bottom-width: 1px; border-left-width: 1px; }
+  .corner.br { bottom: 20px; right: 20px; border-bottom-width: 1px; border-right-width: 1px; }
+
+  @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+  @keyframes drop { 0% { top: -100%; } 50% { top: 0; } 100% { top: 100%; } }
+  @keyframes shimmer { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="ambient-line"></div>
+  <div class="corner tl"></div><div class="corner tr"></div>
+  <div class="corner bl"></div><div class="corner br"></div>
+
+  <div class="warning-box" id="warning-box">
+    <div class="warning-header">
+      <div class="warning-icon">!</div>
+      <div class="warning-title">Content Warning</div>
+    </div>
+    <div class="warning-body">
+      This page contains uncomfortable truths about your <span class="highlight">pipeline</span>, your <span class="highlight">apartment</span>, your <span class="highlight">bar tab</span>, your <span class="highlight">commission check</span>, and your <span class="highlight">relationship status</span>.<br><br>Scroll at your own risk.
+    </div>
+    <div class="warning-tag">AESDR — 12 lessons / 12 weeks / classified</div>
+    <div class="continue-link" id="continue-link">continue &rarr;</div>
+  </div>
+
+  <div class="reread-link" id="reread-link">
+    <span class="ri">!</span> re-read warning
+  </div>
+
+  <div class="confession-layer" id="confession-layer">
+    <div class="typing-area" id="typing-area"></div>
+  </div>
+
+  <div class="evidence-layer" id="evidence-layer">
+    <div class="board">
+      <div class="evidence-card from-left">
+        <span class="tag">exhibit a — your phone</span>
+        A morning routine app. A habit tracker. A focus timer. A cold plunge video.
+      </div>
+      <div class="connector"></div>
+      <div class="evidence-card big-num from-right">
+        <span class="tag">app count</span>
+        11
+      </div>
+      <div class="connector"></div>
+      <div class="evidence-card from-top">
+        <span class="tag">diagnosis</span>
+        You are the least productive person you know.
+      </div>
+      <div class="connector"></div>
+      <div class="evidence-card from-bottom">
+        <span class="tag">screen time report</span>
+        7 hours. Four of them downloading apps about being on your phone less.
+      </div>
+
+      <div class="board-statement" id="board-statement">
+        This course will change your life a few times throughout. Afterward, you'll never make the same money again.
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-hint" id="scroll-hint">
+    <span class="text">scroll</span>
+    <div class="bar"></div>
+  </div>
+</div>
+
+<script>
+const warningBox = document.getElementById('warning-box');
+const confessionLayer = document.getElementById('confession-layer');
+const typingArea = document.getElementById('typing-area');
+const evidenceLayer = document.getElementById('evidence-layer');
+const cards = document.querySelectorAll('.evidence-card');
+const boardStatement = document.getElementById('board-statement');
+const scrollHint = document.getElementById('scroll-hint');
+const rereadLink = document.getElementById('reread-link');
+const continueLink = document.getElementById('continue-link');
+
+let paused = false, done = false, timer = null;
+
+/* === Typed scenario === */
+const scenes = [
+  { segments: [{ text: "So here's the scenario.", style: '' }], charDelay: 38, holdAfter: 1000, exit: 'fade-out', exitWait: 600 },
+  { segments: [{ text: "You're an ", style: '' },{ text: "AE", style: 'iris-text' },{ text: ". Or an ", style: '' },{ text: "SDR", style: 'iris-text' },{ text: ".", style: '' }], charDelay: 42, holdAfter: 1200, exit: 'dissolve', exitWait: 800 },
+  { segments: [{ text: 'You set your alarm for 6am on Sunday to "lock in" this week.', style: '' }], charDelay: 28, holdAfter: 500, exit: null },
+  { segments: [{ text: "It's Saturday again.", style: '' }], charDelay: 52, holdAfter: 700, exit: null },
+  { segments: [{ text: "You didn't lock in at all.", style: '' }], charDelay: 40, holdAfter: 0, exit: null },
+];
+
+function flattenSegs(segs) {
+  const c = [];
+  for (const s of segs) for (const ch of s.text) c.push({ ch, style: s.style });
+  return c;
+}
+function buildHTML(arr) {
+  let h = '', cur = null;
+  for (const { ch, style } of arr) {
+    if (style !== cur) { if (cur) h += '</span>'; if (style) h += '<span class="'+style+'">'; cur = style; }
+    h += ch;
+  }
+  if (cur) h += '</span>';
+  return h;
+}
+
+let sceneIdx = 0, charIdx = 0, typedChars = [], lineEl = null;
+
+function beginConfession() {
+  warningBox.classList.add('pushed');
+  setTimeout(() => {
+    confessionLayer.classList.add('active');
+    rereadLink.classList.add('visible');
+    setTimeout(startScene, 400);
+  }, 300);
+}
+setTimeout(beginConfession, 6000);
+
+function startScene() {
+  if (paused || done) return;
+  if (sceneIdx >= scenes.length) { timer = setTimeout(showEvidence, 800); return; }
+  typedChars = []; charIdx = 0;
+  lineEl = document.createElement('div');
+  lineEl.className = 'tline';
+  typingArea.appendChild(lineEl);
+  typeChar(flattenSegs(scenes[sceneIdx].segments), scenes[sceneIdx]);
+}
+
+function typeChar(flat, scene) {
+  if (paused || done) return;
+  if (charIdx >= flat.length) {
+    lineEl.innerHTML = buildHTML(typedChars);
+    timer = setTimeout(() => {
+      if (paused || done) return;
+      if (scene.exit) {
+        lineEl.classList.add(scene.exit);
+        timer = setTimeout(() => { sceneIdx++; startScene(); }, scene.exitWait);
+      } else { sceneIdx++; startScene(); }
+    }, scene.holdAfter);
+    return;
+  }
+  typedChars.push(flat[charIdx]); charIdx++;
+  lineEl.innerHTML = buildHTML(typedChars) + '<span class="cursor"></span>';
+  timer = setTimeout(() => typeChar(flat, scene), scene.charDelay + Math.random() * 18);
+}
+
+/* === Evidence Board phase === */
+function showEvidence() {
+  done = true;
+  rereadLink.classList.remove('visible');
+  confessionLayer.style.transition = 'opacity 0.5s ease';
+  confessionLayer.style.opacity = '0';
+  warningBox.style.transition = 'opacity 0.3s ease';
+  warningBox.style.opacity = '0';
+
+  setTimeout(() => {
+    evidenceLayer.classList.add('active');
+
+    cards.forEach((card, i) => {
+      setTimeout(() => card.classList.add('pinned'), 300 + i * 450);
+    });
+
+    setTimeout(() => {
+      boardStatement.classList.add('visible');
+    }, 300 + cards.length * 450 + 400);
+
+    setTimeout(() => {
+      scrollHint.classList.add('visible');
+    }, 300 + cards.length * 450 + 1100);
+  }, 500);
+}
+
+/* === Re-read / Continue === */
+rereadLink.addEventListener('click', () => {
+  if (done) return;
+  paused = true; clearTimeout(timer);
+  confessionLayer.classList.remove('active');
+  rereadLink.classList.remove('visible');
+  warningBox.classList.remove('pushed');
+  setTimeout(() => continueLink.classList.add('visible'), 600);
+});
+
+continueLink.addEventListener('click', () => {
+  continueLink.classList.remove('visible');
+  paused = false;
+  warningBox.classList.add('pushed');
+  setTimeout(() => {
+    confessionLayer.classList.add('active');
+    rereadLink.classList.add('visible');
+    setTimeout(() => {
+      if (sceneIdx >= scenes.length) timer = setTimeout(showEvidence, 800);
+      else { const s = scenes[sceneIdx]; typeChar(flattenSegs(s.segments), s); }
+    }, 300);
+  }, 300);
+});
+</script>
+</body>
+</html>
