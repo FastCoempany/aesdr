@@ -79,16 +79,15 @@ export async function GET(request: Request) {
       // ── 5-day drop-off ──
       if (!user.dropoff_5d_sent && purchasedDate <= fiveDaysAgoDate) {
         if (!lastActiveDate || lastActiveDate <= fiveDaysAgoDate) {
-          try {
-            await sendDropoff5d(user.user_email, user.customer_name || 'there', lastLesson, `Lesson ${lastLesson}`);
+          const sent = await sendDropoff5d(user.user_email, user.customer_name || 'there', lastLesson, `Lesson ${lastLesson}`);
+          if (!sent) { errors.push(`5d email failed for ${user.user_email}`); }
+          else {
             const { error: u5 } = await supabase
               .from('purchases')
               .update({ dropoff_5d_sent: true })
               .eq('user_email', user.user_email);
             if (u5) errors.push(`5d update ${user.user_email}: ${u5.message}`);
             else d5Sent++;
-          } catch (err) {
-            console.error(`Dropoff 5d email failed for ${user.user_email}:`, err);
           }
         }
       }
@@ -96,16 +95,15 @@ export async function GET(request: Request) {
       // ── 10-day drop-off ──
       if (!user.dropoff_10d_sent && purchasedDate <= tenDaysAgo) {
         if (!lastActiveDate || lastActiveDate <= tenDaysAgo) {
-          try {
-            await sendDropoff10d(user.user_email, user.customer_name || 'there');
+          const sent = await sendDropoff10d(user.user_email, user.customer_name || 'there');
+          if (!sent) { errors.push(`10d email failed for ${user.user_email}`); }
+          else {
             const { error: u10 } = await supabase
               .from('purchases')
               .update({ dropoff_10d_sent: true })
               .eq('user_email', user.user_email);
             if (u10) errors.push(`10d update ${user.user_email}: ${u10.message}`);
             else d10Sent++;
-          } catch (err) {
-            console.error(`Dropoff 10d email failed for ${user.user_email}:`, err);
           }
         }
       }
@@ -113,16 +111,15 @@ export async function GET(request: Request) {
       // ── 21-day drop-off ──
       if (!user.dropoff_21d_sent && purchasedDate <= twentyOneDaysAgo) {
         if (!lastActiveDate || lastActiveDate <= twentyOneDaysAgo) {
-          try {
-            await sendDropoff21d(user.user_email, user.customer_name || 'there', lastLesson);
+          const sent = await sendDropoff21d(user.user_email, user.customer_name || 'there', lastLesson);
+          if (!sent) { errors.push(`21d email failed for ${user.user_email}`); }
+          else {
             const { error: u21 } = await supabase
               .from('purchases')
               .update({ dropoff_21d_sent: true })
               .eq('user_email', user.user_email);
             if (u21) errors.push(`21d update ${user.user_email}: ${u21.message}`);
             else d21Sent++;
-          } catch (err) {
-            console.error(`Dropoff 21d email failed for ${user.user_email}:`, err);
           }
         }
       }

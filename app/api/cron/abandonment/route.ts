@@ -32,20 +32,20 @@ export async function GET(request: Request) {
     errors.push(`1hr query: ${q1Err.message}`);
   } else if (abandon1hr) {
     for (const row of abandon1hr) {
-      try {
-        await sendAbandon1hr(row.user_email);
-        const { error: updateErr } = await supabase
-          .from('checkout_sessions')
-          .update({ abandon_1hr_sent: now.toISOString() })
-          .eq('session_id', row.session_id)
-          .eq('completed', false);
-        if (updateErr) {
-          errors.push(`1hr update ${row.session_id}: ${updateErr.message}`);
-        } else {
-          hr1Sent++;
-        }
-      } catch (err) {
-        console.error(`Abandon 1hr email failed for ${row.user_email}:`, err);
+      const sent = await sendAbandon1hr(row.user_email);
+      if (!sent) {
+        errors.push(`1hr email failed for ${row.user_email}`);
+        continue;
+      }
+      const { error: updateErr } = await supabase
+        .from('checkout_sessions')
+        .update({ abandon_1hr_sent: now.toISOString() })
+        .eq('session_id', row.session_id)
+        .eq('completed', false);
+      if (updateErr) {
+        errors.push(`1hr update ${row.session_id}: ${updateErr.message}`);
+      } else {
+        hr1Sent++;
       }
     }
   }
@@ -66,20 +66,20 @@ export async function GET(request: Request) {
     errors.push(`24hr query: ${q24Err.message}`);
   } else if (abandon24hr) {
     for (const row of abandon24hr) {
-      try {
-        await sendAbandon24hr(row.user_email);
-        const { error: updateErr } = await supabase
-          .from('checkout_sessions')
-          .update({ abandon_24hr_sent: now.toISOString() })
-          .eq('session_id', row.session_id)
-          .eq('completed', false);
-        if (updateErr) {
-          errors.push(`24hr update ${row.session_id}: ${updateErr.message}`);
-        } else {
-          hr24Sent++;
-        }
-      } catch (err) {
-        console.error(`Abandon 24hr email failed for ${row.user_email}:`, err);
+      const sent = await sendAbandon24hr(row.user_email);
+      if (!sent) {
+        errors.push(`24hr email failed for ${row.user_email}`);
+        continue;
+      }
+      const { error: updateErr } = await supabase
+        .from('checkout_sessions')
+        .update({ abandon_24hr_sent: now.toISOString() })
+        .eq('session_id', row.session_id)
+        .eq('completed', false);
+      if (updateErr) {
+        errors.push(`24hr update ${row.session_id}: ${updateErr.message}`);
+      } else {
+        hr24Sent++;
       }
     }
   }

@@ -6,7 +6,9 @@ import { createAdminClient } from '@/utils/supabase/admin';
 import { sendWelcomeEmail, sendReceiptEmail } from '@/lib/email';
 
 function getStripe() {
-  return new Stripe(process.env.STRIPE_SECRET_KEY!);
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) throw new Error("STRIPE_SECRET_KEY environment variable is not set");
+  return new Stripe(key);
 }
 
 function generatePassword(): string {

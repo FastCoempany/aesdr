@@ -26,7 +26,7 @@ export default async function AccountPage() {
   const { data: purchase } = await supabase
     .from("purchases")
     .select("plan, amount_cents, purchased_at, status")
-    .or(`user_email.eq.${user.email},user_id.eq.${user.id}`)
+    .or(`user_email.eq."${user.email}",user_id.eq.${user.id}`)
     .eq("status", "active")
     .order("purchased_at", { ascending: false })
     .limit(1)

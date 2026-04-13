@@ -55,17 +55,17 @@ export async function GET(request: Request) {
       const twoDaysAfter = new Date(completion.lastCompletedAt.getTime() + TIMING.review.afterCompletion);
       if (now < twoDaysAfter) continue;
 
-      try {
-        await sendReviewRequest(user.user_email, user.customer_name || 'there');
-        const { error: uErr } = await supabase
-          .from('purchases')
-          .update({ review_requested: true, review_requested_at: now.toISOString() })
-          .eq('user_email', user.user_email);
-        if (uErr) errors.push(`review update ${user.user_email}: ${uErr.message}`);
-        else reviewsSent++;
-      } catch (err) {
-        console.error(`Review request failed for ${user.user_email}:`, err);
+      const sent = await sendReviewRequest(user.user_email, user.customer_name || 'there');
+      if (!sent) {
+        errors.push(`review email failed for ${user.user_email}`);
+        continue;
       }
+      const { error: uErr } = await supabase
+        .from('purchases')
+        .update({ review_requested: true, review_requested_at: now.toISOString() })
+        .eq('user_email', user.user_email);
+      if (uErr) errors.push(`review update ${user.user_email}: ${uErr.message}`);
+      else reviewsSent++;
     }
   }
 
@@ -83,17 +83,17 @@ export async function GET(request: Request) {
     errors.push(`nudge query: ${nqErr.message}`);
   } else if (nudgeUsers) {
     for (const user of nudgeUsers) {
-      try {
-        await sendReviewNudge(user.user_email, 'there');
-        const { error: nuErr } = await supabase
-          .from('purchases')
-          .update({ review_nudge_sent: true })
-          .eq('user_email', user.user_email);
-        if (nuErr) errors.push(`nudge update ${user.user_email}: ${nuErr.message}`);
-        else nudgesSent++;
-      } catch (err) {
-        console.error(`Review nudge failed for ${user.user_email}:`, err);
+      const sent = await sendReviewNudge(user.user_email, 'there');
+      if (!sent) {
+        errors.push(`nudge email failed for ${user.user_email}`);
+        continue;
       }
+      const { error: nuErr } = await supabase
+        .from('purchases')
+        .update({ review_nudge_sent: true })
+        .eq('user_email', user.user_email);
+      if (nuErr) errors.push(`nudge update ${user.user_email}: ${nuErr.message}`);
+      else nudgesSent++;
     }
   }
 

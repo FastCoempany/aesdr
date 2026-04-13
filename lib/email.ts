@@ -1,7 +1,11 @@
 import { Resend } from 'resend';
 
 function getResend() {
-  return new Resend(process.env.RESEND_API_KEY);
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    throw new Error("RESEND_API_KEY environment variable is not set");
+  }
+  return new Resend(apiKey);
 }
 
 /** Escape HTML special characters to prevent injection in email templates. */

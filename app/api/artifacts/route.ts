@@ -96,7 +96,7 @@ export async function POST(request: Request) {
       (user.user_metadata?.role as "ae" | "sdr") ?? "sdr";
 
     const studentName =
-      (purchase?.customer_name as string) ??
+      (typeof purchase?.customer_name === "string" ? purchase.customer_name : null) ??
       user.user_metadata?.full_name ??
       user.email?.split("@")[0] ??
       "Student";

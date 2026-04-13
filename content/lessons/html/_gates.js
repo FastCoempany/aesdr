@@ -113,7 +113,7 @@ window.AESDR = window.AESDR || {};
   function _reflectionHTML(screen, g) {
     return '<div class="gate-box">' +
       '<div class="gate-label">Reflection Required</div>' +
-      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<p class="gate-prompt">' + _esc(g.prompt) + '</p>' +
       '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
         'placeholder="' + _esc(g.placeholder || 'Write your reflection here...') + '" ' +
         'oninput="AESDR._onInput(' + screen + ',this.value)">' +
@@ -131,12 +131,12 @@ window.AESDR = window.AESDR || {};
     var rubricHTML = (g.rubric || []).map(function(r, i) {
       return '<label class="gate-rubric-item">' +
         '<input type="checkbox" onchange="AESDR._onRubric(' + screen + ',' + i + ',this.checked)">' +
-        '<span>' + r + '</span></label>';
+        '<span>' + _esc(r) + '</span></label>';
     }).join('');
 
     return '<div class="gate-box">' +
       '<div class="gate-label">Application Required</div>' +
-      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<p class="gate-prompt">' + _esc(g.prompt) + '</p>' +
       '<textarea class="gate-textarea" id="gateTA' + screen + '" ' +
         'placeholder="' + _esc(g.placeholder || 'Write your response...') + '" ' +
         'oninput="AESDR._onInput(' + screen + ',this.value)">' +
@@ -154,7 +154,7 @@ window.AESDR = window.AESDR || {};
   function _evidenceHTML(screen, g) {
     return '<div class="gate-box">' +
       '<div class="gate-label">Evidence Required</div>' +
-      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<p class="gate-prompt">' + _esc(g.prompt) + '</p>' +
       '<textarea class="gate-textarea gate-evidence" id="gateTA' + screen + '" ' +
         'placeholder="' + _esc(g.placeholder || 'Paste your evidence here...') + '" ' +
         'oninput="AESDR._onInput(' + screen + ',this.value)">' +
@@ -171,7 +171,7 @@ window.AESDR = window.AESDR || {};
   function _narrativeHTML(screen, g) {
     return '<div class="gate-box gate-narrative">' +
       '<div class="gate-label">Before You Continue</div>' +
-      '<p class="gate-prompt">' + g.prompt + '</p>' +
+      '<p class="gate-prompt">' + _esc(g.prompt) + '</p>' +
       '<textarea class="gate-textarea gate-textarea-sm" id="gateTA' + screen + '" ' +
         'placeholder="' + _esc(g.placeholder || 'Be specific. One real example.') + '" ' +
         'oninput="AESDR._onInput(' + screen + ',this.value)">' +
@@ -193,7 +193,7 @@ window.AESDR = window.AESDR || {};
 
     var html = '<div class="gate-box gate-homework">' +
       '<div class="gate-label">Accountability Checklist</div>' +
-      '<p class="gate-prompt">' + (g.prompt || 'Complete each item below. No shortcuts.') + '</p>' +
+      '<p class="gate-prompt">' + _esc(g.prompt || 'Complete each item below. No shortcuts.') + '</p>' +
       '<div class="gate-conscience">' +
         '<p class="gate-conscience-text">You can treat this like just another course if you want. Or you can not lie and complete this survival checklist legitimately. What you do when no one is watching makes all the difference in the end.</p>' +
       '</div>' +
@@ -204,7 +204,7 @@ window.AESDR = window.AESDR || {};
       html += '<div class="hw-gate-item' + (done ? ' hw-gate-done' : '') + '" id="hwItem' + screen + '_' + i + '">' +
         '<div class="hw-gate-check">' + (done ? '\u2713' : (i + 1)) + '</div>' +
         '<div class="hw-gate-body">' +
-          '<p class="hw-gate-task">' + items[i].task + '</p>' +
+          '<p class="hw-gate-task">' + _esc(items[i].task) + '</p>' +
           (done
             ? '<div class="hw-gate-submitted">' + _esc(s._hwText[i]).substring(0,200) + '</div>'
             : '<textarea class="gate-textarea gate-textarea-sm" id="hwTA' + screen + '_' + i + '" ' +

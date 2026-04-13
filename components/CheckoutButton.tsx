@@ -26,8 +26,11 @@ export default function CheckoutButton({
       });
 
       const data = await res.json();
-      if (data.url) {
+      if (data.url && new URL(data.url).hostname.endsWith("stripe.com")) {
         window.location.href = data.url;
+      } else if (data.url) {
+        alert("Unexpected checkout URL. Please contact support@aesdr.com.");
+        setLoading(false);
       } else {
         alert("Something went wrong. Please try again or contact support@aesdr.com.");
         setLoading(false);

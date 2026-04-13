@@ -32,19 +32,19 @@ export async function GET(request: Request) {
     errors.push(`day3 query: ${day3Err.message}`);
   } else if (day3Users) {
     for (const user of day3Users) {
-      try {
-        await sendDay3Email(user.user_email, user.customer_name || 'there');
-        const { error: updateErr } = await supabase
-          .from('purchases')
-          .update({ day3_sent: true })
-          .eq('user_email', user.user_email);
-        if (updateErr) {
-          errors.push(`day3 update ${user.user_email}: ${updateErr.message}`);
-        } else {
-          day3Sent++;
-        }
-      } catch (err) {
-        console.error(`Day3 email failed for ${user.user_email}:`, err);
+      const sent = await sendDay3Email(user.user_email, user.customer_name || 'there');
+      if (!sent) {
+        errors.push(`day3 email failed for ${user.user_email}`);
+        continue;
+      }
+      const { error: updateErr } = await supabase
+        .from('purchases')
+        .update({ day3_sent: true })
+        .eq('user_email', user.user_email);
+      if (updateErr) {
+        errors.push(`day3 update ${user.user_email}: ${updateErr.message}`);
+      } else {
+        day3Sent++;
       }
     }
   }
@@ -65,19 +65,19 @@ export async function GET(request: Request) {
     errors.push(`day7 query: ${day7Err.message}`);
   } else if (day7Users) {
     for (const user of day7Users) {
-      try {
-        await sendDay7Email(user.user_email, user.customer_name || 'there');
-        const { error: updateErr } = await supabase
-          .from('purchases')
-          .update({ day7_sent: true })
-          .eq('user_email', user.user_email);
-        if (updateErr) {
-          errors.push(`day7 update ${user.user_email}: ${updateErr.message}`);
-        } else {
-          day7Sent++;
-        }
-      } catch (err) {
-        console.error(`Day7 email failed for ${user.user_email}:`, err);
+      const sent = await sendDay7Email(user.user_email, user.customer_name || 'there');
+      if (!sent) {
+        errors.push(`day7 email failed for ${user.user_email}`);
+        continue;
+      }
+      const { error: updateErr } = await supabase
+        .from('purchases')
+        .update({ day7_sent: true })
+        .eq('user_email', user.user_email);
+      if (updateErr) {
+        errors.push(`day7 update ${user.user_email}: ${updateErr.message}`);
+      } else {
+        day7Sent++;
       }
     }
   }

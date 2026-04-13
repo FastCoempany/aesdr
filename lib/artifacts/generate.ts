@@ -68,10 +68,14 @@ export async function generateArtifacts(
   const sourceHash = hashProgressData(progressRows);
 
   // 3. Check for cached artifacts with matching hash
-  const { data: cached } = await supabase
+  const { data: cached, error: cacheError } = await supabase
     .from("generated_artifacts")
     .select("artifact_type, artifact_data, source_hash")
     .eq("user_id", user.id);
+
+  if (cacheError) {
+    console.error("[artifacts] Cache lookup failed:", cacheError.message);
+  }
 
   const cachedMap = new Map(
     (cached ?? []).map((row: { artifact_type: string; artifact_data: unknown; source_hash: string }) => [

@@ -63,6 +63,10 @@ export async function extractWithLLM(
   const text =
     response.content[0].type === "text" ? response.content[0].text : "";
 
+  if (text.length > 100_000) {
+    throw new Error("LLM response exceeds size limit");
+  }
+
   // Extract JSON from response (handle markdown code blocks)
   const jsonMatch = text.match(/```json\s*([\s\S]*?)```/) ?? text.match(/(\{[\s\S]*\})/);
   if (!jsonMatch?.[1]) {

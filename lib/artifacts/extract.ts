@@ -83,6 +83,7 @@ function extractGatesFromUnit(
   out: GateResponse[]
 ): void {
   const unitIndex = parseInt(unitId, 10);
+  if (isNaN(unitIndex)) return;
   const mapping = UNIT_CATEGORY_MAP.find(
     (m) => m.lessonId === lessonId && m.unitIndex === unitIndex
   );
@@ -91,8 +92,9 @@ function extractGatesFromUnit(
   // Find all gate_ keys in the unit data
   for (const [key, val] of Object.entries(unitData)) {
     if (!key.startsWith("gate_")) continue;
+    if (typeof val !== "object" || !val) continue;
     const gate = val as GateEntry;
-    if (!gate?.completed || !gate.value?.trim()) continue;
+    if (!gate.completed || !gate.value?.trim()) continue;
 
     out.push({
       lessonId,
