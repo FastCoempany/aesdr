@@ -4,6 +4,15 @@ function getResend() {
   return new Resend(process.env.RESEND_API_KEY);
 }
 
+/** Escape HTML special characters to prevent injection in email templates. */
+function esc(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 const FROM = 'AESDR <hello@aesdr.com>';
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://aesdr.com';
 const UNSUBSCRIBE_HEADERS = {
@@ -50,15 +59,17 @@ export async function sendWelcomeEmail(to: string, name: string, _tempPassword: 
 }
 
 function welcomeHtml(name: string, email: string, resetUrl: string) {
+  const safeName = esc(name);
+  const safeEmail = esc(email);
   const credentialsBlock = `
   <div style="background:#f8f9fa;padding:16px 20px;margin:20px 0;border-left:3px solid #10B981">
     <p style="margin:0 0 6px;font-weight:700">Your account:</p>
-    <p style="margin:0 0 4px"><strong>Email:</strong> ${email}</p>
+    <p style="margin:0 0 4px"><strong>Email:</strong> ${safeEmail}</p>
     <p style="margin:8px 0 0;font-size:13px;color:#666">Click the button below to sign in. You can set a password in Account settings after your first login.</p>
   </div>`;
   return `
 <div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
-  <p>Welcome to AESDR${name !== 'there' ? `, ${name}` : ''}.</p>
+  <p>Welcome to AESDR${name !== 'there' ? `, ${safeName}` : ''}.</p>
   <p>No long onboarding. No orientation video. Here's what matters:</p>
   ${credentialsBlock}
   <p style="margin:24px 0"><a href="${resetUrl}" style="display:inline-block;padding:14px 28px;background:#10B981;color:#fff;font-weight:700;text-decoration:none;font-size:16px">Sign In & Start →</a></p>
@@ -92,13 +103,14 @@ export async function sendReceiptEmail(to: string, name: string, tier: string, a
 }
 
 function receiptHtml(name: string, tier: string, amountCents: number) {
+  const safeName = esc(name);
   const amount = (amountCents / 100).toFixed(2);
   const planLabel = tier === 'team' ? 'Team' : 'Individual';
   const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   return `
 <div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
   <p style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#10B981;margin-bottom:4px">Purchase Confirmed</p>
-  <p>Hey ${name},</p>
+  <p>Hey ${safeName},</p>
   <p>This confirms your AESDR purchase. Keep this email for your records.</p>
   <div style="background:#f8f9fa;padding:16px 20px;margin:16px 0;border-left:3px solid #10B981">
     <p style="margin:0 0 4px"><strong>Plan:</strong> AESDR ${planLabel}</p>
@@ -127,9 +139,10 @@ export async function sendDay3Email(to: string, name: string) {
 }
 
 function day3Html(name: string) {
+  const safeName = esc(name);
   return `
 <div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
-  <p>Hey ${name},</p>
+  <p>Hey ${safeName},</p>
   <p>Day 3. If you've started Course 1 — nice. If you haven't, no guilt. Open it when you're ready.</p>
   <p><strong>One thing from Course 2 to keep in your back pocket:</strong></p>
   <p>The "blame chain" is a pattern where everyone points fingers — reps blame their manager, managers blame marketing, and marketing blames the product. Nobody's fixing anything.</p>
@@ -155,9 +168,10 @@ export async function sendDay7Email(to: string, name: string) {
 }
 
 function day7Html(name: string) {
+  const safeName = esc(name);
   return `
 <div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
-  <p>Hey ${name},</p>
+  <p>Hey ${safeName},</p>
   <p>Week 1. Here's where most AESDR students are right now: finishing Course 3.</p>
   <p>Course 3 is where you build the <strong>AE/SDR Alignment Contract</strong> — a one-page document that gets both sides on the same page about handoffs, expectations, and accountability. It's the single most downloaded tool in the program.</p>
   <p>If you're ahead of that: great. Courses 4–6 get into manager dynamics, career pathing, and network building.</p>
@@ -254,12 +268,15 @@ export async function sendDropoff5d(to: string, name: string, lessonId: string, 
 }
 
 function dropoff5dHtml(name: string, lessonId: string, lessonTitle: string) {
+  const safeName = esc(name);
+  const safeTitle = esc(lessonTitle);
+  const safeLesson = esc(lessonId);
   return `
 <div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
-  <p>Hey ${name},</p>
+  <p>Hey ${safeName},</p>
   <p>It's been a few days since you were in the course. No guilt — life happens, quota happens, Monday meetings happen.</p>
-  <p>You left off at <strong>${lessonTitle}</strong>. Here's a direct link to pick up where you stopped:</p>
-  <p><strong><a href="${SITE}/course/${lessonId}" style="color:#10B981">Continue ${lessonTitle} →</a></strong></p>
+  <p>You left off at <strong>${safeTitle}</strong>. Here's a direct link to pick up where you stopped:</p>
+  <p><strong><a href="${SITE}/course/${safeLesson}" style="color:#10B981">Continue ${safeTitle} →</a></strong></p>
   <p>If you're stuck or something didn't make sense, reply to this email. Real person, real inbox.</p>
   <p>— AESDR</p>
   ${footer()}
@@ -281,9 +298,10 @@ export async function sendDropoff10d(to: string, name: string) {
 }
 
 function dropoff10dHtml(name: string) {
+  const safeName = esc(name);
   return `
 <div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
-  <p>Hey ${name},</p>
+  <p>Hey ${safeName},</p>
   <p>Not going to nag. Instead, here's one actionable thing from the course you haven't seen yet:</p>
   <p><strong>The Weekly Alignment Email</strong></p>
   <p>Every Friday, send your manager a 5-line email:</p>
@@ -317,9 +335,11 @@ export async function sendDropoff21d(to: string, name: string, lessonId: string)
 }
 
 function dropoff21dHtml(name: string, lessonId: string) {
+  const safeName = esc(name);
+  const safeLesson = esc(lessonId);
   return `
 <div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
-  <p>Hey ${name},</p>
+  <p>Hey ${safeName},</p>
   <p>This is the last re-engagement email I'll send. After this, I'll leave you alone.</p>
   <p>Before I do — I'd genuinely like to know:</p>
   <p><strong>Was something off?</strong></p>
@@ -331,7 +351,7 @@ function dropoff21dHtml(name: string, lessonId: string) {
   <p>Reply with a one-liner if you want. Or don't. Either way, your account is active and your progress is saved. Come back whenever.</p>
   <p>If you need anything: <a href="mailto:support@aesdr.com" style="color:#10B981">support@aesdr.com</a></p>
   <p>— AESDR</p>
-  <p style="font-size:13px;color:#666"><em>P.S. — If you want to pick it back up, here's the link: <a href="${SITE}/course/${lessonId}" style="color:#10B981">Continue →</a></em></p>
+  <p style="font-size:13px;color:#666"><em>P.S. — If you want to pick it back up, here's the link: <a href="${SITE}/course/${safeLesson}" style="color:#10B981">Continue →</a></em></p>
   ${footer()}
 </div>`;
 }
@@ -351,9 +371,10 @@ export async function sendReviewRequest(to: string, name: string) {
 }
 
 function reviewRequestHtml(name: string) {
+  const safeName = esc(name);
   return `
 <div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
-  <p>Hey ${name},</p>
+  <p>Hey ${safeName},</p>
   <p>You just finished the entire AESDR curriculum. That's rare — most people don't finish most things.</p>
   <p><strong>Quick ask — takes 30 seconds:</strong></p>
   <p>On a scale of 1–5, how useful was this course for your day-to-day work?</p>
@@ -381,9 +402,10 @@ export async function sendReviewNudge(to: string, name: string) {
 }
 
 function reviewNudgeHtml(name: string) {
+  const safeName = esc(name);
   return `
 <div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
-  <p>Hey ${name},</p>
+  <p>Hey ${safeName},</p>
   <p>Quick follow-up on my last email. I know you're busy — this takes 30 seconds.</p>
   <p><strong>Option 1:</strong> Reply with a rating (1–5 stars).</p>
   <p><strong>Option 2:</strong> Reply with one sentence about what was most useful. I'll use it as a testimonial (first name + role only).</p>

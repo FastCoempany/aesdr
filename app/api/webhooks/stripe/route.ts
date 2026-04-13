@@ -26,10 +26,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'No signature' }, { status: 400 });
   }
 
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  if (!webhookSecret) {
+    console.error('[webhook] STRIPE_WEBHOOK_SECRET environment variable is not set');
+    return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
+  }
+
   const stripe = getStripe();
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
+    event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (err) {
     console.error('Webhook signature verification failed:', err);
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
@@ -39,7 +45,8 @@ export async function POST(request: Request) {
     const session = event.data.object as Stripe.Checkout.Session;
     const email = session.customer_details?.email;
     const name = session.customer_details?.name || 'there';
-    const tier = session.metadata?.tier || 'individual';
+    const tierRaw = session.metadata?.tier;
+    const tier = (tierRaw === 'team' || tierRaw === 'individual') ? tierRaw : 'individual';
     const amountCents = session.amount_total || 0;
 
     const supabase = createAdminClient();
@@ -70,7 +77,7 @@ export async function POST(request: Request) {
         // bounded admin user list
         tempPassword = null;
 
-        const { data: existingPurchase } = await supabase
+        const { data: existingPurchase, error: lookupErr } = await supabase
           .from('purchases')
           .select('user_id')
           .eq('user_email', email.toLowerCase())
@@ -78,11 +85,18 @@ export async function POST(request: Request) {
           .limit(1)
           .maybeSingle();
 
+        if (lookupErr) {
+          console.error('[webhook] Purchase lookup failed:', lookupErr.message);
+        }
+
         if (existingPurchase?.user_id) {
           userId = existingPurchase.user_id;
         } else {
-          // Last resort: bounded list search (cap at 50, paginate if needed)
-          const { data: userList } = await supabase.auth.admin.listUsers({ perPage: 50 });
+          // Last resort: bounded list search (cap at 50)
+          const { data: userList, error: listErr } = await supabase.auth.admin.listUsers({ perPage: 50 });
+          if (listErr) {
+            console.error('[webhook] User list failed:', listErr.message);
+          }
           const matched = userList?.users?.find(
             (u) => u.email?.toLowerCase() === email.toLowerCase()
           );

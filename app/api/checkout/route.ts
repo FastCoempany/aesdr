@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     // Validate origin to prevent cross-site form submission
     const origin = request.headers.get('origin');
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aesdr.com';
-    if (origin && !siteUrl.startsWith(origin)) {
+    if (origin && new URL(siteUrl).origin !== origin) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 

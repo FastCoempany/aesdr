@@ -21,12 +21,17 @@ export async function GET(request: Request) {
   }
 
   const supabase = createAdminClient();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('purchases')
     .select('user_email, customer_name, plan')
     .eq('stripe_session_id', sessionId)
     .eq('status', 'active')
     .maybeSingle();
+
+  if (error) {
+    console.error('[purchase-status] Query failed:', error.message);
+    return NextResponse.json({ confirmed: false });
+  }
 
   if (!data) {
     return NextResponse.json({ confirmed: false });

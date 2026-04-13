@@ -47,12 +47,18 @@ export async function extractWithLLM(
 
   const prompt = buildPrompt(gatesByCategory, scoresByCategory, role);
 
-  const response = await client.messages.create({
-    model: MODEL,
-    max_tokens: 4096,
-    messages: [{ role: "user", content: prompt }],
-    system: SYSTEM_PROMPT,
-  });
+  let response: Anthropic.Message;
+  try {
+    response = await client.messages.create({
+      model: MODEL,
+      max_tokens: 4096,
+      messages: [{ role: "user", content: prompt }],
+      system: SYSTEM_PROMPT,
+    });
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : "Unknown API error";
+    throw new Error(`Claude API call failed: ${detail}`);
+  }
 
   const text =
     response.content[0].type === "text" ? response.content[0].text : "";
@@ -63,24 +69,70 @@ export async function extractWithLLM(
     throw new Error("LLM returned no parseable JSON");
   }
 
-  let parsed: LLMExtractionResult;
+  let raw: unknown;
   try {
-    parsed = JSON.parse(jsonMatch[1]) as LLMExtractionResult;
+    raw = JSON.parse(jsonMatch[1]);
   } catch {
     throw new Error("LLM returned malformed JSON");
   }
 
-  // Validate structure
+  // Runtime validation of required structure
+  const parsed = raw as Record<string, unknown>;
+  const playbook = parsed.playbook as Record<string, unknown> | undefined;
+  const mirror = parsed.mirror as Record<string, unknown> | undefined;
+
   if (
-    !parsed.playbook?.sections ||
-    !Array.isArray(parsed.playbook.sections) ||
-    !parsed.mirror?.confrontations ||
-    !Array.isArray(parsed.mirror.confrontations)
+    !playbook?.sections ||
+    !Array.isArray(playbook.sections) ||
+    !mirror?.confrontations ||
+    !Array.isArray(mirror.confrontations)
   ) {
     throw new Error("LLM response missing required fields");
   }
 
-  return parsed;
+  // Validate individual section shapes
+  for (const section of playbook.sections) {
+    if (
+      typeof section !== "object" ||
+      !section ||
+      typeof (section as Record<string, unknown>).category !== "string" ||
+      !Array.isArray((section as Record<string, unknown>).quotes) ||
+      !Array.isArray((section as Record<string, unknown>).commitments)
+    ) {
+      throw new Error("LLM response contains malformed playbook section");
+    }
+  }
+
+  for (const conf of mirror.confrontations) {
+    if (
+      typeof conf !== "object" ||
+      !conf ||
+      typeof (conf as Record<string, unknown>).category !== "string" ||
+      typeof (conf as Record<string, unknown>).stat !== "string"
+    ) {
+      throw new Error("LLM response contains malformed mirror confrontation");
+    }
+  }
+
+  return raw as LLMExtractionResult;
+}
+
+/* ── Input Sanitization ── */
+
+/**
+ * Strip characters and patterns that could be used for prompt injection.
+ * Removes instruction-like patterns while preserving the student's voice.
+ */
+function sanitizeUserText(text: string): string {
+  return text
+    // Remove XML/HTML-like tags that could inject system instructions
+    .replace(/<[^>]*>/g, "")
+    // Remove markdown heading-like patterns that mimic prompt structure
+    .replace(/^#{1,4}\s/gm, "")
+    // Collapse excessive whitespace
+    .replace(/\n{3,}/g, "\n\n")
+    .trim()
+    .slice(0, 2000); // Cap individual response length
 }
 
 /* ── Prompt Construction ── */
@@ -120,7 +172,7 @@ function buildPrompt(
     prompt += `### ${meta.name}\n`;
     for (const r of responses) {
       prompt += `**Lesson ${r.lessonId}.${r.unitIndex} — ${r.label} (${r.gateKey})**\n`;
-      prompt += `> ${r.text}\n\n`;
+      prompt += `> ${sanitizeUserText(r.text)}\n\n`;
     }
   }
 
