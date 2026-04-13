@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR — The Playbook</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;600&display=swap');
+
+  :root {
+    --bg: #020617;
+    --text: #F8FAFC;
+    --muted: #94A3B8;
+    --theme: #10B981;
+    --amber: rgba(245,158,11,0.75);
+    --iris: linear-gradient(90deg, #FF006E, #FF6B00, #F59E0B, #10B981, #38BDF8, #8B5CF6, #FF006E);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  /* Top iris bar */
+  .iris-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--iris);
+    background-size: 300% 100%;
+    animation: shimmer 4s linear infinite;
+    z-index: 100;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+  }
+
+  /* Intro — the typewriter build */
+  .intro {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    text-align: center;
+    padding: 40px;
+  }
+
+  .intro-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: rgba(148,163,184,0.35);
+    margin-bottom: 20px;
+    opacity: 0;
+  }
+
+  .intro-tag.visible { animation: fadeIn 0.5s ease forwards; }
+
+  .intro-claim {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(32px, 6vw, 64px);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+    line-height: 1.05;
+    max-width: 700px;
+    opacity: 0;
+  }
+
+  .intro-claim.visible { animation: riseIn 0.6s ease forwards; }
+
+  @keyframes riseIn {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .iris-text {
+    background: var(--iris);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 4s linear infinite;
+  }
+
+  .intro-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(13px, 1.6vw, 17px);
+    color: var(--muted);
+    max-width: 480px;
+    line-height: 1.7;
+    margin-top: 20px;
+    opacity: 0;
+  }
+
+  .intro-sub.visible { animation: fadeIn 0.5s ease forwards; }
+
+  .scroll-cue {
+    position: absolute;
+    bottom: 48px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+  }
+
+  .scroll-cue.visible { animation: fadeIn 0.5s ease forwards; }
+
+  .scroll-cue span {
+    font-family: 'Caveat', cursive;
+    font-size: 16px;
+    color: rgba(245,158,11,0.3);
+  }
+
+  .scroll-cue .bar {
+    width: 1px;
+    height: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scroll-cue .bar::after {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    background: var(--iris);
+    background-size: 100% 300%;
+    animation: shimmer 4s linear infinite, drop 1.5s ease-in-out infinite;
+  }
+
+  @keyframes drop {
+    0% { top: -100%; }
+    50% { top: 0; }
+    100% { top: 100%; }
+  }
+
+  /* Playbook sections */
+  .pb-section {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 80px 32px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .pb-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .pb-section-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--theme);
+    margin-bottom: 10px;
+  }
+
+  .pb-section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(248,250,252,0.06);
+  }
+
+  .pb-source {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .1em;
+    color: rgba(148,163,184,0.3);
+    margin-bottom: 14px;
+  }
+
+  /* Quote cards — student's own words */
+  .pb-quote {
+    border-left: 2px solid rgba(248,250,252,0.08);
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    position: relative;
+    background: rgba(248,250,252,0.01);
+  }
+
+  .pb-quote-text {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(15px, 2vw, 18px);
+    font-weight: 500;
+    line-height: 1.7;
+    color: rgba(248,250,252,0.8);
+  }
+
+  .pb-quote-text em {
+    font-style: normal;
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .pb-quote-from {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .15em;
+    color: rgba(148,163,184,0.3);
+    margin-top: 12px;
+    text-transform: uppercase;
+  }
+
+  /* Commitment bullet */
+  .pb-commit {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(248,250,252,0.03);
+  }
+
+  .pb-commit-check {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--theme);
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: var(--theme);
+  }
+
+  .pb-commit-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.65;
+    color: rgba(248,250,252,0.65);
+  }
+
+  /* Divider between sections */
+  .pb-divider {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 32px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(248,250,252,0.06) 20%, rgba(248,250,252,0.06) 80%, transparent);
+  }
+
+  /* Closing section */
+  .pb-close {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 80px 32px 120px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .pb-close.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .pb-close-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .pb-close-big {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(36px, 7vw, 72px);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+    line-height: 1;
+  }
+
+  .pb-close-note {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(16px, 2.2vw, 22px);
+    color: var(--amber);
+    margin-top: 20px;
+    transform: rotate(-0.5deg);
+  }
+
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="iris-bar"></div>
+
+<!-- INTRO -->
+<div class="intro">
+  <div class="intro-tag" id="introTag">AUTO-GENERATED FROM YOUR 36 GATE RESPONSES</div>
+  <div class="intro-claim" id="introClaim">You didn't write a playbook.<br>You <span class="iris-text">already wrote one.</span></div>
+  <div class="intro-sub" id="introSub">Every gate response you submitted across 12 lessons has been organized into the operating manual you didn't know you were building. These are your words. Your commitments. Your system.</div>
+  <div class="scroll-cue" id="scrollCue">
+    <span>your words, below</span>
+    <div class="bar"></div>
+  </div>
+</div>
+
+<!-- SECTION 1: PIPELINE -->
+<div class="pb-section" id="sec1">
+  <div class="pb-section-tag">SECTION 01 — YOUR PIPELINE SYSTEM</div>
+  <div class="pb-section-title">How You Said You'd Run Your Pipeline</div>
+
+  <div class="pb-source">EXTRACTED FROM: LESSON 1.1 GATE · LESSON 2.2 GATE · LESSON 3.1 GATE</div>
+
+  <div class="pb-quote">
+    <div class="pb-quote-text">"I need to stop looking at my pipeline once a week like it's a chore. I'm going to <em>review it every morning before I check Slack</em> — 15 minutes, non-negotiable. If something hasn't moved in 10 days, I'm either advancing it or killing it."</div>
+    <div class="pb-quote-from">— YOUR GATE RESPONSE · LESSON 2.2</div>
+  </div>
+
+  <div class="pb-quote">
+    <div class="pb-quote-text">"My problem isn't lead quality. My problem is I <em>avoid the calls I'm scared of</em> and fill the time with busy work. The hard calls need to happen before noon."</div>
+    <div class="pb-quote-from">— YOUR GATE RESPONSE · LESSON 1.1</div>
+  </div>
+
+  <div class="pb-commit">
+    <div class="pb-commit-check">&#10003;</div>
+    <div class="pb-commit-text">Review pipeline every morning before 9am — 15 minutes, no Slack first</div>
+  </div>
+  <div class="pb-commit">
+    <div class="pb-commit-check">&#10003;</div>
+    <div class="pb-commit-text">Hard calls before noon — no busy work before the uncomfortable dials</div>
+  </div>
+  <div class="pb-commit">
+    <div class="pb-commit-check">&#10003;</div>
+    <div class="pb-commit-text">10-day rule — advance or kill, no pipeline ghosts</div>
+  </div>
+</div>
+
+<div class="pb-divider"></div>
+
+<!-- SECTION 2: DISCIPLINE -->
+<div class="pb-section" id="sec2">
+  <div class="pb-section-tag">SECTION 02 — YOUR DAILY OPERATING RULES</div>
+  <div class="pb-section-title">The Discipline You Committed To</div>
+
+  <div class="pb-source">EXTRACTED FROM: LESSON 4.3 GATE · LESSON 5.1 GATE · LESSON 12.2 GATE</div>
+
+  <div class="pb-quote">
+    <div class="pb-quote-text">"Working from home is killing me slowly. I eat lunch at my desk, I never leave the apartment, and by 3pm I'm on my phone for 40 minutes pretending it's 'research.' I need a <em>hard shutdown at 6pm</em> and an actual lunch that doesn't happen at my keyboard."</div>
+    <div class="pb-quote-from">— YOUR GATE RESPONSE · LESSON 12.2</div>
+  </div>
+
+  <div class="pb-quote">
+    <div class="pb-quote-text">"Screen time last week: 11 hours a day. That's not a flex. I'm going to <em>put my phone in another room during call blocks</em>. If someone needs me that bad, they can wait 90 minutes."</div>
+    <div class="pb-quote-from">— YOUR GATE RESPONSE · LESSON 4.3</div>
+  </div>
+
+  <div class="pb-commit">
+    <div class="pb-commit-check">&#10003;</div>
+    <div class="pb-commit-text">Hard shutdown at 6pm — laptop closed, no "one more email"</div>
+  </div>
+  <div class="pb-commit">
+    <div class="pb-commit-check">&#10003;</div>
+    <div class="pb-commit-text">Phone in another room during call blocks — 90 minutes uninterrupted</div>
+  </div>
+  <div class="pb-commit">
+    <div class="pb-commit-check">&#10003;</div>
+    <div class="pb-commit-text">Actual lunch away from the desk — even if it's 20 minutes</div>
+  </div>
+</div>
+
+<div class="pb-divider"></div>
+
+<!-- SECTION 3: IDENTITY -->
+<div class="pb-section" id="sec3">
+  <div class="pb-section-tag">SECTION 03 — YOUR CAREER FRAMEWORK</div>
+  <div class="pb-section-title">Who You Said You'd Become</div>
+
+  <div class="pb-source">EXTRACTED FROM: LESSON 7.3 GATE · LESSON 8.2 GATE · LESSON 6.2 GATE</div>
+
+  <div class="pb-quote">
+    <div class="pb-quote-text">"I've been calling myself a 'high-potential AE' for two years. That's not an identity — that's a placeholder. I'm going to <em>stop auditioning and start performing</em>. The evidence is in my CRM, not my self-talk."</div>
+    <div class="pb-quote-from">— YOUR GATE RESPONSE · LESSON 8.2</div>
+  </div>
+
+  <div class="pb-quote">
+    <div class="pb-quote-text">"When someone asks what I do, I say 'I'm in sales' like I'm apologizing. I need to own it. I <em>help companies solve problems they didn't know they had</em> and I get paid based on how well I do it. That's worth saying with conviction."</div>
+    <div class="pb-quote-from">— YOUR GATE RESPONSE · LESSON 6.2</div>
+  </div>
+
+  <div class="pb-commit">
+    <div class="pb-commit-check">&#10003;</div>
+    <div class="pb-commit-text">Own the title — no more apologetic "I'm in sales"</div>
+  </div>
+  <div class="pb-commit">
+    <div class="pb-commit-check">&#10003;</div>
+    <div class="pb-commit-text">Evidence-based identity — CRM numbers, not self-talk</div>
+  </div>
+</div>
+
+<!-- CLOSING -->
+<div class="pb-close" id="pbClose">
+  <div class="pb-close-title">YOUR PLAYBOOK — 12 LESSONS · 36 GATES · YOUR WORDS</div>
+  <div class="pb-close-big"><span class="iris-text">Now do the thing you said you'd do.</span></div>
+  <div class="pb-close-note">I printed mine. It's on my fridge. Right next to the ramen seasoning packets and the photo of my ex. — M</div>
+</div>
+
+<script>
+// Intro sequence
+const introTag = document.getElementById('introTag');
+const introClaim = document.getElementById('introClaim');
+const introSub = document.getElementById('introSub');
+const scrollCue = document.getElementById('scrollCue');
+
+setTimeout(() => introTag.classList.add('visible'), 300);
+setTimeout(() => introClaim.classList.add('visible'), 800);
+setTimeout(() => introSub.classList.add('visible'), 1400);
+setTimeout(() => scrollCue.classList.add('visible'), 2000);
+
+// Scroll reveal
+const sections = document.querySelectorAll('.pb-section, .pb-close');
+
+function checkScroll() {
+  const windowH = window.innerHeight;
+  sections.forEach(sec => {
+    const rect = sec.getBoundingClientRect();
+    if (rect.top < windowH * 0.8) {
+      sec.classList.add('visible');
+    }
+  });
+}
+
+window.addEventListener('scroll', checkScroll, { passive: true });
+checkScroll();
+</script>
+
+</body>
+</html>
