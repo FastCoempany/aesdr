@@ -189,11 +189,13 @@ export function extractCategoryScores(rows: ProgressRow[]): CategoryScore[] {
    ═══════════════════════════════════════════ */
 
 /**
- * Generate a hash of all progress data to detect when artifacts need
- * regeneration. If the hash matches the stored artifact's source_hash,
- * we skip re-generation.
+ * Generate a hash of all progress data plus user metadata to detect when
+ * artifacts need regeneration. If the hash matches the stored artifact's
+ * source_hash, we skip re-generation.
+ *
+ * Includes role so that switching AE↔SDR invalidates cached artifacts.
  */
-export function hashProgressData(rows: ProgressRow[]): string {
+export function hashProgressData(rows: ProgressRow[], role?: string): string {
   const normalized = rows
     .map((r) => ({
       lesson_id: r.lesson_id,
@@ -203,7 +205,7 @@ export function hashProgressData(rows: ProgressRow[]): string {
 
   return crypto
     .createHash("sha256")
-    .update(JSON.stringify(normalized))
+    .update(JSON.stringify({ rows: normalized, role: role ?? "" }))
     .digest("hex")
     .slice(0, 16);
 }

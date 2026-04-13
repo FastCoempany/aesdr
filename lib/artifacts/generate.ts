@@ -64,8 +64,8 @@ export async function generateArtifacts(
     throw new Error("No course progress found. Complete at least one lesson first.");
   }
 
-  // 2. Compute hash to check cache
-  const sourceHash = hashProgressData(progressRows);
+  // 2. Compute hash to check cache (includes role so AE↔SDR switch invalidates)
+  const sourceHash = hashProgressData(progressRows, user.role);
 
   // 3. Check for cached artifacts with matching hash
   const { data: cached, error: cacheError } = await supabase
@@ -106,6 +106,10 @@ export async function generateArtifacts(
   // 4. Extract data
   const gateResponses = extractGateResponses(progressRows);
   const categoryScores = extractCategoryScores(progressRows);
+
+  if (gateResponses.length === 0) {
+    throw new Error("No gate responses found. Complete at least one reflection gate before generating artifacts.");
+  }
 
   // 5. Generate Diagnostic (no LLM)
   const diagnostic = generateDiagnostic(

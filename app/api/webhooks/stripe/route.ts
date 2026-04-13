@@ -107,6 +107,15 @@ export async function POST(request: Request) {
       }
     }
 
+    // Check if this webhook was already processed (prevent duplicate emails on retry)
+    const { data: existingRecord } = await supabase
+      .from('purchases')
+      .select('stripe_session_id')
+      .eq('stripe_session_id', session.id)
+      .maybeSingle();
+
+    const isNewPurchase = !existingRecord;
+
     // Record purchase (idempotent via upsert on stripe_session_id)
     const { error: purchaseError } = await supabase.from('purchases').upsert(
       {
@@ -134,8 +143,8 @@ export async function POST(request: Request) {
       console.error('Checkout session update failed:', checkoutError.message);
     }
 
-    // Send emails (don't let failures break the webhook)
-    if (email) {
+    // Send emails only on first processing (skip on Stripe retries)
+    if (email && isNewPurchase) {
       try {
         await sendWelcomeEmail(email, name, tempPassword);
       } catch (err) {

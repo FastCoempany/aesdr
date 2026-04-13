@@ -26,7 +26,8 @@ export default function CheckoutButton({
       });
 
       const data = await res.json();
-      if (data.url && new URL(data.url).hostname.endsWith("stripe.com")) {
+      const urlHost = data.url ? new URL(data.url).hostname : "";
+      if (data.url && (urlHost === "stripe.com" || urlHost.endsWith(".stripe.com"))) {
         window.location.href = data.url;
       } else if (data.url) {
         alert("Unexpected checkout URL. Please contact support@aesdr.com.");
