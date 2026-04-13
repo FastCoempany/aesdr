@@ -4,36 +4,42 @@ import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { sendDropoff5d, sendDropoff10d, sendDropoff21d } from '@/lib/email';
 import { TIMING, TOTAL_LESSONS } from '@/lib/config';
+import { verifyCronAuth } from '@/lib/cron-auth';
 
 export async function GET(request: Request) {
-  const authHeader = request.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const authErr = verifyCronAuth(request);
+  if (authErr) return authErr;
 
   const supabase = createAdminClient();
   const now = new Date();
   let d5Sent = 0;
   let d10Sent = 0;
   let d21Sent = 0;
+  const errors: string[] = [];
 
   // ── Gather all candidate users for any tier of dropoff ──
   const fiveDaysAgo = new Date(now.getTime() - TIMING.dropoff.d5).toISOString();
 
-  const { data: allDropoffCandidates } = await supabase
+  const { data: allDropoffCandidates, error: queryErr } = await supabase
     .from('purchases')
     .select('user_email, user_id, customer_name, dropoff_5d_sent, dropoff_10d_sent, dropoff_21d_sent, purchased_at')
     .eq('status', 'active')
     .lte('purchased_at', fiveDaysAgo)
     .or('dropoff_5d_sent.eq.false,dropoff_10d_sent.eq.false,dropoff_21d_sent.eq.false');
 
-  if (allDropoffCandidates && allDropoffCandidates.length > 0) {
+  if (queryErr) {
+    errors.push(`dropoff query: ${queryErr.message}`);
+  } else if (allDropoffCandidates && allDropoffCandidates.length > 0) {
     // Batch-fetch progress for ALL candidate users in one query
     const userIds = [...new Set(allDropoffCandidates.map((u) => u.user_id).filter(Boolean))];
-    const { data: allProgress } = await supabase
+    const { data: allProgress, error: progressErr } = await supabase
       .from('course_progress')
       .select('user_id, lesson_id, is_completed, updated_at')
       .in('user_id', userIds);
+
+    if (progressErr) {
+      errors.push(`progress query: ${progressErr.message}`);
+    }
 
     // Build lookup maps
     const progressByUser = new Map<string, typeof allProgress>();
@@ -75,11 +81,12 @@ export async function GET(request: Request) {
         if (!lastActiveDate || lastActiveDate <= fiveDaysAgoDate) {
           try {
             await sendDropoff5d(user.user_email, user.customer_name || 'there', lastLesson, `Lesson ${lastLesson}`);
-            await supabase
+            const { error: u5 } = await supabase
               .from('purchases')
               .update({ dropoff_5d_sent: true })
               .eq('user_email', user.user_email);
-            d5Sent++;
+            if (u5) errors.push(`5d update ${user.user_email}: ${u5.message}`);
+            else d5Sent++;
           } catch (err) {
             console.error(`Dropoff 5d email failed for ${user.user_email}:`, err);
           }
@@ -91,11 +98,12 @@ export async function GET(request: Request) {
         if (!lastActiveDate || lastActiveDate <= tenDaysAgo) {
           try {
             await sendDropoff10d(user.user_email, user.customer_name || 'there');
-            await supabase
+            const { error: u10 } = await supabase
               .from('purchases')
               .update({ dropoff_10d_sent: true })
               .eq('user_email', user.user_email);
-            d10Sent++;
+            if (u10) errors.push(`10d update ${user.user_email}: ${u10.message}`);
+            else d10Sent++;
           } catch (err) {
             console.error(`Dropoff 10d email failed for ${user.user_email}:`, err);
           }
@@ -107,11 +115,12 @@ export async function GET(request: Request) {
         if (!lastActiveDate || lastActiveDate <= twentyOneDaysAgo) {
           try {
             await sendDropoff21d(user.user_email, user.customer_name || 'there', lastLesson);
-            await supabase
+            const { error: u21 } = await supabase
               .from('purchases')
               .update({ dropoff_21d_sent: true })
               .eq('user_email', user.user_email);
-            d21Sent++;
+            if (u21) errors.push(`21d update ${user.user_email}: ${u21.message}`);
+            else d21Sent++;
           } catch (err) {
             console.error(`Dropoff 21d email failed for ${user.user_email}:`, err);
           }
@@ -120,5 +129,6 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.json({ d5Sent, d10Sent, d21Sent });
+  if (errors.length > 0) console.error('[cron/dropoff] Errors:', errors);
+  return NextResponse.json({ d5Sent, d10Sent, d21Sent, errors: errors.length > 0 ? errors : undefined });
 }

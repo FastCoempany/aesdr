@@ -5,25 +5,42 @@ import type { GateResponse, CategoryScore } from "./types";
 import { CATEGORY_META } from "./categories";
 import type { ArtifactCategory } from "./categories";
 
-/**
- * Shape of a course_progress row from Supabase.
- * state_data contains _units: { "1": { gate_1: {...}, ... }, "2": {...} }
- */
-interface ProgressRow {
-  lesson_id: string;
-  is_completed: boolean;
-  state_data: Record<string, unknown>;
-}
-
+/** Shape of a gate entry within unit state_data */
 interface GateEntry {
   completed?: boolean;
   value?: string;
   completedAt?: string;
 }
 
+/** Shape of the _extra field within each unit's state_data */
 interface ExtraData {
   exerciseScores?: Record<string, { correct: number; total: number }>;
   quizScore?: { correct: number; total: number };
+}
+
+/** Shape of a single unit's state_data (inside the _units namespace) */
+interface UnitStateData {
+  unit?: string;
+  _extra?: ExtraData;
+  [key: string]: unknown; // gate_1, gate_3, gate_8, etc.
+}
+
+/** Shape of the full state_data column from course_progress */
+interface StateData {
+  unit?: string;
+  _units?: Record<string, UnitStateData>;
+  _extra?: ExtraData;
+  [key: string]: unknown; // top-level flat gates for iframe restore compat
+}
+
+/**
+ * Shape of a course_progress row from Supabase.
+ * state_data contains _units: { "1": { gate_1: {...}, ... }, "2": {...} }
+ */
+export interface ProgressRow {
+  lesson_id: string;
+  is_completed: boolean;
+  state_data: StateData;
 }
 
 /* ═══════════════════════════════════════════
@@ -38,14 +55,14 @@ export function extractGateResponses(rows: ProgressRow[]): GateResponse[] {
   const responses: GateResponse[] = [];
 
   for (const row of rows) {
-    const stateData = row.state_data ?? {};
-    const units = (stateData._units as Record<string, Record<string, unknown>>) ?? {};
+    const stateData: StateData = row.state_data ?? {};
+    const units = stateData._units ?? {};
 
     // Also check top-level gates (for rows saved before the merge update)
     const unitKeys = Object.keys(units);
     if (unitKeys.length === 0) {
       // Legacy format: gates at top level, unit from stateData.unit
-      const unitId = (stateData.unit as string) ?? "1";
+      const unitId = stateData.unit ?? "1";
       extractGatesFromUnit(row.lesson_id, unitId, stateData, responses);
     } else {
       for (const [unitId, unitData] of Object.entries(units)) {
@@ -62,7 +79,7 @@ export function extractGateResponses(rows: ProgressRow[]): GateResponse[] {
 function extractGatesFromUnit(
   lessonId: string,
   unitId: string,
-  unitData: Record<string, unknown>,
+  unitData: UnitStateData,
   out: GateResponse[]
 ): void {
   const unitIndex = parseInt(unitId, 10);
@@ -113,23 +130,23 @@ export function extractCategoryScores(rows: ProgressRow[]): CategoryScore[] {
   };
 
   for (const row of rows) {
-    const stateData = row.state_data ?? {};
-    const units = (stateData._units as Record<string, Record<string, unknown>>) ?? {};
+    const stateData: StateData = row.state_data ?? {};
+    const units = stateData._units ?? {};
 
-    const unitEntries = Object.keys(units).length > 0
+    const unitEntries: [string, UnitStateData][] = Object.keys(units).length > 0
       ? Object.entries(units)
-      : [[(stateData.unit as string) ?? "1", stateData] as const];
+      : [[stateData.unit ?? "1", stateData as UnitStateData]];
 
     for (const [unitId, unitData] of unitEntries) {
       if (!unitData || typeof unitData !== "object") continue;
 
-      const unitIndex = parseInt(unitId as string, 10);
+      const unitIndex = parseInt(unitId, 10);
       const mapping = UNIT_CATEGORY_MAP.find(
         (m) => m.lessonId === row.lesson_id && m.unitIndex === unitIndex
       );
       if (!mapping) continue;
 
-      const extra = (unitData as Record<string, unknown>)._extra as ExtraData | undefined;
+      const extra = unitData._extra;
       if (!extra) continue;
 
       const bucket = buckets[mapping.category];

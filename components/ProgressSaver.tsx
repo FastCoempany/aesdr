@@ -66,12 +66,16 @@ export default function ProgressSaver({
       const { type } = event.data ?? {};
 
       if (type === "aesdr:progress") {
-        const { screen, stateData } = event.data as {
-          screen: number;
-          stateData: Record<string, unknown>;
-        };
+        const raw = event.data;
+        const screen = typeof raw?.screen === "number" ? raw.screen : null;
+        const stateData =
+          raw?.stateData && typeof raw.stateData === "object" && !Array.isArray(raw.stateData)
+            ? (raw.stateData as Record<string, unknown>)
+            : null;
+
+        if (screen === null || !stateData) return;
         failCountRef.current = 0;
-        save(screen, stateData ?? {});
+        save(screen, stateData);
       }
 
       if (type === "aesdr:complete") {

@@ -59,7 +59,6 @@ export async function POST(request: Request) {
         email_confirm: true,
         user_metadata: {
           full_name: name !== 'there' ? name : undefined,
-          needs_password_change: true,
         },
       });
 
@@ -93,7 +92,7 @@ export async function POST(request: Request) {
     }
 
     // Record purchase (idempotent via upsert on stripe_session_id)
-    await supabase.from('purchases').upsert(
+    const { error: purchaseError } = await supabase.from('purchases').upsert(
       {
         stripe_session_id: session.id,
         user_email: email,
@@ -106,12 +105,18 @@ export async function POST(request: Request) {
       },
       { onConflict: 'stripe_session_id' }
     );
+    if (purchaseError) {
+      console.error('Purchase upsert failed:', purchaseError.message);
+    }
 
     // Mark checkout session as completed (for abandonment tracking)
-    await supabase
+    const { error: checkoutError } = await supabase
       .from('checkout_sessions')
       .update({ completed: true })
       .eq('session_id', session.id);
+    if (checkoutError) {
+      console.error('Checkout session update failed:', checkoutError.message);
+    }
 
     // Send emails (don't let failures break the webhook)
     if (email) {

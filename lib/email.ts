@@ -11,35 +11,57 @@ const UNSUBSCRIBE_HEADERS = {
   'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
 };
 
-// ─── Welcome Email (immediate after purchase) ───
-
-export async function sendWelcomeEmail(to: string, name: string, tempPassword: string | null) {
-  return getResend().emails.send({
-    from: FROM,
-    to,
-    headers: UNSUBSCRIBE_HEADERS,
-    subject: "You're in. Start here.",
-    html: welcomeHtml(name, to, tempPassword),
-  });
+/**
+ * Wrapper that sends an email and logs failures.
+ * Returns true on success, false on failure (never throws).
+ */
+async function safeSend(
+  label: string,
+  sendFn: () => ReturnType<ReturnType<typeof getResend>['emails']['send']>
+): Promise<boolean> {
+  try {
+    const result = await sendFn();
+    if (result.error) {
+      console.error(`[email] ${label} failed:`, result.error);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error(`[email] ${label} threw:`, err);
+    return false;
+  }
 }
 
-function welcomeHtml(name: string, email: string, tempPassword: string | null) {
-  const loginUrl = `${SITE}/login`;
-  const credentialsBlock = tempPassword
-    ? `
+// ─── Welcome Email (immediate after purchase) ───
+
+export async function sendWelcomeEmail(to: string, name: string, _tempPassword: string | null) {
+  // Generate a magic link for password-free first sign-in.
+  // The user can set their own password later via Account settings.
+  const resetUrl = `${SITE}/login?email=${encodeURIComponent(to)}`;
+  return safeSend(`welcome to ${to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to,
+      headers: UNSUBSCRIBE_HEADERS,
+      subject: "You're in. Start here.",
+      html: welcomeHtml(name, to, resetUrl),
+    })
+  );
+}
+
+function welcomeHtml(name: string, email: string, resetUrl: string) {
+  const credentialsBlock = `
   <div style="background:#f8f9fa;padding:16px 20px;margin:20px 0;border-left:3px solid #10B981">
-    <p style="margin:0 0 6px;font-weight:700">Your login credentials:</p>
+    <p style="margin:0 0 6px;font-weight:700">Your account:</p>
     <p style="margin:0 0 4px"><strong>Email:</strong> ${email}</p>
-    <p style="margin:0 0 4px"><strong>Temporary password:</strong> <code style="background:#e8e8e8;padding:2px 6px;font-size:15px">${tempPassword}</code></p>
-    <p style="margin:8px 0 0;font-size:13px;color:#666">Change your password after signing in at Account → Change Password.</p>
-  </div>`
-    : '';
+    <p style="margin:8px 0 0;font-size:13px;color:#666">Click the button below to sign in. You can set a password in Account settings after your first login.</p>
+  </div>`;
   return `
 <div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
   <p>Welcome to AESDR${name !== 'there' ? `, ${name}` : ''}.</p>
   <p>No long onboarding. No orientation video. Here's what matters:</p>
   ${credentialsBlock}
-  <p style="margin:24px 0"><a href="${loginUrl}" style="display:inline-block;padding:14px 28px;background:#10B981;color:#fff;font-weight:700;text-decoration:none;font-size:16px">Sign In & Start →</a></p>
+  <p style="margin:24px 0"><a href="${resetUrl}" style="display:inline-block;padding:14px 28px;background:#10B981;color:#fff;font-weight:700;text-decoration:none;font-size:16px">Sign In & Start →</a></p>
   <p>Course 1 covers the fundamentals — creating structure, building real camaraderie in your AE/SDR partnership, and setting up your first 90 days the right way.</p>
   <p><strong>A few things to know:</strong></p>
   <ul>
@@ -58,13 +80,15 @@ function welcomeHtml(name: string, email: string, tempPassword: string | null) {
 // ─── Purchase Receipt Email ───
 
 export async function sendReceiptEmail(to: string, name: string, tier: string, amountCents: number) {
-  return getResend().emails.send({
-    from: FROM,
-    to,
-    headers: UNSUBSCRIBE_HEADERS,
-    subject: 'AESDR — Purchase Confirmation',
-    html: receiptHtml(name, tier, amountCents),
-  });
+  return safeSend(`receipt to ${to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to,
+      headers: UNSUBSCRIBE_HEADERS,
+      subject: 'AESDR — Purchase Confirmation',
+      html: receiptHtml(name, tier, amountCents),
+    })
+  );
 }
 
 function receiptHtml(name: string, tier: string, amountCents: number) {
@@ -91,13 +115,15 @@ function receiptHtml(name: string, tier: string, amountCents: number) {
 // ─── Day 3 Drip Email ───
 
 export async function sendDay3Email(to: string, name: string) {
-  return getResend().emails.send({
-    from: FROM,
-    to,
-    headers: UNSUBSCRIBE_HEADERS,
-    subject: "How's Course 1 going?",
-    html: day3Html(name),
-  });
+  return safeSend(`day3 to ${to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to,
+      headers: UNSUBSCRIBE_HEADERS,
+      subject: "How's Course 1 going?",
+      html: day3Html(name),
+    })
+  );
 }
 
 function day3Html(name: string) {
@@ -117,13 +143,15 @@ function day3Html(name: string) {
 // ─── Day 7 Drip Email ───
 
 export async function sendDay7Email(to: string, name: string) {
-  return getResend().emails.send({
-    from: FROM,
-    to,
-    headers: UNSUBSCRIBE_HEADERS,
-    subject: "The tool in Course 3 is worth the entire price",
-    html: day7Html(name),
-  });
+  return safeSend(`day7 to ${to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to,
+      headers: UNSUBSCRIBE_HEADERS,
+      subject: "The tool in Course 3 is worth the entire price",
+      html: day7Html(name),
+    })
+  );
 }
 
 function day7Html(name: string) {
@@ -144,13 +172,15 @@ function day7Html(name: string) {
 // ─── Cart Abandonment: 1 Hour ───
 
 export async function sendAbandon1hr(to: string) {
-  return getResend().emails.send({
-    from: FROM,
-    to,
-    headers: UNSUBSCRIBE_HEADERS,
-    subject: "Still thinking it over?",
-    html: abandon1hrHtml(),
-  });
+  return safeSend(`abandon-1hr to ${to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to,
+      headers: UNSUBSCRIBE_HEADERS,
+      subject: "Still thinking it over?",
+      html: abandon1hrHtml(),
+    })
+  );
 }
 
 function abandon1hrHtml() {
@@ -182,13 +212,15 @@ function abandon1hrHtml() {
 // ─── Cart Abandonment: 24 Hours ───
 
 export async function sendAbandon24hr(to: string) {
-  return getResend().emails.send({
-    from: FROM,
-    to,
-    headers: UNSUBSCRIBE_HEADERS,
-    subject: "Quick question before I stop following up",
-    html: abandon24hrHtml(),
-  });
+  return safeSend(`abandon-24hr to ${to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to,
+      headers: UNSUBSCRIBE_HEADERS,
+      subject: "Quick question before I stop following up",
+      html: abandon24hrHtml(),
+    })
+  );
 }
 
 function abandon24hrHtml() {
@@ -210,13 +242,15 @@ function abandon24hrHtml() {
 // ─── Drop-Off Prevention: 5 Days ───
 
 export async function sendDropoff5d(to: string, name: string, lessonId: string, lessonTitle: string) {
-  return getResend().emails.send({
-    from: FROM,
-    to,
-    headers: UNSUBSCRIBE_HEADERS,
-    subject: "No rush — but your next lesson is ready",
-    html: dropoff5dHtml(name, lessonId, lessonTitle),
-  });
+  return safeSend(`dropoff-5d to ${to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to,
+      headers: UNSUBSCRIBE_HEADERS,
+      subject: "No rush — but your next lesson is ready",
+      html: dropoff5dHtml(name, lessonId, lessonTitle),
+    })
+  );
 }
 
 function dropoff5dHtml(name: string, lessonId: string, lessonTitle: string) {
@@ -235,13 +269,15 @@ function dropoff5dHtml(name: string, lessonId: string, lessonTitle: string) {
 // ─── Drop-Off Prevention: 10 Days ───
 
 export async function sendDropoff10d(to: string, name: string) {
-  return getResend().emails.send({
-    from: FROM,
-    to,
-    headers: UNSUBSCRIBE_HEADERS,
-    subject: "10 minutes. One framework. Worth it.",
-    html: dropoff10dHtml(name),
-  });
+  return safeSend(`dropoff-10d to ${to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to,
+      headers: UNSUBSCRIBE_HEADERS,
+      subject: "10 minutes. One framework. Worth it.",
+      html: dropoff10dHtml(name),
+    })
+  );
 }
 
 function dropoff10dHtml(name: string) {
@@ -269,13 +305,15 @@ function dropoff10dHtml(name: string) {
 // ─── Drop-Off Prevention: 21 Days ───
 
 export async function sendDropoff21d(to: string, name: string, lessonId: string) {
-  return getResend().emails.send({
-    from: FROM,
-    to,
-    headers: UNSUBSCRIBE_HEADERS,
-    subject: "Last check-in from us",
-    html: dropoff21dHtml(name, lessonId),
-  });
+  return safeSend(`dropoff-21d to ${to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to,
+      headers: UNSUBSCRIBE_HEADERS,
+      subject: "Last check-in from us",
+      html: dropoff21dHtml(name, lessonId),
+    })
+  );
 }
 
 function dropoff21dHtml(name: string, lessonId: string) {
@@ -301,13 +339,15 @@ function dropoff21dHtml(name: string, lessonId: string) {
 // ─── Review Request: Post-Completion ───
 
 export async function sendReviewRequest(to: string, name: string) {
-  return getResend().emails.send({
-    from: FROM,
-    to,
-    headers: UNSUBSCRIBE_HEADERS,
-    subject: "You finished all 12. How was it?",
-    html: reviewRequestHtml(name),
-  });
+  return safeSend(`review-request to ${to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to,
+      headers: UNSUBSCRIBE_HEADERS,
+      subject: "You finished all 12. How was it?",
+      html: reviewRequestHtml(name),
+    })
+  );
 }
 
 function reviewRequestHtml(name: string) {
@@ -329,13 +369,15 @@ function reviewRequestHtml(name: string) {
 // ─── Review Request: Nudge (4 days after first, if no response) ───
 
 export async function sendReviewNudge(to: string, name: string) {
-  return getResend().emails.send({
-    from: FROM,
-    to,
-    headers: UNSUBSCRIBE_HEADERS,
-    subject: "30 seconds — that's all I need",
-    html: reviewNudgeHtml(name),
-  });
+  return safeSend(`review-nudge to ${to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to,
+      headers: UNSUBSCRIBE_HEADERS,
+      subject: "30 seconds — that's all I need",
+      html: reviewNudgeHtml(name),
+    })
+  );
 }
 
 function reviewNudgeHtml(name: string) {

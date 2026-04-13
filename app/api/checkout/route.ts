@@ -64,7 +64,7 @@ export async function POST(request: Request) {
     // Log checkout start for abandonment tracking
     if (email) {
       const supabase = createAdminClient();
-      await supabase.from('checkout_sessions').upsert(
+      const { error: sessionError } = await supabase.from('checkout_sessions').upsert(
         {
           session_id: session.id,
           user_email: email,
@@ -74,6 +74,9 @@ export async function POST(request: Request) {
         },
         { onConflict: 'session_id' }
       );
+      if (sessionError) {
+        console.error('Checkout session tracking failed:', sessionError.message);
+      }
     }
 
     return NextResponse.json({ url: session.url });

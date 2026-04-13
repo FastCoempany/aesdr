@@ -82,11 +82,14 @@ export async function POST(request: Request) {
     }
 
     // Get user profile for name and role
-    const { data: purchase } = await supabase
+    const { data: purchase, error: purchaseErr } = await supabase
       .from("purchases")
       .select("customer_name")
       .eq("user_id", user.id)
       .maybeSingle();
+    if (purchaseErr) {
+      console.error("[artifacts] Purchase lookup failed:", purchaseErr.message);
+    }
 
     // Get role from user metadata
     const role =

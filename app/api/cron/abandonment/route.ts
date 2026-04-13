@@ -4,23 +4,23 @@ import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { sendAbandon1hr, sendAbandon24hr } from '@/lib/email';
 import { TIMING } from '@/lib/config';
+import { verifyCronAuth } from '@/lib/cron-auth';
 
 export async function GET(request: Request) {
-  const authHeader = request.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const authErr = verifyCronAuth(request);
+  if (authErr) return authErr;
 
   const supabase = createAdminClient();
   const now = new Date();
   let hr1Sent = 0;
   let hr24Sent = 0;
+  const errors: string[] = [];
 
   // ── 1-hour abandonment emails ──
   const oneHourAgo = new Date(now.getTime() - TIMING.abandonment.hr1.after).toISOString();
   const twoHoursAgo = new Date(now.getTime() - TIMING.abandonment.hr1.after - TIMING.abandonment.hr1.window).toISOString();
 
-  const { data: abandon1hr } = await supabase
+  const { data: abandon1hr, error: q1Err } = await supabase
     .from('checkout_sessions')
     .select('user_email, session_id')
     .eq('completed', false)
@@ -28,19 +28,22 @@ export async function GET(request: Request) {
     .gte('started_at', twoHoursAgo)
     .lte('started_at', oneHourAgo);
 
-  if (abandon1hr) {
-    // The initial query already filters completed=false, so no need to re-check
-    // each row individually. Use a conditional update to guard against race conditions.
+  if (q1Err) {
+    errors.push(`1hr query: ${q1Err.message}`);
+  } else if (abandon1hr) {
     for (const row of abandon1hr) {
       try {
         await sendAbandon1hr(row.user_email);
-        // Only mark sent if still incomplete (atomic guard)
-        await supabase
+        const { error: updateErr } = await supabase
           .from('checkout_sessions')
           .update({ abandon_1hr_sent: now.toISOString() })
           .eq('session_id', row.session_id)
           .eq('completed', false);
-        hr1Sent++;
+        if (updateErr) {
+          errors.push(`1hr update ${row.session_id}: ${updateErr.message}`);
+        } else {
+          hr1Sent++;
+        }
       } catch (err) {
         console.error(`Abandon 1hr email failed for ${row.user_email}:`, err);
       }
@@ -51,7 +54,7 @@ export async function GET(request: Request) {
   const oneDayAgo = new Date(now.getTime() - TIMING.abandonment.hr24.after).toISOString();
   const twoDaysAgo = new Date(now.getTime() - TIMING.abandonment.hr24.after - TIMING.abandonment.hr24.window).toISOString();
 
-  const { data: abandon24hr } = await supabase
+  const { data: abandon24hr, error: q24Err } = await supabase
     .from('checkout_sessions')
     .select('user_email, session_id')
     .eq('completed', false)
@@ -59,21 +62,28 @@ export async function GET(request: Request) {
     .gte('started_at', twoDaysAgo)
     .lte('started_at', oneDayAgo);
 
-  if (abandon24hr) {
+  if (q24Err) {
+    errors.push(`24hr query: ${q24Err.message}`);
+  } else if (abandon24hr) {
     for (const row of abandon24hr) {
       try {
         await sendAbandon24hr(row.user_email);
-        await supabase
+        const { error: updateErr } = await supabase
           .from('checkout_sessions')
           .update({ abandon_24hr_sent: now.toISOString() })
           .eq('session_id', row.session_id)
           .eq('completed', false);
-        hr24Sent++;
+        if (updateErr) {
+          errors.push(`24hr update ${row.session_id}: ${updateErr.message}`);
+        } else {
+          hr24Sent++;
+        }
       } catch (err) {
         console.error(`Abandon 24hr email failed for ${row.user_email}:`, err);
       }
     }
   }
 
-  return NextResponse.json({ hr1Sent, hr24Sent });
+  if (errors.length > 0) console.error('[cron/abandonment] Errors:', errors);
+  return NextResponse.json({ hr1Sent, hr24Sent, errors: errors.length > 0 ? errors : undefined });
 }
