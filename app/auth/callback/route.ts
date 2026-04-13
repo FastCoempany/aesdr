@@ -24,10 +24,18 @@ export async function GET(request: Request) {
 
   if (code) {
     // OAuth / PKCE code exchange
-    await supabase.auth.exchangeCodeForSession(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error) {
+      console.error('[auth/callback] Code exchange failed:', error.message);
+      return NextResponse.redirect(new URL('/login?error=auth', origin));
+    }
   } else if (token_hash && type) {
     // Magic link / email OTP verification
-    await supabase.auth.verifyOtp({ token_hash, type: type as 'magiclink' | 'email' });
+    const { error } = await supabase.auth.verifyOtp({ token_hash, type: type as 'magiclink' | 'email' });
+    if (error) {
+      console.error('[auth/callback] OTP verification failed:', error.message);
+      return NextResponse.redirect(new URL('/login?error=auth', origin));
+    }
   }
 
   return NextResponse.redirect(new URL(next, origin));
