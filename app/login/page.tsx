@@ -102,12 +102,14 @@ function LoginForm() {
           style={{
             fontFamily: "var(--serif)",
             fontSize: "14px",
-            borderLeft: "3px solid var(--amber, #F59E0B)",
-            background: "rgba(245,158,11,0.05)",
-            color: "var(--amber, #F59E0B)",
+            borderLeft: "3px solid var(--coral, #EF4444)",
+            background: "rgba(239,68,68,0.05)",
+            color: "var(--coral, #EF4444)",
           }}
         >
-          Sign in with the email you used to purchase, or <a href="mailto:support@aesdr.com" style={{ color: "var(--theme)" }}>contact support</a> if you need help.
+          You do not have a paid subscription.{" "}
+          <a href="/" style={{ color: "var(--theme)", textDecoration: "underline" }}>Purchase access here</a>{" "}
+          or <a href="mailto:support@aesdr.com" style={{ color: "var(--theme)", textDecoration: "underline" }}>contact support</a> if you believe this is an error.
         </div>
       )}
 
