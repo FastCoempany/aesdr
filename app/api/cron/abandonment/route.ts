@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { sendAbandon1hr, sendAbandon24hr } from '@/lib/email';
+import { TIMING } from '@/lib/config';
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization');
@@ -16,8 +17,8 @@ export async function GET(request: Request) {
   let hr24Sent = 0;
 
   // ── 1-hour abandonment emails ──
-  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000).toISOString();
-  const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString();
+  const oneHourAgo = new Date(now.getTime() - TIMING.abandonment.hr1.after).toISOString();
+  const twoHoursAgo = new Date(now.getTime() - TIMING.abandonment.hr1.after - TIMING.abandonment.hr1.window).toISOString();
 
   const { data: abandon1hr } = await supabase
     .from('checkout_sessions')
@@ -28,22 +29,17 @@ export async function GET(request: Request) {
     .lte('started_at', oneHourAgo);
 
   if (abandon1hr) {
+    // The initial query already filters completed=false, so no need to re-check
+    // each row individually. Use a conditional update to guard against race conditions.
     for (const row of abandon1hr) {
-      // Double-check it's still incomplete
-      const { data: check } = await supabase
-        .from('checkout_sessions')
-        .select('completed')
-        .eq('session_id', row.session_id)
-        .single();
-
-      if (check?.completed) continue;
-
       try {
         await sendAbandon1hr(row.user_email);
+        // Only mark sent if still incomplete (atomic guard)
         await supabase
           .from('checkout_sessions')
           .update({ abandon_1hr_sent: now.toISOString() })
-          .eq('session_id', row.session_id);
+          .eq('session_id', row.session_id)
+          .eq('completed', false);
         hr1Sent++;
       } catch (err) {
         console.error(`Abandon 1hr email failed for ${row.user_email}:`, err);
@@ -52,8 +48,8 @@ export async function GET(request: Request) {
   }
 
   // ── 24-hour abandonment emails ──
-  const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
-  const twoDaysAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000).toISOString();
+  const oneDayAgo = new Date(now.getTime() - TIMING.abandonment.hr24.after).toISOString();
+  const twoDaysAgo = new Date(now.getTime() - TIMING.abandonment.hr24.after - TIMING.abandonment.hr24.window).toISOString();
 
   const { data: abandon24hr } = await supabase
     .from('checkout_sessions')
@@ -65,20 +61,13 @@ export async function GET(request: Request) {
 
   if (abandon24hr) {
     for (const row of abandon24hr) {
-      const { data: check } = await supabase
-        .from('checkout_sessions')
-        .select('completed')
-        .eq('session_id', row.session_id)
-        .single();
-
-      if (check?.completed) continue;
-
       try {
         await sendAbandon24hr(row.user_email);
         await supabase
           .from('checkout_sessions')
           .update({ abandon_24hr_sent: now.toISOString() })
-          .eq('session_id', row.session_id);
+          .eq('session_id', row.session_id)
+          .eq('completed', false);
         hr24Sent++;
       } catch (err) {
         console.error(`Abandon 24hr email failed for ${row.user_email}:`, err);

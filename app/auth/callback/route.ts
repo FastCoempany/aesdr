@@ -1,12 +1,24 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 
+// Allowed redirect paths after authentication (prevent open redirect)
+const ALLOWED_PREFIXES = ['/dashboard', '/account', '/course', '/tools'];
+
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
   const token_hash = searchParams.get('token_hash');
   const type = searchParams.get('type');
-  const next = searchParams.get('next') || '/dashboard';
+  let next = searchParams.get('next') || '/dashboard';
+
+  // Prevent open redirect: only allow relative paths with known prefixes
+  if (
+    next.startsWith('http') ||
+    next.startsWith('//') ||
+    !ALLOWED_PREFIXES.some((p) => next.startsWith(p))
+  ) {
+    next = '/dashboard';
+  }
 
   const supabase = await createClient();
 

@@ -130,8 +130,9 @@ export async function generateArtifacts(
     { type: "mirror", data: mirror },
   ];
 
+  const upsertErrors: string[] = [];
   for (const artifact of artifacts) {
-    await supabase.from("generated_artifacts").upsert(
+    const { error: upsertError } = await supabase.from("generated_artifacts").upsert(
       {
         user_id: user.id,
         artifact_type: artifact.type,
@@ -141,6 +142,12 @@ export async function generateArtifacts(
       },
       { onConflict: "user_id,artifact_type" }
     );
+    if (upsertError) {
+      upsertErrors.push(`${artifact.type}: ${upsertError.message}`);
+    }
+  }
+  if (upsertErrors.length > 0) {
+    console.error("[artifacts] Upsert errors:", upsertErrors.join("; "));
   }
 
   return { diagnostic, playbook, mirror, cached: false };

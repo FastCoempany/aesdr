@@ -63,10 +63,20 @@ export async function extractWithLLM(
     throw new Error("LLM returned no parseable JSON");
   }
 
-  const parsed = JSON.parse(jsonMatch[1]) as LLMExtractionResult;
+  let parsed: LLMExtractionResult;
+  try {
+    parsed = JSON.parse(jsonMatch[1]) as LLMExtractionResult;
+  } catch {
+    throw new Error("LLM returned malformed JSON");
+  }
 
   // Validate structure
-  if (!parsed.playbook?.sections || !parsed.mirror?.confrontations) {
+  if (
+    !parsed.playbook?.sections ||
+    !Array.isArray(parsed.playbook.sections) ||
+    !parsed.mirror?.confrontations ||
+    !Array.isArray(parsed.mirror.confrontations)
+  ) {
     throw new Error("LLM response missing required fields");
   }
 

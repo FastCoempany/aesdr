@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { sendDay3Email, sendDay7Email } from '@/lib/email';
+import { TIMING } from '@/lib/config';
 
 export async function GET(request: Request) {
   // Verify cron secret to prevent unauthorized calls
@@ -17,8 +18,8 @@ export async function GET(request: Request) {
   let day7Sent = 0;
 
   // ── Day 3 emails ──
-  const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000).toISOString();
-  const fourDaysAgo = new Date(now.getTime() - 4 * 24 * 60 * 60 * 1000).toISOString();
+  const threeDaysAgo = new Date(now.getTime() - TIMING.drip.day3.after).toISOString();
+  const fourDaysAgo = new Date(now.getTime() - TIMING.drip.day3.after - TIMING.drip.day3.window).toISOString();
 
   const { data: day3Users } = await supabase
     .from('purchases')
@@ -44,8 +45,8 @@ export async function GET(request: Request) {
   }
 
   // ── Day 7 emails ──
-  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
-  const eightDaysAgo = new Date(now.getTime() - 8 * 24 * 60 * 60 * 1000).toISOString();
+  const sevenDaysAgo = new Date(now.getTime() - TIMING.drip.day7.after).toISOString();
+  const eightDaysAgo = new Date(now.getTime() - TIMING.drip.day7.after - TIMING.drip.day7.window).toISOString();
 
   const { data: day7Users } = await supabase
     .from('purchases')

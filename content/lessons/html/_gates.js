@@ -305,7 +305,7 @@ window.AESDR = window.AESDR || {};
     containers.forEach(function(el) { A.renderGate(screen, el.id); });
     // Save progress
     if (window.parent !== window) {
-      try { window.parent.postMessage({ type: 'aesdr:progress', screen: screen, stateData: A.gateData() }, '*'); } catch(e) {}
+      try { window.parent.postMessage({ type: 'aesdr:progress', screen: screen, stateData: A.gateData() }, window.location.origin); } catch(e) {}
     }
     if (typeof window.render === 'function') window.render();
   };
@@ -344,7 +344,7 @@ window.AESDR = window.AESDR || {};
           type: 'aesdr:progress',
           screen: screen,
           stateData: A.gateData()
-        }, '*');
+        }, window.location.origin);
       } catch(e) {}
     }
 

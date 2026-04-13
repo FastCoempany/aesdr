@@ -2,15 +2,44 @@ export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { z } from 'zod';
 import { createAdminClient } from '@/utils/supabase/admin';
+import { rateLimit, getClientIP } from '@/lib/rate-limit';
 
 function getStripe() {
   return new Stripe(process.env.STRIPE_SECRET_KEY!);
 }
 
+const checkoutSchema = z.object({
+  tier: z.enum(['individual', 'team']),
+  email: z.string().email().max(320).optional(),
+});
+
 export async function POST(request: Request) {
   try {
-    const { tier, email } = await request.json();
+    // Rate limit: 5 checkout sessions per IP per hour
+    const ip = getClientIP(request);
+    const rl = rateLimit(`checkout:${ip}`, { max: 5, windowMs: 60 * 60 * 1000 });
+    if (!rl.success) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+    }
+
+    // Validate origin to prevent cross-site form submission
+    const origin = request.headers.get('origin');
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aesdr.com';
+    if (origin && !siteUrl.startsWith(origin)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const body = await request.json();
+    const result = checkoutSchema.safeParse(body);
+    if (!result.success) {
+      return NextResponse.json(
+        { error: 'Invalid request: ' + result.error.issues.map(i => i.message).join(', ') },
+        { status: 400 }
+      );
+    }
+    const { tier, email } = result.data;
 
     const priceMap: Record<string, string | undefined> = {
       individual: process.env.STRIPE_PRICE_ID_INDIVIDUAL,

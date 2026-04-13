@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { sendReviewRequest, sendReviewNudge } from '@/lib/email';
+import { TIMING, TOTAL_LESSONS } from '@/lib/config';
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization');
@@ -19,39 +20,39 @@ export async function GET(request: Request) {
   // Find users who completed all 12 but haven't been sent a review request
   const { data: completedUsers } = await supabase
     .from('purchases')
-    .select('user_email, user_id')
+    .select('user_email, user_id, customer_name')
     .eq('status', 'active')
     .eq('review_requested', false);
 
-  if (completedUsers) {
+  if (completedUsers && completedUsers.length > 0) {
+    // Batch-fetch all progress for candidate users in one query
+    const userIds = [...new Set(completedUsers.map((u) => u.user_id).filter(Boolean))];
+    const { data: allProgress } = await supabase
+      .from('course_progress')
+      .select('user_id, is_completed, updated_at')
+      .in('user_id', userIds)
+      .eq('is_completed', true);
+
+    // Build per-user completion maps
+    const completionByUser = new Map<string, { count: number; lastCompletedAt: Date }>();
+    for (const row of allProgress ?? []) {
+      const entry = completionByUser.get(row.user_id) ?? { count: 0, lastCompletedAt: new Date(0) };
+      entry.count++;
+      const rowDate = new Date(row.updated_at);
+      if (rowDate > entry.lastCompletedAt) entry.lastCompletedAt = rowDate;
+      completionByUser.set(row.user_id, entry);
+    }
+
     for (const user of completedUsers) {
-      // Count completed lessons
-      const { count } = await supabase
-        .from('course_progress')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.user_id)
-        .eq('is_completed', true);
+      if (!user.user_id) continue;
+      const completion = completionByUser.get(user.user_id);
+      if (!completion || completion.count < TOTAL_LESSONS) continue;
 
-      if (!count || count < 12) continue;
-
-      // Get when the last lesson was completed
-      const { data: lastCompleted } = await supabase
-        .from('course_progress')
-        .select('updated_at')
-        .eq('user_id', user.user_id)
-        .eq('is_completed', true)
-        .order('updated_at', { ascending: false })
-        .limit(1);
-
-      if (!lastCompleted?.[0]) continue;
-
-      const completedAt = new Date(lastCompleted[0].updated_at);
-      const twoDaysAfter = new Date(completedAt.getTime() + 2 * 24 * 60 * 60 * 1000);
-
-      if (now < twoDaysAfter) continue; // Not yet 2 days since completion
+      const twoDaysAfter = new Date(completion.lastCompletedAt.getTime() + TIMING.review.afterCompletion);
+      if (now < twoDaysAfter) continue;
 
       try {
-        await sendReviewRequest(user.user_email, 'there');
+        await sendReviewRequest(user.user_email, user.customer_name || 'there');
         await supabase
           .from('purchases')
           .update({ review_requested: true, review_requested_at: now.toISOString() })
@@ -64,7 +65,7 @@ export async function GET(request: Request) {
   }
 
   // ── Review nudge: 4 days after first review request, if no response ──
-  const fourDaysAgo = new Date(now.getTime() - 4 * 24 * 60 * 60 * 1000).toISOString();
+  const fourDaysAgo = new Date(now.getTime() - TIMING.review.nudgeAfterRequest).toISOString();
 
   const { data: nudgeUsers } = await supabase
     .from('purchases')

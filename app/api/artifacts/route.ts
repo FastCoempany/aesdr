@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { generateArtifacts, getCachedArtifact } from "@/lib/artifacts/generate";
 import type { ArtifactType } from "@/lib/artifacts/types";
+import { rateLimit } from "@/lib/rate-limit";
 
 /**
  * GET /api/artifacts?type=diagnostic|playbook|mirror
@@ -74,6 +75,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Rate limit: 3 artifact generations per user per hour
+    const rl = rateLimit(`artifacts:${user.id}`, { max: 3, windowMs: 60 * 60 * 1000 });
+    if (!rl.success) {
+      return NextResponse.json({ error: "Too many requests. Try again later." }, { status: 429 });
+    }
+
     // Get user profile for name and role
     const { data: purchase } = await supabase
       .from("purchases")
@@ -114,7 +121,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: message }, { status: 422 });
     }
 
+    // Log full error server-side, return generic message to client
     console.error("[artifacts] Generation failed:", message);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json(
+      { error: "Artifact generation failed. Please try again later." },
+      { status: 500 }
+    );
   }
 }

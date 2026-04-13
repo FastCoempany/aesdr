@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { sendDropoff5d, sendDropoff10d, sendDropoff21d } from '@/lib/email';
+import { TIMING, TOTAL_LESSONS } from '@/lib/config';
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization');
@@ -16,143 +17,105 @@ export async function GET(request: Request) {
   let d10Sent = 0;
   let d21Sent = 0;
 
-  // ── 5-day drop-off ──
-  const fiveDaysAgo = new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000).toISOString();
+  // ── Gather all candidate users for any tier of dropoff ──
+  const fiveDaysAgo = new Date(now.getTime() - TIMING.dropoff.d5).toISOString();
 
-  const { data: dropoff5 } = await supabase
+  const { data: allDropoffCandidates } = await supabase
     .from('purchases')
-    .select('user_email, user_id, customer_name')
+    .select('user_email, user_id, customer_name, dropoff_5d_sent, dropoff_10d_sent, dropoff_21d_sent, purchased_at')
     .eq('status', 'active')
-    .eq('dropoff_5d_sent', false)
-    .lte('purchased_at', fiveDaysAgo);
+    .lte('purchased_at', fiveDaysAgo)
+    .or('dropoff_5d_sent.eq.false,dropoff_10d_sent.eq.false,dropoff_21d_sent.eq.false');
 
-  if (dropoff5) {
-    for (const user of dropoff5) {
-      // Check if user has been active recently
-      const { data: progress } = await supabase
-        .from('course_progress')
-        .select('lesson_id, updated_at')
-        .eq('user_id', user.user_id)
-        .order('updated_at', { ascending: false })
-        .limit(1);
+  if (allDropoffCandidates && allDropoffCandidates.length > 0) {
+    // Batch-fetch progress for ALL candidate users in one query
+    const userIds = [...new Set(allDropoffCandidates.map((u) => u.user_id).filter(Boolean))];
+    const { data: allProgress } = await supabase
+      .from('course_progress')
+      .select('user_id, lesson_id, is_completed, updated_at')
+      .in('user_id', userIds);
 
-      const lastActivity = progress?.[0]?.updated_at;
-      if (lastActivity && new Date(lastActivity) > new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000)) {
-        continue; // User is still active, skip
-      }
-
-      // Check if user completed all courses
-      const { count } = await supabase
-        .from('course_progress')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.user_id)
-        .eq('is_completed', true);
-
-      if (count && count >= 12) continue; // Completed everything, skip
-
-      const lastLesson = progress?.[0]?.lesson_id || '1';
-
-      try {
-        await sendDropoff5d(user.user_email, user.customer_name || 'there', lastLesson, `Lesson ${lastLesson}`);
-        await supabase
-          .from('purchases')
-          .update({ dropoff_5d_sent: true })
-          .eq('user_email', user.user_email);
-        d5Sent++;
-      } catch (err) {
-        console.error(`Dropoff 5d email failed for ${user.user_email}:`, err);
-      }
+    // Build lookup maps
+    const progressByUser = new Map<string, typeof allProgress>();
+    for (const row of allProgress ?? []) {
+      const existing = progressByUser.get(row.user_id) ?? [];
+      existing.push(row);
+      progressByUser.set(row.user_id, existing);
     }
-  }
 
-  // ── 10-day drop-off ──
-  const tenDaysAgo = new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000).toISOString();
-
-  const { data: dropoff10 } = await supabase
-    .from('purchases')
-    .select('user_email, user_id, customer_name')
-    .eq('status', 'active')
-    .eq('dropoff_10d_sent', false)
-    .lte('purchased_at', tenDaysAgo);
-
-  if (dropoff10) {
-    for (const user of dropoff10) {
-      const { data: progress } = await supabase
-        .from('course_progress')
-        .select('lesson_id, updated_at')
-        .eq('user_id', user.user_id)
-        .order('updated_at', { ascending: false })
-        .limit(1);
-
-      const lastActivity = progress?.[0]?.updated_at;
-      if (lastActivity && new Date(lastActivity) > new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000)) {
-        continue;
-      }
-
-      const { count } = await supabase
-        .from('course_progress')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.user_id)
-        .eq('is_completed', true);
-
-      if (count && count >= 12) continue;
-
-      try {
-        await sendDropoff10d(user.user_email, user.customer_name || 'there');
-        await supabase
-          .from('purchases')
-          .update({ dropoff_10d_sent: true })
-          .eq('user_email', user.user_email);
-        d10Sent++;
-      } catch (err) {
-        console.error(`Dropoff 10d email failed for ${user.user_email}:`, err);
-      }
+    function getUserActivity(userId: string) {
+      const rows = progressByUser.get(userId) ?? [];
+      const sorted = [...rows].sort((a, b) =>
+        new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+      );
+      const completedCount = rows.filter((r) => r.is_completed).length;
+      return {
+        lastActivity: sorted[0]?.updated_at ?? null,
+        lastLesson: sorted[0]?.lesson_id ?? '1',
+        completedAll: completedCount >= TOTAL_LESSONS,
+      };
     }
-  }
 
-  // ── 21-day drop-off ──
-  const twentyOneDaysAgo = new Date(now.getTime() - 21 * 24 * 60 * 60 * 1000).toISOString();
+    const tenDaysAgo = new Date(now.getTime() - TIMING.dropoff.d10);
+    const twentyOneDaysAgo = new Date(now.getTime() - TIMING.dropoff.d21);
+    const fiveDaysAgoDate = new Date(now.getTime() - TIMING.dropoff.d5);
 
-  const { data: dropoff21 } = await supabase
-    .from('purchases')
-    .select('user_email, user_id, customer_name')
-    .eq('status', 'active')
-    .eq('dropoff_21d_sent', false)
-    .lte('purchased_at', twentyOneDaysAgo);
+    for (const user of allDropoffCandidates) {
+      if (!user.user_id) continue;
+      const { lastActivity, lastLesson, completedAll } = getUserActivity(user.user_id);
 
-  if (dropoff21) {
-    for (const user of dropoff21) {
-      const { data: progress } = await supabase
-        .from('course_progress')
-        .select('lesson_id, updated_at')
-        .eq('user_id', user.user_id)
-        .order('updated_at', { ascending: false })
-        .limit(1);
+      // Skip if completed all courses
+      if (completedAll) continue;
 
-      const lastActivity = progress?.[0]?.updated_at;
-      if (lastActivity && new Date(lastActivity) > new Date(now.getTime() - 21 * 24 * 60 * 60 * 1000)) {
-        continue;
+      const lastActiveDate = lastActivity ? new Date(lastActivity) : null;
+      const purchasedDate = new Date(user.purchased_at);
+
+      // ── 5-day drop-off ──
+      if (!user.dropoff_5d_sent && purchasedDate <= fiveDaysAgoDate) {
+        if (!lastActiveDate || lastActiveDate <= fiveDaysAgoDate) {
+          try {
+            await sendDropoff5d(user.user_email, user.customer_name || 'there', lastLesson, `Lesson ${lastLesson}`);
+            await supabase
+              .from('purchases')
+              .update({ dropoff_5d_sent: true })
+              .eq('user_email', user.user_email);
+            d5Sent++;
+          } catch (err) {
+            console.error(`Dropoff 5d email failed for ${user.user_email}:`, err);
+          }
+        }
       }
 
-      const { count } = await supabase
-        .from('course_progress')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.user_id)
-        .eq('is_completed', true);
+      // ── 10-day drop-off ──
+      if (!user.dropoff_10d_sent && purchasedDate <= tenDaysAgo) {
+        if (!lastActiveDate || lastActiveDate <= tenDaysAgo) {
+          try {
+            await sendDropoff10d(user.user_email, user.customer_name || 'there');
+            await supabase
+              .from('purchases')
+              .update({ dropoff_10d_sent: true })
+              .eq('user_email', user.user_email);
+            d10Sent++;
+          } catch (err) {
+            console.error(`Dropoff 10d email failed for ${user.user_email}:`, err);
+          }
+        }
+      }
 
-      if (count && count >= 12) continue;
-
-      const lastLesson = progress?.[0]?.lesson_id || '1';
-
-      try {
-        await sendDropoff21d(user.user_email, user.customer_name || 'there', lastLesson);
-        await supabase
-          .from('purchases')
-          .update({ dropoff_21d_sent: true })
-          .eq('user_email', user.user_email);
-        d21Sent++;
-      } catch (err) {
-        console.error(`Dropoff 21d email failed for ${user.user_email}:`, err);
+      // ── 21-day drop-off ──
+      if (!user.dropoff_21d_sent && purchasedDate <= twentyOneDaysAgo) {
+        if (!lastActiveDate || lastActiveDate <= twentyOneDaysAgo) {
+          try {
+            await sendDropoff21d(user.user_email, user.customer_name || 'there', lastLesson);
+            await supabase
+              .from('purchases')
+              .update({ dropoff_21d_sent: true })
+              .eq('user_email', user.user_email);
+            d21Sent++;
+          } catch (err) {
+            console.error(`Dropoff 21d email failed for ${user.user_email}:`, err);
+          }
+        }
       }
     }
   }

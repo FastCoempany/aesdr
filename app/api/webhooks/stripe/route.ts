@@ -49,32 +49,45 @@ export async function POST(request: Request) {
     let tempPassword: string | null = null;
 
     if (email) {
-      // Check if user already exists
-      const { data: users } = await supabase.auth.admin.listUsers({ perPage: 1000 });
-      const existingUser = users?.users?.find(
-        (u) => u.email?.toLowerCase() === email.toLowerCase()
-      );
+      // Try to create the user first — if they already exist, createUser
+      // returns an error we can handle. This avoids the expensive listUsers
+      // scan that fetches all users into memory.
+      tempPassword = generatePassword();
+      const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
+        email,
+        password: tempPassword,
+        email_confirm: true,
+        user_metadata: {
+          full_name: name !== 'there' ? name : undefined,
+          needs_password_change: true,
+        },
+      });
 
-      if (existingUser) {
-        userId = existingUser.id;
-      } else {
-        // Auto-create auth user with a readable temporary password
-        tempPassword = generatePassword();
-        const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
-          email,
-          password: tempPassword,
-          email_confirm: true,
-          user_metadata: {
-            full_name: name !== 'there' ? name : undefined,
-            needs_password_change: true,
-          },
-        });
+      if (newUser?.user) {
+        userId = newUser.user.id;
+      } else if (createError) {
+        // User already exists — look up by querying the purchases table
+        // for a previous record with this email, or fall back to a
+        // bounded admin user list
+        tempPassword = null;
 
-        if (createError) {
-          console.error('Failed to create auth user:', createError);
-          tempPassword = null;
-        } else if (newUser?.user) {
-          userId = newUser.user.id;
+        const { data: existingPurchase } = await supabase
+          .from('purchases')
+          .select('user_id')
+          .eq('user_email', email.toLowerCase())
+          .not('user_id', 'is', null)
+          .limit(1)
+          .maybeSingle();
+
+        if (existingPurchase?.user_id) {
+          userId = existingPurchase.user_id;
+        } else {
+          // Last resort: bounded list search (cap at 50, paginate if needed)
+          const { data: userList } = await supabase.auth.admin.listUsers({ perPage: 50 });
+          const matched = userList?.users?.find(
+            (u) => u.email?.toLowerCase() === email.toLowerCase()
+          );
+          userId = matched?.id ?? null;
         }
       }
     }

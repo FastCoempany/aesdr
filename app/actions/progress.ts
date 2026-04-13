@@ -42,9 +42,12 @@ export async function markLessonComplete(lessonId: string) {
 /**
  * Save in-progress lesson state (screen index, unit, checklist ticks, etc.).
  *
- * Each lesson has up to 3 units. The iframe only sends gates for the current
- * unit, so we merge into a `_units` namespace to preserve all unit data for
- * artifact generation. The top-level keys stay flat for iframe restore compat.
+ * Uses a Supabase RPC function (merge_lesson_progress) for atomic merge.
+ * This eliminates the race condition where two tabs could read-then-write
+ * concurrently and overwrite each other's unit data.
+ *
+ * The RPC function handles the _units namespace merge at the DB level
+ * with SELECT ... FOR UPDATE row locking.
  *
  * Resulting state_data shape:
  *   { gate_1: {...}, gate_3: {...}, unit: "2", _extra: {...},
@@ -66,36 +69,12 @@ export async function saveLessonProgress(
     throw new Error("Unauthorized");
   }
 
-  // Read existing state_data to preserve previous unit gate responses
-  const { data: existing } = await supabase
-    .from("course_progress")
-    .select("state_data")
-    .eq("user_id", user.id)
-    .eq("lesson_id", lessonId)
-    .maybeSingle();
-
-  const prev = (existing?.state_data as Record<string, unknown>) ?? {};
-  const prevUnits = (prev._units as Record<string, unknown>) ?? {};
-  const currentUnit = (stateData.unit as string) ?? "1";
-
-  // Merge: keep top-level flat (for iframe restore), archive in _units
-  const merged: Record<string, unknown> = {
-    ...stateData,
-    _units: {
-      ...prevUnits,
-      [currentUnit]: stateData,
-    },
-  };
-
-  const { error } = await supabase.from("course_progress").upsert(
-    {
-      user_id: user.id,
-      lesson_id: lessonId,
-      last_screen: lastScreen,
-      state_data: merged,
-    },
-    { onConflict: "user_id,lesson_id" }
-  );
+  const { error } = await supabase.rpc("merge_lesson_progress", {
+    p_user_id: user.id,
+    p_lesson_id: lessonId,
+    p_last_screen: lastScreen,
+    p_state_data: stateData,
+  });
 
   if (error) {
     throw new Error("Failed to save progress");

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { markLessonComplete, saveLessonProgress } from "@/app/actions/progress";
 import { saveProgressLocally } from "@/utils/progress/local-storage";
+import { TIMING } from "@/lib/config";
 
 interface ProgressSaverProps {
   lessonId: string;
@@ -47,13 +48,12 @@ export default function ProgressSaver({
         if (isAuthenticated) {
           saveLessonProgress(lessonId, screen, stateData).catch(() => {
             failCountRef.current += 1;
-            // After 3 consecutive server failures, assume session expired
-            if (failCountRef.current >= 3) {
+            if (failCountRef.current >= TIMING.progress.maxServerFailures) {
               setSessionExpired(true);
             }
           });
         }
-      }, 1500);
+      }, TIMING.progress.debounceMs);
     },
     [lessonId, isAuthenticated]
   );
@@ -110,7 +110,7 @@ export default function ProgressSaver({
         );
         restoredRef.current = true;
       }
-    }, 1500);
+    }, TIMING.iframeRestoreDelayMs);
     return () => clearTimeout(timer);
   }, [savedStateData]);
 
