@@ -452,7 +452,8 @@ const michaelNote = document.getElementById('michael-note');
 const michaelReview = document.getElementById('michael-review');
 const scrollHint = document.getElementById('scroll-hint');
 
-// After 3s of warning soaking in — the confession starts typing OVER it
+// Warning body fades in at ~1.5s, ~30 words at avg reading speed = ~7.5s of reading time
+// Total: 9s lets the reader fully absorb the warning before the confession interrupts
 setTimeout(() => {
   // Push warning up and fade it
   warningBox.classList.add('pushed');
@@ -462,7 +463,7 @@ setTimeout(() => {
     confessionLayer.classList.add('active');
     setTimeout(startTyping, 400);
   }, 300);
-}, 3000);
+}, 9000);
 
 const lines = [
   { text: "The last time someone asked how sales was going,", delay: 32 },
