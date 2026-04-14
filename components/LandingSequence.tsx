@@ -218,7 +218,9 @@ export default function LandingSequence() {
         if (progressRef.current) progressRef.current.style.width = (progress * 100) + "%";
 
         const totalCards = ZOOM_CARDS.length;
-        const cardProgress = progress * totalCards;
+        // Cards use first 78% of scroll, remaining 22% is for CTA + blank
+        const CARD_END = 0.78;
+        const cardProgress = Math.min(totalCards, (progress / CARD_END) * totalCards);
         const activeIndex = Math.min(Math.floor(cardProgress), totalCards - 1);
         const cardFrac = cardProgress - activeIndex;
 
@@ -239,9 +241,10 @@ export default function LandingSequence() {
         const dots = sideMarkerRef.current?.querySelectorAll<HTMLElement>(`.${s.markerDot}`);
         dots?.forEach((dot, i) => dot.classList.toggle(s.markerDotActive, i === activeIndex));
 
-        if (progress > 0.88 && progress < 0.97) {
-          const fadeIn = Math.min(1, (progress - 0.88) / 0.02);
-          const fadeOut = progress > 0.93 ? 1 - Math.min(1, (progress - 0.93) / 0.03) : 1;
+        // CTA sequence: 0.82 fade in → 0.86-0.90 hold → 0.92 fade out → blank till 1.0
+        if (progress > 0.82 && progress < 0.94) {
+          const fadeIn = Math.min(1, (progress - 0.82) / 0.03);
+          const fadeOut = progress > 0.90 ? 1 - Math.min(1, (progress - 0.90) / 0.03) : 1;
           const op = fadeIn * fadeOut;
           if (ctaRef.current) {
             ctaRef.current.classList.add(s.ctaOverlayVisible);
@@ -251,7 +254,7 @@ export default function LandingSequence() {
           ctaRef.current?.classList.remove(s.ctaOverlayVisible);
           if (ctaRef.current) {
             ctaRef.current.style.opacity = "0";
-            ctaRef.current.style.display = progress >= 0.97 ? "none" : "";
+            ctaRef.current.style.display = progress >= 0.94 ? "none" : "";
           }
         }
 
