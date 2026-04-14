@@ -31,6 +31,7 @@ export default function DeckStack() {
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const progressRef = useRef(0);
   const mouseXRef = useRef(0);
+  const snappingRef = useRef(false);
 
   useEffect(() => {
     let raf: number | null = null;
@@ -76,14 +77,6 @@ export default function DeckStack() {
       if (shadow2Ref.current) shadow2Ref.current.style.opacity = remaining > 2 ? "1" : "0";
     }
 
-    function isSectionInView(): boolean {
-      const el = sectionRef.current;
-      if (!el) return false;
-      const rect = el.getBoundingClientRect();
-      // Section is "active" when it roughly fills the viewport
-      return rect.top <= 50 && rect.bottom >= window.innerHeight - 50;
-    }
-
     function isInCenterZone(): boolean {
       const x = mouseXRef.current;
       const w = window.innerWidth;
@@ -93,10 +86,32 @@ export default function DeckStack() {
     }
 
     function handleWheel(e: WheelEvent) {
-      if (!isSectionInView()) return;
+      const el = sectionRef.current;
+      if (!el) return;
       if (!isInCenterZone()) return;
 
+      const rect = el.getBoundingClientRect();
       const progress = progressRef.current;
+
+      // While snapping to section, block all wheel events
+      if (snappingRef.current) {
+        e.preventDefault();
+        return;
+      }
+
+      // Section approaching from below — snap to it
+      if (rect.top > 0 && rect.top < window.innerHeight * 0.7 && e.deltaY > 0 && progress <= 0) {
+        e.preventDefault();
+        snappingRef.current = true;
+        const targetY = window.scrollY + rect.top;
+        window.scrollTo({ top: targetY, behavior: "smooth" });
+        setTimeout(() => { snappingRef.current = false; }, 600);
+        return;
+      }
+
+      // Section must be roughly filling the viewport for card peel
+      const aligned = rect.top <= 80 && rect.bottom >= window.innerHeight - 80;
+      if (!aligned) return;
 
       // At boundaries, let page scroll through
       if (progress <= 0 && e.deltaY < 0) return;
