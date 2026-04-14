@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import CheckoutButton from "@/components/CheckoutButton";
+import DeckStack from "@/components/DeckStack";
 import GhostButton from "@/components/GhostButton";
 import LandingSequence from "@/components/LandingSequence";
 import TeaseGate from "@/components/TeaseGate";
@@ -10,15 +11,15 @@ import styles from "./page.module.css";
 const FAQ = [
   {
     q: "Is this for me if I'm brand new to sales?",
-    a: "Yes. The curriculum starts with foundational frameworks and builds to advanced execution. If you're in your first 18 months, you'll skip years of painful trial-and-error.",
+    a: "Yes, it's actually inspired by you. The curriculum starts with foundational frameworks and builds to advanced execution. If you're in your first 18 months, you'll skip years of painful trial-and-error.",
   },
   {
     q: "Is this just another motivational sales course?",
-    a: "No. Zero guru energy. Zero \"crush it\" motivation. This is sober, practical training built by someone who carried a bag for 9+ years. Frameworks, not feelings.",
+    a: "Nope. No guru stuff. No \"crush it\" motivation. This is sober, fun, practical training built by people who over the last 10+ years carried bags and managed AEs & SDRs who carried bags from early stage startup level to large enterprise level.",
   },
   {
     q: "What if I want a refund?",
-    a: "14-day, no-questions-asked refund. Email support@aesdr.com and we process it within 3 business days. If it doesn't deliver value, we don't want your money.",
+    a: "14-day, no-questions-asked refund. Email hello@aesdr.com and we process it within 3 business days. If it doesn't deliver value, we don't want your money.",
   },
   {
     q: "How long do I have access?",
@@ -62,6 +63,11 @@ export default function LandingPage() {
           SECTIONS 1+2 — Landing Sequence (Warning → Confession → Terminal → Zoom)
       ═══════════════════════════════════════════════ */}
       <LandingSequence />
+
+      {/* ═══════════════════════════════════════════════
+          DECK STACK — 12 Lessons Preview
+      ═══════════════════════════════════════════════ */}
+      <DeckStack />
 
       {/* ═══════════════════════════════════════════════
           TESTIMONIALS
