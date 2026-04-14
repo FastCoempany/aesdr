@@ -196,12 +196,17 @@ export default function LandingSequence() {
           if (sideMarkerRef.current) sideMarkerRef.current.style.opacity = "0";
           if (progressRef.current) progressRef.current.style.opacity = "0";
           ctaRef.current?.classList.remove(s.ctaOverlayVisible);
+          if (ctaRef.current) {
+            ctaRef.current.style.opacity = "0";
+            ctaRef.current.style.pointerEvents = "none";
+          }
           return;
         }
         vp.style.opacity = "";
         vp.style.pointerEvents = "";
         if (sideMarkerRef.current) sideMarkerRef.current.style.opacity = "";
         if (progressRef.current) progressRef.current.style.opacity = "";
+        if (ctaRef.current) ctaRef.current.style.pointerEvents = "";
 
         const progress = Math.min(1, scrollY / maxScroll);
         if (progressRef.current) progressRef.current.style.width = (progress * 100) + "%";
