@@ -239,15 +239,20 @@ export default function LandingSequence() {
         const dots = sideMarkerRef.current?.querySelectorAll<HTMLElement>(`.${s.markerDot}`);
         dots?.forEach((dot, i) => dot.classList.toggle(s.markerDotActive, i === activeIndex));
 
-        if (progress > 0.96) {
-          const fadeIn = Math.min(1, (progress - 0.96) / 0.02);
+        if (progress > 0.88 && progress < 0.97) {
+          const fadeIn = Math.min(1, (progress - 0.88) / 0.02);
+          const fadeOut = progress > 0.93 ? 1 - Math.min(1, (progress - 0.93) / 0.03) : 1;
+          const op = fadeIn * fadeOut;
           if (ctaRef.current) {
             ctaRef.current.classList.add(s.ctaOverlayVisible);
-            ctaRef.current.style.opacity = String(fadeIn);
+            ctaRef.current.style.opacity = String(op);
           }
         } else {
           ctaRef.current?.classList.remove(s.ctaOverlayVisible);
-          if (ctaRef.current) ctaRef.current.style.opacity = "";
+          if (ctaRef.current) {
+            ctaRef.current.style.opacity = "0";
+            ctaRef.current.style.display = progress >= 0.97 ? "none" : "";
+          }
         }
 
         if (scrollY > 50 && heroRef.current) {

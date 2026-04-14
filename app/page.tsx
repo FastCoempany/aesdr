@@ -64,6 +64,9 @@ export default function LandingPage() {
       ═══════════════════════════════════════════════ */}
       <LandingSequence />
 
+      {/* Ghost break between zoom CTA and deck stack */}
+      <div aria-hidden="true" style={{ height: "40vh" }} />
+
       {/* ═══════════════════════════════════════════════
           DECK STACK — 12 Lessons Preview
       ═══════════════════════════════════════════════ */}
