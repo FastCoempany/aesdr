@@ -230,7 +230,7 @@
   text-transform: uppercase; letter-spacing: .03em; line-height: 1.05;
 }
 .zMichael {
-  font-family: var(--hand); color: rgba(245,158,11,0.75); line-height: 1.4;
+  font-family: var(--hand); color: rgba(235,217,180,0.75); line-height: 1.4;
 }
 .zSub {
   font-family: var(--serif); font-weight: 400; color: var(--text-muted);
@@ -291,7 +291,7 @@
 }
 .ctaNote {
   font-family: var(--hand); font-size: clamp(16px, 2vw, 22px);
-  color: rgba(245,158,11,0.5); margin-bottom: 24px; transform: rotate(-1deg);
+  color: rgba(235,217,180,0.6); margin-bottom: 24px; transform: rotate(-1deg);
 }
 .ctaButton {
   font-family: var(--cond); font-size: 14px; font-weight: 700;
