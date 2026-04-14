@@ -66,7 +66,7 @@ export default function Testimonials() {
           opacity: 0.6,
         }}
       >
-        From the Trenches
+        Already Changing Lives
       </p>
 
       <div

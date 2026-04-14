@@ -74,7 +74,7 @@ export default function LandingPage() {
       <section id="pricing" className={styles.pricingSection}>
         <p className={styles.sectionLabel}>Pricing</p>
         <h2 className={styles.sectionHeadline}>
-          One price. Lifetime access. No upsells.
+          One price. Lifetime access.
         </h2>
 
         <div className={styles.pricingGrid}>
@@ -116,20 +116,27 @@ export default function LandingPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          SECTION 7 — FAQ
+          SECTION 7 — FAQ (Classified Dossier)
       ═══════════════════════════════════════════════ */}
       <section className={styles.faqSection}>
-        <p className={styles.sectionLabel}>Questions</p>
-        <h2 className={styles.sectionHeadline}>Frequently asked</h2>
+        <div className={styles.faqHeader}>
+          <p className={styles.faqLabel}>
+            <span className={styles.faqLabelIcon}>!</span>
+            Questions &mdash; Declassified
+          </p>
+          <h2 className={styles.sectionHeadline}>Frequently Asked</h2>
+        </div>
 
         <div className={styles.faqGrid}>
           {FAQ.map((item, i) => (
             <div key={i} className={styles.faqItem}>
               <p className={styles.faqQ}>{item.q}</p>
               <p className={styles.faqA}>{item.a}</p>
+              <span className={styles.faqStamp}>Answered</span>
             </div>
           ))}
         </div>
+        <p className={styles.faqScrollCue}>scroll &rarr;</p>
       </section>
 
       {/* ═══════════════════════════════════════════════
@@ -141,10 +148,10 @@ export default function LandingPage() {
         </h2>
         <p className={styles.finalSub}>
           12 courses. 5 tools. One price. Lifetime access.<br />
-          Built for reps who want to get better, not just feel better.
+          Built for AEs and SDRs who want to get better, not just feel better.
         </p>
         <a href="#pricing" className={styles.ctaPrimary}>
-          Get Access &mdash; $199
+          Get Access
         </a>
       </section>
 
