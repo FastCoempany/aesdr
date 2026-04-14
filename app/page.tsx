@@ -122,7 +122,7 @@ export default function LandingPage() {
         <div className={styles.faqHeader}>
           <p className={styles.faqLabel}>
             <span className={styles.faqLabelIcon}>!</span>
-            Questions &mdash; Declassified
+            Questions &mdash; Classified
           </p>
           <h2 className={styles.sectionHeadline}>Frequently Asked</h2>
         </div>
@@ -130,9 +130,13 @@ export default function LandingPage() {
         <div className={styles.faqGrid}>
           {FAQ.map((item, i) => (
             <div key={i} className={styles.faqItem}>
+              <p className={styles.faqNum}>Q{String(i + 1).padStart(2, "0")}</p>
               <p className={styles.faqQ}>{item.q}</p>
-              <p className={styles.faqA}>{item.a}</p>
-              <span className={styles.faqStamp}>Answered</span>
+              <div className={styles.faqAnswer}>
+                <p className={styles.faqBlur}>{item.a}</p>
+                <span className={styles.faqRedactLabel}>[classified &mdash; hover to peek]</span>
+              </div>
+              <span className={styles.faqStamp}>Classified</span>
             </div>
           ))}
         </div>
