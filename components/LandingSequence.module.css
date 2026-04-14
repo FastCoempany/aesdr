@@ -311,8 +311,10 @@
 }
 .ctaButton {
   font-family: var(--cond); font-size: 14px; font-weight: 700;
-  letter-spacing: .15em; text-transform: uppercase; color: #fff;
-  background: var(--theme); padding: 18px 56px; text-decoration: none;
-  display: inline-block; transition: background 0.3s, box-shadow 0.3s;
+  letter-spacing: .15em; text-transform: uppercase; color: var(--bg-main);
+  background: var(--iris); background-size: 300% 100%;
+  animation: shimmer 4s linear infinite;
+  padding: 18px 56px; text-decoration: none;
+  display: inline-block; transition: transform 0.15s, box-shadow 0.3s;
 }
-.ctaButton:hover { background: #0d9668; box-shadow: 0 0 30px rgba(16,185,129,0.4); }
+.ctaButton:hover { transform: translateY(-1px); box-shadow: 0 0 30px rgba(16,185,129,0.3); }

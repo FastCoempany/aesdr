@@ -92,13 +92,13 @@ export default function LandingPage() {
             </p>
             <ul className={styles.priceFeatures}>
               <li>All 12 courses</li>
-              <li>5 interactive tools</li>
+              <li>5 interactive tools to takeaway</li>
               <li>Lifetime access</li>
-              <li>Discord community</li>
+              <li className={styles.discordLine}>Discord community <span className={styles.untamedStamp}>Untamed</span></li>
               <li>Future curriculum updates</li>
               <li>14-day refund guarantee</li>
             </ul>
-            <CheckoutButton tier="individual" label="Buy Individual" className={styles.priceCta} />
+            <CheckoutButton tier="individual" label="Buy For Me" className={styles.priceCta} />
           </div>
 
           {/* Team */}
@@ -116,7 +116,7 @@ export default function LandingPage() {
               <li>Priority support</li>
               <li>Invoice + receipt for L&amp;D</li>
             </ul>
-            <CheckoutButton tier="team" label="Buy Team" className={styles.priceCta} />
+            <CheckoutButton tier="team" label="Buy For Us" className={styles.priceCta} />
           </div>
         </div>
       </section>
@@ -128,9 +128,9 @@ export default function LandingPage() {
         <div className={styles.faqHeader}>
           <p className={styles.faqLabel}>
             <span className={styles.faqLabelIcon}>!</span>
-            Questions &mdash; Classified
+            Questions
           </p>
-          <h2 className={styles.sectionHeadline}>Frequently Asked</h2>
+          <h2 className={styles.faqHeadline}>Frequently Asked</h2>
         </div>
 
         <div className={styles.faqGrid}>
@@ -154,7 +154,7 @@ export default function LandingPage() {
       ═══════════════════════════════════════════════ */}
       <section className={styles.finalCta}>
         <h2 className={styles.finalHeadline}>
-          Stop Googling. Start executing.
+          Stop Googling. Start&nbsp;executing.
         </h2>
         <p className={styles.finalSub}>
           12 courses. 5 tools. One price. Lifetime access.<br />
@@ -168,17 +168,10 @@ export default function LandingPage() {
       {/* ═══════════════════════════════════════════════
           CONTENT WARNING
       ═══════════════════════════════════════════════ */}
-      <section className={styles.contentWarning}>
-        <div className={styles.warningIcon}>!</div>
-        <p className={styles.warningLabel}>Content Warning</p>
-        <p className={styles.warningText}>
-          This course contains uncomfortable truths about your{" "}
-          <strong>pipeline</strong>, your <strong>apartment</strong>, your{" "}
-          <strong>bar tab</strong>, your <strong>commission check</strong>,{" "}
-          and your <strong>relationship status</strong>.
-        </p>
-        <p className={styles.warningMeta}>AESDR &mdash; 12 lessons / at your own pace / classified</p>
-      </section>
+      <div className={styles.contentWarningLine}>
+        <span className={styles.warningLineIcon}>!</span>
+        Content Warning &mdash; This course contains uncomfortable truths about your pipeline, your apartment, your bar tab, your commission check, and your relationship status. &mdash; AESDR &mdash; 12 lessons / at your own pace
+      </div>
 
       {/* ─── FOOTER ─── */}
       <footer className={styles.footer}>
