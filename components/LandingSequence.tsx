@@ -197,7 +197,9 @@ export default function LandingSequence() {
           if (progressRef.current) progressRef.current.style.opacity = "0";
           ctaRef.current?.classList.remove(s.ctaOverlayVisible);
           if (ctaRef.current) {
+            ctaRef.current.style.transition = "none";
             ctaRef.current.style.opacity = "0";
+            ctaRef.current.style.display = "none";
             ctaRef.current.style.pointerEvents = "none";
           }
           return;
@@ -206,7 +208,11 @@ export default function LandingSequence() {
         vp.style.pointerEvents = "";
         if (sideMarkerRef.current) sideMarkerRef.current.style.opacity = "";
         if (progressRef.current) progressRef.current.style.opacity = "";
-        if (ctaRef.current) ctaRef.current.style.pointerEvents = "";
+        if (ctaRef.current) {
+          ctaRef.current.style.pointerEvents = "";
+          ctaRef.current.style.transition = "";
+          ctaRef.current.style.display = "";
+        }
 
         const progress = Math.min(1, scrollY / maxScroll);
         if (progressRef.current) progressRef.current.style.width = (progress * 100) + "%";
