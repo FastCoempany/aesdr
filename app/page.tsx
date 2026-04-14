@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import CheckoutButton from "@/components/CheckoutButton";
 import GhostButton from "@/components/GhostButton";
+import LandingSequence from "@/components/LandingSequence";
 import TeaseGate from "@/components/TeaseGate";
 import Testimonials from "@/components/Testimonials";
 import styles from "./page.module.css";
@@ -82,86 +82,9 @@ export default function LandingPage() {
       </header>
 
       {/* ═══════════════════════════════════════════════
-          SECTION 1 — HERO
+          SECTIONS 1+2 — Landing Sequence (Warning → Confession → Terminal → Zoom)
       ═══════════════════════════════════════════════ */}
-      <section className={styles.hero}>
-        <div aria-hidden="true" className={styles.spotlight} />
-
-        <div className={styles.heroContent}>
-          <p className={styles.eyebrow}>For AEs &amp; SDRs who are done pretending</p>
-
-          <h1 className={styles.headline}>
-            Your quota doesn&apos;t care about your motivation.
-          </h1>
-
-          <p className={styles.subhead}>
-            12 courses. 5 interactive tools. Zero guru energy.<br />
-            A practical sales curriculum built by someone who carried a bag for 9 years&nbsp;&mdash; not someone who tweets about it.
-          </p>
-
-          <div className={styles.heroCtas}>
-            <a href="#pricing" className={styles.ctaPrimary}>
-              Get Access &mdash; $199
-            </a>
-            <a href="#curriculum" className={styles.ctaSecondary}>
-              See the Curriculum
-            </a>
-          </div>
-        </div>
-
-        <div className={styles.bunnyWrap}>
-          <div aria-hidden="true" className={styles.bunnyAura} />
-          <Image
-            alt="Ceramic humanoid bunny holding a mask"
-            className={styles.bunny}
-            height={1024}
-            priority
-            src="/ceramic-bunny-mask-cutout.png"
-            width={858}
-          />
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════
-          SECTION 2 — PAIN AGITATION
-      ═══════════════════════════════════════════════ */}
-      <section className={styles.painSection}>
-        <p className={styles.sectionLabel}>The problem</p>
-        <h2 className={styles.painHeadline}>
-          You already know something is broken.
-        </h2>
-
-        <div className={styles.painGrid}>
-          <div className={styles.painCard}>
-            <span className={styles.painIcon}>&#x25CB;</span>
-            <p className={styles.painText}>
-              <strong>Quota pressure is constant.</strong> Every month resets to zero. Your manager wants more pipeline. Your VP wants more logos. Nobody is teaching you how to actually get better.
-            </p>
-          </div>
-          <div className={styles.painCard}>
-            <span className={styles.painIcon}>&#x25CB;</span>
-            <p className={styles.painText}>
-              <strong>Career uncertainty is real.</strong> You&apos;re months in and still not sure if you&apos;re building a career or just surviving one. The next promotion feels like a myth your manager tells you to keep you grinding.
-            </p>
-          </div>
-          <div className={styles.painCard}>
-            <span className={styles.painIcon}>&#x25CB;</span>
-            <p className={styles.painText}>
-              <strong>The advice you&apos;re getting is bad.</strong> Recycled platitudes from people who haven&apos;t carried a quota in a decade. &ldquo;Just add value.&rdquo; &ldquo;Be a trusted advisor.&rdquo; &ldquo;Crush it.&rdquo; None of it is actionable. All of it is noise.
-            </p>
-          </div>
-          <div className={styles.painCard}>
-            <span className={styles.painIcon}>&#x25CB;</span>
-            <p className={styles.painText}>
-              <strong>You&apos;re training yourself.</strong> Your onboarding was a week of shadowing and a Gong playlist. Now you&apos;re Googling &ldquo;how to handle objections&rdquo; at 11pm, hoping a blog post saves your quarter.
-            </p>
-          </div>
-        </div>
-
-        <p className={styles.painKicker}>
-          AESDR exists because nobody built what we needed when we were in the seat.
-        </p>
-      </section>
+      <LandingSequence />
 
       {/* ═══════════════════════════════════════════════
           SECTION 3 — WHAT YOU GET (Curriculum)
