@@ -56,4 +56,9 @@ body {
   color: var(--text-main);
   font-family: var(--serif);
   line-height: 1.6;
+  scrollbar-width: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
 }

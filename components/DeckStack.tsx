@@ -18,67 +18,34 @@ const LESSONS = [
   { num: "12", title: "Leveling Up SaaS Relationships", q: "Who would vouch for you if you changed companies tomorrow?" },
 ];
 
+const TOTAL = LESSONS.length;
+const EDGE_ZONE = 0.12; // 12% on each side = edge scroll zone
+
 export default function DeckStack() {
-  const scrollSpaceRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const counterRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
-  const hintRef = useRef<HTMLDivElement>(null);
   const shadow1Ref = useRef<HTMLDivElement>(null);
   const shadow2Ref = useRef<HTMLDivElement>(null);
-  const gutterLeftRef = useRef<HTMLDivElement>(null);
-  const gutterRightRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const progressRef = useRef(0);
+  const mouseXRef = useRef(0);
 
   useEffect(() => {
-    function update() {
-      const sp = scrollSpaceRef.current;
-      const vp = viewportRef.current;
-      if (!sp || !vp) return;
+    let raf: number | null = null;
 
-      const rect = sp.getBoundingClientRect();
-      const spTop = window.scrollY + rect.top;
-      const scrollY = Math.max(0, window.scrollY - spTop);
-      const maxScroll = sp.offsetHeight - window.innerHeight;
-      if (maxScroll <= 0) return;
+    function renderCards() {
+      const progress = progressRef.current;
+      const activeIndex = Math.min(Math.floor(progress), TOTAL - 1);
+      const cardFrac = progress - activeIndex;
 
-      const inView = rect.top < window.innerHeight && rect.bottom > 0;
-      const pastSection = rect.bottom <= 0;
-
-      if (!inView || pastSection) {
-        headerRef.current?.classList.remove(s.sectionHeaderVisible);
-        counterRef.current?.classList.remove(s.cardCounterVisible);
-        viewportRef.current?.classList.remove(s.deckViewportVisible);
-        hintRef.current?.classList.remove(s.scrollHintVisible);
-        gutterLeftRef.current?.classList.remove(s.sideGutterVisible);
-        gutterRightRef.current?.classList.remove(s.sideGutterVisible);
-        return;
-      }
-
-      headerRef.current?.classList.add(s.sectionHeaderVisible);
-      counterRef.current?.classList.add(s.cardCounterVisible);
-      viewportRef.current?.classList.add(s.deckViewportVisible);
-      gutterLeftRef.current?.classList.add(s.sideGutterVisible);
-      gutterRightRef.current?.classList.add(s.sideGutterVisible);
-
-      const progress = Math.min(1, scrollY / maxScroll);
-      const totalCards = LESSONS.length;
-      const cardProgress = progress * totalCards;
-      const activeIndex = Math.min(Math.floor(cardProgress), totalCards - 1);
-      const cardFrac = cardProgress - activeIndex;
-
-      // Counter
       if (counterRef.current) {
-        const current = Math.min(activeIndex + 1, totalCards);
+        const current = Math.min(activeIndex + 1, TOTAL);
         counterRef.current.textContent =
-          String(current).padStart(2, "0") + " / " + totalCards;
+          String(current).padStart(2, "0") + " / " + TOTAL;
       }
 
-      // Scroll hint
-      if (activeIndex > 0) hintRef.current?.classList.remove(s.scrollHintVisible);
-      else hintRef.current?.classList.add(s.scrollHintVisible);
-
-      // Animate cards
       cardsRef.current.forEach((card, i) => {
         if (!card) return;
         if (i < activeIndex) {
@@ -90,9 +57,7 @@ export default function DeckStack() {
             card.style.opacity = "1";
           } else {
             const t = (cardFrac - 0.7) / 0.3;
-            const x = t * -120;
-            const r = t * -8;
-            card.style.transform = `translateX(${x}%) rotate(${r}deg)`;
+            card.style.transform = `translateX(${t * -120}%) rotate(${t * -8}deg)`;
             card.style.opacity = String(1 - t);
           }
         } else {
@@ -106,39 +71,89 @@ export default function DeckStack() {
         }
       });
 
-      // Shadows
-      const remaining = totalCards - activeIndex;
+      const remaining = TOTAL - activeIndex;
       if (shadow1Ref.current) shadow1Ref.current.style.opacity = remaining > 1 ? "1" : "0";
       if (shadow2Ref.current) shadow2Ref.current.style.opacity = remaining > 2 ? "1" : "0";
     }
 
-    function skipSection() {
-      const sp = scrollSpaceRef.current;
-      if (!sp) return;
-      const rect = sp.getBoundingClientRect();
-      const target = window.scrollY + rect.bottom;
-      window.scrollTo({ top: target, behavior: "smooth" });
+    function isSectionInView(): boolean {
+      const el = sectionRef.current;
+      if (!el) return false;
+      const rect = el.getBoundingClientRect();
+      // Section is "active" when it roughly fills the viewport
+      return rect.top <= 50 && rect.bottom >= window.innerHeight - 50;
     }
 
-    const gl = gutterLeftRef.current;
-    const gr = gutterRightRef.current;
-    gl?.addEventListener("click", skipSection);
-    gr?.addEventListener("click", skipSection);
+    function isInCenterZone(): boolean {
+      const x = mouseXRef.current;
+      const w = window.innerWidth;
+      const leftEdge = w * EDGE_ZONE;
+      const rightEdge = w * (1 - EDGE_ZONE);
+      return x > leftEdge && x < rightEdge;
+    }
 
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
-    update();
+    function handleWheel(e: WheelEvent) {
+      if (!isSectionInView()) return;
+      if (!isInCenterZone()) return;
+
+      const progress = progressRef.current;
+
+      // At boundaries, let page scroll through
+      if (progress <= 0 && e.deltaY < 0) return;
+      if (progress >= TOTAL && e.deltaY > 0) return;
+
+      e.preventDefault();
+
+      // Normalize deltaY: mouse wheel ~100, trackpad ~1-30
+      const delta = Math.abs(e.deltaY) > 50
+        ? (e.deltaY > 0 ? 1 : -1) * 0.18
+        : (e.deltaY / 100) * 0.18;
+
+      progressRef.current = Math.max(0, Math.min(TOTAL, progress + delta));
+
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(renderCards);
+    }
+
+    function handleMouseMove(e: MouseEvent) {
+      mouseXRef.current = e.clientX;
+    }
+
+    function handleScroll() {
+      const el = sectionRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const inView = rect.top < window.innerHeight && rect.bottom > 0;
+
+      if (inView) {
+        headerRef.current?.classList.add(s.sectionHeaderVisible);
+        counterRef.current?.classList.add(s.cardCounterVisible);
+        viewportRef.current?.classList.add(s.deckViewportVisible);
+      } else {
+        headerRef.current?.classList.remove(s.sectionHeaderVisible);
+        counterRef.current?.classList.remove(s.cardCounterVisible);
+        viewportRef.current?.classList.remove(s.deckViewportVisible);
+      }
+    }
+
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    // Initial render
+    renderCards();
+    handleScroll();
 
     return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-      gl?.removeEventListener("click", skipSection);
-      gr?.removeEventListener("click", skipSection);
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("scroll", handleScroll);
+      if (raf) cancelAnimationFrame(raf);
     };
   }, []);
 
   return (
-    <>
+    <div className={s.section} ref={sectionRef}>
       <div className={s.sectionHeader} ref={headerRef}>
         <div className={s.sectionLabel}>What you get</div>
         <h2 className={s.sectionTitle}>12 Lessons. Peel to preview.</h2>
@@ -161,7 +176,7 @@ export default function DeckStack() {
           <div
             key={i}
             className={s.deckCard}
-            style={{ zIndex: LESSONS.length - i }}
+            style={{ zIndex: TOTAL - i }}
             ref={(el) => { cardsRef.current[i] = el; }}
           >
             <div className={s.cardNum}>{lesson.num}</div>
@@ -170,20 +185,6 @@ export default function DeckStack() {
           </div>
         ))}
       </div>
-
-      <div className={`${s.sideGutter} ${s.sideGutterLeft}`} ref={gutterLeftRef}>
-        <span className={s.skipLabel}>skip ↓</span>
-      </div>
-      <div className={`${s.sideGutter} ${s.sideGutterRight}`} ref={gutterRightRef}>
-        <span className={s.skipLabel}>skip ↓</span>
-      </div>
-
-      <div className={s.scrollHint} ref={hintRef}>
-        <span className={s.scrollHintText}>scroll to peel</span>
-        <div className={s.scrollHintBar} />
-      </div>
-
-      <div className={s.scrollSpace} ref={scrollSpaceRef} />
-    </>
+    </div>
   );
 }
