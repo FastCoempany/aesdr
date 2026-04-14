@@ -26,6 +26,8 @@ export default function DeckStack() {
   const hintRef = useRef<HTMLDivElement>(null);
   const shadow1Ref = useRef<HTMLDivElement>(null);
   const shadow2Ref = useRef<HTMLDivElement>(null);
+  const gutterLeftRef = useRef<HTMLDivElement>(null);
+  const gutterRightRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
@@ -48,12 +50,16 @@ export default function DeckStack() {
         counterRef.current?.classList.remove(s.cardCounterVisible);
         viewportRef.current?.classList.remove(s.deckViewportVisible);
         hintRef.current?.classList.remove(s.scrollHintVisible);
+        gutterLeftRef.current?.classList.remove(s.sideGutterVisible);
+        gutterRightRef.current?.classList.remove(s.sideGutterVisible);
         return;
       }
 
       headerRef.current?.classList.add(s.sectionHeaderVisible);
       counterRef.current?.classList.add(s.cardCounterVisible);
       viewportRef.current?.classList.add(s.deckViewportVisible);
+      gutterLeftRef.current?.classList.add(s.sideGutterVisible);
+      gutterRightRef.current?.classList.add(s.sideGutterVisible);
 
       const progress = Math.min(1, scrollY / maxScroll);
       const totalCards = LESSONS.length;
@@ -106,6 +112,19 @@ export default function DeckStack() {
       if (shadow2Ref.current) shadow2Ref.current.style.opacity = remaining > 2 ? "1" : "0";
     }
 
+    function skipSection() {
+      const sp = scrollSpaceRef.current;
+      if (!sp) return;
+      const rect = sp.getBoundingClientRect();
+      const target = window.scrollY + rect.bottom;
+      window.scrollTo({ top: target, behavior: "smooth" });
+    }
+
+    const gl = gutterLeftRef.current;
+    const gr = gutterRightRef.current;
+    gl?.addEventListener("click", skipSection);
+    gr?.addEventListener("click", skipSection);
+
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
     update();
@@ -113,6 +132,8 @@ export default function DeckStack() {
     return () => {
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
+      gl?.removeEventListener("click", skipSection);
+      gr?.removeEventListener("click", skipSection);
     };
   }, []);
 
@@ -148,6 +169,13 @@ export default function DeckStack() {
             <div className={s.cardQuestion}>&ldquo;{lesson.q}&rdquo;</div>
           </div>
         ))}
+      </div>
+
+      <div className={`${s.sideGutter} ${s.sideGutterLeft}`} ref={gutterLeftRef}>
+        <span className={s.skipLabel}>skip ↓</span>
+      </div>
+      <div className={`${s.sideGutter} ${s.sideGutterRight}`} ref={gutterRightRef}>
+        <span className={s.skipLabel}>skip ↓</span>
       </div>
 
       <div className={s.scrollHint} ref={hintRef}>

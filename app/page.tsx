@@ -14,7 +14,7 @@ const FAQ = [
     a: "Yes, it's actually inspired by you. The curriculum starts with foundational frameworks and builds to advanced execution. If you're in your first 18 months, you'll skip years of painful trial-and-error.",
   },
   {
-    q: "Is this just another motivational sales course?",
+    q: "Is this just\u00a0another motivational sales course?",
     a: "Nope. No guru stuff. No \"crush it\" motivation. This is sober, fun, practical training built by people who over the last 10+ years carried bags and managed AEs & SDRs who carried bags from early stage startup level to large enterprise level.",
   },
   {
@@ -27,19 +27,19 @@ const FAQ = [
   },
   {
     q: "What's the difference between Individual and Team?",
-    a: "Individual is one seat, one login. Team gives you up to 10 seats with a shared admin dashboard — built for sales managers who want their whole team on the same page.",
+    a: "Individual is one seat, one login. Team gives you up to 10 seats — built for sales managers who want their whole team on the same page.",
   },
   {
     q: "Is there a community or is this self-paced only?",
-    a: "Both. The course is self-paced with interactive exercises. You also get access to our Discord community — real reps, real problems, real accountability.",
+    a: "Both. The course is self-paced with interactive exercises. You also get access to our Discord community — real AEs & SDRs, real problems, real accountability.",
   },
   {
     q: "I've been in sales for 5+ years. Is this too basic?",
-    a: "Lessons 1–5 cover fundamentals. Lessons 6–12 go deep on prospecting strategy, pipeline math, financial resilience, and career-level relationship building. Experienced reps consistently say Lessons 8–12 are worth the price alone.",
+    a: "Lessons 1–5 cover fundamentals. Lessons 6–12 go deep on prospecting strategy, pipeline math, financial resilience, and career-level relationship building. Experienced AEs & SDRs get just as much value from this course without question. If you disagree. We refund.",
   },
   {
     q: "Can my company expense this?",
-    a: "Yes. We provide a receipt and invoice on purchase. Most L&D budgets cover this easily — especially the Team plan.",
+    a: "Of course. We provide a receipt and invoice on purchase. Most L&D budgets cover this easily — especially the Team plan.",
   },
 ];
 
