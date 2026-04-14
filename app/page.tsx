@@ -7,29 +7,6 @@ import TeaseGate from "@/components/TeaseGate";
 import Testimonials from "@/components/Testimonials";
 import styles from "./page.module.css";
 
-const LESSONS = [
-  { num: "01", title: "Building Real Camaraderie", desc: "How to build genuine relationships in sales orgs that actually last" },
-  { num: "02", title: "Breaking Down Silos", desc: "Cross-functional alignment that makes your deals move faster" },
-  { num: "03", title: "Performance Pitfalls", desc: "The traps that kill sales careers — and how to avoid every one" },
-  { num: "04", title: "Navigating Manager Madness", desc: "Surviving toxic managers, bad coaching, and political games" },
-  { num: "05", title: "The Sales Playbook", desc: "A real operating system for daily execution — not motivational noise" },
-  { num: "06", title: "Beyond the Sales Playbook", desc: "What to do when the playbook breaks and you have to think for yourself" },
-  { num: "07", title: "Prospecting & Pipeline", desc: "Building self-sourced pipeline that gives you leverage and career options." },
-  { num: "08", title: "The 30% Rule", desc: "The math behind pipeline health that most reps never learn" },
-  { num: "09", title: "Salesforce Survival Guide", desc: "CRM hygiene that protects your deals and your credibility" },
-  { num: "10", title: "Breaking Down the Commission Myth", desc: "Financial resilience on variable comp — before it breaks you" },
-  { num: "11", title: "Sober Selling", desc: "Selling without the guru energy, the hustle porn, or the burnout" },
-  { num: "12", title: "Leveling Up SaaS Relationships", desc: "Long-game relationship building that compounds over a career" },
-];
-
-const TOOLS = [
-  { name: "AE/SDR Alignment Contract", lesson: "03", desc: "Stop the passive-aggressive handoff. Build a real working agreement." },
-  { name: "\"I Don't Know\" Framework", lesson: "06", desc: "A structured approach for when you genuinely don't have the answer." },
-  { name: "Time Reclaimed Calculator", lesson: "09", desc: "See exactly how many hours you waste on non-selling activity." },
-  { name: "ROI & Commission Defense Tracker", lesson: "10", desc: "Prove your value in dollars when comp plans change underneath you." },
-  { name: "72-Hour Strike Plan", lesson: "12", desc: "A concrete rescue plan when your quarter is falling apart." },
-];
-
 const FAQ = [
   {
     q: "Is this for me if I'm brand new to sales?",
@@ -87,50 +64,7 @@ export default function LandingPage() {
       <LandingSequence />
 
       {/* ═══════════════════════════════════════════════
-          SECTION 3 — WHAT YOU GET (Curriculum)
-      ═══════════════════════════════════════════════ */}
-      <section id="curriculum" className={styles.curriculumSection}>
-        <p className={styles.sectionLabel}>What you get</p>
-        <h2 className={styles.sectionHeadline}>
-          12 courses. Not 12 PDFs.<br />
-          <span className={styles.headlineMuted}>Interactive lessons with real frameworks you&apos;ll actually use.</span>
-        </h2>
-
-        <div className={styles.lessonGrid}>
-          {LESSONS.map((l) => (
-            <div key={l.num} className={styles.lessonCard}>
-              <span className={styles.lessonNum}>{l.num}</span>
-              <div>
-                <p className={styles.lessonTitle}>{l.title}</p>
-                <p className={styles.lessonDesc}>{l.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════
-          SECTION 4 — TOOLS (Proof of Value)
-      ═══════════════════════════════════════════════ */}
-      <section className={styles.toolsSection}>
-        <p className={styles.sectionLabel}>Included tools</p>
-        <h2 className={styles.sectionHeadline}>
-          5 downloadable tools you&apos;ll actually open twice.
-        </h2>
-
-        <div className={styles.toolsGrid}>
-          {TOOLS.map((t, i) => (
-            <div key={i} className={styles.toolCard}>
-              <div className={styles.toolBadge}>Course {t.lesson}</div>
-              <p className={styles.toolName}>{t.name}</p>
-              <p className={styles.toolDesc}>{t.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════
-          SECTION 5 — TESTIMONIALS
+          TESTIMONIALS
       ═══════════════════════════════════════════════ */}
       <Testimonials />
 
