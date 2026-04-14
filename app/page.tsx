@@ -159,6 +159,21 @@ export default function LandingPage() {
         </a>
       </section>
 
+      {/* ═══════════════════════════════════════════════
+          CONTENT WARNING
+      ═══════════════════════════════════════════════ */}
+      <section className={styles.contentWarning}>
+        <div className={styles.warningIcon}>!</div>
+        <p className={styles.warningLabel}>Content Warning</p>
+        <p className={styles.warningText}>
+          This course contains uncomfortable truths about your{" "}
+          <strong>pipeline</strong>, your <strong>apartment</strong>, your{" "}
+          <strong>bar tab</strong>, your <strong>commission check</strong>,{" "}
+          and your <strong>relationship status</strong>.
+        </p>
+        <p className={styles.warningMeta}>AESDR &mdash; 12 lessons / at your own pace / classified</p>
+      </section>
+
       {/* ─── FOOTER ─── */}
       <footer className={styles.footer}>
         <span style={{ opacity: 0.5 }}>AESDR &copy; {new Date().getFullYear()}</span>

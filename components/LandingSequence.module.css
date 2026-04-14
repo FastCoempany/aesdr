@@ -140,7 +140,7 @@
 }
 .termLine {
   font-size: clamp(13px, 1.8vw, 17px); line-height: 1.8;
-  color: rgba(248,250,252,0.55); opacity: 0; white-space: pre-wrap;
+  color: rgba(248,250,252,0.85); opacity: 0; white-space: pre-wrap;
 }
 .termLineVisible { opacity: 1; }
 .prompt { color: rgba(248,250,252,0.2); margin-right: 8px; }
@@ -163,6 +163,22 @@
   animation: shimmer 4s linear infinite;
 }
 .termOutputVisible { opacity: 1; }
+.termWhisper {
+  font-family: var(--serif);
+  font-size: clamp(12px, 1.4vw, 15px);
+  color: rgba(148,163,184,0.35);
+  margin-top: 16px;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: rgba(148,163,184,0.35);
+  background-clip: unset;
+  animation: none;
+  filter: none;
+}
 
 /* ── Scroll hint ── */
 .scrollHint {
@@ -230,7 +246,7 @@
   text-transform: uppercase; letter-spacing: .03em; line-height: 1.05;
 }
 .zMichael {
-  font-family: var(--hand); color: rgba(235,217,180,0.75); line-height: 1.4;
+  font-family: var(--hand); color: #F0E4CE; line-height: 1.4;
 }
 .zSub {
   font-family: var(--serif); font-weight: 400; color: var(--text-muted);
@@ -291,7 +307,7 @@
 }
 .ctaNote {
   font-family: var(--hand); font-size: clamp(16px, 2vw, 22px);
-  color: rgba(235,217,180,0.6); margin-bottom: 24px; transform: rotate(-1deg);
+  color: rgba(240,228,206,0.7); margin-bottom: 24px; transform: rotate(-1deg);
 }
 .ctaButton {
   font-family: var(--cond); font-size: 14px; font-weight: 700;

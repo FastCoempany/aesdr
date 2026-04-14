@@ -28,13 +28,13 @@ const ZOOM_CARDS: {
   fontSize: string;
 }[] = [
   { voice: "rowan", ghost: "RESET", headline: 'Every month, they reset your number to <span class="iris">zero.</span>', sub: "And every month, you act surprised. You don\u2019t have a pipeline problem. You have a denial problem. The math has been screaming at you for weeks.", fontSize: "clamp(36px,7vw,80px)" },
-  { voice: "michael", headline: "My manager asked for a pipeline update.<br>I sent a screenshot of an empty spreadsheet<br>and wrote \u201Cminimalist aesthetic.\u201D<br><br>He did not laugh.<br>HR laughed. But like, in a concerned way.", fontSize: "clamp(22px,3.5vw,42px)" },
+  { voice: "michael", headline: "My manager asked for a pipeline update. I sent a screenshot of an empty spreadsheet and wrote \u201Cminimalist aesthetic.\u201D He did not laugh. HR laughed. But like, in a concerned way.", fontSize: "clamp(22px,3.5vw,42px)" },
   { voice: "rowan", ghost: "LOST", headline: 'You are not building a career. You are <span class="iris">surviving</span> one.', sub: "The next promotion is not coming. Not because you\u2019re bad \u2014 because nobody has taught you what good looks like. You\u2019re guessing. Loudly.", fontSize: "clamp(36px,7vw,80px)" },
-  { voice: "michael", headline: "My mom asked about my five-year plan.<br>I said \u201Csurvive Q3.\u201D<br>She said that\u2019s three months, not five years.<br><br>I said we don\u2019t really plan past three months in SaaS.<br>She started crying. I started crying.<br>We had pasta.", fontSize: "clamp(22px,3.5vw,42px)" },
+  { voice: "michael", headline: "My mom asked about my five-year plan. I said \u201Csurvive Q3.\u201D She said that\u2019s three months, not five years. I said we don\u2019t really plan past three months in SaaS. She started crying. I started crying. We had pasta.", fontSize: "clamp(22px,3.5vw,42px)" },
   { voice: "rowan", ghost: "NOISE", headline: 'The people advising you haven\u2019t carried a bag in a <span class="iris">decade.</span>', sub: "\u201CJust add value.\u201D \u201CBe a trusted advisor.\u201D \u201CCrush it.\u201D None of it is actionable. All of it is noise from people who forgot what it feels like to miss.", fontSize: "clamp(32px,6vw,72px)" },
-  { voice: "michael", headline: "LinkedIn told me to \u201Clead with value on every call.\u201D<br>So I told a prospect about a really good taco place<br>near their office. Very detailed review. Salsa rankings.<br><br>They did not buy.<br>But the tacos are genuinely excellent.<br>I stand by the recommendation.", fontSize: "clamp(22px,3.5vw,42px)" },
+  { voice: "michael", headline: "LinkedIn told me to \u201Clead with value on every call.\u201D So I told a prospect about a really good taco place near their office. Very detailed review. Salsa rankings. They did not buy. But the tacos are genuinely excellent. I stand by the recommendation.", fontSize: "clamp(22px,3.5vw,42px)" },
   { voice: "rowan", ghost: "ALONE", headline: 'Your onboarding was a <span class="iris">crime scene.</span>', sub: "A week of shadowing. A Gong playlist. A prayer. That is not training. That is abandonment with a Slack channel.", fontSize: "clamp(32px,6vw,72px)" },
-  { voice: "michael", headline: "It\u2019s 11:47pm. I\u2019m watching a YouTube video called<br>\u201CCRUSH Cold Calls in 2024.\u201D<br>The guy has a ring light and a Ferrari poster.<br><br>I\u2019m taking notes. In my phone.<br>This is my professional development.<br>I have a degree. From a university. With a campus.", fontSize: "clamp(22px,3.5vw,42px)" },
+  { voice: "michael", headline: "It\u2019s 11:47pm. I\u2019m watching a YouTube video called \u201CCRUSH Cold Calls in 2024.\u201D The guy has a ring light and a Ferrari poster. I\u2019m taking notes. In my phone. This is my professional development. I have a degree. From a university. With a campus.", fontSize: "clamp(22px,3.5vw,42px)" },
 ];
 
 /* ── Helpers ── */
@@ -63,15 +63,12 @@ function buildHTML(arr: Char[], irisClass: string): string {
 
 export default function LandingSequence() {
   const heroRef = useRef<HTMLDivElement>(null);
-  const warningRef = useRef<HTMLDivElement>(null);
   const confessionRef = useRef<HTMLDivElement>(null);
   const typingRef = useRef<HTMLDivElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
   const termBodyRef = useRef<HTMLDivElement>(null);
   const termOutputRef = useRef<HTMLDivElement>(null);
   const scrollHintRef = useRef<HTMLDivElement>(null);
-  const rereadRef = useRef<HTMLDivElement>(null);
-  const continueRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const scrollSpaceRef = useRef<HTMLDivElement>(null);
   const sideMarkerRef = useRef<HTMLDivElement>(null);
@@ -130,14 +127,9 @@ export default function LandingSequence() {
     /* ── Terminal ── */
     function showTerminal() {
       done = true;
-      rereadRef.current?.classList.remove(s.rereadLinkVisible);
       if (confessionRef.current) {
         confessionRef.current.style.transition = "opacity 0.5s ease";
         confessionRef.current.style.opacity = "0";
-      }
-      if (warningRef.current) {
-        warningRef.current.style.transition = "opacity 0.3s ease";
-        warningRef.current.style.opacity = "0";
       }
       setTimeout(() => {
         terminalRef.current?.classList.add(s.terminalLayerActive);
@@ -251,52 +243,17 @@ export default function LandingSequence() {
       scrollHandler();
     }
 
-    /* ── Re-read / Continue ── */
-    function handleReread() {
-      if (done) return;
-      paused = true;
-      if (timer) clearTimeout(timer);
-      confessionRef.current?.classList.remove(s.confessionLayerActive);
-      rereadRef.current?.classList.remove(s.rereadLinkVisible);
-      warningRef.current?.classList.remove(s.warningBoxPushed);
-      setTimeout(() => continueRef.current?.classList.add(s.continueLinkVisible), 600);
-    }
 
-    function handleContinue() {
-      continueRef.current?.classList.remove(s.continueLinkVisible);
-      paused = false;
-      warningRef.current?.classList.add(s.warningBoxPushed);
-      setTimeout(() => {
-        confessionRef.current?.classList.add(s.confessionLayerActive);
-        rereadRef.current?.classList.add(s.rereadLinkVisible);
-        setTimeout(() => {
-          if (sceneIdx >= SCENES.length) timer = setTimeout(showTerminal, 800);
-          else typeSceneChar(flattenSegs(SCENES[sceneIdx].segments), SCENES[sceneIdx]);
-        }, 300);
-      }, 300);
-    }
-
-    const rereadEl = rereadRef.current;
-    const continueEl = continueRef.current;
-    rereadEl?.addEventListener("click", handleReread);
-    continueEl?.addEventListener("click", handleContinue);
-
-    /* ── Start sequence ── */
+    /* ── Start sequence — go straight to typed confession ── */
     const initTimer = setTimeout(() => {
-      warningRef.current?.classList.add(s.warningBoxPushed);
-      setTimeout(() => {
-        confessionRef.current?.classList.add(s.confessionLayerActive);
-        rereadRef.current?.classList.add(s.rereadLinkVisible);
-        setTimeout(startScene, 400);
-      }, 300);
-    }, 6000);
+      confessionRef.current?.classList.add(s.confessionLayerActive);
+      setTimeout(startScene, 400);
+    }, 1200);
 
     /* ── Cleanup ── */
     return () => {
       clearTimeout(initTimer);
       if (timer) clearTimeout(timer);
-      rereadEl?.removeEventListener("click", handleReread);
-      continueEl?.removeEventListener("click", handleContinue);
       if (scrollHandler) window.removeEventListener("scroll", scrollHandler);
       if (resizeHandler) window.removeEventListener("resize", resizeHandler);
       document.body.style.overflow = "";
@@ -312,31 +269,6 @@ export default function LandingSequence() {
         <div className={`${s.corner} ${s.cornerTR}`} />
         <div className={`${s.corner} ${s.cornerBL}`} />
         <div className={`${s.corner} ${s.cornerBR}`} />
-
-        <div className={s.warningBox} ref={warningRef}>
-          <div className={s.warningHeader}>
-            <div className={s.warningIcon}>!</div>
-            <div className={s.warningTitle}>Content Warning</div>
-          </div>
-          <div className={s.warningBody}>
-            This course contains uncomfortable truths about your{" "}
-            <span className={s.highlight}>pipeline</span>, your{" "}
-            <span className={s.highlight}>apartment</span>, your{" "}
-            <span className={s.highlight}>bar tab</span>, your{" "}
-            <span className={s.highlight}>commission check</span>, and your{" "}
-            <span className={s.highlight}>relationship status</span>.
-            <br /><br />
-            Keep scrolling. It has to get worse before it gets better.
-          </div>
-          <div className={s.warningTag}>AESDR — 12 lessons / at your own pace / classified</div>
-          <div className={s.continueLink} ref={continueRef}>
-            continue &rarr;
-          </div>
-        </div>
-
-        <div className={s.rereadLink} ref={rereadRef}>
-          <span className={s.rereadIcon}>!</span> re-read warning
-        </div>
 
         <div className={s.confessionLayer} ref={confessionRef}>
           <div className={s.typingArea} ref={typingRef} />
@@ -359,6 +291,7 @@ export default function LandingSequence() {
               ))}
               <div className={s.termOutput} ref={termOutputRef}>
                 This course will change your life a few times throughout. Afterward, you&rsquo;ll never make the same money again.
+                <div className={s.termWhisper}>Keep scrolling. It has to get worse before it gets better.</div>
               </div>
             </div>
           </div>
