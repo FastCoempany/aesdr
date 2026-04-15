@@ -6,129 +6,162 @@
 <title>AESDR — The Unfiltered SaaS Sales Survival Guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Caveat:wght@400;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
 <style>
-:root{--crimson:#8B1A1A;--cream:#FAF7F2;--ink:#1A1A1A;--muted:#6B6B6B;--light:#E8E4DF;
---iris:linear-gradient(90deg,#FF006E,#FF6B00,#F59E0B,#10B981,#38BDF8,#8B5CF6,#FF006E);
---serif:'Playfair Display',Georgia,serif;--mono:'Space Mono',monospace;--body:'Source Serif 4',Georgia,serif}
+:root{
+--bg-main:#020617;--bg-panel:#0F172A;--bg-card:#1E293B;
+--text-main:#F8FAFC;--text-muted:#94A3B8;
+--theme:#10B981;--coral:#EF4444;--amber:#F59E0B;
+--line:rgba(255,255,255,0.1);--line2:rgba(255,255,255,0.2);
+--iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+--display:'Abril Fatface',Georgia,serif;
+--serif:'Cormorant Garamond',Georgia,serif;
+--cond:'Barlow Condensed',sans-serif;
+--mono:'DM Mono',monospace;
+--hand:'Caveat',cursive}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--cream);color:var(--ink);font-family:var(--body);overflow:hidden}
+html,body{scrollbar-width:none!important}
+html::-webkit-scrollbar,body::-webkit-scrollbar{display:none!important;width:0!important}
+body{background:var(--bg-main);color:var(--text-main);font-family:var(--serif);line-height:1.6;overflow:hidden}
 a{color:inherit;text-decoration:none}
 
-/* === HERO SPLIT === */
-.hero{display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
-.hero-left{background:var(--crimson);color:#fff;padding:60px 48px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
-.hero-left::after{content:'01';font-family:var(--serif);font-size:300px;font-weight:900;position:absolute;bottom:-40px;right:-20px;opacity:.06;line-height:1;pointer-events:none}
-.hero-right{background:var(--cream);padding:60px 48px;display:flex;flex-direction:column;justify-content:center}
-.mono-label{font-family:var(--mono);font-size:10px;letter-spacing:.25em;text-transform:uppercase;margin-bottom:20px;opacity:.7}
-.hero-h1{font-family:var(--serif);font-size:clamp(36px,5vw,64px);font-weight:900;font-style:italic;line-height:1.05;margin-bottom:24px}
-.hero-h1 .accent{background:var(--iris);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 4s linear infinite}
-.hero-p{font-size:18px;line-height:1.7;color:var(--muted);margin-bottom:32px;max-width:480px}
-.btn-black{display:inline-block;background:var(--ink);color:#fff;font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;padding:16px 36px;border:none;cursor:pointer;transition:background .2s}
-.btn-black:hover{background:#333}
-.btn-outline{display:inline-block;border:1.5px solid var(--ink);color:var(--ink);font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;padding:14px 36px;cursor:pointer;transition:all .2s;background:transparent;margin-left:12px}
-.btn-outline:hover{background:var(--ink);color:#fff}
+/* === SCROLL PROGRESS === */
+.scroll-progress{position:fixed;top:0;left:0;height:2px;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite;width:0%;z-index:100;opacity:0;transition:width .1s linear}
+.side-markers{position:fixed;right:24px;top:50%;transform:translateY(-50%);z-index:50;display:flex;flex-direction:column;gap:8px;opacity:0;transition:opacity .4s}
+.side-markers.vis{opacity:1}
+.marker-dot{width:6px;height:6px;border-radius:50%;background:rgba(248,250,252,0.1);transition:background .3s,transform .3s}
+.marker-dot.active{background:var(--theme);transform:scale(1.5)}
 
-/* Warning box on left panel */
-.warn-box{border:1px solid rgba(255,255,255,.2);padding:24px;margin-top:32px}
-.warn-title{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:8px}
-.warn-text{font-size:15px;line-height:1.6;color:rgba(255,255,255,.8)}
-.warn-text strong{color:#fff}
+/* === HERO SPLIT === */
+.hero{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;position:relative}
+.hero-left{background:var(--bg-panel);color:var(--text-main);padding:60px 48px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
+.hero-left::after{content:'01';font-family:var(--cond);font-size:300px;font-weight:900;text-transform:uppercase;position:absolute;bottom:-40px;right:-20px;opacity:.03;line-height:1;pointer-events:none;color:var(--text-main)}
+.hero-right{background:var(--bg-main);padding:60px 48px;display:flex;flex-direction:column;justify-content:center;position:relative}
+.corner{position:absolute;width:20px;height:20px;border-color:rgba(248,250,252,0.04);border-style:solid;border-width:0;z-index:2}
+.corner-tl{top:20px;left:20px;border-top-width:1px;border-left-width:1px}
+.corner-tr{top:20px;right:20px;border-top-width:1px;border-right-width:1px}
+.corner-bl{bottom:20px;left:20px;border-bottom-width:1px;border-left-width:1px}
+.corner-br{bottom:20px;right:20px;border-bottom-width:1px;border-right-width:1px}
+.ambient-line{position:absolute;bottom:0;left:0;width:100%;height:1px;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite;opacity:.1;z-index:50}
+.mono-label{font-family:var(--mono);font-size:10px;letter-spacing:.25em;text-transform:uppercase;margin-bottom:20px;opacity:.5}
+.hero-h1{font-family:var(--display);font-size:clamp(36px,5vw,64px);font-weight:400;line-height:1.05;margin-bottom:24px;color:var(--text-main)}
+.hero-h1 .accent{background:var(--iris);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 4s linear infinite}
+.hero-p{font-size:18px;line-height:1.7;color:var(--text-muted);margin-bottom:32px;max-width:480px}
+.iris-text{background:var(--iris);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 4s linear infinite}
+.btn-iris{display:inline-block;font-family:var(--cond);font-size:14px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--bg-main);background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite;padding:16px 40px;border:none;cursor:pointer;transition:transform .15s,box-shadow .3s}
+.btn-iris:hover{transform:translateY(-1px);box-shadow:0 0 30px rgba(16,185,129,0.3)}
+.btn-outline{display:inline-block;border:1px solid var(--line2);color:var(--text-muted);font-family:var(--cond);font-size:13px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;padding:14px 36px;cursor:pointer;transition:all .2s;background:transparent;margin-left:12px}
+.btn-outline:hover{background:rgba(255,255,255,0.05);color:var(--text-main)}
+
+/* Warning box */
+.warn-box{border:1px solid rgba(248,250,252,0.08);padding:24px;margin-top:32px}
+.warn-title{font-family:var(--mono);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:rgba(239,68,68,0.5);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.warn-icon{width:16px;height:16px;border:1px solid rgba(239,68,68,0.5);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;color:rgba(239,68,68,0.5)}
+.warn-text{font-size:15px;line-height:1.7;color:rgba(248,250,252,0.6)}
+.warn-text strong{color:var(--text-main);font-weight:700}
 
 /* === CONFESSION OVERLAY === */
-.confession{position:fixed;inset:0;background:var(--ink);z-index:50;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .5s}
+.confession{position:fixed;inset:0;background:var(--bg-main);z-index:50;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .5s}
 .confession.active{opacity:1;pointer-events:auto}
-.typing-area{max-width:700px;width:90%}
-.tline{font-family:var(--serif);font-size:clamp(22px,3.5vw,38px);font-style:italic;font-weight:400;color:#fff;line-height:1.5;min-height:1.6em}
+.typing-area{max-width:720px;width:90%}
+.tline{font-size:clamp(22px,3.5vw,38px);font-weight:600;line-height:1.5;color:var(--text-main);min-height:1.6em}
 .tline .accent{background:var(--iris);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 4s linear infinite}
-.cursor{display:inline-block;width:2px;height:1.1em;background:var(--crimson);vertical-align:text-bottom;margin-left:2px;animation:blink .8s step-end infinite}
+.cursor{display:inline-block;width:2px;height:1.1em;background:var(--theme);vertical-align:text-bottom;margin-left:2px;animation:blink .8s step-end infinite}
 
 /* === TERMINAL === */
-.terminal{position:fixed;inset:0;background:var(--ink);z-index:51;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .6s}
+.terminal{position:fixed;inset:0;background:var(--bg-main);z-index:51;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .6s}
 .terminal.active{opacity:1;pointer-events:auto}
-.term-box{max-width:640px;width:90%;border:1px solid rgba(255,255,255,.08);font-family:var(--mono)}
-.term-bar{display:flex;gap:6px;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.term-box{max-width:680px;width:90%;border:1px solid rgba(248,250,252,0.06);background:rgba(248,250,252,0.02);font-family:var(--mono)}
+.term-bar{display:flex;gap:6px;padding:10px 16px;border-bottom:1px solid rgba(248,250,252,0.06)}
 .term-dot{width:8px;height:8px;border-radius:50%}
 .term-dot.r{background:rgba(239,68,68,.5)}.term-dot.y{background:rgba(245,158,11,.5)}.term-dot.g{background:rgba(16,185,129,.5)}
 .term-body{padding:28px 24px}
-.tl{font-size:14px;line-height:1.8;color:rgba(255,255,255,.5);opacity:0;white-space:pre-wrap}
+.tl{font-size:clamp(13px,1.8vw,17px);line-height:1.8;color:rgba(248,250,252,0.85);opacity:0;white-space:pre-wrap}
 .tl.vis{opacity:1}
-.tl .prompt{color:rgba(255,255,255,.2);margin-right:8px}
-.term-out{margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,.08);font-family:var(--serif);font-size:18px;font-style:italic;font-weight:400;color:#fff;opacity:0;transition:opacity .6s}
+.tl .prompt{color:rgba(248,250,252,0.2);margin-right:8px}
+/* Terminal output — IRIS RAINBOW GRADIENT */
+.term-out{margin-top:24px;padding-top:20px;border-top:1px solid rgba(248,250,252,0.06);font-size:clamp(14px,2vw,19px);font-weight:800;line-height:1.7;letter-spacing:.01em;opacity:0;transition:opacity .6s;background:var(--iris);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 4s linear infinite}
 .term-out.vis{opacity:1}
-.scroll-hint{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);z-index:52;opacity:0;display:flex;flex-direction:column;align-items:center;gap:8px;transition:opacity .4s}
+/* Whisper overrides gradient */
+.term-whisper{font-family:var(--serif);font-size:clamp(12px,1.4vw,15px);color:rgba(148,163,184,0.35);margin-top:16px;font-style:italic;font-weight:400;background:none;-webkit-background-clip:unset;-webkit-text-fill-color:rgba(148,163,184,0.35);background-clip:unset;animation:none}
+.scroll-hint{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);z-index:52;opacity:0;display:flex;flex-direction:column;align-items:center;gap:10px;transition:opacity .4s}
 .scroll-hint.vis{opacity:1}
-.scroll-hint span{font-family:var(--mono);font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:rgba(255,255,255,.25)}
-.scroll-bar{width:1px;height:24px;background:rgba(255,255,255,.1);position:relative;overflow:hidden}
-.scroll-bar::after{content:'';position:absolute;top:-100%;left:0;width:1px;height:100%;background:var(--crimson);animation:drop 1.5s ease-in-out infinite}
+.scroll-hint span{font-family:var(--mono);font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:rgba(148,163,184,0.25)}
+.scroll-bar{width:1px;height:28px;position:relative;overflow:hidden}
+.scroll-bar::after{content:'';position:absolute;top:-100%;left:0;width:1px;height:100%;background:var(--iris);background-size:100% 300%;animation:shimmer 4s linear infinite,drop 1.5s ease-in-out infinite}
 
 /* === ZOOM SECTION === */
 .zoom-space{height:700vh;position:relative}
-.viewport{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;pointer-events:none;opacity:0;transition:opacity .5s}
+.viewport{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;pointer-events:none;opacity:0;transition:opacity .5s;overflow:hidden}
 .viewport.active{opacity:1}
 .zcard{position:absolute;width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;opacity:0;padding:40px;will-change:transform,opacity}
-.zcard-inner{max-width:800px}
-.z-rowan{font-family:var(--serif);font-weight:900;font-style:italic;line-height:1.1}
-.z-michael{font-family:var(--body);font-style:italic;color:var(--crimson);line-height:1.5}
-.z-sub{font-family:var(--body);color:var(--muted);font-size:clamp(14px,1.8vw,20px);margin-top:16px}
-.ghost{position:absolute;font-family:var(--serif);font-weight:900;font-size:clamp(180px,35vw,400px);color:rgba(0,0,0,.03);pointer-events:none;top:50%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;line-height:.8}
+.zcard-inner{max-width:900px;position:relative}
+.z-rowan{font-family:var(--cond);font-weight:900;text-transform:uppercase;letter-spacing:.03em;line-height:1.05;color:var(--text-main)}
+.z-michael{font-family:var(--hand);color:#F0E4CE;line-height:1.4}
+.z-sub{font-family:var(--serif);font-weight:400;color:var(--text-muted);font-size:clamp(14px,1.8vw,20px);margin-top:20px;line-height:1.6;text-transform:none;letter-spacing:0}
+.ghost{position:absolute;font-family:var(--cond);font-weight:900;text-transform:uppercase;color:rgba(248,250,252,0.015);font-size:clamp(200px,40vw,500px);pointer-events:none;top:50%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;line-height:.8}
+/* CTA Overlay (after last zoom card) */
+.cta-overlay{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:60;opacity:0;pointer-events:none;transition:opacity .3s;gap:16px}
+.cta-brand{font-family:var(--cond);font-size:clamp(64px,16vw,200px);font-weight:900;letter-spacing:.06em;text-transform:uppercase}
+.cta-tag{font-family:var(--mono);font-size:12px;color:var(--text-muted);letter-spacing:.15em;text-transform:uppercase}
+.cta-note{font-family:var(--serif);font-style:italic;font-size:18px;color:rgba(248,250,252,0.4);max-width:500px;text-align:center;line-height:1.6}
 
 /* === SCROLL SECTIONS === */
-.section{padding:100px 8%;background:var(--cream);position:relative;z-index:3}
-.section-dark{background:var(--ink);color:#fff}
-.section-crimson{background:var(--crimson);color:#fff}
-.sec-label{font-family:var(--mono);font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
-.sec-h2{font-family:var(--serif);font-size:clamp(32px,5vw,56px);font-weight:900;font-style:italic;line-height:1.1;margin-bottom:24px}
+.section{padding:100px 8%;background:linear-gradient(180deg,#040714 0%,#09101d 50%,#040610 100%);position:relative;z-index:3}
+.sec-label{font-family:var(--mono);font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--text-muted);margin-bottom:16px}
+.sec-h2{font-family:var(--cond);font-size:clamp(32px,5vw,56px);font-weight:800;text-transform:uppercase;letter-spacing:.02em;line-height:1.1;margin-bottom:24px;color:var(--text-main)}
 .divider{width:60px;height:2px;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite;margin:24px 0}
 
 /* DeckStack — Wheel Peel */
 .deck-section{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
 .deck-header{text-align:center;opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
 .deck-header.vis{opacity:1;transform:translateY(0)}
-.deck-counter{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--muted);text-align:center;margin-top:12px;opacity:0;transition:opacity .4s}
+.deck-counter{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--text-muted);text-align:center;margin-top:12px;opacity:0;transition:opacity .4s}
 .deck-counter.vis{opacity:1}
-.deck-viewport{position:relative;width:min(600px,90vw);height:380px;margin-top:32px;opacity:0;transition:opacity .5s}
+.deck-viewport{position:relative;width:min(600px,90vw);height:380px;margin-top:32px;opacity:0;transition:opacity .5s;perspective:1200px}
 .deck-viewport.vis{opacity:1}
-.deck-shadow{position:absolute;inset:0;background:#fff;border:1px solid var(--light);border-radius:4px;z-index:0;transition:opacity .3s}
-.deck-card{position:absolute;inset:0;background:#fff;border:1px solid var(--light);padding:40px;display:flex;flex-direction:column;justify-content:center;will-change:transform,opacity;z-index:1}
-.deck-num{font-family:var(--serif);font-size:64px;font-weight:900;position:absolute;top:-8px;right:12px;opacity:.06;line-height:1;pointer-events:none}
-.deck-title{font-family:var(--serif);font-size:24px;font-weight:700;font-style:italic;margin-bottom:12px}
-.deck-desc{font-size:15px;color:var(--muted);line-height:1.7;font-style:italic}
+.deck-shadow{position:absolute;inset:0;background:rgba(15,23,42,0.6);border:1px solid rgba(255,255,255,0.04);border-radius:4px;z-index:0;transition:opacity .3s}
+.deck-card{position:absolute;inset:0;background:rgba(15,23,42,0.95);border:1px solid rgba(255,255,255,0.08);padding:40px;display:flex;flex-direction:column;justify-content:center;will-change:transform,opacity;z-index:1}
+.deck-card::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:2px;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite;opacity:.5}
+.deck-num{font-family:var(--cond);font-size:64px;font-weight:900;text-transform:uppercase;position:absolute;top:20px;right:20px;line-height:1;pointer-events:none;background:var(--iris);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 4s linear infinite;opacity:.6}
+.deck-title{font-family:var(--cond);font-size:22px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;margin-bottom:16px;color:var(--text-main)}
+.deck-desc{font-family:var(--hand);font-size:20px;color:rgba(245,158,11,0.75);line-height:1.5;transform:rotate(-0.5deg)}
 
 /* Pricing */
 .price-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px;max-width:800px}
-.price-card{background:var(--cream);border:1.5px solid var(--light);padding:40px;position:relative}
-.price-card.featured{border-color:var(--ink);border-width:2px}
-.price-card.featured::before{content:'RECOMMENDED';position:absolute;top:-11px;left:24px;background:var(--ink);color:#fff;font-family:var(--mono);font-size:8px;letter-spacing:.15em;padding:3px 10px}
-.price-name{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
-.price-amt{font-family:var(--serif);font-size:48px;font-weight:900;margin-bottom:20px}
+/* Pricing */
+.price-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);padding:40px;position:relative}
+.price-card.featured{border-color:var(--theme);background:rgba(16,185,129,0.04)}
+.price-card.featured::before{content:'RECOMMENDED';position:absolute;top:-11px;left:24px;background:var(--theme);color:var(--bg-main);font-family:var(--mono);font-size:8px;letter-spacing:.15em;padding:3px 10px}
+.price-name{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px}
+.price-amt{font-family:var(--display);font-size:48px;margin-bottom:20px;color:var(--text-main)}
 .price-list{list-style:none;margin-bottom:28px}
-.price-list li{font-size:14px;padding:10px 0;border-bottom:1px solid var(--light);display:flex;gap:10px;color:var(--muted)}
-.price-list li::before{content:'—';color:var(--ink);font-weight:700}
+.price-list li{font-size:14px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;gap:10px;color:var(--text-muted)}
+.price-list li::before{content:'✓';color:var(--theme);font-weight:700}
 
 /* FAQ — Classified Dossier */
 .faq-grid{display:flex;gap:20px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:0 8%}
 .faq-grid::-webkit-scrollbar{display:none}
-.faq-item{flex-shrink:0;width:300px;padding:32px 28px;background:rgba(0,0,0,.02);border:1px solid var(--light);position:relative;cursor:pointer;transition:border-color .3s,background .3s}
-.faq-item:hover{border-color:rgba(0,0,0,.15);background:rgba(0,0,0,.04)}
+.faq-item{flex-shrink:0;width:300px;padding:32px 28px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);position:relative;cursor:pointer;transition:border-color .3s,background .3s}
+.faq-item:hover{border-color:rgba(255,255,255,0.12);background:rgba(255,255,255,0.04)}
 .faq-item::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:2px;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite;opacity:0;transition:opacity .3s}
 .faq-item:hover::after{opacity:1}
-.faq-num{font-family:var(--mono);font-size:11px;color:var(--crimson);letter-spacing:.1em;margin-bottom:12px}
-.faq-q{font-family:var(--serif);font-size:18px;font-weight:800;letter-spacing:.03em;color:var(--ink);margin:0 0 16px;line-height:1.2}
+.faq-num{font-family:var(--mono);font-size:11px;color:rgba(239,68,68,0.6);letter-spacing:.1em;margin-bottom:12px}
+.faq-q{font-family:var(--cond);font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--text-main);margin:0 0 16px;line-height:1.2}
 .faq-a{position:relative;overflow:hidden}
-.faq-blur{font-family:var(--body);font-size:15px;line-height:1.7;color:var(--muted);filter:blur(5px);transition:filter .4s;user-select:none;margin:0}
+.faq-blur{font-family:var(--serif);font-size:15px;line-height:1.7;color:var(--text-muted);filter:blur(5px);transition:filter .4s;user-select:none;margin:0}
 .faq-item:hover .faq-blur{filter:blur(0)}
-.faq-redact{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--crimson);opacity:1;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.faq-redact{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(239,68,68,0.6);opacity:1;transition:opacity .3s;pointer-events:none;white-space:nowrap}
 .faq-item:hover .faq-redact{opacity:0}
-.faq-stamp{font-family:var(--serif);font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(139,26,26,.25);border:1px solid rgba(139,26,26,.15);display:inline-block;padding:3px 10px;margin-top:20px;transform:rotate(-2deg)}
-.faq-scroll-cue{text-align:center;margin-top:24px;font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(107,107,107,.3)}
-
-/* CTA overlay */
-.cta-full{text-align:center;padding:120px 8%}
-.cta-full .big{font-family:var(--serif);font-size:clamp(48px,10vw,120px);font-weight:900;font-style:italic;line-height:1;margin-bottom:16px}
+.faq-stamp{font-family:var(--cond);font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(239,68,68,0.6);border:1px solid rgba(239,68,68,0.3);display:inline-block;padding:3px 10px;margin-top:20px;transform:rotate(-2deg)}
+.faq-scroll-cue{text-align:center;margin-top:24px;font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(148,163,184,0.3)}
+/* Testimonial cards */
+.test-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);padding:28px;flex:1 1 240px;max-width:280px}
+.test-card p{font-style:italic;color:var(--text-muted);font-size:15px;line-height:1.7;margin-bottom:12px}
+.test-card strong{font-size:13px;color:var(--text-main)}
 
 /* Footer */
-footer{text-align:center;padding:32px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-top:1px solid var(--light)}
+footer{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;padding:32px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);border-top:1px solid rgba(255,255,255,0.06);background:var(--bg-main)}
 
 @keyframes shimmer{0%{background-position:0% 50%}100%{background-position:300% 50%}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
@@ -138,26 +171,36 @@ footer{text-align:center;padding:32px;font-family:var(--mono);font-size:10px;let
 </head>
 <body>
 
+<!-- SCROLL PROGRESS BAR -->
+<div class="scroll-progress" id="scroll-progress"></div>
+<!-- SIDE MARKERS -->
+<div class="side-markers" id="side-markers">
+<div class="marker-dot" data-m="0"></div><div class="marker-dot" data-m="1"></div><div class="marker-dot" data-m="2"></div><div class="marker-dot" data-m="3"></div>
+<div class="marker-dot" data-m="4"></div><div class="marker-dot" data-m="5"></div><div class="marker-dot" data-m="6"></div><div class="marker-dot" data-m="7"></div>
+</div>
+
 <!-- HERO -->
 <section class="hero" id="hero">
 <div class="hero-left">
   <div class="mono-label">AESDR &middot; 12 Lessons &middot; Classified</div>
   <div class="warn-box">
-    <div class="warn-title">Content Warning</div>
+    <div class="warn-title"><span class="warn-icon">!</span> Content Warning</div>
     <div class="warn-text">This course contains uncomfortable truths about your <strong>pipeline</strong>, your <strong>apartment</strong>, your <strong>bar tab</strong>, your <strong>commission check</strong>, and your <strong>relationship status</strong>.</div>
   </div>
   <div style="margin-top:24px">
-    <button class="btn-black" id="enter-btn" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff">Continue &rarr;</button>
+    <button class="btn-iris" id="enter-btn">Continue &rarr;</button>
   </div>
 </div>
 <div class="hero-right">
-  <div class="mono-label" style="color:var(--muted)">The Unfiltered SaaS Sales Survival Guide</div>
+  <div class="corner corner-tl"></div><div class="corner corner-tr"></div><div class="corner corner-bl"></div><div class="corner corner-br"></div>
+  <div class="mono-label" style="color:var(--text-muted)">The Unfiltered SaaS Sales Survival Guide</div>
   <h1 class="hero-h1">Stop Surviving.<br>Start <span class="accent">Owning</span> It.</h1>
   <p class="hero-p">No corporate fluff. No recycled guru advice. 12 interactive, trench-tested modules for AEs and SDRs ready to reduce chaos, manage toxic leadership, and protect their commission.</p>
   <div>
-    <a href="#pricing" class="btn-black">Get Access</a>
+    <a href="#pricing" class="btn-iris">Get Access</a>
     <a href="#curriculum" class="btn-outline">View Syllabus</a>
   </div>
+  <div class="ambient-line"></div>
 </div>
 </section>
 
@@ -167,14 +210,14 @@ footer{text-align:center;padding:32px;font-family:var(--mono);font-size:10px;let
 <!-- TERMINAL -->
 <div class="terminal" id="terminal">
 <div class="term-box">
-  <div class="term-bar"><div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div><span style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.35);margin-left:auto">you_already_knew.exe</span></div>
+  <div class="term-bar"><div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div><span style="font-family:var(--mono);font-size:9px;color:rgba(148,163,184,0.4);letter-spacing:.08em;margin-left:auto">you_already_knew.exe</span></div>
   <div class="term-body" id="term-body">
     <div class="tl" data-text="scanning your phone..."><span class="prompt">&gt;</span><span class="typed"></span></div>
     <div class="tl" data-text="found: morning routine app. habit tracker. focus timer. cold plunge video."><span class="prompt">&gt;</span><span class="typed"></span></div>
     <div class="tl" data-text="total: 11 productivity apps."><span class="prompt">&gt;</span><span class="typed"></span></div>
     <div class="tl" data-text="diagnosis: least productive person you know."><span class="prompt">&gt;</span><span class="typed"></span></div>
     <div class="tl" data-text="screen time: 7 hours. 4 downloading apps about using your phone less."><span class="prompt">&gt;</span><span class="typed"></span></div>
-    <div class="term-out" id="term-out">This course will change your life a few times throughout. Afterward, you'll never make the same money again.<div style="margin-top:12px;font-size:14px;opacity:.5;font-style:normal">Keep scrolling. It has to get worse before it gets better.</div></div>
+    <div class="term-out" id="term-out">This course will change your life a few times throughout. Afterward, you'll never make the same money again.<div class="term-whisper">Keep scrolling. It has to get worse before it gets better.</div></div>
   </div>
 </div>
 </div>
@@ -183,22 +226,22 @@ footer{text-align:center;padding:32px;font-family:var(--mono);font-size:10px;let
 <!-- ZOOM CARDS -->
 <div class="zoom-space" id="zoom-space"></div>
 <div class="viewport" id="viewport">
-<div class="zcard" data-i="0"><div class="ghost">RESET</div><div class="zcard-inner"><div class="z-rowan" style="font-size:clamp(36px,7vw,80px);color:var(--ink)">Every month, they reset your number to <span class="accent">zero.</span></div><div class="z-sub">And every month, you act surprised. You don't have a pipeline problem. You have a denial problem. The math has been screaming at you for weeks.</div></div></div>
+<div class="zcard" data-i="0"><div class="ghost">RESET</div><div class="zcard-inner"><div class="z-rowan" style="font-size:clamp(36px,7vw,80px)">Every month, they reset your number to <span class="iris-text">zero.</span></div><div class="z-sub">And every month, you act surprised. You don't have a pipeline problem. You have a denial problem. The math has been screaming at you for weeks.</div></div></div>
 <div class="zcard" data-i="1"><div class="zcard-inner"><div class="z-michael" style="font-size:clamp(22px,3.5vw,42px)">My manager asked for a pipeline update. I sent a screenshot of an empty spreadsheet and wrote "minimalist aesthetic." He did not laugh. HR laughed. But like, in a concerned way.</div></div></div>
-<div class="zcard" data-i="2"><div class="ghost">LOST</div><div class="zcard-inner"><div class="z-rowan" style="font-size:clamp(36px,7vw,80px);color:var(--ink)">You are not building a career. You are <span class="accent">surviving</span> one.</div><div class="z-sub">The next promotion is not coming. Not because you're bad — because nobody has taught you what good looks like. You're guessing. Loudly.</div></div></div>
+<div class="zcard" data-i="2"><div class="ghost">LOST</div><div class="zcard-inner"><div class="z-rowan" style="font-size:clamp(36px,7vw,80px)">You are not building a career. You are <span class="iris-text">surviving</span> one.</div><div class="z-sub">The next promotion is not coming. Not because you're bad — because nobody has taught you what good looks like. You're guessing. Loudly.</div></div></div>
 <div class="zcard" data-i="3"><div class="zcard-inner"><div class="z-michael" style="font-size:clamp(22px,3.5vw,42px)">My mom asked about my five-year plan. I said "survive Q3." She said that's three months, not five years. I said we don't really plan past three months in SaaS. She started crying. I started crying. We had pasta.</div></div></div>
-<div class="zcard" data-i="4"><div class="ghost">NOISE</div><div class="zcard-inner"><div class="z-rowan" style="font-size:clamp(32px,6vw,72px);color:var(--ink)">The people advising you haven't carried a bag in a <span class="accent">decade.</span></div><div class="z-sub">"Just add value." "Be a trusted advisor." "Crush it." None of it is actionable. All of it is noise from people who forgot what it feels like to miss.</div></div></div>
+<div class="zcard" data-i="4"><div class="ghost">NOISE</div><div class="zcard-inner"><div class="z-rowan" style="font-size:clamp(32px,6vw,72px)">The people advising you haven't carried a bag in a <span class="iris-text">decade.</span></div><div class="z-sub">"Just add value." "Be a trusted advisor." "Crush it." None of it is actionable. All of it is noise from people who forgot what it feels like to miss.</div></div></div>
 <div class="zcard" data-i="5"><div class="zcard-inner"><div class="z-michael" style="font-size:clamp(22px,3.5vw,42px)">LinkedIn told me to "lead with value on every call." So I told a prospect about a really good taco place near their office. Very detailed review. Salsa rankings. They did not buy. But the tacos are genuinely excellent. I stand by the recommendation.</div></div></div>
-<div class="zcard" data-i="6"><div class="ghost">ALONE</div><div class="zcard-inner"><div class="z-rowan" style="font-size:clamp(32px,6vw,72px);color:var(--ink)">Your onboarding was a <span class="accent">crime scene.</span></div><div class="z-sub">A week of shadowing. A Gong playlist. A prayer. That is not training. That is abandonment with a Slack channel.</div></div></div>
+<div class="zcard" data-i="6"><div class="ghost">ALONE</div><div class="zcard-inner"><div class="z-rowan" style="font-size:clamp(32px,6vw,72px)">Your onboarding was a <span class="iris-text">crime scene.</span></div><div class="z-sub">A week of shadowing. A Gong playlist. A prayer. That is not training. That is abandonment with a Slack channel.</div></div></div>
 <div class="zcard" data-i="7"><div class="zcard-inner"><div class="z-michael" style="font-size:clamp(22px,3.5vw,42px)">It's 11:47pm. I'm watching a YouTube video called "CRUSH Cold Calls in 2024." The guy has a ring light and a Ferrari poster. I'm taking notes. In my phone. This is my professional development. I have a degree. From a university. With a campus.</div></div></div>
 </div>
 
-<!-- MID CTA -->
-<div class="section section-crimson cta-full" id="mid-cta" style="display:none">
-  <div class="big" style="color:#fff"><span class="accent">AESDR</span></div>
-  <div class="mono-label" style="color:rgba(255,255,255,.5)">12 lessons &bull; at your own pace &bull; 1 you</div>
-  <p style="font-family:var(--body);font-style:italic;font-size:18px;color:rgba(255,255,255,.6);max-width:500px;margin:16px auto 24px">Nobody gave you real answers on day one. We built this after years of figuring it out alone.</p>
-  <div><a href="#pricing" class="btn-black" style="background:#fff;color:var(--ink)">Get Access &rarr;</a></div>
+<!-- CTA OVERLAY (after last zoom card) -->
+<div class="cta-overlay" id="mid-cta">
+  <div class="cta-brand iris-text">AESDR</div>
+  <div class="cta-tag">12 lessons &bull; at your own pace &bull; 1 you</div>
+  <div class="cta-note">Nobody gave you real answers on day one. We built this after years of figuring it out alone.</div>
+  <a href="#pricing" class="btn-iris">Get Access &rarr;</a>
 </div>
 
 <!-- CURRICULUM — DeckStack Wheel Peel -->
@@ -231,36 +274,36 @@ footer{text-align:center;padding:32px;font-family:var(--mono);font-size:10px;let
 <div class="sec-label">Already Changing Lives</div>
 <div class="divider"></div>
 <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:24px">
-  <div class="deck-card" style="flex:1 1 240px;max-width:280px"><p style="font-style:italic;color:var(--muted);font-size:15px;line-height:1.7;margin-bottom:12px">"I've been an SDR for 14 months and nobody taught me half of what's in Course 1. The manager archetypes alone changed how I handle my 1:1s."</p><strong style="font-size:13px">Jordan M.</strong><br><span style="font-family:var(--mono);font-size:9px;color:var(--muted)">SDR, Series B SaaS</span></div>
-  <div class="deck-card" style="flex:1 1 240px;max-width:280px"><p style="font-style:italic;color:var(--muted);font-size:15px;line-height:1.7;margin-bottom:12px">"No motivational BS. No 'crush your quota' energy. Just practical frameworks I use every week. That's rare."</p><strong style="font-size:13px">Taylor H.</strong><br><span style="font-family:var(--mono);font-size:9px;color:var(--muted)">BDR Lead</span></div>
-  <div class="deck-card" style="flex:1 1 240px;max-width:280px"><p style="font-style:italic;color:var(--muted);font-size:15px;line-height:1.7;margin-bottom:12px">"I used the AE/SDR Alignment Contract from Course 3 in my actual job. My AE and I went from passive-aggressive Slack messages to a real working relationship."</p><strong style="font-size:13px">Marcus T.</strong><br><span style="font-family:var(--mono);font-size:9px;color:var(--muted)">SDR, recently promoted to AE</span></div>
-  <div class="deck-card" style="flex:1 1 240px;max-width:280px"><p style="font-style:italic;color:var(--muted);font-size:15px;line-height:1.7;margin-bottom:12px">"The 72-hour strike plan in Course 12 saved my quarter. I was spiraling after losing two big deals and this framework gave me a concrete plan instead of panic."</p><strong style="font-size:13px">David L.</strong><br><span style="font-family:var(--mono);font-size:9px;color:var(--muted)">AE, Series C Startup</span></div>
-  <div class="deck-card" style="flex:1 1 240px;max-width:280px"><p style="font-style:italic;color:var(--muted);font-size:15px;line-height:1.7;margin-bottom:12px">"I bought the team license for my 6 SDRs. The interactive format actually kept them engaged — I've never seen my team finish a training program before."</p><strong style="font-size:13px">Sarah W.</strong><br><span style="font-family:var(--mono);font-size:9px;color:var(--muted)">SDR Manager</span></div>
+  <div class="test-card"><p>"I've been an SDR for 14 months and nobody taught me half of what's in Course 1. The manager archetypes alone changed how I handle my 1:1s."</p><strong>Jordan M.</strong><br><span style="font-family:var(--mono);font-size:9px;color:var(--text-muted)">SDR, Series B SaaS</span></div>
+  <div class="test-card"><p>"No motivational BS. No 'crush your quota' energy. Just practical frameworks I use every week. That's rare."</p><strong>Taylor H.</strong><br><span style="font-family:var(--mono);font-size:9px;color:var(--text-muted)">BDR Lead</span></div>
+  <div class="test-card"><p>"I used the AE/SDR Alignment Contract from Course 3 in my actual job. My AE and I went from passive-aggressive Slack messages to a real working relationship."</p><strong>Marcus T.</strong><br><span style="font-family:var(--mono);font-size:9px;color:var(--text-muted)">SDR, recently promoted to AE</span></div>
+  <div class="test-card"><p>"The 72-hour strike plan in Course 12 saved my quarter. I was spiraling after losing two big deals and this framework gave me a concrete plan instead of panic."</p><strong>David L.</strong><br><span style="font-family:var(--mono);font-size:9px;color:var(--text-muted)">AE, Series C Startup</span></div>
+  <div class="test-card"><p>"I bought the team license for my 6 SDRs. The interactive format actually kept them engaged — I've never seen my team finish a training program before."</p><strong>Sarah W.</strong><br><span style="font-family:var(--mono);font-size:9px;color:var(--text-muted)">SDR Manager</span></div>
 </div>
 </section>
 
 <!-- PRICING -->
-<section class="section section-dark" id="pricing" style="display:none">
-<div class="sec-label" style="color:rgba(255,255,255,.4)">Pricing</div>
-<div class="sec-h2" style="color:#fff">One price. Lifetime access.</div>
+<section class="section" id="pricing" style="display:none">
+<div class="sec-label">Pricing</div>
+<div class="sec-h2">One price. Lifetime access.</div>
 <div class="divider"></div>
 <div class="price-grid">
   <div class="price-card">
     <div class="price-name">Individual</div>
-    <div class="price-amt">$199<span style="font-size:16px;color:var(--muted);font-family:var(--body)"> / one-time</span></div>
+    <div class="price-amt">$199<span style="font-size:16px;color:var(--text-muted);font-family:var(--serif)"> / one-time</span></div>
     <ul class="price-list">
       <li>All 12 courses</li>
       <li>5 interactive tools to takeaway</li>
       <li>Lifetime access</li>
-      <li>Discord community <span style="font-family:var(--serif);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--crimson);border:1px solid var(--crimson);padding:1px 6px;margin-left:6px;transform:rotate(-2deg);display:inline-block">Untamed</span></li>
+      <li>Discord community <span style="font-family:var(--cond);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(239,68,68,0.6);border:1px solid rgba(239,68,68,0.3);padding:1px 6px;margin-left:6px;transform:rotate(-2deg);display:inline-block">Untamed</span></li>
       <li>Future curriculum updates</li>
       <li>14-day refund guarantee</li>
     </ul>
-    <button class="btn-black" style="width:100%">Buy For Me</button>
+    <a href="#" class="btn-iris" style="width:100%;text-align:center;display:block">Buy For Me</a>
   </div>
   <div class="price-card featured">
     <div class="price-name">Team</div>
-    <div class="price-amt">$999<span style="font-size:16px;color:var(--muted);font-family:var(--body)"> / up to 10 seats</span></div>
+    <div class="price-amt">$999<span style="font-size:16px;color:var(--text-muted);font-family:var(--serif)"> / up to 10 seats</span></div>
     <ul class="price-list">
       <li>Everything in Individual</li>
       <li>Up to 10 team members</li>
@@ -269,14 +312,14 @@ footer{text-align:center;padding:32px;font-family:var(--mono);font-size:10px;let
       <li>Priority support</li>
       <li>Invoice + receipt for L&amp;D</li>
     </ul>
-    <button class="btn-black" style="width:100%;background:var(--crimson)">Buy For Us</button>
+    <a href="#" class="btn-iris" style="width:100%;text-align:center;display:block">Buy For Us</a>
   </div>
 </div>
 </section>
 
 <!-- FAQ — Classified Dossier -->
 <section class="section" id="faq" style="display:none">
-<div class="sec-label"><span style="display:inline-block;width:16px;height:16px;border:1px solid var(--crimson);border-radius:50%;font-size:9px;line-height:16px;text-align:center;color:var(--crimson);margin-right:6px">!</span> Questions</div>
+<div class="sec-label"><span style="display:inline-block;width:16px;height:16px;border:1px solid rgba(239,68,68,0.5);border-radius:50%;font-size:9px;line-height:16px;text-align:center;color:rgba(239,68,68,0.5);margin-right:6px">!</span> Questions</div>
 <div class="sec-h2">Frequently Asked</div>
 <div class="divider"></div>
 <div class="faq-grid">
@@ -293,18 +336,18 @@ footer{text-align:center;padding:32px;font-family:var(--mono);font-size:10px;let
 </section>
 
 <!-- FINAL CTA -->
-<section class="section section-crimson cta-full" id="final-cta" style="display:none">
-<div class="sec-h2" style="color:#fff">Stop Googling. Start&nbsp;executing.</div>
-<p style="font-family:var(--body);font-size:18px;color:rgba(255,255,255,.6);max-width:500px;margin:16px auto 24px">12 courses. 5 tools. One price. Lifetime access.<br>Built for AEs and SDRs who want to get better, not just feel better.</p>
-<div><a href="#pricing" class="btn-black" style="background:#fff;color:var(--ink)">Get Access</a></div>
+<section class="section" id="final-cta" style="display:none;text-align:center;padding:120px 8%">
+<div class="sec-h2">Stop Googling. Start&nbsp;executing.</div>
+<p style="font-family:var(--serif);font-size:18px;font-style:italic;color:var(--text-muted);max-width:500px;margin:16px auto 24px">12 courses. 5 tools. One price. Lifetime access.<br>Built for AEs and SDRs who want to get better, not just feel better.</p>
+<div><a href="#pricing" class="btn-iris">Get Access</a></div>
 </section>
 
-<div id="content-warn" style="display:none;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;text-align:center;padding:20px 8%;color:var(--muted);border-top:1px solid var(--light);border-bottom:1px solid var(--light)">
-<span style="display:inline-block;width:16px;height:16px;border:1px solid var(--crimson);border-radius:50%;font-size:9px;line-height:16px;text-align:center;color:var(--crimson);margin-right:6px">!</span>
+<div id="content-warn" style="display:none;font-family:var(--mono);font-size:8px;letter-spacing:.15em;text-transform:uppercase;text-align:center;padding:20px 8%;color:var(--text-muted);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);background:var(--bg-main)">
+<span style="display:inline-block;width:16px;height:16px;border:1px solid rgba(239,68,68,0.5);border-radius:50%;font-size:9px;line-height:16px;text-align:center;color:rgba(239,68,68,0.5);margin-right:6px">!</span>
 Content Warning — This course contains uncomfortable truths about your pipeline, your apartment, your bar tab, your commission check, and your relationship status. — AESDR — 12 lessons / at your own pace
 </div>
 
-<footer>AESDR &copy; 2026 &bull; <a href="#">Terms</a> &bull; <a href="#">Privacy</a> &bull; <a href="#">Refunds</a> &bull; <a href="#">About</a> &bull; <a href="#">Contact</a></footer>
+<footer><a href="#">AESDR &copy; 2026</a><a href="#">Terms</a><a href="#">Privacy</a><a href="#">Refunds</a><a href="#">About</a><a href="#">Contact</a></footer>
 
 <!-- JS -->
 <script>
@@ -372,12 +415,19 @@ function unlockScroll(){
     zCards.forEach((c,i)=>{
       if(i===ai){let sc,op;if(cf<.12){const t=cf/.12;sc=2.5-1.5*t;op=t}else if(cf<.78){sc=1;op=1}else{const t=(cf-.78)/.22;sc=1-.6*t;op=1-t}
         c.style.transform='scale('+sc+')';c.style.opacity=op}else{c.style.opacity=0}});
-    /* CTA overlay: 0.82 fade in → hold → 0.90 fade out → blank till 1.0 */
+    /* Scroll progress bar */
+    const progBar=$('#scroll-progress');
+    if(progBar){progBar.style.width=(p*100)+'%';progBar.style.opacity=p>0&&p<1?'1':'0'}
+    /* Side markers */
+    const markers=$('#side-markers');
+    if(markers){markers.style.opacity=p>0.01&&p<0.95?'1':'0';markers.classList.toggle('vis',p>0.01&&p<0.95)}
+    $$('.marker-dot').forEach(function(d,i){if(i===ai)d.classList.add('active');else d.classList.remove('active')});
+    /* CTA overlay: fixed position, opacity controlled */
     const ctaEl=$('#mid-cta');
     if(p>0.82&&p<0.94){
       const fadeIn=Math.min(1,(p-0.82)/0.03),fadeOut=p>0.90?1-Math.min(1,(p-0.90)/0.03):1;
-      ctaEl.style.display='block';ctaEl.style.opacity=fadeIn*fadeOut;
-    }else if(p>=0.94){ctaEl.style.display='none'}
+      ctaEl.style.opacity=fadeIn*fadeOut;ctaEl.style.pointerEvents=fadeIn*fadeOut>0.5?'auto':'none';
+    }else{ctaEl.style.opacity='0';ctaEl.style.pointerEvents='none'}
     /* Show remaining sections after zoom */
     if(p>.92)showSections();
     /* Fade hero+terminal */
