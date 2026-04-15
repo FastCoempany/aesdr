@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR Pricing Analysis Report</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,sans-serif;color:#1a1a2e;background:#f8f9fa;line-height:1.6}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px}
+h1{font-size:32px;font-weight:800;margin-bottom:4px}
+h2{font-size:22px;font-weight:700;margin:48px 0 16px;padding-bottom:8px;border-bottom:2px solid #e0e0e0}
+h3{font-size:16px;font-weight:700;margin:24px 0 8px}
+.subtitle{color:#666;font-size:15px;margin-bottom:32px}
+.date{color:#999;font-size:13px;margin-bottom:8px}
+
+/* Cards */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:24px 0}
+.card{background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:24px;text-align:center}
+.card.rec{border-color:#10b981;border-width:2px}
+.card-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#666;margin-bottom:4px}
+.card-price{font-size:42px;font-weight:800;color:#1a1a2e}
+.card-price span{font-size:16px;color:#666;font-weight:400}
+.card-ci{font-size:12px;color:#999;margin-top:4px}
+.card-note{font-size:12px;color:#10b981;margin-top:8px;font-weight:600}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+th{text-align:left;padding:10px 12px;background:#f1f3f5;border-bottom:2px solid #dee2e6;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#495057}
+td{padding:10px 12px;border-bottom:1px solid #e9ecef}
+tr:hover td{background:#f8f9fa}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.green{color:#10b981;font-weight:600}
+.red{color:#ef4444;font-weight:600}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.badge-green{background:#d1fae5;color:#065f46}
+.badge-yellow{background:#fef3c7;color:#92400e}
+.badge-red{background:#fee2e2;color:#991b1b}
+
+/* Chart bars */
+.bar-wrap{display:flex;align-items:center;gap:8px;margin:4px 0}
+.bar-label{width:140px;font-size:12px;text-align:right;flex-shrink:0}
+.bar-track{flex:1;height:20px;background:#f1f3f5;border-radius:3px;overflow:hidden;position:relative}
+.bar-fill{height:100%;border-radius:3px;transition:width .3s}
+.bar-val{font-size:11px;font-weight:600;width:60px;flex-shrink:0}
+
+/* Demand curve SVG */
+.chart-wrap{background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:24px;margin:16px 0}
+
+/* Callout boxes */
+.callout{background:#f0fdf4;border-left:4px solid #10b981;padding:16px 20px;border-radius:0 8px 8px 0;margin:16px 0;font-size:14px}
+.callout-warn{background:#fffbeb;border-left-color:#f59e0b}
+.callout-info{background:#eff6ff;border-left-color:#3b82f6}
+.callout strong{display:block;margin-bottom:4px}
+
+/* Section numbering */
+.section-num{display:inline-block;width:28px;height:28px;background:#1a1a2e;color:#fff;border-radius:50%;text-align:center;line-height:28px;font-size:13px;font-weight:700;margin-right:8px;vertical-align:middle}
+
+/* Print */
+@media print{body{background:#fff}.wrap{padding:20px}h2{break-before:page}}
+@media(max-width:700px){.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="date">Generated April 15, 2026</div>
+<h1>AESDR Pricing Analysis</h1>
+<p class="subtitle">Computational pricing model &mdash; Bayesian conjoint, multi-objective optimization, and game-theoretic screening</p>
+
+<!-- EXECUTIVE SUMMARY -->
+<h2><span class="section-num">1</span> Recommended Prices</h2>
+
+<div class="cards">
+<div class="card rec">
+  <div class="card-label">SDR Individual</div>
+  <div class="card-price">$249</div>
+  <div class="card-ci">90% CI: $111 &ndash; $394</div>
+  <div class="card-note">Quality signal: "Serious Investment"</div>
+</div>
+<div class="card rec">
+  <div class="card-label">AE Individual</div>
+  <div class="card-price">$299</div>
+  <div class="card-ci">90% CI: $108 &ndash; $471</div>
+  <div class="card-note">Quality signal: "Serious Investment"</div>
+</div>
+<div class="card rec">
+  <div class="card-label">Team (10 seats)</div>
+  <div class="card-price">$1,499</div>
+  <div class="card-ci">90% CI: $336 &ndash; $2,663</div>
+  <div class="card-note">$150/seat &bull; Break-even at 6 seats</div>
+</div>
+</div>
+
+<div class="callout-warn callout">
+<strong>Model Agreement: Low</strong>
+The three models disagree significantly &mdash; this is expected. The conjoint model sees high WTP ($360/$440), NSGA-II optimizes for volume ($149/$179), and game theory anchors on signaling ($249/$249). The ensemble balances all three. Wide CIs mean pricing is a strategic choice, not a math answer.
+</div>
+
+<!-- HOW THE THREE MODELS VOTED -->
+<h2><span class="section-num">2</span> How Each Model Voted</h2>
+
+<table>
+<tr><th>Model</th><th>Weight</th><th class="num">SDR</th><th class="num">AE</th><th class="num">Team</th><th>Optimizes For</th></tr>
+<tr><td>Bayesian Conjoint</td><td>40%</td><td class="num">$360</td><td class="num">$440</td><td class="num">$2,000</td><td>Willingness-to-pay</td></tr>
+<tr><td>NSGA-II Optimizer</td><td>35%</td><td class="num">$149</td><td class="num">$179</td><td class="num">$499</td><td>Revenue + Conversion + LTV</td></tr>
+<tr><td>Game Theory</td><td>25%</td><td class="num">$249</td><td class="num">$249</td><td class="num">$1,999</td><td>Quality signaling</td></tr>
+<tr style="font-weight:700;background:#f0fdf4"><td>Ensemble (weighted avg)</td><td>100%</td><td class="num">$258 &rarr; $249</td><td class="num">$301 &rarr; $299</td><td class="num">$1,474 &rarr; $1,499</td><td>Balanced + rounded</td></tr>
+</table>
+
+<!-- DEMAND CURVE -->
+<h2><span class="section-num">3</span> Demand Curve</h2>
+<p style="font-size:14px;color:#666;margin-bottom:12px">Predicted conversion rate at each price point (MLE logistic conjoint model)</p>
+
+<div class="chart-wrap">
+<table>
+<tr><th>Price</th><th class="num">Conversion</th><th>Visual</th><th class="num">Revenue Index</th></tr>
+<tr><td>$50</td><td class="num">97.8%</td><td><div style="background:#d1fae5;height:16px;width:97.8%;border-radius:2px"></div></td><td class="num">48.9</td></tr>
+<tr><td>$97</td><td class="num">97.1%</td><td><div style="background:#d1fae5;height:16px;width:97.1%;border-radius:2px"></div></td><td class="num">94.2</td></tr>
+<tr><td>$145</td><td class="num">95.5%</td><td><div style="background:#d1fae5;height:16px;width:95.5%;border-radius:2px"></div></td><td class="num">138.4</td></tr>
+<tr><td>$192</td><td class="num">92.9%</td><td><div style="background:#a7f3d0;height:16px;width:92.9%;border-radius:2px"></div></td><td class="num">178.4</td></tr>
+<tr><td>$239</td><td class="num">90.5%</td><td><div style="background:#a7f3d0;height:16px;width:90.5%;border-radius:2px"></div></td><td class="num">216.3</td></tr>
+<tr style="background:#f0fdf4;font-weight:600"><td>$249 &larr;</td><td class="num">~90%</td><td><div style="background:#10b981;height:16px;width:90%;border-radius:2px"></div></td><td class="num">224.1</td></tr>
+<tr><td>$287</td><td class="num">88.4%</td><td><div style="background:#6ee7b7;height:16px;width:88.4%;border-radius:2px"></div></td><td class="num">253.6</td></tr>
+<tr style="background:#f0fdf4;font-weight:600"><td>$299 &larr;</td><td class="num">~87%</td><td><div style="background:#10b981;height:16px;width:87%;border-radius:2px"></div></td><td class="num">260.1</td></tr>
+<tr><td>$334</td><td class="num">86.2%</td><td><div style="background:#6ee7b7;height:16px;width:86.2%;border-radius:2px"></div></td><td class="num">287.9</td></tr>
+<tr><td>$382</td><td class="num">83.8%</td><td><div style="background:#fef3c7;height:16px;width:83.8%;border-radius:2px"></div></td><td class="num">320.1</td></tr>
+<tr><td>$429</td><td class="num">81.2%</td><td><div style="background:#fef3c7;height:16px;width:81.2%;border-radius:2px"></div></td><td class="num">348.3</td></tr>
+<tr><td>$500</td><td class="num">76.6%</td><td><div style="background:#fee2e2;height:16px;width:76.6%;border-radius:2px"></div></td><td class="num">383.0</td></tr>
+</table>
+</div>
+
+<!-- SCENARIOS -->
+<h2><span class="section-num">4</span> Scenario Analysis</h2>
+<p style="font-size:14px;color:#666;margin-bottom:12px">Five pricing strategies tested against the same 10K synthetic population</p>
+
+<table>
+<tr><th>Scenario</th><th class="num">SDR</th><th class="num">AE</th><th class="num">Team</th><th class="num">Revenue</th><th class="num">Conv.</th><th class="num">vs. Baseline</th></tr>
+<tr style="font-weight:600"><td>Baseline (current)</td><td class="num">$199</td><td class="num">$199</td><td class="num">$999</td><td class="num">$304,594</td><td class="num">93.7%</td><td class="num">&mdash;</td></tr>
+<tr><td>Segmented (SDR &lt; AE)</td><td class="num">$149</td><td class="num">$249</td><td class="num">$999</td><td class="num">$285,357</td><td class="num">93.9%</td><td class="num red">-$19,237</td></tr>
+<tr><td>Premium Position</td><td class="num">$279</td><td class="num">$349</td><td class="num">$1,499</td><td class="num">$273,405</td><td class="num">87.9%</td><td class="num red">-$31,189</td></tr>
+<tr><td>Race to Bottom</td><td class="num">$149</td><td class="num">$149</td><td class="num">$699</td><td class="num">$251,504</td><td class="num">93.8%</td><td class="num red">-$53,090</td></tr>
+<tr><td>Penetration</td><td class="num">$99</td><td class="num">$99</td><td class="num">$499</td><td class="num">$183,551</td><td class="num">97.3%</td><td class="num red">-$121,043</td></tr>
+</table>
+
+<!-- SENSITIVITY -->
+<h2><span class="section-num">5</span> Sensitivity Analysis</h2>
+<p style="font-size:14px;color:#666;margin-bottom:12px">What moves the needle most? Top factors by revenue impact (baseline: $199/$199/$999)</p>
+
+<div class="chart-wrap" id="tornado">
+<p style="font-size:13px;color:#666;margin-bottom:16px">Baseline revenue: $304,594 &mdash; bars show % change when each factor is perturbed</p>
+<div class="bar-wrap"><div class="bar-label">Reimbursement +15pp</div><div class="bar-track"><div class="bar-fill" style="width:95%;background:#10b981"></div></div><div class="bar-val green">+18.9%</div></div>
+<div class="bar-wrap"><div class="bar-label">SDR price -25%</div><div class="bar-track"><div class="bar-fill" style="width:47%;background:#ef4444"></div></div><div class="bar-val red">-9.3%</div></div>
+<div class="bar-wrap"><div class="bar-label">AE price -25%</div><div class="bar-track"><div class="bar-fill" style="width:46%;background:#ef4444"></div></div><div class="bar-val red">-9.2%</div></div>
+<div class="bar-wrap"><div class="bar-label">Reimbursement -15pp</div><div class="bar-track"><div class="bar-fill" style="width:40%;background:#10b981"></div></div><div class="bar-val green">+8.0%</div></div>
+<div class="bar-wrap"><div class="bar-label">WTP -15%</div><div class="bar-track"><div class="bar-fill" style="width:20%;background:#ef4444"></div></div><div class="bar-val red">-3.9%</div></div>
+<div class="bar-wrap"><div class="bar-label">SDR price +25%</div><div class="bar-track"><div class="bar-fill" style="width:19%;background:#10b981"></div></div><div class="bar-val green">+3.9%</div></div>
+<div class="bar-wrap"><div class="bar-label">AE price +25%</div><div class="bar-track"><div class="bar-fill" style="width:15%;background:#10b981"></div></div><div class="bar-val green">+3.0%</div></div>
+<div class="bar-wrap"><div class="bar-label">WTP +15%</div><div class="bar-track"><div class="bar-fill" style="width:14%;background:#10b981"></div></div><div class="bar-val green">+2.7%</div></div>
+<div class="bar-wrap"><div class="bar-label">Team price +25%</div><div class="bar-track"><div class="bar-fill" style="width:13%;background:#ef4444"></div></div><div class="bar-val red">-2.7%</div></div>
+</div>
+
+<!-- ROI -->
+<h2><span class="section-num">6</span> ROI: The "Do Nothing" Cost</h2>
+
+<div class="callout">
+<strong>Key Insight</strong>
+An SDR missing quota by 10% loses ~$2,880/year in commission. Even a 3% improvement from training recovers $864 &mdash; making a $249 course a <strong>3.5x ROI</strong>. An AE missing by 10% loses ~$7,750/year. A $299 course is a <strong>26x ROI</strong> on just 5% improvement.
+</div>
+
+<table>
+<tr><th>Role</th><th class="num">Median OTE</th><th class="num">Quota Miss</th><th class="num">Annual Loss</th><th class="num">3% Improvement</th><th class="num">5% Improvement</th><th class="num">10% Improvement</th></tr>
+<tr><td>SDR</td><td class="num">$72,000</td><td class="num">10%</td><td class="num red">-$2,880</td><td class="num green">+$864</td><td class="num green">+$1,440</td><td class="num green">+$2,880</td></tr>
+<tr><td>SDR</td><td class="num">$72,000</td><td class="num">20%</td><td class="num red">-$5,760</td><td class="num green">+$864</td><td class="num green">+$1,440</td><td class="num green">+$2,880</td></tr>
+<tr><td>AE</td><td class="num">$155,000</td><td class="num">10%</td><td class="num red">-$7,750</td><td class="num green">+$2,325</td><td class="num green">+$3,875</td><td class="num green">+$7,750</td></tr>
+<tr><td>AE</td><td class="num">$155,000</td><td class="num">20%</td><td class="num red">-$15,500</td><td class="num green">+$2,325</td><td class="num green">+$3,875</td><td class="num green">+$7,750</td></tr>
+</table>
+
+<!-- PARETO -->
+<h2><span class="section-num">7</span> Pareto Frontier (Top 10)</h2>
+<p style="font-size:14px;color:#666;margin-bottom:12px">Non-dominated price combinations from NSGA-II optimization — no solution is better on all objectives simultaneously</p>
+
+<table>
+<tr><th>#</th><th class="num">SDR</th><th class="num">AE</th><th class="num">Team</th><th class="num">Revenue</th><th class="num">Conv.</th><th class="num">LTV</th></tr>
+<tr style="font-weight:600;background:#f0fdf4"><td>1</td><td class="num">$249</td><td class="num">$249</td><td class="num">$799</td><td class="num">$325,764</td><td class="num">90.8%</td><td class="num">$370,109</td></tr>
+<tr><td>2</td><td class="num">$199</td><td class="num">$249</td><td class="num">$699</td><td class="num">$316,308</td><td class="num">92.6%</td><td class="num">$360,243</td></tr>
+<tr><td>3</td><td class="num">$179</td><td class="num">$249</td><td class="num">$699</td><td class="num">$309,896</td><td class="num">93.3%</td><td class="num">$353,243</td></tr>
+<tr><td>4</td><td class="num">$199</td><td class="num">$199</td><td class="num">$699</td><td class="num">$305,488</td><td class="num">93.7%</td><td class="num">$348,424</td></tr>
+<tr><td>5</td><td class="num">$179</td><td class="num">$199</td><td class="num">$699</td><td class="num">$299,076</td><td class="num">94.4%</td><td class="num">$341,403</td></tr>
+<tr><td>6</td><td class="num">$179</td><td class="num">$179</td><td class="num">$699</td><td class="num">$289,607</td><td class="num">94.9%</td><td class="num">$330,811</td></tr>
+<tr><td>7</td><td class="num">$149</td><td class="num">$199</td><td class="num">$499</td><td class="num">$282,227</td><td class="num">95.0%</td><td class="num">$322,444</td></tr>
+<tr><td>8</td><td class="num">$149</td><td class="num">$179</td><td class="num">$499</td><td class="num">$271,578</td><td class="num">95.5%</td><td class="num">$310,482</td></tr>
+<tr><td>9</td><td class="num">$129</td><td class="num">$179</td><td class="num">$499</td><td class="num">$260,214</td><td class="num">95.8%</td><td class="num">$297,607</td></tr>
+<tr><td>10</td><td class="num">$149</td><td class="num">$149</td><td class="num">$499</td><td class="num">$253,315</td><td class="num">96.0%</td><td class="num">$289,773</td></tr>
+</table>
+
+<!-- QUALITY SIGNAL -->
+<h2><span class="section-num">8</span> Quality Signal Zones</h2>
+<p style="font-size:14px;color:#666;margin-bottom:12px">Game-theoretic Spence signaling model — how buyers perceive price as a quality indicator</p>
+
+<table>
+<tr><th>Zone</th><th>Price Range</th><th>Buyer Perception</th><th>Signal Strength</th></tr>
+<tr><td><span class="badge badge-red">Guru Garbage</span></td><td>$0 &ndash; $49</td><td>Likely a scam or recycled content</td><td>0.0 &ndash; 0.15</td></tr>
+<tr><td><span class="badge badge-yellow">Maybe Legit</span></td><td>$50 &ndash; $149</td><td>Could be good or could be a Udemy clone</td><td>0.15 &ndash; 0.60</td></tr>
+<tr><td><span class="badge badge-green">Serious Investment</span></td><td>$150 &ndash; $349</td><td>Sweet spot — signals quality, accessible to self-funders</td><td>0.60 &ndash; 0.95</td></tr>
+<tr><td><span class="badge">Premium / Enterprise</span></td><td>$350+</td><td>Needs L&D budget approval, sticker shock risk</td><td>0.70 &ndash; 0.50</td></tr>
+</table>
+
+<div class="callout-info callout">
+<strong>Both SDR ($249) and AE ($299) land in the "Serious Investment" zone</strong>
+Signal strength: 0.91 (SDR) and 0.87 (AE). This is the optimal zone — high enough to signal quality, low enough that individual reps can self-fund without L&D approval.
+</div>
+
+<!-- COMPENSATION DATA -->
+<h2><span class="section-num">9</span> Underlying Data</h2>
+
+<h3>OTE Distributions (calibrated from BLS + industry surveys)</h3>
+<table>
+<tr><th>Role</th><th class="num">P10</th><th class="num">P25</th><th class="num">Median</th><th class="num">P75</th><th class="num">P90</th><th>Distribution</th></tr>
+<tr><td>SDR</td><td class="num">$63,995</td><td class="num">$69,044</td><td class="num">$75,122</td><td class="num">$81,735</td><td class="num">$88,183</td><td>Lognormal(&mu;=11.23, &sigma;=0.13)</td></tr>
+<tr><td>AE</td><td class="num">$115,679</td><td class="num">$139,506</td><td class="num">$171,779</td><td class="num">$211,517</td><td class="num">$255,085</td><td>Lognormal(&mu;=12.05, &sigma;=0.31)</td></tr>
+</table>
+
+<h3>Quota Attainment</h3>
+<table>
+<tr><th>Role</th><th class="num">Mean</th><th class="num">Median</th><th>Distribution</th><th>Source</th></tr>
+<tr><td>SDR</td><td class="num">47.8%</td><td class="num">47.5%</td><td>Beta(&alpha;=3.2, &beta;=3.5)</td><td>Bridge Group, Repvue</td></tr>
+<tr><td>AE</td><td class="num">52.2%</td><td class="num">52.5%</td><td>Beta(&alpha;=3.5, &beta;=3.2)</td><td>Bridge Group, Repvue</td></tr>
+</table>
+
+<h3>BLS Cross-Validation</h3>
+<table>
+<tr><th>Role</th><th class="num">BLS Base Median</th><th class="num">OTE Multiplier</th><th class="num">BLS OTE Est.</th><th class="num">Our Fitted Median</th><th class="num">Deviation</th></tr>
+<tr><td>SDR (SOC 41-3091)</td><td class="num">$62,890</td><td class="num">1.44x</td><td class="num">$90,562</td><td class="num">$75,122</td><td class="num">17.0%</td></tr>
+<tr><td>AE (SOC 41-4011)</td><td class="num">$73,080</td><td class="num">1.85x</td><td class="num">$135,198</td><td class="num">$171,779</td><td class="num">27.1%</td></tr>
+</table>
+
+<!-- METHODOLOGY -->
+<h2><span class="section-num">10</span> Methodology</h2>
+
+<table>
+<tr><th>Phase</th><th>What It Does</th><th>Key Technique</th></tr>
+<tr><td>1. Data Collection</td><td>BLS wages, Glassdoor/Levels.fyi OTE, Udemy/Coursera prices, G2 reviews, industry benchmarks</td><td>API calls + Apify scrapers + fallback survey data</td></tr>
+<tr><td>2. Calibration</td><td>Fit parametric distributions, estimate elasticity, model competitor substitution</td><td>Lognormal MLE, log-log regression, sigmoid competitor model</td></tr>
+<tr><td>3. Simulation</td><td>Generate 10K synthetic respondents with correlated attributes, run choice model</td><td>Gaussian copula, multinomial logit with Gumbel noise</td></tr>
+<tr><td>4A. Conjoint</td><td>Estimate willingness-to-pay from simulated purchase decisions</td><td>Bayesian hierarchical MNL (PyMC MCMC, 2 chains &times; 3K draws)</td></tr>
+<tr><td>4B. Optimization</td><td>Find Pareto-optimal price triples maximizing revenue, conversion, and LTV</td><td>NSGA-II via pymoo (40 pop &times; 50 gen)</td></tr>
+<tr><td>4C. Game Theory</td><td>Model price-as-quality-signal using Spence signaling framework</td><td>Quality perception sigmoid, incentive compatibility checks</td></tr>
+<tr><td>4D. Ensemble</td><td>Weighted average of all three models, rounded to psychological price points</td><td>Conjoint 40% + NSGA-II 35% + Game Theory 25%</td></tr>
+<tr><td>5. Analysis</td><td>Sensitivity tornado, 5 strategic scenarios, demand curve visualization</td><td>One-at-a-time perturbation, scenario simulation</td></tr>
+</table>
+
+<div style="margin-top:48px;padding-top:16px;border-top:1px solid #e0e0e0;font-size:12px;color:#999">
+AESDR Pricing Engine v1.0 &bull; 10,000 synthetic respondents &bull; 50 Monte Carlo runs per price point &bull; Runtime: 583.6s
+</div>
+
+</div>
+</body>
+</html>
