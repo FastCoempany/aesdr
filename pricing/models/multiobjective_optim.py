@@ -31,8 +31,12 @@ class PricingProblem:
         5. revenue_per_visitor > min_threshold
     """
 
-    def __init__(self, population_df: pd.DataFrame):
-        self.population = population_df
+    def __init__(self, population_df: pd.DataFrame, sample_size: int = 1000):
+        # Sample population for fast evaluation during optimization
+        if len(population_df) > sample_size:
+            self.population = population_df.sample(n=sample_size, random_state=42).reset_index(drop=True)
+        else:
+            self.population = population_df
         self.n_var = 3
         self.n_obj = 3
         self.n_constr = 5
@@ -85,7 +89,7 @@ def estimate_refund_rate(sdr_price: float, ae_price: float) -> float:
     return base + shock
 
 
-def run_nsga2(population_df: pd.DataFrame, n_gen: int = 200, pop_size: int = 100) -> dict:
+def run_nsga2(population_df: pd.DataFrame, n_gen: int = 50, pop_size: int = 40) -> dict:
     """
     Run NSGA-II optimization.
     Falls back to grid search if pymoo is not installed.
@@ -123,8 +127,8 @@ def _run_pymoo_nsga2(population_df: pd.DataFrame, n_gen: int, pop_size: int) -> 
     algorithm = NSGA2(pop_size=pop_size)
     termination = get_termination("n_gen", n_gen)
 
-    print(f"Running NSGA-II: {pop_size} population × {n_gen} generations...")
-    res = pymoo_minimize(pymoo_problem, algorithm, termination, seed=42, verbose=False)
+    print(f"Running NSGA-II: {pop_size} population × {n_gen} generations (sampled 1K respondents)...")
+    res = pymoo_minimize(pymoo_problem, algorithm, termination, seed=42, verbose=True)
 
     if res.F is None or len(res.F) == 0:
         print("NSGA-II did not find feasible solutions. Falling back to grid search.")
