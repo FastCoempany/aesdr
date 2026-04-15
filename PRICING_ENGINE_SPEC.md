@@ -14,16 +14,16 @@ A computational pricing model that generates optimal price points for AESDR's th
 |--------|--------|------|--------|
 | **BLS** | Free API | $0 | REST API v2.0, SOC codes 41-3091 (SDR), 41-4011 (AE) |
 | **ProfitWell/Paddle** | Free | $0 | API integration, benchmark reports |
-| **Glassdoor** | Paywalled | ~$50/mo via Apify | Scraper actor, salary + reviews |
-| **Levels.fyi** | Paywalled | ~$30/mo | Apify scraper or manual CSV |
+| **Glassdoor** | Paywalled | ~$1–3/run via Apify | Scraper actor, salary + reviews |
+| **Levels.fyi** | Paywalled | ~$1–2/run via Apify | Apify scraper or manual CSV |
 | **Repvue** | Semi-free | $0 (manual) | Browse + manual extraction (no API) |
-| **G2/TrustRadius** | Paywalled | ~$50/mo via Apify | Scraper actors for competitor reviews |
-| **Udemy/Coursera** | Paywalled | ~$30/mo via Apify | Course pricing, ratings, enrollment counts |
+| **G2/TrustRadius** | Paywalled | ~$1–3/run via Apify | Scraper actors for competitor reviews |
+| **Udemy/Coursera** | Paywalled | ~$1–3/run via Apify | Course pricing, ratings, enrollment counts |
 | **LinkedIn** | Enterprise only | $800+/mo | **Skip.** Proxy via BLS tenure data + Repvue |
 | **SaaStr/Pavilion/RevGenius** | Membership-gated | $0-$500 | **Proxy via** published annual reports (free PDFs) |
 | **Stripe benchmarks** | Your own Stripe | $0 | Your own Stripe dashboard data |
 
-**Total hard cost: ~$0–$160/month** depending on how many Apify scrapers you run. BLS + ProfitWell + Repvue (manual) + published reports cover 70% of what we need for free.
+**Total hard cost: ~$0–$25 one-time.** Apify free tier ($5/mo credits) covers all scrapers — you run each 1–3 times during data collection, not recurring. BLS + ProfitWell + Repvue (manual) + published reports are free and cover 70% of critical inputs.
 
 ---
 
@@ -563,9 +563,7 @@ pricing/
 | Phase 5: Analysis & Output | 2–3 days | Phase 4 complete |
 | Phase 6: Package & Document | 1–2 days | All phases |
 
-**Total: ~3–4 weeks. Cost: ~$50–160 for scrapers.**
-
-BLS, ProfitWell, Repvue (manual), and published benchmark reports are all free and cover the majority of critical inputs.
+**Total: ~3–4 weeks. Cost: ~$0–25 one-time** (Apify free tier covers it).
 
 ---
 
