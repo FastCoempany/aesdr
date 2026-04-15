@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+
+# Generated data (re-created by running the pipeline)
+data/raw/
+data/processed/
+
+# Model outputs (re-created by running the pipeline)
+models/*_results.json
+simulation/synthetic_population.*
+simulation/monte_carlo_results.json
+calibration/*.json
+!calibration/__init__.py
+analysis/*_results.json
+analysis/*.png
