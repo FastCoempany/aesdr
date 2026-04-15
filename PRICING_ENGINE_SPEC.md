@@ -556,14 +556,14 @@ pricing/
 
 | Phase | Duration | Dependencies |
 |-------|----------|-------------|
-| Phase 1: Data Collection | 5–7 days | Apify account (~$50), BLS API key (free) |
+| Phase 1: Data Collection | 5–7 days | Apify free tier, BLS API key (free) |
 | Phase 2: Calibration | 3–4 days | Phase 1 complete |
 | Phase 3: Synthetic Respondents | 3–4 days | Phase 2 complete |
 | Phase 4: Pricing Models | 5–7 days | Phase 3 complete |
 | Phase 5: Analysis & Output | 2–3 days | Phase 4 complete |
 | Phase 6: Package & Document | 1–2 days | All phases |
 
-**Total: ~3–4 weeks. Cost: ~$0–25 one-time** (Apify free tier covers it).
+**Total: ~3–4 weeks. One-time build. Cost: $0–25** (Apify free tier covers the scrapers, everything else is free). Run it once, get your prices, ship.
 
 ---
 
