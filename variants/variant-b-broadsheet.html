@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR — Broadsheet Edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--crimson:#1A1A1A;--cream:#FFFFFF;--ink:#0A0A0A;--muted:#555;--light:#E0E0E0;
+--iris:linear-gradient(90deg,#FF006E,#FF6B00,#F59E0B,#10B981,#38BDF8,#8B5CF6,#FF006E);
+--serif:'Playfair Display',Georgia,serif;--mono:'Space Mono',monospace;--body:'Source Serif 4',Georgia,serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--cream);color:var(--ink);font-family:var(--body);overflow:hidden}
+a{color:inherit;text-decoration:none}
+
+/* === HERO BROADSHEET === */
+.hero{display:flex;flex-direction:column;min-height:100vh;padding:0 8%;border-bottom:3px double var(--ink);position:relative}
+.hero::before{content:'THE AESDR TIMES';font-family:var(--serif);font-size:11px;letter-spacing:.4em;text-transform:uppercase;text-align:center;display:block;padding:16px 0;border-bottom:1px solid var(--light);color:var(--muted);width:100%}
+.hero-left{padding:40px 0;display:flex;flex-direction:column;justify-content:center;position:relative;border-bottom:1px solid var(--light);color:var(--ink)}
+.hero-left::after{content:'';display:none}
+.hero-right{padding:40px 0;display:flex;flex-direction:column;justify-content:center}
+.mono-label{font-family:var(--mono);font-size:10px;letter-spacing:.25em;text-transform:uppercase;margin-bottom:20px;color:var(--muted)}
+.hero-h1{font-family:var(--serif);font-size:clamp(36px,5vw,64px);font-weight:900;font-style:italic;line-height:1.05;margin-bottom:24px}
+.hero-h1 .accent{background:var(--iris);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 4s linear infinite}
+.hero-p{font-size:18px;line-height:1.7;color:var(--muted);margin-bottom:32px;max-width:480px}
+.btn-black{display:inline-block;background:var(--ink);color:#fff;font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;padding:16px 36px;border:none;cursor:pointer;transition:background .2s}
+.btn-black:hover{background:#333}
+.btn-outline{display:inline-block;border:1.5px solid var(--ink);color:var(--ink);font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;padding:14px 36px;cursor:pointer;transition:all .2s;background:transparent;margin-left:12px}
+.btn-outline:hover{background:var(--ink);color:#fff}
+
+/* Warning box on left panel */
+.warn-box{border:1px solid var(--light);padding:24px;margin-top:32px;border-left:3px solid #EF4444}
+.warn-title{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#EF4444;margin-bottom:8px}
+.warn-text{font-size:15px;line-height:1.6;color:var(--muted)}
+.warn-text strong{color:var(--ink)}
+
+/* === CONFESSION OVERLAY === */
+.confession{position:fixed;inset:0;background:var(--ink);z-index:50;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .5s}
+.confession.active{opacity:1;pointer-events:auto}
+.typing-area{max-width:700px;width:90%}
+.tline{font-family:var(--serif);font-size:clamp(22px,3.5vw,38px);font-style:italic;font-weight:400;color:#fff;line-height:1.5;min-height:1.6em}
+.tline .accent{background:var(--iris);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 4s linear infinite}
+.cursor{display:inline-block;width:2px;height:1.1em;background:var(--crimson);vertical-align:text-bottom;margin-left:2px;animation:blink .8s step-end infinite}
+
+/* === TERMINAL === */
+.terminal{position:fixed;inset:0;background:var(--ink);z-index:51;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .6s}
+.terminal.active{opacity:1;pointer-events:auto}
+.term-box{max-width:640px;width:90%;border:1px solid rgba(255,255,255,.08);font-family:var(--mono)}
+.term-bar{display:flex;gap:6px;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.term-dot{width:8px;height:8px;border-radius:50%}
+.term-dot.r{background:rgba(239,68,68,.5)}.term-dot.y{background:rgba(245,158,11,.5)}.term-dot.g{background:rgba(16,185,129,.5)}
+.term-body{padding:28px 24px}
+.tl{font-size:14px;line-height:1.8;color:rgba(255,255,255,.5);opacity:0;white-space:pre-wrap}
+.tl.vis{opacity:1}
+.tl .prompt{color:rgba(255,255,255,.2);margin-right:8px}
+.term-out{margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,.08);font-family:var(--serif);font-size:18px;font-style:italic;font-weight:400;color:#fff;opacity:0;transition:opacity .6s}
+.term-out.vis{opacity:1}
+.scroll-hint{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);z-index:52;opacity:0;display:flex;flex-direction:column;align-items:center;gap:8px;transition:opacity .4s}
+.scroll-hint.vis{opacity:1}
+.scroll-hint span{font-family:var(--mono);font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:rgba(255,255,255,.25)}
+.scroll-bar{width:1px;height:24px;background:rgba(255,255,255,.1);position:relative;overflow:hidden}
+.scroll-bar::after{content:'';position:absolute;top:-100%;left:0;width:1px;height:100%;background:var(--crimson);animation:drop 1.5s ease-in-out infinite}
+
+/* === ZOOM SECTION === */
+.zoom-space{height:700vh;position:relative}
+.viewport{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;pointer-events:none;opacity:0;transition:opacity .5s}
+.viewport.active{opacity:1}
+.zcard{position:absolute;width:100%;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;opacity:0;padding:40px;will-change:transform,opacity}
+.zcard-inner{max-width:800px}
+.z-rowan{font-family:var(--serif);font-weight:900;font-style:italic;line-height:1.1}
+.z-michael{font-family:var(--body);font-style:italic;color:var(--crimson);line-height:1.5}
+.z-sub{font-family:var(--body);color:var(--muted);font-size:clamp(14px,1.8vw,20px);margin-top:16px}
+.ghost{position:absolute;font-family:var(--serif);font-weight:900;font-size:clamp(180px,35vw,400px);color:rgba(0,0,0,.03);pointer-events:none;top:50%;left:50%;transform:translate(-50%,-50%);white-space:nowrap;line-height:.8}
+
+/* === SCROLL SECTIONS === */
+.section{padding:100px 8%;background:var(--cream);position:relative;z-index:3}
+.section-dark{background:#F5F5F0;color:var(--ink);border-top:3px double var(--ink);border-bottom:3px double var(--ink)}
+.section-crimson{background:#FAFAFA;color:var(--ink);border-top:1px solid var(--light);border-bottom:1px solid var(--light)}
+.sec-label{font-family:var(--mono);font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.sec-h2{font-family:var(--serif);font-size:clamp(32px,5vw,56px);font-weight:900;font-style:italic;line-height:1.1;margin-bottom:24px}
+.divider{width:60px;height:2px;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite;margin:24px 0}
+
+/* Deck grid */
+.deck-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin-top:32px}
+.deck-card{background:#fff;border:1px solid var(--light);padding:32px;position:relative;overflow:hidden;transition:transform .2s}
+.deck-card:hover{transform:translateY(-4px)}
+.deck-num{font-family:var(--serif);font-size:64px;font-weight:900;position:absolute;top:-8px;right:12px;opacity:.06;line-height:1;pointer-events:none}
+.deck-tag{font-family:var(--mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:8px}
+.deck-title{font-family:var(--serif);font-size:20px;font-weight:700;font-style:italic;margin-bottom:8px}
+.deck-desc{font-size:14px;color:var(--muted);line-height:1.6}
+
+/* Pricing */
+.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px;max-width:800px}
+.price-card{background:var(--cream);border:1.5px solid var(--light);padding:40px;position:relative}
+.price-card.featured{border-color:var(--ink);border-width:2px}
+.price-card.featured::before{content:'RECOMMENDED';position:absolute;top:-11px;left:24px;background:var(--ink);color:#fff;font-family:var(--mono);font-size:8px;letter-spacing:.15em;padding:3px 10px}
+.price-name{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.price-amt{font-family:var(--serif);font-size:48px;font-weight:900;margin-bottom:20px}
+.price-list{list-style:none;margin-bottom:28px}
+.price-list li{font-size:14px;padding:10px 0;border-bottom:1px solid var(--light);display:flex;gap:10px;color:var(--muted)}
+.price-list li::before{content:'—';color:var(--ink);font-weight:700}
+
+/* FAQ */
+.faq-item{border-bottom:1px solid var(--light);padding:20px 0}
+.faq-q{font-family:var(--serif);font-size:18px;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.faq-q::after{content:'+';font-family:var(--mono);font-size:20px;transition:transform .2s}
+.faq-item.open .faq-q::after{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s;font-size:15px;color:var(--muted);line-height:1.7}
+.faq-a-inner{padding-top:12px}
+.faq-item.open .faq-a{max-height:300px}
+
+/* CTA overlay */
+.cta-full{text-align:center;padding:120px 8%}
+.cta-full .big{font-family:var(--serif);font-size:clamp(48px,10vw,120px);font-weight:900;font-style:italic;line-height:1;margin-bottom:16px}
+
+/* Footer */
+footer{text-align:center;padding:32px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-top:1px solid var(--light)}
+
+@keyframes shimmer{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes drop{0%{top:-100%}50%{top:0}100%{top:100%}}
+@media(max-width:768px){.price-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+<div class="hero-left">
+  <div class="mono-label">AESDR &middot; 12 Lessons &middot; Classified</div>
+  <div class="warn-box">
+    <div class="warn-title">Content Warning</div>
+    <div class="warn-text">This course contains uncomfortable truths about your <strong>pipeline</strong>, your <strong>apartment</strong>, your <strong>bar tab</strong>, your <strong>commission check</strong>, and your <strong>relationship status</strong>.</div>
+  </div>
+  <div style="margin-top:24px">
+    <button class="btn-black" id="enter-btn">Continue &rarr;</button>
+  </div>
+</div>
+<div class="hero-right">
+  <div class="mono-label" style="color:var(--muted)">The Unfiltered SaaS Sales Survival Guide</div>
+  <h1 class="hero-h1">Stop Surviving.<br>Start <span class="accent">Owning</span> It.</h1>
+  <p class="hero-p">No corporate fluff. No recycled guru advice. 12 interactive, trench-tested modules for AEs and SDRs ready to reduce chaos, manage toxic leadership, and protect their commission.</p>
+  <div>
+    <a href="#pricing" class="btn-black">Get Access</a>
+    <a href="#curriculum" class="btn-outline">View Syllabus</a>
+  </div>
+</div>
+</section>
+
+<!-- CONFESSION -->
+<div class="confession" id="confession"><div class="typing-area" id="typing-area"></div></div>
+
+<!-- TERMINAL -->
+<div class="terminal" id="terminal">
+<div class="term-box">
+  <div class="term-bar"><div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div></div>
+  <div class="term-body" id="term-body">
+    <div class="tl" data-text="scanning your phone..."><span class="prompt">&gt;</span><span class="typed"></span></div>
+    <div class="tl" data-text="found: morning routine app. habit tracker. focus timer."><span class="prompt">&gt;</span><span class="typed"></span></div>
+    <div class="tl" data-text="total: 11 productivity apps."><span class="prompt">&gt;</span><span class="typed"></span></div>
+    <div class="tl" data-text="diagnosis: least productive person you know."><span class="prompt">&gt;</span><span class="typed"></span></div>
+    <div class="term-out" id="term-out">This course will change your life. Afterward, you'll never make the same money again.</div>
+  </div>
+</div>
+</div>
+<div class="scroll-hint" id="scroll-hint"><span>scroll</span><div class="scroll-bar"></div></div>
+
+<!-- ZOOM CARDS -->
+<div class="zoom-space" id="zoom-space"></div>
+<div class="viewport" id="viewport">
+<div class="zcard" data-i="0"><div class="ghost">NUMB</div><div class="zcard-inner"><div class="z-rowan" style="font-size:clamp(32px,6vw,64px);color:var(--ink)">When was the last time you felt <span class="accent">anything</span> about your number?</div></div></div>
+<div class="zcard" data-i="1"><div class="zcard-inner"><div class="z-michael" style="font-size:clamp(22px,3.5vw,40px)">I stared at my pipeline for 40 minutes.<br>Didn't click anything. Just stared.<br><br>Like it was modern art.<br>It kind of is, if the art is about failure.</div></div></div>
+<div class="zcard" data-i="2"><div class="ghost">VERDICT</div><div class="zcard-inner"><div class="z-rowan" style="font-size:clamp(36px,7vw,80px);color:var(--ink)">Your commission check is not income.</div><div class="z-sub">It is a verdict on how you lived the last 30 days.</div></div></div>
+<div class="zcard" data-i="3"><div class="zcard-inner"><div class="z-michael" style="font-size:clamp(20px,3vw,36px)">Last month: $8,200. Bought a jacket.<br>This month: $2,100. Wearing the jacket to eat ramen.<br><br>The jacket is doing great. I am not.</div></div></div>
+<div class="zcard" data-i="4"><div class="ghost">WHO</div><div class="zcard-inner"><div class="z-rowan" style="font-size:clamp(32px,6vw,72px);color:var(--ink)"><span class="accent">"Potential"</span> is not a skill.</div><div class="z-sub">It is a word people use to describe someone who hasn't done anything yet.</div></div></div>
+<div class="zcard" data-i="5"><div class="zcard-inner"><div class="z-rowan" style="font-size:clamp(28px,5vw,56px);color:var(--ink)">12 lessons. Not about sales.<br>About the person <span class="accent">who sells.</span></div></div></div>
+</div>
+
+<!-- MID CTA -->
+<div class="section section-crimson cta-full" id="mid-cta" style="display:none">
+  <div class="big"><span class="accent">AESDR</span></div>
+  <div class="mono-label">12 lessons &bull; at your own pace &bull; 1 you</div>
+  <div style="margin-top:24px"><a href="#pricing" class="btn-black">Get Access &rarr;</a></div>
+</div>
+
+<!-- CURRICULUM -->
+<section class="section" id="curriculum" style="display:none">
+<div class="sec-label">What You Get</div>
+<div class="sec-h2">12 Modules. Zero Fluff.</div>
+<div class="divider"></div>
+<div class="deck-grid">
+  <div class="deck-card"><div class="deck-num">01</div><div class="deck-tag" style="color:#8B5CF6">Mindset</div><div class="deck-title">The SaaS Sales Circus</div><div class="deck-desc">Identify the traps. Stop drinking the corporate Kool-Aid.</div></div>
+  <div class="deck-card"><div class="deck-num">02</div><div class="deck-tag" style="color:#EF4444">Environment</div><div class="deck-title">The Ultimate Home Office</div><div class="deck-desc">You cannot outwork a bad environment.</div></div>
+  <div class="deck-card"><div class="deck-num">03</div><div class="deck-tag" style="color:#F59E0B">Alignment</div><div class="deck-title">Breaking Down Silos</div><div class="deck-desc">Fix the toxic dynamics between AEs and SDRs.</div></div>
+  <div class="deck-card"><div class="deck-num">04</div><div class="deck-tag" style="color:#10B981">Managing Up</div><div class="deck-title">SDR Manager Madness</div><div class="deck-desc">Survive the 10 Manager Archetypes.</div></div>
+  <div class="deck-card"><div class="deck-num">05</div><div class="deck-tag" style="color:#3B82F6">Playbook</div><div class="deck-title">The Sales Playbook</div><div class="deck-desc">Build a system that doesn't depend on luck.</div></div>
+  <div class="deck-card"><div class="deck-num">06</div><div class="deck-tag" style="color:#EC4899">Advanced</div><div class="deck-title">Beyond the Playbook</div><div class="deck-desc">What to do when the script runs out.</div></div>
+  <div class="deck-card"><div class="deck-num">07</div><div class="deck-tag" style="color:#F59E0B">Accountability</div><div class="deck-title">Prospecting is Your Job</div><div class="deck-desc">For AEs: stop coasting on SDR leads.</div></div>
+  <div class="deck-card"><div class="deck-num">08</div><div class="deck-tag" style="color:#D4AF37">Leadership</div><div class="deck-title">The 30% Rule</div><div class="deck-desc">Stop trying to save everyone.</div></div>
+  <div class="deck-card"><div class="deck-num">09</div><div class="deck-tag" style="color:#8B5CF6">Systems</div><div class="deck-title">Salesforce & Slack Survival</div><div class="deck-desc">Turn the tools you hate into weapons.</div></div>
+  <div class="deck-card"><div class="deck-num">10</div><div class="deck-tag" style="color:#10B981">Financials</div><div class="deck-title">The Commission Myth</div><div class="deck-desc">Why OTE is a fantasy. Read the fine print.</div></div>
+  <div class="deck-card"><div class="deck-num">11</div><div class="deck-tag" style="color:#FF7A59">Culture</div><div class="deck-title">Sober Selling</div><div class="deck-desc">How saying no to alcohol sharpens your edge.</div></div>
+  <div class="deck-card"><div class="deck-num">12</div><div class="deck-tag" style="color:#C19A6B">Life</div><div class="deck-title">Leveling Up Relationships</div><div class="deck-desc">Close the success gap at home.</div></div>
+</div>
+</section>
+
+<!-- PRICING -->
+<section class="section section-dark" id="pricing" style="display:none">
+<div class="sec-label">Pricing</div>
+<div class="sec-h2">Invest in Your Survival.</div>
+<div class="divider"></div>
+<div class="price-grid">
+  <div class="price-card">
+    <div class="price-name">The Trench Warrior</div>
+    <div class="price-amt">$249</div>
+    <ul class="price-list">
+      <li>Full access to all 12 interactive courses</li>
+      <li>Downloadable frameworks & trackers</li>
+      <li>Self-paced HTML platform</li>
+      <li>Lifetime updates</li>
+    </ul>
+    <button class="btn-black" style="width:100%">Get Instant Access</button>
+  </div>
+  <div class="price-card featured">
+    <div class="price-name">The Enablement Pack</div>
+    <div class="price-amt">$1,499<span style="font-size:16px;color:var(--muted);font-family:var(--body)"> / team</span></div>
+    <ul class="price-list">
+      <li>Up to 10 rep licenses</li>
+      <li>Manager-specific coaching modules</li>
+      <li>AE/SDR alignment workshop materials</li>
+      <li>1x live pipeline audit with Antaeus</li>
+    </ul>
+    <button class="btn-black" style="width:100%">Equip Your Team</button>
+  </div>
+</div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq" style="display:none">
+<div class="sec-label">FAQ</div>
+<div class="sec-h2">Questions.</div>
+<div class="divider"></div>
+<div style="max-width:700px">
+  <div class="faq-item"><div class="faq-q">Is this for SDRs or AEs?</div><div class="faq-a"><div class="faq-a-inner">Both. The first 6 courses focus on universal survival skills. Courses 7-8 are AE-specific. The rest applies to everyone in SaaS sales.</div></div></div>
+  <div class="faq-item"><div class="faq-q">How long does it take to complete?</div><div class="faq-a"><div class="faq-a-inner">Each course is 30-45 minutes. You can finish the full program in a weekend or spread it over a few weeks. Lifetime access means no rush.</div></div></div>
+  <div class="faq-item"><div class="faq-q">Is there a refund policy?</div><div class="faq-a"><div class="faq-a-inner">Yes. 30-day money-back guarantee, no questions asked. If this doesn't change how you work, you get your money back.</div></div></div>
+  <div class="faq-item"><div class="faq-q">What makes this different from other sales training?</div><div class="faq-a"><div class="faq-a-inner">Most sales training is built by executives or consultants. This is built by someone who lived in the trenches for 9+ years and survived the worst of SaaS sales culture.</div></div></div>
+  <div class="faq-item"><div class="faq-q">Can my company pay for this?</div><div class="faq-a"><div class="faq-a-inner">Yes. The Team Enablement Pack ($1,499 for 10 seats) is designed for L&D budgets. We provide invoicing and can work with procurement.</div></div></div>
+</div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="section section-crimson cta-full" id="final-cta" style="display:none">
+<div class="mono-label">The cost of missing quota is high. The cost of burnout is higher.</div>
+<div class="big">Stop <span class="accent">Surviving.</span></div>
+<div style="margin-top:24px"><a href="#pricing" class="btn-black">Get Access &rarr;</a></div>
+</section>
+
+<footer>AESDR &copy; 2026 &bull; Built for the Trenches</footer>
+
+<!-- JS PLACEHOLDER -->
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+
+/* FAQ accordion */
+$$('.faq-q').forEach(q => q.addEventListener('click', () => q.parentElement.classList.toggle('open')));
+
+/* Confession scenes */
+const scenes = [
+  {segs:[{t:"So here's the scenario.",s:''}],delay:38,hold:1000,exit:'fade'},
+  {segs:[{t:"You're an ",s:''},{t:"AE",s:'accent'},{t:". Or an ",s:''},{t:"SDR",s:'accent'},{t:".",s:''}],delay:42,hold:1200,exit:'fade'},
+  {segs:[{t:'You set your alarm for 6am on Sunday to "lock in."',s:''}],delay:28,hold:600},
+  {segs:[{t:"It's Saturday again.",s:''}],delay:52,hold:700},
+  {segs:[{t:"You didn't lock in at all.",s:''}],delay:40,hold:0},
+];
+
+let sceneIdx=0,charIdx=0,typed=[],lineEl,timer;
+
+function flat(segs){const c=[];for(const s of segs)for(const ch of s.t)c.push({ch,s:s.s});return c}
+function html(arr){let h='',cur=null;for(const{ch,s}of arr){if(s!==cur){if(cur)h+='</span>';if(s)h+='<span class="'+s+'">';cur=s}h+=ch}if(cur)h+='</span>';return h}
+
+function startScene(){
+  if(sceneIdx>=scenes.length){timer=setTimeout(showTerminal,800);return}
+  typed=[];charIdx=0;lineEl=document.createElement('div');lineEl.className='tline';
+  $('#typing-area').appendChild(lineEl);
+  typeChar(flat(scenes[sceneIdx].segs),scenes[sceneIdx]);
+}
+function typeChar(f,sc){
+  if(charIdx>=f.length){lineEl.innerHTML=html(typed);
+    timer=setTimeout(()=>{if(sc.exit){lineEl.style.transition='opacity .6s';lineEl.style.opacity='0';setTimeout(()=>{sceneIdx++;startScene()},600)}else{sceneIdx++;startScene()}},sc.hold);return}
+  typed.push(f[charIdx]);charIdx++;lineEl.innerHTML=html(typed)+'<span class="cursor"></span>';
+  timer=setTimeout(()=>typeChar(f,sc),sc.delay+Math.random()*18);
+}
+
+/* Enter button triggers confession */
+$('#enter-btn').addEventListener('click',()=>{
+  $('#confession').classList.add('active');
+  setTimeout(startScene,500);
+});
+
+/* Terminal phase */
+function showTerminal(){
+  $('#confession').style.transition='opacity .5s';$('#confession').style.opacity='0';
+  setTimeout(()=>{$('#confession').classList.remove('active');$('#terminal').classList.add('active');typeTermLine(0)},500);
+}
+function typeTermLine(idx){
+  const lines=$$('.tl');
+  if(idx>=lines.length){setTimeout(()=>{$('#term-out').classList.add('vis');setTimeout(()=>{$('#scroll-hint').classList.add('vis');unlockScroll()},800)},500);return}
+  const line=lines[idx],span=line.querySelector('.typed'),full=line.dataset.text;
+  line.classList.add('vis');let ci=0;
+  (function tc(){if(ci>=full.length){span.textContent=full;setTimeout(()=>typeTermLine(idx+1),300);return}
+    ci++;span.innerHTML=full.substring(0,ci)+'<span class="cursor"></span>';setTimeout(tc,18+Math.random()*12)})();
+}
+
+/* Unlock scroll + zoom cards */
+function unlockScroll(){
+  document.body.style.overflow='visible';document.body.style.overflowX='hidden';
+  const vp=$('#viewport'),zCards=$$('.zcard'),total=zCards.length;
+  setTimeout(()=>vp.classList.add('active'),200);
+  const heroH=window.innerHeight;
+  function upd(){
+    const sy=Math.max(0,window.scrollY-heroH),maxS=$('#zoom-space').offsetHeight-window.innerHeight;
+    if(maxS<=0)return;const p=Math.min(1,sy/maxS),cp=p*total,ai=Math.min(Math.floor(cp),total-1),cf=cp-ai;
+    zCards.forEach((c,i)=>{
+      if(i===ai){let sc,op;if(cf<.12){const t=cf/.12;sc=2.5-1.5*t;op=t}else if(cf<.78){sc=1;op=1}else{const t=(cf-.78)/.22;sc=1-.6*t;op=1-t}
+        c.style.transform='scale('+sc+')';c.style.opacity=op}else{c.style.opacity=0}});
+    /* Show remaining sections after zoom */
+    if(p>.92){showSections();$('#mid-cta').style.display='block'}
+    /* Fade hero+terminal */
+    if(sy>50){$('#terminal').style.opacity=Math.max(0,1-sy/300);$('#hero').style.opacity=Math.max(0,1-sy/400)}
+  }
+  window.addEventListener('scroll',upd,{passive:true});upd();
+}
+
+let sectionsShown=false;
+function showSections(){
+  if(sectionsShown)return;sectionsShown=true;
+  ['#mid-cta','#curriculum','#pricing','#faq','#final-cta'].forEach(s=>{const el=$(s);if(el)el.style.display='block'});
+}
+</script>
+</body>
+</html>
