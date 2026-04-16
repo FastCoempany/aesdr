@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60; // LLM call can take up to ~30s
 
 import { NextResponse } from "next/server";
+import * as Sentry from "@sentry/nextjs";
 import { createClient } from "@/utils/supabase/server";
 import { generateArtifacts, getCachedArtifact } from "@/lib/artifacts/generate";
 import type { ArtifactType } from "@/lib/artifacts/types";
@@ -49,6 +50,7 @@ export async function GET(request: Request) {
       generatedAt: artifact.generated_at,
     });
   } catch (err) {
+    Sentry.captureException(err, { extra: { handler: "GET /api/artifacts" } });
     const message = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
@@ -124,8 +126,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: message }, { status: 422 });
     }
 
-    // Log full error server-side, return generic message to client
-    console.error("[artifacts] Generation failed:", message);
+    Sentry.captureException(err, { extra: { handler: "POST /api/artifacts" } });
     return NextResponse.json(
       { error: "Artifact generation failed. Please try again later." },
       { status: 500 }

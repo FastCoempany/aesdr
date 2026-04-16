@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
@@ -37,7 +38,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: blob:",
-              "connect-src 'self' https://*.supabase.co https://api.anthropic.com https://alb.reddit.com",
+              "connect-src 'self' https://*.supabase.co https://api.anthropic.com https://alb.reddit.com https://*.ingest.sentry.io",
               "frame-src 'self'",
               "frame-ancestors 'self'",
             ].join("; "),
@@ -48,4 +49,9 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  silent: true,
+  widenClientFileUpload: true,
+  tunnelRoute: "/monitoring",
+  disableLogger: true,
+});

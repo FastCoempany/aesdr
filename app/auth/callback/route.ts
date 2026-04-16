@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 import { createClient } from '@/utils/supabase/server';
 
 // Allowed redirect paths after authentication (prevent open redirect)
@@ -26,14 +27,14 @@ export async function GET(request: Request) {
     // OAuth / PKCE code exchange
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (error) {
-      console.error('[auth/callback] Code exchange failed:', error.message);
+      Sentry.captureException(error, { extra: { step: 'code_exchange' } });
       return NextResponse.redirect(new URL('/login?error=auth', origin));
     }
   } else if (token_hash && type) {
     // Magic link / email OTP verification
     const { error } = await supabase.auth.verifyOtp({ token_hash, type: type as 'magiclink' | 'email' });
     if (error) {
-      console.error('[auth/callback] OTP verification failed:', error.message);
+      Sentry.captureException(error, { extra: { step: 'otp_verify' } });
       return NextResponse.redirect(new URL('/login?error=auth', origin));
     }
   }

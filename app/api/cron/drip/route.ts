@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { sendDay3Email, sendDay7Email } from '@/lib/email';
 import { TIMING } from '@/lib/config';
@@ -82,6 +83,6 @@ export async function GET(request: Request) {
     }
   }
 
-  if (errors.length > 0) console.error('[cron/drip] Errors:', errors);
+  if (errors.length > 0) Sentry.captureMessage('[cron/drip] Errors', { level: 'error', extra: { errors } });
   return NextResponse.json({ day3Sent, day7Sent, errors: errors.length > 0 ? errors : undefined });
 }

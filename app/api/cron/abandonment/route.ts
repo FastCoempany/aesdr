@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { sendAbandon1hr, sendAbandon24hr } from '@/lib/email';
 import { TIMING } from '@/lib/config';
@@ -84,6 +85,6 @@ export async function GET(request: Request) {
     }
   }
 
-  if (errors.length > 0) console.error('[cron/abandonment] Errors:', errors);
+  if (errors.length > 0) Sentry.captureMessage('[cron/abandonment] Errors', { level: 'error', extra: { errors } });
   return NextResponse.json({ hr1Sent, hr24Sent, errors: errors.length > 0 ? errors : undefined });
 }
