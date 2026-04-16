@@ -355,12 +355,18 @@ async function handleHomeworkGates(
 // ─── TIMELINE GATES (Lesson-specific) ───────────────────────────
 
 async function handleTimelineGates(frame: FrameLocator, page: Page): Promise<boolean> {
-  const dayHeaders = frame.locator(".tl-hdr");
+  // Scope to active screen only — timeline elements may exist on hidden screens
+  const firstHdr = frame.locator(".screen.active .tl-hdr").first();
+  const hasTimeline = await firstHdr.isVisible({ timeout: 200 }).catch(() => false);
+  if (!hasTimeline) return false;
+
+  const dayHeaders = frame.locator(".screen.active .tl-hdr");
   const dayCount = await dayHeaders.count().catch(() => 0);
-  if (dayCount === 0) return false;
 
   for (let d = 0; d < dayCount; d++) {
     const hdr = dayHeaders.nth(d);
+    const hdrVisible = await hdr.isVisible().catch(() => false);
+    if (!hdrVisible) continue;
     const parent = frame.locator(`#tl${d}`);
     const isOpen = await parent
       .evaluate((el) => el.classList.contains("open"))
@@ -371,7 +377,6 @@ async function handleTimelineGates(frame: FrameLocator, page: Page): Promise<boo
     }
   }
 
-  // Fill all timeline task textareas
   for (let d = 0; d < dayCount; d++) {
     for (let t = 0; t < 5; t++) {
       const key = `${d}_${t}`;
@@ -437,29 +442,28 @@ async function bruteForcePickAndPlace(
 }
 
 async function handleSiloSorter(frame: FrameLocator, page: Page): Promise<boolean> {
-  const pool = frame.locator("#siloPool");
+  const pool = frame.locator(".screen.active #siloPool");
   const hasPool = await pool.isVisible({ timeout: 200 }).catch(() => false);
   if (!hasPool) return false;
 
-  await bruteForcePickAndPlace(frame, page, "#siloPool .silo-card", ".silo-col");
+  await bruteForcePickAndPlace(frame, page, ".screen.active #siloPool .silo-card", ".screen.active .silo-col");
   return true;
 }
 
 async function handleSequencePuzzle(frame: FrameLocator, page: Page): Promise<boolean> {
-  const tiles = frame.locator("#seqTiles");
+  const tiles = frame.locator(".screen.active #seqTiles");
   const hasTiles = await tiles.isVisible({ timeout: 200 }).catch(() => false);
   if (!hasTiles) return false;
 
-  // Sequence puzzle: pick a tile, then try each slot
   let attempts = 0;
   while (attempts < 50) {
-    const tile = frame.locator("#seqTiles .seq-tile:not(.placed)").first();
+    const tile = frame.locator(".screen.active #seqTiles .seq-tile:not(.placed)").first();
     const tileVisible = await tile
-      .isVisible({ timeout: 500 })
+      .isVisible({ timeout: 200 })
       .catch(() => false);
     if (!tileVisible) break;
 
-    const slots = frame.locator(".seq-drop:not(.correct)");
+    const slots = frame.locator(".screen.active .seq-drop:not(.correct)");
     const slotCount = await slots.count().catch(() => 0);
     let placed = false;
 
@@ -487,7 +491,7 @@ async function handleSequencePuzzle(frame: FrameLocator, page: Page): Promise<bo
 }
 
 async function handleSchedulePuzzle(frame: FrameLocator, page: Page): Promise<boolean> {
-  const tilesWrap = frame.locator("#schedTiles");
+  const tilesWrap = frame.locator(".screen.active #schedTiles");
   const hasTiles = await tilesWrap
     .isVisible({ timeout: 200 })
     .catch(() => false);
@@ -495,13 +499,13 @@ async function handleSchedulePuzzle(frame: FrameLocator, page: Page): Promise<bo
 
   let attempts = 0;
   while (attempts < 50) {
-    const tile = frame.locator("#schedTiles .sched-tile:not(.placed)").first();
+    const tile = frame.locator(".screen.active #schedTiles .sched-tile:not(.placed)").first();
     const tileVisible = await tile
-      .isVisible({ timeout: 500 })
+      .isVisible({ timeout: 200 })
       .catch(() => false);
     if (!tileVisible) break;
 
-    const slots = frame.locator(".sched-slot:not(.correct)");
+    const slots = frame.locator(".screen.active .sched-slot:not(.correct)");
     const slotCount = await slots.count().catch(() => 0);
     let placed = false;
 
@@ -534,30 +538,30 @@ async function handleSchedulePuzzle(frame: FrameLocator, page: Page): Promise<bo
 }
 
 async function handleClassifier(frame: FrameLocator, page: Page): Promise<boolean> {
-  const stream = frame.locator("#clsStream");
+  const stream = frame.locator(".screen.active #clsStream");
   const hasStream = await stream
     .isVisible({ timeout: 200 })
     .catch(() => false);
   if (!hasStream) return false;
 
-  await bruteForcePickAndPlace(frame, page, "#clsStream .cls-obs", ".cls-bucket");
+  await bruteForcePickAndPlace(frame, page, ".screen.active #clsStream .cls-obs", ".screen.active .cls-bucket");
   return true;
 }
 
 // ─── MULTIPLE CHOICE EXERCISES ──────────────────────────────────
 
 async function handleBlameFinder(frame: FrameLocator, page: Page): Promise<boolean> {
-  const container = frame.locator("#blameItems");
+  const container = frame.locator(".screen.active #blameItems");
   const hasBlame = await container
     .isVisible({ timeout: 200 })
     .catch(() => false);
   if (!hasBlame) return false;
 
-  const items = frame.locator(".blame-item:not(.resolved)");
+  const items = frame.locator(".screen.active .blame-item:not(.resolved)");
   const count = await items.count().catch(() => 0);
 
   for (let i = 0; i < count; i++) {
-    const item = frame.locator(".blame-item:not(.resolved)").first();
+    const item = frame.locator(".screen.active .blame-item:not(.resolved)").first();
     const visible = await item.isVisible({ timeout: 500 }).catch(() => false);
     if (!visible) break;
 
@@ -584,18 +588,17 @@ async function handleBlameFinder(frame: FrameLocator, page: Page): Promise<boole
 }
 
 async function handleCCExercise(frame: FrameLocator, page: Page): Promise<boolean> {
-  const ccWrap = frame.locator("#ccWrap");
+  const ccWrap = frame.locator(".screen.active #ccWrap");
   const hasCc = await ccWrap.isVisible({ timeout: 200 }).catch(() => false);
   if (!hasCc) return false;
 
-  const doneBox = frame.locator(".cc-complete-box");
+  const doneBox = frame.locator(".screen.active .cc-complete-box");
   const isDone = await doneBox.isVisible({ timeout: 200 }).catch(() => false);
   if (isDone) return false;
 
   for (let stage = 0; stage < 5; stage++) {
-    // Try each option
     for (let attempt = 0; attempt < 6; attempt++) {
-      const opt = frame.locator(".cc-opt:not(.locked)").first();
+      const opt = frame.locator(".screen.active .cc-opt:not(.locked)").first();
       const optVisible = await opt
         .isVisible({ timeout: 500 })
         .catch(() => false);
@@ -607,7 +610,7 @@ async function handleCCExercise(frame: FrameLocator, page: Page): Promise<boolea
       // Check for POW overlay (wrong answer)
       const powBtn = frame.locator(".cc-pow-btn");
       const hasPow = await powBtn
-        .isVisible({ timeout: 500 })
+        .isVisible({ timeout: 300 })
         .catch(() => false);
       if (hasPow) {
         await powBtn.click();
@@ -616,9 +619,9 @@ async function handleCCExercise(frame: FrameLocator, page: Page): Promise<boolea
       }
 
       // Correct answer — look for advance button
-      const advBtn = frame.locator(".cc-advance .btn");
+      const advBtn = frame.locator(".screen.active .cc-advance .btn");
       const hasAdv = await advBtn
-        .isVisible({ timeout: 500 })
+        .isVisible({ timeout: 300 })
         .catch(() => false);
       if (hasAdv) {
         await advBtn.click();
@@ -637,18 +640,17 @@ async function handleCCExercise(frame: FrameLocator, page: Page): Promise<boolea
 }
 
 async function handleQuiz(frame: FrameLocator, page: Page): Promise<boolean> {
-  const quizBody = frame.locator("#quizBody");
+  const quizBody = frame.locator(".screen.active #quizBody");
   const hasQuiz = await quizBody
     .isVisible({ timeout: 200 })
     .catch(() => false);
   if (!hasQuiz) return false;
 
-  const banner = frame.locator("#quizBanner.show");
+  const banner = frame.locator(".screen.active #quizBanner.show");
   const done = await banner.isVisible({ timeout: 200 }).catch(() => false);
   if (done) return false;
 
-  // Answer each question — pick first option
-  const questions = frame.locator(".q-block");
+  const questions = frame.locator(".screen.active .q-block");
   const qCount = await questions.count().catch(() => 0);
   for (let q = 0; q < qCount; q++) {
     const opt = frame.locator(`#qo${q}_0`);
@@ -667,11 +669,11 @@ async function handleQuiz(frame: FrameLocator, page: Page): Promise<boolean> {
 // ─── CHECKLIST ──────────────────────────────────────────────────
 
 async function handleChecklist(frame: FrameLocator, page: Page): Promise<boolean> {
-  const items = frame.locator(".cl-item:not(.done)");
+  const items = frame.locator(".screen.active .cl-item:not(.done)");
   const count = await items.count().catch(() => 0);
   if (count === 0) return false;
   for (let i = 0; i < count; i++) {
-    const item = frame.locator(".cl-item:not(.done)").first();
+    const item = frame.locator(".screen.active .cl-item:not(.done)").first();
     const visible = await item.isVisible({ timeout: 200 }).catch(() => false);
     if (!visible) break;
     await item.click();
