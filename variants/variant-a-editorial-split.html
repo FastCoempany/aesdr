@@ -126,10 +126,10 @@ a{color:inherit;text-decoration:none}
 .deck-desc{font-family:var(--hand);font-size:20px;color:var(--crimson);line-height:1.5;transform:rotate(-0.5deg)}
 
 /* Pricing */
-.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px;max-width:800px}
+.price-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-top:32px;max-width:1000px}
 .price-card{background:var(--cream);border:1.5px solid var(--light);padding:40px;position:relative}
 .price-card.featured{border-color:var(--ink);border-width:2px}
-.price-card.featured::before{content:'RECOMMENDED';position:absolute;top:-11px;left:24px;background:var(--ink);color:#fff;font-family:var(--mono);font-size:8px;letter-spacing:.15em;padding:3px 10px}
+.price-card.featured::before{content:'ORG REIMBURSEMENT';position:absolute;top:-11px;left:24px;background:var(--ink);color:#fff;font-family:var(--mono);font-size:8px;letter-spacing:.15em;padding:3px 10px}
 .price-name{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
 .price-amt{font-family:var(--display);font-size:48px;font-weight:900;margin-bottom:20px;color:var(--ink)}
 .price-list{list-style:none;margin-bottom:28px}
@@ -163,7 +163,8 @@ footer{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;padding:32px;
 @keyframes shimmer{0%{background-position:0% 50%}100%{background-position:300% 50%}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 @keyframes drop{0%{top:-100%}50%{top:0}100%{top:100%}}
-@media(max-width:768px){.hero{grid-template-columns:1fr}.hero-left{min-height:60vh}.price-grid{grid-template-columns:1fr}}
+@media(max-width:900px){.price-grid{grid-template-columns:1fr}}
+@media(max-width:768px){.hero{grid-template-columns:1fr}.hero-left{min-height:60vh}}
 </style>
 </head>
 <body>
@@ -179,7 +180,7 @@ footer{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;padding:32px;
 <!-- HERO -->
 <section class="hero" id="hero">
 <div class="hero-left">
-  <div class="mono-label">AESDR &middot; 12 Lessons &middot; Classified</div>
+  <div class="mono-label">AESDR &middot; 12 Lessons &middot; A Better You</div>
   <div class="warn-box">
     <div class="warn-title"><span class="warn-icon">!</span> Content Warning</div>
     <div class="warn-text">This course contains uncomfortable truths about your <strong>pipeline</strong>, your <strong>apartment</strong>, your <strong>bar tab</strong>, your <strong>commission check</strong>, and your <strong>relationship status</strong>.</div>
@@ -192,7 +193,7 @@ footer{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;padding:32px;
   <div class="corner corner-tl"></div><div class="corner corner-tr"></div><div class="corner corner-bl"></div><div class="corner corner-br"></div>
   <div class="mono-label" style="color:var(--muted)">The Unfiltered SaaS Sales Survival Guide</div>
   <h1 class="hero-h1">Stop Surviving.<br>Start <span class="accent">Owning</span> It.</h1>
-  <p class="hero-p">No corporate fluff. No recycled guru advice. 12 interactive, trench-tested modules for AEs and SDRs ready to reduce chaos, manage toxic leadership, and protect their commission.</p>
+  <p class="hero-p">This isn't corporate-y but it will advance your career. 12 interactive, field-tested sessions for AEs and SDRs who're serious about controlling chaos, managing toxic leadership, protecting your commission - and your future.</p>
   <div>
     <a href="#pricing" class="btn-iris">Get Access</a>
     <a href="#curriculum" class="btn-outline">View Syllabus</a>
@@ -254,14 +255,14 @@ footer{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;padding:32px;
   <div class="deck-card" style="z-index:12" data-deck="0"><div class="deck-num">01</div><div class="deck-title">Building Real Camaraderie</div><div class="deck-desc">&ldquo;When&rsquo;s the last time your team felt like an actual team?&rdquo;</div></div>
   <div class="deck-card" style="z-index:11" data-deck="1"><div class="deck-num">02</div><div class="deck-title">Breaking Down Silos</div><div class="deck-desc">&ldquo;How many deals died in the handoff you never talked about?&rdquo;</div></div>
   <div class="deck-card" style="z-index:10" data-deck="2"><div class="deck-num">03</div><div class="deck-title">Performance Pitfalls</div><div class="deck-desc">&ldquo;Are you getting better &mdash; or just getting by?&rdquo;</div></div>
-  <div class="deck-card" style="z-index:9" data-deck="3"><div class="deck-num">04</div><div class="deck-title">Navigating Manager Madness</div><div class="deck-desc">&ldquo;Does your manager coach you&hellip; or just count your calls?&rdquo;</div></div>
-  <div class="deck-card" style="z-index:8" data-deck="4"><div class="deck-num">05</div><div class="deck-title" style="text-transform:none">tHe SaLeS pLaYbOoK</div><div class="deck-desc">&ldquo;What&rsquo;s your system? And if you don&rsquo;t have one &mdash; what have you been doing?&rdquo;</div></div>
+  <div class="deck-card" style="z-index:9" data-deck="3"><div class="deck-num">04</div><div class="deck-title">Navigating Manager Madness</div><div class="deck-desc">&ldquo;Does your manager coach you... or just count your calls and faults?&rdquo;</div></div>
+  <div class="deck-card" style="z-index:8" data-deck="4"><div class="deck-num">05</div><div class="deck-title" style="text-transform:none">tHe SaLeS pLaYbOoK</div><div class="deck-desc">&ldquo;What&rsquo;s your system? And if you don&rsquo;t have one &mdash; what have you been doing?&rdquo;<br>&ldquo;(If you got it from somewhere on LinkedIn &mdash; you&rsquo;ll need more than this course can offer, but definitely start here. Now.)&rdquo;</div></div>
   <div class="deck-card" style="z-index:7" data-deck="5"><div class="deck-num">06</div><div class="deck-title" style="text-transform:none">bEyOnD tHe SaLeS pLaYbOoK</div><div class="deck-desc">&ldquo;What do you do when the script runs out and you&rsquo;re live?&rdquo;</div></div>
   <div class="deck-card" style="z-index:6" data-deck="6"><div class="deck-num">07</div><div class="deck-title">Prospecting &amp; Pipeline</div><div class="deck-desc">&ldquo;If inbound dried up tomorrow, would you survive?&rdquo;</div></div>
   <div class="deck-card" style="z-index:5" data-deck="7"><div class="deck-num">08</div><div class="deck-title">The 30% Rule</div><div class="deck-desc">&ldquo;What&rsquo;s your actual close rate? Not the one you told your VP.&rdquo;</div></div>
-  <div class="deck-card" style="z-index:4" data-deck="8"><div class="deck-num">09</div><div class="deck-title">Salesforce Survival Guide</div><div class="deck-desc">&ldquo;Is your CRM protecting you &mdash; or building the case against you?&rdquo;</div></div>
-  <div class="deck-card" style="z-index:3" data-deck="9"><div class="deck-num">10</div><div class="deck-title">Breaking Down the Commission Myth</div><div class="deck-desc">&ldquo;Can you survive three bad months in a row? Financially?&rdquo;</div></div>
-  <div class="deck-card" style="z-index:2" data-deck="10"><div class="deck-num">11</div><div class="deck-title">Sober Selling</div><div class="deck-desc">&ldquo;What if the problem isn&rsquo;t your energy &mdash; it&rsquo;s your process?&rdquo;</div></div>
+  <div class="deck-card" style="z-index:4" data-deck="8"><div class="deck-num">09</div><div class="deck-title">CRM Survival Guide</div><div class="deck-desc">&ldquo;Is your CRM protecting you &mdash; or building the case against you?&rdquo;</div></div>
+  <div class="deck-card" style="z-index:3" data-deck="9"><div class="deck-num">10</div><div class="deck-title">Breaking Down the Commission Myth</div><div class="deck-desc">&ldquo;Can you survive three bad months in a row? Mentally? Financially?&rdquo;</div></div>
+  <div class="deck-card" style="z-index:2" data-deck="10"><div class="deck-num">11</div><div class="deck-title">Sober Selling</div><div class="deck-desc">&ldquo;What if the problem is bigger than your process &mdash; what if it&rsquo;s what you&rsquo;re doing when no one&rsquo;s watching?&rdquo;<br>&ldquo;(21+ sober &mdash; not metaphorical sober.)&rdquo;</div></div>
   <div class="deck-card" style="z-index:1" data-deck="11"><div class="deck-num">12</div><div class="deck-title">Leveling Up SaaS Relationships</div><div class="deck-desc">&ldquo;Who would vouch for you if you changed companies tomorrow?&rdquo;</div></div>
 </div>
 </section>
@@ -286,8 +287,21 @@ footer{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;padding:32px;
 <div class="divider"></div>
 <div class="price-grid">
   <div class="price-card">
-    <div class="price-name">Individual</div>
-    <div class="price-amt">$199<span style="font-size:16px;color:var(--muted);font-family:var(--serif)"> / one-time</span></div>
+    <div class="price-name">SDR Individual</div>
+    <div class="price-amt">$249<span style="font-size:16px;color:var(--muted);font-family:var(--serif)"> / one-time</span></div>
+    <ul class="price-list">
+      <li>All 12 courses</li>
+      <li>5 interactive tools to takeaway</li>
+      <li>Lifetime access</li>
+      <li>Discord community <span style="font-family:var(--cond);font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(239,68,68,0.6);border:1px solid rgba(239,68,68,0.3);padding:1px 6px;margin-left:6px;transform:rotate(-2deg);display:inline-block">Untamed</span></li>
+      <li>Future curriculum updates</li>
+      <li>14-day refund guarantee</li>
+    </ul>
+    <a href="#" class="btn-iris" style="width:100%;text-align:center;display:block">Buy For Me</a>
+  </div>
+  <div class="price-card">
+    <div class="price-name">AE Individual</div>
+    <div class="price-amt">$299<span style="font-size:16px;color:var(--muted);font-family:var(--serif)"> / one-time</span></div>
     <ul class="price-list">
       <li>All 12 courses</li>
       <li>5 interactive tools to takeaway</li>
@@ -300,7 +314,7 @@ footer{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;padding:32px;
   </div>
   <div class="price-card featured">
     <div class="price-name">Team</div>
-    <div class="price-amt">$999<span style="font-size:16px;color:var(--muted);font-family:var(--serif)"> / up to 10 seats</span></div>
+    <div class="price-amt">$1,499<span style="font-size:16px;color:var(--muted);font-family:var(--serif)"> / up to 10 seats</span></div>
     <ul class="price-list">
       <li>Everything in Individual</li>
       <li>Up to 10 team members</li>
@@ -334,8 +348,8 @@ footer{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;padding:32px;
 
 <!-- FINAL CTA -->
 <section class="section" id="final-cta" style="display:none;text-align:center;padding:120px 8%">
-<div class="sec-h2">Stop Googling. Start&nbsp;executing.</div>
-<p style="font-family:var(--serif);font-size:18px;font-style:italic;color:var(--muted);max-width:500px;margin:16px auto 24px">12 courses. 5 tools. One price. Lifetime access.<br>Built for AEs and SDRs who want to get better, not just feel better.</p>
+<div class="sec-h2">Stop ChatGPClaudeing. Start&nbsp;executing.</div>
+<p style="font-family:var(--serif);font-size:18px;font-style:italic;color:var(--muted);max-width:600px;margin:16px auto 24px">12 courses. 5 takeaway tools. One price. Lifetime access. Built for AEs and SDRs who want to get better, not just feel better.</p>
 <div><a href="#pricing" class="btn-iris">Get Access</a></div>
 </section>
 
