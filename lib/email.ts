@@ -432,3 +432,40 @@ function footer() {
     To unsubscribe, reply with UNSUBSCRIBE.
   </p>`;
 }
+
+// ─── Team Invite Email ───
+
+export async function sendTeamInviteEmail(to: string, inviterName: string, token: string) {
+  return safeSend(`team-invite to ${to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to,
+      headers: UNSUBSCRIBE_HEADERS,
+      subject: `${esc(inviterName)} invited you to AESDR`,
+      html: teamInviteHtml(inviterName, token),
+    })
+  );
+}
+
+function teamInviteHtml(inviterName: string, token: string) {
+  const safeName = esc(inviterName);
+  const acceptUrl = `${SITE}/team/accept?token=${encodeURIComponent(token)}`;
+  return `
+<div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
+  <p>Hey,</p>
+  <p><strong>${safeName}</strong> has added you to their team's AESDR account.</p>
+  <p>AESDR is a 12-course professional development curriculum built for AEs and SDRs in SaaS. Interactive exercises, real frameworks, no motivational fluff.</p>
+  <div style="background:#f8f9fa;padding:16px 20px;margin:20px 0;border-left:3px solid #10B981">
+    <p style="margin:0 0 6px;font-weight:700">What you get:</p>
+    <ul style="margin:0;padding-left:20px">
+      <li>All 12 courses with interactive exercises</li>
+      <li>5 downloadable tools (commission tracker, alignment contracts, etc.)</li>
+      <li>Your own progress tracking and personalized takeaway artifacts</li>
+    </ul>
+  </div>
+  <p style="margin:24px 0"><a href="${acceptUrl}" style="display:inline-block;padding:14px 28px;background:#10B981;color:#fff;font-weight:700;text-decoration:none;font-size:16px">Accept Invite & Start →</a></p>
+  <p>This invite is tied to your email address. Click the link above to create your account (or sign in if you already have one).</p>
+  <p>— AESDR</p>
+  ${footer()}
+</div>`;
+}
