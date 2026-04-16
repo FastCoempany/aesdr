@@ -120,7 +120,7 @@ export default function SignupPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 outline-none transition"
+                  className="w-full px-4 py-3 transition"
                   style={{
                     fontFamily: "var(--serif)",
                     fontSize: "16px",
@@ -152,7 +152,7 @@ export default function SignupPage() {
                   minLength={6}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 outline-none transition"
+                  className="w-full px-4 py-3 transition"
                   style={{
                     fontFamily: "var(--serif)",
                     fontSize: "16px",

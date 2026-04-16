@@ -148,7 +148,7 @@ function LoginForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 outline-none transition"
+            className="w-full px-4 py-3 transition"
             style={{
               fontFamily: "var(--serif)",
               fontSize: "16px",
@@ -179,7 +179,7 @@ function LoginForm() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 outline-none transition"
+            className="w-full px-4 py-3 transition"
             style={{
               fontFamily: "var(--serif)",
               fontSize: "16px",

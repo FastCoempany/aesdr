@@ -49,6 +49,7 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&family=Barlow+Condensed:wght@400;500;600;700;800&family=Caveat:wght@400;600&display=swap" />
         
         {/* Favicon Tags */}
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />

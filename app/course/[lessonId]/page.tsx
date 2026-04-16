@@ -232,7 +232,7 @@ export default async function LessonPage({
                 fontSize: "9px",
                 letterSpacing: ".12em",
                 textTransform: "uppercase" as const,
-                padding: "6px 14px",
+                padding: "14px 16px",
                 color: "#fff",
                 background: "rgba(16,185,129,0.7)",
                 backdropFilter: "blur(8px)",

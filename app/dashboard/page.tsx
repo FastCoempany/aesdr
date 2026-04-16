@@ -137,7 +137,7 @@ export default async function Dashboard() {
         <div className="flex items-center gap-4" style={{ fontFamily: "'Space Mono', monospace", fontWeight: 400, fontSize: "11px", letterSpacing: ".15em", textTransform: "uppercase" }}>
           {user ? (
             <>
-              <Link href="/account" style={{ color: "#6B6B6B", textDecoration: "none" }}>Account</Link>
+              <Link href="/account" style={{ color: "#6B6B6B", textDecoration: "none", padding: "12px 4px" }}>Account</Link>
               <SignOutButton />
             </>
           ) : (

@@ -129,6 +129,47 @@ export default async function AccountPage() {
         </section>
 
         {/* Purchase info */}
+        {!purchase && (
+          <section className="mb-10">
+            <h2
+              style={{
+                fontFamily: "var(--mono)",
+                fontSize: "10px",
+                letterSpacing: ".2em",
+                textTransform: "uppercase" as const,
+                color: "var(--text-muted)",
+                marginBottom: "8px",
+              }}
+            >
+              Purchase
+            </h2>
+            <div
+              style={{
+                padding: "16px 20px",
+                background: "var(--bg-panel)",
+                border: "1px solid var(--line)",
+              }}
+            >
+              <p style={{ fontFamily: "var(--serif)", fontSize: "15px", marginBottom: "8px" }}>
+                No active purchase found.
+              </p>
+              <Link
+                href="/#pricing"
+                style={{
+                  fontFamily: "var(--cond)",
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  letterSpacing: ".12em",
+                  textTransform: "uppercase" as const,
+                  color: "var(--theme)",
+                  textDecoration: "none",
+                }}
+              >
+                View plans &rarr;
+              </Link>
+            </div>
+          </section>
+        )}
         {purchase && (
           <section className="mb-10">
             <h2

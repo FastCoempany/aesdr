@@ -14,10 +14,12 @@ export default function CheckoutButton({
   const [loading, setLoading] = useState(false);
   const [showEmail, setShowEmail] = useState(false);
   const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
 
   async function handleCheckout() {
     if (!email || !email.includes("@")) return;
     setLoading(true);
+    setError("");
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
@@ -29,15 +31,12 @@ export default function CheckoutButton({
       const urlHost = data.url ? new URL(data.url).hostname : "";
       if (data.url && (urlHost === "stripe.com" || urlHost.endsWith(".stripe.com"))) {
         window.location.href = data.url;
-      } else if (data.url) {
-        alert("Unexpected checkout URL. Please contact support@aesdr.com.");
-        setLoading(false);
       } else {
-        alert("Something went wrong. Please try again or contact support@aesdr.com.");
+        setError("Something went wrong. Please try again or email support@aesdr.com.");
         setLoading(false);
       }
     } catch {
-      alert("Connection error. Please try again.");
+      setError("Connection error. Please check your internet and try again.");
       setLoading(false);
     }
   }
@@ -48,21 +47,34 @@ export default function CheckoutButton({
         <input
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => { setEmail(e.target.value); setError(""); }}
           onKeyDown={(e) => e.key === "Enter" && handleCheckout()}
           placeholder="Your work email"
+          aria-label="Email address"
           autoFocus
           style={{
             fontFamily: "var(--serif)",
             fontSize: "16px",
             padding: "14px 16px",
             background: "var(--bg-panel, #0F172A)",
-            border: "1px solid var(--line, #1E293B)",
+            border: `1px solid ${error ? "var(--coral, #EF4444)" : "var(--line, #1E293B)"}`,
             color: "var(--text-main, #F8FAFC)",
             width: "100%",
-            outline: "none",
           }}
         />
+        {error && (
+          <p
+            role="alert"
+            style={{
+              fontFamily: "var(--mono)",
+              fontSize: "11px",
+              color: "var(--coral, #EF4444)",
+              margin: 0,
+            }}
+          >
+            {error}
+          </p>
+        )}
         <button
           onClick={handleCheckout}
           className={className}

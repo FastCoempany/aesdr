@@ -64,7 +64,7 @@ export default function RoleSwitcher({ currentRole }: RoleSwitcherProps) {
           fontSize: "10px",
           letterSpacing: ".12em",
           textTransform: "uppercase",
-          padding: "8px 16px",
+          padding: "14px 16px",
           background: "var(--bg-panel)",
           border: "1px solid var(--line)",
           color: "var(--text-muted)",
