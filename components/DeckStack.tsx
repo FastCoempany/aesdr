@@ -30,7 +30,7 @@ export default function DeckStack() {
   const shadow2Ref = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const progressRef = useRef(0);
-  const mouseXRef = useRef(0);
+  const mouseXRef = useRef(typeof window !== "undefined" ? window.innerWidth / 2 : 500);
   const snappingRef = useRef(false);
 
   useEffect(() => {
@@ -168,7 +168,7 @@ export default function DeckStack() {
   }, []);
 
   return (
-    <div className={s.section} ref={sectionRef}>
+    <div id="curriculum" className={s.section} ref={sectionRef}>
       <div className={s.sectionHeader} ref={headerRef}>
         <div className={s.sectionLabel}>What you get</div>
         <h2 className={s.sectionTitle}>12 Lessons. Peel to preview.</h2>

@@ -65,7 +65,6 @@
   perspective: 1200px;
   opacity: 0;
   transition: opacity 0.6s ease;
-  pointer-events: none;
 }
 .deckViewportVisible { opacity: 1; }
 
