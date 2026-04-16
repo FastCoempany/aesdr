@@ -4,18 +4,18 @@ import { useEffect, useRef } from "react";
 import s from "./DeckStack.module.css";
 
 const LESSONS = [
-  { num: "01", title: "Building Real Camaraderie", q: "When\u2019s the last time your team felt like an actual team?" },
-  { num: "02", title: "Breaking Down Silos", q: "How many deals died in the handoff you never talked about?" },
-  { num: "03", title: "Performance Pitfalls", q: "Are you getting better \u2014 or just getting by?" },
-  { num: "04", title: "Navigating Manager Madness", q: "Does your manager coach you\u2026 or just count your calls?" },
-  { num: "05", title: "The Sales Playbook", q: "What\u2019s your system? And if you don\u2019t have one \u2014 what have you been doing?" },
-  { num: "06", title: "Beyond the Sales Playbook", q: "What do you do when the script runs out and you\u2019re live?" },
-  { num: "07", title: "Prospecting & Pipeline", q: "If inbound dried up tomorrow, would you survive?" },
-  { num: "08", title: "The 30% Rule", q: "What\u2019s your actual close rate? Not the one you told your VP." },
-  { num: "09", title: "Salesforce Survival Guide", q: "Is your CRM protecting you \u2014 or building the case against you?" },
-  { num: "10", title: "Breaking Down the Commission Myth", q: "Can you survive three bad months in a row? Financially?" },
-  { num: "11", title: "Sober Selling", q: "What if the problem isn\u2019t your energy \u2014 it\u2019s your process?" },
-  { num: "12", title: "Leveling Up SaaS Relationships", q: "Who would vouch for you if you changed companies tomorrow?" },
+  { num: "01", title: "Building Real Camaraderie", q: "When\u2019s the last time your team felt like an actual team?", titleStyle: undefined as string | undefined },
+  { num: "02", title: "Breaking Down Silos", q: "How many deals died in the handoff you never talked about?", titleStyle: undefined as string | undefined },
+  { num: "03", title: "Performance Pitfalls", q: "Are you getting better \u2014 or just getting by?", titleStyle: undefined as string | undefined },
+  { num: "04", title: "Navigating Manager Madness", q: "Does your manager coach you\u2026 or just count your calls and faults?", titleStyle: undefined as string | undefined },
+  { num: "05", title: "tHe SaLeS pLaYbOoK", q: "What\u2019s your system? And if you don\u2019t have one \u2014 what have you been doing?\n(If you got it from somewhere on LinkedIn \u2014 you\u2019ll need more than this course can offer, but definitely start here. Now.)", titleStyle: "none" },
+  { num: "06", title: "bEyOnD tHe SaLeS pLaYbOoK", q: "What do you do when the script runs out and you\u2019re live?", titleStyle: "none" },
+  { num: "07", title: "Prospecting & Pipeline", q: "If inbound dried up tomorrow, would you survive?", titleStyle: undefined as string | undefined },
+  { num: "08", title: "The 30% Rule", q: "What\u2019s your actual close rate? Not the one you told your VP.", titleStyle: undefined as string | undefined },
+  { num: "09", title: "CRM Survival Guide", q: "Is your CRM protecting you \u2014 or building the case against you?", titleStyle: undefined as string | undefined },
+  { num: "10", title: "Breaking Down the Commission Myth", q: "Can you survive three bad months in a row? Mentally? Financially?", titleStyle: undefined as string | undefined },
+  { num: "11", title: "Sober Selling", q: "What if the problem is bigger than your process \u2014 what if it\u2019s what you\u2019re doing when no one\u2019s watching?\n(21+ sober \u2014 not metaphorical sober.)", titleStyle: undefined as string | undefined },
+  { num: "12", title: "Leveling Up SaaS Relationships", q: "Who would vouch for you if you changed companies tomorrow?", titleStyle: undefined as string | undefined },
 ];
 
 const TOTAL = LESSONS.length;
@@ -195,7 +195,7 @@ export default function DeckStack() {
             ref={(el) => { cardsRef.current[i] = el; }}
           >
             <div className={s.cardNum}>{lesson.num}</div>
-            <div className={s.cardTitle}>{lesson.title}</div>
+            <div className={s.cardTitle} style={lesson.titleStyle ? { textTransform: "none" } : undefined}>{lesson.title}</div>
             <div className={s.cardQuestion}>&ldquo;{lesson.q}&rdquo;</div>
           </div>
         ))}

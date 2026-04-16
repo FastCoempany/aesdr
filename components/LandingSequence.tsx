@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import s from "./LandingSequence.module.css";
 
-/* ── Typed confession scenes ── */
 const SCENES = [
   { segments: [{ text: "So here's the scenario.", style: "" }], charDelay: 38, holdAfter: 1000, exit: "fade-out", exitWait: 600 },
   { segments: [{ text: "You're an ", style: "" }, { text: "AE", style: "iris" }, { text: ". Or an ", style: "" }, { text: "SDR", style: "iris" }, { text: ".", style: "" }], charDelay: 42, holdAfter: 1200, exit: "dissolve", exitWait: 800 },
@@ -20,13 +19,7 @@ const TERM_LINES = [
   "> screen time: 7 hours. 4 downloading apps about using your phone less.",
 ];
 
-const ZOOM_CARDS: {
-  voice: "rowan" | "michael";
-  ghost?: string;
-  headline: string;
-  sub?: string;
-  fontSize: string;
-}[] = [
+const ZOOM_CARDS: { voice: "rowan" | "michael"; ghost?: string; headline: string; sub?: string; fontSize: string }[] = [
   { voice: "rowan", ghost: "RESET", headline: 'Every month, they reset your number to <span class="iris">zero.</span>', sub: "And every month, you act surprised. You don\u2019t have a pipeline problem. You have a denial problem. The math has been screaming at you for weeks.", fontSize: "clamp(36px,7vw,80px)" },
   { voice: "michael", headline: "My manager asked for a pipeline update. I sent a screenshot of an empty spreadsheet and wrote \u201Cminimalist aesthetic.\u201D He did not laugh. HR laughed. But like, in a concerned way.", fontSize: "clamp(22px,3.5vw,42px)" },
   { voice: "rowan", ghost: "LOST", headline: 'You are not building a career. You are <span class="iris">surviving</span> one.', sub: "The next promotion is not coming. Not because you\u2019re bad \u2014 because nobody has taught you what good looks like. You\u2019re guessing. Loudly.", fontSize: "clamp(36px,7vw,80px)" },
@@ -37,7 +30,6 @@ const ZOOM_CARDS: {
   { voice: "michael", headline: "It\u2019s 11:47pm. I\u2019m watching a YouTube video called \u201CCRUSH Cold Calls in 2024.\u201D The guy has a ring light and a Ferrari poster. I\u2019m taking notes. In my phone. This is my professional development. I have a degree. From a university. With a campus.", fontSize: "clamp(22px,3.5vw,42px)" },
 ];
 
-/* ── Helpers ── */
 type Seg = { text: string; style: string };
 type Char = { ch: string; style: string };
 
@@ -63,6 +55,7 @@ function buildHTML(arr: Char[], irisClass: string): string {
 
 export default function LandingSequence() {
   const heroRef = useRef<HTMLDivElement>(null);
+  const enterBtnRef = useRef<HTMLButtonElement>(null);
   const confessionRef = useRef<HTMLDivElement>(null);
   const typingRef = useRef<HTMLDivElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
@@ -76,7 +69,6 @@ export default function LandingSequence() {
   const ctaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    /* ── Mutable animation state ── */
     let paused = false;
     let done = false;
     let timer: ReturnType<typeof setTimeout> | null = null;
@@ -89,7 +81,6 @@ export default function LandingSequence() {
 
     document.body.style.overflow = "hidden";
 
-    /* ── Confession typing ── */
     function typeSceneChar(flat: Char[], scene: typeof SCENES[0]) {
       if (paused || done || !lineEl) return;
       if (charIdx >= flat.length) {
@@ -111,12 +102,8 @@ export default function LandingSequence() {
 
     function startScene() {
       if (paused || done) return;
-      if (sceneIdx >= SCENES.length) {
-        timer = setTimeout(showTerminal, 800);
-        return;
-      }
-      typedChars = [];
-      charIdx = 0;
+      if (sceneIdx >= SCENES.length) { timer = setTimeout(showTerminal, 800); return; }
+      typedChars = []; charIdx = 0;
       const el = document.createElement("div");
       el.className = s.tline;
       typingRef.current?.appendChild(el);
@@ -124,7 +111,6 @@ export default function LandingSequence() {
       typeSceneChar(flattenSegs(SCENES[sceneIdx].segments), SCENES[sceneIdx]);
     }
 
-    /* ── Terminal ── */
     function showTerminal() {
       done = true;
       if (confessionRef.current) {
@@ -142,10 +128,7 @@ export default function LandingSequence() {
       if (!lines || idx >= lines.length) {
         setTimeout(() => {
           termOutputRef.current?.classList.add(s.termOutputVisible);
-          setTimeout(() => {
-            scrollHintRef.current?.classList.add(s.scrollHintVisible);
-            unlockScroll();
-          }, 800);
+          setTimeout(() => { scrollHintRef.current?.classList.add(s.scrollHintVisible); unlockScroll(); }, 800);
         }, 500);
         return;
       }
@@ -155,11 +138,7 @@ export default function LandingSequence() {
       line.classList.add(s.termLineVisible);
       let ci = 0;
       function typeChar() {
-        if (ci >= fullText.length) {
-          span.textContent = fullText;
-          setTimeout(() => typeTermLines(idx + 1), 300);
-          return;
-        }
+        if (ci >= fullText.length) { span.textContent = fullText; setTimeout(() => typeTermLines(idx + 1), 300); return; }
         ci++;
         span.innerHTML = fullText.substring(0, ci) + `<span class="${s.termCursor}"></span>`;
         setTimeout(typeChar, 18 + Math.random() * 12);
@@ -167,11 +146,9 @@ export default function LandingSequence() {
       typeChar();
     }
 
-    /* ── Scroll + Zoom ── */
     function unlockScroll() {
       document.body.style.overflow = "visible";
       document.body.style.overflowX = "hidden";
-
       setTimeout(() => {
         viewportRef.current?.classList.add(s.viewportActive);
         sideMarkerRef.current?.classList.add(s.sideMarkerActive);
@@ -191,34 +168,22 @@ export default function LandingSequence() {
 
         const pastZoom = window.scrollY > heroH + zoomHeight;
         if (pastZoom) {
-          vp.style.opacity = "0";
-          vp.style.pointerEvents = "none";
+          vp.style.opacity = "0"; vp.style.pointerEvents = "none";
           if (sideMarkerRef.current) sideMarkerRef.current.style.opacity = "0";
           if (progressRef.current) progressRef.current.style.opacity = "0";
           ctaRef.current?.classList.remove(s.ctaOverlayVisible);
-          if (ctaRef.current) {
-            ctaRef.current.style.transition = "none";
-            ctaRef.current.style.opacity = "0";
-            ctaRef.current.style.display = "none";
-            ctaRef.current.style.pointerEvents = "none";
-          }
+          if (ctaRef.current) { ctaRef.current.style.transition = "none"; ctaRef.current.style.opacity = "0"; ctaRef.current.style.display = "none"; ctaRef.current.style.pointerEvents = "none"; }
           return;
         }
-        vp.style.opacity = "";
-        vp.style.pointerEvents = "";
+        vp.style.opacity = ""; vp.style.pointerEvents = "";
         if (sideMarkerRef.current) sideMarkerRef.current.style.opacity = "";
         if (progressRef.current) progressRef.current.style.opacity = "";
-        if (ctaRef.current) {
-          ctaRef.current.style.pointerEvents = "";
-          ctaRef.current.style.transition = "";
-          ctaRef.current.style.display = "";
-        }
+        if (ctaRef.current) { ctaRef.current.style.pointerEvents = ""; ctaRef.current.style.transition = ""; ctaRef.current.style.display = ""; }
 
         const progress = Math.min(1, scrollY / maxScroll);
         if (progressRef.current) progressRef.current.style.width = (progress * 100) + "%";
 
         const totalCards = ZOOM_CARDS.length;
-        // Cards use first 78% of scroll, remaining 22% is for CTA + blank
         const CARD_END = 0.78;
         const cardProgress = Math.min(totalCards, (progress / CARD_END) * totalCards);
         const activeIndex = Math.min(Math.floor(cardProgress), totalCards - 1);
@@ -231,31 +196,21 @@ export default function LandingSequence() {
             if (cardFrac < 0.12) { const t = cardFrac / 0.12; scale = 2.5 - 1.5 * t; op = t; }
             else if (cardFrac < 0.78) { scale = 1; op = 1; }
             else { const t = (cardFrac - 0.78) / 0.22; scale = 1 - 0.6 * t; op = 1 - t; }
-            card.style.transform = `scale(${scale})`;
-            card.style.opacity = String(op);
-          } else {
-            card.style.opacity = "0";
-          }
+            card.style.transform = `scale(${scale})`; card.style.opacity = String(op);
+          } else { card.style.opacity = "0"; }
         });
 
         const dots = sideMarkerRef.current?.querySelectorAll<HTMLElement>(`.${s.markerDot}`);
         dots?.forEach((dot, i) => dot.classList.toggle(s.markerDotActive, i === activeIndex));
 
-        // CTA sequence: 0.82 fade in → 0.86-0.90 hold → 0.92 fade out → blank till 1.0
         if (progress > 0.82 && progress < 0.94) {
           const fadeIn = Math.min(1, (progress - 0.82) / 0.03);
           const fadeOut = progress > 0.90 ? 1 - Math.min(1, (progress - 0.90) / 0.03) : 1;
           const op = fadeIn * fadeOut;
-          if (ctaRef.current) {
-            ctaRef.current.classList.add(s.ctaOverlayVisible);
-            ctaRef.current.style.opacity = String(op);
-          }
+          if (ctaRef.current) { ctaRef.current.classList.add(s.ctaOverlayVisible); ctaRef.current.style.opacity = String(op); }
         } else {
           ctaRef.current?.classList.remove(s.ctaOverlayVisible);
-          if (ctaRef.current) {
-            ctaRef.current.style.opacity = "0";
-            ctaRef.current.style.display = progress >= 0.94 ? "none" : "";
-          }
+          if (ctaRef.current) { ctaRef.current.style.opacity = "0"; ctaRef.current.style.display = progress >= 0.94 ? "none" : ""; }
         }
 
         if (scrollY > 50 && heroRef.current) {
@@ -270,19 +225,19 @@ export default function LandingSequence() {
       scrollHandler();
     }
 
-
-    /* ── Start sequence — go straight to typed confession ── */
-    const initTimer = setTimeout(() => {
+    /* Button click triggers confession */
+    function handleEnterClick() {
       confessionRef.current?.classList.add(s.confessionLayerActive);
-      setTimeout(startScene, 400);
-    }, 1200);
+      setTimeout(startScene, 500);
+    }
+    const btn = enterBtnRef.current;
+    btn?.addEventListener("click", handleEnterClick);
 
-    /* ── Cleanup ── */
     return () => {
-      clearTimeout(initTimer);
       if (timer) clearTimeout(timer);
       if (scrollHandler) window.removeEventListener("scroll", scrollHandler);
       if (resizeHandler) window.removeEventListener("resize", resizeHandler);
+      btn?.removeEventListener("click", handleEnterClick);
       document.body.style.overflow = "";
       document.body.style.overflowX = "";
     };
@@ -290,55 +245,75 @@ export default function LandingSequence() {
 
   return (
     <>
+      {/* Hero Split */}
       <div className={s.hero} ref={heroRef}>
-        <div className={s.ambientLine} />
-        <div className={`${s.corner} ${s.cornerTL}`} />
-        <div className={`${s.corner} ${s.cornerTR}`} />
-        <div className={`${s.corner} ${s.cornerBL}`} />
-        <div className={`${s.corner} ${s.cornerBR}`} />
-
-        <div className={s.confessionLayer} ref={confessionRef}>
-          <div className={s.typingArea} ref={typingRef} />
+        <div className={s.heroLeft}>
+          <div className={s.monoLabel}>AESDR &middot; 12 Lessons &middot; A Better You</div>
+          <div className={s.warnBox}>
+            <div className={s.warnTitle}><span className={s.warnIcon}>!</span> Content Warning</div>
+            <div className={s.warnText}>This course contains uncomfortable truths about your <strong>pipeline</strong>, your <strong>apartment</strong>, your <strong>bar tab</strong>, your <strong>commission check</strong>, and your <strong>relationship status</strong>.</div>
+          </div>
+          <div style={{ marginTop: "24px" }}>
+            <button className={s.btnIris} ref={enterBtnRef}>Continue &rarr;</button>
+          </div>
         </div>
+        <div className={s.heroRight}>
+          <div className={`${s.corner} ${s.cornerTL}`} />
+          <div className={`${s.corner} ${s.cornerTR}`} />
+          <div className={`${s.corner} ${s.cornerBL}`} />
+          <div className={`${s.corner} ${s.cornerBR}`} />
+          <div className={s.monoLabel} style={{ color: "var(--muted)" }}>The Unfiltered SaaS Sales Survival Guide</div>
+          <h1 className={s.heroH1}>Stop Surviving.<br />Start <span className={s.heroAccent}>Owning</span> It.</h1>
+          <p className={s.heroP}>This isn&rsquo;t corporate-y but it will advance your career. 12 interactive, field-tested sessions for AEs and SDRs who&rsquo;re serious about controlling chaos, managing toxic leadership, protecting your commission - and your future.</p>
+          <div>
+            <a href="#pricing" className={s.btnIris}>Get Access</a>
+            <a href="#curriculum" className={s.btnOutline}>View Syllabus</a>
+          </div>
+          <div className={s.ambientLine} />
+        </div>
+      </div>
 
-        <div className={s.terminalLayer} ref={terminalRef}>
-          <div className={s.terminal}>
-            <div className={s.termBar}>
-              <div className={`${s.termDot} ${s.termDotR}`} />
-              <div className={`${s.termDot} ${s.termDotY}`} />
-              <div className={`${s.termDot} ${s.termDotG}`} />
-              <span className={s.termTitle}>you_already_knew.exe</span>
-            </div>
-            <div className={s.termBody} ref={termBodyRef}>
-              {TERM_LINES.map((line, i) => (
-                <div key={i} className={s.termLine} data-text={line}>
-                  <span className={s.prompt}>&gt;</span>{" "}
-                  <span />
-                </div>
-              ))}
-              <div className={s.termOutput} ref={termOutputRef}>
-                This course will change your life a few times throughout. Afterward, you&rsquo;ll never make the same money again.
-                <div className={s.termWhisper}>Keep scrolling. It has to get worse before it gets better.</div>
+      {/* Confession overlay */}
+      <div className={s.confessionLayer} ref={confessionRef}>
+        <div className={s.typingArea} ref={typingRef} />
+      </div>
+
+      {/* Terminal overlay */}
+      <div className={s.terminalLayer} ref={terminalRef}>
+        <div className={s.terminal}>
+          <div className={s.termBar}>
+            <div className={`${s.termDot} ${s.termDotR}`} />
+            <div className={`${s.termDot} ${s.termDotY}`} />
+            <div className={`${s.termDot} ${s.termDotG}`} />
+            <span className={s.termTitle}>you_already_knew.exe</span>
+          </div>
+          <div className={s.termBody} ref={termBodyRef}>
+            {TERM_LINES.map((line, i) => (
+              <div key={i} className={s.termLine} data-text={line}>
+                <span className={s.prompt}>&gt;</span>{" "}
+                <span />
               </div>
+            ))}
+            <div className={s.termOutput} ref={termOutputRef}>
+              This course will change your life a few times throughout. Afterward, you&rsquo;ll never make the same money again.
+              <div className={s.termWhisper}>Keep scrolling. It has to get worse before it gets better.</div>
             </div>
           </div>
         </div>
-
-        <div className={s.scrollHint} ref={scrollHintRef}>
-          <span className={s.scrollHintText}>scroll</span>
-          <div className={s.scrollHintBar} />
-        </div>
       </div>
 
-      {/* Zoom section — all hidden via CSS until JS activates */}
-      <div className={s.scrollProgress} ref={progressRef} />
+      {/* Scroll hint */}
+      <div className={s.scrollHint} ref={scrollHintRef}>
+        <span className={s.scrollHintText}>scroll</span>
+        <div className={s.scrollHintBar} />
+      </div>
 
+      {/* Zoom section */}
+      <div className={s.scrollProgress} ref={progressRef} />
       <div className={s.sideMarker} ref={sideMarkerRef}>
         {ZOOM_CARDS.map((_, i) => <div key={i} className={s.markerDot} />)}
       </div>
-
       <div className={s.scrollSpace} ref={scrollSpaceRef} />
-
       <div className={s.viewport} ref={viewportRef} style={{ display: "none" }}>
         {ZOOM_CARDS.map((card, i) => (
           <div key={i} className={s.zcard}>
@@ -347,9 +322,7 @@ export default function LandingSequence() {
               <div
                 className={card.voice === "rowan" ? s.zRowan : s.zMichael}
                 style={{ fontSize: card.fontSize }}
-                dangerouslySetInnerHTML={{
-                  __html: card.headline.replace(/class="iris"/g, `class="${s.irisText}"`),
-                }}
+                dangerouslySetInnerHTML={{ __html: card.headline.replace(/class="iris"/g, `class="${s.irisText}"`) }}
               />
               {card.sub && <div className={s.zSub}>{card.sub}</div>}
             </div>
@@ -357,6 +330,7 @@ export default function LandingSequence() {
         ))}
       </div>
 
+      {/* CTA Overlay */}
       <div className={s.ctaOverlay} ref={ctaRef} style={{ display: "none" }}>
         <div className={`${s.ctaBrand} ${s.irisText}`}>AESDR</div>
         <div className={s.ctaTag}>12 lessons &bull; at your own pace &bull; 1 you</div>
