@@ -23,7 +23,7 @@ function generatePassword(): string {
 }
 
 export async function POST(request: Request) {
-  const rl = rateLimit(`stripe-wh:${getClientIP(request)}`, { max: 100, windowMs: 60 * 1000 });
+  const rl = await rateLimit(`stripe-wh:${getClientIP(request)}`, { max: 100, windowMs: 60 * 1000 });
   if (!rl.success) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }

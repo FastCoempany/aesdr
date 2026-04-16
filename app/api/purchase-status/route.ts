@@ -8,7 +8,7 @@ export async function GET(request: Request) {
   try {
     // Rate limit: 20 requests per IP per minute (success page polls every 2s for 30s)
     const ip = getClientIP(request);
-    const rl = rateLimit(`purchase-status:${ip}`, { max: 20, windowMs: 60 * 1000 });
+    const rl = await rateLimit(`purchase-status:${ip}`, { max: 20, windowMs: 60 * 1000 });
     if (!rl.success) {
       return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
     }

@@ -1,35 +1,29 @@
-/**
- * Simple in-memory rate limiter using a sliding window.
- * Suitable for single-instance deployments (Vercel serverless).
- *
- * For multi-instance or high-traffic scenarios, swap to Upstash Redis.
- */
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
-interface RateLimitEntry {
-  timestamps: number[];
-}
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
 
-const store = new Map<string, RateLimitEntry>();
+const limiters = new Map<string, Ratelimit>();
 
-// Clean up stale entries periodically (every 5 minutes)
-const CLEANUP_INTERVAL = 5 * 60 * 1000;
-let lastCleanup = Date.now();
-
-function cleanup(windowMs: number) {
-  const now = Date.now();
-  if (now - lastCleanup < CLEANUP_INTERVAL) return;
-  lastCleanup = now;
-  const cutoff = now - windowMs;
-  for (const [key, entry] of store) {
-    entry.timestamps = entry.timestamps.filter((t) => t > cutoff);
-    if (entry.timestamps.length === 0) store.delete(key);
+function getLimiter(windowMs: number, max: number): Ratelimit {
+  const cacheKey = `${windowMs}:${max}`;
+  let limiter = limiters.get(cacheKey);
+  if (!limiter) {
+    limiter = new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(max, `${windowMs} ms`),
+      prefix: "aesdr",
+    });
+    limiters.set(cacheKey, limiter);
   }
+  return limiter;
 }
 
 interface RateLimitConfig {
-  /** Maximum requests allowed in the window */
   max: number;
-  /** Window duration in milliseconds */
   windowMs: number;
 }
 
@@ -39,45 +33,19 @@ interface RateLimitResult {
   resetMs: number;
 }
 
-export function rateLimit(
+export async function rateLimit(
   key: string,
   config: RateLimitConfig
-): RateLimitResult {
-  const now = Date.now();
-  const cutoff = now - config.windowMs;
-
-  cleanup(config.windowMs);
-
-  let entry = store.get(key);
-  if (!entry) {
-    entry = { timestamps: [] };
-    store.set(key, entry);
-  }
-
-  // Remove expired timestamps
-  entry.timestamps = entry.timestamps.filter((t) => t > cutoff);
-
-  if (entry.timestamps.length >= config.max) {
-    const oldestInWindow = entry.timestamps[0];
-    return {
-      success: false,
-      remaining: 0,
-      resetMs: oldestInWindow + config.windowMs - now,
-    };
-  }
-
-  entry.timestamps.push(now);
+): Promise<RateLimitResult> {
+  const limiter = getLimiter(config.windowMs, config.max);
+  const result = await limiter.limit(key);
   return {
-    success: true,
-    remaining: config.max - entry.timestamps.length,
-    resetMs: config.windowMs,
+    success: result.success,
+    remaining: result.remaining,
+    resetMs: result.reset - Date.now(),
   };
 }
 
-/**
- * Extract client IP from request headers (for rate limit keying).
- * Falls back to 'unknown' if no IP is available.
- */
 export function getClientIP(request: Request): string {
   return (
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||

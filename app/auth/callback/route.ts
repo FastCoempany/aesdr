@@ -9,7 +9,7 @@ const ALLOWED_PREFIXES = ['/dashboard', '/account', '/course', '/tools'];
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
 
-  const rl = rateLimit(`auth-callback:${getClientIP(request)}`, { max: 10, windowMs: 15 * 60 * 1000 });
+  const rl = await rateLimit(`auth-callback:${getClientIP(request)}`, { max: 10, windowMs: 15 * 60 * 1000 });
   if (!rl.success) {
     return NextResponse.redirect(new URL('/login?error=rate-limit', origin));
   }

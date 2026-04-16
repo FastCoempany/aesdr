@@ -78,7 +78,7 @@ export async function POST(request: Request) {
     }
 
     // Rate limit: 3 artifact generations per user per hour
-    const rl = rateLimit(`artifacts:${user.id}`, { max: 3, windowMs: 60 * 60 * 1000 });
+    const rl = await rateLimit(`artifacts:${user.id}`, { max: 3, windowMs: 60 * 60 * 1000 });
     if (!rl.success) {
       return NextResponse.json({ error: "Too many requests. Try again later." }, { status: 429 });
     }
