@@ -116,6 +116,7 @@ export default function LandingSequence() {
       if (confessionRef.current) {
         confessionRef.current.style.transition = "opacity 0.5s ease";
         confessionRef.current.style.opacity = "0";
+        confessionRef.current.style.pointerEvents = "none";
       }
       setTimeout(() => {
         terminalRef.current?.classList.add(s.terminalLayerActive);
@@ -222,7 +223,7 @@ export default function LandingSequence() {
         }
 
         if (scrollY > 50 && heroRef.current) {
-          if (terminalRef.current) terminalRef.current.style.opacity = "0";
+          if (terminalRef.current) { terminalRef.current.style.opacity = "0"; terminalRef.current.style.pointerEvents = "none"; }
           heroRef.current.style.opacity = String(Math.max(0, 1 - scrollY / 300));
         }
       };

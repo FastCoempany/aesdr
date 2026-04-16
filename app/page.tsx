@@ -83,7 +83,7 @@ export default function LandingPage() {
           <div className={`${styles.priceCard} ${styles.priceCardFeatured}`}>
             <div className={styles.priceRibbon}>Org Reimbursement</div>
             <p className={styles.priceTier}>Team</p>
-            <p className={styles.priceAmount}>$1,499<span className={styles.priceUnit}><br />up to<br />10 seats</span></p>
+            <p className={styles.priceAmount}>$1,499<span className={styles.priceUnit}> / up to 10 seats</span></p>
             <ul className={styles.priceFeatures}>
               <li>Everything in Individual</li>
               <li>Up to 10 team members</li>
