@@ -134,6 +134,52 @@ export async function POST(request: Request) {
       console.error('Purchase upsert failed:', purchaseError.message);
     }
 
+    // If team plan, create team + add owner as admin member
+    if (tier === 'team' && userId && isNewPurchase) {
+      const { data: existingTeam } = await supabase
+        .from('teams')
+        .select('id')
+        .eq('owner_id', userId)
+        .maybeSingle();
+
+      if (!existingTeam) {
+        const { data: purchaseRow } = await supabase
+          .from('purchases')
+          .select('id')
+          .eq('stripe_session_id', session.id)
+          .maybeSingle();
+
+        const { data: newTeam, error: teamErr } = await supabase
+          .from('teams')
+          .insert({
+            name: name !== 'there' ? `${name}'s Team` : 'My Team',
+            owner_id: userId,
+            purchase_id: purchaseRow?.id ?? null,
+            max_seats: 10,
+          })
+          .select('id')
+          .single();
+
+        if (teamErr) {
+          console.error('[webhook] Team creation failed:', teamErr.message);
+        } else if (newTeam && email) {
+          const { error: memberErr } = await supabase
+            .from('team_members')
+            .insert({
+              team_id: newTeam.id,
+              user_id: userId,
+              email: email.toLowerCase(),
+              role: 'admin',
+              accepted_at: new Date().toISOString(),
+            });
+
+          if (memberErr) {
+            console.error('[webhook] Team owner member insert failed:', memberErr.message);
+          }
+        }
+      }
+    }
+
     // Mark checkout session as completed (for abandonment tracking)
     const { error: checkoutError } = await supabase
       .from('checkout_sessions')

@@ -69,7 +69,32 @@ export default async function Dashboard() {
         .maybeSingle();
 
       if (!purchaseById) {
-        redirect("/login?reason=no_purchase");
+        // Check if user is an accepted team member on an active team
+        const { data: teamMembership } = await supabase
+          .from("team_members")
+          .select("team_id, teams!inner(id, purchase_id)")
+          .eq("user_id", user.id)
+          .not("accepted_at", "is", null)
+          .limit(1)
+          .maybeSingle();
+
+        let teamHasActivePurchase = false;
+        if (teamMembership) {
+          const teamData = teamMembership.teams as unknown as { id: string; purchase_id: string | null };
+          if (teamData?.purchase_id) {
+            const { data: teamPurchase } = await supabase
+              .from("purchases")
+              .select("id")
+              .eq("id", teamData.purchase_id)
+              .eq("status", "active")
+              .maybeSingle();
+            teamHasActivePurchase = !!teamPurchase;
+          }
+        }
+
+        if (!teamHasActivePurchase) {
+          redirect("/login?reason=no_purchase");
+        }
       }
     }
   }
