@@ -1,12 +1,14 @@
+import dynamic from "next/dynamic";
 import Link from "next/link";
 
 import CheckoutButton from "@/components/CheckoutButton";
-import DeckStack from "@/components/DeckStack";
 import GhostButton from "@/components/GhostButton";
 import LandingSequence from "@/components/LandingSequence";
 import TeaseGate from "@/components/TeaseGate";
-import Testimonials from "@/components/Testimonials";
 import styles from "./page.module.css";
+
+const DeckStack = dynamic(() => import("@/components/DeckStack"), { ssr: false });
+const Testimonials = dynamic(() => import("@/components/Testimonials"), { ssr: false });
 
 const FAQ = [
   { q: "Is this for me if I\u2019m brand new to sales?", a: "Yes, it\u2019s actually inspired by you. The curriculum starts with foundational frameworks and builds to advanced execution. If you\u2019re in your first 18 months, you\u2019ll skip years of painful trial-and-error." },
