@@ -1,7 +1,6 @@
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
-import * as Sentry from "@sentry/nextjs";
 import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 
@@ -33,13 +32,13 @@ export async function POST(request: Request) {
       .eq("status", "active");
 
     if (error) {
-      Sentry.captureMessage("Refund update failed", { level: "error", extra: { purchaseId, error: error.message } });
+      console.error("[admin-refund] Update failed:", error.message);
       return NextResponse.json({ error: "Failed to update" }, { status: 500 });
     }
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    Sentry.captureException(err, { extra: { handler: "POST /api/admin/refund" } });
+    console.error("[admin-refund] Unexpected error:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

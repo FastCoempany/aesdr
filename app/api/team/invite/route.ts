@@ -1,7 +1,6 @@
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
-import * as Sentry from "@sentry/nextjs";
 import { z } from "zod";
 import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
@@ -81,7 +80,7 @@ export async function POST(request: Request) {
       });
 
     if (insertErr) {
-      Sentry.captureMessage("Team invite insert failed", { level: "error", extra: { teamId: team.id, error: insertErr.message } });
+      console.error("[team-invite] Insert failed:", insertErr.message);
       return NextResponse.json({ error: "Failed to create invite" }, { status: 500 });
     }
 
@@ -90,7 +89,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    Sentry.captureException(err, { extra: { handler: "POST /api/team/invite" } });
+    console.error("[team-invite] Unexpected error:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
