@@ -1,9 +1,11 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 import Stripe from 'stripe';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { sendWelcomeEmail, sendReceiptEmail } from '@/lib/email';
+import { rateLimit, getClientIP } from '@/lib/rate-limit';
 
 function getStripe() {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -21,6 +23,11 @@ function generatePassword(): string {
 }
 
 export async function POST(request: Request) {
+  const rl = rateLimit(`stripe-wh:${getClientIP(request)}`, { max: 100, windowMs: 60 * 1000 });
+  if (!rl.success) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+  }
+
   const body = await request.text();
   const sig = request.headers.get('stripe-signature');
 
@@ -39,7 +46,7 @@ export async function POST(request: Request) {
   try {
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch (err) {
-    console.error('Webhook signature verification failed:', err);
+    Sentry.captureException(err, { extra: { handler: 'stripe-webhook', step: 'signature_verify' } });
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
@@ -131,7 +138,7 @@ export async function POST(request: Request) {
       { onConflict: 'stripe_session_id' }
     );
     if (purchaseError) {
-      console.error('Purchase upsert failed:', purchaseError.message);
+      Sentry.captureMessage('Purchase upsert failed', { level: 'error', extra: { error: purchaseError.message, sessionId: session.id } });
     }
 
     // Mark checkout session as completed (for abandonment tracking)
@@ -140,7 +147,7 @@ export async function POST(request: Request) {
       .update({ completed: true })
       .eq('session_id', session.id);
     if (checkoutError) {
-      console.error('Checkout session update failed:', checkoutError.message);
+      Sentry.captureMessage('Checkout session update failed', { level: 'error', extra: { error: checkoutError.message, sessionId: session.id } });
     }
 
     // Send emails only on first processing (skip on Stripe retries)
@@ -148,13 +155,13 @@ export async function POST(request: Request) {
       try {
         await sendWelcomeEmail(email, name, tempPassword);
       } catch (err) {
-        console.error('Welcome email failed:', err);
+        Sentry.captureException(err, { extra: { handler: 'stripe-webhook', step: 'welcome_email' } });
       }
 
       try {
         await sendReceiptEmail(email, name, tier, amountCents);
       } catch (err) {
-        console.error('Receipt email failed:', err);
+        Sentry.captureException(err, { extra: { handler: 'stripe-webhook', step: 'receipt_email' } });
       }
     }
   }

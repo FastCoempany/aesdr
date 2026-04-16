@@ -1,12 +1,18 @@
 import { NextResponse } from 'next/server';
 import * as Sentry from '@sentry/nextjs';
 import { createClient } from '@/utils/supabase/server';
+import { rateLimit, getClientIP } from '@/lib/rate-limit';
 
 // Allowed redirect paths after authentication (prevent open redirect)
 const ALLOWED_PREFIXES = ['/dashboard', '/account', '/course', '/tools'];
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
+
+  const rl = rateLimit(`auth-callback:${getClientIP(request)}`, { max: 10, windowMs: 15 * 60 * 1000 });
+  if (!rl.success) {
+    return NextResponse.redirect(new URL('/login?error=rate-limit', origin));
+  }
   const code = searchParams.get('code');
   const token_hash = searchParams.get('token_hash');
   const type = searchParams.get('type');

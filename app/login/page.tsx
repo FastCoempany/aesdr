@@ -11,6 +11,7 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const reason = searchParams.get("reason");
+  const authError = searchParams.get("error");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -95,6 +96,21 @@ function LoginForm() {
           Sign In
         </h1>
       </div>
+
+      {authError === "rate-limit" && (
+        <div
+          className="px-4 py-3"
+          style={{
+            fontFamily: "var(--serif)",
+            fontSize: "14px",
+            borderLeft: "3px solid var(--coral, #EF4444)",
+            background: "rgba(239,68,68,0.05)",
+            color: "var(--coral, #EF4444)",
+          }}
+        >
+          Too many attempts. Please wait a few minutes and try again.
+        </div>
+      )}
 
       {reason === "no_purchase" && (
         <div
