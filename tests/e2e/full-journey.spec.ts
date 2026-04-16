@@ -113,6 +113,8 @@ test.describe("Full AESDR Course Journey", () => {
             ? parseInt(screenId.replace("s", ""), 10)
             : screensDone;
 
+          console.log(`  L${lesson} U${unit} → screen s${screenNum}`);
+
           // Check if this is the completion screen (no bottom nav)
           const bottomNav = frame.locator("#bottomnav");
           const navVisible = await bottomNav
@@ -125,16 +127,7 @@ test.describe("Full AESDR Course Journey", () => {
               .catch(() => true));
 
           if (screenNum > 0 && (!navVisible || navHidden)) {
-            // Completion screen — look for "Continue to Journey" button
-            const contBtn = frame.locator('.btn.btn-fill:has-text("Continue")');
-            const hasCont = await contBtn
-              .isVisible({ timeout: 2000 })
-              .catch(() => false);
-            if (hasCont) {
-              console.log(
-                `Lesson ${lesson} Unit ${unit}: Completion screen at s${screenNum}`
-              );
-            }
+            console.log(`  L${lesson} U${unit} → COMPLETE`);
             break;
           }
 
@@ -151,27 +144,26 @@ test.describe("Full AESDR Course Journey", () => {
 
           // Retry loop: keep trying to enable Next button
           let advanced = false;
-          for (let retry = 0; retry < 8; retry++) {
+          for (let retry = 0; retry < 6; retry++) {
             const disabled = await nextBtn.isDisabled().catch(() => true);
             if (!disabled) {
               await nextBtn.click();
-              await page.waitForTimeout(800);
+              await page.waitForTimeout(600);
               advanced = true;
               break;
             }
-            // Retry completing interactive elements
+            if (retry === 0) console.log(`  L${lesson} U${unit} s${screenNum}: Next disabled, retrying...`);
             await completeScreen(frame, screenNum, page);
-            await page.waitForTimeout(1000);
+            await page.waitForTimeout(800);
           }
 
           if (!advanced) {
             console.log(
-              `Lesson ${lesson} Unit ${unit}: STUCK at screen s${screenNum}`
+              `  L${lesson} U${unit} s${screenNum}: STUCK — force advancing`
             );
             await page.screenshot({
               path: `tests/e2e/results/STUCK-L${lesson}-U${unit}-S${screenNum}.png`,
             });
-            // Force advance via JS as last resort
             const iframeEl = page.locator("iframe");
             const contentFrame = await iframeEl.contentFrame();
             if (contentFrame) {
@@ -179,7 +171,7 @@ test.describe("Full AESDR Course Journey", () => {
                 if (typeof (window as any).next === "function")
                   (window as any).next();
               });
-              await page.waitForTimeout(800);
+              await page.waitForTimeout(600);
               screensDone++;
               continue;
             }
@@ -230,18 +222,20 @@ async function completeScreen(
   screen: number,
   page: Page
 ) {
-  await handleStandardGates(frame, screen, page);
-  await handleHomeworkGates(frame, screen, page);
-  await handleTimelineGates(frame, page);
-  await handleSiloSorter(frame, page);
-  await handleSequencePuzzle(frame, page);
-  await handleSchedulePuzzle(frame, page);
-  await handleClassifier(frame, page);
-  await handleBlameFinder(frame, page);
-  await handleCCExercise(frame, page);
-  await handleQuiz(frame, page);
-  await handleChecklist(frame, page);
-  await handleTimeGate(frame, screen, page);
+  const actions: string[] = [];
+  if (await handleStandardGates(frame, screen, page)) actions.push("gate");
+  if (await handleHomeworkGates(frame, screen, page)) actions.push("homework");
+  if (await handleTimelineGates(frame, page)) actions.push("timeline");
+  if (await handleSiloSorter(frame, page)) actions.push("silo");
+  if (await handleSequencePuzzle(frame, page)) actions.push("sequence");
+  if (await handleSchedulePuzzle(frame, page)) actions.push("schedule");
+  if (await handleClassifier(frame, page)) actions.push("classifier");
+  if (await handleBlameFinder(frame, page)) actions.push("blame");
+  if (await handleCCExercise(frame, page)) actions.push("cc");
+  if (await handleQuiz(frame, page)) actions.push("quiz");
+  if (await handleChecklist(frame, page)) actions.push("checklist");
+  if (await handleTimeGate(frame, screen, page)) actions.push("timer");
+  if (actions.length > 0) console.log(`    completed: ${actions.join(", ")}`);
 }
 
 // ─── GATES ───────────────────────────────────────────────────────
@@ -254,13 +248,12 @@ async function fillAndSubmitGate(
   page: Page
 ) {
   const ta = frame.locator(taSelector);
-  const hasTa = await ta.isVisible({ timeout: 500 }).catch(() => false);
+  const hasTa = await ta.isVisible({ timeout: 200 }).catch(() => false);
   if (!hasTa) return false;
 
-  // Check if already submitted (submit button might be gone or gate locked)
   const submitBtn = frame.locator(submitSelector);
   const hasSubmit = await submitBtn
-    .isVisible({ timeout: 500 })
+    .isVisible({ timeout: 200 })
     .catch(() => false);
   if (!hasSubmit) return false;
 
@@ -326,8 +319,8 @@ async function handleStandardGates(
   frame: FrameLocator,
   screen: number,
   page: Page
-) {
-  await fillAndSubmitGate(
+): Promise<boolean> {
+  return fillAndSubmitGate(
     frame,
     `#gateTA${screen}`,
     `#gateAttest${screen}`,
@@ -340,11 +333,13 @@ async function handleHomeworkGates(
   frame: FrameLocator,
   screen: number,
   page: Page
-) {
+): Promise<boolean> {
+  let found = false;
   for (let i = 0; i < 10; i++) {
     const hwTa = frame.locator(`#hwTA${screen}_${i}`);
-    const exists = await hwTa.isVisible({ timeout: 300 }).catch(() => false);
+    const exists = await hwTa.isVisible({ timeout: 200 }).catch(() => false);
     if (!exists) break;
+    found = true;
 
     await fillAndSubmitGate(
       frame,
@@ -354,15 +349,15 @@ async function handleHomeworkGates(
       page
     );
   }
+  return found;
 }
 
 // ─── TIMELINE GATES (Lesson-specific) ───────────────────────────
 
-async function handleTimelineGates(frame: FrameLocator, page: Page) {
-  // Open all collapsed day sections
+async function handleTimelineGates(frame: FrameLocator, page: Page): Promise<boolean> {
   const dayHeaders = frame.locator(".tl-hdr");
   const dayCount = await dayHeaders.count().catch(() => 0);
-  if (dayCount === 0) return;
+  if (dayCount === 0) return false;
 
   for (let d = 0; d < dayCount; d++) {
     const hdr = dayHeaders.nth(d);
@@ -389,6 +384,7 @@ async function handleTimelineGates(frame: FrameLocator, page: Page) {
       );
     }
   }
+  return true;
 }
 
 // ─── PICK-AND-PLACE EXERCISES ───────────────────────────────────
@@ -404,7 +400,7 @@ async function bruteForcePickAndPlace(
   while (attempts < maxAttempts) {
     const item = frame.locator(`${poolSelector}:not(.placed)`).first();
     const itemVisible = await item
-      .isVisible({ timeout: 500 })
+      .isVisible({ timeout: 200 })
       .catch(() => false);
     if (!itemVisible) break;
 
@@ -440,23 +436,19 @@ async function bruteForcePickAndPlace(
   }
 }
 
-async function handleSiloSorter(frame: FrameLocator, page: Page) {
+async function handleSiloSorter(frame: FrameLocator, page: Page): Promise<boolean> {
   const pool = frame.locator("#siloPool");
-  const hasPool = await pool.isVisible({ timeout: 500 }).catch(() => false);
-  if (!hasPool) return;
+  const hasPool = await pool.isVisible({ timeout: 200 }).catch(() => false);
+  if (!hasPool) return false;
 
-  await bruteForcePickAndPlace(
-    frame,
-    page,
-    "#siloPool .silo-card",
-    ".silo-col"
-  );
+  await bruteForcePickAndPlace(frame, page, "#siloPool .silo-card", ".silo-col");
+  return true;
 }
 
-async function handleSequencePuzzle(frame: FrameLocator, page: Page) {
+async function handleSequencePuzzle(frame: FrameLocator, page: Page): Promise<boolean> {
   const tiles = frame.locator("#seqTiles");
-  const hasTiles = await tiles.isVisible({ timeout: 500 }).catch(() => false);
-  if (!hasTiles) return;
+  const hasTiles = await tiles.isVisible({ timeout: 200 }).catch(() => false);
+  if (!hasTiles) return false;
 
   // Sequence puzzle: pick a tile, then try each slot
   let attempts = 0;
@@ -491,14 +483,15 @@ async function handleSequencePuzzle(frame: FrameLocator, page: Page) {
     if (!placed) break;
     attempts++;
   }
+  return true;
 }
 
-async function handleSchedulePuzzle(frame: FrameLocator, page: Page) {
+async function handleSchedulePuzzle(frame: FrameLocator, page: Page): Promise<boolean> {
   const tilesWrap = frame.locator("#schedTiles");
   const hasTiles = await tilesWrap
-    .isVisible({ timeout: 500 })
+    .isVisible({ timeout: 200 })
     .catch(() => false);
-  if (!hasTiles) return;
+  if (!hasTiles) return false;
 
   let attempts = 0;
   while (attempts < 50) {
@@ -537,31 +530,28 @@ async function handleSchedulePuzzle(frame: FrameLocator, page: Page) {
     if (!placed) break;
     attempts++;
   }
+  return true;
 }
 
-async function handleClassifier(frame: FrameLocator, page: Page) {
+async function handleClassifier(frame: FrameLocator, page: Page): Promise<boolean> {
   const stream = frame.locator("#clsStream");
   const hasStream = await stream
-    .isVisible({ timeout: 500 })
+    .isVisible({ timeout: 200 })
     .catch(() => false);
-  if (!hasStream) return;
+  if (!hasStream) return false;
 
-  await bruteForcePickAndPlace(
-    frame,
-    page,
-    "#clsStream .cls-obs",
-    ".cls-bucket"
-  );
+  await bruteForcePickAndPlace(frame, page, "#clsStream .cls-obs", ".cls-bucket");
+  return true;
 }
 
 // ─── MULTIPLE CHOICE EXERCISES ──────────────────────────────────
 
-async function handleBlameFinder(frame: FrameLocator, page: Page) {
+async function handleBlameFinder(frame: FrameLocator, page: Page): Promise<boolean> {
   const container = frame.locator("#blameItems");
   const hasBlame = await container
-    .isVisible({ timeout: 500 })
+    .isVisible({ timeout: 200 })
     .catch(() => false);
-  if (!hasBlame) return;
+  if (!hasBlame) return false;
 
   const items = frame.locator(".blame-item:not(.resolved)");
   const count = await items.count().catch(() => 0);
@@ -590,17 +580,17 @@ async function handleBlameFinder(frame: FrameLocator, page: Page) {
       if (resolved) break;
     }
   }
+  return true;
 }
 
-async function handleCCExercise(frame: FrameLocator, page: Page) {
+async function handleCCExercise(frame: FrameLocator, page: Page): Promise<boolean> {
   const ccWrap = frame.locator("#ccWrap");
-  const hasCc = await ccWrap.isVisible({ timeout: 500 }).catch(() => false);
-  if (!hasCc) return;
+  const hasCc = await ccWrap.isVisible({ timeout: 200 }).catch(() => false);
+  if (!hasCc) return false;
 
-  // Check if already done
   const doneBox = frame.locator(".cc-complete-box");
-  const isDone = await doneBox.isVisible({ timeout: 300 }).catch(() => false);
-  if (isDone) return;
+  const isDone = await doneBox.isVisible({ timeout: 200 }).catch(() => false);
+  if (isDone) return false;
 
   for (let stage = 0; stage < 5; stage++) {
     // Try each option
@@ -643,19 +633,19 @@ async function handleCCExercise(frame: FrameLocator, page: Page) {
       .catch(() => false);
     if (allDone) break;
   }
+  return true;
 }
 
-async function handleQuiz(frame: FrameLocator, page: Page) {
+async function handleQuiz(frame: FrameLocator, page: Page): Promise<boolean> {
   const quizBody = frame.locator("#quizBody");
   const hasQuiz = await quizBody
-    .isVisible({ timeout: 500 })
+    .isVisible({ timeout: 200 })
     .catch(() => false);
-  if (!hasQuiz) return;
+  if (!hasQuiz) return false;
 
-  // Check if already submitted
   const banner = frame.locator("#quizBanner.show");
-  const done = await banner.isVisible({ timeout: 300 }).catch(() => false);
-  if (done) return;
+  const done = await banner.isVisible({ timeout: 200 }).catch(() => false);
+  if (done) return false;
 
   // Answer each question — pick first option
   const questions = frame.locator(".q-block");
@@ -671,24 +661,23 @@ async function handleQuiz(frame: FrameLocator, page: Page) {
     }
   }
 
-  // The Next button label becomes "Submit Answers" for quiz screens.
-  // Clicking Next will call handleNext() which calls submitQuiz().
-  // After submission, if failed, need to retry.
-  // We'll let the main loop handle the Next button click.
+  return true;
 }
 
 // ─── CHECKLIST ──────────────────────────────────────────────────
 
-async function handleChecklist(frame: FrameLocator, page: Page) {
+async function handleChecklist(frame: FrameLocator, page: Page): Promise<boolean> {
   const items = frame.locator(".cl-item:not(.done)");
   const count = await items.count().catch(() => 0);
+  if (count === 0) return false;
   for (let i = 0; i < count; i++) {
     const item = frame.locator(".cl-item:not(.done)").first();
-    const visible = await item.isVisible({ timeout: 300 }).catch(() => false);
+    const visible = await item.isVisible({ timeout: 200 }).catch(() => false);
     if (!visible) break;
     await item.click();
     await page.waitForTimeout(200);
   }
+  return true;
 }
 
 // ─── TIME GATE ──────────────────────────────────────────────────
@@ -697,17 +686,19 @@ async function handleTimeGate(
   frame: FrameLocator,
   screen: number,
   page: Page
-) {
+): Promise<boolean> {
   const timeGate = frame.locator(`#gateTime${screen}`);
   const hasTime = await timeGate
-    .isVisible({ timeout: 500 })
+    .isVisible({ timeout: 200 })
     .catch(() => false);
-  if (!hasTime) return;
+  if (!hasTime) return false;
 
+  console.log(`    waiting for time gate on s${screen}...`);
   const counter = frame.locator(`#gateTimeCtr${screen}`);
   for (let i = 0; i < 180; i++) {
     const text = await counter.textContent().catch(() => "0");
     if (text === "0" || !text) break;
     await page.waitForTimeout(1000);
   }
+  return true;
 }
