@@ -47,15 +47,22 @@ export default async function AcceptInvitePage({
     redirect(`/signup?next=${encodeURIComponent(`/team/accept?token=${token}`)}&email=${encodeURIComponent(invite.email)}`);
   }
 
-  // Accept the invite — link user_id, clear token, set accepted_at
-  await admin
+  // Accept the invite atomically — only succeeds if token still exists
+  const { data: updated, error: updateErr } = await admin
     .from("team_members")
     .update({
       user_id: user.id,
       accepted_at: new Date().toISOString(),
       invite_token: null,
     })
-    .eq("id", invite.id);
+    .eq("id", invite.id)
+    .is("accepted_at", null)
+    .select("id")
+    .maybeSingle();
+
+  if (!updated || updateErr) {
+    redirect("/dashboard");
+  }
 
   redirect("/dashboard");
 }

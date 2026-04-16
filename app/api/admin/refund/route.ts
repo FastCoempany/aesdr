@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
+import { rateLimit } from "@/lib/rate-limit";
 
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "")
   .split(",")
@@ -11,11 +12,22 @@ const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "")
 
 export async function POST(request: Request) {
   try {
+    const origin = request.headers.get("origin");
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com";
+    if (origin && new URL(siteUrl).origin !== origin) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user || !ADMIN_EMAILS.includes(user.email?.toLowerCase() ?? "")) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const rl = await rateLimit(`admin-refund:${user.id}`, { max: 10, windowMs: 60 * 60 * 1000 });
+    if (!rl.success) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
     const body = await request.json();

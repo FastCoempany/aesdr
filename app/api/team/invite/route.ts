@@ -13,6 +13,12 @@ const InviteSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const origin = request.headers.get("origin");
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com";
+    if (origin && new URL(siteUrl).origin !== origin) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
