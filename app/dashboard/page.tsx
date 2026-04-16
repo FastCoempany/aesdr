@@ -95,7 +95,8 @@ export default async function Dashboard() {
     <main
       className="min-h-screen"
       style={{
-        background: "var(--bg-main)",
+        background: "#FAF7F2",
+        color: "#1A1A1A",
         animation: "dashFadeIn 500ms ease-out forwards",
       }}
     >
@@ -103,34 +104,34 @@ export default async function Dashboard() {
       {/* Nav */}
       <nav
         className="sticky top-0 z-50 flex items-center justify-between px-[5%] py-5"
-        style={{ borderBottom: "1px solid var(--line)", background: "rgba(2,6,23,0.9)", backdropFilter: "blur(10px)" }}
+        style={{ borderBottom: "1px solid #E8E4DF", background: "rgba(250,247,242,0.95)", backdropFilter: "blur(10px)" }}
       >
-        <Link href="/" style={{ fontFamily: "var(--cond)", fontSize: "18px", fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", textDecoration: "none" }}>
+        <Link href="/" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: "18px", fontWeight: 900, fontStyle: "italic", letterSpacing: ".05em", textDecoration: "none" }}>
           <span style={{ background: "var(--iris)", backgroundSize: "200% 100%", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", animation: "iris 3s linear infinite" }}>AESDR</span>
         </Link>
-        <div className="flex items-center gap-4" style={{ fontFamily: "var(--cond)", fontWeight: 600, fontSize: "13px", letterSpacing: ".1em", textTransform: "uppercase" }}>
+        <div className="flex items-center gap-4" style={{ fontFamily: "'Space Mono', monospace", fontWeight: 400, fontSize: "11px", letterSpacing: ".15em", textTransform: "uppercase" }}>
           {user ? (
             <>
-              <Link href="/account" style={{ color: "var(--text-muted)", textDecoration: "none" }}>Account</Link>
+              <Link href="/account" style={{ color: "#6B6B6B", textDecoration: "none" }}>Account</Link>
               <SignOutButton />
             </>
           ) : (
-            <Link href="/login" style={{ color: "var(--theme)", textDecoration: "none" }}>Sign In</Link>
+            <Link href="/login" style={{ color: "#8B1A1A", textDecoration: "none" }}>Sign In</Link>
           )}
         </div>
       </nav>
 
-      <div className="mx-auto w-full max-w-3xl px-6 py-16" style={{ color: "var(--text-main)" }}>
+      <div className="mx-auto w-full max-w-3xl px-6 py-16" style={{ color: "#1A1A1A" }}>
 
         {/* Header */}
         <header className="mb-16">
           <p
             style={{
-              fontFamily: "var(--mono)",
+              fontFamily: "'Space Mono', monospace",
               fontSize: "10px",
               letterSpacing: ".3em",
               textTransform: "uppercase",
-              color: "var(--theme)",
+              color: "#8B1A1A",
               marginBottom: "16px",
             }}
           >
@@ -138,13 +139,14 @@ export default async function Dashboard() {
           </p>
           <h1
             style={{
-              fontFamily: "var(--cond)",
+              fontFamily: "'Playfair Display', Georgia, serif",
               fontSize: "clamp(32px, 5vw, 48px)",
-              fontWeight: 800,
-              letterSpacing: ".06em",
-              textTransform: "uppercase" as const,
-              lineHeight: "1",
+              fontWeight: 900,
+              fontStyle: "italic",
+              letterSpacing: ".01em",
+              lineHeight: "1.05",
               marginBottom: "12px",
+              color: "#1A1A1A",
             }}
           >
             {completedCount === 0
@@ -184,7 +186,7 @@ export default async function Dashboard() {
                       top: "32px",
                       bottom: "0",
                       width: "1px",
-                      background: isCompleted ? "var(--theme)" : "var(--line)",
+                      background: isCompleted ? "#8B1A1A" : "#E8E4DF",
                       transition: "background 0.5s",
                     }}
                   />
@@ -200,18 +202,18 @@ export default async function Dashboard() {
                     height: "16px",
                     borderRadius: "50%",
                     border: isCompleted
-                      ? "2px solid var(--theme)"
+                      ? "2px solid #8B1A1A"
                       : isCurrent
-                        ? "2px solid var(--text-main)"
-                        : "1px solid var(--line)",
-                    background: isCompleted ? "var(--theme)" : "transparent",
+                        ? "2px solid #1A1A1A"
+                        : "1px solid #E8E4DF",
+                    background: isCompleted ? "#8B1A1A" : "transparent",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     fontSize: "9px",
-                    color: isCompleted ? "var(--bg-main)" : "transparent",
+                    color: isCompleted ? "#FAF7F2" : "transparent",
                     transition: "all 0.3s",
-                    boxShadow: isCurrent ? "0 0 12px rgba(248,250,252,0.15)" : "none",
+                    boxShadow: isCurrent ? "0 0 12px rgba(139,26,26,0.2)" : "none",
                   }}
                 >
                   {isCompleted && "\u2713"}
@@ -229,11 +231,11 @@ export default async function Dashboard() {
                   {/* Lesson number */}
                   <p
                     style={{
-                      fontFamily: "var(--mono)",
+                      fontFamily: "'Space Mono', monospace",
                       fontSize: "9px",
                       letterSpacing: ".2em",
                       textTransform: "uppercase",
-                      color: isCompleted ? "var(--theme)" : "var(--text-muted)",
+                      color: isCompleted ? "#8B1A1A" : "#6B6B6B",
                       marginBottom: "6px",
                     }}
                   >
@@ -245,12 +247,12 @@ export default async function Dashboard() {
                     <Link
                       href={`/course/${lesson.id}`}
                       style={{
-                        fontFamily: "var(--cond)",
+                        fontFamily: "'Playfair Display', Georgia, serif",
                         fontSize: "22px",
                         fontWeight: 700,
-                        letterSpacing: ".04em",
-                        textTransform: "uppercase",
-                        color: isCurrent ? "var(--text-main)" : "var(--text-muted)",
+                        fontStyle: "italic",
+                        letterSpacing: ".01em",
+                        color: isCurrent ? "#1A1A1A" : "#6B6B6B",
                         textDecoration: "none",
                         display: "block",
                         marginBottom: "8px",
@@ -259,21 +261,21 @@ export default async function Dashboard() {
                     >
                       {displayTitle}
                       {isCurrent && (
-                        <span style={{ marginLeft: "12px", fontSize: "14px", color: "var(--theme)" }}>&rarr;</span>
+                        <span style={{ marginLeft: "12px", fontSize: "14px", color: "#8B1A1A" }}>&rarr;</span>
                       )}
                       {isNextVisible && !isCompleted && (
-                        <span style={{ marginLeft: "12px", fontSize: "11px", color: "var(--text-muted)", fontWeight: 400, fontFamily: "var(--mono)", letterSpacing: ".06em" }}>up next</span>
+                        <span style={{ marginLeft: "12px", fontSize: "11px", color: "#6B6B6B", fontWeight: 400, fontFamily: "'Space Mono', monospace", letterSpacing: ".06em" }}>up next</span>
                       )}
                     </Link>
                   ) : (
                     <p
                       style={{
-                        fontFamily: "var(--cond)",
+                        fontFamily: "'Playfair Display', Georgia, serif",
                         fontSize: "22px",
                         fontWeight: 700,
-                        letterSpacing: ".04em",
-                        textTransform: "uppercase",
-                        color: "var(--text-muted)",
+                        fontStyle: "italic",
+                        letterSpacing: ".01em",
+                        color: "#6B6B6B",
                         marginBottom: "8px",
                         lineHeight: "1.2",
                       }}
@@ -285,11 +287,11 @@ export default async function Dashboard() {
                   {/* Cryptic teaser — the Rowan Pope line */}
                   <p
                     style={{
-                      fontFamily: "var(--serif)",
+                      fontFamily: "'Source Serif 4', Georgia, serif",
                       fontSize: "16px",
                       fontStyle: "italic",
                       lineHeight: "1.6",
-                      color: "var(--text-muted)",
+                      color: "#6B6B6B",
                       maxWidth: "480px",
                     }}
                   >
