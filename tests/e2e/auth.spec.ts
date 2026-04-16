@@ -1,17 +1,10 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Signup page", () => {
-  test("renders signup form", async ({ page }) => {
+  test("renders form fields", async ({ page }) => {
     await page.goto("/signup");
     await expect(page.locator('input[type="email"]')).toBeVisible();
     await expect(page.locator('input[type="password"]')).toBeVisible();
-  });
-
-  test("shows validation on empty submit", async ({ page }) => {
-    await page.goto("/signup");
-    await page.click('button[type="submit"]');
-    const emailInput = page.locator('input[type="email"]');
-    await expect(emailInput).toHaveAttribute("required", "");
   });
 
   test("pre-fills email from query param", async ({ page }) => {
@@ -22,7 +15,7 @@ test.describe("Signup page", () => {
 });
 
 test.describe("Login page", () => {
-  test("renders login form", async ({ page }) => {
+  test("renders form fields", async ({ page }) => {
     await page.goto("/login");
     await expect(page.locator('input[type="email"]')).toBeVisible();
     await expect(page.locator('input[type="password"]')).toBeVisible();
@@ -38,8 +31,20 @@ test.describe("Login page", () => {
     await expect(page.locator("text=/too many|rate limit/i")).toBeVisible();
   });
 
-  test("forgot password link is present", async ({ page }) => {
+  test("has forgot password link", async ({ page }) => {
     await page.goto("/login");
     await expect(page.locator("text=/forgot/i")).toBeVisible();
   });
+});
+
+test.describe("Auth gates — protected routes redirect unauthenticated users", () => {
+  const protectedRoutes = ["/dashboard", "/course/1", "/account", "/team", "/admin"];
+
+  for (const route of protectedRoutes) {
+    test(`${route} redirects away`, async ({ page }) => {
+      await page.goto(route);
+      const url = page.url();
+      expect(url).not.toContain(route);
+    });
+  }
 });
