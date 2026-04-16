@@ -14,11 +14,13 @@ export default async function AcceptInvitePage({
 
   const admin = createAdminClient();
 
-  // Look up the invite
+  // Look up the invite (tokens expire after 7 days)
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
   const { data: invite } = await admin
     .from("team_members")
-    .select("id, team_id, email, accepted_at")
+    .select("id, team_id, email, accepted_at, created_at")
     .eq("invite_token", token)
+    .gt("created_at", sevenDaysAgo)
     .maybeSingle();
 
   if (!invite) {
@@ -47,15 +49,26 @@ export default async function AcceptInvitePage({
     redirect(`/signup?next=${encodeURIComponent(`/team/accept?token=${token}`)}&email=${encodeURIComponent(invite.email)}`);
   }
 
-  // Accept the invite — link user_id, clear token, set accepted_at
-  await admin
+  // Accept the invite — atomic check prevents double-accept race condition
+  const { data: updated, error: updateErr } = await admin
     .from("team_members")
     .update({
       user_id: user.id,
       accepted_at: new Date().toISOString(),
       invite_token: null,
     })
-    .eq("id", invite.id);
+    .eq("id", invite.id)
+    .is("accepted_at", null)
+    .select("id")
+    .maybeSingle();
+
+  if (updateErr || !updated) {
+    return (
+      <main className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg-main)", color: "var(--text-main)" }}>
+        <p style={{ fontFamily: "var(--serif)" }}>This invite has already been accepted.</p>
+      </main>
+    );
+  }
 
   redirect("/dashboard");
 }

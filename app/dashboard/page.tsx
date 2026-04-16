@@ -54,7 +54,7 @@ export default async function Dashboard() {
     const { data: purchase } = await supabase
       .from("purchases")
       .select("id")
-      .eq("user_email", user.email)
+      .eq("user_email", user.email?.toLowerCase())
       .eq("status", "active")
       .limit(1)
       .maybeSingle();

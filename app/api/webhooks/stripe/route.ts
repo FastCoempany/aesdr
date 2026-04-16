@@ -205,5 +205,47 @@ export async function POST(request: Request) {
     }
   }
 
+  if (event.type === 'charge.refunded') {
+    const charge = event.data.object as Stripe.Charge;
+    const supabase = createAdminClient();
+
+    if (charge.payment_intent) {
+      const stripe = getStripe();
+      const sessions = await stripe.checkout.sessions.list({
+        payment_intent: charge.payment_intent as string,
+        limit: 1,
+      });
+      const sessionId = sessions.data[0]?.id;
+      if (sessionId) {
+        const { error } = await supabase
+          .from('purchases')
+          .update({ status: 'refunded' })
+          .eq('stripe_session_id', sessionId);
+        if (error) console.error('[webhook] Refund status update failed:', error.message);
+      }
+    }
+  }
+
+  if (event.type === 'charge.dispute.created') {
+    const dispute = event.data.object as Stripe.Dispute;
+    const supabase = createAdminClient();
+
+    if (dispute.payment_intent) {
+      const stripe = getStripe();
+      const sessions = await stripe.checkout.sessions.list({
+        payment_intent: dispute.payment_intent as string,
+        limit: 1,
+      });
+      const sessionId = sessions.data[0]?.id;
+      if (sessionId) {
+        const { error } = await supabase
+          .from('purchases')
+          .update({ status: 'disputed' })
+          .eq('stripe_session_id', sessionId);
+        if (error) console.error('[webhook] Dispute status update failed:', error.message);
+      }
+    }
+  }
+
   return NextResponse.json({ received: true });
 }
