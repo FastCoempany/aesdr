@@ -168,14 +168,22 @@ export default function LandingSequence() {
 
         const pastZoom = window.scrollY > heroH + zoomHeight;
         if (pastZoom) {
-          vp.style.opacity = "0"; vp.style.pointerEvents = "none";
+          vp.style.display = "none";
           if (sideMarkerRef.current) sideMarkerRef.current.style.opacity = "0";
           if (progressRef.current) progressRef.current.style.opacity = "0";
-          ctaRef.current?.classList.remove(s.ctaOverlayVisible);
-          if (ctaRef.current) { ctaRef.current.style.transition = "none"; ctaRef.current.style.opacity = "0"; ctaRef.current.style.display = "none"; ctaRef.current.style.pointerEvents = "none"; }
+          if (ctaRef.current) { ctaRef.current.style.display = "none"; }
           return;
         }
-        vp.style.opacity = ""; vp.style.pointerEvents = "";
+        /* Before zoom starts, also hide viewport so it doesn't block hero clicks */
+        const beforeZoom = window.scrollY < heroH * 0.5;
+        if (beforeZoom) {
+          vp.style.display = "none";
+          if (sideMarkerRef.current) sideMarkerRef.current.style.opacity = "0";
+          if (progressRef.current) progressRef.current.style.opacity = "0";
+          if (ctaRef.current) { ctaRef.current.style.display = "none"; }
+          return;
+        }
+        vp.style.display = ""; vp.style.opacity = ""; vp.style.pointerEvents = "";
         if (sideMarkerRef.current) sideMarkerRef.current.style.opacity = "";
         if (progressRef.current) progressRef.current.style.opacity = "";
         if (ctaRef.current) { ctaRef.current.style.pointerEvents = ""; ctaRef.current.style.transition = ""; ctaRef.current.style.display = ""; }
@@ -267,7 +275,7 @@ export default function LandingSequence() {
           <p className={s.heroP}>This isn&rsquo;t corporate-y but it will advance your career. 12 interactive, field-tested sessions for AEs and SDRs who&rsquo;re serious about controlling chaos, managing toxic leadership, protecting your commission - and your future.</p>
           <div>
             <a href="#pricing" className={s.btnIris}>Get Access</a>
-            <a href="#curriculum" className={s.btnOutline}>View Syllabus</a>
+            <a href="#curriculum" className={s.btnOutline}>Syllabus Peek</a>
           </div>
           <div className={s.ambientLine} />
         </div>
@@ -314,7 +322,7 @@ export default function LandingSequence() {
         {ZOOM_CARDS.map((_, i) => <div key={i} className={s.markerDot} />)}
       </div>
       <div className={s.scrollSpace} ref={scrollSpaceRef} />
-      <div className={s.viewport} ref={viewportRef} style={{ display: "none" }}>
+      <div className={s.viewport} ref={viewportRef}>
         {ZOOM_CARDS.map((card, i) => (
           <div key={i} className={s.zcard}>
             {card.ghost && <div className={s.ghost}>{card.ghost}</div>}
@@ -331,7 +339,7 @@ export default function LandingSequence() {
       </div>
 
       {/* CTA Overlay */}
-      <div className={s.ctaOverlay} ref={ctaRef} style={{ display: "none" }}>
+      <div className={s.ctaOverlay} ref={ctaRef}>
         <div className={`${s.ctaBrand} ${s.irisText}`}>AESDR</div>
         <div className={s.ctaTag}>12 lessons &bull; at your own pace &bull; 1 you</div>
         <div className={s.ctaNote}>Nobody gave you real answers on day one. We built this after years of figuring it out alone.</div>

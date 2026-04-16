@@ -12,9 +12,9 @@ export default function Testimonials() {
     <section style={{ position: "relative", zIndex: 3, padding: "48px 8%", background: "var(--cream)" }}>
       <p style={{ fontFamily: "var(--mono)", fontSize: "10px", letterSpacing: ".25em", textTransform: "uppercase", color: "var(--muted)", marginBottom: "16px" }}>Already Changing Lives</p>
       <div style={{ width: "60px", height: "2px", background: "var(--iris)", backgroundSize: "300% 100%", marginBottom: "24px" }} />
-      <div style={{ display: "flex", gap: "20px", flexWrap: "wrap", maxWidth: "1000px" }}>
+      <div style={{ display: "flex", gap: "20px", overflowX: "auto", overflowY: "hidden", WebkitOverflowScrolling: "touch", scrollbarWidth: "none" as const, paddingBottom: "4px" }}>
         {TESTIMONIALS.map((t, i) => (
-          <div key={i} style={{ flex: "1 1 240px", maxWidth: "280px", background: "#fff", border: "1px solid var(--light)", padding: "28px" }}>
+          <div key={i} style={{ flex: "0 0 280px", background: "#fff", border: "1px solid var(--light)", padding: "28px" }}>
             <p style={{ fontFamily: "var(--serif)", fontSize: "15px", lineHeight: "1.7", color: "var(--muted)", marginBottom: "12px", fontStyle: "italic" }}>&ldquo;{t.quote}&rdquo;</p>
             <p style={{ fontFamily: "var(--cond)", fontSize: "13px", fontWeight: 700, color: "var(--ink)" }}>{t.name}</p>
             <p style={{ fontFamily: "var(--mono)", fontSize: "9px", color: "var(--muted)" }}>{t.role}</p>

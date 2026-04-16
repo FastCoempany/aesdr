@@ -386,7 +386,7 @@
 .viewport {
   position: fixed;
   inset: 0;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   z-index: 2;
@@ -395,7 +395,7 @@
   transition: opacity 0.5s ease;
   overflow: hidden;
 }
-.viewportActive { opacity: 1; }
+.viewportActive { display: flex !important; opacity: 1; }
 
 .zcard {
   position: absolute;
@@ -497,7 +497,7 @@
   position: fixed;
   inset: 0;
   background: var(--crimson);
-  display: flex;
+  display: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -507,7 +507,7 @@
   transition: opacity 0.3s ease;
   gap: 16px;
 }
-.ctaOverlayVisible { opacity: 1; pointer-events: auto; }
+.ctaOverlayVisible { display: flex !important; opacity: 1; pointer-events: auto; }
 
 .ctaBrand {
   font-family: var(--display);
