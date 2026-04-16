@@ -39,7 +39,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // Let API routes, dashboard, course, tools, account, and auth pages through
-  if (pathname.startsWith("/api/") || pathname.startsWith("/dashboard") || pathname.startsWith("/course") || pathname.startsWith("/tools/") || pathname.startsWith("/account") || pathname.startsWith("/auth/")) {
+  if (pathname.startsWith("/api/") || pathname.startsWith("/dashboard") || pathname.startsWith("/course") || pathname.startsWith("/tools/") || pathname.startsWith("/account") || pathname.startsWith("/auth/") || pathname.startsWith("/admin") || pathname.startsWith("/team")) {
     return supabaseResponse;
   }
 
