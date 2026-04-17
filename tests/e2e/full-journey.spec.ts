@@ -238,8 +238,10 @@ async function completeScreen(
   if (await handleTimeGate(frame, screen, page)) actions.push("timer");
   if (await handleConversation(frame, page)) actions.push("conversation");
   if (await handleSortExercise(frame, page)) actions.push("sort");
+  if (await handleFaultMode(frame, page)) actions.push("fm");
   if (await handleAckExercise(frame, page)) actions.push("ack");
   if (await handleAuditExercise(frame, page)) actions.push("audit");
+  if (await handleEmailRepair(frame, page)) actions.push("email");
 
   // Generic fallback — only runs if #btnNext is still disabled after all specific handlers
   const nextStillDisabled = await frame
@@ -883,6 +885,41 @@ async function handleConversation(frame: FrameLocator, page: Page): Promise<bool
   return true;
 }
 
+// ─── FAULT MODE TAGGER ────────────────────────────────────────
+
+async function handleFaultMode(frame: FrameLocator, page: Page): Promise<boolean> {
+  const fmCards = frame.locator(".screen.active #fmCards");
+  const hasFM = await fmCards.isVisible({ timeout: 200 }).catch(() => false);
+  if (!hasFM) return false;
+
+  const tags = ["time", "onesz", "fear"];
+
+  for (let i = 0; i < 10; i++) {
+    const card = frame.locator(`.screen.active .fm-card:not(.resolved)`).first();
+    const visible = await card.isVisible({ timeout: 300 }).catch(() => false);
+    if (!visible) break;
+
+    const cardId = await card.getAttribute("id").catch(() => "");
+    if (!cardId) break;
+    const idx = cardId.replace("fmc", "");
+
+    for (const tag of tags) {
+      const btn = frame.locator(`#fmb${idx}_${tag}`);
+      const btnDisabled = await btn.isDisabled().catch(() => true);
+      if (btnDisabled) continue;
+
+      await btn.click();
+      await page.waitForTimeout(400);
+
+      const resolved = await card
+        .evaluate((el) => el.classList.contains("resolved"))
+        .catch(() => false);
+      if (resolved) break;
+    }
+  }
+  return true;
+}
+
 // ─── ACKNOWLEDGMENT BUILDER ───────────────────────────────────
 
 async function handleAckExercise(frame: FrameLocator, page: Page): Promise<boolean> {
@@ -890,76 +927,16 @@ async function handleAckExercise(frame: FrameLocator, page: Page): Promise<boole
   const hasAck = await ackWrap.isVisible({ timeout: 200 }).catch(() => false);
   if (!hasAck) return false;
 
-  const doneBox = frame.locator(".screen.active .ack-done-box.show");
-  if (await doneBox.isVisible({ timeout: 200 }).catch(() => false)) return true;
+  if (await frame.locator(".screen.active .ack-done-box.show").isVisible({ timeout: 200 }).catch(() => false))
+    return true;
 
-  for (let attempt = 0; attempt < 5; attempt++) {
-    // Pick one option per section (3 sections)
-    const sections = frame.locator(".screen.active .ack-sections");
-    const secCount = await sections.count().catch(() => 0);
-
-    for (let si = 0; si < secCount; si++) {
-      const sec = sections.nth(si);
-      const choices = sec.locator(".ack-choice:not(.locked)");
-      const choiceCount = await choices.count().catch(() => 0);
-      if (choiceCount > 0) {
-        await choices.nth(attempt % choiceCount).click();
-        await page.waitForTimeout(300);
-      }
-    }
-
-    // Click submit
-    const submitBtn = frame.locator("#ackSubmitBtn");
-    const hasSubmit = await submitBtn.isVisible({ timeout: 300 }).catch(() => false);
-    if (hasSubmit) {
-      await submitBtn.click();
-      await page.waitForTimeout(500);
-    }
-
-    // Check if passed
-    if (await doneBox.isVisible({ timeout: 300 }).catch(() => false)) return true;
-
-    // Failed — read which options are correct, reset, and try with correct ones
-    const correctIndices: Record<number, number> = {};
-    for (let si = 0; si < secCount; si++) {
-      const sec = sections.nth(si);
-      const allChoices = sec.locator(".ack-choice");
-      const total = await allChoices.count().catch(() => 0);
-      for (let ci = 0; ci < total; ci++) {
-        const isCorrect = await allChoices.nth(ci)
-          .evaluate((el) => el.classList.contains("correct"))
-          .catch(() => false);
-        if (isCorrect) { correctIndices[si] = ci; break; }
-      }
-    }
-
-    // Reset via JS
-    await frame.locator("#ackWrap").evaluate(() => {
-      (window as any).resetAck();
-    });
-    await page.waitForTimeout(400);
-
-    // Pick the correct options
-    for (let si = 0; si < secCount; si++) {
-      const ci = correctIndices[si] ?? 0;
-      const sec = sections.nth(si);
-      const choice = sec.locator(".ack-choice").nth(ci);
-      if (await choice.isVisible({ timeout: 200 }).catch(() => false)) {
-        await choice.click();
-        await page.waitForTimeout(200);
-      }
-    }
-
-    // Submit again
-    const submitBtn2 = frame.locator("#ackSubmitBtn");
-    if (await submitBtn2.isVisible({ timeout: 300 }).catch(() => false)) {
-      await submitBtn2.click();
-      await page.waitForTimeout(500);
-    }
-
-    if (await doneBox.isVisible({ timeout: 300 }).catch(() => false)) return true;
-  }
-  return true;
+  return handleSectionPicker(frame, page, {
+    sectionSelector: ".screen.active .ack-sections",
+    choiceSelector: ".ack-choice",
+    submitSelector: "#ackSubmitBtn",
+    doneSelector: ".screen.active .ack-done-box.show",
+    resetFn: "resetAck",
+  });
 }
 
 // ─── TRUST AUDIT ──────────────────────────────────────────────
@@ -990,6 +967,102 @@ async function handleAuditExercise(frame: FrameLocator, page: Page): Promise<boo
       await doneBtn.click();
       await page.waitForTimeout(300);
     }
+  }
+  return true;
+}
+
+// ─── EMAIL REPAIR ─────────────────────────────────────────────
+
+async function handleEmailRepair(frame: FrameLocator, page: Page): Promise<boolean> {
+  const emailWrap = frame.locator(".screen.active #emailWrap");
+  const hasEmail = await emailWrap.isVisible({ timeout: 200 }).catch(() => false);
+  if (!hasEmail) return false;
+
+  const doneBox = frame.locator(".screen.active .email-done.show");
+  if (await doneBox.isVisible({ timeout: 200 }).catch(() => false)) return true;
+
+  return handleSectionPicker(frame, page, {
+    sectionSelector: ".screen.active .email-sections",
+    choiceSelector: ".email-opt",
+    submitSelector: "#emailSubmitBtn",
+    doneSelector: ".screen.active .email-done.show",
+    resetFn: "resetEmail",
+  });
+}
+
+// ─── SECTION PICKER (shared: ack, email, and similar submit-and-verify) ──
+
+async function handleSectionPicker(
+  frame: FrameLocator,
+  page: Page,
+  opts: {
+    sectionSelector: string;
+    choiceSelector: string;
+    submitSelector: string;
+    doneSelector: string;
+    resetFn: string;
+  }
+): Promise<boolean> {
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const sections = frame.locator(opts.sectionSelector);
+    const secCount = await sections.count().catch(() => 0);
+
+    for (let si = 0; si < secCount; si++) {
+      const sec = sections.nth(si);
+      const choices = sec.locator(`${opts.choiceSelector}:not(.locked)`);
+      const choiceCount = await choices.count().catch(() => 0);
+      if (choiceCount > 0) {
+        await choices.nth(attempt % choiceCount).click();
+        await page.waitForTimeout(300);
+      }
+    }
+
+    const submitBtn = frame.locator(opts.submitSelector);
+    if (await submitBtn.isVisible({ timeout: 300 }).catch(() => false)) {
+      await submitBtn.click();
+      await page.waitForTimeout(500);
+    }
+
+    const doneBox = frame.locator(opts.doneSelector);
+    if (await doneBox.isVisible({ timeout: 300 }).catch(() => false)) return true;
+
+    // Failed — read correct answers, reset, pick correct ones
+    const correctIndices: Record<number, number> = {};
+    for (let si = 0; si < secCount; si++) {
+      const sec = sections.nth(si);
+      const allChoices = sec.locator(opts.choiceSelector);
+      const total = await allChoices.count().catch(() => 0);
+      for (let ci = 0; ci < total; ci++) {
+        const isCorrect = await allChoices.nth(ci)
+          .evaluate((el) => el.classList.contains("correct"))
+          .catch(() => false);
+        if (isCorrect) { correctIndices[si] = ci; break; }
+      }
+    }
+
+    await frame.locator("body").evaluate((_, fn) => {
+      if (typeof (window as any)[fn] === "function") (window as any)[fn]();
+    }, opts.resetFn);
+    await page.waitForTimeout(400);
+
+    for (let si = 0; si < secCount; si++) {
+      const ci = correctIndices[si] ?? 0;
+      const sec = sections.nth(si);
+      const choice = sec.locator(opts.choiceSelector).nth(ci);
+      if (await choice.isVisible({ timeout: 200 }).catch(() => false)) {
+        await choice.click();
+        await page.waitForTimeout(200);
+      }
+    }
+
+    const submitBtn2 = frame.locator(opts.submitSelector);
+    if (await submitBtn2.isVisible({ timeout: 300 }).catch(() => false)) {
+      await submitBtn2.click();
+      await page.waitForTimeout(500);
+    }
+
+    if (await frame.locator(opts.doneSelector).isVisible({ timeout: 300 }).catch(() => false))
+      return true;
   }
   return true;
 }
@@ -1055,7 +1128,7 @@ async function handleGenericExercise(frame: FrameLocator, page: Page): Promise<b
 
     // 1. Try clicking option-like elements with onclick handlers
     const clickables = frame.locator(
-      ".screen.active [onclick]:not(.locked):not(.correct):not(.done):not(.placed):not(.resolved):not([onclick*='reset']):not([onclick*='Reset']):not([onclick*='pickSort']):not([onclick*='resetSort'])"
+      ".screen.active [onclick]:not(.locked):not(.correct):not(.done):not(.placed):not(.resolved):not(:disabled):not([onclick*='reset']):not([onclick*='Reset']):not([onclick*='pickSort']):not([onclick*='resetSort'])"
     );
     const clickableCount = await clickables.count().catch(() => 0);
 
@@ -1063,7 +1136,9 @@ async function handleGenericExercise(frame: FrameLocator, page: Page): Promise<b
       // Click the first available clickable
       const target = clickables.first();
       const targetVisible = await target.isVisible({ timeout: 300 }).catch(() => false);
-      if (targetVisible) {
+      if (!targetVisible) { /* skip */ }
+      else if (await target.isDisabled().catch(() => false)) { /* skip disabled */ }
+      else {
         await target.click();
         await page.waitForTimeout(400);
         clickedSomething = true;
