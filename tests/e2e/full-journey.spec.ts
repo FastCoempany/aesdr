@@ -412,43 +412,38 @@ async function bruteForcePickAndPlace(
   targetSelector: string,
   maxAttempts: number = 100
 ) {
-  let attempts = 0;
-  while (attempts < maxAttempts) {
+  for (let attempts = 0; attempts < maxAttempts; attempts++) {
     const item = frame.locator(`${poolSelector}:not(.placed)`).first();
     const itemVisible = await item
       .isVisible({ timeout: 200 })
       .catch(() => false);
     if (!itemVisible) break;
 
+    const placedBefore = await frame
+      .locator(`${poolSelector}.placed`)
+      .count()
+      .catch(() => 0);
+
     const targets = frame.locator(targetSelector);
     const targetCount = await targets.count().catch(() => 0);
     let placed = false;
 
     for (let t = 0; t < targetCount; t++) {
-      // Select the item
-      await item.click();
+      await frame.locator(`${poolSelector}:not(.placed)`).first().click();
       await page.waitForTimeout(250);
-
-      // Try this target
       await targets.nth(t).click();
-      await page.waitForTimeout(350);
+      await page.waitForTimeout(400);
 
-      // Check if item got placed
-      const stillUnplaced = await item
-        .isVisible()
-        .catch(() => false);
-      const hasPlaced = stillUnplaced
-        ? await item
-            .evaluate((el) => el.classList.contains("placed"))
-            .catch(() => false)
-        : true;
-      if (hasPlaced || !stillUnplaced) {
+      const placedAfter = await frame
+        .locator(`${poolSelector}.placed`)
+        .count()
+        .catch(() => 0);
+      if (placedAfter > placedBefore) {
         placed = true;
         break;
       }
     }
     if (!placed) break;
-    attempts++;
   }
 }
 
@@ -466,37 +461,38 @@ async function handleSequencePuzzle(frame: FrameLocator, page: Page): Promise<bo
   const hasTiles = await tiles.isVisible({ timeout: 200 }).catch(() => false);
   if (!hasTiles) return false;
 
-  let attempts = 0;
-  while (attempts < 50) {
+  for (let attempts = 0; attempts < 50; attempts++) {
     const tile = frame.locator(".screen.active #seqTiles .seq-tile:not(.placed)").first();
     const tileVisible = await tile
       .isVisible({ timeout: 200 })
       .catch(() => false);
     if (!tileVisible) break;
 
+    const placedBefore = await frame
+      .locator(".screen.active #seqTiles .seq-tile.placed")
+      .count()
+      .catch(() => 0);
+
     const slots = frame.locator(".screen.active .seq-drop:not(.correct)");
     const slotCount = await slots.count().catch(() => 0);
     let placed = false;
 
     for (let s = 0; s < slotCount; s++) {
-      await tile.click();
+      await frame.locator(".screen.active #seqTiles .seq-tile:not(.placed)").first().click();
       await page.waitForTimeout(250);
       await slots.nth(s).click();
-      await page.waitForTimeout(350);
+      await page.waitForTimeout(400);
 
-      const stillUnplaced = await tile.isVisible().catch(() => false);
-      const isPlaced = stillUnplaced
-        ? await tile
-            .evaluate((el) => el.classList.contains("placed"))
-            .catch(() => false)
-        : true;
-      if (isPlaced || !stillUnplaced) {
+      const placedAfter = await frame
+        .locator(".screen.active #seqTiles .seq-tile.placed")
+        .count()
+        .catch(() => 0);
+      if (placedAfter > placedBefore) {
         placed = true;
         break;
       }
     }
     if (!placed) break;
-    attempts++;
   }
   return true;
 }
@@ -508,42 +504,40 @@ async function handleSchedulePuzzle(frame: FrameLocator, page: Page): Promise<bo
     .catch(() => false);
   if (!hasTiles) return false;
 
-  let attempts = 0;
-  while (attempts < 50) {
-    const tile = frame.locator(".screen.active #schedTiles .sched-tile:not(.placed)").first();
+  for (let attempt = 0; attempt < 30; attempt++) {
+    const tile = frame.locator(".screen.active .sched-tile:not(.placed)").first();
     const tileVisible = await tile
       .isVisible({ timeout: 200 })
       .catch(() => false);
     if (!tileVisible) break;
 
-    const slots = frame.locator(".screen.active .sched-slot:not(.correct)");
-    const slotCount = await slots.count().catch(() => 0);
+    const correctBefore = await frame
+      .locator(".screen.active .sched-slot.correct")
+      .count()
+      .catch(() => 0);
+
     let placed = false;
+    for (let slotIdx = 0; slotIdx < 5; slotIdx++) {
+      const slot = frame.locator(`#slot${slotIdx}`);
+      const alreadyCorrect = await slot
+        .evaluate((el) => el.classList.contains("correct"))
+        .catch(() => true);
+      if (alreadyCorrect) continue;
 
-    for (let s = 0; s < slotCount; s++) {
-      await tile.click();
-      await page.waitForTimeout(250);
-      await slots.nth(s).click();
-      await page.waitForTimeout(350);
+      await frame.locator(".screen.active .sched-tile:not(.placed)").first().click();
+      await page.waitForTimeout(300);
+      await slot.click();
+      await page.waitForTimeout(450);
 
-      const isPlaced = await tile
-        .evaluate((el) => el.classList.contains("placed"))
+      const nowCorrect = await slot
+        .evaluate((el) => el.classList.contains("correct"))
         .catch(() => false);
-      if (isPlaced) {
-        placed = true;
-        break;
-      }
-      // Re-check tile still exists
-      const stillThere = await tile
-        .isVisible()
-        .catch(() => false);
-      if (!stillThere) {
+      if (nowCorrect) {
         placed = true;
         break;
       }
     }
     if (!placed) break;
-    attempts++;
   }
   return true;
 }
