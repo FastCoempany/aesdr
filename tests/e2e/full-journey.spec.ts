@@ -236,6 +236,18 @@ async function completeScreen(
   if (await handleQuiz(frame, page)) actions.push("quiz");
   if (await handleChecklist(frame, page)) actions.push("checklist");
   if (await handleTimeGate(frame, screen, page)) actions.push("timer");
+  if (await handleConversation(frame, page)) actions.push("conversation");
+  if (await handleSortExercise(frame, page)) actions.push("sort");
+
+  // Generic fallback — only runs if #btnNext is still disabled after all specific handlers
+  const nextStillDisabled = await frame
+    .locator("#btnNext")
+    .isDisabled()
+    .catch(() => false);
+  if (nextStillDisabled) {
+    if (await handleGenericExercise(frame, page)) actions.push("generic");
+  }
+
   if (actions.length > 0) console.log(`    completed: ${actions.join(", ")}`);
 }
 
@@ -603,11 +615,17 @@ async function handleBlameFinder(frame: FrameLocator, page: Page): Promise<boole
     const visible = await item.isVisible({ timeout: 500 }).catch(() => false);
     if (!visible) break;
 
+    // Capture this specific item's DOM id so the locator won't drift
+    // after the item gets the .resolved class (which would cause
+    // :not(.resolved) to re-evaluate to a different element)
+    const itemId = await item.evaluate((el) => el.id).catch(() => "");
+    if (!itemId) break;
+    const pinnedItem = frame.locator(`#${itemId}`);
+
     // Try each option until one is correct
-    const opts = item.locator(".blame-opt:not(.locked)");
-    const optCount = await opts.count().catch(() => 0);
+    const optCount = await pinnedItem.locator(".blame-opt:not(.locked)").count().catch(() => 0);
     for (let o = 0; o < optCount; o++) {
-      const opt = item.locator(".blame-opt:not(.locked)").first();
+      const opt = pinnedItem.locator(".blame-opt:not(.locked)").first();
       const optVisible = await opt
         .isVisible({ timeout: 300 })
         .catch(() => false);
@@ -615,8 +633,9 @@ async function handleBlameFinder(frame: FrameLocator, page: Page): Promise<boole
       await opt.click();
       await page.waitForTimeout(500);
 
-      // Check if item is now resolved
-      const resolved = await item
+      // Check if item is now resolved — using the pinned ID-based locator
+      // so it checks the SAME element, not the next unresolved one
+      const resolved = await pinnedItem
         .evaluate((el) => el.classList.contains("resolved"))
         .catch(() => false);
       if (resolved) break;
@@ -794,4 +813,236 @@ async function handleTimeGate(
     await page.waitForTimeout(1000);
   }
   return true;
+}
+
+// ─── CONVERSATION SIMULATOR ────────────────────────────────────
+
+async function handleConversation(frame: FrameLocator, page: Page): Promise<boolean> {
+  const convWrap = frame.locator(".screen.active #convWrap");
+  const hasConv = await convWrap.isVisible({ timeout: 200 }).catch(() => false);
+  if (!hasConv) return false;
+
+  const doneBox = frame.locator(".screen.active .conv-done-box");
+  if (await doneBox.isVisible({ timeout: 200 }).catch(() => false)) return true;
+
+  for (let stage = 0; stage < 10; stage++) {
+    // Click each option until one gives correct feedback
+    const optCount = await frame
+      .locator(".screen.active .conv-opt")
+      .count()
+      .catch(() => 0);
+    if (optCount === 0) break;
+
+    for (let oi = 0; oi < optCount; oi++) {
+      const opt = frame.locator(".screen.active .conv-opt").nth(oi);
+      const optVisible = await opt.isVisible({ timeout: 300 }).catch(() => false);
+      if (!optVisible) continue;
+
+      await opt.click();
+      await page.waitForTimeout(500);
+
+      // Look for advance button (correct answer shows this)
+      const advBtn = frame.locator(".screen.active .conv-adv .btn");
+      const hasAdv = await advBtn.isVisible({ timeout: 400 }).catch(() => false);
+      if (hasAdv) {
+        await advBtn.click();
+        await page.waitForTimeout(500);
+        break;
+      }
+    }
+
+    // Check if all stages done
+    if (await doneBox.isVisible({ timeout: 300 }).catch(() => false)) break;
+
+    // Also check if #btnNext became enabled (some conversations enable it directly)
+    const nextEnabled = await frame
+      .locator("#btnNext")
+      .isDisabled()
+      .catch(() => true);
+    if (!nextEnabled) break;
+  }
+  return true;
+}
+
+// ─── SORT EXERCISE ─────────────────────────────────────────────
+
+async function handleSortExercise(frame: FrameLocator, page: Page): Promise<boolean> {
+  // Detect sort cards via onclick="pickSort" or .sort-card class
+  const sortCards = frame.locator('.screen.active [onclick*="pickSort"]:not(.locked):not(.placed)');
+  const cardCount = await sortCards.count().catch(() => 0);
+  if (cardCount === 0) {
+    // Also try .sort-card selector
+    const altCards = frame.locator(".screen.active .sort-card:not(.locked):not(.placed)");
+    const altCount = await altCards.count().catch(() => 0);
+    if (altCount === 0) return false;
+  }
+
+  // Detect drop zones via onclick="dropInto" or .sort-zone class
+  const zoneSelectors = [
+    '.screen.active [onclick*="dropInto"]',
+    ".screen.active .sort-zone",
+    ".screen.active .sort-drop",
+  ];
+
+  let zoneSelector = "";
+  for (const sel of zoneSelectors) {
+    const cnt = await frame.locator(sel).count().catch(() => 0);
+    if (cnt > 0) {
+      zoneSelector = sel;
+      break;
+    }
+  }
+  if (!zoneSelector) return false;
+
+  const cardSelectors = [
+    '.screen.active [onclick*="pickSort"]:not(.locked):not(.placed)',
+    ".screen.active .sort-card:not(.locked):not(.placed)",
+  ];
+  let cardSelector = "";
+  for (const sel of cardSelectors) {
+    const cnt = await frame.locator(sel).count().catch(() => 0);
+    if (cnt > 0) {
+      cardSelector = sel;
+      break;
+    }
+  }
+  if (!cardSelector) return false;
+
+  await bruteForcePickAndPlace(frame, page, cardSelector, zoneSelector);
+  return true;
+}
+
+// ─── GENERIC EXERCISE FALLBACK ─────────────────────────────────
+
+async function handleGenericExercise(frame: FrameLocator, page: Page): Promise<boolean> {
+  let interacted = false;
+
+  for (let cycle = 0; cycle < 8; cycle++) {
+    // Check if #btnNext is already enabled — no need to continue
+    const nextDisabled = await frame
+      .locator("#btnNext")
+      .isDisabled()
+      .catch(() => true);
+    if (!nextDisabled) break;
+
+    let clickedSomething = false;
+
+    // 1. Try clicking option-like elements with onclick handlers
+    const clickables = frame.locator(
+      ".screen.active [onclick]:not(.locked):not(.correct):not(.done):not(.placed):not(.resolved)"
+    );
+    const clickableCount = await clickables.count().catch(() => 0);
+
+    if (clickableCount > 0) {
+      // Click the first available clickable
+      const target = clickables.first();
+      const targetVisible = await target.isVisible({ timeout: 300 }).catch(() => false);
+      if (targetVisible) {
+        await target.click();
+        await page.waitForTimeout(400);
+        clickedSomething = true;
+        interacted = true;
+
+        // After clicking, check if a drop zone / target zone appeared or needs clicking
+        // (click-and-place pattern: click a card, then click each possible zone)
+        const zones = frame.locator(
+          ".screen.active .drop-zone, .screen.active .target-zone, .screen.active [onclick*='drop'], .screen.active [onclick*='place']"
+        );
+        const zoneCount = await zones.count().catch(() => 0);
+        if (zoneCount > 0) {
+          for (let z = 0; z < zoneCount; z++) {
+            const zone = zones.nth(z);
+            const zoneVisible = await zone.isVisible({ timeout: 200 }).catch(() => false);
+            if (!zoneVisible) continue;
+            await zone.click();
+            await page.waitForTimeout(400);
+
+            // Check if placement succeeded (next button enabled or element changed)
+            const nextNow = await frame
+              .locator("#btnNext")
+              .isDisabled()
+              .catch(() => true);
+            if (!nextNow) break;
+          }
+        }
+      }
+    }
+
+    // 2. Try clicking option divs, cards, rank markers, flip cards, and other common patterns
+    if (!clickedSomething) {
+      const genericOptions = frame.locator(
+        ".screen.active .ack-opt:not(.selected), " +
+        ".screen.active .rank-marker:not(.done), " +
+        ".screen.active .flip-card:not(.archFlipped), " +
+        ".screen.active .recipe-item:not(.done), " +
+        ".screen.active .impact-item:not(.done), " +
+        ".screen.active .audit-item:not(.done), " +
+        ".screen.active .opt-card:not(.selected):not(.locked)"
+      );
+      const genCount = await genericOptions.count().catch(() => 0);
+      if (genCount > 0) {
+        await genericOptions.first().click();
+        await page.waitForTimeout(400);
+        clickedSomething = true;
+        interacted = true;
+      }
+    }
+
+    // 3. Look for advance/continue/submit buttons inside exercise containers and click them
+    const advanceButtons = frame.locator(
+      ".screen.active .btn-advance, " +
+      ".screen.active .btn-submit, " +
+      ".screen.active .btn-continue, " +
+      '.screen.active .exercise-wrap .btn:not(.locked), ' +
+      '.screen.active .ack-submit, ' +
+      '.screen.active button[onclick*="submit"], ' +
+      '.screen.active button[onclick*="advance"], ' +
+      '.screen.active button[onclick*="continue"]'
+    );
+    const advCount = await advanceButtons.count().catch(() => 0);
+    if (advCount > 0) {
+      for (let a = 0; a < advCount; a++) {
+        const btn = advanceButtons.nth(a);
+        const btnVisible = await btn.isVisible({ timeout: 200 }).catch(() => false);
+        const btnDisabled = await btn.isDisabled().catch(() => true);
+        if (btnVisible && !btnDisabled) {
+          await btn.click();
+          await page.waitForTimeout(500);
+          clickedSomething = true;
+          interacted = true;
+          break;
+        }
+      }
+    }
+
+    // 4. Also look for any visible, non-disabled .btn or button inside .screen.active
+    //    that might be a submit/advance (but avoid #btnNext and navigation buttons)
+    if (!clickedSomething) {
+      const anyButtons = frame.locator(
+        ".screen.active .btn:not(#btnNext):not(#btnPrev):not(.locked):not(.disabled), " +
+        ".screen.active button:not(#btnNext):not(#btnPrev):not(.locked):not(:disabled)"
+      );
+      const anyBtnCount = await anyButtons.count().catch(() => 0);
+      for (let b = 0; b < anyBtnCount; b++) {
+        const btn = anyButtons.nth(b);
+        const btnVisible = await btn.isVisible({ timeout: 200 }).catch(() => false);
+        if (!btnVisible) continue;
+        // Skip navigation-like buttons
+        const text = await btn.textContent().catch(() => "");
+        if (text && /next|prev|back/i.test(text)) continue;
+        await btn.click();
+        await page.waitForTimeout(400);
+        clickedSomething = true;
+        interacted = true;
+        break;
+      }
+    }
+
+    if (!clickedSomething) break;
+
+    // Brief pause before next cycle to let UI settle
+    await page.waitForTimeout(300);
+  }
+
+  return interacted;
 }
