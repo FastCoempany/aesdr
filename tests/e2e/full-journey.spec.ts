@@ -85,13 +85,12 @@ test.describe("Full AESDR Course Journey", () => {
           continue;
         }
 
-        // Screen 0: click "Begin Course" or similar entry button
-        const beginBtn = frame.locator(
-          '.btn.btn-fill:has-text("Begin"), .btn.btn-fill:has-text("Start"), .btn.btn-fill:has-text("Let")'
-        );
-        const hasBegin = await beginBtn.first().isVisible({ timeout: 2000 }).catch(() => false);
-        if (hasBegin) {
-          await beginBtn.first().click();
+        // Screen 0: advance to screen 1 via go(1) — all units start here
+        const iframeFrame = page.frames().find(f => f !== page.mainFrame());
+        if (iframeFrame) {
+          await iframeFrame.evaluate(() => {
+            if (typeof (window as any).go === "function") (window as any).go(1);
+          });
           await page.waitForTimeout(800);
         }
 
