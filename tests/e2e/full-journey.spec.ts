@@ -270,6 +270,7 @@ async function fillAndSubmitGate(
   }
 
   // Wait for attestation checkbox to become enabled, then check it
+  // Use force:true because nested card layouts can intercept pointer events
   const attest = frame.locator(attestSelector);
   const hasAttest = await attest.isVisible({ timeout: 800 }).catch(() => false);
   if (hasAttest) {
@@ -278,7 +279,7 @@ async function fillAndSubmitGate(
       if (!disabled) {
         const checked = await attest.isChecked().catch(() => true);
         if (!checked) {
-          await attest.check();
+          await attest.check({ force: true });
           await page.waitForTimeout(300);
         }
         break;
@@ -296,7 +297,7 @@ async function fillAndSubmitGate(
     if (!dis) {
       const chk = await cb.isChecked().catch(() => true);
       if (!chk) {
-        await cb.check();
+        await cb.check({ force: true });
         await page.waitForTimeout(200);
       }
     }
@@ -306,7 +307,7 @@ async function fillAndSubmitGate(
   for (let i = 0; i < 5; i++) {
     const disabled = await submitBtn.isDisabled().catch(() => true);
     if (!disabled) {
-      await submitBtn.click();
+      await submitBtn.click({ force: true });
       await page.waitForTimeout(800);
       return true;
     }
@@ -372,7 +373,7 @@ async function handleTimelineGates(frame: FrameLocator, page: Page): Promise<boo
       .evaluate((el) => el.classList.contains("open"))
       .catch(() => true);
     if (!isOpen) {
-      await hdr.click();
+      await hdr.click({ force: true });
       await page.waitForTimeout(300);
     }
   }
@@ -676,7 +677,7 @@ async function handleChecklist(frame: FrameLocator, page: Page): Promise<boolean
     const item = frame.locator(".screen.active .cl-item:not(.done)").first();
     const visible = await item.isVisible({ timeout: 200 }).catch(() => false);
     if (!visible) break;
-    await item.click();
+    await item.click({ force: true });
     await page.waitForTimeout(200);
   }
   return true;
