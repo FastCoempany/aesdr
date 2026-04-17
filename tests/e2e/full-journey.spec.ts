@@ -266,7 +266,9 @@ async function fillAndSubmitGate(
   if (val.length < 60) {
     await ta.fill(GATE_TEXT);
     await ta.evaluate((el: HTMLTextAreaElement) => {
-      el.dispatchEvent(new Event("input", { bubbles: true }));
+      if (typeof el.oninput === "function") {
+        el.oninput.call(el, new Event("input"));
+      }
     });
     await page.waitForTimeout(600);
   }
