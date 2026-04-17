@@ -86,12 +86,22 @@ test.describe("Full AESDR Course Journey", () => {
         }
 
         // Screen 0: advance to screen 1 via go(1) — all units start here
+        // Retry until go() is defined and screen actually advances (JS may load after #s0 appears)
         const iframeFrame = page.frames().find(f => f !== page.mainFrame());
         if (iframeFrame) {
-          await iframeFrame.evaluate(() => {
-            if (typeof (window as any).go === "function") (window as any).go(1);
-          });
-          await page.waitForTimeout(800);
+          for (let goRetry = 0; goRetry < 15; goRetry++) {
+            await iframeFrame.evaluate(() => {
+              if (typeof (window as any).go === "function") (window as any).go(1);
+            });
+            await page.waitForTimeout(500);
+            const onS1 = await frame
+              .locator(".screen.active")
+              .getAttribute("id")
+              .catch(() => "s0");
+            if (onS1 !== "s0") break;
+            if (goRetry === 2) console.log(`  L${lesson} U${unit}: waiting for go() to load...`);
+            await page.waitForTimeout(500);
+          }
         }
 
         // Navigate through all screens
