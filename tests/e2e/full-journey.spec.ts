@@ -867,48 +867,43 @@ async function handleConversation(frame: FrameLocator, page: Page): Promise<bool
 // ─── SORT EXERCISE ─────────────────────────────────────────────
 
 async function handleSortExercise(frame: FrameLocator, page: Page): Promise<boolean> {
-  // Detect sort cards via onclick="pickSort" or .sort-card class
-  const sortCards = frame.locator('.screen.active [onclick*="pickSort"]:not(.locked):not(.placed)');
-  const cardCount = await sortCards.count().catch(() => 0);
-  if (cardCount === 0) {
-    // Also try .sort-card selector
-    const altCards = frame.locator(".screen.active .sort-card:not(.locked):not(.placed)");
-    const altCount = await altCards.count().catch(() => 0);
-    if (altCount === 0) return false;
-  }
+  const cardSel = '.screen.active [onclick*="pickSort"]:not(.locked)';
+  const firstCard = frame.locator(cardSel).first();
+  const hasCards = await firstCard.isVisible({ timeout: 200 }).catch(() => false);
+  if (!hasCards) return false;
 
-  // Detect drop zones via onclick="dropInto" or .sort-zone class
-  const zoneSelectors = [
-    '.screen.active [onclick*="dropInto"]',
-    ".screen.active .sort-zone",
-    ".screen.active .sort-drop",
-  ];
+  const zones = frame.locator('.screen.active [onclick*="dropInto"]');
+  const zoneCount = await zones.count().catch(() => 0);
+  if (zoneCount === 0) return false;
 
-  let zoneSelector = "";
-  for (const sel of zoneSelectors) {
-    const cnt = await frame.locator(sel).count().catch(() => 0);
-    if (cnt > 0) {
-      zoneSelector = sel;
-      break;
+  for (let attempt = 0; attempt < 50; attempt++) {
+    const card = frame.locator(cardSel).first();
+    const cardVisible = await card.isVisible({ timeout: 200 }).catch(() => false);
+    if (!cardVisible) break;
+
+    const lockedBefore = await frame
+      .locator('.screen.active [onclick*="pickSort"].locked')
+      .count()
+      .catch(() => 0);
+
+    let placed = false;
+    for (let z = 0; z < zoneCount; z++) {
+      await frame.locator(cardSel).first().click();
+      await page.waitForTimeout(250);
+      await zones.nth(z).click();
+      await page.waitForTimeout(400);
+
+      const lockedAfter = await frame
+        .locator('.screen.active [onclick*="pickSort"].locked')
+        .count()
+        .catch(() => 0);
+      if (lockedAfter > lockedBefore) {
+        placed = true;
+        break;
+      }
     }
+    if (!placed) break;
   }
-  if (!zoneSelector) return false;
-
-  const cardSelectors = [
-    '.screen.active [onclick*="pickSort"]:not(.locked):not(.placed)',
-    ".screen.active .sort-card:not(.locked):not(.placed)",
-  ];
-  let cardSelector = "";
-  for (const sel of cardSelectors) {
-    const cnt = await frame.locator(sel).count().catch(() => 0);
-    if (cnt > 0) {
-      cardSelector = sel;
-      break;
-    }
-  }
-  if (!cardSelector) return false;
-
-  await bruteForcePickAndPlace(frame, page, cardSelector, zoneSelector);
   return true;
 }
 
@@ -929,7 +924,7 @@ async function handleGenericExercise(frame: FrameLocator, page: Page): Promise<b
 
     // 1. Try clicking option-like elements with onclick handlers
     const clickables = frame.locator(
-      ".screen.active [onclick]:not(.locked):not(.correct):not(.done):not(.placed):not(.resolved)"
+      ".screen.active [onclick]:not(.locked):not(.correct):not(.done):not(.placed):not(.resolved):not([onclick*='reset']):not([onclick*='Reset'])"
     );
     const clickableCount = await clickables.count().catch(() => 0);
 
@@ -946,7 +941,7 @@ async function handleGenericExercise(frame: FrameLocator, page: Page): Promise<b
         // After clicking, check if a drop zone / target zone appeared or needs clicking
         // (click-and-place pattern: click a card, then click each possible zone)
         const zones = frame.locator(
-          ".screen.active .drop-zone, .screen.active .target-zone, .screen.active [onclick*='drop'], .screen.active [onclick*='place']"
+          ".screen.active .drop-zone, .screen.active .target-zone, .screen.active [onclick*='drop']:not([onclick*='reset']):not([onclick*='Reset']), .screen.active [onclick*='place']"
         );
         const zoneCount = await zones.count().catch(() => 0);
         if (zoneCount > 0) {
@@ -1029,7 +1024,7 @@ async function handleGenericExercise(frame: FrameLocator, page: Page): Promise<b
         if (!btnVisible) continue;
         // Skip navigation-like buttons
         const text = await btn.textContent().catch(() => "");
-        if (text && /next|prev|back/i.test(text)) continue;
+        if (text && /next|prev|back|reset|clear|restart/i.test(text)) continue;
         await btn.click();
         await page.waitForTimeout(400);
         clickedSomething = true;
