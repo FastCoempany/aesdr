@@ -265,8 +265,9 @@ async function fillAndSubmitGate(
   if (val.length < 60) {
     await ta.fill(GATE_TEXT);
     await ta.evaluate((el: HTMLTextAreaElement) => {
-      if (typeof el.oninput === "function") {
-        el.oninput.call(el, new Event("input"));
+      const handler = el.getAttribute("oninput");
+      if (handler) {
+        new Function(handler).call(el);
       }
     });
     await page.waitForTimeout(600);
