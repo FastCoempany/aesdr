@@ -869,16 +869,17 @@ async function handleConversation(frame: FrameLocator, page: Page): Promise<bool
 async function handleSortExercise(frame: FrameLocator, page: Page): Promise<boolean> {
   const cardSel = '.screen.active [onclick*="pickSort"]:not(.locked)';
   const firstCard = frame.locator(cardSel).first();
-  const hasCards = await firstCard.isVisible({ timeout: 200 }).catch(() => false);
+  const hasCards = await firstCard.isVisible({ timeout: 500 }).catch(() => false);
   if (!hasCards) return false;
 
-  const zones = frame.locator('.screen.active [onclick*="dropInto"]');
+  // Drop zones use event delegation (no onclick attr) — target by class
+  const zones = frame.locator('.screen.active .sort-zone');
   const zoneCount = await zones.count().catch(() => 0);
   if (zoneCount === 0) return false;
 
   for (let attempt = 0; attempt < 50; attempt++) {
     const card = frame.locator(cardSel).first();
-    const cardVisible = await card.isVisible({ timeout: 200 }).catch(() => false);
+    const cardVisible = await card.isVisible({ timeout: 300 }).catch(() => false);
     if (!cardVisible) break;
 
     const lockedBefore = await frame
@@ -889,9 +890,9 @@ async function handleSortExercise(frame: FrameLocator, page: Page): Promise<bool
     let placed = false;
     for (let z = 0; z < zoneCount; z++) {
       await frame.locator(cardSel).first().click();
-      await page.waitForTimeout(250);
+      await page.waitForTimeout(300);
       await zones.nth(z).click();
-      await page.waitForTimeout(400);
+      await page.waitForTimeout(500);
 
       const lockedAfter = await frame
         .locator('.screen.active [onclick*="pickSort"].locked')
@@ -924,7 +925,7 @@ async function handleGenericExercise(frame: FrameLocator, page: Page): Promise<b
 
     // 1. Try clicking option-like elements with onclick handlers
     const clickables = frame.locator(
-      ".screen.active [onclick]:not(.locked):not(.correct):not(.done):not(.placed):not(.resolved):not([onclick*='reset']):not([onclick*='Reset'])"
+      ".screen.active [onclick]:not(.locked):not(.correct):not(.done):not(.placed):not(.resolved):not([onclick*='reset']):not([onclick*='Reset']):not([onclick*='pickSort']):not([onclick*='resetSort'])"
     );
     const clickableCount = await clickables.count().catch(() => 0);
 
