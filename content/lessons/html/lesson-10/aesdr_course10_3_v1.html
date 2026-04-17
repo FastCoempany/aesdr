@@ -1783,7 +1783,7 @@ let blameState={}, blameCount=0;
 let seqSel=null, seqDone={};
 let clsSel=null, clsDone={}, clsCount=0;
 let qAns={}, qSubmitted=false, qPassed=false;
-function _saveQuizState()_saveExerciseScores();{AESDR.setExtra('quiz',{ans:qAns,submitted:qSubmitted,passed:qPassed}
+function _saveQuizState(){AESDR.setExtra('quiz',{ans:qAns,submitted:qSubmitted,passed:qPassed}
 function _saveExerciseScores(){
   var scores = {};
   if(typeof siloCount!=='undefined'&&typeof SILO_CARDS!=='undefined') scores.silo={correct:siloCount,total:SILO_CARDS.length};
