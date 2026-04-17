@@ -264,13 +264,8 @@ async function fillAndSubmitGate(
   const val = await ta.inputValue().catch(() => "");
   if (val.length < 60) {
     await ta.fill(GATE_TEXT);
-    await ta.evaluate((el: HTMLTextAreaElement) => {
-      const handler = el.getAttribute("oninput");
-      if (handler) {
-        new Function(handler).call(el);
-      }
-    });
-    await page.waitForTimeout(600);
+    await ta.pressSequentially(" ", { delay: 50 });
+    await page.waitForTimeout(400);
   }
 
   // Wait for attestation checkbox to become enabled, then check it
