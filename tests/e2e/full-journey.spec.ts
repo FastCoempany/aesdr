@@ -238,6 +238,8 @@ async function completeScreen(
   if (await handleTimeGate(frame, screen, page)) actions.push("timer");
   if (await handleConversation(frame, page)) actions.push("conversation");
   if (await handleSortExercise(frame, page)) actions.push("sort");
+  if (await handleAckExercise(frame, page)) actions.push("ack");
+  if (await handleAuditExercise(frame, page)) actions.push("audit");
 
   // Generic fallback — only runs if #btnNext is still disabled after all specific handlers
   const nextStillDisabled = await frame
@@ -826,7 +828,6 @@ async function handleConversation(frame: FrameLocator, page: Page): Promise<bool
   if (await doneBox.isVisible({ timeout: 200 }).catch(() => false)) return true;
 
   for (let stage = 0; stage < 10; stage++) {
-    // Click each option until one gives correct feedback
     const optCount = await frame
       .locator(".screen.active .conv-opt")
       .count()
@@ -841,25 +842,143 @@ async function handleConversation(frame: FrameLocator, page: Page): Promise<bool
       await opt.click();
       await page.waitForTimeout(500);
 
-      // Look for advance button (correct answer shows this)
-      const advBtn = frame.locator(".screen.active .conv-adv .btn");
+      // Check if advance button appeared (correct answer)
+      const advBtn = frame.locator(".screen.active .conv-adv.show .btn");
       const hasAdv = await advBtn.isVisible({ timeout: 400 }).catch(() => false);
       if (hasAdv) {
         await advBtn.click();
         await page.waitForTimeout(500);
         break;
       }
+
+      // Wrong answer: pickConv locks all options with no advance button.
+      // Reset conversation state so the next option can be tried.
+      await frame.locator("#convWrap").evaluate(() => {
+        (window as any).convShowFb = false;
+        (window as any).convPicked = null;
+        (window as any).renderConv();
+      });
+      await page.waitForTimeout(300);
     }
 
-    // Check if all stages done
     if (await doneBox.isVisible({ timeout: 300 }).catch(() => false)) break;
 
-    // Also check if #btnNext became enabled (some conversations enable it directly)
     const nextEnabled = await frame
       .locator("#btnNext")
       .isDisabled()
       .catch(() => true);
     if (!nextEnabled) break;
+  }
+  return true;
+}
+
+// ─── ACKNOWLEDGMENT BUILDER ───────────────────────────────────
+
+async function handleAckExercise(frame: FrameLocator, page: Page): Promise<boolean> {
+  const ackWrap = frame.locator(".screen.active #ackWrap");
+  const hasAck = await ackWrap.isVisible({ timeout: 200 }).catch(() => false);
+  if (!hasAck) return false;
+
+  const doneBox = frame.locator(".screen.active .ack-done-box.show");
+  if (await doneBox.isVisible({ timeout: 200 }).catch(() => false)) return true;
+
+  for (let attempt = 0; attempt < 5; attempt++) {
+    // Pick one option per section (3 sections)
+    const sections = frame.locator(".screen.active .ack-sections");
+    const secCount = await sections.count().catch(() => 0);
+
+    for (let si = 0; si < secCount; si++) {
+      const sec = sections.nth(si);
+      const choices = sec.locator(".ack-choice:not(.locked)");
+      const choiceCount = await choices.count().catch(() => 0);
+      if (choiceCount > 0) {
+        await choices.nth(attempt % choiceCount).click();
+        await page.waitForTimeout(300);
+      }
+    }
+
+    // Click submit
+    const submitBtn = frame.locator("#ackSubmitBtn");
+    const hasSubmit = await submitBtn.isVisible({ timeout: 300 }).catch(() => false);
+    if (hasSubmit) {
+      await submitBtn.click();
+      await page.waitForTimeout(500);
+    }
+
+    // Check if passed
+    if (await doneBox.isVisible({ timeout: 300 }).catch(() => false)) return true;
+
+    // Failed — read which options are correct, reset, and try with correct ones
+    const correctIndices: Record<number, number> = {};
+    for (let si = 0; si < secCount; si++) {
+      const sec = sections.nth(si);
+      const allChoices = sec.locator(".ack-choice");
+      const total = await allChoices.count().catch(() => 0);
+      for (let ci = 0; ci < total; ci++) {
+        const isCorrect = await allChoices.nth(ci)
+          .evaluate((el) => el.classList.contains("correct"))
+          .catch(() => false);
+        if (isCorrect) { correctIndices[si] = ci; break; }
+      }
+    }
+
+    // Reset via JS
+    await frame.locator("#ackWrap").evaluate(() => {
+      (window as any).resetAck();
+    });
+    await page.waitForTimeout(400);
+
+    // Pick the correct options
+    for (let si = 0; si < secCount; si++) {
+      const ci = correctIndices[si] ?? 0;
+      const sec = sections.nth(si);
+      const choice = sec.locator(".ack-choice").nth(ci);
+      if (await choice.isVisible({ timeout: 200 }).catch(() => false)) {
+        await choice.click();
+        await page.waitForTimeout(200);
+      }
+    }
+
+    // Submit again
+    const submitBtn2 = frame.locator("#ackSubmitBtn");
+    if (await submitBtn2.isVisible({ timeout: 300 }).catch(() => false)) {
+      await submitBtn2.click();
+      await page.waitForTimeout(500);
+    }
+
+    if (await doneBox.isVisible({ timeout: 300 }).catch(() => false)) return true;
+  }
+  return true;
+}
+
+// ─── TRUST AUDIT ──────────────────────────────────────────────
+
+async function handleAuditExercise(frame: FrameLocator, page: Page): Promise<boolean> {
+  const auditWrap = frame.locator(".screen.active #auditWrap");
+  const hasAudit = await auditWrap.isVisible({ timeout: 200 }).catch(() => false);
+  if (!hasAudit) return false;
+
+  const items = frame.locator(".screen.active .audit-item:not(.done)");
+  const count = await items.count().catch(() => 0);
+  if (count === 0) return false;
+
+  for (let i = 0; i < count + 2; i++) {
+    const item = frame.locator(".screen.active .audit-item:not(.done)").first();
+    const visible = await item.isVisible({ timeout: 300 }).catch(() => false);
+    if (!visible) break;
+
+    // Open the item
+    const trigger = item.locator(".audit-trigger");
+    await trigger.click();
+    await page.waitForTimeout(300);
+
+    // Click "Mark as Reviewed"
+    const doneBtn = item.locator(".audit-done-btn");
+    const hasDone = await doneBtn.isVisible({ timeout: 300 }).catch(() => false);
+    if (hasDone) {
+      await doneBtn.click();
+      await page.waitForTimeout(300);
+    }
   }
   return true;
 }
