@@ -828,40 +828,51 @@ async function handleConversation(frame: FrameLocator, page: Page): Promise<bool
   if (await doneBox.isVisible({ timeout: 200 }).catch(() => false)) return true;
 
   for (let stage = 0; stage < 10; stage++) {
-    const optCount = await frame
-      .locator(".screen.active .conv-opt")
-      .count()
-      .catch(() => 0);
-    if (optCount === 0) break;
+    if (await doneBox.isVisible({ timeout: 200 }).catch(() => false)) break;
 
+    const opts = frame.locator(".screen.active .conv-opt:not(.locked)");
+    const optCount = await opts.count().catch(() => 0);
+    if (optCount === 0) {
+      // All options locked (wrong pick from previous run) — skip scenario
+      await frame.locator("#convWrap").evaluate(() => {
+        if (typeof (window as any).convAdvance === "function")
+          (window as any).convAdvance();
+      });
+      await page.waitForTimeout(400);
+      continue;
+    }
+
+    let advanced = false;
     for (let oi = 0; oi < optCount; oi++) {
-      const opt = frame.locator(".screen.active .conv-opt").nth(oi);
+      const opt = opts.nth(oi);
       const optVisible = await opt.isVisible({ timeout: 300 }).catch(() => false);
       if (!optVisible) continue;
 
       await opt.click();
       await page.waitForTimeout(500);
 
-      // Check if advance button appeared (correct answer)
+      // Correct answer shows advance button
       const advBtn = frame.locator(".screen.active .conv-adv.show .btn");
       const hasAdv = await advBtn.isVisible({ timeout: 400 }).catch(() => false);
       if (hasAdv) {
         await advBtn.click();
         await page.waitForTimeout(500);
+        advanced = true;
         break;
       }
 
-      // Wrong answer: pickConv locks all options with no advance button.
-      // Reset conversation state so the next option can be tried.
+      // Wrong answer: convShowFb is let-scoped (not on window), so we can't
+      // reset it directly. Call convAdvance() which has closure over it.
       await frame.locator("#convWrap").evaluate(() => {
-        (window as any).convShowFb = false;
-        (window as any).convPicked = null;
-        (window as any).renderConv();
+        if (typeof (window as any).convAdvance === "function")
+          (window as any).convAdvance();
       });
-      await page.waitForTimeout(300);
+      await page.waitForTimeout(400);
+      advanced = true;
+      break;
     }
 
-    if (await doneBox.isVisible({ timeout: 300 }).catch(() => false)) break;
+    if (!advanced) break;
 
     const nextEnabled = await frame
       .locator("#btnNext")
