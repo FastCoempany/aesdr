@@ -346,20 +346,38 @@ async function handleHomeworkGates(
   screen: number,
   page: Page
 ): Promise<boolean> {
+  // Check if the gate container exists and has homework content
+  const gateContainer = frame.locator(`#gate${screen} .hw-gate-items`);
+  const hasGate = await gateContainer
+    .isVisible({ timeout: 1000 })
+    .catch(() => false);
+  if (!hasGate) return false;
+
   let found = false;
+  // Don't break on missing textareas — earlier items may already be done
+  // (completed items show a done view without a textarea)
   for (let i = 0; i < 10; i++) {
+    const hwItem = frame.locator(`#hwItem${screen}_${i}`);
+    const itemExists = await hwItem.count().catch(() => 0);
+    if (!itemExists) break;
+
     const hwTa = frame.locator(`#hwTA${screen}_${i}`);
-    const exists = await hwTa.isVisible({ timeout: 200 }).catch(() => false);
-    if (!exists) break;
+    const exists = await hwTa.isVisible({ timeout: 500 }).catch(() => false);
+    if (!exists) continue;
     found = true;
 
-    await fillAndSubmitGate(
+    const submitted = await fillAndSubmitGate(
       frame,
       `#hwTA${screen}_${i}`,
       `#gateAttest${screen}_${i}`,
       `#hwSub${screen}_${i}`,
       page
     );
+
+    // After submission, the gate re-renders — wait for DOM to settle
+    if (submitted) {
+      await page.waitForTimeout(300);
+    }
   }
   return found;
 }
