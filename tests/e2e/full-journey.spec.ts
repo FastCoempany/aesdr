@@ -671,21 +671,66 @@ async function handleQuiz(frame: FrameLocator, page: Page): Promise<boolean> {
     .catch(() => false);
   if (!hasQuiz) return false;
 
-  const banner = frame.locator(".screen.active #quizBanner.show");
-  const done = await banner.isVisible({ timeout: 200 }).catch(() => false);
-  if (done) return false;
+  const passBanner = frame.locator(".screen.active #quizBanner.pass");
+  if (await passBanner.isVisible({ timeout: 200 }).catch(() => false)) return true;
 
-  const questions = frame.locator(".screen.active .q-block");
-  const qCount = await questions.count().catch(() => 0);
-  for (let q = 0; q < qCount; q++) {
-    const opt = frame.locator(`#qo${q}_0`);
-    const optVisible = await opt
-      .isVisible({ timeout: 500 })
+  const qCount = await frame
+    .locator(".screen.active .q-block")
+    .count()
+    .catch(() => 0);
+  if (qCount === 0) return false;
+
+  for (let attempt = 0; attempt < 5; attempt++) {
+    // If quiz was submitted and failed, read correct answers before retrying
+    const failBanner = frame.locator(".screen.active #quizBanner.fail");
+    const isFailed = await failBanner
+      .isVisible({ timeout: 200 })
       .catch(() => false);
-    if (optVisible) {
-      await opt.click();
-      await page.waitForTimeout(300);
+
+    let knownCorrect: Record<number, number> = {};
+
+    if (isFailed) {
+      for (let q = 0; q < qCount; q++) {
+        for (let o = 0; o < 6; o++) {
+          const opt = frame.locator(`#qo${q}_${o}`);
+          const exists = await opt.count().catch(() => 0);
+          if (!exists) break;
+          const isCorrect = await opt
+            .evaluate((el) => el.classList.contains("correct"))
+            .catch(() => false);
+          if (isCorrect) {
+            knownCorrect[q] = o;
+            break;
+          }
+        }
+      }
+      // Click Next to trigger retryQuiz() — resets the quiz
+      await frame.locator("#btnNext").click();
+      await page.waitForTimeout(800);
     }
+
+    // Pick answers: known correct from previous failure, or try option 0
+    for (let q = 0; q < qCount; q++) {
+      const oi = Math.min(knownCorrect[q] ?? 0, 3);
+      const opt = frame.locator(`#qo${q}_${oi}`);
+      if (await opt.isVisible({ timeout: 300 }).catch(() => false)) {
+        await opt.click();
+        await page.waitForTimeout(200);
+      }
+    }
+
+    // Wait for Next to enable, then click to submit
+    const nextBtn = frame.locator("#btnNext");
+    for (let w = 0; w < 5; w++) {
+      if (!(await nextBtn.isDisabled().catch(() => true))) break;
+      await page.waitForTimeout(400);
+    }
+    await nextBtn.click();
+    await page.waitForTimeout(800);
+
+    // Check if passed
+    if (await passBanner.isVisible({ timeout: 500 }).catch(() => false))
+      return true;
   }
 
   return true;
