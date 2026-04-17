@@ -261,12 +261,15 @@ async function fillAndSubmitGate(
   if (alreadyDone) return true;
 
   // Fill textarea and trigger inline oninput handler
+  // Pre-filled textareas (from saved state) still need oninput to fire
   const val = await ta.inputValue().catch(() => "");
   if (val.length < 60) {
     await ta.fill(GATE_TEXT);
-    await ta.pressSequentially(" ", { delay: 50 });
-    await page.waitForTimeout(400);
   }
+  await ta.click();
+  await ta.press("End");
+  await ta.pressSequentially(" ", { delay: 50 });
+  await page.waitForTimeout(400);
 
   // Wait for attestation checkbox to become enabled, then check it
   // Use force:true because nested card layouts can intercept pointer events
