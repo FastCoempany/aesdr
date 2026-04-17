@@ -164,10 +164,9 @@ test.describe("Full AESDR Course Journey", () => {
             await page.screenshot({
               path: `tests/e2e/results/STUCK-L${lesson}-U${unit}-S${screenNum}.png`,
             });
-            const iframeEl = page.locator("iframe");
-            const contentFrame = await iframeEl.contentFrame();
-            if (contentFrame) {
-              await contentFrame.evaluate(() => {
+            const iframeFrame = page.frames().find(f => f !== page.mainFrame());
+            if (iframeFrame) {
+              await iframeFrame.evaluate(() => {
                 if (typeof (window as any).next === "function")
                   (window as any).next();
               });
@@ -262,10 +261,13 @@ async function fillAndSubmitGate(
     .catch(() => false);
   if (alreadyDone) return true;
 
-  // Fill textarea
+  // Fill textarea and trigger inline oninput handler
   const val = await ta.inputValue().catch(() => "");
   if (val.length < 60) {
     await ta.fill(GATE_TEXT);
+    await ta.evaluate((el: HTMLTextAreaElement) => {
+      el.dispatchEvent(new Event("input", { bubbles: true }));
+    });
     await page.waitForTimeout(600);
   }
 
