@@ -614,8 +614,16 @@ async function handleCCExercise(frame: FrameLocator, page: Page): Promise<boolea
   if (isDone) return false;
 
   for (let stage = 0; stage < 5; stage++) {
-    for (let attempt = 0; attempt < 6; attempt++) {
-      const opt = frame.locator(".screen.active .cc-opt:not(.locked)").first();
+    // closePow() removes .locked from all options, so .first() always picks A.
+    // Instead, iterate by index: try A, then B, then C until one is correct.
+    const optCount = await frame
+      .locator(".screen.active .cc-opt")
+      .count()
+      .catch(() => 0);
+    if (optCount === 0) break;
+
+    for (let oi = 0; oi < optCount; oi++) {
+      const opt = frame.locator(".screen.active .cc-opt").nth(oi);
       const optVisible = await opt
         .isVisible({ timeout: 500 })
         .catch(() => false);
