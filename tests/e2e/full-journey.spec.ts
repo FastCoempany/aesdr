@@ -364,38 +364,52 @@ async function handleHomeworkGates(
 // ─── TIMELINE GATES (Lesson-specific) ───────────────────────────
 
 async function handleTimelineGates(frame: FrameLocator, page: Page): Promise<boolean> {
-  // Scope to active screen only — timeline elements may exist on hidden screens
   const firstHdr = frame.locator(".screen.active .tl-hdr").first();
   const hasTimeline = await firstHdr.isVisible({ timeout: 200 }).catch(() => false);
   if (!hasTimeline) return false;
 
-  const dayHeaders = frame.locator(".screen.active .tl-hdr");
-  const dayCount = await dayHeaders.count().catch(() => 0);
+  const dayCount = await frame.locator(".screen.active .tl-item").count().catch(() => 0);
 
   for (let d = 0; d < dayCount; d++) {
-    const hdr = dayHeaders.nth(d);
-    const hdrVisible = await hdr.isVisible().catch(() => false);
-    if (!hdrVisible) continue;
-    const parent = frame.locator(`#tl${d}`);
-    const isOpen = await parent
+    const dayEl = frame.locator(`#tl${d}`);
+
+    // Skip completed days — never open them, never expose Edit buttons
+    const dayComplete = await dayEl
+      .evaluate((el) => el.classList.contains("tl-complete"))
+      .catch(() => false);
+    if (dayComplete) continue;
+
+    // Open this day section if closed
+    const isOpen = await dayEl
       .evaluate((el) => el.classList.contains("open"))
       .catch(() => true);
     if (!isOpen) {
-      await hdr.click({ force: true });
+      await dayEl.locator(".tl-hdr").click({ force: true });
       await page.waitForTimeout(300);
     }
-  }
 
-  for (let d = 0; d < dayCount; d++) {
     for (let t = 0; t < 5; t++) {
       const key = `${d}_${t}`;
-      await fillAndSubmitGate(
+      const submitted = await fillAndSubmitGate(
         frame,
         `#tlTA${key}`,
         `#tlAttest${key}`,
         `#tlSub${key}`,
         page
       );
+
+      // buildTimeline() rebuilds DOM after each submission, collapsing all sections.
+      // submitTlTask re-opens the current day, but verify and re-open if needed.
+      if (submitted) {
+        await page.waitForTimeout(200);
+        const stillOpen = await dayEl
+          .evaluate((el) => el.classList.contains("open"))
+          .catch(() => true);
+        if (!stillOpen) {
+          await dayEl.locator(".tl-hdr").click({ force: true });
+          await page.waitForTimeout(300);
+        }
+      }
     }
   }
   return true;
