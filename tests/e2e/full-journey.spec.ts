@@ -279,7 +279,10 @@ async function fillAndSubmitGate(
       if (!disabled) {
         const checked = await attest.isChecked().catch(() => true);
         if (!checked) {
-          await attest.check({ force: true });
+          await attest.evaluate((el: HTMLInputElement) => {
+            el.checked = true;
+            el.dispatchEvent(new Event("change", { bubbles: true }));
+          });
           await page.waitForTimeout(300);
         }
         break;
@@ -297,7 +300,10 @@ async function fillAndSubmitGate(
     if (!dis) {
       const chk = await cb.isChecked().catch(() => true);
       if (!chk) {
-        await cb.check({ force: true });
+        await cb.evaluate((el: HTMLInputElement) => {
+          el.checked = true;
+          el.dispatchEvent(new Event("change", { bubbles: true }));
+        });
         await page.waitForTimeout(200);
       }
     }
