@@ -344,6 +344,11 @@ async function completeScreen(
   if (await handleAckExercise(frame, page)) actions.push("ack");
   if (await handleAuditExercise(frame, page)) actions.push("audit");
   if (await handleEmailRepair(frame, page)) actions.push("email");
+  if (await handleRankExercise(frame, page)) actions.push("rank");
+  if (await handleBantExercise(frame, page)) actions.push("bant");
+  if (await handleFeedbackDecoder(frame, page)) actions.push("fd");
+  if (await handleScriptAdaptation(frame, page)) actions.push("sa");
+  if (await handleHabitBuilder(frame, page)) actions.push("hb");
 
   // Generic fallback — only runs if #btnNext is still disabled after all specific handlers
   const nextStillDisabled = await frame
@@ -1060,7 +1065,8 @@ async function handleTranscriptTagger(_frame: FrameLocator, page: Page): Promise
           ".screen.active .tx-line:not(.resolved)"
         );
         let taggableLine: HTMLElement | null = null;
-        for (const l of lines) {
+        for (let li = 0; li < lines.length; li++) {
+          const l = lines[li];
           if (l.querySelector(".tx-tag-col")) { taggableLine = l as HTMLElement; break; }
         }
         if (!taggableLine) return "done";
@@ -1154,8 +1160,10 @@ async function handleAckExercise(_frame: FrameLocator, page: Page): Promise<bool
       if (typeof w.submitAck === "function") w.submitAck();
       if (doc.querySelector(".screen.active .ack-done-box.show")) return { status: "done" };
 
+      // Re-query DOM after submitAck() rebuilds it via buildAck()
+      const freshGroups = doc.querySelectorAll(".screen.active .ack-choices");
       const correct: Record<number, number> = {};
-      optGroups.forEach((group, si) => {
+      freshGroups.forEach((group, si) => {
         const opts = group.querySelectorAll(".ack-choice");
         opts.forEach((o, oi) => {
           if (o.classList.contains("correct")) correct[si] = oi;
@@ -1253,9 +1261,10 @@ async function handleEmailRepair(_frame: FrameLocator, page: Page): Promise<bool
       // Check result
       if (doc.querySelector(".screen.active .email-done.show")) return { status: "done" };
 
-      // Failed — read correct answers
+      // Re-query DOM after submitEmail() rebuilds it
+      const freshGroups = doc.querySelectorAll(".screen.active .email-opts");
       const correct: Record<number, number> = {};
-      optGroups.forEach((group, si) => {
+      freshGroups.forEach((group, si) => {
         const opts = group.querySelectorAll(".email-opt");
         opts.forEach((o, oi) => {
           if (o.classList.contains("correct")) correct[si] = oi;
@@ -1284,6 +1293,161 @@ async function handleEmailRepair(_frame: FrameLocator, page: Page): Promise<bool
       return true;
     }
   }
+  return true;
+}
+
+// ─── RANK EXERCISE ───────────────────────────────────────────
+
+async function handleRankExercise(_frame: FrameLocator, page: Page): Promise<boolean> {
+  const hasRank = await page.evaluate(() => {
+    const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+    if (!iframe?.contentDocument) return false;
+    return !!iframe.contentDocument.querySelector(".screen.active #rankWrap");
+  });
+  if (!hasRank) return false;
+
+  await page.evaluate(() => {
+    const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+    if (!iframe?.contentDocument || !iframe?.contentWindow) return;
+    const doc = iframe.contentDocument;
+    const w = iframe.contentWindow as any;
+
+    const cards = doc.querySelectorAll(".screen.active .rank-card:not(.marked)");
+    cards.forEach((card) => {
+      const id = parseInt(card.id.replace("rc", ""), 10);
+      if (!card.classList.contains("expanded") && typeof w.toggleRank === "function") {
+        w.toggleRank(id);
+      }
+      if (typeof w.markRank === "function") {
+        w.markRank({ stopPropagation: () => {} }, id);
+      }
+    });
+  });
+  await page.waitForTimeout(300);
+  return true;
+}
+
+// ─── BANT QUALIFIER ──────────────────────────────────────────
+
+async function handleBantExercise(_frame: FrameLocator, page: Page): Promise<boolean> {
+  const hasBant = await page.evaluate(() => {
+    const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+    if (!iframe?.contentDocument) return false;
+    return !!iframe.contentDocument.querySelector(".screen.active #bantWrap");
+  });
+  if (!hasBant) return false;
+
+  for (let stage = 0; stage < 10; stage++) {
+    const result = await page.evaluate(() => {
+      const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+      if (!iframe?.contentDocument || !iframe?.contentWindow) return "no-iframe";
+      const doc = iframe.contentDocument;
+      const w = iframe.contentWindow as any;
+
+      if (w.bantDone) return "done";
+
+      const leads = w.BANT_LEADS;
+      if (!leads || !Array.isArray(leads)) return "no-data";
+
+      const correctIdx = leads[w.bantStage]?.ans;
+      if (correctIdx === undefined) return "no-data";
+
+      if (typeof w.pickBant === "function") w.pickBant(correctIdx);
+      if (typeof w.bantAdvance === "function") w.bantAdvance();
+      if (w.bantDone) return "done";
+      return "next";
+    });
+
+    if (result === "done" || result === "no-iframe" || result === "no-data") break;
+    await page.waitForTimeout(300);
+  }
+
+  await page.waitForTimeout(300);
+  return true;
+}
+
+// ─── FEEDBACK DECODER ────────────────────────────────────────
+
+async function handleFeedbackDecoder(_frame: FrameLocator, page: Page): Promise<boolean> {
+  const hasFD = await page.evaluate(() => {
+    const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+    if (!iframe?.contentDocument) return false;
+    return !!iframe.contentDocument.querySelector(".screen.active #fdItems");
+  });
+  if (!hasFD) return false;
+
+  await page.evaluate(() => {
+    const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+    if (!iframe?.contentDocument || !iframe?.contentWindow) return;
+    const w = iframe.contentWindow as any;
+
+    const items = w.FD_ITEMS;
+    if (!items || !Array.isArray(items)) return;
+    items.forEach((item: any, i: number) => {
+      if (typeof w.pickFD === "function" && item.ans !== undefined) {
+        w.pickFD(i, item.ans);
+      }
+    });
+  });
+  await page.waitForTimeout(300);
+  return true;
+}
+
+// ─── SCRIPT ADAPTATION ──────────────────────────────────────
+
+async function handleScriptAdaptation(_frame: FrameLocator, page: Page): Promise<boolean> {
+  const hasSA = await page.evaluate(() => {
+    const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+    if (!iframe?.contentDocument) return false;
+    return !!iframe.contentDocument.querySelector(".screen.active #saItems");
+  });
+  if (!hasSA) return false;
+
+  await page.evaluate(() => {
+    const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+    if (!iframe?.contentDocument || !iframe?.contentWindow) return;
+    const w = iframe.contentWindow as any;
+
+    const items = w.SA_ITEMS;
+    if (!items || !Array.isArray(items)) return;
+    items.forEach((item: any, i: number) => {
+      if (typeof w.pickSA === "function" && item.ans !== undefined) {
+        w.pickSA(i, item.ans);
+      }
+    });
+  });
+  await page.waitForTimeout(300);
+  return true;
+}
+
+// ─── HABIT BUILDER ───────────────────────────────────────────
+
+async function handleHabitBuilder(_frame: FrameLocator, page: Page): Promise<boolean> {
+  const hasHB = await page.evaluate(() => {
+    const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+    if (!iframe?.contentDocument) return false;
+    return !!iframe.contentDocument.querySelector(".screen.active #hbWrap");
+  });
+  if (!hasHB) return false;
+
+  await page.evaluate(() => {
+    const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+    if (!iframe?.contentDocument || !iframe?.contentWindow) return;
+    const doc = iframe.contentDocument;
+    const w = iframe.contentWindow as any;
+
+    const days = w.HB_DAYS;
+    if (!days || !Array.isArray(days)) return;
+    days.forEach((day: any, di: number) => {
+      day.blocks.forEach((_: any, bi: number) => {
+        const key = `${di}_${bi}`;
+        if (!w.hbDone?.has(key) && typeof w.toggleHB === "function") {
+          w.toggleHB(key, di);
+        }
+      });
+    });
+  });
+  await page.waitForTimeout(300);
   return true;
 }
 
