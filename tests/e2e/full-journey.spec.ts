@@ -218,52 +218,93 @@ test.describe("Full AESDR Course Journey", () => {
 
 // ─── ADVANCE VIA NEXT BUTTON ─────────────────────────────────────
 
-// Calls handleNext() inside the iframe via a locator-scoped evaluate so
-// `window` is unambiguously the iframe's window (avoids picking the wrong
-// frame when Next.js HMR / Vercel Analytics inject extra contexts).
+// Locate the lesson iframe's concrete Frame object (not FrameLocator).
+// Filters by URL so we pick the lesson iframe even when Next.js HMR
+// / Vercel Analytics inject additional frames.
+function findLessonFrame(page: Page) {
+  return page
+    .frames()
+    .find((f) => /\/course\/\d+\/units\/\d+/.test(f.url()));
+}
+
 async function advanceViaNext(
-  frame: FrameLocator,
+  _frame: FrameLocator,
   page: Page
 ): Promise<boolean> {
-  const beforeId = await frame
-    .locator(".screen.active")
-    .getAttribute("id")
-    .catch(() => null);
+  const lessonFrame = findLessonFrame(page);
+  if (!lessonFrame) {
+    console.log(
+      `    [advance] no lesson frame — urls: ${page.frames().map((f) => f.url()).join(" | ")}`
+    );
+    return false;
+  }
 
-  const result = await frame
-    .locator("#btnNext")
-    .evaluate((btn) => {
-      const b = btn as HTMLButtonElement;
-      if (b.disabled) return { ok: false, reason: "disabled" };
-      const w = (b.ownerDocument.defaultView ?? window) as unknown as {
+  // Read state directly from the iframe's window — source of truth
+  const before = await lessonFrame
+    .evaluate(() => {
+      const w = window as unknown as {
+        cur?: number;
+        handleNext?: unknown;
+        next?: unknown;
+      };
+      const btn = document.getElementById(
+        "btnNext"
+      ) as HTMLButtonElement | null;
+      return {
+        cur: typeof w.cur === "number" ? w.cur : -1,
+        hasHandleNext: typeof w.handleNext === "function",
+        hasNext: typeof w.next === "function",
+        btnExists: !!btn,
+        btnDisabled: btn ? btn.disabled : true,
+      };
+    })
+    .catch((e) => ({
+      cur: -1,
+      hasHandleNext: false,
+      hasNext: false,
+      btnExists: false,
+      btnDisabled: true,
+      error: String(e),
+    }));
+
+  if (before.btnDisabled || !before.btnExists) return false;
+
+  // Call handleNext() in the lesson frame. Use the CONCRETE Frame so
+  // there's no ambiguity about which context the code runs in.
+  const called = await lessonFrame
+    .evaluate(() => {
+      const w = window as unknown as {
         handleNext?: () => void;
         next?: () => void;
       };
-      try {
-        if (typeof w.handleNext === "function") {
-          w.handleNext();
-          return { ok: true };
-        }
-        if (typeof w.next === "function") {
-          w.next();
-          return { ok: true };
-        }
-        b.click();
-        return { ok: true };
-      } catch (e) {
-        return { ok: false, reason: String(e) };
+      if (typeof w.handleNext === "function") {
+        w.handleNext();
+        return "handleNext";
       }
+      if (typeof w.next === "function") {
+        w.next();
+        return "next";
+      }
+      return "none";
     })
-    .catch(() => ({ ok: false, reason: "locator-failed" }));
-
-  if (!result.ok) return false;
+    .catch((e) => `err:${e}`);
 
   await page.waitForTimeout(700);
-  const afterId = await frame
-    .locator(".screen.active")
-    .getAttribute("id")
-    .catch(() => null);
-  return !!(afterId && afterId !== beforeId);
+
+  const after = await lessonFrame
+    .evaluate(() => {
+      const w = window as unknown as { cur?: number };
+      return typeof w.cur === "number" ? w.cur : -1;
+    })
+    .catch(() => -1);
+
+  const advanced = after !== before.cur && after !== -1;
+  if (!advanced) {
+    console.log(
+      `    [advance] before.cur=${before.cur} called=${called} after.cur=${after} hasHN=${before.hasHandleNext}`
+    );
+  }
+  return advanced;
 }
 
 // ─── SCREEN COMPLETION ───────────────────────────────────────────
