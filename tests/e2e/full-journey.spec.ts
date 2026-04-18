@@ -151,16 +151,21 @@ test.describe("Full AESDR Course Journey", () => {
           // Retry loop: keep trying to enable Next button
           let advanced = false;
           for (let retry = 0; retry < 6; retry++) {
-            const disabled = await nextBtn.isDisabled().catch(() => true);
-            if (!disabled) {
-              await nextBtn.click();
+            // Use evaluate for an atomic disabled-check-and-click to avoid
+            // Playwright actionability issues with iframe buttons
+            const clicked = await nextBtn.evaluate((el: HTMLButtonElement) => {
+              if (!el.disabled) { el.click(); return true; }
+              return false;
+            }).catch(() => false);
+
+            if (clicked) {
               await page.waitForTimeout(600);
               advanced = true;
               break;
             }
             if (retry === 0) console.log(`  L${lesson} U${unit} s${screenNum}: Next disabled, retrying...`);
             await completeScreen(frame, screenNum, page);
-            await page.waitForTimeout(800);
+            await page.waitForTimeout(500);
           }
 
           if (!advanced) {
