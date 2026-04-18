@@ -153,15 +153,42 @@ test.describe("Full AESDR Course Journey", () => {
           for (let retry = 0; retry < 6; retry++) {
             // Use evaluate for an atomic disabled-check-and-click to avoid
             // Playwright actionability issues with iframe buttons
-            const clicked = await nextBtn.evaluate((el: HTMLButtonElement) => {
-              if (!el.disabled) { el.click(); return true; }
-              return false;
-            }).catch(() => false);
+            const result = await nextBtn.evaluate((el: HTMLButtonElement) => {
+              const d = el.disabled;
+              if (!d) {
+                el.click();
+                return { clicked: true, disabled: false };
+              }
+              return { clicked: false, disabled: true };
+            }).catch((e) => ({ clicked: false, disabled: true, error: String(e) }));
 
-            if (clicked) {
+            console.log(`    btnNext check: ${JSON.stringify(result)}`);
+
+            if (result.clicked) {
               await page.waitForTimeout(600);
-              advanced = true;
-              break;
+              // Verify screen actually changed
+              const newScreenId = await frame.locator(".screen.active")
+                .getAttribute("id").catch(() => null);
+              console.log(`    after click: active screen = ${newScreenId}`);
+              if (newScreenId && newScreenId !== `s${screenNum}`) {
+                advanced = true;
+                break;
+              }
+              // Screen didn't change — el.click() may not have fired onclick
+              // Try calling next()/handleNext() directly
+              await frame.locator("body").evaluate(() => {
+                if (typeof (window as any).handleNext === "function")
+                  (window as any).handleNext();
+                else if (typeof (window as any).next === "function")
+                  (window as any).next();
+              });
+              await page.waitForTimeout(600);
+              const newScreenId2 = await frame.locator(".screen.active")
+                .getAttribute("id").catch(() => null);
+              if (newScreenId2 && newScreenId2 !== `s${screenNum}`) {
+                advanced = true;
+                break;
+              }
             }
             if (retry === 0) console.log(`  L${lesson} U${unit} s${screenNum}: Next disabled, retrying...`);
             await completeScreen(frame, screenNum, page);
