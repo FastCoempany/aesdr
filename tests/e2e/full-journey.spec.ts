@@ -239,38 +239,30 @@ async function advanceViaNext(
     return false;
   }
 
-  // Read state directly from the iframe's window — source of truth
+  // `cur` is declared with `let` in the lesson script so it's NOT a
+  // property of `window` — we detect advance via the DOM instead.
   const before = await lessonFrame
     .evaluate(() => {
-      const w = window as unknown as {
-        cur?: number;
-        handleNext?: unknown;
-        next?: unknown;
-      };
       const btn = document.getElementById(
         "btnNext"
       ) as HTMLButtonElement | null;
+      const active = document.querySelector(".screen.active");
       return {
-        cur: typeof w.cur === "number" ? w.cur : -1,
-        hasHandleNext: typeof w.handleNext === "function",
-        hasNext: typeof w.next === "function",
+        activeId: active?.id ?? null,
+        hasHandleNext: typeof (window as unknown as { handleNext?: unknown }).handleNext === "function",
         btnExists: !!btn,
         btnDisabled: btn ? btn.disabled : true,
       };
     })
-    .catch((e) => ({
-      cur: -1,
+    .catch(() => ({
+      activeId: null as string | null,
       hasHandleNext: false,
-      hasNext: false,
       btnExists: false,
       btnDisabled: true,
-      error: String(e),
     }));
 
   if (before.btnDisabled || !before.btnExists) return false;
 
-  // Call handleNext() in the lesson frame. Use the CONCRETE Frame so
-  // there's no ambiguity about which context the code runs in.
   const called = await lessonFrame
     .evaluate(() => {
       const w = window as unknown as {
@@ -291,17 +283,14 @@ async function advanceViaNext(
 
   await page.waitForTimeout(700);
 
-  const after = await lessonFrame
-    .evaluate(() => {
-      const w = window as unknown as { cur?: number };
-      return typeof w.cur === "number" ? w.cur : -1;
-    })
-    .catch(() => -1);
+  const afterId = await lessonFrame
+    .evaluate(() => document.querySelector(".screen.active")?.id ?? null)
+    .catch(() => null);
 
-  const advanced = after !== before.cur && after !== -1;
+  const advanced = afterId !== null && afterId !== before.activeId;
   if (!advanced) {
     console.log(
-      `    [advance] before.cur=${before.cur} called=${called} after.cur=${after} hasHN=${before.hasHandleNext}`
+      `    [advance] before=${before.activeId} called=${called} after=${afterId} hasHN=${before.hasHandleNext}`
     );
   }
   return advanced;
