@@ -150,45 +150,15 @@ test.describe("Full AESDR Course Journey", () => {
 
           // Retry loop: keep trying to enable Next button
           let advanced = false;
-          for (let retry = 0; retry < 6; retry++) {
-            // Strategy 1: use the concrete Frame to call next() directly
-            const iframeFrame = page.frames().find(f => f !== page.mainFrame());
-            if (iframeFrame) {
-              const didAdvance = await iframeFrame.evaluate(() => {
-                const btn = document.getElementById("btnNext") as HTMLButtonElement | null;
-                if (btn && btn.disabled) return false;
-                const cur = (window as any).cur;
-                if (typeof (window as any).handleNext === "function") {
-                  (window as any).handleNext();
-                } else if (typeof (window as any).next === "function") {
-                  (window as any).next();
-                }
-                return (window as any).cur !== cur;
-              }).catch(() => false);
-
-              if (didAdvance) {
-                await page.waitForTimeout(600);
-                advanced = true;
-                break;
-              }
+          for (let retry = 0; retry < 8; retry++) {
+            if (await advanceViaNext(frame, page)) {
+              advanced = true;
+              break;
             }
-
-            // Strategy 2: try Playwright's native click with force
-            const isDisabled = await nextBtn.evaluate(
-              (el: HTMLButtonElement) => el.disabled
-            ).catch(() => true);
-            if (!isDisabled) {
-              await nextBtn.click({ force: true, timeout: 3000 }).catch(() => {});
-              await page.waitForTimeout(600);
-              const newId = await frame.locator(".screen.active")
-                .getAttribute("id").catch(() => null);
-              if (newId && newId !== `s${screenNum}`) {
-                advanced = true;
-                break;
-              }
-            }
-
-            if (retry === 0) console.log(`  L${lesson} U${unit} s${screenNum}: Next disabled, retrying...`);
+            if (retry === 0)
+              console.log(
+                `  L${lesson} U${unit} s${screenNum}: Next disabled, retrying...`
+              );
             await completeScreen(frame, screenNum, page);
             await page.waitForTimeout(500);
           }
@@ -245,6 +215,56 @@ test.describe("Full AESDR Course Journey", () => {
     });
   });
 });
+
+// ─── ADVANCE VIA NEXT BUTTON ─────────────────────────────────────
+
+// Calls handleNext() inside the iframe via a locator-scoped evaluate so
+// `window` is unambiguously the iframe's window (avoids picking the wrong
+// frame when Next.js HMR / Vercel Analytics inject extra contexts).
+async function advanceViaNext(
+  frame: FrameLocator,
+  page: Page
+): Promise<boolean> {
+  const beforeId = await frame
+    .locator(".screen.active")
+    .getAttribute("id")
+    .catch(() => null);
+
+  const result = await frame
+    .locator("#btnNext")
+    .evaluate((btn) => {
+      const b = btn as HTMLButtonElement;
+      if (b.disabled) return { ok: false, reason: "disabled" };
+      const w = (b.ownerDocument.defaultView ?? window) as unknown as {
+        handleNext?: () => void;
+        next?: () => void;
+      };
+      try {
+        if (typeof w.handleNext === "function") {
+          w.handleNext();
+          return { ok: true };
+        }
+        if (typeof w.next === "function") {
+          w.next();
+          return { ok: true };
+        }
+        b.click();
+        return { ok: true };
+      } catch (e) {
+        return { ok: false, reason: String(e) };
+      }
+    })
+    .catch(() => ({ ok: false, reason: "locator-failed" }));
+
+  if (!result.ok) return false;
+
+  await page.waitForTimeout(700);
+  const afterId = await frame
+    .locator(".screen.active")
+    .getAttribute("id")
+    .catch(() => null);
+  return !!(afterId && afterId !== beforeId);
+}
 
 // ─── SCREEN COMPLETION ───────────────────────────────────────────
 
