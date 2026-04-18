@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { markLessonComplete, saveLessonProgress } from "@/app/actions/progress";
+import { markLessonComplete } from "@/app/actions/progress";
 import { saveProgressLocally } from "@/utils/progress/local-storage";
 import { TIMING } from "@/lib/config";
 
@@ -46,7 +46,14 @@ export default function ProgressSaver({
       if (debounceRef.current) clearTimeout(debounceRef.current);
       debounceRef.current = setTimeout(() => {
         if (isAuthenticated) {
-          saveLessonProgress(lessonId, screen, stateData).catch(() => {
+          fetch("/api/progress", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ lessonId, lastScreen: screen, stateData }),
+          }).then((res) => {
+            if (!res.ok) throw new Error(String(res.status));
+            failCountRef.current = 0;
+          }).catch(() => {
             failCountRef.current += 1;
             if (failCountRef.current >= TIMING.progress.maxServerFailures) {
               setSessionExpired(true);
