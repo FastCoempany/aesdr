@@ -170,9 +170,12 @@ test.describe("Full AESDR Course Journey", () => {
             await page.screenshot({
               path: `tests/e2e/results/STUCK-L${lesson}-U${unit}-S${screenNum}.png`,
             });
-            await frame.locator("body").evaluate(() => {
-              if (typeof (window as any).next === "function")
-                (window as any).next();
+            await page.evaluate(() => {
+              const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+              if (iframe?.contentWindow) {
+                const w = iframe.contentWindow as any;
+                if (typeof w.next === "function") w.next();
+              }
             });
             await page.waitForTimeout(600);
             screensDone++;
@@ -218,23 +221,12 @@ test.describe("Full AESDR Course Journey", () => {
 
 // ─── ADVANCE VIA NEXT BUTTON ─────────────────────────────────────
 
-async function getActiveScreenId(
-  frame: FrameLocator
-): Promise<string | null> {
-  return frame
-    .locator(".screen.active")
-    .first()
-    .getAttribute("id")
-    .catch(() => null);
-}
-
 async function advanceViaNext(
   frame: FrameLocator,
   page: Page
 ): Promise<boolean> {
+  // Check button state via FrameLocator (known to work for all handlers)
   const nextBtn = frame.locator("#btnNext");
-
-  // Quick gate: is the button visible and enabled?
   const visible = await nextBtn
     .isVisible({ timeout: 1000 })
     .catch(() => false);
@@ -243,41 +235,48 @@ async function advanceViaNext(
   const disabled = await nextBtn.isDisabled().catch(() => true);
   if (disabled) return false;
 
-  const beforeId = await getActiveScreenId(frame);
+  // Advance via PARENT page reaching into iframe.contentWindow.
+  // Bypasses both FrameLocator evaluate and concrete Frame evaluate.
+  // Works because iframe sandbox includes allow-same-origin.
+  const result = await page.evaluate(() => {
+    const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+    if (!iframe?.contentWindow) return { ok: false, reason: "no-iframe" };
+    const w = iframe.contentWindow as unknown as {
+      handleNext?: () => void;
+      next?: () => void;
+    };
+    const activeId =
+      iframe.contentDocument?.querySelector(".screen.active")?.id ?? null;
+    try {
+      if (typeof w.handleNext === "function") {
+        w.handleNext();
+      } else if (typeof w.next === "function") {
+        w.next();
+      } else {
+        return { ok: false, reason: "no-function" };
+      }
+    } catch (e) {
+      return { ok: false, reason: String(e) };
+    }
+    const afterId =
+      iframe.contentDocument?.querySelector(".screen.active")?.id ?? null;
+    return { ok: true, before: activeId, after: afterId };
+  });
 
-  // Strategy A: native Playwright click (CDP Input.dispatchMouseEvent)
-  await nextBtn.click({ force: true, timeout: 3000 }).catch(() => {});
+  if (!result.ok) {
+    console.log(`    [advance] parent-eval failed: ${result.reason}`);
+    return false;
+  }
+
   await page.waitForTimeout(600);
-  let afterId = await getActiveScreenId(frame);
-  if (afterId && afterId !== beforeId) return true;
 
-  // Strategy B: FrameLocator evaluate calling handleNext() on window
-  // (this is the same CDP path the STUCK fallback used successfully)
-  await frame
-    .locator("body")
-    .evaluate(() => {
-      const w = window as unknown as { handleNext?: () => void };
-      if (typeof w.handleNext === "function") w.handleNext();
-    })
-    .catch(() => {});
-  await page.waitForTimeout(600);
-  afterId = await getActiveScreenId(frame);
-  if (afterId && afterId !== beforeId) return true;
-
-  // Strategy C: FrameLocator evaluate calling next() directly
-  await frame
-    .locator("body")
-    .evaluate(() => {
-      const w = window as unknown as { next?: () => void };
-      if (typeof w.next === "function") w.next();
-    })
-    .catch(() => {});
-  await page.waitForTimeout(600);
-  afterId = await getActiveScreenId(frame);
-  if (afterId && afterId !== beforeId) return true;
-
-  console.log(`    [advance] ALL 3 strategies failed: before=${beforeId} after=${afterId}`);
-  return false;
+  const advanced = !!(result.after && result.after !== result.before);
+  if (!advanced) {
+    console.log(
+      `    [advance] parent-eval: before=${result.before} after=${result.after}`
+    );
+  }
+  return advanced;
 }
 
 // ─── SCREEN COMPLETION ───────────────────────────────────────────
