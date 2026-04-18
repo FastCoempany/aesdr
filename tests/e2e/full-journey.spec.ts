@@ -151,45 +151,43 @@ test.describe("Full AESDR Course Journey", () => {
           // Retry loop: keep trying to enable Next button
           let advanced = false;
           for (let retry = 0; retry < 6; retry++) {
-            // Use evaluate for an atomic disabled-check-and-click to avoid
-            // Playwright actionability issues with iframe buttons
-            const result = await nextBtn.evaluate((el: HTMLButtonElement) => {
-              const d = el.disabled;
-              if (!d) {
-                el.click();
-                return { clicked: true, disabled: false };
-              }
-              return { clicked: false, disabled: true };
-            }).catch((e) => ({ clicked: false, disabled: true, error: String(e) }));
-
-            console.log(`    btnNext check: ${JSON.stringify(result)}`);
-
-            if (result.clicked) {
-              await page.waitForTimeout(600);
-              // Verify screen actually changed
-              const newScreenId = await frame.locator(".screen.active")
-                .getAttribute("id").catch(() => null);
-              console.log(`    after click: active screen = ${newScreenId}`);
-              if (newScreenId && newScreenId !== `s${screenNum}`) {
-                advanced = true;
-                break;
-              }
-              // Screen didn't change — el.click() may not have fired onclick
-              // Try calling next()/handleNext() directly
-              await frame.locator("body").evaluate(() => {
-                if (typeof (window as any).handleNext === "function")
+            // Strategy 1: use the concrete Frame to call next() directly
+            const iframeFrame = page.frames().find(f => f !== page.mainFrame());
+            if (iframeFrame) {
+              const didAdvance = await iframeFrame.evaluate(() => {
+                const btn = document.getElementById("btnNext") as HTMLButtonElement | null;
+                if (btn && btn.disabled) return false;
+                const cur = (window as any).cur;
+                if (typeof (window as any).handleNext === "function") {
                   (window as any).handleNext();
-                else if (typeof (window as any).next === "function")
+                } else if (typeof (window as any).next === "function") {
                   (window as any).next();
-              });
-              await page.waitForTimeout(600);
-              const newScreenId2 = await frame.locator(".screen.active")
-                .getAttribute("id").catch(() => null);
-              if (newScreenId2 && newScreenId2 !== `s${screenNum}`) {
+                }
+                return (window as any).cur !== cur;
+              }).catch(() => false);
+
+              if (didAdvance) {
+                await page.waitForTimeout(600);
                 advanced = true;
                 break;
               }
             }
+
+            // Strategy 2: try Playwright's native click with force
+            const isDisabled = await nextBtn.evaluate(
+              (el: HTMLButtonElement) => el.disabled
+            ).catch(() => true);
+            if (!isDisabled) {
+              await nextBtn.click({ force: true, timeout: 3000 }).catch(() => {});
+              await page.waitForTimeout(600);
+              const newId = await frame.locator(".screen.active")
+                .getAttribute("id").catch(() => null);
+              if (newId && newId !== `s${screenNum}`) {
+                advanced = true;
+                break;
+              }
+            }
+
             if (retry === 0) console.log(`  L${lesson} U${unit} s${screenNum}: Next disabled, retrying...`);
             await completeScreen(frame, screenNum, page);
             await page.waitForTimeout(500);
