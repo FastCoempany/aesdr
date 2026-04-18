@@ -339,6 +339,7 @@ async function completeScreen(
   if (await handleConversation(frame, page)) actions.push("conversation");
   if (await handleSortExercise(frame, page)) actions.push("sort");
   if (await handleFaultMode(frame, page)) actions.push("fm");
+  if (await handleTranscriptTagger(frame, page)) actions.push("tx");
   if (await handlePlanExercise(frame, page)) actions.push("plan");
   if (await handleAckExercise(frame, page)) actions.push("ack");
   if (await handleAuditExercise(frame, page)) actions.push("audit");
@@ -1029,6 +1030,51 @@ async function handleFaultMode(_frame: FrameLocator, page: Page): Promise<boolea
   return true;
 }
 
+// ─── TRANSCRIPT TAGGER ────────────────────────────────────────
+
+async function handleTranscriptTagger(_frame: FrameLocator, page: Page): Promise<boolean> {
+  const hasTx = await page.evaluate(() => {
+    const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+    if (!iframe?.contentDocument) return false;
+    return !!iframe.contentDocument.querySelector(".screen.active #txLines");
+  });
+  if (!hasTx) return false;
+
+  const tags = ["strong", "needs"];
+
+  for (let i = 0; i < 20; i++) {
+    for (const tag of tags) {
+      const result = await page.evaluate(({ tag }) => {
+        const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+        if (!iframe?.contentDocument || !iframe?.contentWindow) return "no-iframe";
+        const line = iframe.contentDocument.querySelector(
+          ".screen.active .tx-line:not(.resolved)"
+        ) as HTMLElement | null;
+        if (!line) return "done";
+        const lineId = line.id;
+        const idx = parseInt(lineId.replace("txl", ""), 10);
+        const btnId = tag === "strong" ? `txbS${idx}` : `txbN${idx}`;
+        const btn = iframe.contentDocument.getElementById(btnId) as HTMLButtonElement | null;
+        if (!btn || btn.disabled) return "skip";
+        const w = iframe.contentWindow as unknown as { tagTx?: (i: number, t: string) => void };
+        if (typeof w.tagTx === "function") {
+          w.tagTx(idx, tag);
+          return line.classList.contains("resolved") ? "resolved" : "wrong";
+        }
+        return "skip";
+      }, { tag });
+
+      if (result === "done" || result === "no-iframe") return true;
+      if (result === "resolved") {
+        await page.waitForTimeout(200);
+        break;
+      }
+      await page.waitForTimeout(150);
+    }
+  }
+  return true;
+}
+
 // ─── PLAN EXERCISE ────────────────────────────────────────────
 
 async function handlePlanExercise(frame: FrameLocator, page: Page): Promise<boolean> {
@@ -1138,7 +1184,7 @@ async function handleEmailRepair(frame: FrameLocator, page: Page): Promise<boole
 // ─── SECTION PICKER (shared: ack, email, and similar submit-and-verify) ──
 
 async function handleSectionPicker(
-  frame: FrameLocator,
+  _frame: FrameLocator,
   page: Page,
   opts: {
     sectionSelector: string;
@@ -1149,65 +1195,97 @@ async function handleSectionPicker(
   }
 ): Promise<boolean> {
   for (let attempt = 0; attempt < 5; attempt++) {
-    const sections = frame.locator(opts.sectionSelector);
-    const secCount = await sections.count().catch(() => 0);
+    // Pick one choice per section, submit, check if done — all via page.evaluate
+    const pickResult = await page.evaluate(({ sectionSel, choiceSel, submitSel, doneSel, att }) => {
+      const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+      if (!iframe?.contentDocument || !iframe?.contentWindow) return "no-iframe";
+      const doc = iframe.contentDocument;
+      const w = iframe.contentWindow as any;
 
-    for (let si = 0; si < secCount; si++) {
-      const sec = sections.nth(si);
-      const choices = sec.locator(`${opts.choiceSelector}:not(.locked)`);
-      const choiceCount = await choices.count().catch(() => 0);
-      if (choiceCount > 0) {
-        await choices.nth(attempt % choiceCount).click();
-        await page.waitForTimeout(300);
-      }
-    }
+      // Check if already done
+      if (doc.querySelector(doneSel)) return "done";
 
-    const submitBtn = frame.locator(opts.submitSelector);
-    if (await submitBtn.isVisible({ timeout: 300 }).catch(() => false)) {
-      await submitBtn.click();
-      await page.waitForTimeout(500);
-    }
+      // Pick one choice per section
+      const sections = doc.querySelectorAll(sectionSel);
+      sections.forEach((sec, si) => {
+        const choices = sec.querySelectorAll(`${choiceSel}:not(.locked)`) as NodeListOf<HTMLButtonElement>;
+        if (choices.length > 0) {
+          choices[att % choices.length].click();
+        }
+      });
 
-    const doneBox = frame.locator(opts.doneSelector);
-    if (await doneBox.isVisible({ timeout: 300 }).catch(() => false)) return true;
+      return "picked";
+    }, { sectionSel: opts.sectionSelector, choiceSel: opts.choiceSelector, submitSel: opts.submitSelector, doneSel: opts.doneSelector, att: attempt });
+
+    if (pickResult === "done") return true;
+    if (pickResult === "no-iframe") return true;
+
+    await page.waitForTimeout(300);
+
+    // Click submit
+    await page.evaluate(({ submitSel }) => {
+      const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+      const btn = iframe?.contentDocument?.querySelector(submitSel) as HTMLButtonElement | null;
+      if (btn && !btn.disabled) btn.click();
+    }, { submitSel: opts.submitSelector });
+    await page.waitForTimeout(500);
+
+    // Check if done after submit
+    const doneAfterSubmit = await page.evaluate(({ doneSel }) => {
+      const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+      return !!iframe?.contentDocument?.querySelector(doneSel);
+    }, { doneSel: opts.doneSelector });
+    if (doneAfterSubmit) return true;
 
     // Failed — read correct answers, reset, pick correct ones
-    const correctIndices: Record<number, number> = {};
-    for (let si = 0; si < secCount; si++) {
-      const sec = sections.nth(si);
-      const allChoices = sec.locator(opts.choiceSelector);
-      const total = await allChoices.count().catch(() => 0);
-      for (let ci = 0; ci < total; ci++) {
-        const isCorrect = await allChoices.nth(ci)
-          .evaluate((el) => el.classList.contains("correct"))
-          .catch(() => false);
-        if (isCorrect) { correctIndices[si] = ci; break; }
-      }
-    }
+    const correctIndices = await page.evaluate(({ sectionSel, choiceSel, resetFn }) => {
+      const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+      if (!iframe?.contentDocument || !iframe?.contentWindow) return {};
+      const doc = iframe.contentDocument;
+      const w = iframe.contentWindow as any;
+      const result: Record<number, number> = {};
 
-    await frame.locator("body").evaluate((_, fn) => {
-      if (typeof (window as any)[fn] === "function") (window as any)[fn]();
-    }, opts.resetFn);
+      const sections = doc.querySelectorAll(sectionSel);
+      sections.forEach((sec, si) => {
+        const choices = sec.querySelectorAll(choiceSel);
+        choices.forEach((c, ci) => {
+          if (c.classList.contains("correct")) result[si] = ci;
+        });
+      });
+
+      // Reset
+      if (typeof w[resetFn] === "function") w[resetFn]();
+
+      return result;
+    }, { sectionSel: opts.sectionSelector, choiceSel: opts.choiceSelector, resetFn: opts.resetFn });
+
     await page.waitForTimeout(400);
 
-    for (let si = 0; si < secCount; si++) {
-      const ci = correctIndices[si] ?? 0;
-      const sec = sections.nth(si);
-      const choice = sec.locator(opts.choiceSelector).nth(ci);
-      if (await choice.isVisible({ timeout: 200 }).catch(() => false)) {
-        await choice.click();
-        await page.waitForTimeout(200);
-      }
-    }
+    // Pick correct answers and submit
+    await page.evaluate(({ sectionSel, choiceSel, submitSel, indices }) => {
+      const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+      if (!iframe?.contentDocument) return;
+      const doc = iframe.contentDocument;
 
-    const submitBtn2 = frame.locator(opts.submitSelector);
-    if (await submitBtn2.isVisible({ timeout: 300 }).catch(() => false)) {
-      await submitBtn2.click();
-      await page.waitForTimeout(500);
-    }
+      const sections = doc.querySelectorAll(sectionSel);
+      sections.forEach((sec, si) => {
+        const ci = indices[si] ?? 0;
+        const choices = sec.querySelectorAll(choiceSel) as NodeListOf<HTMLButtonElement>;
+        if (choices[ci]) choices[ci].click();
+      });
 
-    if (await frame.locator(opts.doneSelector).isVisible({ timeout: 300 }).catch(() => false))
-      return true;
+      // Submit
+      const btn = doc.querySelector(submitSel) as HTMLButtonElement | null;
+      if (btn && !btn.disabled) btn.click();
+    }, { sectionSel: opts.sectionSelector, choiceSel: opts.choiceSelector, submitSel: opts.submitSelector, indices: correctIndices });
+
+    await page.waitForTimeout(500);
+
+    const finalDone = await page.evaluate(({ doneSel }) => {
+      const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+      return !!iframe?.contentDocument?.querySelector(doneSel);
+    }, { doneSel: opts.doneSelector });
+    if (finalDone) return true;
   }
   return true;
 }
