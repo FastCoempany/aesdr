@@ -988,34 +988,42 @@ async function handleConversation(frame: FrameLocator, page: Page): Promise<bool
 
 // ─── FAULT MODE TAGGER ────────────────────────────────────────
 
-async function handleFaultMode(frame: FrameLocator, page: Page): Promise<boolean> {
-  const fmCards = frame.locator(".screen.active #fmCards");
-  const hasFM = await fmCards.isVisible({ timeout: 200 }).catch(() => false);
+async function handleFaultMode(_frame: FrameLocator, page: Page): Promise<boolean> {
+  const hasFM = await page.evaluate(() => {
+    const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+    if (!iframe?.contentDocument) return false;
+    return !!iframe.contentDocument.querySelector(".screen.active #fmCards");
+  });
   if (!hasFM) return false;
 
   const tags = ["time", "onesz", "fear"];
 
   for (let i = 0; i < 10; i++) {
-    const card = frame.locator(`.screen.active .fm-card:not(.resolved)`).first();
-    const visible = await card.isVisible({ timeout: 200 }).catch(() => false);
-    if (!visible) break;
-
-    const cardId = await card.getAttribute("id").catch(() => "");
-    if (!cardId) break;
-    const idx = cardId.replace("fmc", "");
-
     for (const tag of tags) {
-      const btn = frame.locator(`#fmb${idx}_${tag}`);
-      const btnDisabled = await btn.isDisabled().catch(() => true);
-      if (btnDisabled) continue;
+      const result = await page.evaluate(({ tag }) => {
+        const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+        if (!iframe?.contentDocument || !iframe?.contentWindow) return "no-iframe";
+        const card = iframe.contentDocument.querySelector(
+          ".screen.active .fm-card:not(.resolved)"
+        ) as HTMLElement | null;
+        if (!card) return "done";
+        const idx = parseInt(card.id.replace("fmc", ""), 10);
+        const btn = iframe.contentDocument.getElementById(`fmb${idx}_${tag}`) as HTMLButtonElement | null;
+        if (!btn || btn.disabled) return "skip";
+        const w = iframe.contentWindow as unknown as { tagFM?: (i: number, t: string) => void };
+        if (typeof w.tagFM === "function") {
+          w.tagFM(idx, tag);
+          return card.classList.contains("resolved") ? "resolved" : "wrong";
+        }
+        return "skip";
+      }, { tag });
 
-      await btn.click();
-      await page.waitForTimeout(250);
-
-      const resolved = await card
-        .evaluate((el) => el.classList.contains("resolved"))
-        .catch(() => false);
-      if (resolved) break;
+      if (result === "done" || result === "no-iframe") return true;
+      if (result === "resolved") {
+        await page.waitForTimeout(250);
+        break;
+      }
+      await page.waitForTimeout(150);
     }
   }
   return true;

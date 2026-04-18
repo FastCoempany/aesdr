@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { markLessonComplete } from "@/app/actions/progress";
 import { saveProgressLocally } from "@/utils/progress/local-storage";
 import { TIMING } from "@/lib/config";
 
@@ -87,7 +86,11 @@ export default function ProgressSaver({
 
       if (type === "aesdr:complete") {
         if (isAuthenticated) {
-          markLessonComplete(lessonId).catch(() => {});
+          fetch("/api/progress/complete", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ lessonId }),
+          }).catch(() => {});
           saveProgressLocally(lessonId, { is_completed: true });
         }
       }
