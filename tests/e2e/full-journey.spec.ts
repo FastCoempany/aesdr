@@ -106,33 +106,36 @@ test.describe("Full AESDR Course Journey", () => {
         const maxScreens = 20;
 
         while (screensDone < maxScreens) {
-          const activeScreen = frame.locator(".screen.active");
-          const isVisible = await activeScreen
-            .isVisible({ timeout: 3000 })
-            .catch(() => false);
-          if (!isVisible) break;
+          // Use parent-window evaluate for all iframe state checks
+          // to avoid FrameLocator resolution issues during RSC refreshes
+          const iframeState = await page.evaluate(() => {
+            const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+            if (!iframe?.contentDocument) return { hasContent: false } as const;
+            const active = iframe.contentDocument.querySelector(".screen.active") as HTMLElement | null;
+            if (!active) return { hasContent: true, hasActive: false } as const;
+            const bnav = iframe.contentDocument.getElementById("bottomnav") as HTMLElement | null;
+            const bnavDisplay = bnav ? getComputedStyle(bnav).display : "none";
+            const btn = iframe.contentDocument.getElementById("btnNext") as HTMLButtonElement | null;
+            return {
+              hasContent: true,
+              hasActive: true,
+              screenId: active.id,
+              bnavDisplay,
+              btnNextExists: !!btn,
+              btnNextDisabled: btn?.disabled ?? true,
+            } as const;
+          });
 
-          const screenId = await activeScreen
-            .getAttribute("id")
-            .catch(() => null);
-          const screenNum = screenId
-            ? parseInt(screenId.replace("s", ""), 10)
+          if (!iframeState.hasContent || !iframeState.hasActive) break;
+
+          const screenNum = iframeState.screenId
+            ? parseInt(iframeState.screenId.replace("s", ""), 10)
             : screensDone;
 
           console.log(`  L${lesson} U${unit} → screen s${screenNum}`);
 
           // Check if this is the completion screen (no bottom nav)
-          const bottomNav = frame.locator("#bottomnav");
-          const navVisible = await bottomNav
-            .isVisible({ timeout: 1000 })
-            .catch(() => false);
-          const navHidden =
-            navVisible &&
-            (await bottomNav
-              .evaluate((el) => getComputedStyle(el).display === "none")
-              .catch(() => true));
-
-          if (screenNum > 0 && (!navVisible || navHidden)) {
+          if (screenNum > 0 && iframeState.bnavDisplay === "none") {
             console.log(`  L${lesson} U${unit} → COMPLETE`);
             break;
           }
@@ -140,23 +143,42 @@ test.describe("Full AESDR Course Journey", () => {
           // Complete all interactive elements on this screen
           await completeScreen(frame, screenNum, page);
 
-          // ── DEBUG: pinpoint which call hangs after completeScreen ──
-          console.log(`    DBG:1 after completeScreen`);
+          // Re-check iframe state after completing screen interactions
+          // Retry a few times to handle transient iframe reloads from RSC refreshes
+          let nextVisible = false;
+          for (let stateCheck = 0; stateCheck < 5; stateCheck++) {
+            const postState = await page.evaluate(() => {
+              const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+              if (!iframe?.contentDocument) return { ok: false, reason: "no-iframe" } as const;
+              const bnav = iframe.contentDocument.getElementById("bottomnav") as HTMLElement | null;
+              const bnavDisplay = bnav ? getComputedStyle(bnav).display : "none";
+              const btn = iframe.contentDocument.getElementById("btnNext") as HTMLButtonElement | null;
+              const activeId = iframe.contentDocument.querySelector(".screen.active")?.id ?? null;
+              return {
+                ok: true,
+                activeId,
+                bnavDisplay,
+                btnNextExists: !!btn,
+                btnNextDisabled: btn?.disabled ?? true,
+              } as const;
+            });
 
-          // Try to advance via Next button
-          const nextBtn = frame.locator("#btnNext");
-          const nextVisible = await nextBtn
-            .isVisible({ timeout: 2000 })
-            .catch(() => false);
+            nextVisible = postState.ok && postState.btnNextExists && postState.bnavDisplay !== "none";
 
-          console.log(`    DBG:2 nextVisible=${nextVisible}`);
+            if (nextVisible) break;
+
+            if (stateCheck === 4) {
+              console.log(`    [state] btnNext not reachable after retries: ${JSON.stringify(postState)}`);
+            } else {
+              await page.waitForTimeout(800);
+            }
+          }
 
           if (!nextVisible) break;
 
           // Retry loop: keep trying to enable Next button
           let advanced = false;
           for (let retry = 0; retry < 8; retry++) {
-            console.log(`    DBG:3 retry=${retry}`);
             if (await advanceViaNext(frame, page)) {
               advanced = true;
               break;
@@ -228,50 +250,47 @@ test.describe("Full AESDR Course Journey", () => {
 // ─── ADVANCE VIA NEXT BUTTON ─────────────────────────────────────
 
 async function advanceViaNext(
-  frame: FrameLocator,
+  _frame: FrameLocator,
   page: Page
 ): Promise<boolean> {
-  // Check button state via FrameLocator (known to work for all handlers)
-  const nextBtn = frame.locator("#btnNext");
-  console.log(`    DBG:A isVisible...`);
-  const visible = await nextBtn
-    .isVisible({ timeout: 1000 })
-    .catch(() => false);
-  if (!visible) { console.log(`    DBG:A not visible`); return false; }
-
-  console.log(`    DBG:B isDisabled...`);
-  const disabled = await nextBtn.isDisabled().catch(() => true);
-  if (disabled) { console.log(`    DBG:B disabled`); return false; }
-
-  // Advance via PARENT page reaching into iframe.contentWindow.
-  console.log(`    DBG:C page.evaluate...`);
+  // All checks via parent-window evaluate to avoid FrameLocator resolution issues
   const result = await page.evaluate(() => {
     const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
-    if (!iframe?.contentWindow) return { ok: false, reason: "no-iframe" };
+    if (!iframe?.contentWindow || !iframe.contentDocument)
+      return { ok: false, reason: "no-iframe" } as const;
+
+    const btn = iframe.contentDocument.getElementById("btnNext") as HTMLButtonElement | null;
+    if (!btn) return { ok: false, reason: "no-btn" } as const;
+    const bnav = iframe.contentDocument.getElementById("bottomnav") as HTMLElement | null;
+    if (!bnav || getComputedStyle(bnav).display === "none")
+      return { ok: false, reason: "nav-hidden" } as const;
+    if (btn.disabled) return { ok: false, reason: "disabled" } as const;
+
     const w = iframe.contentWindow as unknown as {
       handleNext?: () => void;
       next?: () => void;
     };
     const activeId =
-      iframe.contentDocument?.querySelector(".screen.active")?.id ?? null;
+      iframe.contentDocument.querySelector(".screen.active")?.id ?? null;
     try {
       if (typeof w.handleNext === "function") {
         w.handleNext();
       } else if (typeof w.next === "function") {
         w.next();
       } else {
-        return { ok: false, reason: "no-function" };
+        return { ok: false, reason: "no-function" } as const;
       }
     } catch (e) {
-      return { ok: false, reason: String(e) };
+      return { ok: false, reason: String(e) } as const;
     }
     const afterId =
-      iframe.contentDocument?.querySelector(".screen.active")?.id ?? null;
-    return { ok: true, before: activeId, after: afterId };
+      iframe.contentDocument.querySelector(".screen.active")?.id ?? null;
+    return { ok: true, before: activeId, after: afterId } as const;
   });
 
   if (!result.ok) {
-    console.log(`    [advance] parent-eval failed: ${result.reason}`);
+    if (result.reason !== "disabled")
+      console.log(`    [advance] ${result.reason}`);
     return false;
   }
 
@@ -280,7 +299,7 @@ async function advanceViaNext(
   const advanced = !!(result.after && result.after !== result.before);
   if (!advanced) {
     console.log(
-      `    [advance] parent-eval: before=${result.before} after=${result.after}`
+      `    [advance] no-move: before=${result.before} after=${result.after}`
     );
   }
   return advanced;
