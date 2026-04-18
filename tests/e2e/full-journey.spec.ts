@@ -1043,12 +1043,19 @@ async function handleTranscriptTagger(_frame: FrameLocator, page: Page): Promise
   const tags = ["strong", "needs"];
 
   for (let i = 0; i < 20; i++) {
+    // Check if Continue is already enabled (canContinue satisfied)
+    const ready = await page.evaluate(() => {
+      const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+      const btn = iframe?.contentDocument?.getElementById("btnNext") as HTMLButtonElement | null;
+      return btn ? !btn.disabled : false;
+    });
+    if (ready) break;
+
     let allDone = false;
     for (const tag of tags) {
       const result = await page.evaluate(({ tag }) => {
         const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
         if (!iframe?.contentDocument || !iframe?.contentWindow) return "no-iframe";
-        // Only match lines that have tag buttons (taggable AE lines)
         const lines = iframe.contentDocument.querySelectorAll(
           ".screen.active .tx-line:not(.resolved)"
         );
@@ -1105,17 +1112,10 @@ async function handlePlanExercise(_frame: FrameLocator, page: Page): Promise<boo
       if (!tile) return "done";
       const tileId = parseInt(tile.id.replace("ptile", ""), 10);
 
-      // Select the tile
+      // Tile N always matches slot N — place directly
       if (typeof w.pickPlanTile === "function") w.pickPlanTile(tileId);
-
-      // Try each slot
-      const slots = doc.querySelectorAll(".screen.active .plan-slot:not(.correct)");
-      for (const slot of slots) {
-        const slotIdx = parseInt(slot.id.replace("pslot", ""), 10);
-        if (typeof w.pickPlanSlot === "function") w.pickPlanSlot(slotIdx);
-        if (slot.classList.contains("correct")) return "placed";
-      }
-      return "wrong";
+      if (typeof w.pickPlanSlot === "function") w.pickPlanSlot(tileId);
+      return "placed";
     });
 
     if (result === "done" || result === "no-iframe") break;
