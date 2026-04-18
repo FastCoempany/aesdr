@@ -1043,70 +1043,83 @@ async function handleTranscriptTagger(_frame: FrameLocator, page: Page): Promise
   const tags = ["strong", "needs"];
 
   for (let i = 0; i < 20; i++) {
+    let allDone = false;
     for (const tag of tags) {
       const result = await page.evaluate(({ tag }) => {
         const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
         if (!iframe?.contentDocument || !iframe?.contentWindow) return "no-iframe";
-        const line = iframe.contentDocument.querySelector(
+        // Only match lines that have tag buttons (taggable AE lines)
+        const lines = iframe.contentDocument.querySelectorAll(
           ".screen.active .tx-line:not(.resolved)"
-        ) as HTMLElement | null;
-        if (!line) return "done";
-        const lineId = line.id;
-        const idx = parseInt(lineId.replace("txl", ""), 10);
+        );
+        let taggableLine: HTMLElement | null = null;
+        for (const l of lines) {
+          if (l.querySelector(".tx-tag-col")) { taggableLine = l as HTMLElement; break; }
+        }
+        if (!taggableLine) return "done";
+        const idx = parseInt(taggableLine.id.replace("txl", ""), 10);
         const btnId = tag === "strong" ? `txbS${idx}` : `txbN${idx}`;
         const btn = iframe.contentDocument.getElementById(btnId) as HTMLButtonElement | null;
         if (!btn || btn.disabled) return "skip";
         const w = iframe.contentWindow as unknown as { tagTx?: (i: number, t: string) => void };
         if (typeof w.tagTx === "function") {
           w.tagTx(idx, tag);
-          return line.classList.contains("resolved") ? "resolved" : "wrong";
+          return taggableLine.classList.contains("resolved") ? "resolved" : "wrong";
         }
         return "skip";
       }, { tag });
 
-      if (result === "done" || result === "no-iframe") return true;
+      if (result === "done" || result === "no-iframe") { allDone = true; break; }
       if (result === "resolved") {
         await page.waitForTimeout(200);
         break;
       }
       await page.waitForTimeout(150);
     }
+    if (allDone) break;
   }
   return true;
 }
 
 // ─── PLAN EXERCISE ────────────────────────────────────────────
 
-async function handlePlanExercise(frame: FrameLocator, page: Page): Promise<boolean> {
-  const planTiles = frame.locator(".screen.active #planTiles");
-  const hasPlan = await planTiles.isVisible({ timeout: 200 }).catch(() => false);
+async function handlePlanExercise(_frame: FrameLocator, page: Page): Promise<boolean> {
+  const hasPlan = await page.evaluate(() => {
+    const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+    if (!iframe?.contentDocument) return false;
+    return !!iframe.contentDocument.querySelector(".screen.active #planTiles");
+  });
   if (!hasPlan) return false;
 
   for (let attempt = 0; attempt < 30; attempt++) {
-    const tile = frame.locator(".screen.active .plan-tile:not(.placed)").first();
-    const tileVisible = await tile.isVisible({ timeout: 200 }).catch(() => false);
-    if (!tileVisible) break;
+    const result = await page.evaluate(() => {
+      const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+      if (!iframe?.contentDocument || !iframe?.contentWindow) return "no-iframe";
+      const doc = iframe.contentDocument;
+      const w = iframe.contentWindow as unknown as {
+        pickPlanTile?: (si: number) => void;
+        pickPlanSlot?: (idx: number) => void;
+      };
 
-    await tile.click();
-    await page.waitForTimeout(200);
+      const tile = doc.querySelector(".screen.active .plan-tile:not(.placed)") as HTMLElement | null;
+      if (!tile) return "done";
+      const tileId = parseInt(tile.id.replace("ptile", ""), 10);
 
-    const slots = frame.locator(".screen.active .plan-slot:not(.correct)");
-    const slotCount = await slots.count().catch(() => 0);
+      // Select the tile
+      if (typeof w.pickPlanTile === "function") w.pickPlanTile(tileId);
 
-    let placed = false;
-    for (let s = 0; s < slotCount; s++) {
-      await slots.nth(s).click();
-      await page.waitForTimeout(300);
-
-      const nowCorrect = await slots.nth(s)
-        .evaluate((el) => el.classList.contains("correct"))
-        .catch(() => false);
-      if (nowCorrect) {
-        placed = true;
-        break;
+      // Try each slot
+      const slots = doc.querySelectorAll(".screen.active .plan-slot:not(.correct)");
+      for (const slot of slots) {
+        const slotIdx = parseInt(slot.id.replace("pslot", ""), 10);
+        if (typeof w.pickPlanSlot === "function") w.pickPlanSlot(slotIdx);
+        if (slot.classList.contains("correct")) return "placed";
       }
-    }
-    if (!placed) break;
+      return "wrong";
+    });
+
+    if (result === "done" || result === "no-iframe") break;
+    await page.waitForTimeout(250);
   }
   return true;
 }
