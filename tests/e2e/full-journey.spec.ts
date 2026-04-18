@@ -1126,21 +1126,63 @@ async function handlePlanExercise(_frame: FrameLocator, page: Page): Promise<boo
 
 // ─── ACKNOWLEDGMENT BUILDER ───────────────────────────────────
 
-async function handleAckExercise(frame: FrameLocator, page: Page): Promise<boolean> {
-  const ackWrap = frame.locator(".screen.active #ackWrap");
-  const hasAck = await ackWrap.isVisible({ timeout: 200 }).catch(() => false);
+async function handleAckExercise(_frame: FrameLocator, page: Page): Promise<boolean> {
+  const hasAck = await page.evaluate(() => {
+    const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+    if (!iframe?.contentDocument) return false;
+    return !!iframe.contentDocument.querySelector(".screen.active #ackWrap");
+  });
   if (!hasAck) return false;
 
-  if (await frame.locator(".screen.active .ack-done-box.show").isVisible({ timeout: 200 }).catch(() => false))
-    return true;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const result = await page.evaluate(({ att }) => {
+      const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+      if (!iframe?.contentDocument || !iframe?.contentWindow) return { status: "no-iframe" };
+      const doc = iframe.contentDocument;
+      const w = iframe.contentWindow as any;
 
-  return handleSectionPicker(frame, page, {
-    sectionSelector: ".screen.active .ack-sections",
-    choiceSelector: ".ack-choice",
-    submitSelector: "#ackSubmitBtn",
-    doneSelector: ".screen.active .ack-done-box.show",
-    resetFn: "resetAck",
-  });
+      if (doc.querySelector(".screen.active .ack-done-box.show")) return { status: "done" };
+
+      const optGroups = doc.querySelectorAll(".screen.active .ack-choices");
+      optGroups.forEach((group, si) => {
+        const opts = group.querySelectorAll(".ack-choice:not(.locked)") as NodeListOf<HTMLButtonElement>;
+        if (opts.length > 0) {
+          if (typeof w.pickAck === "function") w.pickAck(si, att % opts.length);
+        }
+      });
+
+      if (typeof w.submitAck === "function") w.submitAck();
+      if (doc.querySelector(".screen.active .ack-done-box.show")) return { status: "done" };
+
+      const correct: Record<number, number> = {};
+      optGroups.forEach((group, si) => {
+        const opts = group.querySelectorAll(".ack-choice");
+        opts.forEach((o, oi) => {
+          if (o.classList.contains("correct")) correct[si] = oi;
+        });
+      });
+      return { status: "wrong", correct };
+    }, { att: attempt });
+
+    if (result.status === "done" || result.status === "no-iframe") return true;
+
+    if (result.status === "wrong" && result.correct) {
+      await page.waitForTimeout(300);
+      await page.evaluate(({ correct }) => {
+        const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+        if (!iframe?.contentWindow) return;
+        const w = iframe.contentWindow as any;
+        if (typeof w.resetAck === "function") w.resetAck();
+        for (const [si, oi] of Object.entries(correct)) {
+          if (typeof w.pickAck === "function") w.pickAck(Number(si), oi);
+        }
+        if (typeof w.submitAck === "function") w.submitAck();
+      }, { correct: result.correct });
+      await page.waitForTimeout(300);
+      return true;
+    }
+  }
+  return true;
 }
 
 // ─── TRUST AUDIT ──────────────────────────────────────────────
@@ -1177,21 +1219,72 @@ async function handleAuditExercise(frame: FrameLocator, page: Page): Promise<boo
 
 // ─── EMAIL REPAIR ─────────────────────────────────────────────
 
-async function handleEmailRepair(frame: FrameLocator, page: Page): Promise<boolean> {
-  const emailWrap = frame.locator(".screen.active #emailWrap");
-  const hasEmail = await emailWrap.isVisible({ timeout: 200 }).catch(() => false);
+async function handleEmailRepair(_frame: FrameLocator, page: Page): Promise<boolean> {
+  const hasEmail = await page.evaluate(() => {
+    const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+    if (!iframe?.contentDocument) return false;
+    return !!iframe.contentDocument.querySelector(".screen.active #emailWrap");
+  });
   if (!hasEmail) return false;
 
-  const doneBox = frame.locator(".screen.active .email-done.show");
-  if (await doneBox.isVisible({ timeout: 200 }).catch(() => false)) return true;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const result = await page.evaluate(({ att }) => {
+      const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+      if (!iframe?.contentDocument || !iframe?.contentWindow) return { status: "no-iframe" };
+      const doc = iframe.contentDocument;
+      const w = iframe.contentWindow as any;
 
-  return handleSectionPicker(frame, page, {
-    sectionSelector: ".screen.active .email-sections",
-    choiceSelector: ".email-opt",
-    submitSelector: "#emailSubmitBtn",
-    doneSelector: ".screen.active .email-done.show",
-    resetFn: "resetEmail",
-  });
+      // Already done?
+      if (doc.querySelector(".screen.active .email-done.show")) return { status: "done" };
+
+      // Pick one option per section via the exercise's pick function
+      const optGroups = doc.querySelectorAll(".screen.active .email-opts");
+      optGroups.forEach((group, si) => {
+        const opts = group.querySelectorAll(".email-opt:not(.locked)") as NodeListOf<HTMLButtonElement>;
+        if (opts.length > 0) {
+          const idx = att % opts.length;
+          if (typeof w.pickEmail === "function") w.pickEmail(si, idx);
+        }
+      });
+
+      // Submit
+      if (typeof w.submitEmail === "function") w.submitEmail();
+
+      // Check result
+      if (doc.querySelector(".screen.active .email-done.show")) return { status: "done" };
+
+      // Failed — read correct answers
+      const correct: Record<number, number> = {};
+      optGroups.forEach((group, si) => {
+        const opts = group.querySelectorAll(".email-opt");
+        opts.forEach((o, oi) => {
+          if (o.classList.contains("correct")) correct[si] = oi;
+        });
+      });
+
+      return { status: "wrong", correct };
+    }, { att: attempt });
+
+    if (result.status === "done" || result.status === "no-iframe") return true;
+
+    if (result.status === "wrong" && result.correct) {
+      await page.waitForTimeout(300);
+      // Reset and pick correct answers
+      await page.evaluate(({ correct }) => {
+        const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+        if (!iframe?.contentWindow) return;
+        const w = iframe.contentWindow as any;
+        if (typeof w.resetEmail === "function") w.resetEmail();
+        for (const [si, oi] of Object.entries(correct)) {
+          if (typeof w.pickEmail === "function") w.pickEmail(Number(si), oi);
+        }
+        if (typeof w.submitEmail === "function") w.submitEmail();
+      }, { correct: result.correct });
+      await page.waitForTimeout(300);
+      return true;
+    }
+  }
+  return true;
 }
 
 // ─── SECTION PICKER (shared: ack, email, and similar submit-and-verify) ──
