@@ -1600,14 +1600,15 @@ async function handleScriptBuilderExercises(_frame: FrameLocator, page: Page): P
 
     const cfgs = [
       { wrap: "bbWrap", pick: "pickBB", submit: "submitBB",
-        submitted: "bbSubmitted", passed: "bbPassed", data: "BB_SECTIONS" },
+        submitted: "bbSubmitted", passed: "bbPassed", reset: "resetBB", data: "BB_SECTIONS" },
       { wrap: "viWrap", pick: "pickVI", submit: "submitVI",
-        submitted: "viSubmitted", passed: "viPassed", data: "VI" },
+        submitted: "viSubmitted", passed: "viPassed", reset: "resetVI", data: "VI" },
     ];
 
     for (const c of cfgs) {
       if (!doc.querySelector(a + "#" + c.wrap)) continue;
       if (g(c.submitted) && g(c.passed)) return true;
+      if (g(c.submitted) && !g(c.passed) && typeof w[c.reset] === "function") w[c.reset]();
       let sections = g(c.data);
       if (sections && !Array.isArray(sections) && sections.sections) sections = sections.sections;
       if (!sections || !Array.isArray(sections)) continue;
@@ -1635,6 +1636,15 @@ async function handleTileZoneExercises(_frame: FrameLocator, page: Page): Promis
     const a = ".screen.active ";
     const g = (v: string) => { try { return w.eval(v); } catch { return null; } };
     let did = false;
+
+    // Classify Skills and Actions
+    if (doc.querySelector(a + "#clsStream") && typeof w.pickCls === "function" && typeof w.dropCls === "function") {
+      const obs = g('CLS_OBS'), order = g('CLS_ORDER');
+      if (obs && order) {
+        for (let di = 0; di < order.length; di++) { w.pickCls(di); w.dropCls(obs[order[di]].zone); }
+        did = true;
+      }
+    }
 
     // Calendar Audit
     if (doc.querySelector(a + "#calPool") && typeof w.pickCal === "function" && typeof w.dropCal === "function") {
