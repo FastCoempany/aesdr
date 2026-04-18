@@ -239,6 +239,7 @@ async function completeScreen(
   if (await handleConversation(frame, page)) actions.push("conversation");
   if (await handleSortExercise(frame, page)) actions.push("sort");
   if (await handleFaultMode(frame, page)) actions.push("fm");
+  if (await handlePlanExercise(frame, page)) actions.push("plan");
   if (await handleAckExercise(frame, page)) actions.push("ack");
   if (await handleAuditExercise(frame, page)) actions.push("audit");
   if (await handleEmailRepair(frame, page)) actions.push("email");
@@ -896,7 +897,7 @@ async function handleFaultMode(frame: FrameLocator, page: Page): Promise<boolean
 
   for (let i = 0; i < 10; i++) {
     const card = frame.locator(`.screen.active .fm-card:not(.resolved)`).first();
-    const visible = await card.isVisible({ timeout: 300 }).catch(() => false);
+    const visible = await card.isVisible({ timeout: 200 }).catch(() => false);
     if (!visible) break;
 
     const cardId = await card.getAttribute("id").catch(() => "");
@@ -909,13 +910,49 @@ async function handleFaultMode(frame: FrameLocator, page: Page): Promise<boolean
       if (btnDisabled) continue;
 
       await btn.click();
-      await page.waitForTimeout(400);
+      await page.waitForTimeout(250);
 
       const resolved = await card
         .evaluate((el) => el.classList.contains("resolved"))
         .catch(() => false);
       if (resolved) break;
     }
+  }
+  return true;
+}
+
+// ─── PLAN EXERCISE ────────────────────────────────────────────
+
+async function handlePlanExercise(frame: FrameLocator, page: Page): Promise<boolean> {
+  const planTiles = frame.locator(".screen.active #planTiles");
+  const hasPlan = await planTiles.isVisible({ timeout: 200 }).catch(() => false);
+  if (!hasPlan) return false;
+
+  for (let attempt = 0; attempt < 30; attempt++) {
+    const tile = frame.locator(".screen.active .plan-tile:not(.placed)").first();
+    const tileVisible = await tile.isVisible({ timeout: 200 }).catch(() => false);
+    if (!tileVisible) break;
+
+    await tile.click();
+    await page.waitForTimeout(200);
+
+    const slots = frame.locator(".screen.active .plan-slot:not(.correct)");
+    const slotCount = await slots.count().catch(() => 0);
+
+    let placed = false;
+    for (let s = 0; s < slotCount; s++) {
+      await slots.nth(s).click();
+      await page.waitForTimeout(300);
+
+      const nowCorrect = await slots.nth(s)
+        .evaluate((el) => el.classList.contains("correct"))
+        .catch(() => false);
+      if (nowCorrect) {
+        placed = true;
+        break;
+      }
+    }
+    if (!placed) break;
   }
   return true;
 }
