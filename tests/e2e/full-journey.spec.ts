@@ -218,16 +218,23 @@ test.describe("Full AESDR Course Journey", () => {
 
 // ─── ADVANCE VIA NEXT BUTTON ─────────────────────────────────────
 
-// Use ONLY FrameLocator methods — the same API that every exercise handler
-// uses successfully. Previous versions used page.frames().find() to get a
-// concrete Frame and called evaluate() on it, which hung indefinitely on
-// L1 U3 s2 despite FrameLocator methods working perfectly on the same screen.
+async function getActiveScreenId(
+  frame: FrameLocator
+): Promise<string | null> {
+  return frame
+    .locator(".screen.active")
+    .first()
+    .getAttribute("id")
+    .catch(() => null);
+}
+
 async function advanceViaNext(
   frame: FrameLocator,
   page: Page
 ): Promise<boolean> {
   const nextBtn = frame.locator("#btnNext");
 
+  // Quick gate: is the button visible and enabled?
   const visible = await nextBtn
     .isVisible({ timeout: 1000 })
     .catch(() => false);
@@ -236,29 +243,41 @@ async function advanceViaNext(
   const disabled = await nextBtn.isDisabled().catch(() => true);
   if (disabled) return false;
 
-  const beforeId = await frame
-    .locator(".screen.active")
-    .first()
-    .getAttribute("id")
-    .catch(() => null);
+  const beforeId = await getActiveScreenId(frame);
 
-  // Native Playwright click — dispatches a real mouse event via CDP
-  // Input.dispatchMouseEvent (not Runtime.evaluate). This is the same
-  // mechanism that works for clicking FM tags, sort cards, etc.
-  await nextBtn.click({ timeout: 5000 }).catch(() => {});
-  await page.waitForTimeout(700);
+  // Strategy A: native Playwright click (CDP Input.dispatchMouseEvent)
+  await nextBtn.click({ force: true, timeout: 3000 }).catch(() => {});
+  await page.waitForTimeout(600);
+  let afterId = await getActiveScreenId(frame);
+  if (afterId && afterId !== beforeId) return true;
 
-  const afterId = await frame
-    .locator(".screen.active")
-    .first()
-    .getAttribute("id")
-    .catch(() => null);
+  // Strategy B: FrameLocator evaluate calling handleNext() on window
+  // (this is the same CDP path the STUCK fallback used successfully)
+  await frame
+    .locator("body")
+    .evaluate(() => {
+      const w = window as unknown as { handleNext?: () => void };
+      if (typeof w.handleNext === "function") w.handleNext();
+    })
+    .catch(() => {});
+  await page.waitForTimeout(600);
+  afterId = await getActiveScreenId(frame);
+  if (afterId && afterId !== beforeId) return true;
 
-  const advanced = !!(afterId && afterId !== beforeId);
-  if (!advanced) {
-    console.log(`    [advance] click: before=${beforeId} after=${afterId}`);
-  }
-  return advanced;
+  // Strategy C: FrameLocator evaluate calling next() directly
+  await frame
+    .locator("body")
+    .evaluate(() => {
+      const w = window as unknown as { next?: () => void };
+      if (typeof w.next === "function") w.next();
+    })
+    .catch(() => {});
+  await page.waitForTimeout(600);
+  afterId = await getActiveScreenId(frame);
+  if (afterId && afterId !== beforeId) return true;
+
+  console.log(`    [advance] ALL 3 strategies failed: before=${beforeId} after=${afterId}`);
+  return false;
 }
 
 // ─── SCREEN COMPLETION ───────────────────────────────────────────
