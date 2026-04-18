@@ -218,113 +218,45 @@ test.describe("Full AESDR Course Journey", () => {
 
 // ─── ADVANCE VIA NEXT BUTTON ─────────────────────────────────────
 
-// Locate the lesson iframe's concrete Frame object (not FrameLocator).
-// Filters by URL so we pick the lesson iframe even when Next.js HMR
-// / Vercel Analytics inject additional frames.
-function findLessonFrame(page: Page) {
-  return page
-    .frames()
-    .find((f) => /\/course\/\d+\/units\/\d+/.test(f.url()));
-}
-
-// Wrap a promise in a timeout so no evaluate can hang forever.
-async function withTimeout<T>(
-  p: Promise<T>,
-  ms: number,
-  label: string
-): Promise<T | { __timeout: string }> {
-  return Promise.race([
-    p,
-    new Promise<{ __timeout: string }>((resolve) =>
-      setTimeout(() => resolve({ __timeout: label }), ms)
-    ),
-  ]);
-}
-
-function isTimeout<T>(v: T | { __timeout: string }): v is { __timeout: string } {
-  return typeof v === "object" && v !== null && "__timeout" in v;
-}
-
+// Use ONLY FrameLocator methods — the same API that every exercise handler
+// uses successfully. Previous versions used page.frames().find() to get a
+// concrete Frame and called evaluate() on it, which hung indefinitely on
+// L1 U3 s2 despite FrameLocator methods working perfectly on the same screen.
 async function advanceViaNext(
-  _frame: FrameLocator,
+  frame: FrameLocator,
   page: Page
 ): Promise<boolean> {
-  const lessonFrame = findLessonFrame(page);
-  if (!lessonFrame) {
-    console.log(
-      `    [advance] no lesson frame — urls: ${page.frames().map((f) => f.url()).join(" | ")}`
-    );
-    return false;
-  }
+  const nextBtn = frame.locator("#btnNext");
 
-  // `cur` is declared with `let` in the lesson script so it's NOT a
-  // property of `window` — we detect advance via the DOM instead.
-  const beforeRaw = await withTimeout(
-    lessonFrame.evaluate(() => {
-      const btn = document.getElementById(
-        "btnNext"
-      ) as HTMLButtonElement | null;
-      const active = document.querySelector(".screen.active");
-      return {
-        activeId: active?.id ?? null,
-        hasHandleNext:
-          typeof (window as unknown as { handleNext?: unknown })
-            .handleNext === "function",
-        btnExists: !!btn,
-        btnDisabled: btn ? btn.disabled : true,
-      };
-    }),
-    5000,
-    "before-evaluate"
-  );
+  const visible = await nextBtn
+    .isVisible({ timeout: 1000 })
+    .catch(() => false);
+  if (!visible) return false;
 
-  if (isTimeout(beforeRaw)) {
-    console.log(`    [advance] timeout in ${beforeRaw.__timeout}`);
-    return false;
-  }
-  const before = beforeRaw;
+  const disabled = await nextBtn.isDisabled().catch(() => true);
+  if (disabled) return false;
 
-  if (before.btnDisabled || !before.btnExists) return false;
+  const beforeId = await frame
+    .locator(".screen.active")
+    .first()
+    .getAttribute("id")
+    .catch(() => null);
 
-  const calledRaw = await withTimeout(
-    lessonFrame.evaluate(() => {
-      const w = window as unknown as {
-        handleNext?: () => void;
-        next?: () => void;
-      };
-      if (typeof w.handleNext === "function") {
-        w.handleNext();
-        return "handleNext";
-      }
-      if (typeof w.next === "function") {
-        w.next();
-        return "next";
-      }
-      return "none";
-    }),
-    5000,
-    "call-handleNext"
-  );
-  const called = isTimeout(calledRaw)
-    ? `timeout:${calledRaw.__timeout}`
-    : calledRaw;
-
+  // Native Playwright click — dispatches a real mouse event via CDP
+  // Input.dispatchMouseEvent (not Runtime.evaluate). This is the same
+  // mechanism that works for clicking FM tags, sort cards, etc.
+  await nextBtn.click({ timeout: 5000 }).catch(() => {});
   await page.waitForTimeout(700);
 
-  const afterRaw = await withTimeout(
-    lessonFrame.evaluate(
-      () => document.querySelector(".screen.active")?.id ?? null
-    ),
-    5000,
-    "after-evaluate"
-  );
-  const afterId = isTimeout(afterRaw) ? null : afterRaw;
+  const afterId = await frame
+    .locator(".screen.active")
+    .first()
+    .getAttribute("id")
+    .catch(() => null);
 
-  const advanced = afterId !== null && afterId !== before.activeId;
+  const advanced = !!(afterId && afterId !== beforeId);
   if (!advanced) {
-    console.log(
-      `    [advance] before=${before.activeId} called=${called} after=${afterId} hasHN=${before.hasHandleNext}`
-    );
+    console.log(`    [advance] click: before=${beforeId} after=${afterId}`);
   }
   return advanced;
 }
