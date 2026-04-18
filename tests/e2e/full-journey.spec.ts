@@ -56,6 +56,17 @@ test.describe("Full AESDR Course Journey", () => {
     test(`3.${lesson}. Complete Lesson ${lesson}`, async () => {
       test.setTimeout(900_000); // 15 min per lesson (3 units)
 
+      page.on("close", () => console.log(">>> PAGE CLOSED"));
+      page.on("crash", () => console.log(">>> PAGE CRASHED"));
+      page.on("console", (msg) => {
+        if (msg.type() === "error") console.log(`>>> CONSOLE ERROR: ${msg.text()}`);
+      });
+      page.on("pageerror", (err) => console.log(`>>> PAGE ERROR: ${err.message}`));
+      page.on("framenavigated", (frame) => {
+        if (frame === page.mainFrame())
+          console.log(`>>> MAIN FRAME NAVIGATED TO: ${frame.url()}`);
+      });
+
       for (let unit = 1; unit <= UNITS_PER_LESSON; unit++) {
         const startTime = Date.now();
         await page.goto(`/course/${lesson}?unit=${unit}`);
