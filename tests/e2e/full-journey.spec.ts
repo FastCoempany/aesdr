@@ -349,6 +349,12 @@ async function completeScreen(
   if (await handleFeedbackDecoder(frame, page)) actions.push("fd");
   if (await handleScriptAdaptation(frame, page)) actions.push("sa");
   if (await handleHabitBuilder(frame, page)) actions.push("hb");
+  if (await handleFlipMarkExercises(frame, page)) actions.push("flipmark");
+  if (await handleStepThroughExercises(frame, page)) actions.push("stepthrough");
+  if (await handlePickCorrectExercises(frame, page)) actions.push("pickcorrect");
+  if (await handleScriptBuilderExercises(frame, page)) actions.push("scriptbuilder");
+  if (await handleTileZoneExercises(frame, page)) actions.push("tilezone");
+  if (await handleSliderExercise(frame, page)) actions.push("slider");
 
   // Generic fallback — only runs if #btnNext is still disabled after all specific handlers
   const nextStillDisabled = await frame
@@ -1449,6 +1455,321 @@ async function handleHabitBuilder(_frame: FrameLocator, page: Page): Promise<boo
   });
   await page.waitForTimeout(300);
   return true;
+}
+
+// ─── FLIP/MARK/TOGGLE EXERCISES ──────────────────────────────
+
+async function handleFlipMarkExercises(_frame: FrameLocator, page: Page): Promise<boolean> {
+  const result = await page.evaluate(() => {
+    const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+    if (!iframe?.contentDocument || !iframe?.contentWindow) return false;
+    const doc = iframe.contentDocument;
+    const w = iframe.contentWindow as any;
+    const a = ".screen.active ";
+    let did = false;
+
+    // Archetype flashcards
+    if (doc.querySelector(a + "#archGrid") && typeof w.flipArch === "function") {
+      const n = w.ARCHETYPES?.length || 0;
+      for (let i = 0; i < n; i++) w.flipArch(i);
+      if (n > 0) did = true;
+    }
+
+    // Mentality flip cards
+    if (doc.querySelector(a + "#flipGrid") && typeof w.doFlip === "function") {
+      const n = w.FLIPS?.length || 0;
+      for (let i = 0; i < n; i++) w.doFlip(i);
+      if (n > 0) did = true;
+    }
+
+    // Skill explorer
+    if (doc.querySelector(a + "#skGrid") && typeof w.markSK === "function") {
+      const n = w.SKILLS?.length || 0;
+      for (let i = 0; i < n; i++) {
+        if (typeof w.toggleSK === "function") w.toggleSK(i);
+        w.markSK({ stopPropagation: () => {} }, i);
+      }
+      if (n > 0) did = true;
+    }
+
+    // Recipe steps (sequential)
+    if (doc.querySelector(a + "#recipeSteps") && typeof w.completeRecipeStep === "function") {
+      const n = w.RECIPE_STEPS?.length || 0;
+      for (let i = 0; i < n; i++) {
+        if (typeof w.toggleRecipe === "function") w.toggleRecipe(i);
+        w.completeRecipeStep({ stopPropagation: () => {} }, i);
+      }
+      if (n > 0) did = true;
+    }
+
+    // Reality rounds (sequential)
+    if (doc.querySelector(a + "#rrItems") && typeof w.acceptRR === "function") {
+      const n = w.REALITIES?.length || 0;
+      for (let i = 0; i < n; i++) {
+        if (typeof w.toggleRR === "function") w.toggleRR(i);
+        w.acceptRR({ stopPropagation: () => {} }, i);
+      }
+      if (n > 0) did = true;
+    }
+
+    // Visibility score (toggle all on)
+    if (doc.querySelector(a + "#visWrap") && typeof w.toggleVis === "function") {
+      const n = w.VIS_ITEMS?.length || 0;
+      for (let i = 0; i < n; i++) {
+        if (!w.visActive?.has(i)) w.toggleVis(i);
+      }
+      if (n > 0) did = true;
+    }
+
+    return did;
+  });
+  if (result) await page.waitForTimeout(300);
+  return result;
+}
+
+// ─── STEP-THROUGH SCENARIOS (MU, KT) ────────────────────────
+
+async function handleStepThroughExercises(_frame: FrameLocator, page: Page): Promise<boolean> {
+  const result = await page.evaluate(() => {
+    const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+    if (!iframe?.contentDocument || !iframe?.contentWindow) return false;
+    const doc = iframe.contentDocument;
+    const w = iframe.contentWindow as any;
+    const a = ".screen.active ";
+
+    const cfgs = [
+      { wrap: "muWrap", data: "MU_SCENARIOS", done: "muDone", stage: "muStage", pick: "pickMU", advance: "muAdvance" },
+      { wrap: "ktWrap", data: "KT_ITEMS", done: "ktDone", stage: "ktStage", pick: "pickKT", advance: "ktAdvance" },
+    ];
+
+    for (const c of cfgs) {
+      if (!doc.querySelector(a + "#" + c.wrap)) continue;
+      if (w[c.done]) return true;
+      const data = w[c.data];
+      if (!data || !Array.isArray(data)) continue;
+      for (let s = 0; s < data.length * 2; s++) {
+        if (w[c.done]) break;
+        const item = data[w[c.stage]];
+        if (!item || item.ans === undefined) break;
+        if (typeof w[c.pick] === "function") w[c.pick](item.ans);
+        if (typeof w[c.advance] === "function") w[c.advance]();
+      }
+      return true;
+    }
+    return false;
+  });
+  if (result) await page.waitForTimeout(300);
+  return result;
+}
+
+// ─── BINARY/MULTI-OPTION PICK-CORRECT EXERCISES ─────────────
+
+async function handlePickCorrectExercises(_frame: FrameLocator, page: Page): Promise<boolean> {
+  const result = await page.evaluate(() => {
+    const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+    if (!iframe?.contentDocument || !iframe?.contentWindow) return false;
+    const w = iframe.contentWindow as any;
+    const doc = iframe.contentDocument;
+    const a = ".screen.active ";
+    let did = false;
+
+    // Subject Line Scorer
+    if (doc.querySelector(a + "#slItems") && typeof w.scoreSL === "function") {
+      const items = w.SL_ITEMS;
+      if (items) { items.forEach((m: any, i: number) => { if (m.correct) w.scoreSL(i, m.correct); }); did = true; }
+    }
+
+    // Meeting Verdicts
+    if (doc.querySelector(a + "#mvItems") && typeof w.verdictMV === "function") {
+      const items = w.MV_ITEMS;
+      if (items) { items.forEach((m: any, i: number) => { if (m.correct) w.verdictMV(i, m.correct); }); did = true; }
+    }
+
+    // Motherboard Mapper
+    if (doc.querySelector(a + "#mbCards") && typeof w.verdictMB === "function") {
+      const items = w.MB_ITEMS;
+      if (items) { items.forEach((m: any, i: number) => { if (m.correct) w.verdictMB(i, m.correct); }); did = true; }
+    }
+
+    // Pipeline Ownership Tagger
+    if (doc.querySelector(a + "#poDeals") && typeof w.tagPO === "function") {
+      const items = w.PO_DEALS;
+      if (items) { items.forEach((m: any, i: number) => { if (m.correct) w.tagPO(i, m.correct); }); did = true; }
+    }
+
+    return did;
+  });
+  if (result) await page.waitForTimeout(300);
+  return result;
+}
+
+// ─── SCRIPT BUILDER (BB, VI — submit-and-verify) ─────────────
+
+async function handleScriptBuilderExercises(_frame: FrameLocator, page: Page): Promise<boolean> {
+  const result = await page.evaluate(() => {
+    const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+    if (!iframe?.contentDocument || !iframe?.contentWindow) return false;
+    const doc = iframe.contentDocument;
+    const w = iframe.contentWindow as any;
+    const a = ".screen.active ";
+
+    const cfgs = [
+      { wrap: "bbWrap", pick: "pickBB", submit: "submitBB",
+        submitted: "bbSubmitted", passed: "bbPassed",
+        getSections: () => w.BB_SECTIONS },
+      { wrap: "viWrap", pick: "pickVI", submit: "submitVI",
+        submitted: "viSubmitted", passed: "viPassed",
+        getSections: () => w.VI?.sections },
+    ];
+
+    for (const c of cfgs) {
+      if (!doc.querySelector(a + "#" + c.wrap)) continue;
+      if (w[c.submitted] && w[c.passed]) return true;
+      const sections = c.getSections();
+      if (!sections || !Array.isArray(sections)) continue;
+      sections.forEach((sec: any, si: number) => {
+        const ci = sec.opts.findIndex((o: any) => o.correct);
+        if (ci >= 0 && typeof w[c.pick] === "function") w[c.pick](si, ci);
+      });
+      if (typeof w[c.submit] === "function") w[c.submit]();
+      return true;
+    }
+    return false;
+  });
+  if (result) await page.waitForTimeout(300);
+  return result;
+}
+
+// ─── TILE-TO-ZONE / MATCHING EXERCISES ───────────────────────
+
+async function handleTileZoneExercises(_frame: FrameLocator, page: Page): Promise<boolean> {
+  const result = await page.evaluate(() => {
+    const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+    if (!iframe?.contentDocument || !iframe?.contentWindow) return false;
+    const doc = iframe.contentDocument;
+    const w = iframe.contentWindow as any;
+    const a = ".screen.active ";
+    let did = false;
+
+    // Calendar Audit: pickCal(di) → dropCal(zone)
+    if (doc.querySelector(a + "#calPool") && typeof w.pickCal === "function" && typeof w.dropCal === "function") {
+      const items = w.CAL_ITEMS, order = w.CAL_ORDER;
+      if (items && order) {
+        for (let di = 0; di < order.length; di++) { w.pickCal(di); w.dropCal(items[order[di]].zone); }
+        did = true;
+      }
+    }
+
+    // SDR vs Self Compare: pickCV2(ai) → dropCV2(col)
+    if (doc.querySelector(a + "#cv2Pool") && typeof w.pickCV2 === "function" && typeof w.dropCV2 === "function") {
+      const items = w.CV2_ITEMS;
+      if (items) { items.forEach((item: any, ai: number) => { w.pickCV2(ai); w.dropCV2(item.col); }); did = true; }
+    }
+
+    // Ramp Planner: pickRampTile(ai) → pickRampWeek(wi)
+    if (doc.querySelector(a + "#rampTiles") && typeof w.pickRampTile === "function" && typeof w.pickRampWeek === "function") {
+      const items = w.RAMP_ACTIVITIES;
+      if (items) { items.forEach((item: any, ai: number) => { w.pickRampTile(ai); w.pickRampWeek(item.week); }); did = true; }
+    }
+
+    // Async Planner: pickAPTile(si) → pickAPSlot(idx) where idx=si
+    if (doc.querySelector(a + "#apSlots") && typeof w.pickAPTile === "function" && typeof w.pickAPSlot === "function") {
+      const items = w.AP_SLOTS;
+      if (items) { for (let i = 0; i < items.length; i++) { w.pickAPTile(i); w.pickAPSlot(i); } did = true; }
+    }
+
+    // Outreach Builder: pickOBTile(si) → pickOBSlot(idx) where idx=si
+    if (doc.querySelector(a + "#obPipeline") && typeof w.pickOBTile === "function" && typeof w.pickOBSlot === "function") {
+      const items = w.OB_STAGES;
+      if (items) { for (let i = 0; i < items.length; i++) { w.pickOBTile(i); w.pickOBSlot(i); } did = true; }
+    }
+
+    // Daily Block Sequencer: pickDBTile(si) → pickDBSlot(idx) where idx=si
+    if (doc.querySelector(a + "#dbBlocks") && typeof w.pickDBTile === "function" && typeof w.pickDBSlot === "function") {
+      const items = w.DB_BLOCKS;
+      if (items) { for (let i = 0; i < items.length; i++) { w.pickDBTile(i); w.pickDBSlot(i); } did = true; }
+    }
+
+    // Irreplaceable Profile: pickIPTile(ai) → pickIPPillar(pi)
+    if (doc.querySelector(a + "#ipPillars") && typeof w.pickIPTile === "function" && typeof w.pickIPPillar === "function") {
+      const actions = w.IP_ACTIONS, pillars = w.IP_PILLARS;
+      if (actions && pillars) {
+        actions.forEach((act: any, ai: number) => {
+          const pi = pillars.findIndex((p: any) => p.key === act.pillar);
+          if (pi >= 0) { w.pickIPTile(ai); w.pickIPPillar(pi); }
+        });
+        did = true;
+      }
+    }
+
+    // Network Circle Sorter: pickNCTile(ai) → pickNCCircle(ci)
+    if (doc.querySelector(a + "#ncCircles") && typeof w.pickNCTile === "function" && typeof w.pickNCCircle === "function") {
+      const contacts = w.NC_CONTACTS, circles = w.NC_CIRCLES;
+      if (contacts && circles) {
+        contacts.forEach((c: any, ai: number) => {
+          const ci = circles.findIndex((cr: any) => cr.key === c.circle);
+          if (ci >= 0) { w.pickNCTile(ai); w.pickNCCircle(ci); }
+        });
+        did = true;
+      }
+    }
+
+    // Impact Matcher: pickImpact(side, di) — left then right by pair index
+    if (doc.querySelector(a + "#impactLeft") && typeof w.pickImpact === "function") {
+      const lOrder = w.IMPACT_L_ORDER, rOrder = w.IMPACT_R_ORDER;
+      if (lOrder && rOrder) {
+        for (let ldi = 0; ldi < lOrder.length; ldi++) {
+          const rdi = rOrder.indexOf(lOrder[ldi]);
+          if (rdi >= 0) { w.pickImpact('l', ldi); w.pickImpact('r', rdi); }
+        }
+        did = true;
+      }
+    }
+
+    // Trust Signal Matcher: pickTS(side, di)
+    if (doc.querySelector(a + "#tsLeft") && typeof w.pickTS === "function") {
+      const lOrder = w.TS_L_ORDER, rOrder = w.TS_R_ORDER;
+      if (lOrder && rOrder) {
+        for (let ldi = 0; ldi < lOrder.length; ldi++) {
+          const rdi = rOrder.indexOf(lOrder[ldi]);
+          if (rdi >= 0) { w.pickTS('l', ldi); w.pickTS('r', rdi); }
+        }
+        did = true;
+      }
+    }
+
+    return did;
+  });
+  if (result) await page.waitForTimeout(300);
+  return result;
+}
+
+// ─── BENCHMARK BEATER (sliders) ──────────────────────────────
+
+async function handleSliderExercise(_frame: FrameLocator, page: Page): Promise<boolean> {
+  const result = await page.evaluate(() => {
+    const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
+    if (!iframe?.contentDocument || !iframe?.contentWindow) return false;
+    const doc = iframe.contentDocument;
+    const w = iframe.contentWindow as any;
+    const a = ".screen.active ";
+
+    if (!doc.querySelector(a + "#bmMetrics")) return false;
+    const items = w.BM_METRICS;
+    if (!items || !Array.isArray(items)) return false;
+
+    items.forEach((_m: any, i: number) => {
+      const slider = doc.getElementById("bms" + i) as HTMLInputElement | null;
+      if (slider) {
+        slider.value = slider.max;
+        slider.dispatchEvent(new Event("input", { bubbles: true }));
+        if (typeof w.updateBM === "function") w.updateBM(i);
+      }
+    });
+    return true;
+  });
+  if (result) await page.waitForTimeout(300);
+  return result;
 }
 
 // ─── SECTION PICKER (shared: ack, email, and similar submit-and-verify) ──
