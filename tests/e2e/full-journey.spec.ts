@@ -227,6 +227,24 @@ function findLessonFrame(page: Page) {
     .find((f) => /\/course\/\d+\/units\/\d+/.test(f.url()));
 }
 
+// Wrap a promise in a timeout so no evaluate can hang forever.
+async function withTimeout<T>(
+  p: Promise<T>,
+  ms: number,
+  label: string
+): Promise<T | { __timeout: string }> {
+  return Promise.race([
+    p,
+    new Promise<{ __timeout: string }>((resolve) =>
+      setTimeout(() => resolve({ __timeout: label }), ms)
+    ),
+  ]);
+}
+
+function isTimeout<T>(v: T | { __timeout: string }): v is { __timeout: string } {
+  return typeof v === "object" && v !== null && "__timeout" in v;
+}
+
 async function advanceViaNext(
   _frame: FrameLocator,
   page: Page
@@ -241,30 +259,35 @@ async function advanceViaNext(
 
   // `cur` is declared with `let` in the lesson script so it's NOT a
   // property of `window` — we detect advance via the DOM instead.
-  const before = await lessonFrame
-    .evaluate(() => {
+  const beforeRaw = await withTimeout(
+    lessonFrame.evaluate(() => {
       const btn = document.getElementById(
         "btnNext"
       ) as HTMLButtonElement | null;
       const active = document.querySelector(".screen.active");
       return {
         activeId: active?.id ?? null,
-        hasHandleNext: typeof (window as unknown as { handleNext?: unknown }).handleNext === "function",
+        hasHandleNext:
+          typeof (window as unknown as { handleNext?: unknown })
+            .handleNext === "function",
         btnExists: !!btn,
         btnDisabled: btn ? btn.disabled : true,
       };
-    })
-    .catch(() => ({
-      activeId: null as string | null,
-      hasHandleNext: false,
-      btnExists: false,
-      btnDisabled: true,
-    }));
+    }),
+    5000,
+    "before-evaluate"
+  );
+
+  if (isTimeout(beforeRaw)) {
+    console.log(`    [advance] timeout in ${beforeRaw.__timeout}`);
+    return false;
+  }
+  const before = beforeRaw;
 
   if (before.btnDisabled || !before.btnExists) return false;
 
-  const called = await lessonFrame
-    .evaluate(() => {
+  const calledRaw = await withTimeout(
+    lessonFrame.evaluate(() => {
       const w = window as unknown as {
         handleNext?: () => void;
         next?: () => void;
@@ -278,14 +301,24 @@ async function advanceViaNext(
         return "next";
       }
       return "none";
-    })
-    .catch((e) => `err:${e}`);
+    }),
+    5000,
+    "call-handleNext"
+  );
+  const called = isTimeout(calledRaw)
+    ? `timeout:${calledRaw.__timeout}`
+    : calledRaw;
 
   await page.waitForTimeout(700);
 
-  const afterId = await lessonFrame
-    .evaluate(() => document.querySelector(".screen.active")?.id ?? null)
-    .catch(() => null);
+  const afterRaw = await withTimeout(
+    lessonFrame.evaluate(
+      () => document.querySelector(".screen.active")?.id ?? null
+    ),
+    5000,
+    "after-evaluate"
+  );
+  const afterId = isTimeout(afterRaw) ? null : afterRaw;
 
   const advanced = afterId !== null && afterId !== before.activeId;
   if (!advanced) {
