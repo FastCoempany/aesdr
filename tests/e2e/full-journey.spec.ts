@@ -140,17 +140,23 @@ test.describe("Full AESDR Course Journey", () => {
           // Complete all interactive elements on this screen
           await completeScreen(frame, screenNum, page);
 
+          // ── DEBUG: pinpoint which call hangs after completeScreen ──
+          console.log(`    DBG:1 after completeScreen`);
+
           // Try to advance via Next button
           const nextBtn = frame.locator("#btnNext");
           const nextVisible = await nextBtn
             .isVisible({ timeout: 2000 })
             .catch(() => false);
 
+          console.log(`    DBG:2 nextVisible=${nextVisible}`);
+
           if (!nextVisible) break;
 
           // Retry loop: keep trying to enable Next button
           let advanced = false;
           for (let retry = 0; retry < 8; retry++) {
+            console.log(`    DBG:3 retry=${retry}`);
             if (await advanceViaNext(frame, page)) {
               advanced = true;
               break;
@@ -227,17 +233,18 @@ async function advanceViaNext(
 ): Promise<boolean> {
   // Check button state via FrameLocator (known to work for all handlers)
   const nextBtn = frame.locator("#btnNext");
+  console.log(`    DBG:A isVisible...`);
   const visible = await nextBtn
     .isVisible({ timeout: 1000 })
     .catch(() => false);
-  if (!visible) return false;
+  if (!visible) { console.log(`    DBG:A not visible`); return false; }
 
+  console.log(`    DBG:B isDisabled...`);
   const disabled = await nextBtn.isDisabled().catch(() => true);
-  if (disabled) return false;
+  if (disabled) { console.log(`    DBG:B disabled`); return false; }
 
   // Advance via PARENT page reaching into iframe.contentWindow.
-  // Bypasses both FrameLocator evaluate and concrete Frame evaluate.
-  // Works because iframe sandbox includes allow-same-origin.
+  console.log(`    DBG:C page.evaluate...`);
   const result = await page.evaluate(() => {
     const iframe = document.querySelector("iframe") as HTMLIFrameElement | null;
     if (!iframe?.contentWindow) return { ok: false, reason: "no-iframe" };
