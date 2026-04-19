@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
 
 export async function POST(request: NextRequest) {
@@ -34,5 +35,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Failed to save" }, { status: 500 });
   }
 
+  revalidatePath("/dashboard");
   return NextResponse.json({ success: true });
 }
