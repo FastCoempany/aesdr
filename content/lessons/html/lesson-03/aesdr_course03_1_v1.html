@@ -2080,7 +2080,7 @@ function buildFD(){
       <div class="fd-scenario"><div class="fd-who">${f.who}</div><div class="fd-quote">"${f.quote}"</div></div>
       <div class="fd-item-q">${f.q}</div>
       <span class="fd-response-tag">Choose the Growth Response</span>
-      <div class="fd-opts">${f.opts.map((o,oi)=>`<button class="fd-opt" id="fdo${i}_${oi}" onclick="pickFD(${i},${oi})">${o}</button>`).join('')}</div>
+      <div class="fd-opts">${f.opts.map((o,oi)=>`<button class="fd-opt" id="fdo${i}_${oi}" onclick="pickFD(${i},${oi})">${o.txt}</button>`).join('')}</div>
       <div class="fd-result" id="fdr${i}"></div>
     </div>
   `).join('');
