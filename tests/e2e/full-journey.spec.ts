@@ -230,6 +230,11 @@ test.describe("Full AESDR Course Journey", () => {
         await page.screenshot({
           path: `tests/e2e/results/L${lesson}-U${unit}-end.png`,
         });
+
+        // Wait for any pending progress/completion API calls to finish
+        // before navigating away (page.goto aborts in-flight fetches)
+        await page.waitForLoadState("networkidle");
+        await page.waitForTimeout(500);
       }
 
       await page.goto("/dashboard");
