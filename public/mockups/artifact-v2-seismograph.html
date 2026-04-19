@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR | The Seismograph</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FAF7F2;--ink:#1A1A1A;--crimson:#8B1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+  --card:#FFFFFF;--accent-lt:rgba(139,26,26,0.06);
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif;--serif:'Source Serif 4',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;--mono:'Space Mono',monospace;--hand:'Caveat',cursive;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:var(--serif)}
+
+/* HEADER */
+.header{padding:48px 5% 40px;text-align:center}
+.h-eye{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--crimson);margin-bottom:12px}
+.h-title{font-family:var(--display);font-size:clamp(36px,5vw,56px);font-weight:900;font-style:italic;line-height:1;margin-bottom:10px}
+.h-name{background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:iris 3s linear infinite}
+.h-sub{font-family:var(--serif);font-size:16px;color:var(--muted);font-style:italic;max-width:500px;margin:0 auto}
+.h-meta{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-top:14px}
+
+/* SEISMOGRAPH CONTAINER */
+.seismo{position:relative;width:100%;overflow-x:auto;padding:0 5%}
+.seismo-inner{position:relative;width:1400px;min-height:900px;margin:0 auto}
+
+/* THE LINE — SVG */
+.seismo-svg{display:block;width:100%;height:500px}
+.seismo-line{fill:none;stroke:var(--crimson);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.seismo-line-bg{fill:none;stroke:var(--light);stroke-width:1;stroke-dasharray:4 8}
+.zone-label{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;fill:var(--muted)}
+.zone-score{font-family:var(--display);font-size:28px;font-style:italic;fill:var(--crimson)}
+.zone-divider{stroke:var(--light);stroke-width:1;stroke-dasharray:2 6}
+
+/* ANNOTATIONS — positioned absolutely */
+.annotations{position:relative;width:1400px;margin:0 auto}
+.anno{position:absolute;width:220px}
+.anno-above{transform:translateY(-100%)}
+.anno-line{width:1px;background:var(--crimson);opacity:0.3;margin:0 auto}
+.anno-dot{width:8px;height:8px;border-radius:50%;background:var(--crimson);margin:0 auto}
+.anno-card{padding:14px;background:var(--card);border:1px solid var(--light);margin-top:8px}
+.anno-card.above{margin-top:0;margin-bottom:8px}
+.anno-src{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.anno-text{font-family:var(--serif);font-size:13px;font-style:italic;color:var(--ink);line-height:1.5}
+.anno-data{font-family:var(--serif);font-size:13px;color:var(--crimson);line-height:1.5;font-weight:600}
+
+/* MIRROR PAIRS — the gap IS the visual */
+.mirror-section{width:1400px;margin:40px auto 0;position:relative}
+.mirror-pair{display:flex;margin-bottom:24px;position:relative}
+.mp-line{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--light)}
+.mp-said{flex:1;text-align:right;padding-right:40px}
+.mp-data{flex:1;padding-left:40px}
+.mp-label{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px}
+.mp-label.you{color:var(--muted)}
+.mp-label.data{color:var(--crimson)}
+.mp-text{font-family:var(--serif);font-size:15px;line-height:1.55}
+.mp-text.you-t{font-style:italic;color:var(--ink)}
+.mp-text.data-t{color:var(--crimson);font-weight:600}
+.mp-gap{position:absolute;left:50%;transform:translateX(-50%);font-family:var(--hand);font-size:16px;color:var(--crimson);white-space:nowrap;top:50%;margin-top:-10px;background:var(--cream);padding:0 8px}
+
+/* AFTERSHOCKS */
+.aftershocks{max-width:720px;margin:64px auto;padding:0 24px 80px}
+.as-title{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--crimson);text-align:center;margin-bottom:24px}
+.as-item{display:flex;gap:16px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--light)}
+.as-amp{font-family:var(--display);font-size:24px;font-style:italic;color:var(--crimson);line-height:1;min-width:40px}
+.as-text{font-family:var(--serif);font-size:15px;color:var(--ink);line-height:1.55}
+
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="h-eye">Artifact — The Seismograph</div>
+  <div class="h-title"><span class="h-name">Jordan Rivera</span></div>
+  <div class="h-sub">One continuous reading. The amplitude is the truth.</div>
+  <div class="h-meta">SDR · Cohort 01 · 12 Lessons · April 19, 2026</div>
+</div>
+
+<div class="seismo">
+  <div class="seismo-inner">
+
+    <!-- THE SEISMOGRAPH LINE -->
+    <svg class="seismo-svg" viewBox="0 0 1400 500" preserveAspectRatio="none">
+      <!-- Baseline -->
+      <line class="seismo-line-bg" x1="0" y1="250" x2="1400" y2="250"/>
+
+      <!-- Zone dividers -->
+      <line class="zone-divider" x1="233" y1="40" x2="233" y2="460"/>
+      <line class="zone-divider" x1="466" y1="40" x2="466" y2="460"/>
+      <line class="zone-divider" x1="700" y1="40" x2="700" y2="460"/>
+      <line class="zone-divider" x1="933" y1="40" x2="933" y2="460"/>
+      <line class="zone-divider" x1="1166" y1="40" x2="1166" y2="460"/>
+
+      <!-- Zone labels -->
+      <text class="zone-label" x="116" y="30" text-anchor="middle">Identity</text>
+      <text class="zone-score" x="116" y="485" text-anchor="middle">85%</text>
+      <text class="zone-label" x="350" y="30" text-anchor="middle">Pipeline</text>
+      <text class="zone-score" x="350" y="485" text-anchor="middle">78%</text>
+      <text class="zone-label" x="583" y="30" text-anchor="middle">Career</text>
+      <text class="zone-score" x="583" y="485" text-anchor="middle">71%</text>
+      <text class="zone-label" x="816" y="30" text-anchor="middle">Discipline</text>
+      <text class="zone-score" x="816" y="485" text-anchor="middle">62%</text>
+      <text class="zone-label" x="1050" y="30" text-anchor="middle">Coaching</text>
+      <text class="zone-score" x="1050" y="485" text-anchor="middle">58%</text>
+      <text class="zone-label" x="1283" y="30" text-anchor="middle">Networking</text>
+      <text class="zone-score" x="1283" y="485" text-anchor="middle">45%</text>
+
+      <!-- THE LINE — amplitude = inverse of score (low score = wild movement) -->
+      <!-- Identity 85% — very calm, small ripples -->
+      <polyline class="seismo-line" points="
+        0,250 20,248 40,253 60,247 80,252 100,246 120,254 140,248 160,251 180,247 200,253 220,249
+        233,250
+        250,242 270,258 290,238 310,262 330,235 350,265 370,240 390,258 400,242 420,260 440,238 460,255
+        466,250
+        490,236 510,268 530,230 550,272 570,226 590,275 610,232 630,270 650,228 670,274 690,235
+        700,250
+        720,222 740,282 755,210 770,295 785,205 800,300 815,195 830,305 845,200 860,298 875,210 890,285 910,220 930,270
+        933,250
+        950,215 965,290 978,200 992,310 1005,190 1020,315 1035,195 1050,305 1065,200 1080,295 1095,210 1110,288 1130,215 1150,280 1166,250
+        1180,195 1200,320 1215,175 1230,340 1245,165 1260,350 1275,170 1290,345 1305,180 1320,335 1340,190 1360,325 1380,200 1400,310
+      "/>
+
+      <!-- Annotation anchor dots -->
+      <circle cx="116" cy="250" r="4" fill="#8B1A1A"/>
+      <circle cx="350" cy="252" r="4" fill="#8B1A1A"/>
+      <circle cx="700" cy="250" r="4" fill="#8B1A1A"/>
+      <circle cx="816" cy="300" r="4" fill="#8B1A1A"/>
+      <circle cx="1050" cy="305" r="4" fill="#8B1A1A"/>
+      <circle cx="1283" cy="340" r="4" fill="#8B1A1A"/>
+    </svg>
+
+    <!-- ANNOTATION CARDS pinned to the line -->
+    <div style="position:relative;height:0">
+
+      <!-- Identity — calm zone, small note -->
+      <div class="anno" style="left:20px;top:-440px">
+        <div class="anno-card">
+          <div class="anno-src">L1 U2 — Self-Assessment</div>
+          <div class="anno-text">"I know who I am. I know where I want to go. That's never been the problem."</div>
+        </div>
+        <div class="anno-line" style="height:20px"></div>
+      </div>
+
+      <!-- Pipeline — moderate activity -->
+      <div class="anno" style="left:260px;top:-440px">
+        <div class="anno-card">
+          <div class="anno-src">L7 U2 — Qualification</div>
+          <div class="anno-text">"I skip the hard BANT question because I'm afraid they'll say no."</div>
+        </div>
+        <div class="anno-line" style="height:30px"></div>
+      </div>
+
+      <!-- Discipline — things getting rough -->
+      <div class="anno" style="left:710px;top:-460px">
+        <div class="anno-card">
+          <div class="anno-src">L9 U1 — Time</div>
+          <div class="anno-text">"My mornings are chaos. No system — just whatever feels urgent."</div>
+        </div>
+        <div class="anno-line" style="height:40px"></div>
+      </div>
+
+      <!-- Coaching — spiking -->
+      <div class="anno" style="left:940px;top:-440px">
+        <div class="anno-card">
+          <div class="anno-src">L3 U2 — Feedback</div>
+          <div class="anno-text">"I never ask for feedback directly. Part of me is afraid of what I'll hear."</div>
+        </div>
+        <div class="anno-line" style="height:20px"></div>
+      </div>
+
+      <!-- Networking — the quake zone -->
+      <div class="anno" style="left:1160px;top:-460px">
+        <div class="anno-card">
+          <div class="anno-src">L6 U3 — Knowledge</div>
+          <div class="anno-text">"I don't know anyone outside my company. My LinkedIn is a ghost town."</div>
+        </div>
+        <div class="anno-line" style="height:50px"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MIRROR PAIRS — distance between sides = the gap -->
+<div style="max-width:1000px;margin:80px auto 0;padding:0 24px">
+  <div style="text-align:center;margin-bottom:32px">
+    <div style="font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--crimson)">The Fault Lines</div>
+    <div style="font-family:var(--display);font-size:28px;font-style:italic;margin-top:8px">Where your words and your data diverge</div>
+  </div>
+
+  <div class="mirror-pair" style="margin-bottom:32px">
+    <div class="mp-line"></div>
+    <div class="mp-said">
+      <div class="mp-label you">You Said</div>
+      <div class="mp-text you-t">"I'm pretty good at qualifying leads."</div>
+    </div>
+    <div class="mp-data">
+      <div class="mp-label data">62% on BANT exercise</div>
+      <div class="mp-text data-t">Two criteria checked. Not four. "Pretty good" is doing heavy lifting.</div>
+    </div>
+    <div class="mp-gap">↔ 16% gap</div>
+  </div>
+
+  <div class="mirror-pair" style="margin-bottom:32px">
+    <div class="mp-line"></div>
+    <div class="mp-said">
+      <div class="mp-label you">You Said</div>
+      <div class="mp-text you-t">"I manage my time well — just too many meetings."</div>
+    </div>
+    <div class="mp-data">
+      <div class="mp-label data">33% selling ratio</div>
+      <div class="mp-text data-t">Meetings take 19%. Slack takes 24%. You're not being pulled — you're not pushing back.</div>
+    </div>
+    <div class="mp-gap">↔ 38% gap</div>
+  </div>
+
+  <div class="mirror-pair" style="margin-bottom:32px">
+    <div class="mp-line"></div>
+    <div class="mp-said">
+      <div class="mp-label you">You Said</div>
+      <div class="mp-text you-t">"I'm open to feedback."</div>
+    </div>
+    <div class="mp-data">
+      <div class="mp-label data">58% coaching score</div>
+      <div class="mp-text data-t">Open ≠ seeking. Three reflections described feedback as something that happens to you.</div>
+    </div>
+    <div class="mp-gap">↔ 42% gap</div>
+  </div>
+
+  <div class="mirror-pair" style="margin-bottom:32px">
+    <div class="mp-line"></div>
+    <div class="mp-said">
+      <div class="mp-label you">You Said</div>
+      <div class="mp-text you-t">"I don't have time to network."</div>
+    </div>
+    <div class="mp-data">
+      <div class="mp-label data">2.5h/day on Slack</div>
+      <div class="mp-text data-t">12.5 hours per week of low-value comms. The time is there. The priority isn't.</div>
+    </div>
+    <div class="mp-gap">↔ 55% gap</div>
+  </div>
+</div>
+
+<!-- AFTERSHOCKS -->
+<div class="aftershocks">
+  <div class="as-title">Aftershocks — What to do now</div>
+  <div class="as-item">
+    <div class="as-amp">9.2</div>
+    <div class="as-text"><strong>Networking:</strong> One real LinkedIn conversation per week. Not a request — a conversation. Build the network before you need it.</div>
+  </div>
+  <div class="as-item">
+    <div class="as-amp">7.8</div>
+    <div class="as-text"><strong>Coaching:</strong> Every Friday, ask your AE for feedback on one specific call or email. Cite the exact moment.</div>
+  </div>
+  <div class="as-item">
+    <div class="as-amp">6.4</div>
+    <div class="as-text"><strong>Discipline:</strong> 8:00–9:30 is prospecting. No Slack, no email. Blocked and defended. Every day.</div>
+  </div>
+  <div class="as-item">
+    <div class="as-amp">3.1</div>
+    <div class="as-text"><strong>Pipeline:</strong> Confirm all four BANT criteria before passing any lead. Ask the hard question.</div>
+  </div>
+
+  <div style="text-align:center;margin-top:48px;padding-top:32px;border-top:2px solid var(--ink)">
+    <div style="font-family:var(--hand);font-size:22px;color:var(--crimson)">The calm zones are yours. The spikes are where the work lives.</div>
+    <div style="font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:12px">36 units · 12 lessons · One continuous reading</div>
+  </div>
+</div>
+
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+</body>
+</html>

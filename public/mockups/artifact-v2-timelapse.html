@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR | The Time Lapse</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FAF7F2;--ink:#1A1A1A;--crimson:#8B1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+  --card:#FFFFFF;--red:#C53030;
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif;--serif:'Source Serif 4',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;--mono:'Space Mono',monospace;--hand:'Caveat',cursive;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:var(--serif)}
+
+.header{text-align:center;padding:48px 5% 32px}
+.h-eye{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--crimson);margin-bottom:12px}
+.h-title{font-family:var(--display);font-size:clamp(36px,5vw,56px);font-weight:900;font-style:italic;line-height:1;margin-bottom:10px}
+.h-name{background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:iris 3s linear infinite}
+.h-sub{font-family:var(--serif);font-size:16px;color:var(--muted);font-style:italic;max-width:520px;margin:0 auto}
+
+/* LEGEND */
+.legend{display:flex;justify-content:center;gap:24px;padding:20px 0;margin:0 5%}
+.legend-item{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.legend-swatch{width:20px;height:12px;border-radius:2px}
+
+/* STRIP CONTAINER */
+.strips-wrap{overflow-x:auto;padding:0 5% 24px}
+.strips{display:flex;gap:0;width:fit-content;min-width:100%;justify-content:center}
+
+/* EACH LESSON STRIP */
+.strip{width:100px;min-height:700px;border-right:1px solid var(--light);position:relative;display:flex;flex-direction:column}
+.strip:last-child{border-right:none}
+.strip:hover{background:rgba(139,26,26,0.02)}
+
+/* Strip header */
+.s-head{text-align:center;padding:12px 6px;border-bottom:1px solid var(--light);background:var(--card)}
+.s-num{font-family:var(--display);font-size:20px;font-style:italic;color:var(--crimson);line-height:1}
+.s-title{font-family:var(--mono);font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px;line-height:1.2;height:24px;overflow:hidden}
+
+/* Gradient column — score as color -->
+.s-gradient{flex:1;position:relative}
+
+/* Unit blocks inside strip */
+.s-unit{flex:1;position:relative;display:flex;flex-direction:column;justify-content:center;padding:6px 8px;border-bottom:1px solid rgba(0,0,0,0.04)}
+.s-unit-id{font-family:var(--mono);font-size:7px;letter-spacing:.1em;color:rgba(0,0,0,0.3);text-align:center}
+
+/* Gate response pinned to strip */
+.s-gate{position:relative;margin:4px 0;padding:6px;background:var(--card);border:1px solid var(--light);opacity:0.9}
+.s-gate-text{font-family:var(--hand);font-size:11px;color:var(--ink);line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+
+/* Score bar at bottom of strip */
+.s-score{text-align:center;padding:10px 6px;background:var(--card);border-top:1px solid var(--light)}
+.s-score-num{font-family:var(--display);font-size:18px;font-style:italic;line-height:1}
+.s-score-label{font-family:var(--mono);font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+
+/* EVIDENCE THREADS — connecting lines between strips */
+.threads{position:relative;max-width:1240px;margin:0 auto;padding:0 5%}
+.thread-section{margin-bottom:48px}
+.thread-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.thread-line{flex:1;height:1px;background:var(--crimson);opacity:0.3}
+.thread-label{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--crimson)}
+
+.thread-pair{display:grid;grid-template-columns:1fr 60px 1fr;gap:0;margin-bottom:20px;align-items:start}
+.thread-said{padding:16px;background:var(--card);border:1px solid var(--light)}
+.thread-data{padding:16px;background:rgba(139,26,26,0.04);border:1px solid var(--light)}
+.thread-connect{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 0}
+.thread-dot{width:6px;height:6px;border-radius:50%;background:var(--crimson)}
+.thread-wire{width:1px;height:20px;background:var(--crimson);opacity:0.4}
+.t-src{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.t-text{font-family:var(--serif);font-size:14px;line-height:1.5}
+.t-text.said{font-style:italic}
+.t-text.data{color:var(--crimson);font-weight:600}
+
+/* TERRAIN SUMMARY */
+.terrain{max-width:720px;margin:40px auto;padding:0 24px 80px}
+.terrain-title{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--crimson);text-align:center;margin-bottom:24px}
+.terrain-row{display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--light)}
+.terrain-cat{font-family:var(--cond);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;min-width:100px}
+.terrain-bar-wrap{flex:1;position:relative;height:24px}
+.terrain-bar{height:100%;border-radius:2px;position:relative;display:flex;align-items:center;padding-left:8px}
+.terrain-pct{font-family:var(--mono);font-size:10px;color:#fff;font-weight:700}
+.terrain-shape{font-family:var(--hand);font-size:14px;color:var(--muted);min-width:80px;text-align:right}
+
+.footer{text-align:center;margin-top:48px;padding-top:32px;border-top:2px solid var(--ink)}
+.footer-text{font-family:var(--hand);font-size:22px;color:var(--crimson)}
+.footer-sub{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:12px}
+
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="h-eye">Artifact — The Time Lapse</div>
+  <div class="h-title"><span class="h-name">Jordan Rivera</span></div>
+  <div class="h-sub">Twelve lessons. Twelve core samples. The strata don't lie.</div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-swatch" style="background:linear-gradient(180deg,#F0C27F,#D4A55A)"></div>High Score</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:linear-gradient(180deg,#C9B8A5,#A89888)"></div>Mid Score</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:linear-gradient(180deg,#8B6B5A,#5C3D2E)"></div>Low Score</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:var(--card);border:1px solid var(--light)"></div>Gate Response</div>
+</div>
+
+<!-- THE TWELVE STRIPS -->
+<div class="strips-wrap">
+<div class="strips">
+
+  <!-- L1 — Identity heavy, high scores -->
+  <div class="strip">
+    <div class="s-head"><div class="s-num">1</div><div class="s-title">Creating Structure</div></div>
+    <div class="s-gradient" style="background:linear-gradient(180deg,#F0C27F 0%,#E8B96E 50%,#D4A55A 100%)">
+      <div class="s-unit"><div class="s-unit-id">U1</div></div>
+      <div class="s-unit">
+        <div class="s-unit-id">U2</div>
+        <div class="s-gate"><div class="s-gate-text">I know who I am. That's never been the problem.</div></div>
+      </div>
+      <div class="s-unit"><div class="s-unit-id">U3</div></div>
+    </div>
+    <div class="s-score"><div class="s-score-num" style="color:#92400E">88%</div><div class="s-score-label">Avg Score</div></div>
+  </div>
+
+  <!-- L2 -->
+  <div class="strip">
+    <div class="s-head"><div class="s-num">2</div><div class="s-title">Breaking Silos</div></div>
+    <div class="s-gradient" style="background:linear-gradient(180deg,#E8C490 0%,#D4A870 50%,#C09060 100%)">
+      <div class="s-unit"><div class="s-unit-id">U1</div>
+        <div class="s-gate"><div class="s-gate-text">I need to stop waiting for leads and start creating my own.</div></div>
+      </div>
+      <div class="s-unit"><div class="s-unit-id">U2</div></div>
+      <div class="s-unit"><div class="s-unit-id">U3</div></div>
+    </div>
+    <div class="s-score"><div class="s-score-num" style="color:#92400E">82%</div><div class="s-score-label">Avg Score</div></div>
+  </div>
+
+  <!-- L3 -->
+  <div class="strip">
+    <div class="s-head"><div class="s-num">3</div><div class="s-title">Surviving</div></div>
+    <div class="s-gradient" style="background:linear-gradient(180deg,#D4B898 0%,#C09878 50%,#A88060 100%)">
+      <div class="s-unit"><div class="s-unit-id">U1</div></div>
+      <div class="s-unit"><div class="s-unit-id">U2</div>
+        <div class="s-gate"><div class="s-gate-text">I wait for feedback. I never ask directly.</div></div>
+      </div>
+      <div class="s-unit"><div class="s-unit-id">U3</div></div>
+    </div>
+    <div class="s-score"><div class="s-score-num" style="color:#7C5C3C">72%</div><div class="s-score-label">Avg Score</div></div>
+  </div>
+
+  <!-- L4 -->
+  <div class="strip">
+    <div class="s-head"><div class="s-num">4</div><div class="s-title">Navigating</div></div>
+    <div class="s-gradient" style="background:linear-gradient(180deg,#D4B898 0%,#BCA080 50%,#9C8068 100%)">
+      <div class="s-unit"><div class="s-unit-id">U1</div></div>
+      <div class="s-unit"><div class="s-unit-id">U2</div></div>
+      <div class="s-unit"><div class="s-unit-id">U3</div></div>
+    </div>
+    <div class="s-score"><div class="s-score-num" style="color:#7C5C3C">70%</div><div class="s-score-label">Avg Score</div></div>
+  </div>
+
+  <!-- L5 -->
+  <div class="strip">
+    <div class="s-head"><div class="s-num">5</div><div class="s-title">Playbook</div></div>
+    <div class="s-gradient" style="background:linear-gradient(180deg,#E0C090 0%,#C8A878 50%,#B09060 100%)">
+      <div class="s-unit"><div class="s-unit-id">U1</div></div>
+      <div class="s-unit"><div class="s-unit-id">U2</div></div>
+      <div class="s-unit"><div class="s-unit-id">U3</div></div>
+    </div>
+    <div class="s-score"><div class="s-score-num" style="color:#7C5C3C">75%</div><div class="s-score-label">Avg Score</div></div>
+  </div>
+
+  <!-- L6 — networking crater -->
+  <div class="strip">
+    <div class="s-head"><div class="s-num">6</div><div class="s-title">Beyond Sales</div></div>
+    <div class="s-gradient" style="background:linear-gradient(180deg,#A8907C 0%,#8B7060 50%,#6B5040 100%)">
+      <div class="s-unit"><div class="s-unit-id">U1</div></div>
+      <div class="s-unit"><div class="s-unit-id">U2</div></div>
+      <div class="s-unit"><div class="s-unit-id">U3</div>
+        <div class="s-gate"><div class="s-gate-text">I don't know anyone. LinkedIn is a ghost town.</div></div>
+      </div>
+    </div>
+    <div class="s-score"><div class="s-score-num" style="color:#5C3D2E">55%</div><div class="s-score-label">Avg Score</div></div>
+  </div>
+
+  <!-- L7 -->
+  <div class="strip">
+    <div class="s-head"><div class="s-num">7</div><div class="s-title">Prospecting</div></div>
+    <div class="s-gradient" style="background:linear-gradient(180deg,#C8A880 0%,#B09468 50%,#988058 100%)">
+      <div class="s-unit"><div class="s-unit-id">U1</div></div>
+      <div class="s-unit"><div class="s-unit-id">U2</div>
+        <div class="s-gate"><div class="s-gate-text">I skip the hard BANT question. I'm afraid they'll say no.</div></div>
+      </div>
+      <div class="s-unit"><div class="s-unit-id">U3</div></div>
+    </div>
+    <div class="s-score"><div class="s-score-num" style="color:#7C5C3C">68%</div><div class="s-score-label">Avg Score</div></div>
+  </div>
+
+  <!-- L8 -->
+  <div class="strip">
+    <div class="s-head"><div class="s-num">8</div><div class="s-title">Leadership</div></div>
+    <div class="s-gradient" style="background:linear-gradient(180deg,#C0A080 0%,#A88868 50%,#907050 100%)">
+      <div class="s-unit"><div class="s-unit-id">U1</div></div>
+      <div class="s-unit"><div class="s-unit-id">U2</div></div>
+      <div class="s-unit"><div class="s-unit-id">U3</div></div>
+    </div>
+    <div class="s-score"><div class="s-score-num" style="color:#7C5C3C">65%</div><div class="s-score-label">Avg Score</div></div>
+  </div>
+
+  <!-- L9 — discipline dip -->
+  <div class="strip">
+    <div class="s-head"><div class="s-num">9</div><div class="s-title">Sales Tools</div></div>
+    <div class="s-gradient" style="background:linear-gradient(180deg,#A89080 0%,#8B7060 50%,#705848 100%)">
+      <div class="s-unit"><div class="s-unit-id">U1</div>
+        <div class="s-gate"><div class="s-gate-text">Mornings are chaos. No system — whatever feels urgent.</div></div>
+      </div>
+      <div class="s-unit"><div class="s-unit-id">U2</div></div>
+      <div class="s-unit"><div class="s-unit-id">U3</div></div>
+    </div>
+    <div class="s-score"><div class="s-score-num" style="color:#5C3D2E">60%</div><div class="s-score-label">Avg Score</div></div>
+  </div>
+
+  <!-- L10 -->
+  <div class="strip">
+    <div class="s-head"><div class="s-num">10</div><div class="s-title">Compensation</div></div>
+    <div class="s-gradient" style="background:linear-gradient(180deg,#C8A878 0%,#B09060 50%,#987848 100%)">
+      <div class="s-unit"><div class="s-unit-id">U1</div></div>
+      <div class="s-unit"><div class="s-unit-id">U2</div></div>
+      <div class="s-unit"><div class="s-unit-id">U3</div></div>
+    </div>
+    <div class="s-score"><div class="s-score-num" style="color:#7C5C3C">71%</div><div class="s-score-label">Avg Score</div></div>
+  </div>
+
+  <!-- L11 -->
+  <div class="strip">
+    <div class="s-head"><div class="s-num">11</div><div class="s-title">Sober Selling</div></div>
+    <div class="s-gradient" style="background:linear-gradient(180deg,#D0B090 0%,#B89878 50%,#A08060 100%)">
+      <div class="s-unit"><div class="s-unit-id">U1</div></div>
+      <div class="s-unit"><div class="s-unit-id">U2</div></div>
+      <div class="s-unit"><div class="s-unit-id">U3</div></div>
+    </div>
+    <div class="s-score"><div class="s-score-num" style="color:#7C5C3C">73%</div><div class="s-score-label">Avg Score</div></div>
+  </div>
+
+  <!-- L12 — slight recovery -->
+  <div class="strip">
+    <div class="s-head"><div class="s-num">12</div><div class="s-title">Balance</div></div>
+    <div class="s-gradient" style="background:linear-gradient(180deg,#C8A880 0%,#B09468 50%,#988058 100%)">
+      <div class="s-unit"><div class="s-unit-id">U1</div></div>
+      <div class="s-unit"><div class="s-unit-id">U2</div>
+        <div class="s-gate"><div class="s-gate-text">No separation between work and not-work. Always on, rarely productive.</div></div>
+      </div>
+      <div class="s-unit"><div class="s-unit-id">U3</div></div>
+    </div>
+    <div class="s-score"><div class="s-score-num" style="color:#7C5C3C">67%</div><div class="s-score-label">Avg Score</div></div>
+  </div>
+
+</div>
+</div>
+
+<!-- EVIDENCE THREADS -->
+<div class="threads" style="margin-top:48px">
+  <div style="text-align:center;margin-bottom:32px">
+    <div style="font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--crimson)">Evidence Threads</div>
+    <div style="font-family:var(--display);font-size:24px;font-style:italic;margin-top:8px">Connecting what you said to what the strata show</div>
+  </div>
+
+  <div class="thread-section">
+    <div class="thread-header"><span class="thread-label">L3 → L9</span><div class="thread-line"></div><span class="thread-label">Coaching ↔ Discipline</span></div>
+    <div class="thread-pair">
+      <div class="thread-said">
+        <div class="t-src">Lesson 3 — You wrote</div>
+        <div class="t-text said">"I'm open to feedback — I just don't get much."</div>
+      </div>
+      <div class="thread-connect"><div class="thread-dot"></div><div class="thread-wire"></div><div class="thread-wire"></div><div class="thread-dot"></div></div>
+      <div class="thread-data">
+        <div class="t-src">Lesson 9 — Your scores showed</div>
+        <div class="t-text data">58% coaching, 62% discipline. You don't seek feedback AND you don't protect your time. These compound.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="thread-section">
+    <div class="thread-header"><span class="thread-label">L2 → L7</span><div class="thread-line"></div><span class="thread-label">Pipeline</span></div>
+    <div class="thread-pair">
+      <div class="thread-said">
+        <div class="t-src">Lesson 2 — You wrote</div>
+        <div class="t-text said">"I need to stop waiting and create my own pipeline."</div>
+      </div>
+      <div class="thread-connect"><div class="thread-dot"></div><div class="thread-wire"></div><div class="thread-wire"></div><div class="thread-dot"></div></div>
+      <div class="thread-data">
+        <div class="t-src">Lesson 7 — You then admitted</div>
+        <div class="t-text data">"I skip the hard question." Five lessons later, you still hadn't fixed the pipeline dependency — you'd just moved the excuse.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="thread-section">
+    <div class="thread-header"><span class="thread-label">L6 → L9</span><div class="thread-line"></div><span class="thread-label">Time Excuse</span></div>
+    <div class="thread-pair">
+      <div class="thread-said">
+        <div class="t-src">Lesson 6 — You wrote</div>
+        <div class="t-text said">"I don't have time to network."</div>
+      </div>
+      <div class="thread-connect"><div class="thread-dot"></div><div class="thread-wire"></div><div class="thread-wire"></div><div class="thread-dot"></div></div>
+      <div class="thread-data">
+        <div class="t-src">Lesson 9 — Your time audit revealed</div>
+        <div class="t-text data">2.5h/day on Slack. 12.5h/week. The time lapse caught you — the excuse in L6 was already dead by L9.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TERRAIN SUMMARY -->
+<div class="terrain">
+  <div class="terrain-title">Terrain Summary — The Landscape of Your Journey</div>
+  <div class="terrain-row">
+    <div class="terrain-cat">Identity</div>
+    <div class="terrain-bar-wrap"><div class="terrain-bar" style="width:85%;background:linear-gradient(90deg,#D4A55A,#F0C27F)"><span class="terrain-pct">85%</span></div></div>
+    <div class="terrain-shape">plateau</div>
+  </div>
+  <div class="terrain-row">
+    <div class="terrain-cat">Pipeline</div>
+    <div class="terrain-bar-wrap"><div class="terrain-bar" style="width:78%;background:linear-gradient(90deg,#B09060,#D4B898)"><span class="terrain-pct">78%</span></div></div>
+    <div class="terrain-shape">ridge</div>
+  </div>
+  <div class="terrain-row">
+    <div class="terrain-cat">Career</div>
+    <div class="terrain-bar-wrap"><div class="terrain-bar" style="width:71%;background:linear-gradient(90deg,#9C8068,#C8A878)"><span class="terrain-pct">71%</span></div></div>
+    <div class="terrain-shape">foothills</div>
+  </div>
+  <div class="terrain-row">
+    <div class="terrain-cat">Discipline</div>
+    <div class="terrain-bar-wrap"><div class="terrain-bar" style="width:62%;background:linear-gradient(90deg,#7C5C3C,#A08060)"><span class="terrain-pct">62%</span></div></div>
+    <div class="terrain-shape">valley</div>
+  </div>
+  <div class="terrain-row">
+    <div class="terrain-cat">Coaching</div>
+    <div class="terrain-bar-wrap"><div class="terrain-bar" style="width:58%;background:linear-gradient(90deg,#6B5040,#8B7060)"><span class="terrain-pct">58%</span></div></div>
+    <div class="terrain-shape">ravine</div>
+  </div>
+  <div class="terrain-row">
+    <div class="terrain-cat">Networking</div>
+    <div class="terrain-bar-wrap"><div class="terrain-bar" style="width:45%;background:linear-gradient(90deg,#5C3D2E,#6B5040)"><span class="terrain-pct">45%</span></div></div>
+    <div class="terrain-shape">crater</div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-text">The strata tell the real story. The deeper the color, the more work lives there.</div>
+    <div class="footer-sub">12 core samples · 36 units · 1 geological record</div>
+  </div>
+</div>
+
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+</body>
+</html>

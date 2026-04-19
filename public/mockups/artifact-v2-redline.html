@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR | The Redline</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FAF7F2;--ink:#1A1A1A;--crimson:#8B1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+  --card:#FFFFFF;--red:#C53030;--red-lt:rgba(197,48,48,0.08);--green:#15803D;
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif;--serif:'Source Serif 4',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;--mono:'Space Mono',monospace;--hand:'Caveat',cursive;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:var(--serif);line-height:1.8}
+
+.page{max-width:760px;margin:0 auto;padding:48px 32px 100px}
+
+/* HEADER — like a manuscript title page */
+.cover{text-align:center;padding:48px 0 40px;margin-bottom:48px;border-bottom:2px solid var(--ink)}
+.cover-eye{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--crimson);margin-bottom:16px}
+.cover-title{font-family:var(--display);font-size:clamp(40px,6vw,60px);font-weight:900;font-style:italic;line-height:1;margin-bottom:8px}
+.cover-name{background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:iris 3s linear infinite}
+.cover-sub{font-family:var(--serif);font-size:18px;font-style:italic;color:var(--muted);margin-bottom:20px}
+.cover-meta{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.cover-stamp{display:inline-block;font-family:var(--cond);font-size:14px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--red);border:3px solid var(--red);padding:6px 20px;margin-top:20px;transform:rotate(-3deg)}
+
+/* EDITOR NOTE */
+.editor-note{background:var(--red-lt);border-left:4px solid var(--red);padding:20px 24px;margin-bottom:48px}
+.en-from{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--red);margin-bottom:6px}
+.en-text{font-family:var(--serif);font-size:16px;color:var(--ink);line-height:1.65;font-style:italic}
+
+/* MANUSCRIPT BODY */
+.ms-section{margin-bottom:48px;position:relative}
+.ms-chapter{font-family:var(--cond);font-size:16px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--crimson);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--light)}
+
+/* Original text — the student's voice */
+.ms-draft{font-family:var(--serif);font-size:17px;line-height:2;color:var(--ink);position:relative;padding-right:200px}
+
+/* Strikethrough text */
+.ms-strike{text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:2px;color:var(--muted)}
+
+/* Inserted text */
+.ms-insert{color:var(--red);font-weight:600;text-decoration:none;border-bottom:2px solid var(--red)}
+
+/* Margin annotation */
+.ms-margin{position:absolute;right:0;width:180px;font-family:var(--hand);font-size:16px;color:var(--red);line-height:1.35;padding-left:16px;border-left:2px solid var(--red);margin-top:-4px}
+
+/* Score callout in margin */
+.ms-score-box{position:absolute;right:0;width:180px;padding:10px 14px;background:var(--red-lt);border:1px solid var(--red)}
+.ms-score-num{font-family:var(--display);font-size:32px;font-style:italic;color:var(--red);line-height:1}
+.ms-score-cat{font-family:var(--mono);font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:var(--red);margin-top:2px}
+.ms-score-note{font-family:var(--hand);font-size:14px;color:var(--red);margin-top:6px;line-height:1.3}
+
+/* Page break marker */
+.ms-break{text-align:center;margin:48px 0;position:relative}
+.ms-break::before{content:'';position:absolute;left:0;right:0;top:50%;height:1px;background:var(--light)}
+.ms-break-inner{font-family:var(--mono);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);background:var(--cream);padding:0 20px;position:relative}
+
+/* ACCEPTED MANUSCRIPT */
+.accepted{border:2px solid var(--green);padding:32px;margin-top:64px;position:relative}
+.acc-stamp{position:absolute;top:-14px;left:24px;font-family:var(--cond);font-size:12px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;background:var(--cream);color:var(--green);border:2px solid var(--green);padding:4px 14px}
+.acc-title{font-family:var(--display);font-size:24px;font-style:italic;margin-bottom:16px;margin-top:8px}
+.acc-item{padding:12px 0;border-bottom:1px solid var(--light);display:flex;gap:14px;align-items:flex-start}
+.acc-item:last-child{border-bottom:none}
+.acc-cat{font-family:var(--cond);font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--crimson);min-width:100px;padding-top:3px}
+.acc-text{font-family:var(--serif);font-size:15px;color:var(--ink);line-height:1.6}
+
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- TITLE PAGE -->
+  <div class="cover">
+    <div class="cover-eye">Draft Manuscript — Self-Assessment</div>
+    <div class="cover-title"><span class="cover-name">Jordan Rivera</span></div>
+    <div class="cover-sub">A self-portrait in twelve lessons</div>
+    <div class="cover-meta">Submitted April 19, 2026 · SDR · Cohort 01</div>
+    <div class="cover-stamp">Returned with edits</div>
+  </div>
+
+  <!-- EDITOR'S NOTE -->
+  <div class="editor-note">
+    <div class="en-from">Editor's Note</div>
+    <div class="en-text">Jordan — you submitted this as a finished draft. It isn't. The self-awareness is real, but the conclusions don't survive contact with the data. I've marked where the narrative breaks down. The version of you that you described and the version your scores describe are not the same person. Fix the gaps and resubmit.</div>
+  </div>
+
+  <!-- CHAPTER 1: PIPELINE -->
+  <div class="ms-section">
+    <div class="ms-chapter">Chapter 1 — Pipeline</div>
+    <div class="ms-draft">
+      I need to stop waiting for leads to come to me and start creating my own pipeline. The inbound dependency is making me passive and it shows in my numbers.
+      <div class="ms-margin" style="top:0">Good. You see the problem. Now look at what you wrote next ↓</div>
+    </div>
+    <br>
+    <div class="ms-draft">
+      <span class="ms-strike">I'm pretty good at qualifying leads — I usually check budget and authority before passing.</span> <span class="ms-insert">I check two of four BANT criteria and call it qualifying. I scored 62% on the exercise that tested this.</span>
+      <div class="ms-score-box" style="top:0">
+        <div class="ms-score-num">78%</div>
+        <div class="ms-score-cat">Pipeline Score</div>
+        <div class="ms-score-note">"Usually" is the word people use when they mean "sometimes"</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ms-break"><span class="ms-break-inner">Page Break</span></div>
+
+  <!-- CHAPTER 2: DISCIPLINE -->
+  <div class="ms-section">
+    <div class="ms-chapter">Chapter 2 — Discipline</div>
+    <div class="ms-draft">
+      My mornings are chaos. Some days I'm prospecting by 8, others I'm on Slack until 10 before I make a single call. There's no system — it's just whatever feels urgent.
+      <div class="ms-margin" style="top:0">Honest. The diagnostic confirms it. Keep reading.</div>
+    </div>
+    <br>
+    <div class="ms-draft">
+      <span class="ms-strike">I manage my time well — I just get pulled into a lot of meetings.</span> <span class="ms-insert">My time audit shows 33% of my day is selling. Internal meetings take 19%. Slack takes 24%. I'm not being pulled — I'm not pushing back.</span>
+      <div class="ms-score-box" style="top:0">
+        <div class="ms-score-num">62%</div>
+        <div class="ms-score-cat">Discipline Score</div>
+        <div class="ms-score-note">Below cohort average of 70%. The meetings aren't the problem.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ms-break"><span class="ms-break-inner">Page Break</span></div>
+
+  <!-- CHAPTER 3: COACHING -->
+  <div class="ms-section">
+    <div class="ms-chapter">Chapter 3 — Coaching</div>
+    <div class="ms-draft">
+      I wait for feedback to come to me. I never ask for it directly because part of me is afraid of what I'll hear. It's easier to assume I'm doing fine than to find out I'm not.
+      <div class="ms-margin" style="top:0">This is the most honest line in the entire manuscript.</div>
+    </div>
+    <br>
+    <div class="ms-draft">
+      <span class="ms-strike">I'm open to feedback — I just don't get much.</span> <span class="ms-insert">In three separate reflections, I described feedback as something that happens to me. I never described going to get it. "Open" and "seeking" are not the same word.</span>
+      <div class="ms-score-box" style="top:0">
+        <div class="ms-score-num">58%</div>
+        <div class="ms-score-cat">Coaching Score</div>
+        <div class="ms-score-note">The gap isn't availability. It's initiative.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ms-break"><span class="ms-break-inner">Page Break</span></div>
+
+  <!-- CHAPTER 4: NETWORKING -->
+  <div class="ms-section">
+    <div class="ms-chapter">Chapter 4 — Networking</div>
+    <div class="ms-draft">
+      I don't know anyone outside my company in this industry. My LinkedIn is a ghost town. I've been so heads-down on quota that I forgot relationships are the long game.
+      <div class="ms-margin" style="top:0">True. But then you contradicted yourself ↓</div>
+    </div>
+    <br>
+    <div class="ms-draft">
+      <span class="ms-strike">I know I should network more, but I don't have time.</span> <span class="ms-insert">I spend 2.5 hours per day on Slack and email — 12.5 hours per week of low-value communication. I have the time. I'm choosing to spend it on the wrong things.</span>
+      <div class="ms-score-box" style="top:0">
+        <div class="ms-score-num">45%</div>
+        <div class="ms-score-cat">Networking Score</div>
+        <div class="ms-score-note">Lowest category. The time excuse died with the time audit.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ms-break"><span class="ms-break-inner">Final Page</span></div>
+
+  <!-- THE ACCEPTED MANUSCRIPT -->
+  <div class="accepted">
+    <div class="acc-stamp">Accepted Manuscript</div>
+    <div class="acc-title">The version that survives the edit.</div>
+
+    <div class="acc-item">
+      <div class="acc-cat">Pipeline</div>
+      <div class="acc-text">Before passing any lead, confirm all four BANT criteria. If I can't answer one, ask the question instead of hoping the AE will figure it out.</div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-cat">Discipline</div>
+      <div class="acc-text">8:00–9:30 is prospecting. No Slack, no email, no CRM. Calendar blocked, phone on DND. Every day, no exceptions.</div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-cat">Coaching</div>
+      <div class="acc-text">Every Friday, ask my AE for one specific piece of feedback. Cite the exact call or email. Stop waiting to be told.</div>
+    </div>
+    <div class="acc-item">
+      <div class="acc-cat">Networking</div>
+      <div class="acc-text">One meaningful LinkedIn conversation per week. Not a connection request — a real conversation. Build the network before I need it.</div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:48px">
+    <div style="font-family:var(--hand);font-size:20px;color:var(--red)">The first draft was who you think you are. The redline is who you actually are. The accepted manuscript is who you're choosing to become.</div>
+    <div style="font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:14px">12 lessons · 36 units · Your words, fact-checked</div>
+  </div>
+
+</div>
+</body>
+</html>
