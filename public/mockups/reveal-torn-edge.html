@@ -22,10 +22,6 @@
 html, body { min-height: 100%; background: var(--cream); color: var(--ink); font-family: var(--serif); overflow-x: hidden; }
 
 /* ═══════════════════════════════════════════
-   SVG DEFINITIONS (clip paths + filters)
-═══════════════════════════════════════════ */
-
-/* ═══════════════════════════════════════════
    FANFARE HEADER
 ═══════════════════════════════════════════ */
 .fanfare {
@@ -424,184 +420,172 @@ html, body { min-height: 100%; background: var(--cream); color: var(--ink); font
  * TORN-EDGE GENERATOR
  *
  * Creates an organic, paper-like ragged edge down the center divide.
- * We generate two polygon clip-paths — one for the left panel, one for the right —
- * with a ~8px gap between them so the cream background peeks through.
+ * Both panels are absolutely positioned to fill the staging container,
+ * then each is clipped with a polygon that traces the torn edge.
+ * An ~8px gap between the two clip-paths lets the cream #FAF7F2
+ * background peek through like the page beneath.
  *
- * The edge is built by walking vertically from top to bottom, generating
- * random horizontal wobble at many small intervals. We use multiple
- * frequencies of noise (large drifts + small jags) to look like real
- * torn paper rather than a simple zigzag.
+ * The edge uses layered sinusoidal noise at three frequencies
+ * plus seeded randomness for micro-roughness, producing an
+ * organic paper-tear feel rather than a clean geometric line.
  */
 (function () {
-  var STEPS = 80;            // number of vertical sample points along the tear
-  var GAP = 4;               // half-gap in px (total gap ~8px)
-  var DRIFT_AMP = 18;        // large slow-wave amplitude in px
-  var JAG_AMP = 6;           // small jagged amplitude in px
-  var MICRO_AMP = 2.5;       // micro-roughness amplitude in px
-  var DRIFT_FREQ = 2.5;      // cycles over the full height for slow wave
-  var JAG_FREQ = 12;         // cycles for medium jags
-  var MICRO_FREQ = 35;       // cycles for micro-roughness
+  var STEPS = 120;           // many points = fine-grained organic tear
+  var GAP = 4;               // half-gap in px (total visible gap ~8px)
+  var DRIFT_AMP = 16;        // large slow-wave amplitude in px
+  var JAG_AMP = 7;           // medium jagged amplitude in px
+  var MICRO_AMP = 3;         // micro-roughness amplitude in px
 
-  // Seeded pseudo-random for reproducibility
+  // Seeded pseudo-random for reproducibility across reloads
   var seed = 42;
   function rand() {
-    seed = (seed * 16807 + 0) % 2147483647;
+    seed = (seed * 16807) % 2147483647;
     return (seed - 1) / 2147483646;
   }
 
-  // Generate the center-line x-offsets (in px, relative to exact center)
   var stagingEl = document.querySelector('.staging');
   if (!stagingEl) return;
 
-  var W = stagingEl.offsetWidth;
-  var H = stagingEl.offsetHeight;
-  var cx = W / 2;  // center x
-
-  // Build array of {t, xOffset} where t goes from 0 to 1
+  // Pre-compute the tear profile as normalised xOffset values (in px).
+  // These are resolution-independent; we convert to % at render time.
   var points = [];
   for (var i = 0; i <= STEPS; i++) {
     var t = i / STEPS;
-    // Combine multiple noise frequencies for organic feel
-    var drift = Math.sin(t * Math.PI * 2 * DRIFT_FREQ + 1.3) * DRIFT_AMP;
-    var jag   = Math.sin(t * Math.PI * 2 * JAG_FREQ + 0.7) * JAG_AMP * (0.5 + rand() * 0.5);
-    var micro = (rand() - 0.5) * 2 * MICRO_AMP;
-    // Add some asymmetric wobble
-    var wobble = Math.cos(t * Math.PI * 2 * 5.7 + 2.1) * 4 * rand();
-    var xOff = drift + jag + micro + wobble;
-    points.push({ t: t, xOff: xOff });
+
+    // Three noise layers with different frequencies
+    var drift  = Math.sin(t * Math.PI * 2 * 2.3 + 1.3) * DRIFT_AMP;
+    var jag    = Math.sin(t * Math.PI * 2 * 11 + 0.7) * JAG_AMP * (0.4 + rand() * 0.6);
+    var micro  = (rand() - 0.5) * 2 * MICRO_AMP;
+
+    // Asymmetric wobble — occasional larger excursions
+    var wobble = Math.cos(t * Math.PI * 2 * 5.7 + 2.1) * 3.5 * (rand() - 0.3);
+
+    // Occasional "fiber pull" — rare larger jag
+    var fiber  = (rand() > 0.88) ? (rand() - 0.5) * 12 : 0;
+
+    points.push({ t: t, xOff: drift + jag + micro + wobble + fiber });
   }
 
-  // Build clip-path polygon strings
-  // LEFT panel: covers from left edge (0%) to the torn edge (center + offset - gap)
-  // Polygon goes: top-left -> along torn edge top-to-bottom -> bottom-left
-  var leftPoly = [];
-  var rightPoly = [];
+  // Force first and last points to zero offset for clean top/bottom edges
+  points[0].xOff = 0;
+  points[STEPS].xOff = 0;
 
-  // Left panel polygon
-  leftPoly.push('0% 0%');  // top-left corner
-  for (var i = 0; i <= STEPS; i++) {
-    var t = points[i].t;
-    var xPx = cx + points[i].xOff - GAP;
-    var xPct = (xPx / W * 100).toFixed(3);
-    var yPct = (t * 100).toFixed(3);
-    leftPoly.push(xPct + '% ' + yPct + '%');
+  // ---- Rendering helpers ----
+  function buildPolygons(containerWidth) {
+    var cx = containerWidth / 2;
+    var lp = ['0% 0%'];
+    var rp = ['100% 0%'];
+
+    for (var i = 0; i <= STEPS; i++) {
+      var yPct = (points[i].t * 100).toFixed(3) + '%';
+
+      var lx = ((cx + points[i].xOff - GAP) / containerWidth * 100).toFixed(3) + '%';
+      lp.push(lx + ' ' + yPct);
+
+      var rx = ((cx + points[i].xOff + GAP) / containerWidth * 100).toFixed(3) + '%';
+      rp.push(rx + ' ' + yPct);
+    }
+
+    lp.push('0% 100%');
+    rp.push('100% 100%');
+
+    return {
+      left:  'polygon(' + lp.join(', ') + ')',
+      right: 'polygon(' + rp.join(', ') + ')'
+    };
   }
-  leftPoly.push('0% 100%');  // bottom-left corner
 
-  // Right panel polygon
-  rightPoly.push('100% 0%');  // top-right corner
-  // Walk torn edge from top to bottom (right side = center + offset + gap)
-  for (var i = 0; i <= STEPS; i++) {
-    var t = points[i].t;
-    var xPx = cx + points[i].xOff + GAP;
-    var xPct = (xPx / W * 100).toFixed(3);
-    var yPct = (t * 100).toFixed(3);
-    rightPoly.push(xPct + '% ' + yPct + '%');
-  }
-  rightPoly.push('100% 100%');  // bottom-right corner
-
-  // Apply clip-paths
   var stagePanel = document.getElementById('panelStage');
   var deskPanel  = document.getElementById('panelDesk');
-
-  stagePanel.style.clipPath = 'polygon(' + leftPoly.join(', ') + ')';
-  deskPanel.style.clipPath  = 'polygon(' + rightPoly.join(', ') + ')';
-
-  // ABSOLUTE POSITIONING: both panels overlap in the same space
-  // so the clip-paths actually carve out their halves
-  var staging = document.querySelector('.staging');
-  staging.style.position = 'relative';
-
-  stagePanel.style.position = 'absolute';
-  stagePanel.style.top = '0';
-  stagePanel.style.left = '0';
-  stagePanel.style.width = '100%';
-  stagePanel.style.height = '100%';
-
-  deskPanel.style.position = 'absolute';
-  deskPanel.style.top = '0';
-  deskPanel.style.left = '0';
-  deskPanel.style.width = '100%';
-  deskPanel.style.height = '100%';
-
-  // Reposition internal elements so they visually center in their half
-  // Left panel content should center in left half
-  var playbillImg = stagePanel.querySelector('.playbill');
-  if (playbillImg) {
-    playbillImg.style.left = '25%';
-  }
-  // Right panel content should center in right half
+  var playbillImg   = stagePanel.querySelector('.playbill');
   var manuscriptImg = deskPanel.querySelector('.manuscript');
-  if (manuscriptImg) {
-    manuscriptImg.style.left = '75%';
-  }
-  // Reposition select chips
-  var chipLeft = stagePanel.querySelector('.select-chip');
-  if (chipLeft) chipLeft.style.left = '25%';
+  var chipLeft  = stagePanel.querySelector('.select-chip');
   var chipRight = deskPanel.querySelector('.select-chip--desk');
-  if (chipRight) chipRight.style.left = '75%';
 
-  // Handle resize — regenerate torn edge
+  function applyDesktop() {
+    var W = stagingEl.offsetWidth;
+    var polys = buildPolygons(W);
+
+    stagePanel.style.position = 'absolute';
+    stagePanel.style.top = '0';
+    stagePanel.style.left = '0';
+    stagePanel.style.width = '100%';
+    stagePanel.style.height = '100%';
+    stagePanel.style.clipPath = polys.left;
+
+    deskPanel.style.position = 'absolute';
+    deskPanel.style.top = '0';
+    deskPanel.style.left = '0';
+    deskPanel.style.width = '100%';
+    deskPanel.style.height = '100%';
+    deskPanel.style.clipPath = polys.right;
+
+    // Centre content in each visual half
+    if (playbillImg)   playbillImg.style.left = '25%';
+    if (manuscriptImg) manuscriptImg.style.left = '75%';
+    if (chipLeft)      chipLeft.style.left = '25%';
+    if (chipRight)     chipRight.style.left = '75%';
+  }
+
+  function applyMobile() {
+    stagePanel.style.position = 'relative';
+    stagePanel.style.width = '100%';
+    stagePanel.style.height = '';
+    stagePanel.style.clipPath = 'none';
+
+    deskPanel.style.position = 'relative';
+    deskPanel.style.width = '100%';
+    deskPanel.style.height = '';
+    deskPanel.style.clipPath = 'none';
+
+    if (playbillImg)   playbillImg.style.left = '50%';
+    if (manuscriptImg) manuscriptImg.style.left = '50%';
+    if (chipLeft)      chipLeft.style.left = '50%';
+    if (chipRight)     chipRight.style.left = '50%';
+  }
+
+  function layout() {
+    if (window.innerWidth <= 900) {
+      applyMobile();
+    } else {
+      applyDesktop();
+    }
+  }
+
+  // Initial layout
+  layout();
+
+  // Debounced resize
   var resizeTimer;
   window.addEventListener('resize', function () {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function () {
-      // Check if mobile breakpoint
-      if (window.innerWidth <= 900) {
-        stagePanel.style.clipPath = 'none';
-        deskPanel.style.clipPath = 'none';
-        stagePanel.style.position = 'relative';
-        stagePanel.style.width = '100%';
-        stagePanel.style.height = '';
-        deskPanel.style.position = 'relative';
-        deskPanel.style.width = '100%';
-        deskPanel.style.height = '';
-        if (playbillImg) playbillImg.style.left = '50%';
-        if (manuscriptImg) manuscriptImg.style.left = '50%';
-        if (chipLeft) chipLeft.style.left = '50%';
-        if (chipRight) chipRight.style.left = '50%';
-        return;
-      }
-
-      var W2 = stagingEl.offsetWidth;
-      var H2 = stagingEl.offsetHeight;
-      var cx2 = W2 / 2;
-
-      var lp = ['0% 0%'];
-      var rp = ['100% 0%'];
-      for (var i = 0; i <= STEPS; i++) {
-        var t = points[i].t;
-        var xPx = cx2 + points[i].xOff - GAP;
-        lp.push((xPx / W2 * 100).toFixed(3) + '% ' + (t * 100).toFixed(3) + '%');
-      }
-      lp.push('0% 100%');
-
-      for (var i = 0; i <= STEPS; i++) {
-        var t = points[i].t;
-        var xPx = cx2 + points[i].xOff + GAP;
-        rp.push((xPx / W2 * 100).toFixed(3) + '% ' + (t * 100).toFixed(3) + '%');
-      }
-      rp.push('100% 100%');
-
-      stagePanel.style.clipPath = 'polygon(' + lp.join(', ') + ')';
-      deskPanel.style.clipPath  = 'polygon(' + rp.join(', ') + ')';
-
-      stagePanel.style.position = 'absolute';
-      stagePanel.style.width = '100%';
-      stagePanel.style.height = '100%';
-      deskPanel.style.position = 'absolute';
-      deskPanel.style.width = '100%';
-      deskPanel.style.height = '100%';
-      if (playbillImg) playbillImg.style.left = '25%';
-      if (manuscriptImg) manuscriptImg.style.left = '75%';
-      if (chipLeft) chipLeft.style.left = '25%';
-      if (chipRight) chipRight.style.left = '75%';
-    }, 150);
+    resizeTimer = setTimeout(layout, 120);
   });
 
-  // Trigger initial mobile check
-  if (window.innerWidth <= 900) {
-    window.dispatchEvent(new Event('resize'));
+  // ---- Paper-fiber wisps ----
+  // Sprinkle tiny rotated hairline divs along the tear to
+  // simulate paper fibers sticking out of the torn edge.
+  if (window.innerWidth > 900) {
+    var fiberCount = 28;
+    for (var f = 0; f < fiberCount; f++) {
+      var idx = Math.floor(rand() * (STEPS - 2)) + 1;
+      var t = points[idx].t;
+      var xOff = points[idx].xOff;
+      var W = stagingEl.offsetWidth;
+      var cx = W / 2;
+      var xPos = cx + xOff;
+      var yPos = t * stagingEl.offsetHeight;
+
+      var wisp = document.createElement('div');
+      wisp.style.cssText =
+        'position:absolute;pointer-events:none;z-index:2;' +
+        'width:' + (4 + rand() * 10) + 'px;height:1px;' +
+        'background:rgba(200,190,175,' + (0.2 + rand() * 0.35) + ');' +
+        'top:' + yPos + 'px;left:' + xPos + 'px;' +
+        'transform:rotate(' + (-40 + rand() * 80) + 'deg);' +
+        'transform-origin:left center;';
+      stagingEl.appendChild(wisp);
+    }
   }
 })();
 
