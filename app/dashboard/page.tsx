@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import SignOutButton from "@/components/SignOutButton";
+import UnlockArtifactTile from "@/components/UnlockArtifactTile";
 import { createClient } from "@/utils/supabase/server";
 import { LESSONS } from "@/utils/progress/types";
 import type { LessonProgressSummary } from "@/utils/progress/types";
@@ -117,8 +118,9 @@ export default async function Dashboard() {
   const currentIdx = LESSONS.findIndex((l) => l.id === currentLesson.id);
   const allComplete = completedCount === LESSONS.length;
 
-  // Fetch reveal pick (if any)
+  // Fetch reveal pick (if any) and check if sealed artifact is unlocked
   let revealPick: string | null = null;
+  let sealedUnlocked = false;
   if (user && allComplete) {
     const { data: pick } = await supabase
       .from("reveal_picks")
@@ -126,6 +128,17 @@ export default async function Dashboard() {
       .eq("user_id", user.id)
       .maybeSingle();
     revealPick = pick?.chosen_artifact ?? null;
+
+    if (revealPick) {
+      const sealedType = revealPick === "playbill" ? "redline" : "playbill";
+      const { data: unlock } = await supabase
+        .from("artifact_unlocks")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("artifact_type", sealedType)
+        .maybeSingle();
+      sealedUnlocked = !!unlock;
+    }
   }
 
   return (
@@ -443,42 +456,45 @@ export default async function Dashboard() {
                     </div>
                   </Link>
 
-                  {/* Sealed artifact */}
-                  <div style={{
-                    width: 200, height: 260, borderRadius: 6, overflow: "hidden",
-                    backgroundImage: revealPick === "playbill" ? "url('/reveal/desk.png')" : "url('/reveal/stage.png')",
-                    backgroundSize: "cover", backgroundPosition: "center", position: "relative",
-                    boxShadow: "0 4px 16px rgba(0,0,0,.1)",
-                    filter: "brightness(.65) saturate(.4)", cursor: "default",
-                  }}>
-                    <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <img
-                        src={revealPick === "playbill" ? "/reveal/manuscript.png" : "/reveal/playbill.png"}
-                        alt="Sealed"
-                        style={{ width: "65%", height: "auto", filter: "drop-shadow(0 8px 16px rgba(0,0,0,.3)) blur(1px)" }}
-                      />
-                    </div>
-                    <div style={{
-                      position: "absolute", inset: 0, display: "flex", flexDirection: "column",
-                      alignItems: "center", justifyContent: "center", gap: 8,
-                    }}>
-                      <span style={{
-                        fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28,
-                        fontWeight: 900, fontStyle: "italic", color: "#FAF7F2",
-                        textShadow: "0 2px 8px rgba(0,0,0,.5)",
+                  {/* Sealed artifact — unlocked or purchasable */}
+                  {sealedUnlocked ? (
+                    <Link
+                      href={revealPick === "playbill" ? "/artifacts/redline" : "/artifacts/playbill"}
+                      style={{
+                        display: "block", width: 200, height: 260, borderRadius: 6, overflow: "hidden",
+                        backgroundImage: revealPick === "playbill" ? "url('/reveal/desk.png')" : "url('/reveal/stage.png')",
+                        backgroundSize: "cover", backgroundPosition: "center", position: "relative",
+                        boxShadow: "0 8px 28px rgba(0,0,0,.18)", textDecoration: "none",
+                        transition: "transform .3s ease, box-shadow .3s ease",
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 36px rgba(0,0,0,.25)"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 8px 28px rgba(0,0,0,.18)"; }}
+                    >
+                      <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <img
+                          src={revealPick === "playbill" ? "/reveal/manuscript.png" : "/reveal/playbill.png"}
+                          alt={revealPick === "playbill" ? "The Manuscript" : "The Programme"}
+                          style={{ width: "65%", height: "auto", filter: "drop-shadow(0 8px 16px rgba(0,0,0,.4))" }}
+                        />
+                      </div>
+                      <div style={{
+                        position: "absolute", bottom: 0, left: 0, right: 0, padding: "24px 12px 12px",
+                        background: "linear-gradient(transparent, rgba(0,0,0,.6))",
+                        fontFamily: "'Space Mono', monospace", fontSize: 8, letterSpacing: ".25em",
+                        textTransform: "uppercase", color: "rgba(250,247,242,.8)", textAlign: "center",
                       }}>
-                        $40
-                      </span>
-                    </div>
-                    <div style={{
-                      position: "absolute", bottom: 0, left: 0, right: 0, padding: "24px 12px 12px",
-                      background: "linear-gradient(transparent, rgba(0,0,0,.6))",
-                      fontFamily: "'Space Mono', monospace", fontSize: 8, letterSpacing: ".25em",
-                      textTransform: "uppercase", color: "rgba(250,247,242,.6)", textAlign: "center",
-                    }}>
-                      {revealPick === "playbill" ? "The Manuscript" : "The Programme"} &middot; Sealed
-                    </div>
-                  </div>
+                        {revealPick === "playbill" ? "The Manuscript" : "The Programme"}
+                      </div>
+                    </Link>
+                  ) : (
+                    <UnlockArtifactTile
+                      artifactType={revealPick === "playbill" ? "redline" : "playbill"}
+                      email={user?.email || ""}
+                      bgImage={revealPick === "playbill" ? "/reveal/desk.png" : "/reveal/stage.png"}
+                      artifactImage={revealPick === "playbill" ? "/reveal/manuscript.png" : "/reveal/playbill.png"}
+                      label={revealPick === "playbill" ? "The Manuscript" : "The Programme"}
+                    />
+                  )}
                 </div>
               )}
             </div>

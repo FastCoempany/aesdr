@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
 import { createClient } from "@/utils/supabase/server";
 import { getCachedArtifact } from "@/lib/artifacts/generate";
@@ -32,6 +33,33 @@ export default async function RedlinePage({
   } = await supabase.auth.getUser();
 
   if (!user) redirect("/login");
+
+  // Access gate: user must have picked this artifact OR purchased it OR have bypass
+  const cookieStore = await cookies();
+  const hasBypass = cookieStore.get("aesdr_bypass")?.value === "1";
+
+  if (!hasBypass) {
+    const { data: pick } = await supabase
+      .from("reveal_picks")
+      .select("chosen_artifact")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    const hasFreePick = pick?.chosen_artifact === "redline";
+
+    if (!hasFreePick) {
+      const { data: unlock } = await supabase
+        .from("artifact_unlocks")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("artifact_type", "redline")
+        .maybeSingle();
+
+      if (!unlock) {
+        redirect("/dashboard");
+      }
+    }
+  }
 
   const artifact = await getCachedArtifact(user.id, "redline");
 

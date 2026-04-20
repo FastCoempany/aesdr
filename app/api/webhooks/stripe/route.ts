@@ -48,10 +48,46 @@ export async function POST(request: Request) {
     const email = session.customer_details?.email;
     const name = session.customer_details?.name || 'there';
     const tierRaw = session.metadata?.tier;
-    const tier = (tierRaw === 'team' || tierRaw === 'individual') ? tierRaw : 'individual';
     const amountCents = session.amount_total || 0;
 
     const supabase = createAdminClient();
+
+    // Handle artifact unlock purchases separately
+    if (tierRaw === 'artifact_unlock') {
+      const artifactType = session.metadata?.artifact_type;
+      if (artifactType && email) {
+        // Find user by email
+        let unlockUserId: string | null = null;
+        const { data: existingPurchase } = await supabase
+          .from('purchases')
+          .select('user_id')
+          .eq('user_email', email.toLowerCase())
+          .not('user_id', 'is', null)
+          .limit(1)
+          .maybeSingle();
+        unlockUserId = existingPurchase?.user_id ?? null;
+
+        if (unlockUserId) {
+          const { error: unlockError } = await supabase
+            .from('artifact_unlocks')
+            .upsert(
+              {
+                user_id: unlockUserId,
+                artifact_type: artifactType,
+                stripe_session_id: session.id,
+                amount_cents: amountCents,
+              },
+              { onConflict: 'user_id,artifact_type' }
+            );
+          if (unlockError) {
+            console.error('[webhook] Artifact unlock insert failed:', unlockError.message);
+          }
+        }
+      }
+      return NextResponse.json({ received: true });
+    }
+
+    const tier = (tierRaw === 'team' || tierRaw === 'individual') ? tierRaw : 'individual';
 
     // Look up or create Supabase auth user by email
     let userId: string | null = null;

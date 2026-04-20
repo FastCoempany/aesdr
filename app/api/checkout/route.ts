@@ -13,8 +13,9 @@ function getStripe() {
 }
 
 const checkoutSchema = z.object({
-  tier: z.enum(['individual', 'team']),
+  tier: z.enum(['individual', 'team', 'artifact_unlock']),
   email: z.string().email().max(320).optional(),
+  artifact_type: z.enum(['playbill', 'redline']).optional(),
 });
 
 export async function POST(request: Request) {
@@ -41,11 +42,12 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-    const { tier, email } = result.data;
+    const { tier, email, artifact_type } = result.data;
 
     const priceMap: Record<string, string | undefined> = {
       individual: process.env.STRIPE_PRICE_ID_INDIVIDUAL,
       team: process.env.STRIPE_PRICE_ID_TEAM,
+      artifact_unlock: process.env.STRIPE_PRICE_ID_ARTIFACT_UNLOCK,
     };
 
     const priceId = priceMap[tier];
@@ -53,14 +55,29 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid tier' }, { status: 400 });
     }
 
+    if (tier === 'artifact_unlock' && !artifact_type) {
+      return NextResponse.json({ error: 'artifact_type required for unlock' }, { status: 400 });
+    }
+
+    const isUnlock = tier === 'artifact_unlock';
+    const successUrl = isUnlock
+      ? `${siteUrl}/artifacts/${artifact_type === 'playbill' ? 'playbill' : 'redline'}?unlocked=1`
+      : `${siteUrl}/success?session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = isUnlock
+      ? `${siteUrl}/dashboard`
+      : `${siteUrl}/purchase/cancel`;
+
     const stripe = getStripe();
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: priceId, quantity: 1 }],
       mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://aesdr.com'}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://aesdr.com'}/purchase/cancel`,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
       customer_email: email || undefined,
-      metadata: { tier },
+      metadata: {
+        tier,
+        ...(artifact_type ? { artifact_type } : {}),
+      },
     });
 
     // Log checkout start for abandonment tracking
