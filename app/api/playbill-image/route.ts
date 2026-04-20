@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
 
   const buffer = await generatePlaybillImage(name);
 
-  return new NextResponse(buffer, {
+  return new NextResponse(new Uint8Array(buffer), {
     headers: {
       "Content-Type": "image/png",
       "Cache-Control": "public, max-age=86400, s-maxage=86400",
