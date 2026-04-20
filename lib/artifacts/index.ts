@@ -14,10 +14,21 @@
 
 export { UNIT_CATEGORY_MAP, CATEGORY_META, type ArtifactCategory } from "./categories";
 export { generateArtifacts, getCachedArtifact } from "./generate";
+export { extractPlaybill, extractRedline } from "./llm";
 export type {
   DiagnosticData,
   PlaybookData,
   MirrorData,
+  PlaybillData,
+  PlaybillProgramme,
+  PlaybillAct,
+  PlaybillReview,
+  PlaybillDirectorNote,
+  RedlineData,
+  RedlineAssessment,
+  RedlineChapterGrade,
+  RedlineMarkup,
+  RedlineAcceptedCommitment,
   ArtifactType,
   StoredArtifact,
 } from "./types";
