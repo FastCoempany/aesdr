@@ -6,6 +6,7 @@ import { createClient } from "@/utils/supabase/server";
 import { getCachedArtifact } from "@/lib/artifacts/generate";
 import type { RedlineData } from "@/lib/artifacts/types";
 import RedlineView from "./RedlineView";
+import { MOCK_REDLINE } from "./mock";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +15,17 @@ export const metadata: Metadata = {
   description: "Your end-of-course manuscript, returned with edits.",
 };
 
-export default async function RedlinePage() {
+export default async function RedlinePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const sp = await searchParams;
+
+  if (sp.preview === "1") {
+    return <RedlineView data={MOCK_REDLINE} />;
+  }
+
   const supabase = await createClient();
   const {
     data: { user },

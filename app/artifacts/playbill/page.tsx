@@ -6,6 +6,7 @@ import { createClient } from "@/utils/supabase/server";
 import { getCachedArtifact } from "@/lib/artifacts/generate";
 import type { PlaybillData } from "@/lib/artifacts/types";
 import PlaybillView from "./PlaybillView";
+import { MOCK_PLAYBILL } from "./mock";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +15,17 @@ export const metadata: Metadata = {
   description: "Your end-of-course self-portrait, staged in three acts.",
 };
 
-export default async function PlaybillPage() {
+export default async function PlaybillPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const sp = await searchParams;
+
+  if (sp.preview === "1") {
+    return <PlaybillView data={MOCK_PLAYBILL} />;
+  }
+
   const supabase = await createClient();
   const {
     data: { user },
