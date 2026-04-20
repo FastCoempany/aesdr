@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR | The Reveal — Choose Your Keeper</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FAF7F2;--ink:#1A1A1A;--crimson:#8B1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+  --stage-deep:#0A0606;--stage-mid:#1C0B0B;--stage-warm:#3A1818;
+  --desk-paper:#F5EFE4;--desk-warm:#E8DFCC;--desk-shadow:#B8A88E;--ink-red:#B00020;
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif;--serif:'Source Serif 4',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;--mono:'Space Mono',monospace;--hand:'Caveat',cursive;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:var(--serif);overflow-x:hidden}
+
+/* FANFARE HEADER */
+.fanfare{text-align:center;padding:56px 5% 32px;position:relative;z-index:2}
+.f-eye{font-family:var(--mono);font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--crimson);margin-bottom:14px}
+.f-title{font-family:var(--display);font-size:clamp(40px,6vw,72px);font-weight:900;font-style:italic;line-height:1;margin-bottom:12px}
+.f-name{background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:iris 3s linear infinite}
+.f-sub{font-family:var(--serif);font-size:18px;font-style:italic;color:var(--muted);max-width:560px;margin:0 auto;line-height:1.55}
+.f-meta{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:16px}
+
+/* DIVIDER INSTRUCTION */
+.pick{text-align:center;margin:32px 0 8px;position:relative;z-index:3}
+.pick-t{font-family:var(--display);font-size:28px;font-style:italic;color:var(--ink)}
+.pick-s{font-family:var(--serif);font-size:14px;font-style:italic;color:var(--muted);margin-top:6px}
+
+/* TWO-OBJECT STAGE */
+.staging{display:grid;grid-template-columns:1fr 1fr;min-height:720px;position:relative}
+
+/* ═══════════════════════════════════════════
+   LEFT — PLAYBILL ON THEATRE STAGE
+═══════════════════════════════════════════ */
+.stage{position:relative;background:radial-gradient(ellipse at center top, var(--stage-warm) 0%, var(--stage-mid) 40%, var(--stage-deep) 100%);overflow:hidden;cursor:pointer;transition:all .5s ease}
+.stage:hover{background:radial-gradient(ellipse at center top, #4A2020 0%, #2A1010 40%, var(--stage-deep) 100%)}
+.stage:hover .playbill{transform:translate(-50%,-50%) rotate(-2deg) scale(1.04)}
+.stage:hover .spot{opacity:.95}
+.stage:hover .select-chip{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* Curtains suggested at sides */
+.curtain-l,.curtain-r{position:absolute;top:0;bottom:0;width:80px;background:linear-gradient(90deg,rgba(139,26,26,.35) 0%,rgba(10,6,6,0) 100%);z-index:2}
+.curtain-l{left:0;background:linear-gradient(90deg,rgba(139,26,26,.5) 0%,rgba(10,6,6,0) 100%)}
+.curtain-r{right:0;background:linear-gradient(270deg,rgba(139,26,26,.5) 0%,rgba(10,6,6,0) 100%)}
+
+/* Spotlight cone */
+.spot{position:absolute;top:-50px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:240px solid transparent;border-right:240px solid transparent;border-top:560px solid rgba(255,240,210,.08);opacity:.75;transition:opacity .5s;z-index:1}
+
+/* Stage floor shadow */
+.stage-floor{position:absolute;bottom:0;left:0;right:0;height:140px;background:linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,.6) 100%);z-index:1}
+
+/* Stage label */
+.stage-label{position:absolute;top:22px;left:24px;font-family:var(--mono);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:rgba(250,247,242,.5);z-index:5}
+
+/* THE PLAYBILL — floating, sealed */
+.playbill{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-1deg);width:300px;height:430px;z-index:3;transition:transform .5s ease;filter:drop-shadow(0 30px 40px rgba(0,0,0,.6)) drop-shadow(0 0 60px rgba(255,220,180,.15))}
+
+.pb-cover{width:100%;height:100%;background:linear-gradient(170deg,#F5EDD8 0%,#EDE2C8 100%);border:1px solid #2A1810;position:relative;padding:38px 32px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+
+/* Ornate border */
+.pb-border{position:absolute;top:14px;left:14px;right:14px;bottom:14px;border:1px solid #8B1A1A;pointer-events:none}
+.pb-border::before,.pb-border::after{content:'';position:absolute;width:22px;height:22px;border:1px solid #8B1A1A}
+.pb-border::before{top:-6px;left:-6px;border-right:none;border-bottom:none}
+.pb-border::after{bottom:-6px;right:-6px;border-left:none;border-top:none}
+.pb-corner-tr,.pb-corner-bl{position:absolute;width:22px;height:22px;border:1px solid #8B1A1A}
+.pb-corner-tr{top:8px;right:8px;border-left:none;border-bottom:none}
+.pb-corner-bl{bottom:8px;left:8px;border-right:none;border-top:none}
+
+.pb-top{text-align:center;position:relative;z-index:2}
+.pb-estb{font-family:var(--mono);font-size:8px;letter-spacing:.3em;color:#8B1A1A;margin-bottom:6px}
+.pb-flourish{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:18px}
+.pb-flourish::before,.pb-flourish::after{content:'';width:40px;height:1px;background:#2A1810}
+.pb-flourish-star{font-family:var(--display);font-size:14px;color:#8B1A1A}
+.pb-theatre{font-family:var(--display);font-size:13px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#2A1810}
+
+.pb-center{text-align:center;position:relative;z-index:2;padding:18px 0}
+.pb-program{font-family:var(--display);font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:#2A1810;margin-bottom:14px}
+.pb-title{font-family:var(--display);font-size:38px;font-style:italic;font-weight:900;line-height:1;color:#2A1810;margin-bottom:14px}
+.pb-sub{font-family:var(--serif);font-size:11px;font-style:italic;color:#5A3818;line-height:1.5;max-width:210px;margin:0 auto}
+
+.pb-mid-ornament{margin:16px auto;width:80px;height:16px;display:flex;align-items:center;justify-content:center;gap:4px}
+.pb-dot{width:4px;height:4px;background:#8B1A1A;border-radius:50%}
+.pb-dash{width:24px;height:1px;background:#2A1810}
+
+.pb-bottom{text-align:center;position:relative;z-index:2}
+.pb-act{font-family:var(--display);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:#2A1810;margin-bottom:6px}
+.pb-acts{font-family:var(--serif);font-size:11px;font-style:italic;color:#5A3818;line-height:1.6}
+.pb-date{font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:#8B1A1A;margin-top:14px;padding-top:10px;border-top:1px solid #2A1810}
+
+/* Aged texture overlay */
+.pb-cover::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 20%, transparent 60%, rgba(139,90,30,.12) 100%);pointer-events:none;z-index:1}
+
+/* SELECT CHIP (hover reveal) */
+.select-chip{position:absolute;bottom:60px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--cream);color:var(--stage-deep);padding:12px 28px;font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;border:none;cursor:pointer;opacity:0;transition:all .4s ease;z-index:4;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+
+/* ═══════════════════════════════════════════
+   RIGHT — REDLINE PAPERS ON DESK
+═══════════════════════════════════════════ */
+.desk{position:relative;background:
+  linear-gradient(135deg, var(--desk-warm) 0%, var(--desk-paper) 50%, #E0D4BC 100%);
+  overflow:hidden;cursor:pointer;transition:all .5s ease}
+.desk:hover{background:linear-gradient(135deg, #EFE3CA 0%, #FBF5E8 50%, #E8DCC2 100%)}
+.desk:hover .stack{transform:translate(-50%,-50%) rotate(-1deg) scale(1.03)}
+.desk:hover .select-chip-d{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* Subtle woodgrain texture */
+.desk::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(95deg, transparent 0, transparent 60px, rgba(139,100,60,.03) 60px, rgba(139,100,60,.03) 62px);pointer-events:none}
+
+.desk-label{position:absolute;top:22px;right:24px;font-family:var(--mono);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);z-index:5}
+
+/* Stack of papers */
+.stack{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-2deg);width:340px;height:440px;z-index:3;transition:transform .5s ease}
+
+/* Back papers (slightly offset) */
+.paper{position:absolute;width:100%;height:100%;background:#FBF6EB;border:1px solid #D4C9AE;box-shadow:0 2px 8px rgba(0,0,0,.08),0 12px 24px rgba(0,0,0,.12)}
+.paper-3{top:14px;left:-10px;transform:rotate(3deg);background:#F3ECD8}
+.paper-2{top:7px;left:4px;transform:rotate(-1deg);background:#F8F1DF}
+.paper-1{top:0;left:0;transform:rotate(0.5deg);background:#FDF8EE;padding:32px 28px;display:flex;flex-direction:column}
+
+/* Top paper content */
+.p-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid #8B1A1A}
+.p-brand{font-family:var(--mono);font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:#8B1A1A}
+.p-stamp{font-family:var(--cond);font-size:10px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:#B00020;border:1.5px solid #B00020;padding:3px 8px;transform:rotate(-3deg)}
+
+.p-title{font-family:var(--display);font-size:26px;font-style:italic;font-weight:900;color:#1A1A1A;line-height:1.1;margin-bottom:6px}
+.p-sub{font-family:var(--serif);font-size:12px;font-style:italic;color:#5C5C5C;margin-bottom:22px}
+
+/* Redline markup preview (obscured) */
+.p-lines{flex:1;display:flex;flex-direction:column;gap:11px;position:relative}
+.p-line{position:relative;display:flex;align-items:flex-start;gap:8px}
+.p-bar{flex:1;height:7px;background:linear-gradient(90deg,#D4C9AE 0%,#D4C9AE 85%,transparent 100%);border-radius:1px}
+.p-bar.short{width:65%}
+.p-bar.mid{width:80%}
+.p-strike{position:absolute;height:1.5px;background:#B00020;top:50%;left:0}
+.p-insert{position:absolute;color:#B00020;font-family:var(--hand);font-size:13px;line-height:1;white-space:nowrap;opacity:.9}
+.p-margin{position:absolute;right:-28px;top:-3px;width:22px;height:22px;border:1.5px solid #B00020;color:#B00020;font-family:var(--hand);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;transform:rotate(8deg);background:rgba(255,255,255,.6)}
+
+/* Caret mark for insertion */
+.p-caret{font-family:var(--hand);font-size:16px;color:#B00020;font-weight:700;line-height:1}
+
+.p-foot{margin-top:18px;padding-top:12px;border-top:1px dashed #C4B99E;display:flex;justify-content:space-between;align-items:center}
+.p-foot-l{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:#8B7A5C}
+.p-foot-r{font-family:var(--hand);font-size:16px;color:#B00020}
+
+/* Red pen resting on paper */
+.pen{position:absolute;bottom:-20px;right:60px;width:180px;height:14px;background:linear-gradient(180deg,#D62020 0%,#A00000 50%,#5A0000 100%);border-radius:2px;transform:rotate(-18deg);z-index:4;box-shadow:0 6px 12px rgba(0,0,0,.25)}
+.pen::before{content:'';position:absolute;left:-14px;top:2px;width:18px;height:10px;background:linear-gradient(90deg,#2A2A2A,#0A0A0A);border-radius:2px 0 0 2px}
+.pen::after{content:'';position:absolute;right:-6px;top:3px;width:10px;height:8px;background:#C0C0C0;border-radius:0 3px 3px 0}
+
+/* Sticky note flag */
+.flag{position:absolute;top:-8px;right:40px;width:32px;height:60px;background:#F5D870;box-shadow:0 2px 6px rgba(0,0,0,.15);transform:rotate(6deg);z-index:4;padding:8px 4px;text-align:center}
+.flag-txt{font-family:var(--hand);font-size:11px;color:#8B1A1A;line-height:1;writing-mode:vertical-rl}
+
+/* Select chip for desk */
+.select-chip-d{position:absolute;bottom:60px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--ink);color:var(--cream);padding:12px 28px;font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;border:none;cursor:pointer;opacity:0;transition:all .4s ease;z-index:5;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+
+/* FOOTER — quiet second-option language */
+.footer-note{text-align:center;padding:48px 5% 72px;background:var(--cream);position:relative;z-index:2}
+.fn-line{width:80px;height:1px;background:var(--light);margin:0 auto 20px}
+.fn-text{font-family:var(--serif);font-size:14px;font-style:italic;color:var(--muted);line-height:1.6;max-width:540px;margin:0 auto}
+.fn-price{font-family:var(--display);font-size:16px;font-style:italic;color:var(--ink);display:inline-block}
+
+/* Ambient sparks on hover */
+.spark{position:absolute;width:3px;height:3px;background:rgba(255,220,180,.6);border-radius:50%;opacity:0;pointer-events:none}
+.stage:hover .spark{animation:float 3s ease-in-out infinite}
+.spark:nth-child(1){top:20%;left:30%;animation-delay:0s}
+.spark:nth-child(2){top:40%;left:70%;animation-delay:1s}
+.spark:nth-child(3){top:60%;left:25%;animation-delay:2s}
+
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+@keyframes float{0%,100%{opacity:0;transform:translateY(0)}50%{opacity:.8;transform:translateY(-20px)}}
+
+@media(max-width:900px){
+  .staging{grid-template-columns:1fr}
+  .stage,.desk{min-height:560px}
+}
+</style>
+</head>
+<body>
+
+<!-- FANFARE -->
+<div class="fanfare">
+  <div class="f-eye">The Course is Complete</div>
+  <div class="f-title"><span class="f-name">Jordan Rivera</span></div>
+  <div class="f-sub">Twelve lessons. Thirty-six units. One finished record of who you were when you started and who you've become since.</div>
+  <div class="f-meta">SDR · Cohort 01 · April 19, 2026</div>
+</div>
+
+<div class="pick">
+  <div class="pick-t">Choose your keeper.</div>
+  <div class="pick-s">Two readings of the same story. Pick the one you want to take home.</div>
+</div>
+
+<!-- TWO-OBJECT STAGE -->
+<div class="staging">
+
+  <!-- LEFT — PLAYBILL ON STAGE -->
+  <div class="stage" onclick="pick('playbill')">
+    <div class="stage-label">I · The Programme</div>
+    <div class="curtain-l"></div>
+    <div class="curtain-r"></div>
+    <div class="spot"></div>
+    <div class="spark"></div>
+    <div class="spark"></div>
+    <div class="spark"></div>
+
+    <div class="playbill">
+      <div class="pb-cover">
+        <div class="pb-border"></div>
+        <div class="pb-corner-tr"></div>
+        <div class="pb-corner-bl"></div>
+
+        <div class="pb-top">
+          <div class="pb-estb">Est. MMXXVI</div>
+          <div class="pb-flourish">
+            <span class="pb-flourish-star">✦</span>
+          </div>
+          <div class="pb-theatre">The AESDR Theatre</div>
+        </div>
+
+        <div class="pb-center">
+          <div class="pb-program">— The Programme —</div>
+          <div class="pb-title">Jordan<br>Rivera</div>
+          <div class="pb-mid-ornament">
+            <span class="pb-dot"></span>
+            <span class="pb-dash"></span>
+            <span class="pb-dot"></span>
+          </div>
+          <div class="pb-sub">A dramatic self-portrait in three acts, composed from the artifacts of twelve lessons.</div>
+        </div>
+
+        <div class="pb-bottom">
+          <div class="pb-act">In Three Acts</div>
+          <div class="pb-acts">The Programme · The Reviews · The Director's Notes</div>
+          <div class="pb-date">Opening night · April MMXXVI</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage-floor"></div>
+    <button class="select-chip">Take the Programme</button>
+  </div>
+
+  <!-- RIGHT — REDLINE PAPERS ON DESK -->
+  <div class="desk" onclick="pick('redline')">
+    <div class="desk-label">II · The Manuscript</div>
+
+    <div class="stack">
+      <div class="paper paper-3"></div>
+      <div class="paper paper-2"></div>
+      <div class="paper paper-1">
+
+        <div class="flag"><div class="flag-txt">REWRITE</div></div>
+
+        <div class="p-head">
+          <div class="p-brand">AESDR · Editorial Desk</div>
+          <div class="p-stamp">Returned with edits</div>
+        </div>
+
+        <div class="p-title">Jordan Rivera</div>
+        <div class="p-sub">A self-portrait in twelve lessons.<br>Draft manuscript — redlined.</div>
+
+        <div class="p-lines">
+          <div class="p-line">
+            <div class="p-bar mid">
+              <div class="p-strike" style="width:60%"></div>
+            </div>
+            <div class="p-margin">!</div>
+          </div>
+          <div class="p-line">
+            <div class="p-bar">
+              <div class="p-strike" style="width:45%;left:25%"></div>
+            </div>
+          </div>
+          <div class="p-line">
+            <span class="p-caret">^</span>
+            <div class="p-bar short"></div>
+            <div class="p-margin">?</div>
+          </div>
+          <div class="p-line">
+            <div class="p-bar">
+              <div class="p-strike" style="width:80%"></div>
+            </div>
+          </div>
+          <div class="p-line">
+            <div class="p-bar mid"></div>
+          </div>
+          <div class="p-line">
+            <span class="p-caret">^</span>
+            <div class="p-bar short">
+              <div class="p-strike" style="width:55%"></div>
+            </div>
+          </div>
+          <div class="p-line">
+            <div class="p-bar"></div>
+            <div class="p-margin">×</div>
+          </div>
+          <div class="p-line">
+            <div class="p-bar mid"></div>
+          </div>
+        </div>
+
+        <div class="p-foot">
+          <div class="p-foot-l">Ch. 1 of III · Folios I / II / III</div>
+          <div class="p-foot-r">— ed.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="pen"></div>
+    <button class="select-chip-d">Take the Manuscript</button>
+  </div>
+
+</div>
+
+<!-- QUIET FOOTER -->
+<div class="footer-note">
+  <div class="fn-line"></div>
+  <div class="fn-text">The reading you don't take home stays sealed. It will be waiting on your dashboard whenever you want the other side of the story — <span class="fn-price">$40</span>.</div>
+</div>
+
+<script>
+function pick(which){
+  alert('Selected: '+which+'\n\n(This would trigger the "true-to-timing" render loader and open the chosen artifact.)');
+}
+</script>
+
+</body>
+</html>
