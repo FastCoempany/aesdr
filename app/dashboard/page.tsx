@@ -115,6 +115,18 @@ export default async function Dashboard() {
   const completedCount = LESSONS.filter((l) => progressMap[l.id]?.is_completed).length;
   const currentLesson = LESSONS.find((l) => !progressMap[l.id]?.is_completed) || LESSONS[0];
   const currentIdx = LESSONS.findIndex((l) => l.id === currentLesson.id);
+  const allComplete = completedCount === LESSONS.length;
+
+  // Fetch reveal pick (if any)
+  let revealPick: string | null = null;
+  if (user && allComplete) {
+    const { data: pick } = await supabase
+      .from("reveal_picks")
+      .select("chosen_artifact")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    revealPick = pick?.chosen_artifact ?? null;
+  }
 
   return (
     <main
@@ -348,6 +360,131 @@ export default async function Dashboard() {
             );
           })}
         </div>
+
+        {/* ═══ REVEAL / ARTIFACTS SECTION ═══ */}
+        {allComplete && (
+          <div style={{ marginTop: 8, paddingLeft: 48, position: "relative" }}>
+            {/* Timeline connector from last lesson */}
+            <div style={{ position: "absolute", left: 15, top: 0, height: 32, width: 1, background: "#8B1A1A" }} />
+            <div style={{
+              position: "absolute", left: 6, top: 32, width: 20, height: 20, borderRadius: "50%",
+              background: "linear-gradient(135deg, #B8943E, #D4B96A)", border: "2px solid #B8943E",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 11, color: "#FAF7F2", boxShadow: "0 0 16px rgba(184,148,62,0.35)",
+            }}>
+              ★
+            </div>
+
+            <div style={{ paddingTop: 28, paddingBottom: 48 }}>
+              <p style={{
+                fontFamily: "'Space Mono', monospace", fontSize: 9, letterSpacing: ".2em",
+                textTransform: "uppercase", color: "#B8943E", marginBottom: 6,
+              }}>
+                {revealPick ? "Your Keeper" : "The Reveal"}
+              </p>
+
+              {!revealPick ? (
+                <>
+                  <Link
+                    href="/reveal"
+                    style={{
+                      fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22,
+                      fontWeight: 700, fontStyle: "italic", color: "#1A1A1A",
+                      textDecoration: "none", display: "block", marginBottom: 8, lineHeight: 1.2,
+                    }}
+                  >
+                    Choose your keeper.
+                    <span style={{ marginLeft: 12, fontSize: 14, color: "#B8943E" }}>&rarr;</span>
+                  </Link>
+                  <p style={{
+                    fontFamily: "'Source Serif 4', Georgia, serif", fontSize: 16,
+                    fontStyle: "italic", lineHeight: 1.6, color: "#6B6B6B", maxWidth: 480,
+                  }}>
+                    Two readings of the same story.{" "}
+                    <span style={{
+                      fontStyle: "normal", fontWeight: 600,
+                      background: "var(--iris)", backgroundSize: "200% 100%",
+                      WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+                      animation: "iris 3s linear infinite",
+                    }}>
+                      Pick the one you want to take home.
+                    </span>
+                  </p>
+                </>
+              ) : (
+                <div style={{ display: "flex", gap: 20, flexWrap: "wrap", marginTop: 4 }}>
+                  {/* Chosen artifact */}
+                  <Link
+                    href={revealPick === "playbill" ? "/artifacts/playbill" : "/artifacts/redline"}
+                    style={{
+                      display: "block", width: 200, height: 260, borderRadius: 6, overflow: "hidden",
+                      backgroundImage: revealPick === "playbill" ? "url('/reveal/stage.png')" : "url('/reveal/desk.png')",
+                      backgroundSize: "cover", backgroundPosition: "center", position: "relative",
+                      boxShadow: "0 8px 28px rgba(0,0,0,.18)", textDecoration: "none",
+                      transition: "transform .3s ease, box-shadow .3s ease",
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 36px rgba(0,0,0,.25)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 8px 28px rgba(0,0,0,.18)"; }}
+                  >
+                    <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <img
+                        src={revealPick === "playbill" ? "/reveal/playbill.png" : "/reveal/manuscript.png"}
+                        alt={revealPick === "playbill" ? "The Programme" : "The Manuscript"}
+                        style={{ width: "65%", height: "auto", filter: "drop-shadow(0 8px 16px rgba(0,0,0,.4))" }}
+                      />
+                    </div>
+                    <div style={{
+                      position: "absolute", bottom: 0, left: 0, right: 0, padding: "24px 12px 12px",
+                      background: "linear-gradient(transparent, rgba(0,0,0,.6))",
+                      fontFamily: "'Space Mono', monospace", fontSize: 8, letterSpacing: ".25em",
+                      textTransform: "uppercase", color: "rgba(250,247,242,.8)", textAlign: "center",
+                    }}>
+                      {revealPick === "playbill" ? "The Programme" : "The Manuscript"}
+                    </div>
+                  </Link>
+
+                  {/* Sealed artifact */}
+                  <div style={{
+                    width: 200, height: 260, borderRadius: 6, overflow: "hidden",
+                    backgroundImage: revealPick === "playbill" ? "url('/reveal/desk.png')" : "url('/reveal/stage.png')",
+                    backgroundSize: "cover", backgroundPosition: "center", position: "relative",
+                    boxShadow: "0 4px 16px rgba(0,0,0,.1)",
+                    filter: "brightness(.65) saturate(.4)", cursor: "default",
+                  }}>
+                    <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <img
+                        src={revealPick === "playbill" ? "/reveal/manuscript.png" : "/reveal/playbill.png"}
+                        alt="Sealed"
+                        style={{ width: "65%", height: "auto", filter: "drop-shadow(0 8px 16px rgba(0,0,0,.3)) blur(1px)" }}
+                      />
+                    </div>
+                    <div style={{
+                      position: "absolute", inset: 0, display: "flex", flexDirection: "column",
+                      alignItems: "center", justifyContent: "center", gap: 8,
+                    }}>
+                      <span style={{
+                        fontFamily: "'Playfair Display', Georgia, serif", fontSize: 28,
+                        fontWeight: 900, fontStyle: "italic", color: "#FAF7F2",
+                        textShadow: "0 2px 8px rgba(0,0,0,.5)",
+                      }}>
+                        $40
+                      </span>
+                    </div>
+                    <div style={{
+                      position: "absolute", bottom: 0, left: 0, right: 0, padding: "24px 12px 12px",
+                      background: "linear-gradient(transparent, rgba(0,0,0,.6))",
+                      fontFamily: "'Space Mono', monospace", fontSize: 8, letterSpacing: ".25em",
+                      textTransform: "uppercase", color: "rgba(250,247,242,.6)", textAlign: "center",
+                    }}>
+                      {revealPick === "playbill" ? "The Manuscript" : "The Programme"} &middot; Sealed
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
       </div>
     </main>
   );
