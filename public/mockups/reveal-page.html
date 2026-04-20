@@ -34,20 +34,20 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 /* ═══════════════════════════════════════════
    LEFT — PLAYBILL ON THEATRE STAGE
 ═══════════════════════════════════════════ */
-.stage{position:relative;overflow:hidden;cursor:pointer;
+.stage{position:relative;cursor:pointer;
   background-image:url('/reveal/stage.png');
   background-size:cover;background-position:center;background-repeat:no-repeat;
   filter:brightness(1) contrast(1);
   transition:filter .5s ease}
 .stage:hover{filter:brightness(1.15) contrast(1.05)}
-.stage:hover .playbill{transform:translate(-50%,-50%) rotate(-2deg) scale(1.04)}
+.stage:hover .playbill{transform:translate(-50%,-50%) rotate(-2deg) scale(1.06)}
 .stage:hover .select-chip{transform:translateX(-50%) translateY(0);opacity:1}
 
 .stage-label{position:absolute;top:22px;left:24px;font-family:var(--mono);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:rgba(250,247,242,.65);z-index:5;mix-blend-mode:screen}
 
 /* THE PLAYBILL — positioned over the stage */
-.playbill{position:absolute;top:42%;left:50%;transform:translate(-50%,-50%) rotate(-1deg);
-  width:clamp(160px,20vw,240px);max-height:70%;height:auto;object-fit:contain;z-index:3;
+.playbill{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-1deg);
+  width:clamp(200px,28vw,320px);height:auto;z-index:3;
   transition:transform .6s cubic-bezier(.2,.8,.2,1);
   filter:drop-shadow(0 30px 40px rgba(0,0,0,.65)) drop-shadow(0 0 60px rgba(255,220,180,.18));
   pointer-events:none;user-select:none}
@@ -70,20 +70,20 @@ html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:v
 /* ═══════════════════════════════════════════
    RIGHT — MANUSCRIPT ON DESK
 ═══════════════════════════════════════════ */
-.desk{position:relative;overflow:hidden;cursor:pointer;
+.desk{position:relative;cursor:pointer;
   background-image:url('/reveal/desk.png');
   background-size:cover;background-position:center;background-repeat:no-repeat;
   filter:brightness(1) contrast(1);
   transition:filter .5s ease}
 .desk:hover{filter:brightness(1.1) contrast(1.04)}
-.desk:hover .stack{transform:translate(-50%,-50%) rotate(-2deg) scale(1.03)}
+.desk:hover .stack{transform:translate(-50%,-50%) rotate(-2.5deg) scale(1.04)}
 .desk:hover .select-chip-d{transform:translateX(-50%) translateY(0);opacity:1}
 
 .desk-label{position:absolute;top:22px;right:24px;font-family:var(--mono);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:rgba(90,56,24,.8);z-index:5;mix-blend-mode:multiply}
 
 /* THE MANUSCRIPT STACK — positioned on the desk */
-.stack{position:absolute;top:42%;left:48%;transform:translate(-50%,-50%) rotate(-2deg);
-  width:clamp(200px,24vw,300px);max-height:70%;height:auto;object-fit:contain;z-index:3;
+.stack{position:absolute;top:52%;left:50%;transform:translate(-50%,-50%) rotate(-4deg);
+  width:clamp(240px,32vw,400px);height:auto;z-index:3;
   transition:transform .6s cubic-bezier(.2,.8,.2,1);
   filter:drop-shadow(0 18px 28px rgba(0,0,0,.45)) drop-shadow(0 4px 8px rgba(0,0,0,.25));
   pointer-events:none;user-select:none}
