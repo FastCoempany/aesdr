@@ -8,7 +8,7 @@ import type { ArtifactType } from "@/lib/artifacts/types";
 import { rateLimit } from "@/lib/rate-limit";
 
 /**
- * GET /api/artifacts?type=diagnostic|playbook|mirror
+ * GET /api/artifacts?type=diagnostic|playbill|redline
  *
  * Fetch a single cached artifact. Returns 404 if not generated yet.
  */
@@ -27,9 +27,9 @@ export async function GET(request: Request) {
     const url = new URL(request.url);
     const type = url.searchParams.get("type") as ArtifactType | null;
 
-    if (!type || !["diagnostic", "playbook", "mirror"].includes(type)) {
+    if (!type || !["diagnostic", "playbill", "redline"].includes(type)) {
       return NextResponse.json(
-        { error: "Invalid type. Use: diagnostic, playbook, or mirror" },
+        { error: "Invalid type. Use: diagnostic, playbill, or redline" },
         { status: 400 }
       );
     }
@@ -57,11 +57,10 @@ export async function GET(request: Request) {
 /**
  * POST /api/artifacts
  *
- * Generate (or regenerate) all 3 artifacts for the authenticated user.
- * Uses cache — if progress data hasn't changed, returns cached versions instantly.
- *
- * Request body (optional):
- *   { "force": true }  — bypass cache and regenerate
+ * Generate (or regenerate) all end-of-course artifacts for the
+ * authenticated user: diagnostic (pure math), playbill (theatrical),
+ * and redline (editorial). Uses cache — if progress data hasn't
+ * changed, returns cached versions instantly.
  */
 export async function POST(request: Request) {
   try {
@@ -112,8 +111,8 @@ export async function POST(request: Request) {
       cached: result.cached,
       artifacts: {
         diagnostic: result.diagnostic,
-        playbook: result.playbook,
-        mirror: result.mirror,
+        playbill: result.playbill,
+        redline: result.redline,
       },
     });
   } catch (err) {
