@@ -87,7 +87,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ received: true });
     }
 
-    const tier = (tierRaw === 'team' || tierRaw === 'individual') ? tierRaw : 'individual';
+    const validTiers = ['sdr', 'ae', 'team'];
+    const tier = validTiers.includes(tierRaw || '') ? tierRaw! : 'sdr';
 
     // Look up or create Supabase auth user by email
     let userId: string | null = null;

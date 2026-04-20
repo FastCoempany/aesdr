@@ -7,7 +7,7 @@ export default function CheckoutButton({
   label,
   className,
 }: {
-  tier: "individual" | "team";
+  tier: "sdr" | "ae" | "team";
   label: string;
   className?: string;
 }) {

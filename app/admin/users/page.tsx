@@ -87,7 +87,8 @@ export default async function AdminUsers({
           }}
         >
           <option value="">All Plans</option>
-          <option value="individual">Individual</option>
+          <option value="sdr">SDR</option>
+          <option value="ae">AE</option>
           <option value="team">Team</option>
         </select>
         <button

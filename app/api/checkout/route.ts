@@ -13,7 +13,7 @@ function getStripe() {
 }
 
 const checkoutSchema = z.object({
-  tier: z.enum(['individual', 'team', 'artifact_unlock']),
+  tier: z.enum(['sdr', 'ae', 'team', 'artifact_unlock']),
   email: z.string().email().max(320).optional(),
   artifact_type: z.enum(['playbill', 'redline']).optional(),
 });
@@ -45,7 +45,8 @@ export async function POST(request: Request) {
     const { tier, email, artifact_type } = result.data;
 
     const priceMap: Record<string, string | undefined> = {
-      individual: process.env.STRIPE_PRICE_ID_INDIVIDUAL,
+      sdr: process.env.STRIPE_PRICE_ID_SDR,
+      ae: process.env.STRIPE_PRICE_ID_AE,
       team: process.env.STRIPE_PRICE_ID_TEAM,
       artifact_unlock: process.env.STRIPE_PRICE_ID_ARTIFACT_UNLOCK,
     };

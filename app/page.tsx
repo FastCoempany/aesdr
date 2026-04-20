@@ -65,7 +65,7 @@ export default function LandingPage() {
               <li>Future curriculum updates</li>
               <li>14-day refund guarantee</li>
             </ul>
-            <CheckoutButton tier="individual" label="Buy For Me" className={styles.priceCta} />
+            <CheckoutButton tier="sdr" label="Buy For Me" className={styles.priceCta} />
           </div>
           {/* AE */}
           <div className={styles.priceCard}>
@@ -79,7 +79,7 @@ export default function LandingPage() {
               <li>Future curriculum updates</li>
               <li>14-day refund guarantee</li>
             </ul>
-            <CheckoutButton tier="individual" label="Buy For Me" className={styles.priceCta} />
+            <CheckoutButton tier="ae" label="Buy For Me" className={styles.priceCta} />
           </div>
           {/* Team */}
           <div className={`${styles.priceCard} ${styles.priceCardFeatured}`}>
