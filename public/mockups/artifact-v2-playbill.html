@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR | The Playbill</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=Bebas+Neue&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FAF7F2;--paper:#F4EFE4;--ink:#1A1A1A;--crimson:#8B1A1A;--gold:#A68B4E;--muted:#6B6B6B;--light:#D8D0C0;
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif;--serif:'Source Serif 4',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;--mono:'Space Mono',monospace;--marq:'Bebas Neue',sans-serif;--hand:'Caveat',cursive;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:var(--serif)}
+
+/* MARQUEE HEADER — old theater poster */
+.marquee{background:var(--ink);color:var(--cream);padding:32px 5% 24px;text-align:center;border-bottom:6px double var(--gold)}
+.mq-eye{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.mq-presents{font-family:var(--marq);font-size:22px;letter-spacing:.3em;color:var(--cream);opacity:.7;margin-bottom:4px}
+.mq-title{font-family:var(--display);font-size:clamp(44px,6vw,72px);font-weight:900;font-style:italic;line-height:.95;letter-spacing:-.01em;margin-bottom:8px}
+.mq-name{background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:iris 3s linear infinite}
+.mq-by{font-family:var(--serif);font-size:14px;font-style:italic;color:var(--light);margin-top:6px;letter-spacing:.05em}
+.mq-rule{width:40%;height:1px;background:var(--gold);margin:14px auto}
+.mq-run{font-family:var(--marq);font-size:14px;letter-spacing:.25em;color:var(--gold)}
+.mq-venue{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--light);margin-top:8px}
+
+/* TAB NAV — acts */
+.acts{display:flex;justify-content:center;background:var(--paper);border-bottom:1px solid var(--light)}
+.act{padding:20px 40px;cursor:pointer;border:none;background:transparent;font-family:var(--display);font-size:18px;font-style:italic;color:var(--muted);border-bottom:3px solid transparent;transition:all .2s}
+.act:hover{color:var(--ink)}
+.act.active{color:var(--crimson);border-bottom-color:var(--crimson)}
+.act-num{font-family:var(--marq);font-size:12px;letter-spacing:.3em;display:block;color:inherit;margin-bottom:2px;opacity:.7}
+
+/* PANELS */
+.panel{display:none;background:var(--paper);padding:56px 6% 80px}
+.panel.active{display:block}
+.panel-header{text-align:center;margin-bottom:48px;max-width:800px;margin-left:auto;margin-right:auto}
+.ph-act{font-family:var(--marq);font-size:16px;letter-spacing:.4em;color:var(--gold)}
+.ph-title{font-family:var(--display);font-size:42px;font-style:italic;margin-top:6px;line-height:1.1}
+.ph-sub{font-family:var(--serif);font-size:15px;font-style:italic;color:var(--muted);margin-top:12px;max-width:560px;margin-left:auto;margin-right:auto;line-height:1.5}
+
+/* PROGRAM PAGE — Diagnostic */
+.program{max-width:900px;margin:0 auto;background:var(--cream);padding:48px 56px;box-shadow:0 2px 12px rgba(0,0,0,0.08);border:1px solid var(--light)}
+
+.prog-section{margin-bottom:40px;padding-bottom:32px;border-bottom:1px solid var(--light)}
+.prog-section:last-child{border-bottom:none}
+.prog-h{font-family:var(--marq);font-size:14px;letter-spacing:.3em;color:var(--crimson);margin-bottom:14px;text-align:center}
+.prog-title{font-family:var(--display);font-size:26px;font-style:italic;text-align:center;margin-bottom:24px}
+
+/* Dramatis Personae table */
+.personae{width:100%}
+.personae tr{border-bottom:1px dotted var(--light)}
+.personae td{padding:10px 0;vertical-align:top}
+.per-role{font-family:var(--serif);font-size:16px;font-style:italic;color:var(--ink);width:38%}
+.per-dots{width:24%;text-align:center;color:var(--muted);letter-spacing:.2em;font-size:12px}
+.per-actor{font-family:var(--display);font-size:17px;font-weight:700;text-align:right;width:38%}
+.per-actor em{font-style:italic;font-weight:400;font-size:13px;color:var(--muted);display:block;margin-top:2px;letter-spacing:.05em}
+
+/* Acts / scenes listing */
+.acts-list{display:grid;grid-template-columns:1fr 1fr;gap:14px 40px}
+.scene{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px dotted var(--light)}
+.scene-label{font-family:var(--serif);font-size:14px;font-style:italic}
+.scene-num{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.1em}
+.scene-score{font-family:var(--display);font-size:15px;font-weight:700;color:var(--crimson)}
+.scene-score.strong{color:var(--ink)}
+
+/* Critical notices */
+.notice{padding:20px 24px;background:var(--paper);border-left:3px solid var(--crimson);margin-top:24px}
+.notice-t{font-family:var(--marq);font-size:11px;letter-spacing:.3em;color:var(--crimson);margin-bottom:6px}
+.notice-b{font-family:var(--serif);font-size:15px;font-style:italic;line-height:1.5;color:var(--ink)}
+
+/* REVIEWS — Mirror */
+.reviews{max-width:1000px;margin:0 auto}
+.rv-intro{text-align:center;margin-bottom:40px;padding:24px;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+.rv-intro-lead{font-family:var(--display);font-size:22px;font-style:italic}
+.rv-intro-sub{font-family:var(--serif);font-size:14px;color:var(--muted);margin-top:6px;font-style:italic}
+
+.review{display:grid;grid-template-columns:220px 1fr 240px;gap:32px;margin-bottom:36px;padding:28px;background:var(--cream);border:1px solid var(--light);align-items:center;position:relative}
+.rv-outlet{text-align:center}
+.rv-outlet-name{font-family:var(--display);font-size:20px;font-weight:900;font-style:italic;line-height:1;margin-bottom:6px}
+.rv-outlet-sub{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.rv-stars{font-size:18px;color:var(--gold);margin-top:8px;letter-spacing:.1em}
+.rv-stars .empty{opacity:.25}
+
+.rv-body{padding:0 20px;border-left:1px solid var(--light);border-right:1px solid var(--light)}
+.rv-quote{font-family:var(--display);font-size:17px;font-style:italic;line-height:1.5;color:var(--ink);margin-bottom:10px}
+.rv-quote::before{content:"\201C";font-size:42px;color:var(--crimson);line-height:0;position:relative;top:14px;margin-right:4px}
+.rv-quote::after{content:"\201D";font-size:42px;color:var(--crimson);line-height:0;position:relative;top:14px;margin-left:2px}
+.rv-by{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-top:8px;text-align:right}
+
+.rv-box{background:var(--ink);color:var(--cream);padding:16px 18px}
+.rv-box-t{font-family:var(--marq);font-size:11px;letter-spacing:.3em;color:var(--gold);margin-bottom:6px}
+.rv-box-num{font-family:var(--display);font-size:32px;font-weight:900;line-height:1;margin-bottom:6px}
+.rv-box-d{font-family:var(--serif);font-size:13px;line-height:1.4;color:var(--light)}
+
+.verdict{max-width:900px;margin:56px auto 0;padding:32px 40px;background:var(--ink);color:var(--cream);text-align:center;position:relative}
+.verdict-stamp{position:absolute;top:-18px;left:50%;transform:translateX(-50%);background:var(--crimson);color:var(--cream);padding:8px 24px;font-family:var(--marq);font-size:13px;letter-spacing:.3em}
+.verdict-text{font-family:var(--display);font-size:22px;font-style:italic;line-height:1.4;max-width:700px;margin:16px auto 0}
+.verdict-sub{font-family:var(--serif);font-size:14px;font-style:italic;color:var(--light);margin-top:12px}
+
+/* DIRECTOR'S NOTES — Playbook */
+.directors{max-width:1000px;margin:0 auto}
+.dn-paper{background:var(--cream);padding:40px 48px;border:1px solid var(--light);position:relative;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.dn-paper::before{content:"DIRECTOR — J. RIVERA";position:absolute;top:20px;right:24px;font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--muted)}
+.dn-paper::after{content:"CONFIDENTIAL — FOR CAST";position:absolute;bottom:20px;right:24px;font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--muted)}
+
+.dn-salut{font-family:var(--display);font-size:28px;font-style:italic;margin-bottom:6px}
+.dn-intro{font-family:var(--serif);font-size:16px;line-height:1.6;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--light)}
+.dn-intro em{color:var(--crimson);font-weight:600}
+
+.note-item{margin-bottom:26px;padding:20px 24px;background:var(--paper);border-left:4px solid var(--crimson);position:relative}
+.note-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.note-scene{font-family:var(--marq);font-size:12px;letter-spacing:.3em;color:var(--crimson)}
+.note-tag{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding:3px 8px;border:1px solid var(--muted)}
+.note-title{font-family:var(--display);font-size:20px;font-style:italic;margin-bottom:8px}
+.note-body{font-family:var(--serif);font-size:15px;line-height:1.55;color:var(--ink)}
+.note-blocking{margin-top:10px;font-family:var(--hand);font-size:18px;color:var(--crimson);line-height:1.3}
+
+.dn-sign{margin-top:32px;padding-top:24px;border-top:1px solid var(--light);text-align:right}
+.dn-sign-hand{font-family:var(--hand);font-size:34px;color:var(--crimson);line-height:1}
+.dn-sign-line{font-family:var(--serif);font-size:13px;font-style:italic;color:var(--muted);margin-top:4px}
+
+.curtain{text-align:center;margin-top:56px;padding-top:28px;border-top:2px solid var(--ink)}
+.curtain-stamp{display:inline-block;padding:10px 28px;background:var(--crimson);color:var(--cream);font-family:var(--marq);font-size:15px;letter-spacing:.4em}
+.curtain-text{font-family:var(--display);font-size:22px;font-style:italic;margin-top:18px;max-width:600px;margin-left:auto;margin-right:auto;line-height:1.4}
+.curtain-meta{font-family:var(--mono);font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-top:14px}
+
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+</style>
+</head>
+<body>
+
+<div class="marquee">
+  <div class="mq-eye">Artifact — The Playbill</div>
+  <div class="mq-presents">AESDR Theater Presents</div>
+  <div class="mq-title"><span class="mq-name">Jordan Rivera</span></div>
+  <div class="mq-by">a one-person show in twelve acts, written and performed by the subject</div>
+  <div class="mq-rule"></div>
+  <div class="mq-run">Limited Run · April 19 — Quarter End</div>
+  <div class="mq-venue">SDR · Cohort 01 · Thirty-Six Scenes · Twelve Lessons</div>
+</div>
+
+<div class="acts">
+  <button class="act active" onclick="showPanel('diag', this)"><span class="act-num">Act I</span>The Program</button>
+  <button class="act" onclick="showPanel('mirr', this)"><span class="act-num">Act II</span>The Reviews</button>
+  <button class="act" onclick="showPanel('play', this)"><span class="act-num">Act III</span>Director's Notes</button>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ACT I — DIAGNOSTIC: THE PROGRAM
+═══════════════════════════════════════════ -->
+<div class="panel active" id="panel-diag">
+  <div class="panel-header">
+    <div class="ph-act">Act I</div>
+    <div class="ph-title">The Program</div>
+    <div class="ph-sub">Read before the performance. Describes who is on stage, what they are playing, and in what order the scenes unfold.</div>
+  </div>
+
+  <div class="program">
+
+    <div class="prog-section">
+      <div class="prog-h">Dramatis Personae</div>
+      <div class="prog-title">The Company</div>
+      <table class="personae">
+        <tr>
+          <td class="per-role">The Protagonist <em>— driven, self-aware, in conflict with own habits</em></td>
+          <td class="per-dots">· · · · · · · · · · · · · ·</td>
+          <td class="per-actor">Jordan Rivera<em>debut performance</em></td>
+        </tr>
+        <tr>
+          <td class="per-role">The Mentor <em>— unseen, heard only through corrections</em></td>
+          <td class="per-dots">· · · · · · · · · · · · · ·</td>
+          <td class="per-actor">The Data<em>unbilled</em></td>
+        </tr>
+        <tr>
+          <td class="per-role">The Ensemble <em>— prospects, colleagues, AEs, ghosts of unmade calls</em></td>
+          <td class="per-dots">· · · · · · · · · · · · · ·</td>
+          <td class="per-actor">Thirty-Six Units<em>rotating cast</em></td>
+        </tr>
+        <tr>
+          <td class="per-role">The Antagonist <em>— the version of you that makes excuses</em></td>
+          <td class="per-dots">· · · · · · · · · · · · · ·</td>
+          <td class="per-actor">Jordan Rivera<em>same actor, different costume</em></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="prog-section">
+      <div class="prog-h">Six Themes of the Play</div>
+      <div class="prog-title">What the Script Is About</div>
+      <div class="acts-list">
+        <div class="scene"><span class="scene-label">Identity</span><span class="scene-num">theme I</span><span class="scene-score strong">85%</span></div>
+        <div class="scene"><span class="scene-label">Pipeline</span><span class="scene-num">theme II</span><span class="scene-score strong">78%</span></div>
+        <div class="scene"><span class="scene-label">Career</span><span class="scene-num">theme III</span><span class="scene-score strong">71%</span></div>
+        <div class="scene"><span class="scene-label">Discipline</span><span class="scene-num">theme IV</span><span class="scene-score">62%</span></div>
+        <div class="scene"><span class="scene-label">Coaching</span><span class="scene-num">theme V</span><span class="scene-score">58%</span></div>
+        <div class="scene"><span class="scene-label">Networking</span><span class="scene-num">theme VI</span><span class="scene-score">45%</span></div>
+      </div>
+      <div class="notice">
+        <div class="notice-t">Director's Preface</div>
+        <div class="notice-b">The play is a tragedy disguised as a success story. The upper half of the program earns applause. The lower half is why the run ends before it should.</div>
+      </div>
+    </div>
+
+    <div class="prog-section">
+      <div class="prog-h">The Twelve Acts</div>
+      <div class="prog-title">Running Order</div>
+      <div class="acts-list">
+        <div class="scene"><span class="scene-label">Leader's Foundation</span><span class="scene-num">Act 1</span><span class="scene-score strong">88%</span></div>
+        <div class="scene"><span class="scene-label">Breaking Silos</span><span class="scene-num">Act 2</span><span class="scene-score strong">82%</span></div>
+        <div class="scene"><span class="scene-label">Surviving</span><span class="scene-num">Act 3</span><span class="scene-score strong">72%</span></div>
+        <div class="scene"><span class="scene-label">Navigating</span><span class="scene-num">Act 4</span><span class="scene-score strong">70%</span></div>
+        <div class="scene"><span class="scene-label">Playbook</span><span class="scene-num">Act 5</span><span class="scene-score strong">75%</span></div>
+        <div class="scene"><span class="scene-label">Beyond Sales</span><span class="scene-num">Act 6</span><span class="scene-score">55%</span></div>
+        <div class="scene"><span class="scene-label">Prospecting</span><span class="scene-num">Act 7</span><span class="scene-score">68%</span></div>
+        <div class="scene"><span class="scene-label">Leadership</span><span class="scene-num">Act 8</span><span class="scene-score">65%</span></div>
+        <div class="scene"><span class="scene-label">Sales Tools</span><span class="scene-num">Act 9</span><span class="scene-score">60%</span></div>
+        <div class="scene"><span class="scene-label">Compensation</span><span class="scene-num">Act 10</span><span class="scene-score strong">71%</span></div>
+        <div class="scene"><span class="scene-label">Sober Selling</span><span class="scene-num">Act 11</span><span class="scene-score strong">73%</span></div>
+        <div class="scene"><span class="scene-label">Balance</span><span class="scene-num">Act 12</span><span class="scene-score">67%</span></div>
+      </div>
+    </div>
+
+    <div class="prog-section" style="border-bottom:none">
+      <div class="prog-h">Warnings to the Audience</div>
+      <div class="prog-title">Content Advisory</div>
+      <div class="notice">
+        <div class="notice-t">Acts VI and IX contain</div>
+        <div class="notice-b">Sustained silence in the networking movement. Improvised blocking during morning scenes. One monologue about "time" that the subject does not appear to believe. Patrons may experience mild secondhand embarrassment.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ACT II — MIRROR: THE REVIEWS
+═══════════════════════════════════════════ -->
+<div class="panel" id="panel-mirr">
+  <div class="panel-header">
+    <div class="ph-act">Act II</div>
+    <div class="ph-title">The Reviews</div>
+    <div class="ph-sub">How the performance was received versus how it was intended. The divergence between the billing and the ticket stub.</div>
+  </div>
+
+  <div class="reviews">
+
+    <div class="rv-intro">
+      <div class="rv-intro-lead">"The critics and the box office rarely agree.<br>On this play, they agree completely."</div>
+      <div class="rv-intro-sub">— four reviews, four verdicts, four rewrites required</div>
+    </div>
+
+    <div class="review">
+      <div class="rv-outlet">
+        <div class="rv-outlet-name">The Pipeline Herald</div>
+        <div class="rv-outlet-sub">Act VII · Qualification</div>
+        <div class="rv-stars">&#9733;&#9733;&#9733;<span class="empty">&#9733;&#9733;</span></div>
+      </div>
+      <div class="rv-body">
+        <div class="rv-quote">"Pretty good" is doing a great deal of work in this performance. The subject claims to qualify every lead. Two of four criteria are actually checked. The rest is hope in a nice outfit.</div>
+        <div class="rv-by">— Staff critic, filed from the BANT exercise</div>
+      </div>
+      <div class="rv-box">
+        <div class="rv-box-t">Box Office</div>
+        <div class="rv-box-num">62%</div>
+        <div class="rv-box-d">Two criteria checked. The missing two cost the ticket.</div>
+      </div>
+    </div>
+
+    <div class="review">
+      <div class="rv-outlet">
+        <div class="rv-outlet-name">Morning Times</div>
+        <div class="rv-outlet-sub">Act IX · Discipline</div>
+        <div class="rv-stars">&#9733;&#9733;<span class="empty">&#9733;&#9733;&#9733;</span></div>
+      </div>
+      <div class="rv-body">
+        <div class="rv-quote">The program claims "good time management, pulled into meetings." The time audit, which does not lie, shows 33% of the day spent selling. The meetings are an alibi. The Slack window is the real stage.</div>
+        <div class="rv-by">— Theater desk, sourced from the time calculator</div>
+      </div>
+      <div class="rv-box">
+        <div class="rv-box-t">Box Office</div>
+        <div class="rv-box-num">33%</div>
+        <div class="rv-box-d">Selling ratio. 19% meetings, 24% Slack. You are not pulled.</div>
+      </div>
+    </div>
+
+    <div class="review">
+      <div class="rv-outlet">
+        <div class="rv-outlet-name">The Coaching Review</div>
+        <div class="rv-outlet-sub">Act III · Feedback</div>
+        <div class="rv-stars">&#9733;&#9733;<span class="empty">&#9733;&#9733;&#9733;</span></div>
+      </div>
+      <div class="rv-body">
+        <div class="rv-quote">The subject tells the audience they are "open to feedback." In three separate scenes, feedback is described as a thing that happens <em>to</em> them. Open and seeking are different words. This play knows only one of them.</div>
+        <div class="rv-by">— Cultural columnist, after three reflections</div>
+      </div>
+      <div class="rv-box">
+        <div class="rv-box-t">Box Office</div>
+        <div class="rv-box-num">58%</div>
+        <div class="rv-box-d">Openness without initiative is a closed door you can see through.</div>
+      </div>
+    </div>
+
+    <div class="review">
+      <div class="rv-outlet">
+        <div class="rv-outlet-name">Industry Weekly</div>
+        <div class="rv-outlet-sub">Act VI · Networking</div>
+        <div class="rv-stars">&#9733;<span class="empty">&#9733;&#9733;&#9733;&#9733;</span></div>
+      </div>
+      <div class="rv-body">
+        <div class="rv-quote">"No time to network" is the line the protagonist delivers with conviction. The same protagonist spends 12.5 hours per week on Slack. The time is present. The priority is absent. The play cannot both be true.</div>
+        <div class="rv-by">— Opening-night reviewer, from the lobby</div>
+      </div>
+      <div class="rv-box">
+        <div class="rv-box-t">Box Office</div>
+        <div class="rv-box-num">45%</div>
+        <div class="rv-box-d">Lowest-grossing act. The excuse did not survive the audit.</div>
+      </div>
+    </div>
+
+    <div class="verdict">
+      <div class="verdict-stamp">Critical Consensus</div>
+      <div class="verdict-text">"A competent performer playing a version of themselves that the evidence does not support. The play earns respect — but not, on current form, a second run."</div>
+      <div class="verdict-sub">The rewrite begins in Act III.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ACT III — PLAYBOOK: DIRECTOR'S NOTES
+═══════════════════════════════════════════ -->
+<div class="panel" id="panel-play">
+  <div class="panel-header">
+    <div class="ph-act">Act III</div>
+    <div class="ph-title">Director's Notes</div>
+    <div class="ph-sub">Between performances. The stage manager's notebook, the blocking changes, the rewrites the lead must learn before next curtain.</div>
+  </div>
+
+  <div class="directors">
+    <div class="dn-paper">
+
+      <div class="dn-salut">For the cast of Jordan Rivera —</div>
+      <div class="dn-intro">The run was strong. The upper half of the program delivers. The reviews for the lower half, however, are not going away on their own. We rewrite in four places before the next performance. <em>Everything below is binding.</em></div>
+
+      <div class="note-item">
+        <div class="note-head">
+          <div class="note-scene">Act VI · Networking</div>
+          <div class="note-tag">highest priority</div>
+        </div>
+        <div class="note-title">New blocking: one real conversation per week.</div>
+        <div class="note-body">Not a connection request. A conversation — an exchange, a question asked, a comment left that is not about yourself. The network is built in the measures the audience does not see. Build it before you need it, or the last act plays to an empty house.</div>
+        <div class="note-blocking">"Cross downstage left. Speak to the person who is not a prospect."</div>
+      </div>
+
+      <div class="note-item">
+        <div class="note-head">
+          <div class="note-scene">Act III · Coaching</div>
+          <div class="note-tag">recurring</div>
+        </div>
+        <div class="note-title">Friday scene: ask for the feedback, specifically.</div>
+        <div class="note-body">Every Friday, ask the AE for one piece of feedback. Cite the exact call, the exact email, the exact moment. "Open" reads as passive on stage. We need seeking. We need the initiative.</div>
+        <div class="note-blocking">"Turn to face the mentor. Ask the question without apologizing for asking."</div>
+      </div>
+
+      <div class="note-item">
+        <div class="note-head">
+          <div class="note-scene">Act IX · Discipline</div>
+          <div class="note-tag">daily</div>
+        </div>
+        <div class="note-title">Opening scene rewritten: 8:00–9:30 is prospecting.</div>
+        <div class="note-body">Phone on DND. Slack closed. Email closed. Calendar blocked, defended, protected. Every day. The meeting comes second — always. The day starts on offense or it does not start at all.</div>
+        <div class="note-blocking">"Lights up. Actor alone on stage with the phone. Other characters do not enter until 9:30."</div>
+      </div>
+
+      <div class="note-item">
+        <div class="note-head">
+          <div class="note-scene">Act VII · Pipeline</div>
+          <div class="note-tag">every performance</div>
+        </div>
+        <div class="note-title">All four BANT criteria. Every lead. Non-negotiable.</div>
+        <div class="note-body">Before the lead gets passed — budget, authority, need, timeline. If you don't know one, ask the hard question. Hope is not a line in this script anymore. Confidence comes from completeness, not from instinct.</div>
+        <div class="note-blocking">"Four beats before the hand-off. Hit all four or don't cross the line."</div>
+      </div>
+
+      <div class="dn-sign">
+        <div class="dn-sign-hand">— J. R.</div>
+        <div class="dn-sign-line">Director, producer, lead. Accountable to all three.</div>
+      </div>
+
+    </div>
+
+    <div class="curtain">
+      <div class="curtain-stamp">Curtain Call</div>
+      <div class="curtain-text">"The Program was who you said you are. The Reviews were who the audience saw. The Director's Notes are who you choose to play next."</div>
+      <div class="curtain-meta">12 acts · 36 scenes · one rewritten script</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function showPanel(id, btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.act').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+
+</body>
+</html>

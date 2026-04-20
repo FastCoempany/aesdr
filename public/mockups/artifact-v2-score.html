@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR | The Score</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;600;700&family=Space+Mono:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FAF7F2;--ink:#1A1A1A;--crimson:#8B1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+  --stave:#2A2A2A;--paper:#FDFAF3;
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif;--serif:'Cormorant Garamond',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;--mono:'Space Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:var(--serif)}
+
+/* HEADER */
+.header{padding:48px 5% 24px;text-align:center;border-bottom:1px solid var(--light)}
+.h-eye{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--crimson);margin-bottom:12px}
+.h-title{font-family:var(--display);font-size:clamp(40px,5vw,64px);font-weight:900;font-style:italic;line-height:1;margin-bottom:10px}
+.h-name{background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:iris 3s linear infinite}
+.h-opus{font-family:var(--serif);font-size:18px;font-style:italic;color:var(--muted);margin-top:6px}
+.h-tempo{font-family:var(--serif);font-size:15px;font-style:italic;color:var(--crimson);margin-top:4px}
+.h-meta{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-top:18px}
+
+/* TAB NAV */
+.movements{display:flex;justify-content:center;gap:0;padding:0;border-bottom:2px solid var(--ink);margin-top:24px}
+.mvmt{padding:16px 36px;cursor:pointer;border:none;background:transparent;font-family:var(--serif);font-size:16px;font-style:italic;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;letter-spacing:.02em}
+.mvmt:hover{color:var(--ink)}
+.mvmt.active{color:var(--crimson);border-bottom-color:var(--crimson);font-weight:600}
+.mvmt-num{font-family:var(--display);font-size:13px;letter-spacing:.1em;display:block;color:inherit;margin-bottom:2px}
+
+/* PANELS */
+.panel{display:none;padding:48px 6% 80px;background:var(--paper)}
+.panel.active{display:block}
+.panel-header{text-align:center;margin-bottom:40px}
+.panel-roman{font-family:var(--display);font-size:42px;font-style:italic;color:var(--crimson);line-height:1}
+.panel-title{font-family:var(--serif);font-size:28px;font-style:italic;margin-top:4px;color:var(--ink)}
+.panel-sub{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-top:10px}
+
+/* STAFF SYSTEM — horizontal rows */
+.stave-row{max-width:1100px;margin:0 auto 32px;padding:16px 20px;background:var(--paper);position:relative}
+.stave-label{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;padding:0 8px}
+.stave-name{font-family:var(--serif);font-size:20px;font-style:italic;color:var(--ink)}
+.stave-voice{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.stave-score{font-family:var(--display);font-size:24px;font-style:italic;color:var(--crimson)}
+
+/* The staff itself */
+.stave{position:relative;height:80px;width:100%;padding:0 16px}
+.stave-line{position:absolute;left:16px;right:16px;height:1px;background:var(--stave)}
+.stave-line:nth-child(1){top:16px}
+.stave-line:nth-child(2){top:31px}
+.stave-line:nth-child(3){top:46px}
+.stave-line:nth-child(4){top:61px}
+.stave-line:nth-child(5){top:76px}
+
+/* Clef glyph */
+.clef{position:absolute;left:20px;top:8px;font-family:var(--display);font-size:60px;font-style:italic;color:var(--stave);line-height:1;font-weight:400}
+
+/* Time signature */
+.time-sig{position:absolute;left:90px;top:18px;font-family:var(--display);font-size:26px;font-weight:700;color:var(--stave);line-height:1;text-align:center}
+.time-sig .top{display:block;margin-bottom:-4px}
+
+/* Bar lines */
+.barline{position:absolute;top:16px;bottom:16px;width:1px;background:var(--stave)}
+.barline.final{width:3px;right:16px}
+
+/* Measure number */
+.measure-num{position:absolute;top:-14px;font-family:var(--mono);font-size:9px;color:var(--muted)}
+
+/* NOTES — abstract vertical bars */
+.note{position:absolute;width:4px;background:var(--stave);border-radius:2px}
+.note.crim{background:var(--crimson)}
+.note.hollow{background:transparent;border:1.5px solid var(--stave)}
+
+/* Dynamics markings below stave */
+.dyn{position:absolute;bottom:-20px;font-family:var(--serif);font-size:14px;font-style:italic;font-weight:700;color:var(--crimson)}
+.tempo-above{position:absolute;top:-28px;font-family:var(--serif);font-size:13px;font-style:italic;color:var(--ink)}
+
+/* KEY SIGNATURE READOUT */
+.key-readout{max-width:800px;margin:48px auto 0;padding:24px;background:var(--cream);border:1px solid var(--light);text-align:center}
+.key-label{font-family:var(--mono);font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.key-reading{font-family:var(--display);font-size:26px;font-style:italic;line-height:1.4}
+.key-reading em{color:var(--crimson)}
+
+/* DISSONANCE SECTION (Mirror) */
+.dissonance{max-width:1000px;margin:0 auto}
+.diss-pair{margin-bottom:48px;padding:28px;background:var(--paper);border:1px solid var(--light);position:relative}
+.diss-accidental{position:absolute;top:-18px;left:28px;background:var(--paper);padding:0 10px;font-family:var(--display);font-size:32px;font-style:italic;color:var(--crimson);line-height:1}
+.diss-measure{position:absolute;top:-14px;right:28px;background:var(--paper);padding:0 10px;font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+
+.voices{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:20px}
+.voice{padding:16px 20px;background:var(--cream);position:relative}
+.voice.upper{border-left:3px solid var(--muted)}
+.voice.lower{border-left:3px solid var(--crimson)}
+.voice-label{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:6px}
+.voice.upper .voice-label{color:var(--muted)}
+.voice.lower .voice-label{color:var(--crimson)}
+.voice-marking{font-family:var(--serif);font-size:13px;font-style:italic;color:var(--ink);opacity:.7;margin-bottom:6px}
+.voice-text{font-family:var(--serif);font-size:17px;line-height:1.4}
+.voice.upper .voice-text{font-style:italic;color:var(--ink)}
+.voice.lower .voice-text{color:var(--crimson);font-weight:600}
+
+.diss-interval{text-align:center;font-family:var(--serif);font-size:16px;font-style:italic;color:var(--crimson);padding-top:12px;border-top:1px dashed var(--light)}
+
+/* ARRANGEMENT (Playbook) */
+.arrangement{max-width:1000px;margin:0 auto}
+.arr-intro{text-align:center;margin-bottom:40px;padding:24px;background:var(--cream);border:1px solid var(--light)}
+.arr-intro .lead{font-family:var(--display);font-size:28px;font-style:italic;line-height:1.3}
+.arr-intro .sub{font-family:var(--serif);font-size:15px;font-style:italic;color:var(--muted);margin-top:10px}
+
+.direction{margin-bottom:28px;padding:24px 28px;background:var(--paper);border:1px solid var(--light);position:relative;display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:start}
+.dir-dynamic{font-family:var(--display);font-size:42px;font-style:italic;font-weight:700;color:var(--crimson);line-height:1}
+.dir-body{}
+.dir-measure{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.dir-cat{font-family:var(--serif);font-size:22px;font-style:italic;margin-bottom:6px}
+.dir-italian{font-family:var(--serif);font-size:15px;font-style:italic;color:var(--crimson);margin-bottom:10px;font-weight:600}
+.dir-text{font-family:var(--serif);font-size:16px;line-height:1.5;color:var(--ink)}
+
+.coda{text-align:center;margin-top:48px;padding-top:28px;border-top:2px solid var(--ink)}
+.coda-symbol{font-family:var(--display);font-size:40px;color:var(--crimson);line-height:1}
+.coda-text{font-family:var(--display);font-size:24px;font-style:italic;margin-top:10px;color:var(--ink);max-width:600px;margin-left:auto;margin-right:auto;line-height:1.4}
+.coda-meta{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:14px}
+
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="h-eye">Artifact — The Score</div>
+  <div class="h-title"><span class="h-name">Jordan Rivera</span></div>
+  <div class="h-opus">Opus 1 — Twelve Lessons for a Young Seller</div>
+  <div class="h-tempo">Allegro con ansia (fast, with anxiety) — q = 132</div>
+  <div class="h-meta">SDR · Cohort 01 · 36 Units · Composed April 19, 2026</div>
+</div>
+
+<div class="movements">
+  <button class="mvmt active" onclick="showPanel('diag', this)"><span class="mvmt-num">I.</span>The Composition</button>
+  <button class="mvmt" onclick="showPanel('mirr', this)"><span class="mvmt-num">II.</span>The Dissonance</button>
+  <button class="mvmt" onclick="showPanel('play', this)"><span class="mvmt-num">III.</span>The Arrangement</button>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MOVEMENT I — DIAGNOSTIC: THE COMPOSITION
+═══════════════════════════════════════════ -->
+<div class="panel active" id="panel-diag">
+  <div class="panel-header">
+    <div class="panel-roman">I.</div>
+    <div class="panel-title">The Composition</div>
+    <div class="panel-sub">The score as written — six voices, twelve measures</div>
+  </div>
+
+  <!-- Identity — soprano, plateau -->
+  <div class="stave-row">
+    <div class="stave-label">
+      <div class="stave-name">Identity <span style="font-size:13px;color:var(--muted);font-style:italic">— soprano</span></div>
+      <div class="stave-score">85%</div>
+    </div>
+    <div class="stave">
+      <div class="stave-line"></div><div class="stave-line"></div><div class="stave-line"></div><div class="stave-line"></div><div class="stave-line"></div>
+      <span class="clef">&#119070;</span>
+      <div class="time-sig"><span class="top">12</span><span>8</span></div>
+      <div class="tempo-above" style="left:140px">dolce, tranquillo</div>
+      <!-- sparse, high notes — plateau -->
+      <div class="note" style="left:180px;top:10px;height:14px"></div>
+      <div class="note hollow" style="left:240px;top:12px;height:12px"></div>
+      <div class="note" style="left:320px;top:14px;height:14px"></div>
+      <div class="barline" style="left:390px"></div>
+      <div class="note" style="left:440px;top:12px;height:16px"></div>
+      <div class="note hollow" style="left:520px;top:14px;height:12px"></div>
+      <div class="note" style="left:600px;top:10px;height:14px"></div>
+      <div class="barline" style="left:670px"></div>
+      <div class="note" style="left:720px;top:14px;height:14px"></div>
+      <div class="note hollow" style="left:800px;top:12px;height:12px"></div>
+      <div class="note" style="left:880px;top:10px;height:14px"></div>
+      <div class="barline final"></div>
+      <div class="dyn" style="left:180px">p</div>
+    </div>
+  </div>
+
+  <!-- Pipeline — alto, ridge -->
+  <div class="stave-row">
+    <div class="stave-label">
+      <div class="stave-name">Pipeline <span style="font-size:13px;color:var(--muted);font-style:italic">— alto</span></div>
+      <div class="stave-score">78%</div>
+    </div>
+    <div class="stave">
+      <div class="stave-line"></div><div class="stave-line"></div><div class="stave-line"></div><div class="stave-line"></div><div class="stave-line"></div>
+      <span class="clef">&#119070;</span>
+      <div class="time-sig"><span class="top">12</span><span>8</span></div>
+      <div class="tempo-above" style="left:140px">moderato, deciso</div>
+      <div class="note" style="left:180px;top:20px;height:22px"></div>
+      <div class="note" style="left:220px;top:18px;height:24px"></div>
+      <div class="note" style="left:260px;top:22px;height:20px"></div>
+      <div class="note" style="left:310px;top:20px;height:22px"></div>
+      <div class="barline" style="left:390px"></div>
+      <div class="note" style="left:430px;top:22px;height:22px"></div>
+      <div class="note" style="left:490px;top:20px;height:24px"></div>
+      <div class="note crim" style="left:560px;top:18px;height:30px"></div>
+      <div class="note" style="left:620px;top:22px;height:20px"></div>
+      <div class="barline" style="left:670px"></div>
+      <div class="note" style="left:720px;top:22px;height:22px"></div>
+      <div class="note" style="left:790px;top:20px;height:22px"></div>
+      <div class="note" style="left:870px;top:22px;height:22px"></div>
+      <div class="barline final"></div>
+      <div class="dyn" style="left:180px">mf</div>
+    </div>
+  </div>
+
+  <!-- Career — tenor, foothills -->
+  <div class="stave-row">
+    <div class="stave-label">
+      <div class="stave-name">Career <span style="font-size:13px;color:var(--muted);font-style:italic">— tenor</span></div>
+      <div class="stave-score">71%</div>
+    </div>
+    <div class="stave">
+      <div class="stave-line"></div><div class="stave-line"></div><div class="stave-line"></div><div class="stave-line"></div><div class="stave-line"></div>
+      <span class="clef">&#119070;</span>
+      <div class="time-sig"><span class="top">12</span><span>8</span></div>
+      <div class="tempo-above" style="left:140px">andante, cercando</div>
+      <div class="note" style="left:180px;top:30px;height:20px"></div>
+      <div class="note hollow" style="left:240px;top:26px;height:24px"></div>
+      <div class="note" style="left:310px;top:32px;height:18px"></div>
+      <div class="barline" style="left:390px"></div>
+      <div class="note" style="left:440px;top:28px;height:22px"></div>
+      <div class="note" style="left:520px;top:30px;height:20px"></div>
+      <div class="note" style="left:600px;top:32px;height:18px"></div>
+      <div class="barline" style="left:670px"></div>
+      <div class="note" style="left:720px;top:28px;height:22px"></div>
+      <div class="note crim" style="left:800px;top:24px;height:28px"></div>
+      <div class="note" style="left:880px;top:30px;height:20px"></div>
+      <div class="barline final"></div>
+      <div class="dyn" style="left:180px">mp</div>
+    </div>
+  </div>
+
+  <!-- Discipline — bass, valley -->
+  <div class="stave-row">
+    <div class="stave-label">
+      <div class="stave-name">Discipline <span style="font-size:13px;color:var(--muted);font-style:italic">— bass</span></div>
+      <div class="stave-score" style="color:#B54040">62%</div>
+    </div>
+    <div class="stave">
+      <div class="stave-line"></div><div class="stave-line"></div><div class="stave-line"></div><div class="stave-line"></div><div class="stave-line"></div>
+      <span class="clef">&#119074;</span>
+      <div class="time-sig"><span class="top">12</span><span>8</span></div>
+      <div class="tempo-above" style="left:140px;color:var(--crimson)">irregolare, agitato</div>
+      <div class="note crim" style="left:180px;top:40px;height:28px"></div>
+      <div class="note crim" style="left:220px;top:36px;height:32px"></div>
+      <div class="note" style="left:270px;top:44px;height:22px"></div>
+      <div class="note crim" style="left:330px;top:38px;height:30px"></div>
+      <div class="barline" style="left:390px"></div>
+      <div class="note crim" style="left:430px;top:40px;height:28px"></div>
+      <div class="note" style="left:490px;top:44px;height:22px"></div>
+      <div class="note crim" style="left:550px;top:36px;height:32px"></div>
+      <div class="note crim" style="left:610px;top:38px;height:30px"></div>
+      <div class="barline" style="left:670px"></div>
+      <div class="note crim" style="left:720px;top:40px;height:28px"></div>
+      <div class="note" style="left:790px;top:44px;height:22px"></div>
+      <div class="note crim" style="left:870px;top:38px;height:30px"></div>
+      <div class="barline final"></div>
+      <div class="dyn" style="left:180px">f</div>
+    </div>
+  </div>
+
+  <!-- Coaching — contralto, ravine -->
+  <div class="stave-row">
+    <div class="stave-label">
+      <div class="stave-name">Coaching <span style="font-size:13px;color:var(--muted);font-style:italic">— contralto</span></div>
+      <div class="stave-score" style="color:#B54040">58%</div>
+    </div>
+    <div class="stave">
+      <div class="stave-line"></div><div class="stave-line"></div><div class="stave-line"></div><div class="stave-line"></div><div class="stave-line"></div>
+      <span class="clef">&#119070;</span>
+      <div class="time-sig"><span class="top">12</span><span>8</span></div>
+      <div class="tempo-above" style="left:140px;color:var(--crimson)">silenzioso, evitando</div>
+      <div class="note crim" style="left:180px;top:38px;height:30px"></div>
+      <div class="note crim" style="left:240px;top:40px;height:28px"></div>
+      <div class="note crim" style="left:320px;top:36px;height:32px"></div>
+      <div class="barline" style="left:390px"></div>
+      <div class="note crim" style="left:440px;top:38px;height:30px"></div>
+      <div class="note" style="left:520px;top:44px;height:22px"></div>
+      <div class="note crim" style="left:600px;top:40px;height:28px"></div>
+      <div class="barline" style="left:670px"></div>
+      <div class="note crim" style="left:720px;top:36px;height:32px"></div>
+      <div class="note crim" style="left:800px;top:38px;height:30px"></div>
+      <div class="note crim" style="left:880px;top:40px;height:28px"></div>
+      <div class="barline final"></div>
+      <div class="dyn" style="left:180px">ff</div>
+    </div>
+  </div>
+
+  <!-- Networking — basso profundo, crater -->
+  <div class="stave-row">
+    <div class="stave-label">
+      <div class="stave-name">Networking <span style="font-size:13px;color:var(--muted);font-style:italic">— basso profondo</span></div>
+      <div class="stave-score" style="color:#B54040">45%</div>
+    </div>
+    <div class="stave">
+      <div class="stave-line"></div><div class="stave-line"></div><div class="stave-line"></div><div class="stave-line"></div><div class="stave-line"></div>
+      <span class="clef">&#119074;</span>
+      <div class="time-sig"><span class="top">12</span><span>8</span></div>
+      <div class="tempo-above" style="left:140px;color:var(--crimson)">tacet — quasi silenzio</div>
+      <div class="note crim" style="left:180px;top:36px;height:34px"></div>
+      <div class="note crim" style="left:220px;top:34px;height:36px"></div>
+      <div class="note crim" style="left:260px;top:36px;height:34px"></div>
+      <div class="note crim" style="left:310px;top:34px;height:36px"></div>
+      <div class="barline" style="left:390px"></div>
+      <div class="note crim" style="left:430px;top:34px;height:36px"></div>
+      <div class="note crim" style="left:490px;top:36px;height:34px"></div>
+      <div class="note crim" style="left:560px;top:34px;height:36px"></div>
+      <div class="note crim" style="left:620px;top:34px;height:36px"></div>
+      <div class="barline" style="left:670px"></div>
+      <div class="note crim" style="left:720px;top:34px;height:36px"></div>
+      <div class="note crim" style="left:790px;top:36px;height:34px"></div>
+      <div class="note crim" style="left:870px;top:34px;height:36px"></div>
+      <div class="barline final"></div>
+      <div class="dyn" style="left:180px">fff</div>
+    </div>
+  </div>
+
+  <div class="key-readout">
+    <div class="key-label">Key Signature — Analysis</div>
+    <div class="key-reading">The upper voices sing in <em>D major</em>; the lower voices are stuck in <em>D minor</em>. <br>The composition is in conflict with itself.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MOVEMENT II — MIRROR: THE DISSONANCE
+═══════════════════════════════════════════ -->
+<div class="panel" id="panel-mirr">
+  <div class="panel-header">
+    <div class="panel-roman">II.</div>
+    <div class="panel-title">The Dissonance</div>
+    <div class="panel-sub">Where the upper voice and the bass line cannot be reconciled</div>
+  </div>
+
+  <div class="dissonance">
+
+    <div class="diss-pair">
+      <div class="diss-accidental">&#9839;</div>
+      <div class="diss-measure">Measure 7 — Pipeline</div>
+      <div class="voices">
+        <div class="voice upper">
+          <div class="voice-label">Upper Voice — Soprano</div>
+          <div class="voice-marking">mp · dolce</div>
+          <div class="voice-text">"I'm pretty good at qualifying leads."</div>
+        </div>
+        <div class="voice lower">
+          <div class="voice-label">Bass Line — The Data</div>
+          <div class="voice-marking">mf · con forza</div>
+          <div class="voice-text">62% on the BANT exercise. Two of four criteria. Not "pretty good." Not qualifying.</div>
+        </div>
+      </div>
+      <div class="diss-interval"><em>Minor second — 16% dissonance</em> — "pretty good" is doing heavy lifting</div>
+    </div>
+
+    <div class="diss-pair">
+      <div class="diss-accidental">&#9837;</div>
+      <div class="diss-measure">Measure 9 — Discipline</div>
+      <div class="voices">
+        <div class="voice upper">
+          <div class="voice-label">Upper Voice — Tenor</div>
+          <div class="voice-marking">mp · rubato</div>
+          <div class="voice-text">"I manage my time well — just too many meetings."</div>
+        </div>
+        <div class="voice lower">
+          <div class="voice-label">Bass Line — The Data</div>
+          <div class="voice-marking">f · agitato</div>
+          <div class="voice-text">33% selling ratio. Meetings 19%, Slack 24%. You aren't pulled — you fail to push back.</div>
+        </div>
+      </div>
+      <div class="diss-interval"><em>Tritone — 38% dissonance</em> — the diabolus in musica</div>
+    </div>
+
+    <div class="diss-pair">
+      <div class="diss-accidental">&#9839;</div>
+      <div class="diss-measure">Measure 3 — Coaching</div>
+      <div class="voices">
+        <div class="voice upper">
+          <div class="voice-label">Upper Voice — Alto</div>
+          <div class="voice-marking">p · ingenuamente</div>
+          <div class="voice-text">"I'm open to feedback."</div>
+        </div>
+        <div class="voice lower">
+          <div class="voice-label">Bass Line — The Data</div>
+          <div class="voice-marking">ff · con ironia</div>
+          <div class="voice-text">Three reflections described feedback as something that happens to you. Open is not seeking.</div>
+        </div>
+      </div>
+      <div class="diss-interval"><em>Major seventh — 42% dissonance</em> — unresolved across the entire score</div>
+    </div>
+
+    <div class="diss-pair">
+      <div class="diss-accidental">&#9837;</div>
+      <div class="diss-measure">Measure 6 — Networking</div>
+      <div class="voices">
+        <div class="voice upper">
+          <div class="voice-label">Upper Voice — Tenor</div>
+          <div class="voice-marking">mp · stanco</div>
+          <div class="voice-text">"I don't have time to network."</div>
+        </div>
+        <div class="voice lower">
+          <div class="voice-label">Bass Line — The Data</div>
+          <div class="voice-marking">fff · severamente</div>
+          <div class="voice-text">2.5 hours per day on Slack. 12.5 per week. The time exists. The priority does not.</div>
+        </div>
+      </div>
+      <div class="diss-interval"><em>Augmented octave — 55% dissonance</em> — the composition collapses here</div>
+    </div>
+
+    <div class="key-readout" style="margin-top:24px">
+      <div class="key-label">Harmonic Analysis</div>
+      <div class="key-reading">You wrote a melody in a major key. The data reveals the piece was always <em>in minor</em>.<br>The next movement is where the score gets rewritten.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MOVEMENT III — PLAYBOOK: THE ARRANGEMENT
+═══════════════════════════════════════════ -->
+<div class="panel" id="panel-play">
+  <div class="panel-header">
+    <div class="panel-roman">III.</div>
+    <div class="panel-title">The Arrangement</div>
+    <div class="panel-sub">Conductor's revisions — marked in pencil, rehearsal notes for the next performance</div>
+  </div>
+
+  <div class="arrangement">
+
+    <div class="arr-intro">
+      <div class="lead">The composition stands. The performance is what changes.</div>
+      <div class="sub">Four directions. Committed to the next rehearsal block.</div>
+    </div>
+
+    <div class="direction">
+      <div class="dir-dynamic">fff</div>
+      <div class="dir-body">
+        <div class="dir-measure">Measure 6 onwards · Networking — basso profondo</div>
+        <div class="dir-cat">One conversation per week.</div>
+        <div class="dir-italian">subito stringendo — poco a poco più forte</div>
+        <div class="dir-text">Not a connection request — a real exchange. On LinkedIn, in DMs, on a call. The network gets built before it is needed, or it is never built at all.</div>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="dir-dynamic">ff</div>
+      <div class="dir-body">
+        <div class="dir-measure">Every fifth measure · Coaching — contralto</div>
+        <div class="dir-cat">Friday feedback, cited and specific.</div>
+        <div class="dir-italian">fermata, cercando — con intenzione</div>
+        <div class="dir-text">Each Friday, ask your AE for feedback on one specific call or email. Quote the moment. Stop waiting to be told.</div>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="dir-dynamic">f</div>
+      <div class="dir-body">
+        <div class="dir-measure">Measures 1–4 daily · Discipline — bass</div>
+        <div class="dir-cat">8:00–9:30 is prospecting.</div>
+        <div class="dir-italian">marcato, risoluto — senza distrazione</div>
+        <div class="dir-text">Calendar blocked. Phone on DND. No Slack, no email, no CRM. Every day, no exceptions. The meeting comes second.</div>
+      </div>
+    </div>
+
+    <div class="direction">
+      <div class="dir-dynamic">mf</div>
+      <div class="dir-body">
+        <div class="dir-measure">Every measure · Pipeline — alto</div>
+        <div class="dir-cat">All four BANT criteria, every time.</div>
+        <div class="dir-italian">preciso, senza eccezione</div>
+        <div class="dir-text">Before you pass any lead, confirm all four. If you don't know, ask the hard question. Hope is not a qualification method.</div>
+      </div>
+    </div>
+
+    <div class="coda">
+      <div class="coda-symbol">&#119046;</div>
+      <div class="coda-text">"The composition is what you were handed. The arrangement is what you choose to play."</div>
+      <div class="coda-meta">36 units · 12 lessons · One revised score</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function showPanel(id, btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.mvmt').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+
+</body>
+</html>
