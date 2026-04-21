@@ -412,10 +412,44 @@ textarea.input-field:focus {
 }
 
 /* PRINT MEDIA QUERIES */
+/* INFO BANNER */
+.info-banner {
+  background: rgba(184, 148, 62, 0.12);
+  border-left: 3px solid #B8943E;
+  padding: 14px 40px 14px 20px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  position: relative;
+  transition: opacity 300ms ease;
+}
+.info-banner.dismissed {
+  opacity: 0;
+  pointer-events: none;
+}
+.info-dismiss {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 6px;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 200ms ease;
+}
+.info-dismiss:hover { opacity: 1; }
+
 @media print {
   @page { margin: 0.5in; size: portrait; }
   body { background: #FFFFFF; }
-  .topbar, .controls-col { display: none !important; }
+  .topbar, .controls-col, .info-banner { display: none !important; }
   .builder-layout { display: block; height: auto; overflow: visible; }
   .preview-col { padding: 0; background: #FFFFFF; display: block; }
   .document-paper {
@@ -449,6 +483,11 @@ textarea.input-field:focus {
   <div class="brand"><span class="iris-text">AESDR</span> <span class="badge">TOOL C3.4</span></div>
   <button class="btn-export" onclick="window.print()">Export Contract</button>
 </header>
+
+<div class="info-banner" id="infoBanner">
+  This is a standalone tool — it runs entirely in your browser. No data is sent anywhere. Your contract details are saved automatically to this browser. Works in any modern browser (Chrome, Firefox, Safari, Edge).
+  <button class="info-dismiss" onclick="dismissBanner()" aria-label="Dismiss">&times;</button>
+</div>
 
 <div class="builder-layout">
 
@@ -577,6 +616,32 @@ textarea.input-field:focus {
 </div>
 
 <script>
+const STORAGE_KEY = 'aesdr_alignment_contract';
+const BANNER_KEY = 'aesdr_alignment_info_dismissed';
+
+const fieldIds = ['in_aeName', 'in_sdrName', 'in_cadence', 'in_framework', 'in_sdrQuota', 'in_aeSla', 'in_custom'];
+
+function saveToStorage() {
+  const data = {};
+  fieldIds.forEach(id => {
+    data[id] = document.getElementById(id).value;
+  });
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+function loadFromStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    fieldIds.forEach(id => {
+      if (data[id] !== undefined && data[id] !== null) {
+        document.getElementById(id).value = data[id];
+      }
+    });
+  } catch(e) {}
+}
+
 function updateDoc() {
   // Get values
   const aeName = document.getElementById('in_aeName').value || '[AE Name]';
@@ -607,10 +672,32 @@ function updateDoc() {
       el.style.backgroundColor = 'rgba(184, 148, 62, 0.2)';
     }, 200);
   });
+
+  // Persist to localStorage
+  saveToStorage();
 }
 
-// Initial render
-updateDoc();
+// Info banner dismiss
+function dismissBanner() {
+  const banner = document.getElementById('infoBanner');
+  banner.classList.add('dismissed');
+  setTimeout(() => { banner.style.display = 'none'; }, 300);
+  try { localStorage.setItem(BANNER_KEY, '1'); } catch(e) {}
+}
+
+// Init: load saved data, check banner state
+(function init() {
+  loadFromStorage();
+  updateDoc();
+
+  // Restore banner dismissed state
+  try {
+    if (localStorage.getItem(BANNER_KEY) === '1') {
+      const banner = document.getElementById('infoBanner');
+      banner.style.display = 'none';
+    }
+  } catch(e) {}
+})();
 </script>
 </body>
 </html>

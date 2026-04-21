@@ -452,6 +452,41 @@ input[type=range]::-moz-range-thumb {
   opacity: 0.5;
 }
 
+/* INFO BANNER */
+.info-banner {
+  background: rgba(184, 148, 62, 0.12);
+  border-left: 3px solid #B8943E;
+  padding: 14px 40px 14px 20px;
+  position: relative;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  opacity: 1;
+  transition: opacity 300ms ease;
+}
+.info-banner.dismissed {
+  opacity: 0;
+  pointer-events: none;
+}
+.info-banner .dismiss-btn {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-family: var(--mono);
+  font-size: 16px;
+  color: var(--text-muted);
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px;
+}
+.info-banner .dismiss-btn:hover {
+  color: var(--text-main);
+}
+
 @media(max-width: 800px) {
   .calc-grid { grid-template-columns: 1fr; }
   .calc-grid::before { display: none; }
@@ -471,6 +506,13 @@ input[type=range]::-moz-range-thumb {
 <header class="topbar">
   <div class="brand"><span class="brand-text">AESDR</span> <span class="badge">Tool: C9.2</span></div>
 </header>
+
+<div class="info-banner" id="infoBanner">
+  <button class="dismiss-btn" onclick="dismissBanner()" aria-label="Dismiss">&times;</button>
+  This is a standalone tool &mdash; it runs entirely in your browser. No data is sent anywhere.
+  Your inputs are saved automatically to this browser.
+  Works in any modern browser (Chrome, Firefox, Safari, Edge).
+</div>
 
 <div class="container">
   <div class="page">
@@ -549,6 +591,60 @@ input[type=range]::-moz-range-thumb {
 // Formatting Utility
 const formatMoney = (num) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(num);
 
+// localStorage Keys
+const STORAGE_KEY = 'aesdr_time_reclaimed';
+const BANNER_KEY = 'aesdr_time_info_dismissed';
+
+// Save current input values to localStorage
+function saveToStorage() {
+  const data = {
+    ote: document.getElementById('oteInput').value,
+    slack: document.getElementById('slackSlider').value,
+    crm: document.getElementById('crmSlider').value
+  };
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {
+    // localStorage unavailable — silently ignore
+  }
+}
+
+// Load saved values from localStorage
+function loadFromStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (data.ote !== undefined) document.getElementById('oteInput').value = data.ote;
+    if (data.slack !== undefined) document.getElementById('slackSlider').value = data.slack;
+    if (data.crm !== undefined) document.getElementById('crmSlider').value = data.crm;
+    // Update slider readout labels
+    document.getElementById('slackVal').textContent = document.getElementById('slackSlider').value;
+    document.getElementById('crmVal').textContent = document.getElementById('crmSlider').value;
+  } catch (e) {
+    // localStorage unavailable — silently ignore
+  }
+}
+
+// Info Banner Dismissal
+function dismissBanner() {
+  const banner = document.getElementById('infoBanner');
+  banner.classList.add('dismissed');
+  setTimeout(function() { banner.style.display = 'none'; }, 300);
+  try {
+    localStorage.setItem(BANNER_KEY, '1');
+  } catch (e) {}
+}
+
+function initBanner() {
+  try {
+    if (localStorage.getItem(BANNER_KEY) === '1') {
+      const banner = document.getElementById('infoBanner');
+      banner.style.display = 'none';
+    }
+  } catch (e) {}
+}
+
 // Core Calculation Logic
 function calculate() {
   // Hide success message if visible
@@ -593,6 +689,9 @@ function calculate() {
     document.getElementById('annualLost').className = 'stat-val';
     bleedSub.textContent = "Zero bleed. Your time is locked in on revenue.";
   }
+
+  // Persist to localStorage on every change
+  saveToStorage();
 }
 
 // Reclaim Button Action (Dopamine Hit)
@@ -623,7 +722,9 @@ function reclaimTime() {
   }, 20); // Speed of slider reset
 }
 
-// Initial calculation on load
+// Initialize on page load
+initBanner();
+loadFromStorage();
 calculate();
 </script>
 </body>

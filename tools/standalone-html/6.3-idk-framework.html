@@ -392,11 +392,45 @@ html, body { height: 100%; background: var(--parchment); color: var(--text); fon
   flex-shrink: 0;
 }
 
+/* INFO BANNER */
+.info-banner {
+  background: rgba(184, 148, 62, 0.12);
+  border-left: 3px solid #B8943E;
+  padding: 14px 40px 14px 20px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  position: relative;
+  transition: opacity 300ms ease;
+}
+.info-banner.dismissed {
+  opacity: 0;
+  pointer-events: none;
+}
+.info-dismiss {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 6px;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 200ms ease;
+}
+.info-dismiss:hover { opacity: 1; }
+
 /* PRINT MEDIA QUERIES */
 @media print {
   @page { margin: 0.5in; }
   body { background: #FFFFFF; color: #000000; }
-  .topbar { display: none !important; }
+  .topbar, .info-banner { display: none !important; }
   .sheet-container {
     border: none;
     box-shadow: none;
@@ -452,6 +486,11 @@ html, body { height: 100%; background: var(--parchment); color: var(--text); fon
   <div class="brand"><span class="iris-text">AESDR</span> <span class="badge">TOOL C6.3</span></div>
   <button class="btn-print" onclick="window.print()">Print Cheat Sheet</button>
 </header>
+
+<div class="info-banner" id="infoBanner">
+  This is a standalone reference card — runs entirely in your browser. Print or save this page for quick access during calls. Works in any modern browser (Chrome, Firefox, Safari, Edge).
+  <button class="info-dismiss" onclick="dismissBanner()" aria-label="Dismiss">&times;</button>
+</div>
 
 <div class="sheet-container">
 
@@ -525,6 +564,26 @@ html, body { height: 100%; background: var(--parchment); color: var(--text); fon
   </div>
 
 </div>
+
+<script>
+const BANNER_KEY = 'aesdr_idk_info_dismissed';
+
+function dismissBanner() {
+  const banner = document.getElementById('infoBanner');
+  banner.classList.add('dismissed');
+  setTimeout(() => { banner.style.display = 'none'; }, 300);
+  try { localStorage.setItem(BANNER_KEY, '1'); } catch(e) {}
+}
+
+// Init: check banner dismissed state
+(function init() {
+  try {
+    if (localStorage.getItem(BANNER_KEY) === '1') {
+      document.getElementById('infoBanner').style.display = 'none';
+    }
+  } catch(e) {}
+})();
+</script>
 
 </body>
 </html>

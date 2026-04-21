@@ -527,6 +527,41 @@ html, body {
   letter-spacing: .05em;
 }
 
+/* ── INFO BANNER ── */
+.info-banner {
+  position: relative;
+  background: var(--gold-hl);
+  border-left: 3px solid var(--gold-solid);
+  padding: 14px 40px 14px 20px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  transition: opacity 0.3s ease;
+}
+.info-banner-text {
+  max-width: 820px;
+  margin: 0 auto;
+}
+.info-banner-dismiss {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-family: var(--mono);
+  font-size: 16px;
+  color: var(--text-muted);
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px;
+  transition: color 0.2s;
+}
+.info-banner-dismiss:hover {
+  color: var(--text-main);
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 700px) {
   :root {
@@ -615,6 +650,14 @@ html, body {
 
 <!-- Iris shimmer divider -->
 <div class="iris-divider"></div>
+
+<!-- INFO BANNER -->
+<div class="info-banner" id="infoBanner" style="display:none;">
+  <div class="info-banner-text">
+    This is a standalone tool — runs entirely in your browser. Your progress is saved automatically to this browser. Works in any modern browser (Chrome, Firefox, Safari, Edge).
+  </div>
+  <button class="info-banner-dismiss" onclick="dismissInfoBanner()" aria-label="Dismiss">&times;</button>
+</div>
 
 <!-- PAGE -->
 <div class="page-outer">
@@ -708,8 +751,59 @@ html, body {
 </div>
 
 <script>
+// ── localStorage persistence ──
+const STORAGE_KEY = 'aesdr_strike_plan';
+const INFO_DISMISSED_KEY = 'aesdr_strike_info_dismissed';
+
 // State
 const tasks = [false, false, false, false, false];
+
+// Load saved state
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length === tasks.length) {
+        for (let i = 0; i < tasks.length; i++) {
+          tasks[i] = !!parsed[i];
+        }
+      }
+    }
+  } catch (e) {}
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+  } catch (e) {}
+}
+
+// ── Info banner ──
+function initInfoBanner() {
+  const banner = document.getElementById('infoBanner');
+  if (!localStorage.getItem(INFO_DISMISSED_KEY)) {
+    banner.style.display = 'block';
+  }
+}
+
+function dismissInfoBanner() {
+  const banner = document.getElementById('infoBanner');
+  banner.style.opacity = '0';
+  setTimeout(() => { banner.style.display = 'none'; }, 300);
+  localStorage.setItem(INFO_DISMISSED_KEY, '1');
+}
+
+// ── Restore UI from saved state ──
+function restoreUI() {
+  const items = document.querySelectorAll('.strike-item');
+  tasks.forEach((checked, idx) => {
+    if (checked && items[idx]) {
+      items[idx].classList.add('done');
+    }
+  });
+  updateProgress();
+}
 
 function toggleStrike(idx, el) {
   tasks[idx] = !tasks[idx];
@@ -726,6 +820,7 @@ function toggleStrike(idx, el) {
   }
 
   updateProgress();
+  saveState();
 }
 
 function updateProgress() {
@@ -765,6 +860,11 @@ function finishCourse() {
 function scrollToList() {
   document.getElementById('strikeListAnchor').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+
+// ── Initialize ──
+loadState();
+initInfoBanner();
+restoreUI();
 </script>
 </body>
 </html>

@@ -383,11 +383,67 @@ tr:hover td { background: rgba(184,148,62,0.04); }
 </div>
 
 <script>
-let deals = [
+// ── localStorage persistence ──
+const STORAGE_KEY = 'aesdr_commission_tracker';
+const INFO_DISMISSED_KEY = 'aesdr_commission_info_dismissed';
+
+const defaultDeals = [
   { id: 1, name: "Stark Industries", arr: 120000, rate: 10, status: "cleared" },
   { id: 2, name: "Wayne Enterprises", arr: 45000, rate: 10, status: "pending" },
   { id: 3, name: "Pied Piper", arr: 20000, rate: 8, status: "clawback" }
 ];
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return {
+        deals: parsed.deals || defaultDeals,
+        baseSalary: parsed.baseSalary !== undefined ? parsed.baseSalary : 75000,
+        taxRate: parsed.taxRate !== undefined ? parsed.taxRate : 30,
+        oteFantasy: parsed.oteFantasy !== undefined ? parsed.oteFantasy : 150000
+      };
+    }
+  } catch (e) {}
+  return { deals: defaultDeals, baseSalary: 75000, taxRate: 30, oteFantasy: 150000 };
+}
+
+function saveState() {
+  try {
+    const state = {
+      deals: deals,
+      baseSalary: parseFloat(document.getElementById('baseSalary').value) || 0,
+      taxRate: parseFloat(document.getElementById('taxRate').value) || 0,
+      oteFantasy: parseFloat(document.getElementById('oteFantasy').value) || 0
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (e) {}
+}
+
+// ── Info banner ──
+function initInfoBanner() {
+  const banner = document.getElementById('infoBanner');
+  if (!localStorage.getItem(INFO_DISMISSED_KEY)) {
+    banner.style.display = 'block';
+  }
+}
+
+function dismissInfoBanner() {
+  const banner = document.getElementById('infoBanner');
+  banner.style.opacity = '0';
+  setTimeout(() => { banner.style.display = 'none'; }, 300);
+  localStorage.setItem(INFO_DISMISSED_KEY, '1');
+}
+
+// ── Init state from localStorage ──
+const state = loadState();
+let deals = state.deals;
+
+// Apply saved global inputs
+document.getElementById('baseSalary').value = state.baseSalary;
+document.getElementById('taxRate').value = state.taxRate;
+document.getElementById('oteFantasy').value = state.oteFantasy;
 
 const formatMoney = (num) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(num);
 
@@ -454,6 +510,8 @@ function calculate() {
   document.getElementById('dashRisk').textContent = formatMoney(totalPendingGross);
   document.getElementById('dashBleed').textContent = formatMoney(totalBleed);
   document.getElementById('dashPacing').textContent = `${formatMoney(realityTotal)} (${pacingPct}%)`;
+
+  saveState();
 }
 
 function addDeal() {
@@ -510,6 +568,8 @@ function exportCSV() {
   document.body.removeChild(link);
 }
 
+// ── Initialize ──
+initInfoBanner();
 calculate();
 </script>
 </body>
