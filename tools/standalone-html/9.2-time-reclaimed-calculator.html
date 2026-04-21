@@ -6,7 +6,7 @@
 <title>AESDR | Time Reclaimed ROI Calculator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
   /* AESDR Dark Theme */
@@ -18,21 +18,21 @@
   --text-main: #F8FAFC;
   --text-muted: #94A3B8;
   
-  /* Asset Theme: Neon Green & Alert Red */
-  --theme: #10B981; 
-  --theme-text: #059669;
-  --theme-glow: rgba(16, 185, 129, 0.3);
+  /* Brand Accents */
+  --theme: #8B1A1A; 
+  --theme-text: #6B1515;
+  --theme-glow: rgba(139, 26, 26, 0.3);
   --coral: #EF4444; 
   --cor-glow: rgba(239, 68, 68, 0.3);
-  --cobalt: #38BDF8; 
+  --cobalt: #B8943E; 
   
   --line: rgba(255,255,255,0.1);
   --line2: rgba(255,255,255,0.2);
   
-  --display: 'Abril Fatface', Georgia, serif;
-  --serif: 'Cormorant Garamond', Georgia, serif;
+  --display: 'Playfair Display', Georgia, serif;
+  --serif: 'Source Serif 4', Georgia, serif;
   --cond: 'Barlow Condensed', sans-serif;
-  --mono: 'DM Mono', monospace;
+  --mono: 'Space Mono', monospace;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; background: var(--bg-main); color: var(--text-main); font-family: var(--serif); line-height: 1.6; }
@@ -153,10 +153,10 @@ input[type=range]::-webkit-slider-runnable-track {
 }
 
 .bleed-box.saved { 
-  border-color: rgba(16, 185, 129, 0.4); 
-  background: rgba(16, 185, 129, 0.05);
+  border-color: rgba(139, 26, 26, 0.4); 
+  background: rgba(139, 26, 26, 0.05);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), 
-              0 0 20px rgba(16, 185, 129, 0.15), 
+              0 0 20px rgba(139, 26, 26, 0.15), 
               inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
@@ -168,7 +168,7 @@ input[type=range]::-webkit-slider-runnable-track {
 
 /* BUTTON */
 .btn-reclaim { width: 100%; margin-top: 30px; font-family: var(--cond); font-size: 16px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; padding: 18px; border: none; background: var(--theme); color: var(--bg-main); cursor: pointer; border-radius: 4px; transition: all .2s; box-shadow: 0 4px 15px var(--theme-glow); position: relative; z-index: 1;}
-.btn-reclaim:hover { background: var(--theme-text); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
+.btn-reclaim:hover { background: var(--theme-text); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(139, 26, 26, 0.4); }
 .btn-reclaim:active { transform: translateY(0); }
 
 .success-msg { text-align: center; font-family: var(--cond); font-size: 16px; font-weight: 700; color: var(--theme); letter-spacing: .05em; text-transform: uppercase; margin-top: 16px; opacity: 0; transition: opacity 0.3s; height: 0; }

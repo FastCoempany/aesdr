@@ -6,7 +6,7 @@
 <title>AESDR | 72-Hour Strike Plan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
   /* AESDR Dark Theme */
@@ -18,22 +18,22 @@
   --text-main: #F8FAFC;
   --text-muted: #94A3B8;
   
-  /* Asset Theme: Strike Protocol */
-  --theme: #10B981; /* Execution Green */
-  --theme-glow: rgba(16, 185, 129, 0.4);
-  --theme-lt: rgba(16, 185, 129, 0.1);
+  /* Brand Accents */
+  --theme: #8B1A1A; /* AESDR Crimson */
+  --theme-glow: rgba(139, 26, 26, 0.4);
+  --theme-lt: rgba(139, 26, 26, 0.1);
   
-  --cobalt: #38BDF8; 
+  --cobalt: #B8943E; 
   --coral: #EF4444; 
-  --amber: #F59E0B;
+  --amber: #B8943E;
   
   --line: rgba(255,255,255,0.1);
   --line2: rgba(255,255,255,0.2);
   
-  --display: 'Abril Fatface', Georgia, serif;
-  --serif: 'Cormorant Garamond', Georgia, serif;
+  --display: 'Playfair Display', Georgia, serif;
+  --serif: 'Source Serif 4', Georgia, serif;
   --cond: 'Barlow Condensed', sans-serif;
-  --mono: 'DM Mono', monospace;
+  --mono: 'Space Mono', monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:var(--bg-main);color:var(--text-main);font-family:var(--serif);line-height:1.6;display:flex;flex-direction:column}
@@ -86,13 +86,13 @@ html,body{height:100%;background:var(--bg-main);color:var(--text-main);font-fami
 /* SUCCESS MODAL */
 .success-overlay{position:fixed;inset:0;background:rgba(2, 6, 23, 0.9);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;pointer-events:none;transition:opacity 0.5s ease}
 .success-overlay.show{opacity:1;pointer-events:auto}
-.success-modal{background:var(--bg-panel);border:1px solid var(--theme);padding:60px 40px;border-radius:8px;text-align:center;max-width:500px;transform:translateY(20px);transition:transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);box-shadow:0 20px 50px rgba(16, 185, 129, 0.2)}
+.success-modal{background:var(--bg-panel);border:1px solid var(--theme);padding:60px 40px;border-radius:8px;text-align:center;max-width:500px;transform:translateY(20px);transition:transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);box-shadow:0 20px 50px rgba(139, 26, 26, 0.2)}
 .success-overlay.show .success-modal{transform:translateY(0)}
 .sm-icon{font-size:64px;margin-bottom:24px;filter:drop-shadow(0 0 20px var(--theme))}
 .sm-title{font-family:var(--display);font-size:36px;color:var(--text-main);margin-bottom:16px;line-height:1.1}
 .sm-sub{font-size:18px;color:var(--text-muted);margin-bottom:32px}
 .btn-launch{font-family:var(--cond);font-size:16px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:16px 32px;border:none;background:var(--theme);color:var(--bg-main);cursor:pointer;border-radius:4px;transition:all .2s;box-shadow:0 0 20px var(--theme-glow);width:100%}
-.btn-launch:hover{background:#059669;box-shadow:0 0 30px var(--theme)}
+.btn-launch:hover{background:#6B1515;box-shadow:0 0 30px var(--theme)}
 
 @media(max-width: 600px) {
   .h1{font-size:36px}

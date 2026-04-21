@@ -6,7 +6,7 @@
 <title>AESDR | AE-SDR Alignment Contract Builder</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
   /* AESDR Dark Theme */
@@ -19,19 +19,19 @@
   --text-muted: #94A3B8;
   
   /* Brand Accents */
-  --theme: #F59E0B; /* Gold for Alignment/Course 3 */
-  --theme-glow: rgba(245, 158, 11, 0.2);
-  --theme-text: #D97706;
-  --cobalt: #38BDF8; 
+  --theme: #B8943E; /* Gold for Alignment/Course 3 */
+  --theme-glow: rgba(184, 148, 62, 0.2);
+  --theme-text: #9A7B2F;
+  --cobalt: #B8943E; 
   --coral: #EF4444; 
   
   --line: rgba(255,255,255,0.1);
   --line2: rgba(255,255,255,0.2);
   
-  --display: 'Abril Fatface', Georgia, serif;
-  --serif: 'Cormorant Garamond', Georgia, serif;
+  --display: 'Playfair Display', Georgia, serif;
+  --serif: 'Source Serif 4', Georgia, serif;
   --cond: 'Barlow Condensed', sans-serif;
-  --mono: 'DM Mono', monospace;
+  --mono: 'Space Mono', monospace;
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
@@ -79,7 +79,7 @@ textarea.input-field{resize:vertical;min-height:80px}
 .doc-list li{font-size:16px;line-height:1.7;color:#222;margin-bottom:8px;display:flex;gap:12px}
 .doc-list li::before{content:'■';color:#000;font-size:10px;margin-top:6px}
 
-.live-val{font-weight:700;color:#000;background:rgba(245, 158, 11, 0.2);padding:2px 6px;border-radius:2px;transition:background 0.3s}
+.live-val{font-weight:700;color:#000;background:rgba(184, 148, 62, 0.2);padding:2px 6px;border-radius:2px;transition:background 0.3s}
 
 /* SIGNATURES */
 .sig-block{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:60px;page-break-inside:avoid}
@@ -260,9 +260,9 @@ function updateDoc() {
   // Optional: Briefly flash the background to show it updated
   const liveVals = document.querySelectorAll('.live-val');
   liveVals.forEach(el => {
-    el.style.backgroundColor = 'rgba(245, 158, 11, 0.5)';
+    el.style.backgroundColor = 'rgba(184, 148, 62, 0.5)';
     setTimeout(() => {
-      el.style.backgroundColor = 'rgba(245, 158, 11, 0.2)';
+      el.style.backgroundColor = 'rgba(184, 148, 62, 0.2)';
     }, 200);
   });
 }
