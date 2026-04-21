@@ -1,8 +1,9 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
-import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
+
+import { createClient } from "@/utils/supabase/server";
 
 const TOOLS_ROOT = path.join(process.cwd(), "tools", "standalone-html");
 
@@ -15,10 +16,6 @@ const ALLOWED_SLUGS = new Set([
   "12.3-72-hr-strike-plan",
 ]);
 
-/**
- * Returns true if the user has course access (active purchase, or accepted
- * team_member on a team with an active purchase).
- */
 async function userHasAccess(
   userId: string,
   email: string | null | undefined
@@ -73,15 +70,18 @@ async function userHasAccess(
 }
 
 /**
- * Serves standalone tool HTML files for in-browser use ("OPEN" action).
- * URL: /tools/:slug  (slug matches filename without .html)
+ * Downloads a standalone AESDR tool HTML file as an attachment.
+ * URL: /api/tools/:slug
  *
  * Gated: user must be authenticated AND have an active purchase (or be an
  * accepted team member on a team with an active purchase, or have the
  * founder bypass cookie).
+ *
+ * Sends `Content-Disposition: attachment` so the browser saves the file
+ * instead of rendering it in-tab. Filename matches the slug + ".html".
  */
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
@@ -102,7 +102,7 @@ export async function GET(
 
     if (!user) {
       return Response.redirect(
-        new URL("/login?reason=no_purchase", _request.url),
+        new URL("/login?reason=no_purchase", request.url),
         302
       );
     }
@@ -110,7 +110,7 @@ export async function GET(
     const ok = await userHasAccess(user.id, user.email);
     if (!ok) {
       return Response.redirect(
-        new URL("/login?reason=no_purchase", _request.url),
+        new URL("/login?reason=no_purchase", request.url),
         302
       );
     }
@@ -125,10 +125,13 @@ export async function GET(
     return new Response("Tool not found", { status: 404 });
   }
 
+  const filename = `${slug}.html`;
+
   return new Response(html, {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
-      "Cache-Control": "private, max-age=3600",
+      "Content-Disposition": `attachment; filename="${filename}"`,
+      "Cache-Control": "private, no-store",
     },
   });
 }
