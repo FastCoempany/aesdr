@@ -8,84 +8,408 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
-:root{
-  /* AESDR Dark Theme */
-  --bg-main: #020617; 
-  --bg-panel: #0F172A;
-  --bg-card: #1E293B;
-  --bg-hover: #334155;
-  
-  --text-main: #F8FAFC;
-  --text-muted: #94A3B8;
-  
-  /* Brand Accents */
-  --theme: #B8943E; /* Gold for Alignment/Course 3 */
-  --theme-glow: rgba(184, 148, 62, 0.2);
-  --theme-text: #9A7B2F;
-  --cobalt: #B8943E; 
-  --coral: #EF4444; 
-  
-  --line: rgba(255,255,255,0.1);
-  --line2: rgba(255,255,255,0.2);
-  
+:root {
+  /* Variant B — The Redline (Luxury) */
+  --parchment: #FFFDF8;
+  --page: #FFFFFF;
+  --text: #2C2C2C;
+  --text-muted: #8B8178;
+  --red: #C53030;
+  --crimson: #8B1A1A;
+  --gold-hl: rgba(184, 148, 62, 0.2);
+  --gold-hl-flash: rgba(184, 148, 62, 0.5);
+  --ruled: #F0EBE3;
+  --margin-line: #E8D4D4;
+
+  --iris: linear-gradient(90deg, #FF006E 0%, #FF6B00 17%, #F59E0B 34%, #10B981 51%, #38BDF8 68%, #8B5CF6 85%, #FF006E 100%);
+
   --display: 'Playfair Display', Georgia, serif;
   --serif: 'Source Serif 4', Georgia, serif;
   --cond: 'Barlow Condensed', sans-serif;
   --mono: 'Space Mono', monospace;
 }
 
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:var(--bg-main);color:var(--text-main);font-family:var(--serif);line-height:1.6}
+@keyframes iris {
+  from { background-position: 0% 50%; }
+  to { background-position: 200% 50%; }
+}
+
+.iris-text {
+  background: var(--iris);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: iris 3s linear infinite;
+}
+
+.iris-line {
+  height: 2px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: var(--parchment); color: var(--text); font-family: var(--serif); line-height: 1.6; }
 
 /* TOPBAR */
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:1px solid var(--line);background:var(--bg-panel);position:sticky;top:0;z-index:100}
-.brand{font-family:var(--cond);font-size:16px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;display:flex;align-items:center;gap:12px}
-.badge{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;background:var(--theme);color:var(--bg-main);font-weight:800;padding:4px 10px;border-radius:2px;box-shadow:0 0 10px var(--theme-glow)}
-.btn-print{font-family:var(--cond);font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:10px 24px;border:none;background:var(--theme);color:var(--bg-main);cursor:pointer;border-radius:2px;transition:all .2s;box-shadow:0 0 15px var(--theme-glow)}
-.btn-print:hover{background:var(--theme-text);transform:translateY(-2px)}
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 40px;
+  background: var(--page);
+  border-bottom: 1px solid var(--ruled);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+}
+.brand {
+  font-family: var(--cond);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  background: var(--crimson);
+  color: #FFFFFF;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 2px;
+}
+.btn-export {
+  font-family: var(--cond);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 11px 28px;
+  border: 2px solid transparent;
+  background: var(--crimson);
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 300ms ease;
+  position: relative;
+  overflow: hidden;
+  color: #FFFFFF;
+}
+.btn-export::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 4px;
+  padding: 2px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.btn-export:hover::before {
+  opacity: 1;
+}
+.btn-export:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(139, 26, 26, 0.25);
+}
 
 /* LAYOUT */
-.builder-layout{display:grid;grid-template-columns:400px 1fr;height:calc(100vh - 65px);overflow:hidden}
+.builder-layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  height: calc(100vh - 57px);
+  overflow: hidden;
+}
 
 /* LEFT: CONTROLS */
-.controls-col{background:var(--bg-panel);border-right:1px solid var(--line);padding:32px;overflow-y:auto}
-.ctrl-hdr{margin-bottom:32px}
-.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--theme);margin-bottom:12px;display:inline-block}
-.ctrl-title{font-family:var(--display);font-size:32px;line-height:1.1;margin-bottom:12px;color:var(--text-main)}
-.ctrl-sub{font-size:15px;color:var(--text-muted);line-height:1.5}
+.controls-col {
+  background: var(--page);
+  border-right: 1px solid var(--ruled);
+  padding: 36px 32px;
+  overflow-y: auto;
+}
+.ctrl-hdr { margin-bottom: 36px; }
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 10px;
+  display: inline-block;
+}
+.ctrl-title {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 900;
+  font-size: 30px;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  color: var(--crimson);
+}
+.ctrl-sub {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
 
-.input-group{margin-bottom:24px}
-.input-label{display:block;font-family:var(--cond);font-size:14px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px}
-.input-field{width:100%;background:var(--bg-main);border:1px solid var(--line2);color:var(--text-main);font-family:var(--serif);font-size:16px;padding:12px;border-radius:4px;outline:none;transition:border-color .2s}
-.input-field:focus{border-color:var(--theme)}
-select.input-field{font-family:var(--cond);font-size:15px;text-transform:uppercase;cursor:pointer}
-textarea.input-field{resize:vertical;min-height:80px}
+.input-group { margin-bottom: 22px; }
+.input-label {
+  display: block;
+  font-family: var(--cond);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.input-field {
+  width: 100%;
+  background: var(--parchment);
+  border: none;
+  border-bottom: 2px solid var(--ruled);
+  color: var(--text);
+  font-family: var(--serif);
+  font-size: 15px;
+  padding: 10px 12px;
+  border-radius: 0;
+  outline: none;
+  transition: border-color 300ms ease;
+}
+.input-field:focus {
+  border-image: var(--iris) 1;
+  border-image-slice: 1;
+  background-size: 200% 100%;
+}
+select.input-field {
+  font-family: var(--cond);
+  font-size: 14px;
+  text-transform: uppercase;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%238B8178' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+textarea.input-field {
+  resize: vertical;
+  min-height: 80px;
+  border: 1px solid var(--ruled);
+  border-radius: 4px;
+  border-bottom-width: 2px;
+}
+textarea.input-field:focus {
+  border-color: transparent;
+  border-image: var(--iris) 1;
+  border-image-slice: 1;
+}
 
-.section-divider{height:1px;background:var(--line);margin:32px 0}
+.section-divider {
+  height: 1px;
+  background: var(--ruled);
+  margin: 28px 0;
+}
 
-/* RIGHT: PREVIEW (THE CONTRACT) */
-.preview-col{background:var(--bg-main);padding:40px;overflow-y:auto;display:flex;justify-content:center}
-.document-paper{background:#FFFFFF;width:100%;max-width:850px;min-height:1100px;padding:60px 80px;box-shadow:0 20px 50px rgba(0,0,0,0.5);color:#000000;font-family:var(--serif)}
+/* RIGHT: PREVIEW */
+.preview-col {
+  background: var(--parchment);
+  padding: 48px 40px;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+}
+.document-paper {
+  background: var(--page);
+  width: 100%;
+  max-width: 820px;
+  min-height: 1100px;
+  padding: 72px 80px 72px 100px;
+  box-shadow:
+    0 1px 3px rgba(0,0,0,0.04),
+    0 8px 24px rgba(0,0,0,0.06),
+    0 24px 48px rgba(0,0,0,0.04);
+  color: var(--text);
+  font-family: var(--serif);
+  position: relative;
+  border: 1px solid rgba(0,0,0,0.04);
+}
+
+/* Margin line */
+.document-paper::before {
+  content: '';
+  position: absolute;
+  left: 72px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--margin-line);
+}
+
+/* Ruled lines as repeating gradient */
+.document-paper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 31px,
+    var(--ruled) 31px,
+    var(--ruled) 32px
+  );
+  pointer-events: none;
+  opacity: 0.5;
+}
 
 /* DOCUMENT STYLING */
-.doc-header{text-align:center;border-bottom:2px solid #000;padding-bottom:24px;margin-bottom:40px}
-.doc-title{font-family:var(--display);font-size:36px;margin-bottom:8px;color:#000}
-.doc-subtitle{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#555}
+.doc-header {
+  text-align: center;
+  padding-bottom: 28px;
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 1;
+}
+.doc-header-line {
+  height: 2px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+  margin-top: 28px;
+}
+.doc-title {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 900;
+  font-size: 34px;
+  margin-bottom: 6px;
+  color: var(--crimson);
+}
+.doc-subtitle {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
 
-.doc-section{margin-bottom:32px}
-.doc-sec-title{font-family:var(--cond);font-size:18px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#000;border-bottom:1px solid #CCC;padding-bottom:8px;margin-bottom:16px}
-.doc-text{font-size:16px;line-height:1.7;color:#222;margin-bottom:16px}
-.doc-list{list-style-type:none;margin-bottom:16px}
-.doc-list li{font-size:16px;line-height:1.7;color:#222;margin-bottom:8px;display:flex;gap:12px}
-.doc-list li::before{content:'■';color:#000;font-size:10px;margin-top:6px}
+.doc-section {
+  margin-bottom: 32px;
+  position: relative;
+  z-index: 1;
+}
+.doc-sec-title {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--crimson);
+  border-bottom: 1px solid var(--margin-line);
+  padding-bottom: 6px;
+  margin-bottom: 16px;
+  letter-spacing: 0.01em;
+}
+.doc-text {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+.doc-list {
+  list-style-type: none;
+  margin-bottom: 16px;
+}
+.doc-list li {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--text);
+  margin-bottom: 10px;
+  display: flex;
+  gap: 12px;
+}
+.doc-list li::before {
+  content: '\25A0';
+  color: var(--red);
+  font-size: 8px;
+  margin-top: 7px;
+  flex-shrink: 0;
+}
 
-.live-val{font-weight:700;color:#000;background:rgba(184, 148, 62, 0.2);padding:2px 6px;border-radius:2px;transition:background 0.3s}
+.live-val {
+  font-weight: 600;
+  color: var(--text);
+  background: var(--gold-hl);
+  padding: 1px 5px;
+  border-radius: 2px;
+  transition: background 300ms ease;
+}
+
+/* Margin notes */
+.margin-note {
+  position: absolute;
+  left: -80px;
+  width: 64px;
+  font-family: var(--serif);
+  font-size: 11px;
+  font-style: italic;
+  color: var(--red);
+  text-align: right;
+  line-height: 1.35;
+  opacity: 0.7;
+}
 
 /* SIGNATURES */
-.sig-block{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:60px;page-break-inside:avoid}
-.sig-line{border-top:1px solid #000;padding-top:8px;margin-top:40px}
-.sig-name{font-family:var(--cond);font-size:16px;font-weight:800;text-transform:uppercase}
-.sig-role{font-family:var(--mono);font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.1em;margin-top:4px}
+.sig-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  margin-top: 64px;
+  page-break-inside: avoid;
+  position: relative;
+  z-index: 1;
+}
+.sig-area { position: relative; }
+.sig-line {
+  border-top: 1px solid var(--text);
+  padding-top: 10px;
+  margin-top: 48px;
+}
+.sig-name {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--text);
+}
+.sig-role {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  margin-top: 4px;
+}
+.sig-date {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  letter-spacing: .05em;
+}
 
 /* PRINT MEDIA QUERIES */
 @media print {
@@ -94,39 +418,54 @@ textarea.input-field{resize:vertical;min-height:80px}
   .topbar, .controls-col { display: none !important; }
   .builder-layout { display: block; height: auto; overflow: visible; }
   .preview-col { padding: 0; background: #FFFFFF; display: block; }
-  .document-paper { box-shadow: none; padding: 0; min-height: auto; max-width: 100%; width: 100%; }
-  .live-val { background: transparent; padding: 0; }
+  .document-paper {
+    box-shadow: none;
+    border: none;
+    padding: 0 0 0 28px;
+    min-height: auto;
+    max-width: 100%;
+    width: 100%;
+  }
+  .document-paper::after { opacity: 0; }
+  .document-paper::before { left: 0; }
+  .live-val { background: transparent; padding: 0; font-weight: 700; }
+  .iris-line, .doc-header-line { background: var(--crimson) !important; animation: none !important; }
+  .margin-note { display: none; }
 }
 
-@media(max-width: 900px) {
+@media (max-width: 900px) {
   .builder-layout { grid-template-columns: 1fr; overflow: auto; height: auto; }
-  .preview-col { display: none; /* Hide preview on mobile to save space */ }
+  .controls-col { border-right: none; border-bottom: 1px solid var(--ruled); }
+  .preview-col { padding: 24px 16px; }
+  .document-paper { padding: 40px 32px 40px 48px; }
+  .document-paper::before { left: 32px; }
+  .margin-note { display: none; }
 }
 </style>
 </head>
 <body>
 
 <header class="topbar">
-  <div class="brand">AESDR <span class="badge">Tool: C3.4</span></div>
-  <button class="btn-print" onclick="window.print()">🖨️ Export Contract</button>
+  <div class="brand"><span class="iris-text">AESDR</span> <span class="badge">TOOL C3.4</span></div>
+  <button class="btn-export" onclick="window.print()">Export Contract</button>
 </header>
 
 <div class="builder-layout">
-  
+
   <div class="controls-col">
     <div class="ctrl-hdr">
       <div class="eyebrow">Alignment Engine</div>
       <h1 class="ctrl-title">The SLA Builder</h1>
-      <p class="ctrl-sub">Enter the terms of your partnership. The document will update in real-time. Export it, bring it to your 1:1, and sign it.</p>
+      <p class="ctrl-sub">Enter the terms of your partnership. The document updates in real-time. Export it, bring it to your 1:1, and sign it.</p>
     </div>
 
     <div class="input-group">
       <label class="input-label">Account Executive Name</label>
-      <input type="text" id="in_aeName" class="input-field" value="Jane Doe" onkeyup="updateDoc()">
+      <input type="text" id="in_aeName" class="input-field" value="Jane Doe" oninput="updateDoc()">
     </div>
     <div class="input-group">
       <label class="input-label">SDR Name</label>
-      <input type="text" id="in_sdrName" class="input-field" value="John Smith" onkeyup="updateDoc()">
+      <input type="text" id="in_sdrName" class="input-field" value="John Smith" oninput="updateDoc()">
     </div>
 
     <div class="section-divider"></div>
@@ -139,7 +478,7 @@ textarea.input-field{resize:vertical;min-height:80px}
         <option value="Twice a Week (15 Min Standups)">Twice a Week (15 Min Standups)</option>
       </select>
     </div>
-    
+
     <div class="input-group">
       <label class="input-label">Qualification Framework</label>
       <select id="in_framework" class="input-field" onchange="updateDoc()">
@@ -154,7 +493,7 @@ textarea.input-field{resize:vertical;min-height:80px}
 
     <div class="input-group">
       <label class="input-label">SDR Monthly Quota Commitment (Meetings)</label>
-      <input type="number" id="in_sdrQuota" class="input-field" value="12" onkeyup="updateDoc()">
+      <input type="number" id="in_sdrQuota" class="input-field" value="12" oninput="updateDoc()">
     </div>
 
     <div class="input-group">
@@ -165,36 +504,37 @@ textarea.input-field{resize:vertical;min-height:80px}
         <option value="End of Day">End of Day</option>
       </select>
     </div>
-    
+
     <div class="input-group">
       <label class="input-label">Custom Rules of Engagement</label>
-      <textarea id="in_custom" class="input-field" onkeyup="updateDoc()">Accounts over $50k ARR require AE approval before booking. SDR has autonomy on accounts under $50k.</textarea>
+      <textarea id="in_custom" class="input-field" oninput="updateDoc()">Accounts over $50k ARR require AE approval before booking. SDR has autonomy on accounts under $50k.</textarea>
     </div>
 
   </div>
 
   <div class="preview-col">
     <div class="document-paper">
-      
+
       <div class="doc-header">
-        <h1 class="doc-title">Service Level Agreement (SLA)</h1>
-        <div class="doc-subtitle">Account Executive & Sales Development Alignment</div>
+        <h1 class="doc-title">Service Level Agreement</h1>
+        <div class="doc-subtitle">Account Executive &amp; Sales Development Alignment</div>
+        <div class="doc-header-line"></div>
       </div>
 
       <div class="doc-section">
         <p class="doc-text">This agreement outlines the operational standards, mutual expectations, and rules of engagement between the Account Executive, <span class="live-val" id="out_aeName1">Jane Doe</span>, and the Sales Development Representative, <span class="live-val" id="out_sdrName1">John Smith</span>. The purpose of this document is to eliminate friction, establish clear boundaries, and maximize revenue generation.</p>
       </div>
 
-      <div class="doc-section">
-        <h2 class="doc-sec-title">I. Communication & Cadence</h2>
+      <div class="doc-section" style="position:relative">
+        <h2 class="doc-sec-title">&sect; I. Communication &amp; Cadence</h2>
         <ul class="doc-list">
           <li><strong>Alignment Meetings:</strong> We agree to a <span class="live-val" id="out_cadence">Weekly (30 Minutes)</span> sync. This time is protected and will not be canceled unless mutually agreed upon.</li>
           <li><strong>Feedback Loop:</strong> Feedback on calls and meetings will be delivered directly, constructively, and within 48 hours of the event.</li>
         </ul>
       </div>
 
-      <div class="doc-section">
-        <h2 class="doc-sec-title">II. SDR Commitments</h2>
+      <div class="doc-section" style="position:relative">
+        <h2 class="doc-sec-title">&sect; II. SDR Commitments</h2>
         <ul class="doc-list">
           <li><strong>Pipeline Generation:</strong> The SDR commits to sourcing and handing over <span class="live-val" id="out_sdrQuota">12</span> highly qualified meetings per month.</li>
           <li><strong>Qualification Standard:</strong> All handed-over meetings must meet the minimum criteria defined by the <span class="live-val" id="out_framework">BANT (Budget, Authority, Need, Timeline)</span> framework.</li>
@@ -202,8 +542,8 @@ textarea.input-field{resize:vertical;min-height:80px}
         </ul>
       </div>
 
-      <div class="doc-section">
-        <h2 class="doc-sec-title">III. Account Executive Commitments</h2>
+      <div class="doc-section" style="position:relative">
+        <h2 class="doc-sec-title">&sect; III. Account Executive Commitments</h2>
         <ul class="doc-list">
           <li><strong>CRM Accountability:</strong> The AE commits to updating the CRM status of an SDR-sourced meeting within <span class="live-val" id="out_aeSla">24 Hours</span> of the call concluding, ensuring the SDR receives accurate commission credit.</li>
           <li><strong>Mentorship:</strong> The AE agrees to spend time reviewing cold calls, offering strategic account insights, and actively aiding in the SDR's professional development.</li>
@@ -211,21 +551,23 @@ textarea.input-field{resize:vertical;min-height:80px}
         </ul>
       </div>
 
-      <div class="doc-section">
-        <h2 class="doc-sec-title">IV. Rules of Engagement</h2>
+      <div class="doc-section" style="position:relative">
+        <h2 class="doc-sec-title">&sect; IV. Rules of Engagement</h2>
         <p class="doc-text live-val" id="out_custom" style="display:inline-block">Accounts over $50k ARR require AE approval before booking. SDR has autonomy on accounts under $50k.</p>
       </div>
 
       <div class="sig-block">
-        <div>
+        <div class="sig-area">
           <div class="sig-line"></div>
           <div class="sig-name" id="out_aeName2">Jane Doe</div>
           <div class="sig-role">Account Executive</div>
+          <div class="sig-date">Date: _______________</div>
         </div>
-        <div>
+        <div class="sig-area">
           <div class="sig-line"></div>
           <div class="sig-name" id="out_sdrName2">John Smith</div>
           <div class="sig-role">Sales Development Rep</div>
+          <div class="sig-date">Date: _______________</div>
         </div>
       </div>
 
@@ -250,14 +592,14 @@ function updateDoc() {
   document.getElementById('out_aeName2').textContent = aeName;
   document.getElementById('out_sdrName1').textContent = sdrName;
   document.getElementById('out_sdrName2').textContent = sdrName;
-  
+
   document.getElementById('out_cadence').textContent = cadence;
   document.getElementById('out_framework').textContent = framework;
   document.getElementById('out_sdrQuota').textContent = sdrQuota;
   document.getElementById('out_aeSla').textContent = aeSla;
   document.getElementById('out_custom').textContent = custom;
-  
-  // Optional: Briefly flash the background to show it updated
+
+  // Briefly flash the gold highlight to show live update
   const liveVals = document.querySelectorAll('.live-val');
   liveVals.forEach(el => {
     el.style.backgroundColor = 'rgba(184, 148, 62, 0.5)';
