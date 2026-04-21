@@ -47,36 +47,38 @@ async function safeSend(
 
 // ─── Welcome Email (immediate after purchase) ───
 
-export async function sendWelcomeEmail(to: string, name: string, _tempPassword: string | null) {
-  // Generate a magic link for password-free first sign-in.
-  // The user can set their own password later via Account settings.
-  const resetUrl = `${SITE}/login?email=${encodeURIComponent(to)}`;
+export async function sendWelcomeEmail(to: string, name: string, tempPassword: string | null) {
+  const loginUrl = `${SITE}/login?email=${encodeURIComponent(to)}`;
   return safeSend(`welcome to ${to}`, () =>
     getResend().emails.send({
       from: FROM,
       to,
       headers: UNSUBSCRIBE_HEADERS,
       subject: "You're in. Start here.",
-      html: welcomeHtml(name, to, resetUrl),
+      html: welcomeHtml(name, to, loginUrl, tempPassword),
     })
   );
 }
 
-function welcomeHtml(name: string, email: string, resetUrl: string) {
+function welcomeHtml(name: string, email: string, loginUrl: string, tempPassword: string | null) {
   const safeName = esc(name);
   const safeEmail = esc(email);
+  const passwordLine = tempPassword
+    ? `<p style="margin:0 0 4px"><strong>Temporary password:</strong> <code style="background:#e8e8e8;padding:2px 8px;border-radius:3px;font-size:15px;letter-spacing:1px">${esc(tempPassword)}</code></p>
+       <p style="margin:8px 0 0;font-size:13px;color:#666">You'll be asked to set your own password on first sign-in.</p>`
+    : `<p style="margin:8px 0 0;font-size:13px;color:#666">Use your existing password to sign in.</p>`;
   const credentialsBlock = `
   <div style="background:#f8f9fa;padding:16px 20px;margin:20px 0;border-left:3px solid #10B981">
     <p style="margin:0 0 6px;font-weight:700">Your account:</p>
     <p style="margin:0 0 4px"><strong>Email:</strong> ${safeEmail}</p>
-    <p style="margin:8px 0 0;font-size:13px;color:#666">Click the button below to sign in. You can set a password in Account settings after your first login.</p>
+    ${passwordLine}
   </div>`;
   return `
 <div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
   <p>Welcome to AESDR${name !== 'there' ? `, ${safeName}` : ''}.</p>
   <p>No long onboarding. No orientation video. Here's what matters:</p>
   ${credentialsBlock}
-  <p style="margin:24px 0"><a href="${resetUrl}" style="display:inline-block;padding:14px 28px;background:#10B981;color:#fff;font-weight:700;text-decoration:none;font-size:16px">Sign In & Start →</a></p>
+  <p style="margin:24px 0"><a href="${loginUrl}" style="display:inline-block;padding:14px 28px;background:#10B981;color:#fff;font-weight:700;text-decoration:none;font-size:16px">Sign In &amp; Start &rarr;</a></p>
   <p>Course 1 covers the fundamentals — creating structure, building real camaraderie in your AE/SDR partnership, and setting up your first 90 days the right way.</p>
   <p><strong>A few things to know:</strong></p>
   <ul>

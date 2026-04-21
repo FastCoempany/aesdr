@@ -53,7 +53,7 @@ function buildHTML(arr: Char[], irisClass: string): string {
   return h;
 }
 
-export default function LandingSequence() {
+export default function LandingSequence({ isAuthenticated = false }: { isAuthenticated?: boolean }) {
   const heroRef = useRef<HTMLDivElement>(null);
   const enterBtnRef = useRef<HTMLButtonElement>(null);
   const confessionRef = useRef<HTMLDivElement>(null);
@@ -275,8 +275,14 @@ export default function LandingSequence() {
           <h1 className={s.heroH1}>Stop Surviving.<br />Start <span className={s.heroAccent}>Owning</span> It.</h1>
           <p className={s.heroP}>This isn&rsquo;t corporate-y but it will advance your career. 12 interactive, field-tested sessions for AEs and SDRs who&rsquo;re serious about controlling chaos, managing toxic leadership, protecting your commission - and your future.</p>
           <div>
-            <a href="#pricing" className={s.btnIris}>Get Access</a>
-            <a href="#curriculum" className={s.btnOutline}>Syllabus Peek</a>
+            {isAuthenticated ? (
+              <a href="/dashboard" className={s.btnIris}>Continue &rarr;</a>
+            ) : (
+              <>
+                <a href="#pricing" className={s.btnIris}>Get Access</a>
+                <a href="#curriculum" className={s.btnOutline}>Syllabus Peek</a>
+              </>
+            )}
           </div>
           <div className={s.ambientLine} />
         </div>

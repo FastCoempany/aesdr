@@ -24,7 +24,7 @@ function LoginForm() {
     setLoading(true);
 
     const supabase = createClient();
-    const { error: authError } = await supabase.auth.signInWithPassword({
+    const { data, error: authError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -35,7 +35,11 @@ function LoginForm() {
       return;
     }
 
-    router.push("/dashboard");
+    if (data.user?.user_metadata?.needs_password_change) {
+      router.push("/account/change-password");
+    } else {
+      router.push("/");
+    }
     router.refresh();
   }
 
@@ -254,8 +258,8 @@ function LoginForm() {
         style={{ fontFamily: "var(--serif)", fontSize: "16px", color: "var(--text-muted)" }}
       >
         Don&apos;t have an account?{" "}
-        <Link href="/signup" style={{ color: "var(--theme)" }}>
-          Sign up
+        <Link href="/#pricing" style={{ color: "var(--theme)" }}>
+          Get access
         </Link>
       </p>
     </div>

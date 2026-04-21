@@ -4,7 +4,9 @@ import Link from "next/link";
 import CheckoutButton from "@/components/CheckoutButton";
 import GhostButton from "@/components/GhostButton";
 import LandingSequence from "@/components/LandingSequence";
+import SignOutButton from "@/components/SignOutButton";
 import TeaseGate from "@/components/TeaseGate";
+import { createClient } from "@/utils/supabase/server";
 import styles from "./page.module.css";
 
 const DeckStack = dynamic(() => import("@/components/DeckStack"));
@@ -21,7 +23,11 @@ const FAQ = [
   { q: "Can my company expense this?", a: "Of course. We provide a receipt and invoice on purchase. Most L&D budgets cover this easily \u2014 especially the Team plan." },
 ];
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const isAuthenticated = !!user;
+
   return (
     <TeaseGate>
     <main className={styles.page}>
@@ -29,15 +35,21 @@ export default function LandingPage() {
 
       {/* ─── NAV ─── */}
       <header className={styles.nav}>
-        <span className={styles.brand}>AESDR</span>
+        <Link href="/" className={styles.brand} style={{ textDecoration: "none", color: "inherit" }}>AESDR</Link>
         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-          <Link href="/login" className={styles.navLink}>Sign In</Link>
-          <a href="#pricing" className={styles.navCta}>Get Access</a>
+          {isAuthenticated ? (
+            <SignOutButton />
+          ) : (
+            <>
+              <Link href="/login" className={styles.navLink}>Sign In</Link>
+              <a href="#pricing" className={styles.navCta}>Get Access</a>
+            </>
+          )}
         </div>
       </header>
 
       {/* Hero + Confession + Terminal + Zoom */}
-      <LandingSequence />
+      <LandingSequence isAuthenticated={isAuthenticated} />
 
       <div aria-hidden="true" style={{ height: "15vh" }} />
 
@@ -131,7 +143,11 @@ export default function LandingPage() {
           12 courses. 5 takeaway tools. One price. Lifetime access.
           Built for AEs and SDRs who want to get better, not just feel better.
         </p>
-        <a href="#pricing" className={styles.ctaPrimary}>Get Access</a>
+        {isAuthenticated ? (
+          <Link href="/dashboard" className={styles.ctaPrimary}>Continue &rarr;</Link>
+        ) : (
+          <a href="#pricing" className={styles.ctaPrimary}>Get Access</a>
+        )}
       </section>
 
       {/* Content Warning */}
