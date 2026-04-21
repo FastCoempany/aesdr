@@ -280,7 +280,7 @@ export default function LandingSequence({ isAuthenticated = false }: { isAuthent
             ) : (
               <>
                 <a href="#pricing" className={s.btnIris}>Get Access</a>
-                <a href="#curriculum" className={s.btnOutline}>Syllabus Peek</a>
+                <a href="/syllabus" className={s.btnOutline}>Syllabus Peek</a>
               </>
             )}
           </div>

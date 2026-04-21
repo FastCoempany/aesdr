@@ -9,7 +9,6 @@ import TeaseGate from "@/components/TeaseGate";
 import { createClient } from "@/utils/supabase/server";
 import styles from "./page.module.css";
 
-const DeckStack = dynamic(() => import("@/components/DeckStack"));
 const Testimonials = dynamic(() => import("@/components/Testimonials"));
 
 const FAQ = [
@@ -53,8 +52,21 @@ export default async function LandingPage() {
 
       <div aria-hidden="true" style={{ height: "15vh" }} />
 
-      {/* Curriculum Deck */}
-      <DeckStack />
+      {/* Syllabus teaser — full DeckStack now lives at /syllabus */}
+      <section id="curriculum" className={styles.syllabusTeaser}>
+        <p className={styles.sectionLabel}>What you get</p>
+        <h2 className={styles.sectionHeadline}>
+          12 lessons. One honest curriculum.
+        </h2>
+        <p className={styles.syllabusTeaserSub}>
+          Camaraderie, silos, the 30% rule, commission math, sober selling,
+          and the handful of relationships that will outlast this company.
+          Peel through every lesson one at a time.
+        </p>
+        <Link href="/syllabus" className={styles.syllabusTeaserCta}>
+          See the full syllabus &rarr;
+        </Link>
+      </section>
 
       {/* Testimonials */}
       <Testimonials />
