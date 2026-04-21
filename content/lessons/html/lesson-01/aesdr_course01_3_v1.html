@@ -1481,7 +1481,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="ghost-n">03</div>
       <div class="sec-eye">Section 03 — Live Call Review</div>
       <div class="lh-title">Tag the Call Transcript</div>
-      <div class="lh-sub"><b id="txCount">0</b> / 6 correctly tagged</div>
+      <div class="lh-sub"><b id="txCount">0</b> / 5 correctly tagged</div>
     </div>
     <div class="tx-wrap">
       <p class="tx-instr">Read each line of this cold call transcript. Tag every line as either "Strong" or "Needs Work." All 6 must be correct to continue.</p>
@@ -2158,7 +2158,7 @@ function canContinue(){
   if(cur===3)return AESDR.gateReady(3);
   if(cur===2) return fmCount===6;
   if(cur===4) return Object.keys(planDone).length===4;
-  if(cur===5) return txCount===4; // 4 taggable AE lines
+  if(cur===5) return txCount===5;
   if(cur===6) return emailSubmitted&&emailPassed;
   if(cur===7){
     if(!qSubmitted) return Object.keys(qAns).length===QUIZ.length;
@@ -2174,7 +2174,7 @@ function getHint(){
     2:`${fmCount} / 6 correctly diagnosed`,
     3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
     4:`${Object.keys(planDone).length} / 4 correctly placed`,
-    5:`${txCount} / 4 correctly tagged`,
+    5:`${txCount} / 5 correctly tagged`,
     6:!emailSubmitted?`${Object.keys(emailChosen).length} / 3 sections chosen`:emailPassed?'✓ Email repaired — continue below.':'Review the correct versions and try again.',
     7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
     8: AESDR.gateHint(8) || "The templates only work if you actually open them.",
