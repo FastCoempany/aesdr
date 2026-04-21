@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Reclaimed Calculator — AESDR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: #FAF7F2;
+            color: #1A1A1A;
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-weight: 400;
+            line-height: 1.6;
+            padding: 60px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .eyebrow {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .2em;
+            color: #B8943E;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 900;
+            font-style: italic;
+            font-size: 3.2rem;
+            line-height: 1.1;
+            margin-bottom: 16px;
+            color: #1A1A1A;
+        }
+
+        .subtitle {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 1.15rem;
+            color: #6B6B6B;
+            font-style: italic;
+            margin-bottom: 48px;
+            max-width: 640px;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #E8E4DF;
+            margin: 40px 0;
+        }
+
+        .section-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .2em;
+            color: #8B1A1A;
+            margin-bottom: 20px;
+        }
+
+        .calculator-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 48px;
+            align-items: start;
+        }
+
+        .inputs-side {
+            /* left side */
+        }
+
+        .input-group {
+            margin-bottom: 32px;
+        }
+
+        .input-group label {
+            display: block;
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .2em;
+            color: #6B6B6B;
+            margin-bottom: 8px;
+        }
+
+        .input-group input[type="text"],
+        .input-group input[type="number"] {
+            width: 100%;
+            max-width: 320px;
+            background: #FFFFFF;
+            border: 1px solid #E8E4DF;
+            border-radius: 0;
+            padding: 14px 16px;
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 1.1rem;
+            color: #1A1A1A;
+            outline: none;
+            transition: border-color .2s;
+        }
+
+        .input-group input[type="text"]:focus,
+        .input-group input[type="number"]:focus {
+            border-color: transparent;
+            border-bottom: 2px solid #8B1A1A;
+        }
+
+        .slider-section {
+            margin-bottom: 36px;
+            padding-bottom: 36px;
+            border-bottom: 1px solid #E8E4DF;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 16px;
+        }
+
+        .slider-title {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #1A1A1A;
+        }
+
+        .slider-value {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 900;
+            font-size: 1.3rem;
+            color: #8B1A1A;
+        }
+
+        .slider-track {
+            width: 100%;
+            height: 6px;
+            background: #E8E4DF;
+            border-radius: 3px;
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .slider-fill {
+            height: 100%;
+            background: #8B1A1A;
+            border-radius: 3px;
+            width: 25%;
+        }
+
+        .slider-thumb {
+            position: absolute;
+            top: 50%;
+            left: 25%;
+            transform: translate(-50%, -50%);
+            width: 18px;
+            height: 18px;
+            background: #FFFFFF;
+            border: 2px solid #8B1A1A;
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(0,0,0,.1);
+        }
+
+        .slider-range {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            color: #6B6B6B;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+        }
+
+        .results-panel {
+            background: #FFFFFF;
+            box-shadow: 0 4px 20px rgba(0,0,0,.06);
+            padding: 40px 36px;
+            position: sticky;
+            top: 40px;
+        }
+
+        .results-panel .panel-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .2em;
+            color: #8B1A1A;
+            margin-bottom: 32px;
+        }
+
+        .result-item {
+            margin-bottom: 28px;
+            padding-bottom: 28px;
+            border-bottom: 1px solid #E8E4DF;
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .result-item .result-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .2em;
+            color: #6B6B6B;
+            margin-bottom: 6px;
+        }
+
+        .result-item .result-value {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 900;
+            font-size: 1.6rem;
+            color: #1A1A1A;
+        }
+
+        .result-item .result-value.crimson {
+            color: #8B1A1A;
+            font-size: 2.2rem;
+        }
+
+        .result-item .result-note {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: .85rem;
+            color: #6B6B6B;
+            margin-top: 4px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            background: #1A1A1A;
+            color: #FAF7F2;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            font-size: .9rem;
+            padding: 16px 28px;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 32px;
+        }
+
+        .btn:hover {
+            background: #333;
+        }
+    </style>
+</head>
+<body>
+    <span class="eyebrow">Course 9 &middot; Interactive Assessment</span>
+    <h1>The &ldquo;Time Reclaimed&rdquo; Calculator</h1>
+    <p class="subtitle">Plug in your numbers to see exactly how much selling time you are throwing away.</p>
+
+    <hr>
+
+    <div class="calculator-layout">
+        <div class="inputs-side">
+            <div class="input-group">
+                <label>Target OTE ($)</label>
+                <input type="text" value="150,000">
+            </div>
+
+            <p class="section-label">Weekly Time Drains</p>
+
+            <div class="slider-section">
+                <div class="slider-header">
+                    <span class="slider-title">Slack / Email Distractions</span>
+                    <span class="slider-value">5 hrs/wk</span>
+                </div>
+                <div class="slider-track">
+                    <div class="slider-fill"></div>
+                    <div class="slider-thumb"></div>
+                </div>
+                <div class="slider-range">
+                    <span>0 hrs</span>
+                    <span>20 hrs</span>
+                </div>
+            </div>
+
+            <div class="slider-section">
+                <div class="slider-header">
+                    <span class="slider-title">CRM / Admin Bloat</span>
+                    <span class="slider-value">5 hrs/wk</span>
+                </div>
+                <div class="slider-track">
+                    <div class="slider-fill"></div>
+                    <div class="slider-thumb"></div>
+                </div>
+                <div class="slider-range">
+                    <span>0 hrs</span>
+                    <span>20 hrs</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="results-panel">
+            <p class="panel-title">Your Results</p>
+
+            <div class="result-item">
+                <p class="result-label">Your True Hourly Rate</p>
+                <p class="result-value">$72.12</p>
+                <p class="result-note">Based on 40-hr week, 52 weeks</p>
+            </div>
+
+            <div class="result-item">
+                <p class="result-label">Total Weekly Hours Lost</p>
+                <p class="result-value">10 hrs</p>
+                <p class="result-note">25% of your selling week</p>
+            </div>
+
+            <div class="result-item">
+                <p class="result-label">Annual Selling Time Burned</p>
+                <p class="result-value">520 hrs</p>
+                <p class="result-note">13 full working weeks per year</p>
+            </div>
+
+            <div class="result-item">
+                <p class="result-label">Annual Financial Bleed</p>
+                <p class="result-value crimson">$37,500</p>
+                <p class="result-note">Money left on the table annually</p>
+            </div>
+
+            <button class="btn">Reclaim My Time</button>
+        </div>
+    </div>
+</body>
+</html>
