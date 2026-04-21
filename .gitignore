@@ -43,3 +43,6 @@ next-env.d.ts
 # lighthouse reports
 *.lighthouse.html
 www.aesdr.com-*.html
+
+# design source files (MJ exports, drafts)
+/design/

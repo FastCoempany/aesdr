@@ -1,20 +1,23 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/react";
+import MobileGate from "@/components/MobileGate";
 import RedditPixel from "@/components/RedditPixel";
 import "./globals.css";
+
+const LAUNCHED = process.env.NEXT_PUBLIC_LAUNCH_MODE === "true";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com"),
   title: "AESDR",
   description: "AEs & SDRs rule this world.",
   robots: {
-    index: false,
-    follow: false,
+    index: LAUNCHED,
+    follow: LAUNCHED,
     googleBot: {
-      index: false,
-      follow: false,
-      noimageindex: true,
+      index: LAUNCHED,
+      follow: LAUNCHED,
+      noimageindex: !LAUNCHED,
     },
   },
   openGraph: {
@@ -65,7 +68,9 @@ export default function RootLayout({
         >
           Skip to content
         </a>
-        <div id="main-content">{children}</div>
+        <div id="main-content">
+          <MobileGate>{children}</MobileGate>
+        </div>
         
         {/* Analytics & Tracking */}
         <Analytics />
