@@ -221,6 +221,41 @@ tr:hover td { background: rgba(184,148,62,0.04); }
 .text-green { color: var(--crimson); }
 .text-gold { color: var(--gold-solid); }
 
+/* INFO BANNER */
+.info-banner {
+  position: relative;
+  background: var(--gold-hl);
+  border-left: 3px solid var(--gold-solid);
+  padding: 14px 40px 14px 20px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  transition: opacity 0.3s ease;
+}
+.info-banner-text {
+  max-width: 940px;
+  margin: 0 auto;
+}
+.info-banner-dismiss {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-family: var(--mono);
+  font-size: 16px;
+  color: var(--text-muted);
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px;
+  transition: color 0.2s;
+}
+.info-banner-dismiss:hover {
+  color: var(--text-main);
+}
+
 @media(max-width: 900px) {
   .dash-grid { grid-template-columns: 1fr 1fr; }
   .global-inputs { grid-template-columns: 1fr; }
@@ -243,6 +278,14 @@ tr:hover td { background: rgba(184,148,62,0.04); }
   <button class="btn-export" onclick="exportCSV()">Export CSV</button>
 </header>
 <div class="iris-divider"></div>
+
+<!-- INFO BANNER -->
+<div class="info-banner" id="infoBanner" style="display:none;">
+  <div class="info-banner-text">
+    This is a standalone tool — it runs entirely in your browser. No data is sent anywhere. Your deals and settings are saved automatically to this browser. Clear your browser data to reset. Works in any modern browser (Chrome, Firefox, Safari, Edge).
+  </div>
+  <button class="info-banner-dismiss" onclick="dismissInfoBanner()" aria-label="Dismiss">&times;</button>
+</div>
 
 <div class="container">
 <div class="page">
