@@ -84,13 +84,20 @@ export default function LandingSequence({ isAuthenticated = false }: { isAuthent
     if (typingRef.current) typingRef.current.innerHTML = "";
 
     const root = document.documentElement;
+    const body = document.body;
 
+    // Lock/unlock BOTH html and body. Browsers are inconsistent about which
+    // one controls the viewport scroll container (it depends on which has
+    // an explicit overflow value), so setting both removes the ambiguity.
     function restoreDocumentScroll() {
       root.style.overflow = "";
       root.style.overflowX = "";
+      body.style.overflow = "";
+      body.style.overflowX = "";
     }
 
     root.style.overflow = "hidden";
+    body.style.overflow = "hidden";
 
     // Failsafe: if anything goes wrong and unlockScroll never runs, force
     // scroll back on after 60s so the page is never permanently frozen.
@@ -170,6 +177,8 @@ export default function LandingSequence({ isAuthenticated = false }: { isAuthent
       scrollUnlocked = true;
       root.style.overflow = "";
       root.style.overflowX = "hidden";
+      body.style.overflow = "";
+      body.style.overflowX = "hidden";
       setTimeout(() => {
         viewportRef.current?.classList.add(s.viewportActive);
         sideMarkerRef.current?.classList.add(s.sideMarkerActive);
