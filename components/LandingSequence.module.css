@@ -410,7 +410,7 @@
   transition: opacity 0.5s ease;
   overflow: hidden;
 }
-.viewportActive { display: flex !important; opacity: 1; }
+.viewportActive { display: flex; opacity: 1; }
 
 .zcard {
   position: absolute;
@@ -423,6 +423,10 @@
   opacity: 0;
   padding: 40px;
   will-change: transform, opacity;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 .zcardInner { max-width: 900px; position: relative; }
 
@@ -433,6 +437,8 @@
   letter-spacing: .03em;
   line-height: 1.05;
   color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 .zMichael {
   font-family: var(--hand);
@@ -524,7 +530,7 @@
   transition: opacity 0.3s ease;
   gap: 16px;
 }
-.ctaOverlayVisible { display: flex !important; opacity: 1; pointer-events: auto; }
+.ctaOverlayVisible { display: flex; opacity: 1; pointer-events: auto; }
 
 .ctaBrand {
   font-family: var(--display);

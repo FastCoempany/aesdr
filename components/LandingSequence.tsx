@@ -258,7 +258,11 @@ export default function LandingSequence() {
           vp.style.display = "none";
           if (sideMarkerRef.current) sideMarkerRef.current.style.opacity = "0";
           if (progressRef.current) progressRef.current.style.opacity = "0";
-          if (ctaRef.current) { ctaRef.current.style.display = "none"; }
+          if (ctaRef.current) {
+            ctaRef.current.classList.remove(s.ctaOverlayVisible);
+            ctaRef.current.style.display = "none";
+            ctaRef.current.style.pointerEvents = "none";
+          }
           return;
         }
         vp.style.display = ""; vp.style.opacity = ""; vp.style.pointerEvents = "";
