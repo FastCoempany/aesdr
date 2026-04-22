@@ -22,6 +22,14 @@ function LoginForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    if (!email.trim()) {
+      setError("you didn't put your email");
+      return;
+    }
+    if (!password.trim()) {
+      setError("you forgot your password — ironic, right?");
+      return;
+    }
     setLoading(true);
 
     const supabase = createClient();
@@ -46,7 +54,7 @@ function LoginForm() {
 
   async function handleForgotPassword() {
     if (!email) {
-      setError("Enter your email above first.");
+      setError("you didn't put your email");
       return;
     }
     setResetLoading(true);
@@ -106,7 +114,7 @@ function LoginForm() {
               fontFamily: "var(--display)",
               fontSize: "clamp(40px, 5.4vw, 48px)",
               lineHeight: "1.02",
-              color: "var(--text-main)",
+              color: "#1A1A1A",
               fontWeight: 400,
               letterSpacing: "-0.015em",
               margin: 0,
@@ -121,11 +129,11 @@ function LoginForm() {
               fontSize: "10px",
               letterSpacing: ".36em",
               textTransform: "uppercase" as const,
-              color: "var(--text-muted)",
+              color: "#6B6B6B",
               margin: 0,
             }}
           >
-            Members <span style={{ color: "var(--text-muted)", opacity: 0.6 }}>·</span> Only
+            Members <span style={{ color: "#6B6B6B", opacity: 0.6 }}>·</span> Only
           </p>
         </div>
 
@@ -135,14 +143,14 @@ function LoginForm() {
             style={{
               fontFamily: "var(--serif)",
               fontSize: "14px",
-              borderLeft: "3px solid var(--coral, #EF4444)",
-              background: "rgba(239,68,68,0.05)",
-              color: "var(--coral, #EF4444)",
+              borderLeft: "3px solid #8B1A1A",
+              background: "rgba(139,26,26,0.06)",
+              color: "#8B1A1A",
             }}
           >
             You do not have a paid subscription.{" "}
-            <a href="/" style={{ color: "var(--theme)", textDecoration: "underline" }}>Purchase access here</a>{" "}
-            or <a href="mailto:support@aesdr.com" style={{ color: "var(--theme)", textDecoration: "underline" }}>contact support</a> if you believe this is an error.
+            <a href="/" style={{ color: "#1A1A1A", textDecoration: "underline" }}>Purchase access here</a>{" "}
+            or <a href="mailto:support@aesdr.com" style={{ color: "#1A1A1A", textDecoration: "underline" }}>contact support</a> if you believe this is an error.
           </div>
         )}
 
@@ -152,9 +160,9 @@ function LoginForm() {
             style={{
               fontFamily: "var(--serif)",
               fontSize: "14px",
-              borderLeft: "3px solid var(--theme)",
-              background: "rgba(16,185,129,0.05)",
-              color: "var(--theme)",
+              borderLeft: "3px solid #1A1A1A",
+              background: "rgba(26,26,26,0.04)",
+              color: "#1A1A1A",
             }}
           >
             Password reset link sent. Check your email.
@@ -169,7 +177,6 @@ function LoginForm() {
             <input
               id="email"
               type="email"
-              required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 transition outline-none"
@@ -185,7 +192,6 @@ function LoginForm() {
             <input
               id="password"
               type="password"
-              required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 transition outline-none"
@@ -204,17 +210,17 @@ function LoginForm() {
                 fontSize: "10px",
                 letterSpacing: ".18em",
                 textTransform: "uppercase" as const,
-                color: "var(--text-muted)",
+                color: "#6B6B6B",
                 background: "none",
                 border: "none",
                 cursor: "pointer",
                 padding: 0,
                 textDecoration: "underline",
                 textUnderlineOffset: "4px",
-                textDecorationColor: "rgba(255,255,255,0.2)",
+                textDecorationColor: "rgba(26,26,26,0.2)",
               }}
             >
-              {resetLoading ? "Sending..." : "Forgot password?"}
+              {resetLoading ? "Sending..." : "what's my password?"}
             </button>
           </div>
 
@@ -222,11 +228,11 @@ function LoginForm() {
             <div
               className="px-4 py-3"
               style={{
-                fontFamily: "var(--serif)",
-                fontSize: "14px",
-                borderLeft: "3px solid var(--coral)",
-                background: "rgba(239,68,68,0.05)",
-                color: "var(--coral)",
+                fontFamily: "var(--hand)",
+                fontSize: "16px",
+                borderLeft: "3px solid #8B1A1A",
+                background: "rgba(139,26,26,0.06)",
+                color: "#8B1A1A",
               }}
             >
               {error}
@@ -248,13 +254,13 @@ function LoginForm() {
         </form>
 
         <div style={{ paddingTop: "8px" }}>
-          <div style={{ height: "1px", background: "var(--line)", marginBottom: "20px" }} aria-hidden />
+          <div style={{ height: "1px", background: "#D4C5AD", marginBottom: "20px" }} aria-hidden />
           <p
             className="text-center"
             style={{
               fontFamily: "var(--serif)",
               fontSize: "15px",
-              color: "var(--text-muted)",
+              color: "#6B6B6B",
               margin: 0,
               fontStyle: "italic",
             }}
@@ -263,19 +269,21 @@ function LoginForm() {
             <Link
               href="/#pricing"
               style={{
-                color: "var(--text-main)",
-                textDecoration: "underline",
-                textUnderlineOffset: "4px",
-                textDecorationColor: "rgba(255,255,255,0.35)",
+                textDecoration: "none",
                 fontStyle: "normal",
                 fontFamily: "var(--mono)",
                 fontSize: "11px",
                 letterSpacing: ".18em",
                 textTransform: "uppercase",
                 marginLeft: "4px",
+                background: "var(--iris)",
+                backgroundSize: "200% 100%",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                animation: "iris 3s linear infinite",
               }}
             >
-              Request Access
+              Get Access
             </Link>
           </p>
         </div>
@@ -289,16 +297,16 @@ const labelStyle: React.CSSProperties = {
   fontSize: "10px",
   letterSpacing: ".22em",
   textTransform: "uppercase",
-  color: "var(--text-muted)",
+  color: "#6B6B6B",
   display: "block",
 };
 
 const inputStyle: React.CSSProperties = {
   fontFamily: "var(--serif)",
   fontSize: "16px",
-  background: "var(--bg-panel)",
-  border: "1px solid var(--line)",
-  color: "var(--text-main)",
+  background: "#FAF7F2",
+  border: "1px solid #D4C5AD",
+  color: "#1A1A1A",
   borderRadius: "2px",
 };
 
@@ -320,11 +328,11 @@ function primaryButtonStyle(hover: boolean): React.CSSProperties {
     letterSpacing: ".22em",
     textTransform: "uppercase",
     padding: "16px 28px",
-    background: hover ? "var(--iris)" : "var(--text-main)",
+    background: hover ? "var(--iris)" : "#1A1A1A",
     backgroundSize: hover ? "200% 100%" : undefined,
     animation: hover ? "iris 3s linear infinite" : undefined,
-    color: hover ? "var(--bg-main)" : "var(--bg-main)",
-    border: "1px solid var(--text-main)",
+    color: hover ? "#1A1A1A" : "#FAF7F2",
+    border: "1px solid #1A1A1A",
     borderRadius: "2px",
     transition: "background 180ms ease, color 180ms ease, letter-spacing 180ms ease",
   };
@@ -337,7 +345,7 @@ function bracketStyle(
     position: "absolute",
     fontFamily: "var(--mono)",
     fontSize: "18px",
-    color: "var(--text-muted)",
+    color: "#6B6B6B",
     opacity: 0.5,
     lineHeight: 1,
     pointerEvents: "none",
@@ -354,7 +362,7 @@ export default function LoginPage() {
   return (
     <main
       className="flex min-h-screen items-center justify-center px-6 py-12"
-      style={{ background: "var(--bg-main)" }}
+      style={{ background: "#E5D5BE" }}
     >
       <Suspense>
         <LoginForm />
