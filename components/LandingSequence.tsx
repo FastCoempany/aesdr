@@ -78,6 +78,15 @@ export default function LandingSequence({ isAuthenticated = false }: { isAuthent
     let scrollHandler: (() => void) | null = null;
     let resizeHandler: (() => void) | null = null;
 
+    // Guard against React StrictMode double-mount in dev: clear any
+    // leftover DOM from the previous effect run before auto-starting.
+    if (typingRef.current) typingRef.current.innerHTML = "";
+    if (termBodyRef.current) {
+      termBodyRef.current.querySelectorAll<HTMLElement>(`.${s.termLine}`).forEach((el) => {
+        el.textContent = "";
+      });
+    }
+
     document.body.style.overflow = "hidden";
 
     function typeSceneChar(flat: Char[], scene: typeof SCENES[0]) {
@@ -235,9 +244,10 @@ export default function LandingSequence({ isAuthenticated = false }: { isAuthent
 
     /* Auto-start confession on mount */
     confessionRef.current?.classList.add(s.confessionLayerActive);
-    setTimeout(startScene, 500);
+    timer = setTimeout(startScene, 500);
 
     return () => {
+      paused = true;
       if (timer) clearTimeout(timer);
       if (scrollHandler) window.removeEventListener("scroll", scrollHandler);
       if (resizeHandler) window.removeEventListener("resize", resizeHandler);
