@@ -10,6 +10,7 @@ import { createClient } from "@/utils/supabase/server";
 import styles from "./page.module.css";
 
 const Testimonials = dynamic(() => import("@/components/Testimonials"));
+const DeckStack = dynamic(() => import("@/components/DeckStack"));
 
 const FAQ = [
   { q: "Is this for me if I\u2019m brand new to sales?", a: "Yes, it\u2019s actually inspired by you. The curriculum starts with foundational frameworks and builds to advanced execution. If you\u2019re in your first 18 months, you\u2019ll skip years of painful trial-and-error." },
@@ -47,24 +48,11 @@ export default async function LandingPage() {
       </header>
 
       {/* Hero + Confession + Terminal + Zoom */}
-      <LandingSequence isAuthenticated={isAuthenticated} />
+      <LandingSequence />
 
       <div aria-hidden="true" style={{ height: "15vh" }} />
 
-      <section id="curriculum" className={styles.syllabusTeaser}>
-        <p className={styles.sectionLabel}>What you get</p>
-        <h2 className={styles.sectionHeadline}>
-          12 lessons. One honest curriculum.
-        </h2>
-        <p className={styles.syllabusTeaserSub}>
-          Camaraderie, silos, the 30% rule, commission math, sober selling,
-          and the handful of relationships that will outlast this company.
-          Peel through every lesson one at a time.
-        </p>
-        <Link href="/syllabus" className={styles.syllabusTeaserCta}>
-          See the full syllabus &rarr;
-        </Link>
-      </section>
+      <DeckStack />
 
       {/* Testimonials */}
       <Testimonials />

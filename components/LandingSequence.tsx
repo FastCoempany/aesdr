@@ -53,8 +53,7 @@ function buildHTML(arr: Char[], irisClass: string): string {
   return h;
 }
 
-export default function LandingSequence({ isAuthenticated = false }: { isAuthenticated?: boolean }) {
-  const heroRef = useRef<HTMLDivElement>(null);
+export default function LandingSequence() {
   const backdropRef = useRef<HTMLDivElement>(null);
   const confessionRef = useRef<HTMLDivElement>(null);
   const typingRef = useRef<HTMLDivElement>(null);
@@ -196,23 +195,13 @@ export default function LandingSequence({ isAuthenticated = false }: { isAuthent
         const vp = viewportRef.current;
         if (!sp || !vp) return;
 
-        const heroH = window.innerHeight;
-        const scrollY = Math.max(0, window.scrollY - heroH);
+        const scrollY = window.scrollY;
         const zoomHeight = sp.offsetHeight;
         const maxScroll = zoomHeight - window.innerHeight;
         if (maxScroll <= 0) return;
 
-        const pastZoom = window.scrollY > heroH + zoomHeight;
+        const pastZoom = scrollY > zoomHeight;
         if (pastZoom) {
-          vp.style.display = "none";
-          if (sideMarkerRef.current) sideMarkerRef.current.style.opacity = "0";
-          if (progressRef.current) progressRef.current.style.opacity = "0";
-          if (ctaRef.current) { ctaRef.current.style.display = "none"; }
-          return;
-        }
-        /* Before zoom starts, also hide viewport so it doesn't block hero clicks */
-        const beforeZoom = window.scrollY < heroH * 0.5;
-        if (beforeZoom) {
           vp.style.display = "none";
           if (sideMarkerRef.current) sideMarkerRef.current.style.opacity = "0";
           if (progressRef.current) progressRef.current.style.opacity = "0";
@@ -257,9 +246,9 @@ export default function LandingSequence({ isAuthenticated = false }: { isAuthent
           if (ctaRef.current) { ctaRef.current.style.opacity = "0"; ctaRef.current.style.display = progress >= 0.94 ? "none" : ""; }
         }
 
-        if (scrollY > 50 && heroRef.current) {
-          if (terminalRef.current) { terminalRef.current.style.opacity = "0"; terminalRef.current.style.pointerEvents = "none"; }
-          heroRef.current.style.opacity = String(Math.max(0, 1 - scrollY / 300));
+        if (scrollY > 50 && terminalRef.current) {
+          terminalRef.current.style.opacity = "0";
+          terminalRef.current.style.pointerEvents = "none";
         }
       };
 
@@ -289,37 +278,6 @@ export default function LandingSequence({ isAuthenticated = false }: { isAuthent
           from ever revealing the page content behind them. Fades out together
           with unlockScroll so the regular page takes over for zoom + pricing. */}
       <div className={s.animationBackdrop} ref={backdropRef} />
-
-      {/* Hero Split */}
-      <div className={s.hero} ref={heroRef}>
-        <div className={s.heroLeft}>
-          <div className={s.monoLabel}>AESDR &middot; 12 Lessons &middot; A Better You</div>
-          <div className={s.warnBox}>
-            <div className={s.warnTitle}><span className={s.warnIcon}>!</span> Content Warning</div>
-            <div className={s.warnText}>This course contains uncomfortable truths about your <strong>pipeline</strong>, your <strong>apartment</strong>, your <strong>bar tab</strong>, your <strong>commission check</strong>, and your <strong>relationship status</strong>.</div>
-          </div>
-        </div>
-        <div className={s.heroRight}>
-          <div className={`${s.corner} ${s.cornerTL}`} />
-          <div className={`${s.corner} ${s.cornerTR}`} />
-          <div className={`${s.corner} ${s.cornerBL}`} />
-          <div className={`${s.corner} ${s.cornerBR}`} />
-          <div className={s.monoLabel} style={{ color: "var(--muted)" }}>The Unfiltered SaaS Sales Survival Guide</div>
-          <h1 className={s.heroH1}>Stop Surviving.<br />Start <span className={s.heroAccent}>Owning</span> It.</h1>
-          <p className={s.heroP}>This isn&rsquo;t corporate-y but it will advance your career. 12 interactive, field-tested sessions for AEs and SDRs who&rsquo;re serious about controlling chaos, managing toxic leadership, protecting your commission - and your future.</p>
-          <div>
-            {isAuthenticated ? (
-              <a href="/dashboard" className={s.btnIris}>Continue &rarr;</a>
-            ) : (
-              <>
-                <a href="#pricing" className={s.btnIris}>Get Access</a>
-                <a href="/syllabus" className={s.btnOutline}>Syllabus Peek</a>
-              </>
-            )}
-          </div>
-          <div className={s.ambientLine} />
-        </div>
-      </div>
 
       {/* Confession overlay */}
       <div className={s.confessionLayer} ref={confessionRef}>
