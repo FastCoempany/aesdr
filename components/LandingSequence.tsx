@@ -83,14 +83,14 @@ export default function LandingSequence({ isAuthenticated = false }: { isAuthent
     // leftover DOM from the previous effect run before auto-starting.
     if (typingRef.current) typingRef.current.innerHTML = "";
 
-    // Always restore scroll on the document. Called from the happy path,
-    // from the cleanup, and from the failsafe timer.
+    const root = document.documentElement;
+
     function restoreDocumentScroll() {
-      document.body.style.overflow = "";
-      document.body.style.overflowX = "";
+      root.style.overflow = "";
+      root.style.overflowX = "";
     }
 
-    document.body.style.overflow = "hidden";
+    root.style.overflow = "hidden";
 
     // Failsafe: if anything goes wrong and unlockScroll never runs, force
     // scroll back on after 60s so the page is never permanently frozen.
@@ -168,8 +168,8 @@ export default function LandingSequence({ isAuthenticated = false }: { isAuthent
 
     function unlockScroll() {
       scrollUnlocked = true;
-      document.body.style.overflow = "visible";
-      document.body.style.overflowX = "hidden";
+      root.style.overflow = "";
+      root.style.overflowX = "hidden";
       setTimeout(() => {
         viewportRef.current?.classList.add(s.viewportActive);
         sideMarkerRef.current?.classList.add(s.sideMarkerActive);
