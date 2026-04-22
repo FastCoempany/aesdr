@@ -134,6 +134,27 @@
   box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
 }
 
+.btnOutline {
+  display: inline-block;
+  border: 1.5px solid var(--ink);
+  color: var(--ink);
+  font-family: var(--cond);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 14px 36px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+  background: transparent;
+  text-decoration: none;
+  margin-top: 24px;
+}
+.btnOutline:hover {
+  background: var(--ink);
+  color: #fff;
+}
+
 .warnBox {
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 24px;

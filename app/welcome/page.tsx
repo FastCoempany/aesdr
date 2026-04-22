@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import AesdrBrand from "@/components/AesdrBrand";
 import SignOutButton from "@/components/SignOutButton";
 import PasswordOverlay from "@/components/PasswordOverlay";
 import { createClient } from "@/utils/supabase/server";
@@ -21,7 +22,7 @@ export default async function WelcomePage() {
   return (
     <main className={styles.page}>
       <header className={styles.nav}>
-        <Link href="/" className={styles.brand}>AESDR</Link>
+        <AesdrBrand className={styles.brand} />
         <SignOutButton />
       </header>
 
@@ -64,6 +65,11 @@ export default async function WelcomePage() {
             serious about controlling chaos, managing toxic leadership,
             protecting your commission - and your future.
           </p>
+          <div>
+            <Link href="/syllabus" className={styles.btnOutline}>
+              Syllabus Peek
+            </Link>
+          </div>
           <div className={styles.ambientLine} />
         </div>
       </div>

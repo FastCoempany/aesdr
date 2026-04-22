@@ -57,7 +57,7 @@ export default async function AccountPage() {
         }}
       >
         <Link
-          href="/"
+          href="/dashboard"
           className="flex items-center gap-3"
           style={{
             fontFamily: "var(--cond)",

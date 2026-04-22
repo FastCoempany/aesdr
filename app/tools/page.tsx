@@ -177,7 +177,7 @@ export default async function ToolsPage() {
         }}
       >
         <Link
-          href="/"
+          href="/dashboard"
           style={{
             fontFamily: "var(--display)",
             fontSize: "18px",

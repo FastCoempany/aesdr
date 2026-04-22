@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 
+import AesdrBrand from "@/components/AesdrBrand";
 import CheckoutButton from "@/components/CheckoutButton";
 import GhostButton from "@/components/GhostButton";
 import LandingSequence from "@/components/LandingSequence";
@@ -32,7 +33,7 @@ export default async function LandingPage() {
 
       {/* ─── NAV ─── */}
       <header className={styles.nav}>
-        <Link href="/" className={styles.brand} style={{ textDecoration: "none", color: "inherit" }}>AESDR</Link>
+        <AesdrBrand className={styles.brand} style={{ textDecoration: "none", color: "inherit" }} />
         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
           {isAuthenticated ? (
             <SignOutButton />

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import AesdrBrand from "@/components/AesdrBrand";
 import styles from "./syllabus.module.css";
 
 export const metadata: Metadata = {
@@ -38,10 +39,10 @@ export default function SyllabusPage() {
   return (
     <main className={styles.page}>
       <header className={styles.topbar}>
-        <Link href="/" className={styles.brand}>
+        <AesdrBrand className={styles.brand}>
           <span className={styles.irisText}>AESDR</span>
           <span className={styles.badge}>Card Catalog</span>
-        </Link>
+        </AesdrBrand>
         <Link href="/" className={styles.backlink}>
           &larr; Back to home
         </Link>
