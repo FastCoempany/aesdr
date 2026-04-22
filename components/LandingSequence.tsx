@@ -81,11 +81,6 @@ export default function LandingSequence({ isAuthenticated = false }: { isAuthent
     // Guard against React StrictMode double-mount in dev: clear any
     // leftover DOM from the previous effect run before auto-starting.
     if (typingRef.current) typingRef.current.innerHTML = "";
-    if (termBodyRef.current) {
-      termBodyRef.current.querySelectorAll<HTMLElement>(`.${s.termLine}`).forEach((el) => {
-        el.textContent = "";
-      });
-    }
 
     document.body.style.overflow = "hidden";
 
@@ -142,7 +137,8 @@ export default function LandingSequence({ isAuthenticated = false }: { isAuthent
         return;
       }
       const line = lines[idx];
-      const span = line.querySelector("span:last-child") as HTMLElement;
+      const span = line.querySelector("span:last-child") as HTMLElement | null;
+      if (!span) { typeTermLines(idx + 1); return; }
       const fullText = (line.getAttribute("data-text") ?? "").replace(/^> /, "");
       line.classList.add(s.termLineVisible);
       let ci = 0;
