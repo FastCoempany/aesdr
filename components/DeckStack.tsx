@@ -199,27 +199,6 @@ export default function DeckStack({ standalone = false }: DeckStackProps) {
           </div>
         )}
       </div>
-
-      <div className={s.controls}>
-        <button
-          type="button"
-          className={s.ctrlBtn}
-          onClick={prev}
-          disabled={active === 0 && !done}
-          aria-label="Previous lesson"
-        >
-          &larr; Prev
-        </button>
-        <button
-          type="button"
-          className={s.ctrlBtn}
-          onClick={next}
-          disabled={done}
-          aria-label="Next lesson"
-        >
-          Peel &rarr;
-        </button>
-      </div>
     </div>
   );
 }

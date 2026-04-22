@@ -364,6 +364,7 @@
   gap: 10px;
   opacity: 0;
   transition: opacity 0.4s ease;
+  pointer-events: none;
 }
 .scrollHintVisible { opacity: 1; }
 .scrollHintText {
@@ -475,6 +476,7 @@
   z-index: 100;
   transition: width 0.1s linear;
   opacity: 0;
+  pointer-events: none;
 }
 .scrollProgressActive { opacity: 1; }
 
@@ -490,6 +492,7 @@
   gap: 8px;
   opacity: 0;
   transition: opacity 0.4s ease;
+  pointer-events: none;
 }
 .sideMarkerActive { opacity: 1; }
 

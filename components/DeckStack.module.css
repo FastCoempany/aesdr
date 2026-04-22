@@ -233,6 +233,8 @@
   box-shadow:
     0 1px 2px rgba(26,26,26,0.04),
     0 8px 24px rgba(26,26,26,0.06);
+  z-index: 100;
+  pointer-events: auto;
 }
 .doneCard::after {
   content: '';
@@ -276,49 +278,6 @@
 .doneBtn:hover {
   background: var(--ink);
   color: var(--cream);
-}
-
-/* Control strip — Prev / Next */
-.controls {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
-}
-.section .controls {
-  position: absolute;
-  bottom: 64px; left: 50%;
-  transform: translateX(-50%);
-}
-.standalone .controls {
-  position: relative;
-  margin-top: 40px;
-}
-
-.ctrlBtn {
-  font-family: var(--cond);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  padding: 11px 22px;
-  background: #fff;
-  color: var(--ink);
-  border: 1.5px solid var(--ink);
-  cursor: pointer;
-  transition: transform 0.15s ease, background 0.18s ease, color 0.18s ease, box-shadow 0.3s ease;
-  min-width: 112px;
-}
-.ctrlBtn:hover:not(:disabled) {
-  background: var(--ink);
-  color: var(--cream);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(26,26,26,0.18);
-}
-.ctrlBtn:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
 }
 
 @keyframes shimmer { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }

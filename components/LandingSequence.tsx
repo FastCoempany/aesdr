@@ -71,13 +71,30 @@ export default function LandingSequence() {
     let paused = false;
     let done = false;
     let scrollUnlocked = false;
-    let timer: ReturnType<typeof setTimeout> | null = null;
     let sceneIdx = 0;
     let charIdx = 0;
     let typedChars: Char[] = [];
     let lineEl: HTMLDivElement | null = null;
     let scrollHandler: (() => void) | null = null;
     let resizeHandler: (() => void) | null = null;
+
+    // Track every timer so cleanup (StrictMode / HMR / unmount) can kill them
+    // all — otherwise orphan chains keep mutating DOM after unmount and can
+    // leave overflow stuck on hidden.
+    const timers = new Set<ReturnType<typeof setTimeout>>();
+    function schedule(fn: () => void, delay: number) {
+      const id = setTimeout(() => {
+        timers.delete(id);
+        if (paused) return;
+        fn();
+      }, delay);
+      timers.add(id);
+      return id;
+    }
+    function clearAllTimers() {
+      for (const id of timers) clearTimeout(id);
+      timers.clear();
+    }
 
     // Guard against React StrictMode double-mount in dev: clear any
     // leftover DOM from the previous effect run before auto-starting.
@@ -99,21 +116,32 @@ export default function LandingSequence() {
     root.style.overflow = "hidden";
     body.style.overflow = "hidden";
 
-    // Failsafe: if anything goes wrong and unlockScroll never runs, force
-    // scroll back on after 60s so the page is never permanently frozen.
-    const failsafe = setTimeout(() => {
-      if (!scrollUnlocked) restoreDocumentScroll();
-    }, 60000);
+    // Failsafe: if unlockScroll never runs for any reason (animation stalls,
+    // query selector fails silently, orphan state from HMR), force scroll
+    // back on after 25s so the page is NEVER permanently frozen. The full
+    // scripted animation is ~18s — 25s is a comfortable ceiling.
+    timers.add(setTimeout(() => {
+      if (!scrollUnlocked) unlockScroll();
+    }, 25000));
+
+    // Escape hatch: any keydown while still locked (after the terminal has
+    // at least started appearing) bails out of the animation and hands
+    // scroll back to the user. Safety net for any stall.
+    function onEscape(e: KeyboardEvent) {
+      if (scrollUnlocked) return;
+      if (e.key === "Escape") unlockScroll();
+    }
+    window.addEventListener("keydown", onEscape);
 
     function typeSceneChar(flat: Char[], scene: typeof SCENES[0]) {
       if (paused || done || !lineEl) return;
       if (charIdx >= flat.length) {
         lineEl.innerHTML = buildHTML(typedChars, s.irisText);
-        timer = setTimeout(() => {
-          if (paused || done) return;
+        schedule(() => {
+          if (done) return;
           if (scene.exit && lineEl) {
             lineEl.classList.add(scene.exit === "fade-out" ? s.tlineFadeOut : s.tlineDissolve);
-            timer = setTimeout(() => { sceneIdx++; startScene(); }, scene.exitWait);
+            schedule(() => { sceneIdx++; startScene(); }, scene.exitWait);
           } else { sceneIdx++; startScene(); }
         }, scene.holdAfter);
         return;
@@ -121,12 +149,12 @@ export default function LandingSequence() {
       typedChars.push(flat[charIdx]);
       charIdx++;
       lineEl.innerHTML = buildHTML(typedChars, s.irisText) + `<span class="${s.cursor}"></span>`;
-      timer = setTimeout(() => typeSceneChar(flat, scene), scene.charDelay + Math.random() * 18);
+      schedule(() => typeSceneChar(flat, scene), scene.charDelay + Math.random() * 18);
     }
 
     function startScene() {
       if (paused || done) return;
-      if (sceneIdx >= SCENES.length) { timer = setTimeout(showTerminal, 800); return; }
+      if (sceneIdx >= SCENES.length) { schedule(showTerminal, 800); return; }
       typedChars = []; charIdx = 0;
       const el = document.createElement("div");
       el.className = s.tline;
@@ -142,18 +170,22 @@ export default function LandingSequence() {
         confessionRef.current.style.opacity = "0";
         confessionRef.current.style.pointerEvents = "none";
       }
-      setTimeout(() => {
+      schedule(() => {
         terminalRef.current?.classList.add(s.terminalLayerActive);
         typeTermLines(0);
       }, 500);
     }
 
     function typeTermLines(idx: number) {
+      if (paused) return;
       const lines = termBodyRef.current?.querySelectorAll<HTMLElement>(`.${s.termLine}`);
       if (!lines || idx >= lines.length) {
-        setTimeout(() => {
+        schedule(() => {
           termOutputRef.current?.classList.add(s.termOutputVisible);
-          setTimeout(() => { scrollHintRef.current?.classList.add(s.scrollHintVisible); unlockScroll(); }, 800);
+          schedule(() => {
+            scrollHintRef.current?.classList.add(s.scrollHintVisible);
+            unlockScroll();
+          }, 800);
         }, 500);
         return;
       }
@@ -165,15 +197,21 @@ export default function LandingSequence() {
       line.classList.add(s.termLineVisible);
       let ci = 0;
       function typeChar() {
-        if (ci >= fullText.length) { span.textContent = fullText; setTimeout(() => typeTermLines(idx + 1), 300); return; }
+        if (paused) return;
+        if (ci >= fullText.length) {
+          span.textContent = fullText;
+          schedule(() => typeTermLines(idx + 1), 300);
+          return;
+        }
         ci++;
         span.innerHTML = fullText.substring(0, ci) + `<span class="${s.termCursor}"></span>`;
-        setTimeout(typeChar, 18 + Math.random() * 12);
+        schedule(typeChar, 18 + Math.random() * 12);
       }
       typeChar();
     }
 
     function unlockScroll() {
+      if (scrollUnlocked) return;
       scrollUnlocked = true;
       root.style.overflow = "";
       root.style.overflowX = "hidden";
@@ -184,7 +222,19 @@ export default function LandingSequence() {
         backdropRef.current.style.opacity = "0";
         backdropRef.current.style.pointerEvents = "none";
       }
-      setTimeout(() => {
+      // Fade confession + terminal overlays so escape-hatch unlocks also
+      // clear the screen, not just restore scroll.
+      if (confessionRef.current) {
+        confessionRef.current.style.transition = "opacity 0.4s ease";
+        confessionRef.current.style.opacity = "0";
+        confessionRef.current.style.pointerEvents = "none";
+      }
+      if (terminalRef.current) {
+        terminalRef.current.style.transition = "opacity 0.4s ease";
+        terminalRef.current.style.opacity = "0";
+        terminalRef.current.style.pointerEvents = "none";
+      }
+      schedule(() => {
         viewportRef.current?.classList.add(s.viewportActive);
         sideMarkerRef.current?.classList.add(s.sideMarkerActive);
         progressRef.current?.classList.add(s.scrollProgressActive);
@@ -260,12 +310,12 @@ export default function LandingSequence() {
 
     /* Auto-start confession on mount */
     confessionRef.current?.classList.add(s.confessionLayerActive);
-    timer = setTimeout(startScene, 500);
+    schedule(startScene, 500);
 
     return () => {
       paused = true;
-      if (timer) clearTimeout(timer);
-      clearTimeout(failsafe);
+      clearAllTimers();
+      window.removeEventListener("keydown", onEscape);
       if (scrollHandler) window.removeEventListener("scroll", scrollHandler);
       if (resizeHandler) window.removeEventListener("resize", resizeHandler);
       restoreDocumentScroll();
