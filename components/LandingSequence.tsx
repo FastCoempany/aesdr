@@ -350,11 +350,7 @@ export default function LandingSequence({ isAuthenticated = false }: { isAuthent
         <div className={`${s.ctaBrand} ${s.irisText}`}>AESDR</div>
         <div className={s.ctaTag}>12 lessons &bull; at your own pace &bull; 1 you</div>
         <div className={s.ctaNote}>Nobody gave you real answers on day one. We built this after years of figuring it out alone.</div>
-        {isAuthenticated ? (
-          <a href="/dashboard" className={s.ctaButton}>Continue &rarr;</a>
-        ) : (
-          <a href="#pricing" className={s.ctaButton}>Get Access &rarr;</a>
-        )}
+        <a href="#pricing" className={s.ctaButton}>Get Access &rarr;</a>
       </div>
     </>
   );
