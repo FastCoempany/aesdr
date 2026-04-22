@@ -52,7 +52,6 @@ export default async function LandingPage() {
 
       <div aria-hidden="true" style={{ height: "15vh" }} />
 
-      {/* Syllabus teaser — full DeckStack now lives at /syllabus */}
       <section id="curriculum" className={styles.syllabusTeaser}>
         <p className={styles.sectionLabel}>What you get</p>
         <h2 className={styles.sectionHeadline}>
