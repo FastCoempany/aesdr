@@ -53,7 +53,10 @@ function buildHTML(arr: Char[], irisClass: string): string {
   return h;
 }
 
+const SEEN_KEY = "aesdr_anim_seen";
+
 export default function LandingSequence() {
+  const heroRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
   const confessionRef = useRef<HTMLDivElement>(null);
   const typingRef = useRef<HTMLDivElement>(null);
@@ -96,16 +99,11 @@ export default function LandingSequence() {
       timers.clear();
     }
 
-    // Guard against React StrictMode double-mount in dev: clear any
-    // leftover DOM from the previous effect run before auto-starting.
     if (typingRef.current) typingRef.current.innerHTML = "";
 
     const root = document.documentElement;
     const body = document.body;
 
-    // Lock/unlock BOTH html and body. Browsers are inconsistent about which
-    // one controls the viewport scroll container (it depends on which has
-    // an explicit overflow value), so setting both removes the ambiguity.
     function restoreDocumentScroll() {
       root.style.overflow = "";
       root.style.overflowX = "";
@@ -113,20 +111,33 @@ export default function LandingSequence() {
       body.style.overflowX = "";
     }
 
+    const alreadySeen = sessionStorage.getItem(SEEN_KEY) === "1";
+
+    if (alreadySeen) {
+      // Skip animation — go straight to hero + zoom scroll
+      if (backdropRef.current) { backdropRef.current.style.opacity = "0"; backdropRef.current.style.pointerEvents = "none"; }
+      if (confessionRef.current) { confessionRef.current.style.opacity = "0"; confessionRef.current.style.pointerEvents = "none"; }
+      if (terminalRef.current) { terminalRef.current.style.opacity = "0"; terminalRef.current.style.pointerEvents = "none"; }
+      if (heroRef.current) { heroRef.current.style.opacity = "1"; heroRef.current.style.pointerEvents = "auto"; }
+      root.style.overflowX = "hidden";
+      body.style.overflowX = "hidden";
+      viewportRef.current?.classList.add(s.viewportActive);
+      sideMarkerRef.current?.classList.add(s.sideMarkerActive);
+      progressRef.current?.classList.add(s.scrollProgressActive);
+      attachZoomScroll();
+      return () => {
+        if (scrollHandler) window.removeEventListener("scroll", scrollHandler);
+        if (resizeHandler) window.removeEventListener("resize", resizeHandler);
+      };
+    }
+
     root.style.overflow = "hidden";
     body.style.overflow = "hidden";
 
-    // Failsafe: if unlockScroll never runs for any reason (animation stalls,
-    // query selector fails silently, orphan state from HMR), force scroll
-    // back on after 25s so the page is NEVER permanently frozen. The full
-    // scripted animation is ~18s — 25s is a comfortable ceiling.
     timers.add(setTimeout(() => {
       if (!scrollUnlocked) unlockScroll();
     }, 25000));
 
-    // Escape hatch: any keydown while still locked (after the terminal has
-    // at least started appearing) bails out of the animation and hands
-    // scroll back to the user. Safety net for any stall.
     function onEscape(e: KeyboardEvent) {
       if (scrollUnlocked) return;
       if (e.key === "Escape") unlockScroll();
@@ -238,11 +249,16 @@ export default function LandingSequence() {
         terminalRef.current.style.pointerEvents = "none";
       }
 
-      // Show the zoom viewport immediately — no delay.
+      sessionStorage.setItem(SEEN_KEY, "1");
+      if (heroRef.current) { heroRef.current.style.opacity = "1"; heroRef.current.style.pointerEvents = "auto"; }
+
       viewportRef.current?.classList.add(s.viewportActive);
       sideMarkerRef.current?.classList.add(s.sideMarkerActive);
       progressRef.current?.classList.add(s.scrollProgressActive);
+      attachZoomScroll();
+    }
 
+    function attachZoomScroll() {
       scrollHandler = function updateZoom() {
         const sp = scrollSpaceRef.current;
         const vp = viewportRef.current;
@@ -256,6 +272,7 @@ export default function LandingSequence() {
         const pastZoom = scrollY > zoomHeight;
         if (pastZoom) {
           vp.style.display = "none";
+          if (heroRef.current) { heroRef.current.style.opacity = "0"; heroRef.current.style.pointerEvents = "none"; }
           if (sideMarkerRef.current) sideMarkerRef.current.style.opacity = "0";
           if (progressRef.current) progressRef.current.style.opacity = "0";
           if (ctaRef.current) {
@@ -265,6 +282,20 @@ export default function LandingSequence() {
           }
           return;
         }
+        // Hero ↔ viewport handoff
+        const heroZone = window.innerHeight * 0.35;
+        if (heroRef.current) {
+          const heroOp = Math.max(0, 1 - scrollY / heroZone);
+          heroRef.current.style.opacity = String(heroOp);
+          heroRef.current.style.pointerEvents = heroOp > 0.1 ? "auto" : "none";
+          if (heroOp > 0.5) {
+            vp.style.opacity = "0";
+            if (sideMarkerRef.current) sideMarkerRef.current.style.opacity = "0";
+            if (progressRef.current) progressRef.current.style.opacity = "0";
+            return;
+          }
+        }
+
         vp.style.display = ""; vp.style.opacity = ""; vp.style.pointerEvents = "";
         if (sideMarkerRef.current) sideMarkerRef.current.style.opacity = "";
         if (progressRef.current) progressRef.current.style.opacity = "";
@@ -340,6 +371,14 @@ export default function LandingSequence() {
           from ever revealing the page content behind them. Fades out together
           with unlockScroll so the regular page takes over for zoom + pricing. */}
       <div className={s.animationBackdrop} ref={backdropRef} />
+
+      {/* Branded hero — visible after animation or on return visits */}
+      <div className={s.landingHero} ref={heroRef}>
+        <div className={s.heroLabel}>12 Lessons &middot; At Your Own Pace &middot; 1 You</div>
+        <h1 className={`${s.heroBrand} ${s.irisText}`}>AESDR</h1>
+        <p className={s.heroTagline}>AEs &amp; SDRs rule this world.</p>
+        <a href="#pricing" className={s.heroCta}>Get Access &rarr;</a>
+      </div>
 
       {/* Confession overlay */}
       <div className={s.confessionLayer} ref={confessionRef}>

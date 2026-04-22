@@ -188,6 +188,68 @@
   z-index: 50;
 }
 
+/* ── Branded Hero (post-animation / return visits) ── */
+.landingHero {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  z-index: 1;
+  background: var(--cream);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.heroLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.heroBrand {
+  font-family: var(--display);
+  font-size: clamp(80px, 18vw, 220px);
+  font-weight: 900;
+  font-style: italic;
+  line-height: 0.85;
+  letter-spacing: .02em;
+  margin: 0;
+}
+
+.heroTagline {
+  font-family: var(--serif);
+  font-size: clamp(16px, 2vw, 22px);
+  font-style: italic;
+  color: var(--muted);
+  margin: 0;
+}
+
+.heroCta {
+  font-family: var(--cond);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--iris);
+  background-size: 300% 100%;
+  animation: shimmer 4s linear infinite;
+  padding: 16px 48px;
+  text-decoration: none;
+  margin-top: 12px;
+  transition: transform 0.15s, box-shadow 0.3s;
+}
+.heroCta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 24px rgba(16, 185, 129, 0.3);
+}
+
 /* ── Animation backdrop ──
    Always-opaque dark layer that sits BEHIND the confession and terminal
    overlays. Its only job: guarantee nothing from the page (hero, pricing,
