@@ -137,8 +137,9 @@ export default function LandingSequence({ isAuthenticated = false }: { isAuthent
         return;
       }
       const line = lines[idx];
-      const span = line.querySelector("span:last-child") as HTMLElement | null;
-      if (!span) { typeTermLines(idx + 1); return; }
+      const maybeSpan = line.querySelector("span:last-child") as HTMLElement | null;
+      if (!maybeSpan) { typeTermLines(idx + 1); return; }
+      const span: HTMLElement = maybeSpan;
       const fullText = (line.getAttribute("data-text") ?? "").replace(/^> /, "");
       line.classList.add(s.termLineVisible);
       let ci = 0;
