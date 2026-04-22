@@ -188,6 +188,19 @@
   z-index: 50;
 }
 
+/* ── Animation backdrop ──
+   Always-opaque dark layer that sits BEHIND the confession and terminal
+   overlays. Its only job: guarantee nothing from the page (hero, pricing,
+   etc.) ever becomes visible during the overlay fades. Fades out when
+   unlockScroll fires so the regular page takes over. */
+.animationBackdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--ink);
+  z-index: 49;
+  pointer-events: none;
+}
+
 /* ── Confession Layer (typed scenario — dark overlay) ── */
 .confessionLayer {
   position: fixed;

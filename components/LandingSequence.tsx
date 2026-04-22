@@ -55,6 +55,7 @@ function buildHTML(arr: Char[], irisClass: string): string {
 
 export default function LandingSequence({ isAuthenticated = false }: { isAuthenticated?: boolean }) {
   const heroRef = useRef<HTMLDivElement>(null);
+  const backdropRef = useRef<HTMLDivElement>(null);
   const confessionRef = useRef<HTMLDivElement>(null);
   const typingRef = useRef<HTMLDivElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
@@ -179,6 +180,11 @@ export default function LandingSequence({ isAuthenticated = false }: { isAuthent
       root.style.overflowX = "hidden";
       body.style.overflow = "";
       body.style.overflowX = "hidden";
+      if (backdropRef.current) {
+        backdropRef.current.style.transition = "opacity 0.6s ease";
+        backdropRef.current.style.opacity = "0";
+        backdropRef.current.style.pointerEvents = "none";
+      }
       setTimeout(() => {
         viewportRef.current?.classList.add(s.viewportActive);
         sideMarkerRef.current?.classList.add(s.sideMarkerActive);
@@ -279,6 +285,11 @@ export default function LandingSequence({ isAuthenticated = false }: { isAuthent
 
   return (
     <>
+      {/* Opaque dark backdrop: keeps the confession/terminal fade transitions
+          from ever revealing the page content behind them. Fades out together
+          with unlockScroll so the regular page takes over for zoom + pricing. */}
+      <div className={s.animationBackdrop} ref={backdropRef} />
+
       {/* Hero Split */}
       <div className={s.hero} ref={heroRef}>
         <div className={s.heroLeft}>
