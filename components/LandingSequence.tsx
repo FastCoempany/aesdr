@@ -55,7 +55,6 @@ function buildHTML(arr: Char[], irisClass: string): string {
 
 export default function LandingSequence({ isAuthenticated = false }: { isAuthenticated?: boolean }) {
   const heroRef = useRef<HTMLDivElement>(null);
-  const enterBtnRef = useRef<HTMLButtonElement>(null);
   const confessionRef = useRef<HTMLDivElement>(null);
   const typingRef = useRef<HTMLDivElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
@@ -234,19 +233,14 @@ export default function LandingSequence({ isAuthenticated = false }: { isAuthent
       scrollHandler();
     }
 
-    /* Button click triggers confession */
-    function handleEnterClick() {
-      confessionRef.current?.classList.add(s.confessionLayerActive);
-      setTimeout(startScene, 500);
-    }
-    const btn = enterBtnRef.current;
-    btn?.addEventListener("click", handleEnterClick);
+    /* Auto-start confession on mount */
+    confessionRef.current?.classList.add(s.confessionLayerActive);
+    setTimeout(startScene, 500);
 
     return () => {
       if (timer) clearTimeout(timer);
       if (scrollHandler) window.removeEventListener("scroll", scrollHandler);
       if (resizeHandler) window.removeEventListener("resize", resizeHandler);
-      btn?.removeEventListener("click", handleEnterClick);
       document.body.style.overflow = "";
       document.body.style.overflowX = "";
     };
@@ -261,9 +255,6 @@ export default function LandingSequence({ isAuthenticated = false }: { isAuthent
           <div className={s.warnBox}>
             <div className={s.warnTitle}><span className={s.warnIcon}>!</span> Content Warning</div>
             <div className={s.warnText}>This course contains uncomfortable truths about your <strong>pipeline</strong>, your <strong>apartment</strong>, your <strong>bar tab</strong>, your <strong>commission check</strong>, and your <strong>relationship status</strong>.</div>
-          </div>
-          <div style={{ marginTop: "24px" }}>
-            <button className={s.btnIris} ref={enterBtnRef}>Continue &rarr;</button>
           </div>
         </div>
         <div className={s.heroRight}>

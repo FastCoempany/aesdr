@@ -5,7 +5,6 @@ import CheckoutButton from "@/components/CheckoutButton";
 import GhostButton from "@/components/GhostButton";
 import LandingSequence from "@/components/LandingSequence";
 import SignOutButton from "@/components/SignOutButton";
-import TeaseGate from "@/components/TeaseGate";
 import { createClient } from "@/utils/supabase/server";
 import styles from "./page.module.css";
 
@@ -28,7 +27,6 @@ export default async function LandingPage() {
   const isAuthenticated = !!user;
 
   return (
-    <TeaseGate>
     <main className={styles.page}>
       <GhostButton />
 
@@ -177,6 +175,5 @@ export default async function LandingPage() {
         <Link href="/contact">Contact</Link>
       </footer>
     </main>
-    </TeaseGate>
   );
 }

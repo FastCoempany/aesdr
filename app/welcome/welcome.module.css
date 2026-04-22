@@ -1,0 +1,202 @@
+.page {
+  min-height: 100vh;
+  background: var(--cream);
+  color: var(--ink);
+}
+
+.nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 48px;
+}
+
+.brand {
+  font-family: var(--cond);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  background: var(--iris);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+
+@keyframes shimmer {
+  from { background-position: 0% 50%; }
+  to   { background-position: 200% 50%; }
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  position: relative;
+}
+
+.heroLeft {
+  background: var(--crimson);
+  color: #fff;
+  padding: 60px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.heroLeft::after {
+  content: '01';
+  font-family: var(--display);
+  font-size: 300px;
+  font-weight: 900;
+  position: absolute;
+  bottom: -40px;
+  right: -20px;
+  opacity: 0.06;
+  line-height: 1;
+  pointer-events: none;
+  color: #fff;
+}
+
+.heroRight {
+  background: var(--cream);
+  padding: 60px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.monoLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  opacity: 0.7;
+}
+
+.heroH1 {
+  font-family: var(--display);
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 900;
+  font-style: italic;
+  line-height: 1.05;
+  margin-bottom: 24px;
+  color: var(--ink);
+}
+
+.heroAccent {
+  background: var(--iris);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+
+.heroP {
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--muted);
+  max-width: 480px;
+}
+
+.btnIris {
+  display: inline-block;
+  font-family: var(--cond);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--iris);
+  background-size: 300% 100%;
+  animation: shimmer 4s linear infinite;
+  padding: 16px 40px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.3s ease;
+}
+.btnIris:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+}
+
+.warnBox {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 24px;
+  margin-top: 32px;
+}
+.warnTitle {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.warnIcon {
+  width: 16px;
+  height: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.5);
+}
+.warnText {
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-color: rgba(0, 0, 0, 0.06);
+  border-style: solid;
+  border-width: 0;
+  z-index: 2;
+}
+.cornerTL { top: 20px; left: 20px; border-top-width: 1px; border-left-width: 1px; }
+.cornerTR { top: 20px; right: 20px; border-top-width: 1px; border-right-width: 1px; }
+.cornerBL { bottom: 20px; left: 20px; border-bottom-width: 1px; border-left-width: 1px; }
+.cornerBR { bottom: 20px; right: 20px; border-bottom-width: 1px; border-right-width: 1px; }
+
+.ambientLine {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--iris);
+  background-size: 300% 100%;
+  animation: shimmer 4s linear infinite;
+  opacity: 0.15;
+  z-index: 50;
+}
+
+@media (max-width: 768px) {
+  .hero { grid-template-columns: 1fr; }
+  .heroLeft { min-height: 60vh; }
+  .nav { padding: 16px 24px; }
+}

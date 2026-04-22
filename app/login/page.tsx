@@ -37,9 +37,9 @@ function LoginForm() {
     }
 
     if (data.user?.user_metadata?.needs_password_change) {
-      router.push("/account/change-password");
+      router.push("/welcome");
     } else {
-      router.push("/");
+      router.push("/dashboard");
     }
     router.refresh();
   }
