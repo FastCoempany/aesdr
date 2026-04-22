@@ -57,6 +57,14 @@
   50% { opacity: 0.35; transform: scale(1.3); }
 }
 
+/* Document scroll must always work. The only place allowed to lock
+   document scroll is a component that restores it in every code path
+   (mount effect + cleanup + error path). See LandingSequence.tsx. */
+html {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 html,
 body {
   scrollbar-width: none !important;

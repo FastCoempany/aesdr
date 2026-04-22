@@ -70,6 +70,7 @@ export default function LandingSequence({ isAuthenticated = false }: { isAuthent
   useEffect(() => {
     let paused = false;
     let done = false;
+    let scrollUnlocked = false;
     let timer: ReturnType<typeof setTimeout> | null = null;
     let sceneIdx = 0;
     let charIdx = 0;
@@ -82,7 +83,20 @@ export default function LandingSequence({ isAuthenticated = false }: { isAuthent
     // leftover DOM from the previous effect run before auto-starting.
     if (typingRef.current) typingRef.current.innerHTML = "";
 
+    // Always restore scroll on the document. Called from the happy path,
+    // from the cleanup, and from the failsafe timer.
+    function restoreDocumentScroll() {
+      document.body.style.overflow = "";
+      document.body.style.overflowX = "";
+    }
+
     document.body.style.overflow = "hidden";
+
+    // Failsafe: if anything goes wrong and unlockScroll never runs, force
+    // scroll back on after 60s so the page is never permanently frozen.
+    const failsafe = setTimeout(() => {
+      if (!scrollUnlocked) restoreDocumentScroll();
+    }, 60000);
 
     function typeSceneChar(flat: Char[], scene: typeof SCENES[0]) {
       if (paused || done || !lineEl) return;
@@ -153,6 +167,7 @@ export default function LandingSequence({ isAuthenticated = false }: { isAuthent
     }
 
     function unlockScroll() {
+      scrollUnlocked = true;
       document.body.style.overflow = "visible";
       document.body.style.overflowX = "hidden";
       setTimeout(() => {
@@ -246,10 +261,10 @@ export default function LandingSequence({ isAuthenticated = false }: { isAuthent
     return () => {
       paused = true;
       if (timer) clearTimeout(timer);
+      clearTimeout(failsafe);
       if (scrollHandler) window.removeEventListener("scroll", scrollHandler);
       if (resizeHandler) window.removeEventListener("resize", resizeHandler);
-      document.body.style.overflow = "";
-      document.body.style.overflowX = "";
+      restoreDocumentScroll();
     };
   }, []);
 
