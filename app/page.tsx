@@ -50,7 +50,7 @@ export default async function LandingPage() {
       {/* Hero + Confession + Terminal + Zoom */}
       <LandingSequence />
 
-      <div aria-hidden="true" style={{ height: "15vh" }} />
+      <div aria-hidden="true" style={{ height: "4vh" }} />
 
       <DeckStack />
 

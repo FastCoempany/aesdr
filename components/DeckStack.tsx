@@ -189,16 +189,17 @@ export default function DeckStack({ standalone = false }: DeckStackProps) {
           </div>
         ))}
 
-        {done && (
-          <div className={s.doneCard}>
-            <div className={s.doneLabel}>End of deck</div>
-            <div className={s.doneTitle}>You&rsquo;ve seen all 12.</div>
-            <button type="button" className={s.doneBtn} onClick={reset}>
-              Re-stack &larr;
-            </button>
-          </div>
-        )}
       </div>
+
+      {done && (
+        <div className={s.doneCard} onClick={reset}>
+          <div className={s.doneLabel}>End of deck</div>
+          <div className={s.doneTitle}>You&rsquo;ve seen all 12.</div>
+          <button type="button" className={s.doneBtn} onClick={reset}>
+            Re-stack &larr;
+          </button>
+        </div>
+      )}
     </div>
   );
 }

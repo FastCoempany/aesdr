@@ -213,6 +213,11 @@ export default function LandingSequence() {
     function unlockScroll() {
       if (scrollUnlocked) return;
       scrollUnlocked = true;
+
+      // Pin to top so browser scroll-restoration doesn't jump the user
+      // to where they were on a previous page load.
+      window.scrollTo(0, 0);
+
       root.style.overflow = "";
       root.style.overflowX = "hidden";
       body.style.overflow = "";
@@ -222,8 +227,6 @@ export default function LandingSequence() {
         backdropRef.current.style.opacity = "0";
         backdropRef.current.style.pointerEvents = "none";
       }
-      // Fade confession + terminal overlays so escape-hatch unlocks also
-      // clear the screen, not just restore scroll.
       if (confessionRef.current) {
         confessionRef.current.style.transition = "opacity 0.4s ease";
         confessionRef.current.style.opacity = "0";
@@ -234,11 +237,11 @@ export default function LandingSequence() {
         terminalRef.current.style.opacity = "0";
         terminalRef.current.style.pointerEvents = "none";
       }
-      schedule(() => {
-        viewportRef.current?.classList.add(s.viewportActive);
-        sideMarkerRef.current?.classList.add(s.sideMarkerActive);
-        progressRef.current?.classList.add(s.scrollProgressActive);
-      }, 200);
+
+      // Show the zoom viewport immediately — no delay.
+      viewportRef.current?.classList.add(s.viewportActive);
+      sideMarkerRef.current?.classList.add(s.sideMarkerActive);
+      progressRef.current?.classList.add(s.scrollProgressActive);
 
       scrollHandler = function updateZoom() {
         const sp = scrollSpaceRef.current;
@@ -276,7 +279,12 @@ export default function LandingSequence() {
         cards.forEach((card, i) => {
           if (i === activeIndex) {
             let scale: number, op: number;
-            if (cardFrac < 0.12) { const t = cardFrac / 0.12; scale = 2.5 - 1.5 * t; op = t; }
+            if (activeIndex === 0 && cardFrac < 0.12) {
+              // First card: start already visible, then settle to 1x.
+              const t = cardFrac / 0.12;
+              scale = 1.3 - 0.3 * t;
+              op = 0.8 + 0.2 * t;
+            } else if (cardFrac < 0.12) { const t = cardFrac / 0.12; scale = 2.5 - 1.5 * t; op = t; }
             else if (cardFrac < 0.78) { scale = 1; op = 1; }
             else { const t = (cardFrac - 0.78) / 0.22; scale = 1 - 0.6 * t; op = 1 - t; }
             card.style.transform = `scale(${scale})`; card.style.opacity = String(op);
@@ -286,14 +294,14 @@ export default function LandingSequence() {
         const dots = sideMarkerRef.current?.querySelectorAll<HTMLElement>(`.${s.markerDot}`);
         dots?.forEach((dot, i) => dot.classList.toggle(s.markerDotActive, i === activeIndex));
 
-        if (progress > 0.82 && progress < 0.94) {
-          const fadeIn = Math.min(1, (progress - 0.82) / 0.03);
-          const fadeOut = progress > 0.90 ? 1 - Math.min(1, (progress - 0.90) / 0.03) : 1;
+        if (progress > 0.84 && progress < 0.97) {
+          const fadeIn = Math.min(1, (progress - 0.84) / 0.03);
+          const fadeOut = progress > 0.93 ? 1 - Math.min(1, (progress - 0.93) / 0.03) : 1;
           const op = fadeIn * fadeOut;
           if (ctaRef.current) { ctaRef.current.classList.add(s.ctaOverlayVisible); ctaRef.current.style.opacity = String(op); }
         } else {
           ctaRef.current?.classList.remove(s.ctaOverlayVisible);
-          if (ctaRef.current) { ctaRef.current.style.opacity = "0"; ctaRef.current.style.display = progress >= 0.94 ? "none" : ""; }
+          if (ctaRef.current) { ctaRef.current.style.opacity = "0"; ctaRef.current.style.display = progress >= 0.97 ? "none" : ""; }
         }
 
         if (scrollY > 50 && terminalRef.current) {
