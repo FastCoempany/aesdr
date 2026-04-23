@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Refund Policy | AESDR",
@@ -96,7 +97,7 @@ export default function RefundPolicyPage() {
         </div>
 
         <footer className="pt-8" style={{ borderTop: "1px solid var(--line)" }}>
-          <a href="/" style={{ fontFamily: "var(--mono)", fontSize: "10px", letterSpacing: ".1em", textTransform: "uppercase", color: "var(--theme)", textDecoration: "none" }}>&larr; Back to Home</a>
+          <Link href="/" style={{ fontFamily: "var(--mono)", fontSize: "10px", letterSpacing: ".1em", textTransform: "uppercase", color: "var(--theme)", textDecoration: "none" }}>&larr; Back to Home</Link>
         </footer>
       </article>
     </main>

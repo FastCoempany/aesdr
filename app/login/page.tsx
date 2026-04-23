@@ -149,7 +149,7 @@ function LoginForm() {
             }}
           >
             You do not have a paid subscription.{" "}
-            <a href="/" style={{ color: "#1A1A1A", textDecoration: "underline" }}>Purchase access here</a>{" "}
+            <Link href="/" style={{ color: "#1A1A1A", textDecoration: "underline" }}>Purchase access here</Link>{" "}
             or <a href="mailto:support@aesdr.com" style={{ color: "#1A1A1A", textDecoration: "underline" }}>contact support</a> if you believe this is an error.
           </div>
         )}

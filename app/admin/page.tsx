@@ -26,6 +26,7 @@ export default async function AdminDashboard() {
   const completedLessons = progressRows.filter((r) => r.is_completed).length;
   const avgCompleted = uniqueUsers.size > 0 ? (completedLessons / uniqueUsers.size).toFixed(1) : "0";
 
+  // eslint-disable-next-line react-hooks/purity -- async server component, runs per-request
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
   const { count: activeCount } = await supabase
     .from("course_progress")

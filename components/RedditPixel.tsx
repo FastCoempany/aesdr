@@ -10,8 +10,9 @@ export default function RedditPixel() {
 
   // This ensures the pixel fires a PageVisit event every time the route changes
   useEffect(() => {
-    if (typeof window !== 'undefined' && (window as any).rdt) {
-      (window as any).rdt('track', 'PageVisit');
+    const w = window as unknown as { rdt?: (event: string, action: string) => void };
+    if (typeof window !== 'undefined' && typeof w.rdt === 'function') {
+      w.rdt('track', 'PageVisit');
     }
   }, [pathname, searchParams]);
 

@@ -62,8 +62,9 @@ function SuccessContent() {
       w.rdt('track', 'Purchase');
     }
 
-    // Initial check
-    checkPurchase();
+    // Initial check (fire-and-forget; setState happens after network IO)
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async work; state set after await
+    void checkPurchase();
 
     // Poll every 2s until confirmed (max 30s)
     const interval = setInterval(() => {

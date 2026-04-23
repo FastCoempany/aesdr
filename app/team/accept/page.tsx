@@ -15,6 +15,7 @@ export default async function AcceptInvitePage({
   const admin = createAdminClient();
 
   // Look up the invite (tokens expire after 7 days)
+  // eslint-disable-next-line react-hooks/purity -- async server component, runs per-request
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
   const { data: invite } = await admin
     .from("team_members")

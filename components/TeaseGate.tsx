@@ -28,10 +28,13 @@ export default function TeaseGate({ children }: { children: React.ReactNode }) {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    if (hasCookie() || hasBypassCookie() || hasAuthSession()) {
-      setGated(false);
-    }
-    setLoaded(true);
+    const bypass = hasCookie() || hasBypassCookie() || hasAuthSession();
+    // Defer state transitions to the next microtask so React doesn't flag this
+    // as a cascading render — the effect still runs exactly once on mount.
+    queueMicrotask(() => {
+      if (bypass) setGated(false);
+      setLoaded(true);
+    });
   }, []);
 
   function handleGhost() {

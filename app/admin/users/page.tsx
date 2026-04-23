@@ -27,7 +27,7 @@ export default async function AdminUsers({
 
   // Fetch progress counts for all user_ids in one query
   const userIds = [...new Set(rows.map((r) => r.user_id).filter(Boolean))] as string[];
-  let progressMap: Record<string, { completed: number; lastActive: string | null }> = {};
+  const progressMap: Record<string, { completed: number; lastActive: string | null }> = {};
 
   if (userIds.length > 0) {
     const { data: progress } = await supabase

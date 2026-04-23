@@ -12,7 +12,7 @@ export default async function AdminTeams() {
 
   // Get member counts per team
   const teamIds = rows.map((t) => t.id);
-  let memberCounts: Record<string, { total: number; accepted: number }> = {};
+  const memberCounts: Record<string, { total: number; accepted: number }> = {};
 
   if (teamIds.length > 0) {
     const { data: members } = await supabase
@@ -32,7 +32,7 @@ export default async function AdminTeams() {
 
   // Get owner emails
   const ownerIds = [...new Set(rows.map((t) => t.owner_id))];
-  let ownerEmails: Record<string, string> = {};
+  const ownerEmails: Record<string, string> = {};
 
   if (ownerIds.length > 0) {
     const { data: purchases } = await supabase

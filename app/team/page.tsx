@@ -33,7 +33,7 @@ export default async function TeamPage() {
   const memberRows = members ?? [];
 
   const userIds = memberRows.map((m) => m.user_id).filter(Boolean) as string[];
-  let progressMap: Record<string, { completed: number; lastActive: string | null }> = {};
+  const progressMap: Record<string, { completed: number; lastActive: string | null }> = {};
 
   if (userIds.length > 0) {
     const { data: progress } = await admin

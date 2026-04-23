@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -70,10 +71,13 @@ export default function MobileGate({
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     const mql = window.matchMedia("(max-width: 767px)");
     const update = () => setIsMobile(mql.matches);
-    update();
+    // Defer initial state transitions so React doesn't flag them as cascading.
+    queueMicrotask(() => {
+      setMounted(true);
+      update();
+    });
     mql.addEventListener("change", update);
     return () => mql.removeEventListener("change", update);
   }, []);
@@ -178,7 +182,7 @@ export default function MobileGate({
           on your laptop to continue.
         </p>
 
-        <a
+        <Link
           href="/"
           style={{
             display: "inline-block",
@@ -195,7 +199,7 @@ export default function MobileGate({
           }}
         >
           Return to homepage
-        </a>
+        </Link>
       </div>
     </div>
   );
