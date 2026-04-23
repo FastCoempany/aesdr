@@ -1,14 +1,17 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
-const COMING_SOON = process.env.NEXT_PUBLIC_COMING_SOON === "true";
 const PUBLIC_PATHS = ["/", "/terms", "/privacy", "/refund-policy", "/about", "/contact", "/success", "/purchase/cancel", "/login", "/signup", "/syllabus", "/coming-soon"];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // ── Coming-soon gate: redirect all traffic when toggled on ──
-  if (COMING_SOON && pathname !== "/coming-soon" && !request.cookies.get("aesdr_cs_bypass")) {
+  // ── Coming-soon gate: runtime-toggleable via COMING_SOON env var ──
+  // Reading process.env inside the handler (not at module scope) ensures
+  // the edge runtime picks up the current value on each request, so flipping
+  // the toggle in Vercel takes effect without a redeploy.
+  const comingSoon = process.env.COMING_SOON === "true";
+  if (comingSoon && pathname !== "/coming-soon" && !request.cookies.get("aesdr_cs_bypass")) {
     const url = request.nextUrl.clone();
     url.pathname = "/coming-soon";
     url.search = "";
