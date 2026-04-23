@@ -193,16 +193,18 @@ export default function LandingSequence() {
       if (!lines || idx >= lines.length) {
         schedule(() => {
           termOutputRef.current?.classList.add(s.termOutputVisible);
+          // Persist the terminal output for 3 seconds so the user can read it,
+          // then transition to the hero with a smooth fade.
           schedule(() => {
             scrollHintRef.current?.classList.add(s.scrollHintVisible);
             unlockScroll();
-          }, 800);
+          }, 3000);
         }, 500);
         return;
       }
       const line = lines[idx];
       const maybeSpan = line.querySelector("span:last-child") as HTMLElement | null;
-      if (!maybeSpan) { typeTermLines(idx + 1); return; }
+      if (!maybeSpan) { schedule(() => typeTermLines(idx + 1), 0); return; }
       const span: HTMLElement = maybeSpan;
       const fullText = (line.getAttribute("data-text") ?? "").replace(/^> /, "");
       line.classList.add(s.termLineVisible);
@@ -244,13 +246,20 @@ export default function LandingSequence() {
         confessionRef.current.style.pointerEvents = "none";
       }
       if (terminalRef.current) {
-        terminalRef.current.style.transition = "opacity 0.4s ease";
+        terminalRef.current.style.transition = "opacity 0.6s ease";
         terminalRef.current.style.opacity = "0";
         terminalRef.current.style.pointerEvents = "none";
       }
 
       sessionStorage.setItem(SEEN_KEY, "1");
-      if (heroRef.current) { heroRef.current.style.opacity = "1"; heroRef.current.style.pointerEvents = "auto"; }
+      // Fade in the hero AFTER the terminal has faded out, not simultaneously.
+      setTimeout(() => {
+        if (heroRef.current) {
+          heroRef.current.style.transition = "opacity 0.8s ease";
+          heroRef.current.style.opacity = "1";
+          heroRef.current.style.pointerEvents = "auto";
+        }
+      }, 600);
 
       viewportRef.current?.classList.add(s.viewportActive);
       sideMarkerRef.current?.classList.add(s.sideMarkerActive);
@@ -377,7 +386,7 @@ export default function LandingSequence() {
         <div className={s.heroLabel}>12 Lessons &middot; At Your Own Pace &middot; 1 You</div>
         <h1 className={`${s.heroBrand} ${s.irisText}`}>AESDR</h1>
         <p className={s.heroTagline}>AEs &amp; SDRs rule this world.</p>
-        <a href="#pricing" className={s.heroCta}>Get Access &rarr;</a>
+        <a href="#pricing" className={s.heroCta}>Get Access <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" style={{display:"inline",verticalAlign:"middle",marginLeft:4}}><path d="M2 3h8v8"/><path d="M7 8l3 3 3-3"/></svg></a>
       </div>
 
       {/* Confession overlay */}
@@ -442,7 +451,7 @@ export default function LandingSequence() {
         <div className={`${s.ctaBrand} ${s.irisText}`}>AESDR</div>
         <div className={s.ctaTag}>12 lessons &bull; at your own pace &bull; 1 you</div>
         <div className={s.ctaNote}>Nobody gave you real answers on day one. We built this after years of figuring it out alone.</div>
-        <a href="#pricing" className={s.ctaButton}>Get Access &rarr;</a>
+        <a href="#pricing" className={s.ctaButton}>Get Access <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" style={{display:"inline",verticalAlign:"middle",marginLeft:4}}><path d="M2 3h8v8"/><path d="M7 8l3 3 3-3"/></svg></a>
       </div>
     </>
   );

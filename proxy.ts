@@ -1,10 +1,19 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
-const PUBLIC_PATHS = ["/", "/terms", "/privacy", "/refund-policy", "/about", "/contact", "/success", "/purchase/cancel", "/login", "/signup", "/syllabus"];
+const COMING_SOON = process.env.NEXT_PUBLIC_COMING_SOON === "true";
+const PUBLIC_PATHS = ["/", "/terms", "/privacy", "/refund-policy", "/about", "/contact", "/success", "/purchase/cancel", "/login", "/signup", "/syllabus", "/coming-soon"];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // ── Coming-soon gate: redirect all traffic when toggled on ──
+  if (COMING_SOON && pathname !== "/coming-soon" && !request.cookies.get("aesdr_cs_bypass")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/coming-soon";
+    url.search = "";
+    return NextResponse.redirect(url, 302);
+  }
 
   // --- Supabase session refresh (required for server components to read auth) ---
   let supabaseResponse = NextResponse.next({ request });
