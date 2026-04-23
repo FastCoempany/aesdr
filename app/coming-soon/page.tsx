@@ -116,7 +116,7 @@ export default function ComingSoonPage() {
             backgroundClip: "text",
             animation: "iris 4s linear infinite",
             letterSpacing: "-0.02em",
-            marginTop: "-20px",
+            marginTop: "-60px",
             position: "relative",
             zIndex: 2,
             userSelect: "none",
