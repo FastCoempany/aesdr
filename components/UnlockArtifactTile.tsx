@@ -20,13 +20,17 @@ export default function UnlockArtifactTile({
   async function handleUnlock() {
     if (loading) return;
     setLoading(true);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ tier: "artifact_unlock", artifact_type: artifactType, email }),
+        signal: controller.signal,
       });
-      const data = await res.json();
+      clearTimeout(timeoutId);
+      const data = await res.json().catch(() => ({}));
       const urlHost = data.url ? new URL(data.url).hostname : "";
       if (data.url && (urlHost === "stripe.com" || urlHost.endsWith(".stripe.com"))) {
         window.location.href = data.url;
@@ -34,6 +38,7 @@ export default function UnlockArtifactTile({
         setLoading(false);
       }
     } catch {
+      clearTimeout(timeoutId);
       setLoading(false);
     }
   }

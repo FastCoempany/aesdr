@@ -35,14 +35,20 @@ function SuccessContent() {
       setPolling(false);
       return;
     }
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
     try {
-      const res = await fetch(`/api/purchase-status?session_id=${sessionId}`);
+      const res = await fetch(`/api/purchase-status?session_id=${sessionId}`, {
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
       const data: PurchaseInfo = await res.json();
       if (data.confirmed) {
         setPurchase(data);
         setPolling(false);
       }
     } catch {
+      clearTimeout(timeoutId);
       // Retry on next interval
     }
   }, [sessionId]);

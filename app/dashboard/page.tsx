@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import SignOutButton from "@/components/SignOutButton";
 import UnlockArtifactTile from "@/components/UnlockArtifactTile";
 import { createClient } from "@/utils/supabase/server";
+import { verifyPaidAccess } from "@/utils/access/verifyAccess";
 import { LESSONS } from "@/utils/progress/types";
 import type { LessonProgressSummary } from "@/utils/progress/types";
 
@@ -51,66 +52,34 @@ export default async function Dashboard() {
   const cookieStore = await cookies();
   const hasBypass = cookieStore.get("aesdr_bypass")?.value === "1";
 
-  if (user && !hasBypass) {
-    const { data: purchase } = await supabase
-      .from("purchases")
-      .select("id")
-      .eq("user_email", user.email?.toLowerCase())
-      .eq("status", "active")
-      .limit(1)
-      .maybeSingle();
-
-    if (!purchase) {
-      const { data: purchaseById } = await supabase
-        .from("purchases")
-        .select("id")
-        .eq("user_id", user.id)
-        .eq("status", "active")
-        .limit(1)
-        .maybeSingle();
-
-      if (!purchaseById) {
-        // Check if user is an accepted team member on an active team
-        const { data: teamMembership } = await supabase
-          .from("team_members")
-          .select("team_id, teams!inner(id, purchase_id)")
+  // Parallelize purchase-access check, course progress, and reveal pick.
+  // These are independent queries that all depend only on user.id.
+  const [hasAccess, progressRes, pickRes] = await Promise.all([
+    user && !hasBypass ? verifyPaidAccess(supabase, user) : Promise.resolve(true),
+    user
+      ? supabase
+          .from("course_progress")
+          .select("lesson_id, is_completed, last_screen")
           .eq("user_id", user.id)
-          .not("accepted_at", "is", null)
-          .limit(1)
-          .maybeSingle();
+      : Promise.resolve({ data: null }),
+    user
+      ? supabase
+          .from("reveal_picks")
+          .select("chosen_artifact")
+          .eq("user_id", user.id)
+          .maybeSingle()
+      : Promise.resolve({ data: null }),
+  ]);
 
-        let teamHasActivePurchase = false;
-        if (teamMembership) {
-          const teamData = teamMembership.teams as unknown as { id: string; purchase_id: string | null };
-          if (teamData?.purchase_id) {
-            const { data: teamPurchase } = await supabase
-              .from("purchases")
-              .select("id")
-              .eq("id", teamData.purchase_id)
-              .eq("status", "active")
-              .maybeSingle();
-            teamHasActivePurchase = !!teamPurchase;
-          }
-        }
-
-        if (!teamHasActivePurchase) {
-          redirect("/login?reason=no_purchase");
-        }
-      }
-    }
+  if (!hasAccess) {
+    redirect("/login?reason=no_purchase");
   }
 
   const userRole = user?.user_metadata?.role as string | undefined;
 
-  let progressMap: Record<string, LessonProgressSummary> = {};
-  if (user) {
-    const { data } = await supabase
-      .from("course_progress")
-      .select("lesson_id, is_completed, last_screen")
-      .eq("user_id", user.id);
-    if (data) {
-      for (const row of data) progressMap[row.lesson_id] = row;
-    }
+  const progressMap: Record<string, LessonProgressSummary> = {};
+  if (progressRes.data) {
+    for (const row of progressRes.data) progressMap[row.lesson_id] = row;
   }
 
   const completedCount = LESSONS.filter((l) => progressMap[l.id]?.is_completed).length;
@@ -118,27 +87,19 @@ export default async function Dashboard() {
   const currentIdx = LESSONS.findIndex((l) => l.id === currentLesson.id);
   const allComplete = completedCount === LESSONS.length;
 
-  // Fetch reveal pick (if any) and check if sealed artifact is unlocked
-  let revealPick: string | null = null;
-  let sealedUnlocked = false;
-  if (user && allComplete) {
-    const { data: pick } = await supabase
-      .from("reveal_picks")
-      .select("chosen_artifact")
-      .eq("user_id", user.id)
-      .maybeSingle();
-    revealPick = pick?.chosen_artifact ?? null;
+  const revealPick: string | null =
+    (allComplete && (pickRes.data as { chosen_artifact?: string } | null)?.chosen_artifact) || null;
 
-    if (revealPick) {
-      const sealedType = revealPick === "playbill" ? "redline" : "playbill";
-      const { data: unlock } = await supabase
-        .from("artifact_unlocks")
-        .select("id")
-        .eq("user_id", user.id)
-        .eq("artifact_type", sealedType)
-        .maybeSingle();
-      sealedUnlocked = !!unlock;
-    }
+  let sealedUnlocked = false;
+  if (user && allComplete && revealPick) {
+    const sealedType = revealPick === "playbill" ? "redline" : "playbill";
+    const { data: unlock } = await supabase
+      .from("artifact_unlocks")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("artifact_type", sealedType)
+      .maybeSingle();
+    sealedUnlocked = !!unlock;
   }
 
   return (
