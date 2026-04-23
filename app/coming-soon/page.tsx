@@ -102,11 +102,11 @@ export default function ComingSoonPage() {
           />
         </div>
 
-        {/* Iris shimmer AESDR logo — positioned in the cloud area */}
+        {/* Iris shimmer AESDR logo — much larger, centered at turtle's foot */}
         <h1
           style={{
             fontFamily: "var(--display, 'Playfair Display', Georgia, serif)",
-            fontSize: "clamp(36px, 8vw, 72px)",
+            fontSize: "clamp(72px, 16vw, 180px)",
             fontWeight: 900,
             fontStyle: "italic",
             background: "var(--iris)",
@@ -116,14 +116,35 @@ export default function ComingSoonPage() {
             backgroundClip: "text",
             animation: "iris 4s linear infinite",
             letterSpacing: "-0.02em",
-            marginTop: "-60px",
+            marginTop: "-30px",
+            marginBottom: 0,
+            lineHeight: 1,
             position: "relative",
             zIndex: 2,
             userSelect: "none",
+            textAlign: "center",
           }}
         >
           AESDR
         </h1>
+
+        {/* Tagline beneath the logo */}
+        <p
+          style={{
+            fontFamily: "var(--display, 'Playfair Display', Georgia, serif)",
+            fontSize: "clamp(14px, 2.2vw, 22px)",
+            fontWeight: 400,
+            fontStyle: "italic",
+            color: "var(--ink, #1A1A1A)",
+            letterSpacing: "0.02em",
+            marginTop: 16,
+            textAlign: "center",
+            userSelect: "none",
+            opacity: 0.85,
+          }}
+        >
+          aes and sdrs rule this world
+        </p>
       </div>
     </main>
   );
