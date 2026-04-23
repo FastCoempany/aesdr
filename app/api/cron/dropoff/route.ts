@@ -12,12 +12,8 @@ export async function GET(request: Request) {
 
   const supabase = createAdminClient();
   const now = new Date();
-  let d5Sent = 0;
-  let d10Sent = 0;
-  let d21Sent = 0;
   const errors: string[] = [];
 
-  // ── Gather all candidate users for any tier of dropoff ──
   const fiveDaysAgo = new Date(now.getTime() - TIMING.dropoff.d5).toISOString();
 
   const { data: allDropoffCandidates, error: queryErr } = await supabase
@@ -25,107 +21,126 @@ export async function GET(request: Request) {
     .select('user_email, user_id, customer_name, dropoff_5d_sent, dropoff_10d_sent, dropoff_21d_sent, purchased_at')
     .eq('status', 'active')
     .lte('purchased_at', fiveDaysAgo)
-    .or('dropoff_5d_sent.eq.false,dropoff_10d_sent.eq.false,dropoff_21d_sent.eq.false');
+    .or('dropoff_5d_sent.eq.false,dropoff_10d_sent.eq.false,dropoff_21d_sent.eq.false')
+    .limit(1000);
 
   if (queryErr) {
     errors.push(`dropoff query: ${queryErr.message}`);
-  } else if (allDropoffCandidates && allDropoffCandidates.length > 0) {
-    // Batch-fetch progress for ALL candidate users in one query
-    const userIds = [...new Set(allDropoffCandidates.map((u) => u.user_id).filter(Boolean))];
-    const { data: allProgress, error: progressErr } = await supabase
-      .from('course_progress')
-      .select('user_id, lesson_id, is_completed, updated_at')
-      .in('user_id', userIds);
+    return NextResponse.json({ d5Sent: 0, d10Sent: 0, d21Sent: 0, errors });
+  }
 
-    if (progressErr) {
-      errors.push(`progress query: ${progressErr.message}`);
-    }
+  if (!allDropoffCandidates || allDropoffCandidates.length === 0) {
+    return NextResponse.json({ d5Sent: 0, d10Sent: 0, d21Sent: 0 });
+  }
 
-    // Build lookup maps
-    const progressByUser = new Map<string, typeof allProgress>();
-    for (const row of allProgress ?? []) {
-      const existing = progressByUser.get(row.user_id) ?? [];
-      existing.push(row);
-      progressByUser.set(row.user_id, existing);
-    }
+  const userIds = [...new Set(allDropoffCandidates.map((u) => u.user_id).filter(Boolean))];
+  const { data: allProgress, error: progressErr } = await supabase
+    .from('course_progress')
+    .select('user_id, lesson_id, is_completed, updated_at')
+    .in('user_id', userIds);
 
-    function getUserActivity(userId: string) {
-      const rows = progressByUser.get(userId) ?? [];
-      const sorted = [...rows].sort((a, b) =>
-        new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-      );
-      const completedCount = rows.filter((r) => r.is_completed).length;
-      return {
-        lastActivity: sorted[0]?.updated_at ?? null,
-        lastLesson: sorted[0]?.lesson_id ?? '1',
-        completedAll: completedCount >= TOTAL_LESSONS,
-      };
-    }
+  if (progressErr) errors.push(`progress query: ${progressErr.message}`);
 
-    const tenDaysAgo = new Date(now.getTime() - TIMING.dropoff.d10);
-    const twentyOneDaysAgo = new Date(now.getTime() - TIMING.dropoff.d21);
-    const fiveDaysAgoDate = new Date(now.getTime() - TIMING.dropoff.d5);
+  const progressByUser = new Map<string, typeof allProgress>();
+  for (const row of allProgress ?? []) {
+    const existing = progressByUser.get(row.user_id) ?? [];
+    existing.push(row);
+    progressByUser.set(row.user_id, existing);
+  }
 
-    for (const user of allDropoffCandidates) {
-      if (!user.user_id) continue;
-      const { lastActivity, lastLesson, completedAll } = getUserActivity(user.user_id);
+  function getUserActivity(userId: string) {
+    const rows = progressByUser.get(userId) ?? [];
+    const sorted = [...rows].sort(
+      (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+    );
+    const completedCount = rows.filter((r) => r.is_completed).length;
+    return {
+      lastActivity: sorted[0]?.updated_at ?? null,
+      lastLesson: sorted[0]?.lesson_id ?? '1',
+      completedAll: completedCount >= TOTAL_LESSONS,
+    };
+  }
 
-      // Skip if completed all courses
-      if (completedAll) continue;
+  const tenDaysAgo = new Date(now.getTime() - TIMING.dropoff.d10);
+  const twentyOneDaysAgo = new Date(now.getTime() - TIMING.dropoff.d21);
+  const fiveDaysAgoDate = new Date(now.getTime() - TIMING.dropoff.d5);
 
-      const lastActiveDate = lastActivity ? new Date(lastActivity) : null;
-      const purchasedDate = new Date(user.purchased_at);
+  // Partition work into tier-specific batches. Emails sent in parallel,
+  // updates applied in one batched query per tier.
+  const tier5: { email: string; name: string; lesson: string }[] = [];
+  const tier10: { email: string; name: string }[] = [];
+  const tier21: { email: string; name: string; lesson: string }[] = [];
 
-      // ── 5-day drop-off ──
-      if (!user.dropoff_5d_sent && purchasedDate <= fiveDaysAgoDate) {
-        if (!lastActiveDate || lastActiveDate <= fiveDaysAgoDate) {
-          const sent = await sendDropoff5d(user.user_email, user.customer_name || 'there', lastLesson, `Lesson ${lastLesson}`);
-          if (!sent) { errors.push(`5d email failed for ${user.user_email}`); }
-          else {
-            const { error: u5 } = await supabase
-              .from('purchases')
-              .update({ dropoff_5d_sent: true })
-              .eq('user_email', user.user_email);
-            if (u5) errors.push(`5d update ${user.user_email}: ${u5.message}`);
-            else d5Sent++;
-          }
-        }
+  for (const user of allDropoffCandidates) {
+    if (!user.user_id) continue;
+    const { lastActivity, lastLesson, completedAll } = getUserActivity(user.user_id);
+    if (completedAll) continue;
+
+    const lastActiveDate = lastActivity ? new Date(lastActivity) : null;
+    const purchasedDate = new Date(user.purchased_at);
+
+    if (!user.dropoff_5d_sent && purchasedDate <= fiveDaysAgoDate) {
+      if (!lastActiveDate || lastActiveDate <= fiveDaysAgoDate) {
+        tier5.push({ email: user.user_email, name: user.customer_name || 'there', lesson: lastLesson });
       }
-
-      // ── 10-day drop-off ──
-      if (!user.dropoff_10d_sent && purchasedDate <= tenDaysAgo) {
-        if (!lastActiveDate || lastActiveDate <= tenDaysAgo) {
-          const sent = await sendDropoff10d(user.user_email, user.customer_name || 'there');
-          if (!sent) { errors.push(`10d email failed for ${user.user_email}`); }
-          else {
-            const { error: u10 } = await supabase
-              .from('purchases')
-              .update({ dropoff_10d_sent: true })
-              .eq('user_email', user.user_email);
-            if (u10) errors.push(`10d update ${user.user_email}: ${u10.message}`);
-            else d10Sent++;
-          }
-        }
+    }
+    if (!user.dropoff_10d_sent && purchasedDate <= tenDaysAgo) {
+      if (!lastActiveDate || lastActiveDate <= tenDaysAgo) {
+        tier10.push({ email: user.user_email, name: user.customer_name || 'there' });
       }
-
-      // ── 21-day drop-off ──
-      if (!user.dropoff_21d_sent && purchasedDate <= twentyOneDaysAgo) {
-        if (!lastActiveDate || lastActiveDate <= twentyOneDaysAgo) {
-          const sent = await sendDropoff21d(user.user_email, user.customer_name || 'there', lastLesson);
-          if (!sent) { errors.push(`21d email failed for ${user.user_email}`); }
-          else {
-            const { error: u21 } = await supabase
-              .from('purchases')
-              .update({ dropoff_21d_sent: true })
-              .eq('user_email', user.user_email);
-            if (u21) errors.push(`21d update ${user.user_email}: ${u21.message}`);
-            else d21Sent++;
-          }
-        }
+    }
+    if (!user.dropoff_21d_sent && purchasedDate <= twentyOneDaysAgo) {
+      if (!lastActiveDate || lastActiveDate <= twentyOneDaysAgo) {
+        tier21.push({ email: user.user_email, name: user.customer_name || 'there', lesson: lastLesson });
       }
     }
   }
 
+  const [d5Successes, d10Successes, d21Successes] = await Promise.all([
+    Promise.all(
+      tier5.map(async (t) => {
+        const ok = await sendDropoff5d(t.email, t.name, t.lesson, `Lesson ${t.lesson}`);
+        return ok ? t.email : null;
+      })
+    ).then((r) => r.filter((x): x is string => !!x)),
+    Promise.all(
+      tier10.map(async (t) => {
+        const ok = await sendDropoff10d(t.email, t.name);
+        return ok ? t.email : null;
+      })
+    ).then((r) => r.filter((x): x is string => !!x)),
+    Promise.all(
+      tier21.map(async (t) => {
+        const ok = await sendDropoff21d(t.email, t.name, t.lesson);
+        return ok ? t.email : null;
+      })
+    ).then((r) => r.filter((x): x is string => !!x)),
+  ]);
+
+  // One batched update per tier.
+  await Promise.all([
+    d5Successes.length
+      ? supabase.from('purchases').update({ dropoff_5d_sent: true }).in('user_email', d5Successes)
+      : Promise.resolve({ error: null }),
+    d10Successes.length
+      ? supabase.from('purchases').update({ dropoff_10d_sent: true }).in('user_email', d10Successes)
+      : Promise.resolve({ error: null }),
+    d21Successes.length
+      ? supabase.from('purchases').update({ dropoff_21d_sent: true }).in('user_email', d21Successes)
+      : Promise.resolve({ error: null }),
+  ]);
+
+  const emailsFailed =
+    tier5.length - d5Successes.length +
+    (tier10.length - d10Successes.length) +
+    (tier21.length - d21Successes.length);
+  if (emailsFailed > 0) errors.push(`${emailsFailed} email send(s) failed`);
+
   if (errors.length > 0) console.error('[cron/dropoff] Errors:', errors);
-  return NextResponse.json({ d5Sent, d10Sent, d21Sent, errors: errors.length > 0 ? errors : undefined });
+  return NextResponse.json({
+    d5Sent: d5Successes.length,
+    d10Sent: d10Successes.length,
+    d21Sent: d21Successes.length,
+    errors: errors.length > 0 ? errors : undefined,
+  });
 }

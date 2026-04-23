@@ -26,26 +26,27 @@ export async function GET(request: Request) {
     .eq('status', 'active')
     .eq('day3_sent', false)
     .gte('purchased_at', fourDaysAgo)
-    .lte('purchased_at', threeDaysAgo);
+    .lte('purchased_at', threeDaysAgo)
+    .limit(500);
 
   if (day3Err) {
     errors.push(`day3 query: ${day3Err.message}`);
-  } else if (day3Users) {
-    for (const user of day3Users) {
-      const sent = await sendDay3Email(user.user_email, user.customer_name || 'there');
-      if (!sent) {
-        errors.push(`day3 email failed for ${user.user_email}`);
-        continue;
-      }
+  } else if (day3Users && day3Users.length > 0) {
+    const day3Successes: string[] = [];
+    await Promise.all(
+      day3Users.map(async (user) => {
+        const sent = await sendDay3Email(user.user_email, user.customer_name || 'there');
+        if (sent) day3Successes.push(user.user_email);
+        else errors.push('day3 email failed');
+      })
+    );
+    if (day3Successes.length > 0) {
       const { error: updateErr } = await supabase
         .from('purchases')
         .update({ day3_sent: true })
-        .eq('user_email', user.user_email);
-      if (updateErr) {
-        errors.push(`day3 update ${user.user_email}: ${updateErr.message}`);
-      } else {
-        day3Sent++;
-      }
+        .in('user_email', day3Successes);
+      if (updateErr) errors.push(`day3 batch update: ${updateErr.message}`);
+      else day3Sent = day3Successes.length;
     }
   }
 
@@ -59,26 +60,27 @@ export async function GET(request: Request) {
     .eq('status', 'active')
     .eq('day7_sent', false)
     .gte('purchased_at', eightDaysAgo)
-    .lte('purchased_at', sevenDaysAgo);
+    .lte('purchased_at', sevenDaysAgo)
+    .limit(500);
 
   if (day7Err) {
     errors.push(`day7 query: ${day7Err.message}`);
-  } else if (day7Users) {
-    for (const user of day7Users) {
-      const sent = await sendDay7Email(user.user_email, user.customer_name || 'there');
-      if (!sent) {
-        errors.push(`day7 email failed for ${user.user_email}`);
-        continue;
-      }
+  } else if (day7Users && day7Users.length > 0) {
+    const day7Successes: string[] = [];
+    await Promise.all(
+      day7Users.map(async (user) => {
+        const sent = await sendDay7Email(user.user_email, user.customer_name || 'there');
+        if (sent) day7Successes.push(user.user_email);
+        else errors.push('day7 email failed');
+      })
+    );
+    if (day7Successes.length > 0) {
       const { error: updateErr } = await supabase
         .from('purchases')
         .update({ day7_sent: true })
-        .eq('user_email', user.user_email);
-      if (updateErr) {
-        errors.push(`day7 update ${user.user_email}: ${updateErr.message}`);
-      } else {
-        day7Sent++;
-      }
+        .in('user_email', day7Successes);
+      if (updateErr) errors.push(`day7 batch update: ${updateErr.message}`);
+      else day7Sent = day7Successes.length;
     }
   }
 
