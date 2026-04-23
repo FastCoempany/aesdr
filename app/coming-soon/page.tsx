@@ -76,7 +76,6 @@ export default function ComingSoonPage() {
               width: "100%",
               height: "auto",
               display: "block",
-              mixBlendMode: "multiply",
               userSelect: "none",
             }}
           />
@@ -117,7 +116,7 @@ export default function ComingSoonPage() {
             backgroundClip: "text",
             animation: "iris 4s linear infinite",
             letterSpacing: "-0.02em",
-            marginTop: "-60px",
+            marginTop: "-20px",
             position: "relative",
             zIndex: 2,
             userSelect: "none",
