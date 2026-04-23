@@ -11,7 +11,7 @@ function hasBypass() {
 }
 
 function setBypass() {
-  document.cookie = `${BYPASS_COOKIE}=1; path=/; max-age=31536000; SameSite=Lax`;
+  document.cookie = `${BYPASS_COOKIE}=1; path=/; SameSite=Lax`;
 }
 
 export default function ComingSoonPage() {
