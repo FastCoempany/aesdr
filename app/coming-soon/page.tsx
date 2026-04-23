@@ -87,8 +87,8 @@ export default function ComingSoonPage() {
             tabIndex={-1}
             style={{
               position: "absolute",
-              top: "22%",
-              left: "16%",
+              top: "16%",
+              left: "20%",
               width: 24,
               height: 24,
               borderRadius: "50%",
