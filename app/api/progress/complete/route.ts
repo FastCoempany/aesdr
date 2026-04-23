@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -14,8 +15,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await request.json();
-  const { lessonId } = body;
+  const rl = await rateLimit(`progress-complete:${user.id}`, { max: 30, windowMs: 60 * 1000 });
+  if (!rl.success) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
+  const body = await request.json().catch(() => null);
+  const lessonId = body?.lessonId;
 
   if (!lessonId || typeof lessonId !== "string") {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });

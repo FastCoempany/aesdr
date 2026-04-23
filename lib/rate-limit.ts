@@ -1,30 +1,13 @@
 /**
- * Simple in-memory rate limiter using a sliding window.
- * Suitable for single-instance deployments (Vercel serverless).
+ * Distributed rate limiter using Upstash Redis when configured.
+ * Falls back to per-instance in-memory sliding window when Upstash env vars
+ * are missing (useful for local dev without Redis).
  *
- * For multi-instance or high-traffic scenarios, swap to Upstash Redis.
+ * Callers MUST `await` the result.
  */
 
-interface RateLimitEntry {
-  timestamps: number[];
-}
-
-const store = new Map<string, RateLimitEntry>();
-
-// Clean up stale entries periodically (every 5 minutes)
-const CLEANUP_INTERVAL = 5 * 60 * 1000;
-let lastCleanup = Date.now();
-
-function cleanup(windowMs: number) {
-  const now = Date.now();
-  if (now - lastCleanup < CLEANUP_INTERVAL) return;
-  lastCleanup = now;
-  const cutoff = now - windowMs;
-  for (const [key, entry] of store) {
-    entry.timestamps = entry.timestamps.filter((t) => t > cutoff);
-    if (entry.timestamps.length === 0) store.delete(key);
-  }
-}
+import { Redis } from "@upstash/redis";
+import { Ratelimit } from "@upstash/ratelimit";
 
 interface RateLimitConfig {
   /** Maximum requests allowed in the window */
@@ -39,22 +22,64 @@ interface RateLimitResult {
   resetMs: number;
 }
 
-export function rateLimit(
-  key: string,
-  config: RateLimitConfig
-): RateLimitResult {
+// ── Upstash client (singleton) ──────────────────────────────────────────────
+
+let upstashRedis: Redis | null = null;
+function getUpstash(): Redis | null {
+  if (upstashRedis) return upstashRedis;
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return null;
+  upstashRedis = new Redis({ url, token });
+  return upstashRedis;
+}
+
+// Cache Ratelimit instances per (max, windowMs) — the SDK recommends reuse.
+const limiterCache = new Map<string, Ratelimit>();
+function getLimiter(redis: Redis, max: number, windowMs: number): Ratelimit {
+  const cacheKey = `${max}:${windowMs}`;
+  const existing = limiterCache.get(cacheKey);
+  if (existing) return existing;
+  const limiter = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(max, `${windowMs} ms`),
+    analytics: false,
+    prefix: "aesdr_rl",
+  });
+  limiterCache.set(cacheKey, limiter);
+  return limiter;
+}
+
+// ── In-memory fallback ──────────────────────────────────────────────────────
+
+interface RateLimitEntry {
+  timestamps: number[];
+}
+const memStore = new Map<string, RateLimitEntry>();
+const CLEANUP_INTERVAL = 5 * 60 * 1000;
+let lastCleanup = Date.now();
+
+function memCleanup(windowMs: number) {
+  const now = Date.now();
+  if (now - lastCleanup < CLEANUP_INTERVAL) return;
+  lastCleanup = now;
+  const cutoff = now - windowMs;
+  for (const [key, entry] of memStore) {
+    entry.timestamps = entry.timestamps.filter((t) => t > cutoff);
+    if (entry.timestamps.length === 0) memStore.delete(key);
+  }
+}
+
+function memRateLimit(key: string, config: RateLimitConfig): RateLimitResult {
   const now = Date.now();
   const cutoff = now - config.windowMs;
+  memCleanup(config.windowMs);
 
-  cleanup(config.windowMs);
-
-  let entry = store.get(key);
+  let entry = memStore.get(key);
   if (!entry) {
     entry = { timestamps: [] };
-    store.set(key, entry);
+    memStore.set(key, entry);
   }
-
-  // Remove expired timestamps
   entry.timestamps = entry.timestamps.filter((t) => t > cutoff);
 
   if (entry.timestamps.length >= config.max) {
@@ -65,7 +90,6 @@ export function rateLimit(
       resetMs: oldestInWindow + config.windowMs - now,
     };
   }
-
   entry.timestamps.push(now);
   return {
     success: true,
@@ -74,9 +98,34 @@ export function rateLimit(
   };
 }
 
+// ── Public API ──────────────────────────────────────────────────────────────
+
+export async function rateLimit(
+  key: string,
+  config: RateLimitConfig
+): Promise<RateLimitResult> {
+  const redis = getUpstash();
+  if (!redis) {
+    return memRateLimit(key, config);
+  }
+
+  try {
+    const limiter = getLimiter(redis, config.max, config.windowMs);
+    const res = await limiter.limit(key);
+    return {
+      success: res.success,
+      remaining: res.remaining,
+      resetMs: Math.max(0, res.reset - Date.now()),
+    };
+  } catch {
+    // If Upstash fails (network, outage), fall back to in-memory to fail open
+    // on process, but still rate-limited per instance.
+    return memRateLimit(key, config);
+  }
+}
+
 /**
  * Extract client IP from request headers (for rate limit keying).
- * Falls back to 'unknown' if no IP is available.
  */
 export function getClientIP(request: Request): string {
   return (

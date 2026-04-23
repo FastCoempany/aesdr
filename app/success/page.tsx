@@ -6,7 +6,6 @@ import Link from 'next/link';
 
 interface PurchaseInfo {
   confirmed: boolean;
-  email?: string;
   name?: string;
   plan?: string;
 }
@@ -77,7 +76,6 @@ function SuccessContent() {
   }, [checkPurchase, polling]);
 
   const displayName = purchase?.name || null;
-  const displayEmail = purchase?.email || null;
   const confirmed = purchase?.confirmed ?? false;
 
   return (
@@ -268,20 +266,11 @@ function SuccessContent() {
             kicker="First"
             title="Check your inbox"
             body={
-              displayEmail ? (
-                <>
-                  Your credentials were sent to{' '}
-                  <strong style={{ color: 'var(--text-main)', fontStyle: 'normal' }}>
-                    {displayEmail}
-                  </strong>
-                  . Sign in with the temporary password and begin.
-                </>
-              ) : (
-                <>
-                  Your credentials are on their way. Check your inbox &mdash;
-                  including spam &mdash; in the next few minutes.
-                </>
-              )
+              <>
+                Your credentials are on their way to the email you purchased
+                with. Check your inbox &mdash; including spam &mdash; in the
+                next few minutes.
+              </>
             }
           />
 
