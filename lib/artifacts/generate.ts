@@ -6,11 +6,11 @@ import {
   hashProgressData,
 } from "./extract";
 import { generateDiagnostic } from "./diagnostic";
-import { extractWithLLM } from "./llm";
+import { extractPlaybill, extractRedline } from "./llm";
 import type {
   DiagnosticData,
-  PlaybookData,
-  MirrorData,
+  PlaybillData,
+  RedlineData,
   ArtifactType,
   StoredArtifact,
 } from "./types";
@@ -19,14 +19,22 @@ import type {
    Artifact Generation Orchestrator
    ═══════════════════════════════════════════
 
-   Entry point for generating all 3 artifacts for a user.
-   Handles caching, data extraction, LLM calls, and storage.
+   Entry point for generating end-of-course artifacts for a user.
+
+   Three artifact types are produced:
+   - diagnostic  — quantitative category scores (pure math, no LLM)
+   - playbill    — theatrical synthesis (LLM: theatre-critic voice)
+   - redline     — editorial synthesis (LLM: manuscript-editor voice)
+
+   The Playbill and Redline are intentionally distinct readings of the
+   same source data — one free (the student's pick), one unlocked via
+   $40 upsell. Both LLM calls are issued in parallel.
 ═══════════════════════════════════════════ */
 
 interface GenerateResult {
   diagnostic: DiagnosticData;
-  playbook: PlaybookData;
-  mirror: MirrorData;
+  playbill: PlaybillData;
+  redline: RedlineData;
   cached: boolean;
 }
 
@@ -38,11 +46,11 @@ interface UserProfile {
 }
 
 /**
- * Generate all 3 artifacts for a user.
+ * Generate all artifacts for a user.
  *
- * - Checks cache first (source_hash match = skip regeneration)
+ * - Checks cache first (matching source_hash for all 3 = skip regeneration)
  * - Diagnostic is pure math (instant)
- * - Playbook + Mirror use one Claude API call
+ * - Playbill and Redline are issued as parallel Claude API calls
  * - Stores results in generated_artifacts table
  */
 export async function generateArtifacts(
@@ -85,20 +93,20 @@ export async function generateArtifacts(
   );
 
   const cachedDiag = cachedMap.get("diagnostic");
-  const cachedPlay = cachedMap.get("playbook");
-  const cachedMirr = cachedMap.get("mirror");
+  const cachedPlaybill = cachedMap.get("playbill");
+  const cachedRedline = cachedMap.get("redline");
 
   const allCached =
-    cachedDiag && cachedPlay && cachedMirr &&
+    cachedDiag && cachedPlaybill && cachedRedline &&
     cachedDiag.source_hash === sourceHash &&
-    cachedPlay.source_hash === sourceHash &&
-    cachedMirr.source_hash === sourceHash;
+    cachedPlaybill.source_hash === sourceHash &&
+    cachedRedline.source_hash === sourceHash;
 
   if (allCached) {
     return {
       diagnostic: cachedDiag.artifact_data as DiagnosticData,
-      playbook: cachedPlay.artifact_data as PlaybookData,
-      mirror: cachedMirr.artifact_data as MirrorData,
+      playbill: cachedPlaybill.artifact_data as PlaybillData,
+      redline: cachedRedline.artifact_data as RedlineData,
       cached: true,
     };
   }
@@ -119,29 +127,19 @@ export async function generateArtifacts(
     user.cohort
   );
 
-  // 6. Generate Playbook + Mirror (one LLM call)
-  const llmResult = await extractWithLLM(gateResponses, categoryScores, user.role);
+  // 6. Generate Playbill + Redline in parallel (two independent LLM calls).
+  //    They take identical inputs but produce distinct voices, so running
+  //    them concurrently roughly halves the end-to-end wait.
+  const [playbill, redline] = await Promise.all([
+    extractPlaybill(gateResponses, categoryScores, user.role, user.name),
+    extractRedline(gateResponses, categoryScores, user.role, user.name),
+  ]);
 
-  const playbook: PlaybookData = {
-    studentName: user.name,
-    role: user.role,
-    generatedAt: new Date().toISOString(),
-    totalGates: gateResponses.length,
-    sections: llmResult.playbook.sections,
-  };
-
-  const mirror: MirrorData = {
-    studentName: user.name,
-    role: user.role,
-    generatedAt: new Date().toISOString(),
-    confrontations: llmResult.mirror.confrontations,
-  };
-
-  // 7. Store all 3 artifacts (upsert)
-  const artifacts: { type: ArtifactType; data: DiagnosticData | PlaybookData | MirrorData }[] = [
+  // 7. Store all artifacts (upsert)
+  const artifacts: { type: ArtifactType; data: DiagnosticData | PlaybillData | RedlineData }[] = [
     { type: "diagnostic", data: diagnostic },
-    { type: "playbook", data: playbook },
-    { type: "mirror", data: mirror },
+    { type: "playbill", data: playbill },
+    { type: "redline", data: redline },
   ];
 
   const upsertErrors: string[] = [];
@@ -164,7 +162,7 @@ export async function generateArtifacts(
     console.error("[artifacts] Upsert errors:", upsertErrors.join("; "));
   }
 
-  return { diagnostic, playbook, mirror, cached: false };
+  return { diagnostic, playbill, redline, cached: false };
 }
 
 /**

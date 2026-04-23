@@ -1787,7 +1787,7 @@ let mvDone={},mvCount=0;
 let apSel=null,apDone={};
 let skOpen=new Set(),skMarked=new Set();
 let qAns={}, qSubmitted=false, qPassed=false;
-function _saveQuizState()_saveExerciseScores();{AESDR.setExtra('quiz',{ans:qAns,submitted:qSubmitted,passed:qPassed}
+function _saveQuizState(){AESDR.setExtra('quiz',{ans:qAns,submitted:qSubmitted,passed:qPassed});}
 function _saveExerciseScores(){
   var scores = {};
   if(typeof siloCount!=='undefined'&&typeof SILO_CARDS!=='undefined') scores.silo={correct:siloCount,total:SILO_CARDS.length};
@@ -1795,7 +1795,7 @@ function _saveExerciseScores(){
   if(typeof seqDone!=='undefined'&&typeof SEQ_STEPS!=='undefined') scores.seq={correct:Object.keys(seqDone).length,total:SEQ_STEPS.length};
   if(typeof clsCount!=='undefined'&&typeof CLS_ITEMS!=='undefined') scores.cls={correct:clsCount,total:CLS_ITEMS.length};
   if(Object.keys(scores).length>0) AESDR.setExtra('exercises',scores);
-});}
+}
 
 /* ════════════════════════════════════
    INIT

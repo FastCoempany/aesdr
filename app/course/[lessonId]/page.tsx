@@ -8,6 +8,7 @@ import SaveExitButton from "@/components/SaveExitButton";
 import { listLessonUnits, getToolAssetsForLesson } from "@/utils/content/catalog";
 import { LESSONS } from "@/utils/progress/types";
 import { createClient } from "@/utils/supabase/server";
+import { verifyPaidAccess } from "@/utils/access/verifyAccess";
 
 export async function generateMetadata({
   params,
@@ -64,39 +65,22 @@ export default async function LessonPage({
   const cookieStore = await cookies();
   const hasBypass = cookieStore.get("aesdr_bypass")?.value === "1";
 
-  if (!hasBypass) {
-    // Check by email first, then by user_id as fallback
-    const { data: purchase } = await supabase
-      .from("purchases")
-      .select("id")
-      .eq("user_email", user.email)
-      .eq("status", "active")
-      .limit(1)
-      .maybeSingle();
+  // Parallelize: access check + progress fetch both depend on user.id only.
+  const [hasAccess, progressResult] = await Promise.all([
+    hasBypass ? Promise.resolve(true) : verifyPaidAccess(supabase, user),
+    supabase
+      .from("course_progress")
+      .select("is_completed, last_screen, state_data")
+      .eq("user_id", user.id)
+      .eq("lesson_id", lessonId)
+      .maybeSingle(),
+  ]);
 
-    if (!purchase) {
-      // Fallback: check by user_id (handles email mismatch scenarios)
-      const { data: purchaseById } = await supabase
-        .from("purchases")
-        .select("id")
-        .eq("user_id", user.id)
-        .eq("status", "active")
-        .limit(1)
-        .maybeSingle();
-
-      if (!purchaseById) {
-        redirect("/login?reason=no_purchase");
-      }
-    }
+  if (!hasAccess) {
+    redirect("/login?reason=no_purchase");
   }
 
-  const { data: progress, error: progressError } = await supabase
-    .from("course_progress")
-    .select("is_completed, last_screen, state_data")
-    .eq("user_id", user.id)
-    .eq("lesson_id", lessonId)
-    .maybeSingle();
-
+  const { data: progress, error: progressError } = progressResult;
   if (progressError) {
     throw new Error("Could not load lesson progress.");
   }
@@ -207,7 +191,7 @@ export default async function LessonPage({
                 fontSize: "9px",
                 letterSpacing: ".12em",
                 textTransform: "uppercase" as const,
-                padding: "6px 14px",
+                padding: "14px 16px",
                 color: "#fff",
                 background: "rgba(16,185,129,0.7)",
                 backdropFilter: "blur(8px)",

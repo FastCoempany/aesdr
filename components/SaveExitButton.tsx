@@ -40,10 +40,10 @@ export default function SaveExitButton() {
           color: "#fff",
           background: "rgba(0,0,0,0.9)",
           backdropFilter: "blur(8px)",
-          padding: "8px 12px",
+          padding: "14px 16px",
           border: "none",
           cursor: "pointer",
-          minHeight: "32px",
+          minHeight: "48px",
           lineHeight: "16px",
         }}
       >

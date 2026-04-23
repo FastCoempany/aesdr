@@ -14,7 +14,8 @@ export default async function AdminDashboard() {
   const purchases = purchasesRes.data ?? [];
   const totalCustomers = purchasesRes.count ?? 0;
   const totalRevenue = purchases.reduce((sum, p) => sum + (p.amount_cents ?? 0), 0);
-  const individualCount = purchases.filter((p) => p.plan === "individual").length;
+  const sdrCount = purchases.filter((p) => p.plan === "sdr" || p.plan === "individual").length;
+  const aeCount = purchases.filter((p) => p.plan === "ae").length;
   const teamCount = purchases.filter((p) => p.plan === "team").length;
   const refundCount = refundsRes.count ?? 0;
   const teamPlanCount = teamsRes.count ?? 0;
@@ -34,7 +35,7 @@ export default async function AdminDashboard() {
   const metrics = [
     { label: "Paying Customers", value: String(totalCustomers) },
     { label: "Revenue", value: `$${(totalRevenue / 100).toLocaleString()}` },
-    { label: "Individual / Team", value: `${individualCount} / ${teamCount}` },
+    { label: "SDR / AE / Team", value: `${sdrCount} / ${aeCount} / ${teamCount}` },
     { label: "Refunds", value: String(refundCount) },
     { label: "Active (7d)", value: String(activeCount ?? 0) },
     { label: "Avg Lessons Done", value: avgCompleted },

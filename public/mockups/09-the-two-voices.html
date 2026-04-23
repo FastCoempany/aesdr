@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup — The Two Voices</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Barlow+Condensed:wght@600;700;800&family=Lora:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;600&display=swap');
+
+  :root {
+    --bg: #020617;
+    --bg-panel: #0F172A;
+    --bg-card: #1E293B;
+    --text: #F8FAFC;
+    --muted: #94A3B8;
+    --theme: #10B981;
+    --theme-glow: rgba(16, 185, 129, 0.4);
+    --iris: linear-gradient(90deg, #FF006E 0%, #FF6B00 17%, #F59E0B 34%, #10B981 51%, #38BDF8 68%, #8B5CF6 85%, #FF006E 100%);
+    --line: rgba(255,255,255,0.06);
+    --amber: rgba(245, 158, 11, 0.7);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+  }
+
+  @keyframes iris {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulseBar {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 72px 24px 56px;
+    animation: fadeIn 0.8s ease-out;
+  }
+
+  .header-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .header h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(28px, 5vw, 50px);
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    line-height: 1.15;
+    margin-bottom: 14px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .header h1 .iris-text {
+    background: var(--iris);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: iris 4s linear infinite;
+  }
+
+  .header .sub {
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--muted);
+  }
+
+  /* Split container */
+  .split-section {
+    display: flex;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    gap: 0;
+    position: relative;
+    margin-bottom: 0;
+  }
+
+  .split-section::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    transform: translateX(-50%);
+    background: var(--iris);
+    background-size: 100% 200%;
+    animation: iris 4s linear infinite, pulseBar 3s ease-in-out infinite;
+  }
+
+  @media (max-width: 768px) {
+    .split-section { flex-direction: column; }
+    .split-section::after { display: none; }
+    .voice { width: 100% !important; }
+    .voice-command { border-bottom: 1px solid var(--line); padding-bottom: 48px; }
+    .voice-chaos { padding-top: 48px; }
+  }
+
+  .voice {
+    width: 50%;
+    padding: 48px 40px 56px;
+  }
+
+  /* Voice labels */
+  .voice-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    margin-bottom: 36px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .voice-command .voice-label {
+    color: var(--theme);
+  }
+
+  .voice-command .voice-label::before {
+    content: '';
+    width: 8px; height: 2px;
+    background: var(--theme);
+  }
+
+  .voice-chaos .voice-label {
+    color: var(--amber);
+  }
+
+  .voice-chaos .voice-label::before {
+    content: '';
+    width: 8px; height: 2px;
+    background: var(--amber);
+  }
+
+  /* Command voice entries */
+  .cmd-entry {
+    margin-bottom: 36px;
+    animation: fadeIn 0.6s ease-out both;
+  }
+
+  .cmd-entry:nth-child(2) { animation-delay: 0.05s; }
+  .cmd-entry:nth-child(3) { animation-delay: 0.1s; }
+  .cmd-entry:nth-child(4) { animation-delay: 0.15s; }
+  .cmd-entry:nth-child(5) { animation-delay: 0.2s; }
+  .cmd-entry:nth-child(6) { animation-delay: 0.25s; }
+  .cmd-entry:nth-child(7) { animation-delay: 0.3s; }
+  .cmd-entry:nth-child(8) { animation-delay: 0.35s; }
+
+  .cmd-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: .15em;
+    color: rgba(16,185,129,0.3);
+    margin-bottom: 6px;
+  }
+
+  .cmd-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(18px, 2.2vw, 24px);
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    line-height: 1.3;
+    color: rgba(248,250,252,0.9);
+  }
+
+  .cmd-sub {
+    font-family: 'Lora', serif;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--muted);
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  /* Chaos voice entries */
+  .chaos-entry {
+    margin-bottom: 36px;
+    animation: fadeIn 0.6s ease-out both;
+  }
+
+  .chaos-entry:nth-child(2) { animation-delay: 0.05s; }
+  .chaos-entry:nth-child(3) { animation-delay: 0.1s; }
+  .chaos-entry:nth-child(4) { animation-delay: 0.15s; }
+  .chaos-entry:nth-child(5) { animation-delay: 0.2s; }
+  .chaos-entry:nth-child(6) { animation-delay: 0.25s; }
+  .chaos-entry:nth-child(7) { animation-delay: 0.3s; }
+  .chaos-entry:nth-child(8) { animation-delay: 0.35s; }
+
+  .chaos-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: .15em;
+    color: rgba(245, 158, 11, 0.25);
+    margin-bottom: 6px;
+  }
+
+  .chaos-text {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(18px, 2.2vw, 22px);
+    color: var(--amber);
+    line-height: 1.4;
+  }
+
+  .chaos-sub {
+    font-family: 'Lora', serif;
+    font-size: 12px;
+    font-style: italic;
+    color: rgba(148,163,184,0.4);
+    margin-top: 4px;
+  }
+
+  /* Merge section */
+  .merge {
+    text-align: center;
+    padding: 64px 24px 48px;
+    position: relative;
+  }
+
+  .merge-bar {
+    width: 100%;
+    max-width: 1100px;
+    height: 3px;
+    margin: 0 auto 48px;
+    background: var(--iris);
+    background-size: 200% 100%;
+    animation: iris 4s linear infinite;
+    position: relative;
+  }
+
+  .merge-bar::after {
+    content: 'THE TWO BECOME ONE';
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: .3em;
+    color: var(--muted);
+    white-space: nowrap;
+    background: var(--bg);
+    padding: 0 16px;
+  }
+
+  .merge h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(22px, 3.5vw, 36px);
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    line-height: 1.25;
+    max-width: 600px;
+    margin: 0 auto 16px;
+  }
+
+  .merge h2 .iris-text {
+    background: var(--iris);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: iris 4s linear infinite;
+  }
+
+  .merge-desc {
+    font-family: 'Lora', serif;
+    font-size: 15px;
+    font-style: italic;
+    color: var(--muted);
+    max-width: 480px;
+    margin: 0 auto 12px;
+    line-height: 1.6;
+  }
+
+  .merge-scrawl {
+    font-family: 'Caveat', cursive;
+    font-size: 18px;
+    color: rgba(245, 158, 11, 0.45);
+    margin-bottom: 36px;
+  }
+
+  .cta {
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--theme);
+    border: none;
+    padding: 16px 48px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .cta:hover {
+    background: #0d9668;
+    box-shadow: 0 0 24px var(--theme-glow);
+  }
+
+  /* Count bar */
+  .count-bar {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    margin: 48px auto 0;
+    max-width: 400px;
+  }
+
+  .count-block {
+    flex: 1;
+    height: 4px;
+    background: var(--bg-card);
+    border-radius: 1px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .count-block::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--iris);
+    background-size: 400% 100%;
+    animation: iris 4s linear infinite;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .count-block:hover::after {
+    opacity: 1;
+  }
+
+  .count-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7px;
+    letter-spacing: .15em;
+    color: rgba(148,163,184,0.25);
+    text-align: center;
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-tag">Two voices. One program. 12 lessons.</div>
+  <h1>Every great rep has <span class="iris-text">two people inside them.</span></h1>
+  <p class="sub">One commands the room. The other eats cereal over the sink at midnight wondering if SaaS was a good idea. We train both.</p>
+</div>
+
+<div class="split-section">
+
+  <!-- LEFT: The Command Voice (Rowan Pope) -->
+  <div class="voice voice-command">
+    <div class="voice-label">The Voice That Closes</div>
+
+    <div class="cmd-entry">
+      <div class="cmd-num">01</div>
+      <div class="cmd-text">Your apartment is your first sale. If you can't close your own environment, you cannot close anyone else's.</div>
+      <div class="cmd-sub">The space you operate from is not decoration. It is infrastructure.</div>
+    </div>
+
+    <div class="cmd-entry">
+      <div class="cmd-num">02</div>
+      <div class="cmd-text">The drink in your hand at the conference is a press release. Everyone is reading it.</div>
+      <div class="cmd-sub">You are being evaluated in every room you think you're relaxing in.</div>
+    </div>
+
+    <div class="cmd-entry">
+      <div class="cmd-num">03</div>
+      <div class="cmd-text">Your commission check is not income. It is a verdict on how you lived the last 30 days.</div>
+      <div class="cmd-sub">Feast-or-famine is not a market condition. It is a character trait you can fix.</div>
+    </div>
+
+    <div class="cmd-entry">
+      <div class="cmd-num">04</div>
+      <div class="cmd-text">The person at home keeping score while you "grind" will not wait forever. Respect the math.</div>
+      <div class="cmd-sub">This career will cost you relationships unless you learn which ones to protect and how.</div>
+    </div>
+
+    <div class="cmd-entry">
+      <div class="cmd-num">05</div>
+      <div class="cmd-text">"Potential" is not a skill. It is a word people use to describe someone who has not done anything yet.</div>
+      <div class="cmd-sub">Stop auditioning. Start performing. The two are not the same.</div>
+    </div>
+
+    <div class="cmd-entry">
+      <div class="cmd-num">06</div>
+      <div class="cmd-text">You did not choose this career. But you will choose who you become inside it. That decision is the curriculum.</div>
+      <div class="cmd-sub">We do not teach you to sell. We teach you to be the person who sells.</div>
+    </div>
+  </div>
+
+  <!-- RIGHT: The Chaos Voice (Michael Scott) -->
+  <div class="voice voice-chaos">
+    <div class="voice-label">The Voice at 2am</div>
+
+    <div class="chaos-entry">
+      <div class="chaos-num">01</div>
+      <div class="chaos-text">My "home office" is my bed. The desk is a folding table from Target. There's a pile of laundry on the chair I named Gerald. Gerald is my coworker now. He's quiet. Great listener.</div>
+    </div>
+
+    <div class="chaos-entry">
+      <div class="chaos-num">02</div>
+      <div class="chaos-text">I had four drinks at the company SKO and told the CEO I could "definitely" run the enterprise segment. He asked me what ARR stood for. I said "Absolutely Ready to Rock." I was not ready to rock.</div>
+    </div>
+
+    <div class="chaos-entry">
+      <div class="chaos-num">03</div>
+      <div class="chaos-text">Last month I made $8,200. This month I made $2,100. I bought a $300 jacket during the $8,200 month. I'm now wearing the $300 jacket while eating ramen I bought with a coupon. Fashion.</div>
+    </div>
+
+    <div class="chaos-entry">
+      <div class="chaos-num">04</div>
+      <div class="chaos-text">My girlfriend asked what I actually do all day. I said "pipeline." She said "that's not a real answer." She was right. We broke up. I still don't have a better answer.</div>
+    </div>
+
+    <div class="chaos-entry">
+      <div class="chaos-num">05</div>
+      <div class="chaos-text">My manager said I have "so much potential." That was six months ago. I still have the same amount of potential. Like, exactly the same amount. It hasn't converted into anything. It's just... sitting there. Being potential.</div>
+    </div>
+
+    <div class="chaos-entry">
+      <div class="chaos-num">06</div>
+      <div class="chaos-text">I didn't choose SaaS sales. I applied to 47 jobs and this one called back first. Like a stray cat that pays commission. Sometimes. On a delayed schedule. With clawbacks.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Merge -->
+<div class="merge">
+  <div class="merge-bar"></div>
+  <h2>This is not a sales course. <span class="iris-text">It's an intervention for the whole person.</span></h2>
+  <p class="merge-desc">Your pipeline, your paycheck, your apartment, your relationships, your conference behavior, your identity, your future. 12 lessons. All of it. The life stuff IS the sales stuff.</p>
+  <p class="merge-scrawl">I came in as Voice #2. I left as Voice #1 who still remembers what the ramen tasted like. That's the whole thing.</p>
+  <a href="#" class="cta">Let Both Voices In &rarr;</a>
+
+  <div class="count-bar">
+    <div class="count-block"></div>
+    <div class="count-block"></div>
+    <div class="count-block"></div>
+    <div class="count-block"></div>
+    <div class="count-block"></div>
+    <div class="count-block"></div>
+    <div class="count-block"></div>
+    <div class="count-block"></div>
+    <div class="count-block"></div>
+    <div class="count-block"></div>
+    <div class="count-block"></div>
+    <div class="count-block"></div>
+  </div>
+  <div class="count-label">12 Lessons &bull; 12 Weeks &bull; 2 Voices &bull; 1 You</div>
+</div>
+
+</body>
+</html>

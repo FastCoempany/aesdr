@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slam Animation Test</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root {
+    --bg: #020617;
+    --text: #F8FAFC;
+    --iris: linear-gradient(90deg, #FF006E, #FF6B00, #F59E0B, #10B981, #38BDF8, #8B5CF6, #FF006E);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+
+  .stage {
+    text-align: center;
+    position: relative;
+    padding: 60px 40px;
+  }
+
+  /* Line 1 */
+  .line1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(24px, 5vw, 52px);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: rgba(248,250,252,0.6);
+    opacity: 0;
+  }
+  .line1.visible { opacity: 1; animation: fadeIn 0.4s ease; }
+
+  /* Dots */
+  .dots {
+    margin: 12px 0;
+    min-height: 40px;
+  }
+  .dot {
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(36px, 7vw, 72px);
+    font-weight: 900;
+    background: var(--iris);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 4s linear infinite;
+    opacity: 0;
+    margin: 0 1px;
+  }
+  .dot.visible { opacity: 1; }
+
+  /* Line 2 — slides left to right */
+  .line2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(24px, 5vw, 52px);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: rgba(248,250,252,0.6);
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 1s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .line2.reveal { clip-path: inset(0 0% 0 0); }
+
+  /* Always Watching container */
+  .aw-wrap {
+    position: relative;
+    display: inline-block;
+    margin-top: 8px;
+  }
+
+  .aw-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(52px, 11vw, 130px);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+    line-height: 1;
+    display: inline-block;
+  }
+
+  /* Pearlescent shimmer */
+  .pearl {
+    background: linear-gradient(90deg, #fff, #ffe0ec, #e0ecff, #fff, #ece0ff, #e0fff5, #fff);
+    background-size: 500% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: pearlShift 5s ease-in-out infinite;
+  }
+
+  @keyframes pearlShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* WA expand */
+  .wa {
+    display: inline-block;
+    transition: transform 0.3s cubic-bezier(.23,1,.32,1);
+  }
+  .wa.big { transform: scale(1.9); }
+  .wa.settle { transition: transform 0.25s cubic-bezier(.23,1,.32,1); transform: scale(1); }
+
+  /* Shooting star container */
+  .star-field {
+    position: absolute;
+    top: 0; left: -15%; width: 130%; height: 100%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .star-field.active { opacity: 1; }
+
+  .star-head {
+    position: absolute;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow:
+      0 0 10px 5px rgba(255,255,255,1),
+      0 0 25px 12px rgba(255,255,255,0.7),
+      0 0 50px 25px rgba(245,158,11,0.5),
+      0 0 80px 40px rgba(56,189,248,0.3),
+      0 0 120px 60px rgba(139,92,246,0.15);
+    animation: fig8 3s linear infinite;
+    z-index: 10;
+  }
+
+  .dust {
+    position: absolute;
+    border-radius: 50%;
+    background: #fff;
+    animation: fig8 3s linear infinite;
+  }
+  .dust.d1 { width:11px; height:11px; opacity:0.7; animation-delay:-0.07s; box-shadow: 0 0 15px 8px rgba(245,158,11,0.5); }
+  .dust.d2 { width:9px; height:9px; opacity:0.55; animation-delay:-0.14s; box-shadow: 0 0 12px 6px rgba(56,189,248,0.5); }
+  .dust.d3 { width:7px; height:7px; opacity:0.4; animation-delay:-0.21s; box-shadow: 0 0 10px 5px rgba(139,92,246,0.5); }
+  .dust.d4 { width:5px; height:5px; opacity:0.3; animation-delay:-0.28s; box-shadow: 0 0 8px 4px rgba(255,0,110,0.4); }
+  .dust.d5 { width:4px; height:4px; opacity:0.2; animation-delay:-0.35s; box-shadow: 0 0 6px 3px rgba(245,158,11,0.3); }
+  .dust.d6 { width:3px; height:3px; opacity:0.15; animation-delay:-0.42s; box-shadow: 0 0 5px 3px rgba(56,189,248,0.3); }
+
+  .sparkle {
+    position: absolute;
+    width: 3px; height: 3px;
+    border-radius: 50%;
+    background: #fff;
+    animation: fig8 3s linear infinite, twinkle 0.6s ease-in-out infinite alternate;
+  }
+  .sparkle.s1 { animation-delay: -0.5s, 0s; }
+  .sparkle.s2 { animation-delay: -1.0s, 0.2s; }
+  .sparkle.s3 { animation-delay: -1.5s, 0.4s; }
+  .sparkle.s4 { animation-delay: -2.0s, 0.1s; }
+  .sparkle.s5 { animation-delay: -2.5s, 0.3s; }
+
+  @keyframes fig8 {
+    0%     { left: 108%; top: 50%; }
+    12.5%  { left: 78%;  top: 10%; }
+    25%    { left: 50%;  top: 50%; }
+    37.5%  { left: 22%;  top: 90%; }
+    50%    { left: -8%;  top: 50%; }
+    62.5%  { left: 22%;  top: 10%; }
+    75%    { left: 50%;  top: 50%; }
+    87.5%  { left: 78%;  top: 90%; }
+    100%   { left: 108%; top: 50%; }
+  }
+
+  @keyframes twinkle {
+    0% { opacity: 0.1; transform: scale(0.5); }
+    100% { opacity: 0.8; transform: scale(2); }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+  }
+
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="line1" id="line1">You think no one knows</div>
+  <div class="dots" id="dots">
+    <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+  </div>
+  <div class="line2" id="line2">but someone's</div>
+  <div class="aw-wrap">
+    <span class="aw-text" id="aw-text"></span>
+    <div class="star-field" id="star-field">
+      <div class="star-head"></div>
+      <div class="dust d1"></div>
+      <div class="dust d2"></div>
+      <div class="dust d3"></div>
+      <div class="dust d4"></div>
+      <div class="dust d5"></div>
+      <div class="dust d6"></div>
+      <div class="sparkle s1"></div>
+      <div class="sparkle s2"></div>
+      <div class="sparkle s3"></div>
+      <div class="sparkle s4"></div>
+      <div class="sparkle s5"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const line1 = document.getElementById('line1');
+const dots = document.querySelectorAll('.dot');
+const line2 = document.getElementById('line2');
+const awText = document.getElementById('aw-text');
+const starField = document.getElementById('star-field');
+
+// Start sequence after 500ms
+setTimeout(run, 500);
+
+function run() {
+  // 1. Line 1 fades in
+  line1.classList.add('visible');
+
+  // 2. Dots appear one by one
+  setTimeout(() => {
+    dots.forEach((d, i) => {
+      setTimeout(() => d.classList.add('visible'), i * 150);
+    });
+
+    // 3. "but someone's" slides in left-to-right
+    setTimeout(() => {
+      line2.classList.add('reveal');
+
+      // 4. "Aaaaaalways" stretch
+      setTimeout(stretchAlways, 900);
+    }, dots.length * 150 + 400);
+  }, 600);
+}
+
+function stretchAlways() {
+  const steps = ['A','Aa','Aaa','Aaaa','Aaaaa','Aaaaaa','Aaaaaalways'];
+  let i = 0;
+
+  function next() {
+    awText.textContent = steps[i];
+    i++;
+    if (i < steps.length) {
+      setTimeout(next, i < steps.length - 1 ? 70 : 140);
+    } else {
+      setTimeout(expandWA, 200);
+    }
+  }
+  next();
+}
+
+function expandWA() {
+  awText.innerHTML = 'always <span class="wa" id="wa">WA</span>';
+  const wa = document.getElementById('wa');
+
+  requestAnimationFrame(() => {
+    wa.classList.add('big');
+
+    setTimeout(() => {
+      wa.classList.remove('big');
+      wa.classList.add('settle');
+
+      setTimeout(() => {
+        awText.innerHTML = '<span class="pearl">always watching</span>';
+        starField.classList.add('active');
+      }, 280);
+    }, 350);
+  });
+}
+</script>
+
+</body>
+</html>

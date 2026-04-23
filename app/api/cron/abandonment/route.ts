@@ -1,7 +1,6 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
-import * as Sentry from '@sentry/nextjs';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { sendAbandon1hr, sendAbandon24hr } from '@/lib/email';
 import { TIMING } from '@/lib/config';
@@ -13,8 +12,6 @@ export async function GET(request: Request) {
 
   const supabase = createAdminClient();
   const now = new Date();
-  let hr1Sent = 0;
-  let hr24Sent = 0;
   const errors: string[] = [];
 
   // ── 1-hour abandonment emails ──
@@ -27,27 +24,27 @@ export async function GET(request: Request) {
     .eq('completed', false)
     .is('abandon_1hr_sent', null)
     .gte('started_at', twoHoursAgo)
-    .lte('started_at', oneHourAgo);
+    .lte('started_at', oneHourAgo)
+    .limit(500);
 
-  if (q1Err) {
-    errors.push(`1hr query: ${q1Err.message}`);
-  } else if (abandon1hr) {
-    for (const row of abandon1hr) {
-      const sent = await sendAbandon1hr(row.user_email);
-      if (!sent) {
-        errors.push(`1hr email failed for ${row.user_email}`);
-        continue;
-      }
+  if (q1Err) errors.push(`1hr query: ${q1Err.message}`);
+
+  const hr1Successes: string[] = [];
+  if (abandon1hr && abandon1hr.length > 0) {
+    await Promise.all(
+      abandon1hr.map(async (row) => {
+        const sent = await sendAbandon1hr(row.user_email);
+        if (sent) hr1Successes.push(row.session_id);
+        else errors.push('1hr email failed');
+      })
+    );
+    if (hr1Successes.length > 0) {
       const { error: updateErr } = await supabase
         .from('checkout_sessions')
         .update({ abandon_1hr_sent: now.toISOString() })
-        .eq('session_id', row.session_id)
+        .in('session_id', hr1Successes)
         .eq('completed', false);
-      if (updateErr) {
-        errors.push(`1hr update ${row.session_id}: ${updateErr.message}`);
-      } else {
-        hr1Sent++;
-      }
+      if (updateErr) errors.push(`1hr batch update: ${updateErr.message}`);
     }
   }
 
@@ -61,30 +58,34 @@ export async function GET(request: Request) {
     .eq('completed', false)
     .is('abandon_24hr_sent', null)
     .gte('started_at', twoDaysAgo)
-    .lte('started_at', oneDayAgo);
+    .lte('started_at', oneDayAgo)
+    .limit(500);
 
-  if (q24Err) {
-    errors.push(`24hr query: ${q24Err.message}`);
-  } else if (abandon24hr) {
-    for (const row of abandon24hr) {
-      const sent = await sendAbandon24hr(row.user_email);
-      if (!sent) {
-        errors.push(`24hr email failed for ${row.user_email}`);
-        continue;
-      }
+  if (q24Err) errors.push(`24hr query: ${q24Err.message}`);
+
+  const hr24Successes: string[] = [];
+  if (abandon24hr && abandon24hr.length > 0) {
+    await Promise.all(
+      abandon24hr.map(async (row) => {
+        const sent = await sendAbandon24hr(row.user_email);
+        if (sent) hr24Successes.push(row.session_id);
+        else errors.push('24hr email failed');
+      })
+    );
+    if (hr24Successes.length > 0) {
       const { error: updateErr } = await supabase
         .from('checkout_sessions')
         .update({ abandon_24hr_sent: now.toISOString() })
-        .eq('session_id', row.session_id)
+        .in('session_id', hr24Successes)
         .eq('completed', false);
-      if (updateErr) {
-        errors.push(`24hr update ${row.session_id}: ${updateErr.message}`);
-      } else {
-        hr24Sent++;
-      }
+      if (updateErr) errors.push(`24hr batch update: ${updateErr.message}`);
     }
   }
 
-  if (errors.length > 0) Sentry.captureMessage('[cron/abandonment] Errors', { level: 'error', extra: { errors } });
-  return NextResponse.json({ hr1Sent, hr24Sent, errors: errors.length > 0 ? errors : undefined });
+  if (errors.length > 0) console.error('[cron/abandonment] Errors:', errors);
+  return NextResponse.json({
+    hr1Sent: hr1Successes.length,
+    hr24Sent: hr24Successes.length,
+    errors: errors.length > 0 ? errors : undefined,
+  });
 }

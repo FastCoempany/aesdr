@@ -188,11 +188,86 @@
   z-index: 50;
 }
 
+/* ── Branded Hero (post-animation / return visits) ── */
+.landingHero {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  z-index: 1;
+  background: var(--cream);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.heroLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.heroBrand {
+  font-family: var(--display);
+  font-size: clamp(80px, 18vw, 220px);
+  font-weight: 900;
+  font-style: italic;
+  line-height: 0.85;
+  letter-spacing: .02em;
+  margin: 0;
+}
+
+.heroTagline {
+  font-family: var(--serif);
+  font-size: clamp(16px, 2vw, 22px);
+  font-style: italic;
+  color: var(--muted);
+  margin: 0;
+}
+
+.heroCta {
+  font-family: var(--cond);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--iris);
+  background-size: 300% 100%;
+  animation: shimmer 4s linear infinite;
+  padding: 16px 48px;
+  text-decoration: none;
+  margin-top: 12px;
+  transition: transform 0.15s, box-shadow 0.3s;
+}
+.heroCta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 24px rgba(16, 185, 129, 0.3);
+}
+
+/* ── Animation backdrop ──
+   Always-opaque dark layer that sits BEHIND the confession and terminal
+   overlays. Its only job: guarantee nothing from the page (hero, pricing,
+   etc.) ever becomes visible during the overlay fades. Fades out when
+   unlockScroll fires so the regular page takes over. */
+.animationBackdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--cream);
+  z-index: 49;
+  pointer-events: none;
+}
+
 /* ── Confession Layer (typed scenario — dark overlay) ── */
 .confessionLayer {
   position: fixed;
   inset: 0;
-  background: var(--ink);
+  background: var(--cream);
   z-index: 50;
   display: flex;
   align-items: center;
@@ -216,7 +291,7 @@
   font-style: italic;
   font-weight: 400;
   line-height: 1.5;
-  color: #fff;
+  color: var(--ink);
   min-height: 1.6em;
   transition: opacity 0.6s ease, filter 0.6s ease, transform 0.6s ease;
 }
@@ -246,7 +321,7 @@
 .terminalLayer {
   position: fixed;
   inset: 0;
-  background: var(--ink);
+  background: var(--cream);
   z-index: 51;
   display: flex;
   align-items: center;
@@ -260,24 +335,25 @@
 .terminal {
   max-width: 680px;
   width: 90%;
-  border: 1px solid rgba(248, 250, 252, 0.06);
-  background: rgba(248, 250, 252, 0.02);
+  border: 1px solid var(--light);
+  background: rgba(0, 0, 0, 0.02);
   font-family: var(--mono);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.04);
 }
 .termBar {
   display: flex;
   align-items: center;
   gap: 6px;
   padding: 10px 16px;
-  border-bottom: 1px solid rgba(248, 250, 252, 0.06);
+  border-bottom: 1px solid var(--light);
 }
 .termDot { width: 8px; height: 8px; border-radius: 50%; }
-.termDotR { background: rgba(239, 68, 68, 0.5); }
-.termDotY { background: rgba(245, 158, 11, 0.5); }
-.termDotG { background: rgba(16, 185, 129, 0.5); }
+.termDotR { background: rgba(239, 68, 68, 0.35); }
+.termDotY { background: rgba(245, 158, 11, 0.35); }
+.termDotG { background: rgba(16, 185, 129, 0.35); }
 .termTitle {
   font-size: 9px;
-  color: rgba(148, 163, 184, 0.4);
+  color: var(--muted);
   letter-spacing: .08em;
   margin-left: auto;
 }
@@ -289,24 +365,24 @@
 .termLine {
   font-size: clamp(13px, 1.8vw, 17px);
   line-height: 1.8;
-  color: rgba(248, 250, 252, 0.85);
+  color: var(--ink);
   opacity: 0;
   white-space: pre-wrap;
 }
 .termLineVisible { opacity: 1; }
-.prompt { color: rgba(248, 250, 252, 0.2); margin-right: 8px; }
+.prompt { color: var(--muted); margin-right: 8px; }
 .termCursor {
   display: inline-block;
   width: 7px;
   height: 14px;
-  background: rgba(248, 250, 252, 0.5);
+  background: var(--crimson);
   vertical-align: text-bottom;
   animation: blink 0.8s step-end infinite;
 }
 .termOutput {
   margin-top: 24px;
   padding-top: 20px;
-  border-top: 1px solid rgba(248, 250, 252, 0.06);
+  border-top: 1px solid var(--light);
   font-size: clamp(14px, 2vw, 19px);
   font-weight: 800;
   line-height: 1.7;
@@ -324,7 +400,7 @@
 .termWhisper {
   font-family: var(--serif);
   font-size: clamp(12px, 1.4vw, 15px);
-  color: rgba(148, 163, 184, 0.35);
+  color: var(--muted);
   margin-top: 16px;
   font-style: italic;
   font-weight: 400;
@@ -332,7 +408,7 @@
   text-transform: none;
   background: none;
   -webkit-background-clip: unset;
-  -webkit-text-fill-color: rgba(148, 163, 184, 0.35);
+  -webkit-text-fill-color: var(--muted);
   background-clip: unset;
   animation: none;
   filter: none;
@@ -351,6 +427,7 @@
   gap: 10px;
   opacity: 0;
   transition: opacity 0.4s ease;
+  pointer-events: none;
 }
 .scrollHintVisible { opacity: 1; }
 .scrollHintText {
@@ -358,7 +435,7 @@
   font-size: 8px;
   letter-spacing: .25em;
   text-transform: uppercase;
-  color: rgba(148, 163, 184, 0.25);
+  color: var(--muted);
 }
 .scrollHintBar {
   width: 1px;
@@ -395,7 +472,7 @@
   transition: opacity 0.5s ease;
   overflow: hidden;
 }
-.viewportActive { display: flex !important; opacity: 1; }
+.viewportActive { display: flex; opacity: 1; }
 
 .zcard {
   position: absolute;
@@ -408,6 +485,10 @@
   opacity: 0;
   padding: 40px;
   will-change: transform, opacity;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 .zcardInner { max-width: 900px; position: relative; }
 
@@ -418,6 +499,8 @@
   letter-spacing: .03em;
   line-height: 1.05;
   color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 .zMichael {
   font-family: var(--hand);
@@ -462,6 +545,7 @@
   z-index: 100;
   transition: width 0.1s linear;
   opacity: 0;
+  pointer-events: none;
 }
 .scrollProgressActive { opacity: 1; }
 
@@ -477,6 +561,7 @@
   gap: 8px;
   opacity: 0;
   transition: opacity 0.4s ease;
+  pointer-events: none;
 }
 .sideMarkerActive { opacity: 1; }
 
@@ -507,7 +592,7 @@
   transition: opacity 0.3s ease;
   gap: 16px;
 }
-.ctaOverlayVisible { display: flex !important; opacity: 1; pointer-events: auto; }
+.ctaOverlayVisible { display: flex; opacity: 1; pointer-events: auto; }
 
 .ctaBrand {
   font-family: var(--display);

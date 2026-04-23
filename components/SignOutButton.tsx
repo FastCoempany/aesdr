@@ -23,6 +23,7 @@ export default function SignOutButton() {
         background: "none",
         border: "none",
         cursor: "pointer",
+        padding: "12px 4px",
         fontFamily: "inherit",
         fontSize: "inherit",
         fontWeight: "inherit",

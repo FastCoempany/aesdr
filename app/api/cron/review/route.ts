@@ -1,7 +1,6 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
-import * as Sentry from '@sentry/nextjs';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { sendReviewRequest, sendReviewNudge } from '@/lib/email';
 import { TIMING, TOTAL_LESSONS } from '@/lib/config';
@@ -13,22 +12,21 @@ export async function GET(request: Request) {
 
   const supabase = createAdminClient();
   const now = new Date();
-  let reviewsSent = 0;
-  let nudgesSent = 0;
   const errors: string[] = [];
 
   // ── Review request: 2 days after completing all 12 lessons ──
-  // Find users who completed all 12 but haven't been sent a review request
   const { data: completedUsers, error: qErr } = await supabase
     .from('purchases')
     .select('user_email, user_id, customer_name')
     .eq('status', 'active')
-    .eq('review_requested', false);
+    .eq('review_requested', false)
+    .limit(1000);
 
-  if (qErr) {
-    errors.push(`review query: ${qErr.message}`);
-  } else if (completedUsers && completedUsers.length > 0) {
-    // Batch-fetch all progress for candidate users in one query
+  const reviewSuccesses: string[] = [];
+
+  if (qErr) errors.push(`review query: ${qErr.message}`);
+
+  if (completedUsers && completedUsers.length > 0) {
     const userIds = [...new Set(completedUsers.map((u) => u.user_id).filter(Boolean))];
     const { data: allProgress, error: pErr } = await supabase
       .from('course_progress')
@@ -38,7 +36,6 @@ export async function GET(request: Request) {
 
     if (pErr) errors.push(`progress query: ${pErr.message}`);
 
-    // Build per-user completion maps
     const completionByUser = new Map<string, { count: number; lastCompletedAt: Date }>();
     for (const row of allProgress ?? []) {
       const entry = completionByUser.get(row.user_id) ?? { count: 0, lastCompletedAt: new Date(0) };
@@ -48,29 +45,31 @@ export async function GET(request: Request) {
       completionByUser.set(row.user_id, entry);
     }
 
-    for (const user of completedUsers) {
-      if (!user.user_id) continue;
-      const completion = completionByUser.get(user.user_id);
-      if (!completion || completion.count < TOTAL_LESSONS) continue;
+    const eligible = completedUsers.filter((user) => {
+      if (!user.user_id) return false;
+      const c = completionByUser.get(user.user_id);
+      if (!c || c.count < TOTAL_LESSONS) return false;
+      const twoDaysAfter = new Date(c.lastCompletedAt.getTime() + TIMING.review.afterCompletion);
+      return now >= twoDaysAfter;
+    });
 
-      const twoDaysAfter = new Date(completion.lastCompletedAt.getTime() + TIMING.review.afterCompletion);
-      if (now < twoDaysAfter) continue;
-
-      const sent = await sendReviewRequest(user.user_email, user.customer_name || 'there');
-      if (!sent) {
-        errors.push(`review email failed for ${user.user_email}`);
-        continue;
-      }
+    await Promise.all(
+      eligible.map(async (user) => {
+        const sent = await sendReviewRequest(user.user_email, user.customer_name || 'there');
+        if (sent) reviewSuccesses.push(user.user_email);
+        else errors.push('review email failed');
+      })
+    );
+    if (reviewSuccesses.length > 0) {
       const { error: uErr } = await supabase
         .from('purchases')
         .update({ review_requested: true, review_requested_at: now.toISOString() })
-        .eq('user_email', user.user_email);
-      if (uErr) errors.push(`review update ${user.user_email}: ${uErr.message}`);
-      else reviewsSent++;
+        .in('user_email', reviewSuccesses);
+      if (uErr) errors.push(`review batch update: ${uErr.message}`);
     }
   }
 
-  // ── Review nudge: 4 days after first review request, if no response ──
+  // ── Review nudge: 4 days after first review request ──
   const fourDaysAgo = new Date(now.getTime() - TIMING.review.nudgeAfterRequest).toISOString();
 
   const { data: nudgeUsers, error: nqErr } = await supabase
@@ -78,26 +77,33 @@ export async function GET(request: Request) {
     .select('user_email')
     .eq('review_requested', true)
     .eq('review_nudge_sent', false)
-    .lte('review_requested_at', fourDaysAgo);
+    .lte('review_requested_at', fourDaysAgo)
+    .limit(1000);
 
-  if (nqErr) {
-    errors.push(`nudge query: ${nqErr.message}`);
-  } else if (nudgeUsers) {
-    for (const user of nudgeUsers) {
-      const sent = await sendReviewNudge(user.user_email, 'there');
-      if (!sent) {
-        errors.push(`nudge email failed for ${user.user_email}`);
-        continue;
-      }
+  if (nqErr) errors.push(`nudge query: ${nqErr.message}`);
+
+  const nudgeSuccesses: string[] = [];
+  if (nudgeUsers && nudgeUsers.length > 0) {
+    await Promise.all(
+      nudgeUsers.map(async (user) => {
+        const sent = await sendReviewNudge(user.user_email, 'there');
+        if (sent) nudgeSuccesses.push(user.user_email);
+        else errors.push('nudge email failed');
+      })
+    );
+    if (nudgeSuccesses.length > 0) {
       const { error: nuErr } = await supabase
         .from('purchases')
         .update({ review_nudge_sent: true })
-        .eq('user_email', user.user_email);
-      if (nuErr) errors.push(`nudge update ${user.user_email}: ${nuErr.message}`);
-      else nudgesSent++;
+        .in('user_email', nudgeSuccesses);
+      if (nuErr) errors.push(`nudge batch update: ${nuErr.message}`);
     }
   }
 
-  if (errors.length > 0) Sentry.captureMessage('[cron/review] Errors', { level: 'error', extra: { errors } });
-  return NextResponse.json({ reviewsSent, nudgesSent, errors: errors.length > 0 ? errors : undefined });
+  if (errors.length > 0) console.error('[cron/review] Errors:', errors);
+  return NextResponse.json({
+    reviewsSent: reviewSuccesses.length,
+    nudgesSent: nudgeSuccesses.length,
+    errors: errors.length > 0 ? errors : undefined,
+  });
 }

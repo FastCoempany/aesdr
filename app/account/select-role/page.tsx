@@ -69,7 +69,7 @@ export default function SelectRolePage() {
                 animation: "iris 3s linear infinite",
               }}
             >
-              <Link href="/" style={{ textDecoration: "none" }}>AESDR</Link>
+              <Link href="/dashboard" style={{ textDecoration: "none" }}>AESDR</Link>
             </span>
           </p>
           <h1

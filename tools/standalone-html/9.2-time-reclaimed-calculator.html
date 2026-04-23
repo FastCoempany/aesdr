@@ -6,247 +6,582 @@
 <title>AESDR | Time Reclaimed ROI Calculator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
-  /* AESDR Dark Theme */
-  --bg-main: #020617; 
-  --bg-panel: #0F172A;
-  --bg-card: #1E293B;
-  --bg-hover: #334155;
-  
-  --text-main: #F8FAFC;
-  --text-muted: #94A3B8;
-  
-  /* Asset Theme: Neon Green & Alert Red */
-  --theme: #10B981; 
-  --theme-text: #059669;
-  --theme-glow: rgba(16, 185, 129, 0.3);
-  --coral: #EF4444; 
-  --cor-glow: rgba(239, 68, 68, 0.3);
-  --cobalt: #38BDF8; 
-  
-  --line: rgba(255,255,255,0.1);
-  --line2: rgba(255,255,255,0.2);
-  
-  --display: 'Abril Fatface', Georgia, serif;
-  --serif: 'Cormorant Garamond', Georgia, serif;
+  --iris: linear-gradient(90deg, #FF006E 0%, #FF6B00 17%, #F59E0B 34%, #10B981 51%, #38BDF8 68%, #8B5CF6 85%, #FF006E 100%);
+  --bg-parchment: #FFFDF8;
+  --bg-page: #FFFFFF;
+  --rule-color: #F0EBE3;
+  --margin-line: #E8D4D4;
+  --text-main: #2C2C2C;
+  --text-muted: #8B8178;
+  --red-ink: #C53030;
+  --crimson: #8B1A1A;
+  --gold-hl: rgba(184, 148, 62, 0.2);
+  --gold-solid: #B8943E;
+  --display: 'Playfair Display', Georgia, serif;
+  --serif: 'Source Serif 4', Georgia, serif;
   --cond: 'Barlow Condensed', sans-serif;
-  --mono: 'DM Mono', monospace;
+  --mono: 'Space Mono', monospace;
 }
+@keyframes iris { from { background-position: 0% 50%; } to { background-position: 200% 50%; } }
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; background: var(--bg-main); color: var(--text-main); font-family: var(--serif); line-height: 1.6; }
+html, body { min-height: 100%; background: var(--bg-parchment); color: var(--text-main); font-family: var(--serif); line-height: 1.6; }
 
 /* TOPBAR */
-.topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 40px; border-bottom: 1px solid var(--line); background: var(--bg-panel); }
-.brand { font-family: var(--cond); font-size: 16px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; display: flex; align-items: center; gap: 12px; }
-.badge { font-family: var(--mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; background: var(--cobalt); color: var(--bg-main); font-weight: 800; padding: 4px 10px; border-radius: 2px; }
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 40px;
+  border-bottom: 1px solid var(--rule-color);
+  background: var(--bg-page);
+}
+.brand {
+  font-family: var(--cond);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.brand-text {
+  background: var(--iris);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: iris 4s linear infinite;
+}
+.badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  background: var(--gold-solid);
+  color: var(--bg-page);
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 2px;
+}
 
 /* CONTAINER */
 .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
 
+/* PAGE (notebook paper aesthetic) */
+.page {
+  background: var(--bg-page);
+  border-radius: 2px;
+  box-shadow:
+    0 1px 3px rgba(0,0,0,0.04),
+    0 8px 24px rgba(0,0,0,0.06),
+    0 24px 48px rgba(0,0,0,0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ruled lines background */
+.page::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent,
+      transparent 31px,
+      var(--rule-color) 31px,
+      var(--rule-color) 32px
+    );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Margin line */
+.page::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 72px;
+  width: 1px;
+  background: var(--margin-line);
+  pointer-events: none;
+  z-index: 0;
+}
+
 /* HEADER INFO */
-.header-info { margin-bottom: 40px; text-align: center; }
-.eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--theme); margin-bottom: 12px; display: inline-block; padding: 4px 10px; background: var(--theme-glow); border-radius: 2px; }
-.h1 { font-family: var(--display); font-size: 42px; line-height: 1.1; margin-bottom: 12px; color: var(--text-main); }
-.sub { font-size: 18px; color: var(--text-muted); max-width: 600px; margin: 0 auto; }
+.header-info {
+  padding: 48px 40px 32px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--gold-solid);
+  margin-bottom: 12px;
+  display: inline-block;
+  padding: 4px 10px;
+  background: var(--gold-hl);
+  border-radius: 2px;
+}
+.h1 {
+  font-family: var(--display);
+  font-size: 44px;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  color: var(--crimson);
+  font-style: italic;
+  font-weight: 700;
+}
+.h1 .iris-text {
+  font-style: normal;
+  font-weight: 900;
+  background: var(--iris);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: iris 4s linear infinite;
+}
+.sub {
+  font-size: 17px;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin: 0 auto;
+  font-style: italic;
+}
 
 /* CALCULATOR GRID */
-.calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; background: var(--bg-panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+.calc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* Divider between columns */
+.calc-grid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: var(--rule-color);
+  z-index: 2;
+}
 
 /* LEFT: INPUTS */
-.inputs-col { padding: 40px; border-right: 1px solid var(--line); background: var(--bg-panel); }
-.input-group { margin-bottom: 32px; }
+.inputs-col {
+  padding: 40px 40px 40px 48px;
+}
+.input-group { margin-bottom: 36px; }
 .input-group:last-child { margin-bottom: 0; }
-.input-label { font-family: var(--cond); font-size: 15px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--text-main); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-.val-readout { font-family: var(--mono); color: var(--cobalt); font-size: 18px; }
+.input-label {
+  font-family: var(--cond);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--text-main);
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.val-readout {
+  font-family: var(--mono);
+  color: var(--gold-solid);
+  font-size: 16px;
+  font-weight: 700;
+}
 
-/* TEXT INPUT */
-.input-field { width: 100%; background: var(--bg-main); border: 1px solid var(--line2); color: var(--text-main); font-family: var(--mono); font-size: 20px; padding: 16px; border-radius: 4px; outline: none; transition: border-color .2s; }
-.input-field:focus { border-color: var(--theme); }
+/* TEXT INPUT — dotted underline, no box borders */
+.input-field {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 2px dotted var(--rule-color);
+  color: var(--text-main);
+  font-family: var(--mono);
+  font-size: 22px;
+  padding: 12px 4px;
+  outline: none;
+  transition: border-color .3s, border-image .3s;
+}
+.input-field:focus {
+  border-bottom-style: solid;
+  border-image: var(--iris) 1;
+  border-image-slice: 1;
+}
 
-/* SHINY 3D MARBLE METALLIC SLIDERS */
-input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; padding: 10px 0; }
+/* RANGE SLIDERS — parchment aesthetic */
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  background: transparent;
+  padding: 10px 0;
+}
 input[type=range]:focus { outline: none; }
 
-input[type=range]::-webkit-slider-thumb { 
-  -webkit-appearance: none; 
-  height: 32px; 
-  width: 32px; 
-  border-radius: 50%; 
-  
-  /* 3D Marble Metallic Effect */
-  background: radial-gradient(circle at 30% 30%, #ffffff 0%, #cbd5e1 20%, #94a3b8 60%, #475569 100%);
-  box-shadow: 
-    inset 0 3px 5px rgba(255, 255, 255, 0.9), 
-    inset 0 -3px 6px rgba(0, 0, 0, 0.6), 
-    0 5px 10px rgba(0, 0, 0, 0.8);
-  border: 1px solid #e2e8f0;
-  
-  cursor: pointer; 
-  margin-top: -12px; 
-  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1); 
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  background: var(--rule-color);
+  border-radius: 2px;
+  border: none;
 }
-input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
-input[type=range]::-webkit-slider-thumb:active { transform: scale(0.95); }
 
-input[type=range]::-webkit-slider-runnable-track { 
-  width: 100%; 
-  height: 8px; 
-  cursor: pointer; 
-  /* Deep recessed track */
-  background: linear-gradient(to bottom, #020617, #1e293b); 
-  border-radius: 4px; 
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.8), 0 1px 1px rgba(255,255,255,0.05);
-  border: 1px solid #0f172a; 
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 22px;
+  width: 22px;
+  border-radius: 50%;
+  background: var(--bg-page);
+  border: 2.5px solid var(--crimson);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12), 0 0 0 3px rgba(139,26,26,0.08);
+  cursor: pointer;
+  margin-top: -9px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+input[type=range]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15), 0 0 0 4px rgba(139,26,26,0.12);
+}
+input[type=range]::-webkit-slider-thumb:active {
+  transform: scale(0.95);
+}
+
+/* Firefox */
+input[type=range]::-moz-range-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  background: var(--rule-color);
+  border-radius: 2px;
+  border: none;
+}
+input[type=range]::-moz-range-thumb {
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  background: var(--bg-page);
+  border: 2.5px solid var(--crimson);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+  cursor: pointer;
+}
+
+.slider-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  font-style: italic;
+  line-height: 1.4;
 }
 
 /* RIGHT: OUTPUTS */
-.outputs-col { padding: 40px; background: var(--bg-card); display: flex; flex-direction: column; justify-content: center; position: relative; }
+.outputs-col {
+  padding: 40px 48px 40px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
 
-/* Background geometric blur for the glassmorphism to pop against */
-.outputs-col::before {
+/* Margin annotations */
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px dotted var(--rule-color);
+  position: relative;
+}
+.stat-lbl {
+  font-family: var(--cond);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.stat-val {
+  font-family: var(--mono);
+  font-size: 19px;
+  color: var(--text-main);
+  transition: color 0.4s ease;
+}
+.stat-val.bad { color: var(--red-ink); }
+
+/* Margin annotation markers */
+.stat-row::before {
   content: '';
   position: absolute;
-  top: 10%;
-  right: 10%;
-  width: 200px;
-  height: 200px;
-  background: var(--coral);
-  filter: blur(100px);
-  opacity: 0.15;
+  left: -28px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  pointer-events: none;
-  transition: background 0.4s ease;
+  background: var(--gold-solid);
+  opacity: 0.5;
 }
-.outputs-col.saved-state::before { background: var(--theme); }
 
-.stat-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; border-bottom: 1px solid var(--line); padding-bottom: 12px; position: relative; z-index: 1;}
-.stat-lbl { font-family: var(--cond); font-size: 14px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--text-muted); }
-.stat-val { font-family: var(--mono); font-size: 20px; color: var(--text-main); }
-.stat-val.bad { color: var(--coral); }
+/* ANNUAL FINANCIAL BLEED — circled in red */
+.bleed-box {
+  margin-top: 24px;
+  text-align: center;
+  padding: 36px 20px;
+  position: relative;
+  transition: all 0.4s ease;
+  background: transparent;
+}
+.bleed-lbl {
+  font-family: var(--cond);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
 
-/* GLASS WINDOW EFFECT */
-.bleed-box { 
-  margin-top: 20px; 
-  text-align: center; 
-  padding: 40px 20px; 
-  border-radius: 12px; 
+/* The circled crimson number */
+.bleed-val {
+  font-family: var(--display);
+  font-size: 58px;
+  line-height: 1;
+  font-weight: 900;
+  transition: color 0.4s ease;
+  display: inline-block;
+  padding: 12px 28px;
+}
+.bleed-val.alert {
+  color: var(--crimson);
+  border: 3px solid var(--red-ink);
+  border-radius: 50% / 35%;
+  box-shadow: 0 0 0 1px rgba(197,48,48,0.15);
+}
+.bleed-val.saved {
+  color: var(--gold-solid);
+  border: 3px solid var(--gold-solid);
+  border-radius: 50% / 35%;
+  box-shadow: 0 0 0 1px rgba(184,148,62,0.15);
+}
+.bleed-sub {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-top: 16px;
+  font-style: italic;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
+}
+
+/* BUTTON — iris shimmer border on hover */
+.btn-reclaim {
+  width: 100%;
+  margin-top: 28px;
+  font-family: var(--cond);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 16px;
+  border: 2px solid var(--crimson);
+  background: var(--crimson);
+  color: var(--bg-page);
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all .3s ease;
   position: relative;
   z-index: 1;
-  transition: all 0.4s ease;
-  
-  /* Glassmorphism CSS */
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
-
-.bleed-box.alert { 
-  border-color: rgba(239, 68, 68, 0.4); 
-  background: rgba(239, 68, 68, 0.05);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), 
-              0 0 20px rgba(239, 68, 68, 0.15), 
-              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+.btn-reclaim:hover {
+  background: transparent;
+  color: var(--crimson);
+  border-image: var(--iris) 1;
+  border-image-slice: 1;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(139,26,26,0.12);
 }
-
-.bleed-box.saved { 
-  border-color: rgba(16, 185, 129, 0.4); 
-  background: rgba(16, 185, 129, 0.05);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), 
-              0 0 20px rgba(16, 185, 129, 0.15), 
-              inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-.bleed-lbl { font-family: var(--cond); font-size: 16px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--text-main); margin-bottom: 10px; }
-.bleed-val { font-family: var(--display); font-size: 64px; line-height: 1; transition: color 0.4s ease; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-.bleed-val.alert { color: var(--coral); }
-.bleed-val.saved { color: var(--theme); }
-.bleed-sub { font-size: 14px; color: var(--text-muted); margin-top: 12px; font-style: italic; }
-
-/* BUTTON */
-.btn-reclaim { width: 100%; margin-top: 30px; font-family: var(--cond); font-size: 16px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; padding: 18px; border: none; background: var(--theme); color: var(--bg-main); cursor: pointer; border-radius: 4px; transition: all .2s; box-shadow: 0 4px 15px var(--theme-glow); position: relative; z-index: 1;}
-.btn-reclaim:hover { background: var(--theme-text); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
 .btn-reclaim:active { transform: translateY(0); }
 
-.success-msg { text-align: center; font-family: var(--cond); font-size: 16px; font-weight: 700; color: var(--theme); letter-spacing: .05em; text-transform: uppercase; margin-top: 16px; opacity: 0; transition: opacity 0.3s; height: 0; }
+.success-msg {
+  text-align: center;
+  font-family: var(--cond);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gold-solid);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-top: 16px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  height: 0;
+}
 .success-msg.show { opacity: 1; height: auto; margin-top: 16px; }
+
+/* FOOTER RULE */
+.page-footer {
+  padding: 20px 40px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid var(--rule-color);
+}
+.page-footer span {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+/* INFO BANNER */
+.info-banner {
+  background: rgba(184, 148, 62, 0.12);
+  border-left: 3px solid #B8943E;
+  padding: 14px 40px 14px 20px;
+  position: relative;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  opacity: 1;
+  transition: opacity 300ms ease;
+}
+.info-banner.dismissed {
+  opacity: 0;
+  pointer-events: none;
+}
+.info-banner .dismiss-btn {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-family: var(--mono);
+  font-size: 16px;
+  color: var(--text-muted);
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px;
+}
+.info-banner .dismiss-btn:hover {
+  color: var(--text-main);
+}
 
 @media(max-width: 800px) {
   .calc-grid { grid-template-columns: 1fr; }
-  .inputs-col { border-right: none; border-bottom: 1px solid var(--line); }
+  .calc-grid::before { display: none; }
+  .inputs-col { border-bottom: 1px solid var(--rule-color); }
+  .page::after { left: 32px; }
+  .inputs-col { padding: 32px 24px 32px 32px; }
+  .outputs-col { padding: 32px 24px 32px 32px; }
+  .header-info { padding: 32px 24px 24px; }
+  .h1 { font-size: 32px; }
+  .bleed-val { font-size: 42px; padding: 10px 20px; }
+  .stat-row::before { left: -20px; }
 }
 </style>
 </head>
 <body>
 
 <header class="topbar">
-  <div class="brand">AESDR <span class="badge">Tool: C9.2</span></div>
+  <div class="brand"><span class="brand-text">AESDR</span> <span class="badge">Tool: C9.2</span></div>
 </header>
 
+<div class="info-banner" id="infoBanner">
+  <button class="dismiss-btn" onclick="dismissBanner()" aria-label="Dismiss">&times;</button>
+  This is a standalone tool &mdash; it runs entirely in your browser. No data is sent anywhere.
+  Your inputs are saved automatically to this browser.
+  Works in any modern browser (Chrome, Firefox, Safari, Edge).
+</div>
+
 <div class="container">
-  
-  <div class="header-info">
-    <div class="eyebrow">Interactive Assessment</div>
-    <h1 class="h1">The "Time Reclaimed" Calculator</h1>
-    <p class="sub">You think checking Slack and updating CRM fields is just "part of the job." Plug in your numbers to see exactly how much selling time you are throwing away.</p>
-  </div>
+  <div class="page">
 
-  <div class="calc-grid">
-    
-    <div class="inputs-col">
-      <div class="input-group">
-        <label class="input-label">Target OTE ($)</label>
-        <input type="number" id="oteInput" class="input-field" value="150000" oninput="calculate()">
-      </div>
-
-      <div class="input-group">
-        <label class="input-label">
-          Slack / Email Distractions
-          <span class="val-readout"><span id="slackVal">5</span> hrs/wk</span>
-        </label>
-        <input type="range" id="slackSlider" min="0" max="20" value="5" step="1" oninput="calculate()">
-        <p style="font-size:12px; color:var(--text-muted); margin-top:6px; font-style:italic">Time spent reading non-essential channels or writing vague emails.</p>
-      </div>
-
-      <div class="input-group">
-        <label class="input-label">
-          CRM / Admin Bloat
-          <span class="val-readout"><span id="crmVal">5</span> hrs/wk</span>
-        </label>
-        <input type="range" id="crmSlider" min="0" max="20" value="5" step="1" oninput="calculate()">
-        <p style="font-size:12px; color:var(--text-muted); margin-top:6px; font-style:italic">Time spent logging calls, fixing data, or building useless reports.</p>
-      </div>
+    <div class="header-info">
+      <div class="eyebrow">Interactive Assessment</div>
+      <h1 class="h1"><span class="iris-text">Time Reclaimed</span><br>The Calculator</h1>
+      <p class="sub">You think checking Slack and updating CRM fields is just "part of the job." Plug in your numbers to see exactly how much selling time you are throwing away.</p>
     </div>
 
-    <div class="outputs-col" id="outputCol">
-      
-      <div class="stat-row">
-        <div class="stat-lbl">Your True Hourly Rate</div>
-        <div class="stat-val" id="hourlyRate">$72/hr</div>
-      </div>
-      
-      <div class="stat-row">
-        <div class="stat-lbl">Total Weekly Hours Lost</div>
-        <div class="stat-val bad" id="weeklyLost" style="transition: color 0.4s">10 hrs</div>
+    <div class="calc-grid">
+
+      <div class="inputs-col">
+        <div class="input-group">
+          <label class="input-label">Target OTE ($)</label>
+          <input type="number" id="oteInput" class="input-field" value="150000" oninput="calculate()">
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">
+            Slack / Email Distractions
+            <span class="val-readout"><span id="slackVal">5</span> hrs/wk</span>
+          </label>
+          <input type="range" id="slackSlider" min="0" max="20" value="5" step="1" oninput="calculate()">
+          <p class="slider-hint">Time spent reading non-essential channels or writing vague emails.</p>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">
+            CRM / Admin Bloat
+            <span class="val-readout"><span id="crmVal">5</span> hrs/wk</span>
+          </label>
+          <input type="range" id="crmSlider" min="0" max="20" value="5" step="1" oninput="calculate()">
+          <p class="slider-hint">Time spent logging calls, fixing data, or building useless reports.</p>
+        </div>
       </div>
 
-      <div class="stat-row">
-        <div class="stat-lbl">Annual Selling Time Burned</div>
-        <div class="stat-val bad" id="annualLost" style="transition: color 0.4s">520 hrs</div>
+      <div class="outputs-col" id="outputCol">
+
+        <div class="stat-row">
+          <div class="stat-lbl">Your True Hourly Rate</div>
+          <div class="stat-val" id="hourlyRate">$72/hr</div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-lbl">Total Weekly Hours Lost</div>
+          <div class="stat-val bad" id="weeklyLost">10 hrs</div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-lbl">Annual Selling Time Burned</div>
+          <div class="stat-val bad" id="annualLost">520 hrs</div>
+        </div>
+
+        <div class="bleed-box" id="bleedBox">
+          <div class="bleed-lbl">Annual Financial Bleed</div>
+          <div class="bleed-val alert" id="financialBleed">$37,500</div>
+          <div class="bleed-sub" id="bleedSub">The monetary value of the selling time you are throwing away this year.</div>
+        </div>
+
+        <button class="btn-reclaim" onclick="reclaimTime()">Reclaim My Time</button>
+        <div class="success-msg" id="successMsg">&#10003; TIME RECLAIMED. GET BACK TO THE PIPELINE.</div>
+
       </div>
 
-      <div class="bleed-box alert" id="bleedBox">
-        <div class="bleed-lbl">Annual Financial Bleed</div>
-        <div class="bleed-val alert" id="financialBleed">$37,500</div>
-        <div class="bleed-sub" id="bleedSub">The monetary value of the selling time you are throwing away this year.</div>
-      </div>
+    </div>
 
-      <button class="btn-reclaim" onclick="reclaimTime()">Reclaim My Time</button>
-      <div class="success-msg" id="successMsg">✓ TIME RECLAIMED. GET BACK TO THE PIPELINE.</div>
-
+    <div class="page-footer">
+      <span>AESDR &mdash; Chapter 9.2</span>
     </div>
 
   </div>
@@ -256,11 +591,65 @@ input[type=range]::-webkit-slider-runnable-track {
 // Formatting Utility
 const formatMoney = (num) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(num);
 
+// localStorage Keys
+const STORAGE_KEY = 'aesdr_time_reclaimed';
+const BANNER_KEY = 'aesdr_time_info_dismissed';
+
+// Save current input values to localStorage
+function saveToStorage() {
+  const data = {
+    ote: document.getElementById('oteInput').value,
+    slack: document.getElementById('slackSlider').value,
+    crm: document.getElementById('crmSlider').value
+  };
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {
+    // localStorage unavailable — silently ignore
+  }
+}
+
+// Load saved values from localStorage
+function loadFromStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (data.ote !== undefined) document.getElementById('oteInput').value = data.ote;
+    if (data.slack !== undefined) document.getElementById('slackSlider').value = data.slack;
+    if (data.crm !== undefined) document.getElementById('crmSlider').value = data.crm;
+    // Update slider readout labels
+    document.getElementById('slackVal').textContent = document.getElementById('slackSlider').value;
+    document.getElementById('crmVal').textContent = document.getElementById('crmSlider').value;
+  } catch (e) {
+    // localStorage unavailable — silently ignore
+  }
+}
+
+// Info Banner Dismissal
+function dismissBanner() {
+  const banner = document.getElementById('infoBanner');
+  banner.classList.add('dismissed');
+  setTimeout(function() { banner.style.display = 'none'; }, 300);
+  try {
+    localStorage.setItem(BANNER_KEY, '1');
+  } catch (e) {}
+}
+
+function initBanner() {
+  try {
+    if (localStorage.getItem(BANNER_KEY) === '1') {
+      const banner = document.getElementById('infoBanner');
+      banner.style.display = 'none';
+    }
+  } catch (e) {}
+}
+
 // Core Calculation Logic
 function calculate() {
   // Hide success message if visible
   document.getElementById('successMsg').classList.remove('show');
-  
+
   // Get values
   const ote = parseFloat(document.getElementById('oteInput').value) || 0;
   const slackHrs = parseInt(document.getElementById('slackSlider').value) || 0;
@@ -280,52 +669,51 @@ function calculate() {
   document.getElementById('hourlyRate').textContent = formatMoney(hourlyRate) + '/hr';
   document.getElementById('weeklyLost').textContent = weeklyLost + ' hrs';
   document.getElementById('annualLost').textContent = annualLost + ' hrs';
-  
+
   const bleedEl = document.getElementById('financialBleed');
   const bleedBox = document.getElementById('bleedBox');
   const bleedSub = document.getElementById('bleedSub');
   const outputCol = document.getElementById('outputCol');
-  
+
   bleedEl.textContent = formatMoney(financialBleed);
-  
+
   // Visual states based on whether they are bleeding money
   if (financialBleed > 0) {
-    bleedBox.className = 'bleed-box alert';
     bleedEl.className = 'bleed-val alert';
-    outputCol.className = 'outputs-col';
     document.getElementById('weeklyLost').className = 'stat-val bad';
     document.getElementById('annualLost').className = 'stat-val bad';
     bleedSub.textContent = "The monetary value of the selling time you are throwing away this year.";
   } else {
-    bleedBox.className = 'bleed-box saved';
     bleedEl.className = 'bleed-val saved';
-    outputCol.className = 'outputs-col saved-state';
     document.getElementById('weeklyLost').className = 'stat-val';
     document.getElementById('annualLost').className = 'stat-val';
     bleedSub.textContent = "Zero bleed. Your time is locked in on revenue.";
   }
+
+  // Persist to localStorage on every change
+  saveToStorage();
 }
 
 // Reclaim Button Action (Dopamine Hit)
 function reclaimTime() {
   const slackSlider = document.getElementById('slackSlider');
   const crmSlider = document.getElementById('crmSlider');
-  
+
   // Smoothly animate sliders to zero
   let sVal = parseInt(slackSlider.value);
   let cVal = parseInt(crmSlider.value);
-  
+
   if (sVal === 0 && cVal === 0) return; // Already at 0
-  
+
   const interval = setInterval(() => {
     if (sVal > 0) sVal--;
     if (cVal > 0) cVal--;
-    
+
     slackSlider.value = sVal;
     crmSlider.value = cVal;
-    
+
     calculate(); // Recalculate each frame
-    
+
     if (sVal === 0 && cVal === 0) {
       clearInterval(interval);
       // Trigger Success UI
@@ -334,7 +722,9 @@ function reclaimTime() {
   }, 20); // Speed of slider reset
 }
 
-// Initial calculation on load
+// Initialize on page load
+initBanner();
+loadFromStorage();
 calculate();
 </script>
 </body>

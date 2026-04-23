@@ -55,10 +55,47 @@ export async function POST(request: Request) {
     const email = session.customer_details?.email;
     const name = session.customer_details?.name || 'there';
     const tierRaw = session.metadata?.tier;
-    const tier = (tierRaw === 'team' || tierRaw === 'individual') ? tierRaw : 'individual';
     const amountCents = session.amount_total || 0;
 
     const supabase = createAdminClient();
+
+    // Handle artifact unlock purchases separately
+    if (tierRaw === 'artifact_unlock') {
+      const artifactType = session.metadata?.artifact_type;
+      if (artifactType && email) {
+        // Find user by email
+        let unlockUserId: string | null = null;
+        const { data: existingPurchase } = await supabase
+          .from('purchases')
+          .select('user_id')
+          .eq('user_email', email.toLowerCase())
+          .not('user_id', 'is', null)
+          .limit(1)
+          .maybeSingle();
+        unlockUserId = existingPurchase?.user_id ?? null;
+
+        if (unlockUserId) {
+          const { error: unlockError } = await supabase
+            .from('artifact_unlocks')
+            .upsert(
+              {
+                user_id: unlockUserId,
+                artifact_type: artifactType,
+                stripe_session_id: session.id,
+                amount_cents: amountCents,
+              },
+              { onConflict: 'user_id,artifact_type' }
+            );
+          if (unlockError) {
+            console.error('[webhook] Artifact unlock insert failed:', unlockError.message);
+          }
+        }
+      }
+      return NextResponse.json({ received: true });
+    }
+
+    const validTiers = ['sdr', 'ae', 'team'];
+    const tier = validTiers.includes(tierRaw || '') ? tierRaw! : 'sdr';
 
     // Look up or create Supabase auth user by email
     let userId: string | null = null;
@@ -75,6 +112,7 @@ export async function POST(request: Request) {
         email_confirm: true,
         user_metadata: {
           full_name: name !== 'there' ? name : undefined,
+          needs_password_change: true,
         },
       });
 
@@ -208,6 +246,48 @@ export async function POST(request: Request) {
         await sendReceiptEmail(email, name, tier, amountCents);
       } catch (err) {
         Sentry.captureException(err, { extra: { handler: 'stripe-webhook', step: 'receipt_email' } });
+      }
+    }
+  }
+
+  if (event.type === 'charge.refunded') {
+    const charge = event.data.object as Stripe.Charge;
+    const supabase = createAdminClient();
+
+    if (charge.payment_intent) {
+      const stripe = getStripe();
+      const sessions = await stripe.checkout.sessions.list({
+        payment_intent: charge.payment_intent as string,
+        limit: 1,
+      });
+      const sessionId = sessions.data[0]?.id;
+      if (sessionId) {
+        const { error } = await supabase
+          .from('purchases')
+          .update({ status: 'refunded' })
+          .eq('stripe_session_id', sessionId);
+        if (error) console.error('[webhook] Refund status update failed:', error.message);
+      }
+    }
+  }
+
+  if (event.type === 'charge.dispute.created') {
+    const dispute = event.data.object as Stripe.Dispute;
+    const supabase = createAdminClient();
+
+    if (dispute.payment_intent) {
+      const stripe = getStripe();
+      const sessions = await stripe.checkout.sessions.list({
+        payment_intent: dispute.payment_intent as string,
+        limit: 1,
+      });
+      const sessionId = sessions.data[0]?.id;
+      if (sessionId) {
+        const { error } = await supabase
+          .from('purchases')
+          .update({ status: 'disputed' })
+          .eq('stripe_session_id', sessionId);
+        if (error) console.error('[webhook] Dispute status update failed:', error.message);
       }
     }
   }

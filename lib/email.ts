@@ -47,49 +47,242 @@ async function safeSend(
 
 // ─── Welcome Email (immediate after purchase) ───
 
-export async function sendWelcomeEmail(to: string, name: string, _tempPassword: string | null) {
-  // Generate a magic link for password-free first sign-in.
-  // The user can set their own password later via Account settings.
-  const resetUrl = `${SITE}/login?email=${encodeURIComponent(to)}`;
+export async function sendWelcomeEmail(to: string, name: string, tempPassword: string | null) {
+  const loginUrl = `${SITE}/login?email=${encodeURIComponent(to)}`;
   return safeSend(`welcome to ${to}`, () =>
     getResend().emails.send({
       from: FROM,
       to,
       headers: UNSUBSCRIBE_HEADERS,
       subject: "You're in. Start here.",
-      html: welcomeHtml(name, to, resetUrl),
+      html: welcomeHtml(name, to, loginUrl, tempPassword),
     })
   );
 }
 
-function welcomeHtml(name: string, email: string, resetUrl: string) {
+function welcomeHtml(name: string, email: string, loginUrl: string, tempPassword: string | null) {
   const safeName = esc(name);
   const safeEmail = esc(email);
-  const credentialsBlock = `
-  <div style="background:#f8f9fa;padding:16px 20px;margin:20px 0;border-left:3px solid #10B981">
-    <p style="margin:0 0 6px;font-weight:700">Your account:</p>
-    <p style="margin:0 0 4px"><strong>Email:</strong> ${safeEmail}</p>
-    <p style="margin:8px 0 0;font-size:13px;color:#666">Click the button below to sign in. You can set a password in Account settings after your first login.</p>
-  </div>`;
-  return `
-<div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
-  <p>Welcome to AESDR${name !== 'there' ? `, ${safeName}` : ''}.</p>
-  <p>No long onboarding. No orientation video. Here's what matters:</p>
-  ${credentialsBlock}
-  <p style="margin:24px 0"><a href="${resetUrl}" style="display:inline-block;padding:14px 28px;background:#10B981;color:#fff;font-weight:700;text-decoration:none;font-size:16px">Sign In & Start →</a></p>
-  <p>Course 1 covers the fundamentals — creating structure, building real camaraderie in your AE/SDR partnership, and setting up your first 90 days the right way.</p>
-  <p><strong>A few things to know:</strong></p>
-  <ul>
-    <li>There are 12 courses. Each has 3 lessons with interactive exercises.</li>
-    <li>Your progress saves automatically. Pick up where you left off anytime.</li>
-    <li>Five courses come with downloadable tools (commission tracker, alignment contracts, etc.) — they unlock when you complete the lesson.</li>
-  </ul>
-  <p><strong>Join the community:</strong> <a href="https://discord.gg/uEpAz3yw" style="color:#10B981">AESDR Discord</a></p>
-  <p><strong>If you need help:</strong> Reply to this email or reach out at <a href="mailto:support@aesdr.com" style="color:#10B981">support@aesdr.com</a>. Real person, real inbox, 48-hour response time.</p>
-  <p>Go.</p>
-  <p>— AESDR</p>
-  ${footer()}
-</div>`;
+  const greeting = name && name !== 'there' ? `Welcome, ${safeName}.` : 'Welcome.';
+  const passwordRow = tempPassword
+    ? `
+      <tr>
+        <td style="padding:6px 0;font-family:Georgia,'Times New Roman',serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#64748B;width:180px;vertical-align:top">Temporary password</td>
+        <td style="padding:6px 0;vertical-align:top">
+          <code style="display:inline-block;background:#0F172A;color:#F8FAFC;padding:8px 14px;border-radius:4px;font-family:'SF Mono',Consolas,monospace;font-size:15px;letter-spacing:2px;font-weight:700">${esc(tempPassword)}</code>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" style="padding:10px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:13px;color:#64748B;font-style:italic;line-height:1.6">
+          You'll be prompted to set your own password on first sign-in.
+        </td>
+      </tr>`
+    : `
+      <tr>
+        <td colspan="2" style="padding:6px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:13px;color:#64748B;font-style:italic;line-height:1.6">
+          Use your existing password to sign in.
+        </td>
+      </tr>`;
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Welcome to AESDR</title>
+</head>
+<body style="margin:0;padding:0;background:#F5F3EE;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#F5F3EE;padding:32px 16px;">
+  <tr>
+    <td align="center">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;width:100%;background:#FFFFFF;border:1px solid #E8E3D8;">
+
+        <!-- Iris shimmer accent bar -->
+        <tr>
+          <td style="height:4px;background:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);font-size:0;line-height:0;">&nbsp;</td>
+        </tr>
+
+        <!-- Header / monogram -->
+        <tr>
+          <td style="padding:36px 48px 8px 48px;">
+            <p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#94A3B8;">
+              AESDR &middot; Member No. ${Math.floor(Math.random() * 900 + 100)}
+            </p>
+          </td>
+        </tr>
+
+        <!-- Editorial headline -->
+        <tr>
+          <td style="padding:0 48px 8px 48px;">
+            <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:44px;line-height:1.08;letter-spacing:-0.01em;color:#0F172A;">
+              ${greeting}
+            </h1>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:0 48px 32px 48px;">
+            <p style="margin:16px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:17px;line-height:1.7;color:#334155;font-style:italic;">
+              You're in. What follows is everything you need to begin — no orientation video, no onboarding checklist. Only the work.
+            </p>
+          </td>
+        </tr>
+
+        <!-- Divider -->
+        <tr>
+          <td style="padding:0 48px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+              <tr><td style="border-top:1px solid #E8E3D8;font-size:0;line-height:0;height:1px;">&nbsp;</td></tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Credentials block -->
+        <tr>
+          <td style="padding:28px 48px 8px 48px;">
+            <p style="margin:0 0 18px;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#10B981;font-weight:700;">
+              Your credentials
+            </p>
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FAFAF7;border:1px solid #E8E3D8;border-left:3px solid #10B981;">
+              <tr>
+                <td style="padding:24px 24px 20px 24px;">
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                    <tr>
+                      <td style="padding:6px 0;font-family:Georgia,'Times New Roman',serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#64748B;width:180px;vertical-align:top">Email</td>
+                      <td style="padding:6px 0;font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#0F172A;vertical-align:top;word-break:break-all">${safeEmail}</td>
+                    </tr>
+                    ${passwordRow}
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- CTA Button -->
+        <tr>
+          <td style="padding:32px 48px 8px 48px;" align="center">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="background:#0F172A;">
+                  <a href="${loginUrl}" style="display:inline-block;padding:18px 40px;font-family:'SF Mono',Consolas,monospace;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#FFFFFF;text-decoration:none;font-weight:700;">
+                    Sign In &amp; Begin &rarr;
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- The work -->
+        <tr>
+          <td style="padding:40px 48px 0 48px;">
+            <p style="margin:0 0 10px;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#94A3B8;">
+              Course I &middot; The Fundamentals
+            </p>
+            <p style="margin:0 0 20px;font-family:Georgia,'Times New Roman',serif;font-size:17px;line-height:1.7;color:#334155;">
+              Structure. Real camaraderie in your AE/SDR partnership. A first 90 days done the right way. That is where this begins.
+            </p>
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+              <tr>
+                <td style="padding:10px 0;border-top:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.6;color:#334155;">
+                  <strong style="color:#0F172A;">Twelve courses.</strong> Three lessons each. Interactive exercises, not video lectures.
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:10px 0;border-top:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.6;color:#334155;">
+                  <strong style="color:#0F172A;">Progress saves.</strong> Return at any hour. Pick up where you stopped.
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:10px 0;border-top:1px solid #E8E3D8;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.6;color:#334155;">
+                  <strong style="color:#0F172A;">Five tools unlock along the way.</strong> Commission tracker. Alignment contracts. Strike plans. Yours when the lesson is done.
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Discord VIP Section -->
+        <tr>
+          <td style="padding:40px 48px 0 48px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:linear-gradient(135deg,#5865F2 0%,#4752C4 100%);border-radius:0;">
+              <tr>
+                <td style="padding:32px 32px 28px 32px;">
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                    <tr>
+                      <td style="vertical-align:middle;padding-right:20px;" width="64">
+                        <!-- Discord logo SVG (inline) -->
+                        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="56" height="56" style="background:#FFFFFF;border-radius:12px;">
+                          <tr>
+                            <td align="center" valign="middle" style="padding:12px;">
+                              <img src="https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a69f118df70ad7828d4_icon_clyde_blurple_RGB.png" width="32" height="32" alt="Discord" style="display:block;border:0;" />
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                      <td style="vertical-align:middle;">
+                        <p style="margin:0 0 4px;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.7);font-weight:700;">
+                          Members only
+                        </p>
+                        <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:22px;line-height:1.2;color:#FFFFFF;font-weight:400;">
+                          The AESDR Discord
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                  <p style="margin:20px 0 22px;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.7;color:rgba(255,255,255,0.92);">
+                    Real reps. Real deals. Real accountability. A private room where the work continues between lessons &mdash; no guru energy, no motivational noise.
+                  </p>
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td style="background:#FFFFFF;">
+                        <a href="https://discord.gg/uEpAz3yw" style="display:inline-block;padding:14px 28px;font-family:'SF Mono',Consolas,monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#5865F2;text-decoration:none;font-weight:700;">
+                          Accept Your Invitation &rarr;
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Help -->
+        <tr>
+          <td style="padding:36px 48px 0 48px;">
+            <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.7;color:#334155;">
+              <strong style="color:#0F172A;">If you need anything:</strong> reply here, or write to <a href="mailto:support@aesdr.com" style="color:#10B981;text-decoration:underline;">support@aesdr.com</a>. Real person, real inbox, 48-hour response.
+            </p>
+          </td>
+        </tr>
+
+        <!-- Sign-off -->
+        <tr>
+          <td style="padding:32px 48px 40px 48px;">
+            <p style="margin:0 0 4px;font-family:Georgia,'Times New Roman',serif;font-size:17px;line-height:1.5;color:#0F172A;font-style:italic;">
+              Begin.
+            </p>
+            <p style="margin:24px 0 0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#94A3B8;">
+              &mdash; AESDR
+            </p>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="padding:0 48px 32px 48px;">
+            ${emailFooterInner()}
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>`;
 }
 
 // ─── Purchase Receipt Email ───
@@ -111,21 +304,124 @@ function receiptHtml(name: string, tier: string, amountCents: number) {
   const amount = (amountCents / 100).toFixed(2);
   const planLabel = tier === 'team' ? 'Team' : 'Individual';
   const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  return `
-<div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
-  <p style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#10B981;margin-bottom:4px">Purchase Confirmed</p>
-  <p>Hey ${safeName},</p>
-  <p>This confirms your AESDR purchase. Keep this email for your records.</p>
-  <div style="background:#f8f9fa;padding:16px 20px;margin:16px 0;border-left:3px solid #10B981">
-    <p style="margin:0 0 4px"><strong>Plan:</strong> AESDR ${planLabel}</p>
-    <p style="margin:0 0 4px"><strong>Amount:</strong> $${amount}</p>
-    <p style="margin:0 0 4px"><strong>Date:</strong> ${date}</p>
-    <p style="margin:0"><strong>Refund window:</strong> 14 days from purchase</p>
-  </div>
-  <p>If you need a formal invoice or have billing questions, reply to this email.</p>
-  <p>— AESDR</p>
-  ${footer()}
-</div>`;
+  const receiptNo = `AESDR-${Date.now().toString(36).toUpperCase().slice(-8)}`;
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AESDR Purchase Confirmation</title>
+</head>
+<body style="margin:0;padding:0;background:#F5F3EE;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#F5F3EE;padding:32px 16px;">
+  <tr>
+    <td align="center">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;width:100%;background:#FFFFFF;border:1px solid #E8E3D8;">
+
+        <!-- Iris shimmer accent bar -->
+        <tr>
+          <td style="height:4px;background:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);font-size:0;line-height:0;">&nbsp;</td>
+        </tr>
+
+        <!-- Kicker -->
+        <tr>
+          <td style="padding:36px 48px 6px 48px;">
+            <p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#10B981;font-weight:700;">
+              Purchase Confirmed
+            </p>
+          </td>
+        </tr>
+
+        <!-- Editorial headline -->
+        <tr>
+          <td style="padding:0 48px 6px 48px;">
+            <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:36px;line-height:1.1;letter-spacing:-0.01em;color:#0F172A;">
+              A record of your purchase.
+            </h1>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:0 48px 28px 48px;">
+            <p style="margin:16px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:16px;line-height:1.7;color:#334155;font-style:italic;">
+              Hey ${safeName} &mdash; thank you. Keep this note for your records.
+            </p>
+          </td>
+        </tr>
+
+        <!-- Divider -->
+        <tr>
+          <td style="padding:0 48px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+              <tr><td style="border-top:1px solid #E8E3D8;font-size:0;line-height:0;height:1px;">&nbsp;</td></tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Line items -->
+        <tr>
+          <td style="padding:28px 48px 8px 48px;">
+            <p style="margin:0 0 18px;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#94A3B8;">
+              Receipt &middot; ${receiptNo}
+            </p>
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FAFAF7;border:1px solid #E8E3D8;border-left:3px solid #10B981;">
+              <tr>
+                <td style="padding:20px 24px;">
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                    <tr>
+                      <td style="padding:10px 0;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#64748B;width:180px;vertical-align:top">Plan</td>
+                      <td style="padding:10px 0;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#0F172A;vertical-align:top">AESDR ${planLabel}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:10px 0;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#64748B;vertical-align:top">Date</td>
+                      <td style="padding:10px 0;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#0F172A;vertical-align:top">${date}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:10px 0;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#64748B;vertical-align:top">Refund window</td>
+                      <td style="padding:10px 0;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#0F172A;vertical-align:top">14 days from purchase</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:16px 0 6px;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#0F172A;font-weight:700;vertical-align:top">Amount paid</td>
+                      <td style="padding:16px 0 6px;font-family:Georgia,'Times New Roman',serif;font-size:28px;line-height:1;color:#0F172A;vertical-align:top;font-weight:400">$${amount}</td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Invoice note -->
+        <tr>
+          <td style="padding:28px 48px 0 48px;">
+            <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.7;color:#334155;">
+              Need a formal invoice, VAT details, or a billing change? Reply here and we'll handle it. Questions go to <a href="mailto:support@aesdr.com" style="color:#10B981;text-decoration:underline;">support@aesdr.com</a>.
+            </p>
+          </td>
+        </tr>
+
+        <!-- Sign-off -->
+        <tr>
+          <td style="padding:32px 48px 40px 48px;">
+            <p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#94A3B8;">
+              &mdash; AESDR
+            </p>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="padding:0 48px 32px 48px;">
+            ${emailFooterInner()}
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>`;
 }
 
 // ─── Day 3 Drip Email ───
@@ -431,6 +727,33 @@ function footer() {
     You're receiving this because you purchased or started a checkout at AESDR.<br>
     To unsubscribe, reply with UNSUBSCRIBE.
   </p>`;
+}
+
+/**
+ * Footer for the editorial/luxury-styled emails (welcome, receipt).
+ * Designed to sit inside the 600px white card; uses Georgia/SF Mono
+ * and the warm stone palette rather than the old grey utilitarian footer.
+ */
+function emailFooterInner() {
+  return `
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+      <td style="border-top:1px solid #E8E3D8;padding-top:20px;">
+        <p style="margin:0 0 10px;font-family:'SF Mono',Consolas,monospace;font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:#94A3B8;">
+          AESDR &middot; <a href="mailto:support@aesdr.com" style="color:#94A3B8;text-decoration:none;">support@aesdr.com</a>
+        </p>
+        <p style="margin:0 0 10px;font-family:Georgia,'Times New Roman',serif;font-size:12px;line-height:1.6;color:#94A3B8;">
+          <a href="${SITE}/contact" style="color:#94A3B8;text-decoration:underline;">Contact</a>
+          &nbsp;&middot;&nbsp;
+          <a href="${SITE}/refund-policy" style="color:#94A3B8;text-decoration:underline;">Refund Policy</a>
+        </p>
+        <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:11px;line-height:1.6;color:#B0B5BD;font-style:italic;">
+          You're receiving this because you purchased or started a checkout at AESDR.
+          To unsubscribe, reply with UNSUBSCRIBE.
+        </p>
+      </td>
+    </tr>
+  </table>`;
 }
 
 // ─── Team Invite Email ───

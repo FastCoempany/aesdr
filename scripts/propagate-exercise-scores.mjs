@@ -78,7 +78,7 @@ for (const dir of lessonDirs) {
     // Find the handleNext or nav function that calls _saveQuizState()
     // and add _saveExerciseScores() right after each _saveQuizState() call
     content = content.replace(
-      /_saveQuizState\(\);?/g,
+      /(?<!function )_saveQuizState\(\);/g,
       (match) => match + "_saveExerciseScores();"
     );
 

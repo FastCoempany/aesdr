@@ -1,12 +1,16 @@
+import dynamic from "next/dynamic";
 import Link from "next/link";
 
+import AesdrBrand from "@/components/AesdrBrand";
 import CheckoutButton from "@/components/CheckoutButton";
-import DeckStack from "@/components/DeckStack";
 import GhostButton from "@/components/GhostButton";
 import LandingSequence from "@/components/LandingSequence";
-import TeaseGate from "@/components/TeaseGate";
-import Testimonials from "@/components/Testimonials";
+import SignOutButton from "@/components/SignOutButton";
+import { createClient } from "@/utils/supabase/server";
 import styles from "./page.module.css";
+
+const Testimonials = dynamic(() => import("@/components/Testimonials"));
+const DeckStack = dynamic(() => import("@/components/DeckStack"));
 
 const FAQ = [
   { q: "Is this for me if I\u2019m brand new to sales?", a: "Yes, it\u2019s actually inspired by you. The curriculum starts with foundational frameworks and builds to advanced execution. If you\u2019re in your first 18 months, you\u2019ll skip years of painful trial-and-error." },
@@ -19,27 +23,35 @@ const FAQ = [
   { q: "Can my company expense this?", a: "Of course. We provide a receipt and invoice on purchase. Most L&D budgets cover this easily \u2014 especially the Team plan." },
 ];
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const isAuthenticated = !!user;
+
   return (
-    <TeaseGate>
     <main className={styles.page}>
       <GhostButton />
 
       {/* ─── NAV ─── */}
       <header className={styles.nav}>
-        <span className={styles.brand}>AESDR</span>
+        <AesdrBrand className={styles.brand} style={{ textDecoration: "none", color: "inherit" }} />
         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-          <Link href="/login" className={styles.navLink}>Sign In</Link>
-          <a href="#pricing" className={styles.navCta}>Get Access</a>
+          {isAuthenticated ? (
+            <SignOutButton />
+          ) : (
+            <>
+              <Link href="/login" className={styles.navLink}>Sign In</Link>
+              <a href="#pricing" className={styles.navCta}>Get Access</a>
+            </>
+          )}
         </div>
       </header>
 
       {/* Hero + Confession + Terminal + Zoom */}
       <LandingSequence />
 
-      <div aria-hidden="true" style={{ height: "15vh" }} />
+      <div aria-hidden="true" style={{ height: "4vh" }} />
 
-      {/* Curriculum Deck */}
       <DeckStack />
 
       {/* Testimonials */}
@@ -63,7 +75,7 @@ export default function LandingPage() {
               <li>Future curriculum updates</li>
               <li>14-day refund guarantee</li>
             </ul>
-            <CheckoutButton tier="individual" label="Buy For Me" className={styles.priceCta} />
+            <CheckoutButton tier="sdr" label="Buy For Me" className={styles.priceCta} />
           </div>
           {/* AE */}
           <div className={styles.priceCard}>
@@ -77,7 +89,7 @@ export default function LandingPage() {
               <li>Future curriculum updates</li>
               <li>14-day refund guarantee</li>
             </ul>
-            <CheckoutButton tier="individual" label="Buy For Me" className={styles.priceCta} />
+            <CheckoutButton tier="ae" label="Buy For Me" className={styles.priceCta} />
           </div>
           {/* Team */}
           <div className={`${styles.priceCard} ${styles.priceCardFeatured}`}>
@@ -129,7 +141,11 @@ export default function LandingPage() {
           12 courses. 5 takeaway tools. One price. Lifetime access.
           Built for AEs and SDRs who want to get better, not just feel better.
         </p>
-        <a href="#pricing" className={styles.ctaPrimary}>Get Access</a>
+        {isAuthenticated ? (
+          <Link href="/dashboard" className={styles.ctaPrimary}>Continue &rarr;</Link>
+        ) : (
+          <a href="#pricing" className={styles.ctaPrimary}>Get Access</a>
+        )}
       </section>
 
       {/* Content Warning */}
@@ -148,6 +164,5 @@ export default function LandingPage() {
         <Link href="/contact">Contact</Link>
       </footer>
     </main>
-    </TeaseGate>
   );
 }

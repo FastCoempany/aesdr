@@ -53,9 +53,11 @@ function buildHTML(arr: Char[], irisClass: string): string {
   return h;
 }
 
+const SEEN_KEY = "aesdr_anim_seen";
+
 export default function LandingSequence() {
   const heroRef = useRef<HTMLDivElement>(null);
-  const enterBtnRef = useRef<HTMLButtonElement>(null);
+  const backdropRef = useRef<HTMLDivElement>(null);
   const confessionRef = useRef<HTMLDivElement>(null);
   const typingRef = useRef<HTMLDivElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
@@ -71,7 +73,7 @@ export default function LandingSequence() {
   useEffect(() => {
     let paused = false;
     let done = false;
-    let timer: ReturnType<typeof setTimeout> | null = null;
+    let scrollUnlocked = false;
     let sceneIdx = 0;
     let charIdx = 0;
     let typedChars: Char[] = [];
@@ -79,17 +81,78 @@ export default function LandingSequence() {
     let scrollHandler: (() => void) | null = null;
     let resizeHandler: (() => void) | null = null;
 
-    document.body.style.overflow = "hidden";
+    // Track every timer so cleanup (StrictMode / HMR / unmount) can kill them
+    // all — otherwise orphan chains keep mutating DOM after unmount and can
+    // leave overflow stuck on hidden.
+    const timers = new Set<ReturnType<typeof setTimeout>>();
+    function schedule(fn: () => void, delay: number) {
+      const id = setTimeout(() => {
+        timers.delete(id);
+        if (paused) return;
+        fn();
+      }, delay);
+      timers.add(id);
+      return id;
+    }
+    function clearAllTimers() {
+      for (const id of timers) clearTimeout(id);
+      timers.clear();
+    }
+
+    if (typingRef.current) typingRef.current.innerHTML = "";
+
+    const root = document.documentElement;
+    const body = document.body;
+
+    function restoreDocumentScroll() {
+      root.style.overflow = "";
+      root.style.overflowX = "";
+      body.style.overflow = "";
+      body.style.overflowX = "";
+    }
+
+    const alreadySeen = sessionStorage.getItem(SEEN_KEY) === "1";
+
+    if (alreadySeen) {
+      // Skip animation — go straight to hero + zoom scroll
+      if (backdropRef.current) { backdropRef.current.style.opacity = "0"; backdropRef.current.style.pointerEvents = "none"; }
+      if (confessionRef.current) { confessionRef.current.style.opacity = "0"; confessionRef.current.style.pointerEvents = "none"; }
+      if (terminalRef.current) { terminalRef.current.style.opacity = "0"; terminalRef.current.style.pointerEvents = "none"; }
+      if (heroRef.current) { heroRef.current.style.opacity = "1"; heroRef.current.style.pointerEvents = "auto"; }
+      root.style.overflowX = "hidden";
+      body.style.overflowX = "hidden";
+      viewportRef.current?.classList.add(s.viewportActive);
+      sideMarkerRef.current?.classList.add(s.sideMarkerActive);
+      progressRef.current?.classList.add(s.scrollProgressActive);
+      attachZoomScroll();
+      return () => {
+        if (scrollHandler) window.removeEventListener("scroll", scrollHandler);
+        if (resizeHandler) window.removeEventListener("resize", resizeHandler);
+      };
+    }
+
+    root.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+
+    timers.add(setTimeout(() => {
+      if (!scrollUnlocked) unlockScroll();
+    }, 25000));
+
+    function onEscape(e: KeyboardEvent) {
+      if (scrollUnlocked) return;
+      if (e.key === "Escape") unlockScroll();
+    }
+    window.addEventListener("keydown", onEscape);
 
     function typeSceneChar(flat: Char[], scene: typeof SCENES[0]) {
       if (paused || done || !lineEl) return;
       if (charIdx >= flat.length) {
         lineEl.innerHTML = buildHTML(typedChars, s.irisText);
-        timer = setTimeout(() => {
-          if (paused || done) return;
+        schedule(() => {
+          if (done) return;
           if (scene.exit && lineEl) {
             lineEl.classList.add(scene.exit === "fade-out" ? s.tlineFadeOut : s.tlineDissolve);
-            timer = setTimeout(() => { sceneIdx++; startScene(); }, scene.exitWait);
+            schedule(() => { sceneIdx++; startScene(); }, scene.exitWait);
           } else { sceneIdx++; startScene(); }
         }, scene.holdAfter);
         return;
@@ -97,12 +160,12 @@ export default function LandingSequence() {
       typedChars.push(flat[charIdx]);
       charIdx++;
       lineEl.innerHTML = buildHTML(typedChars, s.irisText) + `<span class="${s.cursor}"></span>`;
-      timer = setTimeout(() => typeSceneChar(flat, scene), scene.charDelay + Math.random() * 18);
+      schedule(() => typeSceneChar(flat, scene), scene.charDelay + Math.random() * 18);
     }
 
     function startScene() {
       if (paused || done) return;
-      if (sceneIdx >= SCENES.length) { timer = setTimeout(showTerminal, 800); return; }
+      if (sceneIdx >= SCENES.length) { schedule(showTerminal, 800); return; }
       typedChars = []; charIdx = 0;
       const el = document.createElement("div");
       el.className = s.tline;
@@ -118,72 +181,121 @@ export default function LandingSequence() {
         confessionRef.current.style.opacity = "0";
         confessionRef.current.style.pointerEvents = "none";
       }
-      setTimeout(() => {
+      schedule(() => {
         terminalRef.current?.classList.add(s.terminalLayerActive);
         typeTermLines(0);
       }, 500);
     }
 
     function typeTermLines(idx: number) {
+      if (paused) return;
       const lines = termBodyRef.current?.querySelectorAll<HTMLElement>(`.${s.termLine}`);
       if (!lines || idx >= lines.length) {
-        setTimeout(() => {
+        schedule(() => {
           termOutputRef.current?.classList.add(s.termOutputVisible);
-          setTimeout(() => { scrollHintRef.current?.classList.add(s.scrollHintVisible); unlockScroll(); }, 800);
+          schedule(() => {
+            scrollHintRef.current?.classList.add(s.scrollHintVisible);
+            unlockScroll();
+          }, 800);
         }, 500);
         return;
       }
       const line = lines[idx];
-      const span = line.querySelector("span:last-child") as HTMLElement;
+      const maybeSpan = line.querySelector("span:last-child") as HTMLElement | null;
+      if (!maybeSpan) { typeTermLines(idx + 1); return; }
+      const span: HTMLElement = maybeSpan;
       const fullText = (line.getAttribute("data-text") ?? "").replace(/^> /, "");
       line.classList.add(s.termLineVisible);
       let ci = 0;
       function typeChar() {
-        if (ci >= fullText.length) { span.textContent = fullText; setTimeout(() => typeTermLines(idx + 1), 300); return; }
+        if (paused) return;
+        if (ci >= fullText.length) {
+          span.textContent = fullText;
+          schedule(() => typeTermLines(idx + 1), 300);
+          return;
+        }
         ci++;
         span.innerHTML = fullText.substring(0, ci) + `<span class="${s.termCursor}"></span>`;
-        setTimeout(typeChar, 18 + Math.random() * 12);
+        schedule(typeChar, 18 + Math.random() * 12);
       }
       typeChar();
     }
 
     function unlockScroll() {
-      document.body.style.overflow = "visible";
-      document.body.style.overflowX = "hidden";
-      setTimeout(() => {
-        viewportRef.current?.classList.add(s.viewportActive);
-        sideMarkerRef.current?.classList.add(s.sideMarkerActive);
-        progressRef.current?.classList.add(s.scrollProgressActive);
-      }, 200);
+      if (scrollUnlocked) return;
+      scrollUnlocked = true;
 
+      // Pin to top so browser scroll-restoration doesn't jump the user
+      // to where they were on a previous page load.
+      window.scrollTo(0, 0);
+
+      root.style.overflow = "";
+      root.style.overflowX = "hidden";
+      body.style.overflow = "";
+      body.style.overflowX = "hidden";
+      if (backdropRef.current) {
+        backdropRef.current.style.transition = "opacity 0.6s ease";
+        backdropRef.current.style.opacity = "0";
+        backdropRef.current.style.pointerEvents = "none";
+      }
+      if (confessionRef.current) {
+        confessionRef.current.style.transition = "opacity 0.4s ease";
+        confessionRef.current.style.opacity = "0";
+        confessionRef.current.style.pointerEvents = "none";
+      }
+      if (terminalRef.current) {
+        terminalRef.current.style.transition = "opacity 0.4s ease";
+        terminalRef.current.style.opacity = "0";
+        terminalRef.current.style.pointerEvents = "none";
+      }
+
+      sessionStorage.setItem(SEEN_KEY, "1");
+      if (heroRef.current) { heroRef.current.style.opacity = "1"; heroRef.current.style.pointerEvents = "auto"; }
+
+      viewportRef.current?.classList.add(s.viewportActive);
+      sideMarkerRef.current?.classList.add(s.sideMarkerActive);
+      progressRef.current?.classList.add(s.scrollProgressActive);
+      attachZoomScroll();
+    }
+
+    function attachZoomScroll() {
       scrollHandler = function updateZoom() {
         const sp = scrollSpaceRef.current;
         const vp = viewportRef.current;
         if (!sp || !vp) return;
 
-        const heroH = window.innerHeight;
-        const scrollY = Math.max(0, window.scrollY - heroH);
+        const scrollY = window.scrollY;
         const zoomHeight = sp.offsetHeight;
         const maxScroll = zoomHeight - window.innerHeight;
         if (maxScroll <= 0) return;
 
-        const pastZoom = window.scrollY > heroH + zoomHeight;
+        const pastZoom = scrollY > zoomHeight;
         if (pastZoom) {
           vp.style.display = "none";
+          if (heroRef.current) { heroRef.current.style.opacity = "0"; heroRef.current.style.pointerEvents = "none"; }
           if (sideMarkerRef.current) sideMarkerRef.current.style.opacity = "0";
           if (progressRef.current) progressRef.current.style.opacity = "0";
-          if (ctaRef.current) { ctaRef.current.style.display = "none"; }
+          if (ctaRef.current) {
+            ctaRef.current.classList.remove(s.ctaOverlayVisible);
+            ctaRef.current.style.display = "none";
+            ctaRef.current.style.pointerEvents = "none";
+          }
           return;
         }
-        /* Before zoom starts, also hide viewport so it doesn't block hero clicks */
-        const beforeZoom = window.scrollY < heroH * 0.5;
-        if (beforeZoom) {
-          vp.style.display = "none";
-          if (sideMarkerRef.current) sideMarkerRef.current.style.opacity = "0";
-          if (progressRef.current) progressRef.current.style.opacity = "0";
-          if (ctaRef.current) { ctaRef.current.style.display = "none"; }
-          return;
+        // Hero ↔ viewport handoff
+        const heroZone = window.innerHeight * 0.35;
+        if (heroRef.current) {
+          const heroOp = Math.max(0, 1 - scrollY / heroZone);
+          heroRef.current.style.opacity = String(heroOp);
+          heroRef.current.style.pointerEvents = heroOp > 0.1 ? "auto" : "none";
+          if (heroOp > 0.5) {
+            vp.style.opacity = "0";
+            if (sideMarkerRef.current) sideMarkerRef.current.style.opacity = "0";
+            if (progressRef.current) progressRef.current.style.opacity = "0";
+            return;
+          }
         }
+
         vp.style.display = ""; vp.style.opacity = ""; vp.style.pointerEvents = "";
         if (sideMarkerRef.current) sideMarkerRef.current.style.opacity = "";
         if (progressRef.current) progressRef.current.style.opacity = "";
@@ -202,7 +314,12 @@ export default function LandingSequence() {
         cards.forEach((card, i) => {
           if (i === activeIndex) {
             let scale: number, op: number;
-            if (cardFrac < 0.12) { const t = cardFrac / 0.12; scale = 2.5 - 1.5 * t; op = t; }
+            if (activeIndex === 0 && cardFrac < 0.12) {
+              // First card: start already visible, then settle to 1x.
+              const t = cardFrac / 0.12;
+              scale = 1.3 - 0.3 * t;
+              op = 0.8 + 0.2 * t;
+            } else if (cardFrac < 0.12) { const t = cardFrac / 0.12; scale = 2.5 - 1.5 * t; op = t; }
             else if (cardFrac < 0.78) { scale = 1; op = 1; }
             else { const t = (cardFrac - 0.78) / 0.22; scale = 1 - 0.6 * t; op = 1 - t; }
             card.style.transform = `scale(${scale})`; card.style.opacity = String(op);
@@ -212,19 +329,19 @@ export default function LandingSequence() {
         const dots = sideMarkerRef.current?.querySelectorAll<HTMLElement>(`.${s.markerDot}`);
         dots?.forEach((dot, i) => dot.classList.toggle(s.markerDotActive, i === activeIndex));
 
-        if (progress > 0.82 && progress < 0.94) {
-          const fadeIn = Math.min(1, (progress - 0.82) / 0.03);
-          const fadeOut = progress > 0.90 ? 1 - Math.min(1, (progress - 0.90) / 0.03) : 1;
+        if (progress > 0.84 && progress < 0.97) {
+          const fadeIn = Math.min(1, (progress - 0.84) / 0.03);
+          const fadeOut = progress > 0.93 ? 1 - Math.min(1, (progress - 0.93) / 0.03) : 1;
           const op = fadeIn * fadeOut;
           if (ctaRef.current) { ctaRef.current.classList.add(s.ctaOverlayVisible); ctaRef.current.style.opacity = String(op); }
         } else {
           ctaRef.current?.classList.remove(s.ctaOverlayVisible);
-          if (ctaRef.current) { ctaRef.current.style.opacity = "0"; ctaRef.current.style.display = progress >= 0.94 ? "none" : ""; }
+          if (ctaRef.current) { ctaRef.current.style.opacity = "0"; ctaRef.current.style.display = progress >= 0.97 ? "none" : ""; }
         }
 
-        if (scrollY > 50 && heroRef.current) {
-          if (terminalRef.current) { terminalRef.current.style.opacity = "0"; terminalRef.current.style.pointerEvents = "none"; }
-          heroRef.current.style.opacity = String(Math.max(0, 1 - scrollY / 300));
+        if (scrollY > 50 && terminalRef.current) {
+          terminalRef.current.style.opacity = "0";
+          terminalRef.current.style.pointerEvents = "none";
         }
       };
 
@@ -234,52 +351,33 @@ export default function LandingSequence() {
       scrollHandler();
     }
 
-    /* Button click triggers confession */
-    function handleEnterClick() {
-      confessionRef.current?.classList.add(s.confessionLayerActive);
-      setTimeout(startScene, 500);
-    }
-    const btn = enterBtnRef.current;
-    btn?.addEventListener("click", handleEnterClick);
+    /* Auto-start confession on mount */
+    confessionRef.current?.classList.add(s.confessionLayerActive);
+    schedule(startScene, 500);
 
     return () => {
-      if (timer) clearTimeout(timer);
+      paused = true;
+      clearAllTimers();
+      window.removeEventListener("keydown", onEscape);
       if (scrollHandler) window.removeEventListener("scroll", scrollHandler);
       if (resizeHandler) window.removeEventListener("resize", resizeHandler);
-      btn?.removeEventListener("click", handleEnterClick);
-      document.body.style.overflow = "";
-      document.body.style.overflowX = "";
+      restoreDocumentScroll();
     };
   }, []);
 
   return (
     <>
-      {/* Hero Split */}
-      <div className={s.hero} ref={heroRef}>
-        <div className={s.heroLeft}>
-          <div className={s.monoLabel}>AESDR &middot; 12 Lessons &middot; A Better You</div>
-          <div className={s.warnBox}>
-            <div className={s.warnTitle}><span className={s.warnIcon}>!</span> Content Warning</div>
-            <div className={s.warnText}>This course contains uncomfortable truths about your <strong>pipeline</strong>, your <strong>apartment</strong>, your <strong>bar tab</strong>, your <strong>commission check</strong>, and your <strong>relationship status</strong>.</div>
-          </div>
-          <div style={{ marginTop: "24px" }}>
-            <button className={s.btnIris} ref={enterBtnRef}>Continue &rarr;</button>
-          </div>
-        </div>
-        <div className={s.heroRight}>
-          <div className={`${s.corner} ${s.cornerTL}`} />
-          <div className={`${s.corner} ${s.cornerTR}`} />
-          <div className={`${s.corner} ${s.cornerBL}`} />
-          <div className={`${s.corner} ${s.cornerBR}`} />
-          <div className={s.monoLabel} style={{ color: "var(--muted)" }}>The Unfiltered SaaS Sales Survival Guide</div>
-          <h1 className={s.heroH1}>Stop Surviving.<br />Start <span className={s.heroAccent}>Owning</span> It.</h1>
-          <p className={s.heroP}>This isn&rsquo;t corporate-y but it will advance your career. 12 interactive, field-tested sessions for AEs and SDRs who&rsquo;re serious about controlling chaos, managing toxic leadership, protecting your commission - and your future.</p>
-          <div>
-            <a href="#pricing" className={s.btnIris}>Get Access</a>
-            <a href="#curriculum" className={s.btnOutline}>Syllabus Peek</a>
-          </div>
-          <div className={s.ambientLine} />
-        </div>
+      {/* Opaque dark backdrop: keeps the confession/terminal fade transitions
+          from ever revealing the page content behind them. Fades out together
+          with unlockScroll so the regular page takes over for zoom + pricing. */}
+      <div className={s.animationBackdrop} ref={backdropRef} />
+
+      {/* Branded hero — visible after animation or on return visits */}
+      <div className={s.landingHero} ref={heroRef}>
+        <div className={s.heroLabel}>12 Lessons &middot; At Your Own Pace &middot; 1 You</div>
+        <h1 className={`${s.heroBrand} ${s.irisText}`}>AESDR</h1>
+        <p className={s.heroTagline}>AEs &amp; SDRs rule this world.</p>
+        <a href="#pricing" className={s.heroCta}>Get Access &rarr;</a>
       </div>
 
       {/* Confession overlay */}

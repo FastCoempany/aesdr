@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The "I Don't Know" Framework — AESDR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: #FAF7F2;
+            color: #1A1A1A;
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-weight: 400;
+            line-height: 1.6;
+            padding: 60px 40px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .eyebrow {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .2em;
+            color: #B8943E;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 900;
+            font-style: italic;
+            font-size: 3.2rem;
+            line-height: 1.1;
+            margin-bottom: 16px;
+            color: #1A1A1A;
+        }
+
+        .subtitle {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 1.15rem;
+            color: #6B6B6B;
+            font-style: italic;
+            margin-bottom: 48px;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #E8E4DF;
+            margin: 40px 0;
+        }
+
+        .section-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .2em;
+            color: #8B1A1A;
+            margin-bottom: 20px;
+        }
+
+        .golden-rule {
+            background: #FFFFFF;
+            border-left: 4px solid #B8943E;
+            padding: 32px 36px;
+            margin-bottom: 48px;
+            box-shadow: 0 4px 20px rgba(0,0,0,.06);
+        }
+
+        .golden-rule .rule-eyebrow {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .2em;
+            color: #B8943E;
+            margin-bottom: 12px;
+        }
+
+        .golden-rule blockquote {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-style: italic;
+            font-weight: 700;
+            font-size: 1.5rem;
+            line-height: 1.4;
+            color: #1A1A1A;
+            margin-bottom: 12px;
+        }
+
+        .golden-rule .rule-body {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 1rem;
+            color: #6B6B6B;
+            line-height: 1.6;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-bottom: 48px;
+        }
+
+        .step-card {
+            background: #FFFFFF;
+            padding: 36px 28px;
+            box-shadow: 0 4px 20px rgba(0,0,0,.06);
+        }
+
+        .step-number {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 900;
+            font-size: 2.5rem;
+            color: #E8E4DF;
+            margin-bottom: 12px;
+            line-height: 1;
+        }
+
+        .step-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 900;
+            font-style: italic;
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            color: #1A1A1A;
+        }
+
+        .step-desc {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: .95rem;
+            color: #6B6B6B;
+            line-height: 1.6;
+        }
+
+        .step-example {
+            margin-top: 16px;
+            background: #FAF7F2;
+            border: 1px solid #E8E4DF;
+            padding: 14px 16px;
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-style: italic;
+            font-size: .9rem;
+            color: #1A1A1A;
+        }
+
+        .step-example::before {
+            content: 'Example: ';
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: .15em;
+            color: #8B1A1A;
+            font-style: normal;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #1A1A1A;
+            color: #FAF7F2;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            font-size: .9rem;
+            padding: 14px 28px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #333;
+        }
+
+        .btn-row {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <span class="eyebrow">Course 6 &middot; Desk Asset</span>
+    <h1>The &ldquo;I Don&rsquo;t Know&rdquo; Framework</h1>
+    <p class="subtitle">Panic ruins deals. Honesty builds trust.</p>
+
+    <hr>
+
+    <div class="golden-rule">
+        <p class="rule-eyebrow">The Golden Rule</p>
+        <blockquote>&ldquo;Never bluff. Never freeze. Always pivot to a next step.&rdquo;</blockquote>
+        <p class="rule-body">When a prospect asks you something you don't know, your response in the next three seconds determines whether you build trust or destroy it. The framework below gives you a repeatable three-step pattern for every moment of uncertainty.</p>
+    </div>
+
+    <p class="section-label">The Three Steps</p>
+
+    <div class="steps-grid">
+        <div class="step-card">
+            <p class="step-number">01</p>
+            <h3 class="step-title">Validate</h3>
+            <p class="step-desc">Acknowledge the importance of their question. This buys you composure and shows the prospect you take them seriously. Never skip this step &mdash; silence reads as incompetence.</p>
+            <div class="step-example">&ldquo;That&rsquo;s actually a really important question, and I want to make sure I give you the right answer rather than guess.&rdquo;</div>
+        </div>
+        <div class="step-card">
+            <p class="step-number">02</p>
+            <h3 class="step-title">Own It</h3>
+            <p class="step-desc">Admit you don't have the answer right now. Be direct. No hedging, no faking, no filler. Confidence comes from honesty, not from pretending you know everything.</p>
+            <div class="step-example">&ldquo;I don&rsquo;t have the specific number in front of me right now.&rdquo;</div>
+        </div>
+        <div class="step-card">
+            <p class="step-number">03</p>
+            <h3 class="step-title">The Pivot</h3>
+            <p class="step-desc">Immediately create a concrete next step. Attach a timeline and a deliverable. This transforms uncertainty into momentum and gives you a reason to follow up.</p>
+            <div class="step-example">&ldquo;I&rsquo;ll get that from our engineering team and have it in your inbox by end of day tomorrow. Fair?&rdquo;</div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="btn-row">
+        <button class="btn">Print Cheat Sheet</button>
+    </div>
+</body>
+</html>

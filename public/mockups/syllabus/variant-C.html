@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR | Syllabus — Variant C: The Manuscript Codex</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --vellum: #F5EDDA;
+    --vellum-deep: #E8D8BC;
+    --parchment: #FDF6E8;
+    --ink: #1A0F05;
+    --rubric: #8B1A1A;
+    --rubric-glow: rgba(139, 26, 26, 0.15);
+    --gold: #B8943E;
+    --gold-leaf: #D4A740;
+    --gold-glow: rgba(212, 167, 64, 0.25);
+    --faded-ink: #5A4A38;
+    --margin-note: #7A6A58;
+    --rule: #CBB58C;
+    --iris: linear-gradient(90deg, #FF006E 0%, #FF6B00 17%, #F59E0B 34%, #10B981 51%, #38BDF8 68%, #8B5CF6 85%, #FF006E 100%);
+
+    --display: 'Playfair Display', Georgia, serif;
+    --serif: 'Source Serif 4', Georgia, serif;
+    --cond: 'Barlow Condensed', sans-serif;
+    --mono: 'Space Mono', monospace;
+    --hand: 'Caveat', cursive;
+  }
+
+  @keyframes iris {
+    from { background-position: 0% 50%; }
+    to   { background-position: 200% 50%; }
+  }
+
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+  }
+
+  @keyframes marginFade {
+    from { opacity: 0; transform: translateX(12px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--vellum);
+    color: var(--ink);
+    font-family: var(--serif);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  .iris-line {
+    height: 3px;
+    background: var(--iris);
+    background-size: 200% 100%;
+    animation: iris 4s linear infinite;
+  }
+
+  /* ── Codex Binding Edge ── */
+  .binding {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 48px;
+    background: linear-gradient(90deg, #3A2A1C 0%, #5A4632 60%, #8B7355 90%, transparent 100%);
+    z-index: 10;
+    box-shadow: 4px 0 20px rgba(26, 15, 5, 0.25);
+  }
+  .binding::after {
+    content: '';
+    position: absolute;
+    left: 12px; top: 0; bottom: 0;
+    width: 2px;
+    background: repeating-linear-gradient(
+      180deg,
+      var(--gold) 0px, var(--gold) 6px,
+      transparent 6px, transparent 18px
+    );
+    opacity: 0.6;
+  }
+
+  /* ── Page Container ── */
+  .codex-page {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 80px 60px 60px 100px;
+    position: relative;
+  }
+
+  /* ── Parchment texture via subtle noise ── */
+  .codex-page::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(212, 167, 64, 0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 80%, rgba(139, 26, 26, 0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Illuminated Drop Cap ── */
+  .drop-cap-block {
+    text-align: center;
+    margin-bottom: 48px;
+    position: relative;
+    z-index: 1;
+  }
+  .illuminated-letter {
+    display: inline-block;
+    font-family: var(--display);
+    font-size: 120px;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--rubric);
+    text-shadow: 2px 2px 0 var(--gold-leaf), -1px -1px 0 rgba(139, 26, 26, 0.3);
+    position: relative;
+  }
+  .illuminated-letter::before {
+    content: '';
+    position: absolute;
+    inset: -20px;
+    border: 2px solid var(--gold);
+    background: var(--gold-glow);
+    z-index: -1;
+  }
+  .illuminated-letter::after {
+    content: '';
+    position: absolute;
+    inset: -14px;
+    border: 1px solid var(--rule);
+    z-index: -1;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    text-align: center;
+    margin-bottom: 56px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-colophon {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--margin-note);
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: var(--display);
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 900;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--rubric);
+  }
+  .hero-sub {
+    font-family: var(--serif);
+    font-size: 17px;
+    color: var(--faded-ink);
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.65;
+  }
+
+  /* ── Ruled Divider ── */
+  .rule {
+    border: none;
+    height: 1px;
+    background: var(--rule);
+    margin: 40px 0;
+    position: relative;
+    z-index: 1;
+  }
+  .rule.ornate {
+    height: 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 4px 0;
+    background: none;
+  }
+  .rule.ornate::after {
+    content: '\2767';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    color: var(--gold);
+    background: var(--vellum);
+    padding: 0 12px;
+  }
+
+  /* ── Chapter Folio Numbers ── */
+  .folio-label {
+    font-family: var(--cond);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 32px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Manuscript Entries ── */
+  .entries {
+    position: relative;
+    z-index: 1;
+  }
+  .entry {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 0 24px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+  }
+  .entry:last-child {
+    border-bottom: none;
+  }
+  .entry:hover {
+    background: var(--rubric-glow);
+    margin: 0 -20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 2px;
+  }
+
+  /* Folio number */
+  .entry-folio {
+    font-family: var(--display);
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--rubric);
+    line-height: 1;
+    padding-top: 4px;
+    text-align: right;
+  }
+
+  /* Entry content */
+  .entry-body {}
+  .entry-chapter {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--margin-note);
+    margin-bottom: 4px;
+  }
+  .entry-title {
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+  .entry-title.stylized {
+    font-style: italic;
+    letter-spacing: 0.5px;
+  }
+  .entry-question {
+    font-family: var(--serif);
+    font-size: 14px;
+    font-style: italic;
+    color: var(--faded-ink);
+    line-height: 1.6;
+    margin-bottom: 4px;
+  }
+
+  /* Margin annotation */
+  .entry-margin {
+    font-family: var(--hand);
+    font-size: 15px;
+    color: var(--rubric);
+    opacity: 0.75;
+    animation: marginFade 0.6s ease-out both;
+  }
+  .entry:nth-child(odd) .entry-margin { animation-delay: 0.1s; }
+  .entry:nth-child(even) .entry-margin { animation-delay: 0.2s; }
+
+  /* ── Gold Leaf Ornament ── */
+  .gold-ornament {
+    text-align: center;
+    margin: 48px 0;
+    font-size: 24px;
+    color: var(--gold-leaf);
+    letter-spacing: 16px;
+    animation: flicker 3s ease-in-out infinite;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Colophon CTA ── */
+  .colophon {
+    text-align: center;
+    padding: 48px 0 32px;
+    position: relative;
+    z-index: 1;
+  }
+  .colophon h2 {
+    font-family: var(--display);
+    font-size: 28px;
+    font-weight: 900;
+    font-style: italic;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+  .colophon p {
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--faded-ink);
+    max-width: 460px;
+    margin: 0 auto 28px;
+    line-height: 1.7;
+  }
+  .colophon-btn {
+    display: inline-block;
+    font-family: var(--cond);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--parchment);
+    background: var(--rubric);
+    padding: 14px 48px;
+    text-decoration: none;
+    border: 2px solid var(--gold);
+    transition: all 0.3s ease;
+  }
+  .colophon-btn:hover {
+    background: var(--ink);
+    border-color: var(--gold-leaf);
+    box-shadow: 0 0 24px var(--gold-glow);
+  }
+  .colophon-foot {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--margin-note);
+    margin-top: 16px;
+    letter-spacing: 1px;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    padding: 32px 0;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--margin-note);
+    letter-spacing: 2px;
+    border-top: 1px solid var(--rule);
+    max-width: 820px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .binding { width: 24px; }
+    .codex-page { padding: 60px 24px 40px 56px; }
+    .illuminated-letter { font-size: 80px; }
+    .entry { grid-template-columns: 40px 1fr; gap: 0 16px; }
+    .entry-folio { font-size: 24px; }
+    .entry-title { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="iris-line"></div>
+<div class="binding"></div>
+
+<div class="codex-page">
+
+  <!-- Illuminated Drop Cap -->
+  <div class="drop-cap-block">
+    <div class="illuminated-letter">A</div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-colophon">Folio XII &middot; Scripted MMXXVI &middot; Sales Codex</div>
+    <h1>The <em>Syllabus.</em></h1>
+    <p class="hero-sub">Twelve chapters inscribed for the working rep. Read them in order. Annotate freely. Return to them when the quarter gets heavy.</p>
+  </section>
+
+  <hr class="rule ornate">
+
+  <div class="folio-label">Chapters I &ndash; XII</div>
+
+  <section class="entries">
+
+    <!-- 01 -->
+    <article class="entry">
+      <div class="entry-folio">I</div>
+      <div class="entry-body">
+        <div class="entry-chapter">Chapter the First</div>
+        <h3 class="entry-title">Building Real Camaraderie</h3>
+        <p class="entry-question">&ldquo;When&rsquo;s the last time your team felt like an actual team?&rdquo;</p>
+        <span class="entry-margin">keep. read twice.</span>
+      </div>
+    </article>
+
+    <!-- 02 -->
+    <article class="entry">
+      <div class="entry-folio">II</div>
+      <div class="entry-body">
+        <div class="entry-chapter">Chapter the Second</div>
+        <h3 class="entry-title">Breaking Down Silos</h3>
+        <p class="entry-question">&ldquo;How many deals died in the handoff you never talked about?&rdquo;</p>
+        <span class="entry-margin">cc: solutions eng.</span>
+      </div>
+    </article>
+
+    <!-- 03 -->
+    <article class="entry">
+      <div class="entry-folio">III</div>
+      <div class="entry-body">
+        <div class="entry-chapter">Chapter the Third</div>
+        <h3 class="entry-title">Performance Pitfalls</h3>
+        <p class="entry-question">&ldquo;Are you getting better &mdash; or just getting by?&rdquo;</p>
+        <span class="entry-margin">mirror test.</span>
+      </div>
+    </article>
+
+    <!-- 04 -->
+    <article class="entry">
+      <div class="entry-folio">IV</div>
+      <div class="entry-body">
+        <div class="entry-chapter">Chapter the Fourth</div>
+        <h3 class="entry-title">Navigating Manager Madness</h3>
+        <p class="entry-question">&ldquo;Does your manager coach you&hellip; or just count your calls and faults?&rdquo;</p>
+        <span class="entry-margin">send to Todd.</span>
+      </div>
+    </article>
+
+    <!-- 05 -->
+    <article class="entry">
+      <div class="entry-folio">V</div>
+      <div class="entry-body">
+        <div class="entry-chapter">Chapter the Fifth</div>
+        <h3 class="entry-title stylized">tHe SaLeS pLaYbOoK</h3>
+        <p class="entry-question">&ldquo;What&rsquo;s your system? And if you don&rsquo;t have one &mdash; what have you been doing?&rdquo;</p>
+        <span class="entry-margin">LinkedIn isn&rsquo;t one.</span>
+      </div>
+    </article>
+
+    <!-- 06 -->
+    <article class="entry">
+      <div class="entry-folio">VI</div>
+      <div class="entry-body">
+        <div class="entry-chapter">Chapter the Sixth</div>
+        <h3 class="entry-title stylized">bEyOnD tHe SaLeS pLaYbOoK</h3>
+        <p class="entry-question">&ldquo;What do you do when the script runs out and you&rsquo;re live?&rdquo;</p>
+        <span class="entry-margin">improvise w/ intent.</span>
+      </div>
+    </article>
+
+    <!-- 07 -->
+    <article class="entry">
+      <div class="entry-folio">VII</div>
+      <div class="entry-body">
+        <div class="entry-chapter">Chapter the Seventh</div>
+        <h3 class="entry-title">Prospecting &amp; Pipeline</h3>
+        <p class="entry-question">&ldquo;If inbound dried up tomorrow, would you survive?&rdquo;</p>
+        <span class="entry-margin">build outbound muscle.</span>
+      </div>
+    </article>
+
+    <!-- 08 -->
+    <article class="entry">
+      <div class="entry-folio">VIII</div>
+      <div class="entry-body">
+        <div class="entry-chapter">Chapter the Eighth</div>
+        <h3 class="entry-title">The 30% Rule</h3>
+        <p class="entry-question">&ldquo;What&rsquo;s your actual close rate? Not the one you told your VP.&rdquo;</p>
+        <span class="entry-margin">do the math honestly.</span>
+      </div>
+    </article>
+
+    <!-- 09 -->
+    <article class="entry">
+      <div class="entry-folio">IX</div>
+      <div class="entry-body">
+        <div class="entry-chapter">Chapter the Ninth</div>
+        <h3 class="entry-title">CRM Survival Guide</h3>
+        <p class="entry-question">&ldquo;Is your CRM protecting you &mdash; or building the case against you?&rdquo;</p>
+        <span class="entry-margin">log before you forget.</span>
+      </div>
+    </article>
+
+    <!-- 10 -->
+    <article class="entry">
+      <div class="entry-folio">X</div>
+      <div class="entry-body">
+        <div class="entry-chapter">Chapter the Tenth</div>
+        <h3 class="entry-title">Breaking Down the Commission Myth</h3>
+        <p class="entry-question">&ldquo;Can you survive three bad months in a row? Mentally? Financially?&rdquo;</p>
+        <span class="entry-margin">3 months runway min.</span>
+      </div>
+    </article>
+
+    <!-- 11 -->
+    <article class="entry">
+      <div class="entry-folio">XI</div>
+      <div class="entry-body">
+        <div class="entry-chapter">Chapter the Eleventh</div>
+        <h3 class="entry-title">Sober Selling</h3>
+        <p class="entry-question">&ldquo;What if the problem is bigger than your process &mdash; what if it&rsquo;s what you&rsquo;re doing when no one&rsquo;s watching?&rdquo;</p>
+        <span class="entry-margin">21+. not metaphor.</span>
+      </div>
+    </article>
+
+    <!-- 12 -->
+    <article class="entry">
+      <div class="entry-folio">XII</div>
+      <div class="entry-body">
+        <div class="entry-chapter">Chapter the Twelfth</div>
+        <h3 class="entry-title">Leveling Up SaaS Relationships</h3>
+        <p class="entry-question">&ldquo;Who would vouch for you if you changed companies tomorrow?&rdquo;</p>
+        <span class="entry-margin">name 5.</span>
+      </div>
+    </article>
+
+  </section>
+
+  <div class="gold-ornament">&loz; &loz; &loz;</div>
+
+  <section class="colophon">
+    <h2>Read all twelve chapters.</h2>
+    <p>This codex grants lifetime access. No expiration, no lending limits. The margin notes are yours to write &mdash; the lessons are ours to share.</p>
+    <a href="/#pricing" class="colophon-btn">Get Access</a>
+    <div class="colophon-foot">14-day refund &middot; 12 chapters &middot; 5 takeaway tools</div>
+  </section>
+
+</div>
+
+<footer class="footer">
+  AESDR &copy; 2026 &middot; Terms &middot; Privacy &middot; Refunds
+</footer>
+
+</body>
+</html>

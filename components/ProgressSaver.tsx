@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { markLessonComplete, saveLessonProgress } from "@/app/actions/progress";
 import { saveProgressLocally } from "@/utils/progress/local-storage";
 import { TIMING } from "@/lib/config";
 
@@ -46,7 +45,19 @@ export default function ProgressSaver({
       if (debounceRef.current) clearTimeout(debounceRef.current);
       debounceRef.current = setTimeout(() => {
         if (isAuthenticated) {
-          saveLessonProgress(lessonId, screen, stateData).catch(() => {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 10000);
+          fetch("/api/progress", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ lessonId, lastScreen: screen, stateData }),
+            signal: controller.signal,
+          }).then((res) => {
+            clearTimeout(timeoutId);
+            if (!res.ok) throw new Error(String(res.status));
+            failCountRef.current = 0;
+          }).catch(() => {
+            clearTimeout(timeoutId);
             failCountRef.current += 1;
             if (failCountRef.current >= TIMING.progress.maxServerFailures) {
               setSessionExpired(true);
@@ -80,7 +91,16 @@ export default function ProgressSaver({
 
       if (type === "aesdr:complete") {
         if (isAuthenticated) {
-          markLessonComplete(lessonId).catch(() => {});
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 10000);
+          fetch("/api/progress/complete", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ lessonId }),
+            signal: controller.signal,
+          })
+            .then(() => clearTimeout(timeoutId))
+            .catch(() => clearTimeout(timeoutId));
           saveProgressLocally(lessonId, { is_completed: true });
         }
       }

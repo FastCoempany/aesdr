@@ -34,13 +34,14 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://www.redditstatic.com https://alb.reddit.com",
+              `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""} https://www.redditstatic.com https://alb.reddit.com https://va.vercel-scripts.com`,
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
-              "img-src 'self' data: blob:",
-              "connect-src 'self' https://*.supabase.co https://api.anthropic.com https://alb.reddit.com https://*.ingest.sentry.io",
+              "img-src 'self' data: blob: https://www.reddit.com https://alb.reddit.com",
+              "connect-src 'self' https://*.supabase.co https://api.anthropic.com https://alb.reddit.com https://pixel-config.reddit.com https://www.reddit.com https://va.vercel-scripts.com https://vitals.vercel-insights.com",
               "frame-src 'self'",
               "frame-ancestors 'self'",
+              "worker-src 'self' blob:",
             ].join("; "),
           },
         ],
@@ -50,8 +51,13 @@ const nextConfig: NextConfig = {
 };
 
 export default withSentryConfig(nextConfig, {
-  silent: true,
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  silent: !process.env.CI,
   widenClientFileUpload: true,
   tunnelRoute: "/monitoring",
-  disableLogger: true,
+  sourcemaps: {
+    disable: !process.env.SENTRY_AUTH_TOKEN,
+  },
 });

@@ -35,7 +35,6 @@ export async function markLessonComplete(lessonId: string) {
   }
 
   revalidatePath("/dashboard");
-  revalidatePath(`/course/${lessonId}`);
   return { success: true };
 }
 

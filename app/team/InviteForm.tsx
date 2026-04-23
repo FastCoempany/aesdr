@@ -40,7 +40,7 @@ export default function InviteForm() {
         style={{
           fontFamily: "'Source Serif 4', Georgia, serif",
           fontSize: "14px",
-          padding: "10px 16px",
+          padding: "14px 16px",
           border: "1px solid #E8E4DF",
           background: "#FAF7F2",
           color: "#1A1A1A",
@@ -57,7 +57,7 @@ export default function InviteForm() {
           fontWeight: 700,
           letterSpacing: ".15em",
           textTransform: "uppercase",
-          padding: "10px 24px",
+          padding: "14px 24px",
           background: "#1A1A1A",
           color: "#FAF7F2",
           border: "none",

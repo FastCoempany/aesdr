@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Time Reclaimed Calculator — Variant B</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #FFFDF8;
+  min-height: 100vh;
+  padding: 40px 20px;
+  font-family: 'Source Serif 4', Georgia, serif;
+  color: #2C2C2C;
+}
+
+.toolbar {
+  max-width: 780px;
+  margin: 0 auto 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid #F0EBE3;
+}
+
+.toolbar-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #8B8178;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn {
+  display: inline-block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #8B1A1A;
+  border: 1px solid #8B1A1A;
+  background: transparent;
+  padding: 8px 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn:hover {
+  background: #8B1A1A;
+  color: #FFFFFF;
+}
+
+.page {
+  max-width: 780px;
+  margin: 0 auto;
+  background: #FFFFFF;
+  padding: 56px 80px 64px 140px;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+  position: relative;
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 31px,
+    #F0EBE3 31px,
+    #F0EBE3 32px
+  );
+  background-position: 0 24px;
+}
+
+.margin-line {
+  position: absolute;
+  left: 120px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #E8D4D4;
+}
+
+.margin-note {
+  position: absolute;
+  left: 12px;
+  width: 100px;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  font-style: italic;
+  color: #C53030;
+  line-height: 1.4;
+  text-align: right;
+  padding-right: 12px;
+}
+
+.margin-note.right {
+  left: auto;
+  right: -130px;
+  width: 120px;
+  text-align: left;
+  padding-right: 0;
+  padding-left: 12px;
+  border-left: 2px solid #C53030;
+}
+
+.title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-size: 26px;
+  font-weight: 700;
+  color: #8B1A1A;
+  margin-bottom: 4px;
+  line-height: 32px;
+}
+
+.subtitle {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #8B8178;
+  letter-spacing: 0.5px;
+  margin-bottom: 32px;
+}
+
+.section-divider {
+  border: none;
+  border-top: 1px solid #8B1A1A;
+  border-bottom: 1px solid #8B1A1A;
+  height: 4px;
+  margin: 28px 0;
+}
+
+.section-mark {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #8B1A1A;
+  margin-bottom: 16px;
+}
+
+.form-group {
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.form-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 12px;
+  line-height: 32px;
+}
+
+.form-label {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 14px;
+  color: #2C2C2C;
+  white-space: nowrap;
+}
+
+.form-input {
+  border: none;
+  border-bottom: 1.5px dotted #8B8178;
+  background: transparent;
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 16px;
+  color: #2C2C2C;
+  padding: 2px 4px;
+  outline: none;
+  width: 80px;
+  text-align: center;
+}
+
+.form-input:focus {
+  border-bottom-color: #C53030;
+  border-bottom-style: solid;
+}
+
+.form-input.wide {
+  width: 140px;
+}
+
+.form-suffix {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 12px;
+  color: #8B8178;
+}
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.slider-label {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 13px;
+  min-width: 200px;
+}
+
+.slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 2px;
+  background: #F0EBE3;
+  outline: none;
+  max-width: 200px;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #C53030;
+  cursor: pointer;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.slider-value {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #2C2C2C;
+  min-width: 50px;
+  font-style: italic;
+}
+
+.results-area {
+  margin-top: 32px;
+  position: relative;
+}
+
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 8px 0;
+  line-height: 32px;
+  position: relative;
+}
+
+.result-label {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 14px;
+}
+
+.result-value {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.result-value.red-ink {
+  color: #C53030;
+  font-style: italic;
+}
+
+.result-value.highlighted {
+  background: rgba(184, 148, 62, 0.2);
+  padding: 2px 10px;
+}
+
+.big-number-circled {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 140px;
+  height: 140px;
+  border: 3px solid #C53030;
+  border-radius: 50%;
+  margin: 24px auto;
+  text-align: center;
+  position: relative;
+}
+
+.big-number-circled .amount {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: #C53030;
+}
+
+.big-number-circled .label {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  color: #8B8178;
+  text-transform: uppercase;
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.annotation-arrow {
+  position: absolute;
+  right: -130px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  font-style: italic;
+  color: #C53030;
+  width: 120px;
+  line-height: 1.4;
+  border-left: 2px solid #C53030;
+  padding-left: 8px;
+}
+
+.highlight {
+  background: rgba(184, 148, 62, 0.2);
+  padding: 1px 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <span class="toolbar-title">AE-SDR Tools / Time Reclaimed Calculator</span>
+  <button class="btn" style="margin-left:auto;">Recalculate</button>
+</div>
+
+<div class="page">
+  <div class="margin-line"></div>
+
+  <h1 class="title">Time Reclaimed Calculator</h1>
+  <p class="subtitle">How much is that "quick meeting" actually costing you?</p>
+
+  <hr class="section-divider">
+
+  <p class="section-mark">§ I. Your Time Inputs</p>
+
+  <div class="form-group">
+    <div class="slider-row">
+      <span class="slider-label">Hours/week on unqualified meetings:</span>
+      <input type="range" class="slider" min="0" max="20" value="6">
+      <span class="slider-value">6</span>
+      <span class="form-suffix">hrs</span>
+    </div>
+
+    <div class="slider-row">
+      <span class="slider-label">Hours/week on manual CRM entry:</span>
+      <input type="range" class="slider" min="0" max="15" value="4">
+      <span class="slider-value">4</span>
+      <span class="form-suffix">hrs</span>
+    </div>
+
+    <div class="slider-row">
+      <span class="slider-label">Hours/week on email back-and-forth:</span>
+      <input type="range" class="slider" min="0" max="15" value="5">
+      <span class="slider-value">5</span>
+      <span class="form-suffix">hrs</span>
+    </div>
+
+    <div class="slider-row" style="position:relative;">
+      <span class="slider-label">Hours/week in internal meetings:</span>
+      <input type="range" class="slider" min="0" max="20" value="7">
+      <span class="slider-value">7</span>
+      <span class="form-suffix">hrs</span>
+      <span class="margin-note right" style="position:absolute; right:-130px; top:0;">22 hrs/wk of non-selling time. That's 55% of your week.</span>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <p class="section-mark">§ II. Your Financial Inputs</p>
+
+  <div class="form-group">
+    <div class="form-row">
+      <span class="form-label">On-Target Earnings (OTE):</span>
+      <input class="form-input wide" type="text" value="$180,000">
+    </div>
+    <div class="form-row">
+      <span class="form-label">Working weeks/year:</span>
+      <input class="form-input" type="text" value="48">
+    </div>
+    <div class="form-row">
+      <span class="form-label">Hours in selling week:</span>
+      <input class="form-input" type="text" value="40">
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <p class="section-mark">§ III. The Damage Report</p>
+
+  <div class="results-area">
+    <div class="result-item">
+      <span class="result-label">Your hourly rate (at OTE)</span>
+      <span class="result-value highlighted">$93.75/hr</span>
+    </div>
+    <div class="result-item">
+      <span class="result-label">Wasted hours per week</span>
+      <span class="result-value red-ink">22 hrs</span>
+    </div>
+    <div class="result-item">
+      <span class="result-label">Weekly revenue bleed</span>
+      <span class="result-value red-ink">$2,062</span>
+    </div>
+    <div class="result-item">
+      <span class="result-label">Monthly revenue bleed</span>
+      <span class="result-value red-ink">$8,250</span>
+    </div>
+
+    <div style="position:relative; margin-top:16px;">
+      <div class="big-number-circled">
+        <span class="amount">$99,000</span>
+        <span class="label">Annual Financial Bleed</span>
+      </div>
+      <span class="annotation-arrow">This is what you're leaving on the table. Every. Single. Year.</span>
+    </div>
+
+    <div class="result-item" style="margin-top:40px;">
+      <span class="result-label">If you reclaim just <span class="highlight">5 hours/week</span>:</span>
+      <span class="result-value highlighted">+$22,500/year</span>
+    </div>
+  </div>
+
+  <div style="margin-top:32px; position:relative;">
+    <span class="margin-note" style="left:12px; top:0;">The math doesn't lie. Protect your selling hours.</span>
+  </div>
+
+</div>
+
+</body>
+</html>

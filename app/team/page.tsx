@@ -68,7 +68,7 @@ export default async function TeamPage() {
         className="sticky top-0 z-50 flex items-center justify-between px-[5%] py-5"
         style={{ borderBottom: "1px solid #E8E4DF", background: "rgba(250,247,242,0.95)", backdropFilter: "blur(10px)" }}
       >
-        <Link href="/" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: "18px", fontWeight: 900, fontStyle: "italic", letterSpacing: ".05em", textDecoration: "none" }}>
+        <Link href="/dashboard" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: "18px", fontWeight: 900, fontStyle: "italic", letterSpacing: ".05em", textDecoration: "none" }}>
           <span style={{ background: "var(--iris)", backgroundSize: "200% 100%", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", animation: "iris 3s linear infinite" }}>AESDR</span>
         </Link>
         <div className="flex items-center gap-4" style={{ fontFamily: "'Space Mono', monospace", fontWeight: 400, fontSize: "11px", letterSpacing: ".15em", textTransform: "uppercase" }}>

@@ -34,9 +34,10 @@ export default function ChangePasswordForm() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="New password (min 6 characters)"
+        aria-label="New password"
         minLength={6}
         required
-        className="px-4 py-3 outline-none"
+        className="px-4 py-3"
         style={{
           fontFamily: "var(--serif)",
           fontSize: "16px",
@@ -65,7 +66,7 @@ export default function ChangePasswordForm() {
           fontWeight: 700,
           letterSpacing: ".12em",
           textTransform: "uppercase" as const,
-          padding: "10px 20px",
+          padding: "14px 20px",
           background: "var(--text-main)",
           color: "var(--bg-main)",
           border: "none",

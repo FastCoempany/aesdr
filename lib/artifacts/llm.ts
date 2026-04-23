@@ -9,6 +9,8 @@ import type {
   CategoryScore,
   PlaybookSection,
   MirrorConfrontation,
+  PlaybillData,
+  RedlineData,
 } from "./types";
 
 const VALID_CATEGORIES = new Set<string>(["pipeline", "discipline", "networking", "identity", "career", "coaching"]);
@@ -318,4 +320,342 @@ function groupByCategory(
   }
 
   return groups;
+}
+
+/* ═══════════════════════════════════════════
+   PLAYBILL — Theatrical voice synthesis
+═══════════════════════════════════════════ */
+
+const PLAYBILL_SYSTEM = `You are the resident playwright and programme editor for the AESDR Theatre — a fictional repertory house that stages the careers of SaaS sales professionals as dramatic works. You synthesize a student's 12-lesson self-portrait into a theatrical playbill: Programme (Act I, their twelve-lesson opus), Reviews (critics vs box office), and Director's Notes (blocking for next season).
+
+Your voice is theatrical, literary, slightly arch — imagine a New Yorker theatre critic with editorial restraint. Never break character. Never use sales-training jargon ("BANT", "qualification", "pipeline velocity") except when a critic is mocking it. Speak in stage terms: acts, scenes, dynamics, blocking, rehearsal, notes, prompts, beats, cues, wings.
+
+Return ONLY valid JSON. No markdown outside the JSON block. Follow the schema exactly.`;
+
+/**
+ * Generate the Playbill artifact — theatrical-voice synthesis of the student's
+ * gate responses, category scores, and diagnostic. Returns a 3-folio structure:
+ * Programme (6 acts), Reviews (3-4 critic notices), Director's Notes (4-6 blocking notes).
+ */
+export async function extractPlaybill(
+  gateResponses: GateResponse[],
+  categoryScores: CategoryScore[],
+  role: "ae" | "sdr",
+  studentName: string
+): Promise<PlaybillData> {
+  const client = new Anthropic();
+  const gatesByCategory = groupByCategory(gateResponses);
+  const scoresByCategory = Object.fromEntries(
+    categoryScores.map((s) => [s.category, s])
+  );
+  const prompt = buildPlaybillPrompt(
+    gatesByCategory,
+    scoresByCategory,
+    role,
+    studentName
+  );
+
+  let response: Anthropic.Message;
+  try {
+    response = await client.messages.create({
+      model: MODEL,
+      max_tokens: 6144,
+      messages: [{ role: "user", content: prompt }],
+      system: PLAYBILL_SYSTEM,
+    });
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : "Unknown API error";
+    throw new Error(`Playbill API call failed: ${detail}`);
+  }
+
+  const block = response.content[0];
+  if (!block || block.type !== "text") {
+    throw new Error("Playbill API returned unexpected response format");
+  }
+  if (block.text.length > 120_000) {
+    throw new Error("Playbill response exceeds size limit");
+  }
+
+  const match =
+    block.text.match(/```json\s*([\s\S]*?)```/) ??
+    block.text.match(/(\{[\s\S]*\})/);
+  if (!match?.[1]) throw new Error("Playbill LLM returned no parseable JSON");
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(match[1]);
+  } catch {
+    throw new Error("Playbill LLM returned malformed JSON");
+  }
+
+  const p = parsed as Record<string, unknown>;
+  if (
+    !p.programme ||
+    !Array.isArray(p.reviews) ||
+    !Array.isArray(p.directorNotes)
+  ) {
+    throw new Error("Playbill response missing required fields");
+  }
+
+  return {
+    studentName,
+    role,
+    generatedAt: new Date().toISOString(),
+    programme: p.programme as PlaybillData["programme"],
+    reviews: p.reviews as PlaybillData["reviews"],
+    directorNotes: p.directorNotes as PlaybillData["directorNotes"],
+  };
+}
+
+function buildPlaybillPrompt(
+  gatesByCategory: Record<ArtifactCategory, GateResponse[]>,
+  scoresByCategory: Record<string, CategoryScore>,
+  role: "ae" | "sdr",
+  studentName: string
+): string {
+  const roleLabel = role === "ae" ? "Account Executive" : "SDR";
+
+  let prompt = `# Subject of the Playbill — ${studentName}, ${roleLabel}\n\n`;
+
+  prompt += `## Exercise & Quiz Scores by Category\n`;
+  for (const [cat, score] of Object.entries(scoresByCategory)) {
+    const meta = CATEGORY_META[cat as ArtifactCategory];
+    prompt += `- **${meta.name}**: ${score.pct}% (${score.correct}/${score.total} correct)\n`;
+  }
+
+  prompt += `\n## Gate Responses by Category\n\n`;
+  for (const [cat, responses] of Object.entries(gatesByCategory)) {
+    const meta = CATEGORY_META[cat as ArtifactCategory];
+    if (responses.length === 0) continue;
+    prompt += `### ${meta.name}\n`;
+    for (const r of responses) {
+      prompt += `**Lesson ${r.lessonId}.${r.unitIndex} — ${r.label} (${r.gateKey})**\n`;
+      prompt += `> ${sanitizeUserText(r.text)}\n\n`;
+    }
+  }
+
+  prompt += `## Required Output — The Playbill
+
+Return a single JSON object. Write in theatrical voice throughout. Use the student's real words as raw material but transfigure them into stage direction, critical notice, and programme copy.
+
+\`\`\`json
+{
+  "programme": {
+    "tempoMark": "A short Italian-style tempo/dynamic phrase, e.g. 'allegro con ansia' (fast, with anxiety) or 'andante con fuoco' — chosen to reflect the overall tenor of the twelve lessons",
+    "tagline": "One sentence of programme copy. Literary. Placed under the student's name on the title page.",
+    "acts": [
+      {
+        "act": 1,
+        "category": "identity",
+        "categoryName": "Identity",
+        "role": "A SHORT ALL-CAPS CHARACTER NAME the student plays in this act, e.g. 'THE COMPASS', 'THE GHOST', 'THE CONVERT'. Invent something evocative based on the responses.",
+        "dynamic": "One or two Italian musical dynamic/tempo terms, e.g. 'forte, deciso' (strong, decisive) — calibrated to the score",
+        "pct": 85,
+        "programmeNote": "One sentence from the programme editor. Theatrical register. Alludes to the scores without naming them."
+      }
+    ],
+    "reviews": null
+  },
+  "reviews": [
+    {
+      "category": "networking",
+      "categoryName": "Networking",
+      "critic": "A fictional critic or outlet name. Vary them across reviews: 'The Herald', 'The Weekly Ledger', 'The Evening Prompt', 'The Stage Door Dispatch', 'Curtain Rise Quarterly', 'Gallery Notes'.",
+      "critique": "2-3 sentences in the critic's voice describing what the critic saw performed — draws directly from the student's claimed confidence. Arch, attentive, not cruel.",
+      "boxOffice": "1-2 sentences from the box office: the actual data. Counter-weight to the critic's impression. Delivered as a gentle rebuttal.",
+      "verdict": "A short phrase: 'Unfavorable', 'Mixed to poor', 'Panned', 'Reception divided', 'Notices conflict with returns', etc.",
+      "pct": 45
+    }
+  ],
+  "directorNotes": [
+    {
+      "category": "coaching",
+      "categoryName": "Coaching",
+      "blocking": "A specific commitment extracted from the student's gate responses, rewritten as a stage-direction. Imperative mood. Concrete action.",
+      "rehearsalFocus": "One sentence of what to practice between now and opening of the next season."
+    }
+  ]
+}
+\`\`\`
+
+Rules:
+- "programme.acts" MUST contain exactly 6 entries — one per category (identity, pipeline, career, discipline, coaching, networking) — ordered from highest score to lowest.
+- "reviews" MUST contain 3–4 entries. Only include categories where score < 75% AND the student's text claims competence or comfort in that area. If fewer than 3 qualify, include what you have with honest framing.
+- "directorNotes" MUST contain 4–6 entries. Prefer the lower-scoring categories. Each blocking note must correspond to something the student actually committed to in their text.
+- NEVER invent quotes. NEVER put words in the student's mouth. The critic's voice and the programme editor's voice are the only invented voices — the student's own responses are the factual basis.
+- Omit the "programme.reviews" key entirely or set it to null — reviews are top-level.
+- Theatrical voice throughout. No sales jargon except in mockery.`;
+
+  return prompt;
+}
+
+/* ═══════════════════════════════════════════
+   REDLINE — Editorial voice synthesis
+═══════════════════════════════════════════ */
+
+const REDLINE_SYSTEM = `You are the senior commissioning editor for the AESDR Editorial Desk — an imprint that reads drafts written by SaaS sales professionals about themselves and returns them with marks. Your job is to redline a student's twelve-lesson self-portrait.
+
+Your voice is that of a veteran manuscript editor: precise, slightly cold, allergic to cliché, unimpressed by performance but respectful of honest effort. You write reader's reports, chapter grades, and margin notes. You strike through the lines that don't survive the draft's own data and insert the corrected claim. You do not soften, but you do not mock. You catch the contradictions.
+
+Never break character. Never use sales-training jargon ("pipeline velocity", "BANT", "objection handling") except when quoting the student. Speak in editorial terms: draft, rewrite, marginalia, stet, insert, strike, galley, fair copy, readers report, grade.
+
+Return ONLY valid JSON. No markdown outside the JSON block. Follow the schema exactly.`;
+
+/**
+ * Generate the Redline artifact — editorial-voice synthesis of the student's
+ * gate responses, category scores, and diagnostic. Returns a 3-folio structure:
+ * Assessment (6 chapter grades + overall), Redlines (4 marked-up chapters),
+ * Accepted Manuscript (4-6 final commitments).
+ */
+export async function extractRedline(
+  gateResponses: GateResponse[],
+  categoryScores: CategoryScore[],
+  role: "ae" | "sdr",
+  studentName: string
+): Promise<RedlineData> {
+  const client = new Anthropic();
+  const gatesByCategory = groupByCategory(gateResponses);
+  const scoresByCategory = Object.fromEntries(
+    categoryScores.map((s) => [s.category, s])
+  );
+  const prompt = buildRedlinePrompt(
+    gatesByCategory,
+    scoresByCategory,
+    role,
+    studentName
+  );
+
+  let response: Anthropic.Message;
+  try {
+    response = await client.messages.create({
+      model: MODEL,
+      max_tokens: 6144,
+      messages: [{ role: "user", content: prompt }],
+      system: REDLINE_SYSTEM,
+    });
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : "Unknown API error";
+    throw new Error(`Redline API call failed: ${detail}`);
+  }
+
+  const block = response.content[0];
+  if (!block || block.type !== "text") {
+    throw new Error("Redline API returned unexpected response format");
+  }
+  if (block.text.length > 120_000) {
+    throw new Error("Redline response exceeds size limit");
+  }
+
+  const match =
+    block.text.match(/```json\s*([\s\S]*?)```/) ??
+    block.text.match(/(\{[\s\S]*\})/);
+  if (!match?.[1]) throw new Error("Redline LLM returned no parseable JSON");
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(match[1]);
+  } catch {
+    throw new Error("Redline LLM returned malformed JSON");
+  }
+
+  const r = parsed as Record<string, unknown>;
+  if (
+    !r.assessment ||
+    !Array.isArray(r.markups) ||
+    !Array.isArray(r.accepted)
+  ) {
+    throw new Error("Redline response missing required fields");
+  }
+
+  return {
+    studentName,
+    role,
+    generatedAt: new Date().toISOString(),
+    assessment: r.assessment as RedlineData["assessment"],
+    markups: r.markups as RedlineData["markups"],
+    accepted: r.accepted as RedlineData["accepted"],
+  };
+}
+
+function buildRedlinePrompt(
+  gatesByCategory: Record<ArtifactCategory, GateResponse[]>,
+  scoresByCategory: Record<string, CategoryScore>,
+  role: "ae" | "sdr",
+  studentName: string
+): string {
+  const roleLabel = role === "ae" ? "Account Executive" : "SDR";
+
+  let prompt = `# Draft Submitted — ${studentName}, ${roleLabel}\n\n`;
+
+  prompt += `## Exercise & Quiz Scores by Category\n`;
+  for (const [cat, score] of Object.entries(scoresByCategory)) {
+    const meta = CATEGORY_META[cat as ArtifactCategory];
+    prompt += `- **${meta.name}**: ${score.pct}% (${score.correct}/${score.total} correct)\n`;
+  }
+
+  prompt += `\n## Gate Responses by Category\n\n`;
+  for (const [cat, responses] of Object.entries(gatesByCategory)) {
+    const meta = CATEGORY_META[cat as ArtifactCategory];
+    if (responses.length === 0) continue;
+    prompt += `### ${meta.name}\n`;
+    for (const r of responses) {
+      prompt += `**Lesson ${r.lessonId}.${r.unitIndex} — ${r.label} (${r.gateKey})**\n`;
+      prompt += `> ${sanitizeUserText(r.text)}\n\n`;
+    }
+  }
+
+  prompt += `## Required Output — The Redline
+
+Return a single JSON object. Write in editorial voice throughout. Use the student's actual words verbatim in "struckClaim" and "draftOpening" fields (lightly cleaned of typos). The editor voice surrounds those words — it does not replace them.
+
+\`\`\`json
+{
+  "assessment": {
+    "readersReport": "3-4 sentences. The editor's overall framing, written as a reader's report. Cite the strength (upper chapters) and the weakness (which chapters require rewrite). Second-person, addressed to the author.",
+    "overallGrade": "A single letter grade: 'A-', 'B+', 'C', 'C-', 'D+', etc. — calibrated to the mean of category scores.",
+    "overallVerdict": "One sentence. The final editor's verdict.",
+    "chapters": [
+      {
+        "chapter": 1,
+        "category": "identity",
+        "categoryName": "Identity",
+        "grade": "A letter grade calibrated to this category's score",
+        "verdict": "One sentence of reader's report on this chapter. Editor voice. Do not restate the score in the sentence — the score lives in its own field.",
+        "pct": 85
+      }
+    ]
+  },
+  "markups": [
+    {
+      "chapter": 4,
+      "category": "discipline",
+      "categoryName": "Discipline",
+      "draftOpening": "The student's honest admission sentence, taken verbatim from their gate responses (lightly cleaned). This is the first sentence the editor LEAVES IN — the part of their draft that survives unchanged.",
+      "marginNote": "Editor's handwritten margin note responding to the honest part. 1 short sentence. Encouraging but clipped: 'Honest. Keep reading.' or 'The only true line in the chapter.'",
+      "struckClaim": "The self-deceiving line from the student's draft — something they claim about themselves that their scores contradict. Must be taken verbatim or near-verbatim from their actual gate responses.",
+      "insertedTruth": "The corrected version the editor inserts. First-person, written as if the student had been honest from the start. Must reference the actual data (percentage, specific metric) that contradicts the struck line.",
+      "scoreAnnotation": "Formatted as 'X% — [Category] Score'",
+      "scoreNote": "1 short sentence. The editor's comment on the score. Example: '\"Usually\" is the word people use when they mean \"sometimes\".'",
+      "pct": 62
+    }
+  ],
+  "accepted": [
+    {
+      "category": "discipline",
+      "categoryName": "Discipline",
+      "commitment": "1-2 sentences written in the student's first-person voice as a final, revised commitment. Specific. Actionable. Time-bound where possible. This is what survives the redline — the version they are choosing to become."
+    }
+  ]
+}
+\`\`\`
+
+Rules:
+- "assessment.chapters" MUST contain exactly 6 entries — one per category (identity, pipeline, career, discipline, coaching, networking) — ordered from highest score to lowest.
+- "markups" MUST contain exactly 4 entries. Select the 4 categories with the widest gap between what the student claimed and what the scores showed. Must be the lower-scoring categories. Each markup must be grounded in an actual gate response — do not fabricate what the student said.
+- "accepted" MUST contain 4–6 entries. Prefer the categories that were redlined, plus any commitments the student explicitly made in gate responses. First-person voice.
+- NEVER invent claims the student didn't make. The struckClaim must echo something they actually wrote. If no self-deceiving line is available for a low-scoring category, omit that markup.
+- The editor voice is precise, slightly cold, allergic to cliché. The student voice (in draftOpening, struckClaim, accepted.commitment) is first-person and their words.
+- No sales jargon except when quoting the student. The editor speaks like an editor.`;
+
+  return prompt;
 }
