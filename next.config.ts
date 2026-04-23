@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
@@ -40,6 +41,7 @@ const nextConfig: NextConfig = {
               "connect-src 'self' https://*.supabase.co https://api.anthropic.com https://alb.reddit.com https://pixel-config.reddit.com https://www.reddit.com https://va.vercel-scripts.com https://vitals.vercel-insights.com",
               "frame-src 'self'",
               "frame-ancestors 'self'",
+              "worker-src 'self' blob:",
             ].join("; "),
           },
         ],
@@ -48,4 +50,18 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  // Only upload source maps and run the Sentry build plugin when a token is present.
+  // Locally (no SENTRY_AUTH_TOKEN) this becomes a no-op wrapper.
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+  // Tunnel Sentry events through our own domain so ad-blockers don't drop them
+  // and the browser never needs to connect to ingest.sentry.io (keeps CSP tight).
+  tunnelRoute: "/monitoring",
+  sourcemaps: {
+    disable: !process.env.SENTRY_AUTH_TOKEN,
+  },
+});
