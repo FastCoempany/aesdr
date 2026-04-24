@@ -10,10 +10,17 @@ export async function proxy(request: NextRequest) {
   // Reading process.env inside the handler (not at module scope) ensures
   // the edge runtime picks up the current value on each request, so flipping
   // the toggle in Vercel takes effect without a redeploy.
+  //
+  // Desktop visitors land on /coming-soon (password gate). Mobile visitors
+  // land on /mobile (visuals-only, no password — mobile can't use the
+  // ghost-button bypass anyway).
   const comingSoon = process.env.COMING_SOON === "true";
-  if (comingSoon && pathname !== "/coming-soon" && !request.cookies.get("aesdr_cs_bypass")) {
+  const hasBypass = !!request.cookies.get("aesdr_cs_bypass");
+  if (comingSoon && !hasBypass && pathname !== "/coming-soon" && pathname !== "/mobile") {
+    const ua = request.headers.get("user-agent") || "";
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(ua);
     const url = request.nextUrl.clone();
-    url.pathname = "/coming-soon";
+    url.pathname = isMobile ? "/mobile" : "/coming-soon";
     url.search = "";
     return NextResponse.redirect(url, 302);
   }
