@@ -17,7 +17,7 @@ export default function MobilePage() {
         justifyContent: "center",
         position: "relative",
         overflow: "hidden",
-        padding: "32px 24px",
+        padding: "24px 20px",
       }}
     >
       <div
@@ -26,12 +26,13 @@ export default function MobilePage() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          width: "100%",
         }}
       >
         <div
           style={{
             position: "relative",
-            width: "clamp(260px, 80vw, 480px)",
+            width: "clamp(220px, 62vw, 420px)",
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -51,7 +52,7 @@ export default function MobilePage() {
         <h1
           style={{
             fontFamily: "var(--display, 'Playfair Display', Georgia, serif)",
-            fontSize: "clamp(72px, 18vw, 140px)",
+            fontSize: "clamp(56px, 14vw, 120px)",
             fontWeight: 900,
             fontStyle: "italic",
             background: "var(--iris)",
@@ -61,7 +62,7 @@ export default function MobilePage() {
             backgroundClip: "text",
             animation: "iris 4s linear infinite",
             letterSpacing: "-0.02em",
-            marginTop: "-100px",
+            marginTop: "-70px",
             marginBottom: 0,
             lineHeight: 1,
             position: "relative",
@@ -76,7 +77,7 @@ export default function MobilePage() {
         <p
           style={{
             fontFamily: "var(--display, 'Playfair Display', Georgia, serif)",
-            fontSize: "clamp(16px, 3.5vw, 24px)",
+            fontSize: "clamp(14px, 3.2vw, 22px)",
             fontWeight: 600,
             fontStyle: "italic",
             background: "var(--iris)",
@@ -86,9 +87,10 @@ export default function MobilePage() {
             backgroundClip: "text",
             animation: "iris 4s linear infinite",
             letterSpacing: "0.02em",
-            marginTop: 12,
+            marginTop: 10,
             textAlign: "center",
             userSelect: "none",
+            whiteSpace: "nowrap",
           }}
         >
           AEs &amp; SDRs Rule This World
