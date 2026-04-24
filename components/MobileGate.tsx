@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
  */
 const ALLOWED_EXACT = new Set<string>([
   "/",
+  "/mobile",
   "/login",
   "/signup",
   "/success",
@@ -99,8 +100,8 @@ export default function MobileGate({
         position: "fixed",
         inset: 0,
         zIndex: 2147483647,
-        background: "var(--bg-main, #020617)",
-        color: "var(--text-main, #F8FAFC)",
+        background: "var(--cream, #FAF7F2)",
+        color: "var(--ink, #1A1A1A)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -109,10 +110,6 @@ export default function MobileGate({
       }}
     >
       <style>{`
-        @keyframes mgIris {
-          from { background-position: 0% 50%; }
-          to { background-position: 200% 50%; }
-        }
         @keyframes mgFade {
           from { opacity: 0; transform: translateY(8px); }
           to { opacity: 1; transform: translateY(0); }
@@ -129,33 +126,34 @@ export default function MobileGate({
       >
         <p
           style={{
-            fontFamily: "var(--mono, 'Space Mono', monospace)",
-            fontSize: "10px",
-            letterSpacing: ".3em",
-            textTransform: "uppercase",
-            marginBottom: "24px",
-            background:
-              "var(--iris, linear-gradient(90deg, #FF006E 0%, #FF6B00 17%, #F59E0B 34%, #10B981 51%, #38BDF8 68%, #8B5CF6 85%, #FF006E 100%))",
-            backgroundSize: "200% 100%",
+            fontFamily: "var(--display, 'Playfair Display', Georgia, serif)",
+            fontSize: "clamp(13px, 3vw, 16px)",
+            fontWeight: 600,
+            fontStyle: "italic",
+            letterSpacing: ".05em",
+            marginBottom: "20px",
+            background: "var(--iris)",
+            backgroundSize: "300% 100%",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
-            animation: "mgIris 3s linear infinite",
+            backgroundClip: "text",
+            animation: "iris 4s linear infinite",
           }}
         >
-          AESDR / Desktop Required
+          Desktop Required
         </p>
 
         <h1
           id="mobile-gate-headline"
           style={{
             fontFamily: "var(--display, 'Playfair Display', Georgia, serif)",
-            fontSize: "clamp(28px, 7vw, 36px)",
+            fontSize: "clamp(32px, 8vw, 44px)",
             fontWeight: 900,
             fontStyle: "italic",
             lineHeight: 1.1,
-            letterSpacing: ".01em",
+            letterSpacing: "-0.01em",
             marginBottom: "20px",
-            color: "var(--text-main, #F8FAFC)",
+            color: "var(--ink, #1A1A1A)",
           }}
         >
           This course is built for desktop.
@@ -163,39 +161,34 @@ export default function MobileGate({
 
         <p
           style={{
-            fontFamily: "var(--serif, 'Source Serif 4', Georgia, serif)",
-            fontSize: "16px",
+            fontFamily: "var(--display, 'Playfair Display', Georgia, serif)",
+            fontSize: "clamp(15px, 3.5vw, 17px)",
             lineHeight: 1.6,
-            color: "var(--text-muted, #94A3B8)",
-            marginBottom: "32px",
+            color: "var(--ink, #1A1A1A)",
+            marginBottom: "36px",
+            opacity: 0.75,
           }}
         >
           The lessons, tools, and artifacts need the real estate. Open{" "}
-          <span
-            style={{
-              fontWeight: 600,
-              color: "var(--text-main, #F8FAFC)",
-            }}
-          >
-            AESDR.com
-          </span>{" "}
-          on your laptop to continue.
+          <span style={{ fontWeight: 700, opacity: 1 }}>AESDR.com</span> on your
+          laptop to continue.
         </p>
 
         <Link
-          href="/"
+          href="/mobile"
           style={{
             display: "inline-block",
-            padding: "14px 28px",
-            fontFamily: "var(--mono, 'Space Mono', monospace)",
-            fontSize: "11px",
-            letterSpacing: ".2em",
-            textTransform: "uppercase",
-            color: "var(--text-main, #F8FAFC)",
+            padding: "14px 32px",
+            fontFamily: "var(--display, 'Playfair Display', Georgia, serif)",
+            fontSize: "14px",
+            fontStyle: "italic",
+            letterSpacing: ".02em",
+            color: "var(--cream, #FAF7F2)",
+            background: "var(--ink, #1A1A1A)",
             textDecoration: "none",
-            border: "1px solid var(--line, rgba(255,255,255,0.2))",
-            borderRadius: "2px",
-            transition: "border-color .2s, background .2s",
+            border: "none",
+            borderRadius: "999px",
+            transition: "opacity .2s",
           }}
         >
           Return to homepage
