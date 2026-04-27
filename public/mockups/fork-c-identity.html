@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fork C — Full-Screen Split Identity Gate</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700;900&display=swap');
+
+  :root {
+    --bg:#0B0B0F; --ink:#0A0A0F; --cream:#F4EFE6; --text:#F8FAFC; --muted:#94A3B8;
+    --line:rgba(255,255,255,.12);
+    --iris:linear-gradient(90deg,#FF006E,#FF6B00,#F59E0B,#10B981,#38BDF8,#8B5CF6,#FF006E);
+    --serif:'Inter',sans-serif; --mono:'JetBrains Mono',monospace; --display:'Playfair Display',serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{background:var(--bg);color:var(--text);font-family:var(--serif);overflow:hidden}
+  .iris{background:var(--iris);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite}
+  @keyframes shimmer{to{background-position:300% 0}}
+
+  .layer{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .6s ease;pointer-events:none}
+  .layer.on{opacity:1;pointer-events:auto}
+
+  /* Confession opener */
+  .confession{max-width:760px;width:90%;padding:24px}
+  .tline{font-size:clamp(22px,3.5vw,38px);font-weight:600;line-height:1.5;color:var(--text);margin-bottom:18px;min-height:1.5em}
+  .cursor{display:inline-block;width:2px;height:1.05em;background:#10B981;vertical-align:text-bottom;margin-left:2px;animation:blink .8s step-end infinite}
+  @keyframes blink{50%{opacity:0}}
+
+  /* Split identity gate */
+  .split{display:grid;grid-template-columns:1fr 1fr;width:100vw;height:100vh;position:fixed;inset:0}
+  .half{position:relative;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:60px 56px;cursor:pointer;overflow:hidden;transition:flex .8s ease, padding .8s ease}
+  .half.sdr{background:var(--cream);color:var(--ink)}
+  .half.ae{background:var(--ink);color:var(--text)}
+  .half .mono{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;opacity:.55;margin-bottom:18px}
+  .half .role{font-family:var(--display);font-weight:900;font-style:italic;font-size:clamp(80px,14vw,180px);line-height:1;margin-bottom:18px}
+  .half .id{font-family:var(--serif);font-size:clamp(15px,1.5vw,18px);line-height:1.55;max-width:380px;margin-bottom:14px;font-weight:500}
+  .half .id strong{font-weight:700}
+  .half .ghost{position:absolute;font-family:var(--display);font-weight:900;font-size:clamp(280px,46vw,560px);line-height:.8;opacity:.05;pointer-events:none;color:inherit;letter-spacing:-.04em;user-select:none}
+  .half.sdr .ghost{bottom:-80px;right:-30px}
+  .half.ae .ghost{top:-60px;left:-30px}
+  .half .pick-cta{margin-top:24px;font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;opacity:0;transform:translateY(6px);transition:all .25s ease}
+  .half:hover .pick-cta{opacity:1;transform:translateY(0)}
+  .half:hover{flex:1.08}
+  .half:hover .role{filter:brightness(1.05)}
+
+  /* Iris divider */
+  .divider{position:fixed;top:0;bottom:0;left:50%;width:2px;background:var(--iris);background-size:100% 300%;animation:shimmerY 4s linear infinite;z-index:5;transform:translateX(-50%);transition:opacity .6s ease}
+  @keyframes shimmerY{to{background-position:0 300%}}
+
+  /* Top label for the gate */
+  .gate-label{position:fixed;top:36px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);background:rgba(11,11,15,.7);padding:10px 18px;backdrop-filter:blur(6px);z-index:10;text-align:center}
+
+  /* Collapse animation when one is picked */
+  .split.collapseSdr .ae{flex:0;padding:0;overflow:hidden}
+  .split.collapseAe  .sdr{flex:0;padding:0;overflow:hidden}
+  .split.collapseSdr .sdr,.split.collapseAe .ae{flex:1}
+
+  /* Confession after pick */
+  .branch{max-width:760px;width:90%;padding:24px}
+  .branch .tline{margin-bottom:18px}
+
+  /* Terminal */
+  .terminal{width:min(680px,90vw)}
+  .term-bar{background:#1F2937;border:1px solid #374151;border-bottom:none;padding:10px 14px;display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:#9CA3AF}
+  .term-dot{width:11px;height:11px;border-radius:50%}.td-r{background:#EF4444}.td-y{background:#F59E0B}.td-g{background:#10B981}
+  .term-title{margin-left:10px;letter-spacing:.05em}
+  .term-body{background:#0A0F1C;border:1px solid #374151;padding:22px 26px;font-family:var(--mono);font-size:14px;color:#E5E7EB;min-height:280px}
+  .term-line{opacity:0;margin-bottom:10px;line-height:1.5}.term-line.on{opacity:1}
+  .term-out{margin-top:18px;padding-top:14px;border-top:1px dashed #374151;font-family:var(--serif);font-size:15px;color:var(--text);opacity:0;transition:opacity .8s ease}
+  .term-out.on{opacity:1}
+  .term-whisper{font-style:italic;color:var(--muted);margin-top:8px;font-size:13px}
+
+  .hero{flex-direction:column;text-align:center;gap:14px}
+  .hero h1{font-family:var(--display);font-weight:900;font-style:italic;font-size:clamp(56px,12vw,140px);line-height:1}
+  .hero .tag{font-family:var(--serif);font-size:18px;color:var(--muted)}
+  .hero .label{font-family:var(--mono);font-size:11px;letter-spacing:.28em;color:var(--muted);text-transform:uppercase}
+  .hero .cta{margin-top:24px;display:inline-block;padding:16px 38px;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite;color:#fff;font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;text-decoration:none}
+
+  .reset{position:fixed;top:14px;right:18px;z-index:99;font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;background:transparent;border:1px solid var(--line);padding:8px 14px;cursor:pointer;text-decoration:none}
+  .reset:hover{color:var(--text);border-color:var(--text)}
+  .badge{position:fixed;top:14px;left:18px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;z-index:50}
+</style>
+</head>
+<body>
+<div class="badge">Mockup C · Split Identity Gate</div>
+<a class="reset" href="javascript:location.reload()">Replay</a>
+
+<div class="layer on" id="L1">
+  <div class="confession">
+    <div class="tline" id="t1"></div>
+    <div class="tline" id="t2"></div>
+  </div>
+</div>
+
+<div class="layer" id="L2">
+  <div class="gate-label">which one are you</div>
+  <div class="split" id="split">
+    <div class="half sdr" data-role="sdr">
+      <span class="ghost">S</span>
+      <div class="mono">Pre-quota · Pre-promotion · Pre-recognition</div>
+      <div class="role iris">SDR</div>
+      <div class="id"><strong>You book the meetings.</strong> You take the no's. You're the front line of every pipeline you'll never get credit for.</div>
+      <div class="pick-cta">Click to enter →</div>
+    </div>
+    <div class="half ae" data-role="ae">
+      <span class="ghost">A</span>
+      <div class="mono">Quota-carrying · Pipeline-owning · Forecast-faking</div>
+      <div class="role iris">AE</div>
+      <div class="id"><strong>You close the deals.</strong> You ride the forecast. You carry the number that nobody else wants their name attached to.</div>
+      <div class="pick-cta">Click to enter →</div>
+    </div>
+  </div>
+  <div class="divider" id="divider"></div>
+</div>
+
+<div class="layer" id="L3"><div class="branch"><div class="tline" id="b3"></div><div class="tline" id="b4"></div><div class="tline" id="b5"></div></div></div>
+
+<div class="layer" id="L4">
+  <div class="terminal">
+    <div class="term-bar"><span class="term-dot td-r"></span><span class="term-dot td-y"></span><span class="term-dot td-g"></span><span class="term-title">you_already_knew.exe</span></div>
+    <div class="term-body" id="termBody"></div>
+  </div>
+</div>
+
+<div class="layer hero" id="L5">
+  <div class="label">12 lessons · at your own pace · 1 you</div>
+  <h1 class="iris">AESDR</h1>
+  <div class="tag">AEs &amp; SDRs rule this world.</div>
+  <a class="cta" href="javascript:location.reload()">Get Access ↗</a>
+</div>
+
+<script>
+const SDR = {
+  scenes:[
+    "You've been doing this for 9 months. They said “AE in 12.” Nobody's mentioned it since.",
+    "You set your alarm for 6am on Sunday to “lock in” this week. By Tuesday you'd stopped pretending.",
+    "You have a degree. From a university. With a campus. And your job is to get hung up on 97 times a day."
+  ],
+  term:[
+    "> scanning your daily activity...",
+    "> found: 47 dials. 3 connects. 1 “send me an email.” 0 meetings booked.",
+    "> LinkedIn requests sent: 94. Accepted: 11. Replies: “thanks for reaching out!”",
+    "> CRM notes: “VM” “VM” “VM” “gatekeeper” “VM” “wrong number” “VM”",
+    "> diagnosis: I am a human spam filter with a quota and a dream."
+  ]
+};
+const AE = {
+  scenes:[
+    "Your pipeline says $740K. You'd bet your rent on maybe $180K of it.",
+    "Sunday night. You're doing “pipeline review.” That means staring at a spreadsheet and hoping something moves.",
+    "Last quarter you missed by 31%. This quarter your number went up 30%. Nobody explained the math."
+  ],
+  term:[
+    "> scanning your pipeline...",
+    "> found: 22 open opportunities. 17 in “discovery” for 45+ days.",
+    "> forecast accuracy last quarter: 34%. what you told your VP: 85%.",
+    "> deals marked “closing this month”: 8. deals that will actually close: probably 2.",
+    "> diagnosis: professional optimist with a commission plan."
+  ]
+};
+const FINAL = "This course will change your life a few times throughout. Afterward, you’ll never make the same money again.";
+const WHISPER = "Keep scrolling. It has to get worse before it gets better.";
+
+function show(id){document.querySelectorAll('.layer').forEach(l=>l.classList.remove('on'));document.getElementById(id).classList.add('on')}
+function type(el,txt,cb,d=32){let i=0;el.innerHTML='';(function step(){if(i>=txt.length){el.innerHTML=txt;setTimeout(cb,800);return}el.innerHTML=txt.slice(0,++i)+'<span class="cursor"></span>';setTimeout(step,d+Math.random()*16)})()}
+function typeAll(els,lines,cb){let i=0;(function next(){if(i>=lines.length){cb();return}type(els[i],lines[i],()=>{i++;next()})})()}
+
+function startConfession(){
+  show('L1');
+  type(document.getElementById('t1'),"So here's the scenario.",()=>{
+    type(document.getElementById('t2'),"You're an AE. Or an SDR.",()=>{setTimeout(()=>show('L2'),700)});
+  });
+}
+
+function pick(role){
+  const split=document.getElementById('split');
+  split.classList.add(role==='sdr'?'collapseAe':'collapseSdr');
+  document.getElementById('divider').style.opacity='0';
+  setTimeout(()=>{
+    show('L3');
+    setTimeout(()=>{
+      const data=role==='sdr'?SDR:AE;
+      typeAll([document.getElementById('b3'),document.getElementById('b4'),document.getElementById('b5')], data.scenes,()=>{
+        setTimeout(()=>runTerminal(data.term),900);
+      });
+    },500);
+  },900);
+}
+
+function runTerminal(lines){
+  show('L4');
+  const body=document.getElementById('termBody');body.innerHTML='';
+  const lineEls=lines.map(l=>{const d=document.createElement('div');d.className='term-line';d.dataset.text=l;d.innerHTML='<span></span>';body.appendChild(d);return d});
+  const out=document.createElement('div');out.className='term-out';out.innerHTML=FINAL+'<div class="term-whisper">'+WHISPER+'</div>';body.appendChild(out);
+  let i=0;
+  function nextLine(){
+    if(i>=lineEls.length){setTimeout(()=>{out.classList.add('on');setTimeout(()=>show('L5'),3500)},400);return}
+    const el=lineEls[i],span=el.querySelector('span'),txt=el.dataset.text;el.classList.add('on');let ci=0;
+    (function ch(){if(ci>=txt.length){span.textContent=txt;i++;setTimeout(nextLine,260);return}span.innerHTML=txt.slice(0,++ci)+'<span class="cursor"></span>';setTimeout(ch,18+Math.random()*10)})();
+  }
+  nextLine();
+}
+
+document.querySelectorAll('.half').forEach(h=>h.addEventListener('click',()=>pick(h.dataset.role)));
+window.addEventListener('load',()=>setTimeout(startConfession,500));
+</script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fork B — Inline Typewriter Choice</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700;900&display=swap');
+
+  :root {
+    --bg:#0B0B0F; --text:#F8FAFC; --muted:#94A3B8; --line:rgba(255,255,255,.12);
+    --iris:linear-gradient(90deg,#FF006E,#FF6B00,#F59E0B,#10B981,#38BDF8,#8B5CF6,#FF006E);
+    --serif:'Inter',sans-serif; --mono:'JetBrains Mono',monospace; --display:'Playfair Display',serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{background:var(--bg);color:var(--text);font-family:var(--serif);overflow:hidden}
+
+  .stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px}
+
+  .iris{background:var(--iris);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite}
+  @keyframes shimmer{to{background-position:300% 0}}
+
+  .reel{max-width:760px;width:90%}
+  .tline{font-size:clamp(22px,3.5vw,38px);font-weight:600;line-height:1.5;margin-bottom:18px;min-height:1.5em;opacity:0;transition:opacity .5s ease}
+  .tline.on{opacity:1}
+  .cursor{display:inline-block;width:2px;height:1.05em;background:#10B981;vertical-align:text-bottom;margin-left:2px;animation:blink .8s step-end infinite}
+  @keyframes blink{50%{opacity:0}}
+
+  /* Inline pulsing role tokens */
+  .pick{cursor:pointer;position:relative;border-bottom:2px solid transparent;transition:all .2s ease;padding:0 2px}
+  .pick.live{animation:pulse 2s ease-in-out infinite}
+  .pick.live:hover{border-bottom-color:#fff;transform:scale(1.04)}
+  @keyframes pulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.4)}}
+  .pick.chosen{display:inline-block;animation:bigShift .5s forwards}
+  @keyframes bigShift{0%{transform:scale(1)}100%{transform:scale(1.18)}}
+  .pick.dim{color:var(--muted)!important;-webkit-text-fill-color:var(--muted);text-decoration:line-through;opacity:.45;filter:grayscale(1)}
+
+  .picker-hint{font-family:var(--mono);font-size:11px;letter-spacing:.28em;color:var(--muted);text-transform:uppercase;margin-top:8px;opacity:0;transition:opacity .4s}
+  .picker-hint.on{opacity:.7}
+  .picker-hint .arrow{display:inline-block;animation:bob 1.4s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+
+  /* Terminal */
+  .terminal-wrap{margin-top:36px;max-width:680px;width:100%;opacity:0;transition:opacity .5s ease}
+  .terminal-wrap.on{opacity:1}
+  .term-bar{background:#1F2937;border:1px solid #374151;border-bottom:none;padding:10px 14px;display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:#9CA3AF}
+  .term-dot{width:11px;height:11px;border-radius:50%}.td-r{background:#EF4444}.td-y{background:#F59E0B}.td-g{background:#10B981}
+  .term-title{margin-left:10px;letter-spacing:.05em}
+  .term-body{background:#0A0F1C;border:1px solid #374151;padding:22px 26px;font-family:var(--mono);font-size:14px;color:#E5E7EB;min-height:200px}
+  .term-line{opacity:0;margin-bottom:10px;line-height:1.5}.term-line.on{opacity:1}
+  .term-out{margin-top:18px;padding-top:14px;border-top:1px dashed #374151;font-family:var(--serif);font-size:15px;color:var(--text);opacity:0;transition:opacity .8s ease}
+  .term-out.on{opacity:1}
+  .term-whisper{font-style:italic;color:var(--muted);margin-top:8px;font-size:13px}
+
+  /* Final hero embedded under the same reel */
+  .hero{margin-top:36px;text-align:center;opacity:0;transition:opacity .6s ease}
+  .hero.on{opacity:1}
+  .hero h1{font-family:var(--display);font-weight:900;font-style:italic;font-size:clamp(56px,12vw,140px);line-height:1}
+  .hero .tag{font-family:var(--serif);font-size:18px;color:var(--muted);margin-top:8px}
+  .hero .cta{margin-top:28px;display:inline-block;padding:16px 38px;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite;color:#fff;font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;text-decoration:none}
+
+  .reset{position:fixed;top:14px;right:18px;z-index:99;font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;background:transparent;border:1px solid var(--line);padding:8px 14px;cursor:pointer;text-decoration:none}
+  .reset:hover{color:var(--text);border-color:var(--text)}
+  .badge{position:fixed;top:14px;left:18px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--muted);text-transform:uppercase}
+  .stage{align-items:flex-start;padding-top:18vh;overflow-y:auto}
+</style>
+</head>
+<body>
+<div class="badge">Mockup B · Inline Typewriter Choice</div>
+<a class="reset" href="javascript:location.reload()">Replay</a>
+
+<div class="stage">
+  <div class="reel">
+    <div class="tline" id="t1"></div>
+    <div class="tline" id="t2"></div>
+    <div class="picker-hint" id="hint"><span class="arrow">↑</span>&nbsp;&nbsp;click one — it changes everything that comes next</div>
+    <div class="tline" id="b3" style="margin-top:24px"></div>
+    <div class="tline" id="b4"></div>
+    <div class="tline" id="b5"></div>
+    <div class="terminal-wrap" id="termWrap">
+      <div class="term-bar"><span class="term-dot td-r"></span><span class="term-dot td-y"></span><span class="term-dot td-g"></span><span class="term-title">you_already_knew.exe</span></div>
+      <div class="term-body" id="termBody"></div>
+    </div>
+    <div class="hero" id="hero">
+      <h1 class="iris">AESDR</h1>
+      <div class="tag">AEs &amp; SDRs rule this world.</div>
+      <a class="cta" href="javascript:location.reload()">Get Access ↗</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const SDR = {
+  scenes:[
+    "You've been doing this for 9 months. They said “AE in 12.” Nobody's mentioned it since.",
+    "You set your alarm for 6am on Sunday to “lock in” this week. By Tuesday you'd stopped pretending.",
+    "You have a degree. From a university. With a campus. And your job is to get hung up on 97 times a day."
+  ],
+  term:[
+    "> scanning your daily activity...",
+    "> found: 47 dials. 3 connects. 1 “send me an email.” 0 meetings booked.",
+    "> LinkedIn requests sent: 94. Accepted: 11. Replies: “thanks for reaching out!”",
+    "> CRM notes: “VM” “VM” “VM” “gatekeeper” “VM” “wrong number” “VM”",
+    "> diagnosis: I am a human spam filter with a quota and a dream."
+  ]
+};
+const AE = {
+  scenes:[
+    "Your pipeline says $740K. You'd bet your rent on maybe $180K of it.",
+    "Sunday night. You're doing “pipeline review.” That means staring at a spreadsheet and hoping something moves.",
+    "Last quarter you missed by 31%. This quarter your number went up 30%. Nobody explained the math."
+  ],
+  term:[
+    "> scanning your pipeline...",
+    "> found: 22 open opportunities. 17 in “discovery” for 45+ days.",
+    "> forecast accuracy last quarter: 34%. what you told your VP: 85%.",
+    "> deals marked “closing this month”: 8. deals that will actually close: probably 2.",
+    "> diagnosis: professional optimist with a commission plan."
+  ]
+};
+const FINAL = "This course will change your life a few times throughout. Afterward, you’ll never make the same money again.";
+const WHISPER = "Keep scrolling. It has to get worse before it gets better.";
+
+function typePlain(el,txt,cb,d=32){
+  el.classList.add('on');let i=0;el.innerHTML='';
+  (function step(){
+    if(i>=txt.length){el.innerHTML=txt;setTimeout(cb,700);return}
+    el.innerHTML=txt.slice(0,++i)+'<span class="cursor"></span>';
+    setTimeout(step,d+Math.random()*16);
+  })();
+}
+
+function typeWithFork(el,cb){
+  // Build "You're an AE. Or an SDR." with AE & SDR as separate <span class="pick">
+  el.classList.add('on');
+  const segments = [
+    {t:"You're an ",style:""},
+    {t:"AE",style:"pick",role:"ae"},
+    {t:". Or an ",style:""},
+    {t:"SDR",style:"pick",role:"sdr"},
+    {t:".",style:""}
+  ];
+  // Flatten chars with style markers
+  const flat=[];
+  segments.forEach((seg,si)=>{for(const c of seg.t)flat.push({c,style:seg.style,role:seg.role,si})});
+  let i=0;
+  function render(idx){
+    let html='',openSi=-1;
+    for(let k=0;k<idx;k++){
+      const f=flat[k];
+      if(f.si!==openSi){
+        if(openSi!==-1)html+='</span>';
+        if(f.style==='pick')html+=`<span class="pick iris" data-role="${f.role}">`;
+        else html+='<span>';
+        openSi=f.si;
+      }
+      html+=f.c;
+    }
+    if(openSi!==-1)html+='</span>';
+    el.innerHTML=html+'<span class="cursor"></span>';
+  }
+  (function step(){
+    if(i>=flat.length){
+      // remove cursor, mark picks live
+      let html='',openSi=-1;
+      for(let k=0;k<flat.length;k++){
+        const f=flat[k];
+        if(f.si!==openSi){
+          if(openSi!==-1)html+='</span>';
+          if(f.style==='pick')html+=`<span class="pick iris live" data-role="${f.role}">`;
+          else html+='<span>';
+          openSi=f.si;
+        }
+        html+=f.c;
+      }
+      if(openSi!==-1)html+='</span>';
+      el.innerHTML=html;
+      el.querySelectorAll('.pick').forEach(p=>p.addEventListener('click',()=>cb(p.dataset.role,p)));
+      setTimeout(()=>document.getElementById('hint').classList.add('on'),300);
+      return;
+    }
+    i++;render(i);
+    setTimeout(step,38+Math.random()*16);
+  })();
+}
+
+function pick(role,clickedEl){
+  document.getElementById('hint').classList.remove('on');
+  const all=document.querySelectorAll('.pick');
+  all.forEach(p=>{
+    p.classList.remove('live');
+    if(p.dataset.role===role)p.classList.add('chosen');
+    else p.classList.add('dim');
+  });
+  const data=role==='sdr'?SDR:AE;
+  setTimeout(()=>{
+    const els=[document.getElementById('b3'),document.getElementById('b4'),document.getElementById('b5')];
+    let i=0;
+    (function next(){
+      if(i>=data.scenes.length){setTimeout(()=>runTerminal(data.term),700);return}
+      typePlain(els[i],data.scenes[i],()=>{i++;next()});
+    })();
+  },800);
+}
+
+function runTerminal(lines){
+  document.getElementById('termWrap').classList.add('on');
+  document.getElementById('termWrap').scrollIntoView({behavior:'smooth',block:'center'});
+  const body=document.getElementById('termBody');body.innerHTML='';
+  const lineEls=lines.map(l=>{const d=document.createElement('div');d.className='term-line';d.dataset.text=l;d.innerHTML='<span></span>';body.appendChild(d);return d});
+  const out=document.createElement('div');out.className='term-out';out.innerHTML=FINAL+'<div class="term-whisper">'+WHISPER+'</div>';body.appendChild(out);
+  let i=0;
+  function nextLine(){
+    if(i>=lineEls.length){setTimeout(()=>{out.classList.add('on');setTimeout(()=>{document.getElementById('hero').classList.add('on');document.getElementById('hero').scrollIntoView({behavior:'smooth',block:'center'})},2400)},400);return}
+    const el=lineEls[i],span=el.querySelector('span'),txt=el.dataset.text;el.classList.add('on');let ci=0;
+    (function ch(){if(ci>=txt.length){span.textContent=txt;i++;setTimeout(nextLine,260);return}span.innerHTML=txt.slice(0,++ci)+'<span class="cursor"></span>';setTimeout(ch,18+Math.random()*10)})();
+  }
+  nextLine();
+}
+
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    typePlain(document.getElementById('t1'),"So here's the scenario.",()=>{
+      typeWithFork(document.getElementById('t2'),pick);
+    });
+  },500);
+});
+</script>
+</body>
+</html>

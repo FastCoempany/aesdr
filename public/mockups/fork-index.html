@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AE/SDR Fork Mockups — Index</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700;900&display=swap');
+  :root {
+    --bg:#0B0B0F; --text:#F8FAFC; --muted:#94A3B8; --line:rgba(255,255,255,.12);
+    --iris:linear-gradient(90deg,#FF006E,#FF6B00,#F59E0B,#10B981,#38BDF8,#8B5CF6,#FF006E);
+    --serif:'Inter',sans-serif; --mono:'JetBrains Mono',monospace; --display:'Playfair Display',serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:var(--serif);min-height:100vh;padding:64px 32px}
+  .iris{background:var(--iris);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite}
+  @keyframes shimmer{to{background-position:300% 0}}
+  .wrap{max-width:920px;margin:0 auto}
+  .label{font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--muted);text-transform:uppercase;margin-bottom:14px}
+  h1{font-family:var(--display);font-weight:900;font-style:italic;font-size:clamp(36px,5vw,64px);line-height:1.05;margin-bottom:14px}
+  .lede{font-size:17px;line-height:1.6;color:var(--muted);max-width:640px;margin-bottom:48px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
+  a.card{display:block;text-decoration:none;color:var(--text);border:1px solid var(--line);padding:28px;transition:all .2s ease;background:rgba(255,255,255,.02)}
+  a.card:hover{border-color:transparent;background:rgba(255,255,255,.05);transform:translateY(-2px);box-shadow:0 0 30px rgba(139,92,246,.15)}
+  a.card .tag{font-family:var(--mono);font-size:10px;letter-spacing:.28em;color:var(--muted);text-transform:uppercase;margin-bottom:14px}
+  a.card .title{font-family:var(--display);font-weight:900;font-style:italic;font-size:28px;line-height:1.05;margin-bottom:10px}
+  a.card .desc{font-size:14px;line-height:1.6;color:var(--muted)}
+  a.card .arrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--text);margin-top:18px;display:inline-block}
+  .footer{margin-top:64px;font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--muted);text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="label">AESDR · Fork mockups</div>
+  <h1>You're an <span class="iris">AE</span>. Or an <span class="iris">SDR</span>.</h1>
+  <p class="lede">Three takes on the role-fork moment after the opening confession. Each mockup runs the full sequence end-to-end: opener &rarr; pick &rarr; branched scenes &rarr; terminal &rarr; final hero. Click "Replay" in the corner of any mockup to run it again.</p>
+
+  <div class="grid">
+    <a class="card" href="./fork-a-buttons.html">
+      <div class="tag">Mockup A</div>
+      <div class="title">Side-by-Side Buttons</div>
+      <div class="desc">Confession fades, then two large bordered buttons appear. Iris fills on hover. Cleanest separation between "watch" and "choose."</div>
+      <div class="arrow">Open →</div>
+    </a>
+    <a class="card" href="./fork-b-typewriter.html">
+      <div class="tag">Mockup B</div>
+      <div class="title">Inline Typewriter Choice</div>
+      <div class="desc">The fork lives inside the typed sentence. AE/SDR pulse iris after typing finishes. Click one — the other strikes through. Most seamless flow.</div>
+      <div class="arrow">Open →</div>
+    </a>
+    <a class="card" href="./fork-c-identity.html">
+      <div class="tag">Mockup C</div>
+      <div class="title">Split Identity Gate</div>
+      <div class="desc">Full-screen split: cream/SDR vs ink/AE. Ghost letter watermarks, identity copy, iris divider. Most dramatic — feels like an oath.</div>
+      <div class="arrow">Open →</div>
+    </a>
+  </div>
+
+  <div class="footer">localhost · click any card to start</div>
+</div>
+</body>
+</html>
