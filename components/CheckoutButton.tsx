@@ -2,14 +2,18 @@
 
 import { useState } from "react";
 
+import { track } from "@/lib/analytics";
+
 export default function CheckoutButton({
   tier,
   label,
   className,
+  selectedRole,
 }: {
   tier: "sdr" | "ae" | "team";
   label: string;
   className?: string;
+  selectedRole?: "ae" | "sdr";
 }) {
   const [loading, setLoading] = useState(false);
   const [showEmail, setShowEmail] = useState(false);
@@ -93,7 +97,10 @@ export default function CheckoutButton({
 
   return (
     <button
-      onClick={() => setShowEmail(true)}
+      onClick={() => {
+        track("pricing_cta_clicked", { tier, role: selectedRole });
+        setShowEmail(true);
+      }}
       className={className}
       disabled={loading}
     >

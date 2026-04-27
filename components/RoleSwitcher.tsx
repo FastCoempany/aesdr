@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { track } from "@/lib/analytics";
 import { createClient } from "@/utils/supabase/client";
 
 interface RoleSwitcherProps {
@@ -34,6 +35,10 @@ export default function RoleSwitcher({ currentRole }: RoleSwitcherProps) {
       return;
     }
 
+    track("account_role_switched", {
+      from: currentRole as "ae" | "sdr",
+      to: newRole as "ae" | "sdr",
+    });
     setFeedback(`Switched to ${LABELS[newRole]}.`);
     setLoading(false);
     router.refresh();
