@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Fork Mockup C — Full-Screen Identity Gate</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,900;1,400;1,900&family=Source+Serif+4:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@600;700;800&family=Space+Mono&family=Caveat:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --iris: linear-gradient(90deg, #FF006E 0%, #FF6B00 17%, #F59E0B 34%, #10B981 51%, #38BDF8 68%, #8B5CF6 85%, #FF006E 100%);
+    --display: 'Playfair Display', Georgia, serif;
+    --serif: 'Source Serif 4', Georgia, serif;
+    --cond: 'Barlow Condensed', sans-serif;
+    --mono: 'Space Mono', monospace;
+    --hand: 'Caveat', cursive;
+    --crimson: #8B1A1A;
+    --cream: #FAF7F2;
+    --ink: #1A1A1A;
+    --muted: #6B6B6B;
+    --light: #E8E4DF;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--cream); color: var(--ink); min-height: 100vh; overflow: hidden; }
+
+  @keyframes shimmer { from { background-position: 0% 50%; } to { background-position: 300% 50%; } }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeOut { to { opacity: 0; transform: translateY(-6px); } }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes borderDraw { from { width: 0; } to { width: 100%; } }
+
+  .iris { background: var(--iris); background-size: 300% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 4s linear infinite; }
+
+  /* Confession */
+  #confession {
+    position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: var(--cream); z-index: 10;
+  }
+  .typing-area { max-width: 720px; width: 90%; text-align: left; }
+  .tline {
+    font-family: var(--display); font-size: clamp(22px, 3.5vw, 38px);
+    font-style: italic; font-weight: 400; line-height: 1.5; color: var(--ink);
+    min-height: 1.6em;
+  }
+  .tline.fade-in { animation: fadeUp 0.4s ease forwards; }
+  .tline.fade-out { animation: fadeOut 0.5s ease forwards; }
+  .cursor { display: inline-block; width: 2px; height: 1.1em; background: var(--crimson); vertical-align: text-bottom; margin-left: 2px; animation: blink 0.8s step-end infinite; }
+
+  /* Fork — Variant C: full-screen split identity gate */
+  #fork {
+    position: fixed; inset: 0; display: none; z-index: 11;
+  }
+  #fork.active { display: flex; }
+
+  .fork-half {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 20px; cursor: pointer;
+    transition: flex 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+    position: relative; overflow: hidden;
+  }
+
+  .fork-left {
+    background: var(--cream); border-right: 1px solid var(--light);
+  }
+  .fork-right {
+    background: var(--ink);
+  }
+
+  .fork-half:hover { flex: 1.15; }
+
+  .fork-role {
+    font-family: var(--cond); font-size: clamp(64px, 12vw, 140px);
+    font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
+    opacity: 0; animation: fadeUp 0.6s ease 0.3s forwards;
+  }
+  .fork-left .fork-role { color: var(--ink); }
+  .fork-right .fork-role { color: var(--cream); }
+
+  .fork-desc {
+    font-family: var(--serif); font-size: 16px; font-style: italic;
+    max-width: 280px; text-align: center; line-height: 1.6;
+    opacity: 0; animation: fadeUp 0.5s ease 0.6s forwards;
+  }
+  .fork-left .fork-desc { color: var(--muted); }
+  .fork-right .fork-desc { color: rgba(250, 247, 242, 0.5); }
+
+  .fork-label {
+    font-family: var(--mono); font-size: 9px; letter-spacing: 0.3em;
+    text-transform: uppercase; position: absolute; bottom: 40px;
+    opacity: 0; animation: fadeUp 0.4s ease 0.9s forwards;
+  }
+  .fork-left .fork-label { color: var(--muted); }
+  .fork-right .fork-label { color: rgba(250, 247, 242, 0.35); }
+
+  /* Ghost number behind each half */
+  .fork-ghost {
+    position: absolute; font-family: var(--display); font-weight: 900;
+    font-size: clamp(200px, 40vw, 500px); line-height: 0.8;
+    pointer-events: none; opacity: 0.03;
+  }
+  .fork-left .fork-ghost { color: var(--ink); bottom: -40px; right: -20px; }
+  .fork-right .fork-ghost { color: var(--cream); bottom: -40px; left: -20px; }
+
+  /* Iris line between halves */
+  .fork-divider {
+    position: absolute; top: 0; left: 50%; width: 2px; height: 100%;
+    z-index: 2; overflow: hidden; transform: translateX(-50%);
+  }
+  .fork-divider::after {
+    content: ''; display: block; width: 2px; height: 100%;
+    background: var(--iris); background-size: 100% 300%;
+    animation: shimmer 4s linear infinite;
+    opacity: 0; transition: opacity 0.6s ease 0.4s;
+  }
+  #fork.active .fork-divider::after { opacity: 0.4; }
+
+  /* Chosen animation */
+  .fork-half.chosen { flex: 3; }
+  .fork-half.dismissed { flex: 0; opacity: 0; overflow: hidden; }
+
+  /* Post-fork */
+  #postfork {
+    position: fixed; inset: 0; display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: var(--cream); z-index: 12;
+  }
+  #postfork.active { display: flex; }
+
+  /* Terminal */
+  #terminal-layer {
+    position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+    background: var(--cream); z-index: 13;
+  }
+  #terminal-layer.active { display: flex; }
+  .terminal { max-width: 680px; width: 90%; border: 1px solid var(--light); background: rgba(0,0,0,0.02); font-family: var(--mono); }
+  .term-bar { display: flex; align-items: center; gap: 6px; padding: 10px 16px; border-bottom: 1px solid var(--light); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-r { background: rgba(239,68,68,0.35); }
+  .dot-y { background: rgba(245,158,11,0.35); }
+  .dot-g { background: rgba(16,185,129,0.35); }
+  .term-title { font-size: 9px; color: var(--muted); letter-spacing: .08em; margin-left: auto; }
+  .term-body { padding: clamp(20px,3vw,36px) clamp(16px,3vw,28px); }
+  .term-line { font-size: clamp(13px,1.8vw,17px); line-height: 1.8; color: var(--ink); opacity: 0; white-space: pre-wrap; }
+  .term-line.visible { opacity: 1; }
+  .term-line .prompt { color: var(--muted); margin-right: 8px; }
+  .term-cursor { display: inline-block; width: 7px; height: 14px; background: var(--crimson); vertical-align: text-bottom; animation: blink 0.8s step-end infinite; }
+  .term-output { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--light); font-size: clamp(14px,2vw,19px); font-weight: 800; line-height: 1.7; opacity: 0; transition: opacity 0.6s ease; }
+  .term-output.visible { opacity: 1; }
+  .term-output .msg { background: var(--iris); background-size: 300% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 4s linear infinite; }
+  .term-whisper { font-family: var(--serif); font-size: clamp(12px,1.4vw,15px); color: var(--muted); margin-top: 16px; font-style: italic; font-weight: 400; }
+
+  .restart {
+    position: fixed; bottom: 24px; right: 24px; font-family: var(--mono);
+    font-size: 10px; letter-spacing: 0.15em; color: var(--muted);
+    text-decoration: none; z-index: 100; cursor: pointer; border: none; background: none;
+  }
+  .restart:hover { color: var(--ink); }
+</style>
+</head>
+<body>
+
+<div id="confession">
+  <div class="typing-area" id="typing"></div>
+</div>
+
+<div id="fork">
+  <div class="fork-half fork-left" onclick="choosePath('sdr')">
+    <div class="fork-ghost">S</div>
+    <div class="fork-role">SDR</div>
+    <div class="fork-desc">You book the meetings.<br/>You take the "no"s.<br/>You're the front line.</div>
+    <div class="fork-label">click to enter</div>
+  </div>
+  <div class="fork-divider"></div>
+  <div class="fork-half fork-right" onclick="choosePath('ae')">
+    <div class="fork-ghost">A</div>
+    <div class="fork-role">AE</div>
+    <div class="fork-desc">You close the deals.<br/>You carry the number.<br/>You own the forecast.</div>
+    <div class="fork-label">click to enter</div>
+  </div>
+</div>
+
+<div id="postfork">
+  <div class="typing-area" id="posttyping"></div>
+</div>
+
+<div id="terminal-layer">
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <span class="term-title" id="term-title"></span>
+    </div>
+    <div class="term-body" id="term-body"></div>
+  </div>
+</div>
+
+<button class="restart" onclick="location.reload()">↻ restart</button>
+
+<script>
+const SDR_SCENES = [
+  { text: "You've been doing this for 9 months. They said 'AE in 12.' Nobody's mentioned it since.", hold: 800 },
+  { text: "You set your alarm for 6am on Sunday to 'lock in' this week. By Tuesday you'd stopped pretending.", hold: 700 },
+  { text: "You have a degree. From a university. With a campus. And your job is to get hung up on 97 times a day.", hold: 0 },
+];
+const AE_SCENES = [
+  { text: "Your pipeline says $740K. You'd bet your rent on maybe $180K of it.", hold: 800 },
+  { text: "Sunday night. You're doing 'pipeline review.' That means staring at a spreadsheet and hoping something moves.", hold: 700 },
+  { text: "Last quarter you missed by 31%. This quarter your number went up 30%. Nobody explained the math.", hold: 0 },
+];
+const SDR_TERM = {
+  title: "sdr_reality_check.exe",
+  lines: [
+    "> scanning your daily activity...",
+    "> found: 47 dials. 3 connects. 1 "send me an email." 0 meetings booked.",
+    "> LinkedIn requests sent: 94. Accepted: 11. Replies: "thanks for reaching out!"",
+    "> CRM notes: "VM" "VM" "VM" "gatekeeper" "VM" "wrong number" "VM"",
+    "> diagnosis: I am a human spam filter with a quota and a dream.",
+  ]
+};
+const AE_TERM = {
+  title: "pipeline_audit.exe",
+  lines: [
+    "> scanning your pipeline...",
+    "> found: 22 open opportunities. 17 in "discovery" for 45+ days.",
+    "> forecast accuracy last quarter: 34%. what you told your VP: 85%.",
+    "> deals marked "closing this month": 8. deals that will actually close: probably 2.",
+    "> diagnosis: professional optimist with a commission plan.",
+  ]
+};
+
+let chosenPath = null;
+
+function buildHTML(arr) {
+  let h = '', cur = null;
+  for (const { ch, style } of arr) {
+    if (style !== cur) { if (cur) h += '</span>'; if (style) h += `<span class="${style}">`; cur = style; }
+    h += ch;
+  }
+  if (cur) h += '</span>';
+  return h;
+}
+
+function typeText(container, text, segments, cb) {
+  const line = document.createElement('div');
+  line.className = 'tline fade-in';
+  container.appendChild(line);
+  const chars = [];
+  if (segments) { for (const seg of segments) for (const ch of seg.t) chars.push({ ch, style: seg.s }); }
+  else { for (const ch of text) chars.push({ ch, style: '' }); }
+  let i = 0;
+  function type() {
+    if (i >= chars.length) { line.innerHTML = buildHTML(chars); cb(line); return; }
+    i++;
+    line.innerHTML = buildHTML(chars.slice(0, i)) + '<span class="cursor"></span>';
+    setTimeout(type, 35 + Math.random() * 20);
+  }
+  type();
+}
+
+function runShared(idx) {
+  const scenes = [
+    { text: "So here's the scenario.", hold: 1000, exit: true },
+    { segments: [{t:"You're an ",s:""},{t:"AE",s:"iris"},{t:". Or an ",s:""},{t:"SDR",s:"iris"},{t:".",s:""}], hold: 1200, exit: false },
+  ];
+  if (idx >= scenes.length) {
+    setTimeout(() => {
+      const conf = document.getElementById('confession');
+      conf.style.transition = 'opacity 0.5s';
+      conf.style.opacity = '0';
+      setTimeout(() => {
+        conf.style.display = 'none';
+        document.getElementById('fork').classList.add('active');
+      }, 500);
+    }, 600);
+    return;
+  }
+  const scene = scenes[idx];
+  typeText(document.getElementById('typing'), scene.text, scene.segments, (line) => {
+    setTimeout(() => {
+      if (scene.exit) { line.classList.add('fade-out'); setTimeout(() => runShared(idx + 1), 500); }
+      else runShared(idx + 1);
+    }, scene.hold);
+  });
+}
+
+function choosePath(path) {
+  chosenPath = path;
+  const left = document.querySelector('.fork-left');
+  const right = document.querySelector('.fork-right');
+
+  if (path === 'sdr') {
+    left.classList.add('chosen');
+    right.classList.add('dismissed');
+  } else {
+    right.classList.add('chosen');
+    left.classList.add('dismissed');
+  }
+
+  setTimeout(() => {
+    const fork = document.getElementById('fork');
+    fork.style.transition = 'opacity 0.5s';
+    fork.style.opacity = '0';
+    setTimeout(() => {
+      fork.style.display = 'none';
+      document.getElementById('postfork').classList.add('active');
+      runBranched(path === 'sdr' ? SDR_SCENES : AE_SCENES, 0);
+    }, 500);
+  }, 700);
+}
+
+function runBranched(scenes, idx) {
+  if (idx >= scenes.length) { setTimeout(showTerminal, 800); return; }
+  typeText(document.getElementById('posttyping'), scenes[idx].text, null, () => {
+    setTimeout(() => runBranched(scenes, idx + 1), scenes[idx].hold);
+  });
+}
+
+function showTerminal() {
+  const pf = document.getElementById('postfork');
+  pf.style.transition = 'opacity 0.5s';
+  pf.style.opacity = '0';
+  const termData = chosenPath === 'sdr' ? SDR_TERM : AE_TERM;
+  document.getElementById('term-title').textContent = termData.title;
+  const body = document.getElementById('term-body');
+  body.innerHTML = '';
+  for (const line of termData.lines) {
+    const div = document.createElement('div');
+    div.className = 'term-line';
+    div.setAttribute('data-text', line);
+    div.innerHTML = '<span class="prompt">&gt;</span> <span></span>';
+    body.appendChild(div);
+  }
+  const output = document.createElement('div');
+  output.className = 'term-output';
+  output.innerHTML = '<span class="msg">This course will change your life a few times throughout. Afterward, you'll never make the same money again.</span><div class="term-whisper">Keep scrolling. It has to get worse before it gets better.</div>';
+  body.appendChild(output);
+  setTimeout(() => {
+    pf.style.display = 'none';
+    document.getElementById('terminal-layer').classList.add('active');
+    typeTermLines(0);
+  }, 500);
+}
+
+function typeTermLines(idx) {
+  const lines = document.querySelectorAll('.term-line');
+  if (idx >= lines.length) { setTimeout(() => document.querySelector('.term-output').classList.add('visible'), 500); return; }
+  const line = lines[idx];
+  const span = line.querySelector('span:last-child');
+  const fullText = (line.getAttribute('data-text') || '').replace(/^> /, '');
+  line.classList.add('visible');
+  let ci = 0;
+  function typeChar() {
+    if (ci >= fullText.length) { span.textContent = fullText; setTimeout(() => typeTermLines(idx + 1), 300); return; }
+    ci++;
+    span.innerHTML = fullText.substring(0, ci) + '<span class="term-cursor"></span>';
+    setTimeout(typeChar, 18 + Math.random() * 12);
+  }
+  typeChar();
+}
+
+setTimeout(() => runShared(0), 500);
+</script>
+</body>
+</html>
