@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { capturePageview, identify, reset } from "@/lib/analytics";
 import { createClient } from "@/utils/supabase/client";
 
-export default function PostHogClient() {
+export default function PostHogProvider() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 

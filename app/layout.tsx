@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/react";
 import MobileGate from "@/components/MobileGate";
-import PostHogClient from "@/components/PostHogClient";
+import PostHogProvider from "@/components/PostHogProvider";
 import RedditPixel from "@/components/RedditPixel";
 import "./globals.css";
 
@@ -79,7 +79,7 @@ export default function RootLayout({
           <RedditPixel />
         </Suspense>
         <Suspense fallback={null}>
-          <PostHogClient />
+          <PostHogProvider />
         </Suspense>
       </body>
     </html>
