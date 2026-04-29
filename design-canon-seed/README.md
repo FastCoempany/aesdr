@@ -21,7 +21,7 @@ The full repo (`FastCoempany/aesdr`) remains the source of truth. This kit is th
    - `02-typography-specimen.pdf` — 1 page showing all five fonts at real sizes with sample text.
    - `03-color-palette.pdf` — 1 page showing all six tokens with hex / RGB / use cases plus the iris gradient stops.
 
-3. **Upload the rendered PNGs in `04-rendered-surfaces/`.** Seven canonical surface renders so the system extracts visual style from images, not raw HTML.
+3. **Upload the rendered PNGs in `04-rendered-surfaces/`.** Six surface renders — the canonical hero from production plus five isolated single-pattern demonstrations — all in the **active editorial palette** (cream + ink + crimson + iris). The retired dark-palette mockups in `public/mockups/01-27` are deliberately *not* in this kit; their palette is forbidden by `AGENTS.md`.
 
 4. **Upload the individual brand assets in `06-individual-assets/`.** The wordmark on cream and the iris gradient swatch as standalone images.
 
@@ -38,13 +38,12 @@ design-canon-seed/
 ├── 02-typography-specimen.pdf             1 page  · ~82K
 ├── 03-color-palette.pdf                   1 page  · ~67K
 ├── 04-rendered-surfaces/
-│   ├── variant-a-editorial-split.png      canonical hero · ~221K
-│   ├── mockup-09-two-voices.png           the two-voices motif · ~905K
-│   ├── mockup-14-hero-accusation.png      hero accusation pattern · ~72K
-│   ├── mockup-21-hero-terminal.png        terminal hero pattern · ~76K
-│   ├── mockup-25-classified-dossier.png   classified dossier pattern · ~250K
-│   ├── mockup-26-the-mirror.png           "the mirror" pattern · ~110K
-│   └── mockup-27-deck-stack.png           deck-stack pattern · ~414K
+│   ├── variant-a-editorial-split.png      canonical hero from production · ~223K
+│   ├── pattern-editorial-split-hero.png   isolated split + warning box · ~236K
+│   ├── pattern-two-voices.png             the two-voices motif · ~470K
+│   ├── pattern-terminal-block.png         terminal block on cream · ~193K
+│   ├── pattern-classified-card.png        classified dossier card pattern · ~201K
+│   └── pattern-deck-peel.png              12-card deck-stack peel · ~110K
 ├── 05-canonical-references.md             pointer to live repo paths
 └── 06-individual-assets/
     ├── wordmark-on-cream.png              the AESDR. wordmark · ~89K
@@ -62,7 +61,7 @@ Total: 12 files. Designed to onboard a single Claude Design instance without hun
 | Color tokens (hex + RGB + use case) | `03-color-palette.pdf` (definitive) · `01-brand-canon.pdf` p.2 (in context) · `06-individual-assets/iris-gradient-swatch.png` (visual) · `app/globals.css` (binding source) |
 | Typography stack (5 fonts) | `02-typography-specimen.pdf` (definitive) · `01-brand-canon.pdf` p.3 (in context) · `app/globals.css` (binding source) |
 | Iris reservation rules (where iris is allowed and where it is forbidden) | `01-brand-canon.pdf` p.4 (definitive) · `04-rendered-surfaces/variant-a-editorial-split.png` (canonical example) |
-| The two voices (Rowan + Michael) | `01-brand-canon.pdf` p.5 · `04-rendered-surfaces/mockup-09-two-voices.png` |
+| The two voices (Rowan + Michael) | `01-brand-canon.pdf` p.5 · `04-rendered-surfaces/pattern-two-voices.png` |
 | Banned vocabulary + signature moves | `01-brand-canon.pdf` p.6 |
 | Layout patterns (editorial split, terminal block, classified card, deck-stack peel, warning box, editorial body) | `01-brand-canon.pdf` p.7 (catalog) · `04-rendered-surfaces/*.png` (real examples) · `variants/variant-a-editorial-split.html` in repo (binding) |
 | Custom iconography seed inventory + register rules + banned commercial sets | `01-brand-canon.pdf` p.8 |
@@ -84,7 +83,7 @@ The script uses Playwright + Chromium to:
 - Render `tools/design-seed/source-pdf-canon.html` → `01-brand-canon.pdf`
 - Render `tools/design-seed/source-pdf-typography.html` → `02-typography-specimen.pdf`
 - Render `tools/design-seed/source-pdf-palette.html` → `03-color-palette.pdf`
-- Screenshot the canonical variant + six mockups → `04-rendered-surfaces/*.png` at 2× device pixel ratio
+- Screenshot `variants/variant-a-editorial-split.html` (canonical from production) + five isolated single-pattern surfaces from `tools/design-seed/surface-*.html` (all active palette) → `04-rendered-surfaces/*.png` at 2× device pixel ratio
 - Render two asset HTMLs → `06-individual-assets/*.png` at 2× device pixel ratio
 
 When canon changes:
@@ -99,7 +98,7 @@ When canon changes:
 
 - The full canon docs (`AGENTS.md`, `AFFILIATE_BRAND_CANON.md`, `SESSION_STATE.md`). These live in the repo and are referenced from `05-canonical-references.md`. Including them here would dilute attention with prose where Claude Design wants visual signal.
 - The 21 partner deliverables (D01–D34). Same reason — they're downstream of canon and risk getting treated as source. Referenced from the pointer doc instead.
-- The 50+ exploratory mockups. Only 6 are included in `04-rendered-surfaces/` — the ones that carry the strongest visual signal for a system trying to learn AESDR's brand. The full mockup library is at `public/mockups/` and `design-canon/07-mockups/`.
+- The mockups in `public/mockups/01-27` and the equivalents in `design-canon/07-mockups/`. They are **pre-editorial-palette** artifacts using `#020617`, `#0F172A`, `#1E293B`, `#10B981`, `#EF4444`, `#38BDF8`, `#F59E0B`, `#8B5CF6` — colors **retired and forbidden** in `AGENTS.md` and `AFFILIATE_BRAND_CANON.md` §6.5. Including them as visual signal would teach Claude Design the wrong palette. The five single-pattern surfaces in `04-rendered-surfaces/pattern-*.png` (authored from scratch against the active palette in `tools/design-seed/surface-*.html`) replace them. The mockup library remains in `public/mockups/` for historical exploration reference only — **do not point Claude Design at it**.
 
 If Claude Design's onboarding stalls on something this kit doesn't carry, point it back at the live repo via `05-canonical-references.md`.
 

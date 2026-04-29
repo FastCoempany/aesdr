@@ -69,18 +69,28 @@ These are the actual takeaway tools that ship inside AESDR — they're a strong 
 
 ---
 
-## Tier 7 — Mockups (design exploration, secondary)
+## Tier 7 — Mockups (DO NOT INGEST FOR VISUAL EXTRACTION)
 
-| Path | What it is |
+| Path | Status |
 |---|---|
-| `public/mockups/01-locked-vault.html` through `27-deck-stack.html` | Twenty-seven hero / surface mockups exploring the dossier / classified / terminal / two-voices motif. |
-| `public/mockups/artifact-*.html` | Artifact mockups (playbill, redline, score, journal, dashboard, report variants). |
-| `public/mockups/reveal-*.html` | Reveal-page mockups. |
-| `public/mockups/tool-*.html`, `public/mockups/tools/*.html` | Tool design exploration variants. |
-| `public/mockups/syllabus/variant-A,B,C.html` | Syllabus layout exploration. |
-| `public/mockups/fork-a/b/c/-index.html` | Identity-fork landing exploration (related to the in-flight role-fork test in `SESSION_STATE.md`). |
+| `public/mockups/01-locked-vault.html` through `27-deck-stack.html` | **Retired-palette artifacts.** Use `#020617`, `#10B981`, `#F59E0B`, `#8B5CF6` etc. — the full forbidden set. |
+| `public/mockups/artifact-*.html` | Same — pre-editorial-palette era. |
+| `public/mockups/reveal-*.html` | Same. |
+| `public/mockups/tool-*.html`, `public/mockups/tools/*.html` | Same. |
+| `public/mockups/syllabus/variant-A,B,C.html` | Same. |
+| `public/mockups/fork-*.html` | Same. |
 
-The mockups are exploration history, not canon. Use them to extract *style signal* (the dossier aesthetic, the terminal motif, the two-voices motif) — but not as binding pattern references. The variants in Tier 2 are binding; the mockups in this tier are not.
+**These files are exploration history, not canon. They use the retired dark palette codified as forbidden in `AGENTS.md` and `AFFILIATE_BRAND_CANON.md` §6.5.** If Claude Design ingests them and extracts a "design system" from them, the resulting system will use the wrong colors and contradict the binding canon.
+
+The motifs explored in these files (dossier / classified / terminal / two-voices / deck-stack / warning-box) are real and canonical, but the palette they're rendered in is not. The active-palette renderings of the same motifs live in:
+
+- `04-rendered-surfaces/pattern-editorial-split-hero.png`
+- `04-rendered-surfaces/pattern-two-voices.png`
+- `04-rendered-surfaces/pattern-terminal-block.png`
+- `04-rendered-surfaces/pattern-classified-card.png`
+- `04-rendered-surfaces/pattern-deck-peel.png`
+
+Use those. Do **not** point Claude Design at `public/mockups/`.
 
 ---
 

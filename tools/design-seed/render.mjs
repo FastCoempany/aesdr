@@ -45,6 +45,7 @@ const PDF_JOBS = [
 ];
 
 const SURFACE_JOBS = [
+  // The canonical editorial-split layout from production. Active palette.
   {
     src: path.join(REPO_ROOT, "variants/variant-a-editorial-split.html"),
     out: path.join(SURFACES_OUT, "variant-a-editorial-split.png"),
@@ -52,35 +53,45 @@ const SURFACE_JOBS = [
     waitForAnimation: true,
     viewportOnly: true, // page is 700vh scroll-space; only hero renders without JS scroll
   },
+
+  // Five isolated single-pattern surfaces, each authored in tools/design-seed/
+  // against the active editorial palette. NOTE: do NOT render the mockups in
+  // public/mockups/01-27 — those use the retired dark palette (#020617 etc.)
+  // codified as forbidden in AGENTS.md and AFFILIATE_BRAND_CANON.md §6.5.
   {
-    src: path.join(REPO_ROOT, "public/mockups/09-the-two-voices.html"),
-    out: path.join(SURFACES_OUT, "mockup-09-two-voices.png"),
-    label: "mockup-09-two-voices.png",
+    src: path.join(__dirname, "surface-warning-box.html"),
+    out: path.join(SURFACES_OUT, "pattern-editorial-split-hero.png"),
+    label: "pattern-editorial-split-hero.png",
+    viewportOnly: true,
+    viewport: { width: 1440, height: 900 },
   },
   {
-    src: path.join(REPO_ROOT, "public/mockups/14-hero-accusation.html"),
-    out: path.join(SURFACES_OUT, "mockup-14-hero-accusation.png"),
-    label: "mockup-14-hero-accusation.png",
+    src: path.join(__dirname, "surface-two-voices.html"),
+    out: path.join(SURFACES_OUT, "pattern-two-voices.png"),
+    label: "pattern-two-voices.png",
+    viewportOnly: false,
+    viewport: { width: 1440, height: 900 },
   },
   {
-    src: path.join(REPO_ROOT, "public/mockups/21-hero-terminal.html"),
-    out: path.join(SURFACES_OUT, "mockup-21-hero-terminal.png"),
-    label: "mockup-21-hero-terminal.png",
+    src: path.join(__dirname, "surface-terminal-block.html"),
+    out: path.join(SURFACES_OUT, "pattern-terminal-block.png"),
+    label: "pattern-terminal-block.png",
+    viewportOnly: true,
+    viewport: { width: 1440, height: 900 },
   },
   {
-    src: path.join(REPO_ROOT, "public/mockups/25-classified-dossier.html"),
-    out: path.join(SURFACES_OUT, "mockup-25-classified-dossier.png"),
-    label: "mockup-25-classified-dossier.png",
+    src: path.join(__dirname, "surface-classified-card.html"),
+    out: path.join(SURFACES_OUT, "pattern-classified-card.png"),
+    label: "pattern-classified-card.png",
+    viewportOnly: false,
+    viewport: { width: 1440, height: 900 },
   },
   {
-    src: path.join(REPO_ROOT, "public/mockups/26-the-mirror.html"),
-    out: path.join(SURFACES_OUT, "mockup-26-the-mirror.png"),
-    label: "mockup-26-the-mirror.png",
-  },
-  {
-    src: path.join(REPO_ROOT, "public/mockups/27-deck-stack.html"),
-    out: path.join(SURFACES_OUT, "mockup-27-deck-stack.png"),
-    label: "mockup-27-deck-stack.png",
+    src: path.join(__dirname, "surface-deck-peel.html"),
+    out: path.join(SURFACES_OUT, "pattern-deck-peel.png"),
+    label: "pattern-deck-peel.png",
+    viewportOnly: true,
+    viewport: { width: 1440, height: 900 },
   },
 ];
 
@@ -141,7 +152,7 @@ async function renderPdf(browser, job) {
 
 async function renderSurfacePng(browser, job) {
   const context = await browser.newContext({
-    viewport: { width: 1440, height: 900 },
+    viewport: job.viewport ?? { width: 1440, height: 900 },
     deviceScaleFactor: 2,
   });
   const page = await context.newPage();

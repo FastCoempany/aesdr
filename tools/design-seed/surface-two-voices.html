@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AESDR — Two Voices (active palette)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --crimson:#8B1A1A; --cream:#FAF7F2; --ink:#1A1A1A; --muted:#6B6B6B; --light:#E8E4DF;
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif;
+  --serif:'Source Serif 4',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;
+  --mono:'Space Mono',monospace;
+  --hand:'Caveat',cursive;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--cream);color:var(--ink);font-family:var(--serif);-webkit-print-color-adjust:exact}
+.frame{width:1440px;min-height:900px;padding:60px 64px;position:relative}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
+.h1{font-family:var(--display);font-style:italic;font-weight:900;font-size:44px;line-height:1.05;color:var(--ink);margin-top:14px}
+.sub{font-family:var(--serif);font-style:italic;font-size:16px;color:var(--muted);margin-top:8px;max-width:720px}
+.split{display:grid;grid-template-columns:1fr 2px 1fr;margin-top:48px;gap:0}
+.divider{background:var(--iris);background-size:300% 100%;width:2px;align-self:stretch}
+.col{padding:0 36px}
+.col-left{padding-left:0}
+.col-right{padding-right:0}
+.col-label{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;margin-bottom:32px;display:flex;align-items:center;gap:8px}
+.col-label::before{content:'';width:14px;height:2px}
+.col-rowan .col-label{color:var(--ink)}
+.col-rowan .col-label::before{background:var(--ink)}
+.col-michael .col-label{color:var(--crimson)}
+.col-michael .col-label::before{background:var(--crimson)}
+.entry{margin-bottom:30px}
+.num{font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:rgba(26,26,26,0.3);margin-bottom:8px}
+.col-michael .num{color:rgba(139,26,26,0.35)}
+.rowan-text{font-family:var(--cond);font-weight:900;text-transform:uppercase;letter-spacing:.04em;font-size:24px;line-height:1.15;color:var(--ink)}
+.rowan-sub{font-family:var(--serif);font-style:italic;font-size:13px;color:var(--muted);margin-top:8px;line-height:1.55}
+.michael-text{font-family:var(--hand);font-size:22px;color:var(--crimson);line-height:1.35}
+.merge{margin-top:56px;text-align:center;position:relative}
+.merge-bar{width:100%;height:2px;background:var(--iris);background-size:300% 100%;position:relative}
+.merge-bar::after{content:'THE TWO BECOME ONE';position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:9px;letter-spacing:.3em;color:var(--muted);background:var(--cream);padding:0 16px}
+.merge-h2{font-family:var(--display);font-style:italic;font-weight:900;font-size:32px;line-height:1.15;margin-top:36px;color:var(--ink);max-width:740px;margin-left:auto;margin-right:auto}
+.merge-h2 em{font-style:italic;background:var(--iris);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.amb{position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--iris);background-size:300% 100%;opacity:.5}
+</style>
+</head>
+<body>
+<section class="frame">
+
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <div class="eyebrow">AESDR · THE TWO VOICES · ONE PROGRAM · 12 LESSONS</div>
+    <div class="eyebrow" style="text-align:right">CANONICAL PATTERN · ACTIVE PALETTE</div>
+  </div>
+
+  <div style="text-align:center;margin-top:36px">
+    <h1 class="h1">Every great rep has <span style="background:var(--iris);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">two people inside them.</span></h1>
+    <div class="sub" style="margin:12px auto 0">One commands the room. The other eats cereal over the sink at midnight wondering if SaaS was a good idea. We train both.</div>
+  </div>
+
+  <div class="split">
+
+    <!-- ROWAN COLUMN -->
+    <div class="col col-rowan col-left">
+      <div class="col-label">THE VOICE THAT CLOSES</div>
+
+      <div class="entry">
+        <div class="num">01</div>
+        <div class="rowan-text">Your apartment is your first sale. If you can't close your own environment, you cannot close anyone else's.</div>
+        <div class="rowan-sub">The space you operate from is not decoration. It is infrastructure.</div>
+      </div>
+
+      <div class="entry">
+        <div class="num">02</div>
+        <div class="rowan-text">Your commission check is not income. It is a verdict on how you lived the last 30 days.</div>
+        <div class="rowan-sub">Feast-or-famine is not a market condition. It is a character trait you can fix.</div>
+      </div>
+
+      <div class="entry">
+        <div class="num">03</div>
+        <div class="rowan-text">"Potential" is not a skill. It is a word people use to describe someone who has not done anything yet.</div>
+        <div class="rowan-sub">Stop auditioning. Start performing. The two are not the same.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- MICHAEL COLUMN -->
+    <div class="col col-michael col-right">
+      <div class="col-label">THE VOICE AT 2AM</div>
+
+      <div class="entry">
+        <div class="num">01</div>
+        <div class="michael-text">My "home office" is my bed. The desk is a folding table from Target. There's a pile of laundry on the chair I named Gerald. Gerald is my coworker now. He's quiet. Great listener.</div>
+      </div>
+
+      <div class="entry">
+        <div class="num">02</div>
+        <div class="michael-text">Last month I made $8,200. This month I made $2,100. I bought a $300 jacket during the $8,200 month. I'm now wearing the $300 jacket while eating ramen I bought with a coupon. Fashion.</div>
+      </div>
+
+      <div class="entry">
+        <div class="num">03</div>
+        <div class="michael-text">My manager said I have "so much potential." That was six months ago. I still have the same amount of potential. Like, exactly the same amount. It's just sitting there. Being potential.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="merge">
+    <div class="merge-bar"></div>
+    <div class="merge-h2">This is not a sales course. <em>It's an intervention for the whole person.</em></div>
+  </div>
+
+  <div class="amb"></div>
+</section>
+</body>
+</html>
