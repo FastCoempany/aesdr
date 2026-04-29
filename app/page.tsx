@@ -2,10 +2,10 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 
 import AesdrBrand from "@/components/AesdrBrand";
-import CheckoutButton from "@/components/CheckoutButton";
 import EditorialMasthead from "@/components/EditorialMasthead";
 import GhostButton from "@/components/GhostButton";
 import LandingSequence from "@/components/LandingSequence";
+import PricingTiers from "@/components/PricingTiers";
 import SignOutButton from "@/components/SignOutButton";
 import { createClient } from "@/utils/supabase/server";
 import styles from "./page.module.css";
@@ -29,6 +29,10 @@ export default async function LandingPage() {
   const { data: { user } } = await supabase.auth.getUser();
   const isAuthenticated = !!user;
 
+  const metadataRole = user?.user_metadata?.role;
+  const initialRole: "ae" | "sdr" | null =
+    metadataRole === "ae" || metadataRole === "sdr" ? metadataRole : null;
+
   return (
     <main className={styles.page}>
       <EditorialMasthead />
@@ -50,7 +54,7 @@ export default async function LandingPage() {
       </header>
 
       {/* Hero + Confession + Terminal + Zoom */}
-      <LandingSequence />
+      <LandingSequence initialRole={initialRole} />
 
       <div aria-hidden="true" style={{ height: "4vh" }} />
 
@@ -64,51 +68,7 @@ export default async function LandingPage() {
         <p className={styles.sectionLabel}>Pricing</p>
         <h2 className={styles.sectionHeadline}>One price. Lifetime access.</h2>
         <div className={styles.divider} />
-        <div className={styles.pricingGrid}>
-          {/* SDR */}
-          <div className={styles.priceCard}>
-            <p className={styles.priceTier}>SDR Individual</p>
-            <p className={styles.priceAmount}>$249<span className={styles.priceUnit}> / one-time</span></p>
-            <ul className={styles.priceFeatures}>
-              <li>All 12 courses</li>
-              <li>5 interactive tools to takeaway</li>
-              <li>Lifetime access</li>
-              <li className={styles.discordLine}>Discord community <span className={styles.untamedStamp}>Untamed</span></li>
-              <li>Future curriculum updates</li>
-              <li>14-day refund guarantee</li>
-            </ul>
-            <CheckoutButton tier="sdr" label="Buy For Me" className={styles.priceCta} />
-          </div>
-          {/* AE */}
-          <div className={styles.priceCard}>
-            <p className={styles.priceTier}>AE Individual</p>
-            <p className={styles.priceAmount}>$299<span className={styles.priceUnit}> / one-time</span></p>
-            <ul className={styles.priceFeatures}>
-              <li>All 12 courses</li>
-              <li>5 interactive tools to takeaway</li>
-              <li>Lifetime access</li>
-              <li className={styles.discordLine}>Discord community <span className={styles.untamedStamp}>Untamed</span></li>
-              <li>Future curriculum updates</li>
-              <li>14-day refund guarantee</li>
-            </ul>
-            <CheckoutButton tier="ae" label="Buy For Me" className={styles.priceCta} />
-          </div>
-          {/* Team */}
-          <div className={`${styles.priceCard} ${styles.priceCardFeatured}`}>
-            <div className={styles.priceRibbon}>Org Reimbursement</div>
-            <p className={styles.priceTier}>Team</p>
-            <p className={styles.priceAmount}>$1,499<span className={styles.priceUnit}> / up to 10 seats</span></p>
-            <ul className={styles.priceFeatures}>
-              <li>Everything in Individual</li>
-              <li>Up to 10 team members</li>
-              <li>Admin dashboard</li>
-              <li>Team progress tracking</li>
-              <li>Priority support</li>
-              <li>Invoice + receipt for L&amp;D</li>
-            </ul>
-            <CheckoutButton tier="team" label="Buy For Us" className={styles.priceCta} />
-          </div>
-        </div>
+        <PricingTiers initialRole={initialRole} />
       </section>
 
       {/* ═══ FAQ ═══ */}
