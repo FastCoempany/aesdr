@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hero — The Warning Label</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;600&display=swap');
+
+  :root {
+    --bg: #020617;
+    --text: #F8FAFC;
+    --muted: #94A3B8;
+    --theme: #10B981;
+    --amber: rgba(245,158,11,0.7);
+    --iris: linear-gradient(90deg, #FF006E, #FF6B00, #F59E0B, #10B981, #38BDF8, #8B5CF6, #FF006E);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+  }
+
+  .hero {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  /* Ambient background glow */
+  .glow {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(239,68,68,0.04) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: pulse 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+    50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+  }
+
+  /* The warning box */
+  .warning-box {
+    border: 1px solid rgba(248,250,252,0.08);
+    padding: clamp(32px, 5vw, 56px) clamp(28px, 5vw, 64px);
+    max-width: 640px;
+    width: 90%;
+    position: relative;
+    z-index: 2;
+    opacity: 0;
+    animation: boxReveal 0.6s ease 0.3s forwards;
+  }
+
+  @keyframes boxReveal {
+    0% { opacity: 0; transform: scale(0.96); border-color: rgba(248,250,252,0); }
+    100% { opacity: 1; transform: scale(1); border-color: rgba(248,250,252,0.08); }
+  }
+
+  .warning-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeIn 0.4s ease 0.7s forwards;
+  }
+
+  .warning-icon {
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid rgba(239,68,68,0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: rgba(239,68,68,0.7);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .warning-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: rgba(239,68,68,0.5);
+  }
+
+  .warning-body {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(16px, 2.5vw, 22px);
+    font-weight: 500;
+    line-height: 1.7;
+    color: rgba(248,250,252,0.7);
+    opacity: 0;
+    animation: fadeIn 0.5s ease 1s forwards;
+  }
+
+  .warning-body .highlight {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  /* Bottom tag */
+  .warning-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: rgba(148,163,184,0.3);
+    margin-top: 28px;
+    opacity: 0;
+    animation: fadeIn 0.4s ease 1.5s forwards;
+  }
+
+  /* Handwritten note below the box */
+  .review {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(18px, 2.5vw, 26px);
+    color: var(--amber);
+    margin-top: 32px;
+    text-align: center;
+    max-width: 480px;
+    line-height: 1.4;
+    position: relative;
+    z-index: 2;
+    transform: rotate(-1deg);
+    opacity: 0;
+    animation: noteIn 0.5s ease 2s forwards;
+  }
+
+  @keyframes noteIn {
+    0% { opacity: 0; transform: rotate(-1deg) translateY(10px); }
+    100% { opacity: 1; transform: rotate(-1deg) translateY(0); }
+  }
+
+  /* Scroll indicator */
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    z-index: 2;
+    opacity: 0;
+    animation: fadeIn 0.5s ease 2.8s forwards;
+  }
+
+  .scroll-hint .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: rgba(148,163,184,0.25);
+  }
+
+  .scroll-hint .bar {
+    width: 1px;
+    height: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scroll-hint .bar::after {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    background: var(--iris);
+    background-size: 100% 300%;
+    animation: shimmer 4s linear infinite, drop 1.5s ease-in-out infinite;
+  }
+
+  @keyframes drop {
+    0% { top: -100%; }
+    50% { top: 0; }
+    100% { top: 100%; }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+  }
+
+  /* Corner accents */
+  .corner {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-color: rgba(248,250,252,0.04);
+    border-style: solid;
+    border-width: 0;
+  }
+  .corner.tl { top: 20px; left: 20px; border-top-width: 1px; border-left-width: 1px; }
+  .corner.tr { top: 20px; right: 20px; border-top-width: 1px; border-right-width: 1px; }
+  .corner.bl { bottom: 20px; left: 20px; border-bottom-width: 1px; border-left-width: 1px; }
+  .corner.br { bottom: 20px; right: 20px; border-bottom-width: 1px; border-right-width: 1px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="glow"></div>
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+
+  <div class="warning-box">
+    <div class="warning-header">
+      <div class="warning-icon">!</div>
+      <div class="warning-title">Content Warning</div>
+    </div>
+    <div class="warning-body">
+      This page contains uncomfortable truths about your <span class="highlight">pipeline</span>, your <span class="highlight">apartment</span>, your <span class="highlight">bar tab</span>, your <span class="highlight">commission check</span>, and your <span class="highlight">relationship status</span>.<br><br>Scroll at your own risk.
+    </div>
+    <div class="warning-tag">AESDR — 12 lessons / at your own pace / classified</div>
+  </div>
+
+  <div class="review">I scrolled. I cried a little. Then I enrolled. 10/10 would cry again.</div>
+
+  <div class="scroll-hint">
+    <span class="label">You've been warned</span>
+    <div class="bar"></div>
+  </div>
+</div>
+
+</body>
+</html>

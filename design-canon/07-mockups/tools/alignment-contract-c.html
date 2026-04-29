@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AE-SDR Alignment Contract — AESDR Vault</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #1A1714;
+            --panel: #2A2520;
+            --card-hover: #3D3830;
+            --text: #E8E4DF;
+            --muted: #9A9088;
+            --gold: #B8943E;
+            --crimson: #8B1A1A;
+            --gold-light: #C9A96E;
+            --border: rgba(184, 148, 62, 0.15);
+            --input-border: rgba(184, 148, 62, 0.2);
+            --cream: #FAF7F2;
+            --cream-text: #2A2520;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Source Serif 4', Georgia, serif;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Split layout */
+        .split-layout {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Left panel */
+        .left-panel {
+            background: var(--panel);
+            border-right: 1px solid var(--border);
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .logo {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--gold);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .tool-badge {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--gold);
+            background: rgba(184, 148, 62, 0.1);
+            border: 1px solid var(--border);
+            padding: 0.35rem 0.75rem;
+            border-radius: 3px;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+
+        .gold-rule {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, var(--gold), transparent);
+            margin: 1.5rem 0;
+        }
+
+        .eyebrow {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--gold);
+            margin-bottom: 1rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--gold);
+            margin-bottom: 0.4rem;
+        }
+
+        .input-group input, .input-group select, .input-group textarea {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--input-border);
+            color: var(--text);
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 0.95rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 4px;
+            transition: border-color 0.2s;
+        }
+
+        .input-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .btn-gold {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--bg);
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 800;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn-gold:hover {
+            background: var(--gold-light);
+        }
+
+        /* Right panel — the document */
+        .right-panel {
+            background: var(--cream);
+            padding: 3rem 4rem;
+            overflow-y: auto;
+        }
+
+        .contract {
+            max-width: 700px;
+            margin: 0 auto;
+            color: var(--cream-text);
+        }
+
+        .contract-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 900;
+            font-size: 2rem;
+            color: var(--cream-text);
+            text-align: center;
+            margin-bottom: 0.25rem;
+        }
+
+        .contract-subtitle {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-style: italic;
+            color: #6B6560;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .contract-rule {
+            border: none;
+            height: 2px;
+            background: var(--gold);
+            margin: 2rem 0;
+        }
+
+        .contract h2 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--cream-text);
+            margin-bottom: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .contract p {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #3D3830;
+            margin-bottom: 1rem;
+        }
+
+        .contract .highlight {
+            background: rgba(184, 148, 62, 0.15);
+            padding: 0.1rem 0.35rem;
+            border-radius: 2px;
+            font-weight: 600;
+            color: #5A4420;
+        }
+
+        .contract ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 1rem;
+        }
+
+        .contract ul li {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #3D3830;
+            padding-left: 1.5rem;
+            position: relative;
+            margin-bottom: 0.5rem;
+        }
+
+        .contract ul li::before {
+            content: '\2022';
+            position: absolute;
+            left: 0;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .signature-block {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #D4CFC8;
+        }
+
+        .sig-line {
+            border-bottom: 1px solid #3D3830;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-style: italic;
+            color: #6B6560;
+            min-height: 1.5rem;
+        }
+
+        .sig-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #9A9088;
+        }
+
+        @media (max-width: 900px) {
+            .split-layout {
+                grid-template-columns: 1fr;
+            }
+            .right-panel {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="split-layout">
+        <!-- Left Panel: Controls -->
+        <div class="left-panel">
+            <div class="logo">AESDR</div>
+            <div class="tool-badge">Alignment Contract</div>
+
+            <hr class="gold-rule">
+
+            <div class="eyebrow">Participants</div>
+            <div class="input-group">
+                <label>AE Name</label>
+                <input type="text" value="Jordan Mitchell" />
+            </div>
+            <div class="input-group">
+                <label>SDR Name</label>
+                <input type="text" value="Alex Chen" />
+            </div>
+            <div class="input-group">
+                <label>Team / Segment</label>
+                <input type="text" value="Mid-Market West" />
+            </div>
+
+            <hr class="gold-rule">
+
+            <div class="eyebrow">Expectations</div>
+            <div class="input-group">
+                <label>Monthly Meeting Target</label>
+                <input type="text" value="12 qualified meetings" />
+            </div>
+            <div class="input-group">
+                <label>Ideal Customer Profile</label>
+                <select>
+                    <option>VP Sales, 200-2000 employees, SaaS</option>
+                    <option>Director IT, 500+ employees, Manufacturing</option>
+                    <option>C-Suite, 50-200 employees, FinTech</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Feedback Cadence</label>
+                <select>
+                    <option>Weekly 1:1 (15 min)</option>
+                    <option>Bi-weekly sync</option>
+                    <option>Daily standup</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Special Agreements</label>
+                <textarea>AE commits to same-day feedback on all meetings booked. SDR gets first right on any expansion opps from sourced accounts.</textarea>
+            </div>
+
+            <hr class="gold-rule">
+
+            <button class="btn-gold">Export Contract</button>
+        </div>
+
+        <!-- Right Panel: The Document -->
+        <div class="right-panel">
+            <div class="contract">
+                <h1 class="contract-title">AE-SDR Alignment Contract</h1>
+                <p class="contract-subtitle">A mutual commitment to pipeline excellence</p>
+
+                <hr class="contract-rule">
+
+                <h2>Parties</h2>
+                <p>This contract is entered between <span class="highlight">Jordan Mitchell</span> (Account Executive) and <span class="highlight">Alex Chen</span> (Sales Development Representative), operating within the <span class="highlight">Mid-Market West</span> segment.</p>
+
+                <h2>Pipeline Commitments</h2>
+                <p>The SDR commits to delivering <span class="highlight">12 qualified meetings</span> per month that meet the agreed-upon ICP criteria. The AE commits to attending all scheduled meetings on time and providing actionable feedback within 24 hours.</p>
+
+                <h2>Ideal Customer Profile</h2>
+                <ul>
+                    <li>Title: VP Sales or above</li>
+                    <li>Company size: 200-2000 employees</li>
+                    <li>Industry: SaaS / Technology</li>
+                    <li>Pain signals: Scaling outbound, hiring SDRs, quota attainment below 70%</li>
+                </ul>
+
+                <h2>Communication &amp; Feedback</h2>
+                <p>Both parties agree to a <span class="highlight">Weekly 1:1 (15 min)</span> cadence. Feedback must be specific, constructive, and documented. No ghosting on Slack threads related to active prospects.</p>
+
+                <h2>Qualification Standards</h2>
+                <ul>
+                    <li>Budget: Confirmed or inferable from company stage</li>
+                    <li>Authority: Contact is decision-maker or confirmed champion</li>
+                    <li>Need: Explicit pain stated in discovery or trigger event documented</li>
+                    <li>Timeline: Active evaluation within 90 days</li>
+                </ul>
+
+                <h2>Special Agreements</h2>
+                <p>AE commits to same-day feedback on all meetings booked. SDR gets first right on any expansion opps from sourced accounts.</p>
+
+                <h2>Accountability</h2>
+                <p>If either party fails to meet their commitments for two consecutive weeks, a reset conversation is triggered with management present. This contract will be reviewed and renewed monthly.</p>
+
+                <div class="signature-block">
+                    <div>
+                        <div class="sig-line">Jordan Mitchell</div>
+                        <div class="sig-label">Account Executive</div>
+                    </div>
+                    <div>
+                        <div class="sig-line">Alex Chen</div>
+                        <div class="sig-label">Sales Development Rep</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

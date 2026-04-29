@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commission Defense Tracker — AESDR Vault</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #1A1714;
+            --panel: #2A2520;
+            --card-hover: #3D3830;
+            --text: #E8E4DF;
+            --muted: #9A9088;
+            --gold: #B8943E;
+            --crimson: #8B1A1A;
+            --gold-light: #C9A96E;
+            --border: rgba(184, 148, 62, 0.15);
+            --input-border: rgba(184, 148, 62, 0.2);
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Source Serif 4', Georgia, serif;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Subtle noise texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Top bar */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2.5rem;
+        }
+
+        .logo {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--gold);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .tool-badge {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--gold);
+            background: rgba(184, 148, 62, 0.1);
+            border: 1px solid var(--border);
+            padding: 0.35rem 0.75rem;
+            border-radius: 3px;
+        }
+
+        /* Headline */
+        .headline {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 900;
+            font-style: italic;
+            font-size: 2.75rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+            line-height: 1.15;
+        }
+
+        .subtitle {
+            font-family: 'Source Serif 4', Georgia, serif;
+            color: var(--muted);
+            font-size: 1.1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Gold HR */
+        .gold-rule {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 2rem 0;
+        }
+
+        /* Input row */
+        .input-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--gold);
+            margin-bottom: 0.4rem;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            background: var(--panel);
+            border: 1px solid var(--input-border);
+            color: var(--text);
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 1rem;
+            padding: 0.7rem 0.9rem;
+            border-radius: 4px;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        /* Section eyebrow */
+        .eyebrow {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--gold);
+            margin-bottom: 1rem;
+        }
+
+        /* Result cards */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .result-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1.5rem;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .result-card:hover {
+            background: var(--card-hover);
+        }
+
+        .result-card.safe {
+            border-color: var(--gold);
+        }
+
+        .result-card.danger {
+            border-color: var(--crimson);
+        }
+
+        .result-card .card-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .result-card .card-value {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 900;
+            font-size: 2rem;
+        }
+
+        .result-card.safe .card-value {
+            color: var(--gold);
+        }
+
+        .result-card.danger .card-value {
+            color: var(--crimson);
+        }
+
+        .result-card .card-note {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-top: 0.3rem;
+        }
+
+        /* Deal table */
+        .table-wrapper {
+            overflow-x: auto;
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        thead th {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.8rem;
+            color: var(--bg);
+            background: var(--gold);
+            padding: 0.75rem 1rem;
+            text-align: left;
+        }
+
+        thead th:first-child { border-radius: 4px 0 0 0; }
+        thead th:last-child { border-radius: 0 4px 0 0; }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody tr:nth-child(odd) {
+            background: var(--panel);
+        }
+
+        tbody tr:nth-child(even) {
+            background: rgba(42, 37, 32, 0.5);
+        }
+
+        tbody tr:hover {
+            background: var(--card-hover);
+        }
+
+        tbody td {
+            padding: 0.75rem 1rem;
+            color: var(--text);
+        }
+
+        tbody td.money {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        tbody td.status-safe {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        tbody td.status-danger {
+            color: var(--crimson);
+            font-weight: 600;
+        }
+
+        /* Export button */
+        .btn-gold {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--bg);
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 800;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-gold:hover {
+            background: var(--gold-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="logo">AESDR</div>
+            <div class="tool-badge">Commission Defense Tracker</div>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="headline">Defend Every Dollar You Earned</h1>
+        <p class="subtitle">Track, protect, and document your commission on every deal before it slips through the cracks.</p>
+
+        <hr class="gold-rule">
+
+        <!-- Input Row -->
+        <div class="eyebrow">Deal Parameters</div>
+        <div class="input-row">
+            <div class="input-group">
+                <label>Annual Contract Value</label>
+                <input type="text" value="$85,000" />
+            </div>
+            <div class="input-group">
+                <label>Commission Rate</label>
+                <input type="text" value="8%" />
+            </div>
+            <div class="input-group">
+                <label>Split Ratio</label>
+                <input type="text" value="60/40" />
+            </div>
+            <div class="input-group">
+                <label>Deal Stage</label>
+                <select>
+                    <option>Closed-Won</option>
+                    <option>Negotiation</option>
+                    <option>Verbal Commit</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Result Cards -->
+        <div class="eyebrow">Commission Breakdown</div>
+        <div class="results-grid">
+            <div class="result-card safe">
+                <div class="card-label">Gross Commission</div>
+                <div class="card-value">$6,800</div>
+                <div class="card-note">8% of ACV</div>
+            </div>
+            <div class="result-card safe">
+                <div class="card-label">Your Split (60%)</div>
+                <div class="card-value">$4,080</div>
+                <div class="card-note">After AE split</div>
+            </div>
+            <div class="result-card danger">
+                <div class="card-label">At Risk (Clawback)</div>
+                <div class="card-value">$2,040</div>
+                <div class="card-note">If churn before 90 days</div>
+            </div>
+            <div class="result-card safe">
+                <div class="card-label">Protected Amount</div>
+                <div class="card-value">$2,040</div>
+                <div class="card-note">Documented &amp; verified</div>
+            </div>
+        </div>
+
+        <hr class="gold-rule">
+
+        <!-- Deal Table -->
+        <div class="eyebrow">Active Deal Ledger</div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Account</th>
+                        <th>ACV</th>
+                        <th>Commission</th>
+                        <th>Stage</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Meridian Health Systems</td>
+                        <td class="money">$85,000</td>
+                        <td class="money">$4,080</td>
+                        <td>Closed-Won</td>
+                        <td class="status-safe">Protected</td>
+                    </tr>
+                    <tr>
+                        <td>Atlas Manufacturing</td>
+                        <td class="money">$120,000</td>
+                        <td class="money">$5,760</td>
+                        <td>Negotiation</td>
+                        <td class="status-safe">On Track</td>
+                    </tr>
+                    <tr>
+                        <td>Pinnacle Financial Group</td>
+                        <td class="money">$65,000</td>
+                        <td class="money">$3,120</td>
+                        <td>Verbal Commit</td>
+                        <td class="status-danger">At Risk</td>
+                    </tr>
+                    <tr>
+                        <td>Redwood Logistics</td>
+                        <td class="money">$92,000</td>
+                        <td class="money">$4,416</td>
+                        <td>Closed-Won</td>
+                        <td class="status-safe">Protected</td>
+                    </tr>
+                    <tr>
+                        <td>Beacon Analytics</td>
+                        <td class="money">$47,500</td>
+                        <td class="money">$2,280</td>
+                        <td>Closed-Won</td>
+                        <td class="status-danger">Clawback Risk</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Export Button -->
+        <button class="btn-gold">Export Ledger as PDF</button>
+    </div>
+</body>
+</html>

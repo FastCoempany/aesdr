@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR | Your Artifacts — Variant B: The Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FAF7F2;--ink:#1A1A1A;--crimson:#8B1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+  --card:#FFFFFF;--accent-lt:rgba(139,26,26,0.06);--green:#15803D;--green-lt:rgba(21,128,61,0.06);
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif;--serif:'Source Serif 4',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;--mono:'Space Mono',monospace;--hand:'Caveat',cursive;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:var(--serif);line-height:1.6}
+
+nav{display:flex;align-items:center;justify-content:space-between;padding:16px 5%;border-bottom:1px solid var(--light);background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);position:sticky;top:0;z-index:50}
+.nav-brand{font-family:var(--display);font-size:18px;font-weight:900;font-style:italic;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:iris 3s linear infinite}
+.nav-links{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;display:flex;gap:20px}
+.nav-links a{color:var(--muted);text-decoration:none}
+
+/* HEADER */
+.page-header{padding:40px 5% 32px;display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--light)}
+.ph-left{max-width:500px}
+.ph-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--crimson);margin-bottom:8px}
+.ph-title{font-family:var(--display);font-size:clamp(28px,4vw,40px);font-weight:900;font-style:italic;line-height:1.1;margin-bottom:8px}
+.ph-sub{font-family:var(--serif);font-size:15px;color:var(--muted);font-style:italic}
+.ph-right{text-align:right}
+.ph-meta{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.ph-overall{font-family:var(--display);font-size:48px;font-style:italic;color:var(--crimson);line-height:1}
+.ph-overall-label{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+
+/* THREE COLUMNS */
+.tri-grid{display:grid;grid-template-columns:1fr 1fr 1fr;min-height:calc(100vh - 180px)}
+
+.col{border-right:1px solid var(--light);padding:32px 24px;overflow-y:auto}
+.col:last-child{border-right:none}
+.col-header{margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid var(--ink)}
+.col-num{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--crimson);margin-bottom:4px}
+.col-title{font-family:var(--display);font-size:24px;font-weight:900;font-style:italic;line-height:1.1}
+.col-sub{font-family:var(--serif);font-size:13px;color:var(--muted);font-style:italic;margin-top:6px}
+
+/* DIAGNOSTIC COLUMN */
+.d-bar{margin-bottom:16px}
+.d-bar-header{display:flex;justify-content:space-between;margin-bottom:4px}
+.d-bar-name{font-family:var(--cond);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.d-bar-pct{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--crimson)}
+.d-bar-track{height:5px;background:var(--light);overflow:hidden}
+.d-bar-fill{height:100%;background:var(--crimson)}
+.d-bar-note{font-family:var(--serif);font-size:12px;color:var(--muted);font-style:italic;margin-top:4px;line-height:1.4}
+
+.d-verdict{background:var(--accent-lt);border-left:3px solid var(--crimson);padding:16px;margin-top:24px}
+.d-verdict-label{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--crimson);margin-bottom:6px}
+.d-verdict-text{font-family:var(--serif);font-size:14px;color:var(--ink);line-height:1.55;font-style:italic}
+
+/* PLAYBOOK COLUMN */
+.p-section{margin-bottom:20px}
+.p-cat{font-family:var(--cond);font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--crimson);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.p-cat-line{flex:1;height:1px;background:var(--light);margin-left:10px}
+.p-quote{background:var(--card);border:1px solid var(--light);padding:14px;margin-bottom:8px}
+.p-q-src{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.p-q-text{font-family:var(--serif);font-size:14px;font-style:italic;color:var(--ink);line-height:1.55}
+.p-commit{background:var(--green-lt);border-left:2px solid var(--green);padding:10px 12px;margin-bottom:8px}
+.p-commit-text{font-family:var(--serif);font-size:13px;color:var(--ink);line-height:1.5}
+
+/* MIRROR COLUMN */
+.m-pair{margin-bottom:20px;border:1px solid var(--light);overflow:hidden}
+.m-you{padding:14px;background:var(--card)}
+.m-data{padding:14px;background:var(--accent-lt);border-top:1px solid var(--light)}
+.m-label{font-family:var(--mono);font-size:8px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:4px}
+.m-label.you{color:var(--muted)}
+.m-label.data{color:var(--crimson)}
+.m-text{font-family:var(--serif);font-size:14px;line-height:1.55}
+.m-text.you-text{font-style:italic;color:var(--ink)}
+.m-text.data-text{color:var(--crimson);font-weight:600}
+
+.m-bottom{text-align:center;padding:16px;margin-top:24px;border-top:1px solid var(--light)}
+.m-bottom-text{font-family:var(--hand);font-size:18px;color:var(--crimson)}
+
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+@media print{nav{display:none}.tri-grid{display:block}.col{border-right:none;page-break-after:always}}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">AESDR</span>
+  <div class="nav-links"><a href="#">Dashboard</a><a href="#">Account</a></div>
+</nav>
+
+<div class="page-header">
+  <div class="ph-left">
+    <div class="ph-eyebrow">Personal Artifacts</div>
+    <div class="ph-title">Jordan Rivera</div>
+    <div class="ph-sub">Three lenses on your 12-lesson journey — diagnostic scores, your own words, and the uncomfortable truth between them.</div>
+  </div>
+  <div class="ph-right">
+    <div class="ph-meta">Overall Score</div>
+    <div class="ph-overall">67%</div>
+    <div class="ph-overall-label">Developing</div>
+  </div>
+</div>
+
+<div class="tri-grid">
+
+  <!-- COLUMN 1: DIAGNOSTIC -->
+  <div class="col">
+    <div class="col-header">
+      <div class="col-num">Artifact 01</div>
+      <div class="col-title">Diagnostic</div>
+      <div class="col-sub">Your scores across six dimensions.</div>
+    </div>
+
+    <div class="d-bar">
+      <div class="d-bar-header"><span class="d-bar-name">Identity</span><span class="d-bar-pct">85%</span></div>
+      <div class="d-bar-track"><div class="d-bar-fill" style="width:85%"></div></div>
+      <div class="d-bar-note">Strongest category. You know who you are.</div>
+    </div>
+    <div class="d-bar">
+      <div class="d-bar-header"><span class="d-bar-name">Pipeline</span><span class="d-bar-pct">78%</span></div>
+      <div class="d-bar-track"><div class="d-bar-fill" style="width:78%"></div></div>
+      <div class="d-bar-note">Solid instincts. Watch inbound dependency.</div>
+    </div>
+    <div class="d-bar">
+      <div class="d-bar-header"><span class="d-bar-name">Career</span><span class="d-bar-pct">71%</span></div>
+      <div class="d-bar-track"><div class="d-bar-fill" style="width:71%"></div></div>
+      <div class="d-bar-note">Track ROI more systematically.</div>
+    </div>
+    <div class="d-bar">
+      <div class="d-bar-header"><span class="d-bar-name">Discipline</span><span class="d-bar-pct">62%</span></div>
+      <div class="d-bar-track"><div class="d-bar-fill" style="width:62%"></div></div>
+      <div class="d-bar-note">Inconsistent mornings. Calendar needs work.</div>
+    </div>
+    <div class="d-bar">
+      <div class="d-bar-header"><span class="d-bar-name">Coaching</span><span class="d-bar-pct">58%</span></div>
+      <div class="d-bar-track"><div class="d-bar-fill" style="width:58%"></div></div>
+      <div class="d-bar-note">You accept but don't seek feedback.</div>
+    </div>
+    <div class="d-bar">
+      <div class="d-bar-header"><span class="d-bar-name">Networking</span><span class="d-bar-pct">45%</span></div>
+      <div class="d-bar-track"><div class="d-bar-fill" style="width:45%"></div></div>
+      <div class="d-bar-note">Lowest. You're operating in isolation.</div>
+    </div>
+
+    <div class="d-verdict">
+      <div class="d-verdict-label">Verdict</div>
+      <div class="d-verdict-text">Strong self-awareness, weak external systems. Your identity is clear — now build the habits and relationships to match it.</div>
+    </div>
+  </div>
+
+  <!-- COLUMN 2: PLAYBOOK -->
+  <div class="col">
+    <div class="col-header">
+      <div class="col-num">Artifact 02</div>
+      <div class="col-title">Playbook</div>
+      <div class="col-sub">Your reflections, organized as an operating manual.</div>
+    </div>
+
+    <div class="p-section">
+      <div class="p-cat">Pipeline<span class="p-cat-line"></span></div>
+      <div class="p-quote">
+        <div class="p-q-src">L2 U1 — Prospecting</div>
+        <div class="p-q-text">I need to stop waiting for leads and start creating my own pipeline. The inbound dependency is making me passive.</div>
+      </div>
+      <div class="p-quote">
+        <div class="p-q-src">L7 U2 — Qualification</div>
+        <div class="p-q-text">I've been passing leads without fully qualifying. I skip the hard question because I'm afraid they'll say no.</div>
+      </div>
+      <div class="p-commit">
+        <div class="p-commit-text">Before passing any lead, confirm all four BANT criteria. If I can't answer one, ask instead of hoping.</div>
+      </div>
+    </div>
+
+    <div class="p-section">
+      <div class="p-cat">Discipline<span class="p-cat-line"></span></div>
+      <div class="p-quote">
+        <div class="p-q-src">L9 U1 — Time</div>
+        <div class="p-q-text">My mornings are chaos. No system — just whatever feels urgent.</div>
+      </div>
+      <div class="p-commit">
+        <div class="p-commit-text">8:00–9:30 is prospecting. No Slack, no email. Blocked and defended. Every day.</div>
+      </div>
+    </div>
+
+    <div class="p-section">
+      <div class="p-cat">Networking<span class="p-cat-line"></span></div>
+      <div class="p-quote">
+        <div class="p-q-src">L6 U3 — Knowledge</div>
+        <div class="p-q-text">I don't know anyone outside my company. My LinkedIn is a ghost town.</div>
+      </div>
+      <div class="p-commit">
+        <div class="p-commit-text">One meaningful LinkedIn conversation per week. Not a request — a real conversation.</div>
+      </div>
+    </div>
+
+    <div class="p-section">
+      <div class="p-cat">Coaching<span class="p-cat-line"></span></div>
+      <div class="p-quote">
+        <div class="p-q-src">L3 U2 — Feedback</div>
+        <div class="p-q-text">I wait for feedback to come to me. I never ask for it directly because I'm afraid of what I'll hear.</div>
+      </div>
+      <div class="p-commit">
+        <div class="p-commit-text">Ask my AE for one specific piece of feedback every Friday. Cite the exact call or email I want reviewed.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COLUMN 3: MIRROR -->
+  <div class="col">
+    <div class="col-header">
+      <div class="col-num">Artifact 03</div>
+      <div class="col-title">Mirror</div>
+      <div class="col-sub">Your words vs. your data. The uncomfortable truth.</div>
+    </div>
+
+    <div class="m-pair">
+      <div class="m-you">
+        <div class="m-label you">You Said</div>
+        <div class="m-text you-text">"I'm pretty good at qualifying leads."</div>
+      </div>
+      <div class="m-data">
+        <div class="m-label data">The Data</div>
+        <div class="m-text data-text">You scored 62% on BANT qualification. You're checking two criteria, not four.</div>
+      </div>
+    </div>
+
+    <div class="m-pair">
+      <div class="m-you">
+        <div class="m-label you">You Said</div>
+        <div class="m-text you-text">"I manage my time well — I just get pulled into meetings."</div>
+      </div>
+      <div class="m-data">
+        <div class="m-label data">The Data</div>
+        <div class="m-text data-text">62% discipline score. 33% of your day is selling. The meetings aren't the problem — the lack of boundaries is.</div>
+      </div>
+    </div>
+
+    <div class="m-pair">
+      <div class="m-you">
+        <div class="m-label you">You Said</div>
+        <div class="m-text you-text">"I'm open to feedback — I just don't get much."</div>
+      </div>
+      <div class="m-data">
+        <div class="m-label data">The Data</div>
+        <div class="m-text data-text">58% coaching score. You described feedback as something that happens to you — never something you go get.</div>
+      </div>
+    </div>
+
+    <div class="m-pair">
+      <div class="m-you">
+        <div class="m-label you">You Said</div>
+        <div class="m-text you-text">"I know I should network more, but I don't have time."</div>
+      </div>
+      <div class="m-data">
+        <div class="m-label data">The Data</div>
+        <div class="m-text data-text">45% networking. 2.5h/day on Slack. You have the time. You're spending it on the wrong things.</div>
+      </div>
+    </div>
+
+    <div class="m-bottom">
+      <div class="m-bottom-text">The gap between knowing and doing is where your career lives.</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

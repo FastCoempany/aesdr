@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR — Terminal Manifest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=DM+Mono:wght@400;500&family=Cormorant+Garamond:wght@400;600&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #020617;
+    --text: #F8FAFC;
+    --muted: #94A3B8;
+    --theme: #10B981;
+    --coral: rgba(239,68,68,0.5);
+    --iris: linear-gradient(90deg, #FF006E, #FF6B00, #F59E0B, #10B981, #38BDF8, #8B5CF6, #FF006E);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    min-height: 300vh;
+  }
+
+  .spacer { height: 40vh; }
+
+  .terminal-section {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .terminal {
+    border: 1px solid rgba(248,250,252,0.06);
+    background: rgba(248,250,252,0.02);
+    font-family: 'DM Mono', monospace;
+  }
+  .term-bar {
+    display: flex; align-items: center; gap: 6px;
+    padding: 10px 16px;
+    border-bottom: 1px solid rgba(248,250,252,0.06);
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot.r { background: rgba(239,68,68,0.5); }
+  .dot.y { background: rgba(245,158,11,0.5); }
+  .dot.g { background: rgba(16,185,129,0.5); }
+  .term-title {
+    font-size: 9px; color: rgba(148,163,184,0.4); letter-spacing: .08em; margin-left: 8px;
+  }
+
+  .term-body {
+    padding: clamp(24px, 4vw, 40px) clamp(16px, 3vw, 32px);
+  }
+
+  .cmd-line {
+    font-size: clamp(11px, 1.5vw, 14px);
+    color: rgba(248,250,252,0.3);
+    margin-bottom: 24px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .cmd-line.visible { opacity: 1; }
+  .cmd-line .prompt { color: var(--theme); margin-right: 6px; }
+
+  .lesson-line {
+    display: flex;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(248,250,252,0.03);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .lesson-line.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .lesson-num {
+    font-size: clamp(12px, 1.5vw, 14px);
+    color: var(--theme);
+    flex-shrink: 0;
+    width: 28px;
+    text-align: right;
+    padding-top: 1px;
+  }
+  .lesson-info { flex: 1; }
+  .lesson-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(15px, 2vw, 19px);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .lesson-desc {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(13px, 1.5vw, 15px);
+    color: rgba(148,163,184,0.5);
+    line-height: 1.5;
+  }
+
+  .denied-line {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(248,250,252,0.06);
+    font-size: clamp(14px, 2vw, 18px);
+    font-weight: 700;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    background: var(--iris);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 4s linear infinite;
+  }
+  .denied-line.visible { opacity: 1; }
+
+  .cursor-block {
+    display: inline-block;
+    width: 8px; height: 15px;
+    background: rgba(248,250,252,0.4);
+    vertical-align: text-bottom;
+    margin-left: 4px;
+    animation: blink 0.8s step-end infinite;
+  }
+
+  @keyframes shimmer { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+</style>
+</head>
+<body>
+
+<div class="spacer"></div>
+
+<div class="terminal-section">
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="dot r"></div>
+      <div class="dot y"></div>
+      <div class="dot g"></div>
+      <span class="term-title">curriculum_manifest.sh</span>
+    </div>
+    <div class="term-body">
+      <div class="cmd-line" id="cmd">
+        <span class="prompt">$</span> ls -la /aesdr/curriculum/<span class="cursor-block"></span>
+      </div>
+      <div id="lessons"></div>
+      <div class="denied-line" id="denied">
+        > access: denied. purchase required.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="spacer"></div>
+
+<script>
+const lessons = [
+  { num: "01", title: "Building Real Camaraderie", desc: "How to build genuine relationships in sales orgs that actually last" },
+  { num: "02", title: "Breaking Down Silos", desc: "Cross-functional alignment that makes your deals move faster" },
+  { num: "03", title: "Performance Pitfalls", desc: "The traps that kill sales careers — and how to avoid every one" },
+  { num: "04", title: "Navigating Manager Madness", desc: "Surviving toxic managers, bad coaching, and political games" },
+  { num: "05", title: "The Sales Playbook", desc: "A real operating system for daily execution — not motivational noise" },
+  { num: "06", title: "Beyond the Sales Playbook", desc: "What to do when the playbook breaks and you have to think for yourself" },
+  { num: "07", title: "Prospecting & Pipeline", desc: "Building self-sourced pipeline that gives you leverage and career options" },
+  { num: "08", title: "The 30% Rule", desc: "The math behind pipeline health that most reps never learn" },
+  { num: "09", title: "Salesforce Survival Guide", desc: "CRM hygiene that protects your deals and your credibility" },
+  { num: "10", title: "Breaking Down the Commission Myth", desc: "Financial resilience on variable comp — before it breaks you" },
+  { num: "11", title: "Sober Selling", desc: "Selling without the guru energy, the hustle porn, or the burnout" },
+  { num: "12", title: "Leveling Up SaaS Relationships", desc: "Long-game relationship building that compounds over a career" },
+];
+
+const container = document.getElementById('lessons');
+const els = [];
+
+lessons.forEach(l => {
+  const div = document.createElement('div');
+  div.className = 'lesson-line';
+  div.innerHTML = `
+    <div class="lesson-num">${l.num}</div>
+    <div class="lesson-info">
+      <div class="lesson-title">${l.title}</div>
+      <div class="lesson-desc">${l.desc}</div>
+    </div>
+  `;
+  container.appendChild(div);
+  els.push(div);
+});
+
+const cmd = document.getElementById('cmd');
+const denied = document.getElementById('denied');
+
+function check() {
+  const triggerPoint = window.innerHeight * 0.75;
+
+  const cmdRect = cmd.getBoundingClientRect();
+  if (cmdRect.top < triggerPoint) cmd.classList.add('visible');
+
+  els.forEach((el, i) => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < triggerPoint) {
+      setTimeout(() => el.classList.add('visible'), i * 80);
+    }
+  });
+
+  const dRect = denied.getBoundingClientRect();
+  if (dRect.top < triggerPoint) denied.classList.add('visible');
+}
+
+window.addEventListener('scroll', check, { passive: true });
+check();
+</script>
+</body>
+</html>

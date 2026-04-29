@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR | Syllabus — Variant B: The Cinema Reel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --velvet: #1A0508;
+    --velvet-deep: #0A0202;
+    --curtain: #3A0A0E;
+    --curtain-hl: #5B0D14;
+    --marquee: #FFE4B3;
+    --marquee-hot: #FFB84A;
+    --neon: #FF3355;
+    --gold: #D4A740;
+    --cream: #F7ECD8;
+    --ink: #0A0202;
+    --smoke: rgba(247, 236, 216, 0.55);
+    --iris: linear-gradient(90deg, #FF006E 0%, #FF6B00 17%, #F59E0B 34%, #10B981 51%, #38BDF8 68%, #8B5CF6 85%, #FF006E 100%);
+
+    --display: 'Playfair Display', Georgia, serif;
+    --serif: 'Source Serif 4', Georgia, serif;
+    --cond: 'Barlow Condensed', sans-serif;
+    --mono: 'Space Mono', monospace;
+    --hand: 'Caveat', cursive;
+  }
+  @keyframes iris {
+    from { background-position: 0% 50%; }
+    to   { background-position: 200% 50%; }
+  }
+  @keyframes bulb-flicker {
+    0%, 97%, 100% { opacity: 1; }
+    97.5% { opacity: .6; }
+    98% { opacity: 1; }
+    98.5% { opacity: .7; }
+  }
+  @keyframes marquee-glow {
+    0%, 100% { text-shadow: 0 0 6px rgba(255,184,74,.55), 0 0 16px rgba(255,184,74,.3); }
+    50%      { text-shadow: 0 0 10px rgba(255,184,74,.75), 0 0 28px rgba(255,184,74,.45); }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--velvet-deep);
+    color: var(--cream);
+    font-family: var(--serif);
+    line-height: 1.6;
+    min-height: 100%;
+  }
+  /* Velvet + grain background */
+  body {
+    position: relative;
+    background-image:
+      radial-gradient(ellipse at top, rgba(91,13,20,0.35), transparent 60%),
+      radial-gradient(ellipse at bottom, rgba(58,10,14,0.35), transparent 55%),
+      linear-gradient(180deg, #1A0508 0%, #0A0202 100%);
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 200;
+    mix-blend-mode: overlay;
+    opacity: 0.2;
+    background-image:
+      radial-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
+      radial-gradient(rgba(0,0,0,0.4) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 2px 2px;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 199;
+    background:
+      repeating-linear-gradient(180deg,
+        rgba(255,255,255,0.02) 0 1px,
+        transparent 1px 3px);
+  }
+
+  .iris-line {
+    height: 3px;
+    width: 100%;
+    background: var(--iris);
+    background-size: 200% 100%;
+    animation: iris 4s linear infinite;
+    box-shadow: 0 0 22px rgba(255,107,0,0.35);
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 42px;
+    background: rgba(10,2,2,0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(212,167,64,0.22);
+  }
+  .brand {
+    font-family: var(--cond);
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--cream);
+  }
+  .brand .iris-text {
+    background: var(--iris);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: iris 4s linear infinite;
+  }
+  .badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    background: var(--neon);
+    color: var(--velvet-deep);
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 2px;
+  }
+  .backlink {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--smoke);
+    text-decoration: none;
+  }
+  .backlink:hover { color: var(--marquee-hot); }
+
+  /* ── MARQUEE HERO ── */
+  .marquee-wrap {
+    padding: 80px 24px 40px;
+    display: flex;
+    justify-content: center;
+  }
+  .marquee {
+    position: relative;
+    max-width: 1100px;
+    width: 100%;
+    background:
+      radial-gradient(ellipse at center top, rgba(91,13,20,0.9), rgba(26,5,8,0.95) 70%),
+      linear-gradient(180deg, var(--curtain) 0%, var(--curtain-hl) 100%);
+    border: 2px solid var(--gold);
+    padding: 64px 48px 52px;
+    text-align: center;
+    box-shadow:
+      0 0 0 4px var(--velvet-deep),
+      0 0 0 5px rgba(212,167,64,0.7),
+      0 60px 120px rgba(0,0,0,0.6);
+  }
+  /* Lightbulb border */
+  .marquee-bulbs {
+    position: absolute;
+    inset: -18px;
+    pointer-events: none;
+    display: grid;
+    grid-template-columns: repeat(28, 1fr);
+    grid-template-rows: repeat(12, 1fr);
+  }
+  .marquee-bulbs span {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #FFF1C1, var(--marquee-hot) 60%, #7A4A06 100%);
+    box-shadow: 0 0 10px var(--marquee-hot), 0 0 20px rgba(255,184,74,0.45);
+    animation: bulb-flicker 4s linear infinite;
+  }
+  .marquee-now {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .35em;
+    color: var(--marquee-hot);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    animation: marquee-glow 2.4s ease-in-out infinite;
+  }
+  .marquee h1 {
+    font-family: var(--display);
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(48px, 9vw, 128px);
+    line-height: 0.92;
+    letter-spacing: -0.01em;
+    color: var(--marquee);
+    margin-bottom: 12px;
+    text-shadow:
+      0 0 18px rgba(255,184,74,0.35),
+      0 4px 0 rgba(0,0,0,0.5);
+  }
+  .marquee h1 .iris-accent {
+    background: var(--iris);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: iris 3.5s linear infinite;
+    text-shadow: none;
+  }
+  .marquee-sub {
+    font-family: var(--cond);
+    font-size: 18px;
+    letter-spacing: .35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-top: 4px;
+  }
+  .marquee-runtime {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    margin-top: 28px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .25em;
+    color: var(--smoke);
+    text-transform: uppercase;
+  }
+  .marquee-runtime span.pip { color: var(--neon); }
+
+  /* ── FILMSTRIP ── */
+  .strip-label {
+    max-width: 1180px;
+    margin: 72px auto 24px;
+    padding: 0 42px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .strip-label .kicker {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .3em;
+    color: var(--marquee-hot);
+    text-transform: uppercase;
+  }
+  .strip-label .rating {
+    font-family: var(--cond);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .25em;
+    color: var(--cream);
+    border: 1.5px solid var(--cream);
+    padding: 3px 10px;
+    text-transform: uppercase;
+  }
+
+  .filmstrip {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 42px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px 24px;
+    margin-bottom: 80px;
+  }
+  @media (max-width: 900px) { .filmstrip { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px) { .filmstrip { grid-template-columns: 1fr; } }
+
+  .frame {
+    position: relative;
+    background: linear-gradient(180deg, #141416 0%, #050507 100%);
+    border: 1px solid rgba(212,167,64,0.3);
+    padding: 36px 28px 30px;
+    color: var(--cream);
+    overflow: hidden;
+    transition: transform 0.25s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    min-height: 290px;
+  }
+  .frame:hover {
+    transform: translateY(-4px);
+    border-color: var(--marquee-hot);
+    box-shadow: 0 20px 44px rgba(255,51,85,0.18), 0 0 0 1px rgba(255,184,74,0.35) inset;
+  }
+  /* Sprocket holes top/bottom */
+  .frame::before,
+  .frame::after {
+    content: '';
+    position: absolute;
+    left: 0; width: 100%;
+    height: 16px;
+    background:
+      repeating-linear-gradient(90deg,
+        transparent 0 10px,
+        rgba(0,0,0,0.85) 10px 22px,
+        transparent 22px 32px);
+    background-color: var(--gold);
+  }
+  .frame::before { top: 0; }
+  .frame::after { bottom: 0; }
+
+  .frame-inner {
+    position: relative;
+    padding: 8px 0 8px;
+  }
+
+  .reel-num {
+    font-family: var(--cond);
+    font-size: 64px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--marquee-hot);
+    text-shadow: 0 0 12px rgba(255,184,74,0.4);
+    margin-bottom: 4px;
+  }
+  .reel-slate {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--smoke);
+    margin-bottom: 14px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .reel-slate .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--neon);
+    box-shadow: 0 0 8px var(--neon);
+  }
+  .reel-title {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1.1;
+    letter-spacing: -0.005em;
+    color: var(--marquee);
+    margin-bottom: 14px;
+    text-shadow: 0 1px 0 rgba(0,0,0,0.5);
+  }
+  .reel-title.stylized {
+    font-family: var(--cond);
+    font-weight: 800;
+    text-transform: none;
+    font-style: normal;
+    font-size: 26px;
+    letter-spacing: .02em;
+  }
+  .reel-q {
+    font-family: var(--hand);
+    font-size: 20px;
+    line-height: 1.28;
+    color: var(--marquee-hot);
+    white-space: pre-line;
+  }
+  .reel-foot {
+    position: absolute;
+    bottom: 10px;
+    right: 14px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: .2em;
+    color: var(--smoke);
+    text-transform: uppercase;
+  }
+
+  /* ── CTA ── */
+  .final {
+    padding: 100px 24px;
+    text-align: center;
+    background:
+      radial-gradient(ellipse at center, rgba(91,13,20,0.5), transparent 70%),
+      linear-gradient(180deg, #130307 0%, #0A0202 100%);
+    border-top: 1px solid rgba(212,167,64,0.25);
+    border-bottom: 1px solid rgba(212,167,64,0.25);
+  }
+  .final-kicker {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .4em;
+    color: var(--neon);
+    text-transform: uppercase;
+    margin-bottom: 22px;
+  }
+  .final h2 {
+    font-family: var(--display);
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(36px, 6vw, 72px);
+    line-height: 1.05;
+    color: var(--marquee);
+    margin-bottom: 20px;
+    text-shadow: 0 0 26px rgba(255,184,74,0.3);
+  }
+  .final h2 em {
+    background: var(--iris);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: iris 4s linear infinite;
+    font-style: italic;
+  }
+  .final p {
+    max-width: 620px;
+    margin: 0 auto 36px;
+    color: var(--smoke);
+    font-size: 17px;
+  }
+  .ticket-btn {
+    display: inline-block;
+    font-family: var(--cond);
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    padding: 18px 44px;
+    color: var(--velvet-deep);
+    background: var(--marquee-hot);
+    text-decoration: none;
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 24px rgba(255,184,74,0.4);
+    transition: transform 0.15s, box-shadow 0.3s;
+  }
+  .ticket-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 40px rgba(255,184,74,0.65), 0 8px 24px rgba(0,0,0,0.5);
+  }
+  .final-tag {
+    margin-top: 24px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .25em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .footer {
+    padding: 28px 42px 40px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--smoke);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="iris-text">AESDR</span> <span class="badge">Now Showing</span></div>
+  <a href="/" class="backlink">&larr; Back to lobby</a>
+</div>
+<div class="iris-line"></div>
+
+<section class="marquee-wrap">
+  <div class="marquee">
+    <div class="marquee-bulbs" id="bulbs"></div>
+    <div class="marquee-now">&laquo; Feature Presentation &raquo;</div>
+    <h1>The <span class="iris-accent">Syllabus.</span></h1>
+    <div class="marquee-sub">12 lessons &middot; one unbroken reel</div>
+    <div class="marquee-runtime">
+      <span>Runtime: 12 chapters</span><span class="pip">&bull;</span>
+      <span>Rated: H for Honest</span><span class="pip">&bull;</span>
+      <span>Lifetime Access</span>
+    </div>
+  </div>
+</section>
+
+<div class="strip-label">
+  <div class="kicker">Reel 01 — All 12 Frames</div>
+  <div class="rating">R · Real</div>
+</div>
+
+<section class="filmstrip">
+
+  <article class="frame">
+    <div class="frame-inner">
+      <div class="reel-num">01</div>
+      <div class="reel-slate"><span class="dot"></span>Scene 01 · Take 1</div>
+      <h3 class="reel-title">Building Real Camaraderie</h3>
+      <p class="reel-q">&ldquo;When&rsquo;s the last time your team felt like an actual team?&rdquo;</p>
+    </div>
+    <div class="reel-foot">A-CAM</div>
+  </article>
+
+  <article class="frame">
+    <div class="frame-inner">
+      <div class="reel-num">02</div>
+      <div class="reel-slate"><span class="dot"></span>Scene 02 · Take 1</div>
+      <h3 class="reel-title">Breaking Down Silos</h3>
+      <p class="reel-q">&ldquo;How many deals died in the handoff you never talked about?&rdquo;</p>
+    </div>
+    <div class="reel-foot">A-CAM</div>
+  </article>
+
+  <article class="frame">
+    <div class="frame-inner">
+      <div class="reel-num">03</div>
+      <div class="reel-slate"><span class="dot"></span>Scene 03 · Take 2</div>
+      <h3 class="reel-title">Performance Pitfalls</h3>
+      <p class="reel-q">&ldquo;Are you getting better — or just getting by?&rdquo;</p>
+    </div>
+    <div class="reel-foot">B-CAM</div>
+  </article>
+
+  <article class="frame">
+    <div class="frame-inner">
+      <div class="reel-num">04</div>
+      <div class="reel-slate"><span class="dot"></span>Scene 04 · Take 1</div>
+      <h3 class="reel-title">Navigating Manager Madness</h3>
+      <p class="reel-q">&ldquo;Does your manager coach you… or just count your calls and faults?&rdquo;</p>
+    </div>
+    <div class="reel-foot">A-CAM</div>
+  </article>
+
+  <article class="frame">
+    <div class="frame-inner">
+      <div class="reel-num">05</div>
+      <div class="reel-slate"><span class="dot"></span>Scene 05 · Take 3</div>
+      <h3 class="reel-title stylized">tHe SaLeS pLaYbOoK</h3>
+      <p class="reel-q">&ldquo;What&rsquo;s your system? And if you don&rsquo;t have one — what have you been doing?&rdquo;</p>
+    </div>
+    <div class="reel-foot">B-CAM</div>
+  </article>
+
+  <article class="frame">
+    <div class="frame-inner">
+      <div class="reel-num">06</div>
+      <div class="reel-slate"><span class="dot"></span>Scene 06 · Take 1</div>
+      <h3 class="reel-title stylized">bEyOnD tHe SaLeS pLaYbOoK</h3>
+      <p class="reel-q">&ldquo;What do you do when the script runs out and you&rsquo;re live?&rdquo;</p>
+    </div>
+    <div class="reel-foot">A-CAM</div>
+  </article>
+
+  <article class="frame">
+    <div class="frame-inner">
+      <div class="reel-num">07</div>
+      <div class="reel-slate"><span class="dot"></span>Scene 07 · Take 1</div>
+      <h3 class="reel-title">Prospecting &amp; Pipeline</h3>
+      <p class="reel-q">&ldquo;If inbound dried up tomorrow, would you survive?&rdquo;</p>
+    </div>
+    <div class="reel-foot">B-CAM</div>
+  </article>
+
+  <article class="frame">
+    <div class="frame-inner">
+      <div class="reel-num">08</div>
+      <div class="reel-slate"><span class="dot"></span>Scene 08 · Take 2</div>
+      <h3 class="reel-title">The 30% Rule</h3>
+      <p class="reel-q">&ldquo;What&rsquo;s your actual close rate? Not the one you told your VP.&rdquo;</p>
+    </div>
+    <div class="reel-foot">A-CAM</div>
+  </article>
+
+  <article class="frame">
+    <div class="frame-inner">
+      <div class="reel-num">09</div>
+      <div class="reel-slate"><span class="dot"></span>Scene 09 · Take 1</div>
+      <h3 class="reel-title">CRM Survival Guide</h3>
+      <p class="reel-q">&ldquo;Is your CRM protecting you — or building the case against you?&rdquo;</p>
+    </div>
+    <div class="reel-foot">B-CAM</div>
+  </article>
+
+  <article class="frame">
+    <div class="frame-inner">
+      <div class="reel-num">10</div>
+      <div class="reel-slate"><span class="dot"></span>Scene 10 · Take 1</div>
+      <h3 class="reel-title">Breaking Down the Commission Myth</h3>
+      <p class="reel-q">&ldquo;Can you survive three bad months in a row? Mentally? Financially?&rdquo;</p>
+    </div>
+    <div class="reel-foot">A-CAM</div>
+  </article>
+
+  <article class="frame">
+    <div class="frame-inner">
+      <div class="reel-num">11</div>
+      <div class="reel-slate"><span class="dot"></span>Scene 11 · Take 4</div>
+      <h3 class="reel-title">Sober Selling</h3>
+      <p class="reel-q">&ldquo;What if the problem is bigger than your process — what if it&rsquo;s what you&rsquo;re doing when no one&rsquo;s watching?&rdquo;</p>
+    </div>
+    <div class="reel-foot">B-CAM</div>
+  </article>
+
+  <article class="frame">
+    <div class="frame-inner">
+      <div class="reel-num">12</div>
+      <div class="reel-slate"><span class="dot"></span>Scene 12 · Take 1</div>
+      <h3 class="reel-title">Leveling Up SaaS Relationships</h3>
+      <p class="reel-q">&ldquo;Who would vouch for you if you changed companies tomorrow?&rdquo;</p>
+    </div>
+    <div class="reel-foot">A-CAM</div>
+  </article>
+
+</section>
+
+<section class="final">
+  <div class="final-kicker">End of Reel · Lights Up</div>
+  <h2>Book the whole <em>screening.</em></h2>
+  <p>Twelve chapters, no intermission. Every reel field-tested by AEs and SDRs who stopped applauding and started booking.</p>
+  <a href="/#pricing" class="ticket-btn">Get Your Ticket</a>
+  <div class="final-tag">Lifetime seat · 14-day refund · 5 takeaway tools</div>
+</section>
+
+<footer class="footer">
+  AESDR &copy; 2026 &middot; The Unfiltered SaaS Sales Survival Guide &middot; Terms &middot; Privacy
+</footer>
+
+<script>
+  // Procedurally sprinkle bulbs around marquee border
+  (function () {
+    const mount = document.getElementById('bulbs');
+    if (!mount) return;
+    const cols = 28, rows = 12;
+    for (let r = 1; r <= rows; r++) {
+      for (let c = 1; c <= cols; c++) {
+        const onBorder = (r === 1 || r === rows || c === 1 || c === cols);
+        if (!onBorder) continue;
+        const b = document.createElement('span');
+        b.style.gridColumn = c;
+        b.style.gridRow = r;
+        b.style.animationDelay = (Math.random() * 4).toFixed(2) + 's';
+        mount.appendChild(b);
+      }
+    }
+  })();
+</script>
+
+</body>
+</html>

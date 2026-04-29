@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR | AE-SDR Alignment Contract Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FAF7F2;--ink:#1A1A1A;--crimson:#8B1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+  --card:#FFFFFF;--accent-lt:rgba(139,26,26,0.06);
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif;--serif:'Source Serif 4',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;--mono:'Space Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--cream);color:var(--ink);font-family:var(--serif);line-height:1.6}
+
+/* DOWNLOAD BAR */
+.dl-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 40px;border-bottom:1px solid var(--light);background:var(--cream);position:sticky;top:0;z-index:100}
+.dl-brand{font-family:var(--display);font-size:18px;font-weight:900;font-style:italic;letter-spacing:.05em;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:iris 3s linear infinite}
+.dl-label{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-left:16px}
+.dl-right{display:flex;align-items:center;gap:12px}
+.btn-back{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:10px 16px;border:1px solid var(--light);background:transparent;cursor:pointer}
+.btn-back:hover{border-color:var(--crimson);color:var(--crimson)}
+.btn-print{font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:10px 24px;border:none;background:var(--crimson);color:#fff;cursor:pointer;transition:all .2s}
+.btn-print:hover{background:#6B1414;transform:translateY(-1px)}
+
+/* LAYOUT */
+.builder{display:grid;grid-template-columns:380px 1fr;min-height:calc(100vh - 57px)}
+
+/* LEFT: CONTROLS */
+.controls{background:var(--card);border-right:1px solid var(--light);padding:40px 32px;overflow-y:auto}
+.ctrl-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--crimson);margin-bottom:12px}
+.ctrl-title{font-family:var(--display);font-size:28px;font-weight:900;font-style:italic;line-height:1.1;margin-bottom:10px;color:var(--ink)}
+.ctrl-sub{font-family:var(--serif);font-size:15px;color:var(--muted);line-height:1.6;margin-bottom:32px;font-style:italic}
+.input-group{margin-bottom:24px}
+.input-label{display:block;font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.input-field{width:100%;background:var(--cream);border:1px solid var(--light);color:var(--ink);font-family:var(--serif);font-size:15px;padding:12px 14px;outline:none;transition:border-color .2s}
+.input-field:focus{border-color:var(--crimson)}
+select.input-field{font-family:var(--cond);font-size:14px;letter-spacing:.04em;cursor:pointer}
+textarea.input-field{resize:vertical;min-height:80px;line-height:1.6}
+.divider{height:1px;background:var(--light);margin:28px 0}
+.section-head{font-family:var(--cond);font-size:14px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--crimson);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.section-head::after{content:'';flex:1;height:1px;background:var(--light)}
+
+/* RIGHT: PREVIEW */
+.preview{background:var(--cream);padding:40px;overflow-y:auto;display:flex;justify-content:center}
+.document{background:var(--card);width:100%;max-width:800px;min-height:1100px;padding:60px 72px;box-shadow:0 4px 24px rgba(0,0,0,0.06);border:1px solid var(--light)}
+
+/* DOCUMENT STYLES */
+.doc-header{text-align:center;border-bottom:2px solid var(--ink);padding-bottom:24px;margin-bottom:36px}
+.doc-title{font-family:var(--display);font-size:32px;font-weight:900;font-style:italic;margin-bottom:6px;color:var(--ink)}
+.doc-subtitle{font-family:var(--mono);font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted)}
+.doc-parties{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px;padding:20px;background:var(--accent-lt);border-left:3px solid var(--crimson)}
+.doc-party-label{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--crimson);margin-bottom:4px}
+.doc-party-name{font-family:var(--display);font-size:20px;font-style:italic;color:var(--ink)}
+.doc-party-role{font-family:var(--serif);font-size:14px;color:var(--muted);font-style:italic}
+.doc-section{margin-bottom:28px}
+.doc-sec-title{font-family:var(--cond);font-size:15px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);border-bottom:1px solid var(--light);padding-bottom:6px;margin-bottom:14px}
+.doc-text{font-size:15px;line-height:1.75;color:var(--ink);margin-bottom:12px}
+.doc-list{list-style:none;margin-bottom:14px}
+.doc-list li{font-size:15px;line-height:1.75;color:var(--ink);margin-bottom:6px;padding-left:20px;position:relative}
+.doc-list li::before{content:'';position:absolute;left:0;top:11px;width:6px;height:6px;background:var(--crimson);border-radius:50%}
+.doc-sig{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:48px;padding-top:24px;border-top:2px solid var(--ink)}
+.sig-line{border-bottom:1px solid var(--muted);padding-bottom:8px;margin-top:48px}
+.sig-label{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+@media print{.dl-bar,.controls{display:none}.builder{grid-template-columns:1fr}.preview{padding:0}.document{box-shadow:none;border:none}}
+</style>
+</head>
+<body>
+
+<div class="dl-bar">
+  <div style="display:flex;align-items:baseline;gap:4px">
+    <span class="dl-brand">AESDR</span>
+    <span class="dl-label">Lesson 3 Takeaway</span>
+  </div>
+  <div class="dl-right">
+    <button class="btn-back">← Dashboard</button>
+    <button class="btn-print" onclick="window.print()">Print / Save PDF</button>
+  </div>
+</div>
+
+<div class="builder">
+  <!-- LEFT: CONTROLS -->
+  <div class="controls">
+    <div class="ctrl-eyebrow">Lesson 3.3 — Takeaway Tool</div>
+    <div class="ctrl-title">AE–SDR Alignment Contract</div>
+    <div class="ctrl-sub">Build a working agreement between you and your counterpart. Fill in the fields — the contract updates live.</div>
+
+    <div class="section-head">The Parties</div>
+    <div class="input-group">
+      <label class="input-label">SDR Name</label>
+      <input class="input-field" type="text" placeholder="e.g. Jordan Rivera" value="Jordan Rivera">
+    </div>
+    <div class="input-group">
+      <label class="input-label">AE Name</label>
+      <input class="input-field" type="text" placeholder="e.g. Priya Mehta" value="Priya Mehta">
+    </div>
+    <div class="input-group">
+      <label class="input-label">Team / Territory</label>
+      <input class="input-field" type="text" placeholder="e.g. Enterprise West" value="Enterprise West">
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-head">Commitments</div>
+
+    <div class="input-group">
+      <label class="input-label">Meetings per week (SDR → AE)</label>
+      <select class="input-field">
+        <option>3 qualified meetings</option>
+        <option>4 qualified meetings</option>
+        <option selected>5 qualified meetings</option>
+        <option>6 qualified meetings</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label class="input-label">AE feedback cadence</label>
+      <select class="input-field">
+        <option>Daily async (Slack)</option>
+        <option selected>Weekly 1:1 (30 min)</option>
+        <option>Bi-weekly deep review</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label class="input-label">Qualification standard</label>
+      <select class="input-field">
+        <option selected>BANT (all 4 criteria)</option>
+        <option>MEDDIC</option>
+        <option>CHAMP</option>
+      </select>
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-head">Custom Terms</div>
+    <div class="input-group">
+      <label class="input-label">Additional agreements</label>
+      <textarea class="input-field" placeholder="e.g. AE will shadow 2 SDR calls/month. SDR will attend 1 AE demo/week for learning.">AE will shadow 2 SDR calls per month. SDR will attend 1 AE demo per week for learning. Both parties review pipeline together every Friday at 3pm.</textarea>
+    </div>
+  </div>
+
+  <!-- RIGHT: DOCUMENT PREVIEW -->
+  <div class="preview">
+    <div class="document">
+      <div class="doc-header">
+        <div class="doc-title">AE–SDR Alignment Contract</div>
+        <div class="doc-subtitle">Enterprise West &nbsp;·&nbsp; Effective Q2 2026</div>
+      </div>
+
+      <div class="doc-parties">
+        <div>
+          <div class="doc-party-label">Sales Development Rep</div>
+          <div class="doc-party-name">Jordan Rivera</div>
+          <div class="doc-party-role">SDR, Enterprise West</div>
+        </div>
+        <div>
+          <div class="doc-party-label">Account Executive</div>
+          <div class="doc-party-name">Priya Mehta</div>
+          <div class="doc-party-role">AE, Enterprise West</div>
+        </div>
+      </div>
+
+      <div class="doc-section">
+        <div class="doc-sec-title">I. Pipeline Commitments</div>
+        <ul class="doc-list">
+          <li>SDR will deliver a minimum of <strong>5 qualified meetings per week</strong> to AE.</li>
+          <li>All leads must meet <strong>BANT qualification standard</strong> (Budget, Authority, Need, Timeline) before handoff.</li>
+          <li>SDR will include a 2-sentence qualification summary with every meeting invite.</li>
+        </ul>
+      </div>
+
+      <div class="doc-section">
+        <div class="doc-sec-title">II. Feedback & Coaching</div>
+        <ul class="doc-list">
+          <li>AE will provide structured feedback via <strong>weekly 1:1 (30 min)</strong>.</li>
+          <li>Feedback will reference specific calls, emails, or leads — not generalities.</li>
+          <li>SDR may request ad-hoc feedback on any lead within 24 hours of handoff.</li>
+        </ul>
+      </div>
+
+      <div class="doc-section">
+        <div class="doc-sec-title">III. Mutual Accountability</div>
+        <ul class="doc-list">
+          <li>AE will shadow 2 SDR calls per month.</li>
+          <li>SDR will attend 1 AE demo per week for learning.</li>
+          <li>Both parties review pipeline together every Friday at 3pm.</li>
+        </ul>
+      </div>
+
+      <div class="doc-section">
+        <div class="doc-sec-title">IV. Escalation Protocol</div>
+        <div class="doc-text">If either party fails to meet commitments for two consecutive weeks, the other may request a facilitated conversation with their shared manager. The goal is resolution, not punishment.</div>
+      </div>
+
+      <div class="doc-sig">
+        <div>
+          <div class="sig-line"></div>
+          <div class="sig-label">Jordan Rivera — SDR</div>
+        </div>
+        <div>
+          <div class="sig-line"></div>
+          <div class="sig-label">Priya Mehta — AE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

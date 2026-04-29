@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR | Commission Defense Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --iris: linear-gradient(90deg, #FF006E 0%, #FF6B00 17%, #F59E0B 34%, #10B981 51%, #38BDF8 68%, #8B5CF6 85%, #FF006E 100%);
+  --bg-parchment: #FFFDF8;
+  --bg-page: #FFFFFF;
+  --rule-color: #F0EBE3;
+  --margin-line: #E8D4D4;
+  --text-main: #2C2C2C;
+  --text-muted: #8B8178;
+  --red-ink: #C53030;
+  --crimson: #8B1A1A;
+  --gold-hl: rgba(184, 148, 62, 0.2);
+  --gold-solid: #B8943E;
+  --coral: #EF4444;
+  --display: 'Playfair Display', Georgia, serif;
+  --serif: 'Source Serif 4', Georgia, serif;
+  --cond: 'Barlow Condensed', sans-serif;
+  --mono: 'Space Mono', monospace;
+}
+@keyframes iris { from { background-position: 0% 50%; } to { background-position: 200% 50%; } }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; background: var(--bg-parchment); color: var(--text-main); font-family: var(--serif); line-height: 1.6; }
+
+/* TOPBAR */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 40px; background: var(--bg-page);
+  border-bottom: 1px solid var(--rule-color);
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+}
+.brand {
+  font-family: var(--cond); font-size: 16px; font-weight: 800;
+  letter-spacing: .25em; text-transform: uppercase;
+  background: var(--iris); background-size: 200% 100%;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  animation: iris 4s linear infinite;
+}
+.badge {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .15em;
+  text-transform: uppercase; color: var(--crimson); font-weight: 700;
+  padding: 4px 12px; border: 1.5px solid var(--crimson); border-radius: 2px;
+  background: rgba(139,26,26,0.06); margin-left: 14px;
+}
+.topbar-left { display: flex; align-items: center; }
+.btn-export {
+  font-family: var(--cond); font-size: 13px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  padding: 9px 22px; border: 1.5px solid var(--crimson);
+  background: transparent; color: var(--crimson);
+  cursor: pointer; border-radius: 2px; transition: all .3s;
+  position: relative; overflow: hidden;
+}
+.btn-export:hover {
+  background: var(--crimson); color: var(--bg-page);
+  box-shadow: 0 4px 12px rgba(139,26,26,0.2);
+}
+
+/* IRIS DIVIDER */
+.iris-divider { height: 2px; background: var(--iris); background-size: 200% 100%; animation: iris 4s linear infinite; }
+
+/* CONTAINER */
+.container { max-width: 940px; margin: 0 auto; padding: 0 20px; }
+
+/* PAGE */
+.page {
+  background: var(--bg-page); margin: 40px 0; border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 30px rgba(0,0,0,0.06), 0 30px 60px rgba(0,0,0,0.04);
+  position: relative; padding: 56px 56px 56px 88px;
+  background-image: repeating-linear-gradient(to bottom, transparent, transparent 31px, var(--rule-color) 31px, var(--rule-color) 32px);
+  background-position: 0 24px;
+}
+.page::before {
+  content: ''; position: absolute; top: 0; bottom: 0;
+  left: 72px; width: 1.5px; background: var(--margin-line); z-index: 1;
+}
+.page::after {
+  content: ''; position: absolute; top: 0; bottom: 0;
+  left: 68px; width: 1px; background: var(--margin-line); opacity: 0.5; z-index: 1;
+}
+.page > * { position: relative; z-index: 2; }
+
+/* HEADER */
+.header-info { margin-bottom: 40px; }
+.eyebrow {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--red-ink); margin-bottom: 12px;
+  display: inline-block;
+}
+.h1 {
+  font-family: var(--display); font-style: italic; font-weight: 900;
+  font-size: 42px; line-height: 1.1; margin-bottom: 14px; color: var(--crimson);
+}
+.h1 .iris-word {
+  background: var(--iris); background-size: 200% 100%;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  animation: iris 4s linear infinite;
+}
+.sub { font-size: 16px; color: var(--text-muted); max-width: 640px; font-style: italic; line-height: 1.6; }
+
+/* WARNING */
+.warning {
+  background: var(--gold-hl); border-left: 4px solid var(--gold-solid);
+  padding: 18px 24px; margin-bottom: 36px; border-radius: 0 4px 4px 0;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.warn-icon { font-size: 20px; margin-top: 1px; }
+.warn-title {
+  font-family: var(--display); font-style: italic; font-weight: 700;
+  font-size: 16px; color: var(--gold-solid); margin-bottom: 4px;
+}
+.warn-text { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+
+/* GLOBAL INPUTS */
+.global-inputs {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  margin-bottom: 36px; padding-bottom: 36px;
+  border-bottom: 1px dashed var(--margin-line);
+}
+.input-group { display: flex; flex-direction: column; gap: 6px; }
+.input-label {
+  font-family: var(--cond); font-size: 13px; font-weight: 600;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted);
+}
+.input-field {
+  width: 100%; background: transparent; border: none;
+  border-bottom: 2px dotted var(--rule-color); color: var(--text-main);
+  font-family: var(--mono); font-size: 18px; padding: 10px 4px;
+  border-radius: 0; outline: none; transition: border-color .3s;
+}
+.input-field:focus {
+  border-bottom-style: solid;
+  border-image: var(--iris) 1; border-image-slice: 1;
+}
+
+/* DASHBOARD CARDS */
+.dash-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 36px; }
+.d-card {
+  background: var(--bg-parchment); border: 1px solid var(--rule-color);
+  padding: 20px; border-radius: 4px; position: relative; overflow: hidden;
+  transition: transform .3s, box-shadow .3s;
+}
+.d-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+.d-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; }
+.d-card.safe::before { background: var(--gold-solid); }
+.d-card.risk::before { background: var(--gold-solid); }
+.d-card.bleed::before { background: var(--red-ink); }
+.d-card.total::before { background: var(--crimson); }
+.d-lbl {
+  font-family: var(--cond); font-size: 11px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;
+}
+.d-val { font-family: var(--mono); font-size: 28px; font-weight: 400; color: var(--text-main); }
+.d-card.safe .d-val { color: var(--gold-solid); background: var(--gold-hl); display: inline; padding: 0 4px; }
+.d-card.bleed .d-val { color: var(--red-ink); }
+.d-sub { font-size: 12px; color: var(--text-muted); margin-top: 8px; font-style: italic; }
+
+/* ADD DEAL FORM */
+.add-form {
+  display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap;
+  margin-bottom: 24px; padding: 20px 0;
+  border-top: 1px dashed var(--margin-line); border-bottom: 1px dashed var(--margin-line);
+}
+.add-form .input-group { flex: 1; min-width: 140px; }
+.add-form .input-field { font-size: 15px; }
+.btn-add {
+  font-family: var(--cond); font-size: 14px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  padding: 10px 22px; border: 1.5px solid var(--crimson);
+  background: var(--crimson); color: var(--bg-page);
+  cursor: pointer; border-radius: 2px; transition: all .3s; height: 42px;
+}
+.btn-add:hover { background: transparent; color: var(--crimson); }
+
+/* LEDGER TABLE */
+.ledger-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; text-align: left; }
+th {
+  font-family: var(--cond); font-size: 11px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted);
+  padding: 14px 16px; border-bottom: 2px solid var(--rule-color);
+}
+td {
+  padding: 14px 16px; border-bottom: 1px solid var(--rule-color);
+  font-family: var(--mono); font-size: 13px; color: var(--text-main); vertical-align: middle;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(184,148,62,0.04); }
+
+.status-sel {
+  background: var(--bg-parchment); border: 1px solid var(--rule-color);
+  color: var(--text-main); font-family: var(--cond); font-size: 12px;
+  font-weight: 600; text-transform: uppercase; padding: 5px 8px;
+  border-radius: 2px; outline: none; cursor: pointer;
+}
+.status-sel.pending { color: var(--gold-solid); border-color: var(--gold-solid); }
+.status-sel.cleared { color: var(--crimson); border-color: var(--crimson); }
+.status-sel.clawback { color: var(--red-ink); border-color: var(--red-ink); }
+
+.del-btn {
+  background: transparent; border: none; color: var(--text-muted);
+  cursor: pointer; font-size: 14px; transition: color .2s;
+}
+.del-btn:hover { color: var(--coral); }
+
+.empty-state {
+  padding: 40px; text-align: center; font-style: italic; color: var(--text-muted);
+}
+
+.text-red { color: var(--red-ink); }
+.text-green { color: var(--crimson); }
+.text-gold { color: var(--gold-solid); }
+
+/* INFO BANNER */
+.info-banner {
+  position: relative;
+  background: var(--gold-hl);
+  border-left: 3px solid var(--gold-solid);
+  padding: 14px 40px 14px 20px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  transition: opacity 0.3s ease;
+}
+.info-banner-text {
+  max-width: 940px;
+  margin: 0 auto;
+}
+.info-banner-dismiss {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-family: var(--mono);
+  font-size: 16px;
+  color: var(--text-muted);
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px;
+  transition: color 0.2s;
+}
+.info-banner-dismiss:hover {
+  color: var(--text-main);
+}
+
+@media(max-width: 900px) {
+  .dash-grid { grid-template-columns: 1fr 1fr; }
+  .global-inputs { grid-template-columns: 1fr; }
+  .page { padding: 40px 32px 40px 48px; }
+}
+@media(max-width: 600px) {
+  .dash-grid { grid-template-columns: 1fr; }
+  .add-form { flex-direction: column; align-items: stretch; }
+  .topbar { padding: 12px 20px; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-left">
+    <span class="brand">AESDR</span>
+    <span class="badge">Tool: C10.1</span>
+  </div>
+  <button class="btn-export" onclick="exportCSV()">Export CSV</button>
+</header>
+<div class="iris-divider"></div>
+
+<!-- INFO BANNER -->
+<div class="info-banner" id="infoBanner" style="display:none;">
+  <div class="info-banner-text">
+    This is a standalone tool — it runs entirely in your browser. No data is sent anywhere. Your deals and settings are saved automatically to this browser. Clear your browser data to reset. Works in any modern browser (Chrome, Firefox, Safari, Edge).
+  </div>
+  <button class="info-banner-dismiss" onclick="dismissInfoBanner()" aria-label="Dismiss">&times;</button>
+</div>
+
+<div class="container">
+<div class="page">
+
+  <div class="header-info">
+    <div class="eyebrow">Course 10 · Asset</div>
+    <h1 class="h1">Commission <span class="iris-word">Defense</span> Tracker</h1>
+    <p class="sub">Finance works for the company. This tracker works for you. Plug your numbers in to see the difference between the "Fantasy OTE" you were sold, and the harsh reality of taxes and clawbacks.</p>
+  </div>
+
+  <div class="warning">
+    <div class="warn-icon">§</div>
+    <div>
+      <div class="warn-title">The 30% Rule of Thumb</div>
+      <div class="warn-text">Taxes eat ~30% of your commission immediately. If a deal churns within 90 days, you lose 100% of it. Track it here before you spend it.</div>
+    </div>
+  </div>
+
+  <div class="global-inputs">
+    <div class="input-group">
+      <label class="input-label">Base Salary ($)</label>
+      <input type="number" id="baseSalary" class="input-field" value="75000" oninput="calculate()">
+    </div>
+    <div class="input-group">
+      <label class="input-label">Est. Tax Withholding (%)</label>
+      <input type="number" id="taxRate" class="input-field" value="30" oninput="calculate()">
+    </div>
+    <div class="input-group">
+      <label class="input-label">Fantasy OTE ($)</label>
+      <input type="number" id="oteFantasy" class="input-field" value="150000" oninput="calculate()">
+    </div>
+  </div>
+
+  <div class="dash-grid">
+    <div class="d-card safe">
+      <div class="d-lbl">Cleared Take-Home (Net)</div>
+      <div class="d-val" id="dashNet">$0</div>
+      <div class="d-sub">Money you can actually spend.</div>
+    </div>
+    <div class="d-card risk">
+      <div class="d-lbl">At Risk (Clawback Window)</div>
+      <div class="d-val text-gold" id="dashRisk">$0</div>
+      <div class="d-sub">Pending or in the 90-day danger zone.</div>
+    </div>
+    <div class="d-card bleed">
+      <div class="d-lbl">Bleeding (Taxes &amp; Clawbacks)</div>
+      <div class="d-val text-red" id="dashBleed">$0</div>
+      <div class="d-sub">Money the government or company took back.</div>
+    </div>
+    <div class="d-card total">
+      <div class="d-lbl">Reality vs Fantasy OTE</div>
+      <div class="d-val" id="dashPacing" style="font-size:22px;padding-top:2px">0%</div>
+      <div class="d-sub">Base + Cleared Net vs Fantasy OTE.</div>
+    </div>
+  </div>
+
+  <div class="add-form">
+    <div class="input-group">
+      <label class="input-label">Deal Name / Account</label>
+      <input type="text" id="newDealName" class="input-field" placeholder="e.g. Acme Corp">
+    </div>
+    <div class="input-group">
+      <label class="input-label">ARR / TCV ($)</label>
+      <input type="number" id="newDealArr" class="input-field" placeholder="50000">
+    </div>
+    <div class="input-group" style="max-width:120px">
+      <label class="input-label">Comm Rate (%)</label>
+      <input type="number" id="newDealRate" class="input-field" value="10">
+    </div>
+    <button class="btn-add" onclick="addDeal()">+ Log Deal</button>
+  </div>
+
+  <div class="ledger-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Account / Deal</th>
+          <th>ARR ($)</th>
+          <th>Rate (%)</th>
+          <th>Gross Comm ($)</th>
+          <th>Status</th>
+          <th>Est. Tax Hit ($)</th>
+          <th>Net Comm ($)</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="ledgerBody"></tbody>
+    </table>
+    <div id="emptyState" class="empty-state">
+      No deals logged yet. Stop hoping. Start tracking.
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+// ── localStorage persistence ──
+const STORAGE_KEY = 'aesdr_commission_tracker';
+const INFO_DISMISSED_KEY = 'aesdr_commission_info_dismissed';
+
+const defaultDeals = [
+  { id: 1, name: "Stark Industries", arr: 120000, rate: 10, status: "cleared" },
+  { id: 2, name: "Wayne Enterprises", arr: 45000, rate: 10, status: "pending" },
+  { id: 3, name: "Pied Piper", arr: 20000, rate: 8, status: "clawback" }
+];
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return {
+        deals: parsed.deals || defaultDeals,
+        baseSalary: parsed.baseSalary !== undefined ? parsed.baseSalary : 75000,
+        taxRate: parsed.taxRate !== undefined ? parsed.taxRate : 30,
+        oteFantasy: parsed.oteFantasy !== undefined ? parsed.oteFantasy : 150000
+      };
+    }
+  } catch (e) {}
+  return { deals: defaultDeals, baseSalary: 75000, taxRate: 30, oteFantasy: 150000 };
+}
+
+function saveState() {
+  try {
+    const state = {
+      deals: deals,
+      baseSalary: parseFloat(document.getElementById('baseSalary').value) || 0,
+      taxRate: parseFloat(document.getElementById('taxRate').value) || 0,
+      oteFantasy: parseFloat(document.getElementById('oteFantasy').value) || 0
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (e) {}
+}
+
+// ── Info banner ──
+function initInfoBanner() {
+  const banner = document.getElementById('infoBanner');
+  if (!localStorage.getItem(INFO_DISMISSED_KEY)) {
+    banner.style.display = 'block';
+  }
+}
+
+function dismissInfoBanner() {
+  const banner = document.getElementById('infoBanner');
+  banner.style.opacity = '0';
+  setTimeout(() => { banner.style.display = 'none'; }, 300);
+  localStorage.setItem(INFO_DISMISSED_KEY, '1');
+}
+
+// ── Init state from localStorage ──
+const state = loadState();
+let deals = state.deals;
+
+// Apply saved global inputs
+document.getElementById('baseSalary').value = state.baseSalary;
+document.getElementById('taxRate').value = state.taxRate;
+document.getElementById('oteFantasy').value = state.oteFantasy;
+
+const formatMoney = (num) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(num);
+
+function calculate() {
+  const taxRate = parseFloat(document.getElementById('taxRate').value) / 100 || 0;
+  const baseSalary = parseFloat(document.getElementById('baseSalary').value) || 0;
+  const oteFantasy = parseFloat(document.getElementById('oteFantasy').value) || 1;
+
+  let totalClearedGross = 0;
+  let totalPendingGross = 0;
+  let totalClawedBack = 0;
+
+  const tbody = document.getElementById('ledgerBody');
+  tbody.innerHTML = '';
+
+  document.getElementById('emptyState').style.display = deals.length === 0 ? 'block' : 'none';
+
+  deals.forEach((deal) => {
+    const gross = deal.arr * (deal.rate / 100);
+    let taxHit = 0;
+    let net = 0;
+
+    if (deal.status === 'cleared') {
+      taxHit = gross * taxRate;
+      net = gross - taxHit;
+      totalClearedGross += gross;
+    } else if (deal.status === 'pending') {
+      taxHit = gross * taxRate;
+      net = gross - taxHit;
+      totalPendingGross += gross;
+    } else if (deal.status === 'clawback') {
+      totalClawedBack += gross;
+    }
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-family:var(--cond);font-weight:700;font-size:15px">${deal.name}</td>
+      <td>${formatMoney(deal.arr)}</td>
+      <td>${deal.rate}%</td>
+      <td>${formatMoney(gross)}</td>
+      <td>
+        <select class="status-sel ${deal.status}" onchange="updateStatus(${deal.id}, this.value)">
+          <option value="pending" ${deal.status === 'pending' ? 'selected' : ''}>At Risk (90 Days)</option>
+          <option value="cleared" ${deal.status === 'cleared' ? 'selected' : ''}>Cleared / Paid</option>
+          <option value="clawback" ${deal.status === 'clawback' ? 'selected' : ''}>Clawed Back</option>
+        </select>
+      </td>
+      <td class="text-red">-${formatMoney(taxHit)}</td>
+      <td class="${deal.status === 'cleared' ? 'text-green' : (deal.status === 'clawback' ? '' : 'text-gold')}">
+        ${deal.status === 'clawback' ? '$0' : formatMoney(net)}
+      </td>
+      <td><button class="del-btn" onclick="deleteDeal(${deal.id})">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  const totalTaxes = totalClearedGross * taxRate;
+  const netCleared = totalClearedGross - totalTaxes;
+  const totalBleed = totalTaxes + totalClawedBack;
+  const realityTotal = baseSalary + netCleared;
+  const pacingPct = ((realityTotal / oteFantasy) * 100).toFixed(1);
+
+  document.getElementById('dashNet').textContent = formatMoney(netCleared);
+  document.getElementById('dashRisk').textContent = formatMoney(totalPendingGross);
+  document.getElementById('dashBleed').textContent = formatMoney(totalBleed);
+  document.getElementById('dashPacing').textContent = `${formatMoney(realityTotal)} (${pacingPct}%)`;
+
+  saveState();
+}
+
+function addDeal() {
+  const nameInput = document.getElementById('newDealName');
+  const arrInput = document.getElementById('newDealArr');
+  const rateInput = document.getElementById('newDealRate');
+
+  if (!nameInput.value || !arrInput.value) {
+    alert("Enter a Deal Name and ARR to log a deal.");
+    return;
+  }
+
+  deals.push({
+    id: Date.now(),
+    name: nameInput.value,
+    arr: parseFloat(arrInput.value),
+    rate: parseFloat(rateInput.value) || 10,
+    status: 'pending'
+  });
+
+  nameInput.value = '';
+  arrInput.value = '';
+  calculate();
+}
+
+function deleteDeal(id) {
+  deals = deals.filter(d => d.id !== id);
+  calculate();
+}
+
+function updateStatus(id, newStatus) {
+  const deal = deals.find(d => d.id === id);
+  if (deal) { deal.status = newStatus; calculate(); }
+}
+
+function exportCSV() {
+  if (deals.length === 0) { alert("No deals to export."); return; }
+  const taxRate = parseFloat(document.getElementById('taxRate').value) / 100 || 0;
+  let csvContent = "data:text/csv;charset=utf-8,";
+  csvContent += "Deal Name,ARR,Comm Rate (%),Gross Comm,Status,Tax Withheld,Net Comm\n";
+  deals.forEach(deal => {
+    const gross = deal.arr * (deal.rate / 100);
+    let tax = 0, net = 0;
+    if (deal.status === 'cleared' || deal.status === 'pending') {
+      tax = gross * taxRate; net = gross - tax;
+    }
+    csvContent += `"${deal.name}",${deal.arr},${deal.rate},${gross},${deal.status},${tax},${net}\n`;
+  });
+  const link = document.createElement("a");
+  link.setAttribute("href", encodeURI(csvContent));
+  link.setAttribute("download", "aesdr_commission_tracker.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+// ── Initialize ──
+initInfoBanner();
+calculate();
+</script>
+</body>
+</html>

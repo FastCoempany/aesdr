@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AE/SDR Fork Mockups — Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Barlow+Condensed:wght@400;500;600;700;800&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --crimson:#8B1A1A;--cream:#FAF7F2;--ink:#1A1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+    --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+    --display:'Playfair Display',Georgia,serif;
+    --serif:'Source Serif 4',Georgia,serif;
+    --cond:'Barlow Condensed',sans-serif;
+    --mono:'Space Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--cream);color:var(--ink);font-family:var(--serif);min-height:100vh;line-height:1.6}
+  @keyframes shimmer{to{background-position:300% 0}}
+  .iris-text{background:var(--iris);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 4s linear infinite}
+
+  .corner{position:fixed;width:22px;height:22px;border-color:rgba(0,0,0,.10);border-style:solid;border-width:0;z-index:55;pointer-events:none}
+  .c-tl{top:18px;left:18px;border-top-width:1px;border-left-width:1px}
+  .c-tr{top:18px;right:18px;border-top-width:1px;border-right-width:1px}
+  .c-bl{bottom:18px;left:18px;border-bottom-width:1px;border-left-width:1px}
+  .c-br{bottom:18px;right:18px;border-bottom-width:1px;border-right-width:1px}
+  .ambient-line{position:fixed;bottom:0;left:0;width:100%;height:1px;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite;opacity:.18;z-index:60;pointer-events:none}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:80px 32px}
+  .label{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--muted);text-transform:uppercase;margin-bottom:16px}
+  h1{font-family:var(--display);font-weight:900;font-style:italic;font-size:clamp(40px,6vw,80px);line-height:1;margin-bottom:14px;letter-spacing:.01em}
+  .lede{font-family:var(--serif);font-size:18px;line-height:1.7;color:var(--muted);max-width:640px;margin-bottom:48px;font-style:italic}
+  .divider{width:60px;height:2px;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite;margin:24px 0 36px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+  a.card{display:block;text-decoration:none;color:var(--ink);border:1px solid var(--light);padding:32px;background:rgba(0,0,0,.02);position:relative;transition:all .25s ease;overflow:hidden}
+  a.card::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite;opacity:0;transition:opacity .25s ease}
+  a.card:hover{border-color:rgba(0,0,0,.18);background:rgba(0,0,0,.04);transform:translateY(-2px)}
+  a.card:hover::after{opacity:1}
+  a.card .tag{font-family:var(--mono);font-size:10px;letter-spacing:.28em;color:var(--crimson);text-transform:uppercase;margin-bottom:16px}
+  a.card .title{font-family:var(--display);font-weight:900;font-style:italic;font-size:30px;line-height:1.05;margin-bottom:12px;color:var(--ink)}
+  a.card .desc{font-family:var(--serif);font-size:14.5px;line-height:1.7;color:var(--muted)}
+  a.card .arrow{font-family:var(--cond);font-size:12px;font-weight:700;letter-spacing:.18em;color:var(--ink);margin-top:22px;display:inline-block;text-transform:uppercase;padding-bottom:4px;border-bottom:1.5px solid var(--ink)}
+
+  .footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--light);font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--muted);text-transform:uppercase}
+  .footer span{color:var(--crimson)}
+
+  html,body{scrollbar-width:none}
+  html::-webkit-scrollbar,body::-webkit-scrollbar{display:none}
+</style>
+</head>
+<body>
+<div class="corner c-tl"></div><div class="corner c-tr"></div><div class="corner c-bl"></div><div class="corner c-br"></div>
+<div class="ambient-line"></div>
+
+<div class="wrap">
+  <div class="label">AESDR · Fork Mockups · v2 (Editorial Brand)</div>
+  <h1>You're an <span class="iris-text">AE</span>. Or an <span class="iris-text">SDR</span>.</h1>
+  <div class="divider"></div>
+  <p class="lede">Three takes on the role-fork moment after the opening confession. Each runs the full sequence end-to-end: opener &rarr; pick &rarr; branched scenes &rarr; terminal &rarr; final hero. Click "Replay" in the corner of any mockup to run it again.</p>
+
+  <div class="grid">
+    <a class="card" href="./fork-a-buttons.html">
+      <div class="tag">Mockup A</div>
+      <div class="title">Side-by-Side Buttons</div>
+      <div class="desc">Confession fades to two large bordered tiles, role label set in italic Playfair, iris hairline reveals on hover. Cleanest separation between "watch" and "choose."</div>
+      <div class="arrow">Open ↗</div>
+    </a>
+    <a class="card" href="./fork-b-typewriter.html">
+      <div class="tag">Mockup B</div>
+      <div class="title">Inline Typewriter Choice</div>
+      <div class="desc">The fork lives inside the typed sentence itself. AE/SDR render in iris and pulse after typing. Click one — the other strikes through. Most seamless flow, no layout break.</div>
+      <div class="arrow">Open ↗</div>
+    </a>
+    <a class="card" href="./fork-c-identity.html">
+      <div class="tag">Mockup C</div>
+      <div class="title">Editorial Split Identity Gate</div>
+      <div class="desc">Crimson AE / cream SDR — the canonical editorial split. Ghost numerals, corner brackets, iris divider between them. Most dramatic — feels like an oath.</div>
+      <div class="arrow">Open ↗</div>
+    </a>
+  </div>
+
+  <div class="footer">v2 · brand · <span>cream / ink / crimson + iris</span> · playfair · source serif 4 · barlow condensed · space mono</div>
+</div>
+</body>
+</html>

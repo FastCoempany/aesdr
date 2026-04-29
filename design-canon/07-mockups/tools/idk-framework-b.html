@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IDK Framework — Variant B</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #FFFDF8;
+  min-height: 100vh;
+  padding: 60px 20px;
+  font-family: 'Source Serif 4', Georgia, serif;
+  color: #2C2C2C;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.card-wrapper {
+  position: relative;
+  transform: rotate(-1.2deg);
+}
+
+/* Tape at top */
+.tape {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 28px;
+  background: rgba(184, 148, 62, 0.35);
+  border: 1px solid rgba(184, 148, 62, 0.5);
+  z-index: 2;
+}
+
+.tape::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 4px,
+    rgba(255,255,255,0.2) 4px,
+    rgba(255,255,255,0.2) 6px
+  );
+}
+
+.card {
+  background: #FFFFFF;
+  padding: 48px 56px 48px 80px;
+  max-width: 640px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.1), 0 1px 4px rgba(0,0,0,0.06);
+  position: relative;
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 31px,
+    #F0EBE3 31px,
+    #F0EBE3 32px
+  );
+  background-position: 0 16px;
+}
+
+.margin-line {
+  position: absolute;
+  left: 64px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #E8D4D4;
+}
+
+.title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-size: 24px;
+  font-weight: 700;
+  color: #8B1A1A;
+  margin-bottom: 4px;
+  line-height: 32px;
+}
+
+.subtitle {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: #8B8178;
+  letter-spacing: 0.5px;
+  margin-bottom: 24px;
+  text-transform: uppercase;
+}
+
+.golden-rule {
+  border: 1.5px solid #8B1A1A;
+  padding: 16px 20px;
+  margin: 20px 0 28px;
+  position: relative;
+  background: rgba(184, 148, 62, 0.05);
+}
+
+.golden-rule-star {
+  position: absolute;
+  left: -32px;
+  top: 8px;
+  font-family: 'Space Mono', monospace;
+  font-size: 18px;
+  color: #C53030;
+}
+
+.golden-rule h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #8B1A1A;
+  margin-bottom: 8px;
+}
+
+.golden-rule p {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.golden-rule .underline-red {
+  border-bottom: 2px solid #C53030;
+  padding-bottom: 1px;
+}
+
+.step {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.step-number {
+  position: absolute;
+  left: -46px;
+  font-family: 'Space Mono', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: #C53030;
+  width: 28px;
+  text-align: right;
+}
+
+.step-content {
+  flex: 1;
+}
+
+.step-content h4 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #2C2C2C;
+  margin-bottom: 4px;
+  line-height: 32px;
+}
+
+.step-content p {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #2C2C2C;
+}
+
+.step-content .example {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-style: italic;
+  font-size: 12px;
+  color: #8B8178;
+  margin-top: 6px;
+  padding-left: 12px;
+  border-left: 2px solid #F0EBE3;
+}
+
+.underline-red {
+  border-bottom: 2px solid #C53030;
+  padding-bottom: 1px;
+}
+
+.highlight {
+  background: rgba(184, 148, 62, 0.2);
+  padding: 1px 4px;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #F0EBE3;
+  margin: 24px 0;
+}
+
+.footer-note {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  color: #8B8178;
+  font-style: italic;
+  margin-top: 20px;
+  text-align: right;
+}
+
+.margin-note {
+  position: absolute;
+  right: -120px;
+  width: 110px;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  font-style: italic;
+  color: #C53030;
+  line-height: 1.4;
+}
+</style>
+</head>
+<body>
+
+<div class="card-wrapper">
+  <div class="tape"></div>
+  <div class="card">
+    <div class="margin-line"></div>
+
+    <h1 class="title">The IDK Framework</h1>
+    <p class="subtitle">What to say when you don't know the answer on a call</p>
+
+    <div class="golden-rule">
+      <span class="golden-rule-star">★</span>
+      <h3>The Golden Rule</h3>
+      <p>
+        <span class="underline-red">Never fake an answer.</span> A wrong answer destroys trust permanently.
+        "I don't know" said <em>correctly</em> builds more credibility than a shaky guess.
+      </p>
+    </div>
+
+    <hr class="divider">
+
+    <div class="step">
+      <span class="step-number">1.</span>
+      <div class="step-content">
+        <h4><span class="highlight">Identify</span> — Name what you don't know</h4>
+        <p>
+          Acknowledge the gap directly. Don't hedge, don't deflect. Say: <span class="underline-red">"That's a great question — I don't have that specific data point in front of me."</span>
+        </p>
+        <p class="example">"I want to give you the accurate number, not a guess."</p>
+      </div>
+    </div>
+
+    <div class="step" style="position:relative;">
+      <span class="step-number">2.</span>
+      <div class="step-content">
+        <h4><span class="highlight">Defer</span> — Commit to a follow-up</h4>
+        <p>
+          Give a <span class="underline-red">specific timeline</span> for when you'll have the answer. Vague promises ("I'll get back to you") are trust-killers.
+        </p>
+        <p class="example">"I'll have our solutions engineer confirm this and send you the detail by end of day tomorrow."</p>
+      </div>
+      <span class="margin-note" style="top: 20px;">Always give a deadline. "Soon" is not a deadline.</span>
+    </div>
+
+    <div class="step" style="position:relative;">
+      <span class="step-number">3.</span>
+      <div class="step-content">
+        <h4><span class="highlight">Keep Control</span> — Pivot back to your strengths</h4>
+        <p>
+          Bridge to something you <em>do</em> know. Don't let the gap derail momentum. <span class="underline-red">Transition with value:</span>
+        </p>
+        <p class="example">"While I get that confirmed — what I can tell you now is how [related thing] works for teams like yours..."</p>
+      </div>
+      <span class="margin-note" style="top: 20px;">The pivot is where amateurs lose the call. Pros bridge.</span>
+    </div>
+
+    <hr class="divider">
+
+    <p class="footer-note">From Course 3.2 — "Objection Judo" &nbsp;|&nbsp; Pin this to your monitor.</p>
+
+  </div>
+</div>
+
+</body>
+</html>
