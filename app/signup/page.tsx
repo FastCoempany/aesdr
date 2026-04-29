@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { clearRole, getRole } from "@/lib/role";
 import { createClient } from "@/utils/supabase/client";
 
 export default function SignupPage() {
@@ -20,9 +21,13 @@ export default function SignupPage() {
     setLoading(true);
 
     const supabase = createClient();
+    // Promote the anonymous fork pick (if any) to user_metadata so the role
+    // sticks across sessions and the landing page can skip the fork next time.
+    const role = getRole();
     const { error: authError } = await supabase.auth.signUp({
       email,
       password,
+      options: role ? { data: { role } } : undefined,
     });
 
     if (authError) {
@@ -30,6 +35,9 @@ export default function SignupPage() {
       setLoading(false);
       return;
     }
+
+    // Anonymous role is now persisted on the user; sessionStorage can be cleared.
+    clearRole();
 
     setSuccess(true);
     setLoading(false);
