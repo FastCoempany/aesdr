@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import AesdrBrand from "@/components/AesdrBrand";
 import CheckoutButton from "@/components/CheckoutButton";
+import EditorialMasthead from "@/components/EditorialMasthead";
 import GhostButton from "@/components/GhostButton";
 import LandingSequence from "@/components/LandingSequence";
 import SignOutButton from "@/components/SignOutButton";
@@ -30,6 +31,7 @@ export default async function LandingPage() {
 
   return (
     <main className={styles.page}>
+      <EditorialMasthead />
       <GhostButton />
 
       {/* ─── NAV ─── */}
