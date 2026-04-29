@@ -503,7 +503,8 @@ export function runAnimator(refs: AnimatorRefs, opts: AnimatorOptions): () => vo
   schedule(() => {
     if (role) {
       // Member with prefilled role: skip opener + fork.
-      runBranchedScenes(role, () => runTerminal(role, () => unlockScroll(role)));
+      const r = role;
+      runBranchedScenes(r, () => runTerminal(r, () => unlockScroll(r)));
     } else {
       runOpener(() =>
         runFork((picked) => {
