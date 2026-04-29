@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AESDR — Typography Specimen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --crimson:#8B1A1A; --cream:#FAF7F2; --ink:#1A1A1A; --muted:#6B6B6B; --light:#E8E4DF;
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif;
+  --serif:'Source Serif 4',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;
+  --mono:'Space Mono',monospace;
+  --hand:'Caveat',cursive;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+@page{size:Letter;margin:0}
+html,body{background:var(--cream);color:var(--ink);font-family:var(--serif);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:8.5in;height:11in;padding:0.6in;display:flex;flex-direction:column;position:relative}
+.eyebrow{font-family:var(--mono);font-size:9pt;letter-spacing:.25em;text-transform:uppercase;color:var(--muted)}
+.h1{font-family:var(--display);font-style:italic;font-weight:900;font-size:42pt;line-height:1.0;color:var(--ink)}
+.small{font-family:var(--serif);font-size:9pt;color:var(--muted)}
+.row{padding:14pt 0;border-bottom:1px solid var(--light)}
+.row:last-child{border-bottom:none}
+.label{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6pt}
+.tname{font-family:var(--cond);font-weight:800;text-transform:uppercase;letter-spacing:.05em;font-size:11pt;color:var(--ink)}
+.tstack{font-family:var(--mono);font-size:8pt;color:var(--muted)}
+.weights{font-family:var(--mono);font-size:7pt;color:var(--muted);letter-spacing:.1em;margin-top:6pt}
+.amb{position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--iris);background-size:300% 100%}
+</style>
+</head>
+<body>
+<section class="page">
+
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <div class="eyebrow">AESDR · TYPOGRAPHY SPECIMEN · v1</div>
+    <div class="eyebrow">FOR · CLAUDE DESIGN</div>
+  </div>
+
+  <h1 class="h1" style="margin-top:14pt;max-width:6.5in"><em>Five fonts. Each owns a register.</em></h1>
+  <div class="small" style="margin-top:6pt;max-width:6.5in">No font outside this list ships in AESDR work without an explicit canon update. JetBrains Mono and Inter are out (Inter has one course-gate exception per <code>MVI-STANDARDS.md</code>).</div>
+
+  <div style="margin-top:18pt;flex:1">
+
+    <!-- DISPLAY -->
+    <div class="row">
+      <div class="label">
+        <div class="tname">--display · Playfair Display</div>
+        <div class="tstack">'Playfair Display', Georgia, serif</div>
+      </div>
+      <div style="font-family:var(--display);font-style:italic;font-weight:900;font-size:46pt;line-height:1.0;color:var(--ink)">Stop surviving. Start owning it.</div>
+      <div style="font-family:var(--display);font-style:italic;font-weight:700;font-size:24pt;line-height:1.1;color:var(--ink);margin-top:6pt">You are not building a career. You are surviving one.</div>
+      <div class="weights">USE · Headlines · role labels · masthead · large brand wordmarks. Italic 900 is the signature weight.</div>
+    </div>
+
+    <!-- SERIF -->
+    <div class="row">
+      <div class="label">
+        <div class="tname">--serif · Source Serif 4</div>
+        <div class="tstack">'Source Serif 4', Georgia, serif</div>
+      </div>
+      <div style="font-family:var(--serif);font-size:14pt;line-height:1.55;color:var(--ink);max-width:6.5in">Body copy across every page. The font that carries the operating manual where readers actually spend their time. Calm, neutral, editorial. Italics earn their place — used for emphasis and Michael's serif-voiced asides, never for whole paragraphs.</div>
+      <div class="weights">USE · Body text · descriptions · italicized asides · long-form copy.</div>
+    </div>
+
+    <!-- COND -->
+    <div class="row">
+      <div class="label">
+        <div class="tname">--cond · Barlow Condensed</div>
+        <div class="tstack">'Barlow Condensed', sans-serif</div>
+      </div>
+      <div style="font-family:var(--cond);font-weight:900;text-transform:uppercase;letter-spacing:.04em;font-size:24pt;line-height:1.1;color:var(--ink)">UI LABELS · BUTTONS · EYEBROWS · ROWAN'S DISPLAY VOICE</div>
+      <div style="font-family:var(--cond);font-weight:700;text-transform:uppercase;letter-spacing:.15em;font-size:11pt;color:var(--ink);margin-top:6pt;background:var(--iris);background-size:300% 100%;color:#fff;display:inline-block;padding:8pt 20pt">GET ACCESS</div>
+      <div class="weights">USE · UI labels · button text · eyebrows · Rowan's voice in display.</div>
+    </div>
+
+    <!-- MONO -->
+    <div class="row">
+      <div class="label">
+        <div class="tname">--mono · Space Mono</div>
+        <div class="tstack">'Space Mono', monospace</div>
+      </div>
+      <div style="font-family:var(--mono);font-size:11pt;letter-spacing:.25em;text-transform:uppercase;color:var(--ink)">AESDR · WORKSHOP · 12 LESSONS · WORKSHOP-FIRST</div>
+      <div style="font-family:var(--mono);font-size:10pt;color:var(--ink);margin-top:6pt">&gt; scanning your phone...<br>&gt; found: 11 productivity apps. diagnosis: least productive person you know.</div>
+      <div class="weights">USE · Terminal blocks · classified labels · taxonomic labels · 8–10pt mono eyebrows.</div>
+    </div>
+
+    <!-- HAND -->
+    <div class="row">
+      <div class="label">
+        <div class="tname">--hand · Caveat</div>
+        <div class="tstack">'Caveat', cursive</div>
+      </div>
+      <div style="font-family:var(--hand);font-size:30pt;color:var(--crimson);line-height:1.2;transform:rotate(-1deg);transform-origin:left">"Last month I made $8,200. This month I made $2,100. I'm now wearing the $300 jacket while eating ramen I bought with a coupon. Fashion."</div>
+      <div class="weights">USE · Michael's voice · margin annotations · zoom-card asides — <strong>only</strong>.</div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:14pt;display:flex;justify-content:space-between;align-items:flex-end">
+    <div class="small">© AESDR 2026 · Typography specimen v1 · 2026-04-29</div>
+    <div class="eyebrow">END · SPECIMEN</div>
+  </div>
+  <div class="amb"></div>
+</section>
+</body>
+</html>

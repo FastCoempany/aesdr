@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AESDR Iris Gradient Swatch</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1600px;height:900px;background:#FAF7F2;display:flex;align-items:center;justify-content:center;-webkit-print-color-adjust:exact}
+.frame{width:1280px;display:flex;flex-direction:column;gap:24px}
+.label-row{display:flex;justify-content:space-between;align-items:baseline}
+.title{font-family:'Space Mono',monospace;font-size:14px;letter-spacing:.3em;text-transform:uppercase;color:#6B6B6B}
+.note{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#6B6B6B}
+.gradient{height:240px;background:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%)}
+.stops{display:grid;grid-template-columns:repeat(7,1fr);gap:0;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.05em;color:#1A1A1A}
+.stop{text-align:left;padding-top:8px}
+.stop:last-child{text-align:right}
+.swatch-line{height:14px;display:grid;grid-template-columns:17% 17% 17% 17% 17% 15%}
+.swatch-line div:nth-child(1){background:#FF006E}
+.swatch-line div:nth-child(2){background:#FF6B00}
+.swatch-line div:nth-child(3){background:#F59E0B}
+.swatch-line div:nth-child(4){background:#10B981}
+.swatch-line div:nth-child(5){background:#38BDF8}
+.swatch-line div:nth-child(6){background:#8B5CF6}
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="label-row">
+    <div class="title">AESDR · --IRIS · RESERVED ACCENT</div>
+    <div class="note">linear-gradient(90deg, …)</div>
+  </div>
+  <div class="gradient"></div>
+  <div class="swatch-line"><div></div><div></div><div></div><div></div><div></div><div></div></div>
+  <div class="stops">
+    <div class="stop">0%<br>#FF006E</div>
+    <div class="stop">17%<br>#FF6B00</div>
+    <div class="stop">34%<br>#F59E0B</div>
+    <div class="stop">51%<br>#10B981</div>
+    <div class="stop">68%<br>#38BDF8</div>
+    <div class="stop">85%<br>#8B5CF6</div>
+    <div class="stop">100%<br>#FF006E</div>
+  </div>
+</div>
+</body>
+</html>
