@@ -253,7 +253,7 @@ Forbidden iris uses:
 ### 6.5 Photography & iconography
 - **Default: no photography.** AESDR's visual signature is typographic. If imagery is needed, prefer abstract editorial layout (ghost numerals, terminal blocks, redacted text) over stock.
 - **No stock photos of:** people in headsets, handshake closeups, generic "team" shots, fake server rooms, suits at whiteboards, men pointing at floating dashboards.
-- **No icon sets.** No Heroicons, Feather, FontAwesome, Lucide. If an "icon" is genuinely needed, use a 1px-stroke geometric primitive sized to the type (the warning circle in `.warn-icon` is the canonical example).
+- **Iconography & symbols — custom, on-brand, methodically chosen.** Icons and symbols are in play, but every glyph must read as AESDR-custom, not as a third-party icon library. **Banned:** Heroicons, Feather, FontAwesome, Lucide, Material, Bootstrap Icons, Phosphor, Tabler, or any commercial / off-the-shelf set. **Seed iconography in the system today:** the warning circle (`.warn-icon`), the terminal dots (`.term-dot.r/y/g`), the classified stamp (`.faq-stamp`), the corner brackets (`.corner`), the ghost numeral, the deck numeral (`.deck-num`), the cursor (`.cursor`, `.term-cursor`), the redaction band (`.faq-blur` + `.faq-redact`). All new symbols extend that family. Full doctrine in **§6.8**.
 - **The Turtle.** When the existing AESDR turtle artwork is used (mobile gate, etc.), it stays in the same color treatment as production. It does not appear on partner collateral by default. (Open question: whether the turtle gets a partner-context appearance. Resolve before first deck.)
 
 ### 6.6 Partner co-branding zone
@@ -276,6 +276,109 @@ Examples:
 - `aesdr--apex-bdr-club--reminder-email--24h--v1.mjml`
 
 Assets that are partner-agnostic (templates, brand canon, etc.) replace `<partner-slug>` with `template`.
+
+### 6.8 Custom iconography & symbol system
+
+Icons in AESDR are typographic infrastructure, not decoration. Every symbol earns its place by carrying meaning that the type alone can't, and every symbol must read as part of the same hand. Methodically chosen, never imported.
+
+#### 6.8.1 The two registers
+
+| Register | Aligned to | Spirit | Where it appears |
+|---|---|---|---|
+| **Official** (Rowan) | `--cond` / `--mono` / `--display` | Geometric, dossier-coded, surveyed. 1.0–1.5px strokes, no fills by default. | Headers, eyebrows, KPI tiles, classified blocks, terminal sections, status indicators, navigation. |
+| **Annotated** (Michael) | `--hand` (Caveat) | Hand-drawn, off-axis, slightly imperfect. Scribbled checks, drawn arrows, asterisks, underlines that don't quite hit. | Margin annotations, "real talk" interludes, zoom-card asides, internal critique notes. |
+
+The two registers never share a glyph. A check mark in the Official register is a thin geometric `✓`; a check mark in the Annotated register is a Caveat-drawn squiggle that reads as written by hand. If a surface mixes registers, it must do so deliberately, with each register serving its respective voice.
+
+#### 6.8.2 Stroke, fill, color, and size discipline
+
+| Property | Rule | Notes |
+|---|---|---|
+| Stroke weight | **1.0px** default; **1.5px** for icons that need to read at very small sizes (≤ 12pt cap-height). Never thicker. | Thicker strokes read as Material/Bootstrap. We are not that. |
+| Fill | **None by default.** Filled shapes only when they're behaving as ledger marks or status indicators (terminal dots, redaction bars, stamp backgrounds). | Filled icons read as commercial; outline icons read as drafted. |
+| Color | `--ink`, `--muted`, or `--crimson`. Never `--iris`. Never the retired theme/coral/cobalt/amber/violet. | Iris is reserved (§6.4). Theme palette is retired. |
+| Cap-height alignment | Icons inline with type are sized to the **cap-height of the surrounding type token**, not its bounding box. | A `--cond` 14pt body line with an inline icon: the icon is 12–14pt, optically aligned to the baseline. |
+| Optical correction | All icons hand-tuned to baseline, not bounding-box centered. Circles and triangles get visual-weight nudges; squares don't. | This is the difference between "looks designed" and "looks dropped in." |
+| Stamps | Rotated `-2deg` per `.faq-stamp` canon. Always 1px border, mono type inside, `--crimson` at 25% opacity for body, 15% opacity for border. | Stamp registration is intentional imperfection. |
+
+#### 6.8.3 The seed inventory (these are canonical glyphs)
+
+| Glyph | Context | Spec |
+|---|---|---|
+| Warning circle (`!` inside) | Content warnings, compliance call-outs | 16×16, 1px border at .4 opacity (white on crimson) or `--crimson` (on cream); single `!` in mono 9pt |
+| Terminal dots (R / Y / G) | Terminal-block window, process-status indicators | 8×8 filled circles at .35–.5 opacity in `rgba(239,68,68/245,158,11/16,185,129)` — note: these specific RGB values survive from the retired palette as **iconographic dots only**, not as surface colors |
+| Corner brackets | Cream-panel framing | 20×20, 1px borders at `rgba(0,0,0,0.06)`, four corners |
+| Classified stamp | FAQ blocks, dossier panels | Mono 10pt 700wt, uppercase, `--crimson` at 25% body / 15% border, rotated `-2deg`, padding 3×10px |
+| Ghost numeral | Hero corners, zoom cards, pricing | `--display` 900wt, 180–400px, opacity .03–.06, decorative-only |
+| Deck numeral | Deck cards | `--cond` 64pt 900wt, iris-text-clipped, opacity .6 — **note:** this is the only place a numeral takes iris fill, and it's earned by being a primary content marker, not a decoration |
+| Cursor | Confession overlay, terminal | 2×~17px (or 7×14 for term), `--crimson`, 0.8s blink |
+| Redaction band | FAQ blur reveal | 5px blur on body, mono `[CLASSIFIED — HOVER TO PEEK]` overlay |
+| Iris ambient line | Bottom-of-panel signature | 1px height, `--iris` gradient, opacity .15, 4s shimmer |
+
+Any new symbol added to the system must be designed to live next to these without looking imported.
+
+#### 6.8.4 Permitted custom families to extend
+
+These are the families we may grow within the doctrine. Each new instance still requires founder pre-approval (per §16) before first use.
+
+- **Brackets and slashes:** `[ ]`, `/`, `\`, `>`, `<`, `—`, `|`, in `--mono`. Used as inline structural punctuation.
+- **Geometric primitives:** circles, squares, triangles, lines — 1px stroke, no fill, optically nudged.
+- **Status marks:** terminal dots and warning circle as canonical primitives. Other status states extend the same vocabulary.
+- **Dossier marks:** classified stamp, redaction band, page-corner fold (the deck dog-ear), file-tab, ledger rule.
+- **Ledger marks:** thin geometric `✓` in `--muted` (not theme-green), thin geometric `✗` in `--crimson`, em-dash for neutral. **Never** color-bombed checks.
+- **Terminal glyphs:** prompt `>`, cursor, blink, paginated `--`, status RGB dots.
+- **Numeral iconography:** ghost numerals (decorative), deck numerals (content-marker), ledger numerals (mono, in tables).
+- **Hand-drawn (Annotated register):** scribbled checks, drawn arrows, asterisks, underlines — all in Caveat-adjacent strokes, used **only** in Michael-voiced surfaces or margin annotations.
+
+#### 6.8.5 Banned
+
+- All commercial / off-the-shelf icon sets named in §6.5.
+- **Emoji as iconography.** Emoji as deliberate texture in a Caveat-zone Michael surface is a separate question (low yes — see open questions); emoji standing in for "real" icons in Official register is banned.
+- Filled bicolor icons (Material-style two-tone).
+- Iris-filled icons (other than the deck numeral, by canon).
+- Icons that add no information ("decorative-only" instances of would-be icons; if it's decorative, it's a ghost numeral or it's nothing).
+- Off-the-shelf Lottie animations or motion-graphic packs.
+- Stock illustrations, "people-of-the-internet" vector packs, isometric SaaS-product diagrams.
+
+#### 6.8.6 Workflow when a new icon is needed
+
+1. **First check:** can the surrounding type carry the meaning? (Often yes. A `--cond` uppercase label often replaces an icon.)
+2. **Second check:** does the seed inventory already cover it? (Often yes. A circle, a slash, a stamp, a corner bracket.)
+3. **If genuinely new:** sketch in cream-and-ink, 1px stroke, baseline-aligned. Render at 16, 24, 48px to confirm it scales.
+4. **Send to founder for pre-approval** before first use (§16).
+5. **Commit the SVG** to `public/icons/` with the file name `aesdr--icon--<symbol>--v<n>.svg`. Document in this canon under §6.8.3 once approved.
+
+### 6.9 Visual QA discipline (across the board)
+
+Every visual-bearing deliverable — partner-promo page, registration page, replay page, deck slide, PDF one-pager, email shell, calendar invite cover, social-promo set, lockup, animation, icon — passes a five-question check before it ships.
+
+#### 6.9.1 The five-question check
+
+1. **The thumbnail test.** At 200×200px, with no AESDR logo visible, is the asset identifiably AESDR? If the answer is "could be any premium SaaS course," the visual has drifted.
+2. **The token test.** Are all colors and fonts referencing canon tokens (`--cream`, `--ink`, `--crimson`, `--muted`, `--light`, `--iris`, `--display`, `--serif`, `--cond`, `--mono`, `--hand`)? Any raw hex code or font name outside this list requires explicit override.
+3. **The iris-reservation test.** Has iris been used **only** for the brand wordmark, the single primary CTA, role tokens, ambient lines, or the deck numeral? Any other iris usage requires a canon-update conversation, not a one-off exception.
+4. **The icon-discipline test.** Are all icons from the seed inventory or from an approved extension? No imported icon library. No emoji standing in for real iconography in the Official register.
+5. **The voice-thumbnail test.** Read the first 20 words aloud. Is it identifiably AESDR — or could those 20 words appear under a different SaaS-training brand without anyone noticing?
+
+If any of the five fail, the asset doesn't ship. We patch and re-check.
+
+#### 6.9.2 Required block on every visual-bearing deliverable spec
+
+Every deliverable's source markdown carries a `## Visual treatment notes` block specifying:
+
+- Layout pattern (which canonical pattern from §6.3 it extends).
+- Palette (which tokens, where).
+- Type tokens (which tokens, at what sizes).
+- Iconography (which seed glyphs, or which approved extensions).
+- Iris usage (where, why allowed under §6.4).
+- Any deliberate departures from canon (with rationale).
+
+#### 6.9.3 Approval gates
+
+- First instance of any new icon family: founder pre-approval before first use.
+- First instance of any new layout pattern: founder pre-approval before first use.
+- First partner-co-branded asset for each partner: founder pre-approval before first publish.
+- Any deliberate canon departure: founder pre-approval before first publish, plus a canon-revision proposal opened the same day.
 
 ---
 
@@ -674,6 +777,7 @@ This document is the source of truth for the affiliate / partner ecosystem until
 | Version | Date | Author | Notes |
 |---|---|---|---|
 | 1.0 | 2026-04-29 | Founder | Initial canon. Drawn from `affiliate-seeding-deep-research-report.md`, `AGENTS.md`, `app/globals.css`, `components/LandingSequence.module.css`, `variants/variant-a-editorial-split.html`, and the Two-Voices mockup. |
+| 1.1 | 2026-04-29 | Founder | Iconography & symbols are in play but must be custom and on-brand. Added §6.8 (custom iconography & symbol system — seed inventory, two registers, stroke/fill/color/size discipline, banned list, new-icon workflow). Added §6.9 (visual QA discipline — five-question check, required visual-treatment blocks, approval gates). Updated §6.5 third bullet to reflect. |
 
 **How to update:** open a PR titled `canon: <topic>` against `main`. Update the version row. Update any deliverables that contradict the new canon. Do not update canon to fit a deliverable; update the deliverable to fit canon, or argue for a canon change first.
 
