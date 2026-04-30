@@ -1,0 +1,139 @@
+{
+  "$schema": "https://raw.githubusercontent.com/tokens-studio/figma-plugin/main/token-types.schema.json",
+  "_meta": {
+    "name": "AESDR — Design Canon",
+    "version": "1.1",
+    "snapshot": "2026-04-29",
+    "source": "AFFILIATE_BRAND_CANON.md v1.1, AGENTS.md (binding palette + fonts)",
+    "import": "Figma → Plugins → Tokens Studio for Figma → Settings → Tools → Load from File. Then Apply Styles.",
+    "do_not_revive": [
+      "#020617", "#0F172A", "#1E293B", "#10B981", "#EF4444", "#38BDF8", "#F59E0B", "#8B5CF6"
+    ],
+    "do_not_revive_note": "These hex codes are RETIRED as primary surface colors per AGENTS.md. They survive ONLY as iris gradient stops (see color.iris.gradientStops below) and as iconographic terminal-dot indicators (color.terminalDot.*). Never use them as surface or text colors."
+  },
+
+  "color": {
+    "cream":   { "value": "#FAF7F2", "type": "color", "description": "Default page background. Every surface starts here." },
+    "ink":     { "value": "#1A1A1A", "type": "color", "description": "Default body text. Default Rowan display color." },
+    "crimson": { "value": "#8B1A1A", "type": "color", "description": "Primary accent. CTAs, hero left panel, Michael's voice color, terminal cursor." },
+    "muted":   { "value": "#6B6B6B", "type": "color", "description": "Secondary text, mono labels, fine print." },
+    "light":   { "value": "#E8E4DF", "type": "color", "description": "Subtle dividers, low-emphasis surfaces, borders." },
+
+    "iris": {
+      "gradientStop1": { "value": "#FF006E", "type": "color", "description": "Iris stop 0% — magenta. Iconographic only — never a surface color." },
+      "gradientStop2": { "value": "#FF6B00", "type": "color", "description": "Iris stop 17% — orange." },
+      "gradientStop3": { "value": "#F59E0B", "type": "color", "description": "Iris stop 34% — amber. (Was retired --amber as surface; survives here only as iris stop.)" },
+      "gradientStop4": { "value": "#10B981", "type": "color", "description": "Iris stop 51% — emerald. (Was retired --theme as surface; survives here only as iris stop.)" },
+      "gradientStop5": { "value": "#38BDF8", "type": "color", "description": "Iris stop 68% — sky. (Was retired --cobalt as surface; survives here only as iris stop.)" },
+      "gradientStop6": { "value": "#8B5CF6", "type": "color", "description": "Iris stop 85% — violet. (Was retired --violet as surface; survives here only as iris stop.)" }
+    },
+
+    "terminalDot": {
+      "red":    { "value": "rgba(239,68,68,0.5)",   "type": "color", "description": "Terminal-window window-control dot (R). Iconographic use only." },
+      "yellow": { "value": "rgba(245,158,11,0.5)",  "type": "color", "description": "Terminal-window window-control dot (Y). Iconographic use only." },
+      "green":  { "value": "rgba(16,185,129,0.5)",  "type": "color", "description": "Terminal-window window-control dot (G). Iconographic use only." }
+    }
+  },
+
+  "gradient": {
+    "iris": {
+      "value": "linear-gradient(90deg, #FF006E 0%, #FF6B00 17%, #F59E0B 34%, #10B981 51%, #38BDF8 68%, #8B5CF6 85%, #FF006E 100%)",
+      "type": "color",
+      "description": "RESERVED. Brand wordmark · single primary CTA · role tokens · ambient lines (≤2px) · deck numerals · ≤1 accent word per headline. Animated 4s shimmer in production via background-size:300% 100%. Never decorative, never a panel background, never on body copy."
+    }
+  },
+
+  "fontFamily": {
+    "display": { "value": "Playfair Display", "type": "fontFamilies", "description": "Headlines, role labels, masthead. Italic 900 is the signature weight." },
+    "serif":   { "value": "Source Serif 4",   "type": "fontFamilies", "description": "Body copy default." },
+    "cond":    { "value": "Barlow Condensed", "type": "fontFamilies", "description": "UI labels, buttons, eyebrows, Rowan's display voice." },
+    "mono":    { "value": "Space Mono",       "type": "fontFamilies", "description": "Terminal blocks, classified labels, taxonomic labels, mono eyebrows." },
+    "hand":    { "value": "Caveat",           "type": "fontFamilies", "description": "Michael's voice — and ONLY Michael's voice. Margin annotations only." }
+  },
+
+  "fontWeights": {
+    "displayItalic900": { "value": 900, "type": "fontWeights", "description": "Playfair Display italic 900 — the signature display weight." },
+    "displayItalic700": { "value": 700, "type": "fontWeights" },
+    "displayItalic400": { "value": 400, "type": "fontWeights" },
+    "serif400":         { "value": 400, "type": "fontWeights" },
+    "serif600":         { "value": 600, "type": "fontWeights" },
+    "cond900":          { "value": 900, "type": "fontWeights" },
+    "cond800":          { "value": 800, "type": "fontWeights" },
+    "cond700":          { "value": 700, "type": "fontWeights" },
+    "mono400":          { "value": 400, "type": "fontWeights" },
+    "mono700":          { "value": 700, "type": "fontWeights" },
+    "hand400":          { "value": 400, "type": "fontWeights" },
+    "hand600":          { "value": 600, "type": "fontWeights" }
+  },
+
+  "fontSizes": {
+    "wordmarkXL":   { "value": "220px", "type": "fontSizes", "description": "Brand wordmark hero rendering." },
+    "displayHero":  { "value": "64px",  "type": "fontSizes", "description": "Editorial split hero headline." },
+    "displayH2":    { "value": "48px",  "type": "fontSizes" },
+    "displayH3":    { "value": "36px",  "type": "fontSizes" },
+    "condDisplay":  { "value": "24px",  "type": "fontSizes", "description": "Rowan's display voice in zoom cards / pattern callouts." },
+    "condTitle":    { "value": "18px",  "type": "fontSizes", "description": "Section titles, deck-card titles." },
+    "condButton":   { "value": "14px",  "type": "fontSizes", "description": "Button text — uppercase, .15em letter-spacing." },
+    "serifBody":    { "value": "16px",  "type": "fontSizes", "description": "Body copy default." },
+    "serifLarge":   { "value": "18px",  "type": "fontSizes", "description": "Hero subtitle." },
+    "monoEyebrow":  { "value": "10px",  "type": "fontSizes", "description": "Mono eyebrow labels — uppercase, .25em letter-spacing." },
+    "monoFootnote": { "value": "9px",   "type": "fontSizes", "description": "Mono footnote / disclosure / nav links." },
+    "handMichael":  { "value": "22px",  "type": "fontSizes", "description": "Caveat — Michael's voice in zoom cards." }
+  },
+
+  "letterSpacing": {
+    "monoEyebrow":   { "value": "0.25em", "type": "letterSpacing" },
+    "monoFootnote":  { "value": "0.10em", "type": "letterSpacing" },
+    "condButton":    { "value": "0.15em", "type": "letterSpacing" },
+    "condDisplay":   { "value": "0.04em", "type": "letterSpacing" },
+    "displayTight":  { "value": "0.02em", "type": "letterSpacing" }
+  },
+
+  "lineHeights": {
+    "displayHero":  { "value": "1.05", "type": "lineHeights" },
+    "displayH2":    { "value": "1.10", "type": "lineHeights" },
+    "serifBody":    { "value": "1.60", "type": "lineHeights" },
+    "serifLarge":   { "value": "1.65", "type": "lineHeights" },
+    "monoTerminal": { "value": "1.85", "type": "lineHeights" },
+    "handMichael":  { "value": "1.40", "type": "lineHeights" }
+  },
+
+  "spacing": {
+    "1":  { "value": "4px",  "type": "spacing" },
+    "2":  { "value": "8px",  "type": "spacing" },
+    "3":  { "value": "12px", "type": "spacing" },
+    "4":  { "value": "16px", "type": "spacing" },
+    "5":  { "value": "20px", "type": "spacing" },
+    "6":  { "value": "24px", "type": "spacing" },
+    "8":  { "value": "32px", "type": "spacing" },
+    "10": { "value": "40px", "type": "spacing" },
+    "12": { "value": "48px", "type": "spacing" },
+    "16": { "value": "64px", "type": "spacing" }
+  },
+
+  "borderRadius": {
+    "none":  { "value": "0",     "type": "borderRadius", "description": "Default. AESDR is editorial — sharp corners." },
+    "dot":   { "value": "999px", "type": "borderRadius", "description": "Terminal-dot icons, warning-circle icon." }
+  },
+
+  "borderWidth": {
+    "hairline": { "value": "1px",   "type": "borderWidth", "description": "Default border. Custom-icon stroke. Card outlines." },
+    "icon":     { "value": "1.5px", "type": "borderWidth", "description": "Icons that need to read at small sizes." },
+    "outline":  { "value": "1.5px", "type": "borderWidth", "description": "Outline button border on cream." },
+    "feature":  { "value": "2px",   "type": "borderWidth", "description": "Feature card border (Team plan in pricing)." }
+  },
+
+  "opacity": {
+    "ghost":      { "value": "0.06", "type": "opacity", "description": "Ghost numeral on cream." },
+    "ghostDark":  { "value": "0.07", "type": "opacity", "description": "Ghost numeral on crimson (white at 7%)." },
+    "irisAmbient":{ "value": "0.15", "type": "opacity", "description": "Ambient iris line at panel foot." },
+    "cornerBracket":{"value": "0.06","type": "opacity", "description": "Corner-bracket frame on cream." },
+    "stampBody":  { "value": "0.25", "type": "opacity", "description": "Classified-stamp text color (crimson at 25%)." },
+    "stampBorder":{ "value": "0.15", "type": "opacity", "description": "Classified-stamp border (crimson at 15%)." }
+  },
+
+  "rotation": {
+    "stamp":  { "value": "-2deg", "type": "other", "description": "Classified stamp tilt — intentional imperfection." },
+    "michael":{ "value": "-1deg", "type": "other", "description": "Caveat / Michael's voice slight tilt." }
+  }
+}

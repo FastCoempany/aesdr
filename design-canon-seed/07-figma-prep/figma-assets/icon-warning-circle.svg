@@ -1,0 +1,13 @@
+<!--
+  AESDR — Warning Circle Icon
+  Canon: §6.8.3 seed inventory — `.warn-icon`
+  Use: content warnings, compliance call-outs.
+  Color variants:
+    On crimson surface: stroke = white at 50% opacity, glyph = white at 65%
+    On cream surface:   stroke = #8B1A1A (crimson) at 50%, glyph = #8B1A1A at 65%
+  Default below is the cream-surface variant.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18" width="18" height="18" role="img" aria-label="Warning">
+  <circle cx="9" cy="9" r="8.5" fill="none" stroke="#8B1A1A" stroke-opacity="0.5" stroke-width="1"/>
+  <text x="9" y="13" font-family="'Space Mono', monospace" font-size="11" font-weight="700" fill="#8B1A1A" fill-opacity="0.7" text-anchor="middle">!</text>
+</svg>

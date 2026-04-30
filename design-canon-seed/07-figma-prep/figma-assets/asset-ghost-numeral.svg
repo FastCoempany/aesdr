@@ -1,0 +1,15 @@
+<!--
+  AESDR — Ghost Numeral
+  Canon: §6.8.3 seed inventory — ghost numeral, .heroLeft::after pattern
+  Use: hero panels, zoom cards, pricing surfaces. Decorative anchor.
+  Specs: --display italic 900, 180–400px, opacity .03–.06. Decorative only.
+
+  This SVG is the canonical "01" numeral on cream. For other digits in Figma,
+  duplicate the text node and change the character. Reuse the same fill +
+  opacity. Place behind content in the bottom-right or wherever a soft anchor
+  is needed.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 320" width="400" height="320" role="img" aria-label="Ghost numeral 01">
+  <rect width="400" height="320" fill="#FAF7F2"/>
+  <text x="200" y="280" font-family="'Playfair Display', Georgia, serif" font-style="italic" font-weight="900" font-size="320" fill="#000000" fill-opacity="0.06" text-anchor="middle">01</text>
+</svg>

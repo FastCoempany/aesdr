@@ -21,11 +21,13 @@ The full repo (`FastCoempany/aesdr`) remains the source of truth. This kit is th
    - `02-typography-specimen.pdf` — 1 page showing all five fonts at real sizes with sample text.
    - `03-color-palette.pdf` — 1 page showing all six tokens with hex / RGB / use cases plus the iris gradient stops.
 
-3. **Upload the rendered PNGs in `04-rendered-surfaces/`.** Six surface renders — the canonical hero from production plus five isolated single-pattern demonstrations — all in the **active editorial palette** (cream + ink + crimson + iris). The retired dark-palette mockups in `public/mockups/01-27` are deliberately *not* in this kit; their palette is forbidden by `AGENTS.md`.
+3. **(Recommended) Build and upload the `.fig` file** using the materials in `07-figma-prep/`. Walks through Tokens Studio import, SVG component import, and frame assembly in ~25 minutes. See `07-figma-prep/figma-assembly-guide.md`. Once built, drop the resulting `.fig` into Claude Design's "Upload a .fig file" slot — Claude Design parses Figma files locally in the browser (per its onboarding copy), and Figma is its strongest input format.
 
-4. **Upload the individual brand assets in `06-individual-assets/`.** The wordmark on cream and the iris gradient swatch as standalone images.
+4. **Upload the rendered PNGs in `04-rendered-surfaces/`.** Six surface renders — the canonical hero from production plus five isolated single-pattern demonstrations — all in the **active editorial palette** (cream + ink + crimson + iris). The retired dark-palette mockups in `public/mockups/01-27` are deliberately *not* in this kit; their palette is forbidden by `AGENTS.md`.
 
-5. **Pin `05-canonical-references.md`.** It tells Claude Design which repo paths to treat as binding (Tier 1–3) versus reference (Tier 4–7).
+5. **Upload the individual brand assets in `06-individual-assets/`.** The wordmark on cream and the iris gradient swatch as standalone images.
+
+6. **Pin `05-canonical-references.md`.** It tells Claude Design which repo paths to treat as binding (Tier 1–3) versus reference (Tier 4–7).
 
 ---
 
@@ -45,12 +47,24 @@ design-canon-seed/
 │   ├── pattern-classified-card.png        classified dossier card pattern · ~201K
 │   └── pattern-deck-peel.png              12-card deck-stack peel · ~110K
 ├── 05-canonical-references.md             pointer to live repo paths
-└── 06-individual-assets/
-    ├── wordmark-on-cream.png              the AESDR. wordmark · ~89K
-    └── iris-gradient-swatch.png           iris gradient with stops · ~506K
+├── 06-individual-assets/
+│   ├── wordmark-on-cream.png              the AESDR. wordmark · ~89K
+│   └── iris-gradient-swatch.png           iris gradient with stops · ~506K
+└── 07-figma-prep/                         materials to build the .fig file
+    ├── figma-tokens.json                  Tokens Studio JSON (one-click import)
+    ├── figma-assembly-guide.md            ~25-min step-by-step recipe
+    └── figma-assets/                      8 SVG components ready to drag in
+        ├── icon-warning-circle.svg
+        ├── icon-terminal-dots.svg
+        ├── icon-classified-stamp.svg
+        ├── icon-corner-bracket-tl.svg
+        ├── icon-cursor.svg
+        ├── asset-wordmark.svg
+        ├── asset-iris-gradient.svg
+        └── asset-ghost-numeral.svg
 ```
 
-Total: 12 files. Designed to onboard a single Claude Design instance without hunting across the repo.
+Total: 23 files. Designed to onboard a single Claude Design instance without hunting across the repo. The 10 files in `07-figma-prep/` are the bridge to a `.fig` upload (Claude Design's strongest input format) — see `07-figma-prep/figma-assembly-guide.md` for the recipe.
 
 ---
 
