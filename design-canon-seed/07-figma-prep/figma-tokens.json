@@ -234,12 +234,12 @@
     "handMichael": {
       "value": {
         "fontFamily":    "{fontFamily.hand}",
-        "fontWeight":    "{fontWeights.hand600}",
+        "fontWeight":    "{fontWeights.hand400}",
         "fontSize":      "{fontSizes.handMichael}",
         "lineHeight":    "{lineHeights.handMichael}"
       },
       "type": "typography",
-      "description": "Caveat — Michael's voice in zoom cards and margin annotations. Crimson on cream. ONLY for Michael's voice."
+      "description": "Caveat — Michael's voice in zoom cards and margin annotations. Crimson on cream. ONLY for Michael's voice. Pinned to weight 400 (Regular) for universal availability — Caveat 600 isn't installed by default on all Figma desktop instances."
     }
   },
 
