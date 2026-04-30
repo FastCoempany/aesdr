@@ -108,7 +108,7 @@ Every design mockup ever produced for AESDR. The full design exploration history
 - Identity-fork mockups (`fork-a/b/c`, `fork-index`).
 - `tools/` and `syllabus/` subdirectories with finer-grained variants.
 
-The mockups inform the seed iconography, the dossier/classified/terminal aesthetic, and the two-voices motif.
+**These mockups inform the brand's *exploration history* but use the retired dark palette** (`#020617`, `#0F172A`, `#10B981`, `#EF4444`, `#38BDF8`, `#F59E0B`, `#8B5CF6`) — codified as forbidden in `AGENTS.md` and `AFFILIATE_BRAND_CANON.md` §6.5. The *motifs* (dossier, classified, terminal, two-voices, deck-stack, warning-box) are real and canonical, but the **palette-rendering** of those motifs in this folder is not. Do not point design generators at these files as visual canon. Active-palette renderings of the same motifs live in the production references (`variants/variant-a-editorial-split.html`, `components/LandingSequence.module.css`) and in `design-canon-seed/04-rendered-surfaces/pattern-*.png`.
 
 ### `08-production-content/`
 Marketing and content copy currently in production. The actual brand voice in the wild.

@@ -60,7 +60,7 @@ A borrowed audience has 60 minutes and zero trust. Position must land in 10 seco
 
 ## 3. The two voices
 
-AESDR is character-driven. Two voices, always present, never blended into mush. Both must show up across the affiliate ecosystem — the mockup `public/mockups/09-the-two-voices.html` and the production zoom cards in `variants/variant-a-editorial-split.html` are the canonical references.
+AESDR is character-driven. Two voices, always present, never blended into mush. Both must show up across the affiliate ecosystem — the canonical reference is the production zoom-card pattern in `variants/variant-a-editorial-split.html` (`.zRowan` and `.zMichael` classes — Rowan in `--cond` ink, Michael in `--hand` Caveat on `--cream` with `--crimson` color). An active-palette isolated rendering of the same motif is in `tools/design-seed/surface-two-voices.html`. **Do not** treat `public/mockups/09-the-two-voices.html` as a canonical reference — that mockup uses the retired dark palette (`#020617`, `#10B981` etc.) and would teach the wrong colors.
 
 ### 3.1 Rowan — the voice that closes
 - **Spirit:** Eli Pope. Surgical, declarative, high-status. Treats environment, behavior, math, and identity as infrastructure.
