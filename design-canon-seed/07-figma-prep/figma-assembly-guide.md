@@ -2,7 +2,9 @@
 
 **Goal:** Stand up a Figma library that mirrors the brand canon, save it as a `.fig` file, drop it into Claude Design's "Upload a .fig file" slot.
 
-**Time:** ~25 minutes of clicking, mostly first time. After this, re-snaps are 5 minutes.
+**Time:** ~25 minutes of clicking the long way; **~10 minutes** if you take the `html.to.design` shortcut described in step 7-shortcut. After this, re-snaps are 5 minutes either way.
+
+> **About Code Connect.** If you also want to wire this Figma library to the live React components in `components/` so Dev Mode shows real production code, see `code-connect-runbook.md`. The mapping files (`components/*.figma.ts`) and `figma.config.json` are already pre-authored in this repo — once the Figma library exists, Code Connect setup is ~5 min: paste each component's Figma URL into the existing `FIGMA_NODE_URL_TBD` placeholders, then `figma connect publish`.
 
 **What you produce:** A single `.fig` file containing color styles, text styles, components for the seed iconography, and reference frames for the canonical layout patterns.
 
@@ -105,7 +107,25 @@ The `asset-wordmark.svg` is a type reference, but Figma renders Playfair Display
 - For the iris-text variant: select the text → Fill → click the dot → switch to Linear gradient → use the same 7 stops as step 4.
 - Right-click → Create component. Name it `brand/wordmark` (replace the SVG version from step 5).
 
-### 7. Build the canonical layout pattern frames
+### 7-shortcut. **Fast path** — batch-import the 5 patterns via `html.to.design` (saves ~15 min)
+
+If you install the free **html.to.design** Figma plugin, you can skip step 7's manual frame-building entirely:
+
+1. `Plugins → Browse plugins in Community → html.to.design → Save`.
+2. Open the plugin on the `04 — Layout Patterns` page.
+3. For each of the 5 surface HTMLs in `tools/design-seed/`:
+   - `surface-warning-box.html` → produces the editorial-split-hero frame
+   - `surface-two-voices.html` → produces the two-voices frame
+   - `surface-terminal-block.html` → produces the terminal-block frame
+   - `surface-classified-card.html` → produces the classified-card frame
+   - `surface-deck-peel.html` → produces the deck-peel frame
+4. Choose `Import from URL` (file path) or `Paste HTML` and feed the file contents in. The plugin renders the HTML to a Figma frame — fonts, colors, gradients, layout intact (all sourced from the same active-palette tokens we already authored).
+5. Rename each imported frame to its canonical name: `pattern/editorial-split-hero`, `pattern/two-voices`, `pattern/terminal-block-on-cream`, `pattern/classified-card`, `pattern/deck-peel-card`.
+6. Skip step 7 below entirely. Continue at step 8.
+
+This works because the surface HTMLs were authored against the same canon tokens the rest of the Figma file uses — so the plugin's import already speaks the brand's language. The only manual cleanup typically needed is converting raster image-fills back to live shapes for the iris gradient (Figma's gradient editor is faster than HTML's).
+
+### 7. Build the canonical layout pattern frames *(slow path — skip if you used 7-shortcut)*
 
 On the `04 — Layout Patterns` page, create one frame per pattern. Use the corresponding PNG from `design-canon-seed/04-rendered-surfaces/` as a ghost reference (drop it in, set opacity to 30%, build over the top, then delete the reference).
 
@@ -144,7 +164,13 @@ If your Figma plan supports libraries (Professional / Organization / Enterprise)
 
 Skip if you're on Figma Free — the file works as a `.fig` upload regardless.
 
-### 11. Save as `.fig` and feed Claude Design
+### 11. *(Optional, recommended)* Wire Code Connect
+
+If you want Figma's Dev Mode to surface the real React components from `components/`, the mapping work is already pre-authored — see `code-connect-runbook.md`. Five minutes: fill in the 5 `FIGMA_NODE_URL_TBD` placeholders in the `*.figma.ts` files with the URLs from your new Figma components, then `figma connect publish`.
+
+Skippable if you only need the Figma library for Claude Design — Code Connect is for the codebase ↔ Figma production bridge, not for Claude Design ingestion.
+
+### 12. Save as `.fig` and feed Claude Design
 
 - File menu → `Save local copy…`.
 - Save as `aesdr-brand-canon-v1.1.fig` somewhere accessible.
@@ -153,7 +179,7 @@ Skip if you're on Figma Free — the file works as a `.fig` upload regardless.
 - Claude Design parses it locally in the browser (per the form: "Parsed locally in your browser — never uploaded").
 - Claude Design now has the full design system as a Figma source.
 
-### 12. Re-snap when canon changes
+### 13. Re-snap when canon changes
 
 When `AGENTS.md` or `AFFILIATE_BRAND_CANON.md` updates:
 

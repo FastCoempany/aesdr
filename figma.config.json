@@ -1,0 +1,18 @@
+{
+  "codeConnect": {
+    "include": ["components/**/*.figma.ts", "components/**/*.figma.tsx"],
+    "exclude": ["node_modules/**", ".next/**"],
+    "label": "AESDR · React",
+    "language": "jsx",
+    "_meta": {
+      "purpose": "Wires Figma components in the AESDR brand-canon library to their React counterparts. After the Figma library exists (built per design-canon-seed/07-figma-prep/figma-assembly-guide.md), populate the placeholder figmaNode URLs in components/*.figma.ts files and run `figma connect publish`. See design-canon-seed/07-figma-prep/code-connect-runbook.md.",
+      "canonical_components": [
+        "components/AesdrBrand.tsx → brand/wordmark",
+        "components/LandingSequence.tsx → pattern/editorial-split-hero",
+        "components/DeckStack.tsx → pattern/deck-peel-card",
+        "components/Testimonials.tsx → pattern/testimonial-gallery",
+        "components/GhostButton.tsx → component/ghost-button"
+      ]
+    }
+  }
+}
