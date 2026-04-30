@@ -14,7 +14,7 @@
 
 | File | Purpose |
 |---|---|
-| `tools/design-seed/figma-tokens.json` | All canon colors, fonts, sizes, letter-spacing, opacity, spacing, radius, border-width as Tokens Studio JSON. One-click import into Figma. |
+| `design-canon-seed/07-figma-prep/figma-tokens.json` | All canon colors, fonts (incl. 13 composite typography tokens), sizes, letter-spacing, line-heights, opacity, spacing, radius, border-width as Tokens Studio JSON. Two-click import into Figma. |
 | `tools/design-seed/figma-assets/icon-*.svg` | Five seed icons: warning circle, terminal dots (R/Y/G), classified stamp, corner bracket (top-left), cursor. |
 | `tools/design-seed/figma-assets/asset-*.svg` | Three brand assets: wordmark on cream, iris gradient swatch, ghost numeral. |
 | `design-canon-seed/01-brand-canon.pdf` | The 8-page brand book — use as visual reference while building the layout pattern frames. |
@@ -49,13 +49,16 @@ Create these pages (left sidebar, right-click "Pages" panel):
 
 The `⚙ Components` page holds the actual component definitions; the other pages display them in context.
 
-### 3. Import the tokens (one click)
+### 3. Import the tokens (two clicks)
 
 - Open the file. `Plugins → Tokens Studio for Figma → Tokens Studio for Figma`.
 - In Tokens Studio: `Settings → Tools → Load from File`.
-- Select `tools/design-seed/figma-tokens.json` from this repo.
-- Tokens Studio will load: 5 color tokens (cream, ink, crimson, muted, light) + iris gradient stops + terminal dot indicators + 5 font families + weights + sizes + spacing + radius + border-widths + opacities + rotation values.
-- Click `Apply Styles` (top right of Tokens Studio panel). This creates Figma color styles and text styles for everything.
+- Select `design-canon-seed/07-figma-prep/figma-tokens.json` from this repo.
+- Tokens Studio will load: 5 color tokens (cream, ink, crimson, muted, light) + iris gradient stops + terminal dot indicators + 5 font families + weights + sizes + line-heights + letter-spacing + 13 composite typography tokens + spacing + radius + border-widths + opacities + rotation values.
+- Confirm the `AESDR` token set is checked (left rail of the plugin's Tokens panel). If it isn't, nothing will be exported.
+- At the bottom-right of the plugin: open the `Styles & Variables ▾` dropdown → click **`Export styles & variables to Figma`**. This is what populates Figma's native Color Styles, Text Styles, and Variables panels. *(In v2.11.5 the blue `Apply to document` button next to the dropdown only applies tokens within the plugin — it doesn't push to Figma's native panels. The export action is the dropdown item, not the button.)*
+- Verify in Figma's right-sidebar: **Styles** should now show `color/*`, `iris/gradientStop1–6`, `terminalDot/*`, and a Text Styles section with `wordmarkXL`, `displayHero`, `displayH2`, `displayH3`, `serifLarge`, `serifBody`, `condDisplay`, `condTitle`, `condButton`, `monoEyebrow`, `monoFootnote`, `monoTerminal`, `handMichael`. **Variables** should show the AESDR collection with non-color tokens (spacing, radius, border-width, opacity, rotation, plus raw font ingredients).
+- **Free-tier note:** Tokens Studio Free does not create gradient color styles, so `gradient/iris` will not appear in Styles. Step 4 below is the manual workaround. Free-tier also requires the named fonts (Playfair Display, Source Serif 4, Barlow Condensed, Space Mono, Caveat) to be available to your Figma desktop app — text styles silently fail to create when a font is missing.
 
 ### 4. Manually create the iris gradient color style
 
@@ -183,8 +186,8 @@ Skippable if you only need the Figma library for Claude Design — Code Connect 
 
 When `AGENTS.md` or `AFFILIATE_BRAND_CANON.md` updates:
 
-1. Update `tools/design-seed/figma-tokens.json` to match.
-2. In Figma, open the `AESDR — Brand Canon` file → Tokens Studio → Tools → Load from File → re-import the JSON → Apply Styles. The styles update in place.
+1. Update `design-canon-seed/07-figma-prep/figma-tokens.json` to match.
+2. In Figma, open the `AESDR — Brand Canon` file → Tokens Studio → Tools → Load from File → re-import the JSON → bottom-right `Styles & Variables ▾` → `Export styles & variables to Figma`. The styles and variables update in place.
 3. If new icons or assets were added, re-export from `tools/design-seed/figma-assets/` and re-import as components.
 4. File → `Save local copy…` again. Re-upload to Claude Design.
 5. Bump the file name version (`v1.1` → `v1.2`).

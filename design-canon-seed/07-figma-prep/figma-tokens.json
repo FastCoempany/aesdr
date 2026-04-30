@@ -5,7 +5,7 @@
     "version": "1.1",
     "snapshot": "2026-04-29",
     "source": "AFFILIATE_BRAND_CANON.md v1.1, AGENTS.md (binding palette + fonts)",
-    "import": "Figma → Plugins → Tokens Studio for Figma → Settings → Tools → Load from File. Then Apply Styles.",
+    "import": "Figma → Plugins → Tokens Studio for Figma → Settings → Tools → Load from File. Then in the bottom-right of the plugin: Styles & Variables ▾ → Export styles & variables to Figma.",
     "do_not_revive": [
       "#020617", "#0F172A", "#1E293B", "#10B981", "#EF4444", "#38BDF8", "#F59E0B", "#8B5CF6"
     ],
@@ -95,7 +95,152 @@
     "serifBody":    { "value": "1.60", "type": "lineHeights" },
     "serifLarge":   { "value": "1.65", "type": "lineHeights" },
     "monoTerminal": { "value": "1.85", "type": "lineHeights" },
-    "handMichael":  { "value": "1.40", "type": "lineHeights" }
+    "handMichael":  { "value": "1.40", "type": "lineHeights" },
+    "condTitle":    { "value": "1.20", "type": "lineHeights" },
+    "condButton":   { "value": "1.20", "type": "lineHeights" },
+    "monoEyebrow":  { "value": "1.40", "type": "lineHeights" }
+  },
+
+  "typography": {
+    "wordmarkXL": {
+      "value": {
+        "fontFamily":    "{fontFamily.display}",
+        "fontWeight":    "{fontWeights.displayItalic900}",
+        "fontSize":      "{fontSizes.wordmarkXL}",
+        "lineHeight":    "{lineHeights.displayHero}",
+        "letterSpacing": "{letterSpacing.displayTight}"
+      },
+      "type": "typography",
+      "description": "Brand wordmark hero rendering — Playfair Display italic 900, 220px. Cover page, close slide."
+    },
+    "displayHero": {
+      "value": {
+        "fontFamily":    "{fontFamily.display}",
+        "fontWeight":    "{fontWeights.displayItalic900}",
+        "fontSize":      "{fontSizes.displayHero}",
+        "lineHeight":    "{lineHeights.displayHero}",
+        "letterSpacing": "{letterSpacing.displayTight}"
+      },
+      "type": "typography",
+      "description": "Editorial split hero headline — Playfair Display italic 900, 64px. The signature display style."
+    },
+    "displayH2": {
+      "value": {
+        "fontFamily":    "{fontFamily.display}",
+        "fontWeight":    "{fontWeights.displayItalic900}",
+        "fontSize":      "{fontSizes.displayH2}",
+        "lineHeight":    "{lineHeights.displayH2}",
+        "letterSpacing": "{letterSpacing.displayTight}"
+      },
+      "type": "typography",
+      "description": "Section headlines — Playfair Display italic 900, 48px."
+    },
+    "displayH3": {
+      "value": {
+        "fontFamily":    "{fontFamily.display}",
+        "fontWeight":    "{fontWeights.displayItalic700}",
+        "fontSize":      "{fontSizes.displayH3}",
+        "lineHeight":    "{lineHeights.displayH2}",
+        "letterSpacing": "{letterSpacing.displayTight}"
+      },
+      "type": "typography",
+      "description": "Sub-section headlines — Playfair Display italic 700, 36px."
+    },
+    "serifLarge": {
+      "value": {
+        "fontFamily":    "{fontFamily.serif}",
+        "fontWeight":    "{fontWeights.serif400}",
+        "fontSize":      "{fontSizes.serifLarge}",
+        "lineHeight":    "{lineHeights.serifLarge}"
+      },
+      "type": "typography",
+      "description": "Hero subtitle / lede — Source Serif 4 regular, 18px."
+    },
+    "serifBody": {
+      "value": {
+        "fontFamily":    "{fontFamily.serif}",
+        "fontWeight":    "{fontWeights.serif400}",
+        "fontSize":      "{fontSizes.serifBody}",
+        "lineHeight":    "{lineHeights.serifBody}"
+      },
+      "type": "typography",
+      "description": "Body copy default — Source Serif 4 regular, 16px."
+    },
+    "condDisplay": {
+      "value": {
+        "fontFamily":    "{fontFamily.cond}",
+        "fontWeight":    "{fontWeights.cond900}",
+        "fontSize":      "{fontSizes.condDisplay}",
+        "lineHeight":    "{lineHeights.displayH2}",
+        "letterSpacing": "{letterSpacing.condDisplay}"
+      },
+      "type": "typography",
+      "description": "Rowan's display voice in zoom cards / pattern callouts — Barlow Condensed 900, 24px, uppercase."
+    },
+    "condTitle": {
+      "value": {
+        "fontFamily":    "{fontFamily.cond}",
+        "fontWeight":    "{fontWeights.cond800}",
+        "fontSize":      "{fontSizes.condTitle}",
+        "lineHeight":    "{lineHeights.condTitle}",
+        "letterSpacing": "{letterSpacing.condDisplay}"
+      },
+      "type": "typography",
+      "description": "Section titles, deck-card titles — Barlow Condensed 800, 18px, uppercase."
+    },
+    "condButton": {
+      "value": {
+        "fontFamily":    "{fontFamily.cond}",
+        "fontWeight":    "{fontWeights.cond700}",
+        "fontSize":      "{fontSizes.condButton}",
+        "lineHeight":    "{lineHeights.condButton}",
+        "letterSpacing": "{letterSpacing.condButton}"
+      },
+      "type": "typography",
+      "description": "Button text — Barlow Condensed 700, 14px, uppercase, .15em letter-spacing."
+    },
+    "monoEyebrow": {
+      "value": {
+        "fontFamily":    "{fontFamily.mono}",
+        "fontWeight":    "{fontWeights.mono700}",
+        "fontSize":      "{fontSizes.monoEyebrow}",
+        "lineHeight":    "{lineHeights.monoEyebrow}",
+        "letterSpacing": "{letterSpacing.monoEyebrow}"
+      },
+      "type": "typography",
+      "description": "Mono eyebrow labels — Space Mono 700, 10px, uppercase, .25em letter-spacing."
+    },
+    "monoFootnote": {
+      "value": {
+        "fontFamily":    "{fontFamily.mono}",
+        "fontWeight":    "{fontWeights.mono400}",
+        "fontSize":      "{fontSizes.monoFootnote}",
+        "lineHeight":    "{lineHeights.monoTerminal}",
+        "letterSpacing": "{letterSpacing.monoFootnote}"
+      },
+      "type": "typography",
+      "description": "Mono footnote / disclosure / nav links — Space Mono 400, 9px, .10em letter-spacing."
+    },
+    "monoTerminal": {
+      "value": {
+        "fontFamily":    "{fontFamily.mono}",
+        "fontWeight":    "{fontWeights.mono400}",
+        "fontSize":      "14px",
+        "lineHeight":    "{lineHeights.monoTerminal}"
+      },
+      "type": "typography",
+      "description": "Terminal-block body text — Space Mono 400, 14px. Use on cream with ink text."
+    },
+    "handMichael": {
+      "value": {
+        "fontFamily":    "{fontFamily.hand}",
+        "fontWeight":    "{fontWeights.hand600}",
+        "fontSize":      "{fontSizes.handMichael}",
+        "lineHeight":    "{lineHeights.handMichael}"
+      },
+      "type": "typography",
+      "description": "Caveat — Michael's voice in zoom cards and margin annotations. Crimson on cream. ONLY for Michael's voice."
+    }
   },
 
   "spacing": {
