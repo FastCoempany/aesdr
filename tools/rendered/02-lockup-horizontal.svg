@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  AESDR × [PARTNER] — Horizontal Lockup (canon §6.6)
+  This is the partner-agnostic placeholder. Each partner gets a per-pilot render
+  where the [PARTNER MARK] slot is replaced with the partner's canonical mark
+  at matched x-height.
+
+  Lockup syntax (canon §6.6):
+    - AESDR in --display italic 900, --ink (#1A1A1A)
+    - × in --mono 12px equivalent, --ink
+    - Partner mark in their canonical color, matched to AESDR x-height
+    - 24px minimum clearspace (preserved in the viewBox padding)
+
+  Use: web headers, email banners, podcast cover art, anywhere a horizontal lockup fits.
+  See: docs/partner/kit-template/10d-lockup-usage-guide.md
+
+  Discipline checks (canon §6.9.1):
+    1. Thumbnail: AESDR mark + × + partner slot reads as a lockup ✓
+    2. Token: --ink only on AESDR side ✓
+    3. Iris reservation: no iris on lockup ✓
+    4. Icon discipline: type-only ✓
+    5. Voice thumbnail: N/A
+-->
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 720 160"
+     width="720"
+     height="160"
+     role="img"
+     aria-label="AESDR × Partner lockup, horizontal">
+  <title>AESDR × Partner — Horizontal Lockup</title>
+  <desc>Canonical horizontal lockup: AESDR wordmark, multiplication-sign separator, partner-mark placeholder slot.</desc>
+
+  <!-- 24px clearspace zone visualized as a faint guide (remove for production export) -->
+  <rect x="0" y="0" width="720" height="160" fill="#FAF7F2" stroke="none"/>
+
+  <!-- AESDR wordmark -->
+  <text x="48"
+        y="108"
+        font-family="'Playfair Display', Georgia, serif"
+        font-size="80"
+        font-weight="900"
+        font-style="italic"
+        letter-spacing="0.01em"
+        fill="#1A1A1A">AESDR</text>
+
+  <!-- × separator (canon §6.6: --mono, sized subordinate to letterforms) -->
+  <text x="368"
+        y="92"
+        font-family="'Space Mono', monospace"
+        font-size="40"
+        font-weight="400"
+        fill="#1A1A1A">×</text>
+
+  <!-- Partner mark placeholder slot -->
+  <!-- Replace this group with the partner's canonical mark, matched to AESDR x-height (~72px tall ascender-to-descender) -->
+  <g id="partner-mark-slot">
+    <rect x="424" y="46" width="248" height="68" fill="none" stroke="#E8E4DF" stroke-width="1" stroke-dasharray="4 4"/>
+    <text x="548"
+          y="86"
+          font-family="'Space Mono', monospace"
+          font-size="11"
+          font-weight="700"
+          letter-spacing="0.15em"
+          text-anchor="middle"
+          fill="#6B6B6B">[PARTNER MARK]</text>
+    <text x="548"
+          y="104"
+          font-family="'Space Mono', monospace"
+          font-size="9"
+          letter-spacing="0.1em"
+          text-anchor="middle"
+          fill="#6B6B6B">replace per-partner</text>
+  </g>
+</svg>

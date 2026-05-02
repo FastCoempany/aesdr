@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  AESDR — Canonical Wordmark SVG
+  Source: AFFILIATE_BRAND_CANON.md §6.2 (typography), §6.6 (lockup syntax: AESDR in --display italic 900)
+  Token references: --display = 'Playfair Display', --ink = #1A1A1A
+  Use: embed in HTML contexts where Playfair Display is loaded (Google Fonts).
+       For raster export (PNG) at fixed sizes, render through a browser/headless capture.
+       Partner-co-branded uses must follow canon §6.6 lockup syntax — see lockup-horizontal.svg.
+
+  Discipline checks (canon §6.9.1):
+    1. Thumbnail: identifiable as AESDR at 200×200 ✓
+    2. Token: --ink (#1A1A1A) only; no raw hex outside the token ✓
+    3. Iris reservation: no iris on the wordmark itself ✓
+    4. Icon discipline: type-only ✓
+    5. Voice thumbnail: N/A (no body type)
+-->
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 480 120"
+     width="480"
+     height="120"
+     role="img"
+     aria-label="AESDR">
+  <title>AESDR</title>
+  <desc>AESDR canonical wordmark, Playfair Display italic 900, ink on cream.</desc>
+  <text x="0"
+        y="92"
+        font-family="'Playfair Display', Georgia, serif"
+        font-size="96"
+        font-weight="900"
+        font-style="italic"
+        letter-spacing="0.01em"
+        fill="#1A1A1A">AESDR</text>
+</svg>

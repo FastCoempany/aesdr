@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR is open.</title>
+<!--
+  D38 — Post-Pilot Launch Hero (homepage hero block, 30-day window)
+  Per docs/partner/D38-post-pilot-launch-announcement.md, Target 2 — homepage hero block.
+  Editorial-split, lifts variants/variant-a-editorial-split.html pattern.
+  Crimson left: "AESDR is open." with three-pilot context.
+  Cream right: three "what we held" beats + iris CTA.
+  After 30 days, this archives at aesdr.com/launch.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Barlow+Condensed:wght@400;500;600;700;800&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --crimson:#8B1A1A;--cream:#FAF7F2;--ink:#1A1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif;
+  --serif:'Source Serif 4',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;
+  --mono:'Space Mono',monospace;
+  --hand:'Caveat',cursive;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--cream);color:var(--ink);font-family:var(--serif);line-height:1.6}
+@keyframes shimmer{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+
+/* Hero split */
+.hero{display:grid;grid-template-columns:40% 60%;min-height:100vh;position:relative}
+.hero-left{background:var(--crimson);color:#fff;padding:80px 56px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
+.hero-left::after{content:'';font-family:var(--display);font-size:300px;font-weight:900;position:absolute;bottom:-40px;right:-20px;opacity:.06;line-height:1;pointer-events:none;color:#fff}
+.hero-right{background:var(--cream);padding:80px 56px;display:flex;flex-direction:column;justify-content:center;position:relative}
+
+/* Crimson left */
+.left-eyebrow{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:24px}
+.left-headline{font-family:var(--display);font-style:italic;font-weight:700;font-size:clamp(48px,7vw,72px);color:#fff;line-height:1.05;margin-bottom:24px}
+.left-context{font-family:var(--serif);font-size:18px;color:rgba(255,255,255,.85);line-height:1.6;max-width:340px}
+
+/* Cream right */
+.right-eyebrow{font-family:var(--cond);font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:24px}
+.right-h2{font-family:var(--display);font-style:italic;font-weight:700;font-size:32px;color:var(--ink);margin-bottom:32px;line-height:1.2}
+.beat{display:flex;gap:14px;margin-bottom:24px;align-items:flex-start}
+.beat-num{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.15em;padding-top:6px;flex-shrink:0;width:24px}
+.beat-body{font-family:var(--serif);font-size:16px;color:var(--ink);line-height:1.6}
+.beat-body strong{font-family:var(--display);font-style:italic;font-weight:700;font-size:17px;color:var(--ink);display:block;margin-bottom:4px}
+
+/* CTA */
+.cta-zone{margin-top:32px}
+.btn-iris{display:inline-block;font-family:var(--cond);font-size:14px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#fff;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite;padding:18px 44px;border:none;cursor:pointer;text-decoration:none}
+.btn-iris:hover{transform:translateY(-1px)}
+.btn-trail{font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:12px;letter-spacing:.05em}
+.btn-secondary{display:inline-block;font-family:var(--cond);font-size:13px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink);padding-bottom:2px;margin-top:24px}
+
+/* Sign-off */
+.signoff{font-family:var(--display);font-style:italic;font-weight:700;font-size:14px;color:var(--ink);margin-top:32px;padding-top:24px;border-top:1px solid var(--light)}
+
+/* Below-the-fold disqualification + footer */
+.below{max-width:720px;margin:96px auto 64px;padding:0 24px}
+.disq-panel{background:#fff;border:1px solid var(--light);padding:40px 32px;margin-bottom:48px}
+.disq-h{font-family:var(--cond);font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:24px}
+.disq-body{font-family:var(--serif);font-style:italic;font-size:16px;line-height:1.7;color:var(--ink)}
+.disq-body p{margin-bottom:14px}
+.disq-body p.close{margin-top:20px;font-style:normal;color:var(--muted)}
+
+.caveat-ps{font-family:var(--hand);font-size:22px;color:var(--crimson);transform:rotate(-1deg);max-width:560px;margin:48px auto 32px;text-align:center;line-height:1.4}
+
+.footer{background:var(--cream);border-top:1px solid var(--light);padding:48px 24px 64px;margin-top:64px}
+.footer-inner{max-width:720px;margin:0 auto;text-align:center}
+.footer-disc{font-family:var(--serif);font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.footer-nav{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.footer-nav span{margin:0 8px;color:var(--light)}
+
+@media (max-width:768px){
+  .hero{grid-template-columns:1fr}
+  .hero-left,.hero-right{padding:48px 32px}
+  .left-headline{font-size:48px}
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <!-- Crimson left -->
+  <div class="hero-left">
+    <div class="left-eyebrow">LAUNCH · [LAUNCH_DATE]</div>
+    <h1 class="left-headline">AESDR is open.</h1>
+    <p class="left-context">Three pilots in. [N_GRADUATES] graduates. Now open for direct enrollment, with the operating data behind it.</p>
+  </div>
+
+  <!-- Cream right -->
+  <div class="hero-right">
+    <div class="right-eyebrow">WHAT WE HELD IN PILOT PHASE — KEEPING IT</div>
+    <h2 class="right-h2">Three rules earned their place.</h2>
+
+    <div class="beat">
+      <div class="beat-num">01</div>
+      <div class="beat-body">
+        <strong>Workshop-first.</strong>
+        Every partner audience saw the program through a 60-minute live workshop, not a tracked link. We're keeping that for direct enrollment too — open workshops, monthly cadence, free to attend, with the same offer at the close.
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-num">02</div>
+      <div class="beat-body">
+        <strong>Operator over guru.</strong>
+        Pilot phase ran founder-backstage, host-fronted. We're keeping the structure. The brand is the curriculum, not the founder, not the host. AESDR was built to outlast any one person delivering it.
+      </div>
+    </div>
+
+    <div class="beat">
+      <div class="beat-num">03</div>
+      <div class="beat-body">
+        <strong>Honest disqualification.</strong>
+        Every pilot's offer surface named who shouldn't enroll. No exceptions. Refunds stayed below 3% — the right rate for a 14-day no-questions program. Not zero (over-filtering); not double-digit (under-filtering).
+      </div>
+    </div>
+
+    <div class="cta-zone">
+      <a href="https://aesdr.com/enroll" class="btn-iris">Enroll at aesdr.com →</a>
+      <div class="btn-trail">aesdr.com · enroll any tier · 14-day refund</div>
+      <a href="https://aesdr.com/workshops" class="btn-secondary">Or join the next open workshop →</a>
+    </div>
+
+    <div class="signoff">— [FOUNDER_FIRST_NAME], AESDR</div>
+  </div>
+</section>
+
+<!-- Below-the-fold honest disqualification + caveat PS -->
+<section class="below">
+  <div class="disq-panel">
+    <div class="disq-h">WHO SHOULDN'T ENROLL</div>
+    <div class="disq-body">
+      <p>— If you're 8+ years in sales and aren't open to a re-look at fundamentals, the first five lessons will bore you.</p>
+      <p>— If you've enrolled in three programs in the last year and finished none of them, the issue isn't free vs paid; it's whether you'll do the work this time.</p>
+      <p>— If you want motivation, this isn't that. We're not the room.</p>
+      <p>— If you're not in a sales role yet, this isn't the course. We assume you have the seat.</p>
+      <p class="close">None of these are insults. They're filters. The 14-day refund makes the cost of trying low.</p>
+    </div>
+  </div>
+
+  <p class="caveat-ps">PS — If you've been on this list since one of the pilots and you're still here without enrolling, that's normal. The honest answer is: enroll if it's the right time; don't if it isn't. The "I'll decide eventually" is the version of the next 12 months that doesn't decide.</p>
+</section>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <p class="footer-disc">AESDR · [postal address]<br>You're reading the launch announcement, posted [LAUNCH_DATE] at the close of pilot phase.<br>This is one announcement, not a sequence.</p>
+    <div class="footer-nav">PRIVACY <span>·</span> REFUNDS <span>·</span> TERMS <span>·</span> © AESDR 2026</div>
+  </div>
+</footer>
+
+</body>
+</html>

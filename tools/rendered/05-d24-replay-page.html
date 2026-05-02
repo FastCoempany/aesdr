@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>AESDR Workshop Replay</title>
+<!--
+  D24 — Replay Page (canonical render)
+  Per docs/partner/D24-replay-page.md anatomy.
+  Cream + ink + light-bordered video frame + single iris CTA repeated.
+  60/40 voice ratio: Caveat layer once at the close per canon §3.2.
+  For production, this lives at app/[partner_slug]/replay/[token]/page.tsx.
+  This file is the canonical reference render — designers/devs match this.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Barlow+Condensed:wght@400;500;600;700;800&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --crimson:#8B1A1A;--cream:#FAF7F2;--ink:#1A1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif;
+  --serif:'Source Serif 4',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;
+  --mono:'Space Mono',monospace;
+  --hand:'Caveat',cursive;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--cream);color:var(--ink);font-family:var(--serif);line-height:1.6}
+@keyframes shimmer{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+
+/* Header band */
+.header{padding:24px 48px;background:var(--cream);border-bottom:1px solid var(--light);display:flex;justify-content:center;align-items:center}
+.lockup{display:flex;align-items:center;gap:16px}
+.lockup-aesdr{font-family:var(--display);font-style:italic;font-weight:900;font-size:28px;color:var(--ink)}
+.lockup-x{font-family:var(--mono);font-size:18px;color:var(--ink)}
+.lockup-partner{font-family:var(--cond);font-weight:700;font-size:14px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);padding:6px 14px;border:1px dashed var(--light)}
+
+/* Pre-player block */
+.pre-player{max-width:720px;margin:0 auto;padding:64px 24px 32px;text-align:center}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:24px}
+.workshop-title{font-family:var(--display);font-style:italic;font-weight:700;font-size:clamp(32px,5vw,44px);color:var(--ink);line-height:1.1;margin-bottom:24px}
+.summary{font-family:var(--serif);font-style:italic;font-size:18px;color:var(--ink);line-height:1.5;margin-bottom:32px;max-width:580px;margin-left:auto;margin-right:auto}
+.expiry{font-family:var(--mono);font-size:14px;color:var(--crimson);letter-spacing:.15em;margin-bottom:32px;font-weight:700}
+
+/* Iris button */
+.btn-iris{display:inline-block;font-family:var(--cond);font-size:14px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#fff;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite;padding:18px 44px;border:none;cursor:pointer;text-decoration:none}
+.btn-iris:hover{transform:translateY(-1px)}
+.btn-trail{font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:12px;letter-spacing:.05em}
+
+/* Video frame */
+.player-zone{max-width:960px;margin:0 auto;padding:32px 24px}
+.player-frame{aspect-ratio:16/9;border:1px solid var(--light);padding:8px;background:var(--cream)}
+.player-placeholder{width:100%;height:100%;background:#0a0a0a;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase}
+.player-trail{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;margin-top:14px;letter-spacing:.05em}
+
+/* Section pattern: white panel on cream, light border */
+.section{max-width:720px;margin:64px auto;padding:0 24px}
+.panel{background:#fff;border:1px solid var(--light);padding:40px 32px}
+.panel-header{font-family:var(--cond);font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:24px}
+.recap-bullet{font-family:var(--serif);font-size:17px;line-height:1.6;color:var(--ink);margin-bottom:18px}
+.recap-bullet strong{font-family:var(--display);font-style:italic;font-weight:700;font-size:18px}
+.recap-bullet:last-child{margin-bottom:0}
+
+/* Repeated CTA */
+.cta-block{text-align:center;padding:48px 24px}
+
+/* Disqualification card */
+.disq{font-family:var(--serif);font-style:italic;font-size:16px;line-height:1.7;color:var(--ink)}
+.disq p{margin-bottom:14px}
+.disq p.close{margin-top:20px;font-style:normal;color:var(--muted)}
+
+/* FAQ */
+.faq-h{font-family:var(--display);font-style:italic;font-weight:700;font-size:28px;color:var(--ink);margin-bottom:32px;text-align:center}
+.faq-item{padding:20px 0;border-bottom:1px solid var(--light)}
+.faq-item:last-child{border-bottom:none}
+.faq-q{font-family:var(--display);font-style:italic;font-size:22px;color:var(--ink);margin-bottom:10px}
+.faq-a{font-family:var(--serif);font-size:16px;color:var(--ink);line-height:1.7}
+.faq-a strong{font-family:var(--display);font-style:italic;font-weight:700;font-size:18px}
+
+/* Final CTA + Caveat layer */
+.final-block{text-align:center;padding:64px 24px 32px}
+.caveat{font-family:var(--hand);font-size:22px;color:var(--crimson);transform:rotate(-1deg);max-width:520px;margin:32px auto 0;line-height:1.4}
+
+/* Footer */
+.footer{background:var(--cream);border-top:1px solid var(--light);padding:48px 24px 64px;margin-top:64px}
+.footer-inner{max-width:720px;margin:0 auto;text-align:center}
+.footer-disc{font-family:var(--serif);font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.footer-nav{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.footer-nav span{margin:0 8px;color:var(--light)}
+
+/* Expired-render block (alternate state, not shown by default) */
+.expired-render{display:none;max-width:720px;margin:96px auto;padding:0 24px;text-align:center}
+.expired-render.active{display:block}
+.expired-h{font-family:var(--display);font-style:italic;font-weight:700;font-size:36px;color:var(--ink);margin-bottom:24px}
+.expired-body{font-family:var(--serif);font-size:18px;color:var(--ink);line-height:1.6;margin-bottom:32px;text-align:left}
+
+@media (max-width:640px){
+  .pre-player{padding:48px 20px 24px}
+  .workshop-title{font-size:32px}
+  .panel{padding:28px 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- 1. Header band — AESDR × Partner lockup -->
+<header class="header">
+  <div class="lockup">
+    <span class="lockup-aesdr">AESDR</span>
+    <span class="lockup-x">×</span>
+    <span class="lockup-partner">[PARTNER NAME]</span>
+  </div>
+</header>
+
+<!-- 2. Above-the-fold pre-player block -->
+<section class="pre-player">
+  <div class="eyebrow">AESDR · WORKSHOP REPLAY · [PARTNER_SLUG]</div>
+  <h1 class="workshop-title">[WORKSHOP_TITLE]</h1>
+  <p class="summary"><em>Hosted live by [HOST_FIRST_NAME] [HOST_LAST_NAME] on [WORKSHOP_DATE]. The full session is below for [N] more hours.</em></p>
+  <div class="expiry">EXPIRES · [REPLAY_END_DATE_TIME_TZ]</div>
+  <a href="#" class="btn-iris">Enroll → [PILOT_CODE] · saves you $[DISCOUNT]</a>
+  <div class="btn-trail">aesdr.com/[PARTNER_SLUG]/enroll · code [PILOT_CODE] · closes [CODE_EXPIRY]</div>
+</section>
+
+<!-- 3. Replay player -->
+<section class="player-zone">
+  <div class="player-frame">
+    <div class="player-placeholder">[REPLAY VIDEO EMBED — token-gated]</div>
+  </div>
+  <div class="player-trail">runtime: ~62 min · captions: en · single-use link · expires [REPLAY_END_DATE_TIME_TZ]</div>
+</section>
+
+<!-- 4. "What you saw" recap -->
+<section class="section">
+  <div class="panel">
+    <div class="panel-header">WHAT YOU JUST SAW</div>
+    <p class="recap-bullet">— <strong>Activity vs Judgment.</strong> The two-axis frame for reading your own work. The reps who don't survive ramp are usually in the top-left — high activity, low judgment. AESDR Lessons 1–4 are the X-axis curriculum.</p>
+    <p class="recap-bullet">— <strong>Pipeline Integrity.</strong> The discipline of making the pipeline in CRM match the pipeline that closes. Lesson 4 is the operating manual; Lesson 8 is the forecast-honesty conversation.</p>
+    <p class="recap-bullet">— <strong>The 12-Lesson Operating Manual.</strong> Foundations (Lessons 1–4), Range (5–8), Identity (9–12). Twelve lessons, five tools, lifetime access. Worksheet per lesson. Discord per cohort.</p>
+  </div>
+</section>
+
+<!-- 5. Repeated CTA -->
+<section class="cta-block">
+  <a href="#" class="btn-iris">Enroll → [PILOT_CODE] · saves you $[DISCOUNT]</a>
+  <div class="btn-trail">aesdr.com/[PARTNER_SLUG]/enroll · code [PILOT_CODE] · closes [CODE_EXPIRY]</div>
+</section>
+
+<!-- 6. Honest disqualification card -->
+<section class="section">
+  <div class="panel">
+    <div class="panel-header">WHO SHOULDN'T ENROLL</div>
+    <div class="disq">
+      <p>— If you're 8+ years in sales and aren't open to a re-look at fundamentals, the first five lessons will bore you.</p>
+      <p>— If you've enrolled in three programs in the last year and finished none of them, the issue isn't free vs paid; it's whether you'll do the work this time.</p>
+      <p>— If you want motivation, this isn't that. We're not the room.</p>
+      <p>— If you're not in a sales role yet, this isn't the course. We assume you have the seat.</p>
+      <p class="close">None of these are insults. They're filters. The 14-day refund makes the cost of trying low.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7. FAQ-lite -->
+<section class="section">
+  <div class="panel">
+    <h2 class="faq-h">Four questions, plain answers.</h2>
+    <div class="faq-item">
+      <div class="faq-q">What's the refund policy?</div>
+      <p class="faq-a">14-day, no-questions-asked refund. Email <code style="font-family:var(--mono);font-size:14px">hello@aesdr.com</code> and we process it within 3 business days. <strong>If it doesn't deliver value, we don't want your money.</strong></p>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How much time does it take?</div>
+      <p class="faq-a">12 lessons. About 45–60 minutes per lesson, including the worksheet. Across 6–8 weeks at 1–2 lessons per week is the design pace; some students go faster, some slower. The honest answer: if you have an hour a week and the will to actually do the worksheet, you'll finish.</p>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What happens with the replay?</div>
+      <p class="faq-a">The replay is open for 72 hours. After that, the link expires. Why the cap: we run live workshops for the conversation. The replay is a courtesy, not a content asset we're trying to scale.</p>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Who shouldn't enroll?</div>
+      <p class="faq-a">8+ year sales veterans, anyone seeking motivation, anyone who wants a hiring-weight credential, anyone not currently in a sales seat. The 14-day refund means trying is cheap; the cost of buying-when-uncertain is your attention.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 8. Final CTA + Caveat -->
+<section class="final-block">
+  <a href="#" class="btn-iris">Enroll → [PILOT_CODE] · saves you $[DISCOUNT]</a>
+  <div class="btn-trail">aesdr.com/[PARTNER_SLUG]/enroll · code [PILOT_CODE] · closes [CODE_EXPIRY]</div>
+  <p class="caveat">PS — When the link expires, it expires. There's no "I missed it, can you reopen?" form. Most people who say they'll decide tomorrow don't. We part as adults if that's where this lands.</p>
+</section>
+
+<!-- 9. Footer -->
+<footer class="footer">
+  <div class="footer-inner">
+    <p class="footer-disc">AESDR · [postal address]<br>This page hosts the workshop replay for [WORKSHOP_TITLE] on [WORKSHOP_DATE].<br>Workshop hosted by AESDR in partnership with [PARTNER_NAME]. [PARTNER_NAME] receives a commission on enrollments through this page.<br>The replay link expires at [REPLAY_END_DATE_TIME_TZ] and is single-use.</p>
+    <div class="footer-nav">PRIVACY <span>·</span> REFUNDS <span>·</span> TERMS <span>·</span> © AESDR 2026</div>
+  </div>
+</footer>
+
+<!-- Expired-token render (toggle .active class on .expired-render to view) -->
+<!-- Per canon §13: replay page expires; does not silently 404 -->
+<section class="expired-render">
+  <h1 class="expired-h">The replay window has closed.</h1>
+  <div class="expired-body">
+    <p>The replay was open for 72 hours after the live workshop on [WORKSHOP_DATE]. It closed at [REPLAY_END_DATE_TIME_TZ]. We don't run "evergreen" replays — we'd rather host the next live than re-host last week's recording.</p>
+    <p style="margin-top:18px">AESDR's program is still available at list pricing. The pilot code [PILOT_CODE] expired on [CODE_EXPIRY], but the program runs continuously. If the workshop made the case, the program is one click away.</p>
+  </div>
+  <a href="#" class="btn-iris">Enroll at list pricing →</a>
+  <div class="btn-trail">aesdr.com/enroll</div>
+</section>
+
+</body>
+</html>

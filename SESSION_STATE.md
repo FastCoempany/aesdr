@@ -132,6 +132,7 @@ None blocking. Re-confirm with user only if attempting work that contradicts the
 
 ## Recent activity log
 
+- **2026-05-02** — Rendered visible-canon artifacts at `tools/rendered/`: AESDR wordmark SVG, horizontal + stacked lockup SVGs (10a/10b — partner-placeholder), D09 workshop deck as click-to-advance HTML, D24 replay page HTML (incl. expired-token render), D26 partner-promo page HTML, D10 calendar invite cover SVG (1280×720), D38 launch homepage hero HTML. Reference-renders for designers/devs to match; not production code.
 - **2026-05-02** — Batch 8: D35 canon-revision intake, D36 ambassador-conversion playbook, D37 reporting dashboard spec, D38 post-pilot launch announcement, D39 case-study template. **40-deliverable build complete.**
 - **2026-05-02** — Batch 7.5 cleanup: shipped 8 kit-template files, patched cross-reference drift in D14, D19, D20, D21, D32, D33, added 00-INDEX. SESSION_STATE refreshed.
 - **2026-05-02** — Batch 7: D24 replay page, D26 partner-promo landing page, D29 founder + host bio stubs, D30 lesson preview spec, L&D-approver brief.

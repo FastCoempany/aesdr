@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  AESDR × [PARTNER] — Stacked Lockup (canon §6.6)
+  Partner-agnostic placeholder. Stacked variant for square / near-square placements
+  (Instagram tile, podcast app icon overlay, square ad placement).
+
+  Same syntax discipline as horizontal lockup; vertical stack instead.
+  See: docs/partner/kit-template/10d-lockup-usage-guide.md
+-->
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 480 480"
+     width="480"
+     height="480"
+     role="img"
+     aria-label="AESDR × Partner lockup, stacked">
+  <title>AESDR × Partner — Stacked Lockup</title>
+  <desc>Canonical stacked lockup: AESDR wordmark above, multiplication-sign separator centered, partner-mark placeholder slot below.</desc>
+
+  <rect x="0" y="0" width="480" height="480" fill="#FAF7F2" stroke="none"/>
+
+  <!-- AESDR wordmark, centered -->
+  <text x="240"
+        y="180"
+        font-family="'Playfair Display', Georgia, serif"
+        font-size="84"
+        font-weight="900"
+        font-style="italic"
+        letter-spacing="0.01em"
+        text-anchor="middle"
+        fill="#1A1A1A">AESDR</text>
+
+  <!-- × separator, centered between marks -->
+  <text x="240"
+        y="248"
+        font-family="'Space Mono', monospace"
+        font-size="32"
+        font-weight="400"
+        text-anchor="middle"
+        fill="#1A1A1A">×</text>
+
+  <!-- Partner mark placeholder slot -->
+  <g id="partner-mark-slot">
+    <rect x="120" y="280" width="240" height="80" fill="none" stroke="#E8E4DF" stroke-width="1" stroke-dasharray="4 4"/>
+    <text x="240"
+          y="320"
+          font-family="'Space Mono', monospace"
+          font-size="12"
+          font-weight="700"
+          letter-spacing="0.15em"
+          text-anchor="middle"
+          fill="#6B6B6B">[PARTNER MARK]</text>
+    <text x="240"
+          y="340"
+          font-family="'Space Mono', monospace"
+          font-size="9"
+          letter-spacing="0.1em"
+          text-anchor="middle"
+          fill="#6B6B6B">replace per-partner</text>
+  </g>
+</svg>
