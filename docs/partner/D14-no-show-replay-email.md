@@ -121,7 +121,7 @@ Type: `--mono` 10pt for nav links and timestamp; `--serif` 13pt, `--muted` for t
 
 This email is the highest-Michael surface in the kit so far (40% by canon §3.3). That's deliberate — a no-show is a small failure, and AESDR's brand earns trust by treating failures as data, not as moral content. The "no judgment" line and the PS are doing the bulk of that work.
 
-The PS specifically uses `we part as adults` — fourth canonical use. Per the audit conversation, that's the intended last instance for at least the next three deliverables. The next email-shell deliverables (D10 confirmation, D11 24h reminder, D13 same-day attended-no-purchase) will use other canon phrases.
+The PS specifically uses `we part as adults` — fourth canonical use. Per the audit conversation, that's the intended last instance for at least the next three deliverables. The subsequent email-shell deliverables — D10 confirmation, D11 24h reminder, D13 same-day attended-no-purchase (all shipped in batch 4) — used other canon phrases as planned. D18 deadline-window email (batch 5) introduced *"the window is the window"* as the closer.
 
 ---
 

@@ -129,6 +129,8 @@ A mock-up sheet is part of the design queue (Tier 2 per the deliverable plan); f
 
 Per canon §16, every paid placement and ephemeral content piece requires AESDR pre-approval before publication. Disclosure is part of every review. If a partner ships without pre-approval *and* without proper disclosure, that's two strikes — pilot terminates immediately.
 
+**Upstream gate:** Disclosure compliance is one of the canonical checks in D27 partner vetting scorecard (§3.3 + §4 + §5.3). A partner who declines disclosure language during D27 vetting fails the scorecard outright — D27 §"Red-flag list" — and never reaches the point of pre-approval-per-asset under §16. This document governs *post-PASS* execution; D27 is the pre-PASS gate.
+
 ---
 
 ## E. The "good operator" stance

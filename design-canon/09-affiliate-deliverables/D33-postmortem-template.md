@@ -14,6 +14,24 @@ Filled out within 7 days of the pilot's end, after the kill-or-keep memo (D32) a
 
 The postmortem is also the input to the rolling objection log and the canon revision queue. If a postmortem identifies a canon contradiction, the canon updates first; the deliverables follow.
 
+### Data inputs (read these before writing the postmortem)
+
+This document synthesizes; it does not generate primary data. The signals that feed it:
+
+| Input | Source | Used in §… |
+|---|---|---|
+| D27 partner vetting scorecard v1 | `docs/partner/pilots/[partner-slug]/scorecard--v1.md` | §6 ICP fit, §10 single sentence (compare to v0 expectation) |
+| D25 weekly reports (Reports 1, 2, 3) | Sent to partner; archived in pilot folder | §2 numbers vs plan, §3 what worked, §4 what broke |
+| D17 high-intent DM log | `docs/partner/pilots/[partner-slug]/d17-log.md` | §5 objections heard (richest single source) |
+| Live workshop chat log + Q&A transcript | Captured during workshop per canon §12.2 lurk-and-listen | §3, §4, §5, §7 |
+| Email-reply log (D13/D14/D15/D16/D18) | ESP reply inbox | §5 objections heard |
+| L&D-approver brief send + outcome log | `docs/partner/pilots/[partner-slug]/L-and-D/` | §6 ICP fit (approval rate is a fit proxy) |
+| D32 kill-or-keep memo | `docs/partner/pilots/[partner-slug]/kill-or-keep--v1.md` | §2 numbers (lifted), §10 single sentence (cross-check) |
+| D34 partner-facing close-out | Sent to partner; archived in pilot folder | §3 what worked (the partner relationship), §9 lessons for next pilot |
+| Founder lurk-and-listen running doc | Maintained per canon §12.2 throughout pilot | All sections — primary qualitative input |
+
+If any of these inputs are missing or incomplete, name the gap before filling the postmortem. A postmortem without primary data is a vibes document, not a learning document.
+
 ---
 
 ## Template (canonical structure — fill the brackets)

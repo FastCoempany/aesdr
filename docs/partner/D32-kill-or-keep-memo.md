@@ -14,6 +14,12 @@ Filled out within 72 hours of the pilot's end (per `affiliate-seeding-deep-resea
 
 The point of the template is to make the decision *before* the relationship politics start. We write the memo, then we have the conversation, not the other way around.
 
+**Inputs to this memo:**
+- **D27 partner vetting scorecard v1** — the Day-1 baseline. Re-reading what we said before the pilot ran is the cheapest cure for hindsight bias.
+- **D25 Reports 1, 2, 3** — the weekly partner reports surface the funnel data this memo's §1 (Numbers) lifts from.
+- **D17 high-intent DM log** — at `docs/partner/pilots/[partner-slug]/d17-log.md`, per the D17 logging requirement. Surfaces qualitative signal on objection patterns and ICP fit.
+- **L&D-approver brief send log** — at `docs/partner/pilots/[partner-slug]/L-and-D/`. Approval-rate is a signal for §3 failure-mode check (off-ICP → low approval rate; tight ICP → high).
+
 ---
 
 ## Template (canonical text — fill the brackets)

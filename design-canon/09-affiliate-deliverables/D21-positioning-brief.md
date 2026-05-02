@@ -93,19 +93,20 @@ These rules apply to AESDR, to the host, and to every partner who promotes us.
 
 ### What we'd ask of you in a pilot
 
-- Promote registration to your audience on agreed dates with approved copy.
-- Introduce the host at the top of the workshop (≤ 2 minutes).
-- Run disclosures per the AESDR disclosure pack (see D19) — `#ad`, near the link, in plain language.
-- Pre-approval on every paid placement and ephemeral content (FTC compliance).
-- Honest weekly reporting cadence.
+- Pass partner vetting (D27 scorecard) and sign the pilot agreement (D22).
+- Promote registration to your audience on agreed dates with approved copy (templates in `09a–09d` of the partner kit).
+- Introduce the host at the top of the workshop (≤ 2 minutes — script in `09c`).
+- Run disclosures per the AESDR disclosure pack (D19) — `#ad`, near the link, in plain language.
+- Pre-approval on every paid placement and ephemeral content (FTC compliance + D22 §8.2).
+- Honest weekly reporting cadence (D25 — Friday delivery from AESDR; partner shares promotion-side metrics within 24h of each send).
 
 ### What we'll do for you
 
-- Build a partner-specific registration page with attribution baked in.
-- Deliver one live workshop and the 48–72h replay.
-- Run the entire follow-up sequence — emails, optional SMS, manual high-intent.
-- Pay commission on net collected revenue, monthly, in arrears.
-- Send weekly numbers — registrations, attendance, clicks, purchases, refunds — the same week we see them.
+- Build a partner-specific registration page (D26) with attribution baked in (UTM canon §8.7).
+- Deliver one live workshop (D09 deck) and the 72-hour replay (D24).
+- Run the entire follow-up sequence — confirmation, reminders, optional SMS, same-day attendee, no-show replay, free-vs-structured objection, deadline-window, checkout-abandon — plus high-intent DM from Admissions where signals warrant (D17).
+- Pay commission on net revenue (30% per D22 §5.1) on net-45 schedule.
+- Send weekly numbers — registrations, attendance, clicks, purchases, refunds — every Friday during the pilot window (D25).
 
 ---
 

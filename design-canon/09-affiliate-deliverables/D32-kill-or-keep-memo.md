@@ -10,9 +10,15 @@
 
 ## Use
 
-Filled out within 72 hours of the pilot's end (per `affiliate-seeding-deep-research-report.md` §Sample 30-day pilot timeline, days 23–27). Output: one of three decisions — **EXTEND**, **REVISE**, **KILL**. Once decided, drives the close-out conversation with the partner (D34, pending) and the postmortem (D33).
+Filled out within 72 hours of the pilot's end (per `affiliate-seeding-deep-research-report.md` §Sample 30-day pilot timeline, days 23–27). Output: one of three decisions — **EXTEND**, **REVISE**, **KILL**. Once decided, drives the close-out conversation with the partner (D34) and the postmortem (D33).
 
 The point of the template is to make the decision *before* the relationship politics start. We write the memo, then we have the conversation, not the other way around.
+
+**Inputs to this memo:**
+- **D27 partner vetting scorecard v1** — the Day-1 baseline. Re-reading what we said before the pilot ran is the cheapest cure for hindsight bias.
+- **D25 Reports 1, 2, 3** — the weekly partner reports surface the funnel data this memo's §1 (Numbers) lifts from.
+- **D17 high-intent DM log** — at `docs/partner/pilots/[partner-slug]/d17-log.md`, per the D17 logging requirement. Surfaces qualitative signal on objection patterns and ICP fit.
+- **L&D-approver brief send log** — at `docs/partner/pilots/[partner-slug]/L-and-D/`. Approval-rate is a signal for §3 failure-mode check (off-ICP → low approval rate; tight ICP → high).
 
 ---
 
@@ -117,7 +123,7 @@ Conditions for a KILL decision (any one is sufficient):
 >
 > Close-out tone: [neutral / warm / cold — defaults to neutral]
 > Door open for future revisit? [Y / N — and if Y, conditions]
-> Partner-facing message draft: [link to D34 — pending]
+> Partner-facing message draft: [link to D34 — see `docs/partner/D34-pilot-closeout-notes.md`, KILL version]
 
 ---
 
@@ -156,5 +162,5 @@ Memo filed to: `docs/partner/pilots/[Partner-slug]/kill-or-keep--v1.pdf`
 ## Open
 
 - Whether the memo template should be a Notion database row (fillable in-app) vs a markdown file per pilot. Default until decided: markdown file per pilot, in `docs/partner/pilots/[partner-slug]/`. Migrate to a structured tool if pilot count crosses 5.
-- D34 (partner-facing close-out note, two versions — extend / kill) is referenced in §4 KILL — produce in next batch alongside D33.
+- D34 (partner-facing close-out note, two versions — extend / kill) is referenced in §4 KILL. **Produced** as `docs/partner/D34-pilot-closeout-notes.md`.
 - "Comparable hourly rate of founder-direct outreach" — needs a baseline number. Default until measured: $200/hr placeholder. Update once we have one direct-outreach pilot's data.

@@ -1,18 +1,25 @@
 # AESDR — Session State
 
-> Working brief for context recovery if a session corrupts or compacts. Update this file at the end of any session that moves the conversion-test work forward.
+> Working brief for context recovery if a session corrupts or compacts. Update this file at the end of any session that moves a workstream forward.
 
-**Last updated:** 2026-04-28
-**Branch:** `claude/resume-session-2UyBs`
-**HEAD:** `abc245b — Wire PostHog into the role-fork conversion funnel`
+**Last updated:** 2026-05-02
+**Active branch:** `affiliate-seeding`
+**HEAD:** *(see `git log -1 --oneline affiliate-seeding`)*
 
 ---
 
-## Product
+## Two parallel workstreams
 
-AESDR is a sales survival course for early-career AEs & SDRs. 12 lessons, lifetime access. Pricing: $249 SDR / $299 AE / $1,499 Team (up to 10 seats). Built on Next.js 16 / React 19 / Supabase / Stripe.
+This repo carries two independent workstreams. Sessions should not blur them.
 
-## Brand — non-negotiable
+1. **Landing-page conversion test** (branch `claude/resume-session-2UyBs`, since merged to `main`) — the AE/SDR role-fork between scenes 1 and 2 of the confession animation, PostHog wired, mockups rebuilt against editorial tokens.
+2. **Affiliate / partner ecosystem build** (branch `affiliate-seeding`) — the 40-deliverable partner kit + canon + brand-kit snapshots. **This is the active workstream as of 2026-05-02.**
+
+The two workstreams share the canon (`AGENTS.md` + `AFFILIATE_BRAND_CANON.md`) but otherwise touch separate files.
+
+---
+
+## Brand — non-negotiable (both workstreams)
 
 Editorial palette only: `--cream` `--ink` `--crimson` `--muted` `--light` `--iris`. Dark palette retired and codified in [AGENTS.md](./AGENTS.md). Fonts via tokens only: `--display` (Playfair), `--serif` (Source Serif 4), `--cond` (Barlow Condensed), `--mono` (Space Mono), `--hand` (Caveat).
 
@@ -20,113 +27,124 @@ Ground-truth references for any visual work:
 - `app/globals.css` — tokens
 - `components/LandingSequence.module.css` — editorial palette in production
 - `variants/variant-a-editorial-split.html` — canonical editorial split layout
+- `AFFILIATE_BRAND_CANON.md` — affiliate-ecosystem-specific canon (v1.1)
 
 ---
 
-## Current focus — landing-page conversion test
+## Affiliate workstream — current state
 
-**Goal:** lift blended CR from ~2% toward 4%+ by fixing the highest-impact weaknesses on the landing scorecard.
+**Source of truth for status:** `design-canon/09-affiliate-deliverables/00-INDEX.md` (shipped batch 7.5).
 
-**Strategy:** ship Mockup C ("Editorial Split Identity Gate") as a role-fork moment between scenes 1 and 2 of the confession animation. Visitor self-segments AE vs SDR, branched scenes + terminal lines play to their role, picked role threads through to pricing as a "Your tier" pre-highlight.
+### Shipped to date
 
-### Locked design decisions
+- **35 of 40 D-numbered deliverables** across batches 1–7.
+- **9 sub-deliverables** — 8 kit-template files (`00-canon-excerpt`, `09a-d`, `10d`, `11`, `13`) + L&D-approver brief.
+- **Canon v1.1** at root (`AFFILIATE_BRAND_CANON.md`).
+- **Design-canon snapshot** at `design-canon/` (everything brand-bearing repo-wide).
+- **Design-canon-seed** at `design-canon-seed/` (12-file Claude Design onboarding kit).
 
-- **Anonymous role:** `sessionStorage` (lenient — survives F5/back, resets on tab close)
-- **Member role:** `user_metadata.role` server-side, skip the fork
-- **Click-to-advance** across all typed phases; visible "skip animation →" mono-link bottom-right
-- **Editorial masthead** top-left from t=0: "AESDR — Sales Survival Course · for early-career AEs & SDRs"
-- **Role-aware hero descriptor:**
-  - default: *"The 12-lesson sales survival course they never gave you."*
-  - SDR: *"The 12-lesson playbook for SDRs who want out alive."*
-  - AE: *"The 12-lesson playbook for AEs who want their forecast to mean something."*
-- **Tracking event:** `landing_role_pick { role, source: 'editorial-fork' }`
-- **No DB migration** — single `user_metadata.role` is enough
-- **Out of scope:** member role-switching with dual-track progress preservation (future paid SKU)
+### Batch history
 
-### Locked copy
+| Batch | Commit | What shipped |
+|---|---|---|
+| 1 | `0edcfcb` | D01–D05 (outreach + objection replies) |
+| 2 | `2352328` | D19, D20, D21, D32, D33 (positioning + claims + disclosure + ops templates) |
+| 2.5 | `7c6aead` | Canon v1.1 — custom-iconography doctrine + visual QA |
+| 3 | `bfedd0b` | D06, D07, D08, D14, D34 (workshop page cluster + close-out notes) |
+| 4 | `4788316` | D10, D11, D12, D13, D15, D16 (workshop email + SMS sequence) |
+| 5 | `87d16c9` | D09, D17, D18, D23, D27 (workshop deck + funnel-completing pieces + vetting) |
+| 6 | `8bd32a0` | D22, D25, D28, D31, D40 (partner contract + ops + kit assembly) |
+| 7 | `df505d2` | D24, D26, D29, D30, L&D brief (audience-facing surfaces + L&D brief) |
+| 7.5 | *(current)* | 8 kit-template files, cross-reference patches (D14, D19, D20, D21, D32, D33), 00-INDEX, this SESSION_STATE update |
 
-**Mockup C split:**
-- Cream-left = SDR. *"You book the meetings. You take the no's. You're the front line of every pipeline you'll never get credit for."* Mono label: `role · pre-quota · pre-promotion`
-- Crimson-right = AE. *"You close the deals. You ride the forecast. You carry the number that nobody else wants their name attached to."* Mono label: `role · quota-carrying · pipeline-owning`
+### Remaining D-numbered (5)
 
-**Branched scenes (after fork):**
+**Batch 8 — post-pilot codification:**
+- D35 — canon-revision intake template
+- D36 — ambassador-conversion playbook
+- D37 — reporting dashboard spec
+- D38 — post-pilot launch announcement
+- D39 — case-study template
 
-SDR:
-1. *"You've been doing this for 9 months. They said 'AE in 12.' Nobody's mentioned it since."*
-2. *"You set your alarm for 6am on Sunday to 'lock in' this week. By Tuesday you'd stopped pretending."*
-3. *"You have a degree. From a university. With a campus. And your job is to get hung up on 97 times a day."*
+### Operationally pending (block production sends; not D-numbered)
 
-AE:
-1. *"Your pipeline says $740K. You'd bet your rent on maybe $180K of it."*
-2. *"Sunday night. You're doing 'pipeline review.' That means staring at a spreadsheet and hoping something moves."*
-3. *"Last quarter you missed by 31%. This quarter your number went up 30%. Nobody explained the math."*
+See `00-INDEX.md` §"Operationally pending" for the full list. The most-blocking:
 
-**Terminal lines:**
-
-SDR:
-- `> scanning your daily activity...`
-- `> found: 47 dials. 3 connects. 1 "send me an email." 0 meetings booked.`
-- `> LinkedIn requests sent: 94. Accepted: 11. Replies: "thanks for reaching out!"`
-- `> CRM notes: "VM" "VM" "VM" "gatekeeper" "VM" "wrong number" "VM"`
-- `> diagnosis: I am a human spam filter with a quota and a dream.`
-
-AE:
-- `> scanning your pipeline...`
-- `> found: 22 open opportunities. 17 in "discovery" for 45+ days.`
-- `> forecast accuracy last quarter: 34%. what you told your VP: 85%.`
-- `> deals marked "closing this month": 8. deals that will actually close: probably 2.`
-- `> diagnosis: professional optimist with a commission plan.`
-
-**Shared terminal payoff:**
-- *"This course will change your life a few times throughout. Afterward, you'll never make the same money again."*
-- whisper: *"Keep scrolling. It has to get worse before it gets better."*
+1. **Host casting** — blocks D09 production-ready render, D29 swap, D30 recording, D23 Q10 content. Canon §17 outstanding Q1 + Q4.
+2. **Admissions alias setup** — blocks D17 production sends. Canon §12.3 outstanding Q3.
+3. **Counsel review of D22 v1** — blocks first partner contract execution.
+4. **L&D-approver brief PDF** — shipped (batch 7); needs prospect-customization workflow standup before first send.
+5. **Stripe webhooks + Vimeo token-gating + analytics infrastructure** — block D24 replay page + D17 trigger detection in production.
 
 ---
 
-## Shipped on this branch (5 commits ahead of main)
+## Landing-page workstream — last known state
 
-| Commit | Description |
-|---|---|
-| `f1338f9` | Fork mockups (A buttons, B typewriter, C identity) at `public/mockups/` |
-| `18ee7ce` | Dark palette retirement directive in `AGENTS.md` |
-| `fffeaa4` | Mockups rebuilt against editorial tokens |
-| `a78e805` | PostHog env vars in `.env.local.example` |
-| `abc245b` | **HEAD** — PostHog wired: `lib/analytics.ts`, `components/PostHogClient.tsx` mounted in `app/layout.tsx`, `pricing_cta_clicked` firing from `CheckoutButton`, `account_role_switched` from `RoleSwitcher` |
+Last touched on `claude/resume-session-2UyBs` (now merged into `main`). Plan sections B–H all shipped per the prior session log:
 
-### PostHog status
+- B: `lib/role.ts` — getRole/setRole/clearRole/useRole hook (sessionStorage `aesdr_role`)
+- C: `LandingSequence.tsx` rewrite with branched scenes
+- D: `LandingSequence.module.css` split-layer styles
+- E: `components/EditorialMasthead.tsx`
+- F: `components/PricingTiers.tsx` with role-aware pre-highlight
+- G: `app/signup/page.tsx` — `user_metadata.role` on signup
+- H: `app/page.tsx` — server-side role read for member fork-skip
 
-- Project: AESDR (separate from antaeus, US region)
-- Env vars: `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com`
-- Local: keys in `.env.local` (gitignored)
-- Vercel: keys must be added to Production + Preview + Development for events to flow
-- Code: `lib/analytics.ts` no-ops when key is unset, so prod is safe before vars are set
+PostHog wired: `lib/analytics.ts`, `components/PostHogClient.tsx` mounted in `app/layout.tsx`. Events firing: `pricing_cta_clicked`, `account_role_switched`, `landing_role_pick`. Vercel env vars need to be set for events to flow in production.
 
----
+### Cleanup tickets still open on landing-page work
 
-## Still to build — plan sections B–H
-
-- **B.** `lib/role.ts` — `getRole/setRole/clearRole/useRole` hook, sessionStorage key `aesdr_role`, dispatches `CustomEvent('aesdr-role-change')` for cross-component reactivity
-- **C.** `LandingSequence.tsx` rewrite — branched `SCENES_*` / `TERM_LINES_*`, editorial split layer between scene 1 and post-fork scenes, click-to-advance, skip button, `initialRole?: 'ae' | 'sdr'` prop (skips fork when set), role-aware hero descriptor via `useRole()`
-- **D.** `LandingSequence.module.css` — split layer styles (port Mockup C exactly: ghost numerals, corner brackets, iris vertical divider), `.skipLink`, `.heroDescriptor`
-- **E.** `components/EditorialMasthead.tsx` — fixed top-left, mono 10px, "AESDR" in `--crimson` rest in `--muted`. Mount in `app/page.tsx` outside the animation tree
-- **F.** `components/PricingTiers.tsx` — extract pricing block from `app/page.tsx:67-110`. Reads `useRole()` to apply `.priceCardPersonal` modifier + iris "Your tier" badge on matching card. Coexists with existing `.priceCardFeatured` (Team)
-- **G.** `app/signup/page.tsx:22-26` — after `signUp` succeeds, read `getRole()` and pass via `options.data: { role }` so it lands on `user_metadata.role`. Clear sessionStorage on success
-- **H.** `app/page.tsx` (server) — read Supabase user, extract `user_metadata.role`, pass to `<LandingSequence initialRole={role} />` so members skip the fork
-
-### Cleanup tickets (separate, lower priority)
-
-- `app/signup/page.tsx:46` and `app/account/select-role/page.tsx:50` still reference retired dark palette tokens (`--bg-main`, `--text-main`, `--theme`, `--coral`, `--line`, `--bg-panel`). Rebuild against editorial tokens.
+- `app/signup/page.tsx:46` and `app/account/select-role/page.tsx:50` still reference retired dark palette tokens. Rebuild against editorial tokens.
 - Retired tokens still live in `app/globals.css` for legacy course HTML compat. Once all references in new code are gone, audit and prune the truly dead ones.
 
 ---
 
-## Open questions / decisions
+## Pre-flight before next session (affiliate workstream)
 
-None blocking. All resolved in prior sessions. Re-confirm with user only if attempting work that contradicts the locked design decisions above.
+1. Confirm branch + HEAD match `git log -1 affiliate-seeding`. If not, ask user before reconciling.
+2. Read `00-INDEX.md` first — it's the canonical map of what's shipped and what's pending.
+3. Read `AGENTS.md` + `AFFILIATE_BRAND_CANON.md` v1.1 for brand directives (mandatory before any visual work).
+4. Read the most recent batch's commit message — captures any decisions taken that aren't yet in canon.
+5. Re-read `00-INDEX.md` §"Operationally pending" to track real-world blockers.
 
-## Pre-flight before next session
+## Pre-flight before next session (landing-page workstream)
 
-1. Confirm branch + HEAD match what's documented above. If not, ask user before reconciling.
-2. Read `AGENTS.md` for brand directives (mandatory before any visual work).
-3. Read `LandingSequence.module.css` and `variants/variant-a-editorial-split.html` before touching visuals.
-4. Re-read this file's "Locked design decisions" and "Locked copy" sections — those are not up for re-litigation without explicit user request.
+1. Switch to `main`. Cleanup tickets above are the open work.
+2. Re-read `app/page.tsx` and `LandingSequence.module.css` before touching visuals.
+
+---
+
+## Open questions / decisions blocking work
+
+### Affiliate workstream
+
+| Question | Blocks | Default until decided |
+|---|---|---|
+| Host casting (name, tenure, prior roles) | D09, D29, D30, D23 Q10 | `[HOST_FIRST_NAME]` placeholders everywhere |
+| Workshop title pick (from D08 ranked options) | D09 slide 01 | Working placeholder |
+| Admissions alias public-name (real first name vs role-only) | D17 sender, D23 Q10 | Role-only as `Admissions` |
+| Pilot discount default (D28 § published rate) | D28 partner rate | Recommend 20% off list |
+| Commission rate default (D22 §5.1) | D22 first execution | 30% of net revenue (per archetype calibration optional) |
+| AESDR legal entity formation | D22 §1 `[AESDR_LEGAL_ENTITY]` | Operationally pending |
+| Governing law jurisdiction (D22 §17) | D22 first execution | Default Delaware unless counsel says otherwise |
+
+### Landing-page workstream
+
+None blocking. Re-confirm with user only if attempting work that contradicts the locked design decisions in prior `claude/resume-session-2UyBs` session log.
+
+---
+
+## Recent activity log
+
+- **2026-05-02** — Batch 7.5 cleanup: shipped 8 kit-template files, patched cross-reference drift in D14, D19, D20, D21, D32, D33, added 00-INDEX. SESSION_STATE refreshed.
+- **2026-05-02** — Batch 7: D24 replay page, D26 partner-promo landing page, D29 founder + host bio stubs, D30 lesson preview spec, L&D-approver brief.
+- **2026-05-02** — Batch 6: D22 partner pilot agreement, D25 weekly partner reporting, D28 pricing & promo sheet, D31 curriculum map, D40 master partner-kit folder README.
+- **2026-05-02** — Batch 5: D09 workshop deck, D17 high-intent DM, D18 deadline-window email, D23 partner-facing FAQ, D27 partner vetting scorecard.
+- **2026-04-30** — Audit pass `430ee52`: patched three stale references found in batches 1–4 output.
+- **2026-04-29** — Canon v1.1: custom-iconography doctrine + visual QA discipline (`7c6aead`).
+- **2026-04-29** — Canon v1.0: Affiliate & Partner Brand Canon initial (`aa4461d`).
+- **2026-04-28** — Last update to landing-page workstream (PostHog wired through role-fork conversion funnel).
+
+---
+
+*This file is the context-recovery brief, not the source of truth for any individual deliverable. The source of truth for affiliate deliverables is `design-canon/09-affiliate-deliverables/00-INDEX.md`. The source of truth for canon is `AFFILIATE_BRAND_CANON.md`.*

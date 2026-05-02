@@ -145,8 +145,10 @@ Substantiation files exist so that if any approved claim is ever challenged, we 
 
 ## D. Approval workflow
 
+**Upstream gate:** A partner reaches this approval workflow only after passing D27 partner vetting scorecard (§4 brand-fit check + §7 red-flag list — banned-vocab violation is auto-FAIL). Partners who would routinely make forbidden claims are filtered out at D27, not at this per-asset gate.
+
 1. Partner drafts post / story / video / live workshop intro.
-2. Partner sends draft to AESDR for pre-approval (per FTC monitoring rule).
+2. Partner sends draft to AESDR for pre-approval (per FTC monitoring rule + D22 §8.2 contract terms).
 3. AESDR reviews against this sheet.
 4. AESDR replies with one of:
    - **Approved.** Ship as written.
