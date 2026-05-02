@@ -10,9 +10,9 @@
 
 | | Count |
 |---|---|
-| D-numbered deliverables shipped | **35 of 40** |
+| D-numbered deliverables shipped | **40 of 40** |
 | Sub-deliverables shipped | 9 (8 kit-template files + L&D-approver brief) |
-| Remaining D-numbered | 5 (D35, D36, D37, D38, D39) |
+| Remaining D-numbered | 0 — all shipped |
 | Canon version current | v1.1 (2026-04-29) |
 
 ---
@@ -82,11 +82,11 @@
 
 | D# | Title | Status | Audience | Voice ratio |
 |---|---|---|---|---|
-| D35 | Canon-revision intake template | **pending (batch 8)** | AESDR-internal | 90/10 |
-| D36 | Ambassador-conversion playbook | **pending (batch 8)** | AESDR-internal | 90/10 |
-| D37 | Reporting dashboard spec | **pending (batch 8)** | AESDR-internal | 90/10 |
-| D38 | Post-pilot launch announcement | **pending (batch 8)** | broader market | 80/20 |
-| D39 | Case-study template | **pending (batch 8)** | AESDR-internal → partner-facing | 80/20 |
+| D35 | **Canon-revision intake template** | **shipped (batch 8)** | AESDR-internal | 90/10 |
+| D36 | **Ambassador-conversion playbook** | **shipped (batch 8)** | AESDR-internal | 90/10 |
+| D37 | **Reporting dashboard spec** | **shipped (batch 8)** | AESDR-internal | 90/10 |
+| D38 | **Post-pilot launch announcement** | **shipped (batch 8)** | broader market | 80/20 |
+| D39 | **Case-study template** | **shipped (batch 8)** | AESDR-internal → partner-facing | 80/20 |
 | D40 | **Master partner-kit folder README** | **shipped (batch 6)** | partner | 90/10 |
 
 ---

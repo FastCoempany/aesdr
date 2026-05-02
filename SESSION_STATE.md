@@ -37,7 +37,7 @@ Ground-truth references for any visual work:
 
 ### Shipped to date
 
-- **35 of 40 D-numbered deliverables** across batches 1–7.
+- **40 of 40 D-numbered deliverables** across batches 1–8. **Complete.**
 - **9 sub-deliverables** — 8 kit-template files (`00-canon-excerpt`, `09a-d`, `10d`, `11`, `13`) + L&D-approver brief.
 - **Canon v1.1** at root (`AFFILIATE_BRAND_CANON.md`).
 - **Design-canon snapshot** at `design-canon/` (everything brand-bearing repo-wide).
@@ -55,16 +55,12 @@ Ground-truth references for any visual work:
 | 5 | `87d16c9` | D09, D17, D18, D23, D27 (workshop deck + funnel-completing pieces + vetting) |
 | 6 | `8bd32a0` | D22, D25, D28, D31, D40 (partner contract + ops + kit assembly) |
 | 7 | `df505d2` | D24, D26, D29, D30, L&D brief (audience-facing surfaces + L&D brief) |
-| 7.5 | *(current)* | 8 kit-template files, cross-reference patches (D14, D19, D20, D21, D32, D33), 00-INDEX, this SESSION_STATE update |
+| 7.5 | `020e109` | 8 kit-template files, cross-reference patches (D14, D19, D20, D21, D32, D33), 00-INDEX, SESSION_STATE refresh |
+| 8 | *(current)* | D35, D36, D37, D38, D39 (post-pilot codification — closes the 40-deliverable build) |
 
-### Remaining D-numbered (5)
+### Remaining D-numbered
 
-**Batch 8 — post-pilot codification:**
-- D35 — canon-revision intake template
-- D36 — ambassador-conversion playbook
-- D37 — reporting dashboard spec
-- D38 — post-pilot launch announcement
-- D39 — case-study template
+**None.** The 40-deliverable build is complete as of batch 8.
 
 ### Operationally pending (block production sends; not D-numbered)
 
@@ -136,6 +132,7 @@ None blocking. Re-confirm with user only if attempting work that contradicts the
 
 ## Recent activity log
 
+- **2026-05-02** — Batch 8: D35 canon-revision intake, D36 ambassador-conversion playbook, D37 reporting dashboard spec, D38 post-pilot launch announcement, D39 case-study template. **40-deliverable build complete.**
 - **2026-05-02** — Batch 7.5 cleanup: shipped 8 kit-template files, patched cross-reference drift in D14, D19, D20, D21, D32, D33, added 00-INDEX. SESSION_STATE refreshed.
 - **2026-05-02** — Batch 7: D24 replay page, D26 partner-promo landing page, D29 founder + host bio stubs, D30 lesson preview spec, L&D-approver brief.
 - **2026-05-02** — Batch 6: D22 partner pilot agreement, D25 weekly partner reporting, D28 pricing & promo sheet, D31 curriculum map, D40 master partner-kit folder README.
