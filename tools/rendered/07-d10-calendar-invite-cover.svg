@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  D10 — Calendar Invite Cover (1280×720)
-  Per canon §7.7 calendar invite cover spec:
-    - 1280×720 cover image
-    - Cream background
-    - AESDR wordmark
-    - Partner lockup if co-branded (this version: AESDR-only; co-branded variant
-      generated per pilot with the partner mark in the lockup slot)
-    - Mono workshop title
-    - Iris ambient line at bottom
+  D10 Calendar Invite Cover (1280x720)
+  Per canon sec 7.7 calendar invite cover spec:
+    1280x720 cover image
+    Cream background
+    AESDR wordmark
+    Partner lockup if co-branded (this version: AESDR-only; co-branded variant
+       generated per pilot with the partner mark in the lockup slot)
+    Mono workshop title
+    Iris ambient line at bottom
 
   Use: cover image attached to D10 confirmation email's calendar invite.
   Render target: 1280x720 PNG when exported (use any browser/headless capture).
 
-  Discipline checks (canon §6.9.1):
-    1. Thumbnail: AESDR-fingerprint visible at 200×200 ✓
-    2. Token: only --cream, --ink, --crimson, --muted, --light, --iris ✓
-    3. Iris reservation: ambient line at bottom is canonical iris use (canon §6.4) ✓
-    4. Icon discipline: type-only ✓
+  Discipline checks (canon sec 6.9.1):
+    1. Thumbnail: AESDR-fingerprint visible at 200x200 ok
+    2. Token: only cream, ink, crimson, muted, light, iris ok
+    3. Iris reservation: ambient line at bottom is canonical iris use (canon sec 6.4) ok
+    4. Icon discipline: type-only ok
     5. Voice thumbnail: N/A (no body type beyond title)
 -->
 <svg xmlns="http://www.w3.org/2000/svg"
@@ -74,7 +74,7 @@
         text-anchor="middle"
         fill="#1A1A1A">AESDR</text>
 
-  <!-- Workshop title placeholder, --display italic 700 -->
+  <!-- Workshop title placeholder, display italic 700 -->
   <text x="640"
         y="460"
         font-family="'Playfair Display', Georgia, serif"
@@ -94,7 +94,7 @@
         text-anchor="middle"
         fill="#1A1A1A">[YYYY-MM-DD] · [HH:MM] [TZ] · 60 MIN LIVE</text>
 
-  <!-- Hosted-by line, --cond -->
+  <!-- Hosted-by line, cond -->
   <text x="640"
         y="590"
         font-family="'Barlow Condensed', sans-serif"

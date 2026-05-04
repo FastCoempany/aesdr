@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  AESDR × [PARTNER] — Horizontal Lockup (canon §6.6)
+  AESDR x [PARTNER] Horizontal Lockup (canon sec 6.6)
   This is the partner-agnostic placeholder. Each partner gets a per-pilot render
   where the [PARTNER MARK] slot is replaced with the partner's canonical mark
   at matched x-height.
 
-  Lockup syntax (canon §6.6):
-    - AESDR in --display italic 900, --ink (#1A1A1A)
-    - × in --mono 12px equivalent, --ink
-    - Partner mark in their canonical color, matched to AESDR x-height
-    - 24px minimum clearspace (preserved in the viewBox padding)
+  Lockup syntax (canon sec 6.6):
+    AESDR in display italic 900, ink (#1A1A1A)
+    x in mono 12px equivalent, ink
+    Partner mark in their canonical color, matched to AESDR x-height
+    24px minimum clearspace (preserved in the viewBox padding)
 
   Use: web headers, email banners, podcast cover art, anywhere a horizontal lockup fits.
   See: docs/partner/kit-template/10d-lockup-usage-guide.md
 
-  Discipline checks (canon §6.9.1):
-    1. Thumbnail: AESDR mark + × + partner slot reads as a lockup ✓
-    2. Token: --ink only on AESDR side ✓
-    3. Iris reservation: no iris on lockup ✓
-    4. Icon discipline: type-only ✓
+  Discipline checks (canon sec 6.9.1):
+    1. Thumbnail: AESDR mark + x + partner slot reads as a lockup ok
+    2. Token: ink only on AESDR side ok
+    3. Iris reservation: no iris on lockup ok
+    4. Icon discipline: type-only ok
     5. Voice thumbnail: N/A
 -->
 <svg xmlns="http://www.w3.org/2000/svg"
@@ -43,7 +43,7 @@
         letter-spacing="0.01em"
         fill="#1A1A1A">AESDR</text>
 
-  <!-- × separator (canon §6.6: --mono, sized subordinate to letterforms) -->
+  <!-- x separator (canon sec 6.6: mono, sized subordinate to letterforms) -->
   <text x="368"
         y="92"
         font-family="'Space Mono', monospace"
