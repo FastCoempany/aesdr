@@ -16,13 +16,13 @@
 |---|---|---|
 | Partner intro | ≤ 2 min | Partner ad-libs, AESDR-supplied script (slide 02) |
 | Brand opener + filter + outcomes | ~5 min | Locked verbatim |
-| Framework 1 — Activity vs Judgment | ~10 min | Locked diagram, lockable narration |
+| Concept 1 — *What good actually looks like* | ~10 min | Locked concept, lockable narration. Allusive register; no framework taught. |
 | Self-assessment 1 | ~5 min | Locked questions |
 | Reality interlude 1 — Michael | ~3 min | Ad-lib within rails |
-| Framework 2 — Pipeline integrity | ~10 min | Locked diagram, lockable narration |
+| Concept 2 — *What you do when no one's watching* | ~10 min | Locked concept, lockable narration. Allusive register; no framework taught. |
 | Self-assessment 2 | ~5 min | Locked questions |
 | Reality interlude 2 — Michael | ~3 min | Ad-lib within rails |
-| Framework 3 — The 12-lesson operating manual | ~7 min | Locked diagram |
+| The catalog (4-of-12 teaser) | ~5 min | Locked teaser; ad-lib on one card max |
 | Offer + close | ~5 min | Locked verbatim (offer slide from D06) |
 | Q&A | 10–15 min | Ad-lib |
 | **Total cap** | **≤ 75 min** | per canon §7.1 |
@@ -109,37 +109,36 @@
 
 ---
 
-### Slide 06 — Framework 1 title (LOCKED)
+### Slide 06 — Concept 1 title (LOCKED)
 
-**Layout:** Editorial split. Crimson left with ghost numeral `01` opacity .06 white. Display italic 64pt white: *Activity vs Judgment.* Cream right blank.
+**Layout:** Editorial split. Crimson left with ghost numeral `01` opacity .06 white. Display italic 64pt white: *What good actually looks like.* Cream right blank.
 
-**Speaker notes:** Pause 5 seconds before advancing.
+**Speaker notes:** Pause 5 seconds before advancing. Per canon §1.1 + the workshop-as-teaser doctrine — slide 06 names a concept-space, not a framework. The host's job here is to claim the territory, not to teach the framework that lives behind it.
 
 ---
 
-### Slide 07 — Framework 1 diagram (LOCKED DIAGRAM, LOCKABLE NARRATION)
+### Slide 07 — Concept 1 narration (LOCKED CONCEPT, LOCKABLE NARRATION)
 
-**Layout:** Cream background, white panel with `--light` 1px border, centered. Mono `--cond` panel header: `FRAMEWORK 01 · ACTIVITY VS JUDGMENT`. Inside the panel, two-axis diagram:
+**Layout:** Cream background. Centered single-column composition, max-width 720px. No diagram, no framework chart. Three lines of `--display` italic, stacked vertically with 32px between, in `--ink`:
 
-- **Y axis (vertical):** Activity — *low* at bottom, *high* at top. `--mono` 11pt labels.
-- **X axis (horizontal):** Judgment — *low* on left, *high* on right. `--mono` 11pt labels.
-- **Four quadrants, each labeled in `--display` italic 18pt:**
-  - Top-left (high activity, low judgment): *"Hamster wheel."* Subtitle in `--serif` 13pt: "47 dials, 0 meetings, no diagnosis."
-  - Top-right (high activity, high judgment): *"What good looks like."* Crimson outline. Subtitle: "Activity that tightens against feedback."
-  - Bottom-left (low activity, low judgment): *"Quiet quitting."* Subtitle: "Coasting toward the PIP."
-  - Bottom-right (low activity, high judgment): *"Smart but won't survive."* Subtitle: "Judgment without enough reps to compound."
+- Line 1, 32pt regular weight, `--muted`: *"What they tell you good looks like."*
+- Line 2, 32pt regular weight, `--ink`: *"What it actually looks like."*
+- Line 3, 32pt **bold italic**, `--crimson`: *"What you'd see if anyone showed you."*
 
-**Iris usage:** None on this slide. The diagram is type and `--light` borders only.
+Below the three lines, in `--mono` 11pt `--muted`, .15em letter-spacing, centered:
+> `12 LESSONS · 36 UNITS · ONE OPERATING STANDARD`
 
-**Speaker notes (lockable narration — host can paraphrase but cannot change the framework):**
+**Iris usage:** None on this slide.
 
-> *This is the diagram nobody draws for you in your first two years. Sales managers will tell you to "make more calls" — that's the Y axis. They will not tell you about the X axis, because the X axis is harder to coach and harder to measure.*
+**Speaker notes (lockable narration — host can paraphrase but cannot reveal the specific frameworks behind it):**
+
+> *Most early-career reps in this room have never had "good" defined for them. Not really. You've had activity numbers — those are the loud part of the job, the part your manager talks about in 1:1s. You've had outcome numbers — those are the part your VP shows the board.*
 >
-> *Your activity number is loud. Your judgment is quiet. Both compound. But only one of them is what your manager talks about in your 1:1.*
+> *What you haven't had is the operating standard between those two — the judgment layer that makes the activity compound, the part that distinguishes a rep who survives ramp from one who doesn't.*
 >
-> *The reps who don't survive ramp are usually in the top-left. High activity, low judgment. They feel busy. The numbers don't move. They get a PIP, and they leave the industry believing sales "isn't for them" — when really, nobody coached them on the X axis.*
->
-> *The whole point of AESDR is to coach the X axis. We assume you can already make the calls. The question is whether you can read what the calls are telling you.*
+> *AESDR is the operating standard, written down. Twelve lessons. Thirty-six units. The frameworks behind what good actually looks like — but I'm not going to walk through any of them on this stage. The workshop's job is to name the territory. The lessons do the work.*
+
+**Ad-lib rails (host script-only, never on screen):** Within rails, the host *may* reference specific lessons by their library call number — *"Lesson 8 spends 60 minutes on what your actual close rate is, not the one you told your VP"* — but only as a forward-pointer, never to teach the lesson's content here.
 
 ---
 
@@ -147,13 +146,13 @@
 
 **Layout:** Cream. `--display` italic 36pt question, centered. Below it, three response prompts in `--serif` 17pt, italic.
 
-> *Where were you in the diagram on your last five calls?*
+> *When was the last time someone showed you what good actually looks like?*
 >
-> *— Top-left? (Be honest. Most of us start there.)*
-> *— Bottom-right? (Smart, low reps — the at-risk quadrant.)*
-> *— Top-right? (Then why are you here? Stay anyway.)*
+> *— Last week? (Then they're a keeper. Most reps don't have one.)*
+> *— Last quarter? (You remember it. That's the tell.)*
+> *— You're still waiting? (You're not the only one.)*
 
-**Speaker notes:** Give the room 60 seconds. Drop the question in chat. Read 2–3 chat answers aloud (no names). This is the first interactive moment — if the room goes silent, that's data, not failure. Stay in the silence.
+**Speaker notes:** Give the room 60 seconds. Drop the question in chat. Read 2–3 chat answers aloud (no names). This is the first interactive moment — if the room goes silent, that's data, not failure. Stay in the silence. Per workshop-as-teaser doctrine: do not connect the question to a specific lesson.
 
 ---
 
@@ -161,42 +160,45 @@
 
 **Layout:** Cream. `--hand` Caveat 48pt, crimson, hand-rotated `-1deg`. Centered. Single line. No other elements.
 
-**Locked anchor line (host opens with this, then ad-libs the war story off it):**
+**Locked anchor line (host opens with this, then ad-libs the war story off it — canon §3.2 canonical Michael line):**
 
-> *I once made 94 dials in one day. Connected with 3 people. The third one asked me what we did. I forgot.*
+> *I have a degree. From a university. With a campus. And my job is to get hung up on 97 times a day.*
 
-**Ad-lib rails:** Host shares one specific war story from their own ramp era. Real numbers, real props, real beat. Names a small failure. No moralizing. ≤ 90 seconds. End on the punchline; advance the slide. Per canon §3.2, this is Michael register — confessional, deadpan, embarrassingly specific.
+**Ad-lib rails:** Host shares one specific war story from their own early-career era. Real numbers, real props, real beat. Names a small failure. No moralizing. ≤ 90 seconds. End on the punchline; advance the slide. Per canon §3.2, this is Michael register — confessional, deadpan, embarrassingly specific. The line is verbatim canon §3.2 — do not paraphrase.
 
-**Speaker notes:** This is the only ad-lib zone in the deck's first half. Do not extend past 90 seconds. Do not make the story about you — make it about the gap between activity and judgment. The story is a frame; the slide is the frame.
-
----
-
-### Slide 10 — Framework 2 title (LOCKED)
-
-**Layout:** Editorial split. Crimson left with ghost numeral `02`. Display italic 64pt white: *Pipeline integrity.* Cream right blank.
+**Speaker notes:** This is the only ad-lib zone in the deck's first half. Do not extend past 90 seconds. The story is a frame for "what good actually looks like" — specifically, the gap between credentials and the role. Per the workshop-as-teaser doctrine: do not name the lesson this connects to.
 
 ---
 
-### Slide 11 — Framework 2 diagram (LOCKED DIAGRAM, LOCKABLE NARRATION)
+### Slide 10 — Concept 2 title (LOCKED)
 
-**Layout:** Cream. White panel with `--light` border. Mono header: `FRAMEWORK 02 · PIPELINE INTEGRITY`.
+**Layout:** Editorial split. Crimson left with ghost numeral `02`. Display italic 64pt white: *What you do when no one's watching.* Cream right blank.
 
-**Diagram:** A horizontal funnel, 5 stages: `Discovery → Demo → Eval → Verbal → Closed`. Below each stage, two numbers in `--mono` — `(Forecasted)` in muted, `(Actual)` in crimson. Default sample numbers shown as placeholders, marked `[ILLUSTRATIVE]`:
-- Discovery: forecasted 22 / actual 22
-- Demo: forecasted 18 / actual 11
-- Eval: forecasted 12 / actual 5
-- Verbal: forecasted 7 / actual 2
-- Closed: forecasted 4 / actual 1
+---
 
-A `--crimson` line below the funnel: *"Forecast accuracy: 25%. What you told your VP: 85%."*
+### Slide 11 — Concept 2 narration (LOCKED CONCEPT, LOCKABLE NARRATION)
 
-**Speaker notes (lockable narration):**
+**Layout:** Cream. Centered single-column composition, max-width 720px. No diagram. Two-paragraph allusive register, no numbered framework, no chart.
 
-> *Your pipeline is two pipelines — the one in CRM, and the one that actually closes. The first pipeline is built from optimism. The second pipeline is built from evidence. Pipeline integrity is the discipline of making them match.*
+- Paragraph 1, `--display` italic 28pt, `--ink`:
+  > *Most of what determines whether you stay in this role for ten years has nothing to do with the calls you make on the calls. It has to do with what you do in the eighteen hours after.*
+- Paragraph 2, `--serif` italic 18pt, `--muted`, max-width 600px:
+  > *The drinking culture you didn't sign up for. The relationships you're trying to keep. The home office that becomes the entire house. The financial discipline nobody teaches you. The version of yourself this job builds whether you want it or not.*
+
+Below the two paragraphs, in `--mono` 11pt `--muted`, .15em letter-spacing, centered:
+> `THE OPERATING MANUAL — INCLUDING THE PARTS ABOUT YOU`
+
+**Iris usage:** None on this slide.
+
+**Speaker notes (lockable narration — host can paraphrase but cannot name specific lessons):**
+
+> *Sales training pretends this part of the job doesn't exist. We disagree. The reason most early-career reps wash out isn't that they didn't learn the framework. It's that the framework was never the hard part — the hard part was everything outside the workday that compounded against them.*
 >
-> *Most early-career reps lose ramp not because they don't have pipeline — they lose it because their pipeline is a mood. It looks like $740K. It's actually $180K. The 1:1 with their VP is a polite lie. The forecast call is a louder one. By Q-end, the math arrives.*
+> *We do not run a motivational program. We do not run a wellness curriculum. We run an operating manual that includes the parts of the role that other courses skip because they're harder to package and harder to scale. They are also the parts that determine whether you'll still be in this seat in three years.*
 >
-> *AESDR Lesson 4 is the operating manual for this — what evidence each stage requires, what disqualifies a deal from advancing, and how to talk to your manager about a pipeline that's smaller than what you forecasted three weeks ago without losing the room.*
+> *That is most of what's in the back half of the curriculum. I'm not going to walk you through it on this stage. That's what enrollment is for.*
+
+**Ad-lib rails (host script-only, never on screen):** Within rails, the host may reference *one* specific lesson by call number — typically `658.85 / L11` (Sober Selling) or `658.85 / L12` (Leveling Up SaaS Relationships) — as a forward-pointer. The annotation may be quoted verbatim ("21+. not metaphor."). The lesson's *content* is not delivered here.
 
 ---
 
@@ -204,42 +206,54 @@ A `--crimson` line below the funnel: *"Forecast accuracy: 25%. What you told you
 
 **Layout:** Cream. `--display` italic 36pt question. Below, four prompts in `--serif` 17pt italic.
 
-> *Pick your largest open opportunity. Now answer four questions.*
+> *What's the part of this job you don't talk about with your manager?*
 >
-> *— What is the buyer's actual budget cycle? (Not "Q-end" — the real one.)*
-> *— Who else has to say yes? (Name them. By role, not "the team.")*
-> *— What disqualifies this deal from advancing this week?*
-> *— Did you tell your manager all four answers in your last 1:1?*
+> *— The drinking? (You're not weird for asking.)*
+> *— The relationships you're losing? (You're also not weird.)*
+> *— The version of yourself this role is building? (You should ask sooner than later.)*
+> *— Something we didn't list? (Drop it in chat. Real chat, not LinkedIn chat.)*
 
-**Speaker notes:** 90 seconds in chat. Read 2–3 answers aloud. The fourth question is the load-bearing one — most of the room will go quiet on it.
+**Speaker notes:** 90 seconds in chat. Read 2–3 answers aloud. The "real chat, not LinkedIn chat" framing matters — this question only earns honest answers if the room believes the chat won't be screenshotted. Per workshop-as-teaser doctrine: do not name lessons L11 or L12 directly. Per canon §13: most rooms will go quiet here. Stay in the silence.
 
 ---
 
 ### Slide 13 — Reality interlude 2 (AD-LIB, MICHAEL VOICE)
 
-**Layout:** Cream. `--hand` Caveat 48pt, crimson, rotated `-1deg`.
+**Layout:** Cream. `--hand` Caveat 48pt, crimson, rotated `-1deg`. Centered. Single line. No other elements.
 
-**Locked anchor line:**
+**Locked anchor line (canon §3.2 canonical Michael line — verbatim, do not paraphrase):**
 
-> *My manager asked for a pipeline update. I sent a screenshot of an empty spreadsheet and wrote 'minimalist aesthetic.' He did not laugh. HR laughed. But like, in a concerned way.*
+> *LinkedIn told me to 'lead with value on every call.' So I told a prospect about a really good taco place near their office. Very detailed review. Salsa rankings. They did not buy. But the tacos are genuinely excellent. I stand by the recommendation.*
 
-**Ad-lib rails:** Host's own pipeline-lying or pipeline-padding story. Real numbers. End on the punchline. ≤ 90 seconds.
+**Ad-lib rails:** Host's own "what I did when nobody was checking" story. The story should sit in the territory of concept 2 — what you do when no one's watching. Real numbers, real props, real beat. End on the punchline. ≤ 90 seconds.
 
 ---
 
-### Slide 14 — Framework 3: The 12-lesson operating manual (LOCKED DIAGRAM)
+### Slide 14 — The catalog (LOCKED — TEASER REGISTER)
 
-**Layout:** Cream. White panel with `--light` border. Mono header: `FRAMEWORK 03 · THE 12-LESSON OPERATING MANUAL`.
+**Layout:** Cream background. Library-catalog teaser, not a curriculum chart. Centered, max-width 1080px.
 
-**Diagram:** Three columns of four lessons each, `--cond` headers, `--serif` body.
+**Eyebrow, `--mono` 11pt, .25em letter-spacing, `--muted`:**
+> `CARD CATALOG · SHELF 12 · DRAWER A · EST. 2026`
 
-- **Column 1 — Foundations (Lessons 1–4):** Operating standard · Activity vs judgment · Discovery as evidence · Pipeline integrity.
-- **Column 2 — Range (Lessons 5–8):** Objection patterns · Negotiation rails · Multi-thread or die · Forecast honesty.
-- **Column 3 — Identity (Lessons 9–12):** Manager management · Comp math · Ramp survival · Becoming the person who closes.
+**Below the eyebrow, four lesson cards in a 2×2 grid (not all 12) — selected to span the curriculum's tonal range without revealing it.** Each card carries: `--mono` call number, `--display` italic title, `--display` italic question, `--hand` Caveat-crimson annotation, `--mono` stamp.
 
-Below the columns, `--mono` 12pt: `12 lessons · 5 tools · 1 you.` (canon §14 tagline).
+- `658.85 / L08` — *The 30% Rule* — *"What's your actual close rate? Not the one you told your VP."* — *— do the math honestly.* `Mon 08`
+- `658.85 / L10` — *Breaking Down the Commission Myth* — *"Can you survive three bad months in a row? Mentally? Financially?"* — *— 3 months runway min.* `Wed 10`
+- `658.85 / L11` — *Sober Selling* — *"What if the problem is bigger than your process — what if it's what you're doing when no one's watching?"* — *— 21+. not metaphor.* `Thu 11`
+- `658.85 / L12` — *Leveling Up SaaS Relationships* — *"Who would vouch for you if you changed companies tomorrow?"* — *— name 5.* `Fri 12`
 
-**Speaker notes:** This is the only slide that previews the curriculum. Do not over-explain — point at the three columns, name the through-line, advance. Per canon §13, no inflated claims about "transformation" — the through-line is *operating manual*, not *life coach*.
+**Below the 4-card grid, centered, `--mono` 13pt, `--muted`:**
+> `4 OF 12 LESSONS SHOWN · 36 UNITS TOTAL · CHECK ONE OUT`
+
+**Below that, `--mono` 12pt, .15em, uppercase, `--muted`:**
+> `12 LESSONS · 5 TOOLS · 1 YOU`
+
+(canon §14 tagline)
+
+**Speaker notes:** This is the only slide that previews the curriculum, and it shows fewer than half the cards on purpose. The four selected cards span the curriculum's tonal range — close-rate honesty (L08), financial reality (L10), the alcohol question (L11), the relationships question (L12) — so the room sees the program is broader than "more sales tactics" without the workshop having to explain it. Per the workshop-as-teaser doctrine: name the territory, hand off to the catalog. Do not walk through individual lesson outcomes here — the catalog itself is the outcome statement.
+
+**Ad-lib rails:** The host *may* land on one of the four cards in voice — typically L11 because the annotation lands hardest — and read the question aloud. They do not teach the lesson. They name what's in the catalog and move on. ≤ 60 seconds.
 
 ---
 
@@ -347,7 +361,7 @@ Pause 3 seconds. End broadcast. Do not linger; do not run a "secret bonus." Per 
 
 **Iris usage:** Two instances total — the ambient bottom-edge line on slide 01 (canon §6.4 ambient permission) and the single iris CTA on the offer slide (canon §6.4 primary-CTA permission). No other iris uses anywhere in the deck.
 
-**Deliberate departures from canon:** None. The pipeline-funnel diagram on slide 11 is a new framework visualization, but it follows the §6.3 canonical pattern (white panel + `--light` border + `--mono` labels + `--cond` headers). Per canon §6.9.3, this is the first instance of a new layout pattern — the funnel — and requires founder pre-approval before first use. **Approval gate flagged.**
+**Deliberate departures from canon:** None. The deck deliberately uses *no diagrams or frameworks* — slides 7 and 11 are typographic concept-spaces only, slide 14 is the library-catalog teaser. This is per the workshop-as-teaser doctrine (rev 2026-05-02): on-screen content stays broad and allusive; specific frameworks belong in the lessons, not on a workshop slide.
 
 **Five-question check (canon §6.9.1):**
 1. **Thumbnail at 200×200:** Cream + crimson editorial-split title + ghost numeral + display italic = identifiably AESDR. Pass.
@@ -367,15 +381,15 @@ Pause 3 seconds. End broadcast. Do not linger; do not run a "secret bonus." Per 
 | 03 Brand opener | Locked verbatim |
 | 04 Filter (for/not-for) | Locked |
 | 05 Three outcomes | Locked verbatim |
-| 06 Framework 1 title | Locked |
-| 07 Framework 1 diagram | Locked diagram + lockable narration |
+| 06 Concept 1 title | Locked |
+| 07 Concept 1 narration | Locked concept + lockable narration (allusive) |
 | 08 Self-assessment 1 | Locked questions |
-| 09 Reality interlude 1 | Ad-lib (≤ 90s) on locked anchor line |
-| 10 Framework 2 title | Locked |
-| 11 Framework 2 diagram | Locked diagram + lockable narration |
+| 09 Reality interlude 1 | Ad-lib (≤ 90s) on canon §3.2 line (degree / campus) |
+| 10 Concept 2 title | Locked |
+| 11 Concept 2 narration | Locked concept + lockable narration (allusive) |
 | 12 Self-assessment 2 | Locked questions |
-| 13 Reality interlude 2 | Ad-lib (≤ 90s) on locked anchor line |
-| 14 Framework 3 (curriculum) | Locked diagram |
+| 13 Reality interlude 2 | Ad-lib (≤ 90s) on canon §3.2 line (taco / salsa) |
+| 14 The catalog (4-of-12 teaser) | Locked teaser + ad-lib on one card max |
 | 15 Outcome proof | Locked |
 | 16 Offer slide | Locked verbatim (from D06) |
 | 17 Honest disqualification | Locked verbatim |
@@ -404,7 +418,7 @@ This deck depends on:
 - Workshop title finalization (canon §17 outstanding question 5).
 - Host casting (canon §17 outstanding question 1, 4) — `[HOST_FIRST_NAME]` and `[HOST_LAST_NAME]` swap.
 - D27 partner vetting scorecard — partner has to pass before deck is co-branded for them.
-- Founder pre-approval for the pipeline-integrity funnel (slide 11) as a new layout pattern, per canon §6.9.3.
+- Workshop-as-teaser register (rev 2026-05-02) — on-screen content stays broad and allusive; deck uses no framework diagrams. Per canon §6.9.3, this is a doctrine-level decision, not a layout-pattern decision; documented here for ratification.
 
 This deck is a forward dependency for:
 - D17 high-intent DM — the DM references specific moments from the live (a question asked, a reality interlude reaction).

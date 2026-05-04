@@ -56,7 +56,9 @@ Ground-truth references for any visual work:
 | 6 | `8bd32a0` | D22, D25, D28, D31, D40 (partner contract + ops + kit assembly) |
 | 7 | `df505d2` | D24, D26, D29, D30, L&D brief (audience-facing surfaces + L&D brief) |
 | 7.5 | `020e109` | 8 kit-template files, cross-reference patches (D14, D19, D20, D21, D32, D33), 00-INDEX, SESSION_STATE refresh |
-| 8 | *(current)* | D35, D36, D37, D38, D39 (post-pilot codification — closes the 40-deliverable build) |
+| 8 | `7059231` | D35, D36, D37, D38, D39 (post-pilot codification — closes the 40-deliverable build) |
+| Rendered | `4d2d367` + `d3dd898` | Eight visible-canon artifacts at `tools/rendered/` (wordmark SVG, lockups, deck HTML, replay HTML, partner-promo HTML, calendar invite cover SVG, launch hero HTML); SVG comment hyphens fixed |
+| 7.6 | *(current)* | Curriculum-map rewrite to match production reality. D31 rewritten as 12-lesson library catalog (no clusters); D09 deck slides 7+11+14 + interludes + self-assessments rewritten to allusive teaser register; D26 §7 + D24 §4 + D30 (preview switched to L11/Sober Selling territory, working title "The Cost of Being On") + L&D brief + D38 stats stripped — all rewritten against `app/syllabus/page.tsx` (commit `20cbc9e`, 2026-04-22) and `docs/planning/course-content-audit.md` (2026-04-09). Rendered HTMLs (D09/D24/D26/D38) updated in lockstep. |
 
 ### Remaining D-numbered
 
@@ -132,6 +134,7 @@ None blocking. Re-confirm with user only if attempting work that contradicts the
 
 ## Recent activity log
 
+- **2026-05-02** — Batch 7.6 curriculum-map rewrite: D31 fully rewritten as 12-lesson library catalog (no invented clusters); D09 deck slides 7/11/14 + reality interludes + self-assessments rewritten to broad-allusive teaser register per the workshop-as-teaser doctrine; D26 §7, D24 §4, L&D brief, D38, and 4 rendered HTML files updated in lockstep. D30 preview lesson switched from invented "Pipeline Integrity" framing to L11 (Sober Selling) territory under working title "The Cost of Being On." Anchored to `app/syllabus/page.tsx` (commit `20cbc9e`, 2026-04-22) confirmed canonical, and `docs/planning/course-content-audit.md` (2026-04-09).
 - **2026-05-02** — Rendered visible-canon artifacts at `tools/rendered/`: AESDR wordmark SVG, horizontal + stacked lockup SVGs (10a/10b — partner-placeholder), D09 workshop deck as click-to-advance HTML, D24 replay page HTML (incl. expired-token render), D26 partner-promo page HTML, D10 calendar invite cover SVG (1280×720), D38 launch homepage hero HTML. Reference-renders for designers/devs to match; not production code.
 - **2026-05-02** — Batch 8: D35 canon-revision intake, D36 ambassador-conversion playbook, D37 reporting dashboard spec, D38 post-pilot launch announcement, D39 case-study template. **40-deliverable build complete.**
 - **2026-05-02** — Batch 7.5 cleanup: shipped 8 kit-template files, patched cross-reference drift in D14, D19, D20, D21, D32, D33, added 00-INDEX. SESSION_STATE refreshed.

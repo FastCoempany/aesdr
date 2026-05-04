@@ -78,15 +78,15 @@ If on the email render target, no first-name personalization (we don't have firs
 >
 > ***— Operator over guru.*** *We ran the entire pilot phase founder-backstage, host-fronted. We're keeping the structure. The brand is the curriculum, not the founder, not the host. AESDR was built to outlast any one person delivering it.*
 >
-> ***— Honest disqualification.*** *Every pilot's offer surface named who shouldn't enroll. No exceptions. The retention math we got after the 14-day refund window held up — refunds stayed below 3%, which we think is the right rate for a 14-day no-questions program. Not zero (zero would mean we were over-filtering); not double-digit (which would mean we were under-filtering).*
+> ***— Honest disqualification.*** *Every pilot's offer surface named who shouldn't enroll. No exceptions. The retention math after the 14-day refund window held up at `[REFUND_RATE_PERCENT]` — within the band we expected for a no-questions-asked program. Not zero (zero would mean we were over-filtering); not double-digit (which would mean we were under-filtering).*
 >
 > *Three things we learned in pilot phase that we didn't expect:*
 >
-> ***— The 12-week pace is nominal, not real.*** *We designed the curriculum for a 6-8 week pace at 1-2 lessons per week. The actual completion data: most graduates take 11-14 weeks. Not because the program is harder than expected — because real reps have real quarters. We're keeping the design pace as a recommendation; we're not pretending the actual pace is something it isn't.*
+> ***— The recommended pace is recommended, not real.*** *We designed the curriculum for a 6-8 week pace at 1-2 lessons per week. Actual graduate pace: `[GRADUATE_PACE_RANGE]`. Not because the program is harder than expected — because real reps have real quarters. We're keeping the recommended pace as a recommendation, not pretending the real pace is something it isn't.*
 >
-> ***— The reality interludes outperformed the frameworks.*** *Self-assessment scores tracked the framework slides; conversion-after-workshop tracked the reality interludes (the Caveat-style "I made 94 dials, connected with 3, the third asked what we did and I forgot" beats). Reps decide to enroll on recognition, not instruction. We're surfacing more reality interludes in the curriculum revisions, not fewer frameworks.*
+> ***— The lessons reps recognized themselves in landed harder than the frameworks did.*** *The recognition moments — the canon §3.2 register, the embarrassingly-specific honesty about what the role actually does to people — drove enrollment more than the framework slides did. Reps decide to enroll on recognition, not on instruction. We're surfacing more of the recognition register in the next curriculum revision, not less.*
 >
-> ***— L&D-approval rate was higher than we estimated.*** *We thought 1-in-4 enrollees would route through manager-approved reimbursement. Actual: 1-in-2.5. The L&D-approver brief (a one-page PDF written for the conversation with a manager) carried more weight than the workshop-driven enrollment. We're keeping it; we're improving it.*
+> ***— L&D-routed enrollment was higher than estimated.*** *We thought a smaller share of enrollees would come through manager-approved reimbursement. Actual: `[LD_ENROLLMENT_RATIO]`. The L&D-approver brief (a one-page PDF written for the conversation with a manager) carried more weight than we forecasted. We're keeping it; we're improving it.*
 >
 > *AESDR is now open for direct enrollment at* `aesdr.com`. *List pricing — `$249` SDR, `$299` AE, `$1,499` 10-seat Team. Lifetime access. 14-day refund. Same terms every pilot ran on.*
 
@@ -163,11 +163,11 @@ Per canon §6.9.3 + §12.4, founder-signed social posts are a first-instance app
 
 > *Three things we learned in AESDR pilot phase that surprised us:*
 >
-> *— Real pace is 11-14 weeks, not the designed 6-8. We're surfacing the real number, not the marketing one.*
+> *— Real pace is `[GRADUATE_PACE_RANGE]`, not the designed 6-8 weeks. We're surfacing the real number, not the marketing one.*
 >
-> *— Reality interludes outperformed framework slides for conversion. Reps decide on recognition.*
+> *— Recognition moments outperformed framework slides for conversion. Reps decide on recognition.*
 >
-> *— L&D-approval-routed enrollment was 1-in-2.5, not 1-in-4. The L&D brief earned its keep.*
+> *— L&D-routed enrollment ran at `[LD_ENROLLMENT_RATIO]`. The L&D brief earned its keep.*
 >
 > *— `[FOUNDER_FIRST_NAME]`, AESDR · aesdr.com*
 
@@ -233,8 +233,8 @@ Per canon §6.9.3 + §12.4, founder-signed social posts are a first-instance app
 
 - **FTC §10.1:** No partner attribution on this surface (AESDR-direct). Footer states this is the launch announcement — clear and accurate. **Pass.**
 - **CAN-SPAM (§10.4):** Footer carries postal address, unsubscribe, and accurate "why you're receiving this" line. **Pass.**
-- **Approved claims (§10.2):** Pilot count, graduate count, refund rate, completion-pace data — all observational, all from pilot data, all substantiable. The "1-in-2.5 L&D approval" claim requires the data to actually be true; if pilot data shows different, update the claim before send. **Pass conditional on data.**
-- **Forbidden claims (§10.3):** No "guaranteed promotion," "earn back your investment," or income claims. The "completion takes 11-14 weeks" is observational, not promissory. **Pass.**
+- **Approved claims (§10.2):** Pilot count, graduate count, refund rate, pace range, L&D ratio — all use placeholder fields filled at send time from real pilot data. **Pass conditional on real data substituting every placeholder before send.** Per canon §13, no number ships in this announcement that hasn't been verified against the cohort dashboard (D37 View 3) the same week.
+- **Forbidden claims (§10.3):** No "guaranteed promotion," "earn back your investment," or income claims. The pace range is observational and time-bounded, not promissory. **Pass.**
 
 ---
 

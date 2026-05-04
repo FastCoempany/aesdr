@@ -28,9 +28,26 @@
 
 ### What AESDR is
 
-A 12-lesson curriculum built specifically for early-career SaaS sales reps in their first 0–3 years. Hosted by `[HOST_FIRST_NAME] [HOST_LAST_NAME]`, who has [HOST_TENURE_YEARS] years across SDR, AE, and sales-management roles. Lessons cover the operating gap between "do more activity" and "develop sales judgment" — the gap most early-career reps lose ramp on.
+A 12-lesson curriculum built specifically for early-career SaaS sales reps in their first 0–3 years. Hosted by `[HOST_FIRST_NAME] [HOST_LAST_NAME]`, who has [HOST_TENURE_YEARS] years across SDR, AE, and sales-management roles. **Unconventional in tone, conventional in shape:** a defined 12-lesson curriculum (36 sub-units) with documented outcomes, a refund window, and a cohort community. AESDR is upfront that several lessons name parts of the role most sales-training programs avoid — drinking culture, financial reality, manager dynamics, the personal cost of being on. That candor is the program's distinguishing feature, not a footnote.
 
-Three clusters: **Foundations** (Lessons 1–4: operating standard, activity vs judgment, discovery as evidence, pipeline integrity), **Range** (Lessons 5–8: objection patterns, negotiation rails, multi-thread or die, forecast honesty), **Identity** (Lessons 9–12: manager management, comp math, ramp survival, becoming the rep who closes). Five takeaway tools — one-page operating sheets the rep keeps on their desk.
+The 12 lessons (working titles for L&D review — production lesson titles in parentheses use the host's voice and are visible to enrolled reps):
+
+| # | What it covers |
+|---|---|
+| L01 | Building team partnership in early-career sales (Building Real Camaraderie) |
+| L02 | Cross-team alignment and the home-office build-out (Breaking Down Silos) |
+| L03 | Performance pitfalls and survival framework with manager-archetype mapping (Performance Pitfalls) |
+| L04 | Reading your manager: the ten archetypes (Navigating Manager Madness) |
+| L05 | The promotion-track playbook for SDRs (tHe SaLeS pLaYbOoK) |
+| L06 | Field experience over textbook theory; networking and the strategy of "knowing just enough" (bEyOnD tHe SaLeS pLaYbOoK) |
+| L07 | Prospecting ownership for AEs and the existential question of fit in SaaS sales (Prospecting & Pipeline) |
+| L08 | The 30/40/30 segmentation and honest self-assessment (The 30% Rule) |
+| L09 | CRM, Slack, and the SaaS tools stack — discipline before tools (CRM Survival Guide) |
+| L10 | **Quotas are b.s. There, we said it.** Reading your comp plan and surviving variable income. (Breaking Down the Commission Myth) |
+| L11 | Managing your reputation in sales cultures, including the alcohol-and-events question, head-on (Sober Selling) |
+| L12 | Trading your personal life to be in sales: relationships, home-office burnout, dating-while-grinding (Leveling Up SaaS Relationships) |
+
+Each lesson has 3 sub-units (36 total). Per-lesson worksheets and takeaway tools — operating sheets the rep keeps on their desk. Library-catalog metaphor on the syllabus surface; full lesson list visible at `aesdr.com/syllabus`.
 
 ### What it costs
 
@@ -44,12 +61,13 @@ Three clusters: **Foundations** (Lessons 1–4: operating standard, activity vs 
 
 ### What [PROSPECT_NAME] would learn
 
-For an early-career rep in [PROSPECT_ROLE], the program targets three specific operating outcomes:
-- **Pipeline-integrity discipline** — the muscle of distinguishing forecasted pipeline from pipeline that actually closes. Reduces forecast-accuracy gap, which is the #1 ramp-failure pattern in startup SaaS sales.
-- **Objection-pattern recognition** — the 8 patterns covering ~85% of early-career-SaaS objections, with named recognition cues. Reduces escalation rate to manager on routine objections.
-- **Forecast-honesty conversation** — the 1:1 conversation framework for talking about a pipeline that shrunk between weeks. Reduces ramp-month surprise-miss outcomes.
+For an early-career rep in [PROSPECT_ROLE], the program targets four specific operating outcomes:
+- **Honest close-rate math.** Lesson 8 walks the 30/40/30 segmentation managers already use whether they say so or not — and the self-assessment that lets [PROSPECT_NAME] read their own pipeline without the optimism bias most reps carry.
+- **Comp-plan literacy.** Lesson 10 covers reading the comp plan, including the parts that aren't written down (clawbacks, accelerator triggers, what counts as "closed-won" for commission). Plus the financial-discipline practice for variable income.
+- **Manager-reading and managing-up framework.** Lesson 4 names the ten manager archetypes and the framework for working productively with whichever one [PROSPECT_NAME] actually has — versus the one the org chart claims they have.
+- **The role's operating cost on the person.** Lessons 11 and 12 cover the parts of the role most courses avoid: alcohol culture in sales, home-office burnout, the impact on relationships, the long-term identity question. These lessons are not optional, not buried in an appendix; they are part of the operating manual.
 
-These are operating-skill outcomes, not income outcomes. We do not promise revenue lift, deal-size lift, promotion timing, or any specific dollar number. Per canon §10.3 (forbidden claims), AESDR does not make income claims about its program — and we'd flag any one-page-summary that did.
+These are operating-skill outcomes, not income outcomes. AESDR does not promise revenue lift, deal-size lift, promotion timing, or any specific dollar number. Per canon §10.3 (forbidden claims), AESDR does not make income claims about its program — and we'd flag any one-page-summary that did.
 
 ### Time commitment
 
@@ -61,7 +79,7 @@ These are operating-skill outcomes, not income outcomes. We do not promise reven
 
 ### Why now (versus later)
 
-Most reps lose ramp not from missing pipeline but from not knowing *why* they missed. The Lessons 1–4 cluster gives the diagnostic frame; reps with the frame ramp faster than reps without it. Per AESDR's positioning brief (D21), the operating gap is widest in months 6–18 of a SaaS sales role. If [PROSPECT_NAME] is in that window, the cost of waiting is one quarter's worth of compounding judgment.
+Most reps lose ramp not from missing pipeline but from not knowing *why* they missed. AESDR's first four lessons give the diagnostic frame for that question; reps with the frame ramp faster than reps without it. Per AESDR's positioning brief (D21), the operating gap is widest in months 6–18 of a SaaS sales role. If [PROSPECT_NAME] is in that window, the cost of waiting is one quarter's worth of compounding judgment.
 
 ### What this is not
 
@@ -119,7 +137,7 @@ If approving for [PROSPECT_NAME]:
 
 ## Compliance check (canon §10)
 
-- **Approved claims (§10.2):** "Pipeline-integrity discipline reduces forecast-accuracy gap" — observational, not guaranteed. "Objection-pattern recognition reduces escalation rate to manager" — observational. **Pass.**
+- **Approved claims (§10.2):** "Reps with the diagnostic frame ramp faster than reps without it" — observational, not guaranteed. "AESDR is upfront about parts of the role most sales-training programs avoid" — descriptive, accurate per the lesson-list above. **Pass.**
 - **Forbidden claims (§10.3):** No income claims, no specific-dollar promises, no "earn back the cost of the course in 30 days," no ROI projections, no "guaranteed promotion." **Pass.** The closest claim is "reps with the frame ramp faster than reps without it" (§"Why now") — which is observational and ungrouped. Acceptable.
 - **FTC disclosure (§10.1):** L&D-approver brief is not a partner-promoted asset (sent direct from AESDR), so partner-commission disclosure is N/A. If the brief is *forwarded* by a partner during pilot, the partner's own promotional surface (D26) carries the disclosure — the brief inherits.
 - **Honesty discipline (§13):** "What this is not" section is the brand's signature move (canon §13 — "real refund language; real pricing; real honest disqualification"). The PS reinforces. **Pass.**

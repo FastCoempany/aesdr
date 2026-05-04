@@ -120,14 +120,24 @@ If D27 vetting surfaced a usable quote, it lands here. **Skip the entire block i
 
 The quote must pass canon §10.2 approved-claims discipline. Per canon §16, partner quotes are pre-approved during D27.
 
-### 7. Curriculum overview (lift from D31)
+### 7. Curriculum overview (4-of-12 library-catalog teaser, lift from D31)
 
-- **Layout:** Centered column, max-width 960px, padded 96px top. White panel on cream with `--light` 1px border.
+- **Layout:** Centered column, max-width 1080px, padded 96px top. White panel on cream with `--light` 1px border, 48px internal padding.
+- **Eyebrow:** `--mono` 11pt 700, .25em letter-spacing, uppercase, `--muted`:
+  > `CARD CATALOG · SHELF 12 · DRAWER A · EST. 2026`
 - **Header:** `--display` italic 700, 32pt, `--ink`:
-  > *The 12-lesson program behind the workshop.*
-- **Body:** Three-cluster table lifted from D31 §"The three clusters" — Foundations / Range / Identity. Cluster framing lines in `--hand` 22pt `--crimson` as margin annotations (canon §3.2 — Michael register, three instances).
-- **Below table, `--serif` italic 16pt, `--ink`:**
-  > *The workshop is a free 60-minute slice of the curriculum. The full program is what shows up under the offer at the close.*
+  > *Twelve lessons. Real questions on each card.*
+- **Body:** Four lesson cards in a 2×2 grid (not all 12). Each card carries: `--mono` 13pt call number; `--display` italic 700, 22pt title; `--display` italic 18pt question; `--hand` 22pt `--crimson` annotation rotated `-1deg`; `--mono` 11pt rectangular stamp with 1px `--ink` border. Lift these four lesson cards verbatim from D31 (per workshop-as-teaser doctrine, the partner page mirrors the workshop-deck slide 14 selection):
+
+  - `658.85 / L08` — *The 30% Rule* — *"What's your actual close rate? Not the one you told your VP."* — *— do the math honestly.* `Mon 08`
+  - `658.85 / L10` — *Breaking Down the Commission Myth* — *"Can you survive three bad months in a row? Mentally? Financially?"* — *— 3 months runway min.* `Wed 10`
+  - `658.85 / L11` — *Sober Selling* — *"What if the problem is bigger than your process — what if it's what you're doing when no one's watching?"* — *— 21+. not metaphor.* `Thu 11`
+  - `658.85 / L12` — *Leveling Up SaaS Relationships* — *"Who would vouch for you if you changed companies tomorrow?"* — *— name 5.* `Fri 12`
+
+- **Below the 2×2 grid, centered, `--mono` 13pt, `--muted`:**
+  > `4 OF 12 LESSONS SHOWN · 36 UNITS TOTAL · CHECK ONE OUT`
+- **Below the catalog block, `--serif` italic 16pt, `--ink`:**
+  > *The workshop is a free 60-minute teaser. The full catalog opens at enrollment.*
 
 ### 8. Registration form (canon §7.4 — 2 fields max + separate SMS consent)
 
@@ -254,7 +264,7 @@ This page depends on:
 - **D23 partner-facing FAQ** — §9 + §10 lift Q01–Q04, Q11. **Met.**
 - **D27 partner vetting scorecard** — partner-quote slot (§6) is pre-approved during D27. **Met.**
 - **D28 pricing & promo sheet** — `[PILOT_CODE]` and pricing references inherit. **Met.**
-- **D31 curriculum map** — §7 cluster overview lifts D31. **Met.**
+- **D31 curriculum map** — §7 4-of-12 library-catalog teaser lifts D31's catalog cards (specifically L08, L10, L11, L12). **Met.**
 - **D40 master partner-kit folder README** — D26 is referenced as "co-branded surface AESDR ships." **Met.**
 - **Co-brand lockup assets** — operationally pending per partner.
 - **Stripe + analytics + UTM-passing infrastructure** — operationally pending.

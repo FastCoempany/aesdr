@@ -56,11 +56,11 @@ The above-the-fold block is the deal. A registrant who already decided during th
   > `WHAT YOU JUST SAW`
 - **Three bullets, `--serif` 17pt, `--ink`:**
 
-> *— **Activity vs Judgment.** The two-axis frame for reading your own work. The reps who don't survive ramp are usually in the top-left — high activity, low judgment. AESDR Lessons 1–4 are the X-axis curriculum.*
+> *— **What good actually looks like.** The territory most early-career reps have never had named for them — the operating standard between activity numbers and outcome numbers. The workshop pointed at it. The catalog opens it.*
 >
-> *— **Pipeline Integrity.** The discipline of making the pipeline in CRM match the pipeline that closes. Lesson 4 is the operating manual; Lesson 8 is the forecast-honesty conversation.*
+> *— **What you do when no one's watching.** The drinking culture, the relationships you're trying to keep, the version of yourself the role is building. Most sales training pretends this part doesn't exist. We disagree, on purpose.*
 >
-> *— **The 12-Lesson Operating Manual.** Foundations (Lessons 1–4), Range (5–8), Identity (9–12). Twelve lessons, five tools, lifetime access. Worksheet per lesson. Discord per cohort.*
+> *— **The catalog.** Twelve lessons. Thirty-six units. Real questions on each card. Open from day one, lifetime access, refundable in 14 days. The four cards on slide 14 were a teaser — the full drawer opens at enrollment.*
 
 The recap is the bridge from "I watched it" to "I know what it's actually for." Per canon §3.3, this block runs slightly more Rowan (verdict-shaped) than the surrounding page.
 
@@ -195,7 +195,7 @@ The expired render is its own thing — not a graveyard, not a "we missed you, h
 This page depends on:
 - **D14 no-show replay email** — sends the link to this page. **Met.**
 - **D23 partner-facing FAQ** — Q01, Q02, Q04, Q07 lift verbatim into §7. **Met.**
-- **D31 curriculum map** — §4 "what you saw" recap lifts the cluster taxonomy. **Met.**
+- **D31 curriculum map** — §4 "what you saw" recap mirrors D09's two broad concepts (slides 7 + 11) and points at the catalog (slide 14). **Met.**
 - **D28 pricing & promo sheet** — §2 + §10 reference `[PILOT_CODE]` and pricing. **Met.**
 - **Replay video file** + **token-gating infrastructure** — operationally pending per pilot.
 - **Co-brand lockup assets** (D40 §1 file `10a–10c`) — operationally pending per partner.
