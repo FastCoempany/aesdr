@@ -44,9 +44,7 @@ const FAQ_ITEMS = [
     q: "What's the commission rate?",
     a: (
       <p>
-        30% of net revenue (gross minus refunds, payment fees, sales tax) per D22 §5.1.
-        Net is calculated after the 14-day refund window closes. Payment is net-45 from
-        close of the 30-day Attribution window.
+        30% of net revenue (gross minus refunds, payment fees, sales tax). Net is calculated after the 14-day refund window closes. Payment is net-45 from close of the 30-day attribution window.
       </p>
     ),
   },
@@ -56,8 +54,7 @@ const FAQ_ITEMS = [
       <p>
         30-day cookie window from first qualifying click. Commission paid on net revenue
         after refunds. If a buyer arrives via your link, drifts away, comes back via Google,
-        and enrolls within 30 days — you&rsquo;re still the attributed partner. Per canon §8.7 +
-        §8.8.
+        and enrolls within 30 days — you&rsquo;re still the attributed partner.
       </p>
     ),
   },
@@ -65,9 +62,7 @@ const FAQ_ITEMS = [
     q: "Do I get the AESDR email list?",
     a: (
       <p>
-        No, ever. Per D22 §6.5: list co-promotion is not part of any AESDR partner agreement.
-        Reciprocally, AESDR doesn&rsquo;t request your list either. Audience data is the data
-        subject&rsquo;s; not the partner&rsquo;s, not AESDR&rsquo;s to trade.
+        No, ever. List co-promotion is not part of any AESDR partner agreement. Reciprocally, AESDR doesn&rsquo;t request your list either. Audience data belongs to the person who signed up, not to either of us to trade.
       </p>
     ),
   },
@@ -92,7 +87,7 @@ const FAQ_ITEMS = [
     q: "Who shouldn't I send to AESDR?",
     a: (
       <>
-        <p>Plain disqualification per canon §13:</p>
+        <p>Plain disqualification:</p>
         <ul style={{ marginTop: 14, paddingLeft: 0, listStyle: "none" }}>
           <li style={{ marginBottom: 8 }}>— Sales veterans 8+ years in. The first five courses will bore them.</li>
           <li style={{ marginBottom: 8 }}>— Anyone whose primary distribution is rise-and-grind / motivational content.</li>
@@ -107,7 +102,7 @@ const FAQ_ITEMS = [
     q: "What does the workshop actually look like?",
     a: (
       <p>
-        60 minutes live + 10–15 minutes Q&amp;A. Cap 75 minutes. Two concept-spaces (workshop-as-teaser doctrine — the deck names territory but doesn&rsquo;t teach the lessons that live behind it). 4-of-12 catalog teaser at the close. Single offer slide. Locked vs ad-lib zones marked per canon §7.3. The full workshop format reference page lands in Phase 2 of the hub.
+        60 minutes live + 10–15 minutes Q&amp;A, capped at 75 minutes total. The deck names the territory but doesn&rsquo;t teach the lessons that live behind it — the workshop is a teaser, not a sample. A small selection of catalog cards at the close, then the offer, then close. Locked sections (the framework, the offer slide) and ad-lib sections (the host&rsquo;s field stories) are marked clearly so the host knows what to read verbatim and what to make their own.
       </p>
     ),
   },
@@ -115,11 +110,7 @@ const FAQ_ITEMS = [
     q: "What about the founder?",
     a: (
       <p>
-        AESDR is founder-backstage, host-fronted, per canon §12.1. Founder is fully visible
-        to partners and operators (you, in this conversation). Founder is invisible to
-        audience by default. The brand is character-led — Rowan and Michael are the canon
-        faces, not any one human. The host carries the brand publicly; the founder carries
-        the partnership.
+        AESDR is founder-backstage, host-fronted. The founder is fully visible to partners (that&rsquo;s you, in this conversation) and invisible to audience by default. The brand is character-led — Rowan and Michael are the brand faces, not any one human. The host carries the brand publicly; the founder carries the partnership.
       </p>
     ),
   },
@@ -127,10 +118,7 @@ const FAQ_ITEMS = [
     q: "What if a pilot doesn't work?",
     a: (
       <p>
-        D32 (kill-or-keep memo) gets filed within 72 hours of the pilot&rsquo;s end. If the
-        decision is KILL, we send a partner-facing close-out (D34) within 48 hours, signed
-        by the founder by name. Door stays open for future revisit. Per canon §13:
-        &ldquo;we part as adults.&rdquo;
+        We file a kill-or-keep memo within 72 hours of the pilot&rsquo;s end. If the decision is to end it, we send you a close-out note within 48 hours, signed by the founder by name. The door stays open for a future revisit. We part as adults.
       </p>
     ),
   },
@@ -138,9 +126,7 @@ const FAQ_ITEMS = [
     q: "What's the host situation?",
     a: (
       <p>
-        Host casting is interim per Phase 0 #4 — the host bio currently uses
-        <code style={{ fontFamily: "var(--mono)", fontSize: 13, padding: "0 4px" }}>[HOST_FIRST_NAME]</code> and{" "}
-        <code style={{ fontFamily: "var(--mono)", fontSize: 13, padding: "0 4px" }}>[HOST_LAST_NAME]</code> placeholders. The host is hired to carry the brand; the host&rsquo;s job is to deliver the curriculum, not to sell their personal brand. AESDR was built to outlast any one host.
+        Host casting is in progress. The host&rsquo;s job is to deliver the curriculum — not to sell their personal brand. AESDR was built to outlast any one host; if we change hosts in two years, the curriculum is the same. We&rsquo;ll introduce you to the host before your workshop date.
       </p>
     ),
   },
@@ -148,10 +134,7 @@ const FAQ_ITEMS = [
     q: "Can my audience get the program at a different price than aesdr.com lists?",
     a: (
       <p>
-        No. List price applies always — $249 SDR, $299 AE, $1,499 Team. AESDR doesn&rsquo;t
-        run promotional codes, partner-stack discounts, or pricing variance for any audience.
-        Phase 0 #5 ratification, 2026-05-02. If a partner asks, that&rsquo;s a fit signal AESDR
-        notes per D27 vetting.
+        No. List price applies always — $249 SDR, $299 AE, $1,499 Team. AESDR doesn&rsquo;t run promotional codes, partner-stack discounts, or pricing variance for any audience. If a partner pushes for it, that&rsquo;s a fit signal we note.
       </p>
     ),
   },

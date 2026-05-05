@@ -31,74 +31,74 @@ const KIT: KitCategory[] = [
     files: [
       {
         name: "Canon Excerpt for Partners",
-        description: "Six sections of AFFILIATE_BRAND_CANON.md — doctrine, voice, banned vocab, lockup, FTC disclosure, honesty discipline.",
-        href: "/partner-kit/00-canon-excerpt.pdf",
+        description: "The six brand-doctrine sections you need: voice, banned vocabulary, lockup rules, FTC disclosure language, honesty discipline.",
+        href: "/partner-kit/canon-excerpt.pdf",
         format: "pending",
       },
       {
-        name: "Positioning Brief (D21)",
+        name: "Positioning Brief",
         description: "Who AESDR is for, who it isn't for, what we ask of partners, what we do for partners.",
-        href: "/partner-kit/D21-positioning-brief.pdf",
+        href: "/partner-kit/positioning-brief.pdf",
         format: "pending",
       },
       {
-        name: "Approved + Forbidden Claims (D20)",
+        name: "Approved & Forbidden Claims",
         description: "What partners can say about AESDR's outcomes. What they cannot.",
-        href: "/partner-kit/D20-claims-sheet.pdf",
+        href: "/partner-kit/claims-sheet.pdf",
         format: "pending",
       },
       {
-        name: "Disclosure Language Pack (D19)",
-        description: "FTC-compliant disclosure phrasings, by surface (newsletter, social, reel, live, DM).",
-        href: "/partner-kit/D19-disclosure-language-pack.pdf",
+        name: "Disclosure Language Pack",
+        description: "FTC-compliant disclosure phrasings, by surface (newsletter, social, reel, live workshop, DM).",
+        href: "/partner-kit/disclosure-language-pack.pdf",
         format: "pending",
       },
       {
-        name: "Pricing & Commission Sheet (D28)",
-        description: "List pricing. Commission structure. Never-discount doctrine. Worked example.",
-        href: "/partner-kit/D28-pricing-and-promo-sheet.pdf",
+        name: "Pricing & Commission Sheet",
+        description: "List pricing. Commission structure. Never-discount doctrine. Worked commission example.",
+        href: "/partner-kit/pricing-and-commission.pdf",
         format: "pending",
       },
       {
-        name: "Curriculum Map (D31)",
+        name: "Curriculum Map",
         description: "12 courses. 36 lessons. Real questions on each card.",
-        href: "/partner-kit/D31-curriculum-map.pdf",
+        href: "/partner-kit/curriculum-map.pdf",
         format: "pending",
       },
       {
-        name: "L&D-Approver Brief (sample)",
-        description: "One-page brief for the manager-approval conversation.",
-        href: "/partner-kit/L-and-D-approver-brief.pdf",
+        name: "Manager-Approval Brief (sample)",
+        description: "One-page brief written for the prospect's L&D / manager-approval conversation.",
+        href: "/partner-kit/manager-approval-brief.pdf",
         format: "pending",
       },
     ],
   },
   {
     category: "Promotional Copy (partner-customizable)",
-    blurb: "Pre-cleared templates. Use as-is or submit edits for approval.",
+    blurb: "Pre-cleared templates. Lift verbatim or submit edits for approval.",
     files: [
       {
-        name: "Newsletter Launch Send (09a)",
+        name: "Newsletter — Launch Send",
         description: "Pre-cleared launch newsletter. Bracketed placeholders only.",
-        href: "/partner-kit/09a-newsletter-launch.md",
+        href: "/partner-kit/newsletter-launch.md",
         format: "md",
       },
       {
-        name: "Newsletter Reminder Send (09b)",
-        description: "Pre-cleared reminder send. Sent 3-5 days before workshop.",
-        href: "/partner-kit/09b-newsletter-reminder.md",
+        name: "Newsletter — Reminder Send",
+        description: "Pre-cleared reminder send. Sent 3-5 days before the workshop.",
+        href: "/partner-kit/newsletter-reminder.md",
         format: "md",
       },
       {
-        name: "Podcast / Live Intro Scripts (09c)",
-        description: "2-min live workshop intro + 60-sec podcast intro.",
-        href: "/partner-kit/09c-podcast-intro-script.md",
+        name: "Podcast & Live Intro Scripts",
+        description: "Two-minute live workshop intro + 60-second podcast intro.",
+        href: "/partner-kit/podcast-and-live-intros.md",
         format: "md",
       },
       {
-        name: "Six Pre-Cleared Social Posts (09d)",
-        description: "LinkedIn / X / Bluesky variants for pre-, during-, post-workshop.",
-        href: "/partner-kit/09d-social-pre-approved-posts.md",
+        name: "Six Pre-Cleared Social Posts",
+        description: "LinkedIn / X / Bluesky variants for pre-, during-, and post-workshop.",
+        href: "/partner-kit/social-posts.md",
         format: "md",
       },
     ],
@@ -109,20 +109,20 @@ const KIT: KitCategory[] = [
     files: [
       {
         name: "Lockup — Horizontal",
-        description: "AESDR × [Partner] horizontal lockup, partner mark slot.",
-        href: "/partner-kit/02-lockup-horizontal.svg",
+        description: "AESDR × Partner horizontal lockup. Partner-mark slot included.",
+        href: "/partner-kit/lockup-horizontal.svg",
         format: "svg",
       },
       {
         name: "Lockup — Stacked",
-        description: "AESDR × [Partner] stacked lockup for square placements.",
-        href: "/partner-kit/03-lockup-stacked.svg",
+        description: "AESDR × Partner stacked lockup for square placements.",
+        href: "/partner-kit/lockup-stacked.svg",
         format: "svg",
       },
       {
-        name: "Lockup Usage Guide (10d)",
+        name: "Lockup Usage Guide",
         description: "Color rules, sizing, clearspace, where it goes, where it doesn't.",
-        href: "/partner-kit/10d-lockup-usage-guide.pdf",
+        href: "/partner-kit/lockup-usage-guide.pdf",
         format: "pending",
       },
     ],
@@ -132,9 +132,9 @@ const KIT: KitCategory[] = [
     blurb: "What happens in what week of a 30-day pilot.",
     files: [
       {
-        name: "30-Day Pilot Operating Cadence (13)",
+        name: "30-Day Pilot Operating Cadence",
         description: "Day-by-day. Pre-launch through pilot-close.",
-        href: "/partner-kit/13-operating-cadence.pdf",
+        href: "/partner-kit/operating-cadence.pdf",
         format: "pending",
       },
     ],
@@ -269,7 +269,7 @@ export function KitDownloadTable() {
           lineHeight: 1.7,
         }}
       >
-        Three files you&rsquo;ll receive after you sign D22, not before: per-partner UTM-tagged tracking links; per-partner co-brand lockup compositions; the partner pilot agreement itself (counsel-reviewed). Reasoning: those three are operationally specific to your pilot, not pre-clearable.
+        Three things you&rsquo;ll receive after we sign — not before: your partner-specific tracking links, your AESDR × Partner co-branded lockup compositions, and the partnership agreement itself. Those three are specific to your pilot, so we generate them for you once we have a yes from both sides.
       </p>
     </section>
   );

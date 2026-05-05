@@ -164,10 +164,127 @@ export default function CurriculumPage() {
               fontSize: 17,
               color: "var(--ink)",
               lineHeight: 1.7,
+              marginBottom: 18,
             }}
           >
-            Two end-of-course artifacts. <strong>The Programme</strong> (a theatrical playbill self-portrait) and <strong>The Manuscript</strong> (an editorial manuscript-with-edits). Students pick one free at <code style={{ fontFamily: "var(--mono)", fontSize: 14 }}>/reveal</code>. The other unlocks for $40 from the dashboard at any time. Both are real, both are gated, both are part of the program shape.
+            Two end-of-course artifacts. Each student picks one free when they finish the program. The other unlocks for $40 from their dashboard whenever they want it. Both are real, gated, and part of the experience.
           </p>
+          <p
+            style={{
+              fontFamily: "var(--serif)",
+              fontSize: 17,
+              color: "var(--ink)",
+              lineHeight: 1.7,
+              marginBottom: 24,
+            }}
+          >
+            See what each one looks like:
+          </p>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 16,
+            }}
+            className="aesdr-art-preview"
+          >
+            <a
+              href="/artifacts/playbill?preview=1"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "block",
+                padding: "24px 20px",
+                border: "1px solid var(--ink)",
+                background: "var(--cream)",
+                color: "var(--ink)",
+                textDecoration: "none",
+                textAlign: "center",
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: "var(--display)",
+                  fontStyle: "italic",
+                  fontWeight: 700,
+                  fontSize: 22,
+                  marginBottom: 6,
+                }}
+              >
+                The Programme
+              </div>
+              <div
+                style={{
+                  fontFamily: "var(--serif)",
+                  fontStyle: "italic",
+                  fontSize: 14,
+                  color: "var(--muted)",
+                  marginBottom: 12,
+                }}
+              >
+                A theatrical playbill self-portrait, staged in three acts.
+              </div>
+              <div
+                style={{
+                  fontFamily: "var(--mono)",
+                  fontSize: 10,
+                  letterSpacing: "0.15em",
+                  textTransform: "uppercase",
+                  color: "var(--ink)",
+                }}
+              >
+                Open the preview →
+              </div>
+            </a>
+            <a
+              href="/artifacts/redline?preview=1"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "block",
+                padding: "24px 20px",
+                border: "1px solid var(--ink)",
+                background: "var(--cream)",
+                color: "var(--ink)",
+                textDecoration: "none",
+                textAlign: "center",
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: "var(--display)",
+                  fontStyle: "italic",
+                  fontWeight: 700,
+                  fontSize: 22,
+                  marginBottom: 6,
+                }}
+              >
+                The Manuscript
+              </div>
+              <div
+                style={{
+                  fontFamily: "var(--serif)",
+                  fontStyle: "italic",
+                  fontSize: 14,
+                  color: "var(--muted)",
+                  marginBottom: 12,
+                }}
+              >
+                An editorial manuscript, returned with edits.
+              </div>
+              <div
+                style={{
+                  fontFamily: "var(--mono)",
+                  fontSize: 10,
+                  letterSpacing: "0.15em",
+                  textTransform: "uppercase",
+                  color: "var(--ink)",
+                }}
+              >
+                Open the preview →
+              </div>
+            </a>
+          </div>
         </div>
       </section>
 

@@ -19,9 +19,9 @@ export const runtime = "nodejs";
 type ApplyBody = {
   applicantName: string;
   audienceDescriptor: string;
-  primaryChannel: "newsletter" | "podcast" | "community" | "course" | "other";
+  primaryChannel: "newsletter" | "podcast" | "community" | "course";
   audienceSize: string;
-  linkUrl?: string;
+  linkUrl: string;
   utmSource?: string;
   utmMedium?: string;
   utmCampaign?: string;
@@ -32,7 +32,7 @@ function validate(body: unknown): { ok: true; data: ApplyBody } | { ok: false; e
   if (!body || typeof body !== "object") return { ok: false, error: "Invalid body" };
   const b = body as Record<string, unknown>;
 
-  const required = ["applicantName", "audienceDescriptor", "primaryChannel", "audienceSize"] as const;
+  const required = ["applicantName", "audienceDescriptor", "primaryChannel", "audienceSize", "linkUrl"] as const;
   for (const k of required) {
     if (typeof b[k] !== "string" || (b[k] as string).trim().length === 0) {
       return { ok: false, error: `Missing field: ${k}` };
@@ -40,7 +40,7 @@ function validate(body: unknown): { ok: true; data: ApplyBody } | { ok: false; e
   }
 
   const channel = b.primaryChannel as string;
-  if (!["newsletter", "podcast", "community", "course", "other"].includes(channel)) {
+  if (!["newsletter", "podcast", "community", "course"].includes(channel)) {
     return { ok: false, error: "Invalid primaryChannel" };
   }
 
@@ -48,7 +48,7 @@ function validate(body: unknown): { ok: true; data: ApplyBody } | { ok: false; e
   if ((b.applicantName as string).length > 200) return { ok: false, error: "applicantName too long" };
   if ((b.audienceDescriptor as string).length > 1000) return { ok: false, error: "audienceDescriptor too long" };
   if ((b.audienceSize as string).length > 200) return { ok: false, error: "audienceSize too long" };
-  if (b.linkUrl && (b.linkUrl as string).length > 500) return { ok: false, error: "linkUrl too long" };
+  if ((b.linkUrl as string).length > 500) return { ok: false, error: "linkUrl too long" };
 
   return {
     ok: true,
@@ -57,7 +57,7 @@ function validate(body: unknown): { ok: true; data: ApplyBody } | { ok: false; e
       audienceDescriptor: (b.audienceDescriptor as string).trim(),
       primaryChannel: channel as ApplyBody["primaryChannel"],
       audienceSize: (b.audienceSize as string).trim(),
-      linkUrl: typeof b.linkUrl === "string" ? (b.linkUrl as string).trim() || undefined : undefined,
+      linkUrl: (b.linkUrl as string).trim(),
       utmSource: typeof b.utmSource === "string" ? (b.utmSource as string).slice(0, 100) : undefined,
       utmMedium: typeof b.utmMedium === "string" ? (b.utmMedium as string).slice(0, 100) : undefined,
       utmCampaign: typeof b.utmCampaign === "string" ? (b.utmCampaign as string).slice(0, 100) : undefined,
@@ -96,7 +96,7 @@ export async function POST(request: Request) {
       audience_descriptor: data.audienceDescriptor,
       primary_channel: data.primaryChannel,
       audience_size: data.audienceSize,
-      link_url: data.linkUrl || null,
+      link_url: data.linkUrl,
       utm_source: data.utmSource || null,
       utm_medium: data.utmMedium || null,
       utm_campaign: data.utmCampaign || null,

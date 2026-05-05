@@ -31,7 +31,7 @@ export default function PlayPage() {
       <PlayGame />
 
       <CaveatLayer>
-        PS — If you scored under 30 and you&rsquo;re still reading, that&rsquo;s also information. The curriculum exists for exactly this reason.
+        PS — If you scored under 30 and you&rsquo;re still reading, that&rsquo;s also information. The catalog exists for exactly this reason.
       </CaveatLayer>
     </HubPage>
   );

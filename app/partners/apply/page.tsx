@@ -14,7 +14,7 @@ import { ApplicationForm } from "@/components/partners/ApplicationForm";
 export const metadata: Metadata = {
   title: "Apply · AESDR Partners",
   description:
-    "Five fields. The first call is operator-to-operator, 30 minutes, no slide deck. AESDR replies within 5 business days, either direction.",
+    "Five fields. We review applications weekly and reply with a yes-or-no within 5 business days.",
 };
 
 export default function ApplyPage() {
@@ -49,7 +49,7 @@ export default function ApplyPage() {
             marginRight: "auto",
           }}
         >
-          Five fields. The first call is operator-to-operator, 30 minutes, no slide deck.
+          Five fields. If your audience matches, we send a 30-minute Calendly link. If it doesn&rsquo;t, we say so directly.
         </p>
       </div>
 
@@ -91,7 +91,7 @@ export default function ApplyPage() {
               lineHeight: 1.7,
             }}
           >
-            AESDR reviews applications weekly. If your audience matches, we send a 30-min Calendly link. If it doesn&rsquo;t, we tell you so directly within 5 business days. Either answer is fast.
+            We review applications weekly and reply with a yes-or-no within 5 business days. Either answer is fast.
           </p>
         </div>
       </section>

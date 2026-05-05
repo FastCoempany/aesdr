@@ -19,21 +19,21 @@ import { MonoEyebrow, HubCTA, CaveatLayer } from "@/components/partners/HubEleme
 export const metadata: Metadata = {
   title: "Who We Don't Work With · AESDR Partners",
   description:
-    "Plain disqualification. We name who we decline, why, and on what signal. Per canon §13.",
+    "Plain disqualification. We name who we decline, why, and on what signal.",
 };
 
 const RED_FLAGS = [
   {
     headline: "Primary distribution is rise-and-grind energy.",
-    body: "If the bulk of your published content is hustle culture, motivational LinkedIn carousels, or 'crush it' / 'unleash your potential' register, AESDR is not a fit. The brand explicitly counter-positions against that voice (canon §5). One pilot's worth of audience-mismatch costs both sides more than declining the conversation early.",
+    body: "If the bulk of your published content is hustle culture, motivational LinkedIn carousels, or 'crush it' / 'unleash your potential' register, AESDR is not a fit. The brand actively counter-positions against that voice. One pilot's worth of audience-mismatch costs both sides more than declining the conversation early.",
   },
   {
     headline: "Banned-vocab violations in your existing content.",
-    body: "Canon §4.1 names words AESDR will not associate with — \"crush,\" \"game-changer,\" \"unlock,\" \"mindset,\" \"thought leader,\" \"lead with value,\" \"synergy,\" \"empower,\" \"rockstar,\" \"ninja,\" \"rise and grind,\" generic hype emojis. Sample 10 of your last posts; if 3+ feature these terms, the audience-fit signal is too weak.",
+    body: "AESDR will not associate with these words — \"crush,\" \"game-changer,\" \"unlock,\" \"mindset,\" \"thought leader,\" \"lead with value,\" \"synergy,\" \"empower,\" \"rockstar,\" \"ninja,\" \"rise and grind,\" generic hype emojis. Sample 10 of your last posts; if 3+ feature these terms, the audience-fit signal is too weak.",
   },
   {
     headline: "Disclosure resistance.",
-    body: "AESDR requires verbatim FTC material-connection disclosure on every partner-published surface. If you decline to use the disclosure language, AESDR ends the pilot per D22 §11.1. Saying so up front saves the conversation.",
+    body: "AESDR requires verbatim FTC material-connection disclosure on every partner-published surface. If you decline to use the disclosure language, the pilot ends — that's a contract term, not a negotiation. Saying so up front saves the conversation.",
   },
   {
     headline: "Category-exclusivity ask.",
@@ -41,15 +41,15 @@ const RED_FLAGS = [
   },
   {
     headline: "Discount-stacking authority ask.",
-    body: "AESDR does not run promotional discounts (canon §13 + Phase 0 #5). Asking for a partner-issued promo code, an audience-specific discount, or pricing-variance authority is a doctrine breach we won't accommodate.",
+    body: "AESDR does not run promotional discounts. Ever. Asking for a partner-issued promo code, an audience-specific discount, or pricing-variance authority is something we won't accommodate.",
   },
   {
     headline: "Audience-bot signal.",
-    body: "If a sample of 10 recent replies to your audience-published content surfaces 3+ obvious engagement-bot accounts, the audience-quality signal won't hold up under workshop conditions. Canon §1.4 — borrowed trust is a merciless mirror.",
+    body: "If a sample of 10 recent replies to your audience-published content surfaces 3+ obvious engagement-bot accounts, the audience-quality signal won't hold up under workshop conditions. Borrowed trust is a merciless mirror — your audience will surface our weaknesses in 60 minutes, and ours will surface yours.",
   },
   {
     headline: "Pre-role audience.",
-    body: "If your audience is people trying to break into sales, AESDR is not a fit — the curriculum assumes the seat is already theirs. We'd rather decline than enroll buyers we've already disqualified at /partners/curriculum.",
+    body: "If your audience is people trying to break into sales, AESDR is not a fit — the curriculum assumes the seat is already theirs. We'd rather decline than enroll buyers the program isn't built for.",
   },
   {
     headline: "Past compliance issue.",
@@ -57,7 +57,7 @@ const RED_FLAGS = [
   },
   {
     headline: "Founder-on-demand expectations.",
-    body: "AESDR is founder-backstage, host-fronted (canon §12). If your conversion model assumes a recurring founder-appearance — podcast guests, panel keynotes, joint webinar circuit — the canon doctrine and your model are incompatible. Rare exceptions exist (canon §12.4); they're not the default.",
+    body: "AESDR is founder-backstage, host-fronted. If your conversion model assumes a recurring founder appearance — podcast guests, panel keynotes, joint webinar circuit — your model and ours are incompatible. Rare exceptions exist for named-milestone events; they're not the default.",
   },
   {
     headline: "List co-promotion ask.",
@@ -97,7 +97,7 @@ export default function WhoWeDontWorkWithPage() {
             marginRight: "auto",
           }}
         >
-          Most affiliate hubs hide this. AESDR doesn&rsquo;t. Per canon §13: name what&rsquo;s true; let the right partners self-select.
+          Most affiliate hubs hide this. AESDR doesn&rsquo;t. Naming what&rsquo;s true is how the right partners self-select.
         </p>
       </div>
 

@@ -21,23 +21,23 @@ const SECTIONS = [
   {
     title: "What we ask of you.",
     bullets: [
-      "Pass partner vetting (D27 scorecard) and sign the pilot agreement (D22) before any audience-facing work.",
-      "Two named promotion sends to your audience, on agreed dates, with copy lifted from /partners/kit (or submitted for approval).",
-      "Two-minute live-workshop intro per the supplied script. No pitching the offer; no discussing pricing on the live.",
-      "FTC disclosure verbatim per /partners/disclosure (Phase 2). Non-negotiable.",
-      "Pre-approval on every ad-hoc paid placement and ephemeral content. Per AESDR_BRAND_CANON §16.",
-      "Cooperate with weekly reporting cadence (D25). You receive a Friday report; you share promotion-side metrics within 24 hours of each send.",
+      "Pass our partner vetting and sign the partnership agreement before any audience-facing work.",
+      "Two named promotion sends to your audience, on agreed dates, using copy from the partner kit (or submitted for approval).",
+      "Two-minute live-workshop intro using the supplied script. No pitching the offer; no discussing pricing on the live.",
+      "Use the FTC disclosure language verbatim. Non-negotiable.",
+      "Submit any ad-hoc paid placement or ephemeral content for pre-approval.",
+      "Cooperate with the weekly reporting cadence. You receive a Friday report; you share promotion-side metrics within 24 hours of each send.",
     ],
   },
   {
     title: "What we do for you.",
     bullets: [
-      "Build a partner-specific registration page at aesdr.com/[partner_slug]/workshop with attribution baked in.",
-      "Deliver one live workshop hosted by AESDR, plus a 72-hour replay window (D24).",
-      "Run the entire follow-up sequence — confirmation, reminders, optional SMS, same-day attendee, no-show replay, free-vs-structured objection, deadline-window, checkout-abandon — plus high-intent DM from Admissions where signals warrant.",
-      "Pay commission of 30% on net revenue per D22 §5.1, on a net-45 schedule from close of the Attribution window.",
-      "Send the weekly pilot report every Friday during the Pilot Window.",
-      "Deliver the partner kit folder within 3 business days of D22 signing.",
+      "Build a partner-specific registration page with attribution baked in.",
+      "Deliver one live workshop hosted by AESDR, plus a 72-hour replay window.",
+      "Run the entire follow-up sequence — confirmation, reminders, optional SMS, same-day attendee, no-show replay, free-vs-structured objection, deadline-window, checkout-abandon — plus high-intent DM from Admissions where the signals warrant.",
+      "Pay commission of 30% on net revenue, on a net-45 schedule from close of the attribution window.",
+      "Send the weekly pilot report every Friday during the pilot window.",
+      "Deliver the partner kit folder within 3 business days of signing.",
     ],
   },
   {
@@ -45,8 +45,8 @@ const SECTIONS = [
     bullets: [
       "Discount codes for your audience. Never. Ever. AESDR does not run promotional pricing — buyers pay list price every time.",
       "Category exclusivity, first-right-of-refusal, or long-term lockouts.",
-      "Access to the AESDR email list, or any AESDR list co-promotion.",
-      "Founder appearance on demand. Founder is partner-visible per canon §12.1, but appears on audience-facing surfaces only at named-milestone events per §12.4.",
+      "Access to the AESDR email list, or any list co-promotion.",
+      "Founder appearance on demand. The founder is visible to you in the partner conversation but does not appear on audience-facing surfaces except for named-milestone events.",
       "List-share co-promotion in either direction.",
     ],
   },
@@ -189,7 +189,7 @@ export default function ProgramPage() {
               color: "rgba(255,255,255,0.85)",
             }}
           >
-            After enrollment, AESDR offers a $40 unlock for the second of two end-of-course artifacts (Programme / Manuscript). Within the partner&rsquo;s 30-day attribution window, the $40 unlock is partner-attributable. (Pending counsel ratification of the attribution rule before this clause publishes externally.)
+            At the end of the program, students unlock a second on-brand artifact for $40 from their dashboard. Within your 30-day attribution window, that $40 unlock counts toward your commission too.
           </p>
         </article>
       </section>
@@ -197,7 +197,7 @@ export default function ProgramPage() {
       <div style={{ padding: "96px 24px 0" }}>
         <HubCTA
           href="/partners/apply"
-          trail="request triggers a counsel-reviewed D22 PDF, sent within 5 business days."
+          trail="we send the partnership agreement within 5 business days."
         >
           Request the partnership agreement →
         </HubCTA>

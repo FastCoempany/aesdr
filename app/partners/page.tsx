@@ -52,17 +52,17 @@ export default function PartnersHomePage() {
       <MonoEyebrow>AESDR · PARTNERS · EST. 2026</MonoEyebrow>
 
       <EditorialSplitHero
-        leftEyebrow="WARNING · NOT AN AFFILIATE EMPIRE"
+        leftEyebrow="WARNING · NOT A MARKETPLACE"
         leftHeadline={
           <>
-            <em>Less affiliate empire.</em>
+            <em>Three to five partners.</em>
             <br />
-            <em>More founding vineyard.</em>
+            <em>That&rsquo;s the whole program.</em>
           </>
         }
         leftBody={
           <>
-            AESDR partners with a small number of operators whose audiences match the early-career SaaS-sales role we serve. Three to five at any given time. By design.
+            AESDR works with a handful of operators whose audiences are early-career SaaS reps. We don&rsquo;t recruit at scale. The list stays small, on purpose.
           </>
         }
         rightLabel="WHAT THIS PAGE DOES"
@@ -89,7 +89,6 @@ export default function PartnersHomePage() {
                 Every pilot leads with one live 60-minute workshop into the partner&rsquo;s audience, run by AESDR. The workshop earns the sale. The link merely attributes it.
               </>
             ),
-            trail: "lift: AFFILIATE_BRAND_CANON.md §1.1",
           },
           {
             title: "Real Operator. Never guru.",
@@ -98,7 +97,6 @@ export default function PartnersHomePage() {
                 We are the operating manual, not the motivation engine. If a piece of copy could be lifted onto a LinkedIn carousel without anyone noticing, it is wrong.
               </>
             ),
-            trail: "lift: §1.5",
           },
           {
             title: "Honesty is the differentiator.",
@@ -107,7 +105,6 @@ export default function PartnersHomePage() {
                 We say out loud what competitors won&rsquo;t: who should not buy, where the math breaks, what happens when the script runs out. Honesty is not a tone. It is a competitive position.
               </>
             ),
-            trail: "lift: §1.6",
           },
         ]}
       />
@@ -123,7 +120,7 @@ export default function PartnersHomePage() {
           "You expect category exclusivity, first-right-of-refusal, or long-term lockout from competing programs.",
           "You decline to use the FTC-required disclosure language verbatim.",
           "Your primary channel is paid LinkedIn placement.",
-          "You expect discount-stacking authority, partner-issued promo codes, or pricing variance for your audience. AESDR does not run discounts. Ever.",
+          "You expect promo codes, discount-stacking authority, or pricing variance for your audience. AESDR does not run discounts. Ever.",
         ]}
         closingLine="None of these are insults. They're filters. We'd rather decline now than end a pilot in week 4."
       />

@@ -57,11 +57,12 @@ export async function proxy(request: NextRequest) {
     return supabaseResponse;
   }
 
-  // Let API routes, dashboard, course, tools, account, auth pages, and the
-  // partner hub through. Partner hub is partner-facing public surface — should
-  // be reachable without auth, just like /syllabus or /about (canon §1.4
-  // borrowed-trust-as-merciless-mirror — the hub IS the merciless mirror).
-  if (pathname.startsWith("/api/") || pathname.startsWith("/dashboard") || pathname.startsWith("/course") || pathname.startsWith("/tools/") || pathname.startsWith("/account") || pathname.startsWith("/auth/") || pathname.startsWith("/partners") || pathname === "/welcome") {
+  // Let API routes, dashboard, course, tools, account, auth pages, the
+  // partner hub, and artifact previews through. Partner hub is partner-facing
+  // public surface (no auth required, like /syllabus). Artifact pages handle
+  // their own auth gates internally and accept ?preview=1 for partner-side
+  // previews of the end-of-course Programme/Manuscript artifacts.
+  if (pathname.startsWith("/api/") || pathname.startsWith("/dashboard") || pathname.startsWith("/course") || pathname.startsWith("/tools/") || pathname.startsWith("/account") || pathname.startsWith("/auth/") || pathname.startsWith("/partners") || pathname.startsWith("/artifacts/") || pathname === "/welcome") {
     return supabaseResponse;
   }
 

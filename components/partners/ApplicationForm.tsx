@@ -13,14 +13,13 @@
 
 import { useState } from "react";
 
-type Channel = "newsletter" | "podcast" | "community" | "course" | "other";
+type Channel = "newsletter" | "podcast" | "community" | "course";
 
 const CHANNELS: { value: Channel; label: string }[] = [
-  { value: "newsletter", label: "Newsletter" },
-  { value: "podcast", label: "Podcast" },
-  { value: "community", label: "Community" },
-  { value: "course", label: "Course" },
-  { value: "other", label: "Other" },
+  { value: "newsletter", label: "Newsletter — over 1,000 subscribers" },
+  { value: "podcast", label: "Podcast — over 500 monthly listeners (past 6 months)" },
+  { value: "community", label: "Community — over 5,000 unique non-bot members" },
+  { value: "course", label: "Course — this content fills a major gap in my programming" },
 ];
 
 export function ApplicationForm() {
@@ -101,11 +100,12 @@ export function ApplicationForm() {
             label="Approximate size"
             name="audienceSize"
             required
-            placeholder='e.g. "~3,000 newsletter subscribers"'
+            placeholder='e.g. "3,400 newsletter subscribers" or "8,200 community members"'
           />
           <Field
-            label="Link to your work (optional)"
+            label="Link to your work"
             name="linkUrl"
+            required
             placeholder="https://"
             type="url"
           />
@@ -161,7 +161,7 @@ export function ApplicationForm() {
               marginTop: 16,
             }}
           >
-            Five fields. No marketing email sequence. AESDR reviews applications weekly. Reply within 5 business days, either direction.
+            We review applications weekly. You&rsquo;ll get a yes-or-no within 5 business days. No follow-up email sequence either way.
           </p>
         </form>
       </div>
@@ -252,7 +252,7 @@ function FieldRadio({
         {label}
         {required ? <span aria-hidden="true"> *</span> : null}
       </div>
-      <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {options.map((o) => (
           <label
             key={o.value}
@@ -261,9 +261,13 @@ function FieldRadio({
               fontSize: 15,
               color: "var(--ink)",
               display: "flex",
-              alignItems: "center",
-              gap: 6,
+              alignItems: "flex-start",
+              gap: 10,
               cursor: "pointer",
+              padding: "10px 12px",
+              border: "1px solid var(--light)",
+              background: "var(--cream)",
+              lineHeight: 1.45,
             }}
           >
             <input
@@ -271,9 +275,9 @@ function FieldRadio({
               name={name}
               value={o.value}
               required={required}
-              style={{ accentColor: "var(--ink)" }}
+              style={{ accentColor: "var(--ink)", marginTop: 4, flexShrink: 0 }}
             />
-            {o.label}
+            <span>{o.label}</span>
           </label>
         ))}
       </div>

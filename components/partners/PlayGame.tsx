@@ -514,7 +514,7 @@ export function PlayGame() {
           lineHeight: 1.6,
         }}
       >
-        Statements drawn from <code style={{ fontFamily: "var(--mono)", fontSize: 12 }}>AFFILIATE_BRAND_CANON.md</code> §3.1, §3.2, §4.1, §5.3 — every line is either a real AESDR canonical observation or a real banned-vocabulary cliche. The game teaches the canon by playing it.
+        Every statement here is either something AESDR actually says or something AESDR refuses to say. If you&rsquo;ve been around early-career SaaS sales for any length of time, you already know the difference. The game is just confirmation.
       </p>
     </section>
   );
