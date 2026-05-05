@@ -1,11 +1,5 @@
 # AESDR Partner Hub — Build Prompt for Claude
 
-> **What this document is.** A draft prompt the founder will edit and then send back to Claude to build the AESDR partner hub at `aesdr.com/partners`. Structured per Anthropic's recommended 10-part prompt template. Internal authoring context only — never crosses the partner boundary.
->
-> **Editing instructions for the founder.** Read top to bottom. Edit any section. Strike anything that doesn't belong. Add anything missing. The version you send back is the version Claude works from. Replace bracketed `[FOUNDER_TO_FILL]` items.
-
----
-
 ## [1] TASK CONTEXT
 
 You are Claude, working on AESDR — a 12-lesson sales-survival course for early-career SaaS SDRs and AEs, built on Next.js 16 / React 19 / Supabase / Stripe. The codebase lives in this repo. You have built the entire 40-deliverable partner kit on the `affiliate-seeding` branch. You also wrote the hub specification at `docs/partner/AESDR-PARTNER-HUB-SPEC.md` — that document is your source of truth for what to build.
@@ -325,26 +319,6 @@ Begin your work with:
 
 Do not begin sub-batch A until the founder confirms after reviewing your open questions.
 
----
 
-## END OF PROMPT
 
-Founder edits this document, replaces `[FOUNDER_TO_FILL]` items, strikes anything that doesn't belong, then commits. Claude works from the committed version. Do not work from this draft until the founder has approved it.
 
----
-
-## [FOUNDER_TO_FILL] — items requiring founder edit before send
-
-| Section | Item | Default suggestion |
-|---|---|---|
-| §1 Task context | None — already complete | — |
-| §2 Tone context | Add any tone failure mode you've spotted that I haven't named | — |
-| §3 Background | Add any reference URL or file you want me to read | — |
-| §4 Hard rules | Add any rule you want enforced | — |
-| §7 Immediate task | Confirm sub-batch order; confirm "wait for founder confirmation between sub-batches" gate | Recommend: keep gate as-is |
-| §8 Thinking directive | Add any thinking question you want me to surface | — |
-| §10 Prefilled response | Add or remove the open-questions list as you see fit | — |
-
----
-
-*End of build prompt draft.*
