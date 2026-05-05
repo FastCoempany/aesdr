@@ -37,18 +37,18 @@ You are working inside AESDR's brand, governed by `AFFILIATE_BRAND_CANON.md` v1.
 - **§6.9.1 five-question check** — every page passes thumbnail test, token test, iris-reservation test, icon-discipline test, voice-thumbnail test before commit.
 - **§12 founder-backstage doctrine** — founder is invisible to audience. The hub does not include founder bio, founder photo, founder-named author byline, or "from the founder" framing. Founder visibility on a partner-facing surface requires canon §12.4 ratification (named milestone, rare and deliberate); the hub does not qualify.
 - **§13 honesty discipline** — say out loud what competitors won't. The hub includes honest-disqualification surfaces (who shouldn't apply, who shouldn't enroll). The hub names absences (no discounts, no email-list access, no founder-on-demand). Sanitization is forbidden.
-- **§14 tagline pack** — usable verbatim: *"Less affiliate empire. More founding vineyard."* / *"Operator over guru."* / *"12 lessons. 5 tools. 1 you."* / etc. Do not paraphrase canonical taglines.
+- **§14 tagline pack** — usable verbatim: *"You can already feel it. You have to be a part of this."* / *"Real Operator. Never guru."* / *"12 lessons. 5 tools. 1 new you."* / etc. Do not paraphrase canonical taglines.
 
 Operate severe, calm, ranked, authored. No marketing voice. No friendliness-first. Operator-to-operator register throughout.
 
 **Tone failure modes to actively avoid (you've made these mistakes before in this codebase):**
 
-- Inventing curriculum content instead of reading the production syllabus.
+- Inventing curriculum content instead of reading the production syllabus and actual course/lesson/sections content (available via main branch).
 - Inventing frameworks (e.g., "Activity vs Judgment 4-quadrant," "Pipeline Integrity funnel") instead of reading what AESDR actually teaches.
 - Using sage / corporate / sanitized language ("empower learners," "unlock potential," "drive outcomes").
 - Inventing pilot stats ("11-14 weeks completion," "1-in-2.5 L&D ratio").
 - Treating markdown as a partner-facing shipping format. Markdown is internal authoring; PDFs and rendered web pages are partner-facing.
-- Adding "clusters," "tiers," "tracks" to the curriculum — production has 12 lessons, no groupings.
+- Adding "clusters," "tiers," "tracks" to the curriculum — production has 12 courses, each with 3 lessons, with each of the 3 lessons containing around 4 sections each.
 
 ---
 
@@ -74,14 +74,13 @@ Operate severe, calm, ranked, authored. No marketing voice. No friendliness-firs
 
 **Reference URLs (external, for context only):**
 
-- `https://courses.affordanything.com/yfrp-affiliate-partner-resources/` — Afford Anything's affiliate partner resources page; the closest existing precedent for the kind of hub AESDR is building, but in a different brand register. **Do not copy structure; reference for understanding the genre, then ignore. AESDR's hub is its own thing.**
-- Profit Pillars Affiliate Partner Resources — same.
+- 'https://www.shopify.com/affiliates?term=affiliate%20programme&adid=565745246064&campaignid=15436644217&utm_medium=cpc&utm_source=google&matchtype=e&network=g&gad_source=1&gad_campaignid=15436644217&gbraid=0AAAAADp4t0qGiaTcOxYPJcWd5hvm4aGU9&gclid=Cj0KCQjwh-HPBhCIARIsAC0p3cdh2sgCi_NocdGQDlygdGL006h1ittBsWLdPVmrQF7wl0rQynuYJIIaAtgGEALw_wcB` — Shopify's affiliate partner resources page; the closest existing precedent for the kind of hub AESDR is building, but in a different brand register. **Do not copy structure; reference for understanding the genre, then ignore. AESDR's hub is its own thing.**
 
 ---
 
 ## [4] DETAILED TASK DESCRIPTION & RULES
 
-**Build Phase 1 of the AESDR Partner Hub per the spec at `docs/partner/AESDR-PARTNER-HUB-SPEC.md`.** Six pages, one application form, one PDF rendering pipeline, one new Supabase table.
+**Build Phase 1 of the AESDR Partner Hub per the spec at `docs/partner/AESDR-PARTNER-HUB-SPEC.md`.** 7-10 pages, one application form, one PDF rendering pipeline, one new Supabase table.
 
 ### Pages to build (Phase 1)
 
@@ -91,6 +90,8 @@ Operate severe, calm, ranked, authored. No marketing voice. No friendliness-firs
 4. `app/partners/kit/page.tsx` — `/partners/kit`. Per spec §"Page 1.4."
 5. `app/partners/faq/page.tsx` — `/partners/faq`. Per spec §"Page 1.5."
 6. `app/partners/apply/page.tsx` — `/partners/apply`. Per spec §"Page 1.6."
+7. a fun game. something interactive they can just start playing and scoring points (random)
+8..... what am i not thinking of?
 
 ### Components to build
 
@@ -105,7 +106,7 @@ Per spec §"Component library." Reusable React components in `components/partner
 
 ### PDF rendering pipeline
 
-Build a pipeline that converts the kit markdown files (D19, D20, D21, D28, D31, L&D brief, kit-template/00, kit-template/10d, kit-template/13) into branded PDFs at canon §8.5 anatomy. Recommend: Puppeteer + custom HTML/CSS template that uses AESDR tokens. PDFs land at `public/partner-kit/[filename].pdf` and are linked from `/partners/kit`.
+Build a pipeline that converts the kit markdown files (D19, D20, D21, D28, D31, L&D brief, kit-template/00, kit-template/10d, kit-template/13) into branded PDFs at canon §8.5 anatomy. Recommend: Puppeteer + custom HTML/CSS template that uses AESDR tokens. PDFs land at `public/partner-kit/[filename].pdf` and are linked from `/partners/kit`. Only as needed for documents that are currently in markdown format that will actually be partner-facing.
 
 ### Hard rules
 
@@ -139,7 +140,7 @@ Example:
  * Canon: §1 (foundational doctrines), §6.3 (white-panel-on-cream pattern)
  * Copy sources:
  *   - Pillar 1: AFFILIATE_BRAND_CANON.md §1.1 (workshop-first)
- *   - Pillar 2: AFFILIATE_BRAND_CANON.md §1.5 (operator over guru)
+ *   - Pillar 2: AFFILIATE_BRAND_CANON.md §1.5 (real operators. never guru)
  *   - Pillar 3: AFFILIATE_BRAND_CANON.md §1.6 (honesty discipline)
  * Five-question check: PASS (run during component author)
  */
@@ -182,6 +183,7 @@ The relevant prior context from this codebase (you can verify in `git log` and `
 - **Batch 7.6**: curriculum-map rewrite to match production reality. Anchored to `app/syllabus/page.tsx`. Killed invented "Foundations / Range / Identity" cluster taxonomy.
 - **Build fix** (commit `59a9ea6`): excluded `.figma.ts` and `design-canon/` from tsconfig — Vercel builds were failing on pre-existing branch state.
 - **Phase 0 ratification** (this conversation): six hub-build inputs locked.
+- Other chat history using aesdr git repo
 
 You wrote the hub spec at `docs/partner/AESDR-PARTNER-HUB-SPEC.md` in this conversation. Re-read it before starting; do not rewrite it.
 
@@ -197,7 +199,7 @@ Do not repeat those mistakes.
 
 ## [7] IMMEDIATE TASK
 
-**Build Phase 1 of the AESDR Partner Hub** per the spec.
+**Build all phases of the AESDR Partner Hub** per the spec.
 
 Deliverables expected from you:
 
