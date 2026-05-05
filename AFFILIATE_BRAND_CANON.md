@@ -715,12 +715,14 @@ We say out loud what competitors won't.
 
 Repeatable across collateral, host scripts, social, decks. Use, don't paraphrase, unless the canon is updated first.
 
+- *"You can already feel it. You have to be a part of this."* (added v1.2 — partner-hub pull)
+- *"Real Operator. Never guru."* (added v1.2 — partner-hub pull; replaces the doctrine-form *"operator over guru"* as the tagline-form)
+- *"12 lessons. 5 tools. 1 new you."* (revised v1.2 — supersedes earlier *"12 lessons. 5 tools. 1 you."*)
 - *"The operating manual, not the motivation engine."*
 - *"Less affiliate empire. More founding vineyard."*
 - *"If you want generic sales hype, the internet has a surplus."*
 - *"We do not teach you to sell. We teach you to be the person who sells."*
 - *"Borrowed trust is a merciless mirror."*
-- *"12 lessons. 5 tools. 1 you."*
 - *"Not video lectures. Not motivation. Operating judgment."*
 - *"No motivational BS. No 'crush your quota' energy."* (from existing canon)
 - *"This isn't corporate-y but it will advance your career."* (from `variant-a-editorial-split.html`)
@@ -778,6 +780,7 @@ This document is the source of truth for the affiliate / partner ecosystem until
 |---|---|---|---|
 | 1.0 | 2026-04-29 | Founder | Initial canon. Drawn from `affiliate-seeding-deep-research-report.md`, `AGENTS.md`, `app/globals.css`, `components/LandingSequence.module.css`, `variants/variant-a-editorial-split.html`, and the Two-Voices mockup. |
 | 1.1 | 2026-04-29 | Founder | Iconography & symbols are in play but must be custom and on-brand. Added §6.8 (custom iconography & symbol system — seed inventory, two registers, stroke/fill/color/size discipline, banned list, new-icon workflow). Added §6.9 (visual QA discipline — five-question check, required visual-treatment blocks, approval gates). Updated §6.5 third bullet to reflect. |
+| 1.2 | 2026-05-04 | Founder | Tagline-pack §14 updated: added *"You can already feel it. You have to be a part of this."* and *"Real Operator. Never guru."* (the tagline-form of §1.5 doctrine). Replaced *"12 lessons. 5 tools. 1 you."* with *"12 lessons. 5 tools. 1 new you."* — added "new" beat per partner-hub pull. Triggered by AESDR Partner Hub Phase 0 ratification 2026-05-02. Downstream: kit deliverables that referenced the prior tagline get a follow-on cleanup batch (parallel to discount-doctrine and curriculum-terminology cleanups). |
 
 **How to update:** open a PR titled `canon: <topic>` against `main`. Update the version row. Update any deliverables that contradict the new canon. Do not update canon to fit a deliverable; update the deliverable to fit canon, or argue for a canon change first.
 
