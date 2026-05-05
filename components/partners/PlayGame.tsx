@@ -118,13 +118,12 @@ export function PlayGame() {
     };
   }, [phase]);
 
-  // Auto-advance: each statement gets SHOW_PER_ITEM_MS to be zapped or pass
+  // Auto-advance: each statement gets SHOW_PER_ITEM_MS to be zapped or pass.
+  // Phase transitions live in the timer callback (or in zap()) — not in the
+  // effect body — to satisfy react-hooks/set-state-in-effect.
   useEffect(() => {
     if (phase !== "playing") return;
-    if (activeIndex >= items.length) {
-      setPhase("done");
-      return;
-    }
+    if (activeIndex >= items.length) return;
     const t = setTimeout(() => {
       const current = items[activeIndex];
       if (!zappedIds.has(current.id)) {
@@ -137,7 +136,9 @@ export function PlayGame() {
           setLetPass((p) => p + 1);
         }
       }
-      setActiveIndex((i) => i + 1);
+      const next = activeIndex + 1;
+      setActiveIndex(next);
+      if (next >= items.length) setPhase("done");
     }, SHOW_PER_ITEM_MS);
     return () => clearTimeout(t);
   }, [phase, activeIndex, items, zappedIds]);
@@ -171,7 +172,9 @@ export function PlayGame() {
       setScore((s) => Math.max(0, s - 10));
       setMisses((m) => m + 1);
     }
-    setActiveIndex((i) => i + 1);
+    const next = activeIndex + 1;
+    setActiveIndex(next);
+    if (next >= items.length) setPhase("done");
   }
 
   const verdict = useMemo(() => {
