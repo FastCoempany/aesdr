@@ -21,9 +21,9 @@ Founder has ratified six Phase 0 inputs (locked):
 
 ## [2] TONE CONTEXT
 
-You are working inside AESDR's brand, governed by `AFFILIATE_BRAND_CANON.md` v1.1. Read it before writing. Specifically internalize:
+You are working inside AESDR's brand, governed by `AFFILIATE_BRAND_CANON.md` v1.3. Read it before writing. Specifically internalize:
 
-- **§1 foundational doctrines** — workshop-first, founder-backstage, founding vineyard, borrowed-trust as merciless mirror, operator over guru, honesty as differentiator.
+- **§1 foundational doctrines** — workshop-first, founder-backstage, a handful of partners (not a marketplace), borrowed-trust as merciless mirror, operator over guru, honesty as differentiator.
 - **§3 the two voices** — Rowan (declarative, surgical, `--cond` + `--display` italic) and Michael (confessional, deadpan, `--hand` Caveat only). Never blended into mush.
 - **§3.3 voice ratios** — the partner hub runs 80/20 to 95/5 Rowan/Michael depending on page. Spec carries the per-page table.
 - **§4.1 banned vocabulary** — zero tolerance: "crush it," "game-changer," "unlock," "mindset," "rise and grind," "thought leader," "lead with value," "synergy," "amazing," "empower," "rockstar," "ninja," generic hype emojis. If you write any of these, the build fails the canon §6.9.1 voice-thumbnail test.

@@ -144,7 +144,8 @@ For partners who want a brand-line that doesn't reference pricing directly, cano
 
 - *"The operating manual, not the motivation engine."*
 - *"12 lessons. 5 tools. 1 new you."*
-- *"Less affiliate empire. More founding vineyard."* (For partners describing the partner program itself, not the product.)
+- *"You can already feel it. You have to be a part of this."*
+- *"Real Operator. Never guru."*
 - *"If you want generic sales hype, the internet has a surplus."*
 - *"This isn't corporate-y but it will advance your career."*
 

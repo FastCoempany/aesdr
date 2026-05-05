@@ -5,7 +5,7 @@
 **Voice ratio:** 100 Rowan / 0 Michael per canon §3.3 (legal / partner agreement row). Plain-English contract register. No marketing voice. Rowan-adjacent only in the preamble paragraph.
 **Format:** Markdown source. Renders to PDF for execution. Companion DOCX for redline rounds. Per canon §6.5 + §8.5.
 **Use timing:** Sent within 48 hours of a PASS decision on the partner vetting scorecard (D27). Signed before any co-branded asset is built (canon §16 approval gate). Pilot does not start until both parties have signed.
-**Canon refs:** `AFFILIATE_BRAND_CANON.md` §1.3 (founding vineyard), §1.4 (borrowed trust), §1.6 (honesty), §6.6 (co-branding zone), §8.7 (UTM canon), §8.8 (attribution windows), §10.1 (FTC), §10.4 (CAN-SPAM), §10.5 (TCPA / SMS), §16 (approval gates).
+**Canon refs:** `AFFILIATE_BRAND_CANON.md` §1.3 (a handful of partners, not a marketplace), §1.4 (borrowed trust), §1.6 (honesty), §6.6 (co-branding zone), §8.7 (UTM canon), §8.8 (attribution windows), §10.1 (FTC), §10.4 (CAN-SPAM), §10.5 (TCPA / SMS), §16 (approval gates).
 
 > **Placeholder convention:** This is a contract template — placeholders are filled per execution. `[PARTNER_LEGAL_NAME]`, `[PARTNER_SLUG]`, `[PARTNER_ADDRESS]`, `[PARTNER_CONTACT_EMAIL]`, `[FOUNDER_LEGAL_NAME]`, `[FOUNDER_FIRST_NAME]`, `[AESDR_LEGAL_ENTITY]`, `[AESDR_ADDRESS]`, `[PILOT_ID]`, `[WORKSHOP_DATE]`, `[REPLAY_END_DATE]`, `[PILOT_START_DATE]`, `[PILOT_END_DATE]`, `[ATTRIBUTION_END_DATE]`, `[GOVERNING_LAW_STATE]`. Swap globally before send. **Counsel review required before first execution.**
 
@@ -68,7 +68,7 @@ AESDR agrees to do the following during the Pilot Window:
 ## 5. Compensation
 
 - **5.1 Commission rate.** Partner earns a commission of **30% of net revenue** (gross revenue minus refunds, payment processing fees, and applicable sales tax) on all enrollments attributed to Partner during the Attribution window per §2.
-- **5.2 No fixed fee.** This is a commission-only pilot. There is no upfront fee, no "prep" fee, no fixed minimum. Partner's earnings scale with audience-converted revenue, per canon §1.3 founding-vineyard model.
+- **5.2 No fixed fee.** This is a commission-only pilot. There is no upfront fee, no "prep" fee, no fixed minimum. Partner's earnings scale with audience-converted revenue, per canon §1.3 (handful-of-partners model).
 - **5.3 Attribution.** Attribution rules per canon §8.8: 30-day cookie window from first qualifying click; commission paid on net revenue after refunds; if a partner-specific code (`[PILOT_CODE]`) is applied at checkout, Partner is the attributed source regardless of last-click.
 - **5.4 Payment terms.** AESDR pays Partner on a **net-45 schedule** following the close of the Attribution window. Payment via wire, ACH, or PayPal at Partner's election. Partner provides a W-9 (US) or W-8BEN (non-US) before first payment.
 - **5.5 Refund treatment.** Refunds processed within the AESDR refund window (14 days from purchase) reduce the commission base proportionally. If a refund is processed after Partner has been paid, the next subsequent payout is reduced by the corresponding commission amount.
@@ -239,7 +239,7 @@ Date: `[YYYY-MM-DD]`
 2. **Token check:** Pass.
 3. **Iris reservation:** Pass — zero iris.
 4. **Icon discipline:** Pass — type-only.
-5. **Voice thumbnail:** *"AESDR runs partner pilots the way the report describes: small, time-boxed, non-exclusive, intentionally non-romantic."* — passes; verdict-shaped Rowan-adjacent, identifiably AESDR. The "intentionally non-romantic" phrase is the canon §1.3 founding-vineyard register.
+5. **Voice thumbnail:** *"AESDR runs partner pilots the way the report describes: small, time-boxed, non-exclusive, intentionally non-romantic."* — passes; verdict-shaped Rowan-adjacent, identifiably AESDR. The "intentionally non-romantic" phrase is the canon §1.3 register (handful of partners, not a marketplace).
 
 ---
 

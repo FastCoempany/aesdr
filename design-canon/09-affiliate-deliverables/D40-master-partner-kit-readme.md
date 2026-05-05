@@ -14,7 +14,7 @@
 
 > *Hi [PARTNER_NAME] —*
 >
-> *This folder is the AESDR pilot kit for the partnership we signed on [PILOT_START_DATE]. It's intentionally small. Less affiliate empire, more founding vineyard — every file in here earns its place.*
+> *This folder is the AESDR pilot kit for the partnership we signed on [PILOT_START_DATE]. It's intentionally small. We work with a handful of partners, not a marketplace, and every file in here earns its place.*
 >
 > *Read this README first. It tells you what's in the folder, what's pre-cleared for you to use, and what needs an approval round. The 30-day pilot rests on getting those two right.*
 >
@@ -217,11 +217,11 @@ If the pilot succeeds and we extend, that's a written amendment to D22, signed b
 **Deliberate departures from canon:** The README's hostility to a designed PDF render *is* a canon decision — partners need to use this document as a workspace tool, not admire it. Per canon §6.9.1 thumbnail test, the README at thumbnail size is identifiable by section structure and Welcome paragraph register, not by visual fingerprint.
 
 **Five-question check (canon §6.9.1):**
-1. **Thumbnail at 200×200:** Even rendered as plain markdown, the *Welcome* paragraph and the *"Less affiliate empire, more founding vineyard"* line in the welcome are identifiable. Pass.
+1. **Thumbnail at 200×200:** Even rendered as plain markdown, the *Welcome* paragraph and the verdict-shaped *"intentionally small. We work with a handful of partners, not a marketplace"* line are identifiable. Pass.
 2. **Token check:** Pass where AESDR controls render. Acceptable elsewhere — markdown is portable.
 3. **Iris reservation:** Pass — zero.
 4. **Icon discipline:** Pass — type-only.
-5. **Voice thumbnail:** *"This folder is the AESDR pilot kit for the partnership we signed on [PILOT_START_DATE]. It's intentionally small. Less affiliate empire, more founding vineyard — every file in here earns its place."* — passes. Identifiably AESDR; *"intentionally small"* and the founding-vineyard quote are canonical voice moves (canon §1.3, §14).
+5. **Voice thumbnail:** *"This folder is the AESDR pilot kit for the partnership we signed on [PILOT_START_DATE]. It's intentionally small. We work with a handful of partners, not a marketplace, and every file in here earns its place."* — passes. Identifiably AESDR; verdict-shaped Rowan, plain language, no metaphor (per canon §1.3 v1.3).
 
 ---
 

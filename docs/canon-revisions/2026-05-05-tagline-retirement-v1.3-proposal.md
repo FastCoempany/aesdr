@@ -1,8 +1,25 @@
-`AESDR · CANON REVISION INTAKE · 2026-05-05 · TAGLINE-RETIREMENT-V1.3-PROPOSAL`
+`AESDR · CANON REVISION INTAKE · 2026-05-05 · TAGLINE-RETIREMENT-V1.3 · RATIFIED + EXECUTED`
 
-# Canon revision: §14 retire "Less affiliate empire. More founding vineyard."
+# Canon revision: §1.3 / §14 / §15 retire the vineyard / pruning / honest-yield cluster
 
-**Proposed:** 2026-05-05 · From v1.2 to v1.3 · Proposed by Claude (build-side); awaiting founder ratification.
+**Proposed:** 2026-05-05 · From v1.2 to v1.3 · **Ratified by Founder same day; scope expanded beyond Option B; executed in commit batch on `affiliate-seeding` and `main`.**
+
+---
+
+## Execution log (2026-05-05)
+
+**Founder direction (verbatim):**
+> *"i dont like the vineyard, pruning, honest yield language whatsoever. i dont talk like that. the course brand shouldnt talk like that. none of our language should have to be interpreted. it sounds sophisticated but its not necessary."*
+
+**Resolution:** Beyond Option B. The metaphor cluster ("founding vineyard," "small rows," "careful pruning," "honest yield," "affiliate empire" as the structural-mirror counterpoint) removed wholesale from canon. §1.3 retitled and rewritten in plain language. §14 tagline removed. §15 glossary entry removed. Downstream partner-facing surfaces and authoring infrastructure updated in same batch.
+
+**Standing principle (founder-stated 2026-05-05; not yet codified as canon §X but binding for authoring):** *AESDR language should not require interpretation.* Recorded here for follow-on canon-revision intake if founder wants it elevated to a §6.x style discipline. Other metaphors flagged for separate review when/if founder wants: §1.4 *"merciless mirror,"* §15 *"borrowed trust,"* §15 *"operating manual."* No action taken on those in this intake.
+
+**Final canon §1.3 (v1.3):**
+```
+### 1.3 A handful of partners, not a marketplace
+We recruit a handful of tightly aligned partners. We select carefully and decline often. Volume is not a virtue here; conversion quality is.
+```
 
 ---
 

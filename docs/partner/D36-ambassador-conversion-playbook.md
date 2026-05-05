@@ -1,11 +1,11 @@
 # D36 — Ambassador-Conversion Playbook
 
-**Deliverable:** Internal playbook for converting a successful pilot partner into an ongoing ambassador. The discipline that turns one-pilot relationships into multi-quarter ones — without inflating the partner program into the "affiliate empire" the canon explicitly counter-positions against.
+**Deliverable:** Internal playbook for converting a successful pilot partner into an ongoing ambassador. The discipline that turns one-pilot relationships into multi-quarter ones — without inflating the partner program into a high-volume marketplace, which canon §1.3 explicitly counter-positions against.
 **Audience:** AESDR-internal — founder, ops. Never shared with the partner. The conversion conversation itself is partner-facing and uses different language; this document is the AESDR-side strategy and decision rubric behind that conversation.
 **Voice ratio:** 90 Rowan / 10 Michael per canon §3.3 (internal docs row). Operating-doctrine register.
 **Format:** Markdown source. Reference document, not a fillable template (D32 / D33 / D27 are the per-pilot fillables; D36 is the doctrine that informs the conversion call).
 **Use timing:** Consulted within 7 days of D32 kill-or-keep memo landing on EXTEND. The ambassador conversation happens *after* the EXTEND-decision conversation (D34 EXTEND variant) — same partner, different relationship-shape, separate written agreement.
-**Canon refs:** `AFFILIATE_BRAND_CANON.md` §1.3 (founding vineyard — ambassadors are vineyard graduates), §1.4 (borrowed trust), §1.5 (operator over guru), §1.6 (honesty discipline), §6.6 (co-branding zone), §10 (compliance — disclosure carries forward), §12 (founder-backstage; §12.4 founder appearance is rare and earned), §13 (honesty discipline), §16 (approval gates).
+**Canon refs:** `AFFILIATE_BRAND_CANON.md` §1.3 (a handful of partners, not a marketplace — ambassadors are graduated pilot partners), §1.4 (borrowed trust), §1.5 (operator over guru), §1.6 (honesty discipline), §6.6 (co-branding zone), §10 (compliance — disclosure carries forward), §12 (founder-backstage; §12.4 founder appearance is rare and earned), §13 (honesty discipline), §16 (approval gates).
 
 > **Placeholder convention:** This is doctrine, not a fillable. Partner-conversation script in §6 uses `[PARTNER_FIRST_NAME]`, `[PARTNER_NAME]`, `[FOUNDER_FIRST_NAME]`, `[PILOT_ID]` placeholders.
 
@@ -27,7 +27,7 @@ Ambassadors are NOT:
 - **Free of approval gates.** Lower per-asset overhead, not zero. Per canon §16, paid placements + recorded assets always need pre-approval.
 - **Exclusive.** Per canon §10.4 D22 inheritance — non-exclusivity is permanent in both directions.
 
-The number of ambassadors at any time is small. Canon §1.3 founding-vineyard discipline: small rows, careful pruning, honest yield. **Target ambassador count at steady state: 3-5.** More than that, and we're running an affiliate empire — different model, different canon, different doctrine.
+The number of ambassadors at any time is small. Per canon §1.3: a handful of carefully selected partners, not a marketplace. **Target ambassador count at steady state: 3-5.** More than that, and we're running a high-volume affiliate program — different model, different canon, different doctrine.
 
 ---
 
@@ -212,7 +212,7 @@ This playbook is a forward dependency for:
 
 ## Open
 
-- **Whether to publish a "what an AESDR ambassador is" page** at `aesdr.com/ambassadors`. Default: **no for v1.** Publishing the structure invites would-be ambassadors to apply, which inverts the founding-vineyard doctrine (we cultivate; partners don't apply). Reconsider only if 5+ ambassadorships are running and there's specific signal that a transparent landing improves quality of outreach.
+- **Whether to publish a "what an AESDR ambassador is" page** at `aesdr.com/ambassadors`. Default: **no for v1.** Publishing the structure invites would-be ambassadors to apply, which inverts canon §1.3 (we select; partners don't apply for the ambassador role). Reconsider only if 5+ ambassadorships are running and there's specific signal that a transparent landing improves quality of outreach.
 - **Whether ambassadors get any AESDR equity / advisory share.** Default: **no.** Per canon §1.5, ambassadors are operators, not advisors. Equity-style relationships introduce a different governance footprint we're not ready to maintain.
 - **Whether ambassadors share an internal Slack / Discord with AESDR.** Default: **case-by-case.** Some ambassadors will benefit from direct channel; others won't. Default to email + occasional 1:1, not standing channel.
 - **Whether the small retainer ($500-$1,500 / quarter) is universal** or by-archetype. Default: **case-by-case** per the §"What ambassadors do" deliverables. Bootcamp coaches with deeper involvement may earn higher retainer; community operators with lighter involvement may not need one.

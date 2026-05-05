@@ -154,4 +154,4 @@ If the pilot is EXTEND, an amended D22 is drafted between T+10 and T+14 with new
 
 ---
 
-*Source: D22 partner pilot agreement timeline + canon §7.1 workshop format + canon §1.3 founding-vineyard pilot model + research report §Sample 30-day pilot timeline. Per pilot, AESDR ops adjusts dates to the actual workshop schedule.*
+*Source: D22 partner pilot agreement timeline + canon §7.1 workshop format + canon §1.3 (a handful of partners, not a marketplace) + research report §Sample 30-day pilot timeline. Per pilot, AESDR ops adjusts dates to the actual workshop schedule.*

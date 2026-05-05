@@ -67,11 +67,11 @@
 >
 > — [Founder first name], AESDR
 
-## 6. "We do affiliate empires here — big roster, big volume."
+## 6. "We run high-volume affiliate programs — big roster, big volume."
 
 > [Name] —
 >
-> Honest answer: AESDR's not built for that motion right now. We're running a small, founder-led pilot — handful of partners, workshop-first, real attribution, real conversation. Less affiliate empire, more founding vineyard.
+> Honest answer: AESDR's not built for that motion right now. We're running a small, founder-led pilot — a handful of partners, workshop-first, real attribution, real conversation. Not a marketplace.
 >
 > If your audience is a tight ICP fit and you're open to a one-off pilot inside an otherwise high-volume program, happy to scope it. If the volume model is the only model that makes sense for your operation, we're probably the wrong fit and I'd rather say so now than disappoint later.
 >
@@ -103,7 +103,7 @@
 
 ## Notes
 
-- #6 carries the canon tagline `Less affiliate empire, more founding vineyard.` — that's not decoration; it's a counter-positioning move that filters out the wrong kind of partner.
+- #6 leads with the verdict line *"a handful of partners, workshop-first... Not a marketplace."* — that's not decoration; it's the counter-positioning move that filters out the wrong kind of partner.
 - #8 carries `motivation in a trench coat` — Michael's voice doing one beat of work inside an otherwise Rowan reply.
 - #4 (data sharing) is partly compliance, partly trust signal. Operators with any regulatory awareness will respect the answer; ones without may push back. Hold the line.
 - Every reply offers an honest exit. None of them try to win.

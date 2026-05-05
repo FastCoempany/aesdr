@@ -4,7 +4,7 @@
 **Audience:** Internal — founder, ops. Not shared with the partner.
 **Voice ratio:** 90 Rowan / 10 Michael. Verdict mode.
 **Format:** Markdown source; renders to PDF one-pager per canon §6.5. Fillable in Notion/Sheets equivalent.
-**Canon refs:** `AFFILIATE_BRAND_CANON.md` §1.3 (founding vineyard), §1.6 (honesty), §13 (honesty discipline), §16 (approval gates).
+**Canon refs:** `AFFILIATE_BRAND_CANON.md` §1.3 (a handful of partners, not a marketplace), §1.6 (honesty), §13 (honesty discipline), §16 (approval gates).
 
 ---
 
@@ -73,7 +73,7 @@ Mark each that applies. Multiple applies → bias toward KILL.
 - [ ] Workshop ran clean but converted poorly (offer / pricing / framing problem, not partner problem).
 - [ ] Compliance issue surfaced (claim violation, disclosure miss, consent question).
 - [ ] Brand mismatch — partner promoted in a way that contradicted canon.
-- [ ] Partner asked for terms that contradict the founding-vineyard model.
+- [ ] Partner asked for terms that contradict the small-partner-program model (e.g., category exclusivity, marketplace volume, AESDR list access).
 - [ ] Founder hours far exceeded plan; effective hourly rate is below the line.
 
 ### 4. Decision

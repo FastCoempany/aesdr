@@ -19,7 +19,7 @@ The dashboard answers three questions:
 |---|---|---|---|
 | **Daily snapshot** | What happened yesterday? Anything broken? | Daily, automated by 9am ET | Founder + ops |
 | **Pilot-in-flight** | Where does each active pilot stand right now? | Real-time during workshop weeks; daily otherwise | Founder + ops |
-| **Quarterly cohort** | Which partner archetypes are converting; what's the founding-vineyard yield? | Weekly, manual review | Founder |
+| **Quarterly cohort** | Which partner archetypes are converting; which are worth a second pilot? | Weekly, manual review | Founder |
 
 A dashboard that surfaces all three on one page is the goal. A dashboard that surfaces one at a time forces context-switching that the canon §1.5 operating-manual register pushes back on.
 
@@ -59,7 +59,7 @@ Dense single page. `--cream` background. Section headers in `--cond` 12pt 700, .
 
 ## View 2 — Pilot-in-flight
 
-For each currently-running pilot. One panel per pilot. Multiple panels render side-by-side if multiple pilots run in parallel (rare per canon §1.3 founding-vineyard doctrine).
+For each currently-running pilot. One panel per pilot. Multiple panels render side-by-side if multiple pilots run in parallel (rare per canon §1.3 — a handful of partners, not a marketplace).
 
 ### Per-pilot panel structure
 
@@ -117,13 +117,13 @@ The strategic view. Reviewed weekly by the founder, monthly with ops, quarterly 
 
 | Chart | Aggregation | Use |
 |---|---|---|
-| Revenue by partner archetype over time | Quarterly buckets | Identifies which archetype (community / coach / creator / alumni / hybrid) the founding vineyard is yielding from |
-| Effective hourly rate by pilot | Per-pilot bar | Per canon §1.3 — founder time is the soil; this chart is the yield report |
+| Revenue by partner archetype over time | Quarterly buckets | Identifies which archetype (community / coach / creator / alumni / hybrid) is producing returns |
+| Effective hourly rate by pilot | Per-pilot bar | Per canon §1.3 — founder time is the bottleneck; this chart tells us where it pays off |
 | Conversion-rate distribution across pilots | Box-plot | Shows whether AESDR's pilots converge on a conversion rate (good — predictable) or stay scattered (bad — pilot-by-pilot luck) |
 | Refund rate over time | Time series | Per canon §1.6 — refund rate is a quality signal; trending up = quality drop |
 | ICP-fit assessment trend | Categorical (tight/acceptable/off — from D33 §6) | Are we getting better at vetting partners? |
 | Canon-revision queue depth | Count | How many pending revisions; trending up = canon under-resourcing |
-| Ambassador conversion rate | Of EXTEND pilots, what % converted to ambassadorship? | Per canon §1.3 — ambassador is the founding-vineyard graduate; this is the lifecycle metric |
+| Ambassador conversion rate | Of EXTEND pilots, what % converted to ambassadorship? | Per canon §1.3 — ambassador is the graduated-pilot relationship; this is the lifecycle metric |
 | Founder-time distribution | Per-week pie chart | Validation: founder time on partner conversations / workshops / Admissions / canon-revision / other |
 
 ### Honest-numbers discipline carries
@@ -180,7 +180,7 @@ Events without the schema get a "data-loss" flag in the dashboard. Per canon §1
 | Pilot-in-flight | Notion subpage per pilot, with embedded Looker Studio chart pulling from a single Google Sheet of Stripe + GA4 exports | ~3 ops hours per pilot |
 | Quarterly cohort | Notion / Google Sheets cohort sheet, manually updated end-of-month | ~3 hours / month founder-review time |
 
-The hand-stitched version is intentional — per canon §1.3, building a heavyweight dashboard before there are 3+ active pilots is over-engineering. v1 ships at the cost of operator time, which is the right scale for the founding-vineyard size.
+The hand-stitched version is intentional — per canon §1.3, building a heavyweight dashboard before there are 3+ active pilots is over-engineering. v1 ships at the cost of operator time, which is the right scale for a small partner program.
 
 ## v2 implementation (when justified)
 

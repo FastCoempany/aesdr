@@ -25,8 +25,8 @@ We do not hand a partner a tracked link and a coupon and call it an affiliate pr
 ### 1.2 Founder backstage, host-fronted
 The founder is invisible to the audience by default, occasionally visible by choice. The founder is fully visible to partners, operators, vendors, and legal. A contracted **host** delivers workshops on AESDR's behalf. The brand is character-led, not founder-led — Rowan and Michael are the canon faces, not any one human.
 
-### 1.3 Less affiliate empire, more founding vineyard
-Small rows. Careful pruning. Honest yield. We recruit a handful of tightly aligned partners, not a marketplace. Volume is not a virtue here; conversion quality is.
+### 1.3 A handful of partners, not a marketplace
+We recruit a handful of tightly aligned partners. We select carefully and decline often. Volume is not a virtue here; conversion quality is.
 
 ### 1.4 Borrowed trust is a merciless mirror
 Whatever weakness exists in our message, page, deck, or follow-up, a partner's audience will surface in 60 minutes. Therefore: do not borrow trust we have not earned the right to spend. Launch gates in the report are the floor, not the goal.
@@ -60,7 +60,7 @@ A borrowed audience has 60 minutes and zero trust. Position must land in 10 seco
 
 ## 3. The two voices
 
-AESDR is character-driven. Two voices, always present, never blended into mush. Both must show up across the affiliate ecosystem — the mockup `public/mockups/09-the-two-voices.html` and the production zoom cards in `variants/variant-a-editorial-split.html` are the canonical references.
+AESDR is character-driven. Two voices, always present, never blended into mush. Both must show up across the affiliate ecosystem — the canonical reference is the production zoom-card pattern in `variants/variant-a-editorial-split.html` (`.zRowan` and `.zMichael` classes — Rowan in `--cond` ink, Michael in `--hand` Caveat on `--cream` with `--crimson` color). An active-palette isolated rendering of the same motif is in `tools/design-seed/surface-two-voices.html`. **Do not** treat `public/mockups/09-the-two-voices.html` as a canonical reference — that mockup uses the retired dark palette (`#020617`, `#10B981` etc.) and would teach the wrong colors.
 
 ### 3.1 Rowan — the voice that closes
 - **Spirit:** Eli Pope. Surgical, declarative, high-status. Treats environment, behavior, math, and identity as infrastructure.
@@ -715,12 +715,13 @@ We say out loud what competitors won't.
 
 Repeatable across collateral, host scripts, social, decks. Use, don't paraphrase, unless the canon is updated first.
 
+- *"You can already feel it. You have to be a part of this."* (added v1.2 — partner-hub pull)
+- *"Real Operator. Never guru."* (added v1.2 — partner-hub pull; replaces the doctrine-form *"operator over guru"* as the tagline-form)
+- *"12 lessons. 5 tools. 1 new you."* (revised v1.2 — supersedes earlier *"12 lessons. 5 tools. 1 you."*)
 - *"The operating manual, not the motivation engine."*
-- *"Less affiliate empire. More founding vineyard."*
 - *"If you want generic sales hype, the internet has a surplus."*
 - *"We do not teach you to sell. We teach you to be the person who sells."*
 - *"Borrowed trust is a merciless mirror."*
-- *"12 lessons. 5 tools. 1 you."*
 - *"Not video lectures. Not motivation. Operating judgment."*
 - *"No motivational BS. No 'crush your quota' energy."* (from existing canon)
 - *"This isn't corporate-y but it will advance your career."* (from `variant-a-editorial-split.html`)
@@ -742,7 +743,6 @@ Headline-style canon (use as headlines, not as taglines):
 | **Founder backstage** | The doctrine that the founder is invisible to audience but visible to operators. |
 | **The two voices** | Rowan (the voice that closes) and Michael (the voice at 2am). The brand's character pair. |
 | **Iris** | The reserved gradient (`var(--iris)`) used sparingly as the brand's heartbeat. |
-| **Founding vineyard** | The mental model for the partner program — small rows, careful pruning, honest yield. |
 | **Merciless mirror** | What a partner audience is to weak collateral. The thing that exposes us in 60 minutes. |
 | **Borrowed trust** | A partner's audience-trust we are temporarily renting. Returnable, not transferable. |
 | **Operating manual** | What AESDR is. Not a coach, not a community, not a course-experience. |
@@ -778,6 +778,8 @@ This document is the source of truth for the affiliate / partner ecosystem until
 |---|---|---|---|
 | 1.0 | 2026-04-29 | Founder | Initial canon. Drawn from `affiliate-seeding-deep-research-report.md`, `AGENTS.md`, `app/globals.css`, `components/LandingSequence.module.css`, `variants/variant-a-editorial-split.html`, and the Two-Voices mockup. |
 | 1.1 | 2026-04-29 | Founder | Iconography & symbols are in play but must be custom and on-brand. Added §6.8 (custom iconography & symbol system — seed inventory, two registers, stroke/fill/color/size discipline, banned list, new-icon workflow). Added §6.9 (visual QA discipline — five-question check, required visual-treatment blocks, approval gates). Updated §6.5 third bullet to reflect. |
+| 1.2 | 2026-05-04 | Founder | Tagline-pack §14 updated: added *"You can already feel it. You have to be a part of this."* and *"Real Operator. Never guru."* (the tagline-form of §1.5 doctrine). Replaced *"12 lessons. 5 tools. 1 you."* with *"12 lessons. 5 tools. 1 new you."* — added "new" beat per partner-hub pull. Triggered by AESDR Partner Hub Phase 0 ratification 2026-05-02. Downstream: kit deliverables that referenced the prior tagline get a follow-on cleanup batch (parallel to discount-doctrine and curriculum-terminology cleanups). |
+| 1.3 | 2026-05-05 | Founder | Retired the vineyard / pruning / yield metaphor cluster. §1.3 retitled from *"Less affiliate empire, more founding vineyard"* to *"A handful of partners, not a marketplace"*; body rewritten in plain language (removed "small rows, careful pruning, honest yield"). §14 tagline *"Less affiliate empire. More founding vineyard."* removed. §15 glossary entry *"Founding vineyard"* removed. Triggered by founder review 2026-05-04: the metaphor reads as sophisticated for sophistication's sake; AESDR language should not require interpretation. Downstream: hub pages (`app/partners/page.tsx`, `app/partners/how-we-work/page.tsx`, `app/partners/faq/page.tsx`) and partner-facing deliverables (D05 §6, D28 approved-language list, D40 welcome paragraph, kit-template/00-canon-excerpt) all updated in same batch. Internal canon-ref preambles in D22/D27/D32/D36/D37 updated to drop "founding vineyard" parenthetical. Historical research report and seed canon snapshots left as-is (predate the canon). |
 
 **How to update:** open a PR titled `canon: <topic>` against `main`. Update the version row. Update any deliverables that contradict the new canon. Do not update canon to fit a deliverable; update the deliverable to fit canon, or argue for a canon change first.
 
@@ -790,7 +792,7 @@ This document is the source of truth for the affiliate / partner ecosystem until
 
 ---
 
-*End of canon, v1.0.*
+*End of canon, v1.3.*
 
 
 

@@ -5,7 +5,7 @@
 **Voice ratio:** 90 Rowan / 10 Michael per canon §3.3 (internal docs row). Verdict mode. No marketing voice.
 **Format:** Markdown source; renders to PDF one-pager per canon §6.5 + canon §8.5 PDF anatomy. Fillable in Notion / Sheets / `.md` per pilot. One file per scored partner, archived in `docs/partner/pilots/[PARTNER_SLUG]/scorecard--v1.md`.
 **Use timing:** Filled out within 24 hours of the partner qualification call (Day 1 of the 30-day pilot timeline per `affiliate-seeding-deep-research-report.md` §Timeline). Decision blocks subsequent steps — no pilot terms (D22, proposed), no co-branded assets (D26, proposed), and no D17-style audience contact happens without a PASS on file.
-**Canon refs:** `AFFILIATE_BRAND_CANON.md` §1.3 (founding vineyard), §1.4 (borrowed trust), §1.5 (operator over guru), §1.6 (honesty), §4.1 (banned vocab — applies to partner posts about us), §5.1–5.2 (anti-LinkedIn doctrine), §6.6 (co-branding zone), §11 (approved & banned channels), §13 (honesty discipline), §16 (approval gates).
+**Canon refs:** `AFFILIATE_BRAND_CANON.md` §1.3 (a handful of partners, not a marketplace), §1.4 (borrowed trust), §1.5 (operator over guru), §1.6 (honesty), §4.1 (banned vocab — applies to partner posts about us), §5.1–5.2 (anti-LinkedIn doctrine), §6.6 (co-branding zone), §11 (approved & banned channels), §13 (honesty discipline), §16 (approval gates).
 
 > **Placeholder convention:** This is an internal template — placeholder values are filled by the founder per partner. `[PARTNER_NAME]`, `[PARTNER_SLUG]`, `[FOUNDER_FIRST_NAME]` for sign-off. No host placeholders appear in this document — the host is not a vetting variable; the partner is.
 
@@ -132,7 +132,7 @@ Does the partner's expectation of how the pilot runs match how AESDR actually ru
 
 ### 6. Founder-time fit (weight: 15 points)
 
-Per canon §1.3 (founding vineyard) and the report's "effective hourly rate" frame in D32. The pilot must be worth the founder's time — not just on revenue, but on what the founder learns from the audience.
+Per canon §1.3 (a handful of partners, not a marketplace) and the report's "effective hourly rate" frame in D32. The pilot must be worth the founder's time — not just on revenue, but on what the founder learns from the audience.
 
 | Row | Question | Score (0/1/2) |
 |---|---|---|
@@ -144,7 +144,7 @@ Per canon §1.3 (founding vineyard) and the report's "effective hourly rate" fra
 | **Time-fit raw** | / 10 | [n] |
 | **Time-fit weighted** | × 1.5 | **[n] / 15** |
 
-**Interpretation:** Per canon §1.3, the partner program is small rows, careful pruning, honest yield — the founder's time is the soil. 6.5 is a soft signal but not noise; it tracks closely with whether the partner remains a learning relationship beyond pilot one.
+**Interpretation:** Per canon §1.3, the partner program is small by design — a handful of carefully selected partners, not a marketplace. 6.5 is a soft signal but not noise; it tracks closely with whether the partner remains a learning relationship beyond pilot one.
 
 ---
 

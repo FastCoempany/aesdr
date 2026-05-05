@@ -16,8 +16,8 @@ We do not hand a partner a tracked link and a coupon and call it an affiliate pr
 ### §1.2 Founder backstage, host-fronted
 The founder is invisible to the audience by default, occasionally visible by choice. The founder is fully visible to partners, operators, vendors, and legal. A contracted **host** delivers workshops on AESDR's behalf. The brand is character-led, not founder-led — Rowan and Michael are the canon faces, not any one human.
 
-### §1.3 Less affiliate empire, more founding vineyard
-Small rows. Careful pruning. Honest yield. We recruit a handful of tightly aligned partners, not a marketplace. Volume is not a virtue here; conversion quality is.
+### §1.3 A handful of partners, not a marketplace
+We recruit a handful of tightly aligned partners. We select carefully and decline often. Volume is not a virtue here; conversion quality is.
 
 ### §1.4 Borrowed trust is a merciless mirror
 Whatever weakness exists in our message, page, deck, or follow-up, a partner's audience will surface in 60 minutes. Therefore: do not borrow trust we have not earned the right to spend.
@@ -144,7 +144,6 @@ The taglines partners may lift verbatim into co-branded copy. **Use, don't parap
 - *"Real Operator. Never guru."* (added v1.2 — tagline-form of §1.5 doctrine)
 - *"12 lessons. 5 tools. 1 new you."* (revised v1.2)
 - *"The operating manual, not the motivation engine."*
-- *"Less affiliate empire. More founding vineyard."*
 - *"Borrowed trust is a merciless mirror."*
 - *"We do not teach you to sell. We teach you to be the person who sells."*
 - *"This isn't corporate-y but it will advance your career."*
