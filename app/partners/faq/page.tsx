@@ -22,9 +22,7 @@ const FAQ_ITEMS = [
     q: "Why so few partners?",
     a: (
       <p>
-        AESDR partners with a small number of operators at any given time — three to five.
-        Per <code>AFFILIATE_BRAND_CANON.md</code> §1.3 (founding vineyard): small rows,
-        careful pruning, honest yield. Volume is not a virtue here; conversion quality is.
+        AESDR works with a handful of partners at a time, not a marketplace. We select carefully and decline often. Volume isn&rsquo;t a virtue here; conversion quality is. A small program lets us run pilots that are operator-to-operator instead of paperwork-to-paperwork.
       </p>
     ),
   },
@@ -32,11 +30,7 @@ const FAQ_ITEMS = [
     q: "Why won't you discount?",
     a: (
       <p>
-        Promotional discounting reads as the SaaS-affiliate-empire register the brand
-        explicitly counter-positions against. AESDR&rsquo;s economic model is: partners earn
-        commission for delivering the right audience to the right program at a fair price.
-        The price is fair. It does not require a discount to be fair. <strong>Buyers see
-        the same price every other AESDR buyer sees, every time.</strong>
+        Promotional discounting reads like a high-volume affiliate program; that&rsquo;s the register AESDR explicitly isn&rsquo;t in. The economic model is: partners earn commission for delivering the right audience to the right program at a fair price. The price is fair. It does not require a discount to be fair. <strong>Buyers see the same price every other AESDR buyer sees, every time.</strong>
       </p>
     ),
   },

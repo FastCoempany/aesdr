@@ -1,7 +1,7 @@
 /**
  * Page: /partners/program
  * Spec: AESDR-PARTNER-HUB-SPEC.md §"Page 1.2"
- * Canon: §1.3 (founding vineyard), §3.3 (voice ratio 90/10),
+ * Canon: §1.3 (a handful of partners, not a marketplace), §3.3 (voice ratio 90/10),
  *        §10.1 (FTC), §13 (honesty discipline)
  * Copy sources: D40 README §2/§3/§4, D22 §3/§4/§5, D28 §2 (sanitized for never-discount)
  * Five-question check: PASS

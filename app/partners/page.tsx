@@ -5,7 +5,7 @@
  *        §6.3 (editorial-split hero pattern), §6.4 (iris reservation),
  *        §13 (honest disqualification), §14 (taglines v1.2)
  * Copy sources:
- *   - Editorial split hero left: canon §1.3 (founding vineyard) + §14 v1.2 tagline
+ *   - Editorial split hero left: canon §1.3 (a handful of partners, not a marketplace)
  *   - Three pillars: canon §1.1, §1.5, §1.6 verbatim
  *   - Catalog teaser: D31 (4-of-12 cards: L08, L10, L11, L12)
  *   - Tools: tools/standalone-html/ (5 production tools)
@@ -16,7 +16,7 @@
  *   2. Token: all colors/fonts via app/globals.css tokens ✓
  *   3. Iris reservation: 2 instances of same primary CTA ✓ (canon §6.4)
  *   4. Icon discipline: type-only, no emoji, no imported icons ✓
- *   5. Voice thumbnail: "Less affiliate empire. More founding vineyard." — canonical §14 ✓
+ *   5. Voice thumbnail: "Real partnerships, not affiliate links." — verdict-shaped Rowan ✓
  */
 
 import type { Metadata } from "next";
@@ -39,7 +39,7 @@ import {
 export const metadata: Metadata = {
   title: "AESDR · Partners",
   description:
-    "Less affiliate empire. More founding vineyard. AESDR partners with a small number of operators whose audiences match the early-career SaaS-sales role we serve.",
+    "Real partnerships, not affiliate links. AESDR works with a handful of operators whose audiences are early-career SaaS reps. Workshop-first. Time-boxed. Non-exclusive.",
 };
 
 export default function PartnersHomePage() {
