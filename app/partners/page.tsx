@@ -55,14 +55,14 @@ export default function PartnersHomePage() {
         leftEyebrow="WARNING · NOT A MARKETPLACE"
         leftHeadline={
           <>
-            <em>Three to five partners.</em>
+            <em>Real partnerships,</em>
             <br />
-            <em>That&rsquo;s the whole program.</em>
+            <em>not affiliate links.</em>
           </>
         }
         leftBody={
           <>
-            AESDR works with a handful of operators whose audiences are early-career SaaS reps. We don&rsquo;t recruit at scale. The list stays small, on purpose.
+            AESDR doesn&rsquo;t run a marketplace. We work with a small group of operators whose audiences are early-career SaaS reps. Workshop-first. Time-boxed. Non-exclusive. Operator-to-operator.
           </>
         }
         rightLabel="WHAT THIS PAGE DOES"

@@ -269,7 +269,7 @@ export function KitDownloadTable() {
           lineHeight: 1.7,
         }}
       >
-        Three things you&rsquo;ll receive after we sign — not before: your partner-specific tracking links, your AESDR × Partner co-branded lockup compositions, and the partnership agreement itself. Those three are specific to your pilot, so we generate them for you once we have a yes from both sides.
+        Three things you&rsquo;ll receive after we sign the partnership agreement — not before: your partner-specific tracking links, your AESDR × Partner co-branded lockup compositions, and the partnership agreement itself. Those three are specific to your pilot, so we generate them for you once we have a yes from both sides.
       </p>
     </section>
   );

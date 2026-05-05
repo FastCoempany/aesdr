@@ -161,7 +161,7 @@ export function ApplicationForm() {
               marginTop: 16,
             }}
           >
-            We review applications weekly. You&rsquo;ll get a yes-or-no within 5 business days. No follow-up email sequence either way.
+            We review applications weekly. You&rsquo;ll get a yes-or-no within 5 business days.
           </p>
         </form>
       </div>
