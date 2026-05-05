@@ -199,7 +199,7 @@ Do not repeat those mistakes.
 
 ## [7] IMMEDIATE TASK
 
-**Build all phases of the AESDR Partner Hub** per the spec.
+**Build Phase 1 of the AESDR Partner Hub** per the spec.
 
 Deliverables expected from you:
 
