@@ -5,7 +5,7 @@
 **Brand discipline:** `AFFILIATE_BRAND_CANON.md` v1.1, no exceptions. Every page passes canon §6.9.1 five-question check before publish.
 **Voice ratios:** Per canon §3.3 — table in §"Cross-cutting" below.
 **Pricing doctrine:** **Never discount.** List price applies always. Partners earn commission off list, buyers never see promo codes from AESDR.
-**Last updated:** 2026-05-02 (Phase 0 ratified).
+**Last updated:** 2026-05-05 — amendment: codify "no internal references in partner-facing body copy" (founder review 2026-05-04). Prior: 2026-05-02 (Phase 0 ratified).
 
 ---
 
@@ -46,6 +46,34 @@ These six are non-negotiable for the hub build. Any deviation requires a canon-r
 | `/partners/kit` | 95 : 5 | Reference-document register; near-zero voice |
 | `/partners/faq` | 80 : 20 | Verdict mode; Q07-style honest disqualification carries Michael |
 | `/partners/apply` | 90 : 10 | Operator-to-operator; one Michael line at footer |
+
+### No internal references in partner-facing body copy
+
+Per founder review 2026-05-04: partner-facing body copy must read like an operator wrote it for another operator, not like an internal authoring document leaked. Internal references are banned from rendered hub body copy. They remain valid (and required) in spec, build comments, and authoring source.
+
+**Banned in rendered partner-facing body copy:**
+
+- **Canon section references** — `canon §X`, `§1.6`, `per §3.2`, `(canon §14 verbatim)`, etc. The body text never names its source; the source citation lives in spec comments or git commit messages.
+- **Deliverable IDs** — `D22`, `D27`, `D31`, `the D-09 deck`, etc. Refer to the document by what a reader would call it: "the partnership agreement," "the partner-facing FAQ," "the curriculum map."
+- **Phase 0 ratification numbers** — `Phase 0 #5`, `per Phase 0 ratification`, etc. The reader does not know what Phase 0 is and shouldn't have to.
+- **Internal route paths used as process nouns** — `apply at /partners/apply`, `see /partners/curriculum`, `the path-as-process /partners/...`. Link to the path; do not narrate the path. (Hrefs are fine; rendered copy "go to slash-partners-slash-curriculum" is not.)
+- **Internal filename conventions** — kit downloads expose partner-facing names (`positioning-brief.pdf`, `newsletter-launch.md`), not authoring slugs (`D21-positioning-brief.pdf`, `09a-newsletter-launch.md`).
+- **AI-sounding structural mirrors** — "Less X. More Y.", "Not A. But B.", "N to M. By design." constructions read as machine-generated when they appear without the editorial weight to earn them. Use only when the sentence has actually been ratified as canon-grade copy. Default off.
+- **Visible placeholder syntax** — `[HOST_FIRST_NAME]`, `[HOST_LAST_NAME]`, `[PARTNER_NAME]`, `[PILOT_DISCOUNT]`, etc. should never reach a partner-prospect's eyes as literal bracket text. In hub copy, use prose ("the host," "we'll introduce you before your workshop date"). On per-partner surfaces, resolve all placeholders before publish.
+- **Fabricated quantitative claims** — never invent numbers (partner counts, pilot durations, response times, audience-size cutoffs) that aren't already ratified in canon, Phase 0, or D22 after counsel. If a number isn't ratified, don't write it; reword qualitatively until it is.
+
+**Allowed everywhere:**
+- Partner-facing prose, partner-named documents, partner-named tools (`The SLA Builder`, `The 72-Hour Strike Plan`).
+- Public route paths used as `href` link targets (not as narrative process nouns).
+- Quantitative claims drawn from canon, Phase 0 ratifications, or counsel-reviewed D22.
+
+**Where the references stay:**
+- Spec documents (this file, `HUB-BUILD-PROMPT.md`, deliverable markdown).
+- Code comments (top-of-file source citations: `Spec: AESDR-PARTNER-HUB-SPEC.md §X.Y` is a code comment, not body copy).
+- Git commit messages.
+- `SESSION_STATE.md`.
+
+**Five-question check addition:** Before publish, scan rendered body copy for any of the banned patterns above. The build is not done if a reader can see them. Treat this as a sixth question.
 
 ### Compliance
 
@@ -109,7 +137,9 @@ These six are non-negotiable for the hub build. Any deviation requires a canon-r
 1. **Header band.** AESDR wordmark top-left (links to `/`); top-right nav: `Program · Curriculum · Kit · FAQ · Apply`. No co-brand lockup.
 2. **Mono eyebrow** centered: `AESDR · PARTNERS · EST. 2026`.
 3. **Editorial split hero** (canon §6.3 pattern from `variants/variant-a-editorial-split.html`):
-   - Crimson left (40%): warning-eyebrow `WARNING · NOT AN AFFILIATE EMPIRE`. Headline: *"Less affiliate empire. More founding vineyard."* (canon §14 verbatim). Sub: *"AESDR partners with a small number of operators whose audiences match the early-career SaaS-sales role we serve. Three to five at any given time. By design."*
+   - Crimson left (40%): warning-eyebrow `WARNING · NOT A MARKETPLACE`. Headline: *"Real partnerships, not affiliate links."* Sub: *"AESDR doesn't run a marketplace. We work with a small group of operators whose audiences are early-career SaaS reps. Workshop-first. Time-boxed. Non-exclusive. Operator-to-operator."*
+
+   *Note 2026-05-05:* The earlier "Less affiliate empire. More founding vineyard." hero (canon §14) was retired from this surface during founder review. Treat the structural-mirror tagline as not deployable on partner-facing surfaces until/unless re-ratified through canon-revision intake. The "three to five partners" cap was a fabrication and is also retired.
    - Cream right (60%): `--cond` 13pt label `WHAT THIS PAGE DOES`. Body in `--display` italic 700, 36pt: *"This is the page you point a partner-prospect at when they ask 'can I see your website?' — the operator-to-operator version."* Below: `--serif` 17pt context: *"AESDR runs pilot partnerships with community operators, bootcamp coaches, alumni networks, and creators. Workshop-first, time-boxed, non-exclusive."* Single iris CTA: `Request a partner conversation →` (anchors to `/partners/apply`).
 4. **Three-pillar block** (cream, three white panels with `--light` border):
    - Pillar 1 — *Workshop-first.* Body: *"Every pilot leads with one live 60-minute workshop into the partner's audience, run by AESDR. The workshop earns the sale. The link merely attributes it."* Mono trail: `lift: AFFILIATE_BRAND_CANON.md §1.1`
@@ -134,7 +164,7 @@ These six are non-negotiable for the hub build. Any deviation requires a canon-r
 2. Token: pass — all colors and fonts via tokens.
 3. Iris reservation: 2 instances of the same primary CTA, both anchored to `/partners/apply`. Within canon §6.4.
 4. Icon discipline: pass — type-only.
-5. Voice thumbnail: *"Less affiliate empire. More founding vineyard. AESDR partners with a small number of operators whose audiences match the early-career SaaS-sales role we serve. Three to five at any given time. By design."* — passes; canonical canon §14 lift.
+5. Voice thumbnail: *"Real partnerships, not affiliate links. AESDR doesn't run a marketplace. We work with a small group of operators whose audiences are early-career SaaS reps. Workshop-first. Time-boxed. Non-exclusive."* — passes; verdict-shaped Rowan, no internal references, no fabricated numbers.
 
 ### Page 1.2 — `/partners/program`
 
@@ -218,7 +248,7 @@ These six are non-negotiable for the hub build. Any deviation requires a canon-r
    **Operating cadence:**
    - 30-Day Pilot Operating Cadence (`13`) — PDF
 
-6. **Honesty footer:** *"Three files you'll receive after you sign D22, not before: per-partner UTM-tagged tracking links; per-partner co-brand lockup compositions; the partner pilot agreement itself (counsel-reviewed). Reasoning: those three are operationally specific to your pilot, not pre-clearable."*
+6. **Honesty footer:** *"Three files you'll receive after we sign the partnership agreement — not before: per-partner UTM-tagged tracking links; per-partner co-brand lockup compositions; the partnership agreement itself (counsel-reviewed). Reasoning: those three are operationally specific to your pilot, not pre-clearable."*
 7. CTA strip: iris button `Request the partnership agreement →`.
 8. Footer.
 
@@ -266,16 +296,16 @@ These six are non-negotiable for the hub build. Any deviation requires a canon-r
 1. Standard hub header.
 2. Mono eyebrow: `AESDR · PARTNERS · APPLY`.
 3. Hero: `--display` italic 700, 48pt: *"Tell us about your audience."*
-4. Sub: *"Four fields. The first call is operator-to-operator, 30 minutes, no slide deck."*
+4. Sub: *"Five fields. If your audience matches, we send a 30-minute Calendly link. If it doesn't, we say so directly."*
 5. **Application form** (centered, max-width 480px, white panel on cream, `--light` border):
-   - Field 1: Your name (`--cond` label `YOUR NAME`)
-   - Field 2: Your audience (`--cond` label `WHO IS YOUR AUDIENCE` — short text, 1-2 sentences)
-   - Field 3: Your primary channel (`--cond` label `PRIMARY CHANNEL` — radio group: Newsletter / Podcast / Community / Course / Other)
-   - Field 4: Your audience size (`--cond` label `APPROXIMATE SIZE` — text, e.g. "~3,000 newsletter subscribers")
-   - Field 5 (optional): Your URL (`--cond` label `LINK TO YOUR WORK`)
-   - Hidden fields: `utm_source` (always `partners-page`), `utm_medium` (always `application-form`)
+   - Field 1: Your name (`--cond` label `YOUR NAME`) — required.
+   - Field 2: Your audience (`--cond` label `WHO IS YOUR AUDIENCE` — short text, 1-2 sentences) — required.
+   - Field 3: Your primary channel (`--cond` label `PRIMARY CHANNEL` — vertically stacked radio group with gated descriptors): Newsletter — over 1,000 subscribers; Podcast — over 500 monthly listeners (past 6 months); Community — over 5,000 unique non-bot members; Course — this content fills a major gap in my programming. **No "Other" option.** The gates filter pre-application.
+   - Field 4: Your audience size (`--cond` label `APPROXIMATE SIZE` — text, e.g. "~3,000 newsletter subscribers") — required.
+   - Field 5: Your URL (`--cond` label `LINK TO YOUR WORK`) — **required** (was optional in earlier draft; tightened 2026-05-04 because every legitimate channel has a public URL).
+   - Hidden fields: `utm_source` / `utm_medium` / `utm_campaign` / `utm_content` (read from the request URL where present).
    - Submit button: iris CTA `Submit application →`
-6. **What happens next** strip below the form: *"AESDR reviews applications weekly. If your audience matches, we send a 30-min Calendly link. If it doesn't, we tell you so directly within 5 business days."*
+6. **What happens next** strip below the form: *"We review applications weekly. You'll get a yes-or-no within 5 business days."* — no follow-up-email-sequence promise either way (preempting a worry no reader has).
 7. **Caveat closing line:** *"PS — If you're going to apply, apply because the brand makes sense, not because the commission does. We're not for everyone, and that's the point."* (Same Caveat as the home page; reuse the component.)
 8. Footer.
 
