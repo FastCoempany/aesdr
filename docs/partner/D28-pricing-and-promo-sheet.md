@@ -6,7 +6,7 @@
 **Format:** Markdown source. Renders to PDF one-pager per canon §6.5 + §8.5.
 **Canon refs:** `AFFILIATE_BRAND_CANON.md` §1.6 (honesty discipline — "real pricing"), §10.2 (approved claims), §10.3 (forbidden claims), §13 (honesty), §14 (taglines), §16 (approval gates).
 
-> **Placeholder convention:** `[PARTNER_SLUG]`, `[PILOT_CODE]`, `[PILOT_DISCOUNT]`, `[PILOT_PRICE_SDR]`, `[PILOT_PRICE_AE]`, `[PILOT_PRICE_TEAM]`, `[CODE_EXPIRY_DATE_TIME_TZ]` are filled per pilot. List prices below are AESDR's published list and do not vary per pilot.
+> **Placeholder convention:** `[PARTNER_SLUG]` is the only per-pilot field. List prices below are AESDR's published list and apply to every audience, every channel, every partner — there is no per-pilot pricing variance per canon §13 + Phase 0 #5 (never-discount). `[PILOT_CODE]` / `[PILOT_DISCOUNT]` / `[PILOT_PRICE_*]` placeholders from the v1 draft are removed entirely; this sheet's v2 reflects the founder-ratified never-discount policy.
 
 > **Pricing is governed by `PRICING_ENGINE_SPEC.md` in the AESDR repo.** This sheet inherits from it. If the spec changes, this sheet is republished — do not negotiate pricing language without a canon update first.
 
@@ -24,17 +24,15 @@
 
 ---
 
-## 2. Pilot pricing (this pilot only)
+## 2. Pricing is list. Always. No exceptions.
 
-| Tier | List | Pilot price | Code | Code expires |
-|---|---|---|---|---|
-| SDR | $249 | **`[PILOT_PRICE_SDR]`** | `[PILOT_CODE]` | `[CODE_EXPIRY_DATE_TIME_TZ]` |
-| AE | $299 | **`[PILOT_PRICE_AE]`** | `[PILOT_CODE]` | `[CODE_EXPIRY_DATE_TIME_TZ]` |
-| Team | $1,499 | **`[PILOT_PRICE_TEAM]`** | `[PILOT_CODE]` | `[CODE_EXPIRY_DATE_TIME_TZ]` |
+**AESDR does not run promotional codes, pilot discounts, partner-stack discounts, or time-limited price drops.** Per Phase 0 #5 ratified 2026-05-02 + canon §13.
 
-The pilot discount is **`[PILOT_DISCOUNT]`** off list, applied at checkout via `[PILOT_CODE]`. The code is partner-specific to `[PARTNER_SLUG]`. After `[CODE_EXPIRY_DATE_TIME_TZ]`, the code stops working and the offer reverts to list.
+Buyers arriving through `[PARTNER_SLUG]` see the same price every other AESDR buyer sees: $249 SDR, $299 AE, $1,499 Team. Partners earn commission off list price; that's the deal. There is no `[PILOT_CODE]` to issue, no `[PILOT_DISCOUNT]` to advertise, no checkout coupon field for partners to populate.
 
-**No second discount layer.** AESDR does not stack pilot codes with other offers. Audience members who arrive after the deadline see list price; they do not get a "we missed you" follow-up code.
+**Why:** Per canon §1.5 (real operator, never guru) + §13 (honesty as differentiator), promotional pricing reads as the SaaS-affiliate-empire register the brand explicitly counter-positions against. AESDR's economic model is: **partners earn commission for delivering the right audience to the right program at a fair price.** The price is fair. It does not require a discount to be fair.
+
+**The $40 follow-on revenue line.** After enrollment, AESDR offers a $40 unlock for the second of two end-of-course artifacts (Programme / Manuscript) per `app/reveal/RevealView.tsx` line 212. The student picks one artifact free at `/reveal`; the unchosen artifact stays sealed and unlocks for $40 from the dashboard at any time. **Within the partner's 30-day attribution window, the $40 unlock is partner-attributable** — pending founder + counsel ratification of the attribution rule before this clause publishes externally.
 
 ---
 
@@ -42,15 +40,15 @@ The pilot discount is **`[PILOT_DISCOUNT]`** off list, applied at checkout via `
 
 Approved phrasings — copyable verbatim into newsletters, podcast intros, registration page co-branding, and DMs:
 
-> *"AESDR is offering my audience [PILOT_DISCOUNT] off the regular price during the pilot window. Code [PILOT_CODE]. Closes [CODE_EXPIRY_DATE_TIME_TZ]."*
+> *"AESDR is $249 SDR / $299 AE / $1,499 for a 10-seat team. Lifetime access. 14-day, no-questions-asked refund. No discount codes — your audience sees the same price every other AESDR buyer sees."*
 
-> *"AESDR's regular pricing is $249 SDR / $299 AE / $1,499 for a 10-seat team. The pilot pricing for my audience is [PILOT_DISCOUNT] less, with code [PILOT_CODE]."*
+> *"I get a commission on enrollments through my link; the price you pay doesn't change either way. AESDR doesn't run promotional discounts, and I don't ask for them."*
 
-> *"Lifetime access. 14-day, no-questions-asked refund. The pilot code closes [CODE_EXPIRY_DATE_TIME_TZ] — list pricing applies after."*
+> *"The pricing is the pricing. Every audience, every channel, every partner. AESDR's commercial model is built on commission honesty, not discount theater."*
 
-> *"This is a real pilot price, not a permanent discount that resets next month. AESDR doesn't run rolling 'limited-time' codes. The deadline is the deadline."*
+> *"Lifetime access is literal — every revision, every new tool, every supplementary recording is included at the same one-time price."*
 
-Each approved phrasing aligns with canon §10.2 + §13.
+Each approved phrasing aligns with canon §1.6 + §10.2 + §13.
 
 ---
 
@@ -69,6 +67,7 @@ Forbidden phrasings — using these requires AESDR to ask Partner to edit per ca
 | *"Pay in 3 installments!"* / payment-plan claims | Not currently offered. Do not promise what AESDR doesn't deliver. |
 | *"Use my code [DIFFERENT_CODE] for an extra 10% off."* | Stacking discounts unauthorized by AESDR. Forbidden per §2 above. |
 | *"This is the lowest price you'll ever see AESDR at."* | Predicting future pricing. Forbidden per canon §13. |
+| *"Pilot pricing for my audience"* / *"limited-time discount"* / *"use my code for $X off"* | **Forbidden per Phase 0 #5 (never-discount).** AESDR does not issue codes; partners do not advertise discounts. |
 | Any banned vocab from canon §4.1 in pricing context | "Crush your number for $249" — not allowed. |
 
 ---
@@ -114,13 +113,15 @@ Per canon §13. **Do not paraphrase.** "If it doesn't deliver value, we don't wa
 
 ## 8. Comp clarity (Partner-side)
 
-Partner earns 30% of net revenue (gross minus refunds, payment fees, sales tax) per D22 §5.1. Net is calculated after the AESDR refund window closes (14 days from purchase). Payment is net-45 from close of the Attribution window per D22 §5.4.
+Partner earns **30% of net revenue** (gross minus refunds, payment fees, sales tax) per D22 §5.1. Net is calculated after the AESDR refund window closes (14 days from purchase). Payment is net-45 from close of the Attribution window per D22 §5.4.
 
-The pilot discount comes out of AESDR's revenue, not Partner's commission base. If a buyer pays `[PILOT_PRICE_SDR]`, Partner's 30% applies to the discounted net — that's the deal. Partner is not exposed to AESDR's discount decision; Partner just earns 30% of whatever AESDR actually receives, post-refund.
+Per Phase 0 #5 + §2 above, **buyers pay list price.** Partner's 30% commission applies to that net — there's no discount-discount-discount layer to model. The math is straightforward: buyer pays $249, AESDR collects ~$241 after Stripe fees (~3%), Partner earns ~$72.30 commission.
 
 **Worked example** (illustrative, not a forecast):
 
-> *List price $249. Pilot discount [PILOT_DISCOUNT] → buyer pays [PILOT_PRICE_SDR]. Stripe fees ~3% → net to AESDR ~$[X]. Partner commission 30% of $[X] = $[Y].*
+> *Buyer pays $249 (SDR list). Stripe fees ~3% → net to AESDR ~$241. Partner commission 30% of $241 = ~$72.30. Same math at $299 (AE) and $1,499 (Team).*
+
+**$40 follow-on attribution** — pending founder + counsel ratification. Recommended default: when an enrolled buyer later pays $40 to unlock the second end-of-course artifact within the partner's 30-day attribution window, that $40 is partner-attributable; outside the window, it isn't. Partner commission on the $40 unlock = 30% of net = ~$11.64 per unlock.
 
 ---
 
@@ -142,7 +143,7 @@ Approved phrasings in §3 above are pre-cleared — Partner may use them without
 For partners who want a brand-line that doesn't reference pricing directly, canon §14 taglines are pre-approved for partner co-branding:
 
 - *"The operating manual, not the motivation engine."*
-- *"12 lessons. 5 tools. 1 you."*
+- *"12 lessons. 5 tools. 1 new you."*
 - *"Less affiliate empire. More founding vineyard."* (For partners describing the partner program itself, not the product.)
 - *"If you want generic sales hype, the internet has a surplus."*
 - *"This isn't corporate-y but it will advance your career."*
@@ -199,9 +200,9 @@ This sheet is a forward dependency for:
 
 ## Open
 
-- **Pilot discount default.** Currently `[PILOT_DISCOUNT]` placeholder. Recommend default 20% off list ($199 SDR / $239 AE / $1,199 Team) — large enough to be meaningfully different from list, small enough that AESDR's net economics survive. Founder may set per-pilot.
+- **~~Pilot discount default~~** — RESOLVED 2026-05-02 per Phase 0 #5: never. List price always. This open question is closed; v2 reflects the ratified policy.
 - **Whether to publish the worked-example commission math** in §8 for every pilot, or genericize. Default: **per-pilot, real numbers**, because per canon §1.6 the partner-facing economics should be transparent. Generic example would feel like the very SaaS-affiliate ambiguity we're counter-positioning against.
-- **Partner-discount layering.** Default: **never.** Partner cannot offer "additional 10% off" on top of `[PILOT_CODE]`. If a partner asks, that's a fit-signal flag for D27 next time.
+- **Partner-discount layering.** Default: **never.** Partners cannot offer "additional X% off" on any AESDR enrollment, period. There is no AESDR-issued code for them to layer onto. If a partner asks for discount authority, that's a fit-signal flag for D27 next time per Phase 0 #5.
 - **Whether to translate "lifetime access" claim more aggressively** (e.g., "if AESDR ships a Lesson 13 in 2027, you get it"). Default: **yes**, the existing phrasing already says this. Reinforce it in the FAQ Q12, which it does.
 - **Team-tier seat count.** Currently 10 seats fixed per D22-aligned §1. If/when the engine supports flexible seat counts, this sheet rewrites. Until then, "up to 10 seats" is canonical.
 - **International / non-USD pricing.** Default: USD only in v1. Stripe handles currency conversion at checkout; AESDR does not localize the published list price. Partners outside the US dollar zone get the conversion at the buyer's payment method.

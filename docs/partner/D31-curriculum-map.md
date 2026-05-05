@@ -1,6 +1,6 @@
-# D31 — Curriculum Map (12-Lesson Library Catalog)
+# D31 — Curriculum Map (12-Course Library Catalog)
 
-**Deliverable:** Single canonical reference document mapping AESDR's 12 lessons in the production library-catalog metaphor, with per-lesson question, annotation, and outcome territory. The document AESDR points to whenever a partner, prospect, or L&D approver asks "what does this program actually teach?" Every other surface that describes the curriculum (registration page, FAQ, replay page, host bio context, L&D brief) lifts from here.
+**Deliverable:** Single canonical reference document mapping AESDR's 12 courses in the production library-catalog metaphor, with per-course question, annotation, and outcome territory. Each course is 3 lessons; each lesson is ~4 sections. The document AESDR points to whenever a partner, prospect, or L&D approver asks "what does this program actually teach?" Every other surface that describes the curriculum (registration page, FAQ, replay page, host bio context, L&D brief) lifts from here.
 **Audience:** Three audiences, three render targets, same content.
 - **Partners** — required reference; pinned in the partner kit (D40).
 - **Prospects** — embedded into the registration page (D07/D26), the offer page, and as a downloadable PDF in the same-day attendee email (D13).
@@ -16,9 +16,11 @@
 
 ## Structure in one paragraph
 
-AESDR is **12 lessons. 36 units total** (3 per lesson). Each lesson is a card in the library catalog — a real call number, a real question, a margin annotation in the host's hand. The catalog metaphor is intentional: this is a reference work you check out, work through, return when you're a different rep. There are no clusters, no tiers, no hidden upsell tracks. *Twelve cards. Drawer A. Sorted by chapter order.* All open from day one — no drip-gating per canon §1.6.
+AESDR is **12 courses. 36 lessons total** (3 per course). Each lesson is **~4 sections.** Each course is a card in the library catalog — a real call number, a real question, a margin annotation in the host's hand. The catalog metaphor is intentional: this is a reference work you check out, work through, return when you're a different rep. There are no clusters, no tiers, no hidden upsell tracks. *Twelve cards. Drawer A. Sorted by chapter order.* All open from day one — no drip-gating per canon §1.6.
 
-Every lesson has a **dual track** — AE-side framing and SDR-side framing in the same content, role-conditional via `[data-role]` per the production app. Where the audit dated 2026-04-09 surfaced misalignment between dashboard titles and unit content, the syllabus page (2026-04-22) is the cleanup; this document inherits the cleaned version.
+Every course has a **dual track** — AE-side framing and SDR-side framing in the same content, role-conditional via `[data-role]` per the production app. Where the audit dated 2026-04-09 surfaced misalignment between dashboard titles and course content, the syllabus page (2026-04-22) is the cleanup; this document inherits the cleaned version.
+
+> **Terminology note (canon v1.2 → hub Phase 1):** *Course* (top level, 12 cards) → *Lesson* (3 per course) → *Section* (~4 per lesson). Production syllabus page (`app/syllabus/page.tsx`) currently labels the 12 cards as "Lessons" with `L01–L12` call numbers — that's a separate cleanup. This document and the partner hub use the corrected hierarchy; the call numbers `L01–L12` remain consistent with production until the syllabus surface is updated.
 
 ---
 
@@ -34,7 +36,7 @@ Every lesson has a **dual track** — AE-side framing and SDR-side framing in th
 >
 > *— keep. read twice.* `Mon 01`
 
-The performance variable nobody talks about. Three principles for partnership without forced happy-hour energy. Three practical tools for the week. Real recognition, real acknowledgment, real audit. AE-side: from managing tasks to actual partnership. SDR-side: from clock-in/clock-out to earning real partnership. **3 units · ~150 min total.**
+The performance variable nobody talks about. Three principles for partnership without forced happy-hour energy. Three practical tools for the week. Real recognition, real acknowledgment, real audit. AE-side: from managing tasks to actual partnership. SDR-side: from clock-in/clock-out to earning real partnership. **3 lessons · ~150 min total.**
 
 ### `658.85 / L02` — Breaking Down Silos
 
@@ -42,7 +44,7 @@ The performance variable nobody talks about. Three principles for partnership wi
 >
 > *— cc: solutions eng.* `Tue 02`
 
-Silos as deal killers, plus the home-office build-out (your remote setup is your deal room or your outbound factory) and the AE-ego problem nobody addresses honestly. Includes "diagnose the silo," "name the killer," and "unpacking AE ego" — uncomfortable on purpose. **3 units · ~150 min total.**
+Silos as deal killers, plus the home-office build-out (your remote setup is your deal room or your outbound factory) and the AE-ego problem nobody addresses honestly. Includes "diagnose the silo," "name the killer," and "unpacking AE ego" — uncomfortable on purpose. **3 lessons · ~150 min total.**
 
 ### `658.85 / L03` — Performance Pitfalls
 
@@ -50,7 +52,7 @@ Silos as deal killers, plus the home-office build-out (your remote setup is your
 >
 > *— mirror test.* `Wed 03`
 
-The four pitfalls every early-career rep falls into. The Survival Guide's Ten Commandments for AE-SDR partnerships. The 10 AE Manager Archetypes — what the room sees in you, plus how to manage up when they apply to your manager. BANT-as-game in the unit-1 interactive. **3 units · ~150 min total.**
+The four pitfalls every early-career rep falls into. The Survival Guide's Ten Commandments for AE-SDR partnerships. The 10 AE Manager Archetypes — what the room sees in you, plus how to manage up when they apply to your manager. BANT-as-game in the unit-1 interactive. **3 lessons · ~150 min total.**
 
 ### `658.85 / L04` — Navigating Manager Madness
 
@@ -58,7 +60,7 @@ The four pitfalls every early-career rep falls into. The Survival Guide's Ten Co
 >
 > *— send to Todd.* `Thu 04`
 
-The 10 SDR Manager Archetypes — diagnose the kind of management you're under, build the managing-up framework that survives it. Plus simplifying company culture (decode it before it burns you) and mastering async life (your calendar is your contract). **3 units · ~150 min total.**
+The 10 SDR Manager Archetypes — diagnose the kind of management you're under, build the managing-up framework that survives it. Plus simplifying company culture (decode it before it burns you) and mastering async life (your calendar is your contract). **3 lessons · ~150 min total.**
 
 ### `658.85 / L05` — tHe SaLeS pLaYbOoK
 
@@ -66,7 +68,7 @@ The 10 SDR Manager Archetypes — diagnose the kind of management you're under, 
 >
 > *— LinkedIn isn't one.* `Fri 05`
 
-The 6-step promotion recipe, ramp planning, and the visibility score that gets you the title. Plus filtering the noise of unsolicited career advice and how to become irreplaceable in a structurally replaceable role. The lesson title's stylized casing is a deliberate signal: most "playbooks" deserve the irony. **3 units · ~150 min total.**
+The 6-step promotion recipe, ramp planning, and the visibility score that gets you the title. Plus filtering the noise of unsolicited career advice and how to become irreplaceable in a structurally replaceable role. The lesson title's stylized casing is a deliberate signal: most "playbooks" deserve the irony. **3 lessons · ~150 min total.**
 
 ### `658.85 / L06` — bEyOnD tHe SaLeS pLaYbOoK
 
@@ -74,7 +76,7 @@ The 6-step promotion recipe, ramp planning, and the visibility score that gets y
 >
 > *— improvise w/ intent.* `Sat 06`
 
-What experience teaches that books can't. Networking redefined (be the motherboard, not another cog). The strategy of knowing just enough — when "I don't know" is a power move and when product-encyclopedia-energy is the sign you're stalling. **3 units · ~150 min total.**
+What experience teaches that books can't. Networking redefined (be the motherboard, not another cog). The strategy of knowing just enough — when "I don't know" is a power move and when product-encyclopedia-energy is the sign you're stalling. **3 lessons · ~150 min total.**
 
 ### `658.85 / L07` — Prospecting & Pipeline
 
@@ -82,7 +84,7 @@ What experience teaches that books can't. Networking redefined (be the motherboa
 >
 > *— build outbound muscle.* `Sun 07`
 
-Prospecting is the AE's job too — coasting is visible to everyone, especially your SDR. Self-sourced meetings as the AE moat. Plus the existential unit: *Is working in SaaS even worth it?* — the harsh truth, who thrives, who shouldn't. **3 units · ~150 min total.**
+Prospecting is the AE's job too — coasting is visible to everyone, especially your SDR. Self-sourced meetings as the AE moat. Plus the existential unit: *Is working in SaaS even worth it?* — the harsh truth, who thrives, who shouldn't. **3 lessons · ~150 min total.**
 
 ### `658.85 / L08` — The 30% Rule
 
@@ -90,7 +92,7 @@ Prospecting is the AE's job too — coasting is visible to everyone, especially 
 >
 > *— do the math honestly.* `Mon 08`
 
-The 30/40/30 breakdown — what your manager is already doing whether they say so or not. Stop chasing the illusion of potential (the enthusiasm trap). And the AE self-reflection: *are you the problem?* — uncoachable habits hiding in plain sight. **3 units · ~150 min total.**
+The 30/40/30 breakdown — what your manager is already doing whether they say so or not. Stop chasing the illusion of potential (the enthusiasm trap). And the AE self-reflection: *are you the problem?* — uncoachable habits hiding in plain sight. **3 lessons · ~150 min total.**
 
 ### `658.85 / L09` — CRM Survival Guide
 
@@ -98,7 +100,7 @@ The 30/40/30 breakdown — what your manager is already doing whether they say s
 >
 > *— log before you forget.* `Tue 09`
 
-The five biggest CRM pain points and the discipline that solves them. Slack as productivity-killer-in-disguise — controlling signal, cutting noise. The SaaS-tools stack: when tools amplify skill versus when they hide laziness. **3 units · ~150 min total.**
+The five biggest CRM pain points and the discipline that solves them. Slack as productivity-killer-in-disguise — controlling signal, cutting noise. The SaaS-tools stack: when tools amplify skill versus when they hide laziness. **3 lessons · ~150 min total.**
 
 ### `658.85 / L10` — Breaking Down the Commission Myth
 
@@ -106,7 +108,7 @@ The five biggest CRM pain points and the discipline that solves them. Slack as p
 >
 > *— 3 months runway min.* `Wed 10`
 
-OTE is a fantasy until you read the comp plan's fine print. Quotas are bullshit — and here's how to play the game without losing the plot. Living the feast-or-famine life: the financial discipline most early-career reps build too late. **3 units · ~150 min total.**
+OTE is a fantasy until you read the comp plan's fine print. Quotas are bullshit — and here's how to play the game without losing the plot. Living the feast-or-famine life: the financial discipline most early-career reps build too late. **3 lessons · ~150 min total.**
 
 ### `658.85 / L11` — Sober Selling
 
@@ -114,7 +116,7 @@ OTE is a fantasy until you read the comp plan's fine print. Quotas are bullshit 
 >
 > *— 21+. not metaphor.* `Thu 11`
 
-Alcohol and sales culture, head-on. Three units: the work-hard-drink-harder myth and the sober edge; conference culture (where the deals start and the careers stall); professional presence at events. Not metaphor. The annotation says it. **3 units · ~150 min total.**
+Alcohol and sales culture, head-on. Three units: the work-hard-drink-harder myth and the sober edge; conference culture (where the deals start and the careers stall); professional presence at events. Not metaphor. The annotation says it. **3 lessons · ~150 min total.**
 
 ### `658.85 / L12` — Leveling Up SaaS Relationships
 
@@ -122,7 +124,7 @@ Alcohol and sales culture, head-on. Three units: the work-hard-drink-harder myth
 >
 > *— name 5.* `Fri 12`
 
-The SaaS lifestyle gap and what it does to relationships. The home-office trap (presence vs proximity, the emotional black hole of always-on). And the most-debated unit in the catalog: *why SDRs should stay single* — career compounding versus relationship timing. Honest math, not advice. **3 units · ~150 min total.**
+The SaaS lifestyle gap and what it does to relationships. The home-office trap (presence vs proximity, the emotional black hole of always-on). And the most-debated unit in the catalog: *why SDRs should stay single* — career compounding versus relationship timing. Honest math, not advice. **3 lessons · ~150 min total.**
 
 ---
 
@@ -132,7 +134,7 @@ The course-content audit (2026-04-09) names "5 tools" as a reference point in th
 
 > *Each lesson ships with worksheets and takeaway tools you fill against your real reps, your real pipeline, your real comp plan. Not "imagine a prospect named Bob."*
 
-The canon §14 tagline — *"12 lessons. 5 tools. 1 you."* — stays as the headline frame; the per-tool inventory is filled in once production confirms.
+The canon §14 tagline — *"12 lessons. 5 tools. 1 new you."* — stays as the headline frame; the per-tool inventory is filled in once production confirms.
 
 ---
 

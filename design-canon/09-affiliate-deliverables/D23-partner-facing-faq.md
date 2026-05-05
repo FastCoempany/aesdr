@@ -77,7 +77,7 @@ The four-question FAQ-lite block is structured for the registration page hierarc
 
 **Notes (internal):**
 - "Untamed" is canonical (canon §15 glossary).
-- "Twelve lessons, twelve takeaways. Twelve things you can put on your desk." is verdict-shaped Rowan and tracks against the §14 tagline *"12 lessons. 5 tools. 1 you."* The "5 tools" delta is intentional — the tagline counts the major tools, not every lesson takeaway.
+- "Twelve lessons, twelve takeaways. Twelve things you can put on your desk." is verdict-shaped Rowan and tracks against the §14 tagline *"12 lessons. 5 tools. 1 new you."* The "5 tools" delta is intentional — the tagline counts the major tools, not every lesson takeaway.
 - "Drip-gating" is the SaaS-norm pattern we're countering. Naming it is the move.
 
 ---

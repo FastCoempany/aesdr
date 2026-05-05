@@ -247,7 +247,7 @@ Below the two paragraphs, in `--mono` 11pt `--muted`, .15em letter-spacing, cent
 > `4 OF 12 LESSONS SHOWN · 36 UNITS TOTAL · CHECK ONE OUT`
 
 **Below that, `--mono` 12pt, .15em, uppercase, `--muted`:**
-> `12 LESSONS · 5 TOOLS · 1 YOU`
+> `12 LESSONS · 5 TOOLS · 1 NEW YOU`
 
 (canon §14 tagline)
 
