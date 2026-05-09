@@ -1,8 +1,16 @@
 import type { MetadataRoute } from "next";
+import { KIT_ENTRIES } from "@/lib/partner-kit";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com";
   const now = new Date();
+
+  const kitDocUrls = KIT_ENTRIES.map((e) => ({
+    url: `${baseUrl}/partners/kit/${e.slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.5,
+  }));
 
   return [
     { url: baseUrl, lastModified: now, changeFrequency: "weekly", priority: 1.0 },
@@ -23,5 +31,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/partners/how-we-work`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${baseUrl}/partners/who-we-dont-work-with`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${baseUrl}/partners/play`, lastModified: now, changeFrequency: "yearly", priority: 0.4 },
+    ...kitDocUrls,
   ];
 }

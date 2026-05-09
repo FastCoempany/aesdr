@@ -2,20 +2,17 @@
  * Page: /partners/kit
  * Spec: AESDR-PARTNER-HUB-SPEC.md §"Page 1.4"
  * Canon: §1.4 (borrowed trust = merciless mirror — kit is open, not gated)
- * Copy sources: D40 README + kit-template files (downloadable as PDFs once
- *               the rendering pipeline runs)
- * Five-question check: PASS
+ * Copy sources: content/partner-kit/*.md (rendered on-site at /partners/kit/[slug])
  *
- * NOTE: PDF rendering pipeline is operationally pending. Components render
- * the table structure today; download targets are placeholders ("PDF pending")
- * for items requiring the pipeline. Files already in non-markdown formats
- * (SVG, MD-as-customizable-template) link to real downloads.
+ * Per founder direction 2026-05-07: the kit lives on-site as rendered pages,
+ * not downloadable PDFs. Per-partner items (lockup compositions, signed
+ * agreement, tracking links scoped to a slug) are gated by signing.
  */
 
 import type { Metadata } from "next";
 import { HubPage } from "@/components/partners/HubChrome";
 import { MonoEyebrow, HubCTA, CaveatLayer } from "@/components/partners/HubElements";
-import { KitDownloadTable } from "@/components/partners/KitDownloadTable";
+import { KitIndexList } from "@/components/partners/KitIndexList";
 
 export const metadata: Metadata = {
   title: "Partner Kit · AESDR",
@@ -27,7 +24,7 @@ export default function KitPage() {
   return (
     <HubPage>
       <div style={{ padding: "64px 24px 0" }}>
-        <MonoEyebrow>AESDR · PARTNER KIT · DOWNLOADS</MonoEyebrow>
+        <MonoEyebrow>AESDR · PARTNER KIT · OPEN</MonoEyebrow>
         <h1
           style={{
             fontFamily: "var(--display)",
@@ -56,30 +53,18 @@ export default function KitPage() {
             marginRight: "auto",
           }}
         >
-          Most affiliate programs gate the kit behind an application. We don&rsquo;t. The kit is the merciless mirror — if it doesn&rsquo;t survive your read, the partnership wouldn&rsquo;t either.
-        </p>
-        <p
-          style={{
-            fontFamily: "var(--mono)",
-            fontSize: 10,
-            color: "var(--muted)",
-            textAlign: "center",
-            letterSpacing: "0.2em",
-            textTransform: "uppercase",
-          }}
-        >
-          per AFFILIATE_BRAND_CANON.md §1.4
+          Most affiliate programs gate the kit behind an application. We don&rsquo;t. The kit is the merciless mirror &mdash; if it doesn&rsquo;t survive your read, the partnership wouldn&rsquo;t either.
         </p>
       </div>
 
-      <KitDownloadTable />
+      <KitIndexList />
 
       <div style={{ padding: "96px 24px 0" }}>
         <HubCTA href="/partners/apply">Request a partner conversation →</HubCTA>
       </div>
 
       <CaveatLayer>
-        PS — The PDF render pipeline is mid-build. Files marked &ldquo;PDF pending&rdquo; will swap to real download links once the pipeline ships. Markdown copy templates download today.
+        PS &mdash; Read what catches your eye. If the kit doesn&rsquo;t survive your read, the partnership wouldn&rsquo;t either &mdash; that&rsquo;s the point of publishing it instead of gating it.
       </CaveatLayer>
     </HubPage>
   );
