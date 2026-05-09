@@ -4,14 +4,13 @@
  * Canon: §1.6 (honesty), §12 (founder backstage), §13
  *
  * Persists partner-application form submissions to the `partner_applications`
- * Supabase table. Optionally emails admissions inbox if EMAIL_RECIPIENT env
- * var is set (graceful degradation per Phase 0 #6 — admissions@ inbox standup
- * is operationally pending; form ships functional today, email routing
- * activates when inbox lands).
+ * Supabase table, then notifies the founder via Resend (EMAIL_RECIPIENT).
+ * Email failure does not fail the request — the row is the source of truth.
  */
 
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/utils/supabase/admin";
+import { sendPartnerApplicationNotification } from "@/lib/email";
 import crypto from "node:crypto";
 
 export const runtime = "nodejs";
@@ -87,6 +86,7 @@ export async function POST(request: Request) {
   const userAgent = request.headers.get("user-agent") || null;
   const forwardedFor = request.headers.get("x-forwarded-for");
   const ip = forwardedFor ? forwardedFor.split(",")[0]?.trim() : null;
+  const ipHash = hashIp(ip);
 
   const supabase = createAdminClient();
   const { error: insertError } = await supabase
@@ -102,7 +102,7 @@ export async function POST(request: Request) {
       utm_campaign: data.utmCampaign || null,
       utm_content: data.utmContent || null,
       user_agent: userAgent,
-      ip_hash: hashIp(ip),
+      ip_hash: ipHash,
     });
 
   if (insertError) {
@@ -113,21 +113,22 @@ export async function POST(request: Request) {
     );
   }
 
-  // Optional email send — only if EMAIL_RECIPIENT env var is set.
-  // Per Phase 0 #6: admissions@aesdr.com inbox standup is operationally pending.
-  // Form persists to Supabase always; email activates when inbox lands.
-  const emailRecipient = process.env.EMAIL_RECIPIENT;
-  if (emailRecipient) {
-    try {
-      // Resend or equivalent ESP integration goes here.
-      // Until ESP is wired, this block is a no-op. Founder queries the
-      // partner_applications table directly to review applications.
-      console.log("[partners/apply] EMAIL_RECIPIENT set; ESP integration pending.");
-    } catch (emailError) {
-      // Email failure does not fail the request — application is saved regardless.
-      console.error("[partners/apply] Email notification failed:", emailError);
-    }
-  }
+  // Fire-and-forget email notification. Failures are logged inside the helper
+  // and never bubble up — the Supabase row is the source of truth.
+  void sendPartnerApplicationNotification({
+    applicantName: data.applicantName,
+    audienceDescriptor: data.audienceDescriptor,
+    primaryChannel: data.primaryChannel,
+    audienceSize: data.audienceSize,
+    linkUrl: data.linkUrl,
+    utmSource: data.utmSource ?? null,
+    utmMedium: data.utmMedium ?? null,
+    utmCampaign: data.utmCampaign ?? null,
+    utmContent: data.utmContent ?? null,
+    userAgent,
+    ipHash,
+    submittedAt: new Date().toISOString(),
+  });
 
   return NextResponse.json({ ok: true });
 }

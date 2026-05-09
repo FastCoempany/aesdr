@@ -45,6 +45,130 @@ async function safeSend(
   }
 }
 
+// ─── Partner Application Notification (internal, to founder) ───
+
+export type PartnerApplicationPayload = {
+  applicantName: string;
+  audienceDescriptor: string;
+  primaryChannel: string;
+  audienceSize: string;
+  linkUrl: string;
+  utmSource?: string | null;
+  utmMedium?: string | null;
+  utmCampaign?: string | null;
+  utmContent?: string | null;
+  ipHash?: string | null;
+  userAgent?: string | null;
+  submittedAt: string;
+};
+
+export async function sendPartnerApplicationNotification(payload: PartnerApplicationPayload) {
+  const recipient = process.env.EMAIL_RECIPIENT;
+  if (!recipient) {
+    console.warn("[email] EMAIL_RECIPIENT not set; skipping partner application notification.");
+    return false;
+  }
+  const from = process.env.EMAIL_FROM || "AESDR Partners <partner@aesdr.com>";
+  const subject = `Partner application — ${payload.applicantName}`;
+  return safeSend(`partner-application from ${payload.applicantName}`, () =>
+    getResend().emails.send({
+      from,
+      to: recipient,
+      replyTo: recipient,
+      subject,
+      html: partnerApplicationHtml(payload),
+      text: partnerApplicationText(payload),
+    })
+  );
+}
+
+function partnerApplicationText(p: PartnerApplicationPayload): string {
+  const utm = [
+    p.utmSource && `source=${p.utmSource}`,
+    p.utmMedium && `medium=${p.utmMedium}`,
+    p.utmCampaign && `campaign=${p.utmCampaign}`,
+    p.utmContent && `content=${p.utmContent}`,
+  ].filter(Boolean).join(" · ") || "(none)";
+  return [
+    `New partner application — ${p.applicantName}`,
+    "",
+    `Applicant:        ${p.applicantName}`,
+    `Primary channel:  ${p.primaryChannel}`,
+    `Audience:         ${p.audienceDescriptor}`,
+    `Audience size:    ${p.audienceSize}`,
+    `Link:             ${p.linkUrl}`,
+    `UTM:              ${utm}`,
+    `Submitted:        ${p.submittedAt}`,
+    `IP hash:          ${p.ipHash || "(none)"}`,
+    `User agent:       ${p.userAgent || "(none)"}`,
+    "",
+    `Review in Supabase: partner_applications table.`,
+  ].join("\n");
+}
+
+function partnerApplicationHtml(p: PartnerApplicationPayload): string {
+  const row = (label: string, value: string) => `
+    <tr>
+      <td style="padding:8px 16px 8px 0;font-family:'SF Mono',Consolas,monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#6B6B6B;vertical-align:top;width:170px">${esc(label)}</td>
+      <td style="padding:8px 0;font-family:Georgia,'Source Serif 4',serif;font-size:15px;color:#1A1A1A;vertical-align:top;line-height:1.6;word-break:break-word">${value}</td>
+    </tr>`;
+
+  const utmParts = [
+    p.utmSource && `source=${esc(p.utmSource)}`,
+    p.utmMedium && `medium=${esc(p.utmMedium)}`,
+    p.utmCampaign && `campaign=${esc(p.utmCampaign)}`,
+    p.utmContent && `content=${esc(p.utmContent)}`,
+  ].filter(Boolean).join(" &middot; ") || `<span style="color:#6B6B6B">(none)</span>`;
+
+  const linkSafe = esc(p.linkUrl);
+  const linkHtml = /^https?:\/\//i.test(p.linkUrl)
+    ? `<a href="${linkSafe}" style="color:#8B1A1A;text-decoration:underline">${linkSafe}</a>`
+    : linkSafe;
+
+  return `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Partner application</title></head>
+<body style="margin:0;padding:0;background:#FAF7F2;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FAF7F2;padding:32px 16px;">
+  <tr><td align="center">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="640" style="max-width:640px;width:100%;background:#FFFFFF;border:1px solid #E8E4DF;">
+      <tr><td style="padding:28px 32px 8px 32px;">
+        <p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
+          AESDR &middot; Partner Application
+        </p>
+      </td></tr>
+      <tr><td style="padding:0 32px 12px 32px;">
+        <h1 style="margin:0;font-family:Georgia,'Playfair Display',serif;font-style:italic;font-weight:700;font-size:32px;line-height:1.15;color:#1A1A1A;">
+          ${esc(p.applicantName)}
+        </h1>
+      </td></tr>
+      <tr><td style="padding:0 32px 24px 32px;">
+        <p style="margin:8px 0 0;font-family:Georgia,'Source Serif 4',serif;font-size:15px;line-height:1.6;color:#6B6B6B;font-style:italic;">
+          ${esc(p.primaryChannel)} &middot; ${esc(p.audienceSize)}
+        </p>
+      </td></tr>
+      <tr><td style="padding:0 32px 24px 32px;border-top:1px solid #E8E4DF;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-top:8px">
+          ${row("Audience", esc(p.audienceDescriptor))}
+          ${row("Link", linkHtml)}
+          ${row("UTM", utmParts)}
+          ${row("Submitted", esc(p.submittedAt))}
+          ${row("IP hash", esc(p.ipHash || "(none)"))}
+          ${row("User agent", esc(p.userAgent || "(none)"))}
+        </table>
+      </td></tr>
+      <tr><td style="padding:0 32px 32px 32px;">
+        <p style="margin:0;font-family:Georgia,'Source Serif 4',serif;font-size:13px;line-height:1.6;color:#6B6B6B;font-style:italic;">
+          Persisted to <code style="font-family:'SF Mono',Consolas,monospace;font-size:12px;background:#FAF7F2;padding:1px 6px;">partner_applications</code> in Supabase.
+        </p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>`;
+}
+
 // ─── Welcome Email (immediate after purchase) ───
 
 export async function sendWelcomeEmail(to: string, name: string, tempPassword: string | null) {
