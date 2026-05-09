@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/users", label: "Users" },
   { href: "/admin/teams", label: "Teams" },
+  { href: "/admin/partner-kit", label: "Partner Kit" },
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
