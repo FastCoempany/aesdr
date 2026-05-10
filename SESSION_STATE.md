@@ -2,9 +2,9 @@
 
 > Working brief for context recovery if a session corrupts or compacts. Update this file at the end of any session that moves the conversion-test work forward.
 
-**Last updated:** 2026-04-28
+**Last updated:** 2026-04-29
 **Branch:** `claude/resume-session-2UyBs`
-**HEAD:** `abc245b — Wire PostHog into the role-fork conversion funnel`
+**HEAD:** `696af91 — Auto-promote anonymous role to user_metadata on signup (G)`
 
 ---
 
@@ -83,7 +83,7 @@ AE:
 
 ---
 
-## Shipped on this branch (5 commits ahead of main)
+## Shipped on this branch
 
 | Commit | Description |
 |---|---|
@@ -91,7 +91,17 @@ AE:
 | `18ee7ce` | Dark palette retirement directive in `AGENTS.md` |
 | `fffeaa4` | Mockups rebuilt against editorial tokens |
 | `a78e805` | PostHog env vars in `.env.local.example` |
-| `abc245b` | **HEAD** — PostHog wired: `lib/analytics.ts`, `components/PostHogClient.tsx` mounted in `app/layout.tsx`, `pricing_cta_clicked` firing from `CheckoutButton`, `account_role_switched` from `RoleSwitcher` |
+| `abc245b` | PostHog wired: `lib/analytics.ts`, `components/PostHogClient.tsx`, `pricing_cta_clicked` from `CheckoutButton`, `account_role_switched` from `RoleSwitcher` |
+| `0f7f084` | This recovery brief (`SESSION_STATE.md`) |
+| `725a115` | **B + D** — `lib/role.ts` (anonymous role single-source-of-truth) + `LandingSequence.module.css` styles for editorial split, skip link, hero descriptor |
+| `cabb755` | **C/1** — `landing-sequence/copy.ts` (locked branched copy + hero descriptor + fork halves) |
+| `ac59e81` | **C/2** — `landing-sequence/zoom-cards.ts` (existing zoom array, extracted) |
+| `55abb9c` | **C/3** — `landing-sequence/typing.ts` (Seg/Char types + flattenSegs/buildHTML helpers) |
+| `38b3952` | **C/4** — `landing-sequence/animator.ts` (imperative engine: phases, click-to-advance, skip, zoom-scroll) |
+| `945b6cc` | **C/5** — `LandingSequence.tsx` rewritten as thin shell + EventMap aligned (`landing_role_pick`, `landing_fork_skipped`) |
+| `91ab565` | **E** — `EditorialMasthead` nameplate, mounted top-left in `app/page.tsx` |
+| `df9f58e` | **F + H** — `PricingTiers` extracted with role-aware pre-highlight; `initialRole` threaded from server through to `<LandingSequence>` and `<PricingTiers>` |
+| `696af91` | **HEAD** — **G** — `app/signup/page.tsx` auto-promotes anonymous `getRole()` to `user_metadata.role` via `signUp.options.data` and clears sessionStorage on success |
 
 ### PostHog status
 
@@ -103,15 +113,27 @@ AE:
 
 ---
 
-## Still to build — plan sections B–H
+## Plan sections B–H — all shipped ✅
 
-- **B.** `lib/role.ts` — `getRole/setRole/clearRole/useRole` hook, sessionStorage key `aesdr_role`, dispatches `CustomEvent('aesdr-role-change')` for cross-component reactivity
-- **C.** `LandingSequence.tsx` rewrite — branched `SCENES_*` / `TERM_LINES_*`, editorial split layer between scene 1 and post-fork scenes, click-to-advance, skip button, `initialRole?: 'ae' | 'sdr'` prop (skips fork when set), role-aware hero descriptor via `useRole()`
-- **D.** `LandingSequence.module.css` — split layer styles (port Mockup C exactly: ghost numerals, corner brackets, iris vertical divider), `.skipLink`, `.heroDescriptor`
-- **E.** `components/EditorialMasthead.tsx` — fixed top-left, mono 10px, "AESDR" in `--crimson` rest in `--muted`. Mount in `app/page.tsx` outside the animation tree
-- **F.** `components/PricingTiers.tsx` — extract pricing block from `app/page.tsx:67-110`. Reads `useRole()` to apply `.priceCardPersonal` modifier + iris "Your tier" badge on matching card. Coexists with existing `.priceCardFeatured` (Team)
-- **G.** `app/signup/page.tsx:22-26` — after `signUp` succeeds, read `getRole()` and pass via `options.data: { role }` so it lands on `user_metadata.role`. Clear sessionStorage on success
-- **H.** `app/page.tsx` (server) — read Supabase user, extract `user_metadata.role`, pass to `<LandingSequence initialRole={role} />` so members skip the fork
+All eight sections (A through H) of the role-fork conversion test are on this branch. Test plan for next session:
+
+### Manual QA checklist
+
+1. **Anonymous SDR path** — fresh tab → opener types → fork appears → click SDR side → branched SDR scenes type → SDR terminal lines → hero with SDR descriptor → scroll to pricing → SDR card has "Your tier" badge + iris border.
+2. **Anonymous AE path** — repeat with the AE side; verify AE descriptor + AE card highlight.
+3. **Skip button** — click "skip animation →" at any phase → fade straight to hero with default descriptor → no role highlight on pricing.
+4. **Click-to-advance** — anywhere in any typing phase, spacebar/click should fast-forward the current line.
+5. **Member with prefill** — sign up as SDR, refresh landing → opener and fork are skipped → branched SDR scenes type immediately → SDR pricing pre-highlight on first paint (no flicker).
+6. **Member fork-skip event** — verify PostHog receives `landing_fork_skipped { reason: 'member-prefill' }` for member loads (currently fires on `onSkip` only — confirm this is correct or split into a separate boot-time fire if not).
+7. **Persistence semantics** — anonymous picks SDR → F5 → still SDR (sessionStorage). Close tab → reopen → no role (correct, lenient mode).
+8. **Editorial masthead** — visible at top-left from t=0 through the entire animation, doesn't crowd nav at 640px wide.
+9. **Sign-up promotion** — anonymous picks SDR → signs up → check Supabase `auth.users.raw_user_meta_data` for `role: "sdr"`.
+
+### Known follow-ups / not-yet-tested
+
+- `landing_fork_skipped { reason: 'member-prefill' }` may not actually fire today because the animator only calls `onSkip` from the explicit skip button + Escape key, not from the member-prefill boot path. Decide whether to fire it on member boot or remove the `member-prefill` reason.
+- Build verification (`npm run lint`, `npm run build`) hasn't run in this sandbox (no node_modules). Run locally before merging to main.
+- `RoleSwitcher` (account page) still uses `account_role_switched` event — out of scope but worth confirming it continues to fire after the EventMap changes.
 
 ### Cleanup tickets (separate, lower priority)
 
