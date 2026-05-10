@@ -5,46 +5,42 @@
   z-index: 300;
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: .22em;
-  text-transform: uppercase;
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: 0.02em;
   pointer-events: none;
   user-select: none;
 }
 
 .brand {
+  /* fallback color for browsers that don't support background-clip */
   color: var(--crimson);
-  font-weight: 700;
 }
 
-.sep {
-  color: var(--muted);
-  opacity: .5;
+.iris {
+  background: var(--iris);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: mastheadShimmer 4s linear infinite;
 }
 
-.tag {
-  color: var(--muted);
-}
-
-.dot {
-  color: var(--muted);
-  opacity: .5;
+@keyframes mastheadShimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 300% 50%;
+  }
 }
 
 @media (max-width: 640px) {
   .masthead {
     top: 12px;
     left: 14px;
-    font-size: 9px;
-    letter-spacing: .18em;
-    gap: 6px;
-  }
-  /* On small viewports, drop the trailing "for early-career AEs & SDRs"
-     so the masthead stays one line and doesn't crowd the nav. */
-  .masthead .dot,
-  .masthead .tag:last-child {
-    display: none;
+    font-size: 18px;
   }
 }
