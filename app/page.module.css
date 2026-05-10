@@ -134,6 +134,35 @@
   border-width: 2px;
 }
 
+/* Role-matched personal tier — iris-shimmer border, slight lift.
+   Orthogonal to .priceCardFeatured so the modifiers can stack if needed. */
+.priceCardPersonal {
+  border: 2px solid transparent;
+  background:
+    linear-gradient(var(--cream), var(--cream)) padding-box,
+    var(--iris) border-box;
+  background-size: auto, 300% 100%;
+  animation: shimmer 4s linear infinite;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(139, 26, 26, 0.08);
+}
+
+.priceTierBadge {
+  position: absolute;
+  top: -11px;
+  right: 24px;
+  background: var(--iris);
+  background-size: 300% 100%;
+  animation: shimmer 4s linear infinite;
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  font-weight: 700;
+}
+
 .priceRibbon {
   position: absolute;
   top: -11px;
