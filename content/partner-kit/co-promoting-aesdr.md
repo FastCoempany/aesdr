@@ -17,6 +17,15 @@ before publishing — that's faster than asking us to retroactively walk it back
 price. $249 SDR, $299 AE, $1,499 Team. There are no codes, no partner-stack
 discounts, no flash promotions. Don't write copy that implies otherwise.
 
+## "Is this safe to recommend?"
+
+Partner audiences ask this. The honest answer: AESDR has a 14-day,
+no-questions-asked refund. If your audience tries it and it doesn't fit,
+they get their money back — they email a real address, a real person
+processes it, no fight. You're not asked to vouch for outcomes neither
+of us can observe. You're asked to vouch for the program existing on
+those terms.
+
 ## The lockup
 
 Co-branded surfaces (registration page, deck, partner-specific email) carry

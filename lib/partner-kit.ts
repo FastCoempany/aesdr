@@ -6,12 +6,10 @@
  * markdown source under content/partner-kit/.
  *
  * Public-vs-gate boundary (ratified 2026-05-09): this catalog only contains
- * partner-prospect-facing docs. The full operating manual (canon excerpt with
- * voice system, full claims grid, full pricing math, every promo template,
- * day-by-day cadence, lesson-level curriculum) lives in
- * content/partner-kit-private/ and ships to partners post-signing via a
- * mechanism still TBD. Do not move private files into the public catalog
- * without an explicit founder review.
+ * partner-prospect-facing docs. The gated post-signing kit lives in
+ * content/partner-kit-private/ + lib/partner-kit-private.ts. AESDR's internal
+ * source-of-truth (voice system, full canon, internal claims grids, etc.)
+ * lives in content/aesdr-internal/ and is not rendered anywhere.
  */
 
 import fs from "node:fs";
@@ -45,7 +43,7 @@ export const KIT_ENTRIES: KitEntry[] = [
     description:
       "12 courses, four arcs, five tools. What partners need to know without enrolling.",
     category: "About AESDR",
-  source: "curriculum-overview",
+    source: "curriculum-overview",
   },
 
   // How co-promotion works
@@ -53,9 +51,17 @@ export const KIT_ENTRIES: KitEntry[] = [
     slug: "co-promoting-aesdr",
     title: "Co-Promoting AESDR",
     description:
-      "Three bright-line rules. What's pre-cleared and what needs review. What we won't ask you to do.",
+      "Three bright-line rules. The buyer-refund line. What's pre-cleared and what needs review.",
     category: "How co-promotion works",
     source: "co-promoting-aesdr",
+  },
+  {
+    slug: "approved-claims",
+    title: "Approved Claims",
+    description:
+      "What partners can say verbatim. What gets walked back. What gets declined.",
+    category: "How co-promotion works",
+    source: "approved-claims",
   },
   {
     slug: "disclosure-language-pack",
@@ -64,6 +70,14 @@ export const KIT_ENTRIES: KitEntry[] = [
       "FTC-compliant disclosure language by surface. Lift verbatim.",
     category: "How co-promotion works",
     source: "disclosure-language-pack",
+  },
+  {
+    slug: "banned-vocabulary",
+    title: "Banned Vocabulary",
+    description:
+      "The words AESDR doesn't use, and asks partners not to use in copy bearing the mark.",
+    category: "How co-promotion works",
+    source: "banned-vocabulary",
   },
   {
     slug: "lockup-usage",
@@ -77,7 +91,7 @@ export const KIT_ENTRIES: KitEntry[] = [
     slug: "pilot-rhythm",
     title: "30-Day Pilot — At a Glance",
     description:
-      "Week-by-week rhythm of an AESDR pilot. Day-by-day spec ships post-signing.",
+      "Week-by-week rhythm of an AESDR pilot. Operational detail ships post-signing.",
     category: "How co-promotion works",
     source: "pilot-rhythm",
   },
