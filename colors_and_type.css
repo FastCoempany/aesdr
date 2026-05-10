@@ -1,0 +1,251 @@
+/* ============================================================
+   AESDR — Colors & Type
+   The Operating Manual. Not the motivation engine.
+
+   ACTIVE PALETTE ONLY. The legacy globals.css in the codebase
+   ships a retired dark-navy palette (--bg-main, --theme, --coral,
+   --cobalt, --amber, --violet) — DO NOT reach for those tokens
+   in new work. They exist solely so the original lesson HTML
+   renders. Anything new lives on cream + ink + crimson + iris.
+   ============================================================ */
+
+/* ----- Fonts (Google Fonts CDN — substitute if you have local files) ----- */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&family=Barlow+Condensed:wght@300;400;500;600;700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Caveat:wght@400..700&display=swap');
+
+:root {
+  /* ─── ACTIVE PALETTE ─────────────────────────────────────── */
+  --cream:   #FAF7F2;   /* default page background */
+  --ink:     #1A1A1A;   /* default body text */
+  --crimson: #8B1A1A;   /* primary brand accent — CTAs, hero left, emphasis */
+  --muted:   #6B6B6B;   /* secondary text */
+  --light:   #E8E4DF;   /* subtle dividers, card hairlines */
+  --paper:   #FFFFFF;   /* card surfaces (rare; cream first) */
+
+  /* Type-on-crimson */
+  --on-crimson:        rgba(255, 255, 255, 1.00);
+  --on-crimson-soft:   rgba(255, 255, 255, 0.85);
+  --on-crimson-eyebrow:rgba(255, 255, 255, 0.65);
+  --on-crimson-mute:   rgba(255, 255, 255, 0.55);
+  --on-crimson-line:   rgba(255, 255, 255, 0.25);
+
+  /* Crimson-on-cream subtleties */
+  --crimson-mute:    rgba(139, 26, 26, 0.50);
+  --crimson-stamp:   rgba(139, 26, 26, 0.35);
+  --crimson-hairline:rgba(139, 26, 26, 0.20);
+
+  /* Surface hairlines */
+  --line-soft:  rgba(0, 0, 0, 0.06);   /* corner brackets */
+  --line-card:  rgb(232, 228, 223);    /* card 1px border */
+  --tint-card:  rgba(0, 0, 0, 0.024);  /* terminal/classified tint over cream */
+  --shadow-card:0 4px 32px rgba(0, 0, 0, 0.04);
+
+  /* ─── IRIS (RESERVED — shimmer accent only) ──────────────── */
+  /* Use ONLY for: AE/SDR role tokens, primary CTA, AESDR wordmark
+     underline, terminal payoff lines, divider rules at section
+     seams. Never as a default surface. Never as a background fill
+     for body content. */
+  --iris-stops:
+    #FF006E 0%,
+    #FF6B00 17%,
+    #F59E0B 34%,
+    #10B981 51%,
+    #38BDF8 68%,
+    #8B5CF6 85%,
+    #FF006E 100%;
+  --iris: linear-gradient(90deg, var(--iris-stops));
+  --iris-shimmer: linear-gradient(90deg, var(--iris-stops));
+  /* For animated shimmer: background-size: 200% 100%; animation: iris 8s linear infinite; */
+
+  /* ─── TYPE STACKS ────────────────────────────────────────── */
+  --display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --serif:   'Source Serif 4', Georgia, serif;
+  --cond:    'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --mono:    'Space Mono', ui-monospace, Menlo, monospace;
+  --hand:    'Caveat', 'Brush Script MT', cursive;
+
+  /* ─── TYPE TOKENS ────────────────────────────────────────── */
+
+  /* Display (Playfair Black Italic — the verdict headline) */
+  --display-h0-size:    clamp(56px, 9vw, 180px);  /* AESDR wordmark, big number drops */
+  --display-h0-weight:  700;
+  --display-h0-line:    1.00;
+
+  --display-h1-size:    clamp(40px, 5.5vw, 64px); /* hero headline */
+  --display-h1-weight:  900;
+  --display-h1-style:   italic;
+  --display-h1-line:    1.05;
+  --display-h1-track:   -0.005em;
+
+  --display-h2-size:    clamp(30px, 3vw, 44px);   /* section titles */
+  --display-h2-weight:  900;
+  --display-h2-style:   italic;
+  --display-h2-line:    1.05;
+
+  --display-h3-size:    32px;                     /* "two become one" */
+  --display-h3-style:   italic;
+  --display-h3-line:    1.15;
+
+  /* Condensed (Barlow — UI labels, eyebrows, buttons, deck titles) */
+  --cond-deck-title:    26px / 1.00 var(--cond);  /* deck card lesson titles */
+  --cond-faq-q:         18px / 1.20 var(--cond);
+  --cond-btn:           14px / 1.00 var(--cond);
+  --cond-btn-track:     0.15em;
+  --cond-stamp:         10px / 1.00 var(--cond);
+  --cond-stamp-track:   0.15em;
+
+  /* Body serif (Source Serif 4 — voice, paragraphs) */
+  --serif-lead:         18px / 1.65 var(--serif); /* hero subhead, intro */
+  --serif-body:         17px / 1.65 var(--serif);
+  --serif-faq:          14px / 1.65 var(--serif);
+  --serif-caption-i:    italic 13px / 1.5 var(--serif);
+  --serif-pull-i:       italic 16px / 1.4 var(--serif);
+
+  /* Mono (Space Mono — eyebrows, terminal, classified labels) */
+  --mono-eyebrow:       11px / 1.00 var(--mono);
+  --mono-eyebrow-track: 0.30em;
+  --mono-meta:          10px / 1.00 var(--mono);
+  --mono-meta-track:    0.30em;
+  --mono-caption:       9px / 1.00 var(--mono);
+  --mono-caption-track: 0.30em;
+  --mono-term:          15px / 1.85 var(--mono);  /* terminal body */
+
+  /* Hand (Caveat — Michael's voice ONLY; margin annotations only) */
+  --hand-margin:        24px / 1.40 var(--hand);
+
+  /* ─── SPACING / RHYTHM ───────────────────────────────────── */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+  --s-9: 96px;
+  --s-10: 128px;
+
+  /* Editorial rule: section gutter is 64px desktop, 24px mobile */
+  --gutter: 64px;
+  --gutter-mobile: 24px;
+
+  /* ─── RADII ──────────────────────────────────────────────── */
+  /* AESDR is a print-editorial brand. Sharp corners are doctrine.
+     The only rounding we permit:
+       - 9px on the warning-circle icon (it's a circle)
+       - 4px on the deck-stack card ONLY (paper card affordance)
+       - 2px hairline on outer artboards (technical drawing tic) */
+  --r-0:  0;
+  --r-hair: 2px;
+  --r-card: 4px;
+  --r-pill: 9999px; /* role-pill use only */
+}
+
+/* ============================================================
+   SEMANTIC TYPE — apply on the element directly, no class needed
+   if the surrounding rule's defaults are already correct. These
+   are the canonical recipes; copy them rather than reinventing.
+   ============================================================ */
+
+.h-display {
+  font: italic 900 var(--display-h1-size) / var(--display-h1-line) var(--display);
+  letter-spacing: var(--display-h1-track);
+  color: var(--ink);
+  text-wrap: balance;
+}
+.h-section {
+  font: italic 900 var(--display-h2-size) / var(--display-h2-line) var(--display);
+  color: var(--ink);
+}
+.h-merge {
+  font: italic 900 var(--display-h3-size) / var(--display-h3-line) var(--display);
+  color: var(--ink);
+  text-align: center;
+  text-wrap: balance;
+}
+.eyebrow {
+  font: var(--mono-eyebrow);
+  letter-spacing: var(--mono-eyebrow-track);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.eyebrow--light    { color: var(--on-crimson-eyebrow); }
+.eyebrow--crimson  { color: var(--crimson); }
+.meta {
+  font: var(--mono-meta);
+  letter-spacing: var(--mono-meta-track);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.body-serif       { font: var(--serif-body); color: var(--ink); }
+.body-serif--mute { font: var(--serif-body); color: var(--muted); }
+.lead             { font: var(--serif-lead); color: var(--muted); }
+.caption-i        { font: var(--serif-caption-i); color: var(--muted); }
+.term-line        { font: var(--mono-term); color: var(--ink); }
+.term-line .prompt{ color: var(--muted); margin-right: 10px; }
+.michael {
+  /* Caveat appears NOWHERE else. Crimson on cream. */
+  font: var(--hand-margin);
+  color: var(--crimson);
+}
+.rowan {
+  /* Verdict voice. Either of two recipes: */
+  font: italic 900 var(--display-h1-size) / var(--display-h1-line) var(--display);
+  color: var(--ink);
+}
+.rowan--cap {
+  font: 800 22px / 1.1 var(--cond);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+/* ============================================================
+   IRIS UTILITIES — the gradient is reserved.
+   .iris-text  : text fill
+   .iris-rule  : 1–2px horizontal divider
+   .iris-shimmer: animated shimmer (CTAs, wordmark underline)
+   ============================================================ */
+
+.iris-text {
+  background: var(--iris);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+.iris-rule {
+  height: 2px;
+  background: var(--iris);
+  background-size: 200% 100%;
+}
+.iris-shimmer {
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris-flow 8s linear infinite;
+}
+@keyframes iris-flow {
+  from { background-position: 0% 50%; }
+  to   { background-position: 200% 50%; }
+}
+@keyframes ghost-pulse {
+  0%, 100% { opacity: 0.06; transform: scale(1); }
+  50%      { opacity: 0.10; transform: scale(1.02); }
+}
+
+/* ============================================================
+   ROOT DEFAULTS — apply on body/html in real product code
+   ============================================================ */
+
+html, body {
+  background: var(--cream);
+  color: var(--ink);
+  font: var(--serif-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection { background: var(--crimson); color: var(--cream); }
+
+/* Focus: crimson outline, never the retired theme green */
+:focus-visible { outline: 2px solid var(--crimson); outline-offset: 2px; }

@@ -1,0 +1,23 @@
+
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 240" width="300" height="240" role="img" aria-label="Leponeus — The Recovery">
+  <title>Leponeus · The Recovery</title>
+  <desc>AESDR canonical mascot. Pose 05 of 08: The Recovery. Use: Sprout from shell. Lesson 09. Bounce-back moments.</desc>
+  <g fill="none" stroke="#1A1A1A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke">
+    <ellipse cx="120" cy="160" rx="68" ry="36" fill="#F1ECE3"></ellipse>
+             <path d="M 60 160 Q 120 110 180 160"></path>
+    <path d="M 80 158 L 80 132 M 120 156 L 120 122 M 160 158 L 160 132" stroke-opacity=".45"></path>
+                 <path d="M 120 122 L 120 100"></path>
+                 <path d="M 120 110 q -8 -4 -10 -12 q 8 4 10 8" fill="#8B1A1A" stroke="#8B1A1A"></path>
+    <ellipse cx="68" cy="194" rx="10" ry="6" fill="#F1ECE3"></ellipse>
+             <ellipse cx="172" cy="194" rx="10" ry="6" fill="#F1ECE3"></ellipse>
+    <ellipse cx="200" cy="146" rx="16" ry="12" fill="#F1ECE3"></ellipse>
+    <circle cx="208" cy="142" r="1.6" fill="#1A1A1A" stroke="none"></circle>
+    
+    <path d="M 192 130 Q 188 92 178 80 Q 192 86 200 122" fill="#F1ECE3"></path>
+           <path d="M 208 130 Q 216 92 226 80 Q 218 92 216 122" fill="#F1ECE3"></path>
+    
+    
+    <line x1="186" y1="134" x2="216" y2="134" stroke="#8B1A1A" stroke-width="1.4"></line>
+  </g>
+</svg>

@@ -1,0 +1,31 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Card — Hairlines & Shadow</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background: var(--cream); }
+  .card { padding: 24px; display:grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .tile { padding: 18px; box-sizing: border-box; aspect-ratio: 1 / 0.78; display:flex; flex-direction:column; justify-content:space-between; }
+  .one { border: 1px solid var(--line-card); background: var(--cream); }
+  .two { border: 1px solid rgba(255,255,255,.25); background: var(--crimson); color: var(--cream); }
+  .three { background: var(--paper); border: 1px solid var(--line-card); box-shadow: 0 4px 32px rgba(0,0,0,.04); }
+  .lbl { font: 9px/1 var(--mono); letter-spacing:.18em; text-transform: uppercase; color: var(--muted); }
+  .lbl.l { color: var(--cream); opacity:.7; }
+  .demo { font: italic 700 22px/1 var(--display); }
+</style></head>
+<body>
+<div class="card">
+  <div class="tile one">
+    <div class="demo" style="color:var(--ink)">Card hairline</div>
+    <div class="lbl">1PX · #E8E4DF · LINE-CARD</div>
+  </div>
+  <div class="tile two">
+    <div class="demo">On crimson</div>
+    <div class="lbl l">1PX · WHITE · 0.25 · ON-CRIMSON-LINE</div>
+  </div>
+  <div class="tile three">
+    <div class="demo" style="color:var(--ink)">Terminal lift</div>
+    <div class="lbl">SHADOW · 0 4 32 · BLACK 0.04</div>
+  </div>
+</div>
+</body></html>

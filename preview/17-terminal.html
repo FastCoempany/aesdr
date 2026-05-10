@@ -1,0 +1,41 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Card — Terminal Block</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background: var(--cream); }
+  .card { padding: 28px 32px; }
+  .term {
+    background: var(--paper);
+    border: 1px solid var(--line-card);
+    box-shadow: 0 4px 32px rgba(0,0,0,.04);
+    padding: 18px 22px 22px;
+    max-width: 620px;
+  }
+  .head { display:flex; align-items:center; justify-content:space-between; margin-bottom: 14px; }
+  .dots svg { display:block; }
+  .file { font: 10px/1 var(--mono); letter-spacing:.20em; color: var(--muted); text-transform: uppercase; }
+  .line { font: 15px/1.85 var(--mono); color: var(--ink); }
+  .line .p { color: var(--muted); margin-right: 10px; }
+  .iris { color: transparent; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+          background: var(--iris); background-size: 200% 100%; animation: iris-flow 8s linear infinite; }
+  .cur { display:inline-block; width: 9px; height: 16px; vertical-align: -3px; background: var(--crimson); animation: blink 1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+</style></head>
+<body>
+<div class="card">
+  <div class="term">
+    <div class="head">
+      <div class="dots">
+        <svg width="36" height="10" viewBox="0 0 36 10"><circle cx="5" cy="5" r="4" fill="#EF4444" fill-opacity=".5"/><circle cx="18" cy="5" r="4" fill="#F59E0B" fill-opacity=".5"/><circle cx="31" cy="5" r="4" fill="#10B981" fill-opacity=".5"/></svg>
+      </div>
+      <div class="file">DIAGNOSE.SH · LINE 47</div>
+    </div>
+    <div class="line"><span class="p">$</span>./diagnose --honest</div>
+    <div class="line"><span class="p">&gt;</span>scanning weekly schedule…</div>
+    <div class="line"><span class="p">&gt;</span>scanning calendar…</div>
+    <div class="line"><span class="p">&gt;</span>scanning pipeline notes…</div>
+    <div class="line"><span class="p">&gt;</span>diagnosis: <span class="iris">least productive person you know</span><span class="cur"></span></div>
+  </div>
+</div>
+</body></html>

@@ -1,0 +1,26 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Card — Type on Crimson</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background: var(--cream); }
+  .card { padding: 0; }
+  .panel { background: var(--crimson); padding: 28px 32px; display:grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+  .col { display:flex; flex-direction:column; gap: 6px; }
+  .demo { font: italic 700 24px/1 var(--display); }
+  .lbl  { font: var(--mono-caption); letter-spacing:.18em; text-transform: uppercase; opacity: .75; color: var(--cream); }
+</style></head>
+<body>
+<div class="card">
+  <div class="panel">
+    <div class="col"><div class="demo" style="color: var(--on-crimson)">Aa</div><div class="lbl">on-crimson · 1.00</div></div>
+    <div class="col"><div class="demo" style="color: var(--on-crimson-soft)">Aa</div><div class="lbl">soft · 0.85</div></div>
+    <div class="col"><div class="demo" style="color: var(--on-crimson-eyebrow)">Aa</div><div class="lbl">eyebrow · 0.65</div></div>
+    <div class="col"><div class="demo" style="color: var(--on-crimson-mute)">Aa</div><div class="lbl">mute · 0.55</div></div>
+    <div class="col">
+      <div style="height: 36px; border: 1px solid var(--on-crimson-line); display:flex; align-items:center; padding: 0 10px; color: var(--on-crimson-soft); font: var(--mono-caption); letter-spacing:.18em;">LINE 0.25</div>
+      <div class="lbl">--on-crimson-line</div>
+    </div>
+  </div>
+</div>
+</body></html>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 220" width="600" height="220" role="img" aria-label="AESDR — The Operating Manual">
+  <rect width="600" height="220" fill="#FAF7F2"></rect>
+  <text x="40" y="160" font-family="&#39;Playfair Display&#39;, Georgia, serif" font-weight="700" font-size="180" fill="#1A1A1A" letter-spacing="-2">AESDR.</text>
+  <defs>
+    <linearGradient id="wmIris" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF006E"></stop>
+      <stop offset="17%" stop-color="#FF6B00"></stop>
+      <stop offset="34%" stop-color="#F59E0B"></stop>
+      <stop offset="51%" stop-color="#10B981"></stop>
+      <stop offset="68%" stop-color="#38BDF8"></stop>
+      <stop offset="85%" stop-color="#8B5CF6"></stop>
+      <stop offset="100%" stop-color="#FF006E"></stop>
+    </linearGradient>
+  </defs>
+  <rect x="40" y="186" width="180" height="2" fill="url(#wmIris)"></rect>
+  <text x="40" y="208" font-family="&#39;Space Mono&#39;, monospace" font-size="11" fill="#6B6B6B" letter-spacing="1.6">THE OPERATING MANUAL</text>
+</svg>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Card — Classified FAQ</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background: var(--cream); }
+  .card { padding: 28px 32px; }
+  .doc {
+    background: var(--paper);
+    border: 1px solid var(--line-card);
+    padding: 22px 24px 24px;
+    max-width: 620px;
+    position: relative;
+  }
+  .corner { position:absolute; width: 20px; height: 20px; }
+  .corner.tl { top:-1px; left:-1px; border-top:1px solid var(--ink); border-left:1px solid var(--ink); opacity:.6; }
+  .corner.tr { top:-1px; right:-1px; border-top:1px solid var(--ink); border-right:1px solid var(--ink); opacity:.6; }
+  .corner.bl { bottom:-1px; left:-1px; border-bottom:1px solid var(--ink); border-left:1px solid var(--ink); opacity:.6; }
+  .corner.br { bottom:-1px; right:-1px; border-bottom:1px solid var(--ink); border-right:1px solid var(--ink); opacity:.6; }
+  .meta { font: 9px/1 var(--mono); letter-spacing:.20em; color: var(--muted); text-transform: uppercase; display:flex; justify-content:space-between; margin-bottom: 14px; }
+  .q { font: 700 18px/1.2 var(--cond); letter-spacing: .03em; color: var(--ink); margin: 0 0 12px; }
+  .a-wrap { position: relative; }
+  .a { font: 14px/1.65 var(--serif); color: var(--ink); margin: 0; filter: blur(6px); transition: filter .25s ease; }
+  .doc:hover .a { filter: blur(0); }
+  .peek {
+    position: absolute; inset: 0; display:flex; align-items:center; justify-content:center;
+    font: 700 10px/1 var(--cond); letter-spacing:.20em; color: var(--crimson-stamp);
+    text-transform: uppercase; pointer-events:none;
+    transition: opacity .25s ease;
+  }
+  .doc:hover .peek { opacity: 0; }
+  .stamp {
+    position: absolute; top: 14px; right: 18px;
+    border: 1px solid var(--crimson-hairline); color: var(--crimson-stamp);
+    font: 700 10px/1 var(--cond); letter-spacing: .15em; text-transform: uppercase;
+    padding: 4px 10px; transform: rotate(-6deg);
+  }
+</style></head>
+<body>
+<div class="card">
+  <div class="doc">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="stamp">Classified</span>
+    <div class="meta"><span>FILE · 03 / 12</span><span>FAQ.DOSSIER</span></div>
+    <h3 class="q">Is this just another motivational sales course?</h3>
+    <div class="a-wrap">
+      <p class="a">No. Motivational sales content tells you to "just believe in yourself." We tell you exactly what to say when your manager assigns you 40 cold calls and a deal review on the same Friday afternoon. There's a difference. Keep scrolling. It has to get worse before it gets better.</p>
+      <span class="peek">[ Classified — hover to peek ]</span>
+    </div>
+  </div>
+</div>
+</body></html>

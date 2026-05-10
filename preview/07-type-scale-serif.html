@@ -1,0 +1,25 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Card — Type Scale</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background: var(--cream); }
+  .card { padding: 22px 28px; display:flex; flex-direction:column; gap: 6px; }
+  .row  { display:grid; grid-template-columns: 110px 1fr; align-items:baseline; gap: 16px; padding: 4px 0; border-bottom: 1px solid var(--light); }
+  .row:last-child { border-bottom: 0; }
+  .tag  { font: var(--mono-caption); letter-spacing:.18em; text-transform: uppercase; color: var(--muted); }
+  .h1   { font: italic 900 44px/1.05 var(--display); color: var(--ink); margin:0; }
+  .h2   { font: italic 900 32px/1.1 var(--display); color: var(--ink); margin:0; }
+  .body { font: 17px/1.4 var(--serif); color: var(--ink); margin: 0; }
+  .lead { font: 18px/1.4 var(--serif); color: var(--muted); margin: 0; }
+  .sm   { font: italic 13px/1.3 var(--serif); color: var(--muted); margin: 0; }
+</style></head>
+<body>
+<div class="card">
+  <div class="row"><span class="tag">H1 · 44</span><h1 class="h1">Every great rep has two people inside them.</h1></div>
+  <div class="row"><span class="tag">H2 · 32</span><h2 class="h2">An intervention for the whole person.</h2></div>
+  <div class="row"><span class="tag">Lead · 18</span><p class="lead">One commands the room. The other eats cereal over the sink at midnight.</p></div>
+  <div class="row"><span class="tag">Body · 17</span><p class="body">12 interactive, field-tested sessions for AEs and SDRs serious about controlling chaos and protecting their commission.</p></div>
+  <div class="row"><span class="tag">Aside · 13i</span><p class="sm">Keep scrolling. It has to get worse before it gets better.</p></div>
+</div>
+</body></html>

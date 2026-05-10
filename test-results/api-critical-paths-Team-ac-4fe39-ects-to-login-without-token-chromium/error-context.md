@@ -1,0 +1,155 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: api-critical-paths.spec.ts >> Team accept page >> redirects to login without token
+- Location: tests\e2e\api-critical-paths.spec.ts:140:7
+
+# Error details
+
+```
+Error: expect(received).toContain(expected) // indexOf
+
+Expected value: 500
+Received array: [200, 301, 302, 303, 307, 308]
+```
+
+# Test source
+
+```ts
+  45  |         html.includes("Lesson 1") ||
+  46  |         html.includes("Command Center") ||
+  47  |         html.includes("Team Management");
+  48  |       expect(exposesProtectedContent).toBe(false);
+  49  |     });
+  50  |   }
+  51  | });
+  52  | 
+  53  | test.describe("Checkout API validation", () => {
+  54  |   test("POST /api/checkout rejects empty body", async ({ request }) => {
+  55  |     const res = await request.post(`${BASE}/api/checkout`, {
+  56  |       headers: { ...BROWSER_HEADERS, "Content-Type": "application/json" },
+  57  |       data: {},
+  58  |     });
+  59  |     expect(res.status()).toBeGreaterThanOrEqual(400);
+  60  |   });
+  61  | 
+  62  |   test("POST /api/checkout with valid tier returns session or error", async ({ request }) => {
+  63  |     const res = await request.post(`${BASE}/api/checkout`, {
+  64  |       headers: { ...BROWSER_HEADERS, "Content-Type": "application/json" },
+  65  |       data: { tier: "individual", email: "e2e-test@example.com" },
+  66  |     });
+  67  |     expect([200, 400, 401, 500]).toContain(res.status());
+  68  |     if (res.status() === 200) {
+  69  |       const body = await res.json();
+  70  |       expect(body.url).toBeTruthy();
+  71  |     }
+  72  |   });
+  73  | });
+  74  | 
+  75  | test.describe("Admin API security", () => {
+  76  |   test("POST /api/admin/refund rejects without admin auth", async ({ request }) => {
+  77  |     const res = await request.post(`${BASE}/api/admin/refund`, {
+  78  |       headers: { ...BROWSER_HEADERS, "Content-Type": "application/json" },
+  79  |       data: { purchaseId: "fake-uuid-1234" },
+  80  |     });
+  81  |     expect(res.status()).toBe(403);
+  82  |     const body = await res.json();
+  83  |     expect(body.error).toBe("Forbidden");
+  84  |   });
+  85  | 
+  86  |   test("POST /api/admin/refund rejects missing purchaseId", async ({ request }) => {
+  87  |     const res = await request.post(`${BASE}/api/admin/refund`, {
+  88  |       headers: { ...BROWSER_HEADERS, "Content-Type": "application/json" },
+  89  |       data: {},
+  90  |     });
+  91  |     expect([400, 403]).toContain(res.status());
+  92  |   });
+  93  | });
+  94  | 
+  95  | test.describe("Team API security", () => {
+  96  |   test("POST /api/team/invite rejects without auth", async ({ request }) => {
+  97  |     const res = await request.post(`${BASE}/api/team/invite`, {
+  98  |       headers: { ...BROWSER_HEADERS, "Content-Type": "application/json" },
+  99  |       data: { email: "test@example.com" },
+  100 |     });
+  101 |     expect(res.status()).toBe(401);
+  102 |     const body = await res.json();
+  103 |     expect(body.error).toBe("Unauthorized");
+  104 |   });
+  105 | 
+  106 |   test("POST /api/team/invite rejects invalid email format", async ({ request }) => {
+  107 |     const res = await request.post(`${BASE}/api/team/invite`, {
+  108 |       headers: { ...BROWSER_HEADERS, "Content-Type": "application/json" },
+  109 |       data: { email: "not-an-email" },
+  110 |     });
+  111 |     expect([400, 401]).toContain(res.status());
+  112 |   });
+  113 | });
+  114 | 
+  115 | test.describe("Stripe webhook security", () => {
+  116 |   test("rejects requests without stripe-signature header", async ({ request }) => {
+  117 |     const res = await request.post(`${BASE}/api/webhooks/stripe`, {
+  118 |       headers: { ...BROWSER_HEADERS, "Content-Type": "application/json" },
+  119 |       data: '{"type":"checkout.session.completed"}',
+  120 |     });
+  121 |     expect(res.status()).toBe(400);
+  122 |     const body = await res.json();
+  123 |     expect(body.error).toMatch(/signature/i);
+  124 |   });
+  125 | 
+  126 |   test("rejects requests with forged signature", async ({ request }) => {
+  127 |     const res = await request.post(`${BASE}/api/webhooks/stripe`, {
+  128 |       headers: {
+  129 |         ...BROWSER_HEADERS,
+  130 |         "Content-Type": "application/json",
+  131 |         "stripe-signature": "t=1234567890,v1=forged_signature_attempt",
+  132 |       },
+  133 |       data: '{"type":"checkout.session.completed","data":{"object":{}}}',
+  134 |     });
+  135 |     expect(res.status()).toBe(400);
+  136 |   });
+  137 | });
+  138 | 
+  139 | test.describe("Team accept page", () => {
+  140 |   test("redirects to login without token", async ({ request }) => {
+  141 |     const res = await request.get(`${BASE}/team/accept`, {
+  142 |       headers: BROWSER_HEADERS,
+  143 |       maxRedirects: 0,
+  144 |     });
+> 145 |     expect([200, 301, 302, 303, 307, 308]).toContain(res.status());
+      |                                            ^ Error: expect(received).toContain(expected) // indexOf
+  146 |   });
+  147 | 
+  148 |   test("shows invalid invite for fake token", async ({ request }) => {
+  149 |     const res = await request.get(`${BASE}/team/accept?token=fake-token-xyz`, {
+  150 |       headers: BROWSER_HEADERS,
+  151 |     });
+  152 |     expect(res.status()).toBe(200);
+  153 |     const html = await res.text();
+  154 |     expect(html.toLowerCase()).toContain("invalid");
+  155 |   });
+  156 | });
+  157 | 
+  158 | test.describe("Purchase status API", () => {
+  159 |   test("rejects without session_id", async ({ request }) => {
+  160 |     const res = await request.get(`${BASE}/api/purchase-status`, {
+  161 |       headers: BROWSER_HEADERS,
+  162 |     });
+  163 |     expect(res.status()).toBeGreaterThanOrEqual(400);
+  164 |   });
+  165 | 
+  166 |   test("returns pending/not-found for fake session", async ({ request }) => {
+  167 |     const res = await request.get(
+  168 |       `${BASE}/api/purchase-status?session_id=cs_test_fake_id_12345`,
+  169 |       { headers: BROWSER_HEADERS }
+  170 |     );
+  171 |     expect(res.status()).toBeGreaterThanOrEqual(400);
+  172 |   });
+  173 | });
+  174 | 
+```

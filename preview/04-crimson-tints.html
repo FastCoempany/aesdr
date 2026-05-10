@@ -1,0 +1,23 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Card — Crimson Tints</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background: var(--cream); }
+  .card { padding: 24px; }
+  .row { display:grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .sw { padding: 14px; border: 1px solid var(--line-card); background: var(--paper); aspect-ratio: 1 / 0.7; display:flex; flex-direction:column; justify-content:flex-end; }
+  .demo { flex: 1; display:flex; align-items:center; justify-content:center; font: italic 700 28px/1 var(--display); }
+  .name { font: var(--mono-caption); letter-spacing:.18em; color: var(--muted); margin-top: 8px; }
+</style></head>
+<body>
+<div class="card">
+  <div class="row">
+    <div class="sw"><div class="demo" style="color: var(--crimson)">Aa</div><div class="name">--crimson · 1.00</div></div>
+    <div class="sw"><div class="demo" style="color: rgba(139,26,26,.70)">Aa</div><div class="name">on-cream · 0.70</div></div>
+    <div class="sw"><div class="demo" style="color: var(--crimson-mute)">Aa</div><div class="name">--crimson-mute · .50</div></div>
+    <div class="sw"><div class="demo" style="color: var(--crimson-stamp)">Aa</div><div class="name">--crimson-stamp · .35</div></div>
+    <div class="sw"><div class="demo" style="color: var(--crimson-hairline)">Aa</div><div class="name">--crimson-hairline · .20</div></div>
+  </div>
+</div>
+</body></html>

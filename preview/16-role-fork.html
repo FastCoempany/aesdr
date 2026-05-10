@@ -1,0 +1,37 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Card — Role Pills</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background: var(--cream); }
+  .card { padding: 28px 32px; display:flex; flex-direction:column; gap: 16px; }
+  .lbl { font: 9px/1 var(--mono); letter-spacing:.18em; text-transform: uppercase; color: var(--muted); }
+  .switcher {
+    display:inline-flex; padding: 4px; border: 1px solid var(--line-card);
+    background: var(--paper); border-radius: 9999px; gap: 4px;
+  }
+  .pill {
+    padding: 10px 22px; font: 700 12px/1 var(--cond); letter-spacing: .18em;
+    text-transform: uppercase; border-radius: 9999px; cursor: pointer; user-select: none;
+    color: var(--muted); background: transparent; border: 0;
+  }
+  .pill.active {
+    color: var(--cream);
+    background: var(--iris); background-size: 200% 100%;
+    animation: iris-flow 8s linear infinite;
+  }
+  .price-row { display:flex; align-items:baseline; gap: 14px; margin-top: 4px; }
+  .price { font: italic 900 56px/1 var(--display); color: var(--ink); }
+  .meta { font: 11px/1 var(--mono); letter-spacing:.18em; color: var(--muted); text-transform: uppercase; }
+</style></head>
+<body>
+<div class="card">
+  <span class="lbl">YOUR ROLE</span>
+  <div class="switcher">
+    <button class="pill active">SDR</button>
+    <button class="pill">AE</button>
+    <button class="pill">Team</button>
+  </div>
+  <div class="price-row"><span class="price">$249</span><span class="meta">SDR · LIFETIME · 14-DAY REFUND</span></div>
+</div>
+</body></html>

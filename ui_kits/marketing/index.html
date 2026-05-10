@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AESDR — The Operating Manual</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<style>
+  /* ============ LAYOUT SHELL ============ */
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--cream); }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 0 var(--gutter); }
+  @media (max-width: 768px) {
+    .wrap { padding: 0 var(--gutter-mobile); }
+  }
+  section { padding: 96px 0; position: relative; }
+  section + section { border-top: 1px solid var(--light); }
+
+  /* ============ NAV ============ */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(250, 247, 242, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--light);
+  }
+  .nav-inner {
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 18px 0;
+  }
+  .brand { display:flex; align-items:baseline; gap: 10px; }
+  .brand .word { font: italic 900 28px/1 var(--display); color: var(--ink); letter-spacing: -.01em; }
+  .brand .word .dot { color: var(--crimson); }
+  .brand .tag { font: 9px/1 var(--mono); letter-spacing: .25em; color: var(--muted); text-transform: uppercase; }
+  .nav-links { display:flex; gap: 28px; }
+  .nav-links a { font: 11px/1 var(--mono); letter-spacing:.25em; text-transform: uppercase; color: var(--muted); text-decoration: none; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta {
+    font: 700 12px/1 var(--cond); letter-spacing: .15em; text-transform: uppercase;
+    color: var(--cream); background: var(--iris); background-size: 200% 100%;
+    animation: iris-flow 8s linear infinite;
+    padding: 11px 18px; border: 0; cursor: pointer;
+  }
+
+  /* ============ HERO ============ */
+  .hero { padding: 0; border: 0; }
+  .hero-grid { display: grid; grid-template-columns: 1fr 1fr; min-height: 720px; }
+  @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; min-height: 0; } }
+  .hero-l, .hero-r {
+    padding: 96px var(--gutter);
+    position: relative; overflow: hidden;
+    display:flex; flex-direction:column; justify-content:center;
+  }
+  .hero-l { background: var(--crimson); color: var(--cream); }
+  .hero-r { background: var(--cream); }
+  .hero-l .ghost {
+    position:absolute; right: -32px; bottom: -120px;
+    font: italic 700 420px/1 var(--display);
+    color: rgba(255,255,255,.06);
+    pointer-events:none; user-select:none; letter-spacing: -.02em;
+  }
+  .hero-r .ghost {
+    position:absolute; left: -40px; top: -160px;
+    font: italic 700 420px/1 var(--display);
+    color: rgba(0,0,0,.05);
+    pointer-events:none; user-select:none; letter-spacing: -.02em;
+  }
+  .hero h1 { margin: 18px 0 18px; max-width: 480px; position: relative; }
+  .hero-l h1 { font: italic 900 clamp(48px, 5.5vw, 76px)/1.02 var(--display); color: var(--cream); letter-spacing: -.005em; }
+  .hero-r h1 { font: italic 900 clamp(40px, 4.4vw, 60px)/1.05 var(--display); color: var(--ink); letter-spacing: -.005em; }
+  .hero p { font: 17px/1.6 var(--serif); max-width: 420px; margin: 0 0 28px; position: relative; }
+  .hero-l p { color: var(--on-crimson-soft); }
+  .hero-r p { color: var(--muted); }
+  .hero-eb { font: 11px/1 var(--mono); letter-spacing:.30em; text-transform: uppercase; position: relative; }
+  .hero-l .hero-eb { color: var(--on-crimson-eyebrow); }
+  .hero-r .hero-eb { color: var(--muted); }
+  .hero-cta {
+    display:inline-flex; align-items:center; gap: 10px;
+    padding: 16px 24px; font: 700 13px/1 var(--cond); letter-spacing: .18em;
+    text-transform: uppercase; border: 0; cursor: pointer; position:relative;
+    transition: transform .12s ease;
+  }
+  .hero-cta:hover { transform: translateY(-1px); }
+  .hero-cta-iris { color: var(--cream); background: var(--iris); background-size: 200% 100%; animation: iris-flow 8s linear infinite; }
+  .hero-cta-out { background: transparent; color: var(--ink); border: 1.5px solid var(--ink); }
+  .hero-cta-out:hover { background: var(--ink); color: var(--cream); transform: none; }
+  .hero-meta { font: 10px/1.7 var(--mono); letter-spacing:.20em; color: var(--on-crimson-mute); text-transform: uppercase; margin-top: 24px; position:relative; }
+  .hero-r-meta { color: var(--muted); }
+  .iris-rule-h { width: 80px; height: 2px; background: var(--iris); background-size: 200% 100%; animation: iris-flow 8s linear infinite; position:relative; }
+
+  /* ============ DIAGNOSIS / TERMINAL SECTION ============ */
+  .term-section { padding: 120px 0; }
+  .term-row { display:grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  @media (max-width: 900px) { .term-row { grid-template-columns: 1fr; gap: 40px; } }
+  .term-eb { font: 11px/1 var(--mono); letter-spacing:.30em; text-transform: uppercase; color: var(--muted); }
+  .term-h { font: italic 900 44px/1.05 var(--display); color: var(--ink); margin: 14px 0 16px; }
+  .term-h .iris-w { background: var(--iris); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; animation: iris-flow 8s linear infinite; }
+  .term-p { font: 17px/1.65 var(--serif); color: var(--muted); max-width: 460px; margin: 0; }
+  .term {
+    background: var(--paper);
+    border: 1px solid var(--line-card);
+    box-shadow: 0 4px 32px rgba(0,0,0,.04);
+    padding: 22px 24px 26px;
+  }
+  .term-head { display:flex; align-items:center; justify-content:space-between; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--light); }
+  .term-file { font: 10px/1 var(--mono); letter-spacing:.20em; color: var(--muted); text-transform: uppercase; }
+  .term-line { font: 15px/1.95 var(--mono); color: var(--ink); }
+  .term-line .p { color: var(--muted); margin-right: 10px; }
+  .cur { display:inline-block; width: 10px; height: 17px; vertical-align: -3px; background: var(--crimson); animation: blink 1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ============ TWO VOICES ============ */
+  .voices-section { padding: 120px 0; background: var(--cream); }
+  .voices-eb { display:block; text-align:center; font: 11px/1 var(--mono); letter-spacing:.30em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .voices-title { text-align:center; font: italic 900 44px/1.05 var(--display); color: var(--ink); margin: 0 0 64px; }
+  .voices-grid { display:grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+  @media (max-width: 900px) { .voices-grid { grid-template-columns: 1fr; gap: 40px; } }
+  .voice-col { position: relative; }
+  .voice-col + .voice-col::before {
+    content:''; position:absolute; left: -32px; top: 0; bottom: 0; width: 1px;
+    background: var(--light);
+  }
+  .voice-lbl { font: 11px/1 var(--mono); letter-spacing:.30em; text-transform: uppercase; color: var(--muted); margin-bottom: 18px; display:block; }
+  .voice-rowan { font: italic 900 36px/1.1 var(--display); color: var(--ink); margin: 0 0 14px; }
+  .voice-rowan-cap { font: 700 22px/1.2 var(--cond); letter-spacing: .04em; text-transform: uppercase; color: var(--ink); margin: 0; }
+  .voice-michael { font: 26px/1.45 var(--hand); color: var(--crimson); margin: 0; transform: rotate(-0.3deg); max-width: 460px; }
+  .voices-seam { display:flex; align-items:center; gap: 18px; margin-top: 64px; }
+  .voices-seam .rule { flex: 1; height: 2px; background: var(--iris); background-size: 200% 100%; animation: iris-flow 8s linear infinite; }
+  .voices-seam .merge { font: italic 900 22px/1 var(--display); color: var(--ink); white-space: nowrap; }
+
+  /* ============ DECK PEEL SECTION ============ */
+  .deck-section { padding: 120px 0; background: var(--cream); }
+  .deck-head { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 56px; }
+  .deck-head .eb { font: 11px/1 var(--mono); letter-spacing:.30em; text-transform: uppercase; color: var(--muted); }
+  .deck-head h2 { font: italic 900 44px/1.05 var(--display); color: var(--ink); margin: 12px 0 0; }
+  .deck-stack-wrap { perspective: 2000px; padding: 40px 0; }
+  .deck-stack { position: relative; width: 540px; height: 340px; margin: 0 auto; }
+  .deck-card {
+    position: absolute; inset: 0; background: var(--paper);
+    border: 1px solid var(--line-card); border-radius: 4px;
+    padding: 24px 28px; box-shadow: 0 4px 32px rgba(0,0,0,.04);
+    transform-origin: left center;
+  }
+  .deck-card .num { position:absolute; top: 18px; right: 24px; font: italic 900 56px/1 var(--display); color: rgba(0,0,0,.10); }
+  .deck-card .meta { font: 10px/1 var(--mono); letter-spacing:.20em; text-transform: uppercase; color: var(--muted); }
+  .deck-card .h { font: 700 32px/1.05 var(--cond); letter-spacing: .03em; color: var(--ink); margin: 18px 0 14px; max-width: 380px; }
+  .deck-card .quote { font: 16px/1.45 var(--hand); color: var(--crimson); margin: 0; max-width: 380px; }
+  .deck-card .tip { position:absolute; bottom: 20px; left: 28px; font: 9px/1 var(--mono); letter-spacing:.30em; text-transform: uppercase; color: var(--muted); }
+  .deck-card .ghost-q {
+    position:absolute; right: -10px; bottom: -80px;
+    font: italic 700 320px/1 var(--display); color: rgba(0,0,0,.05);
+    pointer-events:none; user-select:none;
+  }
+  .deck-tabs { display:flex; gap: 6px; justify-content:center; margin-top: 32px; }
+  .deck-tabs button {
+    width: 32px; height: 4px; border: 0; padding: 0;
+    background: var(--light); cursor: pointer; transition: background .2s ease;
+  }
+  .deck-tabs button.active {
+    background: var(--iris); background-size: 200% 100%; animation: iris-flow 8s linear infinite;
+    height: 4px; width: 48px;
+  }
+
+  /* ============ PRICING ============ */
+  .pricing-section { padding: 120px 0; background: var(--cream); }
+  .pricing-head { text-align:center; margin-bottom: 56px; }
+  .pricing-head .eb { font: 11px/1 var(--mono); letter-spacing:.30em; text-transform: uppercase; color: var(--muted); }
+  .pricing-head h2 { font: italic 900 44px/1.05 var(--display); color: var(--ink); margin: 12px 0 0; }
+  .pricing-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  @media (max-width: 900px) { .pricing-grid { grid-template-columns: 1fr; } }
+  .price-tile { background: var(--paper); border: 1px solid var(--line-card); padding: 28px 28px 32px; display:flex; flex-direction:column; gap: 12px; position:relative; }
+  .price-tile.hot { border-color: var(--ink); }
+  .price-tile.hot::before {
+    content: 'OPERATOR PICK'; position:absolute; top: -11px; left: 28px;
+    background: var(--ink); color: var(--cream);
+    font: 700 9px/1 var(--cond); letter-spacing: .25em; text-transform: uppercase;
+    padding: 6px 12px;
+  }
+  .price-tile .lbl { font: 11px/1 var(--mono); letter-spacing:.30em; text-transform: uppercase; color: var(--muted); }
+  .price-tile .price { font: italic 900 72px/1 var(--display); color: var(--ink); }
+  .price-tile .sub { font: 14px/1.5 var(--serif); color: var(--muted); margin: 0; min-height: 60px; }
+  .price-tile ul { list-style: none; padding: 0; margin: 8px 0 0; font: 14px/1.7 var(--serif); color: var(--ink); border-top: 1px solid var(--light); padding-top: 12px; }
+  .price-tile li::before { content: '— '; color: var(--crimson); }
+  .price-tile .btn {
+    display:inline-flex; justify-content:center; align-items:center;
+    padding: 14px 22px; font: 700 13px/1 var(--cond); letter-spacing: .15em;
+    text-transform: uppercase; border: 0; cursor: pointer; margin-top: 8px;
+    transition: transform .12s ease;
+  }
+  .price-tile .btn:hover { transform: translateY(-1px); }
+  .price-tile .btn-iris { color: var(--cream); background: var(--iris); background-size: 200% 100%; animation: iris-flow 8s linear infinite; }
+  .price-tile .btn-out { background: transparent; color: var(--ink); border: 1.5px solid var(--ink); }
+  .price-tile .btn-out:hover { background: var(--ink); color: var(--cream); transform: none; }
+
+  /* ============ FAQ ============ */
+  .faq-section { padding: 120px 0; }
+  .faq-head { margin-bottom: 56px; }
+  .faq-head .eb { font: 11px/1 var(--mono); letter-spacing:.30em; text-transform: uppercase; color: var(--muted); }
+  .faq-head h2 { font: italic 900 44px/1.05 var(--display); color: var(--ink); margin: 12px 0 0; }
+  .faq-grid { display:grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 900px) { .faq-grid { grid-template-columns: 1fr; } }
+  .doc {
+    background: var(--paper); border: 1px solid var(--line-card);
+    padding: 26px 28px 28px; position: relative; overflow: hidden;
+  }
+  .doc::before, .doc::after,
+  .doc .br, .doc .bl {
+    content:''; position:absolute; width: 18px; height: 18px;
+  }
+  .doc::before { top: 6px; left: 6px; border-top: 1px solid var(--ink); border-left: 1px solid var(--ink); opacity: .5; }
+  .doc::after  { top: 6px; right: 6px; border-top: 1px solid var(--ink); border-right: 1px solid var(--ink); opacity: .5; }
+  .doc .br { bottom: 6px; right: 6px; border-bottom: 1px solid var(--ink); border-right: 1px solid var(--ink); opacity: .5; }
+  .doc .bl { bottom: 6px; left: 6px; border-bottom: 1px solid var(--ink); border-left: 1px solid var(--ink); opacity: .5; }
+  .doc .meta { font: 9px/1 var(--mono); letter-spacing:.20em; color: var(--muted); text-transform: uppercase; display:flex; justify-content:space-between; margin-bottom: 14px; }
+  .doc .q { font: 700 20px/1.2 var(--cond); letter-spacing: .03em; color: var(--ink); margin: 0 0 14px; max-width: 90%; }
+  .doc .a-wrap { position: relative; min-height: 90px; }
+  .doc .a { font: 14px/1.65 var(--serif); color: var(--ink); margin: 0; filter: blur(6px); transition: filter .25s ease; }
+  .doc:hover .a { filter: blur(0); }
+  .doc .peek { position: absolute; inset: 0; display:flex; align-items:center; justify-content:center; font: 700 10px/1 var(--cond); letter-spacing:.25em; color: var(--crimson-stamp); text-transform: uppercase; pointer-events:none; transition: opacity .25s ease; }
+  .doc:hover .peek { opacity: 0; }
+  .doc .stamp {
+    position: absolute; top: 16px; right: 18px;
+    border: 1px solid var(--crimson-hairline); color: var(--crimson-stamp);
+    font: 700 10px/1 var(--cond); letter-spacing: .15em; text-transform: uppercase;
+    padding: 5px 12px; transform: rotate(-6deg);
+  }
+
+  /* ============ FOOTER ============ */
+  footer { padding: 64px 0 48px; background: var(--ink); color: var(--cream); border: 0; }
+  .foot-grid { display:grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 48px; }
+  @media (max-width: 900px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
+  .foot-brand .word { font: italic 900 32px/1 var(--display); color: var(--cream); }
+  .foot-brand .word .dot { color: #FF6B00; background: var(--iris); background-size: 200% 100%; -webkit-background-clip:text; background-clip:text; color: transparent; -webkit-text-fill-color: transparent; animation: iris-flow 8s linear infinite; }
+  .foot-brand p { font: 14px/1.55 var(--serif); color: rgba(255,255,255,.7); max-width: 320px; margin: 12px 0 0; }
+  .foot-col h4 { font: 11px/1 var(--mono); letter-spacing:.30em; text-transform: uppercase; color: rgba(255,255,255,.5); margin: 0 0 16px; font-weight: normal; }
+  .foot-col a { display:block; color: var(--cream); font: 15px/2 var(--serif); text-decoration: none; }
+  .foot-col a:hover { text-decoration: underline; text-decoration-color: var(--crimson); text-underline-offset: 4px; }
+  .foot-bottom {
+    margin-top: 48px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.12);
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap: 12px;
+  }
+  .foot-bottom .meta { font: 10px/1.6 var(--mono); letter-spacing:.20em; text-transform: uppercase; color: rgba(255,255,255,.5); }
+  .foot-bottom .iris-line { flex: 1; max-width: 240px; height: 1px; background: var(--iris); background-size: 200% 100%; animation: iris-flow 8s linear infinite; opacity: .5; }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div class="brand">
+      <span class="word">AESDR<span class="dot">.</span></span>
+      <span class="tag">THE OPERATING MANUAL</span>
+    </div>
+    <div class="nav-links">
+      <a href="#diagnosis">Diagnosis</a>
+      <a href="#voices">Voices</a>
+      <a href="#deck">12 Lessons</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <button class="nav-cta">Get Access →</button>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero-grid">
+    <div class="hero-l">
+      <span class="ghost">01</span>
+      <span class="hero-eb">AESDR · 12 LESSONS · A BETTER YOU</span>
+      <h1>Stop Surviving.<br>Start Owning It.</h1>
+      <p>This isn't corporate-y but it will advance your career. 12 interactive, field-tested sessions for AEs and SDRs serious about controlling chaos, managing toxic leadership, protecting your commission — and your future.</p>
+      <div style="display:flex;gap:14px;align-items:center;position:relative;">
+        <button class="hero-cta hero-cta-iris">Get Access — $249</button>
+        <span class="iris-rule-h"></span>
+      </div>
+      <div class="hero-meta">14-DAY REFUND · LIFETIME ACCESS · UNTAMED DISCORD</div>
+    </div>
+    <div class="hero-r">
+      <span class="ghost">02</span>
+      <span class="hero-eb">FOR FIRST-1-TO-2-YEAR SDRS &amp; AES</span>
+      <h1>An intervention<br>for the whole rep.</h1>
+      <p>Two voices. One verdict. The one your commission check has been writing about you for the last 30 days, whether you read it or not.</p>
+      <div style="display:flex;gap:14px;align-items:center;">
+        <button class="hero-cta hero-cta-out">Take the Tour</button>
+      </div>
+      <div class="hero-meta hero-r-meta">12 LESSONS · 5 TAKEAWAY TOOLS · NO MOTIVATION</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DIAGNOSIS / TERMINAL ============ -->
+<section id="diagnosis" class="term-section">
+  <div class="wrap">
+    <div class="term-row">
+      <div>
+        <span class="term-eb">DIAGNOSIS · 01 / 12</span>
+        <h2 class="term-h">Stop pretending you don't already <span class="iris-w">know</span> what's wrong.</h2>
+        <p class="term-p">You set your alarm for 6am on Sunday to "lock in" this week. It's Saturday again. You didn't lock in at all. The terminal is honest about what your week actually contained.</p>
+      </div>
+      <div class="term">
+        <div class="term-head">
+          <svg width="36" height="10" viewBox="0 0 36 10"><circle cx="5" cy="5" r="4" fill="#EF4444" fill-opacity=".5"/><circle cx="18" cy="5" r="4" fill="#F59E0B" fill-opacity=".5"/><circle cx="31" cy="5" r="4" fill="#10B981" fill-opacity=".5"/></svg>
+          <div class="term-file">DIAGNOSE.SH · LINE 47</div>
+        </div>
+        <div class="term-line"><span class="p">$</span>./diagnose --honest</div>
+        <div class="term-line"><span class="p">&gt;</span>scanning your week…</div>
+        <div class="term-line"><span class="p">&gt;</span>scanning your calendar…</div>
+        <div class="term-line"><span class="p">&gt;</span>scanning your pipeline notes…</div>
+        <div class="term-line"><span class="p">&gt;</span>diagnosis: <span class="iris-w">least productive person you know</span><span class="cur"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TWO VOICES ============ -->
+<section id="voices" class="voices-section">
+  <div class="wrap">
+    <span class="voices-eb">CHARACTER-LED · NEVER FOUNDER-LED</span>
+    <h2 class="voices-title">Every great rep has two people inside them.</h2>
+    <div class="voices-grid">
+      <div class="voice-col">
+        <span class="voice-lbl">VOICE · ROWAN · THE VERDICT</span>
+        <h3 class="voice-rowan">Your commission check is not income.</h3>
+        <p class="voice-rowan-cap">It is a verdict on the last 30 days.</p>
+      </div>
+      <div class="voice-col">
+        <span class="voice-lbl">VOICE · MICHAEL · 2AM CONFESSION</span>
+        <p class="voice-michael">"Last month I made $8,200. This month I made $2,100. I bought a $300 jacket during the $8,200 month. I'm now wearing the $300 jacket while eating ramen I bought with a coupon. Fashion."</p>
+      </div>
+    </div>
+    <div class="voices-seam">
+      <span class="rule"></span>
+      <span class="merge">— THE TWO BECOME ONE —</span>
+      <span class="rule"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DECK PEEL ============ -->
+<section id="deck" class="deck-section">
+  <div class="wrap">
+    <div class="deck-head">
+      <div>
+        <span class="eb">12 LESSONS · PEEL TO REVEAL</span>
+        <h2>The whole curriculum,<br>in your own time.</h2>
+      </div>
+      <span style="font: italic 13px/1.5 var(--serif); color: var(--muted); max-width: 320px; text-align:right;">Click, tap, or → to peel through. Each card is a lesson; the back of each card is its first 90 seconds.</span>
+    </div>
+    <div class="deck-stack-wrap">
+      <div class="deck-stack" id="stack">
+        <div class="deck-card" data-i="0">
+          <span class="num">01</span>
+          <div class="meta">LESSON · 01 / 12 · DIAGNOSIS</div>
+          <div class="h">The Diagnosis.</div>
+          <p class="quote">"Stop pretending you don't already know what's wrong."</p>
+          <span class="tip">CLICK · TAP · → · TO PEEL</span>
+          <span class="ghost-q">01</span>
+        </div>
+      </div>
+      <div class="deck-tabs" id="tabs"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICING ============ -->
+<section id="pricing" class="pricing-section">
+  <div class="wrap">
+    <div class="pricing-head">
+      <span class="eb">PRICING · LIFETIME · 14-DAY REFUND</span>
+      <h2>Three doors. Same operating manual.</h2>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-tile">
+        <span class="lbl">SDR · LIFETIME</span>
+        <span class="price">$249</span>
+        <p class="sub">For first-year SDRs who can already see what's broken — they just don't have the language for it yet.</p>
+        <ul>
+          <li>12 lessons · 5 takeaway tools</li>
+          <li>Untamed Discord access</li>
+          <li>Field-tested cold-script kit</li>
+        </ul>
+        <button class="btn btn-out">Get SDR Access</button>
+      </div>
+      <div class="price-tile hot">
+        <span class="lbl">AE · LIFETIME</span>
+        <span class="price">$299</span>
+        <p class="sub">For 1–2 year AEs running real deals with no real cover. The math fork that protects your commission first.</p>
+        <ul>
+          <li>Everything in SDR</li>
+          <li>Deal-cycle worksheets</li>
+          <li>Manager-lie playbook</li>
+        </ul>
+        <button class="btn btn-iris">Get AE Access →</button>
+      </div>
+      <div class="price-tile">
+        <span class="lbl">TEAM · UP TO 10</span>
+        <span class="price">$1,499</span>
+        <p class="sub">For managers who want their reps to feel less alone, and want to stop being the manager who lies.</p>
+        <ul>
+          <li>10 seats · cohort thread</li>
+          <li>Manager dashboard</li>
+          <li>Quarterly office hours</li>
+        </ul>
+        <button class="btn btn-out">Get Team Access</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section id="faq" class="faq-section">
+  <div class="wrap">
+    <div class="faq-head">
+      <span class="eb">FAQ · DOSSIER · HOVER TO PEEK</span>
+      <h2>The questions you're<br>too embarrassed to ask out loud.</h2>
+    </div>
+    <div class="faq-grid">
+      <div class="doc"><span class="br"></span><span class="bl"></span>
+        <span class="stamp">Classified</span>
+        <div class="meta"><span>FILE · 01 / 06</span><span>FAQ.DOSSIER</span></div>
+        <h3 class="q">Is this just another motivational sales course?</h3>
+        <div class="a-wrap">
+          <p class="a">No. Motivational content tells you to "just believe in yourself." We tell you what to say when your manager assigns 40 cold calls and a deal review on the same Friday afternoon. Different thing entirely.</p>
+          <span class="peek">[ Classified — hover to peek ]</span>
+        </div>
+      </div>
+      <div class="doc"><span class="br"></span><span class="bl"></span>
+        <span class="stamp">Classified</span>
+        <div class="meta"><span>FILE · 02 / 06</span><span>FAQ.DOSSIER</span></div>
+        <h3 class="q">Will this work if I'm not crushing it right now?</h3>
+        <div class="a-wrap">
+          <p class="a">It's specifically designed for reps who aren't. If you're already at 180% of quota and your manager loves you, save your money. If you're at 62% with a $300 jacket and a coupon-noodle dinner, this is your operating manual.</p>
+          <span class="peek">[ Classified — hover to peek ]</span>
+        </div>
+      </div>
+      <div class="doc"><span class="br"></span><span class="bl"></span>
+        <span class="stamp">Classified</span>
+        <div class="meta"><span>FILE · 03 / 06</span><span>FAQ.DOSSIER</span></div>
+        <h3 class="q">Who shouldn't buy this?</h3>
+        <div class="a-wrap">
+          <p class="a">Sales leaders looking for a team-building activity. Anyone who needs to be told they're amazing. Anyone whose LinkedIn bio contains the words "rockstar," "ninja," or "passionate about." We will not be a good fit.</p>
+          <span class="peek">[ Classified — hover to peek ]</span>
+        </div>
+      </div>
+      <div class="doc"><span class="br"></span><span class="bl"></span>
+        <span class="stamp">Classified</span>
+        <div class="meta"><span>FILE · 04 / 06</span><span>FAQ.DOSSIER</span></div>
+        <h3 class="q">What if it doesn't deliver value?</h3>
+        <div class="a-wrap">
+          <p class="a">14-day refund, no questions, no exit interview. If it doesn't deliver value, we don't want your money. That's not a generous policy — it's a sober one. Refund-rate honesty is part of how we trust ourselves.</p>
+          <span class="peek">[ Classified — hover to peek ]</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="word">AESDR<span class="dot">.</span></div>
+        <p>The Operating Manual. Not the motivation engine. Built by operators who got tired of LinkedIn telling them to rise and grind.</p>
+      </div>
+      <div class="foot-col">
+        <h4>The Course</h4>
+        <a href="#">12 Lessons</a>
+        <a href="#">5 Tools</a>
+        <a href="#">Untamed Discord</a>
+        <a href="#">Refund Policy</a>
+      </div>
+      <div class="foot-col">
+        <h4>For</h4>
+        <a href="#">SDRs</a>
+        <a href="#">AEs</a>
+        <a href="#">Teams</a>
+        <a href="#">Affiliates</a>
+      </div>
+      <div class="foot-col">
+        <h4>Operator</h4>
+        <a href="mailto:support@aesdr.com">support@aesdr.com</a>
+        <a href="#">About</a>
+        <a href="#">Press</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span class="meta">© AESDR · BUILT IN PUBLIC · NO HUSTLE</span>
+      <span class="iris-line"></span>
+      <span class="meta">v1.1 · CANON</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ============ DECK PEEL — minimal vanilla impl ============ */
+const lessons = [
+  { n: '01', section: 'DIAGNOSIS', title: 'The Diagnosis.', quote: '"Stop pretending you don\'t already know what\'s wrong."' },
+  { n: '02', section: 'CAMARADERIE', title: 'Building Real Camaraderie.', quote: '"When\'s the last time your team felt like an actual team?"' },
+  { n: '03', section: 'MANAGER', title: 'When the Manager Lies.', quote: '"\'So much potential\'. Six months ago. Same potential. Just sitting there."' },
+  { n: '04', section: 'COMMISSION', title: 'The Commission Verdict.', quote: '"Your check is the verdict on how you lived 30 days."' },
+  { n: '05', section: 'PLAYBOOK', title: 'tHe SaLeS pLaYbOoK.', quote: '"Yes, the casing is a joke. The lesson is not."' },
+  { n: '06', section: 'BEYOND', title: 'bEyOnD tHe SaLeS pLaYbOoK.', quote: '"What you do when the script runs out is the actual job."' },
+  { n: '07', section: 'CHAOS', title: 'Controlling Chaos.', quote: '"You don\'t need 6am. You need to stop lying about 9am."' },
+  { n: '08', section: 'PIPELINE', title: 'A Pipeline You Can Read.', quote: '"Forecasts are wishes with deadlines. Stop wishing."' },
+  { n: '09', section: 'BURN', title: 'Burn Without Burnout.', quote: '"Some weeks you sprint. Some weeks you survive. Tell them apart."' },
+  { n: '10', section: 'EXIT', title: 'Knowing When To Leave.', quote: '"Loyalty to a logo is the most expensive thing you own."' },
+  { n: '11', section: 'MONEY', title: 'The Money Conversation.', quote: '"Your comp plan was written by someone whose mortgage isn\'t yours."' },
+  { n: '12', section: 'OWN IT', title: 'Owning It.', quote: '"At some point the operating manual becomes yours, not ours."' },
+];
+
+const stack = document.getElementById('stack');
+const tabs = document.getElementById('tabs');
+let active = 0;
+
+function render() {
+  stack.innerHTML = '';
+  // Render the next 3 cards behind, then the active card on top
+  const showCount = 3;
+  for (let offset = showCount; offset >= 1; offset--) {
+    const idx = (active + offset) % lessons.length;
+    const card = makeCard(lessons[idx], offset);
+    stack.appendChild(card);
+  }
+  // active card
+  const top = makeCard(lessons[active], 0);
+  top.style.cursor = 'pointer';
+  top.addEventListener('click', peel);
+  stack.appendChild(top);
+  // tabs
+  tabs.innerHTML = '';
+  lessons.forEach((_, i) => {
+    const b = document.createElement('button');
+    if (i === active) b.classList.add('active');
+    b.addEventListener('click', () => { active = i; render(); });
+    tabs.appendChild(b);
+  });
+}
+
+function makeCard(L, depth) {
+  const el = document.createElement('div');
+  el.className = 'deck-card';
+  el.style.transform = depth === 0
+    ? 'translate(0,0) rotate(0)'
+    : `translate(${depth * 6}px, ${depth * 6}px) rotate(${-depth * 0.7}deg)`;
+  el.style.zIndex = 50 - depth;
+  el.style.opacity = depth === 0 ? '1' : (1 - depth * 0.08);
+  el.style.transition = 'transform .7s cubic-bezier(.6,.2,.2,1), opacity .7s ease';
+  el.innerHTML = `
+    <span class="num">${L.n}</span>
+    <div class="meta">LESSON · ${L.n} / 12 · ${L.section}</div>
+    <div class="h">${L.title}</div>
+    <p class="quote">${L.quote}</p>
+    ${depth === 0 ? '<span class="tip">CLICK · TAP · → · TO PEEL</span>' : ''}
+    <span class="ghost-q">${L.n}</span>
+  `;
+  return el;
+}
+
+function peel() {
+  const top = stack.lastElementChild;
+  if (!top) return;
+  top.style.transform = 'rotateY(-155deg) rotateZ(-4deg) translateX(-8%)';
+  top.style.opacity = '0';
+  setTimeout(() => {
+    active = (active + 1) % lessons.length;
+    render();
+  }, 600);
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight') peel();
+  if (e.key === 'ArrowLeft') { active = (active - 1 + lessons.length) % lessons.length; render(); }
+});
+
+render();
+</script>
+</body>
+</html>

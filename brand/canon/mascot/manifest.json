@@ -1,0 +1,99 @@
+{
+  "name": "Leponeus",
+  "description": "AESDR canonical mascot. Tortoise body with strapped hare-ears. The two voices fused.",
+  "version": "1.0.0",
+  "canon": "v1.0",
+  "owner": "Antaeus",
+  "repo": "https://github.com/FastCoempany/aesdr",
+  "license": "Internal · AESDR Brand Canon",
+  "expressions": [
+    {
+      "id": "leponeus-01-doctrine",
+      "name": "The Doctrine",
+      "key": "doctrine",
+      "use": "Default. Wordmark lockup, certificates, brand voice.",
+      "file": "leponeus-01-doctrine.svg",
+      "sprite": "leponeus.sprite.svg#leponeus-doctrine"
+    },
+    {
+      "id": "leponeus-02-diagnosis",
+      "name": "The Diagnosis",
+      "key": "diagnosis",
+      "use": "Lesson 01. Honest-look-in-the-mirror moments.",
+      "file": "leponeus-02-diagnosis.svg",
+      "sprite": "leponeus.sprite.svg#leponeus-diagnosis"
+    },
+    {
+      "id": "leponeus-03-sprint",
+      "name": "The Sprint",
+      "key": "sprint",
+      "use": "Bursts of velocity. Onboarding and momentum moments.",
+      "file": "leponeus-03-sprint.svg",
+      "sprite": "leponeus.sprite.svg#leponeus-sprint"
+    },
+    {
+      "id": "leponeus-04-fall",
+      "name": "The Fall",
+      "key": "fall",
+      "use": "The dip. Burnout. Lesson 05.",
+      "file": "leponeus-04-fall.svg",
+      "sprite": "leponeus.sprite.svg#leponeus-fall"
+    },
+    {
+      "id": "leponeus-05-recovery",
+      "name": "The Recovery",
+      "key": "recovery",
+      "use": "Sprout from shell. Lesson 09. Bounce-back moments.",
+      "file": "leponeus-05-recovery.svg",
+      "sprite": "leponeus.sprite.svg#leponeus-recovery"
+    },
+    {
+      "id": "leponeus-06-rest",
+      "name": "The Rest",
+      "key": "rest",
+      "use": "Eyes closed. Sundays only. Permission to stop.",
+      "file": "leponeus-06-rest.svg",
+      "sprite": "leponeus.sprite.svg#leponeus-rest"
+    },
+    {
+      "id": "leponeus-07-verdict",
+      "name": "The Verdict",
+      "key": "verdict",
+      "use": "Crimson tip. Pricing/closing/Rowan moments.",
+      "file": "leponeus-07-verdict.svg",
+      "sprite": "leponeus.sprite.svg#leponeus-verdict"
+    },
+    {
+      "id": "leponeus-08-owner",
+      "name": "The Owner",
+      "key": "owner",
+      "use": "A on shell. Lesson 12. Final state.",
+      "file": "leponeus-08-owner.svg",
+      "sprite": "leponeus.sprite.svg#leponeus-owner"
+    }
+  ],
+  "rules": {
+    "stroke": "1.6px round-cap, round-join, non-scaling",
+    "palette": {
+      "ink": "#1A1A1A",
+      "shell": "#F1ECE3",
+      "strap": "#8B1A1A",
+      "cream": "#FAF7F2"
+    },
+    "scarcity": "Max 1 per editorial spread. 1 per badge. 1 per onboarding screen.",
+    "forbidden": [
+      "No anthropomorphizing — no waving, no thumbs, no smiling.",
+      "No 9th expression without a written entry in the canon doc.",
+      "No fill colors outside the palette above.",
+      "No skewing, no warping, no perspective."
+    ]
+  },
+  "surfaces": {
+    "web": "Use the sprite. Reference by id.",
+    "print": "Use standalone SVG. Convert to PDF/X with embedded paths.",
+    "app": "Export PNG @1×/@2×/@3× from doctrine pose. Black square ink lockup.",
+    "lms": "Use standalone SVG inside SCORM packages.",
+    "social": "Stacked lockup. PNG @2× minimum.",
+    "swag": "Single-color print only — black on cream, or cream on crimson."
+  }
+}

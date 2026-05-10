@@ -1,0 +1,21 @@
+
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 240" width="300" height="240" role="img" aria-label="Leponeus — The Diagnosis">
+  <title>Leponeus · The Diagnosis</title>
+  <desc>AESDR canonical mascot. Pose 02 of 08: The Diagnosis. Use: Lesson 01. Honest-look-in-the-mirror moments.</desc>
+  <g fill="none" stroke="#1A1A1A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke">
+    <ellipse cx="120" cy="160" rx="68" ry="36" fill="#F1ECE3"></ellipse>
+             <path d="M 60 160 Q 120 110 180 160"></path>
+    <path d="M 80 158 L 80 132 M 120 156 L 120 122 M 160 158 L 160 132" stroke-opacity=".45"></path>
+    <ellipse cx="68" cy="194" rx="10" ry="6" fill="#F1ECE3"></ellipse>
+             <ellipse cx="172" cy="194" rx="10" ry="6" fill="#F1ECE3"></ellipse>
+    <ellipse cx="200" cy="146" rx="16" ry="12" fill="#F1ECE3"></ellipse>
+    <line x1="204" y1="142" x2="212" y2="142"></line>
+    <line x1="200" y1="152" x2="208" y2="152"></line>
+    <path d="M 192 130 Q 190 100 184 88 Q 196 96 200 122" fill="#F1ECE3"></path>
+           <path d="M 208 130 Q 214 100 222 88 Q 218 100 216 122" fill="#F1ECE3"></path>
+    
+    
+    <line x1="186" y1="134" x2="216" y2="134" stroke="#8B1A1A" stroke-width="1.4"></line>
+  </g>
+</svg>

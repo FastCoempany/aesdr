@@ -1,0 +1,27 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Card — Spacing Scale</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background: var(--cream); }
+  .card { padding: 22px 28px; }
+  .row { display:grid; grid-template-columns: 60px 60px 1fr; gap: 14px; align-items:center; padding: 6px 0; border-bottom: 1px dashed var(--light); }
+  .row:last-child { border-bottom: 0; }
+  .tag { font: 9px/1 var(--mono); letter-spacing:.18em; color: var(--muted); }
+  .px  { font: 10px/1 var(--mono); letter-spacing:.18em; color: var(--ink); }
+  .bar { height: 14px; background: var(--crimson); }
+</style></head>
+<body>
+<div class="card">
+  <div class="row"><span class="tag">--s-1</span><span class="px">4 PX</span><span class="bar" style="width:4px"></span></div>
+  <div class="row"><span class="tag">--s-2</span><span class="px">8 PX</span><span class="bar" style="width:8px"></span></div>
+  <div class="row"><span class="tag">--s-3</span><span class="px">12 PX</span><span class="bar" style="width:12px"></span></div>
+  <div class="row"><span class="tag">--s-4</span><span class="px">16 PX</span><span class="bar" style="width:16px"></span></div>
+  <div class="row"><span class="tag">--s-5</span><span class="px">24 PX</span><span class="bar" style="width:24px"></span></div>
+  <div class="row"><span class="tag">--s-6</span><span class="px">32 PX</span><span class="bar" style="width:32px"></span></div>
+  <div class="row"><span class="tag">--s-7</span><span class="px">48 PX</span><span class="bar" style="width:48px"></span></div>
+  <div class="row"><span class="tag">--s-8</span><span class="px">64 PX</span><span class="bar" style="width:64px"></span></div>
+  <div class="row"><span class="tag">--s-9</span><span class="px">96 PX</span><span class="bar" style="width:96px"></span></div>
+  <div class="row"><span class="tag">--s-10</span><span class="px">128 PX</span><span class="bar" style="width:128px"></span></div>
+</div>
+</body></html>

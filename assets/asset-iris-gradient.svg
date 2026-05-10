@@ -1,0 +1,32 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 140" width="1280" height="140" role="img" aria-label="Iris gradient swatch">
+  <rect width="1280" height="140" fill="#FAF7F2"></rect>
+
+  <defs>
+    <linearGradient id="iris" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF006E"></stop>
+      <stop offset="17%" stop-color="#FF6B00"></stop>
+      <stop offset="34%" stop-color="#F59E0B"></stop>
+      <stop offset="51%" stop-color="#10B981"></stop>
+      <stop offset="68%" stop-color="#38BDF8"></stop>
+      <stop offset="85%" stop-color="#8B5CF6"></stop>
+      <stop offset="100%" stop-color="#FF006E"></stop>
+    </linearGradient>
+  </defs>
+
+  
+  <text x="40" y="32" font-family="&#39;Space Mono&#39;, monospace" font-size="11" letter-spacing="3.3" fill="#6B6B6B">AESDR · --IRIS · RESERVED ACCENT GRADIENT</text>
+
+  
+  <rect x="40" y="48" width="1200" height="48" fill="url(#iris)"></rect>
+
+  
+  <g font-family="&#39;Space Mono&#39;, monospace" font-size="9" fill="#1A1A1A">
+    <text x="40" y="116">0% · #FF006E</text>
+    <text x="244" y="116">17% · #FF6B00</text>
+    <text x="448" y="116">34% · #F59E0B</text>
+    <text x="652" y="116">51% · #10B981</text>
+    <text x="856" y="116">68% · #38BDF8</text>
+    <text x="1060" y="116" text-anchor="end">85% · #8B5CF6   ·   100% · #FF006E</text>
+  </g>
+</svg>
