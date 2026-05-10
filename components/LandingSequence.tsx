@@ -91,7 +91,7 @@ export default function LandingSequence({ initialRole = null }: Props) {
 
       {/* Branded hero — visible after animation or on return visits */}
       <div className={s.landingHero} ref={heroRef}>
-        <div className={s.heroLabel}>12 Lessons &middot; At Your Own Pace &middot; 1 You</div>
+        <div className={s.heroLabel}>12 Interactive Courses &middot; Built by Operators &middot; Not by Course-People</div>
         <h1 className={`${s.heroBrand} ${s.irisText}`}>AESDR</h1>
         <p className={s.heroTagline}>AEs &amp; SDRs rule this world.</p>
         <p className={s.heroDescriptor} ref={descriptorRef}>
@@ -207,7 +207,7 @@ export default function LandingSequence({ initialRole = null }: Props) {
       {/* CTA Overlay (final card moment) */}
       <div className={s.ctaOverlay} ref={ctaRef}>
         <div className={`${s.ctaBrand} ${s.irisText}`}>AESDR</div>
-        <div className={s.ctaTag}>12 lessons &bull; at your own pace &bull; 1 you</div>
+        <div className={s.ctaTag}>12 interactive courses &bull; built by operators &bull; not by course-people</div>
         <div className={s.ctaNote}>
           Nobody gave you real answers on day one. We built this after years of figuring it out alone.
         </div>

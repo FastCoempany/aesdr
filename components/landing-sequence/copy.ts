@@ -57,7 +57,7 @@ export const TERMINAL_FINAL =
 export const TERMINAL_WHISPER = "Keep scrolling. It has to get worse before it gets better.";
 
 export const HERO_DESCRIPTOR: Record<"default" | Role, string> = {
-  default: "The 12-lesson sales survival course they never gave you.",
+  default: "12-lesson sales survival course — for early-career AEs and SDRs.",
   sdr: "The 12-lesson playbook for SDRs who want out alive.",
   ae: "The 12-lesson playbook for AEs who want their forecast to mean something.",
 };
