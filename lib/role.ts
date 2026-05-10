@@ -10,7 +10,7 @@
  * without prop-drilling through the page tree.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 export type Role = "ae" | "sdr";
 
@@ -39,27 +39,23 @@ export function clearRole(): void {
   window.dispatchEvent(new CustomEvent<null>(CHANGE_EVENT, { detail: null }));
 }
 
+function subscribeRoleChange(callback: () => void): () => void {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener(CHANGE_EVENT, callback);
+  return () => window.removeEventListener(CHANGE_EVENT, callback);
+}
+
+/**
+ * Subscribe to the role state. Server-rendered with `initial` (from Supabase
+ * user_metadata) for members; client falls back to sessionStorage for
+ * anonymous visitors. Uses `useSyncExternalStore` to satisfy
+ * react-hooks/set-state-in-effect — React handles the snapshot/subscribe
+ * lifecycle without us calling setState in an effect body.
+ */
 export function useRole(initial?: Role | null): Role | null {
-  // Server render and first client render both produce `initial` so hydration
-  // matches. The effect then subscribes to `aesdr-role-change` and only calls
-  // setState when the actual value differs — avoiding the cascading-render
-  // lint flagged by react-hooks/set-state-in-effect.
-  const [role, setRoleState] = useState<Role | null>(initial ?? null);
-  const initialRef = useRef(initial ?? null);
-
-  useEffect(() => {
-    const current = getRole() ?? initialRef.current;
-    setRoleState((prev) => (prev === current ? prev : current));
-
-    function onChange(event: Event) {
-      const detail = (event as CustomEvent<Role | null>).detail;
-      const next = detail ?? null;
-      setRoleState((prev) => (prev === next ? prev : next));
-    }
-
-    window.addEventListener(CHANGE_EVENT, onChange);
-    return () => window.removeEventListener(CHANGE_EVENT, onChange);
-  }, []);
-
-  return role;
+  return useSyncExternalStore(
+    subscribeRoleChange,
+    () => getRole() ?? initial ?? null,
+    () => initial ?? null,
+  );
 }
