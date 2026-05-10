@@ -1,0 +1,127 @@
+/*
+ * Typography for rendered partner-kit markdown.
+ * Scoped under .aesdr-kit-prose so it doesn't bleed into hub pages.
+ * All colors / fonts via tokens defined in app/globals.css.
+ */
+
+.aesdr-kit-prose {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.75;
+}
+
+.aesdr-kit-prose > *:first-child { margin-top: 0; }
+
+.aesdr-kit-prose h1,
+.aesdr-kit-prose h2,
+.aesdr-kit-prose h3,
+.aesdr-kit-prose h4 {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.aesdr-kit-prose h1 { font-size: 32px; margin: 56px 0 16px; }
+.aesdr-kit-prose h2 { font-size: 26px; margin: 48px 0 14px; }
+.aesdr-kit-prose h3 { font-size: 21px; margin: 36px 0 12px; }
+.aesdr-kit-prose h4 {
+  font-family: var(--cond);
+  font-style: normal;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 32px 0 10px;
+}
+
+.aesdr-kit-prose p {
+  margin: 0 0 18px;
+}
+
+.aesdr-kit-prose strong { color: var(--ink); font-weight: 700; }
+.aesdr-kit-prose em { font-style: italic; }
+
+.aesdr-kit-prose a {
+  color: var(--crimson);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.aesdr-kit-prose a:hover { color: var(--ink); }
+
+.aesdr-kit-prose code {
+  font-family: var(--mono);
+  font-size: 14px;
+  background: var(--light);
+  padding: 1px 6px;
+  border-radius: 0;
+}
+
+.aesdr-kit-prose pre {
+  font-family: var(--mono);
+  font-size: 13px;
+  background: var(--ink);
+  color: var(--cream);
+  padding: 18px 20px;
+  margin: 24px 0;
+  overflow-x: auto;
+  line-height: 1.55;
+}
+.aesdr-kit-prose pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+}
+
+.aesdr-kit-prose ul,
+.aesdr-kit-prose ol {
+  margin: 0 0 20px;
+  padding-left: 24px;
+}
+.aesdr-kit-prose li { margin-bottom: 8px; }
+
+.aesdr-kit-prose blockquote {
+  margin: 24px 0;
+  padding: 16px 20px;
+  background: #fff;
+  border-left: 3px solid var(--crimson);
+  font-style: italic;
+  color: var(--ink);
+}
+.aesdr-kit-prose blockquote p:last-child { margin-bottom: 0; }
+.aesdr-kit-prose blockquote em { font-style: normal; }
+
+.aesdr-kit-prose hr {
+  border: 0;
+  border-top: 1px solid var(--light);
+  margin: 40px 0;
+}
+
+.aesdr-kit-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  font-size: 15px;
+}
+.aesdr-kit-prose thead th {
+  text-align: left;
+  font-family: var(--cond);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 10px 12px;
+  border-bottom: 2px solid var(--ink);
+}
+.aesdr-kit-prose tbody td {
+  padding: 12px;
+  border-bottom: 1px solid var(--light);
+  vertical-align: top;
+  line-height: 1.55;
+}
+.aesdr-kit-prose tbody tr:last-child td { border-bottom: 0; }

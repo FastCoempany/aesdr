@@ -34,7 +34,7 @@ const SECTIONS = [
     bullets: [
       "Build a partner-specific registration page with attribution baked in.",
       "Deliver one live workshop hosted by AESDR, plus a 72-hour replay window.",
-      "Run the entire follow-up sequence — confirmation, reminders, optional SMS, same-day attendee, no-show replay, free-vs-structured objection, deadline-window, checkout-abandon — plus high-intent DM from Admissions where the signals warrant.",
+      "Run the entire follow-up sequence — confirmation, reminders, optional SMS, same-day attendee, no-show replay, free-vs-structured objection, deadline-window, checkout-abandon — plus high-intent DM from the AESDR team where the signals warrant.",
       "Pay commission of 30% on net revenue, on a net-45 schedule from close of the attribution window.",
       "Send the weekly pilot report every Friday during the pilot window.",
       "Deliver the partner kit folder within 3 business days of signing.",

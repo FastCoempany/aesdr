@@ -62,7 +62,7 @@ export async function proxy(request: NextRequest) {
   // public surface (no auth required, like /syllabus). Artifact pages handle
   // their own auth gates internally and accept ?preview=1 for partner-side
   // previews of the end-of-course Programme/Manuscript artifacts.
-  if (pathname.startsWith("/api/") || pathname.startsWith("/dashboard") || pathname.startsWith("/course") || pathname.startsWith("/tools/") || pathname.startsWith("/account") || pathname.startsWith("/auth/") || pathname.startsWith("/partners") || pathname.startsWith("/artifacts/") || pathname === "/welcome") {
+  if (pathname.startsWith("/api/") || pathname.startsWith("/dashboard") || pathname.startsWith("/course") || pathname.startsWith("/tools/") || pathname.startsWith("/account") || pathname.startsWith("/auth/") || pathname.startsWith("/partners") || pathname.startsWith("/admin") || pathname.startsWith("/artifacts/") || pathname === "/welcome") {
     return supabaseResponse;
   }
 
