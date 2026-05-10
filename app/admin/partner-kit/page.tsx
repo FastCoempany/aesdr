@@ -99,6 +99,8 @@ export default async function AdminPartnerKit() {
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com";
+  // eslint-disable-next-line react-hooks/purity -- async server component, runs per-request
+  const nowMs = Date.now();
 
   return (
     <>
@@ -177,7 +179,7 @@ export default async function AdminPartnerKit() {
               <tbody>
                 {tokens.map((t) => {
                   const isRevoked = !!t.revoked_at;
-                  const isExpired = new Date(t.expires_at).getTime() < Date.now();
+                  const isExpired = new Date(t.expires_at).getTime() < nowMs;
                   const status = isRevoked ? "revoked" : isExpired ? "expired" : "active";
                   const views = viewsByToken.get(t.id) ?? 0;
                   return (

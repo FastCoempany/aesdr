@@ -10,11 +10,10 @@ import type { PostHog } from "posthog-js";
 
 type Role = "ae" | "sdr";
 type Tier = "ae" | "sdr" | "team";
-type ForkVariant = "a-buttons" | "b-typewriter" | "c-identity";
 
 type EventMap = {
-  landing_fork_view: { variant: ForkVariant };
-  landing_role_selected: { role: Role; variant: ForkVariant };
+  landing_role_pick: { role: Role; source: "editorial-fork" };
+  landing_fork_skipped: { reason: "skip-button" | "member-prefill" };
   pricing_cta_clicked: { tier: Tier; role?: Role };
   account_role_switched: { from: Role; to: Role };
 };

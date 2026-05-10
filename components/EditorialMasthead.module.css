@@ -1,0 +1,50 @@
+.masthead {
+  position: fixed;
+  top: 18px;
+  left: 22px;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  pointer-events: none;
+  user-select: none;
+}
+
+.brand {
+  color: var(--crimson);
+  font-weight: 700;
+}
+
+.sep {
+  color: var(--muted);
+  opacity: .5;
+}
+
+.tag {
+  color: var(--muted);
+}
+
+.dot {
+  color: var(--muted);
+  opacity: .5;
+}
+
+@media (max-width: 640px) {
+  .masthead {
+    top: 12px;
+    left: 14px;
+    font-size: 9px;
+    letter-spacing: .18em;
+    gap: 6px;
+  }
+  /* On small viewports, drop the trailing "for early-career AEs & SDRs"
+     so the masthead stays one line and doesn't crowd the nav. */
+  .masthead .dot,
+  .masthead .tag:last-child {
+    display: none;
+  }
+}
