@@ -97,6 +97,7 @@ function MascotLeponeusSvg({ size = 220, expression = 'doctrine' }) {
         {/* legs */}
         <ellipse cx="68" cy="194" rx="10" ry="6" fill="#F1ECE3" />
         <ellipse cx="172" cy="194" rx="10" ry="6" fill="#F1ECE3" />
+        {e.legs}
         {/* head */}
         <ellipse cx="200" cy="146" rx="16" ry="12" fill="#F1ECE3" />
         {/* eye */}
@@ -131,12 +132,27 @@ function MascotLeponeusSvgString(size, expression) {
 }
 const expressionMap = {
   doctrine: {
-    shellMarks: <path d="M 80 158 L 80 132 M 100 156 L 100 124 M 120 156 L 120 122 M 140 156 L 140 124 M 160 158 L 160 132" strokeOpacity=".45" />,
-    eye: <circle cx="208" cy="142" r="1.6" fill="#1A1A1A" stroke="none" />,
-    mouth: null,
+    shellMarks: <g strokeOpacity=".45">
+      <path d="M 108 133 L 114.1 136.5 L 114.1 143.5 L 108 147 L 101.9 143.5 L 101.9 136.5 Z" />
+      <path d="M 120 133 L 126.1 136.5 L 126.1 143.5 L 120 147 L 113.9 143.5 L 113.9 136.5 Z" />
+      <path d="M 132 133 L 138.1 136.5 L 138.1 143.5 L 132 147 L 125.9 143.5 L 125.9 136.5 Z" />
+      <path d="M 114 143.5 L 120.1 147 L 120.1 154 L 114 157.5 L 107.9 154 L 107.9 147 Z" />
+      <path d="M 126 143.5 L 132.1 147 L 132.1 154 L 126 157.5 L 119.9 154 L 119.9 147 Z" />
+    </g>,
+    eye: <>
+      <path d="M 205 142 q 3 -2.5 6 0 q -3 2.5 -6 0 Z" fill="#1A1A1A" stroke="none" />
+      <circle cx="215" cy="148" r="0.7" fill="#1A1A1A" stroke="none" />
+    </>,
+    mouth: <path d="M 188 148 q 6 5 14 4" strokeOpacity=".3" />,
     ears: <>
       <path d="M 192 130 Q 188 92 178 80 Q 192 86 200 122" fill="#F1ECE3" />
+      <path d="M 189 122 Q 186 100 182 88" strokeOpacity=".4" />
       <path d="M 208 130 Q 216 92 226 80 Q 218 92 216 122" fill="#F1ECE3" />
+      <path d="M 211 122 Q 214 100 218 88" strokeOpacity=".4" />
+    </>,
+    legs: <>
+      <path d="M 63 199 l 0 2 M 68 200 l 0 2 M 73 199 l 0 2" strokeOpacity=".5" />
+      <path d="M 167 199 l 0 2 M 172 200 l 0 2 M 177 199 l 0 2" strokeOpacity=".5" />
     </>,
   },
   diagnosis: {
