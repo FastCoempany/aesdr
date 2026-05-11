@@ -19,6 +19,10 @@ brand/canon/mascot/
 ├── leponeus-07-verdict.svg
 ├── leponeus-08-owner.svg
 ├── leponeus.sprite.svg          ← all 8 in one <use>-able file
+├── png/                         ← v1.1 iridescent render pass (AI-generated)
+│   ├── README.md                ← swap mechanics + folder spec
+│   ├── prompts.md               ← 8 prompts for ChatGPT / Sora / Midjourney
+│   └── leponeus-{key}.png       ← 8 files, dropped in when generated
 ├── manifest.json                ← machine-readable canon
 └── README.md                    ← this file
 ```
@@ -101,10 +105,16 @@ Leponeus is the spine. Everything else hangs from him.
 
 ---
 
-## Roadmap (not yet committed)
+## Roadmap
 
-- **v1.1** — refined illustrator pass. Single hand. Adds woodblock imperfection without changing geometry.
+- **v1.1 (in progress)** — iridescent render pass for hero-scale use. Lives in `png/`. AI-generated from the canonical hero (`aesdr-design-system/aesdrmascot.png`) using prompts in `png/prompts.md`. Replaces the flat SVG at sizes ≥120px only; small uses (badges, lockups, spots) stay strict-flat-canon. Auto-swap is wired in `brand/synthesis.jsx` via `USE_PNG_MASCOT` + `PNG_THRESHOLD`.
 - **v1.2** — Lottie animation set: blink (doctrine), ear-twitch (sprint), shell-crack (fall), sprout (recovery).
 - **v1.3** — print plates: 1-color, 2-color, 4-color separations for swag.
+
+### Dual-tier rule (v1.1)
+
+The SVGs in this folder remain the source of truth for geometry, palette, and canon-strict use. The PNGs in `png/` are a **render layer** for moments where the iridescent finish reads — the hero pose, the expression sheet, full-bleed editorial. Badges and icons stay on the flat SVG because at 70–80px the iridescent detail just smudges.
+
+If a PNG and SVG disagree on pose, the SVG is right and the PNG should be regenerated.
 
 Open an issue in the repo when you want to bump.

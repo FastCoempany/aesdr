@@ -13,6 +13,7 @@
       "key": "doctrine",
       "use": "Default. Wordmark lockup, certificates, brand voice.",
       "file": "leponeus-01-doctrine.svg",
+      "png": "png/leponeus-doctrine.png",
       "sprite": "leponeus.sprite.svg#leponeus-doctrine"
     },
     {
@@ -21,6 +22,7 @@
       "key": "diagnosis",
       "use": "Lesson 01. Honest-look-in-the-mirror moments.",
       "file": "leponeus-02-diagnosis.svg",
+      "png": "png/leponeus-diagnosis.png",
       "sprite": "leponeus.sprite.svg#leponeus-diagnosis"
     },
     {
@@ -29,6 +31,7 @@
       "key": "sprint",
       "use": "Bursts of velocity. Onboarding and momentum moments.",
       "file": "leponeus-03-sprint.svg",
+      "png": "png/leponeus-sprint.png",
       "sprite": "leponeus.sprite.svg#leponeus-sprint"
     },
     {
@@ -37,6 +40,7 @@
       "key": "fall",
       "use": "The dip. Burnout. Lesson 05.",
       "file": "leponeus-04-fall.svg",
+      "png": "png/leponeus-fall.png",
       "sprite": "leponeus.sprite.svg#leponeus-fall"
     },
     {
@@ -45,6 +49,7 @@
       "key": "recovery",
       "use": "Sprout from shell. Lesson 09. Bounce-back moments.",
       "file": "leponeus-05-recovery.svg",
+      "png": "png/leponeus-recovery.png",
       "sprite": "leponeus.sprite.svg#leponeus-recovery"
     },
     {
@@ -53,6 +58,7 @@
       "key": "rest",
       "use": "Eyes closed. Sundays only. Permission to stop.",
       "file": "leponeus-06-rest.svg",
+      "png": "png/leponeus-rest.png",
       "sprite": "leponeus.sprite.svg#leponeus-rest"
     },
     {
@@ -61,6 +67,7 @@
       "key": "verdict",
       "use": "Crimson tip. Pricing/closing/Rowan moments.",
       "file": "leponeus-07-verdict.svg",
+      "png": "png/leponeus-verdict.png",
       "sprite": "leponeus.sprite.svg#leponeus-verdict"
     },
     {
@@ -69,9 +76,22 @@
       "key": "owner",
       "use": "A on shell. Lesson 12. Final state.",
       "file": "leponeus-08-owner.svg",
+      "png": "png/leponeus-owner.png",
       "sprite": "leponeus.sprite.svg#leponeus-owner"
     }
   ],
+  "renderTiers": {
+    "description": "Dual-tier render. SVG is canonical geometry; PNG is the iridescent render pass for hero-scale use.",
+    "svg": {
+      "use": "Badges, lockups, inline marks, spot illustrations, swag, print plates. Anything ≤100px.",
+      "rules": "Strict 4-color palette, 1.6px round-cap stroke, non-scaling."
+    },
+    "png": {
+      "use": "Mascot System hero, Expression Sheet, full-bleed editorial. Anything ≥120px.",
+      "rules": "Iridescent mother-of-pearl on soft gray-blue cloudwash. Generated from prompts in png/prompts.md.",
+      "swap": "Auto-handled by brand/synthesis.jsx via USE_PNG_MASCOT + PNG_THRESHOLD."
+    }
+  },
   "rules": {
     "stroke": "1.6px round-cap, round-join, non-scaling",
     "palette": {

@@ -47,9 +47,44 @@ function DecisionCard({ verdict, pick, rationale }) {
 /* ============================================================
    1 · MASCOT SYSTEM (construction + lockups)
    ============================================================ */
-function MascotLeponeus({ size = 220, expression = 'doctrine' }) {
+// Dual-tier render: iridescent PNG for hero-scale uses, flat canon SVG for
+// badges/icons/inline. See brand/canon/mascot/png/README.md for the workflow.
+const USE_PNG_MASCOT = true;                            // master toggle
+const PNG_THRESHOLD  = 120;                             // px — below this, always SVG
+const PNG_BASE       = './canon/mascot/png';            // relative to brand/
+// Override per-call with `forceSvg` (badges/lockups pass this so the iridescent
+// render never tries to load at small sizes where it would just smudge).
+function pngPath(expression) {
+  return `${PNG_BASE}/leponeus-${expression}.png`;
+}
+
+function MascotLeponeus({ size = 220, expression = 'doctrine', forceSvg = false }) {
   // The canonical figure: tortoise body with strapped hare-ears.
   // Expressions modify ears, eye, and posture.
+  const useImg = USE_PNG_MASCOT && !forceSvg && size >= PNG_THRESHOLD;
+  if (useImg) {
+    // Square hero render. Falls back to the flat SVG if the PNG 404s — the
+    // onError swap lets us ship before all 8 PNGs are generated.
+    return (
+      <img
+        src={pngPath(expression)}
+        width={size}
+        height={size}
+        alt={`Leponeus ${expression}`}
+        style={{ display: 'block', objectFit: 'contain' }}
+        onError={(ev) => {
+          const img = ev.currentTarget;
+          if (img.dataset.fallback === '1') return;
+          img.dataset.fallback = '1';
+          img.outerHTML = MascotLeponeusSvgString(size, expression);
+        }}
+      />
+    );
+  }
+  return <MascotLeponeusSvg size={size} expression={expression} />;
+}
+
+function MascotLeponeusSvg({ size = 220, expression = 'doctrine' }) {
   const s = { fill: 'none', stroke: '#1A1A1A', strokeWidth: 1.6, strokeLinecap: 'round', strokeLinejoin: 'round' };
   const e = expressionMap[expression] || expressionMap.doctrine;
   return (
@@ -75,6 +110,24 @@ function MascotLeponeus({ size = 220, expression = 'doctrine' }) {
       </g>
     </svg>
   );
+}
+
+// Plain HTML string version of the SVG, for the onError DOM-replace path.
+// Mirrors MascotLeponeusSvg but without React — the fallback fires after the
+// img is already in the DOM so we can't return JSX from it.
+function MascotLeponeusSvgString(size, expression) {
+  const e = expressionMap[expression] || expressionMap.doctrine;
+  const ears = ({
+    doctrine:  '<path d="M 192 130 Q 188 92 178 80 Q 192 86 200 122" fill="#F1ECE3"/><path d="M 208 130 Q 216 92 226 80 Q 218 92 216 122" fill="#F1ECE3"/>',
+    diagnosis: '<path d="M 192 130 Q 190 100 184 88 Q 196 96 200 122" fill="#F1ECE3"/><path d="M 208 130 Q 214 100 222 88 Q 218 100 216 122" fill="#F1ECE3"/>',
+    sprint:    '<path d="M 188 128 Q 168 100 154 92 Q 178 102 196 122" fill="#F1ECE3"/><path d="M 210 130 Q 232 102 246 94 Q 222 104 216 122" fill="#F1ECE3"/>',
+    fall:      '<path d="M 192 132 Q 184 124 176 130 Q 186 130 198 124" fill="#F1ECE3"/><path d="M 210 130 Q 220 138 226 132 Q 218 130 216 124" fill="#F1ECE3"/>',
+    recovery:  '<path d="M 192 130 Q 188 92 178 80 Q 192 86 200 122" fill="#F1ECE3"/><path d="M 208 130 Q 216 92 226 80 Q 218 92 216 122" fill="#F1ECE3"/>',
+    rest:      '<path d="M 192 130 Q 196 110 200 102 Q 200 116 200 122" fill="#F1ECE3"/><path d="M 208 130 Q 212 110 216 102 Q 216 116 216 122" fill="#F1ECE3"/>',
+    verdict:   '<path d="M 196 130 Q 196 96 192 84 Q 202 92 200 122" fill="#F1ECE3"/><path d="M 208 130 Q 208 96 212 84 Q 214 92 216 122" fill="#F1ECE3"/><path d="M 200 80 q 4 -2 4 0" fill="#8B1A1A" stroke="#8B1A1A"/>',
+    owner:     '<path d="M 192 130 Q 188 92 178 80 Q 192 86 200 122" fill="#F1ECE3"/><path d="M 208 130 Q 216 92 226 80 Q 218 92 216 122" fill="#F1ECE3"/>',
+  })[expression] || '';
+  return `<svg viewBox="0 0 300 240" width="${size}" height="${size * (240/300)}" aria-label="Leponeus ${expression}"><g fill="none" stroke="#1A1A1A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="120" cy="160" rx="68" ry="36" fill="#F1ECE3"/><path d="M 60 160 Q 120 110 180 160"/><ellipse cx="68" cy="194" rx="10" ry="6" fill="#F1ECE3"/><ellipse cx="172" cy="194" rx="10" ry="6" fill="#F1ECE3"/><ellipse cx="200" cy="146" rx="16" ry="12" fill="#F1ECE3"/>${ears}<line x1="186" y1="134" x2="216" y2="134" stroke="#8B1A1A" stroke-width="1.4"/></g></svg>`;
 }
 const expressionMap = {
   doctrine: {
@@ -715,7 +768,7 @@ function Room({ kind, bg, fg, rules }) {
   return (
     <div style={{ background: bg, color: fg, border: '1px solid #E8E4DF', padding: '24px 24px 28px', minHeight: 240 }}>
       <Eyebrow color={fg === '#FAF7F2' ? 'rgba(255,255,255,0.55)' : '#6B6B6B'}>ROOM · {kind}</Eyebrow>
-      <div style={{ marginTop: 14, padding: '12px 0' }}><MascotLeponeus size={120} expression="doctrine" /></div>
+      <div style={{ marginTop: 14, padding: '12px 0' }}><MascotLeponeus size={120} expression="doctrine" forceSvg /></div>
       <ul style={{ listStyle: 'none', padding: 0, margin: 0, font: `14px/1.6 'Source Serif 4', serif`, color: fg, opacity: 0.85, display: 'flex', flexDirection: 'column', gap: 6 }}>
         {rules.map(r => <li key={r}>— {r}</li>)}
       </ul>
