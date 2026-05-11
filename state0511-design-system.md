@@ -2,115 +2,173 @@
 
 Author: design-system-caretaker session  ·  Repo: `fastcoempany/aesdr`  ·  Companion branch: `aesdr-design-system`
 
-Counterpart to `state0511-part1.md` and `state0511-part2.md` (which cover the product on `main`). This file covers the **brand canon** on the `aesdr-design-system` branch. Read it if you're touching anything visual — mascot, icons, spots, palette, OG, certificates/artifacts, lesson hero art.
+Counterpart to `state0511-part1.md` and `state0511-part2.md`. This file covers the **brand canon on the `aesdr-design-system` branch** + the **deployment specs** for porting it into `main`. Read it if you're touching anything visual — mascot, icons, spots, palette, OG, lesson pages, certificates/artifacts, dashboard, welcome, etc.
+
+> **v2 — 2026-05-11 (later same day).** All pose decisions are now **locked by the founder**. Specs below are paste-ready. Six new findings from a full app survey are folded in (`/turtle.png`, `/not-found.tsx` palette issue, course-page iframe shape, the three brand metaphors, EditorialMasthead overlap, the foundation step).
 
 ---
 
 ## TL;DR
 
-- Branch `aesdr-design-system` is the **brand canon sandbox**. Production never imports from it directly; the product builder reads it and ports assets into `app/`, `components/`, `public/`.
-- Canon was bumped to **v1.1** today (commit `1a0abee`). Files documenting the bump: `aesdr-design-system/brand/canon/mascot/README.md`, `manifest.json`.
-- **8 transparent-bg iridescent PNG mascots** ship at `aesdr-design-system/brand/canon/mascot/png/leponeus-{key}.png`. These replace the v1.0 cloud-backdrop versions (which are preserved at `png/source/` for reference).
-- A re-runnable cutout pipeline (`png/cutout.py`) regenerates transparent versions from any new source PNG using `rembg + isnet-general-use`. ~5s per pose.
-- **18 refined icon glyphs** and **5 hybrid spot illustrations** (line-art scaffolding + iridescent PNGs) live in `brand/synthesis.jsx`.
+- Branch `aesdr-design-system` = brand canon sandbox. Canon now at **v1.1** (mascot, 8 transparent PNGs, 18 icons, 5 spots, refined fallback SVGs, single-file shareable HTML build).
+- Production never imports from `aesdr-design-system`. Assets get copied into `public/mascot/` and wired via new components in `components/brand/`.
+- **One foundation PR comes first** (move PNGs in, create `<Mascot>` component). Then 13 surface PRs can land in any order.
+- **All pose decisions locked.** No further design discussion needed before execution.
 
 ---
 
-## What changed on `aesdr-design-system` since you last looked
+## Locked pose decisions (founder-approved 2026-05-11)
 
-Commits on the branch (newest first):
+| Surface | Pose | Size | Notes |
+|---|---|---|---|
+| Landing hero | `doctrine` | ~320 px | Post-fork/skip, beside descriptor copy. Single biggest brand impression. |
+| Landing pricing | `verdict` | ~140 px | Beside "Pricing" eyebrow. Echoes "your check is the verdict" framing. |
+| Landing nav | — | — | **Skip.** No mascot in nav. Scarcity preserved. Text wordmark stays. |
+| `/welcome` | `doctrine` | ~280 px | Inside the existing corner-bracketed right column or above headline. |
+| `/syllabus` hero | `doctrine` | ~200 px | Library/card-catalog metaphor; mascot anchors brand without competing with the 12 cards. |
+| `/dashboard` journey header | **dynamic** | ~140–180 px | `doctrine` if 0 complete, current lesson's mapped pose if mid-journey, `owner` if all 12 done. |
+| `/reveal` | `verdict` | ~200 px | "Choose your keeper" = judgment moment. Pose carries the weight. |
+| `/artifacts/playbill` | `owner` | ~240 px | The staged three-act formal finish. Owner has the A-mark on shell. |
+| `/artifacts/redline` | `diagnosis` | ~240 px | The honest mirror, manuscript-with-edits. Counterpart to playbill. |
+| `app/error.tsx` | `recovery` | ~280 px | **Swap from current `/turtle.png` to `/mascot/leponeus-recovery.png`.** |
+| `app/not-found.tsx` | `fall` | ~280 px | **Rebuild this page on editorial palette first** — it still uses retired dark tokens. |
+| `/coming-soon` | `doctrine` | (existing) | **Swap from `/turtle.png` to `/mascot/leponeus-doctrine.png`.** |
+| Course lesson page | — | — | See "Open question: lesson page" below. Page is full-screen iframe; no Next.js-rendered hero possible. |
+| Email templates | tone: "uncomfortable truths" | n/a | Welcome / lesson-complete (lesson's pose) / comeback (recovery) / reveal-unlocked (verdict). Dry, anti-guru. |
 
-| SHA | Summary |
-|---|---|
-| `360aec2` | Refined 18 icons + hybrid spots (creatures inside line-art) |
-| `1a0abee` | 7 fallback SVGs refined + canon bumped to v1.1 |
-| `e0579b0` | 8 iridescent PNGs dropped into wired png/ folder |
-| `c8631e8` | PNGs background-removed into transparent cutouts via rembg |
-| `2d70940` | Prompts.md clarified: one self-contained message per pose |
-| `03f5945` | Doctrine SVG refined: hex scutes, almond eye, ear fold, toes |
-| `3115d57` | Initial dual-tier render wiring (PNG hero + SVG small) |
-
-The single user-facing change you actually need to know: the PNGs at `aesdr-design-system/brand/canon/mascot/png/leponeus-*.png` now have **transparent backgrounds**. Earlier versions had a soft gray-blue cloud backdrop that fought with non-cream surfaces.
-
----
-
-## Action item — image swap (if you used the v1.0 PNGs anywhere)
-
-If `app/error.tsx`, any landing component, or anything else currently references a Leponeus PNG with a cloud background, swap it to the transparent version. The file paths and names are unchanged — they're at the same canonical filenames, just with transparency now.
-
-If you copied PNGs into `public/` already, `cp` the new ones over. Files to copy:
-
-```
-aesdr-design-system/brand/canon/mascot/png/leponeus-doctrine.png
-aesdr-design-system/brand/canon/mascot/png/leponeus-diagnosis.png
-aesdr-design-system/brand/canon/mascot/png/leponeus-sprint.png
-aesdr-design-system/brand/canon/mascot/png/leponeus-fall.png
-aesdr-design-system/brand/canon/mascot/png/leponeus-recovery.png
-aesdr-design-system/brand/canon/mascot/png/leponeus-rest.png
-aesdr-design-system/brand/canon/mascot/png/leponeus-verdict.png
-aesdr-design-system/brand/canon/mascot/png/leponeus-owner.png
-```
-
-Each is 1024×1024, ~1.5–2 MB transparent PNG.
+**Canon scarcity rule preserved everywhere:** max one mascot per page. No surface gets two. Tested as a posture for now — willing to revisit later.
 
 ---
 
-## The 8 expressions — when to use which
+## What I found doing the full survey (six things you should know)
 
-| Key | Name | Use |
-|---|---|---|
-| `doctrine` | The Doctrine | Default. Brand-voice moments. Lockups, headers, certificates, signatures. |
-| `diagnosis` | The Diagnosis | Honest-mirror moments. Lesson 01. Self-assessment intros. |
-| `sprint` | The Sprint | Bursts of velocity. Onboarding momentum. Streak achievements. |
-| `fall` | The Fall | The dip. Burnout. Lesson 05. **Avoid on error pages** — use `recovery` there instead (fall = "you broke", recovery = "we get back up"). |
-| `recovery` | The Recovery | Bounce-back. Lesson 09. Error pages. "Welcome back" emails. |
-| `rest` | The Rest | Permission to pause. Sundays only. Logged-out / paused state. |
-| `verdict` | The Verdict | Pricing, closing, the moment of judgment. Crimson ear-tip. |
-| `owner` | The Owner | Final state. Lesson 12. Artifact pages. The "you finished" moment. A-mark on shell. |
+### Finding 1 — `/turtle.png` is in production today
 
-Canon rule: **max 1 mascot per editorial spread, 1 per badge, 1 per onboarding screen**. Scarcity is what gives it weight.
+`public/turtle.png` (3.3 MB) is referenced from `app/error.tsx` and `/coming-soon`. The error page comment calls it "iridescent-turtle motif." Per the canon, this should be **swapped to the appropriate `/mascot/leponeus-{pose}.png`** — `recovery` for error, `doctrine` for coming-soon. The current asset predates the 8-pose canon.
 
----
+### Finding 2 — `app/not-found.tsx` is still on the retired dark palette
 
-## Lesson → pose mapping (already encoded; copy into a TS constant)
-
-From `aesdr-design-system/brand/synthesis.jsx` (`BADGES` array):
-
-```ts
-// utils/brand/lesson-poses.ts (suggested location)
-export type Pose =
-  | "doctrine" | "diagnosis" | "sprint" | "fall"
-  | "recovery" | "rest" | "verdict" | "owner";
-
-export const LESSON_POSE: Record<number, Pose> = {
-  1:  "doctrine",   // The First Crawl — Diagnosis
-  2:  "doctrine",   // The Camaraderie — Team
-  3:  "verdict",    // The Lie Decoded — Manager
-  4:  "verdict",    // The Verdict — Commission
-  5:  "fall",       // The Fall — Playbook
-  6:  "sprint",     // Beyond the Script
-  7:  "doctrine",   // The Chaos Bridled
-  8:  "doctrine",   // A Pipeline Read
-  9:  "recovery",   // The Recovery — Burn
-  10: "doctrine",   // The Long Mile — Exit
-  11: "verdict",    // The Money Spoken
-  12: "owner",      // The Owner — Own It
-};
+```jsx
+style={{ background: "var(--bg-main)", color: "var(--text-main)" }}
+// ...
+color: "var(--theme)", border: "1px solid var(--theme)",
 ```
 
-This mapping is the brand's narrative arc. Don't reassign without a canon discussion.
+Per AGENTS.md, those tokens are retired and forbidden in new code. Rebuild on editorial palette **before** the `fall` pose lands. Otherwise the mascot ships onto a non-canon-compliant background.
+
+### Finding 3 — Course pages are full-screen iframes
+
+`app/course/[lessonId]/page.tsx` mounts the lesson content from `content/lessons/html/lesson-XX/` as a **fixed-position iframe filling the entire viewport**. The only Next.js chrome is `SaveExitButton` (top-left) and tool download buttons (top-right). There's no Next.js-rendered hero/sidebar.
+
+"Course lesson hero" as originally specced isn't possible. Three real options:
+
+- **A. Floating mascot indicator (top-center, small).** Persistent ~48 px mascot at top-center, pose-mapped to the lesson. Doesn't intrude on the iframe.
+- **B. Pre-lesson splash.** Brief Next.js intro page with the lesson's pose + "Begin lesson" CTA before the iframe mounts. Adds friction.
+- **C. Post-lesson completion screen.** When `MarkCompleteButton` fires, show a celebration screen with the lesson's pose + "next lesson" CTA before redirecting to dashboard. Strongest narrative payoff.
+- **D. Inside the iframe.** Touches `content/lessons/html/lesson-XX/`. Different scope. Skip.
+
+**My recommendation: C.** That's a moment that *should* exist anyway — students currently just hit Save & Exit and silently return to dashboard. A completion celebration screen is a feature-gap the mascot solves.
+
+### Finding 4 — The app has three brand metaphors, not one
+
+- **Library / card catalog** — `/syllabus`. Lessons are "books" with Dewey numbers, call slips, due-date stamps.
+- **Journey / timeline** — `/dashboard`. Vertical timeline with crimson nodes, cryptic teasers, gold-star reveal node.
+- **Theatre / manuscript** — `/reveal`, `/artifacts/playbill`, `/artifacts/redline`. Two artifacts = two readings of the same story.
+
+Each metaphor is internally consistent. The mascot lives across all three but the *surrounding scaffolding* differs. That's a feature.
+
+### Finding 5 — `EditorialMasthead` contends for top-left
+
+`components/EditorialMasthead.tsx` is a fixed-position nameplate ("AESDR — Sales Survival Course · for early-career AEs & SDRs") at `top: 18px; left: 22px`, visible during the LandingSequence animation. It overlaps the nav `AesdrBrand` per state0511-part2.md. **My nav recommendation (skip the mascot in nav) is compatible** — EditorialMasthead stays, AesdrBrand stays, neither gets a mascot, the overlap is its own separate fix.
+
+### Finding 6 — No `/mascot/` folder in `public/` yet
+
+The 8 canon PNGs live only on the design-system branch. Production has zero copies. Step zero of the brand port is `cp` into `public/mascot/`.
 
 ---
 
-## Open gaps the product builder may want to close next
+## Foundation PR (must land first)
 
-Things I see in `app/` that don't yet use the mascot system but probably should. Specs below are starting points, not finished designs.
+Before any surface PR, one foundation commit:
 
-### Gap 1 — OG card (highest ROI, easiest)
+1. `cp aesdr-design-system/brand/canon/mascot/png/leponeus-*.png public/mascot/` (8 files, ~14 MB)
+2. `components/brand/Mascot.tsx`:
 
-Every shared URL becomes an ad. Currently `aesdr.com` ships no `<meta property="og:image">` (verify before building).
+   ```tsx
+   import Image from "next/image";
 
-**Suggested implementation:** Next.js App Router has a convention — `app/opengraph-image.tsx` generates an OG image dynamically via `next/og`. Compose: cream background + the doctrine PNG centered-left + the AESDR wordmark right + a tagline. 1200×630 px.
+   export type Pose =
+     | "doctrine" | "diagnosis" | "sprint" | "fall"
+     | "recovery" | "rest" | "verdict" | "owner";
+
+   export function Mascot({
+     pose,
+     size = 240,
+     priority = false,
+     className,
+     style,
+   }: {
+     pose: Pose;
+     size?: number;
+     priority?: boolean;  // true for above-fold (hero, lesson splash)
+     className?: string;
+     style?: React.CSSProperties;
+   }) {
+     return (
+       <Image
+         src={`/mascot/leponeus-${pose}.png`}
+         alt={`Leponeus — ${pose}`}
+         width={size}
+         height={size}
+         priority={priority}
+         className={className}
+         style={{ display: "block", ...style }}
+       />
+     );
+   }
+   ```
+
+3. `utils/brand/lesson-poses.ts`:
+
+   ```ts
+   import type { Pose } from "@/components/brand/Mascot";
+
+   export const LESSON_POSE: Record<string, Pose> = {
+     "1":  "doctrine",   // The First Crawl — Diagnosis
+     "2":  "doctrine",   // The Camaraderie — Team
+     "3":  "verdict",    // The Lie Decoded — Manager
+     "4":  "verdict",    // The Verdict — Commission
+     "5":  "fall",       // The Fall — Playbook
+     "6":  "sprint",     // Beyond the Script
+     "7":  "doctrine",   // The Chaos Bridled
+     "8":  "doctrine",   // A Pipeline Read
+     "9":  "recovery",   // The Recovery — Burn
+     "10": "doctrine",   // The Long Mile — Exit
+     "11": "verdict",    // The Money Spoken
+     "12": "owner",      // The Owner — Own It
+   };
+
+   export function poseForLesson(lessonId: string | number): Pose {
+     return LESSON_POSE[String(lessonId)] ?? "doctrine";
+   }
+   ```
+
+4. (Optional) Extend `tailwind.config.ts` with brand color tokens so components can write `bg-cream text-ink` instead of hex codes.
+
+---
+
+## Per-surface deployment specs
+
+### Surface 1 — OG card (`app/opengraph-image.tsx`)
+
+Founder-approved copy:
+
+```
+AESDR
+12-lesson sales survival course.
+Built by operators, not course-people.
+aesdr.com
+```
 
 ```tsx
 // app/opengraph-image.tsx
@@ -132,11 +190,13 @@ export default async function OG() {
         background: "#FAF7F2", color: "#1A1A1A",
         padding: "60px 80px", fontFamily: "serif",
       }}>
-        <img src={dataUri} width={400} height={400} style={{ alignSelf: "center" }} />
+        <img src={dataUri} width={420} height={420} style={{ alignSelf: "center" }} />
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", marginLeft: 60 }}>
-          <div style={{ fontSize: 96, fontStyle: "italic", fontWeight: 900 }}>AESDR<span style={{ color: "#8B1A1A" }}>.</span></div>
-          <div style={{ fontSize: 32, marginTop: 24, color: "#6B6B6B", fontStyle: "italic" }}>The honest sales doctrine.</div>
-          <div style={{ fontSize: 18, marginTop: 36, letterSpacing: ".2em", color: "#6B6B6B", textTransform: "uppercase", fontFamily: "monospace" }}>Twelve lessons · One doctrine</div>
+          <div style={{ fontSize: 124, fontStyle: "italic", fontWeight: 900, letterSpacing: "-0.02em" }}>AESDR</div>
+          <div style={{ fontSize: 36, marginTop: 28, color: "#6B6B6B", fontStyle: "italic", lineHeight: 1.3 }}>
+            12-lesson sales survival course.<br/>Built by operators, not course-people.
+          </div>
+          <div style={{ fontSize: 20, marginTop: 40, letterSpacing: ".2em", color: "#8B1A1A", textTransform: "uppercase", fontFamily: "monospace" }}>aesdr.com</div>
         </div>
       </div>
     ),
@@ -145,112 +205,262 @@ export default async function OG() {
 }
 ```
 
-Plus a sibling `app/twitter-image.tsx` with the same export so Twitter cards work. Next.js auto-wires the `<meta>` tags from the file's existence.
+Plus `app/twitter-image.tsx` as a one-line re-export. Next.js auto-injects `<meta>` tags.
 
-### Gap 2 — Playbill / Redline artifact hero
+### Surface 2 — Landing hero
 
-`/artifacts/playbill` and `/artifacts/redline` are the binary takeaway from `/reveal` ("Choose your keeper — two readings of the same story"). They're the brand's "two voices" made manifest as student artifacts. The mascot could anchor each:
+Where: post-LandingSequence resolution, beside the role-aware hero descriptor. Coordinate with `components/landing-sequence/animator.ts` so the mascot fades in only after the typing finishes (or immediately on skip).
 
-- **Playbill** (the staged, three-act self-portrait): `owner` pose works — it's the "final state" pose with the crimson A-mark on the shell. Frames the artifact as the culmination.
-- **Redline** (the manuscript reading, presumably): `diagnosis` pose — the honest-mirror counterpart. Frames the artifact as the unflinching read.
+```tsx
+<div className={styles.heroPanel}>
+  <Mascot pose="doctrine" size={320} priority />
+  <p className={styles.heroDescriptor}>{descriptor}</p>
+</div>
+```
 
-Open question for the user: do you want both artifacts to share the `owner` pose (showing it's the same student, different reading), or should each carry its assigned counterpart pose? My recommendation is the second — but verify before building.
+### Surface 3 — Landing pricing
 
-### Gap 3 — `/reveal` itself
+In `app/page.tsx`, beside the section eyebrow:
 
-The "Choose your keeper" page is the moment of judgment. `verdict` pose fits — that's literally what the pose was designed for. A single iridescent verdict pose at the top of the page, framing the binary choice below.
+```tsx
+<section id="pricing" className={styles.pricingSection}>
+  <div className={styles.pricingHeader}>
+    <Mascot pose="verdict" size={140} />
+    <div>
+      <p className={styles.sectionLabel}>Pricing</p>
+      <h2 className={styles.sectionHeadline}>One price. Lifetime access.</h2>
+    </div>
+  </div>
+  <div className={styles.divider} />
+  <PricingTiers initialRole={initialRole} />
+</section>
+```
 
-### Gap 4 — Course lesson hero
+### Surface 4 — `/welcome`
 
-Each `app/course/[lessonId]/page.tsx` renders a lesson. The lesson's pose (from `LESSON_POSE` above) should appear once at the top — a single iridescent figure anchoring the lesson's emotional theme. Single use per page; canon scarcity rule applies.
+In the existing corner-bracketed right column, above the "Stop Surviving. Start Owning It." headline:
 
-### Gap 5 — Dashboard lesson grid
+```tsx
+<div className={styles.heroRight}>
+  {/* corner brackets unchanged */}
+  <Mascot pose="doctrine" size={280} priority style={{ marginBottom: 16 }} />
+  <div className={styles.monoLabel}>The Unfiltered SaaS Sales Survival Guide</div>
+  <h1 className={styles.heroH1}>Stop Surviving.<br/>Start <span className={styles.heroAccent}>Owning</span> It.</h1>
+  {/* …rest unchanged */}
+</div>
+```
 
-After PR #14 merges, `/dashboard` shows the 12 lessons for admins. Each lesson card could show its pose as a thumbnail (size ~80–100px, transparent PNG, cream card background). The dashboard becomes a literal expression sheet of the student's journey.
+### Surface 5 — `/syllabus`
 
-### Gap 6 — Email templates (Resend already wired)
+Above or beside the `<h1>The Syllabus.</h1>`:
 
-`/api/partners/apply` sends via Resend. Worth building branded transactional templates for:
+```tsx
+<section className={styles.hero}>
+  <Mascot pose="doctrine" size={200} priority />
+  <div className={styles.heroKicker}>Shelf 12 · Drawer A · Est. 2026</div>
+  <h1 className={styles.heroTitle}>The <em>Syllabus.</em></h1>
+  {/* …rest unchanged */}
+</section>
+```
 
-- **Welcome** (doctrine, after signup)
-- **Lesson complete** (lesson-mapped pose, on each lesson finish)
-- **Reveal unlocked** (verdict, when all 12 are done)
-- **Comeback** (recovery, if dormant for 7+ days)
+### Surface 6 — `/dashboard` journey header
 
-React Email is the right framework — same JSX patterns as the rest of the app. Templates would live at `components/emails/*.tsx`, sent by `lib/email.ts`.
+In `app/dashboard/page.tsx`, between the `header` open and the timeline. The mascot becomes a mood ring — pose changes by student state. Zero risk to the timeline below.
 
-### Gap 7 — `app/welcome/page.tsx`
+```tsx
+import { poseForLesson } from "@/utils/brand/lesson-poses";
+import { Mascot } from "@/components/brand/Mascot";
 
-`/welcome` exists per the route map. Doctrine pose, hero-sized (~400px), with a single sentence introducing the doctrine. Onboarding step zero.
+// after computing completedCount/currentLesson/allComplete:
+const headerPose = allComplete
+  ? "owner"
+  : completedCount === 0
+    ? "doctrine"
+    : poseForLesson(currentLesson.id);
 
-### Gap 8 — Error pages
+// replace the existing <header> with:
+<header className="mb-16" style={{ display: "flex", gap: 24, alignItems: "center" }}>
+  <Mascot pose={headerPose} size={160} priority />
+  <div>
+    <p style={{ /* The Journey eyebrow */ }}>The Journey</p>
+    <h1 style={{ /* big italic headline */ }}>
+      {completedCount === 0
+        ? "It starts now."
+        : completedCount === LESSONS.length
+          ? "You made it."
+          : `${completedCount} down. ${LESSONS.length - completedCount} to go.`}
+    </h1>
+  </div>
+</header>
+```
 
-`app/error.tsx` already has "iridescent turtle" per state0511-part1. Confirm it's using the new transparent PNG, not the cloud-bg version. If it uses `fall`, consider swapping to `recovery` per the canon note above ("fall = you broke", "recovery = we get back up" — error pages should signal recovery, not defeat).
+### Surface 7 — `/reveal`
 
-`app/not-found.tsx` — `fall` is actually on-brand here (the 404 is a *user* fall, not a system failure). Caption suggestion: "Every mile looks the same. This one isn't here."
+Above the "Choose your keeper" UI in `app/reveal/RevealView.tsx`:
+
+```tsx
+<Mascot pose="verdict" size={200} priority />
+{/* …existing reveal UI */}
+```
+
+### Surface 8 — `/artifacts/playbill`
+
+Above the artifact view (and inside the empty-state "The curtain has not risen" screen):
+
+```tsx
+<Mascot pose="owner" size={240} priority />
+{/* …existing PlaybillView or empty state */}
+```
+
+### Surface 9 — `/artifacts/redline`
+
+Same pattern, different pose:
+
+```tsx
+<Mascot pose="diagnosis" size={240} priority />
+{/* …existing RedlineView or empty state */}
+```
+
+### Surface 10 — `app/error.tsx`
+
+**Swap the existing `/turtle.png` reference:**
+
+```tsx
+// Before:
+<img src="/turtle.png" alt="" /* … */ />
+
+// After:
+<Mascot pose="recovery" size={320} />
+```
+
+The eyebrow "Error · The turtle stopped" still works for either pose; keep it or change to taste.
+
+### Surface 11 — `app/not-found.tsx`
+
+**First: rebuild the page on editorial palette.** Replace `var(--bg-main)`, `var(--text-main)`, `var(--theme)` with `var(--cream)`, `var(--ink)`, `var(--crimson)`. Then:
+
+```tsx
+<Mascot pose="fall" size={280} />
+<h1>404</h1>
+<p>Every mile looks the same. This one isn't here.</p>
+<Link href="/">Back to home</Link>
+```
+
+(The caption is a callback to the brand's "Long Mile" spot illustration. Optional but on-brand.)
+
+### Surface 12 — `/coming-soon`
+
+Swap `/turtle.png` for `<Mascot pose="doctrine" size={320} />`. Same pattern as error page.
+
+### Surface 13 — Course lesson page (open question — see Finding 3)
+
+Recommended: **build a post-lesson completion screen** as a new route. When `MarkCompleteButton` fires:
+
+```tsx
+// pseudocode
+await markComplete(lessonId);
+router.push(`/course/${lessonId}/complete`);
+```
+
+`/course/[lessonId]/complete/page.tsx`:
+
+```tsx
+<main>
+  <Mascot pose={poseForLesson(lessonId)} size={360} priority />
+  <p>{TEASERS[lessonId].kicker}</p>   {/* iris-shimmer kicker is already brand voice */}
+  <h1>Lesson {lessonId} complete.</h1>
+  <Link href={`/course/${nextLessonId}`}>Next lesson →</Link>
+  <Link href="/dashboard">Back to The Journey</Link>
+</main>
+```
+
+Defer if scope is heavy. The minimum acceptable port is surfaces 1–12; surface 13 can come later.
+
+### Surface 14 — Email templates (Resend + React Email)
+
+Tone: **uncomfortable truths.** Match the live landing voice — dry, anti-guru, sober/fun/practical. No "Hey there!" sunshine.
+
+| Template | Trigger | Pose | Subject (sketch) |
+|---|---|---|---|
+| Welcome | After signup | `doctrine` | "You signed up. Now what." |
+| Lesson complete | After `MarkCompleteButton` | `poseForLesson(lessonId)` | "Lesson {N} done. {N+1} is the harder one." |
+| Comeback | 7+ days dormant | `recovery` | "You haven't shown up in a week. That's data." |
+| Reveal unlocked | After 12th lesson | `verdict` | "Choose your keeper." |
+
+Components at `components/emails/{Welcome,LessonComplete,Comeback,RevealUnlocked}.tsx`, sent by `lib/email.ts` (already wired for Resend per state0511-part1.md).
 
 ---
 
-## Conventions I followed (so your edits stay consistent)
+## Sequencing recommendation
 
-- **Palette is editorial only:** `#FAF7F2` (cream), `#1A1A1A` (ink), `#8B1A1A` (crimson), `#6B6B6B` (muted), `#E8E4DF` (light), iris gradient for role tokens + key CTAs + brand wordmark only. Matches `AGENTS.md`.
-- **Fonts via tokens:** Playfair Display (display), Source Serif 4 (serif body), Barlow Condensed (condensed sans), Space Mono (mono), Caveat (hand — Michael's voice / margin annotations only).
-- **1.6px round-cap monoline** for all flat-SVG iconography. Crimson reserved for change/loss/money — never decorative.
-- **Mascot scarcity:** Max one mascot per editorial spread / badge / onboarding screen.
-- **PNG > SVG by default.** SVG fallback only for single-color reproduction (favicon ≤32px, print plates, swag, App Mark on dark) or onError fallback.
-- **No anthropomorphizing of Leponeus.** No waving, no thumbs up, no smiling, no speech bubbles. The eight expressions are the only vocabulary.
+1. **Foundation PR** — `<Mascot>` component, `lesson-poses.ts`, copy PNGs to `public/mascot/`. Blocks everything.
+2. **OG card** (Surface 1) — 30 min, zero blast radius, immediate distribution win.
+3. **Error + not-found palette fix + mascot swap** (Surfaces 10–12) — also closes the not-found dark-palette debt. Three small commits.
+4. **Welcome + Syllabus + Dashboard header** (Surfaces 4, 5, 6) — three high-visibility brand-voice surfaces.
+5. **Landing hero + pricing** (Surfaces 2, 3) — coordinate with LandingSequence animation.
+6. **Reveal + Playbill + Redline** (Surfaces 7, 8, 9) — narrative climax. Founder may want close QA.
+7. **Course lesson completion screen** (Surface 13) — feature gap, scope before starting.
+8. **Email templates** (Surface 14) — depends on in-app components for visual consistency.
+
+Each can be its own PR. Cherry-pick to taste.
 
 ---
 
-## Where to find things on `aesdr-design-system` branch
+## Three known cleanups to batch with the brand port
 
-| What | Path |
+1. **`/turtle.png` references** → swap to `/mascot/leponeus-{pose}.png` (recovery for error, doctrine for coming-soon).
+2. **`app/not-found.tsx` palette** → `--bg-main` / `--text-main` / `--theme` → `--cream` / `--ink` / `--crimson`.
+3. **`app/signup/page.tsx` + `app/account/select-role/page.tsx`** still use retired tokens per SESSION_STATE.md. Worth folding into the brand-pass batch.
+
+---
+
+## What's on `aesdr-design-system` branch
+
+| Path | Status |
 |---|---|
-| Live design system HTML (boot via `python -m http.server`) | `aesdr-design-system/brand/AESDR Brand Visual System.html` |
-| Mascot PNGs (transparent, canonical) | `aesdr-design-system/brand/canon/mascot/png/leponeus-*.png` |
-| Mascot PNGs (cloud-bg source masters) | `aesdr-design-system/brand/canon/mascot/png/source/` |
-| Cutout pipeline | `aesdr-design-system/brand/canon/mascot/png/cutout.py` |
-| AI generation prompts | `aesdr-design-system/brand/canon/mascot/png/prompts.md` |
-| Flat fallback SVGs (8 poses) | `aesdr-design-system/brand/canon/mascot/leponeus-*.svg` |
-| SVG sprite (all 8 in one file) | `aesdr-design-system/brand/canon/mascot/leponeus.sprite.svg` |
-| Canon README + changelog | `aesdr-design-system/brand/canon/mascot/README.md` |
-| Manifest (machine-readable) | `aesdr-design-system/brand/canon/mascot/manifest.json` |
-| 18-glyph icon set (JSX source) | `aesdr-design-system/brand/synthesis.jsx` (search `const ICON_SET`) |
-| 5 spot illustrations (JSX source) | `aesdr-design-system/brand/synthesis.jsx` (search `function spot`) |
-| Color + type tokens (CSS) | `aesdr-design-system/colors_and_type.css` |
-| Master hero render (reference for re-generation) | `aesdr-design-system/aesdrmascot.png` |
+| `brand/canon/mascot/png/leponeus-{8}.png` | ✅ Transparent cutouts, ready to deploy |
+| `brand/canon/mascot/png/source/leponeus-{8}.png` | ✅ Source masters (cloud bg) for re-cutting |
+| `brand/canon/mascot/png/cutout.py` | ✅ Re-runnable rembg pipeline |
+| `brand/canon/mascot/png/prompts.md` | ✅ AI gen prompts |
+| `brand/canon/mascot/leponeus-{8}.svg` | ✅ Flat fallback SVGs (print/swag/favicon) |
+| `brand/canon/mascot/leponeus.sprite.svg` | ✅ All 8 in one `<use>`-able file |
+| `brand/canon/mascot/manifest.json` | ✅ Machine-readable canon · v1.1 |
+| `brand/canon/mascot/README.md` | ✅ Canon doc + changelog |
+| `brand/synthesis.jsx` | ✅ Live design canvas (mascot, 18 icons, 5 spots, badges, lockups) |
+| `dist/aesdr-brand-visual-system.standalone.html` | ✅ 21 MB single-file shareable HTML |
+| `build/build-standalone.py` | ✅ Re-runnable single-file build |
 
 ---
 
-## How to ship a new pose or refresh an existing one
+## Conventions to honor (from AGENTS.md)
 
-If the brand ever needs a 9th expression OR a regenerated pose:
-
-1. Bump version on this branch first. Open prompts.md and add the per-pose paragraph (mirroring the 8 existing ones).
-2. Generate the new source PNG with the prompts (ChatGPT image / Sora image / Flux / Midjourney). Drop it at `png/source/leponeus-{key}.png`.
-3. `python3 aesdr-design-system/brand/canon/mascot/png/cutout.py` — produces the transparent cutout at `png/leponeus-{key}.png`.
-4. Update manifest.json + README changelog + bump canon version.
-5. Open a PR to the design-system branch with the new asset, then a separate PR to `main` to swap the asset into `public/mascot/`.
+- Editorial palette only — `--cream`, `--ink`, `--crimson`, `--muted`, `--light`, `--iris`. Dark palette retired.
+- Fonts via tokens — `--display`, `--serif`, `--cond`, `--mono`, `--hand`.
+- 1.6 px round-cap monoline for all flat SVG iconography. Crimson reserved for change/loss/money.
+- Mascot scarcity: max 1 per page/spread.
+- No anthropomorphizing of Leponeus — no waving, no thumbs, no smiling, no speech bubbles. 8 expressions only.
+- All changes to `main` go via PR. Direct push blocked (403).
+- Internal canon docs live in `content/aesdr-internal/` and never render publicly.
 
 ---
 
 ## What I'm NOT doing (your lane)
 
-Explicitly out of scope for the design-system caretaker:
-
-- Touching anything in `app/`, `components/`, `lib/`, `public/`, `content/`. Those are the product builder's lane.
+- Touching anything in `app/`, `components/`, `lib/`, `public/`, `content/`. Product builder's lane.
 - Wiring components into routes.
-- Tailwind config edits (palette tokens may need adding to `tailwind.config.ts` — your call on the implementation).
+- Tailwind config edits.
 - Email template authoring.
-- The OG card itself (spec above, but the build belongs in `main`).
+- The OG card itself (spec above; build belongs in `main`).
+- Course content (`content/lessons/html/lesson-XX/`).
 
-If you need a new asset (icon variant, mascot pose, spot illustration, palette token), open an issue or ping in your state file — I'll add it to the canon and let you know when it's ready.
+If you need a new asset (icon variant, mascot pose, spot illustration, palette token), open an issue or write in your next state file. I'll add it to the canon and let you know.
 
 ---
 
 ## Pre-flight for the product-builder session
 
-1. Read this file + state0511-part1.md + state0511-part2.md.
-2. Check whether anything in `app/` or `public/mascot/` uses cloud-bg PNGs from before today. If yes, swap to the transparent versions.
-3. Decide priority order on Gaps 1–8 above. Recommend Gap 1 (OG card) first — single highest-leverage move.
-4. When a gap involves a brand decision (e.g. pose choice for playbill vs redline), ping the user, not the design-system canon. The canon is here to enforce, not to decide.
+1. Read this file + state0511-part1.md + state0511-part2.md + AGENTS.md.
+2. Start with the **foundation PR** (PNGs → `public/mascot/`, `Mascot.tsx`, `lesson-poses.ts`).
+3. Decide on the **course lesson completion screen** approach (Surface 13). If scope is heavy, ship surfaces 1–12 first.
+4. Pose decisions are all locked. Don't re-litigate — execute against the specs above.
+5. If a surface PR opens with something contradicting the canon, ping me via state file or PR comment.
