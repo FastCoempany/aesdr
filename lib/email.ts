@@ -24,6 +24,55 @@ const UNSUBSCRIBE_HEADERS = {
   'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
 };
 
+// ─── Brand: Leponeus pose helper for email templates ───
+// Mirrors utils/brand/lesson-poses.ts but inlined here so this server-side
+// file doesn't import a client TSX component. Update both if the canon
+// pose mapping ever changes.
+type Pose =
+  | "doctrine"
+  | "diagnosis"
+  | "sprint"
+  | "fall"
+  | "recovery"
+  | "rest"
+  | "verdict"
+  | "owner";
+
+const LESSON_POSE_EMAIL: Record<string, Pose> = {
+  "1":  "doctrine",
+  "2":  "doctrine",
+  "3":  "verdict",
+  "4":  "verdict",
+  "5":  "fall",
+  "6":  "sprint",
+  "7":  "doctrine",
+  "8":  "doctrine",
+  "9":  "recovery",
+  "10": "doctrine",
+  "11": "verdict",
+  "12": "owner",
+};
+
+function poseForLessonEmail(lessonId: string): Pose {
+  return LESSON_POSE_EMAIL[lessonId] ?? "doctrine";
+}
+
+/** Absolute URL of a mascot PNG, for email <img src>. */
+function mascotUrl(pose: Pose): string {
+  return `${SITE}/mascot/leponeus-${pose}.png`;
+}
+
+/** Centered Leponeus image table-row, drops into any email card layout. */
+function mascotRow(pose: Pose, size = 180): string {
+  const url = mascotUrl(pose);
+  return `
+        <tr>
+          <td align="center" style="padding:32px 48px 0 48px;">
+            <img src="${url}" width="${size}" height="${size}" alt="" style="display:block;border:0;width:${size}px;height:${size}px;max-width:100%;" />
+          </td>
+        </tr>`;
+}
+
 /**
  * Wrapper that sends an email and logs failures.
  * Returns true on success, false on failure (never throws).
@@ -226,9 +275,12 @@ function welcomeHtml(name: string, email: string, loginUrl: string, tempPassword
           <td style="height:4px;background:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);font-size:0;line-height:0;">&nbsp;</td>
         </tr>
 
+        <!-- Mascot: doctrine pose (brand-voice) -->
+        ${mascotRow("doctrine", 180)}
+
         <!-- Header / monogram -->
         <tr>
-          <td style="padding:36px 48px 8px 48px;">
+          <td style="padding:24px 48px 8px 48px;">
             <p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#94A3B8;">
               AESDR &middot; Member No. ${Math.floor(Math.random() * 900 + 100)}
             </p>
@@ -447,9 +499,12 @@ function receiptHtml(name: string, tier: string, amountCents: number) {
           <td style="height:4px;background:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);font-size:0;line-height:0;">&nbsp;</td>
         </tr>
 
+        <!-- Mascot: doctrine pose (brand-voice for receipts) -->
+        ${mascotRow("doctrine", 160)}
+
         <!-- Kicker -->
         <tr>
-          <td style="padding:36px 48px 6px 48px;">
+          <td style="padding:24px 48px 6px 48px;">
             <p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#10B981;font-weight:700;">
               Purchase Confirmed
             </p>
@@ -915,4 +970,254 @@ function teamInviteHtml(inviterName: string, token: string) {
   <p>— AESDR</p>
   ${footer()}
 </div>`;
+}
+
+// ─── Lesson Complete Email ───
+//
+// Sent after a student marks a lesson as complete. Pose pulled from the
+// canon lesson→pose mapping (doctrine for lessons 1/2/7/8/10, verdict for
+// 3/4/11, fall for 5, sprint for 6, recovery for 9, owner for 12).
+//
+// Tone: dry "uncomfortable truths" register — no celebration confetti,
+// no "great job!" — match the live landing voice. The pose carries the
+// emotional content; the copy stays sober.
+
+export async function sendLessonCompleteEmail(
+  to: string,
+  name: string,
+  lessonId: string,
+  lessonTitle: string
+) {
+  const isLast = lessonId === "12";
+  const subject = isLast
+    ? "Twelve done. Time to pick your keeper."
+    : `Lesson ${lessonId} done. ${Number(lessonId) + 1} is the harder one.`;
+
+  return safeSend(`lesson-complete-${lessonId} to ${to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to,
+      headers: UNSUBSCRIBE_HEADERS,
+      subject,
+      html: lessonCompleteHtml(name, lessonId, lessonTitle),
+    })
+  );
+}
+
+function lessonCompleteHtml(name: string, lessonId: string, lessonTitle: string): string {
+  const safeName = esc(name);
+  const safeLessonId = esc(lessonId);
+  const safeTitle = esc(lessonTitle);
+  const isLast = lessonId === "12";
+  const nextLesson = String(Number(lessonId) + 1);
+  const pose = poseForLessonEmail(lessonId);
+
+  const primaryHref = isLast ? `${SITE}/reveal` : `${SITE}/course/${nextLesson}`;
+  const primaryLabel = isLast ? "Choose your keeper" : `Lesson ${nextLesson}`;
+
+  const sub = isLast
+    ? "You made it through all twelve. The shell did not stop."
+    : `Lesson ${nextLesson} is harder.`;
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Lesson ${safeLessonId} complete | AESDR</title>
+</head>
+<body style="margin:0;padding:0;background:#F5F3EE;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#F5F3EE;padding:32px 16px;">
+  <tr>
+    <td align="center">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;width:100%;background:#FFFFFF;border:1px solid #E8E3D8;">
+
+        <!-- Iris shimmer accent bar -->
+        <tr>
+          <td style="height:4px;background:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);font-size:0;line-height:0;">&nbsp;</td>
+        </tr>
+
+        <!-- Lesson-mapped pose -->
+        ${mascotRow(pose, 200)}
+
+        <!-- Kicker -->
+        <tr>
+          <td style="padding:24px 48px 6px 48px;" align="center">
+            <p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#8B1A1A;font-weight:700;">
+              Lesson ${safeLessonId} &middot; Complete
+            </p>
+          </td>
+        </tr>
+
+        <!-- Editorial headline (the lesson title) -->
+        <tr>
+          <td style="padding:0 48px 6px 48px;" align="center">
+            <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-weight:400;font-style:italic;font-size:32px;line-height:1.15;letter-spacing:-0.01em;color:#0F172A;">
+              ${safeTitle}.
+            </h1>
+          </td>
+        </tr>
+
+        <!-- Sub copy -->
+        <tr>
+          <td style="padding:0 48px 32px 48px;" align="center">
+            <p style="margin:14px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:16px;line-height:1.7;color:#334155;font-style:italic;max-width:420px;">
+              ${safeName ? `Hey ${safeName} &mdash; ` : ""}${sub}
+            </p>
+          </td>
+        </tr>
+
+        <!-- CTA -->
+        <tr>
+          <td style="padding:0 48px 8px 48px;" align="center">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="background:#0F172A;">
+                  <a href="${primaryHref}" style="display:inline-block;padding:16px 36px;font-family:'SF Mono',Consolas,monospace;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#FFFFFF;text-decoration:none;font-weight:700;">
+                    ${primaryLabel} &rarr;
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Secondary link -->
+        <tr>
+          <td style="padding:14px 48px 0 48px;" align="center">
+            <a href="${SITE}/dashboard" style="font-family:'SF Mono',Consolas,monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#94A3B8;text-decoration:none;">
+              Back to the Journey
+            </a>
+          </td>
+        </tr>
+
+        <!-- Sign-off -->
+        <tr>
+          <td style="padding:36px 48px 36px 48px;" align="center">
+            <p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#94A3B8;">
+              &mdash; AESDR
+            </p>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="padding:0 48px 32px 48px;">
+            ${emailFooterInner()}
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>`;
+}
+
+// ─── Reveal Unlocked Email ───
+//
+// Sent after a student completes lesson 12 (or all lessons). The
+// celebration moment — but in the dry "uncomfortable truths" register.
+// Verdict pose: the moment of judgment.
+
+export async function sendRevealUnlockedEmail(to: string, name: string) {
+  return safeSend(`reveal-unlocked to ${to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to,
+      headers: UNSUBSCRIBE_HEADERS,
+      subject: "Choose your keeper.",
+      html: revealUnlockedHtml(name),
+    })
+  );
+}
+
+function revealUnlockedHtml(name: string): string {
+  const safeName = esc(name);
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Choose your keeper | AESDR</title>
+</head>
+<body style="margin:0;padding:0;background:#F5F3EE;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#F5F3EE;padding:32px 16px;">
+  <tr>
+    <td align="center">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;width:100%;background:#FFFFFF;border:1px solid #E8E3D8;">
+
+        <!-- Iris shimmer accent bar -->
+        <tr>
+          <td style="height:4px;background:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);font-size:0;line-height:0;">&nbsp;</td>
+        </tr>
+
+        <!-- Verdict pose: the moment of judgment -->
+        ${mascotRow("verdict", 220)}
+
+        <!-- Kicker -->
+        <tr>
+          <td style="padding:24px 48px 6px 48px;" align="center">
+            <p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#8B1A1A;font-weight:700;">
+              The Reveal &middot; Unlocked
+            </p>
+          </td>
+        </tr>
+
+        <!-- Editorial headline -->
+        <tr>
+          <td style="padding:0 48px 6px 48px;" align="center">
+            <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-weight:400;font-style:italic;font-size:36px;line-height:1.1;letter-spacing:-0.01em;color:#0F172A;">
+              Choose your keeper.
+            </h1>
+          </td>
+        </tr>
+
+        <!-- Sub copy -->
+        <tr>
+          <td style="padding:0 48px 32px 48px;" align="center">
+            <p style="margin:14px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:16px;line-height:1.7;color:#334155;font-style:italic;max-width:440px;">
+              ${safeName ? `Hey ${safeName} &mdash; ` : ""}you finished all twelve. Two readings of the same story. Pick the one you want to take home.
+            </p>
+          </td>
+        </tr>
+
+        <!-- CTA -->
+        <tr>
+          <td style="padding:0 48px 8px 48px;" align="center">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="background:#0F172A;">
+                  <a href="${SITE}/reveal" style="display:inline-block;padding:16px 36px;font-family:'SF Mono',Consolas,monospace;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#FFFFFF;text-decoration:none;font-weight:700;">
+                    Open the Reveal &rarr;
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Sign-off -->
+        <tr>
+          <td style="padding:36px 48px 36px 48px;" align="center">
+            <p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#94A3B8;">
+              &mdash; AESDR
+            </p>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="padding:0 48px 32px 48px;">
+            ${emailFooterInner()}
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>`;
 }
