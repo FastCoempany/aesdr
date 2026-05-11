@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import SignOutButton from "@/components/SignOutButton";
 import UnlockArtifactTile from "@/components/UnlockArtifactTile";
+import { isAdminEmail } from "@/lib/admin";
 import { createClient } from "@/utils/supabase/server";
 import { verifyPaidAccess } from "@/utils/access/verifyAccess";
 import { LESSONS } from "@/utils/progress/types";
@@ -76,6 +77,9 @@ export default async function Dashboard() {
   }
 
   const userRole = user?.user_metadata?.role as string | undefined;
+  // Admins bypass the sequential-lesson gate — every lesson is visible
+  // and clickable. Founder-level access for QA + content review.
+  const isAdmin = isAdminEmail(user?.email);
 
   const progressMap: Record<string, LessonProgressSummary> = {};
   if (progressRes.data) {
@@ -176,8 +180,10 @@ export default async function Dashboard() {
             const isFuture = idx > currentIdx;
             const isNextVisible = idx === currentIdx + 1;
 
-            const isVisible = isCompleted || isCurrent || isNextVisible;
-            const isLocked = isFuture && !isNextVisible;
+            // Admin: every lesson is visible + unlocked. Founder-level access.
+            const isVisible = isAdmin || isCompleted || isCurrent || isNextVisible;
+            const isLocked = !isAdmin && isFuture && !isNextVisible;
+            const isAccessible = isAdmin || isCompleted || isCurrent;
             const displayTitle = userRole === "ae" && lesson.titleAe ? lesson.titleAe : lesson.title;
 
             return (
@@ -253,8 +259,8 @@ export default async function Dashboard() {
                     {isCompleted ? "Completed" : `Lesson ${lesson.id}`}
                   </p>
 
-                  {/* Title — linked if accessible (completed, current, or next) */}
-                  {isCompleted || isCurrent ? (
+                  {/* Title — linked if accessible (completed, current, or admin). */}
+                  {isAccessible ? (
                     <Link
                       href={`/course/${lesson.id}`}
                       style={{

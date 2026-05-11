@@ -2,7 +2,6 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 
 import AesdrBrand from "@/components/AesdrBrand";
-import EditorialMasthead from "@/components/EditorialMasthead";
 import GhostButton from "@/components/GhostButton";
 import LandingSequence from "@/components/LandingSequence";
 import PricingTiers from "@/components/PricingTiers";
@@ -36,7 +35,6 @@ export default async function LandingPage() {
 
   return (
     <main className={styles.page}>
-      <EditorialMasthead />
       <GhostButton />
 
       {/* ─── NAV ─── */}
@@ -107,11 +105,7 @@ export default async function LandingPage() {
           12 courses. 5 takeaway tools. One price. Lifetime access.
           Built for AEs and SDRs who want to get better, not just feel better.
         </p>
-        {isAuthenticated ? (
-          <Link href="/dashboard" className={styles.ctaPrimary}>Continue &rarr;</Link>
-        ) : (
-          <a href="#pricing" className={styles.ctaPrimary}>Get Access</a>
-        )}
+        <a href="#pricing" className={styles.ctaPrimary}>Get Access</a>
       </section>
 
       {/* Content Warning */}
