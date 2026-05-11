@@ -4,6 +4,8 @@ import { useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
+import { Mascot } from "@/components/brand/Mascot";
+
 type Artifact = "programme" | "manuscript";
 
 interface RevealViewProps {
@@ -84,6 +86,11 @@ export default function RevealView({ studentName, role }: RevealViewProps) {
 
   return (
     <main style={styles.main}>
+      {/* VERDICT POSE — the moment of judgment */}
+      <div style={{ display: "flex", justifyContent: "center", marginBottom: 24 }}>
+        <Mascot pose="verdict" size={200} priority />
+      </div>
+
       {/* FANFARE */}
       <div style={styles.fanfare}>
         <div style={styles.fEye}>The Course is Complete</div>

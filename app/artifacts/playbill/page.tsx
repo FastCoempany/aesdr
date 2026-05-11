@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { getCachedArtifact } from "@/lib/artifacts/generate";
 import type { PlaybillData } from "@/lib/artifacts/types";
+import { Mascot } from "@/components/brand/Mascot";
 import PlaybillView from "./PlaybillView";
 import { MOCK_PLAYBILL } from "./mock";
 
@@ -78,6 +79,9 @@ export default async function PlaybillPage({
         }}
       >
         <div style={{ textAlign: "center", maxWidth: "520px" }}>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 24 }}>
+            <Mascot pose="owner" size={200} priority />
+          </div>
           <p
             style={{
               fontFamily: "'Space Mono', monospace",
