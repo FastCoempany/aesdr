@@ -2,14 +2,16 @@
 
 /**
  * Default error boundary. Catches any uncaught error in a route segment.
- * Editorial palette + iridescent-turtle motif (matching the /coming-soon
- * gate page so the error feels like part of the brand, not a Vercel default).
+ * Editorial palette + canon `recovery` pose (the "we get back up" pose,
+ * deliberately not `fall` — error pages should signal recovery, not defeat).
  *
  * Surfaces error.message + error.digest so the founder (or anyone watching
  * Vercel logs) can correlate the page error to the underlying exception.
  */
 
 import Link from "next/link";
+
+import { Mascot } from "@/components/brand/Mascot";
 
 export default function Error({
   error,
@@ -32,7 +34,7 @@ export default function Error({
         textAlign: "center",
       }}
     >
-      {/* Iridescent turtle — same source as /coming-soon (the 741407 gate) */}
+      {/* Recovery pose — canon */}
       <div
         style={{
           position: "relative",
@@ -41,17 +43,10 @@ export default function Error({
           filter: "saturate(1.1)",
         }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/turtle.png"
-          alt=""
-          draggable={false}
-          style={{
-            width: "100%",
-            height: "auto",
-            display: "block",
-            userSelect: "none",
-          }}
+        <Mascot
+          pose="recovery"
+          size={360}
+          style={{ width: "100%", height: "auto" }}
         />
       </div>
 
