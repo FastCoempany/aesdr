@@ -47,17 +47,19 @@ export default async function PrivateKitDocPage(
     redirect(`/partners/kit-private?next=${encodeURIComponent(`/partners/kit-private/${slug}`)}`);
   }
 
-  // Log this page view.
-  const meta = readRequestMeta(await headers());
-  await logAccess({
-    tokenId: session.tid,
-    partnerSlug: session.partner_slug,
-    event: "view",
-    docSlug: slug,
-    ipHash: meta.ipHash,
-    userAgent: meta.userAgent,
-    referrer: meta.referrer,
-  });
+  // Log this page view. Skip for admin to keep audit log clean.
+  if (!session.isAdmin) {
+    const meta = readRequestMeta(await headers());
+    await logAccess({
+      tokenId: session.tid,
+      partnerSlug: session.partner_slug,
+      event: "view",
+      docSlug: slug,
+      ipHash: meta.ipHash,
+      userAgent: meta.userAgent,
+      referrer: meta.referrer,
+    });
+  }
 
   const html = getPrivateKitEntryHtml(entry);
 

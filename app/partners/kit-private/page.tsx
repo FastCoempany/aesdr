@@ -53,17 +53,20 @@ export default async function PrivateKitIndex(
     return <PrivateKitDenied error={params.e} />;
   }
 
-  // Log the index view.
-  const meta = readRequestMeta(await headers());
-  await logAccess({
-    tokenId: session.tid,
-    partnerSlug: session.partner_slug,
-    event: "view",
-    docSlug: null,
-    ipHash: meta.ipHash,
-    userAgent: meta.userAgent,
-    referrer: meta.referrer,
-  });
+  // Log the index view. Skip for admin so the audit log stays clean of
+  // founder browsing noise.
+  if (!session.isAdmin) {
+    const meta = readRequestMeta(await headers());
+    await logAccess({
+      tokenId: session.tid,
+      partnerSlug: session.partner_slug,
+      event: "view",
+      docSlug: null,
+      ipHash: meta.ipHash,
+      userAgent: meta.userAgent,
+      referrer: meta.referrer,
+    });
+  }
 
   return (
     <HubPage>
