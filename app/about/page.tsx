@@ -1,172 +1,79 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import LegalShell, { Section } from "@/components/LegalShell";
 
 export const metadata: Metadata = {
   title: "About | AESDR",
-  description: "Who built AESDR, why it exists, and the philosophy behind the 12-course curriculum.",
+  description:
+    "Who built AESDR, why it exists, and the philosophy behind the 12-course curriculum.",
 };
 
 export default function AboutPage() {
   return (
-    <main
-      className="min-h-screen px-6 py-20"
-      style={{ background: "var(--bg-main)" }}
-    >
-      <div className="mx-auto max-w-2xl" style={{ color: "var(--text-main)" }}>
-        <Link
-          href="/"
-          style={{
-            fontFamily: "var(--mono)",
-            fontSize: "10px",
-            letterSpacing: ".2em",
-            textTransform: "uppercase",
-            color: "var(--theme)",
-            textDecoration: "none",
-          }}
-        >
-          &larr; Back
-        </Link>
+    <LegalShell eyebrow="About" title="About AESDR" current="about">
+      <Section title="Who built this">
+        <p>
+          AESDR was built by sales operators with over a decade of combined
+          experience closing complex deals in SaaS. This isn&rsquo;t a course
+          from someone who read about sales &mdash; it&rsquo;s from people
+          who carried bags, lived the quota pressure, learned what actually
+          works when the playbooks are broken, and have managed AEs and SDRs
+          on the other side.
+        </p>
+      </Section>
 
-        <h1
-          style={{
-            fontFamily: "var(--display)",
-            fontSize: "clamp(32px, 5vw, 48px)",
-            lineHeight: "1",
-            marginTop: "32px",
-            marginBottom: "40px",
-          }}
-        >
-          About AESDR
-        </h1>
+      <Section title="Philosophy">
+        <p style={{ marginBottom: 14 }}>
+          The operating manual, not the motivation engine. No guru energy,
+          no &ldquo;crush it&rdquo; framing, no recycled LinkedIn wisdom.
+          AESDR teaches the part of the role most reps figure out the hard
+          way &mdash; what good actually looks like, how to read your own
+          pipeline honestly, and the judgment moves that separate the rep
+          who survives ramp from the rep who doesn&rsquo;t.
+        </p>
+        <p>
+          12 modular courses. 5 takeaway tools. Interactive HTML format, not
+          video lectures. Lifetime access. 14-day, no-questions-asked refund.
+        </p>
+      </Section>
 
-        <section style={{ marginBottom: "40px" }}>
-          <h2
-            style={{
-              fontFamily: "var(--cond)",
-              fontSize: "18px",
-              fontWeight: 700,
-              letterSpacing: ".08em",
-              textTransform: "uppercase",
-              color: "var(--theme)",
-              marginBottom: "16px",
-            }}
-          >
-            Who Built This
-          </h2>
-          <p
-            style={{
-              fontFamily: "var(--serif)",
-              fontSize: "17px",
-              lineHeight: "1.8",
-              color: "var(--text-muted)",
-            }}
-          >
-            AESDR was built by a sales professional with over nine years of
-            experience closing complex deals in SaaS. This isn&apos;t a course
-            from someone who read about sales — it&apos;s from someone who
-            lived it, survived it, and learned what actually works when the
-            quota pressure is real and the playbooks are broken.
-          </p>
-        </section>
+      <Section title="Who it&rsquo;s for">
+        <ul style={{ paddingLeft: 22 }}>
+          <li>First-1-to-2-year SDRs and AEs in startup SaaS</li>
+          <li>Career-switchers in their first SaaS sales role</li>
+          <li>SDR managers buying for ramp acceleration on junior hires</li>
+          <li>
+            Reps frustrated by broken tools, bloated CRMs, and shifting
+            goalposts
+          </li>
+        </ul>
+      </Section>
 
-        <section style={{ marginBottom: "40px" }}>
-          <h2
-            style={{
-              fontFamily: "var(--cond)",
-              fontSize: "18px",
-              fontWeight: 700,
-              letterSpacing: ".08em",
-              textTransform: "uppercase",
-              color: "var(--theme)",
-              marginBottom: "16px",
-            }}
-          >
-            Philosophy
-          </h2>
-          <p
-            style={{
-              fontFamily: "var(--serif)",
-              fontSize: "17px",
-              lineHeight: "1.8",
-              color: "var(--text-muted)",
-              marginBottom: "16px",
-            }}
-          >
-            No guru energy. No &ldquo;crush it&rdquo; motivation. No recycled
-            LinkedIn wisdom. AESDR teaches sober selling — direct, practical,
-            honest frameworks for AEs and SDRs who want to build a real career
-            in sales without burning out or selling their soul.
-          </p>
-          <p
-            style={{
-              fontFamily: "var(--serif)",
-              fontSize: "17px",
-              lineHeight: "1.8",
-              color: "var(--text-muted)",
-            }}
-          >
-            The 12-course curriculum covers everything from surviving toxic
-            managers to building financial resilience on commission-based
-            income. Every lesson includes interactive exercises, not just
-            text walls.
-          </p>
-        </section>
+      <Section title="Who it&rsquo;s not for">
+        <ul style={{ paddingLeft: 22 }}>
+          <li>Anyone looking for motivation</li>
+          <li>
+            Anyone hunting LinkedIn-friendly badges, certifications, or
+            recruiter clout
+          </li>
+          <li>
+            Reps with 8+ years in the seat who aren&rsquo;t open to a
+            re-look at fundamentals
+          </li>
+        </ul>
+      </Section>
 
-        <section style={{ marginBottom: "40px" }}>
-          <h2
-            style={{
-              fontFamily: "var(--cond)",
-              fontSize: "18px",
-              fontWeight: 700,
-              letterSpacing: ".08em",
-              textTransform: "uppercase",
-              color: "var(--theme)",
-              marginBottom: "16px",
-            }}
+      <Section title="Contact">
+        <p>
+          Questions, feedback, or support requests:{" "}
+          <a
+            href="mailto:support@aesdr.com"
+            style={{ color: "var(--crimson)", textDecoration: "underline" }}
           >
-            Contact
-          </h2>
-          <p
-            style={{
-              fontFamily: "var(--serif)",
-              fontSize: "17px",
-              lineHeight: "1.8",
-              color: "var(--text-muted)",
-            }}
-          >
-            Questions, feedback, or support requests:{" "}
-            <a
-              href="mailto:support@aesdr.com"
-              style={{ color: "var(--theme)", textDecoration: "none" }}
-            >
-              support@aesdr.com
-            </a>
-            <br />
-            We respond within 48 hours.
-          </p>
-        </section>
-
-        <footer
-          style={{
-            borderTop: "1px solid var(--line)",
-            paddingTop: "24px",
-            marginTop: "48px",
-            display: "flex",
-            gap: "24px",
-            flexWrap: "wrap",
-            fontFamily: "var(--mono)",
-            fontSize: "9px",
-            letterSpacing: ".1em",
-            textTransform: "uppercase",
-            color: "var(--text-muted)",
-          }}
-        >
-          <Link href="/terms" style={{ color: "var(--text-muted)", textDecoration: "none", opacity: 0.7 }}>Terms</Link>
-          <Link href="/privacy" style={{ color: "var(--text-muted)", textDecoration: "none", opacity: 0.7 }}>Privacy</Link>
-          <Link href="/refund-policy" style={{ color: "var(--text-muted)", textDecoration: "none", opacity: 0.7 }}>Refunds</Link>
-          <Link href="/contact" style={{ color: "var(--text-muted)", textDecoration: "none", opacity: 0.7 }}>Contact</Link>
-        </footer>
-      </div>
-    </main>
+            support@aesdr.com
+          </a>
+          . We respond within 48 hours.
+        </p>
+      </Section>
+    </LegalShell>
   );
 }
