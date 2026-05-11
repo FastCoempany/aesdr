@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import SignOutButton from "@/components/SignOutButton";
+import ArtifactTile from "@/components/ArtifactTile";
 import UnlockArtifactTile from "@/components/UnlockArtifactTile";
 import { isAdminEmail } from "@/lib/admin";
 import { createClient } from "@/utils/supabase/server";
@@ -394,65 +395,23 @@ export default async function Dashboard() {
               ) : (
                 <div style={{ display: "flex", gap: 20, flexWrap: "wrap", marginTop: 4 }}>
                   {/* Chosen artifact */}
-                  <Link
+                  <ArtifactTile
                     href={revealPick === "playbill" ? "/artifacts/playbill" : "/artifacts/redline"}
-                    style={{
-                      display: "block", width: 200, height: 260, borderRadius: 6, overflow: "hidden",
-                      backgroundImage: revealPick === "playbill" ? "url('/reveal/stage.png')" : "url('/reveal/desk.png')",
-                      backgroundSize: "cover", backgroundPosition: "center", position: "relative",
-                      boxShadow: "0 8px 28px rgba(0,0,0,.18)", textDecoration: "none",
-                      transition: "transform .3s ease, box-shadow .3s ease",
-                    }}
-                    onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 36px rgba(0,0,0,.25)"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 8px 28px rgba(0,0,0,.18)"; }}
-                  >
-                    <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <img
-                        src={revealPick === "playbill" ? "/reveal/playbill.png" : "/reveal/manuscript.png"}
-                        alt={revealPick === "playbill" ? "The Programme" : "The Manuscript"}
-                        style={{ width: "65%", height: "auto", filter: "drop-shadow(0 8px 16px rgba(0,0,0,.4))" }}
-                      />
-                    </div>
-                    <div style={{
-                      position: "absolute", bottom: 0, left: 0, right: 0, padding: "24px 12px 12px",
-                      background: "linear-gradient(transparent, rgba(0,0,0,.6))",
-                      fontFamily: "'Space Mono', monospace", fontSize: 8, letterSpacing: ".25em",
-                      textTransform: "uppercase", color: "rgba(250,247,242,.8)", textAlign: "center",
-                    }}>
-                      {revealPick === "playbill" ? "The Programme" : "The Manuscript"}
-                    </div>
-                  </Link>
+                    bgImage={revealPick === "playbill" ? "/reveal/stage.png" : "/reveal/desk.png"}
+                    artifactImage={revealPick === "playbill" ? "/reveal/playbill.png" : "/reveal/manuscript.png"}
+                    artifactAlt={revealPick === "playbill" ? "The Programme" : "The Manuscript"}
+                    label={revealPick === "playbill" ? "The Programme" : "The Manuscript"}
+                  />
 
                   {/* Sealed artifact — unlocked or purchasable */}
                   {sealedUnlocked ? (
-                    <Link
+                    <ArtifactTile
                       href={revealPick === "playbill" ? "/artifacts/redline" : "/artifacts/playbill"}
-                      style={{
-                        display: "block", width: 200, height: 260, borderRadius: 6, overflow: "hidden",
-                        backgroundImage: revealPick === "playbill" ? "url('/reveal/desk.png')" : "url('/reveal/stage.png')",
-                        backgroundSize: "cover", backgroundPosition: "center", position: "relative",
-                        boxShadow: "0 8px 28px rgba(0,0,0,.18)", textDecoration: "none",
-                        transition: "transform .3s ease, box-shadow .3s ease",
-                      }}
-                      onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 36px rgba(0,0,0,.25)"; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 8px 28px rgba(0,0,0,.18)"; }}
-                    >
-                      <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <img
-                          src={revealPick === "playbill" ? "/reveal/manuscript.png" : "/reveal/playbill.png"}
-                          alt={revealPick === "playbill" ? "The Manuscript" : "The Programme"}
-                          style={{ width: "65%", height: "auto", filter: "drop-shadow(0 8px 16px rgba(0,0,0,.4))" }}
-                        />
-                      </div>
-                      <div style={{
-                        position: "absolute", bottom: 0, left: 0, right: 0, padding: "24px 12px 12px",
-                        background: "linear-gradient(transparent, rgba(0,0,0,.6))",
-                        fontFamily: "'Space Mono', monospace", fontSize: 8, letterSpacing: ".25em",
-                        textTransform: "uppercase", color: "rgba(250,247,242,.8)", textAlign: "center",
-                      }}>
-                        {revealPick === "playbill" ? "The Manuscript" : "The Programme"}
-                      </div>
-                    </Link>
+                      bgImage={revealPick === "playbill" ? "/reveal/desk.png" : "/reveal/stage.png"}
+                      artifactImage={revealPick === "playbill" ? "/reveal/manuscript.png" : "/reveal/playbill.png"}
+                      artifactAlt={revealPick === "playbill" ? "The Manuscript" : "The Programme"}
+                      label={revealPick === "playbill" ? "The Manuscript" : "The Programme"}
+                    />
                   ) : (
                     <UnlockArtifactTile
                       artifactType={revealPick === "playbill" ? "redline" : "playbill"}
