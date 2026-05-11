@@ -1,31 +1,15 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { isAdminEmail } from "@/lib/admin";
 
 const PUBLIC_PATHS = ["/", "/terms", "/privacy", "/refund-policy", "/about", "/contact", "/success", "/purchase/cancel", "/login", "/signup", "/syllabus", "/coming-soon", "/mobile"];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // ── Coming-soon gate: runtime-toggleable via COMING_SOON env var ──
-  // Reading process.env inside the handler (not at module scope) ensures
-  // the edge runtime picks up the current value on each request, so flipping
-  // the toggle in Vercel takes effect without a redeploy.
-  //
-  // Desktop visitors land on /coming-soon (password gate). Mobile visitors
-  // land on /mobile (visuals-only, no password — mobile can't use the
-  // ghost-button bypass anyway).
-  const comingSoon = process.env.COMING_SOON === "true";
-  const hasBypass = !!request.cookies.get("aesdr_cs_bypass");
-  if (comingSoon && !hasBypass && pathname !== "/coming-soon" && pathname !== "/mobile") {
-    const ua = request.headers.get("user-agent") || "";
-    const isMobile = /Mobi|Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(ua);
-    const url = request.nextUrl.clone();
-    url.pathname = isMobile ? "/mobile" : "/coming-soon";
-    url.search = "";
-    return NextResponse.redirect(url, 302);
-  }
-
   // --- Supabase session refresh (required for server components to read auth) ---
+  // We need the user-resolution to also gate admin bypass below, so this has
+  // to run before the coming-soon gate.
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -50,7 +34,27 @@ export async function proxy(request: NextRequest) {
   );
 
   // Refresh the auth token — must be awaited for cookies to sync
-  await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
+  const isAdmin = isAdminEmail(user?.email);
+
+  // ── Coming-soon gate: runtime-toggleable via COMING_SOON env var ──
+  // Reading process.env inside the handler (not at module scope) ensures
+  // the edge runtime picks up the current value on each request, so flipping
+  // the toggle in Vercel takes effect without a redeploy.
+  //
+  // Desktop visitors land on /coming-soon (password gate). Mobile visitors
+  // land on /mobile (visuals-only, no password — mobile can't use the
+  // ghost-button bypass anyway). Admins bypass entirely.
+  const comingSoon = process.env.COMING_SOON === "true";
+  const hasCsBypass = !!request.cookies.get("aesdr_cs_bypass");
+  if (comingSoon && !hasCsBypass && !isAdmin && pathname !== "/coming-soon" && pathname !== "/mobile") {
+    const ua = request.headers.get("user-agent") || "";
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(ua);
+    const url = request.nextUrl.clone();
+    url.pathname = isMobile ? "/mobile" : "/coming-soon";
+    url.search = "";
+    return NextResponse.redirect(url, 302);
+  }
 
   // --- Route access control ---
   if (PUBLIC_PATHS.includes(pathname)) {
@@ -58,11 +62,18 @@ export async function proxy(request: NextRequest) {
   }
 
   // Let API routes, dashboard, course, tools, account, auth pages, the
-  // partner hub, and artifact previews through. Partner hub is partner-facing
-  // public surface (no auth required, like /syllabus). Artifact pages handle
-  // their own auth gates internally and accept ?preview=1 for partner-side
-  // previews of the end-of-course Programme/Manuscript artifacts.
+  // partner hub, admin pages, and artifact previews through. Partner hub
+  // is partner-facing public surface (no auth required, like /syllabus).
+  // Artifact pages handle their own auth gates internally and accept
+  // ?preview=1 for partner-side previews of the end-of-course
+  // Programme/Manuscript artifacts.
   if (pathname.startsWith("/api/") || pathname.startsWith("/dashboard") || pathname.startsWith("/course") || pathname.startsWith("/tools/") || pathname.startsWith("/account") || pathname.startsWith("/auth/") || pathname.startsWith("/partners") || pathname.startsWith("/admin") || pathname.startsWith("/artifacts/") || pathname === "/welcome") {
+    return supabaseResponse;
+  }
+
+  // Admins bypass the lock for any route — founder needs to see the full
+  // app in production, including not-yet-allowlisted routes.
+  if (isAdmin) {
     return supabaseResponse;
   }
 

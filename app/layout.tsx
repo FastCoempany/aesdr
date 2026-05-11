@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/react";
+import AdminChip from "@/components/AdminChip";
 import MobileGate from "@/components/MobileGate";
 import PostHogClient from "@/components/PostHogClient";
 import RedditPixel from "@/components/RedditPixel";
+import { getAdminContext } from "@/lib/admin";
 import "./globals.css";
 
 const LAUNCHED = process.env.NEXT_PUBLIC_LAUNCH_MODE === "true";
@@ -43,18 +45,23 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Check admin status once per request. Only the chip ships to non-admins
+  // (and the chip only renders when isAdmin is true), so non-admins see
+  // zero admin-related HTML/JS.
+  const { isAdmin } = await getAdminContext();
+
   return (
     <html lang="en" className="antialiased">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&family=Barlow+Condensed:wght@400;500;600;700;800&family=Caveat:wght@400;600&display=swap" />
-        
+
         {/* Favicon Tags */}
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -69,10 +76,11 @@ export default function RootLayout({
         >
           Skip to content
         </a>
+        {isAdmin && <AdminChip />}
         <div id="main-content">
           <MobileGate>{children}</MobileGate>
         </div>
-        
+
         {/* Analytics & Tracking */}
         <Analytics />
         <Suspense fallback={null}>

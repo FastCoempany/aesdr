@@ -1,8 +1,10 @@
 import type { SupabaseClient, User } from "@supabase/supabase-js";
+import { isAdminEmail } from "@/lib/admin";
 
 /**
- * Verify a user has active paid access — either through their own purchase
- * or as an accepted member of an active team.
+ * Verify a user has active paid access — either through their own purchase,
+ * as an accepted member of an active team, or by virtue of being an admin
+ * (founder-level access; the same emails listed in ADMIN_EMAILS).
  *
  * Combines email + user_id checks into a single OR query to halve round
  * trips vs. checking them sequentially. Falls through to a team check if
@@ -12,6 +14,10 @@ export async function verifyPaidAccess(
   supabase: SupabaseClient,
   user: User
 ): Promise<boolean> {
+  // Admins bypass every paywall — founder-level access across the app.
+  // Server-only check against ADMIN_EMAILS env; can't be spoofed client-side.
+  if (isAdminEmail(user.email)) return true;
+
   const email = user.email?.toLowerCase() ?? "";
 
   // Single query: purchase linked to user_id OR user_email
