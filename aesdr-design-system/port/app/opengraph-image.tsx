@@ -68,6 +68,8 @@ export default async function OG() {
           </div>
           <div
             style={{
+              display: "flex",
+              flexDirection: "column",
               fontSize: 36,
               marginTop: 28,
               color: "#6B6B6B",
@@ -75,9 +77,8 @@ export default async function OG() {
               lineHeight: 1.3,
             }}
           >
-            12-lesson sales survival course.
-            <br />
-            Built by operators, not course-people.
+            <div>12-lesson sales survival course.</div>
+            <div>Built by operators, not course-people.</div>
           </div>
           <div
             style={{
