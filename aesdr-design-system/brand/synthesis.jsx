@@ -378,25 +378,104 @@ function ExpressionSheet() {
    3 · ICONOGRAPHY
    ============================================================ */
 const ICON_SET = [
-  // [key, label, paths]
-  ['shell',   'Shell',     <><path d="M 8 50 Q 32 16 56 50 Z" /><path d="M 18 48 V 36 M 32 46 V 30 M 46 48 V 36" strokeOpacity=".45" /></>],
-  ['ear',     'Ear',       <path d="M 26 60 Q 22 16 38 6 Q 32 32 34 60 Z" />],
-  ['mile',   'Mile',      <><path d="M 4 52 Q 32 24 60 52" /><circle cx="4" cy="52" r="2" fill="#1A1A1A" stroke="none" /><path d="M 60 52 l -8 -2 m 8 2 l -2 -8" /></>],
-  ['rep',     'Repetition',<><path d="M 8 16 a 24 18 0 1 0 0 32" /><path d="M 8 16 l 6 -6 m -6 6 l 6 6" /></>],
-  ['fall',    'Fall',      <><path d="M 8 50 Q 32 18 56 50 Z" /><path d="M 26 50 L 22 32 L 32 36 L 26 22" stroke="#8B1A1A" /></>],
-  ['rec',     'Recovery',  <><path d="M 8 54 Q 32 24 56 54 Z" /><path d="M 32 26 V 6" /><path d="M 32 16 q -8 -4 -10 -12 q 8 4 10 8" fill="#8B1A1A" stroke="#8B1A1A" /></>],
-  ['weight',  'Weight',    <><line x1="6" y1="36" x2="58" y2="36" /><line x1="32" y1="36" x2="32" y2="14" /><rect x="14" y="14" width="36" height="6" /><circle cx="14" cy="46" r="6" /><circle cx="50" cy="46" r="6" /></>],
-  ['ledger',  'Ledger',    <><rect x="8" y="6" width="48" height="52" /><line x1="14" y1="20" x2="50" y2="20" /><line x1="14" y1="30" x2="50" y2="30" /><line x1="14" y1="40" x2="42" y2="40" /></>],
-  ['hourglass','Hourglass',<path d="M 14 8 L 50 8 L 50 16 L 32 32 L 50 48 L 50 56 L 14 56 L 14 48 L 32 32 L 14 16 Z" />],
-  ['signal',  'Signal',    <><rect x="8" y="44" width="6" height="14" /><rect x="20" y="34" width="6" height="24" /><rect x="32" y="22" width="6" height="36" /><rect x="44" y="10" width="6" height="48" /></>],
-  ['eye',     'Eye',       <><path d="M 4 32 Q 32 8 60 32 Q 32 56 4 32 Z" /><circle cx="32" cy="32" r="6" /><circle cx="32" cy="32" r="2" fill="#1A1A1A" stroke="none" /></>],
-  ['lock',    'Lock',      <><rect x="12" y="26" width="40" height="30" /><path d="M 18 26 V 18 a 14 14 0 0 1 28 0 V 26" /><circle cx="32" cy="40" r="2" fill="#1A1A1A" stroke="none" /></>],
-  ['cursor',  'Cursor',    <path d="M 12 8 L 50 38 L 32 40 L 42 56 L 36 60 L 26 44 L 14 50 Z" fill="#1A1A1A" />],
-  ['warn',    'Warn',      <><path d="M 32 6 L 58 54 L 6 54 Z" /><line x1="32" y1="22" x2="32" y2="38" /><circle cx="32" cy="46" r="1.6" fill="#1A1A1A" stroke="none" /></>],
-  ['refund',  'Refund',    <><circle cx="32" cy="32" r="22" /><path d="M 24 26 a 10 10 0 1 1 -2 12" /><path d="M 22 26 l -6 -2 m 6 2 l -2 6" /></>],
-  ['discord', 'Discord',   <><path d="M 12 18 Q 32 6 52 18 L 56 50 L 44 52 L 40 46 L 24 46 L 20 52 L 8 50 Z" /><circle cx="24" cy="34" r="2.5" fill="#1A1A1A" stroke="none" /><circle cx="40" cy="34" r="2.5" fill="#1A1A1A" stroke="none" /></>],
-  ['team',    'Team',      <><circle cx="20" cy="22" r="8" /><circle cx="44" cy="22" r="8" /><path d="M 8 56 Q 20 38 32 50 Q 44 38 56 56" /></>],
-  ['quill',   'Quill',     <><path d="M 8 56 L 50 14 Q 60 4 56 22 L 18 60 Z" /><line x1="14" y1="50" x2="32" y2="32" /></>],
+  // [key, label, paths] — 64×64 canvas, 4px clear-zone, 1.6px round-cap monoline.
+  // Crimson reserved for change/loss/money (fall, recovery sprout, warn, refund).
+  // Solid fills reserved for signal-mass icons (cursor, quill).
+  ['shell',   'Shell',     <>
+    <path d="M 6 50 Q 32 12 58 50 Z" />
+    <path d="M 28 22 L 32 18 L 36 22 L 36 28 L 32 32 L 28 28 Z" strokeOpacity=".45" />
+    <path d="M 18 48 V 38 M 46 48 V 38" strokeOpacity=".45" />
+    <path d="M 12 46 Q 32 50 52 46" strokeOpacity=".25" />
+  </>],
+  ['ear',     'Ear',       <>
+    <path d="M 24 60 Q 18 16 36 4 Q 32 32 36 60 Z" />
+    <path d="M 30 56 Q 24 22 32 12" strokeOpacity=".4" />
+  </>],
+  ['mile',    'Mile',      <>
+    <path d="M 6 52 Q 32 22 58 52" />
+    <circle cx="6" cy="52" r="2" fill="#1A1A1A" stroke="none" />
+    <line x1="32" y1="34" x2="32" y2="40" strokeOpacity=".5" />
+    <path d="M 58 52 l -6 -3 m 6 3 l -3 -6" />
+  </>],
+  ['rep',     'Repetition',<>
+    <path d="M 50 14 a 22 22 0 1 0 -4 38" />
+    <path d="M 50 14 l -6 -2 m 6 2 l -2 6" />
+    <path d="M 46 52 l -6 2 m 6 -2 l 2 6" />
+  </>],
+  ['fall',    'Fall',      <>
+    <path d="M 6 50 Q 32 14 58 50 Z" />
+    <path d="M 28 50 L 24 36 L 34 38 L 26 22" stroke="#8B1A1A" />
+  </>],
+  ['rec',     'Recovery',  <>
+    <path d="M 6 54 Q 32 18 58 54 Z" />
+    <path d="M 32 24 Q 30 14 32 4" />
+    <path d="M 32 18 q -8 -2 -10 -10 q 8 4 10 8" fill="#8B1A1A" stroke="#8B1A1A" />
+    <path d="M 32 10 q 8 -2 10 -10 q -8 4 -10 8" fill="#8B1A1A" stroke="#8B1A1A" />
+  </>],
+  ['weight',  'Weight',    <>
+    <line x1="6" y1="34" x2="58" y2="34" />
+    <line x1="32" y1="34" x2="32" y2="14" />
+    <rect x="16" y="10" width="32" height="6" />
+    <path d="M 4 38 a 8 8 0 0 0 16 0 Z" />
+    <path d="M 44 38 a 8 8 0 0 0 16 0 Z" />
+  </>],
+  ['ledger',  'Ledger',    <>
+    <rect x="10" y="6" width="44" height="52" />
+    <line x1="14" y1="6" x2="14" y2="58" />
+    <line x1="20" y1="18" x2="48" y2="18" />
+    <line x1="20" y1="28" x2="48" y2="28" />
+    <line x1="20" y1="38" x2="40" y2="38" />
+    <line x1="20" y1="48" x2="48" y2="48" />
+  </>],
+  ['hourglass','Hourglass',<>
+    <path d="M 14 6 H 50 V 14 Q 50 24 32 32 Q 50 40 50 50 V 58 H 14 V 50 Q 14 40 32 32 Q 14 24 14 14 Z" />
+    <circle cx="30" cy="40" r="1" fill="#1A1A1A" stroke="none" />
+    <circle cx="34" cy="44" r="1" fill="#1A1A1A" stroke="none" />
+  </>],
+  ['signal',  'Signal',    <>
+    <rect x="8" y="42" width="6" height="14" />
+    <rect x="20" y="32" width="6" height="24" />
+    <rect x="32" y="22" width="6" height="34" />
+    <rect x="44" y="12" width="6" height="44" />
+  </>],
+  ['eye',     'Eye',       <>
+    <path d="M 4 32 Q 32 8 60 32 Q 32 56 4 32 Z" />
+    <circle cx="32" cy="32" r="7" />
+    <circle cx="32" cy="32" r="2" fill="#1A1A1A" stroke="none" />
+    <path d="M 10 22 Q 32 18 54 22" strokeOpacity=".35" />
+  </>],
+  ['lock',    'Lock',      <>
+    <rect x="12" y="28" width="40" height="28" rx="2" />
+    <path d="M 18 28 V 18 a 14 14 0 0 1 28 0 V 28" />
+    <circle cx="32" cy="40" r="2" fill="#1A1A1A" stroke="none" />
+    <line x1="32" y1="42" x2="32" y2="48" />
+  </>],
+  ['cursor',  'Cursor',    <path d="M 14 8 L 52 36 L 34 40 L 44 58 L 38 62 L 28 44 L 16 50 Z" fill="#1A1A1A" />],
+  ['warn',    'Warn',      <>
+    <path d="M 32 6 L 58 54 L 6 54 Z" />
+    <line x1="32" y1="24" x2="32" y2="38" stroke="#8B1A1A" />
+    <circle cx="32" cy="46" r="1.8" fill="#8B1A1A" stroke="none" />
+  </>],
+  ['refund',  'Refund',    <>
+    <circle cx="32" cy="32" r="20" />
+    <path d="M 32 16 a 16 16 0 1 1 -16 16" stroke="#8B1A1A" />
+    <path d="M 16 32 l 6 -5 m -6 5 l 6 5" stroke="#8B1A1A" />
+  </>],
+  ['discord', 'Discord',   <>
+    <path d="M 12 18 Q 32 6 52 18 L 56 50 Q 46 56 40 50 L 24 50 Q 18 56 8 50 Z" />
+    <ellipse cx="22" cy="34" rx="2.5" ry="3.5" fill="#1A1A1A" stroke="none" />
+    <ellipse cx="42" cy="34" rx="2.5" ry="3.5" fill="#1A1A1A" stroke="none" />
+  </>],
+  ['team',    'Team',      <>
+    <circle cx="22" cy="24" r="7" />
+    <circle cx="42" cy="24" r="7" />
+    <path d="M 8 56 Q 22 38 32 48 Q 42 38 56 56" />
+  </>],
+  ['quill',   'Quill',     <>
+    <path d="M 8 56 L 50 14 Q 60 4 56 22 L 18 60 Z" fill="#1A1A1A" />
+    <line x1="20" y1="46" x2="36" y2="30" stroke="#FAF7F2" strokeOpacity=".4" />
+    <line x1="26" y1="52" x2="42" y2="36" stroke="#FAF7F2" strokeOpacity=".4" />
+  </>],
 ];
 function IconographySystem() {
   return (
@@ -550,19 +629,34 @@ function SpotCard({ id, title, caption, draw, full }) {
     </div>
   );
 }
+// Spots are scaffolding (road, terminal, scale) drawn in canon line-art,
+// with the iridescent PNG creature(s) embedded inline via <image>. The
+// scaffolding stays strict 1.6px monoline; the creature carries the brand.
 const spotS = { fill: 'none', stroke: '#1A1A1A', strokeWidth: 1.6, strokeLinecap: 'round', strokeLinejoin: 'round' };
+// Centered <image> helper: places a square PNG of side `size` at (cx, cy).
+function SpotMascot({ expression, cx, cy, size }) {
+  return (
+    <image
+      href={pngPath(expression)}
+      x={cx - size / 2}
+      y={cy - size / 2}
+      width={size}
+      height={size}
+      preserveAspectRatio="xMidYMid meet"
+    />
+  );
+}
 function spotMile() {
   return (
     <svg viewBox="0 0 480 200" width="100%" style={{ display: 'block' }}>
       <g {...spotS}>
         <path d="M 20 140 Q 240 100 460 140" strokeDasharray="2 6" />
         {[120, 240, 360].map(x => <line key={x} x1={x} y1="128" x2={x} y2="146" />)}
-        <ellipse cx="80" cy="148" rx="22" ry="10" fill="#F1ECE3" />
-        <path d="M 58 148 Q 80 130 102 148" />
-        <ellipse cx="108" cy="144" rx="6" ry="4" fill="#F1ECE3" />
-        <ellipse cx="370" cy="148" rx="24" ry="6" fill="#F1ECE3" />
-        <path d="M 360 144 Q 376 124 388 142" />
       </g>
+      {/* foreground: the patient one (doctrine), close to viewer */}
+      <SpotMascot expression="doctrine" cx={80} cy={130} size={140} />
+      {/* background: the racer (sprint), already passed up the road */}
+      <SpotMascot expression="sprint" cx={370} cy={120} size={70} />
     </svg>
   );
 }
@@ -577,9 +671,8 @@ function spotDiagnosis() {
         <text x="170" y="100" fontFamily="Space Mono, monospace" fontSize="11" fill="#6B6B6B">&gt; scanning…</text>
         <text x="170" y="118" fontFamily="Space Mono, monospace" fontSize="11" fill="#6B6B6B">&gt; calendar…</text>
         <text x="170" y="138" fontFamily="Space Mono, monospace" fontSize="11" fill="#8B1A1A">&gt; verdict ▮</text>
-        <ellipse cx="80" cy="156" rx="36" ry="18" fill="#F1ECE3" />
-        <path d="M 44 156 Q 80 124 116 156" />
       </g>
+      <SpotMascot expression="diagnosis" cx={80} cy={120} size={160} />
     </svg>
   );
 }
@@ -594,41 +687,29 @@ function spotVerdict() {
         <circle cx="420" cy="120" r="14" />
         <text x="240" y="50" textAnchor="middle" fontFamily="Playfair Display, serif" fontStyle="italic" fontWeight="900" fontSize="16" fill="#8B1A1A" stroke="none">VERDICT</text>
       </g>
+      {/* the verdict pose observing its own balance */}
+      <SpotMascot expression="verdict" cx={240} cy={155} size={70} />
     </svg>
   );
 }
 function spotRecovery() {
   return (
     <svg viewBox="0 0 480 200" width="100%" style={{ display: 'block' }}>
-      <g {...spotS}>
-        <ellipse cx="240" cy="156" rx="72" ry="32" fill="#F1ECE3" />
-        <path d="M 168 156 Q 240 110 312 156" />
-        <path d="M 240 110 L 240 60" />
-        <path d="M 240 84 q -20 -10 -24 -28 q 20 10 24 20" fill="#8B1A1A" stroke="#8B1A1A" />
-        <path d="M 240 70 q 18 -8 22 -22 q -18 8 -22 18" fill="#8B1A1A" stroke="#8B1A1A" />
-      </g>
+      {/* recovery PNG already carries the sprout — no scaffolding needed */}
+      <SpotMascot expression="recovery" cx={240} cy={100} size={200} />
     </svg>
   );
 }
 function spotLongMile() {
+  const stops = [60, 240, 420, 600, 780, 940];
   return (
     <svg viewBox="0 0 980 200" width="100%" style={{ display: 'block' }}>
       <g {...spotS}>
         <line x1="20" y1="140" x2="960" y2="140" strokeDasharray="2 6" />
         {[140, 280, 420, 560, 700, 840].map(x => <line key={x} x1={x} y1="128" x2={x} y2="148" />)}
-        <ellipse cx="60" cy="148" rx="22" ry="10" fill="#F1ECE3" />
-        <path d="M 38 148 Q 60 130 82 148" />
-        <ellipse cx="240" cy="148" rx="22" ry="10" fill="#F1ECE3" />
-        <path d="M 218 148 Q 240 130 262 148" />
-        <ellipse cx="420" cy="148" rx="22" ry="10" fill="#F1ECE3" />
-        <path d="M 398 148 Q 420 130 442 148" />
-        <ellipse cx="600" cy="148" rx="22" ry="10" fill="#F1ECE3" />
-        <path d="M 578 148 Q 600 130 622 148" />
-        <ellipse cx="780" cy="148" rx="22" ry="10" fill="#F1ECE3" />
-        <path d="M 758 148 Q 780 130 802 148" />
-        <ellipse cx="940" cy="148" rx="22" ry="10" fill="#F1ECE3" />
-        <path d="M 918 148 Q 940 130 962 148" />
       </g>
+      {/* every mile looks the same — six identical doctrine poses */}
+      {stops.map(cx => <SpotMascot key={cx} expression="doctrine" cx={cx} cy={120} size={70} />)}
     </svg>
   );
 }
