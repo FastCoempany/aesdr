@@ -10,23 +10,31 @@
 
 ## Workflow
 
-1. Open a fresh ChatGPT image session (or Sora image / Midjourney).
-2. Upload `aesdrmascot.png` as the style reference.
-3. Paste the **System Style Block** below as your first message — establish the subject and style.
-4. For each of the 8 expressions, paste the per-pose block. Generate. Pick the best of 2–4 variants.
-5. Save as `leponeus-{key}.png` in this folder (`brand/canon/mascot/png/`). Lowercase keys: `doctrine`, `diagnosis`, `sprint`, `fall`, `recovery`, `rest`, `verdict`, `owner`.
-6. Once a file exists at the predicted path, `synthesis.jsx` will swap it in automatically at sizes ≥120px. Smaller uses (badges, lockup, inline) stay on the canonical flat SVGs.
+For each of the 8 expressions, send **one self-contained message** to ChatGPT (or whichever image tool you're using). That message must contain:
+
+1. **Attach** `aesdr-design-system/aesdrmascot.png` as a reference image. Re-attach it every single time — do not rely on the model remembering it from earlier in the conversation.
+2. **Paste the full System Style Block** (the long block below — paste the actual text, every time).
+3. **Paste the per-pose paragraph** for that expression (e.g. `POSE — Doctrine...`).
+4. Send → generate → pick the best of 2–4 variants → save as `leponeus-{key}.png` in this folder.
+
+Lowercase keys: `doctrine`, `diagnosis`, `sprint`, `fall`, `recovery`, `rest`, `verdict`, `owner`.
+
+Once a file exists at the predicted path, `brand/synthesis.jsx` swaps it in automatically at sizes ≥120px. Smaller uses (badges, lockup, inline) stay on the flat canonical SVGs.
+
+> **Why one self-contained message per pose?** ChatGPT's image gen treats each generation roughly as a fresh prompt. Even with conversation memory, after a few turns the model forgets strap details, scale texture, the cloud background. Stuffing the full style block into every prompt keeps all 8 generations anchored to the same brief. The token cost is trivial; the consistency payoff is huge.
 
 ### Consistency tips
 
-- **Always re-attach the reference image** with every prompt. Models drift without it.
-- **Re-paste the System Style Block** before each per-pose block. Don't rely on the model to remember.
-- If a generation strays (e.g., the strap disappears, ears change scale, background turns dark), regenerate — don't accept "close enough." The expression sheet only works if the 8 read as the same creature.
-- Generate the **doctrine** pose first. Use its output as a secondary reference for the other 7.
+- **Always re-attach the reference image.** Models drift without it.
+- **Always include the full System Style Block** — don't try to abbreviate "same style as before."
+- If a generation strays (e.g. the strap disappears, ears change scale, background turns dark), regenerate — don't accept "close enough." The expression sheet only works if the 8 read as the same creature.
+- Generate the **doctrine** pose first. Once you have a doctrine you're happy with, attach *both* `aesdrmascot.png` and your saved `leponeus-doctrine.png` as references when generating the other 7. Two reference images locks consistency tighter than one.
 
 ---
 
-## System Style Block — paste before EVERY per-pose prompt
+## System Style Block — paste the full text below into EVERY per-pose message
+
+(Where the per-pose prompts say `[Style block above]`, paste the entire block from here verbatim. Don't shorten it. Don't say "same as before.")
 
 ```
 SUBJECT — A single creature, hybrid of a tortoise and a hare. Tortoise body with a
