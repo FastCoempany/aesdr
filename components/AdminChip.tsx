@@ -1,50 +1,208 @@
 /**
- * AdminChip — top-center status pill that only renders for admin sessions.
+ * AdminChip — top-center status pill that doubles as the founder's quick-nav
+ * menu. Renders only for admin sessions (decided server-side in app/layout.tsx).
  *
- * Purpose: when the founder is signed in as an admin (mrcoe7@gmail.com or
- * antaeus.coe@gmail.com per ADMIN_EMAILS), every gate in the app silently
- * lets them through (paywalls, partner-kit token gate, coming-soon, etc.).
- * That convenience comes with a risk: it's easy to forget you're seeing
- * the admin view of the site instead of what a normal user sees. The chip
- * is the constant reminder.
- *
- * Renders server-side only when isAdmin is true. Non-admin requests don't
- * ship any admin-related HTML or JS to the client.
+ * Click the chip to drop a small panel of one-tap links to every operating
+ * surface (journey, affiliate hub, public + private kit, admin dashboard,
+ * sign out). Press Escape or click outside to close. Doesn't disrupt the
+ * non-admin layout because non-admins never receive the component at all.
  */
 
-const STYLE: React.CSSProperties = {
-  position: "fixed",
-  top: 14,
-  left: "50%",
-  transform: "translateX(-50%)",
-  zIndex: 500,
-  display: "inline-flex",
-  alignItems: "center",
-  gap: 8,
-  padding: "5px 12px",
-  background: "var(--cream)",
-  border: "1px solid var(--crimson)",
-  fontFamily: "var(--mono)",
-  fontSize: 10,
-  letterSpacing: "0.22em",
-  textTransform: "uppercase",
-  color: "var(--crimson)",
-  pointerEvents: "none",
-  userSelect: "none",
-};
+"use client";
 
-const DOT: React.CSSProperties = {
-  width: 6,
-  height: 6,
-  borderRadius: "50%",
-  background: "var(--crimson)",
-};
+import Link from "next/link";
+import { useEffect, useRef, useState, useTransition } from "react";
+import { signOut } from "@/app/actions/progress";
+
+const QUICK_LINKS: { label: string; href: string; note?: string }[] = [
+  { label: "Journey", href: "/dashboard", note: "Course dashboard — all lessons unlocked" },
+  { label: "Affiliate Hub", href: "/partners", note: "Partner-prospect surface" },
+  { label: "Public Kit", href: "/partners/kit", note: "8 partner-facing docs" },
+  { label: "Gated Kit", href: "/partners/kit-private", note: "6 ops docs (admin auto-access)" },
+  { label: "Admin · Tokens & Audit Log", href: "/admin/partner-kit" },
+  { label: "Apply Form (visitor view)", href: "/partners/apply" },
+  { label: "Home", href: "/" },
+];
 
 export default function AdminChip() {
+  const [open, setOpen] = useState(false);
+  const [signingOut, startSignOut] = useTransition();
+  const ref = useRef<HTMLDivElement>(null);
+
+  function handleSignOut() {
+    startSignOut(async () => {
+      await signOut();
+      window.location.href = "/";
+    });
+  }
+
+  // Close on outside click + Escape
+  useEffect(() => {
+    if (!open) return;
+    function onDocClick(e: MouseEvent) {
+      if (!ref.current) return;
+      if (!ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("mousedown", onDocClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDocClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
   return (
-    <div style={STYLE} aria-label="Admin mode" role="status">
-      <span style={DOT} aria-hidden="true" />
-      <span>Admin Mode</span>
+    <div
+      ref={ref}
+      style={{
+        position: "fixed",
+        top: 14,
+        left: "50%",
+        transform: "translateX(-50%)",
+        zIndex: 500,
+      }}
+    >
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-label={open ? "Close admin menu" : "Open admin menu"}
+        aria-expanded={open}
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 8,
+          padding: "5px 12px",
+          background: "var(--cream)",
+          border: "1px solid var(--crimson)",
+          fontFamily: "var(--mono)",
+          fontSize: 10,
+          letterSpacing: "0.22em",
+          textTransform: "uppercase",
+          color: "var(--crimson)",
+          cursor: "pointer",
+          userSelect: "none",
+        }}
+      >
+        <span
+          style={{
+            width: 6,
+            height: 6,
+            borderRadius: "50%",
+            background: "var(--crimson)",
+          }}
+          aria-hidden="true"
+        />
+        <span>Admin Mode</span>
+        <span
+          style={{
+            opacity: 0.6,
+            transform: open ? "rotate(180deg)" : "rotate(0deg)",
+            transition: "transform 0.18s ease",
+            display: "inline-block",
+            marginLeft: 4,
+          }}
+          aria-hidden="true"
+        >
+          ▾
+        </span>
+      </button>
+
+      {open && (
+        <div
+          role="menu"
+          style={{
+            position: "absolute",
+            top: "100%",
+            left: "50%",
+            transform: "translateX(-50%)",
+            marginTop: 8,
+            minWidth: 320,
+            background: "var(--cream)",
+            border: "1px solid var(--crimson)",
+            boxShadow: "0 12px 36px rgba(139, 26, 26, 0.18)",
+            padding: 8,
+          }}
+        >
+          {QUICK_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              role="menuitem"
+              onClick={() => setOpen(false)}
+              style={{
+                display: "block",
+                padding: "10px 12px",
+                textDecoration: "none",
+                color: "var(--ink)",
+                borderBottom: "1px solid var(--light)",
+                transition: "background 0.12s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(139, 26, 26, 0.04)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "transparent";
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: "var(--display)",
+                  fontStyle: "italic",
+                  fontWeight: 700,
+                  fontSize: 15,
+                  color: "var(--ink)",
+                  lineHeight: 1.2,
+                }}
+              >
+                {link.label}
+              </div>
+              {link.note && (
+                <div
+                  style={{
+                    fontFamily: "var(--serif)",
+                    fontSize: 12,
+                    color: "var(--muted)",
+                    fontStyle: "italic",
+                    marginTop: 2,
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {link.note}
+                </div>
+              )}
+            </Link>
+          ))}
+
+          {/* Sign out at the bottom — visually separated */}
+          <button
+            type="button"
+            onClick={handleSignOut}
+            disabled={signingOut}
+            style={{
+              display: "block",
+              width: "100%",
+              padding: "12px",
+              marginTop: 4,
+              background: "transparent",
+              border: 0,
+              borderTop: "2px solid var(--crimson)",
+              fontFamily: "var(--mono)",
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "var(--crimson)",
+              cursor: signingOut ? "wait" : "pointer",
+              textAlign: "center",
+            }}
+          >
+            {signingOut ? "Signing out…" : "Sign out"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

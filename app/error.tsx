@@ -1,6 +1,18 @@
 "use client";
 
+/**
+ * Default error boundary. Catches any uncaught error in a route segment.
+ * Editorial palette + iridescent-turtle motif (matching the /coming-soon
+ * gate page so the error feels like part of the brand, not a Vercel default).
+ *
+ * Surfaces error.message + error.digest so the founder (or anyone watching
+ * Vercel logs) can correlate the page error to the underlying exception.
+ */
+
+import Link from "next/link";
+
 export default function Error({
+  error,
   reset,
 }: {
   error: Error & { digest?: string };
@@ -8,46 +20,179 @@ export default function Error({
 }) {
   return (
     <main
-      className="flex min-h-screen flex-col items-center justify-center px-6"
-      style={{ background: "var(--bg-main)", color: "var(--text-main)" }}
+      style={{
+        background: "var(--cream)",
+        color: "var(--ink)",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "48px 24px",
+        textAlign: "center",
+      }}
     >
+      {/* Iridescent turtle — same source as /coming-soon (the 741407 gate) */}
+      <div
+        style={{
+          position: "relative",
+          width: "clamp(220px, 36vw, 360px)",
+          marginBottom: 32,
+          filter: "saturate(1.1)",
+        }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/turtle.png"
+          alt=""
+          draggable={false}
+          style={{
+            width: "100%",
+            height: "auto",
+            display: "block",
+            userSelect: "none",
+          }}
+        />
+      </div>
+
+      <p
+        style={{
+          fontFamily: "var(--mono)",
+          fontSize: 11,
+          letterSpacing: "0.28em",
+          textTransform: "uppercase",
+          color: "var(--crimson)",
+          marginBottom: 16,
+        }}
+      >
+        Error · The turtle stopped
+      </p>
+
       <h1
         style={{
           fontFamily: "var(--display)",
+          fontStyle: "italic",
+          fontWeight: 700,
           fontSize: "clamp(36px, 5vw, 56px)",
-          lineHeight: "1",
+          lineHeight: 1.1,
+          color: "var(--ink)",
+          margin: "0 0 16px",
         }}
       >
-        Something went wrong
+        Something went wrong.
       </h1>
+
       <p
         style={{
           fontFamily: "var(--serif)",
-          fontSize: "18px",
-          color: "var(--text-muted)",
-          marginTop: "16px",
+          fontStyle: "italic",
+          fontSize: 17,
+          lineHeight: 1.7,
+          color: "var(--muted)",
+          marginBottom: 28,
+          maxWidth: 520,
         }}
       >
-        An unexpected error occurred. Please try again.
+        An unexpected error occurred while rendering this page. Try again, or
+        reach <a href="mailto:support@aesdr.com" style={{ color: "var(--crimson)", textDecoration: "underline" }}>support@aesdr.com</a> if it persists.
       </p>
-      <button
-        onClick={reset}
-        style={{
-          marginTop: "32px",
-          fontFamily: "var(--cond)",
-          fontSize: "13px",
-          fontWeight: 700,
-          letterSpacing: ".12em",
-          textTransform: "uppercase",
-          color: "var(--theme)",
-          border: "1px solid var(--theme)",
-          padding: "10px 24px",
-          background: "none",
-          cursor: "pointer",
-        }}
-      >
-        Try Again
-      </button>
+
+      {/* Buttons */}
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", marginBottom: 32 }}>
+        <button
+          type="button"
+          onClick={() => reset()}
+          style={{
+            display: "inline-block",
+            fontFamily: "var(--cond)",
+            fontSize: 14,
+            fontWeight: 700,
+            letterSpacing: "0.18em",
+            textTransform: "uppercase",
+            color: "#fff",
+            background: "var(--crimson)",
+            border: 0,
+            padding: "14px 26px",
+            cursor: "pointer",
+          }}
+        >
+          Try again
+        </button>
+        <Link
+          href="/"
+          style={{
+            display: "inline-block",
+            fontFamily: "var(--cond)",
+            fontSize: 14,
+            fontWeight: 700,
+            letterSpacing: "0.18em",
+            textTransform: "uppercase",
+            color: "var(--ink)",
+            background: "transparent",
+            border: "1px solid var(--ink)",
+            padding: "13px 26px",
+            textDecoration: "none",
+          }}
+        >
+          Back to home
+        </Link>
+      </div>
+
+      {/* Diagnostic — collapsible, only useful info that doesn't leak secrets */}
+      {(error.message || error.digest) && (
+        <details
+          style={{
+            maxWidth: 640,
+            width: "100%",
+            textAlign: "left",
+            background: "rgba(139, 26, 26, 0.04)",
+            border: "1px solid var(--light)",
+            padding: "14px 18px",
+          }}
+        >
+          <summary
+            style={{
+              fontFamily: "var(--mono)",
+              fontSize: 11,
+              letterSpacing: "0.18em",
+              textTransform: "uppercase",
+              color: "var(--muted)",
+              cursor: "pointer",
+              listStyle: "none",
+            }}
+          >
+            Diagnostic
+          </summary>
+          {error.message && (
+            <pre
+              style={{
+                fontFamily: "var(--mono)",
+                fontSize: 12,
+                color: "var(--ink)",
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+                margin: "12px 0 8px",
+                lineHeight: 1.5,
+              }}
+            >
+              {error.message}
+            </pre>
+          )}
+          {error.digest && (
+            <p
+              style={{
+                fontFamily: "var(--mono)",
+                fontSize: 11,
+                color: "var(--muted)",
+                margin: 0,
+                letterSpacing: "0.06em",
+              }}
+            >
+              digest: {error.digest}
+            </p>
+          )}
+        </details>
+      )}
     </main>
   );
 }
