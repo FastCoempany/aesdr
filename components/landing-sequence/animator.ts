@@ -309,11 +309,18 @@ export function runAnimator(refs: AnimatorRefs, opts: AnimatorOptions): () => vo
     window.scrollTo(0, 0);
     restoreScroll();
 
+    // Fade overlays to opacity 0, THEN `display: none` after transition completes
+    // (Fix 3: kills the ghost-typing layer permanently — even at opacity 0 a
+    // `position: fixed; inset: 0` layer is in the rendering tree and can flash
+    // during repaints / HMR / GPU compositing hiccups.)
     const fade = (el: HTMLElement | null, t = 0.6) => {
       if (!el) return;
       el.style.transition = `opacity ${t}s ease`;
       el.style.opacity = "0";
       el.style.pointerEvents = "none";
+      schedule(() => {
+        el.style.display = "none";
+      }, t * 1000 + 50);
     };
     fade(refs.backdrop);
     fade(refs.confession, 0.4);
@@ -333,129 +340,223 @@ export function runAnimator(refs: AnimatorRefs, opts: AnimatorOptions): () => vo
     refs.viewport?.classList.add(c.viewportActive);
     refs.sideMarker?.classList.add(c.sideMarkerActive);
     refs.progress?.classList.add(c.scrollProgressActive);
-    attachZoomScroll();
+
+    // After hero's 800ms fade-in finishes, clear CSS transitions on hero +
+    // viewport so the scroll handler can drive them frame-perfectly without
+    // a 0.4–0.5s catchup lag fighting every scroll event. (Fix 4: single
+    // source of truth — scroll position → inline opacity, no transition.)
+    schedule(() => {
+      if (refs.hero) refs.hero.style.transition = "none";
+      if (refs.viewport) refs.viewport.style.transition = "none";
+      attachZoomScroll();
+    }, 1400);
   }
 
-  /* ─────────── Zoom scroll (preserved from original) ─────────── */
+  /* ─────────── Zoom scroll (refactored — single source of truth + rAF) ───
+   *
+   * Architecture, post-2026-05-10 refactor:
+   *
+   *   computeLayerStates(scrollY) → pure function. Single source of truth.
+   *   render(states)              → batch DOM writes. No reads.
+   *   onScroll                    → rAF-throttled. At most one render/frame.
+   *
+   * Eliminates the prior class-vs-inline opacity fight that caused jitter
+   * around the hero/viewport handoff. Eliminates the early-return path that
+   * left stale card opacities. Eliminates the 0.5s CSS transitions trying
+   * to catch up to scroll-rate inline opacity changes (transitions are
+   * cleared on hero + viewport by unlockScroll once initial fade-in is done).
+   */
+
+  type LayerStates = {
+    heroOpacity: number;
+    viewportOpacity: number;
+    auxOpacity: number; // sideMarker + progress
+    cardIndex: number;
+    cardFrac: number;
+    progress: number; // 0..1, drives progress bar width + CTA timing
+    ctaOpacity: number;
+    ctaVisibleZone: boolean;
+    pastZoom: boolean;
+  };
+
+  function smoothstep(edge0: number, edge1: number, x: number): number {
+    if (edge1 === edge0) return x < edge0 ? 0 : 1;
+    const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
+    return t * t * (3 - 2 * t);
+  }
 
   function attachZoomScroll() {
-    function update() {
-      const sp = refs.scrollSpace;
-      const vp = refs.viewport;
-      if (!sp || !vp) return;
+    // Cache layout measurements; refresh on resize, not on scroll.
+    let cachedZoomHeight = 0;
+    let cachedVh = 0;
+    let cachedMaxScroll = 0;
 
-      const scrollY = window.scrollY;
-      const zoomHeight = sp.offsetHeight;
-      const maxScroll = zoomHeight - window.innerHeight;
-      if (maxScroll <= 0) return;
+    function recomputeMeasurements() {
+      const sp = refs.scrollSpace;
+      if (!sp) return;
+      cachedZoomHeight = sp.offsetHeight;
+      cachedVh = window.innerHeight;
+      cachedMaxScroll = Math.max(0, cachedZoomHeight - cachedVh);
+    }
+
+    function computeLayerStates(scrollY: number): LayerStates {
+      const vh = cachedVh;
+      const zoomHeight = cachedZoomHeight;
+      const maxScroll = cachedMaxScroll;
 
       const pastZoom = scrollY > zoomHeight;
-      if (pastZoom) {
-        vp.style.display = "none";
-        if (refs.hero) {
-          refs.hero.style.opacity = "0";
-          refs.hero.style.pointerEvents = "none";
-        }
-        if (refs.sideMarker) refs.sideMarker.style.opacity = "0";
-        if (refs.progress) refs.progress.style.opacity = "0";
-        if (refs.cta) {
-          refs.cta.classList.remove(c.ctaOverlayVisible);
-          refs.cta.style.display = "none";
-          refs.cta.style.pointerEvents = "none";
-        }
-        return;
-      }
 
-      const heroZone = window.innerHeight * 0.35;
-      if (refs.hero) {
-        const heroOp = Math.max(0, 1 - scrollY / heroZone);
-        refs.hero.style.opacity = String(heroOp);
-        refs.hero.style.pointerEvents = heroOp > 0.1 ? "auto" : "none";
-        if (heroOp > 0.5) {
-          vp.style.opacity = "0";
-          if (refs.sideMarker) refs.sideMarker.style.opacity = "0";
-          if (refs.progress) refs.progress.style.opacity = "0";
-          return;
-        }
-      }
+      // Hero fades OUT and viewport fades IN across the SAME band. By using
+      // one smoothstep with two-sided mapping, the sum stays ≤ 1 and there's
+      // no double-render zone where both are visibly opaque. Band: 10vh–40vh.
+      const handoff = smoothstep(vh * 0.10, vh * 0.40, scrollY);
+      const heroOpacity = pastZoom ? 0 : 1 - handoff;
+      const viewportOpacity = pastZoom ? 0 : handoff;
+      const auxOpacity = pastZoom ? 0 : handoff;
 
-      vp.style.display = "";
-      vp.style.opacity = "";
-      vp.style.pointerEvents = "";
-      if (refs.sideMarker) refs.sideMarker.style.opacity = "";
-      if (refs.progress) refs.progress.style.opacity = "";
-      if (refs.cta) {
-        refs.cta.style.pointerEvents = "";
-        refs.cta.style.transition = "";
-        refs.cta.style.display = "";
-      }
-
-      const progress = Math.min(1, scrollY / maxScroll);
-      if (refs.progress) refs.progress.style.width = progress * 100 + "%";
-
+      // Card animation: drive by overall scroll progress through scrollSpace.
+      const progress = maxScroll > 0 ? Math.min(1, Math.max(0, scrollY / maxScroll)) : 0;
       const total = opts.zoomCards.length;
       const CARD_END = 0.78;
       const cardProgress = Math.min(total, (progress / CARD_END) * total);
-      const activeIndex = Math.min(Math.floor(cardProgress), total - 1);
-      const cardFrac = cardProgress - activeIndex;
+      const cardIndex = Math.min(Math.floor(cardProgress), total - 1);
+      const cardFrac = cardProgress - cardIndex;
 
-      const cards = vp.querySelectorAll<HTMLElement>(`.${c.zcard}`);
-      cards.forEach((card, i) => {
-        if (i === activeIndex) {
-          let scale: number, op: number;
-          if (activeIndex === 0 && cardFrac < 0.12) {
-            const t = cardFrac / 0.12;
-            scale = 1.3 - 0.3 * t;
-            op = 0.8 + 0.2 * t;
-          } else if (cardFrac < 0.12) {
-            const t = cardFrac / 0.12;
-            scale = 2.5 - 1.5 * t;
-            op = t;
-          } else if (cardFrac < 0.78) {
-            scale = 1;
-            op = 1;
-          } else {
-            const t = (cardFrac - 0.78) / 0.22;
-            scale = 1 - 0.6 * t;
-            op = 1 - t;
-          }
-          card.style.transform = `scale(${scale})`;
-          card.style.opacity = String(op);
-        } else {
-          card.style.opacity = "0";
-        }
-      });
-
-      const dots = refs.sideMarker?.querySelectorAll<HTMLElement>(`.${c.markerDot}`);
-      dots?.forEach((dot, i) => dot.classList.toggle(c.markerDotActive, i === activeIndex));
-
+      // CTA: appears at the tail end of the zoom section, then hides.
+      let ctaOpacity = 0;
+      let ctaVisibleZone = false;
       if (progress > 0.84 && progress < 0.97) {
         const fadeIn = Math.min(1, (progress - 0.84) / 0.03);
         const fadeOut = progress > 0.93 ? 1 - Math.min(1, (progress - 0.93) / 0.03) : 1;
-        const op = fadeIn * fadeOut;
-        if (refs.cta) {
-          refs.cta.classList.add(c.ctaOverlayVisible);
-          refs.cta.style.opacity = String(op);
-        }
-      } else {
-        refs.cta?.classList.remove(c.ctaOverlayVisible);
-        if (refs.cta) {
-          refs.cta.style.opacity = "0";
-          refs.cta.style.display = progress >= 0.97 ? "none" : "";
+        ctaOpacity = fadeIn * fadeOut;
+        ctaVisibleZone = true;
+      }
+
+      return {
+        heroOpacity,
+        viewportOpacity,
+        auxOpacity,
+        cardIndex,
+        cardFrac,
+        progress,
+        ctaOpacity,
+        ctaVisibleZone,
+        pastZoom,
+      };
+    }
+
+    function computeCardScaleOp(activeIndex: number, cardFrac: number): { scale: number; op: number } {
+      if (activeIndex === 0 && cardFrac < 0.12) {
+        const t = cardFrac / 0.12;
+        return { scale: 1.3 - 0.3 * t, op: 0.8 + 0.2 * t };
+      }
+      if (cardFrac < 0.12) {
+        const t = cardFrac / 0.12;
+        return { scale: 2.5 - 1.5 * t, op: t };
+      }
+      if (cardFrac < 0.78) {
+        return { scale: 1, op: 1 };
+      }
+      const t = (cardFrac - 0.78) / 0.22;
+      return { scale: 1 - 0.6 * t, op: 1 - t };
+    }
+
+    function render(s: LayerStates) {
+      // Hero — inline opacity, no transition (transition was cleared post-boot)
+      if (refs.hero) {
+        refs.hero.style.opacity = String(s.heroOpacity);
+        refs.hero.style.pointerEvents = s.heroOpacity > 0.1 ? "auto" : "none";
+      }
+
+      // Viewport — single opacity source. Past zoom: display:none for free.
+      if (refs.viewport) {
+        if (s.pastZoom) {
+          refs.viewport.style.display = "none";
+          refs.viewport.style.opacity = "0";
+        } else {
+          refs.viewport.style.display = "flex";
+          refs.viewport.style.opacity = String(s.viewportOpacity);
         }
       }
 
-      if (scrollY > 50 && refs.terminal) {
+      // Side marker + progress: track viewport visibility.
+      if (refs.sideMarker) refs.sideMarker.style.opacity = String(s.auxOpacity);
+      if (refs.progress) {
+        refs.progress.style.opacity = String(s.auxOpacity);
+        refs.progress.style.width = s.progress * 100 + "%";
+      }
+
+      // Cards — always reset ALL card opacities, including non-active ones,
+      // so no card ever retains a stale value from a previous scroll frame.
+      if (refs.viewport && !s.pastZoom) {
+        const cards = refs.viewport.querySelectorAll<HTMLElement>(`.${c.zcard}`);
+        const { scale, op } = computeCardScaleOp(s.cardIndex, s.cardFrac);
+        cards.forEach((card, i) => {
+          if (i === s.cardIndex) {
+            card.style.transform = `scale(${scale})`;
+            card.style.opacity = String(op);
+          } else {
+            card.style.opacity = "0";
+            card.style.transform = "";
+          }
+        });
+
+        const dots = refs.sideMarker?.querySelectorAll<HTMLElement>(`.${c.markerDot}`);
+        dots?.forEach((dot, i) => dot.classList.toggle(c.markerDotActive, i === s.cardIndex));
+      }
+
+      // CTA
+      if (refs.cta) {
+        if (s.ctaVisibleZone) {
+          refs.cta.classList.add(c.ctaOverlayVisible);
+          refs.cta.style.opacity = String(s.ctaOpacity);
+          refs.cta.style.display = "";
+          refs.cta.style.pointerEvents = "";
+        } else {
+          refs.cta.classList.remove(c.ctaOverlayVisible);
+          refs.cta.style.opacity = "0";
+          refs.cta.style.display = s.progress >= 0.97 || s.pastZoom ? "none" : "";
+          refs.cta.style.pointerEvents = "none";
+        }
+      }
+
+      // Terminal — hidden permanently after any meaningful scroll.
+      if (window.scrollY > 50 && refs.terminal) {
         refs.terminal.style.opacity = "0";
         refs.terminal.style.pointerEvents = "none";
       }
     }
 
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
-    listeners.push(() => window.removeEventListener("scroll", update));
-    listeners.push(() => window.removeEventListener("resize", update));
-    update();
+    // rAF throttle: at most one render per animation frame, no matter how
+    // often scroll fires.
+    let rafId: number | null = null;
+    function scheduleRender() {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        render(computeLayerStates(window.scrollY));
+      });
+    }
+
+    function onScroll() {
+      scheduleRender();
+    }
+
+    function onResize() {
+      recomputeMeasurements();
+      scheduleRender();
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
+    listeners.push(() => window.removeEventListener("scroll", onScroll));
+    listeners.push(() => window.removeEventListener("resize", onResize));
+    listeners.push(() => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    });
+
+    recomputeMeasurements();
+    scheduleRender();
   }
 
   /* ─────────── Top-level click/keydown advance + skip ─────────── */
