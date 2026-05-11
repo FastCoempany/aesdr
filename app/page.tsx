@@ -7,6 +7,7 @@ import GhostButton from "@/components/GhostButton";
 import LandingSequence from "@/components/LandingSequence";
 import PricingTiers from "@/components/PricingTiers";
 import SignOutButton from "@/components/SignOutButton";
+import ValidationMarquee from "@/components/ValidationMarquee";
 import { createClient } from "@/utils/supabase/server";
 import styles from "./page.module.css";
 
@@ -62,6 +63,9 @@ export default async function LandingPage() {
 
       {/* Testimonials */}
       <Testimonials />
+
+      {/* Validation — companies whose GTM teams validated AESDR */}
+      <ValidationMarquee />
 
       {/* ═══ PRICING ═══ */}
       <section id="pricing" className={styles.pricingSection}>

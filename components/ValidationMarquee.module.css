@@ -1,0 +1,166 @@
+/*
+ * ValidationMarquee — editorial-palette company-row carousel.
+ * Structure ported from marketing-landing-preview.html, restyled to
+ * AESDR's cream/ink/crimson palette + Playfair/Source Serif/Space Mono.
+ */
+
+.section {
+  background: var(--cream);
+  color: var(--ink);
+  padding: 88px 0 64px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Soft cream gradient fade on either edge so the marquee dissolves into
+   the section instead of clipping at a hard line. */
+.marqueeWrap {
+  position: relative;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 80px,
+    #000 calc(100% - 80px),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 80px,
+    #000 calc(100% - 80px),
+    transparent 100%
+  );
+}
+
+.header {
+  text-align: center;
+  margin: 0 auto 40px;
+  padding: 0 24px;
+  max-width: 920px;
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--crimson);
+  margin: 0 0 12px;
+}
+
+.headline {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(24px, 3vw, 32px);
+  line-height: 1.2;
+  color: var(--ink);
+  margin: 0 0 14px;
+}
+
+.sub {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 0 auto;
+  max-width: 640px;
+}
+
+/* The track */
+.marquee {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: max-content;
+  animation: aesdrMarqueeScroll 60s linear infinite;
+  will-change: transform;
+}
+
+.marquee:hover {
+  animation-play-state: paused;
+}
+
+@keyframes aesdrMarqueeScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    /* Two identical rows side-by-side; scroll 50% to wrap seamlessly */
+    transform: translateX(-50%);
+  }
+}
+
+.row {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0;
+}
+
+.item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding: 0 28px;
+}
+
+.name {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.badge {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--crimson);
+  opacity: 0.75;
+}
+
+.sep {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--light);
+  flex-shrink: 0;
+}
+
+.sectors {
+  text-align: center;
+  margin: 36px auto 0;
+  padding: 0 24px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+@media (max-width: 640px) {
+  .section {
+    padding: 64px 0 48px;
+  }
+  .headline {
+    font-size: 22px;
+  }
+  .item {
+    padding: 0 20px;
+  }
+  .name {
+    font-size: 17px;
+  }
+}
+
+/* Respect reduced motion — pause the marquee for users who opt out */
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    animation: none;
+  }
+}
