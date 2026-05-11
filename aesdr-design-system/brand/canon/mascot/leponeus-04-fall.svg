@@ -1,0 +1,21 @@
+
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 240" width="300" height="240" role="img" aria-label="Leponeus — The Fall">
+  <title>Leponeus · The Fall</title>
+  <desc>AESDR canonical mascot. Pose 04 of 08: The Fall. Use: The dip. Burnout. Lesson 05.</desc>
+  <g fill="none" stroke="#1A1A1A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke">
+    <ellipse cx="120" cy="160" rx="68" ry="36" fill="#F1ECE3"></ellipse>
+             <path d="M 60 160 Q 120 110 180 160"></path>
+    <path d="M 100 152 L 96 132 L 110 138 L 102 122" stroke="#8B1A1A"></path>
+    <ellipse cx="68" cy="194" rx="10" ry="6" fill="#F1ECE3"></ellipse>
+             <ellipse cx="172" cy="194" rx="10" ry="6" fill="#F1ECE3"></ellipse>
+    <ellipse cx="200" cy="146" rx="16" ry="12" fill="#F1ECE3"></ellipse>
+    <path d="M 204 140 L 212 144 M 212 140 L 204 144"></path>
+    <path d="M 200 154 q 4 -3 8 0"></path>
+    <path d="M 192 132 Q 184 124 176 130 Q 186 130 198 124" fill="#F1ECE3"></path>
+           <path d="M 210 130 Q 220 138 226 132 Q 218 130 216 124" fill="#F1ECE3"></path>
+    
+    
+    <line x1="186" y1="134" x2="216" y2="134" stroke="#8B1A1A" stroke-width="1.4"></line>
+  </g>
+</svg>

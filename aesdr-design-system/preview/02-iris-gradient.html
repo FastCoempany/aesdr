@@ -1,0 +1,30 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Card — Iris Gradient</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background: var(--cream); }
+  .card { padding: 24px; }
+  .label { font: var(--mono-eyebrow); letter-spacing: var(--mono-eyebrow-track); color: var(--muted); text-transform: uppercase; }
+  .iris-bar { height: 48px; margin-top: 12px; background: var(--iris); background-size: 200% 100%; animation: iris-flow 8s linear infinite; }
+  .stops { display:grid; grid-template-columns: repeat(7, 1fr); gap:8px; margin-top:10px; }
+  .stop { font: var(--mono-caption); letter-spacing:.1em; color: var(--ink); }
+  .stop em { font-style: normal; color: var(--muted); display:block; margin-top:2px; }
+  .note { font: italic 13px/1.5 var(--serif); color: var(--muted); margin-top:14px; max-width: 620px; }
+</style></head>
+<body>
+<div class="card">
+  <div class="label">AESDR · --IRIS · RESERVED ACCENT GRADIENT</div>
+  <div class="iris-bar"></div>
+  <div class="stops">
+    <div class="stop">#FF006E<em>0%</em></div>
+    <div class="stop">#FF6B00<em>17%</em></div>
+    <div class="stop">#F59E0B<em>34%</em></div>
+    <div class="stop">#10B981<em>51%</em></div>
+    <div class="stop">#38BDF8<em>68%</em></div>
+    <div class="stop">#8B5CF6<em>85%</em></div>
+    <div class="stop">#FF006E<em>100%</em></div>
+  </div>
+  <p class="note">Reserved shimmer accent only — role tokens, primary CTAs, AESDR wordmark, payoff lines, divider rules. Never a default surface.</p>
+</div>
+</body></html>

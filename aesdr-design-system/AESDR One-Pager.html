@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AESDR · One-Pager · 3 Variations</title>
+<link rel="stylesheet" href="colors_and_type.css">
+<style>
+  /* Local glue. Brand-fidelity is in colors_and_type.css. */
+  html, body { margin: 0; background: #FAF7F2; }
+  /* Iris text shimmer (utility used in JSX) */
+  .iris-shimmer-text {
+    background: linear-gradient(90deg,#FF006E,#FF6B00,#F59E0B,#10B981,#38BDF8,#8B5CF6,#FF006E);
+    background-size: 200% 100%;
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent; -webkit-text-fill-color: transparent;
+    animation: iris-flow 8s linear infinite;
+  }
+  .iris-shimmer-btn { transition: transform .12s ease; }
+  .iris-shimmer-btn:hover { transform: translateY(-1px); }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* Tighten the artboard inner reset so cards don't get overridden */
+  [data-dc-artboard] * { box-sizing: border-box; }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<!-- React + Babel -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<!-- Design canvas + variations -->
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="variations/shared.jsx"></script>
+<script type="text/babel" src="variations/variation-a.jsx"></script>
+<script type="text/babel" src="variations/variation-b.jsx"></script>
+<script type="text/babel" src="variations/variation-c.jsx"></script>
+
+<script type="text/babel" data-presets="react">
+  const App = () => (
+    <DesignCanvas>
+      <DCSection
+        id="onepagers"
+        title="AESDR · One-Pager"
+        subtitle="Three takes on the same operating manual. Drag the grip to reorder. Click ⤢ to focus."
+      >
+        <DCArtboard
+          id="a-editorial"
+          label="A · Editorial Spread"
+          width={A_W}
+          height={2520}
+        >
+          <VariationA />
+        </DCArtboard>
+
+        <DCArtboard
+          id="b-dossier"
+          label="B · Operator Dossier"
+          width={B_W}
+          height={2780}
+        >
+          <VariationB />
+        </DCArtboard>
+
+        <DCArtboard
+          id="c-verdict"
+          label="C · The Verdict"
+          width={C_W}
+          height={2340}
+        >
+          <VariationC />
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+
+</body>
+</html>

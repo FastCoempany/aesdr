@@ -1,0 +1,53 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Card — Editorial Hero</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background: var(--cream); }
+  .hero { display:grid; grid-template-columns: 1fr 1fr; min-height: 360px; }
+  .left  { background: var(--crimson); color: var(--cream); padding: 32px 36px; position:relative; overflow:hidden; }
+  .right { background: var(--cream); padding: 32px 36px; position:relative; overflow:hidden; }
+  .ghost {
+    position:absolute; right: -10px; bottom: -60px;
+    font: italic 700 280px/1 var(--display);
+    color: rgba(255,255,255,.06);
+    pointer-events:none; user-select:none;
+  }
+  .ghost-r {
+    position:absolute; left: -20px; top: -80px;
+    font: italic 700 280px/1 var(--display);
+    color: rgba(0,0,0,.06);
+    pointer-events:none; user-select:none;
+  }
+  .eb-l { font: 11px/1 var(--mono); letter-spacing:.30em; text-transform: uppercase; color: rgba(255,255,255,.65); }
+  .eb-r { font: 11px/1 var(--mono); letter-spacing:.30em; text-transform: uppercase; color: var(--muted); }
+  .h-l { font: italic 900 44px/1.05 var(--display); color: var(--cream); margin: 18px 0 12px; max-width: 380px; position:relative; }
+  .h-r { font: italic 900 44px/1.05 var(--display); color: var(--ink); margin: 18px 0 12px; max-width: 380px; position:relative; }
+  .lead-l { font: 16px/1.5 var(--serif); color: rgba(255,255,255,.85); max-width: 360px; position:relative; margin: 0 0 22px; }
+  .lead-r { font: 16px/1.5 var(--serif); color: var(--muted); max-width: 360px; position:relative; margin: 0 0 22px; }
+  .btn {
+    display:inline-flex; align-items:center; gap: 8px;
+    padding: 13px 22px; font: 700 13px/1 var(--cond); letter-spacing: .15em;
+    text-transform: uppercase; border: 0; cursor: pointer; position:relative;
+  }
+  .btn-iris { color: var(--cream); background: var(--iris); background-size: 200% 100%; animation: iris-flow 8s linear infinite; }
+  .btn-out { background: transparent; color: var(--ink); border: 1.5px solid var(--ink); }
+</style></head>
+<body>
+<div class="hero">
+  <div class="left">
+    <span class="ghost">01</span>
+    <div class="eb-l">AESDR · LESSON 01 · ROWAN</div>
+    <h1 class="h-l">Stop Surviving. Start Owning It.</h1>
+    <p class="lead-l">12 sessions for AEs and SDRs serious about controlling chaos and protecting their commission.</p>
+    <button class="btn btn-iris">Get Access →</button>
+  </div>
+  <div class="right">
+    <span class="ghost-r">01</span>
+    <div class="eb-r">12 LESSONS · LIFETIME · 14-DAY REFUND</div>
+    <h1 class="h-r">An intervention<br>for the whole rep.</h1>
+    <p class="lead-r">Two voices. One verdict. The one your commission check has been writing about you.</p>
+    <button class="btn btn-out">Take the Tour</button>
+  </div>
+</div>
+</body></html>

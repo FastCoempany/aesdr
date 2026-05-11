@@ -1,0 +1,21 @@
+
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 240" width="300" height="240" role="img" aria-label="Leponeus — The Rest">
+  <title>Leponeus · The Rest</title>
+  <desc>AESDR canonical mascot. Pose 06 of 08: The Rest. Use: Eyes closed. Sundays only. Permission to stop.</desc>
+  <g fill="none" stroke="#1A1A1A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke">
+    <ellipse cx="120" cy="160" rx="68" ry="36" fill="#F1ECE3"></ellipse>
+             <path d="M 60 160 Q 120 110 180 160"></path>
+    <path d="M 80 158 L 80 132 M 100 156 L 100 124 M 120 156 L 120 122 M 140 156 L 140 124 M 160 158 L 160 132" stroke-opacity=".25"></path>
+    <ellipse cx="68" cy="194" rx="10" ry="6" fill="#F1ECE3"></ellipse>
+             <ellipse cx="172" cy="194" rx="10" ry="6" fill="#F1ECE3"></ellipse>
+    <ellipse cx="200" cy="146" rx="16" ry="12" fill="#F1ECE3"></ellipse>
+    <path d="M 204 142 q 4 0 8 0"></path>
+    
+    <path d="M 192 130 Q 196 110 200 102 Q 200 116 200 122" fill="#F1ECE3"></path>
+           <path d="M 208 130 Q 212 110 216 102 Q 216 116 216 122" fill="#F1ECE3"></path>
+    
+    
+    <line x1="186" y1="134" x2="216" y2="134" stroke="#8B1A1A" stroke-width="1.4"></line>
+  </g>
+</svg>

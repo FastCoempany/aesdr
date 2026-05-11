@@ -1,0 +1,206 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
+
+import { saveProgressLocally } from "@/utils/progress/local-storage";
+import { TIMING } from "@/lib/config";
+
+interface ProgressSaverProps {
+  lessonId: string;
+  isAuthenticated: boolean;
+  /** Saved state_data from Supabase, sent to iframe for cross-device restoration */
+  savedStateData?: Record<string, unknown>;
+}
+
+/**
+ * Invisible component that listens for `aesdr:progress` custom events
+ * dispatched by the lesson iframe via postMessage, then persists progress
+ * to Supabase (if authenticated) and localStorage (always).
+ *
+ * Also handles:
+ * - `aesdr:complete`  → marks lesson as completed in Supabase
+ * - `aesdr:navigate`  → redirects parent to a given href (e.g. /dashboard)
+ * - Sends `aesdr:restore` to iframe on load with saved state from Supabase
+ */
+export default function ProgressSaver({
+  lessonId,
+  isAuthenticated,
+  savedStateData,
+}: ProgressSaverProps) {
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const failCountRef = useRef(0);
+  const [sessionExpired, setSessionExpired] = useState(false);
+  const [navigating, setNavigating] = useState(false);
+  const restoredRef = useRef(false);
+
+  const save = useCallback(
+    (screen: number, stateData: Record<string, unknown>) => {
+      // Always save to localStorage immediately
+      saveProgressLocally(lessonId, {
+        last_screen: screen,
+        state_data: stateData,
+      });
+
+      // Debounce the server save to avoid spamming on rapid navigation
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => {
+        if (isAuthenticated) {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 10000);
+          fetch("/api/progress", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ lessonId, lastScreen: screen, stateData }),
+            signal: controller.signal,
+          }).then((res) => {
+            clearTimeout(timeoutId);
+            if (!res.ok) throw new Error(String(res.status));
+            failCountRef.current = 0;
+          }).catch(() => {
+            clearTimeout(timeoutId);
+            failCountRef.current += 1;
+            if (failCountRef.current >= TIMING.progress.maxServerFailures) {
+              setSessionExpired(true);
+            }
+          });
+        }
+      }, TIMING.progress.debounceMs);
+    },
+    [lessonId, isAuthenticated]
+  );
+
+  useEffect(() => {
+    function handleMessage(event: MessageEvent) {
+      // Only accept messages from our own origin (iframe security)
+      if (event.origin !== window.location.origin) return;
+
+      const { type } = event.data ?? {};
+
+      if (type === "aesdr:progress") {
+        const raw = event.data;
+        const screen = typeof raw?.screen === "number" ? raw.screen : null;
+        const stateData =
+          raw?.stateData && typeof raw.stateData === "object" && !Array.isArray(raw.stateData)
+            ? (raw.stateData as Record<string, unknown>)
+            : null;
+
+        if (screen === null || !stateData) return;
+        failCountRef.current = 0;
+        save(screen, stateData);
+      }
+
+      if (type === "aesdr:complete") {
+        if (isAuthenticated) {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 10000);
+          fetch("/api/progress/complete", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ lessonId }),
+            signal: controller.signal,
+          })
+            .then(() => clearTimeout(timeoutId))
+            .catch(() => clearTimeout(timeoutId));
+          saveProgressLocally(lessonId, { is_completed: true });
+        }
+      }
+
+      if (type === "aesdr:navigate") {
+        const href = event.data?.href;
+        if (typeof href === "string" && href.startsWith("/")) {
+          setNavigating(true);
+          setTimeout(() => { window.location.href = href; }, 300);
+        }
+      }
+    }
+
+    window.addEventListener("message", handleMessage);
+    return () => {
+      window.removeEventListener("message", handleMessage);
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [save, lessonId, isAuthenticated]);
+
+  // Send saved state to iframe for cross-device restoration
+  useEffect(() => {
+    if (restoredRef.current || !savedStateData) return;
+    // Wait for iframe to load, then send state
+    const timer = setTimeout(() => {
+      const iframe = document.querySelector("iframe");
+      if (iframe?.contentWindow) {
+        iframe.contentWindow.postMessage(
+          { type: "aesdr:restore", stateData: savedStateData },
+          window.location.origin
+        );
+        restoredRef.current = true;
+      }
+    }, TIMING.iframeRestoreDelayMs);
+    return () => clearTimeout(timer);
+  }, [savedStateData]);
+
+  if (navigating) {
+    return (
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          background: "#000",
+          zIndex: 99999,
+          animation: "fadeIn 300ms ease-out forwards",
+        }}
+      >
+        <style>{`@keyframes fadeIn{from{opacity:0}to{opacity:1}}`}</style>
+      </div>
+    );
+  }
+
+  if (sessionExpired) {
+    return (
+      <div
+        style={{
+          position: "fixed",
+          bottom: "20px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 10000,
+          background: "rgba(0,0,0,0.9)",
+          border: "1px solid var(--theme)",
+          padding: "14px 24px",
+          display: "flex",
+          alignItems: "center",
+          gap: "16px",
+          maxWidth: "420px",
+        }}
+      >
+        <p
+          style={{
+            fontFamily: "var(--mono)",
+            fontSize: "11px",
+            letterSpacing: ".06em",
+            color: "var(--text-muted)",
+            margin: 0,
+          }}
+        >
+          Session expired. Your progress is saved locally.
+        </p>
+        <a
+          href="/login"
+          style={{
+            fontFamily: "var(--cond)",
+            fontSize: "12px",
+            fontWeight: 700,
+            letterSpacing: ".1em",
+            textTransform: "uppercase",
+            color: "var(--theme)",
+            textDecoration: "none",
+            whiteSpace: "nowrap",
+          }}
+        >
+          Re-login
+        </a>
+      </div>
+    );
+  }
+
+  return null;
+}

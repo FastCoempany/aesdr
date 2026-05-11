@@ -1,0 +1,37 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Card — Active Palette</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background: var(--cream); }
+  .card { padding: 24px; box-sizing: border-box; }
+  .row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  .swatch { aspect-ratio: 1 / 0.95; display:flex; flex-direction:column; justify-content:flex-end; padding: 12px; box-sizing: border-box; border:1px solid var(--line-card); }
+  .name { font: 700 11px/1 var(--cond); letter-spacing:.06em; text-transform:uppercase; }
+  .hex  { font: var(--mono-caption); letter-spacing:.18em; margin-top:4px; opacity:.85; }
+  .role { font: italic 12px/1.3 var(--serif); color: var(--muted); margin-top:6px; }
+</style></head>
+<body>
+<div class="card">
+  <div class="row">
+    <div class="swatch" style="background:var(--cream); color:var(--ink); border-color:var(--line-card)">
+      <div class="name">Cream</div><div class="hex">#FAF7F2</div>
+    </div>
+    <div class="swatch" style="background:var(--ink); color:var(--cream)">
+      <div class="name">Ink</div><div class="hex">#1A1A1A</div>
+    </div>
+    <div class="swatch" style="background:var(--crimson); color:var(--cream)">
+      <div class="name">Crimson</div><div class="hex">#8B1A1A</div>
+    </div>
+    <div class="swatch" style="background:var(--muted); color:var(--cream)">
+      <div class="name">Muted</div><div class="hex">#6B6B6B</div>
+    </div>
+    <div class="swatch" style="background:var(--light); color:var(--ink)">
+      <div class="name">Light</div><div class="hex">#E8E4DF</div>
+    </div>
+    <div class="swatch" style="background:var(--paper); color:var(--ink); border-color:var(--line-card)">
+      <div class="name">Paper</div><div class="hex">#FFFFFF</div>
+    </div>
+  </div>
+</div>
+</body></html>

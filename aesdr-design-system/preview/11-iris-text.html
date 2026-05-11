@@ -1,0 +1,23 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Card — Iris Text</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background: var(--cream); }
+  .card { padding: 26px 32px; }
+  h1 { margin: 0; font: italic 900 56px/1.05 var(--display); color: var(--ink); letter-spacing: -.005em; }
+  .iris {
+    background: var(--iris);
+    background-size: 200% 100%;
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent; -webkit-text-fill-color: transparent;
+    animation: iris-flow 8s linear infinite;
+  }
+  .lbl { font: var(--mono-caption); letter-spacing:.18em; text-transform: uppercase; color: var(--muted); margin-top: 14px; }
+</style></head>
+<body>
+<div class="card">
+  <h1>You are not building a career.<br>You are <span class="iris">surviving</span> one.</h1>
+  <div class="lbl">.IRIS-TEXT · ONE WORD PER HEADLINE · NEVER A WHOLE PARAGRAPH</div>
+</div>
+</body></html>

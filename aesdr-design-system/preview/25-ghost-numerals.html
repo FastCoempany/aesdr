@@ -1,0 +1,28 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Card — Ghost Numerals</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background: var(--cream); }
+  .card { padding: 0; }
+  .row { display:grid; grid-template-columns: repeat(3, 1fr); height: 220px; }
+  .cell { position: relative; overflow:hidden; padding: 18px 20px; box-sizing: border-box; display:flex; flex-direction:column; justify-content:flex-end; }
+  .cream { background: var(--cream); color: var(--ink); }
+  .crim  { background: var(--crimson); color: var(--cream); }
+  .ink   { background: var(--ink); color: var(--cream); }
+  .ghost { position:absolute; right: -16px; bottom: -50px; font: italic 700 240px/1 var(--display); pointer-events:none; user-select:none; }
+  .g-cream { color: rgba(0,0,0,.06); }
+  .g-crim  { color: rgba(255,255,255,.06); }
+  .g-ink   { color: rgba(255,255,255,.06); }
+  .lbl { font: 9px/1 var(--mono); letter-spacing:.20em; text-transform: uppercase; opacity:.7; position: relative; }
+  .h { font: italic 900 22px/1.1 var(--display); margin: 6px 0 0; position:relative; max-width: 220px; }
+</style></head>
+<body>
+<div class="card">
+  <div class="row">
+    <div class="cell cream"><span class="ghost g-cream">01</span><span class="lbl">CREAM · LESSON 01</span><div class="h">The Diagnosis.</div></div>
+    <div class="cell crim"><span class="ghost g-crim">02</span><span class="lbl">CRIMSON · LESSON 02</span><div class="h">Building Camaraderie.</div></div>
+    <div class="cell ink"><span class="ghost g-ink">12</span><span class="lbl">INK · LESSON 12</span><div class="h">Owning It.</div></div>
+  </div>
+</div>
+</body></html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR | The Unfiltered SaaS Sales Survival Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-main: #020617; /* Extra dark slate */
+  --bg-panel: #0F172A;
+  --bg-card: #1E293B;
+  --bg-hover: #334155;
+  
+  --text-main: #F8FAFC;
+  --text-muted: #94A3B8;
+  
+  --theme: #10B981; /* Emerald / Money Green */
+  --theme-glow: rgba(16, 185, 129, 0.4);
+  --coral: #EF4444; /* Alert Red for Anti-Persona */
+  --cobalt: #38BDF8; /* Blue */
+  --amber: #F59E0B; /* Gold */
+  --violet: #8B5CF6; /* Purple */
+  
+  --line: rgba(255,255,255,0.1);
+  --line2: rgba(255,255,255,0.2);
+  
+  --iris: linear-gradient(90deg, #FF006E 0%, #FF6B00 17%, #F59E0B 34%, #10B981 51%, #38BDF8 68%, #8B5CF6 85%, #FF006E 100%);
+  
+  --display: 'Abril Fatface', Georgia, serif;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --cond: 'Barlow Condensed', sans-serif;
+  --mono: 'DM Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg-main); color: var(--text-main); font-family: var(--serif); line-height: 1.6; overflow-x: hidden; }
+a { text-decoration: none; color: inherit; }
+
+/* NAV */
+nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 5%; border-bottom: 1px solid var(--line); background: rgba(2,6,23,0.9); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; }
+.brand { font-family: var(--cond); font-size: 18px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; display:flex; align-items:center; gap:12px; }
+.brand span { background: var(--iris); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.nav-links { display: flex; gap: 30px; font-family: var(--cond); font-weight: 600; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; }
+.nav-links a:hover { color: var(--theme); }
+
+/* BUTTONS */
+.btn { font-family: var(--cond); font-size: 13px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; padding: 14px 28px; border: 1px solid var(--line2); background: transparent; color: var(--text-main); cursor: pointer; transition: all .2s; border-radius: 2px; display: inline-block; }
+.btn:hover { border-color: var(--text-main); }
+.btn-iris { background: var(--text-main); color: var(--bg-main); border: none; position: relative; overflow: hidden; }
+.btn-iris::before { content: ''; position: absolute; inset: 0; background: var(--iris); background-size: 200% 100%; animation: iris 3s linear infinite; opacity: 0; transition: opacity .3s; }
+.btn-iris:hover::before { opacity: 1; }
+.btn-iris span { position: relative; z-index: 1; }
+@keyframes iris { from { background-position: 0% 50%; } to { background-position: 200% 50%; } }
+
+/* HERO */
+.hero { padding: 100px 5% 80px; text-align: center; position: relative; overflow: hidden; }
+.hero::after { content:''; position:absolute; top:-50%; left:50%; transform:translateX(-50%); width:800px; height:800px; background:radial-gradient(circle, var(--theme-glow) 0%, transparent 60%); z-index:-1; opacity:0.3; pointer-events:none;}
+.eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--theme); margin-bottom: 24px; display: inline-block; border: 1px solid var(--theme); padding: 4px 12px; border-radius: 2px; }
+.hero-h1 { font-family: var(--display); font-size: clamp(40px, 8vw, 90px); line-height: .95; margin-bottom: 24px; color: var(--text-main); text-wrap: balance; }
+.hero-p { font-family: var(--serif); font-size: clamp(18px, 2vw, 24px); color: var(--text-muted); max-width: 700px; margin: 0 auto 40px; line-height: 1.5; }
+.hero-actions { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+
+/* ANTI-PERSONA WARNING */
+.warning-box { max-width: 800px; margin: 60px auto 0; border-left: 4px solid var(--coral); background: rgba(239, 68, 68, 0.05); padding: 24px 32px; text-align: left; display: flex; gap: 20px; align-items: flex-start; }
+.warn-icon { font-size: 28px; }
+.warn-title { font-family: var(--cond); font-size: 14px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--coral); margin-bottom: 8px; }
+.warn-text { font-family: var(--serif); font-size: 16px; color: var(--text-muted); }
+.warn-text strong { color: var(--text-main); }
+
+/* INSTRUCTOR BIO */
+.bio-section { padding: 80px 5%; background: var(--bg-panel); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.bio-grid { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2fr; gap: 60px; align-items: center; }
+.bio-stats { display: flex; flex-direction: column; gap: 20px; }
+.stat-box { background: var(--bg-card); padding: 20px; border: 1px solid var(--line); border-left: 3px solid var(--cobalt); }
+.stat-num { font-family: var(--cond); font-size: 28px; font-weight: 800; color: var(--text-main); line-height: 1; margin-bottom: 4px; }
+.stat-lbl { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); }
+.bio-content h2 { font-family: var(--display); font-size: 40px; margin-bottom: 16px; }
+.bio-content p { font-size: 18px; color: var(--text-muted); margin-bottom: 16px; }
+
+/* CURRICULUM */
+.curriculum { padding: 100px 5%; max-width: 1200px; margin: 0 auto; }
+.section-hdr { text-align: center; margin-bottom: 60px; }
+.section-hdr h2 { font-family: var(--display); font-size: 50px; margin-bottom: 16px; }
+.course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+.c-card { background: var(--bg-panel); border: 1px solid var(--line); padding: 32px; transition: transform .2s, border-color .2s; position: relative; overflow: hidden; }
+.c-card:hover { transform: translateY(-5px); border-color: var(--line2); }
+.c-num { font-family: var(--display); font-size: 60px; color: rgba(255,255,255,0.05); position: absolute; top: -10px; right: 10px; line-height: 1; pointer-events: none; }
+.c-tag { font-family: var(--mono); font-size: 9px; letter-spacing: .15em; text-transform: uppercase; margin-bottom: 12px; display: inline-block; }
+.c-title { font-family: var(--cond); font-size: 22px; font-weight: 800; text-transform: uppercase; margin-bottom: 12px; line-height: 1.1; }
+.c-desc { font-family: var(--serif); font-size: 15px; color: var(--text-muted); }
+
+/* IMMEDIATE ROI */
+.roi-section { padding: 100px 5%; background: var(--bg-panel); border-top: 1px solid var(--line); }
+.roi-wrap { max-width: 900px; margin: 0 auto; }
+.roi-item { display: flex; gap: 24px; align-items: flex-start; margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--line); }
+.roi-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.roi-icon { width: 48px; height: 48px; background: var(--bg-card); border: 1px solid var(--line2); display: flex; align-items: center; justify-content: center; font-size: 20px; border-radius: 4px; flex-shrink: 0; color: var(--theme); }
+.roi-text h3 { font-family: var(--cond); font-size: 20px; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; letter-spacing: .05em; }
+
+/* PRICING */
+.pricing { padding: 100px 5%; max-width: 1000px; margin: 0 auto; }
+.pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 40px; }
+.p-tier { background: var(--bg-panel); border: 1px solid var(--line); padding: 40px; position: relative; }
+.p-tier.premium { border-color: var(--theme); box-shadow: 0 0 40px rgba(16, 185, 129, 0.05); }
+.p-tier.premium::before { content: 'Most Popular'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--theme); color: var(--bg-main); font-family: var(--mono); font-size: 9px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; padding: 4px 12px; border-radius: 2px; }
+.p-name { font-family: var(--cond); font-size: 16px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; }
+.p-price { font-family: var(--display); font-size: 56px; margin-bottom: 24px; line-height: 1; }
+.p-feats { list-style: none; margin-bottom: 32px; }
+.p-feats li { font-family: var(--serif); font-size: 16px; color: var(--text-muted); padding: 12px 0; border-bottom: 1px solid var(--line); display: flex; gap: 12px; }
+.p-feats li::before { content: '✓'; color: var(--theme); font-family: sans-serif; font-weight: bold; }
+
+/* FOOTER */
+footer { text-align: center; padding: 40px 5%; border-top: 1px solid var(--line); background: var(--bg-panel); font-family: var(--mono); font-size: 10px; color: var(--text-muted); letter-spacing: .1em; text-transform: uppercase; }
+
+@media(max-width: 768px) {
+  .bio-grid, .pricing-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .hero-h1 { font-size: 48px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="brand">AESDR <span>Interactive</span></div>
+  <div class="nav-links">
+    <a href="#curriculum">Curriculum</a>
+    <a href="#toolkit">The Toolkit</a>
+    <a href="#instructor">Instructor</a>
+  </div>
+  <a href="#pricing" class="btn btn-iris"><span>Get Access</span></a>
+</nav>
+
+<section class="hero">
+  <div class="eyebrow">The 12-Course Survival Guide</div>
+  <h1 class="hero-h1">Stop Surviving SaaS Sales.<br>Start Owning It.</h1>
+<p class="hero-p">No corporate fluff. No recycled guru advice. Just 12 interactive, trench-tested modules to help AEs and SDRs reduce the chaos that keeps them off quota, manage toxic leadership, and protect their commission.</p>
+  
+  <div class="hero-actions">
+    <a href="#pricing" class="btn btn-iris" style="font-size: 15px; padding: 16px 36px;"><span>Unlock the Playbook</span></a>
+    <a href="#curriculum" class="btn" style="font-size: 15px; padding: 16px 36px;">View Syllabus</a>
+  </div>
+
+  <div class="warning-box">
+    <div class="warn-icon">⚠️</div>
+    <div>
+      <div class="warn-title">The Anti-Persona Warning</div>
+      <div class="warn-text"><strong>This is not for reps looking for automated shortcuts or lazy templates.</strong> If you want to put your brain on autopilot and "hack" your way to the top, close this tab. This curriculum is built exclusively for trench warriors willing to do the hard, uncomfortable work to become irreplaceable.</div>
+    </div>
+  </div>
+</section>
+
+<section class="bio-section" id="instructor">
+  <div class="bio-grid">
+    <div class="bio-stats">
+      <div class="stat-box">
+        <div class="stat-num">9+</div>
+        <div class="stat-lbl">Years Enterprise AE Experience</div>
+      </div>
+      <div class="stat-box" style="border-left-color: var(--coral)">
+        <div class="stat-num">4</div>
+        <div class="stat-lbl">Toxic Managers Survived</div>
+      </div>
+      <div class="stat-box" style="border-left-color: var(--theme)">
+        <div class="stat-num">$$$</div>
+        <div class="stat-lbl">Millions in Pipeline Closed</div>
+      </div>
+    </div>
+    <div class="bio-content">
+      <h2>I built the playbook I wish I had when I was drowning in the CRM.</h2>
+      <p>My name is <strong>Antaeus L. Coe</strong>. I’ve lived through the feast-or-famine cycles. I've dealt with the metric maniacs, the bloated pipelines, and the soul-crushing burnout of the SDR grind.</p>
+      <p>Most sales training is created by "former teachers" or executives who skipped the trenches. It’s built to make the company look good.</p>
+      <p><strong>This training is built to protect YOU.</strong> It’s designed to help you keep the money you earn, set boundaries that save your sanity, and build a career that outlasts the chaos.</p>
+    </div>
+  </div>
+</section>
+
+<section class="curriculum" id="curriculum">
+  <div class="section-hdr">
+    <div class="eyebrow" style="color:var(--text-main); border-color:var(--line2); background:var(--bg-hover)">The Interactive Curriculum</div>
+    <h2>12 Modules. Zero Fluff.</h2>
+    <p style="font-family:var(--serif); font-size:18px; color:var(--text-muted)">Every course features interactive blame-chains, sequencers, and reality checks.</p>
+  </div>
+
+  <div class="course-grid">
+    <div class="c-card">
+      <div class="c-num">01</div>
+      <div class="c-tag" style="color:#A78BFA">Mindset</div>
+      <div class="c-title">The SaaS Sales Circus</div>
+      <div class="c-desc">Identify the traps. Stop drinking the corporate Kool-Aid and learn the brutal realities of the tech sales machine.</div>
+    </div>
+    <div class="c-card">
+      <div class="c-num">02</div>
+      <div class="c-tag" style="color:#F87171">Environment</div>
+      <div class="c-title">The Ultimate Home Office</div>
+      <div class="c-desc">You cannot outwork a bad environment. Master the remote setup for focus, productivity, and physical sanity.</div>
+    </div>
+    <div class="c-card">
+      <div class="c-num">03</div>
+      <div class="c-tag" style="color:#FBBF24">Alignment</div>
+      <div class="c-title">Breaking Down Silos</div>
+      <div class="c-desc">Fix the toxic dynamics between AEs and SDRs. Transform tension and ego into a collaborative revenue engine.</div>
+    </div>
+    <div class="c-card">
+      <div class="c-num">04</div>
+      <div class="c-tag" style="color:#34D399">Managing Up</div>
+      <div class="c-title">SDR Manager Madness</div>
+      <div class="c-desc">Survive the 10 Manager Archetypes. From the Metric Maniac to the Cheerleader, learn how to manage your manager.</div>
+    </div>
+    <div class="c-card">
+      <div class="c-num">07</div>
+      <div class="c-tag" style="color:#FBBF24">Accountability</div>
+      <div class="c-title">Prospecting is Your Job</div>
+      <div class="c-desc">For AEs: Why coasting on SDR leads kills careers. Get back in the trenches and own your pipeline.</div>
+    </div>
+    <div class="c-card">
+      <div class="c-num">08</div>
+      <div class="c-tag" style="color:#D4AF37">Leadership</div>
+      <div class="c-title">The 30% Rule</div>
+      <div class="c-desc">Stop trying to save everyone. How to identify real potential and stop wasting energy on the illusion of hustle.</div>
+    </div>
+    <div class="c-card">
+      <div class="c-num">09</div>
+      <div class="c-tag" style="color:#8B5CF6">Systems</div>
+      <div class="c-title">Salesforce & Slack Survival</div>
+      <div class="c-desc">Turn the tools you hate into your secret weapon. Clean your damn data and cut the digital distractions.</div>
+    </div>
+    <div class="c-card">
+      <div class="c-num">10</div>
+      <div class="c-tag" style="color:#10B981">Financials</div>
+      <div class="c-title">The Commission Myth</div>
+      <div class="c-desc">Why OTE is a fantasy. Learn to read the fine print, dodge clawbacks, and survive the feast-or-famine cycle.</div>
+    </div>
+    <div class="c-card">
+      <div class="c-num">11</div>
+      <div class="c-tag" style="color:#FF7A59">Culture</div>
+      <div class="c-title">Sober Selling</div>
+      <div class="c-desc">Redefine "Work Hard, Play Hard." How saying no to alcohol sets you up for sharper thinking and longevity.</div>
+    </div>
+    <div class="c-card">
+      <div class="c-num">12</div>
+      <div class="c-tag" style="color:#C19A6B">Life Balance</div>
+      <div class="c-title">Leveling Up Relationships</div>
+      <div class="c-desc">Close the success gap at home. Why SDRs should stay single, and how AEs can save their marriages from the grind.</div>
+    </div>
+  </div>
+</section>
+
+<section class="roi-section" id="toolkit">
+  <div class="roi-wrap">
+    <div class="section-hdr">
+      <h2>Immediate ROI: The 72-Hour Strike Plan</h2>
+      <p style="font-family:var(--serif); font-size:18px; color:var(--text-muted)">This isn't theory. By Sunday night, you walk away with a custom-built, 4-part defense system ready to deploy on Monday morning.</p>
+    </div>
+
+    <div class="roi-item">
+      <div class="roi-icon">💰</div>
+      <div class="roi-text">
+        <h3>The Commission Tracker</h3>
+        <p style="color:var(--text-muted)">Stop trusting Finance to get your check right. Use our framework to track every deal, predict clawbacks, and budget strictly off your base salary.</p>
+      </div>
+    </div>
+
+    <div class="roi-item">
+      <div class="roi-icon">⏳</div>
+      <div class="roi-text">
+        <h3>The "Time Reclaimed" System</h3>
+        <p style="color:var(--text-muted)">Implement the Slack/Salesforce boundaries from Course 9 to save a minimum of 3 hours a week. What is 12 hours a month worth to your pipeline?</p>
+      </div>
+    </div>
+
+    <div class="roi-item">
+      <div class="roi-icon">🛡️</div>
+      <div class="roi-text">
+        <h3>The Quota Pushback Plan</h3>
+        <p style="color:var(--text-muted)">When management hands you an impossible number, don't just complain. Use our data-driven template to highlight territory realities and push back professionally.</p>
+      </div>
+    </div>
+
+    <div class="roi-item">
+      <div class="roi-icon">🤝</div>
+      <div class="roi-text">
+        <h3>The AE/SDR Helper Document</h3>
+        <p style="color:var(--text-muted)">Eliminate tension between roles immediately. Deploy the 1-page alignment contract to establish mutual respect, attendance expectations, and lead standards.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="pricing" id="pricing">
+  <div class="section-hdr">
+    <h2>Invest in Your Survival.</h2>
+    <p style="font-family:var(--serif); font-size:18px; color:var(--text-muted)">The cost of missing quota is high. The cost of burnout is higher.</p>
+  </div>
+
+  <div class="pricing-grid">
+    <div class="p-tier">
+      <div class="p-name">The Trench Warrior</div>
+      <div class="p-price">$199</div>
+      <ul class="p-feats">
+        <li>Full access to all 12 Interactive Courses</li>
+        <li>Downloadable Frameworks & Trackers</li>
+        <li>Self-Paced HTML Platform</li>
+        <li>Lifetime Updates</li>
+      </ul>
+      <button class="btn" style="width:100%">Get Instant Access</button>
+    </div>
+
+    <div class="p-tier premium">
+      <div class="p-name" style="color:var(--theme)">The Enablement Pack</div>
+      <div class="p-price">$999<span style="font-size:16px; color:var(--text-muted); font-family:var(--serif)"> / team</span></div>
+      <ul class="p-feats">
+        <li>Up to 10 Rep Licenses</li>
+        <li>Manager-Specific Coaching Modules</li>
+        <li>AE/SDR Alignment Workshop Materials</li>
+        <li>1x Live Pipeline Audit with Antaeus</li>
+      </ul>
+      <button class="btn btn-iris" style="width:100%"><span>Equip Your Team</span></button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  AESDR © 2026 | Built for the Trenches.
+</footer>
+
+</body>
+</html>

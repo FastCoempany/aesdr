@@ -1,0 +1,46 @@
+.masthead {
+  position: fixed;
+  top: 18px;
+  left: 22px;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  user-select: none;
+}
+
+.brand {
+  /* fallback color for browsers that don't support background-clip */
+  color: var(--crimson);
+}
+
+.iris {
+  background: var(--iris);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: mastheadShimmer 4s linear infinite;
+}
+
+@keyframes mastheadShimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 300% 50%;
+  }
+}
+
+@media (max-width: 640px) {
+  .masthead {
+    top: 12px;
+    left: 14px;
+    font-size: 18px;
+  }
+}

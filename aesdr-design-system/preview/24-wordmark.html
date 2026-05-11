@@ -1,0 +1,24 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Card — Wordmark</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background: var(--cream); }
+  .card { padding: 32px 36px; display:flex; flex-direction:column; gap: 16px; }
+  .wm { display:inline-flex; flex-direction:column; align-items:flex-start; }
+  .word { font: italic 900 88px/1 var(--display); color: var(--ink); letter-spacing: -.01em; }
+  .word .dot { color: var(--crimson); }
+  .rule { width: 200px; height: 2px; background: var(--iris); background-size: 200% 100%; animation: iris-flow 8s linear infinite; margin-top: 4px; }
+  .tag { font: 11px/1 var(--mono); letter-spacing: .30em; text-transform: uppercase; color: var(--muted); margin-top: 8px; }
+  .meta { font: 9px/1 var(--mono); letter-spacing: .20em; text-transform: uppercase; color: var(--muted); }
+</style></head>
+<body>
+<div class="card">
+  <span class="meta">PRIMARY WORDMARK · CREAM SURFACE · LARGE</span>
+  <div class="wm">
+    <div class="word">AESDR<span class="dot">.</span></div>
+    <div class="rule"></div>
+    <div class="tag">THE OPERATING MANUAL</div>
+  </div>
+</div>
+</body></html>
