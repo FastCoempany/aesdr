@@ -1,0 +1,2 @@
+# npm pack downloads — ignored, vendor/ holds extracted copies
+*.tgz

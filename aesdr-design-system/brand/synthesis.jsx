@@ -60,6 +60,12 @@ function DecisionCard({ verdict, pick, rationale }) {
 // onError fallback if the PNG fails to load.
 const PNG_BASE = './canon/mascot/png';
 function pngPath(expression) {
+  // Standalone-build hook: if window.__MASCOT_PNG[expression] is a data URI,
+  // use it. Lets the single-file shareable HTML inline the PNGs as base64
+  // without touching this file or breaking the normal server-served flow.
+  if (typeof window !== 'undefined' && window.__MASCOT_PNG && window.__MASCOT_PNG[expression]) {
+    return window.__MASCOT_PNG[expression];
+  }
   return `${PNG_BASE}/leponeus-${expression}.png`;
 }
 
