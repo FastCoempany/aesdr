@@ -1,6 +1,6 @@
 # Leponeus — AESDR Canonical Mascot
 
-> **Version** v1.0 · **Canon owner** Antaeus · **Repo** [github.com/FastCoempany/aesdr](https://github.com/FastCoempany/aesdr)
+> **Version** v1.1 · **Canon owner** Antaeus · **Repo** [github.com/FastCoempany/aesdr](https://github.com/FastCoempany/aesdr)
 
 A tortoise body with strapped hare-ears. The two voices of AESDR fused into one figure: shell as pipeline, ears as ambition, strap as the doctrine that holds them together.
 
@@ -93,7 +93,12 @@ Render the standalone SVG to PNG at @1× (128px), @2× (256px), @3× (384–1024
 - **MINOR** (`v1.1`) — additive (a 9th expression, a refined ear curve). Backward-compatible.
 - **PATCH** (`v1.0.1`) — fixes (path simplification, alignment nudges). No visible change at intended sizes.
 
-The canon is frozen at `v1.0` as of this commit. Every downstream export tags `canon-v1.0` until bumped.
+The canon is at `v1.1` as of this commit.
+
+### Changelog
+
+- **v1.1** — Iridescent render pass added at `png/`; 8 transparent-bg PNGs become the default render across the design system. Flat SVGs (this folder) refined to share a common vocabulary — hex scutes, almond eye + nostril, inner ear fold, jaw line, toe hints — while preserving each pose's distinctive feature. SVGs are now the single-color fallback only (print, swag, favicon ≤32px, App Mark on dark, onError fallback).
+- **v1.0** — Initial canon. 8 flat SVG expressions + sprite + manifest.
 
 ---
 

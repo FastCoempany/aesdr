@@ -154,77 +154,180 @@ const expressionMap = {
     </>,
   },
   diagnosis: {
-    shellMarks: <path d="M 80 158 L 80 132 M 120 156 L 120 122 M 160 158 L 160 132" strokeOpacity=".45" />,
-    eye: <line x1="204" y1="142" x2="212" y2="142" />,
-    mouth: <line x1="200" y1="152" x2="208" y2="152" />,
+    shellMarks: <g strokeOpacity=".45">
+      <path d="M 108 133 L 114.1 136.5 L 114.1 143.5 L 108 147 L 101.9 143.5 L 101.9 136.5 Z" />
+      <path d="M 120 133 L 126.1 136.5 L 126.1 143.5 L 120 147 L 113.9 143.5 L 113.9 136.5 Z" />
+      <path d="M 132 133 L 138.1 136.5 L 138.1 143.5 L 132 147 L 125.9 143.5 L 125.9 136.5 Z" />
+      <path d="M 114 143.5 L 120.1 147 L 120.1 154 L 114 157.5 L 107.9 154 L 107.9 147 Z" />
+      <path d="M 126 143.5 L 132.1 147 L 132.1 154 L 126 157.5 L 119.9 154 L 119.9 147 Z" />
+    </g>,
+    eye: <>
+      <line x1="204" y1="142" x2="212" y2="142" />
+      <circle cx="215" cy="148" r="0.7" fill="#1A1A1A" stroke="none" />
+    </>,
+    mouth: <>
+      <line x1="200" y1="152" x2="208" y2="152" />
+      <path d="M 188 148 q 6 5 14 4" strokeOpacity=".25" />
+    </>,
     ears: <>
       <path d="M 192 130 Q 190 100 184 88 Q 196 96 200 122" fill="#F1ECE3" />
+      <path d="M 192 124 Q 192 104 188 92" strokeOpacity=".4" />
       <path d="M 208 130 Q 214 100 222 88 Q 218 100 216 122" fill="#F1ECE3" />
+      <path d="M 211 124 Q 213 104 217 92" strokeOpacity=".4" />
+    </>,
+    legs: <>
+      <path d="M 63 199 l 0 2 M 68 200 l 0 2 M 73 199 l 0 2" strokeOpacity=".5" />
+      <path d="M 167 199 l 0 2 M 172 200 l 0 2 M 177 199 l 0 2" strokeOpacity=".5" />
     </>,
   },
   sprint: {
-    shellMarks: <path d="M 80 158 L 80 132 M 100 156 L 100 124 M 120 156 L 120 122 M 140 156 L 140 124 M 160 158 L 160 132" strokeOpacity=".45" />,
-    eye: <circle cx="208" cy="140" r="1.6" fill="#1A1A1A" stroke="none" />,
+    shellMarks: <g strokeOpacity=".45">
+      <path d="M 108 133 L 114.1 136.5 L 114.1 143.5 L 108 147 L 101.9 143.5 L 101.9 136.5 Z" />
+      <path d="M 120 133 L 126.1 136.5 L 126.1 143.5 L 120 147 L 113.9 143.5 L 113.9 136.5 Z" />
+      <path d="M 132 133 L 138.1 136.5 L 138.1 143.5 L 132 147 L 125.9 143.5 L 125.9 136.5 Z" />
+      <path d="M 114 143.5 L 120.1 147 L 120.1 154 L 114 157.5 L 107.9 154 L 107.9 147 Z" />
+      <path d="M 126 143.5 L 132.1 147 L 132.1 154 L 126 157.5 L 119.9 154 L 119.9 147 Z" />
+    </g>,
+    eye: <>
+      <path d="M 205 140 q 3 -2.5 6 0 q -3 2.5 -6 0 Z" fill="#1A1A1A" stroke="none" />
+      <circle cx="215" cy="146" r="0.7" fill="#1A1A1A" stroke="none" />
+    </>,
     mouth: null,
     ears: <>
       <path d="M 188 128 Q 168 100 154 92 Q 178 102 196 122" fill="#F1ECE3" />
+      <path d="M 188 124 Q 174 104 162 96" strokeOpacity=".4" />
       <path d="M 210 130 Q 232 102 246 94 Q 222 104 216 122" fill="#F1ECE3" />
+      <path d="M 212 124 Q 226 104 238 98" strokeOpacity=".4" />
       {/* speed ticks */}
       <line x1="20" y1="146" x2="38" y2="146" strokeOpacity=".5" />
       <line x1="22" y1="160" x2="34" y2="160" strokeOpacity=".4" />
     </>,
+    legs: <>
+      <path d="M 63 199 l 0 2 M 68 200 l 0 2 M 73 199 l 0 2" strokeOpacity=".5" />
+      <path d="M 167 199 l 0 2 M 172 200 l 0 2 M 177 199 l 0 2" strokeOpacity=".5" />
+    </>,
   },
   fall: {
-    shellMarks: <path d="M 100 152 L 96 132 L 110 138 L 102 122" stroke="#8B1A1A" />,
-    eye: <path d="M 204 140 L 212 144 M 212 140 L 204 144" />,
+    shellMarks: <>
+      <g strokeOpacity=".25">
+        <path d="M 108 133 L 114.1 136.5 L 114.1 143.5 L 108 147 L 101.9 143.5 L 101.9 136.5 Z" />
+        <path d="M 132 133 L 138.1 136.5 L 138.1 143.5 L 132 147 L 125.9 143.5 L 125.9 136.5 Z" />
+        <path d="M 126 143.5 L 132.1 147 L 132.1 154 L 126 157.5 L 119.9 154 L 119.9 147 Z" />
+      </g>
+      <path d="M 100 152 L 96 132 L 110 138 L 102 122" stroke="#8B1A1A" />
+    </>,
+    eye: <>
+      <path d="M 204 140 L 212 144 M 212 140 L 204 144" />
+      <circle cx="215" cy="148" r="0.7" fill="#1A1A1A" stroke="none" />
+    </>,
     mouth: <path d="M 200 154 q 4 -3 8 0" />,
     ears: <>
       <path d="M 192 132 Q 184 124 176 130 Q 186 130 198 124" fill="#F1ECE3" />
+      <path d="M 188 128 Q 184 126 180 128" strokeOpacity=".3" />
       <path d="M 210 130 Q 220 138 226 132 Q 218 130 216 124" fill="#F1ECE3" />
+      <path d="M 214 128 Q 218 126 222 128" strokeOpacity=".3" />
+    </>,
+    legs: <>
+      <path d="M 63 199 l 0 2 M 68 200 l 0 2 M 73 199 l 0 2" strokeOpacity=".5" />
+      <path d="M 167 199 l 0 2 M 172 200 l 0 2 M 177 199 l 0 2" strokeOpacity=".5" />
     </>,
   },
   recovery: {
     shellMarks: <>
-      <path d="M 80 158 L 80 132 M 120 156 L 120 122 M 160 158 L 160 132" strokeOpacity=".45" />
-      <path d="M 120 122 L 120 100" />
-      <path d="M 120 110 q -8 -4 -10 -12 q 8 4 10 8" fill="#8B1A1A" stroke="#8B1A1A" />
+      <g strokeOpacity=".45">
+        <path d="M 108 133 L 114.1 136.5 L 114.1 143.5 L 108 147 L 101.9 143.5 L 101.9 136.5 Z" />
+        <path d="M 132 133 L 138.1 136.5 L 138.1 143.5 L 132 147 L 125.9 143.5 L 125.9 136.5 Z" />
+        <path d="M 114 143.5 L 120.1 147 L 120.1 154 L 114 157.5 L 107.9 154 L 107.9 147 Z" />
+        <path d="M 126 143.5 L 132.1 147 L 132.1 154 L 126 157.5 L 119.9 154 L 119.9 147 Z" />
+      </g>
+      {/* sprout: stem + 2 crimson leaves emerging from healed center scute */}
+      <path d="M 120 133 Q 118 122 120 110" />
+      <path d="M 120 118 q -8 -4 -10 -12 q 8 4 10 8" fill="#8B1A1A" stroke="#8B1A1A" />
+      <path d="M 120 112 q 8 -4 10 -12 q -8 4 -10 8" fill="#8B1A1A" stroke="#8B1A1A" />
     </>,
-    eye: <circle cx="208" cy="142" r="1.6" fill="#1A1A1A" stroke="none" />,
-    mouth: null,
+    eye: <>
+      <path d="M 205 141 q 3 -2.5 6 0 q -3 2.5 -6 0 Z" fill="#1A1A1A" stroke="none" />
+      <circle cx="215" cy="148" r="0.7" fill="#1A1A1A" stroke="none" />
+    </>,
+    mouth: <path d="M 188 148 q 6 5 14 4" strokeOpacity=".3" />,
     ears: <>
       <path d="M 192 130 Q 188 92 178 80 Q 192 86 200 122" fill="#F1ECE3" />
+      <path d="M 189 122 Q 186 100 182 88" strokeOpacity=".4" />
       <path d="M 208 130 Q 216 92 226 80 Q 218 92 216 122" fill="#F1ECE3" />
+      <path d="M 211 122 Q 214 100 218 88" strokeOpacity=".4" />
+    </>,
+    legs: <>
+      <path d="M 63 199 l 0 2 M 68 200 l 0 2 M 73 199 l 0 2" strokeOpacity=".5" />
+      <path d="M 167 199 l 0 2 M 172 200 l 0 2 M 177 199 l 0 2" strokeOpacity=".5" />
     </>,
   },
   verdict: {
-    shellMarks: <path d="M 80 158 L 80 132 M 100 156 L 100 124 M 120 156 L 120 122 M 140 156 L 140 124 M 160 158 L 160 132" strokeOpacity=".45" />,
-    eye: <circle cx="208" cy="142" r="1.6" fill="#1A1A1A" stroke="none" />,
-    mouth: null,
+    shellMarks: <g strokeOpacity=".45">
+      <path d="M 108 133 L 114.1 136.5 L 114.1 143.5 L 108 147 L 101.9 143.5 L 101.9 136.5 Z" />
+      <path d="M 120 133 L 126.1 136.5 L 126.1 143.5 L 120 147 L 113.9 143.5 L 113.9 136.5 Z" />
+      <path d="M 132 133 L 138.1 136.5 L 138.1 143.5 L 132 147 L 125.9 143.5 L 125.9 136.5 Z" />
+      <path d="M 114 143.5 L 120.1 147 L 120.1 154 L 114 157.5 L 107.9 154 L 107.9 147 Z" />
+      <path d="M 126 143.5 L 132.1 147 L 132.1 154 L 126 157.5 L 119.9 154 L 119.9 147 Z" />
+    </g>,
+    eye: <>
+      <path d="M 205 142 q 3 -2.5 6 0 q -3 2.5 -6 0 Z" fill="#1A1A1A" stroke="none" />
+      <circle cx="215" cy="148" r="0.7" fill="#1A1A1A" stroke="none" />
+    </>,
+    mouth: <path d="M 188 148 q 6 5 14 4" strokeOpacity=".3" />,
     ears: <>
       <path d="M 196 130 Q 196 96 192 84 Q 202 92 200 122" fill="#F1ECE3" />
+      <path d="M 196 122 Q 195 100 194 88" strokeOpacity=".4" />
       <path d="M 208 130 Q 208 96 212 84 Q 214 92 216 122" fill="#F1ECE3" />
+      <path d="M 209 122 Q 210 100 211 88" strokeOpacity=".4" />
       <path d="M 200 80 q 4 -2 4 0" fill="#8B1A1A" stroke="#8B1A1A" />
+    </>,
+    legs: <>
+      <path d="M 63 199 l 0 2 M 68 200 l 0 2 M 73 199 l 0 2" strokeOpacity=".5" />
+      <path d="M 167 199 l 0 2 M 172 200 l 0 2 M 177 199 l 0 2" strokeOpacity=".5" />
     </>,
   },
   rest: {
-    shellMarks: <path d="M 80 158 L 80 132 M 100 156 L 100 124 M 120 156 L 120 122 M 140 156 L 140 124 M 160 158 L 160 132" strokeOpacity=".25" />,
+    shellMarks: <g strokeOpacity=".25">
+      <path d="M 108 133 L 114.1 136.5 L 114.1 143.5 L 108 147 L 101.9 143.5 L 101.9 136.5 Z" />
+      <path d="M 120 133 L 126.1 136.5 L 126.1 143.5 L 120 147 L 113.9 143.5 L 113.9 136.5 Z" />
+      <path d="M 132 133 L 138.1 136.5 L 138.1 143.5 L 132 147 L 125.9 143.5 L 125.9 136.5 Z" />
+      <path d="M 114 143.5 L 120.1 147 L 120.1 154 L 114 157.5 L 107.9 154 L 107.9 147 Z" />
+      <path d="M 126 143.5 L 132.1 147 L 132.1 154 L 126 157.5 L 119.9 154 L 119.9 147 Z" />
+    </g>,
     eye: <path d="M 204 142 q 4 0 8 0" />,
     mouth: null,
     ears: <>
       <path d="M 192 130 Q 196 110 200 102 Q 200 116 200 122" fill="#F1ECE3" />
+      <path d="M 194 122 Q 196 114 198 108" strokeOpacity=".4" />
       <path d="M 208 130 Q 212 110 216 102 Q 216 116 216 122" fill="#F1ECE3" />
+      <path d="M 210 122 Q 212 114 214 108" strokeOpacity=".4" />
     </>,
+    legs: null,
   },
   owner: {
     shellMarks: <>
-      <path d="M 80 158 L 80 132 M 100 156 L 100 124 M 120 156 L 120 122 M 140 156 L 140 124 M 160 158 L 160 132" strokeOpacity=".55" />
+      <g strokeOpacity=".55">
+        <path d="M 108 133 L 114.1 136.5 L 114.1 143.5 L 108 147 L 101.9 143.5 L 101.9 136.5 Z" />
+        <path d="M 132 133 L 138.1 136.5 L 138.1 143.5 L 132 147 L 125.9 143.5 L 125.9 136.5 Z" />
+        <path d="M 114 143.5 L 120.1 147 L 120.1 154 L 114 157.5 L 107.9 154 L 107.9 147 Z" />
+        <path d="M 126 143.5 L 132.1 147 L 132.1 154 L 126 157.5 L 119.9 154 L 119.9 147 Z" />
+      </g>
       <text x="120" y="148" textAnchor="middle" fontFamily="Playfair Display, serif" fontStyle="italic" fontWeight="900" fontSize="22" fill="#8B1A1A" stroke="none">A</text>
     </>,
-    eye: <circle cx="208" cy="142" r="1.6" fill="#1A1A1A" stroke="none" />,
-    mouth: null,
+    eye: <>
+      <path d="M 205 142 q 3 -2.5 6 0 q -3 2.5 -6 0 Z" fill="#1A1A1A" stroke="none" />
+      <circle cx="215" cy="148" r="0.7" fill="#1A1A1A" stroke="none" />
+    </>,
+    mouth: <path d="M 188 148 q 6 5 14 4" strokeOpacity=".3" />,
     ears: <>
       <path d="M 192 130 Q 188 92 178 80 Q 192 86 200 122" fill="#F1ECE3" />
+      <path d="M 189 122 Q 186 100 182 88" strokeOpacity=".4" />
       <path d="M 208 130 Q 216 92 226 80 Q 218 92 216 122" fill="#F1ECE3" />
+      <path d="M 211 122 Q 214 100 218 88" strokeOpacity=".4" />
+    </>,
+    legs: <>
+      <path d="M 63 199 l 0 2 M 68 200 l 0 2 M 73 199 l 0 2" strokeOpacity=".5" />
+      <path d="M 167 199 l 0 2 M 172 200 l 0 2 M 177 199 l 0 2" strokeOpacity=".5" />
     </>,
   },
 };

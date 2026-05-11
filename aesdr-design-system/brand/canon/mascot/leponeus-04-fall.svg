@@ -1,21 +1,27 @@
-
-
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 240" width="300" height="240" role="img" aria-label="Leponeus — The Fall">
   <title>Leponeus · The Fall</title>
   <desc>AESDR canonical mascot. Pose 04 of 08: The Fall. Use: The dip. Burnout. Lesson 05.</desc>
   <g fill="none" stroke="#1A1A1A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke">
-    <ellipse cx="120" cy="160" rx="68" ry="36" fill="#F1ECE3"></ellipse>
-             <path d="M 60 160 Q 120 110 180 160"></path>
-    <path d="M 100 152 L 96 132 L 110 138 L 102 122" stroke="#8B1A1A"></path>
-    <ellipse cx="68" cy="194" rx="10" ry="6" fill="#F1ECE3"></ellipse>
-             <ellipse cx="172" cy="194" rx="10" ry="6" fill="#F1ECE3"></ellipse>
-    <ellipse cx="200" cy="146" rx="16" ry="12" fill="#F1ECE3"></ellipse>
-    <path d="M 204 140 L 212 144 M 212 140 L 204 144"></path>
-    <path d="M 200 154 q 4 -3 8 0"></path>
-    <path d="M 192 132 Q 184 124 176 130 Q 186 130 198 124" fill="#F1ECE3"></path>
-           <path d="M 210 130 Q 220 138 226 132 Q 218 130 216 124" fill="#F1ECE3"></path>
-    
-    
-    <line x1="186" y1="134" x2="216" y2="134" stroke="#8B1A1A" stroke-width="1.4"></line>
+    <ellipse cx="120" cy="160" rx="68" ry="36" fill="#F1ECE3"/>
+    <path d="M 60 160 Q 120 110 180 160"/>
+    <g stroke-opacity="0.25">
+      <path d="M 108 133 L 114.1 136.5 L 114.1 143.5 L 108 147 L 101.9 143.5 L 101.9 136.5 Z"/>
+      <path d="M 132 133 L 138.1 136.5 L 138.1 143.5 L 132 147 L 125.9 143.5 L 125.9 136.5 Z"/>
+      <path d="M 126 143.5 L 132.1 147 L 132.1 154 L 126 157.5 L 119.9 154 L 119.9 147 Z"/>
+    </g>
+    <path d="M 100 152 L 96 132 L 110 138 L 102 122" stroke="#8B1A1A"/>
+    <ellipse cx="68" cy="194" rx="10" ry="6" fill="#F1ECE3"/>
+    <ellipse cx="172" cy="194" rx="10" ry="6" fill="#F1ECE3"/>
+    <path d="M 63 199 l 0 2 M 68 200 l 0 2 M 73 199 l 0 2" stroke-opacity="0.5"/>
+    <path d="M 167 199 l 0 2 M 172 200 l 0 2 M 177 199 l 0 2" stroke-opacity="0.5"/>
+    <ellipse cx="200" cy="146" rx="16" ry="12" fill="#F1ECE3"/>
+    <circle cx="215" cy="148" r="0.7" fill="#1A1A1A" stroke="none"/>
+    <path d="M 204 140 L 212 144 M 212 140 L 204 144"/>
+    <path d="M 200 154 q 4 -3 8 0"/>
+    <path d="M 192 132 Q 184 124 176 130 Q 186 130 198 124" fill="#F1ECE3"/>
+    <path d="M 188 128 Q 184 126 180 128" stroke-opacity="0.3"/>
+    <path d="M 210 130 Q 220 138 226 132 Q 218 130 216 124" fill="#F1ECE3"/>
+    <path d="M 214 128 Q 218 126 222 128" stroke-opacity="0.3"/>
+    <line x1="186" y1="134" x2="216" y2="134" stroke="#8B1A1A" stroke-width="1.4"/>
   </g>
 </svg>
