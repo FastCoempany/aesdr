@@ -47,41 +47,39 @@ function DecisionCard({ verdict, pick, rationale }) {
 /* ============================================================
    1 · MASCOT SYSTEM (construction + lockups)
    ============================================================ */
-// Dual-tier render: iridescent PNG for hero-scale uses, flat canon SVG for
-// badges/icons/inline. See brand/canon/mascot/png/README.md for the workflow.
-const USE_PNG_MASCOT = true;                            // master toggle
-const PNG_THRESHOLD  = 120;                             // px — below this, always SVG
-const PNG_BASE       = './canon/mascot/png';            // relative to brand/
-// Override per-call with `forceSvg` (badges/lockups pass this so the iridescent
-// render never tries to load at small sizes where it would just smudge).
+// PNG-first render. The 8 transparent-background iridescent PNGs in
+// brand/canon/mascot/png/ are the single source of truth for the mascot
+// at every size — hero, expression sheet, badges, lockups, inline. They
+// drop onto any surface (cream, crimson, dark) without fighting it.
+//
+// Source PNGs (with the original cloud backdrop, before background removal)
+// are kept at brand/canon/mascot/png/source/ for reference and re-cutting.
+//
+// The flat SVG is used only when forceSvg is set — for single-color
+// reproduction (App Mark, print plates, swag, favicon ≤32px) and as the
+// onError fallback if the PNG fails to load.
+const PNG_BASE = './canon/mascot/png';
 function pngPath(expression) {
   return `${PNG_BASE}/leponeus-${expression}.png`;
 }
 
 function MascotLeponeus({ size = 220, expression = 'doctrine', forceSvg = false }) {
-  // The canonical figure: tortoise body with strapped hare-ears.
-  // Expressions modify ears, eye, and posture.
-  const useImg = USE_PNG_MASCOT && !forceSvg && size >= PNG_THRESHOLD;
-  if (useImg) {
-    // Square hero render. Falls back to the flat SVG if the PNG 404s — the
-    // onError swap lets us ship before all 8 PNGs are generated.
-    return (
-      <img
-        src={pngPath(expression)}
-        width={size}
-        height={size}
-        alt={`Leponeus ${expression}`}
-        style={{ display: 'block', objectFit: 'contain' }}
-        onError={(ev) => {
-          const img = ev.currentTarget;
-          if (img.dataset.fallback === '1') return;
-          img.dataset.fallback = '1';
-          img.outerHTML = MascotLeponeusSvgString(size, expression);
-        }}
-      />
-    );
-  }
-  return <MascotLeponeusSvg size={size} expression={expression} />;
+  if (forceSvg) return <MascotLeponeusSvg size={size} expression={expression} />;
+  return (
+    <img
+      src={pngPath(expression)}
+      width={size}
+      height={size}
+      alt={`Leponeus ${expression}`}
+      style={{ display: 'block', objectFit: 'contain' }}
+      onError={(ev) => {
+        const img = ev.currentTarget;
+        if (img.dataset.fallback === '1') return;
+        img.dataset.fallback = '1';
+        img.outerHTML = MascotLeponeusSvgString(size, expression);
+      }}
+    />
+  );
 }
 
 function MascotLeponeusSvg({ size = 220, expression = 'doctrine' }) {
