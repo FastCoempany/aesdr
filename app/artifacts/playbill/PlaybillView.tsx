@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+
+import { Mascot } from "@/components/brand/Mascot";
 import type { PlaybillData } from "@/lib/artifacts/types";
 
 type Folio = "programme" | "reviews" | "notes";
@@ -30,6 +32,11 @@ export default function PlaybillView({ data }: { data: PlaybillData }) {
   return (
     <main className="playbill">
       <style>{CSS}</style>
+
+      {/* Owner pose — the final state. A-mark on shell. */}
+      <div style={{ display: "flex", justifyContent: "center", paddingTop: 32 }}>
+        <Mascot pose="owner" size={240} priority />
+      </div>
 
       {/* Marquee header */}
       <header className="marquee">

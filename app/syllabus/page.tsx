@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import AesdrBrand from "@/components/AesdrBrand";
+import { Mascot } from "@/components/brand/Mascot";
 import styles from "./syllabus.module.css";
 
 export const metadata: Metadata = {
@@ -50,6 +51,9 @@ export default function SyllabusPage() {
       <div className={styles.irisLine} />
 
       <section className={styles.hero}>
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
+          <Mascot pose="doctrine" size={200} priority />
+        </div>
         <div className={styles.heroKicker}>Shelf 12 &middot; Drawer A &middot; Est. 2026</div>
         <h1 className={styles.heroTitle}>
           The <em>Syllabus.</em>

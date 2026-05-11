@@ -6,11 +6,13 @@ import { redirect } from "next/navigation";
 import SignOutButton from "@/components/SignOutButton";
 import ArtifactTile from "@/components/ArtifactTile";
 import UnlockArtifactTile from "@/components/UnlockArtifactTile";
+import { Mascot } from "@/components/brand/Mascot";
 import { isAdminEmail } from "@/lib/admin";
 import { createClient } from "@/utils/supabase/server";
 import { verifyPaidAccess } from "@/utils/access/verifyAccess";
 import { LESSONS } from "@/utils/progress/types";
 import type { LessonProgressSummary } from "@/utils/progress/types";
+import { poseForLesson } from "@/utils/brand/lesson-poses";
 
 export const metadata: Metadata = {
   title: "Your Lessons | AESDR",
@@ -139,8 +141,22 @@ export default async function Dashboard() {
 
       <div className="mx-auto w-full max-w-3xl px-6 py-16" style={{ color: "#1A1A1A" }}>
 
-        {/* Header */}
-        <header className="mb-16">
+        {/* Header — dynamic pose mood ring per state file canon:
+            doctrine if 0 complete, current lesson's pose mid-journey,
+            owner if all 12 done. */}
+        <header className="mb-16" style={{ display: "flex", gap: 24, alignItems: "center", flexWrap: "wrap" }}>
+          <Mascot
+            pose={
+              allComplete
+                ? "owner"
+                : completedCount === 0
+                  ? "doctrine"
+                  : poseForLesson(currentLesson.id)
+            }
+            size={160}
+            priority
+          />
+          <div style={{ flex: "1 1 320px" }}>
           <p
             style={{
               fontFamily: "'Space Mono', monospace",
@@ -171,6 +187,7 @@ export default async function Dashboard() {
                 ? "You made it."
                 : `${completedCount} down. ${LESSONS.length - completedCount} to go.`}
           </h1>
+          </div>
         </header>
 
         {/* The Journey — sequential timeline */}
