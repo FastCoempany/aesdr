@@ -60,7 +60,9 @@ export default function ComingSoonPage() {
           alignItems: "center",
         }}
       >
-        {/* Turtle image */}
+        {/* Doctrine pose — canon. Kept as <img> (not <Mascot>) so the
+            absolute-positioned bypass button below can stay anchored to
+            the same DOM container with predictable positioning. */}
         <div
           style={{
             position: "relative",
@@ -69,7 +71,7 @@ export default function ComingSoonPage() {
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/turtle.png"
+            src="/mascot/leponeus-doctrine.png"
             alt=""
             draggable={false}
             style={{
@@ -80,15 +82,16 @@ export default function ComingSoonPage() {
             }}
           />
 
-          {/* Ghost bypass button — positioned over the turtle's left eye */}
+          {/* Ghost bypass button — positioned over the mascot's eye area.
+              Founder taps the eye + types 741407 to set the bypass cookie. */}
           <button
             onClick={handleGhost}
             aria-hidden="true"
             tabIndex={-1}
             style={{
               position: "absolute",
-              top: "16%",
-              left: "20%",
+              top: "30%",
+              left: "30%",
               width: 24,
               height: 24,
               borderRadius: "50%",
