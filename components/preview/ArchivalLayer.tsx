@@ -25,8 +25,8 @@ import { IntensityToggle, type Intensity } from "./IntensityToggle";
  *  - topo       very faint contour-line ghost wash
  */
 
-type BgVariant = "parchment" | "dots" | "topo";
-const BG_OPTIONS: BgVariant[] = ["parchment", "dots", "topo"];
+type BgVariant = "registration" | "pressure" | "pressed";
+const BG_OPTIONS: BgVariant[] = ["registration", "pressure", "pressed"];
 
 const OP: Record<Intensity, number> = {
   off: 0,
@@ -50,7 +50,7 @@ const WARM_BONE = "rgba(232, 220, 196, 0.85)";
 
 export function ArchivalLayer() {
   const [intensity, setIntensity] = useState<Intensity>("standard");
-  const [bg, setBg] = useState<BgVariant>("parchment");
+  const [bg, setBg] = useState<BgVariant>("pressed");
   const [pageH, setPageH] = useState(FALLBACK_HEIGHT);
 
   useEffect(() => {
@@ -143,9 +143,9 @@ export function ArchivalLayer() {
       <BgToggle value={bg} onChange={setBg} />
 
       {/* ─── Swappable background substrate ─── */}
-      {bg === "parchment" && <ParchmentBg pageH={pageH} opacity={op * 0.55} />}
-      {bg === "dots" && <DotsBg pageH={pageH} opacity={op * 0.32} />}
-      {bg === "topo" && <TopoBg pageH={pageH} opacity={op * 0.45} />}
+      {bg === "registration" && <RegistrationBg pageH={pageH} opacity={op * 0.55} />}
+      {bg === "pressure" && <PressureBg pageH={pageH} opacity={op * 0.50} />}
+      {bg === "pressed" && <PressedBg pageH={pageH} opacity={op * 0.60} />}
 
       {/* ─── Warm-bone specimen cards (soft depth, NOT multiplied) ─── */}
       <svg
@@ -238,7 +238,7 @@ export function ArchivalLayer() {
             letterSpacing="0.26em"
             fill="#6B6B6B"
           >
-            FIELD STUDIES · CABINET XII · LIVING SPECIMEN
+            FIELD STUDIES · CABINET XII · SPECIMEN LOGGED
           </text>
           <line x1="0" y1="28" x2="420" y2="28" stroke="#1A1A1A" strokeWidth="0.6" opacity="0.5" />
         </g>
@@ -313,7 +313,7 @@ export function ArchivalLayer() {
                   textAnchor={m.x < 720 ? "end" : "start"}
                   stroke="none"
                 >
-                  {["dorsal scute", "marginal scute", "growth ring · VII", "flight distance · 4.2m", "alert posture · 12s"][i % 5]}
+                  {["TRAIT CONFIRMED", "PATTERN OBSERVED", "EXPOSURE WINDOW", "SPECIMEN LOGGED", "MARKING NOTED"][i % 5]}
                 </text>
               </g>
             );
@@ -480,13 +480,13 @@ function StampMark({ kind }: { kind: "stamp-verified" | "stamp-caution" | "stamp
   if (kind === "stamp-verified") {
     return (
       <g stroke={c} fill="none" strokeWidth="1.3">
-        <ellipse cx="0" cy="0" rx="68" ry="20" />
-        <ellipse cx="0" cy="0" rx="62" ry="15" strokeWidth="0.7" />
+        <ellipse cx="0" cy="0" rx="72" ry="20" />
+        <ellipse cx="0" cy="0" rx="66" ry="15" strokeWidth="0.7" />
         <text x="0" y="4" fontFamily="'Space Mono', monospace" fontSize="11" letterSpacing="0.30em" fill={c} stroke="none" textAnchor="middle" fontWeight="700">
-          LIVING SPECIMEN
+          SPECIMEN VERIFIED
         </text>
         <text x="0" y="-12" fontFamily="'Space Mono', monospace" fontSize="6" letterSpacing="0.30em" fill={c} stroke="none" textAnchor="middle">
-          · VERIFIED ·
+          · CASE XII ·
         </text>
       </g>
     );
@@ -494,19 +494,19 @@ function StampMark({ kind }: { kind: "stamp-verified" | "stamp-caution" | "stamp
   if (kind === "stamp-caution") {
     return (
       <g stroke={c} fill="none" strokeWidth="1.5">
-        <rect x="-76" y="-14" width="152" height="28" />
-        <rect x="-72" y="-10" width="144" height="20" strokeWidth="0.7" />
+        <rect x="-72" y="-14" width="144" height="28" />
+        <rect x="-68" y="-10" width="136" height="20" strokeWidth="0.7" />
         <text x="0" y="5" fontFamily="'Space Mono', monospace" fontSize="11" letterSpacing="0.32em" fill={c} stroke="none" textAnchor="middle" fontWeight="700">
-          PREDATOR · CAUTION
+          THREAT PROXIMAL
         </text>
       </g>
     );
   }
   return (
     <g stroke={c} fill="none" strokeWidth="1.2">
-      <rect x="-60" y="-13" width="120" height="26" />
+      <rect x="-88" y="-13" width="176" height="26" />
       <text x="0" y="4" fontFamily="'Space Mono', monospace" fontSize="10" letterSpacing="0.28em" fill={c} stroke="none" textAnchor="middle" fontWeight="700">
-        FIELD OBSERVED
+        REACTION DOCUMENTED
       </text>
     </g>
   );
@@ -565,11 +565,37 @@ function BgToggle({ value, onChange }: { value: BgVariant; onChange: (v: BgVaria
   );
 }
 
-/** Parchment — warm cream with subtle paper-fiber texture. Felt, not measured. */
-function ParchmentBg({ pageH, opacity }: { pageH: number; opacity: number }) {
+/**
+ * Registration — plate-proof aesthetic.
+ *
+ * Tiny alignment crosses at regular grid intersections, calibration
+ * density hashes along the left + right margins, and four crosshair
+ * registration targets at the page corners. Reads as a printer's
+ * proof sheet — the substrate of careful work, not a meadow.
+ */
+function RegistrationBg({ pageH, opacity }: { pageH: number; opacity: number }) {
+  const layout = useMemo(() => {
+    const crosses: { x: number; y: number }[] = [];
+    for (let y = 260; y < pageH - 140; y += 180) {
+      for (let x = 240; x < 1240; x += 220) {
+        crosses.push({ x, y });
+      }
+    }
+    const hashRows: number[] = [];
+    for (let y = 200; y < pageH - 100; y += 36) hashRows.push(y);
+    return { crosses, hashRows };
+  }, [pageH]);
+  const targets = [
+    { x: 64, y: 96 },
+    { x: 1376, y: 96 },
+    { x: 64, y: pageH - 96 },
+    { x: 1376, y: pageH - 96 },
+  ];
   return (
-    <div
+    <svg
       aria-hidden="true"
+      viewBox={`0 0 1440 ${pageH}`}
+      preserveAspectRatio="xMidYMin slice"
       style={{
         position: "absolute",
         top: 0,
@@ -581,50 +607,70 @@ function ParchmentBg({ pageH, opacity }: { pageH: number; opacity: number }) {
         opacity,
         mixBlendMode: "multiply",
         transition: "opacity 320ms",
-        backgroundImage: `
-          repeating-linear-gradient(0deg, rgba(122,98,68,0.07) 0, rgba(122,98,68,0.07) 1px, transparent 1px, transparent 5px),
-          repeating-linear-gradient(90deg, rgba(122,98,68,0.04) 0, rgba(122,98,68,0.04) 1px, transparent 1px, transparent 9px),
-          radial-gradient(ellipse at 22% 18%, rgba(168,140,108,0.14), transparent 55%),
-          radial-gradient(ellipse at 78% 78%, rgba(168,140,108,0.11), transparent 55%),
-          radial-gradient(ellipse at 50% 50%, rgba(168,140,108,0.06), transparent 80%)
-        `,
       }}
-    />
+    >
+      {/* Alignment crosses at grid intersections */}
+      <g stroke="#1A1A1A" strokeWidth="0.5" opacity="0.65">
+        {layout.crosses.map((p, i) => (
+          <g key={i}>
+            <line x1={p.x - 5} y1={p.y} x2={p.x + 5} y2={p.y} />
+            <line x1={p.x} y1={p.y - 5} x2={p.x} y2={p.y + 5} />
+          </g>
+        ))}
+      </g>
+      {/* Registration crosshair targets in 4 corners */}
+      {targets.map((t, i) => (
+        <g key={i} stroke="#1A1A1A" fill="none" strokeWidth="0.8" opacity="0.62">
+          <circle cx={t.x} cy={t.y} r="9" />
+          <line x1={t.x - 14} y1={t.y} x2={t.x + 14} y2={t.y} />
+          <line x1={t.x} y1={t.y - 14} x2={t.x} y2={t.y + 14} />
+          <circle cx={t.x} cy={t.y} r="1.5" fill="#1A1A1A" />
+        </g>
+      ))}
+      {/* Calibration density hashes — left + right margins, varying length */}
+      <g stroke="#1A1A1A" strokeWidth="0.6" opacity="0.55">
+        {layout.hashRows.map((y, i) => {
+          const len = i % 5 === 0 ? 20 : i % 2 === 0 ? 12 : 6;
+          return (
+            <g key={i}>
+              <line x1="12" y1={y} x2={12 + len} y2={y} />
+              <line x1={1428 - len} y1={y} x2="1428" y2={y} />
+            </g>
+          );
+        })}
+      </g>
+      {/* Crop ticks at section anchors — major page divisions */}
+      {[0.18, 0.36, 0.54, 0.72].map((p, i) => {
+        const y = pageH * p;
+        return (
+          <g key={`crop${i}`} stroke="#1A1A1A" strokeWidth="0.7" opacity="0.55">
+            <line x1="40" y1={y} x2="60" y2={y} />
+            <line x1="40" y1={y - 10} x2="40" y2={y + 10} />
+            <line x1="1400" y1={y} x2="1380" y2={y} />
+            <line x1="1400" y1={y - 10} x2="1400" y2={y + 10} />
+          </g>
+        );
+      })}
+    </svg>
   );
 }
 
-/** Dot matrix — small ink dots at grid intersections only. Calibration sheet. */
-function DotsBg({ pageH, opacity }: { pageH: number; opacity: number }) {
-  return (
-    <div
-      aria-hidden="true"
-      style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: pageH,
-        pointerEvents: "none",
-        zIndex: 3,
-        opacity,
-        mixBlendMode: "multiply",
-        transition: "opacity 320ms",
-        backgroundImage: "radial-gradient(circle, rgba(26,26,26,0.62) 1px, transparent 1.6px)",
-        backgroundSize: "32px 32px",
-      }}
-    />
-  );
-}
-
-/** Topo ghosts — very faint contour ellipses drifting across the page. */
-function TopoBg({ pageH, opacity }: { pageH: number; opacity: number }) {
-  const groups = useMemo(() => {
-    const rng = seededJitter(811);
-    return Array.from({ length: 9 }).map(() => ({
+/**
+ * Pressure — soft topographic stress lines.
+ *
+ * Larger overlapping contour fields than a simple topo, with small
+ * directional flow ticks along the outermost contour of each field.
+ * Implies environmental tension — the field has weather, not just
+ * geometry. The specimen is under load.
+ */
+function PressureBg({ pageH, opacity }: { pageH: number; opacity: number }) {
+  const fields = useMemo(() => {
+    const rng = seededJitter(977);
+    return Array.from({ length: 7 }).map(() => ({
       cx: 80 + rng() * 1280,
       cy: 160 + rng() * (pageH - 320),
-      rx: 140 + rng() * 200,
-      ry: 90 + rng() * 130,
+      rx: 200 + rng() * 240,
+      ry: 130 + rng() * 160,
       rot: rng() * 60 - 30,
     }));
   }, [pageH]);
@@ -646,13 +692,135 @@ function TopoBg({ pageH, opacity }: { pageH: number; opacity: number }) {
         transition: "opacity 320ms",
       }}
     >
-      {groups.map((c, i) => (
-        <g key={i} transform={`rotate(${c.rot} ${c.cx} ${c.cy})`} stroke="#1A1A1A" strokeWidth="0.5" fill="none">
-          {[1.0, 0.82, 0.66, 0.50, 0.34, 0.20].map((s, j) => (
-            <ellipse key={j} cx={c.cx} cy={c.cy} rx={c.rx * s} ry={c.ry * s} opacity={0.32 + j * 0.05} />
+      {fields.map((f, i) => (
+        <g key={i} transform={`rotate(${f.rot} ${f.cx} ${f.cy})`} stroke="#1A1A1A" strokeWidth="0.45" fill="none">
+          {[1.0, 0.86, 0.72, 0.58, 0.44, 0.30, 0.18].map((s, j) => (
+            <ellipse key={j} cx={f.cx} cy={f.cy} rx={f.rx * s} ry={f.ry * s} opacity={0.26 + j * 0.04} />
           ))}
+          {/* Directional flow ticks along the outermost contour */}
+          {Array.from({ length: 8 }).map((_, k) => {
+            const a = (k / 8) * Math.PI * 2;
+            const x = f.cx + Math.cos(a) * f.rx;
+            const y = f.cy + Math.sin(a) * f.ry;
+            const tx = Math.cos(a + Math.PI / 2) * 5;
+            const ty = Math.sin(a + Math.PI / 2) * 5;
+            return (
+              <line key={k} x1={x} y1={y} x2={x + tx} y2={y + ty} strokeWidth="0.35" opacity="0.7" />
+            );
+          })}
         </g>
       ))}
     </svg>
+  );
+}
+
+/**
+ * Pressed — premium ledger / cotton-fiber pressed-paper substrate
+ * with watermark-style specimen seals embossed deep into the page.
+ *
+ * Three CSS layers:
+ *  - tight horizontal fiber lines (cotton grain at ~3px)
+ *  - wider ledger rulings (every 24px, very faint warm-ochre)
+ *  - mottled radial-gradient warm patches (paper unevenness)
+ * Plus an SVG layer of large circular watermark seals every
+ * ~1200px scroll bearing the Latin binomial and a stylized
+ * carapace seal.
+ */
+function PressedBg({ pageH, opacity }: { pageH: number; opacity: number }) {
+  const seals = useMemo(() => {
+    const count = Math.max(1, Math.floor(pageH / 1100));
+    return Array.from({ length: count }).map((_, i) => ({
+      x: i % 2 === 0 ? 380 : 1060,
+      y: 540 + i * 1100,
+    }));
+  }, [pageH]);
+
+  return (
+    <>
+      {/* Cotton fiber + ledger rulings + warm mottling */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: pageH,
+          pointerEvents: "none",
+          zIndex: 3,
+          opacity,
+          mixBlendMode: "multiply",
+          transition: "opacity 320ms",
+          backgroundImage: `
+            repeating-linear-gradient(0deg, rgba(122,98,68,0.05) 0, rgba(122,98,68,0.05) 1px, transparent 1px, transparent 3px),
+            repeating-linear-gradient(0deg, rgba(168,140,108,0.08) 0, rgba(168,140,108,0.08) 1px, transparent 1px, transparent 24px),
+            repeating-linear-gradient(90deg, rgba(122,98,68,0.03) 0, rgba(122,98,68,0.03) 1px, transparent 1px, transparent 11px),
+            radial-gradient(ellipse at 28% 22%, rgba(168,140,108,0.13), transparent 55%),
+            radial-gradient(ellipse at 72% 75%, rgba(168,140,108,0.11), transparent 50%),
+            radial-gradient(ellipse at 50% 50%, rgba(168,140,108,0.05), transparent 80%)
+          `,
+        }}
+      />
+      {/* Watermark specimen seals, very faint */}
+      <svg
+        aria-hidden="true"
+        viewBox={`0 0 1440 ${pageH}`}
+        preserveAspectRatio="xMidYMin slice"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: pageH,
+          pointerEvents: "none",
+          zIndex: 3,
+          opacity: opacity * 0.55,
+          mixBlendMode: "multiply",
+          transition: "opacity 320ms",
+        }}
+      >
+        <defs>
+          {seals.map((s, i) => (
+            <path key={i} id={`pressed-seal-curve-${i}`} d={`M ${s.x - 150} ${s.y} A 150 150 0 1 1 ${s.x + 150} ${s.y}`} fill="none" />
+          ))}
+        </defs>
+        {seals.map((s, i) => (
+          <g key={i} stroke="#1A1A1A" fill="none" strokeWidth="0.5" opacity="0.4">
+            <circle cx={s.x} cy={s.y} r="170" strokeWidth="0.6" />
+            <circle cx={s.x} cy={s.y} r="160" strokeWidth="0.3" />
+            <circle cx={s.x} cy={s.y} r="118" strokeWidth="0.3" opacity="0.7" />
+            {/* Latin binomial wrapped around the top */}
+            <text fontFamily="Playfair Display, Georgia, serif" fontStyle="italic" fontSize="20" fill="#1A1A1A" stroke="none" letterSpacing="0.18em" opacity="0.78">
+              <textPath href={`#pressed-seal-curve-${i}`} startOffset="50%" textAnchor="middle">
+                LEPONEUS · AESOPIANUS · NO. XII
+              </textPath>
+            </text>
+            {/* Stylized carapace seal at center */}
+            <g transform={`translate(${s.x} ${s.y})`}>
+              <ellipse cx="0" cy="0" rx="80" ry="56" strokeWidth="0.5" />
+              <ellipse cx="0" cy="0" rx="22" ry="16" strokeWidth="0.4" />
+              {Array.from({ length: 5 }).map((_, j) => {
+                const a = (j / 5) * Math.PI - Math.PI / 2;
+                return (
+                  <line
+                    key={j}
+                    x1={Math.cos(a) * 10}
+                    y1={Math.sin(a) * 10}
+                    x2={Math.cos(a) * 80}
+                    y2={Math.sin(a) * 56}
+                    strokeWidth="0.35"
+                  />
+                );
+              })}
+              <circle cx="0" cy="0" r="2" fill="#1A1A1A" />
+            </g>
+            {/* Bottom label */}
+            <text x={s.x} y={s.y + 138} fontFamily="'Space Mono', monospace" fontSize="9" letterSpacing="0.30em" fill="#1A1A1A" stroke="none" textAnchor="middle" opacity="0.7">
+              · SPECIMEN VERIFIED ·
+            </text>
+          </g>
+        ))}
+      </svg>
+    </>
   );
 }
