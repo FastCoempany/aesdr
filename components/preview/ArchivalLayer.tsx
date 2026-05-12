@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, type CSSProperties } from "react";
 
 import { IntensityToggle, type Intensity } from "./IntensityToggle";
 
@@ -18,7 +18,15 @@ import { IntensityToggle, type Intensity } from "./IntensityToggle";
  * warnings, lead-line tags only.
  *
  * Tone: "know the animal, read the field, train accordingly."
+ *
+ * Backgrounds (swappable via floating toggle):
+ *  - parchment  warm cream with subtle paper-fiber texture
+ *  - dots       calibration-sheet dot matrix at grid intersections
+ *  - topo       very faint contour-line ghost wash
  */
+
+type BgVariant = "parchment" | "dots" | "topo";
+const BG_OPTIONS: BgVariant[] = ["parchment", "dots", "topo"];
 
 const OP: Record<Intensity, number> = {
   off: 0,
@@ -42,6 +50,7 @@ const WARM_BONE = "rgba(232, 220, 196, 0.85)";
 
 export function ArchivalLayer() {
   const [intensity, setIntensity] = useState<Intensity>("standard");
+  const [bg, setBg] = useState<BgVariant>("parchment");
   const [pageH, setPageH] = useState(FALLBACK_HEIGHT);
 
   useEffect(() => {
@@ -131,28 +140,12 @@ export function ArchivalLayer() {
   return (
     <>
       <IntensityToggle label="Archival" value={intensity} onChange={setIntensity} />
+      <BgToggle value={bg} onChange={setBg} />
 
-      {/* ─── 1mm graph-paper grid wash ─── */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: pageH,
-          pointerEvents: "none",
-          zIndex: 3,
-          opacity: op * 0.25,
-          mixBlendMode: "multiply",
-          backgroundImage: `
-            linear-gradient(0deg, rgba(26,26,26,0.55) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(26,26,26,0.55) 1px, transparent 1px)
-          `,
-          backgroundSize: "32px 32px",
-          transition: "opacity 320ms",
-        }}
-      />
+      {/* ─── Swappable background substrate ─── */}
+      {bg === "parchment" && <ParchmentBg pageH={pageH} opacity={op * 0.55} />}
+      {bg === "dots" && <DotsBg pageH={pageH} opacity={op * 0.32} />}
+      {bg === "topo" && <TopoBg pageH={pageH} opacity={op * 0.45} />}
 
       {/* ─── Warm-bone specimen cards (soft depth, NOT multiplied) ─── */}
       <svg
@@ -516,5 +509,150 @@ function StampMark({ kind }: { kind: "stamp-verified" | "stamp-caution" | "stamp
         FIELD OBSERVED
       </text>
     </g>
+  );
+}
+
+/* ─────────────────────────────────────────── Background variants ─── */
+
+function BgToggle({ value, onChange }: { value: BgVariant; onChange: (v: BgVariant) => void }) {
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: 96,
+        right: 16,
+        zIndex: 9999,
+        background: "rgba(26, 26, 26, 0.92)",
+        backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)",
+        color: "var(--cream)",
+        padding: "10px 12px",
+        fontFamily: "var(--mono, 'Space Mono', monospace)",
+        fontSize: 10,
+        letterSpacing: "0.18em",
+        textTransform: "uppercase",
+        display: "flex",
+        flexDirection: "column",
+        gap: 8,
+        border: "1px solid rgba(255,255,255,0.12)",
+        pointerEvents: "auto",
+      }}
+    >
+      <div style={{ opacity: 0.55, fontSize: 9 }}>Background</div>
+      <div style={{ display: "flex", gap: 4 }}>
+        {BG_OPTIONS.map((opt) => {
+          const active = value === opt;
+          const btn: CSSProperties = {
+            padding: "5px 8px",
+            background: active ? "var(--cream)" : "transparent",
+            color: active ? "var(--ink)" : "var(--cream)",
+            border: "1px solid rgba(255,255,255,0.25)",
+            fontFamily: "inherit",
+            fontSize: 9,
+            letterSpacing: "0.14em",
+            textTransform: "uppercase",
+            cursor: "pointer",
+            fontWeight: active ? 700 : 400,
+          };
+          return (
+            <button key={opt} style={btn} onClick={() => onChange(opt)}>
+              {opt}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/** Parchment — warm cream with subtle paper-fiber texture. Felt, not measured. */
+function ParchmentBg({ pageH, opacity }: { pageH: number; opacity: number }) {
+  return (
+    <div
+      aria-hidden="true"
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: pageH,
+        pointerEvents: "none",
+        zIndex: 3,
+        opacity,
+        mixBlendMode: "multiply",
+        transition: "opacity 320ms",
+        backgroundImage: `
+          repeating-linear-gradient(0deg, rgba(122,98,68,0.07) 0, rgba(122,98,68,0.07) 1px, transparent 1px, transparent 5px),
+          repeating-linear-gradient(90deg, rgba(122,98,68,0.04) 0, rgba(122,98,68,0.04) 1px, transparent 1px, transparent 9px),
+          radial-gradient(ellipse at 22% 18%, rgba(168,140,108,0.14), transparent 55%),
+          radial-gradient(ellipse at 78% 78%, rgba(168,140,108,0.11), transparent 55%),
+          radial-gradient(ellipse at 50% 50%, rgba(168,140,108,0.06), transparent 80%)
+        `,
+      }}
+    />
+  );
+}
+
+/** Dot matrix — small ink dots at grid intersections only. Calibration sheet. */
+function DotsBg({ pageH, opacity }: { pageH: number; opacity: number }) {
+  return (
+    <div
+      aria-hidden="true"
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: pageH,
+        pointerEvents: "none",
+        zIndex: 3,
+        opacity,
+        mixBlendMode: "multiply",
+        transition: "opacity 320ms",
+        backgroundImage: "radial-gradient(circle, rgba(26,26,26,0.62) 1px, transparent 1.6px)",
+        backgroundSize: "32px 32px",
+      }}
+    />
+  );
+}
+
+/** Topo ghosts — very faint contour ellipses drifting across the page. */
+function TopoBg({ pageH, opacity }: { pageH: number; opacity: number }) {
+  const groups = useMemo(() => {
+    const rng = seededJitter(811);
+    return Array.from({ length: 9 }).map(() => ({
+      cx: 80 + rng() * 1280,
+      cy: 160 + rng() * (pageH - 320),
+      rx: 140 + rng() * 200,
+      ry: 90 + rng() * 130,
+      rot: rng() * 60 - 30,
+    }));
+  }, [pageH]);
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox={`0 0 1440 ${pageH}`}
+      preserveAspectRatio="xMidYMin slice"
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: pageH,
+        pointerEvents: "none",
+        zIndex: 3,
+        opacity,
+        mixBlendMode: "multiply",
+        transition: "opacity 320ms",
+      }}
+    >
+      {groups.map((c, i) => (
+        <g key={i} transform={`rotate(${c.rot} ${c.cx} ${c.cy})`} stroke="#1A1A1A" strokeWidth="0.5" fill="none">
+          {[1.0, 0.82, 0.66, 0.50, 0.34, 0.20].map((s, j) => (
+            <ellipse key={j} cx={c.cx} cy={c.cy} rx={c.rx * s} ry={c.ry * s} opacity={0.32 + j * 0.05} />
+          ))}
+        </g>
+      ))}
+    </svg>
   );
 }
