@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const BYPASS_COOKIE = "aesdr_cs_bypass";
 const BYPASS_CODE = "741407";
@@ -16,8 +16,16 @@ function setBypass() {
 
 export default function ComingSoonPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [visible, setVisible] = useState(true);
 
+  const completeBypass = useCallback(() => {
+    setBypass();
+    setVisible(false);
+    router.replace("/");
+  }, [router]);
+
+  // Mechanism 1: existing cookie skips the gate entirely.
   useEffect(() => {
     queueMicrotask(() => {
       if (hasBypass()) {
@@ -27,14 +35,52 @@ export default function ComingSoonPage() {
     });
   }, [router]);
 
+  // Mechanism 2: URL bypass — visit /coming-soon?bypass=741407 to set the
+  // cookie without any clicking. Bookmarkable. Backwards-compatible with
+  // mechanism 1. Wrapped in queueMicrotask to satisfy the no-setState-in-effect
+  // lint rule and match mechanism 1's pattern.
+  useEffect(() => {
+    if (searchParams?.get("bypass") === BYPASS_CODE) {
+      queueMicrotask(() => completeBypass());
+    }
+  }, [searchParams, completeBypass]);
+
+  // Mechanism 3: keyboard shortcut. Anywhere on the page, type the 6-digit
+  // code (741407) and the cookie sets. No mouse / no prompt needed.
+  useEffect(() => {
+    let buf = "";
+    let resetTimer: ReturnType<typeof setTimeout> | null = null;
+
+    function handleKey(e: KeyboardEvent) {
+      // Only digits matter; ignore modifiers and special keys.
+      if (e.key.length !== 1 || !/[0-9]/.test(e.key)) return;
+      buf = (buf + e.key).slice(-BYPASS_CODE.length);
+
+      // Reset the buffer if the user pauses for a second.
+      if (resetTimer) clearTimeout(resetTimer);
+      resetTimer = setTimeout(() => {
+        buf = "";
+      }, 1500);
+
+      if (buf === BYPASS_CODE) {
+        if (resetTimer) clearTimeout(resetTimer);
+        completeBypass();
+      }
+    }
+
+    window.addEventListener("keydown", handleKey);
+    return () => {
+      window.removeEventListener("keydown", handleKey);
+      if (resetTimer) clearTimeout(resetTimer);
+    };
+  }, [completeBypass]);
+
   if (!visible) return null;
 
   function handleGhost() {
     const code = prompt("");
     if (code === BYPASS_CODE) {
-      setBypass();
-      setVisible(false);
-      router.replace("/");
+      completeBypass();
     }
   }
 
@@ -51,7 +97,7 @@ export default function ComingSoonPage() {
         overflow: "hidden",
       }}
     >
-      {/* Turtle + logo container */}
+      {/* Mascot + logo container */}
       <div
         style={{
           position: "relative",
@@ -82,21 +128,18 @@ export default function ComingSoonPage() {
             }}
           />
 
-          {/* Ghost bypass button — sits over the mascot's eye area.
-              Founder taps anywhere in the eye region + types 741407 to set
-              the bypass cookie. Hit target enlarged to 80×80 (centered on
-              the doctrine pose's head) so it forgives PNG-position drift. */}
+          {/* Mechanism 4 (the foolproof click target): the entire mascot is
+              the bypass button. Tap ANYWHERE on the mascot, type 741407,
+              done. No more "where exactly is the eye" guessing. */}
           <button
             onClick={handleGhost}
             aria-hidden="true"
             tabIndex={-1}
             style={{
               position: "absolute",
-              top: "16%",
-              left: "16%",
-              width: 80,
-              height: 80,
-              borderRadius: "50%",
+              inset: 0,
+              width: "100%",
+              height: "100%",
               background: "transparent",
               border: "none",
               cursor: "default",
@@ -107,7 +150,7 @@ export default function ComingSoonPage() {
           />
         </div>
 
-        {/* Iris shimmer AESDR logo — stacked on the turtle's foot */}
+        {/* Iris shimmer AESDR logo — stacked on the mascot's foot */}
         <h1
           style={{
             fontFamily: "var(--display, 'Playfair Display', Georgia, serif)",
