@@ -14,6 +14,7 @@ export default function RefundPolicyPage() {
       title="Refund Policy"
       lastUpdated="April 5, 2026"
       current="refund-policy"
+      ghostNumber="05"
     >
       <Section title="The short version">
         <p>

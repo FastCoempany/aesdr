@@ -13,6 +13,7 @@ export default function PrivacyPage() {
       title="Privacy Policy"
       lastUpdated="April 5, 2026"
       current="privacy"
+      ghostNumber="04"
     >
       <Section title="Information we collect">
         <p style={{ marginBottom: 12 }}>

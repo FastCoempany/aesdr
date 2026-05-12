@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <LegalShell eyebrow="Contact" title="Get in touch" current="contact">
+    <LegalShell eyebrow="Contact" title="Get in touch" current="contact" ghostNumber="02">
       <p style={{ marginBottom: 28, fontSize: 18 }}>
         Have a question, need help with your account, or want to share
         feedback? Reach out directly.

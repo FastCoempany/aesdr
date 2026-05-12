@@ -13,6 +13,7 @@ export default function TermsPage() {
       title="Terms of Service"
       lastUpdated="April 5, 2026"
       current="terms"
+      ghostNumber="03"
     >
       <Section title="1. Acceptance of Terms">
         <p>
