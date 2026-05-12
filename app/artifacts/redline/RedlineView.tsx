@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { Divider } from "@/components/brand/Divider";
 import { Mascot } from "@/components/brand/Mascot";
 import type { RedlineData } from "@/lib/artifacts/types";
 
@@ -56,6 +57,13 @@ export default function RedlineView({ data }: { data: RedlineData }) {
           </div>
           <div className="cover-stamp">Returned with edits</div>
         </header>
+
+        {/* Canon flourish: dotted-path between the cover and folio nav.
+            The dashed arc fits the manuscript-with-edits register — a
+            trail of corrections rather than the formal meander. */}
+        <div style={{ maxWidth: 480, margin: "20px auto", color: "#C53030" }}>
+          <Divider variant="dotted-path" />
+        </div>
 
         {/* Folio tabs */}
         <nav className="folios" aria-label="Folio navigation">
