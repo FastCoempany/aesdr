@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <LegalShell eyebrow="About" title="About AESDR" current="about">
+    <LegalShell eyebrow="About" title="About AESDR" current="about" ghostNumber="01">
       <Section title="Who built this">
         <p>
           AESDR was built by sales operators with over a decade of combined

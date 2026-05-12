@@ -20,6 +20,12 @@ type Props = {
   children: ReactNode;
   /** Slug of the current page (omit from footer cross-links). */
   current?: "terms" | "privacy" | "refund-policy" | "about" | "contact";
+  /**
+   * Canon flourish: a huge faded numeral rendered behind the headline area.
+   * Pass a short string like "01", "02", … to mark this page. Optional —
+   * pages without a number stay plain.
+   */
+  ghostNumber?: string;
 };
 
 const CROSS_LINKS: { slug: NonNullable<Props["current"]>; label: string; href: string }[] = [
@@ -30,12 +36,33 @@ const CROSS_LINKS: { slug: NonNullable<Props["current"]>; label: string; href: s
   { slug: "refund-policy", label: "Refunds", href: "/refund-policy" },
 ];
 
+/** Corner-bracket flourish. 14px L-shape at each of the 4 article corners. */
+function CornerBrackets() {
+  const c: React.CSSProperties = {
+    position: "absolute",
+    width: 14,
+    height: 14,
+    pointerEvents: "none",
+    opacity: 0.4,
+  };
+  const ink = "var(--ink)";
+  return (
+    <>
+      <span style={{ ...c, top: -8, left: -8, borderTop: `1px solid ${ink}`, borderLeft: `1px solid ${ink}` }} aria-hidden />
+      <span style={{ ...c, top: -8, right: -8, borderTop: `1px solid ${ink}`, borderRight: `1px solid ${ink}` }} aria-hidden />
+      <span style={{ ...c, bottom: -8, left: -8, borderBottom: `1px solid ${ink}`, borderLeft: `1px solid ${ink}` }} aria-hidden />
+      <span style={{ ...c, bottom: -8, right: -8, borderBottom: `1px solid ${ink}`, borderRight: `1px solid ${ink}` }} aria-hidden />
+    </>
+  );
+}
+
 export default function LegalShell({
   eyebrow,
   title,
   lastUpdated,
   children,
   current,
+  ghostNumber,
 }: Props) {
   return (
     <main
@@ -50,8 +77,37 @@ export default function LegalShell({
         style={{
           maxWidth: 720,
           margin: "0 auto",
+          position: "relative",
         }}
       >
+        <CornerBrackets />
+
+        {/* Ghost numeral — huge faded italic in the upper-right, sits BEHIND
+            content (zIndex 0). Marks the page like a chapter folio. */}
+        {ghostNumber && (
+          <span
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              top: -32,
+              right: -8,
+              fontFamily: "var(--display)",
+              fontStyle: "italic",
+              fontWeight: 900,
+              fontSize: "clamp(140px, 22vw, 260px)",
+              lineHeight: 1,
+              color: "var(--light)",
+              userSelect: "none",
+              pointerEvents: "none",
+              zIndex: 0,
+              letterSpacing: "-0.03em",
+            }}
+          >
+            {ghostNumber}
+          </span>
+        )}
+
+        <div style={{ position: "relative", zIndex: 1 }}>
         {/* Back link */}
         <Link
           href="/"
@@ -149,6 +205,7 @@ export default function LegalShell({
             </Link>
           ))}
         </footer>
+        </div>
       </article>
     </main>
   );
