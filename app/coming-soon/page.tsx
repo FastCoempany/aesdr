@@ -82,18 +82,20 @@ export default function ComingSoonPage() {
             }}
           />
 
-          {/* Ghost bypass button — positioned over the mascot's eye area.
-              Founder taps the eye + types 741407 to set the bypass cookie. */}
+          {/* Ghost bypass button — sits over the mascot's eye area.
+              Founder taps anywhere in the eye region + types 741407 to set
+              the bypass cookie. Hit target enlarged to 80×80 (centered on
+              the doctrine pose's head) so it forgives PNG-position drift. */}
           <button
             onClick={handleGhost}
             aria-hidden="true"
             tabIndex={-1}
             style={{
               position: "absolute",
-              top: "30%",
-              left: "30%",
-              width: 24,
-              height: 24,
+              top: "16%",
+              left: "16%",
+              width: 80,
+              height: 80,
               borderRadius: "50%",
               background: "transparent",
               border: "none",
