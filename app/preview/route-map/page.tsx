@@ -37,7 +37,7 @@ export default async function RoutePreviewPage({ searchParams }: Props) {
           pointerEvents: "none",
         }}
       >
-        Sandbox · /preview/route · not live
+        Sandbox · /preview/route-map · not live
       </div>
     </div>
   );
