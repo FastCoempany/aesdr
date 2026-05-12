@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { Divider } from "@/components/brand/Divider";
 import { Mascot } from "@/components/brand/Mascot";
 import type { PlaybillData } from "@/lib/artifacts/types";
 
@@ -54,6 +55,12 @@ export default function PlaybillView({ data }: { data: PlaybillData }) {
           {roleLabel} · Twelve Lessons · {dateLabel}
         </div>
       </header>
+
+      {/* Canon flourish: meander (Greek-key) between the marquee and the
+          folio nav — chapter-end mark, fits the theatrical register. */}
+      <div style={{ maxWidth: 480, margin: "20px auto", color: "#A68B4E" }}>
+        <Divider variant="meander" />
+      </div>
 
       {/* Folio tabs */}
       <nav className="acts" aria-label="Folio navigation">
