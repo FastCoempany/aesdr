@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import AesdrBrand from "@/components/AesdrBrand";
+import { Icon } from "@/components/brand/Icon";
 import { Mascot } from "@/components/brand/Mascot";
+import { iconForLesson } from "@/utils/brand/lesson-icons";
 import styles from "./syllabus.module.css";
 
 export const metadata: Metadata = {
@@ -73,9 +75,10 @@ export default function SyllabusPage() {
       <section className={styles.catalogGrid}>
         {LESSONS.map((lesson) => (
           <article key={lesson.num} className={styles.card}>
-            <div className={styles.callnum}>
+            <div className={styles.callnum} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <Icon name={iconForLesson(lesson.num)} size={14} />
               <span className={styles.lessonNum}>658.85 / {lesson.num}</span>
-              <span>{lesson.chapter}</span>
+              <span style={{ marginLeft: "auto" }}>{lesson.chapter}</span>
             </div>
             <h3
               className={

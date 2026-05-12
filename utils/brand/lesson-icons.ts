@@ -39,6 +39,14 @@ export const LESSON_ICON: Record<string, IconName> = {
   "12": "lock",
 };
 
+/**
+ * Returns the canonical icon for a lesson id. Accepts both:
+ *   - the dashboard format: "1" .. "12"
+ *   - the syllabus format:  "L01" .. "L12"
+ * Falls back to `shell` (the foundation glyph) for unknown ids.
+ */
 export function iconForLesson(lessonId: string | number): IconName {
-  return LESSON_ICON[String(lessonId)] ?? "shell";
+  const raw = String(lessonId);
+  const normalized = raw.replace(/^L0*/i, "") || raw;
+  return LESSON_ICON[normalized] ?? "shell";
 }
