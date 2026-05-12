@@ -6,12 +6,14 @@ import { redirect } from "next/navigation";
 import SignOutButton from "@/components/SignOutButton";
 import ArtifactTile from "@/components/ArtifactTile";
 import UnlockArtifactTile from "@/components/UnlockArtifactTile";
+import { Icon } from "@/components/brand/Icon";
 import { Mascot } from "@/components/brand/Mascot";
 import { isAdminEmail } from "@/lib/admin";
 import { createClient } from "@/utils/supabase/server";
 import { verifyPaidAccess } from "@/utils/access/verifyAccess";
 import { LESSONS } from "@/utils/progress/types";
 import type { LessonProgressSummary } from "@/utils/progress/types";
+import { iconForLesson } from "@/utils/brand/lesson-icons";
 import { poseForLesson } from "@/utils/brand/lesson-poses";
 
 export const metadata: Metadata = {
@@ -263,7 +265,7 @@ export default async function Dashboard() {
                     transition: "opacity 0.5s, filter 0.5s",
                   }}
                 >
-                  {/* Lesson number */}
+                  {/* Lesson number + canon chapter glyph */}
                   <p
                     style={{
                       fontFamily: "'Space Mono', monospace",
@@ -272,8 +274,12 @@ export default async function Dashboard() {
                       textTransform: "uppercase",
                       color: isCompleted ? "#8B1A1A" : "#6B6B6B",
                       marginBottom: "6px",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "8px",
                     }}
                   >
+                    <Icon name={iconForLesson(lesson.id)} size={14} />
                     {isCompleted ? "Completed" : `Lesson ${lesson.id}`}
                   </p>
 
