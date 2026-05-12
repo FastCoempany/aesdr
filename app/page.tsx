@@ -7,6 +7,7 @@ import LandingSequence from "@/components/LandingSequence";
 import PricingTiers from "@/components/PricingTiers";
 import SignOutButton from "@/components/SignOutButton";
 import ValidationMarquee from "@/components/ValidationMarquee";
+import { Icon, type IconName } from "@/components/brand/Icon";
 import { Mascot } from "@/components/brand/Mascot";
 import { createClient } from "@/utils/supabase/server";
 import styles from "./page.module.css";
@@ -14,15 +15,15 @@ import styles from "./page.module.css";
 const Testimonials = dynamic(() => import("@/components/Testimonials"));
 const DeckStack = dynamic(() => import("@/components/DeckStack"));
 
-const FAQ = [
-  { q: "Is this for me if I\u2019m brand new to sales?", a: "Yes, it\u2019s actually inspired by you. The curriculum starts with foundational frameworks and builds to advanced execution. If you\u2019re in your first 18 months, you\u2019ll skip years of painful trial-and-error." },
-  { q: "Is this just\u00a0another motivational sales course?", a: "Nope. No guru stuff. No \u201Ccrush it\u201D motivation. This is sober, fun, practical training built by people who over the last 10+ years carried bags and managed AEs & SDRs." },
-  { q: "What if I want a refund?", a: "14-day, no-questions-asked refund. Email hello@aesdr.com and we process it within 3 business days. If it doesn\u2019t deliver value, we don\u2019t want your money." },
-  { q: "How long do I have access?", a: "Lifetime. Buy once, access forever. That includes any future updates to the curriculum." },
-  { q: "What\u2019s the difference between Individual and Team?", a: "Individual is one seat, one login. Team gives you up to 10 seats \u2014 built for sales managers who want their whole team on the same page." },
-  { q: "Is there a community or is this self-paced only?", a: "Both. The course is self-paced with interactive exercises. You also get access to our Discord community \u2014 real AEs & SDRs, real problems, real accountability." },
-  { q: "I\u2019ve been in sales for 5+ years. Is this too basic?", a: "Lessons 1\u20135 cover fundamentals. Lessons 6\u201312 go deep on prospecting strategy, pipeline math, financial resilience, and career-level relationship building. If you disagree, we refund." },
-  { q: "Can my company expense this?", a: "Of course. We provide a receipt and invoice on purchase. Most L&D budgets cover this easily \u2014 especially the Team plan." },
+const FAQ: { q: string; a: string; icon: IconName }[] = [
+  { q: "Is this for me if I\u2019m brand new to sales?",          a: "Yes, it\u2019s actually inspired by you. The curriculum starts with foundational frameworks and builds to advanced execution. If you\u2019re in your first 18 months, you\u2019ll skip years of painful trial-and-error.", icon: "eye"       },
+  { q: "Is this just\u00a0another motivational sales course?",   a: "Nope. No guru stuff. No \u201Ccrush it\u201D motivation. This is sober, fun, practical training built by people who over the last 10+ years carried bags and managed AEs & SDRs.",                                       icon: "warn"      },
+  { q: "What if I want a refund?",                                a: "14-day, no-questions-asked refund. Email hello@aesdr.com and we process it within 3 business days. If it doesn\u2019t deliver value, we don\u2019t want your money.",                                                  icon: "refund"    },
+  { q: "How long do I have access?",                              a: "Lifetime. Buy once, access forever. That includes any future updates to the curriculum.",                                                                                                                            icon: "hourglass" },
+  { q: "What\u2019s the difference between Individual and Team?", a: "Individual is one seat, one login. Team gives you up to 10 seats \u2014 built for sales managers who want their whole team on the same page.",                                                                       icon: "team"      },
+  { q: "Is there a community or is this self-paced only?",        a: "Both. The course is self-paced with interactive exercises. You also get access to our Discord community \u2014 real AEs & SDRs, real problems, real accountability.",                                                icon: "discord"   },
+  { q: "I\u2019ve been in sales for 5+ years. Is this too basic?", a: "Lessons 1\u20135 cover fundamentals. Lessons 6\u201312 go deep on prospecting strategy, pipeline math, financial resilience, and career-level relationship building. If you disagree, we refund.",                  icon: "signal"    },
+  { q: "Can my company expense this?",                            a: "Of course. We provide a receipt and invoice on purchase. Most L&D budgets cover this easily \u2014 especially the Team plan.",                                                                                       icon: "ledger"    },
 ];
 
 export default async function LandingPage() {
@@ -89,7 +90,10 @@ export default async function LandingPage() {
         <div className={styles.faqGrid}>
           {FAQ.map((item, i) => (
             <div key={i} className={styles.faqItem}>
-              <p className={styles.faqNum}>Q{String(i + 1).padStart(2, "0")}</p>
+              <p className={styles.faqNum} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                <Icon name={item.icon} size={14} />
+                Q{String(i + 1).padStart(2, "0")}
+              </p>
               <p className={styles.faqQ}>{item.q}</p>
               <div className={styles.faqAnswer}>
                 <p className={styles.faqBlur}>{item.a}</p>
