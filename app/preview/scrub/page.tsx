@@ -16,8 +16,8 @@ export default async function ScrubPreviewPage({ searchParams }: Props) {
   if (params.key !== PREVIEW_KEY) notFound();
   return (
     <div style={{ position: "relative" }}>
-      <ScrubLayer />
       <LandingMockup />
+      <ScrubLayer />
       <div
         aria-hidden="true"
         style={{

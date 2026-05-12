@@ -16,8 +16,8 @@ export default async function ThicketPreviewPage({ searchParams }: Props) {
   if (params.key !== PREVIEW_KEY) notFound();
   return (
     <div style={{ position: "relative" }}>
-      <ThicketLayer />
       <LandingMockup />
+      <ThicketLayer />
       <div
         aria-hidden="true"
         style={{

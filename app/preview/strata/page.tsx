@@ -16,8 +16,8 @@ export default async function StrataPreviewPage({ searchParams }: Props) {
   if (params.key !== PREVIEW_KEY) notFound();
   return (
     <div style={{ position: "relative" }}>
-      <StrataLayer />
       <LandingMockup />
+      <StrataLayer />
       <div
         aria-hidden="true"
         style={{

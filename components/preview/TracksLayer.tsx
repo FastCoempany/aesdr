@@ -93,10 +93,11 @@ export function TracksLayer() {
           position: "fixed",
           inset: 0,
           pointerEvents: "none",
-          zIndex: 0,
+          zIndex: 4,
           opacity: opacity * 0.55,
           background:
             "linear-gradient(180deg, rgba(232,228,223,0.6) 0%, rgba(250,247,242,0) 18%, rgba(250,247,242,0) 72%, rgba(212,176,128,0.32) 100%)",
+          mixBlendMode: "multiply",
           transition: "opacity 320ms",
         }}
       />
@@ -112,8 +113,9 @@ export function TracksLayer() {
           width: "100%",
           height: pageH,
           pointerEvents: "none",
-          zIndex: 0,
+          zIndex: 5,
           opacity,
+          mixBlendMode: "multiply",
           transition: "opacity 320ms",
         }}
       >

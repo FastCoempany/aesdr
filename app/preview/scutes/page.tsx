@@ -16,8 +16,8 @@ export default async function ScutesPreviewPage({ searchParams }: Props) {
   if (params.key !== PREVIEW_KEY) notFound();
   return (
     <div style={{ position: "relative" }}>
-      <ScutesLayer />
       <LandingMockup />
+      <ScutesLayer />
       <div
         aria-hidden="true"
         style={{

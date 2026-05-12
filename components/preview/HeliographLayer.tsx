@@ -91,7 +91,7 @@ export function HeliographLayer() {
           position: "fixed",
           inset: 0,
           pointerEvents: "none",
-          zIndex: 0,
+          zIndex: 4,
           opacity: op * 0.5,
           background: `linear-gradient(180deg,
             rgba(160,176,184,0.30) 0%,
@@ -100,6 +100,7 @@ export function HeliographLayer() {
             rgba(232,200,140,0.0) 84%,
             rgba(120,96,80,0.32) 100%
           )`,
+          mixBlendMode: "multiply",
           transition: "opacity 320ms",
         }}
       />
@@ -110,11 +111,11 @@ export function HeliographLayer() {
           position: "fixed",
           inset: 0,
           pointerEvents: "none",
-          zIndex: 0,
+          zIndex: 4,
           opacity: op * hazeStrength * 0.4,
           background:
             "repeating-linear-gradient(90deg, rgba(232,200,140,0.0) 0px, rgba(232,200,140,0.20) 2px, rgba(232,200,140,0.0) 4px)",
-          mixBlendMode: "soft-light",
+          mixBlendMode: "multiply",
           filter: "blur(2px)",
         }}
       />
@@ -131,8 +132,9 @@ export function HeliographLayer() {
             width: "100%",
             height: "100%",
             pointerEvents: "none",
-            zIndex: 1,
+            zIndex: 5,
             opacity: op,
+            mixBlendMode: "multiply",
             transition: "opacity 320ms",
           }}
         >

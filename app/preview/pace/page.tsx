@@ -16,8 +16,8 @@ export default async function PacePreviewPage({ searchParams }: Props) {
   if (params.key !== PREVIEW_KEY) notFound();
   return (
     <div style={{ position: "relative" }}>
-      <PaceLayer />
       <LandingMockup />
+      <PaceLayer />
       <div
         aria-hidden="true"
         style={{

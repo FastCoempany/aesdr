@@ -16,8 +16,8 @@ export default async function TracksPreviewPage({ searchParams }: Props) {
   if (params.key !== PREVIEW_KEY) notFound();
   return (
     <div style={{ position: "relative" }}>
-      <TracksLayer />
       <LandingMockup />
+      <TracksLayer />
       <div
         aria-hidden="true"
         style={{

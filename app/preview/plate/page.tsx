@@ -16,8 +16,8 @@ export default async function PlatePreviewPage({ searchParams }: Props) {
   if (params.key !== PREVIEW_KEY) notFound();
   return (
     <div style={{ position: "relative" }}>
-      <PlateLayer />
       <LandingMockup />
+      <PlateLayer />
       <div
         aria-hidden="true"
         style={{

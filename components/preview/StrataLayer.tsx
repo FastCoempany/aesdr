@@ -85,8 +85,9 @@ export function StrataLayer() {
           width: "100%",
           height: pageH,
           pointerEvents: "none",
-          zIndex: 0,
+          zIndex: 4,
           opacity: op,
+          mixBlendMode: "multiply",
           transition: "opacity 320ms",
           background: `linear-gradient(180deg,
             rgba(250,247,242,0) 0%,
@@ -111,8 +112,9 @@ export function StrataLayer() {
           width: "100%",
           height: pageH,
           pointerEvents: "none",
-          zIndex: 0,
+          zIndex: 5,
           opacity: op,
+          mixBlendMode: "multiply",
           transition: "opacity 320ms",
         }}
       >

@@ -16,8 +16,8 @@ export default async function BurrowPreviewPage({ searchParams }: Props) {
   if (params.key !== PREVIEW_KEY) notFound();
   return (
     <div style={{ position: "relative" }}>
-      <BurrowLayer />
       <LandingMockup />
+      <BurrowLayer />
       <div
         aria-hidden="true"
         style={{

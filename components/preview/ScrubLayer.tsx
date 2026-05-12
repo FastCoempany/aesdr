@@ -58,10 +58,11 @@ export function ScrubLayer() {
           position: "fixed",
           inset: 0,
           pointerEvents: "none",
-          zIndex: 0,
+          zIndex: 4,
           opacity: op * 0.55,
           background:
             "radial-gradient(ellipse at 80% 90%, rgba(212,160,96,0.45) 0%, rgba(212,160,96,0.18) 35%, transparent 70%)",
+          mixBlendMode: "multiply",
           transition: "opacity 320ms",
         }}
       />
@@ -77,8 +78,9 @@ export function ScrubLayer() {
           width: "100%",
           height: pageH,
           pointerEvents: "none",
-          zIndex: 0,
+          zIndex: 5,
           opacity: op,
+          mixBlendMode: "multiply",
           transition: "opacity 320ms",
         }}
       >

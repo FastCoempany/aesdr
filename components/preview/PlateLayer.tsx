@@ -71,8 +71,9 @@ export function PlateLayer() {
           width: "100%",
           height: pageH,
           pointerEvents: "none",
-          zIndex: 0,
+          zIndex: 5,
           opacity: op,
+          mixBlendMode: "multiply",
           transition: "opacity 320ms",
         }}
       >
