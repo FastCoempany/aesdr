@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 
 import { createClient } from "@/utils/supabase/server";
 import { LESSONS } from "@/utils/progress/types";
+import { readDemoSession } from "@/lib/demo-mode-server";
 import RevealView from "./RevealView";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +15,18 @@ export const metadata: Metadata = {
 };
 
 export default async function RevealPage() {
+  const demoSession = await readDemoSession();
+
+  // Demo: render the pick screen with the synthetic student.
+  if (demoSession) {
+    return (
+      <RevealView
+        studentName={demoSession.user.full_name}
+        role={demoSession.user.role.toUpperCase()}
+      />
+    );
+  }
+
   const supabase = await createClient();
   const {
     data: { user },
