@@ -1,15 +1,13 @@
 [
-  { "t":  0,  "duration":  6, "zoom": 1.00, "focus": [960, 540], "ease": "linear" },
-  { "t":  6,  "duration":  6, "zoom": 1.15, "focus": [960, 480], "ease": "easeInOut" },
-  { "t": 12,  "duration":  4, "zoom": 1.20, "focus": [620, 540], "ease": "easeIn" },
-  { "t": 16,  "duration":  6, "zoom": 1.05, "focus": [960, 540], "ease": "easeOut" },
-  { "t": 22,  "duration":  4, "zoom": 1.00, "focus": [960, 540], "ease": "easeInOut" },
-  { "t": 26,  "duration":  6, "zoom": 1.10, "focus": [960, 540], "ease": "linear" },
-  { "t": 32,  "duration":  4, "zoom": 1.60, "focus": [960,  60], "ease": "easeInOut" },
-  { "t": 36,  "duration":  6, "zoom": 1.60, "focus": [960,  60], "ease": "linear" },
-  { "t": 42,  "duration":  6, "zoom": 1.00, "focus": [960, 540], "ease": "easeOut" },
-  { "t": 48,  "duration":  4, "zoom": 1.20, "focus": [960, 540], "ease": "easeInOut" },
-  { "t": 52,  "duration": 18, "zoom": 1.10, "focus": [960, 540], "ease": "linear" },
-  { "t": 70,  "duration": 12, "zoom": 1.00, "focus": [960, 540], "ease": "easeOut" },
-  { "t": 82,  "duration":  8, "zoom": 1.00, "focus": [960, 540], "ease": "linear" }
+  { "t":  0,  "duration":  5, "zoom": 1.00, "focus": [960, 540], "ease": "linear" },
+  { "t":  5,  "duration":  5, "zoom": 1.15, "focus": [960, 480], "ease": "easeInOut" },
+  { "t": 10,  "duration":  3, "zoom": 1.18, "focus": [620, 540], "ease": "easeIn" },
+  { "t": 13,  "duration":  9, "zoom": 1.05, "focus": [960, 540], "ease": "easeOut" },
+  { "t": 22,  "duration":  4, "zoom": 1.40, "focus": [480, 540], "ease": "easeInOut" },
+  { "t": 26,  "duration":  3, "zoom": 1.60, "focus": [960,  60], "ease": "easeInOut" },
+  { "t": 29,  "duration":  3, "zoom": 1.00, "focus": [960, 540], "ease": "easeOut" },
+  { "t": 32,  "duration":  5, "zoom": 1.10, "focus": [960, 540], "ease": "easeInOut" },
+  { "t": 37,  "duration": 20, "zoom": 1.20, "focus": [960, 540], "ease": "linear" },
+  { "t": 57,  "duration": 20, "zoom": 1.10, "focus": [960, 540], "ease": "easeOut" },
+  { "t": 77,  "duration": 13, "zoom": 1.00, "focus": [960, 540], "ease": "linear" }
 ]
