@@ -118,11 +118,7 @@ export default async function LessonPage({
     <>
       <ProgressSaver lessonId={lessonId} isAuthenticated={true} savedStateData={stateData} />
 
-      {/* Iframe offset by 48px from top so the floating Save & Exit
-          (left) and tool-download (right) controls have their own
-          band above the lesson content. Prevents the buttons from
-          overlapping the "COURSE N" chip / lesson title that lives
-          at the top of the lesson HTML. */}
+      {/* Full-screen iframe — course content owns the entire viewport */}
       {iframeSrc ? (
         <iframe
           key={iframeSrc}
@@ -130,10 +126,9 @@ export default async function LessonPage({
           sandbox="allow-scripts allow-same-origin allow-forms"
           style={{
             position: "fixed",
-            top: 48,
-            left: 0,
+            inset: 0,
             width: "100vw",
-            height: "calc(100dvh - 48px)",
+            height: "100dvh",
             border: "none",
             background: "#fff",
             zIndex: 1,
@@ -158,85 +153,86 @@ export default async function LessonPage({
         </main>
       )}
 
-      {/* Unified course-page header bar — sits in the 48px band above
-          the iframe. Center: Leponeus + AESDR brand. Right: tool
-          downloads (if lesson complete) + Save & Exit. */}
-      <header
+      {/* Floating top-left cluster: Save & Exit + Leponeus + AESDR
+          iris-shimmer wordmark, all on a single row. Overlays the
+          (now empty) left side of the lesson's own topbar — the
+          lesson's right-side "Lesson N.X · progress" remains intact
+          and visible on the opposite side. */}
+      <div
         style={{
           position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: 48,
+          top: 12,
+          left: 12,
           zIndex: 9999,
-          display: "grid",
-          gridTemplateColumns: "1fr auto 1fr",
+          display: "flex",
           alignItems: "center",
-          padding: "0 12px",
-          background: "var(--cream)",
-          borderBottom: "1px solid var(--light)",
+          gap: 14,
         }}
       >
-        {/* Left spacer — keeps the center column truly centered */}
-        <div />
+        <SaveExitButton />
+        <Mascot pose="doctrine" size={108} priority />
+        <span
+          style={{
+            fontFamily: "var(--display)",
+            fontStyle: "italic",
+            fontWeight: 900,
+            fontSize: 44,
+            lineHeight: 1,
+            letterSpacing: ".04em",
+            background: "var(--iris)",
+            backgroundSize: "200% 100%",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            animation: "iris 3s linear infinite",
+          }}
+        >
+          AESDR
+        </span>
+      </div>
 
-        {/* Center: Leponeus + AESDR brand */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <Mascot pose="doctrine" size={36} priority />
-          <span
-            style={{
-              fontFamily: "var(--display)",
-              fontStyle: "italic",
-              fontWeight: 900,
-              fontSize: 20,
-              letterSpacing: ".04em",
-              background: "var(--iris)",
-              backgroundSize: "200% 100%",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
-          >
-            AESDR
-          </span>
-        </div>
-
-        {/* Right: tool downloads (only on completed lessons) + Save & Exit */}
+      {/* Tool downloads — only on completed lessons. Pinned to the
+          right, below the lesson's topbar (which carries the
+          progress bar in that horizontal position). */}
+      {isCompleted && tools.length > 0 && (
         <div
           style={{
+            position: "fixed",
+            top: 80,
+            right: 12,
+            zIndex: 9999,
             display: "flex",
             alignItems: "center",
-            justifyContent: "flex-end",
-            gap: 8,
+            gap: 4,
             flexWrap: "wrap" as const,
+            justifyContent: "flex-end",
+            maxWidth: "calc(100vw - 24px)",
             rowGap: 4,
           }}
         >
-          {isCompleted &&
-            tools.map((tool) => (
-              <a
-                key={tool.slug}
-                href={`/tools/${encodeURIComponent(tool.slug)}/download`}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  fontFamily: "var(--mono)",
-                  fontSize: "9px",
-                  letterSpacing: ".12em",
-                  textTransform: "uppercase" as const,
-                  padding: "8px 12px",
-                  color: "#fff",
-                  background: "rgba(16,185,129,0.7)",
-                  backdropFilter: "blur(8px)",
-                  textDecoration: "none",
-                  display: "inline-block",
-                }}
-              >
-                <span aria-hidden="true">↓</span> Download {tool.title}
-              </a>
-            ))}
-          <SaveExitButton />
+          {tools.map((tool) => (
+            <a
+              key={tool.slug}
+              href={`/tools/${encodeURIComponent(tool.slug)}/download`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontFamily: "var(--mono)",
+                fontSize: "9px",
+                letterSpacing: ".12em",
+                textTransform: "uppercase" as const,
+                padding: "8px 12px",
+                color: "#fff",
+                background: "rgba(16,185,129,0.7)",
+                backdropFilter: "blur(8px)",
+                textDecoration: "none",
+                display: "inline-block",
+              }}
+            >
+              <span aria-hidden="true">↓</span> Download {tool.title}
+            </a>
+          ))}
         </div>
-      </header>
+      )}
     </>
   );
 }
