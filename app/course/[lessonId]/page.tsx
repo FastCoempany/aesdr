@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import ProgressSaver from "@/components/ProgressSaver";
 import SaveExitButton from "@/components/SaveExitButton";
+import { Mascot } from "@/components/brand/Mascot";
 import { listLessonUnits, getToolAssetsForLesson } from "@/utils/content/catalog";
 import { LESSONS } from "@/utils/progress/types";
 import { createClient } from "@/utils/supabase/server";
@@ -193,57 +194,85 @@ export default async function LessonPage({
         </main>
       )}
 
-      {/* Floating controls — top-left: back, top-right: tool downloads */}
-      <div
+      {/* Unified course-page header bar — sits in the 48px band above
+          the iframe. Center: Leponeus + AESDR brand. Right: tool
+          downloads (if lesson complete) + Save & Exit. */}
+      <header
         style={{
           position: "fixed",
-          top: "12px",
-          left: "12px",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 48,
           zIndex: 9999,
-        }}
-      >
-        <SaveExitButton />
-      </div>
-
-      <div
-        style={{
-          position: "fixed",
-          top: "12px",
-          right: "12px",
-          zIndex: 9999,
-          display: "flex",
+          display: "grid",
+          gridTemplateColumns: "1fr auto 1fr",
           alignItems: "center",
-          gap: "4px",
-          flexWrap: "wrap" as const,
-          justifyContent: "flex-end",
-          maxWidth: "calc(100vw - 90px)",
-          rowGap: "4px",
+          padding: "0 12px",
+          background: "var(--cream)",
+          borderBottom: "1px solid var(--light)",
         }}
       >
-        {isCompleted &&
-          tools.map((tool) => (
-            <a
-              key={tool.slug}
-              href={`/tools/${encodeURIComponent(tool.slug)}/download`}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                fontFamily: "var(--mono)",
-                fontSize: "9px",
-                letterSpacing: ".12em",
-                textTransform: "uppercase" as const,
-                padding: "14px 16px",
-                color: "#fff",
-                background: "rgba(16,185,129,0.7)",
-                backdropFilter: "blur(8px)",
-                textDecoration: "none",
-                display: "inline-block",
-              }}
-            >
-              <span aria-hidden="true">↓</span> Download {tool.title}
-            </a>
-          ))}
-      </div>
+        {/* Left spacer — keeps the center column truly centered */}
+        <div />
+
+        {/* Center: Leponeus + AESDR brand */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <Mascot pose="doctrine" size={36} priority />
+          <span
+            style={{
+              fontFamily: "var(--display)",
+              fontStyle: "italic",
+              fontWeight: 900,
+              fontSize: 20,
+              letterSpacing: ".04em",
+              background: "var(--iris)",
+              backgroundSize: "200% 100%",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
+          >
+            AESDR
+          </span>
+        </div>
+
+        {/* Right: tool downloads (only on completed lessons) + Save & Exit */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-end",
+            gap: 8,
+            flexWrap: "wrap" as const,
+            rowGap: 4,
+          }}
+        >
+          {isCompleted &&
+            tools.map((tool) => (
+              <a
+                key={tool.slug}
+                href={`/tools/${encodeURIComponent(tool.slug)}/download`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  fontFamily: "var(--mono)",
+                  fontSize: "9px",
+                  letterSpacing: ".12em",
+                  textTransform: "uppercase" as const,
+                  padding: "8px 12px",
+                  color: "#fff",
+                  background: "rgba(16,185,129,0.7)",
+                  backdropFilter: "blur(8px)",
+                  textDecoration: "none",
+                  display: "inline-block",
+                }}
+              >
+                <span aria-hidden="true">↓</span> Download {tool.title}
+              </a>
+            ))}
+          <SaveExitButton />
+        </div>
+      </header>
     </>
   );
 }
