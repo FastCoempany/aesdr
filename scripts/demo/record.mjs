@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 /**
- * Demo recorder — Playwright-driven flat capture of the AESDR landing
- * flow + course entry. Three acts, ~90s total. Camera moves are applied
- * after the fact by compose.mjs reading timeline.json.
+ * Demo recorder — drives a 90s cinematic capture of the AESDR flow:
  *
- * Acts:
- *   I    (0–12s)    opener typing animation plays
- *   II   (12–30s)   SDR pick + branched scenes + terminal "scanning"
- *   III  (30–90s)   jump to /course/5; lesson header with Leponeus +
- *                   AESDR fills frame, then slow scroll through body
+ *   Act I    (0–12s)   landing opener typing animation
+ *   Act II   (12–22s)  pick SDR; brief branched-scene confession
+ *   Act III  (22–32s)  dashboard / journey page in view
+ *   Act IV   (32–48s)  click into Lesson 6, iframe loads, "Begin Lesson" visible
+ *   Act V    (48–90s)  begin clicked, jumped to the silo drag/drop matching
+ *                      game on screen 2; viewer sees the interactive surface
  *
- * Synthetic-state pill stays off camera via ?hideBadge=1.
+ * Camera moves are applied after the fact by compose.mjs reading
+ * timeline.json. ?hideBadge=1 keeps the synthetic-state pill off camera.
  */
 
 import { chromium } from "playwright";
@@ -23,22 +23,14 @@ const OUT_DIR = path.resolve("scripts/demo/out/raw");
 
 const wait = (ms) => new Promise((res) => setTimeout(res, ms));
 
-// Smooth-scroll helper for the lesson body. The course route renders
-// the lesson inside an iframe, so we scroll inside the iframe's
-// contentWindow when one is present, falling back to the top-level
-// window otherwise.
-async function smoothScroll(page, targetY, durationMs) {
+async function smoothScrollIframe(page, targetY, durationMs) {
   const steps = Math.max(20, Math.floor(durationMs / 50));
   const stepDelay = durationMs / steps;
   for (let i = 1; i <= steps; i++) {
     const y = (targetY * i) / steps;
     await page.evaluate((py) => {
       const iframe = document.querySelector("iframe");
-      if (iframe && iframe.contentWindow) {
-        iframe.contentWindow.scrollTo(0, py);
-      } else {
-        window.scrollTo(0, py);
-      }
+      if (iframe?.contentWindow) iframe.contentWindow.scrollTo(0, py);
     }, y);
     await wait(stepDelay);
   }
@@ -56,31 +48,52 @@ async function main() {
   });
   const page = await context.newPage();
 
+  // ─── Act I — Landing opener (0–12s) ───
   const startUrl = `${BASE_URL}/?demo=741407&hideBadge=1`;
   console.log(`[record] navigating to ${startUrl}`);
   await page.goto(startUrl, { waitUntil: "load" });
-
-  // ─── Act I — Opener typing (0–12s) ───
   console.log("[record] Act I — opener typing");
   await wait(12_000);
 
-  // ─── Act II — Pick SDR + branched + terminal scenes (12–30s) ───
-  console.log("[record] Act II — picking SDR + scanning lines");
+  // ─── Act II — SDR pick + brief branched confession (12–22s) ───
+  console.log("[record] Act II — picking SDR");
   await page.locator('button[data-role="sdr"]').click({ timeout: 5_000 });
-  await wait(18_000);
+  await wait(10_000);
 
-  // ─── Act III — Course entry; Leponeus + AESDR header (30–90s) ───
-  console.log("[record] Act III — entering course");
-  await page.goto(`${BASE_URL}/course/5?demo=741407&hideBadge=1`, {
-    waitUntil: "load",
+  // ─── Act III — Journey / dashboard page (22–32s) ───
+  console.log("[record] Act III — dashboard / journey");
+  await page.goto(`${BASE_URL}/dashboard?hideBadge=1`, { waitUntil: "load" });
+  await wait(10_000);
+
+  // ─── Act IV — Open Lesson 6 (32–48s) ───
+  console.log("[record] Act IV — opening Lesson 6");
+  // Click the lesson title link directly. Demo session has lessons
+  // 1–6 complete, so /course/6 is accessible.
+  await page.locator('a[href="/course/6"]').first().click({ timeout: 5_000 });
+  // Wait for the iframe to load the lesson's screen 0 (intro + Begin button).
+  await page.waitForSelector("iframe", { timeout: 10_000 });
+  await wait(12_000);
+
+  // ─── Act V — Click "Begin Lesson", jump to drag/drop (48–90s) ───
+  console.log("[record] Act V — Begin Lesson + matching game");
+  const frame = page.frameLocator("iframe");
+  // The lesson's intro screen has a button with text "Begin Lesson →".
+  await frame
+    .locator('button:has-text("Begin Lesson")')
+    .first()
+    .click({ timeout: 8_000 });
+  await wait(4_000);
+  // Jump directly to screen 2 — the 3-silo drag/drop matching surface.
+  // The lesson HTML exposes `go(N)` on window for screen navigation.
+  await page.evaluate(() => {
+    const iframe = document.querySelector("iframe");
+    const win = iframe?.contentWindow;
+    if (win && typeof win.go === "function") win.go(2);
   });
-  // Hold on the lesson header for a beat so the viewer registers
-  // Leponeus + the iris-shimmer AESDR wordmark.
-  await wait(7_000);
-  // Slow scroll through the lesson body over 35s, ending ~2400px down.
-  await smoothScroll(page, 2400, 35_000);
-  // Hold the final frame so the timeline camera can settle.
-  await wait(8_000);
+  // Slow nudge-scroll to show the full silo layout, then hold.
+  await wait(4_000);
+  await smoothScrollIframe(page, 600, 14_000);
+  await wait(20_000);
 
   console.log("[record] capture complete, closing");
   await context.close();
