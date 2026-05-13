@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 
 export default function SaveExitButton() {
   const [exiting, setExiting] = useState(false);
+  const [hovered, setHovered] = useState(false);
 
   const handleExit = useCallback(
     (e: React.MouseEvent) => {
@@ -32,22 +33,28 @@ export default function SaveExitButton() {
       <style>{`@keyframes fadeIn{from{opacity:0}to{opacity:1}}`}</style>
       <button
         onClick={handleExit}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
         style={{
           fontFamily: "var(--mono)",
           fontSize: "10px",
-          letterSpacing: ".1em",
+          letterSpacing: ".18em",
           textTransform: "uppercase",
-          color: "#fff",
-          background: "rgba(0,0,0,0.9)",
-          backdropFilter: "blur(8px)",
-          padding: "8px 12px",
-          border: "none",
+          color: "var(--ink)",
+          background: hovered ? "rgba(26,26,26,0.06)" : "transparent",
+          border: "1px solid rgba(26,26,26,0.22)",
+          padding: "5px 10px",
           cursor: "pointer",
-          minHeight: "32px",
           lineHeight: "14px",
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "6px",
+          transition: "background 150ms ease, border-color 150ms ease",
+          borderColor: hovered ? "rgba(26,26,26,0.55)" : "rgba(26,26,26,0.22)",
         }}
       >
-        <span aria-hidden="true">&larr;</span> Save &amp; Exit
+        <span aria-hidden="true">&larr;</span>
+        <span>Save &amp; Exit</span>
       </button>
     </>
   );
