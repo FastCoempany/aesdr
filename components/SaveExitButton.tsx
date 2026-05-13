@@ -40,11 +40,11 @@ export default function SaveExitButton() {
           color: "#fff",
           background: "rgba(0,0,0,0.9)",
           backdropFilter: "blur(8px)",
-          padding: "14px 16px",
+          padding: "10px 14px",
           border: "none",
           cursor: "pointer",
-          minHeight: "48px",
-          lineHeight: "16px",
+          minHeight: "36px",
+          lineHeight: "14px",
         }}
       >
         <span aria-hidden="true">&larr;</span> Save &amp; Exit
