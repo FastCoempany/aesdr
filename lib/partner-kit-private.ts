@@ -84,6 +84,30 @@ export const PRIVATE_KIT_ENTRIES: PrivateKitEntry[] = [
     category: "Working with AESDR",
     source: "escalation-contacts",
   },
+  {
+    slug: "tracking-and-utms",
+    title: "Tracking URL & UTM Cheat-Sheet",
+    description:
+      "Your partner-attributed URL, the UTM scheme that maps to the Friday report, and a self-test before your first send.",
+    category: "Run your pilot",
+    source: "tracking-and-utms",
+  },
+  {
+    slug: "audience-objections",
+    title: "Audience Objections — Honest Answers",
+    description:
+      "The 15 most common questions a SaaS rep asks before paying $249. Honest answers you can adapt to your voice.",
+    category: "Run your pilot",
+    source: "audience-objections",
+  },
+  {
+    slug: "reporting-and-exports",
+    title: "Friday Report & CSV Exports",
+    description:
+      "What the report covers, a sample, the on-demand CSVs available, and the SQL to join them into your own dashboard.",
+    category: "Working with AESDR",
+    source: "reporting-and-exports",
+  },
 ];
 
 export const PRIVATE_KIT_CATEGORIES: {

@@ -362,3 +362,133 @@ is gated content.
 | Substack post | Above the link, plain text — `Affiliate disclosure: I earn a commission if you enroll through this link.` |
 | Story (IG, etc.) | First text frame, plain text "ad" or "sponsored" |
 | Reel / video | Verbal first 10 seconds AND on-screen text for the duration of the recommendation |
+
+---
+
+## 5. Post-workshop replay nudge
+
+**Send timing:** Within 12 hours of the workshop ending. To registrants
+who didn't attend live + any of your audience who clicked the launch
+email but didn't register. ~140 words.
+
+> **Subject:** *The 72-hour replay is live.*
+>
+> **Pre-header:** *No live re-runs. After Wednesday night, the replay closes.*
+
+> *AESDR's workshop ran last night. The replay is up for the next 72
+> hours — after that it closes and there's no re-run.*
+>
+> *If you registered and missed the live: the replay link is in your
+> inbox (subject "AESDR workshop replay — 72-hour window"). Sequence
+> picks up there.*
+>
+> *If you didn't register but were on the fence: same replay link, no
+> friction — `[REGISTRATION_URL]` → drops you into the replay page
+> after a one-field signup.*
+>
+> *Worth 60 minutes if you're an SDR or AE 0–10 years in. Worth your
+> hour for nothing otherwise — save it for something that fits.*
+>
+> ***Replay (72h window) →*** `[REGISTRATION_URL]`
+>
+> *Affiliate disclosure: I earn a commission on enrollments.*
+>
+> *— `[YOUR_FIRST_NAME]`*
+
+**Editable elements:** the bracketed placeholders, the day-of-week
+reference in line 2.
+
+**Locked elements:** subject, pre-header, the 72-hour framing, the
+"worth your hour for nothing otherwise" line, disclosure.
+
+---
+
+## 6. End-of-window last call
+
+**Send timing:** 4–6 hours before the 72-hour replay window closes. To
+clicked-but-didn't-enroll segments. ~100 words.
+
+> **Subject:** *AESDR replay closes tonight.*
+>
+> **Pre-header:** *Not a flash sale. Just a real cutoff.*
+
+> *Quick one — AESDR's replay window closes at midnight tonight, `[TZ]`. After
+> that the replay is gone and the offer closes for this cohort.*
+>
+> *If you've been on the fence, the 14-day refund is real — sign up
+> tonight, decide in two weeks if it's worth it for you. That's the
+> only "low-pressure" thing about this email; the rest is just a real
+> deadline.*
+>
+> ***Replay + enrollment →*** `[REGISTRATION_URL]`
+>
+> *Affiliate disclosure: I earn a commission.*
+>
+> *— `[YOUR_FIRST_NAME]`*
+
+**Editable elements:** the timezone, the close time, optional one-line
+opener at top.
+
+**Locked elements:** subject, pre-header, the "not a flash sale" framing,
+the 14-day refund mention, disclosure.
+
+---
+
+## 7. The "I'll see you Monday" warmth note
+
+**Send timing:** Within 4 hours of someone enrolling via your link.
+Triggered manually (not auto). Personal, in your voice, ~60 words.
+
+> **Subject:** *(no subject — sent from your personal address, reply
+> chain feel)*
+
+> *Saw you enrolled via my link — appreciated. The Untamed Discord
+> invite should land in your inbox within 30 minutes; if it doesn't,
+> reply here and I'll get it sent.*
+>
+> *Genuinely useful 1–2 sentence personal nudge — what lesson to start
+> with given what they've told you about their situation, OR an
+> invitation to keep you posted on how lesson 1 lands.*
+>
+> *— `[YOUR_FIRST_NAME]`*
+
+**Editable elements:** literally everything except the disclosure (which
+isn't required on a 1:1 transactional note since the recommendation
+already happened — but if you mention the program again, add it).
+
+**Locked elements:** none. This one is personal, not a template send.
+
+**Why this matters:** the people who buy via your link become your
+audience members who now have an AESDR relationship. The "I'll see you
+Monday" note doubles your retention with that audience by 2–3x at
+basically zero cost. (Source: every B2C newsletter operator's hard-won
+data.)
+
+---
+
+## 8. Cohort wrap thank-you
+
+**Send timing:** Within 7 days of pilot end, after we send you the
+kill-or-keep memo. To your full list — even people who didn't engage.
+~120 words.
+
+> **Subject:** *Thanks for the AESDR workshop — and what's next.*
+
+> *Quick wrap-up on the AESDR workshop. About `[X]` of you registered,
+> `[Y]` showed up live, `[Z]` enrolled. The replay is closed now (no
+> re-runs), but the program itself stays live at `[PARTNER_REG_URL]` for
+> anyone who decides later — same list price, same 14-day refund. I
+> earn a commission either way; figured I should mention the link is
+> still live in case you needed more time to decide.*
+>
+> *No follow-on workshop planned for this cohort. If interest is
+> there, I may run another one in a couple of quarters — reply and tell
+> me if that's useful.*
+>
+> *— `[YOUR_FIRST_NAME]`*
+
+**Editable elements:** the audience stats, the "follow-on workshop"
+sentiment, opener.
+
+**Locked elements:** disclosure (your link earns commission post-pilot
+too if it's within the 30-day window).
