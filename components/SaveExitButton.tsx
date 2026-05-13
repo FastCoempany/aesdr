@@ -36,21 +36,23 @@ export default function SaveExitButton() {
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         style={{
+          // Match the lesson's own progress-label typography on the opposite
+          // side of the topbar: mono, 9px, .16em tracking, #636060 (--mid).
           fontFamily: "var(--mono)",
-          fontSize: "10px",
-          letterSpacing: ".18em",
+          fontSize: "9px",
+          letterSpacing: ".16em",
           textTransform: "uppercase",
-          color: "var(--ink)",
-          background: hovered ? "rgba(26,26,26,0.06)" : "transparent",
-          border: "1px solid rgba(26,26,26,0.22)",
-          padding: "5px 10px",
+          color: "#636060",
+          background: hovered ? "rgba(99,96,96,0.08)" : "transparent",
+          border: "1px solid rgba(99,96,96,0.32)",
+          borderColor: hovered ? "rgba(99,96,96,0.65)" : "rgba(99,96,96,0.32)",
+          padding: "4px 8px",
           cursor: "pointer",
-          lineHeight: "14px",
+          lineHeight: "12px",
           display: "inline-flex",
           alignItems: "center",
-          gap: "6px",
+          gap: "5px",
           transition: "background 150ms ease, border-color 150ms ease",
-          borderColor: hovered ? "rgba(26,26,26,0.55)" : "rgba(26,26,26,0.22)",
         }}
       >
         <span aria-hidden="true">&larr;</span>
