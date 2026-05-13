@@ -34,17 +34,17 @@ export default function SaveExitButton() {
         onClick={handleExit}
         style={{
           fontFamily: "var(--mono)",
-          fontSize: "9px",
+          fontSize: "10px",
           letterSpacing: ".1em",
           textTransform: "uppercase",
           color: "#fff",
-          background: "rgba(0,0,0,0.82)",
+          background: "rgba(0,0,0,0.9)",
           backdropFilter: "blur(8px)",
-          padding: "6px 10px",
+          padding: "8px 12px",
           border: "none",
           cursor: "pointer",
-          minHeight: "26px",
-          lineHeight: "12px",
+          minHeight: "32px",
+          lineHeight: "14px",
         }}
       >
         <span aria-hidden="true">&larr;</span> Save &amp; Exit
