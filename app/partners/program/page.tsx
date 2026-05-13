@@ -193,6 +193,60 @@ export default function ProgramPage() {
         </article>
       </section>
 
+      {/* Deeper-dive links */}
+      <section
+        style={{
+          maxWidth: 920,
+          margin: "64px auto 0",
+          padding: "0 24px",
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+          gap: 16,
+        }}
+      >
+        {[
+          { href: "/partners/economics", label: "See the math →", sub: "Calculator + worked example + tracking stack" },
+          { href: "/partners/timeline", label: "See the pilot week-by-week →", sub: "Anatomy of a pilot, Week 0 through payment" },
+          { href: "/partners/payments", label: "Payment details →", sub: "Methods, taxes, refunds, the sign-on bonus" },
+        ].map((l) => (
+          <a
+            key={l.href}
+            href={l.href}
+            style={{
+              display: "block",
+              padding: "24px 28px",
+              background: "#fff",
+              border: "1px solid var(--light)",
+              color: "var(--ink)",
+              textDecoration: "none",
+            }}
+          >
+            <div
+              style={{
+                fontFamily: "var(--display)",
+                fontStyle: "italic",
+                fontWeight: 700,
+                fontSize: 18,
+                lineHeight: 1.3,
+                marginBottom: 6,
+              }}
+            >
+              {l.label}
+            </div>
+            <div
+              style={{
+                fontFamily: "var(--serif)",
+                fontSize: 14,
+                color: "var(--muted)",
+                lineHeight: 1.5,
+              }}
+            >
+              {l.sub}
+            </div>
+          </a>
+        ))}
+      </section>
+
       <div style={{ padding: "96px 24px 0" }}>
         <HubCTA
           href="/partners/apply"
