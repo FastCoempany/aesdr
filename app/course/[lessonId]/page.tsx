@@ -117,7 +117,11 @@ export default async function LessonPage({
     <>
       <ProgressSaver lessonId={lessonId} isAuthenticated={true} savedStateData={stateData} />
 
-      {/* Full-screen iframe — course content owns the entire viewport */}
+      {/* Iframe offset by 48px from top so the floating Save & Exit
+          (left) and tool-download (right) controls have their own
+          band above the lesson content. Prevents the buttons from
+          overlapping the "COURSE N" chip / lesson title that lives
+          at the top of the lesson HTML. */}
       {iframeSrc ? (
         <iframe
           key={iframeSrc}
@@ -125,9 +129,10 @@ export default async function LessonPage({
           sandbox="allow-scripts allow-same-origin allow-forms"
           style={{
             position: "fixed",
-            inset: 0,
+            top: 48,
+            left: 0,
             width: "100vw",
-            height: "100dvh",
+            height: "calc(100dvh - 48px)",
             border: "none",
             background: "#fff",
             zIndex: 1,
