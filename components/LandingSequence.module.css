@@ -195,13 +195,36 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* `safe center` keeps vertical centering on tall viewports but
+     gracefully falls back to top-alignment (like flex-start) when
+     the content stack is taller than the viewport. Prior behavior
+     (plain `center`) split the overflow evenly above and below,
+     which clipped the top of the mascot on laptop-height screens.
+     Now any overflow goes to the bottom where the descriptor text
+     lives — and `overflow-y: auto` lets users scroll there if needed. */
+  justify-content: safe center;
   gap: 20px;
   z-index: 1;
   background: var(--cream);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.4s ease;
+  overflow-y: auto;
+  padding: 24px 0;
+}
+
+/* Mascot wrapper — full size (320×320) at all viewports per founder
+   direction. Width capped to 100% so it never overflows horizontally
+   on narrow screens. */
+.heroMascotWrap {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 4px;
+}
+.heroMascotWrap img {
+  width: auto;
+  max-width: 100%;
 }
 
 .heroLabel {
@@ -214,7 +237,10 @@
 
 .heroBrand {
   font-family: var(--display);
-  font-size: clamp(80px, 18vw, 220px);
+  /* Min(width-based clamp, height-based cap) so on shorter screens
+     the wordmark shrinks too — otherwise it stays at 220px and
+     keeps pushing the mascot above the fold. */
+  font-size: min(clamp(80px, 18vw, 220px), 26vh);
   font-weight: 900;
   font-style: italic;
   line-height: 0.85;
