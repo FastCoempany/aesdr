@@ -55,7 +55,7 @@ export default function HowWeWorkPage() {
             marginRight: "auto",
           }}
         >
-          Most affiliate hubs hide the operating doctrine. AESDR publishes it. Whatever weakness exists in our message, your audience will surface in 60 minutes — so we&rsquo;d rather you read it now.
+          The brand doctrine, in advance. Your audience will read AESDR through your endorsement &mdash; this is the long version of what they&rsquo;ll be reading.
         </p>
       </div>
 
@@ -65,12 +65,12 @@ export default function HowWeWorkPage() {
           AESDR runs on six things, all non-negotiable.
         </p>
         <ul style={listStyle}>
-          <li><strong>Workshop-first, not link-first.</strong> Every pilot leads with a single live workshop into the partner&rsquo;s audience, run by AESDR. The workshop earns the sale; the link merely attributes it.</li>
-          <li><strong>Founder backstage, host-fronted.</strong> The founder is invisible to the audience by default, occasionally visible by choice. The founder is fully visible to partners. A contracted host delivers workshops; the brand outlives the host.</li>
-          <li><strong>A handful of partners, not a marketplace.</strong> We recruit a handful of tightly aligned partners. We select carefully and decline often. Volume isn&rsquo;t a virtue here; conversion quality is.</li>
-          <li><strong>Borrowed trust is a merciless mirror.</strong> Whatever weakness exists in our message, page, deck, or follow-up, a partner&rsquo;s audience will surface in 60 minutes. We don&rsquo;t borrow trust we haven&rsquo;t earned the right to spend.</li>
-          <li><strong>Real Operator. Never guru.</strong> We are the operating manual, not the motivation engine. We don&rsquo;t perform expertise; we install it. If a piece of copy could be lifted onto a LinkedIn carousel without anyone noticing, it&rsquo;s wrong.</li>
-          <li><strong>Honesty is the differentiator.</strong> We say out loud what competitors won&rsquo;t: who should not buy, where the math breaks, what happens when the script runs out. Honesty is not a tone. It&rsquo;s a competitive position.</li>
+          <li><strong>We sell by teaching, not by linking.</strong> Every pilot kicks off with one live 60-minute workshop into your audience. We host it. That&rsquo;s the part that does the selling &mdash; the link just tells us who came from you.</li>
+          <li><strong>The host runs the workshop. The founder builds the curriculum.</strong> The host delivers the live sessions; the founder is around for everything else &mdash; partner emails, prep, debriefs. Good curricula tend to outlive their founders, and we built the brand assuming ours will too.</li>
+          <li><strong>Small program on purpose.</strong> Right now we work with a handful of partners at a time, not a marketplace. Cohort 1 is forming. We may scale after; we may not.</li>
+          <li><strong>Your audience will read AESDR through your endorsement.</strong> Whatever&rsquo;s off about our message, page, or deck, your audience will catch in 60 minutes. So we work on the message hard and tell you what we&rsquo;re seeing.</li>
+          <li><strong>Practical, not motivational.</strong> AESDR is the operating manual nobody wrote down. Not &ldquo;crush it.&rdquo; Not &ldquo;mindset.&rdquo; Just the work &mdash; cold-calling, gatekeepers, pipeline reads, what to do when the script runs out.</li>
+          <li><strong>We&rsquo;re open about who shouldn&rsquo;t buy.</strong> We publish who the program isn&rsquo;t for so the right people enroll and the wrong ones don&rsquo;t waste their money. It also makes your recommendations easier to make.</li>
         </ul>
 
         <h2 style={h2Style}>2. The two voices.</h2>
@@ -84,12 +84,12 @@ export default function HowWeWorkPage() {
           <strong>Michael</strong> — the voice at 2am. Confessional, deadpan, embarrassingly specific. Names the laundry pile. Quotes the bad number. Closes with a one-word punchline. *&ldquo;I have a degree. From a university. With a campus.&rdquo;*
         </p>
 
-        <h2 style={h2Style}>3. Why the founder is invisible.</h2>
+        <h2 style={h2Style}>3. Why the founder isn&rsquo;t on the homepage.</h2>
         <p style={pStyle}>
-          Partner-prospects expect a founder bio. We don&rsquo;t publish one on audience-facing surfaces. The founder is invisible to the audience by default — fully visible to you, in the partner conversation.
+          You might be wondering why there&rsquo;s no founder bio on the audience-facing site. Short answer: AESDR&rsquo;s brand isn&rsquo;t founder-led, on purpose. The brand is the operating standard the curriculum encodes. The host who delivers the lessons today might not be the host five years from now &mdash; the curriculum is the same either way. Same with the founder. The brand was built to outlive both.
         </p>
         <p style={pStyle}>
-          AESDR&rsquo;s brand isn&rsquo;t founder-led. The brand is the operating standard the curriculum encodes. The host who delivers the lessons today might not be the host five years from now — the curriculum is the same either way. Same with the founder, same with the partners. The brand outlives any one person; that&rsquo;s the design. It&rsquo;s also why you don&rsquo;t see a &ldquo;meet the founder&rdquo; page or a credibility-by-credentials wall here. The credibility surface is the curriculum itself, the five production tools, and the quality of the conversation when you apply.
+          For partners, this works differently. You&rsquo;ll talk to the founder directly throughout the pilot &mdash; on applying, prep calls, post-pilot debriefs, anything else. There&rsquo;s no &ldquo;founder you can&rsquo;t reach&rdquo; thing here. It&rsquo;s just a choice about where they show up: in your inbox, not on a public bio page.
         </p>
 
         <h2 style={h2Style}>4. Honesty as competitive position.</h2>
@@ -117,7 +117,7 @@ export default function HowWeWorkPage() {
       </div>
 
       <CaveatLayer>
-        PS — If you&rsquo;ve read this far, you&rsquo;ve done more partner-side homework than 90% of programs ask of you. AESDR thanks you. Apply or decline; both are honest answers.
+        PS &mdash; Thanks for reading this far. Apply if any of it fits. Skip it if it doesn&rsquo;t. Both are useful answers for both sides.
       </CaveatLayer>
     </HubPage>
   );

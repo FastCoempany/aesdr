@@ -53,7 +53,7 @@ export default function KitPage() {
             marginRight: "auto",
           }}
         >
-          Most affiliate programs gate the kit behind an application. We don&rsquo;t. The kit is the merciless mirror &mdash; if it doesn&rsquo;t survive your read, the partnership wouldn&rsquo;t either.
+          The full partner kit, readable before you apply. Positioning, claim limits, disclosure language, lockup rules &mdash; everything you&rsquo;d need to evaluate whether the partnership makes sense for your audience.
         </p>
       </div>
 
@@ -64,7 +64,7 @@ export default function KitPage() {
       </div>
 
       <CaveatLayer>
-        PS &mdash; Read what catches your eye. If the kit doesn&rsquo;t survive your read, the partnership wouldn&rsquo;t either &mdash; that&rsquo;s the point of publishing it instead of gating it.
+        PS &mdash; Read what catches your eye. We&rsquo;d rather you skim the kit before applying than discover something post-signing that changes your mind.
       </CaveatLayer>
     </HubPage>
   );

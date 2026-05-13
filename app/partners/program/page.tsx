@@ -19,35 +19,34 @@ export const metadata: Metadata = {
 
 const SECTIONS = [
   {
-    title: "What we ask of you.",
+    title: "What you'll be doing.",
     bullets: [
-      "Pass our partner vetting and sign the partnership agreement before any audience-facing work.",
-      "Two named promotion sends to your audience, on agreed dates, using copy from the partner kit (or submitted for approval).",
-      "Two-minute live-workshop intro using the supplied script. No pitching the offer; no discussing pricing on the live.",
-      "Use the FTC disclosure language verbatim. Non-negotiable.",
-      "Submit any ad-hoc paid placement or ephemeral content for pre-approval.",
-      "Cooperate with the weekly reporting cadence. You receive a Friday report; you share promotion-side metrics within 24 hours of each send.",
+      "Signing the partnership agreement before you start promoting. We'll send it within 5 business days of approval.",
+      "Sending two emails to your list, on dates we agree on together. We'll write the copy — you can rework it in your voice and send drafts back if you want eyes on it.",
+      "Introducing the live workshop for about two minutes, using a short script we'll send you. We handle the pricing talk after.",
+      "Including the standard FTC affiliate disclosure on every promotion — the one-line \"I earn a commission if you sign up\" note. Legal thing, not a brand thing.",
+      "Running any paid placements, sponsored posts, or stories past us first. Usually a 48-hour turnaround.",
+      "Sharing your open and click rate within a day of each email send. We share everything we're seeing on our side — clicks, signups, revenue, projected commission — every Friday.",
     ],
   },
   {
-    title: "What we do for you.",
+    title: "What we'll be doing.",
     bullets: [
-      "Build a partner-specific registration page with attribution baked in.",
-      "Deliver one live workshop hosted by AESDR, plus a 72-hour replay window.",
-      "Run the entire follow-up sequence — confirmation, reminders, optional SMS, same-day attendee, no-show replay, free-vs-structured objection, deadline-window, checkout-abandon — plus high-intent DM from the AESDR team where the signals warrant.",
-      "Pay commission of 30% on net revenue, on a net-45 schedule from close of the attribution window.",
-      "Send the weekly pilot report every Friday during the pilot window.",
-      "Deliver the partner kit folder within 3 business days of signing.",
+      "Building a registration page just for your audience with tracking baked in. URL ready within 24 hours of signing.",
+      "Running the live 60-minute workshop. We host, present, and handle Q&A. Replay stays live for 72 hours.",
+      "Handling every email after registration — confirmations, reminders, replay link, the follow-ups, the soft DMs to people who clicked but didn't enroll. You don't lift a finger after the workshop ends.",
+      "Paying 30% commission on net revenue. Net-45 from the close of the 30-day attribution window. ACH, Wise, or PayPal — your pick.",
+      "Sending you a one-page Friday report every Friday during the pilot. Same numbers we're looking at. No surprises at the close.",
+      "Cohort 1 partners we invite directly: a $500 sign-on bonus paid on agreement signing. Small money, real money — the point is skin in the game from day one.",
     ],
   },
   {
-    title: "What you cannot ask for.",
+    title: "What we can't do.",
     bullets: [
-      "Discount codes for your audience. Never. Ever. AESDR does not run promotional pricing — buyers pay list price every time.",
-      "Category exclusivity, first-right-of-refusal, or long-term lockouts.",
-      "Access to the AESDR email list, or any list co-promotion.",
-      "Founder appearance on demand. The founder is visible to you in the partner conversation but does not appear on audience-facing surfaces except for named-milestone events.",
-      "List-share co-promotion in either direction.",
+      "Discount codes for your audience. We charge the same price to everyone — $249, $299, $1,499. The commission still works at list, and the trust does too.",
+      "Category exclusivity or first-right-of-refusal. We may run pilots with similar partners; you're free to do the same.",
+      "Share the AESDR email list, in either direction. Your audience belongs to you, ours to us.",
+      "A founder appearance at the workshop itself. The host runs the workshop. The founder builds the curriculum and is around for everything else — emails, prep calls, post-pilot debriefs.",
     ],
   },
 ];
@@ -88,7 +87,7 @@ export default function ProgramPage() {
             marginRight: "auto",
           }}
         >
-          Time-boxed. Non-exclusive. Workshop-first. Same pricing as everyone else gets.
+          What you&rsquo;ll be doing. What we&rsquo;ll be doing. What we can&rsquo;t do.
         </p>
       </div>
 
@@ -167,7 +166,7 @@ export default function ProgramPage() {
               marginBottom: 16,
             }}
           >
-            Pricing is list. Commission is 30% of net. No exceptions.
+            One price for everyone. 30% to you.
           </h2>
           <p
             style={{
@@ -178,7 +177,7 @@ export default function ProgramPage() {
               marginBottom: 16,
             }}
           >
-            Buyers see the same price every other AESDR buyer sees: <strong>$249 SDR</strong>, <strong>$299 AE</strong>, <strong>$1,499 Team</strong>. AESDR does not run promotional discounts, pilot codes, or partner-stack discounts. Partners earn commission off list price; that&rsquo;s the deal.
+            Your audience pays the same price every other AESDR buyer pays: <strong>$249 SDR</strong>, <strong>$299 AE</strong>, <strong>$1,499 for a 10-seat team</strong>. No partner codes, no discount stacking, no pilot pricing. Your commission is 30% of net revenue on every sale you bring in, every time.
           </p>
           <p
             style={{
@@ -189,7 +188,7 @@ export default function ProgramPage() {
               color: "rgba(255,255,255,0.85)",
             }}
           >
-            At the end of the program, students unlock a second on-brand artifact for $40 from their dashboard. Within your 30-day attribution window, that $40 unlock counts toward your commission too.
+            At the end of the program, students can unlock a second end-of-course artifact for $40 from their dashboard. If they do that within your 30-day attribution window, it counts toward your commission too.
           </p>
         </article>
       </section>
@@ -204,7 +203,7 @@ export default function ProgramPage() {
       </div>
 
       <CaveatLayer>
-        PS — &ldquo;Same pricing&rdquo; is the load-bearing line on this page. Most affiliate programs offer your audience a discount as their value prop to you. AESDR doesn&rsquo;t. Your value prop is the program itself.
+        PS &mdash; Same pricing is intentional. The reason your audience trusts you is that you sound like yourself. If we let you offer them a discount they couldn&rsquo;t get elsewhere, the recommendation starts feeling transactional. We&rsquo;d rather your audience see you recommending something you&rsquo;d recommend anyway.
       </CaveatLayer>
     </HubPage>
   );
