@@ -28,6 +28,17 @@ export async function proxy(request: NextRequest) {
 
   const demoActive = isDemoCookieSet(request.cookies.get(DEMO_COOKIE)?.value);
 
+  // ── Demo-mode auth-page redirect: clicking "Sign in" / "Sign up" while
+  // a demo session is active should land on /dashboard, not show the real
+  // login form. Mirrors the experience a genuinely authenticated user
+  // would have.
+  if (demoActive && (pathname === "/login" || pathname === "/signup")) {
+    const dashUrl = request.nextUrl.clone();
+    dashUrl.pathname = "/dashboard";
+    dashUrl.search = "";
+    return NextResponse.redirect(dashUrl, 302);
+  }
+
   // --- Supabase session refresh (required for server components to read auth) ---
   // We need the user-resolution to also gate admin bypass below, so this has
   // to run before the coming-soon gate.
