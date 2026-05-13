@@ -202,6 +202,27 @@
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.4s ease;
+  /* Allow scrolling within the hero if the stack overflows on
+     shorter viewports — prevents the mascot from being clipped
+     at the top of the page. */
+  overflow-y: auto;
+  padding: 24px 0;
+}
+
+/* Mascot wrapper — scales down on shorter viewports so the full
+   hero stack (mascot + label + wordmark + tagline + descriptor)
+   never overflows past the top of the viewport. clamp() lets it
+   stay at 320px on tall screens and shrink to ~160px at 600px tall. */
+.heroMascotWrap {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 4px;
+}
+.heroMascotWrap img {
+  width: auto;
+  height: clamp(160px, 32vh, 320px);
+  max-width: 100%;
 }
 
 .heroLabel {
@@ -214,7 +235,10 @@
 
 .heroBrand {
   font-family: var(--display);
-  font-size: clamp(80px, 18vw, 220px);
+  /* Min(width-based clamp, height-based cap) so on shorter screens
+     the wordmark shrinks too — otherwise it stays at 220px and
+     keeps pushing the mascot above the fold. */
+  font-size: min(clamp(80px, 18vw, 220px), 26vh);
   font-weight: 900;
   font-style: italic;
   line-height: 0.85;

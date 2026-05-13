@@ -596,20 +596,37 @@ export function runAnimator(refs: AnimatorRefs, opts: AnimatorOptions): () => vo
   setHeroDescriptor(role);
   lockScroll();
 
-  // 25-second safety: if anything stalls, jump to hero.
-  schedule(() => {
+  // 60-second safety: if anything truly stalls, jump to hero. Cancelled
+  // the moment a fork pick happens (or — for members with prefilled role —
+  // as soon as the branched scenes start), since past that point the
+  // animation is provably progressing. The previous 25s window was tight
+  // enough that a user spending 10+ seconds reading the fork before
+  // clicking would trip the safety mid-typing on the first branched line.
+  const safetyTimerId = setTimeout(() => {
+    timers.delete(safetyTimerId);
+    if (paused) return;
     if (!scrollUnlocked) unlockScroll(role);
-  }, 25000);
+  }, 60000);
+  timers.add(safetyTimerId);
+
+  function cancelSafetyTimer() {
+    clearTimeout(safetyTimerId);
+    timers.delete(safetyTimerId);
+  }
 
   schedule(() => {
     if (role) {
-      // Member with prefilled role: skip opener + fork.
+      // Member with prefilled role: skip opener + fork. Animation
+      // is committed to running, so the safety net isn't needed.
       const r = role;
+      cancelSafetyTimer();
       runBranchedScenes(r, () => runTerminal(r, () => unlockScroll(r)));
     } else {
       runOpener(() =>
         runFork((picked) => {
           role = picked;
+          // User picked — animation is committed, safety no longer needed.
+          cancelSafetyTimer();
           runBranchedScenes(picked, () => runTerminal(picked, () => unlockScroll(picked)));
         }),
       );
