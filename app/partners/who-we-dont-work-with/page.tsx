@@ -44,8 +44,8 @@ const RED_FLAGS = [
     body: "AESDR does not run promotional discounts. Ever. Asking for a partner-issued promo code, an audience-specific discount, or pricing-variance authority is something we won't accommodate.",
   },
   {
-    headline: "Audience-bot signal.",
-    body: "If a sample of 10 recent replies to your audience-published content surfaces 3+ obvious engagement-bot accounts, the audience-quality signal won't hold up under workshop conditions. Borrowed trust is a merciless mirror — your audience will surface our weaknesses in 60 minutes, and ours will surface yours.",
+    headline: "Mostly bot engagement.",
+    body: "If we sample 10 recent replies on your content and most of them are obvious bot accounts, the audience-quality signal won't hold up at workshop time. The workshop is a live event with live engagement; if the audience can't actually show up and ask questions, neither side comes out well.",
   },
   {
     headline: "Pre-role audience.",
@@ -56,8 +56,8 @@ const RED_FLAGS = [
     body: "Verified prior FTC, advertising-standards, or consumer-protection issues. We don't run pilots with partners with active compliance shadows over them. Resolved historical issues are case-by-case.",
   },
   {
-    headline: "Founder-on-demand expectations.",
-    body: "AESDR is founder-backstage, host-fronted. If your conversion model assumes a recurring founder appearance — podcast guests, panel keynotes, joint webinar circuit — your model and ours are incompatible. Rare exceptions exist for named-milestone events; they're not the default.",
+    headline: "Recurring founder appearances as the pitch.",
+    body: "The host runs the workshops, not the founder. If your partnership model relies on a recurring founder presence — joint webinars, podcast circuits, panel keynotes — that's not what we do. Rare exceptions exist for milestone events; they're not the default.",
   },
   {
     headline: "List co-promotion ask.",
@@ -97,7 +97,7 @@ export default function WhoWeDontWorkWithPage() {
             marginRight: "auto",
           }}
         >
-          Most affiliate hubs hide this. AESDR doesn&rsquo;t. Naming what&rsquo;s true is how the right partners self-select.
+          Naming the bad fits up front saves both sides time. None of these are insults &mdash; they&rsquo;re filters.
         </p>
       </div>
 
@@ -181,9 +181,9 @@ export default function WhoWeDontWorkWithPage() {
             lineHeight: 1.7,
           }}
         >
-          None of these are insults. They&rsquo;re filters.
+          If any of these describe you and you&rsquo;d still like to talk,
           <br />
-          We&rsquo;d rather decline now than end a pilot in week 4.
+          email the founder. Sometimes the answer changes.
         </p>
       </section>
 
@@ -194,7 +194,7 @@ export default function WhoWeDontWorkWithPage() {
       </div>
 
       <CaveatLayer>
-        PS — If you read this list and one of them describes you, that&rsquo;s information. Decline cleanly; we part as adults. Door stays open if your model changes.
+        PS &mdash; If you read this list and one of them describes you, that&rsquo;s useful information. Door stays open if your situation changes.
       </CaveatLayer>
     </HubPage>
   );

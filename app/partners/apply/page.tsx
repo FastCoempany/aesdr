@@ -49,7 +49,7 @@ export default function ApplyPage() {
             marginRight: "auto",
           }}
         >
-          Five fields. If your audience matches, we send a 30-minute Calendly link. If it doesn&rsquo;t, we say so directly.
+          Five fields. If your audience fits, we&rsquo;ll send a 30-minute Calendly link. If it doesn&rsquo;t, we&rsquo;ll tell you why.
         </p>
       </div>
 
@@ -97,7 +97,7 @@ export default function ApplyPage() {
       </section>
 
       <CaveatLayer>
-        PS — If you&rsquo;re going to apply, apply because the brand makes sense, not because the commission does. We&rsquo;re not for everyone, and that&rsquo;s the point.
+        PS &mdash; Applying because the commission&rsquo;s good is fine. Applying because the brand makes sense to your audience is what makes it work.
       </CaveatLayer>
     </HubPage>
   );

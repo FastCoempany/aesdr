@@ -39,7 +39,7 @@ import {
 export const metadata: Metadata = {
   title: "AESDR · Partners",
   description:
-    "Real partnerships, not affiliate links. AESDR works with a handful of operators whose audiences are early-career SaaS reps. Workshop-first. Time-boxed. Non-exclusive.",
+    "Pilot Cohort 1 is open. We're looking for a small number of partners whose audiences are SaaS AEs and SDRs — first-year reps through ten-year veterans doing a fundamentals reset. One workshop, two emails, 30% commission, $500 sign-on for invited partners.",
 };
 
 export default function PartnersHomePage() {
@@ -49,31 +49,31 @@ export default function PartnersHomePage() {
 
   return (
     <HubPage>
-      <MonoEyebrow>AESDR · PARTNERS · EST. 2026</MonoEyebrow>
+      <MonoEyebrow>AESDR · PARTNERS · COHORT 1 OPEN</MonoEyebrow>
 
       <EditorialSplitHero
-        leftEyebrow="WARNING · NOT A MARKETPLACE"
+        leftEyebrow="PILOT COHORT 1"
         leftHeadline={
           <>
-            <em>Real partnerships,</em>
+            <em>Picky on purpose.</em>
             <br />
-            <em>not affiliate links.</em>
+            <em>Open by invitation.</em>
           </>
         }
         leftBody={
           <>
-            AESDR doesn&rsquo;t run a marketplace. We work with a small group of operators whose audiences are early-career SaaS reps. Workshop-first. Time-boxed. Non-exclusive. Operator-to-operator.
+            AESDR&rsquo;s first affiliate cohort is forming. We&rsquo;re looking for a small number of partners &mdash; community operators, course creators, agency owners, coaches &mdash; whose audiences are SaaS AEs and SDRs across the career arc: first-year reps, third-year ramp veterans, and ten-year reps doing a fundamentals reset. The shape is simple: one live workshop into your audience, two emails, a 30-day attribution window, 30% commission. That&rsquo;s the whole thing.
           </>
         }
-        rightLabel="WHAT THIS PAGE DOES"
+        rightLabel="WHERE WE ARE"
         rightHeadline={
           <em>
-            You can already feel it. You have to be a part of this.
+            Built with GTM teams. Ready for affiliates.
           </em>
         }
         rightBody={
           <>
-            AESDR runs pilot partnerships with community operators, bootcamp coaches, alumni networks, and creators. Workshop-first, time-boxed, non-exclusive. Real Operator. Never guru.
+            The curriculum was built with feedback from sales leaders and reps at Harvey, Craft, Rally UXR, and ~20 more SaaS companies. The content&rsquo;s been pressure-tested. We&rsquo;re ready to put it in front of new audiences &mdash; and we&rsquo;d rather do that through people their audiences already trust than through ads. Cohort 1 partners we invite directly get a <strong>$500 sign-on bonus</strong> on agreement signing &mdash; small money but real money, and the point is we have skin in the game from day one.
           </>
         }
         ctaHref="/partners/apply"
@@ -83,26 +83,26 @@ export default function PartnersHomePage() {
       <ThreePillarBlock
         pillars={[
           {
-            title: "Workshop-first.",
+            title: "We sell by teaching, not by linking.",
             body: (
               <>
-                Every pilot leads with one live 60-minute workshop into the partner&rsquo;s audience, run by AESDR. The workshop earns the sale. The link merely attributes it.
+                Every pilot kicks off with one live 60-minute workshop into your audience. We run it. It&rsquo;s the part that does the actual selling &mdash; your link just tells us who came from you.
               </>
             ),
           },
           {
-            title: "Real Operator. Never guru.",
+            title: "Practical, not motivational.",
             body: (
               <>
-                We are the operating manual, not the motivation engine. If a piece of copy could be lifted onto a LinkedIn carousel without anyone noticing, it is wrong.
+                The course is the operating manual nobody wrote down &mdash; how to read your own pipeline, what to do when the script runs out, what &ldquo;good&rdquo; actually looks like Monday morning. Not &ldquo;crush it.&rdquo; Not &ldquo;mindset.&rdquo; Just the work. Cold-calling included, dial blocks included, gatekeepers included.
               </>
             ),
           },
           {
-            title: "Honesty is the differentiator.",
+            title: "We say who shouldn't buy.",
             body: (
               <>
-                We say out loud what competitors won&rsquo;t: who should not buy, where the math breaks, what happens when the script runs out. Honesty is not a tone. It is a competitive position.
+                We publish who the program isn&rsquo;t for &mdash; anyone hunting motivation, anyone wanting a LinkedIn-friendly credential, reps not currently in a seat. That&rsquo;s so the right people enroll and the wrong ones don&rsquo;t waste their money. It also makes your job easier &mdash; recommendations to your audience land harder when they trust you&rsquo;re not pitching everyone.
               </>
             ),
           },
@@ -130,7 +130,7 @@ export default function PartnersHomePage() {
       </div>
 
       <CaveatLayer>
-        PS — If you&rsquo;re going to apply, apply because the brand makes sense, not because the commission does. The latter is what every other affiliate program optimizes for. We&rsquo;re not that.
+        PS &mdash; Apply because the brand makes sense to your audience, not just because the commission&rsquo;s good. The math works either way; the fit doesn&rsquo;t.
       </CaveatLayer>
     </HubPage>
   );
