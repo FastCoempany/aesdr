@@ -58,7 +58,14 @@ const HAZARD_TAGS = [
   "CHAMBER · COLLAPSED",
 ];
 
-export function UnderlandLayer() {
+export type UnderlandVariant = "stone" | "plan" | "angled" | "field";
+
+interface UnderlandLayerProps {
+  variant?: UnderlandVariant;
+  label?: string;
+}
+
+export function UnderlandLayer({ variant = "stone", label = "Underland" }: UnderlandLayerProps = {}) {
   const [intensity, setIntensity] = useState<Intensity>("standard");
   const [pageH, setPageH] = useState(FALLBACK_HEIGHT);
 
@@ -169,7 +176,7 @@ export function UnderlandLayer() {
 
   return (
     <>
-      <IntensityToggle label="Underland" value={intensity} onChange={setIntensity} />
+      <IntensityToggle label={label} value={intensity} onChange={setIntensity} />
 
       {/* L1: subtle warm soil-strata band wash below the surface */}
       <div
@@ -342,14 +349,21 @@ export function UnderlandLayer() {
           </g>
         ))}
 
-        {/* Tortoise-shell stones embedded in soil — small hex forms */}
-        {layout.stones.map((s, i) => (
-          <g key={i} opacity="0.82">
-            <polygon points={hexPoints(s.cx, s.cy, s.r)} fill="#E8DCC4" stroke="#1A1A1A" strokeWidth="0.7" />
-            <polygon points={hexPoints(s.cx, s.cy, s.r * 0.45)} fill="none" stroke="#1A1A1A" strokeWidth="0.4" opacity="0.7" />
-            <circle cx={s.cx} cy={s.cy} r="0.9" fill="#1A1A1A" />
-          </g>
-        ))}
+        {/* Variant-driven scatter: tortoise-shell stones OR 3D rabbit holes */}
+        {layout.stones.map((s, i) => {
+          if (variant === "stone") {
+            return (
+              <g key={i} opacity="0.82">
+                <polygon points={hexPoints(s.cx, s.cy, s.r)} fill="#E8DCC4" stroke="#1A1A1A" strokeWidth="0.7" />
+                <polygon points={hexPoints(s.cx, s.cy, s.r * 0.45)} fill="none" stroke="#1A1A1A" strokeWidth="0.4" opacity="0.7" />
+                <circle cx={s.cx} cy={s.cy} r="0.9" fill="#1A1A1A" />
+              </g>
+            );
+          }
+          if (variant === "plan") return <HolePlan key={i} cx={s.cx} cy={s.cy} r={s.r} seed={i} />;
+          if (variant === "angled") return <HoleAngled key={i} cx={s.cx} cy={s.cy} r={s.r} />;
+          return <HoleField key={i} cx={s.cx} cy={s.cy} r={s.r} seed={i} />;
+        })}
 
         {/* Top-left cartouche */}
         <g transform="translate(72 124)" opacity="0.88">
@@ -421,5 +435,189 @@ export function UnderlandLayer() {
         ))}
       </svg>
     </>
+  );
+}
+
+/* ─────────────────────────────────────────── Rabbit-hole renderers ─── */
+
+/**
+ * HolePlan — top-down minimalist ink sketch of a rabbit hole.
+ * Solid dark void ellipse + sparse ink dot-clods around the rim + a
+ * few claw-scratch lines radiating from one side (digging direction).
+ */
+function HolePlan({ cx, cy, r, seed }: { cx: number; cy: number; r: number; seed: number }) {
+  // Deterministic clod jitter from index — no Math.random
+  const clods = Array.from({ length: 14 }).map((_, k) => {
+    const a = (k / 14) * Math.PI * 2 + ((seed * 7 + k) % 5) * 0.1;
+    const dist = r * (1.22 + ((seed + k) % 4) * 0.12);
+    return {
+      cx: cx + Math.cos(a) * dist,
+      cy: cy + Math.sin(a) * dist * 0.85,
+      cr: 0.7 + ((seed + k) % 3) * 0.5,
+    };
+  });
+  return (
+    <g>
+      {/* The void */}
+      <ellipse cx={cx} cy={cy} rx={r} ry={r * 0.72} fill="#1A1A1A" />
+      <ellipse cx={cx} cy={cy - r * 0.1} rx={r * 0.84} ry={r * 0.58} fill="#000" />
+      {/* Dirt clods around the rim */}
+      {clods.map((c, k) => (
+        <circle key={k} cx={c.cx} cy={c.cy} r={c.cr} fill="#1A1A1A" opacity="0.78" />
+      ))}
+      {/* Three claw-scratch lines indicating digging direction (top-right of hole) */}
+      {[0, 1, 2].map((k) => {
+        const a = -Math.PI / 4 + k * 0.18;
+        return (
+          <line
+            key={k}
+            x1={cx + Math.cos(a) * r * 1.18}
+            y1={cy + Math.sin(a) * r * 0.95}
+            x2={cx + Math.cos(a) * r * 1.85}
+            y2={cy + Math.sin(a) * r * 1.45}
+            stroke="#1A1A1A"
+            strokeWidth="0.5"
+            opacity="0.7"
+          />
+        );
+      })}
+    </g>
+  );
+}
+
+/**
+ * HoleAngled — 3/4 perspective rabbit hole.
+ * Dark elliptical void + crescent dirt mound piled on the FAR rim with
+ * cross-hatched shading + faint highlight on mound peak + cast shadow.
+ */
+function HoleAngled({ cx, cy, r }: { cx: number; cy: number; r: number }) {
+  return (
+    <g>
+      {/* Cast shadow under the mound */}
+      <ellipse cx={cx} cy={cy - r * 0.05} rx={r * 1.05} ry={r * 0.10} fill="#1A1A1A" opacity="0.20" />
+      {/* The void — angled ellipse, narrower vertically */}
+      <ellipse cx={cx} cy={cy} rx={r} ry={r * 0.55} fill="#1A1A1A" />
+      {/* Inner darker void suggesting depth */}
+      <ellipse cx={cx} cy={cy + r * 0.05} rx={r * 0.86} ry={r * 0.44} fill="#000" />
+      {/* Near rim highlight (front edge of hole) */}
+      <path
+        d={`M ${cx - r * 0.95} ${cy + r * 0.15} Q ${cx} ${cy + r * 0.55} ${cx + r * 0.95} ${cy + r * 0.15}`}
+        stroke="#1A1A1A"
+        strokeWidth="0.4"
+        fill="none"
+        opacity="0.6"
+      />
+      {/* Crescent dirt mound on far rim */}
+      <path
+        d={`M ${cx - r * 1.1} ${cy - r * 0.25} Q ${cx} ${cy - r * 1.15} ${cx + r * 1.1} ${cy - r * 0.25} Q ${cx} ${cy - r * 0.45} ${cx - r * 1.1} ${cy - r * 0.25} Z`}
+        fill="#1A1A1A"
+        opacity="0.88"
+      />
+      {/* Cross-hatching on mound for soil texture */}
+      {Array.from({ length: 7 }).map((_, k) => {
+        const px = cx - r * 0.9 + k * (r * 0.3);
+        return (
+          <line
+            key={k}
+            x1={px}
+            y1={cy - r * 0.45}
+            x2={px + r * 0.15}
+            y2={cy - r * 0.8 - (k % 2) * r * 0.1}
+            stroke="#FAF7F2"
+            strokeWidth="0.3"
+            opacity="0.45"
+          />
+        );
+      })}
+      {/* Highlight on mound peak */}
+      <path
+        d={`M ${cx - r * 0.6} ${cy - r * 0.78} Q ${cx} ${cy - r * 1.06} ${cx + r * 0.6} ${cy - r * 0.78}`}
+        stroke="#FAF7F2"
+        strokeWidth="0.5"
+        fill="none"
+        opacity="0.55"
+      />
+      {/* Small fallen clods at base of mound on the sides */}
+      {[-1.0, -0.6, 0.55, 0.95].map((dx, k) => (
+        <ellipse
+          key={k}
+          cx={cx + r * dx}
+          cy={cy - r * 0.12}
+          rx={1.2 + (k % 2) * 0.6}
+          ry={0.9 + (k % 2) * 0.4}
+          fill="#1A1A1A"
+          opacity="0.78"
+        />
+      ))}
+    </g>
+  );
+}
+
+/**
+ * HoleField — detailed naturalist top-down rabbit hole.
+ * Heavy dirt-spray ring with shadowed clods at varying sizes, torn
+ * grass tufts at top edge, hare 4-print stagger leading into the
+ * hole from below. Maximum visual detail of the three.
+ */
+function HoleField({ cx, cy, r, seed }: { cx: number; cy: number; r: number; seed: number }) {
+  // Wide spray of clods around the rim — irregular distribution + shadows
+  const sprayClods = Array.from({ length: 26 }).map((_, k) => {
+    const a = (k / 26) * Math.PI * 2 + ((seed * 11 + k * 3) % 7) * 0.08;
+    const dist = r * (1.12 + ((seed + k * 2) % 6) * 0.16);
+    return {
+      cx: cx + Math.cos(a) * dist,
+      cy: cy + Math.sin(a) * dist * 0.85,
+      cr: 0.8 + ((seed + k) % 5) * 0.7,
+    };
+  });
+  return (
+    <g>
+      {/* Outer dirt spray with subtle shadow under each clod */}
+      {sprayClods.map((c, k) => (
+        <g key={k}>
+          <ellipse cx={c.cx + 0.5} cy={c.cy + 0.5} rx={c.cr * 1.05} ry={c.cr * 0.7} fill="#1A1A1A" opacity="0.18" />
+          <ellipse cx={c.cx} cy={c.cy} rx={c.cr} ry={c.cr * 0.78} fill="#1A1A1A" opacity="0.82" />
+        </g>
+      ))}
+      {/* The void */}
+      <ellipse cx={cx} cy={cy} rx={r} ry={r * 0.72} fill="#1A1A1A" />
+      <ellipse cx={cx} cy={cy - r * 0.1} rx={r * 0.85} ry={r * 0.6} fill="#000" />
+      {/* Inner darker rim shadow at the bottom (suggests hole goes down) */}
+      <path
+        d={`M ${cx - r * 0.7} ${cy + r * 0.3} Q ${cx} ${cy + r * 0.6} ${cx + r * 0.7} ${cy + r * 0.3}`}
+        stroke="#FAF7F2"
+        strokeWidth="0.35"
+        fill="none"
+        opacity="0.35"
+      />
+      {/* Torn grass tufts at top rim */}
+      {[-0.55, -0.18, 0.22, 0.6].map((dx, k) => (
+        <g
+          key={k}
+          transform={`translate(${cx + r * dx} ${cy - r * 0.65}) rotate(${(k % 2 === 0 ? -8 : 6) + k * 3})`}
+          stroke="#1A1A1A"
+          strokeWidth="0.4"
+          fill="none"
+          opacity="0.7"
+        >
+          <path d="M 0 0 q -1 -7 -2 -11" />
+          <path d="M 1.5 0 q 1 -6 1.5 -9" />
+          <path d="M -1.5 0 q -1 -8 -2.5 -11" />
+        </g>
+      ))}
+      {/* Hare 4-print stagger leading into the hole from below */}
+      {[0, 1, 2].map((step) => {
+        const py = cy + r * (1.6 + step * 0.7);
+        const px = cx + (step % 2 === 0 ? -1 : 1) * 1.5;
+        return (
+          <g key={step} transform={`translate(${px} ${py})`} fill="#1A1A1A" opacity="0.65">
+            <ellipse cx="-2" cy="-1.5" rx="1.1" ry="2.2" />
+            <ellipse cx="2" cy="-1" rx="1.1" ry="2.2" />
+            <circle cx="-1" cy="2.5" r="0.7" />
+            <circle cx="1.5" cy="3" r="0.7" />
+          </g>
+        );
+      })}
+    </g>
   );
 }
