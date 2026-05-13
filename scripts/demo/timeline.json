@@ -1,0 +1,9 @@
+[
+  { "t":  0,  "duration": 4,  "zoom": 1.00, "focus": [960, 540], "ease": "linear" },
+  { "t":  4,  "duration": 4,  "zoom": 1.18, "focus": [960, 500], "ease": "easeInOut" },
+  { "t":  8,  "duration": 4,  "zoom": 1.00, "focus": [960, 540], "ease": "easeInOut" },
+  { "t": 12,  "duration": 3,  "zoom": 1.10, "focus": [600, 540], "ease": "easeIn" },
+  { "t": 15,  "duration": 3,  "zoom": 1.00, "focus": [960, 540], "ease": "easeOut" },
+  { "t": 18,  "duration": 6,  "zoom": 1.20, "focus": [960, 480], "ease": "easeInOut" },
+  { "t": 24,  "duration": 6,  "zoom": 1.00, "focus": [960, 540], "ease": "easeOut" }
+]
