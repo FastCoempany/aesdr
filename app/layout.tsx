@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/react";
 import AdminChip from "@/components/AdminChip";
+import { DemoBadge } from "@/components/DemoBadge";
 import MobileGate from "@/components/MobileGate";
 import PostHogClient from "@/components/PostHogClient";
 import RedditPixel from "@/components/RedditPixel";
@@ -77,6 +78,7 @@ export default async function RootLayout({
           Skip to content
         </a>
         {isAdmin && <AdminChip />}
+        <DemoBadge />
         <div id="main-content">
           <MobileGate>{children}</MobileGate>
         </div>

@@ -9,6 +9,7 @@ import { listLessonUnits, getToolAssetsForLesson } from "@/utils/content/catalog
 import { LESSONS } from "@/utils/progress/types";
 import { createClient } from "@/utils/supabase/server";
 import { verifyPaidAccess } from "@/utils/access/verifyAccess";
+import { readDemoSession } from "@/lib/demo-mode-server";
 
 export async function generateMetadata({
   params,
@@ -39,42 +40,74 @@ export default async function LessonPage({
   const { lessonId } = await params;
   const { unit: requestedUnitId } = await searchParams;
   const supabase = await createClient();
+  const demoSession = await readDemoSession();
 
   const {
-    data: { user },
+    data: { user: realUser },
     error: authError,
   } = await supabase.auth.getUser();
 
-  if (authError || !user) {
+  // Demo mode short-circuits the login redirect and synthesises a user
+  // with role pre-selected so the lesson renders without account setup.
+  const user = demoSession
+    ? {
+        id: demoSession.user.id,
+        email: demoSession.user.email,
+        user_metadata: {
+          role: demoSession.user.role,
+          full_name: demoSession.user.full_name,
+        },
+      }
+    : realUser;
+
+  if (!demoSession && (authError || !realUser)) {
     redirect("/login");
   }
 
-  // Force password change for users with temp passwords
-  if (user.user_metadata?.needs_password_change) {
+  // Force password change for users with temp passwords (skipped in demo)
+  if (!demoSession && realUser?.user_metadata?.needs_password_change) {
     redirect("/account/set-password");
   }
 
-  // Force role selection before accessing courses
-  if (!user.user_metadata?.role) {
+  // Force role selection before accessing courses (skipped in demo)
+  if (!demoSession && !realUser?.user_metadata?.role) {
     redirect("/account/select-role");
   }
 
-  const userRole: string = user.user_metadata.role;
+  const userRole: string = user!.user_metadata.role as string;
 
   // Purchase gate — bypass for founder (GhostButton cookie)
   const cookieStore = await cookies();
   const hasBypass = cookieStore.get("aesdr_bypass")?.value === "1";
 
   // Parallelize: access check + progress fetch both depend on user.id only.
-  const [hasAccess, progressResult] = await Promise.all([
-    hasBypass ? Promise.resolve(true) : verifyPaidAccess(supabase, user),
-    supabase
-      .from("course_progress")
-      .select("is_completed, last_screen, state_data")
-      .eq("user_id", user.id)
-      .eq("lesson_id", lessonId)
-      .maybeSingle(),
-  ]);
+  // Demo sessions resolve both to synthetic values without touching Supabase.
+  const [hasAccess, progressResult] = demoSession
+    ? [
+        true as boolean,
+        {
+          data: {
+            is_completed: demoSession.lessonsCompleted.includes(lessonId),
+            last_screen:
+              demoSession.currentLessonId === lessonId
+                ? demoSession.currentLessonUnitsCompleted
+                : demoSession.lessonsCompleted.includes(lessonId)
+                  ? 999
+                  : 0,
+            state_data: {} as Record<string, unknown>,
+          },
+          error: null as null | Error,
+        },
+      ]
+    : await Promise.all([
+        hasBypass ? Promise.resolve(true) : verifyPaidAccess(supabase, realUser!),
+        supabase
+          .from("course_progress")
+          .select("is_completed, last_screen, state_data")
+          .eq("user_id", realUser!.id)
+          .eq("lesson_id", lessonId)
+          .maybeSingle(),
+      ]);
 
   if (!hasAccess) {
     redirect("/login?reason=no_purchase");
@@ -108,6 +141,9 @@ export default async function LessonPage({
         const params = new URLSearchParams();
         if (restoreScreen > 0) params.set("screen", String(restoreScreen));
         params.set("role", userRole);
+        // Pass demo flag through to the iframe so the lesson route handler
+        // can inject the gating-bypass script into the served HTML.
+        if (demoSession) params.set("demo", "1");
         const qs = params.toString();
         return `/course/${lessonId}/units/${selectedUnit.unitId}${qs ? `?${qs}` : ""}`;
       })()
