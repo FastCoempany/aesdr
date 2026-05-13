@@ -153,30 +153,43 @@ export default async function LessonPage({
         </main>
       )}
 
-      {/* Floating top-left cluster: Save & Exit + Leponeus + AESDR
-          iris-shimmer wordmark, all on a single row. Overlays the
-          (now empty) left side of the lesson's own topbar — the
-          lesson's right-side "Lesson N.X · progress" remains intact
-          and visible on the opposite side. */}
+      {/* Save & Exit — top-left, aligned with the lesson's own topbar
+          band (which carries the "Section N · progress" indicator on
+          the opposite right side). */}
       <div
         style={{
           position: "fixed",
-          top: 12,
+          top: 9,
           left: 12,
           zIndex: 9999,
-          display: "flex",
-          alignItems: "center",
-          gap: 14,
         }}
       >
         <SaveExitButton />
-        <Mascot pose="doctrine" size={108} priority />
+      </div>
+
+      {/* Center: Leponeus + AESDR iris-shimmer wordmark. Sized to fit
+          inside the ~50px lesson-topbar band so it sits on the same
+          horizontal line as Save & Exit (left) and the lesson's own
+          progress indicator (right). */}
+      <div
+        style={{
+          position: "fixed",
+          top: 6,
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 9999,
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+        }}
+      >
+        <Mascot pose="doctrine" size={40} priority />
         <span
           style={{
             fontFamily: "var(--display)",
             fontStyle: "italic",
             fontWeight: 900,
-            fontSize: 44,
+            fontSize: 22,
             lineHeight: 1,
             letterSpacing: ".04em",
             background: "var(--iris)",
