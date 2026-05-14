@@ -39,6 +39,7 @@ from _common import (
     clamp, ease_io, ease_in, ease_out, fade, lerp, iris_color,
     mascot, with_alpha,
     paste_centered, text_layer, text_centered, iris_text,
+    render_validated_marquee,
     apply_cinema,
 )
 
@@ -634,17 +635,21 @@ def render(idx: int) -> Image.Image:
         if a > 0:
             veil = Image.new("RGBA", (W, H), CREAM + (int(255 * a),))
             bg = Image.alpha_composite(bg, veil)
-            # Big AESDR iris wordmark — sized so the layer fits the frame
-            # vertically with room to spare (font 260 → layer ~430px tall).
-            f_brand = ImageFont.truetype(F_DISP_BI, 260)
+            # Big Leponeus at top-center
+            mh = 280
+            m_end = mascot("rest", mh)
+            paste_centered(bg, with_alpha(m_end, a),
+                           W * 0.50, mh // 2 + 20)
+            # AESDR iris wordmark
+            f_brand = ImageFont.truetype(F_DISP_BI, 180)
             wm = iris_text("AESDR", f_brand, t * 0.20)
-            paste_centered(bg, with_alpha(wm, a), W * 0.50, H * 0.38)
+            paste_centered(bg, with_alpha(wm, a), W * 0.50, H * 0.46)
             # "Change your life." — italic serif
-            f_cta = ImageFont.truetype(F_IT, 54)
+            f_cta = ImageFont.truetype(F_IT, 46)
             text_centered(bg, "Change your life.", f_cta,
-                          INK, W * 0.50, H * 0.60, a)
-            # New tagline — section-grey mono, two lines
-            f_tag = ImageFont.truetype(F_MONO, 22)
+                          INK, W * 0.50, H * 0.62, a)
+            # Section-grey tagline (3 lines, mono)
+            f_tag = ImageFont.truetype(F_MONO, 19)
             tag_lines = [
                 "SEED TO SERIES E AI-FIRST PRODUCTS.",
                 "BUILT WITH FEEDBACK FROM THEIR FOUNDERS, SALES LEADERS,",
@@ -652,7 +657,11 @@ def render(idx: int) -> Image.Image:
             ]
             for li, ln in enumerate(tag_lines):
                 text_centered(bg, ln, f_tag, MUTED,
-                              W * 0.50, H * 0.72 + li * 32, a)
+                              W * 0.50, H * 0.72 + li * 26, a)
+            # Rolling validated-by carousel along the bottom
+            marquee = render_validated_marquee(alpha=a, t=t, w=W - 40,
+                                               scroll_px_per_s=70)
+            paste_centered(bg, marquee, W * 0.50, H * 0.92)
 
     # ─── Cinematic post — no letterbox bars ──────────────────────────
     bg = apply_cinema(bg, idx, t,
