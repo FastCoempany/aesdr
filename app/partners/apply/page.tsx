@@ -51,6 +51,28 @@ export default function ApplyPage() {
         >
           Five fields. If your audience fits, we&rsquo;ll send a 30-minute Calendly link. If it doesn&rsquo;t, we&rsquo;ll tell you why.
         </p>
+        <p
+          style={{
+            fontFamily: "var(--serif)",
+            fontStyle: "italic",
+            fontSize: 15,
+            color: "var(--muted)",
+            textAlign: "center",
+            lineHeight: 1.6,
+            maxWidth: 640,
+            marginLeft: "auto",
+            marginRight: "auto",
+            marginTop: 16,
+          }}
+        >
+          Want to read the terms before you apply?{" "}
+          <a
+            href="/partners/kit/specimen-partnership-agreement"
+            style={{ color: "var(--ink)", textDecoration: "underline" }}
+          >
+            Specimen agreement →
+          </a>
+        </p>
       </div>
 
       <ApplicationForm />

@@ -95,6 +95,14 @@ export const KIT_ENTRIES: KitEntry[] = [
     category: "How co-promotion works",
     source: "pilot-rhythm",
   },
+  {
+    slug: "specimen-partnership-agreement",
+    title: "Specimen Partnership Agreement",
+    description:
+      "Plain-English read of the deal terms — commission, attribution, payments, IP, indemnification. Specimen, not for signature; counsel-reviewed PDF ships at approval.",
+    category: "How co-promotion works",
+    source: "specimen-partnership-agreement",
+  },
 ];
 
 export const KIT_CATEGORIES: { name: KitCategory; blurb: string }[] = [

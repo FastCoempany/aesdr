@@ -254,6 +254,25 @@ export default function ProgramPage() {
         >
           Request the partnership agreement →
         </HubCTA>
+        <p
+          style={{
+            fontFamily: "var(--serif)",
+            fontStyle: "italic",
+            fontSize: 15,
+            color: "var(--muted)",
+            textAlign: "center",
+            lineHeight: 1.6,
+            marginTop: 24,
+          }}
+        >
+          Want to read the deal first?{" "}
+          <a
+            href="/partners/kit/specimen-partnership-agreement"
+            style={{ color: "var(--ink)", textDecoration: "underline" }}
+          >
+            Specimen agreement →
+          </a>
+        </p>
       </div>
 
       <CaveatLayer>
