@@ -83,8 +83,31 @@ LESSONS = [
     ("12", "Relationships & Balance",  "This is where you stop reading. No mercy."),
 ]
 
-VALIDATED = ["NORTHFIELD", "OLIVE & CRANE", "PRESTON YIELD", "AVERY ROW",
-             "MIDLAND BAY", "CHARTERLINE", "STANTON & ROE", "HEARTH GROUP"]
+VALIDATED = [
+    ("Harvey",       "$8B"),
+    ("Pendo",        "$2.6B"),
+    ("Job&Talent",   "$2.35B"),
+    ("OpenGov",      "$1.8B acq."),
+    ("Scribe",       "$1.3B"),
+    ("Superhuman",   "acq. by Grammarly"),
+    ("CADDi",        "$470M"),
+    ("Filevine",     "$400M raised"),
+    ("Aisera",       "acq. Automation Anywhere"),
+    ("k-ID",         "$51M · a16z"),
+    ("Lorikeet",     "$51M raised"),
+    ("Craft",        "$42M raised"),
+    ("Smokeball",    "$30M"),
+    ("Rally UXR",    "$20M raised"),
+    ("Parable",      "$16.5M seed"),
+    ("Shapr3D",      ""),
+    ("Sybill",       ""),
+    ("HeyMilo",      ""),
+    ("Clearbrief",   ""),
+    ("Moonhub",      ""),
+    ("harpin AI",    ""),
+    ("Newscatcher",  ""),
+    ("Duckie",       ""),
+]
 
 
 # ─── Math + ease helpers ──────────────────────────────────────────────
@@ -180,30 +203,34 @@ def text_centered(canvas, text, font, color, cx, cy, alpha=1.0):
 
 
 def iris_text(text: str, font: ImageFont.FreeTypeFont, t_phase: float, alpha=1.0):
-    """Text masked by a horizontally scrolling iris gradient. Returns RGBA layer."""
+    """Text masked by a horizontally scrolling iris gradient.
+
+    Returns RGBA layer. Direct alpha assembly (no PIL paste-with-mask)
+    so anti-aliased edges don't drop the bottom half of glyphs.
+    """
     probe = Image.new("RGBA", (1, 1))
     bbox = ImageDraw.Draw(probe).textbbox((0, 0), text, font=font, anchor="lt")
-    pad = 30
-    tw = bbox[2] - bbox[0] + pad * 2
-    th = bbox[3] - bbox[1] + pad * 2
+    pad = 80
+    tw = max(2, bbox[2] - bbox[0] + pad * 2)
+    th = max(2, bbox[3] - bbox[1] + pad * 2)
 
+    # Build text mask
     mask = Image.new("L", (tw, th), 0)
-    md = ImageDraw.Draw(mask)
-    md.text((pad - bbox[0], pad - bbox[1]), text, font=font, fill=int(255 * clamp(alpha)))
+    ImageDraw.Draw(mask).text(
+        (pad - bbox[0], pad - bbox[1]),
+        text, font=font, fill=int(255 * clamp(alpha)),
+    )
 
-    grad = np.zeros((th, tw, 3), dtype=np.uint8)
+    # Build RGBA gradient with alpha taken directly from the mask
+    grad = np.zeros((th, tw, 4), dtype=np.uint8)
     for x in range(tw):
         u = (x / tw + t_phase) % 1.0
-        grad[:, x] = iris_color(u)
-    grad_img = Image.fromarray(grad, "RGB").convert("RGBA")
-
-    out = Image.new("RGBA", (tw, th), (0, 0, 0, 0))
-    # Use mask as both color stencil and alpha channel
-    out.paste(grad_img, (0, 0), mask)
-    # Ensure alpha follows mask (some PIL versions clobber it)
-    out_arr = np.array(out)
-    out_arr[..., 3] = np.array(mask)
-    return Image.fromarray(out_arr, "RGBA")
+        c = iris_color(u)
+        grad[:, x, 0] = c[0]
+        grad[:, x, 1] = c[1]
+        grad[:, x, 2] = c[2]
+    grad[..., 3] = np.array(mask)
+    return Image.fromarray(grad, "RGBA")
 
 
 # ─── Scene fragments — the course teases ──────────────────────────────
@@ -386,14 +413,15 @@ def render_bant_pick(w=1100, picked_idx: int = -1):
 
 
 def render_validated_strip(alpha=1.0, w=1600, t_phase=0.0):
-    """Validated-by colophon — quiet, etched monogram-style names."""
+    """Static colophon. Kept for back-compat — use render_validated_marquee
+    for the scrolling in-motion version."""
     h = 80
     layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     d = ImageDraw.Draw(layer)
     f_eb = ImageFont.truetype(F_MONO, 12)
     d.text((w // 2, 0), "VALIDATED BY", font=f_eb,
            fill=MUTED + (int(180 * alpha),), anchor="mt")
-    names = VALIDATED[:6]
+    names = [v[0] for v in VALIDATED[:6]]
     f_n = ImageFont.truetype(F_BODY_B, 17)
     spacing = w // (len(names) + 1)
     for i, n in enumerate(names):
@@ -402,6 +430,71 @@ def render_validated_strip(alpha=1.0, w=1600, t_phase=0.0):
         d.text((x, 40 + wobble), n, font=f_n,
                fill=INK + (int(180 * alpha),), anchor="mm")
     return layer
+
+
+def render_validated_marquee(alpha=1.0, t: float = 0.0, w=1920, scroll_px_per_s=60):
+    """Scrolling validator marquee — Playfair italic names, mono badges,
+    cycles continuously. Used in the closing card.
+    """
+    h = 110
+    layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+
+    # Eyebrow centered above the marquee row
+    f_eb = ImageFont.truetype(F_MONO, 13)
+    d.text((w // 2, 0), "VALIDATED ACROSS THE FASTCOEMPANY PORTFOLIO",
+           font=f_eb, fill=MUTED + (int(200 * alpha),), anchor="mt")
+
+    f_n = ImageFont.truetype(F_DISP_BI, 26)
+    f_b = ImageFont.truetype(F_MONO, 14)
+
+    # Pre-measure each name+badge segment width
+    probe = Image.new("RGBA", (1, 1))
+    pd = ImageDraw.Draw(probe)
+    GAP = 64
+    SEP_W = 26
+    segments = []
+    for name, badge in VALIDATED:
+        name_w = pd.textbbox((0, 0), name, font=f_n)[2]
+        badge_w = pd.textbbox((0, 0), badge, font=f_b)[2] if badge else 0
+        seg_w = name_w + (12 + badge_w if badge else 0)
+        segments.append((name, badge, name_w, badge_w, seg_w))
+
+    total_w = sum(s[4] + GAP + SEP_W for s in segments)
+
+    # Scroll offset: cycles through total_w
+    offset = (t * scroll_px_per_s) % total_w
+
+    # Render twice (offset and offset + total_w) so the wrap is seamless
+    y_baseline = 56
+    for pass_idx in range(2):
+        x = -offset + pass_idx * total_w
+        for name, badge, name_w, badge_w, seg_w in segments:
+            if x + seg_w < 0:
+                x += seg_w + GAP + SEP_W
+                continue
+            if x > w:
+                break
+            d.text((x, y_baseline), name, font=f_n,
+                   fill=INK + (int(220 * alpha),))
+            if badge:
+                d.text((x + name_w + 12, y_baseline + 8), badge, font=f_b,
+                       fill=CRIMSON + (int(220 * alpha),))
+            x += seg_w + GAP
+            # subtle dot separator
+            d.ellipse([x + SEP_W // 2 - 3, y_baseline + 14,
+                       x + SEP_W // 2 + 3, y_baseline + 20],
+                      fill=MUTED + (int(160 * alpha),))
+            x += SEP_W
+
+    # Edge fades so the marquee dissolves at the canvas edges
+    fade_w = 220
+    arr = np.array(layer)
+    for x in range(fade_w):
+        k = x / fade_w
+        arr[:, x, 3] = (arr[:, x, 3] * k).astype(np.uint8)
+        arr[:, w - 1 - x, 3] = (arr[:, w - 1 - x, 3] * k).astype(np.uint8)
+    return Image.fromarray(arr, "RGBA")
 
 
 # ─── Post-passes (cinematic look) ─────────────────────────────────────

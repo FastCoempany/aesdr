@@ -1,10 +1,21 @@
 """
-Mockup C — 45s atmospheric commercial. "Pilgrimage" cut.
+Mockup C v2 — 45s atmospheric "Pilgrimage" cut, patched per user feedback.
 
-Visual vocabulary: extreme close-up of the mascot, slow constellation
-reveal of all 12 lessons orbiting it, dolly through a faux lesson
-interior with section progress + sequence puzzle interactive, iris
-sweep, hushed CTA. Letterboxed 2.39:1 with warm light leaks.
+Beats:
+  0–2.5s   intro hook copy fades on as Leponeus zooms in; gone before he lands
+  2.5–9s   mascot fully present; Caveat-style annotation appears
+  6–22s    12-lesson constellation reveal around Leponeus
+  22–24s   AESDR iris wordmark zoom-in as Leponeus zooms out; 11 other titles
+           blur out; Surviving & Thriving pulls focus
+  24–26s   transition into the lesson interior
+  26–38s   actual-style lesson screen: SECTION 03 · SUBJECT-LINE RISKS;
+           BANT picker; "Saw the Series B announcement — one question"
+           is clicked HIGH, turns green, reasoning fades in
+  38–41s   crossfade to big AESDR iris wordmark + course-line tagline
+  41–45s   final card: iris "AESDR.com" + "Change your life." + scrolling
+           validated-by marquee with actual portfolio names
+
+No crimson screen flash. No "6 down. 6 to go." beat. Letterbox 2.39:1.
 """
 
 import math
@@ -24,9 +35,8 @@ from _common import (
     clamp, ease_io, ease_in, ease_out, fade, lerp, iris_color,
     mascot, with_alpha,
     paste_centered, text_layer, text_centered, iris_text,
-    render_lesson_card, render_dashboard_row, render_lesson_header,
-    render_silo_dragdrop, render_validated_strip,
-    apply_cinema, vignette, film_grain,
+    render_lesson_header, render_validated_marquee,
+    apply_cinema,
 )
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -63,8 +73,6 @@ def particles(t, count=70):
 
 
 def constellation_positions():
-    """12 lesson titles arranged in a loose orbit around the mascot."""
-    # angles + radii relative to center
     out = []
     for i in range(12):
         angle = -math.pi / 2 + (i / 12) * 2 * math.pi
@@ -74,199 +82,323 @@ def constellation_positions():
     return out
 
 
-def iris_sweep(t, t0, t1):
-    band_w = int(W * 0.42)
-    k = clamp((t - t0) / max(1e-3, t1 - t0))
-    x_center = int(-band_w + (W + band_w * 2) * ease_io(k))
-    arr = np.zeros((H, W, 4), dtype=np.uint8)
-    for x in range(max(0, x_center - band_w), min(W, x_center + band_w)):
-        dist = (x - x_center) / band_w
-        u = (x / W + t * 0.15) % 1.0
-        c = iris_color(u)
-        a = int(170 * (1 - dist * dist))
-        arr[:, x, 0] = c[0]
-        arr[:, x, 1] = c[1]
-        arr[:, x, 2] = c[2]
-        arr[:, x, 3] = a
-    return Image.fromarray(arr, "RGBA")
+# ─── Faux lesson interior — sized to match the actual /course/3 layout ──
 
+def render_subject_line_risks_screen(w, h, t, click_t=4.0):
+    """Mock of the real lesson page: header, section eyebrow, headline,
+    BANT-style risk picker. At t >= click_t the third row (Series B
+    trigger) is selected HIGH and turns solid green; reasoning fades in.
+    """
+    layer = Image.new("RGBA", (w, h), CREAM + (255,))
+    d = ImageDraw.Draw(layer)
+
+    # Lesson header band (cream)
+    head = render_lesson_header(w=w, t_phase=t * 0.18)
+    layer.alpha_composite(head, (0, 0))
+
+    # Course/section eyebrow row
+    f_chip = ImageFont.truetype(F_MONO_B, 13)
+    d.rounded_rectangle([42, 100, 152, 130], radius=2, fill=CRIMSON)
+    d.text((97, 115), "COURSE 3", font=f_chip, fill=CREAM, anchor="mm")
+
+    f_eb = ImageFont.truetype(F_MONO, 13)
+    d.text((170, 115), "SECTION 03  —  SUBJECT-LINE RISKS",
+           font=f_eb, fill=MUTED, anchor="lm")
+
+    # Big italic headline
+    f_h = ImageFont.truetype(F_DISP_BI, 72)
+    d.text((42, 160), "Which of these earns a reply?",
+           font=f_h, fill=INK)
+    f_sub = ImageFont.truetype(F_BODY, 22)
+    d.text((42, 252), "Six subject lines. High or Low. The reasoning unlocks after each verdict.",
+           font=f_sub, fill=(110, 105, 95))
+
+    # Picker rows (matches the real lesson UI)
+    rows = [
+        ("COLD OUTREACH · REVOPS",   "\"Quick question about your SDR ramp time\""),
+        ("GENERIC SAAS OUTREACH",    "\"Introducing [Company] — Transform Your Sales Process!\""),
+        ("TIMELY TRIGGER",           "\"Saw the Series B announcement — one question\""),
+        ("BENEFIT-FIRST EMAIL",      "\"How we helped [Company] increase revenue by 40%\""),
+    ]
+    row_y0 = 330
+    row_h = 96
+    f_re_eb = ImageFont.truetype(F_MONO, 12)
+    f_re_t = ImageFont.truetype(F_BODY_B, 24)
+    f_btn = ImageFont.truetype(F_MONO_B, 14)
+    f_reason = ImageFont.truetype(F_BODY, 18)
+
+    # cursor position — animates toward the Series B HIGH button
+    cursor_alpha = 0.0
+    cursor_x, cursor_y = 0, 0
+
+    for i, (eb, line) in enumerate(rows):
+        y = row_y0 + i * row_h
+        # Active state for Series B (i=2) once t>=click_t
+        is_picked = (i == 2 and t >= click_t)
+        # Highlight focus on row 2 as the cursor approaches
+        if i == 2 and t >= click_t - 1.0:
+            border_a = clamp((t - (click_t - 1.0)) / 0.6)
+            d.rectangle([42, y - 8, w - 42, y + row_h - 16],
+                        outline=(180, 175, 168), width=1)
+        d.text((58, y + 8), eb, font=f_re_eb, fill=MUTED)
+        d.text((58, y + 30), line, font=f_re_t, fill=INK)
+        # HIGH/LOW buttons
+        for j, (label, col) in enumerate([("↑ HIGH", (90, 160, 110)),
+                                          ("↓ LOW",  (190, 90, 80))]):
+            bx = w - 360 + j * 130
+            by = y + 18
+            if is_picked and j == 0:
+                d.rectangle([bx, by, bx + 116, by + 38], fill=col + (255,))
+                d.text((bx + 58, by + 20), label, font=f_btn,
+                       fill=CREAM, anchor="mm")
+            else:
+                d.rectangle([bx, by, bx + 116, by + 38],
+                            outline=col + (220,), width=1)
+                d.text((bx + 58, by + 20), label, font=f_btn,
+                       fill=col, anchor="mm")
+            # remember cursor target
+            if i == 2 and j == 0:
+                cursor_x = bx + 58
+                cursor_y = by + 20
+        # divider
+        if i < len(rows) - 1:
+            d.line([(42, y + row_h - 12), (w - 42, y + row_h - 12)],
+                   fill=(220, 215, 208))
+
+    # Reasoning text after click
+    if t > click_t:
+        reason_a = clamp((t - click_t) / 0.7)
+        reason_lines = [
+            "Why HIGH:",
+            "References a real, recent event. Reads as personal — not a mass sequence.",
+            "The trailing \"one question\" hints at curiosity without overpromising.",
+        ]
+        ry = row_y0 + 2 * row_h + 30
+        for li, ln in enumerate(reason_lines):
+            col = (90, 160, 110) if li == 0 else (90, 90, 90)
+            f = f_re_eb if li == 0 else f_reason
+            d.text((58, ry + li * 28), ln, font=f,
+                   fill=col + (int(255 * reason_a),))
+
+    # Animated cursor that lands on the Series B HIGH button
+    if t >= click_t - 0.8 and t <= click_t + 1.4:
+        # ease in toward cursor target
+        k = clamp((t - (click_t - 0.8)) / 0.6)
+        # start from below-right
+        sx, sy = w - 250, row_y0 + 4 * row_h
+        cx_now = int(lerp(sx, cursor_x, ease_out(k)))
+        cy_now = int(lerp(sy, cursor_y, ease_out(k)))
+        # cursor triangle
+        d.polygon([(cx_now, cy_now),
+                   (cx_now + 18, cy_now + 6),
+                   (cx_now + 6, cy_now + 18)],
+                  fill=INK)
+        d.polygon([(cx_now, cy_now),
+                   (cx_now + 18, cy_now + 6),
+                   (cx_now + 6, cy_now + 18)],
+                  outline=CREAM, width=2)
+        # tiny ripple on click moment
+        if t > click_t and t < click_t + 0.5:
+            rk = (t - click_t) / 0.5
+            ring_r = int(10 + rk * 60)
+            ring_a = int((1 - rk) * 200)
+            d.ellipse([cursor_x - ring_r, cursor_y - ring_r,
+                       cursor_x + ring_r, cursor_y + ring_r],
+                      outline=(90, 160, 110) + (ring_a,), width=2)
+
+    return layer
+
+
+# ─── Frame renderer ───────────────────────────────────────────────────
 
 def render(idx: int) -> Image.Image:
     t = idx / FPS
     bg = gradient_bg(t)
 
-    # ─── 0–9s · CLOSE-UP, SLOW PULLBACK ───
-    if t < 12.0:
-        # mascot scale: 3.2x → 1.2x by 9s, holds
-        scale = 3.2 - 2.0 * ease_out(clamp(t / 9.0))
-        m = mascot("sprint", int(680 * max(1.0, scale)))
-        # eye-level offset that drifts back to center
-        k = ease_out(clamp(t / 9.0))
-        dx = int(lerp(-260, 0, k))
-        dy = int(lerp(-220, 0, k))
+    # ─── 0–9s · MASCOT REVEAL ───
+    if t < 22.5:
+        # mascot scale: 3.0 → 1.2 by 8s
+        scale = 3.0 - 1.9 * ease_out(clamp(t / 8.0))
+        m = mascot("sprint", int(660 * max(1.0, scale)))
+        k = ease_out(clamp(t / 8.0))
+        dx = int(lerp(-240, 0, k))
+        dy = int(lerp(-200, 0, k))
         paste_centered(bg, m, W * 0.50 + dx, H * 0.50 + dy)
-        # opacity hint at t=0
-        if t < 1.5:
-            veil = Image.new("RGBA", (W, H), CREAM + (int((1 - t / 1.5) * 100),))
+        # cream veil on entry
+        if t < 1.2:
+            veil = Image.new("RGBA", (W, H), CREAM + (int((1 - t / 1.2) * 110),))
             bg = Image.alpha_composite(bg, veil)
-        # Caveat-style annotation
-        a_ann = fade(t, 4.0, 5.0, 9.0, 10.0)
+
+        # Intro hook copy — fades in fast, fades OUT before Leponeus settles
+        a_hook = fade(t, 0.4, 1.2, 2.1, 2.8)
+        if a_hook > 0:
+            f_hook = ImageFont.truetype(F_DISP_BL, 86)
+            text_centered(bg, "Five years selling.", f_hook,
+                          INK, W * 0.50, H * 0.30, a_hook)
+            f_hook2 = ImageFont.truetype(F_IT, 48)
+            text_centered(bg, "No mentor. No map.", f_hook2,
+                          MUTED, W * 0.50, H * 0.40, a_hook)
+
+        # Caveat-style annotation about Leponeus — appears AFTER intro is gone
+        a_ann = fade(t, 3.4, 4.4, 8.6, 9.6)
         if a_ann > 0:
-            f = ImageFont.truetype(F_IT, 36)
-            text_centered(bg, "(this is Leponeus.)", f,
-                          MUTED, W * 0.68, H * 0.72, a_ann)
+            f_ann = ImageFont.truetype(F_IT, 30)
+            lines = [
+                "(this is Leponeus.",
+                "he's your trusty sales career mascot.",
+                "noone cares about you more than Leponeus does.)",
+            ]
+            for li, ln in enumerate(lines):
+                text_centered(bg, ln, f_ann, MUTED,
+                              W * 0.68, H * 0.70 + li * 38, a_ann)
+            # squiggle arrow toward Leponeus
+            for k_arrow in range(22):
+                u = k_arrow / 22
+                ax = int(W * 0.62 - u * (W * 0.10) + math.sin(u * 5) * 4)
+                ay = int(H * 0.66 - u * (H * 0.08) + math.cos(u * 4) * 3)
+                d = ImageDraw.Draw(bg)
+                d.ellipse([ax - 2, ay - 2, ax + 2, ay + 2],
+                          fill=MUTED + (int(180 * a_ann),))
 
     # ─── 6–22s · CONSTELLATION REVEAL ───
     if 6.0 < t < 23.5:
         positions = constellation_positions()
         for i, (angle, r_x, r_y) in enumerate(positions):
-            t_in = 6.0 + i * 0.6
-            a = fade(t, t_in, t_in + 0.9, 22.0, 23.5)
+            t_in = 6.0 + i * 0.55
+            a = fade(t, t_in, t_in + 0.9, 21.6, 22.8)
             if a > 0:
                 num, title, body = LESSONS[i]
                 f_eb = ImageFont.truetype(F_MONO, 13)
                 f_t = ImageFont.truetype(F_DISP_BI, 32)
                 x = int(W * 0.5 + math.cos(angle) * (W * r_x))
                 y = int(H * 0.5 + math.sin(angle) * (H * r_y))
-                # tiny floating offset
                 fy = math.sin(t * 0.5 + i) * 4
                 # eyebrow
                 tl_eb = text_layer(f"{num}", f_eb, MUTED, a * 0.85)
                 paste_centered(bg, tl_eb, x, y - 24 + int(fy))
-                # title
-                # pulse on lesson 3
-                if i == 2 and t > 12.0:
-                    pulse = 0.86 + 0.14 * math.sin((t - 12.0) * 4.0)
+                # title — Surviving & Thriving pulses + crimson once it's all in
+                if i == 2 and t > 11.5:
+                    pulse = 0.86 + 0.14 * math.sin((t - 11.5) * 4.0)
                     col = CRIMSON
                     aa = a * pulse
                 else:
                     col = INK
-                    aa = a * 0.92
+                    aa = a * 0.90
                 tl_t = text_layer(title, f_t, col, aa)
                 paste_centered(bg, tl_t, x, y + 8 + int(fy))
 
-    # ─── particles always ───
-    if 1.0 < t < 32.0:
-        pa = fade(t, 1.0, 2.0, 30.0, 32.0)
+    # ─── particles ───
+    if 1.0 < t < 26.0:
+        pa = fade(t, 1.0, 2.0, 24.0, 26.0)
         p = particles(t)
         bg.alpha_composite(with_alpha(p, pa))
 
-    # ─── 23–34s · DOLLY INTO A LESSON ───
-    if 22.5 < t < 35.0:
-        a = fade(t, 22.5, 23.6, 33.6, 35.0)
-        if a > 0:
-            # wash to cream
-            wash_a = fade(t, 22.5, 23.4, 34.0, 35.0)
-            if wash_a > 0:
-                veil = Image.new("RGBA", (W, H), CREAM + (int(255 * wash_a),))
-                bg = Image.alpha_composite(bg, veil)
-            # lesson header
-            head = render_lesson_header(w=1700, t_phase=t * 0.18)
-            paste_centered(bg, with_alpha(head, a), W * 0.50, H * 0.11)
-            # eyebrow + headline
-            f_eb = ImageFont.truetype(F_MONO, 14)
-            text_centered(bg, "LESSON 03  ·  SECTION 02  ·  SEQUENCE",
-                          f_eb, CRIMSON, W * 0.50, H * 0.20, a)
-            f_h = ImageFont.truetype(F_DISP_BL, 64)
-            text_centered(bg, "Order them. Then defend it.",
-                          f_h, INK, W * 0.50, H * 0.28, a)
-            # sequence puzzle mock — three steps reveal as t advances
-            steps = [
-                ("01", "Ground the trigger.",        "What signal earns the call."),
-                ("02", "Map the persona's stake.",   "What they lose if they ignore you."),
-                ("03", "Make the ask tiny.",         "One question. One outcome."),
-            ]
-            for i, (n, title, sub) in enumerate(steps):
-                t_in = 25.5 + i * 1.5
-                row_a = fade(t, t_in, t_in + 0.7, 33.4, 34.6) * a
-                if row_a > 0:
-                    row = Image.new("RGBA", (1300, 110), (255, 255, 255, 255))
-                    rd = ImageDraw.Draw(row)
-                    rd.rectangle([0, 0, 1299, 109], outline=(180, 175, 168), width=1)
-                    # iris hairline
-                    for x in range(1300):
-                        u = (x / 1300 + t * 0.2) % 1.0
-                        rd.line([(x, 0), (x, 2)], fill=iris_color(u))
-                    f_n = ImageFont.truetype(F_DISP_BI, 44)
-                    rd.text((28, 16), n, font=f_n, fill=INK)
-                    f_t = ImageFont.truetype(F_DISP_BI, 30)
-                    rd.text((108, 24), title, font=f_t, fill=INK)
-                    f_s = ImageFont.truetype(F_BODY, 18)
-                    rd.text((108, 66), sub, font=f_s, fill=(110, 105, 95))
-                    # done badge for first two
-                    if i < 2 and t > t_in + 1.2:
-                        ba = clamp((t - (t_in + 1.2)) / 0.5)
-                        rd.rectangle([1180, 32, 1260, 76], fill=CRIMSON + (int(255 * ba),))
-                        f_bb = ImageFont.truetype(F_MONO_B, 14)
-                        rd.text((1220, 54), "DONE ✓", font=f_bb,
-                                fill=CREAM, anchor="mm")
-                    bg.alpha_composite(with_alpha(row, row_a),
-                                       (int(W * 0.5 - 650), int(H * 0.42) + i * 130))
+    # ─── 22–24s · AESDR ZOOM IN as LEPONEUS ZOOMS OUT + BLUR-OUT OF 11 TITLES ───
+    if 21.6 < t < 25.3:
+        # Mascot zooms back out (shrinks) and drifts slightly down/right
+        z_out = clamp((t - 21.6) / 1.4)
+        scale = 1.2 * (1.0 - 0.8 * z_out)  # shrink to 0.24
+        if scale > 0.1:
+            m = mascot("sprint", max(40, int(660 * scale)))
+            mx = int(W * 0.50 + 20 * z_out)
+            my = int(H * 0.55 + 60 * z_out)
+            paste_centered(bg, with_alpha(m, 1.0 - 0.8 * z_out), mx, my)
 
-    # ─── 34–38s · PULL BACK TO JOURNEY ───
-    if 34.5 < t < 39.2:
-        a = fade(t, 34.5, 35.4, 38.4, 39.2)
-        if a > 0:
-            # cream wash
-            wash = Image.new("RGBA", (W, H), CREAM + (int(255 * a),))
-            bg = Image.alpha_composite(bg, wash)
-            # mascot left
-            m = mascot("rest", 230)
-            paste_centered(bg, with_alpha(m, a), W * 0.17, H * 0.42)
-            # journey heading
-            f_eb = ImageFont.truetype(F_MONO, 16)
-            text_centered(bg, "THE JOURNEY", f_eb, MUTED,
-                          W * 0.45, H * 0.30, a)
-            f_h = ImageFont.truetype(F_DISP_BL, 96)
-            text_centered(bg, "Twelve lessons.", f_h, INK,
-                          W * 0.45, H * 0.42, a)
-            text_centered(bg, "One you'll keep.", f_h, CRIMSON,
-                          W * 0.45, H * 0.54, a)
-            # peripheral rows blurred (faux blur via tiny offsets)
-            for i, (num, title, body) in enumerate(LESSONS[3:8]):
-                row_a = a * 0.40
-                row = render_dashboard_row(num, title, body,
-                                           completed=i < 2, w=900)
-                # blur effect
-                row = row.filter(ImageFilter.GaussianBlur(radius=2))
-                bg.alpha_composite(with_alpha(row, row_a),
-                                   (int(W * 0.62), int(H * 0.34) + i * 70))
+        # AESDR iris wordmark zooms in (small → big)
+        z_in = clamp((t - 21.8) / 1.6)
+        z_in_e = ease_out(z_in)
+        f_size = max(20, int(40 + 360 * z_in_e))
+        f_brand = ImageFont.truetype(F_DISP_BI, f_size)
+        wm = iris_text("AESDR", f_brand, t * 0.20, alpha=clamp(z_in * 2.0))
+        paste_centered(bg, wm, W * 0.50, H * 0.50)
 
-    # ─── 38–42s · IRIS SWEEP + AESDR ───
-    if 38.5 < t < 43.0:
-        sweep = iris_sweep(t, 38.5, 40.5)
-        sa = np.array(sweep)
-        s_alpha = fade(t, 38.5, 39.0, 40.0, 40.6) * 0.6
-        sa[..., 3] = (sa[..., 3] * s_alpha).astype(np.uint8)
-        bg.alpha_composite(Image.fromarray(sa, "RGBA"))
-        # wash to cream
-        wash_a = fade(t, 39.5, 40.2, 42.4, 43.0)
+        # Blur out 11 non-S&T titles, pulse S&T into focus
+        positions = constellation_positions()
+        for i, (angle, r_x, r_y) in enumerate(positions):
+            num, title, body = LESSONS[i]
+            x = int(W * 0.5 + math.cos(angle) * (W * r_x))
+            y = int(H * 0.5 + math.sin(angle) * (H * r_y))
+            if i == 2:
+                # pull S&T toward center as we focus
+                pull = ease_out(clamp((t - 22.5) / 1.5))
+                x = int(lerp(x, W * 0.5, pull))
+                y = int(lerp(y, H * 0.5 + 90, pull))
+                f_t = ImageFont.truetype(F_DISP_BI, int(32 + 24 * pull))
+                tl = text_layer(title, f_t, CRIMSON, 1.0)
+                paste_centered(bg, tl, x, y)
+            else:
+                # blur + fade out
+                blur_a = (1.0 - clamp((t - 22.0) / 1.3)) * 0.70
+                if blur_a > 0:
+                    f_t = ImageFont.truetype(F_DISP_BI, 32)
+                    tl = text_layer(title, f_t, INK, blur_a)
+                    tl = tl.filter(ImageFilter.GaussianBlur(radius=4))
+                    paste_centered(bg, tl, x, y + 8)
+
+    # ─── 24.5–38s · LESSON INTERIOR (Subject-Line Risks) ───
+    if 24.0 < t < 38.6:
+        # white card wash on top of bg (transition)
+        wash_a = fade(t, 24.0, 25.0, 37.5, 38.4)
         if wash_a > 0:
             veil = Image.new("RGBA", (W, H), CREAM + (int(255 * wash_a),))
             bg = Image.alpha_composite(bg, veil)
-        # AESDR wordmark
-        a_brand = fade(t, 40.0, 40.8, 42.4, 43.0)
-        if a_brand > 0:
+        # Render the lesson interior centered, sized close to viewport
+        lt = t - 25.0  # local time inside this beat
+        click_t = 5.5  # cursor lands on Series B HIGH ~5.5s into the beat
+        lesson_w = 1700
+        lesson_h = 900
+        screen = render_subject_line_risks_screen(lesson_w, lesson_h,
+                                                  lt, click_t=click_t)
+        # subtle zoom-in to settle
+        z = 1.04 - 0.04 * ease_out(clamp(lt / 1.2))
+        zw = int(lesson_w * z)
+        zh = int(lesson_h * z)
+        screen_z = screen.resize((zw, zh), Image.LANCZOS)
+        paste_centered(bg, with_alpha(screen_z, wash_a),
+                       W * 0.50, H * 0.50)
+
+    # ─── 38–41s · BIG AESDR WORDMARK + TAGLINE ───
+    if 38.0 < t < 41.5:
+        wash_a = fade(t, 38.0, 38.8, 40.6, 41.5)
+        if wash_a > 0:
+            veil = Image.new("RGBA", (W, H), CREAM + (int(255 * wash_a),))
+            bg = Image.alpha_composite(bg, veil)
+        a = fade(t, 38.5, 39.4, 40.8, 41.5)
+        if a > 0:
             f_brand = ImageFont.truetype(F_DISP_BI, 320)
             wm = iris_text("AESDR", f_brand, t * 0.20)
-            paste_centered(bg, with_alpha(wm, a_brand), W * 0.50, H * 0.44)
+            paste_centered(bg, with_alpha(wm, a), W * 0.50, H * 0.42)
+            f_tag = ImageFont.truetype(F_IT, 36)
+            text_centered(bg,
+                          "12-lesson sales survival course — for early-career AEs and SDRs.",
+                          f_tag, MUTED, W * 0.50, H * 0.60, a)
 
-    # ─── 42.5–45s · HUSHED CTA ───
-    if t > 42.0:
-        a = fade(t, 42.0, 42.7, 44.4, 45.0)
+    # ─── 41–45s · CLOSING CARD ───
+    if t > 41.0:
+        a = fade(t, 41.0, 41.7, 44.4, 45.0)
         if a > 0:
+            # cream wash
+            veil = Image.new("RGBA", (W, H), CREAM + (int(255 * a),))
+            bg = Image.alpha_composite(bg, veil)
+            # iris "AESDR.com" wordmark
+            f_brand = ImageFont.truetype(F_DISP_BI, 260)
+            wm = iris_text("AESDR.com", f_brand, t * 0.22)
+            paste_centered(bg, with_alpha(wm, a), W * 0.50, H * 0.40)
+            # Change your life. — italic serif, on its own line
             f_cta = ImageFont.truetype(F_IT, 56)
-            text_centered(bg, "For the ones still trying.", f_cta,
-                          INK, W * 0.5, H * 0.62, a)
-            f_url = ImageFont.truetype(F_MONO, 26)
-            text_centered(bg, "aesdr.com", f_url, MUTED, W * 0.5, H * 0.74, a)
+            text_centered(bg, "Change your life.", f_cta,
+                          INK, W * 0.50, H * 0.56, a)
+            # Validated-by carousel in motion
+            marquee = render_validated_marquee(alpha=a, t=t, w=W - 40,
+                                               scroll_px_per_s=70)
+            paste_centered(bg, marquee, W * 0.50, H * 0.80)
 
     bg = apply_cinema(bg, idx, t, leak=True, leak_color=(255, 175, 110))
     return bg
 
 
 def main():
-    tmp = tempfile.mkdtemp(prefix="mockup-c45-")
+    tmp = tempfile.mkdtemp(prefix="mockup-c45v2-")
     print(f"[C] rendering {N} frames → {tmp}")
     for i in range(N):
         if i % 60 == 0:
