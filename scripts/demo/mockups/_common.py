@@ -434,16 +434,12 @@ def render_validated_strip(alpha=1.0, w=1600, t_phase=0.0):
 
 def render_validated_marquee(alpha=1.0, t: float = 0.0, w=1920, scroll_px_per_s=60):
     """Scrolling validator marquee — Playfair italic names, mono badges,
-    cycles continuously. Used in the closing card.
+    cycles continuously. Used in the closing card. No eyebrow — the
+    scrolling row is the entire artefact.
     """
-    h = 110
+    h = 60
     layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     d = ImageDraw.Draw(layer)
-
-    # Eyebrow centered above the marquee row
-    f_eb = ImageFont.truetype(F_MONO, 13)
-    d.text((w // 2, 0), "VALIDATED ACROSS THE FASTCOEMPANY PORTFOLIO",
-           font=f_eb, fill=MUTED + (int(200 * alpha),), anchor="mt")
 
     f_n = ImageFont.truetype(F_DISP_BI, 26)
     f_b = ImageFont.truetype(F_MONO, 14)
@@ -466,7 +462,7 @@ def render_validated_marquee(alpha=1.0, t: float = 0.0, w=1920, scroll_px_per_s=
     offset = (t * scroll_px_per_s) % total_w
 
     # Render twice (offset and offset + total_w) so the wrap is seamless
-    y_baseline = 56
+    y_baseline = 14
     for pass_idx in range(2):
         x = -offset + pass_idx * total_w
         for name, badge, name_w, badge_w, seg_w in segments:

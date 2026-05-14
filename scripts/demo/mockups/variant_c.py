@@ -172,15 +172,8 @@ def render_course_screen(w, h, t, click_t=5.0):
     d.text(((sx0 + sx1) // 2, (sy0 + sy1) // 2),
            "← SAVE & EXIT", font=f_save, fill=CREAM, anchor="mm")
 
-    # COURSE 3 breadcrumb chip
-    cx0 = sx1 + 18
-    cx1 = cx0 + 84
-    d.rounded_rectangle([cx0, sy0, cx1, sy1], radius=2, fill=CRIMSON)
-    f_chip = ImageFont.truetype(F_MONO_B, 11)
-    d.text(((cx0 + cx1) // 2, (sy0 + sy1) // 2),
-           "COURSE 3", font=f_chip, fill=CREAM, anchor="mm")
-
     # ADMIN MODE chip (centered)
+    f_chip = ImageFont.truetype(F_MONO_B, 11)
     ax0 = w // 2 - 70
     ax1 = ax0 + 140
     d.rounded_rectangle([ax0, sy0, ax1, sy1], radius=2,
@@ -447,12 +440,14 @@ T_TYPE2_START = T_CC_END + 0.2  # 13.6
 TYPE_SECOND_PREFIX = TYPE_FIRST  # carries forward
 TYPE_SECOND_TAIL = ("he's your trusty sales career mascot. "
                     "no one cares about you more than Leponeus does.)")
-T_AESDR_ZOOM = 18.6
-T_SNEAK = 22.0
-T_SNEAK_END = 24.4
-T_LESSON_START = 24.4
-T_LESSON_END = 38.0
-T_ENDCARD = 38.0
+# Compute when the second typing finishes (chars_per_s = 18 below)
+T_TYPE2_FINISH = T_TYPE2_START + len(TYPE_SECOND_TAIL) / 18.0
+# S&T fades out the moment the second typed line completes
+T_ST_FADE_END = T_TYPE2_FINISH + 0.4
+T_AESDR_ZOOM = T_ST_FADE_END + 0.2
+T_LESSON_START = T_AESDR_ZOOM + 4.0
+T_LESSON_END = 37.0
+T_ENDCARD = 37.0
 
 
 def render(idx: int) -> Image.Image:
@@ -518,10 +513,11 @@ def render(idx: int) -> Image.Image:
             for slot, lesson_idx in enumerate(CC_LESSON_ORDER):
                 t_in = T_CC_START + slot * T_CC_PER
                 t_out = t_in + T_CC_PER + 0.05  # crossfade with next
-                # Last slot (Surviving & Thriving) holds — no fade-out
+                # Last slot (Surviving & Thriving) holds until the
+                # second typed line finishes, then fades and never returns.
                 if slot == len(CC_LESSON_ORDER) - 1:
                     a = fade(t, t_in, t_in + 0.35,
-                             T_AESDR_ZOOM, T_AESDR_ZOOM + 0.6)
+                             T_TYPE2_FINISH, T_ST_FADE_END)
                 else:
                     a = fade(t, t_in, t_in + 0.25,
                              t_out - 0.25, t_out)
@@ -556,8 +552,8 @@ def render(idx: int) -> Image.Image:
             p = particles(t)
             bg.alpha_composite(with_alpha(p, pa))
 
-    # ─── T_AESDR_ZOOM–T_SNEAK · AESDR ZOOM + S&T FOCUS ──────────────
-    if T_AESDR_ZOOM <= t < T_SNEAK:
+    # ─── T_AESDR_ZOOM–T_LESSON_START · AESDR ZOOM + SNEAK PEEK ──────
+    if T_AESDR_ZOOM <= t < T_LESSON_START:
         # Mascot shrinks + drifts
         z_out = clamp((t - T_AESDR_ZOOM) / 1.6)
         m_scale = 1.0 * (1.0 - 0.85 * z_out)
@@ -571,40 +567,26 @@ def render(idx: int) -> Image.Image:
         # leaves vertical margin so the glyphs are never clipped.
         z_in = clamp((t - (T_AESDR_ZOOM + 0.2)) / 1.6)
         z_in_e = ease_out(z_in)
-        # Max font size 280 → layer height ~430 incl. iris_text pad
         f_size = max(20, int(40 + 240 * z_in_e))
         f_brand = ImageFont.truetype(F_DISP_BI, f_size)
         wm = iris_text("AESDR", f_brand, t * 0.20,
                        alpha=clamp(z_in * 2.0))
-        # Center slightly above midline so S&T can sit beneath
         paste_centered(bg, wm, W * 0.50, H * 0.44)
 
-        # Surviving & Thriving in crimson pulled to the spotlight
-        pull = ease_out(clamp((t - (T_AESDR_ZOOM + 0.1)) / 1.3))
-        f_st = ImageFont.truetype(F_DISP_BI, int(44 + 22 * pull))
-        a_st = 1.0
-        pulse = 0.92 + 0.08 * math.sin(t * 3.0)
-        tl = text_layer("Surviving & Thriving", f_st, CRIMSON, a_st * pulse)
-        paste_centered(bg, tl, W * 0.50, H * 0.66)
+        # "Here's a sneak peek." types in beneath the wordmark — fills the
+        # spot Surviving & Thriving used to occupy.
+        t_sneak_start = T_AESDR_ZOOM + 1.0
+        if t >= t_sneak_start:
+            shown = typed_substring("Here's a sneak peek.",
+                                    t, t_sneak_start, chars_per_s=14.0)
+            caret_on = (math.floor(t * 2.5) % 2) == 0
+            f_sneak = ImageFont.truetype(F_DISP_BI, 56)
+            text_centered(bg, shown + ("|" if caret_on else ""),
+                          f_sneak, INK, W * 0.50, H * 0.66, 1.0)
 
-    # ─── T_SNEAK–T_SNEAK_END · "Here's a sneak peek." ───────────────
-    if T_SNEAK <= t < T_SNEAK_END:
-        # Keep the AESDR brand sitting in the upper half through this beat
-        f_brand_s = ImageFont.truetype(F_DISP_BI, 240)
-        wm_s = iris_text("AESDR", f_brand_s, t * 0.20)
-        paste_centered(bg, with_alpha(wm_s, 0.65), W * 0.50, H * 0.32)
-
-        # Hand-written sneak peek line types in
-        f_sneak = ImageFont.truetype(F_IT, 64)
-        shown = typed_substring("Here's a sneak peek.",
-                                t, T_SNEAK, chars_per_s=11.0)
-        caret_on = (math.floor(t * 2.5) % 2) == 0
-        text_centered(bg, shown + ("|" if caret_on else ""),
-                      f_sneak, INK, W * 0.50, H * 0.56, 1.0)
-
-        # Quick flash just before the hard cut
-        if t > T_SNEAK_END - 0.2:
-            flash_a = clamp((t - (T_SNEAK_END - 0.2)) / 0.2) * 0.55
+        # Quick cream flash before the hard cut into the lesson
+        if t > T_LESSON_START - 0.2:
+            flash_a = clamp((t - (T_LESSON_START - 0.2)) / 0.2) * 0.55
             veil = Image.new("RGBA", (W, H), CREAM + (int(255 * flash_a),))
             bg = Image.alpha_composite(bg, veil)
 
@@ -635,33 +617,60 @@ def render(idx: int) -> Image.Image:
         if a > 0:
             veil = Image.new("RGBA", (W, H), CREAM + (int(255 * a),))
             bg = Image.alpha_composite(bg, veil)
-            # Big Leponeus at top-center
-            mh = 280
-            m_end = mascot("rest", mh)
+
+            # Giant Leponeus (sprint pose — same as the opening) at top.
+            # Sized so the lower half of the mascot becomes the canvas
+            # the AESDR + text overlay sits on top of.
+            mh = 1000
+            m_end = mascot("sprint", mh)
             paste_centered(bg, with_alpha(m_end, a),
-                           W * 0.50, mh // 2 + 20)
-            # AESDR iris wordmark
-            f_brand = ImageFont.truetype(F_DISP_BI, 180)
+                           W * 0.50, mh // 2 + 30)
+
+            # AESDR iris wordmark — overlays the mascot's lower body
+            f_brand = ImageFont.truetype(F_DISP_BI, 200)
             wm = iris_text("AESDR", f_brand, t * 0.20)
-            paste_centered(bg, with_alpha(wm, a), W * 0.50, H * 0.46)
+            paste_centered(bg, with_alpha(wm, a), W * 0.50, H * 0.62)
+
             # "Change your life." — italic serif
             f_cta = ImageFont.truetype(F_IT, 46)
             text_centered(bg, "Change your life.", f_cta,
-                          INK, W * 0.50, H * 0.62, a)
-            # Section-grey tagline (3 lines, mono)
+                          INK, W * 0.50, H * 0.78, a)
+
+            # ─── Tagline ──────────────────────────────────────────
+            # Line 1: "SEED TO SERIES E Ai-FIRST PRODUCTS."
+            # — "Ai-FIRST" rendered bold; the "i" lowercase as requested.
             f_tag = ImageFont.truetype(F_MONO, 19)
-            tag_lines = [
-                "SEED TO SERIES E AI-FIRST PRODUCTS.",
-                "BUILT WITH FEEDBACK FROM THEIR FOUNDERS, SALES LEADERS,",
-                "AES & SDRS — AT EVERY ONE.",
+            f_tag_b = ImageFont.truetype(F_MONO_B, 19)
+            line1_segments = [
+                ("SEED TO SERIES E ", f_tag, MUTED),
+                ("Ai-FIRST",          f_tag_b, MUTED),
+                (" PRODUCTS.",        f_tag, MUTED),
             ]
-            for li, ln in enumerate(tag_lines):
-                text_centered(bg, ln, f_tag, MUTED,
-                              W * 0.50, H * 0.72 + li * 26, a)
-            # Rolling validated-by carousel along the bottom
+            # Measure total width, then draw centered
+            probe = ImageDraw.Draw(bg)
+            seg_widths = [probe.textbbox((0, 0), txt, font=f)[2]
+                          for txt, f, _ in line1_segments]
+            total_w = sum(seg_widths)
+            x_cursor = int(W * 0.50 - total_w / 2)
+            y_line1 = int(H * 0.85)
+            for (txt, f, col), sw in zip(line1_segments, seg_widths):
+                tl = text_layer(txt, f, col, a)
+                bg.alpha_composite(tl, (x_cursor - 24, y_line1 - 24))
+                x_cursor += sw
+
+            # Line 2: one line, slightly smaller so it fits
+            f_tag2 = ImageFont.truetype(F_MONO, 17)
+            text_centered(
+                bg,
+                "BUILT WITH FEEDBACK FROM THEIR FOUNDERS, SALES LEADERS, AES & SDRS — AT EVERY ONE.",
+                f_tag2, MUTED, W * 0.50, y_line1 + 30, a,
+            )
+
+            # Rolling validated-by carousel — now occupies the line the
+            # eyebrow used to sit on (no separate "VALIDATED..." label).
             marquee = render_validated_marquee(alpha=a, t=t, w=W - 40,
                                                scroll_px_per_s=70)
-            paste_centered(bg, marquee, W * 0.50, H * 0.92)
+            paste_centered(bg, marquee, W * 0.50, H * 0.95)
 
     # ─── Cinematic post — no letterbox bars ──────────────────────────
     bg = apply_cinema(bg, idx, t,
