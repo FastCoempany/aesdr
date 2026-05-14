@@ -1,275 +1,202 @@
 """
-Mockup A — 15s editorial teaser. Pure Python frame generator → ffmpeg.
+Mockup A — 45s editorial commercial. "Field Manual" cut.
 
-Visual vocabulary: cream + ink, Playfair italic, slow paper-grain motion,
-mascot drifts. Inspired by AESDR brand canon, not the live site.
+Visual vocabulary: cream + ink, Playfair italic, slow push-ins,
+hand-annotated marginalia, lesson cards laid out like book chapters.
+Letterboxed 2.39:1. Course teases: lesson card fan, journey/dashboard
+view, in-lesson sort-into-silos interactive, validated logos strip.
 """
 
 import math
 import os
 import subprocess
-import sys
 import tempfile
 from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
-W, H = 1920, 1080
-FPS = 30
-DURATION = 15
-N = FPS * DURATION  # 450 frames
-
-CREAM = (250, 247, 242)
-INK = (26, 26, 26)
-CRIMSON = (139, 26, 26)
-MUTED = (107, 107, 107)
-LIGHT = (232, 228, 223)
-
-IRIS = [
-    (0.00, (255, 0, 110)),
-    (0.17, (255, 107, 0)),
-    (0.34, (245, 158, 11)),
-    (0.51, (16, 185, 129)),
-    (0.68, (56, 189, 248)),
-    (0.85, (139, 92, 246)),
-    (1.00, (255, 0, 110)),
-]
+from _common import (
+    W, H, FPS, DURATION, N,
+    CREAM, INK, CRIMSON, MUTED, LIGHT, WARM_BONE, PARCHMENT,
+    F_DISP_BI, F_DISP_BL, F_IT, F_REG, F_BODY, F_BODY_B, F_MONO, F_MONO_B,
+    LESSONS, VALIDATED,
+    clamp, ease_io, ease_in, ease_out, fade, lerp, iris_color,
+    mascot, with_alpha,
+    paste_centered, text_layer, text_centered, iris_text,
+    render_lesson_card, render_dashboard_row, render_journey_header,
+    render_lesson_header, render_silo_dragdrop, render_validated_strip,
+    apply_cinema, letterbox,
+)
 
 ROOT = Path(__file__).resolve().parents[3]
-F_DISP = str(ROOT / "public/fonts/Playfair-BoldItalic-Static.ttf")
-F_IT = str(ROOT / "public/fonts/Playfair-Italic.ttf")
-F_REG = str(ROOT / "public/fonts/Playfair.ttf")
-F_BODY = str(ROOT / "public/fonts/LibreBaskerville-Italic.ttf")
-F_MONO = "/usr/share/fonts/truetype/liberation/LiberationMono-Regular.ttf"
-MASCOT_REST = ROOT / "public/mascot/leponeus-rest.png"
-MASCOT_OWNER = ROOT / "public/mascot/leponeus-owner.png"
-MASCOT_VERDICT = ROOT / "public/mascot/leponeus-verdict.png"
-MASCOT_DOCTRINE = ROOT / "public/mascot/leponeus-doctrine.png"
 
 
-def clamp(x, lo=0.0, hi=1.0):
-    return max(lo, min(hi, x))
-
-
-def ease_io(t):
-    return 0.5 - 0.5 * math.cos(math.pi * clamp(t))
-
-
-def fade(t, t_in, t_full_in, t_full_out, t_out):
-    if t < t_in or t > t_out:
-        return 0.0
-    if t < t_full_in:
-        return ease_io((t - t_in) / (t_full_in - t_in))
-    if t < t_full_out:
-        return 1.0
-    return ease_io(1.0 - (t - t_full_out) / (t_out - t_full_out))
-
-
-def iris_color(u):
-    u = u % 1.0
-    for i in range(len(IRIS) - 1):
-        s0, c0 = IRIS[i]
-        s1, c1 = IRIS[i + 1]
-        if s0 <= u <= s1:
-            k = (u - s0) / (s1 - s0)
-            return tuple(int(c0[j] + (c1[j] - c0[j]) * k) for j in range(3))
-    return IRIS[-1][1]
-
-
-def paper_grain(img, seed=0, strength=8):
-    rng = np.random.default_rng(seed)
-    grain = rng.integers(-strength, strength, size=(img.size[1], img.size[0]), dtype=np.int16)
-    arr = np.array(img).astype(np.int16)
-    for c in range(3):
-        arr[..., c] = np.clip(arr[..., c] + grain, 0, 255)
-    return Image.fromarray(arr.astype(np.uint8), "RGBA")
-
-
-def text_alpha(text, font, color, alpha, anchor="mm"):
-    """Render text on a fresh transparent canvas at given alpha."""
-    bbox_img = Image.new("RGBA", (1, 1))
-    d = ImageDraw.Draw(bbox_img)
-    bbox = d.textbbox((0, 0), text, font=font, anchor="lt")
-    pad = 20
-    tw, th = bbox[2] - bbox[0] + pad * 2, bbox[3] - bbox[1] + pad * 2
-    layer = Image.new("RGBA", (tw, th), (0, 0, 0, 0))
-    dd = ImageDraw.Draw(layer)
-    dd.text((pad - bbox[0], pad - bbox[1]), text, font=font, fill=color + (int(255 * alpha),))
-    return layer, anchor
-
-
-def paste_centered(canvas, layer, cx, cy):
-    canvas.alpha_composite(layer, (int(cx - layer.size[0] // 2), int(cy - layer.size[1] // 2)))
-
-
-def make_mascot(path, target_h, mirror=False, tint=None):
-    im = Image.open(path).convert("RGBA")
-    w0, h0 = im.size
-    scale = target_h / h0
-    im = im.resize((int(w0 * scale), target_h), Image.LANCZOS)
-    if mirror:
-        im = im.transpose(Image.FLIP_LEFT_RIGHT)
-    if tint is not None:
-        arr = np.array(im).astype(np.float32)
-        rgb = arr[..., :3]
-        gray = (0.299 * rgb[..., 0] + 0.587 * rgb[..., 1] + 0.114 * rgb[..., 2])[..., None]
-        tint_arr = np.array(tint).astype(np.float32)
-        arr[..., :3] = gray * 0.4 + tint_arr * (1.0 - 0.4) * (gray / 255.0)
-        arr = np.clip(arr, 0, 255).astype(np.uint8)
-        im = Image.fromarray(arr, "RGBA")
-    return im
-
-
-def iris_wordmark(text, font, t_phase):
-    """Render text masked by an animated iris gradient."""
-    layer = Image.new("RGBA", (1, 1))
-    d = ImageDraw.Draw(layer)
-    bbox = d.textbbox((0, 0), text, font=font, anchor="lt")
-    pad = 40
-    tw, th = bbox[2] - bbox[0] + pad * 2, bbox[3] - bbox[1] + pad * 2
-    mask = Image.new("L", (tw, th), 0)
-    md = ImageDraw.Draw(mask)
-    md.text((pad - bbox[0], pad - bbox[1]), text, font=font, fill=255)
-    grad = Image.new("RGB", (tw, th))
-    g = np.zeros((th, tw, 3), dtype=np.uint8)
-    for x in range(tw):
-        u = (x / tw + t_phase) % 1.0
-        g[:, x] = iris_color(u)
-    grad = Image.fromarray(g, "RGB")
-    out = Image.new("RGBA", (tw, th), (0, 0, 0, 0))
-    out.paste(grad, (0, 0), mask)
-    return out
-
-
-def draw_logo_glyph(d, x, y, label, alpha):
-    """Etched-style monogram logo: thin rect + Mono caps inside."""
-    f = ImageFont.truetype(F_MONO, 22)
-    w = 220
-    h = 64
-    col = MUTED + (int(150 * alpha),)
-    d.rectangle([x - w // 2, y - h // 2, x + w // 2, y + h // 2], outline=col, width=1)
-    bbox = d.textbbox((0, 0), label, font=f, anchor="lt")
-    tw = bbox[2] - bbox[0]
-    th = bbox[3] - bbox[1]
-    d.text((x - tw // 2, y - th // 2 - bbox[1]), label, font=f, fill=col)
-
-
-def render_frame(idx, mascots):
+def render(idx: int) -> Image.Image:
     t = idx / FPS
-    img = Image.new("RGBA", (W, H), CREAM + (255,))
+    bg = Image.new("RGBA", (W, H), CREAM + (255,))
+    d = ImageDraw.Draw(bg)
 
-    # ─── 0–3s · Mascot drift in ───
-    if t < 5.5:
-        a = fade(t, 0.2, 1.4, 4.6, 5.5)
-        if a > 0:
-            mascot = mascots["rest"]
-            x = int(W * 0.18 + ease_io((t - 0.2) / 5.3) * 60)
-            y = int(H * 0.20 + math.sin(t * 0.9) * 6)
-            m = mascot.copy()
-            ma = np.array(m)
-            ma[..., 3] = (ma[..., 3] * a).astype(np.uint8)
-            m = Image.fromarray(ma, "RGBA")
-            img.alpha_composite(m, (x, y))
+    # ─── 0–8s · OPENER ─ Mascot at rest, push-in, voice ─
+    if t < 9.0:
+        a_m = fade(t, 0.2, 1.8, 6.6, 8.5)
+        if a_m > 0:
+            scale = 1.0 + 0.18 * ease_out(clamp((t - 0.2) / 8.0))
+            m = mascot("rest", int(540 * scale))
+            paste_centered(bg, with_alpha(m, a_m), W * 0.50, H * 0.46 - 40)
 
-    # ─── 2–10s · Text builds, replacing each beat ───
-    f_disp = ImageFont.truetype(F_DISP, 116)
-    f_sub = ImageFont.truetype(F_BODY, 36)
-    lines = [
-        # (start, in, out, full_out, text, font, color, x_frac, y_frac)
-        (1.6, 2.5, 4.6, 5.4, "Five years selling.", f_disp, INK, 0.50, 0.62),
-        (4.6, 5.5, 7.4, 8.0, "No map. No mentor.", f_disp, INK, 0.50, 0.62),
-        (7.4, 8.1, 9.6, 10.2, "Then someone wrote one.", f_disp, CRIMSON, 0.50, 0.62),
-    ]
-    for start, t_in, t_out, t_full_out, txt, font, col, xf, yf in lines:
-        a = fade(t, start, t_in, t_out, t_full_out)
-        if a > 0:
-            layer, _ = text_alpha(txt, font, col, a)
-            paste_centered(img, layer, W * xf, H * yf)
-
-    # ─── 9.5–13s · AESDR iris wordmark + mascot swap ───
-    if 9.5 < t < 13.2:
-        a = fade(t, 9.5, 10.4, 12.6, 13.2)
-        if a > 0:
-            f_brand = ImageFont.truetype(F_DISP, 240)
-            phase = t * 0.18
-            wm = iris_wordmark("AESDR", f_brand, phase)
-            wa = np.array(wm)
-            wa[..., 3] = (wa[..., 3] * a).astype(np.uint8)
-            wm = Image.fromarray(wa, "RGBA")
-            paste_centered(img, wm, W * 0.5, H * 0.42)
-        a2 = fade(t, 10.2, 10.9, 12.6, 13.2)
+        f_lead = ImageFont.truetype(F_DISP_BI, 92)
+        a1 = fade(t, 1.4, 2.4, 4.0, 4.8)
+        if a1 > 0:
+            text_centered(bg, "Five years selling.", f_lead, INK, W * 0.5, H * 0.78, a1)
+        a2 = fade(t, 4.3, 5.2, 7.2, 8.0)
         if a2 > 0:
-            mascot = mascots["verdict"]
-            m = mascot.copy()
-            ma = np.array(m)
-            ma[..., 3] = (ma[..., 3] * a2).astype(np.uint8)
-            m = Image.fromarray(ma, "RGBA")
-            paste_centered(img, m, W * 0.5, H * 0.74)
+            text_centered(bg, "No mentor. No map.", f_lead, INK, W * 0.5, H * 0.78, a2)
 
-    # ─── 11.5–13.5s · Validated logos strip (etched) ───
-    if 11.5 < t < 13.8:
-        a = fade(t, 11.5, 12.2, 13.4, 13.8)
+        # tiny field-note annotation top right
+        a_ann = fade(t, 2.2, 3.4, 7.0, 8.0)
+        if a_ann > 0:
+            f_ann = ImageFont.truetype(F_IT, 28)
+            text_centered(bg, "— field notes, week 47", f_ann, MUTED,
+                          W * 0.78, H * 0.20, a_ann * 0.85)
+
+    # ─── 8–20s · LESSON CARD FAN ─ chapters laid out like a book ─
+    if 8.0 < t < 21.0:
+        # banner
+        a_ban = fade(t, 8.0, 9.0, 19.5, 20.5)
+        if a_ban > 0:
+            f_eb = ImageFont.truetype(F_MONO, 16)
+            text_centered(bg, "TWELVE LESSONS", f_eb,
+                          MUTED, W * 0.50, H * 0.16, a_ban)
+            f_ttl = ImageFont.truetype(F_DISP_BL, 64)
+            text_centered(bg, "The field manual nobody handed you.", f_ttl,
+                          INK, W * 0.50, H * 0.24, a_ban)
+
+        # cards: 5 visible at staggered angles + positions
+        showcase = [LESSONS[0], LESSONS[2], LESSONS[4], LESSONS[6], LESSONS[11]]
+        positions = [(-0.34, 0.13, -6), (-0.17, 0.06, -2),
+                     (0.00, 0.02, 0), (0.18, 0.06, 3), (0.34, 0.13, 7)]
+        for i, ((num, title, body), (dx, dy, rot)) in enumerate(zip(showcase, positions)):
+            t_in = 9.2 + i * 0.55
+            a = fade(t, t_in, t_in + 0.8, 17.6, 19.2)
+            if a > 0:
+                # subtle float
+                fl_y = math.sin((t - t_in) * 1.0) * 4
+                card = render_lesson_card(num, title, body, w=400, h=300,
+                                          iris_phase=t * 0.18)
+                card = card.rotate(rot * (1.0 - (t - t_in - 1.0) * 0.05),
+                                   resample=Image.BICUBIC, expand=True)
+                cx = int(W * 0.50 + W * dx)
+                cy = int(H * 0.58 + H * dy + fl_y)
+                paste_centered(bg, with_alpha(card, a), cx, cy)
+
+        # mascot perched on the center card
+        a_m = fade(t, 11.0, 11.8, 17.6, 19.2)
+        if a_m > 0:
+            mm = mascot("rest", 170)
+            paste_centered(bg, with_alpha(mm, a_m), W * 0.50, H * 0.40)
+
+        # hand-annotation arrow pointing at lesson 03
+        a_pt = fade(t, 13.5, 14.4, 17.6, 19.2)
+        if a_pt > 0:
+            f_h = ImageFont.truetype(F_IT, 32)
+            text_centered(bg, "the one you'll dog-ear", f_h, CRIMSON,
+                          W * 0.20, H * 0.84, a_pt)
+            # squiggle arrow
+            for k in range(28):
+                u = k / 28
+                ax = int(W * 0.22 + u * (W * 0.10) + math.sin(u * 5) * 4)
+                ay = int(H * 0.81 - u * (H * 0.10) + math.cos(u * 4) * 3)
+                d.ellipse([ax - 2, ay - 2, ax + 2, ay + 2],
+                          fill=CRIMSON + (int(220 * a_pt),))
+
+    # ─── 20–28s · JOURNEY VIEW ─ dashboard mock ─
+    if 20.0 < t < 29.5:
+        a_j = fade(t, 20.0, 21.2, 28.0, 29.5)
+        if a_j > 0:
+            # header
+            head = render_journey_header()
+            paste_centered(bg, with_alpha(head, a_j), W * 0.50, H * 0.22)
+            # 6 completed rows + 6 pending fading in staggered
+            for i, (num, title, body) in enumerate(LESSONS[:8]):
+                t_in = 21.0 + i * 0.20
+                row_a = fade(t, t_in, t_in + 0.5, 27.6, 28.8) * a_j
+                if row_a > 0:
+                    row = render_dashboard_row(num, title, body,
+                                               completed=i < 6, w=1100)
+                    bg.alpha_composite(with_alpha(row, row_a),
+                                       (int(W * 0.5 - 550), int(H * 0.36) + i * 70))
+            # column rule
+            d.line([(int(W * 0.5 - 540), int(H * 0.34)),
+                    (int(W * 0.5 - 540), int(H * 0.34) + 8 * 70)],
+                   fill=(220, 215, 208), width=2)
+
+    # ─── 28–36s · IN-LESSON SORT ─ silo drag/drop on lesson header ─
+    if 28.0 < t < 37.0:
+        a_l = fade(t, 28.0, 29.2, 35.6, 36.8)
+        if a_l > 0:
+            # lesson header at top
+            head = render_lesson_header(w=1700, t_phase=t * 0.18)
+            paste_centered(bg, with_alpha(head, a_l), W * 0.50, H * 0.13)
+            # section eyebrow + headline
+            f_eb = ImageFont.truetype(F_MONO, 14)
+            f_h = ImageFont.truetype(F_DISP_BL, 64)
+            text_centered(bg, "SECTION 02 · SORTING THE BACKLOG", f_eb,
+                          CRIMSON, W * 0.50, H * 0.27, a_l)
+            text_centered(bg, "Which playbooks survive contact?", f_h,
+                          INK, W * 0.50, H * 0.36, a_l)
+            # the interactive
+            silo = render_silo_dragdrop(w=1400, t=t - 28.5)
+            paste_centered(bg, with_alpha(silo, a_l), W * 0.50, H * 0.65)
+
+    # ─── 36–42s · BRAND REVEAL ─ AESDR iris + validated by ─
+    if 36.5 < t < 42.5:
+        a = fade(t, 36.5, 37.6, 41.4, 42.5)
         if a > 0:
-            d = ImageDraw.Draw(img)
-            labels = ["NORTHFIELD", "OLIVE & CRANE", "PRESTON YIELD", "AVERY ROW"]
-            spacing = W / (len(labels) + 1)
-            for i, lab in enumerate(labels):
-                lx = int(spacing * (i + 1))
-                draw_logo_glyph(d, lx, int(H * 0.92), lab, a * 0.7)
+            f_brand = ImageFont.truetype(F_DISP_BI, 320)
+            wm = iris_text("AESDR", f_brand, t * 0.18)
+            paste_centered(bg, with_alpha(wm, a), W * 0.50, H * 0.45)
+            f_tag = ImageFont.truetype(F_IT, 38)
+            text_centered(bg, "The playbook nobody handed you.", f_tag,
+                          MUTED, W * 0.50, H * 0.62, a)
+            strip = render_validated_strip(alpha=a, w=W - 200, t_phase=t * 0.3)
+            paste_centered(bg, strip, W * 0.50, H * 0.80)
 
-    # ─── 13–15s · CTA voice line ───
-    if t > 12.8:
-        a = fade(t, 12.8, 13.5, 14.7, 15.0)
+    # ─── 42–45s · CTA ─
+    if t > 42.0:
+        a = fade(t, 42.0, 42.7, 44.4, 45.0)
         if a > 0:
-            f_cta = ImageFont.truetype(F_IT, 44)
-            f_who = ImageFont.truetype(F_DISP, 50)
-            # Re-clear lower third to ink-text feel
-            d = ImageDraw.Draw(img)
-            line_y = H * 0.55
-            l1, _ = text_alpha("Read by", f_cta, MUTED, a, "mm")
-            paste_centered(img, l1, W * 0.5 - 200, line_y)
-            l2, _ = text_alpha("Michael.", f_who, INK, a, "mm")
-            paste_centered(img, l2, W * 0.5 - 40, line_y)
-            a2 = fade(t, 13.4, 14.0, 14.7, 15.0)
-            if a2 > 0:
-                l3, _ = text_alpha("Endorsed by", f_cta, MUTED, a2, "mm")
-                paste_centered(img, l3, W * 0.5 + 140, line_y)
-                l4, _ = text_alpha("Rowan.", f_who, CRIMSON, a2, "mm")
-                paste_centered(img, l4, W * 0.5 + 320, line_y)
-            # Wipe wordmark + mascot when CTA shows by overlaying cream
-            # (handled by ordering above — CTA paints on top at this point)
+            # cream-on-cream calm
+            f_cta = ImageFont.truetype(F_DISP_BL, 64)
+            text_centered(bg, "Twelve lessons.", f_cta, INK, W * 0.5, H * 0.40, a)
+            text_centered(bg, "One field manual.", f_cta, CRIMSON, W * 0.5, H * 0.48, a)
+            f_url = ImageFont.truetype(F_MONO, 24)
+            text_centered(bg, "aesdr.com", f_url, MUTED, W * 0.5, H * 0.62, a)
 
-    # Paper grain (seed varies for live feel)
-    img = paper_grain(img, seed=idx % 23, strength=5)
-    return img
+    bg = apply_cinema(bg, idx, t, leak=True, leak_color=(255, 170, 100))
+    return bg
 
 
 def main():
-    print("[mockup-A] preloading assets…")
-    mascots = {
-        "rest": make_mascot(MASCOT_REST, 540),
-        "verdict": make_mascot(MASCOT_VERDICT, 360),
-    }
-    tmp = tempfile.mkdtemp(prefix="mockup-a-")
-    print(f"[mockup-A] rendering {N} frames → {tmp}")
+    tmp = tempfile.mkdtemp(prefix="mockup-a45-")
+    print(f"[A] rendering {N} frames → {tmp}")
     for i in range(N):
-        if i % 30 == 0:
-            print(f"  frame {i}/{N}")
-        f = render_frame(i, mascots)
-        f.convert("RGB").save(os.path.join(tmp, f"f-{i:04d}.png"), "PNG", optimize=False)
+        if i % 60 == 0:
+            print(f"  {i}/{N} ({i / N * 100:.0f}%)")
+        f = render(i)
+        f.convert("RGB").save(os.path.join(tmp, f"f-{i:05d}.png"), "PNG")
     out = ROOT / "scripts/demo/out/mockups/mockup-a.mp4"
     out.parent.mkdir(parents=True, exist_ok=True)
-    print(f"[mockup-A] encoding → {out}")
+    print(f"[A] encoding → {out}")
     subprocess.check_call([
         "ffmpeg", "-y",
         "-framerate", str(FPS),
-        "-i", os.path.join(tmp, "f-%04d.png"),
-        "-c:v", "libx264", "-crf", "18", "-preset", "medium",
-        "-pix_fmt", "yuv420p",
+        "-i", os.path.join(tmp, "f-%05d.png"),
+        "-c:v", "libx264", "-crf", "19", "-preset", "medium",
+        "-pix_fmt", "yuv420p", "-movflags", "+faststart",
         str(out),
     ])
-    print(f"[mockup-A] done → {out}")
+    print(f"[A] done → {out}")
 
 
 if __name__ == "__main__":

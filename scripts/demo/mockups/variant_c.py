@@ -1,9 +1,10 @@
 """
-Mockup C — 15s atmospheric / "Ascent" teaser. Python → ffmpeg.
+Mockup C — 45s atmospheric commercial. "Pilgrimage" cut.
 
-Visual vocabulary: slow pull-back from extreme close-up on Leponeus,
-constellation of lesson titles reveals around the mascot, iris sweep,
-hushed CTA. Warm bone palette with a deep cream finish.
+Visual vocabulary: extreme close-up of the mascot, slow constellation
+reveal of all 12 lessons orbiting it, dolly through a faux lesson
+interior with section progress + sequence puzzle interactive, iris
+sweep, hushed CTA. Letterboxed 2.39:1 with warm light leaks.
 """
 
 import math
@@ -15,154 +16,74 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
-W, H = 1920, 1080
-FPS = 30
-DURATION = 15
-N = FPS * DURATION
-
-BONE = (232, 220, 196)  # warm bone
-CREAM = (250, 247, 242)
-INK = (26, 26, 26)
-CRIMSON = (139, 26, 26)
-MUTED = (140, 130, 120)
-LIGHT = (216, 208, 192)
-
-IRIS = [
-    (0.00, (255, 0, 110)),
-    (0.17, (255, 107, 0)),
-    (0.34, (245, 158, 11)),
-    (0.51, (16, 185, 129)),
-    (0.68, (56, 189, 248)),
-    (0.85, (139, 92, 246)),
-    (1.00, (255, 0, 110)),
-]
+from _common import (
+    W, H, FPS, DURATION, N,
+    CREAM, INK, CRIMSON, MUTED, LIGHT, WARM_BONE, PARCHMENT,
+    F_DISP_BI, F_DISP_BL, F_IT, F_REG, F_BODY, F_BODY_B, F_MONO, F_MONO_B,
+    LESSONS, VALIDATED, IRIS,
+    clamp, ease_io, ease_in, ease_out, fade, lerp, iris_color,
+    mascot, with_alpha,
+    paste_centered, text_layer, text_centered, iris_text,
+    render_lesson_card, render_dashboard_row, render_lesson_header,
+    render_silo_dragdrop, render_validated_strip,
+    apply_cinema, vignette, film_grain,
+)
 
 ROOT = Path(__file__).resolve().parents[3]
-F_DISP = str(ROOT / "public/fonts/Playfair-BoldItalic-Static.ttf")
-F_IT = str(ROOT / "public/fonts/Playfair-Italic.ttf")
-F_REG = str(ROOT / "public/fonts/Playfair.ttf")
-F_BODY = str(ROOT / "public/fonts/LibreBaskerville-Italic.ttf")
-F_MONO = "/usr/share/fonts/truetype/liberation/LiberationMono-Regular.ttf"
-
-MASCOT_SPRINT = ROOT / "public/mascot/leponeus-sprint.png"
-MASCOT_REST = ROOT / "public/mascot/leponeus-rest.png"
-MASCOT_DOCTRINE = ROOT / "public/mascot/leponeus-doctrine.png"
-
-
-def clamp(x, lo=0.0, hi=1.0):
-    return max(lo, min(hi, x))
-
-
-def ease_io(t):
-    return 0.5 - 0.5 * math.cos(math.pi * clamp(t))
-
-
-def ease_out_quad(t):
-    t = clamp(t)
-    return 1 - (1 - t) * (1 - t)
-
-
-def fade(t, t_in, t_full_in, t_full_out, t_out):
-    if t < t_in or t > t_out:
-        return 0.0
-    if t < t_full_in:
-        return ease_io((t - t_in) / max(1e-3, t_full_in - t_in))
-    if t < t_full_out:
-        return 1.0
-    return ease_io(1.0 - (t - t_full_out) / max(1e-3, t_out - t_full_out))
-
-
-def iris_color(u):
-    u = u % 1.0
-    for i in range(len(IRIS) - 1):
-        s0, c0 = IRIS[i]
-        s1, c1 = IRIS[i + 1]
-        if s0 <= u <= s1:
-            k = (u - s0) / (s1 - s0)
-            return tuple(int(c0[j] + (c1[j] - c0[j]) * k) for j in range(3))
-    return IRIS[-1][1]
 
 
 def gradient_bg(t):
-    """Vignette + warm-to-cream wash that shifts across the 15s."""
-    # mix factor: bone → cream over time
-    k = ease_io(clamp(t / 15.0))
-    base = tuple(int(BONE[i] * (1 - k) + CREAM[i] * k) for i in range(3))
-    # subtle radial vignette
+    k = ease_io(clamp(t / 45.0))
+    base = tuple(int(WARM_BONE[i] * (1 - k) + CREAM[i] * k) for i in range(3))
     yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
-    cx, cy = W / 2, H * 0.45
-    rr = np.sqrt((xx - cx) ** 2 + (yy - cy) ** 2) / (H * 0.7)
-    vign = np.clip(1.0 - rr * 0.18, 0.65, 1.0)
+    cx, cy = W / 2, H * 0.5
+    rr = np.sqrt((xx - cx) ** 2 + (yy - cy) ** 2) / (math.hypot(W, H) / 2)
+    v = np.clip(1.0 - rr * 0.20, 0.78, 1.0)
     arr = np.zeros((H, W, 3), dtype=np.float32)
     for c in range(3):
-        arr[..., c] = base[c] * vign
+        arr[..., c] = base[c] * v
     return Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8), "RGB").convert("RGBA")
 
 
-def particles(t, count=80, seed=11):
-    rng = np.random.default_rng(seed)
+def particles(t, count=70):
     layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(layer)
+    rng = np.random.default_rng(42)
     for i in range(count):
-        # each particle drifts with own phase
-        seed_i = rng.integers(0, 10_000)
-        rr = np.random.default_rng(seed_i)
-        x0 = rr.random() * W
-        y0 = rr.random() * H
-        vx = (rr.random() - 0.5) * 30
-        vy = -10 - rr.random() * 25
+        x0 = rng.random() * W
+        y0 = rng.random() * H
+        vx = (rng.random() - 0.5) * 24
+        vy = -8 - rng.random() * 20
         x = (x0 + vx * t) % W
         y = (y0 + vy * t) % H
-        r = 1 + rr.random() * 2.5
-        a = int(40 + rr.random() * 60)
-        d.ellipse([x - r, y - r, x + r, y + r], fill=(140, 130, 120, a))
+        r = 1 + rng.random() * 2.4
+        a = int(50 + rng.random() * 70)
+        d.ellipse([x - r, y - r, x + r, y + r], fill=(150, 140, 130, a))
     return layer.filter(ImageFilter.GaussianBlur(radius=0.8))
 
 
-def make_mascot(path, target_h, mirror=False):
-    im = Image.open(path).convert("RGBA")
-    w0, h0 = im.size
-    scale = target_h / h0
-    im = im.resize((max(1, int(w0 * scale)), target_h), Image.LANCZOS)
-    if mirror:
-        im = im.transpose(Image.FLIP_LEFT_RIGHT)
-    return im
-
-
-def iris_wordmark(text, font, t_phase):
-    layer = Image.new("RGBA", (1, 1))
-    d = ImageDraw.Draw(layer)
-    bbox = d.textbbox((0, 0), text, font=font, anchor="lt")
-    pad = 40
-    tw, th = bbox[2] - bbox[0] + pad * 2, bbox[3] - bbox[1] + pad * 2
-    mask = Image.new("L", (tw, th), 0)
-    md = ImageDraw.Draw(mask)
-    md.text((pad - bbox[0], pad - bbox[1]), text, font=font, fill=255)
-    g = np.zeros((th, tw, 3), dtype=np.uint8)
-    for x in range(tw):
-        u = (x / tw + t_phase) % 1.0
-        g[:, x] = iris_color(u)
-    grad = Image.fromarray(g, "RGB")
-    out = Image.new("RGBA", (tw, th), (0, 0, 0, 0))
-    out.paste(grad, (0, 0), mask)
+def constellation_positions():
+    """12 lesson titles arranged in a loose orbit around the mascot."""
+    # angles + radii relative to center
+    out = []
+    for i in range(12):
+        angle = -math.pi / 2 + (i / 12) * 2 * math.pi
+        r_x = 0.34 + 0.04 * math.sin(i * 1.7)
+        r_y = 0.30 + 0.03 * math.cos(i * 1.3)
+        out.append((angle, r_x, r_y))
     return out
 
 
-def paste_centered(canvas, layer, cx, cy):
-    canvas.alpha_composite(layer, (int(cx - layer.size[0] // 2), int(cy - layer.size[1] // 2)))
-
-
-def iris_sweep(t):
-    """Soft horizontal iris band that sweeps left→right over a couple of seconds."""
-    band_w = int(W * 0.35)
-    x_center = int(-band_w + (W + band_w * 2) * ease_io(clamp((t - 11.0) / 1.6)))
-    layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+def iris_sweep(t, t0, t1):
+    band_w = int(W * 0.42)
+    k = clamp((t - t0) / max(1e-3, t1 - t0))
+    x_center = int(-band_w + (W + band_w * 2) * ease_io(k))
     arr = np.zeros((H, W, 4), dtype=np.uint8)
     for x in range(max(0, x_center - band_w), min(W, x_center + band_w)):
         dist = (x - x_center) / band_w
         u = (x / W + t * 0.15) % 1.0
         c = iris_color(u)
-        a = int(180 * (1 - dist * dist))
+        a = int(170 * (1 - dist * dist))
         arr[:, x, 0] = c[0]
         arr[:, x, 1] = c[1]
         arr[:, x, 2] = c[2]
@@ -170,165 +91,200 @@ def iris_sweep(t):
     return Image.fromarray(arr, "RGBA")
 
 
-def constellation_titles():
-    return [
-        ("01 · CREATING STRUCTURE",      (-0.32, -0.30)),
-        ("03 · SURVIVING & THRIVING",    ( 0.34, -0.34)),
-        ("05 · THE SDR PLAYBOOK",        (-0.40,  0.05)),
-        ("07 · PROSPECTING & PIPELINE",  ( 0.38,  0.02)),
-        ("09 · CALLED TO LEAD",          (-0.30,  0.32)),
-        ("12 · RELATIONSHIPS & BALANCE", ( 0.32,  0.34)),
-    ]
-
-
-def render_frame(idx, mascot_full):
+def render(idx: int) -> Image.Image:
     t = idx / FPS
-    img = gradient_bg(t)
-    d = ImageDraw.Draw(img)
+    bg = gradient_bg(t)
 
-    # ─── Camera: extreme close-up of mascot at t=0, pulls back over 9s ───
-    # scale goes from ~3.0x → 1.0x
-    scale = 3.0 - 2.0 * ease_out_quad(clamp(t / 9.0))
-    target_h = int(880 * scale)
-    cur = mascot_full.copy()
-    w0, h0 = cur.size
-    new_h = target_h
-    new_w = int(w0 * (new_h / h0))
-    cur = cur.resize((new_w, new_h), Image.LANCZOS)
-    # offset: when zoomed, look at the eye region (upper-left of mascot)
-    eye_dx = int(-new_w * 0.08 + (new_w * 0.08) * ease_out_quad(clamp(t / 9.0)))
-    eye_dy = int(-new_h * 0.18 + (new_h * 0.18) * ease_out_quad(clamp(t / 9.0)))
-    cx = W // 2 + eye_dx
-    cy = int(H * 0.50) + eye_dy
-    paste_centered(img, cur, cx, cy)
+    # ─── 0–9s · CLOSE-UP, SLOW PULLBACK ───
+    if t < 12.0:
+        # mascot scale: 3.2x → 1.2x by 9s, holds
+        scale = 3.2 - 2.0 * ease_out(clamp(t / 9.0))
+        m = mascot("sprint", int(680 * max(1.0, scale)))
+        # eye-level offset that drifts back to center
+        k = ease_out(clamp(t / 9.0))
+        dx = int(lerp(-260, 0, k))
+        dy = int(lerp(-220, 0, k))
+        paste_centered(bg, m, W * 0.50 + dx, H * 0.50 + dy)
+        # opacity hint at t=0
+        if t < 1.5:
+            veil = Image.new("RGBA", (W, H), CREAM + (int((1 - t / 1.5) * 100),))
+            bg = Image.alpha_composite(bg, veil)
+        # Caveat-style annotation
+        a_ann = fade(t, 4.0, 5.0, 9.0, 10.0)
+        if a_ann > 0:
+            f = ImageFont.truetype(F_IT, 36)
+            text_centered(bg, "(this is Leponeus.)", f,
+                          MUTED, W * 0.68, H * 0.72, a_ann)
 
-    # Mascot opacity: hint at first, full presence by ~2s
-    if t < 2.0:
-        veil = Image.new("RGBA", (W, H), CREAM + (int((1 - t / 2.0) * 80),))
-        img = Image.alpha_composite(img, veil)
-
-    # Caveat-style annotation: "(this is Leponeus.)"
-    if 3.5 < t < 8.5:
-        a = fade(t, 3.5, 4.4, 7.6, 8.5)
-        if a > 0:
-            f_ann = ImageFont.truetype(F_IT, 36)
-            note = "(this is Leponeus.)"
-            layer = Image.new("RGBA", (700, 80), (0, 0, 0, 0))
-            ld = ImageDraw.Draw(layer)
-            ld.text((0, 0), note, font=f_ann, fill=MUTED + (int(220 * a),))
-            img.alpha_composite(layer, (int(W * 0.62), int(H * 0.66)))
-            # hand-drawn arrow
-            x1, y1 = int(W * 0.60), int(H * 0.68)
-            x2, y2 = int(W * 0.52), int(H * 0.55)
-            for k in range(20):
-                u = k / 20
-                xa = int(x1 + (x2 - x1) * u + math.sin(u * 6) * 4)
-                ya = int(y1 + (y2 - y1) * u + math.cos(u * 5) * 3)
-                d.ellipse([xa - 2, ya - 2, xa + 2, ya + 2], fill=MUTED + (int(180 * a),))
-
-    # ─── 5–11s · Constellation of lesson titles fade in ───
-    if 5.0 < t < 12.5:
-        f_const = ImageFont.truetype(F_IT, 32)
-        for i, (title, (dx, dy)) in enumerate(constellation_titles()):
-            t_in = 5.0 + i * 0.7
-            a = fade(t, t_in, t_in + 1.0, 11.6, 12.4)
+    # ─── 6–22s · CONSTELLATION REVEAL ───
+    if 6.0 < t < 23.5:
+        positions = constellation_positions()
+        for i, (angle, r_x, r_y) in enumerate(positions):
+            t_in = 6.0 + i * 0.6
+            a = fade(t, t_in, t_in + 0.9, 22.0, 23.5)
             if a > 0:
-                # highlight Surviving & Thriving on its own beat
-                is_focus = "SURVIVING" in title and t > 8.6
-                if is_focus:
-                    pulse = 0.85 + 0.15 * math.sin((t - 8.6) * 5.0)
+                num, title, body = LESSONS[i]
+                f_eb = ImageFont.truetype(F_MONO, 13)
+                f_t = ImageFont.truetype(F_DISP_BI, 32)
+                x = int(W * 0.5 + math.cos(angle) * (W * r_x))
+                y = int(H * 0.5 + math.sin(angle) * (H * r_y))
+                # tiny floating offset
+                fy = math.sin(t * 0.5 + i) * 4
+                # eyebrow
+                tl_eb = text_layer(f"{num}", f_eb, MUTED, a * 0.85)
+                paste_centered(bg, tl_eb, x, y - 24 + int(fy))
+                # title
+                # pulse on lesson 3
+                if i == 2 and t > 12.0:
+                    pulse = 0.86 + 0.14 * math.sin((t - 12.0) * 4.0)
                     col = CRIMSON
                     aa = a * pulse
                 else:
                     col = INK
-                    aa = a * 0.55
-                # gentle floating offset
-                fx = math.sin(t * 0.6 + i) * 6
-                fy = math.cos(t * 0.5 + i) * 4
-                x = int(W * 0.5 + W * dx + fx)
-                y = int(H * 0.50 + H * dy + fy)
-                tl = Image.new("RGBA", (700, 80), (0, 0, 0, 0))
-                ld = ImageDraw.Draw(tl)
-                ld.text((0, 0), title, font=f_const, fill=col + (int(255 * aa),))
-                bbox = ld.textbbox((0, 0), title, font=f_const, anchor="lt")
-                tw = bbox[2] - bbox[0]
-                img.alpha_composite(tl, (x - tw // 2, y))
+                    aa = a * 0.92
+                tl_t = text_layer(title, f_t, col, aa)
+                paste_centered(bg, tl_t, x, y + 8 + int(fy))
 
-    # ─── Particles (atmospheric dust) ───
-    if t < 13.0:
-        a = fade(t, 0.5, 1.5, 11.5, 13.0)
+    # ─── particles always ───
+    if 1.0 < t < 32.0:
+        pa = fade(t, 1.0, 2.0, 30.0, 32.0)
+        p = particles(t)
+        bg.alpha_composite(with_alpha(p, pa))
+
+    # ─── 23–34s · DOLLY INTO A LESSON ───
+    if 22.5 < t < 35.0:
+        a = fade(t, 22.5, 23.6, 33.6, 35.0)
         if a > 0:
-            p = particles(t, count=70)
-            pa = np.array(p)
-            pa[..., 3] = (pa[..., 3] * a).astype(np.uint8)
-            img.alpha_composite(Image.fromarray(pa, "RGBA"))
+            # wash to cream
+            wash_a = fade(t, 22.5, 23.4, 34.0, 35.0)
+            if wash_a > 0:
+                veil = Image.new("RGBA", (W, H), CREAM + (int(255 * wash_a),))
+                bg = Image.alpha_composite(bg, veil)
+            # lesson header
+            head = render_lesson_header(w=1700, t_phase=t * 0.18)
+            paste_centered(bg, with_alpha(head, a), W * 0.50, H * 0.11)
+            # eyebrow + headline
+            f_eb = ImageFont.truetype(F_MONO, 14)
+            text_centered(bg, "LESSON 03  ·  SECTION 02  ·  SEQUENCE",
+                          f_eb, CRIMSON, W * 0.50, H * 0.20, a)
+            f_h = ImageFont.truetype(F_DISP_BL, 64)
+            text_centered(bg, "Order them. Then defend it.",
+                          f_h, INK, W * 0.50, H * 0.28, a)
+            # sequence puzzle mock — three steps reveal as t advances
+            steps = [
+                ("01", "Ground the trigger.",        "What signal earns the call."),
+                ("02", "Map the persona's stake.",   "What they lose if they ignore you."),
+                ("03", "Make the ask tiny.",         "One question. One outcome."),
+            ]
+            for i, (n, title, sub) in enumerate(steps):
+                t_in = 25.5 + i * 1.5
+                row_a = fade(t, t_in, t_in + 0.7, 33.4, 34.6) * a
+                if row_a > 0:
+                    row = Image.new("RGBA", (1300, 110), (255, 255, 255, 255))
+                    rd = ImageDraw.Draw(row)
+                    rd.rectangle([0, 0, 1299, 109], outline=(180, 175, 168), width=1)
+                    # iris hairline
+                    for x in range(1300):
+                        u = (x / 1300 + t * 0.2) % 1.0
+                        rd.line([(x, 0), (x, 2)], fill=iris_color(u))
+                    f_n = ImageFont.truetype(F_DISP_BI, 44)
+                    rd.text((28, 16), n, font=f_n, fill=INK)
+                    f_t = ImageFont.truetype(F_DISP_BI, 30)
+                    rd.text((108, 24), title, font=f_t, fill=INK)
+                    f_s = ImageFont.truetype(F_BODY, 18)
+                    rd.text((108, 66), sub, font=f_s, fill=(110, 105, 95))
+                    # done badge for first two
+                    if i < 2 and t > t_in + 1.2:
+                        ba = clamp((t - (t_in + 1.2)) / 0.5)
+                        rd.rectangle([1180, 32, 1260, 76], fill=CRIMSON + (int(255 * ba),))
+                        f_bb = ImageFont.truetype(F_MONO_B, 14)
+                        rd.text((1220, 54), "DONE ✓", font=f_bb,
+                                fill=CREAM, anchor="mm")
+                    bg.alpha_composite(with_alpha(row, row_a),
+                                       (int(W * 0.5 - 650), int(H * 0.42) + i * 130))
 
-    # ─── 11–12.6s · Iris sweep wash ───
-    if 11.0 < t < 12.8:
-        sweep = iris_sweep(t)
+    # ─── 34–38s · PULL BACK TO JOURNEY ───
+    if 34.5 < t < 39.2:
+        a = fade(t, 34.5, 35.4, 38.4, 39.2)
+        if a > 0:
+            # cream wash
+            wash = Image.new("RGBA", (W, H), CREAM + (int(255 * a),))
+            bg = Image.alpha_composite(bg, wash)
+            # mascot left
+            m = mascot("rest", 230)
+            paste_centered(bg, with_alpha(m, a), W * 0.17, H * 0.42)
+            # journey heading
+            f_eb = ImageFont.truetype(F_MONO, 16)
+            text_centered(bg, "THE JOURNEY", f_eb, MUTED,
+                          W * 0.45, H * 0.30, a)
+            f_h = ImageFont.truetype(F_DISP_BL, 96)
+            text_centered(bg, "Twelve lessons.", f_h, INK,
+                          W * 0.45, H * 0.42, a)
+            text_centered(bg, "One you'll keep.", f_h, CRIMSON,
+                          W * 0.45, H * 0.54, a)
+            # peripheral rows blurred (faux blur via tiny offsets)
+            for i, (num, title, body) in enumerate(LESSONS[3:8]):
+                row_a = a * 0.40
+                row = render_dashboard_row(num, title, body,
+                                           completed=i < 2, w=900)
+                # blur effect
+                row = row.filter(ImageFilter.GaussianBlur(radius=2))
+                bg.alpha_composite(with_alpha(row, row_a),
+                                   (int(W * 0.62), int(H * 0.34) + i * 70))
+
+    # ─── 38–42s · IRIS SWEEP + AESDR ───
+    if 38.5 < t < 43.0:
+        sweep = iris_sweep(t, 38.5, 40.5)
         sa = np.array(sweep)
-        # fade in/out
-        a_sweep = fade(t, 11.0, 11.4, 12.2, 12.8) * 0.55
-        sa[..., 3] = (sa[..., 3] * a_sweep).astype(np.uint8)
-        img.alpha_composite(Image.fromarray(sa, "RGBA"))
-
-    # ─── 12.5–15s · Final wordmark + CTA ───
-    if t > 12.3:
+        s_alpha = fade(t, 38.5, 39.0, 40.0, 40.6) * 0.6
+        sa[..., 3] = (sa[..., 3] * s_alpha).astype(np.uint8)
+        bg.alpha_composite(Image.fromarray(sa, "RGBA"))
         # wash to cream
-        wash_a = fade(t, 12.3, 13.0, 14.9, 15.0)
+        wash_a = fade(t, 39.5, 40.2, 42.4, 43.0)
         if wash_a > 0:
             veil = Image.new("RGBA", (W, H), CREAM + (int(255 * wash_a),))
-            img = Image.alpha_composite(img, veil)
-        # wordmark
-        a = fade(t, 12.8, 13.4, 14.7, 15.0)
-        if a > 0:
-            f_brand = ImageFont.truetype(F_DISP, 200)
-            phase = t * 0.18
-            wm = iris_wordmark("AESDR", f_brand, phase)
-            wa = np.array(wm)
-            wa[..., 3] = (wa[..., 3] * a).astype(np.uint8)
-            wm = Image.fromarray(wa, "RGBA")
-            paste_centered(img, wm, W * 0.5, H * 0.36)
-            # CTA
-            f_cta = ImageFont.truetype(F_IT, 42)
-            tl = Image.new("RGBA", (W, 100), (0, 0, 0, 0))
-            ld = ImageDraw.Draw(tl)
-            ld.text((W // 2, 0), "Read by Michael. Endorsed by Rowan.",
-                    font=f_cta, fill=INK + (int(255 * a),), anchor="mt")
-            img.alpha_composite(tl, (0, int(H * 0.52)))
-            # url tag
-            f_url = ImageFont.truetype(F_MONO, 22)
-            tl2 = Image.new("RGBA", (W, 60), (0, 0, 0, 0))
-            ld2 = ImageDraw.Draw(tl2)
-            ld2.text((W // 2, 0), "aesdr.com", font=f_url,
-                     fill=MUTED + (int(220 * a),), anchor="mt")
-            img.alpha_composite(tl2, (0, int(H * 0.62)))
+            bg = Image.alpha_composite(bg, veil)
+        # AESDR wordmark
+        a_brand = fade(t, 40.0, 40.8, 42.4, 43.0)
+        if a_brand > 0:
+            f_brand = ImageFont.truetype(F_DISP_BI, 320)
+            wm = iris_text("AESDR", f_brand, t * 0.20)
+            paste_centered(bg, with_alpha(wm, a_brand), W * 0.50, H * 0.44)
 
-    return img
+    # ─── 42.5–45s · HUSHED CTA ───
+    if t > 42.0:
+        a = fade(t, 42.0, 42.7, 44.4, 45.0)
+        if a > 0:
+            f_cta = ImageFont.truetype(F_IT, 56)
+            text_centered(bg, "For the ones still trying.", f_cta,
+                          INK, W * 0.5, H * 0.62, a)
+            f_url = ImageFont.truetype(F_MONO, 26)
+            text_centered(bg, "aesdr.com", f_url, MUTED, W * 0.5, H * 0.74, a)
+
+    bg = apply_cinema(bg, idx, t, leak=True, leak_color=(255, 175, 110))
+    return bg
 
 
 def main():
-    print("[mockup-C] preloading assets…")
-    mascot_full = make_mascot(MASCOT_SPRINT, 880)
-    tmp = tempfile.mkdtemp(prefix="mockup-c-")
-    print(f"[mockup-C] rendering {N} frames → {tmp}")
+    tmp = tempfile.mkdtemp(prefix="mockup-c45-")
+    print(f"[C] rendering {N} frames → {tmp}")
     for i in range(N):
-        if i % 30 == 0:
-            print(f"  frame {i}/{N}")
-        f = render_frame(i, mascot_full)
-        f.convert("RGB").save(os.path.join(tmp, f"f-{i:04d}.png"), "PNG", optimize=False)
+        if i % 60 == 0:
+            print(f"  {i}/{N} ({i / N * 100:.0f}%)")
+        f = render(i)
+        f.convert("RGB").save(os.path.join(tmp, f"f-{i:05d}.png"), "PNG")
     out = ROOT / "scripts/demo/out/mockups/mockup-c.mp4"
     out.parent.mkdir(parents=True, exist_ok=True)
-    print(f"[mockup-C] encoding → {out}")
+    print(f"[C] encoding → {out}")
     subprocess.check_call([
         "ffmpeg", "-y",
         "-framerate", str(FPS),
-        "-i", os.path.join(tmp, "f-%04d.png"),
-        "-c:v", "libx264", "-crf", "18", "-preset", "medium",
-        "-pix_fmt", "yuv420p",
+        "-i", os.path.join(tmp, "f-%05d.png"),
+        "-c:v", "libx264", "-crf", "19", "-preset", "medium",
+        "-pix_fmt", "yuv420p", "-movflags", "+faststart",
         str(out),
     ])
-    print(f"[mockup-C] done → {out}")
+    print(f"[C] done → {out}")
 
 
 if __name__ == "__main__":
