@@ -543,10 +543,12 @@ def light_leak(img: Image.Image, t: float, color=(255, 160, 80), strength=70):
 
 
 def apply_cinema(img: Image.Image, idx: int, t: float,
-                 leak=True, leak_color=(255, 160, 80)) -> Image.Image:
+                 leak=True, leak_color=(255, 160, 80),
+                 letterbox_bars: bool = True) -> Image.Image:
     img = vignette(img, 0.28)
     if leak:
         img = light_leak(img, t, color=leak_color, strength=55)
     img = film_grain(img, idx, strength=4)
-    img = letterbox(img)
+    if letterbox_bars:
+        img = letterbox(img)
     return img
