@@ -55,7 +55,7 @@ export default function ContactPage() {
 
           <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", marginBottom: "24px" }}>
             <a
-              href="mailto:support@aesdr.com"
+              href="mailto:hello@aesdr.com"
               style={{
                 display: "inline-block",
                 fontFamily: "var(--cond)",
@@ -69,7 +69,7 @@ export default function ContactPage() {
                 textDecoration: "none",
               }}
             >
-              support@aesdr.com
+              hello@aesdr.com
             </a>
             <a
               href="https://tally.so/r/KYDb7X"

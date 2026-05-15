@@ -86,7 +86,7 @@ Before I do — I'd genuinely like to know:
 
 Reply with a one-liner if you want. Or don't. Either way, your account is active and your progress is saved. Come back whenever.
 
-If you need anything: **support@aesdr.com**
+If you need anything: **hello@aesdr.com**
 
 — AESDR
 

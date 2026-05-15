@@ -11,7 +11,7 @@
 - [ ] Supabase RLS policies reviewed and enabled on all tables
 - [ ] Real testimonials replacing faux placeholders in `components/Testimonials.tsx`
 - [ ] Legal pages (terms, privacy, refund) reviewed by you
-- [ ] support@aesdr.com inbox active and receiving
+- [ ] hello@aesdr.com inbox active and receiving
 - [ ] DNS and SSL verified on aesdr.com
 
 ---

@@ -279,12 +279,12 @@ const PHASES = [
 {
   id:"email",num:"02",title:"Email Infrastructure",cost:"~$0-20/mo",
   tasks:[
-    {id:"email-01",name:"Set Up support@aesdr.com",desc:"Domain email that routes to your real inbox",cost:"$0-6/mo",time:"15 min",eng:false,
+    {id:"email-01",name:"Set Up hello@aesdr.com",desc:"Domain email that routes to your real inbox",cost:"$0-6/mo",time:"15 min",eng:false,
      subs:[
        "Option A (Free): Go to your domain registrar (GoDaddy, Namecheap, Cloudflare) → Email Forwarding",
-       "Create forward: support@aesdr.com → your personal email",
-       "Option B ($6/mo): Set up Google Workspace → create support@aesdr.com as a real inbox",
-       "Send a test email to support@aesdr.com from a different account",
+       "Create forward: hello@aesdr.com → your personal email",
+       "Option B ($6/mo): Set up Google Workspace → create hello@aesdr.com as a real inbox",
+       "Send a test email to hello@aesdr.com from a different account",
        "Verify it arrives in your inbox",
        "Set up an auto-responder: 'Thanks for reaching out. We respond within 48 hours.'"
      ]},
@@ -306,7 +306,7 @@ const PHASES = [
        "Install Resend SDK: npm install resend",
        "Create lib/email.ts with Resend client initialization",
        "Write welcome email HTML template (keep it SIMPLE — plain text style)",
-       "Content: greeting, what they bought, link to Lesson 1, Discord invite, support@aesdr.com",
+       "Content: greeting, what they bought, link to Lesson 1, Discord invite, hello@aesdr.com",
        "Create a sendWelcomeEmail(email, name) function",
        "Wire it into the Stripe webhook handler — call after purchase row is created",
        "Test: trigger a test purchase → verify welcome email arrives"
@@ -387,7 +387,7 @@ const PHASES = [
      subs:[
        "Create another Tally form (or use Typeform)",
        "Fields: Name, Email (purchase email), Issue type (dropdown: Access issue, Bug report, Billing, Other), Description",
-       "Enable notifications to support@aesdr.com",
+       "Enable notifications to hello@aesdr.com",
        "Link from: contact page footer, welcome email, Discord #support-tickets",
        "Submit a test response and verify you receive it"
      ]},
@@ -780,7 +780,7 @@ const PHASES = [
        "Hour 1: Check Vercel logs for 500 errors",
        "Hour 1: Check Stripe for failed charges",
        "Hour 1: Check Supabase for auth errors",
-       "Hour 2: Check support@aesdr.com for user emails",
+       "Hour 2: Check hello@aesdr.com for user emails",
        "Hour 6: Full check — signups, purchases, lesson starts",
        "Hour 12: Same checks + look for patterns",
        "Hour 24: Full review — count signups, purchases, completed lessons, support tickets",

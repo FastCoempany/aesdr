@@ -88,6 +88,6 @@ No further emails. Respect the silence.
 - **Trigger:** User's course_progress shows is_completed = true for all 12 lesson IDs
 - **Delay:** 24 hours after final completion (not immediately — let the moment breathe)
 - **Rating form:** Can be a simple Typeform, Google Form, or custom page at /feedback
-- **Testimonial collection:** Replies to email go to support@aesdr.com inbox
+- **Testimonial collection:** Replies to email go to hello@aesdr.com inbox
 - **Permission:** Any quote used on the site needs explicit consent. The email asks for it implicitly ("I'll use it as a testimonial"), but a follow-up confirmation is better practice.
 - **Unsubscribe:** Required

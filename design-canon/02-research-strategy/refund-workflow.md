@@ -14,7 +14,7 @@
 ## Step-by-Step: Processing a Refund
 
 ### 1. User requests refund
-They'll email support@aesdr.com. Reply within 48 hours (your stated SLA).
+They'll email hello@aesdr.com. Reply within 48 hours (your stated SLA).
 
 ### 2. Verify eligibility
 Check the purchase date:
