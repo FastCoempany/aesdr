@@ -8,6 +8,7 @@
  */
 
 import type { Metadata } from "next";
+import Link from "next/link";
 import { HubPage } from "@/components/partners/HubChrome";
 import { MonoEyebrow, HubCTA, CaveatLayer } from "@/components/partners/HubElements";
 
@@ -266,12 +267,12 @@ export default function ProgramPage() {
           }}
         >
           Want to read the deal first?{" "}
-          <a
+          <Link
             href="/partners/kit/specimen-partnership-agreement"
             style={{ color: "var(--ink)", textDecoration: "underline" }}
           >
             Specimen agreement →
-          </a>
+          </Link>
         </p>
       </div>
 

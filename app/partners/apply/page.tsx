@@ -7,6 +7,7 @@
  */
 
 import type { Metadata } from "next";
+import Link from "next/link";
 import { HubPage } from "@/components/partners/HubChrome";
 import { MonoEyebrow, CaveatLayer } from "@/components/partners/HubElements";
 import { ApplicationForm } from "@/components/partners/ApplicationForm";
@@ -66,12 +67,12 @@ export default function ApplyPage() {
           }}
         >
           Want to read the terms before you apply?{" "}
-          <a
+          <Link
             href="/partners/kit/specimen-partnership-agreement"
             style={{ color: "var(--ink)", textDecoration: "underline" }}
           >
             Specimen agreement →
-          </a>
+          </Link>
         </p>
       </div>
 
