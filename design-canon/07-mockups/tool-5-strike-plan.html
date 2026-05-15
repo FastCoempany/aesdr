@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR | 72-Hour Strike Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FAF7F2;--ink:#1A1A1A;--crimson:#8B1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+  --card:#FFFFFF;--accent-lt:rgba(139,26,26,0.06);--green:#15803D;
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif;--serif:'Source Serif 4',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;--mono:'Space Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:var(--serif);line-height:1.6}
+
+.dl-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 40px;border-bottom:1px solid var(--light);background:var(--cream);position:sticky;top:0;z-index:100}
+.dl-brand{font-family:var(--display);font-size:18px;font-weight:900;font-style:italic;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:iris 3s linear infinite}
+.dl-label{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-left:16px}
+.btn-print{font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:10px 24px;border:none;background:var(--crimson);color:#fff;cursor:pointer}
+
+.page{max-width:900px;margin:48px auto;padding:0 24px 80px}
+.header{text-align:center;margin-bottom:48px}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--crimson);margin-bottom:14px}
+.title{font-family:var(--display);font-size:clamp(36px,5vw,52px);font-weight:900;font-style:italic;line-height:1;margin-bottom:14px}
+.subtitle{font-family:var(--serif);font-size:17px;color:var(--muted);font-style:italic;max-width:520px;margin:0 auto}
+
+/* RULES */
+.rules{background:var(--accent-lt);border-left:4px solid var(--crimson);padding:24px 28px;margin-bottom:48px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+.rule-num{font-family:var(--display);font-size:28px;font-style:italic;color:var(--crimson);margin-bottom:4px}
+.rule-text{font-family:var(--serif);font-size:14px;color:var(--ink);line-height:1.55}
+
+/* DAY SECTION */
+.day{margin-bottom:40px}
+.day-header{display:flex;align-items:baseline;gap:16px;margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid var(--ink)}
+.day-label{font-family:var(--display);font-size:36px;font-style:italic;color:var(--crimson);line-height:1}
+.day-title{font-family:var(--cond);font-size:18px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
+.day-focus{font-family:var(--serif);font-size:15px;font-style:italic;color:var(--muted);margin-left:auto}
+
+.block-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.block{background:var(--card);border:1px solid var(--light);padding:20px;display:flex;gap:14px;align-items:flex-start}
+.block-check{width:20px;height:20px;border:2px solid var(--light);border-radius:3px;flex-shrink:0;margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;transition:all .15s}
+.block-check.done{border-color:var(--green);background:rgba(21,128,61,0.08);color:var(--green)}
+.block-time{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--muted);margin-bottom:4px}
+.block-task{font-family:var(--cond);font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink);margin-bottom:4px}
+.block-detail{font-family:var(--serif);font-size:13px;color:var(--muted);line-height:1.5;font-style:italic}
+
+/* DEBRIEF */
+.debrief{background:var(--card);border:1px solid var(--light);padding:32px;margin-top:8px}
+.debrief-title{font-family:var(--cond);font-size:14px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--crimson);margin-bottom:16px}
+.debrief-q{font-family:var(--serif);font-size:15px;color:var(--ink);margin-bottom:8px;font-style:italic;padding-left:16px;border-left:3px solid var(--light)}
+.debrief-input{width:100%;border:1px solid var(--light);background:var(--cream);font-family:var(--serif);font-size:14px;padding:10px 14px;margin-bottom:16px;outline:none;min-height:48px;resize:vertical}
+
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+@media print{.dl-bar{display:none}}
+</style>
+</head>
+<body>
+
+<div class="dl-bar">
+  <div style="display:flex;align-items:baseline;gap:4px">
+    <span class="dl-brand">AESDR</span>
+    <span class="dl-label">Lesson 12 Takeaway</span>
+  </div>
+  <button class="btn-print" onclick="window.print()">Print / Save PDF</button>
+</div>
+
+<div class="page">
+  <div class="header">
+    <div class="eyebrow">Lesson 12.3 — Action Plan</div>
+    <div class="title">72-Hour Strike Plan</div>
+    <div class="subtitle">Three days. No mercy. Pick your battles and execute — or nothing from this course mattered.</div>
+  </div>
+
+  <div class="rules">
+    <div><div class="rule-num">1</div><div class="rule-text">No more than 3 actions per day. Focus beats volume.</div></div>
+    <div><div class="rule-num">2</div><div class="rule-text">Every action must have a deliverable — not "try harder."</div></div>
+    <div><div class="rule-num">3</div><div class="rule-text">Debrief each night. Adjust. Then attack again.</div></div>
+  </div>
+
+  <!-- DAY 1 -->
+  <div class="day">
+    <div class="day-header">
+      <div class="day-label">Day 1</div>
+      <div class="day-title">Audit & Commit</div>
+      <div class="day-focus">Foundation</div>
+    </div>
+    <div class="block-grid">
+      <div class="block">
+        <div class="block-check done">✓</div>
+        <div>
+          <div class="block-time">08:00 – 09:00</div>
+          <div class="block-task">Pipeline Audit</div>
+          <div class="block-detail">Score every open lead against BANT. Flag the 3 weakest. Write the questions you should have asked.</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-check"></div>
+        <div>
+          <div class="block-time">10:00 – 11:00</div>
+          <div class="block-task">Outreach Rebuild</div>
+          <div class="block-detail">Rewrite your top 3 email sequences using what you learned in Lesson 5. Shorter. Sharper. Specific.</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-check"></div>
+        <div>
+          <div class="block-time">15:00 – 16:00</div>
+          <div class="block-task">AE Alignment</div>
+          <div class="block-detail">Schedule your Alignment Contract conversation with your AE. Bring the contract from L3 pre-filled.</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-check"></div>
+        <div>
+          <div class="block-time">17:00 – 17:30</div>
+          <div class="block-task">Day 1 Debrief</div>
+          <div class="block-detail">What did you actually do? What did you avoid? What's the one thing you're attacking first tomorrow?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAY 2 -->
+  <div class="day">
+    <div class="day-header">
+      <div class="day-label">Day 2</div>
+      <div class="day-title">Execute & Measure</div>
+      <div class="day-focus">Action</div>
+    </div>
+    <div class="block-grid">
+      <div class="block">
+        <div class="block-check"></div>
+        <div>
+          <div class="block-time">08:00 – 09:30</div>
+          <div class="block-task">Prospect Blitz</div>
+          <div class="block-detail">30 calls. No excuses. Use your rebuilt openers. Track connect rate and conversations started.</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-check"></div>
+        <div>
+          <div class="block-time">11:00 – 12:00</div>
+          <div class="block-task">Time Reclaimed</div>
+          <div class="block-detail">Run the Time Calculator from L9. Identify your biggest time drain. Block it on your calendar for the rest of the week.</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-check"></div>
+        <div>
+          <div class="block-time">14:00 – 15:00</div>
+          <div class="block-task">Feedback Request</div>
+          <div class="block-detail">Send ONE specific feedback request to your AE or manager. Not "how am I doing" — ask about one specific call or email.</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-check"></div>
+        <div>
+          <div class="block-time">17:00 – 17:30</div>
+          <div class="block-task">Day 2 Debrief</div>
+          <div class="block-detail">30 calls — how many connects? What did the feedback reveal? What's the pattern you're seeing?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAY 3 -->
+  <div class="day">
+    <div class="day-header">
+      <div class="day-label">Day 3</div>
+      <div class="day-title">Lock In & Ship</div>
+      <div class="day-focus">Momentum</div>
+    </div>
+    <div class="block-grid">
+      <div class="block">
+        <div class="block-check"></div>
+        <div>
+          <div class="block-time">08:00 – 09:00</div>
+          <div class="block-task">Week Plan</div>
+          <div class="block-detail">Build your proactivity week from L3. Block selling time. Block admin. Protect the calendar like it's revenue.</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-check"></div>
+        <div>
+          <div class="block-time">10:00 – 11:30</div>
+          <div class="block-task">Commission Defense</div>
+          <div class="block-detail">Fill out the ROI Tracker from L10. Calculate your self-sourced ratio. Prepare your numbers before comp conversations happen to you.</div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-check"></div>
+        <div>
+          <div class="block-time">14:00 – 15:00</div>
+          <div class="block-task">72-Hour Retrospective</div>
+          <div class="block-detail">What changed? What will you keep doing? Write one sentence that captures your biggest shift. That's your operating principle now.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="debrief">
+      <div class="debrief-title">72-Hour Retrospective</div>
+      <div class="debrief-q">What's the one thing that actually changed in how you work?</div>
+      <textarea class="debrief-input" placeholder="Write it here..."></textarea>
+      <div class="debrief-q">What will you keep doing every single week, starting now?</div>
+      <textarea class="debrief-input" placeholder="Be specific — time, action, deliverable..."></textarea>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR | ROI & Commission Defense Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FAF7F2;--ink:#1A1A1A;--crimson:#8B1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+  --card:#FFFFFF;--accent-lt:rgba(139,26,26,0.06);--green:#15803D;--green-lt:rgba(21,128,61,0.06);
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif;--serif:'Source Serif 4',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;--mono:'Space Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:var(--serif);line-height:1.6}
+
+.dl-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 40px;border-bottom:1px solid var(--light);background:var(--cream);position:sticky;top:0;z-index:100}
+.dl-brand{font-family:var(--display);font-size:18px;font-weight:900;font-style:italic;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:iris 3s linear infinite}
+.dl-label{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-left:16px}
+.btn-print{font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:10px 24px;border:none;background:var(--crimson);color:#fff;cursor:pointer}
+
+.page{max-width:960px;margin:48px auto;padding:0 24px 80px}
+.header{text-align:center;margin-bottom:48px}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--crimson);margin-bottom:14px}
+.title{font-family:var(--display);font-size:clamp(32px,4.5vw,48px);font-weight:900;font-style:italic;line-height:1.05;margin-bottom:12px}
+.subtitle{font-family:var(--serif);font-size:17px;color:var(--muted);font-style:italic}
+
+/* STATS ROW */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:40px}
+.stat{background:var(--card);border:1px solid var(--light);padding:24px;text-align:center}
+.stat-num{font-family:var(--display);font-size:36px;font-style:italic;color:var(--crimson);line-height:1}
+.stat-label{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+
+/* TABLE */
+.tracker-wrap{background:var(--card);border:1px solid var(--light);margin-bottom:40px;overflow:hidden}
+.tracker-head{padding:20px 24px;border-bottom:1px solid var(--light);display:flex;justify-content:space-between;align-items:center}
+.tracker-title{font-family:var(--cond);font-size:14px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--crimson)}
+.tracker-btn{font-family:var(--cond);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:8px 16px;border:1px solid var(--light);background:var(--cream);color:var(--muted);cursor:pointer}
+
+table{width:100%;border-collapse:collapse}
+thead th{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);text-align:left;padding:12px 16px;background:var(--cream);border-bottom:1px solid var(--light)}
+tbody td{font-family:var(--serif);font-size:14px;padding:14px 16px;border-bottom:1px solid var(--light);vertical-align:top;color:var(--ink)}
+tbody tr:hover{background:var(--accent-lt)}
+.mono{font-family:var(--mono);font-size:12px}
+.green{color:var(--green)}
+.tag{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;display:inline-block}
+.tag-won{background:var(--green-lt);color:var(--green)}
+.tag-pipe{background:var(--accent-lt);color:var(--crimson)}
+.tag-lost{background:rgba(107,107,107,0.08);color:var(--muted)}
+
+/* DEFENSE SECTION */
+.defense{background:var(--card);border:1px solid var(--light);padding:32px}
+.defense-title{font-family:var(--cond);font-size:14px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--crimson);margin-bottom:20px}
+.defense-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.defense-card{border:1px solid var(--light);padding:20px}
+.dc-label{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.dc-text{font-family:var(--serif);font-size:15px;color:var(--ink);line-height:1.6;font-style:italic}
+.dc-num{font-family:var(--display);font-size:28px;font-style:italic;color:var(--crimson);margin-bottom:4px}
+
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+@media print{.dl-bar{display:none}}
+</style>
+</head>
+<body>
+
+<div class="dl-bar">
+  <div style="display:flex;align-items:baseline;gap:4px">
+    <span class="dl-brand">AESDR</span>
+    <span class="dl-label">Lesson 10 Takeaway</span>
+  </div>
+  <button class="btn-print" onclick="window.print()">Print / Save PDF</button>
+</div>
+
+<div class="page">
+  <div class="header">
+    <div class="eyebrow">Lesson 10.1 — Tracker Tool</div>
+    <div class="title">ROI & Commission Defense Tracker</div>
+    <div class="subtitle">When they change your comp plan, you need receipts — not feelings.</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num">$47K</div><div class="stat-label">Pipeline Generated</div></div>
+    <div class="stat"><div class="stat-num">$18.2K</div><div class="stat-label">Closed Won</div></div>
+    <div class="stat"><div class="stat-num">3.8×</div><div class="stat-label">ROI Multiple</div></div>
+    <div class="stat"><div class="stat-num">$2,730</div><div class="stat-label">Commission Earned</div></div>
+  </div>
+
+  <div class="tracker-wrap">
+    <div class="tracker-head">
+      <div class="tracker-title">Deal Log — Q2 2026</div>
+      <button class="tracker-btn">+ Add Deal</button>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Company</th><th>ACV</th><th>Source</th><th>Status</th><th>Commission</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>CloudRoute Inc.</td><td class="mono">$8,400</td><td>Self-sourced</td><td><span class="tag tag-won">Won</span></td><td class="mono green">$840</td></tr>
+        <tr><td>Datavault</td><td class="mono">$12,000</td><td>Inbound</td><td><span class="tag tag-pipe">Pipeline</span></td><td class="mono">—</td></tr>
+        <tr><td>Foundry AI</td><td class="mono">$6,200</td><td>Self-sourced</td><td><span class="tag tag-won">Won</span></td><td class="mono green">$930</td></tr>
+        <tr><td>NovaTech</td><td class="mono">$15,000</td><td>Outbound sequence</td><td><span class="tag tag-pipe">Pipeline</span></td><td class="mono">—</td></tr>
+        <tr><td>SynapseHQ</td><td class="mono">$3,600</td><td>Self-sourced</td><td><span class="tag tag-won">Won</span></td><td class="mono green">$960</td></tr>
+        <tr><td>Meridian Corp</td><td class="mono">$5,800</td><td>Inbound</td><td><span class="tag tag-lost">Lost</span></td><td class="mono">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="defense">
+    <div class="defense-title">Your Commission Defense Summary</div>
+    <div class="defense-grid">
+      <div class="defense-card">
+        <div class="dc-label">Self-sourced pipeline</div>
+        <div class="dc-num">64%</div>
+        <div class="dc-text">Nearly two-thirds of your pipeline came from your own prospecting — not marketing handoffs. That's leverage.</div>
+      </div>
+      <div class="defense-card">
+        <div class="dc-label">Cost to company</div>
+        <div class="dc-num">$4,800/mo</div>
+        <div class="dc-text">Your base + benefits cost the company $57.6K/year. You've already generated $47K in Q2 pipeline alone. You're a profit center, not a cost center.</div>
+      </div>
+      <div class="defense-card">
+        <div class="dc-label">Deals influenced</div>
+        <div class="dc-num">6</div>
+        <div class="dc-text">Track every deal you touched — even ones that closed through other channels. Your fingerprints on pipeline matter in comp negotiations.</div>
+      </div>
+      <div class="defense-card">
+        <div class="dc-label">Script for comp talks</div>
+        <div class="dc-text" style="font-style:normal">"In Q2, I self-sourced 64% of my pipeline and generated $47K in ACV — 3.8× my total cost. Here's the spreadsheet. Can we talk about how my comp reflects that?"</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

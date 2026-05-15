@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Reclaimed Calculator — AESDR Vault</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #1A1714;
+            --panel: #2A2520;
+            --card-hover: #3D3830;
+            --text: #E8E4DF;
+            --muted: #9A9088;
+            --gold: #B8943E;
+            --crimson: #8B1A1A;
+            --gold-light: #C9A96E;
+            --border: rgba(184, 148, 62, 0.15);
+            --input-border: rgba(184, 148, 62, 0.2);
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Source Serif 4', Georgia, serif;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Top bar */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2.5rem;
+        }
+
+        .logo {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--gold);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .tool-badge {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--gold);
+            background: rgba(184, 148, 62, 0.1);
+            border: 1px solid var(--border);
+            padding: 0.35rem 0.75rem;
+            border-radius: 3px;
+        }
+
+        .eyebrow {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--gold);
+            margin-bottom: 0.75rem;
+        }
+
+        .headline {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 900;
+            font-style: italic;
+            font-size: 2.5rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+            line-height: 1.15;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 1.05rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .gold-rule {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 2rem 0;
+        }
+
+        /* OTE Input — large and prominent */
+        .ote-input-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .ote-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .ote-input {
+            width: 100%;
+            max-width: 400px;
+            background: var(--panel);
+            border: 2px solid var(--gold);
+            color: var(--text);
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 900;
+            font-size: 2rem;
+            padding: 0.8rem 1.2rem;
+            border-radius: 6px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .ote-input:focus {
+            outline: none;
+            border-color: var(--gold-light);
+            box-shadow: 0 0 20px rgba(184, 148, 62, 0.2);
+        }
+
+        /* Sliders section */
+        .sliders-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slider-group label {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .slider-value {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: var(--text);
+            margin-bottom: 0.75rem;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: var(--panel);
+            border-radius: 4px;
+            outline: none;
+            border: 1px solid var(--border);
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--gold);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(184, 148, 62, 0.4);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--gold);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(184, 148, 62, 0.4);
+        }
+
+        /* Results panel */
+        .results-panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .results-panel .eyebrow {
+            margin-bottom: 1.5rem;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .result-item {
+            text-align: center;
+        }
+
+        .result-item .result-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            margin-bottom: 0.4rem;
+        }
+
+        .result-item .result-value {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 900;
+            font-size: 1.75rem;
+            color: var(--gold);
+        }
+
+        .result-item .result-value.crimson-value {
+            color: var(--crimson);
+        }
+
+        /* The big bleed number */
+        .bleed-section {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(139, 26, 26, 0.05);
+            border: 1px solid rgba(139, 26, 26, 0.2);
+            border-radius: 8px;
+        }
+
+        .bleed-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--crimson);
+            margin-bottom: 0.5rem;
+        }
+
+        .bleed-number {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 900;
+            font-style: italic;
+            font-size: 3.5rem;
+            color: var(--crimson);
+            text-shadow: 0 0 30px rgba(139, 26, 26, 0.5), 0 0 60px rgba(139, 26, 26, 0.2);
+            line-height: 1.1;
+        }
+
+        .bleed-context {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-style: italic;
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Button */
+        .btn-gold {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--bg);
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 800;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-gold:hover {
+            background: var(--gold-light);
+        }
+
+        @media (max-width: 600px) {
+            .sliders-grid {
+                grid-template-columns: 1fr;
+            }
+            .bleed-number {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="logo">AESDR</div>
+            <div class="tool-badge">Time Reclaimed Calculator</div>
+        </div>
+
+        <!-- Header -->
+        <div class="eyebrow">Revenue Intelligence</div>
+        <h1 class="headline">What Is Your Time Actually Worth?</h1>
+        <p class="subtitle">Calculate the hidden cost of every wasted hour — and reclaim what's yours.</p>
+
+        <hr class="gold-rule">
+
+        <!-- OTE Input -->
+        <div class="ote-input-section">
+            <label class="ote-label">Your On-Target Earnings (OTE)</label>
+            <input type="text" class="ote-input" value="$145,000" />
+        </div>
+
+        <!-- Sliders -->
+        <div class="sliders-grid">
+            <div class="slider-group">
+                <label>Hours/Week on Admin Tasks</label>
+                <div class="slider-value">12 hours</div>
+                <input type="range" min="0" max="30" value="12" />
+            </div>
+            <div class="slider-group">
+                <label>Hours/Week in Unqualified Meetings</label>
+                <div class="slider-value">6 hours</div>
+                <input type="range" min="0" max="20" value="6" />
+            </div>
+            <div class="slider-group">
+                <label>Hours/Week on Manual Prospecting</label>
+                <div class="slider-value">8 hours</div>
+                <input type="range" min="0" max="25" value="8" />
+            </div>
+            <div class="slider-group">
+                <label>Hours/Week Waiting on AE Feedback</label>
+                <div class="slider-value">4 hours</div>
+                <input type="range" min="0" max="15" value="4" />
+            </div>
+        </div>
+
+        <hr class="gold-rule">
+
+        <!-- Results Panel -->
+        <div class="results-panel">
+            <div class="eyebrow">Your Time Economics</div>
+
+            <div class="results-grid">
+                <div class="result-item">
+                    <div class="result-label">Hourly Rate (OTE)</div>
+                    <div class="result-value">$72.50</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Productive Hours/Week</div>
+                    <div class="result-value">10h</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Wasted Hours/Week</div>
+                    <div class="result-value crimson-value">30h</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Reclaimable Revenue</div>
+                    <div class="result-value">$2,175</div>
+                </div>
+            </div>
+
+            <!-- The big bleed number -->
+            <div class="bleed-section">
+                <div class="bleed-label">Annual Financial Bleed</div>
+                <div class="bleed-number">$113,100</div>
+                <div class="bleed-context">That's 78% of your OTE lost to tasks that don't close deals.</div>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <button class="btn-gold">Reclaim My Time</button>
+    </div>
+</body>
+</html>

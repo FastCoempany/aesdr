@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup — Progress Arc</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Barlow+Condensed:wght@600;700;800&family=Lora:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #020617;
+    --card: rgba(255,255,255,0.02);
+    --line: rgba(248,250,252,0.06);
+    --text: #f8fafc;
+    --muted: rgba(248,250,252,0.35);
+    --iris: linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa, #c084fc, #8b5cf6, #6366f1);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 80px 24px;
+  }
+
+  @keyframes iris {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 72px;
+    max-width: 560px;
+  }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .headline {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  .headline span {
+    background: var(--iris);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: iris 3s linear infinite;
+  }
+
+  .sub {
+    font-family: 'Lora', serif;
+    font-size: 17px;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* Phases */
+  .phases {
+    display: flex;
+    gap: 0;
+    max-width: 900px;
+    width: 100%;
+    margin-bottom: 64px;
+    position: relative;
+  }
+
+  @media (max-width: 768px) {
+    .phases { flex-direction: column; }
+    .phase { border-right: none !important; border-bottom: 1px solid var(--line); }
+    .phase:last-child { border-bottom: none; }
+  }
+
+  .phase {
+    flex: 1;
+    padding: 40px 32px;
+    border-right: 1px solid var(--line);
+    position: relative;
+    transition: all 0.4s ease;
+  }
+
+  .phase:last-child { border-right: none; }
+
+  .phase:hover {
+    background: rgba(99,102,241,0.03);
+  }
+
+  .phase-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .phase-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    background: var(--iris);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: iris 3s linear infinite;
+  }
+
+  .phase-desc {
+    font-family: 'Lora', serif;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+
+  .phase-lessons {
+    display: flex;
+    gap: 8px;
+  }
+
+  .phase-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    transition: all 0.3s ease;
+  }
+
+  .phase:hover .phase-dot {
+    border-color: rgba(99,102,241,0.3);
+    color: rgba(248,250,252,0.6);
+  }
+
+  /* Progress bar */
+  .progress-track {
+    max-width: 900px;
+    width: 100%;
+    margin-bottom: 56px;
+  }
+
+  .track-bar {
+    height: 2px;
+    background: var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .track-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0;
+    background: var(--iris);
+    background-size: 200% 100%;
+    animation: iris 3s linear infinite, fillBar 3s ease-out forwards;
+  }
+
+  @keyframes fillBar {
+    to { width: 100%; }
+  }
+
+  .track-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: .2em;
+    color: var(--muted);
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    max-width: 500px;
+  }
+
+  .footer-line {
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--muted);
+    margin-bottom: 32px;
+    line-height: 1.7;
+  }
+
+  .cta {
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--iris);
+    background-size: 200% 100%;
+    animation: iris 3s linear infinite;
+    border: none;
+    padding: 16px 48px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <p class="tag">4 Phases / 12 Lessons / 12 Weeks</p>
+  <h1 class="headline">A blacked-out roadmap. <span>Mile markers, no city names.</span></h1>
+  <p class="sub">You'll know where you are. You won't know what's coming.</p>
+</div>
+
+<div class="phases">
+  <div class="phase">
+    <div class="phase-tag">Phase I &mdash; Lessons 1&ndash;3</div>
+    <div class="phase-name">Foundation</div>
+    <p class="phase-desc">Before you can build anything, you have to demolish what you think you know.</p>
+    <div class="phase-lessons">
+      <div class="phase-dot">01</div>
+      <div class="phase-dot">02</div>
+      <div class="phase-dot">03</div>
+    </div>
+  </div>
+  <div class="phase">
+    <div class="phase-tag">Phase II &mdash; Lessons 4&ndash;6</div>
+    <div class="phase-name">Execution</div>
+    <p class="phase-desc">Knowing means nothing. Doing — daily, relentlessly — is where the gap opens.</p>
+    <div class="phase-lessons">
+      <div class="phase-dot">04</div>
+      <div class="phase-dot">05</div>
+      <div class="phase-dot">06</div>
+    </div>
+  </div>
+  <div class="phase">
+    <div class="phase-tag">Phase III &mdash; Lessons 7&ndash;9</div>
+    <div class="phase-name">Mastery</div>
+    <p class="phase-desc">This is where average stops working and the discipline actually costs you something.</p>
+    <div class="phase-lessons">
+      <div class="phase-dot">07</div>
+      <div class="phase-dot">08</div>
+      <div class="phase-dot">09</div>
+    </div>
+  </div>
+  <div class="phase">
+    <div class="phase-tag">Phase IV &mdash; Lessons 10&ndash;12</div>
+    <div class="phase-name">Domination</div>
+    <p class="phase-desc">You're not learning anymore. You're operating. This is where you become the person they can't ignore.</p>
+    <div class="phase-lessons">
+      <div class="phase-dot">10</div>
+      <div class="phase-dot">11</div>
+      <div class="phase-dot">12</div>
+    </div>
+  </div>
+</div>
+
+<div class="progress-track">
+  <div class="track-bar"><div class="track-fill"></div></div>
+  <div class="track-labels">
+    <span>DAY 1</span>
+    <span>FOUNDATION</span>
+    <span>EXECUTION</span>
+    <span>MASTERY</span>
+    <span>DOMINATION</span>
+  </div>
+</div>
+
+<div class="footer">
+  <p class="footer-line">Four phases. Twelve lessons. No table of contents. You'll understand the roadmap when you've walked it.</p>
+  <a href="#" class="cta">Begin Phase I &rarr;</a>
+</div>
+
+</body>
+</html>

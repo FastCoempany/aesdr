@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR | The "I Don't Know" Framework</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FAF7F2;--ink:#1A1A1A;--crimson:#8B1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+  --card:#FFFFFF;--accent-lt:rgba(139,26,26,0.06);--coral:#C53030;--coral-lt:rgba(197,48,48,0.06);
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif;--serif:'Source Serif 4',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;--mono:'Space Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:var(--serif);line-height:1.6}
+
+.dl-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 40px;border-bottom:1px solid var(--light);background:var(--cream);position:sticky;top:0;z-index:100}
+.dl-brand{font-family:var(--display);font-size:18px;font-weight:900;font-style:italic;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:iris 3s linear infinite}
+.dl-label{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-left:16px}
+.btn-print{font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:10px 24px;border:none;background:var(--crimson);color:#fff;cursor:pointer}
+
+.sheet{max-width:900px;margin:48px auto;padding:0 24px 80px}
+
+.header{text-align:center;margin-bottom:48px}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--crimson);margin-bottom:14px;display:inline-block}
+.title{font-family:var(--display);font-size:clamp(36px,5vw,56px);font-weight:900;font-style:italic;line-height:1;margin-bottom:16px}
+.subtitle{font-family:var(--serif);font-size:18px;color:var(--muted);max-width:560px;margin:0 auto;font-style:italic;line-height:1.6}
+
+/* GOLDEN RULE */
+.golden-rule{background:var(--accent-lt);border-left:4px solid var(--crimson);padding:24px 28px;margin-bottom:48px}
+.gr-label{font-family:var(--mono);font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--crimson);margin-bottom:8px}
+.gr-text{font-family:var(--display);font-size:22px;font-style:italic;line-height:1.4;color:var(--ink)}
+
+/* 3-STEP PIVOT */
+.section-title{font-family:var(--cond);font-size:16px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--crimson);margin-bottom:24px;padding-bottom:10px;border-bottom:1px solid var(--light)}
+.pivot-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:56px}
+.pivot-card{background:var(--card);border:1px solid var(--light);padding:28px 24px;position:relative}
+.p-num{font-family:var(--display);font-size:72px;color:var(--light);position:absolute;top:8px;right:16px;line-height:1;font-style:italic}
+.p-title{font-family:var(--cond);font-size:18px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);margin-bottom:10px;position:relative}
+.p-desc{font-family:var(--serif);font-size:15px;color:var(--muted);line-height:1.65;position:relative;margin-bottom:14px}
+.p-script{background:var(--accent-lt);padding:14px 16px;font-family:var(--serif);font-size:15px;font-style:italic;color:var(--ink);line-height:1.5;border-left:3px solid var(--crimson);position:relative}
+
+/* SCRIPTS */
+.scripts-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:56px}
+.script-box{background:var(--card);border:1px solid var(--light);padding:24px;border-left:4px solid var(--crimson)}
+.s-context{font-family:var(--mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.s-script{font-family:var(--serif);font-size:17px;font-style:italic;color:var(--ink);line-height:1.55}
+.s-script strong{color:var(--crimson);font-style:normal}
+
+/* RED FLAGS */
+.red-flags{background:var(--coral-lt);border:1px solid var(--coral);padding:28px;margin-bottom:56px}
+.rf-title{font-family:var(--cond);font-size:15px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--coral);margin-bottom:16px}
+.rf-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;list-style:none}
+.rf-grid li{font-family:var(--mono);font-size:12px;color:var(--ink);display:flex;gap:8px;align-items:flex-start;line-height:1.5}
+.rf-grid li::before{content:'✕';color:var(--coral);font-weight:bold;flex-shrink:0}
+
+/* CHEAT SHEET */
+.cheat{background:var(--card);border:1px solid var(--light);padding:32px}
+.cheat-title{font-family:var(--cond);font-size:15px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--crimson);margin-bottom:16px}
+.cheat-row{display:grid;grid-template-columns:200px 1fr;gap:16px;padding:12px 0;border-bottom:1px solid var(--light)}
+.cheat-row:last-child{border-bottom:none}
+.cheat-label{font-family:var(--cond);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.cheat-val{font-family:var(--serif);font-size:15px;font-style:italic;color:var(--ink);line-height:1.5}
+
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+@media print{.dl-bar{display:none}}
+</style>
+</head>
+<body>
+
+<div class="dl-bar">
+  <div style="display:flex;align-items:baseline;gap:4px">
+    <span class="dl-brand">AESDR</span>
+    <span class="dl-label">Lesson 6 Takeaway</span>
+  </div>
+  <button class="btn-print" onclick="window.print()">Print / Save PDF</button>
+</div>
+
+<div class="sheet">
+  <div class="header">
+    <div class="eyebrow">Lesson 6.3 — Reference Tool</div>
+    <div class="title">The "I Don't Know" Framework</div>
+    <div class="subtitle">The three words that build more credibility than any pitch deck ever will.</div>
+  </div>
+
+  <div class="golden-rule">
+    <div class="gr-label">The Golden Rule</div>
+    <div class="gr-text">"I don't know" is not a weakness. It's a pivot point. What you do in the next 8 seconds determines whether you lose the deal or earn the trust.</div>
+  </div>
+
+  <div class="section-title">The 3-Step Pivot</div>
+  <div class="pivot-grid">
+    <div class="pivot-card">
+      <div class="p-num">1</div>
+      <div class="p-title">Acknowledge</div>
+      <div class="p-desc">Say it plainly. No hedging, no filler. The prospect already knows you don't know — the question is whether you'll admit it.</div>
+      <div class="p-script">"That's a great question, and I want to give you the right answer — not a guess."</div>
+    </div>
+    <div class="pivot-card">
+      <div class="p-num">2</div>
+      <div class="p-title">Bridge</div>
+      <div class="p-desc">Redirect to what you do know. Anchor the conversation in your competence while buying time for the gap.</div>
+      <div class="p-script">"What I can tell you is how three similar companies handled this — and I'll get the specifics from our solutions team by end of day."</div>
+    </div>
+    <div class="pivot-card">
+      <div class="p-num">3</div>
+      <div class="p-title">Commit</div>
+      <div class="p-desc">Give a specific timeframe. "I'll find out" is noise. "I'll have the answer by 4pm today" is a commitment.</div>
+      <div class="p-script">"I'll confirm the exact integration timeline and send it to you by 4pm today. Fair?"</div>
+    </div>
+  </div>
+
+  <div class="section-title">Ready-Made Scripts</div>
+  <div class="scripts-grid">
+    <div class="script-box">
+      <div class="s-context">When asked about pricing you can't quote</div>
+      <div class="s-script">"Pricing depends on a few factors I want to understand better. <strong>Can I ask two questions</strong> so I can get you an accurate range by tomorrow?"</div>
+    </div>
+    <div class="script-box">
+      <div class="s-context">When asked about a feature you're unsure of</div>
+      <div class="s-script">"I don't want to give you a maybe — <strong>let me check with our product team</strong> and confirm by end of day. In the meantime, here's what I know works..."</div>
+    </div>
+    <div class="script-box">
+      <div class="s-context">When asked about a competitor</div>
+      <div class="s-script">"I'd rather give you an <strong>honest comparison</strong> than a sales pitch. Let me pull the latest data and walk you through it on our next call."</div>
+    </div>
+    <div class="script-box">
+      <div class="s-context">When challenged on something technical</div>
+      <div class="s-script">"That's outside my depth — <strong>I'll loop in our SE</strong> who can speak to the architecture. Can I set up a 15-minute call this week?"</div>
+    </div>
+  </div>
+
+  <div class="red-flags">
+    <div class="rf-title">Red Flags — What Not to Do</div>
+    <ul class="rf-grid">
+      <li>Guessing and hoping they won't notice</li>
+      <li>Saying "I think so" when you have no idea</li>
+      <li>Changing the subject without acknowledging the gap</li>
+      <li>Over-promising a timeline you can't keep</li>
+      <li>Apologizing excessively for not knowing</li>
+      <li>Blaming someone else ("Marketing didn't tell us")</li>
+    </ul>
+  </div>
+
+  <div class="cheat">
+    <div class="cheat-title">Quick Reference — Copy & Paste</div>
+    <div class="cheat-row">
+      <div class="cheat-label">Acknowledge</div>
+      <div class="cheat-val">"I don't have that answer right now, and I don't want to guess."</div>
+    </div>
+    <div class="cheat-row">
+      <div class="cheat-label">Bridge</div>
+      <div class="cheat-val">"Here's what I can tell you..." / "What I do know is..."</div>
+    </div>
+    <div class="cheat-row">
+      <div class="cheat-label">Commit</div>
+      <div class="cheat-val">"I'll have the answer by [specific time]. I'll email/Slack it directly."</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

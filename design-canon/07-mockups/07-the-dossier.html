@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup — The Dossier</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Barlow+Condensed:wght@600;700;800&family=Lora:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;600&display=swap');
+
+  :root {
+    --bg: #020617;
+    --bg-panel: #0F172A;
+    --bg-card: #1E293B;
+    --text: #F8FAFC;
+    --muted: #94A3B8;
+    --theme: #10B981;
+    --theme-glow: rgba(16, 185, 129, 0.4);
+    --iris: linear-gradient(90deg, #FF006E 0%, #FF6B00 17%, #F59E0B 34%, #10B981 51%, #38BDF8 68%, #8B5CF6 85%, #FF006E 100%);
+    --line: rgba(255,255,255,0.08);
+    --redact: #0F172A;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 24px 80px;
+  }
+
+  @keyframes iris {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+
+  @keyframes stampSlam {
+    0% { transform: scale(3) rotate(-18deg); opacity: 0; }
+    60% { transform: scale(1.05) rotate(-14deg); opacity: 1; }
+    100% { transform: scale(1) rotate(-12deg); opacity: 1; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 56px;
+    max-width: 640px;
+    animation: fadeIn 0.8s ease-out;
+  }
+
+  .header-classification {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--theme);
+    padding: 6px 18px;
+    margin-bottom: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--theme);
+  }
+
+  .header-classification .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--theme);
+    animation: blink 2s ease-in-out infinite;
+  }
+
+  .header h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(28px, 4.5vw, 48px);
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+
+  .header h1 .iris-text {
+    background: var(--iris);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: iris 4s linear infinite;
+  }
+
+  .header .sub {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* Document */
+  .document {
+    max-width: 720px;
+    width: 100%;
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    padding: 48px 40px;
+    position: relative;
+    margin-bottom: 48px;
+    animation: fadeIn 1s ease-out 0.3s both;
+  }
+
+  .doc-stamp {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--theme);
+    border: 3px solid var(--theme);
+    padding: 6px 16px;
+    transform: rotate(-12deg);
+    opacity: 0.7;
+    animation: stampSlam 0.5s ease-out 1s both;
+    pointer-events: none;
+  }
+
+  .doc-header {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 20px;
+    margin-bottom: 28px;
+  }
+
+  .doc-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .doc-ref {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: rgba(148,163,184,0.4);
+  }
+
+  /* Entries */
+  .entry {
+    margin-bottom: 32px;
+    position: relative;
+    padding-left: 0;
+  }
+
+  .entry-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .15em;
+    color: var(--theme);
+    opacity: 0.6;
+    margin-bottom: 6px;
+  }
+
+  .entry-line {
+    font-family: 'Lora', serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: rgba(248,250,252,0.8);
+    margin-bottom: 8px;
+  }
+
+  /* Redacted text */
+  .redacted {
+    background: var(--redact);
+    color: var(--redact);
+    padding: 1px 4px;
+    border-radius: 2px;
+    cursor: default;
+    user-select: none;
+    position: relative;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .redacted:hover {
+    border-color: var(--theme);
+    box-shadow: 0 0 8px var(--theme-glow);
+  }
+
+  .redacted:hover::after {
+    content: 'NICE TRY';
+    position: absolute;
+    top: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7px;
+    letter-spacing: .2em;
+    color: var(--theme);
+    white-space: nowrap;
+    background: var(--bg);
+    padding: 3px 8px;
+    border: 1px solid var(--theme);
+  }
+
+  /* Margin note — the Michael Scott voice */
+  .margin-note {
+    font-family: 'Caveat', cursive;
+    font-size: 15px;
+    color: rgba(245, 158, 11, 0.7);
+    padding-left: 20px;
+    border-left: 2px solid rgba(245, 158, 11, 0.15);
+    margin-top: 6px;
+    line-height: 1.5;
+    transform: rotate(-0.3deg);
+  }
+
+  .margin-note::before {
+    content: '^ ';
+    opacity: 0.5;
+  }
+
+  /* Separator */
+  .entry-sep {
+    height: 1px;
+    background: var(--line);
+    margin: 28px 0;
+  }
+
+  /* Bottom section */
+  .doc-footer {
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+    margin-top: 8px;
+  }
+
+  .doc-footer-note {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .15em;
+    color: rgba(148,163,184,0.4);
+    margin-bottom: 8px;
+  }
+
+  .doc-footer-text {
+    font-family: 'Lora', serif;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .doc-footer-scrawl {
+    font-family: 'Caveat', cursive;
+    font-size: 18px;
+    color: rgba(245, 158, 11, 0.6);
+    margin-top: 16px;
+    transform: rotate(-1deg);
+  }
+
+  /* CTA section */
+  .cta-section {
+    text-align: center;
+    max-width: 500px;
+    animation: fadeIn 1s ease-out 0.6s both;
+  }
+
+  .cta-headline {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .cta-sub {
+    font-family: 'Lora', serif;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--muted);
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  .cta-scrawl {
+    font-family: 'Caveat', cursive;
+    font-size: 16px;
+    color: rgba(245, 158, 11, 0.5);
+    margin-bottom: 28px;
+  }
+
+  .cta {
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--theme);
+    border: none;
+    padding: 16px 48px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .cta:hover {
+    background: #0d9668;
+    box-shadow: 0 0 24px var(--theme-glow);
+  }
+
+  @media (max-width: 600px) {
+    .document { padding: 32px 24px; }
+    .doc-stamp { font-size: 20px; top: 20px; right: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-classification"><span class="dot"></span> Classified Curriculum — Eyes Only</div>
+  <h1>12 lessons. <span class="iris-text">All redacted.</span><br>You earn the ink.</h1>
+  <p class="sub">You don't get a syllabus. You get a dossier. It covers your pipeline, your apartment, your relationships, your bar tab, and your bank account. Half of it is blacked out.</p>
+</div>
+
+<div class="document">
+  <div class="doc-stamp">Classified</div>
+
+  <div class="doc-header">
+    <div class="doc-title">AESDR Program Dossier — Curriculum Overview</div>
+    <div class="doc-ref">REF: AESDR-2026-FOUO &bull; DISTRIBUTION: ENROLLED ONLY &bull; 12 ENTRIES</div>
+  </div>
+
+  <div class="entry">
+    <div class="entry-num">ENTRY 01</div>
+    <div class="entry-line">You will learn <span class="redacted">the framework that</span> before you learn anything else. This is not about sales. This is about <span class="redacted">the operating system you run your life on</span>.</div>
+    <div class="margin-note">I thought this was going to be about cold calls. It was about why I eat cereal for dinner three nights a week. Connected? Apparently yes.</div>
+  </div>
+
+  <div class="entry">
+    <div class="entry-num">ENTRY 02</div>
+    <div class="entry-line">The room you work in is either <span class="redacted">accelerating you or</span>. Your apartment, your desk, your lighting — it is not decoration. It is <span class="redacted">infrastructure</span>.</div>
+    <div class="margin-note">I was dialing from my bed. In sweatpants. Next to a pile of laundry I'd named Gerald. We had a whole relationship. Gerald is gone now.</div>
+  </div>
+
+  <div class="entry-sep"></div>
+
+  <div class="entry">
+    <div class="entry-num">ENTRY 03</div>
+    <div class="entry-line">There is a person standing between you and your number. <span class="redacted">That person is</span>. And that person's ego <span class="redacted">has been lying to them since</span>.</div>
+    <div class="margin-note">Spoiler: it's not your manager. It's not your AE. It's the version of you that thinks "potential" is a personality trait.</div>
+  </div>
+
+  <div class="entry">
+    <div class="entry-num">ENTRY 04</div>
+    <div class="entry-line">The drink in your hand at the conference <span class="redacted">is telling everyone exactly</span>. You are being watched when you think you are relaxing. <span class="redacted">Every room is a stage</span>.</div>
+    <div class="margin-note">I once did four tequila shots at a company SKO and told the VP of Sales my "real thoughts." I no longer work at that company. Unrelated. Completely related.</div>
+  </div>
+
+  <div class="entry-sep"></div>
+
+  <div class="entry">
+    <div class="entry-num">ENTRY 05</div>
+    <div class="entry-line">Your commission check is not income. It is <span class="redacted">a confession of how you</span>. One month you're rich. The next you're <span class="redacted">doing math at the grocery store</span>.</div>
+    <div class="margin-note">I bought a $300 jacket after a big month. Then I ate ramen for three weeks. The jacket looked great with the ramen stains though.</div>
+  </div>
+
+  <div class="entry">
+    <div class="entry-num">ENTRY 06</div>
+    <div class="entry-line">The person waiting at home while you "grind" <span class="redacted">is keeping score whether you</span>. This job will cost you <span class="redacted">relationships you didn't know were</span>.</div>
+    <div class="margin-note">My girlfriend asked me what I did all day. I said "pipeline." She said "that's not a real answer." She was right. We broke up. Also unrelated. Also completely related.</div>
+  </div>
+
+  <div class="entry-sep"></div>
+
+  <div class="entry">
+    <div class="entry-num">ENTRIES 07 – 12</div>
+    <div class="entry-line" style="color: rgba(248,250,252,0.3);">The remaining entries are restricted to enrolled participants. <span class="redacted">These lessons cover</span> company politics, <span class="redacted">the math behind</span>, networking that <span class="redacted">actually works</span>, and whether <span class="redacted">this career is even</span>.</div>
+    <div class="margin-note">Lessons 7-12 are where it stops being a sales course and starts being a life intervention. I cried during one of them. At my desk. On camera. During a Zoom. I don't want to talk about it.</div>
+  </div>
+
+  <div class="doc-footer">
+    <div class="doc-footer-note">END OF DECLASSIFIED ENTRIES</div>
+    <div class="doc-footer-text">This is not a sales course with a lifestyle section bolted on. The life stuff IS the sales stuff. You'll understand that sentence in Week 4.</div>
+    <div class="doc-footer-scrawl">— I came for the cold call scripts. I stayed because someone finally told me why I was lonely, broke, and exhausted. Same curriculum. Wild.</div>
+  </div>
+</div>
+
+<div class="cta-section">
+  <div class="cta-headline">The dossier doesn't open itself.</div>
+  <div class="cta-sub">12 lessons covering how you sell, how you live, how you spend, how you show up, and who you go home to. Half the intel is blacked out.</div>
+  <div class="cta-scrawl">I signed up at 2am on a Tuesday. The sales stuff changed my quota. The other stuff changed my life. Same program.</div>
+  <a href="#" class="cta">Request Access &rarr;</a>
+</div>
+
+</body>
+</html>

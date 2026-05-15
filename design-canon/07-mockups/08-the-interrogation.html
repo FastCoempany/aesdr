@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup — The Interrogation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Barlow+Condensed:wght@600;700;800&family=Lora:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;600&display=swap');
+
+  :root {
+    --bg: #020617;
+    --bg-panel: #0F172A;
+    --bg-card: #1E293B;
+    --text: #F8FAFC;
+    --muted: #94A3B8;
+    --theme: #10B981;
+    --theme-glow: rgba(16, 185, 129, 0.4);
+    --iris: linear-gradient(90deg, #FF006E 0%, #FF6B00 17%, #F59E0B 34%, #10B981 51%, #38BDF8 68%, #8B5CF6 85%, #FF006E 100%);
+    --line: rgba(255,255,255,0.06);
+    --amber: #F59E0B;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 24px 80px;
+  }
+
+  @keyframes iris {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes cursorBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 56px;
+    max-width: 600px;
+    animation: fadeIn 0.8s ease-out;
+  }
+
+  .header-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .header-tag .rec {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #EF4444;
+    animation: cursorBlink 1.5s ease-in-out infinite;
+  }
+
+  .header h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(28px, 4.5vw, 46px);
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    line-height: 1.15;
+    margin-bottom: 14px;
+  }
+
+  .header h1 .iris-text {
+    background: var(--iris);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: iris 4s linear infinite;
+  }
+
+  .header .sub {
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* Transcript */
+  .transcript {
+    max-width: 760px;
+    width: 100%;
+    margin-bottom: 56px;
+  }
+
+  .transcript-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 36px;
+  }
+
+  .transcript-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: rgba(148,163,184,0.4);
+  }
+
+  .transcript-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--theme);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .transcript-status .dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--theme);
+  }
+
+  /* Exchange = one Q&A pair */
+  .exchange {
+    margin-bottom: 40px;
+    animation: fadeIn 0.6s ease-out both;
+  }
+
+  .exchange:nth-child(2) { animation-delay: 0.1s; }
+  .exchange:nth-child(3) { animation-delay: 0.2s; }
+  .exchange:nth-child(4) { animation-delay: 0.3s; }
+  .exchange:nth-child(5) { animation-delay: 0.4s; }
+  .exchange:nth-child(6) { animation-delay: 0.5s; }
+  .exchange:nth-child(7) { animation-delay: 0.6s; }
+  .exchange:nth-child(8) { animation-delay: 0.7s; }
+
+  .exchange-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: .2em;
+    color: rgba(148,163,184,0.25);
+    margin-bottom: 12px;
+  }
+
+  /* The Question — Rowan Pope voice */
+  .question {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 14px;
+    align-items: flex-start;
+  }
+
+  .q-marker {
+    flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--theme);
+    margin-top: 5px;
+    letter-spacing: .1em;
+  }
+
+  .q-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    line-height: 1.25;
+    color: var(--text);
+  }
+
+  /* The Answer — Michael Scott voice */
+  .answer {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding-left: 40px;
+  }
+
+  .a-marker {
+    flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: rgba(245, 158, 11, 0.5);
+    margin-top: 4px;
+    letter-spacing: .1em;
+  }
+
+  .a-text {
+    font-family: 'Caveat', cursive;
+    font-size: 19px;
+    color: rgba(245, 158, 11, 0.65);
+    line-height: 1.5;
+  }
+
+  .exchange-line {
+    height: 1px;
+    background: var(--line);
+    margin-top: 28px;
+  }
+
+  /* Lesson tag */
+  .lesson-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: rgba(16,185,129,0.4);
+    border: 1px solid rgba(16,185,129,0.15);
+    padding: 3px 8px;
+    margin-top: 10px;
+  }
+
+  /* Verdict section */
+  .verdict {
+    max-width: 760px;
+    width: 100%;
+    border: 1px solid var(--line);
+    background: var(--bg-panel);
+    padding: 40px;
+    margin-bottom: 48px;
+    animation: fadeIn 0.8s ease-out 0.8s both;
+  }
+
+  .verdict-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--theme);
+    margin-bottom: 16px;
+  }
+
+  .verdict-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(22px, 3.5vw, 32px);
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    line-height: 1.3;
+    margin-bottom: 12px;
+  }
+
+  .verdict-text .iris-text {
+    background: var(--iris);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: iris 4s linear infinite;
+  }
+
+  .verdict-sub {
+    font-family: 'Lora', serif;
+    font-size: 15px;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+
+  .verdict-scrawl {
+    font-family: 'Caveat', cursive;
+    font-size: 17px;
+    color: rgba(245, 158, 11, 0.5);
+    margin-top: 16px;
+  }
+
+  /* CTA */
+  .cta-section {
+    text-align: center;
+    animation: fadeIn 0.8s ease-out 1s both;
+  }
+
+  .cta {
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--theme);
+    border: none;
+    padding: 16px 48px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .cta:hover {
+    background: #0d9668;
+    box-shadow: 0 0 24px var(--theme-glow);
+  }
+
+  @media (max-width: 600px) {
+    .answer { padding-left: 20px; }
+    .verdict { padding: 28px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-tag"><span class="rec"></span> Recording in Progress</div>
+  <h1>Two chairs. One question.<br><span class="iris-text">Who are you when nobody's tracking?</span></h1>
+  <p class="sub">Not just about your pipeline. About your apartment. Your bank account. Your bar tab. Your relationship status. All of it.</p>
+</div>
+
+<div class="transcript">
+  <div class="transcript-header">
+    <div class="transcript-label">Transcript — AESDR Intake Assessment</div>
+    <div class="transcript-status"><span class="dot"></span> Active</div>
+  </div>
+
+  <div class="exchange">
+    <div class="exchange-num">Q1</div>
+    <div class="question">
+      <span class="q-marker">Q:</span>
+      <div class="q-text">Describe the room you work in right now.</div>
+    </div>
+    <div class="answer">
+      <span class="a-marker">A:</span>
+      <div class="a-text">It's my bedroom. The "desk" is a folding table from Target. There's a pile of laundry on the chair so I sit on the bed. I take calls from my bed. I prospect from my bed. I eat lunch in my bed. My bed is my office, my cafeteria, and my therapist's couch.</div>
+    </div>
+    <div class="lesson-tag">We fix this</div>
+    <div class="exchange-line"></div>
+  </div>
+
+  <div class="exchange">
+    <div class="exchange-num">Q2</div>
+    <div class="question">
+      <span class="q-marker">Q:</span>
+      <div class="q-text">What did you do at the last company event?</div>
+    </div>
+    <div class="answer">
+      <span class="a-marker">A:</span>
+      <div class="a-text">Had four drinks at the open bar. Told the VP of Sales my "real thoughts" about the territory alignment. He laughed. I laughed. HR didn't laugh. I got a very calm email the next Monday.</div>
+    </div>
+    <div class="lesson-tag">We fix this</div>
+    <div class="exchange-line"></div>
+  </div>
+
+  <div class="exchange">
+    <div class="exchange-num">Q3</div>
+    <div class="question">
+      <span class="q-marker">Q:</span>
+      <div class="q-text">What does your bank account look like on the 28th of the month?</div>
+    </div>
+    <div class="answer">
+      <span class="a-marker">A:</span>
+      <div class="a-text">Depends which month. Last month I bought a $200 jacket. This month I'm doing math at the grocery store deciding between name-brand cereal and the one in a bag. The bag one's fine. It's fine.</div>
+    </div>
+    <div class="lesson-tag">We fix this</div>
+    <div class="exchange-line"></div>
+  </div>
+
+  <div class="exchange">
+    <div class="exchange-num">Q4</div>
+    <div class="question">
+      <span class="q-marker">Q:</span>
+      <div class="q-text">How do the people in your life describe what you do?</div>
+    </div>
+    <div class="answer">
+      <span class="a-marker">A:</span>
+      <div class="a-text">My mom tells people I "work in tech." My girlfriend says I "make phone calls for a living." My roommate thinks I'm unemployed because I'm always home. Nobody knows what an SDR is. Including, some days, me.</div>
+    </div>
+    <div class="lesson-tag">We fix this</div>
+    <div class="exchange-line"></div>
+  </div>
+
+  <div class="exchange">
+    <div class="exchange-num">Q5</div>
+    <div class="question">
+      <span class="q-marker">Q:</span>
+      <div class="q-text">What time do you stop working? When does the job end and you begin?</div>
+    </div>
+    <div class="answer">
+      <span class="a-marker">A:</span>
+      <div class="a-text">There is no line. I check Slack at 11pm. I refresh my pipeline in bed. I dream about sequences. My "work-life balance" is that both my work and my life are equally chaotic. Perfectly balanced.</div>
+    </div>
+    <div class="lesson-tag">We fix this</div>
+    <div class="exchange-line"></div>
+  </div>
+
+  <div class="exchange">
+    <div class="exchange-num">Q6</div>
+    <div class="question">
+      <span class="q-marker">Q:</span>
+      <div class="q-text">Is this career actually worth it? Or are you just here because you don't know what else to do?</div>
+    </div>
+    <div class="answer">
+      <span class="a-marker">A:</span>
+      <div class="a-text">I applied to 47 jobs. This one called back first. I didn't choose SaaS sales. SaaS sales chose me. Like a stray cat. That pays commission. Sometimes. Is that the wrong answer? That feels like the wrong answer.</div>
+    </div>
+    <div class="lesson-tag">We fix this</div>
+  </div>
+</div>
+
+<div class="verdict">
+  <div class="verdict-label">Assessment Conclusion</div>
+  <div class="verdict-text">This isn't a sales course. <span class="iris-text">It's an intervention for the entire person.</span></div>
+  <div class="verdict-sub">Your pipeline, your paycheck, your apartment, your relationships, your conference behavior, your identity. 12 lessons. All of it.</div>
+  <div class="verdict-scrawl">I came for cold call scripts. I left knowing why I was broke, lonely, and working from a beanbag chair. Same program. Wild.</div>
+</div>
+
+<div class="cta-section">
+  <a href="#" class="cta">Sit Down. Start the Program. &rarr;</a>
+</div>
+
+</body>
+</html>

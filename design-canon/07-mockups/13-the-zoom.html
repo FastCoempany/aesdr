@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR — The Zoom</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=Caveat:wght@400;600&display=swap');
+
+  :root {
+    --bg: #020617;
+    --text: #F8FAFC;
+    --muted: #94A3B8;
+    --theme: #10B981;
+    --amber: rgba(245,158,11,0.75);
+    --iris: linear-gradient(90deg, #FF006E, #FF6B00, #F59E0B, #10B981, #38BDF8, #8B5CF6, #FF006E);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Scroll container — each section is tall to allow scroll-driven zoom */
+  .scroll-space {
+    height: 900vh;
+    position: relative;
+  }
+
+  /* Fixed viewport for the zoom effect */
+  .viewport {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* Each zoom card */
+  .zcard {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: none; /* Controlled by JS */
+    padding: 40px;
+  }
+
+  .zcard.active {
+    opacity: 1;
+  }
+
+  .zcard-inner {
+    max-width: 900px;
+    position: relative;
+  }
+
+  /* Rowan voice */
+  .z-rowan {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    line-height: 1.05;
+  }
+
+  /* Michael voice */
+  .z-michael {
+    font-family: 'Caveat', cursive;
+    color: var(--amber);
+    line-height: 1.4;
+  }
+
+  /* Sub text */
+  .z-sub {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    color: var(--muted);
+    font-size: clamp(14px, 1.8vw, 20px);
+    margin-top: 20px;
+    line-height: 1.6;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .iris-text {
+    background: var(--iris);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 4s linear infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+  }
+
+  .theme-text { color: var(--theme); -webkit-text-fill-color: var(--theme); }
+
+  /* Ghost text behind — extreme scale */
+  .ghost {
+    position: absolute;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: rgba(248,250,252,0.015);
+    font-size: clamp(200px, 40vw, 500px);
+    white-space: nowrap;
+    pointer-events: none;
+    line-height: 0.8;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Scroll progress indicator */
+  #scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: var(--iris);
+    background-size: 300% 100%;
+    animation: shimmer 4s linear infinite;
+    width: 0%;
+    z-index: 100;
+    transition: width 0.1s linear;
+  }
+
+  /* Side markers */
+  .side-marker {
+    position: fixed;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .marker-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(248,250,252,0.1);
+    transition: background 0.3s, transform 0.3s;
+  }
+
+  .marker-dot.active {
+    background: var(--theme);
+    transform: scale(1.5);
+  }
+
+  /* CTA overlay */
+  .cta-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 60;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+    gap: 16px;
+  }
+
+  .cta-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .cta-overlay .brand {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(64px, 16vw, 200px);
+    font-weight: 900;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+
+  .cta-overlay .tag {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .cta-overlay .note {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(16px, 2vw, 22px);
+    color: rgba(245,158,11,0.5);
+    margin-bottom: 24px;
+    transform: rotate(-1deg);
+  }
+
+  .cta {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--theme);
+    padding: 18px 56px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+
+  .cta:hover {
+    background: #0d9668;
+    box-shadow: 0 0 30px rgba(16,185,129,0.4);
+  }
+</style>
+</head>
+<body>
+
+<div id="scroll-progress"></div>
+
+<div class="side-marker">
+  <div class="marker-dot" data-i="0"></div>
+  <div class="marker-dot" data-i="1"></div>
+  <div class="marker-dot" data-i="2"></div>
+  <div class="marker-dot" data-i="3"></div>
+  <div class="marker-dot" data-i="4"></div>
+  <div class="marker-dot" data-i="5"></div>
+  <div class="marker-dot" data-i="6"></div>
+  <div class="marker-dot" data-i="7"></div>
+  <div class="marker-dot" data-i="8"></div>
+</div>
+
+<div class="scroll-space"></div>
+
+<div class="viewport">
+  <!-- Card 0: Opening -->
+  <div class="zcard" data-i="0">
+    <div class="ghost">NUMB</div>
+    <div class="zcard-inner">
+      <div class="z-rowan" style="font-size:clamp(36px,6vw,72px);">When was the last time you felt <span class="iris-text">anything</span> about your number?</div>
+    </div>
+  </div>
+
+  <!-- Card 1: Michael — numbness -->
+  <div class="zcard" data-i="1">
+    <div class="zcard-inner">
+      <div class="z-michael" style="font-size:clamp(24px,4vw,48px);">I stared at my pipeline for 40 minutes.<br>Didn't click anything.<br>Just stared.<br><br>Like it was modern art.<br>It kind of is, if the art is about failure.</div>
+    </div>
+  </div>
+
+  <!-- Card 2: Rowan — verdict -->
+  <div class="zcard" data-i="2">
+    <div class="ghost">VERDICT</div>
+    <div class="zcard-inner">
+      <div class="z-rowan" style="font-size:clamp(42px,8vw,96px);">Your commission check is not income.</div>
+      <div class="z-sub">It is a verdict on how you lived the last 30 days. Your apartment. Your discipline. Your 2pm slump. All of it — confessed in a number.</div>
+    </div>
+  </div>
+
+  <!-- Card 3: Michael — money -->
+  <div class="zcard" data-i="3">
+    <div class="zcard-inner">
+      <div class="z-michael" style="font-size:clamp(22px,3.5vw,42px);">Last month: $8,200. Bought a jacket.<br>This month: $2,100. Wearing the jacket to eat ramen.<br><br>The jacket is doing great.<br>I am not doing great.</div>
+    </div>
+  </div>
+
+  <!-- Card 4: Rowan — conference + relationship -->
+  <div class="zcard" data-i="4">
+    <div class="ghost">WATCHED</div>
+    <div class="zcard-inner">
+      <div class="z-rowan" style="font-size:clamp(32px,5.5vw,64px);">The drink at the conference.<br>The apartment you work from.<br>The relationship you're neglecting.</div>
+      <div class="z-sub">You think these are separate problems. They are the same problem. You are the problem. That is also the solution.</div>
+    </div>
+  </div>
+
+  <!-- Card 5: Michael — conference -->
+  <div class="zcard" data-i="5">
+    <div class="zcard-inner">
+      <div class="z-michael" style="font-size:clamp(22px,3.5vw,42px);">4 tequila shots at the SKO.<br>Told the CEO I could "definitely" run enterprise.<br>He asked what ARR stood for.<br><br>I said "Absolutely Ready to Rock."<br>I was not ready to rock.</div>
+    </div>
+  </div>
+
+  <!-- Card 6: Rowan — identity -->
+  <div class="zcard" data-i="6">
+    <div class="ghost">WHO</div>
+    <div class="zcard-inner">
+      <div class="z-rowan" style="font-size:clamp(36px,6.5vw,80px);"><span class="iris-text">"Potential"</span> is not a skill.</div>
+      <div class="z-sub">It is a word people use to describe someone who hasn't done anything yet. Stop auditioning. Start performing.</div>
+    </div>
+  </div>
+
+  <!-- Card 7: Michael — relationship -->
+  <div class="zcard" data-i="7">
+    <div class="zcard-inner">
+      <div class="z-michael" style="font-size:clamp(24px,4vw,48px);">My girlfriend asked what I do all day.<br>I said "pipeline."<br>She said that's not a real answer.<br><br>She was right.<br>We broke up.<br><br>I still don't have a better answer.</div>
+    </div>
+  </div>
+
+  <!-- Card 8: Rowan — the reveal -->
+  <div class="zcard" data-i="8">
+    <div class="zcard-inner">
+      <div class="z-rowan" style="font-size:clamp(32px,5vw,60px);">12 lessons.<br>Not about sales.<br>About the person <span class="iris-text">who sells.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-overlay">
+  <div class="brand iris-text">AESDR</div>
+  <div class="tag">12 lessons &bull; at your own pace &bull; 1 you</div>
+  <div class="note">The curriculum is classified. My life before it is embarrassing. Same program fixed both.</div>
+  <a href="#" class="cta">Get Access &rarr;</a>
+</div>
+
+<script>
+const cards = document.querySelectorAll('.zcard');
+const dots = document.querySelectorAll('.marker-dot');
+const ctaOverlay = document.querySelector('.cta-overlay');
+const progressBar = document.getElementById('scroll-progress');
+const totalCards = cards.length;
+
+function update() {
+  const scrollY = window.scrollY;
+  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = scrollY / maxScroll;
+
+  // Progress bar
+  progressBar.style.width = (progress * 100) + '%';
+
+  // Which card should be active?
+  const cardProgress = progress * totalCards;
+  const activeIndex = Math.min(Math.floor(cardProgress), totalCards - 1);
+  const cardFrac = cardProgress - activeIndex; // 0-1 within this card
+
+  cards.forEach((card, i) => {
+    if (i === activeIndex) {
+      card.classList.add('active');
+
+      // Zoom effect: start zoomed in (scale 3), zoom out to 1, then zoom past (scale 0.5)
+      let scale, opacity;
+
+      if (cardFrac < 0.15) {
+        // Zooming IN (entering)
+        const t = cardFrac / 0.15;
+        scale = 3 - (2 * t); // 3 -> 1
+        opacity = t; // 0 -> 1
+      } else if (cardFrac < 0.75) {
+        // Holding
+        scale = 1;
+        opacity = 1;
+      } else {
+        // Zooming OUT (exiting)
+        const t = (cardFrac - 0.75) / 0.25;
+        scale = 1 - (0.7 * t); // 1 -> 0.3
+        opacity = 1 - t; // 1 -> 0
+      }
+
+      card.style.transform = `scale(${scale})`;
+      card.style.opacity = opacity;
+    } else {
+      card.classList.remove('active');
+      card.style.opacity = 0;
+    }
+  });
+
+  // Dots
+  dots.forEach((dot, i) => {
+    dot.classList.toggle('active', i === activeIndex);
+  });
+
+  // CTA at the very end
+  if (progress > 0.95) {
+    ctaOverlay.classList.add('visible');
+  } else {
+    ctaOverlay.classList.remove('visible');
+  }
+}
+
+window.addEventListener('scroll', update, { passive: true });
+window.addEventListener('resize', update);
+update();
+</script>
+
+</body>
+</html>

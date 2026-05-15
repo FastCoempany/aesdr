@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commission Defense Tracker — Variant B</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #FFFDF8;
+  min-height: 100vh;
+  padding: 40px 20px;
+  font-family: 'Source Serif 4', Georgia, serif;
+  color: #2C2C2C;
+}
+
+.page {
+  max-width: 780px;
+  margin: 0 auto;
+  background: #FFFFFF;
+  padding: 60px 80px 60px 120px;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+  position: relative;
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 31px,
+    #F0EBE3 31px,
+    #F0EBE3 32px
+  );
+  background-position: 0 28px;
+}
+
+.margin-line {
+  position: absolute;
+  left: 100px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #E8D4D4;
+}
+
+.margin-note {
+  position: absolute;
+  left: -110px;
+  width: 100px;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  font-style: italic;
+  color: #C53030;
+  line-height: 1.4;
+  text-align: right;
+  padding-right: 12px;
+}
+
+.margin-note.gold {
+  color: #8B6914;
+}
+
+.title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-size: 28px;
+  font-weight: 700;
+  color: #8B1A1A;
+  margin-bottom: 4px;
+  line-height: 32px;
+}
+
+.subtitle {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #8B8178;
+  letter-spacing: 0.5px;
+  margin-bottom: 32px;
+}
+
+.section-divider {
+  border: none;
+  border-top: 1px solid #8B1A1A;
+  border-bottom: 1px solid #8B1A1A;
+  height: 4px;
+  margin: 28px 0;
+}
+
+.section-mark {
+  font-family: 'Playfair Display', Georgia, serif;
+  color: #8B1A1A;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.form-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 20px;
+  position: relative;
+  line-height: 32px;
+}
+
+.form-label {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 14px;
+  color: #2C2C2C;
+  white-space: nowrap;
+}
+
+.form-input {
+  flex: 1;
+  border: none;
+  border-bottom: 1.5px dotted #8B8178;
+  background: transparent;
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 16px;
+  color: #2C2C2C;
+  padding: 2px 4px;
+  outline: none;
+  max-width: 200px;
+}
+
+.form-input:focus {
+  border-bottom-color: #C53030;
+  border-bottom-style: solid;
+}
+
+.form-input::placeholder {
+  color: #C4BAB0;
+  font-style: italic;
+}
+
+.results-section {
+  margin-top: 32px;
+  position: relative;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 6px 0;
+  line-height: 32px;
+  position: relative;
+}
+
+.result-label {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 14px;
+}
+
+.result-value {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.result-value.highlighted {
+  background: rgba(184, 148, 62, 0.2);
+  padding: 2px 8px;
+}
+
+.result-value.danger {
+  color: #C53030;
+  font-weight: 700;
+}
+
+.ledger-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 24px;
+}
+
+.ledger-table th {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #8B8178;
+  text-align: left;
+  padding: 8px 4px;
+  border-bottom: 2px solid #2C2C2C;
+}
+
+.ledger-table th:last-child,
+.ledger-table td:last-child {
+  text-align: right;
+}
+
+.ledger-table td {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 14px;
+  padding: 8px 4px;
+  border-bottom: 1px solid #F0EBE3;
+  line-height: 32px;
+}
+
+.ledger-table td.amount {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.ledger-table tr.total td {
+  border-top: 2px solid #2C2C2C;
+  border-bottom: none;
+  font-weight: 600;
+}
+
+.redline-note {
+  position: absolute;
+  right: -140px;
+  width: 130px;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  font-style: italic;
+  color: #C53030;
+  line-height: 1.4;
+  padding-left: 12px;
+  border-left: 2px solid #C53030;
+}
+
+.btn {
+  display: inline-block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #8B1A1A;
+  border: 1px solid #8B1A1A;
+  background: transparent;
+  padding: 8px 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn:hover {
+  background: #8B1A1A;
+  color: #FFFFFF;
+}
+
+.toolbar {
+  position: sticky;
+  top: 0;
+  background: #FFFDF8;
+  border-bottom: 1px solid #F0EBE3;
+  padding: 8px 20px;
+  margin: -40px -20px 40px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 10;
+}
+
+.toolbar-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #8B8178;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <span class="toolbar-title">AE-SDR Tools / Commission Defense</span>
+  <button class="btn" style="margin-left:auto;">Recalculate</button>
+  <button class="btn">Export</button>
+</div>
+
+<div class="page">
+  <div class="margin-line"></div>
+
+  <h1 class="title">Commission Defense Tracker</h1>
+  <p class="subtitle">What you actually keep vs. what the dashboard shows</p>
+
+  <hr class="section-divider">
+
+  <p class="section-mark">§ I. Deal Parameters</p>
+
+  <div class="form-row">
+    <span class="form-label">Annual Contract Value (ACV):</span>
+    <input class="form-input" type="text" placeholder="$85,000" value="$85,000">
+  </div>
+
+  <div class="form-row">
+    <span class="form-label">Commission Rate:</span>
+    <input class="form-input" type="text" placeholder="10%" value="10%" style="max-width:80px;">
+  </div>
+
+  <div class="form-row">
+    <span class="form-label">Tax Bracket (est.):</span>
+    <input class="form-input" type="text" placeholder="32%" value="32%" style="max-width:80px;">
+    <span class="margin-note" style="left:auto; right:-150px; width:130px; text-align:left; padding-left:12px; padding-right:0;">
+      The 30% Rule of Thumb — Taxes eat ~30% of your commission immediately.
+    </span>
+  </div>
+
+  <div class="form-row">
+    <span class="form-label">Clawback Period:</span>
+    <input class="form-input" type="text" placeholder="6 months" value="6 months" style="max-width:120px;">
+  </div>
+
+  <hr class="section-divider">
+
+  <p class="section-mark">§ II. What You Actually Keep</p>
+
+  <div class="results-section">
+    <div class="result-row">
+      <span class="result-label">Gross Commission</span>
+      <span class="result-value highlighted">$8,500</span>
+    </div>
+    <div class="result-row">
+      <span class="result-label">Federal + State Tax (~32%)</span>
+      <span class="result-value danger">– $2,720</span>
+    </div>
+    <div class="result-row">
+      <span class="result-label">Net Commission (take-home)</span>
+      <span class="result-value highlighted">$5,780</span>
+    </div>
+    <div class="result-row">
+      <span class="result-label">At-Risk Amount (clawback exposure)</span>
+      <span class="result-value danger">$8,500</span>
+      <span class="redline-note">You owe back GROSS, not net. This is the trap.</span>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <p class="section-mark">§ III. Pipeline Ledger</p>
+
+  <table class="ledger-table">
+    <thead>
+      <tr>
+        <th>Deal / Account</th>
+        <th>Stage</th>
+        <th>Close Date</th>
+        <th>Commission</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Acme Corp — Enterprise</td>
+        <td>Negotiation</td>
+        <td>May 15</td>
+        <td class="amount">$8,500</td>
+      </tr>
+      <tr>
+        <td>Widget Inc — Growth</td>
+        <td>Demo Scheduled</td>
+        <td>Jun 02</td>
+        <td class="amount">$4,200</td>
+      </tr>
+      <tr>
+        <td>DataFlow — Mid-Market</td>
+        <td>Verbal Yes</td>
+        <td>Apr 28</td>
+        <td class="amount">$6,100</td>
+      </tr>
+      <tr>
+        <td>CloudNine — SMB</td>
+        <td>Contract Sent</td>
+        <td>May 08</td>
+        <td class="amount">$2,800</td>
+      </tr>
+      <tr class="total">
+        <td colspan="3">Total Pipeline Commission</td>
+        <td class="amount">$21,600</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top:24px; position:relative;">
+    <div class="result-row">
+      <span class="result-label">Total Clawback Exposure</span>
+      <span class="result-value danger" style="border:2px solid #C53030; border-radius:50%; width:80px; height:80px; display:flex; align-items:center; justify-content:center; font-size:16px;">$21,600</span>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AESDR — Warning Box on Crimson (active palette)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,400;1,900&family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Barlow+Condensed:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --crimson:#8B1A1A; --cream:#FAF7F2; --ink:#1A1A1A; --muted:#6B6B6B; --light:#E8E4DF;
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif;
+  --serif:'Source Serif 4',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;
+  --mono:'Space Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--cream);color:var(--ink);font-family:var(--serif);-webkit-print-color-adjust:exact}
+.frame{width:1440px;height:900px;display:grid;grid-template-columns:1fr 1fr;position:relative}
+
+/* Crimson left panel — the canonical hero pattern */
+.panel-left{background:var(--crimson);color:#fff;padding:60px 56px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
+.panel-left::after{content:'01';font-family:var(--display);font-style:italic;font-weight:900;font-size:340px;position:absolute;bottom:-50px;right:-30px;opacity:.07;line-height:1;pointer-events:none;color:#fff}
+.eyebrow-light{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,0.65);margin-bottom:24px}
+
+.warn-box{border:1px solid rgba(255,255,255,0.25);padding:28px 30px;margin-top:6px;max-width:480px}
+.warn-title{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.warn-icon{display:inline-block;width:18px;height:18px;border:1px solid rgba(255,255,255,0.5);border-radius:50%;font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.65);text-align:center;line-height:16px}
+.warn-text{font-family:var(--serif);font-size:17px;line-height:1.65;color:rgba(255,255,255,0.85)}
+.warn-text strong{color:#fff;font-weight:700}
+
+.cta-row{margin-top:32px}
+.btn-iris{display:inline-block;font-family:var(--cond);font-size:14px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#fff;background:var(--iris);background-size:300% 100%;padding:16px 40px;border:none;text-decoration:none}
+
+/* Cream right panel — receiving side of the editorial split */
+.panel-right{background:var(--cream);padding:60px 56px;display:flex;flex-direction:column;justify-content:center;position:relative}
+.corner{position:absolute;width:22px;height:22px;border-color:rgba(0,0,0,0.06);border-style:solid;border-width:0}
+.cTL{top:24px;left:24px;border-top-width:1px;border-left-width:1px}
+.cTR{top:24px;right:24px;border-top-width:1px;border-right-width:1px}
+.cBL{bottom:24px;left:24px;border-bottom-width:1px;border-left-width:1px}
+.cBR{bottom:24px;right:24px;border-bottom-width:1px;border-right-width:1px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:24px}
+.h1{font-family:var(--display);font-style:italic;font-weight:900;font-size:64px;line-height:1.05;color:var(--ink);margin-bottom:24px}
+.h1 .accent{background:var(--iris);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.h1-sub{font-family:var(--serif);font-size:18px;line-height:1.65;color:var(--muted);margin-bottom:32px;max-width:480px}
+.btn-outline{display:inline-block;border:1.5px solid var(--ink);color:var(--ink);font-family:var(--cond);font-size:13px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;padding:14px 36px;text-decoration:none;background:transparent;margin-left:12px}
+.amb{position:absolute;left:0;bottom:0;width:100%;height:1px;background:var(--iris);background-size:300% 100%;opacity:.4}
+
+.label-top{position:absolute;top:18px;left:24px;font-family:var(--mono);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,0.5);z-index:2}
+.label-top-right{position:absolute;top:18px;right:24px;font-family:var(--mono);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);z-index:2}
+</style>
+</head>
+<body>
+<section class="frame">
+
+  <!-- Crimson left -->
+  <div class="panel-left">
+    <div class="label-top">EDITORIAL SPLIT · CRIMSON LEFT · WARNING BOX</div>
+    <div class="eyebrow-light">AESDR · 12 LESSONS · A BETTER YOU</div>
+    <div class="warn-box">
+      <div class="warn-title"><span class="warn-icon">!</span> Content Warning</div>
+      <div class="warn-text">This course contains uncomfortable truths about your <strong>pipeline</strong>, your <strong>apartment</strong>, your <strong>bar tab</strong>, your <strong>commission check</strong>, and your <strong>relationship status</strong>.</div>
+    </div>
+    <div class="cta-row">
+      <a class="btn-iris" href="#">Continue →</a>
+    </div>
+  </div>
+
+  <!-- Cream right -->
+  <div class="panel-right">
+    <div class="corner cTL"></div><div class="corner cTR"></div><div class="corner cBL"></div><div class="corner cBR"></div>
+    <div class="label-top-right">EDITORIAL SPLIT · CREAM RIGHT · IRIS ACCENT</div>
+    <div class="eyebrow">The unfiltered SaaS sales survival guide</div>
+    <h1 class="h1">Stop Surviving.<br>Start <span class="accent">Owning</span> It.</h1>
+    <div class="h1-sub">This isn't corporate-y but it will advance your career. 12 interactive, field-tested sessions for AEs and SDRs who're serious about controlling chaos, managing toxic leadership, protecting your commission — and your future.</div>
+    <div>
+      <a class="btn-iris" href="#">Get Access</a>
+      <a class="btn-outline" href="#">View Syllabus</a>
+    </div>
+    <div class="amb"></div>
+  </div>
+
+</section>
+</body>
+</html>
