@@ -66,10 +66,10 @@ export default function AboutPage() {
         <p>
           Questions, feedback, or support requests:{" "}
           <a
-            href="mailto:support@aesdr.com"
+            href="mailto:hello@aesdr.com"
             style={{ color: "var(--crimson)", textDecoration: "underline" }}
           >
-            support@aesdr.com
+            hello@aesdr.com
           </a>
           . We respond within 48 hours.
         </p>

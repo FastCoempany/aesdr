@@ -23,7 +23,7 @@ export default function ContactPage() {
         }}
       >
         <a
-          href="mailto:support@aesdr.com"
+          href="mailto:hello@aesdr.com"
           style={{
             display: "inline-block",
             fontFamily: "var(--cond)",
@@ -37,7 +37,7 @@ export default function ContactPage() {
             textDecoration: "none",
           }}
         >
-          support@aesdr.com →
+          hello@aesdr.com →
         </a>
         <a
           href="https://tally.so/r/KYDb7X"
@@ -100,10 +100,10 @@ export default function ContactPage() {
         <p>
           Same inbox:{" "}
           <a
-            href="mailto:support@aesdr.com"
+            href="mailto:hello@aesdr.com"
             style={{ color: "var(--crimson)", textDecoration: "underline" }}
           >
-            support@aesdr.com
+            hello@aesdr.com
           </a>
           . A real person reads it.
         </p>

@@ -95,10 +95,10 @@ export default function TermsPage() {
         <p>
           Questions about these terms? Reach{" "}
           <a
-            href="mailto:support@aesdr.com"
+            href="mailto:hello@aesdr.com"
             style={{ color: "var(--crimson)", textDecoration: "underline" }}
           >
-            support@aesdr.com
+            hello@aesdr.com
           </a>
           .
         </p>

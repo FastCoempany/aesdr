@@ -138,7 +138,7 @@ export default function CancelPage() {
           }}
         >
           <p style={{ opacity: 0.6 }}>
-            Questions? <a href="mailto:support@aesdr.com" style={{ color: "var(--theme)", textDecoration: "none" }}>support@aesdr.com</a>
+            Questions? <a href="mailto:hello@aesdr.com" style={{ color: "var(--theme)", textDecoration: "none" }}>hello@aesdr.com</a>
           </p>
         </footer>
       </div>

@@ -89,7 +89,7 @@ export default function Error({
         }}
       >
         An unexpected error occurred while rendering this page. Try again, or
-        reach <a href="mailto:support@aesdr.com" style={{ color: "var(--crimson)", textDecoration: "underline" }}>support@aesdr.com</a> if it persists.
+        reach <a href="mailto:hello@aesdr.com" style={{ color: "var(--crimson)", textDecoration: "underline" }}>hello@aesdr.com</a> if it persists.
       </p>
 
       {/* Buttons */}

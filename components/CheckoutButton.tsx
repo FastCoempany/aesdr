@@ -105,7 +105,7 @@ export default function CheckoutButton({
       if (data.url && (urlHost === "stripe.com" || urlHost.endsWith(".stripe.com"))) {
         window.location.href = data.url;
       } else {
-        setError("Something went wrong. Please try again or email support@aesdr.com.");
+        setError("Something went wrong. Please try again or email hello@aesdr.com.");
         setLoading(false);
       }
     } catch {
