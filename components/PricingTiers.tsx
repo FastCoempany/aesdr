@@ -8,6 +8,12 @@
  * authenticated with a `user_metadata.role`, the matching tier card lights up
  * with `.priceCardPersonal` + an iris "Your tier" badge. Coexists with the
  * existing `.priceCardFeatured` (Team) — both modifiers can stack.
+ *
+ * Per-tier differentiation (taglines + role chips + role-specific feature
+ * lines) sits inside the card so all three tiers read as distinct surfaces
+ * rather than "same card, three prices". Taglines pull from the brand's
+ * survival framing — see variant-a-editorial-split.html and the lesson
+ * titles under content/lessons/html/ for the source of those references.
  */
 
 import CheckoutButton from "@/components/CheckoutButton";
@@ -28,13 +34,16 @@ export default function PricingTiers({ initialRole = null }: Props) {
       {/* SDR */}
       <div className={cardClass("sdr")}>
         {role === "sdr" && <div className={styles.priceTierBadge}>Your tier</div>}
-        <p className={styles.priceTier}>SDR Individual</p>
+        <p className={styles.priceTier}>
+          SDR Individual <span className={`${styles.priceRoleChip} ${styles.priceRoleChipSdr}`}>SDR</span>
+        </p>
         <p className={styles.priceAmount}>
           $249<span className={styles.priceUnit}> / one-time</span>
         </p>
+        <p className={styles.priceTagline}>For the rep grinding through 80 dials and a 9% reply rate.</p>
         <ul className={styles.priceFeatures}>
-          <li>All 12 courses</li>
-          <li>5 interactive tools to takeaway</li>
+          <li>All 12 lessons — including <em>The SDR Playbook</em> + <em>SDR Performance Pitfalls</em></li>
+          <li>5 interactive tools to take with you</li>
           <li>Lifetime access</li>
           <li className={styles.discordLine}>
             Discord community <span className={styles.untamedStamp}>Untamed</span>
@@ -48,13 +57,16 @@ export default function PricingTiers({ initialRole = null }: Props) {
       {/* AE */}
       <div className={cardClass("ae")}>
         {role === "ae" && <div className={styles.priceTierBadge}>Your tier</div>}
-        <p className={styles.priceTier}>AE Individual</p>
+        <p className={styles.priceTier}>
+          AE Individual <span className={`${styles.priceRoleChip} ${styles.priceRoleChipAe}`}>AE</span>
+        </p>
         <p className={styles.priceAmount}>
           $299<span className={styles.priceUnit}> / one-time</span>
         </p>
+        <p className={styles.priceTagline}>For the closer juggling 30 active opps and four forecast calls.</p>
         <ul className={styles.priceFeatures}>
-          <li>All 12 courses</li>
-          <li>5 interactive tools to takeaway</li>
+          <li>All 12 lessons — including <em>Surviving AE Management</em> + <em>AE/SDR Alignment</em></li>
+          <li>5 interactive tools to take with you</li>
           <li>Lifetime access</li>
           <li className={styles.discordLine}>
             Discord community <span className={styles.untamedStamp}>Untamed</span>
@@ -68,17 +80,20 @@ export default function PricingTiers({ initialRole = null }: Props) {
       {/* Team */}
       <div className={`${styles.priceCard} ${styles.priceCardFeatured}`}>
         <div className={styles.priceRibbon}>Org Reimbursement</div>
-        <p className={styles.priceTier}>Team</p>
+        <p className={styles.priceTier}>
+          Team <span className={`${styles.priceRoleChip} ${styles.priceRoleChipTeam}`}>SDR + AE</span>
+        </p>
         <p className={styles.priceAmount}>
           $1,499<span className={styles.priceUnit}> / up to 10 seats</span>
         </p>
+        <p className={styles.priceTagline}>For the org rolling out a real motion, not another LMS.</p>
         <ul className={styles.priceFeatures}>
-          <li>Everything in Individual</li>
-          <li>Up to 10 team members</li>
-          <li>Admin dashboard</li>
-          <li>Team progress tracking</li>
-          <li>Priority support</li>
-          <li>Invoice + receipt for L&amp;D</li>
+          <li>Both SDR + AE tracks — mix any 10 seats</li>
+          <li>Admin dashboard + team progress tracking</li>
+          <li>Priority support (direct Slack channel)</li>
+          <li>Invoice + receipt formatted for L&amp;D</li>
+          <li>Lifetime access for every seat</li>
+          <li>14-day refund guarantee</li>
         </ul>
         <CheckoutButton tier="team" label="Buy For Us" className={styles.priceCta} selectedRole={role ?? undefined} />
       </div>

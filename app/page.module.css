@@ -211,7 +211,7 @@
   font-family: var(--display);
   font-size: 48px;
   font-weight: 900;
-  margin: 0 0 20px;
+  margin: 0 0 8px;
   color: var(--ink);
 }
 
@@ -219,6 +219,51 @@
   font-family: var(--serif);
   font-size: 16px;
   color: var(--muted);
+}
+
+/* Per-tier survival tagline — sits between price and feature list.
+   Italic Playfair on muted to read as editorial pull-quote, not body copy. */
+.priceTagline {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--muted);
+  margin: 0 0 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--light);
+}
+
+/* Role chip next to the tier title — anchors each card to its audience
+   without an extra line. SDR=crimson, AE=iris-shimmer, Team=ink. */
+.priceRoleChip {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  padding: 2px 7px;
+  margin-left: 8px;
+  vertical-align: middle;
+  border: 1px solid currentColor;
+  background: var(--cream);
+}
+.priceRoleChipSdr {
+  color: var(--crimson);
+}
+.priceRoleChipAe {
+  background:
+    linear-gradient(var(--cream), var(--cream)) padding-box,
+    var(--iris) border-box;
+  background-size: auto, 300% 100%;
+  animation: shimmer 4s linear infinite;
+  border: 1px solid transparent;
+  color: var(--ink);
+}
+.priceRoleChipTeam {
+  background: var(--ink);
+  color: var(--cream);
+  border-color: var(--ink);
 }
 
 .priceFeatures {
