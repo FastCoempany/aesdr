@@ -1,7 +1,23 @@
 import type { MetadataRoute } from "next";
 import { KIT_ENTRIES } from "@/lib/partner-kit";
 
+/**
+ * Pre-launch gating: when NEXT_PUBLIC_LAUNCH_MODE !== "true", return an
+ * empty sitemap so the public route map (partner hub, kit slugs, etc.)
+ * isn't enumerable at /sitemap.xml. Matches the policy in app/robots.ts,
+ * which disallows all crawling under the same flag.
+ *
+ * The proxy.ts matcher excludes sitemap.xml from auth/coming-soon gating,
+ * so without this conditional the full URL map leaks even when
+ * COMING_SOON=true. Once NEXT_PUBLIC_LAUNCH_MODE flips at launch, the
+ * full sitemap is restored and Search Console submission re-enables.
+ */
 export default function sitemap(): MetadataRoute.Sitemap {
+  const launched = process.env.NEXT_PUBLIC_LAUNCH_MODE === "true";
+  if (!launched) {
+    return [];
+  }
+
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com";
   const now = new Date();
 
