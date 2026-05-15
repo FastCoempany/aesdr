@@ -7,6 +7,7 @@
  */
 
 import type { Metadata } from "next";
+import Link from "next/link";
 import { HubPage } from "@/components/partners/HubChrome";
 import { MonoEyebrow, CaveatLayer } from "@/components/partners/HubElements";
 import { ApplicationForm } from "@/components/partners/ApplicationForm";
@@ -49,7 +50,29 @@ export default function ApplyPage() {
             marginRight: "auto",
           }}
         >
-          Five fields. If your audience matches, we send a 30-minute Calendly link. If it doesn&rsquo;t, we say so directly.
+          Five fields. If your audience fits, we&rsquo;ll send a 30-minute Calendly link. If it doesn&rsquo;t, we&rsquo;ll tell you why.
+        </p>
+        <p
+          style={{
+            fontFamily: "var(--serif)",
+            fontStyle: "italic",
+            fontSize: 15,
+            color: "var(--muted)",
+            textAlign: "center",
+            lineHeight: 1.6,
+            maxWidth: 640,
+            marginLeft: "auto",
+            marginRight: "auto",
+            marginTop: 16,
+          }}
+        >
+          Want to read the terms before you apply?{" "}
+          <Link
+            href="/partners/kit/specimen-partnership-agreement"
+            style={{ color: "var(--ink)", textDecoration: "underline" }}
+          >
+            Specimen agreement →
+          </Link>
         </p>
       </div>
 
@@ -97,7 +120,7 @@ export default function ApplyPage() {
       </section>
 
       <CaveatLayer>
-        PS — If you&rsquo;re going to apply, apply because the brand makes sense, not because the commission does. We&rsquo;re not for everyone, and that&rsquo;s the point.
+        PS &mdash; Applying because the commission&rsquo;s good is fine. Applying because the brand makes sense to your audience is what makes it work.
       </CaveatLayer>
     </HubPage>
   );

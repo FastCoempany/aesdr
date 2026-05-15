@@ -70,7 +70,7 @@ export default async function LandingPage() {
       {/* ═══ PRICING ═══ */}
       <section id="pricing" className={styles.pricingSection}>
         <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
-          <Mascot pose="verdict" size={140} />
+          <Mascot pose="verdict" size={420} />
         </div>
         <p className={styles.sectionLabel}>Pricing</p>
         <h2 className={styles.sectionHeadline}>One price. Lifetime access.</h2>

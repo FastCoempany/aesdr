@@ -22,7 +22,7 @@ const FAQ_ITEMS = [
     q: "Why so few partners?",
     a: (
       <p>
-        AESDR works with a handful of partners at a time, not a marketplace. We select carefully and decline often. Volume isn&rsquo;t a virtue here; conversion quality is. A small program lets us run pilots that are operator-to-operator instead of paperwork-to-paperwork.
+        Right now AESDR works with a handful of partners at a time, not a marketplace &mdash; partly because we&rsquo;re in Pilot Cohort 1, partly because we&rsquo;d rather run a small number of partnerships well than a large number of them on autopilot. We may grow the program after Cohort 1 wraps; we may not. The current shape is the current shape.
       </p>
     ),
   },
@@ -30,7 +30,7 @@ const FAQ_ITEMS = [
     q: "Why won't you discount?",
     a: (
       <p>
-        Promotional discounting reads like a high-volume affiliate program; that&rsquo;s the register AESDR explicitly isn&rsquo;t in. The economic model is: partners earn commission for delivering the right audience to the right program at a fair price. The price is fair. It does not require a discount to be fair. <strong>Buyers see the same price every other AESDR buyer sees, every time.</strong>
+        The reason your audience trusts you is that you sound like yourself. If we let you offer them 20% off they couldn&rsquo;t get elsewhere, the recommendation starts feeling transactional. We&rsquo;d rather your audience see you recommending something you&rsquo;d recommend anyway. <strong>Same price every time, every audience, every channel.</strong>
       </p>
     ),
   },
@@ -46,9 +46,10 @@ const FAQ_ITEMS = [
     q: "How does attribution work?",
     a: (
       <p>
-        30-day cookie window from first qualifying click. Commission paid on net revenue
-        after refunds. If a buyer arrives via your link, drifts away, comes back via Google,
-        and enrolls within 30 days — you&rsquo;re still the attributed partner.
+        30-day cookie window from the first time someone clicks your link. If they come back
+        via Google or directly within those 30 days and sign up, you&rsquo;re still the attributed
+        partner. Commission gets paid on net revenue (after refunds and processing fees). Your
+        Friday report shows every click, every signup, and your running commission total.
       </p>
     ),
   },
@@ -78,16 +79,17 @@ const FAQ_ITEMS = [
     ),
   },
   {
-    q: "Who shouldn't I send to AESDR?",
+    q: "Who is AESDR for, and who shouldn't I send?",
     a: (
       <>
-        <p>Plain disqualification:</p>
+        <p>It&rsquo;s for SaaS AEs and SDRs across the career arc &mdash; first-year reps trying to ramp, third-year reps trying to break out, and ten-year reps who want a re-look at fundamentals. If your audience has any of those people in it, you&rsquo;re a fit.</p>
+        <p style={{ marginTop: 14 }}>Who not to send:</p>
         <ul style={{ marginTop: 14, paddingLeft: 0, listStyle: "none" }}>
-          <li style={{ marginBottom: 8 }}>— Sales veterans 8+ years in. The first five courses will bore them.</li>
-          <li style={{ marginBottom: 8 }}>— Anyone whose primary distribution is rise-and-grind / motivational content.</li>
-          <li style={{ marginBottom: 8 }}>— Anyone wanting a credential or hiring-weight badge — AESDR doesn&rsquo;t issue one.</li>
-          <li style={{ marginBottom: 8 }}>— Reps not currently in a sales seat (AESDR isn&rsquo;t &ldquo;how to get into sales&rdquo;).</li>
-          <li>— Reps who&rsquo;ve enrolled in three programs in the last year and finished none — the issue isn&rsquo;t free vs paid.</li>
+          <li style={{ marginBottom: 8 }}>&mdash; Veteran reps who think they&rsquo;ve already figured it out. (The ones open to revisiting basics are absolutely a fit.)</li>
+          <li style={{ marginBottom: 8 }}>&mdash; Anyone whose distribution is hustle-culture or motivational content. We&rsquo;re the opposite of that.</li>
+          <li style={{ marginBottom: 8 }}>&mdash; Anyone hunting a credential or LinkedIn-friendly badge. The course doesn&rsquo;t issue one and we&rsquo;re not changing that.</li>
+          <li style={{ marginBottom: 8 }}>&mdash; Reps not currently in a sales seat. AESDR isn&rsquo;t a &ldquo;how to break into sales&rdquo; program.</li>
+          <li>&mdash; Reps who&rsquo;ve started three programs this year and finished none. The issue isn&rsquo;t free vs paid.</li>
         </ul>
       </>
     ),
@@ -104,7 +106,7 @@ const FAQ_ITEMS = [
     q: "What about the founder?",
     a: (
       <p>
-        AESDR is founder-backstage, host-fronted. The founder is fully visible to partners (that&rsquo;s you, in this conversation) and invisible to audience by default. The brand is character-led — Rowan and Michael are the brand faces, not any one human. The host carries the brand publicly; the founder carries the partnership.
+        The host runs the public-facing workshops. The founder builds the curriculum and is open to partners via email throughout the pilot &mdash; applying, prep calls, post-pilot debriefs, anything you need. We made this split early because good curricula tend to outlive their founders, and we want the brand to outlive ours too. Nothing weird about it &mdash; talk to whoever makes sense.
       </p>
     ),
   },
