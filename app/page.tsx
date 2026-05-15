@@ -62,7 +62,7 @@ export default async function LandingPage() {
         <div className={styles.sneakPeekVideoWrap}>
           <video
             className={styles.sneakPeekVideo}
-            src="https://github.com/FastCoempany/aesdr/releases/download/leponeus-sneak-peek/leponeus-sneak-peek.mp4"
+            src="/leponeus-sneak-peek.mp4"
             autoPlay
             muted
             loop
