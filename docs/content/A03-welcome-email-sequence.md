@@ -28,7 +28,7 @@ Course 1 covers what nobody tells you in your first 90 days — the manager arch
 - Your progress saves automatically. Pick up where you left off anytime.
 - Five courses come with downloadable tools (commission tracker, alignment contracts, etc.) — they unlock when you complete the lesson.
 
-**If you need help:** Reply to this email or reach out at support@aesdr.com. Real person, real inbox, 48-hour response time.
+**If you need help:** Reply to this email or reach out at hello@aesdr.com. Real person, real inbox, 48-hour response time.
 
 Go.
 
@@ -97,4 +97,4 @@ If you're behind: that's fine too. This isn't a race. It's a system. Come back t
 - **Trigger Email 3:** Cron job, 7 days after purchase
 - **Skip logic:** If user has completed Course 3+ by Day 7, skip Email 3 or send a different "you're crushing it" variant
 - **Unsubscribe:** Required on all emails
-- **From:** AESDR <support@aesdr.com>
+- **From:** AESDR <hello@aesdr.com>

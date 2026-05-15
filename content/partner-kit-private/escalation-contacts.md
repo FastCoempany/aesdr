@@ -10,7 +10,7 @@ contacts AESDR — match yours to the row, get a faster answer.
 | **Anything urgent during a live workshop** (tech failure, dropped audio, host issue) | The text channel in the workshop chat — type in the live chat. The AESDR team is on it. | Real-time |
 | **Copy approval** ([approval workflow](/partners/kit-private/approval-workflow)) | `partner@aesdr.com` — subject line per that page | 24 business hours |
 | **Post-workshop debrief, attendance issues, refund spikes, attribution disputes** | `partner@aesdr.com` — subject `Pilot debrief — [Partner Slug]` | 24 business hours |
-| **Buyer-side issue from your audience** (refund question, login problem, content question) | Forward to `support@aesdr.com` (CC `partner@aesdr.com` if you want visibility) | 48 business hours |
+| **Buyer-side issue from your audience** (refund question, login problem, content question) | Forward to `hello@aesdr.com` (CC `partner@aesdr.com` if you want visibility) | 48 business hours |
 | **Anything contractual, scope-changing, or payment-related** | `partner@aesdr.com` — subject `Contract — [Partner Slug]` | 48 business hours |
 | **Anything else** | `partner@aesdr.com` — say so plainly in the subject. We'll route it. | 48 business hours |
 

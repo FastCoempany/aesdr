@@ -105,7 +105,7 @@ export default function PrivacyPage() {
 
           <section className="space-y-3">
             <h2 style={{ fontFamily: "var(--cond)", fontSize: "18px", fontWeight: 700, letterSpacing: ".04em", textTransform: "uppercase", color: "var(--text-main)" }}>Contact</h2>
-            <p>Privacy questions? Reach us at <strong style={{ color: "var(--text-main)" }}>support@aesdr.com</strong>.</p>
+            <p>Privacy questions? Reach us at <strong style={{ color: "var(--text-main)" }}>hello@aesdr.com</strong>.</p>
           </section>
         </div>
 

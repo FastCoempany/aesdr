@@ -110,7 +110,7 @@ export default function TermsPage() {
 
           <section className="space-y-3">
             <h2 style={{ fontFamily: "var(--cond)", fontSize: "18px", fontWeight: 700, letterSpacing: ".04em", textTransform: "uppercase", color: "var(--text-main)" }}>10. Contact</h2>
-            <p>Questions about these terms? Contact us at <strong style={{ color: "var(--text-main)" }}>support@aesdr.com</strong>.</p>
+            <p>Questions about these terms? Contact us at <strong style={{ color: "var(--text-main)" }}>hello@aesdr.com</strong>.</p>
           </section>
         </div>
 

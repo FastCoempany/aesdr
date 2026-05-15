@@ -21,7 +21,7 @@
 - [ ] Check Vercel dashboard > Deployments > latest > Logs — any 500 errors?
 - [ ] Check Supabase dashboard > Authentication > Users — are signups appearing?
 - [ ] Check Stripe dashboard > Payments — any failed charges?
-- [ ] Check support@aesdr.com — any bounce-backs or user emails?
+- [ ] Check hello@aesdr.com — any bounce-backs or user emails?
 
 ### Hour 6
 - [ ] Same checks as Hour 1-2
@@ -49,7 +49,7 @@
 | Database activity | Supabase dashboard > Table Editor > course_progress |
 | Payments | Stripe dashboard > Payments |
 | Webhooks | Stripe dashboard > Developers > Webhooks > [endpoint] > Attempts |
-| User emails | support@aesdr.com inbox |
+| User emails | hello@aesdr.com inbox |
 | DNS issues | [dnschecker.org](https://dnschecker.org) — enter aesdr.com |
 
 ---

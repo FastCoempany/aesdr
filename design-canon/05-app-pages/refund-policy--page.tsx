@@ -73,7 +73,7 @@ export default function RefundPolicyPage() {
           <section className="space-y-3">
             <h2 style={{ fontFamily: "var(--cond)", fontSize: "18px", fontWeight: 700, letterSpacing: ".04em", textTransform: "uppercase", color: "var(--text-main)" }}>How to Request a Refund</h2>
             <ol className="list-decimal pl-6 space-y-2">
-              <li>Email <strong style={{ color: "var(--text-main)" }}>support@aesdr.com</strong> with the subject line &ldquo;Refund Request&rdquo;</li>
+              <li>Email <strong style={{ color: "var(--text-main)" }}>hello@aesdr.com</strong> with the subject line &ldquo;Refund Request&rdquo;</li>
               <li>Include the email address used for your purchase</li>
               <li>We will confirm your refund within 1 business day</li>
               <li>The refund will appear on your statement within 3&ndash;5 business days depending on your bank</li>
@@ -92,7 +92,7 @@ export default function RefundPolicyPage() {
 
           <section className="space-y-3">
             <h2 style={{ fontFamily: "var(--cond)", fontSize: "18px", fontWeight: 700, letterSpacing: ".04em", textTransform: "uppercase", color: "var(--text-main)" }}>Questions</h2>
-            <p>Reach us at <strong style={{ color: "var(--text-main)" }}>support@aesdr.com</strong>.</p>
+            <p>Reach us at <strong style={{ color: "var(--text-main)" }}>hello@aesdr.com</strong>.</p>
           </section>
         </div>
 

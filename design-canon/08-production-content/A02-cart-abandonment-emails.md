@@ -79,5 +79,5 @@ You haven't. This one doesn't teach you to "smile and dial." It teaches you to a
 - **Trigger:** checkout_started event in Supabase with no matching checkout_completed within 1 hour
 - **Dedup:** Don't send Email 2 if user completed purchase after Email 1
 - **Unsubscribe:** Both emails must include unsubscribe link (CAN-SPAM)
-- **From address:** support@aesdr.com or hello@aesdr.com
-- **Reply-to:** support@aesdr.com (so replies go to a real inbox)
+- **From address:** hello@aesdr.com
+- **Reply-to:** hello@aesdr.com (so replies go to a real inbox)

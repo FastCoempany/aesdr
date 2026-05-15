@@ -53,7 +53,7 @@ to control the ramp.
 1. All Week 1 checks, plus:
 2. Monitor email delivery rates in Resend dashboard
 3. Check Supabase for any failed queries or connection issues
-4. Review user feedback (support@aesdr.com inbox)
+4. Review user feedback (hello@aesdr.com inbox)
 
 ### Gate to Week 3
 - [ ] 0 critical bugs
