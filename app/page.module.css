@@ -104,6 +104,29 @@
 /* ═══════════════════════════════════════════════
    PRICING
    ═══════════════════════════════════════════════ */
+.sneakPeekSection {
+  position: relative;
+  z-index: 3;
+  padding: 64px 8% 80px;
+  background: var(--cream);
+}
+
+.sneakPeekVideoWrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--light);
+  overflow: hidden;
+  background: var(--ink);
+}
+
+.sneakPeekVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .pricingSection {
   position: relative;
   z-index: 3;

@@ -57,7 +57,21 @@ export default async function LandingPage() {
       {/* Hero + Confession + Terminal + Zoom */}
       <LandingSequence initialRole={initialRole} />
 
-      <div aria-hidden="true" style={{ height: "4vh" }} />
+      {/* Sneak-peek video — fills the cream void before the deck stack */}
+      <section className={styles.sneakPeekSection}>
+        <div className={styles.sneakPeekVideoWrap}>
+          <video
+            className={styles.sneakPeekVideo}
+            src="https://github.com/FastCoempany/aesdr/releases/download/leponeus-sneak-peek/leponeus-sneak-peek.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            aria-label="AESDR curriculum sneak peek"
+          />
+        </div>
+      </section>
 
       <DeckStack />
 
