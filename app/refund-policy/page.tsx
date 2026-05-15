@@ -43,7 +43,7 @@ export default function RefundPolicyPage() {
       <Section title="How to request a refund">
         <ol style={{ paddingLeft: 22 }}>
           <li>
-            Email <strong>support@aesdr.com</strong> with the subject line
+            Email <strong>hello@aesdr.com</strong> with the subject line
             &ldquo;Refund Request&rdquo;
           </li>
           <li>Include the email address used for your purchase</li>
@@ -76,10 +76,10 @@ export default function RefundPolicyPage() {
         <p>
           Reach{" "}
           <a
-            href="mailto:support@aesdr.com"
+            href="mailto:hello@aesdr.com"
             style={{ color: "var(--crimson)", textDecoration: "underline" }}
           >
-            support@aesdr.com
+            hello@aesdr.com
           </a>
           .
         </p>

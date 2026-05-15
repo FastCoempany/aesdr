@@ -373,8 +373,8 @@ function SuccessContent() {
               create an account manually
             </Link>{' '}
             using the email you purchased with. Anything else &mdash;{' '}
-            <a href="mailto:support@aesdr.com" style={{ color: 'var(--theme)' }}>
-              support@aesdr.com
+            <a href="mailto:hello@aesdr.com" style={{ color: 'var(--theme)' }}>
+              hello@aesdr.com
             </a>
             .
           </p>
@@ -395,10 +395,10 @@ function SuccessContent() {
         >
           Questions?{' '}
           <a
-            href="mailto:support@aesdr.com"
+            href="mailto:hello@aesdr.com"
             style={{ color: 'var(--theme)', textDecoration: 'none' }}
           >
-            support@aesdr.com
+            hello@aesdr.com
           </a>
         </footer>
       </div>

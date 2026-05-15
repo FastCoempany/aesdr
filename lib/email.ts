@@ -20,7 +20,7 @@ function esc(str: string): string {
 const FROM = 'AESDR <hello@aesdr.com>';
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://aesdr.com';
 const UNSUBSCRIBE_HEADERS = {
-  'List-Unsubscribe': '<mailto:support@aesdr.com?subject=UNSUBSCRIBE>',
+  'List-Unsubscribe': '<mailto:hello@aesdr.com?subject=UNSUBSCRIBE>',
   'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
 };
 
@@ -429,7 +429,7 @@ function welcomeHtml(name: string, email: string, loginUrl: string, tempPassword
         <tr>
           <td style="padding:36px 48px 0 48px;">
             <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.7;color:#334155;">
-              <strong style="color:#0F172A;">If you need anything:</strong> reply here, or write to <a href="mailto:support@aesdr.com" style="color:#10B981;text-decoration:underline;">support@aesdr.com</a>. Real person, real inbox, 48-hour response.
+              <strong style="color:#0F172A;">If you need anything:</strong> reply here, or write to <a href="mailto:hello@aesdr.com" style="color:#10B981;text-decoration:underline;">hello@aesdr.com</a>. Real person, real inbox, 48-hour response.
             </p>
           </td>
         </tr>
@@ -574,7 +574,7 @@ function receiptHtml(name: string, tier: string, amountCents: number) {
         <tr>
           <td style="padding:28px 48px 0 48px;">
             <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.7;color:#334155;">
-              Need a formal invoice, VAT details, or a billing change? Reply here and we'll handle it. Questions go to <a href="mailto:support@aesdr.com" style="color:#10B981;text-decoration:underline;">support@aesdr.com</a>.
+              Need a formal invoice, VAT details, or a billing change? Reply here and we'll handle it. Questions go to <a href="mailto:hello@aesdr.com" style="color:#10B981;text-decoration:underline;">hello@aesdr.com</a>.
             </p>
           </td>
         </tr>
@@ -828,7 +828,7 @@ function dropoff21dHtml(name: string, lessonId: string) {
     <li>Did life just get in the way?</li>
   </ul>
   <p>Reply with a one-liner if you want. Or don't. Either way, your account is active and your progress is saved. Come back whenever.</p>
-  <p>If you need anything: <a href="mailto:support@aesdr.com" style="color:#10B981">support@aesdr.com</a></p>
+  <p>If you need anything: <a href="mailto:hello@aesdr.com" style="color:#10B981">hello@aesdr.com</a></p>
   <p>— AESDR</p>
   <p style="font-size:13px;color:#666"><em>P.S. — If you want to pick it back up, here's the link: <a href="${SITE}/course/${safeLesson}" style="color:#10B981">Continue →</a></em></p>
   ${footer()}
@@ -901,7 +901,7 @@ function footer() {
   return `
   <hr style="border:none;border-top:1px solid #eee;margin:24px 0 16px">
   <p style="font-size:11px;color:#999;line-height:1.5">
-    AESDR · <a href="mailto:support@aesdr.com" style="color:#999">support@aesdr.com</a><br>
+    AESDR · <a href="mailto:hello@aesdr.com" style="color:#999">hello@aesdr.com</a><br>
     <a href="${SITE}/contact" style="color:#999">Contact</a> · <a href="${SITE}/refund-policy" style="color:#999">Refund Policy</a><br>
     You're receiving this because you purchased or started a checkout at AESDR.<br>
     To unsubscribe, reply with UNSUBSCRIBE.
@@ -919,7 +919,7 @@ function emailFooterInner() {
     <tr>
       <td style="border-top:1px solid #E8E3D8;padding-top:20px;">
         <p style="margin:0 0 10px;font-family:'SF Mono',Consolas,monospace;font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:#94A3B8;">
-          AESDR &middot; <a href="mailto:support@aesdr.com" style="color:#94A3B8;text-decoration:none;">support@aesdr.com</a>
+          AESDR &middot; <a href="mailto:hello@aesdr.com" style="color:#94A3B8;text-decoration:none;">hello@aesdr.com</a>
         </p>
         <p style="margin:0 0 10px;font-family:Georgia,'Times New Roman',serif;font-size:12px;line-height:1.6;color:#94A3B8;">
           <a href="${SITE}/contact" style="color:#94A3B8;text-decoration:underline;">Contact</a>

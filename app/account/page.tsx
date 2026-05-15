@@ -219,8 +219,8 @@ export default async function AccountPage() {
               }}
             >
               Need an invoice? Email{" "}
-              <a href="mailto:support@aesdr.com" style={{ color: "var(--theme)" }}>
-                support@aesdr.com
+              <a href="mailto:hello@aesdr.com" style={{ color: "var(--theme)" }}>
+                hello@aesdr.com
               </a>
             </p>
           </section>
@@ -275,8 +275,8 @@ export default async function AccountPage() {
             }}
           >
             Questions or issues?{" "}
-            <a href="mailto:support@aesdr.com" style={{ color: "var(--theme)" }}>
-              support@aesdr.com
+            <a href="mailto:hello@aesdr.com" style={{ color: "var(--theme)" }}>
+              hello@aesdr.com
             </a>
           </p>
         </section>

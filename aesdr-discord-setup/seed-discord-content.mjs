@@ -201,7 +201,7 @@ If you have an access issue, billing question, bug report, or anything else — 
 
 **→ Submit a support ticket:** https://tally.so/r/KYDb7X
 
-You can also email **support@aesdr.com** directly.`,
+You can also email **hello@aesdr.com** directly.`,
     },
   ],
 };
