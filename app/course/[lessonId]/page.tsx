@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import ProgressSaver from "@/components/ProgressSaver";
 import SaveExitButton from "@/components/SaveExitButton";
+import { Mascot } from "@/components/brand/Mascot";
 import { listLessonUnits, getToolAssetsForLesson } from "@/utils/content/catalog";
 import { LESSONS } from "@/utils/progress/types";
 import { createClient } from "@/utils/supabase/server";
@@ -152,35 +153,76 @@ export default async function LessonPage({
         </main>
       )}
 
-      {/* Floating controls — top-left: back, top-right: tool downloads */}
+      {/* Save & Exit — top-left, aligned with the lesson's own topbar
+          band (which carries the "Section N · progress" indicator on
+          the opposite right side). */}
       <div
         style={{
           position: "fixed",
-          top: "12px",
-          left: "12px",
+          top: 9,
+          left: 12,
           zIndex: 9999,
         }}
       >
         <SaveExitButton />
       </div>
 
+      {/* Center: Leponeus + AESDR iris-shimmer wordmark. Sized to fit
+          inside the ~50px lesson-topbar band so it sits on the same
+          horizontal line as Save & Exit (left) and the lesson's own
+          progress indicator (right). */}
       <div
         style={{
           position: "fixed",
-          top: "12px",
-          right: "12px",
+          top: 6,
+          left: "50%",
+          transform: "translateX(-50%)",
           zIndex: 9999,
           display: "flex",
           alignItems: "center",
-          gap: "4px",
-          flexWrap: "wrap" as const,
-          justifyContent: "flex-end",
-          maxWidth: "calc(100vw - 90px)",
-          rowGap: "4px",
+          gap: 8,
         }}
       >
-        {isCompleted &&
-          tools.map((tool) => (
+        <Mascot pose="doctrine" size={40} priority />
+        <span
+          style={{
+            fontFamily: "var(--display)",
+            fontStyle: "italic",
+            fontWeight: 900,
+            fontSize: 22,
+            lineHeight: 1,
+            letterSpacing: ".04em",
+            background: "var(--iris)",
+            backgroundSize: "200% 100%",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            animation: "iris 3s linear infinite",
+          }}
+        >
+          AESDR
+        </span>
+      </div>
+
+      {/* Tool downloads — only on completed lessons. Pinned to the
+          right, below the lesson's topbar (which carries the
+          progress bar in that horizontal position). */}
+      {isCompleted && tools.length > 0 && (
+        <div
+          style={{
+            position: "fixed",
+            top: 80,
+            right: 12,
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            gap: 4,
+            flexWrap: "wrap" as const,
+            justifyContent: "flex-end",
+            maxWidth: "calc(100vw - 24px)",
+            rowGap: 4,
+          }}
+        >
+          {tools.map((tool) => (
             <a
               key={tool.slug}
               href={`/tools/${encodeURIComponent(tool.slug)}/download`}
@@ -191,7 +233,7 @@ export default async function LessonPage({
                 fontSize: "9px",
                 letterSpacing: ".12em",
                 textTransform: "uppercase" as const,
-                padding: "14px 16px",
+                padding: "8px 12px",
                 color: "#fff",
                 background: "rgba(16,185,129,0.7)",
                 backdropFilter: "blur(8px)",
@@ -202,7 +244,8 @@ export default async function LessonPage({
               <span aria-hidden="true">↓</span> Download {tool.title}
             </a>
           ))}
-      </div>
+        </div>
+      )}
     </>
   );
 }
