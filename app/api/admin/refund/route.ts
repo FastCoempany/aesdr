@@ -4,11 +4,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { rateLimit } from "@/lib/rate-limit";
-
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "")
-  .split(",")
-  .map((e) => e.trim().toLowerCase())
-  .filter(Boolean);
+import { isAdminEmail } from "@/lib/admin";
 
 export async function POST(request: Request) {
   try {
@@ -21,7 +17,7 @@ export async function POST(request: Request) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user || !ADMIN_EMAILS.includes(user.email?.toLowerCase() ?? "")) {
+    if (!user || !isAdminEmail(user.email)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

@@ -3,13 +3,36 @@ import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/server";
 
 /**
- * Admin email allowlist (from server-only ADMIN_EMAILS env var).
- * Parsed once at module load; rotation requires a redeploy.
+ * Permanent founder admins — hardcoded so access ships with every deploy
+ * of main and can't drift if the Vercel ADMIN_EMAILS env var is unset,
+ * misspelled, or scoped to the wrong environment.
+ *
+ * Both emails are guaranteed admin on every surface gated by isAdminEmail
+ * / requireAdmin / getAdminContext — proxy.ts, app/admin/layout.tsx,
+ * app/api/admin/refund/route.ts, app/dashboard, app/partners/kit-private,
+ * lib/partner-kit-session.ts, utils/access/verifyAccess.ts — and see
+ * every entry in the AdminChip dropdown.
  */
-export const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "")
-  .split(",")
-  .map((e) => e.trim().toLowerCase())
-  .filter(Boolean);
+const PERMANENT_ADMINS = [
+  "antaeus.coe@gmail.com",
+  "mrcoe7@gmail.com",
+] as const;
+
+/**
+ * Admin email allowlist — union of PERMANENT_ADMINS + optional
+ * ADMIN_EMAILS env var. Parsed once at module load; rotation of the
+ * env-driven portion requires a redeploy, but the permanent two always
+ * have access regardless of env state.
+ */
+export const ADMIN_EMAILS = Array.from(
+  new Set([
+    ...PERMANENT_ADMINS,
+    ...(process.env.ADMIN_EMAILS || "")
+      .split(",")
+      .map((e) => e.trim().toLowerCase())
+      .filter(Boolean),
+  ]),
+);
 
 /**
  * Pure check: is the given email in the admin allowlist?
