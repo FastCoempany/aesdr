@@ -2,8 +2,13 @@
 
 /**
  * Mobile landing — visual clone of /coming-soon for users on small viewports.
- * No gate, no password, no bypass. Just the turtle + brand mark + tagline.
- * Mobile users land here when they hit a desktop-only route.
+ * No gate, no password, no bypass. Just the leponeus mascot + brand mark +
+ * tagline. Mobile users land here when they hit a desktop-only route while
+ * the COMING_SOON gate is on.
+ *
+ * Uses the same /mascot/leponeus-doctrine.png as /coming-soon so the two
+ * surfaces stay visually identical — previously diverged onto /turtle.png
+ * which broke the "visual clone" promise.
  */
 export default function MobilePage() {
   return (
@@ -37,7 +42,7 @@ export default function MobilePage() {
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/turtle.png"
+            src="/mascot/leponeus-doctrine.png"
             alt=""
             draggable={false}
             style={{
