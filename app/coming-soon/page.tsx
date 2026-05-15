@@ -1,77 +1,102 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
-const BYPASS_COOKIE = "aesdr_cs_bypass";
-const BYPASS_CODE = "741407";
+/**
+ * Coming-soon page.
+ *
+ * The bypass secret used to live as `const BYPASS_CODE = "741407"` in this
+ * client component — visible to anyone who opened DevTools and grep'd the
+ * JS bundle. That value now lives only in the server-side env var
+ * `COMING_SOON_BYPASS_CODE` and is verified at:
+ *
+ *   POST /api/coming-soon-bypass   — for the keyboard + mascot-click flows
+ *   proxy.ts                       — for `?bypass=<code>` URL hits
+ *
+ * This page no longer knows the code. It just collects user input (keyboard
+ * buffer or prompt) and POSTs it to the API. Rate limiting (10/hr per IP)
+ * lives in the API route. The cookie itself is now httpOnly — set by the
+ * server response, no longer readable from `document.cookie`.
+ *
+ * Because the cookie is httpOnly, "do I already have bypass?" can't be
+ * checked from client JS. proxy.ts handles that case: anyone with the
+ * cookie already gets routed to `/` and never reaches this page when
+ * COMING_SOON=true. Direct visits to /coming-soon while holding the
+ * cookie still work (the page renders; user can ignore it or refresh).
+ */
 
-function hasBypass() {
-  return document.cookie.split(";").some((c) => c.trim().startsWith(`${BYPASS_COOKIE}=`));
-}
+const KEYBOARD_BUFFER_LIMIT = 8;
 
-function setBypass() {
-  document.cookie = `${BYPASS_COOKIE}=1; path=/; SameSite=Lax`;
+async function submitBypass(code: string): Promise<boolean> {
+  try {
+    const res = await fetch("/api/coming-soon-bypass", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
 }
 
 export default function ComingSoonPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [visible, setVisible] = useState(true);
 
-  const completeBypass = useCallback(() => {
-    setBypass();
-    setVisible(false);
-    router.replace("/");
-  }, [router]);
-
-  // Mechanism 1: existing cookie skips the gate entirely.
-  useEffect(() => {
-    queueMicrotask(() => {
-      if (hasBypass()) {
+  const completeBypass = useCallback(
+    async (code: string) => {
+      const ok = await submitBypass(code);
+      if (ok) {
         setVisible(false);
         router.replace("/");
       }
-    });
-  }, [router]);
+      // Silent failure on bad code — keeps the gate opaque to passersby.
+    },
+    [router],
+  );
 
-  // Mechanism 2: URL bypass — visit /coming-soon?bypass=741407 to set the
-  // cookie without any clicking. Bookmarkable. Backwards-compatible with
-  // mechanism 1. Wrapped in queueMicrotask to satisfy the no-setState-in-effect
-  // lint rule and match mechanism 1's pattern.
-  useEffect(() => {
-    if (searchParams?.get("bypass") === BYPASS_CODE) {
-      queueMicrotask(() => completeBypass());
-    }
-  }, [searchParams, completeBypass]);
-
-  // Mechanism 3: keyboard shortcut. Anywhere on the page, type the 6-digit
-  // code (741407) and the cookie sets. No mouse / no prompt needed.
+  // Mechanism 1: keyboard shortcut. Buffer digits, then submit once 700ms
+  // after the user stops typing. Submitting on every keystroke would burn
+  // through the API's per-IP rate limit (10/hr) on the prefix attempts
+  // before the full code lands — a single mistype could lock the user out
+  // for an hour. Debounce keeps us to one POST per typing burst.
   useEffect(() => {
     let buf = "";
     let resetTimer: ReturnType<typeof setTimeout> | null = null;
+    let submitTimer: ReturnType<typeof setTimeout> | null = null;
 
     function handleKey(e: KeyboardEvent) {
-      // Only digits matter; ignore modifiers and special keys.
       if (e.key.length !== 1 || !/[0-9]/.test(e.key)) return;
-      buf = (buf + e.key).slice(-BYPASS_CODE.length);
+      buf = (buf + e.key).slice(-KEYBOARD_BUFFER_LIMIT);
 
-      // Reset the buffer if the user pauses for a second.
       if (resetTimer) clearTimeout(resetTimer);
+      if (submitTimer) clearTimeout(submitTimer);
+
+      // Hard reset of the buffer if the user pauses much longer (1500ms) —
+      // no stale prefixes lingering between attempts.
       resetTimer = setTimeout(() => {
         buf = "";
       }, 1500);
 
-      if (buf === BYPASS_CODE) {
-        if (resetTimer) clearTimeout(resetTimer);
-        completeBypass();
-      }
+      // Submit once after a short typing pause. Captures the buffer at the
+      // moment the timer fires, not the moment it was scheduled, so it
+      // always sees the most-recent input.
+      submitTimer = setTimeout(() => {
+        if (buf.length >= 4) {
+          const attempt = buf;
+          buf = "";
+          completeBypass(attempt);
+        }
+      }, 700);
     }
 
     window.addEventListener("keydown", handleKey);
     return () => {
       window.removeEventListener("keydown", handleKey);
       if (resetTimer) clearTimeout(resetTimer);
+      if (submitTimer) clearTimeout(submitTimer);
     };
   }, [completeBypass]);
 
@@ -79,9 +104,7 @@ export default function ComingSoonPage() {
 
   function handleGhost() {
     const code = prompt("");
-    if (code === BYPASS_CODE) {
-      completeBypass();
-    }
+    if (code) completeBypass(code);
   }
 
   return (
@@ -128,9 +151,8 @@ export default function ComingSoonPage() {
             }}
           />
 
-          {/* Mechanism 4 (the foolproof click target): the entire mascot is
-              the bypass button. Tap ANYWHERE on the mascot, type 741407,
-              done. No more "where exactly is the eye" guessing. */}
+          {/* The entire mascot is the bypass button. Tap anywhere on it,
+              enter the code in the prompt. The code is verified server-side. */}
           <button
             onClick={handleGhost}
             aria-hidden="true"

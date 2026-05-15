@@ -37,6 +37,39 @@ export async function proxy(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   const isAdmin = isAdminEmail(user?.email);
 
+  // ── URL-param bypass: `?bypass=<COMING_SOON_BYPASS_CODE>` ──
+  // Set the cookie at the edge and redirect to a clean URL on any path.
+  // Replaces the previous client-side mechanism in /coming-soon (which
+  // shipped the literal code in the JS bundle). Fails closed if the env
+  // var is unset.
+  const urlBypass = request.nextUrl.searchParams.get("bypass");
+  if (urlBypass) {
+    const expectedBypass = process.env.COMING_SOON_BYPASS_CODE;
+    if (expectedBypass && urlBypass === expectedBypass) {
+      const cleanUrl = request.nextUrl.clone();
+      cleanUrl.searchParams.delete("bypass");
+      // Send the visitor to the landing page so they don't bounce back into
+      // /coming-soon if they originally hit it directly.
+      if (cleanUrl.pathname === "/coming-soon" || cleanUrl.pathname === "/mobile") {
+        cleanUrl.pathname = "/";
+      }
+      const bypassResponse = NextResponse.redirect(cleanUrl, 302);
+      bypassResponse.cookies.set("aesdr_cs_bypass", "1", {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 365,
+      });
+      return bypassResponse;
+    }
+    // Bad code — strip the param to avoid leaking it in browser history,
+    // and continue with the normal gating below.
+    const stripped = request.nextUrl.clone();
+    stripped.searchParams.delete("bypass");
+    return NextResponse.redirect(stripped, 302);
+  }
+
   // ── Coming-soon gate: runtime-toggleable via COMING_SOON env var ──
   // Reading process.env inside the handler (not at module scope) ensures
   // the edge runtime picks up the current value on each request, so flipping
