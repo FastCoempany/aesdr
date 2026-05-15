@@ -1309,6 +1309,14 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 .comp-r{padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
 .comp-h{font-family:var(--display);font-size:clamp(22px,2.8vw,40px);line-height:1.08;color:var(--black);margin-bottom:18px}
 .comp-p{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.8;margin-bottom:12px}
+/* RETRY OVERLAY — fix wrong-answer lockup on the Manage-Up simulator */
+.retry-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.72);padding:24px;animation:retryFadeIn .2s ease-out}
+.retry-box{background:var(--white);border:2px solid var(--black);border-top:6px solid var(--coral);padding:32px 36px;text-align:center;max-width:480px;box-shadow:6px 6px 0 rgba(0,0,0,0.15)}
+.retry-h{font-family:var(--display);font-style:italic;font-weight:700;font-size:32px;color:var(--coral);margin-bottom:14px;line-height:1.15;letter-spacing:-.01em}
+.retry-msg{font-family:var(--serif);font-size:15px;color:var(--black);line-height:1.65;margin-bottom:24px;text-align:left}
+.retry-btn{font-family:var(--cond);font-size:11px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;padding:13px 32px;border:2px solid var(--black);background:var(--black);color:var(--white);cursor:pointer;transition:all .15s}
+.retry-btn:hover{background:var(--coral);border-color:var(--coral)}
+@keyframes retryFadeIn{from{opacity:0}to{opacity:1}}
 @media(max-width:768px){.app{grid-template-columns:1fr;grid-template-rows:44px 1fr 52px}.sidebar,.sb{display:none}.topbar{padding:0 16px;font-size:11px}.bottomnav{padding:0 16px}.lh{padding:24px 16px 0}.lb{padding:16px 16px 0}.lp{font-size:16px}.kp li{font-size:15px}.cl-area,.tl-wrap,.quiz-body,.tools-blk,.sched-wrap,.cc-opts,.cc-fb{padding-left:16px;padding-right:16px}.cover,.comp{grid-template-columns:1fr}.sched-arena{grid-template-columns:1fr}.rank-wrap{padding:12px 16px 32px}.hb-blocks{grid-template-columns:1fr}.ghost-n{font-size:80px;top:0;right:16px;opacity:0.4}.bottomnav{padding-bottom:env(safe-area-inset-bottom,8px)}.main{padding-bottom:24px}.cover .cvl{padding:28px 16px}.cover .cvr{padding:28px 16px}.cv-list li{font-size:10px}.btn{padding:14px 16px;font-size:10px}.comp-l{padding:28px 16px}.comp-r{padding:28px 16px}.cc-ctx{margin:20px 16px 0}.cc-prog-wrap{margin:22px 16px 0}}
 </style>
 </head>
@@ -1997,7 +2005,29 @@ function renderMU(){
     <div class="mu-manager-card"><div class="mu-manager-tag">AE Manager — ${s.name}</div><div class="mu-manager-says">"${s.says}"</div></div>
     <div class="mu-q">${s.q}</div><div class="mu-opts">${optsHtml}</div>${fbHtml}${advHtml}`;
 }
-function pickMU(oi){if(muShowFb)return;muPicked=oi;muShowFb=true;renderMU();}
+function pickMU(oi){
+  if(muShowFb) return;
+  muPicked=oi; muShowFb=true; renderMU();
+  if(oi !== MU_SCENARIOS[muStage].ans) showMURetry();
+}
+function showMURetry(){
+  var why = MU_SCENARIOS[muStage].why;
+  var ov = document.createElement('div');
+  ov.className = 'retry-overlay';
+  ov.id = 'muRetryOverlay';
+  ov.innerHTML = `
+    <div class="retry-box">
+      <div class="retry-h">Not quite.</div>
+      <div class="retry-msg">${why}</div>
+      <button class="retry-btn" onclick="closeMURetry()">Try Again</button>
+    </div>`;
+  document.body.appendChild(ov);
+}
+function closeMURetry(){
+  var el = document.getElementById('muRetryOverlay');
+  if(el) el.remove();
+  muPicked = null; muShowFb = false; renderMU();
+}
 function muAdvance(){
   if(muStage<MU_SCENARIOS.length-1){muStage++;muPicked=null;muShowFb=false;renderMU();}
   else{muDone=true;renderMU();}
