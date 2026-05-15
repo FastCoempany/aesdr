@@ -415,19 +415,23 @@ export function runAnimator(refs: AnimatorRefs, opts: AnimatorOptions): () => vo
       const auxOpacity = pastZoom ? 0 : handoff;
 
       // Card animation: drive by overall scroll progress through scrollSpace.
+      // CARD_END tracks CTA_START exactly — no dead zone between the last card
+      // fading out and the AESDR CTA fading in. CTA tail extends to ~0.99 so
+      // we don't leave cream void between CTA fade-out and scrollSpace end.
       const progress = maxScroll > 0 ? Math.min(1, Math.max(0, scrollY / maxScroll)) : 0;
       const total = opts.zoomCards.length;
-      const CARD_END = 0.78;
+      const CARD_END = 0.84;
       const cardProgress = Math.min(total, (progress / CARD_END) * total);
       const cardIndex = Math.min(Math.floor(cardProgress), total - 1);
       const cardFrac = cardProgress - cardIndex;
 
-      // CTA: appears at the tail end of the zoom section, then hides.
+      // CTA: appears immediately as the last card fades out, lingers near
+      // the end of scrollSpace.
       let ctaOpacity = 0;
       let ctaVisibleZone = false;
-      if (progress > 0.84 && progress < 0.97) {
+      if (progress > 0.84 && progress < 0.99) {
         const fadeIn = Math.min(1, (progress - 0.84) / 0.03);
-        const fadeOut = progress > 0.93 ? 1 - Math.min(1, (progress - 0.93) / 0.03) : 1;
+        const fadeOut = progress > 0.96 ? 1 - Math.min(1, (progress - 0.96) / 0.03) : 1;
         ctaOpacity = fadeIn * fadeOut;
         ctaVisibleZone = true;
       }
@@ -515,7 +519,7 @@ export function runAnimator(refs: AnimatorRefs, opts: AnimatorOptions): () => vo
         } else {
           refs.cta.classList.remove(c.ctaOverlayVisible);
           refs.cta.style.opacity = "0";
-          refs.cta.style.display = s.progress >= 0.97 || s.pastZoom ? "none" : "";
+          refs.cta.style.display = s.progress >= 0.99 || s.pastZoom ? "none" : "";
           refs.cta.style.pointerEvents = "none";
         }
       }
