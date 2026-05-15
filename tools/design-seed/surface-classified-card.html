@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AESDR — Classified Dossier Cards (active palette)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,900;1,400;1,900&family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Barlow+Condensed:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --crimson:#8B1A1A; --cream:#FAF7F2; --ink:#1A1A1A; --muted:#6B6B6B; --light:#E8E4DF;
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif;
+  --serif:'Source Serif 4',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;
+  --mono:'Space Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--cream);color:var(--ink);font-family:var(--serif);-webkit-print-color-adjust:exact}
+.frame{width:1440px;min-height:900px;padding:60px 64px;position:relative}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
+.warn-eyebrow{display:flex;align-items:center;gap:8px}
+.warn-icon{display:inline-block;width:18px;height:18px;border:1px solid rgba(139,26,26,0.5);border-radius:50%;font-family:var(--mono);font-size:10px;color:rgba(139,26,26,0.7);text-align:center;line-height:16px}
+.h1{font-family:var(--display);font-style:italic;font-weight:900;font-size:48px;line-height:1.05;color:var(--ink);margin-top:14px}
+.divider{width:60px;height:2px;background:var(--iris);background-size:300% 100%;margin:20px 0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:32px}
+.card{background:rgba(0,0,0,0.025);border:1px solid var(--light);padding:32px 28px;position:relative;min-height:280px}
+.card::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:2px;background:var(--iris);background-size:300% 100%;opacity:0;transition:opacity .3s}
+.card.revealed::after{opacity:1}
+.faq-num{font-family:var(--mono);font-size:11px;color:var(--crimson);letter-spacing:.1em;margin-bottom:14px}
+.faq-q{font-family:var(--cond);font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--ink);line-height:1.2;margin-bottom:18px}
+.faq-a{position:relative;overflow:hidden;min-height:120px}
+.faq-blur{font-family:var(--serif);font-size:14px;line-height:1.65;color:var(--muted);filter:blur(5px);user-select:none;margin:0}
+.card.revealed .faq-blur{filter:blur(0)}
+.faq-redact{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--crimson);white-space:nowrap}
+.card.revealed .faq-redact{opacity:0}
+.faq-stamp{font-family:var(--cond);font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(139,26,26,0.35);border:1px solid rgba(139,26,26,0.2);display:inline-block;padding:3px 10px;margin-top:18px;transform:rotate(-2deg)}
+.amb{position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--iris);background-size:300% 100%;opacity:.5}
+.label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+</style>
+</head>
+<body>
+<section class="frame">
+
+  <div class="label-row">
+    <div class="eyebrow warn-eyebrow"><span class="warn-icon">!</span> QUESTIONS</div>
+    <div class="eyebrow">CLASSIFIED-DOSSIER PATTERN · ACTIVE PALETTE</div>
+  </div>
+
+  <h1 class="h1">Frequently Asked.</h1>
+  <div class="divider"></div>
+
+  <div class="grid">
+
+    <!-- Card 1 — first card in revealed state to show the pattern -->
+    <div class="card revealed">
+      <div class="faq-num">Q01</div>
+      <div class="faq-q">Is this just another motivational sales course?</div>
+      <div class="faq-a">
+        <p class="faq-blur">Nope. No guru stuff. No "crush it" motivation. This is sober, fun, practical training built by people who carried bags and managed AEs and SDRs for 10+ years.</p>
+      </div>
+      <span class="faq-stamp">Classified</span>
+    </div>
+
+    <!-- Card 2 — redacted state showing the dossier aesthetic -->
+    <div class="card">
+      <div class="faq-num">Q02</div>
+      <div class="faq-q">What if I want a refund?</div>
+      <div class="faq-a">
+        <p class="faq-blur">14-day, no-questions-asked refund. Email hello@aesdr.com and we process it within 3 business days. If it doesn't deliver value, we don't want your money.</p>
+        <div class="faq-redact">[CLASSIFIED — HOVER TO PEEK]</div>
+      </div>
+      <span class="faq-stamp">Classified</span>
+    </div>
+
+    <!-- Card 3 — also redacted -->
+    <div class="card">
+      <div class="faq-num">Q03</div>
+      <div class="faq-q">I've been in sales 5+ years. Too basic?</div>
+      <div class="faq-a">
+        <p class="faq-blur">Lessons 1–5 cover fundamentals. Lessons 6–12 go deep on prospecting strategy, pipeline math, financial resilience, and career-level relationship building. If you disagree, we refund.</p>
+        <div class="faq-redact">[CLASSIFIED — HOVER TO PEEK]</div>
+      </div>
+      <span class="faq-stamp">Classified</span>
+    </div>
+
+  </div>
+
+  <div class="amb"></div>
+</section>
+</body>
+</html>

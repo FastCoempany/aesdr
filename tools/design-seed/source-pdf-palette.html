@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AESDR — Color Palette</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Barlow+Condensed:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --crimson:#8B1A1A; --cream:#FAF7F2; --ink:#1A1A1A; --muted:#6B6B6B; --light:#E8E4DF;
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif;
+  --serif:'Source Serif 4',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;
+  --mono:'Space Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+@page{size:Letter;margin:0}
+html,body{background:var(--cream);color:var(--ink);font-family:var(--serif);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:8.5in;height:11in;padding:0.6in;display:flex;flex-direction:column;position:relative}
+.eyebrow{font-family:var(--mono);font-size:9pt;letter-spacing:.25em;text-transform:uppercase;color:var(--muted)}
+.h1{font-family:var(--display);font-style:italic;font-weight:900;font-size:42pt;line-height:1.0;color:var(--ink)}
+.h3{font-family:var(--cond);font-weight:800;text-transform:uppercase;letter-spacing:.04em;font-size:11pt;color:var(--ink)}
+.small{font-family:var(--serif);font-size:9pt;line-height:1.5;color:var(--muted)}
+.tiny{font-family:var(--mono);font-size:8pt;letter-spacing:.05em;color:var(--muted)}
+.swatch{height:120pt;border:1px solid var(--light)}
+.amb{position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--iris);background-size:300% 100%}
+</style>
+</head>
+<body>
+<section class="page">
+
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <div class="eyebrow">AESDR · COLOR PALETTE · v1.1</div>
+    <div class="eyebrow">FOR · CLAUDE DESIGN</div>
+  </div>
+
+  <h1 class="h1" style="margin-top:14pt;max-width:6.5in"><em>Six tokens. The editorial palette. The dark palette is retired.</em></h1>
+  <div class="small" style="margin-top:6pt;max-width:6.5in">Active palette only. Retired tokens (#020617, #0F172A, #1E293B, #10B981, #EF4444, #38BDF8, #F59E0B, #8B5CF6) remain in <code>app/globals.css</code> for legacy course HTML compat — they are not to be referenced in any new component, page, or asset.</div>
+
+  <!-- Top row: 3 swatches -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18pt;margin-top:24pt">
+
+    <div>
+      <div class="swatch" style="background:#FAF7F2"></div>
+      <div class="h3" style="margin-top:10pt">--cream</div>
+      <div class="tiny" style="margin-top:2pt">#FAF7F2 · rgb(250, 247, 242)</div>
+      <div class="small" style="margin-top:6pt"><strong>USE.</strong> Default page background. Every surface starts here unless explicitly inverted (crimson hero panels, etc.).</div>
+    </div>
+
+    <div>
+      <div class="swatch" style="background:#1A1A1A"></div>
+      <div class="h3" style="margin-top:10pt">--ink</div>
+      <div class="tiny" style="margin-top:2pt">#1A1A1A · rgb(26, 26, 26)</div>
+      <div class="small" style="margin-top:6pt"><strong>USE.</strong> Default body text. Default Rowan display color. Default border color when borders need weight.</div>
+    </div>
+
+    <div>
+      <div class="swatch" style="background:#8B1A1A"></div>
+      <div class="h3" style="margin-top:10pt">--crimson</div>
+      <div class="tiny" style="margin-top:2pt">#8B1A1A · rgb(139, 26, 26)</div>
+      <div class="small" style="margin-top:6pt"><strong>USE.</strong> Primary accent. CTAs, hero left panel, Michael's voice color, terminal cursor, classified-stamp border.</div>
+    </div>
+
+  </div>
+
+  <!-- Bottom row: 3 swatches -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18pt;margin-top:18pt">
+
+    <div>
+      <div class="swatch" style="background:#6B6B6B"></div>
+      <div class="h3" style="margin-top:10pt">--muted</div>
+      <div class="tiny" style="margin-top:2pt">#6B6B6B · rgb(107, 107, 107)</div>
+      <div class="small" style="margin-top:6pt"><strong>USE.</strong> Secondary text, mono eyebrow labels, fine print, footer disclosure, ledger rules.</div>
+    </div>
+
+    <div>
+      <div class="swatch" style="background:#E8E4DF"></div>
+      <div class="h3" style="margin-top:10pt">--light</div>
+      <div class="tiny" style="margin-top:2pt">#E8E4DF · rgb(232, 228, 223)</div>
+      <div class="small" style="margin-top:6pt"><strong>USE.</strong> Subtle dividers, low-emphasis surfaces, card borders, terminal-block borders on cream.</div>
+    </div>
+
+    <div>
+      <div class="swatch" style="background:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%)"></div>
+      <div class="h3" style="margin-top:10pt">--iris</div>
+      <div class="tiny" style="margin-top:2pt">linear-gradient(90deg, …)</div>
+      <div class="small" style="margin-top:6pt"><strong>USE · RESERVED.</strong> Brand wordmark, single primary CTA, role tokens, ambient lines (≤2px), deck numerals, ≤1 accent word per headline. Never decorative.</div>
+    </div>
+
+  </div>
+
+  <!-- Iris stops detail -->
+  <div style="margin-top:24pt;background:#fff;border:1px solid var(--light);padding:14pt">
+    <div class="h3" style="margin-bottom:8pt">IRIS · GRADIENT STOPS</div>
+    <div style="height:32pt;background:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%)"></div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6pt;margin-top:8pt;font-family:var(--mono);font-size:7pt;letter-spacing:.05em;color:var(--muted)">
+      <div>0% · #FF006E</div>
+      <div>17% · #FF6B00</div>
+      <div>34% · #F59E0B</div>
+      <div>51% · #10B981</div>
+      <div>68% · #38BDF8</div>
+      <div>85% · #8B5CF6</div>
+      <div>100% · #FF006E</div>
+    </div>
+  </div>
+
+  <!-- Pairing examples -->
+  <div style="margin-top:18pt;flex:1">
+    <div class="h3" style="margin-bottom:8pt">CANONICAL PAIRINGS</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12pt">
+
+      <div style="background:#FAF7F2;border:1px solid var(--light);padding:14pt">
+        <div style="font-family:var(--display);font-style:italic;font-weight:900;font-size:18pt;color:#1A1A1A;line-height:1.05">Cream + ink — the default surface.</div>
+        <div class="tiny" style="margin-top:6pt">--cream · --ink</div>
+      </div>
+
+      <div style="background:#8B1A1A;padding:14pt">
+        <div style="font-family:var(--display);font-style:italic;font-weight:900;font-size:18pt;color:#fff;line-height:1.05">Crimson + white — the hero left panel and the offer slide.</div>
+        <div class="tiny" style="margin-top:6pt;color:rgba(255,255,255,.6)">--crimson · #fff</div>
+      </div>
+
+      <div style="background:#FAF7F2;border:1px solid var(--light);padding:14pt">
+        <div style="font-family:var(--display);font-style:italic;font-weight:900;font-size:18pt;color:#1A1A1A;line-height:1.05">Cream + ink + <span style="background:linear-gradient(90deg,#FF006E,#FF6B00,#F59E0B,#10B981,#38BDF8,#8B5CF6,#FF006E);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent">iris</span> — the headline accent.</div>
+        <div class="tiny" style="margin-top:6pt">--cream · --ink · --iris</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="margin-top:14pt;display:flex;justify-content:space-between;align-items:flex-end">
+    <div class="small">© AESDR 2026 · Color palette v1.1 · 2026-04-29</div>
+    <div class="eyebrow">END · PALETTE</div>
+  </div>
+  <div class="amb"></div>
+</section>
+</body>
+</html>

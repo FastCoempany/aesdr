@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDK Framework — AESDR Vault</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #1A1714;
+            --panel: #2A2520;
+            --card-hover: #3D3830;
+            --text: #E8E4DF;
+            --muted: #9A9088;
+            --gold: #B8943E;
+            --crimson: #8B1A1A;
+            --gold-light: #C9A96E;
+            --border: rgba(184, 148, 62, 0.15);
+            --input-border: rgba(184, 148, 62, 0.2);
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Source Serif 4', Georgia, serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Main card — the brass-framed reference card */
+        .vault-card {
+            position: relative;
+            z-index: 1;
+            max-width: 780px;
+            width: 100%;
+            background: var(--panel);
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            padding: 3rem 3.5rem;
+            box-shadow:
+                0 0 0 4px var(--bg),
+                0 0 0 6px rgba(184, 148, 62, 0.3),
+                0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        /* Top bar inside card */
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: var(--gold);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .tool-badge {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--gold);
+            background: rgba(184, 148, 62, 0.1);
+            border: 1px solid var(--border);
+            padding: 0.35rem 0.75rem;
+            border-radius: 3px;
+        }
+
+        .headline {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 900;
+            font-style: italic;
+            font-size: 2.5rem;
+            color: var(--text);
+            text-align: center;
+            margin-bottom: 0.5rem;
+            line-height: 1.15;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--muted);
+            font-size: 1.05rem;
+            margin-bottom: 2rem;
+        }
+
+        .gold-rule {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 2rem 0;
+        }
+
+        /* Golden Rule callout */
+        .golden-rule-box {
+            background: rgba(184, 148, 62, 0.08);
+            border: 1px solid rgba(184, 148, 62, 0.3);
+            border-radius: 6px;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .golden-rule-box .box-eyebrow {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--gold);
+            margin-bottom: 0.75rem;
+        }
+
+        .golden-rule-box .box-text {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 700;
+            font-style: italic;
+            font-size: 1.35rem;
+            color: var(--gold-light);
+            line-height: 1.4;
+        }
+
+        /* Step cards */
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .step-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1.5rem 2rem;
+            display: grid;
+            grid-template-columns: 60px 1fr;
+            gap: 1.5rem;
+            align-items: start;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .step-card:hover {
+            background: var(--card-hover);
+            border-color: rgba(184, 148, 62, 0.3);
+        }
+
+        .step-number {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 900;
+            font-size: 2.5rem;
+            color: var(--gold);
+            line-height: 1;
+        }
+
+        .step-content h3 {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .step-content p {
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .script-text {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-style: italic;
+            font-size: 0.95rem;
+            color: var(--text);
+            background: rgba(184, 148, 62, 0.05);
+            border-left: 3px solid var(--gold);
+            padding: 0.75rem 1rem;
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* Button */
+        .btn-gold {
+            display: block;
+            width: 100%;
+            max-width: 280px;
+            margin: 0 auto;
+            background: var(--gold);
+            color: var(--bg);
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 800;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0.9rem 2rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-align: center;
+        }
+
+        .btn-gold:hover {
+            background: var(--gold-light);
+        }
+
+        /* Corner ornaments */
+        .vault-card::before,
+        .vault-card::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-color: var(--gold);
+            border-style: solid;
+        }
+
+        .vault-card::before {
+            top: 12px;
+            left: 12px;
+            border-width: 2px 0 0 2px;
+        }
+
+        .vault-card::after {
+            bottom: 12px;
+            right: 12px;
+            border-width: 0 2px 2px 0;
+        }
+
+        @media (max-width: 600px) {
+            .vault-card {
+                padding: 2rem 1.5rem;
+            }
+            .step-card {
+                grid-template-columns: 40px 1fr;
+                gap: 1rem;
+            }
+            .headline {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="vault-card">
+        <!-- Header -->
+        <div class="card-header">
+            <div class="logo">AESDR</div>
+            <div class="tool-badge">IDK Framework</div>
+        </div>
+
+        <h1 class="headline">The IDK Framework</h1>
+        <p class="subtitle">When you don't know the answer, own it like a professional.</p>
+
+        <hr class="gold-rule">
+
+        <!-- The Golden Rule -->
+        <div class="golden-rule-box">
+            <div class="box-eyebrow">The Golden Rule</div>
+            <div class="box-text">"I don't know — but I will find out and get back to you by [specific time]."</div>
+        </div>
+
+        <!-- 3 Steps -->
+        <div class="steps">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Identify the Gap</h3>
+                    <p>Acknowledge what you don't know without apologizing excessively. Confidence comes from honesty, not omniscience.</p>
+                    <div class="script-text">"That's a great question. I want to make sure I give you the most accurate answer rather than guess."</div>
+                </div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Deploy the Bridge</h3>
+                    <p>Redirect with value. Share what you DO know, then commit to a specific follow-up timeline.</p>
+                    <div class="script-text">"What I can tell you is [related value point]. For the specifics on [their question], I'll loop in our solutions engineer and have a detailed answer by end of day tomorrow."</div>
+                </div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Keep the Promise</h3>
+                    <p>Follow through BEFORE your stated deadline. This builds more trust than having the answer in the first place.</p>
+                    <div class="script-text">"Hi [Name], following up as promised. I spoke with our team and here's the detailed answer to your question about [topic]..."</div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="gold-rule">
+
+        <button class="btn-gold">Print Cheat Sheet</button>
+    </div>
+</body>
+</html>

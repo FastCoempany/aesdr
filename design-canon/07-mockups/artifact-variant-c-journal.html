@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR | Your Artifacts — Variant C: The Journal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FAF7F2;--ink:#1A1A1A;--crimson:#8B1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+  --card:#FFFFFF;--accent-lt:rgba(139,26,26,0.06);--green:#15803D;--green-lt:rgba(21,128,61,0.06);
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif;--serif:'Source Serif 4',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;--mono:'Space Mono',monospace;--hand:'Caveat',cursive;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:var(--serif);line-height:1.6}
+
+nav{display:flex;align-items:center;justify-content:space-between;padding:16px 5%;border-bottom:1px solid var(--light);background:rgba(250,247,242,0.95);backdrop-filter:blur(10px);position:sticky;top:0;z-index:50}
+.nav-brand{font-family:var(--display);font-size:18px;font-weight:900;font-style:italic;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:iris 3s linear infinite}
+.nav-links{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;display:flex;gap:20px}
+.nav-links a{color:var(--muted);text-decoration:none}
+
+/* HEADER */
+.page-header{max-width:720px;margin:0 auto;padding:48px 24px 32px;text-align:center}
+.ph-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--crimson);margin-bottom:12px}
+.ph-title{font-family:var(--display);font-size:clamp(32px,5vw,48px);font-weight:900;font-style:italic;line-height:1.05;margin-bottom:10px}
+.ph-name{background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:iris 3s linear infinite}
+.ph-sub{font-family:var(--serif);font-size:16px;color:var(--muted);font-style:italic;max-width:440px;margin:0 auto}
+.ph-meta{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-top:16px}
+
+/* TABS */
+.tabs{display:flex;justify-content:center;gap:0;border-bottom:2px solid var(--ink);max-width:720px;margin:0 auto;padding:0 24px}
+.tab{font-family:var(--cond);font-size:14px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:14px 32px;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none}
+.tab:hover{color:var(--ink)}
+.tab.active{color:var(--crimson);border-bottom-color:var(--crimson)}
+
+/* PANEL */
+.panel{display:none;max-width:720px;margin:0 auto;padding:40px 24px 80px;animation:fadeUp .35s ease-out}
+.panel.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* DIAGNOSTIC PANEL */
+.d-overall{display:flex;align-items:center;gap:28px;padding:28px;background:var(--card);border:1px solid var(--light);margin-bottom:32px}
+.d-ring{width:100px;height:100px;border-radius:50%;background:conic-gradient(var(--crimson) 0% 67%,var(--light) 67% 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.d-ring-inner{width:76px;height:76px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;flex-direction:column}
+.d-ring-pct{font-family:var(--display);font-size:32px;font-style:italic;color:var(--crimson);line-height:1}
+.d-ring-label{font-family:var(--mono);font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.d-summary{font-family:var(--serif);font-size:16px;color:var(--ink);line-height:1.65}
+
+.d-list{list-style:none;margin-bottom:32px}
+.d-item{padding:16px 0;border-bottom:1px solid var(--light);display:grid;grid-template-columns:140px 1fr;gap:20px;align-items:start}
+.d-item:first-child{border-top:1px solid var(--light)}
+.d-item-left{display:flex;flex-direction:column;gap:4px}
+.d-cat{font-family:var(--cond);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.d-pct{font-family:var(--display);font-size:28px;font-style:italic;color:var(--crimson);line-height:1}
+.d-item-bar{height:4px;background:var(--light);margin-top:6px;overflow:hidden}
+.d-item-fill{height:100%;background:var(--crimson)}
+.d-item-note{font-family:var(--serif);font-size:15px;color:var(--muted);font-style:italic;line-height:1.55;padding-top:4px}
+
+/* PLAYBOOK PANEL */
+.pb-intro{font-family:var(--serif);font-size:17px;font-style:italic;color:var(--muted);line-height:1.65;margin-bottom:32px;max-width:560px}
+.pb-section{margin-bottom:36px}
+.pb-cat{font-family:var(--cond);font-size:15px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--crimson);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--light)}
+
+.pb-entry{margin-bottom:16px}
+.pb-source{font-family:var(--mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.pb-text{font-family:var(--serif);font-size:17px;font-style:italic;color:var(--ink);line-height:1.65;padding-left:20px;border-left:3px solid var(--light)}
+
+.pb-commit{background:var(--green-lt);border-left:3px solid var(--green);padding:16px 20px;margin-top:12px}
+.pb-commit-label{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:4px}
+.pb-commit-text{font-family:var(--serif);font-size:16px;color:var(--ink);line-height:1.55}
+
+/* MIRROR PANEL */
+.m-intro{font-family:var(--serif);font-size:17px;font-style:italic;color:var(--muted);line-height:1.65;margin-bottom:40px;max-width:560px}
+
+.m-confrontation{margin-bottom:36px}
+.m-num{font-family:var(--display);font-size:48px;font-style:italic;color:var(--light);margin-bottom:8px;line-height:1}
+
+.m-you-block{padding:20px;background:var(--card);border:1px solid var(--light);margin-bottom:0}
+.m-data-block{padding:20px;background:var(--accent-lt);border:1px solid var(--light);border-top:none}
+.m-label{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:8px}
+.m-label.you{color:var(--muted)}
+.m-label.data{color:var(--crimson)}
+.m-quote{font-family:var(--serif);font-size:18px;font-style:italic;color:var(--ink);line-height:1.6}
+.m-stat{font-family:var(--serif);font-size:17px;color:var(--crimson);line-height:1.55;font-weight:600;font-style:normal}
+
+.m-annotation{font-family:var(--hand);font-size:18px;color:var(--crimson);margin-top:10px;padding-left:20px}
+
+.m-final{text-align:center;padding:40px 24px;border-top:2px solid var(--ink);margin-top:48px}
+.m-final-text{font-family:var(--display);font-size:24px;font-style:italic;color:var(--ink);line-height:1.3;max-width:480px;margin:0 auto 12px}
+.m-final-sub{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+@media print{nav{display:none}.panel{display:block!important;page-break-after:always}}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">AESDR</span>
+  <div class="nav-links"><a href="#">Dashboard</a><a href="#">Account</a></div>
+</nav>
+
+<div class="page-header">
+  <div class="ph-eyebrow">Your Personal Artifacts</div>
+  <div class="ph-title">The Journal of<br><span class="ph-name">Jordan Rivera</span></div>
+  <div class="ph-sub">Three artifacts. One truth. Everything you wrote, everything you scored, and the space between them.</div>
+  <div class="ph-meta">SDR · Cohort 01 · Generated April 19, 2026</div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('diagnostic')">Diagnostic</button>
+  <button class="tab" onclick="showTab('playbook')">Playbook</button>
+  <button class="tab" onclick="showTab('mirror')">Mirror</button>
+</div>
+
+<!-- ═══ DIAGNOSTIC ═══ -->
+<div class="panel active" id="diagnostic">
+  <div class="d-overall">
+    <div class="d-ring"><div class="d-ring-inner"><div class="d-ring-pct">67%</div><div class="d-ring-label">Overall</div></div></div>
+    <div class="d-summary">You're in the <strong>developing</strong> tier. Strong self-awareness, but your networking and coaching mechanics are holding you back. Identity is your anchor — now build the systems to match it.</div>
+  </div>
+
+  <ul class="d-list">
+    <li class="d-item">
+      <div class="d-item-left">
+        <div class="d-cat">Identity</div>
+        <div class="d-pct">85%</div>
+        <div class="d-item-bar"><div class="d-item-fill" style="width:85%"></div></div>
+      </div>
+      <div class="d-item-note">You know who you are and where you're going. This is your foundation — everything else builds on it. Strongest category across the board.</div>
+    </li>
+    <li class="d-item">
+      <div class="d-item-left">
+        <div class="d-cat">Pipeline</div>
+        <div class="d-pct">78%</div>
+        <div class="d-item-bar"><div class="d-item-fill" style="width:78%"></div></div>
+      </div>
+      <div class="d-item-note">Solid qualification instincts, but you're over-reliant on inbound. Your self-sourced ratio needs work. Build your own pipeline and stop waiting for marketing.</div>
+    </li>
+    <li class="d-item">
+      <div class="d-item-left">
+        <div class="d-cat">Career</div>
+        <div class="d-pct">71%</div>
+        <div class="d-item-bar"><div class="d-item-fill" style="width:71%"></div></div>
+      </div>
+      <div class="d-item-note">Good awareness of comp mechanics and promotion paths. Need to track your ROI more systematically — feelings don't win comp negotiations, spreadsheets do.</div>
+    </li>
+    <li class="d-item">
+      <div class="d-item-left">
+        <div class="d-cat">Discipline</div>
+        <div class="d-pct">62%</div>
+        <div class="d-item-bar"><div class="d-item-fill" style="width:62%"></div></div>
+      </div>
+      <div class="d-item-note">Your mornings are inconsistent and your calendar is undefended. You know what to do — you're just not protecting the time to do it.</div>
+    </li>
+    <li class="d-item">
+      <div class="d-item-left">
+        <div class="d-cat">Coaching</div>
+        <div class="d-pct">58%</div>
+        <div class="d-item-bar"><div class="d-item-fill" style="width:58%"></div></div>
+      </div>
+      <div class="d-item-note">You accept feedback when it arrives but you don't go get it. The SDRs who grow fastest are the ones who ask for coaching before they need it.</div>
+    </li>
+    <li class="d-item">
+      <div class="d-item-left">
+        <div class="d-cat">Networking</div>
+        <div class="d-pct">45%</div>
+        <div class="d-item-bar"><div class="d-item-fill" style="width:45%"></div></div>
+      </div>
+      <div class="d-item-note">Your lowest category. You're operating in isolation — no external relationships, no industry conversations. Relationships are pipeline. Build them before you need them.</div>
+    </li>
+  </ul>
+</div>
+
+<!-- ═══ PLAYBOOK ═══ -->
+<div class="panel" id="playbook">
+  <div class="pb-intro">These are your own words — extracted from the reflection gates you completed across 12 lessons. They've been organized into a personal operating manual, grouped by the six AESDR performance categories.</div>
+
+  <div class="pb-section">
+    <div class="pb-cat">Pipeline — 4 Reflections</div>
+    <div class="pb-entry">
+      <div class="pb-source">Lesson 2, Unit 1 — Prospecting Habits</div>
+      <div class="pb-text">I need to stop waiting for leads to come to me and start creating my own pipeline. The inbound dependency is making me passive and it shows in my numbers.</div>
+    </div>
+    <div class="pb-entry">
+      <div class="pb-source">Lesson 7, Unit 2 — Qualification Depth</div>
+      <div class="pb-text">I've been passing leads without fully qualifying need and timeline. Two of the three criteria are usually there, but I skip the hard question because I'm afraid they'll say no.</div>
+    </div>
+    <div class="pb-commit">
+      <div class="pb-commit-label">Your Commitment</div>
+      <div class="pb-commit-text">Before passing any lead, I will explicitly confirm all four BANT criteria. If I can't answer one, I'll ask the question instead of hoping the AE will figure it out.</div>
+    </div>
+  </div>
+
+  <div class="pb-section">
+    <div class="pb-cat">Discipline — 3 Reflections</div>
+    <div class="pb-entry">
+      <div class="pb-source">Lesson 9, Unit 1 — Time Management</div>
+      <div class="pb-text">My mornings are chaos. Some days I'm prospecting by 8, others I'm on Slack until 10 before I make a single call. There's no system — it's just whatever feels urgent.</div>
+    </div>
+    <div class="pb-entry">
+      <div class="pb-source">Lesson 12, Unit 2 — WFH Boundaries</div>
+      <div class="pb-text">I work from home and there's no separation between work and not-work. I'm always on, but I'm rarely productive. The guilt of not working makes it worse.</div>
+    </div>
+    <div class="pb-commit">
+      <div class="pb-commit-label">Your Commitment</div>
+      <div class="pb-commit-text">8:00–9:30 is prospecting time. No Slack, no email, no CRM updates. Calendar blocked, phone on DND. Every single day, no exceptions. At 5:30, laptop closes.</div>
+    </div>
+  </div>
+
+  <div class="pb-section">
+    <div class="pb-cat">Networking — 2 Reflections</div>
+    <div class="pb-entry">
+      <div class="pb-source">Lesson 6, Unit 3 — Building Knowledge Capital</div>
+      <div class="pb-text">I don't know anyone outside my company in this industry. My LinkedIn is a ghost town. I've been so heads-down on quota that I forgot relationships are the long game.</div>
+    </div>
+    <div class="pb-commit">
+      <div class="pb-commit-label">Your Commitment</div>
+      <div class="pb-commit-text">One meaningful LinkedIn conversation per week — not a connection request, a real conversation. Ask something specific. Follow up. Build the network before I need it.</div>
+    </div>
+  </div>
+
+  <div class="pb-section">
+    <div class="pb-cat">Coaching — 2 Reflections</div>
+    <div class="pb-entry">
+      <div class="pb-source">Lesson 3, Unit 2 — Feedback Loops</div>
+      <div class="pb-text">I wait for feedback to come to me. I never ask for it directly because part of me is afraid of what I'll hear. It's easier to assume I'm doing fine than to find out I'm not.</div>
+    </div>
+    <div class="pb-commit">
+      <div class="pb-commit-label">Your Commitment</div>
+      <div class="pb-commit-text">Every Friday, ask my AE for one specific piece of feedback — not "how am I doing" but "what did you think of the CloudRoute handoff on Tuesday?" Specifics. Every week.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MIRROR ═══ -->
+<div class="panel" id="mirror">
+  <div class="m-intro">These are the confrontations between what you said about yourself in your reflections and what your exercise scores actually show. The gap is where the growth lives.</div>
+
+  <div class="m-confrontation">
+    <div class="m-num">01</div>
+    <div class="m-you-block">
+      <div class="m-label you">What You Said</div>
+      <div class="m-quote">"I'm pretty good at qualifying leads — I usually check budget and authority before passing."</div>
+    </div>
+    <div class="m-data-block">
+      <div class="m-label data">What the Data Says</div>
+      <div class="m-stat">Your pipeline score is 78%, but you scored 62% on the BANT qualification exercise. You're checking two criteria, not four. "Usually" is doing a lot of heavy lifting in that sentence.</div>
+    </div>
+    <div class="m-annotation">^ "Usually" means "when I remember"</div>
+  </div>
+
+  <div class="m-confrontation">
+    <div class="m-num">02</div>
+    <div class="m-you-block">
+      <div class="m-label you">What You Said</div>
+      <div class="m-quote">"I manage my time well — I just get pulled into a lot of meetings."</div>
+    </div>
+    <div class="m-data-block">
+      <div class="m-label data">What the Data Says</div>
+      <div class="m-stat">Discipline score: 62%. Your own time audit showed only 33% of your day is selling. Internal meetings take 19%, Slack takes 24%. The meetings aren't pulling you — you're not pushing back.</div>
+    </div>
+    <div class="m-annotation">^ You have the time. You're giving it away.</div>
+  </div>
+
+  <div class="m-confrontation">
+    <div class="m-num">03</div>
+    <div class="m-you-block">
+      <div class="m-label you">What You Said</div>
+      <div class="m-quote">"I'm open to feedback — I just don't get much."</div>
+    </div>
+    <div class="m-data-block">
+      <div class="m-label data">What the Data Says</div>
+      <div class="m-stat">Coaching score: 58%. In three separate reflections, you described feedback as something that happens to you. You never once described going to ask for it. The gap isn't availability — it's initiative.</div>
+    </div>
+    <div class="m-annotation">^ "Open" and "seeking" are not the same thing</div>
+  </div>
+
+  <div class="m-confrontation">
+    <div class="m-num">04</div>
+    <div class="m-you-block">
+      <div class="m-label you">What You Said</div>
+      <div class="m-quote">"I know I should network more, but I don't have time."</div>
+    </div>
+    <div class="m-data-block">
+      <div class="m-label data">What the Data Says</div>
+      <div class="m-stat">Networking: 45% — your lowest score. Meanwhile, you spend 2.5 hours per day on Slack and email. You have 12.5 hours per week of low-value communication time. One hour of that could transform your network.</div>
+    </div>
+    <div class="m-annotation">^ The time excuse died with the time audit</div>
+  </div>
+
+  <div class="m-final">
+    <div class="m-final-text">The person you described and the person your scores describe are not the same person. Close the gap, and you'll close more deals.</div>
+    <div class="m-final-sub">Generated from 36 units · 12 lessons · Your words vs. your scores</div>
+  </div>
+</div>
+
+<script>
+function showTab(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>

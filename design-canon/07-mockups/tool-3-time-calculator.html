@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR | Time Reclaimed Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FAF7F2;--ink:#1A1A1A;--crimson:#8B1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+  --card:#FFFFFF;--accent-lt:rgba(139,26,26,0.06);--green:#15803D;--green-lt:rgba(21,128,61,0.06);
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif;--serif:'Source Serif 4',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;--mono:'Space Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--cream);color:var(--ink);font-family:var(--serif);line-height:1.6}
+
+.dl-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 40px;border-bottom:1px solid var(--light);background:var(--cream);position:sticky;top:0;z-index:100}
+.dl-brand{font-family:var(--display);font-size:18px;font-weight:900;font-style:italic;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:iris 3s linear infinite}
+.dl-label{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-left:16px}
+.btn-print{font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:10px 24px;border:none;background:var(--crimson);color:#fff;cursor:pointer}
+
+.page{max-width:960px;margin:48px auto;padding:0 24px 80px}
+.header{text-align:center;margin-bottom:48px}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--crimson);margin-bottom:14px}
+.title{font-family:var(--display);font-size:clamp(32px,4.5vw,48px);font-weight:900;font-style:italic;line-height:1.05;margin-bottom:12px}
+.subtitle{font-family:var(--serif);font-size:17px;color:var(--muted);font-style:italic}
+
+/* CALCULATOR LAYOUT */
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:48px}
+
+.calc-inputs{background:var(--card);border:1px solid var(--light);padding:32px}
+.calc-section{font-family:var(--cond);font-size:14px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--crimson);margin-bottom:20px;padding-bottom:8px;border-bottom:1px solid var(--light)}
+.slider-group{margin-bottom:24px}
+.slider-label{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.slider-name{font-family:var(--cond);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.slider-val{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--crimson)}
+input[type=range]{width:100%;-webkit-appearance:none;height:4px;background:var(--light);outline:none;border-radius:2px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--crimson);cursor:pointer;border:2px solid var(--card);box-shadow:0 1px 4px rgba(0,0,0,0.15)}
+
+.calc-results{background:var(--card);border:1px solid var(--light);padding:32px}
+.result-hero{text-align:center;padding:32px 0;border-bottom:1px solid var(--light);margin-bottom:24px}
+.result-num{font-family:var(--display);font-size:72px;font-style:italic;color:var(--crimson);line-height:1}
+.result-unit{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+.result-sub{font-family:var(--serif);font-size:15px;font-style:italic;color:var(--muted);margin-top:12px;line-height:1.5}
+.result-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--light)}
+.result-row:last-child{border-bottom:none}
+.rr-label{font-family:var(--cond);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.rr-val{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--ink)}
+.rr-val.green{color:var(--green)}
+
+/* BREAKDOWN */
+.breakdown{background:var(--card);border:1px solid var(--light);padding:32px}
+.breakdown-title{font-family:var(--cond);font-size:14px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--crimson);margin-bottom:20px}
+.bar-row{margin-bottom:16px}
+.bar-header{display:flex;justify-content:space-between;margin-bottom:6px}
+.bar-name{font-family:var(--cond);font-size:13px;font-weight:600;color:var(--ink)}
+.bar-val{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.bar-track{height:8px;background:var(--light);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width .5s}
+.bar-fill.sell{background:var(--crimson)}
+.bar-fill.admin{background:var(--muted)}
+.bar-fill.waste{background:#D4CFC8}
+
+.verdict{background:var(--green-lt);border-left:4px solid var(--green);padding:20px 24px;margin-top:32px}
+.verdict-label{font-family:var(--mono);font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--green);margin-bottom:6px}
+.verdict-text{font-family:var(--serif);font-size:16px;color:var(--ink);line-height:1.6;font-style:italic}
+
+@keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+@media print{.dl-bar{display:none}}
+</style>
+</head>
+<body>
+
+<div class="dl-bar">
+  <div style="display:flex;align-items:baseline;gap:4px">
+    <span class="dl-brand">AESDR</span>
+    <span class="dl-label">Lesson 9 Takeaway</span>
+  </div>
+  <button class="btn-print" onclick="window.print()">Print / Save PDF</button>
+</div>
+
+<div class="page">
+  <div class="header">
+    <div class="eyebrow">Lesson 9.2 — Calculator Tool</div>
+    <div class="title">Time Reclaimed Calculator</div>
+    <div class="subtitle">How many hours are you actually selling vs. everything else?</div>
+  </div>
+
+  <div class="calc-grid">
+    <div class="calc-inputs">
+      <div class="calc-section">Your Current Day</div>
+      <div class="slider-group">
+        <div class="slider-label"><span class="slider-name">Hours worked / day</span><span class="slider-val">10.5</span></div>
+        <input type="range" min="6" max="14" value="10.5" step="0.5">
+      </div>
+      <div class="slider-group">
+        <div class="slider-label"><span class="slider-name">Hours selling</span><span class="slider-val">3.5</span></div>
+        <input type="range" min="0" max="10" value="3.5" step="0.5">
+      </div>
+      <div class="slider-group">
+        <div class="slider-label"><span class="slider-name">Hours in meetings (internal)</span><span class="slider-val">2.0</span></div>
+        <input type="range" min="0" max="6" value="2" step="0.5">
+      </div>
+      <div class="slider-group">
+        <div class="slider-label"><span class="slider-name">Hours on admin / CRM</span><span class="slider-val">2.5</span></div>
+        <input type="range" min="0" max="6" value="2.5" step="0.5">
+      </div>
+      <div class="slider-group">
+        <div class="slider-label"><span class="slider-name">Hours on Slack / email</span><span class="slider-val">2.5</span></div>
+        <input type="range" min="0" max="6" value="2.5" step="0.5">
+      </div>
+    </div>
+
+    <div class="calc-results">
+      <div class="result-hero">
+        <div class="result-num">33%</div>
+        <div class="result-unit">Selling Ratio</div>
+        <div class="result-sub">You're spending two-thirds of your day on things that don't close deals.</div>
+      </div>
+      <div class="result-row"><span class="rr-label">Selling hours / week</span><span class="rr-val">17.5h</span></div>
+      <div class="result-row"><span class="rr-label">Non-selling hours / week</span><span class="rr-val">35h</span></div>
+      <div class="result-row"><span class="rr-label">If you reclaim 1h / day</span><span class="rr-val green">+5h selling / week</span></div>
+      <div class="result-row"><span class="rr-label">Annual impact (@ $200/h)</span><span class="rr-val green">+$52,000</span></div>
+    </div>
+  </div>
+
+  <div class="breakdown">
+    <div class="breakdown-title">Where Your Day Goes</div>
+    <div class="bar-row">
+      <div class="bar-header"><span class="bar-name">Active Selling</span><span class="bar-val">3.5h (33%)</span></div>
+      <div class="bar-track"><div class="bar-fill sell" style="width:33%"></div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-header"><span class="bar-name">Internal Meetings</span><span class="bar-val">2.0h (19%)</span></div>
+      <div class="bar-track"><div class="bar-fill admin" style="width:19%"></div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-header"><span class="bar-name">Admin / CRM</span><span class="bar-val">2.5h (24%)</span></div>
+      <div class="bar-track"><div class="bar-fill admin" style="width:24%"></div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-header"><span class="bar-name">Slack / Email</span><span class="bar-val">2.5h (24%)</span></div>
+      <div class="bar-track"><div class="bar-fill waste" style="width:24%"></div></div>
+    </div>
+
+    <div class="verdict">
+      <div class="verdict-label">The Takeaway</div>
+      <div class="verdict-text">Reclaiming just 1 hour per day from admin and Slack would increase your selling time by 29% — and potentially add $52,000 in annual revenue impact. Start with the lowest-value hour and protect it.</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

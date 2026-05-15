@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>72-Hour Strike Plan — AESDR Vault</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #1A1714;
+            --panel: #2A2520;
+            --card-hover: #3D3830;
+            --text: #E8E4DF;
+            --muted: #9A9088;
+            --gold: #B8943E;
+            --crimson: #8B1A1A;
+            --gold-light: #C9A96E;
+            --border: rgba(184, 148, 62, 0.15);
+            --input-border: rgba(184, 148, 62, 0.2);
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Source Serif 4', Georgia, serif;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Top bar */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2.5rem;
+        }
+
+        .logo {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--gold);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .tool-badge {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--gold);
+            background: rgba(184, 148, 62, 0.1);
+            border: 1px solid var(--border);
+            padding: 0.35rem 0.75rem;
+            border-radius: 3px;
+        }
+
+        /* Crimson eyebrow */
+        .eyebrow-crimson {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--crimson);
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+        }
+
+        .eyebrow {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--gold);
+            margin-bottom: 0.75rem;
+        }
+
+        .headline {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 900;
+            font-style: italic;
+            font-size: 2.5rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+            line-height: 1.15;
+        }
+
+        .subtitle {
+            font-family: 'Source Serif 4', Georgia, serif;
+            color: var(--muted);
+            font-size: 1.05rem;
+            margin-bottom: 2rem;
+        }
+
+        .gold-rule {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 2rem 0;
+        }
+
+        /* Progress bar */
+        .progress-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .progress-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+        }
+
+        .progress-value {
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--gold);
+        }
+
+        .progress-track {
+            background: var(--panel);
+            border-radius: 6px;
+            height: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, var(--gold), var(--gold-light));
+            height: 100%;
+            border-radius: 6px;
+            width: 42%;
+            transition: width 0.4s ease;
+        }
+
+        /* Checklist */
+        .checklist {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .checklist-item {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: background 0.2s;
+        }
+
+        .checklist-item:hover {
+            background: var(--card-hover);
+        }
+
+        .checklist-item.completed {
+            opacity: 0.7;
+        }
+
+        .checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--gold);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        .checkbox.checked {
+            background: var(--gold);
+        }
+
+        .checkbox.checked::after {
+            content: '\2713';
+            color: var(--bg);
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .checklist-content {
+            flex: 1;
+        }
+
+        .checklist-title {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        .completed .checklist-title {
+            color: var(--muted);
+            text-decoration: line-through;
+            text-decoration-color: var(--gold);
+        }
+
+        .checklist-meta {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .course-tag {
+            display: inline-block;
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            border-radius: 3px;
+            padding: 0.15rem 0.5rem;
+            margin-left: 0.5rem;
+        }
+
+        /* Launch button (crimson CTA) */
+        .btn-crimson {
+            display: inline-block;
+            background: var(--crimson);
+            color: var(--text);
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 800;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-crimson:hover {
+            background: #A52020;
+            box-shadow: 0 0 20px rgba(139, 26, 26, 0.4);
+        }
+
+        .time-indicator {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .time-block {
+            text-align: center;
+        }
+
+        .time-block .time-num {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 900;
+            font-size: 2rem;
+            color: var(--gold);
+        }
+
+        .time-block .time-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="logo">AESDR</div>
+            <div class="tool-badge">72-Hour Strike Plan</div>
+        </div>
+
+        <!-- Crimson Eyebrow -->
+        <div class="eyebrow-crimson">Monday Morning Execution</div>
+        <h1 class="headline">Your 72-Hour Strike Plan</h1>
+        <p class="subtitle">Every task mapped, every hour accounted for. Execute with precision or lose the week.</p>
+
+        <!-- Time indicators -->
+        <div class="time-indicator">
+            <div class="time-block">
+                <div class="time-num">31</div>
+                <div class="time-label">Hours Left</div>
+            </div>
+            <div class="time-block">
+                <div class="time-num">5</div>
+                <div class="time-label">Tasks Done</div>
+            </div>
+            <div class="time-block">
+                <div class="time-num">7</div>
+                <div class="time-label">Remaining</div>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-section">
+            <div class="progress-header">
+                <span class="progress-label">Mission Progress</span>
+                <span class="progress-value">42%</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+        <hr class="gold-rule">
+
+        <!-- Checklist -->
+        <div class="eyebrow">Strike Sequence</div>
+        <ul class="checklist">
+            <li class="checklist-item completed">
+                <div class="checkbox checked"></div>
+                <div class="checklist-content">
+                    <div class="checklist-title">Pull ICP accounts from ZoomInfo — minimum 25 net-new</div>
+                    <div class="checklist-meta">Hour 0-2 <span class="course-tag">Prospecting</span></div>
+                </div>
+            </li>
+            <li class="checklist-item completed">
+                <div class="checkbox checked"></div>
+                <div class="checklist-content">
+                    <div class="checklist-title">Draft 3 personalized cold sequences (pain-led openers)</div>
+                    <div class="checklist-meta">Hour 2-4 <span class="course-tag">Messaging</span></div>
+                </div>
+            </li>
+            <li class="checklist-item completed">
+                <div class="checkbox checked"></div>
+                <div class="checklist-content">
+                    <div class="checklist-title">Record 5 video prospecting messages for tier-1 targets</div>
+                    <div class="checklist-meta">Hour 4-6 <span class="course-tag">Outreach</span></div>
+                </div>
+            </li>
+            <li class="checklist-item completed">
+                <div class="checkbox checked"></div>
+                <div class="checklist-content">
+                    <div class="checklist-title">Qualify inbound leads — score and route to appropriate AE</div>
+                    <div class="checklist-meta">Hour 8-10 <span class="course-tag">Qualification</span></div>
+                </div>
+            </li>
+            <li class="checklist-item completed">
+                <div class="checkbox checked"></div>
+                <div class="checklist-content">
+                    <div class="checklist-title">Update CRM: all activities logged, next steps documented</div>
+                    <div class="checklist-meta">Hour 10-11 <span class="course-tag">Admin</span></div>
+                </div>
+            </li>
+            <li class="checklist-item">
+                <div class="checkbox"></div>
+                <div class="checklist-content">
+                    <div class="checklist-title">Multi-thread into Champion + Economic Buyer on top 3 opps</div>
+                    <div class="checklist-meta">Hour 24-28 <span class="course-tag">Strategy</span></div>
+                </div>
+            </li>
+            <li class="checklist-item">
+                <div class="checkbox"></div>
+                <div class="checklist-content">
+                    <div class="checklist-title">Book 3 discovery calls with qualified prospects</div>
+                    <div class="checklist-meta">Hour 28-36 <span class="course-tag">Pipeline</span></div>
+                </div>
+            </li>
+            <li class="checklist-item">
+                <div class="checkbox"></div>
+                <div class="checklist-content">
+                    <div class="checklist-title">Confirm all booked meetings — send calendar holds + agendas</div>
+                    <div class="checklist-meta">Hour 36-40 <span class="course-tag">Execution</span></div>
+                </div>
+            </li>
+            <li class="checklist-item">
+                <div class="checkbox"></div>
+                <div class="checklist-content">
+                    <div class="checklist-title">Follow-up sequence triggered for all no-shows from last week</div>
+                    <div class="checklist-meta">Hour 40-44 <span class="course-tag">Recovery</span></div>
+                </div>
+            </li>
+            <li class="checklist-item">
+                <div class="checkbox"></div>
+                <div class="checklist-content">
+                    <div class="checklist-title">Prep talk tracks for Thursday's discovery calls</div>
+                    <div class="checklist-meta">Hour 44-48 <span class="course-tag">Preparation</span></div>
+                </div>
+            </li>
+            <li class="checklist-item">
+                <div class="checkbox"></div>
+                <div class="checklist-content">
+                    <div class="checklist-title">Debrief with AE on active pipeline — align on next moves</div>
+                    <div class="checklist-meta">Hour 48-50 <span class="course-tag">Alignment</span></div>
+                </div>
+            </li>
+            <li class="checklist-item">
+                <div class="checkbox"></div>
+                <div class="checklist-content">
+                    <div class="checklist-title">Week review: pipeline coverage, conversion metrics, blockers</div>
+                    <div class="checklist-meta">Hour 70-72 <span class="course-tag">Review</span></div>
+                </div>
+            </li>
+        </ul>
+
+        <hr class="gold-rule">
+
+        <!-- Launch button -->
+        <button class="btn-crimson">Launch the Strike</button>
+    </div>
+</body>
+</html>

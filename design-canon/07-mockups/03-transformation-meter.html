@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup — The Transformation Meter</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Barlow+Condensed:wght@600;700;800&family=Lora:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #020617;
+    --text: #f8fafc;
+    --muted: rgba(248,250,252,0.35);
+    --iris: linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa, #c084fc, #8b5cf6, #6366f1);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+  }
+
+  @keyframes iris {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+
+  @keyframes dividerPulse {
+    0%, 100% { opacity: 0.4; height: 60%; }
+    50% { opacity: 1; height: 80%; }
+  }
+
+  /* Split */
+  .split {
+    display: flex;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  @media (max-width: 768px) {
+    .split { flex-direction: column; }
+    .side { width: 100% !important; min-height: 50vh; }
+    .divider-wrap { display: none; }
+  }
+
+  .side {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 60px;
+    position: relative;
+  }
+
+  /* Left — Week 1 (desaturated, blurred feel) */
+  .side-before {
+    background: #020617;
+  }
+
+  .side-before::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 70% 50%, rgba(248,250,252,0.02) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .side-before .week-label { color: rgba(248,250,252,0.12); }
+  .side-before .pain-line { color: rgba(248,250,252,0.3); }
+
+  /* Right — Week 12 (iris-lit, crisp) */
+  .side-after {
+    background: #030820;
+  }
+
+  .side-after::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(99,102,241,0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .side-after .week-label {
+    background: var(--iris);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: iris 3s linear infinite;
+    opacity: 0.7;
+  }
+
+  .side-after .pain-line { color: rgba(248,250,252,0.75); }
+
+  .week-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(72px, 10vw, 120px);
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .week-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .pain-line {
+    font-family: 'Lora', serif;
+    font-size: 17px;
+    font-style: italic;
+    line-height: 2.2;
+    position: relative;
+    z-index: 1;
+  }
+
+  .pain-line .marker {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-right: 12px;
+    vertical-align: middle;
+  }
+
+  .side-before .marker { background: rgba(248,250,252,0.1); }
+
+  .side-after .marker {
+    background: var(--iris);
+    background-size: 200% 100%;
+    animation: iris 3s linear infinite;
+  }
+
+  /* Divider */
+  .divider-wrap {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+
+  .divider-line {
+    width: 2px;
+    height: 70%;
+    background: var(--iris);
+    background-size: 100% 200%;
+    animation: iris 3s linear infinite, dividerPulse 4s ease-in-out infinite;
+    border-radius: 2px;
+    box-shadow: 0 0 20px rgba(139,92,246,0.3);
+  }
+
+  .divider-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: .2em;
+    color: rgba(139,92,246,0.6);
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    white-space: nowrap;
+  }
+
+  /* Bottom CTA */
+  .bottom {
+    background: var(--bg);
+    text-align: center;
+    padding: 80px 24px;
+    border-top: 1px solid rgba(99,102,241,0.1);
+  }
+
+  .bottom-q {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    line-height: 1.4;
+    margin-bottom: 12px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .bottom-q span {
+    background: var(--iris);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: iris 3s linear infinite;
+  }
+
+  .bottom-sub {
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--muted);
+    margin-bottom: 40px;
+  }
+
+  .cta {
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--iris);
+    background-size: 200% 100%;
+    animation: iris 3s linear infinite;
+    border: none;
+    padding: 16px 48px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="split">
+  <div class="side side-before">
+    <div class="week-label">Week 1</div>
+    <p class="week-sub">Where you are now</p>
+    <div class="pain-line"><span class="marker"></span>Your pipeline is a guess.</div>
+    <div class="pain-line"><span class="marker"></span>You avoid the phone.</div>
+    <div class="pain-line"><span class="marker"></span>Your AE doesn't trust you yet.</div>
+    <div class="pain-line"><span class="marker"></span>Every rejection feels personal.</div>
+    <div class="pain-line"><span class="marker"></span>You're guessing on every cold call.</div>
+  </div>
+
+  <div class="divider-wrap">
+    <div class="divider-line"></div>
+    <span class="divider-label">12 LESSONS</span>
+  </div>
+
+  <div class="side side-after">
+    <div class="week-label">Week 12</div>
+    <p class="week-sub">Where you'll be</p>
+    <div class="pain-line"><span class="marker"></span>You run a system, not a scramble.</div>
+    <div class="pain-line"><span class="marker"></span>You own the call.</div>
+    <div class="pain-line"><span class="marker"></span>Your AE asks how you do it.</div>
+    <div class="pain-line"><span class="marker"></span>Rejection is data. Nothing more.</div>
+    <div class="pain-line"><span class="marker"></span>Your pipeline is a machine.</div>
+  </div>
+</div>
+
+<div class="bottom">
+  <p class="bottom-q">12 lessons stand between these two people. <span>Which one are you right now?</span></p>
+  <p class="bottom-sub">The curriculum is classified. The transformation is not.</p>
+  <a href="#" class="cta">Become Week 12 &rarr;</a>
+</div>
+
+</body>
+</html>

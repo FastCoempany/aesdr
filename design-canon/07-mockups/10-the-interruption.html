@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR — The Interruption</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&family=Caveat:wght@400;600&display=swap');
+
+  :root {
+    --bg: #020617;
+    --text: #F8FAFC;
+    --muted: #94A3B8;
+    --theme: #10B981;
+    --iris: linear-gradient(90deg, #FF006E, #FF6B00, #F59E0B, #10B981, #38BDF8, #8B5CF6, #FF006E);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    cursor: default;
+  }
+
+  #stage {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  /* Word container — centered phrase area */
+  #phrase {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0 12px;
+    max-width: 800px;
+    padding: 0 40px;
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .word {
+    font-size: clamp(28px, 4.5vw, 48px);
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.15s ease, transform 0.2s ease, color 0.4s ease;
+    position: relative;
+    white-space: nowrap;
+  }
+
+  .word.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .word.faded {
+    color: rgba(248,250,252,0.2);
+    transition: color 0.5s ease;
+  }
+
+  .word.pill {
+    background: rgba(248,250,252,0.06);
+    border: 1px solid rgba(248,250,252,0.08);
+    border-radius: 999px;
+    padding: 2px 16px;
+  }
+
+  .word.accent {
+    color: var(--theme);
+  }
+
+  .word.iris-word {
+    background: var(--iris);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3s linear infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+  }
+
+  .word.big {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 900;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+
+  .word.handwritten {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(26px, 4vw, 44px);
+    font-weight: 400;
+    color: rgba(245, 158, 11, 0.7);
+  }
+
+  .word.small {
+    font-size: clamp(14px, 2vw, 20px);
+    font-weight: 400;
+    color: var(--muted);
+  }
+
+  .word.medium {
+    font-size: clamp(20px, 3vw, 32px);
+  }
+
+  /* Scatter state */
+  .word.scattered {
+    transition: transform 0.4s cubic-bezier(.17,.67,.35,1.2), opacity 0.3s ease;
+    position: absolute;
+  }
+
+  /* Iris bar flash */
+  #iris-bar {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--iris);
+    background-size: 300% 100%;
+    animation: shimmer 3s linear infinite;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.6s cubic-bezier(.22,.68,0,1.1);
+  }
+
+  #iris-bar.active {
+    transform: scaleX(1);
+  }
+
+  /* CTA */
+  #cta {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    pointer-events: none;
+  }
+
+  #cta.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  #cta a {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--theme);
+    padding: 16px 48px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+
+  #cta a:hover {
+    background: #0d9668;
+    box-shadow: 0 0 24px rgba(16,185,129,0.4);
+  }
+
+  /* Replay */
+  #replay {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.4s;
+    border: 1px solid rgba(148,163,184,0.2);
+    padding: 6px 14px;
+    background: none;
+  }
+
+  #replay.visible {
+    opacity: 1;
+  }
+
+  #replay:hover {
+    color: var(--text);
+    border-color: rgba(248,250,252,0.3);
+  }
+
+  /* Progress bar */
+  #progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: var(--iris);
+    background-size: 300% 100%;
+    animation: shimmer 3s linear infinite;
+    width: 0%;
+    transition: width 0.25s linear;
+  }
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <div id="progress"></div>
+  <div id="phrase"></div>
+  <div id="iris-bar"></div>
+  <div id="cta"><a href="#">Get Access &rarr;</a></div>
+  <button id="replay" onclick="startSequence()">Replay</button>
+</div>
+
+<script>
+// ============================================================
+// AESDR KINETIC TYPOGRAPHY SEQUENCE
+// Inspired by The Oblist — word-by-word reveal, scatter, reassemble
+// ============================================================
+
+const phrase = document.getElementById('phrase');
+const irisBar = document.getElementById('iris-bar');
+const cta = document.getElementById('cta');
+const replay = document.getElementById('replay');
+const progress = document.getElementById('progress');
+
+// Script: each "scene" is { words, timing, style, transition }
+// timing = ms per word reveal
+// pause = ms to hold after full phrase shown
+// style = class to apply to words
+// transition = 'cut' (clear) | 'fade' (fade old) | 'scatter' (explode out)
+const scenes = [
+  // === ACT 1: THE INTERRUPTION ===
+  { words: ["Sorry"], timing: 300, pause: 150, style: "" },
+  { words: ["to", "interrupt"], timing: 200, pause: 100, style: "" },
+  { words: ["your", "scrolling."], timing: 200, pause: 600, style: "", pillWords: [4] },
+  { transition: "fade", pause: 200 },
+
+  { words: ["Quick", "question."], timing: 250, pause: 700, style: "" },
+  { transition: "cut", pause: 100 },
+
+  // === ACT 2: THE QUESTION ===
+  { words: ["When"], timing: 0, pause: 200, style: "" },
+  { words: ["was", "the", "last", "time"], timing: 180, pause: 200, style: "" },
+  { words: ["you", "looked", "at", "your", "pipeline"], timing: 160, pause: 300, style: "" },
+  { transition: "scatter", pause: 500 },
+  { words: ["and", "felt"], timing: 200, pause: 200, style: "" },
+  { words: ["nothing?"], timing: 0, pause: 900, style: "accent" },
+  { transition: "cut", pause: 300 },
+
+  // === ACT 3: THE TWIST (Rowan Pope) ===
+  { words: ["Not", "fear."], timing: 250, pause: 250, style: "" },
+  { words: ["Not", "excitement."], timing: 250, pause: 400, style: "" },
+  { transition: "fade", pause: 200 },
+  { words: ["Just"], timing: 0, pause: 400, style: "medium" },
+  { words: ["..."], timing: 0, pause: 500, style: "medium" },
+  { words: ["nothing."], timing: 0, pause: 800, style: "medium" },
+  { transition: "cut", pause: 200 },
+
+  { words: ["That", "numbness"], timing: 200, pause: 100, style: "" },
+  { words: ["is", "not", "burnout."], timing: 180, pause: 400, style: "" },
+  { transition: "fade", pause: 100 },
+  { words: ["It's", "a", "warning."], timing: 200, pause: 900, style: "accent" },
+  { transition: "cut", pause: 400 },
+
+  // === ACT 4: THE CONFESSION (Michael Scott) ===
+  { words: ["You're", "eating", "lunch", "at", "your", "desk."], timing: 150, pause: 300, style: "handwritten" },
+  { words: ["Again."], timing: 0, pause: 300, style: "handwritten" },
+  { words: ["At", "10:30am."], timing: 200, pause: 300, style: "handwritten" },
+  { words: ["Again."], timing: 0, pause: 700, style: "handwritten" },
+  { transition: "cut", pause: 200 },
+
+  // === ACT 5: THE VERDICT (Rowan Pope) ===
+  { words: ["Your", "commission", "check"], timing: 180, pause: 100, style: "" },
+  { words: ["is", "not", "income."], timing: 200, pause: 500, style: "" },
+  { transition: "fade", pause: 100 },
+  { words: ["It", "is", "a"], timing: 180, pause: 100, style: "" },
+  { words: ["verdict."], timing: 0, pause: 900, style: "accent big", irisFlash: true },
+  { transition: "cut", pause: 400 },
+
+  // === ACT 6: THE MONTAGE (Michael Scott) ===
+  { words: ["Last", "month:", "$8,200."], timing: 200, pause: 400, style: "handwritten" },
+  { transition: "fade", pause: 100 },
+  { words: ["This", "month:", "ramen."], timing: 200, pause: 500, style: "handwritten" },
+  { transition: "fade", pause: 100 },
+  { words: ["Nice", "jacket", "though."], timing: 200, pause: 700, style: "handwritten" },
+  { transition: "cut", pause: 300 },
+
+  // === ACT 7: THE CONNECTION (Rowan Pope) ===
+  { words: ["The", "drink", "at", "the", "conference."], timing: 160, pause: 300, style: "" },
+  { words: ["The", "apartment", "you", "work", "from."], timing: 160, pause: 300, style: "" },
+  { words: ["The", "relationship", "you're", "neglecting."], timing: 160, pause: 400, style: "" },
+  { transition: "scatter", pause: 400 },
+  { words: ["It's", "all", "connected."], timing: 200, pause: 900, style: "accent" },
+  { transition: "cut", pause: 400 },
+
+  // === ACT 8: THE PUNCHLINE (Michael Scott) ===
+  { words: ["Your", "girlfriend", "asked"], timing: 180, pause: 100, style: "handwritten" },
+  { words: ["what", "you", "do."], timing: 180, pause: 300, style: "handwritten" },
+  { transition: "fade", pause: 100 },
+  { words: ["You", "said", "\"pipeline.\""], timing: 200, pause: 500, style: "handwritten", pillWords: [2] },
+  { transition: "fade", pause: 100 },
+  { words: ["She", "left."], timing: 250, pause: 900, style: "handwritten" },
+  { transition: "cut", pause: 500 },
+
+  // === ACT 9: THE REVEAL ===
+  { words: ["12", "lessons."], timing: 250, pause: 300, style: "medium" },
+  { words: ["Not", "about", "sales."], timing: 200, pause: 400, style: "medium" },
+  { transition: "fade", pause: 200 },
+  { words: ["About", "the", "person"], timing: 200, pause: 100, style: "medium" },
+  { words: ["who", "sells."], timing: 250, pause: 900, style: "medium accent" },
+  { transition: "cut", pause: 500 },
+
+  // === ACT 10: BRAND ===
+  { words: ["AESDR"], timing: 0, pause: 1500, style: "big iris-word", irisFlash: true },
+  { transition: "fade", pause: 200 },
+
+  { words: ["The", "curriculum", "is", "classified."], timing: 180, pause: 400, style: "small" },
+  { words: ["The", "transformation", "is", "not."], timing: 180, pause: 1200, style: "small" },
+  { transition: "fade", pause: 0, showCta: true },
+];
+
+let currentTimeout = null;
+let timeouts = [];
+
+function clearAllTimeouts() {
+  timeouts.forEach(t => clearTimeout(t));
+  timeouts = [];
+}
+
+function startSequence() {
+  clearAllTimeouts();
+  phrase.innerHTML = '';
+  irisBar.classList.remove('active');
+  cta.classList.remove('visible');
+  replay.classList.remove('visible');
+  progress.style.width = '0%';
+
+  let totalTime = 0;
+  scenes.forEach(s => {
+    if (s.words) totalTime += (s.words.length * (s.timing || 200)) + (s.pause || 0);
+    else totalTime += (s.pause || 0);
+  });
+
+  let elapsed = 0;
+  let sceneIndex = 0;
+
+  function runScene(i) {
+    if (i >= scenes.length) {
+      // Done
+      const t = setTimeout(() => { replay.classList.add('visible'); }, 500);
+      timeouts.push(t);
+      return;
+    }
+
+    const scene = scenes[i];
+
+    // Update progress
+    const pct = Math.min(100, (elapsed / totalTime) * 100);
+    progress.style.width = pct + '%';
+
+    // Transition scenes
+    if (scene.transition) {
+      const existingWords = phrase.querySelectorAll('.word');
+
+      if (scene.transition === 'cut') {
+        phrase.innerHTML = '';
+      } else if (scene.transition === 'fade') {
+        existingWords.forEach(w => w.classList.add('faded'));
+        const t = setTimeout(() => { phrase.innerHTML = ''; }, 300);
+        timeouts.push(t);
+      } else if (scene.transition === 'scatter') {
+        existingWords.forEach(w => {
+          w.classList.add('scattered');
+          const rx = (Math.random() - 0.5) * window.innerWidth * 0.8;
+          const ry = (Math.random() - 0.5) * window.innerHeight * 0.6;
+          const rot = (Math.random() - 0.5) * 40;
+          w.style.transform = `translate(${rx}px, ${ry}px) rotate(${rot}deg)`;
+          w.style.opacity = '0';
+        });
+        const t = setTimeout(() => { phrase.innerHTML = ''; }, 400);
+        timeouts.push(t);
+      }
+
+      elapsed += (scene.pause || 0);
+      const t = setTimeout(() => runScene(i + 1), scene.pause || 0);
+      timeouts.push(t);
+
+      if (scene.showCta) {
+        const ct = setTimeout(() => { cta.classList.add('visible'); }, 200);
+        timeouts.push(ct);
+      }
+
+      return;
+    }
+
+    // Word scenes
+    if (scene.words) {
+      const words = scene.words;
+      const timing = scene.timing || 200;
+      const classes = (scene.style || '').split(' ').filter(Boolean);
+      const pillIndices = scene.pillWords || [];
+
+      words.forEach((w, wi) => {
+        const t = setTimeout(() => {
+          const el = document.createElement('span');
+          el.className = 'word';
+          classes.forEach(c => el.classList.add(c));
+          if (pillIndices.includes(wi)) el.classList.add('pill');
+          el.textContent = w;
+          phrase.appendChild(el);
+
+          // Force reflow then show
+          el.offsetHeight;
+          el.classList.add('visible');
+        }, wi * timing);
+        timeouts.push(t);
+      });
+
+      const totalWordTime = words.length * timing;
+
+      if (scene.irisFlash) {
+        const ft = setTimeout(() => {
+          irisBar.classList.add('active');
+          const ft2 = setTimeout(() => irisBar.classList.remove('active'), 800);
+          timeouts.push(ft2);
+        }, totalWordTime);
+        timeouts.push(ft);
+      }
+
+      elapsed += totalWordTime + (scene.pause || 0);
+      const t = setTimeout(() => runScene(i + 1), totalWordTime + (scene.pause || 0));
+      timeouts.push(t);
+    }
+  }
+
+  // Small delay before starting
+  const startDelay = setTimeout(() => runScene(0), 600);
+  timeouts.push(startDelay);
+}
+
+// Auto-start
+startSequence();
+</script>
+
+</body>
+</html>

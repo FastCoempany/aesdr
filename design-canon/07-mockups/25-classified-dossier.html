@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR — Classified Dossier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=DM+Mono:wght@400;500&family=Cormorant+Garamond:wght@400;600&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #020617;
+    --text: #F8FAFC;
+    --muted: #94A3B8;
+    --theme: #10B981;
+    --coral: rgba(239,68,68,0.5);
+    --line: rgba(255,255,255,0.08);
+    --iris: linear-gradient(90deg, #FF006E, #FF6B00, #F59E0B, #10B981, #38BDF8, #8B5CF6, #FF006E);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 0;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 48px;
+    padding: 0 24px;
+  }
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 16px;
+  }
+  .section-label .icon {
+    width: 16px; height: 16px;
+    border: 1px solid var(--coral);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 700;
+  }
+  .section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    line-height: 1;
+    color: var(--text);
+  }
+  .section-sub {
+    font-size: 16px;
+    color: var(--muted);
+    margin-top: 12px;
+    line-height: 1.6;
+  }
+
+  /* Scroll strip */
+  .strip-wrap {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .strip-wrap::-webkit-scrollbar { display: none; }
+
+  .strip {
+    display: flex;
+    gap: 20px;
+    padding: 0 max(24px, calc((100vw - 1200px)/2));
+    width: max-content;
+  }
+
+  /* Card */
+  .card {
+    flex-shrink: 0;
+    width: 300px;
+    padding: 32px 28px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--line);
+    position: relative;
+    cursor: pointer;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .card:hover {
+    border-color: rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.04);
+  }
+
+  .card-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--theme);
+    letter-spacing: .1em;
+    margin-bottom: 12px;
+  }
+  .card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.15;
+  }
+
+  /* Redacted teaser */
+  .card-teaser {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--muted);
+    position: relative;
+    overflow: hidden;
+  }
+  .card-teaser .blur-text {
+    filter: blur(5px);
+    transition: filter 0.4s ease;
+    user-select: none;
+  }
+  .card:hover .blur-text {
+    filter: blur(0px);
+  }
+  .card-teaser .redact-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--coral);
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .card:hover .redact-label {
+    opacity: 0;
+  }
+
+  /* Iris bottom edge */
+  .card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--iris);
+    background-size: 300% 100%;
+    animation: shimmer 4s linear infinite;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .card:hover::after {
+    opacity: 1;
+  }
+
+  /* Stamp */
+  .card-stamp {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: rgba(239,68,68,0.25);
+    border: 1px solid rgba(239,68,68,0.15);
+    display: inline-block;
+    padding: 3px 10px;
+    margin-top: 20px;
+    transform: rotate(-2deg);
+  }
+
+  /* Scroll cue */
+  .scroll-cue {
+    margin-top: 32px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: rgba(148,163,184,0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .scroll-cue .arrow {
+    display: inline-block;
+    animation: nudge 1.5s ease-in-out infinite;
+  }
+
+  @keyframes shimmer { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
+  @keyframes nudge { 0%,100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
+</style>
+</head>
+<body>
+
+<div class="section-header">
+  <div class="section-label">
+    <span class="icon">!</span>
+    Contents — Classified
+  </div>
+  <h2 class="section-title">12 Lessons. Here's what's inside.</h2>
+  <p class="section-sub">Hover to declassify. Purchase to access.</p>
+</div>
+
+<div class="strip-wrap">
+  <div class="strip" id="strip"></div>
+</div>
+
+<div class="scroll-cue">
+  scroll <span class="arrow">&rarr;</span>
+</div>
+
+<script>
+const lessons = [
+  { num: "01", title: "Building Real Camaraderie", teaser: "The difference between a team that drinks together and a team that sells together — and why most orgs confuse the two." },
+  { num: "02", title: "Breaking Down Silos", teaser: "Your AE doesn't hate you. Your SDR isn't lazy. The system is broken. Here's how to fix the handoff before it kills the deal." },
+  { num: "03", title: "Performance Pitfalls", teaser: "The seven traps that kill more sales careers than bad territory. You're probably in two of them right now." },
+  { num: "04", title: "Navigating Manager Madness", teaser: "Your manager peaked as a rep. Now they manage by spreadsheet. Here's how to survive — and outgrow — bad leadership." },
+  { num: "05", title: "The Sales Playbook", teaser: "Not motivation. Not mindset. An actual operating system for what you do every day, hour by hour, deal by deal." },
+  { num: "06", title: "Beyond the Sales Playbook", teaser: "The playbook breaks. Every time. This lesson is about what to do when the script runs out and you're thinking live." },
+  { num: "07", title: "Prospecting & Pipeline", teaser: "Self-sourced pipeline is career insurance. Inbound is a gift, not a strategy. Here's how to build what you control." },
+  { num: "08", title: "The 30% Rule", teaser: "If 30% of your pipeline is closing, you're healthy. If it's not, you're lying to your forecast. The math doesn't negotiate." },
+  { num: "09", title: "Salesforce Survival Guide", teaser: "CRM hygiene isn't admin work. It's the difference between a rep who gets promoted and a rep who gets managed out." },
+  { num: "10", title: "Breaking Down the Commission Myth", teaser: "Variable comp will betray you. Accelerators lie. Your OTE is fiction. Here's how to build financial resilience anyway." },
+  { num: "11", title: "Sober Selling", teaser: "No cold plunge. No 5am alarm. No guru. Just a clear-eyed framework for performing without burning out." },
+  { num: "12", title: "Leveling Up SaaS Relationships", teaser: "The deals you close this quarter come from relationships you built last year. Most reps figure this out too late." },
+];
+
+const strip = document.getElementById('strip');
+lessons.forEach(l => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="card-num">Lesson ${l.num}</div>
+    <div class="card-title">${l.title}</div>
+    <div class="card-teaser">
+      <span class="blur-text">${l.teaser}</span>
+      <span class="redact-label">[redacted — hover to peek]</span>
+    </div>
+    <div class="card-stamp">Classified</div>
+  `;
+  strip.appendChild(card);
+});
+</script>
+</body>
+</html>

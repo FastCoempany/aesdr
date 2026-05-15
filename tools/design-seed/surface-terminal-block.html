@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AESDR — Terminal Block on Cream (active palette)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,900;1,400;1,900&family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Barlow+Condensed:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --crimson:#8B1A1A; --cream:#FAF7F2; --ink:#1A1A1A; --muted:#6B6B6B; --light:#E8E4DF;
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif;
+  --serif:'Source Serif 4',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;
+  --mono:'Space Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--cream);color:var(--ink);font-family:var(--serif);-webkit-print-color-adjust:exact}
+.frame{width:1440px;min-height:900px;padding:80px 64px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+.label-row{display:flex;justify-content:space-between;width:100%;align-items:center;position:absolute;top:40px;left:0;padding:0 64px}
+.terminal{max-width:680px;width:100%;border:1px solid var(--light);background:rgba(0,0,0,0.02);font-family:var(--mono);box-shadow:0 4px 32px rgba(0,0,0,0.04)}
+.term-bar{display:flex;align-items:center;gap:7px;padding:11px 18px;border-bottom:1px solid var(--light)}
+.term-dot{width:10px;height:10px;border-radius:50%}
+.tdR{background:rgba(239,68,68,0.4)}
+.tdY{background:rgba(245,158,11,0.4)}
+.tdG{background:rgba(16,185,129,0.4)}
+.term-title{font-size:10px;color:var(--muted);letter-spacing:.1em;margin-left:auto;font-family:var(--mono)}
+.term-body{padding:32px 28px}
+.tline{font-size:15px;line-height:1.85;color:var(--ink)}
+.prompt{color:var(--muted);margin-right:10px}
+.term-out{margin-top:26px;padding-top:22px;border-top:1px solid var(--light);font-size:18px;font-weight:800;line-height:1.7;letter-spacing:.01em;background:var(--iris);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.term-whisper{font-family:var(--serif);font-style:italic;font-size:13px;color:var(--muted);margin-top:14px}
+.term-cursor{display:inline-block;width:9px;height:16px;background:var(--crimson);vertical-align:text-bottom;margin-left:2px}
+.caption{font-family:var(--serif);font-style:italic;color:var(--muted);font-size:14px;text-align:center;margin-top:32px;max-width:680px}
+.caption strong{font-weight:600;color:var(--ink);font-style:normal}
+.amb{position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--iris);background-size:300% 100%;opacity:.5}
+</style>
+</head>
+<body>
+<section class="frame">
+
+  <div class="label-row">
+    <div class="eyebrow" style="margin:0">AESDR · TERMINAL BLOCK ON CREAM · CANONICAL PATTERN</div>
+    <div class="eyebrow" style="margin:0">--ink TYPE · --cream BG · NOT THE RETIRED DARK SURFACE</div>
+  </div>
+
+  <div class="terminal">
+    <div class="term-bar">
+      <div class="term-dot tdR"></div>
+      <div class="term-dot tdY"></div>
+      <div class="term-dot tdG"></div>
+      <div class="term-title">you_already_knew.exe</div>
+    </div>
+    <div class="term-body">
+      <div class="tline"><span class="prompt">&gt;</span>scanning your phone...</div>
+      <div class="tline"><span class="prompt">&gt;</span>found: morning routine app. habit tracker. focus timer. cold plunge video.</div>
+      <div class="tline"><span class="prompt">&gt;</span>total: 11 productivity apps.</div>
+      <div class="tline"><span class="prompt">&gt;</span>diagnosis: least productive person you know.</div>
+      <div class="tline"><span class="prompt">&gt;</span>screen time: 7 hours. 4 of them downloading apps about using your phone less.<span class="term-cursor"></span></div>
+      <div class="term-out">This course will change your life a few times throughout. Afterward, you'll never make the same money again.</div>
+      <div class="term-whisper">Keep scrolling. It has to get worse before it gets better.</div>
+    </div>
+  </div>
+
+  <div class="caption">
+    <strong>Terminal block, active palette.</strong> The pattern in production lives on `--cream` with `--ink` mono lines, the iris-text payoff line, and the crimson cursor. The retired dark navy version is not to be revived.
+  </div>
+
+  <div class="amb"></div>
+</section>
+</body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commission Defense Tracker — AESDR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: #FAF7F2;
+            color: #1A1A1A;
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-weight: 400;
+            line-height: 1.6;
+            padding: 60px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .eyebrow {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .2em;
+            color: #B8943E;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 900;
+            font-style: italic;
+            font-size: 3.2rem;
+            line-height: 1.1;
+            margin-bottom: 16px;
+            color: #1A1A1A;
+        }
+
+        .subtitle {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 1.15rem;
+            color: #6B6B6B;
+            font-style: italic;
+            margin-bottom: 48px;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #E8E4DF;
+            margin: 40px 0;
+        }
+
+        .section-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .2em;
+            color: #8B1A1A;
+            margin-bottom: 20px;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 32px;
+            margin-bottom: 48px;
+        }
+
+        .input-group label {
+            display: block;
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .2em;
+            color: #6B6B6B;
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            background: #FFFFFF;
+            border: 1px solid #E8E4DF;
+            border-radius: 0;
+            padding: 14px 16px;
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: 1.1rem;
+            color: #1A1A1A;
+            outline: none;
+            transition: border-color .2s;
+        }
+
+        .input-group input:focus {
+            border-color: transparent;
+            border-bottom: 2px solid #8B1A1A;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .result-card {
+            background: #FFFFFF;
+            padding: 28px 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,.06);
+        }
+
+        .result-card .card-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .2em;
+            color: #6B6B6B;
+            margin-bottom: 12px;
+        }
+
+        .result-card .card-value {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 900;
+            font-size: 2rem;
+            color: #8B1A1A;
+        }
+
+        .result-card .card-sub {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-size: .85rem;
+            color: #6B6B6B;
+            margin-top: 6px;
+        }
+
+        .deal-form-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 20px;
+            align-items: end;
+            margin-bottom: 48px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #1A1A1A;
+            color: #FAF7F2;
+            font-family: 'Barlow Condensed', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            font-size: .9rem;
+            padding: 14px 28px;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            background: #333;
+        }
+
+        .table-empty {
+            background: #FFFFFF;
+            border: 1px dashed #E8E4DF;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .table-empty p {
+            font-family: 'Source Serif 4', Georgia, serif;
+            font-style: italic;
+            color: #6B6B6B;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <span class="eyebrow">Course 10 &middot; Asset</span>
+    <h1>Commission Defense Tracker</h1>
+    <p class="subtitle">Finance works for the company. This tracker works for you.</p>
+
+    <hr>
+
+    <p class="section-label">Your Compensation Inputs</p>
+
+    <div class="input-row">
+        <div class="input-group">
+            <label>Base Salary ($)</label>
+            <input type="text" value="75,000">
+        </div>
+        <div class="input-group">
+            <label>Est. Tax Withholding (%)</label>
+            <input type="text" value="30">
+        </div>
+        <div class="input-group">
+            <label>Fantasy OTE ($)</label>
+            <input type="text" value="150,000">
+        </div>
+    </div>
+
+    <p class="section-label">The Reality Check</p>
+
+    <div class="results-grid">
+        <div class="result-card">
+            <p class="card-label">Cleared Take-Home</p>
+            <p class="card-value">$52,500</p>
+            <p class="card-sub">Net after tax withholding</p>
+        </div>
+        <div class="result-card">
+            <p class="card-label">At Risk</p>
+            <p class="card-value">$75,000</p>
+            <p class="card-sub">In clawback window</p>
+        </div>
+        <div class="result-card">
+            <p class="card-label">Bleeding</p>
+            <p class="card-value">$22,500</p>
+            <p class="card-sub">Taxes &amp; clawbacks</p>
+        </div>
+        <div class="result-card">
+            <p class="card-label">Reality vs Fantasy OTE</p>
+            <p class="card-value">-65%</p>
+            <p class="card-sub">Gap to promised earnings</p>
+        </div>
+    </div>
+
+    <hr>
+
+    <p class="section-label">Log a Deal</p>
+
+    <div class="deal-form-row">
+        <div class="input-group">
+            <label>Deal Name</label>
+            <input type="text" placeholder="e.g. Acme Corp Enterprise">
+        </div>
+        <div class="input-group">
+            <label>ARR / TCV ($)</label>
+            <input type="text" placeholder="48,000">
+        </div>
+        <div class="input-group">
+            <label>Comm Rate (%)</label>
+            <input type="text" placeholder="8">
+        </div>
+        <button class="btn">+ Log Deal</button>
+    </div>
+
+    <div class="table-empty">
+        <p>No deals logged yet. Add your first deal above to start tracking.</p>
+    </div>
+</body>
+</html>

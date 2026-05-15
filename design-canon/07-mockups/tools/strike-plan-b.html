@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>72-Hour Strike Plan — Variant B</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #FFFDF8;
+  min-height: 100vh;
+  padding: 40px 20px;
+  font-family: 'Source Serif 4', Georgia, serif;
+  color: #2C2C2C;
+}
+
+.toolbar {
+  max-width: 780px;
+  margin: 0 auto 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid #F0EBE3;
+}
+
+.toolbar-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #8B8178;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn {
+  display: inline-block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #8B1A1A;
+  border: 1px solid #8B1A1A;
+  background: transparent;
+  padding: 8px 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn:hover {
+  background: #8B1A1A;
+  color: #FFFFFF;
+}
+
+.page {
+  max-width: 780px;
+  margin: 0 auto;
+  background: #FFFFFF;
+  padding: 48px 80px 60px 140px;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+  position: relative;
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 31px,
+    #F0EBE3 31px,
+    #F0EBE3 32px
+  );
+  background-position: 0 20px;
+}
+
+.margin-line {
+  position: absolute;
+  left: 120px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #E8D4D4;
+}
+
+/* Torn edge top */
+.page::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, #FFFDF8 33.33%, transparent 33.33%) -6px 0,
+              linear-gradient(225deg, #FFFDF8 33.33%, transparent 33.33%) -6px 0;
+  background-size: 12px 4px;
+}
+
+.title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-size: 26px;
+  font-weight: 700;
+  color: #8B1A1A;
+  margin-bottom: 4px;
+  line-height: 32px;
+}
+
+.subtitle {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #8B8178;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.progress-margin {
+  position: absolute;
+  left: 16px;
+  top: 48px;
+  width: 95px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #C53030;
+  font-style: italic;
+  text-align: right;
+  line-height: 1.6;
+}
+
+.section-divider {
+  border: none;
+  border-top: 1px solid #8B1A1A;
+  border-bottom: 1px solid #8B1A1A;
+  height: 4px;
+  margin: 24px 0;
+}
+
+.phase-header {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #8B1A1A;
+  margin-bottom: 16px;
+  margin-top: 8px;
+}
+
+.checklist {
+  list-style: none;
+  margin-bottom: 28px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 4px 0;
+  line-height: 32px;
+  position: relative;
+}
+
+.priority-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: 2px solid #C53030;
+  border-radius: 50%;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: #C53030;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid #8B8178;
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  color: #C53030;
+  flex-shrink: 0;
+  margin-top: 6px;
+  cursor: pointer;
+}
+
+.checkbox.checked {
+  border-color: #C53030;
+}
+
+.item-text {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 14px;
+  flex: 1;
+}
+
+.item-text.completed {
+  text-decoration: line-through;
+  color: #8B8178;
+}
+
+.item-annotation {
+  position: absolute;
+  right: -100px;
+  width: 90px;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  color: #8B8178;
+  font-style: italic;
+  line-height: 1.3;
+  margin-top: 8px;
+}
+
+.item-annotation.ref {
+  color: #C53030;
+}
+
+.input-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.input-label {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.form-input {
+  flex: 1;
+  border: none;
+  border-bottom: 1.5px dotted #8B8178;
+  background: transparent;
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 14px;
+  color: #2C2C2C;
+  padding: 2px 4px;
+  outline: none;
+  max-width: 250px;
+}
+
+.form-input:focus {
+  border-bottom-color: #C53030;
+  border-bottom-style: solid;
+}
+
+.highlight {
+  background: rgba(184, 148, 62, 0.2);
+  padding: 1px 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <span class="toolbar-title">AE-SDR Tools / 72-Hour Strike Plan</span>
+  <button class="btn" style="margin-left:auto;">Reset</button>
+  <button class="btn">Print</button>
+</div>
+
+<div class="page">
+  <div class="margin-line"></div>
+
+  <div class="progress-margin">
+    2 of 7<br>executed<br><br>
+    <span style="font-size:9px; color:#8B8178;">~28% complete</span>
+  </div>
+
+  <h1 class="title">72-Hour Strike Plan</h1>
+  <p class="subtitle">Account: _________________ &nbsp; Trigger Date: _________</p>
+
+  <div class="input-row" style="margin-top:16px;">
+    <span class="input-label">Account Name:</span>
+    <input class="form-input" type="text" placeholder="Acme Corp" value="Acme Corp">
+  </div>
+  <div class="input-row">
+    <span class="input-label">Trigger Event:</span>
+    <input class="form-input" type="text" placeholder="Champion went dark after demo" value="Champion went dark after demo">
+  </div>
+
+  <hr class="section-divider">
+
+  <h3 class="phase-header">Phase 1: Hours 0–24 (Reconnaissance)</h3>
+
+  <ul class="checklist">
+    <li class="checklist-item">
+      <span class="priority-number">1</span>
+      <span class="checkbox checked">✓</span>
+      <span class="item-text completed">Identify 3 other contacts in the account via LinkedIn</span>
+      <span class="item-annotation ref">→ Course 2.4<br>"Multi-thread or die"</span>
+    </li>
+    <li class="checklist-item">
+      <span class="priority-number">2</span>
+      <span class="checkbox checked">✓</span>
+      <span class="item-text completed">Research recent company news / 10-K triggers</span>
+      <span class="item-annotation ref">→ Course 1.2<br>"Intel gathering"</span>
+    </li>
+    <li class="checklist-item">
+      <span class="priority-number">3</span>
+      <span class="checkbox"> </span>
+      <span class="item-text">Draft a <span class="highlight">"pattern interrupt"</span> message for champion</span>
+      <span class="item-annotation ref">→ Course 3.1<br>"Break the loop"</span>
+    </li>
+  </ul>
+
+  <h3 class="phase-header">Phase 2: Hours 24–48 (Multi-Thread)</h3>
+
+  <ul class="checklist">
+    <li class="checklist-item">
+      <span class="priority-number">4</span>
+      <span class="checkbox"> </span>
+      <span class="item-text">Send value-add touchpoint to economic buyer (not a check-in)</span>
+      <span class="item-annotation ref">→ Course 2.6<br>"Above the power line"</span>
+    </li>
+    <li class="checklist-item">
+      <span class="priority-number">5</span>
+      <span class="checkbox"> </span>
+      <span class="item-text">Engage SDR to warm up a <span class="highlight">side-door contact</span></span>
+      <span class="item-annotation ref">→ Course 4.2<br>"AE-SDR plays"</span>
+    </li>
+  </ul>
+
+  <h3 class="phase-header">Phase 3: Hours 48–72 (Force a Decision)</h3>
+
+  <ul class="checklist">
+    <li class="checklist-item">
+      <span class="priority-number">6</span>
+      <span class="checkbox"> </span>
+      <span class="item-text">Send the <span class="highlight">"breakup email"</span> — give them a graceful out</span>
+      <span class="item-annotation ref">→ Course 3.4<br>"The dignified close"</span>
+    </li>
+    <li class="checklist-item">
+      <span class="priority-number">7</span>
+      <span class="checkbox"> </span>
+      <span class="item-text">If no response: move to nurture, stop bleeding time on this deal</span>
+      <span class="item-annotation ref">→ Course 5.1<br>"Know when to fold"</span>
+    </li>
+  </ul>
+
+</div>
+
+</body>
+</html>

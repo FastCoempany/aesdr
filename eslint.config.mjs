@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Documentation snapshots / Figma scaffold (not runtime code):
+    "design-canon/**",
+    "design-canon-seed/**",
+    "tools/design-seed/**",
+    "**/*.figma.ts",
   ]),
   // Relax strict type rules in e2e tests — Playwright page/window globals
   // are inherently `any`-shaped and forcing specific types adds noise.

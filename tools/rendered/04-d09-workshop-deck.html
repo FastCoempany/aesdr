@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR — Workshop Deck</title>
+<!--
+  D09 — Workshop Deck (canonical render as HTML)
+  19 slides, 16:9, click-to-advance.
+  Per docs/partner/D09-workshop-deck.md slide-by-slide spec.
+  Per canon §8.6 deck anatomy + §7.3 locked vs ad-lib.
+
+  Navigation:
+    - Click anywhere or press Right Arrow / Space to advance
+    - Press Left Arrow to go back
+    - Press Esc to exit fullscreen-ish mode
+
+  Each slide is a .slide section. Active slide gets .slide-active.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Barlow+Condensed:wght@400;500;600;700;800&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --crimson:#8B1A1A;--cream:#FAF7F2;--ink:#1A1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif;
+  --serif:'Source Serif 4',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif;
+  --mono:'Space Mono',monospace;
+  --hand:'Caveat',cursive;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:#1a1a1a;color:var(--ink);font-family:var(--serif)}
+@keyframes shimmer{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+
+.deck{width:100vw;height:100vh;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;background:var(--cream);display:none;flex-direction:column;justify-content:center;align-items:center;padding:64px 96px;box-sizing:border-box;text-align:center}
+.slide.slide-active{display:flex}
+
+/* HUD: slide counter + status */
+.hud{position:fixed;top:24px;right:24px;z-index:100;font-family:var(--mono);font-size:11px;color:rgba(0,0,0,.4);letter-spacing:.15em;text-transform:uppercase;display:flex;gap:14px;align-items:center}
+.hud-status{padding:4px 10px;border:1px solid rgba(0,0,0,.15)}
+.hud-status.locked{background:rgba(139,26,26,.06);color:var(--crimson);border-color:rgba(139,26,26,.2)}
+.hud-status.adlib{background:rgba(0,0,0,.04);color:var(--muted)}
+.hud-status.partner{background:rgba(245,158,11,.1);color:#92400E;border-color:rgba(245,158,11,.3)}
+.hint{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:100;font-family:var(--mono);font-size:9px;color:rgba(0,0,0,.3);letter-spacing:.2em;text-transform:uppercase}
+
+/* Slide types */
+.slide-title{padding:0;flex-direction:row}
+.title-left{width:40%;height:100%;background:var(--crimson);color:#fff;padding:64px 56px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
+.title-left::after{content:attr(data-numeral);font-family:var(--display);font-weight:900;font-size:300px;position:absolute;bottom:-40px;left:-20px;opacity:.06;line-height:1;color:#fff;pointer-events:none}
+.title-right{width:60%;height:100%;background:var(--cream);padding:64px 56px;display:flex;flex-direction:column;justify-content:center;position:relative}
+.title-eyebrow{font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:24px}
+.title-h{font-family:var(--display);font-style:italic;font-weight:700;font-size:clamp(48px,5vw,72px);color:#fff;line-height:1.05}
+.title-host{font-family:var(--cond);font-size:14px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--ink);margin-bottom:14px}
+.title-date{font-family:var(--mono);font-size:14px;color:var(--muted);letter-spacing:.1em}
+.title-mark{font-family:var(--display);font-style:italic;font-weight:900;font-size:96px;color:var(--ink);margin-bottom:24px}
+
+.ambient-line{position:absolute;bottom:0;left:0;width:100%;height:2px;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite;opacity:.6}
+
+/* Brand opener slide (centered ink on cream) */
+.opener-stack{font-family:var(--display);font-style:italic;font-weight:700;font-size:clamp(36px,4vw,56px);color:var(--ink);line-height:1.3;max-width:900px}
+.opener-stack p{margin-bottom:36px}
+.opener-stack p:last-child{margin-bottom:0}
+.ghost-num{position:absolute;font-family:var(--display);font-weight:900;font-size:clamp(180px,30vw,360px);color:rgba(0,0,0,.04);bottom:-40px;right:-20px;line-height:1;pointer-events:none}
+
+/* Outcomes */
+.outcomes-stack{max-width:900px;text-align:left}
+.outcomes-stack .out{display:flex;gap:20px;align-items:flex-start;margin-bottom:32px}
+.outcomes-stack .out-num{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--muted);letter-spacing:.15em;padding-top:12px;flex-shrink:0;width:40px}
+.outcomes-stack .out-body{font-family:var(--display);font-style:italic;font-weight:400;font-size:28px;color:var(--ink);line-height:1.3}
+.outcomes-stack .out-body em{font-style:italic}
+
+/* For/not for */
+.fornot-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;max-width:1100px;text-align:left}
+.fornot-h{font-family:var(--cond);font-size:14px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:20px}
+.fornot-h-yes{color:var(--ink)}
+.fornot-h-no{color:var(--muted)}
+.fornot-list{font-family:var(--serif);font-size:18px;color:var(--ink);line-height:1.7;list-style:none}
+.fornot-list li{margin-bottom:12px;padding-left:14px;text-indent:-14px}
+.fornot-list li::before{content:"— "}
+
+/* Framework slide */
+.framework-zone{max-width:900px;width:100%}
+.framework-eyebrow{font-family:var(--cond);font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.framework-panel{background:#fff;border:1px solid var(--light);padding:40px;text-align:left}
+.framework-h{font-family:var(--display);font-style:italic;font-weight:700;font-size:28px;color:var(--ink);margin-bottom:24px}
+
+/* 4-quadrant diagram */
+.quadrants{position:relative;width:100%;height:380px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;border:1px solid var(--light);background:var(--cream)}
+.qcell{padding:24px;display:flex;flex-direction:column;justify-content:center;border:1px solid var(--light)}
+.qcell.tr{border-color:var(--crimson);border-width:2px}
+.q-name{font-family:var(--display);font-style:italic;font-weight:700;font-size:18px;color:var(--ink);margin-bottom:6px}
+.q-desc{font-family:var(--serif);font-size:13px;color:var(--muted);line-height:1.5}
+.qaxis-y{position:absolute;top:50%;left:-30px;transform:translateY(-50%) rotate(-90deg);font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--muted);white-space:nowrap}
+.qaxis-x{position:absolute;bottom:-26px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--muted)}
+
+/* Funnel diagram */
+.funnel{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.funnel-row{display:grid;grid-template-columns:120px 1fr 100px 100px;gap:14px;align-items:center;padding:8px 12px;font-family:var(--cond);font-size:13px;letter-spacing:.05em;text-transform:uppercase}
+.funnel-row .stage{color:var(--ink);font-weight:700}
+.funnel-row .bar{height:12px;background:var(--light)}
+.funnel-row .bar-inner{height:100%;background:var(--ink)}
+.funnel-row .num-fc{color:var(--muted);font-family:var(--mono);text-align:right}
+.funnel-row .num-ac{color:var(--crimson);font-family:var(--mono);font-weight:700;text-align:right}
+.funnel-caption{font-family:var(--display);font-style:italic;font-weight:700;color:var(--crimson);font-size:18px;margin-top:14px;text-align:center}
+
+/* Self-assessment */
+.assess-q{font-family:var(--display);font-style:italic;font-weight:700;font-size:36px;color:var(--ink);margin-bottom:32px;max-width:900px;line-height:1.3}
+.assess-prompts{font-family:var(--serif);font-style:italic;font-size:18px;color:var(--ink);max-width:700px;text-align:left}
+.assess-prompts p{margin-bottom:14px}
+
+/* Reality interlude (Caveat) */
+.caveat-line{font-family:var(--hand);color:var(--crimson);font-size:clamp(36px,4vw,52px);line-height:1.4;transform:rotate(-1deg);max-width:1100px}
+
+/* Curriculum diagram (slide 14) */
+.curr-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;max-width:1100px;width:100%}
+.curr-col{padding:32px 24px;background:#fff;border:1px solid var(--light);text-align:left}
+.curr-col-h{font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--ink);margin-bottom:16px}
+.curr-list{font-family:var(--serif);font-size:14px;color:var(--ink);line-height:1.7;list-style:none}
+.curr-tag{font-family:var(--mono);font-size:13px;color:var(--muted);letter-spacing:.1em;margin-top:32px;text-align:center;width:100%}
+
+/* Outcome proof (slide 15) */
+.proof-stack{max-width:900px;text-align:left;font-family:var(--serif);font-size:18px;color:var(--ink);line-height:1.7}
+.proof-stack h3{font-family:var(--cond);font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-top:20px;margin-bottom:10px}
+.proof-stack h3:first-child{margin-top:0}
+.proof-stack em{font-style:italic;color:var(--ink)}
+
+/* Offer slide (crimson) */
+.slide-offer{background:var(--crimson);color:#fff}
+.offer-eyebrow{font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:24px}
+.offer-h{font-family:var(--display);font-style:italic;font-weight:700;font-size:clamp(40px,5vw,64px);color:#fff;margin-bottom:24px;line-height:1.1}
+.offer-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:900px;width:100%;margin:24px 0;text-align:left}
+.offer-tier{padding:24px;border:1px solid rgba(255,255,255,.2)}
+.offer-tier-name{font-family:var(--cond);font-size:14px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:8px}
+.offer-tier-price{font-family:var(--display);font-style:italic;font-weight:700;font-size:36px;color:#fff;margin-bottom:8px}
+.offer-tier-meta{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.6);letter-spacing:.1em}
+.offer-cta{display:inline-block;font-family:var(--cond);font-size:14px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#fff;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite;padding:18px 44px;text-decoration:none;margin-top:24px}
+.offer-trail{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.5);margin-top:14px;letter-spacing:.05em}
+
+/* Disqualification */
+.disq-zone{max-width:900px;text-align:left;font-family:var(--serif);font-style:italic;font-size:18px;color:var(--ink);line-height:1.7}
+.disq-h{font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;font-style:normal}
+.disq-zone p{margin-bottom:12px}
+.disq-zone p.close{margin-top:24px;font-style:normal;color:var(--ink)}
+
+/* Q&A slide */
+.qa-zone{max-width:1100px;text-align:center}
+.qa-eyebrow{font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:96px}
+.qa-camera{width:320px;height:320px;border:1px dashed var(--light);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase;margin:0 auto}
+.qa-trail{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.1em;margin-top:48px}
+
+/* Close slide */
+.close-mark{font-family:var(--display);font-style:italic;font-weight:900;font-size:clamp(96px,16vw,200px);color:var(--ink);line-height:.9}
+.close-tagline{font-family:var(--mono);font-size:14px;font-weight:400;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:32px}
+
+/* Partner intro slot */
+.intro-zone{max-width:900px;text-align:center}
+.intro-h{font-family:var(--display);font-style:italic;font-weight:700;font-size:48px;color:var(--ink);margin-bottom:14px}
+.intro-cap{font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--crimson);margin-bottom:48px}
+.intro-script{font-family:var(--serif);font-size:16px;color:var(--ink);line-height:1.7;text-align:left;background:#fff;padding:32px;border:1px solid var(--light);max-width:680px;margin:0 auto}
+.intro-script p{margin-bottom:14px}
+.intro-script p:last-child{margin-bottom:0}
+</style>
+</head>
+<body>
+
+<div class="hud">
+  <span><span id="hud-num">01</span> / 19</span>
+  <span class="hud-status" id="hud-status">LOCKED</span>
+</div>
+<div class="hint">click or → to advance · ← back · esc exit</div>
+
+<div class="deck" id="deck">
+
+  <!-- Slide 01 — Title -->
+  <section class="slide slide-active slide-title" data-status="locked">
+    <div class="title-left" data-numeral="09">
+      <div class="title-eyebrow">AESDR · WORKSHOP · [PARTNER_SLUG]</div>
+      <h1 class="title-h"><em>What good actually looks like in your first two years.</em></h1>
+    </div>
+    <div class="title-right">
+      <div class="title-mark">AESDR</div>
+      <div class="title-host">HOSTED BY [HOST_FIRST_NAME] [HOST_LAST_NAME]</div>
+      <div class="title-date">[YYYY-MM-DD] · [HH:MM] [TZ]</div>
+      <div class="ambient-line"></div>
+    </div>
+  </section>
+
+  <!-- Slide 02 — Partner intro -->
+  <section class="slide" data-status="partner">
+    <div class="intro-zone">
+      <div class="intro-cap">2 MINUTES MAX · PARTNER AD-LIB FROM SCRIPT</div>
+      <h2 class="intro-h">Welcome — [PARTNER_NAME] hosting AESDR.</h2>
+      <div class="intro-script">
+        <p><em>"Hi everyone — thanks for being here. I want to introduce [HOST_FIRST_NAME] and AESDR briefly, then I'm going to step out of the way."</em></p>
+        <p><em>"I came across AESDR because [partner inserts their actual reason — 1-2 sentences]. It's the only sales-training resource I've seen built specifically for the part of the role where you're trying to figure out what good actually looks like and nobody's telling you."</em></p>
+        <p><em>"Three quick rules: drop your questions in the chat — [HOST_FIRST_NAME] will get to them at the end. The replay is 72 hours. There's an offer at the close that's specific to this group. Over to you, [HOST_FIRST_NAME]."</em></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 03 — Brand opener -->
+  <section class="slide" data-status="locked">
+    <div class="opener-stack">
+      <p><em>Every month, they reset your number to zero.</em></p>
+      <p><em>You are not building a career. You are surviving one.</em></p>
+      <p><em>Most of what you've been told about how to do this job was written by someone who hasn't carried a bag in a decade.</em></p>
+    </div>
+    <div class="ghost-num">01</div>
+  </section>
+
+  <!-- Slide 04 — Who-this-is-for / not-for -->
+  <section class="slide" data-status="locked">
+    <div class="fornot-grid">
+      <div>
+        <div class="fornot-h fornot-h-yes">WHO THIS IS FOR</div>
+        <ul class="fornot-list">
+          <li>First- or second-year SDRs who haven't been told what good looks like.</li>
+          <li>SDRs aiming for AE who suspect "promotion in 12" was a placeholder.</li>
+          <li>First-time AEs in startup SaaS who know activity but not judgment.</li>
+          <li>Career-switchers in their first SaaS sales role.</li>
+          <li>Managers who want their juniors to ramp on something other than vibes.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="fornot-h fornot-h-no">WHO THIS IS NOT FOR</div>
+        <ul class="fornot-list">
+          <li>Sales veterans 8+ years in. The first five lessons will bore you.</li>
+          <li>Anyone looking for motivational content. The internet has a surplus.</li>
+          <li>Anyone who wants a LinkedIn-friendly badge. We don't issue those.</li>
+          <li>Anyone whose primary distribution is "rise and grind" energy. We're not the room.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 05 — Three outcomes -->
+  <section class="slide" data-status="locked">
+    <div class="outcomes-stack">
+      <div class="out">
+        <div class="out-num">01</div>
+        <div class="out-body"><em>You will leave with a definition of "good" you can use Monday morning — not a feeling, an operating standard.</em></div>
+      </div>
+      <div class="out">
+        <div class="out-num">02</div>
+        <div class="out-body"><em>You will leave knowing the three judgment moves that separate the rep who survives ramp from the rep who doesn't.</em></div>
+      </div>
+      <div class="out">
+        <div class="out-num">03</div>
+        <div class="out-body"><em>You will leave with one specific change you'll make in your next five calls. Not a mindset. A move.</em></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 06 — Concept 1 title -->
+  <section class="slide slide-title" data-status="locked">
+    <div class="title-left" data-numeral="01">
+      <div class="title-eyebrow">CONCEPT 01</div>
+      <h2 class="title-h"><em>What good actually looks like.</em></h2>
+    </div>
+    <div class="title-right"></div>
+  </section>
+
+  <!-- Slide 07 — Concept 1 narration (allusive, no diagram) -->
+  <section class="slide" data-status="locked">
+    <div style="max-width:720px;text-align:center">
+      <p style="font-family:var(--display);font-style:italic;font-weight:400;font-size:32px;color:var(--muted);line-height:1.4;margin-bottom:32px">What they tell you good looks like.</p>
+      <p style="font-family:var(--display);font-style:italic;font-weight:400;font-size:32px;color:var(--ink);line-height:1.4;margin-bottom:32px">What it actually looks like.</p>
+      <p style="font-family:var(--display);font-style:italic;font-weight:700;font-size:32px;color:var(--crimson);line-height:1.4;margin-bottom:48px">What you'd see if anyone showed you.</p>
+      <p style="font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)">12 LESSONS · 36 UNITS · ONE OPERATING STANDARD</p>
+    </div>
+  </section>
+
+  <!-- Slide 08 — Self-assessment 1 -->
+  <section class="slide" data-status="locked">
+    <h2 class="assess-q"><em>When was the last time someone showed you what good actually looks like?</em></h2>
+    <div class="assess-prompts">
+      <p><em>— Last week? (Then they're a keeper. Most reps don't have one.)</em></p>
+      <p><em>— Last quarter? (You remember it. That's the tell.)</em></p>
+      <p><em>— You're still waiting? (You're not the only one.)</em></p>
+    </div>
+  </section>
+
+  <!-- Slide 09 — Reality interlude 1 (canon §3.2 line) -->
+  <section class="slide" data-status="adlib">
+    <p class="caveat-line">I have a degree. From a university. With a campus. And my job is to get hung up on 97 times a day.</p>
+  </section>
+
+  <!-- Slide 10 — Concept 2 title -->
+  <section class="slide slide-title" data-status="locked">
+    <div class="title-left" data-numeral="02">
+      <div class="title-eyebrow">CONCEPT 02</div>
+      <h2 class="title-h"><em>What you do when no one's watching.</em></h2>
+    </div>
+    <div class="title-right"></div>
+  </section>
+
+  <!-- Slide 11 — Concept 2 narration (allusive, no framework) -->
+  <section class="slide" data-status="locked">
+    <div style="max-width:720px;text-align:center">
+      <p style="font-family:var(--display);font-style:italic;font-weight:400;font-size:28px;color:var(--ink);line-height:1.4;margin-bottom:32px">Most of what determines whether you stay in this role for ten years has nothing to do with the calls you make on the calls. It has to do with what you do in the eighteen hours after.</p>
+      <p style="font-family:var(--serif);font-style:italic;font-size:18px;color:var(--muted);line-height:1.7;max-width:620px;margin:0 auto 48px">The drinking culture you didn't sign up for. The relationships you're trying to keep. The home office that becomes the entire house. The financial discipline nobody teaches you. The version of yourself this job builds whether you want it or not.</p>
+      <p style="font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)">THE OPERATING MANUAL — INCLUDING THE PARTS ABOUT YOU</p>
+    </div>
+  </section>
+
+  <!-- Slide 12 — Self-assessment 2 -->
+  <section class="slide" data-status="locked">
+    <h2 class="assess-q"><em>What's the part of this job you don't talk about with your manager?</em></h2>
+    <div class="assess-prompts">
+      <p><em>— The drinking? (You're not weird for asking.)</em></p>
+      <p><em>— The relationships you're losing? (You're also not weird.)</em></p>
+      <p><em>— The version of yourself this role is building? (You should ask sooner than later.)</em></p>
+      <p><em>— Something we didn't list? (Drop it in chat. Real chat, not LinkedIn chat.)</em></p>
+    </div>
+  </section>
+
+  <!-- Slide 13 — Reality interlude 2 (canon §3.2 line) -->
+  <section class="slide" data-status="adlib">
+    <p class="caveat-line">LinkedIn told me to "lead with value on every call." So I told a prospect about a really good taco place near their office. Very detailed review. Salsa rankings. They did not buy. But the tacos are genuinely excellent. I stand by the recommendation.</p>
+  </section>
+
+  <!-- Slide 14 — The catalog (4-of-12 teaser) -->
+  <section class="slide" data-status="locked">
+    <div style="max-width:1080px;width:100%">
+      <div style="text-align:center;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:32px">CARD CATALOG · SHELF 12 · DRAWER A · EST. 2026</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <!-- Card L08 -->
+        <div style="padding:24px;background:#fff;border:1px solid var(--light);text-align:left;position:relative">
+          <div style="font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:8px">658.85 / L08</div>
+          <h3 style="font-family:var(--display);font-style:italic;font-weight:700;font-size:22px;color:var(--ink);margin-bottom:10px">The 30% Rule</h3>
+          <p style="font-family:var(--display);font-style:italic;font-size:16px;color:var(--ink);line-height:1.4;margin-bottom:14px">"What's your actual close rate? Not the one you told your VP."</p>
+          <p style="font-family:var(--hand);font-size:18px;color:var(--crimson);transform:rotate(-1deg);margin-top:12px;line-height:1">— do the math honestly.</p>
+          <div style="position:absolute;top:20px;right:20px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ink);padding:3px 7px;border:1px solid var(--ink);text-transform:uppercase">Mon 08</div>
+        </div>
+        <!-- Card L10 -->
+        <div style="padding:24px;background:#fff;border:1px solid var(--light);text-align:left;position:relative">
+          <div style="font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:8px">658.85 / L10</div>
+          <h3 style="font-family:var(--display);font-style:italic;font-weight:700;font-size:22px;color:var(--ink);margin-bottom:10px">Breaking Down the Commission Myth</h3>
+          <p style="font-family:var(--display);font-style:italic;font-size:16px;color:var(--ink);line-height:1.4;margin-bottom:14px">"Can you survive three bad months in a row? Mentally? Financially?"</p>
+          <p style="font-family:var(--hand);font-size:18px;color:var(--crimson);transform:rotate(-1deg);margin-top:12px;line-height:1">— 3 months runway min.</p>
+          <div style="position:absolute;top:20px;right:20px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ink);padding:3px 7px;border:1px solid var(--ink);text-transform:uppercase">Wed 10</div>
+        </div>
+        <!-- Card L11 -->
+        <div style="padding:24px;background:#fff;border:1px solid var(--light);text-align:left;position:relative">
+          <div style="font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:8px">658.85 / L11</div>
+          <h3 style="font-family:var(--display);font-style:italic;font-weight:700;font-size:22px;color:var(--ink);margin-bottom:10px">Sober Selling</h3>
+          <p style="font-family:var(--display);font-style:italic;font-size:16px;color:var(--ink);line-height:1.4;margin-bottom:14px">"What if the problem is bigger than your process — what if it's what you're doing when no one's watching?"</p>
+          <p style="font-family:var(--hand);font-size:18px;color:var(--crimson);transform:rotate(-1deg);margin-top:12px;line-height:1">— 21+. not metaphor.</p>
+          <div style="position:absolute;top:20px;right:20px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ink);padding:3px 7px;border:1px solid var(--ink);text-transform:uppercase">Thu 11</div>
+        </div>
+        <!-- Card L12 -->
+        <div style="padding:24px;background:#fff;border:1px solid var(--light);text-align:left;position:relative">
+          <div style="font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:8px">658.85 / L12</div>
+          <h3 style="font-family:var(--display);font-style:italic;font-weight:700;font-size:22px;color:var(--ink);margin-bottom:10px">Leveling Up SaaS Relationships</h3>
+          <p style="font-family:var(--display);font-style:italic;font-size:16px;color:var(--ink);line-height:1.4;margin-bottom:14px">"Who would vouch for you if you changed companies tomorrow?"</p>
+          <p style="font-family:var(--hand);font-size:18px;color:var(--crimson);transform:rotate(-1deg);margin-top:12px;line-height:1">— name 5.</p>
+          <div style="position:absolute;top:20px;right:20px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ink);padding:3px 7px;border:1px solid var(--ink);text-transform:uppercase">Fri 12</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:28px;font-family:var(--mono);font-size:13px;color:var(--muted);letter-spacing:.05em">4 OF 12 LESSONS SHOWN · 36 UNITS TOTAL · CHECK ONE OUT</div>
+      <div style="text-align:center;margin-top:14px;font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase">12 LESSONS · 5 TOOLS · 1 NEW YOU</div>
+    </div>
+  </section>
+
+  <!-- Slide 15 — Outcome proof -->
+  <section class="slide" data-status="locked">
+    <div class="proof-stack">
+      <h3>WHAT YOU'VE JUST SPENT 50 MINUTES ON:</h3>
+      <p>— One concept-space named: what good actually looks like.</p>
+      <p>— A second concept-space named: what you do when no one's watching.</p>
+      <p>— Two self-assessments — including the one we don't talk about with managers.</p>
+      <h3>WHAT THAT MEANS:</h3>
+      <p><em>You now have a lens, not a framework. AESDR is what happens when the lens becomes a curriculum — twelve lessons, thirty-six units, including the ones you just saw teased.</em></p>
+      <h3>WHAT'S ON THE OTHER SIDE OF THIS SLIDE:</h3>
+      <p><em>The offer. Then 15 minutes of Q&A. Then we close.</em></p>
+    </div>
+  </section>
+
+  <!-- Slide 16 — Offer -->
+  <section class="slide slide-offer" data-status="locked">
+    <div class="offer-eyebrow">AESDR · OFFER · PILOT PRICING</div>
+    <h2 class="offer-h"><em>The 12-lesson program. Lifetime access. 14-day refund.</em></h2>
+    <div class="offer-tiers">
+      <div class="offer-tier">
+        <div class="offer-tier-name">SDR</div>
+        <div class="offer-tier-price">$249</div>
+        <div class="offer-tier-meta">12 LESSONS · 5 TOOLS · UNTAMED · LIFETIME</div>
+      </div>
+      <div class="offer-tier">
+        <div class="offer-tier-name">AE</div>
+        <div class="offer-tier-price">$299</div>
+        <div class="offer-tier-meta">SDR + AE-TRACK SUPPLEMENTARY</div>
+      </div>
+      <div class="offer-tier">
+        <div class="offer-tier-name">TEAM (10 SEATS)</div>
+        <div class="offer-tier-price">$1,499</div>
+        <div class="offer-tier-meta">10 SEATS · DASHBOARD · NO OVERAGE</div>
+      </div>
+    </div>
+    <a href="#" class="offer-cta">Enroll → [PILOT_CODE] · saves you $[DISCOUNT]</a>
+    <div class="offer-trail">aesdr.com/[PARTNER_SLUG]/enroll · code [PILOT_CODE] · closes [CODE_EXPIRY]</div>
+  </section>
+
+  <!-- Slide 17 — Honest disqualification -->
+  <section class="slide" data-status="locked">
+    <div class="disq-zone">
+      <div class="disq-h">BEFORE THE Q&A — WHO SHOULD NOT BUY</div>
+      <p><em>— If you're 8+ years in sales and aren't open to a re-look at fundamentals, the first five lessons will bore you.</em></p>
+      <p><em>— If you want motivational content, this isn't that. Save your money for content that's structured to entertain.</em></p>
+      <p><em>— If you're not in the role yet — if you're trying to break in — this isn't a "how to get into sales" course. We assume you have the seat.</em></p>
+      <p><em>— If you've enrolled in three programs in the last year and finished none of them, the data point isn't free content vs paid; it's whether you're going to do the work this time.</em></p>
+      <p class="close">14-day refund, no questions, no hassle. The pilot price closes [CODE_EXPIRY]. After that, list price.</p>
+    </div>
+  </section>
+
+  <!-- Slide 18 — Q&A -->
+  <section class="slide" data-status="adlib">
+    <div class="qa-zone">
+      <div class="qa-eyebrow">QUESTIONS · 10–15 MIN</div>
+      <div class="qa-camera">[ HOST CAMERA ]</div>
+      <div class="qa-trail">drop questions in chat</div>
+    </div>
+  </section>
+
+  <!-- Slide 19 — Close -->
+  <section class="slide" data-status="locked">
+    <div class="close-mark"><em>AESDR</em></div>
+    <div class="close-tagline">THE OPERATING MANUAL, NOT THE MOTIVATION ENGINE</div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const hudNum = document.getElementById('hud-num');
+  const hudStatus = document.getElementById('hud-status');
+  let idx = 0;
+
+  function update(){
+    slides.forEach((s,i)=>s.classList.toggle('slide-active', i===idx));
+    hudNum.textContent = String(idx+1).padStart(2,'0');
+    const status = slides[idx].dataset.status;
+    hudStatus.textContent = status === 'locked' ? 'LOCKED VERBATIM' : status === 'adlib' ? 'AD-LIB ZONE' : 'PARTNER AD-LIB';
+    hudStatus.className = 'hud-status ' + status;
+  }
+
+  function next(){ if(idx < slides.length-1){ idx++; update(); } }
+  function prev(){ if(idx > 0){ idx--; update(); } }
+
+  document.body.addEventListener('click', (e) => {
+    // Don't navigate if clicking a link inside a slide
+    if (e.target.tagName === 'A') return;
+    next();
+  });
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+    if(e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+  });
+
+  update();
+})();
+</script>
+</body>
+</html>
