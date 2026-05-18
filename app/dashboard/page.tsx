@@ -15,6 +15,7 @@ import { LESSONS } from "@/utils/progress/types";
 import type { LessonProgressSummary } from "@/utils/progress/types";
 import { iconForLesson } from "@/utils/brand/lesson-icons";
 import { poseForLesson } from "@/utils/brand/lesson-poses";
+import { readDemoSession } from "@/lib/demo-mode-server";
 
 export const metadata: Metadata = {
   title: "Your Lessons | AESDR",
@@ -40,42 +41,78 @@ const TEASERS: Record<string, { lead: string; kicker: string }> = {
 
 export default async function Dashboard() {
   const supabase = await createClient();
+  const demoSession = await readDemoSession();
+
   const {
-    data: { user },
+    data: { user: realUser },
   } = await supabase.auth.getUser();
 
-  // Force password change for users with temp passwords
-  if (user?.user_metadata?.needs_password_change) {
+  // Demo mode short-circuits auth + DB queries entirely. Use a synthetic
+  // user shape that satisfies the downstream JSX without touching Supabase.
+  const user = demoSession
+    ? {
+        id: demoSession.user.id,
+        email: demoSession.user.email,
+        user_metadata: {
+          role: demoSession.user.role,
+          full_name: demoSession.user.full_name,
+        },
+      }
+    : realUser;
+
+  // Force password change for users with temp passwords (skipped in demo)
+  if (!demoSession && realUser?.user_metadata?.needs_password_change) {
     redirect("/account/set-password");
   }
 
-  // Force role selection if not yet chosen
-  if (user && !user.user_metadata?.role) {
+  // Force role selection if not yet chosen (skipped in demo)
+  if (!demoSession && realUser && !realUser.user_metadata?.role) {
     redirect("/account/select-role");
   }
 
-  // Purchase gate — bypass for founder (GhostButton cookie)
+  // Purchase gate — bypass for founder (GhostButton cookie) and demo
   const cookieStore = await cookies();
   const hasBypass = cookieStore.get("aesdr_bypass")?.value === "1";
 
   // Parallelize purchase-access check, course progress, and reveal pick.
-  // These are independent queries that all depend only on user.id.
-  const [hasAccess, progressRes, pickRes] = await Promise.all([
-    user && !hasBypass ? verifyPaidAccess(supabase, user) : Promise.resolve(true),
-    user
-      ? supabase
-          .from("course_progress")
-          .select("lesson_id, is_completed, last_screen")
-          .eq("user_id", user.id)
-      : Promise.resolve({ data: null }),
-    user
-      ? supabase
-          .from("reveal_picks")
-          .select("chosen_artifact")
-          .eq("user_id", user.id)
-          .maybeSingle()
-      : Promise.resolve({ data: null }),
-  ]);
+  // In demo mode all of these resolve to synthetic mid-course state.
+  const [hasAccess, progressRes, pickRes] = demoSession
+    ? [
+        true as boolean,
+        {
+          data: [
+            ...demoSession.lessonsCompleted.map((lid) => ({
+              lesson_id: lid,
+              is_completed: true,
+              last_screen: 999,
+            })),
+            {
+              lesson_id: demoSession.currentLessonId,
+              is_completed: false,
+              last_screen: demoSession.currentLessonUnitsCompleted,
+            },
+          ],
+        },
+        { data: null as { chosen_artifact?: string } | null },
+      ]
+    : await Promise.all([
+        realUser && !hasBypass
+          ? verifyPaidAccess(supabase, realUser)
+          : Promise.resolve(true),
+        realUser
+          ? supabase
+              .from("course_progress")
+              .select("lesson_id, is_completed, last_screen")
+              .eq("user_id", realUser.id)
+          : Promise.resolve({ data: null }),
+        realUser
+          ? supabase
+              .from("reveal_picks")
+              .select("chosen_artifact")
+              .eq("user_id", realUser.id)
+              .maybeSingle()
+          : Promise.resolve({ data: null }),
+      ]);
 
   if (!hasAccess) {
     redirect("/login?reason=no_purchase");
@@ -84,7 +121,8 @@ export default async function Dashboard() {
   const userRole = user?.user_metadata?.role as string | undefined;
   // Admins bypass the sequential-lesson gate — every lesson is visible
   // and clickable. Founder-level access for QA + content review.
-  const isAdmin = isAdminEmail(user?.email);
+  // Demo sessions also bypass — let recordings move freely between lessons.
+  const isAdmin = isAdminEmail(user?.email) || !!demoSession;
 
   const progressMap: Record<string, LessonProgressSummary> = {};
   if (progressRes.data) {
@@ -100,12 +138,14 @@ export default async function Dashboard() {
     (allComplete && (pickRes.data as { chosen_artifact?: string } | null)?.chosen_artifact) || null;
 
   let sealedUnlocked = false;
-  if (user && allComplete && revealPick) {
+  if (demoSession) {
+    sealedUnlocked = demoSession.revealUnlocked;
+  } else if (realUser && allComplete && revealPick) {
     const sealedType = revealPick === "playbill" ? "redline" : "playbill";
     const { data: unlock } = await supabase
       .from("artifact_unlocks")
       .select("id")
-      .eq("user_id", user.id)
+      .eq("user_id", realUser.id)
       .eq("artifact_type", sealedType)
       .maybeSingle();
     sealedUnlocked = !!unlock;

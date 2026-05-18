@@ -16,8 +16,11 @@ const IRIS_GRADIENT =
 function SuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
-  const [purchase, setPurchase] = useState<PurchaseInfo | null>(null);
-  const [polling, setPolling] = useState(true);
+  const isDemo = searchParams.get('demo') === '1';
+  const [purchase, setPurchase] = useState<PurchaseInfo | null>(
+    isDemo ? { confirmed: true, name: 'Alex Rivera', plan: 'SDR' } : null,
+  );
+  const [polling, setPolling] = useState(!isDemo);
 
   // Derive a stable 3-digit "member number" from useId — same value on
   // server and client, unique per page render, no Math.random impurity.
@@ -54,6 +57,10 @@ function SuccessContent() {
   }, [sessionId]);
 
   useEffect(() => {
+    // Demo mode: skip Reddit pixel + Stripe status polling. The page is
+    // already in its "confirmed" render state via the initial useState.
+    if (isDemo) return;
+
     // Fire Reddit pixel
     const w = window as unknown as {
       rdt?: (event: string, action: string) => void;
@@ -80,7 +87,7 @@ function SuccessContent() {
       clearInterval(interval);
       clearTimeout(timeout);
     };
-  }, [checkPurchase, polling]);
+  }, [checkPurchase, polling, isDemo]);
 
   const displayName = purchase?.name || null;
   const confirmed = purchase?.confirmed ?? false;

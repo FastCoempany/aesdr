@@ -1,11 +1,43 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { isAdminEmail } from "@/lib/admin";
+import { DEMO_ACTIVATION_CODE, DEMO_COOKIE, DEMO_COOKIE_TTL_SECONDS, isDemoCookieSet, isDemoModeAllowed } from "@/lib/demo-mode";
 
 const PUBLIC_PATHS = ["/", "/terms", "/privacy", "/refund-policy", "/about", "/contact", "/success", "/purchase/cancel", "/login", "/signup", "/syllabus", "/coming-soon", "/mobile"];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // ── Demo-mode activation: ?demo=<code> sets the demo cookie and strips
+  // the param. Hard-disabled on production main (see lib/demo-mode.ts).
+  // We process this BEFORE auth so demo sessions never thrash the auth
+  // refresh flow.
+  const demoParam = request.nextUrl.searchParams.get("demo");
+  if (demoParam === DEMO_ACTIVATION_CODE && isDemoModeAllowed()) {
+    const cleanUrl = request.nextUrl.clone();
+    cleanUrl.searchParams.delete("demo");
+    const res = NextResponse.redirect(cleanUrl, 302);
+    res.cookies.set(DEMO_COOKIE, "1", {
+      maxAge: DEMO_COOKIE_TTL_SECONDS,
+      httpOnly: false, // readable client-side too (for DemoBadge component)
+      sameSite: "lax",
+      path: "/",
+    });
+    return res;
+  }
+
+  const demoActive = isDemoCookieSet(request.cookies.get(DEMO_COOKIE)?.value);
+
+  // ── Demo-mode auth-page redirect: clicking "Sign in" / "Sign up" while
+  // a demo session is active should land on /dashboard, not show the real
+  // login form. Mirrors the experience a genuinely authenticated user
+  // would have.
+  if (demoActive && (pathname === "/login" || pathname === "/signup")) {
+    const dashUrl = request.nextUrl.clone();
+    dashUrl.pathname = "/dashboard";
+    dashUrl.search = "";
+    return NextResponse.redirect(dashUrl, 302);
+  }
 
   // --- Supabase session refresh (required for server components to read auth) ---
   // We need the user-resolution to also gate admin bypass below, so this has
@@ -77,10 +109,11 @@ export async function proxy(request: NextRequest) {
   //
   // Desktop visitors land on /coming-soon (password gate). Mobile visitors
   // land on /mobile (visuals-only, no password — mobile can't use the
-  // ghost-button bypass anyway). Admins bypass entirely.
+  // ghost-button bypass anyway). Admins bypass entirely. Demo sessions
+  // also bypass entirely.
   const comingSoon = process.env.COMING_SOON === "true";
   const hasCsBypass = !!request.cookies.get("aesdr_cs_bypass");
-  if (comingSoon && !hasCsBypass && !isAdmin && pathname !== "/coming-soon" && pathname !== "/mobile") {
+  if (comingSoon && !hasCsBypass && !isAdmin && !demoActive && pathname !== "/coming-soon" && pathname !== "/mobile") {
     const ua = request.headers.get("user-agent") || "";
     const isMobile = /Mobi|Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(ua);
     const url = request.nextUrl.clone();
@@ -100,13 +133,19 @@ export async function proxy(request: NextRequest) {
   // Artifact pages handle their own auth gates internally and accept
   // ?preview=1 for partner-side previews of the end-of-course
   // Programme/Manuscript artifacts.
-  if (pathname.startsWith("/api/") || pathname.startsWith("/dashboard") || pathname.startsWith("/course") || pathname.startsWith("/tools/") || pathname.startsWith("/account") || pathname.startsWith("/auth/") || pathname.startsWith("/partners") || pathname.startsWith("/admin") || pathname.startsWith("/artifacts/") || pathname === "/welcome") {
+  if (pathname.startsWith("/api/") || pathname.startsWith("/dashboard") || pathname.startsWith("/course") || pathname.startsWith("/tools/") || pathname.startsWith("/account") || pathname.startsWith("/auth/") || pathname.startsWith("/partners") || pathname.startsWith("/admin") || pathname.startsWith("/artifacts/") || pathname === "/welcome" || pathname === "/reveal") {
     return supabaseResponse;
   }
 
   // Admins bypass the lock for any route — founder needs to see the full
   // app in production, including not-yet-allowlisted routes.
   if (isAdmin) {
+    return supabaseResponse;
+  }
+
+  // Demo sessions bypass the route-access lock — they need to navigate the
+  // full app to record demos.
+  if (demoActive) {
     return supabaseResponse;
   }
 
