@@ -5,7 +5,7 @@ import { SubLogoTiny } from "./SubLogo";
 /**
  * Subsidiary footer.
  *
- * Holds the tiny "A·OL" monogram, the "Powered by aesdr.com" truthful-
+ * Holds the tiny "A·T" monogram, the "Powered by aesdr.com" truthful-
  * positioning line, and a small footer link cluster. The leponeus mascot
  * appears here only — as a 28px monogram, never larger — per canon §3.5.
  */
@@ -15,6 +15,7 @@ const FOOTER_LINKS = [
   { href: "/teams/partners", label: "Partners" },
   { href: "/teams/pricing", label: "Pricing" },
   { href: "/teams/integrations", label: "Integrations" },
+  { href: "/teams/downloads", label: "Downloads" },
   { href: "/", label: "← aesdr.com" },
 ] as const;
 
@@ -35,7 +36,7 @@ export default function TeamsFooter() {
               draggable={false}
             />
             <span>
-              AESDR / Operating Layer is built on{" "}
+              AESDR / for Teams is built on{" "}
               <Link href="/" style={{ color: "var(--ink)", textDecoration: "underline" }}>
                 aesdr.com
               </Link>
