@@ -218,6 +218,121 @@ function partnerApplicationHtml(p: PartnerApplicationPayload): string {
 </html>`;
 }
 
+// ─── Teams Inquiry Notification (internal, to founder) ───
+// Triggered from the /teams/contact server action when a B2B prospect
+// or channel partner submits the inquiry form. Routed to hello@aesdr.com
+// with subject prefix [/teams inquiry] for inbox triage.
+
+export type TeamsInquiryPayload = {
+  name: string;
+  email: string;
+  company: string;
+  role: string;
+  teamSize: string;
+  message: string;
+  source: string;
+  ipHash?: string | null;
+  userAgent?: string | null;
+  submittedAt: string;
+};
+
+export async function sendTeamsInquiryNotification(payload: TeamsInquiryPayload) {
+  const recipient = process.env.EMAIL_RECIPIENT || "hello@aesdr.com";
+  const from = process.env.EMAIL_FROM || FROM;
+  const subject = `[/teams inquiry] ${payload.role} from ${payload.company} (${payload.teamSize})`;
+  return safeSend(`teams-inquiry from ${payload.company}`, () =>
+    getResend().emails.send({
+      from,
+      to: recipient,
+      replyTo: payload.email,
+      subject,
+      html: teamsInquiryHtml(payload),
+      text: teamsInquiryText(payload),
+    })
+  );
+}
+
+function teamsInquiryText(p: TeamsInquiryPayload): string {
+  return [
+    `New /teams inquiry — ${p.company}`,
+    "",
+    `Name:        ${p.name}`,
+    `Email:       ${p.email}`,
+    `Company:     ${p.company}`,
+    `Role:        ${p.role}`,
+    `Team size:   ${p.teamSize}`,
+    `Source:      ${p.source}`,
+    `Submitted:   ${p.submittedAt}`,
+    `IP hash:     ${p.ipHash || "(none)"}`,
+    `User agent:  ${p.userAgent || "(none)"}`,
+    "",
+    "What brought them here:",
+    "---",
+    p.message || "(none provided)",
+    "---",
+    "",
+    `Reply directly to this email — Reply-To is set to ${p.email}.`,
+  ].join("\n");
+}
+
+function teamsInquiryHtml(p: TeamsInquiryPayload): string {
+  const row = (label: string, value: string) => `
+    <tr>
+      <td style="padding:8px 16px 8px 0;font-family:'SF Mono',Consolas,monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#6B6B6B;vertical-align:top;width:170px">${esc(label)}</td>
+      <td style="padding:8px 0;font-family:Georgia,'Source Serif 4',serif;font-size:15px;color:#1A1A1A;vertical-align:top;line-height:1.6;word-break:break-word">${value}</td>
+    </tr>`;
+
+  const emailHtml = `<a href="mailto:${esc(p.email)}" style="color:#8B1A1A;text-decoration:underline">${esc(p.email)}</a>`;
+
+  return `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Teams inquiry</title></head>
+<body style="margin:0;padding:0;background:#FAF7F2;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FAF7F2;padding:32px 16px;">
+  <tr><td align="center">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="640" style="max-width:640px;width:100%;background:#FFFFFF;border:1px solid #E8E4DF;">
+      <tr><td style="padding:28px 32px 8px 32px;">
+        <p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
+          AESDR &middot; /teams inquiry
+        </p>
+      </td></tr>
+      <tr><td style="padding:0 32px 4px 32px;">
+        <h1 style="margin:0;font-family:Georgia,'Playfair Display',serif;font-style:italic;font-weight:700;font-size:30px;line-height:1.15;color:#1A1A1A;">
+          ${esc(p.company)}
+        </h1>
+      </td></tr>
+      <tr><td style="padding:0 32px 24px 32px;">
+        <p style="margin:6px 0 0;font-family:Georgia,'Source Serif 4',serif;font-size:15px;line-height:1.6;color:#6B6B6B;font-style:italic;">
+          ${esc(p.role)} &middot; ${esc(p.teamSize)} &middot; via ${esc(p.source)}
+        </p>
+      </td></tr>
+      <tr><td style="padding:0 32px 24px 32px;border-top:1px solid #E8E4DF;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-top:8px">
+          ${row("Name", esc(p.name))}
+          ${row("Email", emailHtml)}
+          ${row("Submitted", esc(p.submittedAt))}
+          ${row("IP hash", esc(p.ipHash || "(none)"))}
+          ${row("User agent", esc(p.userAgent || "(none)"))}
+        </table>
+      </td></tr>
+      ${p.message ? `<tr><td style="padding:8px 32px 24px 32px;border-top:1px solid #E8E4DF;">
+        <p style="margin:16px 0 8px;font-family:'SF Mono',Consolas,monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#6B6B6B;">
+          What brought them here
+        </p>
+        <p style="margin:0;font-family:Georgia,'Source Serif 4',serif;font-size:15px;line-height:1.65;color:#1A1A1A;white-space:pre-wrap;">${esc(p.message)}</p>
+      </td></tr>` : ""}
+      <tr><td style="padding:0 32px 32px 32px;">
+        <p style="margin:0;font-family:Georgia,'Source Serif 4',serif;font-size:13px;line-height:1.6;color:#6B6B6B;font-style:italic;">
+          Reply directly to this email &mdash; Reply-To is set to ${emailHtml}.
+        </p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>`;
+}
+
 // ─── Welcome Email (immediate after purchase) ───
 
 export async function sendWelcomeEmail(to: string, name: string, tempPassword: string | null) {
