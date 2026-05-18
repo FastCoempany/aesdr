@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useCallback } from "react";
 
 /**
  * Coming-soon page.
@@ -19,11 +18,11 @@ import { useRouter } from "next/navigation";
  * lives in the API route. The cookie itself is now httpOnly — set by the
  * server response, no longer readable from `document.cookie`.
  *
- * Because the cookie is httpOnly, "do I already have bypass?" can't be
- * checked from client JS. proxy.ts handles that case: anyone with the
- * cookie already gets routed to `/` and never reaches this page when
- * COMING_SOON=true. Direct visits to /coming-soon while holding the
- * cookie still work (the page renders; user can ignore it or refresh).
+ * On successful bypass we do a HARD navigation via `window.location.href`,
+ * not `router.replace()`. Next.js soft-navigation can use cached RSC
+ * payloads that don't reflect the new cookie, leaving the page blank /
+ * dark when the component returns null. The hard nav forces a fresh
+ * server render with the cookie attached.
  */
 
 const KEYBOARD_BUFFER_LIMIT = 8;
@@ -42,20 +41,17 @@ async function submitBypass(code: string): Promise<boolean> {
 }
 
 export default function ComingSoonPage() {
-  const router = useRouter();
-  const [visible, setVisible] = useState(true);
-
-  const completeBypass = useCallback(
-    async (code: string) => {
-      const ok = await submitBypass(code);
-      if (ok) {
-        setVisible(false);
-        router.replace("/");
-      }
-      // Silent failure on bad code — keeps the gate opaque to passersby.
-    },
-    [router],
-  );
+  const completeBypass = useCallback(async (code: string) => {
+    const ok = await submitBypass(code);
+    if (ok) {
+      // Hard navigation: the just-set httpOnly cookie is included in the
+      // GET / request, the server sees it, COMING_SOON gate passes, page
+      // renders. router.replace() would soft-navigate and may use a cached
+      // RSC payload that doesn't reflect the cookie — leaving a blank page.
+      window.location.href = "/";
+    }
+    // Silent failure on bad code — keeps the gate opaque to passersby.
+  }, []);
 
   // Mechanism 1: keyboard shortcut. Buffer digits, then submit once 700ms
   // after the user stops typing. Submitting on every keystroke would burn
@@ -99,8 +95,6 @@ export default function ComingSoonPage() {
       if (submitTimer) clearTimeout(submitTimer);
     };
   }, [completeBypass]);
-
-  if (!visible) return null;
 
   function handleGhost() {
     const code = prompt("");
