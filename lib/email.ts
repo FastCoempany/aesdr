@@ -523,7 +523,7 @@ function welcomeHtml(name: string, email: string, loginUrl: string, tempPassword
                     </tr>
                   </table>
                   <p style="margin:20px 0 22px;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.7;color:rgba(255,255,255,0.92);">
-                    Real reps. Real deals. Real accountability. A private room where the work continues between lessons &mdash; no guru energy, no motivational noise.
+                    Real AEs and SDRs. Real deals. Real accountability. A private room where the work continues between lessons &mdash; no guru energy, no motivational noise.
                   </p>
                   <table role="presentation" cellpadding="0" cellspacing="0" border="0">
                     <tr>
@@ -739,7 +739,7 @@ function day3Html(name: string) {
   <p>Hey ${safeName},</p>
   <p>Day 3. If you've started Course 1 — nice. If you haven't, no guilt. Open it when you're ready.</p>
   <p><strong>One thing from Course 2 to keep in your back pocket:</strong></p>
-  <p>The "blame chain" is a pattern where everyone points fingers — reps blame their manager, managers blame marketing, and marketing blames the product. Nobody's fixing anything.</p>
+  <p>The "blame chain" is a pattern where everyone points fingers — AEs and SDRs blame their manager, managers blame marketing, and marketing blames the product. Nobody's fixing anything.</p>
   <p>Course 2 gives you a framework to break the chain — not by being a hero, but by asking the right questions in the right meetings.</p>
   <p><strong><a href="${SITE}/dashboard" style="color:#10B981">Continue where you left off →</a></strong></p>
   <p>— AESDR</p>
@@ -812,7 +812,7 @@ function abandon1hrHtml() {
   <p>If you're on the fence because of the money: the 14-day refund policy is real. No questions asked. Try it. If it doesn't help, get your money back.</p>
   <p><strong><a href="${SITE}/#pricing" style="color:#10B981">Complete Your Purchase →</a></strong></p>
   <p>— AESDR</p>
-  <p style="font-size:13px;color:#666"><em>P.S. — The first course covers surviving your first 90 days, including the manager types that make or break new reps. If that's not relevant to you right now, save your money. But if it is — you already know.</em></p>
+  <p style="font-size:13px;color:#666"><em>P.S. — The first course covers surviving your first 90 days, including the manager types that make or break new AEs and SDRs. If that's not relevant to you right now, save your money. But if it is — you already know.</em></p>
   ${footer()}
 </div>`;
 }
@@ -973,7 +973,7 @@ function reviewRequestHtml(name: string) {
   <p><strong>Quick ask — takes 30 seconds:</strong></p>
   <p>On a scale of 1–5, how useful was this course for your day-to-day work?</p>
   <p>Reply with a number, or reply with a one-sentence testimonial I can use on the site. Something like:</p>
-  <p style="padding:12px 16px;background:#f5f5f5;border-left:3px solid #10B981;margin:12px 0"><em>"AESDR helped me [specific thing]. I'd recommend it for [type of rep]."</em></p>
+  <p style="padding:12px 16px;background:#f5f5f5;border-left:3px solid #10B981;margin:12px 0"><em>"AESDR helped me [specific thing]. I'd recommend it for [type of AE/SDR]."</em></p>
   <p>Your first name and role are enough — no need to share your company if you don't want to.</p>
   <p>If you'd rate it 1–3, I want to hear what didn't work. Reply with what was missing or what felt off. I'd rather improve it than pretend everything's perfect.</p>
   <p>— AESDR</p>

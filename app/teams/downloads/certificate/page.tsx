@@ -15,7 +15,7 @@ export default function CertificatePage() {
           Completion certificate.
         </h1>
         <p className={styles.heroSubhead}>
-          Fill in the rep details on the left; preview updates live on the right.
+          Fill in the AE/SDR details on the left; preview updates live on the right.
           Print to PDF for distribution, or print directly to paper if your org
           still hands these out at all-hands.
         </p>
