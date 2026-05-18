@@ -2,8 +2,8 @@ import styles from "../../teams.module.css";
 import CertificateGenerator from "./CertificateGenerator";
 
 export const metadata = {
-  title: "Completion certificate — AESDR / Operating Layer",
-  description: "Generate a printable AESDR / Operating Layer completion certificate. Live preview, print to PDF.",
+  title: "Completion certificate — AESDR / for Teams",
+  description: "Generate a printable AESDR / for Teams completion certificate. Live preview, print to PDF.",
 };
 
 export default function CertificatePage() {

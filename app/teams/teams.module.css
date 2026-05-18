@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════
-   AESDR / Operating Layer — Subsidiary visual identity
+   AESDR / for Teams — Subsidiary visual identity
    Cream / Ink palette, iris-shimmer PROMOTED to primary accent.
-   See AESDR_OPERATING_LAYER_CANON.md §3 for the full spec.
+   See AESDR_TEAMS_CANON.md §3 for the full spec.
    ═══════════════════════════════════════════════════════════ */
 
 /* ── Page shell ── */
@@ -87,7 +87,7 @@
   font-weight: 400;
 }
 
-/* Tiny "A·OL" monogram — all-mono treatment */
+/* Tiny "A·T" monogram — all-mono treatment */
 .subLogoTinyMark {
   font-family: var(--cond);
   font-weight: 700;

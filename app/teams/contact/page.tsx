@@ -11,7 +11,7 @@ import ContactForm from "./ContactForm";
  */
 
 export const metadata = {
-  title: "Contact — AESDR / Operating Layer",
+  title: "Contact — AESDR / for Teams",
   description: "Tell us what you're trying to solve. We respond within 24 business hours.",
 };
 

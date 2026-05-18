@@ -4,13 +4,14 @@ import TeamsFooter from "./_components/TeamsFooter";
 import styles from "./teams.module.css";
 
 export const metadata: Metadata = {
-  title: "AESDR / Operating Layer — for sales orgs",
+  title: "AESDR / for Teams — sales onboarding for first- and second-year reps",
   description:
-    "The missing behavioral foundation for early-career sales orgs. Built on the rep-direct AESDR course — packaged for managers, enablement, RevOps, and channel partners.",
+    "The training your first- and second-year SDRs and AEs should already have. The same AESDR course junior reps pay for themselves — packaged for the orgs that hire them.",
   robots: { index: false, follow: false },
   openGraph: {
-    title: "AESDR / Operating Layer",
-    description: "The missing behavioral foundation for early-career sales orgs.",
+    title: "AESDR / for Teams",
+    description:
+      "The training your first- and second-year SDRs and AEs should already have.",
     type: "website",
   },
 };

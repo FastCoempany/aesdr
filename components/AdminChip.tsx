@@ -32,7 +32,7 @@ const QUICK_LINKS: QuickEntry[] = [
   { label: "Admin · Partner Kit", href: "/admin/partner-kit", note: "Tokens + audit log" },
   { label: "Apply Form (visitor view)", href: "/partners/apply" },
   { label: "Home", href: "/" },
-  { divider: true, label: "AESDR / Operating Layer" },
+  { divider: true, label: "AESDR / for Teams" },
   { label: "/teams · Landing", href: "/teams", note: "Subsidiary B2B surface" },
   { label: "/teams · Curriculum", href: "/teams/curriculum", note: "12 modules / 36 lessons mapped" },
   { label: "/teams · Implementation", href: "/teams/implementation", note: "Manager 8-week rollout guide" },

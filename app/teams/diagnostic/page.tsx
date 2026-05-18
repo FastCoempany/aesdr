@@ -16,7 +16,7 @@ import InlineCTA from "../_components/InlineCTA";
  */
 
 export const metadata = {
-  title: "Diagnostic — AESDR / Operating Layer",
+  title: "Diagnostic — AESDR / for Teams",
   description: "How to measure behavior change in early-career SDRs and AEs. Eight dimensions, sample items, expected deltas.",
 };
 

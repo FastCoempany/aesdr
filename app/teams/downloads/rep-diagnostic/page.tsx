@@ -11,7 +11,7 @@ import PrintButton from "../../_components/PrintButton";
  */
 
 export const metadata = {
-  title: "Rep diagnostic instrument — AESDR / Operating Layer",
+  title: "Rep diagnostic instrument — AESDR / for Teams",
   description: "Self-administering before/after diagnostic. 32 items across 8 dimensions, with response scales.",
 };
 
@@ -124,7 +124,7 @@ export default function RepDiagnosticPage() {
           <header className={styles.onepageHeader} style={{ marginBottom: 24 }}>
             <span>
               <span className={styles.certMark}>AESDR</span>
-              <span className={styles.certMarkSuffix}>/ Operating Layer</span>
+              <span className={styles.certMarkSuffix}>/ for Teams</span>
             </span>
             <span className={styles.certSerial}>Diagnostic v1.0</span>
           </header>
