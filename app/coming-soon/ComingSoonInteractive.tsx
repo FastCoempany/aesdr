@@ -1,47 +1,37 @@
 "use client";
 
 import { useEffect, useCallback } from "react";
+import { submitBypassAction } from "./actions";
 
 /**
- * Coming-soon interactive overlay — the keyboard + click bypass mechanisms.
+ * Coming-soon interactive overlay — keyboard + click bypass mechanisms.
  *
- * Lives in a separate client component so the parent page can stay server-
- * rendered. If this component fails to hydrate (CSP block, network blip,
- * extension interference, anything), the page's mascot + wordmark are
- * still on the screen — the user just can't bypass via keyboard or click
- * (they'd fall back to URL-param `?bypass=<code>`, which is handled at
- * the edge by proxy.ts and doesn't need JS at all).
+ * Lives separately from the page so the parent can stay server-rendered.
+ * If this component fails to hydrate (CSP, network, extension, anything),
+ * the page's mascot + wordmark are still on screen — the user just can't
+ * bypass via keyboard or click, and falls back to the URL `?bypass=<code>`
+ * mechanism handled at the edge by proxy.ts (zero JS required).
  *
- * Renders only an invisible click overlay positioned absolutely over the
- * parent's mascot. No visible UI of its own.
+ * Submits to the `submitBypassAction` server action — NOT a fetch to the
+ * API route. The action sets the cookie and redirects in a single server
+ * response, eliminating the cookie/navigation race that the fetch-based
+ * approach was vulnerable to.
  */
 
 const KEYBOARD_BUFFER_LIMIT = 8;
 
-async function submitBypass(code: string): Promise<boolean> {
-  try {
-    const res = await fetch("/api/coming-soon-bypass", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code }),
-    });
-    return res.ok;
-  } catch {
-    return false;
-  }
-}
-
 export default function ComingSoonInteractive() {
   const completeBypass = useCallback(async (code: string) => {
-    const ok = await submitBypass(code);
-    if (ok) {
-      window.location.href = "/";
-    }
-    // Silent failure on bad code — keeps the gate opaque.
+    // Server action: on success, the action's `redirect("/")` causes the
+    // Next.js runtime to navigate the browser automatically. On failure
+    // (bad code, rate-limited, env var unset), the action returns void
+    // and we stay on /coming-soon — no manual navigation needed either way.
+    await submitBypassAction(code);
   }, []);
 
-  // Keyboard buffer with debounced submit. POSTing on every digit would burn
-  // the 10/hr rate limit on prefix attempts; one typing burst → one POST.
+  // Keyboard buffer with debounced submit. Submitting on every digit would
+  // burn the 10/hr rate limit on prefix attempts — one mistype could lock
+  // the user out for an hour. One typing burst → one submission.
   useEffect(() => {
     let buf = "";
     let resetTimer: ReturnType<typeof setTimeout> | null = null;
