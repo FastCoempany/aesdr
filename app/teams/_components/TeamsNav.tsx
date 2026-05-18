@@ -31,9 +31,9 @@ export default function TeamsNav() {
   const pathname = usePathname() ?? "/teams";
 
   return (
-    <nav className={styles.nav} aria-label="Operating Layer navigation">
+    <nav className={styles.nav} aria-label="for Teams navigation">
       <div className={styles.navInner}>
-        <Link href="/teams" className={styles.navBrand} aria-label="AESDR / Operating Layer — home">
+        <Link href="/teams" className={styles.navBrand} aria-label="AESDR / for Teams — home">
           <SubLogoCompact size={20} />
         </Link>
 

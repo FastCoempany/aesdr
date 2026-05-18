@@ -12,7 +12,7 @@ import InlineCTA from "../_components/InlineCTA";
  */
 
 export const metadata = {
-  title: "Integrations — AESDR / Operating Layer",
+  title: "Integrations — AESDR / for Teams",
   description: "What's live now and what's on the roadmap. Honest state, no marketing-grade integration lists.",
 };
 

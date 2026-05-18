@@ -1,4 +1,4 @@
-# AESDR / Operating Layer — Canon + Build Spec
+# AESDR / for Teams — Canon + Build Spec
 
 **Status:** Active build. Target completion: week 1 of June 2026. Stays gated behind `COMING_SOON` until full launch.
 
@@ -18,7 +18,7 @@ This document is **canon** for the subsidiary brand and **spec** for the build. 
 
 ### 1.1 The angle
 
-> **AESDR / Operating Layer is the missing behavioral foundation for early-career sales orgs.**
+> **AESDR / for Teams is the missing behavioral foundation for early-career sales orgs.**
 
 Built on the same 12 lessons that 1st- and 2nd-year SDRs and AEs buy directly on aesdr.com, packaged for sales orgs that need their junior reps to mature faster. The wedge: **young SDRs and AEs break in predictable ways. We turn the breakpoints into a structured training path.**
 
@@ -35,7 +35,7 @@ This framing is borrowed from the Paycor / Listo capability-extension partnershi
 
 The subsidiary openly acknowledges the parent. The relationship is truthful:
 
-> *"AESDR / Operating Layer is built on aesdr.com — the rep-direct course that 1st- and 2nd-year SDRs and AEs actually use. The same 12 lessons, packaged for sales orgs."*
+> *"AESDR / for Teams is built on aesdr.com — the rep-direct course that 1st- and 2nd-year SDRs and AEs actually use. The same 12 lessons, packaged for sales orgs."*
 
 This line appears in the subsidiary footer and (in shortened form) on the landing hero. The consumer brand is referenced as the proof point: this isn't a B2B course someone invented to sell to procurement; it's the same product reps already pay for on their own.
 
@@ -65,11 +65,11 @@ Across all surfaces, the subsidiary voice is **calm, structural, and operator-gr
 
 ### 2.1 Name
 
-**Primary:** `AESDR / Operating Layer`
+**Primary:** `AESDR / for Teams`
 
-Read as "AESDR's operating layer." The slash separator signals subsidiary relationship without using corporate suffixes like "Inc," "Enterprise," or "Pro."
+Read as "AESDR's for Teams." The slash separator signals subsidiary relationship without using corporate suffixes like "Inc," "Enterprise," or "Pro."
 
-**Short form (in URL, in headers when space-constrained):** `AESDR / OL`
+**Short form (in URL, in headers when space-constrained):** `AESDR / Teams`
 
 **Never use:**
 - "AESDR Teams" (descriptive but generic)
@@ -79,12 +79,12 @@ Read as "AESDR's operating layer." The slash separator signals subsidiary relati
 
 ### 2.2 Wordmark treatment
 
-The wordmark on subsidiary pages uses the iris-shimmer gradient (same `var(--iris)` + 4s shimmer keyframe used on consumer brand wordmark and role chips), but with the `/ Operating Layer` suffix in `var(--mono)` (Barlow Condensed) at a smaller size and `var(--muted)` color.
+The wordmark on subsidiary pages uses the iris-shimmer gradient (same `var(--iris)` + 4s shimmer keyframe used on consumer brand wordmark and role chips), but with the `/ for Teams` suffix in `var(--mono)` (Barlow Condensed) at a smaller size and `var(--muted)` color.
 
 Spec:
 ```
 [AESDR]      <-- Playfair Display, 900 italic, iris-shimmer fill
-[ / Operating Layer]   <-- Barlow Condensed, 700, .15em letter-spacing,
+[ / for Teams]   <-- Barlow Condensed, 700, .15em letter-spacing,
                             uppercase, var(--muted), 40% of AESDR's font-size
 ```
 
@@ -109,7 +109,7 @@ Three forms of the sub-brand mark, each scoped to a specific surface scale. All 
 **Use:** landing hero, footer "Powered by" line, marketing PDFs, partner one-pager header, certificate header.
 
 ```
-AESDR  / Operating Layer
+AESDR  / for Teams
 ^^^^^   ^^^^^^^^^^^^^^^^
 Playfair  Barlow Condensed
 900 italic 700, uppercase,
@@ -162,7 +162,7 @@ font-size: 32px;
 Same construction as full mark, but the suffix collapses to `OL`:
 
 ```
-AESDR  / OL
+AESDR  / Teams
 ```
 
 Same fonts, same colors, same gap rules. Renders cleanly at 18–24px AESDR size.
@@ -171,7 +171,7 @@ Same fonts, same colors, same gap rules. Renders cleanly at 18–24px AESDR size
 **Use:** favicons, certificate corners, watermarks on PDFs, any surface ≤16px tall or where a wordmark won't fit.
 
 ```
-A·OL
+A·T
 ```
 
 - All Barlow Condensed 700, uppercase, .15em letter-spacing
@@ -244,7 +244,7 @@ Core layout patterns:
 
 - **Hero with stat triplet.** Three big numbers in iris-shimmer, each with a small mono caption. Modeled on the case-study results pattern.
 - **Buyer-mode card grid.** Four cards, equal weight, each describing one buyer mode (direct seats / white-label / marketplace / fractional). Iris-shimmer borders on hover.
-- **Comparison table.** "Build it yourself / Existing LMS course / AESDR Operating Layer" — structured side-by-side, not narrative.
+- **Comparison table.** "Build it yourself / Existing LMS course / AESDR for Teams" — structured side-by-side, not narrative.
 - **Channel-partner blocks.** One per partner category, each with: "the gap they have," "how AESDR plugs in," "integration mechanism," "revenue model" as a 4-column micro-table.
 - **Spec block.** For curriculum, diagnostic, integrations pages — Notion-doc aesthetic, numbered sections, monospace data labels.
 
@@ -339,7 +339,7 @@ app/api/teams-inquiry/
 ### 5.1 `/teams` — landing
 
 **Hero**
-- Pre-eyebrow: `AESDR / OPERATING LAYER` (mono, muted)
+- Pre-eyebrow: `AESDR / FOR TEAMS` (mono, muted)
 - Headline: *"The missing behavioral foundation for early-career sales orgs."*
 - Subhead (1 sentence): "The same 12 lessons that 1st- and 2nd-year SDRs and AEs buy on aesdr.com — packaged for sales orgs that need their junior reps to mature faster."
 - Stat triplet (three big iris-shimmer KPIs, sourced from cited research — see §15):
@@ -370,7 +370,7 @@ Four cards in a 2×2 grid:
 4. **Marketplace integration** — for LMS, enablement, and hiring platforms. SSO, eventual SCORM/xAPI, revenue-share. **Contact us.**
 
 **Powered by line (footer-ish, just above subsidiary footer)**
-> "AESDR / Operating Layer is built on aesdr.com — the rep-direct course that 1st- and 2nd-year SDRs and AEs actually use. The same 12 lessons, packaged for sales orgs."
+> "AESDR / for Teams is built on aesdr.com — the rep-direct course that 1st- and 2nd-year SDRs and AEs actually use. The same 12 lessons, packaged for sales orgs."
 
 ### 5.2 `/teams/partners` — channel pitch
 
@@ -832,7 +832,7 @@ const QUICK_LINKS: ({ label: string; href: string; note?: string } | { divider: 
   // ... existing entries ...
   { label: "Home", href: "/" },
   { divider: true },
-  { label: "/teams · Landing", href: "/teams", note: "Operating Layer subsidiary" },
+  { label: "/teams · Landing", href: "/teams", note: "for Teams subsidiary" },
   { label: "/teams · Partners", href: "/teams/partners" },
   { label: "/teams · Pricing", href: "/teams/pricing" },
   { label: "/teams · Contact", href: "/teams/contact" },
@@ -980,7 +980,7 @@ Decisions made and ratified by Antaeus. Don't relitigate in PRs without explicit
 |---|---|---|---|
 | 1 | 2026-05-18 | Build a B2B subsidiary instead of repositioning the consumer brand | Consumer brand's polarizing survival voice is its moat. Behavioral-OS framing is too generic to defend at the consumer level. Two-tier brand architecture preserves both. |
 | 2 | 2026-05-18 | Use `/teams` (plural) as the route | `/team` (singular) already exists as a member team-dashboard route. `/teams` is free and reads naturally as "for sales teams." |
-| 3 | 2026-05-18 | Sub-brand name: `AESDR / Operating Layer` | Matches the value-prop angle (behavioral operating system); slash separator signals subsidiary; "Operating Layer" is more distinctive than "Teams" or "Enterprise." |
+| 3 | 2026-05-18 | Sub-brand name: `AESDR / for Teams` | Matches the value-prop angle (behavioral operating system); slash separator signals subsidiary; "for Teams" is more distinctive than "Teams" or "Enterprise." |
 | 4 | 2026-05-18 | Stays gated behind `COMING_SOON` for v1 | Pre-launch period. Subsidiary work is private; share via bypass URLs for B2B sales conversations. Public launch coordinated with consumer brand. |
 | 5 | 2026-05-18 | Iris-shimmer promoted to primary accent on subsidiary | Family-recognition signal: same gradient as consumer wordmark, used aggressively instead of rationed. |
 | 6 | 2026-05-18 | Mascot demoted to footer monogram on subsidiary | B2B audiences read mascots as consumer / playful. Mascot stays beloved on aesdr.com; near-invisible on `/teams/*`. |
@@ -992,6 +992,8 @@ Decisions made and ratified by Antaeus. Don't relitigate in PRs without explicit
 | 12 | 2026-05-18 | Subsidiary nav INCLUDES a "← back to aesdr.com" link | Consistency with the "auxiliary detached building" framing — the building has a door back to the main one. |
 | 13 | 2026-05-18 | Sub-logo treatment formalized — three forms (full / compact / tiny) with type-only construction | Editorial brand DNA. No icon glyph because the parent is type-based; adding an icon for the subsidiary would feel forced and break family resemblance. |
 | 14 | 2026-05-18 | Downloadable PDFs implemented as print-friendly web pages under `/teams/downloads/*`, not as pre-generated binary PDF files | Beautiful PDF output requires design tooling not set up in this sandbox. Print-friendly web pages produce equivalent output via browser print-to-PDF, keep artifacts version-controlled, stay automatically in sync with site content, and read well both as PDF and on web. |
+| 15 | 2026-05-18 | Sub-brand renamed: **AESDR / Operating Layer → AESDR / for Teams** | "Operating Layer" was internal positioning borrowed from the GPT "behavioral operating system" framing. It worked as a way for the team to think about the product but meant nothing to a B2B buyer reading the wordmark cold. "For Teams" is immediately legible, matches the `/teams` URL, and reads naturally ("we got AESDR for Teams"). Tiny monogram updated A·OL → A·T. Canon file renamed via `git mv` to `AESDR_TEAMS_CANON.md`. |
+| 16 | 2026-05-18 | Buyer-perspective copy audit completed across all `/teams/*` surfaces — internal positioning phrases removed | After the rename, did a systematic pass for other internal positioning that leaked into buyer-facing copy. Removed / rewrote: "behavioral foundation" (replaced with concrete language about real-world training), "the wedge" (→ "the problem"), "buyer modes" / "MODE 01-04" (→ "Ways to buy" / tier-named eyebrows), "sharpest early wedge" tag (→ "Strong fit"), "Paycor / Listo capability-extension model" (deleted internal reference), "survival fundamentals" / "behavior-fragile" / "tool-fluent" (rewritten to plain language), "founder-administered" (→ "run by our team"), "in v1" (→ "today" / "right now"), "economic shape" (→ "how the product works"). Brand voice (calm, structural, anti-corporate) preserved. |
 
 ---
 

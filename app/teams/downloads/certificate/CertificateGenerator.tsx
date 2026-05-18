@@ -20,7 +20,7 @@ const today = () => {
 
 const generateSerial = () => {
   const ts = Date.now().toString(36).toUpperCase();
-  return `AESDR-OL-${ts.slice(-6)}`;
+  return `AESDR-T-${ts.slice(-6)}`;
 };
 
 function formatDate(iso: string): string {
@@ -166,7 +166,7 @@ export default function CertificateGenerator() {
           <div className={styles.certHeader}>
             <span>
               <span className={styles.certMark}>AESDR</span>
-              <span className={styles.certMarkSuffix}>/ Operating Layer</span>
+              <span className={styles.certMarkSuffix}>/ for Teams</span>
             </span>
             <span className={styles.certSerial}>{serial}</span>
           </div>
@@ -176,9 +176,9 @@ export default function CertificateGenerator() {
           <p className={styles.certName}>{repName || "—"}</p>
 
           <p className={styles.certBody}>
-            has completed the AESDR / Operating Layer program for{" "}
+            has completed the AESDR / for Teams program for{" "}
             <em>{role === "SDR" ? "Sales Development Representatives" : "Account Executives"}</em>
-            {orgName ? ` at ${orgName}` : ""} — {modulesCompleted || "the full curriculum"} of behavioral foundations for early-career SaaS sales reps.
+            {orgName ? ` at ${orgName}` : ""} — {modulesCompleted || "the full curriculum"} on the work, the people, and the mechanics of selling SaaS in their first two years.
           </p>
 
           <div className={styles.certFooter}>
@@ -197,7 +197,7 @@ export default function CertificateGenerator() {
                 Antaeus Coe
               </div>
               <div className={styles.certSignatureLine} />
-              <div className={styles.certSignatureLabel}>AESDR · Operating Layer</div>
+              <div className={styles.certSignatureLabel}>AESDR · for Teams</div>
             </div>
           </div>
         </div>

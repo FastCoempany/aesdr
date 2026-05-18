@@ -15,8 +15,8 @@ import InlineCTA from "../_components/InlineCTA";
  */
 
 export const metadata = {
-  title: "Curriculum — AESDR / Operating Layer",
-  description: "Twelve modules, three sub-lessons each. The full behavioral foundation map for first- and second-year SDRs and AEs.",
+  title: "Curriculum — AESDR / for Teams",
+  description: "Twelve modules, three sub-lessons each. The full curriculum map for first- and second-year SDRs and AEs — including manager-facing learning outcomes per module.",
 };
 
 type Lesson = {

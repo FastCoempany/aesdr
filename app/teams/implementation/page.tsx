@@ -14,7 +14,7 @@ import InlineCTA from "../_components/InlineCTA";
  */
 
 export const metadata = {
-  title: "Implementation guide — AESDR / Operating Layer",
+  title: "Implementation guide — AESDR / for Teams",
   description: "How to roll AESDR out across your sales team. Week-by-week sequence, manager touchpoints, common mistakes.",
 };
 
