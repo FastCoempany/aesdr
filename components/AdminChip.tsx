@@ -14,7 +14,14 @@ import Link from "next/link";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { signOut } from "@/app/actions/progress";
 
-const QUICK_LINKS: { label: string; href: string; note?: string }[] = [
+type QuickLink = { label: string; href: string; note?: string };
+type QuickDivider = { divider: true; label?: string };
+type QuickEntry = QuickLink | QuickDivider;
+
+const isDivider = (entry: QuickEntry): entry is QuickDivider =>
+  "divider" in entry && entry.divider === true;
+
+const QUICK_LINKS: QuickEntry[] = [
   { label: "Journey", href: "/dashboard", note: "Course dashboard — all lessons unlocked" },
   { label: "Affiliate Hub", href: "/partners", note: "Partner-prospect surface" },
   { label: "Public Kit", href: "/partners/kit", note: "8 partner-facing docs" },
@@ -25,6 +32,16 @@ const QUICK_LINKS: { label: string; href: string; note?: string }[] = [
   { label: "Admin · Partner Kit", href: "/admin/partner-kit", note: "Tokens + audit log" },
   { label: "Apply Form (visitor view)", href: "/partners/apply" },
   { label: "Home", href: "/" },
+  { divider: true, label: "AESDR / Operating Layer" },
+  { label: "/teams · Landing", href: "/teams", note: "Subsidiary B2B surface" },
+  { label: "/teams · Curriculum", href: "/teams/curriculum", note: "12 modules / 36 lessons mapped" },
+  { label: "/teams · Implementation", href: "/teams/implementation", note: "Manager 8-week rollout guide" },
+  { label: "/teams · Diagnostic", href: "/teams/diagnostic", note: "8 dimensions, before/after spec" },
+  { label: "/teams · Integrations", href: "/teams/integrations", note: "Live + roadmap" },
+  { label: "/teams · Partners", href: "/teams/partners", note: "5 channel categories" },
+  { label: "/teams · Pricing", href: "/teams/pricing", note: "Team / Custom / White-label" },
+  { label: "/teams · Contact", href: "/teams/contact", note: "Inquiry form" },
+  { label: "/teams · Downloads", href: "/teams/downloads", note: "4 printable artifacts" },
 ];
 
 export default function AdminChip() {
@@ -129,7 +146,47 @@ export default function AdminChip() {
             padding: 8,
           }}
         >
-          {QUICK_LINKS.map((link) => (
+          {QUICK_LINKS.map((entry, idx) => {
+            if (isDivider(entry)) {
+              return (
+                <div
+                  key={`divider-${idx}`}
+                  role="separator"
+                  style={{
+                    padding: "16px 12px 8px",
+                    marginTop: 4,
+                  }}
+                >
+                  <div
+                    style={{
+                      height: 2,
+                      width: "100%",
+                      background: "var(--iris)",
+                      backgroundSize: "300% 100%",
+                      animation: "iris 4s linear infinite",
+                      opacity: 0.7,
+                    }}
+                    aria-hidden="true"
+                  />
+                  {entry.label && (
+                    <div
+                      style={{
+                        marginTop: 8,
+                        fontFamily: "var(--mono)",
+                        fontSize: 9,
+                        letterSpacing: ".22em",
+                        textTransform: "uppercase",
+                        color: "var(--muted)",
+                      }}
+                    >
+                      {entry.label}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+            const link = entry;
+            return (
             <Link
               key={link.href}
               href={link.href}
@@ -177,7 +234,8 @@ export default function AdminChip() {
                 </div>
               )}
             </Link>
-          ))}
+            );
+          })}
 
           {/* Sign out at the bottom — visually separated */}
           <button
