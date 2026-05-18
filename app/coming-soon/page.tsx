@@ -1,106 +1,26 @@
-"use client";
-
-import { useEffect, useCallback } from "react";
+import ComingSoonInteractive from "./ComingSoonInteractive";
 
 /**
  * Coming-soon page.
  *
- * The bypass secret used to live as `const BYPASS_CODE = "741407"` in this
- * client component — visible to anyone who opened DevTools and grep'd the
- * JS bundle. That value now lives only in the server-side env var
- * `COMING_SOON_BYPASS_CODE` and is verified at:
+ * Server-rendered visual + a small client overlay for the keyboard / click
+ * bypass interaction. The split is deliberate: the mascot, wordmark, and
+ * tagline are static HTML produced on the server, so the page renders
+ * visibly **no matter what** happens with client JS — failed hydration,
+ * CSP-blocked scripts, network blips, extension interference, all benign
+ * to the visual. Previously the whole page was a `"use client"` component
+ * whose state machine could land on `return null` and leave a dark blank.
+ * That failure mode is now structurally impossible.
  *
- *   POST /api/coming-soon-bypass   — for the keyboard + mascot-click flows
- *   proxy.ts                       — for `?bypass=<code>` URL hits
+ * Bypass mechanisms:
  *
- * This page no longer knows the code. It just collects user input (keyboard
- * buffer or prompt) and POSTs it to the API. Rate limiting (10/hr per IP)
- * lives in the API route. The cookie itself is now httpOnly — set by the
- * server response, no longer readable from `document.cookie`.
+ *   1. URL `?bypass=<code>` — handled at the edge in proxy.ts (no JS needed)
+ *   2. Keyboard buffer — debounced POST to /api/coming-soon-bypass
+ *   3. Click mascot → prompt → POST
  *
- * On successful bypass we do a HARD navigation via `window.location.href`,
- * not `router.replace()`. Next.js soft-navigation can use cached RSC
- * payloads that don't reflect the new cookie, leaving the page blank /
- * dark when the component returns null. The hard nav forces a fresh
- * server render with the cookie attached.
+ * The secret lives only in the server-side env var `COMING_SOON_BYPASS_CODE`.
  */
-
-const KEYBOARD_BUFFER_LIMIT = 8;
-
-async function submitBypass(code: string): Promise<boolean> {
-  try {
-    const res = await fetch("/api/coming-soon-bypass", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code }),
-    });
-    return res.ok;
-  } catch {
-    return false;
-  }
-}
-
 export default function ComingSoonPage() {
-  const completeBypass = useCallback(async (code: string) => {
-    const ok = await submitBypass(code);
-    if (ok) {
-      // Hard navigation: the just-set httpOnly cookie is included in the
-      // GET / request, the server sees it, COMING_SOON gate passes, page
-      // renders. router.replace() would soft-navigate and may use a cached
-      // RSC payload that doesn't reflect the cookie — leaving a blank page.
-      window.location.href = "/";
-    }
-    // Silent failure on bad code — keeps the gate opaque to passersby.
-  }, []);
-
-  // Mechanism 1: keyboard shortcut. Buffer digits, then submit once 700ms
-  // after the user stops typing. Submitting on every keystroke would burn
-  // through the API's per-IP rate limit (10/hr) on the prefix attempts
-  // before the full code lands — a single mistype could lock the user out
-  // for an hour. Debounce keeps us to one POST per typing burst.
-  useEffect(() => {
-    let buf = "";
-    let resetTimer: ReturnType<typeof setTimeout> | null = null;
-    let submitTimer: ReturnType<typeof setTimeout> | null = null;
-
-    function handleKey(e: KeyboardEvent) {
-      if (e.key.length !== 1 || !/[0-9]/.test(e.key)) return;
-      buf = (buf + e.key).slice(-KEYBOARD_BUFFER_LIMIT);
-
-      if (resetTimer) clearTimeout(resetTimer);
-      if (submitTimer) clearTimeout(submitTimer);
-
-      // Hard reset of the buffer if the user pauses much longer (1500ms) —
-      // no stale prefixes lingering between attempts.
-      resetTimer = setTimeout(() => {
-        buf = "";
-      }, 1500);
-
-      // Submit once after a short typing pause. Captures the buffer at the
-      // moment the timer fires, not the moment it was scheduled, so it
-      // always sees the most-recent input.
-      submitTimer = setTimeout(() => {
-        if (buf.length >= 4) {
-          const attempt = buf;
-          buf = "";
-          completeBypass(attempt);
-        }
-      }, 700);
-    }
-
-    window.addEventListener("keydown", handleKey);
-    return () => {
-      window.removeEventListener("keydown", handleKey);
-      if (resetTimer) clearTimeout(resetTimer);
-      if (submitTimer) clearTimeout(submitTimer);
-    };
-  }, [completeBypass]);
-
-  function handleGhost() {
-    const code = prompt("");
-    if (code) completeBypass(code);
-  }
-
   return (
     <main
       style={{
@@ -123,9 +43,6 @@ export default function ComingSoonPage() {
           alignItems: "center",
         }}
       >
-        {/* Doctrine pose — canon. Kept as <img> (not <Mascot>) so the
-            absolute-positioned bypass button below can stay anchored to
-            the same DOM container with predictable positioning. */}
         <div
           style={{
             position: "relative",
@@ -144,26 +61,9 @@ export default function ComingSoonPage() {
               userSelect: "none",
             }}
           />
-
-          {/* The entire mascot is the bypass button. Tap anywhere on it,
-              enter the code in the prompt. The code is verified server-side. */}
-          <button
-            onClick={handleGhost}
-            aria-hidden="true"
-            tabIndex={-1}
-            style={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              background: "transparent",
-              border: "none",
-              cursor: "default",
-              zIndex: 10,
-              outline: "none",
-              padding: 0,
-            }}
-          />
+          {/* Client-only bypass overlay — only adds interaction;
+              renders no visible UI of its own. */}
+          <ComingSoonInteractive />
         </div>
 
         {/* Iris shimmer AESDR logo — stacked on the mascot's foot */}
