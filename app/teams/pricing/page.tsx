@@ -14,7 +14,7 @@ import InlineCTA from "../_components/InlineCTA";
  */
 
 export const metadata = {
-  title: "Pricing — AESDR / Operating Layer",
+  title: "Pricing — AESDR / for Teams",
   description: "Team seats, custom enterprise, white-label. Three paths, all starting with a 30-min walkthrough.",
 };
 
@@ -26,7 +26,7 @@ export default function PricingPage() {
           <p className={styles.eyebrow}>Pricing</p>
           <h1 className={styles.heroHeadline}>Pricing for sales orgs.</h1>
           <p className={styles.heroSubhead}>
-            Three paths. All start with a 30-minute walkthrough so we can scope correctly. No procurement-style pricing pages, no demos-behind-forms, no enterprise tier-gating.
+            Three ways to buy. All start with a 30-minute walkthrough so we can scope correctly. No bloated pricing pages, no demos hidden behind forms, no enterprise feature-gating.
           </p>
         </div>
       </section>
@@ -140,8 +140,8 @@ export default function PricingPage() {
               ]},
               { label: "Diagnostic administration", cells: [
                 { kind: "text", value: "Self-serve (roadmap)" },
-                { kind: "text", value: "Founder-administered" },
-                { kind: "text", value: "Partner-administered" },
+                { kind: "text", value: "Run by our team" },
+                { kind: "text", value: "Run by the partner" },
               ]},
               { label: "SSO / SCORM / xAPI", cells: [
                 { kind: "text", value: "Roadmap" },
@@ -174,7 +174,7 @@ export default function PricingPage() {
           </FAQ>
 
           <FAQ q="Can we get a recurring subscription?">
-            Not currently. AESDR is one-time, lifetime by design. Per-seat custom pricing is available for larger orgs but stays one-time per seat. Recurring would change the product&apos;s economic shape and we&apos;re intentional about not doing that yet.
+            Not today. AESDR is one-time, lifetime by design. Per-seat custom pricing is available for larger orgs but stays one-time per seat. Recurring would change how the product works and how we&apos;d need to support it — we&apos;re intentional about staying out of that shape for now.
           </FAQ>
 
           <FAQ q="Do we get a discount for buying multiple 10-seat packs?">

@@ -10,7 +10,7 @@ import PrintButton from "../../_components/PrintButton";
  */
 
 export const metadata = {
-  title: "Partner one-pager — AESDR / Operating Layer",
+  title: "Partner one-pager — AESDR / for Teams",
   description: "Single-page partner brief. Positioning, partner categories, contact.",
 };
 
@@ -44,7 +44,7 @@ export default function PartnerOnePagerPage() {
           <header className={styles.onepageHeader}>
             <span>
               <span className={styles.certMark}>AESDR</span>
-              <span className={styles.certMarkSuffix}>/ Operating Layer</span>
+              <span className={styles.certMarkSuffix}>/ for Teams</span>
             </span>
             <span className={styles.certSerial}>Partner brief · 2026</span>
           </header>
@@ -62,7 +62,7 @@ export default function PartnerOnePagerPage() {
               maxWidth: "26ch",
             }}
           >
-            The missing behavioral foundation for early-career sales orgs.
+            The training your first- and second-year SDRs and AEs should already have.
           </h1>
           <p
             style={{
@@ -74,10 +74,10 @@ export default function PartnerOnePagerPage() {
               maxWidth: "60ch",
             }}
           >
-            Twelve modules, 36 sub-lessons. Built on aesdr.com — the rep-direct course that
-            1st- and 2nd-year SDRs and AEs actually use. Packaged for sales orgs and channel
-            partners who already serve the SDR/AE audience but don&apos;t produce behavioral
-            training content of their own.
+            Twelve modules, 36 sub-lessons. Built on aesdr.com — the course junior SDRs
+            and AEs pay for out of their own pocket. Packaged for sales orgs and channel
+            partners who already serve the SDR/AE audience but don&apos;t produce the
+            training their customers ask for.
           </p>
 
           {/* Three stats */}

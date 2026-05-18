@@ -1,12 +1,12 @@
 import styles from "../teams.module.css";
 
 /**
- * Sub-logo trio for AESDR / Operating Layer.
+ * Sub-logo trio for AESDR / for Teams.
  *
  * Three forms per canon §2.4:
  *   • SubLogoFull — landing hero, footer, marketing surfaces. Default 32px.
  *   • SubLogoCompact — nav bars, breadcrumbs. Default 20px.
- *   • SubLogoTiny — favicons, watermarks, certificate corners. "A·OL" monogram.
+ *   • SubLogoTiny — favicons, watermarks, certificate corners. "A·T" monogram.
  *
  * Type-only construction (no icon glyph) to stay consistent with the
  * parent brand's editorial-typographic identity. Iris-shimmer on "AESDR"
@@ -27,13 +27,13 @@ export function SubLogoFull({ size = 32, as = "span" }: FullProps) {
     <Tag
       className={styles.subLogoFull}
       style={{ fontSize: size }}
-      aria-label="AESDR / Operating Layer"
+      aria-label="AESDR / for Teams"
     >
       <span className={styles.subLogoAesdr} style={{ fontSize: size }}>
         AESDR
       </span>
       <span className={styles.subLogoSuffix} style={{ fontSize: suffixSize }}>
-        <span className={styles.subLogoSlash}>/</span>Operating Layer
+        <span className={styles.subLogoSlash}>/</span>for Teams
       </span>
     </Tag>
   );
@@ -47,7 +47,7 @@ type CompactProps = {
 export function SubLogoCompact({ size = 20 }: CompactProps) {
   const suffixSize = Math.round(size * 0.6);
   return (
-    <span className={styles.subLogoCompact} aria-label="AESDR / OL">
+    <span className={styles.subLogoCompact} aria-label="AESDR / Teams">
       <span className={styles.subLogoAesdr} style={{ fontSize: size }}>
         AESDR
       </span>
@@ -68,7 +68,7 @@ export function SubLogoTiny({ size = 12 }: TinyProps) {
     <span
       className={styles.subLogoTinyMark}
       style={{ fontSize: size }}
-      aria-label="AESDR Operating Layer"
+      aria-label="AESDR for Teams"
     >
       <span className={styles.subLogoTinyA}>A</span>
       <span className={styles.subLogoTinyDot}>·</span>

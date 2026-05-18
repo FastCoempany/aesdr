@@ -12,7 +12,7 @@ import styles from "../teams.module.css";
  */
 
 export const metadata = {
-  title: "Downloads — AESDR / Operating Layer",
+  title: "Downloads — AESDR / for Teams",
   description: "Manager guide, completion certificate, partner one-pager, rep diagnostic instrument. All print-friendly.",
 };
 
@@ -30,7 +30,7 @@ const ARTIFACTS = [
     eyebrow: "ARTIFACT 02 · CERTIFICATE",
     title: "Completion certificate generator",
     description:
-      "Enter rep name + completion date + program scope. Generates a printable certificate in the AESDR / Operating Layer brand. One per rep.",
+      "Enter rep name + completion date + program scope. Generates a printable certificate in the AESDR / for Teams brand. One per rep.",
     pages: "1 page · landscape",
   },
   {
