@@ -1337,7 +1337,7 @@
   height: 18px;
 }
 
-/* ── Rep diagnostic instrument (printable) ───────── */
+/* ── AE/SDR diagnostic instrument (printable) ───────── */
 .instrumentSection {
   padding: 24px 0;
   border-top: 1.5px solid var(--ink);
@@ -1427,6 +1427,208 @@
   font-weight: 700;
   color: var(--ink);
   margin-bottom: 2px;
+}
+
+/* ── Interactive diagnostic (digital, downloadable) ── */
+.diagHeader {
+  background: var(--cream);
+  border: 1px solid var(--light);
+  padding: clamp(16px, 2vw, 24px);
+  margin: 0 0 24px;
+}
+
+.diagHeaderGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  gap: clamp(12px, 1.5vw, 20px);
+}
+@media (max-width: 720px) {
+  .diagHeaderGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 480px) {
+  .diagHeaderGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.diagActionBar {
+  position: sticky;
+  top: 56px; /* below the subsidiary nav */
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 14px 18px;
+  background: var(--cream);
+  border: 1px solid var(--ink);
+  margin: 0 0 24px;
+  flex-wrap: wrap;
+}
+@media (max-width: 600px) {
+  .diagActionBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.diagProgress {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 200px;
+}
+
+.diagProgressLabel {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.diagProgressTrack {
+  height: 4px;
+  background: var(--light);
+  position: relative;
+  overflow: hidden;
+}
+
+.diagProgressFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: var(--iris);
+  background-size: 300% 100%;
+  animation: shimmer 4s linear infinite;
+  transition: width 0.25s ease;
+}
+
+.diagActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Radio-style scale boxes with hover + selected states */
+.diagScale {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.diagScaleBox {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 12px 4px 8px;
+  background: var(--cream);
+  border: 1.5px solid var(--light);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  user-select: none;
+}
+.diagScaleBox:hover {
+  border-color: var(--ink);
+  transform: translateY(-1px);
+}
+.diagScaleBox:has(input:focus-visible) {
+  outline: 2px solid var(--crimson);
+  outline-offset: 2px;
+}
+
+.diagScaleBoxSelected {
+  border-color: transparent;
+  background:
+    linear-gradient(var(--cream), var(--cream)) padding-box,
+    var(--iris) border-box;
+  background-size: auto, 300% 100%;
+  animation: shimmer 4s linear infinite;
+  border-width: 2px;
+}
+
+.diagScaleInput {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.diagScaleNum {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 900;
+  font-style: italic;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.diagScaleLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.2;
+  min-height: 11px;
+}
+
+/* Summary table at the bottom */
+.diagSummary {
+  margin-top: 40px;
+  padding: clamp(20px, 3vw, 32px);
+  background: var(--cream);
+  border: 1.5px solid var(--ink);
+}
+
+.diagSummaryTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--serif);
+  font-size: 14px;
+  margin-top: 12px;
+}
+
+.diagSummaryTable thead th {
+  font-family: var(--cond);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 2px solid var(--ink);
+}
+
+.diagSummaryTable tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--light);
+  color: var(--ink);
+}
+
+.diagSummaryTable tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.diagSummaryTable tbody td:nth-child(2),
+.diagSummaryTable tbody td:nth-child(3) {
+  font-family: var(--mono);
+  font-size: 13px;
+  width: 14ch;
+  white-space: nowrap;
 }
 
 /* ── Partner one-pager (printable) ────────────────── */

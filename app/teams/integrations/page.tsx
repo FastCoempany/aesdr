@@ -30,14 +30,14 @@ const INTEGRATIONS: Integration[] = [
     name: "Email-based seat provisioning",
     state: "Live",
     description:
-      "Partner sends a CSV of seat assignments (rep email + role + manager email). We email each rep individually with a sign-in link, set their manager's account flag for dashboard access, and confirm provisioning by EOD.",
+      "Partner sends a CSV of seat assignments (AE/SDR email + role + manager email). We email each AE/SDR individually with a sign-in link, set their manager's account flag for dashboard access, and confirm provisioning by EOD.",
   },
   {
     number: "02",
     name: "Manager dashboard",
     state: "Live",
     description:
-      "Manager logs in with their email (set as team admin during provisioning). Sees a live view of every rep on their team: lessons completed, modules in progress, last-activity timestamp, and the diagnostic data once administered. Runs on the existing /admin/teams Supabase-backed surface.",
+      "Manager logs in with their email (set as team admin during provisioning). Sees a live view of every AE/SDR on their team: lessons completed, modules in progress, last-activity timestamp, and the diagnostic data once administered. Runs on the existing /admin/teams Supabase-backed surface.",
   },
   {
     number: "03",
@@ -71,7 +71,7 @@ const INTEGRATIONS: Integration[] = [
     name: "xAPI (Tin Can) statements",
     state: "Roadmap",
     description:
-      "Real-time event statements emitted to a partner's Learning Record Store. Captures behavioral signal more granular than SCORM — e.g., 'rep watched 4 of 5 segments in lesson 3.2', 'rep replayed segment 2 twice'.",
+      "Real-time event statements emitted to a partner's Learning Record Store. Captures behavioral signal more granular than SCORM — e.g., 'AE/SDR watched 4 of 5 segments in lesson 3.2', 'AE/SDR replayed segment 2 twice'.",
     buildTrigger:
       "First LXP partnership (Docebo's LXP product, 360Learning, etc.). Build: 1–2 weeks given existing event tracking already in place.",
   },
@@ -98,7 +98,7 @@ const INTEGRATIONS: Integration[] = [
     name: "Completion webhook",
     state: "Roadmap",
     description:
-      "POST to a partner-supplied URL when a rep completes a module or hits a diagnostic milestone. Used to trigger downstream workflows (enablement platform updates, recruiter notifications, HR system updates).",
+      "POST to a partner-supplied URL when a AE/SDR completes a module or hits a diagnostic milestone. Used to trigger downstream workflows (enablement platform updates, recruiter notifications, HR system updates).",
     buildTrigger:
       "First enablement-platform partnership where the partner wants AESDR completion to surface inside their dashboard. Build: 3–5 days.",
   },

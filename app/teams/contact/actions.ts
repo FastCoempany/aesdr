@@ -28,11 +28,11 @@ const VALID_ROLES = new Set([
 ]);
 
 const VALID_TEAM_SIZES = new Set([
-  "1–9 reps",
-  "10–24 reps",
-  "25–49 reps",
-  "50–99 reps",
-  "100+ reps",
+  "1–9 AEs and SDRs",
+  "10–24 AEs and SDRs",
+  "25–49 AEs and SDRs",
+  "50–99 AEs and SDRs",
+  "100+ AEs and SDRs",
 ]);
 
 const VALID_SOURCES = new Set([

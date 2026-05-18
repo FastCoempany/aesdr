@@ -26,7 +26,7 @@ export default function PartnersPage() {
             Your customers hire junior salespeople. AESDR is the training those salespeople are missing.
           </h1>
           <p className={styles.heroSubhead}>
-            If you sell to sales orgs, sales hiring, enablement, RevOps, L&amp;D, or HR — AESDR fills a gap your customers struggle with: getting first- and second-year reps productive without churning them. Five partner categories, mapped below. Each shows what your customers are missing, how AESDR fits, how we&apos;d integrate, and what you&apos;d earn.
+            If you sell to sales orgs, sales hiring, enablement, RevOps, L&amp;D, or HR — AESDR fills a gap your customers struggle with: getting first- and second-year AEs and SDRs productive without churning them. Five partner categories, mapped below. Each shows what your customers are missing, how AESDR fits, how we&apos;d integrate, and what you&apos;d earn.
           </p>
           <div style={{ marginTop: 24 }}>
             <InlineCTA href="/teams/contact?source=partners">Partnership inquiry</InlineCTA>
@@ -40,10 +40,10 @@ export default function PartnersPage() {
           <PartnerCategoryBlock
             title="LMS / LXP platforms"
             examples="Docebo · 360Learning · Absorb · LearnUpon · TalentLMS · Moodle Workplace · Cornerstone OnDemand"
-            intro="Your platform delivers learning. Your customers (HR / L&D) ask for content you don't produce — and sales-rep development for first- and second-year hires is one of the most-asked categories. AESDR slots into your marketplace as the answer."
+            intro="Your platform delivers learning. Your customers (HR / L&D) ask for content you don't produce — and sales-AE/SDR development for first- and second-year hires is one of the most-asked categories. AESDR slots into your marketplace as the answer."
             matrix={{
               gap: "No native curriculum for first- and second-year SDRs and AEs. Customers ask for it; platforms can't justify building it themselves.",
-              plugin: "Listed in your marketplace under Sales / Career Development. Reps consume AESDR modules inside your platform's UX. Manager dashboard runs in parallel.",
+              plugin: "Listed in your marketplace under Sales / Career Development. AEs and SDRs consume AESDR modules inside your platform's UX. Manager dashboard runs in parallel.",
               integration: "Today: SSO + email-based provisioning. Next: SCORM 1.2 / SCORM 2004 / xAPI export — built when the first LMS partnership signs.",
               revenue: "Referral (20% of first-year revenue), reseller margin (60% wholesale), or white-label per-seat wholesale rate.",
             }}
@@ -52,10 +52,10 @@ export default function PartnersPage() {
           <PartnerCategoryBlock
             title="Sales enablement platforms"
             examples="Highspot · Mindtickle · Spekit · Allego · Showpad · Seismic"
-            intro="Your platform manages content, coaching, and analytics for in-seat reps. What it doesn't do — and what your customers ask for — is teach reps the basics of how to function in a sales org before they log in. AESDR is that pre-onboarding layer."
+            intro="Your platform manages content, coaching, and analytics for in-seat AEs and SDRs. What it doesn't do — and what your customers ask for — is teach AEs and SDRs the basics of how to function in a sales org before they log in. AESDR is that pre-onboarding layer."
             matrix={{
-              gap: "The first 6–8 weeks of a rep's role. Reps land in your platform unprepared for the human side of the work; your platform can't fix what they should already know.",
-              plugin: "Pre-onboarding training that runs in weeks 1–8 before reps log into your platform. Co-marketed as 'foundational training + your content delivery.'",
+              gap: "The first 6–8 weeks of a AE/SDR's role. AEs and SDRs land in your platform unprepared for the human side of the work; your platform can't fix what they should already know.",
+              plugin: "Pre-onboarding training that runs in weeks 1–8 before AEs and SDRs log into your platform. Co-marketed as 'foundational training + your content delivery.'",
               integration: "SSO + completion-event webhook (roadmap). Light integration possible immediately via referral link from your platform's onboarding flow.",
               revenue: "Referral (15% of first-year). Bundled enterprise deal: per-seat wholesale, you mark up in your package.",
             }}
@@ -64,11 +64,11 @@ export default function PartnersPage() {
           <PartnerCategoryBlock
             title="Sales hiring & assessment platforms"
             examples="Sales Assembly · Bravado · Aspireship · Uvaro · Victory Lap · RepVue"
-            intro="You place reps. Once placed, those reps either succeed or churn fast — and your platform's reputation rides on that. You have no post-placement training arm to nudge the outcome. AESDR is that arm."
+            intro="You place AEs and SDRs. Once placed, those AEs and SDRs either succeed or churn fast — and your platform's reputation rides on that. You have no post-placement training arm to nudge the outcome. AESDR is that arm."
             matrix={{
-              gap: "Post-placement ramp acceleration. Hiring orgs pay the cost of reps who don't make it; you have no way to prevent it.",
-              plugin: "Include AESDR in your placement package or as a value-add post-hire benefit. 'Hired reps get AESDR access.'",
-              integration: "Bulk seat provisioning via API or CSV (available today). Co-branded onboarding email to placed reps.",
+              gap: "Post-placement ramp acceleration. Hiring orgs pay the cost of AEs and SDRs who don't make it; you have no way to prevent it.",
+              plugin: "Include AESDR in your placement package or as a value-add post-hire benefit. 'Hired AEs and SDRs get AESDR access.'",
+              integration: "Bulk seat provisioning via API or CSV (available today). Co-branded onboarding email to placed AEs and SDRs.",
               revenue: "Wholesale per-seat at ~$99/seat (vs. $249 consumer). You absorb the cost or pass it to the hiring org.",
             }}
           />
@@ -79,7 +79,7 @@ export default function PartnersPage() {
             examples="Memory · Operatus · RevOps.io · CIENCE · MarketStar · Belkins · SalesRoads"
             intro="You run junior SDRs across multiple client engagements. You eat the cost of poor SDR performance directly. You need consistent training across your bench. Most firms train on tools (Outreach, Apollo, Salesloft) but not on how to actually function in a sales org — your SDRs end up competent on tools but fragile when client work gets hard."
             matrix={{
-              gap: "Consistent training across your SDR bench. Reps know the tools but haven't been taught how to handle manager friction, AE handoffs, slow weeks, or any of the predictable breakpoints.",
+              gap: "Consistent training across your SDR bench. AEs and SDRs know the tools but haven't been taught how to handle manager friction, AE handoffs, slow weeks, or any of the predictable breakpoints.",
               plugin: "AESDR completion becomes a credential tier on your bench. Junior SDRs work through AESDR before they're assigned to high-value client work.",
               integration: "Bulk seat purchase. Internal onboarding tracking via the manager dashboard.",
               revenue: "Bulk discount on per-seat pricing at scale (50+ SDRs). Reciprocal referrals: AESDR-trained SDRs flow back to you when our Custom Enterprise clients need fractional support.",
@@ -92,7 +92,7 @@ export default function PartnersPage() {
             examples="Paycor · Rippling · Gusto · Justworks · ADP Marketplace · BambooHR · Workday"
             intro="Marketplaces have hundreds of apps. Listing without proof is noise. This becomes a real path after a handful of Custom Enterprise deals close and we have completion + retention data your customers will trust. Listed here so partners know we're sequencing this for later, not skipping it."
             matrix={{
-              gap: "A category your marketplace doesn't fill: sales-rep development for first- and second-year hires. Your customers ask for it; you don't build training in-house.",
+              gap: "A category your marketplace doesn't fill: sales-AE/SDR development for first- and second-year hires. Your customers ask for it; you don't build training in-house.",
               plugin: "Marketplace listing under Learning & Development. Your customers add AESDR through your existing UX.",
               integration: "SSO + employee directory sync (roadmap). Built when the first marketplace conversation is real.",
               revenue: "Referral (15–20% of first-year). Marketplace takes the standard cut.",

@@ -39,7 +39,7 @@ export default function PricingPage() {
               title="Team seats"
               price="$1,499"
               priceUnit="one-time · up to 10 seats"
-              description="Same product as the consumer course at aesdr.com. Buy a 10-seat pack for your team; reps see the consumer experience; you get manager visibility."
+              description="Same product as the consumer course at aesdr.com. Buy a 10-seat pack for your team; AEs and SDRs see the consumer experience; you get manager visibility."
               features={[
                 "10 seats, any mix of SDR and AE tracks",
                 "Lifetime access for every seat",
@@ -57,7 +57,7 @@ export default function PricingPage() {
               title="Custom enterprise"
               ribbon="MOST COMMON 25+"
               featured
-              description="Per-seat pricing past 10 seats, with manager onboarding and a custom rollout. For orgs hiring 20+ reps a year or running structured ramp programs."
+              description="Per-seat pricing past 10 seats, with manager onboarding and a custom rollout. For orgs hiring 20+ AEs and SDRs a year or running structured ramp programs."
               features={[
                 "Per-seat pricing past 10 seats",
                 "Live manager onboarding session",

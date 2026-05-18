@@ -72,7 +72,7 @@ export default function CertificateGenerator() {
           }}
         >
           <div className={styles.formGroup}>
-            <label className={styles.formLabel} htmlFor="cert-name">Rep name</label>
+            <label className={styles.formLabel} htmlFor="cert-name">AE/SDR name</label>
             <input
               id="cert-name"
               type="text"
@@ -85,7 +85,7 @@ export default function CertificateGenerator() {
           </div>
 
           <div className={styles.formGroup}>
-            <label className={styles.formLabel} htmlFor="cert-role">Rep role</label>
+            <label className={styles.formLabel} htmlFor="cert-role">AE/SDR role</label>
             <select
               id="cert-role"
               value={role}

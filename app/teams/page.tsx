@@ -28,7 +28,7 @@ export default function TeamsLanding() {
           </h1>
           <p className={styles.heroSubhead}>
             The same 12 modules that junior SDRs and AEs buy on aesdr.com — packaged
-            for sales teams that need their new reps productive faster, with fewer
+            for sales teams that need their new AEs and SDRs productive faster, with fewer
             of them quitting in month four.
           </p>
 
@@ -67,7 +67,7 @@ export default function TeamsLanding() {
           <hr className={styles.divider} />
 
           <p className={styles.body}>
-            Most sales orgs hire reps and expect a manager plus an enablement library
+            Most sales orgs hire AEs and SDRs and expect a manager plus an enablement library
             to make them productive. It works for some. Most stall, churn, or quit
             in the first six months.
           </p>
@@ -80,7 +80,7 @@ export default function TeamsLanding() {
           </p>
           <p className={styles.body}>
             AESDR is 12 modules, each addressing one of those things, with a
-            takeaway tool the rep keeps. Real-world training your new reps should
+            takeaway tool the AE/SDR keeps. Real-world training your new AEs and SDRs should
             already have, but rarely do.
           </p>
         </div>
@@ -109,11 +109,11 @@ export default function TeamsLanding() {
 
             <div className={styles.card}>
               <p className={styles.cardEyebrow}>02 · TAKEAWAYS</p>
-              <h3 className={styles.cardTitle}>5 tools reps keep</h3>
+              <h3 className={styles.cardTitle}>5 tools AEs and SDRs keep</h3>
               <p className={styles.cardBody}>
                 Manager Archetype Map. AE/SDR Alignment Contract. 72-Hour Strike
                 Plan (for the week after a bad loss). CRM Survival Guide. Async
-                Cadence Template. Built to live outside the course — reps use
+                Cadence Template. Built to live outside the course — AEs and SDRs use
                 them for years.
               </p>
             </div>
@@ -123,7 +123,7 @@ export default function TeamsLanding() {
               <h3 className={styles.cardTitle}>Untamed Discord</h3>
               <p className={styles.cardBody}>
                 Real AEs and SDRs working through the material together. No
-                &ldquo;crush it&rdquo; energy, no growth-hack pep talk. Where reps
+                &ldquo;crush it&rdquo; energy, no growth-hack pep talk. Where AEs and SDRs
                 process what they&apos;ve learned with people who&apos;ve seen the
                 same fires.
               </p>
@@ -153,7 +153,7 @@ export default function TeamsLanding() {
               title="Team seats"
               price="$1,499"
               priceUnit="one-time · up to 10 seats"
-              description="Buy a 10-seat pack for your team. Reps get the full course; you get the manager dashboard. Lifetime access for every seat."
+              description="Buy a 10-seat pack for your team. AEs and SDRs get the full course; you get the manager dashboard. Lifetime access for every seat."
               features={[
                 "10 seats, any mix of SDR and AE tracks",
                 "Manager dashboard + progress tracking",
@@ -170,7 +170,7 @@ export default function TeamsLanding() {
               title="Custom enterprise"
               ribbon="25+ SEATS"
               featured
-              description="Per-seat pricing with live manager onboarding, a custom rollout calendar, and a dedicated Slack channel. For orgs hiring 20+ reps a year or running structured ramp programs."
+              description="Per-seat pricing with live manager onboarding, a custom rollout calendar, and a dedicated Slack channel. For orgs hiring 20+ AEs and SDRs a year or running structured ramp programs."
               features={[
                 "Per-seat pricing past 10 seats",
                 "Live manager onboarding session",
@@ -199,7 +199,7 @@ export default function TeamsLanding() {
             <BuyerModeCard
               eyebrow="04 · MARKETPLACE"
               title="Marketplace integration"
-              description="For LMS, sales enablement, and hiring platforms. AESDR plugs into your existing customer base as the early-rep training your platform doesn't produce. SSO and SCORM on the integration roadmap."
+              description="For LMS, sales enablement, and hiring platforms. AESDR plugs into your existing customer base as the early-AE/SDR training your platform doesn't produce. SSO and SCORM on the integration roadmap."
               features={[
                 "Listed in your marketplace under sales / L&D categories",
                 "SSO + email-based seat provisioning today",

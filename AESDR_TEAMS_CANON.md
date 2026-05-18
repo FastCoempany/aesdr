@@ -20,14 +20,14 @@ This document is **canon** for the subsidiary brand and **spec** for the build. 
 
 > **AESDR / for Teams is the missing behavioral foundation for early-career sales orgs.**
 
-Built on the same 12 lessons that 1st- and 2nd-year SDRs and AEs buy directly on aesdr.com, packaged for sales orgs that need their junior reps to mature faster. The wedge: **young SDRs and AEs break in predictable ways. We turn the breakpoints into a structured training path.**
+Built on the same 12 lessons that 1st- and 2nd-year SDRs and AEs buy directly on aesdr.com, packaged for sales orgs that need their junior AEs and SDRs to mature faster. The wedge: **young SDRs and AEs break in predictable ways. We turn the breakpoints into a structured training path.**
 
 This framing is borrowed from the Paycor / Listo capability-extension partnership pattern (see decisions log §13). We're not a sales-training course in the B2B SaaS sense — we're the behavioral foundation that platforms in sales enablement, LMS, sales hiring, and fractional RevOps don't have and don't want to build.
 
 ### 1.2 What this is NOT
 
 - **Not a rebrand of aesdr.com.** The consumer brand changes nothing. Same landing page, same FAQ, same pricing cards, same survival voice. The subsidiary is an "auxiliary detached building," not a renovation.
-- **Not a generic "behavioral OS" pivot of the whole company.** The behavioral-OS framing lives only in `/teams/*`. Consumer surfaces stay in the survival voice ("for the rep grinding through 80 dials and a 9% reply rate").
+- **Not a generic "behavioral OS" pivot of the whole company.** The behavioral-OS framing lives only in `/teams/*`. Consumer surfaces stay in the survival voice ("for the AE/SDR grinding through 80 dials and a 9% reply rate").
 - **Not a procurement/RFP-friendly enterprise product** in v1. Custom enterprise is a "contact us" surface; we are not building SOC 2 reports, security questionnaires, or RBAC layers yet. Those come if and when a 50-seat-plus deal lands.
 - **Not a marketing-funnel optimization play.** No PostHog, no SDR-style chatbot, no exit-intent popups, no email capture for a lead magnet. The subsidiary surfaces match the editorial restraint of the parent.
 
@@ -35,9 +35,9 @@ This framing is borrowed from the Paycor / Listo capability-extension partnershi
 
 The subsidiary openly acknowledges the parent. The relationship is truthful:
 
-> *"AESDR / for Teams is built on aesdr.com — the rep-direct course that 1st- and 2nd-year SDRs and AEs actually use. The same 12 lessons, packaged for sales orgs."*
+> *"AESDR / for Teams is built on aesdr.com — the AE/SDR-direct course that 1st- and 2nd-year SDRs and AEs actually use. The same 12 lessons, packaged for sales orgs."*
 
-This line appears in the subsidiary footer and (in shortened form) on the landing hero. The consumer brand is referenced as the proof point: this isn't a B2B course someone invented to sell to procurement; it's the same product reps already pay for on their own.
+This line appears in the subsidiary footer and (in shortened form) on the landing hero. The consumer brand is referenced as the proof point: this isn't a B2B course someone invented to sell to procurement; it's the same product AEs and SDRs already pay for on their own.
 
 Bridge from main site to subsidiary: one small `for sales orgs →` link in the main site footer. **No cross-linking from main landing hero, FAQ, pricing, or anywhere else.** The subsidiary is discovered via:
 
@@ -51,7 +51,7 @@ Two registers depending on surface:
 
 | Surface | Register |
 |---|---|
-| `/teams` landing | Manager-confident editorial. Playfair headlines. Survival framing acknowledged but framed as *the reason this works for orgs* ("reps treat it as a survival guide, which is why they finish it") |
+| `/teams` landing | Manager-confident editorial. Playfair headlines. Survival framing acknowledged but framed as *the reason this works for orgs* ("AEs and SDRs treat it as a survival guide, which is why they finish it") |
 | `/teams/partners` | Channel-partnership ops voice. Less prose, more table. Pitch-mode. |
 | `/teams/pricing` | Direct, transactional. Numbers and what they include. |
 | `/teams/contact` | Calm, low-friction. Form + 24-business-hour reply promise. |
@@ -96,7 +96,7 @@ The `/` separator is a true forward slash, not an em-dash or pipe. It's part of 
 
 **One-liner alts (use contextually):**
 - "Built on aesdr.com. Packaged for teams."
-- "The same 12 lessons your best reps already pay for — rolled out across your org."
+- "The same 12 lessons your best AEs and SDRs already pay for — rolled out across your org."
 - "Operator-grade training for the first 18 months of an SDR or AE career."
 
 Never use any tagline containing the words: "potential," "unleash," "transform," "ignite," "supercharge," "next-level."
@@ -323,13 +323,13 @@ app/api/teams-inquiry/
 
 | Route | One-line intent |
 |---|---|
-| `/teams` | Convince a sales manager / enablement leader / RevOps that AESDR is the behavioral foundation their first-year reps are missing. CTA: book a walkthrough. |
+| `/teams` | Convince a sales manager / enablement leader / RevOps that AESDR is the behavioral foundation their first-year AEs and SDRs are missing. CTA: book a walkthrough. |
 | `/teams/partners` | Convince an LMS / enablement / hiring / fractional-services partner that integrating AESDR fills a real gap in their offering. CTA: partnership inquiry. |
 | `/teams/pricing` | Show team seats (10-pack), describe custom enterprise, describe white-label/reseller paths. CTA: book a walkthrough OR contact for custom. |
 | `/teams/contact` | Capture a qualified B2B inquiry. Email routes to `hello@aesdr.com` with subject prefix `[/teams inquiry]`. |
 | `/teams/curriculum` | Detailed map of the 12 lessons with learning outcomes per lesson. Buyer-facing curriculum reference. |
-| `/teams/diagnostic` | Describe the rep before/after diagnostic instrument. Manager-facing measurement framework. |
-| `/teams/implementation` | The manager implementation guide. Rollout sequence, weekly cadence, what to expect from reps. |
+| `/teams/diagnostic` | Describe the AE/SDR before/after diagnostic instrument. Manager-facing measurement framework. |
+| `/teams/implementation` | The manager implementation guide. Rollout sequence, weekly cadence, what to expect from AEs and SDRs. |
 | `/teams/integrations` | SSO / SCORM / xAPI / LTI roadmap and current state. Honest about what's built vs. on roadmap. |
 
 ---
@@ -341,7 +341,7 @@ app/api/teams-inquiry/
 **Hero**
 - Pre-eyebrow: `AESDR / FOR TEAMS` (mono, muted)
 - Headline: *"The missing behavioral foundation for early-career sales orgs."*
-- Subhead (1 sentence): "The same 12 lessons that 1st- and 2nd-year SDRs and AEs buy on aesdr.com — packaged for sales orgs that need their junior reps to mature faster."
+- Subhead (1 sentence): "The same 12 lessons that 1st- and 2nd-year SDRs and AEs buy on aesdr.com — packaged for sales orgs that need their junior AEs and SDRs to mature faster."
 - Stat triplet (three big iris-shimmer KPIs, sourced from cited research — see §15):
   - **9.1 months** — average SDR ramp time to full quota attainment (Bridge Group)
   - **39%** — first-year SDR turnover rate in SaaS (Bridge Group / TOPO)
@@ -351,9 +351,9 @@ app/api/teams-inquiry/
 **The wedge (one section)**
 - Headline: *"Junior SDRs and AEs break in predictable ways."*
 - Body (3 short paragraphs):
-  1. Most sales orgs hire reps and expect their manager + a Highspot library to make them productive. It works for some. Most stall, churn, or quit.
+  1. Most sales orgs hire AEs and SDRs and expect their manager + a Highspot library to make them productive. It works for some. Most stall, churn, or quit.
   2. The reasons aren't a mystery. Toxic management, ego dynamics between SDRs and AEs, CRM friction, async-life dysfunction, no playbook for the first 100 cold dials — these are the same six or seven breakpoints, repeated across orgs.
-  3. AESDR is 12 lessons, each addressing one of those breakpoints, with a takeaway tool the rep keeps. The behavioral foundation that should already exist but doesn't.
+  3. AESDR is 12 lessons, each addressing one of those breakpoints, with a takeaway tool the AE/SDR keeps. The behavioral foundation that should already exist but doesn't.
 
 **What it is (card row)**
 - Three feature cards:
@@ -364,13 +364,13 @@ app/api/teams-inquiry/
 **Four buyer modes (card grid)**
 Four cards in a 2×2 grid:
 
-1. **Direct team seats** — buy 10 seats for your org. Reps see the consumer experience; you get the manager dashboard and progress visibility. **$1,499 one-time, lifetime access.** *(Clears up the misread Bilal had.)*
+1. **Direct team seats** — buy 10 seats for your org. AEs and SDRs see the consumer experience; you get the manager dashboard and progress visibility. **$1,499 one-time, lifetime access.** *(Clears up the misread Bilal had.)*
 2. **Custom enterprise** — 50+ seats. Per-seat pricing, manager onboarding, custom rollout sequence. **Contact us.**
 3. **White-label / co-branded** — for partners packaging AESDR inside their offering. We deliver the lessons; you wrap them in your brand. **Contact us.**
 4. **Marketplace integration** — for LMS, enablement, and hiring platforms. SSO, eventual SCORM/xAPI, revenue-share. **Contact us.**
 
 **Powered by line (footer-ish, just above subsidiary footer)**
-> "AESDR / for Teams is built on aesdr.com — the rep-direct course that 1st- and 2nd-year SDRs and AEs actually use. The same 12 lessons, packaged for sales orgs."
+> "AESDR / for Teams is built on aesdr.com — the AE/SDR-direct course that 1st- and 2nd-year SDRs and AEs actually use. The same 12 lessons, packaged for sales orgs."
 
 ### 5.2 `/teams/partners` — channel pitch
 
@@ -452,11 +452,11 @@ Categories in order:
   - Channel partner (LMS, enablement, hiring platform, marketplace)
   - Other
 - Team size (dropdown):
-  - 1–9 reps
-  - 10–24 reps
-  - 25–49 reps
-  - 50–99 reps
-  - 100+ reps
+  - 1–9 AEs and SDRs
+  - 10–24 AEs and SDRs
+  - 25–49 AEs and SDRs
+  - 50–99 AEs and SDRs
+  - 100+ AEs and SDRs
 - What brought you here? (textarea, optional, 500 char) — placeholder: "Tell us briefly what you're trying to solve. A sentence or two is enough."
 - Source (hidden field — populated from `?source=` query param to track which page sent them: hero / partners / pricing-custom / pricing-wl / etc.)
 
@@ -470,7 +470,7 @@ Categories in order:
 
 **Hero**
 - Headline: *"The 12 lessons, mapped."*
-- Subhead: "What your reps will work through. Outcomes per lesson, sequencing, expected time."
+- Subhead: "What your AEs and SDRs will work through. Outcomes per lesson, sequencing, expected time."
 
 **Curriculum map** (12 sections, one per lesson):
 
@@ -502,11 +502,11 @@ Course list (from earlier file inventory):
 
 **Hero**
 - Headline: *"How to know it's working."*
-- Subhead: "A before/after diagnostic for measuring rep behavior change. Built for managers who need to justify the investment."
+- Subhead: "A before/after diagnostic for measuring AE/SDR behavior change. Built for managers who need to justify the investment."
 
 **Sections:**
 
-1. **What the diagnostic measures.** 6–8 dimensions of early-career rep behavior:
+1. **What the diagnostic measures.** 6–8 dimensions of early-career AE/SDR behavior:
    - Outbound activity volume
    - Outbound personalization quality
    - Discovery question depth
@@ -528,17 +528,17 @@ Course list (from earlier file inventory):
 
 **Sections:**
 
-1. **Before kickoff** — what the manager needs to do (announce, set expectations, schedule weekly 1:1 5-min check-ins, identify the rep who needs the most support and the one likely to evangelize).
-2. **Week 1–2** — reps complete lessons 1–3 (the structure-building foundation). Manager reads alongside.
+1. **Before kickoff** — what the manager needs to do (announce, set expectations, schedule weekly 1:1 5-min check-ins, identify the AE/SDR who needs the most support and the one likely to evangelize).
+2. **Week 1–2** — AEs and SDRs complete lessons 1–3 (the structure-building foundation). Manager reads alongside.
 3. **Week 3–4** — lessons 4–6 (AE/SDR dynamics, async life). First peer-discussion session.
 4. **Week 5–6** — lessons 7–9 (performance pitfalls, survival guide). Manager runs a "what's stuck" review.
 5. **Week 7–8** — lessons 10–12 (culture, playbook). Diagnostic re-administered. Wrap-up team session.
-6. **What to expect from reps.** Honest range — "some reps will tear through this; some will resist. The resistors are usually the ones who needed it most. Don't force pace."
+6. **What to expect from AEs and SDRs.** Honest range — "some AEs and SDRs will tear through this; some will resist. The resistors are usually the ones who needed it most. Don't force pace."
 7. **What to do with the takeaway tools.** Five tools, when each gets used, how to integrate into existing team rituals.
 8. **Common mistakes.**
    - Treating it like compliance training (kills engagement)
    - Skipping the manager's parallel reading (creates a knowledge gap)
-   - Pushing reps to finish in 4 weeks (defeats the spaced-rep design)
+   - Pushing AEs and SDRs to finish in 4 weeks (defeats the spaced-AE/SDR design)
    - Running peer discussions before lesson 5 (group hasn't built trust yet)
 
 ### 5.8 `/teams/integrations`
@@ -550,7 +550,7 @@ Course list (from earlier file inventory):
 **Sections (honest about state):**
 
 1. **Live now**
-   - Email-based onboarding — partners send a CSV of seats; we email reps individually with sign-in links.
+   - Email-based onboarding — partners send a CSV of seats; we email AEs and SDRs individually with sign-in links.
    - Manager dashboard access — manager email gets `team_admin` flag in Supabase; sees `/admin/teams` view.
 2. **Coming next** (roadmap, no committed dates yet)
    - SSO via SAML 2.0 — for orgs requiring single sign-on (planned)
@@ -585,9 +585,9 @@ This page is honest. We don't claim SSO is "available now" when it isn't. We lis
 | **Footer link** from main site to `/teams` | Single line addition to consumer landing footer | `app/page.tsx` | Small, low-emphasis |
 | **AdminChip integration** | Add `/teams/*` quick-links below a divider | `components/AdminChip.tsx` | See §10.4 |
 | **Downloads index** | `/teams/downloads` route | `app/teams/downloads/page.tsx` | Lists all four downloadable artifacts with print-to-PDF instructions |
-| **Completion certificate** | `/teams/downloads/certificate` route | `app/teams/downloads/certificate/page.tsx` + client | Interactive generator: rep name + module count + date inputs → printable certificate preview |
+| **Completion certificate** | `/teams/downloads/certificate` route | `app/teams/downloads/certificate/page.tsx` + client | Interactive generator: AE/SDR name + module count + date inputs → printable certificate preview |
 | **Partner one-pager** | `/teams/downloads/partner-one-pager` route | `app/teams/downloads/partner-one-pager/page.tsx` | Single-page printable sales sheet (positioning, partner categories, contact) |
-| **Rep diagnostic instrument** | `/teams/downloads/rep-diagnostic` route | `app/teams/downloads/rep-diagnostic/page.tsx` | Printable self-administering instrument — all 32 items across 8 dimensions, with response scales |
+| **AE/SDR diagnostic instrument** | `/teams/downloads/diagnostic-instrument` route | `app/teams/downloads/diagnostic-instrument/page.tsx` | Printable self-administering instrument — all 32 items across 8 dimensions, with response scales |
 
 **Note on PDF format (decision 2026-05-18):** all "downloadable PDFs" are
 implemented as **print-friendly web pages** under `/teams/downloads/*` with
@@ -624,7 +624,7 @@ Detailed pitch angles for each category, used both for the `/teams/partners` pag
 **How AESDR plugs in:**
 - Listed as a "Sales / Early-Career Development" category content partner
 - Customers can add AESDR to their LMS catalog
-- Reps consume lessons inside the LMS UX
+- AEs and SDRs consume lessons inside the LMS UX
 
 **Integration mechanism:** SCORM 1.2 / SCORM 2004 / xAPI export (on roadmap). Initial integration via SSO + email-based provisioning.
 
@@ -637,10 +637,10 @@ Detailed pitch angles for each category, used both for the `/teams/partners` pag
 
 **Examples:** Highspot, Mindtickle, Spekit, Allego, Showpad, Seismic.
 
-**Their gap:** Their platforms are built for content + coaching + analytics, but they don't produce the actual training content for first-year reps. Their customers want "rep onboarding" turnkey, but the platforms only sell the delivery vehicle.
+**Their gap:** Their platforms are built for content + coaching + analytics, but they don't produce the actual training content for first-year AEs and SDRs. Their customers want "AE/SDR onboarding" turnkey, but the platforms only sell the delivery vehicle.
 
 **How AESDR plugs in:**
-- Pre-onboarding behavioral foundation (weeks 1–8) before reps touch the enablement platform
+- Pre-onboarding behavioral foundation (weeks 1–8) before AEs and SDRs touch the enablement platform
 - Co-marketing: "AESDR for the human + behavioral; [Platform] for the playbooks + content delivery"
 - Bundled into enterprise enablement deals
 
@@ -654,11 +654,11 @@ Detailed pitch angles for each category, used both for the `/teams/partners` pag
 
 **Examples:** Sales Assembly, Bravado, Aspireship, Uvaro, Victory Lap, RepVue.
 
-**Their gap:** They place reps. Once placed, the reps either succeed or churn fast. Platform reputation depends on placed-rep success. They have no post-placement training arm.
+**Their gap:** They place AEs and SDRs. Once placed, the AEs and SDRs either succeed or churn fast. Platform reputation depends on placed-AE/SDR success. They have no post-placement training arm.
 
 **How AESDR plugs in:**
 - Post-placement ramp acceleration — included as part of placement package
-- "Hired reps get AESDR access" — value-add for the hiring org, retention boost for the platform
+- "Hired AEs and SDRs get AESDR access" — value-add for the hiring org, retention boost for the platform
 - Could be a hiring-platform-funded benefit
 
 **Integration mechanism:** Bulk seat provisioning via API or CSV (immediate). Co-branded onboarding email.
@@ -691,7 +691,7 @@ Detailed pitch angles for each category, used both for the `/teams/partners` pag
 
 **Flagged as longer-term.** These marketplaces have hundreds of apps. Listing without proof is noise.
 
-**Their gap:** Same as Paycor/Listo dynamic — marketplace owns the HR system of record, AESDR fills a category gap (early-career sales rep development) that the marketplace itself doesn't want to build.
+**Their gap:** Same as Paycor/Listo dynamic — marketplace owns the HR system of record, AESDR fills a category gap (early-career sales AE/SDR development) that the marketplace itself doesn't want to build.
 
 **How AESDR plugs in:** Marketplace listing under "Learning & Development" or "Sales Training" categories.
 
@@ -812,7 +812,7 @@ public/teams/
   aesdr-manager-implementation-guide.pdf
   aesdr-completion-certificate-template.pdf
   aesdr-partner-one-pager.pdf
-  aesdr-rep-diagnostic.pdf
+  aesdr-diagnostic-instrument.pdf
 ```
 
 ### 10.3 Gating
@@ -853,7 +853,7 @@ The render logic checks for `'divider' in entry` and renders a 1px iris-gradient
 [/teams inquiry] {role} from {company} ({team-size})
 ```
 
-Example: `[/teams inquiry] Sales enablement from Acme Corp (25–49 reps)`
+Example: `[/teams inquiry] Sales enablement from Acme Corp (25–49 AEs and SDRs)`
 
 Body format (HTML, plain-text fallback):
 
@@ -934,7 +934,7 @@ Five PRs over ~2–3 weeks. Order matters; earlier PRs unblock later ones.
 - `public/teams/aesdr-manager-implementation-guide.pdf`
 - `public/teams/aesdr-completion-certificate-template.pdf`
 - `public/teams/aesdr-partner-one-pager.pdf`
-- `public/teams/aesdr-rep-diagnostic.pdf`
+- `public/teams/aesdr-diagnostic-instrument.pdf`
 - Wire download links from relevant pages
 
 **Why fourth:** Web pages need to exist first; PDFs are derivative artifacts. Built as the web pages stabilize.

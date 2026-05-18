@@ -13,7 +13,7 @@ import styles from "../teams.module.css";
 
 export const metadata = {
   title: "Downloads — AESDR / for Teams",
-  description: "Manager guide, completion certificate, partner one-pager, rep diagnostic instrument. All print-friendly.",
+  description: "Manager guide, completion certificate, partner one-pager, AE/SDR diagnostic instrument. All print-friendly.",
 };
 
 const ARTIFACTS = [
@@ -30,7 +30,7 @@ const ARTIFACTS = [
     eyebrow: "ARTIFACT 02 · CERTIFICATE",
     title: "Completion certificate generator",
     description:
-      "Enter rep name + completion date + program scope. Generates a printable certificate in the AESDR / for Teams brand. One per rep.",
+      "Enter AE/SDR name + completion date + program scope. Generates a printable certificate in the AESDR / for Teams brand. One per AE/SDR.",
     pages: "1 page · landscape",
   },
   {
@@ -42,12 +42,12 @@ const ARTIFACTS = [
     pages: "1 page · letter portrait",
   },
   {
-    href: "/teams/downloads/rep-diagnostic",
+    href: "/teams/downloads/diagnostic-instrument",
     eyebrow: "ARTIFACT 04 · DIAGNOSTIC",
-    title: "Rep diagnostic instrument",
+    title: "AE/SDR diagnostic instrument",
     description:
-      "Self-administering version of the 8-dimension diagnostic. 32 prompts with 1–5 response scales. Print, distribute to reps for week 0 / week 8.",
-    pages: "~6 pages when printed",
+      "Fully digital. 32 prompts across 8 dimensions with 1–5 response scales. AEs and SDRs fill it in on screen and download responses as a CSV. Administer at week 0 / week 8 and compare deltas.",
+    pages: "Digital · download CSV",
   },
 ];
 
@@ -59,7 +59,7 @@ export default function DownloadsIndex() {
           <p className={styles.eyebrow}>Downloads</p>
           <h1 className={styles.heroHeadline}>Four artifacts. All print-friendly.</h1>
           <p className={styles.heroSubhead}>
-            Send-able materials for managers, partners, and reps. Each is a web
+            Send-able materials for managers, partners, and AEs and SDRs. Each is a web
             page designed to print cleanly to PDF — no separate file to chase, no
             version drift between the website and the PDF.
           </p>
@@ -82,12 +82,12 @@ export default function DownloadsIndex() {
           </div>
 
           <div className={styles.downloadHowto}>
-            <strong>To save any artifact as a PDF:</strong> open the artifact,
-            press <strong>Cmd+P</strong> (Mac) or <strong>Ctrl+P</strong>{" "}
-            (Windows), choose <strong>Save as PDF</strong> in the destination
-            dropdown, click <strong>Save</strong>. The print stylesheet hides
-            the navigation, footer, and form chrome — you get a clean,
-            brand-aligned PDF. Works in Chrome, Safari, Firefox, and Edge.
+            <strong>About these artifacts:</strong> the manager guide, certificate, and partner
+            one-pager are designed to save as PDF — open the artifact, press{" "}
+            <strong>Cmd+P</strong> (Mac) or <strong>Ctrl+P</strong> (Windows), choose{" "}
+            <strong>Save as PDF</strong> in the destination dropdown, click <strong>Save</strong>.
+            The diagnostic instrument is fully digital — fill it in on screen and download a CSV
+            of the responses.
           </div>
         </div>
       </section>

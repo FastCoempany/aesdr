@@ -4,9 +4,9 @@ import TeamsFooter from "./_components/TeamsFooter";
 import styles from "./teams.module.css";
 
 export const metadata: Metadata = {
-  title: "AESDR / for Teams — sales onboarding for first- and second-year reps",
+  title: "AESDR / for Teams — sales onboarding for first- and second-year AEs and SDRs",
   description:
-    "The training your first- and second-year SDRs and AEs should already have. The same AESDR course junior reps pay for themselves — packaged for the orgs that hire them.",
+    "The training your first- and second-year SDRs and AEs should already have. The same AESDR course junior AEs and SDRs pay for themselves — packaged for the orgs that hire them.",
   robots: { index: false, follow: false },
   openGraph: {
     title: "AESDR / for Teams",

@@ -107,7 +107,7 @@ export default function PartnerOnePagerPage() {
           <h2 className={styles.onepageH2}>What it is</h2>
           <p className={styles.onepageBody}>
             12 modules × 3 sub-lessons (36 total, ~16 hours run-time). Five takeaway tools
-            reps keep (manager archetype map, AE/SDR alignment contract, 72-hour strike plan,
+            AEs and SDRs keep (manager archetype map, AE/SDR alignment contract, 72-hour strike plan,
             CRM survival guide, async cadence template). Eight-dimension before/after
             diagnostic for measuring behavior change. Discord community.
           </p>

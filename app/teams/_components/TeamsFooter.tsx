@@ -40,7 +40,7 @@ export default function TeamsFooter() {
               <Link href="/" style={{ color: "var(--ink)", textDecoration: "underline" }}>
                 aesdr.com
               </Link>
-              {" "}— the rep-direct course that 1st- and 2nd-year SDRs and AEs actually use.
+              {" "}— the AE/SDR-direct course that 1st- and 2nd-year SDRs and AEs actually use.
               The same 12 lessons, packaged for sales orgs.
             </span>
           </div>
