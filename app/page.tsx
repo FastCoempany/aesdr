@@ -144,6 +144,7 @@ export default async function LandingPage() {
         <Link href="/refund-policy">Refunds</Link>
         <Link href="/about">About</Link>
         <Link href="/contact">Contact</Link>
+        <Link href="/teams" style={{ opacity: 0.7 }}>for sales orgs &rarr;</Link>
       </footer>
     </main>
   );
