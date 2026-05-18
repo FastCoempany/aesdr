@@ -3,22 +3,30 @@ import ComingSoonInteractive from "./ComingSoonInteractive";
 /**
  * Coming-soon page.
  *
- * Server-rendered visual + a small client overlay for the keyboard / click
+ * Server-rendered visual + a small client overlay for keyboard / click
  * bypass interaction. The split is deliberate: the mascot, wordmark, and
  * tagline are static HTML produced on the server, so the page renders
- * visibly **no matter what** happens with client JS — failed hydration,
- * CSP-blocked scripts, network blips, extension interference, all benign
- * to the visual. Previously the whole page was a `"use client"` component
- * whose state machine could land on `return null` and leave a dark blank.
- * That failure mode is now structurally impossible.
+ * visibly no matter what happens with client JS — failed hydration,
+ * CSP-blocked scripts, network blips, extension interference. The
+ * previous all-client version could land on `setVisible(false) → return
+ * null` and leave a dark blank; that path is now structurally impossible.
  *
- * Bypass mechanisms:
+ * Bypass mechanisms (in order of robustness):
  *
- *   1. URL `?bypass=<code>` — handled at the edge in proxy.ts (no JS needed)
- *   2. Keyboard buffer — debounced POST to /api/coming-soon-bypass
- *   3. Click mascot → prompt → POST
+ *   1. URL `?bypass=<code>` — handled at the edge in proxy.ts. Zero JS.
+ *   2. Keyboard buffer with 700ms debounce → `submitBypassAction()`.
+ *   3. Click mascot → prompt → `submitBypassAction()`.
  *
- * The secret lives only in the server-side env var `COMING_SOON_BYPASS_CODE`.
+ * Both (2) and (3) call a server action (not a fetch) so the cookie set
+ * and the redirect happen atomically in a single server response. The
+ * previous fetch-based approach split the two steps across HTTP round-
+ * trips, creating a race where the cookie could fail to register before
+ * the browser navigated.
+ *
+ * The bypass secret lives only in the server-side env var
+ * `COMING_SOON_BYPASS_CODE`. Without it set, the bypass is uncrackable
+ * (admins still get through via Supabase auth + the hardcoded
+ * PERMANENT_ADMINS list in lib/admin.ts).
  */
 export default function ComingSoonPage() {
   return (
@@ -34,7 +42,6 @@ export default function ComingSoonPage() {
         overflow: "hidden",
       }}
     >
-      {/* Mascot + logo container */}
       <div
         style={{
           position: "relative",
@@ -61,12 +68,13 @@ export default function ComingSoonPage() {
               userSelect: "none",
             }}
           />
-          {/* Client-only bypass overlay — only adds interaction;
-              renders no visible UI of its own. */}
+          {/* Client-only bypass overlay — keyboard + click handlers.
+              Renders an invisible button on top of the mascot. If JS
+              fails to hydrate, the mascot still shows but bypass falls
+              back to the URL `?bypass=<code>` mechanism. */}
           <ComingSoonInteractive />
         </div>
 
-        {/* Iris shimmer AESDR logo — stacked on the mascot's foot */}
         <h1
           style={{
             fontFamily: "var(--display, 'Playfair Display', Georgia, serif)",
@@ -92,7 +100,6 @@ export default function ComingSoonPage() {
           AESDR
         </h1>
 
-        {/* Tagline in iris shimmer */}
         <p
           style={{
             fontFamily: "var(--display, 'Playfair Display', Georgia, serif)",
