@@ -101,6 +101,108 @@ The `/` separator is a true forward slash, not an em-dash or pipe. It's part of 
 
 Never use any tagline containing the words: "potential," "unleash," "transform," "ignite," "supercharge," "next-level."
 
+### 2.4 Sub-logo treatment
+
+Three forms of the sub-brand mark, each scoped to a specific surface scale. All three are type-based (no icon glyphs) to stay consistent with the parent brand's editorial-typographic identity.
+
+#### Full mark
+**Use:** landing hero, footer "Powered by" line, marketing PDFs, partner one-pager header, certificate header.
+
+```
+AESDR  / Operating Layer
+^^^^^   ^^^^^^^^^^^^^^^^
+Playfair  Barlow Condensed
+900 italic 700, uppercase,
+iris-shimmer  .15em letter-spacing,
+fill          var(--muted)
+
+Vertical alignment: baselines aligned.
+Suffix size: 40% of AESDR font-size.
+Slash: real "/" character — never em-dash, never pipe, never bullet.
+Gap before "/": 0.4em. Gap after "/": 0.3em.
+```
+
+CSS spec for `<SubLogoFull>` at 32px base:
+
+```css
+font-size: 32px;
+.aesdr {
+  font-family: var(--display);
+  font-size: 32px;
+  font-weight: 900;
+  font-style: italic;
+  background: var(--iris);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+  letter-spacing: -0.02em;
+}
+.suffix {
+  font-family: var(--cond);
+  font-size: 13px; /* ~40% of 32 */
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-left: 0.4em;
+}
+.slash {
+  /* inside .suffix, but rendered as its own span for slight kerning control */
+  margin-right: 0.3em;
+  color: var(--muted);
+  font-weight: 400;
+}
+```
+
+#### Compact mark
+**Use:** nav bar, breadcrumbs, table headers, dense layouts.
+
+Same construction as full mark, but the suffix collapses to `OL`:
+
+```
+AESDR  / OL
+```
+
+Same fonts, same colors, same gap rules. Renders cleanly at 18–24px AESDR size.
+
+#### Tiny mark / monogram
+**Use:** favicons, certificate corners, watermarks on PDFs, any surface ≤16px tall or where a wordmark won't fit.
+
+```
+A·OL
+```
+
+- All Barlow Condensed 700, uppercase, .15em letter-spacing
+- "A" in iris-shimmer fill
+- "·" (middle dot, not period) in var(--muted)
+- "OL" in var(--muted)
+- Renders at 10–14px font-size
+
+The middle dot signals subsidiary relationship in a glanceable way at favicon scale.
+
+#### Forbidden treatments
+
+- Never stack the suffix below AESDR. The wordmark is always single-line.
+- Never put the suffix in iris-shimmer. Iris is reserved for "AESDR" itself; suffix stays muted.
+- Never substitute `/` with another character (em-dash, pipe, colon, bullet, parenthesis).
+- Never abbreviate "AESDR" — even in the tiny mark, AESDR survives as the full wordmark or as the "A" monogram, never as anything else.
+- Never apply box backgrounds, borders, or container shapes to any form of the mark. The sub-logo is type, not a badge.
+
+#### Component implementation
+
+Three React components under `app/teams/_components/SubLogo.tsx`:
+
+```tsx
+<SubLogoFull />     // default 32px AESDR size
+<SubLogoFull size={48} />  // hero scale, opt-in
+<SubLogoCompact />  // default 20px
+<SubLogoTiny />     // default 12px
+```
+
+Each component is a pure server component (no client interaction). Iris-shimmer animation runs via existing `@keyframes shimmer` already in `app/globals.css` — no new keyframes needed.
+
 ---
 
 ## 3. Visual identity
@@ -878,6 +980,8 @@ Decisions made and ratified by Antaeus. Don't relitigate in PRs without explicit
 | 9 | 2026-05-18 | Add `/teams/*` routes to AdminChip dropdown BENEATH a divider line | Per Antaeus: keep admin nav clean; separated cluster for subsidiary. |
 | 10 | 2026-05-18 | Hero stat triplet on landing uses real cited research numbers, not placeholders | "Built beautifully" + B2B credibility. See §15 for sources to verify before PR 1 ships. |
 | 11 | 2026-05-18 | Powered-by-aesdr.com line in subsidiary footer is KEPT (not hidden) | Truthful positioning — subsidiary is the B2B face of the same product, not a different company. The honesty is itself a credential. |
+| 12 | 2026-05-18 | Subsidiary nav INCLUDES a "← back to aesdr.com" link | Consistency with the "auxiliary detached building" framing — the building has a door back to the main one. |
+| 13 | 2026-05-18 | Sub-logo treatment formalized — three forms (full / compact / tiny) with type-only construction | Editorial brand DNA. No icon glyph because the parent is type-based; adding an icon for the subsidiary would feel forced and break family resemblance. |
 
 ---
 
@@ -892,7 +996,7 @@ Surfaces that need answers as the build progresses. Captured here to prevent sil
 | 3 | Whether to use Calendly or another booking tool for "Book a walkthrough" CTAs | Antaeus | Before PR 2 ships (form submission lands them somewhere) |
 | 4 | Whether to fully write all 12 lessons' learning outcomes vs. summarize from existing HTML | Claude | During PR 3 — depends on lesson content depth |
 | 5 | Whether to mention specific named partner targets on `/teams/partners` page (e.g., "Docebo, Highspot, Sales Assembly") or stay category-only | Antaeus | Before PR 2 ships |
-| 6 | Whether subsidiary nav includes a "back to aesdr.com" link or stays self-contained | Antaeus | Before PR 1 ships |
+| ~~6~~ | ~~Whether subsidiary nav includes a "back to aesdr.com" link or stays self-contained~~ | ~~Antaeus~~ | ~~Resolved 2026-05-18 → §13.12: includes back link.~~ |
 | 7 | Whether to add a Vercel preview password specifically for `/teams/*` so B2B prospects can preview without the consumer-brand bypass code | Antaeus | Optional — defer until first share-with-prospect happens |
 | 8 | Whether the Manager Implementation Guide PDF should be public or gated (request via form) | Antaeus | Before PR 4 ships PDFs |
 | 9 | Curriculum page: full lesson list reconciliation — `content/lessons/html/` shows lessons numbered 6.2, 7.3, 9.1 alongside 1.x–5.x — is the curriculum 12 lessons total or more? | Claude | Before PR 3 ships `/teams/curriculum` |
