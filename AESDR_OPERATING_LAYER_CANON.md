@@ -1009,7 +1009,7 @@ Surfaces that need answers as the build progresses. Captured here to prevent sil
 | ~~6~~ | ~~Whether subsidiary nav includes a "back to aesdr.com" link or stays self-contained~~ | ~~Antaeus~~ | ~~Resolved 2026-05-18 → §13.12: includes back link.~~ |
 | 7 | Whether to add a Vercel preview password specifically for `/teams/*` so B2B prospects can preview without the consumer-brand bypass code | Antaeus | Optional — defer until first share-with-prospect happens |
 | 8 | Whether the Manager Implementation Guide PDF should be public or gated (request via form) | Antaeus | Before PR 4 ships PDFs |
-| 9 | Curriculum page: full lesson list reconciliation — `content/lessons/html/` shows lessons numbered 6.2, 7.3, 9.1 alongside 1.x–5.x — is the curriculum 12 lessons total or more? | Claude | Before PR 3 ships `/teams/curriculum` |
+| ~~9~~ | ~~Curriculum page: full lesson list reconciliation — `content/lessons/html/` shows lessons numbered 6.2, 7.3, 9.1 alongside 1.x–5.x — is the curriculum 12 lessons total or more?~~ | ~~Claude~~ | ~~Resolved in PR 3: 12 modules × 3 sub-lessons = 36 total. Curriculum page reflects accurately; landing page kept "12 modules" framing.~~ |
 | 10 | Whether to register a separate domain for the subsidiary (e.g., `aesdr-os.com` or `teams.aesdr.com`) post-launch | Antaeus | Post-launch decision; not blocking |
 
 ---
