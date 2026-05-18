@@ -577,18 +577,27 @@ This page is honest. We don't claim SSO is "available now" when it isn't. We lis
 | **Partners page** | `/teams/partners` route | `app/teams/partners/page.tsx` | Five category blocks per §5.2 |
 | **Pricing page** | `/teams/pricing` route | `app/teams/pricing/page.tsx` | Three cards + comparison table + FAQ per §5.3 |
 | **Contact page** | `/teams/contact` route | `app/teams/contact/page.tsx` + `ContactForm.tsx` client | Form per §5.4 |
-| **Contact API** | POST route | `app/api/teams-inquiry/route.ts` | Validates, rate-limits, emails hello@aesdr.com |
-| **Curriculum map** | `/teams/curriculum` route | `app/teams/curriculum/page.tsx` | 12 lessons, learning outcomes written |
-| **Diagnostic spec page** | `/teams/diagnostic` route | `app/teams/diagnostic/page.tsx` | 6–8 dimensions, sample items per §5.6 |
-| **Implementation guide** | `/teams/implementation` route | `app/teams/implementation/page.tsx` | Manager guide per §5.7 |
+| **Inquiry server action** | `submitTeamsInquiry()` | `app/teams/contact/actions.ts` + `lib/email.ts` | Validates, rate-limits, emails hello@aesdr.com |
+| **Curriculum map** | `/teams/curriculum` route | `app/teams/curriculum/page.tsx` | 12 modules / 36 sub-lessons, learning outcomes written |
+| **Diagnostic spec page** | `/teams/diagnostic` route | `app/teams/diagnostic/page.tsx` | 8 dimensions, sample items per §5.6 |
+| **Implementation guide** | `/teams/implementation` route | `app/teams/implementation/page.tsx` | Manager guide per §5.7. **Print-friendly via teams.module.css print styles — also serves as the downloadable PDF when print-to-PDF'd from the browser.** |
 | **Integrations page** | `/teams/integrations` route | `app/teams/integrations/page.tsx` | Honest state + roadmap per §5.8 |
 | **Footer link** from main site to `/teams` | Single line addition to consumer landing footer | `app/page.tsx` | Small, low-emphasis |
 | **AdminChip integration** | Add `/teams/*` quick-links below a divider | `components/AdminChip.tsx` | See §10.4 |
-| **Manager guide PDF** | Downloadable from `/teams/implementation` | `public/teams/aesdr-manager-implementation-guide.pdf` | Same content as the web page, formatted for PDF |
-| **Completion certificate template** | Branded PDF template | `public/teams/aesdr-completion-certificate-template.pdf` | Iris-shimmer accent, ink text, cream background. Manager fills in rep name + completion date. |
-| **Partner one-pager** | Sales sheet | `public/teams/aesdr-partner-one-pager.pdf` | Single page with: positioning, what partners get, partnership models, contact. Linked from `/teams/partners` and emailed from `hello@aesdr.com`. |
-| **Curriculum learning outcomes** | Written per-lesson outcomes | Embedded in `/teams/curriculum` page content | 3–5 bullets per lesson, 12 lessons. Drawn from actual course content (not invented). |
-| **Rep diagnostic instrument** | Spec doc + sample items | Embedded in `/teams/diagnostic` page + downloadable PDF at `public/teams/aesdr-rep-diagnostic.pdf` | Real instrument structure, not vaporware. Used initially in Custom Enterprise rollouts; self-service version is roadmap. |
+| **Downloads index** | `/teams/downloads` route | `app/teams/downloads/page.tsx` | Lists all four downloadable artifacts with print-to-PDF instructions |
+| **Completion certificate** | `/teams/downloads/certificate` route | `app/teams/downloads/certificate/page.tsx` + client | Interactive generator: rep name + module count + date inputs → printable certificate preview |
+| **Partner one-pager** | `/teams/downloads/partner-one-pager` route | `app/teams/downloads/partner-one-pager/page.tsx` | Single-page printable sales sheet (positioning, partner categories, contact) |
+| **Rep diagnostic instrument** | `/teams/downloads/rep-diagnostic` route | `app/teams/downloads/rep-diagnostic/page.tsx` | Printable self-administering instrument — all 32 items across 8 dimensions, with response scales |
+
+**Note on PDF format (decision 2026-05-18):** all "downloadable PDFs" are
+implemented as **print-friendly web pages** under `/teams/downloads/*` with
+explicit `@media print` styles. Users print-to-PDF in their browser to get a
+final PDF file. This produces materially better output than auto-generated
+binary PDFs (which require design tooling we don't have set up), keeps the
+artifacts version-controlled in source, and means assets stay automatically
+in sync with the canonical content elsewhere on the site. If the user pulls
+out a PDF reader, the file looks beautiful; if they read the artifact on the
+web instead, it also looks beautiful — same source.
 
 ### 6.2 Reference assets from existing repo
 
@@ -982,6 +991,7 @@ Decisions made and ratified by Antaeus. Don't relitigate in PRs without explicit
 | 11 | 2026-05-18 | Powered-by-aesdr.com line in subsidiary footer is KEPT (not hidden) | Truthful positioning — subsidiary is the B2B face of the same product, not a different company. The honesty is itself a credential. |
 | 12 | 2026-05-18 | Subsidiary nav INCLUDES a "← back to aesdr.com" link | Consistency with the "auxiliary detached building" framing — the building has a door back to the main one. |
 | 13 | 2026-05-18 | Sub-logo treatment formalized — three forms (full / compact / tiny) with type-only construction | Editorial brand DNA. No icon glyph because the parent is type-based; adding an icon for the subsidiary would feel forced and break family resemblance. |
+| 14 | 2026-05-18 | Downloadable PDFs implemented as print-friendly web pages under `/teams/downloads/*`, not as pre-generated binary PDF files | Beautiful PDF output requires design tooling not set up in this sandbox. Print-friendly web pages produce equivalent output via browser print-to-PDF, keep artifacts version-controlled, stay automatically in sync with site content, and read well both as PDF and on web. |
 
 ---
 

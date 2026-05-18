@@ -260,7 +260,16 @@ export default function ImplementationPage() {
             <InlineCTA href="/teams/diagnostic" variant="arrow">
               Read the diagnostic spec
             </InlineCTA>
+            <InlineCTA href="/teams/downloads/certificate" variant="arrow">
+              Certificate generator
+            </InlineCTA>
           </div>
+          <p className={styles.bodyMuted} style={{ marginTop: 20, fontSize: 14 }}>
+            This page is the implementation guide. Press{" "}
+            <strong style={{ color: "var(--ink)" }}>Cmd+P</strong> /{" "}
+            <strong style={{ color: "var(--ink)" }}>Ctrl+P</strong> to save it as a PDF —
+            the nav and CTAs collapse out automatically, you get a printable manager guide.
+          </p>
         </div>
       </section>
     </>

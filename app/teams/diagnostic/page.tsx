@@ -1,3 +1,4 @@
+import Link from "next/link";
 import styles from "../teams.module.css";
 import SpecSection from "../_components/SpecSection";
 import InlineCTA from "../_components/InlineCTA";
@@ -245,9 +246,19 @@ export default function DiagnosticPage() {
           <p className={styles.body}>
             The diagnostic is partly the measurement instrument and partly a forcing function. Orgs that administer it consistently report better outcomes than orgs that don&apos;t — because measuring the dimension makes the dimension visible to both rep and manager.
           </p>
-          <div style={{ marginTop: 24 }}>
+          <div style={{ marginTop: 24, display: "flex", gap: 16, flexWrap: "wrap" }}>
             <InlineCTA href="/teams/contact?source=diagnostic">Talk about diagnostic administration</InlineCTA>
+            <InlineCTA href="/teams/downloads/rep-diagnostic" variant="arrow">
+              Printable instrument
+            </InlineCTA>
           </div>
+          <p className={styles.bodyMuted} style={{ marginTop: 16, fontSize: 14 }}>
+            Need the printable self-administering version?{" "}
+            <Link href="/teams/downloads/rep-diagnostic" style={{ color: "var(--ink)", textDecoration: "underline" }}>
+              /teams/downloads/rep-diagnostic
+            </Link>{" "}
+            — all 32 prompts with 1–5 scales, ready to print or save as PDF.
+          </p>
         </div>
       </section>
     </>

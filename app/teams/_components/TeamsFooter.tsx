@@ -15,6 +15,7 @@ const FOOTER_LINKS = [
   { href: "/teams/partners", label: "Partners" },
   { href: "/teams/pricing", label: "Pricing" },
   { href: "/teams/integrations", label: "Integrations" },
+  { href: "/teams/downloads", label: "Downloads" },
   { href: "/", label: "← aesdr.com" },
 ] as const;
 
