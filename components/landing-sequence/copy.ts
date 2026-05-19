@@ -30,7 +30,7 @@ export const BRANCHED_SCENES: Record<Role, string[]> = {
   ae: [
     "Your pipeline says $740K. You'd bet your rent on maybe $180K of it.",
     "Sunday night. You're doing “pipeline review.” That means staring at a spreadsheet and hoping something moves.",
-    "Last quarter you missed by 31%. This quarter your number went up 30%. Nobody explained the math.",
+    "Last quarter you missed by 31%. This quarter your number went up 30%, and nobody explained the math.",
   ],
 };
 
@@ -52,14 +52,14 @@ export const BRANCHED_TERM_LINES: Record<Role, string[]> = {
 };
 
 export const TERMINAL_FINAL =
-  "This course will change your life a few times throughout. Afterward, you’ll never make the same money again.";
+  "This course will change your life a few times across the twelve lessons. Afterward, you’ll never make the same money again.";
 
-export const TERMINAL_WHISPER = "Keep scrolling. It has to get worse before it gets better.";
+export const TERMINAL_WHISPER = "Keep scrolling. The picture gets worse before it gets better.";
 
 export const HERO_DESCRIPTOR: Record<"default" | Role, string> = {
   default: "12-lesson sales survival course — for early-career AEs and SDRs.",
-  sdr: "The 12-lesson playbook for SDRs who want out alive.",
-  ae: "The 12-lesson playbook for AEs who want their forecast to mean something.",
+  sdr: "The 12-lesson manual for SDRs who want out alive.",
+  ae: "The 12-lesson manual for AEs who want their forecast to mean something.",
 };
 
 export const FORK_PICK_HEADER = "which one are you";
@@ -73,7 +73,7 @@ export const FORK_HALVES = {
       strong: "You book the meetings.",
       rest: " You take the no’s. You’re the front line of every pipeline you’ll never get credit for.",
     },
-    cta: "Choose this path →",
+    cta: "Pick SDR →",
   },
   ae: {
     monoLabel: "role · quota-carrying · pipeline-owning",
@@ -83,6 +83,6 @@ export const FORK_HALVES = {
       strong: "You close the deals.",
       rest: " You ride the forecast. You carry the number that nobody else wants their name attached to.",
     },
-    cta: "Choose this path →",
+    cta: "Pick AE →",
   },
 } as const;

@@ -30,7 +30,7 @@ export const LESSON_ICON: Record<string, IconName> = {
   "3":  "warn",
   "4":  "weight",
   "5":  "fall",
-  "6":  "rep",
+  "6":  "iteration",
   "7":  "signal",
   "8":  "hourglass",
   "9":  "recovery",

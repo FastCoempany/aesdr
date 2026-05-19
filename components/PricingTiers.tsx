@@ -91,7 +91,7 @@ export default function PricingTiers({ initialRole = null }: Props) {
         <p className={styles.priceAmount}>
           $1,499<span className={styles.priceUnit}> / up to 10 seats</span>
         </p>
-        <p className={styles.priceTagline}>For the org rolling out a real motion, not another LMS.</p>
+        <p className={styles.priceTagline}>For the org rolling out real training, not another LMS module nobody finishes.</p>
         <ul className={styles.priceFeatures}>
           <li>Both SDR + AE tracks — mix any 10 seats</li>
           <li>Admin dashboard + team progress tracking</li>

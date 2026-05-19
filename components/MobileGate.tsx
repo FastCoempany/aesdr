@@ -191,7 +191,7 @@ export default function MobileGate({
             transition: "opacity .2s",
           }}
         >
-          Return to homepage
+          Open the mobile preview
         </Link>
       </div>
     </div>
