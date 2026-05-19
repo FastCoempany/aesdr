@@ -102,7 +102,7 @@ export function EconomicsCalculator() {
             onChange={(e) => setSdrPct(Number(e.target.value))}
             style={rangeStyle}
           />
-          <Hint>SaaS rep audiences tilt SDR ($249). AE-heavy audiences shift to $299.</Hint>
+          <Hint>SaaS AE/SDR audiences tilt SDR ($249). AE-heavy audiences shift to $299.</Hint>
         </Field>
       </div>
 

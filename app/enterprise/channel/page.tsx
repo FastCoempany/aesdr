@@ -67,7 +67,7 @@ export default function PartnersPage() {
             intro="You place AEs and SDRs. Once placed, those AEs and SDRs either succeed or churn fast — and your platform's reputation rides on that. You have no post-placement training arm to nudge the outcome. AESDR is that arm."
             matrix={{
               gap: "Post-placement ramp acceleration. Hiring orgs pay the cost of AEs and SDRs who don't make it; you have no way to prevent it.",
-              plugin: "Include AESDR in your placement package or as a value-add post-hire benefit. 'Hired AEs and SDRs get AESDR access.'",
+              plugin: "Include AESDR in your placement package or as a post-hire benefit. 'Hired AEs and SDRs get AESDR access.'",
               integration: "Bulk seat provisioning via API or CSV (available today). Co-branded onboarding email to placed AEs and SDRs.",
               revenue: "Wholesale per-seat at ~$99/seat (vs. $249 consumer). You absorb the cost or pass it to the hiring org.",
             }}

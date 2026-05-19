@@ -73,7 +73,7 @@ const FAQ_ITEMS = [
           <strong>Frame.</strong> Free content optimizes for engagement. AESDR is the operating manual — the part the free content skipped because it doesn&rsquo;t perform well in a 60-second clip.
         </p>
         <p style={{ marginTop: 14 }}>
-          <strong>Accountability.</strong> Free content is consumed alone, nodded at, and forgotten. AESDR has interactive worksheets, takeaway tools, and a Discord (Untamed) where reps in your situation are talking about what&rsquo;s working.
+          <strong>Accountability.</strong> Free content is consumed alone, nodded at, and forgotten. AESDR has interactive worksheets, takeaway tools, and a Discord (Untamed) where AEs and SDRs in your situation are talking about what&rsquo;s working.
         </p>
       </>
     ),
@@ -82,14 +82,14 @@ const FAQ_ITEMS = [
     q: "Who is AESDR for, and who shouldn't I send?",
     a: (
       <>
-        <p>It&rsquo;s for SaaS AEs and SDRs across the career arc &mdash; first-year reps trying to ramp, third-year reps trying to break out, and ten-year reps who want a re-look at fundamentals. If your audience has any of those people in it, you&rsquo;re a fit.</p>
+        <p>It&rsquo;s for SaaS AEs and SDRs across the career arc &mdash; first-year hires trying to ramp, third-year veterans trying to break out, and ten-year veterans who want a re-look at fundamentals. If your audience has any of those people in it, you&rsquo;re a fit.</p>
         <p style={{ marginTop: 14 }}>Who not to send:</p>
         <ul style={{ marginTop: 14, paddingLeft: 0, listStyle: "none" }}>
-          <li style={{ marginBottom: 8 }}>&mdash; Veteran reps who think they&rsquo;ve already figured it out. (The ones open to revisiting basics are absolutely a fit.)</li>
+          <li style={{ marginBottom: 8 }}>&mdash; Veteran AEs and SDRs who think they&rsquo;ve already figured it out. (The ones open to revisiting basics are absolutely a fit.)</li>
           <li style={{ marginBottom: 8 }}>&mdash; Anyone whose distribution is hustle-culture or motivational content. We&rsquo;re the opposite of that.</li>
           <li style={{ marginBottom: 8 }}>&mdash; Anyone hunting a credential or LinkedIn-friendly badge. The course doesn&rsquo;t issue one and we&rsquo;re not changing that.</li>
-          <li style={{ marginBottom: 8 }}>&mdash; Reps not currently in a sales seat. AESDR isn&rsquo;t a &ldquo;how to break into sales&rdquo; program.</li>
-          <li>&mdash; Reps who&rsquo;ve started three programs this year and finished none. The issue isn&rsquo;t free vs paid.</li>
+          <li style={{ marginBottom: 8 }}>&mdash; AEs and SDRs not currently in a sales seat. AESDR isn&rsquo;t a &ldquo;how to break into sales&rdquo; program.</li>
+          <li>&mdash; AEs and SDRs who&rsquo;ve started three programs this year and finished none. The issue isn&rsquo;t free vs paid.</li>
         </ul>
       </>
     ),

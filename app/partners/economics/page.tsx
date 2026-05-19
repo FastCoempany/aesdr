@@ -81,7 +81,7 @@ export default function EconomicsPage() {
       <section style={section}>
         <h2 style={h2Style}>Worked example.</h2>
         <p style={pStyle}>
-          A real-shape pilot to a 1,000-person audience. Plan-mix is typical for SaaS rep audiences &mdash; mostly SDRs, some AEs.
+          A real-shape pilot to a 1,000-person audience. Plan-mix is typical for SaaS AE/SDR audiences &mdash; mostly SDRs, some AEs.
         </p>
         <div style={tableBox}>
           <Row k="Audience promoted to" v="1,000 people" />
@@ -120,7 +120,7 @@ export default function EconomicsPage() {
       <section style={section}>
         <h2 style={h2Style}>About these numbers.</h2>
         <p style={pStyle}>
-          The conversion assumptions above are based on workshop-format precedents in adjacent SaaS-rep audiences, not on multi-pilot AESDR data &mdash; Cohort 1 is the first cohort, so we don&rsquo;t have AESDR-specific benchmarks yet. We&rsquo;ll publish those after Cohort 1 wraps, with anonymized partner-by-partner data. If you want a calibration on what&rsquo;s realistic for your specific audience shape, ask in the partner conversation.
+          The conversion assumptions above are based on workshop-format precedents in adjacent SaaS-AE/SDR audiences, not on multi-pilot AESDR data &mdash; Cohort 1 is the first cohort, so we don&rsquo;t have AESDR-specific benchmarks yet. We&rsquo;ll publish those after Cohort 1 wraps, with anonymized partner-by-partner data. If you want a calibration on what&rsquo;s realistic for your specific audience shape, ask in the partner conversation.
         </p>
       </section>
 

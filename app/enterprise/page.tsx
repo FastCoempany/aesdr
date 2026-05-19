@@ -126,7 +126,7 @@ export default function TeamsLanding() {
               <h3 className={styles.cardTitle}>Untamed Discord</h3>
               <p className={styles.cardBody}>
                 Real AEs and SDRs working through the material together. No
-                &ldquo;crush it&rdquo; energy, no growth-hack pep talk. Where AEs and SDRs
+                motivational performance, no growth-hack pep talk. Where AEs and SDRs
                 process what they&apos;ve learned with people who&apos;ve seen the
                 same fires.
               </p>

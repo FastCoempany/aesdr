@@ -69,7 +69,7 @@ export default function HowWeWorkPage() {
           <li><strong>The host runs the workshop. The founder builds the curriculum.</strong> The host delivers the live sessions; the founder is around for everything else &mdash; partner emails, prep, debriefs. Good curricula tend to outlive their founders, and we built the brand assuming ours will too.</li>
           <li><strong>Small program on purpose.</strong> Right now we work with a handful of partners at a time, not a marketplace. Cohort 1 is forming. We may scale after; we may not.</li>
           <li><strong>Your audience will read AESDR through your endorsement.</strong> Whatever&rsquo;s off about our message, page, or deck, your audience will catch in 60 minutes. So we work on the message hard and tell you what we&rsquo;re seeing.</li>
-          <li><strong>Practical, not motivational.</strong> AESDR is the operating manual nobody wrote down. Not &ldquo;crush it.&rdquo; Not &ldquo;mindset.&rdquo; Just the work &mdash; cold-calling, gatekeepers, pipeline reads, what to do when the script runs out.</li>
+          <li><strong>Practical, not motivational.</strong> AESDR is the operating manual nobody wrote down. No motivational pep talks. No mindset workshops. Just the work &mdash; cold-calling, gatekeepers, pipeline reads, what to do when the script runs out.</li>
           <li><strong>We&rsquo;re open about who shouldn&rsquo;t buy.</strong> We publish who the program isn&rsquo;t for so the right people enroll and the wrong ones don&rsquo;t waste their money. It also makes your recommendations easier to make.</li>
         </ul>
 

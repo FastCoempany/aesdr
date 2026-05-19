@@ -81,13 +81,17 @@ const eslintConfig = defineConfig([
   },
   // Brand-voice blocklist for buyer-facing code surfaces.
   // Excludes lib/ (helpers, not buyer-facing strings) and tests.
-  // Excludes the eslint config itself + canon docs that DESCRIBE
-  // the banned terms.
+  // Also excludes meta-reference surfaces that legitimately quote
+  // banned vocabulary as their core function: the disqualification
+  // page lists what gets you rejected; the partner-side play game
+  // teaches recognising bad copy vs canon-aligned copy.
   {
     files: ["app/**/*.{ts,tsx}", "components/**/*.{ts,tsx}"],
     ignores: [
       "app/**/*.test.{ts,tsx}",
       "components/**/*.test.{ts,tsx}",
+      "app/partners/who-we-dont-work-with/**",
+      "components/partners/PlayGame.tsx",
     ],
     rules: {
       "no-restricted-syntax": ["warn", ...buildCanonRules()],

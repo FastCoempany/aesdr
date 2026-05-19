@@ -39,7 +39,7 @@ import {
 export const metadata: Metadata = {
   title: "AESDR · Partners",
   description:
-    "Pilot Cohort 1 is open. We're looking for a small number of partners whose audiences are SaaS AEs and SDRs — first-year reps through ten-year veterans doing a fundamentals reset. One workshop, two emails, 30% commission, $500 sign-on for invited partners.",
+    "Pilot Cohort 1 is open. We're looking for a small number of partners whose audiences are SaaS AEs and SDRs — first-year through ten-year veterans doing a fundamentals reset. One workshop, two emails, 30% commission, $500 sign-on for invited partners.",
 };
 
 export default function PartnersHomePage() {
@@ -62,7 +62,7 @@ export default function PartnersHomePage() {
         }
         leftBody={
           <>
-            AESDR&rsquo;s first affiliate cohort is forming. We&rsquo;re looking for a small number of partners &mdash; community operators, course creators, agency owners, coaches &mdash; whose audiences are SaaS AEs and SDRs across the career arc: first-year reps, third-year ramp veterans, and ten-year reps doing a fundamentals reset. The shape is simple: one live workshop into your audience, two emails, a 30-day attribution window, 30% commission. That&rsquo;s the whole thing.
+            AESDR&rsquo;s first affiliate cohort is forming. We&rsquo;re looking for a small number of partners &mdash; community operators, course creators, agency owners, coaches &mdash; whose audiences are SaaS AEs and SDRs across the career arc: first-year hires trying to ramp, third-year ramp veterans, and ten-year veterans doing a fundamentals reset. The shape is simple: one live workshop into your audience, two emails, a 30-day attribution window, 30% commission. That&rsquo;s the whole thing.
           </>
         }
         rightLabel="WHERE WE ARE"
@@ -73,7 +73,7 @@ export default function PartnersHomePage() {
         }
         rightBody={
           <>
-            The curriculum was built with feedback from sales leaders and reps at Harvey, Craft, Rally UXR, and ~20 more SaaS companies. The content&rsquo;s been pressure-tested. We&rsquo;re ready to put it in front of new audiences &mdash; and we&rsquo;d rather do that through people their audiences already trust than through ads. Cohort 1 partners we invite directly get a <strong>$500 sign-on bonus</strong> on agreement signing &mdash; small money but real money, and the point is we have skin in the game from day one.
+            The curriculum was built with feedback from sales leaders, AEs, and SDRs at Harvey, Craft, Rally UXR, and ~20 more SaaS companies. The content&rsquo;s been pressure-tested. We&rsquo;re ready to put it in front of new audiences &mdash; and we&rsquo;d rather do that through people their audiences already trust than through ads. Cohort 1 partners we invite directly get a <strong>$500 sign-on bonus</strong> on agreement signing &mdash; small money but real money, and the point is we have skin in the game from day one.
           </>
         }
         ctaHref="/partners/apply"
@@ -94,7 +94,7 @@ export default function PartnersHomePage() {
             title: "Practical, not motivational.",
             body: (
               <>
-                The course is the operating manual nobody wrote down &mdash; how to read your own pipeline, what to do when the script runs out, what &ldquo;good&rdquo; actually looks like Monday morning. Not &ldquo;crush it.&rdquo; Not &ldquo;mindset.&rdquo; Just the work. Cold-calling included, dial blocks included, gatekeepers included.
+                The course is the operating manual nobody wrote down &mdash; how to read your own pipeline, what to do when the script runs out, what &ldquo;good&rdquo; actually looks like Monday morning. No motivational pep talks. No mindset workshops. Just the work. Cold-calling included, dial blocks included, gatekeepers included.
               </>
             ),
           },
@@ -102,7 +102,7 @@ export default function PartnersHomePage() {
             title: "We say who shouldn't buy.",
             body: (
               <>
-                We publish who the program isn&rsquo;t for &mdash; anyone hunting motivation, anyone wanting a LinkedIn-friendly credential, reps not currently in a seat. That&rsquo;s so the right people enroll and the wrong ones don&rsquo;t waste their money. It also makes your job easier &mdash; recommendations to your audience land harder when they trust you&rsquo;re not pitching everyone.
+                We publish who the program isn&rsquo;t for &mdash; anyone hunting motivation, anyone wanting a LinkedIn-friendly credential, AEs and SDRs not currently in a seat. That&rsquo;s so the right people enroll and the wrong ones don&rsquo;t waste their money. It also makes your job easier &mdash; recommendations to your audience land harder when they trust you&rsquo;re not pitching everyone.
               </>
             ),
           },

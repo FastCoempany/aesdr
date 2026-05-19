@@ -123,7 +123,7 @@ const MODULES: Module[] = [
     theme: "The playbook",
     flavor: "SDR",
     description:
-      "What the SDR playbook actually is — and how to become the rep your manager can't replace. The most SDR-focused module in the curriculum; AEs benefit from 5.3 specifically.",
+      "What the SDR playbook actually is — and how to become the SDR your manager can't replace. The most SDR-focused module in the curriculum; AEs benefit from 5.3 specifically.",
     lessons: [
       { number: "5.1", title: "The SDR Playbook" },
       { number: "5.2", title: "The SDR Playbook — Part 2" },
