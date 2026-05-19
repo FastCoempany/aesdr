@@ -490,6 +490,17 @@
   margin-top: 4px;
 }
 
+.kpiSourceLink {
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+  transition: color 0.18s;
+}
+.kpiSourceLink:hover {
+  color: var(--ink);
+}
+
 /* ═══════════════════════════════════════════════
    CARDS
    ═══════════════════════════════════════════════ */
@@ -1512,6 +1523,83 @@
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+/* Role-view toggle on the diagnostic spec page */
+.dimViewToggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 32px;
+  flex-wrap: wrap;
+}
+
+.dimViewLabel {
+  font-family: var(--cond);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.dimViewBtn {
+  font-family: var(--cond);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: transparent;
+  padding: 9px 16px;
+  border: 1.5px solid var(--light);
+  cursor: pointer;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.dimViewBtn:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.dimViewBtnActive {
+  border-color: transparent;
+  background:
+    linear-gradient(var(--cream), var(--cream)) padding-box,
+    var(--iris) border-box;
+  background-size: auto, 300% 100%;
+  animation: shimmer 4s linear infinite;
+  border-width: 1.5px;
+  color: var(--ink);
+}
+
+.dimViewBadge {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: var(--muted);
+  padding: 1px 6px;
+  background: var(--cream);
+  border: 1px solid var(--light);
+}
+
+/* Role-path hint banner above the dimension list */
+.diagPathHint {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted);
+  margin: 0 0 24px;
+  padding: 12px 16px;
+  background: var(--cream);
+  border-left: 3px solid transparent;
+  border-image: var(--iris) 1;
+  font-style: italic;
+}
+.diagPathHint strong {
+  color: var(--ink);
+  font-style: normal;
 }
 
 /* Radio-style scale boxes with hover + selected states */

@@ -32,6 +32,13 @@ type Module = {
   outcomes: string[];
   duration: string;
   managerNote: string;
+  /**
+   * Optional role flavor — most modules apply equally to both AEs and SDRs
+   * and have no flavor set. A few skew one way (e.g., Module 5's "The SDR
+   * Playbook"); those carry the flavor so buyers see at a glance which
+   * modules land hardest for which role.
+   */
+  flavor?: "SDR" | "AE";
 };
 
 const MODULES: Module[] = [
@@ -114,21 +121,22 @@ const MODULES: Module[] = [
   {
     number: "05",
     theme: "The playbook",
+    flavor: "SDR",
     description:
-      "What the SDR playbook actually is — and how to become the AE/SDR your manager can't replace.",
+      "What the SDR playbook actually is — and how to become the rep your manager can't replace. The most SDR-focused module in the curriculum; AEs benefit from 5.3 specifically.",
     lessons: [
       { number: "5.1", title: "The SDR Playbook" },
       { number: "5.2", title: "The SDR Playbook — Part 2" },
       { number: "5.3", title: "How to Become Irreplaceable" },
     ],
     outcomes: [
-      "AEs and SDRs internalize the SDR playbook framework (not the script — the framework)",
+      "SDRs internalize the playbook framework (not the script — the framework)",
       "AEs and SDRs build personal practices that compound across quarters",
       "AEs and SDRs make themselves measurably harder to lose",
     ],
     duration: "~95 min",
     managerNote:
-      "Module 5 is the closest AESDR comes to traditional SDR training content. It's still anti-script — but the playbook framework is concrete enough to coach against.",
+      "Module 5 is the closest AESDR comes to traditional SDR training content. It's still anti-script — but the playbook framework is concrete enough to coach SDRs against. AEs treat 5.3 as the standalone takeaway.",
   },
   {
     number: "06",
@@ -300,12 +308,22 @@ export default function CurriculumPage() {
 
       <section className={`${styles.sectionTight} ${styles.sectionDivider}`}>
         <div className={styles.container}>
+          <p className={styles.diagPathHint}>
+            <strong>One curriculum, both audiences.</strong> AEs and SDRs work
+            through the same modules in the same order. A few modules lean toward
+            one role — those are tagged with a <strong>role flavor</strong> in the
+            meta row (e.g., Module 5 is <strong>SDR-leaning</strong>). Everything
+            else applies to both audiences equally.
+          </p>
           {MODULES.map((m) => (
             <SpecSection
               key={m.number}
               number={m.number}
               title={m.theme}
               meta={[
+                ...(m.flavor
+                  ? [{ label: "Role flavor", value: `${m.flavor}-leaning` }]
+                  : []),
                 { label: "Lessons", value: m.lessons.map((l) => l.number).join(", ") },
                 { label: "Duration", value: m.duration },
               ]}

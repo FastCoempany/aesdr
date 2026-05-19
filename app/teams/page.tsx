@@ -34,19 +34,22 @@ export default function TeamsLanding() {
 
           <div className={styles.kpiRow}>
             <KPIStat
-              value="8.4 mo"
-              caption="Average time to full SDR quota attainment"
-              source="Bridge Group, 2024"
+              value="51%"
+              caption="of AEs hit quota in 2024 — down from 66% in 2022"
+              source="Bridge Group SaaS AE Report, 2024"
+              sourceUrl="https://blog.bridgegroupinc.com/2024-ae-metrics-compensation-benchmark"
             />
             <KPIStat
-              value="39%"
-              caption="First-year SDR voluntary turnover in SaaS"
-              source="Bridge Group, 2024"
+              value="1.9 yr"
+              caption="median SDR tenure — and only 12–13 months of full productivity per hire"
+              source="Bridge Group SDR Metrics Report, 2024"
+              sourceUrl="https://blog.bridgegroupinc.com/sales-development-metrics"
             />
             <KPIStat
-              value="~$115K"
-              caption="Fully-loaded cost of recruiting, ramping, and losing one SDR before productivity"
-              source="LinkedIn Talent + Bridge Group"
+              value="16%"
+              caption="of SDRs get promoted internally per year — down from 34% in 2020"
+              source="Bridge Group SDR Metrics Report, 2024"
+              sourceUrl="https://blog.bridgegroupinc.com/sales-development-metrics"
             />
           </div>
 

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import styles from "../teams.module.css";
-import SpecSection from "../_components/SpecSection";
 import InlineCTA from "../_components/InlineCTA";
+import DimensionList, { type Dimension } from "./DimensionList";
 
 /**
  * /teams/diagnostic — AE/SDR behavior diagnostic spec.
@@ -18,16 +18,6 @@ import InlineCTA from "../_components/InlineCTA";
 export const metadata = {
   title: "Diagnostic — AESDR / for Teams",
   description: "How to measure behavior change in early-career SDRs and AEs. Eight dimensions, sample items, expected deltas.",
-};
-
-type Dimension = {
-  number: string;
-  name: string;
-  role: "SDR" | "AE" | "Both";
-  what: string;
-  why: string;
-  sampleItems: string[];
-  typicalDelta: string;
 };
 
 const DIMENSIONS: Dimension[] = [
@@ -196,40 +186,7 @@ export default function DiagnosticPage() {
           <h2 className={styles.h2}>What gets measured.</h2>
           <hr className={styles.divider} />
 
-          {DIMENSIONS.map((d) => (
-            <SpecSection
-              key={d.number}
-              number={d.number}
-              title={d.name}
-              meta={[
-                { label: "Role", value: d.role },
-              ]}
-            >
-              <p className={styles.h4} style={{ marginTop: 8 }}>What it measures</p>
-              <p className={styles.bodyDense} style={{ marginBottom: 16 }}>{d.what}</p>
-
-              <p className={styles.h4} style={{ marginTop: 16 }}>Why it matters</p>
-              <p className={styles.bodyDense} style={{ marginBottom: 16 }}>{d.why}</p>
-
-              <p className={styles.h4} style={{ marginTop: 16 }}>Sample instrument items</p>
-              <ul className={styles.specList}>
-                {d.sampleItems.map((item) => (
-                  <li key={item}>
-                    <span style={{ fontFamily: "var(--mono)", fontSize: 14, color: "var(--ink)" }}>
-                      {item}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              <div className={styles.specCallout}>
-                <strong style={{ fontStyle: "normal", color: "var(--ink)" }}>
-                  Typical delta over 6–8 weeks:{" "}
-                </strong>
-                {d.typicalDelta}
-              </div>
-            </SpecSection>
-          ))}
+          <DimensionList dimensions={DIMENSIONS} />
         </div>
       </section>
 
