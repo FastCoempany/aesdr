@@ -83,15 +83,17 @@ export async function createAffiliateLink(formData: FormData): Promise<Result> {
 }
 
 /**
- * Mark a payout as paid. Founder-only.
+ * Mark a payout as paid. Founder-only. Throws on error (so an admin
+ * form submission surfaces failures via the framework's error boundary
+ * rather than swallowing them).
  */
-export async function markPayoutPaid(formData: FormData): Promise<Result> {
+export async function markPayoutPaid(formData: FormData): Promise<void> {
   await requireAdmin();
   const payoutId = String(formData.get("payoutId") ?? "");
   const paymentMethod = String(formData.get("paymentMethod") ?? "").trim() || null;
   const paymentReference = String(formData.get("paymentReference") ?? "").trim() || null;
 
-  if (!payoutId) return { ok: false, error: "Missing payout id." };
+  if (!payoutId) throw new Error("Missing payout id.");
 
   const admin = createAdminClient();
   const { data: payout, error: getErr } = await admin
@@ -99,8 +101,8 @@ export async function markPayoutPaid(formData: FormData): Promise<Result> {
     .select("id, partner_slug, total_commission_cents, attribution_ids, status")
     .eq("id", payoutId)
     .maybeSingle();
-  if (getErr || !payout) return { ok: false, error: "Payout not found." };
-  if (payout.status === "paid") return { ok: false, error: "Already marked paid." };
+  if (getErr || !payout) throw new Error("Payout not found.");
+  if (payout.status === "paid") throw new Error("Already marked paid.");
 
   const nowIso = new Date().toISOString();
   const { error: updErr } = await admin
@@ -112,7 +114,7 @@ export async function markPayoutPaid(formData: FormData): Promise<Result> {
       payment_reference: paymentReference,
     })
     .eq("id", payoutId);
-  if (updErr) return { ok: false, error: updErr.message };
+  if (updErr) throw new Error(updErr.message);
 
   // Also stamp paid_at on the underlying attribution rows.
   if (payout.attribution_ids?.length) {
@@ -130,5 +132,4 @@ export async function markPayoutPaid(formData: FormData): Promise<Result> {
 
   revalidatePath("/admin/affiliates");
   revalidatePath(`/admin/affiliates/${payout.partner_slug}`);
-  return { ok: true };
 }

@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { href: "/admin/at-risk", label: "At-risk" },
   { href: "/admin/testimonials", label: "Testimonials" },
   { href: "/admin/teams", label: "Teams" },
+  { href: "/admin/affiliates", label: "Affiliates" },
   { href: "/admin/partner-kit", label: "Partner Kit" },
 ];
 
