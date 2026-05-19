@@ -313,7 +313,7 @@ else.
 
 ---
 
-## Batch 8 — Curriculum rewrite (the batch that runs longest)
+## Batch 8 — Curriculum rewrite (the slowest batch)
 
 Every lesson unit gets audited, scored, rewritten to at least 9/10,
 founder-reviewed, shipped. Rubric in
@@ -453,7 +453,7 @@ Once those five are answered, a separate plan doc gets written at
 
 ---
 
-## Cross-batch progress tracking
+## A doc that tracks what's done
 
 A single tracking doc gets created the day batch 3 starts and is
 updated as each batch ships:

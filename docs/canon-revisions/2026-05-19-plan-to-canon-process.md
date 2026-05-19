@@ -190,7 +190,7 @@ a fifty-rule canon nobody reads end to end. The Step 2 promotion
 threshold (three flags) and the Step 5 retirement loop keep the
 active canon legible.
 
-**Promoting a rule and skipping the sweep.** A rule promoted without a
+**When a rule gets promoted but the sweep doesn't happen.** A rule promoted without a
 sweep means the canon says one thing and the production surfaces say
 another. Step 3 is non-optional. If the sweep can't happen in the
 same week, the promotion waits.
@@ -200,7 +200,7 @@ can't. Pretending the canon is fully automatable means the rules
 that need a human eye silently degrade. Step 4 has three levels for
 this reason.
 
-**Canon that nobody prunes.** Rules that haven't fired in 90 days
+**Rules nobody removes.** Rules that haven't fired in 90 days
 might be retirable. Step 5 keeps the active canon small.
 
 ---
@@ -228,7 +228,7 @@ As of 2026-05-19, the active canon contains:
 
 **Curriculum rubric** (`2026-05-19-curriculum-copy-rubric.md`):
 - Six-axis scoring (length variety, specificity, AI-tell absence,
-  sentence endings, register, paid sentences).
+  sentence endings, register, filler and over-cutting).
 - 6 / 9 / 10 quality bar.
 - Per-lesson acceptance criteria.
 

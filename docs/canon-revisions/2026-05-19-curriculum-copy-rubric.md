@@ -25,7 +25,7 @@ a row?
 
 | Score | Meaning |
 |---|---|
-| 0 | Three or more consecutive sentences under eight words in any paragraph. Or every sentence over 25 words. Reader fatigues. |
+| 0 | Three or more consecutive sentences under eight words in any paragraph, or fatigue-inducing sentence-length monotony (every sentence the same length, regardless of length). |
 | 1 | Mostly fine; one or two stumble points per page. |
 | 2 | Sentence-length variation reads as intentional, not telegraphic. A second-year SDR could read the page aloud at a bar without stumbling. |
 
@@ -72,10 +72,10 @@ it drift into deck-writer or motivation-engine register?
 | 1 | Operator voice holds with one or two slips into formal or marketing prose. |
 | 2 | Operator voice from open to close. A founder-voice aside (parenthetical, occasional first-person) is allowed and welcome. |
 
-### Axis 6 — Paid sentences
+### Axis 6 — Filler and over-cutting
 
-Does every sentence pay its way, or are paragraphs padded with
-filler (or over-pruned into telegraph)?
+Are paragraphs padded with sentences that could be cut without loss,
+or pruned so hard the reader can't catch their breath?
 
 | Score | Meaning |
 |---|---|
@@ -142,12 +142,12 @@ here to prioritise effort, not to argue about during review.
 
 | Lesson | Title | Pre-audit /10 | Axes likely below 1 |
 |---|---|---|---|
-| 01 | Building Real Camaraderie | 6 | Specificity, Paid sentences |
+| 01 | Building Real Camaraderie | 6 | Specificity, Filler and over-cutting |
 | 02 | Breaking Down Silos | 6 | Specificity, AI-tell absence |
 | 03 | Performance Pitfalls (SDR) / Surviving AE Management (AE) | 7 | Sentence endings |
 | 04 | Navigating Manager Madness | 6 | Specificity, Sentence-length variety |
 | 05 | The AE/SDR Playbook | 5 | All axes except Register |
-| 06 | Beyond the Sales Playbook | 6 | Specificity, Paid sentences |
+| 06 | Beyond the Sales Playbook | 6 | Specificity, Filler and over-cutting |
 | 07 | Prospecting & Pipeline | 6 | Specificity, Sentence-length variety |
 | 08 | The 30% Rule | 7 | AI-tell absence, Sentence endings |
 | 09 | CRM Survival Guide | 6 | Specificity, Register |

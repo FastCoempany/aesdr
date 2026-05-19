@@ -128,8 +128,8 @@ Together they read as one human's voice, not a generator's three-
 beat cadence.
 
 ### Test
-Count consecutive sentences under eight words. Three in a row, anywhere
-in the paragraph, is the kill point. Mix in a longer sentence or cut
+Count consecutive sentences under eight words. Three in a row anywhere
+in the paragraph means rewrite the paragraph. Mix in a longer sentence or cut
 one of the three.
 
 ---
