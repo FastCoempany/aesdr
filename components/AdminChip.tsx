@@ -34,7 +34,7 @@ const QUICK_LINKS: QuickEntry[] = [
   { label: "Home", href: "/" },
   { divider: true, label: "AESDR / Enterprise" },
   { label: "/enterprise · Landing", href: "/enterprise", note: "Subsidiary B2B surface" },
-  { label: "/enterprise · Curriculum", href: "/enterprise/curriculum", note: "12 modules / 36 lessons mapped" },
+  { label: "/enterprise · Curriculum", href: "/enterprise/curriculum", note: "12 courses / 36 lessons mapped" },
   { label: "/enterprise · Implementation", href: "/enterprise/implementation", note: "Manager 8-week rollout guide" },
   { label: "/enterprise · Diagnostic", href: "/enterprise/diagnostic", note: "8 dimensions, before/after spec" },
   { label: "/enterprise · Integrations", href: "/enterprise/integrations", note: "Live + roadmap" },

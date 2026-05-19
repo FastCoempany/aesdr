@@ -236,7 +236,7 @@ export default async function Dashboard() {
                 }}
               >
                 {completedCount === 0
-                  ? "Start at Lesson 1"
+                  ? "Start at Course 1"
                   : `Pick up at Lesson ${currentLesson.id}`}
               </p>
               <p

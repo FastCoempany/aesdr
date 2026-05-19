@@ -134,7 +134,7 @@ The course-content audit (2026-04-09) names "5 tools" as a reference point in th
 
 > *Each lesson ships with worksheets and takeaway tools you fill against your real AEs and SDRs, your real pipeline, your real comp plan. Not "imagine a prospect named Bob."*
 
-The canon §14 tagline — *"12 lessons. 5 tools. 1 new you."* — stays as the headline frame; the per-tool inventory is filled in once production confirms.
+The canon §14 tagline — *"12 courses. 5 tools. 1 new you."* — stays as the headline frame; the per-tool inventory is filled in once production confirms.
 
 ---
 
@@ -159,7 +159,7 @@ Per canon §13 honesty discipline — the absences:
 - **Not industry-specific.** Calibrated for early-career SaaS sales generally; not vertical-specific tactics.
 - **Not a credential program.** No certificate, no badge, no hiring-weight credential. The line on a LinkedIn profile would be *"AESDR · 12-lesson operating curriculum"* — honest and accurate, not credentialed.
 - **Not a coaching program.** No live cohort sessions, no 1:1 calls, no scheduled office hours. Self-paced curriculum + asynchronous Untamed community.
-- **Not sanitized.** Lessons titled *"Quotas Are Bullshit"* and *"Why SDRs Should Stay Single"* are not metaphor or marketing — they're the lesson titles. The annotations are in the host's hand. AESDR is unconventional in tone but conventional in shape: 12 lessons, structured curriculum, defined outcomes, refundable.
+- **Not sanitized.** Lessons titled *"Quotas Are Bullshit"* and *"Why SDRs Should Stay Single"* are not metaphor or marketing — they're the lesson titles. The annotations are in the host's hand. AESDR is unconventional in tone but conventional in shape: 12 courses, structured curriculum, defined outcomes, refundable.
 
 ---
 
@@ -234,6 +234,6 @@ This map is a forward dependency for:
 ## Open
 
 - **Tool inventory.** Verify the 5 tools (operating sheets, prep templates) shipping in production. Until verified, this document references "worksheets and takeaway tools" generically. Once verified, restore the per-tool listing with real names and lesson anchors.
-- **Per-unit titles.** The catalog above shows lesson-level titles (12 entries). The production curriculum has 36 units (3 per lesson). Decision: should the partner-facing map list units (36 cards) or stay at the lesson-level (12 cards)? Default: **12 cards (lesson-level only)** — partners and prospects need shape, not granularity. The registration page and replay page use the same 12-card view. Internal docs may reference units.
+- **Per-lesson titles.** The catalog above shows course-level titles (12 entries). The production curriculum has 36 lessons (3 per course). Decision: should the partner-facing map list lessons (36 cards) or stay at the course-level (12 cards)? Default: **12 cards (course-level only)** — partners and prospects need shape, not granularity. The registration page and replay page use the same 12-card view. Internal docs may reference lessons.
 - **Stylized lesson titles (L05, L06).** Production renders them with alternating casing (`tHe SaLeS pLaYbOoK`). Default: **preserve verbatim in all renders.** The casing is the brand move; sanding it to `The Sales Playbook` reads as failing to recognize the joke.
 - **Library metaphor scope.** The metaphor is surface-deep on this map (call numbers, drawers, stamps, "check one out"). It does NOT extend to fictional library imagery (no card catalog drawer renders, no card stock textures, no "due date" fictions). Per canon §6.5, decoration earns its keep or gets cut.

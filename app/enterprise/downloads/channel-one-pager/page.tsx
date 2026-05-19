@@ -74,7 +74,7 @@ export default function PartnerOnePagerPage() {
               maxWidth: "60ch",
             }}
           >
-            Twelve modules, 36 sub-lessons. Built on aesdr.com — the course junior SDRs
+            Twelve modules, 36 lessons. Built on aesdr.com — the course junior SDRs
             and AEs pay for out of their own pocket. Packaged for sales orgs and channel
             partners who already serve the SDR/AE audience but don&apos;t produce the
             training their customers ask for.
@@ -106,7 +106,7 @@ export default function PartnerOnePagerPage() {
           {/* What it is */}
           <h2 className={styles.onepageH2}>What it is</h2>
           <p className={styles.onepageBody}>
-            12 modules × 3 sub-lessons (36 total, ~16 hours run-time). Five takeaway tools
+            12 courses × 3 lessons (36 total, ~16 hours run-time). Five takeaway tools
             AEs and SDRs keep (manager archetype map, AE/SDR alignment contract, 72-hour strike plan,
             CRM survival guide, async cadence template). Eight-dimension before/after
             diagnostic for measuring behavior change. Discord community.

@@ -36,7 +36,7 @@ export default async function RevealPage() {
     redirect(dest);
   }
 
-  // Completion gate — all 12 lessons must be done
+  // Completion gate — all 12 courses must be done
   const { data: progress } = await supabase
     .from("course_progress")
     .select("lesson_id, is_completed")

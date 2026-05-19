@@ -72,7 +72,7 @@ export default async function AtRiskPage() {
     progressByUser.set(row.user_id, entry);
   }
 
-  // At-risk = purchased >= 5 days ago, < 12 lessons complete, no activity
+  // At-risk = purchased >= 5 days ago, < 12 courses complete, no activity
   // in 7+ days. Bucketed by severity:
   //   - "silent_start"   ≥ 5d since purchase + 0 lessons + 0 activity
   //   - "stalled"        ≥ 7d since last activity, 1-11 completed

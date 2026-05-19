@@ -29,7 +29,7 @@ export default async function WelcomePage() {
 
       <div className={styles.hero}>
         <div className={styles.heroLeft}>
-          <div className={styles.monoLabel}>AESDR &middot; 12 Lessons &middot; A Better You</div>
+          <div className={styles.monoLabel}>AESDR &middot; 12 Courses &middot; A Better You</div>
           <div className={styles.warnBox}>
             <div className={styles.warnTitle}>
               <span className={styles.warnIcon}>!</span> Content Warning

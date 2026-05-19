@@ -375,7 +375,7 @@ export default function ManagerArchetypeMapPage() {
             marginBottom: 16,
           }}
         >
-          This is one tool from Lesson 3. There are 11 more lessons.
+          This is one tool from Course 3. There are 11 more lessons.
         </p>
         <Link
           href="/preview"

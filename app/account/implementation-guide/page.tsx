@@ -24,7 +24,7 @@ interface Week {
 const WEEKS: Week[] = [
   {
     num: "01",
-    lesson: "Lesson 01",
+    lesson: "Course 01",
     title: "Building real camaraderie",
     estimate: "~22 min",
     brief:
@@ -34,7 +34,7 @@ const WEEKS: Week[] = [
   },
   {
     num: "02",
-    lesson: "Lesson 02",
+    lesson: "Course 02",
     title: "Breaking down silos",
     estimate: "~24 min",
     brief:
@@ -44,7 +44,7 @@ const WEEKS: Week[] = [
   },
   {
     num: "03",
-    lesson: "Lesson 03",
+    lesson: "Course 03",
     title: "Surviving your manager",
     estimate: "~28 min",
     brief:
@@ -54,17 +54,17 @@ const WEEKS: Week[] = [
   },
   {
     num: "04",
-    lesson: "Lesson 04",
+    lesson: "Course 04",
     title: "Navigating manager madness",
     estimate: "~26 min",
     brief:
-      "Companion to Lesson 3. Where the archetype map covers stable behaviour, this covers volatility — bad weeks, escalations, surprise re-orgs.",
+      "Companion to Course 3. Where the archetype map covers stable behaviour, this covers volatility — bad weeks, escalations, surprise re-orgs.",
     move:
       "Write down the last three times your manager surprised you. Pattern-match before next quarter.",
   },
   {
     num: "05",
-    lesson: "Lesson 05",
+    lesson: "Course 05",
     title: "The AE / SDR playbook",
     estimate: "~32 min",
     brief:
@@ -74,17 +74,17 @@ const WEEKS: Week[] = [
   },
   {
     num: "06",
-    lesson: "Lesson 06",
+    lesson: "Course 06",
     title: "Beyond the playbook",
     estimate: "~28 min",
     brief:
-      "The lesson on what to do when the script runs out and you're live. Pairs well with re-reading Lesson 5 the same week.",
+      "The lesson on what to do when the script runs out and you're live. Pairs well with re-reading Course 5 the same week.",
     move:
       "Pick the one in-call moment you flinched at this month. Write the line you wish you'd said.",
   },
   {
     num: "07",
-    lesson: "Lesson 07",
+    lesson: "Course 07",
     title: "Prospecting & pipeline",
     estimate: "~30 min",
     brief:
@@ -94,7 +94,7 @@ const WEEKS: Week[] = [
   },
   {
     num: "08",
-    lesson: "Lesson 08",
+    lesson: "Course 08",
     title: "The 30% rule",
     estimate: "~24 min",
     brief:
@@ -104,7 +104,7 @@ const WEEKS: Week[] = [
   },
   {
     num: "09",
-    lesson: "Lesson 09",
+    lesson: "Course 09",
     title: "CRM survival guide",
     estimate: "~22 min",
     brief:
@@ -114,7 +114,7 @@ const WEEKS: Week[] = [
   },
   {
     num: "10",
-    lesson: "Lesson 10",
+    lesson: "Course 10",
     title: "Compensation realities",
     estimate: "~26 min",
     brief:
@@ -124,7 +124,7 @@ const WEEKS: Week[] = [
   },
   {
     num: "11",
-    lesson: "Lesson 11",
+    lesson: "Course 11",
     title: "Sober selling",
     estimate: "~22 min",
     brief:
@@ -134,7 +134,7 @@ const WEEKS: Week[] = [
   },
   {
     num: "12",
-    lesson: "Lesson 12",
+    lesson: "Course 12",
     title: "Leveling up SaaS relationships",
     estimate: "~26 min",
     brief:
@@ -406,7 +406,7 @@ export default async function ImplementationGuidePage() {
         </p>
         <p style={{ fontSize: 16, lineHeight: 1.7, color: "var(--ink)", marginBottom: 10 }}>
           You will. Most people miss two or three weeks across the twelve.
-          Don&rsquo;t restart from Lesson 1 — that&rsquo;s the trap. Open the
+          Don&rsquo;t restart from Course 1 — that&rsquo;s the trap. Open the
           dashboard, hit <em>Resume</em>, pick up where you left.
         </p>
         <p style={{ fontSize: 16, lineHeight: 1.7, color: "var(--ink)", marginBottom: 24 }}>

@@ -1067,7 +1067,7 @@ window.AESDR = window.AESDR || {};
 
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>AESDR — Lesson 12.3: Why SDRs Should Stay Single</title>
+<title>AESDR — Course 12.3: Why SDRs Should Stay Single</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@400;500;600;700&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
@@ -1337,7 +1337,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
   <div style="display:flex;align-items:center">
   </div>
   <div class="top-right">
-    <span class="prog-label" id="progLabel">Lesson 12.3</span>
+    <span class="prog-label" id="progLabel">Course 12.3</span>
     <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
   </div>
 </header>
@@ -1348,7 +1348,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
     <div class="cover" style="flex:1">
       <div class="cvl">
         <div>
-          <div class="cv-c2tag">AESDR · Lesson 12.3</div>
+          <div class="cv-c2tag">AESDR · Course 12.3</div>
           <div class="cv-course-num">12</div>
           <div class="cv-big ae-only">Why AEs Should Stay Single</div>
           <div class="cv-big sdr-only">Why SDRs Should Stay Single</div>
@@ -1365,7 +1365,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <li><span class="cl-n">03</span>Commission Rollercoaster</li>
           <li><span class="cl-n">04</span>Career Over Romance</li>
         </ul>
-        <button class="btn btn-fill" onclick="go(1)"><span>Begin Lesson →</span></button>
+        <button class="btn btn-fill" onclick="go(1)"><span>Begin Course →</span></button>
       </div>
     </div>
   </div>
@@ -1629,8 +1629,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 <aside class="sidebar">
   <div class="sb-course">12</div>
-  <div class="sb-lesson ae-only">Lesson 12.3 · Why AEs Should Stay Single</div>
-  <div class="sb-lesson sdr-only">Lesson 12.3 · Why SDRs Should Stay Single</div>
+  <div class="sb-lesson ae-only">Course 12.3 · Why AEs Should Stay Single</div>
+  <div class="sb-lesson sdr-only">Course 12.3 · Why SDRs Should Stay Single</div>
   <div class="sb-divider"></div>
   <div class="sb-label">Sections</div>
   <div class="sb-item" id="nav1" onclick="goSafe(1)">
@@ -2156,7 +2156,7 @@ function getNextLabel(){
 }
 function render(){
   const sec=SEC[cur];
-  document.getElementById('progLabel').textContent=sec?`Section 0${sec}`:'Lesson 12.3';
+  document.getElementById('progLabel').textContent=sec?`Section 0${sec}`:'Course 12.3';
   const pct=cur===0?0:Math.round((cur/(TOTAL-1))*100);
   document.getElementById('progFill').style.width=pct+'%';
   ['nav1','nav2','nav3','nav4'].forEach((id,i)=>

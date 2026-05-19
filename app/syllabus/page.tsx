@@ -113,10 +113,10 @@ export default function SyllabusPage() {
             color: "rgba(250,247,242,0.85)",
           }}
         >
-          <strong>Lesson 7</strong> (Prospecting &amp; Pipeline) →{" "}
-          <strong>Lesson 8</strong> (The 30% Rule) →{" "}
-          <strong>Lesson 10</strong> (Commission Myth) →{" "}
-          <strong>Lesson 12</strong> (Levelling Up SaaS Relationships).
+          <strong>Course 7</strong> (Prospecting &amp; Pipeline) →{" "}
+          <strong>Course 8</strong> (The 30% Rule) →{" "}
+          <strong>Course 10</strong> (Commission Myth) →{" "}
+          <strong>Course 12</strong> (Levelling Up SaaS Relationships).
           That&rsquo;s the part you&rsquo;d wish you&rsquo;d read sooner.
           Foundation chapters (1-6) are still there for the months you
           want to re-examine the fundamentals.
@@ -124,7 +124,7 @@ export default function SyllabusPage() {
       </aside>
 
       <div className={styles.drawerLabel}>
-        <div className={styles.drawerTitle}>Drawer A — 12 Lessons</div>
+        <div className={styles.drawerTitle}>Drawer A — 12 Courses</div>
         <div className={styles.drawerMeta}>Sorted by Chapter Order</div>
       </div>
 
@@ -164,7 +164,7 @@ export default function SyllabusPage() {
           Get Access
         </Link>
         <div className={styles.ctaFoot}>
-          14-day refund &middot; 12 lessons &middot; 5 takeaway tools
+          14-day refund &middot; 12 courses &middot; 5 takeaway tools
         </div>
       </section>
 

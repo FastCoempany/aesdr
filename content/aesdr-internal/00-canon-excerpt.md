@@ -142,7 +142,7 @@ The taglines partners may lift verbatim into co-branded copy. **Use, don't parap
 
 - *"You can already feel it. You have to be a part of this."* (added v1.2)
 - *"Real Operator. Never guru."* (added v1.2 — tagline-form of §1.5 doctrine)
-- *"12 lessons. 5 tools. 1 new you."* (revised v1.2)
+- *"12 courses. 5 tools. 1 new you."* (revised v1.2)
 - *"The operating manual, not the motivation engine."*
 - *"Borrowed trust is a merciless mirror."*
 - *"We do not teach you to sell. We teach you to be the person who sells."*

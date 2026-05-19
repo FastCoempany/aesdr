@@ -41,7 +41,7 @@ export default function CertificateGenerator() {
   const [repName, setRepName] = useState("Alex Rivera");
   const [role, setRole] = useState<"SDR" | "AE">("SDR");
   const [completionDate, setCompletionDate] = useState(today());
-  const [modulesCompleted, setModulesCompleted] = useState("12 modules · 36 lessons");
+  const [modulesCompleted, setModulesCompleted] = useState("12 courses · 36 lessons");
   const [orgName, setOrgName] = useState("");
   const [managerName, setManagerName] = useState("");
 
@@ -137,7 +137,7 @@ export default function CertificateGenerator() {
               onChange={(e) => setModulesCompleted(e.target.value)}
               className={styles.formInput}
               maxLength={120}
-              placeholder="e.g. 12 modules · 36 lessons"
+              placeholder="e.g. 12 courses · 36 lessons"
             />
           </div>
 

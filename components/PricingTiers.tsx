@@ -47,7 +47,7 @@ export default function PricingTiers({ initialRole = null }: Props) {
         </p>
         <p className={styles.priceTagline}>For the SDR grinding through 80 dials and a 9% reply rate.</p>
         <ul className={styles.priceFeatures}>
-          <li>All 12 lessons — including <em>The SDR Playbook</em> + <em>SDR Performance Pitfalls</em></li>
+          <li>All 12 courses — including <em>The SDR Playbook</em> + <em>SDR Performance Pitfalls</em></li>
           <li>5 interactive tools to take with you</li>
           <li>Lifetime access</li>
           <li className={styles.discordLine}>
@@ -70,7 +70,7 @@ export default function PricingTiers({ initialRole = null }: Props) {
         </p>
         <p className={styles.priceTagline}>For the closer juggling 30 active opps and four forecast calls.</p>
         <ul className={styles.priceFeatures}>
-          <li>All 12 lessons — including <em>Surviving AE Management</em> + <em>AE/SDR Alignment</em></li>
+          <li>All 12 courses — including <em>Surviving AE Management</em> + <em>AE/SDR Alignment</em></li>
           <li>5 interactive tools to take with you</li>
           <li>Lifetime access</li>
           <li className={styles.discordLine}>

@@ -130,7 +130,7 @@ export default function DeckStack({ standalone = false }: DeckStackProps) {
       {!standalone && (
         <div className={`${s.sectionHeader} ${s.sectionHeaderVisible}`}>
           <div className={s.sectionLabel}>What you get</div>
-          <h2 className={s.sectionTitle}>12 Lessons. Peel to preview.</h2>
+          <h2 className={s.sectionTitle}>12 Courses. Peel to preview.</h2>
           <div className={s.sectionSubtle}>
             ~{TOTAL_HOURS} hours total · self-paced · lifetime access
           </div>

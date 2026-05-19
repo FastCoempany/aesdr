@@ -43,7 +43,7 @@ export default function EnterpriseFooter() {
                 aesdr.com
               </Link>
               {" "}— the AE/SDR-direct course that 1st- and 2nd-year SDRs and AEs actually use.
-              The same 12 lessons, packaged for sales orgs.
+              The same 12 courses, packaged for sales orgs.
             </span>
           </div>
         </div>

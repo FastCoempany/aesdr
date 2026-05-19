@@ -89,7 +89,7 @@ const DIMENSIONS: Dimension[] = [
       "Self-rating: 'I respect my AE's / SDR's read of the buyer' (1–5)",
       "Use of the AE/SDR Alignment Contract (yes / no / partial)",
     ],
-    typicalDelta: "Module 2 (Working Dynamics) + Module 3 (Survival) lift this most. Pairs who name the ego dynamic out loud — using the framing from Lesson 2.3 — typically see paired-survey scores improve by 1+ point within 4 weeks.",
+    typicalDelta: "Module 2 (Working Dynamics) + Module 3 (Survival) lift this most. Pairs who name the ego dynamic out loud — using the framing from Course 2.3 — typically see paired-survey scores improve by 1+ point within 4 weeks.",
   },
   {
     number: "06",

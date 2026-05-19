@@ -149,7 +149,7 @@ const LD: Item[] = [
     title: "Certificate of completion",
     state: "Live",
     body:
-      "Each learner receives a named, dated certificate on completing all 12 lessons. PDF download; LinkedIn-shareable. The certificate names the learner only — there's no separate company-issued credential layer.",
+      "Each learner receives a named, dated certificate on completing all 12 courses. PDF download; LinkedIn-shareable. The certificate names the learner only — there's no separate company-issued credential layer.",
   },
 ];
 

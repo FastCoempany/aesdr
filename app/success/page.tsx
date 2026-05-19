@@ -285,7 +285,7 @@ function SuccessContent() {
           <EditorialStep
             numeral="II"
             kicker="Then"
-            title="Open Lesson 1"
+            title="Open Course 1"
             body={
               <>
                 <em>The Fundamentals.</em> Structure, camaraderie with your

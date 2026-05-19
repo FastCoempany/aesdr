@@ -179,7 +179,7 @@ export default function ImplementationPage() {
           <ul className={styles.bulletList}>
             <li>
               <strong>Manager Archetype Map.</strong> Eight manager archetypes,
-              what they value, what they reward, what they punish. From Lesson 4.1.
+              what they value, what they reward, what they punish. From Course 4.1.
             </li>
             <li>
               <strong>AE/SDR Alignment Contract.</strong> A two-page working
@@ -188,12 +188,12 @@ export default function ImplementationPage() {
             </li>
             <li>
               <strong>72-Hour Strike Plan.</strong> A structured recovery plan for
-              the week after a major deal loss or quota miss. From Lesson 3.2.
+              the week after a major deal loss or quota miss. From Course 3.2.
             </li>
             <li>
               <strong>CRM Survival Guide.</strong> A working manual for
               maintaining clean CRM without consuming 40% of the week. From
-              Lesson 9.1.
+              Course 9.1.
             </li>
             <li>
               <strong>Async Cadence Template.</strong> Daily / weekly / monthly

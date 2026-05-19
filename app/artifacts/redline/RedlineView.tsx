@@ -233,7 +233,7 @@ export default function RedlineView({ data }: { data: RedlineData }) {
                 — {initials.toUpperCase()}.
               </div>
               <div className="ch-meta">
-                12 lessons · 36 units · Your words, fact-checked
+                12 courses · 36 lessons · Your words, fact-checked
               </div>
             </div>
           </section>

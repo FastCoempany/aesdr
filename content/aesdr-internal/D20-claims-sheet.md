@@ -16,7 +16,7 @@ These are the claims we have substantiated and stand behind. Partners and the ho
 
 ### A1. Structural promise (verbatim)
 
-> *"12 lessons. 5 takeaway tools. Lifetime access. Discord community ('Untamed') included. 14-day no-questions-asked refund."*
+> *"12 courses. 5 takeaway tools. Lifetime access. Discord community ('Untamed') included. 14-day no-questions-asked refund."*
 
 Pricing, also verbatim:
 

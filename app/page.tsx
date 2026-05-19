@@ -246,7 +246,7 @@ export default async function LandingPage() {
       <section className={styles.finalCta}>
         <h2 className={styles.finalHeadline}>Stop ChatGPClaudeing. Start&nbsp;executing.</h2>
         <p className={styles.finalSub}>
-          12 lessons. 5 takeaway tools. One price. Lifetime access.
+          12 courses. 5 takeaway tools. One price. Lifetime access.
           Built for AEs and SDRs who want to get better, not just feel better.
         </p>
         <a href="#pricing" className={styles.ctaPrimary}>Get Access</a>
@@ -255,7 +255,7 @@ export default async function LandingPage() {
       {/* Content Warning */}
       <div className={styles.contentWarningLine}>
         <span className={styles.warningLineIcon}>!</span>
-        Content Warning &mdash; This course contains uncomfortable truths about your pipeline, your apartment, your bar tab, your commission check, and your relationship status. &mdash; AESDR &mdash; 12 lessons / at your own pace
+        Content Warning &mdash; This course contains uncomfortable truths about your pipeline, your apartment, your bar tab, your commission check, and your relationship status. &mdash; AESDR &mdash; 12 courses / at your own pace
       </div>
 
       {/* Footer */}

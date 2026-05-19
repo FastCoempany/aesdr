@@ -16,7 +16,7 @@
 
 | Tier | Audience | Price | Includes |
 |---|---|---|---|
-| **SDR** | Individual SDR — first 0–2 years in role | **$249** | All 12 lessons, all 5 tools, Untamed Discord, lifetime access, 14-day refund. |
+| **SDR** | Individual SDR — first 0–2 years in role | **$249** | All 12 courses, all 5 tools, Untamed Discord, lifetime access, 14-day refund. |
 | **AE** | Individual AE — first 0–2 years in role | **$299** | Same as SDR plus AE-track supplementary recordings + AE-specific worksheets. |
 | **Team** | Manager-purchased seats, up to 10 AEs and SDRs | **$1,499** | 10 seats, manager dashboard, cohort assign + revoke, no per-seat overage. |
 
@@ -78,7 +78,7 @@ A canonical, copy-pastable inclusion list. Use this exactly when a Partner needs
 
 > *Every AESDR enrollment — SDR, AE, or Team — includes:*
 >
-> *— **All 12 lessons.** Sequenced from foundational to advanced. Lifetime access.*
+> *— **All 12 courses.** Sequenced from foundational to advanced. Lifetime access.*
 > *— **All 5 takeaway tools.** One-page operating sheets you use the next day, not in a quarter.*
 > *— **Per-lesson worksheets.** Filled against the buyer's real AEs and SDRs, real pipeline, real comp plan.*
 > *— **Untamed Discord access.** AESDR's community, opened on enrollment.*
@@ -143,7 +143,7 @@ Approved phrasings in §3 above are pre-cleared — Partner may use them without
 For partners who want a brand-line that doesn't reference pricing directly, canon §14 taglines are pre-approved for partner co-branding:
 
 - *"The operating manual, not the motivation engine."*
-- *"12 lessons. 5 tools. 1 new you."*
+- *"12 courses. 5 tools. 1 new you."*
 - *"You can already feel it. You have to be a part of this."*
 - *"Real Operator. Never guru."*
 - *"If you want generic sales hype, the internet has a surplus."*
@@ -204,6 +204,6 @@ This sheet is a forward dependency for:
 - **~~Pilot discount default~~** — RESOLVED 2026-05-02 per Phase 0 #5: never. List price always. This open question is closed; v2 reflects the ratified policy.
 - **Whether to publish the worked-example commission math** in §8 for every pilot, or genericize. Default: **per-pilot, real numbers**, because per canon §1.6 the partner-facing economics should be transparent. Generic example would feel like the very SaaS-affiliate ambiguity we're counter-positioning against.
 - **Partner-discount layering.** Default: **never.** Partners cannot offer "additional X% off" on any AESDR enrollment, period. There is no AESDR-issued code for them to layer onto. If a partner asks for discount authority, that's a fit-signal flag for D27 next time per Phase 0 #5.
-- **Whether to translate "lifetime access" claim more aggressively** (e.g., "if AESDR ships a Lesson 13 in 2027, you get it"). Default: **yes**, the existing phrasing already says this. Reinforce it in the FAQ Q12, which it does.
+- **Whether to translate "lifetime access" claim more aggressively** (e.g., "if AESDR ships a Course 13 in 2027, you get it"). Default: **yes**, the existing phrasing already says this. Reinforce it in the FAQ Q12, which it does.
 - **Team-tier seat count.** Currently 10 seats fixed per D22-aligned §1. If/when the engine supports flexible seat counts, this sheet rewrites. Until then, "up to 10 seats" is canonical.
 - **International / non-USD pricing.** Default: USD only in v1. Stripe handles currency conversion at checkout; AESDR does not localize the published list price. Partners outside the US dollar zone get the conversion at the buyer's payment method.

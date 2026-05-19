@@ -58,7 +58,7 @@ const OBJECTIONS: { number: string; objection: string; answer: string }[] = [
     number: "06",
     objection: '"What if we hate it?"',
     answer:
-      "30-day refund on the Team tier — full refund of unused seats. You hit your AEs and SDRs with one cohort in Lesson 1-3. If the feedback is bad, you tell us in week three and we refund. We'd rather lose this deal cleanly than win it on a fit we already knew was wrong.",
+      "30-day refund on the Team tier — full refund of unused seats. You hit your AEs and SDRs with one cohort in Course 1-3. If the feedback is bad, you tell us in week three and we refund. We'd rather lose this deal cleanly than win it on a fit we already knew was wrong.",
   },
 ];
 

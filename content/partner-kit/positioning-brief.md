@@ -35,6 +35,6 @@ every audience, every channel, every partner — there are no promotional codes.
 
 ## Three things we'll always say
 
-1. 12 lessons, lifetime access, $249 / $299 / $1,499, 14-day refund.
+1. 12 courses, lifetime access, $249 / $299 / $1,499, 14-day refund.
 2. Operating manual, not motivation engine. We don't perform expertise; we install it.
 3. We say out loud who shouldn't buy. Honesty is not a tone here — it's a competitive position.

@@ -26,7 +26,7 @@ export default async function AlumniPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/alumni");
 
-  // Gate: must have all 12 lessons completed.
+  // Gate: must have all 12 courses completed.
   const { data: progress } = await supabase
     .from("course_progress")
     .select("lesson_id, is_completed")

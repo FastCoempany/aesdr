@@ -77,7 +77,7 @@ A workshop-first partner motion. One live workshop into your audience, run by an
 
 ### Three things we'll always say about AESDR
 
-1. 12 lessons, lifetime access, $249/$299/$1,499, 14-day refund.
+1. 12 courses, lifetime access, $249/$299/$1,499, 14-day refund.
 2. Built by people who carried bags and managed AEs and SDRs for 10+ years.
 3. Not video lectures. Interactive. No motivation.
 

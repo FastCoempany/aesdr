@@ -5,7 +5,7 @@ import InlineCTA from "../_components/InlineCTA";
 /**
  * /enterprise/curriculum — the full module + lesson map.
  *
- * Twelve modules, three sub-lessons each = 36 lessons total. Each
+ * Twelve modules, three lessons each = 36 lessons total. Each
  * module gets: theme, three lesson titles, manager-facing learning
  * outcomes, time estimate, "why managers care" line.
  *
@@ -16,7 +16,7 @@ import InlineCTA from "../_components/InlineCTA";
 
 export const metadata = {
   title: "Curriculum — AESDR / Enterprise",
-  description: "Twelve modules, three sub-lessons each. The full curriculum map for first- and second-year SDRs and AEs — including manager-facing learning outcomes per module.",
+  description: "Twelve modules, three lessons each. The full curriculum map for first- and second-year SDRs and AEs — including manager-facing learning outcomes per module.",
 };
 
 type Lesson = {
@@ -285,9 +285,9 @@ export default function CurriculumPage() {
       <section className={styles.hero}>
         <div className={styles.container}>
           <p className={styles.eyebrow}>Curriculum</p>
-          <h1 className={styles.heroHeadline}>The 12 modules, mapped.</h1>
+          <h1 className={styles.heroHeadline}>The 12 courses, mapped.</h1>
           <p className={styles.heroSubhead}>
-            Each module is three sub-lessons grouped around a single theme. AEs and SDRs work through them in sequence — typically one module per week over 12 weeks, though AEs and SDRs go faster or slower depending on density of their schedule.
+            Each module is three lessons grouped around a single theme. AEs and SDRs work through them in sequence — typically one module per week over 12 weeks, though AEs and SDRs go faster or slower depending on density of their schedule.
           </p>
           <div className={styles.kpiRow}>
             <div className={styles.kpi}>

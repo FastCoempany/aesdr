@@ -1067,7 +1067,7 @@ window.AESDR = window.AESDR || {};
 
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>AESDR — Lesson 4.1: Navigating the SDR Manager Madness</title>
+<title>AESDR — Course 4.1: Navigating the SDR Manager Madness</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@400;500;600;700&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
@@ -1332,7 +1332,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
   <div style="display:flex;align-items:center">
   </div>
   <div class="top-right">
-    <span class="prog-label" id="progLabel">Lesson 4.1</span>
+    <span class="prog-label" id="progLabel">Course 4.1</span>
     <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
   </div>
 </header>
@@ -1343,7 +1343,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
     <div class="cover" style="flex:1">
       <div class="cvl">
         <div>
-          <div class="cv-c2tag">AESDR · Lesson 4.1</div>
+          <div class="cv-c2tag">AESDR · Course 4.1</div>
           <div class="cv-course-num">04</div>
           <div class="cv-big ae-only">Reading Your Manager</div>
           <div class="cv-big sdr-only">Reading Your Manager</div>
@@ -1360,7 +1360,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <li><span class="cl-n">03</span>Framework for Managing Up</li>
           <li><span class="cl-n">04</span>Tools for Weekly Alignment</li>
         </ul>
-        <button class="btn btn-fill" onclick="go(1)"><span>Begin Lesson →</span></button>
+        <button class="btn btn-fill" onclick="go(1)"><span>Begin Course →</span></button>
       </div>
     </div>
   </div>
@@ -1649,8 +1649,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 
 <aside class="sidebar">
   <div class="sb-course">04</div>
-  <div class="sb-lesson ae-only">Lesson 4.1 · Reading Your Manager</div>
-  <div class="sb-lesson sdr-only">Lesson 4.1 · Reading Your Manager</div>
+  <div class="sb-lesson ae-only">Course 4.1 · Reading Your Manager</div>
+  <div class="sb-lesson sdr-only">Course 4.1 · Reading Your Manager</div>
   <div class="sb-divider"></div>
   <div class="sb-label">Sections</div>
   <div class="sb-item" id="nav1" onclick="goSafe(1)">
@@ -2172,7 +2172,7 @@ function getNextLabel(){
 }
 function render(){
   const sec=SEC[cur];
-  document.getElementById('progLabel').textContent=sec?`Section 0${sec}`:'Lesson 4.1';
+  document.getElementById('progLabel').textContent=sec?`Section 0${sec}`:'Course 4.1';
   const pct=cur===0?0:Math.round((cur/(TOTAL-1))*100);
   document.getElementById('progFill').style.width=pct+'%';
   ['nav1','nav2','nav3','nav4'].forEach((id,i)=>

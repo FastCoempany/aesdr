@@ -27,7 +27,7 @@ export default function TeamsLanding() {
             The training your first- and second-year SDRs and AEs should already have.
           </h1>
           <p className={styles.heroSubhead}>
-            The same 12 modules that junior SDRs and AEs buy on aesdr.com — packaged
+            The same 12 courses that junior SDRs and AEs buy on aesdr.com — packaged
             for sales teams that need their new AEs and SDRs productive faster, with fewer
             of them quitting in month four.
           </p>
@@ -82,7 +82,7 @@ export default function TeamsLanding() {
             orgs.
           </p>
           <p className={styles.body}>
-            AESDR is 12 modules, each addressing one of those things, with a
+            AESDR is 12 courses, each addressing one of those things, with a
             takeaway tool the AE/SDR keeps. Real-world training your new AEs and SDRs should
             already have, but rarely do.
           </p>
@@ -99,7 +99,7 @@ export default function TeamsLanding() {
           <div className={styles.cardGrid3}>
             <div className={styles.card}>
               <p className={styles.cardEyebrow}>01 · CURRICULUM</p>
-              <h3 className={styles.cardTitle}>12 modules · 36 lessons</h3>
+              <h3 className={styles.cardTitle}>12 courses · 36 lessons</h3>
               <p className={styles.cardBody}>
                 Field-tested, ~25 minutes each. Interactive — not video-and-quiz.
                 Topics span manager dynamics, AE/SDR alignment, CRM, async-life
@@ -188,7 +188,7 @@ export default function TeamsLanding() {
             <BuyerModeCard
               eyebrow="03 · WHITE-LABEL"
               title="White-label / co-branded"
-              description="For partners packaging AESDR inside their own offering. We deliver the 12 modules + 5 takeaway tools; you wrap them in your brand. Revenue-share or wholesale pricing."
+              description="For partners packaging AESDR inside their own offering. We deliver the 12 courses + 5 takeaway tools; you wrap them in your brand. Revenue-share or wholesale pricing."
               features={[
                 "Delivery rights to modules + takeaway tools",
                 "Co-branded materials — your logo + AESDR mark with mutual approval",
@@ -228,7 +228,7 @@ export default function TeamsLanding() {
               aesdr.com
             </Link>
             {" "}— the course that junior SDRs and AEs pay for out of their own pocket.
-            The same 12 modules, packaged for the orgs that hire them.
+            The same 12 courses, packaged for the orgs that hire them.
           </p>
           <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
             <InlineCTA href="/enterprise/contact?source=footer-cta">

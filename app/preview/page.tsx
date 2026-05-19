@@ -6,7 +6,7 @@ import AesdrBrand from "@/components/AesdrBrand";
 export const metadata: Metadata = {
   title: "Sample Lesson — Surviving Your Manager | AESDR",
   description:
-    "A free preview from Lesson 3 (Surviving & Thriving). The full takeaway is gated; the body is not.",
+    "A free preview from Course 3 (Surviving & Thriving). The full takeaway is gated; the body is not.",
   robots: { index: true, follow: true },
 };
 
@@ -126,7 +126,7 @@ export default function PreviewPage() {
             marginBottom: 16,
           }}
         >
-          Lesson 03 · Sample · No signup required
+          Course 03 · Sample · No signup required
         </p>
 
         <h1
@@ -151,7 +151,7 @@ export default function PreviewPage() {
             marginBottom: 40,
           }}
         >
-          A sample from Lesson 3, <em>Surviving &amp; Thriving</em>. The body is open.
+          A sample from Course 3, <em>Surviving &amp; Thriving</em>. The body is open.
           The takeaway tool — the one you&rsquo;d use on Monday — is the part we charge for.
         </p>
 
@@ -377,7 +377,7 @@ export default function PreviewPage() {
             lineHeight: 1.7,
           }}
         >
-          12 lessons. 5 takeaway tools. Lifetime access. 14-day refund.
+          12 courses. 5 takeaway tools. Lifetime access. 14-day refund.
           <br />
           <Link
             href="/free/manager-archetype-map"

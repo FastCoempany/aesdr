@@ -14,7 +14,7 @@ export async function GET(request: Request) {
   const now = new Date();
   const errors: string[] = [];
 
-  // ── Review request: 2 days after completing all 12 lessons ──
+  // ── Review request: 2 days after completing all 12 courses ──
   const { data: completedUsers, error: qErr } = await supabase
     .from('purchases')
     .select('user_email, user_id, customer_name')

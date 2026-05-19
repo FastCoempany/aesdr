@@ -69,14 +69,14 @@ export default function CurriculumPage() {
             textTransform: "uppercase",
           }}
         >
-          12 courses · 36 lessons · ~144 sections · 12 lessons. 5 tools. 1 new you.
+          12 courses · 36 lessons · ~144 sections · 5 tools. 1 new you.
         </p>
       </div>
 
       <CatalogTeaserGrid cards={CATALOG_CARDS} columns={4} />
 
       <CaveatLayer>
-        36 lessons total. Three sub-units per course. Role-conditional content on every lesson.
+        36 lessons total. Three lessons per course. Role-conditional content on every lesson.
       </CaveatLayer>
 
       <ToolStrip />
