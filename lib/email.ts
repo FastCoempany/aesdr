@@ -357,7 +357,7 @@ function welcomeHtml(name: string, email: string, loginUrl: string, tempPassword
       <tr>
         <td style="padding:6px 0;font-family:Georgia,'Times New Roman',serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#64748B;width:180px;vertical-align:top">Temporary password</td>
         <td style="padding:6px 0;vertical-align:top">
-          <code style="display:inline-block;background:#0F172A;color:#F8FAFC;padding:8px 14px;border-radius:4px;font-family:'SF Mono',Consolas,monospace;font-size:15px;letter-spacing:2px;font-weight:700">${esc(tempPassword)}</code>
+          <code style="display:inline-block;background:#1A1A1A;color:#FAF7F2;padding:8px 14px;border-radius:4px;font-family:'SF Mono',Consolas,monospace;font-size:15px;letter-spacing:2px;font-weight:700">${esc(tempPassword)}</code>
         </td>
       </tr>
       <tr>
@@ -405,7 +405,7 @@ function welcomeHtml(name: string, email: string, loginUrl: string, tempPassword
         <!-- Editorial headline -->
         <tr>
           <td style="padding:0 48px 8px 48px;">
-            <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:44px;line-height:1.08;letter-spacing:-0.01em;color:#0F172A;">
+            <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:44px;line-height:1.08;letter-spacing:-0.01em;color:#1A1A1A;">
               ${greeting}
             </h1>
           </td>
@@ -431,16 +431,16 @@ function welcomeHtml(name: string, email: string, loginUrl: string, tempPassword
         <!-- Credentials block -->
         <tr>
           <td style="padding:28px 48px 8px 48px;">
-            <p style="margin:0 0 18px;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#10B981;font-weight:700;">
+            <p style="margin:0 0 18px;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#8B1A1A;font-weight:700;">
               Your credentials
             </p>
-            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FAFAF7;border:1px solid #E8E3D8;border-left:3px solid #10B981;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FAFAF7;border:1px solid #E8E3D8;border-left:3px solid #8B1A1A;">
               <tr>
                 <td style="padding:24px 24px 20px 24px;">
                   <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                     <tr>
                       <td style="padding:6px 0;font-family:Georgia,'Times New Roman',serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#64748B;width:180px;vertical-align:top">Email</td>
-                      <td style="padding:6px 0;font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#0F172A;vertical-align:top;word-break:break-all">${safeEmail}</td>
+                      <td style="padding:6px 0;font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#1A1A1A;vertical-align:top;word-break:break-all">${safeEmail}</td>
                     </tr>
                     ${passwordRow}
                   </table>
@@ -455,7 +455,7 @@ function welcomeHtml(name: string, email: string, loginUrl: string, tempPassword
           <td style="padding:32px 48px 8px 48px;" align="center">
             <table role="presentation" cellpadding="0" cellspacing="0" border="0">
               <tr>
-                <td style="background:#0F172A;">
+                <td style="background:#1A1A1A;">
                   <a href="${loginUrl}" style="display:inline-block;padding:18px 40px;font-family:'SF Mono',Consolas,monospace;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#FFFFFF;text-decoration:none;font-weight:700;">
                     Sign In &amp; Begin &rarr;
                   </a>
@@ -469,7 +469,7 @@ function welcomeHtml(name: string, email: string, loginUrl: string, tempPassword
         <tr>
           <td style="padding:40px 48px 0 48px;">
             <p style="margin:0 0 10px;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#94A3B8;">
-              Course I &middot; The Fundamentals
+              Lesson 1 &middot; The Fundamentals
             </p>
             <p style="margin:0 0 20px;font-family:Georgia,'Times New Roman',serif;font-size:17px;line-height:1.7;color:#334155;">
               Structure. Real camaraderie in your AE/SDR partnership. A first 90 days done the right way. That is where this begins.
@@ -477,17 +477,17 @@ function welcomeHtml(name: string, email: string, loginUrl: string, tempPassword
             <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
               <tr>
                 <td style="padding:10px 0;border-top:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.6;color:#334155;">
-                  <strong style="color:#0F172A;">Twelve courses.</strong> Three lessons each. Interactive exercises, not video lectures.
+                  <strong style="color:#1A1A1A;">Twelve lessons.</strong> Three units each. Interactive exercises, not video lectures.
                 </td>
               </tr>
               <tr>
                 <td style="padding:10px 0;border-top:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.6;color:#334155;">
-                  <strong style="color:#0F172A;">Progress saves.</strong> Return at any hour. Pick up where you stopped.
+                  <strong style="color:#1A1A1A;">Progress saves.</strong> Return at any hour. Pick up where you stopped.
                 </td>
               </tr>
               <tr>
                 <td style="padding:10px 0;border-top:1px solid #E8E3D8;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.6;color:#334155;">
-                  <strong style="color:#0F172A;">Five tools unlock along the way.</strong> Commission tracker. Alignment contracts. Strike plans. Yours when the lesson is done.
+                  <strong style="color:#1A1A1A;">Five tools unlock along the way.</strong> Commission tracker. Alignment contracts. Strike plans. Yours when the lesson is done.
                 </td>
               </tr>
             </table>
@@ -544,7 +544,7 @@ function welcomeHtml(name: string, email: string, loginUrl: string, tempPassword
         <tr>
           <td style="padding:36px 48px 0 48px;">
             <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.7;color:#334155;">
-              <strong style="color:#0F172A;">If you need anything:</strong> reply here, or write to <a href="mailto:hello@aesdr.com" style="color:#10B981;text-decoration:underline;">hello@aesdr.com</a>. Real person, real inbox, 48-hour response.
+              <strong style="color:#1A1A1A;">If you need anything:</strong> reply here, or write to <a href="mailto:hello@aesdr.com" style="color:#8B1A1A;text-decoration:underline;">hello@aesdr.com</a>. Real person, real inbox, 48-hour response.
             </p>
           </td>
         </tr>
@@ -552,11 +552,11 @@ function welcomeHtml(name: string, email: string, loginUrl: string, tempPassword
         <!-- Sign-off -->
         <tr>
           <td style="padding:32px 48px 40px 48px;">
-            <p style="margin:0 0 4px;font-family:Georgia,'Times New Roman',serif;font-size:17px;line-height:1.5;color:#0F172A;font-style:italic;">
+            <p style="margin:0 0 4px;font-family:Georgia,'Times New Roman',serif;font-size:17px;line-height:1.5;color:#1A1A1A;font-style:italic;">
               Begin.
             </p>
             <p style="margin:24px 0 0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#94A3B8;">
-              &mdash; AESDR
+              &mdash; Antaeus
             </p>
           </td>
         </tr>
@@ -620,7 +620,7 @@ function receiptHtml(name: string, tier: string, amountCents: number) {
         <!-- Kicker -->
         <tr>
           <td style="padding:24px 48px 6px 48px;">
-            <p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#10B981;font-weight:700;">
+            <p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#8B1A1A;font-weight:700;">
               Purchase Confirmed
             </p>
           </td>
@@ -629,7 +629,7 @@ function receiptHtml(name: string, tier: string, amountCents: number) {
         <!-- Editorial headline -->
         <tr>
           <td style="padding:0 48px 6px 48px;">
-            <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:36px;line-height:1.1;letter-spacing:-0.01em;color:#0F172A;">
+            <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:36px;line-height:1.1;letter-spacing:-0.01em;color:#1A1A1A;">
               A record of your purchase.
             </h1>
           </td>
@@ -658,25 +658,25 @@ function receiptHtml(name: string, tier: string, amountCents: number) {
             <p style="margin:0 0 18px;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#94A3B8;">
               Receipt &middot; ${receiptNo}
             </p>
-            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FAFAF7;border:1px solid #E8E3D8;border-left:3px solid #10B981;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FAFAF7;border:1px solid #E8E3D8;border-left:3px solid #8B1A1A;">
               <tr>
                 <td style="padding:20px 24px;">
                   <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                     <tr>
                       <td style="padding:10px 0;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#64748B;width:180px;vertical-align:top">Plan</td>
-                      <td style="padding:10px 0;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#0F172A;vertical-align:top">AESDR ${planLabel}</td>
+                      <td style="padding:10px 0;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#1A1A1A;vertical-align:top">AESDR ${planLabel}</td>
                     </tr>
                     <tr>
                       <td style="padding:10px 0;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#64748B;vertical-align:top">Date</td>
-                      <td style="padding:10px 0;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#0F172A;vertical-align:top">${date}</td>
+                      <td style="padding:10px 0;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#1A1A1A;vertical-align:top">${date}</td>
                     </tr>
                     <tr>
                       <td style="padding:10px 0;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#64748B;vertical-align:top">Refund window</td>
-                      <td style="padding:10px 0;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#0F172A;vertical-align:top">14 days from purchase</td>
+                      <td style="padding:10px 0;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#1A1A1A;vertical-align:top">14 days from purchase</td>
                     </tr>
                     <tr>
-                      <td style="padding:16px 0 6px;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#0F172A;font-weight:700;vertical-align:top">Amount paid</td>
-                      <td style="padding:16px 0 6px;font-family:Georgia,'Times New Roman',serif;font-size:28px;line-height:1;color:#0F172A;vertical-align:top;font-weight:400">$${amount}</td>
+                      <td style="padding:16px 0 6px;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#1A1A1A;font-weight:700;vertical-align:top">Amount paid</td>
+                      <td style="padding:16px 0 6px;font-family:Georgia,'Times New Roman',serif;font-size:28px;line-height:1;color:#1A1A1A;vertical-align:top;font-weight:400">$${amount}</td>
                     </tr>
                   </table>
                 </td>
@@ -689,7 +689,7 @@ function receiptHtml(name: string, tier: string, amountCents: number) {
         <tr>
           <td style="padding:28px 48px 0 48px;">
             <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.7;color:#334155;">
-              Need a formal invoice, VAT details, or a billing change? Reply here and we'll handle it. Questions go to <a href="mailto:hello@aesdr.com" style="color:#10B981;text-decoration:underline;">hello@aesdr.com</a>.
+              Need a formal invoice, VAT details, or a billing change? Reply here and we'll handle it. Questions go to <a href="mailto:hello@aesdr.com" style="color:#8B1A1A;text-decoration:underline;">hello@aesdr.com</a>.
             </p>
           </td>
         </tr>
@@ -698,7 +698,7 @@ function receiptHtml(name: string, tier: string, amountCents: number) {
         <tr>
           <td style="padding:32px 48px 40px 48px;">
             <p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#94A3B8;">
-              &mdash; AESDR
+              &mdash; Antaeus
             </p>
           </td>
         </tr>
@@ -899,7 +899,7 @@ function weeklyFramingHtml(name: string, completed: number, total: number) {
       : completed < total / 3
         ? "You're in the foundation half. Expect short lessons that re-wire how you read your own pipeline and your own manager."
         : completed < (total * 2) / 3
-          ? "Middle third — the harder ones: prospecting math, the 30% rule, the CRM as a friend or witness. Heavier reps."
+          ? "Middle third — the harder lessons: prospecting math, the 30% rule, the CRM as a friend or witness. Heavier at-bats."
           : "Final third. Compensation realities, sober selling, the relationship-graph lesson nobody else teaches. Hardest because you'll recognise yourself.";
   return `
 <div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
@@ -1037,7 +1037,7 @@ function day0PlusTwelveHoursHtml(name: string) {
   </p>
   <p>Hey ${safeName},</p>
   <p>The most important thing about AESDR isn't the content. It's whether you actually start it.</p>
-  <p>Most reps who buy a course like this never do Lesson 1. Not because the course is bad. Because there's never an obvious moment to start. Tomorrow's full. Next week's full. Then it's been a month.</p>
+  <p>Most AEs and SDRs who buy a course like this never do Lesson 1. Not because the course is bad. Because there's never an obvious moment to start. Tomorrow's full. Next week's full. Then it's been a month.</p>
   <p>The thing that breaks the pattern is dumb and effective:</p>
   <p style="margin:18px 0;padding:14px 18px;border-left:3px solid #8B1A1A;background:#FFFFFF;font-style:italic">
     Pick a 25-minute window in the next 48 hours. Put it on your calendar — actually on your calendar, not in your head. Do Lesson 1.1 in that window. Don't "find time" — choose a time.
@@ -1104,14 +1104,21 @@ export async function sendDay3Email(to: string, name: string) {
 function day3Html(name: string) {
   const safeName = esc(name);
   return `
-<div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
+<div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
+  <p style="margin:0 0 14px;font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
+    AESDR · Day three
+  </p>
   <p>Hey ${safeName},</p>
-  <p>Day 3. If you've started Course 1 — nice. If you haven't, no guilt. Open it when you're ready.</p>
-  <p><strong>One thing from Course 2 to keep in your back pocket:</strong></p>
-  <p>The "blame chain" is a pattern where everyone points fingers — AEs and SDRs blame their manager, managers blame marketing, and marketing blames the product. Nobody's fixing anything.</p>
-  <p>Course 2 gives you a framework to break the chain — not by being a hero, but by asking the right questions in the right meetings.</p>
-  <p><strong><a href="${SITE}/dashboard" style="color:#10B981">Continue where you left off →</a></strong></p>
-  <p>— AESDR</p>
+  <p>Three days in. If you've started Lesson 1, you're on track. If you haven't, no guilt — the lesson sits there until you come back.</p>
+  <p>One thing from Lesson 2 to keep in your back pocket while you're going about your week:</p>
+  <p style="border-left:3px solid #8B1A1A;padding:6px 0 6px 14px;margin:14px 0;font-style:italic;color:#1A1A1A">
+    There's a pattern where everyone in the org points at someone else. AEs and SDRs blame their manager, managers blame marketing, marketing blames the product. Nobody fixes anything.
+  </p>
+  <p>Lesson 2 lays out how to break that pattern — not by being a hero, but by asking the right questions in the right meetings.</p>
+  <p style="margin:20px 0">
+    <a href="${SITE}/dashboard" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">Continue where you left off →</a>
+  </p>
+  <p style="margin-top:24px">— Antaeus</p>
   ${footer()}
 </div>`;
 }
@@ -1133,15 +1140,20 @@ export async function sendDay7Email(to: string, name: string) {
 function day7Html(name: string) {
   const safeName = esc(name);
   return `
-<div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
+<div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
+  <p style="margin:0 0 14px;font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
+    AESDR · Week one
+  </p>
   <p>Hey ${safeName},</p>
-  <p>Week 1. Here's where most AESDR students are right now: finishing Course 3.</p>
-  <p>Course 3 is where you build the <strong>AE/SDR Alignment Contract</strong> — a one-page document that gets both sides on the same page about handoffs, expectations, and accountability. It's the single most downloaded tool in the program.</p>
-  <p>If you're ahead of that: great. Courses 4–6 get into manager dynamics, career pathing, and network building.</p>
-  <p>If you're behind: that's fine too. This isn't a race. It's a system. Come back to it when you have 20 minutes.</p>
-  <p><strong><a href="${SITE}/course/3" style="color:#10B981">Jump to Course 3 →</a></strong></p>
-  <p>— AESDR</p>
-  <p style="font-size:13px;color:#666"><em>P.S. — If something about the course isn't working for you, reply and tell me. I'd rather fix it than have you quietly disengage.</em></p>
+  <p>Week one. Most AESDR students at this point are finishing Lesson 3.</p>
+  <p>Lesson 3 is where you build the <strong>AE/SDR Alignment Contract</strong> — a one-page document that gets the AE and the SDR onto the same page about handoffs, expectations, and accountability. It's the single most downloaded tool in the program.</p>
+  <p>If you're ahead of that: good. Lessons 4–6 cover manager dynamics, career pathing, and the relationships that pay off two years out.</p>
+  <p>If you're behind: also fine. This isn't a race; it's a system. Come back when you have twenty minutes.</p>
+  <p style="margin:20px 0">
+    <a href="${SITE}/course/3" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">Open Lesson 3 →</a>
+  </p>
+  <p style="margin-top:24px">— Antaeus</p>
+  <p style="margin-top:18px;font-size:13px;color:#6B6B6B"><em>P.S. — If something about the course isn't working for you, reply and tell me. I'd rather fix it than have you quietly disengage.</em></p>
   ${footer()}
 </div>`;
 }
@@ -1162,26 +1174,31 @@ export async function sendAbandon1hr(to: string) {
 
 function abandon1hrHtml() {
   return `
-<div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
+<div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
+  <p style="margin:0 0 14px;font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
+    AESDR · Saw you got close
+  </p>
   <p>Hey,</p>
-  <p>You got pretty close to starting the AESDR curriculum — then stepped away. No judgment. Spending $199 on yourself when you're living on commission income is a real decision.</p>
-  <p>Here's what I'd want to know if I were you:</p>
-  <p><strong>What you're actually getting:</strong></p>
-  <ul>
-    <li>12 courses with interactive exercises (not video lectures you'll never finish)</li>
-    <li>5 downloadable tools you'll use in your actual workflow — commission tracker, alignment contracts, strike plans</li>
-    <li>Frameworks built by someone who carried a quota for 9 years, not someone who read about it</li>
+  <p>You got close to starting AESDR and stepped away. No judgment. Spending $249 on yourself when you're living on commission income is a real decision.</p>
+  <p>Here's what I'd want to know if I were the one looking:</p>
+  <p style="margin:14px 0 6px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:18px">What you're actually getting</p>
+  <ul style="line-height:1.8;padding-left:22px;margin:0 0 14px">
+    <li>Twelve interactive lessons (not video lectures you'll never finish)</li>
+    <li>Five take-home tools you'll actually use — commission tracker, alignment contracts, strike plans</li>
+    <li>A curriculum built by someone who carried a quota for nine years, not someone who read about it</li>
   </ul>
-  <p><strong>What you're not getting:</strong></p>
-  <ul>
+  <p style="margin:14px 0 6px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:18px">What you're not getting</p>
+  <ul style="line-height:1.8;padding-left:22px;margin:0 0 14px">
     <li>Motivational content</li>
     <li>Generic scripts</li>
-    <li>Anything that sounds like it came from a LinkedIn post</li>
+    <li>Anything that reads like a LinkedIn post</li>
   </ul>
-  <p>If you're on the fence because of the money: the 14-day refund policy is real. No questions asked. Try it. If it doesn't help, get your money back.</p>
-  <p><strong><a href="${SITE}/#pricing" style="color:#10B981">Complete Your Purchase →</a></strong></p>
-  <p>— AESDR</p>
-  <p style="font-size:13px;color:#666"><em>P.S. — The first course covers surviving your first 90 days, including the manager types that make or break new AEs and SDRs. If that's not relevant to you right now, save your money. But if it is — you already know.</em></p>
+  <p>If the money's the hesitation: the 14-day refund is real. No questions asked. Try it. If it doesn't help, get your money back inside two weeks.</p>
+  <p style="margin:20px 0">
+    <a href="${SITE}/#pricing" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">Complete your purchase →</a>
+  </p>
+  <p style="margin-top:24px">— Antaeus</p>
+  <p style="margin-top:18px;font-size:13px;color:#6B6B6B"><em>P.S. — Lesson 1 covers surviving your first 90 days, including the manager types that make or break new AEs and SDRs. If that's not relevant to you right now, save your money. If it is, you already know.</em></p>
   ${footer()}
 </div>`;
 }
@@ -1202,16 +1219,24 @@ export async function sendAbandon24hr(to: string) {
 
 function abandon24hrHtml() {
   return `
-<div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
+<div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
+  <p style="margin:0 0 14px;font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
+    AESDR · Last note on this
+  </p>
   <p>Hey,</p>
-  <p>Last email about this — I promise.</p>
-  <p>I talk to a lot of SDRs and AEs. The three reasons people don't invest in themselves are always the same:</p>
-  <p><strong>"I can't afford it right now."</strong><br>Fair. Commission months are unpredictable. But here's the math: if one framework from this course helps you close one extra deal this quarter, the ROI isn't 2x — it's probably 10x. The course costs less than one decent dinner in most cities.</p>
-  <p><strong>"I don't have time."</strong><br>Each lesson is designed to be completed alongside a full-time quota. No 4-hour video modules. Interactive screens you can do on your commute or during a slow Friday.</p>
-  <p><strong>"I've seen courses like this before."</strong><br>You haven't. This one doesn't teach you to "smile and dial." It teaches you to audit your commission structure, manage a bad manager, build a professional network that actually helps you, and create a 72-hour action plan when everything goes sideways.</p>
-  <p><strong><a href="${SITE}/#pricing" style="color:#10B981">Complete Your Purchase →</a></strong></p>
+  <p>Last email about this — promise.</p>
+  <p>I talk to a lot of AEs and SDRs. The three reasons people don't invest in themselves are always the same:</p>
+  <p style="margin:14px 0 4px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:18px">&ldquo;I can't afford it right now.&rdquo;</p>
+  <p>Fair. Commission months are unpredictable. But the math: if one framework from this course helps you close one extra deal this quarter, the return isn't 2x — it's probably 10x. The course costs less than one decent dinner in most cities.</p>
+  <p style="margin:14px 0 4px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:18px">&ldquo;I don't have time.&rdquo;</p>
+  <p>Each lesson runs alongside a full-time quota. No four-hour video modules. Interactive screens you can do on your commute or during a slow Friday.</p>
+  <p style="margin:14px 0 4px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:18px">&ldquo;I've seen courses like this before.&rdquo;</p>
+  <p>You haven't. This one doesn't teach you to &ldquo;smile and dial.&rdquo; It teaches you to audit your commission structure, manage a bad manager, build a professional network that actually helps you, and run a 72-hour action plan when everything goes sideways.</p>
+  <p style="margin:20px 0">
+    <a href="${SITE}/#pricing" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">Complete your purchase →</a>
+  </p>
   <p>14 days to try it. Full refund if it's not for you.</p>
-  <p>— AESDR</p>
+  <p style="margin-top:24px">— Antaeus</p>
   ${footer()}
 </div>`;
 }
@@ -1455,21 +1480,26 @@ function teamInviteHtml(inviterName: string, token: string) {
   const safeName = esc(inviterName);
   const acceptUrl = `${SITE}/team/accept?token=${encodeURIComponent(token)}`;
   return `
-<div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
+<div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
+  <p style="margin:0 0 14px;font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
+    AESDR · You've been added to a team
+  </p>
   <p>Hey,</p>
-  <p><strong>${safeName}</strong> has added you to their team's AESDR account.</p>
-  <p>AESDR is a 12-course professional development curriculum built for AEs and SDRs in SaaS. Interactive exercises, real frameworks, no motivational fluff.</p>
-  <div style="background:#f8f9fa;padding:16px 20px;margin:20px 0;border-left:3px solid #10B981">
-    <p style="margin:0 0 6px;font-weight:700">What you get:</p>
-    <ul style="margin:0;padding-left:20px">
-      <li>All 12 courses with interactive exercises</li>
-      <li>5 downloadable tools (commission tracker, alignment contracts, etc.)</li>
-      <li>Your own progress tracking and personalized takeaway artifacts</li>
+  <p><strong>${safeName}</strong> added you to their team's AESDR account.</p>
+  <p>AESDR is a twelve-lesson professional development curriculum for AEs and SDRs in SaaS. Interactive exercises, real frameworks, no motivational pep talks.</p>
+  <div style="background:#fff;padding:18px 22px;margin:20px 0;border:1px solid #E8E4DF;border-left:3px solid #8B1A1A">
+    <p style="margin:0 0 8px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:16px;color:#1A1A1A">What you get</p>
+    <ul style="margin:0;padding-left:20px;line-height:1.75">
+      <li>All twelve lessons with interactive exercises</li>
+      <li>Five take-home tools (commission tracker, alignment contracts, strike plans)</li>
+      <li>Your own progress tracking and personalised takeaway artefacts</li>
     </ul>
   </div>
-  <p style="margin:24px 0"><a href="${acceptUrl}" style="display:inline-block;padding:14px 28px;background:#10B981;color:#fff;font-weight:700;text-decoration:none;font-size:16px">Accept Invite & Start →</a></p>
-  <p>This invite is tied to your email address. Click the link above to create your account (or sign in if you already have one).</p>
-  <p>— AESDR</p>
+  <p style="margin:24px 0">
+    <a href="${acceptUrl}" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">Accept invite &amp; start →</a>
+  </p>
+  <p>This invite is tied to your email address. Click the link above to create your account, or sign in if you already have one.</p>
+  <p style="margin-top:24px">— Antaeus</p>
   ${footer()}
 </div>`;
 }
@@ -1554,7 +1584,7 @@ function lessonCompleteHtml(name: string, lessonId: string, lessonTitle: string)
         <!-- Editorial headline (the lesson title) -->
         <tr>
           <td style="padding:0 48px 6px 48px;" align="center">
-            <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-weight:400;font-style:italic;font-size:32px;line-height:1.15;letter-spacing:-0.01em;color:#0F172A;">
+            <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-weight:400;font-style:italic;font-size:32px;line-height:1.15;letter-spacing:-0.01em;color:#1A1A1A;">
               ${safeTitle}.
             </h1>
           </td>
@@ -1574,7 +1604,7 @@ function lessonCompleteHtml(name: string, lessonId: string, lessonTitle: string)
           <td style="padding:0 48px 8px 48px;" align="center">
             <table role="presentation" cellpadding="0" cellspacing="0" border="0">
               <tr>
-                <td style="background:#0F172A;">
+                <td style="background:#1A1A1A;">
                   <a href="${primaryHref}" style="display:inline-block;padding:16px 36px;font-family:'SF Mono',Consolas,monospace;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#FFFFFF;text-decoration:none;font-weight:700;">
                     ${primaryLabel} &rarr;
                   </a>
@@ -1597,7 +1627,7 @@ function lessonCompleteHtml(name: string, lessonId: string, lessonTitle: string)
         <tr>
           <td style="padding:36px 48px 36px 48px;" align="center">
             <p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#94A3B8;">
-              &mdash; AESDR
+              &mdash; Antaeus
             </p>
           </td>
         </tr>
@@ -1670,7 +1700,7 @@ function revealUnlockedHtml(name: string): string {
         <!-- Editorial headline -->
         <tr>
           <td style="padding:0 48px 6px 48px;" align="center">
-            <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-weight:400;font-style:italic;font-size:36px;line-height:1.1;letter-spacing:-0.01em;color:#0F172A;">
+            <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-weight:400;font-style:italic;font-size:36px;line-height:1.1;letter-spacing:-0.01em;color:#1A1A1A;">
               Choose your keeper.
             </h1>
           </td>
@@ -1690,7 +1720,7 @@ function revealUnlockedHtml(name: string): string {
           <td style="padding:0 48px 8px 48px;" align="center">
             <table role="presentation" cellpadding="0" cellspacing="0" border="0">
               <tr>
-                <td style="background:#0F172A;">
+                <td style="background:#1A1A1A;">
                   <a href="${SITE}/reveal" style="display:inline-block;padding:16px 36px;font-family:'SF Mono',Consolas,monospace;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#FFFFFF;text-decoration:none;font-weight:700;">
                     Open the Reveal &rarr;
                   </a>
@@ -1704,7 +1734,7 @@ function revealUnlockedHtml(name: string): string {
         <tr>
           <td style="padding:36px 48px 36px 48px;" align="center">
             <p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#94A3B8;">
-              &mdash; AESDR
+              &mdash; Antaeus
             </p>
           </td>
         </tr>
