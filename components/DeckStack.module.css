@@ -52,6 +52,15 @@
   color: var(--ink);
 }
 
+.sectionSubtle {
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 /* Card counter */
 .cardCounter {
   font-family: var(--mono);
@@ -152,6 +161,19 @@
 .deckCard[role="button"]:hover::before {
   width: 52px;
   height: 52px;
+}
+
+.cardDuration {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0.75;
+  pointer-events: none;
 }
 
 .cardNum {

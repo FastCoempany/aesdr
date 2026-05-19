@@ -75,6 +75,50 @@ export default async function LandingPage() {
 
       <DeckStack />
 
+      {/* What this is NOT — preempt the wrong-shaped buyer before pricing. */}
+      <section className={styles.notSection}>
+        <p className={styles.sectionLabel}>Honesty</p>
+        <h2 className={styles.notHeadline}>What this is <em>not</em>.</h2>
+        <div className={styles.notGrid}>
+          <div className={styles.notCard}>
+            <p className={styles.notCardLabel}>Not</p>
+            <p className={styles.notCardTitle}>A motivation playlist.</p>
+            <p className={styles.notCardBody}>
+              No &ldquo;crush it,&rdquo; no morning-routine porn, no quotes
+              over sunsets. If you came to feel better about the job, the
+              refund is faster than the first lesson.
+            </p>
+          </div>
+          <div className={styles.notCard}>
+            <p className={styles.notCardLabel}>Not</p>
+            <p className={styles.notCardTitle}>A LinkedIn certification.</p>
+            <p className={styles.notCardBody}>
+              No badge, no &ldquo;Verified Top 1% Closer&rdquo; profile
+              ornament, no certificate you can put on your wall and skip the
+              work. The receipt is real outcomes, not vanity.
+            </p>
+          </div>
+          <div className={styles.notCard}>
+            <p className={styles.notCardLabel}>Not</p>
+            <p className={styles.notCardTitle}>A live cohort or coaching call.</p>
+            <p className={styles.notCardBody}>
+              Self-paced, interactive HTML lessons. No scheduled calls,
+              no group Slack pressure, no Tuesday-night webinars. Your
+              calendar stays yours.
+            </p>
+          </div>
+          <div className={styles.notCard}>
+            <p className={styles.notCardLabel}>Not</p>
+            <p className={styles.notCardTitle}>A replacement for reps.</p>
+            <p className={styles.notCardBody}>
+              We hand you the operating manual. You still have to make the
+              calls, run the demos, take the no&rsquo;s. Nothing here gets
+              you out of the volume.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials */}
       <Testimonials />
 

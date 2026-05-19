@@ -4,46 +4,67 @@ import LegalShell, { Section } from "@/components/LegalShell";
 export const metadata: Metadata = {
   title: "About | AESDR",
   description:
-    "Who built AESDR, why it exists, and the philosophy behind the 12-course curriculum.",
+    "Who built AESDR, why it exists, and the philosophy behind the 12-lesson curriculum for AEs and SDRs.",
 };
 
 export default function AboutPage() {
   return (
     <LegalShell eyebrow="About" title="About AESDR" current="about" ghostNumber="01">
       <Section title="Who built this">
+        <p style={{ marginBottom: 14 }}>
+          AESDR is the curriculum I wish someone had handed me on day one.
+          Built by Antaeus Coe &mdash; ten-plus years carrying a bag in SaaS,
+          mid-market through enterprise, on both sides of the desk: SDR,
+          AE, and the manager who had to coach the next cohort through the
+          same mistakes I'd already made.
+        </p>
         <p>
-          AESDR was built by sales operators with over a decade of combined
-          experience closing complex deals in SaaS. This isn&rsquo;t a course
-          from someone who read about sales &mdash; it&rsquo;s from people
-          who carried bags, lived the quota pressure, learned what actually
-          works when the playbooks are broken, and have managed AEs and SDRs
-          on the other side.
+          Built with people who lived the same job. The validation set
+          includes SDRs, AEs, and sales leaders from companies whose names
+          you'd recognise &mdash; their pushback shaped the curriculum more
+          than anything I could have written alone.
         </p>
       </Section>
 
-      <Section title="Philosophy">
+      <Section title="Why it exists">
         <p style={{ marginBottom: 14 }}>
-          The operating manual, not the motivation engine. No guru energy,
-          no &ldquo;crush it&rdquo; framing, no recycled LinkedIn wisdom.
-          AESDR teaches the part of the role most reps figure out the hard
-          way &mdash; what good actually looks like, how to read your own
-          pipeline honestly, and the judgment moves that separate the rep
-          who survives ramp from the rep who doesn&rsquo;t.
+          The first eighteen months of a SaaS sales career are an expensive
+          accident. The 2024 Bridge Group state-of-the-SDR report puts
+          tenure at <strong>1.9 years</strong>; only <strong>16%</strong> of
+          SDRs get promoted in any given year; only <strong>51%</strong> of
+          AEs hit quota. The training most orgs ship into that gap is
+          generic, motivational, or pitched at the wrong altitude.
         </p>
         <p>
-          12 modular courses. 5 takeaway tools. Interactive HTML format, not
-          video lectures. Lifetime access. 14-day, no-questions-asked refund.
+          AESDR is the operating manual for the part of the job that
+          actually gets you out of that statistic &mdash; pipeline math,
+          managing up, comp realities, sober selling, prospecting that
+          doesn't read like a confession letter.
+        </p>
+      </Section>
+
+      <Section title="The philosophy">
+        <p style={{ marginBottom: 14 }}>
+          Operating manual, not motivation engine. No guru energy. No
+          &ldquo;crush it&rdquo; framing. No recycled LinkedIn wisdom.
+          Twelve lessons, five take-home tools, interactive HTML, not
+          video lectures &mdash; because the parts of the job that matter
+          are decisions made in a quiet room, not pep talks.
+        </p>
+        <p>
+          Lifetime access. 14-day, no-questions-asked refund. If it
+          doesn&rsquo;t deliver value, we don&rsquo;t want your money.
         </p>
       </Section>
 
       <Section title="Who it&rsquo;s for">
         <ul style={{ paddingLeft: 22 }}>
-          <li>First-1-to-2-year SDRs and AEs in startup SaaS</li>
-          <li>Career-switchers in their first SaaS sales role</li>
-          <li>SDR managers buying for ramp acceleration on junior hires</li>
+          <li>First-1-to-2-year SDRs and AEs in startup or mid-market SaaS</li>
+          <li>Career-switchers in their first SaaS sales seat</li>
+          <li>Sales managers buying for ramp acceleration on junior hires</li>
           <li>
-            Reps frustrated by broken tools, bloated CRMs, and shifting
-            goalposts
+            AEs and SDRs frustrated by broken tools, bloated CRMs, and
+            shifting goalposts
           </li>
         </ul>
       </Section>
@@ -56,22 +77,22 @@ export default function AboutPage() {
             recruiter clout
           </li>
           <li>
-            Reps with 8+ years in the seat who aren&rsquo;t open to a
-            re-look at fundamentals
+            AEs or SDRs with eight-plus years in the seat who aren&rsquo;t
+            open to a re-look at fundamentals
           </li>
         </ul>
       </Section>
 
       <Section title="Contact">
         <p>
-          Questions, feedback, or support requests:{" "}
+          Questions, feedback, or support:{" "}
           <a
             href="mailto:hello@aesdr.com"
             style={{ color: "var(--crimson)", textDecoration: "underline" }}
           >
             hello@aesdr.com
           </a>
-          . We respond within 48 hours.
+          . Real inbox. 48-hour response window.
         </p>
       </Section>
     </LegalShell>
