@@ -25,7 +25,7 @@ buyers. The canon needs to keep them separate.
 | Surface | URL | Audience | Deal | What it is |
 |---|---|---|---|---|
 | Affiliate program | `/partners` | Individual operators, coaches, community owners, creators with an audience of AEs and SDRs | 30% commission on net revenue, Net-45, workshop-first | The consumer-side affiliate hub (what this doc scopes) |
-| Channel partnerships | `/teams/partners` | Companies — LMS platforms, sales-enablement vendors, sales-hiring agencies, fractional RevOps, HR tech marketplaces | Reseller / referral / white-label, variable economics, B2B contract | The B2B "for Teams" channel program |
+| Channel partnerships | `/enterprise/channel` | Companies — LMS platforms, sales-enablement vendors, sales-hiring agencies, fractional RevOps, HR tech marketplaces | Reseller / referral / white-label, variable economics, B2B contract | The B2B Enterprise channel program |
 
 **Rule going forward** (added to the language-patch supplement):
 
@@ -33,11 +33,11 @@ buyers. The canon needs to keep them separate.
   (capital P, the program name) or *affiliates*. The URL is `/partners`.
 - When the B2B channel program is meant, write *channel partners* or
   *channel partnerships* (always with the "channel" prefix). The URL
-  is `/teams/partners`.
+  is `/enterprise/channel`.
 - Never use the bare word *partner* to mean either without context.
   The reader needs the qualifier the first time on every page.
 
-The existing `/teams/partners` hero already uses "Channel
+The existing `/enterprise/channel` hero already uses "Channel
 partnerships" as its eyebrow. The existing `/partners` page uses
 "affiliate cohort" and "partners" interchangeably. The language sweep
 in batch 5 enforces this rule across both surfaces.

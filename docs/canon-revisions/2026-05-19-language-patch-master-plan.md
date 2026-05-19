@@ -37,7 +37,7 @@ to and the order the sweep runs. Every row is a real deliverable.
 | 2 | Enforcement scaffolding | ESLint rule, PR checklist, AGENTS.md, CLAUDE.md | 1d | 0.5h |
 | 3 | Consumer marketing sweep | 14 routes + 10 components | 4d | 3h |
 | 4 | Member-area sweep | 19 routes + 10 components | 2d | 2h |
-| 5 | B2B sweep | 13 /teams routes + 15 /partners routes + 8 partner components | 4d | 2h |
+| 5 | B2B sweep | 13 /enterprise routes + 15 /partners routes + 8 partner components | 4d | 2h |
 | 6 | Email sweep | 23 templates | 3d | 2h |
 | 7 | Internal + partner-kit docs | 32 markdown files | 3d | 2h |
 | 8 | Curriculum rewrite | 36 lesson HTML units + 5 tool HTMLs | 4–6 weeks | 15h |
@@ -171,37 +171,37 @@ needs a separate ticket).
 
 ---
 
-## Batch 5 — B2B (/teams and /partners) sweep
+## Batch 5 — B2B (/enterprise and /partners) sweep
 
-### `/teams/*` routes
+### `/enterprise/*` routes
 
 | Route | File | Risk areas | Founder review |
 |---|---|---|---|
-| `/teams` | `app/teams/page.tsx` | Hero, value props, proof-of-concept section | Required |
-| `/teams/curriculum` | `app/teams/curriculum/page.tsx` | Per-lesson summaries for the B2B audience | Required |
-| `/teams/diagnostic` | `app/teams/diagnostic/page.tsx` | Diagnostic instrument intro, 6 vs 7 dimension role-split prose | Required |
-| `/teams/implementation` | `app/teams/implementation/page.tsx` | Eight-week plan for managers running the rollout | Required |
-| `/teams/integrations` | `app/teams/integrations/page.tsx` | Ten integration entries (R-G4 risk on "build trigger" phrases) | Required |
-| `/teams/procurement` | `app/teams/procurement/page.tsx` | Seventeen spec sections — dense and legal-adjacent | Required |
-| `/teams/champion-kit` | `app/teams/champion-kit/page.tsx` | Forwardable email, thirty-second pitch, six objections | Required |
-| `/teams/pricing` | `app/teams/pricing/page.tsx` | Three tier descriptions for B2B audience | Required |
-| `/teams/partners` | `app/teams/partners/page.tsx` | Channel-partner intake | Required |
-| `/teams/contact` | `app/teams/contact/page.tsx` | Contact form | Quick check |
-| `/teams/downloads` | `app/teams/downloads/page.tsx` | Downloads index | Quick check |
-| `/teams/downloads/certificate` | `app/teams/downloads/certificate/page.tsx` + `CertificateGenerator.tsx` | Form labels, certificate body copy, share button | Required |
-| `/teams/downloads/diagnostic-instrument` | `app/teams/downloads/diagnostic-instrument/page.tsx` | Diagnostic standalone page | Required |
-| `/teams/downloads/partner-one-pager` | `app/teams/downloads/partner-one-pager/page.tsx` | Partner one-pager | Required |
-| `/teams/layout.tsx` | `app/teams/layout.tsx` | Navigation labels, footer (newly extended) | Quick check |
+| `/enterprise` | `app/enterprise/page.tsx` | Hero, value props, proof-of-concept section | Required |
+| `/enterprise/curriculum` | `app/enterprise/curriculum/page.tsx` | Per-lesson summaries for the B2B audience | Required |
+| `/enterprise/diagnostic` | `app/enterprise/diagnostic/page.tsx` | Diagnostic instrument intro, 6 vs 7 dimension role-split prose | Required |
+| `/enterprise/implementation` | `app/enterprise/implementation/page.tsx` | Eight-week plan for managers running the rollout | Required |
+| `/enterprise/integrations` | `app/enterprise/integrations/page.tsx` | Ten integration entries (R-G4 risk on "build trigger" phrases) | Required |
+| `/enterprise/procurement` | `app/enterprise/procurement/page.tsx` | Seventeen spec sections — dense and legal-adjacent | Required |
+| `/enterprise/champion-kit` | `app/enterprise/champion-kit/page.tsx` | Forwardable email, thirty-second pitch, six objections | Required |
+| `/enterprise/pricing` | `app/enterprise/pricing/page.tsx` | Three tier descriptions for B2B audience | Required |
+| `/enterprise/channel` | `app/enterprise/channel/page.tsx` | Channel-partner intake | Required |
+| `/enterprise/contact` | `app/enterprise/contact/page.tsx` | Contact form | Quick check |
+| `/enterprise/downloads` | `app/enterprise/downloads/page.tsx` | Downloads index | Quick check |
+| `/enterprise/downloads/certificate` | `app/enterprise/downloads/certificate/page.tsx` + `CertificateGenerator.tsx` | Form labels, certificate body copy, share button | Required |
+| `/enterprise/downloads/diagnostic-instrument` | `app/enterprise/downloads/diagnostic-instrument/page.tsx` | Diagnostic standalone page | Required |
+| `/enterprise/downloads/channel-one-pager` | `app/enterprise/downloads/channel-one-pager/page.tsx` | Partner one-pager | Required |
+| `/enterprise/layout.tsx` | `app/enterprise/layout.tsx` | Navigation labels, footer (newly extended) | Quick check |
 
-### `/teams/_components/` shared components
+### `/enterprise/_components/` shared components
 
 | Component | Risk areas |
 |---|---|
-| `TeamsFooter` | Footer link labels, "powered by aesdr.com" tagline |
+| `EnterpriseFooter` | Footer link labels, "powered by aesdr.com" tagline |
 | `SubLogo` | Sub-logo aria-label, "T" variant |
 | `SpecSection` | Wrapper — no copy of its own |
 | `InlineCTA` | CTA wrapper — verify default labels |
-| Any others in `app/teams/_components/` | Audit during sweep |
+| Any others in `app/enterprise/_components/` | Audit during sweep |
 
 ### `/partners/*` routes
 

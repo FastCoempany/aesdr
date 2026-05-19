@@ -254,7 +254,7 @@ compliance attestations as a precondition.
 posture and lose it later when audit lands. Both are bad; the second
 is worse.
 
-**Current state.** /teams/procurement is honest about SOC 2 not yet
+**Current state.** /enterprise/procurement is honest about SOC 2 not yet
 done. DPA available on request. GDPR-portable / GDPR-deletable
 already implemented at the data layer.
 

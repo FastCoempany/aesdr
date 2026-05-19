@@ -4,8 +4,8 @@
 > CLAUDE.md, AGENTS.md, and individual page-level overrides. Anything
 > shipped to a buyer-facing surface — consumer landing, /about, emails,
 > dashboard, course UI — must conform to the rules below.
-> **Scope:** Consumer-side. The B2B subsidiary at /teams has its own
-> register (see AESDR_TEAMS_CANON.md); for /teams pages, prefer that.
+> **Scope:** Consumer-side. The B2B subsidiary at /enterprise has its own
+> register (see AESDR_ENTERPRISE_CANON.md); for /enterprise pages, prefer that.
 > **Owner:** Antaeus Coe.
 > **Last revised:** 2026-05-19.
 
@@ -79,7 +79,7 @@ contains them, rewrite before shipping.
 - **Contractions are fine.** *Don't, we're, you'll*. The avoiding-
   contractions register reads as corporate legalese.
 - **British / American English: American spelling.** Brand surfaces
-  (aesdr.com, /teams, emails) are American — *colour → color*,
+  (aesdr.com, /enterprise, emails) are American — *colour → color*,
   *behaviour → behavior*. Match the buyer's market.
 - **Em-dash > en-dash > hyphen.** Don't use the wrong one. `—` not `--`.
 

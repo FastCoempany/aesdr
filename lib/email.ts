@@ -219,9 +219,9 @@ function partnerApplicationHtml(p: PartnerApplicationPayload): string {
 }
 
 // ─── Teams Inquiry Notification (internal, to founder) ───
-// Triggered from the /teams/contact server action when a B2B prospect
+// Triggered from the /enterprise/contact server action when a B2B prospect
 // or channel partner submits the inquiry form. Routed to hello@aesdr.com
-// with subject prefix [/teams inquiry] for inbox triage.
+// with subject prefix [/enterprise inquiry] for inbox triage.
 
 export type TeamsInquiryPayload = {
   name: string;
@@ -239,8 +239,8 @@ export type TeamsInquiryPayload = {
 export async function sendTeamsInquiryNotification(payload: TeamsInquiryPayload) {
   const recipient = process.env.EMAIL_RECIPIENT || "hello@aesdr.com";
   const from = process.env.EMAIL_FROM || FROM;
-  const subject = `[/teams inquiry] ${payload.role} from ${payload.company} (${payload.teamSize})`;
-  return safeSend(`teams-inquiry from ${payload.company}`, () =>
+  const subject = `[/enterprise inquiry] ${payload.role} from ${payload.company} (${payload.teamSize})`;
+  return safeSend(`enterprise-inquiry from ${payload.company}`, () =>
     getResend().emails.send({
       from,
       to: recipient,
@@ -254,7 +254,7 @@ export async function sendTeamsInquiryNotification(payload: TeamsInquiryPayload)
 
 function teamsInquiryText(p: TeamsInquiryPayload): string {
   return [
-    `New /teams inquiry — ${p.company}`,
+    `New /enterprise inquiry — ${p.company}`,
     "",
     `Name:        ${p.name}`,
     `Email:       ${p.email}`,
@@ -293,7 +293,7 @@ function teamsInquiryHtml(p: TeamsInquiryPayload): string {
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="640" style="max-width:640px;width:100%;background:#FFFFFF;border:1px solid #E8E4DF;">
       <tr><td style="padding:28px 32px 8px 32px;">
         <p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
-          AESDR &middot; /teams inquiry
+          AESDR &middot; /enterprise inquiry
         </p>
       </td></tr>
       <tr><td style="padding:0 32px 4px 32px;">

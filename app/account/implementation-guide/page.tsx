@@ -224,7 +224,7 @@ export default async function ImplementationGuidePage() {
         </h1>
         <p style={{ fontSize: 17, lineHeight: 1.7, color: "var(--muted)", marginBottom: 8 }}>
           The version of this document we have for managers running it on a
-          team is at <Link href="/teams/implementation" style={{ color: "var(--crimson)" }}>/teams/implementation</Link>.
+          team is at <Link href="/enterprise/implementation" style={{ color: "var(--crimson)" }}>/enterprise/implementation</Link>.
           This is the version for you, alone, on a Tuesday morning.
         </p>
         <p style={{ fontSize: 17, lineHeight: 1.7, color: "var(--muted)" }}>
