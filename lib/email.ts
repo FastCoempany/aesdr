@@ -720,6 +720,85 @@ function receiptHtml(name: string, tier: string, amountCents: number) {
 
 // ─── Day 3 Drip Email ───
 
+// ─── Day-0 (+12hr): "what to do first" ───
+// Largest single retention lever in the product. Sent ~12 hours after
+// purchase. Names the implementation-intention move concretely — pick a
+// 25-minute window, put it in the calendar, do Lesson 1.1 in it. See
+// behavioral audit §H.2.1.
+
+export async function sendDay0PlusTwelveHours(to: string, name: string) {
+  return safeSend(`day0+12h to ${to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to,
+      headers: UNSUBSCRIBE_HEADERS,
+      subject: "Pick a 25-minute window. Put it on your calendar.",
+      html: day0PlusTwelveHoursHtml(name),
+    })
+  );
+}
+
+function day0PlusTwelveHoursHtml(name: string) {
+  const safeName = esc(name);
+  return `
+<div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
+  <p style="margin:0 0 14px;font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
+    AESDR · Welcome (1 of 2)
+  </p>
+  <p>Hey ${safeName},</p>
+  <p>The most important thing about AESDR isn't the content. It's whether you actually start it.</p>
+  <p>Most reps who buy a course like this never do Lesson 1. Not because the course is bad. Because there's never an obvious moment to start. Tomorrow's full. Next week's full. Then it's been a month.</p>
+  <p>The thing that breaks the pattern is dumb and effective:</p>
+  <p style="margin:18px 0;padding:14px 18px;border-left:3px solid #8B1A1A;background:#FFFFFF;font-style:italic">
+    Pick a 25-minute window in the next 48 hours. Put it on your calendar — actually on your calendar, not in your head. Do Lesson 1.1 in that window. Don't "find time" — choose a time.
+  </p>
+  <p>That's it. The hardest part of the course is the first 25 minutes. Once it's a calendar event, it happens.</p>
+  <p><a href="${SITE}/dashboard" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px;margin:8px 0">Go to Lesson 1.1 →</a></p>
+  <p>Reply to this email if anything's broken. Real person, real inbox.</p>
+  <p style="margin-top:24px">— Antaeus</p>
+  ${footer()}
+</div>`;
+}
+
+// ─── Day-0 (+36hr): "did you start" check-in ───
+// Sent ~36 hours after purchase IF the user hasn't completed Lesson 1.1
+// yet. Tone: friend nudging, not SaaS auto-emailer. Recovers 10–20% of
+// would-be droppers. Audit §H.2.2.
+
+export async function sendDay0PlusThirtySixHours(to: string, name: string) {
+  return safeSend(`day0+36h to ${to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to,
+      headers: UNSUBSCRIBE_HEADERS,
+      subject: "Two days in. Did you start?",
+      html: day0PlusThirtySixHoursHtml(name),
+    })
+  );
+}
+
+function day0PlusThirtySixHoursHtml(name: string) {
+  const safeName = esc(name);
+  return `
+<div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
+  <p style="margin:0 0 14px;font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
+    AESDR · Welcome (2 of 2)
+  </p>
+  <p>Hey ${safeName},</p>
+  <p>Quick check — did you get to Lesson 1 yet?</p>
+  <p>If you did: good. The first lesson is the hardest activation. Everything after compounds.</p>
+  <p>If you didn't: also fine. Here's the thing that gets most people unstuck —</p>
+  <p style="margin:18px 0;padding:14px 18px;border-left:3px solid #8B1A1A;background:#FFFFFF;font-style:italic">
+    The reason you haven't started isn't time. It's that nothing in your day says "this is the moment." Don't wait for the moment. Put it on tomorrow morning's calendar, before you check Slack. 25 minutes.
+  </p>
+  <p>If you're certain AESDR isn't for you, reply REFUND. We process within 3 business days, no questions. We don't want your money if it doesn't deliver value.</p>
+  <p>If you want to talk through anything — the role you bought (SDR / AE), where to start, whether it fits your situation — reply to this email. Real reply, real human.</p>
+  <p><a href="${SITE}/dashboard" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px;margin:8px 0">Open Lesson 1.1 →</a></p>
+  <p style="margin-top:24px">— Antaeus</p>
+  ${footer()}
+</div>`;
+}
+
 export async function sendDay3Email(to: string, name: string) {
   return safeSend(`day3 to ${to}`, () =>
     getResend().emails.send({

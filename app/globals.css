@@ -3,24 +3,13 @@
 @import "tailwindcss";
 
 :root {
-  /* Brand palette — from landing page */
-  --bg-main: #020617;
-  --bg-panel: #0F172A;
-  --bg-card: #1E293B;
-  --bg-hover: #334155;
-
-  --text-main: #F8FAFC;
-  --text-muted: #94A3B8;
-
-  --theme: #10B981;
-  --theme-glow: rgba(16, 185, 129, 0.4);
-  --coral: #EF4444;
-  --cobalt: #38BDF8;
-  --amber: #F59E0B;
-  --violet: #8B5CF6;
-
-  --line: rgba(255,255,255,0.1);
-  --line2: rgba(255,255,255,0.2);
+  /* ── Active editorial palette ──
+     Cream / Ink / Crimson with iris-shimmer accent. See AGENTS.md. */
+  --crimson: #8B1A1A;
+  --cream: #FAF7F2;
+  --ink: #1A1A1A;
+  --muted: #6B6B6B;
+  --light: #E8E4DF;
 
   --iris: linear-gradient(90deg, #FF006E 0%, #FF6B00 17%, #F59E0B 34%, #10B981 51%, #38BDF8 68%, #8B5CF6 85%, #FF006E 100%);
 
@@ -31,15 +20,28 @@
   --mono: 'Space Mono', monospace;
   --hand: 'Caveat', cursive;
 
-  /* Editorial palette */
-  --crimson: #8B1A1A;
-  --cream: #FAF7F2;
-  --ink: #1A1A1A;
-  --muted: #6B6B6B;
-  --light: #E8E4DF;
+  /* ── Retired dark palette ──
+     Kept here behind the active palette so any legacy course HTML that
+     still references --bg-main / --theme / --coral / --cobalt etc. doesn't
+     break. NOT for use in new components. New work uses the editorial
+     palette above. */
+  --bg-main: #020617;
+  --bg-panel: #0F172A;
+  --bg-card: #1E293B;
+  --bg-hover: #334155;
+  --text-main: #F8FAFC;
+  --text-muted: #94A3B8;
+  --theme: #10B981;
+  --theme-glow: rgba(16, 185, 129, 0.4);
+  --coral: #EF4444;
+  --cobalt: #38BDF8;
+  --amber: #F59E0B;
+  --violet: #8B5CF6;
+  --line: rgba(255,255,255,0.1);
+  --line2: rgba(255,255,255,0.2);
 
-  --background: var(--bg-main);
-  --foreground: var(--text-main);
+  --background: var(--cream);
+  --foreground: var(--ink);
 }
 
 @theme inline {
@@ -77,6 +79,24 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid var(--theme);
+  outline: 2px solid var(--crimson);
   outline-offset: 2px;
+}
+
+/* ── Accessibility: respect user's motion preferences ──
+   Per H.11.1 of the behavioral audit. iris-shimmer animations run 4s
+   linear infinite across many surfaces — uncomfortable for users with
+   vestibular sensitivity. This rule disables animations + transitions
+   site-wide when the user has prefers-reduced-motion enabled. Costs
+   nothing for users who don't, fixes a real accessibility liability
+   for users who do. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

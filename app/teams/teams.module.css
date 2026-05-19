@@ -169,6 +169,11 @@
 
 .navLinkActive {
   color: var(--ink);
+  /* Bold-weight makes the active state perceivable without relying on
+     color or the underline alone. Helps color-blind users + degrades
+     gracefully when the iris animation is disabled by prefers-reduced-
+     motion. Audit §H.11.3. */
+  font-weight: 700;
   position: relative;
 }
 .navLinkActive::after {
@@ -1066,7 +1071,10 @@
   line-height: 1.4;
   color: var(--ink);
   background: var(--cream);
-  border: 1.5px solid var(--light);
+  /* Resting-state border darkened from var(--light) for visibility —
+     #B5B0A8 hits WCAG AA contrast against cream. Was hard to perceive
+     at first glance for low-vision users. Audit §H.11.2. */
+  border: 1.5px solid #B5B0A8;
   padding: 12px 14px;
   outline: none;
   transition: border-color 0.18s;
