@@ -33,6 +33,24 @@ const CANON_BLOCKLIST = [
   { pattern: "crush it", note: "'crush it' is base-canon-banned guru framing" },
   { pattern: "crush your quota", note: "'crush your quota' is base-canon-banned" },
   { pattern: "smash your number", note: "'smash your number' is base-canon-banned" },
+  // 2026-05-19 founder additions (Appendix F of the supplement):
+  { pattern: "furniture", note: "F.3: 'furniture' is banned; name the chair, desk, monitor arm" },
+  { pattern: "dial in your tech", note: "F.4: 'dial in your tech' is meaningless; name the specific move" },
+  { pattern: "dial your tech in", note: "F.4: same as above" },
+  // "fuels" / "fueled" / "fueling" as verbs in motivational prose.
+  // Word-boundary regex catches the verb forms without tripping on
+  // "fuel" as a literal noun (e.g. fuel costs in a different context).
+  { pattern: "\\bfuels\\b", note: "F.2: 'fuels' is gym-bro register; use sustains / runs on" },
+  { pattern: "\\bfueled\\b", note: "F.2: same as fuels" },
+  { pattern: "\\bfueling\\b", note: "F.2: same as fuels" },
+  // "kill" / "kills" / "killed" / "killing" as verbs meaning destroy/ruin.
+  // Word-boundary so it doesn't trip on "skill" or "killer" (though
+  // "killer" as a metaphor is also borderline). 'die' / 'dies' stays
+  // explicitly allowed per founder direction.
+  { pattern: "\\bkill\\b", note: "F.1: 'kill' as verb is banned; use tank / wreck / stall / ruin" },
+  { pattern: "\\bkills\\b", note: "F.1: same as kill" },
+  { pattern: "\\bkilled\\b", note: "F.1: same as kill" },
+  { pattern: "\\bkilling\\b", note: "F.1: same as kill" },
   // "rep" as a standalone word — banned per founder direction.
   // Use \b word boundaries via the regex so this doesn't trip on
   // "report", "replay", "represent", "Stripe", etc.

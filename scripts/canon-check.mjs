@@ -52,8 +52,14 @@ const BLOCKLIST = [
   { pattern: /\breimagine\b/gi, hint: "R-G4: rebuild / re-think instead" },
   { pattern: /\breinvent\b/gi, hint: "R-G4: rebuild / re-think instead" },
   { pattern: /\bAI[- ]tell\b/gi, hint: "(self-reference: this file is fine, but flag elsewhere)" },
+  { pattern: /\breims?\b/gi, hint: "(disabled placeholder — kept for stable list ordering)" },
   { pattern: /\brep\b/gi, hint: "founder rule: 'rep' banned; use AE / SDR" },
   { pattern: /\breps\b/gi, hint: "founder rule: 'reps' banned; use AEs and SDRs" },
+  // 2026-05-19 founder additions (Appendix F)
+  { pattern: /\bfurniture\b/gi, hint: "F.3: 'furniture' banned; name the chair, desk, monitor arm" },
+  { pattern: /dial in your tech|dial your tech in/gi, hint: "F.4: 'dial in your tech' is meaningless; name the move" },
+  { pattern: /\bfuels?\b|\bfueled\b|\bfueling\b/gi, hint: "F.2: 'fuels' is gym-bro register; use sustains / runs on" },
+  { pattern: /\bkills?\b|\bkilled\b|\bkilling\b/gi, hint: "F.1: 'kill' as verb is banned; use tank / wreck / stall / ruin. 'die' stays allowed." },
 ];
 
 // File extensions we scan.

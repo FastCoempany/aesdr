@@ -510,3 +510,77 @@ work.
 Marketing copy, FAQ entries, email subject lines, dashboard
 microcopy, and anything else where AESDR speaks to the buyer
 stays bound by R-G1 through R-G8.
+
+---
+
+## Appendix F · 2026-05-19 founder-direction additions
+
+Four new bans promoted to canon during the Lesson 2 review session.
+Each is hard-banned across every AESDR.com buyer-facing surface. The
+attestation carve-out in Appendix E-P3 still applies — strings the
+AE/SDR types as personal commitments are exempt from these bans.
+
+### F.1 · "Kill" as a verb in business prose
+
+Cut every use of *kill / kills / killed / killing* meaning "destroy /
+ruin / stop." Word survives in narrow factual constructions (a
+"kill-or-keep memo" referring to literal program continuation can
+become "continue-or-end memo"; "die" remains acceptable as the
+related concept).
+
+**Don't write.**
+- "Stale case studies kill momentum."
+- "Feature-dumping kills deals."
+- "Vague CRM entries kill your forecast accuracy."
+- "Sobriety kills the vibe."
+
+**Write instead.**
+- "Stale case studies stall momentum."
+- "Feature-dumping tanks deals."
+- "Vague CRM entries wreck your forecast accuracy."
+- "Sobriety ruins the vibe." (or "kills the vibe" → "flatlines the vibe")
+
+### F.2 · "Fuels" as a verb in motivational prose
+
+Cut every use of *fuel / fuels / fueled / fueling* meaning "drives /
+powers / sustains." Reads as gym-bro register and AI-generated cadence.
+
+**Don't write.**
+- "Your environment fuels the dial blocks."
+- "What fuels your follow-through."
+- "The mindset that fuels top performers."
+
+**Write instead.**
+- "Your environment sustains the dial blocks."
+- "What sustains your follow-through."
+- "The mindset top performers run on."
+
+### F.3 · "Furniture" in workspace prose
+
+Cut every use of the word *furniture* in lesson copy and marketing.
+Reads as IKEA-catalogue corporate. Name the specific items (chair,
+desk, monitor arm) instead.
+
+**Don't write.**
+- "Pick the core furniture on purpose."
+- "Invest in quality furniture for your home office."
+
+**Write instead.**
+- "Pick the chair, desk, and monitor arm on purpose."
+- "Invest in a real chair and a desk you can stand at."
+
+### F.4 · "Dial in your tech"
+
+The phrase *dial in your tech* (and variations: *dial it in*, *dial
+your tech in*) means nothing concrete to an AE/SDR reader. Banned as
+gummy corporate-speak. Say what the specific tech move is.
+
+**Don't write.**
+- "Dial in your tech."
+- "Dial in your CRM and your dialer."
+
+**Write instead.**
+- "Set up your dialer keyboard shortcuts. Save your three most-used
+  Salesforce views. Pin your call-disposition macros."
+- "Make the tools work for you instead of against you — name the
+  specific moves."
