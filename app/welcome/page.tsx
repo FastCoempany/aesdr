@@ -65,9 +65,9 @@ export default async function WelcomePage() {
           </h1>
           <p className={styles.heroP}>
             This isn&rsquo;t corporate-y but it will advance your career. 12
-            interactive, field-tested sessions for AEs and SDRs who&rsquo;re
-            serious about controlling chaos, managing toxic leadership,
-            protecting your commission - and your future.
+            interactive, field-tested lessons for AEs and SDRs serious about
+            controlling chaos, managing toxic leadership, and protecting your
+            commission &mdash; and your future.
           </p>
           <div>
             <Link href="/syllabus" className={styles.btnOutline}>

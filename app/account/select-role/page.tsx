@@ -9,7 +9,7 @@ const ROLES = [
   {
     id: "sdr",
     label: "SDR",
-    title: "Sales Development Rep",
+    title: "Sales Development Representative",
     desc: "You prospect, qualify, and book meetings. You're building the pipeline.",
   },
   {
