@@ -57,8 +57,8 @@ course. R-G1 governs concept-by-shorthand, not named-things.
 
 ### Test
 If a single-word noun in the sentence is doing conceptual work, ask:
-"would my SDR friend Bilal, two beers in on a Friday, name this thing
-this way?" If no, name it the way Bilal would.
+"would a second-year SDR, two beers in on a Friday, name this thing
+this way?" If no, name it the way they would.
 
 ---
 
@@ -141,6 +141,11 @@ copy. Each one reads as startup-speak to a reader who hasn't sat in
 the strategy meeting. Banned outright. ESLint rule will flag these in
 JSX strings.
 
+### Hard ban (ESLint-enforced)
+
+These terms are not allowed in any buyer-facing surface. The ESLint
+rule flags them on every commit.
+
 | Banned | Why it fails |
 |---|---|
 | *decision-grade* (anything) | Saying the proof is decision-grade is a way of saying the proof is good without showing it. |
@@ -152,23 +157,43 @@ JSX strings.
 | *pressure* (as standalone noun) | Pressure of what kind, on whom, from where? Say it. |
 | *the operating system* / *our OS* | A 2018 startup-pitch trope. The reader has an operating system already; it's called Tuesday morning. |
 | *surface area* | Geometry doesn't help. Say which surface, which area. |
-| *source of truth* | Where the real number lives. Use that. |
 | *step-change* | A real shift in something specific. Name the shift. |
-| *north star* | The thing we'd shut the company down to protect. Say that thing. |
 | *table stakes* | The thing every serious buyer expects. Say what every serious buyer expects. |
 | *unlock* (as verb in business prose) | A door metaphor for "make possible." Say what's now possible. |
 | *level up* / *level-up* | Motivational register. Say the specific skill. |
 | *crush* (already banned base canon) | Repeated here. |
 | *masterclass* | Course or lesson. |
-| *playbook* (unless naming a specific named playbook from curriculum) | Otherwise replace with a description. |
 | *reimagine* / *reinvent* / *transform* (as marketing verbs) | The thing being reimagined is what to write about. |
 | *flywheel* (unless naming Jim Collins or Bezos) | Otherwise the metaphor is a tell. |
 | *moat* (unless naming Buffett) | Same. |
+| *leverage* (as a verb in business contexts) | A weightlifting metaphor for *use*. Use *use*. |
+| *scale* (as a verb in marketing contexts) | "Scaling X" usually means "doing more X." Say what's being done. |
+| *synergy* / *synergistic* | Parody-level corporate. The collaboration is what's interesting; describe it. |
+| *ecosystem* | Biology metaphor for "set of products." Name the products. |
+| *best practices* | Whose best, by what measure? Name the practice. |
+| *thought leadership* | Conference-speak. Either the thinking leads to action, or it doesn't; say which. |
+| *value-add* | A hyphenated noun for "useful." Use *useful*. |
+| *deep dive* | Diving metaphor for "long meeting." Say what's being covered. |
+| *circle back* | Geometry metaphor for "talk again." Say when. |
+| *low-hanging fruit* | Picking metaphor for "easy task." Say what's easy. |
+
+### Soft ban (canon-only, requires human judgment)
+
+These terms have legitimate uses in some contexts and shouldn't fire
+the ESLint rule on every match. PR review still flags them; the
+reviewer decides if the use is defensible.
+
+| Soft-banned | When it's defensible |
+|---|---|
+| *playbook* | When naming a specific named playbook in the curriculum (*The Friday five-line*, *The AE/SDR Alignment Contract*). Generic "our playbook" still fails. |
+| *north star* | When citing a specific company that's used the phrase about itself (rare). Defaults to fail. |
+| *source of truth* | When the sentence is naming a specific database or system as the canonical record. Defaults to fail. |
 
 ### Test
-If a draft contains any term from this table, the sentence is not
+If a draft contains any hard-banned term, the sentence is not
 finished. Replace the term with what it stands for, or rewrite the
-sentence to not need it.
+sentence to not need it. Soft-banned terms get a sentence in the PR
+description defending the use.
 
 ---
 
@@ -197,7 +222,7 @@ paragraph: rewrite the paragraph.
 
 ---
 
-## R-G6 · Would your SDR friend Bilal say this at a bar on a Friday, sober?
+## R-G6 · Would a second-year SDR say this at a bar on a Friday, sober?
 
 The bar test fails when:
 - The sentence needs a glossary.
@@ -331,6 +356,16 @@ abstraction.
 | masterclass | course / lesson / training |
 | best-in-class | (delete the phrase; describe what's good about it) |
 | decision-grade proof | the math your CFO signs off on / the slide your VP forwards without rewriting |
+| leverage (verb) | use / draw on / put to work |
+| scale (verb, marketing) | grow / expand / do more of [name the activity] |
+| synergy / synergistic | (delete; name what the collaboration produces) |
+| ecosystem | the set of [products / vendors / partners] — name them |
+| best practices | what worked at [specific company / specific situation] |
+| thought leadership | writing / talks / podcasts / the specific output |
+| value-add | useful / helpful / worth paying for |
+| deep dive | the long meeting / the detailed review / the workshop |
+| circle back | follow up on Tuesday / talk again Friday / send a note |
+| low-hanging fruit | the easy fix — name it (the spelling error, the broken link, the missing CTA) |
 
 ---
 

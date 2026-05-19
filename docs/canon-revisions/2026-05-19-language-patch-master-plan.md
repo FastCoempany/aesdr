@@ -16,6 +16,19 @@ to and the order the sweep runs. Every row is a real deliverable.
 
 ---
 
+## Approved decisions (2026-05-19)
+
+| # | Question | Decision |
+|---|---|---|
+| 1 | Canon docs approved | Yes (v3, with the Bilal-to-generic swap applied 2026-05-19). |
+| 2 | Eight-batch sequence | Approved as written. |
+| 3 | R-G4 blocklist | Adds approved: *leverage* (verb), *scale* (verb), *synergy*, *ecosystem*, *best practices*, *thought leadership*, *value-add*, *deep dive*, *circle back*, *low-hanging fruit*. Soft bans (canon-only, not regex-enforced): *playbook*, *north star*, *source of truth*. |
+| 4 | `build/behavioral-pass` merge timing | Path B — hold the branch through the full overhaul. Rebase against main only if an unrelated hot fix needs to ship during the 7–9 week window. |
+| 5 | Curriculum rewrite authority | Hybrid. I draft Unit 1.1 first as the calibration. Founder redlines aggressively. Once the bar for 9/10 is set on Unit 1.1, I draft the remaining 35 units; founder redlines each before ship. |
+| 6 | Affiliate hub | Scoped as a separate workstream. Decisions: separate audience from `/partners` (companies); percentage payout (20-25% of first-year revenue); brand-conformance gate on first three pieces; per-affiliate signed link for tracking; affiliate-visible dashboard. Dashboard is **not yet built** — flagged as part of the affiliate-hub build, which gets its own plan doc once the language sweep is underway. |
+
+---
+
 ## Sequencing — eight batches
 
 | Batch | What gets swept | Surfaces | Effort | Founder hours |

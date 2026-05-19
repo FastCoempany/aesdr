@@ -222,7 +222,7 @@ As of 2026-05-19, the active canon contains:
 - R-G3 — three short declaratives in a row reads as AI cadence.
 - R-G4 — manufactured-concept blocklist.
 - R-G5 — read every long sentence aloud before shipping.
-- R-G6 — would your SDR friend say this at a bar?
+- R-G6 — would a second-year SDR say this at a bar?
 - R-G7 — AI-tell hygiene (phrase and structural bans).
 - R-G8 — prefer the plain noun over the literary verb.
 
