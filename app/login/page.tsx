@@ -148,9 +148,9 @@ function LoginForm() {
               color: "#8B1A1A",
             }}
           >
-            You do not have a paid subscription.{" "}
-            <Link href="/" style={{ color: "#1A1A1A", textDecoration: "underline" }}>Purchase access here</Link>{" "}
-            or <a href="mailto:hello@aesdr.com" style={{ color: "#1A1A1A", textDecoration: "underline" }}>contact support</a> if you believe this is an error.
+            We don&rsquo;t have a purchase on file for that email.{" "}
+            <Link href="/" style={{ color: "#1A1A1A", textDecoration: "underline" }}>Buy access here</Link>{" "}
+            or <a href="mailto:hello@aesdr.com" style={{ color: "#1A1A1A", textDecoration: "underline" }}>email hello@aesdr.com</a> if you think this is wrong.
           </div>
         )}
 
