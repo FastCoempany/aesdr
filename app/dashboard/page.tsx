@@ -329,6 +329,22 @@ export default async function Dashboard() {
               clutters their feed.
             </p>
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+              <Link
+                href="/alumni"
+                style={{
+                  fontFamily: "'Barlow Condensed',sans-serif",
+                  fontSize: 13,
+                  fontWeight: 700,
+                  letterSpacing: ".15em",
+                  textTransform: "uppercase",
+                  color: "#1A1A1A",
+                  background: "#FAF7F2",
+                  padding: "12px 22px",
+                  textDecoration: "none",
+                }}
+              >
+                Open alumni surface →
+              </Link>
               <a
                 href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
                   "https://aesdr.com/"

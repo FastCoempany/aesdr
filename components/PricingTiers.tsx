@@ -40,7 +40,7 @@ export default function PricingTiers({ initialRole = null }: Props) {
         <p className={styles.priceAmount}>
           $249<span className={styles.priceUnit}> / one-time</span>
         </p>
-        <p className={styles.priceTagline}>For the rep grinding through 80 dials and a 9% reply rate.</p>
+        <p className={styles.priceTagline}>For the SDR grinding through 80 dials and a 9% reply rate.</p>
         <ul className={styles.priceFeatures}>
           <li>All 12 lessons — including <em>The SDR Playbook</em> + <em>SDR Performance Pitfalls</em></li>
           <li>5 interactive tools to take with you</li>
@@ -96,6 +96,28 @@ export default function PricingTiers({ initialRole = null }: Props) {
           <li>14-day refund guarantee</li>
         </ul>
         <CheckoutButton tier="team" label="Buy For Us" className={styles.priceCta} selectedRole={role ?? undefined} />
+      </div>
+
+      {/* Trust row — under all three tiers. Honest, no fake badges. */}
+      <div
+        className={styles.trustRow}
+        aria-label="Purchase guarantees"
+      >
+        <span className={styles.trustItem}>
+          <span aria-hidden="true">↻</span> 14-day refund · no questions
+        </span>
+        <span className={styles.trustItem}>
+          <span aria-hidden="true">∞</span> Lifetime access
+        </span>
+        <span className={styles.trustItem}>
+          <span aria-hidden="true">✓</span> Stripe-secured checkout
+        </span>
+        <span className={styles.trustItem}>
+          <span aria-hidden="true">€</span> EU / UK GDPR-compliant
+        </span>
+        <span className={styles.trustItem}>
+          <span aria-hidden="true">$</span> Receipt + invoice on purchase
+        </span>
       </div>
     </div>
   );

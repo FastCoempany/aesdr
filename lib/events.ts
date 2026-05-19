@@ -39,6 +39,8 @@ export type EventMap = {
   weekly_framing_sent: { completed: number; total: number };
   /** Outbound: win-back email dispatched. */
   win_back_sent: { completed: number; purchased_at: string };
+  /** Outbound: 6-month / 12-month alumni re-engagement email. */
+  alumni_reengagement_sent: { month_mark: 6 | 12 };
 };
 
 export type EventType = keyof EventMap;

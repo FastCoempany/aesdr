@@ -962,6 +962,52 @@ function winBackHtml(name: string) {
 </div>`;
 }
 
+// ─── Alumni re-engagement: 6 / 12 month mark ───
+// Single touch, sent only to completers, focused on the alumni surface +
+// (optionally) inviting them to share. Per H.5.3.
+
+export async function sendAlumniReengagement(to: string, name: string, monthMark: 6 | 12) {
+  return safeSend(`alumni-reengagement-${monthMark}m to ${to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to,
+      headers: UNSUBSCRIBE_HEADERS,
+      subject:
+        monthMark === 6
+          ? "Six months in — what stuck?"
+          : "A year of being AESDR-trained",
+      html: alumniReengagementHtml(name, monthMark),
+    })
+  );
+}
+
+function alumniReengagementHtml(name: string, monthMark: 6 | 12) {
+  const safeName = esc(name);
+  const lede =
+    monthMark === 6
+      ? "Six months since you finished. Long enough for the lessons to have either landed or faded."
+      : "A year since you finished. Long enough that the part of the job you do reflexively now was probably learned somewhere.";
+  return `
+<div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
+  <p style="margin:0 0 14px;font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
+    AESDR · ${monthMark} months in
+  </p>
+  <p>Hey ${safeName},</p>
+  <p>${lede}</p>
+  <p>Three things, briefly:</p>
+  <ol style="line-height:1.8;padding-left:22px;margin:8px 0 16px">
+    <li>The takeaway tools are re-downloadable any time at <a href="${SITE}/alumni" style="color:#8B1A1A;text-decoration:underline">${SITE}/alumni</a>. Most alumni grab the 72-hour strike plan again around their next bad quarter.</li>
+    <li>If something from the course actually helped this year, one sentence to <a href="${SITE}/account/review" style="color:#8B1A1A;text-decoration:underline">${SITE}/account/review</a> would be genuinely useful.</li>
+    <li>If you know an AE or SDR in their first eighteen months who could use the course — share the free Manager Archetype Map at <a href="${SITE}/free/manager-archetype-map" style="color:#8B1A1A;text-decoration:underline">${SITE}/free/manager-archetype-map</a>. Cheaper than asking them to buy something.</li>
+  </ol>
+  <p style="margin:20px 0">
+    <a href="${SITE}/alumni" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">Open alumni surface →</a>
+  </p>
+  <p style="margin-top:24px">— Antaeus</p>
+  ${footer()}
+</div>`;
+}
+
 // ─── Day 3 Drip Email ───
 
 // ─── Day-0 (+12hr): "what to do first" ───

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import SignOutButton from "@/components/SignOutButton";
 import ChangePasswordForm from "@/components/ChangePasswordForm";
 import RoleSwitcher from "@/components/RoleSwitcher";
+import { clearPause, setPause } from "@/app/actions/pause";
 import { createClient } from "@/utils/supabase/server";
 
 export const metadata: Metadata = {
@@ -31,6 +32,13 @@ export default async function AccountPage() {
     .order("purchased_at", { ascending: false })
     .limit(1)
     .maybeSingle();
+
+  const pausedUntilRaw = user.user_metadata?.paused_until as string | null | undefined;
+  const pausedUntil = pausedUntilRaw ? new Date(pausedUntilRaw) : null;
+  const isPaused = !!pausedUntil && pausedUntil.getTime() > Date.now();
+  const pauseLabel = pausedUntil
+    ? pausedUntil.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+    : null;
 
   const planLabel = purchase?.plan === "team" ? "Team" : "Individual";
   const amount = purchase ? `$${(purchase.amount_cents / 100).toFixed(2)}` : null;
@@ -241,6 +249,95 @@ export default async function AccountPage() {
             Course Role
           </h2>
           <RoleSwitcher currentRole={user.user_metadata?.role ?? null} />
+        </section>
+
+        {/* Pause emails — "Life happened" lever. Suppresses retention
+            cron emails for N weeks. Lifetime access doesn't change. */}
+        <section className="mb-10">
+          <h2
+            style={{
+              fontFamily: "var(--mono)",
+              fontSize: "10px",
+              letterSpacing: ".2em",
+              textTransform: "uppercase" as const,
+              color: "var(--text-muted)",
+              marginBottom: "12px",
+            }}
+          >
+            Pause Emails
+          </h2>
+          {isPaused ? (
+            <div
+              style={{
+                padding: "16px 20px",
+                background: "var(--bg-panel)",
+                border: "1px solid var(--line)",
+              }}
+            >
+              <p style={{ fontFamily: "var(--serif)", fontSize: "15px", marginBottom: "12px" }}>
+                Emails paused until <strong>{pauseLabel}</strong>. Your
+                lifetime access is unchanged — the course is here when
+                you come back.
+              </p>
+              <form action={clearPause}>
+                <button
+                  type="submit"
+                  style={{
+                    fontFamily: "var(--cond)",
+                    fontSize: "12px",
+                    fontWeight: 700,
+                    letterSpacing: ".15em",
+                    textTransform: "uppercase" as const,
+                    background: "transparent",
+                    color: "var(--theme)",
+                    border: "1px solid var(--line)",
+                    padding: "8px 16px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Resume now
+                </button>
+              </form>
+            </div>
+          ) : (
+            <div
+              style={{
+                padding: "16px 20px",
+                background: "var(--bg-panel)",
+                border: "1px solid var(--line)",
+              }}
+            >
+              <p style={{ fontFamily: "var(--serif)", fontSize: "14px", color: "var(--text-muted)", marginBottom: "12px" }}>
+                Life happened — board prep, quota week, family. Pause the
+                retention emails for a stretch and we&apos;ll go quiet
+                until then. Your course stays open the whole time.
+              </p>
+              <form action={setPause} style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {[2, 4, 8, 12].map((w) => (
+                  <button
+                    key={w}
+                    type="submit"
+                    name="weeks"
+                    value={String(w)}
+                    style={{
+                      fontFamily: "var(--cond)",
+                      fontSize: "12px",
+                      fontWeight: 700,
+                      letterSpacing: ".15em",
+                      textTransform: "uppercase" as const,
+                      background: "transparent",
+                      color: "var(--theme)",
+                      border: "1px solid var(--line)",
+                      padding: "8px 14px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {w} weeks
+                  </button>
+                ))}
+              </form>
+            </div>
+          )}
         </section>
 
         {/* Change password */}

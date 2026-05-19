@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import * as Sentry from "@sentry/nextjs";
 
 import {
+  sendAlumniReengagement,
   sendLessonCompletedNudge,
   sendWeeklyFraming,
   sendWinBack,
@@ -57,6 +58,23 @@ export async function GET(request: Request) {
   let lessonNudges = 0;
   let weekly = 0;
   let winBack = 0;
+  let alumni6 = 0;
+  let alumni12 = 0;
+
+  /**
+   * Check whether a user_id is currently paused (paused_until > now).
+   * Pulls from auth.users metadata via the admin client. Cached per-run
+   * to avoid hammering auth.users in the inner loop.
+   */
+  const pausedCache = new Map<string, boolean>();
+  async function isPaused(userId: string): Promise<boolean> {
+    if (pausedCache.has(userId)) return pausedCache.get(userId)!;
+    const { data } = await supabase.auth.admin.getUserById(userId);
+    const until = data?.user?.user_metadata?.paused_until as string | undefined;
+    const paused = !!until && new Date(until).getTime() > now.getTime();
+    pausedCache.set(userId, paused);
+    return paused;
+  }
 
   // ── 1. Lesson-completion nudges ──────────────────────────────────────
   const nudgeStart = new Date(now.getTime() - TIMING.lessonNudge.after - TIMING.lessonNudge.window);
@@ -72,6 +90,7 @@ export async function GET(request: Request) {
 
   for (const c of (recentCompletions ?? []) as ProgressRow[]) {
     if (!c.user_id) continue;
+    if (await isPaused(c.user_id)) continue;
     // Find next lesson index for this user
     const completedIdx = LESSONS.findIndex((l) => l.id === c.lesson_id);
     if (completedIdx < 0 || completedIdx >= LESSONS.length - 1) continue;
@@ -153,6 +172,7 @@ export async function GET(request: Request) {
 
     for (const p of (candidates ?? []) as PurchaseRow[]) {
       if (!p.user_id) continue;
+      if (await isPaused(p.user_id)) continue;
       const { count: priorThisWeek } = await supabase
         .from("events")
         .select("id", { count: "exact", head: true })
@@ -210,6 +230,7 @@ export async function GET(request: Request) {
 
   for (const p of (winBackCandidates ?? []) as PurchaseRow[]) {
     if (!p.user_id) continue;
+    if (await isPaused(p.user_id)) continue;
     // Only send once per user, ever.
     const { count: prior } = await supabase
       .from("events")
@@ -248,6 +269,62 @@ export async function GET(request: Request) {
     winBack++;
   }
 
+  // ── 4. Alumni re-engagement (6 / 12 month after course_completed event) ──
+  const monthMarks: { mark: 6 | 12; counterRef: (n: number) => void; minDays: number; maxDays: number }[] = [
+    { mark: 6, counterRef: (n) => (alumni6 = n), minDays: 180, maxDays: 187 },
+    { mark: 12, counterRef: (n) => (alumni12 = n), minDays: 365, maxDays: 372 },
+  ];
+  for (const m of monthMarks) {
+    const minTime = new Date(now.getTime() - m.maxDays * 24 * 60 * 60 * 1000).toISOString();
+    const maxTime = new Date(now.getTime() - m.minDays * 24 * 60 * 60 * 1000).toISOString();
+    const { data: completers } = await supabase
+      .from("events")
+      .select("user_id, email")
+      .eq("event_type", "course_completed")
+      .gte("occurred_at", minTime)
+      .lte("occurred_at", maxTime)
+      .limit(2000);
+    let sent = 0;
+    for (const c of (completers ?? []) as { user_id: string | null; email: string | null }[]) {
+      if (!c.user_id || !c.email) continue;
+      if (await isPaused(c.user_id)) continue;
+      const { count: prior } = await supabase
+        .from("events")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", c.user_id)
+        .eq("event_type", "alumni_reengagement_sent")
+        .contains("props", { month_mark: m.mark });
+      if ((prior ?? 0) > 0) continue;
+
+      if (dryRun) {
+        sent++;
+        continue;
+      }
+      const { data: purchase } = await supabase
+        .from("purchases")
+        .select("customer_name")
+        .eq("user_id", c.user_id)
+        .maybeSingle();
+      const ok = await sendAlumniReengagement(
+        c.email,
+        purchase?.customer_name || "there",
+        m.mark
+      );
+      if (!ok) {
+        errors.push(`alumni-${m.mark}m send failed for ${c.email}`);
+        continue;
+      }
+      await supabase.from("events").insert({
+        user_id: c.user_id,
+        email: c.email,
+        event_type: "alumni_reengagement_sent",
+        props: { month_mark: m.mark },
+      });
+      sent++;
+    }
+    m.counterRef(sent);
+  }
+
   if (errors.length > 0) {
     Sentry.captureMessage("[cron/retention] Errors", { level: "error", extra: { errors } });
   }
@@ -255,6 +332,8 @@ export async function GET(request: Request) {
     lessonNudges,
     weekly,
     winBack,
+    alumni6,
+    alumni12,
     dryRun,
     errors: errors.length > 0 ? errors : undefined,
   });
