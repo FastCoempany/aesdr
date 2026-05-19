@@ -70,6 +70,7 @@ export default function SyllabusPage() {
       {/* Advanced-buyer hint — H.8.3. Five-plus-years buyers don't need
           to read in order; name the four lessons that earn their time. */}
       <aside
+        data-surface="dark"
         style={{
           maxWidth: 880,
           margin: "0 auto 24px",

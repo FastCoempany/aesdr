@@ -32,7 +32,7 @@ const ARCHETYPES = [
   {
     name: "The Coach",
     tell: "asks more questions than they answer",
-    fail: "may under-direct when you need a verdict",
+    fail: "may under-direct when you need a clear call",
   },
   {
     name: "The Operator",
