@@ -46,7 +46,7 @@ const MODULES: Module[] = [
     number: "01",
     theme: "Foundations of a sales career",
     description:
-      "AEs and SDRs arrive without the structural scaffolding that holds a sales career together. Module 1 builds it: what good structure looks like, why camaraderie isn't optional, how to actually accept coaching instead of resisting it.",
+      "AEs and SDRs arrive without the structural scaffolding that holds a sales career together. Module 1 builds the scaffolding: what good structure looks like, why camaraderie isn't optional, how to actually accept coaching instead of resisting it.",
     lessons: [
       { number: "1.1", title: "Creating Structure" },
       { number: "1.2", title: "Building Real Camaraderie" },

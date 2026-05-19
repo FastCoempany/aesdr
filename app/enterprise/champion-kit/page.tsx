@@ -107,7 +107,7 @@ export default function ChampionKitPage() {
               It&apos;s $1,499 one-time for 10 seats — lifetime access, no
               subscription. It covers the part of the sales role nobody trains
               on: managing your manager, the math of pipeline, comp realities,
-              the move when the script runs out. Twelve self-paced lessons,
+              what to do when the script runs out. Twelve self-paced lessons,
               ~25 minutes each.
             </p>
             <p style={{ margin: "0 0 14px" }}>

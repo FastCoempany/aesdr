@@ -68,7 +68,7 @@ const DIMENSIONS: Dimension[] = [
     name: "Manager 1:1 engagement",
     role: "Both",
     what: "Quality of the weekly 1:1 with the AE/SDR's manager. Does the AE/SDR show up with their own agenda? Do they push back when they disagree? Do they ask for specific coaching?",
-    why: "1:1s are the single biggest leverage point in a AE/SDR's first year. AEs and SDRs who treat them as performance theater get coached badly; AEs and SDRs who run them as working sessions accelerate.",
+    why: "Nothing in an AE/SDR's first year matters more than how they run their 1:1s. AEs and SDRs who treat them as performance theater get coached badly; AEs and SDRs who run them as working sessions accelerate.",
     sampleItems: [
       "Manager rating: 'AE/SDR arrives with a clear agenda and proposed talking points' (1–5)",
       "Manager rating: 'AE/SDR pushes back constructively when we disagree' (1–5)",
@@ -96,7 +96,7 @@ const DIMENSIONS: Dimension[] = [
     name: "CRM hygiene",
     role: "Both",
     what: "Quality of CRM data the AE/SDR maintains: next-step accuracy, opportunity stage discipline, contact role tagging, activity logging consistency.",
-    why: "Bad CRM data corrupts every downstream signal — forecast, manager coaching, peer handoff, marketing attribution. Most AEs and SDRs treat CRM as compliance; AESDR reframes it as personal leverage.",
+    why: "Bad CRM data corrupts every downstream signal — forecast, manager coaching, peer handoff, marketing attribution. Most AEs and SDRs treat CRM as compliance; AESDR teaches it as a tool the AE/SDR uses for their own protection.",
     sampleItems: [
       "Audit: % of opportunities with next-step date within the next 14 days",
       "Audit: % of stage-changes in the past month that align with stage-definition criteria",
