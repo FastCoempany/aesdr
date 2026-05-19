@@ -311,6 +311,7 @@ export default function ManagerArchetypeMapPage() {
       </section>
 
       <section
+        data-surface="dark"
         style={{
           maxWidth: 720,
           margin: "32px auto",

@@ -81,6 +81,18 @@ body {
 :focus-visible {
   outline: 2px solid var(--crimson);
   outline-offset: 2px;
+  /* Box-shadow ring isn't clipped by overflow:hidden ancestors
+     (deck cards, hero stacks). Keep it as a fallback to the outline. */
+  box-shadow: 0 0 0 4px rgba(139, 26, 26, 0.18);
+}
+
+/* On ink-on-cream surfaces (completion celebration, archetype-map CTA
+   block, alumni hero) the crimson ring vanishes. Component opts in by
+   adding `data-surface="dark"` on its root and the descendant focus
+   ring switches to cream. */
+[data-surface="dark"] :focus-visible {
+  outline-color: var(--cream);
+  box-shadow: 0 0 0 4px rgba(250, 247, 242, 0.22);
 }
 
 /* ── Accessibility: respect user's motion preferences ──

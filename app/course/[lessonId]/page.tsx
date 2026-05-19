@@ -162,9 +162,34 @@ export default async function LessonPage({
           top: 9,
           left: 12,
           zIndex: 9999,
+          display: "flex",
+          gap: 12,
+          alignItems: "center",
         }}
       >
         <SaveExitButton />
+        {/* "Stuck?" surface — H.3.2. Opens a mailto with the lesson +
+            screen prefilled so the founder gets actionable context. */}
+        <a
+          href={`mailto:hello@aesdr.com?subject=${encodeURIComponent(
+            `Stuck on Lesson ${lessonId}${selectedUnit ? ` · Unit ${selectedUnit.unitId}` : ""}`
+          )}&body=${encodeURIComponent(
+            `Hey,\n\nStuck on Lesson ${lessonId}${selectedUnit ? `, Unit ${selectedUnit.unitId} (${selectedUnit.title})` : ""}, around screen ${restoreScreen || 1}.\n\nWhat's tripping me up:\n\n[one sentence]\n\nThanks.`
+          )}`}
+          style={{
+            fontFamily: "'Space Mono', monospace",
+            fontSize: 10,
+            letterSpacing: ".18em",
+            textTransform: "uppercase",
+            color: "rgba(107,107,107,0.7)",
+            textDecoration: "none",
+            padding: "8px 10px",
+            border: "1px solid rgba(0,0,0,0.08)",
+            background: "rgba(255,255,255,0.65)",
+          }}
+        >
+          Stuck?
+        </a>
       </div>
 
       {/* Center: Leponeus + AESDR iris-shimmer wordmark. Sized to fit

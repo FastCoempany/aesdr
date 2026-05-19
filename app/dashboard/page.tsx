@@ -260,23 +260,44 @@ export default async function Dashboard() {
                   : "First open — 22-32 min, save & exit any time."}
               </p>
             </div>
-            <Link
-              href={`/course/${currentLesson.id}`}
-              style={{
-                fontFamily: "'Barlow Condensed',sans-serif",
-                fontSize: 14,
-                fontWeight: 700,
-                letterSpacing: ".15em",
-                textTransform: "uppercase",
-                color: "#fff",
-                background: "#8B1A1A",
-                padding: "14px 28px",
-                textDecoration: "none",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {completedCount === 0 ? "Start lesson 1 →" : "Resume →"}
-            </Link>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-end" }}>
+              <Link
+                href={`/course/${currentLesson.id}`}
+                style={{
+                  fontFamily: "'Barlow Condensed',sans-serif",
+                  fontSize: 14,
+                  fontWeight: 700,
+                  letterSpacing: ".15em",
+                  textTransform: "uppercase",
+                  color: "#fff",
+                  background: "#8B1A1A",
+                  padding: "14px 28px",
+                  textDecoration: "none",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {completedCount === 0 ? "Start lesson 1 →" : "Resume →"}
+              </Link>
+              {completedCount > 0 && progressMap[currentLesson.id]?.last_screen ? (
+                <a
+                  href={`mailto:hello@aesdr.com?subject=${encodeURIComponent(
+                    `Stuck on Lesson ${currentLesson.id}`
+                  )}&body=${encodeURIComponent(
+                    `Hey,\n\nI'm stuck on Lesson ${currentLesson.id} (${currentLesson.title}), around screen ${progressMap[currentLesson.id]?.last_screen}. What's tripping me up:\n\n[describe in a sentence]\n\nThanks.`
+                  )}`}
+                  style={{
+                    fontFamily: "'Space Mono',monospace",
+                    fontSize: 10,
+                    letterSpacing: ".18em",
+                    textTransform: "uppercase",
+                    color: "#6B6B6B",
+                    textDecoration: "underline",
+                  }}
+                >
+                  Stuck? Email a one-liner →
+                </a>
+              ) : null}
+            </div>
           </section>
         )}
 
@@ -285,6 +306,7 @@ export default async function Dashboard() {
         {allComplete && (
           <section
             aria-label="Course complete"
+            data-surface="dark"
             style={{
               marginBottom: 48,
               background: "#1A1A1A",

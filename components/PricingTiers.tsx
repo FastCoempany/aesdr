@@ -30,7 +30,12 @@ export default function PricingTiers({ initialRole = null }: Props) {
   }
 
   return (
-    <div className={styles.pricingGrid}>
+    <div
+      className={styles.pricingGrid}
+      role="region"
+      aria-label="Pricing tiers"
+      aria-live="polite"
+    >
       {/* SDR */}
       <div className={cardClass("sdr")}>
         {role === "sdr" && <div className={styles.priceTierBadge}>Your tier</div>}

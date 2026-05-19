@@ -62,10 +62,65 @@ export default function SyllabusPage() {
         </h1>
         <p className={styles.heroSub}>
           Twelve lessons filed under one call number. Check each one out.
-          Return when you’re a different rep.
+          Return when you’re a different AE or SDR.
         </p>
         <p className={styles.deweyStack}>Dewey 658.85 &middot; AESDR/SAL &middot; Non-Fiction</p>
       </section>
+
+      {/* Advanced-buyer hint — H.8.3. Five-plus-years buyers don't need
+          to read in order; name the four lessons that earn their time. */}
+      <aside
+        style={{
+          maxWidth: 880,
+          margin: "0 auto 24px",
+          padding: "20px 24px",
+          background: "var(--ink)",
+          color: "var(--cream)",
+        }}
+        aria-label="Advanced-buyer reading order"
+      >
+        <p
+          style={{
+            margin: 0,
+            fontFamily: "var(--mono)",
+            fontSize: 10,
+            letterSpacing: ".32em",
+            textTransform: "uppercase",
+            color: "rgba(250,247,242,0.6)",
+            marginBottom: 6,
+          }}
+        >
+          Been in seat 5+ years
+        </p>
+        <p
+          style={{
+            margin: "0 0 8px",
+            fontFamily: "var(--display)",
+            fontStyle: "italic",
+            fontWeight: 700,
+            fontSize: 22,
+            lineHeight: 1.2,
+          }}
+        >
+          Read these four first, in this order.
+        </p>
+        <p
+          style={{
+            margin: 0,
+            fontSize: 15,
+            lineHeight: 1.7,
+            color: "rgba(250,247,242,0.85)",
+          }}
+        >
+          <strong>Lesson 7</strong> (Prospecting &amp; Pipeline) →{" "}
+          <strong>Lesson 8</strong> (The 30% Rule) →{" "}
+          <strong>Lesson 10</strong> (Commission Myth) →{" "}
+          <strong>Lesson 12</strong> (Levelling Up SaaS Relationships).
+          That&rsquo;s the part you&rsquo;d wish you&rsquo;d read sooner.
+          Foundation chapters (1-6) are still there for the months you
+          want to re-examine the fundamentals.
+        </p>
+      </aside>
 
       <div className={styles.drawerLabel}>
         <div className={styles.drawerTitle}>Drawer A — 12 Lessons</div>
@@ -102,7 +157,7 @@ export default function SyllabusPage() {
         <h2 className={styles.ctaHead}>Check out all 12.</h2>
         <p className={styles.ctaBody}>
           Lifetime shelf access. No late fees. The card catalog never closes —
-          but the reps who read it get further.
+          but the AEs and SDRs who read it get further.
         </p>
         <Link href="/#pricing" className={styles.ctaBtn}>
           Get Access

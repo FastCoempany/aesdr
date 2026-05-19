@@ -119,6 +119,84 @@ export default async function LandingPage() {
         </div>
       </section>
 
+      {/* Comparison — anchor AESDR against the three other shapes a buyer
+          might consider. Not bash-the-competitor — just shape clarity. */}
+      <section className={styles.compareSection}>
+        <p className={styles.sectionLabel}>How this compares</p>
+        <h2 className={styles.compareHeadline}>
+          Four shapes of sales training. <em>Pick the one that fits.</em>
+        </h2>
+        <div className={styles.compareGrid}>
+          <div className={styles.compareCol} aria-label="AESDR — this product">
+            <p className={styles.compareLabel}>AESDR</p>
+            <p className={styles.comparePrice}>$249–$1,499 · one-time</p>
+            <ul className={styles.compareList}>
+              <li>12 self-paced interactive lessons</li>
+              <li>5 takeaway tools you use on the job</li>
+              <li>Lifetime access</li>
+              <li>14-day refund, no questions</li>
+              <li>Built by AEs and SDRs who carried bags</li>
+              <li>No live calls, no weekly homework</li>
+            </ul>
+            <p className={styles.compareFitFor}>
+              <strong>Fits:</strong> AEs and SDRs in their first 18 months
+              who want the operating manual, not motivation.
+            </p>
+          </div>
+
+          <div className={styles.compareColMuted} aria-label="Motivational sales courses">
+            <p className={styles.compareLabel}>Motivational courses</p>
+            <p className={styles.comparePrice}>$50–$2,000 · sometimes a subscription</p>
+            <ul className={styles.compareList}>
+              <li>Video lectures, sometimes a workbook</li>
+              <li>Energy is the product</li>
+              <li>Outcomes hard to measure</li>
+              <li>Refund usually 7-day window</li>
+              <li>Built by speakers / personalities</li>
+              <li>Often pairs with a paid coaching upsell</li>
+            </ul>
+            <p className={styles.compareFitFor}>
+              <strong>Fits:</strong> AEs and SDRs looking for emotional lift
+              before a big week. Not what we&rsquo;re selling.
+            </p>
+          </div>
+
+          <div className={styles.compareColMuted} aria-label="Live cohort programs">
+            <p className={styles.compareLabel}>Live cohort programs</p>
+            <p className={styles.comparePrice}>$800–$5,000 · 4–8 weeks</p>
+            <ul className={styles.compareList}>
+              <li>Scheduled live sessions, Slack community</li>
+              <li>Cohort accountability is the moat</li>
+              <li>High completion among committed attendees</li>
+              <li>Refund typically pro-rated</li>
+              <li>Built around instructor availability</li>
+              <li>Calendar-heavy by design</li>
+            </ul>
+            <p className={styles.compareFitFor}>
+              <strong>Fits:</strong> AEs and SDRs whose schedules are open
+              and who need cohort pressure to finish. Different motion than ours.
+            </p>
+          </div>
+
+          <div className={styles.compareColMuted} aria-label="Employer-provided LMS training">
+            <p className={styles.compareLabel}>Employer LMS training</p>
+            <p className={styles.comparePrice}>Free to you · org pays</p>
+            <ul className={styles.compareList}>
+              <li>Embedded in your company&rsquo;s LMS</li>
+              <li>Generic content; mandatory completion</li>
+              <li>Built for compliance, not craft</li>
+              <li>No refund — it&rsquo;s an HR ask</li>
+              <li>Updated rarely; vintage 2019 content common</li>
+              <li>Disappears when you leave the org</li>
+            </ul>
+            <p className={styles.compareFitFor}>
+              <strong>Fits:</strong> Nobody, really. Do it because you have
+              to. Then come here for the part the LMS skipped.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials */}
       <Testimonials />
 

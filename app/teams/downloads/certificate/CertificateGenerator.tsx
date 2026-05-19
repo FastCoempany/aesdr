@@ -51,12 +51,31 @@ export default function CertificateGenerator() {
     window.print();
   }
 
+  // Pre-composed LinkedIn share copy. Uses the rendered values so the
+  // share line names the AE/SDR + role accurately. Per H.7.2.
+  const linkedinShareUrl = useMemo(() => {
+    const shareUrl = "https://aesdr.com/";
+    const summary = `${repName ? repName + " — " : ""}AESDR-trained ${role}. Twelve lessons on the part of SaaS sales nobody actually teaches. ${shareUrl}`;
+    return `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+      shareUrl
+    )}&summary=${encodeURIComponent(summary)}`;
+  }, [repName, role]);
+
   return (
     <>
       <div className={styles.printBar}>
         <div className={styles.printBarLabel}>
           <span>Certificate generator · live preview to the right</span>
         </div>
+        <a
+          href={linkedinShareUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.printBarBtn}
+          style={{ marginRight: 8, background: "transparent", color: "var(--ink)", border: "1px solid var(--ink)" }}
+        >
+          Share on LinkedIn
+        </a>
         <button onClick={handlePrint} className={styles.printBarBtn}>
           Print / Save as PDF
         </button>

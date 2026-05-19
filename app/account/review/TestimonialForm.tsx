@@ -32,6 +32,7 @@ export default function TestimonialForm({ initial }: Props) {
   if (submittedOnce) {
     return (
       <div
+        data-surface="dark"
         style={{
           background: "var(--ink)",
           color: "var(--cream)",

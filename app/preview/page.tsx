@@ -286,6 +286,7 @@ export default function PreviewPage() {
 
         {/* Gated takeaway */}
         <section
+          data-surface="dark"
           style={{
             position: "relative",
             background: "var(--ink)",

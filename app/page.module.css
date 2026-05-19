@@ -168,6 +168,108 @@
 }
 
 /* ═══════════════════════════════════════════════
+   COMPARISON — four shapes anchor
+   ═══════════════════════════════════════════════ */
+.compareSection {
+  position: relative;
+  z-index: 3;
+  padding: 80px 8%;
+  background: var(--cream);
+  text-align: center;
+}
+.compareHeadline {
+  font-family: var(--display);
+  font-size: clamp(28px, 4.5vw, 48px);
+  font-weight: 900;
+  font-style: italic;
+  line-height: 1.05;
+  margin-bottom: 40px;
+  color: var(--ink);
+}
+.compareHeadline em {
+  background: var(--iris);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+  font-style: italic;
+}
+.compareGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: left;
+}
+.compareCol {
+  background: #fff;
+  border: 2px solid var(--ink);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+}
+.compareColMuted {
+  background: #fff;
+  border: 1px solid var(--light);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  opacity: 0.78;
+}
+.compareLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  color: var(--crimson);
+  margin-bottom: 8px;
+}
+.comparePrice {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--ink);
+  margin-bottom: 16px;
+}
+.compareList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink);
+  flex: 1;
+}
+.compareList li {
+  padding-left: 16px;
+  position: relative;
+  margin-bottom: 6px;
+}
+.compareList li::before {
+  content: "·";
+  color: var(--crimson);
+  font-weight: 900;
+  position: absolute;
+  left: 4px;
+  top: -2px;
+}
+.compareFitFor {
+  font-family: var(--serif);
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--light);
+}
+.compareFitFor strong {
+  color: var(--ink);
+}
+
+/* ═══════════════════════════════════════════════
    PRICING
    ═══════════════════════════════════════════════ */
 .sneakPeekSection {

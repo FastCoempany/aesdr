@@ -214,6 +214,7 @@ export default async function AlumniPage() {
       </section>
 
       <section
+        data-surface="dark"
         style={{
           maxWidth: 880,
           margin: "32px auto",
