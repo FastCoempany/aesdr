@@ -1571,7 +1571,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div class="t-head">Task 1: Follow-Up Email Audit</div>
         <ul class="hw-list">
           <li><div class="hw-box"></div>Review your last 10 post-demo or post-meeting follow-up emails.</li>
-          <li><div class="hw-box"></div>Rewrite them to reference specific pain points discussed in discovery. Kill every "just checking in."</li>
+          <li><div class="hw-box"></div>Rewrite them to reference specific pain points discussed in discovery. Cut every "just checking in."</li>
           <li><div class="hw-box"></div>Create 3 follow-up templates tied to different deal stages (post-demo, post-proposal, stalled deal).</li>
         </ul>
       </div>
@@ -1696,7 +1696,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 const SILO_CARDS = [
   { txt:"'Quick Question' or 'Touching Base' templates.", zone:"email", note:"Email: Lazy messaging fails." },
   { txt:"Untouched leads and vague notes.", zone:"crm", note:"CRM: Garbage in, garbage out." },
-  { txt:"Reading scripts like a robot.", zone:"dialer", note:"Dialer: Kills connection and quality." },
+  { txt:"Reading scripts like a robot.", zone:"dialer", note:"Dialer: Tanks connection and quality." },
   { txt:"Craft 5 unique subject lines to test.", zone:"email", note:"Email: Improves sequences." },
   { txt:"Ensure notes have next steps and outcomes.", zone:"crm", note:"CRM: Standardizes processes." },
   { txt:"Record calls and analyze delivery.", zone:"dialer", note:"Dialer: Improves natural conversations." }
@@ -1841,7 +1841,7 @@ function init(){
     items: _role === 'ae' ? [
     { task:'Review your last 10 post-demo follow-up emails. Count how many use phrases like "just checking in," "circling back," or "touching base." Rewrite your worst one here, referencing the specific pain point discussed in the demo and a clear next step with a date.', placeholder:'e.g., "7 of 10 used \'checking in.\' Worst: \'Hi, just checking in on the proposal.\' Rewritten: \'Hi Sarah — in our demo you mentioned onboarding was taking 6 weeks and costing $40K/quarter. I\'ve attached a revised timeline showing how we cut that to 2 weeks. Can we review Thursday at 2 PM?\'"', minChars:120 },
     { task:'Create 3 follow-up email templates tied to specific deal stages: post-demo, post-proposal, and stalled deal. Each must reference a pain point placeholder and include a specific call-to-action with a deadline. Paste all three templates here.', placeholder:'e.g., "Post-demo: \'Hi [Name], you mentioned [pain point] is costing [impact]. Here\'s how we solve it: [link]. Can we schedule a technical review by [date]?\' Post-proposal: \'Hi [Name], the proposal addresses [pain]. Pricing expires [date]...\'"', minChars:120 },
-    { task:'Audit every open opportunity in your pipeline. Count total open deals, then list every deal with no activity in 30+ days or no documented next step. Close-lost or remove at least 3 today and name them here with your reasoning.', placeholder:'e.g., "22 open opportunities. 7 had no activity in 30+ days. Closing lost: 1) BrightCo — champion left company March 1, no new contact. 2) Zenith — went dark after proposal, no response to 4 follow-ups. 3) Apex — budget killed in Q1 review..."', minChars:120 },
+    { task:'Audit every open opportunity in your pipeline. Count total open deals, then list every deal with no activity in 30+ days or no documented next step. Close-lost or remove at least 3 today and name them here with your reasoning.', placeholder:'e.g., "22 open opportunities. 7 had no activity in 30+ days. Closing lost: 1) BrightCo — champion left company March 1, no new contact. 2) Zenith — went dark after proposal, no response to 4 follow-ups. 3) Apex — budget cut in Q1 review..."', minChars:120 },
     { task:'Record or mentally replay your most recent demo. Identify 3 specific moments where you pitched a feature instead of connecting it to the prospect\'s stated pain. Describe each moment and rewrite what you should have said instead.', placeholder:'e.g., "1) Showed reporting dashboard for 5 min without asking what reports they actually need. Should have said: \'You mentioned forecasting is manual — let me show you exactly how this replaces your spreadsheet.\' 2) Demoed integrations before asking about their current stack..."', minChars:100 },
     { task:'Write 5 discovery questions you will lead with before showing any product in your next demo. Each question must target a specific business pain and be open-ended enough to reveal budget, timeline, or decision-making dynamics. Then describe how you will coach your SDR to gather this intel before the meeting.', placeholder:'e.g., "1) \'What is the business impact of [problem] in dollars or hours per month?\' 2) \'Walk me through what happens when [problem] occurs — who is affected?\' ... SDR coaching: will ask SDR to confirm budget range and decision-maker name before every handoff..."', minChars:100 }
   ] : [

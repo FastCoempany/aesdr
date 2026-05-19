@@ -469,7 +469,7 @@ data.)
 ## 8. Cohort wrap thank-you
 
 **Send timing:** Within 7 days of pilot end, after we send you the
-kill-or-keep memo. To your full list — even people who didn't engage.
+cut-or-keep memo. To your full list — even people who didn't engage.
 ~120 words.
 
 > **Subject:** *Thanks for the AESDR workshop — and what's next.*

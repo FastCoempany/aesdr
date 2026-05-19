@@ -499,10 +499,10 @@ window.AESDR = window.AESDR || {};
   A.getExtra = function(key) { return _lessonExtra[key]; };
   /* ── Attestation phrases (unique per checkbox, never repeat across app) ── */
   var ATTEST = [
-    "I refused to fake this because complacency kills careers faster than failure ever could",
-    "I did the work that matters here because complacency kills careers faster than failure ever could",
+    "I refused to fake this because complacency ends careers faster than failure ever could",
+    "I did the work that matters here because complacency ends careers faster than failure ever could",
     "I respected my own time here because my reputation is built one honest action at a time",
-    "I leaned into the work here because complacency kills careers faster than failure ever could",
+    "I leaned into the work here because complacency ends careers faster than failure ever could",
     "I wrestled with this honestly because real professionals do the uncomfortable work first",
     "I made this count because half-effort produces half-results and I'm done with half",
     "I stayed honest here because I'm choosing to be the person who does the hard thing",
@@ -1451,7 +1451,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lie">
         <div class="lie-tab">The Fix</div>
         <div class="lie-q">"The best AEs don't manage SDRs. They partner with them."</div>
-        <div class="lie-a">Ego feels protective in the moment but costs you by Friday. Every time you dismiss an SDR's work, you're training them to bring you less of it. Replace ego with trust, and your pipeline tightens up inside a quarter.</div>
+        <div class="lie-a">Ego feels protective in the moment but costs you in the quarter. Every time you dismiss an SDR's work, you're training them to bring you less of it. Replace ego with trust and watch the pipeline respond.</div>
       </div>
     </div>
     <div class="lb sdr-only">
@@ -1654,7 +1654,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
   </div>
 
   <div style="margin-top:32px;padding:16px 0;border-top:1px solid var(--line)">
-    <p id="sidebarMotto" style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">Ego kills more deals than bad product ever will. Every honest answer here is a step toward the kind of partnership that actually produces revenue.</p>
+    <p id="sidebarMotto" style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">Ego loses more deals than bad product ever will. Every honest answer here is a step toward the kind of partnership that actually produces revenue.</p>
   </div>
 </aside>
 
@@ -1779,7 +1779,7 @@ function _saveExerciseScores(){
    INIT
 ════════════════════════════════════ */
 const SIDEBAR_TEXTS = [
-  "Ego kills more deals than bad product ever will.",
+  "Ego loses more deals than bad product ever will.",
   "You think you’re the smartest person in the room? Wrong room.",
   "I don’t have a problem with ego. I just leave mine at the door.",
   "Nobody ever got promoted by proving they were right in an argument.",
@@ -1805,7 +1805,7 @@ function init(){
     minChars: 120 });
   // Homework gate
   AESDR.gate(8, { type:'homework',
-    conscience: 'Ego kills more deals than bad product ever will. Every honest answer here is a step toward the kind of partnership that actually produces revenue.', prompt: _role === 'ae'
+    conscience: 'Ego loses more deals than bad product ever will. Every honest answer here is a step toward the kind of partnership that actually produces revenue.', prompt: _role === 'ae'
     ? 'This lesson taught that AE ego — micromanaging, taking credit, skipping syncs — silently destroys the AE-SDR partnership that feeds your pipeline. You learned a three-step framework: Diagnose, Ask for Feedback, and Establish Expectations. Now prove you\'ll act on it this week. Each item below requires your SDR\'s name, specific dates, and exact words you\'ll use.'
     : 'This lesson taught you how to identify and navigate AE ego behaviors — micromanaging, taking credit, skipping syncs. You learned to use impact statements instead of accusations and propose solutions instead of complaints. Now prove you\'ll act on it this week. Each item below requires specific names, situations, and exact language you\'ll use.',
     items: _role === 'ae' ? [

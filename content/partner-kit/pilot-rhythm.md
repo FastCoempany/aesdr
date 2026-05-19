@@ -33,7 +33,7 @@ You're hands-off.
 ## Week 4 — Close
 
 Attribution window stays open for 30 days from the workshop registration.
-At the four-week mark we file a kill-or-keep memo: did this work, and is a
+At the four-week mark we file a cut-or-keep memo: did this work, and is a
 second pilot worth running? Either way, you get a clean close-out — net-45
 commission accounting, the actual numbers, and our honest read.
 

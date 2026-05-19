@@ -56,5 +56,5 @@ direct founder contact for exactly this case — use it.
   makes the pilot terms feel off.
 - Any question where the honest answer is "I don't know what to do."
 
-We'd rather adjust mid-pilot than learn at the kill-or-keep that
+We'd rather adjust mid-pilot than learn at the cut-or-keep that
 something was off the whole time.

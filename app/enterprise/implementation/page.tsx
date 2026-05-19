@@ -211,7 +211,7 @@ export default function ImplementationPage() {
           <ul className={styles.bulletList}>
             <li>
               <strong>Treating it like compliance training.</strong> Forcing AEs and SDRs to
-              finish modules by Friday kills engagement and produces clicked-through
+              finish modules by Friday stalls engagement and produces clicked-through
               completion without behavior change. The goal is change, not completion.
             </li>
             <li>

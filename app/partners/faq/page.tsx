@@ -114,7 +114,7 @@ const FAQ_ITEMS = [
     q: "What if a pilot doesn't work?",
     a: (
       <p>
-        We file a kill-or-keep memo within 72 hours of the pilot&rsquo;s end. If the decision is to end it, we send you a close-out note within 48 hours, signed by the founder by name. The door stays open for a future revisit. We part as adults.
+        We file a continue-or-end memo within 72 hours of the pilot&rsquo;s end. If the decision is to end it, we send you a close-out note within 48 hours, signed by the founder by name. The door stays open for a future revisit. We part as adults.
       </p>
     ),
   },

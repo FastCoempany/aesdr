@@ -310,7 +310,7 @@ export function runAnimator(refs: AnimatorRefs, opts: AnimatorOptions): () => vo
     restoreScroll();
 
     // Fade overlays to opacity 0, THEN `display: none` after transition completes
-    // (Fix 3: kills the ghost-typing layer permanently — even at opacity 0 a
+    // (Fix 3: stops the ghost-typing layer permanently — even at opacity 0 a
     // `position: fixed; inset: 0` layer is in the rendering tree and can flash
     // during repaints / HMR / GPU compositing hiccups.)
     const fade = (el: HTMLElement | null, t = 0.6) => {

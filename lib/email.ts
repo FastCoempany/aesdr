@@ -822,7 +822,7 @@ function managerArchetypeMapHtml() {
 
 // ─── Lesson-completed nudge: 24h after a completion ───
 // Capitalises on the warm "I just shipped a thing" moment. Names the
-// next lesson, gives the rough time, kills the open-tab cost. Per
+// next lesson, gives the rough time, removes the open-tab cost. Per
 // behavioral audit H.2.5.
 
 export async function sendLessonCompletedNudge(

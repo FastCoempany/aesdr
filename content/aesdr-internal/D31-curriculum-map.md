@@ -44,7 +44,7 @@ The performance variable nobody talks about. Three principles for partnership wi
 >
 > *— cc: solutions eng.* `Tue 02`
 
-Silos as deal killers, plus the home-office build-out (your remote setup is your deal room or your outbound factory) and the AE-ego problem nobody addresses honestly. Includes "diagnose the silo," "name the killer," and "unpacking AE ego" — uncomfortable on purpose. **3 lessons · ~150 min total.**
+Silos as deal traps, plus the home-office build-out (your remote setup is your deal room or your outbound factory) and the AE-ego problem nobody addresses honestly. Includes "diagnose the silo," "name the trap," and "unpacking AE ego" — uncomfortable on purpose. **3 lessons · ~150 min total.**
 
 ### `658.85 / L03` — Performance Pitfalls
 
@@ -100,7 +100,7 @@ The 30/40/30 breakdown — what your manager is already doing whether they say s
 >
 > *— log before you forget.* `Tue 09`
 
-The five biggest CRM pain points and the discipline that solves them. Slack as productivity-killer-in-disguise — controlling signal, cutting noise. The SaaS-tools stack: when tools amplify skill versus when they hide laziness. **3 lessons · ~150 min total.**
+The five biggest CRM pain points and the discipline that solves them. Slack as productivity-drain-in-disguise — controlling signal, cutting noise. The SaaS-tools stack: when tools amplify skill versus when they hide laziness. **3 lessons · ~150 min total.**
 
 ### `658.85 / L10` — Breaking Down the Commission Myth
 

@@ -67,7 +67,7 @@ const STEPS = [
     when: "Week 5 — Pilot debrief",
     title: "Kill-or-keep memo.",
     you: "Nothing required.",
-    us: "Within 72 hours of pilot close: a written kill-or-keep memo. If keep, terms for the next pilot. If kill, a close-out note signed by the founder by name.",
+    us: "Within 72 hours of pilot close: a written continue-or-end memo. If keep, terms for the next pilot. If end, a close-out note signed by the founder by name.",
   },
   {
     when: "Weeks 5-8 — Attribution window",
