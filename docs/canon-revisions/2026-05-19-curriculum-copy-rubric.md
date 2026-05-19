@@ -3,150 +3,166 @@
 > **Status:** Active. Scoring standard for every lesson body copy in
 > `content/lessons/html/` and every tool HTML in `tools/standalone-html/`.
 > **Owner:** Antaeus Coe.
-> **Last revised:** 2026-05-19.
+> **Last revised:** 2026-05-19 (v2 — rewritten after every example in
+> v1 used the language the canon is supposed to ban).
 
-The user direction: "Curriculum body copy quality needs to go from 6
-to 9 minimum." This doc defines what 6 means, what 9 means, what 10
-means, and how to get from one to the other lesson by lesson.
+The user direction: curriculum body copy needs to move from 6 to 9
+minimum on a ten-point scale. This doc defines what 6 means, what 9
+means, what 10 means, and how to score every unit in the curriculum
+against the same six axes so two readers come to the same score.
 
 ---
 
 ## Six-axis scoring
 
-Each axis scored 0, 1, or 2. Total /12. Mapped to /10 via:
-`score_out_of_10 = round((axis_total / 12) * 10)`.
+Each axis is scored 0, 1, or 2. Total out of 12. Mapped to /10 with
+the table at the bottom of this section.
 
-### Axis 1 · Rhythm
-Tests whether the prose reads aloud cleanly without three-short-
-declaratives-in-a-row, telegraphic AI cadence, or fatigue-inducing
-sentence-length monotony.
+### Axis 1 — Sentence-length variety
 
-- **0** = consistently telegraphic OR consistently nested-clause-long. Reader stumbles.
-- **1** = mostly OK, one or two stumble points per page.
-- **2** = pass on R-G3 + R-G5. Sentence-length variation feels intentional.
+Does the paragraph mix sentence lengths, or stack three short ones in
+a row?
 
-### Axis 2 · Specificity
-Tests whether the lesson names concrete people, situations, numbers,
-named tools instead of leaning on abstract gummy nouns.
+| Score | Meaning |
+|---|---|
+| 0 | Three or more consecutive sentences under eight words in any paragraph. Or every sentence over 25 words. Reader fatigues. |
+| 1 | Mostly fine; one or two stumble points per page. |
+| 2 | Sentence-length variation reads as intentional, not telegraphic. A second-year SDR could read the page aloud at a bar without stumbling. |
 
-- **0** = the lesson could be re-titled "Sales 101" and not feel out of place.
-- **1** = some specifics named, but key paragraphs rely on R-G4 manufactured concepts.
-- **2** = every paragraph carries at least one concrete reference — a named tool, a real number, a specific situation.
+### Axis 2 — Specificity
 
-### Axis 3 · AI-tell absence
-Tests R-G7 hygiene + any pattern that reads as auto-generated.
+Are paragraphs anchored to real people, real times, real numbers, and
+named tools — or are they anchored to abstract single-word nouns?
 
-- **0** = three-part lists, "let me explain," "it's not about X," "imagine X" openers all present.
-- **1** = a few residual phrases but no structural AI-tells.
-- **2** = nothing on the R-G7 blocklist. Reads like one human wrote it.
+| Score | Meaning |
+|---|---|
+| 0 | The lesson would survive being re-titled "Sales 101." Paragraphs lean on words like *the move*, *the verdict*, *the play*, *the wedge* without naming what those refer to. |
+| 1 | Some specifics named; a few key paragraphs still lean on the gummy nouns from R-G4. |
+| 2 | Every paragraph names at least one concrete reference: a tool (Apollo, Salesforce, the AESDR Alignment Contract), a number (the 9% reply rate, the 80-dial day, the 22% win rate), a role (your CFO, your champion, your VP), a time (Tuesday morning, Friday at 4pm), or a situation (the QBR, the 1:1, the bad-month conversation). |
 
-### Axis 4 · Sentence-end strength
-Tests R-G2 — no trailing vague pronouns, no "etc." or "and so on," no
-qualifier-trailing endings.
+### Axis 3 — AI-tell absence
 
-- **0** = multiple sentences end on "it," "this," "the rest," "etc.," "across the board."
-- **1** = one or two violations per page.
-- **2** = every sentence ends on a concrete noun, verb, or clause the reader doesn't have to back-reference.
+Does the prose carry the structural signatures of auto-generated marketing copy?
 
-### Axis 5 · Register consistency
-Tests whether the lesson sustains operator-at-a-bar voice from open to
-close, without drifting into motivation-engine or deck-writer register.
+| Score | Meaning |
+|---|---|
+| 0 | Three-part lists ("Faster. Smarter. Better.") present. "It's not about X. It's about Y." paragraph openers present. Paragraphs end on one-line thesis restatements. Em-dash count exceeds two per paragraph. |
+| 1 | A few residual AI-tell phrases ("at its core," "ultimately") survive but no structural cadences. |
+| 2 | Nothing on the R-G7 phrase blocklist. No three-beat cadences. No "imagine X" openers. Reads as one human wrote it. |
 
-- **0** = register shifts more than once in the lesson. Or the entire lesson is the wrong register.
-- **1** = register holds with one or two slips into formal/marketing copy.
-- **2** = consistent operator voice. Occasional founder-voice aside is fine.
+### Axis 4 — How sentences end
 
-### Axis 6 · Earned brevity
-Tests whether the prose is short where short is sharper and long where
-long is needed — not telegraphic-as-default and not bloated-as-default.
+Does the last word of each sentence anchor to a concrete noun, or
+trail into a pronoun the reader has to back-reference?
 
-- **0** = the lesson is over-pruned (every sentence under 10 words) or over-stuffed (every sentence over 25).
-- **1** = decent length variation but at least one paragraph that should have been cut, or one that should have been expanded.
-- **2** = every sentence pays its way.
+| Score | Meaning |
+|---|---|
+| 0 | Multiple sentences in the lesson end on *it*, *this*, *the rest*, *etc.*, *and so on*, *across the board*. |
+| 1 | One or two sentence-end violations per page. |
+| 2 | Every sentence ends on a concrete noun, a named verb, or a specific clause. The reader doesn't have to scroll up. |
+
+### Axis 5 — Register consistency
+
+Does the lesson stay in operator voice from open to close, or does
+it drift into deck-writer or motivation-engine register?
+
+| Score | Meaning |
+|---|---|
+| 0 | Register shifts more than once across the lesson. Or the whole lesson is in the wrong register (motivational, corporate, academic). |
+| 1 | Operator voice holds with one or two slips into formal or marketing prose. |
+| 2 | Operator voice from open to close. A founder-voice aside (parenthetical, occasional first-person) is allowed and welcome. |
+
+### Axis 6 — Paid sentences
+
+Does every sentence pay its way, or are paragraphs padded with
+filler (or over-pruned into telegraph)?
+
+| Score | Meaning |
+|---|---|
+| 0 | The lesson is either bloated (every sentence over 25 words, several paragraphs that could be cut without loss) or over-pruned (every sentence under 10 words, no breathing room). |
+| 1 | Decent length variation, but at least one paragraph that should have been cut or one that should have been expanded. |
+| 2 | Every sentence earns its place. Cut anything more and meaning drops. Add anything more and pace drops. |
 
 ---
 
 ## Score mapping
 
-| Axis total /12 | /10 | Quality label | Action |
+| Axis total /12 | Mapped to /10 | Quality label | Action |
 |---|---|---|---|
 | 0–4 | 0–3 | Unshippable | Rewrite from scratch |
 | 5–7 | 4–6 | Current floor | Targeted rewrite, axis by axis |
-| 8–9 | 7–8 | Solid | Targeted polish on lowest axes |
-| 10–11 | 9 | Ship-ready | Light final pass, then ship |
-| 12 | 10 | Canonical | Reference for the rest |
+| 8–9 | 7–8 | Solid | Polish on the lowest axes |
+| 10–11 | 9 | Ship-ready | One final pass, then ship |
+| 12 | 10 | Canonical | Use as reference for the rest |
 
-**Target.** Every lesson scores 9/10 (10–11 on the rubric) minimum.
-**Stretch.** At least three lessons hit 10/10 to serve as reference
-specimens.
+**Target.** Every lesson scores at least 9/10. No axis at 0.
+**Stretch.** Three lessons reach 10/10. Those become reference units
+the others get compared against.
 
 ---
 
 ## Acceptance criteria per lesson
 
-A lesson rewrite is acceptable for founder review when:
+A unit rewrite is ready for founder review when:
 
-1. **No axis below 1.** A 9/10 average with a 0 on any single axis is
-   still a fail — the weakest axis is the one a reader notices.
+1. **No axis below 1.** A 9/10 average with a 0 on any single axis
+   is a fail. The weakest axis is the one a reader notices first.
 2. **Two-axis lift minimum from starting score.** Otherwise the
    rewrite hasn't done meaningful work.
-3. **No R-G4 manufactured-concept terms** anywhere in the lesson.
-4. **Read-aloud pass.** A founder-side review pass means: read three
-   non-consecutive pages aloud. Stumble more than once across those
-   three pages = back to me.
-5. **Diff shows specific moves.** PR description names which axes
-   were lifted and where. "I improved Lesson 3" is not a diff; "I
-   rewrote sections 2 and 4 to lift Specificity from 0 to 2 and
-   Rhythm from 1 to 2" is.
+3. **Zero R-G4 manufactured-concept terms** anywhere in the unit.
+4. **Read-aloud pass.** Open the unit, pick three non-consecutive
+   pages, read them aloud. More than one stumble across those three
+   pages sends the unit back.
+5. **Diff annotation.** The PR description names which axes were
+   lifted, where in the unit each lift happened, and any sentence
+   whose meaning (not just style) changed during the rewrite. Style
+   rewrites pass automatically; meaning changes need founder review.
 
 ---
 
-## What stays the same
+## What stays the same in a rewrite
 
-The rubric only governs *copy*, not pedagogy. The lesson structure,
-the order of ideas, the named tools, the questions asked, the
-exercises offered — all unchanged unless the founder explicitly asks
-for a pedagogical change. The rewrite is a voice patch, not a
-curriculum rewrite.
+The rubric governs prose, not pedagogy. The order of ideas, the named
+tools, the questions asked, the exercises offered — all unchanged
+unless the founder asks for a pedagogical change. A copy rewrite is a
+voice patch, not a curriculum rebuild.
 
-The substantive risk of a copy-only rewrite: occasionally a
-paragraph's *meaning* is gummy, not just its prose. In that case the
-rewrite needs founder-side input on what the paragraph is trying to
-say. Mark those paragraphs in PR comments with `[CONTENT QUESTION]`
-and ship the rest.
+Occasionally a paragraph's *meaning* is gummy, not just its prose. In
+those cases, mark the paragraph in the PR with `[CONTENT QUESTION]`
+and ship the rest of the unit. Founder answers the content question
+in review; the next rewrite cycle resolves it.
 
 ---
 
 ## Per-lesson starting scores (estimated, pre-audit)
 
-These are my read of the lessons against the rubric, based on the
-prior browsing during the audit + behavioral deep-dive work. The
-real audit happens during the sweep phase; these are predictions to
-prioritise effort.
+These scores are pre-audit estimates from earlier passes across the
+curriculum. The real audit happens during the sweep. The numbers are
+here to prioritise effort, not to argue about during review.
 
-| Lesson | Title | Starting score (est.) | Axes likely below 1 |
+| Lesson | Title | Pre-audit /10 | Axes likely below 1 |
 |---|---|---|---|
-| 01 | Building Real Camaraderie | 6/10 | Specificity, Earned brevity |
-| 02 | Breaking Down Silos | 6/10 | Specificity, AI-tell |
-| 03 | Performance Pitfalls | 7/10 | Sentence-end strength |
-| 04 | Navigating Manager Madness | 6/10 | Specificity, Rhythm |
-| 05 | The Sales Playbook | 5/10 | All except Register |
-| 06 | Beyond the Sales Playbook | 6/10 | Specificity, Earned brevity |
-| 07 | Prospecting & Pipeline | 6/10 | Specificity, Rhythm |
-| 08 | The 30% Rule | 7/10 | AI-tell, Sentence-end strength |
-| 09 | CRM Survival Guide | 6/10 | Specificity, Register |
-| 10 | Compensation Realities | 7/10 | AI-tell, Sentence-end strength |
-| 11 | Sober Selling | 8/10 | Sentence-end strength |
-| 12 | Levelling Up SaaS Relationships | 7/10 | Specificity |
+| 01 | Building Real Camaraderie | 6 | Specificity, Paid sentences |
+| 02 | Breaking Down Silos | 6 | Specificity, AI-tell absence |
+| 03 | Performance Pitfalls (SDR) / Surviving AE Management (AE) | 7 | Sentence endings |
+| 04 | Navigating Manager Madness | 6 | Specificity, Sentence-length variety |
+| 05 | The AE/SDR Playbook | 5 | All axes except Register |
+| 06 | Beyond the Sales Playbook | 6 | Specificity, Paid sentences |
+| 07 | Prospecting & Pipeline | 6 | Specificity, Sentence-length variety |
+| 08 | The 30% Rule | 7 | AI-tell absence, Sentence endings |
+| 09 | CRM Survival Guide | 6 | Specificity, Register |
+| 10 | Compensation Realities | 7 | AI-tell absence, Sentence endings |
+| 11 | Sober Selling | 8 | Sentence endings |
+| 12 | Levelling Up SaaS Relationships | 7 | Specificity |
 
-Highest-leverage rewrites: Lessons 5, 1, 2, 4, 6, 7, 9. These are
-the ones where the lift from 6→9 is most visible.
+Highest-leverage rewrites: Lessons 5, 1, 2, 4, 6, 7, 9. Those are
+where a 6 → 9 lift is most visible.
 
-Per-lesson estimated effort:
-- Score 7 → 9: ~2 hours of focused rewrite per unit (3 units per lesson = 6 hours)
-- Score 6 → 9: ~3 hours per unit (~9 hours per lesson)
-- Score 5 → 9: ~4 hours per unit (~12 hours per lesson)
+Estimated effort per unit by starting score:
+- 7 → 9: ~2 hours of focused rewrite per unit (~6 hours per lesson)
+- 6 → 9: ~3 hours per unit (~9 hours per lesson)
+- 5 → 9: ~4 hours per unit (~12 hours per lesson)
 
-Rough total: ~95 hours of rewrite work across 36 units, before
-founder-side review iteration. Realistic ship window: 4–6 weeks if
-the founder review keeps pace.
+Total across 36 units: ~95 hours of rewrite work before founder review
+iteration. Realistic ship window: 4–6 weeks if founder review keeps
+pace with three units per week.

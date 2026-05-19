@@ -1,344 +1,408 @@
 # Language-patch supplement to the consumer brand-voice canon
 
 > **Status:** Supplement to `2026-05-19-consumer-brand-voice-canon.md`.
-> Adds seven rules (R-G1 through R-G7), an expanded blocklist, and an
-> AI-tell hygiene section. Read the base canon first; this extends, it
-> does not replace.
+> Adds eight rules (R-G1 through R-G8), an expanded blocklist, and an
+> AI-tell hygiene section. Read the base canon first; this supplement
+> extends it.
 > **Owner:** Antaeus Coe.
-> **Trigger for this supplement:** founder direction 2026-05-19 — voice
-> needs to move from 9 to 10 on web surfaces and from 6 to 9 on
-> curriculum body copy. Specific patterns flagged: single-word abstract
-> nouns ("the move," "the wedge," "the verdict," "the ledger," "account
-> heat," "pressure"), sentences trailing into vague pronouns, AI-output
-> telegraphic rhythm, manufactured-concept startup-speak.
-> **Last revised:** 2026-05-19.
+> **Trigger:** founder direction 2026-05-19. Specific patterns flagged
+> as off-canon: single-word abstract nouns asked to carry meaning
+> ("the move," "the wedge," "the verdict," "the ledger," "account
+> heat," "pressure"), sentences trailing into pronouns the reader has
+> to back-reference, three-short-sentences-in-a-row AI cadence,
+> manufactured startup-speak ("decision-grade proof"), and literary
+> verbs ("showed", "demonstrated") that dress up a noun without
+> adding meaning.
+> **Last revised:** 2026-05-19 (v2 — rewritten after every example in
+> v1 violated its own rule).
 
-This supplement names the rules I want enforced across every surface
-and every lesson. Read it once. Apply it on every new sentence. Re-read
-the violations you spot in the wild.
+This supplement names the rules I want enforced on every surface and
+every lesson. The examples below are the bar. If a future canon
+update introduces an example that's vaguer than what's here, the
+update fails.
 
 ---
 
-## R-G1 · The gummy-abstraction rule
+## R-G1 · Single-word abstract nouns can't carry a concept on their own
 
-Don't use a single-word noun as a named concept the reader has to
-decode. If the concept is real, the sentence can say what it is. The
-single-word version saves three words and costs the meaning.
+A noun like *the move*, *the wedge*, *the verdict*, *the ledger* asks
+the reader to decode what it means. The author saves three words; the
+reader pays them back with interest. Cut it.
 
-**Don't write.**
+### Don't write
 - "That's the move."
 - "Build the wedge."
-- "Read the verdict."
-- "Account heat is what to focus on."
+- "Account heat is what to focus on this week."
 - "Run the play."
 - "That's the unlock."
-- "Surface area matters here."
 
-**Write instead.**
-- "That's where Antaeus parts from the pattern." (says what the move is)
-- "Pick the first lesson that earns the rest." (says what the wedge is)
-- "Here's what to do." (says what the verdict is)
-- "The accounts that would lose value if you waited a week are the ones to focus on." (says what heat is)
+Each one assumes the reader already knows the concept, which is the
+opposite of what the sentence is supposed to do.
 
-**Test.** If the sentence contains a single-word noun being asked to
-do conceptual work, ask: would a thoughtful AE name it that way at a
-bar, sober? If no, say it the way they would.
+### Write instead
+- "That's the email you'd send your VP at 8am Monday before she opens her dashboard."
+- "Pick Lesson 3 — the one on managing your manager — and start there. Lesson 1 is useful, but Lesson 3 changes how you walk into Tuesday's 1:1."
+- "Spend Thursday afternoon on the four accounts where your champion would lose her job if the deal didn't close this quarter. Those are the accounts that wait for nobody."
+- "Send your prospect the screenshot of your last quarter's commit-to-close ratio. Then ask her if her CFO has seen anything that clean."
 
-**Exemptions.** Named tools and canonical artefact names (see §8 of the
-base canon) are not gummy abstractions — *The 30% Rule*, *The Friday
-five-line*, *The Manager Archetype Map* are all specific enough to
-carry the meaning. The blocklist is single-word abstract nouns being
-used as standalone shorthand for an idea the sentence hasn't earned.
+Each replacement names the time, the person, the artifact, or the
+specific situation. The reader doesn't have to decode anything; the
+sentence does the work.
 
----
+### What stays allowed
+Named tools from the curriculum (*The 30% Rule*, *The Friday five-line*,
+*The Manager Archetype Map*, *The 72-Hour Strike Plan*) are not abstract
+nouns. They are proper nouns referring to specific artefacts in the
+course. R-G1 governs concept-by-shorthand, not named-things.
 
-## R-G2 · The trailing-vague-pronoun rule
-
-Don't end a sentence on a pronoun the reader has to back-reference.
-Don't end on a vague qualifier the reader has to fill in.
-
-**Don't write.**
-- "Build a proof you can carry into the room without losing it." ("it" forces a back-reference.)
-- "Hit the number and we'll figure the rest out." ("the rest" is undefined.)
-- "Get it on the page." ("it" again.)
-- "Bring the math and they'll come around." ("they" is unspecified.)
-
-**Write instead.**
-- "Build a proof you can still defend on the eighth slide of the deck."
-- "Hit the number this quarter; the comp conversation gets easier the quarter after."
-- "Write the line you'd want to read at 9pm on a Sunday."
-
-**Test.** Re-read the last three words of every sentence. If they
-require the reader to re-scan up the page, rewrite.
+### Test
+If a single-word noun in the sentence is doing conceptual work, ask:
+"would my SDR friend Bilal, two beers in on a Friday, name this thing
+this way?" If no, name it the way Bilal would.
 
 ---
 
-## R-G3 · The telegraphic-rhythm rule
+## R-G2 · No sentence ends on a pronoun the reader has to back-reference
 
-Three short declarative sentences in a row reads as AI-output cadence.
-The pattern is recognisable: subject, verb, period; subject, verb,
-period; subject, verb, period. It feels punchy on first read and hollow
-on second.
+When a sentence ends on "it," "this," "that," "them," "the rest," "the
+other thing," or "and so on," the reader has to scroll up the page to
+figure out what those words point to. The author has handed the
+decoding job to the reader. Take it back.
 
-**Don't write.**
-- "Signals are time-limited. Heat ranks them. Motion comes from the
-  account ledger — not from research piling up."
+### Don't write
+- "Build a proof you can carry into the room without losing it."
+- "Hit the number and the rest sorts itself out."
+- "Get it on the page."
+- "Bring the math and they'll come around."
+- "It's a lot, but it works."
+
+### Write instead
+- "Build a single-page pipeline math sheet your CFO doesn't argue with."
+- "Hit eighty percent of quota in Q2 and your comp conversation in Q3 stops being a negotiation."
+- "Put the next step, the dollar amount, and the close date on one page in your CRM. Nothing else."
+- "Bring the pipeline math to your QBR; the math is the part your VP reads first and forwards second."
+- "Three lessons in a week is too much. One lesson in a week, the same window every Tuesday, gets you done in twelve weeks."
+
+Each ending is a concrete noun, a specific time, or a named role.
+Nothing trails.
+
+### The hard cases
+Sometimes "it" or "this" reads fine because the noun was named two
+words earlier in the same clause. That's not what R-G2 bans. R-G2
+bans the sentence ending on a pronoun whose referent is far enough
+back that the reader has to look for it.
+
+Pass: "She read the lesson and printed it."
+Fail: "She read the lesson — and after a week of thinking about what
+her manager would say, and what her AE would think, and where her
+quota number landed last month, she printed it."
+
+### Test
+Re-read the last three words of every sentence in the paragraph. If
+any of those three words is a pronoun or a vague qualifier, rewrite.
+
+---
+
+## R-G3 · Three short declarative sentences in a row reads as AI cadence
+
+Subject, verb, period. Subject, verb, period. Subject, verb, period.
+The pattern feels punchy on first read and hollow on second. It is
+the most recognisable signature of auto-generated marketing prose.
+
+### Don't write
+- "Signals are time-limited. Heat ranks them. Motion comes from the account ledger — not from research piling up."
 - "Pipeline is math. Math is honest. Honesty wins."
 - "We don't sell software. We sell craft. The craft is teachable."
 
-**Write instead.** Mix sentence lengths inside the paragraph. One long
-conversational sentence followed by one short one is the AESDR pattern,
-not three short ones in a row.
+### Write instead
+Mix sentence lengths in the paragraph. One long sentence followed by
+one short one is the AESDR pattern. Not three short ones stacked.
 
-- "Signals don't sit there waiting for you — they age out. So the
-  question isn't which account looks interesting; it's which one would
-  lose value if you waited a week."
+- "Most of the accounts in your pipeline this Tuesday won't matter in
+  three weeks; they age out faster than your research keeps up. The
+  ones worth a Thursday-afternoon hour are the ones a competitor would
+  close while you're still pulling Apollo data."
 
-**Test.** Count consecutive sentences under eight words. Three in a
-row anywhere in the paragraph is the kill threshold.
+The long sentence carries the argument. The short sentence lands it.
+Together they read as one human's voice, not a generator's three-
+beat cadence.
+
+### Test
+Count consecutive sentences under eight words. Three in a row, anywhere
+in the paragraph, is the kill point. Mix in a longer sentence or cut
+one of the three.
 
 ---
 
 ## R-G4 · The manufactured-concept blocklist
 
-Specific terms that have leaked from internal strategy docs into
-buyer-facing surfaces. Each reads as startup-speak to a buyer and is
-banned outright unless the sentence can defend it.
+Terms that have leaked from internal strategy docs into buyer-facing
+copy. Each one reads as startup-speak to a reader who hasn't sat in
+the strategy meeting. Banned outright. ESLint rule will flag these in
+JSX strings.
 
-**Banned single-word and short-phrase concepts:**
+| Banned | Why it fails |
+|---|---|
+| *decision-grade* (anything) | Saying the proof is decision-grade is a way of saying the proof is good without showing it. |
+| *the wedge* / *our wedge* | The reader doesn't know what's being wedged into what. |
+| *the verdict* | Sounds like a courtroom; we're not in court. |
+| *the move* / *that's the move* | The reader needs the move, not the announcement that there is one. |
+| *the ledger* | A double-entry bookkeeping metaphor for "the spreadsheet." Use *the spreadsheet*. |
+| *account heat* | An NBA term retrofitted to sales. Say which accounts. |
+| *pressure* (as standalone noun) | Pressure of what kind, on whom, from where? Say it. |
+| *the operating system* / *our OS* | A 2018 startup-pitch trope. The reader has an operating system already; it's called Tuesday morning. |
+| *surface area* | Geometry doesn't help. Say which surface, which area. |
+| *source of truth* | Where the real number lives. Use that. |
+| *step-change* | A real shift in something specific. Name the shift. |
+| *north star* | The thing we'd shut the company down to protect. Say that thing. |
+| *table stakes* | The thing every serious buyer expects. Say what every serious buyer expects. |
+| *unlock* (as verb in business prose) | A door metaphor for "make possible." Say what's now possible. |
+| *level up* / *level-up* | Motivational register. Say the specific skill. |
+| *crush* (already banned base canon) | Repeated here. |
+| *masterclass* | Course or lesson. |
+| *playbook* (unless naming a specific named playbook from curriculum) | Otherwise replace with a description. |
+| *reimagine* / *reinvent* / *transform* (as marketing verbs) | The thing being reimagined is what to write about. |
+| *flywheel* (unless naming Jim Collins or Bezos) | Otherwise the metaphor is a tell. |
+| *moat* (unless naming Buffett) | Same. |
 
-- *decision-grade* (anything)
-- *the wedge* / *our wedge*
-- *the verdict*
-- *the move* / *that's the move*
-- *the ledger* (as conceptual shorthand)
-- *account heat* / *heat ranking*
-- *pressure* (as a standalone noun)
-- *the operating system* / *our OS*
-- *surface area* (as conceptual shorthand)
-- *source of truth*
-- *step-change*
-- *north star* / *the north star*
-- *table stakes*
-- *unlock* as a verb in business context ("this unlocks X")
-- *reimagine* / *reinvent* / *transform* (as verbs in marketing copy)
-- *flywheel* (unless naming Bezos)
-- *moat* (unless naming Buffett)
-- *level up* / *level-up* (motivational register)
-- *crush* (already banned in base canon, restated here)
-- *masterclass* (over-claim)
-- *playbook* unless naming a specific named playbook in the curriculum
-
-**Why each one fails the test.** Every term on this list is a
-shortcut that lets you skip naming the actual thing. The cost is a
-sentence the reader has to translate before they can react to it.
-
-**Test.** If you wrote any term on this list, the sentence is in
-draft. Don't ship until you've replaced the term with what it stands
-for, or until the sentence makes a case for the term being defensible
-in this exact use.
+### Test
+If a draft contains any term from this table, the sentence is not
+finished. Replace the term with what it stands for, or rewrite the
+sentence to not need it.
 
 ---
 
-## R-G5 · Read-aloud test
+## R-G5 · Read every sentence over twelve words out loud before shipping
 
-Any sentence over twelve words gets read aloud before it ships. If
-you stumble on it, the reader will too. Stumble once: rewrite the
-sentence. Stumble twice in a paragraph: the paragraph is wrong.
+If reading the sentence aloud makes the reader stumble — an awkward
+consonant run, a nested clause that needs re-parsing, a pronoun whose
+antecedent is three commas back — the sentence is broken.
 
-The test isn't whether you can read it. It's whether the sentence
-*wants* to be read aloud. Sentences with awkward consonant runs,
-nested clauses you have to mentally parse, or unclear pronoun
-references all fail.
+### Pass
+"Five days since you were last in the course. Probably nothing —
+week got loud, board prep, a deal slipped, normal stuff."
 
-**Pass.** "You bought the course a few weeks back and haven't been
-in for a stretch."
+Long sentence followed by a short list of real things. Reads aloud
+cleanly.
 
-**Fail.** "Pipeline coverage that decision-grade math validates as
-defensible is the metric that matters here." (Try saying that out
-loud once.)
+### Fail
+"Pipeline coverage that decision-grade math validates as defensible
+is the metric on which the conversation pivots."
+
+Five abstract nouns, two passive clauses, no anchors. Try saying it.
+
+### Test
+Stumble once on a sentence: rewrite the sentence. Stumble twice in a
+paragraph: rewrite the paragraph.
 
 ---
 
-## R-G6 · The bar test
+## R-G6 · Would your SDR friend Bilal say this at a bar on a Friday, sober?
 
-Would a thoughtful AE or SDR say this sentence at a bar, sober, when
-explaining the idea to a friend?
-
-Not dumbed-down — said the way an operator says it, not the way a
-deck-writer writes it. The bar test fails when:
-
-- The sentence requires a glossary
-- The sentence sounds like it's trying to impress
-- The sentence sounds like it was workshopped in a Notion doc
-- The cadence is "three-part list followed by a punchy single line"
-- The sentence ends on "and so on" or "etc." or a vague trailing clause
+The bar test fails when:
+- The sentence needs a glossary.
+- The sentence is doing more impressing than informing.
+- The cadence sounds workshopped — three-part list followed by a punchy line.
+- The sentence ends on *and so on*, *etc.*, *across the board*, or any other phrase the reader has to fill in.
+- The vocabulary is deck-vocabulary: *leverage* (verb), *operationalize*, *step-change*, *flywheel*.
 
 The bar test passes when:
+- The sentence is in operator-vocabulary: *number*, *quota*, *forecast*, *comp plan*, *bad month*, *Slack*, *Salesforce*, *CFO*.
+- The sentence has the small frictions a person speaking has — a parenthetical aside, a self-correction, an occasional mild profanity (in surface-appropriate places only — emails to customers, no; founder-voice in /about, yes if it earns it).
+- A friend outside of sales would still follow the meaning without being lost.
 
-- The sentence is in operator-vocabulary
-- The sentence carries the speaker's voice (occasional self-correction,
-  parenthetical aside, mild profanity if surface-appropriate)
-- A friend who doesn't sell software would still follow the meaning
+### Fail
+"Operationalising your discovery motion is table stakes for any AE at scale."
+
+### Pass
+"By month four your discovery calls should sound less like you reading
+from a script and more like you and your prospect figuring something
+out together. If that hasn't happened, Lesson 6 is where I'd start."
 
 ---
 
 ## R-G7 · AI-tell hygiene
 
-Constructions that read as auto-generated. Banned from every surface.
+The constructions below read as auto-generated. Every one of them
+adds zero meaning to the sentence and signals to the reader that
+the prose was written without care or by a model.
 
-**Phrase-level bans.**
-- "Let me explain"
-- "Here's the thing"
-- "In essence" / "At its core" / "Fundamentally" / "Ultimately"
-- "It's worth noting that"
-- "That said," (as a sentence opener)
-- "That being said,"
-- "Moreover" / "Furthermore" / "Additionally" (in body prose;
-  acceptable in formal procurement-style writing)
-- "Welcome to the future of"
-- "Reimagine X"
-- "X, but better"
-- "We don't just X — we Y"
-- "It's not about X. It's about Y." (as a paragraph opener — over-used)
-- "X is the new Y"
-- "Today, more than ever,"
+### Phrase-level bans
+- *Let me explain*
+- *Here's the thing*
+- *In essence* / *At its core* / *Fundamentally* / *Ultimately*
+- *It's worth noting that*
+- *That said,* / *That being said,*
+- *Moreover* / *Furthermore* / *Additionally* (in body prose; fine in
+  formal procurement / legal writing)
+- *Welcome to the future of*
+- *Reimagine X*
+- *X, but better*
+- *We don't just X — we Y*
+- *It's not about X. It's about Y.* (as a paragraph opener)
+- *X is the new Y*
+- *Today, more than ever,*
 
-**Structural patterns.**
-- Three-part rhetorical lists where each part is one word ("Faster.
-  Smarter. Better.") — instant AI tell.
-- Em-dash overuse: more than two per paragraph violates the base
-  canon's punctuation rule.
-- "First of all... Second... Finally..." enumeration in body prose.
-- Closing a paragraph with a one-line restatement of the paragraph's
-  thesis ("That's why X.")
-- Opening a paragraph with "Imagine X." (instant AI tell)
+### Structural bans
+- Three-part rhetorical lists where each item is one word ("Faster.
+  Smarter. Better.") — instant tell.
+- Em-dash overuse: more than two em-dashes per paragraph violates the
+  base canon's punctuation rule. (One per paragraph is the AESDR
+  sweet spot.)
+- "First of all... Second... Finally..." in body prose.
+- Closing a paragraph by restating the paragraph's thesis in a single
+  sentence ("That's why X.").
+- Opening a paragraph with "Imagine X."
 - Bullet lists where every item is a complete sentence ending in a
-  period — this is AI cadence; mix fragment-style and full-sentence
-  bullets in the same list.
+  period — pure AI cadence. Mix fragment-bullets and sentence-bullets
+  in the same list.
 
-**Test.** Paste the paragraph into a private window. If you can
-imagine ChatGPT producing it on the first try, it's wrong.
+### Test
+Paste the paragraph into a private ChatGPT window and ask it to
+generate prose like it. If the model produces something that reads
+close to your draft on the first try, your draft is too close to the
+generator.
+
+---
+
+## R-G8 · Prefer the plain noun over the literary verb
+
+When a noun already names the thing, don't dress it up with a verb
+that abstracts it.
+
+### Don't write
+- "The Q3 data showed weakness in mid-stage pipeline."
+- "His career demonstrated a pattern of ducking difficult accounts."
+- "The lesson reveals what good actually looks like."
+- "Her last quarter exhibited declining win rates."
+- "The framework illustrates the difference between coaching and counting."
+
+The verbs *showed*, *demonstrated*, *revealed*, *exhibited*,
+*illustrated* are doing nothing the noun couldn't do on its own.
+They buy time and dilute meaning.
+
+### Write instead
+- "Mid-stage pipeline was weak in Q3 — coverage at 2.4x against a
+  target of 3.5x."
+- "He ducked the difficult accounts every quarter for three years. His
+  pipeline got cleaner; his quota got harder."
+- "Lesson 4 names what good actually looks like, on a Wednesday, in a
+  1:1 your manager isn't paying attention to."
+- "Her win rate dropped from 34% to 22% across the last four quarters."
+- "Some managers coach; others count. Lesson 4 sorts which kind you
+  have."
+
+### The verbs to watch
+*Showed, demonstrated, revealed, exhibited, illustrated, indicated,
+suggested, conveyed, evidenced, manifested, expressed, communicated*
+(in the abstract sense).
+
+### Test
+If the sentence contains one of those verbs, ask: "could the noun
+do the work directly?" If yes, cut the verb.
 
 ---
 
 ## Expanded substitution table
 
-Extends §4 of the base canon. Specific replacements for the
-manufactured concepts in R-G4.
+Extends §4 of the base canon. Concrete replacements for the
+manufactured concepts in R-G4. Each replacement names a real thing —
+a tool, a time, a person, an artifact — rather than another
+abstraction.
 
 | Don't write | Write instead |
 |---|---|
-| the wedge | the entry point / the first lesson that earns the rest |
-| the verdict | the call / what to do / where I'd land |
-| the move | (don't introduce as a noun; name the move in the sentence) |
-| the ledger | what's on the page / the actual record |
-| account heat | which accounts would lose value if you waited a week |
-| pressure (noun) | the thing that's about to break / what's loud this week |
-| operating system | (avoid; describe the behaviour instead) |
-| surface area | exposure / what someone could see / what's been done |
-| source of truth | where the real number lives |
-| north star | the thing we'd kill the company over |
-| table stakes | what every serious buyer expects |
+| the wedge | the lesson you'd read aloud to a brand-new SDR in week one |
+| the verdict | what I'd do if I were sitting in your seat tomorrow morning |
+| the move | name the actual move — the email you'd send, the call you'd take, the slide you'd build |
+| the ledger | the spreadsheet / the CRM / the line in Salesforce |
+| account heat | which accounts would lose value this Thursday if you waited until next Thursday |
+| pressure (noun) | what's loud this week / what's about to break / what your VP is going to ask about on Friday |
+| operating system | (avoid; name the behaviour) |
+| surface area | which surface, which area — name them |
+| source of truth | the spreadsheet your manager keeps open / the line in Salesforce |
+| north star | the thing we'd shut down the company to protect |
+| table stakes | what every serious buyer expects to see in the first ten minutes |
 | unlock (verb) | open up / make possible / make available |
-| level up | get better at / move into / start doing |
-| step-change | a real shift / not the same kind of improvement |
-| reimagine | rebuild / re-think (in private docs only) |
-| crush quota | hit number / exceed quota |
+| level up | get better at the specific skill — name it |
+| step-change | a real shift in [the specific thing] |
+| reimagine | rebuild / re-think (use only in internal docs, never in marketing) |
+| crush quota | hit number / exceed quota / clear quota |
 | masterclass | course / lesson / training |
-| best-in-class | (delete; demonstrate instead) |
+| best-in-class | (delete the phrase; describe what's good about it) |
+| decision-grade proof | the math your CFO signs off on / the slide your VP forwards without rewriting |
 
 ---
 
 ## Updated quick tests (extends §9 of base canon)
 
-Before shipping any consumer-side or curriculum string, run these
-seven tests:
+Run these eight checks before shipping any consumer or curriculum
+string:
 
-1. **Did I write *rep*?** Replace with AE / SDR.
-2. **Did I write *crush*, *unleash*, *world-class*, *best-in-class*, or *revolutionary*?** Rewrite.
-3. **Did I make a numerical claim without a citation?** Add the citation or delete the number.
-4. **Could this sentence appear on three other SaaS sales courses?** Rewrite to be specific.
-5. **Is there a buried out-clause I forgot to surface?** Add it.
-6. **Did I use a manufactured concept from R-G4?** Replace with what it stands for.
-7. **Did the paragraph fail the read-aloud or bar test?** Rewrite.
+1. **Wrote *rep*?** Replace with AE / SDR.
+2. **Wrote *crush*, *unleash*, *world-class*, *best-in-class*,
+   *revolutionary*?** Rewrite.
+3. **Numerical claim without a citation?** Add the citation or cut
+   the number.
+4. **Could this sentence appear on three other SaaS sales courses?**
+   Rewrite to be specific.
+5. **Buried out-clause anywhere?** Surface it explicitly.
+6. **Used a manufactured concept from R-G4?** Replace with what it
+   stands for.
+7. **Paragraph failed the read-aloud or bar test?** Rewrite.
+8. **Used *showed*, *demonstrated*, *revealed* with a noun that
+   could do the work?** Cut the verb.
 
-If all seven pass, ship.
-
----
-
-## Surface-specific notes (extends §7 of base canon)
-
-### Curriculum body copy (the 6 → 9 lift)
-
-See `2026-05-19-curriculum-copy-rubric.md` for the rubric. The voice
-inside a lesson is the same voice as on the marketing site, with one
-adjustment: lessons can be more conversational, occasionally first-
-person, and may include parenthetical asides in the founder voice
-(see Appendix A of the base canon).
-
-### Email (every template in `lib/email.ts`)
-
-The new emails I shipped today already use the editorial format
-(cream background, mono eyebrow, crimson CTA, Source Serif body,
-signed Antaeus). The older templates that pre-date the canon —
-`sendDay3Email`, `sendDay7Email`, `sendAbandon1hr`, `sendAbandon24hr`,
-`sendTeamInviteEmail`, `sendWelcomeEmail`, `sendReceiptEmail`,
-`sendLessonCompleteEmail`, `sendRevealUnlockedEmail`, partner
-applications, teams inquiry — need a sweep.
-
-### Component-level copy
-
-Any component carrying user-visible strings inherits these rules.
-The biggest concentrations live in `LandingSequence`, `DeckStack`,
-`PricingTiers`, `Testimonials`, the FAQ block in `app/page.tsx`, and
-the brand microcopy in `AesdrBrand`, `GhostButton`, `EditorialMasthead`,
-`MobileGate`, `RoleSwitcher`.
-
-### Internal docs in `content/aesdr-internal/`, `content/partner-kit/`,
-`content/partner-kit-private/`
-
-These are not buyer-facing in the same way, but they're
-forwardable to buyers under partner-kit gates. Apply the same canon.
-Manufactured concepts in internal docs leak into partner copy faster
-than anywhere else.
+Eight tests. Two minutes. Cheaper than the post-ship rewrite.
 
 ---
 
-## Appendix C — Worked examples (the user-flagged paragraph)
+## Appendix C · Worked example (the paragraph the founder flagged on 2026-05-19)
 
-The founder flagged this specific paragraph in 2026-05-19 direction:
+The founder flagged this paragraph as off-canon:
 
-**Before (current draft, fails R-G3 + R-G4 + R-G7):**
+**Original (fails R-G3, R-G4, R-G1, R-G7).**
 
 > "Signals are time-limited. Heat ranks them. Motion comes from the
 > account ledger — not from research piling up."
 
-**Failure modes.**
-- Three short declarative sentences in a row (R-G3).
-- "Heat" as standalone noun for ranking concept (R-G4).
-- "Motion" and "ledger" as manufactured concepts (R-G4).
-- AI-output cadence (R-G7).
+What's wrong with each sentence:
+- *Signals are time-limited.* — "Signals" is doing concept work
+  without a referent. Time-limited how? On what clock?
+- *Heat ranks them.* — "Heat" is the R-G4 banned NBA-borrowed term.
+  Three-word telegraphic sentence stacks the R-G3 violation.
+- *Motion comes from the account ledger — not from research piling up.*
+  — "Motion" and "ledger" are both gummy. The em-dash is the third
+  beat in a three-beat AI cadence.
 
-**After (canon-compliant):**
+**Rewrite (passes all eight tests).**
 
-> "Signals don't sit there waiting for you — they age out. So the
-> question isn't which account looks interesting; it's which one
-> would lose value if you waited a week."
+> "Most of the accounts in your pipeline this Tuesday won't matter
+> in three weeks; they age out faster than your research keeps up.
+> The ones worth a Thursday-afternoon hour are the ones a competitor
+> would close while you're still pulling Apollo data on them."
 
-**Why it works.**
-- One long sentence + one shorter follow-up. Mix of length (R-G3).
-- No single-word abstract nouns (R-G1).
-- No manufactured concepts (R-G4).
-- Survives the read-aloud test (R-G5).
-- Reads the way an operator says it at a bar (R-G6).
-- No AI-tell patterns (R-G7).
+What works:
+- Names the day (Tuesday, Thursday).
+- Names the time window (three weeks).
+- Names a real tool (Apollo).
+- Names a real situation (a competitor closing during your research).
+- No single-word abstract nouns. No banned terms. No three-beat cadence.
+- Reads aloud cleanly. A second-year SDR would say this at a bar.
 
 ---
 
-## Appendix D — How this supplement is enforced
+## Appendix D · How this supplement is enforced
 
 See `2026-05-19-plan-to-canon-process.md` for the full lifecycle. In
-short: pre-merge PR checklist references R-G1 through R-G7;
-quarterly review checks for new patterns; ESLint blocklist for the
-R-G4 manufactured-concept terms in JSX strings.
+short:
+
+- ESLint blocklist for the R-G4 manufactured-concept terms in JSX
+  strings (mechanical).
+- Pre-merge PR checklist referencing R-G1 through R-G8 (taste).
+- Quarterly review for new patterns leaking in (cultural).
+
+Until the ESLint rule lands, R-G4 violations get caught by hand in
+PR review. The sweep planned in
+`2026-05-19-language-patch-master-plan.md` removes the existing
+violations from production surfaces.
