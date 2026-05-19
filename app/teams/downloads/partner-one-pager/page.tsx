@@ -90,16 +90,16 @@ export default function PartnerOnePagerPage() {
             }}
           >
             <div className={styles.onepageStat}>
-              <div className={styles.onepageStatNum}>8.4 mo</div>
-              <div className={styles.onepageStatCaption}>SDR ramp time, current avg</div>
+              <div className={styles.onepageStatNum}>51%</div>
+              <div className={styles.onepageStatCaption}>of AEs hit quota in 2024 (was 66% in 2022)</div>
             </div>
             <div className={styles.onepageStat}>
-              <div className={styles.onepageStatNum}>39%</div>
-              <div className={styles.onepageStatCaption}>First-year SDR turnover, SaaS</div>
+              <div className={styles.onepageStatNum}>1.9 yr</div>
+              <div className={styles.onepageStatCaption}>median SDR tenure — ~13 months productive</div>
             </div>
             <div className={styles.onepageStat}>
-              <div className={styles.onepageStatNum}>$115K</div>
-              <div className={styles.onepageStatCaption}>Cost of one failed SDR hire</div>
+              <div className={styles.onepageStatNum}>16%</div>
+              <div className={styles.onepageStatCaption}>SDR internal-promotion rate (was 34% in 2020)</div>
             </div>
           </div>
 
