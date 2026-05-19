@@ -1161,16 +1161,18 @@ export async function sendReviewRequest(to: string, name: string) {
 function reviewRequestHtml(name: string) {
   const safeName = esc(name);
   return `
-<div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
+<div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
+  <p style="margin:0 0 14px;font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
+    AESDR · You finished all 12
+  </p>
   <p>Hey ${safeName},</p>
   <p>You just finished the entire AESDR curriculum. That's rare — most people don't finish most things.</p>
-  <p><strong>Quick ask — takes 30 seconds:</strong></p>
-  <p>On a scale of 1–5, how useful was this course for your day-to-day work?</p>
-  <p>Reply with a number, or reply with a one-sentence testimonial I can use on the site. Something like:</p>
-  <p style="padding:12px 16px;background:#f5f5f5;border-left:3px solid #10B981;margin:12px 0"><em>"AESDR helped me [specific thing]. I'd recommend it for [type of AE/SDR]."</em></p>
-  <p>Your first name and role are enough — no need to share your company if you don't want to.</p>
-  <p>If you'd rate it 1–3, I want to hear what didn't work. Reply with what was missing or what felt off. I'd rather improve it than pretend everything's perfect.</p>
-  <p>— AESDR</p>
+  <p>One screen. Sixty seconds. Rate it 1–5, drop one sentence. If you grade us 1–3, that's the one I read first — I'd rather hear what to fix than not.</p>
+  <p style="margin:20px 0">
+    <a href="${SITE}/account/review" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">Leave a review →</a>
+  </p>
+  <p style="font-size:14px;color:#6B6B6B">Or just reply to this email if you'd rather type into your inbox. Both go to me.</p>
+  <p style="margin-top:24px">— Antaeus</p>
   ${footer()}
 </div>`;
 }
@@ -1192,14 +1194,17 @@ export async function sendReviewNudge(to: string, name: string) {
 function reviewNudgeHtml(name: string) {
   const safeName = esc(name);
   return `
-<div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
+<div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
+  <p style="margin:0 0 14px;font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
+    AESDR · Follow-up
+  </p>
   <p>Hey ${safeName},</p>
-  <p>Quick follow-up on my last email. I know you're busy — this takes 30 seconds.</p>
-  <p><strong>Option 1:</strong> Reply with a rating (1–5 stars).</p>
-  <p><strong>Option 2:</strong> Reply with one sentence about what was most useful. I'll use it as a testimonial (first name + role only).</p>
-  <p><strong>Option 3:</strong> Tell me what to fix. "Course X was confusing" or "the tool in Course 9 didn't help" — that kind of thing.</p>
-  <p>Any of those three would be genuinely helpful.</p>
-  <p>— AESDR</p>
+  <p>Last one on this from me. The review form is one screen, sixty seconds.</p>
+  <p style="margin:20px 0">
+    <a href="${SITE}/account/review" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">Leave a review →</a>
+  </p>
+  <p style="font-size:14px;color:#6B6B6B">Or reply with one of: a number 1–5, a sentence to publish (first name + role only), or what to fix. Any of the three is genuinely useful.</p>
+  <p style="margin-top:24px">— Antaeus</p>
   ${footer()}
 </div>`;
 }
