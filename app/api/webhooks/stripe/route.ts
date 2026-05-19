@@ -5,6 +5,12 @@ import * as Sentry from '@sentry/nextjs';
 import Stripe from 'stripe';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { sendWelcomeEmail, sendReceiptEmail } from '@/lib/email';
+import { logEvent } from '@/lib/events';
+import {
+  DEFAULT_COMMISSION_RATE,
+  ATTRIBUTION_WINDOW_MS,
+  REFUND_WINDOW_MS,
+} from '@/lib/affiliate';
 import { rateLimit, getClientIP } from '@/lib/rate-limit';
 
 function getStripe() {
@@ -248,6 +254,71 @@ export async function POST(request: Request) {
         Sentry.captureException(err, { extra: { handler: 'stripe-webhook', step: 'receipt_email' } });
       }
     }
+
+    // ── Affiliate attribution ────────────────────────────────────────
+    // If the checkout carried affiliate_link_id metadata (set by
+    // /api/checkout reading the aesdr_attribution cookie), write an
+    // affiliate_attributions row. Idempotent via the unique index on
+    // purchase_id — Stripe webhook retries won't double-attribute.
+    const affiliateLinkId = session.metadata?.affiliate_link_id;
+    const affiliateClickId = session.metadata?.affiliate_click_id;
+    if (affiliateLinkId && email && isNewPurchase) {
+      try {
+        const { data: linkRow } = await supabase
+          .from('affiliate_links')
+          .select('id, partner_slug')
+          .eq('id', affiliateLinkId)
+          .maybeSingle();
+
+        if (linkRow) {
+          const { data: purchaseRow } = await supabase
+            .from('purchases')
+            .select('id, purchased_at')
+            .eq('stripe_session_id', session.id)
+            .maybeSingle();
+
+          if (purchaseRow) {
+            const purchasedAt = new Date(purchaseRow.purchased_at);
+            const commissionCents = Math.round(amountCents * DEFAULT_COMMISSION_RATE);
+            const { error: attrErr } = await supabase.from('affiliate_attributions').upsert(
+              {
+                link_id: linkRow.id,
+                partner_slug: linkRow.partner_slug,
+                click_id: affiliateClickId || null,
+                purchase_id: purchaseRow.id,
+                user_email: email,
+                gross_amount_cents: amountCents,
+                commission_rate: DEFAULT_COMMISSION_RATE,
+                commission_amount_cents: commissionCents,
+                status: 'pending',
+                attribution_window_closes_at: new Date(
+                  purchasedAt.getTime() + ATTRIBUTION_WINDOW_MS
+                ).toISOString(),
+                refund_window_closes_at: new Date(
+                  purchasedAt.getTime() + REFUND_WINDOW_MS
+                ).toISOString(),
+              },
+              { onConflict: 'purchase_id' }
+            );
+            if (attrErr) {
+              Sentry.captureMessage('[webhook] Attribution insert failed', {
+                level: 'error',
+                extra: { error: attrErr.message, sessionId: session.id, linkId: linkRow.id },
+              });
+            } else {
+              await logEvent('affiliate_attributed', {
+                partner_slug: linkRow.partner_slug,
+                link_id: linkRow.id,
+                purchase_id: purchaseRow.id,
+                commission_cents: commissionCents,
+              }, { userId, email });
+            }
+          }
+        }
+      } catch (err) {
+        Sentry.captureException(err, { extra: { handler: 'stripe-webhook', step: 'affiliate_attribution' } });
+      }
+    }
   }
 
   if (event.type === 'charge.refunded') {
@@ -262,11 +333,25 @@ export async function POST(request: Request) {
       });
       const sessionId = sessions.data[0]?.id;
       if (sessionId) {
-        const { error } = await supabase
+        const { data: refundedPurchase, error } = await supabase
           .from('purchases')
           .update({ status: 'refunded' })
-          .eq('stripe_session_id', sessionId);
+          .eq('stripe_session_id', sessionId)
+          .select('id')
+          .maybeSingle();
         if (error) console.error('[webhook] Refund status update failed:', error.message);
+
+        // Flip any matching affiliate attribution to refunded too.
+        if (refundedPurchase?.id) {
+          await supabase
+            .from('affiliate_attributions')
+            .update({
+              status: 'refunded',
+              refunded_at: new Date().toISOString(),
+            })
+            .eq('purchase_id', refundedPurchase.id)
+            .in('status', ['pending', 'cleared']);
+        }
       }
     }
   }

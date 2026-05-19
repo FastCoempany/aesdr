@@ -1,9 +1,10 @@
 export const dynamic = 'force-dynamic';
 
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import Stripe from 'stripe';
 import { z } from 'zod';
 import { createAdminClient } from '@/utils/supabase/admin';
+import { ATTRIBUTION_COOKIE, parseAttributionCookie } from '@/lib/affiliate';
 import { rateLimit, getClientIP } from '@/lib/rate-limit';
 
 function getStripe() {
@@ -18,7 +19,7 @@ const checkoutSchema = z.object({
   artifact_type: z.enum(['playbill', 'redline']).optional(),
 });
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     // Rate limit: 5 checkout sessions per IP per hour
     const ip = getClientIP(request);
@@ -68,6 +69,12 @@ export async function POST(request: Request) {
       ? `${siteUrl}/dashboard`
       : `${siteUrl}/purchase/cancel`;
 
+    // Read attribution cookie (set by /r/[slug] when an affiliate's
+    // audience clicked through). Passed to Stripe as session metadata so
+    // the webhook can write an affiliate_attributions row after payment.
+    const attributionCookie = request.cookies.get(ATTRIBUTION_COOKIE)?.value;
+    const attribution = parseAttributionCookie(attributionCookie);
+
     const stripe = getStripe();
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: priceId, quantity: 1 }],
@@ -78,6 +85,12 @@ export async function POST(request: Request) {
       metadata: {
         tier,
         ...(artifact_type ? { artifact_type } : {}),
+        ...(attribution
+          ? {
+              affiliate_link_id: attribution.linkId,
+              affiliate_click_id: attribution.clickId,
+            }
+          : {}),
       },
     });
 
