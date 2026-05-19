@@ -441,3 +441,72 @@ Until the ESLint rule lands, R-G4 violations get caught by hand in
 PR review. The sweep planned in
 `2026-05-19-language-patch-master-plan.md` removes the existing
 violations from production surfaces.
+
+---
+
+## Appendix E · Positive patterns (use these on purpose)
+
+The R-G rules above are bans. This section names *constructions that
+work* — patterns the curriculum and marketing surfaces should reach
+for when they fit. Promoted to canon during the Unit 1.1 calibration
+on 2026-05-19.
+
+### E-P1 · The "X weeks down the line" frame
+
+When the lesson promises a future-state benefit, anchor it to a
+specific time horizon the reader already lives in. *"6 weeks down
+the line you're not guessing where you are in this world"* lands
+because it names both the clock (six weeks) and the lived experience
+(not guessing your standing).
+
+**Template.** *"so {N} weeks/months down the line you're not {the
+thing they're currently guessing about} in this world."*
+
+**Examples that fit.**
+- "...so 6 weeks down the line you're not guessing where you are in this world."
+- "...so 3 months down the line you're not guessing whether the deal closes."
+- "...so a year down the line you're not guessing why the comp plan changed."
+
+Use it sparingly — one to two times per unit. Over-use turns it
+into a tic.
+
+### E-P2 · The PIP → termination consequence sequence
+
+When the lesson names a consequence of structural failure, walk the
+real sequence: poor results → frustration → PIP → termination. The
+PIP is the under-named middle step that most curricula skip. Naming
+it gives the AE/SDR something specific to fear and specific to
+prevent.
+
+**Template.** *"...leads to poor results, frustration, a PIP, and
+the termination that comes after it."*
+
+Do not collapse to "attrition" or "resignation" — those soften the
+consequence and lose the AE/SDR's lived reality (the PIP is a
+document, the termination is a meeting, both are concrete).
+
+### E-P3 · Carve-out for in-lesson attestations
+
+Interactive attestation strings inside lesson gate-data — the
+sentences the AE/SDR types as a behaviour-anchoring commitment —
+are explicitly exempt from R-G1 through R-G8. Examples that read
+as motivational performance under brand voice (*"I researched this
+with my SDR because no one successful ever half-assed the
+fundamentals"*) are correct in the attestation context because the
+register IS the pedagogy.
+
+**Why exempt.** Attestations aren't AESDR speaking to the buyer.
+They're the AE/SDR speaking to themselves, in the register that
+makes the habit-formation loop land. Treating them as brand-voice
+violations would strip the pedagogical move that makes the lesson
+work.
+
+**Boundary.** The carve-out applies only to:
+- Strings typed by the user as a personal commitment
+- Strings rendered inside a lesson gate / quiz / interactive
+  acknowledgement
+- Strings the AE/SDR opts into rather than reads at them
+
+Marketing copy, FAQ entries, email subject lines, dashboard
+microcopy, and anything else where AESDR speaks to the buyer
+stays bound by R-G1 through R-G8.
