@@ -820,6 +820,148 @@ function managerArchetypeMapHtml() {
 </div>`;
 }
 
+// ─── Lesson-completed nudge: 24h after a completion ───
+// Capitalises on the warm "I just shipped a thing" moment. Names the
+// next lesson, gives the rough time, kills the open-tab cost. Per
+// behavioral audit H.2.5.
+
+export async function sendLessonCompletedNudge(
+  to: string,
+  name: string,
+  nextLessonId: string,
+  nextLessonTitle: string,
+  nextMinutes: number
+) {
+  return safeSend(`lesson-complete-nudge to ${to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to,
+      headers: UNSUBSCRIBE_HEADERS,
+      subject: `Next: ${nextLessonTitle} (~${nextMinutes} min)`,
+      html: lessonCompletedNudgeHtml(name, nextLessonId, nextLessonTitle, nextMinutes),
+    })
+  );
+}
+
+function lessonCompletedNudgeHtml(
+  name: string,
+  nextLessonId: string,
+  nextLessonTitle: string,
+  nextMinutes: number
+) {
+  const safeName = esc(name);
+  const safeTitle = esc(nextLessonTitle);
+  const safeLesson = esc(nextLessonId);
+  return `
+<div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
+  <p style="margin:0 0 14px;font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
+    AESDR · Yesterday you finished a lesson
+  </p>
+  <p>Hey ${safeName},</p>
+  <p>One down. Momentum's a fickle thing in self-paced courses — the gap between &ldquo;I'll do the next one tomorrow&rdquo; and &ldquo;I'll do the next one&rdquo; is where most curricula die.</p>
+  <p>Next up: <strong>${safeTitle}</strong>. Roughly ${nextMinutes} minutes. Same window you used yesterday is the cheapest decision you can make.</p>
+  <p style="margin:20px 0">
+    <a href="${SITE}/course/${safeLesson}" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">Open ${safeTitle} →</a>
+  </p>
+  <p style="margin-top:24px">— Antaeus</p>
+  ${footer()}
+</div>`;
+}
+
+// ─── Weekly framing: Sunday "this week" ───
+// Mid-program engagement primer. Sent each Sunday to active learners who
+// have started but not finished. Names what they're likely to encounter,
+// not which lesson — the lesson is theirs to pick. Per H.3.3.
+
+export async function sendWeeklyFraming(
+  to: string,
+  name: string,
+  completed: number,
+  total: number
+) {
+  return safeSend(`weekly-framing to ${to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to,
+      headers: UNSUBSCRIBE_HEADERS,
+      subject: "This week, expect this",
+      html: weeklyFramingHtml(name, completed, total),
+    })
+  );
+}
+
+function weeklyFramingHtml(name: string, completed: number, total: number) {
+  const safeName = esc(name);
+  const remaining = total - completed;
+  const stage =
+    completed === 0
+      ? "Week one is foundational — camaraderie, silos, how the team you're on actually works (and where it doesn't)."
+      : completed < total / 3
+        ? "You're in the foundation half. Expect short lessons that re-wire how you read your own pipeline and your own manager."
+        : completed < (total * 2) / 3
+          ? "Middle third — the harder ones: prospecting math, the 30% rule, the CRM as a friend or witness. Heavier reps."
+          : "Final third. Compensation realities, sober selling, the relationship-graph lesson nobody else teaches. Hardest because you'll recognise yourself.";
+  return `
+<div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
+  <p style="margin:0 0 14px;font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
+    AESDR · Sunday framing
+  </p>
+  <p>Hey ${safeName},</p>
+  <p>You're ${completed} of ${total} in. ${remaining > 0 ? `${remaining} to go.` : ""}</p>
+  <p>${stage}</p>
+  <p>You don't have to do all of it this week. You have to do one. The window you blocked when you signed up is enough.</p>
+  <p style="margin:20px 0">
+    <a href="${SITE}/dashboard" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">Open the dashboard →</a>
+  </p>
+  <p style="margin-top:24px">— Antaeus</p>
+  ${footer()}
+</div>`;
+}
+
+// ─── Win-back: silent post-refund-window cohort ───
+// Sent once, ~45 days after purchase, only to customers who completed <3
+// lessons and have been quiet for ≥30d. Frame is dignity-first, no
+// guilt — explicit out-clause. Per H.4.4.
+
+export async function sendWinBack(to: string, name: string) {
+  return safeSend(`win-back to ${to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to,
+      headers: UNSUBSCRIBE_HEADERS,
+      subject: "Is this still useful — or should we close the loop?",
+      html: winBackHtml(name),
+    })
+  );
+}
+
+function winBackHtml(name: string) {
+  const safeName = esc(name);
+  return `
+<div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
+  <p style="margin:0 0 14px;font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
+    AESDR · A clean check-in
+  </p>
+  <p>Hey ${safeName},</p>
+  <p>You bought the course a few weeks back and haven't been in for a stretch. That can mean three different things, and all of them are fine.</p>
+  <p style="border-left:3px solid #8B1A1A;padding:6px 0 6px 12px;margin:14px 0;font-style:italic;color:#1A1A1A">
+    1. It wasn't a fit. Tell me why in one line and I'll learn something. The refund window's closed, but I'd still rather know.
+  </p>
+  <p style="border-left:3px solid #8B1A1A;padding:6px 0 6px 12px;margin:14px 0;font-style:italic;color:#1A1A1A">
+    2. Life happened. Quota week, board prep, family. Reply with a date and I'll send you back a re-entry email then — once, no sequence.
+  </p>
+  <p style="border-left:3px solid #8B1A1A;padding:6px 0 6px 12px;margin:14px 0;font-style:italic;color:#1A1A1A">
+    3. You'd actually like to start now. Pick Lesson 1, block 25 minutes this week, hit it.
+  </p>
+  <p style="margin:20px 0">
+    <a href="${SITE}/dashboard" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">Open the dashboard →</a>
+  </p>
+  <p style="font-size:14px;color:#6B6B6B">If none of those land, no further emails on this — promise. You have lifetime access; the course will be here if and when you come back.</p>
+  <p style="margin-top:24px">— Antaeus</p>
+  ${footer()}
+</div>`;
+}
+
 // ─── Day 3 Drip Email ───
 
 // ─── Day-0 (+12hr): "what to do first" ───

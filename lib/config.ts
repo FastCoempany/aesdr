@@ -32,6 +32,25 @@ export const TIMING = {
     nudgeAfterRequest: 4 * DAY,
   },
 
+  /** Lesson-completion nudge — fire the day after a lesson is marked done. */
+  lessonNudge: {
+    after: 24 * HOUR,
+    window: 24 * HOUR,
+  },
+
+  /** Weekly framing — Sunday nudge to active in-progress learners. */
+  weeklyFraming: {
+    minDaysSincePurchase: 5,    // skip the first Sunday after purchase
+    maxDaysSincePurchase: 90,   // stop nudging stale cohorts (win-back picks up)
+  },
+
+  /** Win-back — past refund window, low engagement, long-silent. */
+  winBack: {
+    after: 45 * DAY,
+    maxCompletedLessons: 2,
+    minDaysSilent: 30,
+  },
+
   /** Progress saving */
   progress: {
     debounceMs: 1500,

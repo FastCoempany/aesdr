@@ -33,6 +33,12 @@ export type EventMap = {
   testimonial_submitted: { rating: number; permit_publish: boolean };
   /** LinkedIn-share button clicked from the certificate. */
   certificate_shared: { surface: "linkedin" | "copy_link" };
+  /** Outbound: lesson-completed nudge dispatched. */
+  lesson_nudge_sent: { lesson_id: string; next_lesson_id: string };
+  /** Outbound: Sunday framing email dispatched. */
+  weekly_framing_sent: { completed: number; total: number };
+  /** Outbound: win-back email dispatched. */
+  win_back_sent: { completed: number; purchased_at: string };
 };
 
 export type EventType = keyof EventMap;
