@@ -58,6 +58,20 @@ export default async function Dashboard() {
   const cookieStore = await cookies();
   const hasBypass = cookieStore.get("aesdr_bypass")?.value === "1";
 
+  // First-visit-after-purchase: route through onboarding so we capture the
+  // implementation-intention study window. Dismissable via "Skip for now"
+  // on the onboarding screen, which sets aesdr_onboarding_skipped. We keep
+  // the bypass cookie on the same allowlist — founder previews shouldn't
+  // get pushed into onboarding.
+  if (
+    user &&
+    !user.user_metadata?.onboarding_completed &&
+    !cookieStore.get("aesdr_onboarding_skipped") &&
+    !hasBypass
+  ) {
+    redirect("/account/onboarding");
+  }
+
   // Parallelize purchase-access check, course progress, and reveal pick.
   // These are independent queries that all depend only on user.id.
   const [hasAccess, progressRes, pickRes] = await Promise.all([

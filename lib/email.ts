@@ -718,6 +718,108 @@ function receiptHtml(name: string, tier: string, amountCents: number) {
 </html>`;
 }
 
+// ─── Free reciprocity asset: Manager Archetype Map ───
+// Sent when an AE/SDR drops their email on /free/manager-archetype-map.
+// Goal: re-deliver the asset to their inbox so it survives a closed tab,
+// and put one (1) low-pressure pointer to the full course in the same
+// message. No follow-up sequence — that's a promise on the capture form.
+
+export async function sendManagerArchetypeMap(to: string) {
+  return safeSend(`manager-archetype-map to ${to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to,
+      headers: UNSUBSCRIBE_HEADERS,
+      subject: "Your Manager Archetype Map",
+      html: managerArchetypeMapHtml(),
+    })
+  );
+}
+
+function managerArchetypeMapHtml() {
+  const archetypes = [
+    {
+      name: "The Coach",
+      snapshot: "Asks. Listens. Mirrors you back to yourself.",
+      move:
+        "End your 1:1 with one decision you made this week, one you're stuck on, and the option you're leaning toward.",
+    },
+    {
+      name: "The Operator",
+      snapshot: "Owns the dashboard. The number is the conversation.",
+      move:
+        "Send a Friday five-line: last week's number, this week's, the gap, what's closing it, what isn't.",
+    },
+    {
+      name: "The Closer",
+      snapshot: "Wants in the room. Reads silence as you hiding the deal.",
+      move:
+        "Pre-brief them on one live deal mid-week. Tell them the part you're not sure about. Let them decide if they're joining.",
+    },
+    {
+      name: "The Ghost",
+      snapshot: "Skips. Reschedules. Surfaces only when something's wrong.",
+      move:
+        "Write your update. Don't ask for their time. Make the next step a yes/no question they can answer in 20 seconds.",
+    },
+  ];
+
+  const rows = archetypes
+    .map(
+      (a) => `
+    <tr>
+      <td style="padding:18px 0;border-bottom:1px solid #E8E4DF">
+        <p style="margin:0 0 4px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:20px;color:#1A1A1A">
+          ${esc(a.name)}
+        </p>
+        <p style="margin:0 0 10px;font-family:Georgia,'Source Serif 4',serif;font-style:italic;font-size:14px;color:#6B6B6B">
+          ${esc(a.snapshot)}
+        </p>
+        <p style="margin:0;font-family:'SF Mono',monospace;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#8B1A1A">
+          This week's move
+        </p>
+        <p style="margin:4px 0 0;font-family:Georgia,'Source Serif 4',serif;font-size:15px;line-height:1.6;color:#1A1A1A">
+          ${esc(a.move)}
+        </p>
+      </td>
+    </tr>`
+    )
+    .join("");
+
+  return `
+<div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:620px;margin:0 auto;padding:32px 24px;line-height:1.65;background:#FAF7F2">
+  <p style="margin:0 0 14px;font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
+    AESDR · Free · Manager Archetype Map
+  </p>
+  <h1 style="margin:0 0 12px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:900;font-size:32px;line-height:1.1;color:#1A1A1A">
+    Four manager OSes.<br/>One you're running on.
+  </h1>
+  <p style="margin:0 0 24px;color:#6B6B6B;font-size:16px">
+    Pinned here for your notebook. Skim it Sunday, run the move during the week.
+    If it doesn't land, just hit reply and tell me why — that's how the next version improves.
+  </p>
+
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-top:1px solid #E8E4DF">
+    ${rows}
+  </table>
+
+  <p style="margin:28px 0 8px;font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B">
+    Optional · One pointer · Then I'm out of your inbox
+  </p>
+  <p style="margin:0 0 12px">
+    This is one tool from Lesson 3 of the full course. Eleven more lessons,
+    five takeaway tools, lifetime access. 14-day refund if it doesn't deliver.
+  </p>
+  <p style="margin:0 0 24px">
+    <a href="${SITE}/#pricing" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">See the full course →</a>
+  </p>
+  <p style="margin:0;color:#6B6B6B;font-size:14px">
+    — Antaeus
+  </p>
+  ${footer()}
+</div>`;
+}
+
 // ─── Day 3 Drip Email ───
 
 // ─── Day-0 (+12hr): "what to do first" ───
@@ -945,13 +1047,16 @@ function dropoff5dHtml(name: string, lessonId: string, lessonTitle: string) {
   const safeTitle = esc(lessonTitle);
   const safeLesson = esc(lessonId);
   return `
-<div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
+<div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
+  <p style="margin:0 0 14px;font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
+    AESDR · Five days since
+  </p>
   <p>Hey ${safeName},</p>
-  <p>It's been a few days since you were in the course. No guilt — life happens, quota happens, Monday meetings happen.</p>
-  <p>You left off at <strong>${safeTitle}</strong>. Here's a direct link to pick up where you stopped:</p>
-  <p><strong><a href="${SITE}/course/${safeLesson}" style="color:#10B981">Continue ${safeTitle} →</a></strong></p>
-  <p>If you're stuck or something didn't make sense, reply to this email. Real person, real inbox.</p>
-  <p>— AESDR</p>
+  <p>Five days since you were last in the course. Probably nothing — week got loud, board prep, a deal slipped, normal stuff.</p>
+  <p>You stopped at <strong>${safeTitle}</strong>. Picking it back up is one click:</p>
+  <p><a href="${SITE}/course/${safeLesson}" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px;margin:8px 0">Continue ${safeTitle} →</a></p>
+  <p>If something in the lesson felt off — boring, wrong, hard to follow — reply to this email and tell me. I'd rather fix the curriculum than have you fade out.</p>
+  <p style="margin-top:24px">— Antaeus</p>
   ${footer()}
 </div>`;
 }
@@ -973,22 +1078,25 @@ export async function sendDropoff10d(to: string, name: string) {
 function dropoff10dHtml(name: string) {
   const safeName = esc(name);
   return `
-<div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
+<div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
+  <p style="margin:0 0 14px;font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
+    AESDR · Ten days since
+  </p>
   <p>Hey ${safeName},</p>
-  <p>Not going to nag. Instead, here's one actionable thing from the course you haven't seen yet:</p>
-  <p><strong>The Weekly Alignment Email</strong></p>
-  <p>Every Friday, send your manager a 5-line email:</p>
-  <ol>
-    <li>What I did this week (metrics + context)</li>
-    <li>One win</li>
-    <li>One blocker (with a proposed solution)</li>
-    <li>One question for them</li>
-    <li>My plan for next week</li>
+  <p>Not going to chase. Instead, one actual thing from the course you haven't seen yet — useful whether or not you come back:</p>
+  <p style="margin:18px 0 8px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:18px;color:#1A1A1A">The Friday five-line email</p>
+  <p>Send your manager this, every Friday:</p>
+  <ol style="line-height:1.8;padding-left:24px;margin:8px 0 16px">
+    <li>What I did this week — metrics + context.</li>
+    <li>One win.</li>
+    <li>One blocker, with a proposed fix.</li>
+    <li>One question for you.</li>
+    <li>My plan for next week.</li>
   </ol>
-  <p>That's it. Takes 8 minutes. It flips the power dynamic in your 1:1 and creates a paper trail that protects you in reviews.</p>
-  <p>There's more where that came from.</p>
-  <p><strong><a href="${SITE}/dashboard" style="color:#10B981">Jump back in →</a></strong></p>
-  <p>— AESDR</p>
+  <p>Eight minutes. Flips the power dynamic in your 1:1 because you set the agenda. Creates a paper trail that protects you when a manager-archetype shifts at review time.</p>
+  <p>That's one tool from Module 4. The other 35 lessons have more like it.</p>
+  <p><a href="${SITE}/dashboard" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px;margin:8px 0">Pick it back up →</a></p>
+  <p style="margin-top:24px">— Antaeus</p>
   ${footer()}
 </div>`;
 }
@@ -1011,20 +1119,27 @@ function dropoff21dHtml(name: string, lessonId: string) {
   const safeName = esc(name);
   const safeLesson = esc(lessonId);
   return `
-<div style="font-family:system-ui,-apple-system,sans-serif;color:#333;max-width:560px;margin:0 auto;padding:24px;line-height:1.7">
+<div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
+  <p style="margin:0 0 14px;font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
+    AESDR · Three weeks since — last note
+  </p>
   <p>Hey ${safeName},</p>
-  <p>This is the last re-engagement email I'll send. After this, I'll leave you alone.</p>
-  <p>Before I do — I'd genuinely like to know:</p>
-  <p><strong>Was something off?</strong></p>
-  <ul>
-    <li>Was the content not relevant to your role?</li>
-    <li>Did something feel confusing or poorly designed?</li>
-    <li>Did life just get in the way?</li>
-  </ul>
-  <p>Reply with a one-liner if you want. Or don't. Either way, your account is active and your progress is saved. Come back whenever.</p>
-  <p>If you need anything: <a href="mailto:hello@aesdr.com" style="color:#10B981">hello@aesdr.com</a></p>
-  <p>— AESDR</p>
-  <p style="font-size:13px;color:#666"><em>P.S. — If you want to pick it back up, here's the link: <a href="${SITE}/course/${safeLesson}" style="color:#10B981">Continue →</a></em></p>
+  <p>Last re-engagement email from me. After this, no more nudges — you're on your own timeline, and that's fine.</p>
+  <p>Three things before I go quiet:</p>
+  <p style="margin:18px 0;padding:14px 18px;border-left:3px solid #8B1A1A;background:#FFFFFF;">
+    <strong style="display:block;margin-bottom:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.12em;text-transform:uppercase;font-size:12px;color:#1A1A1A">If it wasn't a fit</strong>
+    Reply REFUND. Inside the 14-day window we process within 3 business days. Outside it, reply anyway — for AESDR, the refund window has been more guideline than rule when the buyer's been honest with me.
+  </p>
+  <p style="margin:18px 0;padding:14px 18px;border-left:3px solid #8B1A1A;background:#FFFFFF;">
+    <strong style="display:block;margin-bottom:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.12em;text-transform:uppercase;font-size:12px;color:#1A1A1A">If life happened</strong>
+    Your progress is saved. Access is lifetime. Pick it back up in a week, a month, a year — same login, same lessons, same Discord. The course doesn't expire just because you did.
+  </p>
+  <p style="margin:18px 0;padding:14px 18px;border-left:3px solid #8B1A1A;background:#FFFFFF;">
+    <strong style="display:block;margin-bottom:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.12em;text-transform:uppercase;font-size:12px;color:#1A1A1A">If something was wrong</strong>
+    Reply with one line — what didn't land. I read every reply. The curriculum gets better when buyers tell me what felt off.
+  </p>
+  <p>If you want to pick up where you stopped: <a href="${SITE}/course/${safeLesson}" style="color:#8B1A1A;text-decoration:underline">continue here</a>.</p>
+  <p style="margin-top:24px">— Antaeus</p>
   ${footer()}
 </div>`;
 }
