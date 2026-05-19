@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "canon-check": "node scripts/canon-check.mjs --soft",
+    "canon-check:strict": "node scripts/canon-check.mjs",
     "test": "playwright test",
     "test:api": "playwright test --grep @api",
     "test:ui": "playwright test --grep @ui"

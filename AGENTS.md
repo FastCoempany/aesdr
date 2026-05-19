@@ -4,6 +4,47 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
+<!-- BEGIN:consumer-brand-voice-canon -->
+# Consumer brand-voice canon — read before writing any buyer-facing copy
+
+Every change touching strings on a buyer-facing surface (`app/`, `components/`,
+`lib/email.ts`, `content/lessons/`, `content/partner-kit*`) is checked against
+the rules in:
+
+- `docs/canon-revisions/2026-05-19-consumer-brand-voice-canon.md` — base canon
+  (blocklist, substitution table, seven moves, surface notes)
+- `docs/canon-revisions/2026-05-19-language-patch-supplement.md` — eight R-G
+  rules (R-G1 gummy abstractions, R-G2 trailing pronouns, R-G3 telegraphic
+  cadence, R-G4 manufactured-concept blocklist, R-G5 read-aloud test, R-G6
+  bar test, R-G7 AI-tell hygiene, R-G8 plain noun over literary verb)
+- `docs/canon-revisions/2026-05-19-curriculum-copy-rubric.md` — six-axis
+  scoring for lesson content (target ≥9/10 per unit, no axis below 1)
+- `docs/canon-revisions/2026-05-19-plan-to-canon-process.md` — how patterns
+  become canon and how canon stays enforced
+- `docs/canon-revisions/2026-05-19-language-patch-master-plan.md` — itemised
+  sweep checklist (every route, component, email, internal doc, lesson unit)
+- `AFFILIATE_BRAND_CANON.md` — overlapping rules for partner-side surfaces
+- `AESDR_ENTERPRISE_CANON.md` — B2B subsidiary brand register
+
+Mechanical enforcement:
+- ESLint `no-restricted-syntax` rule in `eslint.config.mjs` flags hard-banned
+  R-G4 terms in JSX strings + template literals across `app/**` + `components/**`.
+- `scripts/canon-check.mjs` greps .md / .html / .txt for the same patterns
+  ESLint can't reach. Run `node scripts/canon-check.mjs --soft` for a report;
+  drop `--soft` for CI-style exit-1-on-hit.
+
+Taste enforcement:
+- PR template (`.github/pull_request_template.md`) has the R-G1 → R-G8 checks
+  as a checklist the reviewer ticks before merge.
+
+Naming separation:
+- `/partners/*` is the consumer-side affiliate hub. Write "Partners" (capital P,
+  program name) or "affiliates."
+- `/enterprise/*` is the B2B subsidiary. The channel-partnerships page is at
+  `/enterprise/channel` — write "channel partners" with the "channel" prefix
+  on first use. Never bare "partner."
+<!-- END:consumer-brand-voice-canon -->
+
 <!-- BEGIN:brand-palette -->
 # Brand palette — RETIRED vs ACTIVE
 

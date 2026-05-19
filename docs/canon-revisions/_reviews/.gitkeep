@@ -1,0 +1,15 @@
+# Quarterly canon reviews
+
+One file per review session: YYYY-Q*.md. Three questions:
+- Is the rule still violated in the wild?
+- Was the rule violated by someone who'd read it?
+- Has a new pattern emerged?
+
+See Step 5 of the lifecycle in
+docs/canon-revisions/2026-05-19-plan-to-canon-process.md.
+
+First quarterly review scheduled for 2026-08-19.
+
+This folder also hosts the rolling progress doc for the language-patch
+overhaul: 2026-language-patch-progress.md (created when batch 3
+ships).

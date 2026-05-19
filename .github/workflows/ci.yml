@@ -31,6 +31,13 @@ jobs:
       - name: Type check
         run: npx tsc --noEmit
 
+      # Soft mode — surfaces canon-violation counts in CI logs without
+      # failing the build. Will be promoted to strict once the language
+      # sweep (batches 3-8 in docs/canon-revisions/2026-05-19-language-
+      # patch-master-plan.md) zeroes out the existing 332-hit backlog.
+      - name: Canon check (soft)
+        run: npm run canon-check
+
       - name: Build
         run: npm run build
         env:
