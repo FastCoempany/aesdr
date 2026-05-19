@@ -27,13 +27,13 @@
 - First-1-to-2-year SDRs and AEs in startup SaaS — feast-or-famine income, ramp pressure, real chaos.
 - SDR managers buying for ramp acceleration on junior hires.
 - Career-switchers in their first SaaS sales role.
-- Reps frustrated by broken tools, bloated CRMs, and shifting goalposts.
+- AEs and SDRs frustrated by broken tools, bloated CRMs, and shifting goalposts.
 
 ### Who this is not for
 
 - People looking for motivation.
 - Anyone hunting LinkedIn-friendly badges, certifications, or recruiter clout.
-- Reps with 10+ years in the seat who aren't open to a re-look at fundamentals.
+- AEs and SDRs with 10+ years in the seat who aren't open to a re-look at fundamentals.
 - Operators whose primary distribution motion is sponsored carousels.
 
 ---

@@ -40,7 +40,7 @@ Do not name a specific person. The brand is the brand-of-record. (See canon §1.
 
 ### A5. Counter-positioning claim (canonical)
 
-> *"No motivational BS. No 'crush your quota' energy."*
+> *"No motivational performance. No guru routines."*
 > *"The operating manual, not the motivation engine."*
 
 These are two of our most load-bearing brand lines. They earn their keep on every surface.
@@ -73,7 +73,7 @@ These claims are off-limits in every channel, surface, and voice — regardless 
 
 Forbidden — examples of what nobody says:
 
-- ❌ "Reps who take this course make $X more."
+- ❌ "AEs and SDRs who take this course make $X more."
 - ❌ "AESDR pays for itself in your first commission cycle."
 - ❌ "Average AE income increase: $Y."
 
@@ -85,7 +85,7 @@ Even *true* income claims become legally fraught the moment they go on a public 
 - ❌ "AESDR helps you get promoted from SDR to AE."
 - ❌ "X% of students land their next role within Y months."
 
-We are a course, not a placement program. We do not promise outcomes that depend on the rest of the rep's life.
+We are a course, not a placement program. We do not promise outcomes that depend on the rest of the AE/SDR's life.
 
 ### B3. Performance / outcome promises
 
@@ -99,7 +99,7 @@ Promises like these tie our marketing to a number we don't control. We talk abou
 
 - ❌ "The best sales course on the internet."
 - ❌ "The only course built by quota-carriers."
-- ❌ "The #1 program for early-career SaaS reps."
+- ❌ "The #1 program for early-career SaaS AEs and SDRs."
 
 We don't compete by claim. We compete by being.
 

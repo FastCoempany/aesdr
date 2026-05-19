@@ -5,9 +5,9 @@ What partners need to know about what AESDR teaches — without enrolling.
 ## The shape
 
 12 courses. Sequenced from foundational to advanced. Each course pairs
-operating frameworks with one or more interactive worksheets the rep keeps.
+operating frameworks with one or more interactive worksheets the AE/SDR keeps.
 Five takeaway tools unlock across the program — practical artifacts (alignment
-contract, strike plan, ROI tracker, and two more) reps use after the course
+contract, strike plan, ROI tracker, and two more) AEs and SDRs use after the course
 ends.
 
 The format is interactive HTML, not video lectures. A lesson takes 15–25
@@ -16,7 +16,7 @@ weekend before quarter end.
 
 ## The four arcs
 
-The 12 courses cluster into four operating concerns reps face in their first
+The 12 courses cluster into four operating concerns AEs and SDRs face in their first
 two years:
 
 - **Survive ramp.** First 90 days, manager dynamics, expectation calibration.
@@ -39,5 +39,5 @@ two years:
 ## What every license includes
 
 Lifetime access to all 12 courses, all 5 tools, all future updates. A private
-Discord — *Untamed* — for reps who finished or are deep in the work.
+Discord — *Untamed* — for AEs and SDRs who finished or are deep in the work.
 14-day, no-questions-asked refund. One price, paid once.

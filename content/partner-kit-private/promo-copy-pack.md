@@ -37,10 +37,10 @@ workshop. ~250–320 words including disclosure.
 >
 > *Most sales-training content rewards confidence over competence and
 > formatting over thinking. AESDR is the opposite: a 12-lesson operating
-> manual built around the part of the role most reps figure out the hard
+> manual built around the part of the role most AEs and SDRs figure out the hard
 > way — what good actually looks like, how to read your own pipeline
-> honestly, and the three judgment moves that separate the rep who
-> survives ramp from the rep who doesn't.*
+> honestly, and the three judgment moves that separate the AE/SDR who
+> survives ramp from the AE/SDR who doesn't.*
 >
 > ***In the workshop, you'll leave with:***
 >
@@ -177,7 +177,7 @@ locked elements stay.
 > *This week's episode is a quick announcement, not a full conversation.
 > I'm hosting a live workshop for `[YOUR_AUDIENCE_DESCRIPTOR]` with
 > AESDR — a 12-lesson sales-training program built for early-career SaaS
-> reps. Most sales-training rewards confidence over competence; AESDR is
+> AEs and SDRs. Most sales-training rewards confidence over competence; AESDR is
 > the opposite. Operating manual, not motivation engine.*
 >
 > *60 minutes live. Replay for 72 hours after. Free to attend. There's
@@ -209,7 +209,7 @@ beyond these six requires an approval round.
 ### Post 1 — "operating gap" framing
 **Pre-cleared for:** LinkedIn, Twitter/X (short thread), Substack note, Bluesky.
 
-> *Most reps lose ramp not from missing pipeline but from not knowing why
+> *Most AEs and SDRs lose ramp not from missing pipeline but from not knowing why
 > they missed.*
 >
 > *Activity is the loud number. Judgment is the quiet one. Both compound —

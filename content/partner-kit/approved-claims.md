@@ -10,7 +10,7 @@ for someone who hasn't done the work yet.
 > *"AESDR is a 12-lesson sales survival course for first-1-to-2-year SDRs
 > and AEs in startup SaaS. Self-paced, interactive, lifetime access."*
 
-> *"Built by people who carried bags and managed reps for a decade — not
+> *"Built by people who carried bags and managed AEs and SDRs for a decade — not
 > by people who read about it."*
 
 > *"$249 SDR, $299 AE, $1,499 for a 10-seat team. Lifetime access.

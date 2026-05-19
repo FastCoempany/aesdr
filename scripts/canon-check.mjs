@@ -77,6 +77,7 @@ const SKIP_FILE_PATTERNS = [
   /docs\/canon-revisions\//,
   /^AFFILIATE_BRAND_CANON\.md$/,
   /content\/partner-kit\/banned-vocabulary\.md$/,
+  /content\/aesdr-internal\/00-canon-excerpt\.md$/,
   /\.test\.(md|mdx)$/,
 ];
 

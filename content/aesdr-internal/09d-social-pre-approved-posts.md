@@ -26,7 +26,7 @@
 
 **Pre-cleared for:** LinkedIn (text post), Twitter/X (thread, broken into ~3 posts), Substack note, Bluesky.
 
-> *Most reps lose ramp not from missing pipeline but from not knowing why they missed.*
+> *Most AEs and SDRs lose ramp not from missing pipeline but from not knowing why they missed.*
 >
 > *Activity is the loud number. Judgment is the quiet one. Both compound — but only one of them shows up in your 1:1.*
 >

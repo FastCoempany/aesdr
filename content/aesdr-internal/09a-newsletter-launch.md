@@ -38,7 +38,7 @@ You may add up to **two sentences** of your own framing at the very top — your
 
 > *I'm hosting a live workshop for `[YOUR_AUDIENCE_DESCRIPTOR]` on `[WORKSHOP_DATE]` at `[WORKSHOP_TIME_TZ]`, with AESDR. The workshop is built for early-career SaaS SDRs and AEs in their first 0–3 years.*
 
-> *Most sales-training content rewards confidence over competence and formatting over thinking. AESDR is the opposite: a 12-lesson operating manual built around the part of the role most reps figure out the hard way — what good actually looks like, how to read your own pipeline honestly, and the three judgment moves that separate the rep who survives ramp from the rep who doesn't.*
+> *Most sales-training content rewards confidence over competence and formatting over thinking. AESDR is the opposite: a 12-lesson operating manual built around the part of the role most AEs and SDRs figure out the hard way — what good actually looks like, how to read your own pipeline honestly, and the three judgment moves that separate the AE/SDR who survives ramp from the AE/SDR who doesn't.*
 
 > ***In the workshop, you'll leave with:***
 >

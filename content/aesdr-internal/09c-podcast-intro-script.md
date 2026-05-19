@@ -52,7 +52,7 @@ Read at the top of the live workshop, immediately before handing to `[HOST_FIRST
 
 Used on your podcast intro, your video promo for the workshop, your YouTube short, your Instagram/TikTok pre-roll. Read or perform; the script is a starting point, not a verbatim lock — but the locked elements below stay.
 
-> *This week's episode is a quick announcement, not a full conversation. I'm hosting a live workshop for `[YOUR_AUDIENCE_DESCRIPTOR]` with AESDR — a 12-lesson sales-training program built for early-career SaaS reps. Most sales-training rewards confidence over competence; AESDR is the opposite. Operating manual, not motivation engine.*
+> *This week's episode is a quick announcement, not a full conversation. I'm hosting a live workshop for `[YOUR_AUDIENCE_DESCRIPTOR]` with AESDR — a 12-lesson sales-training program built for early-career SaaS AEs and SDRs. Most sales-training rewards confidence over competence; AESDR is the opposite. Operating manual, not motivation engine.*
 >
 > *60 minutes live. Replay for 72 hours after. Free to attend. There's an offer at the close — pilot pricing on the program.*
 >
@@ -64,7 +64,7 @@ Used on your podcast intro, your video promo for the workshop, your YouTube shor
 
 - **Length cap: 60 seconds.** Audio audiences forgive a long episode; they don't forgive a long ad. Keep it at 60.
 - **Disclosure is mandatory** within the first 10 seconds OR clearly named within the intro per canon §10.1. The script above puts it just before the link — also acceptable per FTC's "clearly and conspicuously" rule.
-- **Do not do "5-star testimonial" framing.** No "I've been using AESDR for X months and I'm a different rep" — you haven't, and that's a fake claim per `00-canon-excerpt.md` §4.1.
+- **Do not do "5-star testimonial" framing.** No "I've been using AESDR for X months and I'm a different AE/SDR" — you haven't, and that's a fake claim per `00-canon-excerpt.md` §4.1.
 - **Do not promise a code in the audio.** The pricing code is on the registration page; promising it audio-only ("use code [X] for an extra 20% off!") is forbidden per `02-pricing-and-promo-sheet.pdf` §2.
 
 ---
@@ -85,7 +85,7 @@ If you want a longer intro (e.g., a 90-second podcast intro with more context), 
 
 The most common approved deviation: a 90-second podcast intro that adds one sentence about the specific operating problem the workshop addresses for *your* audience. That's a fit signal AESDR welcomes.
 
-The most common declined deviation: any intro that frames AESDR as "the answer to your sales career" or makes income-claims-by-implication ("the reps who finish AESDR start hitting their numbers"). Forbidden per canon §10.3.
+The most common declined deviation: any intro that frames AESDR as "the answer to your sales career" or makes income-claims-by-implication ("the AEs and SDRs who finish AESDR start hitting their numbers"). Forbidden per canon §10.3.
 
 ---
 

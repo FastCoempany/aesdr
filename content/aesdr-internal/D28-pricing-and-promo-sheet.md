@@ -18,7 +18,7 @@
 |---|---|---|---|
 | **SDR** | Individual SDR — first 0–2 years in role | **$249** | All 12 lessons, all 5 tools, Untamed Discord, lifetime access, 14-day refund. |
 | **AE** | Individual AE — first 0–2 years in role | **$299** | Same as SDR plus AE-track supplementary recordings + AE-specific worksheets. |
-| **Team** | Manager-purchased seats, up to 10 reps | **$1,499** | 10 seats, manager dashboard, cohort assign + revoke, no per-seat overage. |
+| **Team** | Manager-purchased seats, up to 10 AEs and SDRs | **$1,499** | 10 seats, manager dashboard, cohort assign + revoke, no per-seat overage. |
 
 **Lifetime access is literal.** Every revision, every new tool, every supplementary recording is included at no additional cost. AESDR does not run a "premium tier" at higher price for the same content. The price is the access.
 
@@ -80,7 +80,7 @@ A canonical, copy-pastable inclusion list. Use this exactly when a Partner needs
 >
 > *— **All 12 lessons.** Sequenced from foundational to advanced. Lifetime access.*
 > *— **All 5 takeaway tools.** One-page operating sheets you use the next day, not in a quarter.*
-> *— **Per-lesson worksheets.** Filled against the buyer's real reps, real pipeline, real comp plan.*
+> *— **Per-lesson worksheets.** Filled against the buyer's real AEs and SDRs, real pipeline, real comp plan.*
 > *— **Untamed Discord access.** AESDR's community, opened on enrollment.*
 > *— **Every future revision and supplementary recording, at no additional cost.**Lifetime access is literal.*
 > *— **14-day, no-questions-asked refund.**Email* `hello@aesdr.com` *and we process within 3 business days.*

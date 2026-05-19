@@ -65,8 +65,8 @@ The first response is one of:
 Five patterns we walk back regularly. Catch these in your own draft and
 the round is faster:
 
-1. **Soft outcome claims** — "more reps are closing deals after AESDR"
-   gets walked back to "more reps are reading their pipeline more
+1. **Soft outcome claims** — "more AEs and SDRs are closing deals after AESDR"
+   gets walked back to "more AEs and SDRs are reading their pipeline more
    honestly after AESDR" or similar (an observation, not an outcome).
 2. **Banned vocabulary** — anything in the [banned list](/partners/kit/banned-vocabulary)
    gets edited. Catch this yourself.

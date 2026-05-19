@@ -1,7 +1,7 @@
 # Audience Objections — Honest Answers
 
 When you promote AESDR to your audience, the predictable objections will
-come back at you. Below are the 15 most common questions a SaaS rep
+come back at you. Below are the 15 most common questions a SaaS AE/SDR
 asks before paying $249 — plus the honest answer, in language you can
 adapt to your voice.
 
@@ -84,7 +84,7 @@ registrants who attend the live; not posted publicly afterward.
 
 It's priced so that one SDR ramping faster pays for it in their first
 month. The 12-lesson interactive build is the work of dozens of operators
-over a decade. The math is: if the program saves one rep from one bad
+over a decade. The math is: if the program saves one AE/SDR from one bad
 quarter, it paid for itself many times over. If you don't think the
 program is worth $249 for what's inside, the 14-day refund is real.
 
@@ -122,7 +122,7 @@ talk.
 ### "Is the founder active in the community?"
 
 The founder reads everything, posts occasionally, doesn't dominate. The
-community is for reps to talk to each other; the founder is there as a
+community is for AEs and SDRs to talk to each other; the founder is there as a
 listener who occasionally steps in when something concrete comes up.
 
 ---
@@ -133,7 +133,7 @@ listener who occasionally steps in when something concrete comes up.
 
 This is the honest answer — adapt to your voice: *"Because the course
 treats SDRs and AEs like adults, and most sales content I've seen
-doesn't. The author has carried bags and managed reps; the curriculum
+doesn't. The author has carried bags and managed AEs and SDRs; the curriculum
 shows it. I get a commission if you sign up, which I disclose, but
 that's not why I'm sending — I'd send this if there were no
 commission."*

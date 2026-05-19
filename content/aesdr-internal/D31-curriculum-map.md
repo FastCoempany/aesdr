@@ -16,7 +16,7 @@
 
 ## Structure in one paragraph
 
-AESDR is **12 courses. 36 lessons total** (3 per course). Each lesson is **~4 sections.** Each course is a card in the library catalog — a real call number, a real question, a margin annotation in the host's hand. The catalog metaphor is intentional: this is a reference work you check out, work through, return when you're a different rep. There are no clusters, no tiers, no hidden upsell tracks. *Twelve cards. Drawer A. Sorted by chapter order.* All open from day one — no drip-gating per canon §1.6.
+AESDR is **12 courses. 36 lessons total** (3 per course). Each lesson is **~4 sections.** Each course is a card in the library catalog — a real call number, a real question, a margin annotation in the host's hand. The catalog metaphor is intentional: this is a reference work you check out, work through, return when you're a different AE/SDR. There are no clusters, no tiers, no hidden upsell tracks. *Twelve cards. Drawer A. Sorted by chapter order.* All open from day one — no drip-gating per canon §1.6.
 
 Every course has a **dual track** — AE-side framing and SDR-side framing in the same content, role-conditional via `[data-role]` per the production app. Where the audit dated 2026-04-09 surfaced misalignment between dashboard titles and course content, the syllabus page (2026-04-22) is the cleanup; this document inherits the cleaned version.
 
@@ -28,7 +28,7 @@ Every course has a **dual track** — AE-side framing and SDR-side framing in th
 
 > **Card Catalog · Shelf 12 · Drawer A · Est. 2026**
 > Dewey 658.85 · AESDR/SAL · Non-Fiction
-> *Twelve lessons filed under one call number. Check each one out. Return when you're a different rep.*
+> *Twelve lessons filed under one call number. Check each one out. Return when you're a different AE/SDR.*
 
 ### `658.85 / L01` — Building Real Camaraderie
 
@@ -52,7 +52,7 @@ Silos as deal killers, plus the home-office build-out (your remote setup is your
 >
 > *— mirror test.* `Wed 03`
 
-The four pitfalls every early-career rep falls into. The Survival Guide's Ten Commandments for AE-SDR partnerships. The 10 AE Manager Archetypes — what the room sees in you, plus how to manage up when they apply to your manager. BANT-as-game in the unit-1 interactive. **3 lessons · ~150 min total.**
+The four pitfalls every early-career AE/SDR falls into. The Survival Guide's Ten Commandments for AE-SDR partnerships. The 10 AE Manager Archetypes — what the room sees in you, plus how to manage up when they apply to your manager. BANT-as-game in the unit-1 interactive. **3 lessons · ~150 min total.**
 
 ### `658.85 / L04` — Navigating Manager Madness
 
@@ -108,7 +108,7 @@ The five biggest CRM pain points and the discipline that solves them. Slack as p
 >
 > *— 3 months runway min.* `Wed 10`
 
-OTE is a fantasy until you read the comp plan's fine print. Quotas are bullshit — and here's how to play the game without losing the plot. Living the feast-or-famine life: the financial discipline most early-career reps build too late. **3 lessons · ~150 min total.**
+OTE is a fantasy until you read the comp plan's fine print. Quotas are bullshit — and here's how to play the game without losing the plot. Living the feast-or-famine life: the financial discipline most early-career AEs and SDRs build too late. **3 lessons · ~150 min total.**
 
 ### `658.85 / L11` — Sober Selling
 
@@ -132,7 +132,7 @@ The SaaS lifestyle gap and what it does to relationships. The home-office trap (
 
 The course-content audit (2026-04-09) names "5 tools" as a reference point in the production curriculum. **Tool inventory is operationally pending verification** — recommend confirming which 5 tools ship with v1 (operating sheets, prep templates, etc.) before this section gets numerically specific. Until verified, the partner-facing line is:
 
-> *Each lesson ships with worksheets and takeaway tools you fill against your real reps, your real pipeline, your real comp plan. Not "imagine a prospect named Bob."*
+> *Each lesson ships with worksheets and takeaway tools you fill against your real AEs and SDRs, your real pipeline, your real comp plan. Not "imagine a prospect named Bob."*
 
 The canon §14 tagline — *"12 lessons. 5 tools. 1 new you."* — stays as the headline frame; the per-tool inventory is filled in once production confirms.
 
@@ -201,7 +201,7 @@ Per canon §13 honesty discipline — the absences:
 2. **Token check:** Pass.
 3. **Iris reservation:** Pass — zero on the map itself.
 4. **Icon discipline:** Pass — type-only.
-5. **Voice thumbnail:** *"Twelve cards. Drawer A. Sorted by chapter order. All open from day one — no drip-gating. Twelve lessons filed under one call number. Check each one out. Return when you're a different rep."* — passes; identifiably AESDR. The library-as-curriculum metaphor is the production brand fingerprint.
+5. **Voice thumbnail:** *"Twelve cards. Drawer A. Sorted by chapter order. All open from day one — no drip-gating. Twelve lessons filed under one call number. Check each one out. Return when you're a different AE/SDR."* — passes; identifiably AESDR. The library-as-curriculum metaphor is the production brand fingerprint.
 
 ---
 

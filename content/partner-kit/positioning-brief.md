@@ -4,20 +4,20 @@ AESDR is the operating manual, not the motivation engine.
 
 A 12-lesson sales survival course for first-1-to-2-year SDRs and AEs in
 startup SaaS. Self-paced, interactive, lifetime access. Built by people who
-carried bags and managed reps for a decade — not by people who read about it.
+carried bags and managed AEs and SDRs for a decade — not by people who read about it.
 
 ## Who this is for
 
 - First-1-to-2-year SDRs and AEs in startup SaaS — feast-or-famine income, ramp pressure, real chaos.
 - Career-switchers in their first SaaS sales role.
 - SDR managers buying for ramp acceleration on junior hires.
-- Reps frustrated by broken tools, bloated CRMs, and shifting goalposts.
+- AEs and SDRs frustrated by broken tools, bloated CRMs, and shifting goalposts.
 
 ## Who this is not for
 
 - Anyone looking for motivation.
 - Anyone hunting LinkedIn-friendly badges, certifications, or recruiter clout.
-- Reps with 8+ years in the seat who aren't open to a re-look at fundamentals.
+- AEs and SDRs with 8+ years in the seat who aren't open to a re-look at fundamentals.
 - Anyone whose primary distribution motion is sponsored carousels.
 
 None of those are insults. They're filters. We'd rather you decline now than
