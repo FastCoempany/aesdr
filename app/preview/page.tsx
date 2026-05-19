@@ -42,7 +42,7 @@ const ARCHETYPES = [
   {
     name: "The Closer",
     tell: "joins your calls and takes them over",
-    fail: "may forget you need reps to actually grow",
+    fail: "may forget you need at-bats to actually grow",
   },
   {
     name: "The Ghost",

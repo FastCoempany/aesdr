@@ -17,7 +17,7 @@ const DeckStack = dynamic(() => import("@/components/DeckStack"));
 
 const FAQ: { q: string; a: string; icon: IconName }[] = [
   { q: "Is this for me if I\u2019m brand new to sales?",          a: "Yes, it\u2019s actually inspired by you. The curriculum starts with foundational frameworks and builds to advanced execution. If you\u2019re in your first 18 months, you\u2019ll skip years of painful trial-and-error.", icon: "eye"       },
-  { q: "Is this just\u00a0another motivational sales course?",   a: "Nope. No guru stuff. No \u201Ccrush it\u201D motivation. This is sober, fun, practical training built by people who over the last 10+ years carried bags and managed AEs & SDRs.",                                       icon: "warn"      },
+  { q: "Is this just\u00a0another motivational sales course?",   a: "Nope. No guru routines. No motivational performance. This is sober, fun, practical training built by people who over the last 10+ years carried bags and managed AEs & SDRs.",                                       icon: "warn"      },
   { q: "What if I want a refund?",                                a: "14-day, no-questions-asked refund. Email hello@aesdr.com and we process it within 3 business days. If it doesn\u2019t deliver value, we don\u2019t want your money.",                                                  icon: "refund"    },
   { q: "How long do I have access?",                              a: "Lifetime. Buy once, access forever. That includes any future updates to the curriculum.",                                                                                                                            icon: "hourglass" },
   { q: "What\u2019s the difference between Individual and Team?", a: "Individual is one seat, one login. Team gives you up to 10 seats \u2014 built for sales managers who want their whole team on the same page.",                                                                       icon: "team"      },
@@ -84,7 +84,7 @@ export default async function LandingPage() {
             <p className={styles.notCardLabel}>Not</p>
             <p className={styles.notCardTitle}>A motivation playlist.</p>
             <p className={styles.notCardBody}>
-              No &ldquo;crush it,&rdquo; no morning-routine porn, no quotes
+              No motivational performance, no morning-routine porn, no quotes
               over sunsets. If you came to feel better about the job, the
               refund is faster than the first lesson.
             </p>
@@ -109,7 +109,7 @@ export default async function LandingPage() {
           </div>
           <div className={styles.notCard}>
             <p className={styles.notCardLabel}>Not</p>
-            <p className={styles.notCardTitle}>A replacement for reps.</p>
+            <p className={styles.notCardTitle}>A short-cut around the volume.</p>
             <p className={styles.notCardBody}>
               We hand you the operating manual. You still have to make the
               calls, run the demos, take the no&rsquo;s. Nothing here gets

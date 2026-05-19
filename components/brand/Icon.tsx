@@ -18,7 +18,7 @@ export type IconName =
   | "shell"
   | "ear"
   | "mile"
-  | "rep"
+  | "iteration"
   | "fall"
   | "recovery"
   | "weight"
@@ -95,7 +95,7 @@ const PATHS: Record<IconName, React.ReactNode> = {
       <path d="M 58 52 l -6 -3 m 6 3 l -3 -6" />
     </>
   ),
-  rep: (
+  iteration: (
     <>
       <path d="M 50 14 a 22 22 0 1 0 -4 38" />
       <path d="M 50 14 l -6 -2 m 6 2 l -2 6" />

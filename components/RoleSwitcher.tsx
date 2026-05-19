@@ -11,7 +11,7 @@ interface RoleSwitcherProps {
 
 const LABELS: Record<string, string> = {
   ae: "Account Executive (AE)",
-  sdr: "Sales Development Rep (SDR)",
+  sdr: "Sales Development Representative (SDR)",
 };
 
 export default function RoleSwitcher({ currentRole }: RoleSwitcherProps) {

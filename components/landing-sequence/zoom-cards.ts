@@ -44,7 +44,7 @@ export const ZOOM_CARDS: ZoomCard[] = [
     ghost: "NOISE",
     headline:
       'The people advising you haven’t carried a bag in a <span class="iris">decade.</span>',
-    sub: "“Just add value.” “Be a trusted advisor.” “Crush it.” None of it is actionable. All of it is noise from people who forgot what it feels like to miss.",
+    sub: "“Just add value.” “Be a trusted advisor.” “Run through walls.” None of it is actionable. All of it is noise from people who forgot what it feels like to miss.",
     fontSize: "clamp(32px,6vw,72px)",
   },
   {

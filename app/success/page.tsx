@@ -302,7 +302,7 @@ function SuccessContent() {
             title="Accept your invitation"
             body={
               <>
-                The AESDR Discord is members only. Real reps, real deals, real
+                The AESDR Discord is members only. Real AEs and SDRs, real deals, real
                 accountability &mdash; no guru energy, no motivational noise.{' '}
                 <a
                   href="https://discord.gg/uEpAz3yw"

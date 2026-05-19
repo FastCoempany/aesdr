@@ -77,7 +77,7 @@ export default function ContactPage() {
       <Section title="Partner inquiries">
         <p>
           If you run a newsletter, podcast, community, or course audience of
-          early-career SaaS reps and want to explore a partner pilot, the
+          early-career AEs and SDRs and want to explore a partner pilot, the
           partner-side page is at{" "}
           <a
             href="/partners"

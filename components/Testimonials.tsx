@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 
 const SEED: { quote: string; name: string; role: string }[] = [
   { quote: "I've been an SDR for 14 months and nobody taught me half of what's in Lesson 1. The manager archetypes alone changed how I handle my 1:1s.", name: "Jordan M.", role: "SDR, Series B SaaS" },
-  { quote: "No motivational BS. No 'crush your quota' energy. Just practical frameworks I use every week. That's rare.", name: "Taylor H.", role: "BDR Lead" },
+  { quote: "No motivational performance. No guru routines. Just practical frameworks I use every week. That's rare.", name: "Taylor H.", role: "BDR Lead" },
   { quote: "I used the AE/SDR Alignment Contract from Lesson 3 in my actual job. My AE and I went from passive-aggressive Slack messages to a real working relationship.", name: "Marcus T.", role: "SDR, recently promoted to AE" },
   { quote: "The 72-hour strike plan in Lesson 12 saved my quarter. I was spiraling after losing two big deals and this framework gave me a concrete plan instead of panic.", name: "David L.", role: "AE, Series C Startup" },
   { quote: "I bought the team license for my 6 SDRs. The interactive format actually kept them engaged — I've never seen my team finish a training program before.", name: "Sarah W.", role: "SDR Manager" },

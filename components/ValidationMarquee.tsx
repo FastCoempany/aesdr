@@ -77,7 +77,7 @@ export default function ValidationMarquee() {
         </h2>
         <p className={styles.sub}>
           {VALIDATORS.length}+ companies. Seed to Series E. Built with feedback
-          from the founders, sales leaders, and reps at every one.
+          from the founders, sales leaders, and AEs and SDRs at every one.
         </p>
       </header>
 

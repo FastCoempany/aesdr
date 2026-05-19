@@ -46,7 +46,7 @@ export default function AboutPage() {
       <Section title="The philosophy">
         <p style={{ marginBottom: 14 }}>
           Operating manual, not motivation engine. No guru energy. No
-          &ldquo;crush it&rdquo; framing. No recycled LinkedIn wisdom.
+          motivational performance. No recycled LinkedIn wisdom.
           Twelve lessons, five take-home tools, interactive HTML, not
           video lectures &mdash; because the parts of the job that matter
           are decisions made in a quiet room, not pep talks.
