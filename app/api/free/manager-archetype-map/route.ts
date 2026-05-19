@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import crypto from "node:crypto";
 
 import { sendManagerArchetypeMap } from "@/lib/email";
+import { logEvent } from "@/lib/events";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { createAdminClient } from "@/utils/supabase/admin";
 
@@ -103,6 +104,12 @@ export async function POST(request: Request) {
     .from("free_leads")
     .update({ delivered_at: new Date().toISOString(), delivery_error: null })
     .eq("id", leadId);
+
+  await logEvent(
+    "free_lead_captured",
+    { source: SOURCE, role },
+    { email, ipHash, userAgent: ua }
+  );
 
   return NextResponse.json({ ok: true });
 }

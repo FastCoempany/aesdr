@@ -72,7 +72,7 @@ export default async function RootLayout({
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2"
-          style={{ background: "var(--theme)", color: "#000", fontFamily: "var(--mono)", fontSize: "12px", fontWeight: 700 }}
+          style={{ background: "var(--crimson)", color: "#fff", fontFamily: "var(--mono)", fontSize: "12px", fontWeight: 700, letterSpacing: ".15em", textTransform: "uppercase" }}
         >
           Skip to content
         </a>

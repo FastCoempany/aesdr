@@ -2,7 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 
+import { logEvent } from "@/lib/events";
 import { createClient } from "@/utils/supabase/server";
+import { LESSONS } from "@/utils/progress/types";
 import type { LessonProgressSummary } from "@/utils/progress/types";
 
 /**
@@ -32,6 +34,35 @@ export async function markLessonComplete(lessonId: string) {
 
   if (error) {
     throw new Error("Failed to save completion");
+  }
+
+  await logEvent(
+    "lesson_completed",
+    { lesson_id: lessonId },
+    { userId: user.id, email: user.email ?? null }
+  );
+
+  // If this completion lands us at all 12, fire the once-per-user
+  // course_completed event. Idempotent: check the events table first so
+  // re-marking-complete on a finished course doesn't re-fire.
+  const { count: completedCount } = await supabase
+    .from("course_progress")
+    .select("lesson_id", { count: "exact", head: true })
+    .eq("user_id", user.id)
+    .eq("is_completed", true);
+  if ((completedCount ?? 0) >= LESSONS.length) {
+    const { count: priorFire } = await supabase
+      .from("events")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("event_type", "course_completed");
+    if (!priorFire) {
+      await logEvent(
+        "course_completed",
+        {},
+        { userId: user.id, email: user.email ?? null }
+      );
+    }
   }
 
   revalidatePath("/dashboard");

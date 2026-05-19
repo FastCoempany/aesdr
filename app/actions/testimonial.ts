@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
+import { logEvent } from "@/lib/events";
 import { createClient } from "@/utils/supabase/server";
 
 type SubmitResult = { ok: true } | { ok: false; error: string };
@@ -57,6 +58,12 @@ export async function submitTestimonial(formData: FormData): Promise<SubmitResul
     console.error("[testimonial] insert failed", error);
     return { ok: false, error: "Couldn't save. Try again in a minute." };
   }
+
+  await logEvent(
+    "testimonial_submitted",
+    { rating: ratingRaw, permit_publish: permitPublish },
+    { userId: user.id, email: user.email ?? null }
+  );
 
   revalidatePath("/account/review");
   return { ok: true };

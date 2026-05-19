@@ -206,6 +206,171 @@ export default async function Dashboard() {
           </div>
         </header>
 
+        {/* Resume CTA — where the user actually left off. Shows for everyone
+            mid-journey; replaced by a completion celebration + LinkedIn
+            share when all 12 are done. */}
+        {!allComplete && (
+          <section
+            aria-label="Resume your course"
+            style={{
+              marginBottom: 48,
+              background: "#fff",
+              border: "1px solid #E8E4DF",
+              padding: "24px 28px",
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 20,
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <div style={{ flex: "1 1 280px" }}>
+              <p
+                style={{
+                  fontFamily: "'Space Mono',monospace",
+                  fontSize: 10,
+                  letterSpacing: ".3em",
+                  textTransform: "uppercase",
+                  color: "#8B1A1A",
+                  marginBottom: 6,
+                }}
+              >
+                {completedCount === 0
+                  ? "Start where it begins"
+                  : `Pick up at Lesson ${currentLesson.id}`}
+              </p>
+              <p
+                style={{
+                  fontFamily: "'Playfair Display',Georgia,serif",
+                  fontStyle: "italic",
+                  fontWeight: 700,
+                  fontSize: 24,
+                  lineHeight: 1.2,
+                  marginBottom: 6,
+                  color: "#1A1A1A",
+                }}
+              >
+                {userRole === "ae" && currentLesson.titleAe
+                  ? currentLesson.titleAe
+                  : currentLesson.title}
+              </p>
+              <p style={{ fontSize: 14, color: "#6B6B6B" }}>
+                {progressMap[currentLesson.id]?.last_screen
+                  ? `Resuming at screen ${progressMap[currentLesson.id]?.last_screen}`
+                  : "First open — 22-32 min, save & exit any time."}
+              </p>
+            </div>
+            <Link
+              href={`/course/${currentLesson.id}`}
+              style={{
+                fontFamily: "'Barlow Condensed',sans-serif",
+                fontSize: 14,
+                fontWeight: 700,
+                letterSpacing: ".15em",
+                textTransform: "uppercase",
+                color: "#fff",
+                background: "#8B1A1A",
+                padding: "14px 28px",
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {completedCount === 0 ? "Start lesson 1 →" : "Resume →"}
+            </Link>
+          </section>
+        )}
+
+        {/* Completion celebration + LinkedIn share — replaces the resume
+            CTA once the user has all 12 marked done. */}
+        {allComplete && (
+          <section
+            aria-label="Course complete"
+            style={{
+              marginBottom: 48,
+              background: "#1A1A1A",
+              color: "#FAF7F2",
+              padding: "32px 32px",
+            }}
+          >
+            <p
+              style={{
+                fontFamily: "'Space Mono',monospace",
+                fontSize: 10,
+                letterSpacing: ".32em",
+                textTransform: "uppercase",
+                color: "rgba(250,247,242,0.6)",
+                marginBottom: 8,
+              }}
+            >
+              Completed · All 12
+            </p>
+            <p
+              style={{
+                fontFamily: "'Playfair Display',Georgia,serif",
+                fontStyle: "italic",
+                fontWeight: 700,
+                fontSize: 28,
+                lineHeight: 1.2,
+                marginBottom: 12,
+              }}
+            >
+              You finished the operating manual.
+            </p>
+            <p
+              style={{
+                fontSize: 15,
+                lineHeight: 1.65,
+                color: "rgba(250,247,242,0.85)",
+                marginBottom: 20,
+              }}
+            >
+              If it was useful, share it on LinkedIn — the kind of share
+              that brings other AEs and SDRs in, not the kind that
+              clutters their feed.
+            </p>
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+              <a
+                href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+                  "https://aesdr.com/"
+                )}&summary=${encodeURIComponent(
+                  `Just finished AESDR — twelve lessons on the part of SaaS sales nobody actually teaches. Worth it for any ${userRole === "ae" ? "AE" : "SDR"} in their first 18 months. ${"https://aesdr.com/"}`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  fontFamily: "'Barlow Condensed',sans-serif",
+                  fontSize: 13,
+                  fontWeight: 700,
+                  letterSpacing: ".15em",
+                  textTransform: "uppercase",
+                  color: "#1A1A1A",
+                  background: "#FAF7F2",
+                  padding: "12px 22px",
+                  textDecoration: "none",
+                }}
+              >
+                Share on LinkedIn →
+              </a>
+              <Link
+                href="/account/review"
+                style={{
+                  fontFamily: "'Barlow Condensed',sans-serif",
+                  fontSize: 13,
+                  fontWeight: 700,
+                  letterSpacing: ".15em",
+                  textTransform: "uppercase",
+                  color: "#FAF7F2",
+                  border: "1px solid rgba(250,247,242,0.4)",
+                  padding: "12px 22px",
+                  textDecoration: "none",
+                }}
+              >
+                Leave a review
+              </Link>
+            </div>
+          </section>
+        )}
+
         {/* The Journey — sequential timeline */}
         <div className="flex flex-col" style={{ gap: "0" }}>
           {LESSONS.map((lesson, idx) => {

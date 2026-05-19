@@ -3,6 +3,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { logEvent } from "@/lib/events";
 import { createClient } from "@/utils/supabase/server";
 
 const DAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
@@ -52,6 +53,17 @@ export async function saveOnboarding(formData: FormData) {
 
   if (error) throw new Error(error.message);
 
+  await logEvent(
+    "onboarding_completed",
+    {
+      role: (user.user_metadata?.role as string) || "unknown",
+      day,
+      time,
+      weekly_nudge_optin: weeklyNudge,
+    },
+    { userId: user.id, email: user.email ?? null }
+  );
+
   redirect("/dashboard");
 }
 
@@ -74,5 +86,10 @@ export async function skipOnboarding() {
     path: "/",
     maxAge: 60 * 60 * 24 * 365,
   });
+  await logEvent(
+    "onboarding_skipped",
+    { role: (user.user_metadata?.role as string) || "unknown" },
+    { userId: user.id, email: user.email ?? null }
+  );
   redirect("/dashboard");
 }
