@@ -80,8 +80,7 @@ export default function AdminChip() {
       style={{
         position: "fixed",
         top: 14,
-        left: "50%",
-        transform: "translateX(-50%)",
+        left: 14,
         zIndex: 500,
       }}
     >
@@ -136,8 +135,7 @@ export default function AdminChip() {
           style={{
             position: "absolute",
             top: "100%",
-            left: "50%",
-            transform: "translateX(-50%)",
+            left: 0,
             marginTop: 8,
             minWidth: 320,
             background: "var(--cream)",

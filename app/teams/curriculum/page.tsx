@@ -32,6 +32,13 @@ type Module = {
   outcomes: string[];
   duration: string;
   managerNote: string;
+  /**
+   * Optional role flavor — most modules apply equally to both AEs and SDRs
+   * and have no flavor set. A few skew one way (e.g., Module 5's "The SDR
+   * Playbook"); those carry the flavor so buyers see at a glance which
+   * modules land hardest for which role.
+   */
+  flavor?: "SDR" | "AE";
 };
 
 const MODULES: Module[] = [
@@ -39,20 +46,20 @@ const MODULES: Module[] = [
     number: "01",
     theme: "Foundations of a sales career",
     description:
-      "Reps arrive without the structural scaffolding that holds a sales career together. Module 1 builds it: what good structure looks like, why camaraderie isn't optional, how to actually accept coaching instead of resisting it.",
+      "AEs and SDRs arrive without the structural scaffolding that holds a sales career together. Module 1 builds it: what good structure looks like, why camaraderie isn't optional, how to actually accept coaching instead of resisting it.",
     lessons: [
       { number: "1.1", title: "Creating Structure" },
       { number: "1.2", title: "Building Real Camaraderie" },
       { number: "1.3", title: "Mastering Coaching" },
     ],
     outcomes: [
-      "Reps build a weekly cadence that survives bad weeks",
-      "Reps stop treating peer relationships as transactional",
-      "Reps learn to receive coaching without ego defense",
+      "AEs and SDRs build a weekly cadence that survives bad weeks",
+      "AEs and SDRs stop treating peer relationships as transactional",
+      "AEs and SDRs learn to receive coaching without ego defense",
     ],
     duration: "~75 min",
     managerNote:
-      "Reps who finish Module 1 stop treating 1:1s as performance theater. You get more honest feedback in week 4 than in month 3 of an untrained rep.",
+      "AEs and SDRs who finish Module 1 stop treating 1:1s as performance theater. You get more honest feedback in week 4 than in month 3 of an untrained AE/SDR.",
   },
   {
     number: "02",
@@ -65,8 +72,8 @@ const MODULES: Module[] = [
       { number: "2.3", title: "Unpacking AE Ego and Building Healthy Dynamics" },
     ],
     outcomes: [
-      "Reps proactively cross silos (Marketing, RevOps, CS) without escalation",
-      "Reps build a workspace that supports 8-hour focus blocks",
+      "AEs and SDRs proactively cross silos (Marketing, RevOps, CS) without escalation",
+      "AEs and SDRs build a workspace that supports 8-hour focus blocks",
       "AE/SDR pairs name the ego dynamic out loud and de-escalate it",
     ],
     duration: "~85 min",
@@ -84,7 +91,7 @@ const MODULES: Module[] = [
       { number: "3.3", title: "Surviving AE Management" },
     ],
     outcomes: [
-      "Reps recognize the seven SDR breakpoints before they trigger",
+      "AEs and SDRs recognize the seven SDR breakpoints before they trigger",
       "AE/SDR pairs work the survival framework as a shared language",
       "SDRs handle hostile AE feedback without spiraling",
     ],
@@ -96,16 +103,16 @@ const MODULES: Module[] = [
     number: "04",
     theme: "Navigating the org",
     description:
-      "Reps work for a manager, inside a culture, on a schedule. Module 4 covers all three: how to read a chaotic SDR manager, how to find purchase in a vague company culture, how to live the async life without dissolving into Slack.",
+      "AEs and SDRs work for a manager, inside a culture, on a schedule. Module 4 covers all three: how to read a chaotic SDR manager, how to find purchase in a vague company culture, how to live the async life without dissolving into Slack.",
     lessons: [
       { number: "4.1", title: "Navigating the SDR Manager Madness" },
       { number: "4.2", title: "Simplifying Company Culture" },
       { number: "4.3", title: "Mastering the Async Life" },
     ],
     outcomes: [
-      "Reps map their manager's archetype and adapt without losing themselves",
-      "Reps recognize company-culture theater vs. real culture signal",
-      "Reps protect deep work in async environments — boundaries with Slack, calendar, and after-hours pings",
+      "AEs and SDRs map their manager's archetype and adapt without losing themselves",
+      "AEs and SDRs recognize company-culture theater vs. real culture signal",
+      "AEs and SDRs protect deep work in async environments — boundaries with Slack, calendar, and after-hours pings",
     ],
     duration: "~80 min",
     managerNote:
@@ -114,21 +121,22 @@ const MODULES: Module[] = [
   {
     number: "05",
     theme: "The playbook",
+    flavor: "SDR",
     description:
-      "What the SDR playbook actually is — and how to become the rep your manager can't replace.",
+      "What the SDR playbook actually is — and how to become the rep your manager can't replace. The most SDR-focused module in the curriculum; AEs benefit from 5.3 specifically.",
     lessons: [
       { number: "5.1", title: "The SDR Playbook" },
       { number: "5.2", title: "The SDR Playbook — Part 2" },
       { number: "5.3", title: "How to Become Irreplaceable" },
     ],
     outcomes: [
-      "Reps internalize the SDR playbook framework (not the script — the framework)",
-      "Reps build personal practices that compound across quarters",
-      "Reps make themselves measurably harder to lose",
+      "SDRs internalize the playbook framework (not the script — the framework)",
+      "AEs and SDRs build personal practices that compound across quarters",
+      "AEs and SDRs make themselves measurably harder to lose",
     ],
     duration: "~95 min",
     managerNote:
-      "Module 5 is the closest AESDR comes to traditional SDR training content. It's still anti-script — but the playbook framework is concrete enough to coach against.",
+      "Module 5 is the closest AESDR comes to traditional SDR training content. It's still anti-script — but the playbook framework is concrete enough to coach SDRs against. AEs treat 5.3 as the standalone takeaway.",
   },
   {
     number: "06",
@@ -141,47 +149,47 @@ const MODULES: Module[] = [
       { number: "6.3", title: "The Power of Knowing Just Enough" },
     ],
     outcomes: [
-      "Reps build a real network instead of a LinkedIn-likes graph",
-      "Reps know enough about their buyer's industry to ask good questions",
-      "Reps stop conflating activity with sophistication",
+      "AEs and SDRs build a real network instead of a LinkedIn-likes graph",
+      "AEs and SDRs know enough about their buyer's industry to ask good questions",
+      "AEs and SDRs stop conflating activity with sophistication",
     ],
     duration: "~80 min",
     managerNote:
-      "Helpful for reps who've plateaued at month 6. The 'knowing just enough' framing reframes how they prep for discovery calls.",
+      "Helpful for AEs and SDRs who've plateaued at month 6. The 'knowing just enough' framing reframes how they prep for discovery calls.",
   },
   {
     number: "07",
     theme: "Pipeline ownership",
     description:
-      "Prospecting isn't the marketing team's problem to solve. Module 7 makes that explicit — and forces reps to confront whether SaaS is actually the career they want.",
+      "Prospecting isn't the marketing team's problem to solve. Module 7 makes that explicit — and forces AEs and SDRs to confront whether SaaS is actually the career they want.",
     lessons: [
       { number: "7.1", title: "Prospecting Is Your Job Too" },
       { number: "7.2", title: "Why Self-Sourced Meetings Matter Most" },
       { number: "7.3", title: "Is Working in SaaS Even Worth It?" },
     ],
     outcomes: [
-      "Reps stop blaming inbound volume for pipeline shortfalls",
-      "Reps run self-sourcing cadences without manager prompting",
-      "Reps confront the SaaS-career question honestly, before it confronts them",
+      "AEs and SDRs stop blaming inbound volume for pipeline shortfalls",
+      "AEs and SDRs run self-sourcing cadences without manager prompting",
+      "AEs and SDRs confront the SaaS-career question honestly, before it confronts them",
     ],
     duration: "~85 min",
     managerNote:
-      "7.3 is the only place in the curriculum that gives reps explicit permission to quit. Some managers find this uncomfortable. We've kept it — reps respect the honesty and stay longer because of it.",
+      "7.3 is the only place in the curriculum that gives AEs and SDRs explicit permission to quit. Some managers find this uncomfortable. We've kept it — AEs and SDRs respect the honesty and stay longer because of it.",
   },
   {
     number: "08",
     theme: "Hard truths",
     description:
-      "The 30% rule, the illusion of potential, and the question every rep needs to ask but mostly doesn't. The harshest module — buyers should read it before they decide whether AESDR fits their culture.",
+      "The 30% rule, the illusion of potential, and the question every AE/SDR needs to ask but mostly doesn't. The harshest module — buyers should read it before they decide whether AESDR fits their culture.",
     lessons: [
       { number: "8.1", title: "The 30% Rule" },
       { number: "8.2", title: "Stop Chasing the Illusion of Potential" },
       { number: "8.3", title: "Are You the Problem?" },
     ],
     outcomes: [
-      "Reps apply the 30% rule to their own pipeline filtering",
-      "Reps stop investing in opportunities driven by their fantasy of the buyer's interest",
-      "Reps ask 'am I the problem' before assuming the company / manager / territory is",
+      "AEs and SDRs apply the 30% rule to their own pipeline filtering",
+      "AEs and SDRs stop investing in opportunities driven by their fantasy of the buyer's interest",
+      "AEs and SDRs ask 'am I the problem' before assuming the company / manager / territory is",
     ],
     duration: "~75 min",
     managerNote:
@@ -191,20 +199,20 @@ const MODULES: Module[] = [
     number: "09",
     theme: "The tools that ruin you",
     description:
-      "CRM hygiene, Slack discipline, and the broader SaaS-sales-tool sprawl that fragments rep attention. Survival, not optimization.",
+      "CRM hygiene, Slack discipline, and the broader SaaS-sales-tool sprawl that fragments AE/SDR attention. Survival, not optimization.",
     lessons: [
       { number: "9.1", title: "CRM Survival Guide" },
       { number: "9.2", title: "Slack Survival Guide" },
       { number: "9.3", title: "Mastering the SaaS Sales Tools" },
     ],
     outcomes: [
-      "Reps maintain CRM hygiene without it consuming 40% of their week",
-      "Reps build Slack boundaries that protect deep work",
-      "Reps recognize which sales tools earn their place and which are organizational theater",
+      "AEs and SDRs maintain CRM hygiene without it consuming 40% of their week",
+      "AEs and SDRs build Slack boundaries that protect deep work",
+      "AEs and SDRs recognize which sales tools earn their place and which are organizational theater",
     ],
     duration: "~85 min",
     managerNote:
-      "Ships the CRM Survival Guide as a takeaway. Reps reference it during 1:1s for months. We've had managers ask if it's available standalone (it isn't).",
+      "Ships the CRM Survival Guide as a takeaway. AEs and SDRs reference it during 1:1s for months. We've had managers ask if it's available standalone (it isn't).",
   },
   {
     number: "10",
@@ -217,13 +225,13 @@ const MODULES: Module[] = [
       { number: "10.3", title: "Living the Feast-or-Famine Life" },
     ],
     outcomes: [
-      "Reps understand their own comp plan well enough to spot when it's being changed",
-      "Reps stop letting quota-attainment anxiety distort their selling behavior",
-      "Reps build personal financial structures that survive the variable-comp cycle",
+      "AEs and SDRs understand their own comp plan well enough to spot when it's being changed",
+      "AEs and SDRs stop letting quota-attainment anxiety distort their selling behavior",
+      "AEs and SDRs build personal financial structures that survive the variable-comp cycle",
     ],
     duration: "~80 min",
     managerNote:
-      "10.2 is bracing — it doesn't tell reps quotas don't matter, it tells them why most quota math is arbitrary. Forewarn your RevOps team if they're sensitive about it.",
+      "10.2 is bracing — it doesn't tell AEs and SDRs quotas don't matter, it tells them why most quota math is arbitrary. Forewarn your RevOps team if they're sensitive about it.",
   },
   {
     number: "11",
@@ -236,13 +244,13 @@ const MODULES: Module[] = [
       { number: "11.3", title: "Professional Presence at Events" },
     ],
     outcomes: [
-      "Reps develop a sober-selling stance whether or not they drink",
-      "Reps navigate conferences as deliberate work, not vacation-with-business-cards",
-      "Reps build a credible professional presence at events without performing",
+      "AEs and SDRs develop a sober-selling stance whether or not they drink",
+      "AEs and SDRs navigate conferences as deliberate work, not vacation-with-business-cards",
+      "AEs and SDRs build a credible professional presence at events without performing",
     ],
     duration: "~70 min",
     managerNote:
-      "Especially relevant for orgs sending junior reps to Dreamforce, SaaStr, INBOUND, etc. Helpful to read before the conference, not after.",
+      "Especially relevant for orgs sending junior AEs and SDRs to Dreamforce, SaaStr, INBOUND, etc. Helpful to read before the conference, not after.",
   },
   {
     number: "12",
@@ -255,9 +263,9 @@ const MODULES: Module[] = [
       { number: "12.3", title: "Why SDRs Should Stay Single" },
     ],
     outcomes: [
-      "Reps build sustainable peer relationships across companies",
-      "Reps don't let remote-first dissolve into 14-hour days at the same desk",
-      "Reps confront the personal-life-vs-career tradeoff with both eyes open",
+      "AEs and SDRs build sustainable peer relationships across companies",
+      "AEs and SDRs don't let remote-first dissolve into 14-hour days at the same desk",
+      "AEs and SDRs confront the personal-life-vs-career tradeoff with both eyes open",
     ],
     duration: "~75 min",
     managerNote:
@@ -279,7 +287,7 @@ export default function CurriculumPage() {
           <p className={styles.eyebrow}>Curriculum</p>
           <h1 className={styles.heroHeadline}>The 12 modules, mapped.</h1>
           <p className={styles.heroSubhead}>
-            Each module is three sub-lessons grouped around a single theme. Reps work through them in sequence — typically one module per week over 12 weeks, though reps go faster or slower depending on density of their schedule.
+            Each module is three sub-lessons grouped around a single theme. AEs and SDRs work through them in sequence — typically one module per week over 12 weeks, though AEs and SDRs go faster or slower depending on density of their schedule.
           </p>
           <div className={styles.kpiRow}>
             <div className={styles.kpi}>
@@ -300,12 +308,22 @@ export default function CurriculumPage() {
 
       <section className={`${styles.sectionTight} ${styles.sectionDivider}`}>
         <div className={styles.container}>
+          <p className={styles.diagPathHint}>
+            <strong>One curriculum, both audiences.</strong> AEs and SDRs work
+            through the same modules in the same order. A few modules lean toward
+            one role — those are tagged with a <strong>role flavor</strong> in the
+            meta row (e.g., Module 5 is <strong>SDR-leaning</strong>). Everything
+            else applies to both audiences equally.
+          </p>
           {MODULES.map((m) => (
             <SpecSection
               key={m.number}
               number={m.number}
               title={m.theme}
               meta={[
+                ...(m.flavor
+                  ? [{ label: "Role flavor", value: `${m.flavor}-leaning` }]
+                  : []),
                 { label: "Lessons", value: m.lessons.map((l) => l.number).join(", ") },
                 { label: "Duration", value: m.duration },
               ]}
@@ -348,7 +366,7 @@ export default function CurriculumPage() {
           <h2 className={styles.h2}>Want a 5-minute preview of any lesson?</h2>
           <hr className={styles.divider} />
           <p className={styles.body}>
-            Book a 30-minute walkthrough and we&apos;ll show you any module or lesson at depth, on your screen, in the actual product. No marketing reel, no edited highlights — the real lesson, exactly as your reps would see it.
+            Book a 30-minute walkthrough and we&apos;ll show you any module or lesson at depth, on your screen, in the actual product. No marketing reel, no edited highlights — the real lesson, exactly as your AEs and SDRs would see it.
           </p>
           <div style={{ marginTop: 20 }}>
             <InlineCTA href="/teams/contact?source=curriculum">Book a walkthrough</InlineCTA>

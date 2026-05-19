@@ -27,7 +27,7 @@ const ROLES = [
   "Other",
 ];
 
-const TEAM_SIZES = ["1–9 reps", "10–24 reps", "25–49 reps", "50–99 reps", "100+ reps"];
+const TEAM_SIZES = ["1–9 AEs and SDRs", "10–24 AEs and SDRs", "25–49 AEs and SDRs", "50–99 AEs and SDRs", "100+ AEs and SDRs"];
 
 export default function ContactForm() {
   const searchParams = useSearchParams();
