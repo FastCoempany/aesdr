@@ -52,7 +52,7 @@ export function SubLogoCompact({ size = 20 }: CompactProps) {
         AESDR
       </span>
       <span className={styles.subLogoSuffix} style={{ fontSize: suffixSize }}>
-        <span className={styles.subLogoSlash}>/</span>OL
+        <span className={styles.subLogoSlash}>/</span>Teams
       </span>
     </span>
   );
@@ -72,7 +72,7 @@ export function SubLogoTiny({ size = 12 }: TinyProps) {
     >
       <span className={styles.subLogoTinyA}>A</span>
       <span className={styles.subLogoTinyDot}>·</span>
-      <span className={styles.subLogoTinyOl}>OL</span>
+      <span className={styles.subLogoTinyT}>T</span>
     </span>
   );
 }
