@@ -79,8 +79,8 @@ export default function AdminChip() {
       ref={ref}
       style={{
         position: "fixed",
-        top: 14,
-        left: 14,
+        bottom: 14,
+        right: 14,
         zIndex: 500,
       }}
     >
@@ -134,13 +134,15 @@ export default function AdminChip() {
           role="menu"
           style={{
             position: "absolute",
-            top: "100%",
-            left: 0,
-            marginTop: 8,
+            bottom: "100%",
+            right: 0,
+            marginBottom: 8,
             minWidth: 320,
+            maxHeight: "min(72vh, 640px)",
+            overflowY: "auto",
             background: "var(--cream)",
             border: "1px solid var(--crimson)",
-            boxShadow: "0 12px 36px rgba(139, 26, 26, 0.18)",
+            boxShadow: "0 -12px 36px rgba(139, 26, 26, 0.18)",
             padding: 8,
           }}
         >
