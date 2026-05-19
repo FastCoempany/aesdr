@@ -107,7 +107,7 @@ export default async function ReviewPage() {
           }}
         >
           One rating. One sentence. If you grade us 1–3, tell me what to fix
-          — I'd rather hear it than not. If you grade us 4–5 and the line is
+          — I&rsquo;d rather hear it than not. If you grade us 4–5 and the line is
           good, check the box and we may publish it (first name + role only,
           never your company).
         </p>

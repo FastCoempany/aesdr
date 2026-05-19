@@ -102,7 +102,7 @@ export default async function OnboardingPage() {
 
         <p style={{ fontSize: 17, lineHeight: 1.7, color: "var(--muted)", marginBottom: 8 }}>
           Naming <em>when</em>, <em>where</em>, and <em>what</em> roughly triples
-          the odds you'll actually do it. (Gollwitzer 1999. Boring research.
+          the odds you&rsquo;ll actually do it. (Gollwitzer 1999. Boring research.
           Works anyway.)
         </p>
         <p style={{ fontSize: 17, lineHeight: 1.7, color: "var(--muted)", marginBottom: 32 }}>

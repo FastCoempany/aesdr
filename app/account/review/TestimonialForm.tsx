@@ -237,7 +237,7 @@ export default function TestimonialForm({ initial }: Props) {
             />
             <span style={{ fontSize: 15, lineHeight: 1.55 }}>
               <strong>Yes, you can publish this on the AESDR site.</strong> First
-              name + role only. We'll do one editorial pass for typos, never
+              name + role only. We&rsquo;ll do one editorial pass for typos, never
               change the meaning.
             </span>
           </label>

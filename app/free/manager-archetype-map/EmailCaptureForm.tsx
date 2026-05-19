@@ -42,7 +42,7 @@ export default function EmailCaptureForm() {
             color: "var(--cream)",
           }}
         >
-          Check your inbox for <strong>{email}</strong>. If it's not there in 5
+          Check your inbox for <strong>{email}</strong>. If it&rsquo;s not there in 5
           minutes, look in spam — and reply to it so future ones land in your
           inbox.
         </p>

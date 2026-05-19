@@ -168,7 +168,7 @@ export default function ManagerArchetypeMapPage() {
           }}
         >
           Built from ten years of carrying a bag and managing AEs and SDRs.
-          Use it, don't use it — either way it stays free.
+          Use it, don&rsquo;t use it — either way it stays free.
         </p>
       </section>
 
@@ -302,7 +302,7 @@ export default function ManagerArchetypeMapPage() {
                   marginBottom: 6,
                 }}
               >
-                This week's move
+                This week&rsquo;s move
               </p>
               <p style={{ fontSize: 15, lineHeight: 1.65 }}>{a.weekly_move}</p>
             </div>

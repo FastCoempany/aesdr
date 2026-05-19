@@ -152,7 +152,7 @@ export default function PreviewPage() {
           }}
         >
           A sample from Lesson 3, <em>Surviving &amp; Thriving</em>. The body is open.
-          The takeaway tool — the one you'd use on Monday — is the part we charge for.
+          The takeaway tool — the one you&rsquo;d use on Monday — is the part we charge for.
         </p>
 
         <div
@@ -182,16 +182,16 @@ export default function PreviewPage() {
           <p style={{ fontSize: 18, lineHeight: 1.75, marginBottom: 16 }}>
             Every AE and SDR has a story about a manager who made the job
             harder. The mistake is to treat that manager as a personality
-            problem. They're not. They're an <strong>operating system</strong> —
+            problem. They&rsquo;re not. They&rsquo;re an <strong>operating system</strong> —
             a stable set of inputs they reward, outputs they ignore, and signals
             they read as competence or threat.
           </p>
           <p style={{ fontSize: 18, lineHeight: 1.75, marginBottom: 16 }}>
-            You don't have to like the OS. You do have to know which one you're
+            You don&rsquo;t have to like the OS. You do have to know which one you&rsquo;re
             running on. The cheapest mistake in the first 18 months of a sales
             career is matching your behaviour to the wrong manager — pitching a
             Coach like an Operator, ducking a Closer when they want to be in
-            the room, escalating to a Ghost who didn't want the alert.
+            the room, escalating to a Ghost who didn&rsquo;t want the alert.
           </p>
           <p style={{ fontSize: 18, lineHeight: 1.75 }}>
             This lesson hands you a four-archetype map and three live prompts.
@@ -329,7 +329,7 @@ export default function PreviewPage() {
               userSelect: "none",
             }}
           >
-            A printable single-page diagnostic: identify your manager's
+            A printable single-page diagnostic: identify your manager&rsquo;s
             archetype in 10 minutes, see the three behaviours that read as
             competence to that archetype, and the two that read as threat.
             Includes the Friday five-line email template tuned to each archetype.

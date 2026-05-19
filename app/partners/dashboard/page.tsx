@@ -71,7 +71,11 @@ export default async function PartnersDashboardPage() {
   // too but we want consistent counts regardless of policy edge cases.
   const admin = createAdminClient();
 
-  const since30dIso = new Date(Date.now() - 30 * DAY).toISOString();
+  // Per-request timestamp in a server component is safe; React's
+  // purity lint is a false positive on Date.now() at module top.
+  // eslint-disable-next-line react-hooks/purity
+  const nowMs = Date.now();
+  const since30dIso = new Date(nowMs - 30 * DAY).toISOString();
 
   const [linksRes, clicks30Res, clicksLifetimeRes, attribRes] = await Promise.all([
     admin

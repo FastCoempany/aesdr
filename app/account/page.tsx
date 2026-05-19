@@ -35,7 +35,12 @@ export default async function AccountPage() {
 
   const pausedUntilRaw = user.user_metadata?.paused_until as string | null | undefined;
   const pausedUntil = pausedUntilRaw ? new Date(pausedUntilRaw) : null;
-  const isPaused = !!pausedUntil && pausedUntil.getTime() > Date.now();
+  // Date.now() in a server component is per-request and safe; React's
+  // purity rule is a false positive here. The eq lint warning is
+  // suppressed with a clear reason.
+  // eslint-disable-next-line react-hooks/purity
+  const nowMs = Date.now();
+  const isPaused = !!pausedUntil && pausedUntil.getTime() > nowMs;
   const pauseLabel = pausedUntil
     ? pausedUntil.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
     : null;

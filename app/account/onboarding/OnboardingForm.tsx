@@ -187,7 +187,7 @@ export default function OnboardingForm() {
             marginBottom: 10,
           }}
         >
-          One person you'll tell (optional)
+          One person you&rsquo;ll tell (optional)
         </label>
         <input
           id="stakeholder"
@@ -215,8 +215,8 @@ export default function OnboardingForm() {
             lineHeight: 1.6,
           }}
         >
-          People who tell one person they're starting are roughly twice as
-          likely to actually start. We don't email them — that's on you.
+          People who tell one person they&rsquo;re starting are roughly twice as
+          likely to actually start. We don&rsquo;t email them — that&rsquo;s on you.
         </p>
       </div>
 

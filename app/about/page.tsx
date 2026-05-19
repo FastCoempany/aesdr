@@ -16,12 +16,12 @@ export default function AboutPage() {
           Built by Antaeus Coe &mdash; ten-plus years carrying a bag in SaaS,
           mid-market through enterprise, on both sides of the desk: SDR,
           AE, and the manager who had to coach the next cohort through the
-          same mistakes I'd already made.
+          same mistakes I&rsquo;d already made.
         </p>
         <p>
           Built with people who lived the same job. The validation set
           includes SDRs, AEs, and sales leaders from companies whose names
-          you'd recognise &mdash; their pushback shaped the curriculum more
+          you&rsquo;d recognise &mdash; their pushback shaped the curriculum more
           than anything I could have written alone.
         </p>
       </Section>
@@ -39,7 +39,7 @@ export default function AboutPage() {
           AESDR is the operating manual for the part of the job that
           actually gets you out of that statistic &mdash; pipeline math,
           managing up, comp realities, sober selling, prospecting that
-          doesn't read like a confession letter.
+          doesn&rsquo;t read like a confession letter.
         </p>
       </Section>
 
