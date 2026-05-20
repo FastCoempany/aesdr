@@ -54,8 +54,8 @@ These represent the long tail of choppy-cadence surfaces. The deep clean closes 
 
 ## Phased execution
 
-### Phase 1 — Section 2 + Section 3 body sweep (Lessons 5–12)
-**Target:** Every `lp` (lesson paragraph), `kp` (key-point body, post-colon), and `lie-a` (lesson insight answer) string in Section 2 and Section 3 of Lessons 5–12.
+### Phase 1 — All-Section body sweep (Lessons 5–12)
+**Target:** Every `lp` (lesson paragraph), `kp` (key-point body, post-colon), and `lie-a` (lesson insight answer) string in every body section of Lessons 5–12. The cover taglines and completion-screen strings were already swept in Batches 8l–8s; Section 1 received light touches only, and Section 2/3 was largely unswept. Some units have no Section 2/3 body content (interactive-only sections) — those just get a Section 1 deep pass.
 
 **Files in scope (24):**
 - `lesson-05/aesdr_course05_{1,2,3}_v1.html`
