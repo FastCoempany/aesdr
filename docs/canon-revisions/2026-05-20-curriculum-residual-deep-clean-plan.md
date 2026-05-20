@@ -91,24 +91,28 @@ These represent the long tail of choppy-cadence surfaces. The deep clean closes 
 
 **Commit pattern:** One commit per Course.
 
-### Phase 4 — Quiz questions + interactive `why:` / `result:` explanations
-**Target:** Every `QUIZ` array's `q:` strings + every interactive-data `why:` / `result:` / `note:` / `fix:` explanatory text where it functions as teach-back prose.
+### Phase 4 — Quiz questions + interactive teach-backs (targeted catch)
+**Target:** Every `QUIZ` array's `q:` strings + every interactive-data `why:` / `result:` / `note:` / `fix:` explanatory text.
 
-**Pattern to catch:** "X is correct. Y matters. That's how Z works." 3-fragment teach-backs.
+**Threshold for rewrite (per resolution 3):** Only sweep strings that are *actually choppy* — 3+ short sentences in a row, or trailing 2–3 word fragment imperatives. Well-formed 2-sentence teach-backs stay as-is to preserve teach-back register.
 
-**Pattern to write:** Single descriptive teach-back sentence that names the principle + the consequence.
+**Pattern to catch (will rewrite):** "X is correct. Y matters. That's how Z works." 3-fragment chains.
+
+**Pattern to leave (will skip):** "X principle holds because Y consequence. Now do Z." — clean 2-sentence teach-back at the right register.
+
+**Pattern to write (when rewriting):** Single descriptive teach-back sentence that names the principle + the consequence.
 
 **Keep:** The `opts:` arrays themselves (those are answer options, intentionally short).
 
 **Commit pattern:** One commit per Course.
 
-### Phase 5 — Section headers + sidebar mottos
+### Phase 5 — Section headers only (sidebar mottos carved out)
 **Target:**
-- `lh-title` strings across all sections (some are already title-length, some are choppy two-sentence pairs)
-- `lh-sub` strings (these are usually counter-text like "0 / 6 correctly sorted" — leave alone unless prose)
-- `sidebarMotto` per unit (the irisTxt-animated motivational tagline in the sidebar)
+- `lh-title` strings across all sections — sweep the choppy ones (most are title-length and fine)
+- `lh-sub` strings — leave alone (counter-text like "0 / 6 correctly sorted")
+- `sidebarMotto` per unit — **carve out per resolution 2** (motivational-attest-adjacent)
 
-**Most of these are already fine.** This phase is a targeted catch for the few that aren't.
+**Most of these are already fine.** This phase is a targeted catch for the few `lh-title` strings that aren't.
 
 **Commit pattern:** Single commit covering all 36 units.
 
@@ -137,15 +141,15 @@ This is comparable to the existing Batch 8e–8s run (about 36 commits to date f
 
 ---
 
-## Open questions (to confirm before Phase 1 starts)
+## Open questions (resolved 2026-05-20 — execution greenlit)
 
-1. **kp list-item bodies in Lessons 5–12 Section 2/3** — the calibration sample for these is the Lesson 1–4 deep rewrites (e.g., Unit 3.2 kp I "Drop the Ego: You're not the hero of this story..."). Confirm the same bar applies, or whether kp bodies in later lessons should stay punchier given their genre (tactical instruction-list).
+1. **kp list-item bodies in Lessons 5–12 Section 2/3** — **Resolved: same descriptive rewrite as Lesson 1–4.** Calibration anchor is Unit 3.2 kp I body.
 
-2. **Sidebar mottos** — most are 1–2 sentence descriptive strings already. Sweep them or treat as motivational-attest-adjacent (carve-out)?
+2. **Sidebar mottos (`id="sidebarMotto"`)** — **Resolved: carve out as motivational-attest-adjacent.** They already read as a 2-sentence descriptive pair (*"[role/topic noun]. [What writing here does for you]."*) and sit parallel to `SIDEBAR_TEXTS` in voice and position. Treated as sister-set to the founder's Lesson 1 motivational-attest exemption.
 
-3. **`why:` teach-backs inside interactive data** — these are short pedagogical explanations that pop up after a question is answered correctly. They have a teach-back register that arguably wants to be punchier than body prose. Confirm direction: rewrite descriptively, or leave as teach-back-register?
+3. **`why:` / `result:` / `fix:` teach-backs inside interactive data** — **Resolved: targeted catch only (option B).** Leave the well-formed 2-sentence teach-backs alone. Only rewrite the strings that are actually choppy — defined as 3+ short sentences in a row, or trailing 2–3 word fragment imperatives.
 
-4. **Commit cadence** — 46 commits is reviewable but heavy. Acceptable, or batch into ~12 super-commits (one per Course covering all phases for that Course)?
+4. **Commit cadence** — **Resolved: 46 commits, take time.** No super-commit batching.
 
 ---
 
