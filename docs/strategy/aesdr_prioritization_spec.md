@@ -409,7 +409,7 @@ Support both **full Kano** and **operational Kano**.
 
 ### Operational UI grouping
 
-- **Table Stakes** = `basic`
+- **Baseline** = `basic`
 - **Performance Driver** = `performance`
 - **Differentiator** = `delighter`
 - **Ignore / Avoid** = `indifferent`, `reverse`, `questionable`
@@ -548,7 +548,7 @@ Decide what AESDR should build, revise, split, or cut next.
 
 ### Review questions
 
-- Is this table stakes, a performance driver, or a differentiator?
+- Is this baseline (what every buyer expects), a performance driver, or a differentiator?
 - Do students truly need this?
 - Is it actually deliverable well?
 - Does it improve outcomes or just look sophisticated?
@@ -560,7 +560,7 @@ Decide what AESDR should build, revise, split, or cut next.
 - prioritized curriculum backlog
 - approved launch list
 - deferred list
-- items to split or kill
+- items to split or cut
 - judgment log artifact
 
 ---
@@ -835,7 +835,7 @@ Classify items by satisfaction logic.
 ### Layout
 
 Grouped swimlanes:
-- Table Stakes
+- Baseline
 - Performance Drivers
 - Differentiators
 - Ignore / Avoid

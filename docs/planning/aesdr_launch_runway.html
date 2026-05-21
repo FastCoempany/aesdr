@@ -19,12 +19,12 @@
 html{background:var(--bg);color:var(--white);font-family:var(--sans);scroll-behavior:smooth}
 body{min-height:100vh;padding-bottom:300px}
 
-/* ── FLOATING FUEL GAUGE ── */
-.fuel{position:fixed;right:20px;top:50%;transform:translateY(-50%);z-index:1000;display:flex;flex-direction:column;align-items:center;gap:8px}
-.fuel-tube{width:14px;height:260px;background:#111;border:1px solid var(--border);border-radius:99px;overflow:hidden;position:relative}
-.fuel-level{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,var(--green),var(--cyan));border-radius:0 0 99px 99px;transition:height .6s cubic-bezier(.4,0,.2,1);box-shadow:0 0 20px var(--green-glow)}
-.fuel-pct{font-family:var(--mono);font-size:11px;color:var(--green);letter-spacing:.1em;writing-mode:horizontal-tb}
-.fuel-label{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+/* ── FLOATING GAUGE ── */
+.gauge{position:fixed;right:20px;top:50%;transform:translateY(-50%);z-index:1000;display:flex;flex-direction:column;align-items:center;gap:8px}
+.gauge-tube{width:14px;height:260px;background:#111;border:1px solid var(--border);border-radius:99px;overflow:hidden;position:relative}
+.gauge-level{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,var(--green),var(--cyan));border-radius:0 0 99px 99px;transition:height .6s cubic-bezier(.4,0,.2,1);box-shadow:0 0 20px var(--green-glow)}
+.gauge-pct{font-family:var(--mono);font-size:11px;color:var(--green);letter-spacing:.1em;writing-mode:horizontal-tb}
+.gauge-label{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
 
 /* ── HEADER ── */
 .runway-header{text-align:center;padding:80px 20px 60px;position:relative;overflow:hidden}
@@ -104,7 +104,7 @@ body{min-height:100vh;padding-bottom:300px}
 
 /* ── RESPONSIVE ── */
 @media(max-width:700px){
-.fuel{right:8px}.fuel-tube{height:160px;width:10px}
+.gauge{right:8px}.gauge-tube{height:160px;width:10px}
 .strip-head{padding:12px 14px;gap:10px}.strip-meta{display:none}
 .substeps{padding-left:42px}
 .phase{padding:0 14px}
@@ -114,11 +114,11 @@ body{min-height:100vh;padding-bottom:300px}
 </head>
 <body>
 
-<!-- FUEL GAUGE -->
-<div class="fuel">
-  <div class="fuel-pct" id="fuelPct">0%</div>
-  <div class="fuel-tube"><div class="fuel-level" id="fuelLevel"></div></div>
-  <div class="fuel-label">Fuel</div>
+<!-- GAUGE -->
+<div class="gauge">
+  <div class="gauge-pct" id="gaugePct">0%</div>
+  <div class="gauge-tube"><div class="gauge-level" id="gaugeLevel"></div></div>
+  <div class="gauge-label">Gauge</div>
 </div>
 
 <!-- HEADER -->
@@ -131,7 +131,7 @@ body{min-height:100vh;padding-bottom:300px}
 <!-- ANTI-LINKEDIN MANIFESTO -->
 <div class="manifesto">
   <div class="manifesto-box">
-    <p><strong>LinkedIn is not on this runway.</strong> It's a theatre for virtue-signaling snakes and scoundrels faking it for the quick buck — everyone's an expert, nobody's closing. AESDR lives where real reps live: Reddit threads at midnight, Discord DMs between dials, podcast earbuds on the commute, TikToks in the parking lot before standup. We go where the pain is honest and the advice isn't performative.</p>
+    <p><strong>LinkedIn is not on this runway.</strong> It's a theatre for virtue-signaling snakes and scoundrels faking it for the quick buck — everyone's an expert, nobody's closing. AESDR lives where real AEs and SDRs live: Reddit threads at midnight, Discord DMs between dials, podcast earbuds on the commute, TikToks in the parking lot before standup. We go where the pain is honest and the advice isn't performative.</p>
   </div>
 </div>
 
@@ -467,7 +467,7 @@ const PHASES = [
      subs:[
        "Create account: twitter.com/signup — handle: @aesdr (or closest available)",
        "Profile pic: AESDR logo or monogram (green on black)",
-       "Bio: something sharp and real, not corporate. 'Sales training for reps who actually close.' or similar",
+       "Bio: something sharp and real, not corporate. 'Sales training for AEs and SDRs who actually close.' or similar",
        "Header image: simple dark branded banner",
        "Link: aesdr.com",
        "Write and post 5 pieces of content. Repurpose key course insights in the anti-guru voice.",
@@ -475,7 +475,7 @@ const PHASES = [
        "Reply to 10 posts with genuine value — not 'great post!' but actual insight",
        "Pin your best tweet"
      ]},
-    {id:"ch-02",name:"Reddit Organic Presence",desc:"r/sales (250K+), r/salesforce, r/InsideSales — where reps actually vent",cost:"Free",time:"Ongoing",eng:false,
+    {id:"ch-02",name:"Reddit Organic Presence",desc:"r/sales (250K+), r/salesforce, r/InsideSales — where AEs and SDRs actually vent",cost:"Free",time:"Ongoing",eng:false,
      subs:[
        "Create a Reddit account (or use existing personal one — authenticity matters more than branding here)",
        "Join: r/sales, r/salesforce, r/startups, r/Entrepreneur, r/InsideSales",
@@ -514,7 +514,7 @@ const PHASES = [
     {id:"ch-06",name:"Indie Hackers",desc:"Founder community. Build-in-public crossover audience.",cost:"Free",time:"30 min",eng:false,
      subs:[
        "Go to indiehackers.com → create account",
-       "Post your build-in-public story: 'I built a sales training platform because LinkedIn advice is killing reps'",
+       "Post your build-in-public story: 'I built a sales training platform because LinkedIn advice is wrecking AEs and SDRs'",
        "Share real numbers: development timeline, first customers, revenue (when you have it)",
        "Indie Hackers audience overlaps with founders who HIRE AEs/SDRs — potential team plan buyers",
        "Engage with other builders' posts — the community rewards genuine participation"
@@ -523,7 +523,7 @@ const PHASES = [
      subs:[
        "Go to producthunt.com → sign up → go to 'Post a Product'",
        "Prepare launch assets: logo, 3-5 screenshots/mockups, tagline, description",
-       "Tagline: something punchy — 'Sales training for reps who close, not reps who post about closing'",
+       "Tagline: something punchy — 'Sales training for AEs and SDRs who close, not the ones who post about closing'",
        "Write the description: what it is, who it's for, what makes it different",
        "Get 5-10 friends/contacts to upvote on launch day",
        "Schedule launch for a Tuesday or Wednesday (best PH engagement days)",
@@ -561,7 +561,7 @@ const PHASES = [
      subs:[
        "Research 10 podcasts in the sales space. Start with: Sales Gravy, The Sales Evangelist, Sell or Die, Make It Happen Mondays, The Brutal Truth About Sales, Surf and Sales, Sales Hacker Podcast, SDR Game, B2B Revenue Leaders, Modern Sales Pros Podcast",
        "For each: find the host's email or DM (check show notes, Twitter, website)",
-       "Write a pitch email: who you are, your unique angle (anti-guru, real-rep training), 3 topic ideas you could discuss",
+       "Write a pitch email: who you are, your unique angle (anti-guru, real-operator training), 3 topic ideas you could discuss",
        "Make the pitch about THEIR audience, not your product",
        "Follow up once after 5-7 days if no response",
        "When booked: prepare 2-3 talking points, mention aesdr.com naturally, don't hard-sell",
@@ -594,7 +594,7 @@ const PHASES = [
      subs:[
        "Use the quiz content from docs/content/A01-lead-magnet-quiz.md",
        "Build as a standalone page: app/quiz/page.tsx or a separate HTML file",
-       "10 questions → 4 outcome profiles (Burnout Rep, Operator, Survivor, Climber)",
+       "10 questions → 4 outcome profiles (Burnout AE/SDR, Operator, Survivor, Climber)",
        "Gate results behind email capture: 'Enter your email to see your results'",
        "Store emails in a Supabase leads table or Resend audience",
        "Result page shows their profile + CTA to buy AESDR",
@@ -711,7 +711,7 @@ const PHASES = [
 {
   id:"launch",num:"08",title:"Launch Sequence — Final 48 Hours",cost:"$0",
   tasks:[
-    {id:"fin-01",name:"Recruit 5-10 Beta Testers",desc:"Real reps who test the course and give honest feedback",cost:"Free",time:"1-2 days",eng:false,
+    {id:"fin-01",name:"Recruit 5-10 Beta Testers",desc:"Real AEs and SDRs who test the course and give honest feedback",cost:"Free",time:"1-2 days",eng:false,
      subs:[
        "Identify 5-10 people in your network: current/former SDRs, AEs, sales managers",
        "Send each a personal message: 'I built a sales training course and I need honest feedback before launch. Free access in exchange for telling me what sucks.'",
@@ -784,7 +784,7 @@ const PHASES = [
        "Hour 6: Full check — signups, purchases, lesson starts",
        "Hour 12: Same checks + look for patterns",
        "Hour 24: Full review — count signups, purchases, completed lessons, support tickets",
-       "If anything breaks: re-enable proxy (git checkout HEAD~1 -- proxy.ts) as emergency kill switch"
+       "If anything breaks: re-enable proxy (git checkout HEAD~1 -- proxy.ts) as emergency shut-off switch"
      ]}
   ]
 }
@@ -922,8 +922,8 @@ function refreshGlobal(changedPhase) {
   const pct = Math.round((done / total) * 100);
   document.getElementById('doneCount').textContent = done;
   document.getElementById('totalCount').textContent = total;
-  document.getElementById('fuelPct').textContent = pct + '%';
-  document.getElementById('fuelLevel').style.height = pct + '%';
+  document.getElementById('gaugePct').textContent = pct + '%';
+  document.getElementById('gaugeLevel').style.height = pct + '%';
 
   // GO button
   const goBtn = document.getElementById('goBtn');

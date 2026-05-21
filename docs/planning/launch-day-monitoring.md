@@ -82,7 +82,7 @@
 
 ---
 
-## Kill Switches
+## Shut-off Switches
 
 ### Level 1: Pause payments (keep site up)
 In Stripe dashboard: **Products > [AESDR] > Archive product**
