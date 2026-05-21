@@ -1,7 +1,7 @@
 /**
  * Page: /partners/curriculum
  * Spec: AESDR-PARTNER-HUB-SPEC.md §"Page 1.3"
- * Canon: §3.3 (voice ratio 80/20), §6.3 (canonical patterns), §14 (taglines v1.2)
+ * Canon: §3.3 (voice ratio 80/20), §6.3 (canonical patterns), §14 (taglines v1.3)
  * Copy sources: D31 (full 12-card library catalog) + production /tools/[slug]
  * Five-question check: PASS
  */
@@ -69,7 +69,7 @@ export default function CurriculumPage() {
             textTransform: "uppercase",
           }}
         >
-          12 courses · 36 lessons · ~144 sections · 5 tools. Same you. But way....way better.
+          12 courses · 36 lessons · ~144 sections · 5 tools. Same you — way, way better.
         </p>
       </div>
 

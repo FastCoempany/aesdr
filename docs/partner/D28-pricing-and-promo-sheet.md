@@ -143,7 +143,7 @@ Approved phrasings in §3 above are pre-cleared — Partner may use them without
 For partners who want a brand-line that doesn't reference pricing directly, canon §14 taglines are pre-approved for partner co-branding:
 
 - *"The operating manual, not the motivation engine."*
-- *"12 courses. 5 tools. Same you. But way....way better."*
+- *"12 courses. 5 tools. Same you — way, way better."*
 - *"You can already feel it. You have to be a part of this."*
 - *"Real Operator. Never guru."*
 - *"If you want generic sales hype, the internet has a surplus."*

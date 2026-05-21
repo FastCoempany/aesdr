@@ -77,7 +77,7 @@ The four-question FAQ-lite block is structured for the registration page hierarc
 
 **Notes (internal):**
 - "Untamed" is canonical (canon §15 glossary).
-- "Twelve courses, twelve takeaways. Twelve things you can put on your desk." is verdict-shaped Rowan and tracks against the §14 tagline *"12 courses. 5 tools. Same you. But way....way better."* The "5 tools" delta is intentional — the tagline counts the major tools, not every per-course takeaway.
+- "Twelve courses, twelve takeaways. Twelve things you can put on your desk." is verdict-shaped Rowan and tracks against the §14 tagline *"12 courses. 5 tools. Same you — way, way better."* The "5 tools" delta is intentional — the tagline counts the major tools, not every per-course takeaway.
 - "Drip-gating" is the SaaS-norm pattern we're countering. Naming it is the move.
 
 ---

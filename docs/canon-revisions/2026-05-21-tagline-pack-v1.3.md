@@ -50,7 +50,7 @@ Repeatable across collateral, host scripts, social, decks. Use, don't paraphrase
 
 - "You can already feel it. You have to be a part of this."
 - "Real Operator. Never guru."
-- "12 courses. 5 tools. Same you. But way....way better." (revised v1.3 — supersedes v1.2 "12 lessons. 5 tools. 1 new you.")
+- "12 courses. 5 tools. Same you — way, way better." (revised v1.3 — supersedes v1.2 "12 lessons. 5 tools. 1 new you.")
 - "The operating manual, not the motivation engine."
 - "Less affiliate empire. More founding vineyard."
 - "If you want generic sales hype, the internet has a surplus."
@@ -69,7 +69,7 @@ Repeatable across collateral, host scripts, social, decks. Use, don't paraphrase
 One change, two rationales:
 
 - **Hierarchy alignment.** `12 lessons` → `12 courses` brings the canonical tagline into line with the Course → Lesson → Section hierarchy ratified across partner-kit, curriculum-map, syllabus, FAQ, and consumer surfaces. With v1.2 standing, every mono-label tagline-derivative in mockups, warning-tags, and partner-promo surfaces had to choose between matching the canon §14 verbatim ("12 lessons") or matching the hierarchy ("12 courses"). v1.3 removes that conflict.
-- **"Same you. But way....way better." replaces "1 new you."** The v1.2 "new you" beat tried to make the tagline a contract by promising identity-shift. The new phrasing keeps the contract — outcome change is implied — without claiming AESDR rewrites the buyer's identity. "Same you. But way....way better." is more honest per canon §13 (honesty discipline) and stays cleanly within §10.2 approved-claims (no income, no specific outcome, no transformation theatre). The doubled-comma pause "way....way better" is the brand fingerprint: deliberate, slightly off-rhythm, signals a real person wrote the line and a real person believes it.
+- **"Same you — way, way better." replaces "1 new you."** The v1.2 "new you" beat tried to make the tagline a contract by promising identity-shift. The new phrasing keeps the contract — outcome change is implied — without claiming AESDR rewrites the buyer's identity. "Same you — way, way better." is more honest per canon §13 (honesty discipline) and stays cleanly within §10.2 approved-claims (no income, no specific outcome, no transformation theatre). The em-dash pause + repeated "way, way" is the brand fingerprint: a beat the buyer hears, not a flourish that demands interpretation. (An earlier in-draft form used a doubled-comma pause "way....way better"; founder swapped to the em-dash form for print-render durability — see §8 closed-question note below.)
 
 Both moves together: the tagline now reads as something an operator would say to another operator at a bar (canon R-G6 bar test). The v1.2 form read as something a brand wrote; the v1.3 form reads as something a buyer would repeat.
 
@@ -80,7 +80,7 @@ Both moves together: the tagline now reads as something an operator would say to
 | Deliverable | What needs editing | Severity (S/M/L) |
 |---|---|---|
 | `AFFILIATE_BRAND_CANON.md` §14 + §"Decisions log" | Update v1.2 line in §14 and append v1.3 row in decisions log. | S |
-| `docs/partner/D23-partner-facing-faq.md` line 80 | `*"12 lessons. 5 tools. 1 new you."*` → `*"12 courses. 5 tools. Same you. But way....way better."*` | S |
+| `docs/partner/D23-partner-facing-faq.md` line 80 | `*"12 lessons. 5 tools. 1 new you."*` → `*"12 courses. 5 tools. Same you — way, way better."*` | S |
 | `docs/partner/D31-curriculum-map.md` line 137 | Same. | S |
 | `docs/partner/D28-pricing-and-promo-sheet.md` line 146 | Same. | S |
 | `docs/partner/HUB-BUILD-PROMPT.md` line 34 | Same. | S |
@@ -96,13 +96,13 @@ Both moves together: the tagline now reads as something an operator would say to
 
 ## 6. Derivative-form policy (mono-label adaptations)
 
-The full v1.3 tagline `"12 courses. 5 tools. Same you. But way....way better."` is 50 characters with periods and rhythm — it fits headlines, slide closes, and standalone hero captions, but it's longer than the visual budget of a mono-label `· `-separator tag.
+The full v1.3 tagline `"12 courses. 5 tools. Same you — way, way better."` is 49 characters with periods and an em-dash pause — it fits headlines, slide closes, and standalone hero captions, but it's longer than the visual budget of a mono-label `· `-separator tag.
 
 Two derivative forms are pre-cleared for mono-label use:
 
 | Form | Use surfaces |
 |---|---|
-| **Full:** `12 courses. 5 tools. Same you. But way....way better.` | Slide closes, hero captions, brand-line sign-offs, partner-promo `curr-h` headers |
+| **Full:** `12 courses. 5 tools. Same you — way, way better.` | Slide closes, hero captions, brand-line sign-offs, partner-promo `curr-h` headers |
 | **Mono-label short:** `12 courses · at your own pace · same you, way better` | Hero warning-tags, fork-* labels, variant editorial-split CTA tags, lesson-preview thumbnail mono lines |
 | **Inventory short:** `12 courses · 5 tools · same you, way better` | Curriculum-map closers, syllabus footer CTA, places that need the inventory beats |
 
@@ -112,7 +112,7 @@ Derivative usage is canon-cleared per this revision; do not paraphrase further w
 
 ## 7. Compliance check (canon §10)
 
-- **§10.2 approved claims:** "Same you. But way....way better." names outcome change as relative ("better") rather than absolute or specific. No income claim, no conversion-rate claim, no promotion-timing claim. **Pass.**
+- **§10.2 approved claims:** "Same you — way, way better." names outcome change as relative ("better") rather than absolute or specific. No income claim, no conversion-rate claim, no promotion-timing claim. **Pass.**
 - **§10.3 forbidden claims:** No identity-transformation promise (the v1.2 "new you" implied one); no guru-style "this will change your life" register. The line acknowledges the buyer is the same person — the program changes operating capability, not personhood. **Pass.**
 - **§13 honesty discipline:** "Same you" is the honest filter — buyers who expected a transformation course will self-select away; buyers who want sharper tools without the identity theater will self-select toward. The honest disqualification is built into the tagline itself. **Pass.**
 
@@ -120,5 +120,5 @@ Derivative usage is canon-cleared per this revision; do not paraphrase further w
 
 ## 8. Open
 
-- **Whether the v1.3 tagline gets a print-render variant** (where the doubled-comma pause `way....way` might not render correctly across PDF tools that normalize whitespace). Default: ship as-is in markdown source; PDF render team verifies the four dots survive Pandoc / wkhtmltopdf / etc. If they don't, the canonical print form becomes `same you — way, way better` with an em-dash. Confirm before first print run.
+- ~~**Whether the v1.3 tagline gets a print-render variant**~~ **RESOLVED 2026-05-21 (same day as ratification):** Founder swapped the in-draft doubled-comma pause `way....way better` to the em-dash form `Same you — way, way better.` before any downstream production. Em-dash survives Pandoc / wkhtmltopdf / DOCX normalization cleanly; doubled-comma form was print-fragile. The em-dash form is the single canonical phrasing across screen, print, and partner channels. No print-render variant needed.
 - **Whether to retire the v1.2 entry from `2026-05-04-tagline-pack-v1.2.md`** or leave it as historical record. Default: **leave as historical record**, with a one-line note at the top pointing to v1.3 as the active tagline.
