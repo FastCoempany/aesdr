@@ -15,7 +15,7 @@ import { join } from "path";
  *   - Tagline pulled verbatim from live landing copy — do not invent.
  */
 export const runtime = "nodejs";
-export const alt = "AESDR · The 12-lesson sales survival course, built by operators";
+export const alt = "AESDR · The 12-course sales survival program, built by operators";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -77,7 +77,7 @@ export default async function OG() {
               lineHeight: 1.3,
             }}
           >
-            <div>12-lesson sales survival course.</div>
+            <div>12-course sales survival program.</div>
             <div>Built by operators, not course-people.</div>
           </div>
           <div

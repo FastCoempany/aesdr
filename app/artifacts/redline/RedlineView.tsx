@@ -51,7 +51,7 @@ export default function RedlineView({ data }: { data: RedlineData }) {
           <h1 className="cover-title">
             <span className="cover-name">{data.studentName}</span>
           </h1>
-          <p className="cover-sub">A self-portrait in twelve lessons</p>
+          <p className="cover-sub">A self-portrait in twelve courses</p>
           <div className="cover-meta">
             Submitted {dateLabel} · {roleLabel}
           </div>

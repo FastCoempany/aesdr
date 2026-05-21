@@ -371,7 +371,7 @@ export default async function Dashboard() {
                 href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
                   "https://aesdr.com/"
                 )}&summary=${encodeURIComponent(
-                  `Just finished AESDR — twelve lessons on the part of SaaS sales nobody actually teaches. Worth it for any ${userRole === "ae" ? "AE" : "SDR"} in their first 18 months. ${"https://aesdr.com/"}`
+                  `Just finished AESDR — twelve courses on the part of SaaS sales nobody actually teaches you in onboarding. Worth it for any ${userRole === "ae" ? "AE" : "SDR"} inside their first 18 months in the seat. ${"https://aesdr.com/"}`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"

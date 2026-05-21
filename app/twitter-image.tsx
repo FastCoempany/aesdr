@@ -9,7 +9,7 @@ import OpenGraphImage from "./opengraph-image";
 
 export const runtime = "nodejs";
 export const alt =
-  "AESDR · The 12-lesson sales survival course, built by operators";
+  "AESDR · The 12-course sales survival program, built by operators";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

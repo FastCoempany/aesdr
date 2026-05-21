@@ -107,8 +107,8 @@ export default async function PlaybillPage({
             The curtain has not risen.
           </h1>
           <p style={{ fontSize: "16px", fontStyle: "italic", color: "#6B6B6B", lineHeight: 1.6, marginBottom: "28px" }}>
-            Your Playbill will be composed once all twelve lessons are complete.
-            Return here after the final performance.
+            Your Playbill will be composed once all twelve courses are
+            complete — return here after the final performance.
           </p>
           <Link
             href="/dashboard"

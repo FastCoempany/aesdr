@@ -107,8 +107,8 @@ export default async function RedlinePage({
             The editor has not yet read it.
           </h1>
           <p style={{ fontSize: "16px", fontStyle: "italic", color: "#6B6B6B", lineHeight: 1.6, marginBottom: "28px" }}>
-            Your Redline will be prepared once all twelve lessons are complete.
-            Return here after you submit the final draft.
+            Your Redline will be prepared once all twelve courses are
+            complete — return here after you submit the final draft.
           </p>
           <Link
             href="/dashboard"
