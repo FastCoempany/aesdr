@@ -84,6 +84,9 @@ const SKIP_FILE_PATTERNS = [
   /^AFFILIATE_BRAND_CANON\.md$/,
   /content\/partner-kit\/banned-vocabulary\.md$/,
   /content\/aesdr-internal\/00-canon-excerpt\.md$/,
+  /content\/aesdr-internal\/D20-claims-sheet\.md$/,
+  /docs\/partner\/D20-claims-sheet\.md$/,
+  /docs\/partner\/kit-template\/00-canon-excerpt\.md$/,
   /\.test\.(md|mdx)$/,
 ];
 

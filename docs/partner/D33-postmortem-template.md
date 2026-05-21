@@ -1,6 +1,6 @@
 # D33 — Pilot Postmortem Template
 
-**Deliverable:** Structured retrospective filled out per pilot. Captures *what we learned* independent of the EXTEND/REVISE/KILL decision in D32. Feeds the canon, the deck revision queue, the FAQ, and the next pilot's setup.
+**Deliverable:** Structured retrospective filled out per pilot. Captures *what we learned* independent of the EXTEND/REVISE/CUT decision in D32. Feeds the canon, the deck revision queue, the FAQ, and the next pilot's setup.
 **Audience:** Internal — founder, ops, future-AESDR. Not shared with the partner.
 **Voice ratio:** 70 Rowan / 30 Michael. Honest is the only tone that works.
 **Format:** Markdown source; one file per pilot at `docs/partner/pilots/[partner-slug]/postmortem--v1.md`.
@@ -10,7 +10,7 @@
 
 ## Use
 
-Filled out within 7 days of the pilot's end, after the kill-or-keep memo (D32) and the partner-facing close-out (D34) are done. Postmortem comes *after* those two on purpose: the decision shouldn't be contaminated by retrospective second-guessing, and the partner shouldn't be in the room while we critique ourselves.
+Filled out within 7 days of the pilot's end, after the cut-or-keep memo (D32) and the partner-facing close-out (D34) are done. Postmortem comes *after* those two on purpose: the decision shouldn't be contaminated by retrospective second-guessing, and the partner shouldn't be in the room while we critique ourselves.
 
 The postmortem is also the input to the rolling objection log and the canon revision queue. If a postmortem identifies a canon contradiction, the canon updates first; the deliverables follow.
 
@@ -26,7 +26,7 @@ This document synthesizes; it does not generate primary data. The signals that f
 | Live workshop chat log + Q&A transcript | Captured during workshop per canon §12.2 lurk-and-listen | §3, §4, §5, §7 |
 | Email-reply log (D13/D14/D15/D16/D18) | ESP reply inbox | §5 objections heard |
 | L&D-approver brief send + outcome log | `docs/partner/pilots/[partner-slug]/L-and-D/` | §6 ICP fit (approval rate is a fit proxy) |
-| D32 kill-or-keep memo | `docs/partner/pilots/[partner-slug]/kill-or-keep--v1.md` | §2 numbers (lifted), §10 single sentence (cross-check) |
+| D32 cut-or-keep memo | `docs/partner/pilots/[partner-slug]/cut-or-keep--v1.md` | §2 numbers (lifted), §10 single sentence (cross-check) |
 | D34 partner-facing close-out | Sent to partner; archived in pilot folder | §3 what worked (the partner relationship), §9 lessons for next pilot |
 | Founder lurk-and-listen running doc | Maintained per canon §12.2 throughout pilot | All sections — primary qualitative input |
 
@@ -42,7 +42,7 @@ If any of these inputs are missing or incomplete, name the gap before filling th
 > *(Display italic, ~36pt)*
 > *Postmortem: [Partner name]*
 > *Pilot dates: [YYYY-MM-DD] → [YYYY-MM-DD]*
-> *Decision (from D32): [EXTEND / REVISE / KILL]*
+> *Decision (from D32): [EXTEND / REVISE / CUT]*
 
 ---
 

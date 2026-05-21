@@ -6,7 +6,7 @@
 - **External (with explicit partner approval)** — a partner-cleared version may be shipped publicly: AESDR's `/case-studies` page (when warranted), partner-promo collateral, conference / podcast contexts. **Partner sign-off on the external version is required per canon §16; the external version is a redacted/condensed render of the internal source.**
 **Voice ratio:** 80 Rowan / 20 Michael per canon §3.3 (verdict mode). The internal version runs slightly more 90/10 (closer to D33 register); the external version runs 80/20 (closer to D26 register). Same template generates both.
 **Format:** Markdown source. Renders to (1) internal markdown reference filed in pilot folder, (2) external PDF case-study one-pager (when partner-approved), (3) external HTML page on `aesdr.com/case-studies/[PARTNER_SLUG]` (when warranted by post-launch traffic).
-**Use timing:** Filled out within 14 days of pilot end — after D32 (kill-or-keep), D34 (close-out), and D33 (postmortem). Per canon §1.6 + §16, the case study is a separate artifact from D33; D33 is internal critique with anti-canon callouts, D39 is the codified what-worked register.
+**Use timing:** Filled out within 14 days of pilot end — after D32 (cut-or-keep), D34 (close-out), and D33 (postmortem). Per canon §1.6 + §16, the case study is a separate artifact from D33; D33 is internal critique with anti-canon callouts, D39 is the codified what-worked register.
 **Canon refs:** `AFFILIATE_BRAND_CANON.md` §1.4 (borrowed trust), §1.5 (operator over guru), §1.6 (honesty discipline), §3.3 (voice ratios), §10.2 (approved claims — case-study claims must be approved), §10.3 (forbidden claims), §13 (honesty discipline), §16 (approval gates).
 
 > **Placeholder convention:** `[PARTNER_NAME]`, `[PARTNER_SLUG]`, `[PILOT_ID]`, `[PILOT_DATES]`, `[PARTNER_ARCHETYPE]`, `[FOUNDER_FIRST_NAME]`, plus pilot-specific numeric placeholders. Internal version retains full names; external version uses `[PARTNER_NAME]` only when partner approves naming, otherwise paraphrases archetype.
@@ -91,7 +91,7 @@ The structural sequence of the pilot, partner-side and AESDR-side, with named-de
 - **Workshop day:** Partner delivered 2-min intro per `09c`. AESDR host delivered D09 deck. [N] live attendees; [N] chat questions logged.
 - **Replay window:** D14 sent to no-shows. D15 + D16 sent to attendees-who-clicked-but-didn't-checkout. D17 outreach against T3/T4 triggers.
 - **Pricing-window close:** D18 deadline-window email sent. Pilot-pricing closed at [timestamp].
-- **Pilot close:** D32 kill-or-keep memo: [decision]. D34 partner-facing close-out sent. D33 postmortem filed.
+- **Pilot close:** D32 cut-or-keep memo: [decision]. D34 partner-facing close-out sent. D33 postmortem filed.
 
 This sequence is the same across pilots; the case study captures *which beats landed harder than expected and which underperformed expectations.*
 
@@ -121,7 +121,7 @@ This sequence is the same across pilots; the case study captures *which beats la
 
 **Internal version** carries every row. **External version** strips Founder hours + Effective hourly rate (those are AESDR-internal economics; partner doesn't see them in published case studies).
 
-**Per canon §10.2 approved claims:** Numbers above are observational data from the pilot, not promises about future pilots. **Per canon §10.3:** No income claims about the partner's audience members; no per-rep revenue projections.
+**Per canon §10.2 approved claims:** Numbers above are observational data from the pilot, not promises about future pilots. **Per canon §10.3:** No income claims about the partner's audience members; no per-seat revenue projections.
 
 ---
 
@@ -207,7 +207,7 @@ This is the codification layer. Reading 5 case studies' §9 sections back-to-bac
 
 Single line, two outcomes:
 
-> **Status:** `[Pilot only / Extended (running pilot 2) / Ambassador (per D36) / Sunset (per D34 KILL or D36 sunset)]`
+> **Status:** `[Pilot only / Extended (running pilot 2) / Ambassador (per D36) / Sunset (per D34 CUT or D36 sunset)]`
 >
 > **Rationale:** [1 sentence — what status, why, what's next]
 
@@ -291,7 +291,7 @@ Filed to: `docs/partner/pilots/[PARTNER_SLUG]/case-study--v1.md` (internal sourc
 ## Forward dependencies
 
 This template depends on:
-- **D32 kill-or-keep memo** — §4 numbers lift from D32. **Met.**
+- **D32 cut-or-keep memo** — §4 numbers lift from D32. **Met.**
 - **D33 postmortem** — informs §6 and §7; the case study is filed *after* D33 so D33's analysis can be distilled. **Met.**
 - **D34 partner-facing close-out** — partner-side relationship status (§10) reflects D34 outcome. **Met.**
 - **D27 partner vetting scorecard** — §2 archetype data + §9 scorecard-vs-reality delta. **Met.**

@@ -71,7 +71,7 @@ Per canon §4.1 (banned vocab) and §13 (honesty discipline):
 - **The "who shouldn't attend" disqualification block.** Locked. The honest disqualification is a brand move per canon §13.
 - **Pricing language.** Not in this template — pricing is on the registration page. Don't mention price in the launch send.
 - **The disclosure paragraph.** Locked. Per FTC §10.1.
-- **Banned vocab anywhere in your additions.** "Crush it," "game-changer," "unlock," "mindset," "thought leader," etc. — see `00-canon-excerpt.md` §4.1 for the full list.
+- **Banned vocab anywhere in your additions.** Guru-action verbs, "game-changer," "unlock," "mindset," "thought leader," etc. — see `00-canon-excerpt.md` §4.1 for the full catalog.
 
 ---
 

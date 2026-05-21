@@ -17,8 +17,8 @@ This is the most-public AESDR-direct surface in the deliverable set, which means
 
 | Discipline check | What lands | What's forbidden |
 |---|---|---|
-| Honesty discipline (canon §13) | Specific pilot count, specific time window, specific things we learned that surprised us | "Hundreds of reps" / "Industry-leading" / unverifiable scale claims |
-| Approved claims (§10.2) | Structural promise (12 lessons, 5 tools, etc.), the lift from operator interviews + pilot data, "built by people who carried bags" | Income claims, ROI promises, "transform your career" register |
+| Honesty discipline (canon §13) | Specific pilot count, specific time window, specific things we learned that surprised us | "Hundreds of AEs and SDRs" / "Industry-leading" / unverifiable scale claims |
+| Approved claims (§10.2) | Structural promise (12 courses, 5 tools, etc.), the lift from operator interviews + pilot data, "built by people who carried bags" | Income claims, ROI promises, "transform your career" register |
 | Founder-backstage (canon §12) | Founder may sign this announcement (canon §12.4 — a named milestone is one of the rare cases founder visibility is earned) | Founder photo; founder personal-brand framing; "from the founder" hero block |
 
 **Founder visibility is the deliberate departure here.** Per canon §12.4 ("named milestone"), the launch *is* a milestone — AESDR has cleared pilot phase. The announcement may carry the founder's first name in the sign-off (a first per canon §12.5, where audience-facing communications are signed `AESDR Workshop` or `[HOST]`, never the founder). **This requires founder pre-approval before send.**
@@ -82,9 +82,9 @@ If on the email render target, no first-name personalization (we don't have firs
 >
 > *Three things we learned in pilot phase that we didn't expect:*
 >
-> ***— The recommended pace is recommended, not real.*** *We designed the curriculum for a 6-8 week pace at 1-2 lessons per week. Actual graduate pace: `[GRADUATE_PACE_RANGE]`. Not because the program is harder than expected — because real reps have real quarters. We're keeping the recommended pace as a recommendation, not pretending the real pace is something it isn't.*
+> ***— The recommended pace is recommended, not real.*** *We designed the curriculum for a 6-8 week pace at one to two courses per week. Actual graduate pace: `[GRADUATE_PACE_RANGE]`. Not because the program is harder than expected — because real AEs and SDRs have real quarters. We're keeping the recommended pace as a recommendation, not pretending the real pace is something it isn't.*
 >
-> ***— The lessons reps recognized themselves in landed harder than the frameworks did.*** *The recognition moments — the canon §3.2 register, the embarrassingly-specific honesty about what the role actually does to people — drove enrollment more than the framework slides did. Reps decide to enroll on recognition, not on instruction. We're surfacing more of the recognition register in the next curriculum revision, not less.*
+> ***— The lessons AEs and SDRs recognized themselves in landed harder than the frameworks did.*** *The recognition moments — the canon §3.2 register, the embarrassingly-specific honesty about what the role actually does to people — drove enrollment more than the framework slides did. AEs and SDRs decide to enroll on recognition, not on instruction. We're surfacing more of the recognition register in the next curriculum revision, not less.*
 >
 > ***— L&D-routed enrollment was higher than estimated.*** *We thought a smaller share of enrollees would come through manager-approved reimbursement. Actual: `[LD_ENROLLMENT_RATIO]`. The L&D-approver brief (a one-page PDF written for the conversation with a manager) carried more weight than we forecasted. We're keeping it; we're improving it.*
 >
@@ -165,7 +165,7 @@ Per canon §6.9.3 + §12.4, founder-signed social posts are a first-instance app
 >
 > *— Real pace is `[GRADUATE_PACE_RANGE]`, not the designed 6-8 weeks. We're surfacing the real number, not the marketing one.*
 >
-> *— Recognition moments outperformed framework slides for conversion. Reps decide on recognition.*
+> *— Recognition moments outperformed framework slides for conversion. AEs and SDRs decide on recognition.*
 >
 > *— L&D-routed enrollment ran at `[LD_ENROLLMENT_RATIO]`. The L&D brief earned its keep.*
 >

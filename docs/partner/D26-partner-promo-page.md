@@ -1,7 +1,7 @@
 # D26 — Partner-Promo Landing Page
 
 **Deliverable:** Per-partner co-branded landing page where Partner sends their audience during the promotion window. The "click here to register for the workshop" surface — the destination of every UTM-tagged link in `11-tracking-links.md` (D40 kit). Partner has no other AESDR-promoting page; this is it. One pilot, one page, one URL.
-**Audience:** The partner's audience — cold to AESDR, warm to the partner. Most arrive having read 1–2 sentences from the partner ("AESDR is doing a workshop for early-career SaaS reps, link below"). The page does the rest of the work.
+**Audience:** The partner's audience — cold to AESDR, warm to the partner. Most arrive having read 1–2 sentences from the partner ("AESDR is doing a workshop for early-career SaaS AEs and SDRs, link below"). The page does the rest of the work.
 **Voice ratio:** 70 Rowan / 30 Michael per canon §3.3 (workshop registration page row, and §8.3 partner-promo page anatomy). Hero + outcomes in Rowan; the "who this is not for" block + the partner-quote slot lean Michael; partner-relationship disclosure in plain compliance register.
 **Format:** HTML page rendered server-side at `aesdr.com/[PARTNER_SLUG]/workshop` (or equivalent). Crawlable for the partner-attribution window only — `noindex, nofollow` after `[PILOT_END_DATE]` per canon §1.1 (workshop-first, not evergreen).
 **Canon refs:** `AFFILIATE_BRAND_CANON.md` §1.1 (workshop-first), §1.4 (borrowed trust), §3.3 (voice ratios), §6.3 (canonical layout patterns — editorial split hero), §6.4 (iris reservation), §6.6 (co-brand zone), §7.4 (attendee experience: 2-field reg form), §8.1 (registration page anatomy — full version), §8.3 (page anatomy — partner-promo page), §8.7 (UTM canon — hidden form fields), §10.1 (FTC), §10.5 (TCPA — separate SMS opt-in), §13 (honesty discipline).
@@ -79,9 +79,9 @@ The page's first visual beat. Lifts the editorial split layout from `variants/va
 - **Three numbered outcomes**, mono numbering on left margin, `--display` italic 24pt for the outcome line, `--serif` 16pt for the explanation:
 
 > *(`01`)* ***A definition of "good" you can use Monday morning — not a feeling, an operating standard.***
-> *Most reps in their first two years have never had this written down for them. We write it down.*
+> *Most AEs and SDRs in their first two years have never had this written down for them. We write it down.*
 >
-> *(`02`)* ***The three judgment moves that separate the rep who survives ramp from the rep who doesn't.***
+> *(`02`)* ***The three judgment moves that separate the AE or SDR who survives ramp from the one who doesn't.***
 > *We will name them, walk them, and give you a worksheet to apply them to your last five calls.*
 >
 > *(`03`)* ***One specific change you'll make in your next five calls.***
@@ -251,7 +251,7 @@ Type: `--mono` 10pt for nav links and timestamp; `--serif` 13pt, `--muted` for t
 - **FTC material-connection disclosure (§10.1):** §10 partner-relationship disclosure block carries the verbatim canonical disclosure (lifted from D23 Q11). **Pass.**
 - **CAN-SPAM (§10.4):** N/A on the page itself — registrant emails go through AESDR's transactional ESP after registration.
 - **TCPA / SMS (§10.5):** §8 form has SMS opt-in as a separate checkbox, default unchecked, with explicit consent language. Phone field appears only when consented. **Pass.**
-- **Approved claims (§10.2):** No outcome promises, no income claims. The closest claim is §4 outcome 02 ("the rep who survives ramp"), which is observational. **Pass.**
+- **Approved claims (§10.2):** No outcome promises, no income claims. The closest claim is §4 outcome 02 ("the AE or SDR who survives ramp"), which is observational. **Pass.**
 - **Forbidden claims (§10.3):** No "guaranteed promotion," no "earn $X." Partner quote (§6) is pre-approved during D27. **Pass.**
 
 ---

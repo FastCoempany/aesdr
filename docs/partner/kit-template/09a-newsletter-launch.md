@@ -38,7 +38,7 @@ You may add up to **two sentences** of your own framing at the very top — your
 
 > *I'm hosting a live workshop for `[YOUR_AUDIENCE_DESCRIPTOR]` on `[WORKSHOP_DATE]` at `[WORKSHOP_TIME_TZ]`, with AESDR. The workshop is built for early-career SaaS SDRs and AEs in their first 0–3 years.*
 
-> *Most sales-training content rewards confidence over competence and formatting over thinking. AESDR is the opposite: a 12-lesson operating manual built around the part of the role most reps figure out the hard way — what good actually looks like, how to read your own pipeline honestly, and the three judgment moves that separate the rep who survives ramp from the rep who doesn't.*
+> *Most sales-training content rewards confidence over competence and formatting over thinking. AESDR is the opposite: a 12-course operating manual built around the part of the role most AEs and SDRs figure out the hard way — what good actually looks like, how to read your own pipeline honestly, and the three judgment moves that separate the AE or SDR who survives ramp from the one who doesn't.*
 
 > ***In the workshop, you'll leave with:***
 >
@@ -71,7 +71,7 @@ Per canon §4.1 (banned vocab) and §13 (honesty discipline):
 - **The "who shouldn't attend" disqualification block.** Locked. The honest disqualification is a brand move per canon §13.
 - **Pricing language.** Not in this template — pricing is on the registration page. Don't mention price in the launch send.
 - **The disclosure paragraph.** Locked. Per FTC §10.1.
-- **Banned vocab anywhere in your additions.** "Crush it," "game-changer," "unlock," "mindset," "thought leader," etc. — see `00-canon-excerpt.md` §4.1 for the full list.
+- **Banned vocab anywhere in your additions.** Guru-action verbs, "game-changer," "unlock," "mindset," "thought leader," etc. — see `00-canon-excerpt.md` §4.1 for the full catalog.
 
 ---
 

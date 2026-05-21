@@ -4,7 +4,7 @@
 **Audience:** AESDR-internal — founder, ops. Never shared with the partner. The conversion conversation itself is partner-facing and uses different language; this document is the AESDR-side strategy and decision rubric behind that conversation.
 **Voice ratio:** 90 Rowan / 10 Michael per canon §3.3 (internal docs row). Operating-doctrine register.
 **Format:** Markdown source. Reference document, not a fillable template (D32 / D33 / D27 are the per-pilot fillables; D36 is the doctrine that informs the conversion call).
-**Use timing:** Consulted within 7 days of D32 kill-or-keep memo landing on EXTEND. The ambassador conversation happens *after* the EXTEND-decision conversation (D34 EXTEND variant) — same partner, different relationship-shape, separate written agreement.
+**Use timing:** Consulted within 7 days of D32 cut-or-keep memo landing on EXTEND. The ambassador conversation happens *after* the EXTEND-decision conversation (D34 EXTEND variant) — same partner, different relationship-shape, separate written agreement.
 **Canon refs:** `AFFILIATE_BRAND_CANON.md` §1.3 (a handful of partners, not a marketplace — ambassadors are graduated pilot partners), §1.4 (borrowed trust), §1.5 (operator over guru), §1.6 (honesty discipline), §6.6 (co-branding zone), §10 (compliance — disclosure carries forward), §12 (founder-backstage; §12.4 founder appearance is rare and earned), §13 (honesty discipline), §16 (approval gates).
 
 > **Placeholder convention:** This is doctrine, not a fillable. Partner-conversation script in §6 uses `[PARTNER_FIRST_NAME]`, `[PARTNER_NAME]`, `[FOUNDER_FIRST_NAME]`, `[PILOT_ID]` placeholders.
@@ -23,7 +23,7 @@ An **ambassador** is a partner who graduated from the pilot model into a longer-
 Ambassadors are NOT:
 
 - **An "elite tier"** AESDR upsells partners into. Per canon §1.3, the ambassador relationship is earned, not sold.
-- **Permanent or guaranteed.** Ambassador relationships can sunset; the same EXTEND/REVISE/KILL discipline that ends pilots ends ambassadorships, just on a longer cadence.
+- **Permanent or guaranteed.** Ambassador relationships can sunset; the same EXTEND/REVISE/CUT discipline that ends pilots ends ambassadorships, just on a longer cadence.
 - **Free of approval gates.** Lower per-asset overhead, not zero. Per canon §16, paid placements + recorded assets always need pre-approval.
 - **Exclusive.** Per canon §10.4 D22 inheritance — non-exclusivity is permanent in both directions.
 
@@ -160,7 +160,7 @@ Triggers:
 
 Sunset conversation: founder-led, in-person or video, not email. The "we part as adults" canonical phrase (canon §14) applies. Reference to the original D34 EXTEND-decision rationale; what changed since; what AESDR keeps from the relationship. Honest, brief, no relationship-eulogy energy.
 
-A sunset is not a kill. The door stays open for future re-engagement (per canon §13 — AESDR's pilot honesty discipline applies to ambassadorships as well as pilots).
+A sunset is not a cut. The door stays open for future re-engagement (per canon §13 — AESDR's pilot honesty discipline applies to ambassadorships as well as pilots).
 
 ---
 
@@ -198,7 +198,7 @@ A sunset is not a kill. The door stays open for future re-engagement (per canon 
 This playbook depends on:
 - **D22 partner pilot agreement** — the v1 pilot template the ambassador agreement diverges from. **Met.**
 - **D27 partner vetting scorecard** — six-gate check pulls from D27 §6.5 + scorecard signals. **Met.**
-- **D32 kill-or-keep memo** — EXTEND decision feeds the conversion gate. **Met.**
+- **D32 cut-or-keep memo** — EXTEND decision feeds the conversion gate. **Met.**
 - **D33 postmortem** — §6 ICP fit + §7 brand audit feed gates 3 + 4. **Met.**
 - **D17 high-intent DM log** — gate 6 source. **Met.**
 - **`D22a-ambassador-agreement.md` template** — referenced as the agreement-shape doc. **Pending separate authoring** — recommend drafted on first ambassadorship invite, not pre-templated. The structure is named here; the legal doc gets drafted when first needed.

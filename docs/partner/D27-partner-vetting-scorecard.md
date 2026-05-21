@@ -13,7 +13,7 @@
 
 ## Use
 
-The scorecard exists because the partner-side decision is the easiest one to make on charisma and the hardest one to undo. A partner who fails the rubric in writing is a partner who, after one workshop, becomes a brand-mismatch problem we have to clean up with a kill-or-keep memo (D32). The scorecard is a one-hour discipline that prevents a one-quarter cleanup.
+The scorecard exists because the partner-side decision is the easiest one to make on charisma and the hardest one to undo. A partner who fails the rubric in writing is a partner who, after one workshop, becomes a brand-mismatch problem we have to clean up with a cut-or-keep memo (D32). The scorecard is a one-hour discipline that prevents a one-quarter cleanup.
 
 The rubric forces the founder to write down what they saw on the qualification call before the relationship politics begin. Most failed partnerships in pre-revenue founder-sales motion fail on a signal that was visible on the first call — the canon §1.4 "merciless mirror" doctrine applies to partners as much as to deliverables. We just have to write the signal down.
 
@@ -84,7 +84,7 @@ Per the report's "trust signals to verify" column (§ICP and partner matrices). 
 | 3.3 | Partner has run or co-hosted at least one paid commercial activity (sponsorship, affiliate deal, or course) — *or* explicitly named themselves as commercially open. | [Y/N] | [link / note] |
 | 3.4 | The partner's content is operating-detail-heavy, not motivation-heavy. (Sample 5 of their last 10 posts.) | [Y/N] | [link / note] |
 | 3.5 | Audience engagement rate (replies + saves / followers, sampled) ≥ 1.5%. (For newsletters: open rate ≥ 35%; for podcasts: per-episode listener floor ≥ 1k.) | [Y/N] | [link / note] |
-| 3.6 | Partner can name 2–3 specific reps in their audience, by name and current role, when asked on the call. | [Y/N] | [partner's named examples] |
+| 3.6 | Partner can name 2–3 specific AEs and SDRs in their audience, by name and current role, when asked on the call. | [Y/N] | [partner's named examples] |
 | 3.7 | Partner has direct member access (DM, member-channel, mailing list) — not a one-to-many broadcast only. | [Y/N] | [note] |
 | 3.8 | Reference check — at least one prior commercial partner of this person speaks about them positively. (For new partners with no commercial history, this is N/A and earns 0 points but is not disqualifying.) | [Y/N] | [reference name + paraphrase] |
 | **Trust raw** | / 8 | [n] |
@@ -101,7 +101,7 @@ Per canon §5 (anti-LinkedIn doctrine) and §4.1 (banned vocab). The partner's c
 | Row | Question | Score (0/1/2) |
 |---|---|---|
 | 4.1 | If we read the partner's last 20 posts side-by-side with 20 LinkedIn-influencer posts, do they look measurably colder, plainer, more specific? (Per canon §4.4.) | [n] |
-| 4.2 | Does the partner avoid the §4.1 banned vocab in their own content? (Sample 10 posts. Look for "crush it," "game-changer," "unlock," "mindset," "thought leader," generic hype emojis.) | [n] |
+| 4.2 | Does the partner avoid the §4.1 banned vocab in their own content? (Sample 10 posts. Look for the guru-action verb family, "game-changer," "unlock," "mindset," "thought leader," generic hype emojis — the full catalog lives in §4.1.) | [n] |
 | 4.3 | Is the partner's primary distribution channel a non-LinkedIn surface? (LinkedIn is permitted as secondary per §5.2 — a partner whose primary channel is LinkedIn is a fit-signal problem.) | [n] |
 | 4.4 | Does the partner discuss specific dollars, specific call counts, specific timelines — i.e., the "named number" signature move (canon §4.2) — rather than abstract motivation? | [n] |
 | 4.5 | When asked "what would you not say about AESDR," does the partner produce a real answer? (A partner who'd say anything for the deal is a partner who'll mis-position us.) | [n] |
@@ -275,7 +275,7 @@ This scorecard depends on:
 This scorecard is a forward dependency for:
 - **D22 (proposed) partner pilot agreement** — only sent on PASS.
 - **D26 (proposed) partner-promo page** — co-branded surface only built for PASS partners.
-- **D32 kill-or-keep memo** — references this scorecard as the v0 baseline.
+- **D32 cut-or-keep memo** — references this scorecard as the v0 baseline.
 - **D33 postmortem** — references this scorecard for "what we said on day 1 vs what happened."
 - **D40 (proposed) master partner-kit folder README** — references this scorecard as the gate.
 

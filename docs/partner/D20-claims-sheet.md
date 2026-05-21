@@ -85,7 +85,7 @@ Even *true* income claims become legally fraught the moment they go on a public 
 - ❌ "AESDR helps you get promoted from SDR to AE."
 - ❌ "X% of students land their next role within Y months."
 
-We are a course, not a placement program. We do not promise outcomes that depend on the rest of the rep's life.
+We are a course, not a placement program. We do not promise outcomes that depend on the rest of the AE or SDR's life.
 
 ### B3. Performance / outcome promises
 

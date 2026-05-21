@@ -15,17 +15,17 @@
 
 ## A. Cold to community operators (5)
 
-1. Workshop pilot for early-career reps in your community
+1. Workshop pilot for early-career AEs/SDRs in your community
 2. One live workshop, your audience, honest numbers
 3. Founding pilot — non-exclusive, time-boxed
-4. Built for the reps you already host
+4. Built for the AEs and SDRs you already host
 5. Tight fit — pilot for [community] members
 
 ## B. Cold to bootcamp coaches (5)
 
 6. After placement, before confident ramp
 7. Co-host a workshop for your alumni
-8. Pilot for first-two-year reps in your network
+8. Pilot for first-two-year AEs/SDRs in your network
 9. Workshop-first, no exclusivity, your alumni
 10. Short, tracked, honest — alumni pilot
 
@@ -33,7 +33,7 @@
 
 11. Your audience looks unusually relevant
 12. Founding pilot — one workshop, one offer
-13. Pilot fit — early-career reps in your circle
+13. Pilot fit — early-career AEs/SDRs in your circle
 14. Small pilot, real tracking, your room
 15. One workshop, your community, no carousel
 
