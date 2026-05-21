@@ -4,7 +4,7 @@ import LegalShell, { Section } from "@/components/LegalShell";
 export const metadata: Metadata = {
   title: "About | AESDR",
   description:
-    "Who built AESDR, why it exists, and the philosophy behind the 12-lesson curriculum for AEs and SDRs.",
+    "Who built AESDR, why it exists, and the philosophy behind the 12-course survival curriculum for early-career AEs and SDRs.",
 };
 
 export default function AboutPage() {
@@ -45,15 +45,19 @@ export default function AboutPage() {
 
       <Section title="The philosophy">
         <p style={{ marginBottom: 14 }}>
-          Operating manual, not motivation engine. No guru energy. No
-          motivational performance. No recycled LinkedIn wisdom.
-          Twelve lessons, five take-home tools, interactive HTML, not
-          video lectures &mdash; because the parts of the job that matter
-          are decisions made in a quiet room, not pep talks.
+          This is an operating manual rather than a motivation engine —
+          no guru energy, no motivational performance, and no recycled
+          LinkedIn wisdom anywhere in the format. Twelve courses with
+          five take-home tools, all interactive HTML rather than video
+          lectures, because the parts of the job that actually matter
+          are decisions made in a quiet room rather than pep talks
+          delivered to an audience.
         </p>
         <p>
-          Lifetime access. 14-day, no-questions-asked refund. If it
-          doesn&rsquo;t deliver value, we don&rsquo;t want your money.
+          You get lifetime access and a 14-day, no-questions-asked
+          refund window — and if it doesn&rsquo;t deliver real value to
+          you across that window, we genuinely don&rsquo;t want your
+          money.
         </p>
       </Section>
 
@@ -85,14 +89,15 @@ export default function AboutPage() {
 
       <Section title="Contact">
         <p>
-          Questions, feedback, or support:{" "}
+          Questions, feedback, or support reach us at{" "}
           <a
             href="mailto:hello@aesdr.com"
             style={{ color: "var(--crimson)", textDecoration: "underline" }}
           >
             hello@aesdr.com
           </a>
-          . Real inbox. 48-hour response window.
+          {" "}— a real inbox monitored by a real human, with a 48-hour
+          response window during the working week.
         </p>
       </Section>
     </LegalShell>

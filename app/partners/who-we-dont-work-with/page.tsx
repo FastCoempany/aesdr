@@ -41,7 +41,7 @@ const RED_FLAGS = [
   },
   {
     headline: "Discount-stacking authority ask.",
-    body: "AESDR does not run promotional discounts. Ever. Asking for a partner-issued promo code, an audience-specific discount, or pricing-variance authority is something we won't accommodate.",
+    body: "AESDR doesn't run promotional discounts as a matter of policy — not for anniversaries, not for partner audiences, not for cohort 1 launches — so asking for a partner-issued promo code, an audience-specific discount, or pricing-variance authority is something we genuinely won't accommodate in the pilot agreement.",
   },
   {
     headline: "Mostly bot engagement.",

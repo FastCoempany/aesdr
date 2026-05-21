@@ -62,7 +62,7 @@ export default function PartnersHomePage() {
         }
         leftBody={
           <>
-            AESDR&rsquo;s first affiliate cohort is forming. We&rsquo;re looking for a small number of partners &mdash; community operators, course creators, agency owners, coaches &mdash; whose audiences are SaaS AEs and SDRs across the career arc: first-year hires trying to ramp, third-year ramp veterans, and ten-year veterans doing a fundamentals reset. The shape is simple: one live workshop into your audience, two emails, a 30-day attribution window, 30% commission. That&rsquo;s the whole thing.
+            AESDR&rsquo;s first affiliate cohort is forming, and we&rsquo;re looking for a small number of partners &mdash; community operators, course creators, agency owners, coaches &mdash; whose audiences are SaaS AEs and SDRs across the career arc: first-year hires trying to ramp, third-year ramp veterans, and ten-year veterans doing a fundamentals reset. The shape of the pilot is deliberately simple &mdash; one live workshop into your audience, two emails over the attribution window, a 30-day attribution window, and a 30% commission rate &mdash; and there&rsquo;s nothing else hidden in the agreement beyond that.
           </>
         }
         rightLabel="WHERE WE ARE"
@@ -86,7 +86,7 @@ export default function PartnersHomePage() {
             title: "We sell by teaching, not by linking.",
             body: (
               <>
-                Every pilot kicks off with one live 60-minute workshop into your audience. We run it. It&rsquo;s the part that does the actual selling &mdash; your link just tells us who came from you.
+                Every pilot kicks off with one live 60-minute workshop into your audience that we run ourselves &mdash; that workshop is the part that does the actual selling for the audience, and your affiliate link is the mechanism that simply tells us who came in from your side.
               </>
             ),
           },
@@ -94,7 +94,7 @@ export default function PartnersHomePage() {
             title: "Practical, not motivational.",
             body: (
               <>
-                The course is the operating manual nobody wrote down &mdash; how to read your own pipeline, what to do when the script runs out, what &ldquo;good&rdquo; actually looks like Monday morning. No motivational pep talks. No mindset workshops. Just the work. Cold-calling included, dial blocks included, gatekeepers included.
+                The course is the operating manual nobody bothered to write down for the role &mdash; how to read your own pipeline honestly, what to do when the script runs out mid-call, what &ldquo;good&rdquo; actually looks like on a Monday morning. There are no motivational pep talks and no mindset workshops anywhere in the format, only the work itself: cold-calling included, dial blocks included, and gatekeepers included.
               </>
             ),
           },
@@ -122,7 +122,7 @@ export default function PartnersHomePage() {
           "Your primary channel is paid LinkedIn placement.",
           "You expect promo codes, discount-stacking authority, or pricing variance for your audience. AESDR does not run discounts. Ever.",
         ]}
-        closingLine="None of these are insults. They're filters. We'd rather decline now than end a pilot in week 4."
+        closingLine="None of these are meant as insults — they're filters that work for both sides, and we'd rather decline a partner conversation now than end a pilot together in week 4 with both sides disappointed in the outcome."
       />
 
       <div style={{ padding: "96px 24px 0" }}>
