@@ -3,7 +3,7 @@ import LegalShell, { Section } from "@/components/LegalShell";
 
 export const metadata: Metadata = {
   title: "Contact | AESDR",
-  description: "Get in touch with the AESDR team. We respond within 48 hours.",
+  description: "Get in touch with the AESDR team — a real human reads the inbox and responds within 48 hours.",
 };
 
 export default function ContactPage() {
