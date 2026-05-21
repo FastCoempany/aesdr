@@ -1,6 +1,6 @@
 # D25 — Weekly Partner Reporting Template
 
-**Deliverable:** Standardized weekly report sent from AESDR ops to the partner during a live pilot. One template, one cadence, one register. The report exists so the partner sees the pilot the way AESDR sees it — not a curated highlight reel and not a scary internal dashboard, but the same numbers AESDR uses internally, in the same plain language.
+**Deliverable:** Standardized weekly report sent from AESDR ops to the partner during a live pilot. Single template, single Friday cadence, single plain-operator register. The report exists so the partner sees the pilot the way AESDR sees it — not a curated highlight reel and not a scary internal dashboard, but the same numbers AESDR uses internally, in the same plain language.
 **Audience:** Partner principal (the person signing D22). Sent by AESDR ops; reviewed by founder before send.
 **Voice ratio:** 90 Rowan / 10 Michael per canon §3.3 (internal docs row, partner-adjacent variant). Plain operator-to-operator register — no marketing voice in either direction.
 **Format:** Markdown source. Renders to PDF for email attachment **or** to a shared Google Doc / Notion page that the partner can re-read at any time. Per canon §6.5 + §8.5.

@@ -71,7 +71,7 @@ The clip is built from L11.1's source recording with light editorial cuts — pa
 
 ### 3.1 Locked outro (verbatim)
 
-> *"That's a 12-minute slice of one lesson — `658.85 / L11` in the catalog. The full lesson runs longer and the program runs longer than that — twelve lessons, thirty-six units, lifetime access, 14-day refund, $249 to start. The link's below this video. — [HOST_FIRST_NAME], AESDR."*
+> *"That's a 12-minute slice of one lesson — `658.85 / L11` in the catalog. The full lesson runs longer and the program runs longer than that — twelve courses, thirty-six lessons, lifetime access, 14-day refund, $249 to start. The link's below this video. — [HOST_FIRST_NAME], AESDR."*
 
 ---
 
@@ -87,16 +87,16 @@ The opening 0:00–0:45 visual frame (also the static thumbnail asset). **The ti
   - Body, `--display` italic 700, 56pt, white:
     > *The Cost of Being On*
   - Below body, `--serif` italic 16pt, white at .85 opacity:
-    > *Lesson 11 of 12. ~12 min preview. The part of the role that determines whether you're still in the seat in three years.*
+    > *Course 11 of 12. ~12 min preview. The part of the role that determines whether you're still in the seat in three years.*
   - Ghost numeral `11` opacity .06 white in bottom-left corner.
 - **Cream right panel (60% width):**
   - `AESDR` wordmark, `--display` italic 900, 64pt, `--ink`.
   - Below wordmark, mono `--cond` 13pt 700, .15em, uppercase, `--ink`:
     > `HOSTED BY [HOST_FIRST_NAME] [HOST_LAST_NAME]`
   - Below host name, `--mono` 10pt, `--muted`:
-    > `aesdr.com · 12 lessons · 5 tools · 1 you`
+    > `aesdr.com · 12 lessons · 5 tools · 1 new you`
 
-**Static thumbnail render** (the PNG file partners use): same layout, exported at 1280×720 PNG, sRGB. Partner-co-branded variant inserts the AESDR × Partner lockup centered on the cream right panel below the wordmark, replacing the `12 lessons / 5 tools / 1 you` line. Per canon §6.6.
+**Static thumbnail render** (the PNG file partners use): same layout, exported at 1280×720 PNG, sRGB. Partner-co-branded variant inserts the AESDR × Partner lockup centered on the cream right panel below the wordmark, replacing the `12 lessons / 5 tools / 1 new you` line. Per canon §6.6.
 
 The annotation from the source syllabus — *"21+. not metaphor."* — does **not** appear on the title card or in any thumbnail. It surfaces only after the host says the subject on camera, where it lands as honesty rather than as click-bait.
 

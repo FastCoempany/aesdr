@@ -126,7 +126,7 @@ The quote must pass canon §10.2 approved-claims discipline. Per canon §16, par
 - **Eyebrow:** `--mono` 11pt 700, .25em letter-spacing, uppercase, `--muted`:
   > `CARD CATALOG · SHELF 12 · DRAWER A · EST. 2026`
 - **Header:** `--display` italic 700, 32pt, `--ink`:
-  > *Twelve lessons. Real questions on each card.*
+  > *Twelve courses, real questions on each card.*
 - **Body:** Four lesson cards in a 2×2 grid (not all 12). Each card carries: `--mono` 13pt call number; `--display` italic 700, 22pt title; `--display` italic 18pt question; `--hand` 22pt `--crimson` annotation rotated `-1deg`; `--mono` 11pt rectangular stamp with 1px `--ink` border. Lift these four lesson cards verbatim from D31 (per workshop-as-teaser doctrine, the partner page mirrors the workshop-deck slide 14 selection):
 
   - `658.85 / L08` — *The 30% Rule* — *"What's your actual close rate? Not the one you told your VP."* — *— do the math honestly.* `Mon 08`
@@ -135,7 +135,7 @@ The quote must pass canon §10.2 approved-claims discipline. Per canon §16, par
   - `658.85 / L12` — *Leveling Up SaaS Relationships* — *"Who would vouch for you if you changed companies tomorrow?"* — *— name 5.* `Fri 12`
 
 - **Below the 2×2 grid, centered, `--mono` 13pt, `--muted`:**
-  > `4 OF 12 LESSONS SHOWN · 36 UNITS TOTAL · CHECK ONE OUT`
+  > `4 OF 12 COURSES SHOWN · 36 LESSONS TOTAL · CHECK ONE OUT`
 - **Below the catalog block, `--serif` italic 16pt, `--ink`:**
   > *The workshop is a free 60-minute teaser. The full catalog opens at enrollment.*
 
