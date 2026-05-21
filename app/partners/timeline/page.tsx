@@ -11,7 +11,7 @@ import { MonoEyebrow, HubCTA, CaveatLayer } from "@/components/partners/HubEleme
 export const metadata: Metadata = {
   title: "Pilot Timeline · AESDR Partners",
   description:
-    "Week-by-week from agreement signing through end of attribution window. About 11 weeks end to end.",
+    "Week-by-week timeline of an AESDR partner pilot from agreement signing through the end of the attribution window — about 11 weeks end to end.",
 };
 
 const STEPS = [
@@ -65,9 +65,9 @@ const STEPS = [
   },
   {
     when: "Week 5 — Pilot debrief",
-    title: "Kill-or-keep memo.",
+    title: "Cut-or-keep memo.",
     you: "Nothing required.",
-    us: "Within 72 hours of pilot close: a written continue-or-end memo. If keep, terms for the next pilot. If end, a close-out note signed by the founder by name.",
+    us: "Within 72 hours of pilot close: a written continue-or-end memo — if we're keeping the partnership, you get terms for the next pilot in the same memo; if we're ending it, you get a close-out note signed by the founder by name.",
   },
   {
     when: "Weeks 5-8 — Attribution window",

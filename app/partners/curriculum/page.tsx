@@ -18,7 +18,7 @@ import {
 export const metadata: Metadata = {
   title: "Curriculum · AESDR Partners",
   description:
-    "Twelve courses. Thirty-six lessons. Real questions on each card. The library catalog your audience would be enrolling into.",
+    "Twelve courses across thirty-six lessons with a real diagnostic question on each catalog card — the full library catalog your audience would be enrolling into through the partnership.",
 };
 
 export default function CurriculumPage() {

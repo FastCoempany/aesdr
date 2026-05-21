@@ -10,7 +10,7 @@ import { MonoEyebrow, HubCTA, CaveatLayer } from "@/components/partners/HubEleme
 export const metadata: Metadata = {
   title: "Payments · AESDR Partners",
   description:
-    "How and when commissions clear. Methods, tax forms, refund handling, minimums — all in plain English.",
+    "How and when partner commissions clear, plus payment methods, tax forms, refund handling, and minimums — all in plain English rather than legalese.",
 };
 
 export default function PaymentsPage() {

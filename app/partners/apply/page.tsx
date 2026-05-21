@@ -15,7 +15,7 @@ import { ApplicationForm } from "@/components/partners/ApplicationForm";
 export const metadata: Metadata = {
   title: "Apply · AESDR Partners",
   description:
-    "Five fields. We review applications weekly and reply with a yes-or-no within 5 business days.",
+    "Five-field partner application — we review submissions weekly and reply with a yes-or-no answer within 5 business days, not weeks later.",
 };
 
 export default function ApplyPage() {

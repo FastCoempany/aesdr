@@ -19,7 +19,7 @@ import { MonoEyebrow, HubCTA, CaveatLayer } from "@/components/partners/HubEleme
 export const metadata: Metadata = {
   title: "How We Work · AESDR Partners",
   description:
-    "What we believe. The two voices. Why the founder is invisible. Honesty as competitive position.",
+    "What AESDR believes about partnership, the two-voice register on the curriculum, why the founder stays largely invisible, and how honesty operates as competitive positioning rather than as humility.",
 };
 
 export default function HowWeWorkPage() {
@@ -97,7 +97,7 @@ export default function HowWeWorkPage() {
           Most sales-training programs sand the rough edges. AESDR doesn&rsquo;t — for two reasons.
         </p>
         <p style={pStyle}>
-          First, the rough edges are the work. Lessons titled <em>&ldquo;Quotas Are Bullshit&rdquo;</em> and <em>&ldquo;Why SDRs Should Stay Single&rdquo;</em> are not metaphor. They&rsquo;re the lesson titles. Sanitizing them would lose the audience the program is built for — and that audience can spot sanitization in 30 seconds.
+          First, the rough edges are the actual work — lessons titled <em>&ldquo;Quotas Are Bullshit&rdquo;</em> and <em>&ldquo;Why SDRs Should Stay Single&rdquo;</em> aren&rsquo;t metaphors or provocations, they&rsquo;re the literal lesson titles inside the curriculum, and sanitizing them at the marketing layer would lose the exact audience the program is built for — that audience can spot sanitization in roughly 30 seconds.
         </p>
         <p style={pStyle}>
           Second, sophisticated buyers (and sophisticated partners) recognize sanded-corporate register on sight. Refusing to sand is how the brand signals that the curriculum respects them as adults.

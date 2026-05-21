@@ -15,7 +15,7 @@ import { EconomicsCalculator } from "@/components/partners/EconomicsCalculator";
 export const metadata: Metadata = {
   title: "Economics · AESDR Partners",
   description:
-    "The math, in advance. Real numbers from a real-shaped pilot, plus a calculator for your audience size.",
+    "The economics of an AESDR partner pilot laid out in advance — real numbers from a real-shaped pilot run, plus an interactive calculator you can plug your own audience size and conversion assumptions into.",
 };
 
 export default function EconomicsPage() {

@@ -14,7 +14,7 @@ import { FAQAccordion } from "@/components/partners/FAQAccordion";
 
 export const metadata: Metadata = {
   title: "Partner FAQ · AESDR",
-  description: "Twelve questions. Plain answers. The buyer FAQ lives at /syllabus.",
+  description: "Twelve common partner questions with plain, specific answers — the buyer-facing FAQ for the program itself lives separately at /syllabus.",
 };
 
 const FAQ_ITEMS = [

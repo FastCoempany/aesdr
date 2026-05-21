@@ -18,7 +18,7 @@ import { PlayGame } from "@/components/partners/PlayGame";
 export const metadata: Metadata = {
   title: "Signal or Noise · AESDR Partners",
   description:
-    "60 seconds. 12 statements. Zap the noise. Let the signal pass. The game teaches the AESDR canon by playing it.",
+    "A 60-second judgment game where 12 statements fly past and you zap the noise while letting the signal pass — the game itself teaches the AESDR canon by making you play it.",
 };
 
 export default function PlayPage() {

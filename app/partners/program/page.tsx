@@ -15,7 +15,7 @@ import { MonoEyebrow, HubCTA, CaveatLayer } from "@/components/partners/HubEleme
 export const metadata: Metadata = {
   title: "Partner Program · AESDR",
   description:
-    "Time-boxed. Non-exclusive. Workshop-first. Same pricing as everyone else gets. Commission is 30% of net.",
+    "Time-boxed and non-exclusive partner program centered on a live workshop into your audience, with the same pricing every retail buyer gets and a flat 30% commission on net revenue.",
 };
 
 const SECTIONS = [
