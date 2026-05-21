@@ -18,7 +18,7 @@
 | Workshop day | T-0 | Live workshop + immediate replay open |
 | Replay window | T+1 → T+3 | 72-hour replay open + same-day attendee follow-up |
 | Pricing window close | T+4 → T+7 | Deadline-window emails + final conversions |
-| Pilot close | T+8 → T+30 | Attribution close, kill-or-keep, postmortem |
+| Pilot close | T+8 → T+30 | Attribution close, cut-or-keep, postmortem |
 
 Where `T` = workshop date.
 
@@ -117,14 +117,14 @@ Where `T` = workshop date.
 
 | Day | Partner | AESDR |
 |---|---|---|
-| T+8 | (Light week — no new partner action required.) | Continue D17 follow-up replies. Begin internal D32 kill-or-keep memo draft (canon §16). |
-| T+10 | (No partner action.) | Founder + ops complete D32 memo. Decision: EXTEND / REVISE / KILL. |
-| T+12 | Receive D34 partner-facing close-out note (extend or kill version). 48 hrs after D32 finalized. | Send D34. |
-| T+14 | Reply to D34 if relevant. | If EXTEND: amendment to D22 drafted. If KILL: door-close per D27 §10 register. If REVISE: re-score date scheduled. |
-| T+30 | **Attribution window closes.** Final commission calculation locked. | **Friday after T+30 — Send D25 Report 3 (final pilot report).** Includes kill-or-keep summary in §6. |
+| T+8 | (Light week — no new partner action required.) | Continue D17 follow-up replies. Begin internal D32 cut-or-keep memo draft (canon §16). |
+| T+10 | (No partner action.) | Founder + ops complete D32 memo. Decision: EXTEND / REVISE / CUT. |
+| T+12 | Receive D34 partner-facing close-out note (extend or cut version). 48 hrs after D32 finalized. | Send D34. |
+| T+14 | Reply to D34 if relevant. | If EXTEND: amendment to D22 drafted. If CUT: door-close per D27 §10 register. If REVISE: re-score date scheduled. |
+| T+30 | **Attribution window closes.** Final commission calculation locked. | **Friday after T+30 — Send D25 Report 3 (final pilot report).** Includes cut-or-keep summary in §6. |
 | T+45 | Receive net-45 commission payout per D22 §5.4. | Pay commission to partner. |
 
-**End of pilot signal:** Net revenue, refund-adjusted commission, qualitative-fit signal, kill-or-keep decision. All input to D33 postmortem (internal-only).
+**End of pilot signal:** Net revenue, refund-adjusted commission, qualitative-fit signal, cut-or-keep decision. All input to D33 postmortem (internal-only).
 
 ---
 

@@ -68,12 +68,12 @@ The four-question FAQ-lite block is structured for the registration page hierarc
 
 > *Each lesson has four pieces:*
 >
-> *— A 30–45 minute video lesson, hosted by [HOST_FIRST_NAME].*
-> *— A worksheet you fill out against your real reps, your real pipeline, your real comp plan. Not "imagine a prospect named Bob."*
-> *— A takeaway tool — a one-page operating sheet you can use the next day. (Twelve lessons, twelve takeaways. Twelve things you can put on your desk.)*
-> *— A discussion thread in Untamed, our Discord. Other students working on the same lesson are in there.*
+> *— An interactive HTML lesson sequence, written by [HOST_FIRST_NAME].*
+> *— A worksheet you fill out against your real accounts, your real pipeline, your real comp plan. Not "imagine a prospect named Bob."*
+> *— A takeaway tool — a one-page operating sheet you can use the next day. (Twelve courses, twelve takeaways. Twelve things you can put on your desk.)*
+> *— A discussion thread in Untamed, our Discord. Other students working on the same course are in there.*
 >
-> *No live cohort. No mandatory office hours. No drip-gating — every lesson is open from day one and you decide the pace.*
+> *No live cohort. No mandatory office hours. No drip-gating — every course is open from day one and you decide the pace.*
 
 **Notes (internal):**
 - "Untamed" is canonical (canon §15 glossary).
@@ -104,7 +104,7 @@ The four-question FAQ-lite block is structured for the registration page hierarc
 >
 > ***Frame.*** *Free content optimizes for engagement, which means it rewards confidence, controversy, and short hooks. It tells you "always be closing" and never tells you what to actually say. AESDR is the operating manual — the part the free content skipped because it doesn't perform well in a 60-second clip.*
 >
-> ***Accountability.*** *Free content is consumed alone, nodded at, and forgotten. AESDR has interactive worksheets, takeaway tools, and a Discord (Untamed) where reps in your situation are talking about what's working. Doing the work, watched by other people doing the work, is the difference between watching and ramping.*
+> ***Accountability.*** *Free content is consumed alone, nodded at, and forgotten. AESDR has interactive worksheets, takeaway tools, and a Discord (Untamed) where AEs and SDRs in your situation are talking about what's working. Doing the work, watched by other people doing the work, is the difference between watching and ramping.*
 >
 > *None of this is to say you should stop watching free content. Watch it. Learn from it. AESDR isn't a replacement for free content; it's the structure you can hang the free content on once you have one.*
 
@@ -153,9 +153,9 @@ The four-question FAQ-lite block is structured for the registration page hierarc
 
 > *No.*
 >
-> *We don't issue a credential because no SaaS sales credential currently has hiring weight in the market we serve, and we're not going to manufacture one and pretend it does. The thing that has hiring weight is the rep you become — measurable in the conversations you can hold, the pipeline you can read, the meetings you can run.*
+> *We don't issue a credential because no SaaS sales credential currently has hiring weight in the market we serve, and we're not going to manufacture one and pretend it does. The thing that has hiring weight is the AE or SDR you become — measurable in the conversations you can hold, the pipeline you can read, the meetings you can run.*
 >
-> *If you need a line on your LinkedIn, "AESDR · 12-lesson operating curriculum" is honest, accurate, and can go under Education or Certifications. We won't object. But we won't issue a PDF that pretends to be more than that.*
+> *If you need a line on your LinkedIn, "AESDR · 12-course operating curriculum" is honest, accurate, and can go under Education or Certifications. We won't object. But we won't issue a PDF that pretends to be more than that.*
 
 **Notes (internal):**
 - Per canon §1.6, honesty is the differentiator. Most competitor courses sell the certificate as if it carries weight. We name the truth.
@@ -168,9 +168,9 @@ The four-question FAQ-lite block is structured for the registration page hierarc
 
 > *Two reasons.*
 >
-> *One: the gap between SDR and AE is mostly about judgment. The reps who get promoted are the ones who already operate like AEs before the title arrives — they read pipeline cleanly, they handle objections without escalating, they manage their manager. Waiting until the title arrives to build those muscles means the title arrives, and then your AE ramp starts at zero. Reps who built the muscles earlier ramp faster.*
+> *One: the gap between SDR and AE is mostly about judgment. The AEs and SDRs who get promoted are the ones who already operate like AEs before the title arrives — they read pipeline cleanly, they handle objections without escalating, they manage their manager. Waiting until the title arrives to build those muscles means the title arrives, and then your AE ramp starts at zero. AEs and SDRs who built the muscles earlier ramp faster.*
 >
-> *Two: the SDR seat itself is more survivable when you have judgment. Most reps don't get fired from SDR for missing pipeline; they get fired for not knowing why they missed it. AESDR is the lens for "why."*
+> *Two: the SDR seat itself is more survivable when you have judgment. Most SDRs don't get fired for missing pipeline; they get fired for not knowing why they missed it. AESDR is the lens for "why."*
 >
 > *Honest counter: if you're 60+ days from promotion and your current quota is fine, waiting is also a defensible answer. The course will run again. The cohort cost of waiting is your time, not your seat.*
 
@@ -183,7 +183,7 @@ The four-question FAQ-lite block is structured for the registration page hierarc
 
 ## Q10 — Who built AESDR? Who is the host?
 
-> *AESDR is hosted by **[HOST_FIRST_NAME] [HOST_LAST_NAME]**, who has [N] years in startup SaaS sales — including the SDR seat, the AE seat, and a sales-management chair. The curriculum is built from operator interviews, real ramp data, and the patterns that show up consistently across early-career SaaS reps in startups.*
+> *AESDR is hosted by **[HOST_FIRST_NAME] [HOST_LAST_NAME]**, who has [N] years in startup SaaS sales — including the SDR seat, the AE seat, and a sales-management chair. The curriculum is built from operator interviews, real ramp data, and the patterns that show up consistently across early-career SaaS AEs and SDRs in startups.*
 >
 > *We don't lean on a personal-brand-led origin story for AESDR. The brand isn't the host's name — the brand is the operating standard the curriculum encodes. If [HOST_FIRST_NAME] is replaced one day, the curriculum doesn't change.*
 >
@@ -265,7 +265,7 @@ The four-question FAQ-lite block is structured for the registration page hierarc
 ## Compliance check (canon §10)
 
 - **FTC material-connection disclosure (canon §10.1):** Q11 carries the canonical disclosure paragraph. When the FAQ is embedded on a partner-promo page, Q11 must be present (not stripped to fit a hierarchy). **Required surface.**
-- **Approved claims (canon §10.2):** No outcome promises. The closest claim is Q09's "reps who built the muscles earlier ramp faster," which is observational, not a guarantee. **Pass.**
+- **Approved claims (canon §10.2):** No outcome promises. The closest claim is Q09's "AEs and SDRs who built the muscles earlier ramp faster," which is observational, not a guarantee. **Pass.**
 - **Forbidden claims (canon §10.3):** No "guaranteed promotion," "earn $X in 90 days," "10x your pipeline." **Pass.**
 - **CAN-SPAM / TCPA:** N/A — FAQ is a content surface, not an outbound message.
 

@@ -15,7 +15,7 @@ Every title must:
 - Name a specific pain or specific moment, not a generic outcome.
 - Hold both voices on the page (title in Rowan's register; subtitle / supporting line allowed in Michael's).
 - Read clearly at 24pt and 64pt.
-- Pass the thumbnail test from canon §6.9.1 — would a reasonable rep know in two seconds whether this is for them?
+- Pass the thumbnail test from canon §6.9.1 — would a reasonable AE or SDR know in two seconds whether this is for them?
 - Avoid every banned phrase in canon §4.1.
 
 A title is also a contract: the workshop must deliver on the title's promise inside the first 10 minutes or the title is wrong.
@@ -30,10 +30,10 @@ A title is also a contract: the workshop must deliver on the title's promise ins
 
 ### 2. *The Operating Manual for Your First Year.*
 **Why it's #2:** Reuses the canonical brand frame ("operating manual, not motivation engine") as the workshop title itself. Strongest brand integration. Slight risk it reads as too internal-jargon to a cold audience — depends on partner's audience.
-**Subtitle:** *60 minutes. The five pressures every early-career rep gets, none of which are explained on day one.*
+**Subtitle:** *60 minutes. The five pressures every early-career AE or SDR gets, none of which are explained on day one.*
 
 ### 3. *Before Your Manager Has The Conversation.*
-**Why it's #3:** Names a specific dreaded moment without naming it. High emotional resonance for first-year reps; works in cold registration. Verdict-shaped. Slightly darker than #1–2.
+**Why it's #3:** Names a specific dreaded moment without naming it. High emotional resonance for first-year AEs and SDRs; works in cold registration. Verdict-shaped. Slightly darker than #1–2.
 **Subtitle:** *A live workshop on what to do in the first 90 days, before "we need to talk about your numbers" is on the calendar.*
 
 ---
@@ -46,7 +46,7 @@ Best fit for partners whose audience leans toward "SDR aiming for AE track."
 ### 5. *Pre-Quota: The Session They Should've Run Day One.*
 Best fit for very-early-career audiences (months 0–6 in role). The "they" earns honesty points.
 
-### 6. *Three Bad Months: How First-Year Reps Get Out.*
+### 6. *Three Bad Months: How First-Year AEs and SDRs Get Out.*
 Best fit for partners whose audience is already in distress. Strong pain anchor; harder to put on a registration page that needs to feel optimistic enough to register.
 
 ### 7. *Why Your Pipeline Is Lying To You.*
@@ -60,7 +60,7 @@ Best fit for analytics-leaning audiences (newsletters, podcasts where the host i
 ## C. Specific-moment tier (Michael-flavored, narrower fit)
 
 ### 9. *The Sunday Night Audit.*
-Names a specific recurring scene most reps will recognize ("Sunday pipeline review = staring at a spreadsheet, hoping something moves" — canon, from `variants/variant-a-editorial-split.html`). Best as a session within a series, less ideal as a standalone first-pilot title.
+Names a specific recurring scene most AEs and SDRs will recognize ("Sunday pipeline review = staring at a spreadsheet, hoping something moves" — canon, from `variants/variant-a-editorial-split.html`). Best as a session within a series, less ideal as a standalone first-pilot title.
 
 ### 10. *What Onboarding Should Have Been.*
 Past-tense regret as pain frame. Strong line; risk that some attendees will read it as "I'm being told I was failed" and disengage. Use only where the partner's audience has explicitly named onboarding as a gripe.
@@ -87,10 +87,10 @@ Efficiency-led, plainest of the set. Useful as a backup if the partner objects t
 
 We are documenting these so the canon is self-enforcing.
 
-- ❌ *"5 Mistakes Killing Your Pipeline"* — listicle frame, LinkedIn cadence, banned by canon §4.
-- ❌ *"How to Crush Your Quota in Your First Year"* — banned vocabulary.
+- ❌ Listicle pattern of the form *"5 Mistakes [F.1-verb]-ing Your Pipeline"* — LinkedIn cadence, banned by canon §4. The banned verb here is the F.1 verb family (see canon for the substitution table).
+- ❌ Guru-vocabulary pattern of the form *"How to [guru-verb] Your Quota in Your First Year"* — banned vocabulary, base canon guru framing.
 - ❌ *"Unlock Your Sales Potential"* — banned vocabulary, performance promise.
-- ❌ *"The Sales Rep's Mindset"* — banned vocabulary, mocked in canon.
+- ❌ *"The Sales [role-word]'s Mindset"* (where the role-word is the founder-banned shorthand) — banned vocabulary, mocked in canon.
 - ❌ *"Your Path to AE: The Ultimate Workshop"* — superlative claim (banned, canon §10.3 B4).
 - ❌ *"Why Top SDRs Always Hit Quota"* — implied performance claim.
 - ❌ *"The 7 Habits of High-Performing SDRs"* — listicle + cliché.

@@ -101,7 +101,7 @@
 
 > *01.  You will leave with a definition of "good" you can use Monday morning — not a feeling, an operating standard.*
 >
-> *02.  You will leave knowing the three judgment moves that separate the rep who survives ramp from the rep who doesn't.*
+> *02.  You will leave knowing the three judgment moves that separate the AE or SDR who survives ramp from the one who doesn't.*
 >
 > *03.  You will leave with one specific change you'll make in your next five calls. Not a mindset. A move.*
 
@@ -132,9 +132,9 @@ Below the three lines, in `--mono` 11pt `--muted`, .15em letter-spacing, centere
 
 **Speaker notes (lockable narration — host can paraphrase but cannot reveal the specific frameworks behind it):**
 
-> *Most early-career reps in this room have never had "good" defined for them. Not really. You've had activity numbers — those are the loud part of the job, the part your manager talks about in 1:1s. You've had outcome numbers — those are the part your VP shows the board.*
+> *Most early-career AEs and SDRs in this room have never had "good" defined for them. Not really. You've had activity numbers — those are the loud part of the job, the part your manager talks about in 1:1s. You've had outcome numbers — those are the part your VP shows the board.*
 >
-> *What you haven't had is the operating standard between those two — the judgment layer that makes the activity compound, the part that distinguishes a rep who survives ramp from one who doesn't.*
+> *What you haven't had is the operating standard between those two — the judgment layer that makes the activity compound, the part that distinguishes an AE or SDR who survives ramp from one who doesn't.*
 >
 > *AESDR is the operating standard, written down. Twelve lessons. Thirty-six units. The frameworks behind what good actually looks like — but I'm not going to walk through any of them on this stage. The workshop's job is to name the territory. The lessons do the work.*
 
@@ -148,7 +148,7 @@ Below the three lines, in `--mono` 11pt `--muted`, .15em letter-spacing, centere
 
 > *When was the last time someone showed you what good actually looks like?*
 >
-> *— Last week? (Then they're a keeper. Most reps don't have one.)*
+> *— Last week? (Then they're a keeper. Most AEs and SDRs don't have one.)*
 > *— Last quarter? (You remember it. That's the tell.)*
 > *— You're still waiting? (You're not the only one.)*
 
@@ -192,7 +192,7 @@ Below the two paragraphs, in `--mono` 11pt `--muted`, .15em letter-spacing, cent
 
 **Speaker notes (lockable narration — host can paraphrase but cannot name specific lessons):**
 
-> *Sales training pretends this part of the job doesn't exist. We disagree. The reason most early-career reps wash out isn't that they didn't learn the framework. It's that the framework was never the hard part — the hard part was everything outside the workday that compounded against them.*
+> *Sales training pretends this part of the job doesn't exist. We disagree. The reason most early-career AEs and SDRs wash out isn't that they didn't learn the framework. It's that the framework was never the hard part — the hard part was everything outside the workday that compounded against them.*
 >
 > *We do not run a motivational program. We do not run a wellness curriculum. We run an operating manual that includes the parts of the role that other courses skip because they're harder to package and harder to scale. They are also the parts that determine whether you'll still be in this seat in three years.*
 >
@@ -264,7 +264,7 @@ Below the two paragraphs, in `--mono` 11pt `--muted`, .15em letter-spacing, cent
 > **What you've worked through in the last 50 minutes:**
 > - One framework for activity vs judgment.
 > - One framework for pipeline integrity.
-> - Two self-assessments using your real reps and your real pipeline.
+> - Two self-assessments using your real accounts and your real pipeline.
 >
 > **What that means:**
 > *You now have a lens. AESDR is what happens when the lens becomes a curriculum.*

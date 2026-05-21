@@ -19,7 +19,7 @@ The same template renders three different reports across one pilot, in sequence:
 |---|---|---|
 | **Report 1 — Promotion week** | End-of-day Friday of the promotion window | Pre-workshop traffic, registrations, qualitative signals on partner promotion sends |
 | **Report 2 — Workshop week** | End-of-day Friday after the workshop | Live attendance, replay watches, offer-page engagement, early conversion |
-| **Report 3 — Final pilot report** | Within 7 days of `[PILOT_END_DATE]` | Final attribution-window numbers, kill-or-keep summary, what we learned |
+| **Report 3 — Final pilot report** | Within 7 days of `[PILOT_END_DATE]` | Final attribution-window numbers, cut-or-keep summary, what we learned |
 
 If a pilot runs longer than 30 days, additional Friday reports use the same template; the Final pilot report is always the last one.
 
@@ -48,7 +48,7 @@ If a pilot runs longer than 30 days, additional Friday reports use the same temp
 
 - *"This week was promotion week. Your two sends generated 142 page views and 38 registrations, with strong replies on the second send. We're comfortably ahead of the pre-pilot estimate of 30 registrations through promotion. The next data we'll see is live attendance on [WORKSHOP_DATE]."*
 - *"Workshop week wrapped. Live attendance came in at 47 against an estimate of 60 — below pace, but the chat engagement was unusually high (28 questions, 4 deep operating questions). Conversion early-window is 2 enrollments. We'd expect 1–3 more from the replay over the next 48 hours."*
-- *"Final pilot report. Net revenue [$X], commission accrued [$Y]. The pilot's biggest win was [signal]. The biggest miss was [issue]. AESDR's kill-or-keep decision is EXTEND/REVISE/KILL — explained in §6 below."*
+- *"Final pilot report. Net revenue [$X], commission accrued [$Y]. The pilot's biggest win was [signal]. The biggest miss was [issue]. AESDR's cut-or-keep decision is EXTEND/REVISE/CUT — explained in §6 below."*
 
 ---
 
@@ -118,18 +118,18 @@ If there are no actions on either side, write "No actions required this week" �
 
 ---
 
-### 6. (Final report only — Report 3) Kill-or-keep summary
+### 6. (Final report only — Report 3) Cut-or-keep summary
 
 In Reports 1 and 2, this section is **omitted**. In the Final report, it is present.
 
 > *(--display italic 28pt header)*
-> *AESDR's decision: [EXTEND / REVISE / KILL]*
+> *AESDR's decision: [EXTEND / REVISE / CUT]*
 
 > *(--serif 16pt body, 3–5 sentences, plain English)*
 >
-> *[Founder's plain summary of the kill-or-keep memo (D32) — the partner-facing version. The internal D32 stays internal; this is the public-to-partner version drafted as D34. It carries the decision, the rationale in 3 sentences, and the next step.]*
+> *[Founder's plain summary of the cut-or-keep memo (D32) — the partner-facing version. The internal D32 stays internal; this is the public-to-partner version drafted as D34. It carries the decision, the rationale in 3 sentences, and the next step.]*
 
-**Pointer:** the partner-facing close-out note (D34, EXTEND or KILL version) is delivered as a separate communication within 48 hours of this report, signed by the founder by name. This Final report carries the summary; D34 carries the conversation.
+**Pointer:** the partner-facing close-out note (D34, EXTEND or CUT version) is delivered as a separate communication within 48 hours of this report, signed by the founder by name. This Final report carries the summary; D34 carries the conversation.
 
 ---
 
@@ -164,7 +164,7 @@ Type: `--mono` 10pt for the report-attribution line; `--serif` 13pt, `--muted` f
 - Headline-paragraph italic: `--serif` italic 16pt, `--ink`.
 - Mono eyebrow + footer report-attribution: `--mono` 10–11pt, `--muted`.
 - Hairline rules between sections: `--light` 1px.
-- Final-report decision marker (`EXTEND / REVISE / KILL`): `--display` italic 700, 28pt, `--crimson`. (This is the only crimson in the document — earned by the section's gravity.)
+- Final-report decision marker (`EXTEND / REVISE / CUT`): `--display` italic 700, 28pt, `--crimson`. (This is the only crimson in the document — earned by the section's gravity.)
 
 **Type tokens:** Per palette above.
 
@@ -202,7 +202,7 @@ This template depends on:
 - **D22 partner pilot agreement** — §7 of D22 references this template by name. **In this batch.**
 - **Canon §8.7 UTM** — provides the field schema for §3 funnel metrics. **Met.**
 - **Stripe webhook + analytics infrastructure** — `begin_checkout` / `purchase` / refund events must fire correctly with partner attribution. **Operationally pending per pilot.**
-- **D32 kill-or-keep memo** — the Final-report §6 summary lifts from D32. **Met.**
+- **D32 cut-or-keep memo** — the Final-report §6 summary lifts from D32. **Met.**
 - **D34 partner-facing close-out note** — Final-report §6 references D34 as the follow-on conversation. **Met.**
 
 This template is a forward dependency for:
