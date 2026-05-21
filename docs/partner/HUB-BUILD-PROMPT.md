@@ -26,7 +26,7 @@ You are working inside AESDR's brand, governed by `AFFILIATE_BRAND_CANON.md` v1.
 - **§1 foundational doctrines** — workshop-first, founder-backstage, a handful of partners (not a marketplace), borrowed-trust as merciless mirror, operator over guru, honesty as differentiator.
 - **§3 the two voices** — Rowan (declarative, surgical, `--cond` + `--display` italic) and Michael (confessional, deadpan, `--hand` Caveat only). Never blended into mush.
 - **§3.3 voice ratios** — the partner hub runs 80/20 to 95/5 Rowan/Michael depending on page. Spec carries the per-page table.
-- **§4.1 banned vocabulary** — zero tolerance: "crush it," "game-changer," "unlock," "mindset," "rise and grind," "thought leader," "lead with value," "synergy," "amazing," "empower," "rockstar," "ninja," generic hype emojis. If you write any of these, the build fails the canon §6.9.1 voice-thumbnail test.
+- **§4.1 banned vocabulary** — zero tolerance for the §4.1 catalog (guru-action verbs, "game-changer," "unlock," "mindset," "rise and grind," "thought leader," "lead with value," the corporate-speak family, "amazing," "empower," "rockstar," "ninja," generic hype emojis — full list in §4.1). If you write any of these, the build fails the canon §6.9.1 voice-thumbnail test.
 - **§6 visual system** — cream + ink + crimson + iris + muted + light. No dark surfaces. No imported icons. No emoji.
 - **§6.9.1 five-question check** — every page passes thumbnail test, token test, iris-reservation test, icon-discipline test, voice-thumbnail test before commit.
 - **§12 founder-backstage doctrine** — founder is invisible to audience. The hub does not include founder bio, founder photo, founder-named author byline, or "from the founder" framing. Founder visibility on a partner-facing surface requires canon §12.4 ratification (named milestone, rare and deliberate); the hub does not qualify.
@@ -174,7 +174,7 @@ The relevant prior context from this codebase (you can verify in `git log` and `
 - **Batches 1–8** (April 29 – May 2, 2026): shipped all 40 D-numbered partner deliverables plus 9 sub-deliverables (8 kit-template files + L&D-approver brief).
 - **Batch 7.5** cleanup: kit-template subfiles, cross-reference patches, 00-INDEX.
 - **Render batch**: 8 visible-canon artifacts at `tools/rendered/`.
-- **Batch 7.6**: curriculum-map rewrite to match production reality. Anchored to `app/syllabus/page.tsx`. Killed invented "Foundations / Range / Identity" cluster taxonomy.
+- **Batch 7.6**: curriculum-map rewrite to match production reality. Anchored to `app/syllabus/page.tsx`. Cut invented "Foundations / Range / Identity" cluster taxonomy.
 - **Build fix** (commit `59a9ea6`): excluded `.figma.ts` and `design-canon/` from tsconfig — Vercel builds were failing on pre-existing branch state.
 - **Phase 0 ratification** (this conversation): six hub-build inputs locked.
 - Other chat history using aesdr git repo

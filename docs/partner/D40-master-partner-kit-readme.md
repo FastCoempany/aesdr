@@ -143,7 +143,7 @@ The full cadence is in `13-operating-cadence.md`. Summary:
 | Promotion week 2 | Reminder send | Sends `09b-newsletter-reminder.md`. | Tech rehearsal Thursday; final asset QA. |
 | Workshop week | Live + replay window opens | Delivers 2-min intro per `09c`. Posts replay link in member channel. | Delivers workshop. Sends D10/D11/D12/D13/D14 to registrants. Sends D15/D16 same week. |
 | Pricing-window close | Deadline-window | Optional one final reminder using approved copy from `09a`–`09b` register. | Sends D18 deadline email to non-buyers. |
-| Pilot close (`[PILOT_END_DATE]`) | Final report + close-out | Confirms metrics shared. | Sends D25 Report 3 + D34 partner-facing close-out + initiates D32 kill-or-keep. |
+| Pilot close (`[PILOT_END_DATE]`) | Final report + close-out | Confirms metrics shared. | Sends D25 Report 3 + D34 partner-facing close-out + initiates D32 cut-or-keep. |
 
 Reports arrive every Friday. If a Friday is missed, that's a Friday AESDR owes you a written explanation, not a quiet skip.
 

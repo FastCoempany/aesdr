@@ -47,7 +47,7 @@ Or if no first name on file:
 >
 > *The replay is open for the next 72 hours. Same workshop, same offer at the close, same 14-day refund on the program if you decide it's a fit. After that, the replay closes — we don't run this as evergreen content, and we don't sell the recording.*
 >
-> *One reason to actually watch it instead of letting the link expire: the workshop is built around the operating standard nobody handed you on day one. If you're in your first one to two years in startup SaaS, the gap it names is the one most early-career reps spend a year trying to identify on their own. Sixty minutes versus a year is a reasonable trade.*
+> *One reason to actually watch it instead of letting the link expire: the workshop is built around the operating standard nobody handed you on day one. If you're in your first one to two years in startup SaaS, the gap it names is the one most early-career AEs and SDRs spend a year trying to identify on their own. Sixty minutes versus a year is a reasonable trade.*
 
 ### Primary CTA
 

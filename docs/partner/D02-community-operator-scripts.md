@@ -18,11 +18,11 @@ Personalization required in every send: community name, one specific signal you 
 
 ## 1. Cold — community operator
 
-> Subject: Workshop pilot for early-career reps in your community
+> Subject: Workshop pilot for early-career AEs/SDRs in your community
 >
 > [Name] —
 >
-> I run AESDR — a 12-lesson sales survival course for first-1-to-2-year SDRs and AEs in startup SaaS. The reps your community hosts look like exactly who we built it for.
+> I run AESDR — a 12-course sales survival course for first-1-to-2-year SDRs and AEs in startup SaaS. The AEs and SDRs your community hosts look like exactly who we built it for.
 >
 > Rather than pitch a generic affiliate arrangement, I'd rather test one live workshop into [community]. We measure registration-to-purchase honestly, compare cohort quality against any other channel you've run, and only extend if the numbers are real.
 >

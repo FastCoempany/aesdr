@@ -137,10 +137,10 @@ Each variant is a single DM. **Do not** attach a calendar link in the first mess
 
 Per canon §4.1 banned vocab and §5.3 anti-cliché doctrine:
 
-- "Just wanted to circle back."
+- The corporate-filler re-engagement verb family ("just wanted to..." constructions — see §4.1 for catalog).
 - "Hope this finds you well."
 - "Quick question."
-- "Synergy" / "leverage" / "amazing" / "rockstar" / any banned word.
+- Any word from the §4.1 banned-vocab catalog (the corporate-speak family, the LinkedIn-influencer noun family, "amazing," "rockstar," etc.).
 - Multi-paragraph pitches. The DM is short by design — see length target.
 - Calendar link in the first message.
 - "Limited time bonus" framing. Pilot pricing is honest; no manufactured urgency (canon §9.2).

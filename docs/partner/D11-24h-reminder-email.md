@@ -39,9 +39,9 @@
 
 > *Tomorrow. [Day, Date · Time · TZ]. The [workshop title] workshop you registered for.*
 >
-> *60 minutes live, 10–15 minutes Q&A, one offer at the close. The reason to actually show up live instead of catching the replay: the Q&A. The questions reps in your situation tend to ask out loud are the same questions you've been Googling alone, and they tend to show up in chat the moment one person says them first. Replay is fine; live is sharper.*
+> *60 minutes live, 10–15 minutes Q&A, one offer at the close. The reason to actually show up live instead of catching the replay: the Q&A. The questions AEs and SDRs in your situation tend to ask out loud are the same questions you've been Googling alone, and they tend to show up in chat the moment one person says them first. Replay is fine; live is sharper.*
 >
-> *One thing we'll cover that most early-career reps don't have a frame for: the difference between activity and judgment. Your manager grades you on activity because activity is countable. Your career compounds on judgment because judgment is what makes the activity earn anything. The workshop is built around that gap.*
+> *One thing we'll cover that most early-career AEs and SDRs don't have a frame for: the difference between activity and judgment. Your manager grades you on activity because activity is countable. Your career compounds on judgment because judgment is what makes the activity earn anything. The workshop is built around that gap.*
 >
 > *That's it. Join link below. See you tomorrow.*
 

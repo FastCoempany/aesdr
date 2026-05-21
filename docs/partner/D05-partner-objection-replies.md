@@ -93,7 +93,7 @@
 >
 > Two answers, one short, one honest.
 >
-> Short: the gap is real — early-career reps in startup SaaS aren't getting structured coaching, and most of what's online is motivation in a trench coat. AESDR is built for that gap specifically.
+> Short: the gap is real — early-career AEs and SDRs in startup SaaS aren't getting structured coaching, and most of what's online is motivation in a trench coat. AESDR is built for that gap specifically.
 >
 > Honest: I'd rather test one workshop into a real audience and learn from objections than spray a launch and call the silence "demand." Workshop-first is slower for a week and faster for a quarter. If [community] has the right ICP, the test costs us a session and gives us both real data.
 >

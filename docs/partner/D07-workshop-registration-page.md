@@ -68,7 +68,7 @@ Type: `--mono` 10pt, `.25em` letter-spacing, uppercase, color `--muted`. Positio
 The single accent word (`SaaS` or whichever the title's accent word becomes) takes the iris text-clip treatment per `.heroAccent`. One accent word, never more.
 
 **Subtitle** (`--serif` 18pt, line-height 1.7, `--muted`):
-> *A live 60-minute workshop for first-1-to-2-year SDRs and AEs in startup SaaS. No motivation. No mindset slide. The five pressures every early-career rep gets, and the operating standard nobody handed you on day one.*
+> *A live 60-minute workshop for first-1-to-2-year SDRs and AEs in startup SaaS. No motivation. No mindset slide. The five pressures every early-career AE or SDR gets, and the operating standard nobody handed you on day one.*
 
 **Primary CTA** (iris button):
 > `Save my seat →`
@@ -91,7 +91,7 @@ Three numbered outcomes, mono labels (`--mono` 10pt, `.25em` letter-spacing, `--
 > *Activity, judgment, and manager communication, in the order they actually matter — not the order LinkedIn presents them.*
 >
 > **02 / The conversation before the conversation.**
-> *What a coachable rep sounds like in their 1:1, and how to be one before your manager has to make the call without you in the room.*
+> *What a coachable AE or SDR sounds like in their 1:1, and how to be one before your manager has to make the call without you in the room.*
 >
 > **03 / The math behind the month.**
 > *Why your commission check is a verdict on the last 30 days, and how to read it before payroll does.*
@@ -106,7 +106,7 @@ Two columns under a single mono eyebrow:
 ### Left column — Who this is for
 
 > **For first-1-to-2-year SDRs and AEs in startup SaaS.**
-> - Reps in their first or second seat, learning what good looks like in real time.
+> - AEs and SDRs in their first or second seat, learning what good looks like in real time.
 > - Career-switchers in their first SaaS sales role.
 > - SDRs aiming for the AE track, looking for the playbook before the title.
 > - Managers buying for ramp acceleration on junior hires.

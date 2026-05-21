@@ -62,11 +62,11 @@ Personalization: their actual content (a real episode, a real post, a real threa
 
 ### 4. Cold — alumni ambassador
 
-> Subject: Pilot fit — early-career reps in your circle
+> Subject: Pilot fit — early-career AEs/SDRs in your circle
 >
 > [Name] —
 >
-> [Mutual context — how you found them: an alumni event, a Slack mention, a mutual friend]. The reps in [alumni network] are exactly who AESDR was built for: first 1–2 years in startup SaaS, more pressure than coaching, more activity than judgment.
+> [Mutual context — how you found them: an alumni event, a Slack mention, a mutual friend]. The AEs and SDRs in [alumni network] are exactly who AESDR was built for: first 1–2 years in startup SaaS, more pressure than coaching, more activity than judgment.
 >
 > Rather than pitch a referral arrangement, I'd rather test one workshop into your circle. Cohort-specific, geo-specific if useful, tracked end-to-end. If it works for your folks, we keep going; if not, we don't pretend.
 >

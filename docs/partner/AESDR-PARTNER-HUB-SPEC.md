@@ -137,7 +137,7 @@ Per founder review 2026-05-04: partner-facing body copy must read like an operat
 1. **Header band.** AESDR wordmark top-left (links to `/`); top-right nav: `Program · Curriculum · Kit · FAQ · Apply`. No co-brand lockup.
 2. **Mono eyebrow** centered: `AESDR · PARTNERS · EST. 2026`.
 3. **Editorial split hero** (canon §6.3 pattern from `variants/variant-a-editorial-split.html`):
-   - Crimson left (40%): warning-eyebrow `WARNING · NOT A MARKETPLACE`. Headline: *"Real partnerships, not affiliate links."* Sub: *"AESDR doesn't run a marketplace. We work with a small group of operators whose audiences are early-career SaaS reps. Workshop-first. Time-boxed. Non-exclusive. Operator-to-operator."*
+   - Crimson left (40%): warning-eyebrow `WARNING · NOT A MARKETPLACE`. Headline: *"Real partnerships, not affiliate links."* Sub: *"AESDR doesn't run a marketplace. We work with a small group of operators whose audiences are early-career SaaS AEs and SDRs. Workshop-first. Time-boxed. Non-exclusive. Operator-to-operator."*
 
    *Note 2026-05-05:* The earlier *"Less affiliate empire. More founding vineyard."* hero was **retired in canon v1.3** the same day (vineyard / pruning / honest-yield metaphor cluster removed wholesale per founder direction — see `docs/canon-revisions/2026-05-05-tagline-retirement-v1.3-proposal.md`). The shipped headline above is the live version. The "three to five partners" cap was a fabrication and is also retired.
    - Cream right (60%): `--cond` 13pt label `WHAT THIS PAGE DOES`. Body in `--display` italic 700, 36pt: *"This is the page you point a partner-prospect at when they ask 'can I see your website?' — the operator-to-operator version."* Below: `--serif` 17pt context: *"AESDR runs pilot partnerships with community operators, bootcamp coaches, alumni networks, and creators. Workshop-first, time-boxed, non-exclusive."* Single iris CTA: `Request a partner conversation →` (anchors to `/partners/apply`).
@@ -164,7 +164,7 @@ Per founder review 2026-05-04: partner-facing body copy must read like an operat
 2. Token: pass — all colors and fonts via tokens.
 3. Iris reservation: 2 instances of the same primary CTA, both anchored to `/partners/apply`. Within canon §6.4.
 4. Icon discipline: pass — type-only.
-5. Voice thumbnail: *"Real partnerships, not affiliate links. AESDR doesn't run a marketplace. We work with a small group of operators whose audiences are early-career SaaS reps. Workshop-first. Time-boxed. Non-exclusive."* — passes; verdict-shaped Rowan, no internal references, no fabricated numbers.
+5. Voice thumbnail: *"Real partnerships, not affiliate links. AESDR doesn't run a marketplace. We work with a small group of operators whose audiences are early-career SaaS AEs and SDRs. Workshop-first. Time-boxed. Non-exclusive."* — passes; verdict-shaped Rowan, no internal references, no fabricated numbers.
 
 ### Page 1.2 — `/partners/program`
 

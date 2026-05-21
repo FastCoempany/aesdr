@@ -90,7 +90,7 @@ AESDR agrees to do the following during the Pilot Window:
 
 - AESDR sends Partner a weekly pilot report (D25 template) by end-of-day Friday of each pilot week.
 - Partner shares promotion-send metrics with AESDR within 24 hours of each promotion send.
-- A final post-pilot report is sent within 7 days of `[PILOT_END_DATE]`. This final report includes the AESDR-side kill-or-keep decision summary (Partner-facing version of D32, drafted as D34).
+- A final post-pilot report is sent within 7 days of `[PILOT_END_DATE]`. This final report includes the AESDR-side cut-or-keep decision summary (Partner-facing version of D32, drafted as D34).
 
 ---
 
@@ -257,7 +257,7 @@ This agreement depends on:
 This agreement is a forward dependency for:
 - Every co-branded asset that ships under AESDR × Partner lockup — none of those publish until this is signed.
 - D34 partner-facing pilot close-out notes — references the Pilot Window dates locked here.
-- D32 kill-or-keep memo — references "did the partner hold their commitments under §3" as a qualitative-signal input.
+- D32 cut-or-keep memo — references "did the partner hold their commitments under §3" as a qualitative-signal input.
 
 ---
 

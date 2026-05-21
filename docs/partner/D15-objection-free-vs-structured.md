@@ -53,7 +53,7 @@
 >
 > ***Two — frame.*** *Free content optimizes for engagement, which means it rewards confidence, controversy, and short hooks. Free content tells you "always be closing" and never tells you what to actually say. AESDR is the operating manual — the part the free content skipped because it doesn't perform well in a 60-second clip.*
 >
-> ***Three — accountability.*** *Free content is consumed alone, nodded at, and forgotten. AESDR has interactive exercises, a worksheet per lesson, takeaway tools you actually use, and a Discord (Untamed) where reps in your situation are talking about what's working. Doing the work, watched by other people doing the work, is the difference between watching and ramping.*
+> ***Three — accountability.*** *Free content is consumed alone, nodded at, and forgotten. AESDR has interactive exercises, a worksheet per lesson, takeaway tools you actually use, and a Discord (Untamed) where AEs and SDRs in your situation are talking about what's working. Doing the work, watched by other people doing the work, is the difference between watching and ramping.*
 >
 > *None of this is to say you should stop watching free content. Watch it. Learn from it. AESDR isn't a replacement for free content; it's a structure you can hang the free content on once you have one.*
 >

@@ -183,7 +183,7 @@ This email depends on:
 - **A real, single deadline** — the pilot pricing window must actually close at the timestamp. Operationally: per canon §9.2, this must be enforced in Stripe (code expires) and on the partner-promo page (offer surface reverts to list). **Operationally pending per pilot setup.**
 
 This email is a forward dependency for:
-- **D33 postmortem** — open rate, click-through, conversion-on-deadline-day are all key signals for the kill-or-keep decision.
+- **D33 postmortem** — open rate, click-through, conversion-on-deadline-day are all key signals for the cut-or-keep decision.
 - **D34 partner-facing close-out** — references the pilot's deadline-day conversion as part of the recap.
 
 ---

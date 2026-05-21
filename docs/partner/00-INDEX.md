@@ -74,9 +74,9 @@
 
 | D# | Title | Status | Audience | Voice ratio |
 |---|---|---|---|---|
-| D32 | Kill-or-keep decision memo | shipped | AESDR-internal | 90/10 |
+| D32 | Cut-or-keep decision memo | shipped | AESDR-internal | 90/10 |
 | D33 | Pilot postmortem template | shipped | AESDR-internal | 90/10 |
-| D34 | Partner-facing close-out notes (EXTEND + KILL) | shipped | partner | 80/20 |
+| D34 | Partner-facing close-out notes (EXTEND + CUT) | shipped | partner | 80/20 |
 
 ### D35–D40 — Post-pilot Codification + Kit Assembly
 

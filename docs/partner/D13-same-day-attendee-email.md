@@ -3,7 +3,7 @@
 **Deliverable:** Single email sent the same day as the workshop to attendees who showed up live but did not enroll. Closes the gap between "saw the workshop" and "decided." Includes the worksheet referenced in the deck.
 **Audience:** Attendance status `attended_live = true, purchased = false` at workshop end + 60 minutes.
 **Voice ratio:** 65 Rowan / 35 Michael — slightly higher Michael than reminder emails because trust is at peak (they showed up, they listened) and the email needs warmth without grovel. Calm Rowan body, Michael in two places — one mid-body beat and the PS.
-**Send timing:** Workshop end + 90 minutes (after the kill-window for any post-session purchases to land).
+**Send timing:** Workshop end + 90 minutes (after the close-out window for any post-session purchases to land).
 **Sender:** `[Host first name], AESDR` per canon §7.5 — this is the one transactional email where personal voice helps; trust is host-conferred at this moment.
 **Format:** Markdown source. Renders to HTML for ESP. Branded shell per canon §8.4. Includes a 1-page worksheet PDF attachment.
 **Canon refs:** `AFFILIATE_BRAND_CANON.md` §3.3, §7.5, §8.4, §13 (honesty), §10.4.
@@ -37,7 +37,7 @@
 
 ### Body
 
-> *You stayed for the whole workshop. That puts you in the smaller half of registrants — most people drop in the last 15 minutes when the offer slide goes up, and most of them never circle back. You did, and that's worth saying out loud.*
+> *You stayed for the whole workshop. That puts you in the smaller half of registrants — most people drop in the last 15 minutes when the offer slide goes up, and most of them never return. You did, and that's worth saying out loud.*
 >
 > *Three things in this email.*
 >

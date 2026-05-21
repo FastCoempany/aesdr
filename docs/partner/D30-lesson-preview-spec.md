@@ -157,9 +157,9 @@ A three-bullet block embeddable into newsletters, podcast notes, and the D26 par
 
 > *Three takeaways from AESDR's canonical lesson preview, "The Cost of Being On":*
 >
-> *— **The operating cost of "always-on."** The reps who burn out aren't the ones who don't try hard. They're the ones who don't have a plan for the part of the job that happens after the workday ends.*
+> *— **The operating cost of "always-on."** The AEs and SDRs who burn out aren't the ones who don't try hard. They're the ones who don't have a plan for the part of the job that happens after the workday ends.*
 >
-> *— **The reps who get promoted are the ones still sharp on Friday afternoon.** Not the ones closing out the bar Thursday night. The math compounds in one direction; you choose which.*
+> *— **The AEs and SDRs who get promoted are the ones still sharp on Friday afternoon.** Not the ones closing out the bar Thursday night. The math compounds in one direction; you choose which.*
 >
 > *— **Sales-culture pressure is real and most courses pretend it isn't.** AESDR doesn't. Lesson 11 in the catalog spends a full 150 minutes on what the lesson titles call out plainly: 21+. Not metaphor.*
 
@@ -209,7 +209,7 @@ Per canon §6.9.3, **first instance of any new layout pattern: founder pre-appro
 2. **Token check:** Pass.
 3. **Iris reservation:** Pass — zero iris on the clip's visual surfaces.
 4. **Icon discipline:** Pass — type-only on the title card; no imported icons or emoji; no subject-matter imagery.
-5. **Voice thumbnail:** *"The operating cost of 'always-on.' The reps who burn out aren't the ones who don't try hard — they're the ones who don't have a plan for the part of the job that happens after the workday ends."* — passes; verdict-shaped Rowan, identifiably AESDR. The "after the workday ends" framing is the canonical canon §1.5 operator-over-guru move.
+5. **Voice thumbnail:** *"The operating cost of 'always-on.' The AEs and SDRs who burn out aren't the ones who don't try hard — they're the ones who don't have a plan for the part of the job that happens after the workday ends."* — passes; verdict-shaped Rowan, identifiably AESDR. The "after the workday ends" framing is the canonical canon §1.5 operator-over-guru move.
 
 ---
 

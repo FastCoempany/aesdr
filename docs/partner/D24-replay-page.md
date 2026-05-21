@@ -56,7 +56,7 @@ The above-the-fold block is the deal. A registrant who already decided during th
   > `WHAT YOU JUST SAW`
 - **Three bullets, `--serif` 17pt, `--ink`:**
 
-> *— **What good actually looks like.** The territory most early-career reps have never had named for them — the operating standard between activity numbers and outcome numbers. The workshop pointed at it. The catalog opens it.*
+> *— **What good actually looks like.** The territory most early-career AEs and SDRs have never had named for them — the operating standard between activity numbers and outcome numbers. The workshop pointed at it. The catalog opens it.*
 >
 > *— **What you do when no one's watching.** The drinking culture, the relationships you're trying to keep, the version of yourself the role is building. Most sales training pretends this part doesn't exist. We disagree, on purpose.*
 >
