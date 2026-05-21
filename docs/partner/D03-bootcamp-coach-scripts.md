@@ -22,7 +22,7 @@ Personalization: bootcamp / cohort name, one specific outcome they publish (plac
 >
 > [Name] —
 >
-> I run AESDR — a 12-lesson sales survival course for SDRs and AEs in their first 1–2 years of startup SaaS. It's built for the gap most bootcamp grads land in: placed, paid, and quietly drowning in their first quarter.
+> I run AESDR — a 12-course sales survival course for SDRs and AEs in their first 1–2 years of startup SaaS. It's built for the gap most bootcamp grads land in: placed, paid, and quietly drowning in their first quarter.
 >
 > [Bootcamp] keeps coming up when I look for coaches who actually stay close to alumni after placement. If useful, I'd rather co-host a short workshop for your cohort or alumni network than pitch you a generic affiliate arrangement. One live session, tracked attribution, clean disclosure language, straightforward rev share, no exclusivity.
 >

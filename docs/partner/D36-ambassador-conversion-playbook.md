@@ -27,7 +27,7 @@ Ambassadors are NOT:
 - **Free of approval gates.** Lower per-asset overhead, not zero. Per canon §16, paid placements + recorded assets always need pre-approval.
 - **Exclusive.** Per canon §10.4 D22 inheritance — non-exclusivity is permanent in both directions.
 
-The number of ambassadors at any time is small. Per canon §1.3: a handful of carefully selected partners, not a marketplace. **Target ambassador count at steady state: 3-5.** More than that, and we're running a high-volume affiliate program — different model, different canon, different doctrine.
+The number of ambassadors at any time is small. Per canon §1.3: a handful of carefully selected partners, not a marketplace. **Target ambassador count at steady state: 3-5.** More than that, and we're running a high-volume affiliate program — which is a different model with its own canon and operating doctrine, not an evolution of this one.
 
 ---
 

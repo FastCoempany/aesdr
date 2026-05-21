@@ -53,7 +53,7 @@ When co-branded: `AESDR × [partner]` lockup top-center per canon §6.6.
 >
 > *Two: if you can't make it live, the replay opens for 48–72 hours after the session ends. Same content, same offer window. After 72 hours, the replay closes — we don't run this as evergreen content.*
 >
-> *That's it. See you on [day of week].*
+> *That's the whole confirmation — we'll see you on [day of week].*
 
 ### Primary CTA
 
@@ -64,7 +64,7 @@ When co-branded: `AESDR × [partner]` lockup top-center per canon §6.6.
 
 ### PS — Michael's line
 
-> *PS — If you registered, then forgot, then re-read this email three weeks from now wondering what AESDR is, it's the 12-lesson sales survival course you signed up to see one workshop from. You're not behind. We do this every couple of weeks.*
+> *PS — If you registered, then forgot, then re-read this email three weeks from now wondering what AESDR is, it's the 12-course sales survival course you signed up to see one workshop from. You're not behind — we do this every couple of weeks.*
 
 — `AESDR Workshop`
 

@@ -34,7 +34,7 @@ If the post contains a quote-thread or media, the disclosure goes in the **first
 
 Disclosure in the **first sentence** of the caption, before the recommendation.
 
-> *"#ad — AESDR partner. The 12-lesson SaaS sales survival course built for first-1-to-2-year SDRs and AEs. Workshop into [community] on [date]: [link]"*
+> *"#ad — AESDR partner. The 12-course SaaS sales survival program built for first-1-to-2-year SDRs and AEs. Workshop into [community] on [date]: [link]"*
 
 In-image disclosure is required if the caption is collapsed by default — overlay `Paid partnership with AESDR` in legible type.
 

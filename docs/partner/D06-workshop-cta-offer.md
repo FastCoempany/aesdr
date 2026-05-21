@@ -19,11 +19,11 @@ The single closing slide of the workshop deck. Locked verbatim per canon §7.3 �
 
 ┌──────────────────────────────────────────────────────┐
 │ MONO EYEBROW (top):                                  │
-│ AESDR · 12-LESSON COURSE · ENROLLMENT WINDOW         │
+│ AESDR · 12-COURSE PROGRAM · ENROLLMENT WINDOW        │
 │                                                      │
 │ DISPLAY ITALIC, ~64PT, WHITE:                        │
-│ Twelve lessons. Five tools. Lifetime access.         │
-│ Fourteen-day refund.                                 │
+│ Twelve courses, five tools, lifetime access,         │
+│ fourteen-day refund.                                 │
 │                                                      │
 │ SERIF ITALIC, 22PT, WHITE AT .75 OPACITY:            │
 │ "We do not teach you to sell.                        │
@@ -53,15 +53,15 @@ The single closing slide of the workshop deck. Locked verbatim per canon §7.3 �
 
 > *"That's the workshop.*
 >
-> *If what you saw maps to where you actually are — first one to two years in startup SaaS, looking for the operating standard nobody handed you on day one — AESDR is the 12-lesson program that picks up where this hour ended.*
+> *If what you saw maps to where you actually are — first one to two years in startup SaaS, looking for the operating standard nobody handed you on day one — AESDR is the 12-course program that picks up where this hour ended.*
 >
-> *Twelve lessons. Five tools. Lifetime access. A Discord called Untamed. Fourteen-day no-questions-asked refund. $249 for an SDR seat, $299 for an AE seat, $1,499 for a team license up to ten.*
+> *Twelve courses, five tools, lifetime access, a Discord called Untamed, and a fourteen-day no-questions-asked refund. Pricing runs $249 for an SDR seat, $299 for an AE seat, and $1,499 for a team license up to ten.*
 >
 > *The link is on the slide. The code closes [date]. After that, you can still enroll — without the code.*
 >
 > *Two more things before Q&A.*
 >
-> *One — who shouldn't enroll. If you came here for motivation, this isn't that. If you came here for a LinkedIn-friendly badge, we don't issue one. If you've been in sales ten-plus years and aren't open to a re-look at fundamentals, the first five lessons will bore you. The fourteen-day refund is real, but I'd rather you not buy it than ask for one.*
+> *One — who shouldn't enroll. If you came here for motivation, this isn't that. If you came here for a LinkedIn-friendly badge, we don't issue one. If you've been in sales ten-plus years and aren't open to a re-look at fundamentals, the first five courses will bore you. The fourteen-day refund is real, but I'd rather you not buy it than ask for one.*
 >
 > *Two — if you have any questions about whether this fits where you actually are, ask them in Q&A in the next ten minutes. We'd rather lose a sale than land the wrong one.*
 >
@@ -92,7 +92,7 @@ Replaces (or sits above) the existing `Pricing · One price. Lifetime access.` b
 > *before you decide.*
 
 **Serif body, 18pt, muted:**
-> *Twelve lessons, taught as interactive HTML — not video lectures, not motivation. Five takeaway tools, including the AE/SDR Alignment Contract and the 72-hour Strike Plan. Lifetime access, including future curriculum updates. Discord (Untamed) included. $249 SDR / $299 AE / $1,499 Team up to 10. One-time. 14-day no-questions-asked refund.*
+> *Twelve courses, taught as interactive HTML — not video lectures, not motivation. Five takeaway tools, including the AE/SDR Alignment Contract and the 72-hour Strike Plan. Lifetime access, including future curriculum updates, with the Discord (Untamed) opened on enrollment. $249 SDR / $299 AE / $1,499 Team up to 10 — one-time, with a 14-day no-questions-asked refund window backing the whole thing.*
 
 **Three-tier price band** — lifts the existing `.price-grid` from `variants/variant-a-editorial-split.html` verbatim, with one modification: a `pilot code · CLOSES [DATE]` mono line above the SDR card.
 
@@ -105,7 +105,7 @@ Replaces (or sits above) the existing `Pricing · One price. Lifetime access.` b
 >
 > - You wanted a motivation program. AESDR is the operating manual; the motivation engine is somewhere else.
 > - You wanted certification or a LinkedIn-friendly credential. We don't issue either.
-> - You're more than two years in and aren't open to revisiting fundamentals. The first five lessons will feel basic.
+> - You're more than two years in and aren't open to revisiting fundamentals. The first five courses will feel basic.
 > - You wanted scripts and templates more than you wanted structure. We're structure.
 >
 > *(`--serif` italic, 16pt, `--ink`)*

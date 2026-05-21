@@ -157,9 +157,9 @@ Per canon §13 honesty discipline — the absences:
 - **Not a sales-introduction course.** AESDR assumes you have the seat. If you're trying to break into sales, this isn't the course.
 - **Not a sales-leadership course.** The SDR-to-AE-to-first-year-AE arc is the spine. Manager-track content is partial (L3.3, L4.1, L8.1, L8.2 carry it) but the program isn't a leadership curriculum.
 - **Not industry-specific.** Calibrated for early-career SaaS sales generally; not vertical-specific tactics.
-- **Not a credential program.** No certificate, no badge, no hiring-weight credential. The line on a LinkedIn profile would be *"AESDR · 12-lesson operating curriculum"* — honest and accurate, not credentialed.
+- **Not a credential program.** No certificate, no badge, no hiring-weight credential. The line on a LinkedIn profile would be *"AESDR · 12-course operating curriculum"* — honest and accurate, not credentialed.
 - **Not a coaching program.** No live cohort sessions, no 1:1 calls, no scheduled office hours. Self-paced curriculum + asynchronous Untamed community.
-- **Not sanitized.** Lessons titled *"Quotas Are Bullshit"* and *"Why SDRs Should Stay Single"* are not metaphor or marketing — they're the lesson titles. The annotations are in the host's hand. AESDR is unconventional in tone but conventional in shape: 12 lessons, structured curriculum, defined outcomes, refundable.
+- **Not sanitized.** Sections titled *"Quotas Are Bullshit"* and *"Why SDRs Should Stay Single"* are not metaphor or marketing — they're the section titles, and the annotations are in the host's hand. AESDR is unconventional in tone but conventional in shape: 12 courses, structured curriculum, defined outcomes, refundable.
 
 ---
 
@@ -227,7 +227,7 @@ This map is a forward dependency for:
 
 > *(--serif italic 16pt, --ink, single paragraph below the catalog — the document's last visual beat.)*
 >
-> *Twelve lessons. Real questions on each card. Annotations in the host's hand. Open from day one, lifetime access, refundable in 14 days. Hosted by [HOST_FIRST_NAME], built from operator interviews, kept current as the role changes. Check one out.*
+> *Twelve courses, real questions on each card, annotations in the host's hand. Open from day one, lifetime access, refundable in 14 days. Hosted by [HOST_FIRST_NAME], built from operator interviews, kept current as the role changes. Check one out.*
 
 ---
 

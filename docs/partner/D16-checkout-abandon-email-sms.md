@@ -22,7 +22,7 @@
 
 ### Pre-header
 
-> *Same checkout, same price, same code. Three things people usually need.*
+> *Same checkout link, same price, same code — and three things people usually need before they can finish.*
 
 ### Body
 
@@ -38,9 +38,9 @@
 >
 > ***Two — the page closed before you finished.*** *Tab crashed, browser restarted, you got pulled into a meeting. The link below resumes the same session — your code, your tier, your email.*
 >
-> ***Three — you got most of the way through and changed your mind.*** *That's a real reason and we're not going to dance around it. If you walked away because the price hit differently than you expected, or because you hit "I'll think about it" and the tab idle-closed, that's data we want to know about. Reply to this email with what stopped you. Real reply, real answer.*
+> ***Three — you got most of the way through and changed your mind.*** *That's a real reason and we're not going to dance around it. If you walked away because the price hit differently than you expected, or because you hit "I'll think about it" and the tab idle-closed, that's data we want to know about. Reply to this email with what stopped you — you'll get a real answer from a real person, not a templated bounce.*
 >
-> ***The link.*** *Same checkout, same code, same price.*
+> ***The link.*** *Same checkout session, same code, same price as the page you closed.*
 
 **Primary CTA:**
 
