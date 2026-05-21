@@ -145,7 +145,7 @@ Per founder review 2026-05-04: partner-facing body copy must read like an operat
    - Pillar 1 — *Workshop-first.* Body: *"Every pilot leads with one live 60-minute workshop into the partner's audience, run by AESDR. The workshop earns the sale. The link merely attributes it."* Mono trail: `lift: AFFILIATE_BRAND_CANON.md §1.1`
    - Pillar 2 — *Operator over guru.* Body: *"We are the operating manual, not the motivation engine. If a piece of copy could be lifted onto a LinkedIn carousel without anyone noticing, it is wrong."* Mono trail: `lift: §1.5`
    - Pillar 3 — *Honesty is the differentiator.* Body: *"We say out loud what competitors won't: who should not buy, where the math breaks, what happens when the script runs out. Honesty is not a tone. It is a competitive position."* Mono trail: `lift: §1.6`
-5. **The catalog teaser** (4-of-12 lessons; lift verbatim from D31). Same library-catalog pattern as D26 §7. Mono eyebrow `WHAT YOUR AUDIENCE WOULD BE LEARNING`. 2×2 grid of L08, L10, L11, L12 cards. Trail: `4 OF 12 LESSONS SHOWN · 36 UNITS TOTAL · CHECK ONE OUT`.
+5. **The catalog teaser** (4-of-12 courses; lift verbatim from D31). Same library-catalog pattern as D26 §7. Mono eyebrow `WHAT YOUR AUDIENCE WOULD BE LEARNING`. 2×2 grid of L08, L10, L11, L12 cards. Trail: `4 OF 12 COURSES SHOWN · 36 LESSONS TOTAL · CHECK ONE OUT`.
 6. **The 5 tools strip** (`--cond` eyebrow, single horizontal row of 5 named tool cards):
    - The SLA Builder — *"AE-SDR alignment, written down."* — links to `/tools/3.3-aesdr-alignment-contract`
    - The "I Don't Know" Framework — *"What to say when the script runs out."* — links to `/tools/6.3-idk-framework`

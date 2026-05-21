@@ -52,7 +52,7 @@ The four-question FAQ-lite block is structured for the registration page hierarc
 
 ## Q02 — How much time does the program take?
 
-> *12 lessons. About 45–60 minutes per lesson, including the worksheet and the takeaway tool. Across 6–8 weeks at one to two lessons per week is the design pace; some students go faster, some slower.*
+> *12 courses, each running about 45–60 minutes once you include the worksheet and the takeaway tool. The design pace is six to eight weeks at one or two courses per week; some students go faster, some slower.*
 >
 > *The Discord (Untamed) is asynchronous — you can dip in for 5 minutes a week or 5 minutes a day. Most active members read more than they post.*
 >
@@ -77,7 +77,7 @@ The four-question FAQ-lite block is structured for the registration page hierarc
 
 **Notes (internal):**
 - "Untamed" is canonical (canon §15 glossary).
-- "Twelve lessons, twelve takeaways. Twelve things you can put on your desk." is verdict-shaped Rowan and tracks against the §14 tagline *"12 lessons. 5 tools. 1 new you."* The "5 tools" delta is intentional — the tagline counts the major tools, not every lesson takeaway.
+- "Twelve courses, twelve takeaways. Twelve things you can put on your desk." is verdict-shaped Rowan and tracks against the §14 tagline *"12 courses. 5 tools. Same you. But way....way better."* The "5 tools" delta is intentional — the tagline counts the major tools, not every per-course takeaway.
 - "Drip-gating" is the SaaS-norm pattern we're countering. Naming it is the move.
 
 ---
@@ -117,7 +117,7 @@ The four-question FAQ-lite block is structured for the registration page hierarc
 
 ## Q06 — Will my company reimburse this?
 
-> *Often, yes. AESDR is structured exactly for L&D-reimbursement: it's a defined curriculum (12 lessons), it has documented outcomes, and the pricing is in the range most L&D budgets approve without escalation.*
+> *Often, yes. AESDR is structured exactly for L&D-reimbursement: it's a defined curriculum (12 courses), it has documented outcomes, and the pricing is in the range most L&D budgets approve without escalation.*
 >
 > *Two practical paths:*
 >

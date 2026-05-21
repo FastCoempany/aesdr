@@ -142,7 +142,7 @@ content, pricing, and refund policy. [Partner] vouches for fit.
 - CTA: iris button per canon §6.4 — the one iris instance on this slide.
 - Michael line: `--hand` (Caveat) in white, slight rotation.
 **Type tokens:** `--mono` eyebrow at 12pt; `--display` italic 900 at clamp(40, 5vw, 64); `--serif` italic at 22pt for the canon quote; `--cond` 700 at 14pt for button; `--mono` 10pt for code/date line.
-**Iconography:** None new. Optional ghost numeral `12` (representing the 12 lessons) at opacity .04 in the bottom-right of the slide.
+**Iconography:** None new. Optional ghost numeral `12` (representing the 12 courses) at opacity .04 in the bottom-right of the slide.
 **Iris usage:** One — the `Enroll now →` button. Per canon §6.4.
 **Deliberate departures from canon:** None. This slide is the canonical instance of canon §8.6.
 

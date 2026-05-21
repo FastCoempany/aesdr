@@ -94,9 +94,9 @@ The opening 0:00–0:45 visual frame (also the static thumbnail asset). **The ti
   - Below wordmark, mono `--cond` 13pt 700, .15em, uppercase, `--ink`:
     > `HOSTED BY [HOST_FIRST_NAME] [HOST_LAST_NAME]`
   - Below host name, `--mono` 10pt, `--muted`:
-    > `aesdr.com · 12 lessons · 5 tools · 1 new you`
+    > `aesdr.com · 12 courses · 5 tools · same you, way better`
 
-**Static thumbnail render** (the PNG file partners use): same layout, exported at 1280×720 PNG, sRGB. Partner-co-branded variant inserts the AESDR × Partner lockup centered on the cream right panel below the wordmark, replacing the `12 lessons / 5 tools / 1 new you` line. Per canon §6.6.
+**Static thumbnail render** (the PNG file partners use): same layout, exported at 1280×720 PNG, sRGB. Partner-co-branded variant inserts the AESDR × Partner lockup centered on the cream right panel below the wordmark, replacing the `12 courses / 5 tools / same you, way better` line. Per canon §6.6.
 
 The annotation from the source syllabus — *"21+. not metaphor."* — does **not** appear on the title card or in any thumbnail. It surfaces only after the host says the subject on camera, where it lands as honesty rather than as click-bait.
 

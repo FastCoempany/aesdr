@@ -134,7 +134,7 @@ The course-content audit (2026-04-09) names "5 tools" as a reference point in th
 
 > *Each lesson ships with worksheets and takeaway tools you fill against your real AEs and SDRs, your real pipeline, your real comp plan. Not "imagine a prospect named Bob."*
 
-The canon §14 tagline — *"12 courses. 5 tools. 1 new you."* — stays as the headline frame; the per-tool inventory is filled in once production confirms.
+The canon §14 tagline — *"12 courses. 5 tools. Same you. But way....way better."* — stays as the headline frame; the per-tool inventory is filled in once production confirms.
 
 ---
 

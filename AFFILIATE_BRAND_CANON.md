@@ -48,7 +48,7 @@ A borrowed audience has 60 minutes and zero trust. Position must land in 10 seco
 | What AESDR is | The operating manual for early-career SaaS sales, not the motivation engine. |
 | Who it's for | First-1-to-2-year SDRs and AEs in startup SaaS who're serious about controlling chaos, managing toxic leadership, protecting their commission, and their future. (Also: SDR managers buying for ramp.) |
 | Who it's explicitly not for | People looking for motivational content, automated shortcuts, LinkedIn polish, badge-hustle, certification clout, or anything that smells like a guru course. |
-| Structural promise | 12 lessons. 5 takeaway tools. Lifetime access. Discord ("Untamed"). 14-day refund. |
+| Structural promise | 12 courses. 5 takeaway tools. Lifetime access. Discord ("Untamed"). 14-day refund. |
 | Delivery format | Self-paced, interactive, field-tested. Not video lectures. Not motivation. |
 | Pricing (current canon) | $249 SDR · $299 AE · $1,499 Team (up to 10 seats). One-time, lifetime access. |
 | Authority frame | Built by people who carried bags and managed AEs/SDRs for 10+ years. Authority lives in the brand and the host, never in a named founder. |
@@ -574,7 +574,7 @@ If the partner cannot or will not disclose, we do not work with them. This is a 
 
 ### 10.2 Approved claims
 The partner and host may say these:
-- The structural promise (12 lessons, 5 takeaway tools, lifetime access, $249/$299/$1,499, 14-day refund). Verbatim.
+- The structural promise (12 courses, 5 takeaway tools, lifetime access, $249/$299/$1,499, 14-day refund). Verbatim.
 - "Built by people who carried bags and managed AEs and SDRs for 10+ years."
 - "Not video lectures. Interactive."
 - "Discord community ('Untamed') included."
@@ -717,7 +717,7 @@ Repeatable across collateral, host scripts, social, decks. Use, don't paraphrase
 
 - *"You can already feel it. You have to be a part of this."* (added v1.2 — partner-hub pull)
 - *"Real Operator. Never guru."* (added v1.2 — partner-hub pull; replaces the doctrine-form *"operator over guru"* as the tagline-form)
-- *"12 lessons. 5 tools. 1 new you."* (revised v1.2 — supersedes earlier *"12 lessons. 5 tools. 1 you."*)
+- *"12 courses. 5 tools. Same you. But way....way better."* (revised v1.3 2026-05-21 — supersedes v1.2 *"12 lessons. 5 tools. 1 new you."*; hierarchy alignment + identity-shift claim removed)
 - *"The operating manual, not the motivation engine."*
 - *"If you want generic sales hype, the internet has a surplus."*
 - *"We do not teach you to sell. We teach you to be the person who sells."*
@@ -780,6 +780,7 @@ This document is the source of truth for the affiliate / partner ecosystem until
 | 1.1 | 2026-04-29 | Founder | Iconography & symbols are in play but must be custom and on-brand. Added §6.8 (custom iconography & symbol system — seed inventory, two registers, stroke/fill/color/size discipline, banned list, new-icon workflow). Added §6.9 (visual QA discipline — five-question check, required visual-treatment blocks, approval gates). Updated §6.5 third bullet to reflect. |
 | 1.2 | 2026-05-04 | Founder | Tagline-pack §14 updated: added *"You can already feel it. You have to be a part of this."* and *"Real Operator. Never guru."* (the tagline-form of §1.5 doctrine). Replaced *"12 lessons. 5 tools. 1 you."* with *"12 lessons. 5 tools. 1 new you."* — added "new" beat per partner-hub pull. Triggered by AESDR Partner Hub Phase 0 ratification 2026-05-02. Downstream: kit deliverables that referenced the prior tagline get a follow-on cleanup batch (parallel to discount-doctrine and curriculum-terminology cleanups). |
 | 1.3 | 2026-05-05 | Founder | Retired the vineyard / pruning / yield metaphor cluster. §1.3 retitled from *"Less affiliate empire, more founding vineyard"* to *"A handful of partners, not a marketplace"*; body rewritten in plain language (removed "small rows, careful pruning, honest yield"). §14 tagline *"Less affiliate empire. More founding vineyard."* removed. §15 glossary entry *"Founding vineyard"* removed. Triggered by founder review 2026-05-04: the metaphor reads as sophisticated for sophistication's sake; AESDR language should not require interpretation. Downstream: hub pages (`app/partners/page.tsx`, `app/partners/how-we-work/page.tsx`, `app/partners/faq/page.tsx`) and partner-facing deliverables (D05 §6, D28 approved-language list, D40 welcome paragraph, kit-template/00-canon-excerpt) all updated in same batch. Internal canon-ref preambles in D22/D27/D32/D36/D37 updated to drop "founding vineyard" parenthetical. Historical research report and seed canon snapshots left as-is (predate the canon). |
+| 1.4 | 2026-05-21 | Founder | Tagline-pack §14 revised again (v1.3 of §14 specifically, ratified at canon-wide v1.4). Replaced *"12 lessons. 5 tools. 1 new you."* with *"12 courses. 5 tools. Same you. But way....way better."* — hierarchy alignment (course as top-level) plus identity-shift claim removed. Two derivative-form short variants pre-cleared for mono-label rhythm: *"12 courses · at your own pace · same you, way better"* and *"12 courses · 5 tools · same you, way better"*. Triggered during Tier B/C/D cadence + hierarchy re-sweep close-out (commits `8cee550` → `bbe5c47`). Full revision doc at `docs/canon-revisions/2026-05-21-tagline-pack-v1.3.md`. Downstream: D23/D28/D30/D31/HUB-BUILD-PROMPT/kit-template/00-canon-excerpt updated to v1.3 line; 17 mockup + variant files updated to use derivative forms (warning-tags, fork-* labels, syllabus marquees, lesson-preview thumbnails). |
 
 **How to update:** open a PR titled `canon: <topic>` against `main`. Update the version row. Update any deliverables that contradict the new canon. Do not update canon to fit a deliverable; update the deliverable to fit canon, or argue for a canon change first.
 

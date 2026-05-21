@@ -2,7 +2,7 @@
 
 ## [1] TASK CONTEXT
 
-You are Claude, working on AESDR — a 12-lesson sales-survival course for early-career SaaS SDRs and AEs, built on Next.js 16 / React 19 / Supabase / Stripe. The codebase lives in this repo. You have built the entire 40-deliverable partner kit on the `affiliate-seeding` branch. You also wrote the hub specification at `docs/partner/AESDR-PARTNER-HUB-SPEC.md` — that document is your source of truth for what to build.
+You are Claude, working on AESDR — a 12-course sales-survival program for early-career SaaS SDRs and AEs, built on Next.js 16 / React 19 / Supabase / Stripe. The codebase lives in this repo. You have built the entire 40-deliverable partner kit on the `affiliate-seeding` branch. You also wrote the hub specification at `docs/partner/AESDR-PARTNER-HUB-SPEC.md` — that document is your source of truth for what to build.
 
 The task: **build Phase 1 of the AESDR Partner Hub** at `aesdr.com/partners` per the hub spec. The hub is the surface a partner-prospect navigates to when they ask, *"can I see your website?"* It must answer that question without them needing to ask follow-ups.
 
@@ -31,7 +31,7 @@ You are working inside AESDR's brand, governed by `AFFILIATE_BRAND_CANON.md` v1.
 - **§6.9.1 five-question check** — every page passes thumbnail test, token test, iris-reservation test, icon-discipline test, voice-thumbnail test before commit.
 - **§12 founder-backstage doctrine** — founder is invisible to audience. The hub does not include founder bio, founder photo, founder-named author byline, or "from the founder" framing. Founder visibility on a partner-facing surface requires canon §12.4 ratification (named milestone, rare and deliberate); the hub does not qualify.
 - **§13 honesty discipline** — say out loud what competitors won't. The hub includes honest-disqualification surfaces (who shouldn't apply, who shouldn't enroll). The hub names absences (no discounts, no email-list access, no founder-on-demand). Sanitization is forbidden.
-- **§14 tagline pack** — usable verbatim: *"You can already feel it. You have to be a part of this."* / *"Real Operator. Never guru."* / *"12 lessons. 5 tools. 1 new you."* / etc. Do not paraphrase canonical taglines.
+- **§14 tagline pack** — usable verbatim: *"You can already feel it. You have to be a part of this."* / *"Real Operator. Never guru."* / *"12 courses. 5 tools. Same you. But way....way better."* / etc. Do not paraphrase canonical taglines.
 
 Operate severe, calm, ranked, authored. No marketing voice. No friendliness-first. Operator-to-operator register throughout.
 
@@ -52,8 +52,8 @@ Operate severe, calm, ranked, authored. No marketing voice. No friendliness-firs
 
 1. `docs/partner/AESDR-PARTNER-HUB-SPEC.md` — this is your build spec; you wrote it; re-read it before starting.
 2. `AFFILIATE_BRAND_CANON.md` v1.1 — the canon. Read every section.
-3. `app/syllabus/page.tsx` (commit `20cbc9e`, 2026-04-22) — the production syllabus. The library-catalog metaphor lives here. The 12 lesson titles, questions, annotations, and stamps are the source of truth.
-4. `docs/planning/course-content-audit.md` (2026-04-09) — confirms 36 units across 12 lessons + role-conditional fork.
+3. `app/syllabus/page.tsx` (commit `20cbc9e`, 2026-04-22) — the production syllabus. The library-catalog metaphor lives here. The 12 course titles, questions, annotations, and stamps are the source of truth.
+4. `docs/planning/course-content-audit.md` (2026-04-09) — confirms 36 lessons across 12 courses + role-conditional fork.
 5. `app/reveal/RevealView.tsx` — the Programme/Manuscript artifact-pick mechanic + the $40 follow-on copy.
 6. `app/artifacts/playbill/page.tsx` and `app/artifacts/redline/page.tsx` — the two end-of-course artifacts.
 7. `tools/standalone-html/` (5 files) — the 5 tools. Each linked from `aesdr.com/tools/[slug]`.
@@ -105,7 +105,7 @@ Build a pipeline that converts the kit markdown files (D19, D20, D21, D28, D31, 
 ### Hard rules
 
 1. **No invented content.** Every line of copy lifts from a named source in the spec. If the source doesn't have what you need, **stop and ask** the founder; do not invent.
-2. **No clusters or groupings on the curriculum.** Production has 12 lessons. The hub has 12 lessons. Do not introduce "Foundations / Range / Identity" or any equivalent.
+2. **No clusters or groupings on the curriculum.** Production has 12 courses. The hub has 12 courses. Do not introduce "Foundations / Range / Identity" or any equivalent.
 3. **No discount references.** Per Phase 0 #5. Sweep your work for `[PILOT_DISCOUNT]`, `[PILOT_CODE]`, "save you $," "promo code," "pilot pricing" — none of these appear on the hub.
 4. **No founder visibility.** Per canon §12.1. No founder bio, photo, byline, or "from the founder" framing.
 5. **No invented pilot stats.** No "X% completion rate," no "Y% conversion rate," no specific numbers that aren't in the spec or sourced from production data.

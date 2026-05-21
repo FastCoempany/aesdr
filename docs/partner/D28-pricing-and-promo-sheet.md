@@ -16,7 +16,7 @@
 
 | Tier | Audience | Price | Includes |
 |---|---|---|---|
-| **SDR** | Individual SDR — first 0–2 years in role | **$249** | All 12 lessons, all 5 tools, Untamed Discord, lifetime access, 14-day refund. |
+| **SDR** | Individual SDR — first 0–2 years in role | **$249** | All 12 courses, all 5 tools, Untamed Discord, lifetime access, 14-day refund. |
 | **AE** | Individual AE — first 0–2 years in role | **$299** | Same as SDR plus AE-track supplementary recordings + AE-specific worksheets. |
 | **Team** | Manager-purchased seats, up to 10 AEs/SDRs | **$1,499** | 10 seats, manager dashboard, cohort assign + revoke, no per-seat overage. |
 
@@ -143,7 +143,7 @@ Approved phrasings in §3 above are pre-cleared — Partner may use them without
 For partners who want a brand-line that doesn't reference pricing directly, canon §14 taglines are pre-approved for partner co-branding:
 
 - *"The operating manual, not the motivation engine."*
-- *"12 lessons. 5 tools. 1 new you."*
+- *"12 courses. 5 tools. Same you. But way....way better."*
 - *"You can already feel it. You have to be a part of this."*
 - *"Real Operator. Never guru."*
 - *"If you want generic sales hype, the internet has a surplus."*
