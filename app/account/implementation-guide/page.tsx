@@ -9,7 +9,7 @@ import { createClient } from "@/utils/supabase/server";
 export const metadata: Metadata = {
   title: "Implementation guide (solo) | AESDR",
   description:
-    "How to actually finish AESDR if you bought it for yourself. Twelve weeks, two windows a week, the moves that work in practice.",
+    "How to actually finish AESDR if you bought it for yourself — twelve weeks of structured implementation across two windows per week, with the specific moves that work in practice rather than just on the page.",
 };
 
 interface Week {

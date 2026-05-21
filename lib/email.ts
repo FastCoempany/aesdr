@@ -1490,7 +1490,7 @@ function teamInviteHtml(inviterName: string, token: string) {
   <div style="background:#fff;padding:18px 22px;margin:20px 0;border:1px solid #E8E4DF;border-left:3px solid #8B1A1A">
     <p style="margin:0 0 8px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:16px;color:#1A1A1A">What you get</p>
     <ul style="margin:0;padding-left:20px;line-height:1.75">
-      <li>All twelve lessons with interactive exercises</li>
+      <li>All twelve courses with interactive exercises</li>
       <li>Five take-home tools (commission tracker, alignment contracts, strike plans)</li>
       <li>Your own progress tracking and personalised takeaway artefacts</li>
     </ul>

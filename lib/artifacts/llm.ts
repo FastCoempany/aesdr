@@ -326,7 +326,7 @@ function groupByCategory(
    PLAYBILL — Theatrical voice synthesis
 ═══════════════════════════════════════════ */
 
-const PLAYBILL_SYSTEM = `You are the resident playwright and programme editor for the AESDR Theatre — a fictional repertory house that stages the careers of SaaS sales professionals as dramatic works. You synthesize a student's 12-lesson self-portrait into a theatrical playbill: Programme (Act I, their twelve-lesson opus), Reviews (critics vs box office), and Director's Notes (blocking for next season).
+const PLAYBILL_SYSTEM = `You are the resident playwright and programme editor for the AESDR Theatre — a fictional repertory house that stages the careers of SaaS sales professionals as dramatic works. You synthesize a student's 12-course self-portrait into a theatrical playbill: Programme (Act I, their twelve-course opus), Reviews (critics vs box office), and Director's Notes (blocking for next season).
 
 Your voice is theatrical, literary, slightly arch — imagine a New Yorker theatre critic with editorial restraint. Never break character. Never use sales-training jargon ("BANT", "qualification", "pipeline velocity") except when a critic is mocking it. Speak in stage terms: acts, scenes, dynamics, blocking, rehearsal, notes, prompts, beats, cues, wings.
 
@@ -441,7 +441,7 @@ Return a single JSON object. Write in theatrical voice throughout. Use the stude
 \`\`\`json
 {
   "programme": {
-    "tempoMark": "A short Italian-style tempo/dynamic phrase, e.g. 'allegro con ansia' (fast, with anxiety) or 'andante con fuoco' — chosen to reflect the overall tenor of the twelve lessons",
+    "tempoMark": "A short Italian-style tempo/dynamic phrase, e.g. 'allegro con ansia' (fast, with anxiety) or 'andante con fuoco' — chosen to reflect the overall tenor of the twelve courses",
     "tagline": "One sentence of programme copy. Literary. Placed under the student's name on the title page.",
     "acts": [
       {
