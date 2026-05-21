@@ -67,7 +67,7 @@ The ICP should stay narrow enough that a partner can describe the buyer in one b
 | SDR aiming for AE track | “I want the real transition playbook, not generic motivation.” | Promotion timing, shadowing, missed targets, confusion about next-level behavior | “I should wait until I’m promoted.” | Build AE judgment before the title arrives | SDR/AE creators, coaches, alumni ambassadors |
 | First-time AE in startup SaaS | “I know activity, but not how to manage the culture, ambiguity, and personal expectations.” | New logo responsibility, startup volatility, first bad month | “This sounds too junior.” “I already know sales basics.” | This is not generic sales training; it is startup-survival operating context | AE-focused micro-creators, community operators |
 | Career-switcher in first SaaS sales role | “I didn’t grow up in this culture, and I’m learning the rules while being measured by them.” | First role, first quota, fear of washing out | “I should just learn on the job.” | Compress painful trial-and-error | Bootcamp coaches, alumni networks, micro-creators |
-| Manager-sponsored buyer | “I need ramp support for junior reps without building a program from scratch.” | New cohort hire, underperforming ramp, no internal enablement bandwidth | “I can coach them myself.” “Budget is tight.” | Faster ramp and fewer avoidable mistakes for junior reps | Community operators, coach-led workshops, trusted creators with manager audiences |
+| Manager-sponsored buyer | “I need ramp support for junior AEs and SDRs without building a program from scratch.” | New cohort hire, underperforming ramp, no internal enablement bandwidth | “I can coach them myself.” “Budget is tight.” | Faster ramp and fewer avoidable mistakes for junior AEs and SDRs | Community operators, coach-led workshops, trusted creators with manager audiences |
 
 The partner archetype comparison below is a practical scoring model for pre-revenue pilots. These are directional judgments inferred from narrow-ICP, founder-led, workshop-first selling logic. Treat them as hypotheses to test, not carved tablets lowered from the mountain. citeturn14view0turn14view2turn15search0
 
@@ -75,9 +75,9 @@ The partner archetype comparison below is a practical scoring model for pre-reve
 | --- | --- | --- | --- | --- | --- |
 | Community operator | High if the community is role-specific and active | Live attendance history, moderated conversations, member replies, role relevance, sponsor references | Medium-to-high conversion, medium volume | Moderate | Low fixed prep fee only if past attendance is proven, plus commission; one live workshop + replay + 30-day attribution |
 | Bootcamp coach | Very high | Student testimonials, office-hours attendance, alumni outcomes, direct coaching history | High conversion, lower volume | Low-to-moderate | Commission-first or fixed-against-commission; workshop + private Q&A + fast follow-up |
-| Micro-creator | Variable to high if niche is exact | Comments from real reps, repeated role-specific content, live session history, audience quality over size | Medium conversion, variable volume | Low | Commission-first; no fixed fee unless they can prove workshop attendance or email list response |
+| Micro-creator | Variable to high if niche is exact | Comments from real AEs and SDRs, repeated role-specific content, live session history, audience quality over size | Medium conversion, variable volume | Low | Commission-first; no fixed fee unless they can prove workshop attendance or email list response |
 | Alumni ambassador | High trust, small reach | Admin or leadership role in alumni circles, repeat referrals, known peer credibility | High conversion, very low volume | Very low | Referral code or stipend + commission; cohort- or geo-specific pilot only |
-| Hybrid coach-creator | Often the strongest overall fit | Teaches, hosts, writes, and has real replies from reps | High conversion, moderate volume | Moderate | Fixed-against-commission with co-branded workshop and two follow-up sends |
+| Hybrid coach-creator | Often the strongest overall fit | Teaches, hosts, writes, and has real replies from AEs and SDRs | High conversion, moderate volume | Moderate | Fixed-against-commission with co-branded workshop and two follow-up sends |
 
 ## Workshop-first pilot and nurture funnel
 
@@ -111,17 +111,17 @@ The workshop itself should be designed to teach something real, not merely perfu
 | Live content | 45–55 minutes total, with one framework, one self-assessment, one “startup reality” section, one offer | 35%+ registration-to-live attendance |
 | Q&A | 10–15 minutes with real role-specific questions | At least 5 substantive ICP questions in a small pilot |
 | Offer | One clear CTA only: checkout or application, not both unless price is high enough to justify calls | 5%+ attendee-to-purchase or 3+ high-intent calls booked |
-| Replay | 48–72 hour gated replay with summary email and CTA above the fold | Replay contributes at least some incremental conversions; if it contributes none, fix follow-up or kill replay |
-| Kill criteria | Partner sends traffic but no trust, no attendance, no engagement, or off-ICP signups | End the pilot and do not extend |
+| Replay | 48–72 hour gated replay with summary email and CTA above the fold | Replay contributes at least some incremental conversions; if it contributes none, fix follow-up or cut replay |
+| Cut criteria | Partner sends traffic but no trust, no attendance, no engagement, or off-ICP signups | End the pilot and do not extend |
 
 A good default workshop agenda for AESDR is this.
 
 | Time | Segment |
 | --- | --- |
 | 0–5 min | Who this is for, who it is not for, what people will leave with |
-| 5–15 min | The real pressures early-career reps face in startup SaaS |
+| 5–15 min | The real pressures early-career AEs and SDRs face in startup SaaS |
 | 15–25 min | The performance operating system: activity, judgment, manager communication |
-| 25–35 min | Cultural and expectation traps that quietly wreck otherwise good reps |
+| 25–35 min | Cultural and expectation traps that quietly wreck otherwise good AEs and SDRs |
 | 35–45 min | How AESDR’s curriculum resolves those gaps |
 | 45–55 min | Q&A |
 | 55–60 min | Offer, deadline, bonus, and next step |
@@ -219,7 +219,7 @@ gantt
     section Next 30 days
     Run pilot workshops                          :b1, 2026-05-28, 21d
     Daily reporting and QA                       :b2, 2026-05-28, 21d
-    Kill or keep decisions by partner            :b3, 2026-06-10, 14d
+    Cut or keep decisions by partner            :b3, 2026-06-10, 14d
 
     section Final 30 days
     Double down on best 1-2 partners             :c1, 2026-06-27, 21d
@@ -253,27 +253,27 @@ A sample 30-day pilot timeline for one partner:
 | 18 | Evaluate purchases, refunds, and qualitative fit | Founder |
 | 19–21 | Manual follow-up to high-intent leads | Founder |
 | 22 | Weekly report to partner | Ops |
-| 23–27 | Decide extend, revise, or kill | Founder |
+| 23–27 | Decide extend, revise, or cut | Founder |
 | 28–30 | Contract closeout and postmortem | Founder + ops |
 
 Sample outreach subject lines:
 
 - Workshop for early-career SaaS SDRs and AEs
-- Practical session idea for your new-rep audience
+- Practical session idea for your new-hire AE/SDR audience
 - Could we test a live AESDR session with your community?
-- Tight fit for reps under two years in startup SaaS
-- Founding pilot for early-career reps in your network
+- Tight fit for AEs/SDRs under two years in startup SaaS
+- Founding pilot for early-career AEs/SDRs in your network
 
 Sample short outreach scripts:
 
 **Community operator**
-> I run AESDR, a 12-course program for early-career SaaS SDRs and AEs. We focus on the part most reps learn the hard way: performance expectations, startup pressure, and the cultural realities of SaaS sales. I think your community is tightly aligned. Rather than pitch a generic affiliate arrangement, I’d rather test one live workshop for your members, measure registration-to-sale honestly, and only expand if it works.
+> I run AESDR, a 12-course program for early-career SaaS SDRs and AEs. We focus on the part most AEs and SDRs learn the hard way: performance expectations, startup pressure, and the cultural realities of SaaS sales. I think your community is tightly aligned. Rather than pitch a generic affiliate arrangement, I’d rather test one live workshop for your members, measure registration-to-sale honestly, and only expand if it works.
 
 **Bootcamp coach**
-> I think AESDR fits the gap after placement and before confident ramp. It is built for reps in their first two years, especially in startup environments where expectations are loud and instruction is often quiet. If useful, I’d love to co-host a short workshop for your alumni or students and structure the pilot with clear tracking, clean disclosures, and a straightforward revenue share.
+> I think AESDR fits the gap after placement and before confident ramp. It is built for AEs and SDRs in their first two years, especially in startup environments where expectations are loud and instruction is often quiet. If useful, I’d love to co-host a short workshop for your alumni or students and structure the pilot with clear tracking, clean disclosures, and a straightforward revenue share.
 
 **Micro-creator or alumni ambassador**
-> Your audience looks unusually relevant: early-career reps asking practical questions, not fishing for motivational wallpaper. I’m piloting a workshop-first partner motion for AESDR and looking for a small number of aligned operators to test with. One workshop, one replay window, one tracked offer, no weird exclusivity. If the numbers are real, we keep going. If not, we part as adults.
+> Your audience looks unusually relevant: early-career AEs and SDRs asking practical questions, not fishing for motivational wallpaper. I’m piloting a workshop-first partner motion for AESDR and looking for a small number of aligned operators to test with. One workshop, one replay window, one tracked offer, no weird exclusivity. If the numbers are real, we keep going. If not, we part as adults.
 
 Sample workshop CTA copy:
 

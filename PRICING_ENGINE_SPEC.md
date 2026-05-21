@@ -66,7 +66,7 @@ BLS reports base salary only. Sales comp is OTE (base + commission). We need the
 
 **What we extract (browsing + copy):**
 - Company ratings for sales orgs
-- Average quota attainment percentages (critical — tells us what % of reps are actually hitting numbers)
+- Average quota attainment percentages (critical — tells us what % of AEs and SDRs are actually hitting numbers)
 - Culture scores (proxy for training investment)
 - Comp ranges by company tier
 
@@ -116,11 +116,11 @@ BLS reports base salary only. Sales comp is OTE (base + commission). We need the
 - Gartner/Forrester sales training market sizing (executive summaries free)
 
 **What we extract:**
-- Average L&D spend per rep ($500–$1,500/yr cited across sources)
+- Average L&D spend per seat ($500–$1,500/yr cited across sources)
 - Self-directed vs company-funded training split
 - Training format preferences (video vs live vs hybrid)
 - Career tenure by role (average months as SDR before promotion/attrition)
-- Quota attainment distributions (typically ~40–60% of reps hit quota)
+- Quota attainment distributions (typically ~40–60% of AEs and SDRs hit quota)
 
 **Output:** `industry_benchmarks.json` — curated parameter file
 
@@ -573,5 +573,5 @@ Being straight:
 
 - **Your brand equity** — no model captures the emotional resonance of the landing page you've built. The confession sequence, the Michael cards, the classified dossier — that's conversion lift that doesn't show up in competitor benchmarks.
 - **Founder distribution** — if you're selling through personal audience (Twitter, LinkedIn), your conversion rate is 3–5x what cold traffic produces. The model can't price for that without your audience data.
-- **First-mover timing** — the market for "honest, practical SDR/AE training by actual reps" barely exists as a category. You're pricing a category, not a product.
+- **First-mover timing** — the market for "honest, practical SDR/AE training by actual operators" barely exists as a category. You're pricing a category, not a product.
 - **Post-purchase signal** — refund rate and word-of-mouth are the real pricing feedback loop. The model gets you to launch price. Your Stripe data after 90 days replaces everything above.

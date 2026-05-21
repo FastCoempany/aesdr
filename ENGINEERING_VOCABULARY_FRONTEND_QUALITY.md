@@ -73,7 +73,7 @@ These are the terms for "does it feel alive and responsive, not janky or sluggis
 
 **60fps / jank** — Animations must hit 60 frames per second (16.7ms per frame) to feel smooth. "Jank" is the visible stutter when a frame takes too long. The engineering tool is Chrome DevTools → Performance tab → look for long frames. The phrase: "Are we profiling animation performance and targeting 60fps on mid-range Android?"
 
-**GPU-accelerated properties** — Only `transform` and `opacity` can be animated without triggering layout recalculation. Animating `width`, `height`, `top`, `left`, `margin`, or `padding` causes "layout thrashing" and kills performance. The phrase: "Are all animations using transform/opacity only, or are we triggering reflows?"
+**GPU-accelerated properties** — Only `transform` and `opacity` can be animated without triggering layout recalculation. Animating `width`, `height`, `top`, `left`, `margin`, or `padding` causes "layout thrashing" and tanks performance. The phrase: "Are all animations using transform/opacity only, or are we triggering reflows?"
 
 **Layout thrashing / forced reflow** — Reading layout properties (like `offsetHeight`) then immediately writing style changes forces the browser to recalculate layout synchronously. This is the #1 cause of animation jank. The engineering phrase: "Are we batching DOM reads and writes to avoid forced reflows?"
 
@@ -288,7 +288,7 @@ The terms for "when it does break, we know immediately and fix fast."
 
 **Error budget** — A target error rate (e.g., 99.9% success = 0.1% error budget). When you've consumed your error budget, you stop shipping features and fix reliability. The phrase: "What's our error budget, and do we have a policy to freeze deploys when it's exhausted?"
 
-**Feature flags / kill switches** — The ability to disable any feature in production without deploying code. Essential for launch: if the certificate generator starts failing, flip a flag and show "Certificate available soon" instead of a 500 error. The phrase: "Can we kill any feature in <30 seconds via feature flag without a deploy?"
+**Feature flags / shut-off switches** — The ability to disable any feature in production without deploying code. Essential for launch: if the certificate generator starts failing, flip a flag and show "Certificate available soon" instead of a 500 error. The phrase: "Can we shut off any feature in <30 seconds via feature flag without a deploy?"
 
 **Canary deployment** — Rolling out a new version to 1–5% of users first, monitoring for errors, then gradually expanding. The alternative to "deploy to everyone and pray." The phrase: "Are we using canary deploys with automatic rollback on error rate spike?"
 

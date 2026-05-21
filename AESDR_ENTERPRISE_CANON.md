@@ -20,7 +20,7 @@ This document is **canon** for the subsidiary brand and **spec** for the build. 
 
 > **AESDR / Enterprise is the missing behavioral foundation for early-career sales orgs.**
 
-Built on the same 12 lessons that 1st- and 2nd-year SDRs and AEs buy directly on aesdr.com, packaged for sales orgs that need their junior AEs and SDRs to mature faster. The wedge: **young SDRs and AEs break in predictable ways. We turn the breakpoints into a structured training path.**
+Built on the same 12 courses that 1st- and 2nd-year SDRs and AEs buy directly on aesdr.com, packaged for sales orgs that need their junior AEs and SDRs to mature faster. The problem: **young SDRs and AEs break in predictable ways. We turn the breakpoints into a structured training path.**
 
 This framing is borrowed from the Paycor / Listo capability-extension partnership pattern (see decisions log §13). We're not a sales-training course in the B2B SaaS sense — we're the behavioral foundation that platforms in sales enablement, LMS, sales hiring, and fractional RevOps don't have and don't want to build.
 
@@ -57,7 +57,7 @@ Two registers depending on surface:
 | `/enterprise/contact` | Calm, low-friction. Form + 24-business-hour reply promise. |
 | `/enterprise/curriculum`, `/enterprise/diagnostic`, `/enterprise/implementation`, `/enterprise/integrations` | Spec-document register. Manager-facing technical clarity. |
 
-Across all surfaces, the subsidiary voice is **calm, structural, and operator-grade**. It never says "crush it," "10x," "unleash," or "transform your sales org." If a sentence could appear in a Highspot deck without modification, rewrite it.
+Across all surfaces, the subsidiary voice is **calm, structural, and operator-grade**. It never uses the guru-verb family, "10x" claims, the "unleash"-style hype family, or "transform your sales org." If a sentence could appear in a Highspot deck without modification, rewrite it.
 
 ---
 
@@ -348,12 +348,12 @@ app/api/enterprise-inquiry/
   - **$115K** — average cost to recruit, ramp, and lose one SDR before productivity (Bridge Group + LinkedIn Talent)
 - Primary CTA: `Book a 30-min walkthrough` (iris-shimmer fill button) → `/enterprise/contact?source=hero`
 
-**The wedge (one section)**
+**The problem (one section)**
 - Headline: *"Junior SDRs and AEs break in predictable ways."*
 - Body (3 short paragraphs):
   1. Most sales orgs hire AEs and SDRs and expect their manager + a Highspot library to make them productive. It works for some. Most stall, churn, or quit.
   2. The reasons aren't a mystery. Toxic management, ego dynamics between SDRs and AEs, CRM friction, async-life dysfunction, no playbook for the first 100 cold dials — these are the same six or seven breakpoints, repeated across orgs.
-  3. AESDR is 12 lessons, each addressing one of those breakpoints, with a takeaway tool the AE/SDR keeps. The behavioral foundation that should already exist but doesn't.
+  3. AESDR is 12 courses, each addressing one of those breakpoints, with a takeaway tool the AE/SDR keeps. The behavioral foundation that should already exist but doesn't.
 
 **What it is (card row)**
 - Three feature cards:
@@ -536,7 +536,7 @@ Course list (from earlier file inventory):
 6. **What to expect from AEs and SDRs.** Honest range — "some AEs and SDRs will tear through this; some will resist. The resistors are usually the ones who needed it most. Don't force pace."
 7. **What to do with the takeaway tools.** Five tools, when each gets used, how to integrate into existing team rituals.
 8. **Common mistakes.**
-   - Treating it like compliance training (kills engagement)
+   - Treating it like compliance training (tanks engagement)
    - Skipping the manager's parallel reading (creates a knowledge gap)
    - Pushing AEs and SDRs to finish in 4 weeks (defeats the spaced-AE/SDR design)
    - Running peer discussions before lesson 5 (group hasn't built trust yet)
@@ -658,7 +658,7 @@ Detailed pitch angles for each category, used both for the `/enterprise/channel`
 
 **How AESDR plugs in:**
 - Post-placement ramp acceleration — included as part of placement package
-- "Hired AEs and SDRs get AESDR access" — value-add for the hiring org, retention boost for the platform
+- "Hired AEs and SDRs get AESDR access" — a real benefit for the hiring org, retention boost for the platform
 - Could be a hiring-platform-funded benefit
 
 **Integration mechanism:** Bulk seat provisioning via API or CSV (immediate). Co-branded onboarding email.
@@ -994,7 +994,7 @@ Decisions made and ratified by Antaeus. Don't relitigate in PRs without explicit
 | 13 | 2026-05-18 | Sub-logo treatment formalized — three forms (full / compact / tiny) with type-only construction | Editorial brand DNA. No icon glyph because the parent is type-based; adding an icon for the subsidiary would feel forced and break family resemblance. |
 | 14 | 2026-05-18 | Downloadable PDFs implemented as print-friendly web pages under `/enterprise/downloads/*`, not as pre-generated binary PDF files | Beautiful PDF output requires design tooling not set up in this sandbox. Print-friendly web pages produce equivalent output via browser print-to-PDF, keep artifacts version-controlled, stay automatically in sync with site content, and read well both as PDF and on web. |
 | 15 | 2026-05-18 | Sub-brand renamed: **AESDR / Operating Layer → AESDR / Enterprise** | "Operating Layer" was internal positioning borrowed from the GPT "behavioral operating system" framing. It worked as a way for the team to think about the product but meant nothing to a B2B buyer reading the wordmark cold. "For Teams" is immediately legible, matches the `/enterprise` URL, and reads naturally ("we got AESDR Enterprise"). Tiny monogram updated A·OL → A·T. Canon file renamed via `git mv` to `AESDR_ENTERPRISE_CANON.md`. |
-| 16 | 2026-05-18 | Buyer-perspective copy audit completed across all `/enterprise/*` surfaces — internal positioning phrases removed | After the rename, did a systematic pass for other internal positioning that leaked into buyer-facing copy. Removed / rewrote: "behavioral foundation" (replaced with concrete language about real-world training), "the wedge" (→ "the problem"), "buyer modes" / "MODE 01-04" (→ "Ways to buy" / tier-named eyebrows), "sharpest early wedge" tag (→ "Strong fit"), "Paycor / Listo capability-extension model" (deleted internal reference), "survival fundamentals" / "behavior-fragile" / "tool-fluent" (rewritten to plain language), "founder-administered" (→ "run by our team"), "in v1" (→ "today" / "right now"), "economic shape" (→ "how the product works"). Brand voice (calm, structural, anti-corporate) preserved. |
+| 16 | 2026-05-18 | Buyer-perspective copy audit completed across all `/enterprise/*` surfaces — internal positioning phrases removed | After the rename, did a systematic pass for other internal positioning that leaked into buyer-facing copy. Removed / rewrote: "behavioral foundation" (replaced with concrete language about real-world training), the R-G1 gummy-abstraction label that previously sat at line 23 (→ "the problem"), "buyer modes" / "MODE 01-04" (→ "Ways to buy" / tier-named eyebrows), the same R-G1 label in tag form (→ "Strong fit"), "Paycor / Listo capability-extension model" (deleted internal reference), "survival fundamentals" / "behavior-fragile" / "tool-fluent" (rewritten to plain language), "founder-administered" (→ "run by our team"), "in v1" (→ "today" / "right now"), "economic shape" (→ "how the product works"). Brand voice (calm, structural, anti-corporate) preserved. |
 
 ---
 

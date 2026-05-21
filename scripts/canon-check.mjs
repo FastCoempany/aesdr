@@ -87,6 +87,8 @@ const SKIP_FILE_PATTERNS = [
   /content\/aesdr-internal\/D20-claims-sheet\.md$/,
   /docs\/partner\/D20-claims-sheet\.md$/,
   /docs\/partner\/kit-template\/00-canon-excerpt\.md$/,
+  /\.github\/pull_request_template\.md$/,
+  /^AGENTS\.md$/,
   /\.test\.(md|mdx)$/,
 ];
 
