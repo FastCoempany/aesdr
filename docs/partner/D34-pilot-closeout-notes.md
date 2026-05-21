@@ -1,6 +1,6 @@
 # D34 — Partner-Facing Pilot Close-Out Notes (2 Versions)
 
-**Deliverable:** Two short emails — one for an `EXTEND` decision, one for a `KILL` decision (per D32). Sent from the founder, by name, within 48 hours of the kill-or-keep memo being signed.
+**Deliverable:** Two short emails — one for an `EXTEND` decision, one for a `CUT` decision (per D32). Sent from the founder, by name, within 48 hours of the cut-or-keep memo being signed.
 **Audience:** The partner. Operator-to-operator. They've just finished the pilot; they expect honesty.
 **Voice ratio:** 80 Rowan / 20 Michael. Calm, direct, no defensiveness, no celebration theater.
 **Sender:** Founder, by first name.
@@ -21,7 +21,7 @@
 
 ## Version A — EXTEND
 
-Sent when the kill-or-keep memo (D32) ruled `EXTEND`. The email is the offer; the contract amendment follows separately.
+Sent when the cut-or-keep memo (D32) ruled `EXTEND`. The email is the offer; the contract amendment follows separately.
 
 ### Subject
 
@@ -51,9 +51,9 @@ Sent when the kill-or-keep memo (D32) ruled `EXTEND`. The email is the offer; th
 
 ---
 
-## Version B — KILL
+## Version B — CUT
 
-Sent when the kill-or-keep memo (D32) ruled `KILL`. The email is the close-out; no contract amendment follows.
+Sent when the cut-or-keep memo (D32) ruled `CUT`. The email is the close-out; no contract amendment follows.
 
 ### Subject
 
@@ -69,7 +69,7 @@ Sent when the kill-or-keep memo (D32) ruled `KILL`. The email is the close-out; 
 >
 > What this told us: [one sentence — the single specific reason the pilot didn't clear our extend bar — ICP fit, conversion math, founder hours, compliance, or fit at the brand level. Be specific. No "wasn't quite right."].
 >
-> None of that is on you to fix. Some pilots clear the bar, some don't, and the only thing worse than killing one is dragging it out because the conversation was uncomfortable.
+> None of that is on you to fix. Some pilots clear the bar, some don't, and the only thing worse than cutting one is dragging it out because the conversation was uncomfortable.
 >
 > The door's open if something specific changes — [name a specific changed condition that would re-open the conversation, or write "I'll reach back if our setup changes in a way that fits your audience"].
 >
@@ -80,15 +80,15 @@ Sent when the kill-or-keep memo (D32) ruled `KILL`. The email is the close-out; 
 ### Voice notes
 
 - "Wanted to tell you straight before you found out by absence of follow-up" — Rowan opening, sets the tone immediately.
-- The "name a specific reason" rule is the most important sentence in the email. Vague kill notes ("just wasn't quite the right fit") are worse than no email; they look like the founder couldn't be bothered to think about it.
-- "None of that is on you to fix" is a load-bearing line — kills any defensiveness from the partner without absolving them where it's their problem (the next sentence opens the door, not closes it).
+- The "name a specific reason" rule is the most important sentence in the email. Vague cut notes ("just wasn't quite the right fit") are worse than no email; they look like the founder couldn't be bothered to think about it.
+- "None of that is on you to fix" is a load-bearing line — cuts any defensiveness from the partner without absolving them where it's their problem (the next sentence opens the door, not closes it).
 - "We part as adults" earns its presence here. Final use for at least the next three deliverables, per the audit cap.
 
 ---
 
 ## Optional Version C — REVISE (placeholder)
 
-If the kill-or-keep memo ruled `REVISE` (close-but-missed; partner willing to retest with adjustments), use a hybrid:
+If the cut-or-keep memo ruled `REVISE` (close-but-missed; partner willing to retest with adjustments), use a hybrid:
 
 > [Partner name] —
 >
@@ -128,7 +128,7 @@ This version is intentionally lighter than A or B because REVISE is an open ques
 **Iris usage:** None. Per canon §6.4, iris is reserved; close-out correspondence is below the threshold.
 
 **Attachments (referenced in both versions):**
-- A 1-page PDF rendering of the D32 numbers section (the kill-or-keep memo's §1 table only — not the full memo, which is internal). File name: `aesdr--[partner-slug]--pilot-recap--v1.pdf`.
+- A 1-page PDF rendering of the D32 numbers section (the cut-or-keep memo's §1 table only — not the full memo, which is internal). File name: `aesdr--[partner-slug]--pilot-recap--v1.pdf`.
 
 **Deliberate departures from canon:** None. The "no iris" choice is canon — these are correspondence, not CTA surfaces.
 
@@ -143,7 +143,7 @@ This version is intentionally lighter than A or B because REVISE is an open ques
 
 ## Notes
 
-- The KILL version is shorter than partners expect, and that's correct. A long kill email reads as defensive. A short one reads as confident.
+- The CUT version is shorter than partners expect, and that's correct. A long cut email reads as defensive. A short one reads as confident.
 - Both versions reference the attached PDF recap. That recap is the operationally honest deliverable — without it, both notes feel hollow. Build the recap renderer (lift D32 §1 to PDF) before the first close-out goes out.
 - Neither email apologizes. Apologies in correspondence imply we did something wrong; the canon's honesty discipline (§13) frames pilots as tests, not promises.
 

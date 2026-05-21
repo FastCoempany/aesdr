@@ -1,4 +1,4 @@
-# D32 — Kill-or-Keep Decision Memo Template
+# D32 — Cut-or-Keep Decision Memo Template
 
 **Deliverable:** One-page template the founder fills out post-pilot to decide whether to extend, revise, or end the partnership. Forces a written decision instead of a default-to-keep.
 **Audience:** Internal — founder, ops. Not shared with the partner.
@@ -10,7 +10,7 @@
 
 ## Use
 
-Filled out within 72 hours of the pilot's end (per `affiliate-seeding-deep-research-report.md` §Sample 30-day pilot timeline, days 23–27). Output: one of three decisions — **EXTEND**, **REVISE**, **KILL**. Once decided, drives the close-out conversation with the partner (D34) and the postmortem (D33).
+Filled out within 72 hours of the pilot's end (per `affiliate-seeding-deep-research-report.md` §Sample 30-day pilot timeline, days 23–27). Output: one of three decisions — **EXTEND**, **REVISE**, **CUT**. Once decided, drives the close-out conversation with the partner (D34) and the postmortem (D33).
 
 The point of the template is to make the decision *before* the relationship politics start. We write the memo, then we have the conversation, not the other way around.
 
@@ -25,12 +25,12 @@ The point of the template is to make the decision *before* the relationship poli
 ## Template (canonical text — fill the brackets)
 
 > *(Mono eyebrow)*
-> `AESDR · KILL-OR-KEEP MEMO · [Partner slug] · [Pilot ID]`
+> `AESDR · CUT-OR-KEEP MEMO · [Partner slug] · [Pilot ID]`
 
 > *(Display italic, ~36pt)*
 > *Partner: [Partner name]*
 > *Pilot: [Pilot ID, e.g., c_2026-05-apex]*
-> *Decision: [EXTEND / REVISE / KILL]*
+> *Decision: [EXTEND / REVISE / CUT]*
 
 ---
 
@@ -65,7 +65,7 @@ Three sentences each. Specific. No "kind of" / "sort of."
 
 ### 3. Failure-mode check
 
-Mark each that applies. Multiple applies → bias toward KILL.
+Mark each that applies. Multiple applies → bias toward CUT.
 
 - [ ] Partner missed promotion deliverables (skipped sends, posted late, omitted disclosures).
 - [ ] Audience showed up but was off-ICP (tenure / role / industry mismatch).
@@ -109,9 +109,9 @@ Conditions for a REVISE decision:
 > Who owns each change: [Founder / Ops / Partner]
 > Retest date: [YYYY-MM-DD]
 
-#### KILL
+#### CUT
 
-Conditions for a KILL decision (any one is sufficient):
+Conditions for a CUT decision (any one is sufficient):
 
 - Repeated compliance issues during the pilot.
 - Audience was structurally off-ICP and unlikely to change.
@@ -123,13 +123,13 @@ Conditions for a KILL decision (any one is sufficient):
 >
 > Close-out tone: [neutral / warm / cold — defaults to neutral]
 > Door open for future revisit? [Y / N — and if Y, conditions]
-> Partner-facing message draft: [link to D34 — see `docs/partner/D34-pilot-closeout-notes.md`, KILL version]
+> Partner-facing message draft: [link to D34 — see `docs/partner/D34-pilot-closeout-notes.md`, CUT version]
 
 ---
 
 ### 5. Lessons that survive the partner
 
-Independent of EXTEND/REVISE/KILL — what does AESDR keep from this pilot regardless?
+Independent of EXTEND/REVISE/CUT — what does AESDR keep from this pilot regardless?
 
 - **Deck change:** [text]
 - **Registration-page change:** [text]
@@ -148,7 +148,7 @@ These get fed into the rolling objection log and into the next pilot's setup, re
 | Founder | [Name] | [YYYY-MM-DD] |
 | Ops (if applicable) | [Name] | [YYYY-MM-DD] |
 
-Memo filed to: `docs/partner/pilots/[Partner-slug]/kill-or-keep--v1.pdf`
+Memo filed to: `docs/partner/pilots/[Partner-slug]/cut-or-keep--v1.pdf`
 
 ---
 
@@ -156,11 +156,11 @@ Memo filed to: `docs/partner/pilots/[Partner-slug]/kill-or-keep--v1.pdf`
 
 - The template forces the founder to write the decision *before* the partner-facing conversation. This is on purpose. If a partner is great in the room but the numbers are clearly bad, the room will lie to you. The memo lies less.
 - **The "effective hourly rate" line is load-bearing.** Founder time is a real cost. A partnership that converts but consumes 40 founder hours per closed sale is not a partnership; it's a part-time job.
-- The "Lessons that survive the partner" section is the most important section in any KILL memo. We never lose a pilot without keeping something.
+- The "Lessons that survive the partner" section is the most important section in any CUT memo. We never lose a pilot without keeping something.
 - **No emotion in the rationale.** Numbers and observed behavior. The partner-facing tone (warm/neutral/cold) gets to carry the relationship work; the memo carries the decision.
 
 ## Open
 
 - Whether the memo template should be a Notion database row (fillable in-app) vs a markdown file per pilot. Default until decided: markdown file per pilot, in `docs/partner/pilots/[partner-slug]/`. Migrate to a structured tool if pilot count crosses 5.
-- D34 (partner-facing close-out note, two versions — extend / kill) is referenced in §4 KILL. **Produced** as `docs/partner/D34-pilot-closeout-notes.md`.
+- D34 (partner-facing close-out note, two versions — extend / cut) is referenced in §4 CUT. **Produced** as `docs/partner/D34-pilot-closeout-notes.md`.
 - "Comparable hourly rate of founder-direct outreach" — needs a baseline number. Default until measured: $200/hr placeholder. Update once we have one direct-outreach pilot's data.

@@ -22,38 +22,38 @@
 
 > *(Body intro paragraph, --serif 14pt italic, --ink)*
 >
-> *This brief summarizes AESDR — a 12-lesson sales-survival curriculum for early-career SaaS SDRs and AEs — for L&D / manager review. It exists because [PROSPECT_NAME] requested enrollment and the typical approval question is: "what is this, and is it worth $[PRICE]?" The answer is below in 250 words.*
+> *This brief summarizes AESDR — a 12-course sales-survival curriculum for early-career SaaS SDRs and AEs — for L&D / manager review. It exists because [PROSPECT_NAME] requested enrollment and the typical approval question is: "what is this, and is it worth $[PRICE]?" The answer is below in 250 words.*
 
 ---
 
 ### What AESDR is
 
-A 12-lesson curriculum built specifically for early-career SaaS sales reps in their first 0–3 years. Hosted by `[HOST_FIRST_NAME] [HOST_LAST_NAME]`, who has [HOST_TENURE_YEARS] years across SDR, AE, and sales-management roles. **Unconventional in tone, conventional in shape:** a defined 12-lesson curriculum (36 sub-units) with documented outcomes, a refund window, and a cohort community. AESDR is upfront that several lessons name parts of the role most sales-training programs avoid — drinking culture, financial reality, manager dynamics, the personal cost of being on. That candor is the program's distinguishing feature, not a footnote.
+A 12-course curriculum built specifically for early-career SaaS AEs and SDRs in their first 0–3 years. Hosted by `[HOST_FIRST_NAME] [HOST_LAST_NAME]`, who has [HOST_TENURE_YEARS] years across SDR, AE, and sales-management roles. **Unconventional in tone, conventional in shape:** a defined 12-course curriculum (36 lessons) with documented outcomes, a refund window, and a cohort community. AESDR is upfront that several courses name parts of the role most sales-training programs avoid — drinking culture, financial reality, manager dynamics, the personal cost of being on. That candor is the program's distinguishing feature, not a footnote.
 
-The 12 lessons (working titles for L&D review — production lesson titles in parentheses use the host's voice and are visible to enrolled reps):
+The 12 courses (working titles for L&D review — production course titles in parentheses use the host's voice and are visible to enrolled AEs and SDRs):
 
 | # | What it covers |
 |---|---|
-| L01 | Building team partnership in early-career sales (Building Real Camaraderie) |
-| L02 | Cross-team alignment and the home-office build-out (Breaking Down Silos) |
-| L03 | Performance pitfalls and survival framework with manager-archetype mapping (Performance Pitfalls) |
-| L04 | Reading your manager: the ten archetypes (Navigating Manager Madness) |
-| L05 | The promotion-track playbook for SDRs (tHe SaLeS pLaYbOoK) |
-| L06 | Field experience over textbook theory; networking and the strategy of "knowing just enough" (bEyOnD tHe SaLeS pLaYbOoK) |
-| L07 | Prospecting ownership for AEs and the existential question of fit in SaaS sales (Prospecting & Pipeline) |
-| L08 | The 30/40/30 segmentation and honest self-assessment (The 30% Rule) |
-| L09 | CRM, Slack, and the SaaS tools stack — discipline before tools (CRM Survival Guide) |
-| L10 | **Quotas are b.s. There, we said it.** Reading your comp plan and surviving variable income. (Breaking Down the Commission Myth) |
-| L11 | Managing your reputation in sales cultures, including the alcohol-and-events question, head-on (Sober Selling) |
-| L12 | Trading your personal life to be in sales: relationships, home-office burnout, dating-while-grinding (Leveling Up SaaS Relationships) |
+| C01 | Building team partnership in early-career sales (Building Real Camaraderie) |
+| C02 | Cross-team alignment and the home-office build-out (Breaking Down Silos) |
+| C03 | Performance pitfalls and survival framework with manager-archetype mapping (Performance Pitfalls) |
+| C04 | Reading your manager: the ten archetypes (Navigating Manager Madness) |
+| C05 | The promotion-track playbook for SDRs (tHe SaLeS pLaYbOoK) |
+| C06 | Field experience over textbook theory; networking and the strategy of "knowing just enough" (bEyOnD tHe SaLeS pLaYbOoK) |
+| C07 | Prospecting ownership for AEs and the existential question of fit in SaaS sales (Prospecting & Pipeline) |
+| C08 | The 30/40/30 segmentation and honest self-assessment (The 30% Rule) |
+| C09 | CRM, Slack, and the SaaS tools stack — discipline before tools (CRM Survival Guide) |
+| C10 | **Quotas are b.s. There, we said it.** Reading your comp plan and surviving variable income. (Breaking Down the Commission Myth) |
+| C11 | Managing your reputation in sales cultures, including the alcohol-and-events question, head-on (Sober Selling) |
+| C12 | Trading your personal life to be in sales: relationships, home-office burnout, dating-while-grinding (Leveling Up SaaS Relationships) |
 
-Each lesson has 3 sub-units (36 total). Per-lesson worksheets and takeaway tools — operating sheets the rep keeps on their desk. Library-catalog metaphor on the syllabus surface; full lesson list visible at `aesdr.com/syllabus`.
+Each course has 3 lessons (36 total). Per-course worksheets and takeaway tools — operating sheets the AE or SDR keeps on their desk. Library-catalog metaphor on the syllabus surface; full course list visible at `aesdr.com/syllabus`.
 
 ### What it costs
 
 | Tier | Price | What's included |
 |---|---|---|
-| SDR | **$249** | All 12 lessons, all 5 tools, Untamed Discord, lifetime access, 14-day refund |
+| SDR | **$249** | All 12 courses, all 5 tools, Untamed Discord, lifetime access, 14-day refund |
 | AE | **$299** | Same as SDR + AE-track supplementary recordings + AE-specific worksheets |
 | Team | **$1,499** | 10 seats, manager dashboard, cohort assign + revoke, no per-seat overage |
 
@@ -61,17 +61,17 @@ Each lesson has 3 sub-units (36 total). Per-lesson worksheets and takeaway tools
 
 ### What [PROSPECT_NAME] would learn
 
-For an early-career rep in [PROSPECT_ROLE], the program targets four specific operating outcomes:
-- **Honest close-rate math.** Lesson 8 walks the 30/40/30 segmentation managers already use whether they say so or not — and the self-assessment that lets [PROSPECT_NAME] read their own pipeline without the optimism bias most reps carry.
-- **Comp-plan literacy.** Lesson 10 covers reading the comp plan, including the parts that aren't written down (clawbacks, accelerator triggers, what counts as "closed-won" for commission). Plus the financial-discipline practice for variable income.
-- **Manager-reading and managing-up framework.** Lesson 4 names the ten manager archetypes and the framework for working productively with whichever one [PROSPECT_NAME] actually has — versus the one the org chart claims they have.
-- **The role's operating cost on the person.** Lessons 11 and 12 cover the parts of the role most courses avoid: alcohol culture in sales, home-office burnout, the impact on relationships, the long-term identity question. These lessons are not optional, not buried in an appendix; they are part of the operating manual.
+For an early-career AE or SDR in [PROSPECT_ROLE], the program targets four specific operating outcomes:
+- **Honest close-rate math.** Course 8 walks the 30/40/30 segmentation managers already use whether they say so or not — and the self-assessment that lets [PROSPECT_NAME] read their own pipeline without the optimism bias most AEs and SDRs carry.
+- **Comp-plan literacy.** Course 10 covers reading the comp plan, including the parts that aren't written down (clawbacks, accelerator triggers, what counts as "closed-won" for commission). Plus the financial-discipline practice for variable income.
+- **Manager-reading and managing-up framework.** Course 4 names the ten manager archetypes and the framework for working productively with whichever one [PROSPECT_NAME] actually has — versus the one the org chart claims they have.
+- **The role's operating cost on the person.** Courses 11 and 12 cover the parts of the role most other programs avoid: alcohol culture in sales, home-office burnout, the impact on relationships, the long-term identity question. These courses are not optional, not buried in an appendix; they are part of the operating manual.
 
 These are operating-skill outcomes, not income outcomes. AESDR does not promise revenue lift, deal-size lift, promotion timing, or any specific dollar number. Per canon §10.3 (forbidden claims), AESDR does not make income claims about its program — and we'd flag any one-page-summary that did.
 
 ### Time commitment
 
-12 lessons. ~45–60 minutes per lesson (video + worksheet + tool). Recommended pace: 1–2 lessons per week across 6–8 weeks. The rep's weekly time investment is **~1–2 hours**, mostly in evenings. The Untamed Discord community is asynchronous — optional reading, no mandatory office hours.
+12 courses, roughly 45–60 minutes each including the interactive HTML lesson sequence and the takeaway tool. Recommended pace is one to two courses per week across six to eight weeks. The AE or SDR's weekly time investment is **~1–2 hours**, mostly in evenings. The Untamed Discord community is asynchronous — optional reading, no mandatory office hours.
 
 ### Refund policy
 
@@ -79,13 +79,13 @@ These are operating-skill outcomes, not income outcomes. AESDR does not promise 
 
 ### Why now (versus later)
 
-Most reps lose ramp not from missing pipeline but from not knowing *why* they missed. AESDR's first four lessons give the diagnostic frame for that question; reps with the frame ramp faster than reps without it. Per AESDR's positioning brief (D21), the operating gap is widest in months 6–18 of a SaaS sales role. If [PROSPECT_NAME] is in that window, the cost of waiting is one quarter's worth of compounding judgment.
+Most AEs and SDRs lose ramp not from missing pipeline but from not knowing *why* they missed. AESDR's first four courses give the diagnostic frame for that question; AEs and SDRs with the frame ramp faster than those without it. Per AESDR's positioning brief (D21), the operating gap is widest in months 6–18 of a SaaS sales role. If [PROSPECT_NAME] is in that window, the cost of waiting is one quarter's worth of compounding judgment.
 
 ### What this is not
 
 - **Not a sales-introduction course.** AESDR assumes [PROSPECT_NAME] has the seat. It is not "how to break into sales."
 - **Not industry-specific.** Calibrated for early-career SaaS sales generally; not vertical-specific tactics.
-- **Not a credential program.** No certificate, no badge, no hiring-weight credential. The line on a LinkedIn profile would be "AESDR · 12-lesson operating curriculum" — honest and accurate, not credentialed.
+- **Not a credential program.** No certificate, no badge, no hiring-weight credential. The line on a LinkedIn profile would be "AESDR · 12-course operating curriculum" — honest and accurate, not credentialed.
 - **Not a coaching program.** No live cohort sessions, no 1:1 calls, no scheduled office hours. Self-paced curriculum + asynchronous community.
 
 ### How to approve
@@ -131,14 +131,14 @@ If approving for [PROSPECT_NAME]:
 2. **Token check:** Pass.
 3. **Iris reservation:** Pass — zero iris.
 4. **Icon discipline:** Pass — type-only.
-5. **Voice thumbnail:** *"This brief summarizes AESDR — a 12-lesson sales-survival curriculum for early-career SaaS SDRs and AEs — for L&D / manager review. It exists because [PROSPECT_NAME] requested enrollment and the typical approval question is: 'what is this, and is it worth $[PRICE]?' The answer is below in 250 words."* — passes; identifiably AESDR — the "answer is below in 250 words" closer reads as the operating-manual register, not as a corporate-content register.
+5. **Voice thumbnail:** *"This brief summarizes AESDR — a 12-course sales-survival curriculum for early-career SaaS SDRs and AEs — for L&D / manager review. It exists because [PROSPECT_NAME] requested enrollment and the typical approval question is: 'what is this, and is it worth $[PRICE]?' The answer is below in 250 words."* — passes; identifiably AESDR — the "answer is below in 250 words" closer reads as the operating-manual register, not as a corporate-content register.
 
 ---
 
 ## Compliance check (canon §10)
 
-- **Approved claims (§10.2):** "Reps with the diagnostic frame ramp faster than reps without it" — observational, not guaranteed. "AESDR is upfront about parts of the role most sales-training programs avoid" — descriptive, accurate per the lesson-list above. **Pass.**
-- **Forbidden claims (§10.3):** No income claims, no specific-dollar promises, no "earn back the cost of the course in 30 days," no ROI projections, no "guaranteed promotion." **Pass.** The closest claim is "reps with the frame ramp faster than reps without it" (§"Why now") — which is observational and ungrouped. Acceptable.
+- **Approved claims (§10.2):** "AEs and SDRs with the diagnostic frame ramp faster than those without it" — observational, not guaranteed. "AESDR is upfront about parts of the role most sales-training programs avoid" — descriptive, accurate per the course-list above. **Pass.**
+- **Forbidden claims (§10.3):** No income claims, no specific-dollar promises, no "earn back the cost of the course in 30 days," no ROI projections, no "guaranteed promotion." **Pass.** The closest claim is "AEs and SDRs with the frame ramp faster than those without it" (§"Why now") — which is observational and ungrouped. Acceptable.
 - **FTC disclosure (§10.1):** L&D-approver brief is not a partner-promoted asset (sent direct from AESDR), so partner-commission disclosure is N/A. If the brief is *forwarded* by a partner during pilot, the partner's own promotional surface (D26) carries the disclosure — the brief inherits.
 - **Honesty discipline (§13):** "What this is not" section is the brand's signature move (canon §13 — "real refund language; real pricing; real honest disqualification"). The PS reinforces. **Pass.**
 
