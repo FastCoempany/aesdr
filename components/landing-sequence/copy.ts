@@ -52,14 +52,14 @@ export const BRANCHED_TERM_LINES: Record<Role, string[]> = {
 };
 
 export const TERMINAL_FINAL =
-  "This course will change your life a few times across the twelve lessons. Afterward, you’ll never make the same money again.";
+  "This program will change your life a few times across the twelve courses. Afterward, you’ll never make the same money again.";
 
 export const TERMINAL_WHISPER = "Keep scrolling. The picture gets worse before it gets better.";
 
 export const HERO_DESCRIPTOR: Record<"default" | Role, string> = {
-  default: "12-lesson sales survival course — for early-career AEs and SDRs.",
-  sdr: "The 12-lesson manual for SDRs who want out alive.",
-  ae: "The 12-lesson manual for AEs who want their forecast to mean something.",
+  default: "12-course sales survival program — for early-career AEs and SDRs.",
+  sdr: "The 12-course survival program for SDRs who want out alive.",
+  ae: "The 12-course survival program for AEs who want their forecast to mean something.",
 };
 
 export const FORK_PICK_HEADER = "which one are you";

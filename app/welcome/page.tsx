@@ -64,10 +64,11 @@ export default async function WelcomePage() {
             Start <span className={styles.heroAccent}>Owning</span> It.
           </h1>
           <p className={styles.heroP}>
-            This isn&rsquo;t corporate-y but it will advance your career. 12
-            interactive, field-tested lessons for AEs and SDRs serious about
-            controlling chaos, managing toxic leadership, and protecting your
-            commission &mdash; and your future.
+            This isn&rsquo;t corporate-y, but it will measurably advance
+            your career across the next 12 interactive, field-tested
+            courses — built for AEs and SDRs who are serious about
+            controlling chaos, managing toxic leadership, and protecting
+            both your commission and your long-term career trajectory.
           </p>
           <div>
             <Link href="/syllabus" className={styles.btnOutline}>

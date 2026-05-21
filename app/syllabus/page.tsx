@@ -10,7 +10,7 @@ import styles from "./syllabus.module.css";
 export const metadata: Metadata = {
   title: "The Syllabus | AESDR",
   description:
-    "The full 12-lesson AESDR syllabus — filed under one call number. The question each lesson answers, on its own index card.",
+    "The full 12-course AESDR syllabus filed under one Dewey call number, with the question each course actually answers laid out on its own index card.",
 };
 
 type Lesson = {
@@ -61,8 +61,9 @@ export default function SyllabusPage() {
           The <em>Syllabus.</em>
         </h1>
         <p className={styles.heroSub}>
-          Twelve lessons filed under one call number. Check each one out.
-          Return when you’re a different AE or SDR.
+          Twelve courses filed under one Dewey call number — check each
+          one out as the work demands it and return it when you’re a
+          different AE or SDR on the other side.
         </p>
         <p className={styles.deweyStack}>Dewey 658.85 &middot; AESDR/SAL &middot; Non-Fiction</p>
       </section>
@@ -157,8 +158,9 @@ export default function SyllabusPage() {
       <section className={styles.cta}>
         <h2 className={styles.ctaHead}>Check out all 12.</h2>
         <p className={styles.ctaBody}>
-          Lifetime shelf access. No late fees. The card catalog never closes —
-          but the AEs and SDRs who read it get further.
+          Lifetime shelf access with no late fees, because the card catalog
+          never actually closes — but the AEs and SDRs who genuinely read it
+          across the years are the ones who get further.
         </p>
         <Link href="/#pricing" className={styles.ctaBtn}>
           Get Access

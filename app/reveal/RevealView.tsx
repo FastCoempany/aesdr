@@ -98,8 +98,9 @@ export default function RevealView({ studentName, role }: RevealViewProps) {
           <span style={styles.fName}>{studentName}</span>
         </div>
         <div style={styles.fSub}>
-          Twelve lessons. Thirty-six units. One finished record of who you
-          were when you started and who you&rsquo;ve become since.
+          Twelve courses, thirty-six lessons, and one finished record of
+          who you were when you started — and who you&rsquo;ve become
+          since.
         </div>
         <div style={styles.fMeta}>
           {role} &middot; Cohort 01 &middot; April 19, 2026
@@ -110,8 +111,8 @@ export default function RevealView({ studentName, role }: RevealViewProps) {
       <div style={styles.pick}>
         <div style={styles.pickT}>Choose your keeper.</div>
         <div style={styles.pickS}>
-          Two readings of the same story. Pick the one you want to take
-          home.
+          These are two different readings of the same story you just
+          lived through — pick the one you want to take home with you.
         </div>
       </div>
 
