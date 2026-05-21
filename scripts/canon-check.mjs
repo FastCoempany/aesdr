@@ -89,6 +89,7 @@ const SKIP_FILE_PATTERNS = [
   /docs\/partner\/kit-template\/00-canon-excerpt\.md$/,
   /\.github\/pull_request_template\.md$/,
   /^AGENTS\.md$/,
+  /^www\.aesdr\.com-\d{8}T\d{6}\.html$/,
   /\.test\.(md|mdx)$/,
 ];
 
