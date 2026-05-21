@@ -101,7 +101,7 @@ Vercel auto-deploys. Site returns to pre-launch gated state within 2-3 minutes.
 Replace `app/page.tsx` return with:
 ```tsx
 return (
-  <main style={{ display: "flex", height: "100vh", alignItems: "center", justifyContent: "center", background: "#020617", color: "#fff", fontFamily: "system-ui" }}>
+  <main style={{ display: "flex", height: "100vh", alignItems: "center", justifyContent: "center", background: "#FAF7F2", color: "#1A1A1A", fontFamily: "Georgia, serif" }}>
     <p>We're doing some quick maintenance. Back shortly.</p>
   </main>
 );
