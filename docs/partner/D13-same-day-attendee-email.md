@@ -45,9 +45,9 @@
 >
 > ***Two — the replay.*** *Open for the next 48–72 hours at* `aesdr.com/[partner-slug]/replay/[token]`*. After that, it closes — we don't run this as evergreen content, and we don't sell the recording.*
 >
-> ***Three — the offer, and the honest thing.*** *AESDR is the 12-lesson program: $249 SDR / $299 AE / $1,499 Team, lifetime access, 14-day no-questions-asked refund. Enrollment link:* `aesdr.com/[partner-slug]/enroll · code [PILOT-CODE] · closes [date]`*.*
+> ***Three — the offer, and the honest thing.*** *AESDR is the 12-course program — $249 SDR / $299 AE / $1,499 Team, lifetime access from day one, and a 14-day no-questions-asked refund window backing the whole thing. Enrollment link:* `aesdr.com/[partner-slug]/enroll · code [PILOT-CODE] · closes [date]`*.*
 >
-> *The honest thing: if you walked out of the workshop unsure whether the program fits where you actually are, the answer is probably "wait." AESDR isn't going anywhere. Course 1 isn't going to change. The 14-day refund is real, but we'd genuinely rather you don't enroll than enroll uncertain. If you have a specific question — about your role, your timing, your fit — reply to this email. Real reply, real answer.*
+> *The honest thing: if you walked out of the workshop unsure whether the program fits where you actually are, the answer is probably "wait." AESDR isn't going anywhere and Course 1 isn't going to change. The 14-day refund is real, but we'd genuinely rather you don't enroll than enroll uncertain. If you have a specific question about your role, your timing, or your fit, reply to this email — you'll get a real answer from a real person, not a templated bounce.*
 
 ### Primary CTA
 

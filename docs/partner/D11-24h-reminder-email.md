@@ -43,7 +43,7 @@
 >
 > *One thing we'll cover that most early-career AEs and SDRs don't have a frame for: the difference between activity and judgment. Your manager grades you on activity because activity is countable. Your career compounds on judgment because judgment is what makes the activity earn anything. The workshop is built around that gap.*
 >
-> *That's it. Join link below. See you tomorrow.*
+> *That's the whole email — the join link is below, and we'll see you tomorrow.*
 
 ### Primary CTA
 

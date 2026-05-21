@@ -18,7 +18,7 @@
 > *not the motivation engine.*
 
 > *(Serif body, 16pt, muted)*
-> AESDR is a 12-lesson sales survival course for first-1-to-2-year SDRs and AEs in startup SaaS. Self-paced, interactive, lifetime access. Built by people who carried bags and managed AEs and SDRs for 10+ years.
+> AESDR is a 12-course sales survival program for first-1-to-2-year SDRs and AEs in startup SaaS — self-paced and interactive across the whole curriculum, with lifetime access from day one. Built by people who carried bags and managed AEs and SDRs for 10+ years.
 
 ---
 
@@ -77,9 +77,9 @@ A workshop-first partner motion. One live workshop into your audience, run by an
 
 ### Three things we'll always say about AESDR
 
-1. 12 lessons, lifetime access, $249/$299/$1,499, 14-day refund.
+1. 12 courses, lifetime access, $249/$299/$1,499, 14-day refund.
 2. Built by people who carried bags and managed AEs and SDRs for 10+ years.
-3. Not video lectures. Interactive. No motivation.
+3. Interactive HTML lessons rather than video lectures, with no motivational performance anywhere in the format.
 
 ### Three things we'll never say
 

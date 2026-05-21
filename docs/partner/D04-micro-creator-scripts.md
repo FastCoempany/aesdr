@@ -24,7 +24,7 @@ Personalization: their actual content (a real episode, a real post, a real threa
 >
 > Caught [specific episode / post / thread]. The way you framed [specific point] is one of the few places I've seen the actual ramp problem named in plain English instead of LinkedIn vocabulary.
 >
-> I run AESDR — a 12-lesson sales survival course for first-1-to-2-year SDRs and AEs. We're piloting a workshop-first partner motion with a small number of aligned creators. One workshop into your audience, tracked attribution, no exclusivity, commission on net revenue.
+> I run AESDR — a 12-course sales survival course for first-1-to-2-year SDRs and AEs. We're piloting a workshop-first partner motion with a small number of aligned creators. One workshop into your audience, tracked attribution, no exclusivity, commission on net revenue.
 >
 > Worth a 15-minute call to see if the fit is real?
 >
@@ -94,7 +94,7 @@ Personalization: their actual content (a real episode, a real post, a real threa
 >
 > [Name] —
 >
-> One nudge, then quiet. The pilot fit for [alumni network] is one of the best on my list — small reach, high trust, exactly the cohort.
+> One nudge, then quiet. The pilot fit for [alumni network] is one of the best on my list — the reach is small, the trust is high, and the cohort is exactly who AESDR was built for.
 >
 > If now isn't right, totally fine. If later is, the door stays open.
 >

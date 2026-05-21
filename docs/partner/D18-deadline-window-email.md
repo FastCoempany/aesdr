@@ -1,6 +1,6 @@
 # D18 — Deadline-Window Email
 
-**Deliverable:** Single transactional email sent at a real deadline — the moment the pilot pricing window or the replay window is genuinely about to close. One email, one window, one truth. No "12 hours left" follow-up. No "extending one day only." The deadline is real or the deliverable is fraud.
+**Deliverable:** Single transactional email sent at a real deadline — the moment the pilot pricing window or the replay window is genuinely about to close. One email, one window, one honest summary of what's actually about to close. No "12 hours left" follow-up. No "extending one day only." The deadline is real or the deliverable is fraud.
 **Audience:** Workshop registrants (attended or not) who clicked the offer page during the pilot window but didn't complete checkout. Audience filter: `attended_live OR watched_replay = true, clicked_offer = true, started_checkout IN (false, true), purchased = false`. The audience is the people who got the workshop, looked at the offer, and didn't decide yet.
 **Voice ratio:** 80 Rowan / 20 Michael per canon §3.3 (deadline email row). Verdict mode. The "who should not buy" honesty line carries Rowan; the PS carries Michael.
 **Send timing:** 24 hours before pilot pricing closes **or** before replay window closes — whichever comes first per pilot. One email per audience member, ever.

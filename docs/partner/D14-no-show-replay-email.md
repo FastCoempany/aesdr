@@ -43,7 +43,7 @@ Or if no first name on file:
 
 ### Body
 
-> *You registered. You didn't make it. No judgment — most weeks I miss things I meant to attend too, and the people I respect treat that as data, not a moral failing.*
+> *You registered but didn't make it, and that's not a moral failing — most weeks I miss things I meant to attend too, and the people I respect treat that as data rather than a character verdict.*
 >
 > *The replay is open for the next 72 hours. Same workshop, same offer at the close, same 14-day refund on the program if you decide it's a fit. After that, the replay closes — we don't run this as evergreen content, and we don't sell the recording.*
 >
@@ -58,7 +58,7 @@ Or if no first name on file:
 
 ### PS — Michael's line
 
-> *PS — If you're going to skip it again, that's fine. We part as adults. But the link won't be here next week, and there's no "did you mean to register?" follow-up coming. One email, one window, your call.*
+> *PS — If you're going to skip it again, that's fine and we part as adults. But the link won't be here next week, and there's no "did you mean to register?" follow-up coming after this — one email, one window, and the rest is your call to make.*
 
 — `AESDR Workshop`
 

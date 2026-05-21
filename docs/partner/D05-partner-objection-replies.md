@@ -53,7 +53,7 @@
 >
 > Short answer: probably not, and definitely not without your audience's specific consent.
 >
-> The pilot uses partner-specific UTMs and a partner-promo registration page, so we attribute by source without sharing PII either direction. Anyone who registers gives consent to AESDR directly on the form. Cleaner for compliance, cleaner for trust, cleaner for you.
+> The pilot uses partner-specific UTMs and a partner-promo registration page, so we attribute by source without sharing PII either direction. Anyone who registers gives consent to AESDR directly on the form — cleaner for everyone on every axis: compliance, trust, and your relationship with your own audience.
 >
 > — [Founder first name], AESDR
 
