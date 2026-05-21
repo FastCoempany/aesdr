@@ -6,7 +6,7 @@ import AesdrBrand from "@/components/AesdrBrand";
 export const metadata: Metadata = {
   title: "Sample Lesson — Surviving Your Manager | AESDR",
   description:
-    "A free preview from Course 3 (Surviving & Thriving). The full takeaway is gated; the body is not.",
+    "A free preview from Course 3 (Surviving & Thriving) — the full takeaway tool is gated behind purchase, but the lesson body itself is open to read.",
   robots: { index: true, follow: true },
 };
 
@@ -181,10 +181,11 @@ export default function PreviewPage() {
           </p>
           <p style={{ fontSize: 18, lineHeight: 1.75, marginBottom: 16 }}>
             Every AE and SDR has a story about a manager who made the job
-            harder. The mistake is to treat that manager as a personality
-            problem. They&rsquo;re not. They&rsquo;re an <strong>operating system</strong> —
-            a stable set of inputs they reward, outputs they ignore, and signals
-            they read as competence or threat.
+            measurably harder, and the common mistake is to treat that
+            manager as a personality problem — which they almost never
+            actually are; they&rsquo;re an <strong>operating system</strong>
+            instead, with a stable set of inputs they reward, outputs they
+            ignore, and signals they read as either competence or threat.
           </p>
           <p style={{ fontSize: 18, lineHeight: 1.75, marginBottom: 16 }}>
             You don&rsquo;t have to like the OS. You do have to know which one you&rsquo;re

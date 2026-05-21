@@ -39,10 +39,10 @@ export default async function AlumniPage() {
   const firstName =
     (user.user_metadata?.full_name as string | undefined)?.split(" ")[0] ||
     user.email?.split("@")[0] ||
-    "AE/SDR";
+    "AESDR Alum";
   const role = user.user_metadata?.role === "ae" ? "AE" : "SDR";
   const shareUrl = "https://aesdr.com/";
-  const shareSummary = `I just finished AESDR — twelve lessons on the part of SaaS sales nobody actually teaches. Worth it for any ${role} in their first 18 months.`;
+  const shareSummary = `I just finished AESDR — twelve courses on the part of SaaS sales nobody actually teaches you in onboarding. Worth it for any ${role} inside their first 18 months in the seat.`;
 
   return (
     <main

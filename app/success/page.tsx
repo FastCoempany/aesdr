@@ -254,8 +254,10 @@ function SuccessContent() {
             maxWidth: '54ch',
           }}
         >
-          No orientation video. No onboarding checklist. What follows is
-          everything you need to begin &mdash; in order.
+          There&apos;s no orientation video and no onboarding checklist
+          waiting for you here &mdash; what follows is everything you
+          genuinely need to begin, laid out in the order you&apos;ll
+          actually use it.
         </p>
 
         {/* Steps — editorial ledger */}
