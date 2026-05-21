@@ -469,15 +469,15 @@ function welcomeHtml(name: string, email: string, loginUrl: string, tempPassword
         <tr>
           <td style="padding:40px 48px 0 48px;">
             <p style="margin:0 0 10px;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#94A3B8;">
-              Lesson 1 &middot; The Fundamentals
+              Course 1 &middot; The Fundamentals
             </p>
             <p style="margin:0 0 20px;font-family:Georgia,'Times New Roman',serif;font-size:17px;line-height:1.7;color:#334155;">
-              Structure. Real camaraderie in your AE/SDR partnership. A first 90 days done the right way. That is where this begins.
+              Structure across the first 90 days, real camaraderie inside your AE-SDR partnership, and a foundation done the right way from week one — that's where this program begins.
             </p>
             <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
               <tr>
                 <td style="padding:10px 0;border-top:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.6;color:#334155;">
-                  <strong style="color:#1A1A1A;">Twelve lessons.</strong> Three units each. Interactive exercises, not video lectures.
+                  <strong style="color:#1A1A1A;">Twelve courses</strong>, three lessons each, with interactive exercises rather than video lectures you'll never finish.
                 </td>
               </tr>
               <tr>
@@ -807,8 +807,7 @@ function managerArchetypeMapHtml() {
     Optional · One pointer · Then I'm out of your inbox
   </p>
   <p style="margin:0 0 12px">
-    This is one tool from Lesson 3 of the full course. Eleven more lessons,
-    five takeaway tools, lifetime access. 14-day refund if it doesn't deliver.
+    This is one tool from Course 3 of the full program — there are eleven more courses, five takeaway tools, and lifetime access waiting on the other side, all backed by a 14-day refund if it doesn't deliver.
   </p>
   <p style="margin:0 0 24px">
     <a href="${SITE}/#pricing" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">See the full course →</a>
@@ -859,7 +858,7 @@ function lessonCompletedNudgeHtml(
   </p>
   <p>Hey ${safeName},</p>
   <p>One down. Momentum's a fickle thing in self-paced courses — the gap between &ldquo;I'll do the next one tomorrow&rdquo; and &ldquo;I'll do the next one&rdquo; is where most curricula die.</p>
-  <p>Next up: <strong>${safeTitle}</strong>. Roughly ${nextMinutes} minutes. Same window you used yesterday is the cheapest decision you can make.</p>
+  <p>Next up is <strong>${safeTitle}</strong>, which runs roughly ${nextMinutes} minutes — and reusing the same calendar window you used yesterday is the cheapest decision you can make to keep the momentum going.</p>
   <p style="margin:20px 0">
     <a href="${SITE}/course/${safeLesson}" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">Open ${safeTitle} →</a>
   </p>
@@ -951,7 +950,7 @@ function winBackHtml(name: string) {
     2. Life happened. Quota week, board prep, family. Reply with a date and I'll send you back a re-entry email then — once, no sequence.
   </p>
   <p style="border-left:3px solid #8B1A1A;padding:6px 0 6px 12px;margin:14px 0;font-style:italic;color:#1A1A1A">
-    3. You'd actually like to start now. Pick Lesson 1, block 25 minutes this week, hit it.
+    3. You'd actually like to start now — pick Course 1, block 25 minutes on the calendar this week, and hit it.
   </p>
   <p style="margin:20px 0">
     <a href="${SITE}/dashboard" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">Open the dashboard →</a>
@@ -1013,7 +1012,7 @@ function alumniReengagementHtml(name: string, monthMark: 6 | 12) {
 // ─── Day-0 (+12hr): "what to do first" ───
 // Largest single retention lever in the product. Sent ~12 hours after
 // purchase. Names the implementation-intention move concretely — pick a
-// 25-minute window, put it in the calendar, do Lesson 1.1 in it. See
+// 25-minute window, put it in the calendar, do Course 1.1 in it. See
 // behavioral audit §H.2.1.
 
 export async function sendDay0PlusTwelveHours(to: string, name: string) {
@@ -1037,13 +1036,13 @@ function day0PlusTwelveHoursHtml(name: string) {
   </p>
   <p>Hey ${safeName},</p>
   <p>The most important thing about AESDR isn't the content. It's whether you actually start it.</p>
-  <p>Most AEs and SDRs who buy a course like this never do Lesson 1. Not because the course is bad. Because there's never an obvious moment to start. Tomorrow's full. Next week's full. Then it's been a month.</p>
+  <p>Most AEs and SDRs who buy a program like this never actually start Course 1 — and the reason isn't that the program is bad, it's that there's never an obvious moment to begin: tomorrow is already full, next week is already full, and then somehow it's been a month.</p>
   <p>The thing that breaks the pattern is dumb and effective:</p>
   <p style="margin:18px 0;padding:14px 18px;border-left:3px solid #8B1A1A;background:#FFFFFF;font-style:italic">
-    Pick a 25-minute window in the next 48 hours. Put it on your calendar — actually on your calendar, not in your head. Do Lesson 1.1 in that window. Don't "find time" — choose a time.
+    Pick a 25-minute window in the next 48 hours. Put it on your calendar — actually on your calendar, not in your head. Do Course 1.1 in that window. Don't "find time" — choose a time.
   </p>
   <p>That's it. The hardest part of the course is the first 25 minutes. Once it's a calendar event, it happens.</p>
-  <p><a href="${SITE}/dashboard" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px;margin:8px 0">Go to Lesson 1.1 →</a></p>
+  <p><a href="${SITE}/dashboard" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px;margin:8px 0">Go to Course 1.1 →</a></p>
   <p>Reply to this email if anything's broken. Real person, real inbox.</p>
   <p style="margin-top:24px">— Antaeus</p>
   ${footer()}
@@ -1051,7 +1050,7 @@ function day0PlusTwelveHoursHtml(name: string) {
 }
 
 // ─── Day-0 (+36hr): "did you start" check-in ───
-// Sent ~36 hours after purchase IF the user hasn't completed Lesson 1.1
+// Sent ~36 hours after purchase IF the user hasn't completed Course 1.1
 // yet. Tone: friend nudging, not SaaS auto-emailer. Recovers 10–20% of
 // would-be droppers. Audit §H.2.2.
 
@@ -1075,7 +1074,7 @@ function day0PlusThirtySixHoursHtml(name: string) {
     AESDR · Welcome (2 of 2)
   </p>
   <p>Hey ${safeName},</p>
-  <p>Quick check — did you get to Lesson 1 yet?</p>
+  <p>Quick check — did you get into Course 1 yet?</p>
   <p>If you did: good. The first lesson is the hardest activation. Everything after compounds.</p>
   <p>If you didn't: also fine. Here's the thing that gets most people unstuck —</p>
   <p style="margin:18px 0;padding:14px 18px;border-left:3px solid #8B1A1A;background:#FFFFFF;font-style:italic">
@@ -1083,7 +1082,7 @@ function day0PlusThirtySixHoursHtml(name: string) {
   </p>
   <p>If you're certain AESDR isn't for you, reply REFUND. We process within 3 business days, no questions. We don't want your money if it doesn't deliver value.</p>
   <p>If you want to talk through anything — the role you bought (SDR / AE), where to start, whether it fits your situation — reply to this email. Real reply, real human.</p>
-  <p><a href="${SITE}/dashboard" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px;margin:8px 0">Open Lesson 1.1 →</a></p>
+  <p><a href="${SITE}/dashboard" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px;margin:8px 0">Open Course 1.1 →</a></p>
   <p style="margin-top:24px">— Antaeus</p>
   ${footer()}
 </div>`;
@@ -1109,12 +1108,12 @@ function day3Html(name: string) {
     AESDR · Day three
   </p>
   <p>Hey ${safeName},</p>
-  <p>Three days in. If you've started Lesson 1, you're on track. If you haven't, no guilt — the lesson sits there until you come back.</p>
-  <p>One thing from Lesson 2 to keep in your back pocket while you're going about your week:</p>
+  <p>Three days into the program — if you've started Course 1, you're on track, and if you haven't, no guilt, the course sits there in the dashboard until you come back to it.</p>
+  <p>One thing from Course 2 to keep in your back pocket while you're going about the rest of the week:</p>
   <p style="border-left:3px solid #8B1A1A;padding:6px 0 6px 14px;margin:14px 0;font-style:italic;color:#1A1A1A">
     There's a pattern where everyone in the org points at someone else. AEs and SDRs blame their manager, managers blame marketing, marketing blames the product. Nobody fixes anything.
   </p>
-  <p>Lesson 2 lays out how to break that pattern — not by being a hero, but by asking the right questions in the right meetings.</p>
+  <p>Course 2 lays out how to break that pattern across the team — not by being a hero on any single deal, but by asking the right questions in the right meetings consistently.</p>
   <p style="margin:20px 0">
     <a href="${SITE}/dashboard" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">Continue where you left off →</a>
   </p>
@@ -1145,12 +1144,12 @@ function day7Html(name: string) {
     AESDR · Week one
   </p>
   <p>Hey ${safeName},</p>
-  <p>Week one. Most AESDR students at this point are finishing Lesson 3.</p>
-  <p>Lesson 3 is where you build the <strong>AE/SDR Alignment Contract</strong> — a one-page document that gets the AE and the SDR onto the same page about handoffs, expectations, and accountability. It's the single most downloaded tool in the program.</p>
+  <p>You're roughly one week into the program, and most AESDR students at this point are finishing Course 3.</p>
+  <p>Course 3 is where you build the <strong>AE/SDR Alignment Contract</strong> — a one-page document that gets both the AE and the SDR onto the same page about handoffs, expectations, and accountability, and it remains the single most downloaded tool across the entire program.</p>
   <p>If you're ahead of that: good. Lessons 4–6 cover manager dynamics, career pathing, and the relationships that pay off two years out.</p>
   <p>If you're behind: also fine. This isn't a race; it's a system. Come back when you have twenty minutes.</p>
   <p style="margin:20px 0">
-    <a href="${SITE}/course/3" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">Open Lesson 3 →</a>
+    <a href="${SITE}/course/3" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">Open Course 3 →</a>
   </p>
   <p style="margin-top:24px">— Antaeus</p>
   <p style="margin-top:18px;font-size:13px;color:#6B6B6B"><em>P.S. — If something about the course isn't working for you, reply and tell me. I'd rather fix it than have you quietly disengage.</em></p>
@@ -1183,7 +1182,7 @@ function abandon1hrHtml() {
   <p>Here's what I'd want to know if I were the one looking:</p>
   <p style="margin:14px 0 6px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:18px">What you're actually getting</p>
   <ul style="line-height:1.8;padding-left:22px;margin:0 0 14px">
-    <li>Twelve interactive lessons (not video lectures you'll never finish)</li>
+    <li>Twelve interactive courses (not video lectures you'll never finish)</li>
     <li>Five take-home tools you'll actually use — commission tracker, alignment contracts, strike plans</li>
     <li>A curriculum built by someone who carried a quota for nine years, not someone who read about it</li>
   </ul>
@@ -1193,12 +1192,12 @@ function abandon1hrHtml() {
     <li>Generic scripts</li>
     <li>Anything that reads like a LinkedIn post</li>
   </ul>
-  <p>If the money's the hesitation: the 14-day refund is real. No questions asked. Try it. If it doesn't help, get your money back inside two weeks.</p>
+  <p>If the money is what's holding you back, the 14-day refund is a real one — no questions asked, no email-tag negotiation — so try the program for a week or two, and if it doesn't actually help your work, you get your money back inside the two-week window.</p>
   <p style="margin:20px 0">
     <a href="${SITE}/#pricing" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">Complete your purchase →</a>
   </p>
   <p style="margin-top:24px">— Antaeus</p>
-  <p style="margin-top:18px;font-size:13px;color:#6B6B6B"><em>P.S. — Lesson 1 covers surviving your first 90 days, including the manager types that make or break new AEs and SDRs. If that's not relevant to you right now, save your money. If it is, you already know.</em></p>
+  <p style="margin-top:18px;font-size:13px;color:#6B6B6B"><em>P.S. — Course 1 covers surviving your first 90 days in the seat, including the manager types that make or break new AEs and SDRs across the first quarter; if that material isn't relevant to where you are right now, save your money, and if it is relevant, you already know.</em></p>
   ${footer()}
 </div>`;
 }
@@ -1227,7 +1226,7 @@ function abandon24hrHtml() {
   <p>Last email about this — promise.</p>
   <p>I talk to a lot of AEs and SDRs. The three reasons people don't invest in themselves are always the same:</p>
   <p style="margin:14px 0 4px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:18px">&ldquo;I can't afford it right now.&rdquo;</p>
-  <p>Fair. Commission months are unpredictable. But the math: if one framework from this course helps you close one extra deal this quarter, the return isn't 2x — it's probably 10x. The course costs less than one decent dinner in most cities.</p>
+  <p>That's fair — commission months are genuinely unpredictable across the year — but the underlying math still holds: if one framework from this program helps you close even one extra deal this quarter, the return isn't 2x on the purchase price, it's probably closer to 10x, because the program itself costs less than one decent dinner in most cities.</p>
   <p style="margin:14px 0 4px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:18px">&ldquo;I don't have time.&rdquo;</p>
   <p>Each lesson runs alongside a full-time quota. No four-hour video modules. Interactive screens you can do on your commute or during a slow Friday.</p>
   <p style="margin:14px 0 4px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:18px">&ldquo;I've seen courses like this before.&rdquo;</p>
