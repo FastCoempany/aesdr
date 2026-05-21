@@ -17,7 +17,7 @@
 
 Hey [First Name],
 
-You got pretty close to starting the AESDR curriculum — then stepped away. No judgment. Spending $199 on yourself when you're living on commission income is a real decision.
+You got pretty close to starting the AESDR curriculum — then stepped away. No judgment — spending $249 on yourself when you're living on commission income is a real decision.
 
 Here's what I'd want to know if I were you:
 

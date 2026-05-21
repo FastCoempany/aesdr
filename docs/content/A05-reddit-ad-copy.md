@@ -26,7 +26,7 @@ I built a 12-course curriculum for SDRs and AEs after 9 years in SaaS sales. It 
 
 It's interactive (not video lectures) and you can do it alongside your quota.
 
-$199. 14-day refund. No guru energy.
+$249 SDR. 14-day refund. No guru energy.
 
 **CTA:** aesdr.com?utm_source=reddit_sales&utm_medium=paid&utm_campaign=manager_pain
 
@@ -84,7 +84,7 @@ Sales is one of the few careers where you can go from $50K to $200K+ in 3-5 year
 
 I spent 9 years in SaaS sales figuring it out the hard way. AESDR is the 12-course curriculum I wish I had: pipeline mechanics, manager survival, commission planning, networking that actually works, and a 72-hour action plan for when everything falls apart.
 
-$199. Interactive. Self-paced. 14-day refund.
+$249 SDR / $299 AE. Interactive. Self-paced. 14-day refund.
 
 **CTA:** aesdr.com?utm_source=reddit_career&utm_medium=paid&utm_campaign=career_path
 

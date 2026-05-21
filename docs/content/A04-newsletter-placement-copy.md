@@ -51,12 +51,12 @@ Built by someone who carried a bag for 9 years. No guru energy. No motivational 
 ### Headlines (pick one)
 
 1. "Give your SDR team the training you don't have time to build."
-2. "12-course SDR curriculum. Interactive. Self-paced. $999 for 10 seats."
+2. "12-course SDR curriculum. Interactive. Self-paced. $1,499 for 10 seats."
 3. "Your SDRs are undertrained. This fixes that without pulling you into it."
 
 ### 50-word version
 
-AESDR is a 12-course interactive curriculum for SDRs and AEs. Covers quota mechanics, manager alignment, pipeline hygiene, and career development. Self-paced. No video lectures. Team license: $999 for up to 10 seats. Built by a 9-year quota carrier. **aesdr.com**
+AESDR is a 12-course interactive curriculum for SDRs and AEs. Covers quota mechanics, manager alignment, pipeline hygiene, and career development. Self-paced. No video lectures. Team license: $1,499 for up to 10 seats. Built by a 9-year quota carrier. **aesdr.com**
 
 ### 100-word version
 
@@ -64,7 +64,7 @@ Your SDRs are undertrained and you know it. But you don't have 40 hours to build
 
 AESDR is different: 12 interactive courses covering everything from cold call frameworks to commission math to managing up. Each lesson has hands-on exercises, not passive video. Five courses include downloadable tools — alignment contracts, commission trackers, pipeline audit templates.
 
-Team license: $999 for up to 10 AEs and SDRs. Self-paced. Progress tracked. Built by someone who actually made cold calls for a living.
+Team license: $1,499 for up to 10 AEs and SDRs. Self-paced. Progress tracked. Built by someone who actually made cold calls for a living.
 
 **aesdr.com** — See the full curriculum.
 
@@ -90,7 +90,7 @@ AESDR is the second kind. 12 interactive courses covering the real mechanics of 
 
 No video lectures. No motivational posters. Just interactive exercises and downloadable tools you'll use at your actual desk.
 
-$199 for individual access. 14-day full refund if it's not for you.
+$249 for an SDR seat, $299 for an AE seat, $1,499 for a 10-seat team. 14-day full refund if it's not for you.
 
 **aesdr.com**
 
