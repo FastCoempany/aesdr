@@ -16,7 +16,7 @@
 | Pavilion (formerly Revenue Collective) | Revenue leaders | 10K+ | High-intent, high-income audience. |
 | The Hustle | Broad tech/business | 1.5M+ | Mass reach. Lower intent but high volume. |
 | Sales Hacker / Outreach Blog | Sales ops, SDRs | 50K+ | Technical audience. Lead with tools. |
-| Bravado Newsletter | Sales reps | 25K+ | Peer community. Authentic tone required. |
+| Bravado Newsletter | Sales AEs and SDRs | 25K+ | Peer community. Authentic tone required. |
 
 ---
 
@@ -60,11 +60,11 @@ AESDR is a 12-course interactive curriculum for SDRs and AEs. Covers quota mecha
 
 ### 100-word version
 
-Your SDRs are undertrained and you know it. But you don't have 40 hours to build a proper curriculum, and the generic vendors charge five figures for content your reps will ignore.
+Your SDRs are undertrained and you know it. But you don't have 40 hours to build a proper curriculum, and the generic vendors charge five figures for content your AEs and SDRs will ignore.
 
 AESDR is different: 12 interactive courses covering everything from cold call frameworks to commission math to managing up. Each lesson has hands-on exercises, not passive video. Five courses include downloadable tools — alignment contracts, commission trackers, pipeline audit templates.
 
-Team license: $999 for up to 10 reps. Self-paced. Progress tracked. Built by someone who actually made cold calls for a living.
+Team license: $999 for up to 10 AEs and SDRs. Self-paced. Progress tracked. Built by someone who actually made cold calls for a living.
 
 **aesdr.com** — See the full curriculum.
 
@@ -80,7 +80,7 @@ Team license: $999 for up to 10 reps. Self-paced. Progress tracked. Built by som
 
 ### 50-word version
 
-AESDR is a 12-course sales training built by a 9-year SaaS veteran — not a motivational speaker. Interactive lessons. Downloadable tools. No "crush it" energy. Just the playbook for surviving bad managers, hitting quota, and building a real career in sales. **aesdr.com**
+AESDR is a 12-course sales training built by a 9-year SaaS veteran — not a motivational speaker. Interactive lessons. Downloadable tools. No guru-action-verb energy. Just the playbook for surviving bad managers, hitting quota, and building a real career in sales. **aesdr.com**
 
 ### 100-word version
 

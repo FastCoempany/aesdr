@@ -63,7 +63,7 @@
 **Role:** SDR, 8 months in  
 
 ### T9
-**Quote:** "No motivational BS. No 'crush your quota' energy. Just practical frameworks I use every week. That's rare."  
+**Quote:** "No motivational performance and no guru routines anywhere in the lessons — just practical frameworks I actually use every week on real deals, which turned out to be rarer than I expected when I started looking."  
 **Name:** Taylor H.  
 **Role:** BDR Lead  
 

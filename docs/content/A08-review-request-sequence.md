@@ -32,7 +32,7 @@ On a scale of 1-5, how useful was this course for your day-to-day work?
 
 If you'd rate it 4 or 5, I'd love a one-sentence testimonial I can use on the site. Just reply to this email with something like:
 
-*"AESDR helped me [specific thing]. I'd recommend it for [type of rep]."*
+*"AESDR helped me [specific thing]. I'd recommend it for [type of AE or SDR]."*
 
 Your first name and role are enough — no need to share your company if you don't want to.
 

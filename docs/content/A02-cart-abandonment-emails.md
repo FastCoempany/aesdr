@@ -37,7 +37,7 @@ If you're on the fence because of the money: the 14-day refund policy is real. N
 
 — AESDR
 
-*P.S. — The first course covers surviving your first 90 days, including the manager types that make or break new reps. If that's not relevant to you right now, save your money. But if it is — you already know.*
+*P.S. — The first course covers surviving your first 90 days, including the manager types that make or break new AEs and SDRs. If that's not relevant to you right now, save your money. But if it is — you already know.*
 
 ---
 
@@ -47,7 +47,7 @@ If you're on the fence because of the money: the 14-day refund policy is real. N
 
 1. "The real cost of not knowing this stuff"
 2. "Quick question before I stop following up"
-3. "Most reps figure this out too late"
+3. "Most AEs and SDRs figure this out too late"
 
 ### Body
 

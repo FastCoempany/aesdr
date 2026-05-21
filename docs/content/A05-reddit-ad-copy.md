@@ -62,7 +62,7 @@ One of the 12 AESDR courses teaches you how to reverse-engineer your commission 
 
 ## AD VARIANT 4: The Anti-Guru Angle
 
-**Headline:** "If one more LinkedIn 'sales guru' tells me to 'crush it,' I'm going to lose it"
+**Headline:** "If one more LinkedIn 'sales guru' tells me to use guru-action verbs, I'm going to lose it"
 
 **Body:**
 I built AESDR because I was tired of sales advice from people who haven't made a cold call since 2014.

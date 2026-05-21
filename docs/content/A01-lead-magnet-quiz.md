@@ -1,4 +1,4 @@
-# Lead Magnet: "What Kind of Sales Rep Are You?" Diagnostic Quiz
+# Lead Magnet: "What Kind of AE / SDR Are You?" Diagnostic Quiz
 
 > 10 questions, 4 answer options each, maps to 4 outcome profiles.
 > Purpose: email capture → nurture → course CTA.
@@ -7,9 +7,9 @@
 
 ## Quiz Title Options (pick one)
 
-1. "What Kind of Sales Rep Are You? Take the 2-Minute Diagnostic."
+1. "What Kind of AE / SDR Are You? Take the 2-Minute Diagnostic."
 2. "The SDR Reality Check — Where Do You Actually Stand?"
-3. "Are You Surviving or Thriving? The Rep Self-Assessment."
+3. "Are You Surviving or Thriving? The AE / SDR Self-Assessment."
 
 ---
 
@@ -64,7 +64,7 @@ B) "Block your calendar. Protect your prospecting time or meetings will eat you 
 C) "Just do what your manager says and you'll be fine." → Survivor  
 D) "Let me share the playbook I built — it's not perfect but it's real." → Climber  
 
-### Q8: You get a LinkedIn message from a sales "guru" offering a masterclass. Your reaction?
+### Q8: You get a LinkedIn message from a sales "guru" offering a paid course. Your reaction?
 
 A) "Another one." *delete* → Burnout  
 B) "I'll check if they have real quota-carrying experience." → Operator  
@@ -121,14 +121,14 @@ You've got the fundamentals locked. The problem? So does everyone else at your l
 
 Nobody taught you how to actually do this job. Your onboarding was a week of shadowing and a Salesforce login. You're surviving on instinct, and that's impressive — but instinct doesn't scale.
 
-**What AESDR offers you:** Start with Course 1. The entire first half of the curriculum is built for reps who need real foundations, not recycled advice from people who haven't carried a bag in a decade.
+**What AESDR offers you:** Start with Course 1. The entire first half of the curriculum is built for AEs and SDRs who need real foundations, not recycled advice from people who haven't carried a bag in a decade.
 
 **CTA:** "Start from the beginning →"
 
 ### The Climber
 **Headline:** "You've got the mindset. Now get the playbook."
 
-You're already thinking strategically. But ambition without frameworks is just hustle. The reps who actually make the jump from SDR to AE to enterprise closer have specific tools — not just drive.
+You're already thinking strategically. But ambition without frameworks is just hustle. The AEs and SDRs who actually make the jump from SDR to AE to enterprise closer have specific tools — not just drive.
 
 **What AESDR offers you:** The full 12-course system, including tools like the Commission Defense Tracker, the 72-Hour Strike Plan, and the AE/SDR Alignment Contract. These are the artifacts that separate climbers from dreamers.
 
