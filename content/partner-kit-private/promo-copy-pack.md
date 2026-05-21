@@ -36,7 +36,7 @@ workshop. ~250–320 words including disclosure.
 > built for early-career SaaS SDRs and AEs in their first 0–3 years.*
 >
 > *Most sales-training content rewards confidence over competence and
-> formatting over thinking. AESDR is the opposite: a 12-lesson operating
+> formatting over thinking. AESDR is the opposite: a 12-course operating
 > manual built around the part of the role most AEs and SDRs figure out the hard
 > way — what good actually looks like, how to read your own pipeline
 > honestly, and the three judgment moves that separate the AE/SDR who
@@ -176,7 +176,7 @@ locked elements stay.
 
 > *This week's episode is a quick announcement, not a full conversation.
 > I'm hosting a live workshop for `[YOUR_AUDIENCE_DESCRIPTOR]` with
-> AESDR — a 12-lesson sales-training program built for early-career SaaS
+> AESDR — a 12-course sales-training program built for early-career SaaS
 > AEs and SDRs. Most sales-training rewards confidence over competence; AESDR is
 > the opposite. Operating manual, not motivation engine.*
 >

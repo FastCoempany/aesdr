@@ -2,9 +2,10 @@
 
 AESDR is the operating manual, not the motivation engine.
 
-A 12-lesson sales survival course for first-1-to-2-year SDRs and AEs in
-startup SaaS. Self-paced, interactive, lifetime access. Built by people who
-carried bags and managed AEs and SDRs for a decade — not by people who read about it.
+A 12-course sales survival program for first-1-to-2-year SDRs and AEs in
+startup SaaS — self-paced, interactive, with lifetime access — built by
+people who carried bags and managed AEs and SDRs for a decade rather than
+by people who read about it.
 
 ## Who this is for
 
@@ -20,18 +21,23 @@ carried bags and managed AEs and SDRs for a decade — not by people who read ab
 - AEs and SDRs with 8+ years in the seat who aren't open to a re-look at fundamentals.
 - Anyone whose primary distribution motion is sponsored carousels.
 
-None of those are insults. They're filters. We'd rather you decline now than
-end a pilot in week four.
+None of those are meant as insults — they're filters that work for both
+sides, and we'd rather you decline a partner conversation now than end
+a pilot together in week four with both sides disappointed in the outcome.
 
 ## What's in the program
 
-12 modular lessons. 5 takeaway tools (alignment contract, strike plan, ROI
-tracker, and two more). Interactive HTML exercises, not video lectures.
-Lifetime access including future curriculum updates. A private Discord
-(*Untamed*) included with every license. 14-day, no-questions-asked refund.
+12 modular courses with 5 takeaway tools (the alignment contract, the
+72-hour strike plan, the ROI commission defense tracker, and two
+more) — all delivered as interactive HTML exercises rather than video
+lectures, with lifetime access that includes every future curriculum
+update, the private Discord community (*Untamed*) included with every
+license, and a 14-day no-questions-asked refund backing the whole thing.
 
-Pricing is list. $249 SDR, $299 AE, $1,499 for a 10-seat team. Same price
-every audience, every channel, every partner — there are no promotional codes.
+Pricing is at list price across the board ($249 SDR, $299 AE, $1,499
+for a 10-seat team), and it stays at list across every audience, every
+channel, and every partner — there are no promotional codes to issue or
+to advertise.
 
 ## Three things we'll always say
 

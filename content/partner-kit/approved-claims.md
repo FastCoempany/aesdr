@@ -7,8 +7,9 @@ for someone who hasn't done the work yet.
 
 ## Pre-cleared phrasings
 
-> *"AESDR is a 12-lesson sales survival course for first-1-to-2-year SDRs
-> and AEs in startup SaaS. Self-paced, interactive, lifetime access."*
+> *"AESDR is a 12-course sales survival program for first-1-to-2-year SDRs
+> and AEs in startup SaaS — self-paced and interactive across the whole
+> curriculum, with lifetime access from day one."*
 
 > *"Built by people who carried bags and managed AEs and SDRs for a decade — not
 > by people who read about it."*
@@ -39,7 +40,7 @@ These are factual and verifiable; phrase them however fits your voice:
 
 ## Claims that get walked back
 
-Three categories. Don't write copy that implies any of them:
+Three categories of claim to avoid — don't write copy that implies any of them:
 
 **Outcome guarantees.** No "X% of grads get promoted." No "you'll close
 more deals." No income claims of any kind, even soft ones. AESDR is a

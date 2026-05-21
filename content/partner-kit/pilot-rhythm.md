@@ -40,8 +40,9 @@ commission accounting, the actual numbers, and our honest read.
 ## What happens at the end
 
 - **Keep:** we run a second pilot under refreshed terms.
-- **Kill:** we send you a close-out note within 48 hours, signed by the
-  founder by name. The door stays open for a future revisit.
+- **Cut:** we send you a close-out note within 48 hours, signed by the
+  founder by name — the door stays open for a future revisit if either
+  side wants to reopen the conversation later.
 - **Pause:** if the data isn't conclusive, we extend by 14 days rather than
   guess.
 

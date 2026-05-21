@@ -41,10 +41,11 @@ who knows the gaps in your own game and wants a clean reset, it is.
 
 ### "Does it teach cold calling?"
 
-Yes — Lesson 6 is heavily phone-based. Dial blocks, openers,
-gatekeepers, the "I don't know" framework on live calls, energy on the
-phone. The course assumes you're picking up the phone, not just sending
-emails.
+Yes — Course 6 is heavily phone-based across all three of its
+lessons: dial blocks, opener craft, getting past gatekeepers, the
+"I don't know" framework on live calls, and energy management on the
+phone across a day. The program assumes you're actively picking up
+the phone rather than just sending email sequences from a hiding spot.
 
 ### "Is there a certificate or badge?"
 
@@ -83,7 +84,7 @@ registrants who attend the live; not posted publicly afterward.
 ### "Why $249?"
 
 It's priced so that one SDR ramping faster pays for it in their first
-month. The 12-lesson interactive build is the work of dozens of operators
+month. The 12-course interactive build is the work of dozens of operators
 over a decade. The math is: if the program saves one AE/SDR from one bad
 quarter, it paid for itself many times over. If you don't think the
 program is worth $249 for what's inside, the 14-day refund is real.

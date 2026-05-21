@@ -52,7 +52,7 @@ Read at the top of the live workshop, immediately before handing to `[HOST_FIRST
 
 Used on your podcast intro, your video promo for the workshop, your YouTube short, your Instagram/TikTok pre-roll. Read or perform; the script is a starting point, not a verbatim lock — but the locked elements below stay.
 
-> *This week's episode is a quick announcement, not a full conversation. I'm hosting a live workshop for `[YOUR_AUDIENCE_DESCRIPTOR]` with AESDR — a 12-lesson sales-training program built for early-career SaaS AEs and SDRs. Most sales-training rewards confidence over competence; AESDR is the opposite. Operating manual, not motivation engine.*
+> *This week's episode is a quick announcement, not a full conversation. I'm hosting a live workshop for `[YOUR_AUDIENCE_DESCRIPTOR]` with AESDR — a 12-course sales-training program built for early-career SaaS AEs and SDRs. Most sales-training rewards confidence over competence; AESDR is the opposite. Operating manual, not motivation engine.*
 >
 > *60 minutes live. Replay for 72 hours after. Free to attend. There's an offer at the close — pilot pricing on the program.*
 >

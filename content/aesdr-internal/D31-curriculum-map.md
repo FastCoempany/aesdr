@@ -28,7 +28,7 @@ Every course has a **dual track** — AE-side framing and SDR-side framing in th
 
 > **Card Catalog · Shelf 12 · Drawer A · Est. 2026**
 > Dewey 658.85 · AESDR/SAL · Non-Fiction
-> *Twelve lessons filed under one call number. Check each one out. Return when you're a different AE/SDR.*
+> *Twelve courses filed under one call number. Check each one out. Return when you're a different AE/SDR.*
 
 ### `658.85 / L01` — Building Real Camaraderie
 
@@ -157,7 +157,7 @@ Per canon §13 honesty discipline — the absences:
 - **Not a sales-introduction course.** AESDR assumes you have the seat. If you're trying to break into sales, this isn't the course.
 - **Not a sales-leadership course.** The SDR-to-AE-to-first-year-AE arc is the spine. Manager-track content is partial (L3.3, L4.1, L8.1, L8.2 carry it) but the program isn't a leadership curriculum.
 - **Not industry-specific.** Calibrated for early-career SaaS sales generally; not vertical-specific tactics.
-- **Not a credential program.** No certificate, no badge, no hiring-weight credential. The line on a LinkedIn profile would be *"AESDR · 12-lesson operating curriculum"* — honest and accurate, not credentialed.
+- **Not a credential program.** No certificate, no badge, no hiring-weight credential. The line on a LinkedIn profile would be *"AESDR · 12-course operating curriculum"* — honest and accurate, not credentialed.
 - **Not a coaching program.** No live cohort sessions, no 1:1 calls, no scheduled office hours. Self-paced curriculum + asynchronous Untamed community.
 - **Not sanitized.** Lessons titled *"Quotas Are Bullshit"* and *"Why SDRs Should Stay Single"* are not metaphor or marketing — they're the lesson titles. The annotations are in the host's hand. AESDR is unconventional in tone but conventional in shape: 12 courses, structured curriculum, defined outcomes, refundable.
 
@@ -201,7 +201,7 @@ Per canon §13 honesty discipline — the absences:
 2. **Token check:** Pass.
 3. **Iris reservation:** Pass — zero on the map itself.
 4. **Icon discipline:** Pass — type-only.
-5. **Voice thumbnail:** *"Twelve cards. Drawer A. Sorted by chapter order. All open from day one — no drip-gating. Twelve lessons filed under one call number. Check each one out. Return when you're a different AE/SDR."* — passes; identifiably AESDR. The library-as-curriculum metaphor is the production brand fingerprint.
+5. **Voice thumbnail:** *"Twelve cards. Drawer A. Sorted by chapter order. All open from day one — no drip-gating. Twelve courses filed under one call number. Check each one out. Return when you're a different AE/SDR."* — passes; identifiably AESDR. The library-as-curriculum metaphor is the production brand fingerprint.
 
 ---
 
@@ -227,7 +227,7 @@ This map is a forward dependency for:
 
 > *(--serif italic 16pt, --ink, single paragraph below the catalog — the document's last visual beat.)*
 >
-> *Twelve lessons. Real questions on each card. Annotations in the host's hand. Open from day one, lifetime access, refundable in 14 days. Hosted by [HOST_FIRST_NAME], built from operator interviews, kept current as the role changes. Check one out.*
+> *Twelve courses. Real questions on each card. Annotations in the host's hand. Open from day one, lifetime access, refundable in 14 days. Hosted by [HOST_FIRST_NAME], built from operator interviews, kept current as the role changes. Check one out.*
 
 ---
 
