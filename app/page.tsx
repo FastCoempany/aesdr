@@ -17,9 +17,9 @@ const DeckStack = dynamic(() => import("@/components/DeckStack"));
 
 const FAQ: { q: string; a: string; icon: IconName }[] = [
   { q: "Is this for me if I\u2019m brand new to sales?",          a: "Yes, it\u2019s actually inspired by you. The curriculum starts with the fundamentals and ends with the harder lessons. If you\u2019re in your first 18 months, you\u2019ll skip years of painful trial-and-error.", icon: "eye"       },
-  { q: "Is this just\u00a0another motivational sales course?",   a: "Nope. No guru routines. No motivational performance. This is sober, fun, practical training built by people who over the last 10+ years carried bags and managed AEs & SDRs.",                                       icon: "warn"      },
+  { q: "Is this just\u00a0another motivational sales course?",   a: "Nope \u2014 no guru routines and no motivational performance built into the format; this is sober, fun, practical training built by people who carried bags and managed AEs and SDRs over the last 10+ years on real teams.",                                       icon: "warn"      },
   { q: "What if I want a refund?",                                a: "14-day, no-questions-asked refund. Email hello@aesdr.com and we process it within 3 business days. If it doesn\u2019t deliver value, we don\u2019t want your money.",                                                  icon: "refund"    },
-  { q: "How long do I have access?",                              a: "Lifetime. Buy once, access forever. That includes any future updates to the curriculum.",                                                                                                                            icon: "hourglass" },
+  { q: "How long do I have access?",                              a: "Lifetime — buy once and you have access to the curriculum forever, including every future update we ship to the lessons.",                                                                                                                            icon: "hourglass" },
   { q: "What\u2019s the difference between Individual and Team?", a: "Individual is one seat, one login. Team gives you up to 10 seats \u2014 built for sales managers who want their whole team on the same page.",                                                                       icon: "team"      },
   { q: "Is there a community or is this self-paced only?",        a: "Both. The course is self-paced with interactive exercises. You also get access to our Discord community \u2014 real AEs & SDRs, real problems, real accountability.",                                                icon: "discord"   },
   { q: "I\u2019ve been in sales for 5+ years. Is this too basic?", a: "Lessons 1\u20135 cover fundamentals. Lessons 6\u201312 work through prospecting strategy, pipeline math, financial resilience, and the relationships that pay off five years out. If you disagree, we refund.",                  icon: "signal"    },
@@ -102,9 +102,10 @@ export default async function LandingPage() {
             <p className={styles.notCardLabel}>Not</p>
             <p className={styles.notCardTitle}>A live cohort or coaching call.</p>
             <p className={styles.notCardBody}>
-              Self-paced, interactive HTML lessons. No scheduled calls,
-              no group Slack pressure, no Tuesday-night webinars. Your
-              calendar stays yours.
+              Self-paced interactive HTML lessons you work through on your
+              own time — no scheduled calls, no group Slack pressure, and
+              no Tuesday-night webinars, so the rest of your calendar stays
+              yours to allocate however the week demands.
             </p>
           </div>
           <div className={styles.notCard}>
@@ -157,7 +158,7 @@ export default async function LandingPage() {
             </ul>
             <p className={styles.compareFitFor}>
               <strong>Fits:</strong> AEs and SDRs looking for emotional lift
-              before a big week. Not what we&rsquo;re selling.
+              before a big week — which isn&rsquo;t what we&rsquo;re selling here.
             </p>
           </div>
 
@@ -174,7 +175,8 @@ export default async function LandingPage() {
             </ul>
             <p className={styles.compareFitFor}>
               <strong>Fits:</strong> AEs and SDRs whose schedules are open
-              and who need cohort pressure to finish. Different motion than ours.
+              and who need cohort pressure to finish — a different motion
+              than the one this product is designed around.
             </p>
           </div>
 
@@ -190,8 +192,9 @@ export default async function LandingPage() {
               <li>Disappears when you leave the org</li>
             </ul>
             <p className={styles.compareFitFor}>
-              <strong>Fits:</strong> Nobody, really. Do it because you have
-              to. Then come here for the part the LMS skipped.
+              <strong>Fits:</strong> Nobody really chooses this one — you do
+              it because you have to for HR, and then you come back here for
+              the part the LMS skipped entirely.
             </p>
           </div>
         </div>
@@ -246,8 +249,9 @@ export default async function LandingPage() {
       <section className={styles.finalCta}>
         <h2 className={styles.finalHeadline}>Stop ChatGPClaudeing. Start&nbsp;executing.</h2>
         <p className={styles.finalSub}>
-          12 courses. 5 takeaway tools. One price. Lifetime access.
-          Built for AEs and SDRs who want to get better, not just feel better.
+          12 courses with 5 takeaway tools at one price and lifetime
+          access — built for AEs and SDRs who want to get better at the
+          actual work rather than just feel better about the week ahead.
         </p>
         <a href="#pricing" className={styles.ctaPrimary}>Get Access</a>
       </section>
