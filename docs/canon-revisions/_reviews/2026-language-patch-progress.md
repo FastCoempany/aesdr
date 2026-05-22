@@ -1,10 +1,14 @@
 # 2026 language patch — progress tracker
 
-> **Status:** Active. Updated 2026-05-22 (post Batch 8 pivot-sweep).
+> **Status:** Active. Updated 2026-05-22 (post `/partners` → `/affiliates`
+> Phase 1 + Phase 2).
 > **Owner:** Antaeus Coe.
 > **Source:** This doc rolls up sweep state against the master plan at
-> `docs/canon-revisions/2026-05-19-language-patch-master-plan.md` and the
-> residual deep-clean at `docs/canon-revisions/2026-05-20-curriculum-residual-deep-clean-plan.md`.
+> `docs/canon-revisions/2026-05-19-language-patch-master-plan.md`, the
+> residual deep-clean at `docs/canon-revisions/2026-05-20-curriculum-residual-deep-clean-plan.md`,
+> the §14 tagline-pack v1.3 at `2026-05-21-tagline-pack-v1.3.md`, the
+> partners-to-affiliates rename plan at `2026-05-22-partners-to-affiliates-rename-plan.md`,
+> and the affiliate-hub plan at `2026-05-22-affiliate-hub-plan.md`.
 
 ---
 
@@ -16,9 +20,9 @@
 | 2 | Enforcement scaffolding | ✅ Shipped | ESLint blocklist active in `eslint.config.mjs`; PR template updated at `.github/pull_request_template.md`; `AGENTS.md` + `CLAUDE.md` reference the canon; `scripts/canon-check.mjs` ships per-line carve-outs (commit `d1009ab`). |
 | 3 | Consumer marketing sweep | ✅ Shipped | All 14 routes + 10 components in `app/` + `components/` swept. |
 | 4 | Member-area sweep | ✅ Shipped | All 19 member routes + 10 components swept. |
-| 5 | B2B sweep | ✅ Shipped | `/enterprise/*` (15 routes) + `/partners/*` (15 routes) + 8 components swept. canon-check confirms zero hits on either. |
-| 6 | Email sweep | ✅ Shipped | All 23 templates in `lib/email.ts` either rewritten or verified post-canon. |
-| 7 | Internal + partner-kit docs | ✅ Shipped | 14 files in `content/aesdr-internal/`, 9 files in `content/partner-kit/`, 9 files in `content/partner-kit-private/` all swept. |
+| 5 | B2B sweep | ✅ Shipped | `/enterprise/*` (15 routes) + `/affiliates/*` (15 routes; was `/partners/*` pre-rename) + 8 components swept. canon-check confirms zero hits on either. |
+| 6 | Email sweep | ✅ Shipped | All 23 templates in `lib/email.ts` either rewritten or verified post-canon. Phase-2 alias `sendAffiliateApplicationNotification` exported alongside original `sendPartnerApplicationNotification`. |
+| 7 | Internal + partner-kit docs | ✅ Shipped | 14 files in `content/aesdr-internal/`, 9 files in `content/affiliate-kit/`, 9 files in `content/affiliate-kit-private/` all swept. Folders renamed in rename Phase 2. |
 | 8 | Curriculum rewrite | 🟡 Partial | Deep-clean (6 phases, ~46 commits) shipped per `2026-05-20-curriculum-residual-deep-clean-plan.md`. Batch 8 closure pivot sweep shipped 2026-05-22 (commits `89b8bb1`, `19962cd`, `e12fe82`, `07fef25`). **Five-axis rubric pass below.** |
 
 Canon-check: clean (3 documented carve-outs via `LINE_EXEMPTIONS` in
@@ -173,7 +177,7 @@ Batch 8 done.
 
 Per master plan §"Affiliate hub", five scoping questions still open:
 
-1. Is `/affiliate` a separate audience from `/partners`, or a renamed expansion?
+1. ✅ Resolved 2026-05-22: `/affiliates` is the renamed expansion (was `/partners`). Rename plan shipped Phases 1 + 2. `/enterprise/channel` continues to serve B2B channel partners (distinct surface, intentional).
 2. Payout model — percentage of sale, or fixed bounty per signup?
 3. Brand-conformance gate — first three pieces of affiliate marketing copy reviewed and approved before going live?
 4. Tracking — UTM-only, or per-affiliate signed link?
@@ -191,3 +195,42 @@ Once answered, separate plan doc at `docs/canon-revisions/2026-MM-DD-affiliate-h
   Bypass-URL or staging-preview needed to confirm served copy.
 - Branch state: all work on `main` post `5cda080` (the Enterprise admin
   nav addition). `build/behavioral-pass` merged + landed.
+
+---
+
+## `/partners` → `/affiliates` rename — ship status (2026-05-22)
+
+Plan ratified by founder 2026-05-22. Executed in 3 phases:
+
+| Phase | Status | Commits | Notes |
+|---|---|---|---|
+| 1 — Routes + redirects | ✅ Shipped | `6b4a843`, `e0d5e5e`, `6e078fb` | All `/partners/*` routes (15 pages + 2 API endpoints + 8 components + 5 lib files + admin chrome at `/admin/partner-kit` → `/admin/affiliate-kit`) renamed. 301 redirects in place via `next.config.ts`. Three rechecks closed the gaps. |
+| 2 — Docs + body rewrites | ✅ Shipped | `932140d` + Tier 1-5 patch | `docs/partner/` → `docs/affiliate/` (50+ deliverables); `content/partner-kit/` → `content/affiliate-kit/`; `content/partner-kit-private/` → `content/affiliate-kit-private/`. Body-text "partner" → "affiliate" rewrites across 96 files. Channel-partner / partnership / partnered / partnering carve-outs preserved. AGENTS.md naming separation block updated. `AESDR-PARTNER-HUB-SPEC.md` → `AESDR-AFFILIATE-HUB-SPEC.md`; `D40-master-partner-kit-readme.md` → `D40-master-affiliate-kit-readme.md`. Email function alias `sendAffiliateApplicationNotification` exported. |
+| 3 — DB migration | 🟡 Parked | — | Supabase column `partner_slug` → `affiliate_slug` + table `partner_applications` → `affiliate_applications` + camelCase API name `partnerSlug` → `affiliateSlug` across `lib/affiliate-kit-tokens.ts` consumers. Only matters once live affiliate data exists; defers until affiliate-hub Phase 4-5. |
+
+Verification across the post-rename state:
+- `npx tsc --noEmit`: clean
+- `npm run lint`: 0 errors
+- `node scripts/canon-check.mjs`: clean
+- Zero `/partners` URL strings in `app/`, `components/`, `lib/`, `scripts/`, `utils/`
+- 301 redirects active in `next.config.ts` (verified declarative; sandbox egress couldn't reach `aesdr.com` for live curl confirmation)
+- Body-text rewrites preserve channel-partner / partnership / partnered / partnering carve-outs per AGENTS.md naming separation rules
+
+---
+
+## Affiliate hub — scoping decisions (2026-05-22)
+
+Founder ratified all five scoping questions from the master plan §"Affiliate hub":
+
+1. ✅ Audience: consumer-side affiliates (creators / micro-creators / alumni ambassadors); B2B stays at `/enterprise/channel`.
+2. ✅ Payout: 30% of net revenue (matches D22 §5.1 default).
+3. ✅ Brand-conformance gate: first 3 pieces approved before going live. v1 = Option A (3 approvals only); v1.1 = sophistication-toggle hybrid (Option B for `developing` tier).
+4. ✅ Tracking: hybrid HMAC-signed link + UTMs (cookie source-of-truth, last-touch UTM fallback).
+5. ✅ Dashboards: two — affiliate-facing + admin-facing per `2026-05-22-affiliate-hub-plan.md` §3-4.
+
+Additional ratifications:
+- Payment processor: Stripe Connect Standard for v1.
+- Multi-touch attribution: last-cookie-wins as default; revisit after first 10 attributions.
+- Public-side disclosure: footer injection when `aesdr_aff` cookie is present.
+
+Affiliate-hub buildout (Phase 1-5 per plan, ~6-8 weeks) is parked awaiting separate execution ratification.

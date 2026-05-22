@@ -2,7 +2,7 @@
  * Partner kit — PRIVATE catalog (post-signing, gated by per-partner token).
  *
  * Maps URL slugs → markdown source under content/affiliate-kit-private/.
- * Routes lit from this catalog are gated via /partners/kit-private/* and
+ * Routes lit from this catalog are gated via /affiliates/kit-private/* and
  * require a valid signed token (lib/affiliate-kit-tokens.ts) to access.
  *
  * Public-vs-gate boundary (ratified 2026-05-09): this catalog contains only

@@ -9,7 +9,7 @@ import { createClient } from "@/utils/supabase/server";
  *
  * Both emails are guaranteed admin on every surface gated by isAdminEmail
  * / requireAdmin / getAdminContext — proxy.ts, app/admin/layout.tsx,
- * app/api/admin/refund/route.ts, app/dashboard, app/partners/kit-private,
+ * app/api/admin/refund/route.ts, app/dashboard, app/affiliates/kit-private,
  * lib/affiliate-kit-session.ts, utils/access/verifyAccess.ts — and see
  * every entry in the AdminChip dropdown.
  */

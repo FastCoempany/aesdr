@@ -77,20 +77,20 @@ export default function ContactPage() {
       <Section title="Partner inquiries">
         <p>
           If you run a newsletter, podcast, community, or course audience of
-          early-career AEs and SDRs and want to explore a partner pilot, the
-          partner-side page is at{" "}
+          early-career AEs and SDRs and want to explore an affiliate pilot, the
+          affiliate-side page is at{" "}
           <a
             href="/affiliates"
             style={{ color: "var(--crimson)", textDecoration: "underline" }}
           >
-            /partners
+            /affiliates
           </a>
           . Or email{" "}
           <a
-            href="mailto:partner@aesdr.com"
+            href="mailto:hello@aesdr.com"
             style={{ color: "var(--crimson)", textDecoration: "underline" }}
           >
-            partner@aesdr.com
+            hello@aesdr.com
           </a>{" "}
           directly.
         </p>

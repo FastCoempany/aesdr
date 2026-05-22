@@ -95,6 +95,12 @@ async function safeSend(
 }
 
 // ─── Partner Application Notification (internal, to founder) ───
+// Renamed Phase 2 (2026-05-22) — function + type names retain "Partner"
+// for backward compatibility with existing callers + the matching
+// Supabase `partner_applications` table (renamed in Phase 3 alongside
+// the DB column migration). Visible strings now read "Affiliate application."
+// New code should import the `sendAffiliateApplicationNotification` alias
+// below; existing callers continue to resolve through the original name.
 
 export type PartnerApplicationPayload = {
   applicantName: string;
@@ -111,15 +117,19 @@ export type PartnerApplicationPayload = {
   submittedAt: string;
 };
 
+/** Phase-2 alias. New callers import this. Old `PartnerApplicationPayload`
+ *  stays for backward compatibility through Phase 3. */
+export type AffiliateApplicationPayload = PartnerApplicationPayload;
+
 export async function sendPartnerApplicationNotification(payload: PartnerApplicationPayload) {
   const recipient = process.env.EMAIL_RECIPIENT;
   if (!recipient) {
-    console.warn("[email] EMAIL_RECIPIENT not set; skipping partner application notification.");
+    console.warn("[email] EMAIL_RECIPIENT not set; skipping affiliate application notification.");
     return false;
   }
-  const from = process.env.EMAIL_FROM || "AESDR Partners <partner@aesdr.com>";
-  const subject = `Partner application — ${payload.applicantName}`;
-  return safeSend(`partner-application from ${payload.applicantName}`, () =>
+  const from = process.env.EMAIL_FROM || "AESDR Affiliates <hello@aesdr.com>";
+  const subject = `Affiliate application — ${payload.applicantName}`;
+  return safeSend(`affiliate-application from ${payload.applicantName}`, () =>
     getResend().emails.send({
       from,
       to: recipient,
@@ -131,6 +141,12 @@ export async function sendPartnerApplicationNotification(payload: PartnerApplica
   );
 }
 
+/** Phase-2 alias of sendPartnerApplicationNotification. New callers
+ *  should import this name. The original export continues to resolve
+ *  through Phase 3 (when the DB column + Supabase table rename
+ *  finalizes the affiliate-naming convention end-to-end). */
+export const sendAffiliateApplicationNotification = sendPartnerApplicationNotification;
+
 function partnerApplicationText(p: PartnerApplicationPayload): string {
   const utm = [
     p.utmSource && `source=${p.utmSource}`,
@@ -139,7 +155,7 @@ function partnerApplicationText(p: PartnerApplicationPayload): string {
     p.utmContent && `content=${p.utmContent}`,
   ].filter(Boolean).join(" · ") || "(none)";
   return [
-    `New partner application — ${p.applicantName}`,
+    `New affiliate application — ${p.applicantName}`,
     "",
     `Applicant:        ${p.applicantName}`,
     `Primary channel:  ${p.primaryChannel}`,
@@ -151,7 +167,7 @@ function partnerApplicationText(p: PartnerApplicationPayload): string {
     `IP hash:          ${p.ipHash || "(none)"}`,
     `User agent:       ${p.userAgent || "(none)"}`,
     "",
-    `Review in Supabase: partner_applications table.`,
+    `Review in Supabase: partner_applications table (column rename to affiliate_applications pending Phase 3 migration).`,
   ].join("\n");
 }
 
@@ -176,14 +192,14 @@ function partnerApplicationHtml(p: PartnerApplicationPayload): string {
 
   return `<!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"><title>Partner application</title></head>
+<head><meta charset="utf-8"><title>Affiliate application</title></head>
 <body style="margin:0;padding:0;background:#FAF7F2;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FAF7F2;padding:32px 16px;">
   <tr><td align="center">
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="640" style="max-width:640px;width:100%;background:#FFFFFF;border:1px solid #E8E4DF;">
       <tr><td style="padding:28px 32px 8px 32px;">
         <p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
-          AESDR &middot; Partner Application
+          AESDR &middot; Affiliate Application
         </p>
       </td></tr>
       <tr><td style="padding:0 32px 12px 32px;">

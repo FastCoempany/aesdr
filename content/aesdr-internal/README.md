@@ -16,9 +16,9 @@ operate. It stays here.
 
 ## Where the partner-facing content lives
 
-- `content/partner-kit/` — public, rendered at `/partners/kit/[slug]`
+- `content/affiliate-kit/` — public, rendered at `/affiliates/kit/[slug]`
 - `content/partner-kit-private/` — gated, rendered at
-  `/partners/kit-private/[slug]` after partner signs and is issued a
+  `/affiliates/kit-private/[slug]` after partner signs and is issued a
   per-partner token
 
 This folder (`content/aesdr-internal/`) is neither — it's reference

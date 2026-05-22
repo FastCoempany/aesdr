@@ -1,10 +1,10 @@
 /**
  * Component: KitIndexList
- * Spec: AESDR-PARTNER-HUB-SPEC.md §"Page 1.4 — /partners/kit"
+ * Spec: AESDR-AFFILIATE-HUB-SPEC.md §"Page 1.4 — /partners/kit"
  * Canon: §6.5 (no decorative icons), §13 (honesty — kit is open, not gated)
  *
  * On-site index of the partner kit. Each entry links to the rendered page
- * at /partners/kit/[slug]. Supersedes the prior PDF-download model.
+ * at /affiliates/kit/[slug]. Supersedes the prior PDF-download model.
  */
 
 import Link from "next/link";

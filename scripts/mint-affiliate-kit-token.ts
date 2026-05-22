@@ -53,7 +53,7 @@ async function main() {
     expiresInDays: days,
   });
 
-  const url = `${baseUrl}/partners/kit-private?t=${result.signed}`;
+  const url = `${baseUrl}/affiliates/kit-private?t=${result.signed}`;
   console.log("");
   console.log("Token minted:");
   console.log(`  partner_slug:  ${slug}`);

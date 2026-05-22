@@ -1,12 +1,12 @@
 /**
  * Component: HubChrome (LockupHeader + Footer + page wrapper)
- * Spec: AESDR-PARTNER-HUB-SPEC.md §"Component library"
+ * Spec: AESDR-AFFILIATE-HUB-SPEC.md §"Component library"
  * Canon: §6.1 (palette — cream override on retired-dark default), §6.4 (iris reservation), §6.6 (lockup placement)
  * Five-question check: PASS
  *
  * Per Q7 ratification 2026-05-04: per-page wrapper sets `background: var(--cream)`
  * to override `app/globals.css` body default of `var(--bg-main)` (retired dark
- * palette). Sibling routes outside /partners/* retain their existing defaults.
+ * palette). Sibling routes outside /affiliates/* retain their existing defaults.
  */
 
 import Link from "next/link";

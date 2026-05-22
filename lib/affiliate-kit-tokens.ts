@@ -1,7 +1,7 @@
 /**
  * Partner-kit gate — token issuance, verification, and access logging.
  *
- * Token URL format: /partners/kit-private?t=<base64url(payload)>.<base64url(hmac)>
+ * Token URL format: /affiliates/kit-private?t=<base64url(payload)>.<base64url(hmac)>
  * Payload: { tid: <uuid>, exp: <unix-seconds> } JSON, then base64url-encoded.
  * HMAC: SHA-256(payload, KIT_TOKEN_SECRET). Signature ensures partners can't
  * forge tokens; the DB row gives us revocation + audit.

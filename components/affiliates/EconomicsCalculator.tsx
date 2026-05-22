@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * EconomicsCalculator — interactive commission projector for /partners/economics.
+ * EconomicsCalculator — interactive commission projector for /affiliates/economics.
  *
  * Inputs: audience size, registration rate %, conversion rate %, plan mix.
  * Outputs: projected commission with the math shown.

@@ -1,14 +1,14 @@
 /**
- * GET /api/partners/kit-private/auth?t=<signed>&next=<path>
+ * GET /api/affiliates/kit-private/auth?t=<signed>&next=<path>
  *
  * Handles partner-kit token sign-in:
  *   1. Verify HMAC + expiry on the URL token.
  *   2. Resolve the token to a DB row (rejects revoked / expired).
  *   3. Log the auth event (success or denied).
  *   4. Set a session cookie (signed copy of the same token).
- *   5. Redirect to `next` (defaults to /partners/kit-private).
+ *   5. Redirect to `next` (defaults to /affiliates/kit-private).
  *
- * The cookie lasts 30 days and is scoped to /partners/kit-private. Subsequent
+ * The cookie lasts 30 days and is scoped to /affiliates/kit-private. Subsequent
  * page renders read the cookie directly — no DB lookup on the auth path
  * after first sign-in (DB still hit per page view for the access log).
  */

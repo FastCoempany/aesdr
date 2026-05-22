@@ -1,6 +1,6 @@
 /**
- * API: POST /api/partners/apply
- * Spec: AESDR-PARTNER-HUB-SPEC.md §"Page 1.6 — /partners/apply"
+ * API: POST /api/affiliates/apply
+ * Spec: AESDR-AFFILIATE-HUB-SPEC.md §"Page 1.6 — /affiliates/apply"
  * Canon: §1.6 (honesty), §12 (founder backstage), §13
  *
  * Persists partner-application form submissions to the `partner_applications`

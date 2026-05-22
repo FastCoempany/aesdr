@@ -200,7 +200,7 @@ export default async function AdminAffiliatesPage() {
                   <code>user_metadata.is_affiliate = true</code> and{" "}
                   <code>user_metadata.partner_slug = &quot;...&quot;</code>{" "}
                   on a Supabase auth user, then have them sign in and
-                  visit <code>/partners/dashboard/links</code>.
+                  visit <code>/affiliates/dashboard/links</code>.
                 </td>
               </tr>
             )}

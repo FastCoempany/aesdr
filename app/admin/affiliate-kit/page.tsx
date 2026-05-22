@@ -275,7 +275,7 @@ function CopyLinkBlock({
   expiresAt: string;
 }) {
   const signed = signToken(tid, new Date(expiresAt));
-  const url = `${baseUrl}/partners/kit-private?t=${signed}`;
+  const url = `${baseUrl}/affiliates/kit-private?t=${signed}`;
   return (
     <div>
       <div style={{ fontSize: 11, color: "#6B6B6B", marginBottom: 4 }}>Access URL — share with partner:</div>

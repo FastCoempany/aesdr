@@ -2,7 +2,7 @@
 
 /**
  * Component: FAQAccordion (CLIENT)
- * Spec: AESDR-PARTNER-HUB-SPEC.md §"Page 1.5 — /partners/faq"
+ * Spec: AESDR-AFFILIATE-HUB-SPEC.md §"Page 1.5 — /affiliates/faq"
  * Canon: §3.3 (voice ratios — 80/20 verdict mode), §6.5 (no decorative icons)
  * Five-question check: PASS — type-led expand/collapse; no chevron icon, no emoji.
  *
