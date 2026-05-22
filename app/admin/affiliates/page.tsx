@@ -21,13 +21,33 @@ interface PerSlug {
 export default async function AdminAffiliatesPage() {
   const supabase = createAdminClient();
 
-  const [linksRes, clicksRes, attribRes] = await Promise.all([
+  const [linksRes, clicksRes, attribRes, metricsRes] = await Promise.all([
     supabase.from("affiliate_links").select("affiliate_slug, active"),
     supabase.from("affiliate_clicks").select("affiliate_slug"),
     supabase
       .from("affiliate_attributions")
       .select("affiliate_slug, status, commission_amount_cents"),
+    supabase
+      .from("affiliate_metrics")
+      .select(
+        "affiliate_slug, display_name, status, archetype, sophistication_tier, strike_count, approved_pieces_count, pending_submissions"
+      ),
   ]);
+
+  type MetricsRow = {
+    affiliate_slug: string;
+    display_name: string;
+    status: string;
+    archetype: string;
+    sophistication_tier: string;
+    strike_count: number;
+    approved_pieces_count: number;
+    pending_submissions: number;
+  };
+  const metricsBySlug = new Map<string, MetricsRow>();
+  for (const m of (metricsRes.data ?? []) as MetricsRow[]) {
+    metricsBySlug.set(m.affiliate_slug, m);
+  }
 
   const linkCounts = new Map<string, number>();
   for (const l of linksRes.data ?? []) {
@@ -74,6 +94,22 @@ export default async function AdminAffiliatesPage() {
     }
   }
 
+  // Include affiliates from the metrics view even when they have no
+  // links/clicks/attributions yet (vetting + activated, pre-promotion).
+  for (const slug of metricsBySlug.keys()) {
+    if (!perSlug.has(slug)) {
+      perSlug.set(slug, {
+        affiliate_slug: slug,
+        links: 0,
+        clicks: 0,
+        pendingCents: 0,
+        clearedCents: 0,
+        paidCents: 0,
+        refundedCount: 0,
+      });
+    }
+  }
+
   const rows = Array.from(perSlug.values()).sort(
     (a, b) => b.clearedCents + b.pendingCents - (a.clearedCents + a.pendingCents)
   );
@@ -110,22 +146,41 @@ export default async function AdminAffiliatesPage() {
         >
           Affiliate ledger.
         </h1>
-        <Link
-          href="/admin/affiliates/queue"
-          style={{
-            fontFamily: "'Barlow Condensed',sans-serif",
-            fontSize: 13,
-            fontWeight: 700,
-            letterSpacing: ".15em",
-            textTransform: "uppercase",
-            color: "#fff",
-            background: "#8B1A1A",
-            padding: "10px 20px",
-            textDecoration: "none",
-          }}
-        >
-          Review queue →
-        </Link>
+        <div style={{ display: "flex", gap: 10 }}>
+          <Link
+            href="/admin/affiliates/new"
+            style={{
+              fontFamily: "'Barlow Condensed',sans-serif",
+              fontSize: 13,
+              fontWeight: 700,
+              letterSpacing: ".15em",
+              textTransform: "uppercase",
+              color: "#1A1A1A",
+              background: "transparent",
+              border: "1px solid #1A1A1A",
+              padding: "9px 20px",
+              textDecoration: "none",
+            }}
+          >
+            New affiliate
+          </Link>
+          <Link
+            href="/admin/affiliates/queue"
+            style={{
+              fontFamily: "'Barlow Condensed',sans-serif",
+              fontSize: 13,
+              fontWeight: 700,
+              letterSpacing: ".15em",
+              textTransform: "uppercase",
+              color: "#fff",
+              background: "#8B1A1A",
+              padding: "10px 20px",
+              textDecoration: "none",
+            }}
+          >
+            Review queue →
+          </Link>
+        </div>
       </div>
 
       <div
@@ -189,7 +244,7 @@ export default async function AdminAffiliatesPage() {
         >
           <thead>
             <tr style={{ background: "#FAF7F2", textAlign: "left" }}>
-              {["Affiliate", "Links", "Clicks", "Pending", "Cleared", "Paid", "Refunded", ""].map((h) => (
+              {["Affiliate", "Status", "Tier", "Gate", "Strikes", "Pending", "Cleared", "Paid", ""].map((h) => (
                 <th
                   key={h}
                   style={{
@@ -211,30 +266,47 @@ export default async function AdminAffiliatesPage() {
             {rows.length === 0 && (
               <tr>
                 <td
-                  colSpan={8}
+                  colSpan={9}
                   style={{ padding: "32px 16px", textAlign: "center", color: "#6B6B6B" }}
                 >
-                  No affiliates yet. Create the first one by setting{" "}
-                  <code>user_metadata.is_affiliate = true</code> and{" "}
-                  <code>user_metadata.affiliate_slug = &quot;...&quot;</code>{" "}
-                  on a Supabase auth user, then have them sign in and
-                  visit <code>/affiliates/dashboard/links</code>.
+                  No affiliates yet. Click <strong>New affiliate</strong>{" "}
+                  above to create one. They land in <code>vetting</code>{" "}
+                  status; the onboarding email fires when you flip them
+                  to <code>active</code>.
                 </td>
               </tr>
             )}
-            {rows.map((r) => (
+            {rows.map((r) => {
+              const m = metricsBySlug.get(r.affiliate_slug);
+              const gateRequirement = m?.sophistication_tier === "proven" ? 1 : 3;
+              return (
               <tr key={r.affiliate_slug} style={{ borderBottom: "1px solid #E8E4DF" }}>
                 <td style={{ padding: "12px 14px" }}>
-                  <strong>{r.affiliate_slug}</strong>
+                  <div><strong>{m?.display_name ?? r.affiliate_slug}</strong></div>
+                  <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 11, color: "#6B6B6B" }}>
+                    {r.affiliate_slug} · {r.links} link{r.links === 1 ? "" : "s"} · {r.clicks} click{r.clicks === 1 ? "" : "s"}
+                  </div>
                 </td>
-                <td style={{ padding: "12px 14px" }}>{r.links}</td>
-                <td style={{ padding: "12px 14px" }}>{r.clicks}</td>
+                <td style={{ padding: "12px 14px", fontFamily: "'Space Mono',monospace", fontSize: 11, textTransform: "uppercase", letterSpacing: ".18em", color: m?.status === "active" ? "#1A1A1A" : "#6B6B6B" }}>
+                  {m?.status ?? "—"}
+                </td>
+                <td style={{ padding: "12px 14px", fontFamily: "'Space Mono',monospace", fontSize: 11, color: "#6B6B6B" }}>
+                  {m?.sophistication_tier ?? "—"}
+                </td>
+                <td style={{ padding: "12px 14px", fontFamily: "'Space Mono',monospace", fontSize: 13 }}>
+                  {m ? `${m.approved_pieces_count}/${gateRequirement}` : "—"}
+                  {m && m.pending_submissions > 0 && (
+                    <span style={{ color: "#8B1A1A", marginLeft: 6 }}>+{m.pending_submissions}</span>
+                  )}
+                </td>
+                <td style={{ padding: "12px 14px", color: (m?.strike_count ?? 0) > 0 ? "#8B1A1A" : "#6B6B6B" }}>
+                  {m?.strike_count ?? 0}
+                </td>
                 <td style={{ padding: "12px 14px" }}>{dollars(r.pendingCents)}</td>
                 <td style={{ padding: "12px 14px", fontWeight: 700, color: r.clearedCents > 0 ? "#8B1A1A" : "#1A1A1A" }}>
                   {dollars(r.clearedCents)}
                 </td>
                 <td style={{ padding: "12px 14px", color: "#6B6B6B" }}>{dollars(r.paidCents)}</td>
-                <td style={{ padding: "12px 14px", color: "#6B6B6B" }}>{r.refundedCount}</td>
                 <td style={{ padding: "12px 14px" }}>
                   <Link
                     href={`/admin/affiliates/${r.affiliate_slug}`}
@@ -252,7 +324,8 @@ export default async function AdminAffiliatesPage() {
                   </Link>
                 </td>
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
       </div>

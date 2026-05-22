@@ -16,6 +16,7 @@ import {
   sendAffiliateCopyDeclinedEmail,
   sendAffiliateCopyEditsRequestedEmail,
   sendAffiliateGateClearedEmail,
+  sendAffiliateOnboardingEmail,
   sendAffiliatePauseEmail,
 } from "@/lib/email";
 import { logEvent } from "@/lib/events";
@@ -617,6 +618,9 @@ export async function setAffiliateStatus(formData: FormData): Promise<void> {
   if (!affiliateId) throw new Error("Missing affiliate id.");
   if (!(allowed as readonly string[]).includes(status)) throw new Error("Invalid status.");
 
+  const previous = await getAffiliateById(affiliateId);
+  if (!previous) throw new Error("Affiliate not found.");
+
   const admin = createAdminClient();
   const nowIso = new Date().toISOString();
   const patch: Record<string, unknown> = { status };
@@ -625,7 +629,64 @@ export async function setAffiliateStatus(formData: FormData): Promise<void> {
   if (status === "sunset") patch.sunset_at = nowIso;
   await admin.from("affiliates").update(patch).eq("id", affiliateId);
 
+  // Fire onboarding email on first activation (vetting → active).
+  if (previous.status === "vetting" && status === "active") {
+    await sendAffiliateOnboardingEmail({
+      to: previous.email,
+      displayName: previous.display_name,
+      slug: previous.slug,
+      sophisticationTier: previous.sophistication_tier,
+    });
+  }
+
   await logEvent("affiliate_status_changed", { affiliate_id: affiliateId, status });
   revalidatePath("/admin/affiliates");
-  revalidatePath(`/admin/affiliates/${affiliateId}`);
+  revalidatePath(`/admin/affiliates/${previous.slug}`);
+}
+
+/* ─── new-affiliate creation (admin side) ─── */
+
+/**
+ * Create a new affiliate row from scratch (or promote an application).
+ * Founder-only. Fields mirror the affiliates table; status defaults to
+ * 'vetting' so the founder explicitly activates after the welcome
+ * conversation.
+ */
+export async function createAffiliate(formData: FormData): Promise<void> {
+  await requireAdmin();
+  const slug = String(formData.get("slug") ?? "").trim().toLowerCase();
+  const display_name = String(formData.get("display_name") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const archetype = String(formData.get("archetype") ?? "creator");
+  const sophistication_tier = String(formData.get("sophistication_tier") ?? "developing");
+  const application_id_raw = String(formData.get("application_id") ?? "").trim();
+  const application_id = application_id_raw || null;
+
+  if (!slug || !/^[a-z0-9-]{2,40}$/.test(slug)) {
+    throw new Error("Slug must be 2–40 chars, lowercase letters/digits/hyphens.");
+  }
+  if (!display_name) throw new Error("Display name required.");
+  if (!email || !email.includes("@")) throw new Error("Valid email required.");
+  if (!["creator", "coach", "alumni", "hybrid", "community"].includes(archetype)) {
+    throw new Error("Invalid archetype.");
+  }
+  if (!["developing", "proven"].includes(sophistication_tier)) {
+    throw new Error("Invalid sophistication tier.");
+  }
+
+  const admin = createAdminClient();
+  const { error } = await admin.from("affiliates").insert({
+    slug,
+    display_name,
+    email,
+    archetype,
+    sophistication_tier,
+    application_id,
+    status: "vetting",
+  });
+  if (error) throw new Error(error.message);
+
+  await logEvent("affiliate_status_changed", { affiliate_id: slug, status: "vetting" });
+
+  revalidatePath("/admin/affiliates");
 }

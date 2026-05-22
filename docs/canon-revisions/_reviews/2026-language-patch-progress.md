@@ -206,7 +206,7 @@ Plan ratified by founder 2026-05-22. Executed in 3 phases:
 |---|---|---|---|
 | 1 — Routes + redirects | ✅ Shipped | `6b4a843`, `e0d5e5e`, `6e078fb` | All `/partners/*` routes (15 pages + 2 API endpoints + 8 components + 5 lib files + admin chrome at `/admin/partner-kit` → `/admin/affiliate-kit`) renamed. 301 redirects in place via `next.config.ts`. Three rechecks closed the gaps. |
 | 2 — Docs + body rewrites | ✅ Shipped | `932140d` + Tier 1-5 patch | `docs/partner/` → `docs/affiliate/` (50+ deliverables); `content/partner-kit/` → `content/affiliate-kit/`; `content/partner-kit-private/` → `content/affiliate-kit-private/`. Body-text "partner" → "affiliate" rewrites across 96 files. Channel-partner / partnership / partnered / partnering carve-outs preserved. AGENTS.md naming separation block updated. `AESDR-PARTNER-HUB-SPEC.md` → `AESDR-AFFILIATE-HUB-SPEC.md`; `D40-master-partner-kit-readme.md` → `D40-master-affiliate-kit-readme.md`. Email function alias `sendAffiliateApplicationNotification` exported. |
-| 3 — DB migration | 🟡 Parked | — | Supabase column `partner_slug` → `affiliate_slug` + table `partner_applications` → `affiliate_applications` + camelCase API name `partnerSlug` → `affiliateSlug` across `lib/affiliate-kit-tokens.ts` consumers. Only matters once live affiliate data exists; defers until affiliate-hub Phase 4-5. |
+| 3 — DB migration | ✅ Shipped | `2cd7289` | Supabase column rename (`partner_slug` → `affiliate_slug` across 4 operational tables), table rename (`partner_applications` → `affiliate_applications`), RLS policies recreated with backward-compatible JWT claim coalesce (`affiliate_slug` with `partner_slug` fallback), 18 application files updated to canonical names. Migration file: `supabase/migrations/20260522_affiliate_slug_rename.sql`. |
 
 Verification across the post-rename state:
 - `npx tsc --noEmit`: clean
@@ -234,3 +234,45 @@ Additional ratifications:
 - Public-side disclosure: footer injection when `aesdr_aff` cookie is present.
 
 Affiliate-hub buildout (Phase 1-5 per plan, ~6-8 weeks) is parked awaiting separate execution ratification.
+
+---
+
+## Affiliate hub — end-to-end buildout (2026-05-22)
+
+Founder directive (verbatim): *"i want everything done now. not a skip
+around. not a minimum, not a run on existing (if thats not future final
+state) - i want it all done right and completely ende to end and done now.
+no mater how much time it takes."* — triggered by disclosure that first
+pilot affiliate is close. The 14-item buildout was executed in three
+shipped phases on `main`.
+
+| Step | Status | Commit | Notes |
+|---|---|---|---|
+| 1. Phase 3 DB rename | ✅ Shipped | `2cd7289` | (see rename §) |
+| 2. `affiliates` canonical entity table | ✅ Shipped | `b3ad0ae` | `id`, `user_id`, `slug`, `status`, `archetype`, `sophistication_tier`, `commission_pct`, `strike_count`, `strike_log`, `stripe_account_id`, `approved_pieces_count`, `gate_exited_at`, RLS. |
+| 3. `affiliate_copy_submissions` table | ✅ Shipped | `b3ad0ae` | Brand-conformance gate system of record. RLS: self-read + self-insert. |
+| 4. Submit-copy form (affiliate side) | ✅ Shipped | `72542fe` | `/affiliates/dashboard/submissions` — list + gate-progress + draft form. |
+| 5. Admin approval queue | ✅ Shipped | `72542fe` | `/admin/affiliates/queue` + per-submission review page with approve / edits / decline tabs. |
+| 6. Brand-conformance gate enforcement | ✅ Shipped | `72542fe` | `approveAffiliateCopy` advances `approved_pieces_count`; gate exits at 3 (developing) or 1 (proven); auto-activates `vetting` affiliates. |
+| 7. Payment settings UI (affiliate side) | ✅ Shipped | `811c5dc` | `/affiliates/dashboard/payments` with Connect / Dashboard buttons, payout history table. |
+| 8. Stripe Connect Standard integration | ✅ Shipped | `811c5dc` | `lib/stripe-connect.ts`, `/api/affiliates/stripe/{connect,refresh,dashboard}` endpoints, `account.updated` webhook handler. |
+| 9. Payout batch processor | ✅ Shipped | `811c5dc` | `runAffiliatePayoutBatch` aggregates cleared attributions → inserts `affiliate_payouts` row → runs Stripe Transfer → marks paid → emails. |
+| 10. Lifecycle automation emails | ✅ Shipped | `72542fe` + `811c5dc` | onboarding (vetting→active), copy approved / edits / declined, gate cleared, pause, payout notification. Shared `affiliateShellHtml` template. |
+| 11. Three-strike compliance tracker | ✅ Shipped | `72542fe` | `declineAffiliateCopy` records strike with category; same-category 3rd auto-pauses + emails. |
+| 12. FTC public-side disclosure footer | ✅ Shipped | `811c5dc` | `components/AffiliateDisclosureFooter.tsx` reads `aesdr_attribution` cookie; injected at `app/layout.tsx`. |
+| 13. Aggregate metrics view | ✅ Shipped | `b3ad0ae` | `affiliate_metrics` view — clicks (lifetime + 30d), attributed enrollments, gross revenue, projected/paid commission, conversion rate, pending submissions. Wired into `/admin/affiliates`. |
+| 14. Sophistication-tier hybrid | ✅ Shipped | `b3ad0ae` + `72542fe` | Schema: `sophistication_tier` enum on `affiliates`. UI: admin toggle on detail page. Logic: `gateRequirementFor()` returns 3 for developing, 1 for proven. |
+
+Founder action items (parallel to my work, before first pilot):
+
+1. **Stripe Connect Standard activation** — Stripe Dashboard → Connect → enable Standard accounts; capture `STRIPE_CONNECT_CLIENT_ID` (not used by the Account Links flow we shipped, but worth grabbing for future OAuth fallback).
+2. **Webhook endpoint** — Add `account.updated` event subscription to the existing Stripe webhook (`/api/webhooks/stripe`).
+3. **Vercel env vars** — Confirm `STRIPE_SECRET_KEY` is set; `RESEND_API_KEY` and `EMAIL_RECIPIENT` already in use.
+4. **Sophistication-tier policy** — Document the criteria for `proven` vs `developing` (e.g. proven = prior affiliate revenue >$X / verified audience >Y) so admin classification stays consistent.
+5. **Three-strike policy specifics** — Confirm the seven decline categories cover the policy; adjust `decline_category` check constraint if anything is missing.
+6. **Onboarding email body** — Redline the welcome copy in `sendAffiliateOnboardingEmail` (lib/email.ts) before the first pilot affiliate gets it.
+
+Verification (post-buildout):
+- `npx tsc --noEmit`: clean
+- `node scripts/canon-check.mjs`: clean
+- All migrations idempotent; safe to apply to empty pre-pilot state.
