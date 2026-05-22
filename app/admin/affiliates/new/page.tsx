@@ -135,6 +135,10 @@ export default function NewAffiliatePage() {
               <option value="developing">developing (3-piece gate)</option>
               <option value="proven">proven (1-piece gate)</option>
             </select>
+            <p style={{ margin: "6px 0 0", fontSize: 12, color: "#6B6B6B", lineHeight: 1.5 }}>
+              Criteria in <code style={{ fontFamily: "'Space Mono',monospace", fontSize: 11 }}>docs/affiliate/tier-criteria.md</code>.
+              Default to developing unless all three conditions clearly hold.
+            </p>
           </div>
         </div>
 

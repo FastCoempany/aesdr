@@ -461,6 +461,8 @@ After Phase 5: end-to-end ready for live affiliate onboarding.
 - **What happens to currently-pending partner-kit deliverables (the D-series docs that say "partner pilot agreement")?** Per the rename plan, body content rewrites "partner" → "affiliate" in those docs; the workflow itself remains intact.
 - **Brand-conformance gate exit criteria.** First 3 pieces approved → exits the gate. Alternative: 3 pieces AND a 30-day window. **Default: Option A (just 3 pieces) for v1; sophistication-toggle hybrid baked into the schema for v1.1.**
 
+  **As shipped (2026-05-22):** `developing` exits at 3 approved pieces; `proven` exits at 1. The 30-day-elapsed alternative from the v1.1 plan below was dropped in favor of the simpler approval-count gate. Tier-classification criteria live in `docs/affiliate/tier-criteria.md` — that file is the source of truth for who gets which tier at vetting time.
+
   **Sophistication-toggle hybrid (v1.1):** The `affiliates` table carries a `sophistication_tier` field set at D27 vetting:
   - `proven` — established operator with track record (verified prior commercial work, existing creator with demonstrated brand-fit) → path A exit (3 approvals only).
   - `developing` — newcomer, unproven, lower D27 score, or any compliance flag during vetting → path B exit (3 approvals AND 30 days elapsed).
