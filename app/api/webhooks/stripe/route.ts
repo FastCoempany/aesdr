@@ -11,6 +11,7 @@ import {
   ATTRIBUTION_WINDOW_MS,
   REFUND_WINDOW_MS,
 } from '@/lib/affiliate';
+import { mapAccountStatus } from '@/lib/stripe-connect';
 import { rateLimit, getClientIP } from '@/lib/rate-limit';
 
 function getStripe() {
@@ -352,6 +353,37 @@ export async function POST(request: Request) {
             .eq('purchase_id', refundedPurchase.id)
             .in('status', ['pending', 'cleared']);
         }
+      }
+    }
+  }
+
+  // ── Stripe Connect: affiliate Standard accounts ──────────────────
+  // Track the affiliate's Stripe account through onboarding and any
+  // subsequent restriction/disable events. Status drives whether the
+  // payout batch processor can include this affiliate.
+  if (event.type === 'account.updated') {
+    const account = event.data.object as Stripe.Account;
+    const status = mapAccountStatus(account);
+    const supabase = createAdminClient();
+
+    const { data: affiliate } = await supabase
+      .from('affiliates')
+      .select('id, stripe_account_status')
+      .eq('stripe_account_id', account.id)
+      .maybeSingle();
+
+    if (affiliate) {
+      const previousStatus = affiliate.stripe_account_status;
+      await supabase
+        .from('affiliates')
+        .update({ stripe_account_status: status })
+        .eq('id', affiliate.id);
+
+      if (status === 'enabled' && previousStatus !== 'enabled') {
+        await logEvent('affiliate_stripe_enabled', {
+          affiliate_id: affiliate.id,
+          stripe_account_id: account.id,
+        });
       }
     }
   }

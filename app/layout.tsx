@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/react";
 import AdminChip from "@/components/AdminChip";
+import AffiliateDisclosureFooter from "@/components/AffiliateDisclosureFooter";
 import MobileGate from "@/components/MobileGate";
 import PostHogClient from "@/components/PostHogClient";
 import RedditPixel from "@/components/RedditPixel";
@@ -80,6 +81,9 @@ export default async function RootLayout({
         <div id="main-content">
           <MobileGate>{children}</MobileGate>
         </div>
+        <Suspense fallback={null}>
+          <AffiliateDisclosureFooter />
+        </Suspense>
 
         {/* Analytics & Tracking */}
         <Analytics />

@@ -160,7 +160,7 @@ export default async function AffiliatesDashboardPage() {
         <SignOutButton />
       </header>
 
-      <section style={{ maxWidth: 1080, margin: "0 auto", padding: "48px 24px 24px" }}>
+      <section style={{ maxWidth: 1080, margin: "0 auto", padding: "48px 24px 16px" }}>
         <p
           style={{
             fontFamily: "var(--mono)",
@@ -173,6 +173,32 @@ export default async function AffiliatesDashboardPage() {
         >
           Affiliates · {affiliateSlug}
         </p>
+        <nav
+          style={{
+            display: "flex",
+            gap: 18,
+            marginBottom: 20,
+            flexWrap: "wrap",
+            fontFamily: "var(--cond)",
+            fontSize: 13,
+            fontWeight: 700,
+            letterSpacing: ".15em",
+            textTransform: "uppercase",
+          }}
+        >
+          <Link href="/affiliates/dashboard" style={{ color: "var(--crimson)", textDecoration: "none", borderBottom: "2px solid var(--crimson)", paddingBottom: 4 }}>
+            Overview
+          </Link>
+          <Link href="/affiliates/dashboard/links" style={{ color: "var(--muted)", textDecoration: "none", paddingBottom: 4 }}>
+            Links
+          </Link>
+          <Link href="/affiliates/dashboard/submissions" style={{ color: "var(--muted)", textDecoration: "none", paddingBottom: 4 }}>
+            Submissions
+          </Link>
+          <Link href="/affiliates/dashboard/payments" style={{ color: "var(--muted)", textDecoration: "none", paddingBottom: 4 }}>
+            Payments
+          </Link>
+        </nav>
         <h1
           style={{
             fontFamily: "var(--display)",

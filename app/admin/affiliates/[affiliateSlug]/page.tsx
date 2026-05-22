@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { markPayoutPaid } from "@/app/actions/affiliate";
+import {
+  markPayoutPaid,
+  runAffiliatePayoutBatch,
+  setAffiliateSophisticationTier,
+  setAffiliateStatus,
+} from "@/app/actions/affiliate";
+import { getAffiliateBySlug } from "@/lib/affiliate-entity";
 import { createAdminClient } from "@/utils/supabase/admin";
 
 export const dynamic = "force-dynamic";
@@ -22,6 +28,7 @@ export default async function AffiliateDetailPage({
 }) {
   const { affiliateSlug } = await params;
   const supabase = createAdminClient();
+  const affiliate = await getAffiliateBySlug(affiliateSlug);
 
   const [linksRes, attribRes, payoutRes] = await Promise.all([
     supabase
@@ -47,7 +54,7 @@ export default async function AffiliateDetailPage({
   const attributions = attribRes.data ?? [];
   const payouts = payoutRes.data ?? [];
 
-  if (links.length === 0 && attributions.length === 0 && payouts.length === 0) {
+  if (!affiliate && links.length === 0 && attributions.length === 0 && payouts.length === 0) {
     notFound();
   }
 
@@ -67,11 +74,83 @@ export default async function AffiliateDetailPage({
           fontWeight: 900,
           fontSize: "clamp(28px,4vw,40px)",
           lineHeight: 1.1,
-          marginBottom: 24,
+          marginBottom: 8,
         }}
       >
-        {affiliateSlug}
+        {affiliate?.display_name ?? affiliateSlug}
       </h1>
+      <p style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, color: "#6B6B6B", marginBottom: 24 }}>
+        {affiliateSlug}
+        {affiliate?.email && ` · ${affiliate.email}`}
+      </p>
+
+      {/* Entity panel: status + tier + Stripe Connect */}
+      {affiliate && (
+        <section
+          style={{
+            background: "#fff",
+            border: "1px solid #E8E4DF",
+            padding: "20px 24px",
+            marginBottom: 32,
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: 24,
+          }}
+        >
+          <div>
+            <p style={{ margin: 0, fontFamily: "'Space Mono',monospace", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", color: "#6B6B6B", marginBottom: 8 }}>
+              Status
+            </p>
+            <form action={setAffiliateStatus} style={{ display: "flex", gap: 6, alignItems: "center" }}>
+              <input type="hidden" name="affiliateId" value={affiliate.id} />
+              <select name="status" defaultValue={affiliate.status} style={{ padding: "6px 10px", border: "1px solid #B5B0A8", fontFamily: "Georgia,serif", fontSize: 13 }}>
+                {["vetting", "active", "paused", "sunset", "cut"].map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+              <button type="submit" style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: 11, letterSpacing: ".15em", textTransform: "uppercase", color: "#1A1A1A", background: "transparent", border: "1px solid #1A1A1A", padding: "5px 12px", cursor: "pointer" }}>
+                Save
+              </button>
+            </form>
+          </div>
+          <div>
+            <p style={{ margin: 0, fontFamily: "'Space Mono',monospace", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", color: "#6B6B6B", marginBottom: 8 }}>
+              Sophistication tier
+            </p>
+            <form action={setAffiliateSophisticationTier} style={{ display: "flex", gap: 6, alignItems: "center" }}>
+              <input type="hidden" name="affiliateId" value={affiliate.id} />
+              <select name="sophistication_tier" defaultValue={affiliate.sophistication_tier} style={{ padding: "6px 10px", border: "1px solid #B5B0A8", fontFamily: "Georgia,serif", fontSize: 13 }}>
+                <option value="developing">developing</option>
+                <option value="proven">proven</option>
+              </select>
+              <button type="submit" style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: 11, letterSpacing: ".15em", textTransform: "uppercase", color: "#1A1A1A", background: "transparent", border: "1px solid #1A1A1A", padding: "5px 12px", cursor: "pointer" }}>
+                Save
+              </button>
+            </form>
+          </div>
+          <div>
+            <p style={{ margin: 0, fontFamily: "'Space Mono',monospace", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", color: "#6B6B6B", marginBottom: 8 }}>
+              Gate / strikes
+            </p>
+            <p style={{ margin: 0, fontFamily: "Georgia,serif", fontSize: 14 }}>
+              {affiliate.approved_pieces_count} approved · {affiliate.strike_count} strikes
+            </p>
+          </div>
+          <div>
+            <p style={{ margin: 0, fontFamily: "'Space Mono',monospace", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", color: "#6B6B6B", marginBottom: 8 }}>
+              Stripe Connect
+            </p>
+            <p style={{ margin: 0, fontFamily: "Georgia,serif", fontSize: 14 }}>
+              {affiliate.stripe_account_status ?? "not connected"}
+            </p>
+            {affiliate.stripe_account_id && (
+              <code style={{ fontFamily: "'Space Mono',monospace", fontSize: 10, color: "#6B6B6B" }}>
+                {affiliate.stripe_account_id}
+              </code>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* Cleared-ready payout helper */}
       {cleared.length > 0 && (
@@ -112,10 +191,33 @@ export default async function AffiliateDetailPage({
               across {cleared.length} cleared attributions
             </span>
           </p>
-          <p style={{ margin: 0, fontSize: 13, color: "rgba(250,247,242,0.7)" }}>
-            Bundle these into a payout row via SQL or the (future) one-click button.
-            Then mark paid below with the wire reference once the money lands.
+          <p style={{ margin: "0 0 12px", fontSize: 13, color: "rgba(250,247,242,0.7)" }}>
+            {affiliate?.stripe_account_status === "enabled"
+              ? "Run the Stripe Connect Transfer below — payout, attribution stamp, and affiliate email all happen in one click."
+              : "Stripe Connect isn't enabled for this affiliate yet. They need to finish onboarding before automatic payout works. Use the legacy manual mark-paid flow until then."}
           </p>
+          {affiliate?.stripe_account_status === "enabled" && (
+            <form action={runAffiliatePayoutBatch}>
+              <input type="hidden" name="affiliateId" value={affiliate.id} />
+              <button
+                type="submit"
+                style={{
+                  fontFamily: "'Barlow Condensed',sans-serif",
+                  fontWeight: 700,
+                  fontSize: 13,
+                  letterSpacing: ".18em",
+                  textTransform: "uppercase",
+                  color: "#1A1A1A",
+                  background: "#FAF7F2",
+                  border: "none",
+                  padding: "10px 22px",
+                  cursor: "pointer",
+                }}
+              >
+                Pay out via Stripe Connect →
+              </button>
+            </form>
+          )}
         </div>
       )}
 

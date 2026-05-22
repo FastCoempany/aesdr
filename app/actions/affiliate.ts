@@ -483,6 +483,129 @@ export async function setAffiliateSophisticationTier(formData: FormData): Promis
   revalidatePath(`/admin/affiliates/${affiliateId}`);
 }
 
+/* ─── payout batch processor ─── */
+
+/**
+ * Generate + send a payout batch for one affiliate, covering all `cleared`
+ * attributions that aren't already attached to an existing payout.
+ *
+ * Steps:
+ *   1. Aggregate cleared attributions for the affiliate.
+ *   2. Insert an affiliate_payouts row (status=processing).
+ *   3. Run a Stripe Transfer to the affiliate's Connect account.
+ *   4. Mark payout paid + stamp paid_at on the underlying attributions.
+ *   5. Email the affiliate.
+ *
+ * Failures roll the payout back to status=failed and leave attributions
+ * untouched so the next run picks them up.
+ */
+export async function runAffiliatePayoutBatch(formData: FormData): Promise<void> {
+  await requireAdmin();
+  const affiliateId = String(formData.get("affiliateId") ?? "");
+  if (!affiliateId) throw new Error("Missing affiliate id.");
+
+  const affiliate = await getAffiliateById(affiliateId);
+  if (!affiliate) throw new Error("Affiliate not found.");
+  if (!affiliate.stripe_account_id || affiliate.stripe_account_status !== "enabled") {
+    throw new Error(
+      "Affiliate's Stripe account is not enabled. They must finish onboarding first."
+    );
+  }
+
+  const admin = createAdminClient();
+  const { data: cleared, error: clearedErr } = await admin
+    .from("affiliate_attributions")
+    .select("id, commission_amount_cents, attributed_at")
+    .eq("affiliate_slug", affiliate.slug)
+    .eq("status", "cleared")
+    .order("attributed_at", { ascending: true });
+  if (clearedErr) throw new Error(clearedErr.message);
+  if (!cleared || cleared.length === 0) {
+    throw new Error("No cleared attributions to pay out.");
+  }
+
+  const total = cleared.reduce((s, a) => s + (a.commission_amount_cents ?? 0), 0);
+  if (total <= 0) throw new Error("Total payout is zero.");
+  const ids = cleared.map((a) => a.id);
+  const dates = cleared.map((a) => new Date(a.attributed_at).getTime());
+  const periodStart = new Date(Math.min(...dates)).toISOString().slice(0, 10);
+  const periodEnd = new Date(Math.max(...dates)).toISOString().slice(0, 10);
+
+  const { data: payout, error: insErr } = await admin
+    .from("affiliate_payouts")
+    .insert({
+      affiliate_slug: affiliate.slug,
+      affiliate_id: affiliate.id,
+      period_start: periodStart,
+      period_end: periodEnd,
+      total_commission_cents: total,
+      attribution_ids: ids,
+      status: "processing",
+    })
+    .select("id")
+    .single();
+  if (insErr || !payout) throw new Error(insErr?.message ?? "Could not insert payout.");
+
+  // Lazy-import Stripe to keep the action import surface small.
+  const { transferToAffiliate } = await import("@/lib/stripe-connect");
+  const { sendAffiliatePayoutNotificationEmail } = await import("@/lib/email");
+
+  let transferId: string;
+  try {
+    const transfer = await transferToAffiliate({
+      accountId: affiliate.stripe_account_id,
+      amountCents: total,
+      payoutId: payout.id,
+      affiliateSlug: affiliate.slug,
+    });
+    transferId = transfer.id;
+  } catch (err) {
+    await admin
+      .from("affiliate_payouts")
+      .update({
+        status: "failed",
+        note: err instanceof Error ? err.message : "Stripe transfer failed.",
+      })
+      .eq("id", payout.id);
+    throw err;
+  }
+
+  const nowIso = new Date().toISOString();
+  await admin
+    .from("affiliate_payouts")
+    .update({
+      status: "paid",
+      paid_at: nowIso,
+      payment_method: "stripe_connect_transfer",
+      payment_reference: transferId,
+    })
+    .eq("id", payout.id);
+  await admin
+    .from("affiliate_attributions")
+    .update({ status: "paid", paid_at: nowIso })
+    .in("id", ids);
+
+  await sendAffiliatePayoutNotificationEmail({
+    to: affiliate.email,
+    displayName: affiliate.display_name,
+    amountCents: total,
+    periodStart,
+    periodEnd,
+    paymentMethod: "Stripe Connect",
+    reference: transferId,
+  });
+
+  await logEvent("affiliate_payout_paid", {
+    affiliate_slug: affiliate.slug,
+    payout_id: payout.id,
+    total_cents: total,
+  });
+
+  revalidatePath("/admin/affiliates");
+  revalidatePath(`/admin/affiliates/${affiliate.slug}`);
+  revalidatePath("/affiliates/dashboard/payments");
+}
+
 /**
  * Update an affiliate's lifecycle status. Active / paused / sunset / cut.
  */

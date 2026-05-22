@@ -97,18 +97,36 @@ export default async function AdminAffiliatesPage() {
       >
         Admin · Affiliates
       </p>
-      <h1
-        style={{
-          fontFamily: "'Playfair Display',Georgia,serif",
-          fontStyle: "italic",
-          fontWeight: 900,
-          fontSize: "clamp(28px,4vw,40px)",
-          lineHeight: 1.1,
-          marginBottom: 24,
-        }}
-      >
-        Affiliate ledger.
-      </h1>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 12, marginBottom: 24 }}>
+        <h1
+          style={{
+            margin: 0,
+            fontFamily: "'Playfair Display',Georgia,serif",
+            fontStyle: "italic",
+            fontWeight: 900,
+            fontSize: "clamp(28px,4vw,40px)",
+            lineHeight: 1.1,
+          }}
+        >
+          Affiliate ledger.
+        </h1>
+        <Link
+          href="/admin/affiliates/queue"
+          style={{
+            fontFamily: "'Barlow Condensed',sans-serif",
+            fontSize: 13,
+            fontWeight: 700,
+            letterSpacing: ".15em",
+            textTransform: "uppercase",
+            color: "#fff",
+            background: "#8B1A1A",
+            padding: "10px 20px",
+            textDecoration: "none",
+          }}
+        >
+          Review queue →
+        </Link>
+      </div>
 
       <div
         style={{
