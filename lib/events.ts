@@ -56,6 +56,50 @@ export type EventMap = {
     payout_id: string;
     total_cents: number;
   };
+  /** Affiliate submitted a draft copy piece for brand-conformance review. */
+  affiliate_copy_submitted: {
+    affiliate_id: string;
+    affiliate_slug: string;
+    submission_id: string;
+    channel: string;
+    format: string;
+  };
+  /** Admin approved a copy submission. */
+  affiliate_copy_approved: {
+    affiliate_id: string;
+    affiliate_slug: string;
+    submission_id: string;
+    gate_cleared_now: boolean;
+  };
+  /** Admin requested edits on a copy submission. */
+  affiliate_copy_edits_requested: {
+    submission_id: string;
+    affiliate_id: string;
+  };
+  /** Admin declined a copy submission (strike recorded). */
+  affiliate_copy_declined: {
+    affiliate_id: string;
+    affiliate_slug: string;
+    submission_id: string;
+    category: string;
+    strike_number: number;
+    auto_paused: boolean;
+  };
+  /** Affiliate lifecycle status change (vetting/active/paused/sunset/cut). */
+  affiliate_status_changed: {
+    affiliate_id: string;
+    status: string;
+  };
+  /** Affiliate connected a Stripe Connect Standard account. */
+  affiliate_stripe_connected: {
+    affiliate_id: string;
+    stripe_account_id: string;
+  };
+  /** Affiliate's Stripe Connect account became fully enabled (charges + payouts). */
+  affiliate_stripe_enabled: {
+    affiliate_id: string;
+    stripe_account_id: string;
+  };
 };
 
 export type EventType = keyof EventMap;

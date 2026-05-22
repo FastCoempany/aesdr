@@ -134,10 +134,6 @@ export async function sendAffiliateApplicationNotification(payload: AffiliateApp
   );
 }
 
-/** Phase-2 alias of sendAffiliateApplicationNotification. New callers
- *  should import this name. The original export continues to resolve
- *  through Phase 3 (when the DB column + Supabase table rename
- *  finalizes the affiliate-naming convention end-to-end). */
 function affiliateApplicationText(p: AffiliateApplicationPayload): string {
   const utm = [
     p.utmSource && `source=${p.utmSource}`,
@@ -158,8 +154,278 @@ function affiliateApplicationText(p: AffiliateApplicationPayload): string {
     `IP hash:          ${p.ipHash || "(none)"}`,
     `User agent:       ${p.userAgent || "(none)"}`,
     "",
-    `Review in Supabase: affiliate_applications table (column rename to affiliate_applications pending Phase 3 migration).`,
+    `Review in Supabase: affiliate_applications table.`,
   ].join("\n");
+}
+
+// ─── Affiliate hub lifecycle emails ───
+// Triggered by app/actions/affiliate.ts during the copy-submission review
+// flow + status transitions. All sent from hello@aesdr.com to the
+// affiliate's email on the affiliates table.
+
+function affiliateShellHtml(args: {
+  eyebrow: string;
+  headline: string;
+  body: string;
+  ctaUrl?: string;
+  ctaLabel?: string;
+}): string {
+  return `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>${esc(args.eyebrow)}</title></head>
+<body style="margin:0;padding:0;background:#FAF7F2;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FAF7F2;padding:32px 16px;">
+  <tr><td align="center">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;width:100%;background:#FFFFFF;border:1px solid #E8E4DF;">
+      <tr><td style="padding:28px 32px 8px 32px;">
+        <p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
+          ${esc(args.eyebrow)}
+        </p>
+      </td></tr>
+      <tr><td style="padding:4px 32px 16px 32px;">
+        <h1 style="margin:0;font-family:Georgia,'Playfair Display',serif;font-style:italic;font-weight:700;font-size:28px;line-height:1.2;color:#1A1A1A;">
+          ${esc(args.headline)}
+        </h1>
+      </td></tr>
+      <tr><td style="padding:0 32px 24px 32px;font-family:Georgia,'Source Serif 4',serif;font-size:15px;line-height:1.7;color:#1A1A1A;">
+        ${args.body}
+      </td></tr>
+      ${args.ctaUrl && args.ctaLabel ? `<tr><td style="padding:0 32px 32px 32px;">
+        <a href="${esc(args.ctaUrl)}" style="display:inline-block;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#FFFFFF;background:#8B1A1A;padding:13px 24px;text-decoration:none;">${esc(args.ctaLabel)}</a>
+      </td></tr>` : ""}
+      <tr><td style="padding:0 32px 28px 32px;border-top:1px solid #E8E4DF;">
+        <p style="margin:16px 0 0;font-family:Georgia,'Source Serif 4',serif;font-size:13px;line-height:1.65;color:#6B6B6B;font-style:italic;">
+          A real person reads replies to this thread. Email hello@aesdr.com
+          with anything that needs a human.
+        </p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body></html>`;
+}
+
+/** Welcome an affiliate the moment they're activated on the canonical table. */
+export async function sendAffiliateOnboardingEmail(args: {
+  to: string;
+  displayName: string;
+  slug: string;
+  sophisticationTier: "developing" | "proven";
+}): Promise<boolean> {
+  const gateRequirement = args.sophisticationTier === "proven" ? 1 : 3;
+  const body = `
+        <p style="margin:0 0 16px;">${esc(args.displayName)} — welcome to the AESDR Affiliate Program.</p>
+        <p style="margin:0 0 16px;">Your affiliate handle is <code style="font-family:'SF Mono',Consolas,monospace;font-size:14px;background:#FAF7F2;padding:1px 6px;">${esc(args.slug)}</code>. Tracking links you create route through <code style="font-family:'SF Mono',Consolas,monospace;font-size:14px;background:#FAF7F2;padding:1px 6px;">${esc(SITE)}/r/&lt;your-slug&gt;</code>.</p>
+        <p style="margin:0 0 16px;">Before your first piece goes public, drop the draft into the dashboard's <strong>Submit copy</strong> page. We review the first ${gateRequirement} ${gateRequirement === 1 ? "piece" : "pieces"} for brand fit — palette, claims, FTC disclosure, the usual. After that, you post freely.</p>
+        <p style="margin:0;">Commission is 30% of net revenue on enrolments attributed to your link within 30 days. Refund window is 14 days; commission clears once it closes.</p>
+  `;
+  return safeSend(`affiliate-onboarding to ${args.to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to: args.to,
+      subject: "Welcome to the AESDR Affiliate Program",
+      html: affiliateShellHtml({
+        eyebrow: "AESDR · Affiliates",
+        headline: "You're in.",
+        body,
+        ctaUrl: `${SITE}/affiliates/dashboard`,
+        ctaLabel: "Open the dashboard",
+      }),
+      text: [
+        `${args.displayName} — welcome to the AESDR Affiliate Program.`,
+        ``,
+        `Your handle: ${args.slug}`,
+        `Tracking links: ${SITE}/r/<your-slug>`,
+        ``,
+        `Submit your first ${gateRequirement} ${gateRequirement === 1 ? "piece" : "pieces"} via the dashboard's "Submit copy" page for brand-fit review. After that, you post freely.`,
+        ``,
+        `Commission: 30% of net revenue, 30-day attribution window, 14-day refund window.`,
+        ``,
+        `Open the dashboard: ${SITE}/affiliates/dashboard`,
+      ].join("\n"),
+    })
+  );
+}
+
+export async function sendAffiliateCopyApprovedEmail(args: {
+  to: string;
+  displayName: string;
+  channel: string;
+  reviewerNotes: string | null;
+  gateCleared: boolean;
+}): Promise<boolean> {
+  const body = `
+        <p style="margin:0 0 16px;">${esc(args.displayName)} — approved. Your ${esc(args.channel)} draft cleared review${args.gateCleared ? " and cleared the brand-conformance gate" : ""}. Ship it.</p>
+        ${args.reviewerNotes ? `<p style="margin:0 0 16px;font-style:italic;color:#6B6B6B;">Reviewer notes: ${esc(args.reviewerNotes)}</p>` : ""}
+        ${args.gateCleared ? `<p style="margin:0;">From here on, post freely. You can still send pieces for a sanity check, but you don't have to.</p>` : `<p style="margin:0;">Two more approved pieces and you exit the gate — after that, post freely.</p>`}
+  `;
+  return safeSend(`affiliate-copy-approved to ${args.to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to: args.to,
+      subject: args.gateCleared ? "Approved — and you just cleared the gate" : "Approved — ship it",
+      html: affiliateShellHtml({
+        eyebrow: "AESDR · Affiliates · Approved",
+        headline: args.gateCleared ? "Approved. Gate cleared." : "Approved.",
+        body,
+        ctaUrl: `${SITE}/affiliates/dashboard/submissions`,
+        ctaLabel: "Back to submissions",
+      }),
+      text: `${args.displayName} — approved. ${args.gateCleared ? "Gate cleared." : ""}${args.reviewerNotes ? `\n\nReviewer notes: ${args.reviewerNotes}` : ""}`,
+    })
+  );
+}
+
+export async function sendAffiliateCopyEditsRequestedEmail(args: {
+  to: string;
+  displayName: string;
+  channel: string;
+  editRequests: string;
+}): Promise<boolean> {
+  const body = `
+        <p style="margin:0 0 16px;">${esc(args.displayName)} — your ${esc(args.channel)} draft needs a couple of edits before it ships.</p>
+        <p style="margin:0 0 16px;font-family:'SF Mono',Consolas,monospace;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:#6B6B6B;">What to change</p>
+        <p style="margin:0 0 16px;white-space:pre-wrap;background:#FAF7F2;padding:14px 16px;font-size:14px;">${esc(args.editRequests)}</p>
+        <p style="margin:0;">Tweak and resubmit through the same form.</p>
+  `;
+  return safeSend(`affiliate-copy-edits to ${args.to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to: args.to,
+      subject: "Edits requested before this can ship",
+      html: affiliateShellHtml({
+        eyebrow: "AESDR · Affiliates · Edits",
+        headline: "Almost there — one round of edits.",
+        body,
+        ctaUrl: `${SITE}/affiliates/dashboard/submissions`,
+        ctaLabel: "Open submissions",
+      }),
+      text: `${args.displayName} — edits requested on your ${args.channel} draft.\n\n${args.editRequests}\n\nResubmit at ${SITE}/affiliates/dashboard/submissions`,
+    })
+  );
+}
+
+export async function sendAffiliateCopyDeclinedEmail(args: {
+  to: string;
+  displayName: string;
+  channel: string;
+  declineReason: string;
+  declineCategory: string;
+  strikeNumber: number;
+  autoPaused: boolean;
+}): Promise<boolean> {
+  const categoryLabel = args.declineCategory.replace(/_/g, " ");
+  const body = `
+        <p style="margin:0 0 16px;">${esc(args.displayName)} — this ${esc(args.channel)} draft can't run as written.</p>
+        <p style="margin:0 0 16px;font-family:'SF Mono',Consolas,monospace;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:#6B6B6B;">Category</p>
+        <p style="margin:0 0 16px;">${esc(categoryLabel)} · strike ${args.strikeNumber} of 3 in this category</p>
+        <p style="margin:0 0 16px;font-family:'SF Mono',Consolas,monospace;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:#6B6B6B;">Why</p>
+        <p style="margin:0 0 16px;white-space:pre-wrap;background:#FAF7F2;padding:14px 16px;font-size:14px;">${esc(args.declineReason)}</p>
+        ${args.autoPaused ? `<p style="margin:0;color:#8B1A1A;font-weight:600;">Your account is paused pending a conversation. Email hello@aesdr.com to reopen.</p>` : `<p style="margin:0;">Submit a different draft when you're ready. Three same-category strikes pauses the account.</p>`}
+  `;
+  return safeSend(`affiliate-copy-declined to ${args.to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to: args.to,
+      subject: args.autoPaused ? "Account paused" : "Draft declined",
+      html: affiliateShellHtml({
+        eyebrow: "AESDR · Affiliates · Declined",
+        headline: args.autoPaused ? "Paused for a conversation." : "Declined.",
+        body,
+        ctaUrl: `${SITE}/affiliates/dashboard/submissions`,
+        ctaLabel: "Open submissions",
+      }),
+      text: `${args.displayName} — declined.\n\nCategory: ${categoryLabel} (strike ${args.strikeNumber}/3)\nReason: ${args.declineReason}\n${args.autoPaused ? "\nAccount paused — email hello@aesdr.com." : ""}`,
+    })
+  );
+}
+
+export async function sendAffiliateGateClearedEmail(args: {
+  to: string;
+  displayName: string;
+}): Promise<boolean> {
+  const body = `
+        <p style="margin:0 0 16px;">${esc(args.displayName)} — gate cleared. You're off the brand-conformance review queue.</p>
+        <p style="margin:0 0 16px;">From here on, post freely. You can still ping us before a big push if you want a sanity check, but it's not required.</p>
+        <p style="margin:0;">Tracking and commission keep running as normal. The dashboard is your home base.</p>
+  `;
+  return safeSend(`affiliate-gate-cleared to ${args.to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to: args.to,
+      subject: "Gate cleared — post freely",
+      html: affiliateShellHtml({
+        eyebrow: "AESDR · Affiliates · Gate cleared",
+        headline: "You're off the review queue.",
+        body,
+        ctaUrl: `${SITE}/affiliates/dashboard`,
+        ctaLabel: "Open the dashboard",
+      }),
+      text: `${args.displayName} — gate cleared. Post freely from here on. Dashboard: ${SITE}/affiliates/dashboard`,
+    })
+  );
+}
+
+export async function sendAffiliatePauseEmail(args: {
+  to: string;
+  displayName: string;
+  reason: string;
+}): Promise<boolean> {
+  const body = `
+        <p style="margin:0 0 16px;">${esc(args.displayName)} — your affiliate account is paused.</p>
+        <p style="margin:0 0 16px;font-family:'SF Mono',Consolas,monospace;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:#6B6B6B;">Reason</p>
+        <p style="margin:0 0 16px;">${esc(args.reason)}</p>
+        <p style="margin:0;">Tracking links keep working for purposes of in-flight attributions inside the existing window, but no new pieces can ship. Email hello@aesdr.com to talk it through.</p>
+  `;
+  return safeSend(`affiliate-pause to ${args.to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to: args.to,
+      subject: "Affiliate account paused",
+      html: affiliateShellHtml({
+        eyebrow: "AESDR · Affiliates · Paused",
+        headline: "Account paused.",
+        body,
+      }),
+      text: `${args.displayName} — account paused.\nReason: ${args.reason}\nEmail hello@aesdr.com to reopen.`,
+    })
+  );
+}
+
+export async function sendAffiliatePayoutNotificationEmail(args: {
+  to: string;
+  displayName: string;
+  amountCents: number;
+  periodStart: string;
+  periodEnd: string;
+  paymentMethod: string | null;
+  reference: string | null;
+}): Promise<boolean> {
+  const amount = `$${(args.amountCents / 100).toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+  const body = `
+        <p style="margin:0 0 16px;">${esc(args.displayName)} — your payout for ${esc(args.periodStart)} → ${esc(args.periodEnd)} is on its way.</p>
+        <p style="margin:0 0 16px;font-family:'SF Mono',Consolas,monospace;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:#6B6B6B;">Amount</p>
+        <p style="margin:0 0 16px;font-size:24px;font-weight:600;color:#1A1A1A;">${esc(amount)}</p>
+        ${args.paymentMethod ? `<p style="margin:0 0 8px;font-family:'SF Mono',Consolas,monospace;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:#6B6B6B;">Method</p><p style="margin:0 0 16px;">${esc(args.paymentMethod)}</p>` : ""}
+        ${args.reference ? `<p style="margin:0 0 8px;font-family:'SF Mono',Consolas,monospace;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:#6B6B6B;">Reference</p><p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:14px;">${esc(args.reference)}</p>` : ""}
+  `;
+  return safeSend(`affiliate-payout to ${args.to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to: args.to,
+      subject: `Payout sent — ${amount}`,
+      html: affiliateShellHtml({
+        eyebrow: "AESDR · Affiliates · Payout",
+        headline: "Payout sent.",
+        body,
+        ctaUrl: `${SITE}/affiliates/dashboard`,
+        ctaLabel: "View the dashboard",
+      }),
+      text: `${args.displayName} — payout sent.\nAmount: ${amount}\nPeriod: ${args.periodStart} → ${args.periodEnd}${args.paymentMethod ? `\nMethod: ${args.paymentMethod}` : ""}${args.reference ? `\nReference: ${args.reference}` : ""}`,
+    })
+  );
 }
 
 function affiliateApplicationHtml(p: AffiliateApplicationPayload): string {
