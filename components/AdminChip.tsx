@@ -29,7 +29,7 @@ const QUICK_LINKS: QuickEntry[] = [
   { label: "Admin · Dashboard", href: "/admin", note: "Cohort + revenue stats" },
   { label: "Admin · Users", href: "/admin/users", note: "All buyers, roles, refunds" },
   { label: "Admin · Teams", href: "/admin/teams", note: "Team purchases + seat allocations" },
-  { label: "Admin · Partner Kit", href: "/admin/partner-kit", note: "Tokens + audit log" },
+  { label: "Admin · Affiliate Kit", href: "/admin/affiliate-kit", note: "Tokens + audit log" },
   { label: "Apply Form (visitor view)", href: "/affiliates/apply" },
   { label: "Home", href: "/" },
   { divider: true, label: "AESDR / Enterprise" },

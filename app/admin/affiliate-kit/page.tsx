@@ -1,5 +1,5 @@
 /**
- * /admin/partner-kit — list tokens, mint new ones, view recent access.
+ * /admin/affiliate-kit — list tokens, mint new ones, view recent access.
  *
  * Sits behind requireAdmin() (via app/admin/layout.tsx). Shows:
  *   - Mint form (slug, label, days, notes) → POSTs to a server action
@@ -53,7 +53,7 @@ async function mintAction(formData: FormData) {
     expiresInDays: days,
   });
 
-  revalidatePath("/admin/partner-kit");
+  revalidatePath("/admin/affiliate-kit");
 }
 
 async function revokeAction(formData: FormData) {
@@ -68,7 +68,7 @@ async function revokeAction(formData: FormData) {
     .update({ revoked_at: new Date().toISOString(), revoked_reason: reason })
     .eq("id", id);
 
-  revalidatePath("/admin/partner-kit");
+  revalidatePath("/admin/affiliate-kit");
 }
 
 export default async function AdminPartnerKit() {
