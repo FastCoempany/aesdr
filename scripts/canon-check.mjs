@@ -12,6 +12,7 @@
  *
  * Skipped surfaces (canon docs that DESCRIBE the banned terms):
  *   - docs/canon-revisions/**
+ *   - docs/_audits/**  (audits discuss the banned vocab by name)
  *   - AFFILIATE_BRAND_CANON.md (describes partner-side banned vocab)
  *   - content/affiliate-kit/banned-vocabulary.md
  *   - any file with "canon" in the path
@@ -87,6 +88,7 @@ const SKIP_DIRS = new Set([
 // the banned terms because they describe them.
 const SKIP_FILE_PATTERNS = [
   /docs\/canon-revisions\//,
+  /docs\/_audits\//,
   /^AFFILIATE_BRAND_CANON\.md$/,
   /content\/affiliate-kit\/banned-vocabulary\.md$/,
   /content\/aesdr-internal\/00-canon-excerpt\.md$/,
