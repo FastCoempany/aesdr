@@ -87,7 +87,7 @@ export function verifyToken(token: string): VerifyResult {
 
 export type ResolvedToken = {
   tid: string;
-  partner_slug: string;
+  affiliate_slug: string;
   partner_label: string | null;
   expires_at: string;
   revoked_at: string | null;
@@ -101,7 +101,7 @@ export async function resolveToken(tid: string): Promise<ResolvedToken | null> {
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("partner_kit_tokens")
-    .select("id, partner_slug, partner_label, expires_at, revoked_at")
+    .select("id, affiliate_slug, partner_label, expires_at, revoked_at")
     .eq("id", tid)
     .maybeSingle();
 
@@ -115,7 +115,7 @@ export async function resolveToken(tid: string): Promise<ResolvedToken | null> {
 
   return {
     tid: data.id,
-    partner_slug: data.partner_slug,
+    affiliate_slug: data.affiliate_slug,
     partner_label: data.partner_label,
     expires_at: data.expires_at,
     revoked_at: data.revoked_at,
@@ -126,7 +126,7 @@ export type AccessEvent = "view" | "auth" | "denied";
 
 export async function logAccess(args: {
   tokenId: string | null;
-  partnerSlug: string;
+  affiliateSlug: string;
   docSlug?: string | null;
   event: AccessEvent;
   ipHash?: string | null;
@@ -136,7 +136,7 @@ export async function logAccess(args: {
   const supabase = createAdminClient();
   const { error } = await supabase.from("partner_kit_access").insert({
     token_id: args.tokenId,
-    partner_slug: args.partnerSlug,
+    affiliate_slug: args.affiliateSlug,
     doc_slug: args.docSlug ?? null,
     event: args.event,
     ip_hash: args.ipHash ?? null,
@@ -153,7 +153,7 @@ export async function logAccess(args: {
  * Called from the founder's CLI script (scripts/mint-affiliate-kit-token.ts).
  */
 export async function mintToken(args: {
-  partnerSlug: string;
+  affiliateSlug: string;
   partnerLabel?: string;
   notes?: string;
   expiresInDays: number;
@@ -165,7 +165,7 @@ export async function mintToken(args: {
   const { data, error } = await supabase
     .from("partner_kit_tokens")
     .insert({
-      partner_slug: args.partnerSlug,
+      affiliate_slug: args.affiliateSlug,
       partner_label: args.partnerLabel ?? null,
       notes: args.notes ?? null,
       expires_at: expiresAt.toISOString(),

@@ -94,15 +94,12 @@ async function safeSend(
   }
 }
 
-// ─── Partner Application Notification (internal, to founder) ───
-// Renamed Phase 2 (2026-05-22) — function + type names retain "Partner"
-// for backward compatibility with existing callers + the matching
-// Supabase `partner_applications` table (renamed in Phase 3 alongside
-// the DB column migration). Visible strings now read "Affiliate application."
-// New code should import the `sendAffiliateApplicationNotification` alias
-// below; existing callers continue to resolve through the original name.
+// ─── Affiliate Application Notification (internal, to founder) ───
+// Renamed Phase 3 (2026-05-22) — function + type + Supabase table all
+// carry the affiliate-naming canonical now that the Phase 3 migration
+// has shipped (20260522_affiliate_slug_rename.sql).
 
-export type PartnerApplicationPayload = {
+export type AffiliateApplicationPayload = {
   applicantName: string;
   audienceDescriptor: string;
   primaryChannel: string;
@@ -117,11 +114,7 @@ export type PartnerApplicationPayload = {
   submittedAt: string;
 };
 
-/** Phase-2 alias. New callers import this. Old `PartnerApplicationPayload`
- *  stays for backward compatibility through Phase 3. */
-export type AffiliateApplicationPayload = PartnerApplicationPayload;
-
-export async function sendPartnerApplicationNotification(payload: PartnerApplicationPayload) {
+export async function sendAffiliateApplicationNotification(payload: AffiliateApplicationPayload) {
   const recipient = process.env.EMAIL_RECIPIENT;
   if (!recipient) {
     console.warn("[email] EMAIL_RECIPIENT not set; skipping affiliate application notification.");
@@ -135,19 +128,17 @@ export async function sendPartnerApplicationNotification(payload: PartnerApplica
       to: recipient,
       replyTo: recipient,
       subject,
-      html: partnerApplicationHtml(payload),
-      text: partnerApplicationText(payload),
+      html: affiliateApplicationHtml(payload),
+      text: affiliateApplicationText(payload),
     })
   );
 }
 
-/** Phase-2 alias of sendPartnerApplicationNotification. New callers
+/** Phase-2 alias of sendAffiliateApplicationNotification. New callers
  *  should import this name. The original export continues to resolve
  *  through Phase 3 (when the DB column + Supabase table rename
  *  finalizes the affiliate-naming convention end-to-end). */
-export const sendAffiliateApplicationNotification = sendPartnerApplicationNotification;
-
-function partnerApplicationText(p: PartnerApplicationPayload): string {
+function affiliateApplicationText(p: AffiliateApplicationPayload): string {
   const utm = [
     p.utmSource && `source=${p.utmSource}`,
     p.utmMedium && `medium=${p.utmMedium}`,
@@ -167,11 +158,11 @@ function partnerApplicationText(p: PartnerApplicationPayload): string {
     `IP hash:          ${p.ipHash || "(none)"}`,
     `User agent:       ${p.userAgent || "(none)"}`,
     "",
-    `Review in Supabase: partner_applications table (column rename to affiliate_applications pending Phase 3 migration).`,
+    `Review in Supabase: affiliate_applications table (column rename to affiliate_applications pending Phase 3 migration).`,
   ].join("\n");
 }
 
-function partnerApplicationHtml(p: PartnerApplicationPayload): string {
+function affiliateApplicationHtml(p: AffiliateApplicationPayload): string {
   const row = (label: string, value: string) => `
     <tr>
       <td style="padding:8px 16px 8px 0;font-family:'SF Mono',Consolas,monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#6B6B6B;vertical-align:top;width:170px">${esc(label)}</td>
@@ -224,7 +215,7 @@ function partnerApplicationHtml(p: PartnerApplicationPayload): string {
       </td></tr>
       <tr><td style="padding:0 32px 32px 32px;">
         <p style="margin:0;font-family:Georgia,'Source Serif 4',serif;font-size:13px;line-height:1.6;color:#6B6B6B;font-style:italic;">
-          Persisted to <code style="font-family:'SF Mono',Consolas,monospace;font-size:12px;background:#FAF7F2;padding:1px 6px;">partner_applications</code> in Supabase.
+          Persisted to <code style="font-family:'SF Mono',Consolas,monospace;font-size:12px;background:#FAF7F2;padding:1px 6px;">affiliate_applications</code> in Supabase.
         </p>
       </td></tr>
     </table>

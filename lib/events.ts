@@ -42,17 +42,17 @@ export type EventMap = {
   /** Outbound: 6-month / 12-month alumni re-engagement email. */
   alumni_reengagement_sent: { month_mark: 6 | 12 };
   /** Affiliate link click (logged by /r/[slug]). */
-  affiliate_clicked: { partner_slug: string; link_id: string };
+  affiliate_clicked: { affiliate_slug: string; link_id: string };
   /** Affiliate attribution recorded (purchase matched to a click). */
   affiliate_attributed: {
-    partner_slug: string;
+    affiliate_slug: string;
     link_id: string;
     purchase_id: string;
     commission_cents: number;
   };
   /** Affiliate payout marked paid by founder. */
   affiliate_payout_paid: {
-    partner_slug: string;
+    affiliate_slug: string;
     payout_id: string;
     total_cents: number;
   };

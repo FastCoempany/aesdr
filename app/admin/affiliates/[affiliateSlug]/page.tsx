@@ -27,19 +27,19 @@ export default async function AffiliateDetailPage({
     supabase
       .from("affiliate_links")
       .select("id, slug, label, destination_url, active, expires_at, created_at")
-      .eq("partner_slug", affiliateSlug)
+      .eq("affiliate_slug", affiliateSlug)
       .order("created_at", { ascending: false }),
     supabase
       .from("affiliate_attributions")
       .select(
         "id, status, user_email, gross_amount_cents, commission_amount_cents, attributed_at, refund_window_closes_at, cleared_at, paid_at"
       )
-      .eq("partner_slug", affiliateSlug)
+      .eq("affiliate_slug", affiliateSlug)
       .order("attributed_at", { ascending: false }),
     supabase
       .from("affiliate_payouts")
       .select("id, period_start, period_end, total_commission_cents, status, payment_method, payment_reference, paid_at, created_at")
-      .eq("partner_slug", affiliateSlug)
+      .eq("affiliate_slug", affiliateSlug)
       .order("created_at", { ascending: false }),
   ]);
 

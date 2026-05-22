@@ -266,7 +266,7 @@ export async function POST(request: Request) {
       try {
         const { data: linkRow } = await supabase
           .from('affiliate_links')
-          .select('id, partner_slug')
+          .select('id, affiliate_slug')
           .eq('id', affiliateLinkId)
           .maybeSingle();
 
@@ -283,7 +283,7 @@ export async function POST(request: Request) {
             const { error: attrErr } = await supabase.from('affiliate_attributions').upsert(
               {
                 link_id: linkRow.id,
-                partner_slug: linkRow.partner_slug,
+                affiliate_slug: linkRow.affiliate_slug,
                 click_id: affiliateClickId || null,
                 purchase_id: purchaseRow.id,
                 user_email: email,
@@ -307,7 +307,7 @@ export async function POST(request: Request) {
               });
             } else {
               await logEvent('affiliate_attributed', {
-                partner_slug: linkRow.partner_slug,
+                affiliate_slug: linkRow.affiliate_slug,
                 link_id: linkRow.id,
                 purchase_id: purchaseRow.id,
                 commission_cents: commissionCents,

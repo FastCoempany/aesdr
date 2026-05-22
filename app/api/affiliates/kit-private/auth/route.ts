@@ -49,7 +49,7 @@ export async function GET(request: Request) {
   if (!verified.ok) {
     await logAccess({
       tokenId: null,
-      partnerSlug: "(unknown)",
+      affiliateSlug: "(unknown)",
       event: "denied",
       ipHash: meta.ipHash,
       userAgent: meta.userAgent,
@@ -64,7 +64,7 @@ export async function GET(request: Request) {
   if (!resolved) {
     await logAccess({
       tokenId: verified.tid,
-      partnerSlug: "(unknown)",
+      affiliateSlug: "(unknown)",
       event: "denied",
       ipHash: meta.ipHash,
       userAgent: meta.userAgent,
@@ -77,7 +77,7 @@ export async function GET(request: Request) {
 
   await logAccess({
     tokenId: resolved.tid,
-    partnerSlug: resolved.partner_slug,
+    affiliateSlug: resolved.affiliate_slug,
     event: "auth",
     ipHash: meta.ipHash,
     userAgent: meta.userAgent,

@@ -6,7 +6,7 @@
  * Canon: §1.6 (honesty), §10.5 (TCPA — N/A on hub), §13 (honest disqualification)
  * Five-question check: PASS — type-led, single iris CTA, no decorative icons.
  *
- * Posts to /api/affiliates/apply. Persists to partner_applications Supabase
+ * Posts to /api/affiliates/apply. Persists to affiliate_applications Supabase
  * table; optional email send when EMAIL_RECIPIENT env var is set on server.
  * Per Q6: graceful degradation if ESP not wired.
  */

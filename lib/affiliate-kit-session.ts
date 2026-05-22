@@ -27,7 +27,7 @@ export async function readKitSession(): Promise<KitSession | null> {
   if (isAdmin) {
     return {
       tid: "__admin__",
-      partner_slug: "__admin__",
+      affiliate_slug: "__admin__",
       partner_label: user?.email ? `Admin (${user.email})` : "Admin",
       expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
       revoked_at: null,

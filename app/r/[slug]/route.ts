@@ -38,7 +38,7 @@ export async function GET(
   const { data: link } = await supabase
     .from("affiliate_links")
     .select(
-      "id, partner_slug, destination_url, utm_source, utm_medium, utm_campaign, utm_content, active, expires_at"
+      "id, affiliate_slug, destination_url, utm_source, utm_medium, utm_campaign, utm_content, active, expires_at"
     )
     .eq("slug", slug)
     .maybeSingle();
@@ -71,7 +71,7 @@ export async function GET(
       .from("affiliate_clicks")
       .insert({
         link_id: link.id,
-        partner_slug: link.partner_slug,
+        affiliate_slug: link.affiliate_slug,
         ip_hash: ipHash,
         user_agent: ua,
         referrer,
@@ -86,7 +86,7 @@ export async function GET(
 
   await logEvent(
     "affiliate_clicked",
-    { partner_slug: link.partner_slug, link_id: link.id },
+    { affiliate_slug: link.affiliate_slug, link_id: link.id },
     { ipHash, userAgent: ua }
   );
 

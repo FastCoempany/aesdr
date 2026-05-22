@@ -9,7 +9,7 @@ function dollars(cents: number): string {
 }
 
 interface PerSlug {
-  partner_slug: string;
+  affiliate_slug: string;
   links: number;
   clicks: number;
   pendingCents: number;
@@ -22,28 +22,28 @@ export default async function AdminAffiliatesPage() {
   const supabase = createAdminClient();
 
   const [linksRes, clicksRes, attribRes] = await Promise.all([
-    supabase.from("affiliate_links").select("partner_slug, active"),
-    supabase.from("affiliate_clicks").select("partner_slug"),
+    supabase.from("affiliate_links").select("affiliate_slug, active"),
+    supabase.from("affiliate_clicks").select("affiliate_slug"),
     supabase
       .from("affiliate_attributions")
-      .select("partner_slug, status, commission_amount_cents"),
+      .select("affiliate_slug, status, commission_amount_cents"),
   ]);
 
   const linkCounts = new Map<string, number>();
   for (const l of linksRes.data ?? []) {
-    linkCounts.set(l.partner_slug, (linkCounts.get(l.partner_slug) ?? 0) + 1);
+    linkCounts.set(l.affiliate_slug, (linkCounts.get(l.affiliate_slug) ?? 0) + 1);
   }
 
   const clickCounts = new Map<string, number>();
   for (const c of clicksRes.data ?? []) {
-    clickCounts.set(c.partner_slug, (clickCounts.get(c.partner_slug) ?? 0) + 1);
+    clickCounts.set(c.affiliate_slug, (clickCounts.get(c.affiliate_slug) ?? 0) + 1);
   }
 
   const perSlug = new Map<string, PerSlug>();
   for (const a of attribRes.data ?? []) {
-    const slug = a.partner_slug;
+    const slug = a.affiliate_slug;
     const entry = perSlug.get(slug) ?? {
-      partner_slug: slug,
+      affiliate_slug: slug,
       links: linkCounts.get(slug) ?? 0,
       clicks: clickCounts.get(slug) ?? 0,
       pendingCents: 0,
@@ -63,7 +63,7 @@ export default async function AdminAffiliatesPage() {
   for (const slug of linkCounts.keys()) {
     if (!perSlug.has(slug)) {
       perSlug.set(slug, {
-        partner_slug: slug,
+        affiliate_slug: slug,
         links: linkCounts.get(slug) ?? 0,
         clicks: clickCounts.get(slug) ?? 0,
         pendingCents: 0,
@@ -198,16 +198,16 @@ export default async function AdminAffiliatesPage() {
                 >
                   No affiliates yet. Create the first one by setting{" "}
                   <code>user_metadata.is_affiliate = true</code> and{" "}
-                  <code>user_metadata.partner_slug = &quot;...&quot;</code>{" "}
+                  <code>user_metadata.affiliate_slug = &quot;...&quot;</code>{" "}
                   on a Supabase auth user, then have them sign in and
                   visit <code>/affiliates/dashboard/links</code>.
                 </td>
               </tr>
             )}
             {rows.map((r) => (
-              <tr key={r.partner_slug} style={{ borderBottom: "1px solid #E8E4DF" }}>
+              <tr key={r.affiliate_slug} style={{ borderBottom: "1px solid #E8E4DF" }}>
                 <td style={{ padding: "12px 14px" }}>
-                  <strong>{r.partner_slug}</strong>
+                  <strong>{r.affiliate_slug}</strong>
                 </td>
                 <td style={{ padding: "12px 14px" }}>{r.links}</td>
                 <td style={{ padding: "12px 14px" }}>{r.clicks}</td>
@@ -219,7 +219,7 @@ export default async function AdminAffiliatesPage() {
                 <td style={{ padding: "12px 14px", color: "#6B6B6B" }}>{r.refundedCount}</td>
                 <td style={{ padding: "12px 14px" }}>
                   <Link
-                    href={`/admin/affiliates/${r.partner_slug}`}
+                    href={`/admin/affiliates/${r.affiliate_slug}`}
                     style={{
                       fontFamily: "'Barlow Condensed',sans-serif",
                       fontSize: 12,

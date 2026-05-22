@@ -33,7 +33,7 @@ export async function GET(request: Request) {
   // the purchase is still active.
   const { data: eligible, error: queryErr } = await supabase
     .from("affiliate_attributions")
-    .select("id, purchase_id, partner_slug")
+    .select("id, purchase_id, affiliate_slug")
     .eq("status", "pending")
     .lte("refund_window_closes_at", nowIso)
     .limit(1000);

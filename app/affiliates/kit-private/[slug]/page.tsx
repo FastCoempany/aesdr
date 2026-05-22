@@ -52,7 +52,7 @@ export default async function PrivateKitDocPage(
     const meta = readRequestMeta(await headers());
     await logAccess({
       tokenId: session.tid,
-      partnerSlug: session.partner_slug,
+      affiliateSlug: session.affiliate_slug,
       event: "view",
       docSlug: slug,
       ipHash: meta.ipHash,
@@ -119,7 +119,7 @@ export default async function PrivateKitDocPage(
       />
 
       <CaveatLayer>
-        PS &mdash; {session.partner_label || session.partner_slug} &middot; access expires {new Date(session.expires_at).toLocaleDateString()}.
+        PS &mdash; {session.partner_label || session.affiliate_slug} &middot; access expires {new Date(session.expires_at).toLocaleDateString()}.
       </CaveatLayer>
     </HubPage>
   );

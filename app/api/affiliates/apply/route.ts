@@ -3,14 +3,14 @@
  * Spec: AESDR-AFFILIATE-HUB-SPEC.md §"Page 1.6 — /affiliates/apply"
  * Canon: §1.6 (honesty), §12 (founder backstage), §13
  *
- * Persists partner-application form submissions to the `partner_applications`
+ * Persists partner-application form submissions to the `affiliate_applications`
  * Supabase table, then notifies the founder via Resend (EMAIL_RECIPIENT).
  * Email failure does not fail the request — the row is the source of truth.
  */
 
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/utils/supabase/admin";
-import { sendPartnerApplicationNotification } from "@/lib/email";
+import { sendAffiliateApplicationNotification } from "@/lib/email";
 import crypto from "node:crypto";
 
 export const runtime = "nodejs";
@@ -90,7 +90,7 @@ export async function POST(request: Request) {
 
   const supabase = createAdminClient();
   const { error: insertError } = await supabase
-    .from("partner_applications")
+    .from("affiliate_applications")
     .insert({
       applicant_name: data.applicantName,
       audience_descriptor: data.audienceDescriptor,
@@ -115,7 +115,7 @@ export async function POST(request: Request) {
 
   // Fire-and-forget email notification. Failures are logged inside the helper
   // and never bubble up — the Supabase row is the source of truth.
-  void sendPartnerApplicationNotification({
+  void sendAffiliateApplicationNotification({
     applicantName: data.applicantName,
     audienceDescriptor: data.audienceDescriptor,
     primaryChannel: data.primaryChannel,

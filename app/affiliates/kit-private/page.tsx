@@ -59,7 +59,7 @@ export default async function PrivateKitIndex(
     const meta = readRequestMeta(await headers());
     await logAccess({
       tokenId: session.tid,
-      partnerSlug: session.partner_slug,
+      affiliateSlug: session.affiliate_slug,
       event: "view",
       docSlug: null,
       ipHash: meta.ipHash,
@@ -100,7 +100,7 @@ export default async function PrivateKitIndex(
             marginRight: "auto",
           }}
         >
-          Affiliate-only. {session.partner_label || session.partner_slug} &middot; access expires {new Date(session.expires_at).toLocaleDateString()}.
+          Affiliate-only. {session.partner_label || session.affiliate_slug} &middot; access expires {new Date(session.expires_at).toLocaleDateString()}.
         </p>
       </div>
 

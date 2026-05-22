@@ -12,7 +12,7 @@ type Result = { ok: true; data?: Record<string, unknown> } | { ok: false; error:
 
 /**
  * Create a new affiliate link for the calling user. The user must have
- * `is_affiliate: true` and `partner_slug` pinned on user_metadata. Slug
+ * `is_affiliate: true` and `affiliate_slug` pinned on user_metadata. Slug
  * is generated server-side; affiliate names the label only.
  */
 export async function createAffiliateLink(formData: FormData): Promise<Result> {
@@ -21,8 +21,8 @@ export async function createAffiliateLink(formData: FormData): Promise<Result> {
   if (!user) return { ok: false, error: "Sign in to manage links." };
 
   const isAffiliate = user.user_metadata?.is_affiliate === true;
-  const partnerSlug = user.user_metadata?.partner_slug as string | undefined;
-  if (!isAffiliate || !partnerSlug) {
+  const affiliateSlug = user.user_metadata?.affiliate_slug as string | undefined;
+  if (!isAffiliate || !affiliateSlug) {
     return { ok: false, error: "Your account isn't set up for the Partners program. Email hello@aesdr.com." };
   }
 
@@ -55,7 +55,7 @@ export async function createAffiliateLink(formData: FormData): Promise<Result> {
   for (let attempt = 0; attempt < 3; attempt++) {
     slug = generateSlug();
     const { error } = await admin.from("affiliate_links").insert({
-      partner_slug: partnerSlug,
+      affiliate_slug: affiliateSlug,
       slug,
       destination_url: parsedDest.toString(),
       utm_source,
@@ -98,7 +98,7 @@ export async function markPayoutPaid(formData: FormData): Promise<void> {
   const admin = createAdminClient();
   const { data: payout, error: getErr } = await admin
     .from("affiliate_payouts")
-    .select("id, partner_slug, total_commission_cents, attribution_ids, status")
+    .select("id, affiliate_slug, total_commission_cents, attribution_ids, status")
     .eq("id", payoutId)
     .maybeSingle();
   if (getErr || !payout) throw new Error("Payout not found.");
@@ -125,11 +125,11 @@ export async function markPayoutPaid(formData: FormData): Promise<void> {
   }
 
   await logEvent("affiliate_payout_paid", {
-    partner_slug: payout.partner_slug,
+    affiliate_slug: payout.affiliate_slug,
     payout_id: payout.id,
     total_cents: payout.total_commission_cents,
   });
 
   revalidatePath("/admin/affiliates");
-  revalidatePath(`/admin/affiliates/${payout.partner_slug}`);
+  revalidatePath(`/admin/affiliates/${payout.affiliate_slug}`);
 }

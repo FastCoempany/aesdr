@@ -59,7 +59,7 @@ export default async function AffiliatesDashboardPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/affiliates/dashboard");
 
-  const affiliateSlug = user.user_metadata?.partner_slug as string | undefined;
+  const affiliateSlug = user.user_metadata?.affiliate_slug as string | undefined;
   const isAffiliate = user.user_metadata?.is_affiliate === true;
   if (!isAffiliate || !affiliateSlug) {
     return (
@@ -81,23 +81,23 @@ export default async function AffiliatesDashboardPage() {
     admin
       .from("affiliate_links")
       .select("id, slug, label, destination_url, active, expires_at, created_at")
-      .eq("partner_slug", affiliateSlug)
+      .eq("affiliate_slug", affiliateSlug)
       .order("created_at", { ascending: false }),
     admin
       .from("affiliate_clicks")
       .select("id", { count: "exact", head: true })
-      .eq("partner_slug", affiliateSlug)
+      .eq("affiliate_slug", affiliateSlug)
       .gte("clicked_at", since30dIso),
     admin
       .from("affiliate_clicks")
       .select("id", { count: "exact", head: true })
-      .eq("partner_slug", affiliateSlug),
+      .eq("affiliate_slug", affiliateSlug),
     admin
       .from("affiliate_attributions")
       .select(
         "id, status, gross_amount_cents, commission_amount_cents, attributed_at, refund_window_closes_at, user_email"
       )
-      .eq("partner_slug", affiliateSlug)
+      .eq("affiliate_slug", affiliateSlug)
       .order("attributed_at", { ascending: false })
       .limit(50),
   ]);

@@ -13,7 +13,7 @@ import { mintToken, signToken } from "@/lib/affiliate-kit-tokens";
 
 type TokenRow = {
   id: string;
-  partner_slug: string;
+  affiliate_slug: string;
   partner_label: string | null;
   notes: string | null;
   issued_at: string;
@@ -25,7 +25,7 @@ type TokenRow = {
 type AccessRow = {
   id: string;
   token_id: string | null;
-  partner_slug: string;
+  affiliate_slug: string;
   doc_slug: string | null;
   event: "view" | "auth" | "denied";
   ip_hash: string | null;
@@ -36,7 +36,7 @@ type AccessRow = {
 
 async function mintAction(formData: FormData) {
   "use server";
-  const slug = String(formData.get("partnerSlug") || "").trim();
+  const slug = String(formData.get("affiliateSlug") || "").trim();
   const label = String(formData.get("partnerLabel") || "").trim();
   const notes = String(formData.get("notes") || "").trim();
   const days = Math.max(1, Math.min(365, Number(formData.get("days") || 90)));
@@ -47,7 +47,7 @@ async function mintAction(formData: FormData) {
   }
 
   await mintToken({
-    partnerSlug: slug,
+    affiliateSlug: slug,
     partnerLabel: label || undefined,
     notes: notes || undefined,
     expiresInDays: days,
@@ -119,7 +119,7 @@ export default async function AdminPartnerKit() {
           <label style={labelStyle}>
             <span>Partner slug *</span>
             <input
-              name="partnerSlug"
+              name="affiliateSlug"
               required
               placeholder="acme-newsletter"
               pattern="^[a-z0-9-]+$"
@@ -185,8 +185,8 @@ export default async function AdminPartnerKit() {
                   return (
                     <tr key={t.id} style={{ borderBottom: "1px solid #E8E4DF" }}>
                       <td style={tdStyle}>
-                        <div style={{ fontWeight: 700 }}>{t.partner_label || t.partner_slug}</div>
-                        <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: "#6B6B6B" }}>{t.partner_slug}</div>
+                        <div style={{ fontWeight: 700 }}>{t.partner_label || t.affiliate_slug}</div>
+                        <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, color: "#6B6B6B" }}>{t.affiliate_slug}</div>
                         {t.notes && <div style={{ fontSize: 12, color: "#6B6B6B", fontStyle: "italic", marginTop: 4 }}>{t.notes}</div>}
                       </td>
                       <td style={tdStyle}>{fmt(t.issued_at)}</td>
@@ -247,7 +247,7 @@ export default async function AdminPartnerKit() {
                 {access.map((a) => (
                   <tr key={a.id} style={{ borderBottom: "1px solid #E8E4DF" }}>
                     <td style={tdStyle}>{fmt(a.accessed_at)}</td>
-                    <td style={tdStyle}>{a.partner_slug}</td>
+                    <td style={tdStyle}>{a.affiliate_slug}</td>
                     <td style={tdStyle}>
                       <span style={statusStyle(a.event === "denied" ? "revoked" : a.event === "auth" ? "active" : "active")}>{a.event}</span>
                     </td>

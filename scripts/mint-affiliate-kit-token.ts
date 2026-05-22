@@ -47,7 +47,7 @@ async function main() {
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com";
   const result = await mintToken({
-    partnerSlug: slug,
+    affiliateSlug: slug,
     partnerLabel: label,
     notes,
     expiresInDays: days,
@@ -56,7 +56,7 @@ async function main() {
   const url = `${baseUrl}/affiliates/kit-private?t=${result.signed}`;
   console.log("");
   console.log("Token minted:");
-  console.log(`  partner_slug:  ${slug}`);
+  console.log(`  affiliate_slug:  ${slug}`);
   if (label) console.log(`  partner_label: ${label}`);
   console.log(`  expires_at:    ${result.expiresAt.toISOString()}`);
   console.log(`  tid:           ${result.tid}`);
