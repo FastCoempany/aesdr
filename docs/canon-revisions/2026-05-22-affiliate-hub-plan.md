@@ -21,12 +21,24 @@
 3. **Brand-conformance gate.** First **3 pieces** of affiliate marketing
    copy reviewed and approved by AESDR before going live. Inherits the
    canon §16 approval workflow already in use for partner pilots.
+   - **v1 exit criterion:** Option A — 3 approvals → exits the gate (no
+     calendar-time requirement).
+   - **v1.1 exit criterion:** sophistication-toggle hybrid — `proven`
+     affiliates exit at 3 approvals (Option A); `developing` affiliates
+     need 3 approvals AND 30 days elapsed (Option B). Tier set at D27
+     vetting, founder-overridable. See §10 for the schema + workflow.
 4. **Tracking.** Hybrid model: **HMAC-signed link** as source of truth,
    **UTMs layered for GA4 reporting**. Per-affiliate signed link at
    `aesdr.com/r/{token}`, 30-day attribution cookie, last-touch UTM
    fallback if cookie cleared.
 5. **Dashboards.** Two — affiliate-facing (per spec §3 below) and
    admin-facing (per spec §4 below).
+
+**Additional ratifications (2026-05-22):**
+
+- **Payment processor:** Stripe Connect Standard for v1.
+- **Multi-touch attribution model:** last-cookie-wins as default (industry standard); revisit after first 10 attributions.
+- **Public AESDR-side affiliate disclosure:** footer line injected on every page when `aesdr_aff` cookie is present, per FTC norms.
 
 ---
 
@@ -447,7 +459,22 @@ After Phase 5: end-to-end ready for live affiliate onboarding.
   standard) vs first-touch (cleaner for the affiliate who introduced the
   buyer). Default: last-cookie-wins; revisit after first 10 attributions.
 - **What happens to currently-pending partner-kit deliverables (the D-series docs that say "partner pilot agreement")?** Per the rename plan, body content rewrites "partner" → "affiliate" in those docs; the workflow itself remains intact.
-- **Brand-conformance gate exit criteria.** First 3 pieces approved → exits the gate. Alternative: 3 pieces AND a 30-day window. Default: just the 3 pieces; affiliates who can post 3 approved pieces in week 1 can graduate immediately.
+- **Brand-conformance gate exit criteria.** First 3 pieces approved → exits the gate. Alternative: 3 pieces AND a 30-day window. **Default: Option A (just 3 pieces) for v1; sophistication-toggle hybrid baked into the schema for v1.1.**
+
+  **Sophistication-toggle hybrid (v1.1):** The `affiliates` table carries a `sophistication_tier` field set at D27 vetting:
+  - `proven` — established operator with track record (verified prior commercial work, existing creator with demonstrated brand-fit) → path A exit (3 approvals only).
+  - `developing` — newcomer, unproven, lower D27 score, or any compliance flag during vetting → path B exit (3 approvals AND 30 days elapsed).
+
+  Founder sets the tier during vetting; can override mid-program if behavior warrants moving up or down. v1 ships with `proven` as the universal default (effectively running Option A everywhere) until the toggle UI is built; v1.1 surfaces the toggle in the admin vetting flow and respects path B for `developing`-tier affiliates.
+
+  Schema change in `affiliates` migration:
+  ```sql
+  alter table affiliates
+    add column sophistication_tier text default 'proven'
+    check (sophistication_tier in ('proven','developing'));
+  ```
+
+  Phase 4 (lifecycle automation) adds the conditional logic: if `sophistication_tier = 'developing'` AND `(approved_count < 3 OR (now() - joined_at) < interval '30 days')`, the affiliate stays in the gate; otherwise they exit.
 - **Public-facing affiliate disclosure on `aesdr.com`.** Per FTC, AESDR's own surfaces also disclose the commission relationship. Default: footer line on every page that's reachable from an affiliate link — *"AESDR runs an affiliate program. Some links to this site carry commission for the referring affiliate."* Implementation in middleware: detect `aesdr_aff` cookie, inject footer disclosure when cookie present.
 
 ---

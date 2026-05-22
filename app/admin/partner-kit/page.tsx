@@ -9,7 +9,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/utils/supabase/admin";
-import { mintToken, signToken } from "@/lib/partner-kit-tokens";
+import { mintToken, signToken } from "@/lib/affiliate-kit-tokens";
 
 type TokenRow = {
   id: string;

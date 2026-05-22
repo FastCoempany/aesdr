@@ -77,8 +77,8 @@ export async function createAffiliateLink(formData: FormData): Promise<Result> {
     return { ok: false, error: "Couldn't create the link. Try again." };
   }
 
-  revalidatePath("/partners/dashboard");
-  revalidatePath("/partners/dashboard/links");
+  revalidatePath("/affiliates/dashboard");
+  revalidatePath("/affiliates/dashboard/links");
   return { ok: true, data: { slug } };
 }
 

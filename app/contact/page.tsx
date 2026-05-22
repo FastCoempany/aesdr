@@ -80,7 +80,7 @@ export default function ContactPage() {
           early-career AEs and SDRs and want to explore a partner pilot, the
           partner-side page is at{" "}
           <a
-            href="/partners"
+            href="/affiliates"
             style={{ color: "var(--crimson)", textDecoration: "underline" }}
           >
             /partners

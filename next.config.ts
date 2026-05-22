@@ -5,6 +5,16 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/*": ["./content/lessons/html/**/*", "./tools/standalone-html/**/*"],
   },
+  async redirects() {
+    // Permanent 301 redirects from the legacy /partners/* namespace to
+    // /affiliates/* per docs/canon-revisions/2026-05-22-partners-to-affiliates-rename-plan.md.
+    // Preserves SEO equity, keeps existing bookmarks + in-flight partner-kit
+    // email links working, gives external referrers a clean signal to update.
+    return [
+      { source: "/partners", destination: "/affiliates", permanent: true },
+      { source: "/partners/:path*", destination: "/affiliates/:path*", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

@@ -18,10 +18,7 @@
  * Output: one line per unit with axis scores + total /12 + mapped /10.
  */
 
-import { readFile } from "node:fs/promises";
-import { glob } from "node:fs/promises";
-import path from "node:path";
-import { readdir } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 
 const ROOT = process.cwd();
 const LESSONS = `${ROOT}/content/lessons/html`;
