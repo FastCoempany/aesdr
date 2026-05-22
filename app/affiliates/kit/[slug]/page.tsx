@@ -21,7 +21,7 @@ import {
   KIT_ENTRIES,
   getKitEntry,
   getKitEntryHtml,
-} from "@/lib/partner-kit";
+} from "@/lib/affiliate-kit";
 import "./kit-prose.css";
 
 type Params = { slug: string };

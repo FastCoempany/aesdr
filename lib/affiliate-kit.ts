@@ -1,8 +1,8 @@
 /**
- * Partner kit catalog. Maps URL slugs → markdown source + metadata.
+ * Affiliate kit catalog. Maps URL slugs → markdown source + metadata.
  *
  * The kit lives on-site (rendered, not downloaded) per founder direction
- * 2026-05-07. Each entry below renders at /partners/kit/[slug] using the
+ * 2026-05-07. Each entry below renders at /affiliates/kit/[slug] using the
  * markdown source under content/partner-kit/.
  *
  * Public-vs-gate boundary (ratified 2026-05-09): this catalog only contains

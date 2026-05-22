@@ -18,28 +18,28 @@ function dateShort(iso: string | null | undefined): string {
 export default async function AffiliateDetailPage({
   params,
 }: {
-  params: Promise<{ partnerSlug: string }>;
+  params: Promise<{ affiliateSlug: string }>;
 }) {
-  const { partnerSlug } = await params;
+  const { affiliateSlug } = await params;
   const supabase = createAdminClient();
 
   const [linksRes, attribRes, payoutRes] = await Promise.all([
     supabase
       .from("affiliate_links")
       .select("id, slug, label, destination_url, active, expires_at, created_at")
-      .eq("partner_slug", partnerSlug)
+      .eq("partner_slug", affiliateSlug)
       .order("created_at", { ascending: false }),
     supabase
       .from("affiliate_attributions")
       .select(
         "id, status, user_email, gross_amount_cents, commission_amount_cents, attributed_at, refund_window_closes_at, cleared_at, paid_at"
       )
-      .eq("partner_slug", partnerSlug)
+      .eq("partner_slug", affiliateSlug)
       .order("attributed_at", { ascending: false }),
     supabase
       .from("affiliate_payouts")
       .select("id, period_start, period_end, total_commission_cents, status, payment_method, payment_reference, paid_at, created_at")
-      .eq("partner_slug", partnerSlug)
+      .eq("partner_slug", affiliateSlug)
       .order("created_at", { ascending: false }),
   ]);
 
@@ -70,7 +70,7 @@ export default async function AffiliateDetailPage({
           marginBottom: 24,
         }}
       >
-        {partnerSlug}
+        {affiliateSlug}
       </h1>
 
       {/* Cleared-ready payout helper */}

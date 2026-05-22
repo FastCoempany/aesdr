@@ -101,15 +101,15 @@ const eslintConfig = defineConfig([
   // Excludes lib/ (helpers, not buyer-facing strings) and tests.
   // Also excludes meta-reference surfaces that legitimately quote
   // banned vocabulary as their core function: the disqualification
-  // page lists what gets you rejected; the partner-side play game
+  // page lists what gets you rejected; the affiliate-side play game
   // teaches recognising bad copy vs canon-aligned copy.
   {
     files: ["app/**/*.{ts,tsx}", "components/**/*.{ts,tsx}"],
     ignores: [
       "app/**/*.test.{ts,tsx}",
       "components/**/*.test.{ts,tsx}",
-      "app/partners/who-we-dont-work-with/**",
-      "components/partners/PlayGame.tsx",
+      "app/affiliates/who-we-dont-work-with/**",
+      "components/affiliates/PlayGame.tsx",
     ],
     rules: {
       "no-restricted-syntax": ["warn", ...buildCanonRules()],

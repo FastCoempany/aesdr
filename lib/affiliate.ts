@@ -18,7 +18,7 @@ export const VISITOR_COOKIE = "aesdr_visitor";
 /** Attribution window from first click. */
 export const ATTRIBUTION_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
 
-/** Refund window after purchase (matches /partners/payments copy). */
+/** Refund window after purchase (matches /affiliates/payments copy). */
 export const REFUND_WINDOW_MS = 14 * 24 * 60 * 60 * 1000;
 
 /** Default commission rate on the consumer-side affiliate program. */

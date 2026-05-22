@@ -8,7 +8,7 @@
  */
 
 import Link from "next/link";
-import { KIT_CATEGORIES, KIT_ENTRIES } from "@/lib/partner-kit";
+import { KIT_CATEGORIES, KIT_ENTRIES } from "@/lib/affiliate-kit";
 
 export function KitIndexList() {
   return (
