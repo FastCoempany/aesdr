@@ -212,17 +212,16 @@ export async function sendAffiliateOnboardingEmail(args: {
   sophisticationTier: "developing" | "proven";
 }): Promise<boolean> {
   const gateRequirement = args.sophisticationTier === "proven" ? 1 : 3;
+  const pieceWord = gateRequirement === 1 ? "piece" : "pieces";
   const body = `
-        <p style="margin:0 0 16px;">${esc(args.displayName)} — welcome to the AESDR Affiliate Program.</p>
-        <p style="margin:0 0 16px;">Your affiliate handle is <code style="font-family:'SF Mono',Consolas,monospace;font-size:14px;background:#FAF7F2;padding:1px 6px;">${esc(args.slug)}</code>. Tracking links you create route through <code style="font-family:'SF Mono',Consolas,monospace;font-size:14px;background:#FAF7F2;padding:1px 6px;">${esc(SITE)}/r/&lt;your-slug&gt;</code>.</p>
-        <p style="margin:0 0 16px;">Before your first piece goes public, drop the draft into the dashboard's <strong>Submit copy</strong> page. We review the first ${gateRequirement} ${gateRequirement === 1 ? "piece" : "pieces"} for brand fit — palette, claims, FTC disclosure, the usual. After that, you post freely.</p>
-        <p style="margin:0;">Commission is 30% of net revenue on enrolments attributed to your link within 30 days. Refund window is 14 days; commission clears once it closes.</p>
+        <p style="margin:0 0 16px;">${esc(args.displayName)}, you're set up under the handle <code style="font-family:'SF Mono',Consolas,monospace;font-size:14px;background:#FAF7F2;padding:1px 6px;">${esc(args.slug)}</code> — that's the suffix on every tracking link you'll create.</p>
+        <p style="margin:0;">Your first ${gateRequirement} ${pieceWord} run through a quick brand-fit check from the dashboard's <strong>Submit copy</strong> page. After that, you post freely.</p>
   `;
   return safeSend(`affiliate-onboarding to ${args.to}`, () =>
     getResend().emails.send({
       from: FROM,
       to: args.to,
-      subject: "Welcome to the AESDR Affiliate Program",
+      subject: "You're in — AESDR Affiliate Program",
       html: affiliateShellHtml({
         eyebrow: "AESDR · Affiliates",
         headline: "You're in.",
@@ -231,14 +230,9 @@ export async function sendAffiliateOnboardingEmail(args: {
         ctaLabel: "Open the dashboard",
       }),
       text: [
-        `${args.displayName} — welcome to the AESDR Affiliate Program.`,
+        `${args.displayName}, you're set up under the handle ${args.slug} — that's the suffix on every tracking link you'll create.`,
         ``,
-        `Your handle: ${args.slug}`,
-        `Tracking links: ${SITE}/r/<your-slug>`,
-        ``,
-        `Submit your first ${gateRequirement} ${gateRequirement === 1 ? "piece" : "pieces"} via the dashboard's "Submit copy" page for brand-fit review. After that, you post freely.`,
-        ``,
-        `Commission: 30% of net revenue, 30-day attribution window, 14-day refund window.`,
+        `Your first ${gateRequirement} ${pieceWord} run through a quick brand-fit check from the dashboard's "Submit copy" page. After that, you post freely.`,
         ``,
         `Open the dashboard: ${SITE}/affiliates/dashboard`,
       ].join("\n"),
@@ -345,8 +339,13 @@ export async function sendAffiliateGateClearedEmail(args: {
 }): Promise<boolean> {
   const body = `
         <p style="margin:0 0 16px;">${esc(args.displayName)} — gate cleared. You're off the brand-conformance review queue.</p>
-        <p style="margin:0 0 16px;">From here on, post freely. You can still ping us before a big push if you want a sanity check, but it's not required.</p>
-        <p style="margin:0;">Tracking and commission keep running as normal. The dashboard is your home base.</p>
+        <p style="margin:0 0 24px;">Post freely from here on. You can still send a draft for a sanity check before a big push, but it's not required.</p>
+        <p style="margin:0 0 12px;font-family:'SF Mono',Consolas,monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#6B6B6B;">How the money works now</p>
+        <ul style="margin:0;padding:0 0 0 20px;font-family:Georgia,'Source Serif 4',serif;font-size:15px;line-height:1.7;color:#1A1A1A;">
+          <li style="margin-bottom:6px;">30% of net revenue on any enrolment attributed to your link</li>
+          <li style="margin-bottom:6px;">30-day attribution window from a visitor's first click</li>
+          <li style="margin-bottom:0;">14-day refund window — commission clears the moment it closes, then ships in the next payout batch</li>
+        </ul>
   `;
   return safeSend(`affiliate-gate-cleared to ${args.to}`, () =>
     getResend().emails.send({
@@ -360,7 +359,18 @@ export async function sendAffiliateGateClearedEmail(args: {
         ctaUrl: `${SITE}/affiliates/dashboard`,
         ctaLabel: "Open the dashboard",
       }),
-      text: `${args.displayName} — gate cleared. Post freely from here on. Dashboard: ${SITE}/affiliates/dashboard`,
+      text: [
+        `${args.displayName} — gate cleared. You're off the brand-conformance review queue.`,
+        ``,
+        `Post freely from here on. You can still send a draft for a sanity check before a big push, but it's not required.`,
+        ``,
+        `How the money works now:`,
+        `  - 30% of net revenue on any enrolment attributed to your link`,
+        `  - 30-day attribution window from a visitor's first click`,
+        `  - 14-day refund window — commission clears the moment it closes, then ships in the next payout batch`,
+        ``,
+        `Dashboard: ${SITE}/affiliates/dashboard`,
+      ].join("\n"),
     })
   );
 }
