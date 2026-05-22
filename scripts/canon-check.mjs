@@ -16,6 +16,12 @@
  *   - content/partner-kit/banned-vocabulary.md
  *   - any file with "canon" in the path
  *
+ * Per-line carve-outs (curriculum pedagogical examples, attestations):
+ *   - LINE_EXEMPTIONS table below holds specific (file, line, match)
+ *     triples. Each suppresses exactly one hit. If the line drifts,
+ *     the exemption stops matching and the hit reappears — this is
+ *     the intended self-healing behavior.
+ *
  * Each pattern is a regex executed case-insensitively. Hits print as
  * `path:line:column  pattern  hint` (parseable by editor jump-to-line).
  */
@@ -93,6 +99,44 @@ const SKIP_FILE_PATTERNS = [
   /\.test\.(md|mdx)$/,
 ];
 
+// Per-line exemptions — specific (file, line, matched-text) triples that
+// are documented canonical carve-outs (curriculum pedagogical examples,
+// attestations per Appendix E-P3, etc.). Each entry suppresses exactly
+// one hit; if the line drifts, the exemption stops matching and the
+// hit comes back — that is the intended self-healing behavior.
+//
+// Add new exemptions only with a `reason` that names the canon section
+// or appendix that authorizes the carve-out.
+const LINE_EXEMPTIONS = [
+  {
+    file: "content/lessons/html/lesson-01/aesdr_course01_v1.html",
+    line: 1656,
+    match: "kills",
+    reason: "Appendix E-P3 attest-text carve-out: 'complacency kills careers' is the AE/SDR's own attestation in the Day-4 debrief gate. The banned-verb register is intentional — this is the student writing what they actually feel, not the brand voice.",
+  },
+  {
+    file: "content/lessons/html/lesson-09/aesdr_course09_2_v1.html",
+    line: 1602,
+    match: "circle back",
+    reason: "Pedagogical example: the section teaches AEs/SDRs to replace 'Let's circle back' with direct deadline-driven Slack messages. Quoting the banned phrase to refute it is the lesson's point.",
+  },
+  {
+    file: "content/lessons/html/lesson-09/aesdr_course09_2_v1.html",
+    line: 1841,
+    match: "circle back",
+    reason: "Pedagogical example: same Slack-discipline section, gate prompt template showing before-and-after rewrites of vague messages. The 'Before: Let's circle back on this.' is the negative example the student replaces.",
+  },
+];
+
+function isExempt(rel, lineNum, matchedText) {
+  return LINE_EXEMPTIONS.some(
+    (ex) =>
+      ex.file === rel &&
+      ex.line === lineNum &&
+      ex.match.toLowerCase() === matchedText.toLowerCase(),
+  );
+}
+
 async function walk(dir) {
   const out = [];
   let entries;
@@ -134,13 +178,15 @@ async function scan(file) {
       pattern.lastIndex = 0;
       let m;
       while ((m = pattern.exec(line)) !== null) {
-        hits.push({
-          file: rel,
-          line: i + 1,
-          col: m.index + 1,
-          match: m[0],
-          hint,
-        });
+        if (!isExempt(rel, i + 1, m[0])) {
+          hits.push({
+            file: rel,
+            line: i + 1,
+            col: m.index + 1,
+            match: m[0],
+            hint,
+          });
+        }
         if (pattern.lastIndex === m.index) pattern.lastIndex++;
       }
     }
