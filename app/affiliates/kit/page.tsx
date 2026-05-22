@@ -1,11 +1,11 @@
 /**
- * Page: /partners/kit
- * Spec: AESDR-PARTNER-HUB-SPEC.md §"Page 1.4"
+ * Page: /affiliates/kit
+ * Spec: AESDR-AFFILIATE-HUB-SPEC.md §"Page 1.4"
  * Canon: §1.4 (borrowed trust = merciless mirror — kit is open, not gated)
- * Copy sources: content/partner-kit/*.md (rendered on-site at /partners/kit/[slug])
+ * Copy sources: content/affiliate-kit/*.md (rendered on-site at /affiliates/kit/[slug])
  *
  * Per founder direction 2026-05-07: the kit lives on-site as rendered pages,
- * not downloadable PDFs. Per-partner items (lockup compositions, signed
+ * not downloadable PDFs. Per-affiliate items (lockup compositions, signed
  * agreement, tracking links scoped to a slug) are gated by signing.
  */
 
@@ -15,7 +15,7 @@ import { MonoEyebrow, HubCTA, CaveatLayer } from "@/components/affiliates/HubEle
 import { KitIndexList } from "@/components/affiliates/KitIndexList";
 
 export const metadata: Metadata = {
-  title: "Partner Kit · AESDR",
+  title: "Affiliate Kit · AESDR",
   description:
     "The kit, in advance. Most affiliate programs gate the kit behind an application. We don't.",
 };
@@ -24,7 +24,7 @@ export default function KitPage() {
   return (
     <HubPage>
       <div style={{ padding: "64px 24px 0" }}>
-        <MonoEyebrow>AESDR · PARTNER KIT · OPEN</MonoEyebrow>
+        <MonoEyebrow>AESDR · AFFILIATE KIT · OPEN</MonoEyebrow>
         <h1
           style={{
             fontFamily: "var(--display)",
@@ -53,14 +53,14 @@ export default function KitPage() {
             marginRight: "auto",
           }}
         >
-          The full partner kit, readable before you apply. Positioning, claim limits, disclosure language, lockup rules &mdash; everything you&rsquo;d need to evaluate whether the partnership makes sense for your audience.
+          The full affiliate kit, readable before you apply. Positioning, claim limits, disclosure language, lockup rules &mdash; everything you&rsquo;d need to evaluate whether the partnership makes sense for your audience.
         </p>
       </div>
 
       <KitIndexList />
 
       <div style={{ padding: "96px 24px 0" }}>
-        <HubCTA href="/affiliates/apply">Request a partner conversation →</HubCTA>
+        <HubCTA href="/affiliates/apply">Request a affiliate conversation →</HubCTA>
       </div>
 
       <CaveatLayer>

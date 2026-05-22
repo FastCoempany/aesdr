@@ -2,7 +2,7 @@
  * Component: CatalogTeaserGrid + ToolStrip
  * Spec: AESDR-PARTNER-HUB-SPEC.md §"Page 1.1" item 5, §"Page 1.3"
  * Canon: §6.3 (white-panel-on-cream pattern), §3.2 (Caveat = Michael only)
- * Copy sources: docs/partner/D31-curriculum-map.md (catalog cards verbatim);
+ * Copy sources: docs/affiliate/D31-curriculum-map.md (catalog cards verbatim);
  *               app/syllabus/page.tsx (call numbers, questions, annotations, stamps)
  * Five-question check: PASS
  */

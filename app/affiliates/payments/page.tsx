@@ -1,5 +1,5 @@
 /**
- * Page: /partners/payments
+ * Page: /affiliates/payments
  * Payment mechanics in plain English. Phase 2 build.
  */
 
@@ -8,16 +8,16 @@ import { HubPage } from "@/components/affiliates/HubChrome";
 import { MonoEyebrow, HubCTA, CaveatLayer } from "@/components/affiliates/HubElements";
 
 export const metadata: Metadata = {
-  title: "Payments · AESDR Partners",
+  title: "Payments · AESDR Affiliates",
   description:
-    "How and when partner commissions clear, plus payment methods, tax forms, refund handling, and minimums — all in plain English rather than legalese.",
+    "How and when affiliate commissions clear, plus payment methods, tax forms, refund handling, and minimums — all in plain English rather than legalese.",
 };
 
 export default function PaymentsPage() {
   return (
     <HubPage>
       <div style={{ padding: "64px 24px 0" }}>
-        <MonoEyebrow>AESDR · PARTNERS · PAYMENTS</MonoEyebrow>
+        <MonoEyebrow>AESDR · AFFILIATES · PAYMENTS</MonoEyebrow>
         <h1
           style={{
             fontFamily: "var(--display)",
@@ -84,16 +84,16 @@ export default function PaymentsPage() {
 
         <Block label="Payment methods">
           <p style={pStyle}>
-            ACH (US bank), Wise (international), or PayPal. We&rsquo;ll ask which you prefer when you sign. Stripe Connect partner payouts coming later in 2026; we&rsquo;ll migrate existing partners with no change to commission terms.
+            ACH (US bank), Wise (international), or PayPal. We&rsquo;ll ask which you prefer when you sign. Stripe Connect affiliate payouts coming later in 2026; we&rsquo;ll migrate existing affiliates with no change to commission terms.
           </p>
         </Block>
 
         <Block label="Tax forms">
           <p style={pStyle}>
-            US partners: we&rsquo;ll send a W-9 to fill out at signing. 1099-NEC issued in January for the prior tax year if total commissions cross $600.
+            US affiliates: we&rsquo;ll send a W-9 to fill out at signing. 1099-NEC issued in January for the prior tax year if total commissions cross $600.
           </p>
           <p style={pStyle}>
-            Non-US partners: W-8BEN at signing. No US tax withholding applies for most non-US individuals on commission income; we&rsquo;ll handle the paperwork either way.
+            Non-US affiliates: W-8BEN at signing. No US tax withholding applies for most non-US individuals on commission income; we&rsquo;ll handle the paperwork either way.
           </p>
         </Block>
 
@@ -114,10 +114,10 @@ export default function PaymentsPage() {
 
         <Block label="The $500 sign-on bonus (Cohort 1)">
           <p style={pStyle}>
-            For partners we specifically invite to Pilot Cohort 1: $500 paid within 5 business days of agreement signing, via your stated payment method. Counted as separate from pilot commission, not subtracted from it. Reported as 1099-MISC income.
+            For affiliates we specifically invite to Pilot Cohort 1: $500 paid within 5 business days of agreement signing, via your stated payment method. Counted as separate from pilot commission, not subtracted from it. Reported as 1099-MISC income.
           </p>
           <p style={pStyle}>
-            <em>Why it exists:</em> Most affiliate programs ask partners to take all the trust risk &mdash; promote first, see if we pay. The sign-on inverts that. We have skin in the game from day one, not just you.
+            <em>Why it exists:</em> Most affiliate programs ask affiliates to take all the trust risk &mdash; promote first, see if we pay. The sign-on inverts that. We have skin in the game from day one, not just you.
           </p>
         </Block>
 
@@ -129,7 +129,7 @@ export default function PaymentsPage() {
       </section>
 
       <div style={{ padding: "96px 24px 0" }}>
-        <HubCTA href="/affiliates/apply">Request a partner conversation →</HubCTA>
+        <HubCTA href="/affiliates/apply">Request a affiliate conversation →</HubCTA>
       </div>
 
       <CaveatLayer>

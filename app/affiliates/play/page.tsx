@@ -1,6 +1,6 @@
 /**
- * Page: /partners/play (NEW per Q4 ratification 2026-05-04)
- * Spec: AESDR-PARTNER-HUB-SPEC.md §[4] item 7 (build prompt addition)
+ * Page: /affiliates/play (NEW per Q4 ratification 2026-05-04)
+ * Spec: AESDR-AFFILIATE-HUB-SPEC.md §[4] item 7 (build prompt addition)
  * Canon: §1.5 (real operator), §1.6 (honesty), §3.1/§3.2 (the two voices), §4.1 (banned vocab)
  * Five-question check: PASS — game uses real canonical statements + real banned-vocab cliches; no SaaS-game energy; cream + ink + crimson; no congratulatory overlays.
  *
@@ -16,7 +16,7 @@ import { MonoEyebrow, CaveatLayer } from "@/components/affiliates/HubElements";
 import { PlayGame } from "@/components/affiliates/PlayGame";
 
 export const metadata: Metadata = {
-  title: "Signal or Noise · AESDR Partners",
+  title: "Signal or Noise · AESDR Affiliates",
   description:
     "A 60-second judgment game where 12 statements fly past and you zap the noise while letting the signal pass — the game itself teaches the AESDR canon by making you play it.",
 };

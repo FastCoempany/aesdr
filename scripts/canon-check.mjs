@@ -13,7 +13,7 @@
  * Skipped surfaces (canon docs that DESCRIBE the banned terms):
  *   - docs/canon-revisions/**
  *   - AFFILIATE_BRAND_CANON.md (describes partner-side banned vocab)
- *   - content/partner-kit/banned-vocabulary.md
+ *   - content/affiliate-kit/banned-vocabulary.md
  *   - any file with "canon" in the path
  *
  * Per-line carve-outs (curriculum pedagogical examples, attestations):
@@ -88,11 +88,11 @@ const SKIP_DIRS = new Set([
 const SKIP_FILE_PATTERNS = [
   /docs\/canon-revisions\//,
   /^AFFILIATE_BRAND_CANON\.md$/,
-  /content\/partner-kit\/banned-vocabulary\.md$/,
+  /content\/affiliate-kit\/banned-vocabulary\.md$/,
   /content\/aesdr-internal\/00-canon-excerpt\.md$/,
   /content\/aesdr-internal\/D20-claims-sheet\.md$/,
-  /docs\/partner\/D20-claims-sheet\.md$/,
-  /docs\/partner\/kit-template\/00-canon-excerpt\.md$/,
+  /docs\/affiliate\/D20-claims-sheet\.md$/,
+  /docs\/affiliate\/kit-template\/00-canon-excerpt\.md$/,
   /\.github\/pull_request_template\.md$/,
   /^AGENTS\.md$/,
   /^www\.aesdr\.com-\d{8}T\d{6}\.html$/,

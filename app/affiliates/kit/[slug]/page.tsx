@@ -1,13 +1,13 @@
 /**
- * Page: /partners/kit/[slug]
- * Spec: AESDR-PARTNER-HUB-SPEC.md §"Page 1.4 — /partners/kit"
+ * Page: /affiliates/kit/[slug]
+ * Spec: AESDR-AFFILIATE-HUB-SPEC.md §"Page 1.4 — /affiliates/kit"
  * Canon: §1.4 (borrowed trust = merciless mirror — kit is open, not gated)
  *
- * Renders one partner-kit document as an on-site page. Source markdown lives
- * in content/partner-kit/. The catalog (slug → file) is in lib/partner-kit.ts.
+ * Renders one affiliate-kit document as an on-site page. Source markdown lives
+ * in content/affiliate-kit/. The catalog (slug → file) is in lib/affiliate-kit.ts.
  *
  * Per founder direction 2026-05-07: kit content lives on-site, not as PDFs.
- * Per-partner items (lockup SVGs scoped to a partner mark, signed agreement,
+ * Per-affiliate items (lockup SVGs scoped to a affiliate mark, signed agreement,
  * tracking links scoped to a slug) arrive after signing and are not part
  * of this public surface.
  */
@@ -35,9 +35,9 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { slug } = await params;
   const entry = getKitEntry(slug);
-  if (!entry) return { title: "Not found · AESDR Partners" };
+  if (!entry) return { title: "Not found · AESDR Affiliates" };
   return {
-    title: `${entry.title} · AESDR Partner Kit`,
+    title: `${entry.title} · AESDR Affiliate Kit`,
     description: entry.description,
   };
 }
@@ -54,7 +54,7 @@ export default async function KitDocPage(
   return (
     <HubPage>
       <div style={{ padding: "64px 24px 0", maxWidth: 880, margin: "0 auto" }}>
-        <MonoEyebrow>AESDR · PARTNER KIT · {entry.category.toUpperCase()}</MonoEyebrow>
+        <MonoEyebrow>AESDR · AFFILIATE KIT · {entry.category.toUpperCase()}</MonoEyebrow>
         <h1
           style={{
             fontFamily: "var(--display)",
@@ -105,11 +105,11 @@ export default async function KitDocPage(
       />
 
       <div style={{ padding: "96px 24px 0" }}>
-        <HubCTA href="/affiliates/apply">Request a partner conversation →</HubCTA>
+        <HubCTA href="/affiliates/apply">Request a affiliate conversation →</HubCTA>
       </div>
 
       <CaveatLayer>
-        PS — This page is the kit document itself. Per-partner items (your tracking links, your AESDR × Partner lockup compositions, the partnership agreement) arrive after signing.
+        PS — This page is the kit document itself. Per-affiliate items (your tracking links, your AESDR × Affiliate lockup compositions, the partnership agreement) arrive after signing.
       </CaveatLayer>
     </HubPage>
   );

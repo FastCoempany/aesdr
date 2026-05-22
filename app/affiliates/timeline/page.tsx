@@ -1,5 +1,5 @@
 /**
- * Page: /partners/timeline
+ * Page: /affiliates/timeline
  * Anatomy of a pilot — week-by-week from agreement signing through
  * end of attribution window. Phase 2 build.
  */
@@ -9,9 +9,9 @@ import { HubPage } from "@/components/affiliates/HubChrome";
 import { MonoEyebrow, HubCTA, CaveatLayer } from "@/components/affiliates/HubElements";
 
 export const metadata: Metadata = {
-  title: "Pilot Timeline · AESDR Partners",
+  title: "Pilot Timeline · AESDR Affiliates",
   description:
-    "Week-by-week timeline of an AESDR partner pilot from agreement signing through the end of the attribution window — about 11 weeks end to end.",
+    "Week-by-week timeline of an AESDR affiliate pilot from agreement signing through the end of the attribution window — about 11 weeks end to end.",
 };
 
 const STEPS = [
@@ -19,13 +19,13 @@ const STEPS = [
     when: "Week 0",
     title: "Agreement signed.",
     you: "Sign the partnership agreement. Send us your preferred payment method, tax form (W-9 or W-8BEN), and audience description.",
-    us: "Send the full private partner kit. Send a $500 sign-on within 5 business days (Cohort 1 invited partners only). Schedule a 30-min prep call.",
+    us: "Send the full private affiliate kit. Send a $500 sign-on within 5 business days (Cohort 1 invited affiliates only). Schedule a 30-min prep call.",
   },
   {
     when: "Week 1",
     title: "Setup + kit review.",
     you: "Read the full private kit. Pick a workshop date with us. Confirm your audience list size and segments.",
-    us: "Build your partner-attributed registration page. Generate your tracking URL and UTM scheme. Lock the workshop date on calendar.",
+    us: "Build your affiliate-attributed registration page. Generate your tracking URL and UTM scheme. Lock the workshop date on calendar.",
   },
   {
     when: "Week 2",
@@ -93,7 +93,7 @@ export default function TimelinePage() {
   return (
     <HubPage>
       <div style={{ padding: "64px 24px 0" }}>
-        <MonoEyebrow>AESDR · PARTNERS · PILOT TIMELINE</MonoEyebrow>
+        <MonoEyebrow>AESDR · AFFILIATES · PILOT TIMELINE</MonoEyebrow>
         <h1
           style={{
             fontFamily: "var(--display)",
@@ -189,7 +189,7 @@ export default function TimelinePage() {
       </section>
 
       <div style={{ padding: "96px 24px 0" }}>
-        <HubCTA href="/affiliates/apply">Request a partner conversation →</HubCTA>
+        <HubCTA href="/affiliates/apply">Request a affiliate conversation →</HubCTA>
       </div>
 
       <CaveatLayer>

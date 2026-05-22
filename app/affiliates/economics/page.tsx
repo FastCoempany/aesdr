@@ -1,10 +1,10 @@
 /**
- * Page: /partners/economics
+ * Page: /affiliates/economics
  * Public-facing version of worked-commission-example.md, plus an
- * interactive calculator for partners to plug in their audience size
+ * interactive calculator for affiliates to plug in their audience size
  * and conversion assumptions and see projected commission.
  *
- * Phase 2 build per partner-hub copy revision. Linked from /partners/program.
+ * Phase 2 build per affiliate-hub copy revision. Linked from /affiliates/program.
  */
 
 import type { Metadata } from "next";
@@ -13,16 +13,16 @@ import { MonoEyebrow, HubCTA, CaveatLayer } from "@/components/affiliates/HubEle
 import { EconomicsCalculator } from "@/components/affiliates/EconomicsCalculator";
 
 export const metadata: Metadata = {
-  title: "Economics · AESDR Partners",
+  title: "Economics · AESDR Affiliates",
   description:
-    "The economics of an AESDR partner pilot laid out in advance — real numbers from a real-shaped pilot run, plus an interactive calculator you can plug your own audience size and conversion assumptions into.",
+    "The economics of an AESDR affiliate pilot laid out in advance — real numbers from a real-shaped pilot run, plus an interactive calculator you can plug your own audience size and conversion assumptions into.",
 };
 
 export default function EconomicsPage() {
   return (
     <HubPage>
       <div style={{ padding: "64px 24px 0" }}>
-        <MonoEyebrow>AESDR · PARTNERS · ECONOMICS</MonoEyebrow>
+        <MonoEyebrow>AESDR · AFFILIATES · ECONOMICS</MonoEyebrow>
         <h1
           style={{
             fontFamily: "var(--display)",
@@ -61,7 +61,7 @@ export default function EconomicsPage() {
         <ul style={listStyle}>
           <li><strong>Commission:</strong> 30% of net revenue on every sale you bring in.</li>
           <li><strong>Net revenue:</strong> Gross minus refunds (within the 14-day window), payment processor fees (~2.9% + $0.30 per transaction), and any sales tax. It&rsquo;s what AESDR actually keeps. 30% of that goes to you.</li>
-          <li><strong>Attribution window:</strong> 30 days from the first time someone clicks your partner-attributed link. If they come back later via Google or directly within those 30 days and enroll, you&rsquo;re still the attributed partner.</li>
+          <li><strong>Attribution window:</strong> 30 days from the first time someone clicks your affiliate-attributed link. If they come back later via Google or directly within those 30 days and enroll, you&rsquo;re still the attributed affiliate.</li>
           <li><strong>Refund window:</strong> 14 days from purchase, no questions asked. Net revenue is calculated <em>after</em> the refund window closes &mdash; we don&rsquo;t pay commission on something that gets refunded.</li>
           <li><strong>Payment:</strong> Net-45 from the close of the 30-day attribution window. So roughly 75 days from your first promotion send, you see the money.</li>
           <li><strong>Methods:</strong> ACH, Wise, or PayPal &mdash; whichever you prefer. We send a W-9 (US) or W-8BEN (non-US) at signing.</li>
@@ -104,10 +104,10 @@ export default function EconomicsPage() {
       <section style={section}>
         <h2 style={h2Style}>Tracking + attribution.</h2>
         <p style={pStyle}>
-          First-touch attribution. 30-day cookie. UTMs preserved through the registration → workshop → enrollment → Stripe flow. Three things happen when someone clicks your partner link:
+          First-touch attribution. 30-day cookie. UTMs preserved through the registration → workshop → enrollment → Stripe flow. Three things happen when someone clicks your affiliate link:
         </p>
         <ul style={listStyle}>
-          <li>A cookie sets in their browser with your partner code, scoped to a 30-day window.</li>
+          <li>A cookie sets in their browser with your affiliate code, scoped to a 30-day window.</li>
           <li>First-touch attribution gets recorded in the AESDR dashboard with their email (if they register) or as an anonymous click (if they don&rsquo;t).</li>
           <li>UTM parameters get logged for post-pilot reporting &mdash; which channel converted best, which post drove the best registrants.</li>
         </ul>
@@ -120,12 +120,12 @@ export default function EconomicsPage() {
       <section style={section}>
         <h2 style={h2Style}>About these numbers.</h2>
         <p style={pStyle}>
-          The conversion assumptions above are based on workshop-format precedents in adjacent SaaS-AE/SDR audiences, not on multi-pilot AESDR data &mdash; Cohort 1 is the first cohort, so we don&rsquo;t have AESDR-specific benchmarks yet. We&rsquo;ll publish those after Cohort 1 wraps, with anonymized partner-by-partner data. If you want a calibration on what&rsquo;s realistic for your specific audience shape, ask in the partner conversation.
+          The conversion assumptions above are based on workshop-format precedents in adjacent SaaS-AE/SDR audiences, not on multi-pilot AESDR data &mdash; Cohort 1 is the first cohort, so we don&rsquo;t have AESDR-specific benchmarks yet. We&rsquo;ll publish those after Cohort 1 wraps, with anonymized affiliate-by-affiliate data. If you want a calibration on what&rsquo;s realistic for your specific audience shape, ask in the affiliate conversation.
         </p>
       </section>
 
       <div style={{ padding: "96px 24px 0" }}>
-        <HubCTA href="/affiliates/apply">Request a partner conversation →</HubCTA>
+        <HubCTA href="/affiliates/apply">Request a affiliate conversation →</HubCTA>
       </div>
 
       <CaveatLayer>

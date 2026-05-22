@@ -1,7 +1,7 @@
 /**
- * Page: /partners/program
- * Spec: AESDR-PARTNER-HUB-SPEC.md §"Page 1.2"
- * Canon: §1.3 (a handful of partners, not a marketplace), §3.3 (voice ratio 90/10),
+ * Page: /affiliates/program
+ * Spec: AESDR-AFFILIATE-HUB-SPEC.md §"Page 1.2"
+ * Canon: §1.3 (a handful of affiliates, not a marketplace), §3.3 (voice ratio 90/10),
  *        §10.1 (FTC), §13 (honesty discipline)
  * Copy sources: D40 README §2/§3/§4, D22 §3/§4/§5, D28 §2 (sanitized for never-discount)
  * Five-question check: PASS
@@ -13,9 +13,9 @@ import { HubPage } from "@/components/affiliates/HubChrome";
 import { MonoEyebrow, HubCTA, CaveatLayer } from "@/components/affiliates/HubElements";
 
 export const metadata: Metadata = {
-  title: "Partner Program · AESDR",
+  title: "Affiliate Program · AESDR",
   description:
-    "Time-boxed and non-exclusive partner program centered on a live workshop into your audience, with the same pricing every retail buyer gets and a flat 30% commission on net revenue.",
+    "Time-boxed and non-exclusive affiliate program centered on a live workshop into your audience, with the same pricing every retail buyer gets and a flat 30% commission on net revenue.",
 };
 
 const SECTIONS = [
@@ -38,14 +38,14 @@ const SECTIONS = [
       "Handling every email after registration — confirmations, reminders, replay link, the follow-ups, the soft DMs to people who clicked but didn't enroll. You don't lift a finger after the workshop ends.",
       "Paying 30% commission on net revenue. Net-45 from the close of the 30-day attribution window. ACH, Wise, or PayPal — your pick.",
       "Sending you a one-page Friday report every Friday during the pilot. Same numbers we're looking at. No surprises at the close.",
-      "Cohort 1 partners we invite directly: a $500 sign-on bonus paid on agreement signing. Small money, real money — the point is skin in the game from day one.",
+      "Cohort 1 affiliates we invite directly: a $500 sign-on bonus paid on agreement signing. Small money, real money — the point is skin in the game from day one.",
     ],
   },
   {
     title: "What we can't do.",
     bullets: [
       "Discount codes for your audience. We charge the same price to everyone — $249, $299, $1,499. The commission still works at list, and the trust does too.",
-      "Category exclusivity or first-right-of-refusal. We may run pilots with similar partners; you're free to do the same.",
+      "Category exclusivity or first-right-of-refusal. We may run pilots with similar affiliates; you're free to do the same.",
       "Share the AESDR email list, in either direction. Your audience belongs to you, ours to us.",
       "A founder appearance at the workshop itself. The host runs the workshop. The founder builds the curriculum and is around for everything else — emails, prep calls, post-pilot debriefs.",
     ],
@@ -56,7 +56,7 @@ export default function ProgramPage() {
   return (
     <HubPage>
       <div style={{ padding: "64px 24px 0" }}>
-        <MonoEyebrow>AESDR · PARTNER PROGRAM · STRUCTURE</MonoEyebrow>
+        <MonoEyebrow>AESDR · AFFILIATE PROGRAM · STRUCTURE</MonoEyebrow>
         <h1
           style={{
             fontFamily: "var(--display)",
@@ -178,7 +178,7 @@ export default function ProgramPage() {
               marginBottom: 16,
             }}
           >
-            Your audience pays the same price every other AESDR buyer pays: <strong>$249 SDR</strong>, <strong>$299 AE</strong>, <strong>$1,499 for a 10-seat team</strong>. No partner codes, no discount stacking, no pilot pricing. Your commission is 30% of net revenue on every sale you bring in, every time.
+            Your audience pays the same price every other AESDR buyer pays: <strong>$249 SDR</strong>, <strong>$299 AE</strong>, <strong>$1,499 for a 10-seat team</strong>. No affiliate codes, no discount stacking, no pilot pricing. Your commission is 30% of net revenue on every sale you bring in, every time.
           </p>
           <p
             style={{

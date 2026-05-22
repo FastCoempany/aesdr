@@ -1,8 +1,8 @@
 /**
- * Page: /partners/faq
- * Spec: AESDR-PARTNER-HUB-SPEC.md §"Page 1.5"
+ * Page: /affiliates/faq
+ * Spec: AESDR-AFFILIATE-HUB-SPEC.md §"Page 1.5"
  * Canon: §3.3 (voice ratio 80/20), §10.1 (FTC), §13 (honesty)
- * Copy sources: D23 partner-facing FAQ (Q05/Q07 lifts), Phase 0 #5
+ * Copy sources: D23 affiliate-facing FAQ (Q05/Q07 lifts), Phase 0 #5
  *               (never-discount), canon §1, §12, §14
  * Five-question check: PASS
  */
@@ -13,16 +13,16 @@ import { MonoEyebrow, HubCTA, CaveatLayer } from "@/components/affiliates/HubEle
 import { FAQAccordion } from "@/components/affiliates/FAQAccordion";
 
 export const metadata: Metadata = {
-  title: "Partner FAQ · AESDR",
-  description: "Twelve common partner questions with plain, specific answers — the buyer-facing FAQ for the program itself lives separately at /syllabus.",
+  title: "Affiliate FAQ · AESDR",
+  description: "Twelve common affiliate questions with plain, specific answers — the buyer-facing FAQ for the program itself lives separately at /syllabus.",
 };
 
 const FAQ_ITEMS = [
   {
-    q: "Why so few partners?",
+    q: "Why so few affiliates?",
     a: (
       <p>
-        Right now AESDR works with a handful of partners at a time, not a marketplace &mdash; partly because we&rsquo;re in Pilot Cohort 1, partly because we&rsquo;d rather run a small number of partnerships well than a large number of them on autopilot. We may grow the program after Cohort 1 wraps; we may not. The current shape is the current shape.
+        Right now AESDR works with a handful of affiliates at a time, not a marketplace &mdash; partly because we&rsquo;re in Pilot Cohort 1, partly because we&rsquo;d rather run a small number of partnerships well than a large number of them on autopilot. We may grow the program after Cohort 1 wraps; we may not. The current shape is the current shape.
       </p>
     ),
   },
@@ -48,7 +48,7 @@ const FAQ_ITEMS = [
       <p>
         30-day cookie window from the first time someone clicks your link. If they come back
         via Google or directly within those 30 days and sign up, you&rsquo;re still the attributed
-        partner. Commission gets paid on net revenue (after refunds and processing fees). Your
+        affiliate. Commission gets paid on net revenue (after refunds and processing fees). Your
         Friday report shows every click, every signup, and your running commission total.
       </p>
     ),
@@ -57,7 +57,7 @@ const FAQ_ITEMS = [
     q: "Do I get the AESDR email list?",
     a: (
       <p>
-        No, ever. List co-promotion is not part of any AESDR partner agreement. Reciprocally, AESDR doesn&rsquo;t request your list either. Audience data belongs to the person who signed up, not to either of us to trade.
+        No, ever. List co-promotion is not part of any AESDR affiliate agreement. Reciprocally, AESDR doesn&rsquo;t request your list either. Audience data belongs to the person who signed up, not to either of us to trade.
       </p>
     ),
   },
@@ -106,7 +106,7 @@ const FAQ_ITEMS = [
     q: "What about the founder?",
     a: (
       <p>
-        The host runs the public-facing workshops. The founder builds the curriculum and is open to partners via email throughout the pilot &mdash; applying, prep calls, post-pilot debriefs, anything you need. We made this split early because good curricula tend to outlive their founders, and we want the brand to outlive ours too. Nothing weird about it &mdash; talk to whoever makes sense.
+        The host runs the public-facing workshops. The founder builds the curriculum and is open to affiliates via email throughout the pilot &mdash; applying, prep calls, post-pilot debriefs, anything you need. We made this split early because good curricula tend to outlive their founders, and we want the brand to outlive ours too. Nothing weird about it &mdash; talk to whoever makes sense.
       </p>
     ),
   },
@@ -130,7 +130,7 @@ const FAQ_ITEMS = [
     q: "Can my audience get the program at a different price than aesdr.com lists?",
     a: (
       <p>
-        No. List price applies always — $249 SDR, $299 AE, $1,499 Team. AESDR doesn&rsquo;t run promotional codes, partner-stack discounts, or pricing variance for any audience. If a partner pushes for it, that&rsquo;s a fit signal we note.
+        No. List price applies always — $249 SDR, $299 AE, $1,499 Team. AESDR doesn&rsquo;t run promotional codes, affiliate-stack discounts, or pricing variance for any audience. If a affiliate pushes for it, that&rsquo;s a fit signal we note.
       </p>
     ),
   },
@@ -140,7 +140,7 @@ export default function FAQPage() {
   return (
     <HubPage>
       <div style={{ padding: "64px 24px 0" }}>
-        <MonoEyebrow>AESDR · PARTNERS · FAQ</MonoEyebrow>
+        <MonoEyebrow>AESDR · AFFILIATES · FAQ</MonoEyebrow>
         <h1
           style={{
             fontFamily: "var(--display)",
@@ -169,7 +169,7 @@ export default function FAQPage() {
             marginRight: "auto",
           }}
         >
-          This is the FAQ for partners. The buyer FAQ lives at <a href="/syllabus" style={{ color: "var(--ink)", textDecoration: "underline" }}>/syllabus</a>.
+          This is the FAQ for affiliates. The buyer FAQ lives at <a href="/syllabus" style={{ color: "var(--ink)", textDecoration: "underline" }}>/syllabus</a>.
         </p>
       </div>
 
@@ -180,7 +180,7 @@ export default function FAQPage() {
       </CaveatLayer>
 
       <div style={{ padding: "32px 24px 0" }}>
-        <HubCTA href="/affiliates/apply">Request a partner conversation →</HubCTA>
+        <HubCTA href="/affiliates/apply">Request a affiliate conversation →</HubCTA>
       </div>
     </HubPage>
   );

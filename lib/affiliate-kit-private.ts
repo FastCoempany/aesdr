@@ -1,7 +1,7 @@
 /**
  * Partner kit — PRIVATE catalog (post-signing, gated by per-partner token).
  *
- * Maps URL slugs → markdown source under content/partner-kit-private/.
+ * Maps URL slugs → markdown source under content/affiliate-kit-private/.
  * Routes lit from this catalog are gated via /partners/kit-private/* and
  * require a valid signed token (lib/affiliate-kit-tokens.ts) to access.
  *
@@ -28,7 +28,7 @@ export type PrivateKitEntry = {
   title: string;
   description: string;
   category: PrivateKitCategory;
-  /** Filename inside content/partner-kit-private/ (without extension). */
+  /** Filename inside content/affiliate-kit-private/ (without extension). */
   source: string;
 };
 
@@ -133,7 +133,7 @@ export function getPrivateKitEntryHtml(entry: PrivateKitEntry): string {
   const file = path.join(
     process.cwd(),
     "content",
-    "partner-kit-private",
+    "affiliate-kit-private",
     `${entry.source}.md`,
   );
   const md = fs.readFileSync(file, "utf8");

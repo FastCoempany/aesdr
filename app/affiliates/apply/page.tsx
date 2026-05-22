@@ -1,8 +1,8 @@
 /**
- * Page: /partners/apply
- * Spec: AESDR-PARTNER-HUB-SPEC.md §"Page 1.6"
+ * Page: /affiliates/apply
+ * Spec: AESDR-AFFILIATE-HUB-SPEC.md §"Page 1.6"
  * Canon: §1.6 (honesty), §3.3 (voice ratio 90/10), §13 (honest disqualification)
- * Copy sources: D27 §1 (sanitized for 5-field public form), partner-hub register
+ * Copy sources: D27 §1 (sanitized for 5-field public form), affiliate-hub register
  * Five-question check: PASS
  */
 
@@ -13,16 +13,16 @@ import { MonoEyebrow, CaveatLayer } from "@/components/affiliates/HubElements";
 import { ApplicationForm } from "@/components/affiliates/ApplicationForm";
 
 export const metadata: Metadata = {
-  title: "Apply · AESDR Partners",
+  title: "Apply · AESDR Affiliates",
   description:
-    "Five-field partner application — we review submissions weekly and reply with a yes-or-no answer within 5 business days, not weeks later.",
+    "Five-field affiliate application — we review submissions weekly and reply with a yes-or-no answer within 5 business days, not weeks later.",
 };
 
 export default function ApplyPage() {
   return (
     <HubPage>
       <div style={{ padding: "64px 24px 0" }}>
-        <MonoEyebrow>AESDR · PARTNERS · APPLY</MonoEyebrow>
+        <MonoEyebrow>AESDR · AFFILIATES · APPLY</MonoEyebrow>
         <h1
           style={{
             fontFamily: "var(--display)",

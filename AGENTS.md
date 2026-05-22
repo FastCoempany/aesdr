@@ -38,11 +38,17 @@ Taste enforcement:
   as a checklist the reviewer ticks before merge.
 
 Naming separation:
-- `/partners/*` is the consumer-side affiliate hub. Write "Partners" (capital P,
-  program name) or "affiliates."
+- `/affiliates/*` is the consumer-side affiliate program (individual
+  creators / micro-creators / alumni ambassadors who promote AESDR for
+  commission). Write "Affiliate Program" (capital A) or "affiliates." The
+  legacy `/partners/*` URLs 301-redirect to `/affiliates/*` per the
+  rename ratified 2026-05-22 (`docs/canon-revisions/2026-05-22-partners-to-affiliates-rename-plan.md`).
 - `/enterprise/*` is the B2B subsidiary. The channel-partnerships page is at
   `/enterprise/channel` — write "channel partners" with the "channel" prefix
-  on first use. Never bare "partner."
+  on first use. Never bare "partner" in B2B context.
+- "Partnership" as a generic working-relationship word (e.g., "AE-SDR
+  partnership" in curriculum copy) is fine. "Partner" alone refers to
+  channel partners only.
 <!-- END:consumer-brand-voice-canon -->
 
 <!-- BEGIN:brand-palette -->

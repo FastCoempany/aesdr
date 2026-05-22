@@ -9,7 +9,7 @@ import { createAdminClient } from "@/utils/supabase/admin";
 import StatTile from "./_components/StatTile";
 
 export const metadata: Metadata = {
-  title: "Partners dashboard | AESDR",
+  title: "Affiliates dashboard | AESDR",
   description:
     "Live view of your affiliate clicks, attributed enrollments, projected commission, and paid commission.",
 };
@@ -54,14 +54,14 @@ function statusPill(status: string): React.ReactElement {
   );
 }
 
-export default async function PartnersDashboardPage() {
+export default async function AffiliatesDashboardPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login?next=/partners/dashboard");
+  if (!user) redirect("/login?next=/affiliates/dashboard");
 
-  const partnerSlug = user.user_metadata?.partner_slug as string | undefined;
+  const affiliateSlug = user.user_metadata?.partner_slug as string | undefined;
   const isAffiliate = user.user_metadata?.is_affiliate === true;
-  if (!isAffiliate || !partnerSlug) {
+  if (!isAffiliate || !affiliateSlug) {
     return (
       <NoAccessNotice />
     );
@@ -81,23 +81,23 @@ export default async function PartnersDashboardPage() {
     admin
       .from("affiliate_links")
       .select("id, slug, label, destination_url, active, expires_at, created_at")
-      .eq("partner_slug", partnerSlug)
+      .eq("partner_slug", affiliateSlug)
       .order("created_at", { ascending: false }),
     admin
       .from("affiliate_clicks")
       .select("id", { count: "exact", head: true })
-      .eq("partner_slug", partnerSlug)
+      .eq("partner_slug", affiliateSlug)
       .gte("clicked_at", since30dIso),
     admin
       .from("affiliate_clicks")
       .select("id", { count: "exact", head: true })
-      .eq("partner_slug", partnerSlug),
+      .eq("partner_slug", affiliateSlug),
     admin
       .from("affiliate_attributions")
       .select(
         "id, status, gross_amount_cents, commission_amount_cents, attributed_at, refund_window_closes_at, user_email"
       )
-      .eq("partner_slug", partnerSlug)
+      .eq("partner_slug", affiliateSlug)
       .order("attributed_at", { ascending: false })
       .limit(50),
   ]);
@@ -171,7 +171,7 @@ export default async function PartnersDashboardPage() {
             marginBottom: 12,
           }}
         >
-          Partners · {partnerSlug}
+          Affiliates · {affiliateSlug}
         </p>
         <h1
           style={{
@@ -398,7 +398,7 @@ function NoAccessNotice() {
             marginBottom: 16,
           }}
         >
-          Partners dashboard · No access
+          Affiliates dashboard · No access
         </p>
         <h1
           style={{
@@ -410,7 +410,7 @@ function NoAccessNotice() {
             marginBottom: 16,
           }}
         >
-          Your account isn&rsquo;t set up for the Partners program yet.
+          Your account isn&rsquo;t set up for the Affiliates program yet.
         </h1>
         <p style={{ fontSize: 16, lineHeight: 1.65, color: "var(--muted)", marginBottom: 24 }}>
           The dashboard becomes available after a partnership conversation

@@ -8,13 +8,13 @@ import { createClient } from "@/utils/supabase/server";
 import LinkForm from "./LinkForm";
 
 export const metadata: Metadata = {
-  title: "Create a tracking link | AESDR Partners",
+  title: "Create a tracking link | AESDR Affiliates",
 };
 
 export default async function CreateLinkPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login?next=/partners/dashboard/links");
+  if (!user) redirect("/login?next=/affiliates/dashboard/links");
 
   const isAffiliate = user.user_metadata?.is_affiliate === true;
   if (!isAffiliate) redirect("/affiliates/dashboard");

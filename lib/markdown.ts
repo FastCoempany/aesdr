@@ -2,7 +2,7 @@
  * Minimal server-side markdown → HTML renderer for partner-kit pages.
  *
  * Scope: we control the source markdown ourselves. This handles only the
- * subset of markdown we actually use in content/partner-kit/*.md:
+ * subset of markdown we actually use in content/affiliate-kit/*.md:
  *   - Headers (#, ##, ###, ####)
  *   - Paragraphs
  *   - Bold (**), italic (*), inline code (`)

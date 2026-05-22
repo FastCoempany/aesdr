@@ -1,10 +1,10 @@
 /**
- * Page: /partners/who-we-dont-work-with (PROMOTED to Phase 1 per Q5 ratification 2026-05-04)
- * Spec: AESDR-PARTNER-HUB-SPEC.md §"Phase 3 — /partners/who-we-don't-work-with" (promoted)
+ * Page: /affiliates/who-we-dont-work-with (PROMOTED to Phase 1 per Q5 ratification 2026-05-04)
+ * Spec: AESDR-AFFILIATE-HUB-SPEC.md §"Phase 3 — /affiliates/who-we-don't-work-with" (promoted)
  * Canon: §1.4 (borrowed-trust merciless mirror), §1.6 (honesty differentiator),
  *        §13 (honesty discipline)
- * Copy sources: D27 partner vetting scorecard §"Red-flag list" — sanitized
- *               for partner-facing register.
+ * Copy sources: D27 affiliate vetting scorecard §"Red-flag list" — sanitized
+ *               for affiliate-facing register.
  * Five-question check: PASS
  *
  * Per build-prompt §[8] item 7: "The disqualification panel placement is the
@@ -17,7 +17,7 @@ import { HubPage } from "@/components/affiliates/HubChrome";
 import { MonoEyebrow, HubCTA, CaveatLayer } from "@/components/affiliates/HubElements";
 
 export const metadata: Metadata = {
-  title: "Who We Don't Work With · AESDR Partners",
+  title: "Who We Don't Work With · AESDR Affiliates",
   description:
     "Plain disqualification. We name who we decline, why, and on what signal.",
 };
@@ -33,7 +33,7 @@ const RED_FLAGS = [
   },
   {
     headline: "Disclosure resistance.",
-    body: "AESDR requires verbatim FTC material-connection disclosure on every partner-published surface. If you decline to use the disclosure language, the pilot ends — that's a contract term, not a negotiation. Saying so up front saves the conversation.",
+    body: "AESDR requires verbatim FTC material-connection disclosure on every affiliate-published surface. If you decline to use the disclosure language, the pilot ends — that's a contract term, not a negotiation. Saying so up front saves the conversation.",
   },
   {
     headline: "Category-exclusivity ask.",
@@ -41,7 +41,7 @@ const RED_FLAGS = [
   },
   {
     headline: "Discount-stacking authority ask.",
-    body: "AESDR doesn't run promotional discounts as a matter of policy — not for anniversaries, not for partner audiences, not for cohort 1 launches — so asking for a partner-issued promo code, an audience-specific discount, or pricing-variance authority is something we genuinely won't accommodate in the pilot agreement.",
+    body: "AESDR doesn't run promotional discounts as a matter of policy — not for anniversaries, not for affiliate audiences, not for cohort 1 launches — so asking for a affiliate-issued promo code, an audience-specific discount, or pricing-variance authority is something we genuinely won't accommodate in the pilot agreement.",
   },
   {
     headline: "Mostly bot engagement.",
@@ -53,15 +53,15 @@ const RED_FLAGS = [
   },
   {
     headline: "Past compliance issue.",
-    body: "Verified prior FTC, advertising-standards, or consumer-protection issues. We don't run pilots with partners with active compliance shadows over them. Resolved historical issues are case-by-case.",
+    body: "Verified prior FTC, advertising-standards, or consumer-protection issues. We don't run pilots with affiliates with active compliance shadows over them. Resolved historical issues are case-by-case.",
   },
   {
     headline: "Recurring founder appearances as the pitch.",
-    body: "The host runs the workshops, not the founder. If your partnership model relies on a recurring founder presence — joint webinars, podcast circuits, panel keynotes — that's not what we do. Rare exceptions exist for milestone events; they're not the default.",
+    body: "The host runs the workshops, not the founder. If your affiliateship model relies on a recurring founder presence — joint webinars, podcast circuits, panel keynotes — that's not what we do. Rare exceptions exist for milestone events; they're not the default.",
   },
   {
     headline: "List co-promotion ask.",
-    body: "AESDR does not share its email list, ever — and doesn't request yours. Co-promotion-via-list is not part of any AESDR partner agreement. Asking is a fit signal.",
+    body: "AESDR does not share its email list, ever — and doesn't request yours. Co-promotion-via-list is not part of any AESDR affiliate agreement. Asking is a fit signal.",
   },
 ];
 
@@ -69,7 +69,7 @@ export default function WhoWeDontWorkWithPage() {
   return (
     <HubPage>
       <div style={{ padding: "64px 24px 0" }}>
-        <MonoEyebrow>AESDR · PARTNERS · HONEST DISQUALIFICATION</MonoEyebrow>
+        <MonoEyebrow>AESDR · AFFILIATES · HONEST DISQUALIFICATION</MonoEyebrow>
         <h1
           style={{
             fontFamily: "var(--display)",

@@ -1,6 +1,6 @@
 /**
- * Page: /partners/kit-private (gated index)
- * Spec: AESDR-PARTNER-HUB-SPEC.md §"Page 1.4 — kit (partner-only)"
+ * Page: /affiliates/kit-private (gated index)
+ * Spec: AESDR-AFFILIATE-HUB-SPEC.md §"Page 1.4 — kit (affiliate-only)"
  *
  * Renders the index of 13 private kit docs, but only after a valid session
  * cookie is present. Without a cookie:
@@ -9,7 +9,7 @@
  *   - Otherwise, we render a "you need an access link" stub.
  *
  * Per founder direction 2026-05-09: full operating manual ships post-signing
- * via per-partner signed URL with audit trail.
+ * via per-affiliate signed URL with audit trail.
  */
 
 import type { Metadata } from "next";
@@ -27,8 +27,8 @@ import { logAccess } from "@/lib/affiliate-kit-tokens";
 import { readRequestMeta } from "@/lib/req-meta";
 
 export const metadata: Metadata = {
-  title: "Partner Kit (Private) · AESDR",
-  description: "Partner-only operating manual.",
+  title: "Affiliate Kit (Private) · AESDR",
+  description: "Affiliate-only operating manual.",
   robots: { index: false, follow: false },
 };
 
@@ -44,7 +44,7 @@ export default async function PrivateKitIndex(
   // If a token is present, hand off to the auth route (sets cookie + redirects).
   if (params.t) {
     const next = "/affiliates/kit-private";
-    redirect(`/api/partners/kit-private/auth?t=${encodeURIComponent(params.t)}&next=${encodeURIComponent(next)}`);
+    redirect(`/api/affiliates/kit-private/auth?t=${encodeURIComponent(params.t)}&next=${encodeURIComponent(next)}`);
   }
 
   const session = await readKitSession();
@@ -71,7 +71,7 @@ export default async function PrivateKitIndex(
   return (
     <HubPage>
       <div style={{ padding: "64px 24px 0" }}>
-        <MonoEyebrow>AESDR · PARTNER KIT · PRIVATE</MonoEyebrow>
+        <MonoEyebrow>AESDR · AFFILIATE KIT · PRIVATE</MonoEyebrow>
         <h1
           style={{
             fontFamily: "var(--display)",
@@ -100,7 +100,7 @@ export default async function PrivateKitIndex(
             marginRight: "auto",
           }}
         >
-          Partner-only. {session.partner_label || session.partner_slug} &middot; access expires {new Date(session.expires_at).toLocaleDateString()}.
+          Affiliate-only. {session.partner_label || session.partner_slug} &middot; access expires {new Date(session.expires_at).toLocaleDateString()}.
         </p>
       </div>
 
@@ -194,7 +194,7 @@ export default async function PrivateKitIndex(
       </section>
 
       <CaveatLayer>
-        PS &mdash; This page tracks views (which doc, when, from where). That&rsquo;s by design &mdash; not surveillance, but a record we both can refer to. The public partner kit lives at <Link href="/affiliates/kit" style={{ color: "var(--ink)", textDecoration: "underline" }}>/partners/kit</Link>; this private kit is for you.
+        PS &mdash; This page tracks views (which doc, when, from where). That&rsquo;s by design &mdash; not surveillance, but a record we both can refer to. The public affiliate kit lives at <Link href="/affiliates/kit" style={{ color: "var(--ink)", textDecoration: "underline" }}>/affiliates/kit</Link>; this private kit is for you.
       </CaveatLayer>
     </HubPage>
   );
@@ -205,7 +205,7 @@ function PrivateKitDenied({ error }: { error?: string }) {
   return (
     <HubPage>
       <div style={{ padding: "120px 24px 80px", maxWidth: 640, margin: "0 auto" }}>
-        <MonoEyebrow>AESDR · PARTNER KIT · PRIVATE</MonoEyebrow>
+        <MonoEyebrow>AESDR · AFFILIATE KIT · PRIVATE</MonoEyebrow>
         <h1
           style={{
             fontFamily: "var(--display)",
@@ -229,7 +229,7 @@ function PrivateKitDenied({ error }: { error?: string }) {
             marginBottom: 16,
           }}
         >
-          The private partner kit is gated. Approved partners receive a personal access link by email after the partnership agreement is signed.
+          The private affiliate kit is gated. Approved affiliates receive a personal access link by email after the partnership agreement is signed.
         </p>
         {message && (
           <p
@@ -251,13 +251,13 @@ function PrivateKitDenied({ error }: { error?: string }) {
             lineHeight: 1.7,
           }}
         >
-          The public partner kit is at{" "}
+          The public affiliate kit is at{" "}
           <Link href="/affiliates/kit" style={{ color: "var(--ink)", textDecoration: "underline" }}>
-            /partners/kit
+            /affiliates/kit
           </Link>
           . If you need a fresh access link, email{" "}
-          <a href="mailto:partner@aesdr.com" style={{ color: "var(--ink)", textDecoration: "underline" }}>
-            partner@aesdr.com
+          <a href="mailto:affiliate@aesdr.com" style={{ color: "var(--ink)", textDecoration: "underline" }}>
+            affiliate@aesdr.com
           </a>
           .
         </p>

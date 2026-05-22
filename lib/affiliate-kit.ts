@@ -3,11 +3,11 @@
  *
  * The kit lives on-site (rendered, not downloaded) per founder direction
  * 2026-05-07. Each entry below renders at /affiliates/kit/[slug] using the
- * markdown source under content/partner-kit/.
+ * markdown source under content/affiliate-kit/.
  *
  * Public-vs-gate boundary (ratified 2026-05-09): this catalog only contains
  * partner-prospect-facing docs. The gated post-signing kit lives in
- * content/partner-kit-private/ + lib/partner-kit-private.ts. AESDR's internal
+ * content/affiliate-kit-private/ + lib/affiliate-kit-private.ts. AESDR's internal
  * source-of-truth (voice system, full canon, internal claims grids, etc.)
  * lives in content/aesdr-internal/ and is not rendered anywhere.
  */
@@ -23,7 +23,7 @@ export type KitEntry = {
   title: string;
   description: string;
   category: KitCategory;
-  /** Filename inside content/partner-kit/ (without extension). */
+  /** Filename inside content/affiliate-kit/ (without extension). */
   source: string;
 };
 
@@ -126,7 +126,7 @@ export function getKitEntryHtml(entry: KitEntry): string {
   const file = path.join(
     process.cwd(),
     "content",
-    "partner-kit",
+    "affiliate-kit",
     `${entry.source}.md`,
   );
   const md = fs.readFileSync(file, "utf8");

@@ -1,7 +1,7 @@
 /**
- * Page: /partners/kit-private/[slug] (gated kit doc renderer)
+ * Page: /affiliates/kit-private/[slug] (gated kit doc renderer)
  *
- * Same render path as /partners/kit/[slug] but pulls from the PRIVATE catalog
+ * Same render path as /affiliates/kit/[slug] but pulls from the PRIVATE catalog
  * and requires a valid session cookie. Logs a page view per render.
  */
 
@@ -30,7 +30,7 @@ export async function generateMetadata(
   const { slug } = await params;
   const entry = getPrivateKitEntry(slug);
   return {
-    title: entry ? `${entry.title} · AESDR Partner Kit (Private)` : "Not found",
+    title: entry ? `${entry.title} · AESDR Affiliate Kit (Private)` : "Not found",
     robots: { index: false, follow: false },
   };
 }
@@ -67,7 +67,7 @@ export default async function PrivateKitDocPage(
     <HubPage>
       <div style={{ padding: "64px 24px 0", maxWidth: 880, margin: "0 auto" }}>
         <MonoEyebrow>
-          AESDR · PARTNER KIT · PRIVATE · {entry.category.toUpperCase()}
+          AESDR · AFFILIATE KIT · PRIVATE · {entry.category.toUpperCase()}
         </MonoEyebrow>
         <h1
           style={{

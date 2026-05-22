@@ -1,6 +1,6 @@
 /**
- * Page: /partners/curriculum
- * Spec: AESDR-PARTNER-HUB-SPEC.md §"Page 1.3"
+ * Page: /affiliates/curriculum
+ * Spec: AESDR-AFFILIATE-HUB-SPEC.md §"Page 1.3"
  * Canon: §3.3 (voice ratio 80/20), §6.3 (canonical patterns), §14 (taglines v1.3)
  * Copy sources: D31 (full 12-card library catalog) + production /tools/[slug]
  * Five-question check: PASS
@@ -16,7 +16,7 @@ import {
 } from "@/components/affiliates/CatalogTeaserGrid";
 
 export const metadata: Metadata = {
-  title: "Curriculum · AESDR Partners",
+  title: "Curriculum · AESDR Affiliates",
   description:
     "Twelve courses across thirty-six lessons with a real diagnostic question on each catalog card — the full library catalog your audience would be enrolling into through the partnership.",
 };
@@ -289,7 +289,7 @@ export default function CurriculumPage() {
       </section>
 
       <div style={{ padding: "96px 24px 0" }}>
-        <HubCTA href="/affiliates/apply">Request a partner conversation →</HubCTA>
+        <HubCTA href="/affiliates/apply">Request a affiliate conversation →</HubCTA>
       </div>
     </HubPage>
   );
