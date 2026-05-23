@@ -51,6 +51,16 @@ const SECTIONS = [
     ],
   },
   {
+    title: "What we'll do if the numbers are soft early.",
+    bullets: [
+      "If your two emails generate fewer than 60 clicks combined across the first week, we email same-day and book a 20-minute retro. The retro fixes the copy, the timing, or the segment together — it doesn't declare the pilot dead from two soft numbers.",
+      "If clicks land but registrations don't (fewer than 8% of clicks turning into registrations across both sends), we bring the registration-page numbers and the landing copy to the same retro. Sometimes the email lands and the page doesn't.",
+      "Out of the retro: we either restructure (shift dates, swap subject lines, broaden the segment, rebuild the page) or pause. Pause is on the table from week one — not a punishment, the alternative to letting a soft pilot drag for thirty days.",
+      "Either side can call the retro. Email at any point with \"I'm worried about the numbers,\" and we're on a 20-minute call inside 48 hours. The trigger doesn't have to come from us.",
+      "If the numbers land above the threshold and the funnel looks healthy, we stay heads-down until the 30-day window closes and the closeout report lands. We don't run retros on data that's working.",
+    ],
+  },
+  {
     title: "What happens if it doesn't work.",
     bullets: [
       "A pilot that clears under $1,500 in commission across your 30-day attribution window probably means our offer isn't the right fit for your audience. We'd rather see the data and pause than keep running campaigns that aren't moving.",
