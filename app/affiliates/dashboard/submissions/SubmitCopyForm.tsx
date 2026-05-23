@@ -13,7 +13,7 @@ const CHANNELS = [
   { value: "tiktok", label: "TikTok" },
   { value: "instagram", label: "Instagram" },
   { value: "community", label: "Community (Discord/Slack)" },
-  { value: "course", label: "Course module" },
+  { value: "course", label: "Course" },
   { value: "blog", label: "Blog post" },
   { value: "other", label: "Other" },
 ];
