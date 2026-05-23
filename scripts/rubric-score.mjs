@@ -123,6 +123,12 @@ function scoreAxis2(paragraphs) {
 }
 
 // AXIS 3: AI-tell absence — known R-G7 patterns
+// Three signature families per the canon rubric:
+//  (a) "isn't X — it's Y" pivot pattern + related phrasings
+//  (b) "Three-part lists" — three consecutive single-word capitalized
+//      sentences (the "Faster. Smarter. Better." marketing tell)
+//  (c) Em-dash density — any paragraph with >2 em-dashes registers as
+//      a fragment-heavy structural tell per the canon doc threshold.
 function scoreAxis3(paragraphs) {
   const aiTells = [
     /\bisn['’]t [^—.]*— it['’]s/i,
@@ -138,6 +144,18 @@ function scoreAxis3(paragraphs) {
   for (const re of aiTells) {
     const found = joined.match(new RegExp(re, "gi"));
     if (found) hits += found.length;
+  }
+  // (b) Three-part single-word capitalized lists. Matches "Faster.
+  // Smarter. Better." but skips multi-word sequences like
+  // "Pipeline math. Tuesday morning. Real numbers." (each "sentence"
+  // must be a single capitalized word terminated by a period).
+  const threePartRe = /(?:^|\.\s+)([A-Z][a-z]+\.\s+){2}[A-Z][a-z]+\./g;
+  const threePartHits = joined.match(threePartRe);
+  if (threePartHits) hits += threePartHits.length;
+  // (c) Em-dash density: per-paragraph count, threshold per canon doc.
+  for (const p of paragraphs) {
+    const emdashes = (p.match(/—/g) || []).length;
+    if (emdashes > 2) hits++;
   }
   if (hits >= 4) return 0;
   if (hits >= 2) return 1;
