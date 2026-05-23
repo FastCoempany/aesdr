@@ -140,6 +140,12 @@ const LINE_EXEMPTIONS = [
     match: "circle back",
     reason: "Pedagogical example: same Slack-discipline section, gate prompt template showing before-and-after rewrites of vague messages. The 'Before: Let's circle back on this.' is the negative example the student replaces.",
   },
+  {
+    file: "content/lessons/html/lesson-12/aesdr_course12_1_v1.html",
+    line: 1070,
+    match: "Leveling Up",
+    reason: "Course 12.1 canonical title: 'Leveling Up SaaS Relationships'. The phrase is curriculum-name use per founder ratification 2026-05-22, not motivational register. This exemption applies only to the <title> tag line that names the course; body uses of 'level up' within the lesson remain R-G4 candidates and surface as hits.",
+  },
 ];
 
 function isExempt(rel, lineNum, matchedText) {

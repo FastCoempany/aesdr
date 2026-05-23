@@ -135,6 +135,7 @@ const WEEKS: Week[] = [
   {
     num: "12",
     lesson: "Course 12",
+    // eslint-disable-next-line no-restricted-syntax -- Course 12 canonical title; "level up" here is curriculum-name use per founder ratification 2026-05-22, not motivational register
     title: "Leveling up SaaS relationships",
     estimate: "~26 min",
     brief:

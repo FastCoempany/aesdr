@@ -15,6 +15,7 @@ export const LESSONS = [
   { num: "09", title: "CRM Survival Guide", q: "Is your CRM protecting you — or building the case against you?", minutes: 22, titleStyle: undefined as string | undefined },
   { num: "10", title: "Breaking Down the Commission Myth", q: "Can you survive three bad months in a row? Mentally? Financially?", minutes: 26, titleStyle: undefined as string | undefined },
   { num: "11", title: "Sober Selling", q: "What if the problem is bigger than your process — what if it’s what you’re doing when no one’s watching?\n(21+ sober — not metaphorical sober.)", minutes: 22, titleStyle: undefined as string | undefined },
+  // eslint-disable-next-line no-restricted-syntax -- Course 12 canonical title; "level up" here is curriculum-name use per founder ratification 2026-05-22, not motivational register
   { num: "12", title: "Leveling Up SaaS Relationships", q: "Who would vouch for you if you changed companies tomorrow?", minutes: 26, titleStyle: undefined as string | undefined },
 ];
 

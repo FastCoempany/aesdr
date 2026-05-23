@@ -41,7 +41,7 @@ const RED_FLAGS = [
   },
   {
     headline: "Discount-stacking authority ask.",
-    body: "AESDR doesn't run promotional discounts as a matter of policy — not for anniversaries, not for affiliate audiences, not for cohort 1 launches — so asking for a affiliate-issued promo code, an audience-specific discount, or pricing-variance authority is something we genuinely won't accommodate in the pilot agreement.",
+    body: "AESDR doesn't run promotional discounts as a matter of policy — not for anniversaries, not for affiliate audiences, not for cohort 1 launches — so asking for an affiliate-issued promo code, an audience-specific discount, or pricing-variance authority is something we genuinely won't accommodate in the pilot agreement.",
   },
   {
     headline: "Mostly bot engagement.",
@@ -57,7 +57,7 @@ const RED_FLAGS = [
   },
   {
     headline: "Recurring founder appearances as the pitch.",
-    body: "The host runs the workshops, not the founder. If your affiliateship model relies on a recurring founder presence — joint webinars, podcast circuits, panel keynotes — that's not what we do. Rare exceptions exist for milestone events; they're not the default.",
+    body: "The host runs the workshops, not the founder. If your affiliate model relies on a recurring founder presence — joint webinars, podcast circuits, panel keynotes — that's not what we do. Rare exceptions exist for milestone events; they're not the default.",
   },
   {
     headline: "List co-promotion ask.",

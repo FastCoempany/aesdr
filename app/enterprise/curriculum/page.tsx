@@ -258,6 +258,7 @@ const MODULES: Module[] = [
     description:
       "SaaS relationships, the home office trap (revisited from a different angle), and the contested final lesson on personal life in a high-output career. Closing module.",
     lessons: [
+      // eslint-disable-next-line no-restricted-syntax -- Course 12.1 canonical title; "level up" here is curriculum-name use per founder ratification 2026-05-22, not motivational register
       { number: "12.1", title: "Leveling Up SaaS Relationships" },
       { number: "12.2", title: "Navigating the Home Office Trap" },
       { number: "12.3", title: "Why SDRs Should Stay Single" },

@@ -105,6 +105,7 @@ Two derivative forms are pre-cleared for mono-label use:
 | **Full:** `12 courses. 5 tools. Same you — way, way better.` | Slide closes, hero captions, brand-line sign-offs, partner-promo `curr-h` headers |
 | **Mono-label short:** `12 courses · at your own pace · same you, way better` | Hero warning-tags, fork-* labels, variant editorial-split CTA tags, lesson-preview thumbnail mono lines |
 | **Inventory short:** `12 courses · 5 tools · same you, way better` | Curriculum-map closers, syllabus footer CTA, places that need the inventory beats |
+| **Consumer inventory:** `12 courses · 5 takeaway tools` (or `12 courses with 5 takeaway tools`) | Homepage feature bullets, syllabus banner, preview footer, enterprise pricing description, affiliate catalog teaser. The "takeaway" modifier survives as buyer-side clarifier: it names what the tools *are* (artifacts they leave the program with) rather than relying on context. Founder-ratified addition 2026-05-22. |
 
 Derivative usage is canon-cleared per this revision; do not paraphrase further without a new canon-revision intake.
 

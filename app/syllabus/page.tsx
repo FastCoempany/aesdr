@@ -35,6 +35,7 @@ const LESSONS: Lesson[] = [
   { num: "L09", chapter: "ch. 09", title: "CRM Survival Guide",                   question: "“Is your CRM protecting you — or building the case against you?”",                                              annotation: "— log before you forget.",   stamp: "Tue 09" },
   { num: "L10", chapter: "ch. 10", title: "Breaking Down the Commission Myth",    question: "“Can you survive three bad months in a row? Mentally? Financially?”",                                           annotation: "— 3 months runway min.",     stamp: "Wed 10" },
   { num: "L11", chapter: "ch. 11", title: "Sober Selling",                        question: "“What if the problem is bigger than your process — what if it’s what you’re doing when no one’s watching?”",   annotation: "— 21+. not metaphor.",       stamp: "Thu 11" },
+  // eslint-disable-next-line no-restricted-syntax -- Course 12 canonical title; "level up" here is curriculum-name use per founder ratification 2026-05-22, not motivational register
   { num: "L12", chapter: "ch. 12", title: "Leveling Up SaaS Relationships",       question: "“Who would vouch for you if you changed companies tomorrow?”",                                                  annotation: "— name 5.",                  stamp: "Fri 12" },
 ];
 
