@@ -61,6 +61,11 @@ function wordCount(s) {
 // 0 = 3+ consecutive sentences <8 words in any paragraph, OR fatigue monotony
 // 1 = one or two stumble points
 // 2 = intentional variation
+//
+// Carve-out: three consecutive short *question* sentences are
+// rhetorical structure (e.g. "Forecast hawk? Deal-stage enforcer?
+// Last-minute discounter?"), not telegraphic cadence. The canon's
+// R-G3 ban targets choppy declarative fragments, not question-stacks.
 function scoreAxis1(paragraphs) {
   let shortStacks = 0;
   let monotonyHits = 0;
@@ -76,8 +81,14 @@ function scoreAxis1(paragraphs) {
         wordCount(sentences[i + 1]) < 8 &&
         wordCount(sentences[i + 2]) < 8
       ) {
-        shortStacks++;
-        break;
+        const allQuestions =
+          sentences[i].trim().endsWith("?") &&
+          sentences[i + 1].trim().endsWith("?") &&
+          sentences[i + 2].trim().endsWith("?");
+        if (!allQuestions) {
+          shortStacks++;
+          break;
+        }
       }
     }
 
