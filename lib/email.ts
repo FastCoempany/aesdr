@@ -24,6 +24,45 @@ const UNSUBSCRIBE_HEADERS = {
   'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
 };
 
+/**
+ * Strip HTML to plain-text for the multipart/alternative `text:` body.
+ *
+ * Resend builds multipart MIME only when both html and text are passed.
+ * Without a text part, plain-text-only clients (CLI mail, accessibility
+ * tools, search-indexed previews) fall back to raw-HTML rendering, and
+ * spam filters penalize HTML-only sends. This helper produces a
+ * deliverability-safe text alternative from the existing HTML body.
+ *
+ * Behavior:
+ *   - Replaces <a href="X">Y</a> with `Y (X)` so links survive the strip
+ *   - Replaces <br> and block-element openers with newlines
+ *   - Strips remaining tags
+ *   - Decodes the four entities `esc()` introduces (&amp; &lt; &gt; &quot;)
+ *   - Collapses ≥3 consecutive newlines to 2 (paragraph breaks)
+ *   - Trims surrounding whitespace
+ */
+function htmlToText(html: string): string {
+  return html
+    .replace(/<a\s+[^>]*href=["']([^"']+)["'][^>]*>([^<]*)<\/a>/gi, "$2 ($1)")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/(p|div|h1|h2|h3|h4|h5|h6|li|tr|blockquote)>/gi, "\n\n")
+    .replace(/<li[^>]*>/gi, "- ")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&mdash;/g, "—")
+    .replace(/&rsquo;/g, "’")
+    .replace(/&lsquo;/g, "‘")
+    .replace(/^[ \t]+/gm, "")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 // ─── Brand: Leponeus pose helper for email templates ───
 // Mirrors utils/brand/lesson-poses.ts but inlined here so this server-side
 // file doesn't import a client TSX component. Update both if the canon
@@ -627,6 +666,7 @@ export async function sendWelcomeEmail(to: string, name: string, tempPassword: s
       headers: UNSUBSCRIBE_HEADERS,
       subject: "You're in. Start here.",
       html: welcomeHtml(name, to, loginUrl, tempPassword),
+      text: htmlToText(welcomeHtml(name, to, loginUrl, tempPassword)),
     })
   );
 }
@@ -869,6 +909,7 @@ export async function sendReceiptEmail(to: string, name: string, tier: string, a
       headers: UNSUBSCRIBE_HEADERS,
       subject: 'AESDR — Purchase Confirmation',
       html: receiptHtml(name, tier, amountCents),
+      text: htmlToText(receiptHtml(name, tier, amountCents)),
     })
   );
 }
@@ -1015,6 +1056,7 @@ export async function sendManagerArchetypeMap(to: string) {
       headers: UNSUBSCRIBE_HEADERS,
       subject: "Your Manager Archetype Map",
       html: managerArchetypeMapHtml(),
+      text: htmlToText(managerArchetypeMapHtml()),
     })
   );
 }
@@ -1121,6 +1163,7 @@ export async function sendLessonCompletedNudge(
       headers: UNSUBSCRIBE_HEADERS,
       subject: `Next: ${nextLessonTitle} (~${nextMinutes} min)`,
       html: lessonCompletedNudgeHtml(name, nextLessonId, nextLessonTitle, nextMinutes),
+      text: htmlToText(lessonCompletedNudgeHtml(name, nextLessonId, nextLessonTitle, nextMinutes)),
     })
   );
 }
@@ -1168,6 +1211,7 @@ export async function sendWeeklyFraming(
       headers: UNSUBSCRIBE_HEADERS,
       subject: "This week, expect this",
       html: weeklyFramingHtml(name, completed, total),
+      text: htmlToText(weeklyFramingHtml(name, completed, total)),
     })
   );
 }
@@ -1213,6 +1257,7 @@ export async function sendWinBack(to: string, name: string) {
       headers: UNSUBSCRIBE_HEADERS,
       subject: "Is this still useful — or should we close the loop?",
       html: winBackHtml(name),
+      text: htmlToText(winBackHtml(name)),
     })
   );
 }
@@ -1259,6 +1304,7 @@ export async function sendAlumniReengagement(to: string, name: string, monthMark
           ? "Six months in — what stuck?"
           : "A year of being AESDR-trained",
       html: alumniReengagementHtml(name, monthMark),
+      text: htmlToText(alumniReengagementHtml(name, monthMark)),
     })
   );
 }
@@ -1306,6 +1352,7 @@ export async function sendDay0PlusTwelveHours(to: string, name: string) {
       headers: UNSUBSCRIBE_HEADERS,
       subject: "Pick a 25-minute window. Put it on your calendar.",
       html: day0PlusTwelveHoursHtml(name),
+      text: htmlToText(day0PlusTwelveHoursHtml(name)),
     })
   );
 }
@@ -1345,6 +1392,7 @@ export async function sendDay0PlusThirtySixHours(to: string, name: string) {
       headers: UNSUBSCRIBE_HEADERS,
       subject: "Two days in. Did you start?",
       html: day0PlusThirtySixHoursHtml(name),
+      text: htmlToText(day0PlusThirtySixHoursHtml(name)),
     })
   );
 }
@@ -1379,6 +1427,7 @@ export async function sendDay3Email(to: string, name: string) {
       headers: UNSUBSCRIBE_HEADERS,
       subject: "How's Course 1 going?",
       html: day3Html(name),
+      text: htmlToText(day3Html(name)),
     })
   );
 }
@@ -1415,6 +1464,7 @@ export async function sendDay7Email(to: string, name: string) {
       headers: UNSUBSCRIBE_HEADERS,
       subject: "The tool in Course 3 is worth the entire price",
       html: day7Html(name),
+      text: htmlToText(day7Html(name)),
     })
   );
 }
@@ -1450,6 +1500,7 @@ export async function sendAbandon1hr(to: string) {
       headers: UNSUBSCRIBE_HEADERS,
       subject: "Still thinking it over?",
       html: abandon1hrHtml(),
+      text: htmlToText(abandon1hrHtml()),
     })
   );
 }
@@ -1495,6 +1546,7 @@ export async function sendAbandon24hr(to: string) {
       headers: UNSUBSCRIBE_HEADERS,
       subject: "Quick question before I stop following up",
       html: abandon24hrHtml(),
+      text: htmlToText(abandon24hrHtml()),
     })
   );
 }
@@ -1533,6 +1585,7 @@ export async function sendDropoff5d(to: string, name: string, lessonId: string, 
       headers: UNSUBSCRIBE_HEADERS,
       subject: "No rush — but your next lesson is ready",
       html: dropoff5dHtml(name, lessonId, lessonTitle),
+      text: htmlToText(dropoff5dHtml(name, lessonId, lessonTitle)),
     })
   );
 }
@@ -1566,6 +1619,7 @@ export async function sendDropoff10d(to: string, name: string) {
       headers: UNSUBSCRIBE_HEADERS,
       subject: "10 minutes. One framework. Worth it.",
       html: dropoff10dHtml(name),
+      text: htmlToText(dropoff10dHtml(name)),
     })
   );
 }
@@ -1606,6 +1660,7 @@ export async function sendDropoff21d(to: string, name: string, lessonId: string)
       headers: UNSUBSCRIBE_HEADERS,
       subject: "Last check-in from us",
       html: dropoff21dHtml(name, lessonId),
+      text: htmlToText(dropoff21dHtml(name, lessonId)),
     })
   );
 }
@@ -1649,6 +1704,7 @@ export async function sendReviewRequest(to: string, name: string) {
       headers: UNSUBSCRIBE_HEADERS,
       subject: "You finished all 12. How was it?",
       html: reviewRequestHtml(name),
+      text: htmlToText(reviewRequestHtml(name)),
     })
   );
 }
@@ -1682,6 +1738,7 @@ export async function sendReviewNudge(to: string, name: string) {
       headers: UNSUBSCRIBE_HEADERS,
       subject: "30 seconds — that's all I need",
       html: reviewNudgeHtml(name),
+      text: htmlToText(reviewNudgeHtml(name)),
     })
   );
 }
@@ -1754,6 +1811,7 @@ export async function sendTeamInviteEmail(to: string, inviterName: string, token
       headers: UNSUBSCRIBE_HEADERS,
       subject: `${esc(inviterName)} invited you to AESDR`,
       html: teamInviteHtml(inviterName, token),
+      text: htmlToText(teamInviteHtml(inviterName, token)),
     })
   );
 }
@@ -1814,6 +1872,7 @@ export async function sendLessonCompleteEmail(
       headers: UNSUBSCRIBE_HEADERS,
       subject,
       html: lessonCompleteHtml(name, lessonId, lessonTitle),
+      text: htmlToText(lessonCompleteHtml(name, lessonId, lessonTitle)),
     })
   );
 }
@@ -1943,6 +2002,7 @@ export async function sendRevealUnlockedEmail(to: string, name: string) {
       headers: UNSUBSCRIBE_HEADERS,
       subject: "Choose your keeper.",
       html: revealUnlockedHtml(name),
+      text: htmlToText(revealUnlockedHtml(name)),
     })
   );
 }
