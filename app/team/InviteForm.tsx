@@ -39,7 +39,7 @@ export default function InviteForm() {
         placeholder="colleague@company.com"
         style={{
           fontFamily: "'Source Serif 4', Georgia, serif",
-          fontSize: "14px",
+          fontSize: "16px",
           padding: "14px 16px",
           border: "1px solid #B5B0A8",
           background: "#FAF7F2",

@@ -212,7 +212,7 @@ export default function TeaseGate({ children }: { children: React.ReactNode }) {
         }}
       >
         <span
-          data-text="AEs & SDRs rule this world"
+          data-text="Real Operator. Never guru."
           style={{
             position: "relative",
             display: "inline-block",
@@ -232,7 +232,7 @@ export default function TeaseGate({ children }: { children: React.ReactNode }) {
             filter: "drop-shadow(0 0 18px rgba(255,255,255,0.08))",
           }}
         >
-          AEs &amp; SDRs rule this world
+          Real Operator. Never guru.
         </span>
       </h1>
     </div>

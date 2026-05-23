@@ -98,7 +98,7 @@ export default function LandingSequence({ initialRole = null }: Props) {
         </div>
         <div className={s.heroLabel}>12 Interactive Courses &middot; Built by Operators &middot; Not by Course-People</div>
         <h1 className={`${s.heroBrand} ${s.irisText}`}>AESDR</h1>
-        <p className={s.heroTagline}>AEs &amp; SDRs rule this world.</p>
+        <p className={s.heroTagline}>12 courses. 5 tools. Same you &mdash; way, way better.</p>
         <p className={s.heroDescriptor} ref={descriptorRef}>
           {initialDescriptor}
         </p>

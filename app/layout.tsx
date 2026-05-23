@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/react";
 import AdminChip from "@/components/AdminChip";
@@ -14,7 +14,7 @@ const LAUNCHED = process.env.NEXT_PUBLIC_LAUNCH_MODE === "true";
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com"),
   title: "AESDR",
-  description: "AEs & SDRs rule this world.",
+  description: "12 courses. 5 tools. Same you — way, way better.",
   robots: {
     index: LAUNCHED,
     follow: LAUNCHED,
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "AESDR",
-    description: "AEs & SDRs rule this world.",
+    description: "12 courses. 5 tools. Same you — way, way better.",
     siteName: "AESDR",
     url: "https://aesdr.com",
     images: [
@@ -41,9 +41,16 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "AESDR",
-    description: "AEs & SDRs rule this world.",
+    description: "12 courses. 5 tools. Same you — way, way better.",
     images: ["/ceramic-bunny-mask-cutout.png"],
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#FAF7F2",
 };
 
 export default async function RootLayout({
