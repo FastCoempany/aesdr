@@ -24,7 +24,9 @@ const ROOT = process.cwd();
 const LESSONS = `${ROOT}/content/lessons/html`;
 
 // Extract body-prose strings from a unit (lp, kp body after colon, lie-a,
-// comp-sub, comp-p). Excludes carve-outs: lie-q, sidebarMotto, SIDEBAR_TEXTS.
+// comp-sub, comp-p). Excludes carve-outs: lie-q, sidebarMotto, SIDEBAR_TEXTS,
+// and the "Created by Antaeus L. Coe" attribution line (italic signature, not
+// body prose — counting it as a 4-word paragraph false-fires Axis 6 overcut).
 async function extractProse(file) {
   const body = await readFile(file, "utf-8");
   const paragraphs = [];
@@ -33,7 +35,9 @@ async function extractProse(file) {
   const re = /class="(lp|kp-body|lie-a|comp-sub|comp-p)[^"]*"[^>]*>([^<]+)</g;
   let m;
   while ((m = re.exec(body)) !== null) {
-    paragraphs.push(m[2].trim());
+    const text = m[2].trim();
+    if (/^Created by/.test(text)) continue;
+    paragraphs.push(text);
   }
 
   // Also catch kp <li> body text (the bit after <strong>X:</strong>)
