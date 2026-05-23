@@ -103,7 +103,7 @@ const DIMENSIONS: Dimension[] = [
       "Self-rating: 'My CRM reflects what's actually happening on my deals' (1–5)",
       "Manager rating: 'I can forecast from this AE/SDR's data without manual cleanup' (1–5)",
     ],
-    typicalDelta: "Course 9 (The Tools That Ruin You) is the unlock here. AEs and SDRs who complete 9.1 (CRM Survival Guide) typically see manager-rated forecasting quality improve from 2.5 → 3.5 on average within a month.",
+    typicalDelta: "Course 9 (The Tools That Ruin You) is the key intervention here. AEs and SDRs who complete 9.1 (CRM Survival Guide) typically see manager-rated forecasting quality improve from 2.5 → 3.5 on average within a month.",
   },
   {
     number: "07",
