@@ -164,7 +164,7 @@ executed agreement (the "Affiliate").
   [Lockup Usage Rules](/affiliates/kit/lockup-usage).
 - The Affiliate grants AESDR a limited, non-exclusive, non-transferable,
   revocable license to use the Affiliate's name and, where the Affiliate
-  supplies it, mark, in promotional materials referring to the affiliateship
+  supplies it, mark, in promotional materials referring to the affiliate program
   during the term.
 - Neither party may register the other's marks, create derivative works of
   the other's content, or transfer rights to a third party without written

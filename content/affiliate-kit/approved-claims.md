@@ -29,7 +29,7 @@ for someone who hasn't done the work yet.
 
 These are factual and verifiable; phrase them however fits your voice:
 
-- 12 modular courses + 5 takeaway tools (alignment contract, strike plan,
+- 12 courses + 5 takeaway tools (alignment contract, strike plan,
   ROI tracker, and two more)
 - Interactive HTML format, not video lectures
 - Discord (*Untamed*) included with every license

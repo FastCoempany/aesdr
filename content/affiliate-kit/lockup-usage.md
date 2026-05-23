@@ -2,7 +2,7 @@
 
 The **AESDR × Affiliate** lockup is the co-brand mark used on affiliate-specific
 registration pages, decks, and emails. The lockup files themselves are built
-to your affiliate mark and arrive after the affiliateship agreement is signed —
+to your affiliate mark and arrive after the partnership agreement is signed —
 this page is the rules they ship with.
 
 ## Where it goes

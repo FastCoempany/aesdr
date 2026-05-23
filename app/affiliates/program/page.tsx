@@ -50,6 +50,17 @@ const SECTIONS = [
       "A founder appearance at the workshop itself. The host runs the workshop. The founder builds the curriculum and is around for everything else — emails, prep calls, post-pilot debriefs.",
     ],
   },
+  {
+    title: "What happens if it doesn't work.",
+    bullets: [
+      "A pilot that clears under $1,500 in commission across your 30-day attribution window probably means our offer isn't the right fit for your audience. We'd rather see the data and pause than keep running campaigns that aren't moving.",
+      "Either side can wind down with 14 days' written notice — email is fine. The 30-day attribution window stays open for signups that already happened; commissions on those still pay out per Net-45.",
+      "If we end the pilot, you keep the registration page, the click data, and the revenue numbers. We send a one-page closeout summary by the end of the wind-down period.",
+      "If you end the pilot, we send a one-line note to audience members who registered but didn't enroll, then stop the follow-up cadence. Your call on timing and wording.",
+      "No clawbacks on in-flight commissions. No \"we'd like to revisit\" emails. The signed agreement governs and we honor it whether the pilot worked or not.",
+      "No pressure to renew or re-launch. If the pilot worked, we'll ask. If it didn't, we won't pretend otherwise.",
+    ],
+  },
 ];
 
 export default function ProgramPage() {

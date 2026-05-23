@@ -6,9 +6,9 @@ What affiliates need to know about what AESDR teaches — without enrolling.
 
 12 courses. Sequenced from foundational to advanced. Each course pairs
 operating frameworks with one or more interactive worksheets the AE/SDR keeps.
-Five takeaway tools unlock across the program — practical artifacts (alignment
-contract, strike plan, ROI tracker, and two more) AEs and SDRs use after the course
-ends.
+Five takeaway tools open across the program — practical artifacts (alignment
+contract, strike plan, ROI tracker, and two more) AEs and SDRs keep using after
+the course ends.
 
 The format is interactive HTML, not video lectures. A lesson takes 15–25
 minutes. You can do one on a commute, two on a slow Friday, the rest the

@@ -21,23 +21,22 @@ by people who read about it.
 - AEs and SDRs with 8+ years in the seat who aren't open to a re-look at fundamentals.
 - Anyone whose primary distribution motion is sponsored carousels.
 
-None of those are meant as insults — they're filters that work for both
-sides, and we'd rather you decline an affiliate conversation now than end
-a pilot together in week four with both sides disappointed in the outcome.
+None of those are meant as insults. They're filters that work for both
+sides. We'd rather you decline an affiliate conversation now than end
+a pilot in week four with both sides disappointed.
 
 ## What's in the program
 
-12 modular courses with 5 takeaway tools (the alignment contract, the
-72-hour strike plan, the ROI commission defense tracker, and two
-more) — all delivered as interactive HTML exercises rather than video
-lectures, with lifetime access that includes every future curriculum
-update, the private Discord community (*Untamed*) included with every
-license, and a 14-day no-questions-asked refund backing the whole thing.
+12 courses with 5 takeaway tools — the alignment contract, the 72-hour
+strike plan, the ROI commission defense tracker, and two more. All
+delivered as interactive HTML exercises, not video lectures. Lifetime
+access includes every future curriculum update. The private Discord
+community (*Untamed*) comes with every license. A 14-day no-questions-asked
+refund backs the whole thing.
 
-Pricing is at list price across the board ($249 SDR, $299 AE, $1,499
-for a 10-seat team), and it stays at list across every audience, every
-channel, and every affiliate — there are no promotional codes to issue or
-to advertise.
+Pricing is at list price across the board: $249 SDR, $299 AE, $1,499 for
+a 10-seat team. It stays at list across every audience, every channel,
+every affiliate. There are no promotional codes to issue or to advertise.
 
 ## Three things we'll always say
 

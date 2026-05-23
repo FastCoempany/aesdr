@@ -31,7 +31,7 @@ those terms.
 Co-branded surfaces (registration page, deck, affiliate-specific email) carry
 the **AESDR × Affiliate** lockup. Placement, color, and clearspace rules live
 in the [Lockup Usage Rules](/affiliates/kit/lockup-usage). The actual lockup
-files arrive after the affiliateship agreement is signed — they're built to
+files arrive after the partnership agreement is signed — they're built to
 your mark, so they're affiliate-specific.
 
 ## What's pre-cleared, what needs review
