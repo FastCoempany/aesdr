@@ -113,14 +113,19 @@ function scoreAxis1(paragraphs) {
 // AXIS 2: specificity
 // Heuristic: a paragraph has ≥1 concrete reference if it contains numbers,
 // named roles, named tools, time markers, or named situations.
+//
+// Role regex matches singular OR plural form (AE/AEs/SDR/SDRs). The
+// original `\bAE\b` form failed to match "AEs" because "s" extends the
+// word boundary — a real bug that false-flagged operator-vocabulary
+// paragraphs as abstract.
 const CONCRETE_HINTS = [
   /\b\d/, // any digit
-  /\b(SDR|AE|VP|CFO|CRO|CEO|RVP|GM|BDR)\b/,
+  /\b(SDRs?|AEs?|VPs?|CFOs?|CROs?|CEOs?|RVPs?|GMs?|BDRs?)\b/,
   /\b(Salesforce|HubSpot|Apollo|Outreach|Slack|LinkedIn|Notion|Gong|Untamed)\b/,
   /\b(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|morning|afternoon|evening)\b/i,
-  /\b(QBR|1:1|huddle|standup|demo|discovery|forecast|all-hands|offsite)\b/i,
-  /\b(quarter|month|week|year|day)\b/i,
-  /\b(quota|pipeline|commission|comp plan|OTE|MEDDIC|BANT)\b/i,
+  /\b(QBRs?|1:1s?|huddles?|standups?|demos?|discoverys?|forecasts?|all-hands|offsites?|conferences?|events?|dinners?)\b/i,
+  /\b(quarter|month|week|year|day)s?\b/i,
+  /\b(quotas?|pipelines?|commissions?|comp plans?|OTE|MEDDIC|BANT|cadences?|sequences?|deals?|leads?|territor(?:y|ies)|accounts?|prospects?|champions?|customers?|executives?)\b/i,
 ];
 
 function scoreAxis2(paragraphs) {
