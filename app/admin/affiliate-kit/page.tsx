@@ -3,7 +3,7 @@
  *
  * Sits behind requireAdmin() (via app/admin/layout.tsx). Shows:
  *   - Mint form (slug, label, days, notes) → POSTs to a server action
- *   - Token list (issued, expires, revoked, partner)
+ *   - Token list (issued, expires, revoked, affiliate)
  *   - Access log (most recent 200 events)
  */
 
@@ -114,7 +114,7 @@ export default async function AdminPartnerKit() {
       </header>
 
       <section style={cardStyle}>
-        <h2 style={h2Style}>Mint a new partner token</h2>
+        <h2 style={h2Style}>Mint a new affiliate token</h2>
         <form action={mintAction} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
           <label style={labelStyle}>
             <span>Partner slug *</span>
@@ -127,7 +127,7 @@ export default async function AdminPartnerKit() {
             />
           </label>
           <label style={labelStyle}>
-            <span>Partner label</span>
+            <span>Affiliate label</span>
             <input
               name="partnerLabel"
               placeholder="Acme Newsletter (Jordan Doe)"
@@ -278,7 +278,7 @@ function CopyLinkBlock({
   const url = `${baseUrl}/affiliates/kit-private?t=${signed}`;
   return (
     <div>
-      <div style={{ fontSize: 11, color: "#6B6B6B", marginBottom: 4 }}>Access URL — share with partner:</div>
+      <div style={{ fontSize: 11, color: "#6B6B6B", marginBottom: 4 }}>Access URL — share with affiliate:</div>
       <code
         style={{
           display: "block",

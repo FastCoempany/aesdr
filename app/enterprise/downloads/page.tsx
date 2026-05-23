@@ -13,7 +13,7 @@ import styles from "../enterprise.module.css";
 
 export const metadata = {
   title: "Downloads — AESDR / Enterprise",
-  description: "Manager guide, completion certificate, partner one-pager, AE/SDR diagnostic instrument. All print-friendly.",
+  description: "Manager guide, completion certificate, channel partner one-pager, AE/SDR diagnostic instrument. All print-friendly.",
 };
 
 const ARTIFACTS = [
@@ -82,7 +82,7 @@ export default function DownloadsIndex() {
           </div>
 
           <div className={styles.downloadHowto}>
-            <strong>About these artifacts:</strong> the manager guide, certificate, and partner
+            <strong>About these artifacts:</strong> the manager guide, certificate, and channel partner
             one-pager are designed to save as PDF — open the artifact, press{" "}
             <strong>Cmd+P</strong> (Mac) or <strong>Ctrl+P</strong> (Windows), choose{" "}
             <strong>Save as PDF</strong> in the destination dropdown, click <strong>Save</strong>.

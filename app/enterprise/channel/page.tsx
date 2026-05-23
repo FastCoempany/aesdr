@@ -26,7 +26,7 @@ export default function PartnersPage() {
             Your customers hire junior salespeople. AESDR is the training those salespeople are missing.
           </h1>
           <p className={styles.heroSubhead}>
-            If you sell to sales orgs, sales hiring, enablement, RevOps, L&amp;D, or HR — AESDR fills a gap your customers struggle with: getting first- and second-year AEs and SDRs productive without churning them. Five partner categories, mapped below. Each shows what your customers are missing, how AESDR fits, how we&apos;d integrate, and what you&apos;d earn.
+            If you sell to sales orgs, sales hiring, enablement, RevOps, L&amp;D, or HR — AESDR fills a gap your customers struggle with: getting first- and second-year AEs and SDRs productive without churning them. Five channel partner categories, mapped below. Each shows what your customers are missing, how AESDR fits, how we&apos;d integrate, and what you&apos;d earn.
           </p>
           <div style={{ marginTop: 24 }}>
             <InlineCTA href="/enterprise/contact?source=channel">Partnership inquiry</InlineCTA>

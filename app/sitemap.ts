@@ -3,7 +3,7 @@ import { KIT_ENTRIES } from "@/lib/affiliate-kit";
 
 /**
  * Pre-launch gating: when NEXT_PUBLIC_LAUNCH_MODE !== "true", return an
- * empty sitemap so the public route map (partner hub, kit slugs, etc.)
+ * empty sitemap so the public route map (affiliate hub, kit slugs, etc.)
  * isn't enumerable at /sitemap.xml. Matches the policy in app/robots.ts,
  * which disallows all crawling under the same flag.
  *

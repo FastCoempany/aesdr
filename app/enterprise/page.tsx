@@ -206,11 +206,11 @@ export default function TeamsLanding() {
               features={[
                 "Listed in your marketplace under sales / L&D categories",
                 "SSO + email-based seat provisioning today",
-                "SCORM, xAPI, LTI built per partner request",
+                "SCORM, xAPI, LTI built per channel partner request",
                 "Referral fee, reseller margin, or wholesale seats",
               ]}
               ctaHref="/enterprise/channel"
-              ctaLabel="See partner categories"
+              ctaLabel="See channel partner categories"
             />
           </div>
         </div>

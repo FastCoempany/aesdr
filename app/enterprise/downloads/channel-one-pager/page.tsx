@@ -5,13 +5,13 @@ import PrintButton from "../../_components/PrintButton";
  * /enterprise/downloads/channel-one-pager — single-page printable.
  *
  * Compressed version of /enterprise/channel for attaching to outbound emails
- * or handing to a partner in a conversation. Letter portrait, fits on
+ * or handing to a channel partner in a conversation. Letter portrait, fits on
  * one page when printed.
  */
 
 export const metadata = {
-  title: "Partner one-pager — AESDR / Enterprise",
-  description: "Single-page partner brief. Positioning, partner categories, contact.",
+  title: "Channel partner one-pager — AESDR / Enterprise",
+  description: "Single-page channel partner brief. Positioning, channel partner categories, contact.",
 };
 
 const CATEGORIES = [
@@ -127,7 +127,7 @@ export default function PartnerOnePagerPage() {
           <h2 className={styles.onepageH2}>Partnership models</h2>
           <p className={styles.onepageBody}>
             <strong>Referral:</strong> 15–20% of first-year revenue on qualified leads.{" "}
-            <strong>Reseller:</strong> 60% wholesale, partner sets retail.{" "}
+            <strong>Reseller:</strong> 60% wholesale, channel partner sets retail.{" "}
             <strong>White-label:</strong> Co-branded delivery, per-seat wholesale.{" "}
             <strong>Marketplace listing:</strong> Standard marketplace cut. Custom terms
             scoped during partnership conversation. No exclusivity, no minimums.

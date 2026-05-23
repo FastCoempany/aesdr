@@ -1,7 +1,7 @@
 import styles from "../enterprise.module.css";
 
 /**
- * One block per partner category on /enterprise/channel.
+ * One block per channel partner category on /enterprise/channel.
  *
  * Structure mirrors the canon §7 spec: category name + example targets
  * in the header, framing paragraph below, then a 4-cell matrix —
