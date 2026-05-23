@@ -9,6 +9,29 @@ import { createClient } from "@/utils/supabase/server";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * Lesson-to-lesson narrative bridges. Surfaces the editorial through-line
+ * the May-22 audit named as "invisible" — each completion page now
+ * contextualizes what the next course picks up from this one, rather than
+ * just naming the next course's number.
+ *
+ * Keyed by the just-completed lesson ID. Bridges 1→2 through 11→12.
+ * Course 12's completion uses the existing isLast message.
+ */
+const NARRATIVE_BRIDGES: Record<string, string> = {
+  "1": "Course 1 built structure with your manager. Course 2 expands that structure across the floor — silos, home office, AE-SDR friction.",
+  "2": "Course 2 mapped the floor's hidden dynamics. Course 3 is the survival kit for when those dynamics turn against you.",
+  "3": "Course 3 was about surviving the worst weeks. Course 4 is about navigating the everyday — the manager, the culture, the async-life.",
+  "4": "Course 4 read the rooms you sit in. Course 5 is the playbook for what to do once you're in them.",
+  "5": "Course 5 gave you the playbook. Course 6 is what the playbook leaves out — the networking, the curiosity, the moves nobody coaches.",
+  "6": "Course 6 expanded your toolkit beyond the playbook. Course 7 forces the harder question: is prospecting your job too?",
+  "7": "Course 7 confronted whose pipeline this really is. Course 8 confronts who's responsible when it breaks.",
+  "8": "Course 8 made you the variable. Course 9 takes a hard look at the tools that quietly ruin you.",
+  "9": "Course 9 audited the tools. Course 10 audits the comp plan — and what the math actually says about your year.",
+  "10": "Course 10 was the financial math. Course 11 is the off-the-clock math — selling sober, conferences, professional presence.",
+  "11": "Course 11 was about who you are at the conference. Course 12 is about who you are on the other 350 days.",
+};
+
 interface PageProps {
   params: Promise<{ lessonId: string }>;
 }
@@ -156,7 +179,7 @@ export default async function LessonCompletePage({ params }: PageProps) {
       >
         {isLast
           ? "You made it through all twelve. The shell did not stop."
-          : `Lesson ${nextLesson.id} is harder.`}
+          : NARRATIVE_BRIDGES[lessonId] ?? `Lesson ${nextLesson.id} is harder.`}
       </p>
 
       <div
