@@ -21,6 +21,12 @@ interface ProgressSaverProps {
  * - `aesdr:complete`  → marks lesson as completed in Supabase
  * - `aesdr:navigate`  → redirects parent to a given href (e.g. /dashboard)
  * - Sends `aesdr:restore` to iframe on load with saved state from Supabase
+ *
+ * Visible feedback: shows a small editorial "Saved" toast for ~1.6s after
+ * each successful server save (auth users only — unauth users don't have
+ * a server save to confirm). The toast addresses the audit finding
+ * "if a buyer closes the tab mid-lesson, do they know they can come back?"
+ * by giving the persistence a felt, visible moment.
  */
 export default function ProgressSaver({
   lessonId,
@@ -28,10 +34,18 @@ export default function ProgressSaver({
   savedStateData,
 }: ProgressSaverProps) {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const savedHideRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const failCountRef = useRef(0);
   const [sessionExpired, setSessionExpired] = useState(false);
   const [navigating, setNavigating] = useState(false);
+  const [showSaved, setShowSaved] = useState(false);
   const restoredRef = useRef(false);
+
+  const flashSaved = useCallback(() => {
+    setShowSaved(true);
+    if (savedHideRef.current) clearTimeout(savedHideRef.current);
+    savedHideRef.current = setTimeout(() => setShowSaved(false), 1600);
+  }, []);
 
   const save = useCallback(
     (screen: number, stateData: Record<string, unknown>) => {
@@ -56,6 +70,7 @@ export default function ProgressSaver({
             clearTimeout(timeoutId);
             if (!res.ok) throw new Error(String(res.status));
             failCountRef.current = 0;
+            flashSaved();
           }).catch(() => {
             clearTimeout(timeoutId);
             failCountRef.current += 1;
@@ -66,7 +81,7 @@ export default function ProgressSaver({
         }
       }, TIMING.progress.debounceMs);
     },
-    [lessonId, isAuthenticated]
+    [lessonId, isAuthenticated, flashSaved]
   );
 
   useEffect(() => {
@@ -118,6 +133,7 @@ export default function ProgressSaver({
     return () => {
       window.removeEventListener("message", handleMessage);
       if (debounceRef.current) clearTimeout(debounceRef.current);
+      if (savedHideRef.current) clearTimeout(savedHideRef.current);
     };
   }, [save, lessonId, isAuthenticated]);
 
@@ -157,28 +173,32 @@ export default function ProgressSaver({
   if (sessionExpired) {
     return (
       <div
+        role="status"
+        aria-live="polite"
         style={{
           position: "fixed",
           bottom: "20px",
           left: "50%",
           transform: "translateX(-50%)",
           zIndex: 10000,
-          background: "rgba(0,0,0,0.9)",
-          border: "1px solid var(--theme)",
-          padding: "14px 24px",
+          background: "#fff",
+          border: "1px solid var(--ink)",
+          borderLeft: "3px solid var(--crimson)",
+          padding: "14px 22px",
           display: "flex",
           alignItems: "center",
-          gap: "16px",
-          maxWidth: "420px",
+          gap: "18px",
+          maxWidth: "440px",
+          boxShadow: "0 4px 14px rgba(0,0,0,0.08)",
         }}
       >
         <p
           style={{
-            fontFamily: "var(--mono)",
-            fontSize: "11px",
-            letterSpacing: ".06em",
-            color: "var(--text-muted)",
+            fontFamily: "var(--serif)",
+            fontSize: "13px",
+            color: "var(--ink)",
             margin: 0,
+            lineHeight: 1.45,
           }}
         >
           Session expired. Your progress is saved locally.
@@ -189,18 +209,67 @@ export default function ProgressSaver({
             fontFamily: "var(--cond)",
             fontSize: "12px",
             fontWeight: 700,
-            letterSpacing: ".1em",
+            letterSpacing: ".15em",
             textTransform: "uppercase",
-            color: "var(--theme)",
+            color: "var(--crimson)",
             textDecoration: "none",
             whiteSpace: "nowrap",
           }}
         >
-          Re-login
+          Re-login →
         </a>
       </div>
     );
   }
 
-  return null;
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      style={{
+        position: "fixed",
+        bottom: 20,
+        right: 20,
+        zIndex: 9980,
+        pointerEvents: "none",
+        opacity: showSaved ? 1 : 0,
+        transform: showSaved ? "translateY(0)" : "translateY(6px)",
+        transition: "opacity 180ms ease-out, transform 180ms ease-out",
+      }}
+    >
+      <div
+        style={{
+          background: "var(--cream)",
+          border: "1px solid var(--ink)",
+          padding: "8px 14px",
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+        }}
+      >
+        <span
+          aria-hidden="true"
+          style={{
+            width: 6,
+            height: 6,
+            borderRadius: "50%",
+            background: "var(--crimson)",
+          }}
+        />
+        <span
+          style={{
+            fontFamily: "var(--cond)",
+            fontSize: 11,
+            letterSpacing: ".18em",
+            textTransform: "uppercase",
+            color: "var(--ink)",
+          }}
+        >
+          Saved
+        </span>
+      </div>
+    </div>
+  );
 }

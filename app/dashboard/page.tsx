@@ -79,7 +79,7 @@ export default async function Dashboard() {
     user
       ? supabase
           .from("course_progress")
-          .select("lesson_id, is_completed, last_screen")
+          .select("lesson_id, is_completed, last_screen, completed_at, updated_at")
           .eq("user_id", user.id)
       : Promise.resolve({ data: null }),
     user
@@ -125,6 +125,47 @@ export default async function Dashboard() {
     sealedUnlocked = !!unlock;
   }
 
+  /* ─── Recency signals for the two top-of-dashboard surfaces ───
+     • justClosedLesson: a lesson completed in the last 24h → small
+       editorial recognition above the Resume CTA.
+     • inactiveDays: days since the most recent activity (any progress
+       row updated) → welcome-back banner when ≥5 days. */
+  const progressRows = (progressRes.data ?? []) as Array<{
+    lesson_id: string;
+    is_completed: boolean;
+    completed_at: string | null;
+    updated_at: string | null;
+  }>;
+  // Date.now() in a server component is per-request and safe; React's
+  // purity rule is a false positive here (same pattern as app/account/page.tsx).
+  // eslint-disable-next-line react-hooks/purity
+  const now = Date.now();
+  const DAY_MS = 86_400_000;
+  let justClosedLesson: { id: string; title: string } | null = null;
+  let inactiveDays: number | null = null;
+  if (progressRows.length > 0) {
+    const recentCompletion = progressRows
+      .filter((r) => r.is_completed && r.completed_at)
+      .map((r) => ({ row: r, ts: Date.parse(r.completed_at as string) }))
+      .filter((x) => !Number.isNaN(x.ts))
+      .sort((a, b) => b.ts - a.ts)[0];
+    if (recentCompletion && now - recentCompletion.ts < DAY_MS && !allComplete) {
+      const lesson = LESSONS.find((l) => l.id === recentCompletion.row.lesson_id);
+      if (lesson) {
+        const title = userRole === "ae" && lesson.titleAe ? lesson.titleAe : lesson.title;
+        justClosedLesson = { id: lesson.id, title };
+      }
+    }
+    const lastActivity = progressRows
+      .map((r) => (r.updated_at ? Date.parse(r.updated_at) : NaN))
+      .filter((ts) => !Number.isNaN(ts))
+      .sort((a, b) => b - a)[0];
+    if (lastActivity) {
+      const days = Math.floor((now - lastActivity) / DAY_MS);
+      if (days >= 5 && !allComplete) inactiveDays = days;
+    }
+  }
+
   return (
     <main
       className="min-h-screen"
@@ -158,7 +199,7 @@ export default async function Dashboard() {
       <div className="mx-auto w-full max-w-3xl px-6 py-16" style={{ color: "#1A1A1A" }}>
 
         {/* Header — dynamic pose mood ring per state file canon:
-            doctrine if 0 complete, current lesson's pose mid-journey,
+            doctrine if 0 complete, current lesson's pose mid-course,
             owner if all 12 done. */}
         <header className="mb-16" style={{ display: "flex", gap: 24, alignItems: "center", flexWrap: "wrap" }}>
           <Mascot
@@ -183,7 +224,7 @@ export default async function Dashboard() {
               marginBottom: "16px",
             }}
           >
-            The Journey
+            The Operating Manual
           </p>
           <h1
             style={{
@@ -206,8 +247,93 @@ export default async function Dashboard() {
           </div>
         </header>
 
+        {/* Welcome-back banner — appears when the user's last activity was
+            ≥5 days ago. Editorial, no celebration, just acknowledgment +
+            an orienting line so they don't land cold. */}
+        {inactiveDays !== null && (
+          <aside
+            aria-label="Welcome back"
+            style={{
+              marginBottom: 24,
+              padding: "18px 22px",
+              background: "#fff",
+              borderLeft: "3px solid #8B1A1A",
+            }}
+          >
+            <p
+              style={{
+                fontFamily: "'Space Mono',monospace",
+                fontSize: 10,
+                letterSpacing: ".32em",
+                textTransform: "uppercase",
+                color: "#6B6B6B",
+                marginBottom: 6,
+              }}
+            >
+              {inactiveDays >= 30 ? "Back after a while" : `Back after ${inactiveDays} days`}
+            </p>
+            <p
+              style={{
+                fontFamily: "'Source Serif 4', Georgia, serif",
+                fontSize: 15,
+                lineHeight: 1.55,
+                color: "#1A1A1A",
+                margin: 0,
+              }}
+            >
+              Your progress is where you left it. Lesson {currentLesson.id} is up next
+              {progressMap[currentLesson.id]?.last_screen
+                ? `, mid-lesson at screen ${progressMap[currentLesson.id]?.last_screen}.`
+                : "."}
+            </p>
+          </aside>
+        )}
+
+        {/* Just-closed recognition — appears for 24h after a lesson is
+            marked complete. Small editorial marker, no animation, per the
+            audit ("celebratory animations would feel off-brand — but some
+            kind of progression marker would help"). Suppressed when all
+            twelve are done (the all-complete section handles that case). */}
+        {justClosedLesson && (
+          <aside
+            aria-label={`Module ${justClosedLesson.id} closed`}
+            style={{
+              marginBottom: 24,
+              padding: "14px 20px",
+              background: "#1A1A1A",
+              color: "#FAF7F2",
+            }}
+            data-surface="dark"
+          >
+            <p
+              style={{
+                fontFamily: "'Space Mono',monospace",
+                fontSize: 10,
+                letterSpacing: ".32em",
+                textTransform: "uppercase",
+                color: "rgba(250,247,242,0.65)",
+                marginBottom: 4,
+              }}
+            >
+              Module {justClosedLesson.id} closed
+            </p>
+            <p
+              style={{
+                fontFamily: "'Playfair Display', Georgia, serif",
+                fontStyle: "italic",
+                fontWeight: 700,
+                fontSize: 17,
+                lineHeight: 1.3,
+                margin: 0,
+              }}
+            >
+              {justClosedLesson.title}.
+            </p>
+          </aside>
+        )}
+
         {/* Resume CTA — where the user actually left off. Shows for everyone
-            mid-journey; replaced by a completion celebration + LinkedIn
+            mid-course; replaced by a completion celebration + LinkedIn
             share when all 12 are done. */}
         {!allComplete && (
           <section
@@ -409,7 +535,7 @@ export default async function Dashboard() {
           </section>
         )}
 
-        {/* The Journey — sequential timeline */}
+        {/* Sequential timeline — twelve modules in order */}
         <div className="flex flex-col" style={{ gap: "0" }}>
           {LESSONS.map((lesson, idx) => {
             const isCompleted = progressMap[lesson.id]?.is_completed ?? false;
