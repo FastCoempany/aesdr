@@ -26,7 +26,7 @@ executed agreement (the "Affiliate").
 
 - The agreement runs for one **time-boxed pilot** — typically a 30-day
   attribution window plus the payment-clearance period (see §5). Roughly
-  90 days end-to-end from the Affiliate's first promotional send.
+  90 days in total from the Affiliate's first promotional send.
 - Either party may terminate the agreement at any time, in writing, with
   30 days' notice. Termination does not extinguish commissions already
   earned on enrollments inside the attribution window.
@@ -55,7 +55,7 @@ executed agreement (the "Affiliate").
 
 ## 4. What AESDR does
 
-- Builds a Affiliate-attributed registration page with tracking in place
+- Builds an Affiliate-attributed registration page with tracking in place
   within 24 hours of agreement execution.
 - Runs the live 60-minute workshop. Hosts, presents, handles Q&A. Replay
   stays live for 72 hours.

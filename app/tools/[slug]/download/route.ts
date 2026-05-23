@@ -53,7 +53,7 @@ export async function GET(
   if (!progress?.is_completed) {
     return new Response(
       gatePage(
-        `Complete Lesson ${requiredLesson} to unlock this download.`,
+        `Complete Lesson ${requiredLesson} first to download this.`,
         true
       ),
       { headers: { "Content-Type": "text/html; charset=utf-8" } }

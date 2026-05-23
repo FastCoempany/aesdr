@@ -200,7 +200,7 @@ export default function ProgramPage() {
               color: "rgba(255,255,255,0.85)",
             }}
           >
-            At the end of the program, students can unlock a second end-of-course artifact for $40 from their dashboard. If they do that within your 30-day attribution window, it counts toward your commission too.
+            At the end of the program, students can buy a second end-of-course artifact for $40 from their dashboard. If they do that within your 30-day attribution window, it counts toward your commission too.
           </p>
         </article>
       </section>

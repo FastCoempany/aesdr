@@ -168,7 +168,7 @@ export default async function LandingPage() {
             <p className={styles.comparePrice}>$800–$5,000 · 4–8 weeks</p>
             <ul className={styles.compareList}>
               <li>Scheduled live sessions, Slack community</li>
-              <li>Cohort accountability is the moat</li>
+              <li>Cohort accountability is the selling point</li>
               <li>High completion among committed attendees</li>
               <li>Refund typically pro-rated</li>
               <li>Built around instructor availability</li>

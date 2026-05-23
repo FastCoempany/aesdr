@@ -125,7 +125,7 @@ export default async function PlaybillPage({
               textTransform: "uppercase",
             }}
           >
-            Back to the Journey
+            Back to the dashboard
           </Link>
         </div>
       </main>

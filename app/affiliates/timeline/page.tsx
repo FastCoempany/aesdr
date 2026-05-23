@@ -121,7 +121,7 @@ export default function TimelinePage() {
             marginRight: "auto",
           }}
         >
-          About 11 weeks end-to-end, agreement signing through payment. Two sends from you, one workshop, one debrief. Everything else happens on our end.
+          About 11 weeks from agreement signing through payment. Two sends from you, one workshop, one debrief. Everything else happens on our end.
         </p>
       </div>
 

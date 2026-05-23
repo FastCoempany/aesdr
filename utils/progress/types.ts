@@ -35,7 +35,7 @@ export const LESSONS: LessonMeta[] = [
   { id: "2",  title: "Breaking Down Silos",               subtitle: "Home office, ego & team dynamics",   totalScreens: 9 },
   { id: "3",  title: "Surviving & Thriving",               subtitle: "SDR pitfalls, survival & managing up", titleAe: "Surviving & Thriving", subtitleAe: "Performance pitfalls, survival & managing up", totalScreens: 9 },
   { id: "4",  title: "Navigating the Workplace",           subtitle: "Manager dynamics, culture & async life", totalScreens: 9 },
-  { id: "5",  title: "The SDR Playbook",                   subtitle: "Level up, stand out & become irreplaceable", titleAe: "The AE Playbook", subtitleAe: "Level up, stand out & become irreplaceable", totalScreens: 9 },
+  { id: "5",  title: "The SDR Playbook",                   subtitle: "Stand out, last in role, earn the next title", titleAe: "The AE Playbook", subtitleAe: "Stand out, last in role, earn the next title", totalScreens: 9 },
   { id: "6",  title: "Beyond the Sales Playbook",          subtitle: "Learning, networking & knowledge strategy", totalScreens: 9 },
   { id: "7",  title: "Prospecting & Pipeline",             subtitle: "Self-sourced meetings & SaaS career fit", totalScreens: 9 },
   { id: "8",  title: "Leadership & Self-Assessment",       subtitle: "The 30% rule, potential & accountability", totalScreens: 9 },

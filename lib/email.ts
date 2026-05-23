@@ -810,7 +810,7 @@ function welcomeHtml(name: string, email: string, loginUrl: string, tempPassword
               </tr>
               <tr>
                 <td style="padding:10px 0;border-top:1px solid #E8E3D8;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.6;color:#334155;">
-                  <strong style="color:#1A1A1A;">Five tools unlock along the way.</strong> Commission tracker. Alignment contracts. Strike plans. Yours when the lesson is done.
+                  <strong style="color:#1A1A1A;">Five take-home tools come with the course.</strong> Commission tracker. Alignment contracts. Strike plans. Yours when the lesson that builds each one is done.
                 </td>
               </tr>
             </table>
@@ -1407,7 +1407,7 @@ function day0PlusThirtySixHoursHtml(name: string) {
   <p>Hey ${safeName},</p>
   <p>Quick check — did you get into Course 1 yet?</p>
   <p>If you did: good. The first lesson is the hardest activation. Everything after compounds.</p>
-  <p>If you didn't: also fine. Here's the thing that gets most people unstuck —</p>
+  <p>If you didn't: also fine. What gets most people unstuck —</p>
   <p style="margin:18px 0;padding:14px 18px;border-left:3px solid #8B1A1A;background:#FFFFFF;font-style:italic">
     The reason you haven't started isn't time. It's that nothing in your day says "this is the moment." Don't wait for the moment. Put it on tomorrow morning's calendar, before you check Slack. 25 minutes.
   </p>
@@ -1561,7 +1561,7 @@ function abandon24hrHtml() {
   <p>Last email about this — promise.</p>
   <p>I talk to a lot of AEs and SDRs. The three reasons people don't invest in themselves are always the same:</p>
   <p style="margin:14px 0 4px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:18px">&ldquo;I can't afford it right now.&rdquo;</p>
-  <p>That's fair — commission months are genuinely unpredictable across the year — but the underlying math still holds: if one framework from this program helps you close even one extra deal this quarter, the return isn't 2x on the purchase price, it's probably closer to 10x, because the program itself costs less than one decent dinner in most cities.</p>
+  <p>That's fair — commission months are genuinely unpredictable across the year. The underlying math is straightforward: one extra deal closed this quarter, helped along by one framework from this course, returns more than the course costs. The course itself runs less than one decent dinner in most cities.</p>
   <p style="margin:14px 0 4px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:18px">&ldquo;I don't have time.&rdquo;</p>
   <p>Each lesson runs alongside a full-time quota. No four-hour video modules. Interactive screens you can do on your commute or during a slow Friday.</p>
   <p style="margin:14px 0 4px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:18px">&ldquo;I've seen courses like this before.&rdquo;</p>
@@ -1959,7 +1959,7 @@ function lessonCompleteHtml(name: string, lessonId: string, lessonTitle: string)
         <tr>
           <td style="padding:14px 48px 0 48px;" align="center">
             <a href="${SITE}/dashboard" style="font-family:'SF Mono',Consolas,monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#94A3B8;text-decoration:none;">
-              Back to the Journey
+              Back to all lessons
             </a>
           </td>
         </tr>

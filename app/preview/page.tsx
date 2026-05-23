@@ -183,20 +183,21 @@ export default function PreviewPage() {
             Every AE and SDR has a story about a manager who made the job
             measurably harder, and the common mistake is to treat that
             manager as a personality problem — which they almost never
-            actually are; they&rsquo;re an <strong>operating system</strong>
-            instead, with a stable set of inputs they reward, outputs they
-            ignore, and signals they read as either competence or threat.
+            actually are. Each manager has a stable set of behaviours they
+            reward, behaviours they ignore, and signals they read as either
+            competence or threat.
           </p>
           <p style={{ fontSize: 18, lineHeight: 1.75, marginBottom: 16 }}>
-            You don&rsquo;t have to like the OS. You do have to know which one you&rsquo;re
-            running on. The cheapest mistake in the first 18 months of a sales
-            career is matching your behaviour to the wrong manager — pitching a
-            Coach like an Operator, ducking a Closer when they want to be in
-            the room, escalating to a Ghost who didn&rsquo;t want the alert.
+            You don&rsquo;t have to like how your manager reads you. You do
+            have to know how they read you. The cheapest mistake in the first
+            18 months of a sales career is matching your behaviour to the
+            wrong manager — pitching a Coach like an Operator, ducking a
+            Closer when they want to be in the room, escalating to a Ghost
+            who didn&rsquo;t want the alert.
           </p>
           <p style={{ fontSize: 18, lineHeight: 1.75 }}>
             This lesson hands you a four-archetype map and three live prompts.
-            By the end you can read the OS in a week, not a quarter.
+            By the end you can read your manager in a week, not a quarter.
           </p>
         </section>
 
@@ -364,7 +365,7 @@ export default function PreviewPage() {
               textDecoration: "none",
             }}
           >
-            Unlock the full lesson
+            Open the full lesson
           </Link>
         </section>
 

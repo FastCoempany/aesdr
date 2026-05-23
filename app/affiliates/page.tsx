@@ -77,7 +77,7 @@ export default function AffiliatesHomePage() {
           </>
         }
         ctaHref="/affiliates/apply"
-        ctaText="Request a affiliate conversation →"
+        ctaText="Request an affiliate conversation →"
       />
 
       <ThreePillarBlock
@@ -122,11 +122,11 @@ export default function AffiliatesHomePage() {
           "Your primary channel is paid LinkedIn placement.",
           "You expect promo codes, discount-stacking authority, or pricing variance for your audience. AESDR does not run discounts. Ever.",
         ]}
-        closingLine="None of these are meant as insults — they're filters that work for both sides, and we'd rather decline a affiliate conversation now than end a pilot together in week 4 with both sides disappointed in the outcome."
+        closingLine="None of these are meant as insults — they're filters that work for both sides, and we'd rather decline an affiliate conversation now than end a pilot together in week 4 with both sides disappointed in the outcome."
       />
 
       <div style={{ padding: "96px 24px 0" }}>
-        <HubCTA href="/affiliates/apply">Request a affiliate conversation →</HubCTA>
+        <HubCTA href="/affiliates/apply">Request an affiliate conversation →</HubCTA>
       </div>
 
       <CaveatLayer>

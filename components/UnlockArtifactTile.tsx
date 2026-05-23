@@ -99,7 +99,7 @@ export default function UnlockArtifactTile({
         fontFamily: "'Space Mono', monospace", fontSize: 8, letterSpacing: ".25em",
         textTransform: "uppercase", color: "rgba(250,247,242,.6)", textAlign: "center",
       }}>
-        {label} &middot; Unlock
+        {label} &middot; Buy
       </div>
     </button>
   );

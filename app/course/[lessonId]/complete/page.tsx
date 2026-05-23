@@ -200,7 +200,7 @@ export default async function LessonCompletePage({ params }: PageProps) {
           </Link>
         )}
         <Link href="/dashboard" style={btnSecondary}>
-          Back to the Journey
+          Back to the dashboard
         </Link>
       </div>
     </main>

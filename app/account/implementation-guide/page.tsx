@@ -48,7 +48,7 @@ const WEEKS: Week[] = [
     title: "Surviving your manager",
     estimate: "~28 min",
     brief:
-      "Probably the highest-leverage lesson for the first eighteen months. The Manager Archetype Map drops in here.",
+      "Probably the lesson that pays back fastest in the first eighteen months. The Manager Archetype Map drops in here.",
     move:
       "Print the one-pager. Label your manager. Run the matching weekly move at your next 1:1.",
   },

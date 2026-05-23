@@ -22,7 +22,7 @@ const isDivider = (entry: QuickEntry): entry is QuickDivider =>
   "divider" in entry && entry.divider === true;
 
 const QUICK_LINKS: QuickEntry[] = [
-  { label: "Journey", href: "/dashboard", note: "Course dashboard — all lessons unlocked" },
+  { label: "Dashboard", href: "/dashboard", note: "Course dashboard — all lessons unlocked" },
   { label: "Affiliate Hub", href: "/affiliates", note: "Partner-prospect surface" },
   { label: "Public Kit", href: "/affiliates/kit", note: "8 partner-facing docs" },
   { label: "Gated Kit", href: "/affiliates/kit-private", note: "6 ops docs (admin auto-access)" },

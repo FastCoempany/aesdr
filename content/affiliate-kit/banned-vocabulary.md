@@ -71,7 +71,7 @@ Each comes loaded with context the audience has already filed under
 
 The brand AESDR is building wins by being plain, specific, and
 operationally true. Anything that performs expertise rather than
-installs it works against that — including in copy a Affiliate writes
+installs it works against that — including in copy an Affiliate writes
 about us.
 
 ## What we ask
