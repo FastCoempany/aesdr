@@ -74,9 +74,10 @@ const BLOCKLIST = [
   { pattern: /\bsurface area\b/gi, hint: "R-G4: 'surface area' is geometry metaphor; say which surface, which area" },
   { pattern: /\becosystem\b/gi, hint: "R-G4: 'ecosystem' is biology metaphor; name the products" },
   { pattern: /\bflywheel\b/gi, hint: "R-G4: 'flywheel' is startup trope (unless naming Bezos/Collins)" },
-  // 'level up' as motivational verb. Negative lookbehind skips
-  // legitimate hierarchical uses: 'the next level up', 'next level up'.
-  { pattern: /(?<!\bthe\s)(?<!\bnext\s)\blevel[- ]up\b/gi, hint: "R-G4: 'level up' is motivational register; name the specific skill" },
+  // 'level up' / 'leveling up' / 'leveled up' / 'levels up' as motivational
+  // verb. Negative lookbehind skips legitimate hierarchical uses:
+  // 'the next level up', 'next level up', 'the level up'.
+  { pattern: /(?<!\bthe\s)(?<!\bnext\s)\b(?:level|leveled|leveling|levels)[- ]up\b/gi, hint: "R-G4: 'level up' is motivational register; name the specific skill" },
 ];
 
 // File extensions we scan.

@@ -22,7 +22,7 @@ const FAQ: { q: string; a: string; icon: IconName }[] = [
   { q: "How long do I have access?",                              a: "Lifetime — buy once and you have access to the curriculum forever, including every future update we ship to the lessons.",                                                                                                                            icon: "hourglass" },
   { q: "What\u2019s the difference between Individual and Team?", a: "Individual is one seat, one login. Team gives you up to 10 seats \u2014 built for sales managers who want their whole team on the same page.",                                                                       icon: "team"      },
   { q: "Is there a community or is this self-paced only?",        a: "Both. The course is self-paced with interactive exercises. You also get access to our Discord community \u2014 real AEs & SDRs, real problems, real accountability.",                                                icon: "discord"   },
-  { q: "I\u2019ve been in sales for 5+ years. Is this too basic?", a: "Lessons 1\u20135 cover fundamentals. Lessons 6\u201312 work through prospecting strategy, pipeline math, financial resilience, and the relationships that pay off five years out. If you disagree, we refund.",                  icon: "signal"    },
+  { q: "I\u2019ve been in sales for 5+ years. Is this too basic?", a: "Courses 1\u20135 cover fundamentals. Courses 6\u201312 work through prospecting strategy, pipeline math, financial resilience, and the relationships that pay off five years out. If you disagree, we refund.",                  icon: "signal"    },
   { q: "Can my company expense this?",                            a: "Of course. We provide a receipt and invoice on purchase. Most L&D budgets cover this easily \u2014 especially the Team plan.",                                                                                       icon: "ledger"    },
 ];
 
@@ -132,7 +132,7 @@ export default async function LandingPage() {
             <p className={styles.compareLabel}>AESDR</p>
             <p className={styles.comparePrice}>$249–$1,499 · one-time</p>
             <ul className={styles.compareList}>
-              <li>12 self-paced interactive lessons</li>
+              <li>12 self-paced interactive courses</li>
               <li>5 takeaway tools you use on the job</li>
               <li>Lifetime access</li>
               <li>14-day refund, no questions</li>

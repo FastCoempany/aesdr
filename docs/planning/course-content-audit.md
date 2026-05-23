@@ -4,6 +4,8 @@
 **Scope:** All 12 lessons, 36 units, ~360 screens
 **Purpose:** Map all content, identify AE/SDR fork points, assess accountability gates, and plan the overhaul.
 
+> **Note (2026-05-22):** This audit predates the 2026-05-21 Course → Lesson → Section hierarchy reframe. Read "lesson" below as what is now called *course*, and "unit" below as what is now called *lesson*. Document terms left as-is to preserve historical accuracy of the April audit state.
+
 ---
 
 ## 1. CONTENT MAP — WHAT EXISTS NOW

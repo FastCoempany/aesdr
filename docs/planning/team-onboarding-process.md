@@ -41,7 +41,7 @@ Email each team member individually:
 > 3. Temporary password: AESDRteam2026!
 > 4. You'll be prompted to change your password on first login
 >
-> The course has 12 lessons. Start with Lesson 1 and work through them in order.
+> The program has 12 courses. Start with Course 1 and work through them in order.
 >
 > Questions? Reply to this email.
 

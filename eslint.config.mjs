@@ -63,16 +63,28 @@ const CANON_BLOCKLIST = [
   { pattern: "surface area", note: "R-G4: 'surface area' is geometry metaphor; name which surface, which area" },
   { pattern: "ecosystem", note: "R-G4: 'ecosystem' is biology metaphor; name the products" },
   { pattern: "flywheel", note: "R-G4: 'flywheel' is startup trope (unless naming Bezos/Collins)" },
-  // 'level up' as motivational verb. Lookbehind skips legitimate
-  // hierarchical uses ('the next level up', 'next level up').
-  { pattern: "(?<!\\bthe\\s)(?<!\\bnext\\s)\\blevel[- ]up\\b", note: "R-G4: 'level up' is motivational register; name the specific skill" },
+  // 'level up' / 'leveling up' / 'leveled up' / 'levels up' as motivational
+  // verb. Lookbehind skips legitimate hierarchical uses ('the next level
+  // up', 'next level up', 'the level up').
+  { pattern: "(?<!\\bthe\\s)(?<!\\bnext\\s)\\b(?:level|leveled|leveling|levels)[- ]up\\b", note: "R-G4: 'level up' is motivational register; name the specific skill" },
 ];
 
 // Build the no-restricted-syntax option array. One entry per phrase,
 // matching string literals + JSX text. Case-insensitive.
+//
+// Pattern handling: if the entry already starts with regex syntax
+// (`\b`, `(?<`, `(?=`, `(?:`), treat the whole pattern as a regex and
+// pass it through. Otherwise escape every regex special character so
+// the entry behaves as a literal substring match. This lets simple
+// entries like { pattern: "deep dive" } work alongside lookbehind
+// patterns like { pattern: "(?<!\\bthe\\s)\\blevel..." }.
 function buildCanonRules() {
   return CANON_BLOCKLIST.flatMap((b) => {
-    const re = b.pattern.startsWith("\\b") ? b.pattern : b.pattern.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
+    const isAlreadyRegex =
+      b.pattern.startsWith("\\b") || b.pattern.startsWith("(?");
+    const re = isAlreadyRegex
+      ? b.pattern
+      : b.pattern.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
     const message = `Canon (R-G4): ${b.note}. See docs/canon-revisions/2026-05-19-language-patch-supplement.md`;
     return [
       { selector: `Literal[value=/${re}/i]`, message },

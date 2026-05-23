@@ -65,10 +65,10 @@ export default function RefundPolicyPage() {
 
       <Section title="Why we offer this">
         <p>
-          We built this course for people who are serious about leveling up.
-          If you put in the work and it does not deliver value, we do not
-          want your money. That said, this policy exists to protect
-          good-faith buyers &mdash; not to subsidize free access.
+          We built this for AEs and SDRs serious about the work.
+          If you put in the work and it doesn&rsquo;t deliver value, we
+          don&rsquo;t want your money. That said, this policy exists to
+          protect good-faith buyers &mdash; not to subsidize free access.
         </p>
       </Section>
 
