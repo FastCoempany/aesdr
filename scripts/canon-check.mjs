@@ -67,6 +67,16 @@ const BLOCKLIST = [
   { pattern: /dial in your tech|dial your tech in/gi, hint: "F.4: 'dial in your tech' is meaningless; name the move" },
   { pattern: /\bfuels?\b|\bfueled\b|\bfueling\b/gi, hint: "F.2: 'fuels' is gym-bro register; use sustains / runs on" },
   { pattern: /\bkills?\b|\bkilled\b|\bkilling\b/gi, hint: "F.1: 'kill' as verb is banned; use tank / wreck / stall / ruin. 'die' stays allowed." },
+  // 2026-05-22 mechanical-foundation additions — R-G4 hard-bans previously
+  // covered only in the canon doc, now mechanically enforced:
+  { pattern: /\bthe ledger\b/gi, hint: "R-G4: 'the ledger' is bookkeeping metaphor; use 'the spreadsheet'" },
+  { pattern: /\bour OS\b/g, hint: "R-G4: 'our OS' is startup-pitch trope" },
+  { pattern: /\bsurface area\b/gi, hint: "R-G4: 'surface area' is geometry metaphor; say which surface, which area" },
+  { pattern: /\becosystem\b/gi, hint: "R-G4: 'ecosystem' is biology metaphor; name the products" },
+  { pattern: /\bflywheel\b/gi, hint: "R-G4: 'flywheel' is startup trope (unless naming Bezos/Collins)" },
+  // 'level up' as motivational verb. Negative lookbehind skips
+  // legitimate hierarchical uses: 'the next level up', 'next level up'.
+  { pattern: /(?<!\bthe\s)(?<!\bnext\s)\blevel[- ]up\b/gi, hint: "R-G4: 'level up' is motivational register; name the specific skill" },
 ];
 
 // File extensions we scan.
@@ -90,6 +100,7 @@ const SKIP_FILE_PATTERNS = [
   /docs\/canon-revisions\//,
   /docs\/_audits\//,
   /^AFFILIATE_BRAND_CANON\.md$/,
+  /^AESDR_ENTERPRISE_CANON\.md$/,
   /content\/affiliate-kit\/banned-vocabulary\.md$/,
   /content\/aesdr-internal\/00-canon-excerpt\.md$/,
   /content\/aesdr-internal\/D20-claims-sheet\.md$/,

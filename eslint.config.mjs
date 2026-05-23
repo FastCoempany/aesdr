@@ -56,6 +56,16 @@ const CANON_BLOCKLIST = [
   // "report", "replay", "represent", "Stripe", etc.
   { pattern: "\\brep\\b", note: "'rep' is banned; use AE / SDR / 'AEs and SDRs'" },
   { pattern: "\\breps\\b", note: "'reps' is banned; use 'AEs and SDRs'" },
+  // 2026-05-22 mechanical-foundation additions — R-G4 hard-bans previously
+  // covered only in the canon doc, now mechanically enforced in JSX too:
+  { pattern: "the ledger", note: "R-G4: 'the ledger' is bookkeeping metaphor; use 'the spreadsheet'" },
+  { pattern: "our OS", note: "R-G4: 'our OS' is startup-pitch trope" },
+  { pattern: "surface area", note: "R-G4: 'surface area' is geometry metaphor; name which surface, which area" },
+  { pattern: "ecosystem", note: "R-G4: 'ecosystem' is biology metaphor; name the products" },
+  { pattern: "flywheel", note: "R-G4: 'flywheel' is startup trope (unless naming Bezos/Collins)" },
+  // 'level up' as motivational verb. Lookbehind skips legitimate
+  // hierarchical uses ('the next level up', 'next level up').
+  { pattern: "(?<!\\bthe\\s)(?<!\\bnext\\s)\\blevel[- ]up\\b", note: "R-G4: 'level up' is motivational register; name the specific skill" },
 ];
 
 // Build the no-restricted-syntax option array. One entry per phrase,
