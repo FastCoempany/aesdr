@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/react";
+import A11yToggle from "@/components/A11yToggle";
 import AdminChip from "@/components/AdminChip";
 import AffiliateDisclosureFooter from "@/components/AffiliateDisclosureFooter";
 import MobileGate from "@/components/MobileGate";
@@ -91,6 +92,8 @@ export default async function RootLayout({
         <Suspense fallback={null}>
           <AffiliateDisclosureFooter />
         </Suspense>
+
+        <A11yToggle />
 
         {/* Analytics & Tracking */}
         <Analytics />

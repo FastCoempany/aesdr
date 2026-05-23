@@ -118,3 +118,25 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* In-product accessibility toggle (components/A11yToggle.tsx). Same
+   payload as the OS-level rule above, but triggered by a data-attribute
+   on <html> instead of the OS signal. Stacks with the OS rule — either
+   one alone halts the iris-shimmer; both is fine. Escape hatch for the
+   ~90% of users without OS-level reduced-motion enabled. */
+[data-reduce-motion="true"] *,
+[data-reduce-motion="true"] *::before,
+[data-reduce-motion="true"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Larger-text mode — root font-size bump. Components using relative
+   units (em, %, clamp with vw) scale automatically. Px-based components
+   stay fixed; rem-migration is a future workstream per the accessibility
+   audit doc. */
+[data-larger-text="true"] {
+  font-size: 112.5%;
+}
