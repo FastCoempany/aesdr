@@ -3,10 +3,10 @@ import SpecSection from "../_components/SpecSection";
 import InlineCTA from "../_components/InlineCTA";
 
 /**
- * /enterprise/curriculum — the full module + lesson map.
+ * /enterprise/curriculum — the full course + lesson map.
  *
- * Twelve modules, three lessons each = 36 lessons total. Each
- * module gets: theme, three lesson titles, manager-facing learning
+ * 12 courses, three lessons each = 36 lessons total. Each
+ * course gets: theme, three lesson titles, manager-facing learning
  * outcomes, time estimate, "why managers care" line.
  *
  * Buyer-facing reference. Used during walkthroughs and shared with
@@ -16,7 +16,7 @@ import InlineCTA from "../_components/InlineCTA";
 
 export const metadata = {
   title: "Curriculum — AESDR / Enterprise",
-  description: "Twelve modules, three lessons each. The full curriculum map for first- and second-year SDRs and AEs — including manager-facing learning outcomes per module.",
+  description: "12 courses, three lessons each. The full curriculum map for first- and second-year SDRs and AEs — including manager-facing learning outcomes per course.",
 };
 
 type Lesson = {
@@ -24,7 +24,7 @@ type Lesson = {
   title: string;
 };
 
-type Module = {
+type Course = {
   number: string;
   theme: string;
   description: string;
@@ -33,20 +33,20 @@ type Module = {
   duration: string;
   managerNote: string;
   /**
-   * Optional role flavor — most modules apply equally to both AEs and SDRs
-   * and have no flavor set. A few skew one way (e.g., Module 5's "The SDR
+   * Optional role flavor — most courses apply equally to both AEs and SDRs
+   * and have no flavor set. A few skew one way (e.g., Course 5's "The SDR
    * Playbook"); those carry the flavor so buyers see at a glance which
-   * modules land hardest for which role.
+   * courses land hardest for which role.
    */
   flavor?: "SDR" | "AE";
 };
 
-const MODULES: Module[] = [
+const COURSES: Course[] = [
   {
     number: "01",
     theme: "Foundations of a sales career",
     description:
-      "AEs and SDRs arrive without the structural scaffolding that holds a sales career together. Module 1 builds the scaffolding: what good structure looks like, why camaraderie isn't optional, how to actually accept coaching instead of resisting it.",
+      "AEs and SDRs arrive without the structural scaffolding that holds a sales career together. Course 1 builds the scaffolding: what good structure looks like, why camaraderie isn't optional, how to actually accept coaching instead of resisting it.",
     lessons: [
       { number: "1.1", title: "Creating Structure" },
       { number: "1.2", title: "Building Real Camaraderie" },
@@ -59,7 +59,7 @@ const MODULES: Module[] = [
     ],
     duration: "~75 min",
     managerNote:
-      "AEs and SDRs who finish Module 1 stop treating 1:1s as performance theater. You get more honest feedback in week 4 than in month 3 of an untrained AE/SDR.",
+      "AEs and SDRs who finish Course 1 stop treating 1:1s as performance theater. You get more honest feedback in week 4 than in month 3 of an untrained AE/SDR.",
   },
   {
     number: "02",
@@ -78,13 +78,13 @@ const MODULES: Module[] = [
     ],
     duration: "~85 min",
     managerNote:
-      "Module 2 ships the AE/SDR Alignment Contract as a takeaway. We've seen pairs use it to renegotiate handoff expectations within a week.",
+      "Course 2 ships the AE/SDR Alignment Contract as a takeaway. We've seen pairs use it to renegotiate handoff expectations within a week.",
   },
   {
     number: "03",
     theme: "Survival fundamentals",
     description:
-      "What goes wrong, why it goes wrong, and how to survive AE management when you're the SDR. The most-cited module in user feedback.",
+      "What goes wrong, why it goes wrong, and how to survive AE management when you're the SDR. The most-cited course in user feedback.",
     lessons: [
       { number: "3.1", title: "SDR Performance Pitfalls" },
       { number: "3.2", title: "The Survival Guide for AEs and SDRs" },
@@ -97,13 +97,13 @@ const MODULES: Module[] = [
     ],
     duration: "~90 min",
     managerNote:
-      "If you only have time to read one module yourself before rollout, read 3.3. It tells your AEs everything they're doing wrong with their SDRs that they think is normal.",
+      "If you only have time to read one course yourself before rollout, read 3.3. It tells your AEs everything they're doing wrong with their SDRs that they think is normal.",
   },
   {
     number: "04",
     theme: "Navigating the org",
     description:
-      "AEs and SDRs work for a manager, inside a culture, on a schedule. Module 4 covers all three: how to read a chaotic SDR manager, how to find purchase in a vague company culture, how to live the async life without dissolving into Slack.",
+      "AEs and SDRs work for a manager, inside a culture, on a schedule. Course 4 covers all three: how to read a chaotic SDR manager, how to find purchase in a vague company culture, how to live the async life without dissolving into Slack.",
     lessons: [
       { number: "4.1", title: "Navigating the SDR Manager Madness" },
       { number: "4.2", title: "Simplifying Company Culture" },
@@ -123,7 +123,7 @@ const MODULES: Module[] = [
     theme: "The playbook",
     flavor: "SDR",
     description:
-      "What the SDR playbook actually is — and how to become the SDR your manager can't replace. The most SDR-focused module in the curriculum; AEs benefit from 5.3 specifically.",
+      "What the SDR playbook actually is — and how to become the SDR your manager can't replace. The most SDR-focused course in the curriculum; AEs benefit from 5.3 specifically.",
     lessons: [
       { number: "5.1", title: "The SDR Playbook" },
       { number: "5.2", title: "The SDR Playbook — Part 2" },
@@ -136,7 +136,7 @@ const MODULES: Module[] = [
     ],
     duration: "~95 min",
     managerNote:
-      "Module 5 is the closest AESDR comes to traditional SDR training content. It's still anti-script — but the playbook framework is concrete enough to coach SDRs against. AEs treat 5.3 as the standalone takeaway.",
+      "Course 5 is the closest AESDR comes to traditional SDR training content. It's still anti-script — but the playbook framework is concrete enough to coach SDRs against. AEs treat 5.3 as the standalone takeaway.",
   },
   {
     number: "06",
@@ -161,7 +161,7 @@ const MODULES: Module[] = [
     number: "07",
     theme: "Pipeline ownership",
     description:
-      "Prospecting isn't the marketing team's problem to solve. Module 7 makes that explicit — and forces AEs and SDRs to confront whether SaaS is actually the career they want.",
+      "Prospecting isn't the marketing team's problem to solve. Course 7 makes that explicit — and forces AEs and SDRs to confront whether SaaS is actually the career they want.",
     lessons: [
       { number: "7.1", title: "Prospecting Is Your Job Too" },
       { number: "7.2", title: "Why Self-Sourced Meetings Matter Most" },
@@ -180,7 +180,7 @@ const MODULES: Module[] = [
     number: "08",
     theme: "Hard truths",
     description:
-      "The 30% rule, the illusion of potential, and the question every AE/SDR needs to ask but mostly doesn't. The harshest module — buyers should read it before they decide whether AESDR fits their culture.",
+      "The 30% rule, the illusion of potential, and the question every AE/SDR needs to ask but mostly doesn't. The harshest course — buyers should read it before they decide whether AESDR fits their culture.",
     lessons: [
       { number: "8.1", title: "The 30% Rule" },
       { number: "8.2", title: "Stop Chasing the Illusion of Potential" },
@@ -193,7 +193,7 @@ const MODULES: Module[] = [
     ],
     duration: "~75 min",
     managerNote:
-      "If your culture is allergic to honest self-assessment, this module will land wrong. Strong fit for orgs that already practice candid 1:1s.",
+      "If your culture is allergic to honest self-assessment, this course will land wrong. Strong fit for orgs that already practice candid 1:1s.",
   },
   {
     number: "09",
@@ -218,7 +218,7 @@ const MODULES: Module[] = [
     number: "10",
     theme: "Commission + comp",
     description:
-      "The commission myth, why most quotas are arbitrary, and how to live financially through feast-or-famine without breaking. Probably the most-needed module that gets least time in traditional training.",
+      "The commission myth, why most quotas are arbitrary, and how to live financially through feast-or-famine without breaking. Probably the most-needed course that gets least time in traditional training.",
     lessons: [
       { number: "10.1", title: "Breaking Down the Commission Myth" },
       { number: "10.2", title: "Quotas Are Bullshit" },
@@ -237,7 +237,7 @@ const MODULES: Module[] = [
     number: "11",
     theme: "Off-the-clock",
     description:
-      "Selling sober, surviving conference culture, showing up at industry events as a professional rather than a network-spammer. The module that addresses what HR won't.",
+      "Selling sober, surviving conference culture, showing up at industry events as a professional rather than a network-spammer. The course that addresses what HR won't.",
     lessons: [
       { number: "11.1", title: "Sober Selling" },
       { number: "11.2", title: "Conference Culture" },
@@ -256,7 +256,7 @@ const MODULES: Module[] = [
     number: "12",
     theme: "Life outside work",
     description:
-      "SaaS relationships, the home office trap (revisited from a different angle), and the contested final lesson on personal life in a high-output career. Closing module.",
+      "SaaS relationships, the home office trap (revisited from a different angle), and the contested final lesson on personal life in a high-output career. Closing course.",
     lessons: [
       // eslint-disable-next-line no-restricted-syntax -- Course 12.1 canonical title; "level up" here is curriculum-name use per founder ratification 2026-05-22, not motivational register
       { number: "12.1", title: "Leveling Up SaaS Relationships" },
@@ -274,8 +274,8 @@ const MODULES: Module[] = [
   },
 ];
 
-const TOTAL_LESSONS = MODULES.reduce((sum, m) => sum + m.lessons.length, 0);
-const TOTAL_DURATION_MIN = MODULES.reduce(
+const TOTAL_LESSONS = COURSES.reduce((sum, m) => sum + m.lessons.length, 0);
+const TOTAL_DURATION_MIN = COURSES.reduce(
   (sum, m) => sum + parseInt(m.duration.replace(/\D/g, ""), 10),
   0,
 );
@@ -288,12 +288,12 @@ export default function CurriculumPage() {
           <p className={styles.eyebrow}>Curriculum</p>
           <h1 className={styles.heroHeadline}>The 12 courses, mapped.</h1>
           <p className={styles.heroSubhead}>
-            Each module is three lessons grouped around a single theme. AEs and SDRs work through them in sequence — typically one module per week over 12 weeks, though AEs and SDRs go faster or slower depending on density of their schedule.
+            Each course is three lessons grouped around a single theme. AEs and SDRs work through them in sequence — typically one course per week over 12 weeks, though AEs and SDRs go faster or slower depending on density of their schedule.
           </p>
           <div className={styles.kpiRow}>
             <div className={styles.kpi}>
               <div className={styles.kpiNumber}>12</div>
-              <div className={styles.kpiCaption}>Modules, each a coherent theme</div>
+              <div className={styles.kpiCaption}>Courses, each a coherent theme</div>
             </div>
             <div className={styles.kpi}>
               <div className={styles.kpiNumber}>{TOTAL_LESSONS}</div>
@@ -311,12 +311,12 @@ export default function CurriculumPage() {
         <div className={styles.container}>
           <p className={styles.diagPathHint}>
             <strong>One curriculum, both audiences.</strong> AEs and SDRs work
-            through the same modules in the same order. A few modules lean toward
+            through the same courses in the same order. A few courses lean toward
             one role — those are tagged with a <strong>role flavor</strong> in the
-            meta row (e.g., Module 5 is <strong>SDR-leaning</strong>). Everything
+            meta row (e.g., Course 5 is <strong>SDR-leaning</strong>). Everything
             else applies to both audiences equally.
           </p>
-          {MODULES.map((m) => (
+          {COURSES.map((m) => (
             <SpecSection
               key={m.number}
               number={m.number}
@@ -333,7 +333,7 @@ export default function CurriculumPage() {
                 {m.description}
               </p>
 
-              <p className={styles.h4} style={{ marginTop: 8 }}>Lessons in this module</p>
+              <p className={styles.h4} style={{ marginTop: 8 }}>Lessons in this course</p>
               <ul className={styles.specList}>
                 {m.lessons.map((l) => (
                   <li key={l.number}>
@@ -367,7 +367,7 @@ export default function CurriculumPage() {
           <h2 className={styles.h2}>Want a 5-minute preview of any lesson?</h2>
           <hr className={styles.divider} />
           <p className={styles.body}>
-            Book a 30-minute walkthrough and we&apos;ll show you any module or lesson at depth, on your screen, in the actual product. No marketing reel, no edited highlights — the real lesson, exactly as your AEs and SDRs would see it.
+            Book a 30-minute walkthrough and we&apos;ll show you any course or lesson at depth, on your screen, in the actual product. No marketing reel, no edited highlights — the real lesson, exactly as your AEs and SDRs would see it.
           </p>
           <div style={{ marginTop: 20 }}>
             <InlineCTA href="/enterprise/contact?source=curriculum">Book a walkthrough</InlineCTA>

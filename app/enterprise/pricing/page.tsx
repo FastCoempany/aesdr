@@ -121,7 +121,7 @@ export default function PricingPage() {
               { label: "Manager dashboard", cells: [
                 { kind: "check", value: true },
                 { kind: "check", value: true },
-                { kind: "text", value: "Optional (partner's choice)" },
+                { kind: "text", value: "Optional (channel partner's choice)" },
               ]},
               { label: "Live manager onboarding", cells: [
                 { kind: "check", value: false },
@@ -136,12 +136,12 @@ export default function PricingPage() {
               { label: "Dedicated Slack channel", cells: [
                 { kind: "text", value: "Priority Slack support" },
                 { kind: "text", value: "Dedicated org channel" },
-                { kind: "text", value: "Dedicated partner channel" },
+                { kind: "text", value: "Dedicated channel partner Slack" },
               ]},
               { label: "Diagnostic administration", cells: [
                 { kind: "text", value: "Self-serve (roadmap)" },
                 { kind: "text", value: "Run by our team" },
-                { kind: "text", value: "Run by the partner" },
+                { kind: "text", value: "Run by the channel partner" },
               ]},
               { label: "SSO / SCORM / xAPI", cells: [
                 { kind: "text", value: "Roadmap" },

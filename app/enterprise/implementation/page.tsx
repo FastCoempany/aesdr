@@ -38,7 +38,7 @@ export default function ImplementationPage() {
           <hr className={styles.divider} />
           <ul className={styles.bulletList}>
             <li>
-              You&apos;ll read the curriculum in parallel with your AEs and SDRs. Not all 36 lessons, but at least the modules they&apos;re currently working through.
+              You&apos;ll read the curriculum in parallel with your AEs and SDRs. Not all 36 lessons, but at least the courses they&apos;re currently working through.
             </li>
             <li>
               You&apos;ll hold weekly 1:1s with each AE/SDR where AESDR is on the agenda for ~5 minutes. Just enough to ask &ldquo;what landed&rdquo; and &ldquo;what felt wrong.&rdquo;
@@ -83,14 +83,14 @@ export default function ImplementationPage() {
             number="01"
             title="Weeks 1–2 — Foundations"
             meta={[
-              { label: "Modules", value: "01 Foundations · 02 Working dynamics" },
+              { label: "Courses", value: "01 Foundations · 02 Working dynamics" },
               { label: "Lessons", value: "1.1, 1.2, 1.3, 2.1, 2.2, 2.3" },
               { label: "AE/SDR time", value: "~3 hrs over the two weeks" },
             ]}
           >
             <p className={styles.bodyDense} style={{ marginBottom: 12 }}>
               The structure-building foundation. AEs and SDRs learn to run their own
-              weeks, build peer relationships, and accept coaching. Module 2
+              weeks, build peer relationships, and accept coaching. Course 2
               introduces the AE/SDR Alignment Contract as the first takeaway
               tool.
             </p>
@@ -98,7 +98,7 @@ export default function ImplementationPage() {
             <ul className={styles.bulletList}>
               <li>Week 1 1:1: ask each AE/SDR &ldquo;What surprised you in 1.1 Creating Structure?&rdquo; Listen, don&apos;t coach.</li>
               <li>Week 2 1:1: ask each AE/SDR pair to bring their AE/SDR Alignment Contract to the joint pod meeting. Discuss as a team.</li>
-              <li>End of week 2: 15-min team retro. &ldquo;What from Modules 1–2 is changing how you&apos;re working?&rdquo;</li>
+              <li>End of week 2: 15-min team retro. &ldquo;What from Courses 1–2 is changing how you&apos;re working?&rdquo;</li>
             </ul>
           </SpecSection>
 
@@ -106,13 +106,13 @@ export default function ImplementationPage() {
             number="02"
             title="Weeks 3–4 — Survival fundamentals"
             meta={[
-              { label: "Modules", value: "03 Survival · 04 Navigating the org" },
+              { label: "Courses", value: "03 Survival · 04 Navigating the org" },
               { label: "Lessons", value: "3.1, 3.2, 3.3, 4.1, 4.2, 4.3" },
               { label: "AE/SDR time", value: "~3 hrs over the two weeks" },
             ]}
           >
             <p className={styles.bodyDense} style={{ marginBottom: 12 }}>
-              The most-cited modules in user feedback. Module 3 covers the seven SDR breakpoints and what surviving AE management looks like in practice. Module 4 builds out the Manager Archetype Map.
+              The most-cited courses in user feedback. Course 3 covers the seven SDR breakpoints and what surviving AE management looks like in practice. Course 4 builds out the Manager Archetype Map.
             </p>
             <p className={styles.h4}>Manager touchpoints this fortnight</p>
             <ul className={styles.bulletList}>
@@ -126,13 +126,13 @@ export default function ImplementationPage() {
             number="03"
             title="Weeks 5–6 — Playbook + beyond"
             meta={[
-              { label: "Modules", value: "05 The playbook · 06 What the playbook doesn't teach" },
+              { label: "Courses", value: "05 The playbook · 06 What the playbook doesn't teach" },
               { label: "Lessons", value: "5.1, 5.2, 5.3, 6.1, 6.2, 6.3" },
               { label: "AE/SDR time", value: "~3.5 hrs over the two weeks" },
             ]}
           >
             <p className={styles.bodyDense} style={{ marginBottom: 12 }}>
-              The closest AESDR comes to traditional SDR training. Module 5 is the framework AEs and SDRs will coach against for the rest of their career. Module 6 builds out networking + curiosity skills the playbook leaves out.
+              The closest AESDR comes to traditional SDR training. Course 5 is the framework AEs and SDRs will coach against for the rest of their career. Course 6 builds out networking + curiosity skills the playbook leaves out.
             </p>
             <p className={styles.h4}>Manager touchpoints this fortnight</p>
             <ul className={styles.bulletList}>
@@ -146,7 +146,7 @@ export default function ImplementationPage() {
             number="04"
             title="Weeks 7–8 — Pipeline + hard truths + tools"
             meta={[
-              { label: "Modules", value: "07 Pipeline ownership · 08 Hard truths · 09 The tools that ruin you" },
+              { label: "Courses", value: "07 Pipeline ownership · 08 Hard truths · 09 The tools that ruin you" },
               { label: "Lessons", value: "7.1, 7.2, 7.3, 8.1, 8.2, 8.3, 9.1, 9.2, 9.3" },
               { label: "AE/SDR time", value: "~4.5 hrs over the two weeks" },
             ]}
@@ -161,8 +161,8 @@ export default function ImplementationPage() {
               <li>End of week 8: 60-min team wrap-up. Topic: &ldquo;What did we learn? What are we doing differently? Which two AEs and SDRs changed the most, and what did they do?&rdquo;</li>
             </ul>
             <div className={styles.specCallout}>
-              <strong style={{ fontStyle: "normal", color: "var(--ink)" }}>Note about modules 10–12: </strong>
-              The 8-week structured rollout covers modules 1–9. Modules 10–12 (commission/comp, off-the-clock, life outside work) are best worked through individually over the following months, not in cohort format. AEs and SDRs engage with them when relevant — they&apos;re standalone enough to be self-paced.
+              <strong style={{ fontStyle: "normal", color: "var(--ink)" }}>Note about courses 10–12: </strong>
+              The 8-week structured rollout covers courses 1–9. Courses 10–12 (commission/comp, off-the-clock, life outside work) are best worked through individually over the following months, not in cohort format. AEs and SDRs engage with them when relevant — they&apos;re standalone enough to be self-paced.
             </div>
           </SpecSection>
         </div>
@@ -184,7 +184,7 @@ export default function ImplementationPage() {
             <li>
               <strong>AE/SDR Alignment Contract.</strong> A two-page working
               agreement between paired SDR and AE. Handoff expectations, escalation
-              triggers, mutual commitments. From Module 2.
+              triggers, mutual commitments. From Course 2.
             </li>
             <li>
               <strong>72-Hour Strike Plan.</strong> A structured recovery plan for
@@ -197,7 +197,7 @@ export default function ImplementationPage() {
             </li>
             <li>
               <strong>Async Cadence Template.</strong> Daily / weekly / monthly
-              rhythms for managing Slack, email, deep-work blocks. From Module 4.
+              rhythms for managing Slack, email, deep-work blocks. From Course 4.
             </li>
           </ul>
         </div>
@@ -211,7 +211,7 @@ export default function ImplementationPage() {
           <ul className={styles.bulletList}>
             <li>
               <strong>Treating it like compliance training.</strong> Forcing AEs and SDRs to
-              finish modules by Friday stalls engagement and produces clicked-through
+              finish courses by Friday stalls engagement and produces clicked-through
               completion without behavior change. The goal is change, not completion.
             </li>
             <li>
@@ -229,7 +229,7 @@ export default function ImplementationPage() {
             <li>
               <strong>Running peer discussions before week 4.</strong> The team
               hasn&apos;t built trust yet. The first peer discussion lands hollow.
-              Start them at end of week 4, after Module 3 (Survival) has given
+              Start them at end of week 4, after Course 3 (Survival) has given
               AEs and SDRs a shared language.
             </li>
             <li>

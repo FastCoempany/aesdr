@@ -33,7 +33,7 @@ const DIMENSIONS: Dimension[] = [
       "Days per month where activity dropped below 50% of personal average — diagnostic of burnout / coasting",
       "Manager rating: 1–5 scale on whether AE/SDR maintains baseline activity without prompting",
     ],
-    typicalDelta: "AEs and SDRs starting below their team's 50th percentile typically lift 30–60% on dials and 20–40% on emails within 6 weeks. AEs and SDRs already at or above median move less — Module 1 (Structure) is the primary lift driver.",
+    typicalDelta: "AEs and SDRs starting below their team's 50th percentile typically lift 30–60% on dials and 20–40% on emails within 6 weeks. AEs and SDRs already at or above median move less — Course 1 (Structure) is the primary lift driver.",
   },
   {
     number: "02",
@@ -47,7 +47,7 @@ const DIMENSIONS: Dimension[] = [
       "Time spent on prospect research per touch (self-reported median minutes)",
       "Use of public signal (news, hiring, funding, role changes) — count per 20 touches",
     ],
-    typicalDelta: "Most lift comes from Module 6 (Beyond the Playbook) and Module 7 (Pipeline Ownership). 15–25% improvement in manager-graded scores typical over 8 weeks.",
+    typicalDelta: "Most lift comes from Course 6 (Beyond the Playbook) and Course 7 (Pipeline Ownership). 15–25% improvement in manager-graded scores typical over 8 weeks.",
   },
   {
     number: "03",
@@ -61,7 +61,7 @@ const DIMENSIONS: Dimension[] = [
       "Manager rating: 'AE/SDR probed past surface answers to reach the actual driver' (1–5)",
       "Self-rating: 'I usually feel I left disco with the buyer's real motivation, not just the stated motivation' (1–5)",
     ],
-    typicalDelta: "AEs see 20–30% improvement on talk/listen ratio after Module 5 (The Playbook) + Module 6. SDRs typically don't run deep disco; their improvement shows in qualification accuracy, not disco depth.",
+    typicalDelta: "AEs see 20–30% improvement on talk/listen ratio after Course 5 (The Playbook) + Course 6. SDRs typically don't run deep disco; their improvement shows in qualification accuracy, not disco depth.",
   },
   {
     number: "04",
@@ -75,7 +75,7 @@ const DIMENSIONS: Dimension[] = [
       "Self-rating: 'I leave 1:1s having gotten what I needed' (1–5)",
       "Frequency of AE/SDR-initiated coaching requests in the past month (count)",
     ],
-    typicalDelta: "Module 1 (Foundations) ships strongest lift here. Managers consistently report 'less performance theater, more honest signal' within 2–3 weeks of AE/SDR completing Module 1.3 (Mastering Coaching).",
+    typicalDelta: "Course 1 (Foundations) ships strongest lift here. Managers consistently report 'less performance theater, more honest signal' within 2–3 weeks of AE/SDR completing Course 1.3 (Mastering Coaching).",
   },
   {
     number: "05",
@@ -84,12 +84,12 @@ const DIMENSIONS: Dimension[] = [
     what: "The working relationship between the SDR and their paired AE. Friction, handoff quality, mutual respect, ego dynamics.",
     why: "This is the most-cited break-point in user feedback. AEs and SDRs quit over bad AE/SDR relationships more often than over bad managers.",
     sampleItems: [
-      "Paired survey: each rates the other 1–5 on 'trustworthy handoff partner'",
+      "Paired survey: each rates the other 1–5 on 'trustworthy on the handoff'",
       "Count of escalations to manager triggered by AE/SDR friction in the past month",
       "Self-rating: 'I respect my AE's / SDR's read of the buyer' (1–5)",
       "Use of the AE/SDR Alignment Contract (yes / no / partial)",
     ],
-    typicalDelta: "Module 2 (Working Dynamics) + Module 3 (Survival) lift this most. Pairs who name the ego dynamic out loud — using the framing from Course 2.3 — typically see paired-survey scores improve by 1+ point within 4 weeks.",
+    typicalDelta: "Course 2 (Working Dynamics) + Course 3 (Survival) lift this most. Pairs who name the ego dynamic out loud — using the framing from Course 2.3 — typically see paired-survey scores improve by 1+ point within 4 weeks.",
   },
   {
     number: "06",
@@ -103,7 +103,7 @@ const DIMENSIONS: Dimension[] = [
       "Self-rating: 'My CRM reflects what's actually happening on my deals' (1–5)",
       "Manager rating: 'I can forecast from this AE/SDR's data without manual cleanup' (1–5)",
     ],
-    typicalDelta: "Module 9 (The Tools That Ruin You) is the unlock here. AEs and SDRs who complete 9.1 (CRM Survival Guide) typically see manager-rated forecasting quality improve from 2.5 → 3.5 on average within a month.",
+    typicalDelta: "Course 9 (The Tools That Ruin You) is the unlock here. AEs and SDRs who complete 9.1 (CRM Survival Guide) typically see manager-rated forecasting quality improve from 2.5 → 3.5 on average within a month.",
   },
   {
     number: "07",
@@ -117,7 +117,7 @@ const DIMENSIONS: Dimension[] = [
       "Self-rating: 'I have a clear-eyed view of which deals are real' (1–5)",
       "Manager rating: 'This AE's commit number is reliable' (1–5)",
     ],
-    typicalDelta: "Module 8 (Hard Truths) — especially 8.1 (The 30% Rule) — is the lift. Variance typically tightens 15–25% over 8 weeks for AEs whose pre-program variance was >30%.",
+    typicalDelta: "Course 8 (Hard Truths) — especially 8.1 (The 30% Rule) — is the lift. Variance typically tightens 15–25% over 8 weeks for AEs whose pre-program variance was >30%.",
   },
   {
     number: "08",
@@ -131,7 +131,7 @@ const DIMENSIONS: Dimension[] = [
       "Manager rating: 'This AE/SDR distinguishes urgent from urgent-feeling' (1–5)",
       "Audit: number of after-hours / weekend Slack messages sent in past 2 weeks (a tell for boundary erosion)",
     ],
-    typicalDelta: "Module 4 (Navigating the Org) + Module 9 (The Tools That Ruin You) drive most of the lift. Subtle but durable — improvements show up at month 3, not week 3.",
+    typicalDelta: "Course 4 (Navigating the Org) + Course 9 (The Tools That Ruin You) drive most of the lift. Subtle but durable — improvements show up at month 3, not week 3.",
   },
 ];
 

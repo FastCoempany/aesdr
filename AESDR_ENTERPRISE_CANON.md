@@ -35,7 +35,7 @@ This framing is borrowed from the Paycor / Listo capability-extension partnershi
 
 The subsidiary openly acknowledges the parent. The relationship is truthful:
 
-> *"AESDR / Enterprise is built on aesdr.com — the AE/SDR-direct course that 1st- and 2nd-year SDRs and AEs actually use. The same 12 lessons, packaged for sales orgs."*
+> *"AESDR / Enterprise is built on aesdr.com — the AE/SDR-direct course that 1st- and 2nd-year SDRs and AEs actually use. The same 12 courses, packaged for sales orgs."*
 
 This line appears in the subsidiary footer and (in shortened form) on the landing hero. The consumer brand is referenced as the proof point: this isn't a B2B course someone invented to sell to procurement; it's the same product AEs and SDRs already pay for on their own.
 
@@ -96,7 +96,7 @@ The `/` separator is a true forward slash, not an em-dash or pipe. It's part of 
 
 **One-liner alts (use contextually):**
 - "Built on aesdr.com. Packaged for teams."
-- "The same 12 lessons your best AEs and SDRs already pay for — rolled out across your org."
+- "The same 12 courses your best AEs and SDRs already pay for — rolled out across your org."
 - "Operator-grade training for the first 18 months of an SDR or AE career."
 
 Never use any tagline containing the words: "potential," "unleash," "transform," "ignite," "supercharge," "next-level."
@@ -327,7 +327,7 @@ app/api/enterprise-inquiry/
 | `/enterprise/channel` | Convince an LMS / enablement / hiring / fractional-services partner that integrating AESDR fills a real gap in their offering. CTA: partnership inquiry. |
 | `/enterprise/pricing` | Show team seats (10-pack), describe custom enterprise, describe white-label/reseller paths. CTA: book a walkthrough OR contact for custom. |
 | `/enterprise/contact` | Capture a qualified B2B inquiry. Email routes to `hello@aesdr.com` with subject prefix `[/enterprise inquiry]`. |
-| `/enterprise/curriculum` | Detailed map of the 12 lessons with learning outcomes per lesson. Buyer-facing curriculum reference. |
+| `/enterprise/curriculum` | Detailed map of the 12 courses with learning outcomes per lesson. Buyer-facing curriculum reference. |
 | `/enterprise/diagnostic` | Describe the AE/SDR before/after diagnostic instrument. Manager-facing measurement framework. |
 | `/enterprise/implementation` | The manager implementation guide. Rollout sequence, weekly cadence, what to expect from AEs and SDRs. |
 | `/enterprise/integrations` | SSO / SCORM / xAPI / LTI roadmap and current state. Honest about what's built vs. on roadmap. |
@@ -341,7 +341,7 @@ app/api/enterprise-inquiry/
 **Hero**
 - Pre-eyebrow: `AESDR / FOR TEAMS` (mono, muted)
 - Headline: *"The missing behavioral foundation for early-career sales orgs."*
-- Subhead (1 sentence): "The same 12 lessons that 1st- and 2nd-year SDRs and AEs buy on aesdr.com — packaged for sales orgs that need their junior AEs and SDRs to mature faster."
+- Subhead (1 sentence): "The same 12 courses that 1st- and 2nd-year SDRs and AEs buy on aesdr.com — packaged for sales orgs that need their junior AEs and SDRs to mature faster."
 - Stat triplet (three big iris-shimmer KPIs, sourced from cited research — see §15):
   - **9.1 months** — average SDR ramp time to full quota attainment (Bridge Group)
   - **39%** — first-year SDR turnover rate in SaaS (Bridge Group / TOPO)
@@ -357,7 +357,7 @@ app/api/enterprise-inquiry/
 
 **What it is (card row)**
 - Three feature cards:
-  - **12 lessons** — survival-grade, field-tested, ~25 min each
+  - **12 courses** — survival-grade, field-tested, ~25 min each
   - **5 takeaway tools** — manager archetype map, AE/SDR alignment contract, 72-hour strike plan, CRM survival guide, async cadence template
   - **Discord community** — "Untamed" — real AEs and SDRs working through it together
 
@@ -370,7 +370,7 @@ Four cards in a 2×2 grid:
 4. **Marketplace integration** — for LMS, enablement, and hiring platforms. SSO, eventual SCORM/xAPI, revenue-share. **Contact us.**
 
 **Powered by line (footer-ish, just above subsidiary footer)**
-> "AESDR / Enterprise is built on aesdr.com — the AE/SDR-direct course that 1st- and 2nd-year SDRs and AEs actually use. The same 12 lessons, packaged for sales orgs."
+> "AESDR / Enterprise is built on aesdr.com — the AE/SDR-direct course that 1st- and 2nd-year SDRs and AEs actually use. The same 12 courses, packaged for sales orgs."
 
 ### 5.2 `/enterprise/channel` — channel pitch
 
@@ -426,7 +426,7 @@ Categories in order:
 - Sticky-header table comparing: Direct Team / Custom Enterprise / White-label across ~10 attributes (seats, pricing model, onboarding, branding, SCORM, dedicated support, contract terms, etc.)
 
 **FAQ block (under table)** — short Q&A list:
-- "Is the Team tier the same product as the consumer course?" → Yes. Same 12 lessons, same Discord, same takeaway tools.
+- "Is the Team tier the same product as the consumer course?" → Yes. Same 12 courses, same Discord, same takeaway tools.
 - "Can we get a recurring subscription?" → Not currently. We're one-time + lifetime by design. Per-seat custom pricing is available for larger orgs.
 - "Do we get a discount for buying multiple Teams?" → No discount stacking on the Team tier. Custom enterprise tier is the path past 10 seats.
 - "Refund policy?" → 14-day no-questions-asked, same as consumer.
@@ -469,7 +469,7 @@ Categories in order:
 ### 5.5 `/enterprise/curriculum`
 
 **Hero**
-- Headline: *"The 12 lessons, mapped."*
+- Headline: *"The 12 courses, mapped."*
 - Subhead: "What your AEs and SDRs will work through. Outcomes per lesson, sequencing, expected time."
 
 **Curriculum map** (12 sections, one per lesson):
@@ -578,14 +578,14 @@ This page is honest. We don't claim SSO is "available now" when it isn't. We lis
 | **Pricing page** | `/enterprise/pricing` route | `app/enterprise/pricing/page.tsx` | Three cards + comparison table + FAQ per §5.3 |
 | **Contact page** | `/enterprise/contact` route | `app/enterprise/contact/page.tsx` + `ContactForm.tsx` client | Form per §5.4 |
 | **Inquiry server action** | `submitTeamsInquiry()` | `app/enterprise/contact/actions.ts` + `lib/email.ts` | Validates, rate-limits, emails hello@aesdr.com |
-| **Curriculum map** | `/enterprise/curriculum` route | `app/enterprise/curriculum/page.tsx` | 12 modules / 36 sub-lessons, learning outcomes written |
+| **Curriculum map** | `/enterprise/curriculum` route | `app/enterprise/curriculum/page.tsx` | 12 courses / 36 sub-lessons, learning outcomes written |
 | **Diagnostic spec page** | `/enterprise/diagnostic` route | `app/enterprise/diagnostic/page.tsx` | 8 dimensions, sample items per §5.6 |
 | **Implementation guide** | `/enterprise/implementation` route | `app/enterprise/implementation/page.tsx` | Manager guide per §5.7. **Print-friendly via enterprise.module.css print styles — also serves as the downloadable PDF when print-to-PDF'd from the browser.** |
 | **Integrations page** | `/enterprise/integrations` route | `app/enterprise/integrations/page.tsx` | Honest state + roadmap per §5.8 |
 | **Footer link** from main site to `/enterprise` | Single line addition to consumer landing footer | `app/page.tsx` | Small, low-emphasis |
 | **AdminChip integration** | Add `/enterprise/*` quick-links below a divider | `components/AdminChip.tsx` | See §10.4 |
 | **Downloads index** | `/enterprise/downloads` route | `app/enterprise/downloads/page.tsx` | Lists all four downloadable artifacts with print-to-PDF instructions |
-| **Completion certificate** | `/enterprise/downloads/certificate` route | `app/enterprise/downloads/certificate/page.tsx` + client | Interactive generator: AE/SDR name + module count + date inputs → printable certificate preview |
+| **Completion certificate** | `/enterprise/downloads/certificate` route | `app/enterprise/downloads/certificate/page.tsx` + client | Interactive generator: AE/SDR name + course count + date inputs → printable certificate preview |
 | **Partner one-pager** | `/enterprise/downloads/channel-one-pager` route | `app/enterprise/downloads/channel-one-pager/page.tsx` | Single-page printable sales sheet (positioning, partner categories, contact) |
 | **AE/SDR diagnostic instrument** | `/enterprise/downloads/diagnostic-instrument` route | `app/enterprise/downloads/diagnostic-instrument/page.tsx` | Printable self-administering instrument — all 32 items across 8 dimensions, with response scales |
 
@@ -732,7 +732,7 @@ Pricing finalized during walkthrough. No published rate card v1.
 
 For partners packaging AESDR inside their own offering.
 
-- Delivery rights to the 12 lessons + 5 takeaway tools
+- Delivery rights to the 12 courses + 5 takeaway tools
 - Co-branded materials (their logo + AESDR mark with mutual approval)
 - Per-seat wholesale rate (higher than direct-buy per-seat rate because of branding rights)
 - Revenue-share or wholesale models both available
@@ -1007,12 +1007,12 @@ Surfaces that need answers as the build progresses. Captured here to prevent sil
 | 1 | Final per-seat rate for Custom Enterprise (50+ seats) | Antaeus | Before PR 2 ships `/enterprise/pricing` |
 | 2 | White-label / co-branded wholesale rate | Antaeus | Same as #1 — informs `/enterprise/pricing` |
 | 3 | Whether to use Calendly or another booking tool for "Book a walkthrough" CTAs | Antaeus | Before PR 2 ships (form submission lands them somewhere) |
-| 4 | Whether to fully write all 12 lessons' learning outcomes vs. summarize from existing HTML | Claude | During PR 3 — depends on lesson content depth |
+| 4 | Whether to fully write all 12 courses' learning outcomes vs. summarize from existing HTML | Claude | During PR 3 — depends on lesson content depth |
 | 5 | Whether to mention specific named partner targets on `/enterprise/channel` page (e.g., "Docebo, Highspot, Sales Assembly") or stay category-only | Antaeus | Before PR 2 ships |
 | ~~6~~ | ~~Whether subsidiary nav includes a "back to aesdr.com" link or stays self-contained~~ | ~~Antaeus~~ | ~~Resolved 2026-05-18 → §13.12: includes back link.~~ |
 | 7 | Whether to add a Vercel preview password specifically for `/enterprise/*` so B2B prospects can preview without the consumer-brand bypass code | Antaeus | Optional — defer until first share-with-prospect happens |
 | 8 | Whether the Manager Implementation Guide PDF should be public or gated (request via form) | Antaeus | Before PR 4 ships PDFs |
-| ~~9~~ | ~~Curriculum page: full lesson list reconciliation — `content/lessons/html/` shows lessons numbered 6.2, 7.3, 9.1 alongside 1.x–5.x — is the curriculum 12 lessons total or more?~~ | ~~Claude~~ | ~~Resolved in PR 3: 12 modules × 3 sub-lessons = 36 total. Curriculum page reflects accurately; landing page kept "12 modules" framing.~~ |
+| ~~9~~ | ~~Curriculum page: full lesson list reconciliation — `content/lessons/html/` shows lessons numbered 6.2, 7.3, 9.1 alongside 1.x–5.x — is the curriculum 12 courses total or more?~~ | ~~Claude~~ | ~~Resolved in PR 3: 12 courses × 3 sub-lessons = 36 total. Curriculum page reflects accurately; landing page kept "12 courses" framing.~~ |
 | 10 | Whether to register a separate domain for the subsidiary (e.g., `aesdr-os.com` or `teams.aesdr.com`) post-launch | Antaeus | Post-launch decision; not blocking |
 
 ---

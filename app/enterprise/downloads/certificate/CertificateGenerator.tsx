@@ -41,7 +41,7 @@ export default function CertificateGenerator() {
   const [repName, setRepName] = useState("Alex Rivera");
   const [role, setRole] = useState<"SDR" | "AE">("SDR");
   const [completionDate, setCompletionDate] = useState(today());
-  const [modulesCompleted, setModulesCompleted] = useState("12 courses · 36 lessons");
+  const [scopeCompleted, setScopeCompleted] = useState("12 courses · 36 lessons");
   const [orgName, setOrgName] = useState("");
   const [managerName, setManagerName] = useState("");
 
@@ -55,7 +55,7 @@ export default function CertificateGenerator() {
   // share line names the AE/SDR + role accurately. Per H.7.2.
   const linkedinShareUrl = useMemo(() => {
     const shareUrl = "https://aesdr.com/";
-    const summary = `${repName ? repName + " — " : ""}AESDR-trained ${role}. Twelve lessons on the part of SaaS sales nobody actually teaches. ${shareUrl}`;
+    const summary = `${repName ? repName + " — " : ""}AESDR-trained ${role}. 12 courses on the part of SaaS sales nobody actually teaches. ${shareUrl}`;
     return `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
       shareUrl
     )}&summary=${encodeURIComponent(summary)}`;
@@ -129,12 +129,12 @@ export default function CertificateGenerator() {
           </div>
 
           <div className={styles.formGroup}>
-            <label className={styles.formLabel} htmlFor="cert-modules">Scope completed</label>
+            <label className={styles.formLabel} htmlFor="cert-scope">Scope completed</label>
             <input
-              id="cert-modules"
+              id="cert-scope"
               type="text"
-              value={modulesCompleted}
-              onChange={(e) => setModulesCompleted(e.target.value)}
+              value={scopeCompleted}
+              onChange={(e) => setScopeCompleted(e.target.value)}
               className={styles.formInput}
               maxLength={120}
               placeholder="e.g. 12 courses · 36 lessons"
@@ -197,7 +197,7 @@ export default function CertificateGenerator() {
           <p className={styles.certBody}>
             has completed the AESDR / Enterprise program for{" "}
             <em>{role === "SDR" ? "Sales Development Representatives" : "Account Executives"}</em>
-            {orgName ? ` at ${orgName}` : ""} — {modulesCompleted || "the full curriculum"} on the work, the people, and the mechanics of selling SaaS in their first two years.
+            {orgName ? ` at ${orgName}` : ""} — {scopeCompleted || "the full curriculum"} on the work, the people, and the mechanics of selling SaaS in their first two years.
           </p>
 
           <div className={styles.certFooter}>

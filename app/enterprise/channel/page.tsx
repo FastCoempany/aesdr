@@ -43,7 +43,7 @@ export default function PartnersPage() {
             intro="Your platform delivers learning. Your customers (HR / L&D) ask for content you don't produce — and sales-AE/SDR development for first- and second-year hires is one of the most-asked categories. AESDR slots into your marketplace as the answer."
             matrix={{
               gap: "No native curriculum for first- and second-year SDRs and AEs. Customers ask for it; platforms can't justify building it themselves.",
-              plugin: "Listed in your marketplace under Sales / Career Development. AEs and SDRs consume AESDR modules inside your platform's UX. Manager dashboard runs in parallel.",
+              plugin: "Listed in your marketplace under Sales / Career Development. AEs and SDRs consume AESDR courses inside your platform's UX. Manager dashboard runs in parallel.",
               integration: "Today: SSO + email-based provisioning. Next: SCORM 1.2 / SCORM 2004 / xAPI export — built when the first LMS partnership signs.",
               revenue: "Referral (20% of first-year revenue), reseller margin (60% wholesale), or white-label per-seat wholesale rate.",
             }}

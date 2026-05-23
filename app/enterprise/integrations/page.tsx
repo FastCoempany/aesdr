@@ -37,7 +37,7 @@ const INTEGRATIONS: Integration[] = [
     name: "Manager dashboard",
     state: "Live",
     description:
-      "Manager logs in with their email (set as team admin during provisioning). Sees a live view of every AE/SDR on their team: lessons completed, modules in progress, last-activity timestamp, and the diagnostic data once administered. Runs on the existing /admin/teams Supabase-backed surface.",
+      "Manager logs in with their email (set as team admin during provisioning). Sees a live view of every AE/SDR on their team: lessons completed, courses in progress, last-activity timestamp, and the diagnostic data once administered. Runs on the existing /admin/teams Supabase-backed surface.",
   },
   {
     number: "03",
@@ -46,7 +46,7 @@ const INTEGRATIONS: Integration[] = [
     description:
       "Standard SAML 2.0 SP-initiated and IdP-initiated flows. JIT user provisioning from the SAML attribute mapping (email, role, manager-email).",
     buildTrigger:
-      "First Custom Enterprise client requiring SSO as a security gate. Estimated build: 1–2 weeks once a real partner is on the other side.",
+      "First Custom Enterprise client requiring SSO as a security gate. Estimated build: 1–2 weeks once a real channel partner is on the other side.",
   },
   {
     number: "04",
@@ -64,14 +64,14 @@ const INTEGRATIONS: Integration[] = [
     description:
       "More granular completion tracking than SCORM 1.2 — sequence + navigation + interaction tracking. Better fit for modern LMS partners.",
     buildTrigger:
-      "Same trigger as SCORM 1.2 — built alongside in the same sprint. Per-partner choice on which spec they need.",
+      "Same trigger as SCORM 1.2 — built alongside in the same sprint. Each channel partner picks which spec they need.",
   },
   {
     number: "06",
     name: "xAPI (Tin Can) statements",
     state: "Roadmap",
     description:
-      "Real-time event statements emitted to a partner's Learning Record Store. Captures behavioral signal more granular than SCORM — e.g., 'AE/SDR watched 4 of 5 segments in lesson 3.2', 'AE/SDR replayed segment 2 twice'.",
+      "Real-time event statements emitted to the channel partner's Learning Record Store. Captures behavioral signal more granular than SCORM — e.g., 'AE/SDR watched 4 of 5 segments in lesson 3.2', 'AE/SDR replayed segment 2 twice'.",
     buildTrigger:
       "First LXP partnership (Docebo's LXP product, 360Learning, etc.). Build: 1–2 weeks given existing event tracking already in place.",
   },
@@ -98,7 +98,7 @@ const INTEGRATIONS: Integration[] = [
     name: "Completion webhook",
     state: "Roadmap",
     description:
-      "POST to a partner-supplied URL when a AE/SDR completes a module or hits a diagnostic milestone. Used to trigger downstream workflows (enablement platform updates, recruiter notifications, HR system updates).",
+      "POST to a URL the channel partner supplies when an AE/SDR completes a course or hits a diagnostic milestone. Used to trigger downstream workflows (enablement platform updates, recruiter notifications, HR system updates).",
     buildTrigger:
       "First enablement-platform partnership where the partner wants AESDR completion to surface inside their dashboard. Build: 3–5 days.",
   },
@@ -107,9 +107,9 @@ const INTEGRATIONS: Integration[] = [
     name: "Iframe embed of lessons",
     state: "Custom",
     description:
-      "For white-label deals: AESDR lessons embedded as iframes inside the partner's product. Partner controls the chrome (nav, branding, header) while we deliver the lesson content. Domain whitelist required.",
+      "For white-label deals: AESDR lessons embedded as iframes inside the channel partner's product. The channel partner controls the chrome (nav, branding, header) while we deliver the lesson content. Domain whitelist required.",
     buildTrigger:
-      "First white-label partnership. Build per-partner basis — security review and domain config requires partner-specific scoping.",
+      "First white-label partnership. Build is per channel partner — security review and domain config require channel-partner-specific scoping.",
   },
 ];
 
@@ -122,8 +122,8 @@ export default function IntegrationsPage() {
           <h1 className={styles.heroHeadline}>What&apos;s live now. What&apos;s on the way.</h1>
           <p className={styles.heroSubhead}>
             Honest state. Two integrations are live today; eight more are on the
-            roadmap and get built when a real partner conversation generates the
-            pull. We don&apos;t puff up the list — most marketplaces do, and it
+            roadmap and get built when a real channel partner conversation generates
+            the pull. We don&apos;t puff up the list — most marketplaces do, and it
             burns trust the first time a buyer asks for a feature that doesn&apos;t
             exist.
           </p>

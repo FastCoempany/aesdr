@@ -93,7 +93,7 @@ export default function TeamsLanding() {
       <section className={`${styles.section} ${styles.sectionDivider}`}>
         <div className={styles.container}>
           <p className={styles.eyebrow}>What it is</p>
-          <h2 className={styles.h2}>Twelve lessons. Five tools. One Discord.</h2>
+          <h2 className={styles.h2}>12 courses. 5 tools. One Discord.</h2>
           <hr className={styles.divider} />
 
           <div className={styles.cardGrid3}>
@@ -190,7 +190,7 @@ export default function TeamsLanding() {
               title="White-label / co-branded"
               description="For partners packaging AESDR inside their own offering. We deliver the 12 courses + 5 takeaway tools; you wrap them in your brand. Revenue-share or wholesale pricing."
               features={[
-                "Delivery rights to modules + takeaway tools",
+                "Delivery rights to courses + takeaway tools",
                 "Co-branded materials — your logo + AESDR mark with mutual approval",
                 "Per-seat wholesale rate or revenue-share",
                 "No exclusivity, no minimums",

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     "The full 12-course AESDR syllabus filed under one Dewey call number, with the question each course actually answers laid out on its own index card.",
 };
 
-type Lesson = {
+type Course = {
   num: string;
   chapter: string;
   title: string;
@@ -23,20 +23,20 @@ type Lesson = {
   stamp: string;
 };
 
-const LESSONS: Lesson[] = [
-  { num: "L01", chapter: "ch. 01", title: "Building Real Camaraderie",           question: "“When’s the last time your team felt like an actual team?”",                                                   annotation: "— keep. read twice.",        stamp: "Mon 01" },
-  { num: "L02", chapter: "ch. 02", title: "Breaking Down Silos",                  question: "“How many deals died in the handoff you never talked about?”",                                                  annotation: "— cc: solutions eng.",       stamp: "Tue 02" },
-  { num: "L03", chapter: "ch. 03", title: "Performance Pitfalls",                 question: "“Are you getting better — or just getting by?”",                                                                annotation: "— mirror test.",             stamp: "Wed 03" },
-  { num: "L04", chapter: "ch. 04", title: "Navigating Manager Madness",           question: "“Does your manager coach you… or just count your calls and faults?”",                                           annotation: "— send to Todd.",            stamp: "Thu 04" },
-  { num: "L05", chapter: "ch. 05", title: "tHe SaLeS pLaYbOoK",    stylized: true, question: "“What’s your system? And if you don’t have one — what have you been doing?”",                                   annotation: "— LinkedIn isn’t one.",      stamp: "Fri 05" },
-  { num: "L06", chapter: "ch. 06", title: "bEyOnD tHe SaLeS pLaYbOoK", stylized: true, question: "“What do you do when the script runs out and you’re live?”",                                               annotation: "— improvise w/ intent.",     stamp: "Sat 06" },
-  { num: "L07", chapter: "ch. 07", title: "Prospecting & Pipeline",               question: "“If inbound dried up tomorrow, would you survive?”",                                                            annotation: "— build outbound muscle.",   stamp: "Sun 07" },
-  { num: "L08", chapter: "ch. 08", title: "The 30% Rule",                         question: "“What’s your actual close rate? Not the one you told your VP.”",                                                annotation: "— do the math honestly.",    stamp: "Mon 08" },
-  { num: "L09", chapter: "ch. 09", title: "CRM Survival Guide",                   question: "“Is your CRM protecting you — or building the case against you?”",                                              annotation: "— log before you forget.",   stamp: "Tue 09" },
-  { num: "L10", chapter: "ch. 10", title: "Breaking Down the Commission Myth",    question: "“Can you survive three bad months in a row? Mentally? Financially?”",                                           annotation: "— 3 months runway min.",     stamp: "Wed 10" },
-  { num: "L11", chapter: "ch. 11", title: "Sober Selling",                        question: "“What if the problem is bigger than your process — what if it’s what you’re doing when no one’s watching?”",   annotation: "— 21+. not metaphor.",       stamp: "Thu 11" },
+const COURSES: Course[] = [
+  { num: "C01", chapter: "ch. 01", title: "Building Real Camaraderie",           question: "“When’s the last time your team felt like an actual team?”",                                                   annotation: "— keep. read twice.",        stamp: "Mon 01" },
+  { num: "C02", chapter: "ch. 02", title: "Breaking Down Silos",                  question: "“How many deals died in the handoff you never talked about?”",                                                  annotation: "— cc: solutions eng.",       stamp: "Tue 02" },
+  { num: "C03", chapter: "ch. 03", title: "Performance Pitfalls",                 question: "“Are you getting better — or just getting by?”",                                                                annotation: "— mirror test.",             stamp: "Wed 03" },
+  { num: "C04", chapter: "ch. 04", title: "Navigating Manager Madness",           question: "“Does your manager coach you… or just count your calls and faults?”",                                           annotation: "— send to Todd.",            stamp: "Thu 04" },
+  { num: "C05", chapter: "ch. 05", title: "tHe SaLeS pLaYbOoK",    stylized: true, question: "“What’s your system? And if you don’t have one — what have you been doing?”",                                   annotation: "— LinkedIn isn’t one.",      stamp: "Fri 05" },
+  { num: "C06", chapter: "ch. 06", title: "bEyOnD tHe SaLeS pLaYbOoK", stylized: true, question: "“What do you do when the script runs out and you’re live?”",                                               annotation: "— improvise w/ intent.",     stamp: "Sat 06" },
+  { num: "C07", chapter: "ch. 07", title: "Prospecting & Pipeline",               question: "“If inbound dried up tomorrow, would you survive?”",                                                            annotation: "— build outbound muscle.",   stamp: "Sun 07" },
+  { num: "C08", chapter: "ch. 08", title: "The 30% Rule",                         question: "“What’s your actual close rate? Not the one you told your VP.”",                                                annotation: "— do the math honestly.",    stamp: "Mon 08" },
+  { num: "C09", chapter: "ch. 09", title: "CRM Survival Guide",                   question: "“Is your CRM protecting you — or building the case against you?”",                                              annotation: "— log before you forget.",   stamp: "Tue 09" },
+  { num: "C10", chapter: "ch. 10", title: "Breaking Down the Commission Myth",    question: "“Can you survive three bad months in a row? Mentally? Financially?”",                                           annotation: "— 3 months runway min.",     stamp: "Wed 10" },
+  { num: "C11", chapter: "ch. 11", title: "Sober Selling",                        question: "“What if the problem is bigger than your process — what if it’s what you’re doing when no one’s watching?”",   annotation: "— 21+. not metaphor.",       stamp: "Thu 11" },
   // eslint-disable-next-line no-restricted-syntax -- Course 12 canonical title; "level up" here is curriculum-name use per founder ratification 2026-05-22, not motivational register
-  { num: "L12", chapter: "ch. 12", title: "Leveling Up SaaS Relationships",       question: "“Who would vouch for you if you changed companies tomorrow?”",                                                  annotation: "— name 5.",                  stamp: "Fri 12" },
+  { num: "C12", chapter: "ch. 12", title: "Leveling Up SaaS Relationships",       question: "“Who would vouch for you if you changed companies tomorrow?”",                                                  annotation: "— name 5.",                  stamp: "Fri 12" },
 ];
 
 export default function SyllabusPage() {
@@ -131,7 +131,7 @@ export default function SyllabusPage() {
       </div>
 
       <section className={styles.catalogGrid}>
-        {LESSONS.map((lesson) => (
+        {COURSES.map((lesson) => (
           <article key={lesson.num} className={styles.card}>
             <div className={styles.callnum} style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <Icon name={iconForLesson(lesson.num)} size={14} />
