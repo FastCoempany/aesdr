@@ -297,3 +297,80 @@ The one thing not addressed is the thing the May-19 audit named as the single hi
 Everything else is small fixes with outsized value, exactly as the May-19 closing read predicted.
 
 — End of update audit. Prepared 2026-05-22.
+
+---
+
+## P. Founder ratification — 2026-05-22 (post-audit)
+
+**Founder quote:** *"journey, mindset, blueprint, leverage are perfectly fine
+with me. As long as how they're structured in a sentence isn't the choppy stuff."*
+
+**What this changes.** The May-19 audit's lexical AI-tell watch-list
+(`journey`, `mindset`, `blueprint`, `leverage`) is **deprecated as a hygiene
+metric**. These words are acceptable in the AESDR curriculum. The actual
+concern is syntactic — whether the sentences containing them carry
+telegraphic / choppy cadence (R-G3 territory), not whether the words
+themselves appear.
+
+**Empirical check** of whether the structural concern is present in current
+state:
+
+| Rubric axis | Units flagged 0 / 36 | Direction |
+|---|---|---|
+| Axis 1 (sentence-length variety) | 14 | could be choppy *or* bloated |
+| Axis 6 (filler / over-cutting) | 20 | **bloated, not choppy** (lessons average >28 words/sentence in flagged units) |
+
+The lessons skew toward sentence bloat after the Batch 8 deep-clean
+over-merged short fragments. Choppy cadence — the actual founder concern
+around these words — is **not present** in the curriculum.
+
+### Regrades
+
+| Category | Pre-ratification | Post-ratification |
+|---|---|---|
+| §G Curriculum body copy quality | 6 → 6 (→) | **6 → 7 (↑)** — rubric Axis 3 (R-G7 AI-tells) + Axis 5 (register) now clean across all 36 units; the lexical concern that capped this is deprecated |
+| §K AI-tell / non-human language hygiene | 6 → 5 (↓) | **6 → 6 (→)** — no regression. The new affiliate-hub light pollution (`unlock`, `mindset`, `unleash` in dashboard/admin strings) is the only real residual; lessons are clean by the criteria the founder actually cares about |
+| §L Language consistency across surfaces | 5 → 6 (↑) | **5 → 6 (↑)** — unchanged |
+
+### Updated opportunity list
+
+The May-19 audit's #1 recommendation (3-hour lexical AI-tell sweep across
+36 lessons) is **retired** by this ratification. New ranking:
+
+| # | Opportunity | Cost | Why |
+|---|---|---|---|
+| 1 | **Finish tagline v1.3 propagation** to layout, coming-soon, mobile, LandingSequence, TeaseGate | 30 min | Visible to every visitor; closes §A's "why not 10" reason |
+| 2 | **Fresh canon read of new affiliate-hub UI strings** (dashboard, admin queue, payments, submit-copy, emails) | 1–2 hrs | Light pollution from rapid build, never reviewed |
+| 3 | **Curriculum bloat pass** — 20 units flagged Axis 6 = 0 (sentence avg >28 words). Tighten sentence-length variety, restore short-sentence punch | 3–4 hrs | This is the actual structural concern in the lessons; replaces the deprecated lexical sweep |
+| 4 | **Add `/affiliates/program` wind-down / underperformance language** | 1 hr | Partners ask this before signing; May-19 #11 still open |
+| 5 | **Delete legacy dark-palette CSS vars** in `app/globals.css` | 15 min | Bundle hygiene; removes drift surface |
+| 6 | **Role-fork `localStorage` persistence** + visible role-banner on consumer landing | 1 hr | May-19 #1 + #7 still both open |
+| 7 | **Form field resting-state contrast pass** | 30 min | May-19 accessibility gap |
+| 8 | **Audit the 8 public affiliate-kit docs at `content/affiliate-kit/D*.md`** | 1 hr | Highest external-exposure unread surface |
+| 9 | **Build `/design` admin page** documenting tokens, type ramp, button variants | 4 hrs | Pays off across every future contributor |
+| 10 | **Mobile lesson typography review on real device** | 1 hr | May-19 #15 still open |
+
+**If you do nothing else this week, do #1 through #3.** Combined cost ~5
+hours; closes the most-visible tagline drift, the unaudited new surface,
+and the actual structural concern in the lesson body.
+
+### Net direction (post-ratification)
+
+| Category | May 19 | This update |
+|---|---|---|
+| Affiliate hub | 8 | **9** ↑ |
+| Email templates | 6 | **7** ↑ |
+| Behavioral / drop-off design | 4 | **6** ↑↑ |
+| Accessibility | 4 | **5** ↑ |
+| Language consistency across surfaces | 5 | **6** ↑ |
+| **Curriculum body copy quality** | 6 | **7** ↑ ← *regraded* |
+| AI-tell / non-human language hygiene | 6 | **6** → ← *regraded (no regression)* |
+| Brand voice + positioning | 9 | 9 → |
+| Visual identity + design system | 8 | 8 → |
+| Consumer landing + FAQ | 8 | 8 → |
+| Curriculum structure | 8 | 8 → |
+| `/enterprise` subsidiary | 6 | 6 → |
+| Mobile experience | 5 | 5 → |
+
+**Six categories up, seven flat, zero down.** Three days of work moved the
+needle on every category the founder prioritized.
