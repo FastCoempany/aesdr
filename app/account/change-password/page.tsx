@@ -77,7 +77,7 @@ export default function ChangePasswordPage() {
                   animation: "iris 3s linear infinite",
                 }}
               >
-                <Link href="/dashboard" style={{ textDecoration: "none" }}>AESDR</Link>
+                <Link href="/dashboard" style={{ textDecoration: "none" }} aria-label="AESDR — dashboard">AESDR</Link>
               </span>
             </p>
 

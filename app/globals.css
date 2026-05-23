@@ -11,6 +11,12 @@
   --muted: #6B6B6B;
   --light: #E8E4DF;
 
+  /* Form field resting-state border. Darker than --light to clear WCAG
+     2.1 AA non-text contrast (3:1 minimum on cream). Use this on input,
+     textarea, select, and clickable form-choice labels — not on
+     decorative cards or dividers. */
+  --form-border: #B5B0A8;
+
   --iris: linear-gradient(90deg, #FF006E 0%, #FF6B00 17%, #F59E0B 34%, #10B981 51%, #38BDF8 68%, #8B5CF6 85%, #FF006E 100%);
 
   /* Font stacks */

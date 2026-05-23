@@ -41,7 +41,7 @@ export default function InviteForm() {
           fontFamily: "'Source Serif 4', Georgia, serif",
           fontSize: "14px",
           padding: "14px 16px",
-          border: "1px solid #E8E4DF",
+          border: "1px solid #B5B0A8",
           background: "#FAF7F2",
           color: "#1A1A1A",
           flex: "1 1 240px",

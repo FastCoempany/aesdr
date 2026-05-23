@@ -17,7 +17,12 @@ export default async function AesdrBrand({
   const href = user ? "/dashboard" : "/";
 
   return (
-    <Link href={href} className={className} style={style}>
+    <Link
+      href={href}
+      className={className}
+      style={style}
+      aria-label={user ? "AESDR — dashboard" : "AESDR — home"}
+    >
       {children}
     </Link>
   );

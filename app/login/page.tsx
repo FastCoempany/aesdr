@@ -102,7 +102,7 @@ function LoginForm() {
                 animation: "iris 3s linear infinite",
               }}
             >
-              <Link href="/" style={{ textDecoration: "none" }}>AESDR</Link>
+              <Link href="/" style={{ textDecoration: "none" }} aria-label="AESDR — home">AESDR</Link>
             </span>
           </p>
 

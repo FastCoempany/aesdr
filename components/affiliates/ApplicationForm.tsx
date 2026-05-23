@@ -265,7 +265,7 @@ function FieldRadio({
               gap: 10,
               cursor: "pointer",
               padding: "10px 12px",
-              border: "1px solid var(--light)",
+              border: "1px solid var(--form-border)",
               background: "var(--cream)",
               lineHeight: 1.45,
             }}
@@ -314,7 +314,7 @@ const inputStyle: React.CSSProperties = {
   fontSize: 16,
   color: "var(--ink)",
   background: "var(--cream)",
-  border: "1px solid var(--light)",
+  border: "1px solid var(--form-border)",
   outline: "none",
   resize: "vertical",
 };

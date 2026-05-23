@@ -223,7 +223,7 @@ export default function TestimonialForm({ initial }: Props) {
               gap: 12,
               cursor: "pointer",
               padding: "12px 14px",
-              border: "1px solid var(--light)",
+              border: "1px solid var(--form-border)",
               background: "#fff",
               alignItems: "flex-start",
             }}
