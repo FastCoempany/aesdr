@@ -174,7 +174,7 @@ export default function ImplementationPage() {
           <h2 className={styles.h2}>What AEs and SDRs walk out with.</h2>
           <hr className={styles.divider} />
           <p className={styles.body}>
-            AESDR ships five tools that live outside the course. AEs and SDRs keep them, use them, modify them, share them with peers. Each one comes from a specific lesson but works standalone.
+            AESDR ships five tools that live outside the program. AEs and SDRs keep them, use them, modify them, share them with peers. Each one comes from a specific lesson but works standalone.
           </p>
           <ul className={styles.bulletList}>
             <li>

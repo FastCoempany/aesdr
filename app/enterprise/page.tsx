@@ -116,7 +116,7 @@ export default function TeamsLanding() {
               <p className={styles.cardBody}>
                 Manager Archetype Map. AE/SDR Alignment Contract. 72-Hour Strike
                 Plan (for the week after a bad loss). CRM Survival Guide. Async
-                Cadence Template. Built to live outside the course — AEs and SDRs use
+                Cadence Template. Built to live outside the program — AEs and SDRs use
                 them for years.
               </p>
             </div>
@@ -227,7 +227,7 @@ export default function TeamsLanding() {
             <Link href="/" style={{ color: "var(--ink)" }}>
               aesdr.com
             </Link>
-            {" "}— the course that junior SDRs and AEs pay for out of their own pocket.
+            {" "}— the program that junior SDRs and AEs pay for out of their own pocket.
             The same 12 courses, packaged for the orgs that hire them.
           </p>
           <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>

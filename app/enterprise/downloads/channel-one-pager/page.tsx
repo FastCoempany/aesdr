@@ -74,7 +74,7 @@ export default function PartnerOnePagerPage() {
               maxWidth: "60ch",
             }}
           >
-            Twelve courses, 36 lessons. Built on aesdr.com — the course junior SDRs
+            12 courses, 36 lessons. Built on aesdr.com — the program junior SDRs
             and AEs pay for out of their own pocket. Packaged for sales orgs and channel
             partners who already serve the SDR/AE audience but don&apos;t produce the
             training their customers ask for.

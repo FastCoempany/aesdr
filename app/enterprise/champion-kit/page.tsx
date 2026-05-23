@@ -52,7 +52,7 @@ const OBJECTIONS: { number: string; objection: string; answer: string }[] = [
     number: "05",
     objection: '"Is this another founder running a thinly-veiled coaching upsell?"',
     answer:
-      "No. AESDR is a one-time purchase. Lifetime access. There is no premium tier, no coaching call upsell, no community subscription. We make $249-$1,499 per seat and that's the entire commercial relationship. If you want our help on top, we charge for it explicitly under Custom Enterprise — but the course doesn't tee that up.",
+      "No. AESDR is a one-time purchase. Lifetime access. There is no premium tier, no coaching call upsell, no community subscription. We make $249-$1,499 per seat and that's the entire commercial relationship. If you want our help on top, we charge for it explicitly under Custom Enterprise — but the program doesn't tee that up.",
   },
   {
     number: "06",
