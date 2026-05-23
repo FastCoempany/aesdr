@@ -40,10 +40,15 @@ async function extractProse(file) {
     paragraphs.push(text);
   }
 
-  // Also catch kp <li> body text (the bit after <strong>X:</strong>)
-  const kpRe = /<li><span class="kp-n">[^<]+<\/span><strong>[^<]+<\/strong>\s*([^<]+)</g;
+  // Also catch kp <li> body text — capture the whole list item innerHTML
+  // and strip tags. The previous regex stopped at the first `<` after the
+  // opening <strong>, which missed multi-<strong> items like the
+  // "What You Think / What It Actually Says" rationalization pairs in
+  // lesson 11.3 — only the first quote was being scored.
+  const kpRe = /<li><span class="kp-n">[^<]+<\/span>(.+?)<\/li>/gs;
   while ((m = kpRe.exec(body)) !== null) {
-    paragraphs.push(m[1].trim());
+    const stripped = m[1].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    if (stripped.length > 0) paragraphs.push(stripped);
   }
 
   return paragraphs;
@@ -66,10 +71,40 @@ function wordCount(s) {
 // 1 = one or two stumble points
 // 2 = intentional variation
 //
-// Carve-out: three consecutive short *question* sentences are
-// rhetorical structure (e.g. "Forecast hawk? Deal-stage enforcer?
-// Last-minute discounter?"), not telegraphic cadence. The canon's
-// R-G3 ban targets choppy declarative fragments, not question-stacks.
+// Carve-outs:
+//   - Three consecutive short *question* sentences are rhetorical structure
+//     (e.g. "Forecast hawk? Deal-stage enforcer? Last-minute discounter?"),
+//     not telegraphic cadence.
+//   - Three consecutive short *imperative* sentences are brand-voice
+//     emphasis ("Own your schedule. Track your numbers. Ask for feedback.")
+//     — first word is a verb in base form, not a pronoun/article/
+//     demonstrative.
+// The canon's R-G3 ban targets choppy declarative fragments
+// ("Faster. Smarter. Better.") with assertive subject-verb chains, not
+// these intentional parallel-structure devices.
+const NON_IMPERATIVE_FIRST_WORDS = new Set([
+  // pronouns
+  "i", "you", "he", "she", "it", "we", "they",
+  // possessives
+  "my", "your", "his", "her", "its", "our", "their",
+  // articles + demonstratives
+  "a", "an", "the", "this", "that", "these", "those", "there", "here",
+  // conjunctions
+  "and", "but", "or", "so", "then", "yet", "for",
+  // be-forms (start of statements, not commands)
+  "is", "are", "was", "were", "am", "be", "been", "being",
+]);
+
+function isLikelyImperative(sentence) {
+  const firstWord = sentence.trim().split(/\s+/)[0]?.replace(/[^a-zA-Z']/g, "").toLowerCase();
+  if (!firstWord) return false;
+  // Skip if it's a known non-imperative starter
+  if (NON_IMPERATIVE_FIRST_WORDS.has(firstWord)) return false;
+  // Skip -ing / -ed verb forms (gerunds/participles, not imperatives)
+  if (firstWord.endsWith("ing") || firstWord.endsWith("ed")) return false;
+  return true;
+}
+
 function scoreAxis1(paragraphs) {
   let shortStacks = 0;
   let monotonyHits = 0;
@@ -89,7 +124,11 @@ function scoreAxis1(paragraphs) {
           sentences[i].trim().endsWith("?") &&
           sentences[i + 1].trim().endsWith("?") &&
           sentences[i + 2].trim().endsWith("?");
-        if (!allQuestions) {
+        const allImperatives =
+          isLikelyImperative(sentences[i]) &&
+          isLikelyImperative(sentences[i + 1]) &&
+          isLikelyImperative(sentences[i + 2]);
+        if (!allQuestions && !allImperatives) {
           shortStacks++;
           break;
         }
