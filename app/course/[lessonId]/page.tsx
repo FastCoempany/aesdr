@@ -149,7 +149,7 @@ export default async function LessonPage({
             color: "var(--text-muted)",
           }}
         >
-          No lesson content found for this module.
+          No lesson content found for this course.
         </main>
       )}
 
