@@ -1,5 +1,7 @@
 import { Resend } from 'resend';
 
+import { bridgeAfter } from '@/utils/progress/bridges';
+
 function getResend() {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
@@ -1890,7 +1892,7 @@ function lessonCompleteHtml(name: string, lessonId: string, lessonTitle: string)
 
   const sub = isLast
     ? "You made it through all twelve. The shell did not stop."
-    : `Lesson ${nextLesson} is harder.`;
+    : bridgeAfter(lessonId) ?? `Lesson ${nextLesson} is harder.`;
 
   return `<!DOCTYPE html>
 <html>

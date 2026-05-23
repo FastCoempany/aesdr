@@ -45,7 +45,7 @@ export default function ResetPasswordPage() {
   return (
     <main
       className="flex min-h-screen items-center justify-center px-6 py-12"
-      style={{ background: "var(--bg-main)" }}
+      style={{ background: "var(--cream)" }}
     >
       <div className="w-full max-w-[420px]" style={{ position: "relative" }}>
         {/* Corner brackets — ornamental */}
@@ -86,7 +86,7 @@ export default function ResetPasswordPage() {
                 fontFamily: "var(--display)",
                 fontSize: "clamp(36px, 5vw, 44px)",
                 lineHeight: "1.05",
-                color: "var(--text-main)",
+                color: "var(--ink)",
                 fontWeight: 400,
                 letterSpacing: "-0.01em",
                 margin: 0,
@@ -100,7 +100,7 @@ export default function ResetPasswordPage() {
                 fontSize: "10px",
                 letterSpacing: ".36em",
                 textTransform: "uppercase" as const,
-                color: "var(--text-muted)",
+                color: "var(--muted)",
                 margin: 0,
               }}
             >
@@ -110,7 +110,7 @@ export default function ResetPasswordPage() {
               style={{
                 fontFamily: "var(--serif)",
                 fontSize: "16px",
-                color: "var(--text-muted)",
+                color: "var(--muted)",
                 lineHeight: 1.55,
                 margin: "8px auto 0",
                 maxWidth: "340px",
@@ -125,11 +125,11 @@ export default function ResetPasswordPage() {
             <div
               className="px-5 py-6 text-center"
               style={{
-                borderLeft: "3px solid var(--theme)",
-                background: "rgba(16,185,129,0.05)",
+                borderLeft: "3px solid var(--crimson)",
+                background: "rgba(139,26,26,0.05)",
               }}
             >
-              <p style={{ fontFamily: "var(--serif)", fontSize: "16px", color: "var(--theme)", margin: 0 }}>
+              <p style={{ fontFamily: "var(--serif)", fontSize: "16px", color: "var(--crimson)", margin: 0 }}>
                 Password updated. Redirecting to your dashboard…
               </p>
             </div>
@@ -175,9 +175,9 @@ export default function ResetPasswordPage() {
                   style={{
                     fontFamily: "var(--serif)",
                     fontSize: "14px",
-                    borderLeft: "3px solid var(--coral)",
-                    background: "rgba(239,68,68,0.05)",
-                    color: "var(--coral)",
+                    borderLeft: "3px solid var(--crimson)",
+                    background: "rgba(139,26,26,0.05)",
+                    color: "var(--crimson)",
                   }}
                 >
                   {error}
@@ -200,13 +200,13 @@ export default function ResetPasswordPage() {
           )}
 
           <div style={{ paddingTop: "8px" }}>
-            <div style={{ height: "1px", background: "var(--line)", marginBottom: "20px" }} aria-hidden />
+            <div style={{ height: "1px", background: "var(--light)", marginBottom: "20px" }} aria-hidden />
             <p
               className="text-center"
               style={{
                 fontFamily: "var(--serif)",
                 fontSize: "15px",
-                color: "var(--text-muted)",
+                color: "var(--muted)",
                 margin: 0,
                 fontStyle: "italic",
               }}
@@ -215,10 +215,10 @@ export default function ResetPasswordPage() {
               <Link
                 href="/login"
                 style={{
-                  color: "var(--text-main)",
+                  color: "var(--ink)",
                   textDecoration: "underline",
                   textUnderlineOffset: "4px",
-                  textDecorationColor: "rgba(255,255,255,0.35)",
+                  textDecorationColor: "rgba(26,26,26,0.35)",
                   fontStyle: "normal",
                   fontFamily: "var(--mono)",
                   fontSize: "11px",
@@ -242,16 +242,16 @@ const labelStyle: React.CSSProperties = {
   fontSize: "10px",
   letterSpacing: ".22em",
   textTransform: "uppercase",
-  color: "var(--text-muted)",
+  color: "var(--muted)",
   display: "block",
 };
 
 const inputStyle: React.CSSProperties = {
   fontFamily: "var(--serif)",
   fontSize: "16px",
-  background: "var(--bg-panel)",
-  border: "1px solid var(--line)",
-  color: "var(--text-main)",
+  background: "#fff",
+  border: "1px solid var(--light)",
+  color: "var(--ink)",
   borderRadius: "2px",
 };
 
@@ -273,11 +273,11 @@ function primaryButtonStyle(hover: boolean): React.CSSProperties {
     letterSpacing: ".22em",
     textTransform: "uppercase",
     padding: "16px 28px",
-    background: hover ? "var(--iris)" : "var(--text-main)",
+    background: hover ? "var(--iris)" : "var(--ink)",
     backgroundSize: hover ? "200% 100%" : undefined,
     animation: hover ? "iris 3s linear infinite" : undefined,
-    color: "var(--bg-main)",
-    border: "1px solid var(--text-main)",
+    color: "var(--cream)",
+    border: "1px solid var(--ink)",
     borderRadius: "2px",
     transition: "background 180ms ease, color 180ms ease",
   };
@@ -290,7 +290,7 @@ function bracketStyle(
     position: "absolute",
     fontFamily: "var(--mono)",
     fontSize: "18px",
-    color: "var(--text-muted)",
+    color: "var(--muted)",
     opacity: 0.5,
     lineHeight: 1,
     pointerEvents: "none",

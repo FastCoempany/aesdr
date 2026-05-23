@@ -147,18 +147,18 @@ export default async function ToolsPage() {
     <main
       style={{
         minHeight: "100vh",
-        background: "var(--bg-main)",
-        color: "var(--text-main)",
+        background: "var(--cream)",
+        color: "var(--ink)",
         animation: "toolsFadeIn 500ms ease-out forwards",
       }}
     >
       <style>{`
         @keyframes toolsFadeIn{from{opacity:0}to{opacity:1}}
         .tool-card{transition:border-color .25s ease, transform .25s ease, box-shadow .25s ease, background .25s ease;}
-        .tool-card:hover{border-color: var(--line2); transform: translateY(-2px); box-shadow: 0 12px 36px rgba(0,0,0,.35);}
+        .tool-card:hover{border-color: var(--light); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.08);}
         .tool-btn{transition:border-color .2s ease, background .2s ease, color .2s ease;}
-        .tool-btn.primary:hover{background: var(--theme); color:#020617; border-color: var(--theme);}
-        .tool-btn.secondary:hover{border-color: var(--line2); background: rgba(255,255,255,0.04);}
+        .tool-btn.primary:hover{background: var(--crimson); color:#FAF7F2; border-color: var(--crimson);}
+        .tool-btn.secondary:hover{border-color: var(--light); background: rgba(26,26,26,0.04);}
       `}</style>
 
       {/* Nav */}
@@ -171,8 +171,8 @@ export default async function ToolsPage() {
           alignItems: "center",
           justifyContent: "space-between",
           padding: "20px 5%",
-          borderBottom: "1px solid var(--line)",
-          background: "rgba(2,6,23,0.85)",
+          borderBottom: "1px solid var(--light)",
+          background: "rgba(250,247,242,0.85)",
           backdropFilter: "blur(10px)",
         }}
       >
@@ -212,13 +212,13 @@ export default async function ToolsPage() {
         >
           <Link
             href="/dashboard"
-            style={{ color: "var(--text-muted)", textDecoration: "none" }}
+            style={{ color: "var(--muted)", textDecoration: "none" }}
           >
             Course
           </Link>
           <Link
             href="/account"
-            style={{ color: "var(--text-muted)", textDecoration: "none" }}
+            style={{ color: "var(--muted)", textDecoration: "none" }}
           >
             Account
           </Link>
@@ -260,7 +260,7 @@ export default async function ToolsPage() {
               letterSpacing: ".01em",
               lineHeight: 1.05,
               marginBottom: "16px",
-              color: "var(--text-main)",
+              color: "var(--ink)",
             }}
           >
             Five instruments. Use them as intended.
@@ -270,7 +270,7 @@ export default async function ToolsPage() {
               fontFamily: "var(--serif)",
               fontSize: "17px",
               lineHeight: 1.6,
-              color: "var(--text-muted)",
+              color: "var(--muted)",
               maxWidth: "640px",
               fontStyle: "italic",
             }}
@@ -297,8 +297,8 @@ export default async function ToolsPage() {
                 key={tool.slug}
                 className="tool-card"
                 style={{
-                  background: "var(--bg-panel)",
-                  border: "1px solid var(--line)",
+                  background: "#fff",
+                  border: "1px solid var(--light)",
                   borderRadius: "4px",
                   padding: "28px 26px",
                   display: "flex",
@@ -311,7 +311,7 @@ export default async function ToolsPage() {
                     fontSize: "10px",
                     letterSpacing: ".28em",
                     textTransform: "uppercase",
-                    color: "var(--text-muted)",
+                    color: "var(--muted)",
                     marginBottom: "10px",
                   }}
                 >
@@ -324,7 +324,7 @@ export default async function ToolsPage() {
                     fontWeight: 700,
                     fontStyle: "italic",
                     lineHeight: 1.2,
-                    color: "var(--text-main)",
+                    color: "var(--ink)",
                     marginBottom: "12px",
                   }}
                 >
@@ -335,7 +335,7 @@ export default async function ToolsPage() {
                     fontFamily: "var(--serif)",
                     fontSize: "15px",
                     lineHeight: 1.55,
-                    color: "var(--text-muted)",
+                    color: "var(--muted)",
                     marginBottom: "24px",
                     flexGrow: 1,
                   }}
@@ -357,9 +357,9 @@ export default async function ToolsPage() {
                       fontSize: "11px",
                       letterSpacing: ".2em",
                       textTransform: "uppercase",
-                      color: "var(--text-main)",
+                      color: "var(--ink)",
                       background: "transparent",
-                      border: "1px solid var(--theme)",
+                      border: "1px solid var(--crimson)",
                       borderRadius: "2px",
                       textDecoration: "none",
                       cursor: "pointer",
@@ -378,9 +378,9 @@ export default async function ToolsPage() {
                       fontSize: "11px",
                       letterSpacing: ".2em",
                       textTransform: "uppercase",
-                      color: "var(--text-muted)",
+                      color: "var(--muted)",
                       background: "transparent",
-                      border: "1px solid var(--line)",
+                      border: "1px solid var(--light)",
                       borderRadius: "2px",
                       textDecoration: "none",
                       cursor: "pointer",
@@ -402,7 +402,7 @@ export default async function ToolsPage() {
             fontSize: "10px",
             letterSpacing: ".22em",
             textTransform: "uppercase",
-            color: "var(--text-muted)",
+            color: "var(--muted)",
             textAlign: "center",
           }}
         >

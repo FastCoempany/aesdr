@@ -40,9 +40,9 @@ export default function MarkCompleteButton({
       <span
         style={{
           ...baseStyle,
-          color: "var(--theme)",
-          border: "1px solid var(--theme)",
-          background: "rgba(16,185,129,0.15)",
+          color: "var(--crimson)",
+          border: "1px solid var(--crimson)",
+          background: "rgba(139,26,26,0.15)",
           display: "inline-flex",
           alignItems: "center",
           lineHeight: "1",
@@ -62,8 +62,8 @@ export default function MarkCompleteButton({
       disabled={isPending}
       style={{
         ...baseStyle,
-        color: "var(--text-muted)",
-        border: "1px solid var(--line)",
+        color: "var(--muted)",
+        border: "1px solid var(--light)",
         background: "transparent",
         lineHeight: "1",
         boxSizing: "border-box" as const,

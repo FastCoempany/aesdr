@@ -10,9 +10,9 @@ export default function CancelPage() {
   return (
     <main
       className="min-h-screen px-6 py-20"
-      style={{ background: "var(--bg-main)" }}
+      style={{ background: "var(--cream)" }}
     >
-      <div className="mx-auto max-w-2xl" style={{ color: "var(--text-main)" }}>
+      <div className="mx-auto max-w-2xl" style={{ color: "var(--ink)" }}>
 
         <Link
           href="/"
@@ -21,7 +21,7 @@ export default function CancelPage() {
             fontSize: "10px",
             letterSpacing: ".2em",
             textTransform: "uppercase",
-            color: "var(--theme)",
+            color: "var(--crimson)",
             textDecoration: "none",
           }}
         >
@@ -45,7 +45,7 @@ export default function CancelPage() {
             fontFamily: "var(--serif)",
             fontSize: "18px",
             lineHeight: "1.8",
-            color: "var(--text-muted)",
+            color: "var(--muted)",
             marginBottom: "32px",
           }}
         >
@@ -55,8 +55,8 @@ export default function CancelPage() {
         <div
           style={{
             padding: "24px",
-            background: "rgba(255,255,255,0.02)",
-            border: "1px solid rgba(255,255,255,0.06)",
+            background: "#fff",
+            border: "1px solid var(--light)",
             marginBottom: "40px",
           }}
         >
@@ -67,7 +67,7 @@ export default function CancelPage() {
               fontWeight: 700,
               letterSpacing: ".04em",
               textTransform: "uppercase",
-              color: "var(--text-main)",
+              color: "var(--ink)",
               marginBottom: "12px",
             }}
           >
@@ -78,7 +78,7 @@ export default function CancelPage() {
               fontFamily: "var(--serif)",
               fontSize: "15px",
               lineHeight: "1.8",
-              color: "var(--text-muted)",
+              color: "var(--muted)",
               paddingLeft: "20px",
             }}
           >
@@ -98,8 +98,8 @@ export default function CancelPage() {
               fontWeight: 700,
               letterSpacing: ".06em",
               textTransform: "uppercase",
-              color: "var(--bg-main)",
-              background: "var(--theme)",
+              color: "var(--cream)",
+              background: "var(--crimson)",
               padding: "14px 28px",
               textDecoration: "none",
             }}
@@ -115,8 +115,8 @@ export default function CancelPage() {
               fontWeight: 700,
               letterSpacing: ".06em",
               textTransform: "uppercase",
-              color: "var(--text-main)",
-              border: "1px solid var(--line2)",
+              color: "var(--ink)",
+              border: "1px solid var(--light)",
               padding: "14px 28px",
               textDecoration: "none",
             }}
@@ -127,18 +127,18 @@ export default function CancelPage() {
 
         <footer
           style={{
-            borderTop: "1px solid var(--line)",
+            borderTop: "1px solid var(--light)",
             paddingTop: "24px",
             marginTop: "48px",
             fontFamily: "var(--mono)",
             fontSize: "9px",
             letterSpacing: ".1em",
             textTransform: "uppercase",
-            color: "var(--text-muted)",
+            color: "var(--muted)",
           }}
         >
           <p style={{ opacity: 0.6 }}>
-            Questions? <a href="mailto:hello@aesdr.com" style={{ color: "var(--theme)", textDecoration: "none" }}>hello@aesdr.com</a>
+            Questions? <a href="mailto:hello@aesdr.com" style={{ color: "var(--crimson)", textDecoration: "none" }}>hello@aesdr.com</a>
           </p>
         </footer>
       </div>

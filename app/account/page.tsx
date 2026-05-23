@@ -58,14 +58,14 @@ export default async function AccountPage() {
   return (
     <main
       className="min-h-screen px-6 py-0"
-      style={{ background: "var(--bg-main)" }}
+      style={{ background: "var(--cream)" }}
     >
       {/* Top nav */}
       <nav
         className="sticky top-0 z-50 -mx-6 flex items-center justify-between border-b px-[5%] py-5"
         style={{
-          borderColor: "var(--line)",
-          background: "rgba(2,6,23,0.9)",
+          borderColor: "var(--light)",
+          background: "rgba(250,247,242,0.95)",
           backdropFilter: "blur(10px)",
         }}
       >
@@ -103,14 +103,14 @@ export default async function AccountPage() {
             textTransform: "uppercase" as const,
           }}
         >
-          <Link href="/dashboard" style={{ color: "var(--text-muted)", textDecoration: "none" }}>
+          <Link href="/dashboard" style={{ color: "var(--muted)", textDecoration: "none" }}>
             Lessons
           </Link>
           <SignOutButton />
         </div>
       </nav>
 
-      <div className="mx-auto w-full max-w-xl py-16" style={{ color: "var(--text-main)" }}>
+      <div className="mx-auto w-full max-w-xl py-16" style={{ color: "var(--ink)" }}>
         <h1
           style={{
             fontFamily: "var(--display)",
@@ -130,7 +130,7 @@ export default async function AccountPage() {
               fontSize: "10px",
               letterSpacing: ".2em",
               textTransform: "uppercase" as const,
-              color: "var(--text-muted)",
+              color: "var(--muted)",
               marginBottom: "8px",
             }}
           >
@@ -150,7 +150,7 @@ export default async function AccountPage() {
                 fontSize: "10px",
                 letterSpacing: ".2em",
                 textTransform: "uppercase" as const,
-                color: "var(--text-muted)",
+                color: "var(--muted)",
                 marginBottom: "8px",
               }}
             >
@@ -159,8 +159,8 @@ export default async function AccountPage() {
             <div
               style={{
                 padding: "16px 20px",
-                background: "var(--bg-panel)",
-                border: "1px solid var(--line)",
+                background: "#fff",
+                border: "1px solid var(--light)",
               }}
             >
               <p style={{ fontFamily: "var(--serif)", fontSize: "15px", marginBottom: "8px" }}>
@@ -174,7 +174,7 @@ export default async function AccountPage() {
                   fontWeight: 700,
                   letterSpacing: ".12em",
                   textTransform: "uppercase" as const,
-                  color: "var(--theme)",
+                  color: "var(--crimson)",
                   textDecoration: "none",
                 }}
               >
@@ -191,7 +191,7 @@ export default async function AccountPage() {
                 fontSize: "10px",
                 letterSpacing: ".2em",
                 textTransform: "uppercase" as const,
-                color: "var(--text-muted)",
+                color: "var(--muted)",
                 marginBottom: "8px",
               }}
             >
@@ -200,8 +200,8 @@ export default async function AccountPage() {
             <div
               style={{
                 padding: "16px 20px",
-                background: "var(--bg-panel)",
-                border: "1px solid var(--line)",
+                background: "#fff",
+                border: "1px solid var(--light)",
               }}
             >
               <p style={{ fontFamily: "var(--serif)", fontSize: "15px", marginBottom: "4px" }}>
@@ -219,7 +219,7 @@ export default async function AccountPage() {
               )}
               <p style={{ fontFamily: "var(--serif)", fontSize: "15px", margin: 0 }}>
                 <strong>Status:</strong>{" "}
-                <span style={{ color: "var(--theme)" }}>Active</span>
+                <span style={{ color: "var(--crimson)" }}>Active</span>
               </p>
             </div>
             <p
@@ -227,12 +227,12 @@ export default async function AccountPage() {
                 fontFamily: "var(--mono)",
                 fontSize: "10px",
                 letterSpacing: ".1em",
-                color: "var(--text-muted)",
+                color: "var(--muted)",
                 marginTop: "8px",
               }}
             >
               Need an invoice? Email{" "}
-              <a href="mailto:hello@aesdr.com" style={{ color: "var(--theme)" }}>
+              <a href="mailto:hello@aesdr.com" style={{ color: "var(--crimson)" }}>
                 hello@aesdr.com
               </a>
             </p>
@@ -247,7 +247,7 @@ export default async function AccountPage() {
               fontSize: "10px",
               letterSpacing: ".2em",
               textTransform: "uppercase" as const,
-              color: "var(--text-muted)",
+              color: "var(--muted)",
               marginBottom: "8px",
             }}
           >
@@ -265,7 +265,7 @@ export default async function AccountPage() {
               fontSize: "10px",
               letterSpacing: ".2em",
               textTransform: "uppercase" as const,
-              color: "var(--text-muted)",
+              color: "var(--muted)",
               marginBottom: "12px",
             }}
           >
@@ -275,8 +275,8 @@ export default async function AccountPage() {
             <div
               style={{
                 padding: "16px 20px",
-                background: "var(--bg-panel)",
-                border: "1px solid var(--line)",
+                background: "#fff",
+                border: "1px solid var(--light)",
               }}
             >
               <p style={{ fontFamily: "var(--serif)", fontSize: "15px", marginBottom: "12px" }}>
@@ -294,8 +294,8 @@ export default async function AccountPage() {
                     letterSpacing: ".15em",
                     textTransform: "uppercase" as const,
                     background: "transparent",
-                    color: "var(--theme)",
-                    border: "1px solid var(--line)",
+                    color: "var(--crimson)",
+                    border: "1px solid var(--light)",
                     padding: "8px 16px",
                     cursor: "pointer",
                   }}
@@ -308,11 +308,11 @@ export default async function AccountPage() {
             <div
               style={{
                 padding: "16px 20px",
-                background: "var(--bg-panel)",
-                border: "1px solid var(--line)",
+                background: "#fff",
+                border: "1px solid var(--light)",
               }}
             >
-              <p style={{ fontFamily: "var(--serif)", fontSize: "14px", color: "var(--text-muted)", marginBottom: "12px" }}>
+              <p style={{ fontFamily: "var(--serif)", fontSize: "14px", color: "var(--muted)", marginBottom: "12px" }}>
                 Life happened — board prep, quota week, family. Pause the
                 retention emails for a stretch and we&apos;ll go quiet
                 until then. Your course stays open the whole time.
@@ -331,8 +331,8 @@ export default async function AccountPage() {
                       letterSpacing: ".15em",
                       textTransform: "uppercase" as const,
                       background: "transparent",
-                      color: "var(--theme)",
-                      border: "1px solid var(--line)",
+                      color: "var(--crimson)",
+                      border: "1px solid var(--light)",
                       padding: "8px 14px",
                       cursor: "pointer",
                     }}
@@ -353,7 +353,7 @@ export default async function AccountPage() {
               fontSize: "10px",
               letterSpacing: ".2em",
               textTransform: "uppercase" as const,
-              color: "var(--text-muted)",
+              color: "var(--muted)",
               marginBottom: "12px",
             }}
           >
@@ -365,7 +365,7 @@ export default async function AccountPage() {
         {/* Support */}
         <section
           style={{
-            borderTop: "1px solid var(--line)",
+            borderTop: "1px solid var(--light)",
             paddingTop: "24px",
           }}
         >
@@ -373,11 +373,11 @@ export default async function AccountPage() {
             style={{
               fontFamily: "var(--serif)",
               fontSize: "14px",
-              color: "var(--text-muted)",
+              color: "var(--muted)",
             }}
           >
             Questions or issues?{" "}
-            <a href="mailto:hello@aesdr.com" style={{ color: "var(--theme)" }}>
+            <a href="mailto:hello@aesdr.com" style={{ color: "var(--crimson)" }}>
               hello@aesdr.com
             </a>
           </p>

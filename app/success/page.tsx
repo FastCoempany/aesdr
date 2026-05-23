@@ -88,7 +88,7 @@ function SuccessContent() {
   return (
     <main
       className="min-h-screen px-6 py-20"
-      style={{ background: 'var(--bg-main)' }}
+      style={{ background: 'var(--cream)' }}
     >
       {/* Iris shimmer accent bar — the mark of entry */}
       <div
@@ -118,7 +118,7 @@ function SuccessContent() {
 
       <div
         className="mx-auto max-w-2xl"
-        style={{ color: 'var(--text-main)', animation: 'aesdr-rise .7s ease-out both' }}
+        style={{ color: 'var(--ink)', animation: 'aesdr-rise .7s ease-out both' }}
       >
         {/* Status / member line */}
         <div
@@ -137,7 +137,7 @@ function SuccessContent() {
               fontSize: '10px',
               letterSpacing: '.28em',
               textTransform: 'uppercase',
-              color: confirmed ? 'var(--theme)' : 'var(--amber, #F59E0B)',
+              color: confirmed ? 'var(--crimson)' : 'var(--crimson)',
               margin: 0,
               display: 'inline-flex',
               alignItems: 'center',
@@ -153,8 +153,8 @@ function SuccessContent() {
                     width: 6,
                     height: 6,
                     borderRadius: '50%',
-                    background: 'var(--theme)',
-                    boxShadow: '0 0 12px var(--theme-glow, rgba(16,185,129,.6))',
+                    background: 'var(--crimson)',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
                   }}
                 />
                 Purchase confirmed
@@ -164,8 +164,8 @@ function SuccessContent() {
                 <span
                   className="inline-block h-3 w-3 animate-spin rounded-full border"
                   style={{
-                    borderColor: 'var(--line)',
-                    borderTopColor: 'var(--amber, #F59E0B)',
+                    borderColor: 'var(--light)',
+                    borderTopColor: 'var(--crimson)',
                   }}
                 />
                 Confirming your purchase...
@@ -181,7 +181,7 @@ function SuccessContent() {
               fontSize: '10px',
               letterSpacing: '.28em',
               textTransform: 'uppercase',
-              color: 'var(--text-muted)',
+              color: 'var(--muted)',
               margin: 0,
               minHeight: '1em',
             }}
@@ -197,7 +197,7 @@ function SuccessContent() {
             fontSize: '10px',
             letterSpacing: '.32em',
             textTransform: 'uppercase',
-            color: 'var(--text-muted)',
+            color: 'var(--muted)',
             marginBottom: '18px',
           }}
         >
@@ -234,7 +234,7 @@ function SuccessContent() {
             fontStyle: 'italic',
             fontSize: 'clamp(18px, 2.3vw, 22px)',
             lineHeight: 1.55,
-            color: 'var(--text-main)',
+            color: 'var(--ink)',
             opacity: 0.92,
             marginTop: '28px',
             marginBottom: '18px',
@@ -249,7 +249,7 @@ function SuccessContent() {
             fontFamily: 'var(--serif)',
             fontSize: '17px',
             lineHeight: 1.8,
-            color: 'var(--text-muted)',
+            color: 'var(--muted)',
             marginBottom: '56px',
             maxWidth: '54ch',
           }}
@@ -264,8 +264,8 @@ function SuccessContent() {
         <section
           aria-label="Next steps"
           style={{
-            borderTop: '1px solid var(--line)',
-            borderBottom: '1px solid var(--line)',
+            borderTop: '1px solid var(--light)',
+            borderBottom: '1px solid var(--light)',
             marginBottom: '48px',
           }}
         >
@@ -332,7 +332,7 @@ function SuccessContent() {
             fontStyle: 'italic',
             fontSize: '24px',
             lineHeight: 1.4,
-            color: 'var(--text-main)',
+            color: 'var(--ink)',
             margin: '0 0 8px',
           }}
         >
@@ -344,7 +344,7 @@ function SuccessContent() {
             fontSize: '10px',
             letterSpacing: '.28em',
             textTransform: 'uppercase',
-            color: 'var(--text-muted)',
+            color: 'var(--muted)',
             margin: '0 0 40px',
           }}
         >
@@ -355,9 +355,9 @@ function SuccessContent() {
         <div
           style={{
             padding: '18px 22px',
-            background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.06)',
-            borderLeft: '2px solid var(--theme)',
+            background: '#fff',
+            border: '1px solid var(--light)',
+            borderLeft: '2px solid var(--crimson)',
             marginBottom: '48px',
           }}
         >
@@ -365,17 +365,17 @@ function SuccessContent() {
             style={{
               fontFamily: 'var(--serif)',
               fontSize: '14px',
-              color: 'var(--text-muted)',
+              color: 'var(--muted)',
               lineHeight: 1.65,
               margin: 0,
             }}
           >
             Didn&apos;t get the email? Check spam, or{' '}
-            <Link href="/signup" style={{ color: 'var(--theme)' }}>
+            <Link href="/signup" style={{ color: 'var(--crimson)' }}>
               create an account manually
             </Link>{' '}
             using the email you purchased with. Anything else &mdash;{' '}
-            <a href="mailto:hello@aesdr.com" style={{ color: 'var(--theme)' }}>
+            <a href="mailto:hello@aesdr.com" style={{ color: 'var(--crimson)' }}>
               hello@aesdr.com
             </a>
             .
@@ -384,21 +384,21 @@ function SuccessContent() {
 
         <footer
           style={{
-            borderTop: '1px solid var(--line)',
+            borderTop: '1px solid var(--light)',
             paddingTop: '20px',
             marginTop: '48px',
             fontFamily: 'var(--mono)',
             fontSize: '9px',
             letterSpacing: '.2em',
             textTransform: 'uppercase',
-            color: 'var(--text-muted)',
+            color: 'var(--muted)',
             opacity: 0.6,
           }}
         >
           Questions?{' '}
           <a
             href="mailto:hello@aesdr.com"
-            style={{ color: 'var(--theme)', textDecoration: 'none' }}
+            style={{ color: 'var(--crimson)', textDecoration: 'none' }}
           >
             hello@aesdr.com
           </a>
@@ -430,7 +430,7 @@ function EditorialStep({
         gridTemplateColumns: '88px 1fr',
         gap: '24px',
         padding: '28px 4px',
-        borderBottom: isLast ? 'none' : '1px solid var(--line)',
+        borderBottom: isLast ? 'none' : '1px solid var(--light)',
         alignItems: 'baseline',
       }}
     >
@@ -441,7 +441,7 @@ function EditorialStep({
             fontSize: '9px',
             letterSpacing: '.28em',
             textTransform: 'uppercase',
-            color: accent || 'var(--text-muted)',
+            color: accent || 'var(--muted)',
             margin: '0 0 6px',
           }}
         >
@@ -454,7 +454,7 @@ function EditorialStep({
             fontStyle: 'italic',
             fontSize: '44px',
             lineHeight: 1,
-            color: accent || 'var(--text-main)',
+            color: accent || 'var(--ink)',
             margin: 0,
           }}
         >
@@ -470,7 +470,7 @@ function EditorialStep({
             fontWeight: 700,
             letterSpacing: '.06em',
             textTransform: 'uppercase',
-            color: 'var(--text-main)',
+            color: 'var(--ink)',
             margin: '0 0 10px',
           }}
         >
@@ -481,7 +481,7 @@ function EditorialStep({
             fontFamily: 'var(--serif)',
             fontSize: '16px',
             lineHeight: 1.75,
-            color: 'var(--text-muted)',
+            color: 'var(--muted)',
             margin: 0,
           }}
         >

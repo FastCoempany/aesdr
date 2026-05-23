@@ -46,9 +46,9 @@ export default function RoleSwitcher({ currentRole }: RoleSwitcherProps) {
 
   if (!currentRole) {
     return (
-      <p style={{ fontFamily: "var(--serif)", fontSize: "15px", color: "var(--text-muted)" }}>
+      <p style={{ fontFamily: "var(--serif)", fontSize: "15px", color: "var(--muted)" }}>
         No role selected.{" "}
-        <a href="/account/select-role" style={{ color: "var(--theme)" }}>
+        <a href="/account/select-role" style={{ color: "var(--crimson)" }}>
           Choose one
         </a>
       </p>
@@ -70,9 +70,9 @@ export default function RoleSwitcher({ currentRole }: RoleSwitcherProps) {
           letterSpacing: ".12em",
           textTransform: "uppercase",
           padding: "14px 16px",
-          background: "var(--bg-panel)",
-          border: "1px solid var(--line)",
-          color: "var(--text-muted)",
+          background: "#fff",
+          border: "1px solid var(--light)",
+          color: "var(--muted)",
         }}
       >
         {loading ? "Switching..." : `Switch to ${currentRole === "ae" ? "SDR" : "AE"}`}
@@ -83,7 +83,7 @@ export default function RoleSwitcher({ currentRole }: RoleSwitcherProps) {
             fontFamily: "var(--mono)",
             fontSize: "10px",
             letterSpacing: ".08em",
-            color: "var(--theme)",
+            color: "var(--crimson)",
             marginTop: "8px",
           }}
         >

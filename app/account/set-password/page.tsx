@@ -47,7 +47,7 @@ export default function SetPasswordPage() {
   return (
     <main
       className="flex min-h-screen items-center justify-center px-6"
-      style={{ background: "var(--bg-main)" }}
+      style={{ background: "var(--cream)" }}
     >
       <div className="w-full max-w-sm space-y-10">
         <div className="space-y-4 text-center">
@@ -77,7 +77,7 @@ export default function SetPasswordPage() {
               fontFamily: "var(--display)",
               fontSize: "32px",
               lineHeight: "1",
-              color: "var(--text-main)",
+              color: "var(--ink)",
             }}
           >
             Set Your Password
@@ -86,7 +86,7 @@ export default function SetPasswordPage() {
             style={{
               fontFamily: "var(--serif)",
               fontSize: "15px",
-              color: "var(--text-muted)",
+              color: "var(--muted)",
               lineHeight: "1.6",
             }}
           >
@@ -98,11 +98,11 @@ export default function SetPasswordPage() {
           <div
             className="px-5 py-6 text-center"
             style={{
-              borderLeft: "3px solid var(--theme)",
-              background: "rgba(16,185,129,0.05)",
+              borderLeft: "3px solid var(--crimson)",
+              background: "rgba(139,26,26,0.05)",
             }}
           >
-            <p style={{ fontFamily: "var(--serif)", fontSize: "16px", color: "var(--theme)" }}>
+            <p style={{ fontFamily: "var(--serif)", fontSize: "16px", color: "var(--crimson)" }}>
               Password set. Redirecting to your courses...
             </p>
           </div>
@@ -116,7 +116,7 @@ export default function SetPasswordPage() {
                   fontSize: "10px",
                   letterSpacing: ".14em",
                   textTransform: "uppercase",
-                  color: "var(--text-muted)",
+                  color: "var(--muted)",
                 }}
               >
                 New Password
@@ -132,9 +132,9 @@ export default function SetPasswordPage() {
                 style={{
                   fontFamily: "var(--serif)",
                   fontSize: "16px",
-                  background: "var(--bg-panel)",
-                  border: "1px solid var(--line)",
-                  color: "var(--text-main)",
+                  background: "#fff",
+                  border: "1px solid var(--light)",
+                  color: "var(--ink)",
                 }}
                 placeholder="Min 6 characters"
               />
@@ -148,7 +148,7 @@ export default function SetPasswordPage() {
                   fontSize: "10px",
                   letterSpacing: ".14em",
                   textTransform: "uppercase",
-                  color: "var(--text-muted)",
+                  color: "var(--muted)",
                 }}
               >
                 Confirm Password
@@ -164,9 +164,9 @@ export default function SetPasswordPage() {
                 style={{
                   fontFamily: "var(--serif)",
                   fontSize: "16px",
-                  background: "var(--bg-panel)",
-                  border: "1px solid var(--line)",
-                  color: "var(--text-main)",
+                  background: "#fff",
+                  border: "1px solid var(--light)",
+                  color: "var(--ink)",
                 }}
                 placeholder="Re-enter password"
               />
@@ -178,9 +178,9 @@ export default function SetPasswordPage() {
                 style={{
                   fontFamily: "var(--serif)",
                   fontSize: "14px",
-                  borderLeft: "3px solid var(--coral)",
-                  background: "rgba(239,68,68,0.05)",
-                  color: "var(--coral)",
+                  borderLeft: "3px solid var(--crimson)",
+                  background: "rgba(139,26,26,0.05)",
+                  color: "var(--crimson)",
                 }}
               >
                 {error}
@@ -198,8 +198,8 @@ export default function SetPasswordPage() {
                 letterSpacing: ".15em",
                 textTransform: "uppercase",
                 padding: "14px 28px",
-                background: "var(--text-main)",
-                color: "var(--bg-main)",
+                background: "var(--ink)",
+                color: "var(--cream)",
                 border: "none",
               }}
             >

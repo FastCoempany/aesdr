@@ -19,7 +19,7 @@ export default function SignOutButton() {
       }}
       disabled={isPending}
       style={{
-        color: "var(--text-muted)",
+        color: "var(--muted)",
         background: "none",
         border: "none",
         cursor: "pointer",

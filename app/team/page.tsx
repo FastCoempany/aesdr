@@ -172,7 +172,7 @@ export default async function TeamPage() {
                         fontSize: "9px",
                         letterSpacing: ".1em",
                         textTransform: "uppercase",
-                        color: m.accepted_at ? "#10B981" : "#D4A017",
+                        color: m.accepted_at ? "#1A1A1A" : "#6B6B6B",
                       }}>
                         {m.accepted_at ? "Active" : "Pending"}
                       </span>

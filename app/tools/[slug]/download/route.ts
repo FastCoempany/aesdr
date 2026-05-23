@@ -79,18 +79,18 @@ export async function GET(
 <style>
   .dl-bar {
     position: fixed; top: 0; left: 0; right: 0; z-index: 99999;
-    background: #020617; color: #F8FAFC; padding: 12px 24px;
+    background: #1A1A1A; color: #FAF7F2; padding: 12px 24px;
     display: flex; align-items: center; justify-content: space-between;
     font-family: 'Barlow Condensed', sans-serif; font-size: 13px;
     font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
-    border-bottom: 2px solid #10B981;
+    border-bottom: 2px solid #8B1A1A;
   }
   .dl-bar button {
-    background: #10B981; color: #020617; border: none; padding: 8px 20px;
+    background: #8B1A1A; color: #FAF7F2; border: none; padding: 8px 20px;
     font-family: inherit; font-size: 12px; font-weight: 700;
     letter-spacing: .12em; text-transform: uppercase; cursor: pointer;
   }
-  .dl-bar button:hover { background: #34D399; }
+  .dl-bar button:hover { background: #6E1414; }
   .dl-spacer { height: 52px; }
   @media print { .dl-bar, .dl-spacer { display: none; } }
 </style>
@@ -127,13 +127,13 @@ function gatePage(message: string, showBackLink: boolean): string {
 <style>
   body {
     margin: 0; min-height: 100vh; display: flex; align-items: center;
-    justify-content: center; background: #020617; color: #F8FAFC;
-    font-family: 'Cormorant Garamond', Georgia, serif; font-size: 20px;
+    justify-content: center; background: #FAF7F2; color: #1A1A1A;
+    font-family: 'Source Serif 4', Georgia, serif; font-size: 18px;
     text-align: center; padding: 24px;
   }
-  .lock { font-size: 48px; margin-bottom: 16px; }
-  .msg { color: #94A3B8; max-width: 400px; line-height: 1.6; }
-  a { color: #10B981; text-decoration: none; }
+  .lock { font-size: 32px; margin-bottom: 16px; opacity: 0.6; }
+  .msg { color: #6B6B6B; max-width: 440px; line-height: 1.6; font-style: italic; }
+  a { color: #8B1A1A; text-decoration: underline; }
 </style>
 </head>
 <body>

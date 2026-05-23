@@ -72,7 +72,7 @@ export default function InviteForm() {
           fontFamily: "'Space Mono', monospace",
           fontSize: "11px",
           letterSpacing: ".05em",
-          color: message.ok ? "#10B981" : "#8B1A1A",
+          color: message.ok ? "#1A1A1A" : "#8B1A1A",
           width: "100%",
           marginTop: "4px",
         }}>

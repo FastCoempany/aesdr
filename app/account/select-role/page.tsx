@@ -47,7 +47,7 @@ export default function SelectRolePage() {
   return (
     <main
       className="flex min-h-screen items-center justify-center px-6"
-      style={{ background: "var(--bg-main)" }}
+      style={{ background: "var(--cream)" }}
     >
       <div className="w-full max-w-lg space-y-10">
         <div className="space-y-4 text-center">
@@ -80,7 +80,7 @@ export default function SelectRolePage() {
               letterSpacing: ".06em",
               textTransform: "uppercase",
               lineHeight: "1",
-              color: "var(--text-main)",
+              color: "var(--ink)",
             }}
           >
             What&rsquo;s your role?
@@ -89,7 +89,7 @@ export default function SelectRolePage() {
             style={{
               fontFamily: "var(--serif)",
               fontSize: "15px",
-              color: "var(--text-muted)",
+              color: "var(--muted)",
               lineHeight: "1.6",
             }}
           >
@@ -107,8 +107,8 @@ export default function SelectRolePage() {
               className="flex-1 cursor-pointer text-left transition disabled:cursor-wait disabled:opacity-50"
               style={{
                 padding: "28px 24px",
-                background: "var(--bg-panel)",
-                border: "1px solid var(--line)",
+                background: "#fff",
+                border: "1px solid var(--light)",
               }}
             >
               <p
@@ -118,7 +118,7 @@ export default function SelectRolePage() {
                   fontWeight: 800,
                   letterSpacing: ".08em",
                   textTransform: "uppercase",
-                  color: "var(--text-main)",
+                  color: "var(--ink)",
                   marginBottom: "4px",
                 }}
               >
@@ -130,7 +130,7 @@ export default function SelectRolePage() {
                   fontSize: "10px",
                   letterSpacing: ".15em",
                   textTransform: "uppercase",
-                  color: "var(--theme)",
+                  color: "var(--crimson)",
                   marginBottom: "12px",
                 }}
               >
@@ -141,7 +141,7 @@ export default function SelectRolePage() {
                   fontFamily: "var(--serif)",
                   fontSize: "14px",
                   lineHeight: "1.6",
-                  color: "var(--text-muted)",
+                  color: "var(--muted)",
                 }}
               >
                 {role.desc}
@@ -156,9 +156,9 @@ export default function SelectRolePage() {
             style={{
               fontFamily: "var(--serif)",
               fontSize: "14px",
-              borderLeft: "3px solid var(--coral)",
-              background: "rgba(239,68,68,0.05)",
-              color: "var(--coral)",
+              borderLeft: "3px solid var(--crimson)",
+              background: "rgba(139,26,26,0.05)",
+              color: "var(--crimson)",
             }}
           >
             {error}

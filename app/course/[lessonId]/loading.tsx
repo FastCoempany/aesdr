@@ -8,8 +8,8 @@ export default function CourseLoading() {
         <div
           className="h-8 w-8 animate-spin rounded-full border-2"
           style={{
-            borderColor: "var(--line)",
-            borderTopColor: "var(--theme)",
+            borderColor: "var(--light)",
+            borderTopColor: "var(--crimson)",
           }}
         />
         <span
@@ -18,7 +18,7 @@ export default function CourseLoading() {
             fontSize: "11px",
             letterSpacing: ".1em",
             textTransform: "uppercase",
-            color: "var(--text-muted, #94A3B8)",
+            color: "var(--muted)",
           }}
         >
           Loading lesson...

@@ -51,7 +51,7 @@ export default function SignupPage() {
   return (
     <main
       className="flex min-h-screen items-center justify-center px-6"
-      style={{ background: "var(--bg-main)" }}
+      style={{ background: "var(--cream)" }}
     >
       <div className="w-full max-w-sm space-y-10">
         <div className="space-y-4 text-center">
@@ -81,7 +81,7 @@ export default function SignupPage() {
               fontFamily: "var(--display)",
               fontSize: "32px",
               lineHeight: "1",
-              color: "var(--text-main)",
+              color: "var(--ink)",
             }}
           >
             Create Account
@@ -92,15 +92,15 @@ export default function SignupPage() {
           <div
             className="px-5 py-6 text-center"
             style={{
-              borderLeft: "3px solid var(--theme)",
-              background: "rgba(16,185,129,0.05)",
+              borderLeft: "3px solid var(--crimson)",
+              background: "rgba(139,26,26,0.05)",
             }}
           >
             <p
               style={{
                 fontFamily: "var(--serif)",
                 fontSize: "16px",
-                color: "var(--theme)",
+                color: "var(--crimson)",
               }}
             >
               Account created. Redirecting to your dashboard...
@@ -117,7 +117,7 @@ export default function SignupPage() {
                     fontSize: "10px",
                     letterSpacing: ".14em",
                     textTransform: "uppercase" as const,
-                    color: "var(--text-muted)",
+                    color: "var(--muted)",
                   }}
                 >
                   Email
@@ -132,9 +132,9 @@ export default function SignupPage() {
                   style={{
                     fontFamily: "var(--serif)",
                     fontSize: "16px",
-                    background: "var(--bg-panel)",
-                    border: "1px solid var(--line)",
-                    color: "var(--text-main)",
+                    background: "#fff",
+                    border: "1px solid var(--light)",
+                    color: "var(--ink)",
                   }}
                   placeholder="you@company.com"
                 />
@@ -148,7 +148,7 @@ export default function SignupPage() {
                     fontSize: "10px",
                     letterSpacing: ".14em",
                     textTransform: "uppercase" as const,
-                    color: "var(--text-muted)",
+                    color: "var(--muted)",
                   }}
                 >
                   Password
@@ -164,9 +164,9 @@ export default function SignupPage() {
                   style={{
                     fontFamily: "var(--serif)",
                     fontSize: "16px",
-                    background: "var(--bg-panel)",
-                    border: "1px solid var(--line)",
-                    color: "var(--text-main)",
+                    background: "#fff",
+                    border: "1px solid var(--light)",
+                    color: "var(--ink)",
                   }}
                   placeholder="Min 6 characters"
                 />
@@ -178,9 +178,9 @@ export default function SignupPage() {
                   style={{
                     fontFamily: "var(--serif)",
                     fontSize: "14px",
-                    borderLeft: "3px solid var(--coral)",
-                    background: "rgba(239,68,68,0.05)",
-                    color: "var(--coral)",
+                    borderLeft: "3px solid var(--crimson)",
+                    background: "rgba(139,26,26,0.05)",
+                    color: "var(--crimson)",
                   }}
                 >
                   {error}
@@ -198,8 +198,8 @@ export default function SignupPage() {
                   letterSpacing: ".15em",
                   textTransform: "uppercase" as const,
                   padding: "14px 28px",
-                  background: "var(--text-main)",
-                  color: "var(--bg-main)",
+                  background: "var(--ink)",
+                  color: "var(--cream)",
                   border: "none",
                 }}
               >
@@ -212,11 +212,11 @@ export default function SignupPage() {
               style={{
                 fontFamily: "var(--serif)",
                 fontSize: "16px",
-                color: "var(--text-muted)",
+                color: "var(--muted)",
               }}
             >
               Already have an account?{" "}
-              <Link href="/login" style={{ color: "var(--theme)" }}>
+              <Link href="/login" style={{ color: "var(--crimson)" }}>
                 Sign in
               </Link>
             </p>

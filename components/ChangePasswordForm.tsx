@@ -41,18 +41,18 @@ export default function ChangePasswordForm() {
         style={{
           fontFamily: "var(--serif)",
           fontSize: "16px",
-          background: "var(--bg-panel)",
-          border: "1px solid var(--line)",
-          color: "var(--text-main)",
+          background: "#fff",
+          border: "1px solid var(--light)",
+          color: "var(--ink)",
         }}
       />
       {error && (
-        <p style={{ fontFamily: "var(--serif)", fontSize: "13px", color: "var(--coral)", margin: 0 }}>
+        <p style={{ fontFamily: "var(--serif)", fontSize: "13px", color: "var(--crimson)", margin: 0 }}>
           {error}
         </p>
       )}
       {success && (
-        <p style={{ fontFamily: "var(--serif)", fontSize: "13px", color: "var(--theme)", margin: 0 }}>
+        <p style={{ fontFamily: "var(--serif)", fontSize: "13px", color: "var(--crimson)", margin: 0 }}>
           Password updated.
         </p>
       )}
@@ -67,8 +67,8 @@ export default function ChangePasswordForm() {
           letterSpacing: ".12em",
           textTransform: "uppercase" as const,
           padding: "14px 20px",
-          background: "var(--text-main)",
-          color: "var(--bg-main)",
+          background: "var(--ink)",
+          color: "var(--cream)",
           border: "none",
           alignSelf: "flex-start",
         }}

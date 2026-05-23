@@ -13,6 +13,7 @@ import { createClient } from "@/utils/supabase/server";
 import { verifyPaidAccess } from "@/utils/access/verifyAccess";
 import { LESSONS } from "@/utils/progress/types";
 import type { LessonProgressSummary } from "@/utils/progress/types";
+import { bridgeAfter } from "@/utils/progress/bridges";
 import { iconForLesson } from "@/utils/brand/lesson-icons";
 import { poseForLesson } from "@/utils/brand/lesson-poses";
 
@@ -299,7 +300,7 @@ export default async function Dashboard() {
             aria-label={`Module ${justClosedLesson.id} closed`}
             style={{
               marginBottom: 24,
-              padding: "14px 20px",
+              padding: "18px 22px",
               background: "#1A1A1A",
               color: "#FAF7F2",
             }}
@@ -322,13 +323,41 @@ export default async function Dashboard() {
                 fontFamily: "'Playfair Display', Georgia, serif",
                 fontStyle: "italic",
                 fontWeight: 700,
-                fontSize: 17,
+                fontSize: 18,
                 lineHeight: 1.3,
                 margin: 0,
               }}
             >
               {justClosedLesson.title}.
             </p>
+            {bridgeAfter(justClosedLesson.id) && (
+              <p
+                style={{
+                  fontFamily: "'Source Serif 4', Georgia, serif",
+                  fontSize: 14,
+                  lineHeight: 1.55,
+                  color: "rgba(250,247,242,0.78)",
+                  marginTop: 14,
+                  marginBottom: 0,
+                  paddingTop: 14,
+                  borderTop: "1px solid rgba(250,247,242,0.15)",
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "'Space Mono',monospace",
+                    fontSize: 9,
+                    letterSpacing: ".3em",
+                    textTransform: "uppercase",
+                    color: "rgba(250,247,242,0.5)",
+                    marginRight: 8,
+                  }}
+                >
+                  Coming next ·
+                </span>
+                {bridgeAfter(justClosedLesson.id)}
+              </p>
+            )}
           </aside>
         )}
 

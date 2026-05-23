@@ -26,25 +26,13 @@
   --mono: 'Space Mono', monospace;
   --hand: 'Caveat', cursive;
 
-  /* ── Retired dark palette ──
-     Kept here behind the active palette so any legacy course HTML that
-     still references --bg-main / --theme / --coral / --cobalt etc. doesn't
-     break. NOT for use in new components. New work uses the editorial
-     palette above. */
-  --bg-main: #020617;
-  --bg-panel: #0F172A;
-  --bg-card: #1E293B;
-  --bg-hover: #334155;
-  --text-main: #F8FAFC;
-  --text-muted: #94A3B8;
-  --theme: #10B981;
-  --theme-glow: rgba(16, 185, 129, 0.4);
-  --coral: #EF4444;
-  --cobalt: #38BDF8;
-  --amber: #F59E0B;
-  --violet: #8B5CF6;
-  --line: rgba(255,255,255,0.1);
-  --line2: rgba(255,255,255,0.2);
+  /* ── Retired dark palette deleted 2026-05-23 ──
+     The legacy --bg-main / --bg-panel / --theme / --coral / --cobalt /
+     --amber / --violet / --line / --text-* tokens have been removed.
+     Every shipping app/ + components/ surface migrated to the editorial
+     palette above. Lesson HTMLs in content/lessons/html/ are iframe-
+     scoped and define their own per-unit theme color inside their own
+     <style> blocks — they were never inheriting from this file. */
 
   --background: var(--cream);
   --foreground: var(--ink);

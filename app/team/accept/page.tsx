@@ -65,7 +65,7 @@ export default async function AcceptInvitePage({
 
   if (updateErr || !updated) {
     return (
-      <main className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg-main)", color: "var(--text-main)" }}>
+      <main className="min-h-screen flex items-center justify-center" style={{ background: "var(--cream)", color: "var(--ink)" }}>
         <p style={{ fontFamily: "var(--serif)" }}>This invite has already been accepted.</p>
       </main>
     );

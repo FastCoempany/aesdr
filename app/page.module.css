@@ -67,7 +67,7 @@
 }
 .navCta:hover {
   transform: translateY(-1px);
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 /* ═══════════════════════════════════════════════
@@ -482,7 +482,7 @@
 
 .priceFeatures li::before {
   content: "✓";
-  color: var(--theme);
+  color: var(--crimson);
   font-weight: 700;
 }
 
@@ -508,7 +508,7 @@
 }
 .priceCta:hover {
   transform: translateY(-1px);
-  box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
 }
 
 .discordLine { position: relative; }
@@ -519,8 +519,8 @@
   font-weight: 700;
   letter-spacing: .1em;
   text-transform: uppercase;
-  color: rgba(239, 68, 68, 0.6);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: rgba(139,26,26,0.6);
+  border: 1px solid rgba(139,26,26,0.3);
   padding: 1px 6px;
   margin-left: 6px;
   transform: rotate(-2deg);
@@ -551,21 +551,21 @@
   font-size: 10px;
   letter-spacing: .25em;
   text-transform: uppercase;
-  color: rgba(239, 68, 68, 0.5);
+  color: rgba(139,26,26,0.5);
   margin-bottom: 16px;
 }
 
 .faqLabelIcon {
   width: 16px;
   height: 16px;
-  border: 1px solid rgba(239, 68, 68, 0.5);
+  border: 1px solid rgba(139,26,26,0.5);
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 9px;
   font-weight: 700;
-  color: rgba(239, 68, 68, 0.5);
+  color: rgba(139,26,26,0.5);
 }
 
 .faqHeadline {
@@ -741,7 +741,7 @@
 }
 .ctaPrimary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
 }
 
 /* ═══════════════════════════════════════════════

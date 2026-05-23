@@ -143,10 +143,10 @@ export default async function LessonPage({
         <main
           className="flex h-screen items-center justify-center"
           style={{
-            background: "var(--bg-main)",
+            background: "var(--cream)",
             fontFamily: "var(--serif)",
             fontSize: "18px",
-            color: "var(--text-muted)",
+            color: "var(--muted)",
           }}
         >
           No lesson content found for this course.
@@ -185,7 +185,7 @@ export default async function LessonPage({
             textDecoration: "none",
             padding: "8px 10px",
             border: "1px solid rgba(0,0,0,0.08)",
-            background: "rgba(255,255,255,0.65)",
+            background: "rgba(250,247,242,0.85)",
           }}
         >
           Stuck?
@@ -260,7 +260,7 @@ export default async function LessonPage({
                 textTransform: "uppercase" as const,
                 padding: "8px 12px",
                 color: "#fff",
-                background: "rgba(16,185,129,0.7)",
+                background: "rgba(139,26,26,0.7)",
                 backdropFilter: "blur(8px)",
                 textDecoration: "none",
                 display: "inline-block",
