@@ -6,28 +6,34 @@ import { createClient } from "@/utils/supabase/server";
 const TOOLS_ROOT = path.join(process.cwd(), "tools", "standalone-html");
 
 /**
- * Map tool slugs to the lesson that must be completed before download.
+ * Map tool slugs to the gating condition.
+ * A lesson ID string ("3", "6", etc.) gates on completion of that single
+ * lesson. The literal "ALL" gates on completion of all twelve — used for
+ * end-of-course bonus downloads.
  */
 const TOOL_LESSON_GATE: Record<string, string> = {
   "3.3-aesdr-alignment-contract": "3",
   "6.3-idk-framework": "6",
   "9.2-time-reclaimed-calculator": "9",
   "10.1-ROI-commission-defense-tracker": "10",
-  "12.3-72-hr-strike-plan": "12",
+  "bonus-72-hr-strike-plan": "ALL",
 };
+
+const ALL_LESSON_IDS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
 
 /**
  * Serves a tool HTML wrapped in a print-friendly page.
- * Gated: user must be authenticated AND have completed the lesson.
+ * Gated: user must be authenticated AND have completed the lesson (or
+ * all twelve lessons, for bonus tools gated with "ALL").
  */
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  const requiredLesson = TOOL_LESSON_GATE[slug];
+  const gate = TOOL_LESSON_GATE[slug];
 
-  if (!requiredLesson) {
+  if (!gate) {
     return new Response("Tool not found", { status: 404 });
   }
 
@@ -43,21 +49,42 @@ export async function GET(
     );
   }
 
-  const { data: progress } = await supabase
-    .from("course_progress")
-    .select("is_completed")
-    .eq("user_id", user.id)
-    .eq("lesson_id", requiredLesson)
-    .maybeSingle();
+  if (gate === "ALL") {
+    const { data: rows } = await supabase
+      .from("course_progress")
+      .select("lesson_id, is_completed")
+      .eq("user_id", user.id)
+      .eq("is_completed", true);
 
-  if (!progress?.is_completed) {
-    return new Response(
-      gatePage(
-        `Complete Lesson ${requiredLesson} first to download this.`,
-        true
-      ),
-      { headers: { "Content-Type": "text/html; charset=utf-8" } }
-    );
+    const completedSet = new Set((rows ?? []).map((r) => r.lesson_id));
+    const missing = ALL_LESSON_IDS.filter((id) => !completedSet.has(id));
+
+    if (missing.length > 0) {
+      const msg =
+        missing.length === 1
+          ? `Almost there — Lesson ${missing[0]} is the last one before this bonus opens.`
+          : `Finish all twelve courses to open this bonus. ${missing.length} left.`;
+      return new Response(gatePage(msg, true), {
+        headers: { "Content-Type": "text/html; charset=utf-8" },
+      });
+    }
+  } else {
+    const { data: progress } = await supabase
+      .from("course_progress")
+      .select("is_completed")
+      .eq("user_id", user.id)
+      .eq("lesson_id", gate)
+      .maybeSingle();
+
+    if (!progress?.is_completed) {
+      return new Response(
+        gatePage(
+          `Complete Lesson ${gate} first to download this.`,
+          true
+        ),
+        { headers: { "Content-Type": "text/html; charset=utf-8" } }
+      );
+    }
   }
 
   const filePath = path.join(TOOLS_ROOT, `${slug}.html`);

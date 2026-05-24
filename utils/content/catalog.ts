@@ -26,8 +26,14 @@ const TOOL_MAP: Record<string, ToolAsset[]> = {
   "6":  [{ slug: "6.3-idk-framework", title: "\"I Don't Know\" Framework" }],
   "9":  [{ slug: "9.2-time-reclaimed-calculator", title: "Time Reclaimed Calculator" }],
   "10": [{ slug: "10.1-ROI-commission-defense-tracker", title: "ROI & Commission Defense Tracker" }],
-  "12": [{ slug: "12.3-72-hr-strike-plan", title: "72-Hour Strike Plan" }],
+  // The 72-Hour Strike Plan was relocated to an end-of-course bonus
+  // (gated on all twelve lessons complete). See app/tools/[slug]/download
+  // /route.ts — slug "bonus-72-hr-strike-plan" with the "ALL" gate. It
+  // intentionally no longer appears in any single lesson's tool list.
 };
+export const BONUS_TOOLS: ToolAsset[] = [
+  { slug: "bonus-72-hr-strike-plan", title: "72-Hour Strike Plan" },
+];
 
 /**
  * Extract the <title> text from an HTML file's first few lines.

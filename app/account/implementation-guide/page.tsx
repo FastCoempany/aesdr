@@ -139,7 +139,7 @@ const WEEKS: Week[] = [
     title: "Leveling up SaaS relationships",
     estimate: "~26 min",
     brief:
-      "The relationship-graph lesson. Includes the 72-hour strike plan as the take-home tool for bad quarters.",
+      "The relationship-graph lesson. Maps the network you'd lean on if your comp plan changed tomorrow.",
     move:
       "Write down three people you&rsquo;d call if you changed jobs tomorrow. If the list is short, that&rsquo;s the work.",
   },

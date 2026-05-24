@@ -18,7 +18,7 @@ const TOOLS = [
   { slug: "6.3-idk-framework", title: "I Don't Know Framework", lesson: "6" },
   { slug: "9.2-time-reclaimed-calculator", title: "Time Reclaimed Calculator", lesson: "9" },
   { slug: "10.1-ROI-commission-defense-tracker", title: "ROI & Commission Defense Tracker", lesson: "10" },
-  { slug: "12.3-72-hr-strike-plan", title: "72-Hour Strike Plan", lesson: "12" },
+  { slug: "bonus-72-hr-strike-plan", title: "72-Hour Strike Plan", lesson: "Bonus" },
 ];
 
 export default async function AlumniPage() {

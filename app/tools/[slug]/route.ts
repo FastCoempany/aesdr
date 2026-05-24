@@ -12,7 +12,7 @@ const ALLOWED_SLUGS = new Set([
   "6.3-idk-framework",
   "9.2-time-reclaimed-calculator",
   "10.1-ROI-commission-defense-tracker",
-  "12.3-72-hr-strike-plan",
+  "bonus-72-hr-strike-plan",
 ]);
 
 /**

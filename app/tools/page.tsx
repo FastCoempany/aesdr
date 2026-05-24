@@ -61,12 +61,12 @@ const TOOLS: ReadonlyArray<{
       "Your commission check, itemized and indefensible. Export to CSV when HR asks.",
   },
   {
-    slug: "12.3-72-hr-strike-plan",
-    number: "12.3",
+    slug: "bonus-72-hr-strike-plan",
+    number: "Bonus",
     name: "72-Hour Strike Plan",
-    title: "12.3 — 72-Hour Strike Plan",
+    title: "Bonus — 72-Hour Strike Plan",
     description:
-      "A red-lined checklist for the three days you most need discipline. Timestamped, crossed off.",
+      "A red-lined checklist for the three days you most need discipline. Timestamped, crossed off. Opens when you finish all twelve courses.",
   },
 ];
 

@@ -188,7 +188,8 @@ export default function ImplementationPage() {
             </li>
             <li>
               <strong>72-Hour Strike Plan.</strong> A structured recovery plan for
-              the week after a major deal loss or quota miss. From Course 3.2.
+              the week after a major deal loss or quota miss. End-of-course bonus —
+              opens when all twelve courses are complete.
             </li>
             <li>
               <strong>CRM Survival Guide.</strong> A working manual for
