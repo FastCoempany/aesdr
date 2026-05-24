@@ -54,9 +54,9 @@ export default function AboutPage() {
           delivered to an audience.
         </p>
         <p>
-          You get lifetime access and a 14-day, no-questions-asked
-          refund window — and if it doesn&rsquo;t deliver real value to
-          you across that window, we genuinely don&rsquo;t want your
+          You buy it once and it&rsquo;s yours — no subscription, no renewal.
+          14-day, no-questions-asked refund window — and if it doesn&rsquo;t
+          deliver real value to you across that window, we genuinely don&rsquo;t want your
           money.
         </p>
       </Section>

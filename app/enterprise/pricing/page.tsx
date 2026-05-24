@@ -7,7 +7,7 @@ import InlineCTA from "../_components/InlineCTA";
 /**
  * /enterprise/pricing — three tiers + comparison table + FAQ.
  *
- * Team tier is explicitly $1,499 one-time / 10 seats / lifetime —
+ * Team tier is now "Let's discuss" — quoted per team after a short conversation —
  * mirrors the consumer pricing (and clears up the misread Bilal had).
  * Custom Enterprise and White-label are "contact us" — pricing
  * conversations happen during walkthrough.
@@ -37,19 +37,19 @@ export default function PricingPage() {
             <BuyerModeCard
               eyebrow="TIER 01 · TEAM"
               title="Team seats"
-              price="$1,499"
-              priceUnit="one-time · up to 10 seats"
-              description="Same product as the consumer course at aesdr.com. Buy a 10-seat pack for your team; AEs and SDRs see the consumer experience; you get manager visibility."
+              price="Let’s discuss"
+              priceUnit="quoted per team"
+              description="Same product as the consumer course at aesdr.com. License seats for your team; AEs and SDRs see the consumer experience; you get manager visibility. Every team's shape is different, so pricing is quoted after a short conversation about size + segment."
               features={[
-                "10 seats, any mix of SDR and AE tracks",
-                "Lifetime access for every seat",
+                "Mixed AE + SDR tracks across your team",
+                "One-time purchase — no per-seat subscription",
                 "Manager dashboard + progress tracking",
                 "Priority Slack support",
                 "Invoice + receipt formatted for L&D",
                 "14-day refund — same as consumer",
               ]}
               ctaHref="/enterprise/contact?source=pricing-team"
-              ctaLabel="Talk first, buy after"
+              ctaLabel="Get a quote"
             />
 
             <BuyerModeCard
@@ -57,9 +57,9 @@ export default function PricingPage() {
               title="Custom enterprise"
               ribbon="MOST COMMON 25+"
               featured
-              description="Per-seat pricing past 10 seats, with manager onboarding and a custom rollout. For orgs hiring 20+ AEs and SDRs a year or running structured ramp programs."
+              description="For orgs hiring 20+ AEs and SDRs a year or running structured ramp programs. Per-seat licensing, manager onboarding, and a rollout calendar adapted to your hiring cycle."
               features={[
-                "Per-seat pricing past 10 seats",
+                "Per-seat licensing scoped on call",
                 "Live manager onboarding session",
                 "Custom rollout sequence (we adapt the implementation guide to your calendar)",
                 "Dedicated org Slack channel",
@@ -99,18 +99,18 @@ export default function PricingPage() {
             featuredColumn={1}
             rows={[
               { label: "Seat model", cells: [
-                { kind: "text", value: "10-seat pack" },
-                { kind: "text", value: "Per-seat (10–unlimited)" },
+                { kind: "text", value: "Quoted per team" },
+                { kind: "text", value: "Per-seat licensing" },
                 { kind: "text", value: "Wholesale per-seat" },
               ]},
               { label: "Pricing", cells: [
-                { kind: "text", value: "$1,499 one-time" },
+                { kind: "text", value: "Let’s discuss" },
                 { kind: "text", value: "Per-seat, scoped on call" },
                 { kind: "text", value: "Wholesale or rev-share" },
               ]},
               { label: "Access duration", cells: [
-                { kind: "text", value: "Lifetime" },
-                { kind: "text", value: "Lifetime per seat" },
+                { kind: "text", value: "One-time purchase" },
+                { kind: "text", value: "One-time purchase per seat" },
                 { kind: "text", value: "Per partnership terms" },
               ]},
               { label: "Branding", cells: [
@@ -170,15 +170,15 @@ export default function PricingPage() {
           <hr className={styles.divider} />
 
           <FAQ q="Is the Team tier the same product as the consumer course?">
-            Yes. Identical 12 courses, identical Discord community, identical takeaway tools. The only difference is the manager dashboard layered on top and the Slack support line.
+            Yes. Identical 12 courses, identical takeaway tools. The differences are the manager dashboard layered on top, the priority Slack support line, and the L&amp;D-formatted invoice.
           </FAQ>
 
           <FAQ q="Can we get a recurring subscription?">
-            Not today. AESDR is one-time, lifetime by design. Per-seat custom pricing is available for larger orgs but stays one-time per seat. Recurring would change how the product works and how we&apos;d need to support it — we&apos;re intentional about staying out of that shape for now.
+            Not today. AESDR is one-time purchase by design — no per-seat subscription, no per-year renewal. Per-seat custom licensing is available for larger orgs but stays one-time per seat. Recurring would change how the product works and how we&apos;d need to support it; we&apos;re intentional about staying out of that shape for now.
           </FAQ>
 
-          <FAQ q="Do we get a discount for buying multiple 10-seat packs?">
-            No discount stacking on the Team tier — list price applies. Past 10 seats, move to Custom Enterprise. The per-seat rate scales down with volume.
+          <FAQ q="Why isn't the Team price on the page?">
+            Every team's shape is different — segment, seat count, rollout cadence, whether you need a custom diagnostic admin. A flat number on the page would either over-quote a small team or under-quote a complex one. Email us with your team size + segment and we'll quote it inside 24 hours.
           </FAQ>
 
           <FAQ q="What's the refund policy?">

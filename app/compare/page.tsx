@@ -45,7 +45,7 @@ const CATEGORIES: Category[] = [
     theyDoWell:
       "Senior-AE and revenue-leader peer networks are excellent for what they are. The room is the value. You pay $3K–$5K/year for access to other senior operators who've actually carried bags, the Slack you can post a real question in at 11pm, the off-record conversations that happen in person twice a year. The network compounds — five years in, you have a thousand named people you can text.",
     weDoDifferently:
-      "AESDR is a written operating manual you re-read in year three when the comp plan changes. It's a curriculum, not a peer network. The Discord exists but it's a supplement to the lessons, not the product. One-time purchase from $249, not annual membership. And the audience is AEs and SDRs in their first 18 months, not VPs running a region.",
+      "AESDR is a written operating manual you re-read in year three when the comp plan changes. It's a curriculum, not a peer network. We don't sell community access — the alumni room opens when you finish all twelve courses, but that's a bonus, not the product. One-time purchase from $249, not annual membership. And the audience is AEs and SDRs in their first 18 months, not VPs running a region.",
     routing:
       "If you're already on a senior peer network and want the network, stay there. If you want a structured framework you can hand to a new SDR on Monday morning, this one.",
   },

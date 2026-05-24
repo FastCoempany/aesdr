@@ -93,7 +93,7 @@ export default function TeamsLanding() {
       <section className={`${styles.section} ${styles.sectionDivider}`}>
         <div className={styles.container}>
           <p className={styles.eyebrow}>What it is</p>
-          <h2 className={styles.h2}>12 courses. 5 tools. One Discord.</h2>
+          <h2 className={styles.h2}>12 courses. 5 tools. One operating manual.</h2>
           <hr className={styles.divider} />
 
           <div className={styles.cardGrid3}>
@@ -122,13 +122,13 @@ export default function TeamsLanding() {
             </div>
 
             <div className={styles.card}>
-              <p className={styles.cardEyebrow}>03 · COMMUNITY</p>
-              <h3 className={styles.cardTitle}>Untamed Discord</h3>
+              <p className={styles.cardEyebrow}>03 · MEASUREMENT</p>
+              <h3 className={styles.cardTitle}>The 32-question diagnostic</h3>
               <p className={styles.cardBody}>
-                Real AEs and SDRs working through the material together. No
-                motivational performance, no growth-hack pep talk. Where AEs and SDRs
-                process what they&apos;ve learned with people who&apos;ve seen the
-                same fires.
+                Role-pathed instrument your AEs and SDRs run before and after the
+                program. Eight dimensions, downloadable CSV with per-dimension
+                averages so L&amp;D can prove behavior change rather than completion
+                rates.
               </p>
             </div>
           </div>
@@ -154,18 +154,18 @@ export default function TeamsLanding() {
             <BuyerModeCard
               eyebrow="01 · TEAM"
               title="Team seats"
-              price="$1,499"
-              priceUnit="one-time · up to 10 seats"
-              description="Buy a 10-seat pack for your team. AEs and SDRs get the full course; you get the manager dashboard. Lifetime access for every seat."
+              price="Let’s discuss"
+              priceUnit="quoted per team"
+              description="Email us to license seats for your team. AEs and SDRs get the full course; you get the manager dashboard. One-time purchase per team — no per-seat subscription."
               features={[
-                "10 seats, any mix of SDR and AE tracks",
+                "Mixed AE + SDR tracks across the team",
                 "Manager dashboard + progress tracking",
                 "Priority Slack support",
                 "Invoice + receipt formatted for L&D reimbursement",
                 "14-day refund — same as the consumer course",
               ]}
-              ctaHref="/enterprise/pricing"
-              ctaLabel="Team pricing"
+              ctaHref="/enterprise/contact?source=team-card"
+              ctaLabel="Get a quote"
             />
 
             <BuyerModeCard
@@ -175,7 +175,7 @@ export default function TeamsLanding() {
               featured
               description="Per-seat pricing with live manager onboarding, a custom rollout calendar, and a dedicated Slack channel. For orgs hiring 20+ AEs and SDRs a year or running structured ramp programs."
               features={[
-                "Per-seat pricing past 10 seats",
+                "Per-seat licensing scoped on call",
                 "Live manager onboarding session",
                 "Custom rollout sequence — we adapt to your calendar",
                 "Dedicated org Slack channel",

@@ -65,7 +65,7 @@ const RED_FLAGS = [
   },
   {
     headline: "Audience already saturated on a senior peer network.",
-    body: "If most of your readers are Sales Assembly, Pavilion, or Modern Sales Pros members — meaning they're already in a $3K–$5K/year peer network at the senior tier — AESDR's $249–$1,499 curriculum reads as redundant. Those buyers want the room, not another manual. Both products are good; the audience overlap is wrong for a pilot. Decline rather than create audience fatigue.",
+    body: "If most of your readers are Sales Assembly, Pavilion, or Modern Sales Pros members — meaning they're already in a $3K–$5K/year peer network at the senior tier — AESDR's $249–$299 Individual curriculum reads as redundant. Those buyers want the room, not another manual. Both products are good; the audience overlap is wrong for a pilot. Decline rather than create audience fatigue.",
   },
   {
     headline: "Audience is mostly pre-role.",

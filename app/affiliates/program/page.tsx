@@ -44,7 +44,7 @@ const SECTIONS = [
   {
     title: "What we can't do.",
     bullets: [
-      "Discount codes for your audience. We charge the same price to everyone — $249, $299, $1,499. The commission still works at list, and the trust does too.",
+      "Discount codes for your audience. We charge the same price to everyone — $249 SDR Individual, $299 AE Individual (Team licensing is quoted separately and isn't affiliate-attributable). The commission still works at list, and the trust does too.",
       "Category exclusivity or first-right-of-refusal. We may run pilots with similar affiliates; you're free to do the same.",
       "Share the AESDR email list, in either direction. Your audience belongs to you, ours to us.",
       "A founder appearance at the workshop itself. The host runs the workshop. The founder builds the curriculum and is around for everything else — emails, prep calls, post-pilot debriefs.",
@@ -199,7 +199,7 @@ export default function ProgramPage() {
               marginBottom: 16,
             }}
           >
-            Your audience pays the same price every other AESDR buyer pays: <strong>$249 SDR</strong>, <strong>$299 AE</strong>, <strong>$1,499 for a 10-seat team</strong>. No affiliate codes, no discount stacking, no pilot pricing. Your commission is 30% of net revenue on every sale you bring in, every time.
+            Your audience pays the same price every other AESDR buyer pays: <strong>$249 SDR Individual</strong>, <strong>$299 AE Individual</strong>. Team licensing is quoted per team through enterprise contact and isn&rsquo;t affiliate-attributable. No affiliate codes, no discount stacking, no pilot pricing. Your commission is 30% of net revenue on every Individual sale you bring in, every time.
           </p>
           <p
             style={{

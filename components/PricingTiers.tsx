@@ -49,11 +49,9 @@ export default function PricingTiers({ initialRole = null }: Props) {
         <ul className={styles.priceFeatures}>
           <li>All 12 courses — including <em>The SDR Playbook</em> + <em>SDR Performance Pitfalls</em></li>
           <li>5 interactive tools to take with you</li>
-          <li>Lifetime access</li>
-          <li className={styles.discordLine}>
-            Discord community <span className={styles.untamedStamp}>Untamed</span>
-          </li>
-          <li>Future curriculum updates</li>
+          <li>One-time purchase. No subscription.</li>
+          <li>Future curriculum updates included</li>
+          <li>Alumni room access when you finish all twelve</li>
           <li>14-day refund guarantee</li>
         </ul>
         <CheckoutButton tier="sdr" label="Buy For Me" className={styles.priceCta} selectedRole={role ?? undefined} />
@@ -72,11 +70,9 @@ export default function PricingTiers({ initialRole = null }: Props) {
         <ul className={styles.priceFeatures}>
           <li>All 12 courses — including <em>Surviving AE Management</em> + <em>AE/SDR Alignment</em></li>
           <li>5 interactive tools to take with you</li>
-          <li>Lifetime access</li>
-          <li className={styles.discordLine}>
-            Discord community <span className={styles.untamedStamp}>Untamed</span>
-          </li>
-          <li>Future curriculum updates</li>
+          <li>One-time purchase. No subscription.</li>
+          <li>Future curriculum updates included</li>
+          <li>Alumni room access when you finish all twelve</li>
           <li>14-day refund guarantee</li>
         </ul>
         <CheckoutButton tier="ae" label="Buy For Me" className={styles.priceCta} selectedRole={role ?? undefined} />
@@ -89,18 +85,24 @@ export default function PricingTiers({ initialRole = null }: Props) {
           Team <span className={`${styles.priceRoleChip} ${styles.priceRoleChipTeam}`}>SDR + AE</span>
         </p>
         <p className={styles.priceAmount}>
-          $1,499<span className={styles.priceUnit}> / up to 10 seats</span>
+          Let&rsquo;s discuss<span className={styles.priceUnit}> / quoted per team</span>
         </p>
         <p className={styles.priceTagline}>For the org rolling out real training, not another LMS module nobody finishes.</p>
         <ul className={styles.priceFeatures}>
-          <li>Both SDR + AE tracks — mix any 10 seats</li>
+          <li>Both SDR + AE tracks — mix any number of seats</li>
           <li>Admin dashboard + team progress tracking</li>
           <li>Priority support (direct Slack channel)</li>
           <li>Invoice + receipt formatted for L&amp;D</li>
-          <li>Lifetime access for every seat</li>
+          <li>One-time purchase. No subscription.</li>
           <li>14-day refund guarantee</li>
         </ul>
-        <CheckoutButton tier="team" label="Buy For Us" className={styles.priceCta} selectedRole={role ?? undefined} />
+        <a
+          href="/enterprise/contact?source=pricing"
+          className={styles.priceCta}
+          style={{ display: "block", textAlign: "center", textDecoration: "none" }}
+        >
+          Talk to us →
+        </a>
       </div>
 
       {/* Trust row — under all three tiers. Honest, no fake badges. */}
@@ -112,7 +114,7 @@ export default function PricingTiers({ initialRole = null }: Props) {
           <span aria-hidden="true">↻</span> 14-day refund · no questions
         </span>
         <span className={styles.trustItem}>
-          <span aria-hidden="true">∞</span> Lifetime access
+          <span aria-hidden="true">↻</span> One-time purchase
         </span>
         <span className={styles.trustItem}>
           <span aria-hidden="true">✓</span> Stripe-secured checkout

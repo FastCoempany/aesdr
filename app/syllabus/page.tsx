@@ -159,9 +159,9 @@ export default function SyllabusPage() {
       <section className={styles.cta}>
         <h2 className={styles.ctaHead}>Check out all 12.</h2>
         <p className={styles.ctaBody}>
-          Lifetime shelf access with no late fees, because the card catalog
-          never actually closes — but the AEs and SDRs who genuinely read it
-          across the years are the ones who get further.
+          One-time check-out, no late fees, because the card catalog never
+          actually closes — but the AEs and SDRs who genuinely read it across
+          the years are the ones who get further.
         </p>
         <Link href="/#pricing" className={styles.ctaBtn}>
           Get Access

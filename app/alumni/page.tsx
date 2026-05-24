@@ -148,7 +148,7 @@ export default async function AlumniPage() {
             marginBottom: 16,
           }}
         >
-          Your tools — re-downloadable, lifetime
+          Your tools — re-downloadable any time
         </p>
         <div
           style={{

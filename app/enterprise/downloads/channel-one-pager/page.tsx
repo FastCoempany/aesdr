@@ -109,7 +109,7 @@ export default function PartnerOnePagerPage() {
             12 courses × 3 lessons (36 total, ~16 hours run-time). Five takeaway tools
             AEs and SDRs keep (manager archetype map, AE/SDR alignment contract, 72-hour strike plan,
             CRM survival guide, async cadence template). Eight-dimension before/after
-            diagnostic for measuring behavior change. Discord community.
+            diagnostic for measuring behavior change.
           </p>
 
           {/* Partner categories */}

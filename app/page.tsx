@@ -19,10 +19,10 @@ const FAQ: { q: string; a: string; icon: IconName }[] = [
   { q: "Is this for me if I\u2019m brand new to sales?",          a: "Yes, it\u2019s actually inspired by you. The curriculum starts with the fundamentals and ends with harder material. If you\u2019re in your first 18 months, you\u2019ll skip years of painful trial-and-error.", icon: "eye"       },
   { q: "Is this just\u00a0another motivational sales course?",   a: "Nope \u2014 no guru routines and no motivational performance built into the format; this is sober, fun, practical training built by people who carried bags and managed AEs and SDRs over the last 10+ years on real teams.",                                       icon: "warn"      },
   { q: "What if I want a refund?",                                a: "14-day, no-questions-asked refund. Email hello@aesdr.com and we process it within 3 business days. If it doesn\u2019t deliver value, we don\u2019t want your money.",                                                  icon: "refund"    },
-  { q: "What does “lifetime access” actually mean?",    a: "Buy once. No subscription, no renewal, no expiration. Every future update we ship to the curriculum is included at no extra charge. If we ever shut down AESDR, every active customer gets a final downloadable bundle of the lessons they’d unlocked.",            icon: "hourglass" },
+  { q: "Is this a subscription? How long do I get access?",    a: "Not a subscription. One-time purchase. No renewal, no expiration date. Every future update we ship to the curriculum is included at no extra charge. If we ever shut AESDR down, every active customer gets a final downloadable bundle of the lessons they’d completed.",            icon: "hourglass" },
   { q: "Why does the page ask AE or SDR?",                        a: "So we can show you the copy and pricing for your role. Pick once and we remember it for your session. You can switch anytime — the underlying program is the same; the role-pick changes which examples and which price you see first.",                                       icon: "signal"    },
-  { q: "What\u2019s the difference between Individual and Team?", a: "Individual is one seat, one login. Team gives you up to 10 seats \u2014 built for sales managers who want their whole team on the same page.",                                                                       icon: "team"      },
-  { q: "Is there a community or is this self-paced only?",        a: "Both. The program is self-paced with interactive exercises. You also get access to our Discord community \u2014 real AEs & SDRs, real problems, real accountability.",                                                icon: "discord"   },
+  { q: "What\u2019s the difference between Individual and Team?", a: "Individual is one seat, one login. Team is for sales managers rolling out training across an actual team \u2014 manager dashboard, mixed AE/SDR tracks, invoice formatted for L&D. Team pricing isn't on the page because every team's shape is different \u2014 email hello@aesdr.com and we'll quote it after a five-minute conversation about team size.",                                                                       icon: "team"      },
+  { q: "Is there a community or is this self-paced only?",        a: "Self-paced. AESDR is a written operating manual you re-read in year three when the comp plan changes, not a live community. There's an alumni room that opens when you finish all twelve courses \u2014 but it's a course bonus, not what you're paying for.",                                                icon: "discord"   },
   { q: "I\u2019ve been in sales for 5+ years. Is this too basic?", a: "Courses 1\u20135 cover fundamentals. Courses 6\u201312 work through prospecting strategy, pipeline math, financial resilience, and the relationships that pay off five years out. If you disagree, we refund.",                  icon: "signal"    },
   { q: "Can my company expense this?",                            a: "Of course. We provide a receipt and invoice on purchase. Most L&D budgets cover this easily \u2014 especially the Team plan.",                                                                                       icon: "ledger"    },
   { q: "How is this different from Sales Assembly or Pavilion?", a: "Different product entirely. Those are senior-AE peer networks at $3K\u2013$5K/year \u2014 you pay for the room. AESDR is a written operating manual you re-read in year three. If you want the network, those are excellent. If you want a framework you can hand to a new SDR on Monday morning, this one. Full breakdown at /compare.",                                                                                  icon: "team"      },
@@ -135,11 +135,11 @@ export default async function LandingPage() {
         <div className={styles.compareGrid}>
           <div className={styles.compareCol} aria-label="AESDR — this product">
             <p className={styles.compareLabel}>AESDR</p>
-            <p className={styles.comparePrice}>$249–$1,499 · one-time</p>
+            <p className={styles.comparePrice}>$249–$299 · one-time (team licensing on request)</p>
             <ul className={styles.compareList}>
               <li>12 self-paced interactive courses</li>
               <li>5 takeaway tools you use on the job</li>
-              <li>Lifetime access</li>
+              <li>One-time purchase. No subscription.</li>
               <li>14-day refund, no questions</li>
               <li>Built by AEs and SDRs who carried bags</li>
               <li>No live calls, no weekly homework</li>
@@ -237,7 +237,7 @@ export default async function LandingPage() {
           <Mascot pose="verdict" size={MASCOT_SIZE.banner} />
         </div>
         <p className={styles.sectionLabel}>Pricing</p>
-        <h2 className={styles.sectionHeadline}>One price. Lifetime access.</h2>
+        <h2 className={styles.sectionHeadline}>One price. Yours when you buy it.</h2>
         <div className={styles.divider} />
         <PricingTiers initialRole={initialRole} />
       </section>
@@ -274,9 +274,9 @@ export default async function LandingPage() {
       <section className={styles.finalCta}>
         <h2 className={styles.finalHeadline}>Stop ChatGPClaudeing. Start&nbsp;executing.</h2>
         <p className={styles.finalSub}>
-          12 courses with 5 takeaway tools at one price and lifetime
-          access — built for AEs and SDRs who want to get better at the
-          actual work rather than just feel better about the week ahead.
+          12 courses with 5 takeaway tools, one-time purchase — built for
+          AEs and SDRs who want to get better at the actual work rather
+          than just feel better about the week ahead.
         </p>
         <a href="#pricing" className={styles.ctaPrimary}>Get Access</a>
       </section>
@@ -293,6 +293,8 @@ export default async function LandingPage() {
         <Link href="/terms">Terms</Link>
         <Link href="/privacy">Privacy</Link>
         <Link href="/refund-policy">Refunds</Link>
+        <Link href="/research">Research</Link>
+        <Link href="/compare">Compare</Link>
         <Link href="/about">About</Link>
         <Link href="/contact">Contact</Link>
         <Link href="/enterprise" style={{ opacity: 0.7 }}>for sales orgs &rarr;</Link>

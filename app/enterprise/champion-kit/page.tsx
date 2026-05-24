@@ -44,15 +44,15 @@ const OBJECTIONS: { number: string; objection: string; answer: string }[] = [
   },
   {
     number: "04",
-    objection: '"What\'s the ROI on $1,499 for a team of 10?"',
+    objection: '"What\'s the ROI here?"',
     answer:
-      "$150 / seat. One avoidable bad hire — or one AE who ramps two weeks faster — pays for the whole team plan. The Bridge Group 2024 number on SDR cost-to-replace is roughly $115K. If AESDR delays one departure on the cohort, the maths is uncontroversial.",
+      "Industry research puts SDR cost-to-replace at roughly $115K (Bridge Group 2024) and a single early AE departure inside a ramping team at multiples of that when you factor lost pipeline. AESDR is priced so that delaying one bad ramp on the cohort already pays for the entire team — and Team pricing is quoted per team, so the math gets specific to your seat count on the intro call.",
   },
   {
     number: "05",
     objection: '"Is this another founder running a thinly-veiled coaching upsell?"',
     answer:
-      "No. AESDR is a one-time purchase. Lifetime access. There is no premium tier, no coaching call upsell, no community subscription. We make $249-$1,499 per seat and that's the entire commercial relationship. If you want our help on top, we charge for it explicitly under Custom Enterprise — but the program doesn't tee that up.",
+      "No. AESDR is a one-time purchase. No premium tier, no coaching call upsell, no per-seat subscription. The seat price is the entire commercial relationship for Individual and Team. If you want our help on top, we charge for it explicitly under Custom Enterprise — but the program doesn't tee that up.",
   },
   {
     number: "06",
@@ -99,16 +99,17 @@ export default function ChampionKitPage() {
             }}
           >
             <p style={{ margin: "0 0 14px", fontFamily: "'Space Mono', monospace", fontSize: 11, letterSpacing: ".2em", color: "var(--muted)" }}>
-              SUBJECT: <strong>A $1,499 line item I&apos;d like to defend</strong>
+              SUBJECT: <strong>A training line item I&apos;d like to defend</strong>
             </p>
             <p style={{ margin: "0 0 14px" }}>Hi [name],</p>
             <p style={{ margin: "0 0 14px" }}>
               I want to pull AESDR / Enterprise in for our [SDRs / AEs / sales team].
-              It&apos;s $1,499 one-time for 10 seats — lifetime access, no
-              subscription. It covers the part of the sales role nobody trains
-              on: managing your manager, the math of pipeline, comp realities,
-              what to do when the script runs out. Twelve self-paced lessons,
-              ~25 minutes each.
+              One-time purchase — no per-seat subscription, no per-year renewal.
+              Team pricing is quoted per team after a short call; I&apos;m attaching
+              their contact page below. It covers the part of the sales role
+              nobody trains on: managing your manager, the math of pipeline,
+              comp realities, what to do when the script runs out. Twelve
+              self-paced lessons, ~25 minutes each.
             </p>
             <p style={{ margin: "0 0 14px" }}>
               I&apos;m flagging it because the alternative is another six
@@ -159,8 +160,10 @@ export default function ChampionKitPage() {
               comp, sober selling.
             </li>
             <li>
-              <strong>Cost:</strong> $1,499 one-time, 10 seats, lifetime
-              access. $150 per seat.
+              <strong>Cost:</strong> Quoted per team — one-time purchase, no
+              per-seat subscription. They publish the consumer prices ($249 SDR
+              / $299 AE Individual); Team pricing comes after a five-minute
+              conversation about team size.
             </li>
             <li>
               <strong>Risk:</strong> 30-day refund on unused seats. Real

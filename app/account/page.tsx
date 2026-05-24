@@ -280,9 +280,8 @@ export default async function AccountPage() {
               }}
             >
               <p style={{ fontFamily: "var(--serif)", fontSize: "15px", marginBottom: "12px" }}>
-                Emails paused until <strong>{pauseLabel}</strong>. Your
-                lifetime access is unchanged — the course is here when
-                you come back.
+                Emails paused until <strong>{pauseLabel}</strong>. Your access
+                is unchanged — the course is here when you come back.
               </p>
               <form action={clearPause}>
                 <button

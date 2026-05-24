@@ -84,7 +84,7 @@ export default function CancelPage() {
           >
             <li>14-day, no-questions-asked refund policy</li>
             <li>One-time payment — no subscriptions, no upsells</li>
-            <li>Lifetime access to all 12 courses + 5 tools</li>
+            <li>All 12 courses + 5 takeaway tools, yours when you buy</li>
           </ul>
         </div>
 

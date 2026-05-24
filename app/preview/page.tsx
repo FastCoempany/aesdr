@@ -379,7 +379,7 @@ export default function PreviewPage() {
             lineHeight: 1.7,
           }}
         >
-          12 courses. 5 takeaway tools. Lifetime access. 14-day refund.
+          12 courses. 5 takeaway tools. One-time purchase. 14-day refund.
           <br />
           <Link
             href="/free/manager-archetype-map"

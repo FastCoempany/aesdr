@@ -73,7 +73,7 @@ const FAQ_ITEMS = [
           <strong>Frame.</strong> Free content optimizes for engagement. AESDR is the operating manual — the part the free content skipped because it doesn&rsquo;t perform well in a 60-second clip.
         </p>
         <p style={{ marginTop: 14 }}>
-          <strong>Accountability.</strong> Free content is consumed alone, nodded at, and forgotten. AESDR has interactive worksheets, takeaway tools, and a Discord (Untamed) where AEs and SDRs in your situation are talking about what&rsquo;s working.
+          <strong>Accountability.</strong> Free content is consumed alone, nodded at, and forgotten. AESDR has interactive worksheets, gates that require attestations before advancing, and takeaway tools that go into a 1:1 with a manager next week. Structure is what compounds; consumption alone doesn&rsquo;t.
         </p>
       </>
     ),
@@ -130,7 +130,7 @@ const FAQ_ITEMS = [
     q: "Can my audience get the program at a different price than aesdr.com lists?",
     a: (
       <p>
-        No. List price applies always — $249 SDR, $299 AE, $1,499 Team. AESDR doesn&rsquo;t run promotional codes, affiliate-stack discounts, or pricing variance for any audience. If a affiliate pushes for it, that&rsquo;s a fit signal we note.
+        No. List price applies always — $249 SDR Individual, $299 AE Individual. Team licensing isn&rsquo;t affiliate-attributable (enterprise sales come through hello@aesdr.com directly, not through affiliate tracking). AESDR doesn&rsquo;t run promotional codes, affiliate-stack discounts, or pricing variance for any audience. If an affiliate pushes for it, that&rsquo;s a fit signal we note.
       </p>
     ),
   },

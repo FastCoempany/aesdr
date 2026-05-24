@@ -301,26 +301,16 @@ function SuccessContent() {
           <EditorialStep
             numeral="III"
             kicker="Finally"
-            title="Accept your invitation"
+            title="Show up Tuesday morning"
             body={
               <>
-                The AESDR Discord is members only. Real AEs and SDRs, real deals, real
-                accountability &mdash; no guru energy, no motivational noise.{' '}
-                <a
-                  href="https://discord.gg/uEpAz3yw"
-                  style={{
-                    color: '#8B9BFF',
-                    textDecoration: 'underline',
-                    textUnderlineOffset: '3px',
-                    fontStyle: 'normal',
-                    fontWeight: 600,
-                  }}
-                >
-                  Enter the room &rarr;
-                </a>
+                The course is yours now. The work that matters is what you do
+                with it on a Tuesday morning when nobody&apos;s watching &mdash;
+                not in a chat room, not in a webinar, in your calendar between
+                the calls. Open Course 1.1, set a 25-minute timer, and go.
               </>
             }
-            accent="#5865F2"
+            accent="var(--crimson)"
             isLast
           />
         </section>

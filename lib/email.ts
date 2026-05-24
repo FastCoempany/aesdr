@@ -819,52 +819,6 @@ function welcomeHtml(name: string, email: string, loginUrl: string, tempPassword
           </td>
         </tr>
 
-        <!-- Discord VIP Section -->
-        <tr>
-          <td style="padding:40px 48px 0 48px;">
-            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:linear-gradient(135deg,#5865F2 0%,#4752C4 100%);border-radius:0;">
-              <tr>
-                <td style="padding:32px 32px 28px 32px;">
-                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-                    <tr>
-                      <td style="vertical-align:middle;padding-right:20px;" width="64">
-                        <!-- Discord logo SVG (inline) -->
-                        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="56" height="56" style="background:#FFFFFF;border-radius:12px;">
-                          <tr>
-                            <td align="center" valign="middle" style="padding:12px;">
-                              <img src="https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a69f118df70ad7828d4_icon_clyde_blurple_RGB.png" width="32" height="32" alt="Discord" style="display:block;border:0;" />
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-                      <td style="vertical-align:middle;">
-                        <p style="margin:0 0 4px;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,0.7);font-weight:700;">
-                          Members only
-                        </p>
-                        <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:22px;line-height:1.2;color:#FFFFFF;font-weight:400;">
-                          The AESDR Discord
-                        </p>
-                      </td>
-                    </tr>
-                  </table>
-                  <p style="margin:20px 0 22px;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.7;color:rgba(255,255,255,0.92);">
-                    Real AEs and SDRs. Real deals. Real accountability. A private room where the work continues between lessons &mdash; no guru energy, no motivational noise.
-                  </p>
-                  <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                    <tr>
-                      <td style="background:#FFFFFF;">
-                        <a href="https://discord.gg/uEpAz3yw" style="display:inline-block;padding:14px 28px;font-family:'SF Mono',Consolas,monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#5865F2;text-decoration:none;font-weight:700;">
-                          Accept Your Invitation &rarr;
-                        </a>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-
         <!-- Help -->
         <tr>
           <td style="padding:36px 48px 0 48px;">
@@ -1134,7 +1088,7 @@ function managerArchetypeMapHtml() {
     Optional · One pointer · Then I'm out of your inbox
   </p>
   <p style="margin:0 0 12px">
-    This is one tool from Course 3 of the full program — there are eleven more courses, five takeaway tools, and lifetime access waiting on the other side, all backed by a 14-day refund if it doesn't deliver.
+    This is one tool from Course 3 of the full program — there are eleven more courses and five takeaway tools waiting on the other side, all backed by a 14-day refund if it doesn't deliver. One-time purchase, no subscription.
   </p>
   <p style="margin:0 0 24px">
     <a href="${SITE}/#pricing" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">See the full course →</a>
@@ -1285,7 +1239,7 @@ function winBackHtml(name: string) {
   <p style="margin:20px 0">
     <a href="${SITE}/dashboard" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">Open the dashboard →</a>
   </p>
-  <p style="font-size:14px;color:#6B6B6B">If none of those land, no further emails on this — promise. You have lifetime access; the course will be here if and when you come back.</p>
+  <p style="font-size:14px;color:#6B6B6B">If none of those land, no further emails on this — promise. The course is yours; it'll be here if and when you come back.</p>
   <p style="margin-top:24px">— Antaeus</p>
   ${footer()}
 </div>`;
@@ -1684,7 +1638,7 @@ function dropoff21dHtml(name: string, lessonId: string) {
   </p>
   <p style="margin:18px 0;padding:14px 18px;border-left:3px solid #8B1A1A;background:#FFFFFF;">
     <strong style="display:block;margin-bottom:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.12em;text-transform:uppercase;font-size:12px;color:#1A1A1A">If life happened</strong>
-    Your progress is saved. Access is lifetime. Pick it back up in a week, a month, a year — same login, same lessons, same Discord. The course doesn't expire just because you did.
+    Your progress is saved. You bought it once — it doesn't expire. Pick it back up in a week, a month, a year. Same login, same lessons. The course doesn't expire just because you did.
   </p>
   <p style="margin:18px 0;padding:14px 18px;border-left:3px solid #8B1A1A;background:#FFFFFF;">
     <strong style="display:block;margin-bottom:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.12em;text-transform:uppercase;font-size:12px;color:#1A1A1A">If something was wrong</strong>

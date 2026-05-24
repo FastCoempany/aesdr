@@ -413,7 +413,7 @@ export default async function ImplementationGuidePage() {
         <p style={{ fontSize: 16, lineHeight: 1.7, color: "var(--ink)", marginBottom: 24 }}>
           If life&rsquo;s actually loud — board prep, quota week, family —
           pause the emails from <Link href="/account" style={{ color: "var(--crimson)" }}>your account</Link>{" "}
-          for 2-12 weeks. Lifetime access doesn&rsquo;t change.
+          for 2-12 weeks. Your course access doesn&rsquo;t change.
         </p>
         <Link
           href="/dashboard"

@@ -32,10 +32,10 @@ export default function RefundPolicyPage() {
             days.
           </li>
           <li>
-            <strong>Team purchases ($1,499 for 10 seats):</strong> Full refund
-            within 14 days of purchase, provided no more than 2 team members
-            have accessed the course. If 3 or more team members have logged
-            in, we will work with you on a case-by-case basis.
+            <strong>Team purchases:</strong> Full refund within 14 days of
+            purchase, provided no more than 2 team members have accessed the
+            course. If 3 or more team members have logged in, we will work
+            with you on a case-by-case basis.
           </li>
         </ul>
       </Section>
