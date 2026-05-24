@@ -167,7 +167,7 @@ export default function SyllabusPage() {
           Get Access
         </Link>
         <div className={styles.ctaFoot}>
-          14-day refund &middot; 12 courses &middot; 5 takeaway tools
+          14-day refund &middot; 12 courses &middot; named takeaway artifacts
         </div>
       </section>
 

@@ -38,6 +38,7 @@ two years:
 
 ## What every license includes
 
-Lifetime access to all 12 courses, all 5 tools, all future updates. A private
-Discord — *Untamed* — for AEs and SDRs who finished or are deep in the work.
-14-day, no-questions-asked refund. One price, paid once.
+One-time purchase: all 12 courses, the named takeaway artifacts, every future
+curriculum update at no extra cost. A private alumni room opens to buyers who
+finish all twelve courses — strictly post-completion, not a pre-purchase
+community claim. 14-day, no-questions-asked refund. One price, paid once.

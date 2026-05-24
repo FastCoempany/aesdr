@@ -3,9 +3,9 @@
 AESDR is the operating manual, not the motivation engine.
 
 A 12-course sales survival program for first-1-to-2-year SDRs and AEs in
-startup SaaS — self-paced, interactive, with lifetime access — built by
-people who carried bags and managed AEs and SDRs for a decade rather than
-by people who read about it.
+startup SaaS — self-paced, interactive, one-time purchase with no
+subscription — built by people who carried bags and managed AEs and
+SDRs for a decade rather than by people who read about it.
 
 ## Who this is for
 
@@ -27,19 +27,28 @@ a pilot in week four with both sides disappointed.
 
 ## What's in the program
 
-12 courses with 5 takeaway tools — the alignment contract, the 72-hour
-strike plan, the ROI commission defense tracker, and two more. All
-delivered as interactive HTML exercises, not video lectures. Lifetime
-access includes every future curriculum update. The private Discord
-community (*Untamed*) comes with every license. A 14-day no-questions-asked
-refund backs the whole thing.
+12 courses with named takeaway artifacts — the alignment contract, the
+ROI commission defense tracker, the I-don't-know framework, the
+time-reclaimed calculator, and the end-of-course strike plan. All
+delivered as interactive HTML exercises, not video lectures. One-time
+purchase; every future curriculum update is included at no additional
+cost. A private alumni room opens to buyers who finish all twelve
+courses — strictly post-completion, not a pre-purchase brand promise.
+A 14-day no-questions-asked refund backs the whole thing.
 
-Pricing is at list price across the board: $249 SDR, $299 AE, $1,499 for
-a 10-seat team. It stays at list across every audience, every channel,
-every affiliate. There are no promotional codes to issue or to advertise.
+## Pricing
+
+Pricing is at list across consumer Individual tiers — $249 SDR, $299 AE
+— and stays at list across every audience, every channel, every
+affiliate. There are no promotional codes to issue or to advertise.
+
+Team licensing is quoted per team after a five-minute conversation
+about team size and segment; it is not affiliate-attributable.
+Enterprise inquiries route through hello@aesdr.com directly, not
+through affiliate tracking.
 
 ## Three things we'll always say
 
-1. 12 courses, lifetime access, $249 / $299 / $1,499, 14-day refund.
+1. 12 courses, named takeaway artifacts, $249 SDR / $299 AE Individual, 14-day refund.
 2. Operating manual, not motivation engine. We don't perform expertise; we install it.
 3. We say out loud who shouldn't buy. Honesty is not a tone here — it's a competitive position.

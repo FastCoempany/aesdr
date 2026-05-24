@@ -174,7 +174,7 @@ export default function ImplementationPage() {
           <h2 className={styles.h2}>What AEs and SDRs walk out with.</h2>
           <hr className={styles.divider} />
           <p className={styles.body}>
-            AESDR ships five tools that live outside the program. AEs and SDRs keep them, use them, modify them, share them with peers. Each one comes from a specific lesson but works standalone.
+            AESDR ships named takeaway artifacts that live outside the program — the alignment contract, the ROI tracker, the I-don't-know framework, the time-reclaimed calculator, and the end-of-course strike plan. AEs and SDRs keep them, use them, modify them, share them with peers. Each one comes from a specific lesson but works standalone.
           </p>
           <ul className={styles.bulletList}>
             <li>

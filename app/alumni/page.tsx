@@ -135,8 +135,87 @@ export default async function AlumniPage() {
         </p>
       </section>
 
+      {/* The alumni room — Discord, post-completion-only by design. The
+          landing FAQ + /compare promise this opens "when you finish all
+          twelve courses." This is where that promise gets kept. The brand
+          register is sharper than the previous "real AEs, real problems,
+          real accountability" wording — the alumni-only positioning is
+          what makes the room defensible against the audit's untested-
+          community-promise concern. */}
+      <section style={{ maxWidth: 880, margin: "32px auto 0", padding: "0 24px" }}>
+        <article
+          style={{
+            background: "var(--ink)",
+            color: "var(--cream)",
+            padding: "40px 44px",
+          }}
+          data-surface="dark"
+        >
+          <p
+            style={{
+              fontFamily: "var(--mono)",
+              fontSize: 10,
+              letterSpacing: ".32em",
+              textTransform: "uppercase",
+              color: "rgba(250,247,242,0.65)",
+              marginBottom: 12,
+            }}
+          >
+            Alumni room · now open
+          </p>
+          <h2
+            style={{
+              fontFamily: "var(--display)",
+              fontStyle: "italic",
+              fontWeight: 700,
+              fontSize: "clamp(24px, 3vw, 32px)",
+              lineHeight: 1.2,
+              margin: "0 0 16px",
+            }}
+          >
+            The Discord opens when you do.
+          </h2>
+          <p
+            style={{
+              fontFamily: "var(--serif)",
+              fontSize: 16,
+              lineHeight: 1.7,
+              color: "rgba(250,247,242,0.88)",
+              margin: "0 0 24px",
+              maxWidth: 560,
+            }}
+          >
+            Small room. AEs and SDRs who finished the same twelve courses you
+            did. No SDR-bootcamp graduates trying to break in, no marketing-
+            attached LinkedIn motivational posts, no &ldquo;crush it&rdquo; energy.
+            Where alumni post the post-mortems they wouldn&rsquo;t put in
+            company Slack and ask the questions they can&rsquo;t ask their
+            actual manager.
+          </p>
+          <a
+            href="https://discord.gg/uEpAz3yw"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "inline-block",
+              fontFamily: "var(--cond)",
+              fontSize: 13,
+              fontWeight: 700,
+              letterSpacing: ".22em",
+              textTransform: "uppercase",
+              color: "var(--ink)",
+              background: "var(--cream)",
+              padding: "14px 32px",
+              textDecoration: "none",
+            }}
+          >
+            Open the alumni room →
+          </a>
+        </article>
+      </section>
+
       <section
-        style={{ maxWidth: 880, margin: "0 auto", padding: "32px 24px 16px" }}
+        style={{ maxWidth: 880, margin: "48px auto 0", padding: "32px 24px 16px" }}
       >
         <p
           style={{

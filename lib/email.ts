@@ -1920,6 +1920,41 @@ function lessonCompleteHtml(name: string, lessonId: string, lessonTitle: string)
           </td>
         </tr>
 
+        ${isLast ? `
+        <!-- Alumni room introduction — appears ONLY when isLast === true.
+             Strict alumni-only Discord intro per founder direction. The
+             room is gated to course-12 completers; this is the moment
+             that gate opens. -->
+        <tr>
+          <td style="padding:40px 48px 0 48px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#1A1A1A;">
+              <tr>
+                <td style="padding:32px 36px 28px 36px;">
+                  <p style="margin:0 0 12px;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:rgba(250,247,242,0.65);font-weight:700;">
+                    Alumni room &middot; now open
+                  </p>
+                  <p style="margin:0 0 16px;font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:700;font-size:24px;line-height:1.2;color:#FAF7F2;">
+                    The Discord opens when you do.
+                  </p>
+                  <p style="margin:0 0 22px;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.7;color:rgba(250,247,242,0.88);">
+                    Small room. AEs and SDRs who finished the same twelve courses you just did. Where alumni post the post-mortems they wouldn't put in company Slack and ask the questions they can't ask their actual manager.
+                  </p>
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td style="background:#FAF7F2;">
+                        <a href="https://discord.gg/uEpAz3yw" style="display:inline-block;padding:14px 28px;font-family:'SF Mono',Consolas,monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#1A1A1A;text-decoration:none;font-weight:700;">
+                          Open the alumni room &rarr;
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        ` : ''}
+
         <!-- Sign-off -->
         <tr>
           <td style="padding:36px 48px 36px 48px;" align="center">

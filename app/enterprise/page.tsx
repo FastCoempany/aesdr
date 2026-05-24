@@ -51,6 +51,12 @@ export default function TeamsLanding() {
               source="Bridge Group SDR Metrics Report, 2024"
               sourceUrl="https://blog.bridgegroupinc.com/sales-development-metrics"
             />
+            <KPIStat
+              value="6.8"
+              caption="stakeholders in a typical B2B buying decision — the seat your AE is navigating, not the seller-side conversation"
+              source="Gartner B2B Buying Journey"
+              sourceUrl="https://www.gartner.com/en/sales/insights/b2b-buying-journey"
+            />
           </div>
 
           <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginTop: 12 }}>
@@ -112,7 +118,7 @@ export default function TeamsLanding() {
 
             <div className={styles.card}>
               <p className={styles.cardEyebrow}>02 · TAKEAWAYS</p>
-              <h3 className={styles.cardTitle}>5 tools AEs and SDRs keep</h3>
+              <h3 className={styles.cardTitle}>Takeaway artifacts AEs and SDRs keep</h3>
               <p className={styles.cardBody}>
                 Manager Archetype Map. AE/SDR Alignment Contract. 72-Hour Strike
                 Plan (for the week after a bad loss). CRM Survival Guide. Async
@@ -188,7 +194,7 @@ export default function TeamsLanding() {
             <BuyerModeCard
               eyebrow="03 · WHITE-LABEL"
               title="White-label / co-branded"
-              description="For partners packaging AESDR inside their own offering. We deliver the 12 courses + 5 takeaway tools; you wrap them in your brand. Revenue-share or wholesale pricing."
+              description="For partners packaging AESDR inside their own offering. We deliver the 12 courses + the named artifacts that ship with them; you wrap them in your brand. Revenue-share or wholesale pricing."
               features={[
                 "Delivery rights to courses + takeaway tools",
                 "Co-branded materials — your logo + AESDR mark with mutual approval",

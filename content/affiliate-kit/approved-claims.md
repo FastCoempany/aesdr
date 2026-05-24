@@ -9,13 +9,13 @@ for someone who hasn't done the work yet.
 
 > *"AESDR is a 12-course sales survival program for first-1-to-2-year SDRs
 > and AEs in startup SaaS — self-paced and interactive across the whole
-> curriculum, with lifetime access from day one."*
+> curriculum. One-time purchase, no subscription."*
 
 > *"Built by people who carried bags and managed AEs and SDRs for a decade — not
 > by people who read about it."*
 
-> *"$249 SDR, $299 AE, $1,499 for a 10-seat team. Lifetime access.
-> 14-day, no-questions-asked refund."*
+> *"$249 SDR Individual, $299 AE Individual. Team licensing is quoted per team
+> and isn't affiliate-attributable. 14-day, no-questions-asked refund."*
 
 > *"The operating manual, not the motivation engine."*
 
@@ -29,13 +29,15 @@ for someone who hasn't done the work yet.
 
 These are factual and verifiable; phrase them however fits your voice:
 
-- 12 courses + 5 takeaway tools (alignment contract, strike plan,
-  ROI tracker, and two more)
+- 12 courses + named takeaway artifacts (alignment contract,
+  I-don't-know framework, time-reclaimed calculator, ROI commission
+  defense tracker, plus the end-of-course strike-plan bonus)
 - Interactive HTML format, not video lectures
-- Discord (*Untamed*) included with every license
+- Private alumni room opens to buyers who finish all twelve courses
+  (post-completion only — not a pre-purchase community claim)
 - Built for first-2-year SDRs and AEs in startup SaaS
 - 14-day, no-questions-asked refund
-- Lifetime access, including all future curriculum updates
+- One-time purchase; every future curriculum update included
 - Self-paced — start, stop, and resume on your own schedule
 
 ## Claims that get walked back

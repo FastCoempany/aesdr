@@ -14,8 +14,10 @@ quota attainment. If you're not sure whether a phrase crosses the line, ask
 before publishing — that's faster than asking us to retroactively walk it back.
 
 **3. Don't offer pricing your audience can't actually get.** The price is the
-price. $249 SDR, $299 AE, $1,499 Team. There are no codes, no affiliate-stack
-discounts, no flash promotions. Don't write copy that implies otherwise.
+price. $249 SDR Individual, $299 AE Individual. Team licensing is quoted per
+team through hello@aesdr.com and isn't affiliate-attributable. There are no
+codes, no affiliate-stack discounts, no flash promotions. Don't write copy
+that implies otherwise.
 
 ## "Is this safe to recommend?"
 

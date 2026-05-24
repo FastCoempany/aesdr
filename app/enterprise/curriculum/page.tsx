@@ -180,7 +180,7 @@ const COURSES: Course[] = [
     number: "08",
     theme: "Hard truths",
     description:
-      "The 30% rule, the illusion of potential, and the question every AE/SDR needs to ask but mostly doesn't. The harshest course — buyers should read it before they decide whether AESDR fits their culture.",
+      "The 30% rule (codifying the talk-to-listen discipline established by Gong's call-analytics research on top vs. underperformer ratios), the illusion of potential, and the question every AE/SDR needs to ask but mostly doesn't. The harshest course — buyers should read it before they decide whether AESDR fits their culture.",
     lessons: [
       { number: "8.1", title: "The 30% Rule" },
       { number: "8.2", title: "Stop Chasing the Illusion of Potential" },
