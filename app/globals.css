@@ -3,6 +3,12 @@
 @import "tailwindcss";
 
 :root {
+  /* Editorial palette is light-only. Telling the UA color-scheme: light
+     prevents form-control + scrollbar dark-mode rendering on iOS/Android
+     and stops the brief system-default flash during navigation on
+     devices with OS-level dark-mode preference enabled. */
+  color-scheme: light;
+
   /* ── Active editorial palette ──
      Cream / Ink / Crimson with iris-shimmer accent. See AGENTS.md. */
   --crimson: #8B1A1A;

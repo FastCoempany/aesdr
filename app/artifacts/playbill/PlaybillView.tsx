@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { Divider } from "@/components/brand/Divider";
-import { Mascot } from "@/components/brand/Mascot";
+import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
 import type { PlaybillData } from "@/lib/artifacts/types";
 
 type Folio = "programme" | "reviews" | "notes";
@@ -36,7 +36,7 @@ export default function PlaybillView({ data }: { data: PlaybillData }) {
 
       {/* Owner pose — the final state. A-mark on shell. */}
       <div style={{ display: "flex", justifyContent: "center", paddingTop: 32 }}>
-        <Mascot pose="owner" size={240} priority />
+        <Mascot pose="owner" size={MASCOT_SIZE.panel} priority />
       </div>
 
       {/* Marquee header */}

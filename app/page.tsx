@@ -8,7 +8,7 @@ import PricingTiers from "@/components/PricingTiers";
 import SignOutButton from "@/components/SignOutButton";
 import ValidationMarquee from "@/components/ValidationMarquee";
 import { Icon, type IconName } from "@/components/brand/Icon";
-import { Mascot } from "@/components/brand/Mascot";
+import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
 import { createClient } from "@/utils/supabase/server";
 import styles from "./page.module.css";
 
@@ -210,7 +210,7 @@ export default async function LandingPage() {
       {/* ═══ PRICING ═══ */}
       <section id="pricing" className={styles.pricingSection}>
         <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
-          <Mascot pose="verdict" size={420} />
+          <Mascot pose="verdict" size={MASCOT_SIZE.banner} />
         </div>
         <p className={styles.sectionLabel}>Pricing</p>
         <h2 className={styles.sectionHeadline}>One price. Lifetime access.</h2>

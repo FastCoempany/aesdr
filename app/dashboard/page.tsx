@@ -7,7 +7,7 @@ import SignOutButton from "@/components/SignOutButton";
 import ArtifactTile from "@/components/ArtifactTile";
 import UnlockArtifactTile from "@/components/UnlockArtifactTile";
 import { Icon } from "@/components/brand/Icon";
-import { Mascot } from "@/components/brand/Mascot";
+import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
 import { isAdminEmail } from "@/lib/admin";
 import { createClient } from "@/utils/supabase/server";
 import { verifyPaidAccess } from "@/utils/access/verifyAccess";
@@ -211,7 +211,7 @@ export default async function Dashboard() {
                   ? "doctrine"
                   : poseForLesson(currentLesson.id)
             }
-            size={160}
+            size={MASCOT_SIZE.compact}
             priority
           />
           <div style={{ flex: "1 1 320px" }}>

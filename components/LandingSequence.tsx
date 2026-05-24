@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 import { track } from "@/lib/analytics";
 import { setRole as persistRole, type Role } from "@/lib/role";
 
-import { Mascot } from "@/components/brand/Mascot";
+import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
 
 import { runAnimator, type AnimatorRefs } from "./landing-sequence/animator";
 import { FORK_HALVES, FORK_PICK_HEADER, HERO_DESCRIPTOR } from "./landing-sequence/copy";
@@ -94,7 +94,7 @@ export default function LandingSequence({ initialRole = null }: Props) {
       {/* Branded hero — visible after animation or on return visits */}
       <div className={s.landingHero} ref={heroRef}>
         <div className={s.heroMascotWrap}>
-          <Mascot pose="doctrine" size={320} priority />
+          <Mascot pose="doctrine" size={MASCOT_SIZE.landing} priority />
         </div>
         <div className={s.heroLabel}>12 Interactive Courses &middot; Built by Operators &middot; Not by Course-People</div>
         <h1 className={`${s.heroBrand} ${s.irisText}`}>AESDR</h1>

@@ -11,7 +11,7 @@
 
 import Link from "next/link";
 
-import { Mascot } from "@/components/brand/Mascot";
+import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
 
 export default function Error({
   error,
@@ -45,7 +45,7 @@ export default function Error({
       >
         <Mascot
           pose="recovery"
-          size={360}
+          size={MASCOT_SIZE.completion}
           style={{ width: "100%", height: "auto" }}
         />
       </div>

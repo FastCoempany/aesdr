@@ -1695,7 +1695,7 @@ const KT_ITEMS = [
   {
     tag:"SaaS Trend",
     name:"AI-powered SDR tools are replacing early-stage prospecting workflows",
-    body:"Gartner predicts that by 2026, 40% of all initial prospect research tasks will be AI-assisted. The human contribution shifts from volume to judgment.",
+    body:"By 2026, AI-assisted research is the default for early-stage prospecting at most SaaS orgs, and the human contribution has shifted from volume to judgment — Gartner forecasted this transition in 2024 and it has played out on most floors since.",
     q:"How does a Motherboard use this trend in a conversation with a VP of Sales?",
     opts:[
       "I mention that AI tools are getting better and our product integrates with some of them.",
@@ -1721,7 +1721,7 @@ const KT_ITEMS = [
   {
     tag:"SaaS Trend",
     name:"SaaS churn is accelerating as CFOs demand faster time-to-value from every purchase",
-    body:"Post-2022 budget cuts have made CFOs active participants in SaaS renewals. Vendors who can't show measurable value within 90 days are being cut — even on multi-year deals.",
+    body:"The tighter budget cycle of the last few years has made CFOs active participants in SaaS renewals. Vendors who can't show measurable value within 90 days are being cut — even on multi-year deals.",
     q:"What's the Motherboard conversation starter for a VP of Customer Success?",
     opts:[
       "Has your team been dealing with more renewal risk lately? We have a solution that helps with that.",
@@ -1786,7 +1786,7 @@ function _saveExerciseScores(){
   if(typeof siloCount!=='undefined'&&typeof SILO_CARDS!=='undefined') scores.silo={correct:siloCount,total:SILO_CARDS.length};
   if(typeof blameCount!=='undefined'&&typeof BLAME_ITEMS!=='undefined') scores.blame={correct:blameCount,total:BLAME_ITEMS.length};
   if(typeof seqDone!=='undefined'&&typeof SEQ_STEPS!=='undefined') scores.seq={correct:Object.keys(seqDone).length,total:SEQ_STEPS.length};
-  if(typeof clsCount!=='undefined'&&typeof CLS_ITEMS!=='undefined') scores.cls={correct:clsCount,total:CLS_ITEMS.length};
+  if(typeof clsCount!=='undefined'&&typeof CLS_OBS!=='undefined') scores.cls={correct:clsCount,total:CLS_OBS.length};
   if(Object.keys(scores).length>0) AESDR.setExtra('exercises',scores);
 }
 
@@ -1828,7 +1828,7 @@ function init(){
       placeholder:'Example: "1. Maria Torres, VP Sales at Dataflow (champion) 2. James Lee, Partner at Accenture (partner) 3. Priya Shah, AE at Gong (peer). Check-in scheduled with Maria for Thursday 4/15. Question: \'What trends are you seeing in procurement cycles this quarter?\'..."',
       minChars:100 },
     { task:'Read one SaaS industry report this week (name the specific report and source — Gartner, Forrester, or similar). Write down 1 insight and describe exactly how you used it in a discovery call or executive presentation, including the account name.',
-      placeholder:'Example: "Read Gartner\'s 2026 Magic Quadrant for CRM. Insight: 73% of mid-market buyers now require AI-native features. Used it in my discovery call with Initech on Tuesday: \'Your competitors are already evaluating AI-native CRM — how is your team thinking about this?\'..."',
+      placeholder:'Example: "Read Gartner\'s 2026 Magic Quadrant for Sales Force Automation. Insight: 73% of mid-market buyers now require AI-native features. Used it in my discovery call with Initech on Tuesday: \'Your competitors are already evaluating AI-native CRM — how is your team thinking about this?\'..."',
       minChars:100 },
     { task:'Post one industry insight on LinkedIn with your actual take — not a forwarded article. Write at least two sentences positioning yourself as someone who understands the market. Paste the text of your post here.',
       placeholder:'Example: "Posted on LinkedIn 4/10: \'The SaaS consolidation wave isn\'t slowing down. I\'m seeing 3 of my top accounts actively cutting vendors this quarter. If you\'re not positioned as essential infrastructure, you\'re on the chopping block. Here\'s what I\'m telling my buyers...\'"',
@@ -1886,6 +1886,7 @@ function init(){
 }
 function goSafe(n){if(n>maxReached)return;go(n);}
 function go(n){
+  if(n>maxReached)maxReached=n;
   try{localStorage.setItem('aesdr_screen_'+location.pathname.replace(/[^a-z0-9]/gi,'_'),n)}catch(e){}
   if(window.AESDR&&AESDR.persistNow) AESDR.persistNow();
   if(n===TOTAL-1&&window.parent!==window){try{window.parent.postMessage({type:"aesdr:complete"},"*")}catch(e){}}

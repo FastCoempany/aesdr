@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import AesdrBrand from "@/components/AesdrBrand";
 import SignOutButton from "@/components/SignOutButton";
 import PasswordOverlay from "@/components/PasswordOverlay";
-import { Mascot } from "@/components/brand/Mascot";
+import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
 import { createClient } from "@/utils/supabase/server";
 import styles from "./welcome.module.css";
 
@@ -54,7 +54,7 @@ export default async function WelcomePage() {
           <div className={`${styles.corner} ${styles.cornerBL}`} />
           <div className={`${styles.corner} ${styles.cornerBR}`} />
           <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
-            <Mascot pose="doctrine" size={280} priority />
+            <Mascot pose="doctrine" size={MASCOT_SIZE.welcome} priority />
           </div>
           <div className={styles.monoLabel} style={{ color: "var(--muted)" }}>
             The Unfiltered SaaS Sales Survival Guide

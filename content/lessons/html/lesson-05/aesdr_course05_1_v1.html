@@ -1736,7 +1736,7 @@ function _saveExerciseScores(){
   if(typeof siloCount!=='undefined'&&typeof SILO_CARDS!=='undefined') scores.silo={correct:siloCount,total:SILO_CARDS.length};
   if(typeof blameCount!=='undefined'&&typeof BLAME_ITEMS!=='undefined') scores.blame={correct:blameCount,total:BLAME_ITEMS.length};
   if(typeof seqDone!=='undefined'&&typeof SEQ_STEPS!=='undefined') scores.seq={correct:Object.keys(seqDone).length,total:SEQ_STEPS.length};
-  if(typeof clsCount!=='undefined'&&typeof CLS_ITEMS!=='undefined') scores.cls={correct:clsCount,total:CLS_ITEMS.length};
+  if(typeof clsCount!=='undefined'&&typeof CLS_OBS!=='undefined') scores.cls={correct:clsCount,total:CLS_OBS.length};
   if(Object.keys(scores).length>0) AESDR.setExtra('exercises',scores);
 }
 
@@ -1816,6 +1816,7 @@ function init(){
 }
 function goSafe(n){if(n>maxReached)return;go(n);}
 function go(n){
+  if(n>maxReached)maxReached=n;
   try{localStorage.setItem('aesdr_screen_'+location.pathname.replace(/[^a-z0-9]/gi,'_'),n)}catch(e){}
   if(window.AESDR&&AESDR.persistNow) AESDR.persistNow();
   if(n===TOTAL-1&&window.parent!==window){try{window.parent.postMessage({type:"aesdr:complete"},"*")}catch(e){}}

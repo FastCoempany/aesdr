@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { Mascot } from "@/components/brand/Mascot";
+import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
 import { poseForLesson } from "@/utils/brand/lesson-poses";
 import { bridgeAfter } from "@/utils/progress/bridges";
 import { LESSONS } from "@/utils/progress/types";
@@ -113,7 +113,7 @@ export default async function LessonCompletePage({ params }: PageProps) {
       }}
     >
       <div style={{ marginBottom: 32 }}>
-        <Mascot pose={poseForLesson(lessonId)} size={360} priority />
+        <Mascot pose={poseForLesson(lessonId)} size={MASCOT_SIZE.completion} priority />
       </div>
 
       <p

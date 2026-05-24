@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 
 import ProgressSaver from "@/components/ProgressSaver";
 import SaveExitButton from "@/components/SaveExitButton";
-import { Mascot } from "@/components/brand/Mascot";
+import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
 import { listLessonUnits, getToolAssetsForLesson } from "@/utils/content/catalog";
 import { LESSONS } from "@/utils/progress/types";
 import { createClient } from "@/utils/supabase/server";
@@ -208,7 +208,7 @@ export default async function LessonPage({
           gap: 8,
         }}
       >
-        <Mascot pose="doctrine" size={40} priority />
+        <Mascot pose="doctrine" size={MASCOT_SIZE.inline} priority />
         <span
           style={{
             fontFamily: "var(--display)",

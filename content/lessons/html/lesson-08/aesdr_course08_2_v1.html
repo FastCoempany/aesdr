@@ -1636,7 +1636,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         </div>
         <div class="comp-big ae-only">Check the<br>actual dashboard<br>numbers rather than<br>the vibe in the<br>team huddle —<br>that's the test.</div>
         <div class="comp-big sdr-only">Prove your<br>potential with the<br>numbers in your<br>CRM, rather than<br>promising it<br>in the next 1:1.</div>
-        <div class="comp-sub ae-only">Your best SDR on the pod isn't the loudest one in the team huddle — it's the one quietly sitting on 22 bookings this month with a 40% hold rate at the demo. Coach them deliberately. Invest your scarce coaching hours in them. Let the actual numbers pick your favorites, not the personalities. Numbers make careers in this business. Not personalities, as much as they'd like you to think it. Numbers first, THEN personality. Personality is for the prospect and customer. Internal: put numbers on the board first, earn the right for people to care about your personality second. External: show prospects &amp; customers your personality and they'll give you the numbers (eventually, with consistency).</div>
+        <div class="comp-sub ae-only">Your best SDR on the pod isn't the loudest one in the team huddle — it's the one quietly sitting on 22 bookings this month with a 40% hold rate at the demo. Coach them deliberately. Invest your scarce coaching hours in them. Let the actual numbers pick your favorites, not the personalities — internally, you earn the right to be heard by putting numbers on the board first; the personality is for the prospect, not for the team meeting.</div>
         <div class="comp-sub sdr-only">Enthusiasm in the team meeting gets you noticed on the pod for about a week. Execution across the months is what gets your manager to invest coaching hours in you. Stop talking about what you'll do in the next quarter. Start showing in the CRM what you've done in the current one.</div>
       </div>
       <div class="comp-r">
@@ -1797,7 +1797,7 @@ function _saveExerciseScores(){
   if(typeof siloCount!=='undefined'&&typeof SILO_CARDS!=='undefined') scores.silo={correct:siloCount,total:SILO_CARDS.length};
   if(typeof blameCount!=='undefined'&&typeof BLAME_ITEMS!=='undefined') scores.blame={correct:blameCount,total:BLAME_ITEMS.length};
   if(typeof seqDone!=='undefined'&&typeof SEQ_STEPS!=='undefined') scores.seq={correct:Object.keys(seqDone).length,total:SEQ_STEPS.length};
-  if(typeof clsCount!=='undefined'&&typeof CLS_ITEMS!=='undefined') scores.cls={correct:clsCount,total:CLS_ITEMS.length};
+  if(typeof clsCount!=='undefined'&&typeof CLS_OBS!=='undefined') scores.cls={correct:clsCount,total:CLS_OBS.length};
   if(Object.keys(scores).length>0) AESDR.setExtra('exercises',scores);
 }
 
@@ -1878,6 +1878,7 @@ function init(){
 }
 function goSafe(n){if(n>maxReached)return;go(n);}
 function go(n){
+  if(n>maxReached)maxReached=n;
   try{localStorage.setItem('aesdr_screen_'+location.pathname.replace(/[^a-z0-9]/gi,'_'),n)}catch(e){}
   if(window.AESDR&&AESDR.persistNow) AESDR.persistNow();
   if(n===TOTAL-1&&window.parent!==window){try{window.parent.postMessage({type:"aesdr:complete"},"*")}catch(e){}}

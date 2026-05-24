@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Mascot } from "@/components/brand/Mascot";
+import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
 
 /**
  * 404 page. Editorial palette (rebuilt off retired dark tokens) + canon
@@ -33,7 +33,7 @@ export default function NotFound() {
       >
         <Mascot
           pose="fall"
-          size={320}
+          size={MASCOT_SIZE.landing}
           style={{ width: "100%", height: "auto" }}
         />
       </div>

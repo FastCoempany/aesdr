@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import AesdrBrand from "@/components/AesdrBrand";
 import { Icon } from "@/components/brand/Icon";
-import { Mascot } from "@/components/brand/Mascot";
+import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
 import { iconForLesson } from "@/utils/brand/lesson-icons";
 import styles from "./syllabus.module.css";
 
@@ -55,7 +55,7 @@ export default function SyllabusPage() {
 
       <section className={styles.hero}>
         <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
-          <Mascot pose="doctrine" size={200} priority />
+          <Mascot pose="doctrine" size={MASCOT_SIZE.card} priority />
         </div>
         <div className={styles.heroKicker}>Shelf 12 &middot; Drawer A &middot; Est. 2026</div>
         <h1 className={styles.heroTitle}>

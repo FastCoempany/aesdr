@@ -1768,7 +1768,7 @@ function _saveExerciseScores(){
   if(typeof siloCount!=='undefined'&&typeof SILO_CARDS!=='undefined') scores.silo={correct:siloCount,total:SILO_CARDS.length};
   if(typeof blameCount!=='undefined'&&typeof BLAME_ITEMS!=='undefined') scores.blame={correct:blameCount,total:BLAME_ITEMS.length};
   if(typeof seqDone!=='undefined'&&typeof SEQ_STEPS!=='undefined') scores.seq={correct:Object.keys(seqDone).length,total:SEQ_STEPS.length};
-  if(typeof clsCount!=='undefined'&&typeof CLS_ITEMS!=='undefined') scores.cls={correct:clsCount,total:CLS_ITEMS.length};
+  if(typeof clsCount!=='undefined'&&typeof CLS_OBS!=='undefined') scores.cls={correct:clsCount,total:CLS_OBS.length};
   if(Object.keys(scores).length>0) AESDR.setExtra('exercises',scores);
 }
 
@@ -1819,7 +1819,7 @@ function init(){
   var _hwSDR = [
     { task: 'Design your shutdown ritual: write the exact physical action you will take to signal the end of your workday (pulling off headset, closing laptop, changing out of work clothes). Include the exact time you will perform it every day this week and what your partner will see that proves you are done.', placeholder: 'Example: At [exact time] I will [physical action]. My partner will see me [visible change]. This signals I am switching from call mode to...', minChars: 120 },
     { task: 'Name two specific blocks of time this week (day, start time, end time) where you will be 100% present with your partner — no phone, no Slack, no checking email. Put these on your actual calendar right now and describe what you will do during each block.', placeholder: 'Block 1: [Day], [start]-[end], activity: [what you will do together]. Block 2: [Day], [start]-[end], activity: [what you will do together]. Calendar event created: yes/no...', minChars: 100 },
-    { task: 'List every app that sends you notifications after hours (Slack, email, LinkedIn, dialer, CRM). For each one, write whether you will disable notifications entirely during personal time or set a specific Do Not Disturb schedule. Include the exact hours.', placeholder: 'Slack: DND from [time] to [time]. Gmail: notifications off from [time]. LinkedIn: [action]. Outreach/Salesloft: [action]. Other: ...', minChars: 100 },
+    { task: 'List every app that sends you notifications after hours (Slack, email, LinkedIn, dialer, CRM). For each one, write whether you will disable notifications entirely during personal time or set a specific Do Not Disturb schedule. Include the exact hours.', placeholder: 'Slack: DND from [time] to [time]. Gmail: notifications off from [time]. LinkedIn: [action]. Sequencer: [action]. Other: ...', minChars: 100 },
     { task: 'Write your after-hours boundary commitment: when your manager or AE messages after your shutdown time, what exactly will you do? Write the rule, the exceptions (if any), and the exact response you will send if someone expects an immediate reply.', placeholder: 'My rule: After [time], I do not respond to [specific channels]. Exception: [only if X]. My response template: "[exact words I will send if someone expects a reply]"...', minChars: 100 },
     { task: 'Have the boundary conversation with your partner this week. Write the exact date you will have it, what you will propose, and — after the conversation — what they actually said. What feedback did they give? What did you agree to change?', placeholder: 'Conversation date: [exact date]. I proposed: [specific rules]. Their response: [what they actually said]. We agreed to: [specific commitments from both sides]...', minChars: 100 }
   ];
@@ -1858,6 +1858,7 @@ function init(){
 }
 function goSafe(n){if(n>maxReached)return;go(n);}
 function go(n){
+  if(n>maxReached)maxReached=n;
   try{localStorage.setItem('aesdr_screen_'+location.pathname.replace(/[^a-z0-9]/gi,'_'),n)}catch(e){}
   if(window.AESDR&&AESDR.persistNow) AESDR.persistNow();
   if(n===TOTAL-1&&window.parent!==window){try{window.parent.postMessage({type:"aesdr:complete"},"*")}catch(e){}}

@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { Divider } from "@/components/brand/Divider";
-import { Mascot } from "@/components/brand/Mascot";
+import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
 import type { RedlineData } from "@/lib/artifacts/types";
 
 type Folio = "assessment" | "redlines" | "accepted";
@@ -42,7 +42,7 @@ export default function RedlineView({ data }: { data: RedlineData }) {
       <div className="page">
         {/* Diagnosis pose — the honest mirror */}
         <div style={{ display: "flex", justifyContent: "center", paddingTop: 32 }}>
-          <Mascot pose="diagnosis" size={240} priority />
+          <Mascot pose="diagnosis" size={MASCOT_SIZE.panel} priority />
         </div>
 
         {/* Title page */}
