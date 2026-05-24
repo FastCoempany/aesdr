@@ -1788,7 +1788,71 @@ function _saveExerciseScores(){
   if(typeof seqDone!=='undefined'&&typeof SEQ_STEPS!=='undefined') scores.seq={correct:Object.keys(seqDone).length,total:SEQ_STEPS.length};
   if(typeof clsCount!=='undefined'&&typeof CLS_OBS!=='undefined') scores.cls={correct:clsCount,total:CLS_OBS.length};
   if(Object.keys(scores).length>0) AESDR.setExtra('exercises',scores);
+  try { _saveExerciseState(); } catch(e) {}
 }
+
+/* ── Exercise state persistence (bespoke) ── */
+function _exStateKey(){return 'aesdr_exercise_state_' + location.pathname.replace(/[^a-z0-9]/gi,'_');}
+function _saveExerciseState(){
+  try {
+    var st = {};
+
+    if(typeof viChosen!=='undefined') st.vi = {chosen: viChosen, submitted: !!viSubmitted, passed: !!viPassed};
+    if(typeof mbDone!=='undefined') st.mb = {done: mbDone, count: (typeof mbCount!=='undefined'?mbCount:0)};
+    if(typeof ncDone!=='undefined') st.nc = {done: ncDone, count: (typeof ncCount!=='undefined'?ncCount:0)};
+    if(typeof ktStage!=='undefined') st.kt = {stage: ktStage, done: !!ktDone, picked: (typeof ktPicked!=='undefined'?ktPicked:null), showFb: !!ktShowFb};
+    if(Object.keys(st).length>0) localStorage.setItem(_exStateKey(), JSON.stringify(st));
+  } catch(e) {}
+}
+function _restoreExerciseState(){
+  try {
+    var raw = null;
+    try { raw = localStorage.getItem(_exStateKey()); } catch(e) {}
+    if(!raw) return;
+    var st = JSON.parse(raw);
+    if(!st) return;
+
+    // VI: restore + rebuild
+    if(st.vi && typeof viChosen!=='undefined'){
+      viChosen = st.vi.chosen || {};
+      viSubmitted = !!st.vi.submitted;
+      viPassed = !!st.vi.passed;
+      try { buildVI(); } catch(e) {}
+    }
+    // MB: verdictMB(i, MB_ITEMS[i].correct)
+    if(st.mb && typeof mbDone!=='undefined' && typeof MB_ITEMS!=='undefined'){
+      Object.keys(st.mb.done||{}).forEach(function(iStr){
+        var i = parseInt(iStr,10);
+        if(mbDone[i]) return;
+        var item = MB_ITEMS[i];
+        if(!item || !item.correct) return;
+        try { verdictMB(i, item.correct); } catch(e) {}
+      });
+    }
+    // NC: ai keyed; pickNCCircle with ncSel=ai, find ci where NC_CIRCLES[ci].key === NC_CONTACTS[ai].circle
+    if(st.nc && typeof ncDone!=='undefined' && typeof NC_CONTACTS!=='undefined' && typeof NC_CIRCLES!=='undefined'){
+      Object.keys(st.nc.done||{}).forEach(function(aiStr){
+        var ai = parseInt(aiStr,10);
+        if(ncDone[ai]) return;
+        var contact = NC_CONTACTS[ai];
+        if(!contact || contact.circle===undefined) return;
+        var ci = -1;
+        for(var k=0;k<NC_CIRCLES.length;k++){ if(NC_CIRCLES[k] && NC_CIRCLES[k].key===contact.circle){ ci = k; break; } }
+        if(ci<0) return;
+        try { ncSel = ai; pickNCCircle(ci); } catch(e) {}
+      });
+    }
+    // KT: restore + re-render
+    if(st.kt && typeof ktStage!=='undefined'){
+      ktStage = st.kt.stage|0;
+      ktDone = !!st.kt.done;
+      ktPicked = (st.kt.picked===null||st.kt.picked===undefined)?null:(st.kt.picked|0);
+      ktShowFb = !!st.kt.showFb;
+      try { renderKT(); } catch(e) {}
+    }
+  } catch(e) { console.error('_restoreExerciseState:', e); }
+}
+try { window.addEventListener('beforeunload', function(){ try { _saveExerciseState(); } catch(e) {} }); } catch(e) {}
 
 /* ════════════════════════════════════
    INIT
@@ -1867,6 +1931,7 @@ function init(){
   try { renderKT(); } catch(e) { console.error('renderKT:', e); }
   try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
   if(Object.keys(qAns).length>0){var _ws=qSubmitted;qSubmitted=false;for(var _qi in qAns){try{document.getElementById('qo'+_qi+'_'+qAns[_qi]).classList.add('chosen');}catch(e){}}if(_ws)submitQuiz();}
+  try { _restoreExerciseState(); } catch(e) { console.error('_restoreExerciseState:', e); }
 
   // Restore saved screen position
 

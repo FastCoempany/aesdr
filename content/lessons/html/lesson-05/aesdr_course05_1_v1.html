@@ -1738,7 +1738,77 @@ function _saveExerciseScores(){
   if(typeof seqDone!=='undefined'&&typeof SEQ_STEPS!=='undefined') scores.seq={correct:Object.keys(seqDone).length,total:SEQ_STEPS.length};
   if(typeof clsCount!=='undefined'&&typeof CLS_OBS!=='undefined') scores.cls={correct:clsCount,total:CLS_OBS.length};
   if(Object.keys(scores).length>0) AESDR.setExtra('exercises',scores);
+  try { _saveExerciseState(); } catch(e) {}
 }
+
+/* ── Exercise state persistence (bespoke) ── */
+function _exStateKey(){return 'aesdr_exercise_state_' + location.pathname.replace(/[^a-z0-9]/gi,'_');}
+function _saveExerciseState(){
+  try {
+    var st = {};
+
+    if(typeof recipeOpen!=='undefined') st.recipe = {open: Array.from(recipeOpen||[]), done: (typeof recipeDone!=='undefined'?Array.from(recipeDone||[]):[])};
+    if(typeof slDone!=='undefined') st.sl = {done: slDone, count: (typeof slCount!=='undefined'?slCount:0)};
+    if(typeof rampDone!=='undefined') st.ramp = {done: rampDone};
+    if(typeof visActive!=='undefined') st.vis = {active: Array.from(visActive||[]), score: (typeof visScore!=='undefined'?visScore:0)};
+    if(Object.keys(st).length>0) localStorage.setItem(_exStateKey(), JSON.stringify(st));
+  } catch(e) {}
+}
+function _restoreExerciseState(){
+  try {
+    var raw = null;
+    try { raw = localStorage.getItem(_exStateKey()); } catch(e) {}
+    if(!raw) return;
+    var st = JSON.parse(raw);
+    if(!st) return;
+
+    // Recipe: completeRecipeStep for each done (in order), then toggleRecipe for each in open but not done
+    if(st.recipe && typeof recipeDone!=='undefined' && Array.isArray(st.recipe.done)){
+      var doneSorted = st.recipe.done.slice().sort(function(a,b){return a-b;});
+      doneSorted.forEach(function(i){
+        if(!recipeDone.has(i)){
+          try { completeRecipeStep({stopPropagation: function(){}}, i); } catch(e) {}
+        }
+      });
+    }
+    if(st.recipe && typeof recipeOpen!=='undefined' && Array.isArray(st.recipe.open)){
+      st.recipe.open.forEach(function(i){
+        if(!recipeOpen.has(i)){
+          try { toggleRecipe(i); recipeOpen.add(i); } catch(e) {}
+        }
+      });
+    }
+    // SL: scoreSL(i, SL_ITEMS[i].correct)
+    if(st.sl && typeof slDone!=='undefined' && typeof SL_ITEMS!=='undefined'){
+      Object.keys(st.sl.done||{}).forEach(function(iStr){
+        var i = parseInt(iStr,10);
+        if(slDone[i]) return;
+        var item = SL_ITEMS[i];
+        if(!item || !item.correct) return;
+        try { scoreSL(i, item.correct); } catch(e) {}
+      });
+    }
+    // Ramp: ai keyed; pickRampWeek with rampSel=ai, week index = RAMP_ACTIVITIES[ai].week
+    if(st.ramp && typeof rampDone!=='undefined' && typeof RAMP_ACTIVITIES!=='undefined'){
+      Object.keys(st.ramp.done||{}).forEach(function(aiStr){
+        var ai = parseInt(aiStr,10);
+        if(rampDone[ai]) return;
+        var act = RAMP_ACTIVITIES[ai];
+        if(!act || act.week===undefined) return;
+        try { rampSel = ai; pickRampWeek(act.week); } catch(e) {}
+      });
+    }
+    // Vis: restore visActive set + visScore, then buildVis
+    if(st.vis && typeof visActive!=='undefined' && Array.isArray(st.vis.active) && typeof VIS_ITEMS!=='undefined'){
+      visActive.clear();
+      st.vis.active.forEach(function(i){ visActive.add(i); });
+      visScore = 0;
+      visActive.forEach(function(idx){ if(VIS_ITEMS[idx]) visScore += VIS_ITEMS[idx].pts; });
+      try { buildVis(); } catch(e) {}
+    }
+  } catch(e) { console.error('_restoreExerciseState:', e); }
+}
+try { window.addEventListener('beforeunload', function(){ try { _saveExerciseState(); } catch(e) {} }); } catch(e) {}
 
 /* ════════════════════════════════════
    INIT
@@ -1797,6 +1867,7 @@ function init(){
   try { buildVis(); } catch(e) { console.error('buildVis:', e); }
   try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
   if(Object.keys(qAns).length>0){var _ws=qSubmitted;qSubmitted=false;for(var _qi in qAns){try{document.getElementById('qo'+_qi+'_'+qAns[_qi]).classList.add('chosen');}catch(e){}}if(_ws)submitQuiz();}
+  try { _restoreExerciseState(); } catch(e) { console.error('_restoreExerciseState:', e); }
 
   // Restore saved screen position
 

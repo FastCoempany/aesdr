@@ -1821,7 +1821,104 @@ function _saveExerciseScores(){
   if(typeof seqDone!=='undefined'&&typeof SEQ_STEPS!=='undefined') scores.seq={correct:Object.keys(seqDone).length,total:SEQ_STEPS.length};
   if(typeof clsCount!=='undefined'&&typeof CLS_OBS!=='undefined') scores.cls={correct:clsCount,total:CLS_OBS.length};
   if(Object.keys(scores).length>0) AESDR.setExtra('exercises',scores);
+  try { _saveExerciseState(); } catch(e) {}
 }
+
+/* ── Exercise state persistence (bespoke) ── */
+function _exStateKey(){return 'aesdr_exercise_state_' + location.pathname.replace(/[^a-z0-9]/gi,'_');}
+function _saveExerciseState(){
+  try {
+    var st = {};
+
+    if(typeof rrDone!=='undefined') st.rr = {done: Array.from(rrDone||[]), open: (typeof rrOpen!=='undefined'?Array.from(rrOpen||[]):[])};
+    if(typeof bmPassing!=='undefined'){
+      var bmVals = {};
+      try { if(typeof BM_METRICS!=='undefined'){ BM_METRICS.forEach(function(m,i){ var el=document.getElementById('bms'+i); if(el) bmVals[i] = parseInt(el.value); }); } } catch(e) {}
+      st.bm = {passing: bmPassing, vals: bmVals};
+    }
+    if(typeof tsMatched!=='undefined') st.ts = {matched: Array.from(tsMatched||[]), count: (typeof tsCount!=='undefined'?tsCount:0)};
+    if(typeof ipDone!=='undefined') st.ip = {done: ipDone};
+    if(typeof saDone!=='undefined') st.sa = {done: saDone, count: (typeof saCount!=='undefined'?saCount:0)};
+    if(Object.keys(st).length>0) localStorage.setItem(_exStateKey(), JSON.stringify(st));
+  } catch(e) {}
+}
+function _restoreExerciseState(){
+  try {
+    var raw = null;
+    try { raw = localStorage.getItem(_exStateKey()); } catch(e) {}
+    if(!raw) return;
+    var st = JSON.parse(raw);
+    if(!st) return;
+
+    // RR: acceptRR for done items (it auto-stops propagation); toggleRR for open
+    if(st.rr && typeof rrDone!=='undefined' && Array.isArray(st.rr.done)){
+      st.rr.done.forEach(function(i){
+        if(!rrDone.has(i)){
+          try { acceptRR({stopPropagation: function(){}}, i); } catch(e) {}
+        }
+      });
+    }
+    if(st.rr && typeof rrOpen!=='undefined' && Array.isArray(st.rr.open)){
+      st.rr.open.forEach(function(i){
+        if(!rrOpen.has(i)){
+          try { toggleRR(i); } catch(e) {}
+        }
+      });
+    }
+    // BM: restore slider values + trigger updateBM (which sets bmPassing)
+    if(st.bm && typeof bmPassing!=='undefined' && typeof BM_METRICS!=='undefined'){
+      var vals = st.bm.vals || {};
+      Object.keys(vals).forEach(function(iStr){
+        var i = parseInt(iStr,10);
+        var el = document.getElementById('bms'+i);
+        if(el){
+          el.value = vals[iStr];
+          try { updateBM(i); } catch(e) {}
+        }
+      });
+    }
+    // TS: directly mark matched buttons
+    if(st.ts && typeof tsMatched!=='undefined' && Array.isArray(st.ts.matched) && typeof TS_L_ORDER!=='undefined' && typeof TS_R_ORDER!=='undefined'){
+      st.ts.matched.forEach(function(pi){
+        if(tsMatched.has(pi)) return;
+        var lDi = TS_L_ORDER.indexOf(pi);
+        var rDi = TS_R_ORDER.indexOf(pi);
+        if(lDi<0||rDi<0) return;
+        tsMatched.add(pi);
+        if(typeof tsCount!=='undefined') tsCount++;
+        var lEl = document.getElementById('tsl'+lDi);
+        var rEl = document.getElementById('tsr'+rDi);
+        if(lEl){ lEl.classList.add('matched'); lEl.disabled=true; }
+        if(rEl){ rEl.classList.add('matched'); rEl.disabled=true; }
+      });
+      var tc = document.getElementById('tsCount'); if(tc && typeof tsCount!=='undefined') tc.textContent = tsCount;
+    }
+    // IP: ai keyed; pickIPPillar with ipSel=ai, find pi where IP_PILLARS[pi].key === IP_ACTIONS[ai].pillar
+    if(st.ip && typeof ipDone!=='undefined' && typeof IP_ACTIONS!=='undefined' && typeof IP_PILLARS!=='undefined'){
+      Object.keys(st.ip.done||{}).forEach(function(aiStr){
+        var ai = parseInt(aiStr,10);
+        if(ipDone[ai]) return;
+        var act = IP_ACTIONS[ai];
+        if(!act || act.pillar===undefined) return;
+        var pi = -1;
+        for(var k=0;k<IP_PILLARS.length;k++){ if(IP_PILLARS[k] && IP_PILLARS[k].key===act.pillar){ pi = k; break; } }
+        if(pi<0) return;
+        try { ipSel = ai; pickIPPillar(pi); } catch(e) {}
+      });
+    }
+    // SA: pickSA(i, SA_ITEMS[i].ans)
+    if(st.sa && typeof saDone!=='undefined' && typeof SA_ITEMS!=='undefined'){
+      Object.keys(st.sa.done||{}).forEach(function(iStr){
+        var i = parseInt(iStr,10);
+        if(saDone[i]) return;
+        var item = SA_ITEMS[i];
+        if(!item || item.ans===undefined) return;
+        try { pickSA(i, item.ans); } catch(e) {}
+      });
+    }
+  } catch(e) { console.error('_restoreExerciseState:', e); }
+}
+try { window.addEventListener('beforeunload', function(){ try { _saveExerciseState(); } catch(e) {} }); } catch(e) {}
 
 /* ════════════════════════════════════
    INIT
@@ -1881,6 +1978,7 @@ function init(){
   try { buildSA(); } catch(e) { console.error('buildSA:', e); }
   try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
   if(Object.keys(qAns).length>0){var _ws=qSubmitted;qSubmitted=false;for(var _qi in qAns){try{document.getElementById('qo'+_qi+'_'+qAns[_qi]).classList.add('chosen');}catch(e){}}if(_ws)submitQuiz();}
+  try { _restoreExerciseState(); } catch(e) { console.error('_restoreExerciseState:', e); }
 
   // Restore saved screen position
 

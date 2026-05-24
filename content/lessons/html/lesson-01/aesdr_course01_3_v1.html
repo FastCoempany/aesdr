@@ -1760,7 +1760,70 @@ function _saveExerciseScores(){
   if(typeof seqDone!=='undefined'&&typeof SEQ_STEPS!=='undefined') scores.seq={correct:Object.keys(seqDone).length,total:SEQ_STEPS.length};
   if(typeof clsCount!=='undefined'&&typeof CLS_OBS!=='undefined') scores.cls={correct:clsCount,total:CLS_OBS.length};
   if(Object.keys(scores).length>0) AESDR.setExtra('exercises',scores);
+  try { _saveExerciseState(); } catch(e) {}
 }
+
+/* ── Exercise state persistence (bespoke) ── */
+function _exStateKey(){return 'aesdr_exercise_state_' + location.pathname.replace(/[^a-z0-9]/gi,'_');}
+function _saveExerciseState(){
+  try {
+    var st = {};
+
+    if(typeof fmState!=='undefined') st.fm = {state: fmState, count: (typeof fmCount!=='undefined'?fmCount:0)};
+    if(typeof planDone!=='undefined') st.plan = {done: planDone};
+    if(typeof txState!=='undefined') st.tx = {state: txState, count: (typeof txCount!=='undefined'?txCount:0)};
+    if(typeof emailChosen!=='undefined') st.email = {chosen: emailChosen, submitted: !!emailSubmitted, passed: !!emailPassed};
+    if(Object.keys(st).length>0) localStorage.setItem(_exStateKey(), JSON.stringify(st));
+  } catch(e) {}
+}
+function _restoreExerciseState(){
+  try {
+    var raw = null;
+    try { raw = localStorage.getItem(_exStateKey()); } catch(e) {}
+    if(!raw) return;
+    var st = JSON.parse(raw);
+    if(!st) return;
+
+    // FM: tagFM(i, ans) for each correct
+    if(st.fm && typeof fmState!=='undefined' && typeof FM_SCENARIOS!=='undefined'){
+      Object.keys(st.fm.state||{}).forEach(function(iStr){
+        var i = parseInt(iStr,10);
+        if(fmState[i]==='correct') return;
+        if(st.fm.state[i]!=='correct') return;
+        var item = FM_SCENARIOS[i];
+        if(!item || !item.ans) return;
+        try { tagFM(i, item.ans); } catch(e) {}
+      });
+    }
+    // Plan: replay slot placements; correct condition is planSel===idx
+    if(st.plan && typeof planDone!=='undefined'){
+      Object.keys(st.plan.done||{}).forEach(function(idxStr){
+        var idx = parseInt(idxStr,10);
+        if(planDone[idx]) return;
+        try { planSel = idx; pickPlanSlot(idx); } catch(e) {}
+      });
+    }
+    // TX: tagTx(i, l.ans) for each correct
+    if(st.tx && typeof txState!=='undefined' && typeof TX_LINES!=='undefined'){
+      Object.keys(st.tx.state||{}).forEach(function(iStr){
+        var i = parseInt(iStr,10);
+        if(txState[i]==='correct') return;
+        if(st.tx.state[i]!=='correct') return;
+        var l = TX_LINES[i];
+        if(!l || !l.ans) return;
+        try { tagTx(i, l.ans); } catch(e) {}
+      });
+    }
+    // Email: restore + rebuild
+    if(st.email && typeof emailChosen!=='undefined'){
+      emailChosen = st.email.chosen || {};
+      emailSubmitted = !!st.email.submitted;
+      emailPassed = !!st.email.passed;
+      try { buildEmail(); } catch(e) {}
+    }
+  } catch(e) { console.error('_restoreExerciseState:', e); }
+}
+try { window.addEventListener('beforeunload', function(){ try { _saveExerciseState(); } catch(e) {} }); } catch(e) {}
 
 /* ══════════════════════════════════════════
    INIT
@@ -1824,6 +1887,7 @@ function init(){
   try { buildEmail(); } catch(e) { console.error('buildEmail:', e); }
   try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
   if(Object.keys(qAns).length>0){var _ws=qSubmitted;qSubmitted=false;for(var _qi in qAns){try{document.getElementById('qo'+_qi+'_'+qAns[_qi]).classList.add('chosen');}catch(e){}}if(_ws)submitQuiz();}
+  try { _restoreExerciseState(); } catch(e) { console.error('_restoreExerciseState:', e); }
 
   // Restore saved screen position
 

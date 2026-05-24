@@ -1798,7 +1798,70 @@ function _saveExerciseScores(){
   if(typeof seqDone!=='undefined'&&typeof SEQ_STEPS!=='undefined') scores.seq={correct:Object.keys(seqDone).length,total:SEQ_STEPS.length};
   if(typeof clsCount!=='undefined'&&typeof CLS_OBS!=='undefined') scores.cls={correct:clsCount,total:CLS_OBS.length};
   if(Object.keys(scores).length>0) AESDR.setExtra('exercises',scores);
+  try { _saveExerciseState(); } catch(e) {}
 }
+
+/* ── Exercise state persistence (bespoke) ── */
+function _exStateKey(){return 'aesdr_exercise_state_' + location.pathname.replace(/[^a-z0-9]/gi,'_');}
+function _saveExerciseState(){
+  try {
+    var st = {};
+
+    if(typeof archFlipped!=='undefined') st.arch = {flipped: Array.from(archFlipped||[])};
+    if(typeof impactMatched!=='undefined') st.impact = {matched: Array.from(impactMatched||[]), count: (typeof impactCount!=='undefined'?impactCount:0)};
+    if(typeof muStage!=='undefined') st.mu = {stage: muStage, done: !!muDone, picked: (typeof muPicked!=='undefined'?muPicked:null), showFb: !!muShowFb};
+    if(typeof bbChosen!=='undefined') st.bb = {chosen: bbChosen, submitted: !!bbSubmitted, passed: !!bbPassed};
+    if(Object.keys(st).length>0) localStorage.setItem(_exStateKey(), JSON.stringify(st));
+  } catch(e) {}
+}
+function _restoreExerciseState(){
+  try {
+    var raw = null;
+    try { raw = localStorage.getItem(_exStateKey()); } catch(e) {}
+    if(!raw) return;
+    var st = JSON.parse(raw);
+    if(!st) return;
+
+    // arch flips: flipArch toggles class+adds to set
+    if(st.arch && typeof archFlipped!=='undefined' && Array.isArray(st.arch.flipped)){
+      st.arch.flipped.forEach(function(i){
+        if(!archFlipped.has(i)){ try { flipArch(i); } catch(e) {} }
+      });
+    }
+    // impact: directly mark matched buttons (avoid re-running pickImpact state machine)
+    if(st.impact && typeof impactMatched!=='undefined' && Array.isArray(st.impact.matched) && typeof IMPACT_L_ORDER!=='undefined' && typeof IMPACT_R_ORDER!=='undefined'){
+      st.impact.matched.forEach(function(pi){
+        if(impactMatched.has(pi)) return;
+        var lDi = IMPACT_L_ORDER.indexOf(pi);
+        var rDi = IMPACT_R_ORDER.indexOf(pi);
+        if(lDi<0||rDi<0) return;
+        impactMatched.add(pi);
+        if(typeof impactCount!=='undefined') impactCount++;
+        var lEl = document.getElementById('il'+lDi);
+        var rEl = document.getElementById('ir'+rDi);
+        if(lEl){ lEl.classList.add('matched'); lEl.disabled=true; }
+        if(rEl){ rEl.classList.add('matched'); rEl.disabled=true; }
+      });
+      var ic = document.getElementById('impactCount'); if(ic && typeof impactCount!=='undefined') ic.textContent = impactCount;
+    }
+    // mu: restore + re-render
+    if(st.mu && typeof muStage!=='undefined'){
+      muStage = st.mu.stage|0;
+      muDone = !!st.mu.done;
+      muPicked = (st.mu.picked===null||st.mu.picked===undefined)?null:(st.mu.picked|0);
+      muShowFb = !!st.mu.showFb;
+      try { renderMU(); } catch(e) {}
+    }
+    // bb: restore + rebuild
+    if(st.bb && typeof bbChosen!=='undefined'){
+      bbChosen = st.bb.chosen || {};
+      bbSubmitted = !!st.bb.submitted;
+      bbPassed = !!st.bb.passed;
+      try { buildBB(); } catch(e) {}
+    }
+  } catch(e) { console.error('_restoreExerciseState:', e); }
+}
+try { window.addEventListener('beforeunload', function(){ try { _saveExerciseState(); } catch(e) {} }); } catch(e) {}
 
 /* ════════════════════════════════════
    INIT
@@ -1862,6 +1925,7 @@ function init(){
   try { buildBB(); } catch(e) { console.error('buildBB:', e); }
   try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
   if(Object.keys(qAns).length>0){var _ws=qSubmitted;qSubmitted=false;for(var _qi in qAns){try{document.getElementById('qo'+_qi+'_'+qAns[_qi]).classList.add('chosen');}catch(e){}}if(_ws)submitQuiz();}
+  try { _restoreExerciseState(); } catch(e) { console.error('_restoreExerciseState:', e); }
 
   // Restore saved screen position
 

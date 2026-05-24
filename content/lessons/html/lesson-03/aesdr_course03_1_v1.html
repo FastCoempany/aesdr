@@ -1883,7 +1883,81 @@ function _saveExerciseScores(){
   if(typeof seqDone!=='undefined'&&typeof SEQ_STEPS!=='undefined') scores.seq={correct:Object.keys(seqDone).length,total:SEQ_STEPS.length};
   if(typeof clsCount!=='undefined'&&typeof CLS_OBS!=='undefined') scores.cls={correct:clsCount,total:CLS_OBS.length};
   if(Object.keys(scores).length>0) AESDR.setExtra('exercises',scores);
+  try { _saveExerciseState(); } catch(e) {}
 }
+
+/* ── Exercise state persistence (bespoke) ── */
+function _exStateKey(){return 'aesdr_exercise_state_' + location.pathname.replace(/[^a-z0-9]/gi,'_');}
+function _saveExerciseState(){
+  try {
+    var st = {};
+
+    if(typeof rankOpen!=='undefined') st.rank = {open: Array.from(rankOpen||[]), marked: (typeof rankMarked!=='undefined'?Array.from(rankMarked||[]):[])};
+    if(typeof bantStage!=='undefined') st.bant = {stage: bantStage, done: !!bantDone, picked: (typeof bantPicked!=='undefined'?bantPicked:null), showFb: !!bantShowFb};
+    if(typeof fdState!=='undefined') st.fd = {state: fdState, count: (typeof fdCount!=='undefined'?fdCount:0)};
+    if(typeof saState!=='undefined') st.sa = {state: saState, count: (typeof saCount!=='undefined'?saCount:0)};
+    if(typeof hbDone!=='undefined') st.hb = {done: Array.from(hbDone||[])};
+    if(Object.keys(st).length>0) localStorage.setItem(_exStateKey(), JSON.stringify(st));
+  } catch(e) {}
+}
+function _restoreExerciseState(){
+  try {
+    var raw = null;
+    try { raw = localStorage.getItem(_exStateKey()); } catch(e) {}
+    if(!raw) return;
+    var st = JSON.parse(raw);
+    if(!st) return;
+
+    // rank: re-toggle open items (toggleRank is a toggle so call once per saved item)
+    if(st.rank && typeof rankOpen!=='undefined' && Array.isArray(st.rank.open)){
+      st.rank.open.forEach(function(i){
+        if(!rankOpen.has(i)){
+          try { toggleRank(i); } catch(e) {}
+        }
+      });
+    }
+    // bant: restore + re-render
+    if(st.bant && typeof bantStage!=='undefined'){
+      bantStage = st.bant.stage|0;
+      bantDone = !!st.bant.done;
+      bantPicked = (st.bant.picked===null||st.bant.picked===undefined)?null:(st.bant.picked|0);
+      bantShowFb = !!st.bant.showFb;
+      try { renderBant(); } catch(e) {}
+    }
+    // fd: pickFD(i, FD_ITEMS[i].ans) for each correct
+    if(st.fd && typeof fdState!=='undefined' && typeof FD_ITEMS!=='undefined'){
+      Object.keys(st.fd.state||{}).forEach(function(iStr){
+        var i = parseInt(iStr,10);
+        if(fdState[i]==='correct') return;
+        if(st.fd.state[i]!=='correct') return;
+        var item = FD_ITEMS[i];
+        if(!item || item.ans===undefined) return;
+        try { pickFD(i, item.ans); } catch(e) {}
+      });
+    }
+    // sa: pickSA(i, SA_ITEMS[i].ans)
+    if(st.sa && typeof saState!=='undefined' && typeof SA_ITEMS!=='undefined'){
+      Object.keys(st.sa.state||{}).forEach(function(iStr){
+        var i = parseInt(iStr,10);
+        if(saState[i]==='correct') return;
+        if(st.sa.state[i]!=='correct') return;
+        var item = SA_ITEMS[i];
+        if(!item || item.ans===undefined) return;
+        try { pickSA(i, item.ans); } catch(e) {}
+      });
+    }
+    // hb: toggleHB(key, di) where key="di_bi"
+    if(st.hb && typeof hbDone!=='undefined' && Array.isArray(st.hb.done)){
+      st.hb.done.forEach(function(key){
+        if(!hbDone.has(key)){
+          var di = parseInt(String(key).split('_')[0],10);
+          try { toggleHB(key, di); } catch(e) {}
+        }
+      });
+    }
+  } catch(e) { console.error('_restoreExerciseState:', e); }
+}
+try { window.addEventListener('beforeunload', function(){ try { _saveExerciseState(); } catch(e) {} }); } catch(e) {}
 
 /* ══════════════════════════════════════════
    INIT
@@ -1944,6 +2018,7 @@ function init(){
   try { buildHB(); } catch(e) { console.error('buildHB:', e); }
   try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
   if(Object.keys(qAns).length>0){var _ws=qSubmitted;qSubmitted=false;for(var _qi in qAns){try{document.getElementById('qo'+_qi+'_'+qAns[_qi]).classList.add('chosen');}catch(e){}}if(_ws)submitQuiz();}
+  try { _restoreExerciseState(); } catch(e) { console.error('_restoreExerciseState:', e); }
 
   // Restore saved screen position
 
