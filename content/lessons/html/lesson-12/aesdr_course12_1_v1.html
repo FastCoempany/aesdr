@@ -1071,7 +1071,7 @@ window.AESDR = window.AESDR || {};
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@400;500;600;700&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
-<style>/*a11y-reset*/.cls-bucket, .sb-item, .silo-col{all:unset;box-sizing:border-box;display:block;width:100%;text-align:left}
+<style>/*a11y-reset*/.cls-bucket, .sb-item, .silo-col, .silo-card, .seq-drop, .cls-obs{all:unset;box-sizing:border-box;display:block;width:100%;text-align:left}
 :root{
   --white:#FFFFFF;--black:#000000;--mid:#636060;--lite:#F2EEE9;--lite2:#E5E1DC;
   
@@ -2002,9 +2002,9 @@ function handleNext(){
 ════════════════════════════════════ */
 function buildSilo(){
   document.getElementById('siloPool').innerHTML=SILO_ORDER.map((ci,di)=>`
-    <div class="silo-card" id="sc${di}" onclick="pickSilo(${di})">
+    <button type="button" class="silo-card" id="sc${di}" onclick="pickSilo(${di})">
       <span class="silo-card-txt">${SILO_CARDS[ci].txt}</span>
-    </div>
+    </button>
   `).join('');
   ['pro','partner','shared'].forEach(z=>{document.getElementById('silo-dropped-'+z).innerHTML='';});
 }
@@ -2090,9 +2090,9 @@ function buildSeq(){
   document.getElementById('seqSlots').innerHTML=SEQ_STEPS.map((s,i)=>`
     <div class="seq-slot" id="ss${i}">
       <div class="seq-pos">${i+1}</div>
-      <div class="seq-drop" id="sd${i}" onclick="pickSeqSlot(${i})">
+      <button type="button" class="seq-drop" id="sd${i}" onclick="pickSeqSlot(${i})">
         <div id="sd-content${i}"><div class="seq-drop-txt" style="color:var(--mid);font-style:italic;font-family:var(--serif);font-weight:400;font-size:13px;letter-spacing:0;text-transform:none">— select step —</div></div>
-      </div>
+      </button>
     </div>
   `).join('');
   document.getElementById('seqTiles').innerHTML=SEQ_TILE_ORDER.map(si=>`
@@ -2145,10 +2145,10 @@ function resetSeq(){
 ════════════════════════════════════ */
 function buildCls(){
   document.getElementById('clsStream').innerHTML=CLS_ORDER.map((ci,di)=>`
-    <div class="cls-obs" id="co${di}" onclick="pickCls(${di})">
+    <button type="button" class="cls-obs" id="co${di}" onclick="pickCls(${di})">
       <div class="cls-obs-icon">${CLS_OBS[ci].ico}</div>
       <div class="cls-obs-txt">${CLS_OBS[ci].txt}</div>
-    </div>
+    </button>
   `).join('');
   ['saas','partner_act','joint'].forEach(z=>{
     document.getElementById('cls-'+z+'-items').innerHTML='';

@@ -1071,7 +1071,7 @@ window.AESDR = window.AESDR || {};
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@400;500;600;700&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
-<style>/*a11y-reset*/.sb-item{all:unset;box-sizing:border-box;display:block;width:100%;text-align:left}
+<style>/*a11y-reset*/.sb-item, .cv2-col, .cv2-tile, .db-block, .ob-slot{all:unset;box-sizing:border-box;display:block;width:100%;text-align:left}
 :root{
   --white:#FFFFFF;--black:#000000;--mid:#636060;--lite:#F5F0FF;--lite2:#E8DEFF;
   --plum:#3D0054;--plum-lt:rgba(61,0,84,0.07);--plum-md:rgba(61,0,84,0.15);
@@ -1977,17 +1977,17 @@ function updatePOMeters(){
 function buildCV2(){
   // Two columns
   document.getElementById('cv2Cols').innerHTML=`
-    <div class="cv2-col" id="cv2c_sdr" onclick="dropCV2('sdr')">
+    <button type="button" class="cv2-col" id="cv2c_sdr" onclick="dropCV2('sdr')">
       <div class="cv2-col-hdr"><div class="cv2-col-name sdr">SDR-Sourced</div></div>
       <div class="cv2-col-items" id="cv2i_sdr"></div>
-    </div>
-    <div class="cv2-col" id="cv2c_self" onclick="dropCV2('self')">
+    </button>
+    <button type="button" class="cv2-col" id="cv2c_self" onclick="dropCV2('self')">
       <div class="cv2-col-hdr"><div class="cv2-col-name self">Self-Sourced</div></div>
       <div class="cv2-col-items" id="cv2i_self"></div>
-    </div>
+    </button>
   `;
   document.getElementById('cv2Pool').innerHTML=CV2_TILE_ORDER.map(ai=>`
-    <div class="cv2-tile" id="cv2t${ai}" onclick="pickCV2(${ai})">${CV2_ITEMS[ai].txt}</div>
+    <button type="button" class="cv2-tile" id="cv2t${ai}" onclick="pickCV2(${ai})">${CV2_ITEMS[ai].txt}</button>
   `).join('');
 }
 function pickCV2(ai){
@@ -2033,10 +2033,10 @@ function resetCV2(){
 function buildOB(){
   document.getElementById('obPipeline').innerHTML=OB_STAGES.map((s,i)=>`
     <div class="ob-stage">
-      <div class="ob-slot" id="obs${i}" onclick="pickOBSlot(${i})">
+      <button type="button" class="ob-slot" id="obs${i}" onclick="pickOBSlot(${i})">
         <div class="ob-stage-num">${s.stage}</div>
         <div class="ob-slot-placeholder">— select —</div>
-      </div>
+      </button>
     </div>
     ${i<OB_STAGES.length-1?'<div style="flex-shrink:0;width:18px;display:flex;align-items:center;font-size:16px;color:var(--mid)">→</div>':''}
   `).join('');
@@ -2089,13 +2089,13 @@ function resetOB(){
 ════════════════════════════════════ */
 function buildDB(){
   document.getElementById('dbBlocks').innerHTML=DB_BLOCKS.map((b,i)=>`
-    <div class="db-block" id="dbb${i}" onclick="pickDBSlot(${i})">
+    <button type="button" class="db-block" id="dbb${i}" onclick="pickDBSlot(${i})">
       <div class="db-blk-time">${b.time}</div>
       <div class="db-blk-content" id="dbbc${i}">
         <div class="db-blk-placeholder">— select activity →</div>
       </div>
       <div class="db-blk-check">✓</div>
-    </div>
+    </button>
   `).join('');
   document.getElementById('dbTiles').innerHTML=DB_TILE_ORDER.map(si=>`
     <button class="db-tile" id="dbt${si}" onclick="pickDBTile(${si})">${DB_BLOCKS[si].act}</button>

@@ -1070,7 +1070,7 @@ window.AESDR = window.AESDR || {};
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@400;500;600;700&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
-<style>/*a11y-reset*/.sb-item{all:unset;box-sizing:border-box;display:block;width:100%;text-align:left}
+<style>/*a11y-reset*/.sb-item, .cl-item, .sched-slot, .tl-hdr{all:unset;box-sizing:border-box;display:block;width:100%;text-align:left}
 :root {
   --white:   #FFFFFF;
   --black:   #000000;
@@ -1997,13 +1997,13 @@ function handleNext(){
 ══════════════════════════════════════════ */
 function buildChecklist(){
   document.getElementById('clArea').innerHTML = CHECKLIST.map((c,i)=>`
-    <div class="cl-item" id="cl${i}" onclick="toggleCheck(${i})">
+    <button type="button" class="cl-item" id="cl${i}" onclick="toggleCheck(${i})">
       <div class="cl-box"><span class="cl-check">✓</span></div>
       <div>
         <div class="cl-label">${c.label}</div>
         <div class="cl-desc">${c.desc}</div>
       </div>
-    </div>
+    </button>
   `).join('');
 }
 function toggleCheck(i){
@@ -2058,13 +2058,13 @@ function buildTimeline(){
     return `<div class="tl-item${dayDone?' tl-complete':''}" id="tl${di}">
       <div class="tl-dot-col"><div class="tl-dot"></div></div>
       <div class="tl-card">
-        <div class="tl-hdr" onclick="toggleDay(${di})">
+        <button type="button" class="tl-hdr" onclick="toggleDay(${di})">
           <div>
             <div class="tl-dtag">${d.day}${dayDone?' \u2713':''}</div>
             <div class="tl-dname">${d.title}</div>
           </div>
           <div class="tl-arr">\u203A</div>
-        </div>
+        </button>
         <div class="tl-body">
           <div class="tl-inner">
             <p class="tl-text">${d.text}</p>
@@ -2145,10 +2145,10 @@ function editTlTask(di,ti){
 ══════════════════════════════════════════ */
 function buildSched(){
   document.getElementById('schedSlots').innerHTML = SCHED.map((s,i)=>`
-    <div class="sched-slot" id="slot${i}" onclick="pickSlot(${i})">
+    <button type="button" class="sched-slot" id="slot${i}" onclick="pickSlot(${i})">
       <span class="slot-time">${s.time}</span>
       <span class="slot-act" id="slotAct${i}"></span>
-    </div>
+    </button>
   `).join('');
   document.getElementById('schedTiles').innerHTML = TILE_ORDER.map(si=>`
     <button class="sched-tile" id="tile${si}" onclick="pickTile(${si})">${SCHED[si].act}</button>
@@ -2282,19 +2282,47 @@ function pickCC(oi){
   renderCC();
   if(oi!==CC[ccStage].ans) showPow();
 }
+var _powPrevFocus=null;
+var _powKeyHandler=null;
 function showPow(){
+  _powPrevFocus=document.activeElement;
   var ov=document.createElement('div');
   ov.className='cc-pow-overlay'; ov.id='ccPowOverlay';
+  ov.setAttribute('role','dialog');
+  ov.setAttribute('aria-modal','true');
+  ov.setAttribute('aria-labelledby','ccPowTitle');
+  ov.setAttribute('tabindex','-1');
   ov.innerHTML='<div class="cc-pow-box">'+
-    '<div class="cc-pow-word">POW!</div>'+
+    '<div class="cc-pow-word" id="ccPowTitle">POW!</div>'+
     '<div class="cc-pow-msg">Nobody cares who you are when you\u2019re cold calling them!</div>'+
     '<button class="cc-pow-btn" onclick="closePow()">Try Again</button>'+
   '</div>';
   document.body.appendChild(ov);
+  ov.focus();
+  _powKeyHandler=function(e){
+    if(e.key==='Escape'){ e.preventDefault(); closePow(); return; }
+    if(e.key==='Tab'){
+      var focusables=ov.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if(focusables.length===0){ e.preventDefault(); ov.focus(); return; }
+      var first=focusables[0], last=focusables[focusables.length-1];
+      var active=document.activeElement;
+      if(e.shiftKey){
+        if(active===first||active===ov){ e.preventDefault(); last.focus(); }
+      } else {
+        if(active===last){ e.preventDefault(); first.focus(); }
+      }
+    }
+  };
+  document.addEventListener('keydown',_powKeyHandler,true);
 }
 function closePow(){
+  if(_powKeyHandler){ document.removeEventListener('keydown',_powKeyHandler,true); _powKeyHandler=null; }
   var el=document.getElementById('ccPowOverlay');
   if(el) el.remove();
+  if(_powPrevFocus && document.body.contains(_powPrevFocus) && typeof _powPrevFocus.focus==='function'){
+    try{ _powPrevFocus.focus(); }catch(_){}
+  }
+  _powPrevFocus=null;
   ccPicked=null; ccShowFb=false; renderCC();
 }
 function ccAdvance(){

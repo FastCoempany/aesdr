@@ -1071,7 +1071,7 @@ window.AESDR = window.AESDR || {};
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@400;500;600;700&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
-<style>/*a11y-reset*/.sb-item{all:unset;box-sizing:border-box;display:block;width:100%;text-align:left}
+<style>/*a11y-reset*/.sb-item, .ap-slot, .cal-item, .flip-card, .sk-card-top{all:unset;box-sizing:border-box;display:block;width:100%;text-align:left}
 :root{
   --white:#FFFFFF;--black:#000000;--mid:#636060;--lite:#EEF2FF;--lite2:#DDE5FF;
   --cobalt:#0038FF;--cob-lt:rgba(0,56,255,0.07);--cob-md:rgba(0,56,255,0.15);
@@ -1980,7 +1980,7 @@ function handleNext(){
 ════════════════════════════════════ */
 function buildFlips(){
   document.getElementById('flipGrid').innerHTML=FLIPS.map((f,i)=>`
-    <div class="flip-card" id="fc${i}" onclick="doFlip(${i})">
+    <button type="button" class="flip-card" id="fc${i}" onclick="doFlip(${i})">
       <div class="flip-inner">
         <div class="flip-face flip-front">
           <div class="flip-old-tag">Old Mentality</div>
@@ -1993,7 +1993,7 @@ function buildFlips(){
           <div class="flip-new-sub">${f.sub}</div>
         </div>
       </div>
-    </div>
+    </button>
   `).join('');
 }
 function doFlip(i){
@@ -2008,7 +2008,7 @@ function doFlip(i){
 ════════════════════════════════════ */
 function buildCal(){
   document.getElementById('calPool').innerHTML=CAL_ORDER.map((ci,di)=>`
-    <div class="cal-item" id="ci${di}" onclick="pickCal(${di})">${CAL_ITEMS[ci].txt}</div>
+    <button type="button" class="cal-item" id="ci${di}" onclick="pickCal(${di})">${CAL_ITEMS[ci].txt}</button>
   `).join('');
   document.getElementById('calDroppedWaste').innerHTML='';
   document.getElementById('calDroppedImpact').innerHTML='';
@@ -2095,13 +2095,13 @@ function verdictMV(i,verdict){
 ════════════════════════════════════ */
 function buildAP(){
   document.getElementById('apSlots').innerHTML=AP_SLOTS.map((s,i)=>`
-    <div class="ap-slot" id="aps${i}" onclick="pickAPSlot(${i})">
+    <button type="button" class="ap-slot" id="aps${i}" onclick="pickAPSlot(${i})">
       <div class="ap-slot-time">${s.time}</div>
       <div class="ap-slot-content" id="apsC${i}">
         <div class="ap-slot-placeholder">— select activity →</div>
       </div>
       <div class="ap-slot-check">✓</div>
-    </div>
+    </button>
   `).join('');
   document.getElementById('apOptions').innerHTML=AP_TILE_ORDER.map(si=>`
     <button class="ap-opt" id="apo${si}" onclick="pickAPTile(${si})">${AP_SLOTS[si].act}</button>
@@ -2156,13 +2156,13 @@ function resetAP(){
 ════════════════════════════════════ */
 function buildSK(){
   document.getElementById('skGrid').innerHTML=SKILLS.map((s,i)=>`
-    <div class="sk-card" id="skc${i}" onclick="toggleSK(${i})">
-      <div class="sk-card-top">
+    <div class="sk-card" id="skc${i}">
+      <button type="button" class="sk-card-top" onclick="toggleSK(${i})" aria-expanded="false" aria-controls="skb${i}body">
         <div class="sk-card-icon">${s.icon}</div>
         <div class="sk-card-name">${s.name}</div>
         <div class="sk-card-arr">›</div>
-      </div>
-      <div class="sk-body">
+      </button>
+      <div class="sk-body" id="skb${i}body">
         <div class="sk-inner">
           <div class="sk-desc">${s.desc}</div>
           <div class="sk-platform">Platform</div>
@@ -2178,7 +2178,10 @@ function buildSK(){
 function toggleSK(i){
   const el=document.getElementById('skc'+i);
   el.classList.toggle('expanded');
-  if(el.classList.contains('expanded')) skOpen.add(i);
+  const expanded = el.classList.contains('expanded');
+  if(expanded) skOpen.add(i);
+  const btn = el.querySelector('.sk-card-top');
+  if(btn) btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
 }
 function markSK(e,i){
   e.stopPropagation();

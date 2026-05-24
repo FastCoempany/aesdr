@@ -1071,7 +1071,7 @@ window.AESDR = window.AESDR || {};
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@400;500;600;700&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
-<style>/*a11y-reset*/.sb-item{all:unset;box-sizing:border-box;display:block;width:100%;text-align:left}
+<style>/*a11y-reset*/.sb-item, .plan-slot{all:unset;box-sizing:border-box;display:block;width:100%;text-align:left}
 :root{
   --white:#FFFFFF;--black:#000000;--mid:#636060;--lite:#F2EEE9;--lite2:#E5E1DC;
   --violet:#5200CC;--vio-lt:rgba(82,0,204,0.07);--vio-md:rgba(82,0,204,0.15);
@@ -1985,12 +1985,12 @@ function tagFM(i,tag){
 ══════════════════════════════════════════ */
 function buildPlan(){
   document.getElementById('planSlots').innerHTML=PLAN_SLOTS.map((s,i)=>`
-    <div class="plan-slot" id="pslot${i}" onclick="pickPlanSlot(${i})">
+    <button type="button" class="plan-slot" id="pslot${i}" onclick="pickPlanSlot(${i})">
       <div class="plan-time">${s.time}</div>
       <div class="plan-content" id="pslotContent${i}">
         <div class="plan-placeholder">— select activity —</div>
       </div>
-    </div>
+    </button>
   `).join('');
   document.getElementById('planTiles').innerHTML=PLAN_TILE_ORDER.map(si=>`
     <button class="plan-tile" id="ptile${si}" onclick="pickPlanTile(${si})">${PLAN_SLOTS[si].act}</button>

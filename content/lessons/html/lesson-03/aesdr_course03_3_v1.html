@@ -1071,7 +1071,7 @@ window.AESDR = window.AESDR || {};
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@400;500;600;700&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
-<style>/*a11y-reset*/.sb-item{all:unset;box-sizing:border-box;display:block;width:100%;text-align:left}
+<style>/*a11y-reset*/.sb-item, .arch-card, .mu-opt{all:unset;box-sizing:border-box;display:block;width:100%;text-align:left}
 :root{
   --white:#FFFFFF;--black:#000000;--mid:#636060;--lite:#EFF4F0;--lite2:#E0EAE2;
   --emerald:#006644;--em-lt:rgba(0,102,68,0.08);--em-md:rgba(0,102,68,0.18);
@@ -1970,7 +1970,7 @@ function handleNext(){
 ════════════════════════════════════ */
 function buildArch(){
   document.getElementById('archGrid').innerHTML=ARCHETYPES.map((a,i)=>`
-    <div class="arch-card" id="ac${i}" onclick="flipArch(${i})">
+    <button type="button" class="arch-card" id="ac${i}" onclick="flipArch(${i})">
       <div class="arch-inner">
         <div class="arch-face arch-front">
           <div class="arch-front-num">${a.num}</div>
@@ -1985,7 +1985,7 @@ function buildArch(){
           <div class="arch-back-surv">${a.surv}</div>
         </div>
       </div>
-    </div>
+    </button>
   `).join('');
 }
 function flipArch(i){
@@ -2060,7 +2060,7 @@ function renderMU(){
   const optsHtml=s.opts.map((o,oi)=>{
     let cls='';
     if(muShowFb){if(oi===s.ans)cls='correct locked';else if(oi===muPicked)cls='wrong locked';else cls='locked';}
-    return `<div class="mu-opt ${cls}" onclick="pickMU(${oi})"><span class="mu-ltr">${String.fromCharCode(65+oi)}.</span>${o}</div>`;
+    return `<button type="button" class="mu-opt ${cls}" onclick="pickMU(${oi})"><span class="mu-ltr">${String.fromCharCode(65+oi)}.</span>${o}</button>`;
   }).join('');
   const fbHtml=muShowFb&&muPicked!==null?`<div class="mu-fb show ${muPicked===s.ans?'good':'bad'}">${muPicked===s.ans?'✓ Right move:':'✗ Why that misses:'} ${s.why}</div>`:'';
   const showAdv=muShowFb&&muPicked===s.ans;

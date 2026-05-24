@@ -1071,7 +1071,7 @@ window.AESDR = window.AESDR || {};
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@400;500;600;700&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
-<style>/*a11y-reset*/.sb-item{all:unset;box-sizing:border-box;display:block;width:100%;text-align:left}
+<style>/*a11y-reset*/.sb-item, .ip-pillar, .rr-item-top, .sa-opt{all:unset;box-sizing:border-box;display:block;width:100%;text-align:left}
 :root{
   --white:#FFFFFF;--black:#000000;--mid:#636060;--lite:#F8F0F2;--lite2:#EDDDDF;
   --burg:#7B002A;--burg-lt:rgba(123,0,42,0.07);--burg-md:rgba(123,0,42,0.18);
@@ -2020,14 +2020,14 @@ function handleNext(){
 function buildRR(){
   document.getElementById('rrItems').innerHTML=REALITIES.map((r,i)=>`
     <div class="rr-item ${i===0?'unlocked open':'locked'}" id="rri${i}">
-      <div class="rr-item-top" onclick="toggleRR(${i})">
+      <button type="button" class="rr-item-top" onclick="toggleRR(${i})">
         <div class="rr-num">${r.num}</div>
         <div class="rr-content">
           <div class="rr-label">${r.label}</div>
           <div class="rr-truth">${r.truth}</div>
         </div>
         <div class="rr-status ${i===0?'open':'locked'}" id="rr-status${i}">${i===0?'OPEN':'LOCKED'}</div>
-      </div>
+      </button>
       <div class="rr-body">
         <div class="rr-inner">
           <div class="rr-shift-lbl">Mindset Shift</div>
@@ -2161,10 +2161,10 @@ function resetTS(){
 ════════════════════════════════════ */
 function buildIP(){
   document.getElementById('ipPillars').innerHTML=IP_PILLARS.map((p,pi)=>`
-    <div class="ip-pillar" id="ipp${pi}" onclick="pickIPPillar(${pi})">
+    <button type="button" class="ip-pillar" id="ipp${pi}" onclick="pickIPPillar(${pi})">
       <div class="ip-pillar-hdr"><div class="ip-pillar-name ${p.cls}">${p.name}</div><div class="ip-pillar-count"><span id="ipc${pi}">0</span> / 2 placed</div></div>
       <div class="ip-pillar-items" id="ippi${pi}"></div>
-    </div>
+    </button>
   `).join('');
   document.getElementById('ipPool').innerHTML=IP_TILE_ORDER.map(ai=>`
     <button class="ip-tile" id="ipt${ai}" onclick="pickIPTile(${ai})">${IP_ACTIONS[ai].txt}</button>
@@ -2222,9 +2222,9 @@ function buildSA(){
         <div class="sa-q-txt">${s.q}</div>
       </div>
       <div class="sa-opts">
-        ${s.opts.map((o,oi)=>`<div class="sa-opt" id="sao${i}_${oi}" onclick="pickSA(${i},${oi})">
+        ${s.opts.map((o,oi)=>`<button type="button" class="sa-opt" id="sao${i}_${oi}" onclick="pickSA(${i},${oi})">
           <span class="sa-ltr">${String.fromCharCode(65+oi)}.</span>${o}
-        </div>`).join('')}
+        </button>`).join('')}
       </div>
       <div class="sa-result" id="sar${i}"></div>
     </div>

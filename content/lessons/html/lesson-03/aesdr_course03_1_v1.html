@@ -1071,7 +1071,7 @@ window.AESDR = window.AESDR || {};
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@400;500;600;700&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
-<style>/*a11y-reset*/.sb-item{all:unset;box-sizing:border-box;display:block;width:100%;text-align:left}
+<style>/*a11y-reset*/.sb-item, .hb-block, .bant-opt, .rank-card-top{all:unset;box-sizing:border-box;display:block;width:100%;text-align:left}
 :root{
   --white:#FFFFFF;--black:#000000;--mid:#636060;--lite:#EFF4F0;--lite2:#E0EAE2;
   --emerald:#006644;--em-lt:rgba(0,102,68,0.08);--em-md:rgba(0,102,68,0.18);
@@ -2063,8 +2063,8 @@ function handleNext(){
 ══════════════════════════════════════════ */
 function buildRank(){
   document.getElementById('rankWrap').innerHTML=PITFALLS.map((p,i)=>`
-    <div class="rank-card" id="rc${i}" onclick="toggleRank(${i})">
-      <div class="rank-card-top">
+    <div class="rank-card" id="rc${i}">
+      <button type="button" class="rank-card-top" onclick="toggleRank(${i})" aria-expanded="false" aria-controls="rb${i}">
         <div class="rank-num">${p.num}</div>
         <div class="rank-divider"></div>
         <div class="rank-main">
@@ -2072,8 +2072,8 @@ function buildRank(){
           <div class="rank-sub">${p.sub}</div>
         </div>
         <div class="rank-chevron">›</div>
-      </div>
-      <div class="rank-body">
+      </button>
+      <div class="rank-body" id="rb${i}">
         <div class="rank-inner">
           <div class="rank-desc">${p.desc}</div>
           <div class="rank-fix-lbl">How to Fix It</div>
@@ -2087,7 +2087,10 @@ function buildRank(){
 function toggleRank(i){
   const el=document.getElementById('rc'+i);
   el.classList.toggle('expanded');
-  if(el.classList.contains('expanded')) rankOpen.add(i);
+  const expanded = el.classList.contains('expanded');
+  if(expanded) rankOpen.add(i);
+  const btn = el.querySelector('.rank-card-top');
+  if(btn) btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
 }
 function markRank(e,i){
   e.stopPropagation();
@@ -2124,10 +2127,10 @@ function renderBant(){
       else if(oi===bantPicked) cls='wrong locked';
       else cls='locked';
     }
-    return `<div class="bant-opt ${cls}" onclick="pickBant(${oi})">
+    return `<button type="button" class="bant-opt ${cls}" onclick="pickBant(${oi})">
       <span>${o.txt}</span>
       <span class="bant-verdict">${bantShowFb?(o.correct?'✓':oi===bantPicked?'✗':''):'→ '+o.verdict}</span>
-    </div>`;
+    </button>`;
   }).join('');
   const fbHtml=bantShowFb&&bantPicked!==null?`<div class="bant-fb show ${bantPicked===s.opts.findIndex(o=>o.correct)?'good':'bad'}">${bantPicked===s.opts.findIndex(o=>o.correct)?'✓':'✗'} ${s.why}</div>`:'';
   const showAdv=bantShowFb&&bantPicked===s.opts.findIndex(o=>o.correct);
@@ -2263,12 +2266,12 @@ function buildHB(){
       <div class="hb-blocks">
         ${day.blocks.map((b,bi)=>{
           const key=`${di}_${bi}`;
-          return `<div class="hb-block" id="hbb_${key}" onclick="toggleHB('${key}',${di})">
+          return `<button type="button" class="hb-block" id="hbb_${key}" onclick="toggleHB('${key}',${di})">
             <div class="hb-block-time">${b.time}</div>
             <div class="hb-block-act">${b.act}</div>
             <div class="hb-block-goal">${b.goal}</div>
             <div class="hb-block-check">✓</div>
-          </div>`;
+          </button>`;
         }).join('')}
       </div>
     </div>

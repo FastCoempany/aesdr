@@ -1071,7 +1071,7 @@ window.AESDR = window.AESDR || {};
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@400;500;600;700&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
-<style>/*a11y-reset*/.sb-item{all:unset;box-sizing:border-box;display:block;width:100%;text-align:left}
+<style>/*a11y-reset*/.sb-item, .nc-circle, .nc-tile, .kt-opt{all:unset;box-sizing:border-box;display:block;width:100%;text-align:left}
 :root{
   --white:#FFFFFF;--black:#000000;--mid:#636060;--lite:#EEF2F8;--lite2:#DCE3F0;
   --navy:#001A4E;--navy-lt:rgba(0,26,78,0.07);--navy-md:rgba(0,26,78,0.15);
@@ -2054,13 +2054,13 @@ function verdictMB(i,verdict){
 ════════════════════════════════════ */
 function buildNC(){
   document.getElementById('ncCircles').innerHTML=NC_CIRCLES.map((c,ci)=>`
-    <div class="nc-circle" id="ncc${ci}" onclick="pickNCCircle(${ci})">
+    <button type="button" class="nc-circle" id="ncc${ci}" onclick="pickNCCircle(${ci})">
       <div class="nc-circle-hdr"><div class="nc-circle-name ${c.cls}">${c.name}</div><div class="nc-circle-desc">${c.desc}</div></div>
       <div class="nc-circle-items" id="ncci${ci}"></div>
-    </div>
+    </button>
   `).join('');
   document.getElementById('ncPool').innerHTML=NC_TILE_ORDER.map(ai=>`
-    <div class="nc-tile" id="nct${ai}" onclick="pickNCTile(${ai})">${NC_CONTACTS[ai].txt}</div>
+    <button type="button" class="nc-tile" id="nct${ai}" onclick="pickNCTile(${ai})">${NC_CONTACTS[ai].txt}</button>
   `).join('');
 }
 function pickNCTile(ai){
@@ -2126,7 +2126,7 @@ function renderKT(){
   const optsHtml=s.opts.map((o,oi)=>{
     let cls='';
     if(ktShowFb){if(oi===s.ans)cls='correct locked';else if(oi===ktPicked)cls='wrong locked';else cls='locked';}
-    return `<div class="kt-opt ${cls}" onclick="pickKT(${oi})"><span class="kt-ltr">${String.fromCharCode(65+oi)}.</span>${o}</div>`;
+    return `<button type="button" class="kt-opt ${cls}" onclick="pickKT(${oi})"><span class="kt-ltr">${String.fromCharCode(65+oi)}.</span>${o}</button>`;
   }).join('');
   const fbHtml=ktShowFb&&ktPicked!==null?`<div class="kt-fb show ${ktPicked===s.ans?'good':'bad'}">${ktPicked===s.ans?'✓ Right move:':'✗ Why that misses:'} ${s.why}</div>`:'';
   const showAdv=ktShowFb&&ktPicked===s.ans;

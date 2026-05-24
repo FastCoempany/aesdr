@@ -1071,7 +1071,7 @@ window.AESDR = window.AESDR || {};
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@400;500;600;700&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
-<style>/*a11y-reset*/.sb-item{all:unset;box-sizing:border-box;display:block;width:100%;text-align:left}
+<style>/*a11y-reset*/.sb-item, .sort-card, .conv-opt{all:unset;box-sizing:border-box;display:block;width:100%;text-align:left}
 :root {
   --white:  #FFFFFF;
   --black:  #000000;
@@ -2046,10 +2046,10 @@ function handleNext(){
 function buildSort(){
   document.getElementById('sortPoolCards').innerHTML = SORT_DISPLAY_ORDER.map((ci,di)=>{
     const c=SORT_CARDS[ci];
-    return `<div class="sort-card" id="sc${di}" onclick="pickSortCard(${di})">
+    return `<button type="button" class="sort-card" id="sc${di}" onclick="pickSortCard(${di})">
       <span class="sc-txt">${c.txt}</span>
       <span class="sc-ico">✓</span>
-    </div>`;
+    </button>`;
   }).join('');
   document.getElementById('droppedCog').innerHTML='';
   document.getElementById('droppedPartner').innerHTML='';
@@ -2136,9 +2136,9 @@ function renderConv(){
       else if(oi===convPicked) cls='wrong locked';
       else cls='locked';
     }
-    return `<div class="conv-opt ${cls}" onclick="pickConv(${oi})">
+    return `<button type="button" class="conv-opt ${cls}" onclick="pickConv(${oi})">
       <span class="co-ltr">${String.fromCharCode(65+oi)}.</span>${o}
-    </div>`;
+    </button>`;
   }).join('');
 
   let fbHtml='';
