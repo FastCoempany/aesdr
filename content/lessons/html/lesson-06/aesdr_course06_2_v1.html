@@ -1071,7 +1071,7 @@ window.AESDR = window.AESDR || {};
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@400;500;600;700&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
-<style>
+<style>/*a11y-reset*/.sb-item{all:unset;box-sizing:border-box;display:block;width:100%;text-align:left}
 :root{
   --white:#FFFFFF;--black:#000000;--mid:#636060;--lite:#EEF2F8;--lite2:#DCE3F0;
   --navy:#001A4E;--navy-lt:rgba(0,26,78,0.07);--navy-md:rgba(0,26,78,0.15);
@@ -1575,22 +1575,22 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
   <div class="sb-lesson sdr-only">Course 6.2 · Networking</div>
   <div class="sb-divider"></div>
   <div class="sb-label">Sections</div>
-  <div class="sb-item" id="nav1" onclick="goSafe(1)">
+  <button type="button" class="sb-item" id="nav1" onclick="goSafe(1)">
     <div class="sb-tag">Section 01</div>
     <div class="sb-name">Know Yourself First</div>
-  </div>
-  <div class="sb-item" id="nav2" onclick="goSafe(3)">
+  </button>
+  <button type="button" class="sb-item" id="nav2" onclick="goSafe(3)">
     <div class="sb-tag">Section 02</div>
     <div class="sb-name">Motherboard &amp; Network</div>
-  </div>
-  <div class="sb-item" id="nav3" onclick="goSafe(5)">
+  </button>
+  <button type="button" class="sb-item" id="nav3" onclick="goSafe(5)">
     <div class="sb-tag">Section 03</div>
     <div class="sb-name">Knowledge &amp; Quiz</div>
-  </div>
-  <div class="sb-item" id="nav4" onclick="goSafe(7)">
+  </button>
+  <button type="button" class="sb-item" id="nav4" onclick="goSafe(7)">
     <div class="sb-tag">Section 04</div>
     <div class="sb-name">Templates &amp; Homework</div>
-  </div>
+  </button>
 
   <div style="margin-top:32px;padding:16px 0;border-top:1px solid var(--line)">
     <p id="sidebarMotto" style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">Networking isn't collecting LinkedIn connections — it's building relationships that open doors you didn't know existed. Every answer here is a real connection plan.</p>

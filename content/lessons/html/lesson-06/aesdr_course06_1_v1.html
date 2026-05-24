@@ -1071,7 +1071,7 @@ window.AESDR = window.AESDR || {};
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Inter:wght@400;500;600;700&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
-<style>
+<style>/*a11y-reset*/.cls-bucket, .sb-item, .silo-col{all:unset;box-sizing:border-box;display:block;width:100%;text-align:left}
 :root{
   --white:#FFFFFF;--black:#000000;--mid:#636060;--lite:#F2EEE9;--lite2:#E5E1DC;
   --red:#B8001F;--red-lt:rgba(184,0,31,0.07);--red-md:rgba(184,0,31,0.15);
@@ -1420,18 +1420,18 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="silo-pool-lbl">Concepts — Select One</div>
       <div class="silo-pool-cards" id="siloPool"></div>
       <div class="silo-cols" id="siloCols">
-        <div class="silo-col" id="silo-col-legacy" onclick="dropSilo('legacy')">
+        <button type="button" class="silo-col" id="silo-col-legacy" onclick="dropSilo('legacy')">
           <div class="silo-col-hdr"><div class="silo-col-name">Legacy Processes</div><div class="silo-col-sub">Outdated and rigid</div></div>
           <div class="silo-dropped" id="silo-dropped-legacy"></div>
-        </div>
-        <div class="silo-col" id="silo-col-loop" onclick="dropSilo('loop')">
+        </button>
+        <button type="button" class="silo-col" id="silo-col-loop" onclick="dropSilo('loop')">
           <div class="silo-col-hdr"><div class="silo-col-name">Recycling Loop</div><div class="silo-col-sub">Books selling a dream</div></div>
           <div class="silo-dropped" id="silo-dropped-loop"></div>
-        </div>
-        <div class="silo-col" id="silo-col-exp" onclick="dropSilo('exp')">
+        </button>
+        <button type="button" class="silo-col" id="silo-col-exp" onclick="dropSilo('exp')">
           <div class="silo-col-hdr"><div class="silo-col-name">Real Experience</div><div class="silo-col-sub">Learning by doing</div></div>
           <div class="silo-dropped" id="silo-dropped-exp"></div>
-        </div>
+        </button>
       </div>
       <button class="silo-reset" onclick="resetSilo()">Reset board</button>
     </div>
@@ -1530,18 +1530,18 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
     <div class="cls-wrap">
       <p class="cls-instr">Sort each item into the correct category: the traits you must develop, the questions to ask in your log, or the actions to take.</p>
       <div class="cls-buckets">
-        <div class="cls-bucket" id="cls-traits" onclick="dropCls('traits')">
+        <button type="button" class="cls-bucket" id="cls-traits" onclick="dropCls('traits')">
           <div class="cls-bkt-hdr"><div class="cls-bkt-name traits">Core Traits</div><div class="cls-bkt-count"><span id="cls-traits-count">0</span> / 3 items</div></div>
           <div class="cls-bkt-items" id="cls-traits-items"></div>
-        </div>
-        <div class="cls-bucket" id="cls-logs" onclick="dropCls('logs')">
+        </button>
+        <button type="button" class="cls-bucket" id="cls-logs" onclick="dropCls('logs')">
           <div class="cls-bkt-hdr"><div class="cls-bkt-name logs">Experience Log</div><div class="cls-bkt-count"><span id="cls-logs-count">0</span> / 2 items</div></div>
           <div class="cls-bkt-items" id="cls-logs-items"></div>
-        </div>
-        <div class="cls-bucket" id="cls-actions" onclick="dropCls('actions')">
+        </button>
+        <button type="button" class="cls-bucket" id="cls-actions" onclick="dropCls('actions')">
           <div class="cls-bkt-hdr"><div class="cls-bkt-name actions">Homework Actions</div><div class="cls-bkt-count"><span id="cls-actions-count">0</span> / 3 items</div></div>
           <div class="cls-bkt-items" id="cls-actions-items"></div>
-        </div>
+        </button>
       </div>
       <div class="cls-stream-lbl">Items — Select One</div>
       <div class="cls-stream" id="clsStream"></div>
@@ -1640,22 +1640,22 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
   <div class="sb-lesson sdr-only">Course 6.1 · Learning Habits</div>
   <div class="sb-divider"></div>
   <div class="sb-label">Sections</div>
-  <div class="sb-item" id="nav1" onclick="goSafe(1)">
+  <button type="button" class="sb-item" id="nav1" onclick="goSafe(1)">
     <div class="sb-tag">Section 01</div>
     <div class="sb-name">The Flaws of Books</div>
-  </div>
-  <div class="sb-item" id="nav2" onclick="goSafe(3)">
+  </button>
+  <button type="button" class="sb-item" id="nav2" onclick="goSafe(3)">
     <div class="sb-tag">Section 02</div>
     <div class="sb-name">The Real Teacher</div>
-  </div>
-  <div class="sb-item" id="nav3" onclick="goSafe(5)">
+  </button>
+  <button type="button" class="sb-item" id="nav3" onclick="goSafe(5)">
     <div class="sb-tag">Section 03</div>
     <div class="sb-name">Building Your Playbook</div>
-  </div>
-  <div class="sb-item" id="nav4" onclick="goSafe(8)">
+  </button>
+  <button type="button" class="sb-item" id="nav4" onclick="goSafe(8)">
     <div class="sb-tag">Section 04</div>
     <div class="sb-name">Skills & Homework</div>
-  </div>
+  </button>
 
   <div style="margin-top:32px;padding:16px 0;border-top:1px solid var(--line)">
     <p id="sidebarMotto" style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">The playbook gets you started — what you do beyond it is what gets you promoted. Every answer here pushes you past the safe and into the strategic.</p>
@@ -1777,6 +1777,123 @@ function _saveExerciseScores(){
   if(typeof seqDone!=='undefined'&&typeof SEQ_STEPS!=='undefined') scores.seq={correct:Object.keys(seqDone).length,total:SEQ_STEPS.length};
   if(typeof clsCount!=='undefined'&&typeof CLS_OBS!=='undefined') scores.cls={correct:clsCount,total:CLS_OBS.length};
   if(Object.keys(scores).length>0) AESDR.setExtra('exercises',scores);
+  try { _saveExerciseState(); } catch(e) {}
+}
+
+/* ── Exercise state persistence (silo/blame/seq/cls) ── */
+function _exStateKey(){return 'aesdr_exercise_state_' + location.pathname.replace(/[^a-z0-9]/gi,'_');}
+function _saveExerciseState(){
+  try {
+    var st = {};
+    if(typeof siloDone!=='undefined') st.silo = {done: siloDone, count: (typeof siloCount!=='undefined'?siloCount:0)};
+    if(typeof blameState!=='undefined') st.blame = {state: blameState, count: (typeof blameCount!=='undefined'?blameCount:0)};
+    if(typeof seqDone!=='undefined') st.seq = {done: seqDone};
+    if(typeof clsDone!=='undefined') st.cls = {done: clsDone, count: (typeof clsCount!=='undefined'?clsCount:0)};
+    if(Object.keys(st).length>0) localStorage.setItem(_exStateKey(), JSON.stringify(st));
+  } catch(e) {}
+}
+function _restoreExerciseState(){
+  try {
+    var raw = null;
+    try { raw = localStorage.getItem(_exStateKey()); } catch(e) {}
+    if(!raw) return;
+    var st = JSON.parse(raw);
+    if(!st) return;
+    // Silo replay
+    if(st.silo && typeof siloDone!=='undefined' && typeof SILO_CARDS!=='undefined' && typeof SILO_ORDER!=='undefined'){
+      var siloZones = {};
+      Object.keys(st.silo.done||{}).forEach(function(diStr){
+        var di = parseInt(diStr,10);
+        if(siloDone[di]) return;
+        var ci = SILO_ORDER[di];
+        var card = (ci!==undefined) ? SILO_CARDS[ci] : null;
+        if(!card) return;
+        var zone = card.zone;
+        siloZones[zone] = true;
+        var el = document.getElementById('sc'+di);
+        siloDone[di] = true;
+        if(typeof siloCount!=='undefined') siloCount++;
+        if(el) el.classList.add('placed');
+        var d = document.getElementById('silo-dropped-'+zone);
+        if(d) d.innerHTML += '<div class="silo-dropped-card">'+card.txt+(card.note?'<div class="silo-note">'+card.note+'</div>':'')+'</div>';
+      });
+      var sc = document.getElementById('siloCount');
+      if(sc && typeof siloCount!=='undefined') sc.textContent = siloCount;
+    }
+    // Blame replay
+    if(st.blame && typeof blameState!=='undefined' && typeof BLAME_ITEMS!=='undefined'){
+      Object.keys(st.blame.state||{}).forEach(function(iStr){
+        var i = parseInt(iStr,10);
+        if(blameState[i]==='correct') return;
+        if(st.blame.state[i]!=='correct') return;
+        var item = BLAME_ITEMS[i];
+        if(!item) return;
+        blameState[i] = 'correct';
+        if(typeof blameCount!=='undefined') blameCount++;
+        (item.opts||[]).forEach(function(_,x){
+          var el = document.getElementById('bo'+i+'_'+x);
+          if(!el) return;
+          el.classList.add('locked');
+          if(x === item.ans) el.classList.add('correct');
+        });
+        var bi = document.getElementById('bi'+i); if(bi) bi.classList.add('resolved');
+        var bf = document.getElementById('bf'+i); if(bf) bf.style.display = 'block';
+      });
+      var bc = document.getElementById('blameCount');
+      if(bc && typeof blameCount!=='undefined') bc.textContent = blameCount;
+    }
+    // Seq replay
+    if(st.seq && typeof seqDone!=='undefined' && typeof SEQ_STEPS!=='undefined'){
+      Object.keys(st.seq.done||{}).forEach(function(idxStr){
+        var idx = parseInt(idxStr,10);
+        if(seqDone[idx]) return;
+        // Find the tile (by SEQ_STEPS index) whose pos matches idx+1
+        var tileSi = -1;
+        for(var k=0;k<SEQ_STEPS.length;k++){
+          if(SEQ_STEPS[k] && SEQ_STEPS[k].pos === idx+1){ tileSi = k; break; }
+        }
+        if(tileSi < 0) return;
+        var step = SEQ_STEPS[tileSi];
+        seqDone[idx] = true;
+        var slotEl = document.getElementById('sd'+idx);
+        if(slotEl){ slotEl.classList.remove('target','bad'); slotEl.classList.add('correct'); }
+        var sct = document.getElementById('sd-content'+idx);
+        if(sct) sct.innerHTML = '<div><div class="seq-drop-txt">'+step.act+'</div>'+(step.sub?'<div class="seq-drop-sub">'+step.sub+'</div>':'')+'</div>';
+        var ss = document.getElementById('ss'+idx); if(ss) ss.classList.add('correct');
+        var tileEl = document.getElementById('st'+tileSi); if(tileEl) tileEl.classList.add('placed');
+      });
+      var sqc = document.getElementById('seqCount');
+      if(sqc) sqc.textContent = Object.keys(seqDone).length;
+    }
+    // Cls replay
+    if(st.cls && typeof clsDone!=='undefined' && typeof CLS_OBS!=='undefined' && typeof CLS_ORDER!=='undefined'){
+      var clsZones = {};
+      Object.keys(st.cls.done||{}).forEach(function(diStr){
+        var di = parseInt(diStr,10);
+        if(clsDone[di]) return;
+        var ci = CLS_ORDER[di];
+        var obs = (ci!==undefined) ? CLS_OBS[ci] : null;
+        if(!obs) return;
+        var zone = obs.zone;
+        clsZones[zone] = true;
+        var el = document.getElementById('co'+di);
+        clsDone[di] = true;
+        if(typeof clsCount!=='undefined') clsCount++;
+        if(el) el.classList.add('placed');
+        var items = document.getElementById('cls-'+zone+'-items');
+        if(items) items.innerHTML += '<div class="cls-bkt-item '+zone+'-item">'+obs.txt+'</div>';
+      });
+      Object.keys(clsZones).forEach(function(z){
+        var zoneCount = 0;
+        for(var k=0;k<CLS_ORDER.length;k++){
+          var ci = CLS_ORDER[k];
+          if(clsDone[k] && CLS_OBS[ci] && CLS_OBS[ci].zone === z) zoneCount++;
+        }
+        var ce = document.getElementById('cls-'+z+'-count'); if(ce) ce.textContent = zoneCount;
+      });
+      var cc = document.getElementById('clsCount'); if(cc && typeof clsCount!=='undefined') cc.textContent = clsCount;
+    }
+  } catch(e) { console.error('_restoreExerciseState:', e); }
 }
 
 /* ════════════════════════════════════
@@ -1863,6 +1980,7 @@ function init(){
   try { buildCls(); } catch(e) { console.error('buildCls:', e); }
   try { buildQuiz(); } catch(e) { console.error('buildQuiz:', e); }
   if(Object.keys(qAns).length>0){var _ws=qSubmitted;qSubmitted=false;for(var _qi in qAns){try{document.getElementById('qo'+_qi+'_'+qAns[_qi]).classList.add('chosen');}catch(e){}}if(_ws)submitQuiz();}
+  try { _restoreExerciseState(); } catch(e) { console.error('_restoreExerciseState:', e); }
 
   // Restore saved screen position
 
