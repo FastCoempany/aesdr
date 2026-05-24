@@ -63,6 +63,18 @@ const RED_FLAGS = [
     headline: "List co-promotion ask.",
     body: "AESDR does not share its email list, ever — and doesn't request yours. Co-promotion-via-list is not part of any AESDR affiliate agreement. Asking is a fit signal.",
   },
+  {
+    headline: "Audience already saturated on a senior peer network.",
+    body: "If most of your readers are Sales Assembly, Pavilion, or Modern Sales Pros members — meaning they're already in a $3K–$5K/year peer network at the senior tier — AESDR's $249–$1,499 curriculum reads as redundant. Those buyers want the room, not another manual. Both products are good; the audience overlap is wrong for a pilot. Decline rather than create audience fatigue.",
+  },
+  {
+    headline: "Audience is mostly pre-role.",
+    body: "If your readers are people trying to break into sales — Aspireship, Uvaro, Victory Lap, Vendition demographic — AESDR isn't their fit. The curriculum assumes the seat is already theirs. We'd rather see you co-promote a bootcamp to those readers than enroll buyers the program isn't built for.",
+  },
+  {
+    headline: "Vendor-sponsored content adjacency.",
+    body: "If your distribution is funded by sales-tool vendors — RepVue Academy–style sponsorships, Outreach-owned channels, ZoomInfo-adjacent newsletters — there's a structural conflict. AESDR's Module 9 names specific tools by their honest tradeoffs, and a sponsor-adjacent partner is going to have a hard time co-promoting content that says \"Outreach is fine, but X is also fine, and your CRM is probably misconfigured.\" Not a register fight; a structural fit problem.",
+  },
 ];
 
 export default function WhoWeDontWorkWithPage() {

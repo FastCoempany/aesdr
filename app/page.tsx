@@ -25,6 +25,10 @@ const FAQ: { q: string; a: string; icon: IconName }[] = [
   { q: "Is there a community or is this self-paced only?",        a: "Both. The program is self-paced with interactive exercises. You also get access to our Discord community \u2014 real AEs & SDRs, real problems, real accountability.",                                                icon: "discord"   },
   { q: "I\u2019ve been in sales for 5+ years. Is this too basic?", a: "Courses 1\u20135 cover fundamentals. Courses 6\u201312 work through prospecting strategy, pipeline math, financial resilience, and the relationships that pay off five years out. If you disagree, we refund.",                  icon: "signal"    },
   { q: "Can my company expense this?",                            a: "Of course. We provide a receipt and invoice on purchase. Most L&D budgets cover this easily \u2014 especially the Team plan.",                                                                                       icon: "ledger"    },
+  { q: "How is this different from Sales Assembly or Pavilion?", a: "Different product entirely. Those are senior-AE peer networks at $3K\u2013$5K/year \u2014 you pay for the room. AESDR is a written operating manual you re-read in year three. If you want the network, those are excellent. If you want a framework you can hand to a new SDR on Monday morning, this one. Full breakdown at /compare.",                                                                                  icon: "team"      },
+  { q: "Why not just use Bravado, r/sales, or LinkedIn?",         a: "Those are good for the random thread when you have a specific live problem. AESDR is structured \u2014 Lesson 8 is the 30% rule, Lesson 10 is the comp-plan teardown, Lesson 12 is the relationship graph. You don\u2019t have to phrase your problem correctly to find the answer; the curriculum sequences it. Plus role-conditional content across 18 of the 36 sub-lessons, which a community can\u2019t deliver.", icon: "discord"   },
+  { q: "I\u2019ve been reading Sales Hacker and RepVue for a year. Different?", a: "Three differences. Structure \u2014 a reading list doesn\u2019t sequence what compounds. Vendor independence \u2014 the free content is sponsored by tools, so the tools lessons are quietly compromised. AESDR is buyer-paid; no vendor has copy approval. And artifacts \u2014 you don\u2019t take a Sales Hacker post into your 1:1 with a bad manager next week. You take the AE/SDR Alignment Contract.",         icon: "eye"       },
+  { q: "Should I take Aspireship or Uvaro instead?",              a: "Different audience. Those are bootcamps for people trying to break into sales \u2014 they place you, coach you through ramp, sometimes share first-year commission. AESDR assumes the seat is already yours. If you\u2019re three months from your first SDR interview, take a bootcamp. If you\u2019re three months into the job and the ramp is harder than anyone warned you about, this one.",                                          icon: "warn"      },
 ];
 
 export default async function LandingPage() {
@@ -199,6 +203,26 @@ export default async function LandingPage() {
             </p>
           </div>
         </div>
+        <p
+          style={{
+            textAlign: "center",
+            marginTop: 32,
+            fontFamily: "var(--serif)",
+            fontStyle: "italic",
+            fontSize: 15,
+            color: "var(--muted)",
+            lineHeight: 1.6,
+          }}
+        >
+          Wondering how AESDR sits next to Sales Assembly, Bravado, Aspireship,
+          Sales Hacker, or the rest?{" "}
+          <Link
+            href="/compare"
+            style={{ color: "var(--crimson)", textDecoration: "underline" }}
+          >
+            We named each one →
+          </Link>
+        </p>
       </section>
 
       {/* Testimonials */}
