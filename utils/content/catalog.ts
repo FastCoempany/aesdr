@@ -23,8 +23,15 @@ const TOOLS_ROOT = path.join(process.cwd(), "tools", "standalone-html");
  */
 const TOOL_MAP: Record<string, ToolAsset[]> = {
   "3":  [{ slug: "3.3-aesdr-alignment-contract", title: "AE/SDR Alignment Contract Builder" }],
+  "4":  [
+    { slug: "4.1-manager-archetype-map", title: "Manager Archetype Map" },
+    { slug: "4.3-async-cadence-template", title: "Async Cadence Template" },
+  ],
   "6":  [{ slug: "6.3-idk-framework", title: "\"I Don't Know\" Framework" }],
-  "9":  [{ slug: "9.2-time-reclaimed-calculator", title: "Time Reclaimed Calculator" }],
+  "9":  [
+    { slug: "9.1-crm-survival-guide", title: "CRM Survival Guide" },
+    { slug: "9.2-time-reclaimed-calculator", title: "Time Reclaimed Calculator" },
+  ],
   "10": [{ slug: "10.1-ROI-commission-defense-tracker", title: "ROI & Commission Defense Tracker" }],
   // The 72-Hour Strike Plan was relocated to an end-of-course bonus
   // (gated on all twelve lessons complete). See app/tools/[slug]/download

@@ -120,10 +120,11 @@ export default function TeamsLanding() {
               <p className={styles.cardEyebrow}>02 · TAKEAWAYS</p>
               <h3 className={styles.cardTitle}>Takeaway artifacts AEs and SDRs keep</h3>
               <p className={styles.cardBody}>
-                Manager Archetype Map. AE/SDR Alignment Contract. 72-Hour Strike
-                Plan (for the week after a bad loss). CRM Survival Guide. Async
-                Cadence Template. Built to live outside the program — AEs and SDRs use
-                them for years.
+                Seven course-tied artifacts plus an end-of-course bonus — the
+                AE/SDR Alignment Contract, the Manager Archetype Map, the Async
+                Cadence Template, the CRM Survival Guide, and more. Each one is
+                a real downloadable that lives outside the program — AEs and SDRs
+                use them for years.
               </p>
             </div>
 

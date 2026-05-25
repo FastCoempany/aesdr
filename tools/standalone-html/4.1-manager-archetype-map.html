@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESDR | The Manager Archetype Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Variant B — The Redline (Luxury) */
+  --parchment: #FFFDF8;
+  --page: #FFFFFF;
+  --text: #2C2C2C;
+  --text-muted: #8B8178;
+  --red: #C53030;
+  --crimson: #8B1A1A;
+  --gold: #B8943E;
+  --gold-hl: rgba(184, 148, 62, 0.2);
+  --ruled: #F0EBE3;
+  --margin-line: #E8D4D4;
+
+  --iris: linear-gradient(90deg, #FF006E 0%, #FF6B00 17%, #F59E0B 34%, #10B981 51%, #38BDF8 68%, #8B5CF6 85%, #FF006E 100%);
+
+  --display: 'Playfair Display', Georgia, serif;
+  --serif: 'Source Serif 4', Georgia, serif;
+  --cond: 'Barlow Condensed', sans-serif;
+  --mono: 'Space Mono', monospace;
+}
+
+@keyframes iris {
+  from { background-position: 0% 50%; }
+  to { background-position: 200% 50%; }
+}
+
+.iris-text {
+  background: var(--iris);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: iris 3s linear infinite;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; background: var(--parchment); color: var(--text); font-family: var(--serif); line-height: 1.6; }
+
+/* TOPBAR */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 40px;
+  background: var(--page);
+  border-bottom: 1px solid var(--ruled);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+}
+.brand {
+  font-family: var(--cond);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  background: var(--crimson);
+  color: #FFFFFF;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 2px;
+}
+.btn-print {
+  font-family: var(--cond);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 11px 28px;
+  border: 2px solid transparent;
+  background: var(--crimson);
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 300ms ease;
+  position: relative;
+  overflow: hidden;
+  color: #FFFFFF;
+}
+.btn-print::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 4px;
+  padding: 2px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.btn-print:hover::before { opacity: 1; }
+.btn-print:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(139, 26, 26, 0.25);
+}
+
+/* PAGE CONTAINER */
+.sheet-container {
+  max-width: 880px;
+  margin: 48px auto;
+  padding: 72px 80px 72px 100px;
+  background: var(--page);
+  border: 1px solid rgba(0,0,0,0.04);
+  box-shadow:
+    0 1px 3px rgba(0,0,0,0.04),
+    0 8px 24px rgba(0,0,0,0.06),
+    0 24px 48px rgba(0,0,0,0.04);
+  position: relative;
+}
+
+/* Margin line */
+.sheet-container::before {
+  content: '';
+  position: absolute;
+  left: 72px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--margin-line);
+}
+
+/* Ruled lines */
+.sheet-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 31px,
+    var(--ruled) 31px,
+    var(--ruled) 32px
+  );
+  pointer-events: none;
+  opacity: 0.45;
+}
+
+/* Content above ruled lines */
+.sheet-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* HEADER */
+.sheet-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 14px;
+  display: inline-block;
+}
+.title {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 900;
+  font-size: 46px;
+  line-height: 1.05;
+  margin-bottom: 18px;
+  color: var(--crimson);
+}
+.title-keyword {
+  background: var(--iris);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: iris 3s linear infinite;
+}
+.subtitle {
+  font-size: 16px;
+  color: var(--text-muted);
+  max-width: 600px;
+  margin: 0 auto 28px auto;
+  font-style: italic;
+  line-height: 1.6;
+}
+.header-line {
+  height: 2px;
+  background: var(--iris);
+  background-size: 200% 100%;
+  animation: iris 3s linear infinite;
+}
+
+/* HOW TO USE */
+.how-to {
+  background: var(--gold-hl);
+  border-left: 4px solid var(--gold);
+  padding: 22px 28px;
+  margin: 36px 0 8px;
+  border-radius: 0 4px 4px 0;
+}
+.how-title {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.how-text {
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.7;
+}
+
+/* SECTION DIVIDER LABEL */
+.set-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 48px 0 18px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--margin-line);
+}
+
+/* ARCHETYPE CARD */
+.arch {
+  border: 1px solid var(--margin-line);
+  border-left: 4px solid var(--crimson);
+  background: var(--parchment);
+  padding: 26px 30px 28px;
+  margin-bottom: 24px;
+  border-radius: 0 4px 4px 0;
+  position: relative;
+  overflow: hidden;
+  page-break-inside: avoid;
+}
+.arch-num {
+  position: absolute;
+  top: -18px;
+  right: 14px;
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 900;
+  font-size: 110px;
+  line-height: 1;
+  color: var(--crimson);
+  opacity: 0.06;
+  pointer-events: none;
+}
+.arch-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--crimson);
+  margin-bottom: 6px;
+}
+.arch-name {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 900;
+  font-size: 28px;
+  color: var(--text);
+  margin-bottom: 8px;
+  line-height: 1.1;
+}
+.arch-snapshot {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--text-muted);
+  margin-bottom: 22px;
+  line-height: 1.55;
+}
+
+/* TWO-COLUMN SIGNAL GRID */
+.signal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px 36px;
+  margin-bottom: 22px;
+}
+.sig-head {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.sig-head.competence { color: var(--text); }
+.sig-head.threat { color: var(--red); }
+.sig-list { list-style: none; }
+.sig-list li {
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--text);
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+.sig-list li::before {
+  font-size: 9px;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+.sig-list.competence li::before { content: '\25A0'; color: var(--gold); }
+.sig-list.threat li::before { content: '\2715'; color: var(--red); font-size: 11px; margin-top: 2px; }
+
+/* WEEKLY MOVE */
+.weekly {
+  border-top: 1px solid var(--margin-line);
+  padding-top: 16px;
+}
+.weekly-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.weekly-text {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--text);
+}
+.weekly-text strong { color: var(--crimson); font-weight: 600; }
+
+/* CLOSING */
+.closing {
+  margin-top: 44px;
+  padding-top: 28px;
+  border-top: 2px solid transparent;
+  border-image: var(--iris) 1;
+  text-align: center;
+}
+.closing-text {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 19px;
+  color: var(--crimson);
+  line-height: 1.45;
+  max-width: 600px;
+  margin: 0 auto 10px;
+}
+.closing-sub {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* INFO BANNER */
+.info-banner {
+  background: rgba(184, 148, 62, 0.12);
+  border-left: 3px solid #B8943E;
+  padding: 14px 40px 14px 20px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  position: relative;
+  transition: opacity 300ms ease;
+}
+.info-banner.dismissed { opacity: 0; pointer-events: none; }
+.info-dismiss {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 6px;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 200ms ease;
+}
+.info-dismiss:hover { opacity: 1; }
+
+/* PRINT */
+@media print {
+  @page { margin: 0.5in; size: portrait; }
+  body { background: #FFFFFF; color: #000000; }
+  .topbar, .info-banner { display: none !important; }
+  .sheet-container {
+    border: none;
+    box-shadow: none;
+    margin: 0;
+    padding: 0 0 0 28px;
+    max-width: 100%;
+    background: #FFFFFF;
+  }
+  .sheet-container::after { opacity: 0; }
+  .sheet-container::before { left: 0; }
+  .title { color: #000000; font-size: 36px; }
+  .title-keyword { -webkit-text-fill-color: #8B1A1A; background: none; animation: none; }
+  .subtitle { color: #444444; }
+  .header-line { background: #8B1A1A !important; animation: none !important; }
+  .how-to { background: #FFFBEB; border-left-color: #9A7B2F; }
+  .how-title { color: #9A7B2F; }
+  .how-text { color: #000000; }
+  .set-label { color: #555555; border-bottom-color: #E2E8F0; }
+  .arch {
+    background: #FFFFFF;
+    border-color: #E2E8F0;
+    border-left-color: #8B1A1A;
+    page-break-inside: avoid;
+  }
+  .arch-num { color: #8B1A1A; opacity: 0.05; }
+  .arch-eyebrow { color: #8B1A1A; }
+  .arch-name { color: #000000; }
+  .sig-head.threat { color: #C53030; }
+  .sig-list.competence li::before { color: #9A7B2F; }
+  .sig-list.threat li::before { color: #C53030; }
+  .weekly-text strong { color: #8B1A1A; }
+  .closing { border-image: none; border-top: 2px solid #8B1A1A; }
+  .closing-text { color: #8B1A1A; }
+}
+
+@media (max-width: 768px) {
+  .signal-grid { grid-template-columns: 1fr; gap: 18px; }
+  .sheet-container { padding: 32px 24px 32px 48px; margin: 20px 16px; }
+  .sheet-container::before { left: 32px; }
+  .title { font-size: 32px; }
+  .arch { padding: 22px 22px 24px; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand"><span class="iris-text">AESDR</span> <span class="badge">Tool C4.1</span></div>
+  <button class="btn-print" onclick="window.print()">Print the Map</button>
+</header>
+
+<div class="info-banner" id="infoBanner">
+  This is a standalone reference card — it runs entirely in your browser. No data is sent anywhere. Print it or save it as a PDF and keep it next to your monitor. Works in any modern browser (Chrome, Firefox, Safari, Edge).
+  <button class="info-dismiss" onclick="dismissBanner()" aria-label="Dismiss">&times;</button>
+</div>
+
+<div class="sheet-container">
+
+  <div class="sheet-header">
+    <div class="eyebrow">AESDR &middot; Course 4.1 &middot; Take-home tool</div>
+    <h1 class="title">The Manager <span class="title-keyword">Archetype Map</span></h1>
+    <p class="subtitle">Most managers run on one operating system under pressure. Read which one yours defaults to, then use the matching weekly move to manage up on purpose — before their assumptions about you write your review for you.</p>
+    <div class="header-line"></div>
+  </div>
+
+  <div class="how-to">
+    <div class="how-title">How to use this</div>
+    <div class="how-text">Find the archetype your manager runs on this quarter — most people are one type with a second showing up under stress. Read what that type reads as competence and what it reads as a threat. Then run the weekly move for that type, every week, in writing. You are not changing your manager. You are removing the gaps they would otherwise fill with their own guesses.</div>
+  </div>
+
+  <div class="set-label">The four operating systems</div>
+
+  <div class="arch">
+    <div class="arch-num">01</div>
+    <div class="arch-eyebrow">Archetype 01</div>
+    <div class="arch-name">The Coach</div>
+    <div class="arch-snapshot">Asks. Listens. Mirrors you back to yourself.</div>
+    <div class="signal-grid">
+      <div>
+        <div class="sig-head competence">Reads as competence</div>
+        <ul class="sig-list competence">
+          <li>You&rsquo;ve thought about it.</li>
+          <li>You can name the gap.</li>
+          <li>You came with the question, not the complaint.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="sig-head threat">Reads as threat</div>
+        <ul class="sig-list threat">
+          <li>You ask them to decide for you.</li>
+          <li>You wait to be told.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="weekly">
+      <div class="weekly-label">Your weekly move</div>
+      <p class="weekly-text">End your 1:1 with one decision you made this week, one you&rsquo;re stuck on, and the option you&rsquo;re leaning toward.</p>
+    </div>
+  </div>
+
+  <div class="arch">
+    <div class="arch-num">02</div>
+    <div class="arch-eyebrow">Archetype 02</div>
+    <div class="arch-name">The Operator</div>
+    <div class="arch-snapshot">Owns the dashboard. The number is the conversation.</div>
+    <div class="signal-grid">
+      <div>
+        <div class="sig-head competence">Reads as competence</div>
+        <ul class="sig-list competence">
+          <li>Pipeline math that reconciles.</li>
+          <li>Forecasts that don&rsquo;t drift.</li>
+          <li>Activity tied to a specific stage gap.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="sig-head threat">Reads as threat</div>
+        <ul class="sig-list threat">
+          <li>Vibes-based updates.</li>
+          <li>&ldquo;Working on it.&rdquo;</li>
+          <li>Numbers that move without a story.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="weekly">
+      <div class="weekly-label">Your weekly move</div>
+      <p class="weekly-text">Send a Friday five-line: last week&rsquo;s number, this week&rsquo;s, the gap, what&rsquo;s closing it, what isn&rsquo;t.</p>
+    </div>
+  </div>
+
+  <div class="arch">
+    <div class="arch-num">03</div>
+    <div class="arch-eyebrow">Archetype 03</div>
+    <div class="arch-name">The Closer</div>
+    <div class="arch-snapshot">Wants in the room. Reads silence as you hiding the deal.</div>
+    <div class="signal-grid">
+      <div>
+        <div class="sig-head competence">Reads as competence</div>
+        <ul class="sig-list competence">
+          <li>You invite them in early.</li>
+          <li>You tell them the risk before they ask.</li>
+          <li>You let them play the role they&rsquo;re best at.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="sig-head threat">Reads as threat</div>
+        <ul class="sig-list threat">
+          <li>Surprise losses.</li>
+          <li>Calls they weren&rsquo;t on.</li>
+          <li>Deals that stall in their blind spot.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="weekly">
+      <div class="weekly-label">Your weekly move</div>
+      <p class="weekly-text">Pre-brief them on one live deal mid-week. Tell them the part you&rsquo;re not sure about. Let them decide if they&rsquo;re joining.</p>
+    </div>
+  </div>
+
+  <div class="arch">
+    <div class="arch-num">04</div>
+    <div class="arch-eyebrow">Archetype 04</div>
+    <div class="arch-name">The Ghost</div>
+    <div class="arch-snapshot">Skips. Reschedules. Surfaces only when something&rsquo;s wrong.</div>
+    <div class="signal-grid">
+      <div>
+        <div class="sig-head competence">Reads as competence</div>
+        <ul class="sig-list competence">
+          <li>No surprises.</li>
+          <li>Self-managed pipeline.</li>
+          <li>Async, written updates they can scan.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="sig-head threat">Reads as threat</div>
+        <ul class="sig-list threat">
+          <li>Surfacing problems they have to solve.</li>
+          <li>Pulling them into meetings.</li>
+          <li>Anything that needs them present.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="weekly">
+      <div class="weekly-label">Your weekly move</div>
+      <p class="weekly-text">Write your update. Don&rsquo;t ask for their time. Make the next step a yes/no question they can answer in 20 seconds.</p>
+    </div>
+  </div>
+
+  <div class="set-label">Three more you&rsquo;ll meet on the SDR floor</div>
+
+  <div class="arch">
+    <div class="arch-num">05</div>
+    <div class="arch-eyebrow">Archetype 05</div>
+    <div class="arch-name">The Metric Maniac</div>
+    <div class="arch-snapshot">Counts the dials. Never asks what the dials produced.</div>
+    <div class="signal-grid">
+      <div>
+        <div class="sig-head competence">Reads as competence</div>
+        <ul class="sig-list competence">
+          <li>Activity numbers tied to an outcome.</li>
+          <li>A reason for any dip, before they spot it.</li>
+          <li>Raw counts presented with the insight next to them.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="sig-head threat">Reads as threat</div>
+        <ul class="sig-list threat">
+          <li>A 5% drop in activity with no explanation.</li>
+          <li>Quiet weeks they can&rsquo;t read.</li>
+          <li>Output they have to ask twice about.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="weekly">
+      <div class="weekly-label">Your weekly move</div>
+      <p class="weekly-text">Report the number with the reframe attached: <strong>&ldquo;Dials are down eight, connects are up fifteen percent because I qualified faster.&rdquo;</strong> Never let a metric travel without its narrative.</p>
+    </div>
+  </div>
+
+  <div class="arch">
+    <div class="arch-num">06</div>
+    <div class="arch-eyebrow">Archetype 06</div>
+    <div class="arch-name">The Template Tyrant</div>
+    <div class="arch-snapshot">One script for everyone. Deviation reads as defiance.</div>
+    <div class="signal-grid">
+      <div>
+        <div class="sig-head competence">Reads as competence</div>
+        <ul class="sig-list competence">
+          <li>You run the template first, then earn the edits.</li>
+          <li>Changes backed by reply rates, not opinions.</li>
+          <li>You frame your tweak as a test, not a rebellion.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="sig-head threat">Reads as threat</div>
+        <ul class="sig-list threat">
+          <li>Going off-script with nothing to show for it.</li>
+          <li>&ldquo;I just thought this sounded better.&rdquo;</li>
+          <li>Looking like you think the system is beneath you.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="weekly">
+      <div class="weekly-label">Your weekly move</div>
+      <p class="weekly-text">Run the template, then run one personalized variant beside it and track both. Bring the response-rate comparison: <strong>&ldquo;Standard pulled 4%, the personalized line pulled 11% — can I keep testing it?&rdquo;</strong> Let the data make your case.</p>
+    </div>
+  </div>
+
+  <div class="arch">
+    <div class="arch-num">07</div>
+    <div class="arch-eyebrow">Archetype 07</div>
+    <div class="arch-name">The Two-Faced Cheerleader</div>
+    <div class="arch-snapshot">Praises you in the room. Takes it apart in the 1:1.</div>
+    <div class="signal-grid">
+      <div>
+        <div class="sig-head competence">Reads as competence</div>
+        <ul class="sig-list competence">
+          <li>You ask for the real feedback directly.</li>
+          <li>You keep a written record of what was agreed.</li>
+          <li>You close the gap between the public line and the private one.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="sig-head threat">Reads as threat</div>
+        <ul class="sig-list threat">
+          <li>Being held to the public praise in front of others.</li>
+          <li>Feedback they can&rsquo;t walk back later.</li>
+          <li>You naming the contradiction out loud.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="weekly">
+      <div class="weekly-label">Your weekly move</div>
+      <p class="weekly-text">After every 1:1, send a short written recap of what they said and what you agreed to fix. Ask one specific question: <strong>&ldquo;What&rsquo;s the one thing you&rsquo;d change before next week?&rdquo;</strong> The record keeps the feedback consistent.</p>
+    </div>
+  </div>
+
+  <div class="closing">
+    <p class="closing-text">You are not trying to change your manager. You are removing the gaps they fill with assumptions about you.</p>
+    <p class="closing-sub">Course 4.1 &middot; Reading Your Manager &middot; AESDR</p>
+  </div>
+
+</div>
+
+<script>
+const BANNER_KEY = 'aesdr_archetype_map_info_dismissed';
+
+function dismissBanner() {
+  const banner = document.getElementById('infoBanner');
+  banner.classList.add('dismissed');
+  setTimeout(() => { banner.style.display = 'none'; }, 300);
+  try { localStorage.setItem(BANNER_KEY, '1'); } catch(e) {}
+}
+
+(function init() {
+  try {
+    if (localStorage.getItem(BANNER_KEY) === '1') {
+      document.getElementById('infoBanner').style.display = 'none';
+    }
+  } catch(e) {}
+})();
+</script>
+
+</body>
+</html>

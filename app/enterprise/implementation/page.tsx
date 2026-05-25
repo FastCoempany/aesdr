@@ -174,31 +174,45 @@ export default function ImplementationPage() {
           <h2 className={styles.h2}>What AEs and SDRs walk out with.</h2>
           <hr className={styles.divider} />
           <p className={styles.body}>
-            AESDR ships named takeaway artifacts that live outside the program — the alignment contract, the ROI tracker, the I-don't-know framework, the time-reclaimed calculator, and the end-of-course strike plan. AEs and SDRs keep them, use them, modify them, share them with peers. Each one comes from a specific lesson but works standalone.
+            AESDR ships named takeaway artifacts that live outside the program. AEs and SDRs keep them, use them, modify them, share them with peers. Each one comes from a specific lesson but works standalone — seven course-tied tools plus an end-of-course bonus.
           </p>
           <ul className={styles.bulletList}>
             <li>
-              <strong>Manager Archetype Map.</strong> Eight manager archetypes,
-              what they value, what they reward, what they punish. From Course 4.1.
-            </li>
-            <li>
               <strong>AE/SDR Alignment Contract.</strong> A two-page working
               agreement between paired SDR and AE. Handoff expectations, escalation
-              triggers, mutual commitments. From Course 2.
+              triggers, mutual commitments. From Course 3.
+            </li>
+            <li>
+              <strong>Manager Archetype Map.</strong> The operating systems your
+              manager runs on, what reads to them as competence vs. threat, and the
+              weekly move that manages each one up. From Course 4.1.
+            </li>
+            <li>
+              <strong>Async Cadence Template.</strong> Daily / weekly / monthly
+              rhythms for managing Slack, email, and deep-work blocks in remote
+              work. From Course 4.3.
+            </li>
+            <li>
+              <strong>The I-Don&apos;t-Know Framework.</strong> What to actually say
+              when a prospect asks something you can&apos;t answer — without losing
+              the room. From Course 6.3.
+            </li>
+            <li>
+              <strong>CRM Survival Guide.</strong> A working manual for keeping a
+              clean CRM without it consuming 40% of the week. From Course 9.1.
+            </li>
+            <li>
+              <strong>Time Reclaimed Calculator.</strong> What the revenue-ops stack
+              is actually costing you in hours, reckoned in minutes. From Course 9.2.
+            </li>
+            <li>
+              <strong>ROI &amp; Commission Defense Tracker.</strong> Your commission
+              check itemized and defensible — exportable when HR asks. From Course 10.1.
             </li>
             <li>
               <strong>72-Hour Strike Plan.</strong> A structured recovery plan for
               the week after a major deal loss or quota miss. End-of-course bonus —
               opens when all twelve courses are complete.
-            </li>
-            <li>
-              <strong>CRM Survival Guide.</strong> A working manual for
-              maintaining clean CRM without consuming 40% of the week. From
-              Course 9.1.
-            </li>
-            <li>
-              <strong>Async Cadence Template.</strong> Daily / weekly / monthly
-              rhythms for managing Slack, email, deep-work blocks. From Course 4.
             </li>
           </ul>
         </div>

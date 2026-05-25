@@ -37,12 +37,36 @@ const TOOLS: ReadonlyArray<{
       "The AE/SDR partnership manuscript. Signed, binding, tonally superior to any Slack agreement.",
   },
   {
+    slug: "4.1-manager-archetype-map",
+    number: "4.1",
+    name: "Manager Archetype Map",
+    title: "4.1 — Manager Archetype Map",
+    description:
+      "Which operating system your manager runs on, what reads to them as competence, and the weekly move that manages each one up.",
+  },
+  {
+    slug: "4.3-async-cadence-template",
+    number: "4.3",
+    name: "Async Cadence Template",
+    title: "4.3 — Async Cadence Template",
+    description:
+      "The daily, weekly, and monthly rhythm that turns remote work into the advantage instead of the rope you hang your pipeline with.",
+  },
+  {
     slug: "6.3-idk-framework",
     number: "6.3",
     name: "The IDK Framework",
     title: "6.3 — The IDK Framework",
     description:
       "A pocket reference for the four questions you never should’ve had to guess at.",
+  },
+  {
+    slug: "9.1-crm-survival-guide",
+    number: "9.1",
+    name: "CRM Survival Guide",
+    title: "9.1 — CRM Survival Guide",
+    description:
+      "The record that proves you did the work this quarter — or the case against you in a QBR. How to keep it the first thing without losing 40% of your week.",
   },
   {
     slug: "9.2-time-reclaimed-calculator",

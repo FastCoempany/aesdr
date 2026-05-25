@@ -10,7 +10,10 @@ const TOOLS_ROOT = path.join(process.cwd(), "tools", "standalone-html");
 // Whitelist of valid tool slugs (prevents path traversal)
 const ALLOWED_SLUGS = new Set([
   "3.3-aesdr-alignment-contract",
+  "4.1-manager-archetype-map",
+  "4.3-async-cadence-template",
   "6.3-idk-framework",
+  "9.1-crm-survival-guide",
   "9.2-time-reclaimed-calculator",
   "10.1-ROI-commission-defense-tracker",
   "bonus-72-hr-strike-plan",

@@ -15,7 +15,10 @@ export const metadata: Metadata = {
 
 const TOOLS = [
   { slug: "3.3-aesdr-alignment-contract", title: "AE/SDR Alignment Contract", lesson: "3" },
+  { slug: "4.1-manager-archetype-map", title: "Manager Archetype Map", lesson: "4" },
+  { slug: "4.3-async-cadence-template", title: "Async Cadence Template", lesson: "4" },
   { slug: "6.3-idk-framework", title: "I Don't Know Framework", lesson: "6" },
+  { slug: "9.1-crm-survival-guide", title: "CRM Survival Guide", lesson: "9" },
   { slug: "9.2-time-reclaimed-calculator", title: "Time Reclaimed Calculator", lesson: "9" },
   { slug: "10.1-ROI-commission-defense-tracker", title: "ROI & Commission Defense Tracker", lesson: "10" },
   { slug: "bonus-72-hr-strike-plan", title: "72-Hour Strike Plan", lesson: "Bonus" },
