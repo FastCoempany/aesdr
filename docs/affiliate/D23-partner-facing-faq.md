@@ -220,16 +220,16 @@ The four-question FAQ-lite block is structured for the registration page hierarc
 >
 > *Lesson 1 is open immediately. So is Lesson 12. We don't drip-gate — every lesson is available from day one, and you decide the pace.*
 >
-> *Lifetime access. That means: every revision we make to a lesson, every new tool we add, every supplementary recording — you get them at no additional cost. We do not run a "premium tier" at higher price for the same content. The price you pay is the access you get.*
+> *Your login keeps working. That means: every revision we make to a lesson, every new tool we add, every supplementary recording — you get them at no additional cost, re-downloadable any time. We do not run a "premium tier" at higher price for the same content. The price you pay is the access you get.*
 >
-> *Untamed (the Discord) opens with your enrollment. There is no "wait for the next cohort." You can post in there in the first hour after enrollment if you want.*
+> *Untamed (the Discord) is the alumni community — it opens when you complete the course, not on enrollment. The room is the people who finished, by design.*
 >
 > *14-day refund window starts from the purchase date, not from the date you finish Lesson 1. Refund anytime in those 14 days, no questions, no friction.*
 
 **Notes (internal):**
 - The "we don't drip-gate" line is the cleanest counter-position to the SaaS-norm cohort model (canon §5.3).
 - Per canon §13, "we do not run a premium tier at higher price for the same content" is honest pricing — preempts the "is there a better version?" question.
-- Lifetime access language must match `app/page.tsx` and `PRICING_ENGINE_SPEC.md`. If those change, this answer changes in lockstep.
+- Access language ("your login keeps working") must match `app/page.tsx` and `PRICING_ENGINE_SPEC.md`. If those change, this answer changes in lockstep.
 
 ---
 

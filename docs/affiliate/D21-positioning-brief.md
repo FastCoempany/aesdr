@@ -18,7 +18,7 @@
 > *not the motivation engine.*
 
 > *(Serif body, 16pt, muted)*
-> AESDR is a 12-course sales survival program for first-1-to-2-year SDRs and AEs in startup SaaS — self-paced and interactive across the whole curriculum, with lifetime access from day one. Built by people who carried bags and managed AEs and SDRs for 10+ years.
+> AESDR is a 12-course sales survival program for first-1-to-2-year SDRs and AEs in startup SaaS — self-paced and interactive across the whole curriculum, open from day one with your login that keeps working. Built by people who carried bags and managed AEs and SDRs for 10+ years.
 
 ---
 
@@ -45,8 +45,8 @@
 | Lessons | 12 modular courses, lesson-clusters by theme |
 | Tools | 5 takeaway tools (alignment contract, strike plan, ROI tracker, others) |
 | Format | Interactive HTML exercises, not video lectures |
-| Community | Discord — *Untamed* — included with every license |
-| Access | Lifetime, including future curriculum updates |
+| Community | Discord — *Untamed* — alumni-only, opens on course completion |
+| Access | Your login keeps working, including future curriculum updates |
 | Refund | 14 days, no-questions-asked |
 
 ### Pricing
@@ -55,9 +55,9 @@
 |---|---|---|
 | SDR Individual | $249 | 1 |
 | AE Individual | $299 | 1 |
-| Team | $1,499 | up to 10 |
+| Team | Let's discuss | up to 10 |
 
-One-time. Lifetime access. Reimbursable through most L&D budgets.
+One-time. Your login keeps working. Reimbursable through most L&D budgets.
 
 ---
 
@@ -77,7 +77,7 @@ A workshop-first affiliate motion. One live workshop into your audience, run by 
 
 ### Three things we'll always say about AESDR
 
-1. 12 courses, lifetime access, $249/$299/$1,499, 14-day refund.
+1. 12 courses, your login keeps working, $249/$299/Team is contact-for-pricing, 14-day refund.
 2. Built by people who carried bags and managed AEs and SDRs for 10+ years.
 3. Interactive HTML lessons rather than video lectures, with no motivational performance anywhere in the format.
 

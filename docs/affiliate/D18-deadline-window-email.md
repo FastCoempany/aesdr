@@ -51,7 +51,7 @@ If no first name on file:
 >
 > *Here's what closes at **[CODE_EXPIRY_DATE_TIME_TZ]**:*
 >
-> ***— The pilot pricing.*** *Code [PILOT_CODE] is specific to this pilot. After the deadline, the offer reverts to list. Lifetime access either way; the pilot price is the difference between deciding now and deciding later at full cost.*
+> ***— The pilot pricing.*** *Code [PILOT_CODE] is specific to this pilot. After the deadline, the offer reverts to list. Your login keeps working either way; the pilot price is the difference between deciding now and deciding later at full cost.*
 >
 > ***— The replay link.*** *The replay window we promised was 72 hours. After the timestamp above, the link expires. We don't run "evergreen" replays. We don't sell the recording.*
 >

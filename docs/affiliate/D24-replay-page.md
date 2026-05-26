@@ -60,7 +60,7 @@ The above-the-fold block is the deal. A registrant who already decided during th
 >
 > *— **What you do when no one's watching.** The drinking culture, the relationships you're trying to keep, the version of yourself the role is building. Most sales training pretends this part doesn't exist. We disagree, on purpose.*
 >
-> *— **The catalog.** Twelve courses, thirty-six lessons, real questions on each card. Open from day one, lifetime access, refundable in 14 days. The four cards on slide 14 were a teaser — the full drawer opens at enrollment.*
+> *— **The catalog.** Twelve courses, thirty-six lessons, real questions on each card. Open from day one, your login keeps working, refundable in 14 days. The four cards on slide 14 were a teaser — the full drawer opens at enrollment.*
 
 The recap is the bridge from "I watched it" to "I know what it's actually for." Per canon §3.3, this block runs slightly more Rowan (verdict-shaped) than the surrounding page.
 

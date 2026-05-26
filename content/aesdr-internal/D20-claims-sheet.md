@@ -16,11 +16,11 @@ These are the claims we have substantiated and stand behind. Partners and the ho
 
 ### A1. Structural promise (verbatim)
 
-> *"12 courses. 5 takeaway tools. Lifetime access. Discord community ('Untamed') included. 14-day no-questions-asked refund."*
+> *"12 courses. 5 takeaway tools. Your login keeps working. Untamed — the alumni Discord community — opens when you complete the course. 14-day no-questions-asked refund."*
 
 Pricing, also verbatim:
 
-> *"$249 for an SDR seat. $299 for an AE seat. $1,499 for a Team license up to 10 seats. One-time, not a subscription."*
+> *"$249 for an SDR seat. $299 for an AE seat. Team license up to 10 seats — contact us for pricing. One-time, not a subscription."*
 
 ### A2. Authority frame (verbatim)
 

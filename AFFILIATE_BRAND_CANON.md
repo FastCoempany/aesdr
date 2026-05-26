@@ -48,9 +48,9 @@ A borrowed audience has 60 minutes and zero trust. Position must land in 10 seco
 | What AESDR is | The operating manual for early-career SaaS sales, not the motivation engine. |
 | Who it's for | First-1-to-2-year SDRs and AEs in startup SaaS who're serious about controlling chaos, managing toxic leadership, protecting their commission, and their future. (Also: SDR managers buying for ramp.) |
 | Who it's explicitly not for | People looking for motivational content, automated shortcuts, LinkedIn polish, badge-hustle, certification clout, or anything that smells like a guru course. |
-| Structural promise | 12 courses. 5 takeaway tools. Lifetime access. Discord ("Untamed"). 14-day refund. |
+| Structural promise | 12 courses. 5 takeaway tools. Your login keeps working. Discord ("Untamed") — alumni-only, opens on course completion. 14-day refund. |
 | Delivery format | Self-paced, interactive, field-tested. Not video lectures. Not motivation. |
-| Pricing (current canon) | $249 SDR · $299 AE · $1,499 Team (up to 10 seats). One-time, lifetime access. |
+| Pricing (current canon) | $249 SDR · $299 AE · Team (up to 10 seats) is contact-for-pricing — let's discuss. One-time; your login keeps working. |
 | Authority frame | Built by people who carried bags and managed AEs/SDRs for 10+ years. Authority lives in the brand and the host, never in a named founder. |
 | Tonal stance | Confessional + verdict. We name the mess (Michael) and rule on it (Rowan). |
 
@@ -532,7 +532,7 @@ The moves we use, the moves we don't, and why each.
 - **Loss aversion through the merciless mirror.** We don't sell a future gain ("make more money"); we name a present cost ("you're guessing, loudly"). The audience already feels the loss; we make it legible.
 - **The taco-place test.** Specific, embarrassing scene-painting beats abstract pain ("you struggle with discovery calls"). One vivid scene per surface, minimum.
 - **Real deadlines, not theatrical ones.** Pilot windows are real: registration closes when the workshop starts. Bonus windows are real: stated, dated, honored. We do not run "ends tonight!" copy that resets weekly.
-- **Anchor-and-deflate on price.** We never pretend $249/$299/$1,499 is a discount. We anchor on the cost of *not* taking the course (a missed quarter, a lost commission cycle). The price is plain math; we trust the audience to do it.
+- **Anchor-and-deflate on price.** We never pretend $249/$299 (and the contact-for-pricing Team license) is a discount. We anchor on the cost of *not* taking the course (a missed quarter, a lost commission cycle). The price is plain math; we trust the audience to do it.
 - **Behavioral commitment via micro-yes.** Registration is a 2-field form (email + role). Self-assessment slide asks one yes/no question. Tiny commitments compound into the close.
 
 ### 9.2 Moves we explicitly do not use
@@ -574,7 +574,7 @@ If the partner cannot or will not disclose, we do not work with them. This is a 
 
 ### 10.2 Approved claims
 The partner and host may say these:
-- The structural promise (12 courses, 5 takeaway tools, lifetime access, $249/$299/$1,499, 14-day refund). Verbatim.
+- The structural promise (12 courses, 5 takeaway tools, your login keeps working, $249/$299/Team is contact-for-pricing, 14-day refund). Verbatim.
 - "Built by people who carried bags and managed AEs and SDRs for 10+ years."
 - "Not video lectures. Interactive."
 - "Discord community ('Untamed') included."

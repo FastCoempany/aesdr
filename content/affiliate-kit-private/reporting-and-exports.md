@@ -52,7 +52,7 @@ WORKSHOP ATTENDANCE
 ENROLLMENTS TO DATE
   SDR plan @ $249   ...............  7  → $1,743
   AE plan @ $299    ...............  3  → $897
-  Team plan @ $1,499 ..............  0  → $0
+  Team plan (quoted)  .............  0  → $0
   Gross revenue                    → $2,640
 
 PROJECTED COMMISSION

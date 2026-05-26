@@ -63,7 +63,7 @@ Operate severe, calm, ranked, authored. No marketing voice. No friendliness-firs
 11. `docs/affiliate/00-INDEX.md` — index of the 40 affiliate deliverables. The hub's content lifts from these.
 12. `docs/affiliate/D21-positioning-brief.md`, `D31-curriculum-map.md`, `D40-master-affiliate-kit-readme.md` — primary content sources for hub home, curriculum page, kit page.
 13. `docs/affiliate/kit-template/00-canon-excerpt.md`, `09a-newsletter-launch.md`, `09b-newsletter-reminder.md`, `09c-podcast-intro-script.md`, `09d-social-pre-approved-posts.md`, `10d-lockup-usage-guide.md`, `11-tracking-links.md`, `13-operating-cadence.md` — the kit downloadables.
-14. `PRICING_ENGINE_SPEC.md` — pricing source of truth. List prices: $249 SDR / $299 AE / $1,499 Team. Never discount.
+14. `PRICING_ENGINE_SPEC.md` — pricing source of truth. List prices: $249 SDR / $299 AE; Team is contact-for-pricing. Never discount.
 15. `SESSION_STATE.md` — context recovery brief. The "Recent activity" log shows what's shipped and what's not.
 
 **Reference URLs (external, for context only):**

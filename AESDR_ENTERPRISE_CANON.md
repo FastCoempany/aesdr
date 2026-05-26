@@ -364,7 +364,7 @@ app/api/enterprise-inquiry/
 **Four buyer modes (card grid)**
 Four cards in a 2×2 grid:
 
-1. **Direct team seats** — buy 10 seats for your org. AEs and SDRs see the consumer experience; you get the manager dashboard and progress visibility. **$1,499 one-time, lifetime access.** *(Clears up the misread Bilal had.)*
+1. **Direct team seats** — buy 10 seats for your org. AEs and SDRs see the consumer experience; you get the manager dashboard and progress visibility. **One-time; your login keeps working. Contact us for Team pricing.** *(Clears up the misread Bilal had.)*
 2. **Custom enterprise** — 50+ seats. Per-seat pricing, manager onboarding, custom rollout sequence. **Contact us.**
 3. **White-label / co-branded** — for partners packaging AESDR inside their offering. We deliver the lessons; you wrap them in your brand. **Contact us.**
 4. **Marketplace integration** — for LMS, enablement, and hiring platforms. SSO, eventual SCORM/xAPI, revenue-share. **Contact us.**
@@ -407,7 +407,7 @@ Categories in order:
 
 **Three pricing cards** (modeled on consumer pricing card layout but with subsidiary visual identity — iris-shimmer accents, ink-fill featured tier for Custom):
 
-1. **Team — $1,499** (one-time, lifetime, up to 10 seats, any mix of SDR/AE tracks)
+1. **Team — Let's discuss** (one-time, your login keeps working, up to 10 seats, any mix of SDR/AE tracks)
    - Same as the consumer Team tier — explicit that it's the SAME PRODUCT
    - What's included: 10 seats, manager dashboard, progress tracking, priority support (direct Slack), invoice + receipt formatted for L&D
    - CTA: `Buy now` → existing checkout (Stripe Team SKU)
@@ -427,7 +427,7 @@ Categories in order:
 
 **FAQ block (under table)** — short Q&A list:
 - "Is the Team tier the same product as the consumer course?" → Yes. Same 12 courses, same Discord, same takeaway tools.
-- "Can we get a recurring subscription?" → Not currently. We're one-time + lifetime by design. Per-seat custom pricing is available for larger orgs.
+- "Can we get a recurring subscription?" → Not currently. We're one-time by design, and your login keeps working. Per-seat custom pricing is available for larger orgs.
 - "Do we get a discount for buying multiple Teams?" → No discount stacking on the Team tier. Custom enterprise tier is the path past 10 seats.
 - "Refund policy?" → 14-day no-questions-asked, same as consumer.
 - "Can we white-label without revenue share?" → Possible at a higher wholesale-seat rate. Discussed during walkthrough.
@@ -664,7 +664,7 @@ Detailed pitch angles for each category, used both for the `/enterprise/channel`
 **Integration mechanism:** Bulk seat provisioning via API or CSV (immediate). Co-branded onboarding email.
 
 **Revenue model:**
-- Wholesale per-seat: $99/seat lifetime (vs. $249 consumer) — platform absorbs cost or passes to hiring org
+- Wholesale per-seat: $99/seat one-time (vs. $249 consumer) — platform absorbs cost or passes to hiring org
 
 ### 7.4 Fractional RevOps & outsourced SDR firms
 
@@ -705,22 +705,22 @@ Detailed pitch angles for each category, used both for the `/enterprise/channel`
 
 ## 8. Pricing structure
 
-### 8.1 Team seats — $1,499 one-time
+### 8.1 Team seats — one-time (contact us for pricing)
 
 - 10 seats, any mix of SDR / AE tracks
-- Lifetime access for each seat
+- Your login keeps working, for each seat
 - Manager dashboard included
 - Priority Slack support
 - Invoice + receipt formatted for L&D reimbursement
 - 14-day refund
 
-**Same as the existing consumer Team tier.** Important: this is also addressing the misread Bilal had — the Team tier IS one-time, lifetime, ten seats. Not recurring, not corporate subscription.
+**Same as the existing consumer Team tier.** Important: this is also addressing the misread Bilal had — the Team tier IS one-time, ten seats, and your login keeps working. Not recurring, not corporate subscription.
 
 ### 8.2 Custom enterprise
 
 Triggered when team size > 10 or buyer requests custom onboarding.
 
-- Per-seat pricing (TBD on standard rate; expect $99–$149/seat lifetime for 50+ seats)
+- Per-seat pricing (TBD on standard rate; expect $99–$149/seat one-time for 50+ seats)
 - Manager onboarding session (live)
 - Custom rollout sequence (we adapt the Implementation Guide to the org's calendar)
 - Dedicated Slack channel
@@ -966,7 +966,7 @@ Explicitly NOT building in this sprint. Listed to prevent scope creep.
 - Live chat / Intercom-style widget
 - A/B testing on landing-page copy
 - PostHog / Mixpanel / any analytics SDK
-- Recurring subscription billing on Custom Enterprise *(stay one-time + lifetime model)*
+- Recurring subscription billing on Custom Enterprise *(stay one-time; your login keeps working)*
 - Replacing or substantively modifying any consumer-brand page (`app/page.tsx`, `/partners/*`, `/syllabus`, pricing cards, FAQ, About, Contact)
 - Migrating any consumer copy to the "behavioral OS" framing
 

@@ -59,7 +59,7 @@
 >
 > ***If you genuinely think the free content is enough:*** *the honest answer is, maybe it is — for you. Don't enroll. The 14-day refund means the cost of trying is low, but the cost of buying-when-uncertain is your attention, and your attention is the one thing this email is competing for. Save it for something you're sure of.*
 >
-> ***If you think the free content isn't enough but you haven't admitted that out loud yet:*** *the enrollment link is below. The pilot code closes [date]. Lifetime access. 14-day refund.*
+> ***If you think the free content isn't enough but you haven't admitted that out loud yet:*** *the enrollment link is below. The pilot code closes [date]. Your login keeps working. 14-day refund.*
 
 ### Primary CTA
 

@@ -27,7 +27,7 @@ total. Five takeaway tools (worksheets you actually use — alignment
 contract, strike plan, ROI tracker, etc.). Role-conditional content on
 every lesson — SDR-flavored exercises hide if you marked yourself as AE,
 and vice versa. Private Discord (Untamed) for ongoing conversation with
-other AESDR enrollees. Lifetime access including future updates.
+other AESDR enrollees. Your login keeps working, including future updates.
 
 ### "Is this for me if I've been selling for 8 years?"
 
@@ -99,7 +99,7 @@ rather your recommendation be that the program is worth the list price.
 ### "Can I expense this?"
 
 Almost always yes. AESDR provides a receipt and invoice on purchase.
-Most L&D budgets cover this easily, especially the $1,499 Team plan.
+Most L&D budgets cover this easily, especially the Team plan.
 
 ### "What if I hate it?"
 
@@ -115,10 +115,10 @@ value.
 
 ### "Is there a community or is it self-paced only?"
 
-Both. The course is self-paced. The Discord (Untamed) is included with
-every license — real AEs and SDRs in similar situations, talking about
-what's working. Not a hype channel. Not a motivation channel. Operator
-talk.
+Both. The course is self-paced. The Discord (Untamed) is the alumni
+community — it opens when you complete the course. Real AEs and SDRs in
+similar situations, talking about what's working. Not a hype channel.
+Not a motivation channel. Operator talk.
 
 ### "Is the founder active in the community?"
 

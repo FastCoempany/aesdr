@@ -59,7 +59,7 @@ workshop. ~250–320 words including disclosure.
 > fits.*
 >
 > *Live workshop runs ~60 minutes plus 10–15 minutes of Q&A. There's an
-> offer at the close (lifetime access to the full program, 14-day
+> offer at the close (your login keeps working on the full program, 14-day
 > refund), and there's a 72-hour replay window for anyone who can't make
 > the live.*
 >
@@ -259,7 +259,7 @@ Link goes in the first reply / first comment, plain — no shortener.
 >
 > *— Operating manual, not motivation engine.*
 >
-> *— 12 courses + 5 takeaway tools. Lifetime access. 14-day refund.*
+> *— 12 courses + 5 takeaway tools. Your login keeps working. 14-day refund.*
 >
 > *— No certificate program. No "elite community." No drip-gating.*
 >
@@ -442,9 +442,9 @@ Triggered manually (not auto). Personal, in your voice, ~60 words.
 > **Subject:** *(no subject — sent from your personal address, reply
 > chain feel)*
 
-> *Saw you enrolled via my link — appreciated. The Untamed Discord
-> invite should land in your inbox within 30 minutes; if it doesn't,
-> reply here and I'll get it sent.*
+> *Saw you enrolled via my link — appreciated. Untamed, the alumni
+> Discord, opens once you finish the course; until then your login keeps
+> working and you can come back any time.*
 >
 > *Genuinely useful 1–2 sentence personal nudge — what lesson to start
 > with given what they've told you about their situation, OR an

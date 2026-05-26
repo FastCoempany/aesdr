@@ -227,7 +227,7 @@ This map is a forward dependency for:
 
 > *(--serif italic 16pt, --ink, single paragraph below the catalog — the document's last visual beat.)*
 >
-> *Twelve courses. Real questions on each card. Annotations in the host's hand. Open from day one, lifetime access, refundable in 14 days. Hosted by [HOST_FIRST_NAME], built from operator interviews, kept current as the role changes. Check one out.*
+> *Twelve courses. Real questions on each card. Annotations in the host's hand. Open from day one, your login keeps working, refundable in 14 days. Hosted by [HOST_FIRST_NAME], built from operator interviews, kept current as the role changes. Check one out.*
 
 ---
 

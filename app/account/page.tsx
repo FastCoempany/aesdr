@@ -257,7 +257,7 @@ export default async function AccountPage() {
         </section>
 
         {/* Pause emails — "Life happened" lever. Suppresses retention
-            cron emails for N weeks. Lifetime access doesn't change. */}
+            cron emails for N weeks. Their login keeps working regardless. */}
         <section className="mb-10">
           <h2
             style={{

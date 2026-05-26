@@ -224,7 +224,7 @@ SEO-optimised. Not because it's good, but because it ranks.
 
 **Blast radius.** Top-of-funnel erosion. Buyers who would have found
 us instead find a free-but-generic alternative; some convert, some
-just leave. Worst case: a partner asks why they should pay $1,499 when
+just leave. Worst case: a buyer asks why they should pay the Team price when
 something free exists.
 
 **Current state.** /preview shows the substance gap. /about shows the

@@ -71,7 +71,7 @@ The clip is built from L11.1's source recording with light editorial cuts — pa
 
 ### 3.1 Locked outro (verbatim)
 
-> *"That's a 12-minute slice of one lesson — `658.85 / L11` in the catalog. The full lesson runs longer and the program runs longer than that — twelve courses, thirty-six lessons, lifetime access, 14-day refund, $249 to start. The link's below this video. — [HOST_FIRST_NAME], AESDR."*
+> *"That's a 12-minute slice of one lesson — `658.85 / L11` in the catalog. The full lesson runs longer and the program runs longer than that — twelve courses, thirty-six lessons, your login that keeps working, 14-day refund, $249 to start. The link's below this video. — [HOST_FIRST_NAME], AESDR."*
 
 ---
 

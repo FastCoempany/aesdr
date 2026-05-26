@@ -182,7 +182,7 @@ Per founder review 2026-05-04: affiliate-facing body copy must read like an oper
    - **What you cannot ask for.** 5-bullet list, lifted from D40 §4 + Phase 0 #5 ratification. Includes: discount codes (never), category exclusivity (never), AESDR's email list (never), founder appearance on demand (rare per canon §12.4), list co-promotion (never).
 6. **Pricing & commission** strip (NEW — built from D28 sanitized + Phase 0 #5):
    - Header: *"Pricing is list. Commission is 30% of net. No exceptions."*
-   - Body: *"Buyers see the same price every other AESDR buyer sees: $249 SDR, $299 AE, $1,499 Team. AESDR does not run promotional discounts, pilot codes, or affiliate-stack discounts. Affiliates earn commission off list price; that's the deal."*
+   - Body: *"Buyers see the same price every other AESDR buyer sees: $249 SDR, $299 AE, and a contact-for-pricing Team license. AESDR does not run promotional discounts, pilot codes, or affiliate-stack discounts. Affiliates earn commission off list price; that's the deal."*
    - Sub-block — the $40 follow-on: *"After enrollment, AESDR offers a $40 unlock for the second end-of-course artifact (see /tools/playbill-vs-redline). Within the affiliate's 30-day attribution window, the $40 unlock is affiliate-attributable."* (Note: this attribution rule needs founder + counsel ratification before publish; see §"Open questions.")
 7. **Approval workflow** strip — three-row table: APPROVED / APPROVED WITH EDITS / DECLINED. Lift from D40 §3 verbatim.
 8. **CTA strip:** iris button `Request the affiliateship agreement →` (anchors to `/affiliates/apply`). Mono trail: `request triggers a counsel-reviewed D22 PDF, sent within 5 business days.`

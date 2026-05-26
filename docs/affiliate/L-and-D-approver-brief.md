@@ -37,7 +37,7 @@ The 12 courses (working titles for L&D review — production course titles in pa
 | C01 | Building team partnership in early-career sales (Building Real Camaraderie) |
 | C02 | Cross-team alignment and the home-office build-out (Breaking Down Silos) |
 | C03 | Performance pitfalls and survival framework with manager-archetype mapping (Performance Pitfalls) |
-| C04 | Reading your manager: the ten archetypes (Navigating Manager Madness) |
+| C04 | Reading your manager: the five archetypes (Navigating Manager Madness) |
 | C05 | The promotion-track playbook for SDRs (tHe SaLeS pLaYbOoK) |
 | C06 | Field experience over textbook theory; networking and the strategy of "knowing just enough" (bEyOnD tHe SaLeS pLaYbOoK) |
 | C07 | Prospecting ownership for AEs and the existential question of fit in SaaS sales (Prospecting & Pipeline) |
@@ -53,11 +53,11 @@ Each course has 3 lessons (36 total). Per-course worksheets and takeaway tools �
 
 | Tier | Price | What's included |
 |---|---|---|
-| SDR | **$249** | All 12 courses, all 5 tools, Untamed Discord, lifetime access, 14-day refund |
+| SDR | **$249** | All 12 courses, all 5 tools, Untamed Discord (alumni, on completion), your login keeps working, 14-day refund |
 | AE | **$299** | Same as SDR + AE-track supplementary recordings + AE-specific worksheets |
-| Team | **$1,499** | 10 seats, manager dashboard, cohort assign + revoke, no per-seat overage |
+| Team | **Let's discuss** | 10 seats, manager dashboard, cohort assign + revoke, no per-seat overage |
 
-**Pricing is one-time, lifetime access.** No subscription, no auto-renewal, no upgrade path to a "premium tier" — there is no premium tier. The price is the access.
+**Pricing is one-time, and your login keeps working.** No subscription, no auto-renewal, no upgrade path to a "premium tier" — there is no premium tier. The price is the access.
 
 ### What [PROSPECT_NAME] would learn
 
@@ -113,7 +113,7 @@ If approving for [PROSPECT_NAME]:
 - Section headers (`What AESDR is`, `What it costs`, etc.): `--cond` 11pt 700, .15em, uppercase, `--ink`.
 - Document headline: `--display` italic 700, 32pt.
 - Mono eyebrow + footer: `--mono` 10pt, `--muted`.
-- Pricing-table tier prices ($249, $299, $1,499): `--display` italic 700, 18pt, `--ink`. (Not crimson — pricing in this register is information, not alarm.)
+- Pricing-table tier prices ($249, $299, and the Team "Let's discuss" cell): `--display` italic 700, 18pt, `--ink`. (Not crimson — pricing in this register is information, not alarm.)
 - Closing signature line: `--display` italic 700, 14pt, `--ink`.
 - PS Caveat: `--hand` 22pt, `--crimson`, rotation `-1deg`. Single instance.
 - Hairline rules between sections: `--light` 1px.

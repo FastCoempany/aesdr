@@ -88,7 +88,7 @@ If on the email render target, no first-name personalization (we don't have firs
 >
 > ***— L&D-routed enrollment was higher than estimated.*** *We thought a smaller share of enrollees would come through manager-approved reimbursement. Actual: `[LD_ENROLLMENT_RATIO]`. The L&D-approver brief (a one-page PDF written for the conversation with a manager) carried more weight than we forecasted. We're keeping it; we're improving it.*
 >
-> *AESDR is now open for direct enrollment at* `aesdr.com`. *List pricing — `$249` SDR, `$299` AE, `$1,499` 10-seat Team. Lifetime access. 14-day refund. Same terms every pilot ran on.*
+> *AESDR is now open for direct enrollment at* `aesdr.com`. *List pricing — `$249` SDR, `$299` AE; the 10-seat Team is contact-for-pricing — let's discuss. Your login keeps working. 14-day refund. Same terms every pilot ran on.*
 
 ### Primary CTA
 
@@ -187,7 +187,7 @@ Per canon §6.9.3 + §12.4, founder-signed social posts are a first-instance app
 
 - **Not a "pilot wrap-up" thank-you tour.** Pilot affiliates get D34 + D36 communications individually; D38 is the broader-market announcement, not the affiliate-acknowledgment vehicle.
 - **Not an "AESDR raised funding" / "AESDR has a new investor" announcement.** That's a different category and would require a separate canon-revision intake (D35) before any such language ships.
-- **Not a "feature update" announcement.** AESDR ships curriculum updates continuously per canon §"lifetime access is literal"; those don't get announced as launch milestones.
+- **Not a "feature update" announcement.** AESDR ships curriculum updates continuously per canon §"your login keeps working"; those don't get announced as launch milestones.
 - **Not the founder's personal-brand launch.** Founder visibility (sign-off, social posts) earns its place by virtue of canon §12.4 milestone-eligibility. After the 30-day launch window, founder retreats to default backstage per canon §12.1.
 - **Not a recurring announcement template.** This is a *one-time* deliverable for the pilot-to-direct transition. Subsequent broader-market communications (e.g., a year-1 retrospective) require a separate deliverable per canon §17 (don't repurpose the launch template into a quarterly send).
 

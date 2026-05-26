@@ -50,7 +50,7 @@ You may add up to **two sentences** of your own framing at the very top — your
 
 > ***Who shouldn't attend:*** *Sales veterans 8+ years in. Anyone looking for motivation. Anyone who wants a LinkedIn-friendly badge. None of these are insults — they're filters. Save your hour for something that fits.*
 
-> *Live workshop runs ~60 minutes plus 10–15 minutes of Q&A. There's an offer at the close (lifetime access to the full program, 14-day refund), and there's a 72-hour replay window for anyone who can't make the live.*
+> *Live workshop runs ~60 minutes plus 10–15 minutes of Q&A. There's an offer at the close (your login keeps working on the full program, 14-day refund), and there's a 72-hour replay window for anyone who can't make the live.*
 
 > [Iris CTA — link to `[REGISTRATION_URL]`]
 >

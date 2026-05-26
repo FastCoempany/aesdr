@@ -176,7 +176,7 @@ Same redaction-card pattern as `.faq-item` in `variant-a-editorial-split.html`: 
 > *60 minutes live, plus optional 10 minutes of Q&A. The replay is the same length.*
 >
 > **Q04 / What's the offer at the close?**
-> *AESDR is a 12-course sales survival course priced at $249 for an SDR seat, $299 for an AE seat, and $1,499 for a 10-seat team. Lifetime access from day one, with a 14-day no-questions-asked refund window backing the whole thing. We tell you exactly what it is and what it isn't.*
+> *AESDR is a 12-course sales survival course priced at $249 for an SDR seat, $299 for an AE seat, and a 10-seat team license that's contact-for-pricing — let's discuss. Your login keeps working from day one, with a 14-day no-questions-asked refund window backing the whole thing. We tell you exactly what it is and what it isn't.*
 
 ---
 
