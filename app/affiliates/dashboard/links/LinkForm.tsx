@@ -159,7 +159,7 @@ export default function LinkForm() {
             padding: "10px 14px",
             background: "#fff",
             color: "var(--ink)",
-            border: "1px solid #B5B0A8",
+            border: "1px solid #928C84",
             width: "100%",
           }}
         >
@@ -200,7 +200,7 @@ export default function LinkForm() {
             padding: "10px 14px",
             background: "#fff",
             color: "var(--ink)",
-            border: "1px solid #B5B0A8",
+            border: "1px solid #928C84",
             width: "100%",
           }}
         />
@@ -256,7 +256,7 @@ export default function LinkForm() {
                   padding: "8px 12px",
                   background: "#fff",
                   color: "var(--ink)",
-                  border: "1px solid #B5B0A8",
+                  border: "1px solid #928C84",
                   width: "100%",
                 }}
               />

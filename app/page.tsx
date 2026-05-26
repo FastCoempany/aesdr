@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 
@@ -30,6 +31,10 @@ const FAQ: { q: string; a: string; icon: IconName }[] = [
   { q: "I\u2019ve been reading Sales Hacker and RepVue for a year. Different?", a: "Three differences. Structure \u2014 a reading list doesn\u2019t sequence what compounds. Vendor independence \u2014 the free content is sponsored by tools, so the tools lessons are quietly compromised. AESDR is buyer-paid; no vendor has copy approval. And artifacts \u2014 you don\u2019t take a Sales Hacker post into your 1:1 with a bad manager next week. You take the AE/SDR Alignment Contract.",         icon: "eye"       },
   { q: "Should I take Aspireship or Uvaro instead?",              a: "Different audience. Those are bootcamps for people trying to break into sales \u2014 they place you, coach you through ramp, sometimes share first-year commission. AESDR assumes the seat is already yours. If you\u2019re three months from your first SDR interview, take a bootcamp. If you\u2019re three months into the job and the ramp is harder than anyone warned you about, this one.",                                          icon: "warn"      },
 ];
+
+export const metadata: Metadata = {
+  title: "AESDR — Sales training for first- and second-year AEs and SDRs",
+};
 
 export default async function LandingPage() {
   const supabase = await createClient();
@@ -253,17 +258,23 @@ export default async function LandingPage() {
         </div>
         <div className={styles.faqGrid}>
           {FAQ.map((item, i) => (
-            <div key={i} className={styles.faqItem}>
+            <div
+              key={i}
+              className={styles.faqItem}
+              tabIndex={0}
+              role="group"
+              aria-label={`Frequently asked question ${i + 1}: ${item.q}`}
+            >
               <p className={styles.faqNum} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-                <Icon name={item.icon} size={14} />
+                <Icon name={item.icon} size={14} aria-hidden />
                 Q{String(i + 1).padStart(2, "0")}
               </p>
               <p className={styles.faqQ}>{item.q}</p>
               <div className={styles.faqAnswer}>
                 <p className={styles.faqBlur}>{item.a}</p>
-                <span className={styles.faqRedactLabel}>[classified &mdash; hover to peek]</span>
+                <span className={styles.faqRedactLabel} aria-hidden="true">[classified &mdash; hover or focus to peek]</span>
               </div>
-              <span className={styles.faqStamp}>Classified</span>
+              <span className={styles.faqStamp} aria-hidden="true">Classified</span>
             </div>
           ))}
         </div>

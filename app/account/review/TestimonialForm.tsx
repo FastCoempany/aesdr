@@ -126,7 +126,7 @@ export default function TestimonialForm({ initial }: Props) {
                   fontSize: 22,
                   background: selected ? "var(--crimson)" : "transparent",
                   color: selected ? "#fff" : "var(--ink)",
-                  border: `1px solid ${selected ? "var(--crimson)" : "#B5B0A8"}`,
+                  border: `1px solid ${selected ? "var(--crimson)" : "#928C84"}`,
                   cursor: "pointer",
                 }}
               >
@@ -169,7 +169,7 @@ export default function TestimonialForm({ initial }: Props) {
             padding: "12px 14px",
             background: "#fff",
             color: "var(--ink)",
-            border: "1px solid #B5B0A8",
+            border: "1px solid #928C84",
             resize: "vertical",
             lineHeight: 1.6,
           }}
@@ -211,7 +211,7 @@ export default function TestimonialForm({ initial }: Props) {
                 padding: "10px 14px",
                 background: "#fff",
                 color: "var(--ink)",
-                border: "1px solid #B5B0A8",
+                border: "1px solid #928C84",
                 width: "100%",
               }}
             />

@@ -125,13 +125,15 @@ export default function CheckoutButton({
           onKeyDown={(e) => e.key === "Enter" && handleCheckout()}
           placeholder={placeholder}
           aria-label="Email address"
+          autoComplete="email"
+          aria-invalid={error ? true : undefined}
           autoFocus
           style={{
             fontFamily: "var(--serif)",
             fontSize: "16px",
             padding: "14px 16px",
             background: "var(--cream, #FAF7F2)",
-            border: `1px solid ${error ? "var(--crimson, #8B1A1A)" : "var(--light, #E8E4DF)"}`,
+            border: `1px solid ${error ? "var(--crimson, #8B1A1A)" : "var(--form-border, #928C84)"}`,
             color: "var(--ink, #1A1A1A)",
             width: "100%",
           }}

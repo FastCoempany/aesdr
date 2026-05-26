@@ -90,6 +90,7 @@ export default function SignupPage() {
 
         {success ? (
           <div
+            role="status"
             className="px-5 py-6 text-center"
             style={{
               borderLeft: "3px solid var(--crimson)",
@@ -126,6 +127,7 @@ export default function SignupPage() {
                   id="email"
                   type="email"
                   required
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-4 py-3 transition"
@@ -133,7 +135,7 @@ export default function SignupPage() {
                     fontFamily: "var(--serif)",
                     fontSize: "16px",
                     background: "#fff",
-                    border: "1px solid var(--light)",
+                    border: "1px solid var(--form-border)",
                     color: "var(--ink)",
                   }}
                   placeholder="you@company.com"
@@ -158,6 +160,7 @@ export default function SignupPage() {
                   type="password"
                   required
                   minLength={6}
+                  autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-4 py-3 transition"
@@ -165,7 +168,7 @@ export default function SignupPage() {
                     fontFamily: "var(--serif)",
                     fontSize: "16px",
                     background: "#fff",
-                    border: "1px solid var(--light)",
+                    border: "1px solid var(--form-border)",
                     color: "var(--ink)",
                   }}
                   placeholder="Min 6 characters"
@@ -174,6 +177,7 @@ export default function SignupPage() {
 
               {error && (
                 <div
+                  role="alert"
                   className="px-4 py-3"
                   style={{
                     fontFamily: "var(--serif)",

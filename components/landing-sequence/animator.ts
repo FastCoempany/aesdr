@@ -45,6 +45,7 @@ export type AnimatorRefs = {
   progress: HTMLDivElement | null;
   cta: HTMLDivElement | null;
   skipBtn: HTMLButtonElement | null;
+  liveRegion: HTMLDivElement | null;
 };
 
 export type AnimatorOptions = {
@@ -193,6 +194,15 @@ export function runAnimator(refs: AnimatorRefs, opts: AnimatorOptions): () => vo
         const collapseClass = picked === "sdr" ? c.splitCollapseAe : c.splitCollapseSdr;
         refs.split?.classList.add(collapseClass);
         refs.divider?.classList.add(c.forkDividerHidden);
+        // Announce the selection to assistive tech (WCAG 4.1.3). The fork
+        // is a visual split with no native form semantics, so the change
+        // of state would otherwise be silent to screen-reader users.
+        if (refs.liveRegion) {
+          refs.liveRegion.textContent =
+            picked === "ae"
+              ? "Account Executive track selected. Loading your path."
+              : "Sales Development Representative track selected. Loading your path.";
+        }
         opts.onRolePick(picked);
         schedule(() => {
           refs.fork?.classList.remove(c.forkLayerActive);
@@ -567,7 +577,19 @@ export function runAnimator(refs: AnimatorRefs, opts: AnimatorOptions): () => vo
 
   function onAdvanceKey(e: KeyboardEvent) {
     if (scrollUnlocked) return;
-    if (e.key === " " || e.key === "Enter") {
+    // Don't eat Space/Enter when a focused interactive control (the fork
+    // halves or the skip button) should receive the activation itself.
+    // Without this, a keyboard user who Tabs to a fork half and presses
+    // Enter has the global advance handler hijack the key, so they can
+    // never pick a role with the keyboard. (WCAG 2.1.1)
+    const active = document.activeElement as HTMLElement | null;
+    const onInteractive =
+      !!active &&
+      (active.closest("[data-role]") !== null ||
+        active.closest(`.${c.skipLink}`) !== null ||
+        active.tagName === "BUTTON" ||
+        active.tagName === "A");
+    if ((e.key === " " || e.key === "Enter") && !onInteractive) {
       e.preventDefault();
       advance?.();
     }

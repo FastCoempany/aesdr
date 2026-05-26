@@ -71,7 +71,7 @@ export default function RoleSwitcher({ currentRole }: RoleSwitcherProps) {
           textTransform: "uppercase",
           padding: "14px 16px",
           background: "#fff",
-          border: "1px solid var(--light)",
+          border: "1px solid var(--form-border)",
           color: "var(--muted)",
         }}
       >
@@ -79,6 +79,8 @@ export default function RoleSwitcher({ currentRole }: RoleSwitcherProps) {
       </button>
       {feedback && (
         <p
+          role="status"
+          aria-live="polite"
           style={{
             fontFamily: "var(--mono)",
             fontSize: "10px",

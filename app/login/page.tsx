@@ -129,11 +129,11 @@ function LoginForm() {
               fontSize: "10px",
               letterSpacing: ".36em",
               textTransform: "uppercase" as const,
-              color: "#6B6B6B",
+              color: "#5A5A5A",
               margin: 0,
             }}
           >
-            Members <span style={{ color: "#6B6B6B", opacity: 0.6 }}>·</span> Only
+            Members <span style={{ color: "#5A5A5A" }} aria-hidden>·</span> Only
           </p>
         </div>
 
@@ -156,6 +156,7 @@ function LoginForm() {
 
         {resetSent && (
           <div
+            role="status"
             className="px-4 py-3"
             style={{
               fontFamily: "var(--serif)",
@@ -177,6 +178,7 @@ function LoginForm() {
             <input
               id="email"
               type="email"
+              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 transition outline-none"
@@ -192,6 +194,7 @@ function LoginForm() {
             <input
               id="password"
               type="password"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 transition outline-none"
@@ -210,7 +213,7 @@ function LoginForm() {
                 fontSize: "10px",
                 letterSpacing: ".18em",
                 textTransform: "uppercase" as const,
-                color: "#6B6B6B",
+                color: "#5A5A5A",
                 background: "none",
                 border: "none",
                 cursor: "pointer",
@@ -226,6 +229,7 @@ function LoginForm() {
 
           {error && (
             <div
+              role="alert"
               className="px-4 py-3"
               style={{
                 fontFamily: "var(--hand)",
@@ -260,7 +264,7 @@ function LoginForm() {
             style={{
               fontFamily: "var(--serif)",
               fontSize: "15px",
-              color: "#6B6B6B",
+              color: "#5A5A5A",
               margin: 0,
               fontStyle: "italic",
             }}
@@ -297,7 +301,7 @@ const labelStyle: React.CSSProperties = {
   fontSize: "10px",
   letterSpacing: ".22em",
   textTransform: "uppercase",
-  color: "#6B6B6B",
+  color: "#5A5A5A",
   display: "block",
 };
 
@@ -305,7 +309,7 @@ const inputStyle: React.CSSProperties = {
   fontFamily: "var(--serif)",
   fontSize: "16px",
   background: "#FAF7F2",
-  border: "1px solid #D4C5AD",
+  border: "1px solid #998B70",
   color: "#1A1A1A",
   borderRadius: "2px",
 };

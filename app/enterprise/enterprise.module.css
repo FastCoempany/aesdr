@@ -1071,10 +1071,11 @@
   line-height: 1.4;
   color: var(--ink);
   background: var(--cream);
-  /* Resting-state border darkened from var(--light) for visibility —
-     #B5B0A8 hits WCAG AA contrast against cream. Was hard to perceive
-     at first glance for low-vision users. Audit §H.11.2. */
-  border: 1.5px solid #B5B0A8;
+  /* Resting-state border darkened from var(--light) for visibility.
+     #928C84 hits WCAG 2.1.11 AA non-text contrast against cream
+     (3.12:1) and white (3.33:1). The previous #B5B0A8 was only ~2.0:1
+     and did NOT pass. Audit §H.11.2. */
+  border: 1.5px solid var(--form-border);
   padding: 12px 14px;
   outline: none;
   transition: border-color 0.18s;

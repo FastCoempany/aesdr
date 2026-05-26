@@ -34,6 +34,8 @@ export default function InviteForm() {
       <input
         type="email"
         required
+        autoComplete="email"
+        aria-label="Colleague's email address"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="colleague@company.com"
@@ -41,7 +43,7 @@ export default function InviteForm() {
           fontFamily: "'Source Serif 4', Georgia, serif",
           fontSize: "16px",
           padding: "14px 16px",
-          border: "1px solid #B5B0A8",
+          border: "1px solid #928C84",
           background: "#FAF7F2",
           color: "#1A1A1A",
           flex: "1 1 240px",
@@ -68,7 +70,7 @@ export default function InviteForm() {
         {loading ? "Sending..." : "Send Invite"}
       </button>
       {message && (
-        <p style={{
+        <p role={message.ok ? "status" : "alert"} style={{
           fontFamily: "'Space Mono', monospace",
           fontSize: "11px",
           letterSpacing: ".05em",

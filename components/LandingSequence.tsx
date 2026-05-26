@@ -33,6 +33,7 @@ export default function LandingSequence({ initialRole = null }: Props) {
   const progressRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const skipBtnRef = useRef<HTMLButtonElement>(null);
+  const liveRegionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const refs: AnimatorRefs = {
@@ -54,6 +55,7 @@ export default function LandingSequence({ initialRole = null }: Props) {
       progress: progressRef.current,
       cta: ctaRef.current,
       skipBtn: skipBtnRef.current,
+      liveRegion: liveRegionRef.current,
     };
 
     return runAnimator(refs, {
@@ -78,6 +80,16 @@ export default function LandingSequence({ initialRole = null }: Props) {
 
   return (
     <>
+      {/* Polite live region — announces the role selection to assistive
+          tech, since the fork is a visual split with no native form
+          semantics. (WCAG 4.1.3) */}
+      <div
+        ref={liveRegionRef}
+        aria-live="polite"
+        aria-atomic="true"
+        className="visually-hidden"
+      />
+
       {/* Skip-animation link — visible from t=0 */}
       <button
         ref={skipBtnRef}
@@ -127,10 +139,15 @@ export default function LandingSequence({ initialRole = null }: Props) {
       </div>
 
       {/* Editorial split fork (Mockup C) */}
-      <div className={s.forkLayer} ref={forkRef} aria-label="Choose your role">
+      <div className={s.forkLayer} ref={forkRef} role="group" aria-label="Choose your role">
         <div className={s.forkLabel}>{FORK_PICK_HEADER}</div>
         <div className={s.split} ref={splitRef}>
-          <button type="button" className={`${s.half} ${s.halfSdr}`} data-role="sdr">
+          <button
+            type="button"
+            className={`${s.half} ${s.halfSdr}`}
+            data-role="sdr"
+            aria-label={`Choose the Sales Development Representative track. ${FORK_HALVES.sdr.body.strong}${FORK_HALVES.sdr.body.rest}`}
+          >
             <span className={`${s.halfCorner} ${s.cornerTLh}`} />
             <span className={`${s.halfCorner} ${s.cornerTRh}`} />
             <span className={`${s.halfCorner} ${s.cornerBLh}`} />
@@ -144,7 +161,12 @@ export default function LandingSequence({ initialRole = null }: Props) {
             </span>
             <span className={s.halfPickCta}>{FORK_HALVES.sdr.cta}</span>
           </button>
-          <button type="button" className={`${s.half} ${s.halfAe}`} data-role="ae">
+          <button
+            type="button"
+            className={`${s.half} ${s.halfAe}`}
+            data-role="ae"
+            aria-label={`Choose the Account Executive track. ${FORK_HALVES.ae.body.strong}${FORK_HALVES.ae.body.rest}`}
+          >
             <span className={`${s.halfCorner} ${s.cornerTLh}`} />
             <span className={`${s.halfCorner} ${s.cornerTRh}`} />
             <span className={`${s.halfCorner} ${s.cornerBLh}`} />

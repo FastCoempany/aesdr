@@ -831,7 +831,19 @@
   padding-bottom: 6px;
   border-bottom: 1.5px solid currentColor;
 }
-.half:hover .halfPickCta { opacity: 1; transform: translateY(0); }
+.half:hover .halfPickCta,
+.half:focus-visible .halfPickCta { opacity: 1; transform: translateY(0); }
+
+/* Keyboard focus affordance for the fork halves. The buttons have
+   border:none + overflow:hidden, so the global box-shadow ring can be
+   clipped; an inset outline guarantees a visible indicator on both the
+   cream and crimson halves. (WCAG 2.4.7) */
+.half:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: -6px;
+}
+.half:hover::after,
+.half:focus-visible::after { opacity: 1; }
 
 .forkDivider {
   position: fixed;

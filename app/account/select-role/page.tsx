@@ -108,7 +108,7 @@ export default function SelectRolePage() {
               style={{
                 padding: "28px 24px",
                 background: "#fff",
-                border: "1px solid var(--light)",
+                border: "1px solid var(--form-border)",
               }}
             >
               <p

@@ -236,9 +236,11 @@ function FieldRadio({
   options: { value: string; label: string }[];
   required?: boolean;
 }) {
+  const groupLabelId = `radiogroup-${name}`;
   return (
-    <div style={{ marginBottom: 24 }}>
+    <div style={{ marginBottom: 24 }} role="radiogroup" aria-labelledby={groupLabelId}>
       <div
+        id={groupLabelId}
         style={{
           fontFamily: "var(--cond)",
           fontSize: 11,

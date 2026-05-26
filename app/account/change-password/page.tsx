@@ -126,6 +126,7 @@ export default function ChangePasswordPage() {
 
           {success ? (
             <div
+              role="status"
               className="px-5 py-6 text-center"
               style={{
                 borderLeft: "3px solid var(--crimson)",
@@ -147,6 +148,7 @@ export default function ChangePasswordPage() {
                   type="password"
                   required
                   minLength={6}
+                  autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-4 py-3 outline-none transition"
@@ -164,6 +166,7 @@ export default function ChangePasswordPage() {
                   type="password"
                   required
                   minLength={6}
+                  autoComplete="new-password"
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
                   className="w-full px-4 py-3 outline-none transition"
@@ -174,6 +177,7 @@ export default function ChangePasswordPage() {
 
               {error && (
                 <div
+                  role="alert"
                   className="px-4 py-3"
                   style={{
                     fontFamily: "var(--serif)",
@@ -220,7 +224,7 @@ const inputStyle: React.CSSProperties = {
   fontFamily: "var(--serif)",
   fontSize: "16px",
   background: "#fff",
-  border: "1px solid var(--light)",
+  border: "1px solid var(--form-border)",
   color: "var(--ink)",
   borderRadius: "2px",
 };

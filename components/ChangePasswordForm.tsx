@@ -35,6 +35,7 @@ export default function ChangePasswordForm() {
         onChange={(e) => setPassword(e.target.value)}
         placeholder="New password (min 6 characters)"
         aria-label="New password"
+        autoComplete="new-password"
         minLength={6}
         required
         className="px-4 py-3"
@@ -42,17 +43,17 @@ export default function ChangePasswordForm() {
           fontFamily: "var(--serif)",
           fontSize: "16px",
           background: "#fff",
-          border: "1px solid var(--light)",
+          border: "1px solid var(--form-border)",
           color: "var(--ink)",
         }}
       />
       {error && (
-        <p style={{ fontFamily: "var(--serif)", fontSize: "13px", color: "var(--crimson)", margin: 0 }}>
+        <p role="alert" style={{ fontFamily: "var(--serif)", fontSize: "13px", color: "var(--crimson)", margin: 0 }}>
           {error}
         </p>
       )}
       {success && (
-        <p style={{ fontFamily: "var(--serif)", fontSize: "13px", color: "var(--crimson)", margin: 0 }}>
+        <p role="status" style={{ fontFamily: "var(--serif)", fontSize: "13px", color: "var(--crimson)", margin: 0 }}>
           Password updated.
         </p>
       )}

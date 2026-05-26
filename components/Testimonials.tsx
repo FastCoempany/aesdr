@@ -49,7 +49,12 @@ export default async function Testimonials() {
         From the field
       </p>
       <div style={{ width: "60px", height: "2px", background: "var(--iris)", backgroundSize: "300% 100%", marginBottom: "24px" }} />
-      <div style={{ display: "flex", gap: "20px", overflowX: "auto", overflowY: "hidden", WebkitOverflowScrolling: "touch", scrollbarWidth: "none" as const, paddingBottom: "4px" }}>
+      <div
+        tabIndex={0}
+        role="group"
+        aria-label="Customer testimonials — scroll horizontally to read more"
+        style={{ display: "flex", gap: "20px", overflowX: "auto", overflowY: "hidden", WebkitOverflowScrolling: "touch", scrollbarWidth: "none" as const, paddingBottom: "4px" }}
+      >
         {items.map((t, i) => (
           <div key={i} style={{ flex: "0 0 280px", background: "#fff", border: "1px solid var(--light)", padding: "28px" }}>
             <p style={{ fontFamily: "var(--serif)", fontSize: "15px", lineHeight: "1.7", color: "var(--muted)", marginBottom: "12px", fontStyle: "italic" }}>&ldquo;{t.quote}&rdquo;</p>

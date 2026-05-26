@@ -18,10 +18,11 @@
   --light: #E8E4DF;
 
   /* Form field resting-state border. Darker than --light to clear WCAG
-     2.1 AA non-text contrast (3:1 minimum on cream). Use this on input,
-     textarea, select, and clickable form-choice labels — not on
-     decorative cards or dividers. */
-  --form-border: #B5B0A8;
+     2.1.11 AA non-text contrast (3:1 minimum). Verified: 3.12:1 on cream,
+     3.33:1 on white. (The previous #B5B0A8 only reached ~2.0:1 and did
+     NOT pass.) Use this on input, textarea, select, and clickable
+     form-choice labels — not on decorative cards or dividers. */
+  --form-border: #928C84;
 
   --iris: linear-gradient(90deg, #FF006E 0%, #FF6B00 17%, #F59E0B 34%, #10B981 51%, #38BDF8 68%, #8B5CF6 85%, #FF006E 100%);
 
@@ -72,10 +73,24 @@ body::-webkit-scrollbar {
 }
 
 body {
-  background: var(--bg-main);
-  color: var(--text-main);
+  background: var(--cream);
+  color: var(--ink);
   font-family: var(--serif);
   line-height: 1.6;
+}
+
+/* Visually-hidden utility for screen-reader-only text that isn't covered
+   by Tailwind's sr-only in inline-style components. Standard clip pattern. */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
 }
 
 :focus-visible {

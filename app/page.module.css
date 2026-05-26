@@ -600,7 +600,8 @@
   cursor: pointer;
   transition: border-color 0.3s, background 0.3s;
 }
-.faqItem:hover {
+.faqItem:hover,
+.faqItem:focus-visible {
   border-color: rgba(0, 0, 0, 0.15);
   background: rgba(0, 0, 0, 0.04);
 }
@@ -617,7 +618,8 @@
   opacity: 0;
   transition: opacity 0.3s ease;
 }
-.faqItem:hover::after { opacity: 1; }
+.faqItem:hover::after,
+.faqItem:focus-visible::after { opacity: 1; }
 
 .faqNum {
   font-family: var(--mono);
@@ -650,7 +652,8 @@
   user-select: none;
   margin: 0;
 }
-.faqItem:hover .faqBlur { filter: blur(0); }
+.faqItem:hover .faqBlur,
+.faqItem:focus-visible .faqBlur { filter: blur(0); }
 
 .faqRedactLabel {
   position: absolute;
@@ -667,7 +670,8 @@
   pointer-events: none;
   white-space: nowrap;
 }
-.faqItem:hover .faqRedactLabel { opacity: 0; }
+.faqItem:hover .faqRedactLabel,
+.faqItem:focus-visible .faqRedactLabel { opacity: 0; }
 
 .faqStamp {
   font-family: var(--cond);
