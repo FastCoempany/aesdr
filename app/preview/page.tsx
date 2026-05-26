@@ -35,14 +35,14 @@ const ARCHETYPES = [
     fail: "may under-direct when you need a clear call",
   },
   {
-    name: "The Operator",
+    name: "The Metric Maniac",
     tell: "owns the dashboard, runs the QBR off it",
     fail: "may mistake your activity for your competence",
   },
   {
-    name: "The Closer",
-    tell: "joins your calls and takes them over",
-    fail: "may forget you need at-bats to actually grow",
+    name: "The Template Tyrant",
+    tell: "runs one playbook and expects it followed",
+    fail: "may leave no room for your judgment on a deal",
   },
   {
     name: "The Ghost",
@@ -319,7 +319,7 @@ export default function PreviewPage() {
               marginBottom: 16,
             }}
           >
-            The Manager OS One-Pager
+            The Manager Archetype Map
           </p>
           <p
             style={{
@@ -346,9 +346,9 @@ export default function PreviewPage() {
               userSelect: "none",
             }}
           >
-            Plus the escalation script for the Ghost, the de-escalation script
-            for the Closer, and the proof-of-work cadence the Operator silently
-            grades you on.
+            Plus the async escalation script for the Ghost, the written-recap
+            paper trail that pins down the Two-Faced Cheerleader, and the A/B
+            deviation pitch the Template Tyrant will actually green-light.
           </p>
           <Link
             href="/#pricing"

@@ -121,7 +121,7 @@ const LD: Item[] = [
     title: "Format",
     state: "Live",
     body:
-      "Twelve self-paced interactive lessons (HTML, not video). Average lesson: ~25 minutes. Total: ~5 hours of structured content. Tooled with five take-home artefacts the learner uses on the job (alignment contract, pipeline math sheet, manager OS one-pager, comp survival map, 72-hour strike plan).",
+      "Twelve self-paced interactive lessons (HTML, not video). Average lesson: ~25 minutes. Total: ~5 hours of structured content. Tooled with take-home artefacts the learner uses on the job (the AE/SDR Alignment Contract, the Time Reclaimed Calculator, the Manager Archetype Map, the ROI & Commission Defense Tracker, and the 72-Hour Strike Plan).",
   },
   {
     number: "14",

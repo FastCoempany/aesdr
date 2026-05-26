@@ -97,7 +97,7 @@ The voice has seven recurring rhetorical moves. Most copy uses one or two.
    we don't want your money."*
 4. **The named tool.** Specific artefact names build credibility faster
    than abstract claims. *"The Friday five-line."* *"The 72-hour strike
-   plan."* *"The manager OS one-pager."*
+   plan."* *"The Manager Archetype Map."*
 5. **The cited stat.** When you state a market fact, link the source
    (Bridge Group, Gartner). Never invent percentages.
 6. **The Rowan Pope line.** Two sentences. The first is the threat. The
@@ -151,7 +151,6 @@ canonical names below (not aliases that drifted into individual pages):
 | The AE/SDR Alignment Contract | 3 | "the alignment doc", "the handoff" |
 | The 30% Rule | 8 | "the talk-time rule", "the listening discipline" |
 | The 72-hour strike plan | 12 | "the recovery sprint", "the rebound plan" |
-| The Manager OS one-pager | 3 | "the manager diagnostic" (in non-canon contexts only) |
 
 ## 9. The five quick tests
 
