@@ -1388,7 +1388,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lie">
         <div class="lie-tab">The Reality Check</div>
         <div class="lie-q">"You're promised $250K, but pocketing $160K."</div>
-        <div class="lie-a">AEs who budget around their OTE are one bad quarter from financial stress. Plan around your base. Commissions are a bonus — not a paycheck.</div>
+        <div class="lie-a">AEs who budget around their OTE are one bad quarter from real financial stress, so plan your life around your base and treat every commission check as a bonus that landed rather than a paycheck you were owed.</div>
       </div>
     </div>
     <div class="lb sdr-only">
@@ -1625,16 +1625,16 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
           <div style="font-family:var(--display);font-size:56px;color:var(--white);line-height:.9;margin:10px 0 0">10</div>
         </div>
         <div class="comp-big ae-only">Know the fine print<br>of your comp plan<br>cold — that's how<br>you own your income<br>across the year<br>rather than guessing at it.</div>
-        <div class="comp-big sdr-only">Stop hoping that<br>your variable comp<br>will work out somehow.<br>Start managing<br>the math<br>month by month.</div>
+        <div class="comp-big sdr-only">Manage the math<br>on your variable comp<br>month by month<br>instead of hoping<br>it works out<br>by the next pay cycle.</div>
         <div class="comp-sub ae-only">Your comp plan is designed to motivate you to close deals and to protect the company at the same time. Clawbacks, splits, and accelerators all carry specific fine print. The AEs who manage their money well are the ones who read every line in the plan and track every dollar against it.</div>
-        <div class="comp-sub sdr-only">Your comp plan is designed to motivate dial volume, but the fine print works against you whenever the meetings you book don't convert downstream. Budget your life around the base, track the variable as actual variable, and stop hoping it works out.</div>
+        <div class="comp-sub sdr-only">Your comp plan is designed to motivate dial volume, but the fine print works against you whenever the meetings you book don't convert downstream. Budget your life around the base and track the variable against the qualification rules that decide whether a meeting ever pays.</div>
       </div>
       <div class="comp-r">
         <div class="eyebrow">Course 10 · Lesson 1 Complete</div>
         <div class="comp-h ae-only">Every deal closes twice in this career — once on the customer call, and again on the comp-plan payout months later.</div>
         <div class="comp-h sdr-only">Play the sales-economics game smarter than your peers — starting in your first SDR comp cycle, not after your third one confuses you.</div>
         <p class="comp-p ae-only">Budget your life around your base pay, not your OTE. Track every deal against the actual lines in your comp plan. Know your clawback windows, your split rules, and your accelerator thresholds before they affect a single payout. Your long-term financial future depends more on those details than on raw deal flow.</p>
-        <p class="comp-p sdr-only">Budget your life around your base pay and treat commissions as bonus money — not guaranteed income. Track meetings against the conversion criteria that determine qualified credit, know exactly what qualifies on your plan, and own your financial future instead of just hoping the variable works out.</p>
+        <p class="comp-p sdr-only">Budget your life around your base pay and treat commissions as bonus money rather than guaranteed income. Track every meeting against the conversion criteria that determine qualified credit, and learn exactly what your plan counts as qualified before your next pay cycle.</p>
         <p class="comp-p" style="font-family:var(--serif);font-style:italic;color:var(--mid)">Created by Antaeus L. Coe</p>
         <div style="margin-top:28px;display:flex;gap:12px;flex-wrap:wrap">
           <button class="btn btn-fill" onclick="if(window.parent!==window){window.parent.postMessage({type:'aesdr:navigate',href:'/dashboard'},'*')}else{location.href='/dashboard'}"><span>Continue to Dashboard &rarr;</span></button>
@@ -1912,17 +1912,14 @@ function _restoreExerciseState(){
    INIT
 ════════════════════════════════════ */
 const SIDEBAR_TEXTS = [
-  "Commission math is the math no one teaches you. Until it’s too late.",
-  "Money doesn’t grow on trees. It grows on closed-won.",
-  "Know your comp plan better than your manager knows it.",
-  "If you can’t calculate your check, you can’t optimize it.",
-  "OTE means on target. Are you on target?",
-  "Your comp plan is a contract. Read every line.",
-  "Accelerators reward the overachievers. Decelerators punish the complacent.",
-  "The difference between good and great is one more deal per month.",
-  "Money is a scoreboard. Know where you stand.",
-  "Your W-2 is the ultimate performance review.",
-  "Don’t chase money. Chase the activities that produce it."
+  "Nobody teaches you commission math until the quarter it costs you a paycheck.",
+  "Your comp plan is a contract that runs all year — read every line of it before it reads you.",
+  "If you can’t calculate your own check off your comp plan, you can’t catch the quarter finance gets it wrong.",
+  "OTE is the number the recruiter quoted; your base is the number that pays your rent.",
+  "Accelerators reward the quarter you clear quota; decelerators quietly punish the quarter you don’t.",
+  "One bad month off OTE-based budgeting is the difference between fine and scrambling.",
+  "Track every closed-won deal against the actual line in your comp plan, not the number in your head.",
+  "Clawbacks live in the section of the comp plan most AEs and SDRs never open."
 ];
 
 function init(){
@@ -2267,9 +2264,9 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
+    1: AESDR.gateHint(1) || 'Open your comp plan and write what the fine print actually says.',
     2:`${siloCount} / 6 correctly sorted`,
-    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
+    3: AESDR.gateHint(3) || 'Open your comp plan and write what the fine print actually says.',
     4:`${blameCount} / 4 myths resolved`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,

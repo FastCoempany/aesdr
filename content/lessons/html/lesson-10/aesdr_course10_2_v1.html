@@ -1381,7 +1381,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-title">Why Quotas Feel Like a Trap</div>
     </div>
     <div class="lb ae-only">
-      <p class="lp">Every time you significantly beat your assigned quota in a quarter, leadership quietly raises it for the next one. That pattern isn't a reward you're being shortchanged on — it's the comp system working exactly as designed. Quotas in this kind of org aren't really about recognizing your performance; they're about extracting maximum revenue from every territory every quarter. As an AE in this seat, the game is rigged to keep you chasing the number, never quite reaching a stable ceiling.</p>
+      <p class="lp">Every time you beat your assigned quota by a wide margin in a quarter, leadership quietly raises it for the next one, and that's the comp system working exactly as designed rather than a reward you got shortchanged on. Quotas in this kind of org track maximum revenue out of every territory every quarter, not your performance. The seat is built to keep you chasing the number without ever reaching a stable ceiling.</p>
       <ul class="kp">
         <li><span class="kp-n">01</span><strong>Punishment for Success:</strong> You closed 140% last quarter? Congratulations — your new number just went up 30%. Overperformance becomes next quarter's baseline.</li>
         <li><span class="kp-n">02</span><strong>Seasonal Disconnect:</strong> Q4 might be your best quarter, but Q1 is a graveyard. Your quota doesn't adjust for budget cycles, procurement delays, or holiday blackouts.</li>
@@ -1394,7 +1394,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       </div>
     </div>
     <div class="lb sdr-only">
-      <p class="lp">Every time you significantly beat your assigned meeting target in a month, leadership quietly raises it for the next one. That pattern isn't a reward you're being shortchanged on — it's a structural trap built into the comp design. SDR quotas aren't really about recognizing your daily hustle; they're about squeezing maximum output from every SDR seat across the year. The math behind the targets is always trending upward, regardless of what you actually deliver.</p>
+      <p class="lp">Every time you beat your assigned meeting target by a wide margin in a month, leadership quietly raises it for the next one, and that's a structural trap built into the comp design rather than a reward you got shortchanged on. SDR quotas squeeze maximum output from every seat across the year, not your daily hustle. The math behind the targets trends upward regardless of what you actually book.</p>
       <ul class="kp">
         <li><span class="kp-n">01</span><strong>Punishment for Success:</strong> You booked 20 meetings last month? Great — your new target is 25. Overperformance becomes next month's expectation.</li>
         <li><span class="kp-n">02</span><strong>Seasonal Disconnect:</strong> You're expected to hit the same meeting targets in August (when everyone is on vacation) as you are in October. The calendar doesn't adjust, even when connect rates crater.</li>
@@ -1403,7 +1403,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lie">
         <div class="lie-tab">The Mindset Shift</div>
         <div class="lie-q">"Your quota is an arbitrary number."</div>
-        <div class="lie-a">It often ignores the reality of your outbound reality. Treat it like a floor, not a ceiling, and stop letting it dictate your self-worth. Track your own metrics so you can manage up with data.</div>
+        <div class="lie-a">It ignores what your outbound week actually looks like — connect rates, lead quality, the August slowdown. Treat it like a floor, not a ceiling, and track your own connect-to-meeting numbers so you can manage up with data instead of feelings.</div>
       </div>
     </div>
       <!-- Narrative Gate -->
@@ -1465,7 +1465,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <ul class="kp">
         <li><span class="kp-n">01</span><strong>Bloated Meeting Numbers:</strong> Booking meetings with unqualified prospects inflates your activity metrics but tanks your conversion rate. Your AE notices — and so does your manager.</li>
         <li><span class="kp-n">02</span><strong>Volume vs. Quality:</strong> Focusing on raw meeting count over meeting quality makes the dashboard look good, but the deals don't materialize. Eventually, your "meetings booked" number stops meaning anything.</li>
-        <li><span class="kp-n">03</span><strong>Lead Quality Gaps:</strong> Sometimes the leads you're handed by Marketing or routing are genuinely garbage on inspection — wrong ICP for your territory, bad contact data, or already touched repeatedly by another SDR on the floor — but don't let those bad inputs define your output numbers; flag the lead-quality issue formally with your manager in writing and focus your dial time on the higher-quality leads in the queue.</li>
+        <li><span class="kp-n">03</span><strong>Lead Quality Gaps:</strong> Sometimes the leads Marketing or routing hands you are garbage on inspection: wrong ICP for your territory, bad contact data, or already worked twice by another SDR on the floor. Don't let those bad inputs define your numbers. Flag the lead-quality issue to your manager in writing, then spend your dial time on the better leads in the queue.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Action</div>
@@ -1920,17 +1920,14 @@ function _restoreExerciseState(){
    INIT
 ════════════════════════════════════ */
 const SIDEBAR_TEXTS = [
-  "Quotas push you. They don’t define you.",
-  "A number is just a number. Until it’s your number.",
-  "Missing quota doesn’t make you a failure. Accepting it does.",
-  "The number is the mountain. Your habits are the legs.",
-  "Quota is a conversation with the future version of you.",
-  "The target doesn’t care about your feelings. Hit it anyway.",
-  "Quota is not a ceiling. It’s a minimum.",
-  "The person who hits quota consistently beats the person who clears it once.",
-  "Your relationship with your number defines your relationship with your career.",
-  "Quota is a mirror. Some people look. Others look away.",
-  "The number is fair. Your effort might not be."
+  "The quarter you close 140% is the quarter leadership quietly raises your number for next quarter.",
+  "Treat the assigned quota as a floor you defend with data, not a ceiling you tie your self-worth to.",
+  "A bloated forecast full of maybe-deals looks busy at QBR and converts on nothing.",
+  "If a deal hasn’t moved in 30 days and you can’t name the next step, it isn’t in your forecast — it’s in your way.",
+  "The AE who clears quota three quarters running beats the one who spikes to 140% once and craters the next two.",
+  "Bring three quarters of win-rate and cycle-length data to the quota conversation; bring frustration and you lose the room.",
+  "Your territory got carved in January and lost $480K of pipeline — that’s the number your manager needs to see, not your stress.",
+  "The SDR who manages up with conversion rates from the CRM gets promoted; the one who grinds raw dial volume burns out first."
 ];
 
 function init(){
@@ -2282,14 +2279,14 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
+    1: AESDR.gateHint(1) || 'Name your exact quota and your current attainment, then write what changed.',
     2:`${siloCount} / 6 correctly sorted`,
-    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
+    3: AESDR.gateHint(3) || 'Open your pipeline and write what the data actually says.',
     4:`${blameCount} / 4 traps resolved`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,
     7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    8: AESDR.gateHint(8) || "Document every win—your success isn't just about one number.",
+    8: AESDR.gateHint(8) || "Document the win in writing the week it happens, not the quarter you need it.",
   };
   return h[cur]||'';
 }

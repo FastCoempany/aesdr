@@ -1387,7 +1387,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       </ul>
       <div class="lie">
         <div class="lie-tab">The Reality Check</div>
-        <div class="lie-q">"That $40K commission check is not your new normal — it's a windfall."</div>
+        <div class="lie-q">"That $40K commission check is a windfall, not your new normal."</div>
         <div class="lie-a">AEs who spend their commission the month it arrives are one bad quarter from financial panic. Build the habit now: base salary funds your life, commissions fund your future.</div>
       </div>
     </div>
@@ -1400,8 +1400,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       </ul>
       <div class="lie">
         <div class="lie-tab">The Reality Check</div>
-        <div class="lie-q">"Commission is not your paycheck — it's a bonus."</div>
-        <div class="lie-a">If you spend every dollar you earn during a feast month, you'll suffer when the famine hits. Live off your base. Bank the variable. Build a buffer.</div>
+        <div class="lie-q">"Commission is a bonus, not your paycheck."</div>
+        <div class="lie-a">Spend every dollar you earn during a feast month and the next famine month will hurt. Live off your base, bank the variable, and build a buffer that covers three months of rent.</div>
       </div>
     </div>
       <!-- Narrative Gate -->
@@ -1670,7 +1670,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
   </button>
 
   <div style="margin-top:32px;padding:16px 0;border-top:1px solid var(--line)">
-    <p id="sidebarMotto" style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">Feast-or-famine is the emotional rollercoaster nobody prepares you for. What you write here builds the emotional discipline to survive it.</p>
+    <p id="sidebarMotto" style="font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:700;line-height:1.65;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:iris 3s linear infinite">Nobody hands you a budget for a paycheck that doubles one quarter and halves the next. The numbers you write here are the buffer that carries you through the famine month.</p>
   </div>
 </aside>
 
@@ -1912,17 +1912,14 @@ function _restoreExerciseState(){
    INIT
 ════════════════════════════════════ */
 const SIDEBAR_TEXTS = [
-  "Feast or famine is the ride nobody prepares you for.",
-  "Emotional discipline is the skill they never put in the job description.",
-  "Celebrate the wins. Grieve the losses. Never for longer than 24 hours.",
-  "The rollercoaster doesn’t stop. You just get better at holding on.",
-  "Consistency is boring. Consistency also pays your rent.",
-  "Momentum is fragile. Protect it with your habits.",
-  "The high after a win is dangerous if it makes you lazy.",
-  "Resilience isn’t about not falling. It’s about falling and still dialing.",
-  "Steady beats spectacular. Every quarter.",
-  "Your worst month teaches you more than your best. Listen to it.",
-  "Emotional regulation is the invisible skill behind every President’s Club winner."
+  "That $40K commission check is a windfall, not your new monthly normal — and the difference is whether you panic next quarter.",
+  "The AEs who last save aggressively in the feast quarters and live lean when the pipeline dries up.",
+  "Budget your lifestyle off your worst month in the last six, not off your best quarter ever.",
+  "A six-month buffer in the bank is the difference between negotiating from confidence and discounting from rent anxiety in the last week of the quarter.",
+  "Two deals push and your champion quits in the same week — that's three months of pipeline gone from the forecast, and the buffer is what carries you through it.",
+  "OTE is the number HR quoted in the offer letter; your base plus a conservative commission estimate is the number you actually budget against.",
+  "Cap commission spending at 20% and the famine month stops being a crisis and starts being a slow month.",
+  "Track every payout and clawback for six months and you'll find your real average income is nowhere near your OTE."
 ];
 
 function init(){
@@ -2274,14 +2271,14 @@ function canContinue(){
 }
 function getHint(){
   const h={
-    1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
+    1: AESDR.gateHint(1) || 'Name your highest and lowest commission months, then write the dollar amounts.',
     2:`${siloCount} / 6 correctly sorted`,
-    3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
+    3: AESDR.gateHint(3) || 'Calculate your real average monthly take-home and write the floor number.',
     4:`${blameCount} / 4 traps resolved`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,
     7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
-    8: AESDR.gateHint(8) || "Turn feast-or-famine into steady success.",
+    8: AESDR.gateHint(8) || "Build the six-month buffer before the famine quarter arrives, not after.",
   };
   return h[cur]||'';
 }
