@@ -31,8 +31,8 @@ const TOOLS: ReadonlyArray<{
   {
     slug: "3.3-aesdr-alignment-contract",
     number: "3.3",
-    name: "The Alignment Contract",
-    title: "3.3 — The Alignment Contract",
+    name: "AE/SDR Alignment Contract",
+    title: "3.3 — AE/SDR Alignment Contract",
     description:
       "The AE/SDR partnership manuscript. Signed, binding, tonally superior to any Slack agreement.",
   },
@@ -79,7 +79,7 @@ const TOOLS: ReadonlyArray<{
   {
     slug: "10.1-ROI-commission-defense-tracker",
     number: "10.1",
-    name: "ROI Commission Defense Tracker",
+    name: "ROI & Commission Defense Tracker",
     title: "10.1 — Commission Defense Tracker",
     description:
       "Your commission check, itemized and indefensible. Export to CSV when HR asks.",

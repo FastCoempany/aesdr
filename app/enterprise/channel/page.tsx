@@ -12,7 +12,7 @@ import InlineCTA from "../_components/InlineCTA";
  */
 
 export const metadata = {
-  title: "Partners — AESDR / Enterprise",
+  title: "Channel Partners — AESDR / Enterprise",
   description: "Channel partnerships with LMS, sales enablement, sales hiring, fractional RevOps, and HR tech marketplaces.",
 };
 
@@ -90,7 +90,7 @@ export default function PartnersPage() {
             title="HR tech marketplaces"
             tag="(LATER)"
             examples="Paycor · Rippling · Gusto · Justworks · ADP Marketplace · BambooHR · Workday"
-            intro="Marketplaces have hundreds of apps. Listing without proof is noise. This becomes a real path after a handful of Custom Enterprise deals close and we have completion + retention data your customers will trust. Listed here so partners know we're sequencing this for later, not skipping it."
+            intro="Marketplaces have hundreds of apps. Listing without proof is noise. This becomes a real path after a handful of Custom Enterprise deals close and we have completion + retention data your customers will trust. Listed here so channel partners know we're sequencing this for later, not skipping it."
             matrix={{
               gap: "A category your marketplace doesn't fill: sales-AE/SDR development for first- and second-year hires. Your customers ask for it; you don't build training in-house.",
               plugin: "Marketplace listing under Learning & Development. Your customers add AESDR through your existing UX.",

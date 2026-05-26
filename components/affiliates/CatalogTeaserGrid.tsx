@@ -289,7 +289,7 @@ export const TOOLS = [
     tagline: "OTE is a fantasy until you read the comp plan.",
   },
   {
-    slug: "12.3-72-hr-strike-plan",
+    slug: "bonus-72-hr-strike-plan",
     name: "The 72-Hour Strike Plan",
     tagline: "When ramp is wrong and the next 72 hours matter.",
   },

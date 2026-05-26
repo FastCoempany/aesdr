@@ -71,9 +71,9 @@ export default function PricingPage() {
             />
 
             <BuyerModeCard
-              eyebrow="TIER 03 · PARTNER"
+              eyebrow="TIER 03 · CHANNEL PARTNER"
               title="White-label / co-branded"
-              description="For partners packaging AESDR inside their own offering. We deliver the 12 courses + the named artifacts that ship with them; you wrap them in your brand. Revenue-share or wholesale pricing."
+              description="For channel partners packaging AESDR inside their own offering. We deliver the 12 courses + the named artifacts that ship with them; you wrap them in your brand. Revenue-share or wholesale pricing."
               features={[
                 "Delivery rights to lessons + takeaway tools",
                 "Co-branded materials (your logo + AESDR mark with mutual approval)",

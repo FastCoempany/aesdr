@@ -35,8 +35,8 @@ const ARTIFACTS = [
   },
   {
     href: "/enterprise/downloads/channel-one-pager",
-    eyebrow: "ARTIFACT 03 · PARTNER",
-    title: "Partner one-pager",
+    eyebrow: "ARTIFACT 03 · CHANNEL PARTNER",
+    title: "Channel partner one-pager",
     description:
       "Single-page sales sheet for channel partners. Positioning, partner categories, contact. Designed for printing or PDF-attaching to outbound emails.",
     pages: "1 page · letter portrait",
@@ -59,7 +59,7 @@ export default function DownloadsIndex() {
           <p className={styles.eyebrow}>Downloads</p>
           <h1 className={styles.heroHeadline}>Four artifacts. All print-friendly.</h1>
           <p className={styles.heroSubhead}>
-            Send-able materials for managers, partners, and AEs and SDRs. Each is a web
+            Send-able materials for managers, channel partners, and AEs and SDRs. Each is a web
             page designed to print cleanly to PDF — no separate file to chase, no
             version drift between the website and the PDF.
           </p>

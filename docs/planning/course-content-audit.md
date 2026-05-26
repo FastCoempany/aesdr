@@ -78,7 +78,7 @@ Every unit follows the same 10-screen template:
 
 **Hard SDR-only content (needs AE equivalent):**
 - L3.1: SDR Performance Pitfalls (BANT, proactivity, script adaptation)
-- L3.3: Surviving AE Management (10 manager archetypes, managing up)
+- L3.3: The Unofficial Manager (5 AE Partner Types, managing up)
 - L4.1: Navigating SDR Manager Madness
 - L5.1-5.3: Entire lesson is SDR promotion/career path
 - L12.3: "Stay Single, Build Yourself" uses SDR-specific language (call blocks, sequences, OTE)

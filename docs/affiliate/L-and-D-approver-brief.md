@@ -64,7 +64,7 @@ Each course has 3 lessons (36 total). Per-course worksheets and takeaway tools �
 For an early-career AE or SDR in [PROSPECT_ROLE], the program targets four specific operating outcomes:
 - **Honest close-rate math.** Course 8 walks the 30/40/30 segmentation managers already use whether they say so or not — and the self-assessment that lets [PROSPECT_NAME] read their own pipeline without the optimism bias most AEs and SDRs carry.
 - **Comp-plan literacy.** Course 10 covers reading the comp plan, including the parts that aren't written down (clawbacks, accelerator triggers, what counts as "closed-won" for commission). Plus the financial-discipline practice for variable income.
-- **Manager-reading and managing-up framework.** Course 4 names the ten manager archetypes and the framework for working productively with whichever one [PROSPECT_NAME] actually has — versus the one the org chart claims they have.
+- **Manager-reading and managing-up framework.** Course 4 names the five manager archetypes and the framework for working productively with whichever one [PROSPECT_NAME] actually has — versus the one the org chart claims they have.
 - **The role's operating cost on the person.** Courses 11 and 12 cover the parts of the role most other programs avoid: alcohol culture in sales, home-office burnout, the impact on relationships, the long-term identity question. These courses are not optional, not buried in an appendix; they are part of the operating manual.
 
 These are operating-skill outcomes, not income outcomes. AESDR does not promise revenue lift, deal-size lift, promotion timing, or any specific dollar number. Per canon §10.3 (forbidden claims), AESDR does not make income claims about its program — and we'd flag any one-page-summary that did.

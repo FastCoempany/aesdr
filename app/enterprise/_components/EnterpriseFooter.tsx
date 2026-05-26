@@ -12,7 +12,7 @@ import { SubLogoTiny } from "./SubLogo";
 
 const FOOTER_LINKS = [
   { href: "/enterprise/contact", label: "Contact" },
-  { href: "/enterprise/channel", label: "Partners" },
+  { href: "/enterprise/channel", label: "Channel Partners" },
   { href: "/enterprise/pricing", label: "Pricing" },
   { href: "/enterprise/integrations", label: "Integrations" },
   { href: "/enterprise/procurement", label: "Procurement" },

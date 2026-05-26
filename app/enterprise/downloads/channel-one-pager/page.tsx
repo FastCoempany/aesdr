@@ -107,8 +107,8 @@ export default function PartnerOnePagerPage() {
           <h2 className={styles.onepageH2}>What it is</h2>
           <p className={styles.onepageBody}>
             12 courses × 3 lessons (36 total, ~16 hours run-time). Five takeaway tools
-            AEs and SDRs keep (manager archetype map, AE/SDR alignment contract, 72-hour strike plan,
-            CRM survival guide, async cadence template). Eight-dimension before/after
+            AEs and SDRs keep (Manager Archetype Map, AE/SDR Alignment Contract, 72-Hour Strike Plan,
+            CRM Survival Guide, Async Cadence Template). Eight-dimension before/after
             diagnostic for measuring behavior change.
           </p>
 

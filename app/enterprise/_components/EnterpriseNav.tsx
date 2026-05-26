@@ -23,7 +23,7 @@ const NAV_LINKS = [
   { href: "/enterprise/implementation", label: "Implementation" },
   { href: "/enterprise/diagnostic", label: "Diagnostic" },
   { href: "/enterprise/integrations", label: "Integrations" },
-  { href: "/enterprise/channel", label: "Partners" },
+  { href: "/enterprise/channel", label: "Channel Partners" },
   { href: "/enterprise/pricing", label: "Pricing" },
 ] as const;
 

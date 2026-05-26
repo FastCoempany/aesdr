@@ -195,7 +195,7 @@ export default function TeamsLanding() {
             <BuyerModeCard
               eyebrow="03 · WHITE-LABEL"
               title="White-label / co-branded"
-              description="For partners packaging AESDR inside their own offering. We deliver the 12 courses + the named artifacts that ship with them; you wrap them in your brand. Revenue-share or wholesale pricing."
+              description="For channel partners packaging AESDR inside their own offering. We deliver the 12 courses + the named artifacts that ship with them; you wrap them in your brand. Revenue-share or wholesale pricing."
               features={[
                 "Delivery rights to courses + takeaway tools",
                 "Co-branded materials — your logo + AESDR mark with mutual approval",

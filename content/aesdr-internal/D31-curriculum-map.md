@@ -60,7 +60,7 @@ The four pitfalls every early-career AE/SDR falls into. The Survival Guide's Ten
 >
 > *— send to Todd.* `Thu 04`
 
-The 10 SDR Manager Archetypes — diagnose the kind of management you're under, build the managing-up framework that survives it. Plus simplifying company culture (decode it before it burns you) and mastering async life (your calendar is your contract). **3 lessons · ~150 min total.**
+The 5 SDR Manager Archetypes — diagnose the kind of management you're under, build the managing-up framework that survives it. Plus simplifying company culture (decode it before it burns you) and mastering async life (your calendar is your contract). **3 lessons · ~150 min total.**
 
 ### `658.85 / L05` — tHe SaLeS pLaYbOoK
 

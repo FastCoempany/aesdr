@@ -105,7 +105,7 @@ const WEEKS: Week[] = [
   {
     num: "09",
     lesson: "Course 09",
-    title: "CRM survival guide",
+    title: "CRM Survival Guide",
     estimate: "~22 min",
     brief:
       "How to make the tool work for you instead of just feeding it. Smaller-scope lesson, faster read.",
