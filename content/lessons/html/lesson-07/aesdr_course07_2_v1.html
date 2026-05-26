@@ -1379,8 +1379,8 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
     <div class="lb ae-only">
       <p class="lp">SDR-sourced meetings are genuinely useful across the quarter, but the dynamic shifts completely when you walk into a meeting you booked yourself off your own research, your own outreach, and your own relationship with the prospect — because in that scenario you're not catching up to the SDR's context on the way into the call, you are the context the meeting is built on.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>You own the backstory.</strong> You know exactly which pain point surfaced in the early conversation, which specific trigger made the prospect respond to your outreach, and which line in your message actually landed — and that level of ownership is the difference between an SDR hand-off (which just gives you a name) and a self-sourced meeting (which gives you real leverage going in).</li>
-        <li><span class="kp-n">02</span><strong>Trust starts before the meeting does.</strong> They already know you did the work. That signals investment — and investment is contagious in a sales conversation.</li>
+        <li><span class="kp-n">01</span><strong>You own the backstory.</strong> You know exactly which pain point surfaced in the early conversation, which specific trigger made the prospect respond to your outreach, and which line in your message actually landed — and that level of ownership is the difference between an SDR hand-off, which just gives you a name, and a self-sourced meeting, which gives you a real read on the prospect before the call even starts.</li>
+        <li><span class="kp-n">02</span><strong>Trust starts before the meeting does.</strong> The prospect already knows you did the homework on their account, and a prospect who can see you put in the work shows up readier to put in their own.</li>
         <li><span class="kp-n">03</span><strong>SDR performance fluctuates.</strong> When the pipeline slows — because it will — the AEs who survive are the ones who never stopped building their own. Self-sourced pipeline is your insurance policy.</li>
       </ul>
       <div class="lie">
@@ -1393,7 +1393,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <p class="lp">Any SDR on the floor can book a meeting in a given week if the goal is just hitting the booking number on the scorecard — but the SDRs who get promoted to AE are the ones who book meetings that actually convert into pipeline downstream, with qualified leads carrying real pain, real budget, and real urgency; your reputation in this seat is built on what happens after the hand-off to your AE, not on the booking count alone.</p>
       <ul class="kp">
         <li><span class="kp-n">01</span><strong>Qualification is everything.</strong> A meeting with an unqualified lead wastes your AE's time and destroys your credibility. Every meeting you book should pass a clear qualification bar — pain, authority, timeline.</li>
-        <li><span class="kp-n">02</span><strong>Context is your currency.</strong> The SDR who passes a lead with detailed notes, pain points, and next steps gives the AE a running start. That's how you become the SDR every AE requests.</li>
+        <li><span class="kp-n">02</span><strong>Your notes are what the AE remembers.</strong> The SDR who passes a lead with detailed pain points, budget signals, and next steps gives the AE a running start, and that's how you become the SDR every AE on the floor asks to be paired with.</li>
         <li><span class="kp-n">03</span><strong>Volume without quality is a trap.</strong> Booking 20 meetings that go nowhere is worse than booking 8 that convert. Track your meeting-to-opportunity rate and optimize relentlessly.</li>
       </ul>
       <div class="lie">
@@ -1853,7 +1853,7 @@ function init(){
   AESDR.gate(1, {
     type:'narrative',
     prompt: _role === 'ae'
-      ? 'This lesson argues that self-sourced meetings give you leverage because you own the backstory, trust starts before the meeting, and you\'re not dependent on SDR activity fluctuations. Name a specific self-sourced meeting from the past 3 months — the account, the date, and the research that got you in the door. Compare your preparation, confidence, and close rate on that meeting versus a recent SDR-handed meeting. Which of the three advantages (backstory ownership, pre-meeting trust, pipeline insurance) was most evident, and what does that tell you about your current pipeline source mix?'
+      ? 'This lesson argues that self-sourced meetings put you ahead because you own the backstory, trust starts before the meeting, and you\'re not dependent on SDR activity fluctuations. Name a specific self-sourced meeting from the past 3 months — the account, the date, and the research that got you in the door. Compare your preparation, confidence, and close rate on that meeting versus a recent SDR-handed meeting. Which of the three advantages (backstory ownership, pre-meeting trust, pipeline insurance) was most evident, and what does that tell you about your current pipeline source mix?'
       : 'This lesson states that qualification is everything, context is your currency, and volume without quality is a trap. Calculate your exact meeting-to-qualified-opportunity conversion rate for the past month — write the numbers. Then describe one specific meeting you booked that failed to convert: name the prospect, explain what qualification step you skipped (pain, authority, or timeline), and describe what context you failed to provide in your handoff notes that would have helped your AE.',
     minChars: 120
   });
