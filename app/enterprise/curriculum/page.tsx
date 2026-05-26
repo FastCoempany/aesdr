@@ -88,7 +88,7 @@ const COURSES: Course[] = [
     lessons: [
       { number: "3.1", title: "SDR Performance Pitfalls" },
       { number: "3.2", title: "The Survival Guide for AEs and SDRs" },
-      { number: "3.3", title: "Surviving AE Management" },
+      { number: "3.3", title: "The Unofficial Manager" },
     ],
     outcomes: [
       "AEs and SDRs recognize the seven SDR breakpoints before they trigger",

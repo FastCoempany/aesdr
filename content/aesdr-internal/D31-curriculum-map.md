@@ -52,7 +52,7 @@ Silos as deal traps, plus the home-office build-out (your remote setup is your d
 >
 > *— mirror test.* `Wed 03`
 
-The four pitfalls every early-career AE/SDR falls into. The Survival Guide's Ten Commandments for AE-SDR partnerships. The 10 AE Manager Archetypes — what the room sees in you, plus how to manage up when they apply to your manager. BANT-as-game in the unit-1 interactive. **3 lessons · ~150 min total.**
+The four pitfalls every early-career AE/SDR falls into. The Survival Guide's Ten Commandments for AE-SDR partnerships. The 5 AE Partner Types — your AE is your unofficial manager, and your real SDR manager builds 80%+ of your review from a private line to the AEs you serve. BANT-as-game in the unit-1 interactive. **3 lessons · ~150 min total.**
 
 ### `658.85 / L04` — Navigating Manager Madness
 

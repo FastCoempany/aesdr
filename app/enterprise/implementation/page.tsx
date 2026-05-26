@@ -116,7 +116,7 @@ export default function ImplementationPage() {
             </p>
             <p className={styles.h4}>Manager touchpoints this fortnight</p>
             <ul className={styles.bulletList}>
-              <li>Pre-read 3.3 (Surviving AE Management) yourself, before AEs and SDRs do. Some content will feel personal. It&apos;s not — but you&apos;ll want to have processed it before you discuss it.</li>
+              <li>Pre-read 3.3 (The Unofficial Manager) yourself, before AEs and SDRs do. Some content will feel personal. It&apos;s not — but you&apos;ll want to have processed it before you discuss it.</li>
               <li>Week 4 1:1: ask &ldquo;Which manager archetype am I, based on 4.1?&rdquo; If you don&apos;t have a stomach for this question, skip it — but it&apos;s the most diagnostic 30 seconds you&apos;ll spend.</li>
               <li>First peer-discussion session: 30-min team discussion at end of week 4. Topic: &ldquo;Where in the org are we still in survival mode?&rdquo;</li>
             </ul>

@@ -68,7 +68,7 @@ export default function PricingTiers({ initialRole = null }: Props) {
         </p>
         <p className={styles.priceTagline}>For the closer juggling 30 active opps and four forecast calls.</p>
         <ul className={styles.priceFeatures}>
-          <li>All 12 courses — including <em>Surviving AE Management</em> + <em>AE/SDR Alignment</em></li>
+          <li>All 12 courses — including <em>The Unofficial Manager</em> + <em>AE/SDR Alignment</em></li>
           <li>Named takeaway artifacts: the alignment contract, the ROI tracker, the strike plan, plus two more</li>
           <li>One-time purchase. No subscription.</li>
           <li>Future curriculum updates included</li>
