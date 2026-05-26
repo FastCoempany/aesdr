@@ -1599,7 +1599,7 @@ function dropoff10dHtml(name: string) {
     <li>My plan for next week.</li>
   </ol>
   <p>Eight minutes. Flips the power dynamic in your 1:1 because you set the agenda. Creates a paper trail that protects you when a manager-archetype shifts at review time.</p>
-  <p>That's one tool from the managing-your-manager course. The other 35 lessons each hand you something you can use the same week.</p>
+  <p>That's one tool from the managing your 'manager' course. The other 35 lessons each hand you something you can use the same week.</p>
   <p><a href="${SITE}/dashboard" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px;margin:8px 0">Pick it back up →</a></p>
   <p style="margin-top:24px">— Antaeus</p>
   ${footer()}
