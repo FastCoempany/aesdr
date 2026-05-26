@@ -24,11 +24,11 @@ export const BRIDGE_TO_NEXT: Record<string, string> = {
   "2":
     "Course 2 mapped the floor's hidden dynamics. Course 3 is the survival kit for when those dynamics turn against you.",
   "3":
-    "Course 3 was about surviving the worst weeks. Course 4 is about navigating the everyday — the manager, the culture, the async-life.",
+    "Course 3 got you through the worst weeks. Course 4 is the ordinary ones — the manager who won't decide, the culture you didn't pick, the Slack thread that never sleeps.",
   "4":
     "Course 4 read the rooms you sit in. Course 5 is the playbook for what to do once you're in them.",
   "5":
-    "Course 5 gave you the playbook. Course 6 is what the playbook leaves out — the networking, the curiosity, the moves nobody coaches.",
+    "Course 5 handed you the playbook. Course 6 is what it leaves on the cutting-room floor — the room you work after the demo, the questions nobody told you to ask, the habits no manager coaches.",
   "6":
     "Course 6 expanded your toolkit beyond the playbook. Course 7 forces the harder question: is prospecting your job too?",
   "7":

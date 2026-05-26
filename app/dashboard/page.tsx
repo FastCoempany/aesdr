@@ -282,10 +282,10 @@ export default async function Dashboard() {
                 margin: 0,
               }}
             >
-              Your progress is where you left it. Lesson {currentLesson.id} is up next
+              Nothing reset while you were gone. Lesson {currentLesson.id} is where you stopped
               {progressMap[currentLesson.id]?.last_screen
-                ? `, mid-lesson at screen ${progressMap[currentLesson.id]?.last_screen}.`
-                : "."}
+                ? `, holding at screen ${progressMap[currentLesson.id]?.last_screen} until you open it again.`
+                : ", ready when you are."}
             </p>
           </aside>
         )}
@@ -501,9 +501,9 @@ export default async function Dashboard() {
                 marginBottom: 20,
               }}
             >
-              If it was useful, share it on LinkedIn — the kind of share
-              that brings other AEs and SDRs in, not the kind that
-              clutters their feed.
+              If it earned its place in your week, say so on LinkedIn — the
+              kind of post that brings a first-year AE or SDR in, not the kind
+              that scrolls past as noise.
             </p>
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               <Link

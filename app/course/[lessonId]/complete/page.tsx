@@ -156,8 +156,8 @@ export default async function LessonCompletePage({ params }: PageProps) {
         }}
       >
         {isLast
-          ? "You made it through all twelve. The shell did not stop."
-          : bridgeAfter(lessonId) ?? `Lesson ${nextLesson.id} is harder.`}
+          ? "Twelve done. The shell never stopped, and now neither do you."
+          : bridgeAfter(lessonId) ?? `Lesson ${nextLesson.id} asks more of you than this one did.`}
       </p>
 
       <div

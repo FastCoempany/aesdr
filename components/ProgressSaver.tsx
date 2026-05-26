@@ -201,7 +201,7 @@ export default function ProgressSaver({
             lineHeight: 1.45,
           }}
         >
-          Session expired. Your progress is saved locally.
+          Your login timed out, but this device kept your spot. Log back in to pick up where you stopped.
         </p>
         <a
           href="/login"
