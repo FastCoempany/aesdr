@@ -14,35 +14,43 @@ export const metadata: Metadata = {
 const ARCHETYPES = [
   {
     name: "The Coach",
-    snapshot: "Asks. Listens. Mirrors you back to yourself.",
-    reads_as_competence: ["You've thought about it.", "You can name the gap.", "You came with the question, not the complaint."],
-    reads_as_threat: ["You ask them to decide for you.", "You wait to be told."],
+    snapshot: "Asks before telling. Develops you instead of just measuring you.",
+    reads_as_competence: ["You came with the question, not the complaint.", "You can name your own gap.", "You tried something before asking."],
+    reads_as_threat: ["You wait to be told.", "You bring problems with no attempt attached."],
     weekly_move:
       "End your 1:1 with one decision you made this week, one you're stuck on, and the option you're leaning toward.",
   },
   {
-    name: "The Operator",
-    snapshot: "Owns the dashboard. The number is the conversation.",
-    reads_as_competence: ["Pipeline math that reconciles.", "Forecasts that don't drift.", "Activity tied to a specific stage gap."],
-    reads_as_threat: ["Vibes-based updates.", "“Working on it.”", "Numbers that move without a story."],
+    name: "The Metric Maniac",
+    snapshot: "The dashboard is the conversation. Equates activity with output.",
+    reads_as_competence: ["Pipeline math that reconciles.", "Activity tied to a specific stage gap.", "Numbers that come with a story."],
+    reads_as_threat: ["Vibes-based updates.", "“Working on it.”", "A quiet day with nothing logged."],
     weekly_move:
-      "Send a Friday five-line: last week's number, this week's, the gap, what's closing it, what isn't.",
+      "Send a Friday five-line — last week's number, this week's, the gap, what's closing it, what isn't. Lead with the metric they watch most.",
   },
   {
-    name: "The Closer",
-    snapshot: "Wants in the room. Reads silence as you hiding the deal.",
-    reads_as_competence: ["You invite them in early.", "You tell them the risk before they ask.", "You let them play the role they're best at."],
-    reads_as_threat: ["Surprise losses.", "Calls they weren't on.", "Deals that stall in their blind spot."],
+    name: "The Template Tyrant",
+    snapshot: "One script, one sequence, one way. No room for your judgment.",
+    reads_as_competence: ["You follow the process.", "You bring data on where you deviated and why it worked.", "You ask before going off-script."],
+    reads_as_threat: ["Going off-script silently.", "“I just did my own thing.”"],
     weekly_move:
-      "Pre-brief them on one live deal mid-week. Tell them the part you're not sure about. Let them decide if they're joining.",
+      "When you want to deviate, bring an A/B: “the template gets 4%, my variant got 9% on 40 sends. Can I run it on the next batch?”",
+  },
+  {
+    name: "The Two-Faced Cheerleader",
+    snapshot: "Public praise, private criticism. You never quite know where you stand.",
+    reads_as_competence: ["You create a paper trail.", "You send written recaps of every 1:1.", "You confirm agreements in writing."],
+    reads_as_threat: ["Verbal-only agreements they can reframe later.", "Letting the record stay fuzzy."],
+    weekly_move:
+      "After every 1:1, send a two-line written recap of what was agreed. Make the record exist.",
   },
   {
     name: "The Ghost",
-    snapshot: "Skips. Reschedules. Surfaces only when something's wrong.",
-    reads_as_competence: ["No surprises.", "Self-managed pipeline.", "Async, written updates they can scan."],
-    reads_as_threat: ["Surfacing problems they have to solve.", "Pulling them into meetings.", "Anything that requires them to be present."],
+    snapshot: "Absent. Unavailable. You're coaching yourself.",
+    reads_as_competence: ["You operate without hand-holding.", "Self-managed pipeline.", "You escalate only what genuinely needs them."],
+    reads_as_threat: ["Constant pings.", "Needing them in every decision.", "Anything that requires them to be present."],
     weekly_move:
-      "Write your update. Don't ask for their time. Make the next step a yes/no question they can answer in 20 seconds.",
+      "Send one async update they can read in 30 seconds, ending with one specific question and a deadline. Make engaging with you cheap.",
   },
 ];
 
@@ -154,7 +162,7 @@ export default function ManagerArchetypeMapPage() {
             marginBottom: 16,
           }}
         >
-          Four manager operating systems. What each one reads as competence,
+          Five manager operating systems. What each one reads as competence,
           what each reads as threat, and the one move that works on them this
           week.
         </p>

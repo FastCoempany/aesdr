@@ -1355,7 +1355,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div class="eyebrow">Course 4 · Lesson 1 of 3</div>
         <div class="hero-h">From chaos<br><span class="irisTxt">to control.</span></div>
         <ul class="cv-list">
-          <li><span class="cl-n">01</span>The 10 SDR Manager Archetypes</li>
+          <li><span class="cl-n">01</span>The 5 Manager Archetypes</li>
           <li><span class="cl-n">02</span>The Impact of Mismanagement</li>
           <li><span class="cl-n">03</span>Framework for Managing Up</li>
           <li><span class="cl-n">04</span>Tools for Weekly Alignment</li>
@@ -1409,24 +1409,32 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="ghost-n">01</div>
       <div><div class="c4-badge">Course 4</div><span class="sec-eye">Section 01 — Mapping Archetypes</span></div>
       <div class="lh-title">Sort the Survival Strategies</div>
-      <div class="lh-sub"><b id="siloCount">0</b> / 6 correctly sorted</div>
+      <div class="lh-sub"><b id="siloCount">0</b> / 5 correctly sorted</div>
     </div>
     <div class="silo-wrap">
-      <p class="silo-instr">Click a strategy to select it, then match it to the correct manager archetype you are trying to survive.</p>
+      <p class="silo-instr">Click a strategy to select it, then match it to the manager archetype it's built for. One strategy per archetype.</p>
       <div class="silo-pool-lbl">Survival Strategies — Select One</div>
       <div class="silo-pool-cards" id="siloPool"></div>
       <div class="silo-cols" id="siloCols">
+        <button type="button" class="silo-col" id="silo-col-coach" onclick="dropSilo('coach')">
+          <div class="silo-col-hdr"><div class="silo-col-name">The Coach</div><div class="silo-col-sub">Asks before telling</div></div>
+          <div class="silo-dropped" id="silo-dropped-coach"></div>
+        </button>
         <button type="button" class="silo-col" id="silo-col-maniac" onclick="dropSilo('maniac')">
-          <div class="silo-col-hdr"><div class="silo-col-name">The Metric Maniac</div><div class="silo-col-sub">Data without context</div></div>
+          <div class="silo-col-hdr"><div class="silo-col-name">The Metric Maniac</div><div class="silo-col-sub">The dashboard is the conversation</div></div>
           <div class="silo-dropped" id="silo-dropped-maniac"></div>
         </button>
         <button type="button" class="silo-col" id="silo-col-tyrant" onclick="dropSilo('tyrant')">
-          <div class="silo-col-hdr"><div class="silo-col-name">The Template Tyrant</div><div class="silo-col-sub">One-size-fits-all scripts</div></div>
+          <div class="silo-col-hdr"><div class="silo-col-name">The Template Tyrant</div><div class="silo-col-sub">One script, one way</div></div>
           <div class="silo-dropped" id="silo-dropped-tyrant"></div>
         </button>
         <button type="button" class="silo-col" id="silo-col-cheer" onclick="dropSilo('cheer')">
           <div class="silo-col-hdr"><div class="silo-col-name">The Two-Faced Cheerleader</div><div class="silo-col-sub">Public praise, private criticism</div></div>
           <div class="silo-dropped" id="silo-dropped-cheer"></div>
+        </button>
+        <button type="button" class="silo-col" id="silo-col-ghost" onclick="dropSilo('ghost')">
+          <div class="silo-col-hdr"><div class="silo-col-name">The Ghost</div><div class="silo-col-sub">Absent, unavailable</div></div>
+          <div class="silo-dropped" id="silo-dropped-ghost"></div>
         </button>
       </div>
       <button class="silo-reset" onclick="resetSilo()">Reset board</button>
@@ -1443,10 +1451,13 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
     </div>
     <div class="lb ae-only">
       <p class="lp">Taking control means diagnosing the root of the friction and proactively communicating deal context before your VP starts hovering over your pipeline.</p>
+      <p class="lp">There are five sales manager archetypes. Most leaders lean into one. Read which one yours defaults to, then run the weekly move built for that type.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>Diagnose Their Pressure:</strong> Is your manager a forecast hawk? A deal-stage enforcer? A last-minute discounter? Identify the pattern and you can get ahead of it.</li>
-        <li><span class="kp-n">02</span><strong>Align on What Matters:</strong> Ask two questions every week. "Which deals should I prioritize?" Then: "If I need executive sponsorship on this account, what's the fastest path?" Make their job easier and they'll give you more room.</li>
-        <li><span class="kp-n">03</span><strong>Proactively Share Deal Narratives:</strong> Don't wait for the forecast call. Send a pipeline update with context: "Deal X slipped because the champion changed roles — here's my recovery plan." That's managing up.</li>
+        <li><span class="kp-n">01</span><strong>The Coach:</strong> Asks before telling. Develops you instead of just measuring you. Reads as competence when you arrive with the question and a gap you can already name; reads as threat when you wait to be told. Weekly move: end your 1:1 with one deal call you made this week, one you're stuck on, and the option you're leaning toward.</li>
+        <li><span class="kp-n">02</span><strong>The Metric Maniac:</strong> The dashboard is the conversation. Equates activity with output. Reads as competence when your pipeline math reconciles and a number comes with a story; reads as threat when a forecast moves with no narrative. Weekly move: send a Friday five-line — last week's coverage, this week's, the gap, what's closing it, what isn't. Lead with the metric they watch most.</li>
+        <li><span class="kp-n">03</span><strong>The Template Tyrant:</strong> One process, one playbook, one way. No room for your judgment on deal strategy. Reads as competence when you follow the process and bring the data on where you deviated and why it worked; reads as threat when you go off-script silently. Weekly move: when you want to deviate, bring an A/B — "the standard sequence books 4%, my variant booked 9% on 40 accounts. Can I run it on the next batch?"</li>
+        <li><span class="kp-n">04</span><strong>The Two-Faced Cheerleader:</strong> Public praise, private criticism. You never quite know where you stand. Reads as competence when you create a paper trail; reads as threat when you leave agreements verbal-only and they reframe them later. Weekly move: after every 1:1, send a two-line written recap of what was agreed. Make the record exist.</li>
+        <li><span class="kp-n">05</span><strong>The Ghost:</strong> Absent. Unavailable. You're running your deals alone. Reads as competence when you operate without hand-holding and escalate only what genuinely needs them; reads as threat when you ping constantly. Weekly move: send one async pipeline update they can read in 30 seconds, ending with one specific ask and a deadline. Make engaging with you cheap.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Cost of Doing Nothing</div>
@@ -1456,10 +1467,13 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
     </div>
     <div class="lb sdr-only">
       <p class="lp">Taking control means diagnosing the actual friction, not reacting to surface symptoms. Then communicating context about your work proactively. Do it before their assumptions about you harden into the version that shows up on the forecast call.</p>
+      <p class="lp">There are five SDR manager archetypes. Most managers lean into one. Read which one yours defaults to, then run the weekly move built for that type.</p>
       <ul class="kp">
-        <li><span class="kp-n">01</span><strong>Diagnose Their Type:</strong> Identify which of the ten archetypes your SDR manager actually fits. Name the specific pain points — metrics obsession, template enforcement, two-faced cheerleading. Then plan around the pattern, not the general feeling of being managed badly.</li>
-        <li><span class="kp-n">02</span><strong>Align and Set Boundaries:</strong> Ask clarifying questions every week. "What's the one metric that matters most this week?" "Can I try this approach and share results back?" That keeps the conversation anchored to the work — not to vague disagreements about your job.</li>
-        <li><span class="kp-n">03</span><strong>Proactively Share Context:</strong> Present every set of metrics alongside a written narrative — "Here's why my numbers shifted this week." Ask for specific feedback regularly. Then they're never filling the context gap with their own assumptions about your performance.</li>
+        <li><span class="kp-n">01</span><strong>The Coach:</strong> Asks before telling. Develops you instead of just measuring you. Reads as competence when you arrive with the question and a gap you can already name; reads as threat when you wait to be told. Weekly move: end your 1:1 with one decision you made this week, one you're stuck on, and the option you're leaning toward.</li>
+        <li><span class="kp-n">02</span><strong>The Metric Maniac:</strong> The dashboard is the conversation. Equates activity with output. Reads as competence when your pipeline math reconciles and a number comes with a story; reads as threat when a quiet day has nothing logged. Weekly move: send a Friday five-line — last week's number, this week's, the gap, what's closing it, what isn't. Lead with the metric they watch most.</li>
+        <li><span class="kp-n">03</span><strong>The Template Tyrant:</strong> One script, one sequence, one way. No room for your judgment. Reads as competence when you follow the process and bring the data on where you deviated and why it worked; reads as threat when you go off-script silently. Weekly move: when you want to deviate, bring an A/B — "the template gets 4%, my variant got 9% on 40 sends. Can I run it on the next batch?"</li>
+        <li><span class="kp-n">04</span><strong>The Two-Faced Cheerleader:</strong> Public praise, private criticism. You never quite know where you stand. Reads as competence when you create a paper trail; reads as threat when you leave agreements verbal-only and they reframe them later. Weekly move: after every 1:1, send a two-line written recap of what was agreed. Make the record exist.</li>
+        <li><span class="kp-n">05</span><strong>The Ghost:</strong> Absent. Unavailable. You're coaching yourself. Reads as competence when you operate without hand-holding and escalate only what genuinely needs them; reads as threat when you ping constantly. Weekly move: send one async update they can read in 30 seconds, ending with one specific question and a deadline. Make engaging with you cheap.</li>
       </ul>
       <div class="lie">
         <div class="lie-tab">The Cost of Doing Nothing</div>
@@ -1476,7 +1490,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <div class="lh-stripe"></div>
       <div><div class="c4-badge">Course 4</div><span class="sec-eye">Section 02 — Diagnose the Impact</span></div>
       <div class="lh-title">Identify the Mismanagement</div>
-      <div class="lh-sub"><b id="blameCount">0</b> / 4 archetypes resolved</div>
+      <div class="lh-sub"><b id="blameCount">0</b> / 5 archetypes resolved</div>
     </div>
     <div class="blame-wrap">
       <p class="blame-instr">Each statement below is a symptom of a specific manager archetype, so click the archetype it points to in order to uncover the fix that goes with it.</p>
@@ -1600,7 +1614,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div class="t-head ae-only">Actionable Homework for AEs</div>
         <div class="t-head sdr-only">Actionable Homework for SDRs</div>
         <ul class="hw-list ae-only">
-          <li><div class="hw-box"></div>Identify your sales leader's management style — are they a forecast hawk, a deal-stage enforcer, or a hands-off delegator?</li>
+          <li><div class="hw-box"></div>Identify your sales leader's archetype — Coach, Metric Maniac, Template Tyrant, Two-Faced Cheerleader, or Ghost?</li>
           <li><div class="hw-box"></div>Send a proactive pipeline update before your next 1:1. Include deal narratives, not just numbers.</li>
           <li><div class="hw-box"></div>Ask for one specific resource or piece of support on your top deal this week.</li>
           <li><div class="hw-box"></div>Self-Reflection: Where am I letting my manager fill gaps with assumptions instead of giving them context?</li>
@@ -1691,39 +1705,44 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
 ════════════════════════════════════ */
 
 const SILO_CARDS = [
-  { txt:"Proactively report key insights alongside raw activity numbers.", zone:"maniac", note:"The Metric Maniac needs context." },
-  { txt:"Follow the script but track data on adding personal touches.", zone:"tyrant", note:"The Template Tyrant needs data-driven proof." },
-  { txt:"Document public compliments to hold them accountable.", zone:"cheer", note:"The Cheerleader needs consistent feedback documented." },
-  { txt:"Reframe metrics: 'Call duration dipped, but connects are up.'", zone:"maniac", note:"The Metric Maniac needs reframed metrics." },
-  { txt:"Share response rates comparing personalized vs. standard emails.", zone:"tyrant", note:"The Template Tyrant respects data over opinions." },
-  { txt:"Seek consistent, constructive feedback in private 1:1s.", zone:"cheer", note:"The Cheerleader needs private alignment." },
+  { txt:"End your 1:1 with one decision you made, one you're stuck on, and the option you're leaning toward.", zone:"coach", note:"The Coach develops you — show your own thinking, not just your results." },
+  { txt:"Send a Friday five-line: last week's number, this week's, the gap, what's closing it, what isn't.", zone:"maniac", note:"The Metric Maniac needs the number with a story attached." },
+  { txt:"Bring an A/B: 'the template gets 4%, my variant got 9% on 40 sends. Can I run it on the next batch?'", zone:"tyrant", note:"The Template Tyrant respects data over opinions — earn the deviation." },
+  { txt:"After every 1:1, send a two-line written recap of what was agreed.", zone:"cheer", note:"The Cheerleader can reframe verbal-only deals — make the record exist." },
+  { txt:"Send one async update they read in 30 seconds, ending with one specific question and a deadline.", zone:"ghost", note:"The Ghost is absent — make engaging with you cheap." },
 ];
-const SILO_ORDER = [2,5,0,3,1,4];
+const SILO_ORDER = [2,4,0,3,1];
 
 const BLAME_ITEMS = [
   {
-    statement:'"My manager only cares that I made 100 calls, even if none connected."',
-    opts:["They are a Pipeline Magician","The Metric Maniac","The Cheerleader","The Template Tyrant"],
+    statement:'"My manager asks what I tried before I get to ask my question, then makes me name my own gap."',
+    opts:["The Metric Maniac","The Coach","The Ghost","The Template Tyrant"],
     ans:1,
-    fix:"Real fix: Proactively report key insights alongside numbers. Reframe it: 'Connects are up 15% because I qualified faster.'"
+    fix:"That's The Coach — they develop you, not just measure you. Real fix: end your 1:1 with one decision you made, one you're stuck on, and the option you're leaning toward."
   },
   {
-    statement:'"I have to use a robotic email script that gets zero replies."',
-    opts:["The Process Preacher","The CRM Crusader","The Template Tyrant","The Eternal Optimist"],
+    statement:'"My manager only cares that I made 100 calls, even if none connected."',
+    opts:["The Coach","The Metric Maniac","The Two-Faced Cheerleader","The Template Tyrant"],
+    ans:1,
+    fix:"That's The Metric Maniac — the dashboard is the conversation. Real fix: send a Friday five-line that leads with the number, then attaches the story: 'Connects up 15% because I qualified faster.'"
+  },
+  {
+    statement:'"I have to use one robotic email script and I get blocked the second I want to change a line."',
+    opts:["The Ghost","The Metric Maniac","The Template Tyrant","The Coach"],
     ans:2,
-    fix:"Real fix: Follow templates but add personal touches. Track response rates and present the data-driven feedback."
+    fix:"That's The Template Tyrant — one script, one way. Real fix: follow the process, then bring an A/B — 'the template gets 4%, my variant got 9% on 40 sends. Can I run it on the next batch?'"
   },
   {
     statement:'"My manager praises me in the team meeting but tears me apart in our 1:1."',
-    opts:["The Two-Faced Cheerleader","The Call Whisperer","The 'Two-Week SDR' Veteran","The Metric Maniac"],
+    opts:["The Two-Faced Cheerleader","The Coach","The Ghost","The Metric Maniac"],
     ans:0,
-    fix:"Real fix: Document compliments and positive progress to hold them accountable. Seek consistent feedback."
+    fix:"That's The Two-Faced Cheerleader — public praise, private criticism. Real fix: after every 1:1, send a two-line written recap of what was agreed. Make the record exist."
   },
   {
-    statement:'"My manager panics the second my daily activity dips by 5%."',
-    opts:["The 'Metrics Don't Lie' Mastermind","The Eternal Optimist","The Pipeline Magician","The Cheerleader"],
-    ans:0,
-    fix:"Real fix: Provide context for dips in stats to avoid panic. Present metrics with a clear narrative."
+    statement:'"My manager is never around. I bring a real blocker and it sits unread for three days."',
+    opts:["The Metric Maniac","The Template Tyrant","The Two-Faced Cheerleader","The Ghost"],
+    ans:3,
+    fix:"That's The Ghost — absent, unavailable, you're coaching yourself. Real fix: send one async update they can read in 30 seconds, ending with one specific question and a deadline."
   }
 ];
 
@@ -1751,13 +1770,23 @@ const CLS_ORDER = [4,0,6,2,1,5,3,7];
 const QUIZ = [
   {
     q:"How should you handle a 'Metric Maniac' manager?",
-    opts:["Proactively report key insights alongside numbers","Document their compliments to hold them accountable","Follow their templates exactly without changes","Remind them that metrics are just vanity numbers"],
+    opts:["Send a Friday five-line that leads with their number and attaches the story behind it","Document their compliments to hold them accountable","Follow their templates exactly without changes","Remind them that metrics are just vanity numbers"],
     ans:0
   },
   {
-    q:"What is the recommended strategy for dealing with a 'Template Tyrant'?",
-    opts:["Refuse to use their templates","Follow templates but add personal touches and share data on results","Ask for public praise when you use the template","Ignore the templates and write your own scripts completely"],
+    q:"What is the recommended weekly move for a 'Template Tyrant'?",
+    opts:["Refuse to use their templates","Follow the process, then bring an A/B showing your variant beat the template on real volume","Ask for public praise when you use the template","Go off-script silently and hope they don't notice"],
     ans:1
+  },
+  {
+    q:"Your manager is 'The Ghost' — absent and slow to respond. What's the move that earns competence?",
+    opts:["Ping them in every decision until they engage","Send one async update they read in 30 seconds, ending with one specific question and a deadline","Wait for them to come to you","Escalate everything to their boss instead"],
+    ans:1
+  },
+  {
+    q:"Which archetype calls for a two-line written recap after every 1:1, so verbal agreements can't be reframed later?",
+    opts:["The Coach","The Metric Maniac","The Two-Faced Cheerleader","The Template Tyrant"],
+    ans:2
   },
   {
     q:"According to the Weekly Alignment Meeting Template, what should you do during the 'Challenges' section?",
@@ -1933,8 +1962,8 @@ function init(){
   AESDR.gate(1, {
     type:'narrative',
     prompt: _role === 'ae'
-      ? 'This lesson describes three types of sales leader pressure: forecast hawking, deal-stage enforcement, and last-minute discounting. Which pattern does YOUR sales leader default to? Name a specific deal or forecast call from the past two weeks where that pattern showed up, explain what context you failed to share proactively, and describe how that gap led to micromanagement or lost autonomy on your end.'
-      : 'This lesson introduces three SDR manager archetypes: the Metric Maniac, the Template Tyrant, and the Two-Faced Cheerleader. Which one most closely matches YOUR manager right now? Cite a specific interaction from the past two weeks that proves it — what did they say or do, what pressure were they responding to, and what could you have done differently to manage up around that behavior?',
+      ? 'This lesson describes five sales manager archetypes: the Coach, the Metric Maniac, the Template Tyrant, the Two-Faced Cheerleader, and the Ghost. Which one does YOUR sales leader default to? Name a specific deal or forecast call from the past two weeks where that pattern showed up, explain what context you failed to share proactively, and describe how that gap led to micromanagement or lost autonomy on your end.'
+      : 'This lesson introduces five SDR manager archetypes: the Coach, the Metric Maniac, the Template Tyrant, the Two-Faced Cheerleader, and the Ghost. Which one most closely matches YOUR manager right now? Cite a specific interaction from the past two weeks that proves it — what did they say or do, what pressure were they responding to, and what could you have done differently to manage up around that behavior?',
     minChars: 120
   });
   AESDR.gate(3, {
@@ -1947,13 +1976,13 @@ function init(){
   // Homework gate
   AESDR.gate(8, { type:'homework',
     conscience: 'SDR managers can make or break your trajectory. Every answer here is preparation for navigating the politics that nobody warns you about.', items: _role === 'ae' ? [
-    { task:'Name your sales leader by first name and classify their dominant style: forecast hawk, deal-stage enforcer, or hands-off delegator. Cite two specific behaviors from the past month that confirm your diagnosis.', placeholder:'e.g. "My VP, Sarah, is a forecast hawk. Last Tuesday she pulled me into a 30-min pipeline review because I hadn\'t updated Stage 3 notes on the Acme deal. Two weeks before that she..."', minChars:100 },
+    { task:'Name your sales leader by first name and identify their archetype: Coach, Metric Maniac, Template Tyrant, Two-Faced Cheerleader, or Ghost. Cite two specific behaviors from the past month that confirm your diagnosis.', placeholder:'e.g. "My VP, Sarah, is a Metric Maniac. Last Tuesday she pulled me into a 30-min pipeline review because I hadn\'t updated Stage 3 notes on the Acme deal. Two weeks before that she..."', minChars:100 },
     { task:'Write the exact proactive pipeline update you will send before your next 1:1. Include at least one deal name, current stage, why it moved or stalled, and your recovery or acceleration plan.', placeholder:'e.g. "Hi Sarah — quick pipeline update ahead of Thursday. Acme ($45K, Stage 4) — champion changed roles last week. Recovery plan: reaching out to their replacement by Wednesday and re-confirming the business case..."', minChars:120 },
     { task:'Identify your top deal by name and dollar amount. What specific resource, exec sponsorship, or support will you request from your sales leader this week? Write the exact ask you\'ll make.', placeholder:'e.g. "On the DataCorp deal ($80K, Stage 3), I need our VP to join the next call as exec sponsor. I\'ll say: \'Sarah, the CFO at DataCorp wants to see senior commitment before signing...\'..."', minChars:100 },
     { task:'List three specific information gaps where your sales leader is currently filling the void with assumptions. For each gap, write the proactive update you will send this week with a specific date.', placeholder:'e.g. "Gap 1: She doesn\'t know why the Zenith deal slipped — I\'ll send context by Tuesday. Gap 2: She assumes I\'m not working the West Coast accounts — I\'ll share my outreach log by Wednesday..."', minChars:120 },
     { task:'Design your weekly alignment meeting agenda with your sales leader. List the three sections you\'ll cover (from the lesson template: metrics check-in, challenges & blockers, feedback), and write one specific talking point for each section based on your current pipeline.', placeholder:'e.g. "Metrics: Walk through my 3 active Stage 4 deals — Acme, DataCorp, Zenith. Challenges: DataCorp champion left, need help identifying new sponsor. Feedback: Ask Sarah what she thought of my Zenith proposal approach..."', minChars:100 }
   ] : [
-    { task:'Name your SDR manager by first name and identify their archetype: Metric Maniac, Template Tyrant, or Two-Faced Cheerleader. Cite two specific interactions from the past month that confirm your classification.', placeholder:'e.g. "My manager, James, is a Metric Maniac. Last Monday he flagged my dial count dropping by 8 without asking about the 3 meetings I booked. Two weeks ago he..."', minChars:100 },
+    { task:'Name your SDR manager by first name and identify their archetype: Coach, Metric Maniac, Template Tyrant, Two-Faced Cheerleader, or Ghost. Cite two specific interactions from the past month that confirm your classification.', placeholder:'e.g. "My manager, James, is a Metric Maniac. Last Monday he flagged my dial count dropping by 8 without asking about the 3 meetings I booked. Two weeks ago he..."', minChars:100 },
     { task:'Write out your full weekly alignment meeting agenda using the lesson template. Include specific metrics you\'ll report, one blocker you\'ll raise by name, and one piece of feedback you\'ll request from your manager.', placeholder:'e.g. "Metrics: 47 dials, 12 conversations, 4 meetings booked (vs. 3 target). Blocker: The Fintech vertical list is exhausted — need new accounts loaded by Thursday. Feedback: Ask James how he wants me to prioritize inbound vs. outbound this quarter..."', minChars:120 },
     { task:'Identify one specific frustration with your manager from this week. Apply the three-step framework: diagnose the archetype behavior causing it, write the boundary-setting question you\'ll ask (exact words), and describe the proactive context you\'ll share to prevent it recurring.', placeholder:'e.g. "Frustration: James questioned why I left early Tuesday when I\'d already hit my daily targets. Archetype: Metric Maniac — equates hours with output. Boundary question: \'James, if I hit 50 dials and 4 meetings by 3pm, can I use the last hour for research?\'..."', minChars:120 },
     { task:'Write the exact message you\'ll send your manager before your next 1:1 that proactively shares context on your numbers. Include your current metrics for the week, why they moved up or down, and what you plan to do differently next week.', placeholder:'e.g. "Hi James — ahead of our Thursday 1:1. This week: 52 dials (up from 44), 5 meetings booked. Dials went up because I protected my morning call block. Meetings booked dropped one from target because the Healthcare list has gone cold — plan to swap to FinServ next week..."', minChars:100 },
@@ -2022,7 +2051,7 @@ function buildSilo(){
       <span class="silo-card-txt">${SILO_CARDS[ci].txt}</span>
     </button>
   `).join('');
-  ['maniac','tyrant','cheer'].forEach(z=>{document.getElementById('silo-dropped-'+z).innerHTML='';});
+  ['coach','maniac','tyrant','cheer','ghost'].forEach(z=>{document.getElementById('silo-dropped-'+z).innerHTML='';});
 }
 function pickSilo(di){
   if(siloDone[di]) return;
@@ -2050,7 +2079,7 @@ function renderSiloUI(){
     const el=document.getElementById('sc'+di);if(!el)return;
     el.classList.toggle('sel',siloSel===di);
   });
-  ['maniac','tyrant','cheer'].forEach(z=>{
+  ['coach','maniac','tyrant','cheer','ghost'].forEach(z=>{
     const col=document.getElementById('silo-col-'+z);
     col.classList.toggle('target',siloSel!==null);
   });
@@ -2240,11 +2269,11 @@ function submitQuiz(){
     });
     if(chosen===q.ans)correct++;
   });
-  qPassed=correct>=3;
+  qPassed=correct>=4;
   _saveQuizState();_saveExerciseScores();AESDR.persistNow();
   const b=document.getElementById('quizBanner');
   b.className='quiz-banner show '+(qPassed?'pass':'fail');
-  b.innerHTML=qPassed?`✓ ${correct} / ${QUIZ.length} correct — cleared to continue. <button class="gate-edit-btn" style="margin-left:12px" onclick="retryQuiz()">Reset Quiz</button>`:`${correct} / ${QUIZ.length} correct — need 3 to pass. Review and try again.`;
+  b.innerHTML=qPassed?`✓ ${correct} / ${QUIZ.length} correct — cleared to continue. <button class="gate-edit-btn" style="margin-left:12px" onclick="retryQuiz()">Reset Quiz</button>`:`${correct} / ${QUIZ.length} correct — need 4 to pass. Review and try again.`;
   render();
 }
 function retryQuiz(){
@@ -2262,8 +2291,8 @@ function canContinue(){
   if(cur<maxReached)return true;
   if(cur===1)return AESDR.gateReady(1);
   if(cur===3)return AESDR.gateReady(3);
-  if(cur===2)return siloCount===6;
-  if(cur===4)return blameCount===4;
+  if(cur===2)return siloCount===5;
+  if(cur===4)return blameCount===5;
   if(cur===5)return Object.keys(seqDone).length===5;
   if(cur===6)return clsCount===8;
   if(cur===7){if(!qSubmitted)return Object.keys(qAns).length===QUIZ.length;return true;}
@@ -2273,12 +2302,12 @@ function canContinue(){
 function getHint(){
   const h={
     1: AESDR.gateHint(1) || 'Read. Reflect. Write.',
-    2:`${siloCount} / 6 correctly sorted`,
+    2:`${siloCount} / 5 correctly sorted`,
     3: AESDR.gateHint(3) || 'Read. Reflect. Write.',
-    4:`${blameCount} / 4 archetypes resolved`,
+    4:`${blameCount} / 5 archetypes resolved`,
     5:`${Object.keys(seqDone).length} / 5 correctly sequenced`,
     6:`${clsCount} / 8 correctly classified`,
-    7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 3 / 4 to advance.',
+    7:!qSubmitted?`${Object.keys(qAns).length} / ${QUIZ.length} answered`:qPassed?'✓ Passed — continue below.':'Need 4 / 6 to advance.',
     8: AESDR.gateHint(8) || "Manage your manager, take back control.",
   };
   return h[cur]||'';
@@ -2312,9 +2341,11 @@ function render(){
 // Zone click delegation
 document.addEventListener('click',function(e){
   if(siloSel!==null){
+    if(e.target.closest('#silo-col-coach')&&!e.target.closest('.silo-card'))dropSilo('coach');
     if(e.target.closest('#silo-col-maniac')&&!e.target.closest('.silo-card'))dropSilo('maniac');
     if(e.target.closest('#silo-col-tyrant')&&!e.target.closest('.silo-card'))dropSilo('tyrant');
     if(e.target.closest('#silo-col-cheer')&&!e.target.closest('.silo-card'))dropSilo('cheer');
+    if(e.target.closest('#silo-col-ghost')&&!e.target.closest('.silo-card'))dropSilo('ghost');
   }
   if(clsSel!==null){
     if(e.target.closest('#cls-metrics')&&!e.target.closest('.cls-obs'))dropCls('metrics');
