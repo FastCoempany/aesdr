@@ -15,7 +15,7 @@
 |---|---|---|---|
 | 1 | Hub routing | **`aesdr.com/affiliates`** | All UTM templates, kit cross-references, internal links anchor here. Do not use `/for-affiliates`, `/affiliates`, or subdomain. |
 | 2 | $40 end-of-course option | **Defined in `app/reveal/RevealView.tsx` line 212** as the unlock fee for the second end-of-course artifact. Student picks one of two artifacts free at `/reveal`; the unchosen artifact stays sealed and unlocks for $40 from the dashboard at any time. | Hub affiliate-economics page surfaces this as a real revenue line. D22 §5.1 commission terms must address whether the $40 unlock is affiliate-attributable (recommend: yes, within the 30-day attribution window). |
-| 3 | 5 takeaway tools | **Named, in production at `tools/standalone-html/`:** (1) The SLA Builder — `3.3-aesdr-alignment-contract.html`; (2) The "I Don't Know" Framework — `6.3-idk-framework.html`; (3) Time Reclaimed ROI Calculator — `9.2-time-reclaimed-calculator.html`; (4) Commission Defense Tracker — `10.1-ROI-commission-defense-tracker.html`; (5) The 72-Hour Strike Plan — `12.3-72-hr-strike-plan.html`. | D31 curriculum map + L&D brief + hub `/affiliates/curriculum` page lift the named list. Each tool is linkable at `aesdr.com/tools/[slug]`. |
+| 3 | 5 takeaway tools | **Named, in production at `tools/standalone-html/`:** (1) AE/SDR Alignment Contract — `3.3-aesdr-alignment-contract.html`; (2) The "I Don't Know" Framework — `6.3-idk-framework.html`; (3) Time Reclaimed Calculator — `9.2-time-reclaimed-calculator.html`; (4) ROI & Commission Defense Tracker — `10.1-ROI-commission-defense-tracker.html`; (5) The 72-Hour Strike Plan — `12.3-72-hr-strike-plan.html`. | D31 curriculum map + L&D brief + hub `/affiliates/curriculum` page lift the named list. Each tool is linkable at `aesdr.com/tools/[slug]`. |
 | 4 | Host casting | **Interim placeholder.** Continue using `[HOST_FIRST_NAME]` and `[HOST_LAST_NAME]` across all hub copy. | Hub ships with placeholders; founder swaps globally when host is cast. Forward-dep flagged on every page that references the host. |
 | 5 | Discount policy | **Never. Ever. Discount.** AESDR does not run promotional codes, pilot discounts, affiliate-stack discounts, time-limited price drops, or any pricing variance. List price applies always. | Triggers cleanup work in D28, D09 slide 16, D17 V5/V6, D18, D24 CTA, D26 §3b CTA, and 09a/09b/09c/09d copy templates — references to `[PILOT_DISCOUNT]`, `[PILOT_CODE]`, "save you $[DISCOUNT]" must be removed or re-framed. **Cleanup is a separate task; not a hub Phase 1 blocker.** |
 | 6 | D22 access | **Request the agreement.** Hub does not publish the pilot agreement; affiliates request it via the `/affiliates/apply` form, AESDR sends counsel-reviewed PDF when ready. | Hub `/affiliates/apply` form posts to `admissions@aesdr.com`. Counsel review of D22 v1 remains operationally pending. |
@@ -63,7 +63,7 @@ Per founder review 2026-05-04: affiliate-facing body copy must read like an oper
 - **Fabricated quantitative claims** — never invent numbers (affiliate counts, pilot durations, response times, audience-size cutoffs) that aren't already ratified in canon, Phase 0, or D22 after counsel. If a number isn't ratified, don't write it; reword qualitatively until it is.
 
 **Allowed everywhere:**
-- Affiliate-facing prose, affiliate-named documents, affiliate-named tools (`The SLA Builder`, `The 72-Hour Strike Plan`).
+- Affiliate-facing prose, affiliate-named documents, affiliate-named tools (`AE/SDR Alignment Contract`, `The 72-Hour Strike Plan`).
 - Public route paths used as `href` link targets (not as narrative process nouns).
 - Quantitative claims drawn from canon, Phase 0 ratifications, or counsel-reviewed D22.
 
@@ -147,10 +147,10 @@ Per founder review 2026-05-04: affiliate-facing body copy must read like an oper
    - Pillar 3 — *Honesty is the differentiator.* Body: *"We say out loud what competitors won't: who should not buy, where the math breaks, what happens when the script runs out. Honesty is not a tone. It is a competitive position."* Mono trail: `lift: §1.6`
 5. **The catalog teaser** (4-of-12 courses; lift verbatim from D31). Same library-catalog pattern as D26 §7. Mono eyebrow `WHAT YOUR AUDIENCE WOULD BE LEARNING`. 2×2 grid of L08, L10, L11, L12 cards. Trail: `4 OF 12 COURSES SHOWN · 36 LESSONS TOTAL · CHECK ONE OUT`.
 6. **The 5 tools strip** (`--cond` eyebrow, single horizontal row of 5 named tool cards):
-   - The SLA Builder — *"AE-SDR alignment, written down."* — links to `/tools/3.3-aesdr-alignment-contract`
+   - AE/SDR Alignment Contract — *"AE-SDR alignment, written down."* — links to `/tools/3.3-aesdr-alignment-contract`
    - The "I Don't Know" Framework — *"What to say when the script runs out."* — links to `/tools/6.3-idk-framework`
    - Time Reclaimed Calculator — *"Slack as productivity theater. Quantified."* — links to `/tools/9.2-time-reclaimed-calculator`
-   - Commission Defense Tracker — *"OTE is a fantasy until you read the comp plan."* — links to `/tools/10.1-ROI-commission-defense-tracker`
+   - ROI & Commission Defense Tracker — *"OTE is a fantasy until you read the comp plan."* — links to `/tools/10.1-ROI-commission-defense-tracker`
    - The 72-Hour Strike Plan — *"When ramp is wrong and the next 72 hours matter."* — links to `/tools/12.3-72-hr-strike-plan`
 7. **Honest disqualification panel** — *"Who shouldn't apply to be an AESDR affiliate."* Lift from D27 red-flag list, sanitized for affiliate-facing register. Five bullets: primary distribution is "rise and grind"; demands category exclusivity; resists FTC disclosure; primary channel is LinkedIn-as-paid-ad; expects discount-stacking authority. Closing line: *"None of these are insults. They're filters. We'd rather decline now than end a pilot in week 4."*
 8. **Final CTA repeat** — same iris button text + anchor as §3.

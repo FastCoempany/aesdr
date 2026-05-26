@@ -270,7 +270,7 @@ export function CatalogTeaserGrid({
 export const TOOLS = [
   {
     slug: "3.3-aesdr-alignment-contract",
-    name: "The SLA Builder",
+    name: "AE/SDR Alignment Contract",
     tagline: "AE-SDR alignment, written down.",
   },
   {
@@ -285,7 +285,7 @@ export const TOOLS = [
   },
   {
     slug: "10.1-ROI-commission-defense-tracker",
-    name: "Commission Defense Tracker",
+    name: "ROI & Commission Defense Tracker",
     tagline: "OTE is a fantasy until you read the comp plan.",
   },
   {

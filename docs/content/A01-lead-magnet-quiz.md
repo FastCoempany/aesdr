@@ -130,7 +130,7 @@ Nobody taught you how to actually do this job. Your onboarding was a week of sha
 
 You're already thinking strategically. But ambition without frameworks is just hustle. The AEs and SDRs who actually make the jump from SDR to AE to enterprise closer have specific tools — not just drive.
 
-**What AESDR offers you:** The full 12-course system, including tools like the Commission Defense Tracker, the 72-Hour Strike Plan, and the AE/SDR Alignment Contract. These are the artifacts that separate climbers from dreamers.
+**What AESDR offers you:** The full 12-course system, including tools like the ROI & Commission Defense Tracker, the 72-Hour Strike Plan, and the AE/SDR Alignment Contract. These are the artifacts that separate climbers from dreamers.
 
 **CTA:** "See all 12 courses →"
 

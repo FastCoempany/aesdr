@@ -146,8 +146,8 @@ canonical names below (not aliases that drifted into individual pages):
 
 | Canonical name | Lesson | Aliases to remove |
 |---|---|---|
-| The Friday five-line | 3 | "weekly alignment email", "5-line email" |
-| The Manager Archetype Map | 3 | "the four manager types", "manager OSes" |
+| The Friday five-line | 4 | "weekly alignment email", "5-line email" |
+| The Manager Archetype Map | 4 | "the four manager types", "manager OSes" |
 | The AE/SDR Alignment Contract | 3 | "the alignment doc", "the handoff" |
 | The 30% Rule | 8 | "the talk-time rule", "the listening discipline" |
 | The 72-hour strike plan | 12 | "the recovery sprint", "the rebound plan" |

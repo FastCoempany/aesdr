@@ -80,7 +80,7 @@ const TOOLS: ReadonlyArray<{
     slug: "10.1-ROI-commission-defense-tracker",
     number: "10.1",
     name: "ROI & Commission Defense Tracker",
-    title: "10.1 — Commission Defense Tracker",
+    title: "10.1 — ROI & Commission Defense Tracker",
     description:
       "Your commission check, itemized and indefensible. Export to CSV when HR asks.",
   },

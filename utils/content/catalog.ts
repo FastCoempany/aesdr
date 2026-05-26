@@ -22,7 +22,7 @@ const TOOLS_ROOT = path.join(process.cwd(), "tools", "standalone-html");
  * The slug matches the filename (minus .html) in /tools/standalone-html/.
  */
 const TOOL_MAP: Record<string, ToolAsset[]> = {
-  "3":  [{ slug: "3.3-aesdr-alignment-contract", title: "AE/SDR Alignment Contract Builder" }],
+  "3":  [{ slug: "3.3-aesdr-alignment-contract", title: "AE/SDR Alignment Contract" }],
   "4":  [
     { slug: "4.1-manager-archetype-map", title: "Manager Archetype Map" },
     { slug: "4.3-async-cadence-template", title: "Async Cadence Template" },
