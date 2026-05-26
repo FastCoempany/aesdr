@@ -178,7 +178,7 @@ export default function PricingPage() {
           </FAQ>
 
           <FAQ q="Why isn't the Team price on the page?">
-            Every team's shape is different — segment, seat count, rollout cadence, whether you need a custom diagnostic admin. A flat number on the page would either over-quote a small team or under-quote a complex one. Email us with your team size + segment and we'll quote it inside 24 hours.
+            Every team&rsquo;s shape is different — segment, seat count, rollout cadence, whether you need a custom diagnostic admin. A flat number on the page would either over-quote a small team or under-quote a complex one. Email us with your team size + segment and we&rsquo;ll quote it inside 24 hours.
           </FAQ>
 
           <FAQ q="What's the refund policy?">
