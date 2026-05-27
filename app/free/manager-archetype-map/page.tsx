@@ -383,7 +383,7 @@ export default function ManagerArchetypeMapPage() {
             marginBottom: 16,
           }}
         >
-          This is one of the assets from Course 3 — there are 11 more courses inside the full AESDR program waiting to be worked through.
+          This is one of the substantial assets from Course 3 — there are 11 more courses inside the full AESDR program waiting to be worked through.
         </p>
         <Link
           href="/preview"

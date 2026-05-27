@@ -169,7 +169,7 @@ export default function MobileGate({
             opacity: 0.75,
           }}
         >
-          The lessons, tools, and assets need the real estate. Open{" "}
+          The lessons, tools, and substantial assets need the real estate. Open{" "}
           <span style={{ fontWeight: 700, opacity: 1 }}>AESDR.com</span> on your
           laptop to continue.
         </p>

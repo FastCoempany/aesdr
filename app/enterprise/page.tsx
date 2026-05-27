@@ -89,7 +89,7 @@ export default function TeamsLanding() {
           </p>
           <p className={styles.body}>
             AESDR is 12 courses, each addressing one of those things, with a
-            takeaway asset the AE/SDR keeps. Real-world training your new AEs and SDRs should
+            substantial asset the AE/SDR keeps. Real-world training your new AEs and SDRs should
             already have, but rarely do.
           </p>
         </div>
@@ -120,7 +120,7 @@ export default function TeamsLanding() {
               <p className={styles.cardEyebrow}>02 · TAKEAWAYS</p>
               <h3 className={styles.cardTitle}>Assets AEs and SDRs keep</h3>
               <p className={styles.cardBody}>
-                Seven course-tied assets plus an end-of-course bonus — the
+                Seven substantial assets plus an end-of-course bonus — the
                 AE/SDR Alignment Contract, the Manager Archetype Map, the Async
                 Cadence Template, the CRM Survival Guide, and more. Each one is
                 a real downloadable that lives outside the program — AEs and SDRs
@@ -195,9 +195,9 @@ export default function TeamsLanding() {
             <BuyerModeCard
               eyebrow="03 · WHITE-LABEL"
               title="White-label / co-branded"
-              description="For channel partners packaging AESDR inside their own offering. We deliver the 12 courses + the named assets that ship with them; you wrap them in your brand. Revenue-share or wholesale pricing."
+              description="For channel partners packaging AESDR inside their own offering. We deliver the 12 courses + the substantial assets that ship with them; you wrap them in your brand. Revenue-share or wholesale pricing."
               features={[
-                "Delivery rights to courses + the named assets",
+                "Delivery rights to courses + the substantial assets",
                 "Co-branded materials — your logo + AESDR mark with mutual approval",
                 "Per-seat wholesale rate or revenue-share",
                 "No exclusivity, no minimums",

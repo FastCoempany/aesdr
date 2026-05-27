@@ -91,7 +91,7 @@ export default function ImplementationPage() {
             <p className={styles.bodyDense} style={{ marginBottom: 12 }}>
               The structure-building foundation. AEs and SDRs learn to run their own
               weeks, build peer relationships, and accept coaching. Course 2
-              introduces the AE/SDR Alignment Contract as the first asset
+              introduces the AE/SDR Alignment Contract as the first substantial asset
               they keep.
             </p>
             <p className={styles.h4}>Manager touchpoints this fortnight</p>
@@ -170,11 +170,11 @@ export default function ImplementationPage() {
 
       <section className={`${styles.sectionTight} ${styles.sectionDivider}`}>
         <div className={styles.containerNarrow}>
-          <p className={styles.eyebrow}>Seven assets you keep</p>
+          <p className={styles.eyebrow}>Seven substantial assets</p>
           <h2 className={styles.h2}>What AEs and SDRs walk out with.</h2>
           <hr className={styles.divider} />
           <p className={styles.body}>
-            AESDR ships named assets that live outside the program. AEs and SDRs keep them, use them, modify them, share them with peers. Each one comes from a specific lesson but works standalone — seven course-tied assets plus an end-of-course bonus.
+            AESDR ships substantial assets that live outside the program. AEs and SDRs keep them, use them, modify them, share them with peers. Each one comes from a specific lesson but works standalone — seven in all, plus an end-of-course bonus.
           </p>
           <ul className={styles.bulletList}>
             <li>

@@ -266,7 +266,7 @@ export function CatalogTeaserGrid({
   );
 }
 
-// The takeaway assets — production-live at /tools/[slug]
+// The substantial assets — production-live at /tools/[slug]
 export const TOOLS = [
   {
     slug: "3.3-aesdr-alignment-contract",
@@ -296,7 +296,7 @@ export const TOOLS = [
 ];
 
 export function ToolStrip({
-  eyebrow = "The assets that ship with enrollment",
+  eyebrow = "The substantial assets that ship with enrollment",
 }: {
   eyebrow?: string;
 }) {

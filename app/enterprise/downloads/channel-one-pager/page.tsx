@@ -106,7 +106,7 @@ export default function PartnerOnePagerPage() {
           {/* What it is */}
           <h2 className={styles.onepageH2}>What it is</h2>
           <p className={styles.onepageBody}>
-            12 courses × 3 lessons (36 total, ~16 hours run-time). Seven assets
+            12 courses × 3 lessons (36 total, ~16 hours run-time). Seven substantial assets
             AEs and SDRs keep (Manager Archetype Map, AE/SDR Alignment Contract,
             CRM Survival Guide, Async Cadence Template, and more), plus the 72-Hour Strike Plan
             as an end-of-course bonus. Eight-dimension before/after

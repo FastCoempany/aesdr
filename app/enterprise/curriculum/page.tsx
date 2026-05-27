@@ -116,7 +116,7 @@ const COURSES: Course[] = [
     ],
     duration: "~80 min",
     managerNote:
-      "Ships the Manager Archetype Map as an asset AEs and SDRs keep. Surprisingly diagnostic for managers reading it themselves — most find their own archetype on the list.",
+      "Ships the Manager Archetype Map as a substantial asset AEs and SDRs keep. Surprisingly diagnostic for managers reading it themselves — most find their own archetype on the list.",
   },
   {
     number: "05",

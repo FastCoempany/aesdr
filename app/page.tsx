@@ -296,7 +296,7 @@ export default async function LandingPage() {
       <section className={styles.finalCta}>
         <h2 className={styles.finalHeadline}>Stop ChatGPClaudeing. Start&nbsp;executing.</h2>
         <p className={styles.finalSub}>
-          12 courses, plus the assets you keep — The Alignment Contract, The
+          12 courses, plus the substantial assets you keep — The Alignment Contract, The
           ROI &amp; Commission Defense Tracker, the 72-Hour Strike Plan, and the
           rest. Built for AEs and SDRs who want to get better at the actual
           work rather than just feel better about the week ahead.

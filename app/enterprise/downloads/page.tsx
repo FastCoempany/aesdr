@@ -22,7 +22,7 @@ const ARTIFACTS = [
     eyebrow: "ARTIFACT 01 · MANAGER",
     title: "Manager Implementation Guide",
     description:
-      "The full 8-week rollout sequence with manager touchpoints, the assets AEs and SDRs keep, and common mistakes. Read on web or print-to-PDF.",
+      "The full 8-week rollout sequence with manager touchpoints, the substantial assets AEs and SDRs keep, and common mistakes. Read on web or print-to-PDF.",
     pages: "~12 pages when printed",
   },
   {

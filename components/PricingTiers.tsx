@@ -48,7 +48,7 @@ export default function PricingTiers({ initialRole = null }: Props) {
         <p className={styles.priceTagline}>For the SDR grinding through 80 dials and a 9% reply rate.</p>
         <ul className={styles.priceFeatures}>
           <li>All 12 courses — including <em>The SDR Playbook</em> + <em>SDR Performance Pitfalls</em></li>
-          <li>Named assets you keep: The Alignment Contract, The ROI &amp; Commission Defense Tracker, the 72-Hour Strike Plan, plus more</li>
+          <li>Substantial assets you keep: The Alignment Contract, The ROI &amp; Commission Defense Tracker, the 72-Hour Strike Plan, plus more</li>
           <li>One-time purchase. No subscription.</li>
           <li>Future curriculum updates included</li>
           <li>Alumni room access when you finish all twelve</li>
@@ -69,7 +69,7 @@ export default function PricingTiers({ initialRole = null }: Props) {
         <p className={styles.priceTagline}>For the closer juggling 30 active opps and four forecast calls.</p>
         <ul className={styles.priceFeatures}>
           <li>All 12 courses — including <em>The Unofficial Manager</em> + <em>AE/SDR Alignment</em></li>
-          <li>Named assets you keep: The Alignment Contract, The ROI &amp; Commission Defense Tracker, the 72-Hour Strike Plan, plus more</li>
+          <li>Substantial assets you keep: The Alignment Contract, The ROI &amp; Commission Defense Tracker, the 72-Hour Strike Plan, plus more</li>
           <li>One-time purchase. No subscription.</li>
           <li>Future curriculum updates included</li>
           <li>Alumni room access when you finish all twelve</li>
