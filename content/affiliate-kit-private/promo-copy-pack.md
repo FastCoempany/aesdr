@@ -259,7 +259,7 @@ Link goes in the first reply / first comment, plain — no shortener.
 >
 > *— Operating manual, not motivation engine.*
 >
-> *— 12 courses + 5 takeaway tools. Your login keeps working. 14-day refund.*
+> *— 12 courses + seven takeaway artifacts. Your login keeps working. 14-day refund.*
 >
 > *— No certificate program. No "elite community." No drip-gating.*
 >
