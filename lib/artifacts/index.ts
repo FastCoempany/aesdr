@@ -4,7 +4,7 @@
  * Auto-generates 3 end-of-course outputs from student data:
  *
  * 1. The Diagnostic — Quantitative scores by category (no LLM)
- * 2. The Playbook — Gate responses organized into a personal operating manual (Claude API)
+ * 2. The Playbook — Gate responses organized into a single personal reference (Claude API)
  * 3. The Mirror — Confrontation pairs: what they said vs what the data says (Claude API)
  *
  * Usage:

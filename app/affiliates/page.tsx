@@ -94,7 +94,7 @@ export default function AffiliatesHomePage() {
             title: "Practical, not motivational.",
             body: (
               <>
-                The course is the operating manual nobody bothered to write down for the role &mdash; how to read your own pipeline honestly, what to do when the script runs out mid-call, what &ldquo;good&rdquo; actually looks like on a Monday morning. There are no motivational pep talks and no mindset workshops anywhere in the format, only the work itself: cold-calling included, dial blocks included, and gatekeepers included.
+                The course is the part of the job nobody bothered to write down for the role &mdash; how to read your own pipeline honestly, what to do when the script runs out mid-call, what &ldquo;good&rdquo; actually looks like on a Monday morning. There are no motivational pep talks and no mindset workshops anywhere in the format, only the work itself: cold-calling included, dial blocks included, and gatekeepers included.
               </>
             ),
           },

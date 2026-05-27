@@ -8,7 +8,7 @@
  *     verification + cookie-set + redirect back here.
  *   - Otherwise, we render a "you need an access link" stub.
  *
- * Per founder direction 2026-05-09: full operating manual ships post-signing
+ * Per founder direction 2026-05-09: full kit ships post-signing
  * via per-affiliate signed URL with audit trail.
  */
 
@@ -28,7 +28,7 @@ import { readRequestMeta } from "@/lib/req-meta";
 
 export const metadata: Metadata = {
   title: "Affiliate Kit (Private) · AESDR",
-  description: "Affiliate-only operating manual.",
+  description: "The affiliate-only kit.",
   robots: { index: false, follow: false },
 };
 

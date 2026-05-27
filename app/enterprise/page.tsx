@@ -99,7 +99,7 @@ export default function TeamsLanding() {
       <section className={`${styles.section} ${styles.sectionDivider}`}>
         <div className={styles.container}>
           <p className={styles.eyebrow}>What it is</p>
-          <h2 className={styles.h2}>12 courses. One operating manual.</h2>
+          <h2 className={styles.h2}>12 courses. The whole job, in order.</h2>
           <hr className={styles.divider} />
 
           <div className={styles.cardGrid3}>

@@ -487,7 +487,7 @@ export default async function Dashboard() {
                 marginBottom: 12,
               }}
             >
-              You finished the operating manual.
+              You finished the whole thing.
             </p>
             <p
               style={{

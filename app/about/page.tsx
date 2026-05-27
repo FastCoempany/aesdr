@@ -36,7 +36,7 @@ export default function AboutPage() {
           generic, motivational, or pitched at the wrong altitude.
         </p>
         <p>
-          AESDR is the operating manual for the part of the job that
+          AESDR covers the part of the job that
           actually gets you out of that statistic &mdash; pipeline math,
           managing up, comp realities, sober selling, prospecting that
           doesn&rsquo;t read like a confession letter.
@@ -45,10 +45,10 @@ export default function AboutPage() {
 
       <Section title="The philosophy">
         <p style={{ marginBottom: 14 }}>
-          This is an operating manual rather than a motivation engine —
+          This teaches how the job works, not how to feel about it —
           no guru energy, no motivational performance, and no recycled
-          LinkedIn wisdom anywhere in the format. 12 courses with seven
-          takeaway artifacts, all interactive HTML rather than video
+          LinkedIn wisdom anywhere in the format. 12 courses, plus seven
+          things you keep and use, all interactive rather than video
           lectures, because the parts of the job that actually matter
           are decisions made in a quiet room rather than pep talks
           delivered to an audience.

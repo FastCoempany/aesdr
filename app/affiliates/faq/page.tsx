@@ -70,7 +70,7 @@ const FAQ_ITEMS = [
           <strong>Sequence.</strong> Free content is published in the order the publisher feels like publishing. AESDR is sequenced; you move from foundational to advanced in a deliberate order.
         </p>
         <p style={{ marginTop: 14 }}>
-          <strong>Frame.</strong> Free content optimizes for engagement. AESDR is the operating manual — the part the free content skipped because it doesn&rsquo;t perform well in a 60-second clip.
+          <strong>Frame.</strong> Free content optimizes for engagement. AESDR is the part the free content skipped, because it doesn&rsquo;t perform well in a 60-second clip.
         </p>
         <p style={{ marginTop: 14 }}>
           <strong>Accountability.</strong> Free content is consumed alone, nodded at, and forgotten. AESDR has interactive worksheets, gates that require attestations before advancing, and takeaway artifacts that go into a 1:1 with a manager next week. Structure is what compounds; consumption alone doesn&rsquo;t.

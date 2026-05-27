@@ -103,7 +103,7 @@ export function Footer() {
             marginBottom: 20,
           }}
         >
-          AESDR · The operating manual, not the motivation engine.
+          AESDR · How the job works, not how to feel about it.
           <br />
           This is the partner hub. Buyers go to{" "}
           <Link href="/" style={{ color: "var(--muted)", textDecoration: "underline" }}>
