@@ -118,7 +118,7 @@ export default function ComingSoonPage() {
             userSelect: "none",
           }}
         >
-          12 courses. 5 tools. Same you &mdash; way, way better.
+          12 courses. Same you &mdash; way, way better.
         </p>
       </div>
     </main>

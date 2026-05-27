@@ -47,8 +47,8 @@ export default function AboutPage() {
         <p style={{ marginBottom: 14 }}>
           This is an operating manual rather than a motivation engine —
           no guru energy, no motivational performance, and no recycled
-          LinkedIn wisdom anywhere in the format. 12 courses with 5
-          takeaway tools, all interactive HTML rather than video
+          LinkedIn wisdom anywhere in the format. 12 courses with seven
+          takeaway artifacts, all interactive HTML rather than video
           lectures, because the parts of the job that actually matter
           are decisions made in a quiet room rather than pep talks
           delivered to an audience.

@@ -266,7 +266,7 @@ export function CatalogTeaserGrid({
   );
 }
 
-// The 5 takeaway tools — production-live at /tools/[slug]
+// The takeaway artifacts — production-live at /tools/[slug]
 export const TOOLS = [
   {
     slug: "3.3-aesdr-alignment-contract",
@@ -296,7 +296,7 @@ export const TOOLS = [
 ];
 
 export function ToolStrip({
-  eyebrow = "The five tools that ship with enrollment",
+  eyebrow = "The takeaway artifacts that ship with enrollment",
 }: {
   eyebrow?: string;
 }) {

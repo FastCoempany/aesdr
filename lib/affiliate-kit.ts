@@ -41,7 +41,7 @@ export const KIT_ENTRIES: KitEntry[] = [
     slug: "curriculum-overview",
     title: "Curriculum Overview",
     description:
-      "12 courses, four arcs, five tools. What partners need to know without enrolling.",
+      "12 courses, four arcs, seven artifacts. What partners need to know without enrolling.",
     category: "About AESDR",
     source: "curriculum-overview",
   },

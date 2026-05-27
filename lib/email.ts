@@ -812,7 +812,7 @@ function welcomeHtml(name: string, email: string, loginUrl: string, tempPassword
               </tr>
               <tr>
                 <td style="padding:10px 0;border-top:1px solid #E8E3D8;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.6;color:#334155;">
-                  <strong style="color:#1A1A1A;">Five take-home tools come with the course</strong> — a commission tracker, the alignment contracts, the 72-hour strike plan among them. Each one is yours the moment you finish the lesson that builds it.
+                  <strong style="color:#1A1A1A;">Seven take-home artifacts come with the course</strong> — the ROI &amp; Commission Defense Tracker, the AE/SDR Alignment Contract, and the CRM Survival Guide among them. Each one is yours the moment you finish the lesson that builds it — plus the 72-Hour Strike Plan, which opens when you finish all twelve courses.
                 </td>
               </tr>
             </table>
@@ -1088,7 +1088,7 @@ function managerArchetypeMapHtml() {
     Optional · One pointer · Then I'm out of your inbox
   </p>
   <p style="margin:0 0 12px">
-    This is one tool from Course 3 of the full program — eleven more courses and five takeaway tools come with it, all backed by a 14-day refund if it doesn't deliver. One-time purchase, no subscription.
+    This is one artifact from Course 3 of the full program — eleven more courses and seven takeaway artifacts come with it, all backed by a 14-day refund if it doesn't deliver. One-time purchase, no subscription.
   </p>
   <p style="margin:0 0 24px">
     <a href="${SITE}/#pricing" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">See the full course →</a>
@@ -1280,7 +1280,7 @@ function alumniReengagementHtml(name: string, monthMark: 6 | 12) {
   <p>${lede}</p>
   <p>Three things, briefly:</p>
   <ol style="line-height:1.8;padding-left:22px;margin:8px 0 16px">
-    <li>The takeaway tools are re-downloadable any time at <a href="${SITE}/alumni" style="color:#8B1A1A;text-decoration:underline">${SITE}/alumni</a>. Most alumni grab the 72-hour strike plan again around their next bad quarter.</li>
+    <li>The takeaway artifacts are re-downloadable any time at <a href="${SITE}/alumni" style="color:#8B1A1A;text-decoration:underline">${SITE}/alumni</a>. Most alumni grab the 72-hour strike plan again around their next bad quarter.</li>
     <li>If something from the course actually helped this year, one sentence to <a href="${SITE}/account/review" style="color:#8B1A1A;text-decoration:underline">${SITE}/account/review</a> would be genuinely useful.</li>
     <li>If you know an AE or SDR in their first eighteen months who could use the course — share the free Manager Archetype Map at <a href="${SITE}/free/manager-archetype-map" style="color:#8B1A1A;text-decoration:underline">${SITE}/free/manager-archetype-map</a>. Cheaper than asking them to buy something.</li>
   </ol>
@@ -1434,7 +1434,7 @@ function day7Html(name: string) {
   </p>
   <p>Hey ${safeName},</p>
   <p>You're roughly one week into the program, and most AESDR students at this point are finishing Course 3.</p>
-  <p>Course 3 is where you build the <strong>AE/SDR Alignment Contract</strong> — a one-page document that gets both the AE and the SDR onto the same page about handoffs, expectations, and accountability, and it remains the single most downloaded tool across the entire program.</p>
+  <p>Course 3 is where you build the <strong>AE/SDR Alignment Contract</strong> — a one-page document that gets both the AE and the SDR onto the same page about handoffs, expectations, and accountability, and it remains the single most downloaded artifact across the entire program.</p>
   <p>If you're ahead of that: good. Lessons 4–6 cover manager dynamics, career pathing, and the relationships that pay off two years out.</p>
   <p>If you're behind: also fine. Nobody's clocking your pace here — come back when you've got a clear twenty minutes.</p>
   <p style="margin:20px 0">
@@ -1473,7 +1473,7 @@ function abandon1hrHtml() {
   <p style="margin:14px 0 6px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:18px">What you're actually getting</p>
   <ul style="line-height:1.8;padding-left:22px;margin:0 0 14px">
     <li>Twelve interactive courses (not video lectures you'll never finish)</li>
-    <li>Five take-home tools you'll actually use — commission tracker, alignment contracts, strike plans</li>
+    <li>Seven take-home artifacts you'll actually use — the ROI &amp; Commission Defense Tracker, the AE/SDR Alignment Contract, the CRM Survival Guide, and more</li>
     <li>A curriculum built by someone who carried a quota for nine years, not someone who read about it</li>
   </ul>
   <p style="margin:14px 0 6px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:18px">What you're not getting</p>
@@ -1599,7 +1599,7 @@ function dropoff10dHtml(name: string) {
     <li>My plan for next week.</li>
   </ol>
   <p>Eight minutes. Flips the power dynamic in your 1:1 because you set the agenda. Creates a paper trail that protects you when a manager-archetype shifts at review time.</p>
-  <p>That's one tool from the managing your 'manager' course. The other 35 lessons each hand you something you can use the same week.</p>
+  <p>That's one artifact from the managing your 'manager' course. The other 35 lessons each hand you something you can use the same week.</p>
   <p><a href="${SITE}/dashboard" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px;margin:8px 0">Pick it back up →</a></p>
   <p style="margin-top:24px">— Antaeus</p>
   ${footer()}
@@ -1787,8 +1787,8 @@ function teamInviteHtml(inviterName: string, token: string) {
     <p style="margin:0 0 8px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:16px;color:#1A1A1A">What you get</p>
     <ul style="margin:0;padding-left:20px;line-height:1.75">
       <li>All twelve courses with interactive exercises</li>
-      <li>Five take-home tools (commission tracker, alignment contracts, strike plans)</li>
-      <li>Your own progress tracking and personalized takeaway tools</li>
+      <li>Seven take-home artifacts (ROI &amp; Commission Defense Tracker, AE/SDR Alignment Contract, CRM Survival Guide, and more)</li>
+      <li>Your own progress tracking and personalized takeaway artifacts</li>
     </ul>
   </div>
   <p style="margin:24px 0">

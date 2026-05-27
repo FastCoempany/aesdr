@@ -6,7 +6,7 @@ import AesdrBrand from "@/components/AesdrBrand";
 export const metadata: Metadata = {
   title: "Sample Lesson — Surviving Your Manager | AESDR",
   description:
-    "A free preview from Course 3 (Surviving & Thriving) — the full takeaway tool is gated behind purchase, but the lesson body itself is open to read.",
+    "A free preview from Course 3 (Surviving & Thriving) — the full takeaway artifact is gated behind purchase, but the lesson body itself is open to read.",
   robots: { index: true, follow: true },
 };
 
@@ -152,7 +152,7 @@ export default function PreviewPage() {
           }}
         >
           A sample from Course 3, <em>Surviving &amp; Thriving</em>. The body is open.
-          The takeaway tool — the one you&rsquo;d use on Monday — is the part we charge for.
+          The takeaway artifact — the one you&rsquo;d use on Monday — is the part we charge for.
         </p>
 
         <div

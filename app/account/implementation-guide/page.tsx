@@ -120,7 +120,7 @@ const WEEKS: Week[] = [
     brief:
       "Comp plan, commission math, financial resilience. The lesson most AEs read after their first bad month.",
     move:
-      "Run the ROI / commission-defense tool with this lesson&apos;s framing. The math doesn&apos;t lie.",
+      "Run the ROI / commission-defense tracker with this lesson&apos;s framing. The math doesn&apos;t lie.",
   },
   {
     num: "11",
