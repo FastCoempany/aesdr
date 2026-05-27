@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 import { track } from "@/lib/analytics";
-import { setRole as persistRole, type Role } from "@/lib/role";
+import { getRole, setRole as persistRole, type Role } from "@/lib/role";
 
 import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
 
@@ -58,8 +58,17 @@ export default function LandingSequence({ initialRole = null }: Props) {
       liveRegion: liveRegionRef.current,
     };
 
+    // initialRole comes from server-side user_metadata (members only); it's
+    // null for anonymous visitors. Fall back to the role persisted in
+    // localStorage so a returning anonymous visitor who already picked SDR/AE
+    // gets the prefilled hero + skipped fork instead of being re-forked as new.
+    // getRole() is read here (client-only effect) to avoid an SSR hydration
+    // mismatch — the hero server-renders the neutral descriptor, and the
+    // animator updates it imperatively after mount.
+    const resolvedRole = initialRole ?? getRole();
+
     return runAnimator(refs, {
-      initialRole,
+      initialRole: resolvedRole,
       zoomCards: ZOOM_CARDS,
       classes: s as unknown as Record<string, string>,
       onRolePick: (role) => {
@@ -68,7 +77,11 @@ export default function LandingSequence({ initialRole = null }: Props) {
       },
       onSkip: () => {
         track("landing_fork_skipped", {
-          reason: initialRole ? "member-prefill" : "skip-button",
+          reason: initialRole
+            ? "member-prefill"
+            : resolvedRole
+              ? "stored-role-prefill"
+              : "skip-button",
         });
       },
     });

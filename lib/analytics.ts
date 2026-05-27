@@ -13,7 +13,9 @@ type Tier = "ae" | "sdr" | "team";
 
 type EventMap = {
   landing_role_pick: { role: Role; source: "editorial-fork" };
-  landing_fork_skipped: { reason: "skip-button" | "member-prefill" };
+  landing_fork_skipped: {
+    reason: "skip-button" | "member-prefill" | "stored-role-prefill";
+  };
   pricing_cta_clicked: { tier: Tier; role?: Role };
   account_role_switched: { from: Role; to: Role };
 };
