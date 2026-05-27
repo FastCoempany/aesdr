@@ -7,15 +7,15 @@ import SignOutButton from "@/components/SignOutButton";
 import { createClient } from "@/utils/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Artifacts | AESDR",
+  title: "Assets | AESDR",
   description:
-    "Your AESDR artifacts. Open each one in-browser or download it for the record.",
+    "Your AESDR assets. Open each one in-browser or download it for the record.",
 };
 
 export const dynamic = "force-dynamic";
 
 /**
- * The takeaway artifacts, in course order. Slugs match filenames in
+ * The takeaway assets, in course order. Slugs match filenames in
  * /tools/standalone-html/ (minus the .html extension).
  *
  * Copy is intentionally dry and slightly menacing — consistent with the
@@ -287,7 +287,7 @@ export default async function ToolsPage() {
               color: "var(--ink)",
             }}
           >
-            Seven artifacts, one bonus. Use them as intended.
+            Seven assets, one bonus. Use them as intended.
           </h1>
           <p
             style={{
@@ -299,8 +299,8 @@ export default async function ToolsPage() {
               fontStyle: "italic",
             }}
           >
-            Open each artifact in-browser for a working session, or download
-            the HTML to keep a copy offline. Everything runs locally — nothing
+            Open each asset in-browser for a working session, or download
+            a copy to keep offline. Everything runs locally — nothing
             phones home.
           </p>
         </header>

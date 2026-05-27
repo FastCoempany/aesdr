@@ -73,9 +73,9 @@ export default function PricingPage() {
             <BuyerModeCard
               eyebrow="TIER 03 · CHANNEL PARTNER"
               title="White-label / co-branded"
-              description="For channel partners packaging AESDR inside their own offering. We deliver the 12 courses + the named artifacts that ship with them; you wrap them in your brand. Revenue-share or wholesale pricing."
+              description="For channel partners packaging AESDR inside their own offering. We deliver the 12 courses + the named assets that ship with them; you wrap them in your brand. Revenue-share or wholesale pricing."
               features={[
-                "Delivery rights to lessons + the named artifacts",
+                "Delivery rights to lessons + the named assets",
                 "Co-branded materials (your logo + AESDR mark with mutual approval)",
                 "Per-seat wholesale rate or revenue-share",
                 "No exclusivity, no minimums",
@@ -170,7 +170,7 @@ export default function PricingPage() {
           <hr className={styles.divider} />
 
           <FAQ q="Is the Team tier the same product as the consumer course?">
-            Yes. Identical 12 courses, identical takeaway artifacts. The differences are the manager dashboard layered on top, the priority Slack support line, and the L&amp;D-formatted invoice.
+            Yes. Identical 12 courses, identical assets. The differences are the manager dashboard layered on top, the priority Slack support line, and the L&amp;D-formatted invoice.
           </FAQ>
 
           <FAQ q="Can we get a recurring subscription?">

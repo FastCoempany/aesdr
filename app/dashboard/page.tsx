@@ -19,7 +19,7 @@ import { poseForLesson } from "@/utils/brand/lesson-poses";
 
 export const metadata: Metadata = {
   title: "Your Lessons | AESDR",
-  description: "Access your 12-course AESDR curriculum, track progress across every lesson, and download the takeaway artifacts that ship with the program.",
+  description: "Access your 12-course AESDR curriculum, track progress across every lesson, and download the assets that ship with the program.",
 };
 
 /* ─── Rowan Pope energy. Each line is cryptic, sharp, slightly menacing. ─── */

@@ -28,7 +28,7 @@ const FAQ: { q: string; a: string; icon: IconName }[] = [
   { q: "Can my company expense this?",                            a: "Of course. We provide a receipt and invoice on purchase. Most L&D budgets cover this easily \u2014 especially the Team plan.",                                                                                       icon: "ledger"    },
   { q: "How is this different from Sales Assembly or Pavilion?", a: "Different product entirely. Those are senior-AE peer networks \u2014 you're paying for the room and the people in it. AESDR is the lessons and the work, something you come back to in year three. If you want the network, those are excellent. If you want a framework you can hand to a new SDR on Monday morning, this one. Full breakdown at /compare.",                                                                                  icon: "team"      },
   { q: "Why not just use Bravado, r/sales, or LinkedIn?",         a: "Those are good for the random thread when you have a specific live problem. AESDR is structured \u2014 Lesson 8 is the 30% rule, Lesson 10 is the comp-plan teardown, Lesson 12 is the relationship graph. You don\u2019t have to phrase your problem correctly to find the answer; the curriculum sequences it. Plus role-conditional content across 18 of the 36 sub-lessons, which a community can\u2019t deliver.", icon: "signal"    },
-  { q: "I\u2019ve been reading Sales Hacker and RepVue for a year. Different?", a: "Three differences. Structure \u2014 a reading list doesn\u2019t sequence what compounds. Vendor independence \u2014 the free content is sponsored by tools, so the tools lessons are quietly compromised. AESDR is buyer-paid; no vendor has copy approval. And artifacts \u2014 you don\u2019t take a Sales Hacker post into your 1:1 with a bad manager next week. You take the AE/SDR Alignment Contract.",         icon: "eye"       },
+  { q: "I\u2019ve been reading Sales Hacker and RepVue for a year. Different?", a: "Three differences. Structure \u2014 a reading list doesn\u2019t sequence what compounds. Vendor independence \u2014 the free content is sponsored by tools, so the tools lessons are quietly compromised. AESDR isn\u2019t sponsored by any of them, so nothing\u2019s shaped to sell you software. And what you keep \u2014 you don\u2019t take a Sales Hacker post into your 1:1 with a bad manager next week. You take the AE/SDR Alignment Contract.",         icon: "eye"       },
   { q: "Should I take Aspireship or Uvaro instead?",              a: "Different audience. Those are bootcamps for people trying to break into sales \u2014 they place you, coach you through ramp, sometimes share first-year commission. AESDR assumes the seat is already yours. If you\u2019re three months from your first SDR interview, take a bootcamp. If you\u2019re three months into the job and the ramp is harder than anyone warned you about, this one.",                                          icon: "warn"      },
 ];
 
@@ -296,9 +296,9 @@ export default async function LandingPage() {
       <section className={styles.finalCta}>
         <h2 className={styles.finalHeadline}>Stop ChatGPClaudeing. Start&nbsp;executing.</h2>
         <p className={styles.finalSub}>
-          12 courses with named takeaway artifacts you keep — the alignment
-          contract, the ROI tracker, the strike plan, and the rest. One-time
-          purchase, built for AEs and SDRs who want to get better at the actual
+          12 courses, plus the assets you keep — The Alignment Contract, The
+          ROI &amp; Commission Defense Tracker, the 72-Hour Strike Plan, and the
+          rest. Built for AEs and SDRs who want to get better at the actual
           work rather than just feel better about the week ahead.
         </p>
         <a href="#pricing" className={styles.ctaPrimary}>Get Access</a>

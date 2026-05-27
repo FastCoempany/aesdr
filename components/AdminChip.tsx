@@ -41,7 +41,7 @@ const QUICK_LINKS: QuickEntry[] = [
   { label: "/enterprise · Partners", href: "/enterprise/channel", note: "5 channel categories" },
   { label: "/enterprise · Pricing", href: "/enterprise/pricing", note: "Team / Custom / White-label" },
   { label: "/enterprise · Contact", href: "/enterprise/contact", note: "Inquiry form" },
-  { label: "/enterprise · Downloads", href: "/enterprise/downloads", note: "4 printable artifacts" },
+  { label: "/enterprise · Downloads", href: "/enterprise/downloads", note: "4 printable downloads" },
 ];
 
 export default function AdminChip() {

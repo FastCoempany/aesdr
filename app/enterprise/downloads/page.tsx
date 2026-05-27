@@ -22,7 +22,7 @@ const ARTIFACTS = [
     eyebrow: "ARTIFACT 01 · MANAGER",
     title: "Manager Implementation Guide",
     description:
-      "The full 8-week rollout sequence with manager touchpoints, takeaway artifacts, and common mistakes. Read on web or print-to-PDF.",
+      "The full 8-week rollout sequence with manager touchpoints, the assets AEs and SDRs keep, and common mistakes. Read on web or print-to-PDF.",
     pages: "~12 pages when printed",
   },
   {
@@ -57,7 +57,7 @@ export default function DownloadsIndex() {
       <section className={styles.hero}>
         <div className={styles.container}>
           <p className={styles.eyebrow}>Downloads</p>
-          <h1 className={styles.heroHeadline}>Four artifacts. All print-friendly.</h1>
+          <h1 className={styles.heroHeadline}>Four downloads. All print-friendly.</h1>
           <p className={styles.heroSubhead}>
             Send-able materials for managers, channel partners, and AEs and SDRs. Each is a web
             page designed to print cleanly to PDF — no separate file to chase, no
@@ -82,8 +82,8 @@ export default function DownloadsIndex() {
           </div>
 
           <div className={styles.downloadHowto}>
-            <strong>About these artifacts:</strong> the manager guide, certificate, and channel partner
-            one-pager are designed to save as PDF — open the artifact, press{" "}
+            <strong>About these downloads:</strong> the manager guide, certificate, and channel partner
+            one-pager are designed to save as PDF — open the file, press{" "}
             <strong>Cmd+P</strong> (Mac) or <strong>Ctrl+P</strong> (Windows), choose{" "}
             <strong>Save as PDF</strong> in the destination dropdown, click <strong>Save</strong>.
             The diagnostic instrument is fully digital — fill it in on screen and download a CSV

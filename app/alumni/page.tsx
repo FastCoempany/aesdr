@@ -132,7 +132,7 @@ export default async function AlumniPage() {
         </h1>
         <p style={{ fontSize: 18, lineHeight: 1.7, color: "var(--muted)", maxWidth: 640 }}>
           The course doesn&rsquo;t stop being yours when you finish it. Below
-          are the takeaway artifacts you earned, the share surfaces if you want
+          are the assets you earned, the share surfaces if you want
           them, and the way back into the dashboard if a lesson is worth a
           re-read.
         </p>
