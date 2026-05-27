@@ -68,7 +68,7 @@
 | D28 | **Pricing & promo sheet** | **shipped (batch 6)** | affiliate | 100/0 |
 | D29 | **Founder + host bio stubs** | **shipped (batch 7)** | mixed (host: audience; founder: affiliate; alias: high-intent) | 80/20 host, 90/10 founder, 100/0 alias |
 | D30 | **Lesson preview clip + transcript spec** | **shipped (batch 7)** | affiliates + prospects + L&D | 75/25 (clip content) |
-| D31 | **Curriculum map (12 courses, 5 tools)** | **shipped (batch 6)** | affiliate + prospect + L&D | 80/20 |
+| D31 | **Curriculum map (12 courses, seven artifacts)** | **shipped (batch 6)** | affiliate + prospect + L&D | 80/20 |
 
 ### D32–D34 — Pilot Operations (batches 2, 3)
 

@@ -15,7 +15,7 @@
 |---|---|---|---|
 | 1 | Hub routing | **`aesdr.com/affiliates`** | All UTM templates, kit cross-references, internal links anchor here. Do not use `/for-affiliates`, `/affiliates`, or subdomain. |
 | 2 | $40 end-of-course option | **Defined in `app/reveal/RevealView.tsx` line 212** as the unlock fee for the second end-of-course artifact. Student picks one of two artifacts free at `/reveal`; the unchosen artifact stays sealed and unlocks for $40 from the dashboard at any time. | Hub affiliate-economics page surfaces this as a real revenue line. D22 §5.1 commission terms must address whether the $40 unlock is affiliate-attributable (recommend: yes, within the 30-day attribution window). |
-| 3 | 5 takeaway tools | **Named, in production at `tools/standalone-html/`:** (1) AE/SDR Alignment Contract — `3.3-aesdr-alignment-contract.html`; (2) The "I Don't Know" Framework — `6.3-idk-framework.html`; (3) Time Reclaimed Calculator — `9.2-time-reclaimed-calculator.html`; (4) ROI & Commission Defense Tracker — `10.1-ROI-commission-defense-tracker.html`; (5) The 72-Hour Strike Plan — `12.3-72-hr-strike-plan.html`. | D31 curriculum map + L&D brief + hub `/affiliates/curriculum` page lift the named list. Each tool is linkable at `aesdr.com/tools/[slug]`. |
+| 3 | seven takeaway artifacts | **Named, in production at `tools/standalone-html/`:** (1) AE/SDR Alignment Contract — `3.3-aesdr-alignment-contract.html`; (2) Manager Archetype Map — `4.1-manager-archetype-map.html`; (3) Async Cadence Template — `4.3-async-cadence-template.html`; (4) The "I Don't Know" Framework — `6.3-idk-framework.html`; (5) CRM Survival Guide — `9.1-crm-survival-guide.html`; (6) Time Reclaimed Calculator — `9.2-time-reclaimed-calculator.html`; (7) ROI & Commission Defense Tracker — `10.1-ROI-commission-defense-tracker.html`. Plus the 72-Hour Strike Plan as an end-of-course bonus — `bonus-72-hr-strike-plan.html` (gated on all twelve lessons complete). | D31 curriculum map + L&D brief + hub `/affiliates/curriculum` page lift the named list. Each artifact is linkable at `aesdr.com/tools/[slug]`. |
 | 4 | Host casting | **Interim placeholder.** Continue using `[HOST_FIRST_NAME]` and `[HOST_LAST_NAME]` across all hub copy. | Hub ships with placeholders; founder swaps globally when host is cast. Forward-dep flagged on every page that references the host. |
 | 5 | Discount policy | **Never. Ever. Discount.** AESDR does not run promotional codes, pilot discounts, affiliate-stack discounts, time-limited price drops, or any pricing variance. List price applies always. | Triggers cleanup work in D28, D09 slide 16, D17 V5/V6, D18, D24 CTA, D26 §3b CTA, and 09a/09b/09c/09d copy templates — references to `[PILOT_DISCOUNT]`, `[PILOT_CODE]`, "save you $[DISCOUNT]" must be removed or re-framed. **Cleanup is a separate task; not a hub Phase 1 blocker.** |
 | 6 | D22 access | **Request the agreement.** Hub does not publish the pilot agreement; affiliates request it via the `/affiliates/apply` form, AESDR sends counsel-reviewed PDF when ready. | Hub `/affiliates/apply` form posts to `admissions@aesdr.com`. Counsel review of D22 v1 remains operationally pending. |
@@ -146,7 +146,7 @@ Per founder review 2026-05-04: affiliate-facing body copy must read like an oper
    - Pillar 2 — *Operator over guru.* Body: *"We are the operating manual, not the motivation engine. If a piece of copy could be lifted onto a LinkedIn carousel without anyone noticing, it is wrong."* Mono trail: `lift: §1.5`
    - Pillar 3 — *Honesty is the differentiator.* Body: *"We say out loud what competitors won't: who should not buy, where the math breaks, what happens when the script runs out. Honesty is not a tone. It is a competitive position."* Mono trail: `lift: §1.6`
 5. **The catalog teaser** (4-of-12 courses; lift verbatim from D31). Same library-catalog pattern as D26 §7. Mono eyebrow `WHAT YOUR AUDIENCE WOULD BE LEARNING`. 2×2 grid of L08, L10, L11, L12 cards. Trail: `4 OF 12 COURSES SHOWN · 36 LESSONS TOTAL · CHECK ONE OUT`.
-6. **The 5 tools strip** (`--cond` eyebrow, single horizontal row of 5 named tool cards):
+6. **The artifacts strip** (`--cond` eyebrow, single horizontal row of named artifact cards):
    - AE/SDR Alignment Contract — *"AE-SDR alignment, written down."* — links to `/tools/3.3-aesdr-alignment-contract`
    - The "I Don't Know" Framework — *"What to say when the script runs out."* — links to `/tools/6.3-idk-framework`
    - Time Reclaimed Calculator — *"Slack as productivity theater. Quantified."* — links to `/tools/9.2-time-reclaimed-calculator`
@@ -192,7 +192,7 @@ Per founder review 2026-05-04: affiliate-facing body copy must read like an oper
 
 ### Page 1.3 — `/affiliates/curriculum`
 
-**Source:** D31 curriculum map (full 12-card library catalog), with the 5 tools strip from `/affiliates` reused.
+**Source:** D31 curriculum map (full 12-card library catalog), with the artifacts strip from `/affiliates` reused.
 
 **Layout:**
 
@@ -202,7 +202,7 @@ Per founder review 2026-05-04: affiliate-facing body copy must read like an oper
 4. Sub: *"This is what your audience enrolls into. It is what we will spend 60 minutes teasing — not teaching — at the workshop. The lessons are where the work is."*
 5. **The full catalog** (all 12 cards, not just the 4-of-12 teaser used elsewhere). Layout: 4-column grid on desktop (3 rows × 4 columns), 2-column on tablet, 1-column on mobile. Each card carries: `--mono` call number (`658.85 / L01` etc.), `--display` italic title (preserve stylized casing on L05/L06), `--display` italic 18pt question, `--hand` Caveat-crimson annotation rotated `-1deg`, `--mono` rectangular stamp.
 6. **Caveat layer between cards and tools:** *"36 units total. Three sub-units per lesson. Role-conditional content on every unit."*
-7. **The 5 tools strip** (reused from `/affiliates`). Mono eyebrow: `THE FIVE TOOLS THAT SHIP WITH ENROLLMENT`.
+7. **The artifacts strip** (reused from `/affiliates`). Mono eyebrow: `THE TAKEAWAY ARTIFACTS THAT SHIP WITH ENROLLMENT`.
 8. **Closing block:** *"Time commitment table"* lifted from D31. Followed by: *"What this curriculum is not"* — 6-bullet honest-disqualification list lifted from D31.
 9. **Below the disqualification:** *"At the end of the catalog, two end-of-course artifacts. The Programme. The Manuscript. Students pick one free at `/reveal`. The other unlocks for $40 from the dashboard at any time. Both are real, both are gated, both are part of the program shape."*
 10. CTA strip: same iris button anchored to `/affiliates/apply`.
@@ -377,7 +377,7 @@ All components consume CSS tokens from `app/globals.css`; no new color or font t
 4. Sub: *"A 12-minute slice from `658.85 / L11` in the catalog. Hosted by `[HOST_FIRST_NAME]`. The territory: what you do when no one's watching."*
 5. **Embedded video player** (Vimeo private, token-gated; see D30 §5).
 6. **Below player:** transcript download (PDF), takeaway block (3 bullets verbatim from D30 §7).
-7. **"What this is and isn't" block:** *"This is one of twelve lessons. The other eleven cover the catalog at `/affiliates/curriculum`. The full lessons run longer and include worksheets, the takeaway tools, and the Discord (Untamed). The preview is the preview."*
+7. **"What this is and isn't" block:** *"This is one of twelve lessons. The other eleven cover the catalog at `/affiliates/curriculum`. The full lessons run longer and include worksheets, the takeaway artifacts, and the Discord (Untamed). The preview is the preview."*
 8. CTA strip: iris button `Request an affiliate conversation →`.
 9. Footer.
 
@@ -542,7 +542,7 @@ Files requiring rewrite to remove discount/promo-code references:
 | Production syllabus | `app/syllabus/page.tsx` (commit `20cbc9e`, 2026-04-22) |
 | Course-content audit | `docs/planning/course-content-audit.md` (2026-04-09) |
 | 36 lesson HTMLs | `content/lessons/html/lesson-01` through `lesson-12` |
-| 5 tools | `tools/standalone-html/` + routes at `app/tools/[slug]/page.tsx` |
+| Takeaway artifacts | `tools/standalone-html/` + routes at `app/tools/[slug]/page.tsx` |
 | 2 artifacts mechanic | `app/reveal/RevealView.tsx` line 212 + `app/artifacts/playbill/page.tsx` + `app/artifacts/redline/page.tsx` |
 | Existing rendered HTML examples | `tools/rendered/04-d09-workshop-deck.html`, `05-d24-replay-page.html`, `06-d26-affiliate-promo-page.html`, `08-d38-launch-hero.html` |
 | Variant-a-editorial-split (canonical pattern) | `variants/variant-a-editorial-split.html` |

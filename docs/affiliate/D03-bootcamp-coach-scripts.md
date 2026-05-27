@@ -72,4 +72,4 @@ Personalization: bootcamp / cohort name, one specific outcome they publish (plac
 ## Open
 
 - Whether the co-host gets billed as `AESDR × [bootcamp]` for the session itself (per canon §6.6) or stays single-host for first pilots. Default: single-host workshop with the coach doing intro + Q&A moderation, lockup on registration page only.
-- Whether AESDR offers a coach-only enablement layer (e.g., they get the `5 takeaway tools` free for their teaching reference) — useful sweetener, but check legal/cost first.
+- Whether AESDR offers a coach-only enablement layer (e.g., they get the `seven takeaway artifacts` free for their teaching reference) — useful sweetener, but check legal/cost first.

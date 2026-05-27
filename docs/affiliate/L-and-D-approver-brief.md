@@ -47,13 +47,13 @@ The 12 courses (working titles for L&D review — production course titles in pa
 | C11 | Managing your reputation in sales cultures, including the alcohol-and-events question, head-on (Sober Selling) |
 | C12 | Trading your personal life to be in sales: relationships, home-office burnout, dating-while-grinding (Leveling Up SaaS Relationships) |
 
-Each course has 3 lessons (36 total). Per-course worksheets and takeaway tools — operating sheets the AE or SDR keeps on their desk. Library-catalog metaphor on the syllabus surface; full course list visible at `aesdr.com/syllabus`.
+Each course has 3 lessons (36 total). Per-course worksheets and takeaway artifacts — operating sheets the AE or SDR keeps on their desk. Library-catalog metaphor on the syllabus surface; full course list visible at `aesdr.com/syllabus`.
 
 ### What it costs
 
 | Tier | Price | What's included |
 |---|---|---|
-| SDR | **$249** | All 12 courses, all 5 tools, Untamed Discord (alumni, on completion), your login keeps working, 14-day refund |
+| SDR | **$249** | All 12 courses, all seven takeaway artifacts + the 72-Hour Strike Plan bonus, Untamed Discord (alumni, on completion), your login keeps working, 14-day refund |
 | AE | **$299** | Same as SDR + AE-track supplementary recordings + AE-specific worksheets |
 | Team | **Let's discuss** | 10 seats, manager dashboard, cohort assign + revoke, no per-seat overage |
 

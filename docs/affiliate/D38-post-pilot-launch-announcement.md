@@ -18,7 +18,7 @@ This is the most-public AESDR-direct surface in the deliverable set, which means
 | Discipline check | What lands | What's forbidden |
 |---|---|---|
 | Honesty discipline (canon §13) | Specific pilot count, specific time window, specific things we learned that surprised us | "Hundreds of AEs and SDRs" / "Industry-leading" / unverifiable scale claims |
-| Approved claims (§10.2) | Structural promise (12 courses, 5 tools, etc.), the lift from operator interviews + pilot data, "built by people who carried bags" | Income claims, ROI promises, "transform your career" register |
+| Approved claims (§10.2) | Structural promise (12 courses, seven artifacts, etc.), the lift from operator interviews + pilot data, "built by people who carried bags" | Income claims, ROI promises, "transform your career" register |
 | Founder-backstage (canon §12) | Founder may sign this announcement (canon §12.4 — a named milestone is one of the rare cases founder visibility is earned) | Founder photo; founder personal-brand framing; "from the founder" hero block |
 
 **Founder visibility is the deliberate departure here.** Per canon §12.4 ("named milestone"), the launch *is* a milestone — AESDR has cleared pilot phase. The announcement may carry the founder's first name in the sign-off (a first per canon §12.5, where audience-facing communications are signed `AESDR Workshop` or `[HOST]`, never the founder). **This requires founder pre-approval before send.**

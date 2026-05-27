@@ -12,7 +12,7 @@ Founder has ratified six Phase 0 inputs (locked):
 
 1. Routing: `aesdr.com/affiliates`
 2. The $40 end-of-course option is the unlock fee for the second of two end-of-course artifacts (Programme / Manuscript) at `app/reveal/RevealView.tsx` line 212.
-3. The 5 takeaway tools live at `tools/standalone-html/` and route via `app/tools/[slug]/page.tsx`.
+3. The seven takeaway artifacts live at `tools/standalone-html/` and route via `app/tools/[slug]/page.tsx`.
 4. Host casting is interim — keep `[HOST_FIRST_NAME]` and `[HOST_LAST_NAME]` placeholders.
 5. **Discount policy: never. Ever. List price applies always.** AESDR does not run promotional codes, pilot discounts, affiliate-stack discounts, or time-limited price drops.
 6. The pilot agreement (D22) is requested by the affiliate via the application form, not published on the hub.
@@ -31,7 +31,7 @@ You are working inside AESDR's brand, governed by `AFFILIATE_BRAND_CANON.md` v1.
 - **§6.9.1 five-question check** — every page passes thumbnail test, token test, iris-reservation test, icon-discipline test, voice-thumbnail test before commit.
 - **§12 founder-backstage doctrine** — founder is invisible to audience. The hub does not include founder bio, founder photo, founder-named author byline, or "from the founder" framing. Founder visibility on a affiliate-facing surface requires canon §12.4 ratification (named milestone, rare and deliberate); the hub does not qualify.
 - **§13 honesty discipline** — say out loud what competitors won't. The hub includes honest-disqualification surfaces (who shouldn't apply, who shouldn't enroll). The hub names absences (no discounts, no email-list access, no founder-on-demand). Sanitization is forbidden.
-- **§14 tagline pack** — usable verbatim: *"You can already feel it. You have to be a part of this."* / *"Real Operator. Never guru."* / *"12 courses. 5 tools. Same you — way, way better."* / etc. Do not paraphrase canonical taglines.
+- **§14 tagline pack** — usable verbatim: *"You can already feel it. You have to be a part of this."* / *"Real Operator. Never guru."* / *"12 courses. Same you — way, way better."* / etc. Do not paraphrase canonical taglines.
 
 Operate severe, calm, ranked, authored. No marketing voice. No friendliness-first. Operator-to-operator register throughout.
 
@@ -56,7 +56,7 @@ Operate severe, calm, ranked, authored. No marketing voice. No friendliness-firs
 4. `docs/planning/course-content-audit.md` (2026-04-09) — confirms 36 lessons across 12 courses + role-conditional fork.
 5. `app/reveal/RevealView.tsx` — the Programme/Manuscript artifact-pick mechanic + the $40 follow-on copy.
 6. `app/artifacts/playbill/page.tsx` and `app/artifacts/redline/page.tsx` — the two end-of-course artifacts.
-7. `tools/standalone-html/` (5 files) — the 5 tools. Each linked from `aesdr.com/tools/[slug]`.
+7. `tools/standalone-html/` — the seven takeaway artifacts + the 72-Hour Strike Plan bonus. Each linked from `aesdr.com/tools/[slug]`.
 8. `variants/variant-a-editorial-split.html` — canonical visual pattern. The hub composes from this.
 9. `tools/rendered/04-d09-workshop-deck.html`, `05-d24-replay-page.html`, `06-d26-affiliate-promo-page.html`, `08-d38-launch-hero.html` — existing rendered HTML examples in the brand. Match their register and visual discipline.
 10. `app/globals.css` — CSS tokens. Use these, never raw hex.
@@ -185,7 +185,7 @@ You have made specific mistakes in this codebase that the founder corrected:
 - Invented curriculum content (corrected in Batch 7.6).
 - Used "ship as PDF/markdown" framing (corrected this conversation — markdown is never affiliate-facing).
 - Wrote sage L&D-brief titles (corrected this conversation — sharper register required).
-- Did not check production-app code before claiming "operationally pending" on items already in production (the 5 tools, the 2 artifacts).
+- Did not check production-app code before claiming "operationally pending" on items already in production (the seven takeaway artifacts, the 2 reveal-mechanic artifacts).
 
 Do not repeat those mistakes.
 
@@ -243,7 +243,7 @@ Before writing any code, think step by step:
 
 1. **What's the source of truth for each piece of copy?** For every line you'll write on every page, identify the source file. If the source file doesn't have it, surface the gap to the founder before fabricating.
 
-2. **Where does the founder-backstage doctrine break the typical course-creator hub pattern?** Most affiliate hubs lead with founder credibility ("founded by [name], former VP at [company]"). AESDR doesn't. What's the equivalent credibility surface that respects canon §12.1? Answer: the canon itself, the curriculum (real production lessons), the 5 tools (real production HTML), and the application form (real first-call commitment). The brand-of-record carries weight; the founder doesn't appear.
+2. **Where does the founder-backstage doctrine break the typical course-creator hub pattern?** Most affiliate hubs lead with founder credibility ("founded by [name], former VP at [company]"). AESDR doesn't. What's the equivalent credibility surface that respects canon §12.1? Answer: the canon itself, the curriculum (real production lessons), the seven takeaway artifacts (real production HTML), and the application form (real first-call commitment). The brand-of-record carries weight; the founder doesn't appear.
 
 3. **What's the affiliate's first 60 seconds on `/affiliates` going to feel like?** They land. They scan. They scroll. They form an opinion in 60 seconds about whether AESDR is operationally serious. What does the page need to communicate in those 60 seconds? Per canon §1.4 (borrowed-trust as merciless mirror), this is the highest-leverage moment in the entire build.
 

@@ -1,5 +1,11 @@
 `AESDR · CANON REVISION INTAKE · 2026-05-21 · TAGLINE-PACK-V1.3`
 
+> **SUPERSEDED by v1.4** (`2026-05-27-tagline-pack-v1.4.md`): the §14 tagline
+> dropped the "5 tools" beat → *"12 courses. Same you — way, way better."*,
+> and "tools" was retired as the product-category noun in favor of named
+> "artifacts." Retained as historical record — do not lift its tagline forms
+> verbatim.
+
 # Canon revision: §14 tagline pack v1.3
 
 **Proposed:** 2026-05-21 · From v1.2 to v1.3 · Proposed by Founder

@@ -16,7 +16,7 @@
 
 | Tier | Audience | Price | Includes |
 |---|---|---|---|
-| **SDR** | Individual SDR — first 0–2 years in role | **$249** | All 12 courses, all 5 tools, Untamed Discord (alumni, on completion), your login keeps working, 14-day refund. |
+| **SDR** | Individual SDR — first 0–2 years in role | **$249** | All 12 courses, all seven takeaway artifacts + the 72-Hour Strike Plan bonus, Untamed Discord (alumni, on completion), your login keeps working, 14-day refund. |
 | **AE** | Individual AE — first 0–2 years in role | **$299** | Same as SDR plus AE-track supplementary recordings + AE-specific worksheets. |
 | **Team** | Manager-purchased seats, up to 10 AEs/SDRs | **Let's discuss** | 10 seats, manager dashboard, cohort assign + revoke, no per-seat overage. Contact us for Team pricing. |
 
@@ -79,7 +79,7 @@ A canonical, copy-pastable inclusion list. Use this exactly when a Affiliate nee
 > *Every AESDR enrollment — SDR, AE, or Team — includes:*
 >
 > *— **All 12 courses.** Sequenced from foundational to advanced. Your login keeps working — come back any time.*
-> *— **All 5 takeaway tools.** One-page operating sheets you use the next day, not in a quarter.*
+> *— **All seven takeaway artifacts.** One-page operating sheets you use the next day, not in a quarter.*
 > *— **Per-course worksheets.** Filled against the buyer's real accounts, real pipeline, real comp plan.*
 > *— **Untamed Discord access.** AESDR's alumni community, opening when the learner completes the course.*
 > *— **Every future revision and supplementary recording, at no additional cost.** Re-downloadable any time.*
@@ -143,7 +143,7 @@ Approved phrasings in §3 above are pre-cleared — Affiliate may use them witho
 For affiliates who want a brand-line that doesn't reference pricing directly, canon §14 taglines are pre-approved for affiliate co-branding:
 
 - *"The operating manual, not the motivation engine."*
-- *"12 courses. 5 tools. Same you — way, way better."*
+- *"12 courses. Same you — way, way better."*
 - *"You can already feel it. You have to be a part of this."*
 - *"Real Operator. Never guru."*
 - *"If you want generic sales hype, the internet has a surplus."*
