@@ -357,8 +357,8 @@ you're promoting the program directly rather than a dated workshop.
 > you reverse-engineer it from a quota and a quarterly review.*
 >
 > *AESDR is the operating manual I wish I'd had: 12 courses built by people
-> who carried a bag, interactive rather than video, with seven artifacts
-> you keep and use the same week. 12 courses. Same you — way, way better.*
+> who carried a bag, interactive rather than video, with seven one-page
+> takeaway artifacts you keep. 12 courses. Same you — way, way better.*
 >
 > *Your login keeps working. 14-day refund. It's for SDRs and AEs 0–3 years
 > in — not veterans, not anyone shopping for motivation.*
