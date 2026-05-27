@@ -181,6 +181,21 @@ export default async function LessonCompletePage({ params }: PageProps) {
           Back to the dashboard
         </Link>
       </div>
+
+      <p style={{ marginTop: 24, textAlign: "center" }}>
+        <Link
+          href={`/course/${lessonId}/feedback`}
+          style={{
+            fontFamily: "var(--mono)",
+            fontSize: 11,
+            letterSpacing: ".18em",
+            textTransform: "uppercase",
+            color: "var(--muted)",
+          }}
+        >
+          Something not land? Tell us &rarr;
+        </Link>
+      </p>
     </main>
   );
 }

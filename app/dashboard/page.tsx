@@ -434,12 +434,8 @@ export default async function Dashboard() {
                 {completedCount === 0 ? "Start lesson 1 →" : "Resume →"}
               </Link>
               {completedCount > 0 && progressMap[currentLesson.id]?.last_screen ? (
-                <a
-                  href={`mailto:hello@aesdr.com?subject=${encodeURIComponent(
-                    `Stuck on Lesson ${currentLesson.id}`
-                  )}&body=${encodeURIComponent(
-                    `Hey,\n\nI'm stuck on Lesson ${currentLesson.id} (${currentLesson.title}), around screen ${progressMap[currentLesson.id]?.last_screen}. What's tripping me up:\n\n[describe in a sentence]\n\nThanks.`
-                  )}`}
+                <Link
+                  href={`/course/${currentLesson.id}/feedback`}
                   style={{
                     fontFamily: "'Space Mono',monospace",
                     fontSize: 10,
@@ -449,8 +445,8 @@ export default async function Dashboard() {
                     textDecoration: "underline",
                   }}
                 >
-                  Stuck? Email a one-liner →
-                </a>
+                  Stuck or disagree? →
+                </Link>
               ) : null}
             </div>
           </section>

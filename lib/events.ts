@@ -27,6 +27,8 @@ export type EventMap = {
   lesson_completed: { lesson_id: string };
   /** All 12 courses completed (fires once). */
   course_completed: Record<string, never>;
+  /** In-product lesson feedback submitted (stuck / disagree / didn't land). */
+  lesson_feedback_submitted: { lesson_id: string; kind: string };
   /** Free reciprocity asset captured an email. */
   free_lead_captured: { source: string; role?: string | null };
   /** Testimonial submitted (any rating). */
