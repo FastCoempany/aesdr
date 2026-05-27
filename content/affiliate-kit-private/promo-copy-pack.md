@@ -329,17 +329,18 @@ is gated content.
 ### Post 7 — named-artifact framing
 **Pre-cleared for:** LinkedIn, Twitter/X, Substack note, Bluesky.
 
-> *The AE/SDR Alignment Contract is a one-page document the AE and the SDR
-> actually sign — handoffs, expectations, who owns what when a deal stalls.
-> Most pairs never write it down, so they re-litigate the same fight every
-> quarter. The ones who do write it down stop.*
+> *You know that running fight between the AE and the SDR — who owns what
+> when a deal stalls, who fumbled the handoff? AESDR has a one-pager both of
+> you actually sign that just... settles it. Boring on paper. Saves the
+> relationship in practice.*
 >
-> *It's one of seven artifacts you keep from AESDR — a 12-course operating
-> manual for early-career SaaS AEs and SDRs. Not motivation. The thing you'd
-> put on your desk and use Monday.*
+> *That's one of seven artifacts you walk away with. The rest is a 12-course
+> operating manual for AEs and SDRs in their first year or two — built by
+> people who actually carried a bag, not motivation fluff.*
 >
-> *I'm hosting a live workshop with them on `[WORKSHOP_DATE]` at
-> `[WORKSHOP_TIME_TZ]`. Free to attend, 72-hour replay. Link in comments.*
+> *I'm hosting a live workshop with them `[WORKSHOP_DATE]` at
+> `[WORKSHOP_TIME_TZ]` — free, with a 72-hour replay if you can't catch it
+> live. Link's in the comments.*
 >
 > *Affiliate disclosure: I earn a commission on enrollments through this
 > link.*
