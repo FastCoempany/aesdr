@@ -329,9 +329,9 @@ is gated content.
 ### Post 7 — named-artifact framing
 **Pre-cleared for:** LinkedIn, Twitter/X, Substack note, Bluesky.
 
-> *The AE/SDR Alignment Contract is a one-page document both reps actually
-> sign — handoffs, expectations, who owns what when a deal stalls. Most
-> pairs never write it down, so they re-litigate the same fight every
+> *The AE/SDR Alignment Contract is a one-page document the AE and the SDR
+> actually sign — handoffs, expectations, who owns what when a deal stalls.
+> Most pairs never write it down, so they re-litigate the same fight every
 > quarter. The ones who do write it down stop.*
 >
 > *It's one of seven artifacts you keep from AESDR — a 12-course operating
