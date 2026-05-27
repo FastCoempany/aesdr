@@ -201,10 +201,10 @@ locked elements stay.
 
 ---
 
-## 5. Six pre-cleared social posts
+## 5. Eight pre-cleared social posts
 
 Lift verbatim with placeholders filled. Each is platform-tagged. Anything
-beyond these six requires an approval round.
+beyond these eight requires an approval round.
 
 ### Post 1 — "operating gap" framing
 **Pre-cleared for:** LinkedIn, Twitter/X (short thread), Substack note, Bluesky.
@@ -326,12 +326,56 @@ is gated content.
 >
 > *#ad — affiliate disclosure.*
 
-### Six-post hard rules
+### Post 7 — named-artifact framing
+**Pre-cleared for:** LinkedIn, Twitter/X, Substack note, Bluesky.
+
+> *The AE/SDR Alignment Contract is a one-page document both reps actually
+> sign — handoffs, expectations, who owns what when a deal stalls. Most
+> pairs never write it down, so they re-litigate the same fight every
+> quarter. The ones who do write it down stop.*
+>
+> *It's one of seven artifacts you keep from AESDR — a 12-course operating
+> manual for early-career SaaS AEs and SDRs. Not motivation. The thing you'd
+> put on your desk and use Monday.*
+>
+> *I'm hosting a live workshop with them on `[WORKSHOP_DATE]` at
+> `[WORKSHOP_TIME_TZ]`. Free to attend, 72-hour replay. Link in comments.*
+>
+> *Affiliate disclosure: I earn a commission on enrollments through this
+> link.*
+>
+> *— `[YOUR_FIRST_NAME]`*
+
+Link goes in the first reply / first comment, plain — no shortener.
+
+### Post 8 — evergreen, direct-to-course (no workshop tie)
+**Pre-cleared for:** LinkedIn, Twitter/X, Bluesky, Substack note. Use when
+you're promoting the program directly rather than a dated workshop.
+
+> *The hardest part of the first two years in SaaS sales isn't the
+> rejection. It's that nobody tells you what good actually looks like —
+> you reverse-engineer it from a quota and a quarterly review.*
+>
+> *AESDR is the operating manual I wish I'd had: 12 courses built by people
+> who carried a bag, interactive rather than video, with seven artifacts
+> you keep and use the same week. 12 courses. Same you — way, way better.*
+>
+> *Your login keeps working. 14-day refund. It's for SDRs and AEs 0–3 years
+> in — not veterans, not anyone shopping for motivation.*
+>
+> *`[REGISTRATION_URL]`*
+>
+> *#ad — affiliate disclosure: I earn a commission on enrollments through
+> this link.*
+>
+> *— `[YOUR_FIRST_NAME]`*
+
+### Eight-post hard rules
 
 - **Don't modify the body.** Bracketed placeholders are your only edit
   window.
-- **Don't add a CTA** to a post that doesn't already carry one. Posts 1–3
-  are awareness; only 5 and 6 carry deadline framing.
+- **Don't add a CTA** to a post that doesn't already carry one. Posts 1–3,
+  7, and 8 are awareness; only 5 and 6 carry deadline framing.
 - **Don't repost** the same post multiple times to game the algorithm.
 - **Don't boost** any post without an approval round. Paid placement is a
   separate gate.
