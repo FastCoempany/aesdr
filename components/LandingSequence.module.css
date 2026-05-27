@@ -867,7 +867,7 @@
    ═══════════════════════════════════════════════ */
 .skipLink {
   position: fixed;
-  bottom: 24px;
+  top: 24px;
   right: 28px;
   z-index: 200;
   font-family: var(--mono);

@@ -20,8 +20,6 @@ export const LESSONS = [
 ];
 
 const TOTAL = LESSONS.length;
-const TOTAL_MINUTES = LESSONS.reduce((s, l) => s + l.minutes, 0);
-const TOTAL_HOURS = (TOTAL_MINUTES / 60).toFixed(1).replace(/\.0$/, "");
 
 type DeckStackProps = {
   /**
@@ -131,9 +129,9 @@ export default function DeckStack({ standalone = false }: DeckStackProps) {
       {!standalone && (
         <div className={`${s.sectionHeader} ${s.sectionHeaderVisible}`}>
           <div className={s.sectionLabel}>What you get</div>
-          <h2 className={s.sectionTitle}>12 courses, ready to peel through and preview.</h2>
+          <h2 className={s.sectionTitle}>12 courses, take a peel through.</h2>
           <div className={s.sectionSubtle}>
-            ~{TOTAL_HOURS} hours total · self-paced · one-time purchase
+            click through any course · interactive, not video · preview any lesson
           </div>
         </div>
       )}

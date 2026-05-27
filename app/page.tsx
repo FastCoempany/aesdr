@@ -23,10 +23,10 @@ const FAQ: { q: string; a: string; icon: IconName }[] = [
   { q: "Is this a subscription? How long do I get access?",    a: "Not a subscription. One-time purchase. No renewal, no expiration date. Every future update we ship to the curriculum is included at no extra charge. If we ever shut AESDR down, every active customer gets a final downloadable bundle of the lessons they’d completed.",            icon: "hourglass" },
   { q: "Why does the page ask AE or SDR?",                        a: "So we can show you the copy and pricing for your role. Pick once and we remember it. You can switch anytime — the underlying program is the same; the role-pick changes which examples and which price you see first.",                                       icon: "signal"    },
   { q: "What\u2019s the difference between Individual and Team?", a: "Individual is one seat, one login. Team is for sales managers rolling out training across an actual team \u2014 manager dashboard, mixed AE/SDR tracks, invoice formatted for L&D. Team pricing isn't on the page because every team's shape is different \u2014 email hello@aesdr.com and we'll quote it after a five-minute conversation about team size.",                                                                       icon: "team"      },
-  { q: "Is there a community or is this self-paced only?",        a: "Self-paced. AESDR is a written operating manual you re-read in year three when the comp plan changes, not a live community. There's an alumni room that opens when you finish all twelve courses \u2014 but it's a course bonus, not what you're paying for.",                                                icon: "hourglass" },
+  { q: "Is there a community or is this self-paced only?",        a: "Self-paced. AESDR is the kind of thing you come back to in year three when the comp plan changes — not a live community you check into. There's an alumni room that opens when you finish all twelve courses \u2014 but it's a course bonus, not what you're paying for.",                                                icon: "hourglass" },
   { q: "I\u2019ve been in sales for 5+ years. Is this too basic?", a: "Courses 1\u20135 cover fundamentals. Courses 6\u201312 work through prospecting strategy, pipeline math, financial resilience, and the relationships that pay off five years out. If you disagree, we refund.",                  icon: "signal"    },
   { q: "Can my company expense this?",                            a: "Of course. We provide a receipt and invoice on purchase. Most L&D budgets cover this easily \u2014 especially the Team plan.",                                                                                       icon: "ledger"    },
-  { q: "How is this different from Sales Assembly or Pavilion?", a: "Different product entirely. Those are senior-AE peer networks at $3K\u2013$5K/year \u2014 you pay for the room. AESDR is a written operating manual you re-read in year three. If you want the network, those are excellent. If you want a framework you can hand to a new SDR on Monday morning, this one. Full breakdown at /compare.",                                                                                  icon: "team"      },
+  { q: "How is this different from Sales Assembly or Pavilion?", a: "Different product entirely. Those are senior-AE peer networks \u2014 you're paying for the room and the people in it. AESDR is the lessons and the work, something you come back to in year three. If you want the network, those are excellent. If you want a framework you can hand to a new SDR on Monday morning, this one. Full breakdown at /compare.",                                                                                  icon: "team"      },
   { q: "Why not just use Bravado, r/sales, or LinkedIn?",         a: "Those are good for the random thread when you have a specific live problem. AESDR is structured \u2014 Lesson 8 is the 30% rule, Lesson 10 is the comp-plan teardown, Lesson 12 is the relationship graph. You don\u2019t have to phrase your problem correctly to find the answer; the curriculum sequences it. Plus role-conditional content across 18 of the 36 sub-lessons, which a community can\u2019t deliver.", icon: "signal"    },
   { q: "I\u2019ve been reading Sales Hacker and RepVue for a year. Different?", a: "Three differences. Structure \u2014 a reading list doesn\u2019t sequence what compounds. Vendor independence \u2014 the free content is sponsored by tools, so the tools lessons are quietly compromised. AESDR is buyer-paid; no vendor has copy approval. And artifacts \u2014 you don\u2019t take a Sales Hacker post into your 1:1 with a bad manager next week. You take the AE/SDR Alignment Contract.",         icon: "eye"       },
   { q: "Should I take Aspireship or Uvaro instead?",              a: "Different audience. Those are bootcamps for people trying to break into sales \u2014 they place you, coach you through ramp, sometimes share first-year commission. AESDR assumes the seat is already yours. If you\u2019re three months from your first SDR interview, take a bootcamp. If you\u2019re three months into the job and the ramp is harder than anyone warned you about, this one.",                                          icon: "warn"      },
@@ -94,37 +94,41 @@ export default async function LandingPage() {
             <p className={styles.notCardLabel}>Not</p>
             <p className={styles.notCardTitle}>A motivation playlist.</p>
             <p className={styles.notCardBody}>
-              No motivational performance, no morning-routine porn, no quotes
-              over sunsets. If you came to feel better about the job, the
-              refund is faster than the first lesson.
+              This isn&rsquo;t the genre where someone gets you hyped for the
+              week &mdash; no morning-routine speeches, no quotes over a sunset,
+              no performance. If you&rsquo;re here to feel better about the job
+              instead of getting better at it, this is the wrong shelf, and
+              that&rsquo;s genuinely fine.
             </p>
           </div>
           <div className={styles.notCard}>
             <p className={styles.notCardLabel}>Not</p>
             <p className={styles.notCardTitle}>A LinkedIn certification.</p>
             <p className={styles.notCardBody}>
-              No badge, no &ldquo;Verified Top 1% Closer&rdquo; profile
-              ornament, no certificate you can put on your wall and skip the
-              work. The receipt is real outcomes, not vanity.
+              There&rsquo;s no badge for your profile, no &ldquo;Top 1%
+              Closer&rdquo; certificate for the wall &mdash; nothing you can wave
+              around instead of doing the job. The point was never the
+              credential. It&rsquo;s that you actually get better.
             </p>
           </div>
           <div className={styles.notCard}>
             <p className={styles.notCardLabel}>Not</p>
             <p className={styles.notCardTitle}>A live cohort or coaching call.</p>
             <p className={styles.notCardBody}>
-              Self-paced interactive HTML lessons you work through on your
-              own time — no scheduled calls, no group Slack pressure, and
-              no Tuesday-night webinars, so the rest of your calendar stays
-              yours to allocate however the week demands.
+              You go through the lessons on your own time, and they&rsquo;re
+              interactive &mdash; not a video you half-watch. No scheduled
+              calls, no group-Slack guilt, no Tuesday-night webinar. Your
+              calendar stays yours.
             </p>
           </div>
           <div className={styles.notCard}>
             <p className={styles.notCardLabel}>Not</p>
-            <p className={styles.notCardTitle}>A short-cut around the volume.</p>
+            <p className={styles.notCardTitle}>A skip button for the grind.</p>
             <p className={styles.notCardBody}>
-              We hand you the operating manual. You still have to make the
-              calls, run the demos, take the no&rsquo;s. Nothing here gets
-              you out of the volume.
+              We can show you how the job actually works. We can&rsquo;t do the
+              job for you &mdash; you still have to make the calls, run the
+              demos, and eat the no&rsquo;s. Nothing here gets you out of the
+              actual work.
             </p>
           </div>
         </div>
@@ -142,16 +146,23 @@ export default async function LandingPage() {
             <p className={styles.compareLabel}>AESDR</p>
             <p className={styles.comparePrice}>$249–$299 · one-time (team licensing on request)</p>
             <ul className={styles.compareList}>
-              <li>12 self-paced interactive courses</li>
-              <li>Named takeaway artifacts — the alignment contract, the ROI tracker, the strike plan, plus two more</li>
-              <li>One-time purchase. No subscription.</li>
+              <li>12 interactive courses &mdash; not videos you sit through</li>
+              <li>
+                You keep{" "}
+                <span className={styles.artifactName}>The Alignment Contract</span>,{" "}
+                <span className={styles.artifactName}>The Manager Archetype Map</span>,{" "}
+                <span className={styles.artifactName}>The ROI &amp; Commission Defense Tracker</span>{" "}
+                &mdash; and four more like them
+              </li>
+              <li>Separate tracks for AEs and SDRs &mdash; the content forks to your seat</li>
               <li>14-day refund, no questions</li>
-              <li>Built by AEs and SDRs who carried bags</li>
-              <li>No live calls, no weekly homework</li>
+              <li>Built by people who carried bags &mdash; AEs, SDRs, and the managers and VPs who led them</li>
+              <li>Worked against your real accounts, pipeline, and comp plan &mdash; not &ldquo;imagine a prospect named Bob&rdquo;</li>
             </ul>
             <p className={styles.compareFitFor}>
-              <strong>Fits:</strong> AEs and SDRs in their first 18 months
-              who want the operating manual, not motivation.
+              <strong>Fits:</strong> AEs and SDRs in their first 2 years or so
+              who want to get better at the actual work &mdash; not get hyped
+              for the week.
             </p>
           </div>
 
