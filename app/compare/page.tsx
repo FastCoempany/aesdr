@@ -45,7 +45,7 @@ const CATEGORIES: Category[] = [
     theyDoWell:
       "Senior-AE and revenue-leader peer networks are excellent for what they are. The room is the value. You pay $3K–$5K/year for access to other senior operators who've actually carried bags, the Slack you can post a real question in at 11pm, the off-record conversations that happen in person twice a year. The network compounds — five years in, you have a thousand named people you can text.",
     weDoDifferently:
-      "AESDR is a written operating manual you re-read in year three when the comp plan changes. It's a curriculum, not a peer network. We don't sell community access — the alumni room opens when you finish all twelve courses, but that's a bonus, not the product. One-time purchase from $249, not annual membership. And the audience is AEs and SDRs in their first 18 months, not VPs running a region.",
+      "AESDR is the lessons and the work, structured so you can come back to them in year three when the comp plan changes. It's a curriculum, not a peer network. We don't sell community access — the alumni room opens when you finish all twelve courses, but that's a bonus, not the product. And the audience is AEs and SDRs in their first 2 years or so, not VPs running a region.",
     routing:
       "If you're already on a senior peer network and want the network, stay there. If you want a structured framework you can hand to a new SDR on Monday morning, this one.",
   },
@@ -78,7 +78,7 @@ const CATEGORIES: Category[] = [
     theyDoWell:
       "Free sales content is genuinely good now. Sales Hacker has a deep archive. RepVue Academy is professionally produced. Any of these will give you a hundred useful posts on prospecting, discovery, negotiation, comp. If you're a disciplined self-learner who reads one substantive article per week and applies it, you don't need to buy a course.",
     weDoDifferently:
-      "Three differences. First — structure. AESDR sequences the material so what you learn in Lesson 3 sets up what compounds in Lesson 7. A reading list doesn't do that. Second — vendor independence. The free educational content is sponsored by tools (RepVue is funded by ZoomInfo-adjacent advertisers, Sales Hacker is owned by Outreach), so the tools lessons are quietly compromised. AESDR is one-time-purchase from buyers; no vendor has copy approval. Third — the artifacts. You don't take a Sales Hacker post into your 1:1 with a bad manager next week. You take the AE/SDR Alignment Contract.",
+      "Three differences. First — structure. AESDR sequences the material so what you learn in Lesson 3 sets up what compounds in Lesson 7. A reading list doesn't do that. Second — vendor independence. The free educational content is sponsored by tools (RepVue is funded by ZoomInfo-adjacent advertisers, Sales Hacker is owned by Outreach), so the tool lessons are quietly compromised. AESDR isn't sponsored by any of them, so nothing in the lessons is shaped to sell you software. Third — what you walk away with. You don't take a Sales Hacker post into your 1:1 with a bad manager next week. You take the AE/SDR Alignment Contract.",
     routing:
       "If you've been reading free content for a year and it hasn't compounded, the gap is structure. That's what we sell.",
   },
@@ -372,10 +372,10 @@ export default function ComparePage() {
             }}
           >
             The reason AESDR exists isn&rsquo;t that the alternatives are broken. It&rsquo;s
-            that none of them sit at this specific intersection — written
-            operating manual, role-forked between AE and SDR, anti-guru register,
-            one-time purchase you don&rsquo;t renew. If that&rsquo;s the thing missing from
-            your shelf, this is it.
+            that none of them sit at this specific intersection — a written
+            walkthrough of how the job actually works, split into separate tracks
+            for AEs and SDRs, anti-guru in register, built by people who carried a
+            bag. If that&rsquo;s the thing missing from your shelf, this is it.
           </p>
           <Link
             href="/#pricing"
