@@ -64,7 +64,7 @@ executed agreement (the "Affiliate").
 - Sends the Affiliate a one-page Friday report each week of the pilot
   showing clicks, registrations, attendance, enrollment, refunds, and
   projected commission.
-- Pays commissions and the sign-on bonus (where applicable) per §5 and §6.
+- Pays commissions per §5.
 
 ## 5. Commission
 
@@ -88,19 +88,7 @@ executed agreement (the "Affiliate").
   commission. Final commission is calculated when the 30-day attribution
   window closes and all in-window refund windows have closed.
 
-## 6. Sign-on bonus (Cohort 1 invited affiliates only)
-
-- Cohort 1 affiliates whom AESDR invites directly receive a **$500 sign-on
-  bonus** paid on agreement execution. The bonus is paid by the next
-  business-day ACH, Wise, or PayPal cycle after the Company receives the
-  counter-signed agreement.
-- The sign-on bonus is **not** offered to affiliates who applied through the
-  public application path, nor to affiliates outside Cohort 1, unless
-  expressly stated in the executed agreement.
-- The sign-on bonus is not contingent on enrollment performance and is
-  not clawed back if the pilot under-performs.
-
-## 7. Payments
+## 6. Payments
 
 - **Cadence.** Net-45 from the close of the 30-day attribution window.
   In practice, the Affiliate sees commission about 75 days from the first
@@ -122,7 +110,7 @@ executed agreement (the "Affiliate").
   the underlying tracking + Stripe data and corrects in the next payout
   if substantiated.
 
-## 8. Tracking and data
+## 7. Tracking and data
 
 - AESDR's attribution stack uses first-touch attribution, a 30-day cookie,
   UTM parameters preserved through the registration → workshop → enrollment
@@ -133,7 +121,7 @@ executed agreement (the "Affiliate").
 - The Affiliate receives on-demand CSV exports of click, registration,
   enrollment, and commission lines on request.
 
-## 9. Promotional restrictions
+## 8. Promotional restrictions
 
 - **Pricing.** AESDR's published price is the price. The Affiliate does not
   offer, advertise, or imply pricing the Company has not authorized.
@@ -152,7 +140,7 @@ executed agreement (the "Affiliate").
   out-of-scope (e.g., audiences who have not entered or are no longer in
   the SaaS sales-development category in a meaningful way).
 
-## 10. Marks and intellectual property
+## 9. Marks and intellectual property
 
 - AESDR owns the AESDR name, the Leponeus mascot, the curriculum, all
   course content, and the AESDR × Affiliate lockup.
@@ -170,7 +158,7 @@ executed agreement (the "Affiliate").
   the other's content, or transfer rights to a third party without written
   consent.
 
-## 11. Confidentiality
+## 10. Confidentiality
 
 - Each party may receive non-public information from the other —
   audience data, Friday-report numbers, in-development course content,
@@ -182,7 +170,7 @@ executed agreement (the "Affiliate").
   professional advisors under similar obligations.
 - Confidentiality survives termination of the agreement for two (2) years.
 
-## 12. Representations and limited warranties
+## 11. Representations and limited warranties
 
 - Each party represents it has the authority to enter the agreement and
   to grant the licenses described.
@@ -196,7 +184,7 @@ executed agreement (the "Affiliate").
   "as is" — no warranty of fitness for a particular professional outcome,
   career outcome, or earnings outcome is made or implied.
 
-## 13. Indemnification
+## 12. Indemnification
 
 - AESDR will defend, indemnify, and hold the Affiliate harmless from third-
   party claims arising from (i) AESDR's curriculum content, (ii) AESDR's
@@ -207,7 +195,7 @@ executed agreement (the "Affiliate").
   the Approved Claims, (ii) the Affiliate's audience-list practices, or
   (iii) the Affiliate's failure to disclose the material connection.
 
-## 14. Limitation of liability
+## 13. Limitation of liability
 
 - Neither party is liable for indirect, incidental, consequential,
   special, or punitive damages — including lost profits or lost
@@ -219,7 +207,7 @@ executed agreement (the "Affiliate").
   infringement, or (iii) the Affiliate's indemnification obligations
   arising from misrepresentation to its audience.
 
-## 15. Governing law and disputes
+## 14. Governing law and disputes
 
 - Governing law and venue are specified in the executed agreement and
   reflect the Company's state of incorporation.
@@ -227,7 +215,7 @@ executed agreement (the "Affiliate").
   for 30 days before initiating formal proceedings. Either party may
   seek injunctive relief at any time for IP or confidentiality breaches.
 
-## 16. General
+## 15. General
 
 - **Independent contractors.** The Affiliate is an independent contractor.
   Nothing creates an employment, agency, joint venture, or franchise
