@@ -177,6 +177,16 @@ rule flags them on every commit.
 | *circle back* | Geometry metaphor for "talk again." Say when. |
 | *low-hanging fruit* | Picking metaphor for "easy task." Say what's easy. |
 
+### Founder carve-out: lesson-content "blueprint" and "mindset"
+
+Founder-ratified (2026-05-27): **"blueprint" and "mindset" are approved in
+lesson/curriculum content** (`content/lessons/`) and must **not** be flagged
+by audits as AI-tell there. The curriculum earns them — a lesson literally
+hands the AE/SDR a blueprint to follow, and the Identity arc is explicitly a
+mindset shift. They stay discouraged in marketing/landing copy, where the
+generic register still reads as a tell. Curriculum-scoped only; not a license
+for buyer-facing surfaces.
+
 ### Soft ban (canon-only, requires human judgment)
 
 These terms have legitimate uses in some contexts and shouldn't fire
