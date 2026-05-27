@@ -16,7 +16,7 @@ These are the claims we have substantiated and stand behind. Partners and the ho
 
 ### A1. Structural promise (verbatim)
 
-> *"12 courses. 5 takeaway tools. Your login keeps working. Untamed — the alumni Discord community — opens when you complete the course. 14-day no-questions-asked refund."*
+> *"12 courses. Seven takeaway artifacts. Your login keeps working. Untamed — the alumni Discord community — opens when you complete the course. 14-day no-questions-asked refund."*
 
 Pricing, also verbatim:
 

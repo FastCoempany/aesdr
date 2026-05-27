@@ -43,7 +43,7 @@
 | Component | Detail |
 |---|---|
 | Lessons | 12 modular courses, lesson-clusters by theme |
-| Tools | 5 takeaway tools (alignment contract, strike plan, ROI tracker, others) |
+| Artifacts | Seven takeaway artifacts (AE/SDR Alignment Contract, Manager Archetype Map, ROI & Commission Defense Tracker, others) + the 72-Hour Strike Plan bonus |
 | Format | Interactive HTML exercises, not video lectures |
 | Community | Discord — *Untamed* — alumni-only, opens when the learner completes the course |
 | Access | Your login keeps working, including future curriculum updates |

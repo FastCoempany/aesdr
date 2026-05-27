@@ -130,11 +130,11 @@ The SaaS lifestyle gap and what it does to relationships. The home-office trap (
 
 ## Tools
 
-The course-content audit (2026-04-09) names "5 tools" as a reference point in the production curriculum. **Tool inventory is operationally pending verification** — recommend confirming which 5 tools ship with v1 (operating sheets, prep templates, etc.) before this section gets numerically specific. Until verified, the partner-facing line is:
+Verified against production (`utils/content/catalog.ts`): **seven takeaway artifacts** ship across the program — the AE/SDR Alignment Contract (3.3), Manager Archetype Map (4.1), Async Cadence Template (4.3), the "I Don't Know" Framework (6.3), CRM Survival Guide (9.1), Time Reclaimed Calculator (9.2), and ROI & Commission Defense Tracker (10.1) — plus the 72-Hour Strike Plan as an end-of-course bonus (gated on all twelve lessons complete). The affiliate-facing line is:
 
-> *Each lesson ships with worksheets and takeaway tools you fill against your real AEs and SDRs, your real pipeline, your real comp plan. Not "imagine a prospect named Bob."*
+> *Each lesson ships with worksheets and takeaway artifacts you fill against your real AEs and SDRs, your real pipeline, your real comp plan. Not "imagine a prospect named Bob."*
 
-The canon §14 tagline — *"12 courses. 5 tools. Same you — way, way better."* — stays as the headline frame; the per-tool inventory is filled in once production confirms.
+The canon §14 tagline (v1.4) — *"12 courses. Same you — way, way better."* — is the headline frame; the artifact inventory above is verified against production.
 
 ---
 
@@ -210,7 +210,7 @@ Per canon §13 honesty discipline — the absences:
 This map depends on:
 - **`app/syllabus/page.tsx` (commit `20cbc9e`, 2026-04-22)** — source of truth for titles, questions, annotations, stamps. **Met.**
 - **`docs/planning/course-content-audit.md` (2026-04-09)** — source of truth for unit-level content territory and AE/SDR fork structure. **Met.**
-- **Tool inventory verification** — production curriculum's 5 tools need confirmation; partner-facing tool list filled when verified. **Operationally pending.**
+- **Artifact inventory** — verified against `utils/content/catalog.ts`: seven takeaway artifacts + the 72-Hour Strike Plan bonus, named with lesson anchors above. **Met.**
 
 This map is a forward dependency for:
 - **D09 workshop deck** slide 14 (curriculum tease, broad-allusive register).
@@ -233,7 +233,7 @@ This map is a forward dependency for:
 
 ## Open
 
-- **Tool inventory.** Verify the 5 tools (operating sheets, prep templates) shipping in production. Until verified, this document references "worksheets and takeaway tools" generically. Once verified, restore the per-tool listing with real names and lesson anchors.
+- **Artifact inventory.** Resolved — verified against `utils/content/catalog.ts`: seven takeaway artifacts + the 72-Hour Strike Plan bonus, named with lesson anchors in the Tools section above.
 - **Per-lesson titles.** The catalog above shows course-level titles (12 entries). The production curriculum has 36 lessons (3 per course). Decision: should the partner-facing map list lessons (36 cards) or stay at the course-level (12 cards)? Default: **12 cards (course-level only)** — partners and prospects need shape, not granularity. The registration page and replay page use the same 12-card view. Internal docs may reference lessons.
 - **Stylized lesson titles (L05, L06).** Production renders them with alternating casing (`tHe SaLeS pLaYbOoK`). Default: **preserve verbatim in all renders.** The casing is the brand move; sanding it to `The Sales Playbook` reads as failing to recognize the joke.
 - **Library metaphor scope.** The metaphor is surface-deep on this map (call numbers, drawers, stamps, "check one out"). It does NOT extend to fictional library imagery (no card catalog drawer renders, no card stock textures, no "due date" fictions). Per canon §6.5, decoration earns its keep or gets cut.
