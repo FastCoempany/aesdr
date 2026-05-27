@@ -485,25 +485,35 @@
   max-width: 28ch;
 }
 
-.kpiSource {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--muted);
-  opacity: 0.7;
-  margin-top: 4px;
+/* Whole stat is the citation link — the report title lives in title/aria-label,
+   not spelled out on the surface. */
+.kpiLink {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
 }
 
-.kpiSourceLink {
+/* Small "open source" mark after the number. Must opt out of .kpiNumber's
+   gradient text-clip (transparent fill) or it renders invisible. */
+.kpiCite {
+  font-size: 0.3em;
+  font-style: normal;
+  font-weight: 700;
+  vertical-align: super;
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  -webkit-text-fill-color: var(--muted);
   color: var(--muted);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  text-decoration-thickness: 1px;
-  transition: color 0.18s;
+  animation: none;
+  transition: color 0.18s, -webkit-text-fill-color 0.18s;
 }
-.kpiSourceLink:hover {
-  color: var(--ink);
+.kpiLink:hover .kpiCite {
+  -webkit-text-fill-color: var(--crimson);
+  color: var(--crimson);
 }
 
 /* ═══════════════════════════════════════════════

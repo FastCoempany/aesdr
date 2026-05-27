@@ -23,25 +23,30 @@ type Props = {
 };
 
 export default function KPIStat({ value, caption, source, sourceUrl }: Props) {
+  const body = (
+    <>
+      <div className={styles.kpiNumber}>
+        {value}
+        {sourceUrl && <span className={styles.kpiCite} aria-hidden="true"> ↗</span>}
+      </div>
+      <div className={styles.kpiCaption}>{caption}</div>
+    </>
+  );
   return (
     <div className={styles.kpi}>
-      <div className={styles.kpiNumber}>{value}</div>
-      <div className={styles.kpiCaption}>{caption}</div>
-      {source && (
-        <div className={styles.kpiSource}>
-          {sourceUrl ? (
-            <a
-              href={sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.kpiSourceLink}
-            >
-              {source} ↗
-            </a>
-          ) : (
-            source
-          )}
-        </div>
+      {sourceUrl ? (
+        <a
+          className={styles.kpiLink}
+          href={sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={source ? `Source: ${source}` : undefined}
+          aria-label={source ? `${value} — ${caption}. Source: ${source}, opens in a new tab` : undefined}
+        >
+          {body}
+        </a>
+      ) : (
+        body
       )}
     </div>
   );
