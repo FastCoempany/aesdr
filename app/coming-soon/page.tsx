@@ -118,7 +118,7 @@ export default function ComingSoonPage() {
             userSelect: "none",
           }}
         >
-          AEs &amp; SDRs Rule This World
+          12 courses. 5 tools. Same you &mdash; way, way better.
         </p>
       </div>
     </main>

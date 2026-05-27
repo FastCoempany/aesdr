@@ -167,7 +167,7 @@ export default function CurriculumPage() {
               marginBottom: 18,
             }}
           >
-            Two end-of-course artifacts. Each student picks one free when they finish the program. The other unlocks for $40 from their dashboard whenever they want it. Both are real, gated, and part of the experience.
+            Two end-of-course artifacts. Each student picks one free when they finish the program. The other is available for $40 from their dashboard whenever they want it. Both are real, gated, and part of the experience.
           </p>
           <p
             style={{

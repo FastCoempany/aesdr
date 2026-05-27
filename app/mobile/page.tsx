@@ -95,10 +95,9 @@ export default function MobilePage() {
             marginTop: 10,
             textAlign: "center",
             userSelect: "none",
-            whiteSpace: "nowrap",
           }}
         >
-          AEs &amp; SDRs Rule This World
+          12 courses. 5 tools. Same you &mdash; way, way better.
         </p>
       </div>
     </main>

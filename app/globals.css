@@ -149,3 +149,26 @@ body {
 [data-larger-text="true"] {
   font-size: 112.5%;
 }
+
+/* ── Accessibility: high-contrast mode ──
+   The iris-shimmer gradient dips to ~1.9:1 against white CTA text where it
+   crosses the amber stop — below WCAG AA (4.5:1). When the user's OS asks
+   for more contrast (or forced-colors), collapse --iris to solid crimson:
+   white-on-crimson is ~9.3:1 and crimson-fill text on cream ~8.7:1, both
+   clear AA + AAA. The default site is untouched — this only fires on user
+   request. Mirrors the reduced-motion dual pattern: OS signal + in-product
+   data-attribute escape hatch. */
+@media (prefers-contrast: more) {
+  :root {
+    --iris: var(--crimson);
+  }
+}
+@media (forced-colors: active) {
+  :root {
+    --iris: var(--crimson);
+  }
+}
+[data-high-contrast="true"] {
+  --iris: var(--crimson);
+}
+
