@@ -6,6 +6,7 @@ import {
   runAffiliatePayoutBatch,
   setAffiliateSophisticationTier,
   setAffiliateStatus,
+  setAffiliateWorkshop,
 } from "@/app/actions/affiliate";
 import { getAffiliateBySlug } from "@/lib/affiliate-entity";
 import { createAdminClient } from "@/utils/supabase/admin";
@@ -149,6 +150,219 @@ export default async function AffiliateDetailPage({
               </code>
             )}
           </div>
+        </section>
+      )}
+
+      {/* Workshop pilot config — sets fields read by /[affiliateSlug]/workshop */}
+      {affiliate && (
+        <section
+          style={{
+            background: "#fff",
+            border: "1px solid #E8E4DF",
+            padding: "20px 24px",
+            marginBottom: 32,
+          }}
+        >
+          <header style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 16, gap: 12 }}>
+            <h2 style={{ margin: 0, fontFamily: "Georgia,serif", fontStyle: "italic", fontSize: 22, color: "#1A1A1A" }}>
+              Workshop pilot
+            </h2>
+            {affiliate.workshop_registration_open && affiliate.workshop_date_iso && (
+              <Link
+                href={`/${affiliate.slug}/workshop`}
+                target="_blank"
+                style={{ fontFamily: "'Space Mono',monospace", fontSize: 11, letterSpacing: ".18em", textTransform: "uppercase", color: "#8B1A1A", textDecoration: "underline" }}
+              >
+                Open page ↗
+              </Link>
+            )}
+          </header>
+          <p style={{ margin: "0 0 16px", fontFamily: "Georgia,serif", fontSize: 13, color: "#6B6B6B", fontStyle: "italic" }}>
+            Sets fields read by <code style={{ fontFamily: "'Space Mono',monospace", fontSize: 12 }}>/{affiliate.slug}/workshop</code>.
+            Page renders only when the master switch is ON and title + date are set.
+            Per D07 spec; title default ratified 2026-05-28 in D08.
+          </p>
+
+          <form action={setAffiliateWorkshop}>
+            <input type="hidden" name="affiliateId" value={affiliate.id} />
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16, marginBottom: 16 }}>
+              {/* Master switch */}
+              <label style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "10px 12px", border: "1px solid #B5B0A8", background: affiliate.workshop_registration_open ? "#F0E8D8" : "transparent", cursor: "pointer", gridColumn: "1 / -1" }}>
+                <input
+                  type="checkbox"
+                  name="workshop_registration_open"
+                  defaultChecked={affiliate.workshop_registration_open}
+                  style={{ marginTop: 3 }}
+                />
+                <span style={{ fontFamily: "Georgia,serif", fontSize: 14, color: "#1A1A1A" }}>
+                  <strong>Registration open</strong> — master switch. Off = page 404s. On requires title + date set.
+                </span>
+              </label>
+
+              {/* Title */}
+              <label style={{ gridColumn: "1 / -1" }}>
+                <span style={{ display: "block", fontFamily: "'Space Mono',monospace", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", color: "#6B6B6B", marginBottom: 6 }}>
+                  Workshop title
+                </span>
+                <input
+                  name="workshop_title"
+                  type="text"
+                  defaultValue={affiliate.workshop_title ?? "What good actually looks like in startup SaaS"}
+                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #B5B0A8", fontFamily: "Georgia,serif", fontSize: 14 }}
+                />
+              </label>
+
+              {/* Audience descriptor */}
+              <label style={{ gridColumn: "1 / -1" }}>
+                <span style={{ display: "block", fontFamily: "'Space Mono',monospace", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", color: "#6B6B6B", marginBottom: 6 }}>
+                  Audience descriptor (per pilot)
+                </span>
+                <textarea
+                  name="workshop_audience_descriptor"
+                  rows={2}
+                  defaultValue={affiliate.workshop_audience_descriptor ?? ""}
+                  placeholder="e.g. Apex BDR Club members in their first 18 months"
+                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #B5B0A8", fontFamily: "Georgia,serif", fontSize: 14, resize: "vertical" }}
+                />
+              </label>
+
+              {/* Date + TZ */}
+              <label>
+                <span style={{ display: "block", fontFamily: "'Space Mono',monospace", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", color: "#6B6B6B", marginBottom: 6 }}>
+                  Workshop date (ISO 8601 with offset)
+                </span>
+                <input
+                  name="workshop_date_iso"
+                  type="text"
+                  defaultValue={affiliate.workshop_date_iso ?? ""}
+                  placeholder="2026-06-15T18:00:00-04:00"
+                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #B5B0A8", fontFamily: "'Space Mono',monospace", fontSize: 13 }}
+                />
+                <span style={{ display: "block", marginTop: 4, fontFamily: "Georgia,serif", fontSize: 11, color: "#6B6B6B", fontStyle: "italic" }}>
+                  Include offset for DST correctness (-04:00 = EDT, -05:00 = EST).
+                </span>
+              </label>
+
+              <label>
+                <span style={{ display: "block", fontFamily: "'Space Mono',monospace", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", color: "#6B6B6B", marginBottom: 6 }}>
+                  Display timezone
+                </span>
+                <select
+                  name="workshop_timezone"
+                  defaultValue={affiliate.workshop_timezone ?? "America/New_York"}
+                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #B5B0A8", fontFamily: "Georgia,serif", fontSize: 14 }}
+                >
+                  <option value="America/New_York">Eastern (America/New_York)</option>
+                  <option value="America/Chicago">Central (America/Chicago)</option>
+                  <option value="America/Denver">Mountain (America/Denver)</option>
+                  <option value="America/Phoenix">Arizona (America/Phoenix)</option>
+                  <option value="America/Los_Angeles">Pacific (America/Los_Angeles)</option>
+                  <option value="America/Anchorage">Alaska (America/Anchorage)</option>
+                  <option value="Pacific/Honolulu">Hawaii (Pacific/Honolulu)</option>
+                </select>
+              </label>
+
+              {/* Host */}
+              <label>
+                <span style={{ display: "block", fontFamily: "'Space Mono',monospace", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", color: "#6B6B6B", marginBottom: 6 }}>
+                  Host first name
+                </span>
+                <input
+                  name="host_first_name"
+                  type="text"
+                  defaultValue={affiliate.host_first_name ?? ""}
+                  placeholder="(blank = falls back to “Admissions, AESDR.”)"
+                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #B5B0A8", fontFamily: "Georgia,serif", fontSize: 14 }}
+                />
+              </label>
+
+              <label>
+                <span style={{ display: "block", fontFamily: "'Space Mono',monospace", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", color: "#6B6B6B", marginBottom: 6 }}>
+                  Host last name
+                </span>
+                <input
+                  name="host_last_name"
+                  type="text"
+                  defaultValue={affiliate.host_last_name ?? ""}
+                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #B5B0A8", fontFamily: "Georgia,serif", fontSize: 14 }}
+                />
+              </label>
+
+              <label>
+                <span style={{ display: "block", fontFamily: "'Space Mono',monospace", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", color: "#6B6B6B", marginBottom: 6 }}>
+                  Host tenure (years)
+                </span>
+                <input
+                  name="host_tenure_years"
+                  type="number"
+                  min={0}
+                  max={50}
+                  defaultValue={affiliate.host_tenure_years ?? ""}
+                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #B5B0A8", fontFamily: "Georgia,serif", fontSize: 14 }}
+                />
+              </label>
+
+              <label style={{ gridColumn: "1 / -1" }}>
+                <span style={{ display: "block", fontFamily: "'Space Mono',monospace", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", color: "#6B6B6B", marginBottom: 6 }}>
+                  Host background beat (one line)
+                </span>
+                <input
+                  name="host_background_beat"
+                  type="text"
+                  defaultValue={affiliate.host_background_beat ?? ""}
+                  placeholder="e.g. Carried bags at Brex, Front, and a Series A you've never heard of"
+                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #B5B0A8", fontFamily: "Georgia,serif", fontSize: 14 }}
+                />
+              </label>
+
+              {/* Partner quote */}
+              <label style={{ gridColumn: "1 / -1" }}>
+                <span style={{ display: "block", fontFamily: "'Space Mono',monospace", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", color: "#6B6B6B", marginBottom: 6 }}>
+                  Partner quote (optional)
+                </span>
+                <textarea
+                  name="workshop_partner_quote"
+                  rows={2}
+                  defaultValue={affiliate.workshop_partner_quote ?? ""}
+                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #B5B0A8", fontFamily: "Georgia,serif", fontSize: 14, resize: "vertical" }}
+                />
+              </label>
+
+              <label style={{ gridColumn: "1 / -1" }}>
+                <span style={{ display: "block", fontFamily: "'Space Mono',monospace", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", color: "#6B6B6B", marginBottom: 6 }}>
+                  Partner quote attribution
+                </span>
+                <input
+                  name="workshop_partner_quote_attribution"
+                  type="text"
+                  defaultValue={affiliate.workshop_partner_quote_attribution ?? ""}
+                  placeholder="e.g. Apex BDR Club founder"
+                  style={{ width: "100%", padding: "8px 12px", border: "1px solid #B5B0A8", fontFamily: "Georgia,serif", fontSize: 14 }}
+                />
+              </label>
+
+              {/* SMS */}
+              <label style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "10px 12px", border: "1px solid #B5B0A8", cursor: "pointer", gridColumn: "1 / -1" }}>
+                <input
+                  type="checkbox"
+                  name="sms_enabled"
+                  defaultChecked={affiliate.sms_enabled}
+                  style={{ marginTop: 3 }}
+                />
+                <span style={{ fontFamily: "Georgia,serif", fontSize: 14, color: "#1A1A1A" }}>
+                  <strong>SMS enabled for this pilot</strong> — when on, the registration form shows the canon §10.5 opt-in checkbox + phone field. Keep off until 10DLC clears and you actually want SMS reminders on this pilot.
+                </span>
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              style={{ fontFamily: "'Barlow Condensed',sans-serif", fontWeight: 700, fontSize: 13, letterSpacing: ".18em", textTransform: "uppercase", color: "#fff", background: "#8B1A1A", border: "none", padding: "12px 24px", cursor: "pointer" }}
+            >
+              Save workshop config
+            </button>
+          </form>
         </section>
       )}
 

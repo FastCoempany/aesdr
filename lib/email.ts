@@ -2086,3 +2086,50 @@ function revealUnlockedHtml(name: string): string {
 </body>
 </html>`;
 }
+
+// ─── Workshop Registration Confirmation ───
+// Sent the moment a prospect submits the workshop registration form at
+// /[affiliateSlug]/workshop. Resend send is fire-and-forget via safeSend
+// — a failed email logs but does NOT fail the registration (the row is
+// already saved). Per D07 (registration spec) and D10 (confirmation
+// email spec). The "Admissions" alias decision (D17, ratified 2026-05-28)
+// applies to scaled outbound DMs; transactional confirmations continue to
+// send from hello@aesdr.com so replies route to the established inbox
+// until admissions@ mailbox is operationally standing up.
+
+export type WorkshopRegistrationConfirmationPayload = {
+  to: string;
+  firstName: string;
+  workshopTitle: string;
+  workshopDateDisplay: string; // human-readable, formatted in workshop tz
+  affiliateDisplayName: string;
+  affiliateSlug: string;
+};
+
+export async function sendWorkshopRegistrationConfirmation(
+  p: WorkshopRegistrationConfirmationPayload
+): Promise<boolean> {
+  const body = `
+    <p style="margin:0 0 16px;">You're registered for the workshop on <strong>${esc(p.workshopDateDisplay)}</strong>.</p>
+    <p style="margin:0 0 16px;">Sixty minutes, live. The Q&amp;A runs as long as the questions do. A reminder lands twenty-four hours before, with the live link; another arrives three hours before.</p>
+    <p style="margin:0 0 16px;">If something comes up and you can't make it live, the replay opens within twenty-four hours of the workshop and stays open for seventy-two hours. Everyone who registered gets it automatically.</p>
+    <p style="margin:0 0 16px;">This workshop was organized in partnership with <strong>${esc(p.affiliateDisplayName)}</strong>.</p>
+  `;
+  const html = affiliateShellHtml({
+    eyebrow: "AESDR · Workshop · Registered",
+    headline: `You're in, ${esc(p.firstName)}.`,
+    body,
+    ctaUrl: `${SITE}/${p.affiliateSlug}/workshop`,
+    ctaLabel: "Workshop details",
+  });
+  return safeSend(`workshop-confirmation to ${p.to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to: p.to,
+      subject: `You're registered: ${p.workshopTitle}`,
+      html,
+      text: htmlToText(html),
+      headers: UNSUBSCRIBE_HEADERS,
+    })
+  );
+}

@@ -690,3 +690,85 @@ export async function createAffiliate(formData: FormData): Promise<void> {
 
   revalidatePath("/admin/affiliates");
 }
+
+/* ─── workshop pilot config (admin side) ─── */
+
+/**
+ * Update an affiliate's workshop-pilot config (title, audience, date,
+ * host, partner quote, SMS toggle, master open switch).
+ *
+ * The form posts a full snapshot of the workshop fields each save, so
+ * we update them all at once rather than maintaining per-field actions.
+ * Empty strings on text/textarea fields become NULL in the DB.
+ *
+ * Per D07 (registration spec), D08 (title ratified 2026-05-28), D29
+ * (host stubs), D12 (SMS opt-in toggle), canon §10.5 (consent rules).
+ */
+export async function setAffiliateWorkshop(formData: FormData): Promise<void> {
+  await requireAdmin();
+  const affiliateId = String(formData.get("affiliateId") ?? "");
+  if (!affiliateId) throw new Error("Missing affiliate id.");
+
+  const text = (key: string): string | null => {
+    const v = String(formData.get(key) ?? "").trim();
+    return v === "" ? null : v;
+  };
+  const integer = (key: string): number | null => {
+    const raw = String(formData.get(key) ?? "").trim();
+    if (raw === "") return null;
+    const n = Number(raw);
+    if (!Number.isFinite(n) || !Number.isInteger(n)) {
+      throw new Error(`${key} must be an integer.`);
+    }
+    return n;
+  };
+  const checkbox = (key: string): boolean =>
+    String(formData.get(key) ?? "") === "on";
+
+  // Validate ISO date if provided. We accept any string Date can parse —
+  // admins are expected to enter ISO 8601 with offset (e.g.
+  // "2026-06-15T18:00:00-04:00"). Postgres will store it as timestamptz.
+  const dateRaw = text("workshop_date_iso");
+  if (dateRaw && Number.isNaN(new Date(dateRaw).getTime())) {
+    throw new Error("workshop_date_iso must be a valid ISO 8601 datetime.");
+  }
+
+  // Master switch sanity: can't open registration without title + date.
+  const open = checkbox("workshop_registration_open");
+  const title = text("workshop_title");
+  if (open && (!title || !dateRaw)) {
+    throw new Error(
+      "Can't open registration without both workshop_title and workshop_date_iso set."
+    );
+  }
+
+  const patch = {
+    workshop_title: title,
+    workshop_audience_descriptor: text("workshop_audience_descriptor"),
+    workshop_partner_quote: text("workshop_partner_quote"),
+    workshop_partner_quote_attribution: text("workshop_partner_quote_attribution"),
+    workshop_date_iso: dateRaw,
+    workshop_timezone: text("workshop_timezone") || "America/New_York",
+    host_first_name: text("host_first_name"),
+    host_last_name: text("host_last_name"),
+    host_tenure_years: integer("host_tenure_years"),
+    host_background_beat: text("host_background_beat"),
+    sms_enabled: checkbox("sms_enabled"),
+    workshop_registration_open: open,
+  };
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("affiliates")
+    .update(patch)
+    .eq("id", affiliateId);
+  if (error) throw new Error(`Couldn't save workshop config: ${error.message}`);
+
+  // Use the affiliate's slug for the revalidate path (admin URL uses slug).
+  const affiliate = await getAffiliateById(affiliateId);
+  if (affiliate) {
+    revalidatePath(`/admin/affiliates/${affiliate.slug}`);
+    revalidatePath(`/${affiliate.slug}/workshop`);
+  }
+  revalidatePath("/admin/affiliates");
+}

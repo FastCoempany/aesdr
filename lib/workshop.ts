@@ -71,7 +71,7 @@ export function resolveTemplateSlots(
 
   const hostLine = resolveHostLine(affiliate);
   const partnerQuoteBlock = resolvePartnerQuoteBlock(affiliate);
-  const dateDisplay = resolveDateDisplay(affiliate);
+  const dateDisplay = formatWorkshopDateForDisplay(affiliate);
 
   return template
     .replaceAll("[WORKSHOP_TITLE]", title)
@@ -118,8 +118,11 @@ function resolvePartnerQuoteBlock(affiliate: AffiliateRecord): string {
  * Date display — formatted in the affiliate's workshop_timezone. Falls
  * back to a plain ISO string if the date is unset (caller is responsible
  * for not rendering the page in that state via getLiveWorkshopAffiliate).
+ *
+ * Exported so the confirmation email + future reminders can format
+ * the same way as the public page.
  */
-function resolveDateDisplay(affiliate: AffiliateRecord): string {
+export function formatWorkshopDateForDisplay(affiliate: AffiliateRecord): string {
   if (!affiliate.workshop_date_iso) return "TBD";
   const tz = affiliate.workshop_timezone || "America/New_York";
   try {

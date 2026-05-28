@@ -16,10 +16,16 @@
 
 import { NextResponse } from "next/server";
 
-import { getLiveWorkshopAffiliate, insertWorkshopRegistration } from "@/lib/workshop";
+import {
+  getLiveWorkshopAffiliate,
+  insertWorkshopRegistration,
+  formatWorkshopDateForDisplay,
+  DEFAULT_WORKSHOP_TITLE,
+} from "@/lib/workshop";
 import type { WorkshopRegistrationPayload } from "@/lib/workshop";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { readRequestMeta } from "@/lib/req-meta";
+import { sendWorkshopRegistrationConfirmation } from "@/lib/email";
 
 const RATE_LIMIT = { max: 5, windowMs: 60_000 }; // 5/min per IP
 
@@ -114,6 +120,20 @@ export async function POST(request: Request) {
   if (!result.ok) {
     return NextResponse.json({ ok: false, error: result.error }, { status: 500 });
   }
+
+  // Fire-and-forget confirmation email. safeSend returns false on failure
+  // and logs to Sentry/console; we do NOT fail the registration response
+  // because the row is already saved and the user has seen the success
+  // state in the UI. A missed email is recoverable (resend), a failed
+  // registration is not.
+  void sendWorkshopRegistrationConfirmation({
+    to: body.email,
+    firstName: body.first_name,
+    workshopTitle: affiliate.workshop_title || DEFAULT_WORKSHOP_TITLE,
+    workshopDateDisplay: formatWorkshopDateForDisplay(affiliate),
+    affiliateDisplayName: affiliate.display_name,
+    affiliateSlug: affiliate.slug,
+  });
 
   return NextResponse.json({ ok: true });
 }
