@@ -48,5 +48,3 @@ If it doesn't deliver value, we don't want your money. The offer at the end come
 - **Length:** 60 minutes, live. The Q&A runs as long as the questions do.
 - **Where:** Live link emailed at registration; reminder at twenty-four hours and three hours before.
 - **Replay:** Sent within twenty-four hours after live to everyone who registered. Open for seventy-two hours.
-</content>
-</invoke>
