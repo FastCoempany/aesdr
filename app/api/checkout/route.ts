@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (tier === 'artifact_unlock' && !artifact_type) {
-      return NextResponse.json({ error: 'artifact_type required for unlock' }, { status: 400 });
+      return NextResponse.json({ error: 'Artifact required for unlock' }, { status: 400 });
     }
 
     const isUnlock = tier === 'artifact_unlock';

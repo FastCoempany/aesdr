@@ -39,7 +39,7 @@ export async function GET(request: Request) {
 
     if (!artifact) {
       return NextResponse.json(
-        { error: "Artifact not generated yet. POST to /api/artifacts to generate." },
+        { error: "Artifact not ready yet." },
         { status: 404 }
       );
     }
