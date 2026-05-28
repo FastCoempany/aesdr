@@ -60,6 +60,24 @@ export interface AffiliateRecord {
   sunset_at: string | null;
 
   notes: string | null;
+
+  // Workshop pilot fields (added 20260528_workshop_registration.sql).
+  // All nullable; the workshop page renders only when
+  // workshop_registration_open = true AND the title + date are populated.
+  workshop_title: string | null;
+  workshop_audience_descriptor: string | null;
+  workshop_partner_quote: string | null;
+  workshop_partner_quote_attribution: string | null;
+  workshop_date_iso: string | null;
+  workshop_timezone: string | null;
+
+  host_first_name: string | null;
+  host_last_name: string | null;
+  host_tenure_years: number | null;
+  host_background_beat: string | null;
+
+  sms_enabled: boolean;
+  workshop_registration_open: boolean;
 }
 
 export interface StrikeEntry {

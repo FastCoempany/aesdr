@@ -1,0 +1,186 @@
+/*
+ * Workshop registration page styles.
+ * Scoped under .workshop-page so they don't bleed elsewhere. All colors
+ * and fonts via tokens in app/globals.css (active editorial palette).
+ */
+
+.workshop-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 80px 24px 120px;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--serif);
+}
+
+.workshop-prose {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--ink);
+}
+
+.workshop-prose > *:first-child { margin-top: 0; }
+
+.workshop-prose h1,
+.workshop-prose h2,
+.workshop-prose h3,
+.workshop-prose h4 {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.15;
+}
+
+.workshop-prose h1 {
+  font-size: clamp(36px, 5vw, 56px);
+  margin: 0 0 24px;
+}
+
+.workshop-prose h2 {
+  font-size: 28px;
+  margin: 56px 0 18px;
+}
+
+.workshop-prose h3 { font-size: 22px; margin: 40px 0 12px; }
+
+.workshop-prose p { margin: 0 0 18px; }
+.workshop-prose strong { color: var(--ink); font-weight: 700; }
+.workshop-prose em { font-style: italic; }
+
+.workshop-prose blockquote {
+  margin: 28px 0;
+  padding: 16px 0 16px 24px;
+  border-left: 3px solid var(--crimson);
+  color: var(--muted);
+  font-style: italic;
+}
+
+.workshop-prose ul,
+.workshop-prose ol {
+  margin: 0 0 22px;
+  padding-left: 24px;
+}
+
+.workshop-prose li { margin: 6px 0; }
+
+.workshop-prose hr {
+  border: none;
+  border-top: 1px solid var(--light);
+  margin: 48px 0;
+}
+
+/* ── Form ───────────────────────────────────────────────────────────── */
+
+.workshop-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 32px;
+  margin: 24px 0 32px;
+  background: #fff;
+  border: 1px solid var(--light);
+  font-family: var(--serif);
+}
+
+.workshop-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.workshop-form-field-indent { padding-left: 26px; margin-top: 12px; }
+
+.workshop-form-field > span,
+.workshop-form-field > legend {
+  font-family: var(--cond);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0;
+}
+
+.workshop-form-field input[type="email"],
+.workshop-form-field input[type="text"],
+.workshop-form-field input[type="number"],
+.workshop-form-field input[type="tel"] {
+  padding: 10px 12px;
+  border: 1px solid var(--light);
+  background: var(--cream);
+  font-family: var(--serif);
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.workshop-form-field input:focus {
+  outline: 2px solid var(--crimson);
+  outline-offset: -1px;
+}
+
+.workshop-form-radio,
+.workshop-form-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.workshop-form-radio input,
+.workshop-form-checkbox input {
+  margin-top: 4px;
+}
+
+.workshop-form-radio span,
+.workshop-form-checkbox span { color: var(--ink); }
+
+.workshop-form-submit {
+  margin-top: 8px;
+  padding: 14px 24px;
+  background: var(--crimson);
+  color: #fff;
+  border: none;
+  font-family: var(--cond);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.workshop-form-submit:hover { background: #6e1414; }
+
+.workshop-form-submit:disabled {
+  background: var(--muted);
+  cursor: wait;
+}
+
+.workshop-form-error {
+  margin: 0;
+  padding: 12px 16px;
+  background: #fdf2f2;
+  border-left: 3px solid var(--crimson);
+  color: var(--crimson);
+  font-size: 14px;
+}
+
+.workshop-form-success {
+  padding: 32px;
+  margin: 24px 0;
+  background: #fff;
+  border: 1px solid var(--light);
+  border-left: 3px solid var(--crimson);
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.workshop-form-success p { margin: 0 0 12px; }
+.workshop-form-success p:last-child { margin: 0; }
