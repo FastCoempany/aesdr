@@ -30,7 +30,7 @@ You don't need a round for:
 
 ## How to submit
 
-Email `affiliate@aesdr.com`. Subject line: `Approval — [Affiliate Slug] —
+Email `affiliates@aesdr.com`. Subject line: `Approval — [Affiliate Slug] —
 [Surface] — [Date you want to publish]`.
 
 Body needs:

@@ -8,11 +8,11 @@ contacts AESDR — match yours to the row, get a faster answer.
 | What | Who | Response time |
 |---|---|---|
 | **Anything urgent during a live workshop** (tech failure, dropped audio, host issue) | The text channel in the workshop chat — type in the live chat. The AESDR team is on it. | Real-time |
-| **Copy approval** ([approval workflow](/affiliates/kit-private/approval-workflow)) | `affiliate@aesdr.com` — subject line per that page | 24 business hours |
-| **Post-workshop debrief, attendance issues, refund spikes, attribution disputes** | `affiliate@aesdr.com` — subject `Pilot debrief — [Affiliate Slug]` | 24 business hours |
-| **Buyer-side issue from your audience** (refund question, login problem, content question) | Forward to `hello@aesdr.com` (CC `affiliate@aesdr.com` if you want visibility) | 48 business hours |
-| **Anything contractual, scope-changing, or payment-related** | `affiliate@aesdr.com` — subject `Contract — [Affiliate Slug]` | 48 business hours |
-| **Anything else** | `affiliate@aesdr.com` — say so plainly in the subject. We'll route it. | 48 business hours |
+| **Copy approval** ([approval workflow](/affiliates/kit-private/approval-workflow)) | `affiliates@aesdr.com` — subject line per that page | 24 business hours |
+| **Post-workshop debrief, attendance issues, refund spikes, attribution disputes** | `affiliates@aesdr.com` — subject `Pilot debrief — [Affiliate Slug]` | 24 business hours |
+| **Buyer-side issue from your audience** (refund question, login problem, content question) | Forward to `hello@aesdr.com` (CC `affiliates@aesdr.com` if you want visibility) | 48 business hours |
+| **Anything contractual, scope-changing, or payment-related** | `affiliates@aesdr.com` — subject `Contract — [Affiliate Slug]` | 48 business hours |
+| **Anything else** | `affiliates@aesdr.com` — say so plainly in the subject. We'll route it. | 48 business hours |
 
 ## What "business hours" means
 
@@ -39,7 +39,7 @@ watching it.
 
 ## When to escalate beyond email
 
-If you've emailed `affiliate@aesdr.com` and haven't heard back inside
+If you've emailed `affiliates@aesdr.com` and haven't heard back inside
 **72 business hours**, something's gone wrong on our side. Reply to the
 original thread with `RE: still no response` in the subject. If still
 no reply within 24 hours of that, the affiliateship agreement names a

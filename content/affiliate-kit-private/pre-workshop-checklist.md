@@ -70,7 +70,7 @@ done your job — the rest is on AESDR.
 - [ ] Reply to inbound questions from your audience in your voice — staying
       clear of the [banned vocabulary list](/affiliates/kit/banned-vocabulary)
       and not making any [forbidden claims](/affiliates/kit/approved-claims).
-- [ ] Forward to AESDR (`affiliate@aesdr.com`) any audience questions you
+- [ ] Forward to AESDR (`affiliates@aesdr.com`) any audience questions you
       can't answer cleanly. We respond within 24 business hours.
 
 **Day 2 after**
@@ -97,11 +97,11 @@ done your job — the rest is on AESDR.
 - Replay is the buffer — most enrollments come from replay watchers
   anyway. The Friday report will show you the real conversion math.
 - If attendance is materially below your expectations (e.g., <50% of
-  registered), email `affiliate@aesdr.com` after the live. We'll do a
+  registered), email `affiliates@aesdr.com` after the live. We'll do a
   joint debrief on what to adjust for the replay window.
 
 **Audience complaint about the workshop content**
-- Don't engage publicly. Forward the message to `affiliate@aesdr.com`
+- Don't engage publicly. Forward the message to `affiliates@aesdr.com`
   with the original audience member's permission.
 - AESDR responds to substantive complaints within 24 business hours,
   with a CC to you so you have the response in writing.
@@ -113,4 +113,4 @@ done your job — the rest is on AESDR.
   and net is calculated. Don't panic in the first week.
 
 **Anything else**
-- Email `affiliate@aesdr.com`. We'd rather hear it once than have it sit.
+- Email `affiliates@aesdr.com`. We'd rather hear it once than have it sit.

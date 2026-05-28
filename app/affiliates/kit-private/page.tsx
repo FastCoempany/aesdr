@@ -256,8 +256,8 @@ function PrivateKitDenied({ error }: { error?: string }) {
             /affiliates/kit
           </Link>
           . If you need a fresh access link, email{" "}
-          <a href="mailto:affiliate@aesdr.com" style={{ color: "var(--ink)", textDecoration: "underline" }}>
-            affiliate@aesdr.com
+          <a href="mailto:affiliates@aesdr.com" style={{ color: "var(--ink)", textDecoration: "underline" }}>
+            affiliates@aesdr.com
           </a>
           .
         </p>

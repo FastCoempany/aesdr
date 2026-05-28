@@ -23,12 +23,16 @@ export type KitSession = ResolvedToken & { isAdmin?: boolean };
 
 export async function readKitSession(): Promise<KitSession | null> {
   // Admin bypass — short-circuits the entire token system.
-  const { isAdmin, user } = await getAdminContext();
+  const { isAdmin } = await getAdminContext();
   if (isAdmin) {
     return {
       tid: "__admin__",
       affiliate_slug: "__admin__",
-      partner_label: user?.email ? `Admin (${user.email})` : "Admin",
+      // Per 2026-05-28 ratification: admin-preview label shows the
+      // canonical affiliates inbox instead of the logged-in admin's
+      // personal email, so the CaveatLayer PS on kit-private pages
+      // doesn't leak the founder's gmail.
+      partner_label: "Admin (affiliates@aesdr.com)",
       expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
       revoked_at: null,
       isAdmin: true,

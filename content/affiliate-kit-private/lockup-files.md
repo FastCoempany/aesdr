@@ -71,7 +71,7 @@ have you crop ours.
 1. Confirm you're using the supplied file unmodified.
 2. Compare against the composition guide PDF — the example sizes there
    should match how it's rendering on yours.
-3. If it still looks wrong, email `affiliate@aesdr.com` with a screenshot
+3. If it still looks wrong, email `affiliates@aesdr.com` with a screenshot
    of the placement. We'll either fix the file or fix the placement
    guidance, depending on which is off.
 
