@@ -21,7 +21,21 @@ import SignOutButton from "@/components/SignOutButton";
 import { createClient } from "@/utils/supabase/server";
 import { PLAYBOOK_ENTRIES, recommendForArchetype } from "@/lib/affiliate-playbooks";
 import { getAffiliateForUser } from "@/lib/affiliate-entity";
+import type { AffiliateArchetype } from "@/lib/affiliate-entity";
+import { isAdminEmail } from "@/lib/admin";
 import "./playbooks.css";
+
+const ARCHETYPES: AffiliateArchetype[] = [
+  "creator",
+  "coach",
+  "community",
+  "alumni",
+  "hybrid",
+];
+
+function isArchetype(value: string | null): value is AffiliateArchetype {
+  return value !== null && (ARCHETYPES as string[]).includes(value);
+}
 
 export const metadata: Metadata = {
   title: "Playbooks | AESDR Affiliates",
@@ -30,23 +44,41 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function PlaybooksIndexPage() {
+export default async function PlaybooksIndexPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ preview?: string }>;
+}) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/affiliates/dashboard/playbooks");
 
+  // Admin bypass: lib/admin.ts permanent + env allowlist. Admins can
+  // preview the playbooks surface without an affiliate row, and can
+  // cycle through every archetype's "Start here" callout via the
+  // ?preview= query param (?preview=creator|coach|community|alumni|hybrid).
+  const isAdmin = isAdminEmail(user.email);
   const isAffiliate = user.user_metadata?.is_affiliate === true;
-  if (!isAffiliate) redirect("/affiliates/dashboard");
+  if (!isAffiliate && !isAdmin) redirect("/affiliates/dashboard");
+
+  const { preview } = await searchParams;
+  const previewArchetype = isAdmin && isArchetype(preview ?? null) ? preview as AffiliateArchetype : null;
 
   // Load the affiliate record so we can surface an archetype-matched
-  // "Start here" callout above the grid. Falls back to null (no callout)
-  // when the record isn't found — hybrid archetype also returns null.
-  const affiliate = await getAffiliateForUser({
-    userId: user.id,
-    jwtAffiliateSlug: user.user_metadata?.affiliate_slug,
-    jwtPartnerSlug: user.user_metadata?.partner_slug,
-  });
-  const recommendation = affiliate ? recommendForArchetype(affiliate.archetype) : null;
+  // "Start here" callout above the grid. Skipped for admin preview
+  // mode (we use the previewArchetype directly instead).
+  const affiliate = !previewArchetype && isAffiliate
+    ? await getAffiliateForUser({
+        userId: user.id,
+        jwtAffiliateSlug: user.user_metadata?.affiliate_slug,
+        jwtPartnerSlug: user.user_metadata?.partner_slug,
+      })
+    : null;
+
+  const archetypeForCallout = previewArchetype ?? affiliate?.archetype ?? null;
+  const recommendation = archetypeForCallout
+    ? recommendForArchetype(archetypeForCallout)
+    : null;
 
   const sorted = [...PLAYBOOK_ENTRIES].sort((a, b) => a.order - b.order);
 
@@ -78,6 +110,32 @@ export default async function PlaybooksIndexPage() {
         </p>
       </section>
 
+      {isAdmin && (
+        <section className="playbooks-admin-preview">
+          <p className="playbooks-admin-preview-label">Admin preview</p>
+          <p className="playbooks-admin-preview-help">
+            Cycle through each archetype's &ldquo;Start here&rdquo; callout:
+          </p>
+          <div className="playbooks-admin-preview-tabs">
+            <Link
+              href="/affiliates/dashboard/playbooks"
+              className={!previewArchetype ? "playbooks-admin-preview-tab-active" : ""}
+            >
+              None
+            </Link>
+            {ARCHETYPES.map((a) => (
+              <Link
+                key={a}
+                href={`/affiliates/dashboard/playbooks?preview=${a}`}
+                className={previewArchetype === a ? "playbooks-admin-preview-tab-active" : ""}
+              >
+                {a}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
       {recommendation && (
         <section className="playbook-recommended-section">
           <Link
@@ -87,7 +145,7 @@ export default async function PlaybooksIndexPage() {
             <div className="playbook-recommended-header">
               <span className="playbook-recommended-label">Start here</span>
               <span className="playbook-recommended-archetype">
-                Your archetype: {affiliate?.archetype}
+                {previewArchetype ? `Preview: ${previewArchetype}` : `Your archetype: ${affiliate?.archetype}`}
               </span>
             </div>
             <h2>{recommendation.primary.title}</h2>

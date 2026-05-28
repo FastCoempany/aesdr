@@ -14,6 +14,7 @@ import AesdrBrand from "@/components/AesdrBrand";
 import SignOutButton from "@/components/SignOutButton";
 import { createClient } from "@/utils/supabase/server";
 import { getPlaybook, getPlaybookHtml } from "@/lib/affiliate-playbooks";
+import { isAdminEmail } from "@/lib/admin";
 import "../playbooks.css";
 
 type Params = { path: string };
@@ -39,8 +40,10 @@ export default async function PlaybookDetailPage(
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/login?next=/affiliates/dashboard/playbooks/${path}`);
 
+  // Admin bypass (matches lib/affiliate-kit-session.ts pattern).
+  const isAdmin = isAdminEmail(user.email);
   const isAffiliate = user.user_metadata?.is_affiliate === true;
-  if (!isAffiliate) redirect("/affiliates/dashboard");
+  if (!isAffiliate && !isAdmin) redirect("/affiliates/dashboard");
 
   const entry = getPlaybook(path);
   if (!entry) notFound();

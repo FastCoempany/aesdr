@@ -26,6 +26,7 @@ const QUICK_LINKS: QuickEntry[] = [
   { label: "Affiliate Hub", href: "/affiliates", note: "Partner-prospect surface" },
   { label: "Public Kit", href: "/affiliates/kit", note: "8 partner-facing docs" },
   { label: "Gated Kit", href: "/affiliates/kit-private", note: "6 ops docs (admin auto-access)" },
+  { label: "Playbooks", href: "/affiliates/dashboard/playbooks", note: "7 path playbooks (4 ready, 3 draft)" },
   { label: "Admin · Dashboard", href: "/admin", note: "Cohort + revenue stats" },
   { label: "Admin · Users", href: "/admin/users", note: "All buyers, roles, refunds" },
   { label: "Admin · Teams", href: "/admin/teams", note: "Team purchases + seat allocations" },

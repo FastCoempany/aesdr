@@ -78,6 +78,61 @@
   margin: 0 0 16px;
 }
 
+/* ── Admin preview tabs (cycle through archetypes) ──────────────────── */
+
+.playbooks-admin-preview {
+  max-width: 1080px;
+  margin: 0 auto 16px;
+  padding: 16px 24px;
+  background: #fff;
+  border: 1px dashed var(--crimson);
+}
+
+.playbooks-admin-preview-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--crimson);
+  margin: 0 0 4px;
+}
+
+.playbooks-admin-preview-help {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+.playbooks-admin-preview-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.playbooks-admin-preview-tabs a {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 5px 10px;
+  border: 1px solid var(--light);
+}
+
+.playbooks-admin-preview-tabs a:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.playbooks-admin-preview-tab-active {
+  color: var(--cream) !important;
+  background: var(--ink);
+  border-color: var(--ink) !important;
+}
+
 /* ── Recommended-for-archetype "Start here" callout ─────────────────── */
 
 .playbook-recommended-section {
