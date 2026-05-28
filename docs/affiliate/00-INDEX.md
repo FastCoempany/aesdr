@@ -124,7 +124,7 @@ These are not D-numbered deliverables; they're real-world inputs the deliverable
 | Admissions alias setup (LinkedIn account, calendar, inbox) | D17 production sends, D23 Q10 contact line, D29 alias bio | canon §12.3 outstanding Q3 |
 | Counsel review of D22 v1 | First affiliate contract execution | D22 §16 redline workflow |
 | AESDR legal entity formation | D22 §1 placeholder `[AESDR_LEGAL_ENTITY]` | D22 §1 |
-| Workshop title finalization | D09 slide 01 | canon §17 outstanding Q5 |
+| Workshop title finalization (**resolved 2026-05-28**) | D09 slide 01 | D08 (Q5 resolved) |
 | Lesson 04 source recording approval + cut | D30 production | D30 §8 |
 | Co-brand lockup assets (10a/b/c per affiliate) | D26 + D40 kit handoff | D40 §1 + canon §6.6 |
 | Stripe webhooks + Vimeo token-gating + analytics infra | D24 replay page, D26 affiliate-promo page, D17 trigger detection | D22 §6, D26 §10, D24 §10 |

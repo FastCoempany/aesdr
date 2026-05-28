@@ -35,7 +35,7 @@
 
 **Layout:** Editorial split title card (canon §6.3, pattern from `variants/variant-a-editorial-split.html`). Crimson left, cream right.
 
-- **Crimson left panel (40% width):** Mono eyebrow `AESDR · WORKSHOP · [PARTNER_SLUG]`. Below it, `--display` italic 72pt white type: *the workshop title* (placeholder until canon §17 outstanding question 5 resolves — current default: *"What good actually looks like in your first two years."*). Ghost numeral `09` bottom-left at opacity .06, white.
+- **Crimson left panel (40% width):** Mono eyebrow `AESDR · WORKSHOP · [PARTNER_SLUG]`. Below it, `--display` italic 72pt white type: *What good actually looks like in startup **SaaS**.* (ratified 2026-05-28; canon §17 outstanding question 5 resolved). The accent word `SaaS` gets the `.heroAccent` iris text-clip treatment per the one-accent-word rule. Ghost numeral `09` bottom-left at opacity .06, white.
 - **Cream right panel (60% width):** Hosted-by line, `--cond` 14pt: `HOSTED BY [HOST_FIRST_NAME] [HOST_LAST_NAME]`. Below it, affiliate co-brand lockup if co-branded (canon §6.6). Below it, mono date band: `[YYYY-MM-DD] · [HH:MM] [TZ]`. Ambient iris line at bottom edge (canon §6.4 — permitted as ambient).
 
 **Speaker notes:** Hold this slide for ~30 seconds while attendees join. Do not speak over it. Audio: silence or low ambient — no music.
@@ -414,8 +414,8 @@ Post-workshop debrief within 24 hours per canon §12.2.
 
 This deck depends on:
 - `D06-workshop-cta-offer.md` — slide 16 lifts verbatim from D06's offer block. **Already shipped.**
-- `D08-workshop-title-options.md` — slide 01 title placeholder resolved when founder picks from D08's ranked options. **Already shipped; final pick pending.**
-- Workshop title finalization (canon §17 outstanding question 5).
+- `D08-workshop-title-options.md` — slide 01 title placeholder resolved by D08's ratified pick. **Already shipped; final pick ratified 2026-05-28: *What good actually looks like in startup SaaS.***
+- Workshop title finalization (canon §17 outstanding question 5). **Resolved 2026-05-28** — see D08.
 - Host casting (canon §17 outstanding question 1, 4) — `[HOST_FIRST_NAME]` and `[HOST_LAST_NAME]` swap.
 - D27 affiliate vetting scorecard — affiliate has to pass before deck is co-branded for them.
 - Workshop-as-teaser register (rev 2026-05-02) — on-screen content stays broad and allusive; deck uses no framework diagrams. Per canon §6.9.3, this is a doctrine-level decision, not a layout-pattern decision; documented here for ratification.
@@ -430,7 +430,7 @@ This deck is a forward dependency for:
 
 ## Open
 
-- Workshop title — pending founder pick from D08. Until then, slide 01 placeholder.
+- Workshop title (ratified 2026-05-28): *What good actually looks like in startup SaaS.* Slide 01 placeholder resolved.
 - Pipeline-integrity funnel sample numbers (slide 11) — currently `[ILLUSTRATIVE]`. Question: do we use a single canonical illustration across every pilot, or randomize per host? Default: single canonical illustration. The illustration is the framework, not the host's experience.
 - Slide 18 (Q&A) — should the host get a backup-question slide (3–5 prepared questions to seed if chat is silent)? Default: **yes**, but they live in the host's notes, not as a deck slide. Silent chat is a fit signal; a backup slide signals desperation.
 - Whether to add a slide between 17 and 18 explicitly handing off to the offer-page URL (mono URL display, scannable QR). Default: **no** — the URL is in the same-day attendee email (D13), the replay page (D24 proposed), and the chat. A QR slide is the kind of thing LinkedIn-vibes events do.

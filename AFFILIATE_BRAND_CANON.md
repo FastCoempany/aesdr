@@ -789,7 +789,7 @@ This document is the source of truth for the affiliate / partner ecosystem until
 2. The Turtle artwork — does it appear on partner collateral, and if so, where?
 3. Admissions alias setup — `admissions@aesdr.com` vs another address? Calendar tooling choice?
 4. Is the host one named individual long-term, or a rotating cast? Affects locked vs ad-lib ratios.
-5. Workshop title — pain-led options pending; placeholder until founder picks.
+5. Workshop title — **resolved 2026-05-28**: *What good actually looks like in startup SaaS.* See D08 for rationale; subtitle and downstream threading in D07, D09. Per-pilot templates (D10, D13, D14, D15, D18, D24, D26) inherit via `[WORKSHOP_TITLE]`.
 
 ---
 

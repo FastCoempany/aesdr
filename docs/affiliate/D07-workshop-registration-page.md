@@ -51,7 +51,7 @@ Type: `--mono` 10pt, `.25em` letter-spacing, uppercase, color `--muted`. Positio
 
 **Warning box** (1px white border at .2 opacity):
 > ⚠ **CONTENT WARNING**
-> *This workshop names what's actually going wrong in your first year — your **pipeline**, your **manager 1:1s**, your **commission math**, your **Sunday nights**, and the **expectations nobody walked you through**.*
+> *This workshop names what's actually going wrong in your first two years — your **pipeline**, your **manager 1:1s**, your **commission math**, your **Sunday nights**, and the **expectations nobody walked you through**.*
 
 **Ghost numeral:** `01` in `--display` 900wt at 300px, opacity .06, bottom-right of crimson panel.
 
@@ -62,13 +62,13 @@ Type: `--mono` 10pt, `.25em` letter-spacing, uppercase, color `--muted`. Positio
 **Mono label:**
 > `THE LIVE WORKSHOP · 60 MINUTES · ONE OFFER · NO RECORDING SOLD`
 
-**Headline** (D8 title — placeholder; founder picks):
+**Headline** (D8 title — ratified 2026-05-28):
 > *What good actually looks like in startup* ***SaaS***.
 
 The single accent word (`SaaS` or whichever the title's accent word becomes) takes the iris text-clip treatment per `.heroAccent`. One accent word, never more.
 
 **Subtitle** (`--serif` 18pt, line-height 1.7, `--muted`):
-> *A live 60-minute workshop for first-1-to-2-year SDRs and AEs in startup SaaS. No motivation. No mindset slide. The five pressures every early-career AE or SDR gets, and the operating standard nobody handed you on day one.*
+> *Sixty minutes on the part of the job your onboarding skipped — for SDRs and AEs in their first two years, and the experienced ones running it back with more context.*
 
 **Primary CTA** (iris button):
 > `Save my seat →`
@@ -235,13 +235,13 @@ Type: `--mono` 10pt, `.1em` letter-spacing, uppercase for nav links; `--serif` 1
 2. **Token check:** All colors and fonts reference canon tokens.
 3. **Iris reservation:** Three iris instances, all permitted.
 4. **Icon discipline:** Only seed glyphs (warning circle, ghost numeral, corner brackets, classified stamp). No imported icons.
-5. **Voice thumbnail:** First 20 words pass as identifiably AESDR — "What good actually looks like in startup SaaS / A live 60-minute workshop for first-1-to-2-year SDRs and AEs in startup SaaS."
+5. **Voice thumbnail:** First 20 words pass as identifiably AESDR — "What good actually looks like in startup SaaS / Sixty minutes on the part of the job your onboarding skipped."
 
 ---
 
 ## Open
 
-- Title is placeholder pending founder pick from D8. Once picked, lock in `aesdr--template--workshop-registration--v1.html` and propagate to D6, D14, reminder emails (D10–D11), the deck, and replay page.
+- Title ratified 2026-05-28: *What good actually looks like in startup SaaS.* Locked in `aesdr--template--workshop-registration--v1.html` and threaded through D6, D14, reminder emails (D10–D11), the deck, and replay page.
 - Host name + bio sentence pending host casting (canon §17 open question 4).
 - Calendar tooling — registration confirmation includes a calendar attachment per canon §7.4 + §7.7. Tooling pending.
 - Affiliate co-mark image asset and exact placement vary per affiliate; lockup rules per canon §6.6 hold across all of them.

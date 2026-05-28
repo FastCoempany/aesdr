@@ -1,7 +1,7 @@
 # D8 — Workshop Title Options (12 Ranked)
 
 **Deliverable:** Twelve pain-led workshop titles, ranked, for the live affiliate workshop. The chosen title threads through the registration page (D7), offer slide (D6), reminders, replay copy, and affiliate-promo copy.
-**Audience:** First-1-to-2-year SDRs and AEs in startup SaaS.
+**Audience:** SDRs and AEs in their first two years in startup SaaS. Also written for experienced operators who want the realities of the role named, not retaught.
 **Voice ratio:** 75 Rowan / 25 Michael. Pain-led, verdict-shaped, 4–8 words where possible.
 **Format:** Markdown source. Title gets locked to canon at v1.x once founder picks.
 **Canon refs:** `AFFILIATE_BRAND_CANON.md` §3, §4 (banned vocabulary), §13 (honesty), `affiliate-seeding-deep-research-report.md` §Workshop-first pilot (registration-page pass criterion: pain-led title).
@@ -22,11 +22,16 @@ A title is also a contract: the workshop must deliver on the title's promise ins
 
 ---
 
-## A. Top tier (founder picks one of these)
+## A. Top tier (ratified 2026-05-28: #1)
 
-### 1. *What good actually looks like in startup SaaS.*
+> **Final pick:** *What good actually looks like in startup SaaS.*
+> **Subtitle (Michael flicker):** *Sixty minutes on the part of the job your onboarding skipped — for SDRs and AEs in their first two years, and the experienced ones running it back with more context.*
+>
+> Threaded into D07 (registration page), D09 (deck slide 01), `AFFILIATE_BRAND_CANON.md` §17 (outstanding Q5 resolved), and `00-INDEX.md` forward-deps. Per-pilot templates (D10, D13, D14, D15, D18, D24, D26) inherit via the `[WORKSHOP_TITLE]` slot — no template edits required.
+
+### 1. *What good actually looks like in startup SaaS.* ← **FINAL PICK**
 **Why it's #1:** Names the exact pain the report's ICP described in interviews ("I'm working hard, but nobody has explained what good actually looks like here"). Verdict-shaped. Reads at every size. The "actually" earns its place by signaling that other answers are dishonest.
-**Subtitle (Michael flicker):** *A live workshop for first-year SDRs and AEs in startup SaaS. No motivation. No mindset slide. Just the operating standard nobody handed you on day one.*
+**Subtitle (Michael flicker):** *Sixty minutes on the part of the job your onboarding skipped — for SDRs and AEs in their first two years, and the experienced ones running it back with more context.*
 
 ### 2. *The Operating Manual for Your First Year.*
 **Why it's #2:** Reuses the canonical brand frame ("operating manual, not motivation engine") as the workshop title itself. Strongest brand integration. Slight risk it reads as too internal-jargon to a cold audience — depends on affiliate's audience.
