@@ -201,7 +201,7 @@ This playbook depends on:
 - **D32 cut-or-keep memo** — EXTEND decision feeds the conversion gate. **Met.**
 - **D33 postmortem** — §6 ICP fit + §7 brand audit feed gates 3 + 4. **Met.**
 - **D17 high-intent DM log** — gate 6 source. **Met.**
-- **`D22a-ambassador-agreement.md` template** — referenced as the agreement-shape doc. **Pending separate authoring** — recommend drafted on first ambassadorship invite, not pre-templated. The structure is named here; the legal doc gets drafted when first needed.
+- **`D22a-ambassador-agreement.md` template** — referenced as the agreement-shape doc. **Authoring policy ratified 2026-05-28:** drafted on first ambassadorship invite, not pre-templated. The structure is named here; the legal doc gets drafted when first needed.
 
 This playbook is a forward dependency for:
 - **Future ambassador agreements** — the doctrine governs the term-sheet shape.

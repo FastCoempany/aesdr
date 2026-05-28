@@ -127,7 +127,7 @@ The PS specifically uses `we part as adults` — fourth canonical use. Per the a
 
 ## Open
 
-- Replay-page URL pattern — `aesdr.com/[affiliate-slug]/replay/[token]` is a placeholder. Final pattern may differ depending on whether replay tokens are affiliate-namespaced or globally unique. Default until decided: affiliate-namespaced for clean attribution.
+- Replay-page URL pattern (ratified 2026-05-28): `aesdr.com/[affiliate-slug]/replay/[token]` — affiliate-namespaced for clean attribution, not globally unique.
 - Whether to send the same email at H+0 (right after live ends) and at H+24 with shifted copy ("12 hours left"). Default: **no** — one email, one window, per the canon's anti-fake-urgency stance (§9.2). Forces attendees to choose, doesn't manufacture pressure.
 - Whether the PS line should be cut for the affiliate-co-branded pilot version (some affiliates may find it too pointed). Default: keep. If an affiliate objects, that's a fit signal, not a reason to soften.
 - Time zone of the expiry timestamp — recommend ET as default; localize per registrant if/when the registration form captures TZ. Currently the form captures only email + role (canon §7.4), so ET it is.

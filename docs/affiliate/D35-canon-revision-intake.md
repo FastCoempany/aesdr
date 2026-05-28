@@ -240,7 +240,7 @@ This template is a forward dependency for:
 ## Open
 
 - **Storage location.** Default: `docs/canon-revisions/[YYYY-MM-DD]-[topic].md`. Rationale: discoverable in repo, version-controlled with the canon itself.
-- **Whether to require two-person review** for L-severity changes. Default: **founder + one other** (ops or counsel depending on §6). For solo founder pre-team scale, founder + a deliberate 24-hour cooling-off period before merge.
+- **Two-person review for L-severity changes (ratified 2026-05-28).** For solo founder pre-team scale: **founder + a deliberate 24-hour cooling-off period before merge**. Once the team grows, escalate to founder + one other (ops or counsel depending on §6).
 - **Threshold for Major-tier (version bump).** Default: any change to canon §1 (foundational doctrines), §3 (voices), §10 (compliance), §13 (honesty) is automatically Major regardless of size. Other section changes are Major if §5 downstream-impact severity sums to L.
 - **Whether the intake itself is affiliate-readable.** Default: **no.** Canon-revision intakes are internal — affiliates see the canon's published state via `00-canon-excerpt.md`, not the deliberation behind it. Per canon §12 (founder-backstage doctrine).
 - **Tooling.** Default: markdown file in repo. Reconsider Notion / Linear when the team grows past founder + ops.

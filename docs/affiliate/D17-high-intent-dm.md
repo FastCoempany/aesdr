@@ -227,7 +227,7 @@ This DM is a forward dependency for:
 
 ## Open
 
-- Admissions alias displayed-sender format. Default: single-word `Admissions` until the alias gets a real first name (canon §12.3 outstanding question). Alternative: a fictional first name (`Sam, AESDR Admissions`). Recommend default; fictional first name reads slightly less honest.
+- Admissions alias displayed-sender format (ratified 2026-05-28): **single-word `Admissions`**. The fictional-first-name alternative (`Sam, AESDR Admissions`) was considered and not chosen — reads slightly less honest. Re-open if/when the alias gets a real first name (canon §12.3).
 - Whether to ship a V7 variant for *team-buyer* signals (manager attended, asked about cohort licensing). Default: **not in batch 5** — D17 is one-to-one consumer pull. Team-buyer is a different motion that probably warrants its own deliverable.
 - Affiliate permission protocol for V6. Default until codified: written OK in the pilot folder before forwarding. Codify in D27 affiliate vetting scorecard so it's a contract item, not an ad-hoc.
 - LinkedIn-vs-email channel decision. Default: LinkedIn DM if both are available, because the channel itself signals operator-to-operator. Email if no LinkedIn handle.

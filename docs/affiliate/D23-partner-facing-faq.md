@@ -293,6 +293,6 @@ This FAQ is a forward dependency for:
 
 - Should the FAQ render as a standalone `/faq` page on `aesdr.com`, or only as embedded blocks? Default: **embedded blocks for now.** The standalone page becomes worthwhile once organic-search traffic warrants it, which is post-pilot.
 - Q08 — should we add a question about "Will AESDR help me get hired?" Default: **no** — that's a pre-role audience, and Q07 already disqualifies pre-role buyers. Adding the question would invite buyers we're filtering out.
-- Q11 — should the disclosure paragraph carry a affiliate-name placeholder (`[PARTNER_NAME]`) so each pilot's FAQ surface names its specific affiliate? Default: **yes** — recommend swap during affiliate-promo page render. The generic "the affiliate" wording reads as legalese; the specific name reads as honest.
+- Q11 — affiliate-name placeholder (`[PARTNER_NAME]`) swap (ratified 2026-05-28): **yes** — swap during affiliate-promo page render. The generic "the affiliate" wording reads as legalese; the specific name reads as honest.
 - Whether the FAQ should be expand-collapse or full-rendered. Default: **full-rendered on standalone page, expand-collapse on embedded contexts** for length reasons. Trigger is the question text; no chevron icon.
 - Q07 disqualification list — whether to add "if you're a manager looking to enroll a team" as a sixth bullet pointing to Team pricing. Default: **not in batch 5.** Team is a different motion (pricing in `PRICING_ENGINE_SPEC.md`); a Team-specific FAQ may need its own deliverable.

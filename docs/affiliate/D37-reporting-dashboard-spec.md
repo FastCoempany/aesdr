@@ -141,7 +141,7 @@ Per canon §13 — same discipline as View 1. No green arrows. No "trending up /
 | Stripe webhook | begin_checkout, purchase, refund events | Real-time |
 | Vercel analytics | Page views, source attribution (when UTM passes through) | ~1 min |
 | AESDR app DB | Registrations, enrollment status, role | Real-time |
-| ESP (TBD: Resend / Postmark / Loops) | Email send / open / click / reply | ~1 min |
+| ESP — Resend (ratified 2026-05-28; already in use per `lib/email.ts`) | Email send / open / click / reply | ~1 min |
 | Vimeo (or replay infra) | Replay-watch progress events | ~5 min |
 
 ### Secondary sources (manual / hand-stitched)
