@@ -198,6 +198,9 @@ export default async function AffiliatesDashboardPage() {
           <Link href="/affiliates/dashboard/payments" style={{ color: "var(--muted)", textDecoration: "none", paddingBottom: 4 }}>
             Payments
           </Link>
+          <Link href="/affiliates/dashboard/playbooks" style={{ color: "var(--muted)", textDecoration: "none", paddingBottom: 4 }}>
+            Playbooks
+          </Link>
         </nav>
         <h1
           style={{

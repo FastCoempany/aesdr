@@ -1,0 +1,321 @@
+/*
+ * Affiliate playbooks styles. Scoped under .playbooks-page so they
+ * don't bleed elsewhere. All colors and fonts via tokens in
+ * app/globals.css (active editorial palette).
+ */
+
+.playbooks-page {
+  min-height: 100vh;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--serif);
+}
+
+.playbooks-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 5%;
+  border-bottom: 1px solid var(--light);
+}
+
+/* ── Nav (matches the existing dashboard tab pattern) ──────────────── */
+
+.playbooks-nav {
+  display: flex;
+  gap: 24px;
+  padding: 20px 5% 0;
+  border-bottom: 1px solid var(--light);
+  flex-wrap: wrap;
+}
+
+.playbooks-nav a {
+  padding-bottom: 12px;
+  color: var(--muted);
+  text-decoration: none;
+  font-family: var(--cond);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.playbooks-nav-active {
+  color: var(--crimson) !important;
+  border-bottom: 2px solid var(--crimson);
+}
+
+/* ── Intro ───────────────────────────────────────────────────────────── */
+
+.playbooks-intro {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 56px 24px 24px;
+}
+
+.playbooks-eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 16px;
+}
+
+.playbooks-intro h1 {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(32px, 4vw, 44px);
+  line-height: 1.15;
+  margin: 0 0 24px;
+  color: var(--ink);
+}
+
+.playbooks-lead {
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--ink);
+  margin: 0 0 16px;
+}
+
+/* ── Grid of path tiles ─────────────────────────────────────────────── */
+
+.playbooks-grid-section {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 24px 24px 64px;
+}
+
+.playbooks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.playbook-tile {
+  position: relative;
+  display: block;
+  background: #fff;
+  border: 1px solid var(--light);
+  padding: 24px 24px 56px;
+  text-decoration: none;
+  color: var(--ink);
+  transition: border-color 120ms ease;
+}
+
+.playbook-tile:hover {
+  border-color: var(--crimson);
+}
+
+.playbook-tile h2 {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 22px;
+  margin: 12px 0 10px;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.playbook-tile p {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--muted);
+  margin: 0;
+}
+
+.playbook-tile-status {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  display: inline-block;
+}
+
+.playbook-tile-ready .playbook-tile-status {
+  background: var(--crimson);
+  color: #fff;
+}
+
+.playbook-tile-draft .playbook-tile-status {
+  background: var(--light);
+  color: var(--muted);
+}
+
+.playbook-tile-arrow {
+  position: absolute;
+  bottom: 20px;
+  right: 24px;
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--crimson);
+}
+
+/* ── Footnote ───────────────────────────────────────────────────────── */
+
+.playbooks-footnote {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 24px 96px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink);
+  border-top: 1px solid var(--light);
+}
+
+.playbooks-footnote h3 {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 22px;
+  margin: 24px 0 12px;
+  color: var(--ink);
+}
+
+.playbooks-footnote a {
+  color: var(--crimson);
+  text-decoration: underline;
+}
+
+/* ── Breadcrumb on [path] page ──────────────────────────────────────── */
+
+.playbooks-breadcrumb {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 24px 8px;
+}
+
+.playbooks-breadcrumb a {
+  font-family: var(--cond);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.playbooks-breadcrumb a:hover {
+  color: var(--crimson);
+}
+
+.playbooks-breadcrumb .playbooks-eyebrow {
+  margin-top: 16px;
+}
+
+/* ── Rendered markdown (playbook prose) ─────────────────────────────── */
+
+.playbook-prose {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 24px 48px;
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--ink);
+}
+
+.playbook-prose > *:first-child { margin-top: 0; }
+
+.playbook-prose h1 {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(32px, 4vw, 44px);
+  margin: 0 0 24px;
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+.playbook-prose h2 {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 26px;
+  margin: 48px 0 14px;
+  color: var(--ink);
+}
+
+.playbook-prose h3 {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 20px;
+  margin: 32px 0 12px;
+  color: var(--ink);
+}
+
+.playbook-prose p { margin: 0 0 18px; }
+.playbook-prose strong { font-weight: 700; }
+.playbook-prose em { font-style: italic; }
+
+.playbook-prose ul,
+.playbook-prose ol {
+  margin: 0 0 22px;
+  padding-left: 24px;
+}
+
+.playbook-prose li { margin: 6px 0; }
+
+.playbook-prose blockquote {
+  margin: 24px 0;
+  padding: 12px 0 12px 20px;
+  border-left: 3px solid var(--crimson);
+  color: var(--muted);
+  font-style: italic;
+}
+
+.playbook-prose a {
+  color: var(--crimson);
+  text-decoration: underline;
+}
+
+.playbook-prose code {
+  font-family: var(--mono);
+  font-size: 14px;
+  background: var(--light);
+  padding: 1px 6px;
+}
+
+.playbook-prose pre {
+  background: var(--light);
+  padding: 16px 20px;
+  overflow-x: auto;
+  margin: 24px 0;
+}
+
+.playbook-prose pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.playbook-prose hr {
+  border: none;
+  border-top: 1px solid var(--light);
+  margin: 40px 0;
+}
+
+.playbook-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  font-size: 15px;
+}
+
+.playbook-prose th,
+.playbook-prose td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--light);
+  vertical-align: top;
+}
+
+.playbook-prose th {
+  font-family: var(--cond);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 700;
+}
