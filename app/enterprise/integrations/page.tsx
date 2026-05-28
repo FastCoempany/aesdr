@@ -37,7 +37,7 @@ const INTEGRATIONS: Integration[] = [
     name: "Manager dashboard",
     state: "Live",
     description:
-      "Manager logs in with their email (set as team admin during provisioning). Sees a live view of every AE/SDR on their team: lessons completed, courses in progress, last-activity timestamp, and the diagnostic data once administered. Runs on the existing /admin/teams Supabase-backed surface.",
+      "Manager logs in with their email (set as team admin during provisioning). Sees a live view of every AE/SDR on their team: lessons completed, courses in progress, last-activity timestamp, and the diagnostic data once administered.",
   },
   {
     number: "03",
