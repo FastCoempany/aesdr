@@ -3,6 +3,13 @@
 When you write something that isn't pre-cleared in the [Promotional Copy Pack](/affiliates/kit-private/promo-copy-pack),
 this is how to get it through.
 
+> **Where this fits:** Every path playbook references this workflow as
+> the gate for net-new copy. Once you've cleared three pieces under
+> the gate (one piece for the proven tier), the gate exits and you can
+> publish without per-piece approval. See your specific path at
+> [Playbooks](/affiliates/dashboard/playbooks) for what your first
+> piece should be.
+
 ## When you need to submit
 
 You need an approval round if you're publishing any of:

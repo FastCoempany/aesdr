@@ -78,6 +78,100 @@
   margin: 0 0 16px;
 }
 
+/* ── Recommended-for-archetype "Start here" callout ─────────────────── */
+
+.playbook-recommended-section {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px 16px;
+}
+
+.playbook-recommended-tile {
+  position: relative;
+  display: block;
+  background: var(--ink);
+  color: var(--cream);
+  border: 1px solid var(--ink);
+  padding: 28px 32px 64px;
+  text-decoration: none;
+  transition: transform 120ms ease;
+}
+
+.playbook-recommended-tile:hover {
+  transform: translateY(-1px);
+}
+
+.playbook-recommended-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.playbook-recommended-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  background: var(--crimson);
+  color: #fff;
+  padding: 4px 10px;
+}
+
+.playbook-recommended-archetype {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(250, 247, 242, 0.6);
+}
+
+.playbook-recommended-tile h2 {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 30px;
+  margin: 0 0 12px;
+  color: var(--cream);
+  line-height: 1.15;
+}
+
+.playbook-recommended-reason {
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(250, 247, 242, 0.85);
+  margin: 0 0 12px;
+  max-width: 640px;
+}
+
+.playbook-recommended-fallback {
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgba(250, 247, 242, 0.7);
+  margin: 16px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid rgba(250, 247, 242, 0.15);
+  max-width: 640px;
+}
+
+.playbook-recommended-fallback-email,
+.playbook-recommended-fallback-link {
+  color: var(--cream);
+  font-weight: 700;
+}
+
+.playbook-recommended-arrow {
+  position: absolute;
+  bottom: 24px;
+  right: 32px;
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 28px;
+  color: var(--cream);
+}
+
 /* ── Grid of path tiles ─────────────────────────────────────────────── */
 
 .playbooks-grid-section {

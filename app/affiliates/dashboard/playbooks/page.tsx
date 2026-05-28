@@ -19,7 +19,8 @@ import { redirect } from "next/navigation";
 import AesdrBrand from "@/components/AesdrBrand";
 import SignOutButton from "@/components/SignOutButton";
 import { createClient } from "@/utils/supabase/server";
-import { PLAYBOOK_ENTRIES } from "@/lib/affiliate-playbooks";
+import { PLAYBOOK_ENTRIES, recommendForArchetype } from "@/lib/affiliate-playbooks";
+import { getAffiliateForUser } from "@/lib/affiliate-entity";
 import "./playbooks.css";
 
 export const metadata: Metadata = {
@@ -36,6 +37,16 @@ export default async function PlaybooksIndexPage() {
 
   const isAffiliate = user.user_metadata?.is_affiliate === true;
   if (!isAffiliate) redirect("/affiliates/dashboard");
+
+  // Load the affiliate record so we can surface an archetype-matched
+  // "Start here" callout above the grid. Falls back to null (no callout)
+  // when the record isn't found — hybrid archetype also returns null.
+  const affiliate = await getAffiliateForUser({
+    userId: user.id,
+    jwtAffiliateSlug: user.user_metadata?.affiliate_slug,
+    jwtPartnerSlug: user.user_metadata?.partner_slug,
+  });
+  const recommendation = affiliate ? recommendForArchetype(affiliate.archetype) : null;
 
   const sorted = [...PLAYBOOK_ENTRIES].sort((a, b) => a.order - b.order);
 
@@ -66,6 +77,38 @@ export default async function PlaybooksIndexPage() {
           Pick one to start. Layering a second path later is fine; running two in parallel from week one is not. Start where your highest-leverage channel already is.
         </p>
       </section>
+
+      {recommendation && (
+        <section className="playbook-recommended-section">
+          <Link
+            href={`/affiliates/dashboard/playbooks/${recommendation.primary.slug}`}
+            className="playbook-recommended-tile"
+          >
+            <div className="playbook-recommended-header">
+              <span className="playbook-recommended-label">Start here</span>
+              <span className="playbook-recommended-archetype">
+                Your archetype: {affiliate?.archetype}
+              </span>
+            </div>
+            <h2>{recommendation.primary.title}</h2>
+            <p className="playbook-recommended-reason">{recommendation.reason}</p>
+            {recommendation.primary.status === "draft" && recommendation.fallback && (
+              <p className="playbook-recommended-fallback">
+                This playbook is in draft. Email{" "}
+                <span className="playbook-recommended-fallback-email">
+                  affiliates@aesdr.com
+                </span>{" "}
+                to co-write yours inside 5 business days. In the meantime, the{" "}
+                <span className="playbook-recommended-fallback-link">
+                  {recommendation.fallback.title}
+                </span>{" "}
+                playbook is the next-closest fit.
+              </p>
+            )}
+            <span className="playbook-recommended-arrow">→</span>
+          </Link>
+        </section>
+      )}
 
       <section className="playbooks-grid-section">
         <div className="playbooks-grid">

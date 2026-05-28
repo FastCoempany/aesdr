@@ -6,6 +6,18 @@ and pre-cleared social posts. Lift verbatim with placeholders filled.
 Anything outside what's here needs the [approval workflow](/affiliates/kit-private/approval-workflow)
 before publishing.
 
+> **Where this fits by path:** Templates 01a–02b are referenced by the
+> [Workshop host](/affiliates/dashboard/playbooks/workshop-host)
+> playbook. Templates 03a–03b are the
+> [Newsletter feature](/affiliates/dashboard/playbooks/newsletter-feature)
+> assets. Template 04a is the 1:1 referral message in the
+> [Coach endorsement](/affiliates/dashboard/playbooks/coach-endorsement)
+> playbook. Templates 05a–05d cover social formats (referenced from the
+> social-only playbook stub). Template 06a is the
+> [Community drop](/affiliates/dashboard/playbooks/community-drop)
+> pinned post. If you don't know which path you're on yet, start at
+> [Playbooks](/affiliates/dashboard/playbooks).
+
 ## Placeholders used throughout
 
 | Placeholder | What to fill |

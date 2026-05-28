@@ -3,6 +3,14 @@
 Who to email for what during a pilot. Five legitimate reasons a affiliate
 contacts AESDR — match yours to the row, get a faster answer.
 
+> **Where this fits:** Each path playbook has its own "When to email
+> affiliates@aesdr.com" section with the path-specific triggers
+> (sub-3% workshop registration, sub-4% newsletter conversion, etc.).
+> The table below is the master routing — what address goes with which
+> kind of message. Start at the
+> [playbook for your path](/affiliates/dashboard/playbooks) to know
+> when to send.
+
 ## The contacts
 
 | What | Who | Response time |

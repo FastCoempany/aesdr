@@ -5,6 +5,11 @@ their first AESDR pilot: the 24 hours before the workshop, the live
 itself, and the 72 hours after. If the items below all clear, you've
 done your job — the rest is on AESDR.
 
+> **Where this fits:** This checklist is the T-24h / live / T-72h
+> portion of the [Workshop host playbook](/affiliates/dashboard/playbooks/workshop-host).
+> Read that first if you haven't — it sets up the 42-day arc this
+> checklist sits inside.
+
 ## 24 hours before
 
 **Registration page**

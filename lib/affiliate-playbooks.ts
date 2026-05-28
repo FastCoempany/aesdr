@@ -19,6 +19,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import { renderMarkdown } from "@/lib/markdown";
+import type { AffiliateArchetype } from "@/lib/affiliate-entity";
 
 export type PlaybookStatus = "ready" | "draft";
 
@@ -110,4 +111,60 @@ export function getPlaybookHtml(entry: PlaybookEntry): string {
   );
   const raw = readFileSync(filePath, "utf-8");
   return renderMarkdown(raw);
+}
+
+/**
+ * Maps an affiliate's archetype to the playbook slug that fits their
+ * format. Drives the "Start here" callout on the playbooks index.
+ *
+ * - `hybrid` returns null (no single recommendation — show the grid only).
+ * - `alumni` maps to its draft playbook; the UI handles the draft-fallback
+ *   render.
+ */
+const ARCHETYPE_TO_PLAYBOOK: Record<AffiliateArchetype, string | null> = {
+  creator: "newsletter-feature",
+  coach: "coach-endorsement",
+  community: "community-drop",
+  alumni: "alumni-ambassador",
+  hybrid: null,
+};
+
+/** One-sentence reason the recommended playbook fits this archetype. */
+const ARCHETYPE_REASON: Record<AffiliateArchetype, string | null> = {
+  creator:
+    "Newsletter is the lowest-coordination path and matches the reach pattern most creators already have.",
+  coach:
+    "1:1 endorsement converts highest in the program for an active client base — and re-uses the trust you've already built.",
+  community:
+    "Pinned community posts convert at 12-20% for paid communities; the path is built around the dynamics you already run.",
+  alumni:
+    "Your testimony is the strongest content angle in your network — distinct from cold recommendation and worth co-writing.",
+  hybrid: null,
+};
+
+/**
+ * Closest "ready" playbook to fall back to when the archetype's
+ * native playbook is still in draft (currently: alumni).
+ */
+const DRAFT_FALLBACK = "newsletter-feature";
+
+export type PlaybookRecommendation = {
+  primary: PlaybookEntry;
+  reason: string;
+  fallback?: PlaybookEntry;
+};
+
+export function recommendForArchetype(
+  archetype: AffiliateArchetype
+): PlaybookRecommendation | null {
+  const slug = ARCHETYPE_TO_PLAYBOOK[archetype];
+  if (!slug) return null;
+  const primary = getPlaybook(slug);
+  if (!primary) return null;
+  const reason = ARCHETYPE_REASON[archetype] || "";
+  if (primary.status === "draft") {
+    const fallback = getPlaybook(DRAFT_FALLBACK);
+    return { primary, reason, fallback };
+  }
+  return { primary, reason };
 }
