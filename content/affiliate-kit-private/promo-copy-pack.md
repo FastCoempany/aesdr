@@ -259,7 +259,7 @@ Link goes in the first reply / first comment, plain — no shortener.
 >
 > *— Operating manual, not motivation engine.*
 >
-> *— 12 courses + seven takeaway artifacts. Your login keeps working. 14-day refund.*
+> *— 12 courses + seven substantial assets. Your login keeps working. 14-day refund.*
 >
 > *— No certificate program. No "elite community." No drip-gating.*
 >
@@ -334,7 +334,7 @@ is gated content.
 > you actually sign that just... settles it. Boring on paper. Saves the
 > relationship in practice.*
 >
-> *That's one of seven artifacts you walk away with. The rest is a 12-course
+> *That's one of seven substantial assets you walk away with. The rest is a 12-course
 > operating manual for AEs and SDRs in their first year or two — built by
 > people who actually carried a bag, not motivation fluff.*
 >
@@ -359,7 +359,7 @@ you're promoting the program directly rather than a dated workshop.
 >
 > *AESDR is the operating manual I wish I'd had: 12 courses built by people
 > who carried a bag, interactive rather than video, with seven one-page
-> takeaway artifacts you keep. 12 courses. Same you — way, way better.*
+> substantial assets you keep. 12 courses. Same you — way, way better.*
 >
 > *Your login keeps working. 14-day refund. It's for SDRs and AEs 0–3 years
 > in — not veterans, not anyone shopping for motivation.*

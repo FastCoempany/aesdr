@@ -69,7 +69,7 @@
 > *Three things AESDR does differently than most sales-training:*
 >
 > *— Operating manual, not motivation engine.*
-> *— 12 courses + seven takeaway artifacts. Your login keeps working. 14-day refund.*
+> *— 12 courses + seven substantial assets. Your login keeps working. 14-day refund.*
 > *— No certificate program. No "elite community." No drip-gating.*
 >
 > *Live workshop is the front door. Register: `[REGISTRATION_URL]`.*

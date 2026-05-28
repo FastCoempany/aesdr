@@ -156,6 +156,7 @@ rule flags them on every commit.
 | *account heat* | An NBA term retrofitted to sales. Say which accounts. |
 | *pressure* (as standalone noun) | Pressure of what kind, on whom, from where? Say it. |
 | *the operating system* / *our OS* | A 2018 startup-pitch trope. The reader has an operating system already; it's called Tuesday morning. |
+| *operating manual* (as buyer-facing copy) | The metaphor reads like a static book/PDF in-product. It stays the approved affiliate/marketing tagline (*"the operating manual, not the motivation engine"*) and the internal editorial frame (base canon §2) — but must not ship as literal product-UI copy. v1.5 (2026-05-28). |
 | *surface area* | Geometry doesn't help. Say which surface, which area. |
 | *step-change* | A real shift in something specific. Name the shift. |
 | *table stakes* | The thing every serious buyer expects. Say what every serious buyer expects. |
@@ -176,6 +177,15 @@ rule flags them on every commit.
 | *deep dive* | Diving metaphor for "long meeting." Say what's being covered. |
 | *circle back* | Geometry metaphor for "talk again." Say when. |
 | *low-hanging fruit* | Picking metaphor for "easy task." Say what's easy. |
+
+> **Surface-scoping note (v1.5).** *operating manual* is the one hard-ban that
+> is surface-scoped rather than absolute. It is banned only on buyer-facing
+> PRODUCT surfaces (`app/**`, `components/**`, buyer-facing lesson HTML); it is
+> the canonical affiliate/marketing tagline and the internal editorial frame
+> everywhere else. The ESLint rule is already scoped to `app/`+`components/`, so
+> it enforces exactly this. `scripts/canon-check.mjs` carries the same ban with
+> an `allowIn` carve-out for the affiliate-kit, internal, marketing, mockup, and
+> rendered-deliverable trees, so the tagline keeps working there.
 
 ### Founder carve-out: lesson-content "blueprint" and "mindset"
 
@@ -354,6 +364,8 @@ abstraction.
 | account heat | which accounts would lose value this Thursday if you waited until next Thursday |
 | pressure (noun) | what's loud this week / what's about to break / what your VP is going to ask about on Friday |
 | operating system | (avoid; name the behaviour) |
+| operating manual (in product UI) | describe the function — "how the job works", "the whole job, in order" (tagline + internal-frame use stays; see R-G4 surface-scoping note) |
+| takeaway artifacts / 5 tools (the seven deliverables) | the substantial assets — and name them where a list reads naturally (v1.5, supersedes v1.4 "artifacts"/"tools") |
 | surface area | which surface, which area — name them |
 | source of truth | the spreadsheet your manager keeps open / the line in Salesforce |
 | north star | the thing we'd shut down the company to protect |

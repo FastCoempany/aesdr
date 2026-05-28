@@ -53,7 +53,7 @@
 >
 > ***Two — frame.*** *Free content optimizes for engagement, which means it rewards confidence, controversy, and short hooks. Free content tells you "always be closing" and never tells you what to actually say. AESDR is the operating manual — the part the free content skipped because it doesn't perform well in a 60-second clip.*
 >
-> ***Three — accountability.*** *Free content is consumed alone, nodded at, and forgotten. AESDR has interactive exercises, a worksheet per lesson, takeaway artifacts you actually use, and a Discord (Untamed) where AEs and SDRs in your situation are talking about what's working. Doing the work, watched by other people doing the work, is the difference between watching and ramping.*
+> ***Three — accountability.*** *Free content is consumed alone, nodded at, and forgotten. AESDR has interactive exercises, a worksheet per lesson, substantial assets you actually use, and a Discord (Untamed) where AEs and SDRs in your situation are talking about what's working. Doing the work, watched by other people doing the work, is the difference between watching and ramping.*
 >
 > *None of this is to say you should stop watching free content. Watch it. Learn from it. AESDR isn't a replacement for free content; it's a structure you can hang the free content on once you have one.*
 >
@@ -134,7 +134,7 @@ Unsubscribe · Privacy · Refunds
 - This is the longest email in the funnel by design. Per canon §3.3, objection-handling is verdict mode — and a verdict has to actually argue. A 90-word "but consider this!" email would fail; the audience is sophisticated and will recognize empty rebuttal.
 - The "three things free content cannot do" structure is the canonical argument for AESDR vs free content. If it lands well in pilots, lift it into the FAQ (D23, pending) and the offer page (D6) — but **not as a sales line** — as the same plain argument it makes here.
 - The "save your attention for something you're sure of" line is the most distinctive move in the email. Most objection-handling content tries to argue the recipient into the sale. This one offers the recipient the dignified out — and that's the move that makes the *other* recipients enroll.
-- The PS reframes "I never finished a course I bought" from a personal failing into a design problem. That's an honest move, and it's also a structural argument for AESDR — interactive exercises + Discord + takeaway artifacts are designed to finish.
+- The PS reframes "I never finished a course I bought" from a personal failing into a design problem. That's an honest move, and it's also a structural argument for AESDR — interactive exercises + Discord + substantial assets are designed to finish.
 
 ## Open
 

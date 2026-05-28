@@ -29,7 +29,7 @@ const FONTS: Array<{ token: string; stack: string; use: string; sample: string; 
     token: "--display",
     stack: "'Playfair Display', Georgia, serif",
     use: "Headlines, role labels",
-    sample: "The Operating Manual",
+    sample: "What good actually looks like",
     sampleStyle: { fontFamily: "var(--display)", fontStyle: "italic", fontWeight: 700, fontSize: 32 },
   },
   {

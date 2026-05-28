@@ -225,7 +225,7 @@ export default async function Dashboard() {
               marginBottom: "16px",
             }}
           >
-            The Operating Manual
+            The whole job, in order
           </p>
           <h1
             style={{

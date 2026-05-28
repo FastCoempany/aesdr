@@ -23,7 +23,7 @@ manager to teach you in 1:1s if they had the time and the framework.
 ### "What's actually in it?"
 
 Twelve interactive lessons, three sub-units per lesson, ~144 sections
-total. Seven takeaway artifacts you actually use — the AE/SDR Alignment
+total. Seven substantial assets you actually use — the AE/SDR Alignment
 Contract, the ROI & Commission Defense Tracker, the CRM Survival Guide, and
 more, plus the 72-Hour Strike Plan as an end-of-course bonus. Role-conditional content on
 every lesson — SDR-flavored exercises hide if you marked yourself as AE,

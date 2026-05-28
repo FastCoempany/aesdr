@@ -67,6 +67,12 @@ const CANON_BLOCKLIST = [
   // verb. Lookbehind skips legitimate hierarchical uses ('the next level
   // up', 'next level up', 'the level up').
   { pattern: "(?<!\\bthe\\s)(?<!\\bnext\\s)\\b(?:level|leveled|leveling|levels)[- ]up\\b", note: "R-G4: 'level up' is motivational register; name the specific skill" },
+  // 2026-05-28 (canon v1.5): "operating manual" metaphor is banned on buyer-facing
+  // product surfaces — it reads like a static book/PDF in-product. This rule is
+  // scoped to app/** + components/** (the live product UI), which is exactly the
+  // banned surface; the phrase stays the approved affiliate/marketing tagline in
+  // content/affiliate-kit/**, docs/**, and the brand-canon docs (untouched here).
+  { pattern: "operating manual", note: "v1.5: 'operating manual' metaphor is banned on buyer-facing product surfaces; it stays the approved affiliate/marketing tagline" },
 ];
 
 // Build the no-restricted-syntax option array. One entry per phrase,

@@ -7,7 +7,7 @@
 > **Scope:** Consumer-side. The B2B subsidiary at /enterprise has its own
 > register (see AESDR_ENTERPRISE_CANON.md); for /enterprise pages, prefer that.
 > **Owner:** Antaeus Coe.
-> **Last revised:** 2026-05-19.
+> **Last revised:** 2026-05-28 (v1.5 — see `2026-05-28-canon-v1.5-substantial-assets-and-operating-manual.md`).
 
 This is the voice document I wish I'd had when I first started writing
 copy under stress. Reading it should take seven minutes; running every
@@ -33,6 +33,11 @@ is banned because they can read.
 Every paragraph either advances the operating manual or names a real
 out-clause. If it does neither, cut it.
 
+> *"Operating manual" here is the editorial frame for what we're building —
+> the north-star the writing aims at, not a phrase to ship. As literal
+> buyer-facing product copy it is banned (see §3); it reads like a static
+> book/PDF in-product. It stays the affiliate/marketing tagline. (v1.5.)*
+
 ## 3. The blocklist
 
 Words and phrases that do not appear in consumer-side copy. If a draft
@@ -50,6 +55,12 @@ contains them, rewrite before shipping.
 - **the wedge / our positioning / the operating system** — internal
   positioning language that leaked from strategy docs into buyer-facing
   surfaces in the May 2026 audit. Rewrite to the buyer's vocabulary.
+- **operating manual** (as literal buyer-facing copy) — the editorial
+  north-star frame (§2) that must not ship as product-UI copy: in-product
+  it reads like a static book/PDF. Describe the function instead ("how the
+  job works", "the whole job, in order"). Stays the affiliate/marketing
+  tagline and the internal frame. (v1.5, 2026-05-28; ESLint + canon-check
+  enforced, scoped to buyer-facing surfaces.)
 - **let me explain / here's the thing** — filler that doesn't land
 - **literally** — almost always replaceable with nothing
 
@@ -65,6 +76,8 @@ contains them, rewrite before shipping.
 | game-changer | the lesson most AEs/SDRs read twice |
 | game-changing insight | the line that lands with most managers |
 | the wedge | the part of the job most courses skip |
+| AESDR is the operating manual | describe the function — "how the job works" / "the whole job, in order" |
+| takeaway artifacts / 5 tools | the substantial assets (name them) |
 | our methodology | this lesson / this tool / this framework |
 | reach out | email |
 | at the end of the day | (delete) |
@@ -141,8 +154,12 @@ The voice has seven recurring rhetorical moves. Most copy uses one or two.
 
 ## 8. Tools, lessons, and named artefacts
 
-When referencing course content from a buyer-facing surface, use the
-canonical names below (not aliases that drifted into individual pages):
+The buyer-facing collective noun for the seven deliverables is
+**substantial assets** (v1.5 — supersedes v1.4's "artifacts" and the
+retired "tools"). Name the specific assets wherever a list reads
+naturally. When referencing course content from a buyer-facing surface,
+use the canonical names below (not aliases that drifted into individual
+pages):
 
 | Canonical name | Lesson | Aliases to remove |
 |---|---|---|

@@ -29,7 +29,7 @@ for someone who hasn't done the work yet.
 
 These are factual and verifiable; phrase them however fits your voice:
 
-- 12 courses + named takeaway artifacts (alignment contract,
+- 12 courses + named substantial assets (alignment contract,
   I-don't-know framework, time-reclaimed calculator, ROI commission
   defense tracker, plus the end-of-course strike-plan bonus)
 - Interactive HTML format, not video lectures

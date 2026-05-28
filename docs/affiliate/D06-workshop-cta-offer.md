@@ -22,7 +22,7 @@ The single closing slide of the workshop deck. Locked verbatim per canon §7.3 �
 │ AESDR · 12-COURSE PROGRAM · ENROLLMENT WINDOW        │
 │                                                      │
 │ DISPLAY ITALIC, ~64PT, WHITE:                        │
-│ Twelve courses, seven artifacts, come back any time, │
+│ Twelve courses, seven substantial assets, come back any time, │
 │ fourteen-day refund.                                 │
 │                                                      │
 │ SERIF ITALIC, 22PT, WHITE AT .75 OPACITY:            │
@@ -55,7 +55,7 @@ The single closing slide of the workshop deck. Locked verbatim per canon §7.3 �
 >
 > *If what you saw maps to where you actually are — first one to two years in startup SaaS, looking for the operating standard nobody handed you on day one — AESDR is the 12-course program that picks up where this hour ended.*
 >
-> *Twelve courses, seven artifacts, your login that keeps working, a Discord called Untamed that opens when you finish, and a fourteen-day no-questions-asked refund. Pricing runs $249 for an SDR seat, $299 for an AE seat, and a 10-seat team license is contact-for-pricing — let's discuss.*
+> *Twelve courses, seven substantial assets, your login that keeps working, a Discord called Untamed that opens when you finish, and a fourteen-day no-questions-asked refund. Pricing runs $249 for an SDR seat, $299 for an AE seat, and a 10-seat team license is contact-for-pricing — let's discuss.*
 >
 > *The link is on the slide. The code closes [date]. After that, you can still enroll — without the code.*
 >
@@ -92,7 +92,7 @@ Replaces (or sits above) the existing `Pricing · One price. Come back any time.
 > *before you decide.*
 
 **Serif body, 18pt, muted:**
-> *Twelve courses, taught as interactive HTML — not video lectures, not motivation. Five takeaway artifacts, including the AE/SDR Alignment Contract and the 72-hour Strike Plan. Your login keeps working, including future curriculum updates, and the Discord (Untamed) opens when you complete the course — it's the alumni community. $249 SDR / $299 AE / Team up to 10 is contact-for-pricing — one-time, with a 14-day no-questions-asked refund window backing the whole thing.*
+> *Twelve courses, taught as interactive HTML — not video lectures, not motivation. Seven substantial assets, including the AE/SDR Alignment Contract and the 72-hour Strike Plan. Your login keeps working, including future curriculum updates, and the Discord (Untamed) opens when you complete the course — it's the alumni community. $249 SDR / $299 AE / Team up to 10 is contact-for-pricing — one-time, with a 14-day no-questions-asked refund window backing the whole thing.*
 
 **Three-tier price band** — lifts the existing `.price-grid` from `variants/variant-a-editorial-split.html` verbatim, with one modification: a `pilot code · CLOSES [DATE]` mono line above the SDR card.
 

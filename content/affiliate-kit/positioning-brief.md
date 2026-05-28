@@ -27,7 +27,7 @@ a pilot in week four with both sides disappointed.
 
 ## What's in the program
 
-12 courses with named takeaway artifacts — the alignment contract, the
+12 courses with named substantial assets — the alignment contract, the
 ROI commission defense tracker, the I-don't-know framework, the
 time-reclaimed calculator, and the end-of-course strike plan. All
 delivered as interactive HTML exercises, not video lectures. One-time
@@ -49,6 +49,6 @@ through affiliate tracking.
 
 ## Three things we'll always say
 
-1. 12 courses, named takeaway artifacts, $249 SDR / $299 AE Individual, 14-day refund.
+1. 12 courses, named substantial assets, $249 SDR / $299 AE Individual, 14-day refund.
 2. Operating manual, not motivation engine. We don't perform expertise; we install it.
 3. We say out loud who shouldn't buy. Honesty is not a tone here — it's a competitive position.

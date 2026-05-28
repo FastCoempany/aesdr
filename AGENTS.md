@@ -13,6 +13,10 @@ the rules in:
 
 - `docs/canon-revisions/2026-05-19-consumer-brand-voice-canon.md` — base canon
   (blocklist, substitution table, seven moves, surface notes)
+- `docs/canon-revisions/2026-05-28-canon-v1.5-substantial-assets-and-operating-manual.md`
+  — current vocabulary pack (v1.5): the seven deliverables are **"substantial
+  assets"** buyer-facing; **"operating manual"** is banned as literal product-UI
+  copy (stays the affiliate/marketing tagline + internal editorial frame)
 - `docs/canon-revisions/2026-05-19-language-patch-supplement.md` — eight R-G
   rules (R-G1 gummy abstractions, R-G2 trailing pronouns, R-G3 telegraphic
   cadence, R-G4 manufactured-concept blocklist, R-G5 read-aloud test, R-G6

@@ -23,6 +23,15 @@
  *     the exemption stops matching and the hit reappears — this is
  *     the intended self-healing behavior.
  *
+ * Per-pattern surface scoping (allowIn):
+ *   - A blocklist entry may carry an optional `allowIn: [regex, ...]` of
+ *     path patterns where THAT pattern is legitimate and should not fire.
+ *     Used for bans that are buyer-facing-only — e.g. "operating manual" is
+ *     banned in-product but is the approved affiliate/marketing tagline, so
+ *     its allowIn exempts the affiliate-kit / internal / marketing trees.
+ *     Unlike a global SKIP_FILE_PATTERN, this scopes a single pattern while
+ *     every other blocklist entry still runs against the file.
+ *
  * Each pattern is a regex executed case-insensitively. Hits print as
  * `path:line:column  pattern  hint` (parseable by editor jump-to-line).
  */
@@ -78,6 +87,24 @@ const BLOCKLIST = [
   // verb. Negative lookbehind skips legitimate hierarchical uses:
   // 'the next level up', 'next level up', 'the level up'.
   { pattern: /(?<!\bthe\s)(?<!\bnext\s)\b(?:level|leveled|leveling|levels)[- ]up\b/gi, hint: "R-G4: 'level up' is motivational register; name the specific skill" },
+  // 2026-05-28 (canon v1.5): the "operating manual" metaphor is banned on
+  // buyer-facing PRODUCT surfaces (it reads like a static book/PDF in-product),
+  // but it remains the approved affiliate/marketing tagline ("the operating
+  // manual, not the motivation engine"). `allowIn` exempts the affiliate-kit,
+  // internal, marketing, mockup, and rendered-deliverable trees where the
+  // tagline is canonical; buyer-facing lesson HTML + stray docs stay gated.
+  {
+    pattern: /\boperating manual\b/gi,
+    hint: "v1.5: 'operating manual' metaphor is banned on buyer-facing product surfaces; it stays the approved affiliate/marketing tagline",
+    allowIn: [
+      /^docs\/affiliate\//,
+      /^docs\/content\//,
+      /^content\/affiliate-kit/,
+      /^content\/aesdr-internal\//,
+      /^public\/mockups\//,
+      /^tools\/rendered\//,
+    ],
+  },
 ];
 
 // File extensions we scan.
@@ -194,7 +221,11 @@ async function scan(file) {
   const hits = [];
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    for (const { pattern, hint } of BLOCKLIST) {
+    for (const { pattern, hint, allowIn } of BLOCKLIST) {
+      // Per-pattern surface scoping: some bans (e.g. "operating manual") apply
+      // only to buyer-facing surfaces and are legitimate elsewhere. Skip this
+      // pattern entirely when the file lives in one of its allowed trees.
+      if (allowIn && allowIn.some((re) => re.test(rel))) continue;
       pattern.lastIndex = 0;
       let m;
       while ((m = pattern.exec(line)) !== null) {

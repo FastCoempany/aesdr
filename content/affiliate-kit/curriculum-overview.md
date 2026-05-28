@@ -6,7 +6,7 @@ What affiliates need to know about what AESDR teaches — without enrolling.
 
 12 courses. Sequenced from foundational to advanced. Each course pairs
 operating frameworks with one or more interactive worksheets the AE/SDR keeps.
-Seven takeaway artifacts open across the program — the AE/SDR Alignment
+Seven substantial assets open across the program — the AE/SDR Alignment
 Contract, the ROI & Commission Defense Tracker, the CRM Survival Guide, and
 more — that AEs and SDRs keep using after the course ends, plus the 72-Hour
 Strike Plan as an end-of-course bonus.
@@ -39,7 +39,7 @@ two years:
 
 ## What every license includes
 
-One-time purchase: all 12 courses, the named takeaway artifacts, every future
+One-time purchase: all 12 courses, the named substantial assets, every future
 curriculum update at no extra cost. A private alumni room opens to buyers who
 finish all twelve courses — strictly post-completion, not a pre-purchase
 community claim. 14-day, no-questions-asked refund. One price, paid once.

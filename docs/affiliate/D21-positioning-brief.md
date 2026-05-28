@@ -43,7 +43,7 @@
 | Component | Detail |
 |---|---|
 | Lessons | 12 modular courses, lesson-clusters by theme |
-| Tools | seven takeaway artifacts (alignment contract, strike plan, ROI tracker, others) |
+| Tools | seven substantial assets (alignment contract, strike plan, ROI tracker, others) |
 | Format | Interactive HTML exercises, not video lectures |
 | Community | Discord — *Untamed* — alumni-only, opens on course completion |
 | Access | Your login keeps working, including future curriculum updates |
