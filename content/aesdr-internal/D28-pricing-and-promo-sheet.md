@@ -32,7 +32,7 @@ Buyers arriving through `[PARTNER_SLUG]` see the same price every other AESDR bu
 
 **Why:** Per canon §1.5 (real operator, never guru) + §13 (honesty as differentiator), promotional pricing reads as the SaaS-affiliate-empire register the brand explicitly counter-positions against. AESDR's economic model is: **partners earn commission for delivering the right audience to the right program at a fair price.** The price is fair. It does not require a discount to be fair.
 
-**The $40 follow-on revenue line.** After enrollment, AESDR offers a $40 unlock for the second of two end-of-course artifacts (Programme / Manuscript) per `app/reveal/RevealView.tsx` line 212. The student picks one artifact free at `/reveal`; the unchosen artifact stays sealed and unlocks for $40 from the dashboard at any time. **Within the partner's 30-day attribution window, the $40 unlock is partner-attributable** — pending founder + counsel ratification of the attribution rule before this clause publishes externally.
+**The $40 follow-on revenue line.** After enrollment, AESDR offers a $40 unlock for the second of two end-of-course artifacts (Programme / Manuscript) per `app/reveal/RevealView.tsx` line 212. The student picks one artifact free at `/reveal`; the unchosen artifact stays sealed and unlocks for $40 from the dashboard at any time. **Within the affiliate's 30-day attribution window, the $40 unlock is affiliate-attributable** (rule ratified 2026-05-28; full attribution policy below).
 
 ---
 
@@ -121,7 +121,7 @@ Per Phase 0 #5 + §2 above, **buyers pay list price.** Partner's 30% commission 
 
 > *Buyer pays $249 (SDR list). Stripe fees ~3% → net to AESDR ~$241. Partner commission 30% of $241 = ~$72.30. Same math at $299 (AE) and on the Team license (contact-for-pricing).*
 
-**$40 follow-on attribution** — pending founder + counsel ratification. Recommended default: when an enrolled buyer later pays $40 to unlock the second end-of-course artifact within the partner's 30-day attribution window, that $40 is partner-attributable; outside the window, it isn't. Partner commission on the $40 unlock = 30% of net = ~$11.64 per unlock.
+**$40 follow-on attribution (ratified 2026-05-28).** When an affiliate-sourced buyer pays the $40 unlock for the second end-of-course artifact within 30 days of their original course purchase, the unlock is attributed to the original referring affiliate and pays standard commission (30% of net ≈ $11.64). Outside the 30-day window the $40 is not affiliate-attributable. The window runs from the original Stripe purchase timestamp and does not reset on subsequent activity. Disputes are resolved by reference to the original Stripe purchase timestamp and the affiliate attribution cookie recorded at that time.
 
 ---
 

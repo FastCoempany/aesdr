@@ -14,7 +14,7 @@
 | # | Input | Decision | Implication |
 |---|---|---|---|
 | 1 | Hub routing | **`aesdr.com/affiliates`** | All UTM templates, kit cross-references, internal links anchor here. Do not use `/for-affiliates`, `/affiliates`, or subdomain. |
-| 2 | $40 end-of-course option | **Defined in `app/reveal/RevealView.tsx` line 212** as the unlock fee for the second end-of-course artifact. Student picks one of two artifacts free at `/reveal`; the unchosen artifact stays sealed and unlocks for $40 from the dashboard at any time. | Hub affiliate-economics page surfaces this as a real revenue line. D22 §5.1 commission terms must address whether the $40 unlock is affiliate-attributable (recommend: yes, within the 30-day attribution window). |
+| 2 | $40 end-of-course option | **Defined in `app/reveal/RevealView.tsx` line 212** as the unlock fee for the second end-of-course artifact. Student picks one of two artifacts free at `/reveal`; the unchosen artifact stays sealed and unlocks for $40 from the dashboard at any time. | Hub affiliate-economics page surfaces this as a real revenue line. D22 §5.1 commission terms confirm the $40 unlock is affiliate-attributable within 30 days of original purchase (ratified 2026-05-28; full rule in D28). |
 | 3 | seven substantial assets | **Named, in production at `tools/standalone-html/`:** (1) AE/SDR Alignment Contract — `3.3-aesdr-alignment-contract.html`; (2) Manager Archetype Map — `4.1-manager-archetype-map.html`; (3) Async Cadence Template — `4.3-async-cadence-template.html`; (4) The "I Don't Know" Framework — `6.3-idk-framework.html`; (5) CRM Survival Guide — `9.1-crm-survival-guide.html`; (6) Time Reclaimed Calculator — `9.2-time-reclaimed-calculator.html`; (7) ROI & Commission Defense Tracker — `10.1-ROI-commission-defense-tracker.html`. Plus the 72-Hour Strike Plan as an end-of-course bonus — `bonus-72-hr-strike-plan.html` (gated on all twelve lessons complete). | D31 curriculum map + L&D brief + hub `/affiliates/curriculum` page lift the named list. Each artifact is linkable at `aesdr.com/tools/[slug]`. |
 | 4 | Host casting | **Interim placeholder.** Continue using `[HOST_FIRST_NAME]` and `[HOST_LAST_NAME]` across all hub copy. | Hub ships with placeholders; founder swaps globally when host is cast. Forward-dep flagged on every page that references the host. |
 | 5 | Discount policy | **Never. Ever. Discount.** AESDR does not run promotional codes, pilot discounts, affiliate-stack discounts, time-limited price drops, or any pricing variance. List price applies always. | Triggers cleanup work in D28, D09 slide 16, D17 V5/V6, D18, D24 CTA, D26 §3b CTA, and 09a/09b/09c/09d copy templates — references to `[PILOT_DISCOUNT]`, `[PILOT_CODE]`, "save you $[DISCOUNT]" must be removed or re-framed. **Cleanup is a separate task; not a hub Phase 1 blocker.** |
@@ -183,7 +183,7 @@ Per founder review 2026-05-04: affiliate-facing body copy must read like an oper
 6. **Pricing & commission** strip (NEW — built from D28 sanitized + Phase 0 #5):
    - Header: *"Pricing is list. Commission is 30% of net. No exceptions."*
    - Body: *"Buyers see the same price every other AESDR buyer sees: $249 SDR, $299 AE, and a contact-for-pricing Team license. AESDR does not run promotional discounts, pilot codes, or affiliate-stack discounts. Affiliates earn commission off list price; that's the deal."*
-   - Sub-block — the $40 follow-on: *"After enrollment, AESDR offers a $40 unlock for the second end-of-course artifact (see /tools/playbill-vs-redline). Within the affiliate's 30-day attribution window, the $40 unlock is affiliate-attributable."* (Note: this attribution rule needs founder + counsel ratification before publish; see §"Open questions.")
+   - Sub-block — the $40 follow-on: *"After enrollment, AESDR offers a $40 unlock for the second end-of-course artifact (see /tools/playbill-vs-redline). Within the affiliate's 30-day attribution window, the $40 unlock is affiliate-attributable."*
 7. **Approval workflow** strip — three-row table: APPROVED / APPROVED WITH EDITS / DECLINED. Lift from D40 §3 verbatim.
 8. **CTA strip:** iris button `Request the affiliateship agreement →` (anchors to `/affiliates/apply`). Mono trail: `request triggers a counsel-reviewed D22 PDF, sent within 5 business days.`
 9. Footer.
@@ -420,9 +420,9 @@ All components consume CSS tokens from `app/globals.css`; no new color or font t
 
 ### Page 2.5 — `/affiliates/program/commission`
 
-**Source:** D28 sanitized for never-discount + D22 §5 + the $40 attribution decision (pending founder + counsel ratification).
+**Source:** D28 sanitized for never-discount + D22 §5 + the $40 attribution decision (ratified 2026-05-28; see D28).
 
-**Layout:** Single-column, table-format. Subsections: rate (30% net), attribution (30-day cookie + code-based override), payment terms (net-45), $40 follow-on attribution rule (when ratified), refund treatment.
+**Layout:** Single-column, table-format. Subsections: rate (30% net), attribution (30-day cookie + code-based override), payment terms (net-45), $40 follow-on attribution rule (ratified 2026-05-28 — 30-day window from original purchase), refund treatment.
 
 ### Per-affiliate pages — `/[partner_slug]/workshop`
 
@@ -517,7 +517,7 @@ Files requiring rewrite to remove discount/promo-code references:
 
 ## Open questions (require founder/counsel input before relevant phase)
 
-1. **$40 follow-on attribution.** Is the $40 unlock affiliate-attributable within the 30-day window? Recommend: yes. Ratification needed before `/affiliates/program/commission` ships in Phase 2.5.
+1. **$40 follow-on attribution.** **Resolved 2026-05-28** — yes, attributable within the 30-day window from original purchase. Full rule in D28.
 2. **Phase 2 routing for `/affiliates/preview`.** Does the lesson preview clip live as an embedded video on a Next.js page, or as a redirect to a Vimeo public link? Recommend: embedded, so the page can frame the clip per D30 spec.
 3. **Phase 2 case-study cadence.** How many pilots before `/affiliates/case-studies` activates? Recommend: any one PASS-tier pilot. Empty-state copy holds until then.
 4. **Phase 3 `/affiliates/calendar`.** Is the pilot calendar public, or affiliate-application-gated? Recommend: public — it's a transparency play that reinforces canon §1.6.
