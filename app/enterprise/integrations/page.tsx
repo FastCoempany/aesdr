@@ -53,7 +53,7 @@ const INTEGRATIONS: Integration[] = [
     name: "SCORM 1.2 export",
     state: "Roadmap",
     description:
-      "Per-lesson SCORM 1.2 packages exportable from the AESDR backend. Importable into any SCORM-compliant LMS (Docebo, LearnUpon, TalentLMS, Moodle, etc.). Includes completion tracking and pass/fail signals.",
+      "Per-lesson SCORM 1.2 packages, importable into any SCORM-compliant LMS (Docebo, LearnUpon, TalentLMS, Moodle, etc.). Includes completion tracking and pass/fail signals.",
     buildTrigger:
       "First LMS partnership signed. The buyer-pull determines whether we need SCORM 1.2 or jump to 2004. Build: 2–3 weeks.",
   },
@@ -91,7 +91,7 @@ const INTEGRATIONS: Integration[] = [
     description:
       "Programmatic seat creation, manager assignment, and progress query. For resellers and white-label partners managing high-volume seat allocations programmatically rather than via CSV.",
     buildTrigger:
-      "First reseller wanting programmatic seat ops. Build: 1 week given the existing internal admin endpoints we already use.",
+      "First reseller wanting programmatic seat ops. Build: 1 week given existing seat-management plumbing already in place.",
   },
   {
     number: "09",
