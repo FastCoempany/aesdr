@@ -1,7 +1,7 @@
 # D8 — Workshop Title Options (12 Ranked)
 
 **Deliverable:** Twelve pain-led workshop titles, ranked, for the live affiliate workshop. The chosen title threads through the registration page (D7), offer slide (D6), reminders, replay copy, and affiliate-promo copy.
-**Audience:** SDRs and AEs in their first two years in startup SaaS. Also written for experienced operators who want the realities of the role named, not retaught.
+**Audience:** SDRs and AEs in their first two years in startup SaaS. Also written for experienced operators who want the realities of the role called out, not necessarily retaught.
 **Voice ratio:** 75 Rowan / 25 Michael. Pain-led, verdict-shaped, 4–8 words where possible.
 **Format:** Markdown source. Title gets locked to canon at v1.x once founder picks.
 **Canon refs:** `AFFILIATE_BRAND_CANON.md` §3, §4 (banned vocabulary), §13 (honesty), `affiliate-seeding-deep-research-report.md` §Workshop-first pilot (registration-page pass criterion: pain-led title).
