@@ -313,7 +313,7 @@
 <script>
 /* ════════════════════════════════════════════════════════════════
    AESDR PARTNERSHIPS OS — DATA MODEL
-   Facts sourced from the live codebase (prices $249/$299, 30% commission,
+   Facts sourced from the live codebase (prices $249/$299, 40% commission set rate,
    30-day attribution, archetypes, inboxes, stack). Agent roster is DEFINED
    HERE, not recalled from a prior session — rename/reject freely.
    ════════════════════════════════════════════════════════════════ */
@@ -366,7 +366,7 @@ CONSTRAINTS:
 - First-touch ≤ 120 words. One ask: a 15-min call OR "want the partner kit?"
 - Follow-up 1 (day +4): add one new piece of value, not a nag.
 - Follow-up 2 (day +9): the honest close — "last note, no hard feelings."
-- Disclose the economics plainly: 30% commission, 30-day attribution window, one-time $249/$299 product.
+- Disclose the economics plainly: 40% commission, 30-day attribution window, one-time $249/$299 product.
 - Reply-to is affiliates@aesdr.com.
 
 Run your own draft against the canon blocklist before returning. Flag any line you're unsure on.`},
@@ -534,7 +534,7 @@ git add .claude/agents && git commit -m "Build partnerships agent roster"`}
    steps:[
     'The program is live and lightly populated. Before you add to it, understand exactly what exists. <b>Dispatch Ledger</b> (copy the dispatch line below) to walk the schema with you — it runs the two queries in the block and explains each table.',
     '<b>Read the five tables</b> it surfaces: <code>affiliates</code> (the roster), <code>affiliate_attributions</code> (who earned what), <code>affiliate_payouts</code> (what\'s been paid), <code>affiliate_links</code> (tracked links), <code>affiliate_applications</code> (inbound). Ask Ledger to print the column list for any you don\'t recognize.',
-    '<b>Write down the economics baked into the schema</b> (you\'ll quote these on every call): <b>commission 30%</b>, <b>30-day attribution window</b>, archetypes (creator/coach/alumni/hybrid/community), tiers (developing/proven), the 3-strike policy, the copy-gate (3 approved pieces for developing, 1 for proven).',
+    '<b>Write down the economics baked into the schema</b> (you\'ll quote these on every call): <b>commission 40%</b>, <b>30-day attribution window</b>, archetypes (creator/coach/alumni/hybrid/community), tiers (developing/proven), the 3-strike policy, the copy-gate (3 approved pieces for developing, 1 for proven).',
     '<b>Walk the admin surfaces</b> in the browser, in order: <span class="where">aesdr.com/admin/affiliates</span> (roster — see who exists) → <span class="where">/admin/affiliates/queue</span> (copy review — where Warden\'s verdicts land) → <span class="where">/admin/affiliates/new</span> (the manual-add form you\'ll use to onboard in Week 5). Click into one existing affiliate to see the detail page.',
     '<b>Walk the affiliate-facing surfaces</b> as a partner sees them: <span class="where">/affiliates/dashboard</span> (their home) → <span class="where">/affiliates/dashboard/playbooks</span> (the per-archetype roadmaps) → <span class="where">/affiliates/kit-private</span> (the gated kit). <b>Done when</b> you\'ve written the honest baseline in one line: X affiliates, Y active, $Z attributed to date.'
    ],
@@ -704,7 +704,7 @@ where name = any(array['<name1>','<name2>','<name3>']);`}]
     '<b>Set up the booking link once</b>, before the first "yes" needs it: Cal.com (or SavvyCal) → <span class="ui">Event Types</span> → <span class="ui">New</span> → name it "AESDR partner intro", duration 15 min, availability in US Pacific–Eastern business hours only (matches founder + workshop overlap). Copy the link — it goes in every yes-reply. No back-and-forth scheduling, no LinkedIn.',
     'Replies are the job now. Same-day response, every time. A warm reply that waits 48 hours cools.',
     'For a "yes, tell me more": reply with the <span class="where">/affiliates/kit</span> link + your Cal.com link. Move them to <code>replied</code>, then <code>call_booked</code> once they pick a slot.',
-    'For a "what\'s the commission?": the honest numbers — 30%, 30-day window, $249/$299 product, paid via Stripe. Don\'t hedge; the transparency is the pitch.',
+    'For a "what\'s the commission?": the honest numbers — 40%, 30-day window, $249/$299 product, paid via Stripe. Don\'t hedge; the transparency is the pitch.',
     'For silence: leave them at <code>contacted</code> — the follow-up ladder (Day +4) handles them automatically. Dispatch <b>Almanac</b> each morning to surface who\'s due.'
    ],
    callouts:[{type:'who',title:'Booking tool, no LinkedIn needed',body:'Use Cal.com or SavvyCal with a 15-min "AESDR partner intro" event type. Put the link in every reply. Calendar overlap: keep slots in US Pacific–Eastern business hours to match founder + workshop availability.'}]
@@ -761,8 +761,10 @@ create index if not exists alc_time_idx on affiliate_link_clicks(clicked_at desc
    sophistication_tier, commission_pct, attribution_window_days)
 values
   ('<their-slug>','<Display Name>','<their-email>',
-   'active','creator','developing', 30.00, 30);
--- onboarding email fires from the app on status=active`}]
+   'active','creator','developing', 40.00, 30);
+-- onboarding email fires from the app on status=active
+-- NOTE: live schema still defaults commission_pct to 30.00 — set 40.00
+-- explicitly until the rate migration lands (see attribution-decision memo)`}]
   },
   {id:'w5t2',title:'Days 28–30 — Phase-30 review + the milestone memo',day:28,tags:[A('almanac'),A('ledger')],
    steps:[
@@ -1057,14 +1059,14 @@ const BENCHMARKS = {
     ['Teachable platform affiliate','30%','Subscription','Platform-level affiliate program, not course-creator sales'],
     ['General digital / info product','20–50%','Wide range','No physical COGS; margins support high rates'],
     ['B2B SaaS (subscription)','15–30% recurring','Higher perceived value from recurring mechanic',''],
-    ['<b>AESDR (30%)</b>','<b>30%</b>','<b>$249–$299 one-time</b>','<b>At-market. Below HigherLevels (closest comparable) at 40%.</b>']
+    ['<b>AESDR (40%)</b>','<b>40%</b>','<b>$249–$299 one-time</b>','<b>Top of market — matches HigherLevels, the closest niche comparable, on rate.</b>']
   ],
   trajectoryRows:[
-    ['Conservative','5,000','1.0%','1.0%','0.5','$125','$37'],
-    ['Mid','5,000','2.0%','1.5%','1.5','$374','$112'],
-    ['Optimistic','5,000','2.5%','2.5%','3.1','$771','$231'],
-    ['Strong niche endorsement','5,000','3.5%','3.0%','5.25','$1,307','$392'],
-    ['$3k GMV target (back-solved)','15,000','2.5%','2.0%','7.5 (×2 sends)','$3,000+','$900+']
+    ['Conservative','5,000','1.0%','1.0%','0.5','$125','$50'],
+    ['Mid','5,000','2.0%','1.5%','1.5','$374','$150'],
+    ['Optimistic','5,000','2.5%','2.5%','3.1','$771','$308'],
+    ['Strong niche endorsement','5,000','3.5%','3.0%','5.25','$1,307','$523'],
+    ['$3k GMV target (back-solved)','15,000','2.5%','2.0%','7.5 (×2 sends)','$3,000+','$1,200+']
   ],
   refundRows:[
     ['Online courses (industry avg)','~5%','Healthy benchmark for well-structured content'],
@@ -1087,7 +1089,7 @@ const ATTRIBUTION = {
     ['Best when','≤25 partners, you control the stack','Self-serve dashboards become the bottleneck','You need a partner marketplace + PRM','Large channel program, later']
   ],
   pickRow:5, // "Best when" row index for highlighting note
-  verdict:'Extend the custom system for the first ~25 partners (it\'s already built — 30% commission, 30-day window, Stripe Connect payouts all exist). Adopt <b>Rewardful at $49/mo</b> (Starter; 0% transaction fees, Stripe-native, one-time-purchase clean) the moment partner self-serve dashboards become the bottleneck — you hit the $7,500/mo revenue cap at ~100 affiliate sales/month, then upgrade to $99/mo Growth. Skip PartnerStack (est. $800+/mo + 3–15% commission surcharge, no public pricing) and Impact ($30/mo or 3% rev whichever higher, plus 2.5% network tax on every payout) until the channel program needs a full PRM. Both are over-engineered and over-priced for this stage.'
+  verdict:'Extend the custom system for the first ~25 partners (it\'s already built — 40% commission, 30-day window, Stripe Connect payouts all exist). Adopt <b>Rewardful at $49/mo</b> (Starter; 0% transaction fees, Stripe-native, one-time-purchase clean) the moment partner self-serve dashboards become the bottleneck — you hit the $7,500/mo revenue cap at ~100 affiliate sales/month, then upgrade to $99/mo Growth. Skip PartnerStack (est. $800+/mo + 3–15% commission surcharge, no public pricing) and Impact ($30/mo or 3% rev whichever higher, plus 2.5% network tax on every payout) until the channel program needs a full PRM. Both are over-engineered and over-priced for this stage.'
 };
 
 /* ─── TEMPLATE LIBRARY ─── */
@@ -1097,7 +1099,7 @@ const TEMPLATES = [
 
 <span class="var">[NAME]</span> — I read <span class="var">[SPECIFIC PIECE]</span> and the line about <span class="var">[REAL DETAIL]</span> is exactly the gap AESDR is built for: first-1-2-year SDRs and AEs who got dropped into the seat and told to figure it out.
 
-It's a one-time course ($249/$299), built by operators, no guru stuff. If you ever point readers at it, the affiliate deal is 30% with a 30-day attribution window — real money, paid via Stripe, no games.
+It's a one-time course ($249/$299), built by operators, no guru stuff. If you ever point readers at it, the affiliate deal is 40% with a 30-day attribution window — real money, paid via Stripe, no games.
 
 Not asking for a yes today. Want the partner kit to see if it's a fit for your list?
 
@@ -1107,7 +1109,7 @@ Not asking for a yes today. Want the partner kit to see if it's a fit for your l
 
 <span class="var">[NAME]</span> — <span class="var">[COMMUNITY]</span> is full of exactly who AESDR is for: reps a year or two in, ramp harder than anyone warned them. It's a one-time course built by operators, not course-people.
 
-If it fits your members, the partner deal is 30% / 30-day window, paid clean via Stripe. We review your first couple posts so they read in your voice, not a salesy one — protects your members' trust, then you're free.
+If it fits your members, the partner deal is 40% / 30-day window, paid clean via Stripe. We review your first couple posts so they read in your voice, not a salesy one — protects your members' trust, then you're free.
 
 Worth 15 minutes to see if it's a fit?
 
@@ -1119,7 +1121,7 @@ If the partner thing isn't for you, no problem at all — keep the resource. If 
 
 — Antaeus`},
   {name:'Follow-up 2 · +9 days (honest close)',meta:'last touch, then mark cold',
-   body:`<span class="var">[NAME]</span> — last note from me, no hard feelings if it's a no. I think AESDR genuinely fits <span class="var">[THEIR AUDIENCE]</span>, and the 30% / 30-day deal is real, but I'd rather leave you alone than nag.
+   body:`<span class="var">[NAME]</span> — last note from me, no hard feelings if it's a no. I think AESDR genuinely fits <span class="var">[THEIR AUDIENCE]</span>, and the 40% / 30-day deal is real, but I'd rather leave you alone than nag.
 
 Door's open whenever. — Antaeus`},
   {name:'Channel · first-touch (enterprise)',meta:'Herald drafts · leads with the gap',
@@ -1235,11 +1237,11 @@ const DISPATCH = {
   w4t2:['Use the ledger subagent to implement the attribution decision: <extend custom schema | wire the Rewardful + Stripe webhook>.'],
   w5t1:[
     'Use the warden subagent to review this affiliate\'s first submission and return APPROVE / EDITS / DECLINE: <paste copy>',
-    'Use the ledger subagent to create the affiliate row (status=active, tier=developing, 30% / 30-day) and confirm the onboarding email fired.'
+    'Use the ledger subagent to create the affiliate row (status=active, tier=developing, 40% / 30-day) and confirm the onboarding email fired.'
   ],
   w5t2:['Use the ledger subagent for the phase-30 metrics pull.','Use the almanac subagent to draft the 30-day founder memo from that pull (8 lines).'],
   w6t1:['Use the warden subagent to review this submission with line-level rewrites in their voice: <paste copy>'],
-  w6t2:['Use the ledger subagent to confirm the latest attribution fired correctly — show the row, the 30% math, and the refund-window close date.'],
+  w6t2:['Use the ledger subagent to confirm the latest attribution fired correctly — show the row, the 40% math, and the refund-window close date.'],
   w7t1:['Use the herald subagent to source 10 channel candidates (enablement consultants, fractional VP-Sales, RevOps, training firms with a junior-rep gap) and run the non-cannibalization test on each.'],
   w7t2:['Use the herald subagent to draft the channel first-touch for <PARTNER>, leading with the gap we fill, not a rate.'],
   w8t1:['Use the ledger subagent to build the affiliate_weekly_report view and run this week\'s pull.','Use the almanac subagent to turn that pull into the 8-line Friday founder note.'],
@@ -1300,7 +1302,7 @@ const SCRIPT = {
 "Thanks for taking fifteen — I'll keep it to fifteen. I reached out because [REASON FROM THEIR DOSSIER]: your [newsletter / community / show] talks to exactly who AESDR is built for — reps a year or two in, dropped in the deep end and told to figure it out. So this isn't a cold pitch. It's a 'I think these two things fit' call."
 
 <span class="cue">[1:00 · How it works — plain numbers, no mystery]</span>
-"Here's the whole thing, no fine print. AESDR is a one-time course — two-forty-nine or two-ninety-nine depending on the path — for first- and second-year SDRs and AEs. If you point your audience at it and someone buys through your link, you earn thirty percent. The attribution window is thirty days, so if they click today and buy in three weeks, you still get the credit. Paid out through Stripe. That's the deal — there isn't a catch I'm holding back."
+"Here's the whole thing, no fine print. AESDR is a one-time course — two-forty-nine or two-ninety-nine depending on the path — for first- and second-year SDRs and AEs. If you point your audience at it and someone buys through your link, you earn forty percent — about a hundred dollars a sale. The attribution window is thirty days, so if they click today and buy in three weeks, you still get the credit. Paid out through Stripe. That's the deal — there isn't a catch I'm holding back."
 
 <span class="cue">[3:00 · What makes it easy for you]</span>
 "You get a tracked link and a kit — pre-written copy you can lift word-for-word or rework in your own voice. You're never staring at a blank page."
@@ -1501,7 +1503,7 @@ function buildContent(){
       </div>
       <div class="heroMascot"><img src="/mascot/leponeus-doctrine.png" alt="Leponeus"></div>
     </div>
-    <div class="disclaim"><b>Read this first.</b> Every fact here is pulled from the live AESDR codebase: prices ($249 / $299 one-time), commission (30%, 30-day attribution window), the archetype/tier/strike structure, the inboxes (affiliates@aesdr.com, hello@aesdr.com), and the stack (Supabase · Cloudflare Email Routing · Stripe Connect · Resend · Vercel). The <b>seven agents are a build deliverable</b> — we stand them up as part of launching this function, each as a Claude Code subagent (a markdown file in <code>.claude/agents/</code>) or an Agent-SDK worker. Every agent card below is its full spec + system prompt — i.e. the thing you paste into the agent definition when you build it. Building the roster is a Week-1 task in the plan, not an afterthought.</div>
+    <div class="disclaim"><b>Read this first.</b> The economics here are real, not invented: prices ($249 / $299 one-time) and the 30-day attribution window are from the live codebase; the <b>40% affiliate commission is the set program rate</b> (the live schema still defaults to 30% — a rate migration closes that gap). Plus the archetype/tier/strike structure, the inboxes (affiliates@aesdr.com, hello@aesdr.com), and the stack (Supabase · Cloudflare Email Routing · Stripe Connect · Resend · Vercel). The <b>seven agents are a build deliverable</b> — we stand them up as part of launching this function, each as a Claude Code subagent (a markdown file in <code>.claude/agents/</code>) or an Agent-SDK worker. Every agent card below is its full spec + system prompt — i.e. the thing you paste into the agent definition when you build it. Building the roster is a Week-1 task in the plan, not an afterthought.</div>
     <h2 class="blockH">The first hour, literally</h2>
     <p class="body">Open the <b>Phase · Days 1–30</b> section in the sidebar and expand <b>Week 1</b>. Task one is "Get credentialed across the stack" — that's your 9:00am. Work top-down. Check the box on each task as you finish; your progress saves to this browser and the bars at the top fill as you go.</p>
     <div class="ribbon">
@@ -1631,18 +1633,18 @@ function buildContent(){
     <h1 class="secTitle">Benchmarks.</h1>
     <p class="secLede">Commission competitiveness, conversion rate expectations, refund thresholds, and the $3k/mo trajectory math — back-solved from first principles, checked against published industry data.</p>
     <div class="iris-line secDivider"></div>
-    <h3 class="subH">Commission rate: is 30% competitive?</h3>
+    <h3 class="subH">Commission rate: is 40% competitive?</h3>
     <table class="rTable"><thead><tr><th>Program</th><th>Rate</th><th>Price point</th><th>Notes</th></tr></thead>
     <tbody>${BENCHMARKS.commissionRows.map(r=>`<tr>${r.map(cell=>`<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody>
     </table>
-    <div class="callout"><div class="cTitle">Verdict on 30%</div>At-market for the info-product / online-course space. The closest direct comparable — HigherLevels (SDR/AE career courses) — pays <b>40% on a $997–$2,000+ product</b>, so their per-commission dollar (~$400) is 5× AESDR\'s (~$75 at $249). Competitive with the general market, <b>below the niche leader</b>. A 35–40% rate would strengthen the pitch for high-value affiliate candidates without materially impacting the model.</div>
+    <div class="callout"><div class="cTitle">Verdict on 40%</div>Top of the market for one-time info products, and a match for HigherLevels — the closest comparable in the SDR/AE niche — on rate. Per sale that\'s <b>~$100 at $249 / ~$120 at $299</b>. HigherLevels still pays more in absolute dollars (~$400/sale) but only because their product is priced ~4× higher; the <em>rate</em> is now equal, and AESDR\'s lower ticket makes the recommendation an easier yes for an affiliate\'s audience. Lead the pitch with the rate match, not the ticket size.</div>
     <h3 class="subH">Conversion funnel math — 5k-person practitioner list</h3>
     <p class="body" style="font-size:14px;color:var(--muted)">What a single promotional send to a 5,000-person sales newsletter realistically produces at various CTR and conversion rate assumptions.</p>
     <div class="matrix"><table>
       <thead><tr><th>Scenario</th><th>List size</th><th>CTR</th><th>CVR</th><th>Sales/send</th><th>GMV/send</th><th>Affiliate payout/send</th></tr></thead>
       <tbody>${BENCHMARKS.trajectoryRows.map(r=>`<tr>${r.map(cell=>`<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody>
     </table></div>
-    <div class="callout"><div class="cTitle">$3k/mo trajectory reality</div>$3,000 GMV/month = 12–13 sales at $249 = <b>~$900 affiliate payout</b>. A single 5k-person list typically generates 2–5 sales per dedicated send ($500–$1,250 GMV). To hit $3k/month from one list requires 3–4 sends/month (heavy) or a 15,000+ list at typical rates. <b>The $3k milestone is an aggregate across multiple affiliates</b> — not an expectation from any single partner.</div>
+    <div class="callout"><div class="cTitle">$3k/mo trajectory reality</div>$3,000 GMV/month = 12–13 sales at $249 = <b>~$1,200 affiliate payout</b> (at 40%). A single 5k-person list typically generates 2–5 sales per dedicated send ($500–$1,250 GMV). To hit $3k/month from one list requires 3–4 sends/month (heavy) or a 15,000+ list at typical rates. <b>The $3k milestone is an aggregate across multiple affiliates</b> — not an expectation from any single partner.</div>
     <h3 class="subH">Refund rate thresholds</h3>
     <table class="rTable"><thead><tr><th>Context</th><th>Refund rate</th><th>Notes</th></tr></thead>
     <tbody>${BENCHMARKS.refundRows.map(r=>`<tr>${r.map(cell=>`<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody>

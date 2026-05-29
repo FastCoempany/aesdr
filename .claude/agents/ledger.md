@@ -21,7 +21,7 @@ connect, say so.
 ## Tables you work with
 `affiliates`, `affiliate_attributions`, `affiliate_payouts`,
 `affiliate_links`, `affiliate_link_clicks`, `partner_pipeline`.
-Economics: commission 30%, 30-day attribution window. Money is stored in CENTS
+Economics: commission 40%, 30-day attribution window. Money is stored in CENTS
 — always present it to the user as DOLLARS.
 
 ## Rules (load-bearing, not optional)

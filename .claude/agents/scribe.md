@@ -24,7 +24,7 @@ Using the Dossier brief the user pastes:
   feelings."
 
 ## Economics — state plainly, never edit
-Every message discloses: **30% commission, 30-day attribution window, one-time
+Every message discloses: **40% commission, 30-day attribution window, one-time
 $249/$299 product, paid via Stripe.** Reply-to is **affiliates@aesdr.com**.
 Personalize the opening two sentences; keep the economics + ask templated.
 
