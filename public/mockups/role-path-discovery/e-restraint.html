@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>E (restraint) — Inline comparison, disclosure-controlled</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Barlow+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --crimson:#8B1A1A;--cream:#FAF7F2;--ink:#1A1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+    --iris:linear-gradient(90deg,#FF006E,#FF6B00,#F59E0B,#10B981,#38BDF8,#8B5CF6,#FF006E);
+    --display:'Playfair Display',Georgia,serif;
+    --serif:'Source Serif 4',Georgia,serif;
+    --cond:'Barlow Condensed',sans-serif;
+    --mono:'Space Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--cream);color:var(--ink);font-family:var(--serif);min-height:100vh;line-height:1.6;padding-top:48px}
+  @keyframes shimmer{to{background-position:300% 0}}
+
+  .topnav{position:fixed;top:0;left:0;right:0;background:#fff;border-bottom:1px solid var(--light);padding:10px 24px;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);z-index:200}
+  .topnav a{color:var(--crimson);text-decoration:none;border-bottom:1px solid var(--crimson)}
+
+  .annot{position:fixed;top:60px;left:24px;background:#fff;border:1px dashed var(--crimson);padding:10px 14px;font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--crimson);z-index:300;max-width:320px;line-height:1.5}
+  .annot strong{color:var(--ink)}
+
+  .priorSection{padding:48px 24px;text-align:center;border-bottom:1px solid var(--light);background:rgba(0,0,0,.015);font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+
+  .pathSection{padding:80px 24px 96px;max-width:1100px;margin:0 auto}
+  .pathLabel{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--crimson);text-align:center;margin-bottom:14px}
+  .pathHeadline{font-family:var(--display);font-style:italic;font-weight:700;font-size:clamp(36px,5vw,52px);text-align:center;line-height:1.1;margin-bottom:14px}
+  .pathLede{font-family:var(--serif);font-size:17px;font-style:italic;color:var(--muted);text-align:center;max-width:680px;margin:0 auto 40px;line-height:1.6}
+  .pathDivider{width:60px;height:2px;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite;margin:0 auto 48px}
+
+  /* Top stats bar — quantifies the divergence without naming content */
+  .statsBar{display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:var(--ink);color:var(--cream);margin-bottom:32px;border-top:2px solid transparent;background-image:linear-gradient(var(--ink),var(--ink)),var(--iris);background-origin:border-box;background-clip:padding-box,border-box}
+  .stat{padding:20px 18px;text-align:center;border-right:1px solid rgba(250,247,242,.12)}
+  .stat:last-child{border-right:none}
+  .stat .num{font-family:var(--display);font-style:italic;font-weight:700;font-size:36px;color:#fff;line-height:1}
+  .stat .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(250,247,242,.6);margin-top:6px}
+
+  .pathGrid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:36px}
+  .pathCol{background:#fff;border:1px solid var(--light);padding:32px 32px 28px;position:relative}
+  .pathCol.sdr{border-top:3px solid #38BDF8}
+  .pathCol.ae{border-top:3px solid #FF6B00}
+  .pathCol .roleLabel{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;margin-bottom:10px}
+  .pathCol.sdr .roleLabel{color:#1d6f9c}
+  .pathCol.ae .roleLabel{color:#a14400}
+  .pathCol h3{font-family:var(--display);font-style:italic;font-weight:700;font-size:28px;margin-bottom:14px;line-height:1.15}
+  .pathCol .leadIn{font-family:var(--serif);font-size:15px;color:var(--muted);font-style:italic;line-height:1.55;margin-bottom:20px}
+  .pathCol .subhead{font-family:var(--cond);font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px;padding-top:14px;border-top:1px solid var(--light)}
+  .pathCol .subhead:first-of-type{margin-top:0;padding-top:0;border-top:none}
+  /* Topic rows: number + topic only. No outcome strings, no framework names. */
+  .topicRow{display:flex;gap:12px;padding:7px 0;font-size:15px;line-height:1.5;border-bottom:1px dashed var(--light)}
+  .topicRow:last-child{border-bottom:none}
+  .topicRow .num{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.1em;flex-shrink:0;padding-top:3px;width:22px}
+  .topicRow .topic{color:var(--ink);font-weight:600}
+  .pathCol .restraintNote{margin-top:18px;padding:12px 14px;background:rgba(0,0,0,.025);font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);line-height:1.5;border-left:2px solid var(--ink)}
+
+  .sharedNote{background:var(--ink);color:var(--cream);padding:22px 28px;text-align:center;font-family:var(--serif);font-size:15px;line-height:1.6;margin-bottom:24px}
+  .sharedNote strong{color:#fff;font-weight:700}
+  .sharedNote .small{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(250,247,242,.55);margin-bottom:8px;display:block}
+
+  .footNote{text-align:center;font-family:var(--serif);font-size:14.5px;color:var(--muted);font-style:italic;line-height:1.6;max-width:620px;margin:0 auto}
+  .footNote strong{color:var(--ink);font-style:normal}
+
+  .followingHint{padding:36px 24px;text-align:center;background:rgba(0,0,0,.02);border-top:1px solid var(--light);font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+  .followingHint span{color:var(--crimson)}
+
+  @media(max-width:680px){.pathGrid,.statsBar{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+  <div class="topnav">
+    <a href="/mockups/role-path-discovery/">← Back to index</a>
+    <span>Mockup E (restraint) · Disclosure-controlled comparison</span>
+  </div>
+
+  <div class="annot">
+    <strong>Same layout as E</strong> — restraint applied. Topic categories shown, specific frameworks NOT named. Buyer sees that paths meaningfully diverge without learning the actual content.
+  </div>
+
+  <div class="priorSection">↑ Section above: <strong style="color:var(--ink)">What this is NOT</strong> ↑</div>
+
+  <section class="pathSection">
+    <p class="pathLabel">The fork</p>
+    <h2 class="pathHeadline">AE path or SDR path?</h2>
+    <p class="pathLede">The paths share a foundation. The role-specific half is built differently — different lessons, different teaching, different artifacts. The frameworks and tools you take home are inside the program.</p>
+    <div class="pathDivider"></div>
+
+    <div class="statsBar">
+      <div class="stat"><div class="num">36</div><div class="lbl">Sub-lessons total</div></div>
+      <div class="stat"><div class="num">18</div><div class="lbl">Role-conditional</div></div>
+      <div class="stat"><div class="num">7</div><div class="lbl">Lessons that diverge</div></div>
+    </div>
+
+    <div class="sharedNote">
+      <span class="small">Lessons 1–5 · Foundation</span>
+      Both paths share the fundamentals. <strong>You take these in the same order, with the same teaching.</strong> If you switch roles later, you don't re-take them.
+    </div>
+
+    <div class="pathGrid">
+
+      <div class="pathCol sdr">
+        <p class="roleLabel">SDR Path</p>
+        <h3>You're in pipeline-gen.</h3>
+        <p class="leadIn">The path is built for the first 18 months of pipeline-gen work and the climb to the AE seat. Topics, in order:</p>
+        <p class="subhead">Lessons 6–12 (SDR-conditional)</p>
+        <div class="topicRow"><span class="num">06</span><span class="topic">Cold outbound mechanics</span></div>
+        <div class="topicRow"><span class="num">07</span><span class="topic">List quality &amp; sourcing</span></div>
+        <div class="topicRow"><span class="num">08</span><span class="topic">Working with your manager</span></div>
+        <div class="topicRow"><span class="num">09</span><span class="topic">Ramp &amp; survival (months 0–4)</span></div>
+        <div class="topicRow"><span class="num">10</span><span class="topic">Pipeline math &amp; output</span></div>
+        <div class="topicRow"><span class="num">11</span><span class="topic">The handoff to AE</span></div>
+        <div class="topicRow"><span class="num">12</span><span class="topic">The jump to AE</span></div>
+        <p class="restraintNote">Frameworks, templates, and artifacts live inside the program.</p>
+      </div>
+
+      <div class="pathCol ae">
+        <p class="roleLabel">AE Path</p>
+        <h3>You're carrying the bag.</h3>
+        <p class="leadIn">The path is built for the AE seat — first quota, second-year resilience, the relationships that pay later. Topics, in order:</p>
+        <p class="subhead">Lessons 6–12 (AE-conditional)</p>
+        <div class="topicRow"><span class="num">06</span><span class="topic">Discovery &amp; qualification</span></div>
+        <div class="topicRow"><span class="num">07</span><span class="topic">Demo mechanics</span></div>
+        <div class="topicRow"><span class="num">08</span><span class="topic">Stage probability &amp; forecast math</span></div>
+        <div class="topicRow"><span class="num">09</span><span class="topic">Pipeline coverage reality</span></div>
+        <div class="topicRow"><span class="num">10</span><span class="topic">Compensation strategy</span></div>
+        <div class="topicRow"><span class="num">11</span><span class="topic">Relationships that compound</span></div>
+        <div class="topicRow"><span class="num">12</span><span class="topic">Year-three resilience</span></div>
+        <p class="restraintNote">Frameworks, templates, and artifacts live inside the program.</p>
+      </div>
+
+    </div>
+
+    <p class="footNote">Doing both jobs at once? <strong>Pick the role you spend more time in.</strong> You can switch primary path anytime; the non-primary content stays unlocked.</p>
+  </section>
+
+  <div class="followingHint">↓ Section below: <span>Pricing</span> ↓</div>
+</body>
+</html>
