@@ -178,6 +178,20 @@
   .doneBar{margin:14px 0 2px;padding:11px 14px;background:var(--ink);color:var(--cream);font-size:13.5px;line-height:1.5;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
   .doneTag{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ok);border:1px solid var(--ok);padding:2px 8px;flex-shrink:0}
 
+  /* verbatim call script */
+  .callScript{margin:16px 0;border:1px solid var(--ink);background:#fff}
+  .callScriptHead{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:1px solid var(--light);gap:10px}
+  .csTitle{font-family:var(--display);font-style:italic;font-weight:700;font-size:17px}
+  .callScriptBody{padding:14px 18px;font-size:14.5px;line-height:1.75;white-space:pre-wrap}
+  .callScriptBody .cue{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--crimson);text-transform:uppercase;margin-top:6px}
+
+  /* if-it-stalls branches */
+  .stallWrap{margin:14px 0;border-left:3px solid #a14400;background:rgba(161,68,0,.05);padding:12px 16px}
+  .stallLabel{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#a14400;margin-bottom:8px}
+  .stallRow{padding:8px 0;border-bottom:1px dashed rgba(161,68,0,.2);font-size:14px;line-height:1.6}
+  .stallRow:last-child{border-bottom:none}
+  .stallTrigger{font-family:var(--mono);font-size:11px;color:#a14400;letter-spacing:.02em;font-weight:700}
+
   /* agent cards */
   .agentGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin:24px 0}
   .agentCard{border:1px solid var(--ink);background:#fff;padding:22px;position:relative;display:flex;flex-direction:column}
@@ -1206,6 +1220,51 @@ const DONE = {
   w12t2:'90-day proof delivered; three milestones evidenced; next-quarter plan presented.'
 };
 
+/* ─── SCRIPT: verbatim, read-aloud scripts (copyable) ─── */
+const SCRIPT = {
+  w4t1:{title:'The 15-minute intro call — verbatim',body:`<span class="cue">[0:00 · Open — why them, specifically]</span>
+"Thanks for taking fifteen — I'll keep it to fifteen. I reached out because [REASON FROM THEIR DOSSIER]: your [newsletter / community / show] talks to exactly who AESDR is built for — reps a year or two in, dropped in the deep end and told to figure it out. So this isn't a cold pitch. It's a 'I think these two things fit' call."
+
+<span class="cue">[1:00 · How it works — plain numbers, no mystery]</span>
+"Here's the whole thing, no fine print. AESDR is a one-time course — two-forty-nine or two-ninety-nine depending on the path — for first- and second-year SDRs and AEs. If you point your audience at it and someone buys through your link, you earn thirty percent. The attribution window is thirty days, so if they click today and buy in three weeks, you still get the credit. Paid out through Stripe. That's the deal — there isn't a catch I'm holding back."
+
+<span class="cue">[3:00 · What makes it easy for you]</span>
+"You get a tracked link and a kit — pre-written copy you can lift word-for-word or rework in your own voice. You're never staring at a blank page."
+
+<span class="cue">[4:00 · The gate — say it straight, it's a feature]</span>
+"One thing I'm upfront about: your first few posts, I read before they go out. Not to police you — to make sure the copy sounds like you and not like a guru ad. Because if you recommend something that comes off salesy, it's your audience's trust that takes the hit, not mine. Clear three and you post freely after that. Most people clear it fast."
+
+<span class="cue">[6:00 · Hand it over — this is most of the call. Listen.]</span>
+"That's the mechanics. What's your read — does this fit how you usually work with your audience? And what would you need to know before you'd put your name anywhere near it?"
+[Then stop talking. Answer honestly. If they ask something you don't know, say "I'll find out and email you today" — never wing a number or a promise.]
+
+<span class="cue">[13:00 · Close on a real next step — not "let me think"]</span>
+"Here's what I'd suggest: I send you the kit today, you check whether the copy fits your voice, and we talk again [specific day]. Or — if you already know it's a yes — I get your link set up this week and you go live whenever you're ready. Which of those is easier for you?"`}
+};
+function renderScript(id){
+  const s=SCRIPT[id];if(!s)return '';
+  return `<div class="callScript"><div class="callScriptHead"><span class="csTitle">${esc(s.title)}</span>
+    <button class="copyBtn" style="border-color:var(--ink);color:var(--ink)" onclick="copyText(document.getElementById('cs-${id}').innerText,this)">Copy script</button></div>
+    <div class="callScriptBody" id="cs-${id}">${s.body}</div></div>`;
+}
+
+/* ─── STALL: the "if it stalls" branch per high-risk task ─── */
+const STALL = {
+  w2t1:[{t:'Scout returns under 30, or most score voice-fit ≤2',fix:'The surface is wrong, not the method. Drop the weakest surface, add two niches — a vertical-specific sales community, a regional one. If fit is uniformly low, your doctrine\'s bar is too broad; tighten the archetype. Never lower the bar to hit 50 — 30 great beats 50 mediocre.'}],
+  w3t2:[{t:'Reply rate under 10% after wave 1 (≤1 of 8)',fix:'Do NOT send wave 2 unchanged. Diagnose in order: (1) subject line — about THEM or about us? (2) first sentence — does it prove you read their work, or is it generic? (3) the ask — "want the kit?" converts colder rooms than "15-min call"; swap it. Change ONE variable for wave 2 so you learn what moved it.'}],
+  w3t3:[{t:'People reply warm but won\'t book a call',fix:'The call is too big an ask for where they are. Offer the async path: "happy to just send the kit and let you look on your own time — no call needed." Booking-resistance is usually "interested, but not enough to schedule." The kit lets them self-qualify, and the real ones come back to book.'}],
+  w4t1:[{t:'Good calls, no commitments',fix:'You\'re explaining, not closing. Two fixes: (1) end every call on the binary close from the script — "kit-and-talk-again, or set you up this week?" "Let me think" means you didn\'t offer a next step. (2) If they hesitate on the gate, you framed it as a rule, not protection — re-read the gate beat. If 3+ pass for the same reason, that reason is your real objection — bring it to the founder.'}],
+  w6t1:[{t:'Affiliate onboarded but no copy submitted in 7 days',fix:'Week-one dormancy is the #1 churn cause and it\'s almost always friction, not disinterest. Skip the "just checking in" — offer to co-write: "want to hop on for 15 and draft your first post together?" You + Warden live beats three async rounds. If they ghost the co-write too, they were a soft yes on the call — mark them paused, don\'t chase a third time.'}],
+  w7t2:[{t:'A channel conversation opened, then went quiet',fix:'Channel cycles run longer than affiliate — quiet ≠ dead. But diagnose: did you lead with the gap you fill, or with a rate? If rate, you triggered procurement-brain too early. Re-anchor on the gap and offer a low-commitment next step — a co-hosted session, a pilot with one of their clients — not a contract. And remember: you need 1 of 3 to land, not 3 of 3.'}],
+  w9t1:[{t:'Stuck at 6–7 active by day 58',fix:'Two levers, in order: (1) unstick the gate-stalled — a co-writing call revives a stalled developing-tier affiliate faster than new outreach. (2) THEN run a fresh Scout sweep. Don\'t lower the voice-fit bar to pad the count — 7 great affiliates on a $3k trajectory beats 10 where 4 never post. Give the founder the honest number and the why.'}],
+  w12t1:[{t:'Run-rate at ~$2k, not $3k, by day 84',fix:'Don\'t widen — deepen. The top-3 overinvestment is the lever: one more piece from each top performer beats five new cold partners this late. Run the workshop with your strongest affiliate (the system\'s already built) — a live workshop converts 3–5× a link drop. And check the math: pending commission that hasn\'t cleared still counts toward trajectory — you may already be there on a booked basis.'}]
+};
+function renderStall(id){
+  const st=STALL[id];if(!st)return '';
+  return `<div class="stallWrap"><div class="stallLabel">⚠ If it stalls</div>
+    ${st.map(r=>`<div class="stallRow"><span class="stallTrigger">${esc(r.t)}</span> → ${r.fix}</div>`).join('')}</div>`;
+}
+
 function copyDispatch(id,idx,btn){copyText(DISPATCH[id][idx],btn);}
 function renderDispatch(id){
   const d=DISPATCH[id];if(!d)return '';
@@ -1235,8 +1294,10 @@ function renderTask(t){
     <div class="taskDetail">
       <div class="steps">${t.steps.map(s=>`<div class="step">${s}</div>`).join('')}</div>
       ${renderDispatch(t.id)}
+      ${renderScript(t.id)}
       ${renderCode(t.code)}
       ${renderCallouts(t.callouts)}
+      ${renderStall(t.id)}
       ${renderDoneBar(t.id)}
     </div>
   </div>`;
