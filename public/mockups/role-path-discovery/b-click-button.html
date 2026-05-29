@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>B — Click button on pricing cards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Barlow+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --crimson:#8B1A1A;--cream:#FAF7F2;--ink:#1A1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+    --iris:linear-gradient(90deg,#FF006E,#FF6B00,#F59E0B,#10B981,#38BDF8,#8B5CF6,#FF006E);
+    --display:'Playfair Display',Georgia,serif;
+    --serif:'Source Serif 4',Georgia,serif;
+    --cond:'Barlow Condensed',sans-serif;
+    --mono:'Space Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--cream);color:var(--ink);font-family:var(--serif);min-height:100vh;line-height:1.6}
+  @keyframes shimmer{to{background-position:300% 0}}
+
+  .topnav{position:fixed;top:0;left:0;right:0;background:#fff;border-bottom:1px solid var(--light);padding:10px 24px;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);z-index:200}
+  .topnav a{color:var(--crimson);text-decoration:none;border-bottom:1px solid var(--crimson)}
+
+  .annot{position:fixed;top:60px;left:24px;background:#fff;border:1px dashed var(--crimson);padding:10px 14px;font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--crimson);z-index:300;max-width:300px;line-height:1.5}
+  .annot strong{color:var(--ink)}
+
+  .pricingSection{padding:160px 24px 120px;max-width:1200px;margin:0 auto}
+  .sectionLabel{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--crimson);text-align:center;margin-bottom:14px}
+  .sectionHeadline{font-family:var(--display);font-style:italic;font-weight:700;font-size:clamp(36px,5vw,52px);text-align:center;line-height:1.1;margin-bottom:16px}
+  .divider{width:60px;height:2px;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite;margin:0 auto 64px}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+  .card{background:#fff;border:1px solid var(--light);padding:28px 28px 32px;position:relative}
+  .card .tier{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .card .price{font-family:var(--display);font-style:italic;font-weight:700;font-size:42px;line-height:1;margin-bottom:6px}
+  .card .priceNote{font-family:var(--serif);font-size:13px;color:var(--muted);font-style:italic;margin-bottom:18px}
+  .card .feat{padding:8px 0;border-bottom:1px solid var(--light);font-size:14.5px;display:flex;align-items:flex-start;gap:8px}
+  .card .feat:last-of-type{border-bottom:none;margin-bottom:18px}
+  .card .feat::before{content:'·';color:var(--crimson);font-weight:700}
+  .cta{display:block;width:100%;padding:14px;background:var(--crimson);color:#fff;text-align:center;font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;cursor:pointer;border:none}
+  .cta:hover{background:#6e1414}
+
+  /* THE NEW BUTTON */
+  .roleBtn{display:flex;align-items:center;justify-content:space-between;width:100%;margin:14px 0 4px;padding:10px 14px;background:transparent;border:1px solid var(--crimson);color:var(--crimson);font-family:var(--cond);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;text-align:left;gap:8px}
+  .roleBtn:hover{background:var(--crimson);color:#fff}
+  .roleBtn .chev{font-family:var(--display);font-style:italic;font-size:16px;transition:transform .2s ease}
+  .card.open .roleBtn{background:var(--crimson);color:#fff;border-color:var(--crimson)}
+  .card.open .roleBtn .chev{transform:rotate(180deg)}
+
+  /* THE POPOVER (panel) */
+  .panel{display:none;background:var(--ink);color:var(--cream);padding:24px 22px;margin:0 -28px;border-top:2px solid var(--crimson);border-bottom:2px solid var(--crimson)}
+  .card.open .panel{display:block}
+  .panel .panelLabel{font-family:var(--mono);font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:rgba(250,247,242,.55);margin-bottom:10px}
+  .panel .row{margin-bottom:14px}
+  .panel .row:last-child{margin-bottom:0}
+  .panel .row .roleH{font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#fff;margin-bottom:4px}
+  .panel .row .roleText{font-family:var(--serif);font-size:13.5px;line-height:1.55;color:rgba(250,247,242,.85)}
+  .panel .row .roleText em{color:#fff;font-style:normal;font-weight:700}
+
+  .swap{position:fixed;bottom:24px;right:24px;background:#fff;border:1px dashed var(--crimson);padding:8px 14px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--crimson);z-index:300}
+  .swap button{background:transparent;border:none;color:var(--ink);font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;text-decoration:underline;margin-left:8px}
+</style>
+</head>
+<body>
+  <div class="topnav">
+    <a href="./index.html">← Back to index</a>
+    <span>Mockup B · Click button on pricing cards</span>
+  </div>
+
+  <div class="annot">
+    <strong>Pattern:</strong> Tap-friendly button under each card title.<br>
+    <strong>Card 2 (SDR Individual)</strong> shows the panel open. Click the buttons on the others to test.
+  </div>
+
+  <section class="pricingSection">
+    <p class="sectionLabel">Pricing</p>
+    <h2 class="sectionHeadline">One price. Yours when you buy it.</h2>
+    <div class="divider"></div>
+
+    <div class="cards">
+
+      <div class="card">
+        <p class="tier">Individual · AE</p>
+        <p class="price">$497</p>
+        <p class="priceNote">One-time. No subscription.</p>
+        <button class="roleBtn" onclick="document.querySelectorAll('.card').forEach(c=>c.classList.remove('open'));this.parentElement.classList.toggle('open')">
+          <span>How is the AE path different?</span><span class="chev">▾</span>
+        </button>
+        <div class="panel">
+          <p class="panelLabel">Path breakdown</p>
+          <div class="row"><div class="roleH">Shared</div><div class="roleText">Lessons 1–5: fundamentals. <em>All buyers see these.</em></div></div>
+          <div class="row"><div class="roleH">AE-specific</div><div class="roleText">Lessons 6–12: discovery, demo, pipeline math, comp-plan teardown, relationship graph. <em>18 of 36 sub-lessons are AE-conditional.</em></div></div>
+          <div class="row"><div class="roleH">Not for AE</div><div class="roleText">Cold outbound mechanics, SDR-manager 1:1 rubric. <em>Available if you switch role later.</em></div></div>
+        </div>
+        <p class="feat">12 courses, 36 lessons</p>
+        <p class="feat">AE-conditional content on 18 sub-lessons</p>
+        <p class="feat">14-day no-questions refund</p>
+        <a class="cta">Get Access</a>
+      </div>
+
+      <div class="card open">
+        <p class="tier">Individual · SDR</p>
+        <p class="price">$497</p>
+        <p class="priceNote">One-time. No subscription.</p>
+        <button class="roleBtn" onclick="document.querySelectorAll('.card').forEach(c=>c.classList.remove('open'));this.parentElement.classList.toggle('open')">
+          <span>How is the SDR path different?</span><span class="chev">▾</span>
+        </button>
+        <div class="panel">
+          <p class="panelLabel">Path breakdown</p>
+          <div class="row"><div class="roleH">Shared</div><div class="roleText">Lessons 1–5: fundamentals. <em>All buyers see these.</em></div></div>
+          <div class="row"><div class="roleH">SDR-specific</div><div class="roleText">Cold outbound, manager 1:1s, pipeline-gen math, the 30% rule, ramp-survival. <em>18 of 36 sub-lessons are SDR-conditional.</em></div></div>
+          <div class="row"><div class="roleH">Not for SDR (yet)</div><div class="roleText">Discovery deep-dive, comp-plan teardown. <em>Unlocks when you switch to AE.</em></div></div>
+        </div>
+        <p class="feat">12 courses, 36 lessons</p>
+        <p class="feat">SDR-conditional content on 18 sub-lessons</p>
+        <p class="feat">14-day no-questions refund</p>
+        <a class="cta">Get Access</a>
+      </div>
+
+      <div class="card">
+        <p class="tier">Team · Manager</p>
+        <p class="price">Custom</p>
+        <p class="priceNote">Five-minute quote by email.</p>
+        <button class="roleBtn" onclick="document.querySelectorAll('.card').forEach(c=>c.classList.remove('open'));this.parentElement.classList.toggle('open')">
+          <span>How does Team work?</span><span class="chev">▾</span>
+        </button>
+        <div class="panel">
+          <p class="panelLabel">Team breakdown</p>
+          <div class="row"><div class="roleH">Mixed roster</div><div class="roleText">Each seat picks their own role. AEs get AE content, SDRs get SDR content, same dashboard.</div></div>
+          <div class="row"><div class="roleH">Manager view</div><div class="roleText">Per-rep progress, completion, lesson-by-lesson activity. Roll up to cohort metrics.</div></div>
+          <div class="row"><div class="roleH">Invoice + L&amp;D</div><div class="roleText">PO-friendly invoicing. Pricing scales with seat count. Five-minute quote on email.</div></div>
+        </div>
+        <p class="feat">Per-seat access, unlimited duration</p>
+        <p class="feat">Manager dashboard + cohort reporting</p>
+        <p class="feat">Mixed AE/SDR allowed in one purchase</p>
+        <a class="cta">Email for quote</a>
+      </div>
+
+    </div>
+  </section>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Role-Path Discovery — 5 Approaches</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Barlow+Condensed:wght@400;500;600;700;800&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --crimson:#8B1A1A;--cream:#FAF7F2;--ink:#1A1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+    --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+    --display:'Playfair Display',Georgia,serif;
+    --serif:'Source Serif 4',Georgia,serif;
+    --cond:'Barlow Condensed',sans-serif;
+    --mono:'Space Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--cream);color:var(--ink);font-family:var(--serif);min-height:100vh;line-height:1.6}
+  @keyframes shimmer{to{background-position:300% 0}}
+  .iris-text{background:var(--iris);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 4s linear infinite}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:80px 32px}
+  .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--muted);text-transform:uppercase;margin-bottom:16px}
+  h1{font-family:var(--display);font-weight:900;font-style:italic;font-size:clamp(40px,6vw,72px);line-height:1.05;margin-bottom:18px;letter-spacing:.01em}
+  .lede{font-family:var(--serif);font-size:18px;line-height:1.7;color:var(--ink);max-width:680px;margin-bottom:14px}
+  .lede em{font-style:italic;color:var(--muted)}
+  .divider{width:60px;height:2px;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite;margin:32px 0 36px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;margin-bottom:48px}
+  a.card{display:block;text-decoration:none;color:var(--ink);border:1px solid var(--light);padding:28px 28px 60px;background:#fff;position:relative;transition:all .25s ease;overflow:hidden}
+  a.card::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite;opacity:0;transition:opacity .25s ease}
+  a.card:hover{border-color:var(--crimson);transform:translateY(-2px)}
+  a.card:hover::after{opacity:1}
+  a.card .letter{font-family:var(--display);font-style:italic;font-weight:900;font-size:48px;color:var(--crimson);line-height:1;margin-bottom:14px}
+  a.card .tag{font-family:var(--mono);font-size:10px;letter-spacing:.28em;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+  a.card .title{font-family:var(--display);font-weight:700;font-style:italic;font-size:24px;line-height:1.15;margin-bottom:10px;color:var(--ink)}
+  a.card .desc{font-family:var(--serif);font-size:14.5px;line-height:1.6;color:var(--muted)}
+  a.card .meta{position:absolute;left:28px;bottom:22px;display:flex;gap:14px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  a.card .meta span.cost{color:var(--ink)}
+  a.card .arrow{position:absolute;right:28px;bottom:18px;font-family:var(--display);font-style:italic;font-size:24px;color:var(--crimson)}
+
+  .footer{margin-top:24px;padding-top:24px;border-top:1px solid var(--light);font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--muted);text-transform:uppercase}
+  .footer span{color:var(--crimson)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="eyebrow">Mockups · Role-Path Discovery</p>
+    <h1>Five approaches.<br>One conversion problem.</h1>
+    <div class="divider"></div>
+    <p class="lede">If a buyer skips the animation or scrolls straight to the pricing cards, they never learn the AE and SDR paths are <em>different curricula</em>, not just different examples. Each mockup below is a different way to close that gap. Click into any one to see it rendered.</p>
+
+    <div class="grid" style="margin-top:48px">
+
+      <a class="card" href="./a-skip-modal.html">
+        <div class="letter">A</div>
+        <div class="tag">Yours · Refined</div>
+        <div class="title">Skip → "Who are you?" modal</div>
+        <div class="desc">When the user clicks "skip animation," a modal appears asking for role + buyer-type. Catches the skip case directly; risks reading as "I told you I was in a hurry."</div>
+        <div class="meta"><span>Cost <span class="cost">~45 min</span></span><span>Friction <span class="cost">High</span></span></div>
+        <div class="arrow">→</div>
+      </a>
+
+      <a class="card" href="./b-click-button.html">
+        <div class="letter">B</div>
+        <div class="tag">Yours · Refined</div>
+        <div class="title">Click button on pricing cards</div>
+        <div class="desc">Tap-friendly button on each card opens a popover with the AE-vs-SDR-vs-Team breakdown. Information at the conversion moment. Converted from hover (broken on mobile) to click.</div>
+        <div class="meta"><span>Cost <span class="cost">~30 min</span></span><span>Friction <span class="cost">Low</span></span></div>
+        <div class="arrow">→</div>
+      </a>
+
+      <a class="card" href="./c-sticky-banner.html">
+        <div class="letter">C</div>
+        <div class="tag">Mine</div>
+        <div class="title">Sticky role-filter banner</div>
+        <div class="desc">Thin bar pins to the viewport top after the user scrolls past the hero. One click filters the entire page. Ambient navigation; never blocks content.</div>
+        <div class="meta"><span>Cost <span class="cost">~1 hr</span></span><span>Friction <span class="cost">None</span></span></div>
+        <div class="arrow">→</div>
+      </a>
+
+      <a class="card" href="./d-pricing-tabs.html">
+        <div class="letter">D</div>
+        <div class="tag">Mine</div>
+        <div class="title">Role tabs inside each pricing card</div>
+        <div class="desc">AE / SDR / Both tabs at the top of each card. Tap a tab → card content changes to the role-specific lessons, outcomes, and price. Decision happens at the moment of buying.</div>
+        <div class="meta"><span>Cost <span class="cost">~1.5 hr</span></span><span>Friction <span class="cost">Low</span></span></div>
+        <div class="arrow">→</div>
+      </a>
+
+      <a class="card" href="./e-inline-comparison.html">
+        <div class="letter">E</div>
+        <div class="tag">Mine · Recommended</div>
+        <div class="title">Inline "Which path?" comparison block</div>
+        <div class="desc">A new section before Pricing. Two columns rendered side-by-side: SDR path lessons vs AE path lessons. No interaction needed. The most thorough answer to the question rather than a workaround.</div>
+        <div class="meta"><span>Cost <span class="cost">~2.5 hr</span></span><span>Friction <span class="cost">None</span></span></div>
+        <div class="arrow">→</div>
+      </a>
+
+    </div>
+
+    <div class="footer">Brand palette · Editorial register · <span>Mockups only — none of these are wired up</span></div>
+  </div>
+</body>
+</html>
