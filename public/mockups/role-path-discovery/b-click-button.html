@@ -85,7 +85,7 @@
         <p class="tier">Individual · AE</p>
         <p class="price">$497</p>
         <p class="priceNote">One-time. No subscription.</p>
-        <button class="roleBtn" onclick="document.querySelectorAll('.card').forEach(c=>c.classList.remove('open'));this.parentElement.classList.toggle('open')">
+        <button class="roleBtn" onclick="toggleCard(this)">
           <span>How is the AE path different?</span><span class="chev">▾</span>
         </button>
         <div class="panel">
@@ -104,7 +104,7 @@
         <p class="tier">Individual · SDR</p>
         <p class="price">$497</p>
         <p class="priceNote">One-time. No subscription.</p>
-        <button class="roleBtn" onclick="document.querySelectorAll('.card').forEach(c=>c.classList.remove('open'));this.parentElement.classList.toggle('open')">
+        <button class="roleBtn" onclick="toggleCard(this)">
           <span>How is the SDR path different?</span><span class="chev">▾</span>
         </button>
         <div class="panel">
@@ -123,7 +123,7 @@
         <p class="tier">Team · Manager</p>
         <p class="price">Custom</p>
         <p class="priceNote">Five-minute quote by email.</p>
-        <button class="roleBtn" onclick="document.querySelectorAll('.card').forEach(c=>c.classList.remove('open'));this.parentElement.classList.toggle('open')">
+        <button class="roleBtn" onclick="toggleCard(this)">
           <span>How does Team work?</span><span class="chev">▾</span>
         </button>
         <div class="panel">
@@ -140,5 +140,13 @@
 
     </div>
   </section>
+  <script>
+    function toggleCard(btn){
+      const card = btn.closest('.card');
+      const wasOpen = card.classList.contains('open');
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('open'));
+      if (!wasOpen) card.classList.add('open');
+    }
+  </script>
 </body>
 </html>

@@ -56,8 +56,9 @@
 
   .modeBadge{display:none;text-align:center;margin-bottom:14px;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--crimson)}
   body.filtered-ae .modeBadge.ae,body.filtered-sdr .modeBadge.sdr,body.filtered-team .modeBadge.team{display:block}
-  body.filtered-ae .card.ae,body.filtered-ae .card.shared,body.filtered-sdr .card.sdr,body.filtered-sdr .card.shared,body.filtered-team .card.team{display:block}
-  body.filtered-ae .card:not(.ae):not(.shared),body.filtered-sdr .card:not(.sdr):not(.shared),body.filtered-team .card:not(.team):not(.shared){display:none}
+  body.filtered-ae .card:not(.ae),
+  body.filtered-sdr .card:not(.sdr),
+  body.filtered-team .card:not(.team){display:none}
 </style>
 </head>
 <body class="">
@@ -95,7 +96,7 @@
     <p class="modeBadge team">Filtered to Team buyer</p>
 
     <div class="cards">
-      <div class="card ae shared">
+      <div class="card ae">
         <p class="tier">Individual · AE</p>
         <p class="price">$497</p>
         <p class="feat">AE-conditional content on 18 sub-lessons</p>
@@ -103,7 +104,7 @@
         <p class="feat">14-day no-questions refund</p>
         <a class="cta">Get Access (AE)</a>
       </div>
-      <div class="card sdr shared">
+      <div class="card sdr">
         <p class="tier">Individual · SDR</p>
         <p class="price">$497</p>
         <p class="feat">SDR-conditional content on 18 sub-lessons</p>
@@ -111,7 +112,7 @@
         <p class="feat">14-day no-questions refund</p>
         <a class="cta">Get Access (SDR)</a>
       </div>
-      <div class="card team shared">
+      <div class="card team">
         <p class="tier">Team · Manager</p>
         <p class="price">Custom</p>
         <p class="feat">Mixed AE/SDR roster supported</p>
