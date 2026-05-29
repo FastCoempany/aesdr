@@ -195,14 +195,21 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* `safe center` keeps vertical centering on tall viewports but
-     gracefully falls back to top-alignment (like flex-start) when
-     the content stack is taller than the viewport. Prior behavior
-     (plain `center`) split the overflow evenly above and below,
-     which clipped the top of the mascot on laptop-height screens.
-     Now any overflow goes to the bottom where the descriptor text
-     lives — and `overflow-y: auto` lets users scroll there if needed. */
-  justify-content: safe center;
+  /* Centering pattern: `justify-content: flex-start` + `margin-top: auto`
+     on the first child (heroMascotWrap) + `margin-bottom: auto` on the
+     last child (heroCta). When content fits, the auto-margins split
+     remaining vertical space evenly and the stack reads as centered.
+     When content overflows, the auto-margins resolve to 0 and the
+     stack stays top-aligned — the mascot head never clips.
+
+     Previously used `justify-content: safe center`. The `safe` keyword
+     is supposed to fall back to start on overflow, but the browser's
+     overflow detection breaks when `overflow-y: auto` is set on the
+     same container (the scrollbar gives the browser an out: "no
+     overflow, it just scrolls"), so the centering kept clipping the
+     mascot top on borderline viewports. Auto-margins don't have that
+     interaction and behave consistently across browsers. */
+  justify-content: flex-start;
   gap: 20px;
   z-index: 1;
   background: var(--cream);
@@ -215,15 +222,21 @@
 
 /* Mascot wrapper — full size (320×320) at all viewports per founder
    direction. Width capped to 100% so it never overflows horizontally
-   on narrow screens. */
+   on narrow screens. `height: auto` on the img is required for
+   proportional scaling — Next/Image stamps a height=320 HTML attribute
+   that survives if we only override width, which distorts the aspect
+   ratio on narrow viewports. `margin-top: auto` participates in the
+   auto-margin centering pattern on .landingHero above. */
 .heroMascotWrap {
   display: flex;
   justify-content: center;
   width: 100%;
+  margin-top: auto;
   margin-bottom: 4px;
 }
 .heroMascotWrap img {
   width: auto;
+  height: auto;
   max-width: 100%;
 }
 
@@ -269,6 +282,10 @@
   padding: 16px 48px;
   text-decoration: none;
   margin-top: 12px;
+  /* margin-bottom: auto pairs with margin-top: auto on .heroMascotWrap
+     to centre the stack on tall viewports while keeping it top-aligned
+     when content overflows. See the comment on .landingHero. */
+  margin-bottom: auto;
   transition: transform 0.15s, box-shadow 0.3s;
 }
 .heroCta:hover {
