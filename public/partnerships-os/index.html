@@ -167,6 +167,17 @@
   .handNote{font-family:var(--hand);font-size:19px;color:var(--ink);transform:rotate(-.5deg);margin:10px 0 4px;padding-left:18px;position:relative}
   .handNote::before{content:'»';position:absolute;left:0;color:var(--crimson);font-family:var(--display);font-style:italic}
 
+  /* dispatch lines (paste-into-Claude-Code) + done-when bar */
+  .dispatchWrap{margin:14px 0;border:1px solid var(--crimson);background:rgba(139,26,26,.04)}
+  .dispatchLabel{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--crimson);padding:9px 14px;border-bottom:1px solid rgba(139,26,26,.2);display:flex;align-items:center;gap:8px}
+  .dispatchLine{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-bottom:1px dashed rgba(139,26,26,.14)}
+  .dispatchLine:last-child{border-bottom:none}
+  .dispatchLine code{flex:1;font-family:var(--mono);font-size:12.5px;line-height:1.55;color:var(--ink);background:transparent;padding:0;border-radius:0}
+  .dispatchCopy{flex-shrink:0;border-color:var(--crimson)!important;color:var(--crimson)!important}
+  .dispatchCopy:hover{background:var(--crimson)!important;color:#fff!important}
+  .doneBar{margin:14px 0 2px;padding:11px 14px;background:var(--ink);color:var(--cream);font-size:13.5px;line-height:1.5;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .doneTag{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ok);border:1px solid var(--ok);padding:2px 8px;flex-shrink:0}
+
   /* agent cards */
   .agentGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin:24px 0}
   .agentCard{border:1px solid var(--ink);background:#fff;padding:22px;position:relative;display:flex;flex-direction:column}
@@ -653,7 +664,8 @@ limit 25;`}]
   {id:'w3t2',title:'Days 11–13 — Send the first 25 (paced, not blasted)',day:11,tags:[A('scribe'),WHO('25 partner candidates')],
    steps:[
     'Send in three waves of ~8/day, not all 25 at once — so you can respond to early replies same-day and tune the message between waves.',
-    'For each: pull the Dossier brief → hand to <b>Scribe</b> → Scribe personalizes the top two sentences from the brief → you read it once (does it sound like a peer, not a vendor?) → send from your AESDR address, reply-to <code>affiliates@aesdr.com</code>.',
+    '<b>Where you send from</b> (set this up once, before wave 1): a real AESDR mailbox, one-to-one — <u>no sequencing tool</u>. A bulk sender makes 25 hand-picked operators feel like a blast and tanks the register the whole pitch depends on. In Gmail/Workspace: <span class="ui">Settings</span> → <span class="ui">Accounts</span> → <span class="ui">Send mail as</span> → add your AESDR address; then in the same panel set <b>Reply-to</b> to <code>affiliates@aesdr.com</code> so replies route to the shared inbox. Send each one individually — never CC, never BCC.',
+    'For each: pull the Dossier brief → hand to <b>Scribe</b> (dispatch line below) → Scribe personalizes the top two sentences from the brief → you read it once (does it sound like a peer, not a vendor?) → paste into a new email → send from your AESDR address, reply-to <code>affiliates@aesdr.com</code>.',
     'Log each send in <code>partner_pipeline</code>: status → <code>contacted</code>, set <code>next_action</code> = "follow-up 1", <code>next_action_date</code> = +4 days.',
     'Wave 2 (Day 12) and Wave 3 (Day 13): adjust the first-touch based on Wave 1 reply rate. If nobody replies to the "want the kit?" ask, switch to the "15-min call" ask, or vice versa.'
    ],
@@ -666,8 +678,9 @@ where name = any(array['<name1>','<name2>','<name3>']);`}]
   },
   {id:'w3t3',title:'Days 14–15 — Work the replies; book the first calls',day:14,tags:[WHO('repliers'),A('almanac')],
    steps:[
+    '<b>Set up the booking link once</b>, before the first "yes" needs it: Cal.com (or SavvyCal) → <span class="ui">Event Types</span> → <span class="ui">New</span> → name it "AESDR partner intro", duration 15 min, availability in US Pacific–Eastern business hours only (matches founder + workshop overlap). Copy the link — it goes in every yes-reply. No back-and-forth scheduling, no LinkedIn.',
     'Replies are the job now. Same-day response, every time. A warm reply that waits 48 hours cools.',
-    'For a "yes, tell me more": send the <span class="where">/affiliates/kit</span> link + offer a 15-min call. Move them to <code>replied</code>, then <code>call_booked</code>.',
+    'For a "yes, tell me more": reply with the <span class="where">/affiliates/kit</span> link + your Cal.com link. Move them to <code>replied</code>, then <code>call_booked</code> once they pick a slot.',
     'For a "what\'s the commission?": the honest numbers — 30%, 30-day window, $249/$299 product, paid via Stripe. Don\'t hedge; the transparency is the pitch.',
     'For silence: leave them at <code>contacted</code> — the follow-up ladder (Day +4) handles them automatically. Dispatch <b>Almanac</b> each morning to surface who\'s due.'
    ],
@@ -1114,6 +1127,99 @@ function renderCallouts(cs){
     <div class="cTitle">${esc(c.title)}</div>${c.body}</div>`).join('');
 }
 
+/* ─── DISPATCH: the literal line(s) you paste into Claude Code per task ─── */
+const DISPATCH = {
+  w1t3:['Use the warden subagent to score these 3 sales-creator posts against canon so I can calibrate my ear: <paste 3 posts>'],
+  w1t4:['Use the ledger subagent to walk the affiliate schema and show current affiliates plus their attribution totals.'],
+  w1t5:['Use the ledger subagent to create the partner_pipeline table from the Day-3 migration and push it to the live project.'],
+  w1t6:['Use the scout subagent to run Sweep 1: find 15 paid sales communities on Skool and Mighty Networks (50–2,000 members), scored for voice-fit.'],
+  w1t7:['Use the ledger subagent to estimate the build-cost of the three gaps in the custom attribution system: partner dashboard, automated payouts, link-click tracking.'],
+  w2t1:[
+    'Use the scout subagent — Sweep 1: paid communities (Skool + Mighty Networks + Circle), sales/SDR/AE/revenue, 50–2,000 members. Return 15 scored rows.',
+    'Use the scout subagent — Sweep 2: independent sales newsletters (Substack/Beehiiv) + operator-host podcasts. Return 15 scored rows with reply-to / guest-pitch contact paths.',
+    'Use the scout subagent — Sweep 3: practitioner-network figures (30MPC, Outbound Squad, RepVue, Modern Sales Pros, Apex BDR Club, Pavilion) who have their OWN audience. Return 15 scored rows.',
+    'Use the dossier subagent to enrich every candidate scoring voice-fit ≥3, then have ledger write the survivors to partner_pipeline at status=enriched.'
+  ],
+  w2t2:['Use the ledger subagent to run the ranking query and show me the top 25 by composite score; flag any ties for me to break on voice-fit.'],
+  w2t3:['Use the scribe subagent to draft the outreach library — first-touch (newsletter / community / podcast variants), follow-up 1 (+4d), follow-up 2 (+9d). Canon-check each and save to content/partnerships/outreach/.'],
+  w3t2:['Use the scribe subagent to personalize the first-touch for <NAME> from their Dossier brief — keep the economics + ask templated: <paste brief>'],
+  w3t3:['Use the almanac subagent for my morning standup — who replied, who is due a follow-up, what to do first.'],
+  w4t2:['Use the ledger subagent to implement the attribution decision: <extend custom schema | wire the Rewardful + Stripe webhook>.'],
+  w5t1:[
+    'Use the warden subagent to review this affiliate\'s first submission and return APPROVE / EDITS / DECLINE: <paste copy>',
+    'Use the ledger subagent to create the affiliate row (status=active, tier=developing, 30% / 30-day) and confirm the onboarding email fired.'
+  ],
+  w5t2:['Use the ledger subagent for the phase-30 metrics pull.','Use the almanac subagent to draft the 30-day founder memo from that pull (8 lines).'],
+  w6t1:['Use the warden subagent to review this submission with line-level rewrites in their voice: <paste copy>'],
+  w6t2:['Use the ledger subagent to confirm the latest attribution fired correctly — show the row, the 30% math, and the refund-window close date.'],
+  w7t1:['Use the herald subagent to source 10 channel candidates (enablement consultants, fractional VP-Sales, RevOps, training firms with a junior-rep gap) and run the non-cannibalization test on each.'],
+  w7t2:['Use the herald subagent to draft the channel first-touch for <PARTNER>, leading with the gap we fill, not a rate.'],
+  w8t1:['Use the ledger subagent to build the affiliate_weekly_report view and run this week\'s pull.','Use the almanac subagent to turn that pull into the 8-line Friday founder note.'],
+  w8t2:['Use the ledger subagent for a payout dry-run: cleared-but-unpaid attributions, totaled per affiliate. Do NOT trigger the real payout.'],
+  w9t1:['Use the scout subagent to refill the funnel if it is thinning, then scribe + warden through the second wave to push toward 10 active.'],
+  w9t2:['Use the ledger subagent for the trajectory math toward $3k/mo.','Use the almanac subagent to draft the 60-day founder memo and name the phase-90 bet.'],
+  w10t1:[
+    'Use the ledger subagent to rank affiliates by attributed commission and show the top 3.',
+    'Use the almanac subagent to extract what made the top 3 convert (format, message, audience).',
+    'Use the scout subagent to find 10 more partners who look like the top 3.'
+  ],
+  w10t2:['Use the herald subagent to draft partnership terms for the lead channel deal: structure, attribution mechanism, split, term length.'],
+  w11t1:['Use the almanac subagent to help me codify the weekly operating cadence into docs/partnerships/operating-cadence.md.'],
+  w11t2:['Use the scout subagent for the second-wave sweep (25 candidates), then dossier + scribe through the proven process.'],
+  w12t1:['Use the ledger subagent for the monthly run-rate and the refund-rate health check.'],
+  w12t2:['Use the ledger subagent for the full 90-day metrics pull.','Use the almanac subagent to write the 90-day proof + next-quarter plan from it.']
+};
+
+/* ─── DONE: the completion test for each task ─── */
+const DONE = {
+  w1t1:'You can log into all five — Supabase, Cloudflare, GitHub, Stripe, Vercel — yourself, without asking.',
+  w1t2:'<code>supabase --version</code> and <code>wrangler --version</code> both print, and <code>supabase link</code> succeeded.',
+  w1t3:'You can name five R-G blocklist terms from memory, and <code>node scripts/canon-check.mjs --soft</code> runs.',
+  w1tAgents:'All 7 files exist in <code>.claude/agents/</code> and each returns sane output on a one-shot test dispatch.',
+  w1t4:'You\'ve written down the honest baseline in one line: X affiliates, Y active, $Z attributed to date.',
+  w1t5:'<code>select count(*) from partner_pipeline;</code> returns 0 rows (the table exists and is empty).',
+  w1t6:'<code>docs/partnerships/discovery-doctrine.md</code> is committed and Scout has returned its first 15 candidates.',
+  w1t7:'You\'ve read the matrix and opened the evaluation. Decision NOT made yet — that\'s day ~25, on purpose.',
+  w2t1:'50 rows sit at status <code>enriched</code> in <code>partner_pipeline</code>.',
+  w2t2:'Top 25 each have a <code>next_action_date</code>; everyone else is <code>cold</code> (not deleted).',
+  w2t3:'5 templates saved in <code>content/partnerships/outreach/</code>, each passing canon-check.',
+  w3t1:'A test email to <code>affiliates@aesdr.com</code> lands in the founder inbox within one minute.',
+  w3t2:'25 rows at status <code>contacted</code>, each with <code>next_action_date</code> = +4 days.',
+  w3t3:'Every reply answered same-day; at least 3 calls on the calendar.',
+  w4t1:'8–10 calls done; each candidate moved to <code>negotiating</code> or <code>passed</code>.',
+  w4t2:'<code>docs/partnerships/attribution-decision.md</code> sent to the founder; the choice is implemented.',
+  w5t1:'3–5 affiliates at status <code>active</code>, kit links sent, first copy in review.',
+  w5t2:'30-day memo sent to the founder with all four milestones evidenced.',
+  w6t1:'Each first-cohort affiliate has at least one approved piece; gate-clearers are posting freely.',
+  w6t2:'A real test click produced a <code>pending</code> attribution row with the 30-day window set.',
+  w7t1:'10 channel candidates sourced, cut to the 3 strongest, in <code>partner_pipeline</code> at <code>motion=channel</code>.',
+  w7t2:'3 channel conversations open (status <code>replied</code> or <code>negotiating</code>).',
+  w8t1:'<code>affiliate_weekly_report</code> view exists and the first Friday note is sent.',
+  w8t2:'Founder approved the first batch; Stripe shows the transfer; the affiliate sees "paid".',
+  w9t1:'10 affiliates at <code>active</code>, each with at least one approved piece.',
+  w9t2:'60-day memo sent; trajectory math done; the phase-90 bet (wider vs deeper) is decided.',
+  w10t1:'Top 3 identified; each given a second piece or a workshop; Scout finding 10 lookalikes.',
+  w10t2:'Lead channel deal has draft terms in front of the partner; founder looped in.',
+  w11t1:'<code>operating-cadence.md</code> is committed — a stranger could run your week from it.',
+  w11t2:'25 new candidates in the funnel; one workshop scheduled with your top affiliate.',
+  w12t1:'Run-rate at/near $3k/mo; month-end payout run clean; refund rate under 15%.',
+  w12t2:'90-day proof delivered; three milestones evidenced; next-quarter plan presented.'
+};
+
+function copyDispatch(id,idx,btn){copyText(DISPATCH[id][idx],btn);}
+function renderDispatch(id){
+  const d=DISPATCH[id];if(!d)return '';
+  return `<div class="dispatchWrap">
+    <div class="dispatchLabel">▶ Dispatch — paste into Claude Code, in the aesdr repo</div>
+    ${d.map((line,i)=>`<div class="dispatchLine"><code>${esc(line)}</code>
+      <button class="copyBtn dispatchCopy" onclick="copyDispatch('${id}',${i},this)">Copy</button></div>`).join('')}
+  </div>`;
+}
+function renderDoneBar(id){
+  const dn=DONE[id];if(!dn)return '';
+  return `<div class="doneBar"><span class="doneTag">Done when</span><span>${dn}</span></div>`;
+}
+
 /* task card */
 function renderTask(t){
   const done = !!store.done[t.id];
@@ -1128,8 +1234,10 @@ function renderTask(t){
     </div>
     <div class="taskDetail">
       <div class="steps">${t.steps.map(s=>`<div class="step">${s}</div>`).join('')}</div>
+      ${renderDispatch(t.id)}
       ${renderCode(t.code)}
       ${renderCallouts(t.callouts)}
+      ${renderDoneBar(t.id)}
     </div>
   </div>`;
 }
