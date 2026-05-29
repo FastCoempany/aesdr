@@ -989,7 +989,7 @@ const RESOURCES = {
     ['r/sales contributors','Public; identifiable heavy contributors with their own audiences.','reddit.com/r/sales','lo']
   ],
   discovery:[
-    ['Common Room','Community-intelligence: signals across Slack/Discord/Reddit/X/GitHub. Find advocates, trace to their communities. ~$1.5–3k/mo.','commonroom.io','hi'],
+    ['Common Room','Community-intelligence: signals across Slack/Discord/Reddit/X/GitHub. <b>$1,000/mo minimum billed annually</b> (no free tier as of 2026) — over-budget for early stage. Revisit at Phase 2 when managing 50+ partners.','commonroom.io','mid'],
     ['Clay','Enrichment + list-building automation. Build the scored target list.','clay.com','hi'],
     ['Apollo / Listen Notes / Podchaser','Contact + podcast metadata for the manual stack.','—','mid'],
     ['Skool / Mighty directories','Free, manual, highest brand-fit signal for the price.','—','hi']
@@ -1003,6 +1003,65 @@ const RESOURCES = {
   ]
 };
 
+/* ─── PROSPECT INTEL (Run A: affiliate; Run B: channel) — researched May 2026 ─── */
+const PROSPECTS = {
+  affiliate:[
+    {name:'Neil Bhuiyan',surface:'Podcast',handle:'happyselling.io/podcast',audience:'2k–5k listeners · 110+ eps',archetype:'creator',vf:5,why:'Podcast built specifically for brand-new SDRs (max 2 yrs in seat); every episode is a live discovery call with an early-career rep — exact audience match.',contact:'X DM @HappySelling_io · linktr.ee/happyselling',conflict:'N'},
+    {name:'Florin Tatulea',surface:'Newsletter (Substack)',handle:'salesflo.substack.com',audience:'~13k confirmed subs',archetype:'creator',vf:5,why:'Head of Sales Dev at Common Room; writes tactical prospecting breakdowns for SDRs/AEs at real SaaS companies — operator voice, zero guru.',contact:'Newsletter reply · X DM @FlorinTatulea',conflict:'N'},
+    {name:'Elric Legloire',surface:'Newsletter + Podcast',handle:'newsletter.outbound.kitchen',audience:'~7k newsletter · ~3–5k podcast',archetype:'creator',vf:4,why:'4x top-SDR, led teams at Chili Piper; Outbound Kitchen is a practitioner frame with no hype.',contact:'X DM @elriclegloire · Substack chat open',conflict:'Soft — Sell Better speaker; no paid-course conflict confirmed'},
+    {name:'Jed Mahrle',surface:'Newsletter (Substack)',handle:'jed.substack.com / practicalprospecting.io',audience:'tens of thousands (multi-platform)',archetype:'creator/coach',vf:4,why:'Ex-PandaDoc AE; writes cold email and outbound frameworks weekly — peer voice, results-oriented.',contact:'Newsletter reply · X DM',conflict:'Soft — sells agency + team-oriented newsletter courses; not a direct consumer SDR course'},
+    {name:'Tom Slocum',surface:'Newsletter (Beehiiv)',handle:'thesdlab.beehiiv.com',audience:'est. 3k–8k',archetype:'creator/coach',vf:4,why:'18 yrs in sales; The SD Lab writes outbound tactics in a "trenches" tone — anti-guru, very operator.',contact:'X DM @Tommy_Slocum · thesdlab.com/press-media',conflict:'Soft — sells $29.99 team bootcamp; not a consumer SDR course'},
+    {name:'Stefan Conic',surface:'Skool + Podcast',handle:'skool.com/sdr-hire-community-1422',audience:'Skool community + podcast est. 1–3k listeners',archetype:'community/creator',vf:4,why:'Founder of SDR Hire; podcast breakdowns are "400 cold calls a day" style — operator pragmatist.',contact:'sdrhire.com email',conflict:'N — recruiting firm, not a competing course'},
+    {name:'Daniel Goerner',surface:'Skool community',handle:'skool.com/sdr-bdr-community',audience:'est. 200–500 members',archetype:'community/coach',vf:4,why:'Active SDR at Oxylabs running a peer-built community for reps wanting tactical help — practitioner, not guru.',contact:'Skool DM @daniel-goerner-4130',conflict:'N — complementary community, not a curriculum'},
+    {name:'Sam Nelson',surface:'Newsletter + Community',handle:'samnelson.substack.com · SDRLeader.com',audience:'~11k Substack subs',archetype:'creator/community',vf:3,why:'Founded SDRLeader.com after years at Outreach; writes for the SDR ecosystem — slightly senior audience but high credibility.',contact:'X DM @realSamNelson · newsletter reply',conflict:'N — SDRLeader.com is vendor-neutral'},
+    {name:'Collin Mitchell',surface:'Podcast (Sales Transformation)',handle:'@collinmitchell on X',audience:'est. 1k–4k',archetype:'creator',vf:3,why:'Chief Evangelist at Humantic AI; twice-weekly personalization tips for SDRs.',contact:'X DM',conflict:'Soft — vendor affiliated (Humantic AI); no competing course'},
+    {name:'Michael Gagliano',surface:'Community (SDR Nation)',handle:'sdrnation.com',audience:'est. 500–2k members',archetype:'community',vf:3,why:'Co-founder of the longest-running paid SDR community; credibility with serious early-career reps.',contact:'sdrnation.com/about',conflict:'Soft — SDR Nation sells $540/yr competing membership; review carefully before approaching'}
+  ],
+  affiliateConflicts:[
+    {name:'Jason Bay',surface:'Podcast (Outbound Squad)',handle:'outboundsquad.com/podcast',audience:'est. 10k–30k',why:'Hard conflict: confirmed Sell Better speaker + 30MPC trainer. Do not approach.'},
+    {name:'Belal Batrawy',surface:'Newsletter (Substack)',handle:'deathtofluff.substack.com',audience:'tens of thousands',why:'Hard conflict: runs Death to Fluff Bootcamp (paid AE program via learntosell.io). Do not approach.'},
+    {name:'Morgan J Ingram',surface:'Podcast (SDR Chronicles)',handle:'SDR Chronicles podcast',audience:'est. 5k–15k',why:'Hard conflict: Director at JBarrows Sales Training. Do not approach.'}
+  ],
+  channel:[
+    {name:'Vendux',type:'Fractional VP-Sales network',url:'vendux.org',size:'10+ (1,000+ exec roster)',fit:'North America\'s largest pre-vetted fractional sales leader network — every exec placed at a startup confronts a ramp problem. AESDR gives them a tool to hand new SDRs/AEs from Day 1.',structure:'Referral fee or co-sell — Vendux adds AESDR to placement package',conflict:'N',contact:'vendux.org contact form'},
+    {name:'Martal Group',type:'SDR outsourcing / BDR-as-a-service',url:'martal.ca',size:'10+ (200+ SDRs · 2k+ clients)',fit:'Outsourced SDR firm for B2B tech/SaaS — reps are continuously onboarded. License AESDR as a required ramp module; reduces their training overhead.',structure:'White-label or content bundle in SDR onboarding stack',conflict:'N',contact:'martal.ca contact form'},
+    {name:'Skaled Consulting',type:'Sales-enablement consultancy',url:'skaled.com',size:'Boutique 10+',fit:'Embedded GTM consulting for B2B SaaS — new SDR/AE hires at client companies arrive under-trained; AESDR fills the rep-level onboarding gap.',structure:'Content bundle — Skaled recommends AESDR inside enablement engagements',conflict:'N',contact:'skaled.com/contact'},
+    {name:'RevOps Consulting',type:'RevOps consultancy',url:'revopsconsulting.io',size:'Boutique 2–10',fit:'Serves pre-revenue through post-Series C B2B tech; explicitly trains sales teams on the changes they implement — AESDR as the self-paced foundational layer.',structure:'Content bundle alongside HubSpot / CRM implementation playbooks',conflict:'N',contact:'revopsconsulting.io contact form'},
+    {name:'The Revenue Operations Group',type:'RevOps consultancy',url:'revopsgroup.com',size:'Solo/boutique 2–5',fit:'Works with early/growth-stage SaaS — exactly the cohort that hires raw SDRs/AEs who need fast ramping.',structure:'Referral fee — recommended to client reps as part of RevOps onboarding stack',conflict:'N',contact:'revopsgroup.com discovery call form'},
+    {name:'Activated Scale',type:'Fractional RevOps / fractional sales',url:'activatedscale.com',size:'Boutique 2–10',fit:'Provides fractional RevOps leadership and fractional selling to SaaS startups — reps placed need quick-ramp SDR/AE fundamentals.',structure:'Referral fee — recommended to every client-side SDR/AE at onboarding',conflict:'N',contact:'activatedscale.com contact'},
+    {name:'Belkins',type:'SDR outsourcing / BDR-as-a-service',url:'belkins.io',size:'10+ (Clutch Top 1000 2025)',fit:'Outsourced SDR agency for B2B companies — each SDR placed with a client undergoes onboarding that AESDR could formalize as a required ramp module.',structure:'Content bundle — Belkins includes AESDR access as part of its sales-enablement services',conflict:'N',contact:'belkins.io contact form'},
+    {name:'Sales Assembly',type:'Sales training firm / community',url:'salesassembly.com',size:'10+ (350+ member companies · 14 cert tracks)',fit:'Membership-based B2B SaaS enablement — individual reps who cannot afford $30k/yr team seats can self-study with AESDR at $249.',structure:'Referral fee — recommended to individual reps for self-paced study alongside live sessions',conflict:'Moderate — 14 cert tracks overlap in content; different price point ($249 vs $30k team)',contact:'salesassembly.com contact form'},
+    {name:'Factor 8',type:'Sales training firm',url:'factor8.com',size:'Firm 10+',fit:'Runs The Sales Bar eLearning for SDRs/BDRs — AESDR adds startup-SaaS-specific depth they underindex on. Best angle: carved-out sub-$50M ARR segment.',structure:'Content bundle scoped to startup ICP only',conflict:'Y — The Sales Bar is a directly competing self-paced SDR/AE curriculum',contact:'info@factor8.com'},
+    {name:'Winning by Design',type:'Sales training firm',url:'winningbydesign.com',size:'Firm 10+ (16k+ trained globally)',fit:'Cohort-based B2B SaaS training for AEs/SDRs/CSMs — AESDR targets the sub-$10M ARR startup segment that WbD under-serves.',structure:'Co-sell for companies too small for WbD\'s enterprise pricing',conflict:'Y — WbD sells SDR and AE courses directly',contact:'winningbydesign.com contact form'}
+  ]
+};
+
+/* ─── BENCHMARKS (Run D) — commission, conversion math, refund thresholds ─── */
+const BENCHMARKS = {
+  commissionRows:[
+    ['HigherLevels (SDR/AE career courses)','40%','$997–$2,000+ one-time','Closest direct comparable in the early-career rep niche'],
+    ['GoHighLevel SaaS affiliate','40% recurring','$97–$297/mo SaaS','Different product; recurring mechanic inflates perceived value'],
+    ['Teachable platform affiliate','30%','Subscription','Platform-level affiliate program, not course-creator sales'],
+    ['General digital / info product','20–50%','Wide range','No physical COGS; margins support high rates'],
+    ['B2B SaaS (subscription)','15–30% recurring','Higher perceived value from recurring mechanic',''],
+    ['<b>AESDR (30%)</b>','<b>30%</b>','<b>$249–$299 one-time</b>','<b>At-market. Below HigherLevels (closest comparable) at 40%.</b>']
+  ],
+  trajectoryRows:[
+    ['Conservative','5,000','1.0%','1.0%','0.5','$125','$37'],
+    ['Mid','5,000','2.0%','1.5%','1.5','$374','$112'],
+    ['Optimistic','5,000','2.5%','2.5%','3.1','$771','$231'],
+    ['Strong niche endorsement','5,000','3.5%','3.0%','5.25','$1,307','$392'],
+    ['$3k GMV target (back-solved)','15,000','2.5%','2.0%','7.5 (×2 sends)','$3,000+','$900+']
+  ],
+  refundRows:[
+    ['Online courses (industry avg)','~5%','Healthy benchmark for well-structured content'],
+    ['Low-price impulse (<$100)','10–30%+','High variability; buyer regret common'],
+    ['Well-structured professional dev / B2B','3–5%','Typical for high-quality career-focused content'],
+    ['Best-in-class (onboarding + strong pre-qual)','<2%','Achievable with completion support'],
+    ['<b>AESDR target</b>','<b><5%</b>','<b>Flag affiliate at 15%; suspend at 20% (aligns with ClickBank standard)</b>']
+  ]
+};
+
 /* ─── ATTRIBUTION DECISION MATRIX ─── */
 const ATTRIBUTION = {
   cols:['Custom (extend Supabase+Stripe)','Rewardful','PartnerStack','Impact'],
@@ -1010,12 +1069,12 @@ const ATTRIBUTION = {
     ['Fit for one-time product','Native — already built for $249/$299 one-time','Excellent — Stripe-native, one-time-friendly','Built for SaaS recurring; one-time is awkward','Enterprise; overkill for stage'],
     ['Partner self-serve dashboard','Build it (gap)','Included','Included, polished','Included'],
     ['Automated payouts','Stripe Connect already wired','Via Stripe','Built-in','Built-in'],
-    ['Monthly cost','~$0 + your time','~$49–149/mo','~$500+/mo','$$$ enterprise'],
+    ['Monthly cost (verified May 2026)','~$0 + your time','$49/mo Starter (≤$7.5k/mo aff. rev) · $99/mo Growth (≤$15k/mo) · 0% txn fees','~$800+/mo est. + 3–15% commission surcharge (no public pricing)','$30/mo OR 3% monthly aff. rev (whichever higher) + 2.5% network tax on all payouts'],
     ['Setup time','Days (extend schema)','~1 day','~1 week','Weeks'],
     ['Best when','≤25 partners, you control the stack','Self-serve dashboards become the bottleneck','You need a partner marketplace + PRM','Large channel program, later']
   ],
   pickRow:5, // "Best when" row index for highlighting note
-  verdict:'Extend the custom system for the first ~25 partners (it\'s already built — 30% commission, 30-day window, Stripe Connect payouts all exist). Adopt Rewardful the moment partner self-serve dashboards become the thing eating your time. Skip PartnerStack/Impact until the channel program is large enough to need a PRM — that\'s a next-quarter question, not a day-30 one.'
+  verdict:'Extend the custom system for the first ~25 partners (it\'s already built — 30% commission, 30-day window, Stripe Connect payouts all exist). Adopt <b>Rewardful at $49/mo</b> (Starter; 0% transaction fees, Stripe-native, one-time-purchase clean) the moment partner self-serve dashboards become the bottleneck — you hit the $7,500/mo revenue cap at ~100 affiliate sales/month, then upgrade to $99/mo Growth. Skip PartnerStack (est. $800+/mo + 3–15% commission surcharge, no public pricing) and Impact ($30/mo or 3% rev whichever higher, plus 2.5% network tax on every payout) until the channel program needs a full PRM. Both are over-engineered and over-priced for this stage.'
 };
 
 /* ─── TEMPLATE LIBRARY ─── */
@@ -1088,6 +1147,8 @@ const NAV = [
   {g:'The Toolkit'},
   {id:'agents',n:'AI',label:'Agent Roster'},
   {id:'resources',n:'◆',label:'Resource Vault'},
+  {id:'prospects',n:'⊛',label:'Prospect Intel'},
+  {id:'benchmarks',n:'~',label:'Benchmarks'},
   {id:'templates',n:'✎',label:'Outreach Library'},
   {id:'cli',n:'>_',label:'CLI Vault'},
   {id:'attribution',n:'$',label:'Attribution Decision'},
@@ -1504,6 +1565,84 @@ function buildContent(){
     <table class="rTable"><thead><tr><th>Avoid</th><th>Why</th></tr></thead><tbody>
     ${RESOURCES.avoid.map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td></tr>`).join('')}</tbody></table>
     <div class="callout"><div class="cTitle">The litmus test</div>If your instinct is to plug AESDR into a marketplace and watch the numbers, it's the wrong instinct for this brand. If it's community intelligence, manual curation, and a tight scored list — that's the motion.</div>
+  </section>`;
+
+  /* PROSPECTS */
+  html+=`<section class="section" id="sec-prospects">
+    <div class="secEyebrow">Researched · May 2026 · no LinkedIn</div>
+    <h1 class="secTitle">Prospect Intel.</h1>
+    <p class="secLede">Named candidates across affiliate and channel surfaces — researched against public presence. Audience sizes confirmed or estimated (noted). Conflict flags are live. Approach no-conflict, highest voice-fit first.</p>
+    <div class="iris-line secDivider"></div>
+    <h3 class="subH">Affiliate prospects — 10 candidates (Run A)</h3>
+    <p class="body" style="font-size:14px;color:var(--muted)">Sorted by voice-fit score. Priority outreach: Neil Bhuiyan → Florin Tatulea → Stefan Conic → Daniel Goerner → Elric Legloire. Hard conflicts listed separately below.</p>
+    <div class="matrix"><table>
+      <thead><tr><th>Name</th><th>Surface</th><th>Handle / URL</th><th>Audience</th><th>Archetype</th><th>VF</th><th>Why fit</th><th>Contact path</th><th>Conflict</th></tr></thead>
+      <tbody>${PROSPECTS.affiliate.map(p=>`<tr>
+        <td><b>${esc(p.name)}</b></td>
+        <td style="font-size:13px">${esc(p.surface)}</td>
+        <td class="src">${esc(p.handle)}</td>
+        <td style="font-size:12px">${esc(p.audience)}</td>
+        <td style="font-size:12px">${esc(p.archetype)}</td>
+        <td style="font-family:var(--mono);font-size:14px;font-weight:700;color:${p.vf>=5?'var(--ok)':p.vf>=4?'var(--crimson)':'var(--muted)'}">${p.vf}/5</td>
+        <td style="font-size:13px">${esc(p.why)}</td>
+        <td style="font-size:12px;font-family:var(--mono);color:var(--muted)">${esc(p.contact)}</td>
+        <td><span class="badge ${p.conflict==='N'?'hi':p.conflict.startsWith('Y')?'lo':'mid'}">${p.conflict==='N'?'Clean':p.conflict.startsWith('Y')?'Conflict':'Soft'}</span></td>
+      </tr>`).join('')}</tbody>
+    </table></div>
+    <h3 class="subH">Hard conflicts — do not approach</h3>
+    <div class="callout" style="border-left-color:#a14400;background:rgba(161,68,0,.05)">
+      <div class="cTitle" style="color:#a14400">Conflict flags</div>
+      ${PROSPECTS.affiliateConflicts.map(p=>`<div style="margin-bottom:10px;font-size:14px"><b>${esc(p.name)}</b> <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">${esc(p.surface)} · ${esc(p.audience)}</span><br><span style="font-size:13px;color:var(--muted)">${esc(p.why)}</span></div>`).join('')}
+    </div>
+    <h3 class="subH">Channel prospects — 10 organizations (Run B)</h3>
+    <p class="body" style="font-size:14px;color:var(--muted)">Recommended first outreach: Vendux → Martal Group → Skaled → RevOps Consulting → Revenue Operations Group. Conflict-flagged orgs require a carved-out ICP before approaching — do not drop them.</p>
+    <div class="matrix"><table>
+      <thead><tr><th>Org</th><th>Type</th><th>URL</th><th>Size</th><th>Fit rationale</th><th>Structure</th><th>Conflict</th><th>Contact</th></tr></thead>
+      <tbody>${PROSPECTS.channel.map(p=>`<tr>
+        <td><b>${esc(p.name)}</b></td>
+        <td style="font-size:12px">${esc(p.type)}</td>
+        <td class="src">${esc(p.url)}</td>
+        <td style="font-size:12px">${esc(p.size)}</td>
+        <td style="font-size:13px">${esc(p.fit)}</td>
+        <td style="font-size:12px;font-style:italic;color:var(--muted)">${esc(p.structure)}</td>
+        <td><span class="badge ${p.conflict==='N'?'hi':p.conflict.startsWith('Y')?'lo':'mid'}">${p.conflict==='N'?'Clean':p.conflict.startsWith('Y')?'Conflict':'Moderate'}</span></td>
+        <td style="font-size:11px;font-family:var(--mono);color:var(--muted)">${esc(p.contact)}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>
+    <div class="callout"><div class="cTitle">Channel outreach note</div>Herald drafts the pitch for channel candidates. Every message leads with the gap you fill in their practice — not a rate. Channel cycles run 3–6× longer than affiliate. You need 1 of 3 conversations to land, not 3 of 3.</div>
+  </section>`;
+
+  /* BENCHMARKS */
+  html+=`<section class="section" id="sec-benchmarks">
+    <div class="secEyebrow">Researched · May 2026 · your numbers vs the field</div>
+    <h1 class="secTitle">Benchmarks.</h1>
+    <p class="secLede">Commission competitiveness, conversion rate expectations, refund thresholds, and the $3k/mo trajectory math — back-solved from first principles, checked against published industry data.</p>
+    <div class="iris-line secDivider"></div>
+    <h3 class="subH">Commission rate: is 30% competitive?</h3>
+    <table class="rTable"><thead><tr><th>Program</th><th>Rate</th><th>Price point</th><th>Notes</th></tr></thead>
+    <tbody>${BENCHMARKS.commissionRows.map(r=>`<tr>${r.map(cell=>`<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody>
+    </table>
+    <div class="callout"><div class="cTitle">Verdict on 30%</div>At-market for the info-product / online-course space. The closest direct comparable — HigherLevels (SDR/AE career courses) — pays <b>40% on a $997–$2,000+ product</b>, so their per-commission dollar (~$400) is 5× AESDR\'s (~$75 at $249). Competitive with the general market, <b>below the niche leader</b>. A 35–40% rate would strengthen the pitch for high-value affiliate candidates without materially impacting the model.</div>
+    <h3 class="subH">Conversion funnel math — 5k-person practitioner list</h3>
+    <p class="body" style="font-size:14px;color:var(--muted)">What a single promotional send to a 5,000-person sales newsletter realistically produces at various CTR and conversion rate assumptions.</p>
+    <div class="matrix"><table>
+      <thead><tr><th>Scenario</th><th>List size</th><th>CTR</th><th>CVR</th><th>Sales/send</th><th>GMV/send</th><th>Affiliate payout/send</th></tr></thead>
+      <tbody>${BENCHMARKS.trajectoryRows.map(r=>`<tr>${r.map(cell=>`<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody>
+    </table></div>
+    <div class="callout"><div class="cTitle">$3k/mo trajectory reality</div>$3,000 GMV/month = 12–13 sales at $249 = <b>~$900 affiliate payout</b>. A single 5k-person list typically generates 2–5 sales per dedicated send ($500–$1,250 GMV). To hit $3k/month from one list requires 3–4 sends/month (heavy) or a 15,000+ list at typical rates. <b>The $3k milestone is an aggregate across multiple affiliates</b> — not an expectation from any single partner.</div>
+    <h3 class="subH">Refund rate thresholds</h3>
+    <table class="rTable"><thead><tr><th>Context</th><th>Refund rate</th><th>Notes</th></tr></thead>
+    <tbody>${BENCHMARKS.refundRows.map(r=>`<tr>${r.map(cell=>`<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody>
+    </table>
+    <div class="callout"><div class="cTitle">AESDR policy (recommended)</div>Clawback commissions on any confirmed refund within the refund window. Hold payout 30–45 days after refund window closes. <b>Flag for review at 15%</b> refund rate on referred sales (audience mismatch signal). <b>Suspend at 20%</b> — aligns with ClickBank\'s published threshold, the industry standard for info-product programs.</div>
+    <h3 class="subH">Tooling pricing snapshot (Run C — verified May 2026)</h3>
+    <table class="rTable"><thead><tr><th>Tool</th><th>Free tier</th><th>Starter paid</th><th>Fit for AESDR</th></tr></thead>
+    <tbody>
+      <tr><td><b>Cal.com</b></td><td>Yes — unlimited event types, 1 user</td><td>Teams $15/user/mo (adds round-robin)</td><td><span class="badge hi">Use it now</span> Free tier handles all solo founder intake calls</td></tr>
+      <tr><td><b>SavvyCal</b></td><td>Free (1 link)</td><td>$12/mo Basic · $20/mo Premium</td><td><span class="badge mid">Optional</span> Calendar overlay reduces no-shows; worth $12/mo for affiliate candidate calls</td></tr>
+      <tr><td><b>Gmail Workspace</b></td><td>—</td><td>Hard limit: 2,000/day · safe cold outreach: 25–50/day after ramp-up</td><td><span class="badge hi">Already in use</span> Keep cold sends under 50/day; use a subdomain (affiliates.aesdr.com) to protect root domain deliverability</td></tr>
+    </tbody>
+    </table>
   </section>`;
 
   /* TEMPLATES */
