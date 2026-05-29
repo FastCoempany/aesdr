@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>K — The Pivot (compact card near pricing)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Barlow+Condensed:wght@400;500;600;700;800&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --crimson:#8B1A1A;--cream:#FAF7F2;--ink:#1A1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+    --iris:linear-gradient(90deg,#FF006E,#FF6B00,#F59E0B,#10B981,#38BDF8,#8B5CF6,#FF006E);
+    --display:'Playfair Display',Georgia,serif;
+    --serif:'Source Serif 4',Georgia,serif;
+    --cond:'Barlow Condensed',sans-serif;
+    --mono:'Space Mono',monospace;
+    --hand:'Caveat',cursive;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--cream);color:var(--ink);font-family:var(--serif);min-height:100vh;line-height:1.6;padding-top:48px}
+  @keyframes shimmer{to{background-position:300% 0}}
+
+  .topnav{position:fixed;top:0;left:0;right:0;background:#fff;border-bottom:1px solid var(--light);padding:10px 24px;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);z-index:200}
+  .topnav a{color:var(--crimson);text-decoration:none;border-bottom:1px solid var(--crimson)}
+
+  .annot{position:fixed;top:60px;left:24px;background:#fff;border:1px dashed var(--crimson);padding:10px 14px;font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--crimson);z-index:300;max-width:300px;line-height:1.5}
+  .annot strong{color:var(--ink)}
+
+  /* Compact card sits inline above the pricing area */
+  .stage{max-width:1080px;margin:0 auto;padding:60px 24px 120px;display:flex;flex-direction:column;align-items:center}
+  .ctxAbove{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:24px}
+  .ctxAbove span{color:var(--crimson)}
+
+  /* THE PIVOT — small editorial badge */
+  .pivot{background:#fff;border:1px solid var(--ink);width:100%;max-width:560px;padding:24px 28px;position:relative;transition:all .25s ease}
+  .pivot::before{content:'';position:absolute;top:-1px;left:-1px;right:-1px;height:2px;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite}
+
+  .pivotHead{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;margin-bottom:18px}
+  .pivotMascot{width:64px;height:64px;flex-shrink:0;transition:opacity .25s ease}
+  .pivotMascot img{width:100%;height:100%;object-fit:contain;display:block}
+  .pivotEyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.26em;color:var(--crimson);text-transform:uppercase;margin-bottom:6px}
+  .pivotTitle{font-family:var(--display);font-style:italic;font-weight:700;font-size:22px;line-height:1.2;color:var(--ink)}
+
+  /* Initial state — question + buttons */
+  .pivotPrompt{display:block;font-family:var(--serif);font-size:15px;color:var(--ink);line-height:1.55;margin-bottom:14px;font-style:italic;color:var(--muted)}
+  .pivotBtns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .pivotBtn{padding:12px 8px;background:transparent;border:1px solid var(--ink);font-family:var(--cond);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);cursor:pointer;transition:all .15s ease}
+  .pivotBtn:hover,.pivotBtn.active{background:var(--ink);color:var(--cream)}
+
+  /* Revealed state */
+  .pivotReveal{display:none;margin-top:18px;padding-top:18px;border-top:1px solid var(--light)}
+  .pivot.revealed .pivotReveal{display:block}
+  .pivot.revealed .pivotPrompt{display:none}
+  .pivotReveal p{font-family:var(--serif);font-size:15.5px;line-height:1.65;color:var(--ink);margin-bottom:12px}
+  .pivotReveal p em{color:var(--muted);font-style:italic}
+  .pivotReveal p strong{font-weight:700}
+  .pivotMeta{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px dashed var(--light)}
+  .pivotChip{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);padding:5px 9px;border:1px solid var(--light);background:rgba(0,0,0,.02)}
+  .pivotChip strong{color:var(--crimson)}
+  .swapHint{font-family:var(--hand);font-size:18px;color:var(--ink);margin-top:14px;text-align:right;transform:rotate(-1deg)}
+
+  /* Fake pricing chrome below to show the pivot in-context */
+  .pricingPreview{margin-top:40px;width:100%;max-width:1100px;padding:24px;border:1px dashed var(--light);text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+  .pricingPreview span{color:var(--crimson)}
+</style>
+</head>
+<body>
+  <div class="topnav">
+    <a href="/mockups/role-path-discovery/">← Back to index</a>
+    <span>Mockup K · The Pivot (compact, sits above pricing)</span>
+  </div>
+
+  <div class="annot">
+    <strong>Pattern:</strong> Small editorial badge that sits just above the pricing cards. Pick a seat → the badge swaps in-place to show that role's shape. Smallest footprint of the three. Cycle through by clicking another button.
+  </div>
+
+  <section class="stage">
+    <p class="ctxAbove">↑ Section above: <span>What this is NOT</span> &middot; Next: <span>Pricing</span> ↓</p>
+
+    <div class="pivot" id="pivot">
+      <div class="pivotHead">
+        <div class="pivotMascot"><img src="/mascot/leponeus-diagnosis.png" alt="" id="pmascot"></div>
+        <div>
+          <p class="pivotEyebrow">Before you scroll · Role-conditional</p>
+          <h3 class="pivotTitle" id="ptitle">Half the curriculum changes by seat.</h3>
+        </div>
+      </div>
+      <p class="pivotPrompt">Pick the seat you're in — we'll show you the shape of your path before you pick a price.</p>
+      <div class="pivotBtns">
+        <button class="pivotBtn" onclick="pick('ae',this)">AE</button>
+        <button class="pivotBtn" onclick="pick('sdr',this)">SDR</button>
+        <button class="pivotBtn" onclick="pick('team',this)">Team</button>
+      </div>
+
+      <div class="pivotReveal" id="reveal-ae">
+        <p>You're carrying a number. The AE half of the program is built around the work you actually do — the math, the conversations, the calendar pressure. <strong>Seven sub-lessons are AE-conditional.</strong></p>
+        <p><em>The other path's seven aren't hidden; they live a click away in your dashboard once you switch.</em></p>
+        <div class="pivotMeta">
+          <span class="pivotChip"><strong>7 of 36</strong> · AE-conditional</span>
+          <span class="pivotChip">Switch path anytime</span>
+        </div>
+        <p class="swapHint">tap another button to swap.</p>
+      </div>
+
+      <div class="pivotReveal" id="reveal-sdr">
+        <p>You're filling the pipeline. The SDR half is built around the first 18 months specifically — the climb, the patience, the question of what good actually looks like before anyone tells you. <strong>Seven sub-lessons are SDR-conditional.</strong></p>
+        <p><em>The AE path's seven aren't hidden; they unlock the day you switch your role to AE in your dashboard.</em></p>
+        <div class="pivotMeta">
+          <span class="pivotChip"><strong>7 of 36</strong> · SDR-conditional</span>
+          <span class="pivotChip">Switch path anytime</span>
+        </div>
+        <p class="swapHint">tap another button to swap.</p>
+      </div>
+
+      <div class="pivotReveal" id="reveal-team">
+        <p>You're picking up the tab. Each seat picks their own path. AEs get the AE work, SDRs get the SDR work, <strong>one purchase, mixed roster.</strong></p>
+        <p><em>You see per-rep progress, manager rollup, and which sub-lessons each seat finished. PO-friendly invoice. Five-minute quote.</em></p>
+        <div class="pivotMeta">
+          <span class="pivotChip">Mixed AE + SDR</span>
+          <span class="pivotChip">Per-seat dashboard</span>
+        </div>
+        <p class="swapHint">tap another button to swap.</p>
+      </div>
+    </div>
+
+    <div class="pricingPreview">↓ Pricing cards would render here in the real page ↓</div>
+  </section>
+
+  <script>
+    const POSES = {ae:'verdict', sdr:'sprint', team:'owner'};
+    const TITLES = {
+      ae:'Your AE path is ready.',
+      sdr:'Your SDR path is ready.',
+      team:'Your team setup is ready.'
+    };
+    function pick(role,btn){
+      const pivot = document.getElementById('pivot');
+      pivot.classList.add('revealed');
+      document.querySelectorAll('.pivotBtn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.pivotReveal').forEach(r=>r.style.display='none');
+      document.getElementById('reveal-'+role).style.display='block';
+      document.getElementById('pmascot').src = '/mascot/leponeus-' + POSES[role] + '.png';
+      document.getElementById('ptitle').textContent = TITLES[role];
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>J — The Letter (founder-voice reveal)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Barlow+Condensed:wght@400;500;600;700;800&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --crimson:#8B1A1A;--cream:#FAF7F2;--ink:#1A1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+    --iris:linear-gradient(90deg,#FF006E,#FF6B00,#F59E0B,#10B981,#38BDF8,#8B5CF6,#FF006E);
+    --display:'Playfair Display',Georgia,serif;
+    --serif:'Source Serif 4',Georgia,serif;
+    --cond:'Barlow Condensed',sans-serif;
+    --mono:'Space Mono',monospace;
+    --hand:'Caveat',cursive;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--cream);color:var(--ink);font-family:var(--serif);min-height:100vh;line-height:1.6;padding-top:48px}
+  @keyframes shimmer{to{background-position:300% 0}}
+
+  .topnav{position:fixed;top:0;left:0;right:0;background:#fff;border-bottom:1px solid var(--light);padding:10px 24px;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);z-index:200}
+  .topnav a{color:var(--crimson);text-decoration:none;border-bottom:1px solid var(--crimson)}
+
+  .annot{position:fixed;top:60px;left:24px;background:#fff;border:1px dashed var(--crimson);padding:10px 14px;font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--crimson);z-index:300;max-width:300px;line-height:1.5}
+  .annot strong{color:var(--ink)}
+
+  .stage{max-width:720px;margin:0 auto;padding:80px 24px 120px}
+
+  /* THE LETTER — editorial register, NOT dossier */
+  .letter{background:#fff;border:1px solid var(--light);padding:56px 56px 48px;position:relative;box-shadow:0 24px 48px rgba(26,26,26,.06)}
+  .letter::before{content:'';position:absolute;top:-1px;left:-1px;right:-1px;height:2px;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite}
+
+  /* Mascot in upper-right, lightly bordered */
+  .letterMascot{position:absolute;top:32px;right:32px;width:96px;height:96px}
+  .letterMascot img{width:100%;height:100%;object-fit:contain;display:block;transition:opacity .3s ease}
+
+  .letterEyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--muted);text-transform:uppercase;margin-bottom:16px}
+  .letterHeadline{font-family:var(--display);font-style:italic;font-weight:700;font-size:42px;line-height:1.05;margin-bottom:32px;max-width:480px;color:var(--ink)}
+
+  .letterQ{font-family:var(--serif);font-size:18px;color:var(--ink);line-height:1.65;margin-bottom:22px;font-style:italic;color:var(--muted)}
+
+  .pickerRow{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+  .pickerBtn{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:transparent;border:1px solid var(--ink);font-family:var(--cond);font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);cursor:pointer;text-align:left;transition:all .15s ease}
+  .pickerBtn:hover{background:var(--ink);color:var(--cream)}
+  .pickerBtn.active{background:var(--ink);color:var(--cream)}
+  .pickerBtn .arrow{font-family:var(--display);font-style:italic;font-size:18px}
+
+  .letterBody{display:none;padding-top:18px;border-top:1px solid var(--light);margin-top:8px;position:relative}
+  .letterBody.show{display:block}
+  .letterBody p{font-family:var(--serif);font-size:17px;line-height:1.75;margin-bottom:16px;color:var(--ink)}
+  .letterBody p:last-of-type{margin-bottom:0}
+  .letterBody em{font-style:italic;color:var(--muted)}
+  .letterBody strong{font-weight:700;color:var(--ink)}
+
+  /* Caveat margin annotations */
+  .marginAnnot{position:relative;font-family:var(--hand);font-size:22px;color:var(--ink);line-height:1.2;margin:18px 0 4px;padding-left:24px;transform:rotate(-.6deg);max-width:420px}
+  .marginAnnot::before{content:'»';position:absolute;left:0;top:2px;color:var(--crimson);font-family:var(--display);font-style:italic;font-size:24px}
+
+  .letterStat{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:14px;padding:6px 10px;border:1px solid var(--light);background:rgba(0,0,0,.02)}
+  .letterStat strong{color:var(--crimson)}
+
+  .letterSign{margin-top:32px;padding-top:18px;border-top:1px solid var(--light);font-family:var(--hand);font-size:24px;color:var(--ink);line-height:1.2}
+  .letterSign small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+</style>
+</head>
+<body>
+  <div class="topnav">
+    <a href="/mockups/role-path-discovery/">← Back to index</a>
+    <span>Mockup J · The Letter (founder-voice reveal)</span>
+  </div>
+
+  <div class="annot">
+    <strong>Pattern:</strong> A single editorial-letter card. Pick a seat → the letter writes itself for you. No lessons named, no jargon — just operator-direct prose. Caveat-font margin annotation gives the founder-voice register without leaning on the dossier aesthetic.
+  </div>
+
+  <section class="stage">
+
+    <div class="letter">
+      <div class="letterMascot">
+        <img src="/mascot/leponeus-diagnosis.png" alt="Leponeus" id="mascotImg">
+      </div>
+
+      <p class="letterEyebrow">A note · before you scroll to pricing</p>
+      <h1 class="letterHeadline">Half the curriculum changes based on the seat you're in.</h1>
+
+      <p class="letterQ">Pick the seat. We'll write the rest of this for you.</p>
+
+      <div class="pickerRow">
+        <button class="pickerBtn" onclick="pick('ae',this)"><span>I'm carrying a number</span><span class="arrow">→</span></button>
+        <button class="pickerBtn" onclick="pick('sdr',this)"><span>I'm filling the pipeline</span><span class="arrow">→</span></button>
+        <button class="pickerBtn" onclick="pick('team',this)"><span>I'm picking up the tab for a roster</span><span class="arrow">→</span></button>
+      </div>
+
+      <div class="letterBody" id="body-ae">
+        <p>Good. You're sitting in the seat half the program is written for.</p>
+        <p>The work you'd ask a senior AE to walk you through, the math you wish your manager would put on a whiteboard, the conversations that look easy from the outside and never are inside — that's where the AE-conditional content lives. Different topics, different ordering, different examples, different tools at the end.</p>
+        <p><strong>Seven of the thirty-six sub-lessons</strong> were built specifically for this seat. The rest of the program is the same for everyone — the foundation everyone needs, taught once.</p>
+        <p class="marginAnnot">it'll be obvious in week one. that's by design.</p>
+        <span class="letterStat"><strong>7 of 36</strong> · AE-conditional · 5 are shared with SDR</span>
+        <div class="letterSign">
+          — the team<small>(yes, real people)</small>
+        </div>
+      </div>
+
+      <div class="letterBody" id="body-sdr">
+        <p>Good. You're sitting in the seat the other half is written for.</p>
+        <p>The months everyone tells you will eventually click. The work that doesn't look glamorous from the outside. The question of when to trust your manager and when to push back. The math you'll need before you graduate to a quota. That's where the SDR-conditional content lives. Different topics, different ordering, different examples, different tools at the end.</p>
+        <p><strong>Seven of the thirty-six sub-lessons</strong> were built specifically for this seat. The rest of the program is the same for everyone — the foundation everyone needs, taught once.</p>
+        <p class="marginAnnot">we built this because the help we needed didn't exist.</p>
+        <span class="letterStat"><strong>7 of 36</strong> · SDR-conditional · 5 are shared with AE</span>
+        <div class="letterSign">
+          — the team<small>(yes, real people)</small>
+        </div>
+      </div>
+
+      <div class="letterBody" id="body-team">
+        <p>Good. You're the buyer who actually wanted the AE/SDR split.</p>
+        <p>Each seat on your roster picks their own path. AEs get the AE work, SDRs get the SDR work, both inside the same purchase and the same dashboard. You see per-rep progress, manager rollup, and which sub-lessons each seat has actually finished. The program is the same one your individual buyers get; the difference is the visibility layer above it.</p>
+        <p><strong>One purchase. Mixed roster.</strong> Invoice format your L&amp;D team is used to seeing. Quoted in a five-minute call.</p>
+        <p class="marginAnnot">no minimum yet. honest pricing on the call.</p>
+        <span class="letterStat">Mixed roster · per-seat progress · invoiced</span>
+        <div class="letterSign">
+          — the team<small>(yes, real people)</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const POSES = {ae:'verdict', sdr:'sprint', team:'owner'};
+    function pick(role,btn){
+      document.querySelectorAll('.pickerBtn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.letterBody').forEach(b=>b.classList.remove('show'));
+      document.getElementById('body-'+role).classList.add('show');
+      document.getElementById('mascotImg').src = '/mascot/leponeus-' + POSES[role] + '.png';
+    }
+  </script>
+</body>
+</html>

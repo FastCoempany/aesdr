@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>I — Three Doors (editorial role-pick)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Barlow+Condensed:wght@400;500;600;700;800&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --crimson:#8B1A1A;--cream:#FAF7F2;--ink:#1A1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+    --iris:linear-gradient(90deg,#FF006E,#FF6B00,#F59E0B,#10B981,#38BDF8,#8B5CF6,#FF006E);
+    --display:'Playfair Display',Georgia,serif;
+    --serif:'Source Serif 4',Georgia,serif;
+    --cond:'Barlow Condensed',sans-serif;
+    --mono:'Space Mono',monospace;
+    --hand:'Caveat',cursive;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--cream);color:var(--ink);font-family:var(--serif);min-height:100vh;line-height:1.6;padding-top:48px}
+  @keyframes shimmer{to{background-position:300% 0}}
+
+  .topnav{position:fixed;top:0;left:0;right:0;background:#fff;border-bottom:1px solid var(--light);padding:10px 24px;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);z-index:200}
+  .topnav a{color:var(--crimson);text-decoration:none;border-bottom:1px solid var(--crimson)}
+
+  .annot{position:fixed;top:60px;left:24px;background:#fff;border:1px dashed var(--crimson);padding:10px 14px;font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--crimson);z-index:300;max-width:300px;line-height:1.5}
+  .annot strong{color:var(--ink)}
+
+  .stage{max-width:1080px;margin:0 auto;padding:64px 24px 120px}
+  .stageEyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--crimson);text-transform:uppercase;text-align:center;margin-bottom:14px}
+  .stageHeadline{font-family:var(--display);font-style:italic;font-weight:700;font-size:clamp(36px,5vw,52px);text-align:center;line-height:1.1;margin-bottom:12px}
+  .stageHint{font-family:var(--serif);font-size:16px;font-style:italic;color:var(--muted);text-align:center;margin-bottom:36px}
+  .stageDivider{width:60px;height:2px;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite;margin:0 auto 40px}
+
+  .doorRow{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;transition:all .35s ease}
+  @media(max-width:760px){.doorRow{grid-template-columns:1fr}}
+
+  /* Each door */
+  .door{background:#fff;border:1px solid var(--light);padding:28px 24px 24px;cursor:pointer;position:relative;text-align:center;transition:all .25s ease}
+  .door:hover{border-color:var(--ink);transform:translateY(-2px)}
+  .door .mascotWrap{width:120px;height:120px;margin:0 auto 14px}
+  .door .mascotWrap img{width:100%;height:100%;object-fit:contain;display:block}
+  .door .doorTag{font-family:var(--mono);font-size:10px;letter-spacing:.26em;color:var(--crimson);text-transform:uppercase;margin-bottom:10px}
+  .door .doorTitle{font-family:var(--display);font-style:italic;font-weight:700;font-size:24px;line-height:1.15;margin-bottom:8px}
+  .door .doorHint{font-family:var(--serif);font-size:14px;color:var(--muted);font-style:italic;line-height:1.5;margin-bottom:18px}
+  .door .doorPick{font-family:var(--cond);font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--ink);padding-bottom:4px;border-bottom:1.5px solid var(--ink);display:inline-block}
+
+  /* Picked state — the doorRow gets a class, picked door expands */
+  body.picked .doorRow{grid-template-columns:1fr}
+  body.picked .door:not(.is-picked){display:none}
+  body.picked .door.is-picked{padding:48px 40px 40px;cursor:default;text-align:left;display:grid;grid-template-columns:auto 1fr;gap:36px;align-items:start}
+  body.picked .door.is-picked:hover{transform:none}
+  body.picked .door.is-picked .mascotWrap{width:200px;height:200px;margin:0}
+  body.picked .door.is-picked .doorPick{display:none}
+  body.picked .door.is-picked::before{content:'';position:absolute;top:-1px;left:-1px;right:-1px;height:3px;background:var(--iris);background-size:300% 100%;animation:shimmer 4s linear infinite}
+  .pickedBody{display:none}
+  body.picked .door.is-picked .pickedBody{display:block}
+
+  .pickedBody h2{font-family:var(--display);font-style:italic;font-weight:700;font-size:34px;line-height:1.1;margin:6px 0 16px;color:var(--ink)}
+  .pickedBody p{font-family:var(--serif);font-size:17px;line-height:1.7;margin-bottom:14px;color:var(--ink);max-width:560px}
+  .pickedBody p em{color:var(--muted);font-style:italic}
+  .pickedStat{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--crimson);margin-top:6px;padding:6px 10px;border:1px solid var(--crimson)}
+
+  .swapBack{margin-top:24px;display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);text-decoration:none;border-bottom:1px solid var(--muted);cursor:pointer;background:none;border-top:none;border-left:none;border-right:none;padding:4px 0}
+  .swapBack:hover{color:var(--ink);border-bottom-color:var(--ink)}
+
+  .marginNote{font-family:var(--hand);font-size:22px;color:var(--ink);margin-top:18px;transform:rotate(-1deg);line-height:1.2}
+  .marginNote::before{content:'— ';color:var(--muted)}
+</style>
+</head>
+<body>
+  <div class="topnav">
+    <a href="/mockups/role-path-discovery/">← Back to index</a>
+    <span>Mockup I · Three Doors (editorial role-pick)</span>
+  </div>
+
+  <div class="annot">
+    <strong>Pattern:</strong> Three tiles side-by-side. Click one → others collapse, picked expands to show role-shape essay. No lesson names, no AESDR-specific terms — generic laymen language only. Leponeus pose changes per role.
+  </div>
+
+  <section class="stage">
+    <p class="stageEyebrow">Pathfinder · Role-conditional curriculum</p>
+    <h1 class="stageHeadline">Which seat are you in?</h1>
+    <p class="stageHint">Pick one. Half the curriculum changes based on your answer.</p>
+    <div class="stageDivider"></div>
+
+    <div class="doorRow" id="doorRow">
+
+      <div class="door" data-role="ae" onclick="pick('ae')">
+        <div class="mascotWrap"><img src="/mascot/leponeus-verdict.png" alt=""></div>
+        <p class="doorTag">[AE Path]</p>
+        <h3 class="doorTitle">You're carrying a number.</h3>
+        <p class="doorHint">Closing, forecasting, working open opps to a quota.</p>
+        <span class="doorPick">Pick this →</span>
+
+        <div class="pickedBody">
+          <h2>You're carrying a number.</h2>
+          <p>Half the program is the foundation — shared with the other path, taught the same way. The other half is built around the seat you're sitting in: the work you actually do, the conversations you actually have, the math you actually run when the quarter doesn't look the way the spreadsheet said it would.</p>
+          <p>Different topics. Different ordering. Different examples. Different tools at the end. <em>Seven of the thirty-six sub-lessons are built specifically for this seat.</em></p>
+          <span class="pickedStat">7 of 36 · AE-conditional</span>
+          <div class="marginNote">you'll know the difference in week one.</div>
+          <br>
+          <button class="swapBack" onclick="reset()">← Pick a different seat</button>
+        </div>
+      </div>
+
+      <div class="door" data-role="sdr" onclick="pick('sdr')">
+        <div class="mascotWrap"><img src="/mascot/leponeus-sprint.png" alt=""></div>
+        <p class="doorTag">[SDR Path]</p>
+        <h3 class="doorTitle">You're filling the pipeline.</h3>
+        <p class="doorHint">Cold outreach, list work, the climb to the AE seat.</p>
+        <span class="doorPick">Pick this →</span>
+
+        <div class="pickedBody">
+          <h2>You're filling the pipeline.</h2>
+          <p>Half the program is the foundation — shared with the other path, taught the same way. The other half is built around the seat you're sitting in: the months everyone tells you will eventually click, the work that doesn't look glamorous from the outside, and the question of when to trust your manager versus when to push back.</p>
+          <p>Different topics. Different ordering. Different examples. Different tools at the end. <em>Seven of the thirty-six sub-lessons are built specifically for this seat.</em></p>
+          <span class="pickedStat">7 of 36 · SDR-conditional</span>
+          <div class="marginNote">if it were easy, the curriculum wouldn't exist.</div>
+          <br>
+          <button class="swapBack" onclick="reset()">← Pick a different seat</button>
+        </div>
+      </div>
+
+      <div class="door" data-role="team" onclick="pick('team')">
+        <div class="mascotWrap"><img src="/mascot/leponeus-owner.png" alt=""></div>
+        <p class="doorTag">[Team Path]</p>
+        <h3 class="doorTitle">You're picking up the tab.</h3>
+        <p class="doorHint">Buying for a roster. Mixed AE + SDR allowed.</p>
+        <span class="doorPick">Pick this →</span>
+
+        <div class="pickedBody">
+          <h2>You're picking up the tab.</h2>
+          <p>Each seat picks their own path. Your AEs get the AE work, your SDRs get the SDR work, both inside the same purchase and the same dashboard. You see per-rep progress, manager rollup, and which sub-lessons each seat has actually finished.</p>
+          <p>The program is the same one your individual buyers get. The difference is the visibility layer above it — and the invoice format your L&amp;D team is used to seeing. <em>One purchase. Mixed roster. Two paths inside.</em></p>
+          <span class="pickedStat">Mixed AE + SDR · Per-seat progress</span>
+          <div class="marginNote">no minimum yet; five-minute call to size.</div>
+          <br>
+          <button class="swapBack" onclick="reset()">← Pick a different seat</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    function pick(role){
+      document.body.classList.add('picked');
+      document.querySelectorAll('.door').forEach(d=>{
+        d.classList.toggle('is-picked', d.dataset.role === role);
+      });
+    }
+    function reset(){
+      document.body.classList.remove('picked');
+      document.querySelectorAll('.door').forEach(d=>d.classList.remove('is-picked'));
+    }
+  </script>
+</body>
+</html>
