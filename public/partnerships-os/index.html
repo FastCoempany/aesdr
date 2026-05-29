@@ -458,11 +458,14 @@ const WEEKS = [
   },
   {id:'w1t2',title:'Day 1, 11:00am — Set up the local toolchain',day:1,tags:[CLI()],
    steps:[
-    'Clone the repo and install the CLIs you\'ll use daily. Open <span class="ui">Terminal</span>.',
-    'Clone + install dependencies. The repo is a Next.js app with the affiliate backend in <code>supabase/migrations</code>.',
-    'Install the <b>Supabase CLI</b> (your most-used tool — Ledger agent drives it) and the <b>Cloudflare Wrangler</b> CLI (for the eventual link shortener).',
-    'Link the Supabase CLI to the live project so you can run migrations and queries without the dashboard.',
-    'Confirm everything works with the verification block.'
+    '<b>Open Terminal.</b> macOS: <span class="ui">⌘ + Space</span> → type <code>Terminal</code> → Enter. Make a home for the code: <code>mkdir -p ~/code && cd ~/code</code>.',
+    '<b>Clone the repo</b> (block 1): run <code>git clone https://github.com/fastcoempany/aesdr.git</code>, then <code>cd aesdr</code>. You\'re now inside the Next.js app; the affiliate backend lives in <code>supabase/migrations/</code>.',
+    '<b>Install dependencies:</b> <code>npm install</code> (1–2 min). If it errors on Node version, install Node 20+ first — <code>nvm install 20 && nvm use 20</code> — then re-run.',
+    '<b>Install the Supabase CLI</b> (block 2): <code>brew install supabase/tap/supabase</code>. This is your most-used tool — Ledger drives every query and migration through it.',
+    '<b>Install Cloudflare Wrangler:</b> <code>npm install -g wrangler</code>. For the aesdr.io link shortener in Phase 60 — install now so it\'s done.',
+    '<b>Verify both:</b> <code>supabase --version && wrangler --version</code> — both must print a version. If <code>command not found</code>, quit and reopen Terminal so PATH reloads, then re-run.',
+    '<b>Log in + link to the live project</b> (block 3): <code>supabase login</code> (opens browser → Authorize). Grab the ref from the dashboard URL <code>supabase.com/dashboard/project/&lt;REF&gt;</code>, then <code>supabase link --project-ref &lt;REF&gt;</code>.',
+    '<b>Pull the live schema</b> so the affiliate tables exist locally: <code>supabase db pull</code>. <b>Done when</b> <code>supabase/migrations/</code> shows the existing affiliate tables.'
    ],
    code:[
     {label:'clone + install',lang:'bash',body:`git clone https://github.com/fastcoempany/aesdr.git
@@ -484,11 +487,11 @@ supabase db pull`}
   },
   {id:'w1t3',title:'Day 1, 2:00pm — Read the canon until you can hear it',day:1,tags:[A('warden')],
    steps:[
-    'You cannot approve affiliate copy — or write outreach — until you can hear the AESDR voice. Read these in order, in-repo:',
-    '<code>AGENTS.md</code> + <code>AFFILIATE_BRAND_CANON.md</code> — the brand-voice canon and the affiliate-side overlap rules.',
-    '<code>docs/canon-revisions/</code> — every dated file. The R-G blocklist (R-G1→R-G8), the substitution table, the "seven moves." This is the rubric Warden enforces.',
-    'The live surfaces, as a buyer would see them: <span class="where">aesdr.com</span> (landing), <span class="where">aesdr.com/affiliates</span> (the program), <span class="where">aesdr.com/affiliates/kit</span> (public kit), <span class="where">aesdr.com/enterprise</span> (the B2B surface you\'ll launch).',
-    'Run the canon checker so you understand the mechanical enforcement layer you\'ll lean on.'
+    'You cannot approve affiliate copy — or write outreach — until you can hear the AESDR voice. Read these in this exact order, in-repo. Open them in your editor: <code>code .</code> from the repo root (or <code>open -e &lt;file&gt;</code>).',
+    '<b>Read 1 (15 min):</b> <code>AGENTS.md</code> then <code>AFFILIATE_BRAND_CANON.md</code> — the base brand-voice canon and the affiliate-side overlap rules. These two set the register everything else enforces.',
+    '<b>Read 2 (30 min):</b> open the folder <code>docs/canon-revisions/</code> and read every dated <code>.md</code> file oldest→newest. Note specifically: the R-G blocklist (R-G1→R-G8), the substitution table, and the "seven moves." This is the literal rubric Warden runs against.',
+    '<b>Read 3 (10 min) — walk the live surfaces as a buyer would:</b> open <span class="where">aesdr.com</span> (landing), <span class="where">aesdr.com/affiliates</span> (the program), <span class="where">aesdr.com/affiliates/kit</span> (public kit), <span class="where">aesdr.com/enterprise</span> (the B2B surface you\'ll launch). Read them out loud — that\'s the R-G5 test.',
+    '<b>Run the mechanical checker</b> (block below): <code>node scripts/canon-check.mjs --soft</code> from the repo root. Read its output so you know what the linter catches vs. what needs your ear. <b>Done when</b> you can name five R-G blocklist terms from memory.'
    ],
    code:[{label:'run the canon checker',lang:'bash',body:`# soft report — shows every flagged phrase across .md/.html/.txt
 node scripts/canon-check.mjs --soft
@@ -499,11 +502,13 @@ node scripts/canon-check.mjs --soft
   },
   {id:'w1tAgents',title:'Day 2 — Build the agent roster (your force multiplier)',day:2,tags:[CLI()],
    steps:[
-    'Before you do the work by hand, build the seven agents that do the repeatable parts. At 25→100 partners across two motions, you cannot manually sweep, enrich, write, review, and reconcile. The agents are the only way one operator runs this.',
-    'Each agent is a <b>Claude Code subagent</b> — a markdown file in <code>.claude/agents/</code> with frontmatter (name, description, tools) + the system prompt. Open the <span class="ui">Agent Roster</span> section in the sidebar; each card\'s "dispatch prompt" IS the system prompt for that file.',
-    'Build them in priority order: <b>Scout</b> + <b>Dossier</b> first (you need candidates on Day 4), then <b>Scribe</b> + <b>Warden</b> (you need them by Week 3 outreach), then <b>Ledger</b> + <b>Almanac</b> (reporting + standup), then <b>Herald</b> (channel, Phase 60).',
-    'Scope each agent\'s tools to its job: Scout/Dossier/Herald get WebSearch + WebFetch; Ledger gets Bash (supabase CLI); Warden gets the canon docs + canon-check; Scribe + Almanac get Read on the canon + pipeline.',
-    'Test each one immediately after building — dispatch Scout on one real community, confirm the output shape matches its spec, tune the prompt, commit.'
+    '<b>Why first:</b> at 25→100 partners across two motions you cannot manually sweep, enrich, write, review, and reconcile. The seven agents are the only way one operator runs this. Build them before you do any of that work by hand.',
+    '<b>Make the folder:</b> in Terminal from the repo root, <code>mkdir -p .claude/agents</code>. Each agent is one markdown file here: <code>scout.md</code>, <code>dossier.md</code>, <code>scribe.md</code>, <code>ledger.md</code>, <code>warden.md</code>, <code>herald.md</code>, <code>almanac.md</code>.',
+    '<b>Get each system prompt:</b> open the <span class="ui">Agent Roster</span> section in this OS\'s sidebar → click a card → click <span class="ui">Copy prompt</span>. That copied text is the body of that agent\'s <code>.md</code> file.',
+    '<b>Write each file</b> in this exact shape — frontmatter, then the copied prompt (see the scout.md block below): line 1 <code>---</code>, then <code>name:</code>, <code>description:</code>, <code>tools:</code>, then <code>---</code>, then paste the prompt under it.',
+    '<b>Scope the tools line per agent</b> (this is the only line that differs structurally): Scout/Dossier/Herald → <code>WebSearch, WebFetch</code> (+ Bash for Scout/Ledger); Ledger → <code>Bash, Read</code>; Warden → <code>Bash, Read, Grep</code>; Scribe → <code>Read, Write</code>; Almanac → <code>Bash, Read</code>.',
+    '<b>Build in priority order:</b> Scout + Dossier first (you need candidates Day 4) → Scribe + Warden (Week 3 outreach) → Ledger + Almanac (reporting + standup) → Herald last (channel, Phase 60).',
+    '<b>Test each immediately:</b> in Claude Code from the repo, type <code>use the scout subagent to find 3 sales communities on Skool</code>. Confirm the output shape matches the spec, tune the prompt if not, then commit: <code>git add .claude/agents && git commit -m "Build partnerships agent roster"</code>. <b>Done when</b> all 7 files exist and each returns sane output on a one-shot test.'
    ],
    code:[
     {label:'.claude/agents/scout.md (pattern for all seven)',lang:'markdown',body:`---
@@ -527,11 +532,11 @@ git add .claude/agents && git commit -m "Build partnerships agent roster"`}
   },
   {id:'w1t4',title:'Day 2 — Map the existing affiliate machine end-to-end',day:2,tags:[CLI(),A('ledger')],
    steps:[
-    'The program is live and lightly populated. Before you add to it, understand exactly what exists. Dispatch <b>Ledger</b> to walk the schema with you.',
-    'Read the affiliate tables: <code>affiliates</code>, <code>affiliate_attributions</code>, <code>affiliate_payouts</code>, <code>affiliate_links</code>, <code>affiliate_applications</code>.',
-    'Note the economics baked into the schema: <b>commission 30%</b>, <b>30-day attribution window</b>, archetypes (creator/coach/alumni/hybrid/community), tiers (developing/proven), the 3-strike policy, and the copy-approval gate (3 pieces for developing, 1 for proven).',
-    'Walk the live admin surfaces: <span class="where">aesdr.com/admin/affiliates</span> (roster), <span class="where">/admin/affiliates/queue</span> (copy review), <span class="where">/admin/affiliates/new</span> (manual add).',
-    'Walk the affiliate-facing surfaces: <span class="where">/affiliates/dashboard</span>, <span class="where">/affiliates/dashboard/playbooks</span> (the per-path roadmaps), <span class="where">/affiliates/kit-private</span> (the gated kit).'
+    'The program is live and lightly populated. Before you add to it, understand exactly what exists. <b>Dispatch Ledger</b> (copy the dispatch line below) to walk the schema with you — it runs the two queries in the block and explains each table.',
+    '<b>Read the five tables</b> it surfaces: <code>affiliates</code> (the roster), <code>affiliate_attributions</code> (who earned what), <code>affiliate_payouts</code> (what\'s been paid), <code>affiliate_links</code> (tracked links), <code>affiliate_applications</code> (inbound). Ask Ledger to print the column list for any you don\'t recognize.',
+    '<b>Write down the economics baked into the schema</b> (you\'ll quote these on every call): <b>commission 30%</b>, <b>30-day attribution window</b>, archetypes (creator/coach/alumni/hybrid/community), tiers (developing/proven), the 3-strike policy, the copy-gate (3 approved pieces for developing, 1 for proven).',
+    '<b>Walk the admin surfaces</b> in the browser, in order: <span class="where">aesdr.com/admin/affiliates</span> (roster — see who exists) → <span class="where">/admin/affiliates/queue</span> (copy review — where Warden\'s verdicts land) → <span class="where">/admin/affiliates/new</span> (the manual-add form you\'ll use to onboard in Week 5). Click into one existing affiliate to see the detail page.',
+    '<b>Walk the affiliate-facing surfaces</b> as a partner sees them: <span class="where">/affiliates/dashboard</span> (their home) → <span class="where">/affiliates/dashboard/playbooks</span> (the per-archetype roadmaps) → <span class="where">/affiliates/kit-private</span> (the gated kit). <b>Done when</b> you\'ve written the honest baseline in one line: X affiliates, Y active, $Z attributed to date.'
    ],
    code:[{label:'see who is already in the program',lang:'sql',body:`-- run via: supabase db query  (or the SQL editor)
 select slug, display_name, status, archetype, sophistication_tier,
@@ -551,10 +556,12 @@ order by commission_dollars desc nulls last;`}],
   },
   {id:'w1t5',title:'Day 3 — Stand up the partner pipeline (your CRM, in Supabase)',day:3,tags:[CLI(),A('ledger')],
    steps:[
-    'You are not using LinkedIn and you are not buying a CRM seat in week 1. The pipeline lives where the rest of the data lives: Supabase. Dispatch <b>Ledger</b> to create the table from the migration below.',
-    'Create a new migration file, paste the SQL, and push it.',
-    'This table is the spine of the whole motion — Scout writes candidates into it, Dossier enriches them, Scribe\'s outreach status updates it, Almanac reads it every morning.',
-    'Confirm it landed, then add it to the admin chip nav so you have a one-click view (founder can do this in 2 min, or you, since you have repo write).'
+    'You are not using LinkedIn and you are not buying a CRM seat in week 1. The pipeline lives where the rest of the data lives: Supabase. <b>Dispatch Ledger</b> (line below) to create the table from the migration in the block.',
+    '<b>Create the migration file:</b> in Terminal, <code>supabase migration new partner_pipeline</code>. This makes an empty timestamped file in <code>supabase/migrations/</code>.',
+    '<b>Paste the SQL</b> from the block below into that new file and save. It defines the table, the status enum (sourced→enriched→contacted→…→activated), the affiliate/channel motion check, and the indexes.',
+    '<b>Push it live:</b> <code>supabase db push</code>. Supabase prints the diff and asks to confirm — type <code>y</code>. This is the spine of the motion: Scout writes candidates in, Dossier enriches, Scribe updates outreach status, Almanac reads it every morning.',
+    '<b>Verify it landed:</b> <code>supabase db query "select count(*) from partner_pipeline;"</code> — must return <code>0</code> (table exists, empty). <b>Done when</b> that returns 0 rows.',
+    '<b>Add the one-click view:</b> open <code>components/AdminChip.tsx</code>, add a "Partner Pipeline" entry pointing at <code>/admin/pipeline</code> (you have repo write — or hand the founder the 2-min change). You want a clickable board by end of week, not SQL-only.'
    ],
    code:[{label:'supabase/migrations/20260601_partner_pipeline.sql',lang:'sql',body:`-- Partner pipeline: the partnerships-role CRM, native to Supabase.
 create table if not exists partner_pipeline (
@@ -598,18 +605,19 @@ supabase db query "select count(*) from partner_pipeline;"`}],
   {id:'w1t6',title:'Day 4 — Build the discovery doctrine (write it down)',day:4,tags:[A('scout')],
    steps:[
     'The JD says "discovery process documented" by day 30. Do it on day 4 so the next three weeks execute against it instead of improvising.',
-    'Write a one-page doctrine in <code>docs/partnerships/discovery-doctrine.md</code>: the sourcing rule (practitioner networks, never marketplaces), the voice-fit bar (1–5, reject ≤2), the archetype targets, and the disqualifiers (guru aesthetic, vendor-sponsored conflicts, audience &lt;1k engaged).',
-    'Dispatch <b>Scout</b> with that doctrine to run its first sweep — 15 candidates across Skool, Mighty Networks, and independent sales newsletters.',
-    'Hand each Scout result to <b>Dossier</b> for the ones scoring voice-fit ≥3. Write the survivors into <code>partner_pipeline</code> at status <code>enriched</code>.'
+    '<b>Create the doc:</b> <code>mkdir -p docs/partnerships && touch docs/partnerships/discovery-doctrine.md</code>, open it, and write one page covering four things: (1) the sourcing rule — practitioner networks, never marketplaces, never LinkedIn; (2) the voice-fit bar — score 1–5, reject anything ≤2; (3) the archetype targets — creator / coach / alumni / community; (4) the disqualifiers — guru aesthetic, vendor-sponsored conflicts, audience under ~1k engaged.',
+    '<b>Dispatch Scout</b> (line below) to run Sweep 1 against that doctrine: 15 candidates across Skool, Mighty Networks, and independent sales newsletters. Scout returns a scored table — it does not invent names.',
+    '<b>Pipe survivors to Dossier:</b> for every Scout row scoring voice-fit ≥3, dispatch Dossier to enrich it (real audience size, cadence, conflicts, the non-LinkedIn contact path).',
+    '<b>Write them in:</b> have Ledger insert each enriched candidate into <code>partner_pipeline</code> at status <code>enriched</code>. <b>Done when</b> <code>docs/partnerships/discovery-doctrine.md</code> is committed and Scout has returned its first 15.'
    ],
    callouts:[{type:'note',title:'The doctrine is a filter, not a formality',body:'You will be tempted by a creator with 100k followers and a guru voice. The doctrine is what lets you say no to them on day 12 without re-litigating it. Borrowed trust is a merciless mirror — a bad-fit partner damages the brand faster than a good one helps.'}]
   },
   {id:'w1t7',title:'Day 5 — The attribution-platform decision (start the clock)',day:5,tags:[A('ledger'),DAY('decision by day 30')],
    steps:[
-    'The JD makes this YOUR call by day 30. Start the evaluation now; you\'ll decide in Week 4 once you\'ve felt the real volume.',
-    'Read the decision matrix in the <b>Attribution</b> section of this OS (sidebar). The contenders: Rewardful, PartnerStack, Impact, or extending the custom Supabase + Stripe system that already exists.',
-    'Key constraint you already know from the schema: AESDR has a working custom attribution system (affiliate_attributions, 30-day window, Stripe Connect payouts). The real question is whether to keep extending it or adopt a platform for partner-facing dashboards + automated payouts.',
-    'Dispatch <b>Ledger</b> to estimate the build-cost of the three gaps the custom system has: (1) partner self-serve dashboard, (2) automated payout scheduling, (3) link-level click tracking. That estimate is the "build vs buy" number.'
+    'The JD makes this YOUR call by day 30. Start the evaluation now; you decide in Week 4 once you\'ve felt the real volume.',
+    '<b>Open the matrix:</b> in this OS\'s sidebar click <span class="ui">Attribution Decision</span>. The four contenders with verified May-2026 pricing are there: extend the custom Supabase+Stripe system ($0), Rewardful ($49/$99/mo), PartnerStack (~$800+/mo est.), Impact ($30/mo or 3% + 2.5% network tax).',
+    '<b>Note the constraint from the schema</b> (you saw it in w1t4): AESDR already has a working custom attribution system — <code>affiliate_attributions</code>, 30-day window, Stripe Connect payouts. The real question is build-vs-buy for partner-facing dashboards + automated payouts, not "do we have attribution."',
+    '<b>Dispatch Ledger</b> (line below) to estimate the build-cost of the three gaps the custom system has: (1) partner self-serve dashboard, (2) automated payout scheduling, (3) link-level click tracking. That number is your "build" side of build-vs-buy. <b>Done when</b> you\'ve opened the matrix and the estimate exists — the decision itself is day ~25, on purpose.'
    ],
    callouts:[{type:'note',title:'Don\'t decide today',body:'Anyone who picks the attribution platform on day 5 is guessing. You pick on day ~25 when you know your real partner count, payout cadence, and how much partner-facing polish you actually need. Today you just open the evaluation.'}]
   }
@@ -620,11 +628,12 @@ supabase db query "select count(*) from partner_pipeline;"`}],
  tasks:[
   {id:'w2t1',title:'Days 6–7 — Run the full discovery sweep (target: 50 scored rows)',day:6,tags:[A('scout'),A('dossier')],
    steps:[
-    'Dispatch <b>Scout</b> three times, scoped to three surfaces so results don\'t blur together:',
-    'Sweep 1 — <b>paid communities</b>: Skool + Mighty Networks + Circle. The community owner is the candidate. Filter to sales / SDR / AE / revenue communities, 50–2,000 members.',
-    'Sweep 2 — <b>newsletters + podcasts</b>: independent sales newsletters (Substack/Beehiiv) and sales podcasts with operator hosts. Reply-to address or guest-pitch form = contact path.',
-    'Sweep 3 — <b>practitioner-network figures</b>: active contributors in 30MPC, Outbound Squad, RepVue, Modern Sales Pros, Apex BDR Club, Pavilion — people with their OWN audience, not just members.',
-    'Pipe every result scoring voice-fit ≥3 to <b>Dossier</b>. Write survivors to <code>partner_pipeline</code>. Target: 50 rows at status <code>enriched</code> by end of Day 7.'
+    '<b>Head start:</b> the first sweep is already run — open <span class="ui">Prospect Intel</span> in the sidebar for 10 named affiliate candidates (Neil Bhuiyan, Florin Tatulea, Stefan Conic, …) with voice-fit scores and contact paths, plus 3 hard-conflict do-not-approach names. Your job this week: verify those, then extend to 50.',
+    '<b>Dispatch Scout three times</b> (the three lines below), scoped to three surfaces so results don\'t blur together. Run them as separate dispatches, not one:',
+    '<b>Sweep 1 — paid communities</b> (copy line 1): Skool + Mighty Networks + Circle. The community OWNER is the candidate. Filter to sales / SDR / AE / revenue, 50–2,000 members.',
+    '<b>Sweep 2 — newsletters + podcasts</b> (line 2): independent sales newsletters (Substack/Beehiiv) + operator-host podcasts. Contact path = reply-to address or guest-pitch form.',
+    '<b>Sweep 3 — practitioner-network figures</b> (line 3): active contributors in 30MPC, Outbound Squad, RepVue, Modern Sales Pros, Apex BDR Club, Pavilion who have their OWN audience — not just members.',
+    '<b>Enrich + write in</b> (line 4): pipe every result scoring voice-fit ≥3 to Dossier, then have Ledger insert survivors (block below). <b>Done when</b> 50 rows sit at status <code>enriched</code> in <code>partner_pipeline</code> by end of Day 7.'
    ],
    callouts:[{type:'who',title:'The people, concretely',body:'See the <b>Resource Vault</b> in the sidebar for the named starting-point list — communities, newsletters, podcasts, and networks, with where to find each. No LinkedIn anywhere on it.'}],
    code:[{label:'bulk-insert Scout results (Ledger does this for you)',lang:'sql',body:`-- Ledger formats Scout's rows into this insert.
@@ -639,10 +648,10 @@ values
   },
   {id:'w2t2',title:'Days 8–9 — Score, rank, and cut to the top 25',day:8,tags:[A('dossier')],
    steps:[
-    'Fifty is the long list. Twenty-five is the day-30 target. Rank by a simple composite: <b>voice-fit (×3) + audience-fit (×2) + reachability (×1)</b>.',
-    'Reachability matters more than raw audience because you have no LinkedIn — a 5k newsletter with an open reply address beats a 50k audience you can only reach through a gatekeeper.',
-    'Cut anyone voice-fit ≤2 regardless of audience. Cut anyone already sponsored by a competing sales-course or a sales-tool vendor whose lessons you\'d contradict.',
-    'Update <code>partner_pipeline</code>: top 25 stay <code>enriched</code> and get a <code>next_action_date</code>; the rest move to <code>cold</code> (not deleted — they\'re your Phase 90 second wave).'
+    '<b>Run the ranking query</b> (block below) via Ledger or <code>supabase db query</code>. It scores every enriched row by the composite <b>voice-fit (×3) + audience-fit (×2) + reachability (×1)</b> and returns the top 25.',
+    '<b>Why reachability is weighted:</b> you have no LinkedIn — a 5k newsletter with an open reply address beats a 50k audience locked behind a gatekeeper. The query already caps audience influence so a huge-but-unreachable name can\'t buy its way up.',
+    '<b>Apply two hard cuts by hand</b> on the ranked list: cut anyone voice-fit ≤2 regardless of audience; cut anyone sponsored by a competing sales-course or a sales-tool vendor whose lessons you\'d contradict (Prospect Intel already flags the 3 hard conflicts — keep them out).',
+    '<b>Update statuses</b> (block): top 25 stay <code>enriched</code> and get a <code>next_action_date</code>; everyone else moves to <code>cold</code> — <u>not deleted</u>, they\'re your Phase-90 second wave. <b>Done when</b> the top 25 each have a <code>next_action_date</code> and the rest read <code>cold</code>.'
    ],
    code:[{label:'rank the pipeline',lang:'sql',body:`select name, surface, audience_est, voice_fit,
        (voice_fit*3) + (least(audience_est,20000)/4000*2) as composite,
@@ -654,10 +663,10 @@ limit 25;`}]
   },
   {id:'w2t3',title:'Day 10 — Pre-write the outreach library',day:10,tags:[A('scribe')],
    steps:[
-    'Before you send anything, have <b>Scribe</b> draft the reusable scaffolding so each send is personalization-on-top-of-canon, not a blank page.',
-    'Generate: first-touch (newsletter-writer variant, community-owner variant, podcast-host variant), follow-up 1 (+4 days), follow-up 2 (+9 days, honest close).',
-    'Every template discloses the economics: 30% commission, 30-day window, $249/$299 one-time product, reply-to <code>affiliates@aesdr.com</code>.',
-    'Store them in the <b>Template Library</b> (sidebar) and in <code>content/partnerships/outreach/</code>. Run each through canon-check before it\'s allowed in the library.'
+    '<b>Dispatch Scribe</b> (line below) to draft the reusable scaffolding so every send is personalization-on-top-of-canon, not a blank page. The finished drafts already live in the <span class="ui">Outreach Library</span> section of this OS — Scribe regenerates/tunes them, you don\'t start cold.',
+    '<b>Generate five pieces:</b> first-touch × 3 variants (newsletter-writer, community-owner, podcast-host), follow-up 1 (+4 days, adds value), follow-up 2 (+9 days, honest close). The first two sentences are the only bespoke part; the rest is templated.',
+    '<b>Lock the disclosure block</b> (never edited per send): commission rate, 30-day attribution window, $249/$299 one-time product, paid via Stripe, reply-to <code>affiliates@aesdr.com</code>.',
+    '<b>Save + check:</b> Scribe writes them to <code>content/partnerships/outreach/</code> (one file each). Run <code>node scripts/canon-check.mjs content/partnerships/outreach/</code> on the folder. <b>Done when</b> 5 templates are saved and each passes canon-check.'
    ],
    callouts:[{type:'note',title:'Personalize the top, never the disclosure',body:'The first two sentences are bespoke per partner (the reason THEY fit). The economics + the ask are templated and never edited — that\'s how you stay both personal and compliant at 25-partner scale.'}]
   }
@@ -707,19 +716,21 @@ where name = any(array['<name1>','<name2>','<name3>']);`}]
  tasks:[
   {id:'w4t1',title:'Days 16–19 — Run partner intro calls (target: 8–10)',day:16,tags:[WHO('candidates'),A('warden')],
    steps:[
-    'The 15-min call has one job: confirm mutual fit and explain how the program actually works. Not a hard sell — these are peers.',
-    'Your script beats: (1) why you reached out to THEM specifically, (2) how the program works — 30% / 30-day / they get a tracked link + the kit, (3) the brand-fit gate — first few pieces of copy get reviewed (Warden), then they post freely, (4) their questions.',
-    'Be honest about the gate. Operators respect "we review your first 3 posts to make sure they read right, then you\'re free" far more than "post whatever."',
-    'After each call: status → <code>negotiating</code> or <code>passed</code>. For yeses, the next step is onboarding (Week 5).'
+    '<b>Use the verbatim script below</b> (the "15-minute intro call" block in this task — copy it). It\'s timed beat-by-beat: 0:00 open → 1:00 how it works → 3:00 what makes it easy → 4:00 the gate → 6:00 hand it over → 13:00 binary close. The job is mutual-fit + plain mechanics, not a hard sell.',
+    '<b>Before each call (2 min):</b> reopen the candidate\'s Dossier brief and the one specific piece you referenced in outreach, so the 0:00 open names a real thing they made.',
+    '<b>Hit the four beats:</b> (1) why you reached out to THEM specifically, (2) the mechanics — commission / 30-day window / tracked link + kit, (3) the brand-fit gate — first few pieces reviewed by Warden, then they post freely, (4) their questions (this is most of the call — listen).',
+    '<b>Frame the gate as protection, not policing:</b> "we read your first 3 posts so they sound like you, not a guru ad — then you\'re free." Operators respect this; it protects THEIR audience\'s trust.',
+    '<b>Close on the binary</b> (13:00 beat): "I send the kit today and we talk again [day], OR I set your link up this week — which is easier?" Never end on "let me think."',
+    '<b>Log immediately after</b> in <code>partner_pipeline</code>: status → <code>negotiating</code> (a yes/maybe) or <code>passed</code> (a no). <b>Done when</b> 8–10 calls are done and each candidate is moved to one of those two states.'
    ],
    callouts:[{type:'note',title:'The gate is a feature in the pitch',body:'Frame the copy-review gate as protecting THEIR audience\'s trust, not policing them. A partner who recommends something that turns out guru-coded looks bad to their own people. You\'re the quality bar that keeps that from happening.'}]
   },
   {id:'w4t2',title:'Days 20–22 — Decide the attribution platform & write the memo',day:20,tags:[A('ledger'),DAY('JD milestone: by day 30')],
    steps:[
-    'You now know your real numbers: ~25 contacted, ~8–10 in conversation, a sense of payout cadence and how much partner-facing polish matters. Decide.',
-    'Run the decision matrix (sidebar → <b>Attribution</b>). The honest default for AESDR\'s stage: <b>extend the custom Supabase + Stripe system</b> for the first ~25 partners, adopt <b>Rewardful</b> (Stripe-native, cleanest for one-time products) only when partner self-serve dashboards become the bottleneck.',
-    'Write a one-page decision memo in <code>docs/partnerships/attribution-decision.md</code>: what you chose, the three gaps it closes, the trigger condition that would make you switch, and the cost. Founder-aligned strategic call — send it to the founder, don\'t just file it.',
-    'Dispatch <b>Ledger</b> to implement whichever you chose (extend the schema, or wire the Rewardful/Stripe webhook).'
+    'You now know your real numbers: ~25 contacted, ~8–10 in conversation, a sense of payout cadence and how much partner-facing polish matters. Decide now.',
+    '<b>Reopen the matrix</b> (sidebar → <span class="ui">Attribution Decision</span>) and read the "honest default" callout. For AESDR\'s stage it\'s: <b>extend the custom Supabase + Stripe system</b> for the first ~25 partners ($0), and adopt <b>Rewardful at $49/mo</b> (Stripe-native, cleanest for one-time products) the moment partner self-serve dashboards become the bottleneck.',
+    '<b>Write the memo:</b> <code>touch docs/partnerships/attribution-decision.md</code> and fill one page — what you chose, the three gaps it closes, the exact trigger condition that flips you to Rewardful, and the cost both ways. This is a founder-aligned strategic call: email the founder the memo, don\'t just commit it.',
+    '<b>Dispatch Ledger to implement</b> (line below) whichever you chose. If extending custom, the first gap to close is link-level click tracking — the <code>/r/[slug]</code> route exists; add the clicks table in the block below and <code>supabase db push</code>. <b>Done when</b> the memo is sent and the choice is implemented.'
    ],
    code:[{label:'if extending custom: link-level click tracking gap',lang:'sql',body:`-- the one gap worth closing first: per-link click attribution.
 -- /r/[slug] route already exists; add a clicks table it writes to.
@@ -740,10 +751,10 @@ create index if not exists alc_time_idx on affiliate_link_clicks(clicked_at desc
  tasks:[
   {id:'w5t1',title:'Days 23–27 — Onboard the first 3–5 affiliates (the gate begins)',day:23,tags:[CLI(),A('warden')],
    steps:[
-    'Turn each yes into a live affiliate row. Use the existing admin flow at <span class="where">/admin/affiliates/new</span> — it creates the row, mints the slug, and triggers the onboarding email.',
-    'Set each at status <code>vetting</code> → <code>active</code>, archetype per Dossier, tier <code>developing</code> (the gate requires 3 approved pieces before they post freely).',
-    'Send them their kit access link (<span class="where">/affiliates/kit-private</span>) and point them at the playbook for their archetype (<span class="where">/affiliates/dashboard/playbooks</span>).',
-    'As their first copy comes in, <b>Warden</b> reviews against canon → APPROVE / EDITS / DECLINE. First-timers get EDITS, not DECLINE — you\'re teaching the voice.'
+    '<b>Create each affiliate</b> in the browser: go to <span class="where">/admin/affiliates/new</span> → fill display name, email, archetype (from their Dossier brief), set tier <b>developing</b> → <span class="ui">Create</span>. This mints the slug, writes the row, and fires the onboarding email automatically. (Or have Ledger insert via the SQL block — same result.)',
+    '<b>Flip status to active:</b> open the new affiliate at <span class="where">/admin/affiliates/[slug]</span> → set status <code>vetting</code> → <code>active</code>. Confirm <code>commission_pct</code> and <code>attribution_window_days</code> read correctly on the row. Tier stays <b>developing</b> — the gate requires 3 approved pieces before they post freely.',
+    '<b>Send them two links:</b> their kit access at <span class="where">/affiliates/kit-private</span> and the playbook for their archetype at <span class="where">/affiliates/dashboard/playbooks</span>. One email, both links, from your AESDR address.',
+    '<b>Review their first copy as it lands:</b> it appears in <span class="where">/admin/affiliates/queue</span>. Dispatch Warden on each → APPROVE / EDITS / DECLINE. First-timers get EDITS with line rewrites, never DECLINE — you\'re teaching the voice. <b>Done when</b> 3–5 affiliates read <code>active</code>, kit links sent, first copy in review.'
    ],
    code:[{label:'or create an affiliate via CLI/SQL (Ledger)',lang:'sql',body:`insert into affiliates
   (slug, display_name, email, status, archetype,
@@ -755,10 +766,10 @@ values
   },
   {id:'w5t2',title:'Days 28–30 — Phase-30 review + the milestone memo',day:28,tags:[A('almanac'),A('ledger')],
    steps:[
-    'Dispatch <b>Almanac</b> for the phase review, not just a weekly one. Pull the full Phase-30 picture.',
-    'Confirm the four milestones: ✅ discovery process documented (<code>docs/partnerships/discovery-doctrine.md</code>), ✅ 25 candidates identified (<code>partner_pipeline</code> count), ✅ outreach started (contacted count), ✅ attribution platform chosen (<code>docs/partnerships/attribution-decision.md</code>).',
-    'Write the 30-day memo to the founder: numbers vs milestone, what converted, what didn\'t, the one change for Phase 60. 8 lines, not a report (Almanac drafts it).',
-    'Dispatch <b>Ledger</b> for the clean metrics pull that backs the memo.'
+    '<b>Dispatch Ledger first</b> (line below) for the clean Phase-30 metrics pull — the single block returns candidates, contacted, in-conversation, active affiliates, and total attributions in one query. This is the evidence the memo stands on.',
+    '<b>Check the four milestones off against real artifacts:</b> ✅ discovery documented → file <code>docs/partnerships/discovery-doctrine.md</code> exists; ✅ 25 candidates → <code>partner_pipeline</code> count ≥25; ✅ outreach started → contacted count; ✅ platform chosen → file <code>docs/partnerships/attribution-decision.md</code> sent. If any is short, that\'s the lede of the memo, not a thing to hide.',
+    '<b>Dispatch Almanac</b> (line below) to draft the 30-day founder memo from Ledger\'s pull: numbers vs milestone, what converted, what didn\'t, the one change for Phase 60. 8 lines, not a report.',
+    '<b>Send it</b> to the founder (email or the standing Friday channel). <b>Done when</b> the 30-day memo is sent with all four milestones evidenced.'
    ],
    code:[{label:'phase-30 metrics pull',lang:'sql',body:`select
   (select count(*) from partner_pipeline where motion='affiliate') as candidates,
@@ -775,19 +786,20 @@ values
  tasks:[
   {id:'w6t1',title:'Days 31–34 — Drive the first cohort through the copy gate',day:31,tags:[A('warden'),WHO('active affiliates')],
    steps:[
-    'Each developing-tier affiliate needs 3 approved pieces to exit the gate. Your job: get their copy in, reviewed, and approved fast — a slow review is why affiliates go dormant.',
-    'For each affiliate, point them at the archetype playbook → they draft their first piece → submit via <span class="where">/affiliates/dashboard/submissions</span> → it lands in <span class="where">/admin/affiliates/queue</span>.',
-    'Dispatch <b>Warden</b> on each submission within 24 business hours. APPROVE moves the gate counter; EDITS comes back with exact line rewrites in their voice.',
-    'When a partner clears 3 approved (or 1 for a proven-tier partner), they post freely. Celebrate it — first live post is the activation moment.'
+    'Each developing-tier affiliate needs 3 approved pieces to exit the gate. Your job: get their copy in, reviewed, and approved fast — a slow review is the #1 cause of month-one dormancy.',
+    '<b>Point each affiliate at their playbook:</b> send them <span class="where">/affiliates/dashboard/playbooks</span> → they pick their archetype roadmap → draft their first piece → submit at <span class="where">/affiliates/dashboard/submissions</span>. The submission lands in your queue at <span class="where">/admin/affiliates/queue</span>.',
+    '<b>Review within 24 business hours:</b> open the queue, copy the submitted text, dispatch Warden (line below) → it returns APPROVE / EDITS / DECLINE. APPROVE in the admin UI ticks their gate counter up by one; EDITS sends back exact line rewrites in their voice for them to resubmit.',
+    '<b>Watch the counter:</b> at 3 approved (developing) or 1 (proven), the gate drops and they post freely. <b>Done when</b> each first-cohort affiliate has ≥1 approved piece and gate-clearers are posting. Tell them when they clear — first live post is the activation moment.'
    ],
    callouts:[{type:'note',title:'Speed is retention',body:'The single biggest cause of affiliate churn in month one is a copy review that takes a week. Warden gives you same-day turnaround. Use it. A partner whose first post is live by day 35 stays; one still waiting on day 45 ghosts.'}]
   },
   {id:'w6t2',title:'Days 35–37 — First attributed dollars + the link mechanics',day:35,tags:[CLI(),A('ledger')],
    steps:[
-    'Confirm the tracking actually works end-to-end before volume arrives. The <code>/r/[slug]</code> redirect route already exists — verify a click writes an attribution.',
-    'Have one live affiliate post their link. Click it yourself from a clean browser. Confirm: redirect works → click logged → if you complete a test purchase, an <code>affiliate_attributions</code> row appears at status <code>pending</code> with the 30-day window set.',
-    'Walk the affiliate through their dashboard (<span class="where">/affiliates/dashboard</span>) so they can see their own clicks + pending commission. Self-serve visibility kills the "am I getting credit?" emails.',
-    'Dispatch <b>Ledger</b> to confirm the attribution math: 30% of the $249/$299 sale, pending until the 30-day refund window closes, then cleared for payout.'
+    'Confirm tracking works end-to-end before volume arrives. The <code>/r/[slug]</code> redirect route already exists — your job is to prove a click writes an attribution.',
+    '<b>Run the live test:</b> have one active affiliate post their tracked link (or grab it from their dashboard yourself). Open it in a private/incognito window → confirm it redirects to the buy page. Then complete a test purchase (use a Stripe test card if in test mode, or a real $249 you refund after).',
+    '<b>Verify the row appeared</b> (block below, via Ledger): an <code>affiliate_attributions</code> row at status <code>pending</code>, the correct commission amount, and <code>refund_window_closes_at</code> set 30 days out. If no row, the click→attribution wiring is the bug — fix before any real partner sends traffic.',
+    '<b>Walk the affiliate through their dashboard:</b> screen-share <span class="where">/affiliates/dashboard</span> so they see their own clicks + pending commission. Self-serve visibility kills the "am I getting credit?" emails before they start.',
+    '<b>Confirm the math with Ledger</b> (line below): commission = the program rate × the $249/$299 sale, held <code>pending</code> until the 30-day refund window closes, then <code>cleared</code> for payout. <b>Done when</b> a real test click produced a <code>pending</code> row with the window set.'
    ],
    code:[{label:'verify attribution fired',lang:'sql',body:`select att.affiliate_slug, att.status,
        att.gross_amount_cents/100.0 as sale,
@@ -803,19 +815,20 @@ limit 10;`}]
  tasks:[
   {id:'w7t1',title:'Days 38–40 — Dispatch Herald; build the channel target list',day:38,tags:[A('herald')],
    steps:[
-    'Channel partners are NOT consumer creators. They\'re organizations that put AESDR in front of sales teams. Dispatch <b>Herald</b> to find them.',
-    'Targets: sales-enablement consultants, fractional VP-Sales networks, RevOps consultancies, and sales-training firms that lack a junior-rep curriculum (AESDR fills their gap rather than competing).',
-    'Walk the existing surface so you know what you\'re selling: <span class="where">aesdr.com/enterprise</span>, <span class="where">/enterprise/channel</span> (the 5 partner categories already defined), <span class="where">/enterprise/diagnostic</span>, <span class="where">/enterprise/champion-kit</span>.',
-    'Write channel candidates into <code>partner_pipeline</code> with <code>motion=&#39;channel&#39;</code>. Target 10 sourced, cut to the 3 strongest for first contact.'
+    '<b>Head start:</b> Herald has already run — open <span class="ui">Prospect Intel</span> → "Channel prospects" for 10 named orgs (Vendux, Martal Group, Skaled, …) with fit rationale, proposed structure, and conflict flags. Verify these, then extend. Channel partners are orgs that put AESDR in front of sales TEAMS, not consumer creators.',
+    '<b>Walk the surface you\'re selling first</b> (browser): <span class="where">aesdr.com/enterprise</span> → <span class="where">/enterprise/channel</span> (the 5 partner categories already defined) → <span class="where">/enterprise/diagnostic</span> → <span class="where">/enterprise/champion-kit</span>. You can\'t pitch channel until you\'ve seen exactly what a partner would resell.',
+    '<b>Dispatch Herald</b> (line below) to source 10 candidates across the four target types: sales-enablement consultants, fractional VP-Sales networks, RevOps consultancies, and training firms that LACK a junior-rep curriculum (you fill the gap, not compete).',
+    '<b>Run the non-cannibalization test on each</b> (Herald flags it; you enforce): does AESDR fill a gap in their offer, or compete with it? The two firms in Prospect Intel flagged "Conflict" sell a directly competing curriculum — keep them only with a carved-out ICP.',
+    '<b>Write them in:</b> have Ledger insert each into <code>partner_pipeline</code> with <code>motion=&#39;channel&#39;</code>. <b>Done when</b> 10 channel candidates are sourced and cut to the 3 strongest at <code>motion=channel</code>.'
    ],
    callouts:[{type:'note',title:'The non-cannibalization test',body:'For every channel candidate Herald proposes, the question is: does AESDR fill a gap in their offer, or compete with it? A sales-training firm that only does senior-AE work has a junior-rep gap you fill. One that already sells a first-year curriculum is a competitor, not a partner. Herald flags this; you enforce it.'}]
   },
   {id:'w7t2',title:'Days 41–44 — Open 3 channel conversations',day:41,tags:[A('herald'),WHO('channel candidates')],
    steps:[
-    'Channel outreach is a different register from affiliate — it\'s B2B, partnership-structured, higher-touch. <b>Herald</b> drafts the first-touch; it leads with the gap you fill, not a commission rate.',
-    'The structures on the table (decide per partner): referral fee (they intro, you close, they get %), reseller margin (they sell, keep a margin), or co-delivery (they wrap AESDR into their engagement).',
-    'Reply-to <code>affiliates@aesdr.com</code> for now; flag any deal large enough to warrant the founder on the call.',
-    'Log to <code>partner_pipeline</code>: <code>motion=&#39;channel&#39;</code>, status tracks the same ladder. JD milestone: 3 channel conversations open by day 60.'
+    '<b>Dispatch Herald</b> (line below) to draft the channel first-touch for each of your 3 strongest, using the channel template in the <span class="ui">Outreach Library</span> as the base. It leads with the gap you fill in THEIR practice — never opens with a commission rate.',
+    '<b>Pick a structure per partner before you send</b> (name it in the message): referral fee (they intro, you close, they earn %), reseller margin (they sell, keep a margin), or co-delivery (they wrap AESDR into their engagement). The Prospect Intel "Structure" column already proposes one per org — start there.',
+    '<b>Send one-to-one</b> from your AESDR address, reply-to <code>affiliates@aesdr.com</code>. If a deal is large enough to need the founder on the call, flag it now per the escalation rule — don\'t discover that mid-negotiation.',
+    '<b>Log each</b> to <code>partner_pipeline</code> at <code>motion=&#39;channel&#39;</code>, status tracking the same ladder (contacted → replied → negotiating). <b>Done when</b> 3 channel conversations are open (status <code>replied</code> or <code>negotiating</code>) — the day-60 milestone.'
    ]
   }
  ]},
@@ -824,10 +837,10 @@ limit 10;`}]
  tasks:[
   {id:'w8t1',title:'Days 45–48 — Stand up the weekly reporting pull',day:45,tags:[CLI(),A('ledger')],
    steps:[
-    'Dispatch <b>Ledger</b> to build a reporting view that turns the weekly pull into one query instead of five.',
-    'The view rolls up per-affiliate: clicks, attributions, pending vs cleared commission, refund-window status, payout-ready totals — plus the aggregate trajectory toward $3k/mo.',
-    'Schedule it: every Friday, Ledger runs the view, Almanac writes the 8-line review, you send the founder one message. Same time, every week — predictability is its own trust signal.',
-    'Add the headline numbers to a simple admin dashboard tile (founder or you, in-repo) so the founder can self-serve without asking.'
+    '<b>Dispatch Ledger</b> (line below) to build the <code>affiliate_weekly_report</code> view from the SQL block — it <code>create or replace view</code>s a single rollup so the weekly pull is one query, not five.',
+    '<b>Confirm the view returns the right columns</b> per affiliate: 7-day clicks, pending vs cleared commission, paid-to-date, plus the aggregate trajectory toward $3k/mo. Run <code>supabase db query "select * from affiliate_weekly_report;"</code> once to eyeball it.',
+    '<b>Set the Friday ritual</b> (block 2): every Friday run the one-liner that pipes the view to <code>reports/$(date +%Y-%m-%d)-weekly.txt</code>, then dispatch Almanac to turn it into the 8-line founder note. Same time every week — predictability is its own trust signal.',
+    '<b>Surface it without asking:</b> add the three headline numbers (active affiliates, cleared commission, trajectory) to an admin dashboard tile in-repo so the founder self-serves. <b>Done when</b> the view exists and the first Friday note is sent.'
    ],
    code:[{label:'reporting view (Ledger builds)',lang:'sql',body:`create or replace view affiliate_weekly_report as
 select a.slug, a.display_name, a.status, a.sophistication_tier,
@@ -848,10 +861,10 @@ order by cleared_commission desc;`},
   },
   {id:'w8t2',title:'Days 49–51 — First payout dry-run',day:49,tags:[CLI(),A('ledger'),WHO('Founder')],
    steps:[
-    'By now your earliest attributions are clearing the 30-day window. Run a payout DRY-RUN before any real money moves.',
-    'The payout batch logic already exists (Stripe Connect transfers, see app/actions/affiliate.ts). Dispatch <b>Ledger</b> to list cleared-but-unpaid attributions and total the batch.',
-    'Walk the founder through the dry-run numbers before approving the first real transfer — this is a founder-aligned money decision, not a solo call on the first run.',
-    'Run the real batch from <span class="where">/admin/affiliates/[slug]</span> (the payout helper) or via the existing action. Confirm Stripe shows the transfer + the affiliate sees "paid".'
+    'By now your earliest attributions are clearing the 30-day window. Run a payout DRY-RUN before any real money moves — never trigger a real payout from inside an agent.',
+    '<b>Dispatch Ledger for the dry-run</b> (block below): it lists cleared-but-unpaid attributions totaled per affiliate. The batch logic itself already exists as Stripe Connect transfers in <code>app/actions/affiliate.ts</code> — Ledger only reports, it does not pay.',
+    '<b>Walk the founder through the numbers</b> before any transfer: per-affiliate totals, the grand total, anything anomalous (Ledger flags refund rate >15% or one affiliate >60% of volume). This first run is a founder-approved money decision, not a solo call.',
+    '<b>Run the real batch in the UI:</b> with founder approval, go to <span class="where">/admin/affiliates/[slug]</span> → the payout helper → confirm the amount → execute. <b>Done when</b> Stripe shows the transfer and the affiliate\'s dashboard reads "paid".'
    ],
    code:[{label:'payout dry-run',lang:'sql',body:`-- cleared, not yet paid = ready for payout
 select affiliate_slug,
@@ -868,18 +881,18 @@ order by payout_due desc;`}]
  tasks:[
   {id:'w9t1',title:'Days 52–56 — Push to 10 active affiliates',day:52,tags:[A('scribe'),A('warden')],
    steps:[
-    'You onboarded 3–5 in Phase 30. Get to 10 active by working the second wave: the candidates still in <code>negotiating</code>, plus re-activating any <code>cold</code> rows worth a second touch.',
-    'For partners stalled in the gate, unstick them: a 15-min co-writing call where you and Warden help draft their first approved piece live often beats three async rounds.',
-    'Run a second Scout sweep if the pipeline is thinning — you always want 2x your target in the funnel.',
-    'Target: 10 affiliates at <code>active</code> with at least one approved piece each by day 60.'
+    '<b>Work the warm middle first:</b> query <code>partner_pipeline</code> for everyone at status <code>negotiating</code> — these are your fastest path to active. Send each the onboarding follow-up; run them through the w5t1 create-affiliate flow as they say yes.',
+    '<b>Unstick the gate-stalled</b> (block this against new outreach): for any developing-tier affiliate sitting on an unfinished first piece, book a 15-min co-writing call — you + Warden draft their first approved post live. This revives a stalled partner faster than three async rounds or any new cold name.',
+    '<b>Refill only if thinning:</b> if the funnel is below 2× your remaining target, dispatch Scout (line below) for a fresh sweep, then scribe + warden the survivors through. Do NOT lower the voice-fit bar to pad the count.',
+    '<b>Hold the bar:</b> 7 great affiliates on a $3k trajectory beats 10 where 4 never post. <b>Done when</b> 10 affiliates read <code>active</code> with ≥1 approved piece each — or you\'ve given the founder the honest lower number and why.'
    ]
   },
   {id:'w9t2',title:'Days 57–60 — Phase-60 review + the trajectory check',day:57,tags:[A('almanac'),A('ledger')],
    steps:[
-    'Confirm milestones: ✅ 10 affiliates onboarded, ✅ 3 channel conversations open, ✅ attribution reporting live.',
-    'The leading indicator for the Phase-90 $3k/mo goal: are cleared+pending commissions trending toward $3k/month run-rate? Dispatch <b>Ledger</b> for the trajectory math.',
-    'Almanac drafts the 60-day founder memo: which affiliates are producing, which channel conversation is closest, the one bottleneck to remove for Phase 90.',
-    'Decide the Phase-90 bet: do you go wider (more affiliates) or deeper (help your top 3 produce more)? The data tells you — usually deeper wins.'
+    '<b>Check the three milestones against artifacts:</b> ✅ 10 affiliates → <code>active</code> count; ✅ 3 channel conversations → <code>motion=channel</code> at <code>replied/negotiating</code>; ✅ reporting live → the <code>affiliate_weekly_report</code> view + a sent Friday note exist.',
+    '<b>Dispatch Ledger for the trajectory math</b> (block below): cleared + pending commission by month. The leading indicator for the Phase-90 $3k/mo goal is whether this is trending toward $3k run-rate — pending counts, it just hasn\'t cleared the window yet.',
+    '<b>Dispatch Almanac</b> for the 60-day founder memo: which affiliates are producing, which channel conversation is closest, the one bottleneck to remove for Phase 90.',
+    '<b>Decide the Phase-90 bet and write it in the memo:</b> wider (more affiliates) or deeper (overinvest in the top 3)? Let the trajectory data pick — usually deeper wins this late. <b>Done when</b> the 60-day memo is sent and the wider-vs-deeper bet is decided.'
    ],
    code:[{label:'trajectory toward $3k/mo',lang:'sql',body:`select date_trunc('month', attributed_at) as month,
        sum(commission_amount_cents)/100.0 as commission_booked,
@@ -895,10 +908,10 @@ group by 1 order by 1 desc;`}]
  tasks:[
   {id:'w10t1',title:'Days 61–64 — Find your top 3 and overinvest',day:61,tags:[A('ledger'),A('almanac')],
    steps:[
-    'Dispatch <b>Ledger</b> to rank affiliates by attributed commission. The top 3 are where Phase 90 revenue comes from.',
-    'For each top performer: what made them work? Format (newsletter vs community), message, audience. Dispatch <b>Almanac</b> to extract the pattern.',
-    'Overinvest in them: co-create a second piece, offer a workshop (the workshop registration system is built — <span class="where">/[slug]/workshop</span>), bump a proven performer to <code>proven</code> tier so their gate drops to 1 piece.',
-    'Clone the pattern: have Scout find 10 more partners who look like your top 3.'
+    '<b>Dispatch Ledger</b> (line 1 below) to run the top-3 ranking query in the block — affiliates ordered by attributed commission. These three are where Phase-90 revenue comes from.',
+    '<b>Dispatch Almanac</b> (line 2) to extract WHY each top-3 converted: format (newsletter vs community vs podcast), message angle, audience. You\'re looking for the repeatable pattern, not praise.',
+    '<b>Overinvest, three concrete moves:</b> (1) co-create a second piece with each; (2) offer a workshop — the registration + confirmation system is already built at <span class="where">/[slug]/workshop</span>, just schedule one; (3) bump a proven performer to <code>proven</code> tier in the admin UI so their copy-gate drops to 1 piece.',
+    '<b>Clone the pattern</b> (line 3): dispatch Scout to find 10 more partners who look like your top 3 — same surface, same archetype. <b>Done when</b> the top 3 are identified, each has a second piece or workshop in motion, and Scout is finding lookalikes.'
    ],
    code:[{label:'top performers',lang:'sql',body:`select a.slug, a.display_name, a.archetype,
        sum(att.commission_amount_cents)/100.0 as commission,
@@ -909,10 +922,10 @@ order by commission desc limit 3;`}]
   },
   {id:'w10t2',title:'Days 65–67 — Move the lead channel deal toward signature',day:65,tags:[A('herald'),WHO('Founder + lead channel partner')],
    steps:[
-    'Of your 3 channel conversations, one is closest. Push it toward signed-or-close (the Phase-90 milestone).',
-    'Dispatch <b>Herald</b> to draft the actual partnership terms: structure (referral/reseller/co-delivery), the attribution mechanism (how an enterprise deal traces back to them), the commercial split, the term length.',
-    'Bring the founder in for the close — channel deals are relationship + paper, and a founder signature carries weight an IC\'s can\'t.',
-    'If it needs legal review (anything contractual, scope-changing), flag it early per the escalation rules — don\'t let paperwork stall a verbal yes.'
+    '<b>Pick the lead:</b> of your 3 channel conversations, identify the one furthest along (status <code>negotiating</code>, warmest replies). That\'s the one you push to signed-or-close for the milestone — don\'t split focus across all three this late.',
+    '<b>Dispatch Herald to draft the terms</b> (line below): the structure (referral / reseller / co-delivery), the attribution mechanism (how an enterprise deal traces back to them — promo code, dedicated link, or manual ref), the commercial split, and the term length. Put it in a one-page terms doc, not a 12-page contract.',
+    '<b>Bring the founder in for the close:</b> schedule a 3-way call. Channel deals are relationship + paper, and a founder signature carries weight an IC\'s can\'t. You drive the mechanics; the founder lends the gravity.',
+    '<b>Flag legal early</b> if anything is contractual or scope-changing — per the escalation rule, don\'t let paperwork stall a verbal yes. <b>Done when</b> the lead channel deal has draft terms in front of the partner and the founder is looped in.'
    ]
   }
  ]},
@@ -921,18 +934,18 @@ order by commission desc limit 3;`}]
  tasks:[
   {id:'w11t1',title:'Days 68–74 — Codify the operating cadence',day:68,tags:[A('almanac')],
    steps:[
-    'Write the repeatable weekly cadence in <code>docs/partnerships/operating-cadence.md</code>: Monday (Almanac standup + Scout sweep), Tue–Thu (outreach + calls + copy review), Friday (Ledger report + Almanac review + founder note).',
-    'Codify the agent dispatch rhythm: Scout weekly, Dossier on-demand, Scribe per-outreach, Warden per-submission (24h SLA), Ledger Fridays, Almanac daily, Herald bi-weekly.',
-    'Document the follow-up ladder as automation-ready logic so a future hire (or you, scaling) can run it: contacted → +4 → +9 → cold.',
-    'This is the "runs without founder day-to-day involvement" deliverable from the JD\'s definition of success. Write it so someone else could run it.'
+    '<b>Create the doc:</b> <code>touch docs/partnerships/operating-cadence.md</code>. Write the weekly rhythm explicitly by day: Monday = Almanac standup + Scout sweep; Tue–Thu = outreach + calls + copy review; Friday = Ledger report + Almanac review + founder note. A stranger should be able to run your week from this file.',
+    '<b>Codify the agent dispatch rhythm</b> as a table in the doc: Scout weekly · Dossier on-demand · Scribe per-outreach · Warden per-submission (24h SLA) · Ledger Fridays · Almanac daily · Herald bi-weekly. Paste the actual dispatch line for each so it\'s copy-runnable.',
+    '<b>Document the follow-up ladder as logic</b>, not prose: <code>contacted → +4 days → +9 days → cold</code>, with the exact <code>partner_pipeline</code> status transitions at each step. This is what a future hire (or an Agent-SDK cron) automates.',
+    'This is the JD\'s real success deliverable — "runs without founder day-to-day involvement." <b>Done when</b> <code>operating-cadence.md</code> is committed and a stranger could run your week from it.'
    ]
   },
   {id:'w11t2',title:'Days 75–81 — Second affiliate wave + workshop pilot',day:75,tags:[A('scout'),A('scribe'),WHO('top affiliate')],
    steps:[
-    'Run the second wave at scale now that the machine is proven: Scout sweep → Dossier → Scribe → the ladder, but now you\'re doing 25 more with a tested process.',
-    'Pilot a workshop with your strongest affiliate — the registration + confirmation system is already built (<span class="where">/[slug]/workshop</span>). A live workshop converts far higher than a link drop.',
-    'Use the affiliate playbooks (<span class="where">/affiliates/dashboard/playbooks</span>) to let new partners self-serve onboarding — you built the leverage, now it pays off in reduced hand-holding.',
-    'Target: pipeline deep enough that day-90 isn\'t a cliff — Phase 2 (next quarter) should have 25+ warm candidates waiting.'
+    '<b>Run the second wave at scale</b> (line below): Scout sweep → Dossier → Scribe → the ladder — same process you proved in Phase 30, now for 25 more with no hand-holding because the machine works. Pull from the <code>cold</code> rows you parked in w2t2 plus fresh Scout results.',
+    '<b>Pilot a workshop with your strongest affiliate:</b> the registration + confirmation system is already built — send them <span class="where">/[slug]/workshop</span> (their slug), pick a date in US Pacific–Eastern business hours, and co-promote. A live workshop converts 3–5× a link drop.',
+    '<b>Push self-serve onboarding:</b> point every new partner at <span class="where">/affiliates/dashboard/playbooks</span> so they ramp without you in the loop. The leverage you built in Phase 30 pays off now as reduced hand-holding.',
+    '<b>Stock the next quarter:</b> keep the funnel deep enough that day-90 isn\'t a cliff. <b>Done when</b> 25 new candidates are in the funnel and one workshop is scheduled with your top affiliate.'
    ]
   }
  ]},
@@ -941,10 +954,10 @@ order by commission desc limit 3;`}]
  tasks:[
   {id:'w12t1',title:'Days 82–86 — Hit the $3k/mo trajectory + run payouts clean',day:82,tags:[A('ledger'),CLI()],
    steps:[
-    'Dispatch <b>Ledger</b> for the run-rate: are booked commissions (pending + cleared) on a $3k/month trajectory? If close-but-under, the top-3 overinvestment from Week 9 is your lever — push one more piece from each.',
-    'Run the month-end payout batch cleanly and solo now (founder approved the process in Phase 60). Confirm every cleared attribution pays, every affiliate sees "paid", Stripe reconciles.',
-    'Confirm refund rate is healthy (<15%). A spike means a partner is over-promising — Warden + a debrief call, not a payout problem.',
-    'Update the live numbers on the founder dashboard tile so the trajectory is visible without asking.'
+    '<b>Dispatch Ledger for the run-rate</b> (block 1): booked commission (pending + cleared) this month vs the $3k target. If close-but-under, your lever is the Week-9 top-3 overinvestment — push one more piece from each, don\'t chase new cold partners this late.',
+    '<b>Run the month-end payout solo</b> now (founder approved the process in Phase 60): payout helper at <span class="where">/admin/affiliates/[slug]</span> → confirm → execute. Verify every cleared attribution pays, every affiliate dashboard reads "paid", and Stripe reconciles.',
+    '<b>Run the refund-rate health check</b> (block 2): if any affiliate is over 15%, that\'s a partner over-promising — book a Warden review + a debrief call, it\'s a copy problem, not a payout problem. Suspend only at 20% per the benchmark policy.',
+    '<b>Update the founder dashboard tile</b> with the live trajectory so it\'s visible without asking. <b>Done when</b> run-rate is at/near $3k/mo, the payout ran clean, and refund rate is under 15%.'
    ],
    code:[{label:'run-rate + health check',lang:'sql',body:`-- monthly run-rate
 select sum(commission_amount_cents)/100.0 as booked_this_month
@@ -958,10 +971,10 @@ from affiliate_attributions;`}]
   },
   {id:'w12t2',title:'Days 87–90 — The 90-day proof + the next-quarter plan',day:87,tags:[A('almanac'),A('ledger'),WHO('Founder')],
    steps:[
-    'Deliver the 90-day proof. Dispatch <b>Ledger</b> for the full pull and <b>Almanac</b> to write it. Three milestones, evidenced: ✅ affiliates on $3k/mo trajectory, ✅ one channel partnership signed or close, ✅ both motions running.',
-    'Show the cadence doc — proof the function runs without founder day-to-day involvement (the JD\'s real success definition).',
-    'Present the next-quarter plan: the second-wave pipeline, the channel deals in flight, the top-performer playbook to clone, and the one resource/tool you\'d add now that you\'ve earned the data to justify it.',
-    'This is also your own 90-day review (the JD has one built in, both sides). You walk in with a running machine and the numbers to prove it. That\'s the overachiever close.'
+    '<b>Build the proof:</b> dispatch Ledger (line 1) for the full 90-day metrics pull, then Almanac (line 2) to write it up. Evidence all three milestones with a number or an artifact each: ✅ affiliates on $3k/mo trajectory (run-rate), ✅ one channel partnership signed or close (the terms doc), ✅ both motions running (active affiliate + channel counts).',
+    '<b>Show the cadence doc</b> (<code>docs/partnerships/operating-cadence.md</code>) as the proof the function runs without founder day-to-day involvement — the JD\'s real success definition, not any single metric.',
+    '<b>Present the next-quarter plan:</b> the second-wave pipeline (25+ warm), the channel deals in flight, the top-performer playbook to clone, and the one tool you\'d add now that the data justifies it (e.g. Rewardful at the dashboard-bottleneck trigger).',
+    'This is also your own 90-day review — the JD has one built in, both sides. You walk in with a running machine and the numbers to prove it. <b>Done when</b> the 90-day proof is delivered, three milestones evidenced, next-quarter plan presented.'
    ],
    callouts:[{type:'note',title:'What "overachieve" actually looks like here',body:'Not 10 affiliates — 15. Not "3 conversations" — one signed channel deal + 3 more open. Not "reporting live" — a founder who hasn\'t had to ask for a number in a month because it\'s already in front of him every Friday. The bar isn\'t the milestones; it\'s making the milestones look conservative.'}]
   }
