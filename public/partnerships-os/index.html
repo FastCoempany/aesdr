@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Partnerships OS · The First 90 · AESDR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Space+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Barlow+Condensed:wght@400;500;600;700;800&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --crimson:#8B1A1A;--crimson-d:#6e1414;--cream:#FAF7F2;--ink:#1A1A1A;--muted:#6B6B6B;--light:#E8E4DF;
+    --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+    --display:'Playfair Display',Georgia,serif;
+    --serif:'Source Serif 4',Georgia,serif;
+    --cond:'Barlow Condensed',sans-serif;
+    --mono:'Space Mono',monospace;
+    --hand:'Caveat',cursive;
+    --ok:#10B981;--paper:#fff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--cream);color:var(--ink);font-family:var(--serif);line-height:1.6;-webkit-font-smoothing:antialiased}
+  @keyframes shimmer{to{background-position:300% 0}}
+  ::selection{background:var(--ink);color:var(--cream)}
+
+  .iris-text{background:var(--iris);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 5s linear infinite}
+  .iris-line{height:2px;background:var(--iris);background-size:300% 100%;animation:shimmer 5s linear infinite}
+
+  /* ─── Layout shell ─── */
+  .app{display:grid;grid-template-columns:268px 1fr;min-height:100vh}
+  @media(max-width:920px){.app{grid-template-columns:1fr}.sidebar{position:fixed;left:-280px;transition:left .25s ease;z-index:400}.sidebar.open{left:0}.menuToggle{display:flex!important}}
+
+  /* ─── Sidebar ─── */
+  .sidebar{background:var(--ink);color:var(--cream);position:sticky;top:0;height:100vh;overflow-y:auto;border-right:1px solid #000;display:flex;flex-direction:column}
+  .sidebar::-webkit-scrollbar{width:7px}.sidebar::-webkit-scrollbar-thumb{background:#333}
+  .brandBox{padding:24px 22px 18px;border-bottom:1px solid rgba(250,247,242,.1);position:relative}
+  .brandBox::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--iris);background-size:300% 100%;animation:shimmer 5s linear infinite;opacity:.5}
+  .brandWord{font-family:var(--display);font-style:italic;font-weight:900;font-size:26px;letter-spacing:.01em}
+  .brandSub{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(250,247,242,.55);margin-top:4px}
+  .navList{padding:14px 0;flex:1}
+  .navGroup{font-family:var(--mono);font-size:9px;letter-spacing:.26em;text-transform:uppercase;color:rgba(250,247,242,.4);padding:16px 22px 6px}
+  .navItem{display:flex;align-items:center;gap:10px;padding:9px 22px;color:rgba(250,247,242,.78);text-decoration:none;font-family:var(--cond);font-size:14px;letter-spacing:.06em;cursor:pointer;border-left:2px solid transparent;transition:all .12s ease}
+  .navItem:hover{background:rgba(250,247,242,.05);color:#fff}
+  .navItem.active{border-left-color:var(--crimson);color:#fff;background:rgba(139,26,26,.18)}
+  .navItem .ni-num{font-family:var(--mono);font-size:10px;color:rgba(250,247,242,.4);min-width:16px}
+  .navFoot{padding:16px 22px;border-top:1px solid rgba(250,247,242,.1);font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(250,247,242,.4);line-height:1.7}
+  .navFoot b{color:var(--crimson)}
+
+  /* sidebar mascot */
+  .sideMascot{width:64px;height:64px;margin:8px auto 4px;display:block;opacity:.92}
+
+  /* ─── Main ─── */
+  .main{min-width:0;padding:0 0 120px}
+  .menuToggle{display:none;position:fixed;top:14px;left:14px;z-index:401;background:var(--ink);color:var(--cream);border:none;width:42px;height:42px;font-size:18px;cursor:pointer;align-items:center;justify-content:center}
+
+  /* top status bar */
+  .statusBar{position:sticky;top:0;z-index:200;background:rgba(250,247,242,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--light);padding:12px 32px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+  .dayPill{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center;gap:10px}
+  .dayPill .dot{width:8px;height:8px;border-radius:50%;background:var(--crimson)}
+  .dayControls{display:flex;align-items:center;gap:8px}
+  .dayControls button{font-family:var(--mono);font-size:11px;letter-spacing:.12em;background:transparent;border:1px solid var(--ink);color:var(--ink);padding:5px 10px;cursor:pointer}
+  .dayControls button:hover{background:var(--ink);color:var(--cream)}
+  .dayControls input{width:62px;font-family:var(--mono);font-size:12px;text-align:center;border:1px solid var(--ink);padding:5px 4px;background:#fff}
+  .progWrap{flex:1;min-width:160px;max-width:340px}
+  .progLabel{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;display:flex;justify-content:space-between}
+  .progTrack{height:7px;background:var(--light);position:relative;overflow:hidden}
+  .progFill{height:100%;width:0;background:var(--iris);background-size:300% 100%;animation:shimmer 5s linear infinite;transition:width .4s ease}
+
+  .content{max-width:1000px;margin:0 auto;padding:40px 32px 0}
+  @media(max-width:600px){.content{padding:28px 18px 0}.statusBar{padding:10px 16px}}
+
+  /* section */
+  .section{display:none;animation:fade .3s ease}
+  .section.show{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .secEyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--crimson);margin-bottom:14px}
+  h1.secTitle{font-family:var(--display);font-style:italic;font-weight:900;font-size:clamp(34px,5.5vw,60px);line-height:1.02;margin-bottom:16px}
+  .secLede{font-family:var(--serif);font-size:18px;line-height:1.7;color:var(--ink);max-width:680px;margin-bottom:14px}
+  .secLede em{color:var(--muted);font-style:italic}
+  .secDivider{width:60px;margin:28px 0 36px}
+
+  /* hero (day 1) */
+  .hero{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;padding:24px 0 8px}
+  @media(max-width:680px){.hero{grid-template-columns:1fr}}
+  .heroMascot{width:240px;height:240px}
+  .heroMascot img{width:100%;height:100%;object-fit:contain}
+  .signoff{font-family:var(--hand);font-size:26px;color:var(--ink);transform:rotate(-1deg);margin-top:8px}
+  .signoff::before{content:'— '}
+
+  /* phase ribbon */
+  .ribbon{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:30px 0 40px}
+  @media(max-width:680px){.ribbon{grid-template-columns:1fr}}
+  .ribCard{border:1px solid var(--ink);padding:18px 20px;position:relative;background:#fff;cursor:pointer;transition:transform .15s}
+  .ribCard:hover{transform:translateY(-2px)}
+  .ribCard::before{content:'';position:absolute;top:-1px;left:-1px;right:-1px;height:2px;background:var(--iris);background-size:300% 100%;animation:shimmer 5s linear infinite;opacity:0;transition:opacity .2s}
+  .ribCard:hover::before{opacity:1}
+  .ribNum{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--crimson);text-transform:uppercase;margin-bottom:8px}
+  .ribTitle{font-family:var(--display);font-style:italic;font-weight:700;font-size:22px;margin-bottom:8px}
+  .ribGoal{font-family:var(--serif);font-size:13.5px;color:var(--muted);line-height:1.5}
+  .ribMeter{margin-top:12px;height:5px;background:var(--light)}
+  .ribMeter span{display:block;height:100%;background:var(--crimson);width:0;transition:width .4s}
+
+  /* week block */
+  .week{margin-bottom:14px;border:1px solid var(--light);background:#fff}
+  .weekHead{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:14px;background:#fff;transition:background .12s}
+  .weekHead:hover{background:rgba(0,0,0,.015)}
+  .weekHead.open{border-bottom:1px solid var(--light)}
+  .weekL{display:flex;align-items:baseline;gap:14px;min-width:0}
+  .weekTag{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--crimson);white-space:nowrap}
+  .weekTitle{font-family:var(--display);font-style:italic;font-weight:700;font-size:19px;color:var(--ink)}
+  .weekMeta{display:flex;align-items:center;gap:14px;flex-shrink:0}
+  .weekCount{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--muted)}
+  .weekChev{font-family:var(--display);font-style:italic;font-size:18px;color:var(--crimson);transition:transform .2s}
+  .weekHead.open .weekChev{transform:rotate(180deg)}
+  .weekBody{display:none;padding:8px 20px 18px}
+  .weekBody.open{display:block}
+  .weekIntro{font-family:var(--serif);font-style:italic;color:var(--muted);font-size:14.5px;padding:12px 0 14px;border-bottom:1px dashed var(--light);margin-bottom:12px}
+
+  /* task */
+  .task{border-left:2px solid var(--light);padding:2px 0 2px 0;margin-bottom:4px}
+  .taskHead{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;padding:11px 14px;cursor:pointer;transition:background .1s}
+  .taskHead:hover{background:rgba(139,26,26,.03)}
+  .checkbox{width:20px;height:20px;border:1.5px solid var(--ink);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#fff;transition:all .12s}
+  .checkbox.done{background:var(--crimson);border-color:var(--crimson)}
+  .checkbox.done::after{content:'✓';color:#fff;font-size:13px;font-weight:700}
+  .taskMain{min-width:0}
+  .taskTitle{font-family:var(--serif);font-size:15.5px;font-weight:600;color:var(--ink);line-height:1.4}
+  .task.done .taskTitle{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--light)}
+  .taskTags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+  .tag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:2px 7px;border:1px solid var(--light);color:var(--muted)}
+  .tag.agent{border-color:var(--crimson);color:var(--crimson);cursor:pointer}
+  .tag.cli{border-color:var(--ink);color:var(--ink)}
+  .tag.who{background:rgba(0,0,0,.03)}
+  .tag.t-day{color:#a14400;border-color:#e6c9a8}
+  .taskChev{font-family:var(--display);font-style:italic;font-size:15px;color:var(--muted);transition:transform .2s;padding-top:2px}
+  .task.open .taskChev{transform:rotate(180deg);color:var(--crimson)}
+  .taskDetail{display:none;padding:4px 14px 18px 46px}
+  .task.open .taskDetail{display:block}
+
+  /* step list inside task */
+  .steps{counter-reset:step;margin:6px 0 0}
+  .step{position:relative;padding:7px 0 7px 34px;font-size:14.5px;line-height:1.55;border-bottom:1px dashed var(--light)}
+  .step:last-child{border-bottom:none}
+  .step::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:7px;width:22px;height:22px;background:var(--ink);color:var(--cream);font-family:var(--mono);font-size:10px;display:flex;align-items:center;justify-content:center}
+  .step b{font-weight:700}
+  .step code,.inlineCode{font-family:var(--mono);font-size:12.5px;background:var(--light);padding:1px 6px;border-radius:2px}
+  .step .ui{font-family:var(--cond);font-weight:700;letter-spacing:.04em;background:var(--ink);color:var(--cream);padding:1px 8px;font-size:12.5px;text-transform:uppercase}
+  .step .where{font-family:var(--mono);font-size:11px;color:var(--crimson);letter-spacing:.05em}
+
+  /* code block */
+  .codeBlock{position:relative;margin:12px 0;background:#11141a;border:1px solid #000;overflow:hidden}
+  .codeBlock pre{padding:16px 16px 16px 18px;overflow-x:auto;color:#e8e4df;font-family:var(--mono);font-size:12.5px;line-height:1.7}
+  .codeBlock .cbHead{display:flex;justify-content:space-between;align-items:center;padding:7px 14px;background:#000;border-bottom:1px solid #222}
+  .codeBlock .cbLabel{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#888}
+  .copyBtn{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;background:transparent;border:1px solid #444;color:#aaa;padding:4px 9px;cursor:pointer;transition:all .12s}
+  .copyBtn:hover{border-color:var(--crimson);color:#fff}
+  .copyBtn.copied{border-color:var(--ok);color:var(--ok)}
+  .pre-c{color:#7fd1b9}.pre-k{color:#c792ea}.pre-s{color:#ecc48d}.pre-m{color:#637777;font-style:italic}
+
+  /* callouts */
+  .callout{border-left:3px solid var(--crimson);background:rgba(139,26,26,.045);padding:12px 16px;margin:12px 0;font-size:14px;line-height:1.6}
+  .callout.who{border-left-color:var(--ink);background:rgba(0,0,0,.03)}
+  .callout .cTitle{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--crimson);margin-bottom:6px}
+  .callout.who .cTitle{color:var(--ink)}
+  .handNote{font-family:var(--hand);font-size:19px;color:var(--ink);transform:rotate(-.5deg);margin:10px 0 4px;padding-left:18px;position:relative}
+  .handNote::before{content:'»';position:absolute;left:0;color:var(--crimson);font-family:var(--display);font-style:italic}
+
+  /* agent cards */
+  .agentGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin:24px 0}
+  .agentCard{border:1px solid var(--ink);background:#fff;padding:22px;position:relative;display:flex;flex-direction:column}
+  .agentCard::before{content:'';position:absolute;top:-1px;left:-1px;right:-1px;height:2px;background:var(--iris);background-size:300% 100%;animation:shimmer 5s linear infinite}
+  .agentName{font-family:var(--display);font-style:italic;font-weight:900;font-size:26px;line-height:1}
+  .agentRole{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--crimson);margin:6px 0 12px}
+  .agentDesc{font-size:14px;line-height:1.6;color:var(--ink);margin-bottom:12px;flex:1}
+  .agentMaps{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);border-top:1px dashed var(--light);padding-top:10px;margin-bottom:12px}
+  .agentMaps b{color:var(--ink)}
+  .agentBtn{font-family:var(--cond);font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;background:var(--ink);color:var(--cream);border:none;padding:11px;cursor:pointer;width:100%;transition:background .12s}
+  .agentBtn:hover{background:var(--crimson)}
+
+  /* resource + table */
+  .rTable{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;background:#fff;border:1px solid var(--light)}
+  .rTable th{font-family:var(--cond);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-align:left;padding:12px 14px;border-bottom:2px solid var(--ink);font-weight:700}
+  .rTable td{padding:11px 14px;border-bottom:1px solid var(--light);vertical-align:top;line-height:1.5}
+  .rTable tr:last-child td{border-bottom:none}
+  .rTable a{color:var(--crimson);text-decoration:underline}
+  .rTable .src{font-family:var(--mono);font-size:11px;letter-spacing:.04em}
+  .badge{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:2px 7px;border:1px solid;display:inline-block}
+  .badge.hi{color:var(--ok);border-color:var(--ok)}
+  .badge.mid{color:#a14400;border-color:#e6c9a8}
+  .badge.lo{color:var(--muted);border-color:var(--light)}
+
+  /* matrix */
+  .matrix{overflow-x:auto;margin:20px 0}
+  .matrix table{border-collapse:collapse;width:100%;min-width:680px;font-size:13.5px;background:#fff;border:1px solid var(--light)}
+  .matrix th{background:var(--ink);color:var(--cream);font-family:var(--cond);font-size:13px;letter-spacing:.1em;text-transform:uppercase;padding:12px;text-align:left}
+  .matrix td{padding:11px 12px;border-bottom:1px solid var(--light);border-right:1px solid var(--light);vertical-align:top;line-height:1.45}
+  .matrix tr td:first-child{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:rgba(0,0,0,.02)}
+  .matrix .pick{background:rgba(139,26,26,.07)}
+  .matrix .pick td:first-child{color:var(--crimson)}
+
+  /* template card */
+  .tmpl{border:1px solid var(--light);background:#fff;margin:14px 0}
+  .tmplHead{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--light);gap:10px;flex-wrap:wrap}
+  .tmplName{font-family:var(--display);font-style:italic;font-weight:700;font-size:17px}
+  .tmplMeta{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted)}
+  .tmplBody{padding:16px;font-size:14.5px;line-height:1.65;white-space:pre-wrap}
+  .tmplBody .var{background:rgba(139,26,26,.1);color:var(--crimson);padding:0 3px;font-family:var(--mono);font-size:12.5px}
+
+  /* metric tiles */
+  .metricGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:20px 0}
+  .metric{border:1px solid var(--light);background:#fff;padding:18px 20px;position:relative}
+  .metric .mNum{font-family:var(--display);font-style:italic;font-weight:900;font-size:38px;line-height:1;color:var(--ink)}
+  .metric .mLabel{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+  .metric .mTarget{font-family:var(--serif);font-size:13px;font-style:italic;color:var(--crimson);margin-top:8px}
+
+  /* modal */
+  .modalScrim{position:fixed;inset:0;background:rgba(26,26,26,.6);z-index:500;display:none;align-items:center;justify-content:center;padding:24px}
+  .modalScrim.open{display:flex}
+  .modal{background:var(--cream);border:1px solid var(--ink);max-width:680px;width:100%;max-height:86vh;overflow-y:auto;position:relative}
+  .modal::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--iris);background-size:300% 100%;animation:shimmer 5s linear infinite;z-index:2}
+  .modalHead{padding:24px 28px 16px;border-bottom:1px solid var(--light);display:flex;justify-content:space-between;align-items:start;gap:16px;position:sticky;top:0;background:var(--cream)}
+  .modalClose{background:none;border:none;font-size:24px;cursor:pointer;color:var(--muted);line-height:1}
+  .modalBody{padding:20px 28px 28px}
+
+  /* misc */
+  .pill{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border:1px solid var(--ink);margin:2px 4px 2px 0}
+  .pill.c{border-color:var(--crimson);color:var(--crimson)}
+  h2.blockH{font-family:var(--display);font-style:italic;font-weight:700;font-size:28px;margin:38px 0 14px}
+  h3.subH{font-family:var(--cond);font-size:15px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:26px 0 10px;padding-top:14px;border-top:1px solid var(--light)}
+  p.body{font-size:15.5px;line-height:1.7;margin-bottom:14px;max-width:720px}
+  .disclaim{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--muted);line-height:1.7;border:1px dashed var(--crimson);padding:14px 16px;margin:20px 0;background:rgba(139,26,26,.03)}
+  .disclaim b{color:var(--crimson)}
+  a.ext{color:var(--crimson);text-decoration:underline}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--cream);padding:12px 22px;font-family:var(--mono);font-size:12px;letter-spacing:.1em;z-index:600;transition:transform .3s ease;text-transform:uppercase}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<button class="menuToggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+<div class="app">
+
+  <!-- ─────────── SIDEBAR ─────────── -->
+  <aside class="sidebar">
+    <div class="brandBox">
+      <div class="brandWord">AESDR</div>
+      <div class="brandSub">Partnerships OS · The First 90</div>
+      <img class="sideMascot" src="/mascot/leponeus-doctrine.png" alt="Leponeus">
+    </div>
+    <nav class="navList" id="navList"></nav>
+    <div class="navFoot">
+      Operator: <b>Antaeus Coe</b><br>
+      Reports to: founder (you)<br>
+      Surfaces: AESDR.com + Enterprise<br>
+      Channel: <b>no LinkedIn</b>
+    </div>
+  </aside>
+
+  <!-- ─────────── MAIN ─────────── -->
+  <main class="main">
+    <div class="statusBar">
+      <div class="dayPill"><span class="dot"></span><span id="dayLabel">DAY 1 · WEEK 1 · PHASE 30</span></div>
+      <div class="dayControls">
+        <button onclick="stepDay(-1)">◀ Day</button>
+        <input id="dayInput" type="number" min="1" max="90" value="1" onchange="setDay(this.value)">
+        <button onclick="stepDay(1)">Day ▶</button>
+      </div>
+      <div class="progWrap">
+        <div class="progLabel"><span>Total progress</span><span id="progPct">0%</span></div>
+        <div class="progTrack"><div class="progFill" id="progFill"></div></div>
+      </div>
+    </div>
+
+    <div class="content" id="content"></div>
+  </main>
+</div>
+
+<!-- modal + toast -->
+<div class="modalScrim" id="modalScrim" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modalHead"><div id="modalTitle"></div><button class="modalClose" onclick="closeModal()">×</button></div>
+    <div class="modalBody" id="modalBody"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   AESDR PARTNERSHIPS OS — DATA MODEL
+   Facts sourced from the live codebase (prices $249/$299, 30% commission,
+   30-day attribution, archetypes, inboxes, stack). Agent roster is DEFINED
+   HERE, not recalled from a prior session — rename/reject freely.
+   ════════════════════════════════════════════════════════════════ */
+
+/* helper to keep strings clean */
+const C = (cmd,label) => ({cmd,label:label||'shell'});
+
+/* ─── AGENT ROSTER (proposed) ─── */
+const AGENTS = [
+  {id:'scout', name:'Scout', role:'Partner Discovery', pose:'sprint',
+   desc:'Sweeps practitioner networks, paid-community directories (Skool, Mighty Networks), sales newsletters and podcasts. Returns scored candidate rows — never a raw dump. Reads excerpts, not whole pages, so it locates partners fast.',
+   maps:'Claude Code <b>Explore</b> / <b>general-purpose</b> agent · tools: WebSearch, WebFetch, Bash',
+   prompt:`You are Scout, AESDR's partner-discovery agent. Find candidate AFFILIATE partners for AESDR (a self-paced sales curriculum for first-1-2-year SDRs/AEs in startup SaaS; $249/$299 one-time; brand voice is operator-direct, anti-guru).
+
+HARD RULE: never propose mass affiliate marketplaces (Rakuten, CJ, ShareASale, Impact-as-marketplace). We source from PRACTITIONER NETWORKS only.
+
+Sweep these surfaces and return 15 candidates:
+- Skool + Mighty Networks paid sales communities (community owner = the candidate)
+- Independent sales newsletters (Substack/Beehiiv) with operator (not influencer) voice
+- Sales podcasts with host-read potential
+- 30MPC-adjacent, Outbound Squad-adjacent, RepVue contributors, Modern Sales Pros members
+
+For each candidate return a row:
+| name | surface/handle | audience size (est) | archetype guess (creator/coach/alumni/community) | voice-fit 1-5 | why-fit (1 line) | contact path (NOT LinkedIn) |
+
+Score voice-fit honestly. A guru-aesthetic creator is a 1, an operator-who-teaches is a 5. Flag anyone already sponsored by a sales-tool vendor (conflict risk).`},
+
+  {id:'dossier', name:'Dossier', role:'Candidate Enrichment', pose:'diagnosis',
+   desc:'Takes one name and builds the full profile before you reach out: real audience size, content cadence, voice-fit read against canon, existing commercial relationships, and the warm-or-cold contact path. Turns a name into a decision.',
+   maps:'Claude Code <b>general-purpose</b> agent · tools: WebFetch, WebSearch, Read (canon docs)',
+   prompt:`You are Dossier, AESDR's candidate-enrichment agent. I'll give you ONE partner candidate. Build a pre-outreach brief:
+
+1. Audience: where, how big, how engaged (cite the surfaces you checked).
+2. Content cadence + 3 representative pieces (links). Quote 2 lines that reveal their voice.
+3. Voice-fit verdict against AESDR canon (operator-direct, anti-guru, plain English). Score 1-5 + one-sentence rationale. Pull the blocklist test: do they say "crush it / level up / unlock your potential"? If yes, score down.
+4. Commercial posture: do they already promote courses/tools? Any conflicts?
+5. Contact path that is NOT LinkedIn — newsletter reply address, public email, Twitter/X DMs open?, community DM, podcast guest-pitch form.
+6. The single best angle for first-touch, in one sentence.
+
+Output as a one-screen brief. If they're a clear no, say so in line 1 and stop.`},
+
+  {id:'scribe', name:'Scribe', role:'Outreach Copy', pose:'doctrine',
+   desc:'Drafts first-touch and the full follow-up ladder in AESDR voice, run against the canon blocklist before it hands anything back. Personalizes from a Dossier brief. Never sends — you send.',
+   maps:'Claude Code <b>claude</b> agent · reads AFFILIATE_BRAND_CANON.md + canon-revisions · canon-check before output',
+   prompt:`You are Scribe, AESDR's outreach copywriter. Using the Dossier brief I paste below, draft a first-touch message + a 3-step follow-up ladder for an AFFILIATE partner.
+
+VOICE: operator-direct, plain, peer-to-peer. No "crush it / level up / unlock / passionate / rockstar." No flattery padding. Lead with the specific reason THEY fit, not a pitch about us. Reference one real thing they made.
+
+CONSTRAINTS:
+- First-touch ≤ 120 words. One ask: a 15-min call OR "want the partner kit?"
+- Follow-up 1 (day +4): add one new piece of value, not a nag.
+- Follow-up 2 (day +9): the honest close — "last note, no hard feelings."
+- Disclose the economics plainly: 30% commission, 30-day attribution window, one-time $249/$299 product.
+- Reply-to is affiliates@aesdr.com.
+
+Run your own draft against the canon blocklist before returning. Flag any line you're unsure on.`},
+
+  {id:'ledger', name:'Ledger', role:'Attribution & Ops', pose:'owner',
+   desc:'Runs the Supabase queries, reconciles payouts, builds the weekly reporting pull. Lives in the terminal. The agent you hand the boring-but-load-bearing numbers work.',
+   maps:'Claude Code <b>general-purpose</b> agent · tools: Bash (supabase CLI, psql), Read · service-role scoped',
+   prompt:`You are Ledger, AESDR's attribution + ops agent. You operate the Supabase project for the affiliate program.
+
+Tasks I'll hand you:
+- Build/extend the partner_pipeline table + reporting views.
+- Weekly pull: new clicks, attributed enrollments, pending vs cleared commission, refund-window status, payout-ready totals — per affiliate and in aggregate.
+- Reconcile a payout batch before I approve it.
+
+RULES: read-only by default; show me the SQL before any write; never run a destructive statement without surfacing the row count it will touch. Use the affiliates + affiliate_attributions + affiliate_payouts tables. Output money as dollars, not cents. Flag anomalies (e.g., refund rate > 15%, a single affiliate > 60% of volume).`},
+
+  {id:'warden', name:'Warden', role:'Brand-Fit Governance', pose:'verdict',
+   desc:'Reviews affiliate copy submissions against canon before they post. The gate that keeps borrowed trust from turning into the guru register. Approves, requests edits, or declines with a reason.',
+   maps:'Claude Code <b>claude</b> agent · runs scripts/canon-check.mjs + reads canon-revisions',
+   prompt:`You are Warden, AESDR's brand-fit reviewer. I'll paste an affiliate's submitted copy. Judge it against the canon.
+
+Return one verdict: APPROVE / EDITS / DECLINE.
+- APPROVE: reads in our register, discloses the affiliate relationship, no banned terms.
+- EDITS: fixable. List each line + the exact rewrite. Keep their voice, fix the register.
+- DECLINE: guru-coded, misrepresents the product, or claims outcomes we don't promise. Give the category + one-sentence reason (this maps to the 3-strike policy).
+
+Check specifically: the R-G blocklist, overclaiming ("guaranteed", "10x"), price accuracy ($249/$299 one-time), and that the affiliate disclosure is present. Be fair — first-timers learning the voice get EDITS, not DECLINE.`},
+
+  {id:'herald', name:'Herald', role:'Channel / Enterprise', pose:'recovery',
+   desc:'The enterprise-side counterpart to Scout. Researches channel-partner candidates (sales-enablement consultants, RevOps shops, fractional VP-Sales networks), and drafts partnership structures for the unlaunched channel program.',
+   maps:'Claude Code <b>general-purpose</b> agent · WebSearch, WebFetch, Read (/enterprise canon)',
+   prompt:`You are Herald, AESDR's channel/enterprise partner agent. AESDR Enterprise (/enterprise/channel) is built but unlaunched — same curriculum + manager-rollout layer + diagnostic, sold to sales TEAMS.
+
+Find + structure CHANNEL partners (not consumer affiliates):
+- Sales-enablement consultants who advise SaaS sales orgs
+- Fractional VP-Sales / sales-leadership networks
+- RevOps consultancies
+- Sales-training firms that lack a junior-rep curriculum (we fill their gap, not compete)
+
+For each: what they sell, who they reach, how AESDR slots in WITHOUT cannibalizing their offer, and a proposed structure (referral fee vs reseller margin vs co-delivery). Draft the one-paragraph partnership pitch. Reply-to affiliates@aesdr.com. Flag deal sizes that warrant founder sign-off.`},
+
+  {id:'almanac', name:'Almanac', role:'Daily Standup & Review', pose:'rest',
+   desc:'Reads the pipeline each morning and tells you the day\'s top three. Runs the Friday weekly review. The agent that thinks WITH you so the OS doesn\'t become a checklist you abandon by week three.',
+   maps:'Claude Code <b>claude</b> agent · reads partner_pipeline + this plan\'s progress state',
+   prompt:`You are Almanac, my daily operating partner for the AESDR partnerships role. Two rituals:
+
+MORNING (2 min): read the partner_pipeline table + my open tasks for today's day-number in the 90-day plan. Tell me: (1) the 3 things that actually move the number today, (2) anyone gone cold who needs a follow-up per the ladder, (3) one thing I can safely skip. Be opinionated.
+
+FRIDAY REVIEW (10 min): pull the week — outreach sent, replies, calls booked, affiliates activated, commission trajectory vs the 30/60/90 milestone. Tell me what worked, what to cut, and the one bet for next week. Write it as 8 lines, not a report.
+
+Never pad. If a day is light, say "light day, do X and stop."`}
+];
+
+/* ─── THE 90-DAY SPINE ─── */
+/* phases -> weeks -> tasks. Each task: t(title, tags[], steps[], extras{}) */
+
+const PHASES = [
+  {id:'p30', num:'Phase · Days 1–30', title:'Foundation & First Contact',
+   goal:'Discovery process documented · 25 candidates identified · outreach started · attribution platform chosen.', dayStart:1,dayEnd:30},
+  {id:'p60', num:'Phase · Days 31–60', title:'Activation & The Channel Switch',
+   goal:'10 affiliates onboarded · 3 channel conversations open · attribution reporting live.', dayStart:31,dayEnd:60},
+  {id:'p90', num:'Phase · Days 61–90', title:'Compounding & Proof',
+   goal:'Affiliates on a $3k/mo trajectory · one channel partnership signed or close · both motions running.', dayStart:61,dayEnd:90}
+];
+
+/* tag helpers */
+const A=(id)=>({type:'agent',id});           // dispatch agent
+const CLI=()=>({type:'cli'});                 // has terminal commands
+const WHO=(t)=>({type:'who',t});              // a person to talk to
+const DAY=(t)=>({type:'day',t});              // day marker
+
+/* WEEKS — the spine. Heavily detailed in Week 1, day-level thereafter. */
+const WEEKS = [
+/* ══════════ PHASE 30 ══════════ */
+{phase:'p30',tag:'Week 1 · Days 1–5',title:'Get the keys. See the whole board.',
+ intro:'You do not send a single outreach this week. Week 1 is reconnaissance and infrastructure: get access to every system, read the canon until you can hear the voice in your head, and stand up the pipeline that everything else writes into.',
+ tasks:[
+  {id:'w1t1',title:'Day 1, 9:00am — Get credentialed across the stack',day:1,
+   tags:[WHO('Founder'),CLI()],
+   steps:[
+    'Founder (you) grants access to the five systems the role runs on. Do these in order — each unblocks the next.',
+    '<span class="ui">Supabase</span> — go to <span class="where">supabase.com/dashboard</span> → project <b>aesdr-course</b> → <span class="ui">Settings</span> → <span class="ui">Members</span> → <span class="ui">Invite</span> → enter your AESDR email → role <b>Developer</b>. This is where affiliates, attributions, and payouts live.',
+    '<span class="ui">Cloudflare</span> — <span class="where">dash.cloudflare.com</span> → <b>aesdr.com</b> zone → <span class="ui">Manage Account</span> → <span class="ui">Members</span> → <span class="ui">Invite</span>. You need this for the email routing that powers <code>affiliates@aesdr.com</code>.',
+    '<span class="ui">GitHub</span> — repo <b>fastcoempany/aesdr</b> → <span class="ui">Settings</span> → <span class="ui">Collaborators</span> → add you with <b>Write</b>. The kit, the playbooks, and the affiliate copy all live in-repo.',
+    '<span class="ui">Stripe</span> — the Connect dashboard (affiliate payouts run on Stripe Connect Standard). <span class="where">dashboard.stripe.com</span> → <span class="ui">Settings</span> → <span class="ui">Team</span> → invite, role <b>Analyst</b> (read) for now; upgrade to <b>Admin</b> when you run your first payout in Phase 60.',
+    '<span class="ui">Vercel</span> — <span class="where">vercel.com</span> → the AESDR project → <span class="ui">Settings</span> → <span class="ui">Members</span> → invite. You rarely deploy, but you need to read env vars and logs.'
+   ],
+   callouts:[{type:'who',title:'Who you talk to today',body:'Just the founder. 30 minutes, screen-share, he clicks invite on each system while you accept on your end. Do not let this slip to "I\'ll send you access later" — a blocked Day 1 becomes a blocked Week 1.'}]
+  },
+  {id:'w1t2',title:'Day 1, 11:00am — Set up the local toolchain',day:1,tags:[CLI()],
+   steps:[
+    'Clone the repo and install the CLIs you\'ll use daily. Open <span class="ui">Terminal</span>.',
+    'Clone + install dependencies. The repo is a Next.js app with the affiliate backend in <code>supabase/migrations</code>.',
+    'Install the <b>Supabase CLI</b> (your most-used tool — Ledger agent drives it) and the <b>Cloudflare Wrangler</b> CLI (for the eventual link shortener).',
+    'Link the Supabase CLI to the live project so you can run migrations and queries without the dashboard.',
+    'Confirm everything works with the verification block.'
+   ],
+   code:[
+    {label:'clone + install',lang:'bash',body:`git clone https://github.com/fastcoempany/aesdr.git
+cd aesdr
+npm install`},
+    {label:'install CLIs',lang:'bash',body:`# Supabase CLI (Homebrew on macOS)
+brew install supabase/tap/supabase
+# Cloudflare Wrangler (for the aesdr.io shortener, Phase 60)
+npm install -g wrangler
+# verify
+supabase --version && wrangler --version`},
+    {label:'link supabase to live project',lang:'bash',body:`# get the project ref from the dashboard URL: supabase.com/dashboard/project/<REF>
+supabase login
+supabase link --project-ref <PROJECT_REF>
+# pull current schema so you can see the affiliate tables locally
+supabase db pull`}
+   ],
+   callouts:[{type:'note',title:'Why CLI over dashboard',body:'The Supabase dashboard is fine for a one-off look. But the weekly reporting pull, the payout reconciliation, and every Ledger-agent task run through the CLI + SQL. Get comfortable here in week 1 and the rest of the quarter is faster.'}]
+  },
+  {id:'w1t3',title:'Day 1, 2:00pm — Read the canon until you can hear it',day:1,tags:[A('warden')],
+   steps:[
+    'You cannot approve affiliate copy — or write outreach — until you can hear the AESDR voice. Read these in order, in-repo:',
+    '<code>AGENTS.md</code> + <code>AFFILIATE_BRAND_CANON.md</code> — the brand-voice canon and the affiliate-side overlap rules.',
+    '<code>docs/canon-revisions/</code> — every dated file. The R-G blocklist (R-G1→R-G8), the substitution table, the "seven moves." This is the rubric Warden enforces.',
+    'The live surfaces, as a buyer would see them: <span class="where">aesdr.com</span> (landing), <span class="where">aesdr.com/affiliates</span> (the program), <span class="where">aesdr.com/affiliates/kit</span> (public kit), <span class="where">aesdr.com/enterprise</span> (the B2B surface you\'ll launch).',
+    'Run the canon checker so you understand the mechanical enforcement layer you\'ll lean on.'
+   ],
+   code:[{label:'run the canon checker',lang:'bash',body:`# soft report — shows every flagged phrase across .md/.html/.txt
+node scripts/canon-check.mjs --soft
+
+# this is the same gate CI uses (drop --soft for exit-1-on-hit)
+# Warden agent runs this before approving any affiliate copy`}],
+   callouts:[{type:'who',title:'Dispatch Warden to quiz you',body:'Paste three real sales-creator tweets into Warden and ask it to score them against canon. You\'ll calibrate your ear in 20 minutes instead of two weeks.'}]
+  },
+  {id:'w1tAgents',title:'Day 2 — Build the agent roster (your force multiplier)',day:2,tags:[CLI()],
+   steps:[
+    'Before you do the work by hand, build the seven agents that do the repeatable parts. At 25→100 partners across two motions, you cannot manually sweep, enrich, write, review, and reconcile. The agents are the only way one operator runs this.',
+    'Each agent is a <b>Claude Code subagent</b> — a markdown file in <code>.claude/agents/</code> with frontmatter (name, description, tools) + the system prompt. Open the <span class="ui">Agent Roster</span> section in the sidebar; each card\'s "dispatch prompt" IS the system prompt for that file.',
+    'Build them in priority order: <b>Scout</b> + <b>Dossier</b> first (you need candidates on Day 4), then <b>Scribe</b> + <b>Warden</b> (you need them by Week 3 outreach), then <b>Ledger</b> + <b>Almanac</b> (reporting + standup), then <b>Herald</b> (channel, Phase 60).',
+    'Scope each agent\'s tools to its job: Scout/Dossier/Herald get WebSearch + WebFetch; Ledger gets Bash (supabase CLI); Warden gets the canon docs + canon-check; Scribe + Almanac get Read on the canon + pipeline.',
+    'Test each one immediately after building — dispatch Scout on one real community, confirm the output shape matches its spec, tune the prompt, commit.'
+   ],
+   code:[
+    {label:'.claude/agents/scout.md (pattern for all seven)',lang:'markdown',body:`---
+name: scout
+description: AESDR partner-discovery agent. Sweeps practitioner
+  networks + paid-community directories for affiliate candidates.
+  Use PROACTIVELY when building or refreshing the target list.
+tools: WebSearch, WebFetch, Bash
+---
+
+<paste Scout's dispatch prompt here — see the Agent Roster card>`},
+    {label:'scaffold all seven',lang:'bash',body:`mkdir -p .claude/agents
+# create one file per agent; paste each system prompt from the
+# Agent Roster cards in this OS (the "Copy prompt" button)
+for a in scout dossier scribe ledger warden herald almanac; do
+  touch .claude/agents/$a.md
+done
+git add .claude/agents && git commit -m "Build partnerships agent roster"`}
+   ],
+   callouts:[{type:'note',title:'Build cost is one afternoon',body:'Seven markdown files, each is frontmatter + a system prompt you already have (the cards). ~2-3 hours to write and test all seven. It is the highest-ROI afternoon of the quarter — every week after, they do the work that would otherwise eat your days.'}]
+  },
+  {id:'w1t4',title:'Day 2 — Map the existing affiliate machine end-to-end',day:2,tags:[CLI(),A('ledger')],
+   steps:[
+    'The program is live and lightly populated. Before you add to it, understand exactly what exists. Dispatch <b>Ledger</b> to walk the schema with you.',
+    'Read the affiliate tables: <code>affiliates</code>, <code>affiliate_attributions</code>, <code>affiliate_payouts</code>, <code>affiliate_links</code>, <code>affiliate_applications</code>.',
+    'Note the economics baked into the schema: <b>commission 30%</b>, <b>30-day attribution window</b>, archetypes (creator/coach/alumni/hybrid/community), tiers (developing/proven), the 3-strike policy, and the copy-approval gate (3 pieces for developing, 1 for proven).',
+    'Walk the live admin surfaces: <span class="where">aesdr.com/admin/affiliates</span> (roster), <span class="where">/admin/affiliates/queue</span> (copy review), <span class="where">/admin/affiliates/new</span> (manual add).',
+    'Walk the affiliate-facing surfaces: <span class="where">/affiliates/dashboard</span>, <span class="where">/affiliates/dashboard/playbooks</span> (the per-path roadmaps), <span class="where">/affiliates/kit-private</span> (the gated kit).'
+   ],
+   code:[{label:'see who is already in the program',lang:'sql',body:`-- run via: supabase db query  (or the SQL editor)
+select slug, display_name, status, archetype, sophistication_tier,
+       commission_pct, approved_pieces_count, joined_at
+from affiliates
+order by joined_at desc;
+
+-- current attribution + commission picture
+select a.slug, count(att.*) as attributions,
+       sum(att.commission_amount_cents)/100.0 as commission_dollars,
+       att.status
+from affiliates a
+left join affiliate_attributions att on att.affiliate_slug = a.slug
+group by a.slug, att.status
+order by commission_dollars desc nulls last;`}],
+   callouts:[{type:'note',title:'The honest baseline',body:'Write down the real starting numbers today: X affiliates, Y active, $Z attributed to date. Every milestone in this plan measures against this line. No vanity baselines.'}]
+  },
+  {id:'w1t5',title:'Day 3 — Stand up the partner pipeline (your CRM, in Supabase)',day:3,tags:[CLI(),A('ledger')],
+   steps:[
+    'You are not using LinkedIn and you are not buying a CRM seat in week 1. The pipeline lives where the rest of the data lives: Supabase. Dispatch <b>Ledger</b> to create the table from the migration below.',
+    'Create a new migration file, paste the SQL, and push it.',
+    'This table is the spine of the whole motion — Scout writes candidates into it, Dossier enriches them, Scribe\'s outreach status updates it, Almanac reads it every morning.',
+    'Confirm it landed, then add it to the admin chip nav so you have a one-click view (founder can do this in 2 min, or you, since you have repo write).'
+   ],
+   code:[{label:'supabase/migrations/20260601_partner_pipeline.sql',lang:'sql',body:`-- Partner pipeline: the partnerships-role CRM, native to Supabase.
+create table if not exists partner_pipeline (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  surface text,                       -- newsletter / podcast / Skool / community
+  handle text,                        -- @ or URL (never LinkedIn)
+  motion text not null default 'affiliate'
+    check (motion in ('affiliate','channel')),
+  archetype text,                     -- creator/coach/alumni/community (affiliate)
+  audience_est int,
+  voice_fit int check (voice_fit between 1 and 5),
+  status text not null default 'sourced' check (status in
+    ('sourced','enriched','contacted','replied','call_booked',
+     'negotiating','activated','passed','cold')),
+  contact_path text,                  -- the NON-LinkedIn way in
+  why_fit text,
+  owner text default 'antaeus',
+  next_action text,
+  next_action_date date,
+  source_agent text,                  -- which agent surfaced them
+  notes jsonb not null default '[]'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create index if not exists pp_status_idx on partner_pipeline(status);
+create index if not exists pp_motion_idx on partner_pipeline(motion);
+create index if not exists pp_next_idx on partner_pipeline(next_action_date);
+alter table partner_pipeline enable row level security;
+-- service-role only (you reach it via CLI / admin); no anon policy.`},
+    {label:'create + push the migration',lang:'bash',body:`# create the file (paste the SQL above into it)
+supabase migration new partner_pipeline
+
+# push to the live project
+supabase db push
+
+# verify
+supabase db query "select count(*) from partner_pipeline;"`}],
+   callouts:[{type:'who',title:'2-minute founder assist',body:'Ask the founder to add a "Partner Pipeline" entry to the AdminChip (components/AdminChip.tsx) pointing at a simple /admin/pipeline view — or do it yourself, you have write access. Either way you want a clickable board, not SQL-only, by end of week.'}]
+  },
+  {id:'w1t6',title:'Day 4 — Build the discovery doctrine (write it down)',day:4,tags:[A('scout')],
+   steps:[
+    'The JD says "discovery process documented" by day 30. Do it on day 4 so the next three weeks execute against it instead of improvising.',
+    'Write a one-page doctrine in <code>docs/partnerships/discovery-doctrine.md</code>: the sourcing rule (practitioner networks, never marketplaces), the voice-fit bar (1–5, reject ≤2), the archetype targets, and the disqualifiers (guru aesthetic, vendor-sponsored conflicts, audience &lt;1k engaged).',
+    'Dispatch <b>Scout</b> with that doctrine to run its first sweep — 15 candidates across Skool, Mighty Networks, and independent sales newsletters.',
+    'Hand each Scout result to <b>Dossier</b> for the ones scoring voice-fit ≥3. Write the survivors into <code>partner_pipeline</code> at status <code>enriched</code>.'
+   ],
+   callouts:[{type:'note',title:'The doctrine is a filter, not a formality',body:'You will be tempted by a creator with 100k followers and a guru voice. The doctrine is what lets you say no to them on day 12 without re-litigating it. Borrowed trust is a merciless mirror — a bad-fit partner damages the brand faster than a good one helps.'}]
+  },
+  {id:'w1t7',title:'Day 5 — The attribution-platform decision (start the clock)',day:5,tags:[A('ledger'),DAY('decision by day 30')],
+   steps:[
+    'The JD makes this YOUR call by day 30. Start the evaluation now; you\'ll decide in Week 4 once you\'ve felt the real volume.',
+    'Read the decision matrix in the <b>Attribution</b> section of this OS (sidebar). The contenders: Rewardful, PartnerStack, Impact, or extending the custom Supabase + Stripe system that already exists.',
+    'Key constraint you already know from the schema: AESDR has a working custom attribution system (affiliate_attributions, 30-day window, Stripe Connect payouts). The real question is whether to keep extending it or adopt a platform for partner-facing dashboards + automated payouts.',
+    'Dispatch <b>Ledger</b> to estimate the build-cost of the three gaps the custom system has: (1) partner self-serve dashboard, (2) automated payout scheduling, (3) link-level click tracking. That estimate is the "build vs buy" number.'
+   ],
+   callouts:[{type:'note',title:'Don\'t decide today',body:'Anyone who picks the attribution platform on day 5 is guessing. You pick on day ~25 when you know your real partner count, payout cadence, and how much partner-facing polish you actually need. Today you just open the evaluation.'}]
+  }
+ ]},
+
+{phase:'p30',tag:'Week 2 · Days 6–10',title:'The list. Fifty names, scored.',
+ intro:'This is the highest-leverage week of the quarter. A tight, scored target list of the right fifty partners beats a thousand marketplace signups. You will live in Scout and Dossier this week.',
+ tasks:[
+  {id:'w2t1',title:'Days 6–7 — Run the full discovery sweep (target: 50 scored rows)',day:6,tags:[A('scout'),A('dossier')],
+   steps:[
+    'Dispatch <b>Scout</b> three times, scoped to three surfaces so results don\'t blur together:',
+    'Sweep 1 — <b>paid communities</b>: Skool + Mighty Networks + Circle. The community owner is the candidate. Filter to sales / SDR / AE / revenue communities, 50–2,000 members.',
+    'Sweep 2 — <b>newsletters + podcasts</b>: independent sales newsletters (Substack/Beehiiv) and sales podcasts with operator hosts. Reply-to address or guest-pitch form = contact path.',
+    'Sweep 3 — <b>practitioner-network figures</b>: active contributors in 30MPC, Outbound Squad, RepVue, Modern Sales Pros, Apex BDR Club, Pavilion — people with their OWN audience, not just members.',
+    'Pipe every result scoring voice-fit ≥3 to <b>Dossier</b>. Write survivors to <code>partner_pipeline</code>. Target: 50 rows at status <code>enriched</code> by end of Day 7.'
+   ],
+   callouts:[{type:'who',title:'The people, concretely',body:'See the <b>Resource Vault</b> in the sidebar for the named starting-point list — communities, newsletters, podcasts, and networks, with where to find each. No LinkedIn anywhere on it.'}],
+   code:[{label:'bulk-insert Scout results (Ledger does this for you)',lang:'sql',body:`-- Ledger formats Scout's rows into this insert.
+insert into partner_pipeline
+  (name, surface, handle, motion, archetype, audience_est,
+   voice_fit, status, contact_path, why_fit, source_agent, next_action, next_action_date)
+values
+  ('<name>','newsletter','<url>','affiliate','creator',8500,
+   4,'enriched','reply-to: hello@<their-domain>',
+   'Operator voice, writes to first-2-yr reps weekly','scout',
+   'Dispatch Scribe for first-touch', current_date + 1);`}]
+  },
+  {id:'w2t2',title:'Days 8–9 — Score, rank, and cut to the top 25',day:8,tags:[A('dossier')],
+   steps:[
+    'Fifty is the long list. Twenty-five is the day-30 target. Rank by a simple composite: <b>voice-fit (×3) + audience-fit (×2) + reachability (×1)</b>.',
+    'Reachability matters more than raw audience because you have no LinkedIn — a 5k newsletter with an open reply address beats a 50k audience you can only reach through a gatekeeper.',
+    'Cut anyone voice-fit ≤2 regardless of audience. Cut anyone already sponsored by a competing sales-course or a sales-tool vendor whose lessons you\'d contradict.',
+    'Update <code>partner_pipeline</code>: top 25 stay <code>enriched</code> and get a <code>next_action_date</code>; the rest move to <code>cold</code> (not deleted — they\'re your Phase 90 second wave).'
+   ],
+   code:[{label:'rank the pipeline',lang:'sql',body:`select name, surface, audience_est, voice_fit,
+       (voice_fit*3) + (least(audience_est,20000)/4000*2) as composite,
+       contact_path
+from partner_pipeline
+where motion='affiliate' and status='enriched'
+order by composite desc
+limit 25;`}]
+  },
+  {id:'w2t3',title:'Day 10 — Pre-write the outreach library',day:10,tags:[A('scribe')],
+   steps:[
+    'Before you send anything, have <b>Scribe</b> draft the reusable scaffolding so each send is personalization-on-top-of-canon, not a blank page.',
+    'Generate: first-touch (newsletter-writer variant, community-owner variant, podcast-host variant), follow-up 1 (+4 days), follow-up 2 (+9 days, honest close).',
+    'Every template discloses the economics: 30% commission, 30-day window, $249/$299 one-time product, reply-to <code>affiliates@aesdr.com</code>.',
+    'Store them in the <b>Template Library</b> (sidebar) and in <code>content/partnerships/outreach/</code>. Run each through canon-check before it\'s allowed in the library.'
+   ],
+   callouts:[{type:'note',title:'Personalize the top, never the disclosure',body:'The first two sentences are bespoke per partner (the reason THEY fit). The economics + the ask are templated and never edited — that\'s how you stay both personal and compliant at 25-partner scale.'}]
+  }
+ ]},
+
+{phase:'p30',tag:'Week 3 · Days 11–15',title:'First contact.',
+ intro:'Outreach begins. The number that matters this week is not "sends" — it\'s "replies that lead to a real conversation." Quality of fit, set in weeks 1–2, is what makes this week convert.',
+ tasks:[
+  {id:'w3t1',title:'Day 11 — Confirm the affiliates@ inbox actually delivers',day:11,tags:[CLI(),DAY('do before first send')],
+   steps:[
+    'Every outreach has reply-to <code>affiliates@aesdr.com</code>. Confirm the Cloudflare Email Routing rule exists and delivers BEFORE you send to 25 real people.',
+    'In <span class="where">dash.cloudflare.com</span> → <b>aesdr.com</b> → <span class="ui">Email</span> → <span class="ui">Email Routing</span> → <span class="ui">Routing rules</span>, confirm <code>affiliates@aesdr.com</code> → forwards to the founder\'s inbox (it was ratified in the codebase; verify it\'s live in the dashboard).',
+    'Send a test from a personal address to <code>affiliates@aesdr.com</code>. Confirm it lands within a minute.',
+    'If it bounces, the rule isn\'t active — add it: <span class="ui">Create address</span> → <code>affiliates@aesdr.com</code> → <span class="ui">Send to</span> → founder\'s email. No DNS work needed; MX already points to Cloudflare.'
+   ],
+   callouts:[{type:'note',title:'Deliverability is the silent killer',body:'A first-touch from an address that bounces on reply is worse than no send. Five minutes of verification here protects 25 first impressions.'}]
+  },
+  {id:'w3t2',title:'Days 11–13 — Send the first 25 (paced, not blasted)',day:11,tags:[A('scribe'),WHO('25 partner candidates')],
+   steps:[
+    'Send in three waves of ~8/day, not all 25 at once — so you can respond to early replies same-day and tune the message between waves.',
+    'For each: pull the Dossier brief → hand to <b>Scribe</b> → Scribe personalizes the top two sentences from the brief → you read it once (does it sound like a peer, not a vendor?) → send from your AESDR address, reply-to <code>affiliates@aesdr.com</code>.',
+    'Log each send in <code>partner_pipeline</code>: status → <code>contacted</code>, set <code>next_action</code> = "follow-up 1", <code>next_action_date</code> = +4 days.',
+    'Wave 2 (Day 12) and Wave 3 (Day 13): adjust the first-touch based on Wave 1 reply rate. If nobody replies to the "want the kit?" ask, switch to the "15-min call" ask, or vice versa.'
+   ],
+   code:[{label:'mark a batch contacted',lang:'sql',body:`update partner_pipeline
+set status='contacted',
+    next_action='follow-up 1 (value-add)',
+    next_action_date = current_date + 4,
+    updated_at = now()
+where name = any(array['<name1>','<name2>','<name3>']);`}]
+  },
+  {id:'w3t3',title:'Days 14–15 — Work the replies; book the first calls',day:14,tags:[WHO('repliers'),A('almanac')],
+   steps:[
+    'Replies are the job now. Same-day response, every time. A warm reply that waits 48 hours cools.',
+    'For a "yes, tell me more": send the <span class="where">/affiliates/kit</span> link + offer a 15-min call. Move them to <code>replied</code>, then <code>call_booked</code>.',
+    'For a "what\'s the commission?": the honest numbers — 30%, 30-day window, $249/$299 product, paid via Stripe. Don\'t hedge; the transparency is the pitch.',
+    'For silence: leave them at <code>contacted</code> — the follow-up ladder (Day +4) handles them automatically. Dispatch <b>Almanac</b> each morning to surface who\'s due.'
+   ],
+   callouts:[{type:'who',title:'Booking tool, no LinkedIn needed',body:'Use Cal.com or SavvyCal with a 15-min "AESDR partner intro" event type. Put the link in every reply. Calendar overlap: keep slots in US Pacific–Eastern business hours to match founder + workshop availability.'}]
+  }
+ ]},
+
+{phase:'p30',tag:'Week 4 · Days 16–22',title:'First conversations. The platform call.',
+ intro:'You\'re talking to real candidates now. This week you turn conversations into the first verbal yeses, and you make the attribution-platform decision the JD put on your desk.',
+ tasks:[
+  {id:'w4t1',title:'Days 16–19 — Run partner intro calls (target: 8–10)',day:16,tags:[WHO('candidates'),A('warden')],
+   steps:[
+    'The 15-min call has one job: confirm mutual fit and explain how the program actually works. Not a hard sell — these are peers.',
+    'Your script beats: (1) why you reached out to THEM specifically, (2) how the program works — 30% / 30-day / they get a tracked link + the kit, (3) the brand-fit gate — first few pieces of copy get reviewed (Warden), then they post freely, (4) their questions.',
+    'Be honest about the gate. Operators respect "we review your first 3 posts to make sure they read right, then you\'re free" far more than "post whatever."',
+    'After each call: status → <code>negotiating</code> or <code>passed</code>. For yeses, the next step is onboarding (Week 5).'
+   ],
+   callouts:[{type:'note',title:'The gate is a feature in the pitch',body:'Frame the copy-review gate as protecting THEIR audience\'s trust, not policing them. A partner who recommends something that turns out guru-coded looks bad to their own people. You\'re the quality bar that keeps that from happening.'}]
+  },
+  {id:'w4t2',title:'Days 20–22 — Decide the attribution platform & write the memo',day:20,tags:[A('ledger'),DAY('JD milestone: by day 30')],
+   steps:[
+    'You now know your real numbers: ~25 contacted, ~8–10 in conversation, a sense of payout cadence and how much partner-facing polish matters. Decide.',
+    'Run the decision matrix (sidebar → <b>Attribution</b>). The honest default for AESDR\'s stage: <b>extend the custom Supabase + Stripe system</b> for the first ~25 partners, adopt <b>Rewardful</b> (Stripe-native, cleanest for one-time products) only when partner self-serve dashboards become the bottleneck.',
+    'Write a one-page decision memo in <code>docs/partnerships/attribution-decision.md</code>: what you chose, the three gaps it closes, the trigger condition that would make you switch, and the cost. Founder-aligned strategic call — send it to the founder, don\'t just file it.',
+    'Dispatch <b>Ledger</b> to implement whichever you chose (extend the schema, or wire the Rewardful/Stripe webhook).'
+   ],
+   code:[{label:'if extending custom: link-level click tracking gap',lang:'sql',body:`-- the one gap worth closing first: per-link click attribution.
+-- /r/[slug] route already exists; add a clicks table it writes to.
+create table if not exists affiliate_link_clicks (
+  id uuid primary key default gen_random_uuid(),
+  affiliate_slug text not null references affiliates(slug) on delete cascade,
+  link_slug text,
+  ip_hash text, user_agent text, referrer text,
+  utm_source text, utm_medium text, utm_campaign text,
+  clicked_at timestamptz not null default now()
+);
+create index if not exists alc_slug_idx on affiliate_link_clicks(affiliate_slug);
+create index if not exists alc_time_idx on affiliate_link_clicks(clicked_at desc);`}]
+  }
+ ]},
+{phase:'p30',tag:'Week 4½ · Days 23–30',title:'Close the phase. Hit the milestone.',
+ intro:'Convert verbal yeses into signed, tracked affiliates and lock the Phase-30 milestones: discovery documented, 25 candidates identified, outreach started, platform chosen.',
+ tasks:[
+  {id:'w5t1',title:'Days 23–27 — Onboard the first 3–5 affiliates (the gate begins)',day:23,tags:[CLI(),A('warden')],
+   steps:[
+    'Turn each yes into a live affiliate row. Use the existing admin flow at <span class="where">/admin/affiliates/new</span> — it creates the row, mints the slug, and triggers the onboarding email.',
+    'Set each at status <code>vetting</code> → <code>active</code>, archetype per Dossier, tier <code>developing</code> (the gate requires 3 approved pieces before they post freely).',
+    'Send them their kit access link (<span class="where">/affiliates/kit-private</span>) and point them at the playbook for their archetype (<span class="where">/affiliates/dashboard/playbooks</span>).',
+    'As their first copy comes in, <b>Warden</b> reviews against canon → APPROVE / EDITS / DECLINE. First-timers get EDITS, not DECLINE — you\'re teaching the voice.'
+   ],
+   code:[{label:'or create an affiliate via CLI/SQL (Ledger)',lang:'sql',body:`insert into affiliates
+  (slug, display_name, email, status, archetype,
+   sophistication_tier, commission_pct, attribution_window_days)
+values
+  ('<their-slug>','<Display Name>','<their-email>',
+   'active','creator','developing', 30.00, 30);
+-- onboarding email fires from the app on status=active`}]
+  },
+  {id:'w5t2',title:'Days 28–30 — Phase-30 review + the milestone memo',day:28,tags:[A('almanac'),A('ledger')],
+   steps:[
+    'Dispatch <b>Almanac</b> for the phase review, not just a weekly one. Pull the full Phase-30 picture.',
+    'Confirm the four milestones: ✅ discovery process documented (<code>docs/partnerships/discovery-doctrine.md</code>), ✅ 25 candidates identified (<code>partner_pipeline</code> count), ✅ outreach started (contacted count), ✅ attribution platform chosen (<code>docs/partnerships/attribution-decision.md</code>).',
+    'Write the 30-day memo to the founder: numbers vs milestone, what converted, what didn\'t, the one change for Phase 60. 8 lines, not a report (Almanac drafts it).',
+    'Dispatch <b>Ledger</b> for the clean metrics pull that backs the memo.'
+   ],
+   code:[{label:'phase-30 metrics pull',lang:'sql',body:`select
+  (select count(*) from partner_pipeline where motion='affiliate') as candidates,
+  (select count(*) from partner_pipeline where status='contacted') as contacted,
+  (select count(*) from partner_pipeline where status in ('call_booked','negotiating')) as in_convo,
+  (select count(*) from affiliates where status='active') as active_affiliates,
+  (select count(*) from affiliate_attributions) as attributions_total;`}]
+  }
+ ]},
+
+/* ══════════ PHASE 60 ══════════ */
+{phase:'p60',tag:'Week 5 · Days 31–37',title:'From signed to selling.',
+ intro:'Phase 60 is activation. A signed affiliate who never posts is worth zero. This phase is about getting your first cohort actually live, clearing the copy gate, and producing the first attributed dollars.',
+ tasks:[
+  {id:'w6t1',title:'Days 31–34 — Drive the first cohort through the copy gate',day:31,tags:[A('warden'),WHO('active affiliates')],
+   steps:[
+    'Each developing-tier affiliate needs 3 approved pieces to exit the gate. Your job: get their copy in, reviewed, and approved fast — a slow review is why affiliates go dormant.',
+    'For each affiliate, point them at the archetype playbook → they draft their first piece → submit via <span class="where">/affiliates/dashboard/submissions</span> → it lands in <span class="where">/admin/affiliates/queue</span>.',
+    'Dispatch <b>Warden</b> on each submission within 24 business hours. APPROVE moves the gate counter; EDITS comes back with exact line rewrites in their voice.',
+    'When a partner clears 3 approved (or 1 for a proven-tier partner), they post freely. Celebrate it — first live post is the activation moment.'
+   ],
+   callouts:[{type:'note',title:'Speed is retention',body:'The single biggest cause of affiliate churn in month one is a copy review that takes a week. Warden gives you same-day turnaround. Use it. A partner whose first post is live by day 35 stays; one still waiting on day 45 ghosts.'}]
+  },
+  {id:'w6t2',title:'Days 35–37 — First attributed dollars + the link mechanics',day:35,tags:[CLI(),A('ledger')],
+   steps:[
+    'Confirm the tracking actually works end-to-end before volume arrives. The <code>/r/[slug]</code> redirect route already exists — verify a click writes an attribution.',
+    'Have one live affiliate post their link. Click it yourself from a clean browser. Confirm: redirect works → click logged → if you complete a test purchase, an <code>affiliate_attributions</code> row appears at status <code>pending</code> with the 30-day window set.',
+    'Walk the affiliate through their dashboard (<span class="where">/affiliates/dashboard</span>) so they can see their own clicks + pending commission. Self-serve visibility kills the "am I getting credit?" emails.',
+    'Dispatch <b>Ledger</b> to confirm the attribution math: 30% of the $249/$299 sale, pending until the 30-day refund window closes, then cleared for payout.'
+   ],
+   code:[{label:'verify attribution fired',lang:'sql',body:`select att.affiliate_slug, att.status,
+       att.gross_amount_cents/100.0 as sale,
+       att.commission_amount_cents/100.0 as commission,
+       att.attributed_at, att.refund_window_closes_at
+from affiliate_attributions att
+order by att.attributed_at desc
+limit 10;`}]
+  }
+ ]},
+{phase:'p60',tag:'Week 6 · Days 38–44',title:'Turn on the channel.',
+ intro:'The enterprise channel program is built and unlaunched. You are the one who flips it on. This week: identify the first channel candidates and open three conversations — a different motion, a different buyer, the same brand.',
+ tasks:[
+  {id:'w7t1',title:'Days 38–40 — Dispatch Herald; build the channel target list',day:38,tags:[A('herald')],
+   steps:[
+    'Channel partners are NOT consumer creators. They\'re organizations that put AESDR in front of sales teams. Dispatch <b>Herald</b> to find them.',
+    'Targets: sales-enablement consultants, fractional VP-Sales networks, RevOps consultancies, and sales-training firms that lack a junior-rep curriculum (AESDR fills their gap rather than competing).',
+    'Walk the existing surface so you know what you\'re selling: <span class="where">aesdr.com/enterprise</span>, <span class="where">/enterprise/channel</span> (the 5 partner categories already defined), <span class="where">/enterprise/diagnostic</span>, <span class="where">/enterprise/champion-kit</span>.',
+    'Write channel candidates into <code>partner_pipeline</code> with <code>motion=&#39;channel&#39;</code>. Target 10 sourced, cut to the 3 strongest for first contact.'
+   ],
+   callouts:[{type:'note',title:'The non-cannibalization test',body:'For every channel candidate Herald proposes, the question is: does AESDR fill a gap in their offer, or compete with it? A sales-training firm that only does senior-AE work has a junior-rep gap you fill. One that already sells a first-year curriculum is a competitor, not a partner. Herald flags this; you enforce it.'}]
+  },
+  {id:'w7t2',title:'Days 41–44 — Open 3 channel conversations',day:41,tags:[A('herald'),WHO('channel candidates')],
+   steps:[
+    'Channel outreach is a different register from affiliate — it\'s B2B, partnership-structured, higher-touch. <b>Herald</b> drafts the first-touch; it leads with the gap you fill, not a commission rate.',
+    'The structures on the table (decide per partner): referral fee (they intro, you close, they get %), reseller margin (they sell, keep a margin), or co-delivery (they wrap AESDR into their engagement).',
+    'Reply-to <code>affiliates@aesdr.com</code> for now; flag any deal large enough to warrant the founder on the call.',
+    'Log to <code>partner_pipeline</code>: <code>motion=&#39;channel&#39;</code>, status tracks the same ladder. JD milestone: 3 channel conversations open by day 60.'
+   ]
+  }
+ ]},
+{phase:'p60',tag:'Week 7 · Days 45–51',title:'Reporting goes live.',
+ intro:'You cannot manage what you cannot see, and the founder cannot trust what you cannot show. This week the attribution reporting goes from ad-hoc SQL to a standing, repeatable pull.',
+ tasks:[
+  {id:'w8t1',title:'Days 45–48 — Stand up the weekly reporting pull',day:45,tags:[CLI(),A('ledger')],
+   steps:[
+    'Dispatch <b>Ledger</b> to build a reporting view that turns the weekly pull into one query instead of five.',
+    'The view rolls up per-affiliate: clicks, attributions, pending vs cleared commission, refund-window status, payout-ready totals — plus the aggregate trajectory toward $3k/mo.',
+    'Schedule it: every Friday, Ledger runs the view, Almanac writes the 8-line review, you send the founder one message. Same time, every week — predictability is its own trust signal.',
+    'Add the headline numbers to a simple admin dashboard tile (founder or you, in-repo) so the founder can self-serve without asking.'
+   ],
+   code:[{label:'reporting view (Ledger builds)',lang:'sql',body:`create or replace view affiliate_weekly_report as
+select a.slug, a.display_name, a.status, a.sophistication_tier,
+  count(distinct alc.id) as clicks_7d,
+  count(distinct att.id) filter (where att.status='pending') as pending_count,
+  coalesce(sum(att.commission_amount_cents) filter (where att.status='pending'),0)/100.0 as pending_commission,
+  coalesce(sum(att.commission_amount_cents) filter (where att.status='cleared'),0)/100.0 as cleared_commission,
+  coalesce(sum(att.commission_amount_cents) filter (where att.status='paid'),0)/100.0 as paid_to_date
+from affiliates a
+left join affiliate_link_clicks alc
+  on alc.affiliate_slug=a.slug and alc.clicked_at > now()-interval '7 days'
+left join affiliate_attributions att on att.affiliate_slug=a.slug
+group by a.slug,a.display_name,a.status,a.sophistication_tier
+order by cleared_commission desc;`},
+   {label:'the Friday one-liner',lang:'bash',body:`supabase db query "select * from affiliate_weekly_report;" \\
+  | tee "reports/$(date +%Y-%m-%d)-weekly.txt"
+# then dispatch Almanac to turn it into the 8-line founder note`}]
+  },
+  {id:'w8t2',title:'Days 49–51 — First payout dry-run',day:49,tags:[CLI(),A('ledger'),WHO('Founder')],
+   steps:[
+    'By now your earliest attributions are clearing the 30-day window. Run a payout DRY-RUN before any real money moves.',
+    'The payout batch logic already exists (Stripe Connect transfers, see app/actions/affiliate.ts). Dispatch <b>Ledger</b> to list cleared-but-unpaid attributions and total the batch.',
+    'Walk the founder through the dry-run numbers before approving the first real transfer — this is a founder-aligned money decision, not a solo call on the first run.',
+    'Run the real batch from <span class="where">/admin/affiliates/[slug]</span> (the payout helper) or via the existing action. Confirm Stripe shows the transfer + the affiliate sees "paid".'
+   ],
+   code:[{label:'payout dry-run',lang:'sql',body:`-- cleared, not yet paid = ready for payout
+select affiliate_slug,
+       count(*) as items,
+       sum(commission_amount_cents)/100.0 as payout_due
+from affiliate_attributions
+where status='cleared' and paid_at is null
+group by affiliate_slug
+order by payout_due desc;`}]
+  }
+ ]},
+{phase:'p60',tag:'Week 8 · Days 52–60',title:'Close Phase 60. Both motions breathing.',
+ intro:'Lock the milestones: 10 affiliates onboarded, 3 channel conversations open, reporting live. Then stabilize so Phase 90 compounds instead of firefighting.',
+ tasks:[
+  {id:'w9t1',title:'Days 52–56 — Push to 10 active affiliates',day:52,tags:[A('scribe'),A('warden')],
+   steps:[
+    'You onboarded 3–5 in Phase 30. Get to 10 active by working the second wave: the candidates still in <code>negotiating</code>, plus re-activating any <code>cold</code> rows worth a second touch.',
+    'For partners stalled in the gate, unstick them: a 15-min co-writing call where you and Warden help draft their first approved piece live often beats three async rounds.',
+    'Run a second Scout sweep if the pipeline is thinning — you always want 2x your target in the funnel.',
+    'Target: 10 affiliates at <code>active</code> with at least one approved piece each by day 60.'
+   ]
+  },
+  {id:'w9t2',title:'Days 57–60 — Phase-60 review + the trajectory check',day:57,tags:[A('almanac'),A('ledger')],
+   steps:[
+    'Confirm milestones: ✅ 10 affiliates onboarded, ✅ 3 channel conversations open, ✅ attribution reporting live.',
+    'The leading indicator for the Phase-90 $3k/mo goal: are cleared+pending commissions trending toward $3k/month run-rate? Dispatch <b>Ledger</b> for the trajectory math.',
+    'Almanac drafts the 60-day founder memo: which affiliates are producing, which channel conversation is closest, the one bottleneck to remove for Phase 90.',
+    'Decide the Phase-90 bet: do you go wider (more affiliates) or deeper (help your top 3 produce more)? The data tells you — usually deeper wins.'
+   ],
+   code:[{label:'trajectory toward $3k/mo',lang:'sql',body:`select date_trunc('month', attributed_at) as month,
+       sum(commission_amount_cents)/100.0 as commission_booked,
+       count(*) as deals
+from affiliate_attributions
+group by 1 order by 1 desc;`}]
+  }
+ ]},
+
+/* ══════════ PHASE 90 ══════════ */
+{phase:'p90',tag:'Week 9 · Days 61–67',title:'Double down on what converts.',
+ intro:'Phase 90 is proof. You have data now — which partners, which formats, which messages convert. Stop spreading thin; pour into the winners and turn the first channel conversation into paper.',
+ tasks:[
+  {id:'w10t1',title:'Days 61–64 — Find your top 3 and overinvest',day:61,tags:[A('ledger'),A('almanac')],
+   steps:[
+    'Dispatch <b>Ledger</b> to rank affiliates by attributed commission. The top 3 are where Phase 90 revenue comes from.',
+    'For each top performer: what made them work? Format (newsletter vs community), message, audience. Dispatch <b>Almanac</b> to extract the pattern.',
+    'Overinvest in them: co-create a second piece, offer a workshop (the workshop registration system is built — <span class="where">/[slug]/workshop</span>), bump a proven performer to <code>proven</code> tier so their gate drops to 1 piece.',
+    'Clone the pattern: have Scout find 10 more partners who look like your top 3.'
+   ],
+   code:[{label:'top performers',lang:'sql',body:`select a.slug, a.display_name, a.archetype,
+       sum(att.commission_amount_cents)/100.0 as commission,
+       count(att.*) as deals
+from affiliates a join affiliate_attributions att on att.affiliate_slug=a.slug
+group by a.slug,a.display_name,a.archetype
+order by commission desc limit 3;`}]
+  },
+  {id:'w10t2',title:'Days 65–67 — Move the lead channel deal toward signature',day:65,tags:[A('herald'),WHO('Founder + lead channel partner')],
+   steps:[
+    'Of your 3 channel conversations, one is closest. Push it toward signed-or-close (the Phase-90 milestone).',
+    'Dispatch <b>Herald</b> to draft the actual partnership terms: structure (referral/reseller/co-delivery), the attribution mechanism (how an enterprise deal traces back to them), the commercial split, the term length.',
+    'Bring the founder in for the close — channel deals are relationship + paper, and a founder signature carries weight an IC\'s can\'t.',
+    'If it needs legal review (anything contractual, scope-changing), flag it early per the escalation rules — don\'t let paperwork stall a verbal yes.'
+   ]
+  }
+ ]},
+{phase:'p90',tag:'Week 10–11 · Days 68–81',title:'Systematize. Make it run without heroics.',
+ intro:'A function that only works when you\'re manually pushing every lever isn\'t a function — it\'s a bottleneck with your name on it. These two weeks turn the motion into a cadence that runs on rails.',
+ tasks:[
+  {id:'w11t1',title:'Days 68–74 — Codify the operating cadence',day:68,tags:[A('almanac')],
+   steps:[
+    'Write the repeatable weekly cadence in <code>docs/partnerships/operating-cadence.md</code>: Monday (Almanac standup + Scout sweep), Tue–Thu (outreach + calls + copy review), Friday (Ledger report + Almanac review + founder note).',
+    'Codify the agent dispatch rhythm: Scout weekly, Dossier on-demand, Scribe per-outreach, Warden per-submission (24h SLA), Ledger Fridays, Almanac daily, Herald bi-weekly.',
+    'Document the follow-up ladder as automation-ready logic so a future hire (or you, scaling) can run it: contacted → +4 → +9 → cold.',
+    'This is the "runs without founder day-to-day involvement" deliverable from the JD\'s definition of success. Write it so someone else could run it.'
+   ]
+  },
+  {id:'w11t2',title:'Days 75–81 — Second affiliate wave + workshop pilot',day:75,tags:[A('scout'),A('scribe'),WHO('top affiliate')],
+   steps:[
+    'Run the second wave at scale now that the machine is proven: Scout sweep → Dossier → Scribe → the ladder, but now you\'re doing 25 more with a tested process.',
+    'Pilot a workshop with your strongest affiliate — the registration + confirmation system is already built (<span class="where">/[slug]/workshop</span>). A live workshop converts far higher than a link drop.',
+    'Use the affiliate playbooks (<span class="where">/affiliates/dashboard/playbooks</span>) to let new partners self-serve onboarding — you built the leverage, now it pays off in reduced hand-holding.',
+    'Target: pipeline deep enough that day-90 isn\'t a cliff — Phase 2 (next quarter) should have 25+ warm candidates waiting.'
+   ]
+  }
+ ]},
+{phase:'p90',tag:'Week 12–13 · Days 82–90',title:'Prove it. Hand the founder a running machine.',
+ intro:'The final stretch: hit the $3k/mo trajectory, get the channel deal signed or clearly close, and deliver the 90-day proof that the function exists and runs.',
+ tasks:[
+  {id:'w12t1',title:'Days 82–86 — Hit the $3k/mo trajectory + run payouts clean',day:82,tags:[A('ledger'),CLI()],
+   steps:[
+    'Dispatch <b>Ledger</b> for the run-rate: are booked commissions (pending + cleared) on a $3k/month trajectory? If close-but-under, the top-3 overinvestment from Week 9 is your lever — push one more piece from each.',
+    'Run the month-end payout batch cleanly and solo now (founder approved the process in Phase 60). Confirm every cleared attribution pays, every affiliate sees "paid", Stripe reconciles.',
+    'Confirm refund rate is healthy (<15%). A spike means a partner is over-promising — Warden + a debrief call, not a payout problem.',
+    'Update the live numbers on the founder dashboard tile so the trajectory is visible without asking.'
+   ],
+   code:[{label:'run-rate + health check',lang:'sql',body:`-- monthly run-rate
+select sum(commission_amount_cents)/100.0 as booked_this_month
+from affiliate_attributions
+where attributed_at > date_trunc('month', now());
+
+-- refund-rate health
+select round(100.0 * count(*) filter (where status='refunded')
+       / nullif(count(*),0), 1) as refund_pct
+from affiliate_attributions;`}]
+  },
+  {id:'w12t2',title:'Days 87–90 — The 90-day proof + the next-quarter plan',day:87,tags:[A('almanac'),A('ledger'),WHO('Founder')],
+   steps:[
+    'Deliver the 90-day proof. Dispatch <b>Ledger</b> for the full pull and <b>Almanac</b> to write it. Three milestones, evidenced: ✅ affiliates on $3k/mo trajectory, ✅ one channel partnership signed or close, ✅ both motions running.',
+    'Show the cadence doc — proof the function runs without founder day-to-day involvement (the JD\'s real success definition).',
+    'Present the next-quarter plan: the second-wave pipeline, the channel deals in flight, the top-performer playbook to clone, and the one resource/tool you\'d add now that you\'ve earned the data to justify it.',
+    'This is also your own 90-day review (the JD has one built in, both sides). You walk in with a running machine and the numbers to prove it. That\'s the overachiever close.'
+   ],
+   callouts:[{type:'note',title:'What "overachieve" actually looks like here',body:'Not 10 affiliates — 15. Not "3 conversations" — one signed channel deal + 3 more open. Not "reporting live" — a founder who hasn\'t had to ask for a number in a month because it\'s already in front of him every Friday. The bar isn\'t the milestones; it\'s making the milestones look conservative.'}]
+  }
+ ]}
+];
+
+/* ─── RESOURCE VAULT (no LinkedIn) ─── */
+const RESOURCES = {
+  communities:[
+    ['Skool','Paid-community directory; filter sales/SDR/AE/revenue, 50–2k members. Owner = candidate.','skool.com/discovery','hi'],
+    ['Mighty Networks','Niche paid communities; sales subcategory. Browseable directory.','mightynetworks.com','hi'],
+    ['Circle communities','Premium Circle-hosted communities; harder to surface, higher quality.','circle.so','mid'],
+    ['Geneva','Newer, smaller, browseable community host.','geneva.com','lo'],
+    ['Apex BDR Club','Already engaged. SDR/BDR-focused. Warm.','—','hi'],
+    ['Modern Sales Pros','Closed senior-sales-leader community; members run their own teams + networks.','modernsalespros.com','mid'],
+    ['Pavilion','Sales-leader community; vetted-partner directory access.','joinpavilion.com','mid'],
+    ['Sales Confidence (UK)','Community-led, James Ski. UK/EU reach.','salesconfidence.com','mid']
+  ],
+  voices:[
+    ['30 Minutes to President\'s Club','Armand Farrokh + Nick Cegelski. Podcast + paid community + courses. Adjacent network = top-decile candidates.','30mpc.com','hi'],
+    ['Outbound Squad','Jason Bay. Outbound-focused; SDR-heavy audience.','outboundsquad.com','hi'],
+    ['RepVue','Practitioner-led, anti-recruiter. Forum mods + newsletter authors = exact persona.','repvue.com','hi'],
+    ['Sales newsletters (Substack/Beehiiv)','Independent operator-voice newsletters to first-2-yr reps. Reply-to = contact path.','—','hi'],
+    ['Sales podcasts (operator hosts)','Host-read potential. Find via Listen Notes / Podchaser metadata filters.','listennotes.com','mid'],
+    ['r/sales contributors','Public; identifiable heavy contributors with their own audiences.','reddit.com/r/sales','lo']
+  ],
+  discovery:[
+    ['Common Room','Community-intelligence: signals across Slack/Discord/Reddit/X/GitHub. Find advocates, trace to their communities. ~$1.5–3k/mo.','commonroom.io','hi'],
+    ['Clay','Enrichment + list-building automation. Build the scored target list.','clay.com','hi'],
+    ['Apollo / Listen Notes / Podchaser','Contact + podcast metadata for the manual stack.','—','mid'],
+    ['Skool / Mighty directories','Free, manual, highest brand-fit signal for the price.','—','hi']
+  ],
+  avoid:[
+    ['Rakuten Advertising','Mass marketplace — volume, zero brand-fit signal.'],
+    ['CJ (Commission Junction)','Mass marketplace — wrong register entirely.'],
+    ['ShareASale','Mass marketplace — e-commerce DNA, mismatched.'],
+    ['Impact (as a marketplace)','Fine as attribution infra; do NOT use its marketplace for discovery.'],
+    ['LinkedIn','Per founder direction — not a channel for this role. No exceptions.']
+  ]
+};
+
+/* ─── ATTRIBUTION DECISION MATRIX ─── */
+const ATTRIBUTION = {
+  cols:['Custom (extend Supabase+Stripe)','Rewardful','PartnerStack','Impact'],
+  rows:[
+    ['Fit for one-time product','Native — already built for $249/$299 one-time','Excellent — Stripe-native, one-time-friendly','Built for SaaS recurring; one-time is awkward','Enterprise; overkill for stage'],
+    ['Partner self-serve dashboard','Build it (gap)','Included','Included, polished','Included'],
+    ['Automated payouts','Stripe Connect already wired','Via Stripe','Built-in','Built-in'],
+    ['Monthly cost','~$0 + your time','~$49–149/mo','~$500+/mo','$$$ enterprise'],
+    ['Setup time','Days (extend schema)','~1 day','~1 week','Weeks'],
+    ['Best when','≤25 partners, you control the stack','Self-serve dashboards become the bottleneck','You need a partner marketplace + PRM','Large channel program, later']
+  ],
+  pickRow:5, // "Best when" row index for highlighting note
+  verdict:'Extend the custom system for the first ~25 partners (it\'s already built — 30% commission, 30-day window, Stripe Connect payouts all exist). Adopt Rewardful the moment partner self-serve dashboards become the thing eating your time. Skip PartnerStack/Impact until the channel program is large enough to need a PRM — that\'s a next-quarter question, not a day-30 one.'
+};
+
+/* ─── TEMPLATE LIBRARY ─── */
+const TEMPLATES = [
+  {name:'First-touch · newsletter writer',meta:'≤120 words · reply-to affiliates@aesdr.com',
+   body:`Subject: the part of the job your readers are mid-struggle with
+
+<span class="var">[NAME]</span> — I read <span class="var">[SPECIFIC PIECE]</span> and the line about <span class="var">[REAL DETAIL]</span> is exactly the gap AESDR is built for: first-1-2-year SDRs and AEs who got dropped into the seat and told to figure it out.
+
+It's a one-time course ($249/$299), built by operators, no guru stuff. If you ever point readers at it, the affiliate deal is 30% with a 30-day attribution window — real money, paid via Stripe, no games.
+
+Not asking for a yes today. Want the partner kit to see if it's a fit for your list?
+
+— Antaeus, AESDR`},
+  {name:'First-touch · community owner',meta:'≤120 words',
+   body:`Subject: something for the first-2-years crowd in <span class="var">[COMMUNITY]</span>
+
+<span class="var">[NAME]</span> — <span class="var">[COMMUNITY]</span> is full of exactly who AESDR is for: reps a year or two in, ramp harder than anyone warned them. It's a one-time course built by operators, not course-people.
+
+If it fits your members, the partner deal is 30% / 30-day window, paid clean via Stripe. We review your first couple posts so they read in your voice, not a salesy one — protects your members' trust, then you're free.
+
+Worth 15 minutes to see if it's a fit?
+
+— Antaeus, AESDR · affiliates@aesdr.com`},
+  {name:'Follow-up 1 · +4 days (value, not nag)',meta:'send only if no reply',
+   body:`<span class="var">[NAME]</span> — quick follow-up, with something useful attached either way: <span class="var">[THE PLAYBOOK / A SPECIFIC LESSON ANGLE RELEVANT TO THEIR AUDIENCE]</span>.
+
+If the partner thing isn't for you, no problem at all — keep the resource. If it is, the kit's here: aesdr.com/affiliates/kit
+
+— Antaeus`},
+  {name:'Follow-up 2 · +9 days (honest close)',meta:'last touch, then mark cold',
+   body:`<span class="var">[NAME]</span> — last note from me, no hard feelings if it's a no. I think AESDR genuinely fits <span class="var">[THEIR AUDIENCE]</span>, and the 30% / 30-day deal is real, but I'd rather leave you alone than nag.
+
+Door's open whenever. — Antaeus`},
+  {name:'Channel · first-touch (enterprise)',meta:'Herald drafts · leads with the gap',
+   body:`Subject: the junior-rep gap in <span class="var">[THEIR OFFER]</span>
+
+<span class="var">[NAME]</span> — you do <span class="var">[WHAT THEY DO]</span> for sales orgs. The gap I keep seeing alongside that work is the first-1-2-year rep: the team buys senior enablement, and the new reps are still figuring it out alone.
+
+AESDR Enterprise fills exactly that — same curriculum, manager-rollout layer, a diagnostic. It complements what you sell rather than competing. A few ways we could structure it (referral, reseller margin, or co-delivery).
+
+Worth a call to see if it slots into your engagements?
+
+— Antaeus, AESDR · affiliates@aesdr.com`}
+];
+
+/* ════════════════════════════════════════════════════════════════
+   RENDER ENGINE
+   ════════════════════════════════════════════════════════════════ */
+const store = {
+  done: JSON.parse(localStorage.getItem('aesdr_pos_done')||'{}'),
+  save(){localStorage.setItem('aesdr_pos_done',JSON.stringify(this.done));}
+};
+let currentDay = parseInt(localStorage.getItem('aesdr_pos_day')||'1',10);
+
+const allTasks = WEEKS.flatMap(w=>w.tasks);
+const POSE_BY = {scout:'sprint',dossier:'diagnosis',scribe:'doctrine',ledger:'owner',warden:'verdict',herald:'recovery',almanac:'rest'};
+
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+/* nav */
+const NAV = [
+  {g:'Start'},
+  {id:'day1',n:'01',label:'Day 1 — Cold Open'},
+  {id:'overview',n:'02',label:'The 90-Day Arc'},
+  {g:'The Plan'},
+  {id:'p30',n:'30',label:'Phase · Days 1–30'},
+  {id:'p60',n:'60',label:'Phase · Days 31–60'},
+  {id:'p90',n:'90',label:'Phase · Days 61–90'},
+  {g:'The Toolkit'},
+  {id:'agents',n:'AI',label:'Agent Roster'},
+  {id:'resources',n:'◆',label:'Resource Vault'},
+  {id:'templates',n:'✎',label:'Outreach Library'},
+  {id:'cli',n:'>_',label:'CLI Vault'},
+  {id:'attribution',n:'$',label:'Attribution Decision'},
+  {id:'metrics',n:'%',label:'Milestone Tracker'}
+];
+
+function buildNav(){
+  const el=document.getElementById('navList');
+  el.innerHTML = NAV.map(item=>{
+    if(item.g) return `<div class="navGroup">${item.g}</div>`;
+    return `<a class="navItem" data-sec="${item.id}" onclick="showSection('${item.id}')">
+      <span class="ni-num">${item.n}</span><span>${item.label}</span></a>`;
+  }).join('');
+}
+
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('show'));
+  const sec=document.getElementById('sec-'+id);
+  if(sec)sec.classList.add('show');
+  document.querySelectorAll('.navItem').forEach(n=>n.classList.toggle('active',n.dataset.sec===id));
+  document.querySelector('.sidebar').classList.remove('open');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* tag rendering */
+function renderTags(tags){
+  return (tags||[]).map(t=>{
+    if(t.type==='agent'){const a=AGENTS.find(x=>x.id===t.id);return `<span class="tag agent" onclick="event.stopPropagation();openAgent('${t.id}')">⚡ ${a?a.name:t.id}</span>`;}
+    if(t.type==='cli')return `<span class="tag cli">&gt;_ terminal</span>`;
+    if(t.type==='who')return `<span class="tag who">◷ ${esc(t.t)}</span>`;
+    if(t.type==='day')return `<span class="tag t-day">★ ${esc(t.t)}</span>`;
+    return '';
+  }).join('');
+}
+
+/* code block rendering with copy */
+let codeId=0;
+function renderCode(blocks){
+  if(!blocks)return '';
+  return blocks.map(b=>{
+    const id='code'+(codeId++);
+    return `<div class="codeBlock">
+      <div class="cbHead"><span class="cbLabel">${esc(b.label)} · ${b.lang}</span>
+        <button class="copyBtn" onclick="copyCode('${id}',this)">Copy</button></div>
+      <pre id="${id}">${esc(b.body)}</pre></div>`;
+  }).join('');
+}
+function renderCallouts(cs){
+  if(!cs)return '';
+  return cs.map(c=>`<div class="callout ${c.type==='who'?'who':''}">
+    <div class="cTitle">${esc(c.title)}</div>${c.body}</div>`).join('');
+}
+
+/* task card */
+function renderTask(t){
+  const done = !!store.done[t.id];
+  return `<div class="task ${done?'done':''}" id="task-${t.id}">
+    <div class="taskHead" onclick="toggleTask('${t.id}')">
+      <div class="checkbox ${done?'done':''}" onclick="event.stopPropagation();toggleDone('${t.id}')"></div>
+      <div class="taskMain">
+        <div class="taskTitle">${t.title}</div>
+        <div class="taskTags">${renderTags(t.tags)}</div>
+      </div>
+      <div class="taskChev">▾</div>
+    </div>
+    <div class="taskDetail">
+      <div class="steps">${t.steps.map(s=>`<div class="step">${s}</div>`).join('')}</div>
+      ${renderCode(t.code)}
+      ${renderCallouts(t.callouts)}
+    </div>
+  </div>`;
+}
+
+/* week + phase */
+function renderPhaseSection(phaseId){
+  const phase=PHASES.find(p=>p.id===phaseId);
+  const weeks=WEEKS.filter(w=>w.phase===phaseId);
+  return `<section class="section" id="sec-${phaseId}">
+    <div class="secEyebrow">${esc(phase.num)}</div>
+    <h1 class="secTitle">${esc(phase.title)}</h1>
+    <p class="secLede"><b>Milestone:</b> ${esc(phase.goal)}</p>
+    <div class="iris-line secDivider"></div>
+    ${weeks.map(renderWeek).join('')}
+  </section>`;
+}
+function renderWeek(w){
+  const ids=w.tasks.map(t=>t.id);
+  const doneN=ids.filter(i=>store.done[i]).length;
+  return `<div class="week" id="week-${w.tasks[0].id}">
+    <div class="weekHead" onclick="toggleWeek('${w.tasks[0].id}')">
+      <div class="weekL"><span class="weekTag">${esc(w.tag)}</span>
+        <span class="weekTitle">${esc(w.title)}</span></div>
+      <div class="weekMeta"><span class="weekCount" data-wc="${w.tasks[0].id}">${doneN}/${ids.length}</span>
+        <span class="weekChev">▾</span></div>
+    </div>
+    <div class="weekBody">
+      <div class="weekIntro">${esc(w.intro)}</div>
+      ${w.tasks.map(renderTask).join('')}
+    </div>
+  </div>`;
+}
+
+/* interactions */
+function toggleWeek(firstId){
+  const wk=document.getElementById('week-'+firstId);
+  wk.querySelector('.weekHead').classList.toggle('open');
+  wk.querySelector('.weekBody').classList.toggle('open');
+}
+function toggleTask(id){document.getElementById('task-'+id).classList.toggle('open');}
+function toggleDone(id){
+  store.done[id]=!store.done[id];store.save();
+  const t=document.getElementById('task-'+id);
+  t.classList.toggle('done',store.done[id]);
+  t.querySelector('.checkbox').classList.toggle('done',store.done[id]);
+  updateProgress();
+}
+function updateProgress(){
+  const total=allTasks.length;
+  const done=allTasks.filter(t=>store.done[t.id]).length;
+  const pct=Math.round(100*done/total);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progPct').textContent=pct+'%';
+  // per-week counts
+  WEEKS.forEach(w=>{
+    const el=document.querySelector('[data-wc="'+w.tasks[0].id+'"]');
+    if(el){const d=w.tasks.filter(t=>store.done[t.id]).length;el.textContent=d+'/'+w.tasks.length;}
+  });
+  // phase ribbons
+  PHASES.forEach(p=>{
+    const wk=WEEKS.filter(w=>w.phase===p.id).flatMap(w=>w.tasks);
+    const d=wk.filter(t=>store.done[t.id]).length;
+    const bar=document.querySelector('[data-rib="'+p.id+'"]');
+    if(bar)bar.style.width=Math.round(100*d/wk.length)+'%';
+  });
+}
+
+/* day simulator */
+function setDay(d){
+  d=Math.max(1,Math.min(90,parseInt(d,10)||1));
+  currentDay=d;localStorage.setItem('aesdr_pos_day',d);
+  document.getElementById('dayInput').value=d;
+  const phase = d<=30?'PHASE 30':d<=60?'PHASE 60':'PHASE 90';
+  const wk=Math.ceil(d/7);
+  document.getElementById('dayLabel').textContent=`DAY ${d} · WEEK ${wk} · ${phase}`;
+}
+function stepDay(n){setDay(currentDay+n);}
+
+/* agent modal */
+function openAgent(id){
+  const a=AGENTS.find(x=>x.id===id);if(!a)return;
+  document.getElementById('modalTitle').innerHTML=
+    `<div style="display:flex;gap:14px;align-items:center">
+      <img src="/mascot/leponeus-${a.pose}.png" style="width:54px;height:54px;object-fit:contain" alt="">
+      <div><div style="font-family:var(--display);font-style:italic;font-weight:900;font-size:28px;line-height:1">${a.name}</div>
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--crimson)">${a.role}</div></div>
+    </div>`;
+  document.getElementById('modalBody').innerHTML=
+    `<p style="font-size:15px;line-height:1.6;margin-bottom:14px">${a.desc}</p>
+     <div class="agentMaps" style="margin-bottom:16px">Maps to: ${a.maps}</div>
+     <div style="font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">System prompt · the contents of .claude/agents/${a.id}.md</div>
+     <div class="codeBlock"><div class="cbHead"><span class="cbLabel">paste into the agent definition</span>
+       <button class="copyBtn" onclick="copyAgentPrompt('${a.id}',this)">Copy prompt</button></div>
+       <pre style="white-space:pre-wrap">${esc(a.prompt)}</pre></div>`;
+  document.getElementById('modalScrim').classList.add('open');
+}
+function copyAgentPrompt(id,btn){const a=AGENTS.find(x=>x.id===id);if(a)copyText(a.prompt,btn);}
+function closeModal(){document.getElementById('modalScrim').classList.remove('open');}
+
+/* copy helpers */
+function copyCode(id,btn){copyText(document.getElementById(id).textContent,btn);}
+function copyText(txt,btn){
+  navigator.clipboard.writeText(txt).then(()=>{
+    if(btn){btn.classList.add('copied');const o=btn.textContent;btn.textContent='Copied ✓';
+      setTimeout(()=>{btn.classList.remove('copied');btn.textContent=o;},1400);}
+    toast('Copied to clipboard');
+  });
+}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),1800);}
+
+/* ─── build static sections ─── */
+function buildContent(){
+  const c=document.getElementById('content');
+  let html='';
+
+  /* DAY 1 */
+  html+=`<section class="section show" id="sec-day1">
+    <div class="hero">
+      <div>
+        <div class="secEyebrow">Day 1 · 8:55am · before the first coffee</div>
+        <h1 class="secTitle">You own the<br>whole motion now.</h1>
+        <p class="secLede">Two surfaces, one operator. The affiliate program is live and waiting for someone to actually run it. The channel program is built and has never been switched on — you're the one who flips it. No team to manage, no playbook handed down. You build the machine and you run it.</p>
+        <p class="secLede"><em>This document is the machine's blueprint. Ninety days, click by click. Seven agents that execute the parts you shouldn't be doing by hand. Every terminal command, every dashboard click, every person to talk to — in order.</em></p>
+        <div class="signoff">build it so it runs without me by day 90.</div>
+      </div>
+      <div class="heroMascot"><img src="/mascot/leponeus-doctrine.png" alt="Leponeus"></div>
+    </div>
+    <div class="disclaim"><b>Read this first.</b> Every fact here is pulled from the live AESDR codebase: prices ($249 / $299 one-time), commission (30%, 30-day attribution window), the archetype/tier/strike structure, the inboxes (affiliates@aesdr.com, hello@aesdr.com), and the stack (Supabase · Cloudflare Email Routing · Stripe Connect · Resend · Vercel). The <b>seven agents are a build deliverable</b> — we stand them up as part of launching this function, each as a Claude Code subagent (a markdown file in <code>.claude/agents/</code>) or an Agent-SDK worker. Every agent card below is its full spec + system prompt — i.e. the thing you paste into the agent definition when you build it. Building the roster is a Week-1 task in the plan, not an afterthought.</div>
+    <h2 class="blockH">The first hour, literally</h2>
+    <p class="body">Open the <b>Phase · Days 1–30</b> section in the sidebar and expand <b>Week 1</b>. Task one is "Get credentialed across the stack" — that's your 9:00am. Work top-down. Check the box on each task as you finish; your progress saves to this browser and the bars at the top fill as you go.</p>
+    <div class="ribbon">
+      ${PHASES.map(p=>`<div class="ribCard" onclick="showSection('${p.id}')">
+        <div class="ribNum">${esc(p.num)}</div>
+        <div class="ribTitle">${esc(p.title)}</div>
+        <div class="ribGoal">${esc(p.goal)}</div>
+        <div class="ribMeter"><span data-rib="${p.id}"></span></div>
+      </div>`).join('')}
+    </div>
+    <p class="body" style="font-family:var(--hand);font-size:22px;transform:rotate(-.5deg)">— the goal isn't to finish the checklist. it's to make the milestones look conservative.</p>
+  </section>`;
+
+  /* OVERVIEW */
+  html+=`<section class="section" id="sec-overview">
+    <div class="secEyebrow">The shape of the quarter</div>
+    <h1 class="secTitle">The 90-day arc.</h1>
+    <p class="secLede">Three phases, each with a hard milestone from the job description. Lead with the affiliate motion because it's live; bring channel online behind it. By day 90 both run in parallel — and run without the founder in the day-to-day.</p>
+    <div class="iris-line secDivider"></div>
+    ${PHASES.map(p=>{
+      const wks=WEEKS.filter(w=>w.phase===p.id);
+      return `<h2 class="blockH">${esc(p.num)} — ${esc(p.title)}</h2>
+        <p class="body"><b>Milestone:</b> ${esc(p.goal)}</p>
+        <table class="rTable"><thead><tr><th>Week</th><th>Focus</th><th>Tasks</th></tr></thead><tbody>
+        ${wks.map(w=>`<tr><td class="src">${esc(w.tag)}</td><td><b>${esc(w.title)}</b><br><span style="color:var(--muted);font-size:13px">${esc(w.intro)}</span></td><td>${w.tasks.length}</td></tr>`).join('')}
+        </tbody></table>`;
+    }).join('')}
+  </section>`;
+
+  /* PHASES */
+  html+=renderPhaseSection('p30');
+  html+=renderPhaseSection('p60');
+  html+=renderPhaseSection('p90');
+
+  /* AGENTS */
+  html+=`<section class="section" id="sec-agents">
+    <div class="secEyebrow">The team that isn't people · build these in Week 1</div>
+    <h1 class="secTitle">Seven agents<br>to build.</h1>
+    <p class="secLede">These don't exist yet — building them is the Week-1 leverage move (see Phase 30 → "Build the agent roster"). Each owns a slice of the motion so you stay on the relationships, the part that can't be delegated. Click any agent for its full spec + system prompt: that's the content of its <code>.claude/agents/&lt;name&gt;.md</code> file. <em>Rename, merge, or cut any of them as you build.</em></p>
+    <div class="iris-line secDivider"></div>
+    <div class="agentGrid">
+      ${AGENTS.map(a=>`<div class="agentCard">
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:6px">
+          <img src="/mascot/leponeus-${a.pose}.png" style="width:46px;height:46px;object-fit:contain" alt="">
+          <div><div class="agentName">${a.name}</div><div class="agentRole">${a.role}</div></div>
+        </div>
+        <div class="agentDesc">${a.desc}</div>
+        <div class="agentMaps">${a.maps}</div>
+        <button class="agentBtn" onclick="openAgent('${a.id}')">View dispatch prompt →</button>
+      </div>`).join('')}
+    </div>
+  </section>`;
+
+  /* RESOURCES */
+  const rt=(rows,cols)=>`<table class="rTable"><thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>
+    ${rows.map(r=>`<tr>${r.map((cell,i)=>{
+      if(i===cols.length-1 && (cell==='hi'||cell==='mid'||cell==='lo'))
+        return `<td><span class="badge ${cell}">${cell==='hi'?'High fit':cell==='mid'?'Medium':'Low'}</span></td>`;
+      if(i===2 && cell!=='—') return `<td class="src">${cell}</td>`;
+      return `<td>${cell}</td>`;
+    }).join('')}</tr>`).join('')}</tbody></table>`;
+  html+=`<section class="section" id="sec-resources">
+    <div class="secEyebrow">Where the right partners actually are</div>
+    <h1 class="secTitle">Resource Vault.</h1>
+    <p class="secLede">Practitioner networks, not marketplaces. One-hundredth the volume, a hundred times the per-partner conversion. <b>No LinkedIn anywhere on this list</b> — per founder direction.</p>
+    <div class="iris-line secDivider"></div>
+    <h3 class="subH">Paid communities (owner = the candidate)</h3>
+    ${rt(RESOURCES.communities,['Source','What it is','Where','Fit'])}
+    <h3 class="subH">Voices, networks & newsletters</h3>
+    ${rt(RESOURCES.voices,['Source','What it is','Where','Fit'])}
+    <h3 class="subH">Discovery & enrichment tooling</h3>
+    ${rt(RESOURCES.discovery,['Tool','What it does','Where','Fit'])}
+    <h3 class="subH">Do NOT start here</h3>
+    <table class="rTable"><thead><tr><th>Avoid</th><th>Why</th></tr></thead><tbody>
+    ${RESOURCES.avoid.map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td></tr>`).join('')}</tbody></table>
+    <div class="callout"><div class="cTitle">The litmus test</div>If your instinct is to plug AESDR into a marketplace and watch the numbers, it's the wrong instinct for this brand. If it's community intelligence, manual curation, and a tight scored list — that's the motion.</div>
+  </section>`;
+
+  /* TEMPLATES */
+  html+=`<section class="section" id="sec-templates">
+    <div class="secEyebrow">Personalize the top. Never the disclosure.</div>
+    <h1 class="secTitle">Outreach Library.</h1>
+    <p class="secLede">Scribe-drafted, canon-checked scaffolding. The first two sentences are bespoke per partner; the economics and the ask are templated and never edited — personal and compliant at scale. <span class="var" style="background:rgba(139,26,26,.1);color:var(--crimson);padding:0 4px;font-family:var(--mono);font-size:13px">[VARIABLES]</span> get filled per send.</p>
+    <div class="iris-line secDivider"></div>
+    ${TEMPLATES.map((t,i)=>`<div class="tmpl">
+      <div class="tmplHead"><span class="tmplName">${esc(t.name)}</span>
+        <span class="tmplMeta">${esc(t.meta)}</span>
+        <button class="copyBtn" style="border-color:var(--ink);color:var(--ink)" onclick="copyText(document.getElementById('tmpl${i}').innerText,this)">Copy</button></div>
+      <div class="tmplBody" id="tmpl${i}">${t.body}</div>
+    </div>`).join('')}
+  </section>`;
+
+  /* CLI VAULT */
+  const cliGroups=[
+    {h:'Daily — the commands you run most',blocks:[
+      {label:'morning: pull the pipeline (Almanac reads this)',lang:'bash',body:`supabase db query "select name, status, next_action, next_action_date
+from partner_pipeline
+where next_action_date <= current_date
+order by next_action_date;"`},
+      {label:'who replied / who is due a follow-up',lang:'bash',body:`supabase db query "select name, status, next_action_date
+from partner_pipeline
+where status='contacted' and next_action_date <= current_date;"`}
+    ]},
+    {h:'Supabase — schema & migrations',blocks:[
+      {label:'create a new migration',lang:'bash',body:`supabase migration new <name>
+# edit the file in supabase/migrations/, then:
+supabase db push`},
+      {label:'pull current live schema',lang:'bash',body:`supabase db pull`},
+      {label:'ad-hoc query',lang:'bash',body:`supabase db query "<SQL>"`}
+    ]},
+    {h:'Cloudflare — email routing for affiliates@',lang:'bash',blocks:[
+      {label:'dashboard path (no CLI needed)',lang:'text',body:`dash.cloudflare.com
+ → aesdr.com zone
+ → Email  → Email Routing  → Routing rules
+ → confirm  affiliates@aesdr.com → forwards to founder inbox
+ (Create address if missing; MX already points to Cloudflare, no DNS work)`},
+      {label:'wrangler (for the aesdr.io shortener, Phase 60+)',lang:'bash',body:`wrangler login
+wrangler whoami
+# the shortener is a Worker; scaffold when 10DLC/links work begins`}
+    ]},
+    {h:'Git — the kit, playbooks & copy live in-repo',blocks:[
+      {label:'standard flow',lang:'bash',body:`git checkout -b partnerships/<change>
+# edit content/partnerships/* or docs/partnerships/*
+git add -A && git commit -m "<what>"
+git push -u origin partnerships/<change>`}
+    ]},
+    {h:'Reporting — the Friday pull',blocks:[
+      {label:'weekly report + save to file',lang:'bash',body:`supabase db query "select * from affiliate_weekly_report;" \\
+  | tee "reports/$(date +%Y-%m-%d)-weekly.txt"`},
+      {label:'payout dry-run',lang:'bash',body:`supabase db query "select affiliate_slug, count(*) items,
+  sum(commission_amount_cents)/100.0 payout_due
+from affiliate_attributions
+where status='cleared' and paid_at is null
+group by affiliate_slug order by payout_due desc;"`}
+    ]}
+  ];
+  html+=`<section class="section" id="sec-cli">
+    <div class="secEyebrow">Every command, copy-ready</div>
+    <h1 class="secTitle">CLI Vault.</h1>
+    <p class="secLede">The terminal, Supabase, Cloudflare, and git commands the role runs — gathered in one place so you're never hunting. Hand the SQL-heavy ones to <b>Ledger</b>.</p>
+    <div class="iris-line secDivider"></div>
+    ${cliGroups.map(g=>`<h3 class="subH">${esc(g.h)}</h3>${renderCode(g.blocks)}`).join('')}
+  </section>`;
+
+  /* ATTRIBUTION */
+  html+=`<section class="section" id="sec-attribution">
+    <div class="secEyebrow">Your call · JD milestone by day 30</div>
+    <h1 class="secTitle">Attribution decision.</h1>
+    <p class="secLede">The JD makes this yours. Don't decide on day 5 — decide ~day 25 when you know your real partner count and payout cadence. Here's the matrix and the honest default.</p>
+    <div class="iris-line secDivider"></div>
+    <div class="matrix"><table>
+      <thead><tr><th></th>${ATTRIBUTION.cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead>
+      <tbody>${ATTRIBUTION.rows.map((r,ri)=>`<tr class="${ri===ATTRIBUTION.pickRow?'pick':''}">${r.map((cell,ci)=>`<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody>
+    </table></div>
+    <div class="callout"><div class="cTitle">The honest default</div>${ATTRIBUTION.verdict}</div>
+    <div class="handNote">decide on data, not on day-5 vibes. write the memo, send it to the founder.</div>
+  </section>`;
+
+  /* METRICS */
+  html+=`<section class="section" id="sec-metrics">
+    <div class="secEyebrow">What you're measured on</div>
+    <h1 class="secTitle">Milestone tracker.</h1>
+    <p class="secLede">Straight from the JD. These are the only numbers that matter — everything in the plan rolls up to them.</p>
+    <div class="iris-line secDivider"></div>
+    <h3 class="subH">Day 30</h3>
+    <div class="metricGrid">
+      <div class="metric"><div class="mNum">25</div><div class="mLabel">Candidates identified</div><div class="mTarget">in partner_pipeline</div></div>
+      <div class="metric"><div class="mNum">✓</div><div class="mLabel">Discovery documented</div><div class="mTarget">discovery-doctrine.md</div></div>
+      <div class="metric"><div class="mNum">✓</div><div class="mLabel">Outreach started</div><div class="mTarget">first 25 contacted</div></div>
+      <div class="metric"><div class="mNum">✓</div><div class="mLabel">Platform chosen</div><div class="mTarget">attribution-decision.md</div></div>
+    </div>
+    <h3 class="subH">Day 60</h3>
+    <div class="metricGrid">
+      <div class="metric"><div class="mNum">10</div><div class="mLabel">Affiliates onboarded</div><div class="mTarget">status = active</div></div>
+      <div class="metric"><div class="mNum">3</div><div class="mLabel">Channel conversations</div><div class="mTarget">motion = channel</div></div>
+      <div class="metric"><div class="mNum">✓</div><div class="mLabel">Reporting live</div><div class="mTarget">weekly view + Friday note</div></div>
+    </div>
+    <h3 class="subH">Day 90</h3>
+    <div class="metricGrid">
+      <div class="metric"><div class="mNum">$3k</div><div class="mLabel">Monthly trajectory</div><div class="mTarget">commission run-rate</div></div>
+      <div class="metric"><div class="mNum">1</div><div class="mLabel">Channel signed / close</div><div class="mTarget">first paper</div></div>
+      <div class="metric"><div class="mNum">2</div><div class="mLabel">Motions running</div><div class="mTarget">affiliate + channel</div></div>
+    </div>
+    <div class="callout"><div class="cTitle">The real success definition</div>By day 90 the founder hasn't had to ask for a number in a month, because the Friday note already put it in front of him. The function runs without his day-to-day involvement. That — not any single metric — is the bar.</div>
+  </section>`;
+
+  c.innerHTML=html;
+}
+
+/* boot */
+buildNav();
+buildContent();
+setDay(currentDay);
+updateProgress();
+// open week 1 by default
+setTimeout(()=>{const f=WEEKS[0].tasks[0].id;const wk=document.getElementById('week-'+f);if(wk){wk.querySelector('.weekHead').classList.add('open');wk.querySelector('.weekBody').classList.add('open');}},50);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+</script>
+</body>
+</html>
