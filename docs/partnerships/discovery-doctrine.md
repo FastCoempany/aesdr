@@ -6,7 +6,7 @@
 **Owners:** partnerships lead.
 **Companion docs:** `AFFILIATE_BRAND_CANON.md` (the voice canon), `content/internal/partnerships-os.html` § Prospect Intel (the named-candidate reference list).
 
-Borrowed trust is a merciless mirror. A partner whose audience smells motivational content tanks our register in 60 minutes. This doctrine is what lets the partnerships lead say no to a wrong-fit creator with 100k followers on day 12, without re-litigating it.
+This doctrine sets the rules Scout uses on every affiliate sweep. Its purpose is to let the partnerships lead reject a wrong-fit creator with 100k followers on day 12 without re-litigating which surfaces, what voice register, or what audience size are acceptable. Without a written doctrine, every borderline case turns into a debate; with one, Scout drops the bad fits at the sweep step and only candidates worth the time reach human review.
 
 ---
 
@@ -24,8 +24,6 @@ Practitioner networks only. Never marketplaces. Never LinkedIn.
 - Mass affiliate marketplaces — Rakuten, CJ (Commission Junction), ShareASale, Impact-as-a-marketplace. Spray-and-pray surfaces optimized for volume; we are not.
 - LinkedIn. Per founder direction: not as a primary channel, not as a contact path, not for partner promotion. Manual one-human-to-one-human DM is the only carve-out, and even that is downstream of an earned warm intro elsewhere.
 
-The litmus: if the instinct is to plug AESDR into a marketplace and watch the numbers, that is the wrong instinct for this brand.
-
 ---
 
 ## 2. Voice-fit bar
@@ -40,7 +38,7 @@ Every candidate gets a 1–5 voice-fit score before any further work. Score hone
 | **2** | Hype-adjacent. Mixes "value" with "energy." Reads like a LinkedIn carousel half the time. Drop. |
 | **1** | Guru aesthetic. Performs expertise instead of installing it. Drop. |
 
-**Cut anyone scoring ≤2.** A bad-fit partner damages the brand faster than a good one helps. Thirty great candidates beats a hundred mediocre ones.
+**Cut anyone scoring ≤2.** A bad-fit partner introduces brand risk that a good-fit partner cannot cancel out — and that risk compounds across their audience. Aim for 30 strong candidates over 100 marginal ones.
 
 ---
 
@@ -64,7 +62,7 @@ Archetypes are not mutually exclusive — Neil Bhuiyan is creator + community, F
 Cut on any of these without re-litigating:
 
 - **Guru aesthetic.** Banned vocabulary appears in their feed: "crush it," "level up," "unlock your potential," "rise and grind," "thought leader," "10x." Headset photos. Motivation graphics. Performance theater. Score 1 and drop.
-- **Vendor-sponsored conflict with a competing curriculum.** Currently flagged in Prospect Intel as hard conflicts: **Jason Bay** (Outbound Squad — 30MPC trainer, paid Sell Better speaker), **Belal Batrawy** (sells Death to Fluff Bootcamp via learntosell.io), **Morgan J Ingram** (Director at JBarrows Sales Training). Each sells a direct substitute for AESDR. Approaching them is wasted cycles at best and a competitor-signal at worst. They are listed in Prospect Intel under hard conflicts so future sweeps do not re-discover them.
+- **Vendor-sponsored conflict with a competing curriculum.** Currently flagged in Prospect Intel as hard conflicts: **Jason Bay** (Outbound Squad — 30MPC trainer, paid Sell Better speaker), **Belal Batrawy** (sells Death to Fluff Bootcamp via learntosell.io), **Morgan J Ingram** (Director at JBarrows Sales Training). Each sells a direct substitute for AESDR. Approaching them wastes the partnerships lead's time and signals AESDR's recruiting moves to the competing curriculum. They are listed in Prospect Intel under hard conflicts so future sweeps do not re-discover them.
 - **Audience under ~1k engaged.** Not raw followers — engaged readers, listeners, or community members. A 5k newsletter with 800 opens beats a 30k follower count with no replies.
 - **Sponsored by a sales-tool vendor whose lessons we would contradict.** A creator paid by a cold-email automation vendor will not credibly recommend a course that teaches restraint. Conflict, not a partner.
 - **Refuses disclosure.** If a candidate cannot or will not disclose the affiliate relationship per FTC rules, we do not work with them. This is a fit signal, not a paperwork dispute.
