@@ -458,13 +458,13 @@ const WEEKS = [
   },
   {id:'w1t2',title:'Day 1, 11:00am — Set up the local toolchain',day:1,tags:[CLI()],
    steps:[
-    '<b>Open Terminal.</b> macOS: <span class="ui">⌘ + Space</span> → type <code>Terminal</code> → Enter. Make a home for the code: <code>mkdir -p ~/code && cd ~/code</code>.',
-    '<b>Clone the repo</b> (block 1): run <code>git clone https://github.com/fastcoempany/aesdr.git</code>, then <code>cd aesdr</code>. You\'re now inside the Next.js app; the affiliate backend lives in <code>supabase/migrations/</code>.',
-    '<b>Install dependencies:</b> <code>npm install</code> (1–2 min). If it errors on Node version, install Node 20+ first — <code>nvm install 20 && nvm use 20</code> — then re-run.',
-    '<b>Install the Supabase CLI</b> (block 2): <code>brew install supabase/tap/supabase</code>. This is your most-used tool — Ledger drives every query and migration through it.',
-    '<b>Install Cloudflare Wrangler:</b> <code>npm install -g wrangler</code>. For the aesdr.io link shortener in Phase 60 — install now so it\'s done.',
-    '<b>Verify both:</b> <code>supabase --version && wrangler --version</code> — both must print a version. If <code>command not found</code>, quit and reopen Terminal so PATH reloads, then re-run.',
-    '<b>Log in + link to the live project</b> (block 3): <code>supabase login</code> (opens browser → Authorize). Grab the ref from the dashboard URL <code>supabase.com/dashboard/project/&lt;REF&gt;</code>, then <code>supabase link --project-ref &lt;REF&gt;</code>.',
+    '<b>Open your terminal.</b> <b>macOS:</b> <span class="ui">⌘ + Space</span> → <code>Terminal</code>. <b>Windows:</b> <span class="ui">⊞ Win</span> → <code>PowerShell</code>. Make a home for the code: macOS <code>mkdir -p ~/code && cd ~/code</code>; Windows <code>cd $HOME; mkdir code -ea 0; cd code</code>.',
+    '<b>Clone the repo</b> (block 1): <code>git clone https://github.com/fastcoempany/aesdr.git</code>, then <code>cd aesdr</code>. You\'re now inside the Next.js app; the affiliate backend lives in <code>supabase/migrations/</code>.',
+    '<b>Install dependencies:</b> <code>npm install</code> (1–2 min). If it errors on Node version, install Node 20+ first (<a class="ext" href="https://nodejs.org" target="_blank">nodejs.org</a> on Windows; <code>nvm install 20 && nvm use 20</code> on macOS).',
+    '<b>Install the Supabase CLI</b> (block 2). <b>macOS:</b> <code>brew install supabase/tap/supabase</code>. <b>Windows:</b> <code>scoop install supabase</code> (install Scoop first from <a class="ext" href="https://scoop.sh" target="_blank">scoop.sh</a>) — or download the binary from <a class="ext" href="https://github.com/supabase/cli/releases" target="_blank">github.com/supabase/cli/releases</a>. Ledger drives every query through this.',
+    '<b>Install Cloudflare Wrangler:</b> <code>npm install -g wrangler</code> (works on both macOS + Windows). For the aesdr.io link shortener in Phase 60 — install now so it\'s done.',
+    '<b>Verify both:</b> <code>supabase --version</code> and <code>wrangler --version</code> — both must print a version. If <code>command not found</code> / <code>not recognized</code>, close and reopen the terminal so PATH reloads.',
+    '<b>Log in + link to the live project</b> (block 3): <code>supabase login</code> opens your browser → Authorize. The project ref is baked into the next line — <code>supabase link --project-ref jwhjysjvehqslzcfpehl</code>.',
     '<b>Pull the live schema</b> so the affiliate tables exist locally: <code>supabase db pull</code>. <b>Done when</b> <code>supabase/migrations/</code> shows the existing affiliate tables.'
    ],
    code:[
@@ -477,9 +477,10 @@ brew install supabase/tap/supabase
 npm install -g wrangler
 # verify
 supabase --version && wrangler --version`},
-    {label:'link supabase to live project',lang:'bash',body:`# get the project ref from the dashboard URL: supabase.com/dashboard/project/<REF>
+    {label:'link supabase to live project',lang:'bash',body:`# project ref is baked in: jwhjysjvehqslzcfpehl
+# dashboard: https://supabase.com/dashboard/project/jwhjysjvehqslzcfpehl
 supabase login
-supabase link --project-ref <PROJECT_REF>
+supabase link --project-ref jwhjysjvehqslzcfpehl
 # pull current schema so you can see the affiliate tables locally
 supabase db pull`}
    ],
@@ -520,13 +521,19 @@ tools: WebSearch, WebFetch, Bash
 ---
 
 <paste Scout's dispatch prompt here — see the Agent Roster card>`},
-    {label:'scaffold all seven',lang:'bash',body:`mkdir -p .claude/agents
+    {label:'scaffold all seven (macOS / Linux)',lang:'bash',body:`mkdir -p .claude/agents
 # create one file per agent; paste each system prompt from the
 # Agent Roster cards in this OS (the "Copy prompt" button)
 for a in scout dossier scribe ledger warden herald almanac; do
   touch .claude/agents/$a.md
 done
-git add .claude/agents && git commit -m "Build partnerships agent roster"`}
+git add .claude/agents && git commit -m "Build partnerships agent roster"`},
+    {label:'scaffold all seven (Windows / PowerShell)',lang:'powershell',body:`New-Item .claude\\agents -ItemType Directory -ea 0 | Out-Null
+'scout','dossier','scribe','ledger','warden','herald','almanac' | %{
+  New-Item ".claude\\agents\\$_.md" -ItemType File -ea 0 | Out-Null
+}
+git add .claude/agents
+git commit -m "Build partnerships agent roster"`}
    ],
    callouts:[{type:'note',title:'Build cost is one afternoon',body:'Seven markdown files, each is frontmatter + a system prompt you already have (the cards). ~2-3 hours to write and test all seven. It is the highest-ROI afternoon of the quarter — every week after, they do the work that would otherwise eat your days.'}]
   },
@@ -605,7 +612,7 @@ supabase db query "select count(*) from partner_pipeline;"`}],
   {id:'w1t6',title:'Day 4 — Build the discovery doctrine (write it down)',day:4,tags:[A('scout')],
    steps:[
     'The JD says "discovery process documented" by day 30. Do it on day 4 so the next three weeks execute against it instead of improvising.',
-    '<b>Create the doc:</b> <code>mkdir -p docs/partnerships && touch docs/partnerships/discovery-doctrine.md</code>, open it, and write one page covering four things: (1) the sourcing rule — practitioner networks, never marketplaces, never LinkedIn; (2) the voice-fit bar — score 1–5, reject anything ≤2; (3) the archetype targets — creator / coach / alumni / community; (4) the disqualifiers — guru aesthetic, vendor-sponsored conflicts, audience under ~1k engaged.',
+    '<b>Create the doc:</b> macOS — <code>mkdir -p docs/partnerships && touch docs/partnerships/discovery-doctrine.md</code>; Windows — <code>New-Item docs\\partnerships -ItemType Directory -ea 0; New-Item docs\\partnerships\\discovery-doctrine.md -ItemType File</code>. Then open it (<code>code docs/partnerships/discovery-doctrine.md</code> if VS Code is installed) and write one page covering four things: (1) the sourcing rule — practitioner networks, never marketplaces, never LinkedIn; (2) the voice-fit bar — score 1–5, reject anything ≤2; (3) the archetype targets — creator / coach / alumni / community; (4) the disqualifiers — guru aesthetic, vendor-sponsored conflicts, audience under ~1k engaged.',
     '<b>Dispatch Scout</b> (line below) to run Sweep 1 against that doctrine: 15 candidates across Skool, Mighty Networks, and independent sales newsletters. Scout returns a scored table — it does not invent names.',
     '<b>Pipe survivors to Dossier:</b> for every Scout row scoring voice-fit ≥3, dispatch Dossier to enrich it (real audience size, cadence, conflicts, the non-LinkedIn contact path).',
     '<b>Write them in:</b> have Ledger insert each enriched candidate into <code>partner_pipeline</code> at status <code>enriched</code>. <b>Done when</b> <code>docs/partnerships/discovery-doctrine.md</code> is committed and Scout has returned its first 15.'
@@ -701,13 +708,13 @@ where name = any(array['<name1>','<name2>','<name3>']);`}]
   },
   {id:'w3t3',title:'Days 14–15 — Work the replies; book the first calls',day:14,tags:[WHO('repliers'),A('almanac')],
    steps:[
-    '<b>Set up the booking link once</b>, before the first "yes" needs it: Cal.com (or SavvyCal) → <span class="ui">Event Types</span> → <span class="ui">New</span> → name it "AESDR partner intro", duration 15 min, availability in US Pacific–Eastern business hours only (matches founder + workshop overlap). Copy the link — it goes in every yes-reply. No back-and-forth scheduling, no LinkedIn.',
+    '<b>Booking link is live:</b> <a class="ext" href="https://calendar.app.google/wFRpSWG2ehvNhgd4A" target="_blank">calendar.app.google/wFRpSWG2ehvNhgd4A</a> (Google Calendar Appointment Schedule on <code>hello@aesdr.com</code>, 15-min "AESDR partner intro", availability in <b>US Central / Chicago</b> business hours, checks <code>antaeus.coe@gmail.com</code> + <code>mrcoe7@gmail.com</code> for conflicts). Open it in a private window once to confirm the booking interface loads. This link goes in every yes-reply.',
     'Replies are the job now. Same-day response, every time. A warm reply that waits 48 hours cools.',
-    'For a "yes, tell me more": reply with the <span class="where">/affiliates/kit</span> link + your Cal.com link. Move them to <code>replied</code>, then <code>call_booked</code> once they pick a slot.',
+    'For a "yes, tell me more": reply with the <span class="where">/affiliates/kit</span> link + your booking link (<code>calendar.app.google/wFRpSWG2ehvNhgd4A</code>). Move them to <code>replied</code>, then <code>call_booked</code> once they pick a slot.',
     'For a "what\'s the commission?": the honest numbers — 40%, 30-day window, $249/$299 product, paid via Stripe. Don\'t hedge; the transparency is the pitch.',
     'For silence: leave them at <code>contacted</code> — the follow-up ladder (Day +4) handles them automatically. Dispatch <b>Almanac</b> each morning to surface who\'s due.'
    ],
-   callouts:[{type:'who',title:'Booking tool, no LinkedIn needed',body:'Use Cal.com or SavvyCal with a 15-min "AESDR partner intro" event type. Put the link in every reply. Calendar overlap: keep slots in US Pacific–Eastern business hours to match founder + workshop availability.'}]
+   callouts:[{type:'who',title:'Booking link — already wired',body:'Google Calendar Appointment Schedule, 15-min "AESDR partner intro" event on <code>hello@aesdr.com</code>. URL: <code>calendar.app.google/wFRpSWG2ehvNhgd4A</code>. Cross-checks <code>antaeus.coe@gmail.com</code> + <code>mrcoe7@gmail.com</code> for conflicts so personal appointments block partner slots automatically.'}]
   }
  ]},
 
@@ -945,7 +952,7 @@ order by commission desc limit 3;`}]
   {id:'w11t2',title:'Days 75–81 — Second affiliate wave + workshop pilot',day:75,tags:[A('scout'),A('scribe'),WHO('top affiliate')],
    steps:[
     '<b>Run the second wave at scale</b> (line below): Scout sweep → Dossier → Scribe → the ladder — same process you proved in Phase 30, now for 25 more with no hand-holding because the machine works. Pull from the <code>cold</code> rows you parked in w2t2 plus fresh Scout results.',
-    '<b>Pilot a workshop with your strongest affiliate:</b> the registration + confirmation system is already built — send them <span class="where">/[slug]/workshop</span> (their slug), pick a date in US Pacific–Eastern business hours, and co-promote. A live workshop converts 3–5× a link drop.',
+    '<b>Pilot a workshop with your strongest affiliate:</b> the registration + confirmation system is already built — send them <span class="where">/[slug]/workshop</span> (their slug), pick a date in US Central business hours, and co-promote. A live workshop converts 3–5× a link drop.',
     '<b>Push self-serve onboarding:</b> point every new partner at <span class="where">/affiliates/dashboard/playbooks</span> so they ramp without you in the loop. The leverage you built in Phase 30 pays off now as reduced hand-holding.',
     '<b>Stock the next quarter:</b> keep the funnel deep enough that day-90 isn\'t a cliff. <b>Done when</b> 25 new candidates are in the funnel and one workshop is scheduled with your top affiliate.'
    ]
@@ -1154,6 +1161,7 @@ function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replac
 const NAV = [
   {g:'Start'},
   {id:'day1',n:'01',label:'Day 1 — Cold Open'},
+  {id:'wiring',n:'⚡',label:'Wiring Status'},
   {id:'overview',n:'02',label:'The 90-Day Arc'},
   {g:'The Plan'},
   {id:'p30',n:'30',label:'Phase · Days 1–30'},
@@ -1503,7 +1511,7 @@ function buildContent(){
       </div>
       <div class="heroMascot"><img src="/mascot/leponeus-doctrine.png" alt="Leponeus"></div>
     </div>
-    <div class="disclaim"><b>Read this first.</b> The economics here are real, not invented: prices ($249 / $299 one-time) and the 30-day attribution window are from the live codebase; the <b>40% affiliate commission is the set program rate</b> (the live schema still defaults to 30% — a rate migration closes that gap). Plus the archetype/tier/strike structure, the inboxes (affiliates@aesdr.com, hello@aesdr.com), and the stack (Supabase · Cloudflare Email Routing · Stripe Connect · Resend · Vercel). The <b>seven agents are a build deliverable</b> — we stand them up as part of launching this function, each as a Claude Code subagent (a markdown file in <code>.claude/agents/</code>) or an Agent-SDK worker. Every agent card below is its full spec + system prompt — i.e. the thing you paste into the agent definition when you build it. Building the roster is a Week-1 task in the plan, not an afterthought.</div>
+    <div class="disclaim"><b>Read this first.</b> The economics are real, not invented: prices ($249 / $299 one-time), 30-day attribution window, and the <b>40% affiliate commission rate</b> (live schema still defaults to 30% — open rate-migration task; see <a class="ext" onclick="showSection('wiring')" style="cursor:pointer">Wiring Status</a>). Plus the archetype/tier/strike structure, the inboxes (<code>affiliates@aesdr.com</code>, <code>hello@aesdr.com</code>), and the stack (Supabase · Cloudflare Email Routing · Stripe Connect · Resend · Vercel). <b>Every account is already wired</b> — project refs, IDs, keys baked into every command across the 90 days. Stripe is in test mode; toggle to Live before first real payout. The <b>seven agents are a Week-1 build</b>: markdown files in <code>.claude/agents/</code>, each card below is its full system prompt to paste in.</div>
     <h2 class="blockH">The first hour, literally</h2>
     <p class="body">Open the <b>Phase · Days 1–30</b> section in the sidebar and expand <b>Week 1</b>. Task one is "Get credentialed across the stack" — that's your 9:00am. Work top-down. Check the box on each task as you finish; your progress saves to this browser and the bars at the top fill as you go.</p>
     <div class="ribbon">
@@ -1515,6 +1523,48 @@ function buildContent(){
       </div>`).join('')}
     </div>
     <p class="body" style="font-family:var(--hand);font-size:22px;transform:rotate(-.5deg)">— the goal isn't to finish the checklist. it's to make the milestones look conservative.</p>
+  </section>`;
+
+  /* WIRING STATUS */
+  const wiring = [
+    {sys:'Repo',state:'ok',value:'fastcoempany/aesdr',url:'https://github.com/fastcoempany/aesdr',note:'Founder Antaeus Coe · admin emails: antaeus.coe@gmail.com, mrcoe7@gmail.com'},
+    {sys:'Supabase',state:'ok',value:'aesdr-course · project ref jwhjysjvehqslzcfpehl',url:'https://supabase.com/dashboard/project/jwhjysjvehqslzcfpehl',note:'Pooler host: aws-1-us-east-1.pooler.supabase.com · Shared IPv4 pooler (port 6543)'},
+    {sys:'Supabase RO role',state:'ok',value:'aesdr_readonly (SELECT only on public schema)',url:'',note:'Ledger reads default to this; writes use the postgres role + show-SQL confirmation'},
+    {sys:'.env.partnerships',state:'ok',value:'SUPABASE_DB_URL_RO + SUPABASE_DB_URL set',url:'',note:'Gitignored. Agents source this for DB creds.'},
+    {sys:'Vercel',state:'ok',value:'team fastcoempanys-projects / project aesdr',url:'https://vercel.com/fastcoempanys-projects/aesdr',note:'4 crons already active in vercel.json — Almanac slots into this pattern'},
+    {sys:'Cloudflare',state:'ok',value:'zone 07ee6aa5cd7829aee80105227b8178ff · account 24bd5f80e4219b86bb899058e99a28e1',url:'https://dash.cloudflare.com/24bd5f80e4219b86bb899058e99a28e1/aesdr.com',note:'Email Routing live · affiliates@aesdr.com forwarding active'},
+    {sys:'Google Workspace',state:'ok',value:'hello@aesdr.com (Workspace admin)',url:'https://admin.google.com',note:'Personal Gmails (antaeus.coe@, mrcoe7@) are admin-allowlisted but not on Workspace'},
+    {sys:'Booking link',state:'ok',value:'Google Calendar Appointment Schedule · 15-min',url:'https://calendar.app.google/wFRpSWG2ehvNhgd4A',note:'Owned by hello@aesdr.com · US Central · cross-checks personal calendars for conflicts'},
+    {sys:'Stripe',state:'warn',value:'acct_1TJwnMAthQxYexaq · <b>TEST MODE</b>',url:'https://dashboard.stripe.com/acct_1TJwnMAthQxYexaq/test/dashboard',note:'Toggle to Live mode (top-right of Stripe dashboard) before the first real payout — account ID is the same across both modes'},
+    {sys:'aesdr.io',state:'ok',value:'owned + DNS configured',url:'',note:'Cloudflare Workers shortener wires in Phase 60 — domain ready'},
+    {sys:'affiliates@aesdr.com',state:'ok',value:'reply-to for all partnerships outreach',url:'',note:'Cloudflare Email Routing → forwarding inbox · canonized 2026-05-28'},
+    {sys:'Secrets in Vercel',state:'ok',value:'all set: STRIPE_*, RESEND_API_KEY, SUPABASE_SERVICE_ROLE_KEY, ANTHROPIC_API_KEY, CRON_SECRET',url:'https://vercel.com/fastcoempanys-projects/aesdr/settings/environment-variables',note:'Founder-confirmed'},
+    {sys:'Affiliate commission rate',state:'warn',value:'set in doc at <b>40%</b> · live schema defaults to 30.00',url:'',note:'Rate-migration task open — covers schema default + existing affiliate rows + buyer-facing pages'}
+  ];
+  const stateBadge = (s) => s==='ok'?'<span class="badge hi">Set</span>':s==='warn'?'<span class="badge mid">Action needed</span>':'<span class="badge lo">Not set</span>';
+  html+=`<section class="section" id="sec-wiring">
+    <div class="secEyebrow">Every system at a glance</div>
+    <h1 class="secTitle">Wiring status.</h1>
+    <p class="secLede">Every account, project ref, ID, and key the OS needs to run — already in place. The 12 rows below replace every <code>&lt;REF&gt;</code> placeholder in the 90-day plan with the real value. Two yellow rows are intentional: things that work today but require one deliberate action before going live.</p>
+    <div class="iris-line secDivider"></div>
+    <div class="matrix"><table>
+      <thead><tr><th>System</th><th>Status</th><th>Value baked into the OS</th><th>Note</th></tr></thead>
+      <tbody>${wiring.map(w=>`<tr class="${w.state==='warn'?'pick':''}">
+        <td><b>${esc(w.sys)}</b></td>
+        <td>${stateBadge(w.state)}</td>
+        <td style="font-size:12.5px">${w.url?`<a class="ext" href="${w.url}" target="_blank">${w.value}</a>`:w.value}</td>
+        <td style="font-size:12px;color:var(--muted)">${w.note}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>
+    <h3 class="subH">Operator profile baked into the doc</h3>
+    <table class="rTable"><tbody>
+      <tr><td><b>Timezone</b></td><td>US Central (America/Chicago) — Booking link windows + workshop times match this</td></tr>
+      <tr><td><b>Primary OS</b></td><td>Windows / PowerShell as primary (operator on <code>C:\\Users\\tanya\\aesdr</code>); macOS commands shown alongside where they differ</td></tr>
+      <tr><td><b>Email inbox for replies</b></td><td><code>affiliates@aesdr.com</code> (every outreach reply-to) — forwards to founder via Cloudflare Email Routing</td></tr>
+      <tr><td><b>Founder admin emails</b></td><td><code>antaeus.coe@gmail.com</code>, <code>mrcoe7@gmail.com</code> — both grant admin access to <code>/admin/*</code> surfaces</td></tr>
+    </tbody></table>
+    <div class="callout"><div class="cTitle">Two yellow rows · explained</div><b>Stripe is in test mode.</b> Account ID is correct and the same in both modes; toggle to Live (top-right of Stripe dashboard) before the first real payout. Don\'t flip it until Phase 60 when payouts actually start — keeps test data clean.<br><br><b>Affiliate rate is 40% in the doc, schema default is 30%.</b> The OS prices, scripts, and templates all reflect 40%. The live <code>affiliates.commission_pct</code> column still defaults to <code>30.00</code> — open task: write a migration that changes the default + updates existing affiliate rows. Until then, w5t1 (onboard the first cohort) explicitly sets <code>commission_pct=40.00</code> on insert.</div>
+    <div class="handNote">wiring is the boring part. it being done is what lets day 1 start at task one, not "go grab the keys."</div>
   </section>`;
 
   /* OVERVIEW */
