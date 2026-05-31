@@ -4,6 +4,7 @@ import { withSentryConfig } from "@sentry/nextjs";
 const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/*": ["./content/lessons/html/**/*", "./tools/standalone-html/**/*"],
+    "/partnerships-os": ["./content/internal/partnerships-os.html"],
   },
   async redirects() {
     // Permanent 301 redirects from the legacy /partners/* namespace to
