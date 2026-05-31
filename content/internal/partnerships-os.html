@@ -233,6 +233,17 @@
   .callout.likely .verdict{margin-top:12px;font-size:14px;line-height:1.6}
   .tag.likely{border-color:var(--ok);color:var(--ok);background:rgba(16,185,129,.06)}
 
+  /* auto-complete callout + tag (violet = Claude can do this end-to-end) */
+  .autoWrap{margin:14px 0;border:1px solid #7c3aed;background:rgba(124,58,237,.04)}
+  .autoLabel{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#7c3aed;padding:10px 14px;border-bottom:1px solid rgba(124,58,237,.18);display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .autoLabel .autoLeft{display:flex;align-items:center;gap:8px}
+  .autoTitle{font-family:var(--display);font-style:italic;font-weight:700;font-size:15px;color:var(--ink);padding:10px 14px 4px;text-transform:none;letter-spacing:0}
+  .autoBody{padding:0 14px 14px;white-space:pre-wrap;font-family:var(--mono);font-size:12px;line-height:1.6;color:var(--ink);max-height:320px;overflow-y:auto;background:#fff;border-top:1px dashed rgba(124,58,237,.15);margin-top:8px;padding-top:14px}
+  .autoCopy{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;background:transparent;border:1px solid #7c3aed;color:#7c3aed;padding:5px 10px;cursor:pointer;transition:all .12s}
+  .autoCopy:hover{background:#7c3aed;color:#fff}
+  .autoCopy.copied{background:var(--ok);border-color:var(--ok);color:#fff}
+  .tag.auto{border-color:#7c3aed;color:#7c3aed;background:rgba(124,58,237,.06)}
+
   /* template card */
   .tmpl{border:1px solid var(--light);background:#fff;margin:14px 0}
   .tmplHead{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--light);gap:10px;flex-wrap:wrap}
@@ -1318,6 +1329,7 @@ function renderTags(tags, taskId){
     return '';
   }).join('');
   if(taskId && LIKELY_DONE[taskId]) out += '<span class="tag likely">⚡ likely done</span>';
+  if(taskId && AUTO_COMPLETE[taskId]) out += '<span class="tag auto">▶ auto-complete</span>';
   return out;
 }
 
@@ -1675,6 +1687,364 @@ function renderLikelyDone(id){
   </div>`;
 }
 
+/* ─── AUTO_COMPLETE: tasks where Claude can produce the actual deliverable ─── */
+/* Paste the prompt into a fresh Claude Code session inside the aesdr repo. */
+const AUTO_COMPLETE = {
+  w1t6:{
+    title:'Day 4 — Build the discovery doctrine',
+    prompt:`Day 4 of the AESDR 90-day partnerships plan: write the discovery doctrine document.
+
+In the aesdr repo, create docs/partnerships/discovery-doctrine.md.
+
+Read first for context:
+- AFFILIATE_BRAND_CANON.md (the brand voice canon)
+- Every file in docs/canon-revisions/ (the R-G blocklist + seven moves)
+- The PROSPECTS constant in content/internal/partnerships-os.html — lists 10 named affiliate candidates and 10 channel candidates from Run A/B research
+
+The doctrine has four sections, ~5-10 lines each:
+(1) Sourcing rule — practitioner networks only, never marketplaces (Rakuten, CJ, ShareASale, Impact-as-marketplace), never LinkedIn. Founder direction, no exceptions.
+(2) Voice-fit bar — score 1-5 honestly. Reject anyone scoring ≤2. Guru-aesthetic creators ("crush it / level up / unlock") are 1. Operators who teach real work are 5.
+(3) Archetype targets — creator, coach, alumni, community. Define what each looks like in 2 lines.
+(4) Disqualifiers — guru aesthetic, vendor-sponsored conflicts with competing courses, audience under ~1k engaged. Reference the 3 hard-conflict names from Prospect Intel (Jason Bay, Belal Batrawy, Morgan Ingram) as examples.
+
+Use 2-3 of the 10 named Prospect Intel candidates as concrete examples of "good" (Neil Bhuiyan and Florin Tatulea are the highest voice-fit at 5/5).
+
+Before committing, run "node scripts/canon-check.mjs --soft" against the new file — fix any flagged R-G blocklist terms.
+
+Commit: "Add discovery doctrine (Day 4 deliverable)". Push to main.`
+  },
+  w1t7:{
+    title:'Day 5 — Attribution build-cost analysis',
+    prompt:`Day 5 of the AESDR 90-day partnerships plan: estimate the build-cost of closing the three gaps in the custom attribution system.
+
+In the aesdr repo, audit these files:
+- lib/affiliate-*.ts (entity, kit-session, payouts, etc.)
+- app/api/checkout/route.ts (Stripe checkout)
+- app/r/[slug]/route.ts if it exists (the tracked redirect)
+- supabase/migrations/*affiliate*.sql (the existing schema)
+- supabase/migrations/_apply_all_affiliate_hub.sql (the hand-applied bundle)
+
+For each of the three gaps, write an estimate covering:
+(1) Partner self-serve dashboard — files to add, UI shape, hours of dev work, data the dashboard reads, permissions that enforce it.
+(2) Automated payout scheduling — what triggers it (cron / Stripe webhook / manual button?), state transitions on affiliate_attributions and affiliate_payouts, how it interacts with the existing payout helper in app/actions/affiliate.ts.
+(3) Link-level click tracking — the affiliate_link_clicks table (specced in OS Days 20-22 SQL block), the /r/[slug] route changes to write to it, how clicks join to attributions.
+
+Write the result to docs/partnerships/attribution-build-cost.md as a one-page memo. This is the "build" side of the build-vs-buy decision the founder reviews on Day 22.
+
+Commit: "Attribution build-cost analysis (Day 5 deliverable)". Push to main.`
+  },
+  w2t3:{
+    title:'Day 10 — Write the canon-checked outreach library',
+    prompt:`Day 10 of the AESDR 90-day partnerships plan: write the 5 canon-checked outreach templates.
+
+In the aesdr repo, create the folder content/partnerships/outreach/ and write 5 files:
+- first-touch-newsletter.md
+- first-touch-community.md
+- first-touch-podcast.md
+- follow-up-1.md (sent +4 days if no reply, adds value)
+- follow-up-2.md (sent +9 days, honest close)
+
+Voice: operator-direct, peer-to-peer. Lead with the specific reason THEY fit (placeholder for personalization). No flattery padding.
+
+BANNED terms (R-G blocklist): "crush it, level up, unlock, 10x, passionate, rockstar, ninja, game-changer, synergy, circle back, reach out." Read AFFILIATE_BRAND_CANON.md and every file in docs/canon-revisions/ first.
+
+Structure of each template:
+- The first 2 sentences are bespoke per partner — use placeholders like [NAME], [SPECIFIC PIECE], [REAL DETAIL]
+- The economics + ask are templated and never edited
+- Economics block (must appear in every first-touch and follow-up): 40% commission, 30-day attribution window, $249/$299 one-time product, paid via Stripe
+- Reply-to: affiliates@aesdr.com
+- Booking link for "want a 15-min call?" asks: https://calendar.app.google/wFRpSWG2ehvNhgd4A
+- The Outreach Library section of the partnerships-os doc (TEMPLATES constant in content/internal/partnerships-os.html) has draft versions — use them as the starting point and polish.
+
+After writing all 5 files, run "node scripts/canon-check.mjs content/partnerships/outreach/" — fix any flagged terms.
+
+Commit: "Outreach library — 5 canon-checked templates (Day 10 deliverable)". Push to main.`
+  },
+  w4t2:{
+    title:'Days 20–22 — Write the attribution decision memo',
+    prompt:`Days 20-22 of the AESDR 90-day partnerships plan: write the attribution-platform decision memo and implement the choice.
+
+In the aesdr repo, write docs/partnerships/attribution-decision.md — a one-page memo from the partnerships lead to the founder.
+
+Read first:
+- The Attribution Decision section of the partnerships-os doc (ATTRIBUTION constant in content/internal/partnerships-os.html)
+- The Benchmarks section (BENCHMARKS constant)
+- docs/partnerships/attribution-build-cost.md if it exists (from Day 5)
+
+Recommended choice: extend the custom Supabase + Stripe attribution system for the first ~25 affiliates ($0/mo cost). Adopt Rewardful at $49/mo Starter (Stripe-native, 0% transaction fees, supports one-time products) the moment partner self-serve dashboards become the bottleneck — empirically when active affiliates >25 OR "where's my dashboard?" inquiries exceed 2/week.
+
+The memo MUST include:
+- The recommended choice in one sentence at the top
+- The three gaps the custom system has (partner dashboard, automated payouts, link-click tracking)
+- The exact trigger condition that flips the decision to Rewardful (numeric — "≥25 active affiliates AND ≥2 dashboard inquiries/week")
+- Cost both ways (custom: $0/mo + 2-3 dev-days; Rewardful Starter: $49/mo + ~1 day integration)
+- Rollback path: how to revert from Rewardful back to custom if it proves wrong
+- The Day-30 milestone evidence (the memo itself)
+
+After the memo, IF the choice is "extend custom," add the link-level click tracking gap. Create a migration file at supabase/migrations/<timestamp>_affiliate_link_clicks.sql with the clicks table from the OS Days 20-22 code block. Apply directly via Supabase Dashboard SQL Editor (https://supabase.com/dashboard/project/jwhjysjvehqslzcfpehl/sql/new — the CLI is broken in this repo due to duplicate-timestamp issues). Then INSERT a tracking row in supabase_migrations.schema_migrations.
+
+Commit: "Attribution platform decision memo + link-click tracking (Days 20-22 deliverable)". Push to main.`
+  },
+  w5t2:{
+    title:'Days 28–30 — Phase-30 founder memo',
+    prompt:`Days 28-30 of the AESDR 90-day partnerships plan: write the Phase-30 founder memo.
+
+In the aesdr repo, create docs/partnerships/reports/phase-30-memo.md (create the reports folder if needed — also add reports/*.md to .gitignore IF the founder wants memos private, otherwise commit them).
+
+The memo follows the 30-day template in the partnerships-os doc Days 28-30 task (MEMOS constant). 8 lines, structured.
+
+Pull real numbers from Supabase. Use the read-only connection (SUPABASE_DB_URL_RO from .env.partnerships):
+
+SELECT status, count(*) FROM partner_pipeline WHERE motion='affiliate' GROUP BY status;
+SELECT count(*) FROM partner_pipeline WHERE status='contacted';
+SELECT count(*) FROM partner_pipeline WHERE status IN ('call_booked','negotiating');
+SELECT count(*) FROM affiliates WHERE status='active';
+SELECT count(*) FROM affiliate_attributions;
+
+Format as the 8-line memo:
+(1) Milestones hit (4 from Day 30: discovery doctrine + 25 candidates + outreach started + platform chosen — confirm each with the artifact name or count)
+(2) Funnel numbers (contacted -> replied -> calls booked -> verbal yeses, as a chain)
+(3) What converted (the highest-yield surface or message — derive from your data)
+(4) What didn't (the angle/ask/surface that fell flat)
+(5) Phase-60 change (the one thing changing in the next 30 days)
+(6) Trajectory toward $3k/mo (on/behind/ahead, with one line of math)
+(7) Asks (0 if none, otherwise the one founder-needed decision)
+(8) Sign-off
+
+Commit: "Phase-30 founder memo (Day 30 deliverable)". Push to main. Paste the final memo in chat for review before forwarding to the founder.`
+  },
+  w7t1:{
+    title:'Days 38–40 — Extend the channel target list',
+    prompt:`Days 38-40 of the AESDR 90-day partnerships plan: extend the channel target list beyond the 10 already-named candidates.
+
+In the aesdr repo, the Prospect Intel section (PROSPECTS.channel in content/internal/partnerships-os.html) lists 10 named channel candidates:
+- No-conflict: Vendux, Martal Group, Skaled, RevOps Consulting, The Revenue Operations Group, Activated Scale, Belkins
+- Moderate conflict: Sales Assembly (overlapping community curriculum)
+- Hard conflict: Factor 8 (sells The Sales Bar eLearning), Winning by Design (sells SDR/AE courses)
+
+Use WebSearch + WebFetch to find 5 MORE channel partner candidates not already on this list. Sources:
+- Sales-enablement consultancies (small/boutique, focused on B2B SaaS)
+- Fractional VP-Sales networks beyond Vendux
+- RevOps consultancies focused on growth-stage SaaS
+- BDR-as-a-service / SDR outsourcing firms beyond Martal/Belkins
+- Sales training firms with a junior-rep gap (NOT a competing curriculum)
+
+For each candidate, return:
+- org_name
+- type
+- url (no LinkedIn)
+- size_signal (solo / boutique 2-10 / firm 10+)
+- fit_rationale (1 line — what gap does AESDR fill in their offer?)
+- structure_suggestion (referral fee / content bundle / co-sell / white-label)
+- conflict_risk (do they sell a competing SDR/AE curriculum?)
+- contact_path (no LinkedIn — email / web form / etc.)
+
+Run the non-cannibalization test on each — flag any that sell a competing curriculum, don't drop them but mark "conflict_risk: Y".
+
+INSERT all 5 new rows into partner_pipeline at motion='channel' status='enriched' via the Supabase Dashboard SQL Editor.
+
+After inserts, output a markdown table summarizing the 5 new candidates and post it in chat for review before any outreach.`
+  },
+  w7t2:{
+    title:'Days 41–44 — Draft channel first-touches',
+    prompt:`Days 41-44 of the AESDR 90-day partnerships plan: draft channel first-touch outreach for the 3 strongest channel candidates.
+
+In the aesdr repo, write 3 markdown files to content/partnerships/outreach/:
+- channel-vendux.md
+- channel-martal.md
+- channel-skaled.md
+
+These are one-to-one emails, NOT a sequence. Reply-to: affiliates@aesdr.com.
+
+Voice: operator-direct, B2B partnership register (not the consumer-affiliate register — different audience). Read AESDR_ENTERPRISE_CANON.md for the B2B voice; read AFFILIATE_BRAND_CANON.md for the R-G blocklist.
+
+Lead with the gap AESDR fills in THEIR practice. Never open with a commission rate.
+
+Vendux opening angle: every fractional sales exec they place hits a junior-rep ramp problem on Day 1. AESDR is the turn-key tool to hand new SDRs/AEs without Vendux building curriculum.
+
+Martal Group opening angle: every SDR they place at a client undergoes onboarding that AESDR could formalize as a content bundle. Reduces Martal's training overhead, becomes part of the client-facing offer.
+
+Skaled opening angle: AESDR fills the rep-level onboarding gap inside Skaled's enablement engagements. Senior enablement + AESDR rep-level = full coverage without Skaled building curriculum.
+
+Each message includes:
+- Personalized opening referencing one specific thing they do (research their website for a concrete reference)
+- The gap-fill rationale (above)
+- A structure proposal from the Prospect Intel "Structure" column (referral fee for Vendux, content bundle for Martal, content bundle for Skaled)
+- A 15-min discovery call CTA with the booking link: https://calendar.app.google/wFRpSWG2ehvNhgd4A
+- Reply-to affiliates@aesdr.com
+- Sign-off: "Antaeus Coe, AESDR"
+
+Length: 150-200 words each.
+
+Run "node scripts/canon-check.mjs content/partnerships/outreach/channel-*.md" before committing — fix any flagged terms.
+
+Commit: "Channel first-touches for Vendux / Martal / Skaled (Days 41-44 deliverable)". Push to main. Paste all 3 messages in chat for review before any send.`
+  },
+  w8t1:{
+    title:'Days 45–48 — Build the weekly reporting view + first Friday note',
+    prompt:`Days 45-48 of the AESDR 90-day partnerships plan: build the affiliate_weekly_report view and run the first Friday note.
+
+In the aesdr repo, the partnerships-os doc Days 45-48 task has the CREATE OR REPLACE VIEW SQL in its code block. Use it as the spec.
+
+NOTE: The Supabase CLI is broken in this repo due to duplicate-timestamp migration issues. Apply changes directly via the Dashboard SQL Editor at https://supabase.com/dashboard/project/jwhjysjvehqslzcfpehl/sql/new.
+
+Step 1: Create the view via the SQL Editor. The view should roll up per-affiliate: clicks_7d, pending_count, pending_commission ($), cleared_commission ($), paid_to_date ($).
+
+Step 2: Verify — SELECT * FROM affiliate_weekly_report; — should return rows (or zero rows if no affiliates yet — that's OK).
+
+Step 3: Generate this week's report. Save the output as text to reports/<YYYY-MM-DD>-weekly.txt (create the reports/ folder; add it to .gitignore so individual reports aren't committed).
+
+Step 4: Draft the 8-line Friday founder note based on the report. Save to docs/partnerships/reports/friday-note-<YYYY-MM-DD>.md. Format: top-line headline, active count, top-3 by commission, refund-rate health, one thing this week, one thing next week, asks (0 if none), sign-off.
+
+Step 5: Track the view in supabase_migrations.schema_migrations:
+
+INSERT INTO supabase_migrations.schema_migrations (version, name, statements) VALUES ('<current_timestamp>_affiliate_weekly_report', 'affiliate_weekly_report', ARRAY[]::text[]);
+
+Step 6: Create a matching migration file at supabase/migrations/<timestamp>_affiliate_weekly_report.sql with the same CREATE OR REPLACE VIEW SQL — keeps repo in sync with DB.
+
+Commit: "Add affiliate_weekly_report view + first Friday note (Days 45-48 deliverable)". Push to main.`
+  },
+  w8t2:{
+    title:'Days 49–51 — Generate the first payout dry-run',
+    prompt:`Days 49-51 of the AESDR 90-day partnerships plan: generate the first payout dry-run report.
+
+You are NOT triggering the actual payout. This is review-only output for the partnerships lead to walk the founder through.
+
+In the aesdr repo, use the read-only Supabase connection (SUPABASE_DB_URL_RO from .env.partnerships).
+
+Run this query (or its equivalent if column names differ):
+
+SELECT a.slug, a.display_name, count(att.*) as cleared_count, sum(att.commission_amount_cents)/100.0 as payout_due_dollars FROM affiliates a JOIN affiliate_attributions att ON att.affiliate_slug = a.slug WHERE att.status = 'cleared' AND att.paid_at IS NULL GROUP BY a.slug, a.display_name HAVING sum(att.commission_amount_cents) > 0 ORDER BY payout_due_dollars DESC;
+
+Also pull refund rate per affiliate:
+
+SELECT a.slug, round(100.0 * count(att.*) filter (where att.status='refunded') / nullif(count(att.*),0), 1) as refund_pct FROM affiliates a LEFT JOIN affiliate_attributions att ON att.affiliate_slug = a.slug GROUP BY a.slug HAVING count(att.*) > 0 ORDER BY refund_pct DESC;
+
+Write the result to docs/partnerships/reports/payout-dry-run-<YYYY-MM-DD>.md formatted as a one-page founder-review summary.
+
+Include:
+- Total batch amount in dollars (top line)
+- Per-affiliate breakdown (name, attribution count, payout due)
+- Anomalies you'd flag: refund rate >15% (cite which affiliate), single affiliate >60% of volume, negative or zero rows
+- The closing line for founder review: "Founder, ready to execute the batch via /admin/affiliates/[slug] payout helper. Stripe is in [Live/Test] mode — verify before clicking. Approve?"
+
+Do NOT trigger the actual payout. The admin UI batch action requires founder approval per the OS rules.
+
+Commit: "Payout dry-run for founder review (Days 49-51 deliverable)". Push to main. Post the markdown in chat so the partnerships lead can forward directly.`
+  },
+  w9t2:{
+    title:'Days 57–60 — Phase-60 founder memo',
+    prompt:`Days 57-60 of the AESDR 90-day partnerships plan: write the Phase-60 founder memo.
+
+In the aesdr repo, create docs/partnerships/reports/phase-60-memo.md.
+
+The memo follows the 60-day template in the partnerships-os doc Days 57-60 task (MEMOS constant). 8 lines, structured.
+
+Pull real numbers from Supabase (read-only):
+
+SELECT count(*) FROM affiliates WHERE status='active';
+SELECT count(*) FROM partner_pipeline WHERE motion='channel' AND status IN ('replied','negotiating','call_booked');
+SELECT a.slug, a.display_name, sum(att.commission_amount_cents)/100.0 as commission FROM affiliates a JOIN affiliate_attributions att ON att.affiliate_slug=a.slug GROUP BY a.slug, a.display_name ORDER BY commission DESC LIMIT 3;
+SELECT * FROM affiliate_weekly_report;
+
+Format as the 8-line memo:
+(1) Milestones hit (3 from Day 60: 10 affiliates onboarded, 3 channel conversations open, reporting live)
+(2) Producing affiliates (top 3 by commission $)
+(3) Closest channel (org name, status, next step)
+(4) One bottleneck to remove
+(5) Phase-90 bet (wider vs deeper) with one-line rationale from trajectory data
+(6) Trajectory toward $3k/mo
+(7) Asks (0 if none)
+(8) Sign-off
+
+Commit: "Phase-60 founder memo (Day 60 deliverable)". Push to main.`
+  },
+  w11t1:{
+    title:'Days 68–74 — Write the operating cadence doc',
+    prompt:`Days 68-74 of the AESDR 90-day partnerships plan: codify the operating cadence into a doc a future hire could run from.
+
+In the aesdr repo, write docs/partnerships/operating-cadence.md.
+
+Read first for context:
+- The Days 68-74 task in content/internal/partnerships-os.html (the OS doc)
+- The AGENTS constant for the 7 agents and their roles
+- The DISPATCH constant for the per-task agent dispatch lines
+- The MEMOS constant for the founder-memo cadence
+
+The doc has 4 sections:
+
+(1) Weekly cadence by day
+- Monday: Almanac standup + Scout sweep
+- Tuesday-Thursday: outreach + calls + copy review
+- Friday: Ledger report + Almanac review + founder note
+For each day, list: what runs, who triggers it, what the output is.
+
+(2) Agent dispatch rhythm — table
+For each of the 7 agents (Scout, Dossier, Scribe, Warden, Ledger, Herald, Almanac):
+- How often it runs (weekly / on-demand / per-task / per-submission / daily)
+- What triggers it (a partner candidate name? a new submission? Friday 9am?)
+- What it outputs (a scored row? a verdict? a memo?)
+- Who reviews
+
+(3) The follow-up ladder as logic
+- contacted -> +4 days -> +9 days -> cold
+- Exact partner_pipeline status transitions at each step
+- Written so it could be automated (cron + headless claude -p) without rewriting
+
+(4) Decision protocols
+- When to escalate to the founder (any deal that needs paper / scope-changing / new payout structure)
+- When the partnerships lead decides solo (everything under standing thresholds)
+
+Length: ~2-3 pages, written so a future hire (or a fresh Claude session) could run the role from this single file.
+
+Commit: "Operating cadence — the function runs without me (Day 68 deliverable)". Push to main.`
+  },
+  w12t2:{
+    title:'Days 87–90 — 90-day proof memo + next-quarter plan',
+    prompt:`Days 87-90 of the AESDR 90-day partnerships plan: write the 90-day proof memo and the next-quarter plan.
+
+In the aesdr repo, write docs/partnerships/reports/90-day-proof.md.
+
+The memo follows the 90-day template in the partnerships-os doc Days 87-90 task (MEMOS constant — 12 lines).
+
+Pull real numbers from Supabase (read-only):
+
+SELECT sum(commission_amount_cents)/100.0 as monthly_run_rate FROM affiliate_attributions WHERE attributed_at > date_trunc('month', now());
+SELECT count(*) FROM affiliates WHERE status='active';
+SELECT count(*) FROM partner_pipeline WHERE motion='channel' AND status IN ('replied','negotiating','signed','close');
+SELECT count(*) FROM partner_pipeline WHERE motion='affiliate' AND status='enriched';
+SELECT a.slug, a.display_name, sum(att.commission_amount_cents)/100.0 as commission FROM affiliates a JOIN affiliate_attributions att ON att.affiliate_slug=a.slug GROUP BY a.slug, a.display_name ORDER BY commission DESC LIMIT 3;
+SELECT * FROM affiliate_weekly_report;
+
+Evidence all three milestones:
+(1) $3k/mo trajectory — current monthly run-rate, math showing how the top 3 affiliates contribute, days to hit $3k at current pace.
+(2) One channel partnership signed or close — name the org, current status, expected close date or signed date.
+(3) Both motions running — active affiliate count + channel conversation count + the Friday note cadence (cite the count of Friday notes sent).
+
+Then the next-quarter plan:
+- Warm pipeline count (enriched candidates ready for Phase 2)
+- Channel deals in flight (named, each with status)
+- Top-performer playbook to clone (what made #1 work, how to find 5 more like them)
+- One add: the tool/hire/surface the data justifies (e.g., flip to Rewardful at the bottleneck trigger, or pre-launch the audience-sized earnings calculator)
+
+Length: ~12 lines, dense.
+
+Commit: "90-day proof + next-quarter plan (Days 87-90 deliverable)". Push to main. Paste the proof memo in chat for the partnerships lead to forward to the founder directly.`
+  }
+};
+function renderAutoComplete(id){
+  const a = AUTO_COMPLETE[id]; if(!a) return '';
+  const promptId = 'auto-'+id;
+  return `<div class="autoWrap">
+    <div class="autoLabel">
+      <span class="autoLeft">▶ Have Claude do it · paste this prompt into Claude Code</span>
+      <button class="autoCopy" onclick="copyText(document.getElementById('${promptId}').textContent, this)">Copy prompt</button>
+    </div>
+    <div class="autoTitle">${esc(a.title)}</div>
+    <div class="autoBody" id="${promptId}">${esc(a.prompt)}</div>
+  </div>`;
+}
+
 /* ─── STALL: the "if it stalls" branch per high-risk task ─── */
 const STALL = {
   w2t1:[{t:'Scout returns under 30, or most score voice-fit ≤2',fix:'The surface is wrong, not the method. Drop the weakest surface, add two niches — a vertical-specific sales community, a regional one. If fit is uniformly low, your doctrine\'s bar is too broad; tighten the archetype. Never lower the bar to hit 50 — 30 great beats 50 mediocre.'}],
@@ -1720,6 +2090,7 @@ function renderTask(t){
     </div>
     <div class="taskDetail">
       ${renderLikelyDone(t.id)}
+      ${renderAutoComplete(t.id)}
       <div class="steps">${t.steps.map(s=>`<div class="step">${s}</div>`).join('')}</div>
       ${renderDispatch(t.id)}
       ${renderScript(t.id)}
