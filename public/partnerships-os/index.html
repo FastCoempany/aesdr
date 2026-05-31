@@ -225,6 +225,14 @@
   .matrix .pick{background:rgba(139,26,26,.07)}
   .matrix .pick td:first-child{color:var(--crimson)}
 
+  /* likely-already-done callout + tag (green = pre-wired in this repo) */
+  .callout.likely{border-left-color:var(--ok);background:rgba(16,185,129,.06)}
+  .callout.likely .cTitle{color:var(--ok)}
+  .callout.likely ol{margin:8px 0 0 22px;padding:0;font-size:14px;line-height:1.65}
+  .callout.likely ol li{margin-bottom:6px}
+  .callout.likely .verdict{margin-top:12px;font-size:14px;line-height:1.6}
+  .tag.likely{border-color:var(--ok);color:var(--ok);background:rgba(16,185,129,.06)}
+
   /* template card */
   .tmpl{border:1px solid var(--light);background:#fff;margin:14px 0}
   .tmplHead{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--light);gap:10px;flex-wrap:wrap}
@@ -1301,14 +1309,16 @@ function showSection(id){
 }
 
 /* tag rendering */
-function renderTags(tags){
-  return (tags||[]).map(t=>{
+function renderTags(tags, taskId){
+  let out = (tags||[]).map(t=>{
     if(t.type==='agent'){const a=AGENTS.find(x=>x.id===t.id);return `<span class="tag agent" onclick="event.stopPropagation();openAgent('${t.id}')">⚡ ${a?a.name:t.id}</span>`;}
     if(t.type==='cli')return `<span class="tag cli">&gt;_ terminal</span>`;
     if(t.type==='who')return `<span class="tag who">◷ ${esc(t.t)}</span>`;
     if(t.type==='day')return `<span class="tag t-day">★ ${esc(t.t)}</span>`;
     return '';
   }).join('');
+  if(taskId && LIKELY_DONE[taskId]) out += '<span class="tag likely">⚡ likely done</span>';
+  return out;
 }
 
 /* code block rendering with copy */
@@ -1510,6 +1520,161 @@ function renderMemo(id){
     <div class="callScriptBody" id="memo-${id}"><b>Subject:</b> ${esc(m.subject)}\n\n${m.body}</div></div>`;
 }
 
+/* ─── LIKELY_DONE: tasks where infra/research/drafts already exist ─── */
+/* This repo is alive — most of Day 1 is verify-not-build. Each entry: */
+/* checks[] = the 60-second verification path; verdict = what to do based on it. */
+const LIKELY_DONE = {
+  w1t1:{
+    checks:[
+      'Visit <a class="ext" href="https://supabase.com/dashboard/project/jwhjysjvehqslzcfpehl" target="_blank">supabase.com/dashboard/project/jwhjysjvehqslzcfpehl</a> — if you see the <b>aesdr-course</b> project, you have Supabase ✓',
+      'Visit <a class="ext" href="https://dash.cloudflare.com/24bd5f80e4219b86bb899058e99a28e1/aesdr.com" target="_blank">dash.cloudflare.com → aesdr.com</a> — if it loads (no permission error), you have Cloudflare ✓',
+      'Visit <a class="ext" href="https://github.com/fastcoempany/aesdr" target="_blank">github.com/fastcoempany/aesdr</a> — if you see the code (not 404), you have GitHub ✓',
+      'Visit <a class="ext" href="https://dashboard.stripe.com/" target="_blank">dashboard.stripe.com</a> — if you land on the AESDR account, you have Stripe ✓',
+      'Visit <a class="ext" href="https://vercel.com/fastcoempanys-projects/aesdr" target="_blank">vercel.com/fastcoempanys-projects/aesdr</a> — if you see the project, you have Vercel ✓'
+    ],
+    verdict:'<b>Founder reading this:</b> all 5 will pass — check the box and skip the invite flow. <b>New hire reading this:</b> any that fail → founder runs just that one invite from the steps below (5 min total).'
+  },
+  w1t2:{
+    checks:[
+      'In Terminal / PowerShell, from the repo: <code>ls package.json</code> (macOS) or <code>Get-Item package.json</code> (Windows) — shows the file ✓ (you\'re in the repo)',
+      '<code>ls node_modules</code> (macOS) or <code>Get-ChildItem node_modules | Select -First 3</code> (Windows) — shows packages ✓ (<code>npm install</code> has run)',
+      '<code>supabase --version</code> — should print a version',
+      '<code>wrangler --version</code> — should print a version',
+      'From the repo: <code>supabase status</code> — should show the linked project ref <code>jwhjysjvehqslzcfpehl</code> (means <code>supabase link</code> already ran)'
+    ],
+    verdict:'<b>All 5 pass:</b> toolchain is done — check the box. <b>Anything fails:</b> only run the missing install from the steps below; you don\'t need to re-clone or re-link if those already passed.'
+  },
+  w1t3:{
+    checks:[
+      '<code>ls AFFILIATE_BRAND_CANON.md</code> (Windows: <code>Get-Item AFFILIATE_BRAND_CANON.md</code>) — shows the file ✓',
+      '<code>ls docs/canon-revisions/</code> — shows 5+ dated <code>.md</code> files (the R-G blocklist, language patch supplement, plan-to-canon process, etc.) ✓',
+      '<code>node scripts/canon-check.mjs --soft</code> — runs and prints a report (the linter script exists) ✓'
+    ],
+    verdict:'<b>All 3 pass:</b> the canon infrastructure is built. The BUILD is done — your TASK is the read. Block 60 minutes today to actually read AGENTS.md + AFFILIATE_BRAND_CANON.md + every file in docs/canon-revisions/. The "done" check happens in your head (can you name 5 R-G blocklist terms?), not on the file system.'
+  },
+  w1tAgents:{
+    checks:[
+      'macOS: <code>ls .claude/agents/*.md</code>; Windows: <code>Get-ChildItem .claude\\agents\\*.md</code> — should list 7 files: <code>scout.md, dossier.md, scribe.md, ledger.md, warden.md, herald.md, almanac.md</code>',
+      'Open any one (e.g. <code>code .claude/agents/scout.md</code>) — should show YAML frontmatter (<code>name:</code>, <code>description:</code>, <code>tools:</code>) followed by the system prompt body',
+      'In Claude Code from inside the repo, type: <code>use the scout subagent to find 3 sales communities on Skool</code> — should return a list, not "agent not found"'
+    ],
+    verdict:'<b>All 3 pass:</b> the 7-agent roster is built (we created it earlier this build) — check the box. <b>One missing:</b> copy that agent\'s prompt from the corresponding Agent Roster card in the sidebar and create just that one file.'
+  },
+  w1t4:{
+    checks:[
+      'In Supabase SQL Editor: <code>select count(*) from affiliates;</code> — returns a number (table exists) ✓',
+      'Visit <a class="ext" href="https://aesdr.com/admin/affiliates" target="_blank">aesdr.com/admin/affiliates</a> — loads the admin roster (admin email auth works) ✓',
+      'Visit <a class="ext" href="https://aesdr.com/affiliates/dashboard" target="_blank">aesdr.com/affiliates/dashboard</a> — loads the affiliate-facing dashboard ✓',
+      'Visit <a class="ext" href="https://aesdr.com/affiliates/kit-private/promo-copy-pack" target="_blank">aesdr.com/affiliates/kit-private/promo-copy-pack</a> — loads (admin-bypass active for founder emails) ✓'
+    ],
+    verdict:'<b>All 4 pass:</b> the affiliate machine exists end-to-end. This task is a READ, not a BUILD — your work is to walk the system, note what each surface does, and write down the baseline number (X affiliates, Y active, $Z attributed). Nothing to construct.'
+  },
+  w1t5:{
+    checks:[
+      'In Supabase SQL Editor: <code>select count(*) from partner_pipeline;</code> — if it ERRORS with "relation does not exist", the migration has NOT been run yet',
+      'If it returns a number (likely 0): the migration has been run — confirm the column list matches the SQL block below'
+    ],
+    verdict:'<b>Most likely: the table does NOT exist yet</b> — this is real Day-3 work. Do the full migration below. <b>If the count query returns a number:</b> someone already ran it — check the columns + AdminChip nav entry, then check the box.'
+  },
+  w1t6:{
+    checks:[
+      'macOS: <code>ls docs/partnerships/discovery-doctrine.md</code>; Windows: <code>Get-Item docs\\partnerships\\discovery-doctrine.md</code> — if errors with "no such file", the doc has NOT been written',
+      'Open the <span class="ui">Prospect Intel</span> section in the sidebar — Run A (10 named affiliate candidates) and Run B (10 named channel orgs) are already populated'
+    ],
+    verdict:'<b>The doctrine doc is not written yet</b> — that\'s the real work. BUT the practical sourcing is already started (Prospect Intel has 20 named candidates from the May-2026 sweep). Your doctrine doc should reflect the rules that produced those 20, then formalize them so future sweeps stay consistent.'
+  },
+  w1t7:{
+    checks:[
+      'Open the <span class="ui">Attribution Decision</span> section in the sidebar — the 4-platform matrix with verified May-2026 pricing is already there ✓',
+      'Read the "honest default" callout — the recommendation (extend custom → adopt Rewardful at the dashboard-bottleneck trigger) is already drafted ✓',
+      'In Supabase Tables: confirm <code>affiliate_attributions</code> + <code>affiliate_payouts</code> already exist (the custom system foundation is in place) ✓'
+    ],
+    verdict:'<b>All 3 pass:</b> the research is done, the recommendation is drafted, and the custom-attribution foundation already exists. Your real Day-5 work is just to OPEN the evaluation (read the matrix, think about it). The actual decision is day ~25 — by design.'
+  },
+  w2t1:{
+    checks:[
+      'Open the <span class="ui">Prospect Intel</span> section → "Affiliate prospects" — if you see 10 named candidates (Neil Bhuiyan, Florin Tatulea, Stefan Conic, …) with voice-fit scores and contact paths, the first sweep is already done ✓',
+      'Run the first dispatch line below to have Dossier verify the 10 are still current (audience size, contact path, conflict flags haven\'t changed since May 2026)'
+    ],
+    verdict:'<b>Head start exists.</b> Your real work this week: <u>verify</u> the 10 already-sourced rows, then run the 3 fresh sweeps (dispatch lines 2–4) to extend to ~50 total. Don\'t re-source what\'s already named.'
+  },
+  w2t3:{
+    checks:[
+      'Open the <span class="ui">Outreach Library</span> section in the sidebar — if you see 5 templates (first-touch newsletter / community / podcast, follow-up 1, follow-up 2, channel first-touch), the drafts are already done ✓',
+      '<code>ls scripts/canon-check.mjs</code> — the canon-check script exists ✓',
+      'macOS: <code>ls content/partnerships/outreach/</code>; Windows: <code>Get-ChildItem content\\partnerships\\outreach\\</code> — if errors, the folder doesn\'t exist yet (drafts only live in this OS so far)'
+    ],
+    verdict:'<b>Drafts already exist in the OS</b>, canon-check exists, but the templates aren\'t yet saved to <code>content/partnerships/outreach/</code>. Your real work: have Scribe save them to the folder + canon-check + commit. No regeneration from scratch.'
+  },
+  w3t1:{
+    checks:[
+      'Send a test email from any personal address to <code>affiliates@aesdr.com</code>',
+      'Within 60 seconds, check <code>mrcoe7@gmail.com</code> — the test should land via Cloudflare Email Routing'
+    ],
+    verdict:'<b>Already confirmed live</b> in the Wiring Status section. The 60-second test above is your verification — if it lands, check the box. If not, the dashboard click-path in the steps below fixes the routing rule.'
+  },
+  w4t2:{
+    checks:[
+      'Open the <span class="ui">Attribution Decision</span> section — the matrix with verified May-2026 pricing exists ✓',
+      'Open the <span class="ui">Benchmarks</span> section — the conversion + commission + refund data that informs the decision exists ✓',
+      'Check: macOS <code>ls docs/partnerships/attribution-decision.md</code>; Windows <code>Get-Item docs\\partnerships\\attribution-decision.md</code> — if errors, the memo has NOT been written yet'
+    ],
+    verdict:'<b>Research + recommendation already drafted in the OS.</b> Your Day-22 work: read the matrix, write the one-page memo (typically "extend custom for ~25 partners, adopt Rewardful at the dashboard-bottleneck trigger"), send to founder, then have Ledger implement.'
+  },
+  w5t1:{
+    checks:[
+      'Visit <a class="ext" href="https://aesdr.com/admin/affiliates/new" target="_blank">aesdr.com/admin/affiliates/new</a> — loads the manual-add form ✓ (the onboarding flow is built)',
+      'In SQL Editor: <code>select count(*) from affiliates where status=\'active\';</code> — returns a number (likely 0 — that\'s expected if you haven\'t onboarded yet)',
+      'Confirm Resend is wired: in Vercel env vars, <code>RESEND_API_KEY</code> is set (Wiring Status says ✓) — means onboarding emails will actually fire'
+    ],
+    verdict:'<b>The onboarding infrastructure is built.</b> Your real Day-23 work: do the click-by-click — create each affiliate via the admin UI, flip status to active, send kit + playbook links, wait for first copy in the queue. Don\'t build, fill.'
+  },
+  w6t2:{
+    checks:[
+      'Visit <code>aesdr.com/r/&lt;active-affiliate-slug&gt;</code> (use a real slug from <code>select slug from affiliates limit 1;</code>) — should redirect to the buy page ✓',
+      'In SQL Editor: <code>select count(*) from affiliate_attributions;</code> — should return a number (table exists) ✓',
+      'Then: <code>select count(*) from affiliate_link_clicks;</code> — if errors with "relation does not exist", this table is the open gap (it\'s the optional Day-22 migration from the Attribution decision step)'
+    ],
+    verdict:'<b>The /r/ redirect route exists; the attribution table exists.</b> The <code>affiliate_link_clicks</code> table may be the one gap — if you went with "extend custom" on Day 22, you should have added it then. Your real Day-35 work: do a live click → purchase test and confirm a <code>pending</code> attribution row appears with the 30-day window.'
+  },
+  w7t1:{
+    checks:[
+      'Open the <span class="ui">Prospect Intel</span> section → "Channel prospects" — if you see 10 named orgs (Vendux, Martal Group, Skaled, RevOps Consulting, …) with fit rationale, the channel sourcing is already done ✓',
+      'Run the first dispatch line below to have Herald verify the 10 are still current (no new competing products, web presence active)'
+    ],
+    verdict:'<b>Head start exists</b> — Run B research already sourced 10 channel candidates with conflict flags and proposed structures. Your real Day-38 work: verify, cut to the 3 strongest (Vendux / Martal / Skaled are the no-conflict pick), write those 3 to partner_pipeline at <code>motion=channel</code>.'
+  },
+  w8t1:{
+    checks:[
+      'In SQL Editor: <code>select * from affiliate_weekly_report limit 1;</code> — if errors with "view does not exist", the reporting view is the open gap (build from the SQL block below)',
+      'If query returns rows: the view exists ✓. Then macOS <code>ls reports/</code>; Windows <code>Get-ChildItem reports\\</code> — if empty/missing, you haven\'t run the Friday ritual yet'
+    ],
+    verdict:'<b>The view spec exists in this OS but is NOT deployed yet.</b> Your Day-45 work: run the create-view SQL (block below), then run the Friday one-liner to confirm it pipes to a file, then dispatch Almanac for the 8-line note.'
+  },
+  w8t2:{
+    checks:[
+      'Visit <a class="ext" href="https://aesdr.com/admin/affiliates" target="_blank">aesdr.com/admin/affiliates</a> → click any active affiliate → the payout helper should be visible on the detail page ✓ (the UI exists)',
+      'In SQL Editor run the dry-run query (block below) — returns rows = the data shape is wired',
+      'Check Stripe is in Live mode (not Test): top-right toggle in <a class="ext" href="https://dashboard.stripe.com/" target="_blank">dashboard.stripe.com</a>. <b>If Test mode</b>, the Wiring Status flag still applies — flip to Live before any real payout.'
+    ],
+    verdict:'<b>The payout infrastructure is built</b> (admin UI + Stripe Connect Standard + the action exists in <code>app/actions/affiliate.ts</code>). Your Day-49 work: run the dry-run, walk the founder through the numbers, then execute from the UI. Don\'t skip the founder-approval beat on the first batch.'
+  },
+  w11t1:{
+    checks:[
+      'macOS: <code>ls docs/partnerships/operating-cadence.md</code>; Windows: <code>Get-Item docs\\partnerships\\operating-cadence.md</code> — if errors, the cadence doc has NOT been written yet'
+    ],
+    verdict:'<b>Likely NOT done yet</b> — and that\'s right. By Day 68 you have 10 weeks of real operating data and know what your cadence actually IS, instead of guessing on Day 1. Write the doc from what you\'ve been doing, not from theory.'
+  }
+};
+function renderLikelyDone(id){
+  const ld = LIKELY_DONE[id]; if(!ld) return '';
+  return `<div class="callout likely">
+    <div class="cTitle">⚡ Likely already done — verify in 60 seconds</div>
+    <ol>${ld.checks.map(c=>`<li>${c}</li>`).join('')}</ol>
+    <p class="verdict">${ld.verdict}</p>
+  </div>`;
+}
+
 /* ─── STALL: the "if it stalls" branch per high-risk task ─── */
 const STALL = {
   w2t1:[{t:'Scout returns under 30, or most score voice-fit ≤2',fix:'The surface is wrong, not the method. Drop the weakest surface, add two niches — a vertical-specific sales community, a regional one. If fit is uniformly low, your doctrine\'s bar is too broad; tighten the archetype. Never lower the bar to hit 50 — 30 great beats 50 mediocre.'}],
@@ -1549,11 +1714,12 @@ function renderTask(t){
       <div class="checkbox ${done?'done':''}" onclick="event.stopPropagation();toggleDone('${t.id}')"></div>
       <div class="taskMain">
         <div class="taskTitle">${t.title}</div>
-        <div class="taskTags">${renderTags(t.tags)}</div>
+        <div class="taskTags">${renderTags(t.tags, t.id)}</div>
       </div>
       <div class="taskChev">▾</div>
     </div>
     <div class="taskDetail">
+      ${renderLikelyDone(t.id)}
       <div class="steps">${t.steps.map(s=>`<div class="step">${s}</div>`).join('')}</div>
       ${renderDispatch(t.id)}
       ${renderScript(t.id)}
