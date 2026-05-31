@@ -723,8 +723,9 @@ where name = any(array['<name1>','<name2>','<name3>']);`}]
  tasks:[
   {id:'w4t1',title:'Days 16–19 — Run partner intro calls (target: 8–10)',day:16,tags:[WHO('candidates'),A('warden')],
    steps:[
-    '<b>Use the verbatim script below</b> (the "15-minute intro call" block in this task — copy it). It\'s timed beat-by-beat: 0:00 open → 1:00 how it works → 3:00 what makes it easy → 4:00 the gate → 6:00 hand it over → 13:00 binary close. The job is mutual-fit + plain mechanics, not a hard sell.',
-    '<b>Before each call (2 min):</b> reopen the candidate\'s Dossier brief and the one specific piece you referenced in outreach, so the 0:00 open names a real thing they made.',
+    '<b>Send the Pre-Call Bundle first</b> (sidebar → <span class="ui">Pre-Call Bundle</span>): the audience-sized 1-pager + founder Loom + course preview + kit + transparency page go out 24–48h before the call. The bundle does the convincing so the call is a fit-check, not a pitch.',
+    '<b>Use the verbatim script below</b> (the "15-minute intro call" block in this task — copy it). Timed beat-by-beat: 0:00 open → 1:00 how it works → 3:00 what makes it easy → 4:00 the gate → 6:00 hand it over → 13:00 binary close. The job is mutual-fit + plain mechanics, not a hard sell.',
+    '<b>Before each call (2 min):</b> reopen the candidate\'s Dossier brief and the one specific piece you referenced in outreach, so the 0:00 open names a real thing they made. Have the Stripe Connect dashboard tab open (Lever #9) so you can show it live if "what does the payout actually look like?" comes up.',
     '<b>Hit the four beats:</b> (1) why you reached out to THEM specifically, (2) the mechanics — commission / 30-day window / tracked link + kit, (3) the brand-fit gate — first few pieces reviewed by Warden, then they post freely, (4) their questions (this is most of the call — listen).',
     '<b>Frame the gate as protection, not policing:</b> "we read your first 3 posts so they sound like you, not a guru ad — then you\'re free." Operators respect this; it protects THEIR audience\'s trust.',
     '<b>Close on the binary</b> (13:00 beat): "I send the kit today and we talk again [day], OR I set your link up this week — which is easier?" Never end on "let me think."',
@@ -864,8 +865,13 @@ left join affiliate_link_clicks alc
 left join affiliate_attributions att on att.affiliate_slug=a.slug
 group by a.slug,a.display_name,a.status,a.sophistication_tier
 order by cleared_commission desc;`},
-   {label:'the Friday one-liner',lang:'bash',body:`supabase db query "select * from affiliate_weekly_report;" \\
+   {label:'the Friday one-liner (macOS / Linux)',lang:'bash',body:`mkdir -p reports
+supabase db query "select * from affiliate_weekly_report;" \\
   | tee "reports/$(date +%Y-%m-%d)-weekly.txt"
+# then dispatch Almanac to turn it into the 8-line founder note`},
+   {label:'the Friday one-liner (Windows / PowerShell)',lang:'powershell',body:`New-Item reports -ItemType Directory -ea 0 | Out-Null
+$out = "reports\\$(Get-Date -Format yyyy-MM-dd)-weekly.txt"
+supabase db query "select * from affiliate_weekly_report;" | Tee-Object -FilePath $out
 # then dispatch Almanac to turn it into the 8-line founder note`}]
   },
   {id:'w8t2',title:'Days 49–51 — First payout dry-run',day:49,tags:[CLI(),A('ledger'),WHO('Founder')],
@@ -919,7 +925,7 @@ group by 1 order by 1 desc;`}]
    steps:[
     '<b>Dispatch Ledger</b> (line 1 below) to run the top-3 ranking query in the block — affiliates ordered by attributed commission. These three are where Phase-90 revenue comes from.',
     '<b>Dispatch Almanac</b> (line 2) to extract WHY each top-3 converted: format (newsletter vs community vs podcast), message angle, audience. You\'re looking for the repeatable pattern, not praise.',
-    '<b>Overinvest, three concrete moves:</b> (1) co-create a second piece with each; (2) offer a workshop — the registration + confirmation system is already built at <span class="where">/[slug]/workshop</span>, just schedule one; (3) bump a proven performer to <code>proven</code> tier in the admin UI so their copy-gate drops to 1 piece.',
+    '<b>Overinvest, three concrete moves</b> (also see sidebar → <span class="ui">Conversion Levers</span> for the full P90 menu): (1) co-create a second piece with each; (2) offer a workshop — the registration + confirmation system is already built at <span class="where">/[slug]/workshop</span>, just schedule one (Lever #8); (3) bump a proven performer to <code>proven</code> tier in the admin UI so their copy-gate drops to 1 piece (Lever #10 performance ladder).',
     '<b>Clone the pattern</b> (line 3): dispatch Scout to find 10 more partners who look like your top 3 — same surface, same archetype. <b>Done when</b> the top 3 are identified, each has a second piece or workshop in motion, and Scout is finding lookalikes.'
    ],
    code:[{label:'top performers',lang:'sql',body:`select a.slug, a.display_name, a.archetype,
@@ -943,7 +949,7 @@ order by commission desc limit 3;`}]
  tasks:[
   {id:'w11t1',title:'Days 68–74 — Codify the operating cadence',day:68,tags:[A('almanac')],
    steps:[
-    '<b>Create the doc:</b> <code>touch docs/partnerships/operating-cadence.md</code>. Write the weekly rhythm explicitly by day: Monday = Almanac standup + Scout sweep; Tue–Thu = outreach + calls + copy review; Friday = Ledger report + Almanac review + founder note. A stranger should be able to run your week from this file.',
+    '<b>Create the doc:</b> macOS — <code>touch docs/partnerships/operating-cadence.md</code>; Windows — <code>New-Item docs\\partnerships\\operating-cadence.md -ItemType File</code>. Write the weekly rhythm explicitly by day: Monday = Almanac standup + Scout sweep; Tue–Thu = outreach + calls + copy review; Friday = Ledger report + Almanac review + founder note. A stranger should be able to run your week from this file.',
     '<b>Codify the agent dispatch rhythm</b> as a table in the doc: Scout weekly · Dossier on-demand · Scribe per-outreach · Warden per-submission (24h SLA) · Ledger Fridays · Almanac daily · Herald bi-weekly. Paste the actual dispatch line for each so it\'s copy-runnable.',
     '<b>Document the follow-up ladder as logic</b>, not prose: <code>contacted → +4 days → +9 days → cold</code>, with the exact <code>partner_pipeline</code> status transitions at each step. This is what a future hire (or an Agent-SDK cron) automates.',
     'This is the JD\'s real success deliverable — "runs without founder day-to-day involvement." <b>Done when</b> <code>operating-cadence.md</code> is committed and a stranger could run your week from it.'
@@ -1143,6 +1149,102 @@ Worth a call to see if it slots into your engagements?
 — Antaeus, AESDR · affiliates@aesdr.com`}
 ];
 
+/* ─── PRE-CALL ASSET BUNDLE ─── send these BEFORE the 15-min call ─── */
+const PRECALL = [
+  {n:1,asset:'Audience-sized earnings 1-pager',type:'per-candidate',builds:'Scribe + Ledger',
+   dispatch:'Use the scribe subagent to build a 1-page earnings PDF for <NAME>: their list size from Dossier × the BENCHMARKS conversion scenarios (conservative / mid / optimistic) × 40% commission. Output a Google Doc / PDF.',
+   timing:'Send 24 hours before the call · attach to the calendar invite',
+   why:'Personalized math (their list size, not "what affiliates could earn") lifts call-conversion by ~2× per industry data'},
+  {n:2,asset:'90-second founder Loom',type:'per-candidate',builds:'Founder (you), recorded fresh',
+   dispatch:'(No agent — record on loom.com using hello@aesdr.com. Script: "Hi <NAME> — I read your <SPECIFIC THING>, here\'s the line that made me think AESDR fits your audience. <ONE PARAGRAPH>. The call link is in your email. Talk Thursday.")',
+   timing:'Send with the calendar confirmation · 48h before call',
+   why:'Face + name beats a deck. Reply rate lifts 3–5× in B2B outbound when there\'s a personalized video.'},
+  {n:3,asset:'Course preview / sample lesson',type:'build-once',builds:'Already lives at /affiliates/preview (or create if missing)',
+   dispatch:'Use the ledger subagent to confirm /affiliates/preview exists with a watchable sample. If not, create it as a Day-1 task.',
+   timing:'Link sent with calendar invite · before call',
+   why:'Affiliates cannot recommend what they have not tasted. Removes the "commit to learn" friction.'},
+  {n:4,asset:'Public kit URL',type:'build-once',builds:'Lives at aesdr.com/affiliates/kit',
+   dispatch:'No build needed — link is live. Operator drops it in every reply-to-yes and every calendar invite.',
+   timing:'Include in every reply that gets a "tell me more"',
+   why:'The kit IS the demo. Self-qualification cuts 80% of dead calls.'},
+  {n:5,asset:'Refund rate + completion stats page',type:'build-once',builds:'Ledger (queries) → static page',
+   dispatch:'Use the ledger subagent to pull current refund rate + course completion rate, publish at /affiliates/transparency. Updates monthly via cron.',
+   timing:'Reference in the call · link in the kit',
+   why:'Answers the silent biggest objection: "will this damage my audience\'s trust?" Numbers settle it.'},
+  {n:6,asset:'One real affiliate\'s anonymized earnings',type:'build-once',builds:'Ledger (queries) → testimonial card in the kit',
+   dispatch:'Use the ledger subagent to pull top affiliate quarterly stats (anonymized: archetype + list size + earnings). Save to content/partnerships/proof-points.md.',
+   timing:'Drop in the call when they ask "what do affiliates actually earn?"',
+   why:'Concrete > abstract. One real number beats a benchmark table.'},
+  {n:7,asset:'Pre-written call framing',type:'build-once',builds:'Operator (already in Booking Schedule description)',
+   dispatch:'No agent — already wired into the Google Calendar Appointment Schedule description: "15 minutes. Plain mechanics. Not a pitch — if it isn\'t a fit I\'ll tell you on the call."',
+   timing:'Auto-delivered with every booking confirmation',
+   why:'Lowers booking resistance. Reframes the call as a fit-check, not a pitch.'},
+  {n:8,asset:'Draft post in their voice',type:'per-candidate',builds:'Scribe',
+   dispatch:'Use the scribe subagent to draft <NAME>\'s first promotional post in THEIR voice — reference their recent piece <X> as the voice anchor. Send as "here\'s what your first post could look like — feel free to rewrite."',
+   timing:'Send during the call or as the post-call follow-up',
+   why:'They show up able to PICTURE the recommendation. Removes the blank-page friction that kills activation.'}
+];
+
+/* ─── CONVERSION LEVERS ─── ranked by phase, by leverage ─── */
+const LEVERS = [
+  {phase:'P30',n:1,move:'Charter affiliate cohort (first 10)',
+   rationale:'Locked-in 40% lifetime + public charter badge + first crack at workshops. Creates urgency without manufactured scarcity. The 10 charter members recruit your next 10 for free.',
+   build:'Add a `is_charter` boolean to affiliates table + a "Charter Member" badge on /affiliates/kit and in transactional emails. Cut off after the 10th active.',
+   metric:'Charter slots filled by day 45'},
+  {phase:'P30',n:2,move:'Founder-led every onboarding call',
+   rationale:'Not a CSM. You. This is the moat against PartnerStack\'s "managed" programs. Do not scale past 50 affiliates.',
+   build:'No build — operator behavior. Block 15-min slots on Tue/Thu for new-affiliate calls.',
+   metric:'100% of first-cohort onboards include a founder call'},
+  {phase:'P30',n:3,move:'The "honest no" guarantee',
+   rationale:'On every call: "if your audience isn\'t a fit I\'ll tell you and we don\'t proceed." Reverses social pressure. You only sign fits.',
+   build:'Already in the verbatim call script (beat 4). Behavior, not build.',
+   metric:'Pass-rate on intro calls > 20% (honesty bar)'},
+  {phase:'P30',n:4,move:'Single-page e-signable contract',
+   rationale:'No 12-page legal doc. Faster signature = higher conversion at the moment of yes.',
+   build:'Draft one-page terms in docs/partnerships/affiliate-terms.md. Use HelloSign or DocuSign free tier for the signature.',
+   metric:'Time from verbal yes → signed: <48 hours'},
+  {phase:'P60',n:5,move:'Custom landing page per affiliate (/[slug]/welcome)',
+   rationale:'Auto-built from their content/bio. They see their name on a page that talks to THEIR people. Pre-call asset becomes a live page.',
+   build:'Add a [slug] dynamic route at /[slug]/welcome with their photo, audience pitch, and a tracked CTA. Workshop route /[slug]/workshop already exists — same pattern.',
+   metric:'Per-affiliate page CTR vs. raw link CTR'},
+  {phase:'P60',n:6,move:'Public earnings transparency page',
+   rationale:'Anonymized: affiliate count, last quarter\'s payouts, avg per-affiliate, refund rate. Trust signal Rewardful cannot manufacture.',
+   build:'Static page at /affiliates/transparency. Cron-pulls monthly from Ledger.',
+   metric:'Page in the kit · referenced in every call'},
+  {phase:'P60',n:7,move:'Kit-first ask in every first-touch',
+   rationale:'Default to "want the kit?" not "want a call?" The kit is the demo. Self-qualification kills 80% of dead calls.',
+   build:'Behavior + template change. Update first-touch templates so the ask defaults to kit.',
+   metric:'% of first-touches that ask for the kit (target: 100% of cold sends)'},
+  {phase:'P60',n:8,move:'Workshop co-host as the close, not "post about us"',
+   rationale:'Instead of "post," propose a co-hosted live workshop. 3–5× link-drop conversion. System already built at /[slug]/workshop.',
+   build:'Add a "Co-hosted workshop" call-to-action template in the outreach library.',
+   metric:'Workshops co-hosted per quarter (target: 3+ by Phase 90)'},
+  {phase:'P60',n:9,move:'Stripe Connect dashboard tour mid-call',
+   rationale:'Show them the actual interface with a (anonymized) pending balance. Concrete defeats every dollar-rate objection.',
+   build:'Behavior. Just demo it on the call. Have a tab open in advance.',
+   metric:'Calls where the Stripe tab was shown (qualitative)'},
+  {phase:'P60',n:10,move:'Performance ladders',
+   rationale:'First 3 sales = thank-you note + feature on your site. 10 = workshop slot. 25 = tier bump to proven, gate drops to 1 piece. Affiliates run on micro-wins.',
+   build:'Add a `milestones_unlocked` jsonb column to affiliates + a notification when each tier triggers (Resend email).',
+   metric:'Affiliates unlocking each tier ratio'},
+  {phase:'P90',n:11,move:'Reframe the gate as co-writing, not policing',
+   rationale:'"Your first 3 posts, we draft together on a 15-min call." Removes the most-objected-to part of the program. The gate becomes a feature.',
+   build:'Behavior + a one-line addition to the onboarding email: "want to book a co-write session for your first piece?"',
+   metric:'Time from active → first approved piece (target: <7 days)'},
+  {phase:'P90',n:12,move:'Founder Friday note CC\'d to affiliates',
+   rationale:'Weekly metrics go to them too. They feel like operators inside the company, not vendors. Retention lever.',
+   build:'Modify the Almanac Friday note dispatch to include active affiliates in BCC.',
+   metric:'Affiliate retention through quarter 2 (target: >85%)'},
+  {phase:'P90',n:13,move:'Quarterly transparency report',
+   rationale:'GMV, payouts, refund, NPS — public PDF. Every affiliate forwards it to recruit your next 10.',
+   build:'Static page at /affiliates/q1-report.pdf · generated from Ledger\'s quarterly pull.',
+   metric:'Report views + forwards (UTM-tracked)'},
+  {phase:'P90+',n:14,move:'Audience-sized earnings calculator',
+   rationale:'Public page at /affiliates/calculator. Prospect enters their list size, gets back the scenario table. Highest single-lever conversion lift for the lowest build cost.',
+   build:'A small Next.js page reading the BENCHMARKS data. Server component. Embedded in the kit and the partner outreach.',
+   metric:'Calculator → /affiliates/apply funnel CR'}
+];
+
 /* ════════════════════════════════════════════════════════════════
    RENDER ENGINE
    ════════════════════════════════════════════════════════════════ */
@@ -1173,6 +1275,8 @@ const NAV = [
   {id:'prospects',n:'⊛',label:'Prospect Intel'},
   {id:'benchmarks',n:'~',label:'Benchmarks'},
   {id:'templates',n:'✎',label:'Outreach Library'},
+  {id:'precall',n:'◐',label:'Pre-Call Bundle'},
+  {id:'levers',n:'↑',label:'Conversion Levers'},
   {id:'cli',n:'>_',label:'CLI Vault'},
   {id:'attribution',n:'$',label:'Attribution Decision'},
   {id:'metrics',n:'%',label:'Milestone Tracker'}
@@ -1233,14 +1337,18 @@ const DISPATCH = {
   w1t6:['Use the scout subagent to run Sweep 1: find 15 paid sales communities on Skool and Mighty Networks (50–2,000 members), scored for voice-fit.'],
   w1t7:['Use the ledger subagent to estimate the build-cost of the three gaps in the custom attribution system: partner dashboard, automated payouts, link-click tracking.'],
   w2t1:[
-    'Use the scout subagent — Sweep 1: paid communities (Skool + Mighty Networks + Circle), sales/SDR/AE/revenue, 50–2,000 members. Return 15 scored rows.',
-    'Use the scout subagent — Sweep 2: independent sales newsletters (Substack/Beehiiv) + operator-host podcasts. Return 15 scored rows with reply-to / guest-pitch contact paths.',
-    'Use the scout subagent — Sweep 3: practitioner-network figures (30MPC, Outbound Squad, RepVue, Modern Sales Pros, Apex BDR Club, Pavilion) who have their OWN audience. Return 15 scored rows.',
-    'Use the dossier subagent to enrich every candidate scoring voice-fit ≥3, then have ledger write the survivors to partner_pipeline at status=enriched.'
+    'Use the dossier subagent to verify the 10 named affiliate prospects in Prospect Intel are still current (audience size, contact path, conflict flags) — start with Neil Bhuiyan, Florin Tatulea, Stefan Conic, Daniel Goerner, Elric Legloire.',
+    'Use the scout subagent — Sweep 1 (extend the list): paid communities (Skool + Mighty Networks + Circle), sales/SDR/AE/revenue, 50–2,000 members. Skip anyone already in Prospect Intel. Return 15 fresh scored rows.',
+    'Use the scout subagent — Sweep 2: independent sales newsletters (Substack/Beehiiv) + operator-host podcasts. Skip Prospect Intel duplicates. Return 15 scored rows with reply-to / guest-pitch contact paths.',
+    'Use the scout subagent — Sweep 3: practitioner-network figures (30MPC, Outbound Squad, RepVue, Modern Sales Pros, Apex BDR Club, Pavilion) with their OWN audience. Skip Prospect Intel duplicates + the 3 hard-conflict names (Jason Bay, Belal Batrawy, Morgan Ingram). Return 15 scored rows.',
+    'Use the dossier subagent to enrich every new candidate scoring voice-fit ≥3, then have ledger write the survivors + the 10 verified Prospect Intel rows to partner_pipeline at status=enriched.'
   ],
   w2t2:['Use the ledger subagent to run the ranking query and show me the top 25 by composite score; flag any ties for me to break on voice-fit.'],
   w2t3:['Use the scribe subagent to draft the outreach library — first-touch (newsletter / community / podcast variants), follow-up 1 (+4d), follow-up 2 (+9d). Canon-check each and save to content/partnerships/outreach/.'],
-  w3t2:['Use the scribe subagent to personalize the first-touch for <NAME> from their Dossier brief — keep the economics + ask templated: <paste brief>'],
+  w3t2:[
+    'Use the scribe subagent to personalize the first-touch for <NAME> from their Dossier brief — keep the economics + ask templated: <paste brief>',
+    'Recommended send order Wave 1 (8/day, from Prospect Intel highest voice-fit): 1. Neil Bhuiyan (podcast — exact audience), 2. Florin Tatulea (newsletter — Common Room SDR lead), 3. Stefan Conic (Skool + podcast), 4. Daniel Goerner (Skool community), 5. Elric Legloire (Outbound Kitchen), 6. Tom Slocum (The SD Lab), 7. Jed Mahrle (Practical Prospecting), 8. Sam Nelson (SDRLeader.com).'
+  ],
   w3t3:['Use the almanac subagent for my morning standup — who replied, who is due a follow-up, what to do first.'],
   w4t2:['Use the ledger subagent to implement the attribution decision: <extend custom schema | wire the Rewardful + Stripe webhook>.'],
   w5t1:[
@@ -1250,8 +1358,15 @@ const DISPATCH = {
   w5t2:['Use the ledger subagent for the phase-30 metrics pull.','Use the almanac subagent to draft the 30-day founder memo from that pull (8 lines).'],
   w6t1:['Use the warden subagent to review this submission with line-level rewrites in their voice: <paste copy>'],
   w6t2:['Use the ledger subagent to confirm the latest attribution fired correctly — show the row, the 40% math, and the refund-window close date.'],
-  w7t1:['Use the herald subagent to source 10 channel candidates (enablement consultants, fractional VP-Sales, RevOps, training firms with a junior-rep gap) and run the non-cannibalization test on each.'],
-  w7t2:['Use the herald subagent to draft the channel first-touch for <PARTNER>, leading with the gap we fill, not a rate.'],
+  w7t1:[
+    'Use the herald subagent to verify the 10 channel orgs in Prospect Intel are still current (web presence, no new competing product, contact paths). Cut to 3 — recommended: Vendux, Martal Group, Skaled.',
+    'Use the herald subagent to source 5 more channel candidates not yet in Prospect Intel, run the non-cannibalization test on each, and write them to partner_pipeline at motion=channel.'
+  ],
+  w7t2:[
+    'Use the herald subagent to draft the channel first-touch for Vendux (lead with: every fractional sales exec they place hits a junior-rep ramp problem on Day 1). Reply-to affiliates@aesdr.com.',
+    'Use the herald subagent to draft the channel first-touch for Martal Group (lead with: every SDR they place at a client undergoes onboarding AESDR could formalize as a content bundle).',
+    'Use the herald subagent to draft the channel first-touch for Skaled (lead with: AESDR fills the rep-level onboarding gap inside their enablement engagements).'
+  ],
   w8t1:['Use the ledger subagent to build the affiliate_weekly_report view and run this week\'s pull.','Use the almanac subagent to turn that pull into the 8-line Friday founder note.'],
   w8t2:['Use the ledger subagent for a payout dry-run: cleared-but-unpaid attributions, totaled per affiliate. Do NOT trigger the real payout.'],
   w9t1:['Use the scout subagent to refill the funnel if it is thinning, then scribe + warden through the second wave to push toward 10 active.'],
@@ -1332,6 +1447,69 @@ function renderScript(id){
     <div class="callScriptBody" id="cs-${id}">${s.body}</div></div>`;
 }
 
+/* ─── MEMOS: founder-memo skeletons (30/60/90) — operator fills in numbers ─── */
+const MEMOS = {
+  w5t2:{
+    title:'30-day founder memo · 8 lines',
+    subject:'AESDR partnerships — 30 day · milestones, numbers, the one Phase-60 change',
+    body:`Hey [Antaeus] — phase-30 close.
+
+<b>Milestones hit:</b> ✅ discovery doctrine committed · ✅ &lt;X&gt; candidates in pipeline (target 25) · ✅ &lt;Y&gt; contacted · ✅ attribution decision sent.
+<b>Numbers:</b> &lt;X&gt; candidates → &lt;Y&gt; replies (&lt;reply rate&gt;%) → &lt;Z&gt; calls booked → &lt;A&gt; verbal yeses.
+<b>What converted:</b> &lt;the single highest-yield surface/message/angle from wave 1&gt;.
+<b>What didn't:</b> &lt;what fell flat — the angle, the ask, the surface&gt;.
+<b>Phase-60 change:</b> &lt;the one thing changing in the next 30 days based on what wave 1 taught us&gt;.
+
+Trajectory toward $3k/mo: on / behind / ahead — &lt;one line of math&gt;.
+Asks: &lt;0 if none, otherwise the one founder-needed decision&gt;.
+
+— [your name]`
+  },
+  w9t2:{
+    title:'60-day founder memo · 8 lines',
+    subject:'AESDR partnerships — 60 day · activation, channel, the Phase-90 bet',
+    body:`Hey [Antaeus] — phase-60 close.
+
+<b>Milestones hit:</b> ✅ &lt;N&gt; affiliates active (target 10) · ✅ &lt;N&gt; channel conversations open (target 3) · ✅ weekly reporting live (view + Friday note).
+<b>Producing affiliates:</b> &lt;top 3 by attributed commission · $X / $Y / $Z &gt;.
+<b>Closest channel:</b> &lt;org name&gt; — at status &lt;negotiating / replied&gt;, next step &lt;X&gt;.
+<b>One bottleneck to remove:</b> &lt;the one friction point eating the most cycles right now&gt;.
+<b>Phase-90 bet — wider vs deeper:</b> &lt;deeper: overinvest in top 3&gt; OR &lt;wider: 25 more affiliates&gt; — with one-line rationale from the trajectory data.
+
+Trajectory toward $3k/mo: &lt;current run-rate&gt; vs $3,000 target. &lt;On track / Need X more sales/mo&gt;.
+Asks: &lt;0 if none&gt;.
+
+— [your name]`
+  },
+  w12t2:{
+    title:'90-day proof memo · 12 lines',
+    subject:'AESDR partnerships — 90 day proof + the next quarter',
+    body:`Hey [Antaeus] — phase-90 close. The function exists, runs, and proves itself.
+
+<b>Milestone 1 · $3k/mo trajectory:</b> ✅ &lt;current monthly run-rate&gt;. &lt;X&gt; active affiliates producing &lt;Y&gt; sales/month at 40% / 30-day. &lt;Top 3 = N% of volume.&gt;
+<b>Milestone 2 · One channel partnership signed/close:</b> ✅ &lt;org name&gt; — &lt;signed / terms with partner / verbal yes pending paper&gt;. &lt;1 line on structure.&gt;
+<b>Milestone 3 · Both motions running:</b> ✅ affiliate cohort = &lt;N&gt; active · channel = &lt;M&gt; conversations · weekly reporting = &lt;in place since week N&gt;.
+
+<b>Runs without you:</b> docs/partnerships/operating-cadence.md is the playbook. Agents handle the repeatable parts (Scout/Dossier/Scribe/Warden/Ledger/Almanac/Herald). Friday note arrives Friday without me asking.
+
+<b>Next-quarter plan:</b>
+• Pipeline: &lt;N&gt; warm candidates waiting (Phase 2 second wave).
+• Channel: &lt;deals in flight + next paper&gt;.
+• Lever: &lt;top performer's playbook to clone — what made &lt;name&gt; work and how to find 5 more like them&gt;.
+• One add: &lt;the tool / hire / surface earned by the data — e.g. flip to Rewardful at the dashboard-bottleneck trigger&gt;.
+
+Numbers: &lt;90-day pull from Ledger — sales, GMV, payouts, refund rate, NPS if available&gt;.
+
+— [your name]`
+  }
+};
+function renderMemo(id){
+  const m=MEMOS[id];if(!m)return '';
+  return `<div class="callScript"><div class="callScriptHead"><span class="csTitle">${esc(m.title)}</span>
+    <button class="copyBtn" style="border-color:var(--ink);color:var(--ink)" onclick="copyText(document.getElementById('memo-${id}').innerText,this)">Copy memo</button></div>
+    <div class="callScriptBody" id="memo-${id}"><b>Subject:</b> ${esc(m.subject)}\n\n${m.body}</div></div>`;
+}
+
 /* ─── STALL: the "if it stalls" branch per high-risk task ─── */
 const STALL = {
   w2t1:[{t:'Scout returns under 30, or most score voice-fit ≤2',fix:'The surface is wrong, not the method. Drop the weakest surface, add two niches — a vertical-specific sales community, a regional one. If fit is uniformly low, your doctrine\'s bar is too broad; tighten the archetype. Never lower the bar to hit 50 — 30 great beats 50 mediocre.'}],
@@ -1379,6 +1557,7 @@ function renderTask(t){
       <div class="steps">${t.steps.map(s=>`<div class="step">${s}</div>`).join('')}</div>
       ${renderDispatch(t.id)}
       ${renderScript(t.id)}
+      ${renderMemo(t.id)}
       ${renderCode(t.code)}
       ${renderCallouts(t.callouts)}
       ${renderStall(t.id)}
@@ -1722,6 +1901,59 @@ function buildContent(){
         <button class="copyBtn" style="border-color:var(--ink);color:var(--ink)" onclick="copyText(document.getElementById('tmpl${i}').innerText,this)">Copy</button></div>
       <div class="tmplBody" id="tmpl${i}">${t.body}</div>
     </div>`).join('')}
+  </section>`;
+
+  /* PRE-CALL ASSET BUNDLE */
+  html+=`<section class="section" id="sec-precall">
+    <div class="secEyebrow">Before they ever click the booking link</div>
+    <h1 class="secTitle">Pre-Call Bundle.</h1>
+    <p class="secLede">Eight assets that go to a partner candidate <em>before</em> the 15-min intro call. The bundle does the convincing so the call is a fit-check, not a pitch. Ranked by conversion lift: #1 (audience-sized 1-pager) is the single highest-impact send; #8 (draft post in their voice) closes the activation gap.</p>
+    <div class="iris-line secDivider"></div>
+    <div class="callout"><div class="cTitle">When to send what</div><b>24 hours before the call:</b> #1 (1-pager) + #4 (kit link) + #5 (transparency page). <b>48 hours before:</b> #2 (founder Loom). <b>In the calendar invite:</b> #3 (course preview) + #7 (framing — auto-attached). <b>During or after the call:</b> #6 (proof points) + #8 (draft post).</div>
+    <div class="matrix"><table>
+      <thead><tr><th>#</th><th>Asset</th><th>Type</th><th>Built by</th><th>Why</th><th>Send timing</th></tr></thead>
+      <tbody>${PRECALL.map(p=>`<tr>
+        <td style="font-family:var(--mono);font-weight:700;color:var(--crimson)">${p.n}</td>
+        <td><b>${esc(p.asset)}</b></td>
+        <td><span class="badge ${p.type==='build-once'?'hi':'mid'}">${p.type==='build-once'?'Build once':'Per candidate'}</span></td>
+        <td style="font-size:12px">${esc(p.builds)}</td>
+        <td style="font-size:13px">${esc(p.why)}</td>
+        <td style="font-size:12px;font-style:italic;color:var(--muted)">${esc(p.timing)}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>
+    <h3 class="subH">Dispatch lines — paste each into Claude Code per candidate</h3>
+    ${PRECALL.map(p=>`<div class="dispatchWrap">
+      <div class="dispatchLabel">▶ ${p.n}. ${esc(p.asset)} <span style="opacity:.6">· ${p.type}</span></div>
+      <div class="dispatchLine"><code>${esc(p.dispatch)}</code>
+        <button class="copyBtn dispatchCopy" onclick="copyText(this.previousElementSibling.textContent,this)">Copy</button></div>
+    </div>`).join('')}
+    <div class="handNote">the call is short because the bundle did the work. don't pitch in person — verify in person.</div>
+  </section>`;
+
+  /* CONVERSION LEVERS */
+  html+=`<section class="section" id="sec-levers">
+    <div class="secEyebrow">Elite moves · ranked by phase, by leverage</div>
+    <h1 class="secTitle">Conversion Levers.</h1>
+    <p class="secLede">Fourteen specific things that raise the likelihood an affiliate signs, posts, performs, and retains. Each one has a Phase tag (when to build), a rationale (why it works), a build (what gets touched), and a metric (how you know it worked). Not all at once — pick three per phase.</p>
+    <div class="iris-line secDivider"></div>
+    ${['P30','P60','P90','P90+'].map(phase=>{
+      const rows = LEVERS.filter(l=>l.phase===phase);
+      if(!rows.length)return '';
+      const phaseLabel = phase==='P30'?'Phase 30 · Foundation moves':phase==='P60'?'Phase 60 · Activation moves':phase==='P90'?'Phase 90 · Compounding moves':'Beyond 90 · Scale moves';
+      return `<h3 class="subH">${phaseLabel}</h3>
+        ${rows.map(l=>`<div class="tmpl">
+          <div class="tmplHead">
+            <span class="tmplName">${l.n}. ${esc(l.move)}</span>
+            <span class="tmplMeta">${l.phase}</span>
+          </div>
+          <div class="tmplBody" style="white-space:normal">
+            <p style="margin-bottom:10px"><b>Why it works:</b> ${esc(l.rationale)}</p>
+            <p style="margin-bottom:10px"><b>Build:</b> ${esc(l.build)}</p>
+            <p><b>Metric:</b> <span style="color:var(--crimson)">${esc(l.metric)}</span></p>
+          </div>
+        </div>`).join('')}`;
+    }).join('')}
+    <div class="callout"><div class="cTitle">Pick three per phase</div>Don't build all 14. Pick the three highest-leverage for your phase, ship them clean, measure. Then pick the next three. Stacking levers without measuring is a recipe for a busy quarter that didn't move the number.</div>
   </section>`;
 
   /* CLI VAULT */
