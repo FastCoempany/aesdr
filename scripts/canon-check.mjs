@@ -134,6 +134,10 @@ const SKIP_FILE_PATTERNS = [
   /content\/aesdr-internal\/D20-claims-sheet\.md$/,
   /docs\/affiliate\/D20-claims-sheet\.md$/,
   /docs\/affiliate\/kit-template\/00-canon-excerpt\.md$/,
+  // discovery doctrine enumerates the banned vocab as part of the disqualifier
+  // rubric Scout uses — same structural reason AFFILIATE_BRAND_CANON.md is
+  // exempt (it DESCRIBES the banned terms so the operator can recognize them).
+  /^docs\/partnerships\/discovery-doctrine\.md$/,
   /\.github\/pull_request_template\.md$/,
   /^AGENTS\.md$/,
   /^www\.aesdr\.com-\d{8}T\d{6}\.html$/,
