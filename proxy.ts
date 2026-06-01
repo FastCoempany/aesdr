@@ -37,6 +37,17 @@ export async function proxy(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   const isAdmin = isAdminEmail(user?.email);
 
+  // ── Affiliate-experience environment ──
+  // The isolated affiliate prospect experience lives under /x/*. It is OFF by
+  // default and only opens when AFFILIATE_EXPERIENCE=1 is set on the deployment
+  // (the dedicated preview). When enabled, these routes are fully exempt from
+  // the coming-soon gate and the production route allowlist — a prospect with a
+  // ?p= link must reach them with no auth. When the var is unset (production),
+  // /x/* falls through to the normal lock below and never surfaces.
+  if (process.env.AFFILIATE_EXPERIENCE === "1" && pathname.startsWith("/x/")) {
+    return supabaseResponse;
+  }
+
   // ── URL-param bypass: `?bypass=<COMING_SOON_BYPASS_CODE>` ──
   // Set the cookie at the edge and redirect to a clean URL on any path.
   // Replaces the previous client-side mechanism in /coming-soon (which
