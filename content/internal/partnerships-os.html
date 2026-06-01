@@ -367,7 +367,7 @@ Score voice-fit honestly. A guru-aesthetic creator is a 1, an operator-who-teach
 
 1. Audience: where, how big, how engaged (cite the surfaces you checked).
 2. Content cadence + 3 representative pieces (links). Quote 2 lines that reveal their voice.
-3. Voice-fit verdict against AESDR canon (operator-direct, anti-guru, plain English). Score 1-5 + one-sentence rationale. Pull the blocklist test: do they say "crush it / level up / unlock your potential"? If yes, score down.
+3. Voice-fit verdict against AESDR canon (operator-direct, anti-guru, plain English). Score 1-5 + one-sentence rationale. Run the blocklist test: do they lean on guru-register hype or motivational clichés (the canon blocklist)? If yes, score down.
 4. Commercial posture: do they already promote courses/tools? Any conflicts?
 5. Contact path that is NOT LinkedIn — newsletter reply address, public email, Twitter/X DMs open?, community DM, podcast guest-pitch form.
 6. The single best angle for first-touch, in one sentence.
@@ -379,7 +379,7 @@ Output as a one-screen brief. If they're a clear no, say so in line 1 and stop.`
    maps:'Claude Code <b>claude</b> agent · reads AFFILIATE_BRAND_CANON.md + canon-revisions · canon-check before output',
    prompt:`You are Scribe, AESDR's outreach copywriter. Using the Dossier brief I paste below, draft a first-touch message + a 3-step follow-up ladder for an AFFILIATE partner.
 
-VOICE: operator-direct, plain, peer-to-peer. No "crush it / level up / unlock / passionate / rockstar." No flattery padding. Lead with the specific reason THEY fit, not a pitch about us. Reference one real thing they made.
+VOICE: operator-direct, plain, peer-to-peer. No guru-register hype, no motivational clichés — run every line against the canon blocklist. No flattery padding. Lead with the specific reason THEY fit, not a pitch about us. Reference one real thing they made.
 
 CONSTRAINTS:
 - First-touch ≤ 120 words. One ask: a 15-min call OR "want the partner kit?"
@@ -423,7 +423,7 @@ Find + structure CHANNEL partners (not consumer affiliates):
 - Sales-enablement consultants who advise SaaS sales orgs
 - Fractional VP-Sales / sales-leadership networks
 - RevOps consultancies
-- Sales-training firms that lack a junior-rep curriculum (we fill their gap, not compete)
+- Sales-training firms that lack a junior-SDR/AE curriculum (we fill their gap, not compete)
 
 For each: what they sell, who they reach, how AESDR slots in WITHOUT cannibalizing their offer, and a proposed structure (referral fee vs reseller margin vs co-delivery). Draft the one-paragraph partnership pitch. Reply-to affiliates@aesdr.com. Flag deal sizes that warrant founder sign-off.`},
 
@@ -669,7 +669,7 @@ insert into partner_pipeline
 values
   ('<name>','newsletter','<url>','affiliate','creator',8500,
    4,'enriched','reply-to: hello@<their-domain>',
-   'Operator voice, writes to first-2-yr reps weekly','scout',
+   'Operator voice, writes to first-2-yr SDRs and AEs weekly','scout',
    'Dispatch Scribe for first-touch', current_date + 1);`}]
   },
   {id:'w2t2',title:'Days 8–9 — Score, rank, and cut to the top 25',day:8,tags:[A('dossier')],
@@ -720,7 +720,7 @@ limit 25;`}]
    ],
    code:[{label:'mark a batch contacted',lang:'sql',body:`update partner_pipeline
 set status='contacted',
-    next_action='follow-up 1 (value-add)',
+    next_action='follow-up 1 (adds a resource)',
     next_action_date = current_date + 4,
     updated_at = now()
 where name = any(array['<name1>','<name2>','<name3>']);`}]
@@ -826,7 +826,7 @@ values
     'Confirm tracking works end-to-end before volume arrives. The <code>/r/[slug]</code> redirect route already exists — your job is to prove a click writes an attribution.',
     '<b>Run the live test:</b> have one active affiliate post their tracked link (or grab it from their dashboard yourself). Open it in a private/incognito window → confirm it redirects to the buy page. Then complete a test purchase (use a Stripe test card if in test mode, or a real $249 you refund after).',
     '<b>Verify the row appeared</b> (block below, via Ledger): an <code>affiliate_attributions</code> row at status <code>pending</code>, the correct commission amount, and <code>refund_window_closes_at</code> set 30 days out. If no row, the click→attribution wiring is the bug — fix before any real partner sends traffic.',
-    '<b>Walk the affiliate through their dashboard:</b> screen-share <span class="where">/affiliates/dashboard</span> so they see their own clicks + pending commission. Self-serve visibility kills the "am I getting credit?" emails before they start.',
+    '<b>Walk the affiliate through their dashboard:</b> screen-share <span class="where">/affiliates/dashboard</span> so they see their own clicks + pending commission. Self-serve visibility stops the "am I getting credit?" emails before they start.',
     '<b>Confirm the math with Ledger</b> (line below): commission = the program rate × the $249/$299 sale, held <code>pending</code> until the 30-day refund window closes, then <code>cleared</code> for payout. <b>Done when</b> a real test click produced a <code>pending</code> row with the window set.'
    ],
    code:[{label:'verify attribution fired',lang:'sql',body:`select att.affiliate_slug, att.status,
@@ -845,11 +845,11 @@ limit 10;`}]
    steps:[
     '<b>Head start:</b> Herald has already run — open <span class="ui">Prospect Intel</span> → "Channel prospects" for 10 named orgs (Vendux, Martal Group, Skaled, …) with fit rationale, proposed structure, and conflict flags. Verify these, then extend. Channel partners are orgs that put AESDR in front of sales TEAMS, not consumer creators.',
     '<b>Walk the surface you\'re selling first</b> (browser): <span class="where">aesdr.com/enterprise</span> → <span class="where">/enterprise/channel</span> (the 5 partner categories already defined) → <span class="where">/enterprise/diagnostic</span> → <span class="where">/enterprise/champion-kit</span>. You can\'t pitch channel until you\'ve seen exactly what a partner would resell.',
-    '<b>Dispatch Herald</b> (line below) to source 10 candidates across the four target types: sales-enablement consultants, fractional VP-Sales networks, RevOps consultancies, and training firms that LACK a junior-rep curriculum (you fill the gap, not compete).',
+    '<b>Dispatch Herald</b> (line below) to source 10 candidates across the four target types: sales-enablement consultants, fractional VP-Sales networks, RevOps consultancies, and training firms that LACK a junior-SDR/AE curriculum (you fill the gap, not compete).',
     '<b>Run the non-cannibalization test on each</b> (Herald flags it; you enforce): does AESDR fill a gap in their offer, or compete with it? The two firms in Prospect Intel flagged "Conflict" sell a directly competing curriculum — keep them only with a carved-out ICP.',
     '<b>Write them in:</b> have Ledger insert each into <code>partner_pipeline</code> with <code>motion=&#39;channel&#39;</code>. <b>Done when</b> 10 channel candidates are sourced and cut to the 3 strongest at <code>motion=channel</code>.'
    ],
-   callouts:[{type:'note',title:'The non-cannibalization test',body:'For every channel candidate Herald proposes, the question is: does AESDR fill a gap in their offer, or compete with it? A sales-training firm that only does senior-AE work has a junior-rep gap you fill. One that already sells a first-year curriculum is a competitor, not a partner. Herald flags this; you enforce it.'}]
+   callouts:[{type:'note',title:'The non-cannibalization test',body:'For every channel candidate Herald proposes, the question is: does AESDR fill a gap in their offer, or compete with it? A sales-training firm that only does senior-AE work has a junior-SDR/AE gap you fill. One that already sells a first-year curriculum is a competitor, not a partner. Herald flags this; you enforce it.'}]
   },
   {id:'w7t2',title:'Days 41–44 — Open 3 channel conversations',day:41,tags:[A('herald'),WHO('channel candidates')],
    steps:[
@@ -1030,7 +1030,7 @@ const RESOURCES = {
     ['30 Minutes to President\'s Club','Armand Farrokh + Nick Cegelski. Podcast + paid community + courses. Adjacent network = top-decile candidates.','30mpc.com','hi'],
     ['Outbound Squad','Jason Bay. Outbound-focused; SDR-heavy audience.','outboundsquad.com','hi'],
     ['RepVue','Practitioner-led, anti-recruiter. Forum mods + newsletter authors = exact persona.','repvue.com','hi'],
-    ['Sales newsletters (Substack/Beehiiv)','Independent operator-voice newsletters to first-2-yr reps. Reply-to = contact path.','—','hi'],
+    ['Sales newsletters (Substack/Beehiiv)','Independent operator-voice newsletters to first-2-yr SDRs and AEs. Reply-to = contact path.','—','hi'],
     ['Sales podcasts (operator hosts)','Host-read potential. Find via Listen Notes / Podchaser metadata filters.','listennotes.com','mid'],
     ['r/sales contributors','Public; identifiable heavy contributors with their own audiences.','reddit.com/r/sales','lo']
   ],
@@ -1052,16 +1052,16 @@ const RESOURCES = {
 /* ─── PROSPECT INTEL (Run A: affiliate; Run B: channel) — researched May 2026 ─── */
 const PROSPECTS = {
   affiliate:[
-    {name:'Neil Bhuiyan',surface:'Podcast',handle:'happyselling.io/podcast',audience:'2k–5k listeners · 110+ eps',archetype:'creator',vf:5,why:'Podcast built specifically for brand-new SDRs (max 2 yrs in seat); every episode is a live discovery call with an early-career rep — exact audience match.',contact:'X DM @HappySelling_io · linktr.ee/happyselling',conflict:'N'},
+    {name:'Neil Bhuiyan',surface:'Podcast',handle:'happyselling.io/podcast',audience:'2k–5k listeners · 110+ eps',archetype:'creator',vf:5,why:'Podcast built specifically for brand-new SDRs (max 2 yrs in seat); every episode is a live discovery call with an early-career SDR — exact audience match.',contact:'X DM @HappySelling_io · linktr.ee/happyselling',conflict:'N'},
     {name:'Florin Tatulea',surface:'Newsletter (Substack)',handle:'salesflo.substack.com',audience:'~13k confirmed subs',archetype:'creator',vf:5,why:'Head of Sales Dev at Common Room; writes tactical prospecting breakdowns for SDRs/AEs at real SaaS companies — operator voice, zero guru.',contact:'Newsletter reply · X DM @FlorinTatulea',conflict:'N'},
     {name:'Elric Legloire',surface:'Newsletter + Podcast',handle:'newsletter.outbound.kitchen',audience:'~7k newsletter · ~3–5k podcast',archetype:'creator',vf:4,why:'4x top-SDR, led teams at Chili Piper; Outbound Kitchen is a practitioner frame with no hype.',contact:'X DM @elriclegloire · Substack chat open',conflict:'Soft — Sell Better speaker; no paid-course conflict confirmed'},
     {name:'Jed Mahrle',surface:'Newsletter (Substack)',handle:'jed.substack.com / practicalprospecting.io',audience:'tens of thousands (multi-platform)',archetype:'creator/coach',vf:4,why:'Ex-PandaDoc AE; writes cold email and outbound frameworks weekly — peer voice, results-oriented.',contact:'Newsletter reply · X DM',conflict:'Soft — sells agency + team-oriented newsletter courses; not a direct consumer SDR course'},
     {name:'Tom Slocum',surface:'Newsletter (Beehiiv)',handle:'thesdlab.beehiiv.com',audience:'est. 3k–8k',archetype:'creator/coach',vf:4,why:'18 yrs in sales; The SD Lab writes outbound tactics in a "trenches" tone — anti-guru, very operator.',contact:'X DM @Tommy_Slocum · thesdlab.com/press-media',conflict:'Soft — sells $29.99 team bootcamp; not a consumer SDR course'},
     {name:'Stefan Conic',surface:'Skool + Podcast',handle:'skool.com/sdr-hire-community-1422',audience:'Skool community + podcast est. 1–3k listeners',archetype:'community/creator',vf:4,why:'Founder of SDR Hire; podcast breakdowns are "400 cold calls a day" style — operator pragmatist.',contact:'sdrhire.com email',conflict:'N — recruiting firm, not a competing course'},
-    {name:'Daniel Goerner',surface:'Skool community',handle:'skool.com/sdr-bdr-community',audience:'est. 200–500 members',archetype:'community/coach',vf:4,why:'Active SDR at Oxylabs running a peer-built community for reps wanting tactical help — practitioner, not guru.',contact:'Skool DM @daniel-goerner-4130',conflict:'N — complementary community, not a curriculum'},
-    {name:'Sam Nelson',surface:'Newsletter + Community',handle:'samnelson.substack.com · SDRLeader.com',audience:'~11k Substack subs',archetype:'creator/community',vf:3,why:'Founded SDRLeader.com after years at Outreach; writes for the SDR ecosystem — slightly senior audience but high credibility.',contact:'X DM @realSamNelson · newsletter reply',conflict:'N — SDRLeader.com is vendor-neutral'},
+    {name:'Daniel Goerner',surface:'Skool community',handle:'skool.com/sdr-bdr-community',audience:'est. 200–500 members',archetype:'community/coach',vf:4,why:'Active SDR at Oxylabs running a peer-built community for SDRs and AEs wanting tactical help — practitioner, not guru.',contact:'Skool DM @daniel-goerner-4130',conflict:'N — complementary community, not a curriculum'},
+    {name:'Sam Nelson',surface:'Newsletter + Community',handle:'samnelson.substack.com · SDRLeader.com',audience:'~11k Substack subs',archetype:'creator/community',vf:3,why:'Founded SDRLeader.com after years at Outreach; writes for the SDR world — slightly senior audience but high credibility.',contact:'X DM @realSamNelson · newsletter reply',conflict:'N — SDRLeader.com is vendor-neutral'},
     {name:'Collin Mitchell',surface:'Podcast (Sales Transformation)',handle:'@collinmitchell on X',audience:'est. 1k–4k',archetype:'creator',vf:3,why:'Chief Evangelist at Humantic AI; twice-weekly personalization tips for SDRs.',contact:'X DM',conflict:'Soft — vendor affiliated (Humantic AI); no competing course'},
-    {name:'Michael Gagliano',surface:'Community (SDR Nation)',handle:'sdrnation.com',audience:'est. 500–2k members',archetype:'community',vf:3,why:'Co-founder of the longest-running paid SDR community; credibility with serious early-career reps.',contact:'sdrnation.com/about',conflict:'Soft — SDR Nation sells $540/yr competing membership; review carefully before approaching'}
+    {name:'Michael Gagliano',surface:'Community (SDR Nation)',handle:'sdrnation.com',audience:'est. 500–2k members',archetype:'community',vf:3,why:'Co-founder of the longest-running paid SDR community; credibility with serious early-career SDRs and AEs.',contact:'sdrnation.com/about',conflict:'Soft — SDR Nation sells $540/yr competing membership; review carefully before approaching'}
   ],
   affiliateConflicts:[
     {name:'Jason Bay',surface:'Podcast (Outbound Squad)',handle:'outboundsquad.com/podcast',audience:'est. 10k–30k',why:'Hard conflict: confirmed Sell Better speaker + 30MPC trainer. Do not approach.'},
@@ -1070,13 +1070,13 @@ const PROSPECTS = {
   ],
   channel:[
     {name:'Vendux',type:'Fractional VP-Sales network',url:'vendux.org',size:'10+ (1,000+ exec roster)',fit:'North America\'s largest pre-vetted fractional sales leader network — every exec placed at a startup confronts a ramp problem. AESDR gives them a tool to hand new SDRs/AEs from Day 1.',structure:'Referral fee or co-sell — Vendux adds AESDR to placement package',conflict:'N',contact:'vendux.org contact form'},
-    {name:'Martal Group',type:'SDR outsourcing / BDR-as-a-service',url:'martal.ca',size:'10+ (200+ SDRs · 2k+ clients)',fit:'Outsourced SDR firm for B2B tech/SaaS — reps are continuously onboarded. License AESDR as a required ramp module; reduces their training overhead.',structure:'White-label or content bundle in SDR onboarding stack',conflict:'N',contact:'martal.ca contact form'},
-    {name:'Skaled Consulting',type:'Sales-enablement consultancy',url:'skaled.com',size:'Boutique 10+',fit:'Embedded GTM consulting for B2B SaaS — new SDR/AE hires at client companies arrive under-trained; AESDR fills the rep-level onboarding gap.',structure:'Content bundle — Skaled recommends AESDR inside enablement engagements',conflict:'N',contact:'skaled.com/contact'},
+    {name:'Martal Group',type:'SDR outsourcing / BDR-as-a-service',url:'martal.ca',size:'10+ (200+ SDRs · 2k+ clients)',fit:'Outsourced SDR firm for B2B tech/SaaS — SDRs are continuously onboarded. License AESDR as a required ramp module; reduces their training overhead.',structure:'White-label or content bundle in SDR onboarding stack',conflict:'N',contact:'martal.ca contact form'},
+    {name:'Skaled Consulting',type:'Sales-enablement consultancy',url:'skaled.com',size:'Boutique 10+',fit:'Embedded GTM consulting for B2B SaaS — new SDR/AE hires at client companies arrive under-trained; AESDR fills the SDR/AE-level onboarding gap.',structure:'Content bundle — Skaled recommends AESDR inside enablement engagements',conflict:'N',contact:'skaled.com/contact'},
     {name:'RevOps Consulting',type:'RevOps consultancy',url:'revopsconsulting.io',size:'Boutique 2–10',fit:'Serves pre-revenue through post-Series C B2B tech; explicitly trains sales teams on the changes they implement — AESDR as the self-paced foundational layer.',structure:'Content bundle alongside HubSpot / CRM implementation playbooks',conflict:'N',contact:'revopsconsulting.io contact form'},
-    {name:'The Revenue Operations Group',type:'RevOps consultancy',url:'revopsgroup.com',size:'Solo/boutique 2–5',fit:'Works with early/growth-stage SaaS — exactly the cohort that hires raw SDRs/AEs who need fast ramping.',structure:'Referral fee — recommended to client reps as part of RevOps onboarding stack',conflict:'N',contact:'revopsgroup.com discovery call form'},
-    {name:'Activated Scale',type:'Fractional RevOps / fractional sales',url:'activatedscale.com',size:'Boutique 2–10',fit:'Provides fractional RevOps leadership and fractional selling to SaaS startups — reps placed need quick-ramp SDR/AE fundamentals.',structure:'Referral fee — recommended to every client-side SDR/AE at onboarding',conflict:'N',contact:'activatedscale.com contact'},
+    {name:'The Revenue Operations Group',type:'RevOps consultancy',url:'revopsgroup.com',size:'Solo/boutique 2–5',fit:'Works with early/growth-stage SaaS — exactly the cohort that hires raw SDRs/AEs who need fast ramping.',structure:'Referral fee — recommended to client-side SDRs and AEs as part of RevOps onboarding stack',conflict:'N',contact:'revopsgroup.com discovery call form'},
+    {name:'Activated Scale',type:'Fractional RevOps / fractional sales',url:'activatedscale.com',size:'Boutique 2–10',fit:'Provides fractional RevOps leadership and fractional selling to SaaS startups — SDRs and AEs placed need quick-ramp fundamentals.',structure:'Referral fee — recommended to every client-side SDR/AE at onboarding',conflict:'N',contact:'activatedscale.com contact'},
     {name:'Belkins',type:'SDR outsourcing / BDR-as-a-service',url:'belkins.io',size:'10+ (Clutch Top 1000 2025)',fit:'Outsourced SDR agency for B2B companies — each SDR placed with a client undergoes onboarding that AESDR could formalize as a required ramp module.',structure:'Content bundle — Belkins includes AESDR access as part of its sales-enablement services',conflict:'N',contact:'belkins.io contact form'},
-    {name:'Sales Assembly',type:'Sales training firm / community',url:'salesassembly.com',size:'10+ (350+ member companies · 14 cert tracks)',fit:'Membership-based B2B SaaS enablement — individual reps who cannot afford $30k/yr team seats can self-study with AESDR at $249.',structure:'Referral fee — recommended to individual reps for self-paced study alongside live sessions',conflict:'Moderate — 14 cert tracks overlap in content; different price point ($249 vs $30k team)',contact:'salesassembly.com contact form'},
+    {name:'Sales Assembly',type:'Sales training firm / community',url:'salesassembly.com',size:'10+ (350+ member companies · 14 cert tracks)',fit:'Membership-based B2B SaaS enablement — individual SDRs and AEs who cannot afford $30k/yr team seats can self-study with AESDR at $249.',structure:'Referral fee — recommended to individual SDRs and AEs for self-paced study alongside live sessions',conflict:'Moderate — 14 cert tracks overlap in content; different price point ($249 vs $30k team)',contact:'salesassembly.com contact form'},
     {name:'Factor 8',type:'Sales training firm',url:'factor8.com',size:'Firm 10+',fit:'Runs The Sales Bar eLearning for SDRs/BDRs — AESDR adds startup-SaaS-specific depth they underindex on. Best angle: carved-out sub-$50M ARR segment.',structure:'Content bundle scoped to startup ICP only',conflict:'Y — The Sales Bar is a directly competing self-paced SDR/AE curriculum',contact:'info@factor8.com'},
     {name:'Winning by Design',type:'Sales training firm',url:'winningbydesign.com',size:'Firm 10+ (16k+ trained globally)',fit:'Cohort-based B2B SaaS training for AEs/SDRs/CSMs — AESDR targets the sub-$10M ARR startup segment that WbD under-serves.',structure:'Co-sell for companies too small for WbD\'s enterprise pricing',conflict:'Y — WbD sells SDR and AE courses directly',contact:'winningbydesign.com contact form'}
   ]
@@ -1085,7 +1085,7 @@ const PROSPECTS = {
 /* ─── BENCHMARKS (Run D) — commission, conversion math, refund thresholds ─── */
 const BENCHMARKS = {
   commissionRows:[
-    ['HigherLevels (SDR/AE career courses)','40%','$997–$2,000+ one-time','Closest direct comparable in the early-career rep niche'],
+    ['HigherLevels (SDR/AE career courses)','40%','$997–$2,000+ one-time','Closest direct comparable in the early-career SDR/AE niche'],
     ['GoHighLevel SaaS affiliate','40% recurring','$97–$297/mo SaaS','Different product; recurring mechanic inflates perceived value'],
     ['Teachable platform affiliate','30%','Subscription','Platform-level affiliate program, not course-creator sales'],
     ['General digital / info product','20–50%','Wide range','No physical COGS; margins support high rates'],
@@ -1103,7 +1103,7 @@ const BENCHMARKS = {
     ['Online courses (industry avg)','~5%','Healthy benchmark for well-structured content'],
     ['Low-price impulse (<$100)','10–30%+','High variability; buyer regret common'],
     ['Well-structured professional dev / B2B','3–5%','Typical for high-quality career-focused content'],
-    ['Best-in-class (onboarding + strong pre-qual)','<2%','Achievable with completion support'],
+    ['Top performers (onboarding + strong pre-qual)','<2%','Achievable with completion support'],
     ['<b>AESDR target</b>','<b><5%</b>','<b>Flag affiliate at 15%; suspend at 20% (aligns with ClickBank standard)</b>']
   ]
 };
@@ -1138,7 +1138,7 @@ Not asking for a yes today. Want the partner kit to see if it's a fit for your l
   {name:'First-touch · community owner',meta:'≤120 words',
    body:`Subject: something for the first-2-years crowd in <span class="var">[COMMUNITY]</span>
 
-<span class="var">[NAME]</span> — <span class="var">[COMMUNITY]</span> is full of exactly who AESDR is for: reps a year or two in, ramp harder than anyone warned them. It's a one-time course built by operators, not course-people.
+<span class="var">[NAME]</span> — <span class="var">[COMMUNITY]</span> is full of exactly who AESDR is for: SDRs and AEs a year or two in, ramping harder than anyone warned them. It's a one-time course built by operators, not course-people.
 
 If it fits your members, the partner deal is 40% / 30-day window, paid clean via Stripe. We review your first couple posts so they read in your voice, not a salesy one — protects your members' trust, then you're free.
 
@@ -1156,9 +1156,9 @@ If the partner thing isn't for you, no problem at all — keep the resource. If 
 
 Door's open whenever. — Antaeus`},
   {name:'Channel · first-touch (enterprise)',meta:'Herald drafts · leads with the gap',
-   body:`Subject: the junior-rep gap in <span class="var">[THEIR OFFER]</span>
+   body:`Subject: the junior-SDR/AE gap in <span class="var">[THEIR OFFER]</span>
 
-<span class="var">[NAME]</span> — you do <span class="var">[WHAT THEY DO]</span> for sales orgs. The gap I keep seeing alongside that work is the first-1-2-year rep: the team buys senior enablement, and the new reps are still figuring it out alone.
+<span class="var">[NAME]</span> — you do <span class="var">[WHAT THEY DO]</span> for sales orgs. The gap I keep seeing alongside that work is the first-1-2-year SDR or AE: the team buys senior enablement, and the new hires are still figuring it out alone.
 
 AESDR Enterprise fills exactly that — same curriculum, manager-rollout layer, a diagnostic. It complements what you sell rather than competing. A few ways we could structure it (referral, reseller margin, or co-delivery).
 
@@ -1178,7 +1178,7 @@ const PRECALL = [
    timing:'Send with the calendar confirmation · 48h before call',
    why:'Face + name beats a deck. Reply rate lifts 3–5× in B2B outbound when there\'s a personalized video.'},
   {n:3,asset:'Course preview / sample lesson',type:'build-once',builds:'Already lives at /affiliates/preview (or create if missing)',
-   dispatch:'Use the ledger subagent to confirm /affiliates/preview exists with a watchable sample. If not, create it as a Day-1 task.',
+   dispatch:'Use Ledger subagent to confirm /affiliates/preview exists with a watchable sample. If not, create it as a Day-1 task.',
    timing:'Link sent with calendar invite · before call',
    why:'Affiliates cannot recommend what they have not tasted. Removes the "commit to learn" friction.'},
   {n:4,asset:'Public kit URL',type:'build-once',builds:'Lives at aesdr.com/affiliates/kit',
@@ -1186,11 +1186,11 @@ const PRECALL = [
    timing:'Include in every reply that gets a "tell me more"',
    why:'The kit IS the demo. Self-qualification cuts 80% of dead calls.'},
   {n:5,asset:'Refund rate + completion stats page',type:'build-once',builds:'Ledger (queries) → static page',
-   dispatch:'Use the ledger subagent to pull current refund rate + course completion rate, publish at /affiliates/transparency. Updates monthly via cron.',
+   dispatch:'Use Ledger subagent to pull current refund rate + course completion rate, publish at /affiliates/transparency. Updates monthly via cron.',
    timing:'Reference in the call · link in the kit',
    why:'Answers the silent biggest objection: "will this damage my audience\'s trust?" Numbers settle it.'},
   {n:6,asset:'One real affiliate\'s anonymized earnings',type:'build-once',builds:'Ledger (queries) → testimonial card in the kit',
-   dispatch:'Use the ledger subagent to pull top affiliate quarterly stats (anonymized: archetype + list size + earnings). Save to content/partnerships/proof-points.md.',
+   dispatch:'Use Ledger subagent to pull top affiliate quarterly stats (anonymized: archetype + list size + earnings). Save to content/partnerships/proof-points.md.',
    timing:'Drop in the call when they ask "what do affiliates actually earn?"',
    why:'Concrete > abstract. One real number beats a benchmark table.'},
   {n:7,asset:'Pre-written call framing',type:'build-once',builds:'Operator (already in Booking Schedule description)',
@@ -1200,7 +1200,7 @@ const PRECALL = [
   {n:8,asset:'Draft post in their voice',type:'per-candidate',builds:'Scribe',
    dispatch:'Use the scribe subagent to draft <NAME>\'s first promotional post in THEIR voice — reference their recent piece <X> as the voice anchor. Send as "here\'s what your first post could look like — feel free to rewrite."',
    timing:'Send during the call or as the post-call follow-up',
-   why:'They show up able to PICTURE the recommendation. Removes the blank-page friction that kills activation.'}
+   why:'They show up able to PICTURE the recommendation. Removes the blank-page friction that stalls activation.'}
 ];
 
 /* ─── CONVERSION LEVERS ─── ranked by phase, by leverage ─── */
@@ -1230,7 +1230,7 @@ const LEVERS = [
    build:'Static page at /affiliates/transparency. Cron-pulls monthly from Ledger.',
    metric:'Page in the kit · referenced in every call'},
   {phase:'P60',n:7,move:'Kit-first ask in every first-touch',
-   rationale:'Default to "want the kit?" not "want a call?" The kit is the demo. Self-qualification kills 80% of dead calls.',
+   rationale:'Default to "want the kit?" not "want a call?" The kit is the demo. Self-qualification clears 80% of dead calls.',
    build:'Behavior + template change. Update first-touch templates so the ask defaults to kit.',
    metric:'% of first-touches that ask for the kit (target: 100% of cold sends)'},
   {phase:'P60',n:8,move:'Workshop co-host as the close, not "post about us"',
@@ -1353,10 +1353,10 @@ function renderCallouts(cs){
 /* ─── DISPATCH: the literal line(s) you paste into Claude Code per task ─── */
 const DISPATCH = {
   w1t3:['Use the warden subagent to score these 3 sales-creator posts against canon so I can calibrate my ear: <paste 3 posts>'],
-  w1t4:['Use the ledger subagent to walk the affiliate schema and show current affiliates plus their attribution totals.'],
-  w1t5:['Use the ledger subagent to create the partner_pipeline table from the Day-3 migration and push it to the live project.'],
+  w1t4:['Use Ledger subagent to walk the affiliate schema and show current affiliates plus their attribution totals.'],
+  w1t5:['Use Ledger subagent to create the partner_pipeline table from the Day-3 migration and push it to the live project.'],
   w1t6:['Use the scout subagent to run Sweep 1: find 15 paid sales communities on Skool and Mighty Networks (50–2,000 members), scored for voice-fit.'],
-  w1t7:['Use the ledger subagent to re-audit the custom attribution system against docs/partnerships/attribution-build-cost.md — the Day-5 audit found the partner dashboard, payout pipeline, and link-click tracking all already built. Confirm nothing material changed and check whether any Day-22 trigger condition (active count >25, dashboard inquiries >2/week, Stripe Connect edge case) has fired.'],
+  w1t7:['Use Ledger subagent to re-audit the custom attribution system against docs/partnerships/attribution-build-cost.md — the Day-5 audit found the partner dashboard, payout pipeline, and link-click tracking all already built. Confirm nothing material changed and check whether any Day-22 trigger condition (active count >25, dashboard inquiries >2/week, Stripe Connect edge case) has fired.'],
   w2t1:[
     'Use the dossier subagent to verify the 10 named affiliate prospects in Prospect Intel are still current (audience size, contact path, conflict flags) — start with Neil Bhuiyan, Florin Tatulea, Stefan Conic, Daniel Goerner, Elric Legloire.',
     'Use the scout subagent — Sweep 1 (extend the list): paid communities (Skool + Mighty Networks + Circle), sales/SDR/AE/revenue, 50–2,000 members. Skip anyone already in Prospect Intel. Return 15 fresh scored rows.',
@@ -1364,44 +1364,44 @@ const DISPATCH = {
     'Use the scout subagent — Sweep 3: practitioner-network figures (30MPC, Outbound Squad, RepVue, Modern Sales Pros, Apex BDR Club, Pavilion) with their OWN audience. Skip Prospect Intel duplicates + the 3 hard-conflict names (Jason Bay, Belal Batrawy, Morgan Ingram). Return 15 scored rows.',
     'Use the dossier subagent to enrich every new candidate scoring voice-fit ≥3, then have ledger write the survivors + the 10 verified Prospect Intel rows to partner_pipeline at status=enriched. Target: 50 enriched rows total. If the three sweeps net fewer than 50 after voice-fit cuts, run one more sweep on the weakest-covered surface — do not lower the bar to hit the number (30 great beats 50 mediocre).'
   ],
-  w2t2:['Use the ledger subagent to run the ranking query and show me the top 25 by composite score; flag any ties for me to break on voice-fit.'],
+  w2t2:['Use Ledger subagent to run the ranking query and show me the top 25 by composite score; flag any ties for me to break on voice-fit.'],
   w2t3:['Use the scribe subagent to draft the outreach library — first-touch (newsletter / community / podcast variants), follow-up 1 (+4d), follow-up 2 (+9d). Canon-check each and save to content/partnerships/outreach/.'],
   w3t2:[
     'Use the scribe subagent to personalize the first-touch for <NAME> from their Dossier brief — keep the economics + ask templated: <paste brief>',
     'Recommended send order Wave 1 (8/day, from Prospect Intel highest voice-fit): 1. Neil Bhuiyan (podcast — exact audience), 2. Florin Tatulea (newsletter — Common Room SDR lead), 3. Stefan Conic (Skool + podcast), 4. Daniel Goerner (Skool community), 5. Elric Legloire (Outbound Kitchen), 6. Tom Slocum (The SD Lab), 7. Jed Mahrle (Practical Prospecting), 8. Sam Nelson (SDRLeader.com).'
   ],
   w3t3:['Use the almanac subagent for my morning standup — who replied, who is due a follow-up, what to do first.'],
-  w4t2:['Use the ledger subagent to implement the attribution decision: <extend custom schema | wire the Rewardful + Stripe webhook>.'],
+  w4t2:['Use Ledger subagent to implement the attribution decision: <extend custom schema | wire the Rewardful + Stripe webhook>.'],
   w5t1:[
     'Use the warden subagent to review this affiliate\'s first submission and return APPROVE / EDITS / DECLINE: <paste copy>',
-    'Use the ledger subagent to create the affiliate row (status=active, tier=developing, 40% / 30-day) and confirm the onboarding email fired.'
+    'Use Ledger subagent to create the affiliate row (status=active, tier=developing, 40% / 30-day) and confirm the onboarding email fired.'
   ],
-  w5t2:['Use the ledger subagent for the phase-30 metrics pull.','Use the almanac subagent to draft the 30-day founder memo from that pull (8 lines).'],
+  w5t2:['Use Ledger subagent for the phase-30 metrics pull.','Use the almanac subagent to draft the 30-day founder memo from that pull (8 lines).'],
   w6t1:['Use the warden subagent to review this submission with line-level rewrites in their voice: <paste copy>'],
-  w6t2:['Use the ledger subagent to confirm the latest attribution fired correctly — show the row, the 40% math, and the refund-window close date.'],
+  w6t2:['Use Ledger subagent to confirm the latest attribution fired correctly — show the row, the 40% math, and the refund-window close date.'],
   w7t1:[
     'Use the herald subagent to verify the 10 channel orgs in Prospect Intel are still current (web presence, no new competing product, contact paths). Cut to 3 — recommended: Vendux, Martal Group, Skaled.',
     'Use the herald subagent to source 5 more channel candidates not yet in Prospect Intel, run the non-cannibalization test on each, and write them to partner_pipeline at motion=channel.'
   ],
   w7t2:[
-    'Use the herald subagent to draft the channel first-touch for Vendux (lead with: every fractional sales exec they place hits a junior-rep ramp problem on Day 1). Reply-to affiliates@aesdr.com.',
+    'Use the herald subagent to draft the channel first-touch for Vendux (lead with: every fractional sales exec they place hits a junior-SDR/AE ramp problem on Day 1). Reply-to affiliates@aesdr.com.',
     'Use the herald subagent to draft the channel first-touch for Martal Group (lead with: every SDR they place at a client undergoes onboarding AESDR could formalize as a content bundle).',
-    'Use the herald subagent to draft the channel first-touch for Skaled (lead with: AESDR fills the rep-level onboarding gap inside their enablement engagements).'
+    'Use the herald subagent to draft the channel first-touch for Skaled (lead with: AESDR fills the SDR/AE-level onboarding gap inside their enablement engagements).'
   ],
-  w8t1:['Use the ledger subagent to build the affiliate_weekly_report view and run this week\'s pull.','Use the almanac subagent to turn that pull into the 8-line Friday founder note.'],
-  w8t2:['Use the ledger subagent for a payout dry-run: cleared-but-unpaid attributions, totaled per affiliate. Do NOT trigger the real payout.'],
+  w8t1:['Use Ledger subagent to build the affiliate_weekly_report view and run this week\'s pull.','Use the almanac subagent to turn that pull into the 8-line Friday founder note.'],
+  w8t2:['Use Ledger subagent for a payout dry-run: cleared-but-unpaid attributions, totaled per affiliate. Do NOT trigger the real payout.'],
   w9t1:['Use the scout subagent to refill the funnel if it is thinning, then scribe + warden through the second wave to push toward 10 active.'],
-  w9t2:['Use the ledger subagent for the trajectory math toward $3k/mo.','Use the almanac subagent to draft the 60-day founder memo and name the phase-90 bet.'],
+  w9t2:['Use Ledger subagent for the trajectory math toward $3k/mo.','Use the almanac subagent to draft the 60-day founder memo and name the phase-90 bet.'],
   w10t1:[
-    'Use the ledger subagent to rank affiliates by attributed commission and show the top 3.',
+    'Use Ledger subagent to rank affiliates by attributed commission and show the top 3.',
     'Use the almanac subagent to extract what made the top 3 convert (format, message, audience).',
     'Use the scout subagent to find 10 more partners who look like the top 3.'
   ],
   w10t2:['Use the herald subagent to draft partnership terms for the lead channel deal: structure, attribution mechanism, split, term length.'],
   w11t1:['Use the almanac subagent to help me codify the weekly operating cadence into docs/partnerships/operating-cadence.md.'],
   w11t2:['Use the scout subagent for the second-wave sweep (25 candidates), then dossier + scribe through the proven process.'],
-  w12t1:['Use the ledger subagent for the monthly run-rate and the refund-rate health check.'],
-  w12t2:['Use the ledger subagent for the full 90-day metrics pull.','Use the almanac subagent to write the 90-day proof + next-quarter plan from it.']
+  w12t1:['Use Ledger subagent for the monthly run-rate and the refund-rate health check.'],
+  w12t2:['Use Ledger subagent for the full 90-day metrics pull.','Use the almanac subagent to write the 90-day proof + next-quarter plan from it.']
 };
 
 /* ─── DONE: the completion test for each task ─── */
@@ -1443,7 +1443,7 @@ const DONE = {
 /* ─── SCRIPT: verbatim, read-aloud scripts (copyable) ─── */
 const SCRIPT = {
   w4t1:{title:'The 15-minute intro call — verbatim',body:`<span class="cue">[0:00 · Open — why them, specifically]</span>
-"Thanks for taking fifteen — I'll keep it to fifteen. I reached out because [REASON FROM THEIR DOSSIER]: your [newsletter / community / show] talks to exactly who AESDR is built for — reps a year or two in, dropped in the deep end and told to figure it out. So this isn't a cold pitch. It's a 'I think these two things fit' call."
+"Thanks for taking fifteen — I'll keep it to fifteen. I got in touch because [REASON FROM THEIR DOSSIER]: your [newsletter / community / show] talks to exactly who AESDR is built for — SDRs and AEs a year or two in, dropped in the deep end and told to figure it out. So this isn't a cold pitch. It's a 'I think these two things fit' call."
 
 <span class="cue">[1:00 · How it works — plain numbers, no mystery]</span>
 "Here's the whole thing, no fine print. AESDR is a one-time course — two-forty-nine or two-ninety-nine depending on the path — for first- and second-year SDRs and AEs. If you point your audience at it and someone buys through your link, you earn forty percent — about a hundred dollars a sale. The attribution window is thirty days, so if they click today and buy in three weeks, you still get the credit. Paid out through Stripe. That's the deal — there isn't a catch I'm holding back."
@@ -1702,7 +1702,7 @@ Read first for context:
 
 The doctrine has four sections, ~5-10 lines each:
 (1) Sourcing rule — practitioner networks only, never marketplaces (Rakuten, CJ, ShareASale, Impact-as-marketplace), never LinkedIn. Founder direction, no exceptions.
-(2) Voice-fit bar — score 1-5 honestly. Reject anyone scoring ≤2. Guru-aesthetic creators ("crush it / level up / unlock") are 1. Operators who teach real work are 5.
+(2) Voice-fit bar — score 1-5 honestly. Reject anyone scoring ≤2. Guru-aesthetic creators (hype register, motivational clichés from the canon blocklist) are 1. Operators who teach real work are 5.
 (3) Archetype targets — creator, coach, alumni, community. Define what each looks like in 2 lines.
 (4) Disqualifiers — guru aesthetic, vendor-sponsored conflicts with competing courses, audience under ~1k engaged. Reference the 3 hard-conflict names from Prospect Intel (Jason Bay, Belal Batrawy, Morgan Ingram) as examples.
 
@@ -1747,7 +1747,7 @@ In the aesdr repo, create the folder content/partnerships/outreach/ and write 5 
 
 Voice: operator-direct, peer-to-peer. Lead with the specific reason THEY fit (placeholder for personalization). No flattery padding.
 
-BANNED terms (R-G blocklist): "crush it, level up, unlock, 10x, passionate, rockstar, ninja, game-changer, synergy, circle back, reach out." Read AFFILIATE_BRAND_CANON.md and every file in docs/canon-revisions/ first.
+BANNED terms: the full R-G blocklist plus the founder bans — no guru-register hype, no motivational clichés, no corporate-speak; always write SDR and AE in full (the three-letter shorthand is banned); avoid violent or gym-bro verbs. Do not reproduce the blocklist in your files. Read AFFILIATE_BRAND_CANON.md and every file in docs/canon-revisions/ first, then verify against scripts/canon-check.mjs — it is the source of truth.
 
 Structure of each template:
 - The first 2 sentences are bespoke per partner — use placeholders like [NAME], [SPECIFIC PIECE], [REAL DETAIL]
@@ -1830,7 +1830,7 @@ Use WebSearch + WebFetch to find 5 MORE channel partner candidates not already o
 - Fractional VP-Sales networks beyond Vendux
 - RevOps consultancies focused on growth-stage SaaS
 - BDR-as-a-service / SDR outsourcing firms beyond Martal/Belkins
-- Sales training firms with a junior-rep gap (NOT a competing curriculum)
+- Sales training firms with a junior-SDR/AE gap (NOT a competing curriculum)
 
 For each candidate, return:
 - org_name
@@ -1863,11 +1863,11 @@ Voice: operator-direct, B2B partnership register (not the consumer-affiliate reg
 
 Lead with the gap AESDR fills in THEIR practice. Never open with a commission rate.
 
-Vendux opening angle: every fractional sales exec they place hits a junior-rep ramp problem on Day 1. AESDR is the turn-key tool to hand new SDRs/AEs without Vendux building curriculum.
+Vendux opening angle: every fractional sales exec they place hits a junior-SDR/AE ramp problem on Day 1. AESDR is the turn-key tool to hand new SDRs/AEs without Vendux building curriculum.
 
 Martal Group opening angle: every SDR they place at a client undergoes onboarding that AESDR could formalize as a content bundle. Reduces Martal's training overhead, becomes part of the client-facing offer.
 
-Skaled opening angle: AESDR fills the rep-level onboarding gap inside Skaled's enablement engagements. Senior enablement + AESDR rep-level = full coverage without Skaled building curriculum.
+Skaled opening angle: AESDR fills the SDR/AE-level onboarding gap inside Skaled's enablement engagements. Senior enablement + AESDR SDR/AE-level = full coverage without Skaled building curriculum.
 
 Each message includes:
 - Personalized opening referencing one specific thing they do (research their website for a concrete reference)
