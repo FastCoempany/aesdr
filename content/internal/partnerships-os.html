@@ -642,8 +642,8 @@ supabase db query "select count(*) from partner_pipeline;"`}],
    steps:[
     'The JD makes this YOUR call by day 30. Start the evaluation now; you decide in Week 4 once you\'ve felt the real volume.',
     '<b>Open the matrix:</b> in this OS\'s sidebar click <span class="ui">Attribution Decision</span>. The four contenders with verified May-2026 pricing are there: extend the custom Supabase+Stripe system ($0), Rewardful ($49/$99/mo), PartnerStack (~$800+/mo est.), Impact ($30/mo or 3% + 2.5% network tax).',
-    '<b>Note the constraint from the schema</b> (you saw it in w1t4): AESDR already has a working custom attribution system — <code>affiliate_attributions</code>, 30-day window, Stripe Connect payouts. The real question is build-vs-buy for partner-facing dashboards + automated payouts, not "do we have attribution."',
-    '<b>Dispatch Ledger</b> (line below) to estimate the build-cost of the three gaps the custom system has: (1) partner self-serve dashboard, (2) automated payout scheduling, (3) link-level click tracking. That number is your "build" side of build-vs-buy. <b>Done when</b> you\'ve opened the matrix and the estimate exists — the decision itself is day ~25, on purpose.'
+    '<b>Note the constraint from the schema</b> (you saw it in Day 2 — Map the existing affiliate machine): AESDR already has a working custom attribution system — <code>affiliate_attributions</code>, 30-day window, Stripe Connect payouts. Per the May-2026 build-cost audit at <code>docs/partnerships/attribution-build-cost.md</code>, the three gaps the OS originally named (partner dashboard, automated payouts, link-click tracking) are <u>substantially closed already</u>. The real question is "stay vs. swap to Rewardful for polish," not "build vs. buy."',
+    '<b>Dispatch Ledger</b> (line below) to re-audit the current state. Read <code>docs/partnerships/attribution-build-cost.md</code> first — that\'s the baseline. The one remaining piece of plumbing: schedule <code>/api/cron/affiliate</code> in <code>vercel.json</code> (15 minutes — the route exists but Vercel isn\'t invoking it on schedule). <b>Done when</b> you\'ve read the memo and opened the matrix — the actual decision happens day ~25 with real volume data.'
    ],
    callouts:[{type:'note',title:'Don\'t decide today',body:'Anyone who picks the attribution platform on day 5 is guessing. You pick on day ~25 when you know your real partner count, payout cadence, and how much partner-facing polish you actually need. Today you just open the evaluation.'}]
   }
@@ -757,20 +757,18 @@ where name = any(array['<name1>','<name2>','<name3>']);`}]
     'You now know your real numbers: ~25 contacted, ~8–10 in conversation, a sense of payout cadence and how much partner-facing polish matters. Decide now.',
     '<b>Reopen the matrix</b> (sidebar → <span class="ui">Attribution Decision</span>) and read the "honest default" callout. For AESDR\'s stage it\'s: <b>extend the custom Supabase + Stripe system</b> for the first ~25 partners ($0), and adopt <b>Rewardful at $49/mo</b> (Stripe-native, cleanest for one-time products) the moment partner self-serve dashboards become the bottleneck.',
     '<b>Write the memo:</b> <code>touch docs/partnerships/attribution-decision.md</code> and fill one page — what you chose, the three gaps it closes, the exact trigger condition that flips you to Rewardful, and the cost both ways. This is a founder-aligned strategic call: email the founder the memo, don\'t just commit it.',
-    '<b>Dispatch Ledger to implement</b> (line below) whichever you chose. If extending custom, the first gap to close is link-level click tracking — the <code>/r/[slug]</code> route exists; add the clicks table in the block below and <code>supabase db push</code>. <b>Done when</b> the memo is sent and the choice is implemented.'
+    '<b>Dispatch Ledger to implement</b> (line below) whichever you chose. If extending custom, the audit found ONE remaining piece of plumbing: schedule the affiliate-lifecycle cron in <code>vercel.json</code> (it exists at <code>app/api/cron/affiliate/route.ts</code> but isn\'t invoked). Add the entry from the block below and re-deploy. <b>Done when</b> the memo is sent, the choice is implemented, and the cron shows up green in Vercel\'s cron dashboard.'
    ],
-   code:[{label:'if extending custom: link-level click tracking gap',lang:'sql',body:`-- the one gap worth closing first: per-link click attribution.
--- /r/[slug] route already exists; add a clicks table it writes to.
-create table if not exists affiliate_link_clicks (
-  id uuid primary key default gen_random_uuid(),
-  affiliate_slug text not null references affiliates(slug) on delete cascade,
-  link_slug text,
-  ip_hash text, user_agent text, referrer text,
-  utm_source text, utm_medium text, utm_campaign text,
-  clicked_at timestamptz not null default now()
-);
-create index if not exists alc_slug_idx on affiliate_link_clicks(affiliate_slug);
-create index if not exists alc_time_idx on affiliate_link_clicks(clicked_at desc);`}]
+   code:[{label:'if extending custom: schedule the affiliate cron (the one real remaining gap)',lang:'json',body:`// vercel.json — add this object to the existing "crons" array:
+{
+  "path": "/api/cron/affiliate",
+  "schedule": "0 12 * * *"
+}
+// noon UTC — outside the existing 13/14/15/16 UTC crons so load is staggered.
+// Confirm CRON_SECRET env var is set in Vercel (the existing 4 crons use it).
+// The cron promotes affiliate_attributions pending -> cleared once the 30-day
+// refund window has passed AND the underlying purchase is still active.
+// Idempotent: re-running same day only flips rows already eligible.`}]
   }
  ]},
 {phase:'p30',tag:'Week 4½ · Days 23–30',title:'Close the phase. Hit the milestone.',
@@ -879,7 +877,7 @@ select a.slug, a.display_name, a.status, a.sophistication_tier,
   coalesce(sum(att.commission_amount_cents) filter (where att.status='cleared'),0)/100.0 as cleared_commission,
   coalesce(sum(att.commission_amount_cents) filter (where att.status='paid'),0)/100.0 as paid_to_date
 from affiliates a
-left join affiliate_link_clicks alc
+left join affiliate_clicks alc
   on alc.affiliate_slug=a.slug and alc.clicked_at > now()-interval '7 days'
 left join affiliate_attributions att on att.affiliate_slug=a.slug
 group by a.slug,a.display_name,a.status,a.sophistication_tier
@@ -1114,14 +1112,14 @@ const ATTRIBUTION = {
   cols:['Custom (extend Supabase+Stripe)','Rewardful','PartnerStack','Impact'],
   rows:[
     ['Fit for one-time product','Native — already built for $249/$299 one-time','Excellent — Stripe-native, one-time-friendly','Built for SaaS recurring; one-time is awkward','Enterprise; overkill for stage'],
-    ['Partner self-serve dashboard','Build it (gap)','Included','Included, polished','Included'],
-    ['Automated payouts','Stripe Connect already wired','Via Stripe','Built-in','Built-in'],
-    ['Monthly cost (verified May 2026)','~$0 + your time','$49/mo Starter (≤$7.5k/mo aff. rev) · $99/mo Growth (≤$15k/mo) · 0% txn fees','~$800+/mo est. + 3–15% commission surcharge (no public pricing)','$30/mo OR 3% monthly aff. rev (whichever higher) + 2.5% network tax on all payouts'],
-    ['Setup time','Days (extend schema)','~1 day','~1 week','Weeks'],
+    ['Partner self-serve dashboard','Already built — 5 sub-pages live','Included','Included, polished','Included'],
+    ['Automated payouts','Built — cron + Stripe Connect + webhook clawback','Via Stripe','Built-in','Built-in'],
+    ['Monthly cost (verified May 2026)','~$0 + ~8–12h polish backlog','$49/mo Starter (≤$7.5k/mo aff. rev) · $99/mo Growth (≤$15k/mo) · 0% txn fees','~$800+/mo est. + 3–15% commission surcharge (no public pricing)','$30/mo OR 3% monthly aff. rev (whichever higher) + 2.5% network tax on all payouts'],
+    ['Setup time','~0 (working today)','~1 day','~1 week','Weeks'],
     ['Best when','≤25 partners, you control the stack','Self-serve dashboards become the bottleneck','You need a partner marketplace + PRM','Large channel program, later']
   ],
   pickRow:5, // "Best when" row index for highlighting note
-  verdict:'Extend the custom system for the first ~25 partners (it\'s already built — 40% commission, 30-day window, Stripe Connect payouts all exist). Adopt <b>Rewardful at $49/mo</b> (Starter; 0% transaction fees, Stripe-native, one-time-purchase clean) the moment partner self-serve dashboards become the bottleneck — you hit the $7,500/mo revenue cap at ~100 affiliate sales/month, then upgrade to $99/mo Growth. Skip PartnerStack (est. $800+/mo + 3–15% commission surcharge, no public pricing) and Impact ($30/mo or 3% rev whichever higher, plus 2.5% network tax on every payout) until the channel program needs a full PRM. Both are over-engineered and over-priced for this stage.'
+  verdict:'<b>Per the May-2026 build-cost audit</b> (docs/partnerships/attribution-build-cost.md), the custom system is not a "build" option — it\'s functional end-to-end and in production today. Partner dashboard (5 sub-pages), payout pipeline (cron + Stripe Connect + webhook clawback), and link-click tracking (affiliate_clicks) are all built; the one remaining piece of plumbing (scheduling /api/cron/affiliate) was closed during the latest OS update. <b>Stay on custom</b> through at least Phase 30 — the real choice is "stay vs. swap to Rewardful for polish," not "build vs. buy." Adopt <b>Rewardful at $49/mo</b> only when a trigger fires: active affiliates >25 with a polish backlog bottleneck, "where\'s my dashboard?" inquiries >2/week, or a Stripe Connect edge case the custom code can\'t handle. Skip PartnerStack (est. $800+/mo + 3–15% surcharge) and Impact ($30/mo or 3% + 2.5% network tax) until the channel program needs a full PRM.'
 };
 
 /* ─── TEMPLATE LIBRARY ─── */
@@ -1357,7 +1355,7 @@ const DISPATCH = {
   w1t4:['Use the ledger subagent to walk the affiliate schema and show current affiliates plus their attribution totals.'],
   w1t5:['Use the ledger subagent to create the partner_pipeline table from the Day-3 migration and push it to the live project.'],
   w1t6:['Use the scout subagent to run Sweep 1: find 15 paid sales communities on Skool and Mighty Networks (50–2,000 members), scored for voice-fit.'],
-  w1t7:['Use the ledger subagent to estimate the build-cost of the three gaps in the custom attribution system: partner dashboard, automated payouts, link-click tracking.'],
+  w1t7:['Use the ledger subagent to re-audit the custom attribution system against docs/partnerships/attribution-build-cost.md — the Day-5 audit found the partner dashboard, payout pipeline, and link-click tracking all already built. Confirm nothing material changed and check whether any Day-22 trigger condition (active count >25, dashboard inquiries >2/week, Stripe Connect edge case) has fired.'],
   w2t1:[
     'Use the dossier subagent to verify the 10 named affiliate prospects in Prospect Intel are still current (audience size, contact path, conflict flags) — start with Neil Bhuiyan, Florin Tatulea, Stefan Conic, Daniel Goerner, Elric Legloire.',
     'Use the scout subagent — Sweep 1 (extend the list): paid communities (Skool + Mighty Networks + Circle), sales/SDR/AE/revenue, 50–2,000 members. Skip anyone already in Prospect Intel. Return 15 fresh scored rows.',
@@ -1645,9 +1643,9 @@ const LIKELY_DONE = {
     checks:[
       'Visit <code>aesdr.com/r/&lt;active-affiliate-slug&gt;</code> (use a real slug from <code>select slug from affiliates limit 1;</code>) — should redirect to the buy page ✓',
       'In SQL Editor: <code>select count(*) from affiliate_attributions;</code> — should return a number (table exists) ✓',
-      'Then: <code>select count(*) from affiliate_link_clicks;</code> — if errors with "relation does not exist", this table is the open gap (it\'s the optional Day-22 migration from the Attribution decision step)'
+      'Then: <code>select count(*) from affiliate_clicks;</code> — also returns a number ✓. Per the build-cost audit, the click→attribution chain is already wired end-to-end (<code>/r/[slug]</code> → <code>affiliate_clicks</code> → cookie → checkout metadata → webhook → attribution row).'
     ],
-    verdict:'<b>The /r/ redirect route exists; the attribution table exists.</b> The <code>affiliate_link_clicks</code> table may be the one gap — if you went with "extend custom" on Day 22, you should have added it then. Your real Day-35 work: do a live click → purchase test and confirm a <code>pending</code> attribution row appears with the 30-day window.'
+    verdict:'<b>The whole attribution chain is already built.</b> The <code>/r/[slug]</code> route logs clicks to <code>affiliate_clicks</code>, sets the 30-day cookie, and the Stripe webhook writes the attribution on purchase. Your real Day 35–37 work: do a live click → purchase test and confirm a <code>pending</code> attribution row appears with the 30-day window — you\'re verifying the wiring, not building it.'
   },
   w7t1:{
     checks:[
@@ -1714,24 +1712,26 @@ Before committing, run "node scripts/canon-check.mjs --soft" against the new fil
 Commit: "Add discovery doctrine (Day 4 deliverable)". Push to main.`
   },
   w1t7:{
-    title:'Day 5 — Attribution build-cost analysis',
-    prompt:`Day 5 of the AESDR 90-day partnerships plan: estimate the build-cost of closing the three gaps in the custom attribution system.
+    title:'Day 5 — Attribution build-cost analysis · ALREADY DONE (re-audit to refresh)',
+    prompt:`Day 5 deliverable is DONE — the audit memo lives at docs/partnerships/attribution-build-cost.md (committed 2026-05-31). Read it first.
 
-In the aesdr repo, audit these files:
-- lib/affiliate-*.ts (entity, kit-session, payouts, etc.)
-- app/api/checkout/route.ts (Stripe checkout)
-- app/r/[slug]/route.ts if it exists (the tracked redirect)
-- supabase/migrations/*affiliate*.sql (the existing schema)
-- supabase/migrations/_apply_all_affiliate_hub.sql (the hand-applied bundle)
+Headline finding from that audit: the three "gaps" the OS originally named are substantially closed. The custom attribution system is essentially complete and in production:
+- Partner self-serve dashboard: BUILT (5 sub-pages — overview / payments / links / submissions / playbooks).
+- Automated payout scheduling: pipeline BUILT (runAffiliatePayoutBatch + /api/cron/affiliate + Stripe Connect transfers + webhook clawback). The cron is now scheduled in vercel.json as of this OS update.
+- Link-level click tracking: FULLY BUILT. /r/[slug] writes to affiliate_clicks (note: the table is affiliate_clicks, NOT affiliate_link_clicks), sets the 30-day cookie, checkout reads it as Stripe metadata, webhook closes the loop.
 
-For each of the three gaps, write an estimate covering:
-(1) Partner self-serve dashboard — files to add, UI shape, hours of dev work, data the dashboard reads, permissions that enforce it.
-(2) Automated payout scheduling — what triggers it (cron / Stripe webhook / manual button?), state transitions on affiliate_attributions and affiliate_payouts, how it interacts with the existing payout helper in app/actions/affiliate.ts.
-(3) Link-level click tracking — the affiliate_link_clicks table (specced in OS Days 20-22 SQL block), the /r/[slug] route changes to write to it, how clicks join to attributions.
+Only run this prompt to RE-AUDIT if something material changed. To re-audit:
 
-Write the result to docs/partnerships/attribution-build-cost.md as a one-page memo. This is the "build" side of the build-vs-buy decision the founder reviews on Day 22.
+In the aesdr repo, re-read:
+- docs/partnerships/attribution-build-cost.md (the baseline)
+- lib/affiliate-*.ts, lib/stripe-connect.ts
+- app/api/checkout/route.ts, app/r/[slug]/route.ts, app/api/webhooks/stripe/route.ts, app/api/cron/affiliate/route.ts
+- app/actions/affiliate.ts (runAffiliatePayoutBatch, markPayoutPaid)
+- supabase/migrations/*affiliate*.sql
 
-Commit: "Attribution build-cost analysis (Day 5 deliverable)". Push to main.`
+Update the memo's rollup table + recommendation if the state changed. Check whether any of the three Day-22 trigger conditions have fired (active affiliate count >25, "where's my dashboard?" inquiries >2/week, a Stripe Connect edge case needing functionality the custom code lacks).
+
+Commit: "Re-audit attribution build-cost". Push to main.`
   },
   w2t3:{
     title:'Day 10 — Write the canon-checked outreach library',
@@ -1771,19 +1771,21 @@ Read first:
 - The Benchmarks section (BENCHMARKS constant)
 - docs/partnerships/attribution-build-cost.md if it exists (from Day 5)
 
-Recommended choice: extend the custom Supabase + Stripe attribution system for the first ~25 affiliates ($0/mo cost). Adopt Rewardful at $49/mo Starter (Stripe-native, 0% transaction fees, supports one-time products) the moment partner self-serve dashboards become the bottleneck — empirically when active affiliates >25 OR "where's my dashboard?" inquiries exceed 2/week.
+IMPORTANT context from the Day-5 build-cost audit (docs/partnerships/attribution-build-cost.md): the custom system is NOT a "build from scratch" option — it is substantially complete and in production. Partner dashboard, payout pipeline, and link-click tracking (affiliate_clicks table, NOT affiliate_link_clicks) are all built. The only piece of remaining plumbing — scheduling /api/cron/affiliate in vercel.json — was closed during the OS-doc update. So the real decision is "stay on the working custom system vs. swap to Rewardful for polish," not "build vs. buy."
+
+Recommended choice: stay on the custom Supabase + Stripe attribution system through at least Phase 30, likely Phase 60 ($0/mo cost, already working). Adopt Rewardful at $49/mo Starter only when one of the trigger conditions below fires.
 
 The memo MUST include:
 - The recommended choice in one sentence at the top
-- The three gaps the custom system has (partner dashboard, automated payouts, link-click tracking)
-- The exact trigger condition that flips the decision to Rewardful (numeric — "≥25 active affiliates AND ≥2 dashboard inquiries/week")
-- Cost both ways (custom: $0/mo + 2-3 dev-days; Rewardful Starter: $49/mo + ~1 day integration)
+- The honest current state: custom system is functional end-to-end; polish backlog is ~8-12 hours (cite the build-cost memo)
+- The exact trigger conditions that flip the decision to Rewardful: (1) active affiliate count >25 AND dashboard-polish backlog becomes the bottleneck, OR (2) "where's my dashboard?" inquiries exceed 2/week, OR (3) a Stripe Connect edge case (de-activation, dispute, OFAC) needs functionality the custom code lacks
+- Cost both ways (custom: $0/mo + the polish backlog as the cohort grows; Rewardful Starter: $49/mo + ~1 day integration + ongoing webhook-reliability risk)
 - Rollback path: how to revert from Rewardful back to custom if it proves wrong
 - The Day-30 milestone evidence (the memo itself)
 
-After the memo, IF the choice is "extend custom," add the link-level click tracking gap. Create a migration file at supabase/migrations/<timestamp>_affiliate_link_clicks.sql with the clicks table from the OS Days 20-22 code block. Apply directly via Supabase Dashboard SQL Editor (https://supabase.com/dashboard/project/jwhjysjvehqslzcfpehl/sql/new — the CLI is broken in this repo due to duplicate-timestamp issues). Then INSERT a tracking row in supabase_migrations.schema_migrations.
+No migration work is needed — the link-click tracking table (affiliate_clicks) already exists and is wired. If the audit surfaced any NEW gap since Day 5, address it; otherwise the memo is the whole deliverable.
 
-Commit: "Attribution platform decision memo + link-click tracking (Days 20-22 deliverable)". Push to main.`
+Commit: "Attribution platform decision memo (Days 20-22 deliverable)". Push to main.`
   },
   w5t2:{
     title:'Days 28–30 — Phase-30 founder memo',
