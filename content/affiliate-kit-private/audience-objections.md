@@ -100,7 +100,8 @@ rather your recommendation be that the program is worth the list price.
 ### "Can I expense this?"
 
 Almost always yes. AESDR provides a receipt and invoice on purchase.
-Most L&D budgets cover this easily, especially the Team plan.
+At $249–$299 it sits well under most L&D approval thresholds; the Team plan
+is built for the budget conversation.
 
 ### "What if I hate it?"
 
@@ -142,7 +143,7 @@ commission."*
 
 ### "How much do you make if I sign up?"
 
-The honest answer (lift verbatim): *"I get 30% of net — about $70 on a
+The honest answer (lift verbatim): *"I get 40% of net — about $96 on a
 $249 SDR plan after refunds and processing fees. It doesn't change the
 price you pay. If you sign up and don't like it, the 14-day refund is
 real — I'd rather you refund than feel like you wasted money."*

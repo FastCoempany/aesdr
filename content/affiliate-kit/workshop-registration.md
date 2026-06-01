@@ -1,3 +1,9 @@
+# Specimen workshop registration page
+
+> **SPECIMEN — the bracketed `[TOKENS]` below fill in automatically at pilot setup** (workshop title, host line, registration form). This is the structure your workshop page will follow, so you can see exactly what your audience lands on before you commit. The voice and the offer are real; only the details are templated.
+
+---
+
 # [WORKSHOP_TITLE]
 
 > [WORKSHOP_SUBTITLE]

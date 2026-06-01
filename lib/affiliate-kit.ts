@@ -48,6 +48,14 @@ export const KIT_ENTRIES: KitEntry[] = [
 
   // How co-promotion works
   {
+    slug: "what-you-earn",
+    title: "What You Earn",
+    description:
+      "The rate, the math, and when you're paid — in plain numbers, before you commit.",
+    category: "How co-promotion works",
+    source: "what-you-earn",
+  },
+  {
     slug: "co-promoting-aesdr",
     title: "Co-Promoting AESDR",
     description:

@@ -53,14 +53,14 @@ export default function KitPage() {
             marginRight: "auto",
           }}
         >
-          The full affiliate kit, readable before you apply. Positioning, claim limits, disclosure language, lockup rules &mdash; everything you&rsquo;d need to evaluate whether the partnership makes sense for your audience.
+          Most affiliate programs gate the kit behind an application. We don&rsquo;t. Positioning, what you earn, claim limits, disclosure language, the actual agreement &mdash; all of it readable before you ever talk to us, so you can decide whether the partnership fits your audience on your own terms.
         </p>
       </div>
 
       <KitIndexList />
 
       <div style={{ padding: "96px 24px 0" }}>
-        <HubCTA href="/affiliates/apply">Request a affiliate conversation →</HubCTA>
+        <HubCTA href="/affiliates/apply">Request an affiliate conversation →</HubCTA>
       </div>
 
       <CaveatLayer>

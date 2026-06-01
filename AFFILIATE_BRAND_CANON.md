@@ -48,7 +48,7 @@ A borrowed audience has 60 minutes and zero trust. Position must land in 10 seco
 | What AESDR is | The operating manual for early-career SaaS sales, not the motivation engine. |
 | Who it's for | First-1-to-2-year SDRs and AEs in startup SaaS who're serious about controlling chaos, managing toxic leadership, protecting their commission, and their future. (Also: SDR managers buying for ramp.) |
 | Who it's explicitly not for | People looking for motivational content, automated shortcuts, LinkedIn polish, badge-hustle, certification clout, or anything that smells like a guru course. |
-| Structural promise | 12 courses. 5 takeaway tools. Your login keeps working. Discord ("Untamed") — alumni-only, opens on course completion. 14-day refund. |
+| Structural promise | 12 courses. Seven substantial assets you keep. Your login keeps working. Discord ("Untamed") — alumni-only, opens on course completion. 14-day refund. |
 | Delivery format | Self-paced, interactive, field-tested. Not video lectures. Not motivation. |
 | Pricing (current canon) | $249 SDR · $299 AE · Team (up to 10 seats) is contact-for-pricing — let's discuss. One-time; your login keeps working. |
 | Authority frame | Built by people who carried bags and managed AEs/SDRs for 10+ years. Authority lives in the brand and the host, never in a named founder. |
@@ -254,7 +254,7 @@ Forbidden iris uses:
 - **Default: no photography.** AESDR's visual signature is typographic. If imagery is needed, prefer abstract editorial layout (ghost numerals, terminal blocks, redacted text) over stock.
 - **No stock photos of:** people in headsets, handshake closeups, generic "team" shots, fake server rooms, suits at whiteboards, men pointing at floating dashboards.
 - **Iconography & symbols — custom, on-brand, methodically chosen.** Icons and symbols are in play, but every glyph must read as AESDR-custom, not as a third-party icon library. **Banned:** Heroicons, Feather, FontAwesome, Lucide, Material, Bootstrap Icons, Phosphor, Tabler, or any commercial / off-the-shelf set. **Seed iconography in the system today:** the warning circle (`.warn-icon`), the terminal dots (`.term-dot.r/y/g`), the classified stamp (`.faq-stamp`), the corner brackets (`.corner`), the ghost numeral, the deck numeral (`.deck-num`), the cursor (`.cursor`, `.term-cursor`), the redaction band (`.faq-blur` + `.faq-redact`). All new symbols extend that family. Full doctrine in **§6.8**.
-- **The Turtle.** When the existing AESDR turtle artwork is used (mobile gate, etc.), it stays in the same color treatment as production. It does not appear on partner collateral by default. (Open question: whether the turtle gets a partner-context appearance. Resolve before first deck.)
+- **Leponeus (the mascot).** AESDR's mascot is Leponeus. When Leponeus artwork is used, it stays in the same color treatment as production. Use the pose set in `public/mascot/` (e.g. `leponeus-doctrine.png`). On partner collateral, use sparingly and only where it earns its place — never as decoration.
 
 ### 6.6 Partner co-branding zone
 - **Lockup placement:** "AESDR × [partner]" lockup goes top-center of partner-specific landing pages, top-left of partner-specific decks, footer-only on emails.
@@ -574,7 +574,7 @@ If the partner cannot or will not disclose, we do not work with them. This is a 
 
 ### 10.2 Approved claims
 The partner and host may say these:
-- The structural promise (12 courses, 5 takeaway tools, your login keeps working, $249/$299/Team is contact-for-pricing, 14-day refund). Verbatim.
+- The structural promise (12 courses, seven substantial assets, your login keeps working, $249/$299/Team is contact-for-pricing, 14-day refund). Verbatim.
 - "Built by people who carried bags and managed AEs and SDRs for 10+ years."
 - "Not video lectures. Interactive."
 - "Discord community ('Untamed') included."
@@ -786,7 +786,7 @@ This document is the source of truth for the affiliate / partner ecosystem until
 
 **Outstanding open questions** (not blocking, to resolve before specific deliverables):
 1. Founder bio — anonymized stub vs full instructor bio for the host. (Pending host casting.)
-2. The Turtle artwork — does it appear on partner collateral, and if so, where?
+2. Leponeus (the mascot) — how prominently does it appear on partner collateral, and where? (Use sparingly; never decoration.)
 3. Admissions alias setup — `admissions@aesdr.com` vs another address? Calendar tooling choice?
 4. Is the host one named individual long-term, or a rotating cast? Affects locked vs ad-lib ratios.
 5. Workshop title — **resolved 2026-05-28**: *What good actually looks like in startup SaaS.* See D08 for rationale; subtitle and downstream threading in D07, D09. Per-pilot templates (D10, D13, D14, D15, D18, D24, D26) inherit via `[WORKSHOP_TITLE]`.

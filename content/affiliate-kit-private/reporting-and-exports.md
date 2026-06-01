@@ -16,7 +16,7 @@ attribution window — you receive a one-page email report covering:
 - **Enrollments to date** (gross), plan mix shown
 - **Refund status** — any refunds within the 14-day window are flagged
 - **Projected commission**, with the math shown line-by-line:
-  gross → minus refunds → minus Stripe fees → net → 30% = your commission
+  gross → minus refunds → minus Stripe fees → net → 40% = your commission
 
 The report is the same data we're looking at on our side. No surprises
 at the close.
@@ -60,9 +60,8 @@ PROJECTED COMMISSION
   Less refunds (1 within 14d)      −$249
   Less Stripe fees                 −$76
   Net revenue                      $2,315
-  Your 30%                         $694.50
-  Cohort 1 sign-on (one-time)      $500
-  PROJECTED TOTAL                  $1,194.50
+  Your 40%                         $926.00
+  PROJECTED TOTAL                  $926.00
 
 PAYMENT TIMELINE
   Attribution window closes:       2026-XX-XX
@@ -108,7 +107,7 @@ One row per enrollment attributed to you. Columns:
 | `refunded` | `true` / `false` |
 | `refunded_at` | ISO timestamp if refunded |
 | `commission_status` | `projected` / `confirmed` / `paid` |
-| `commission_amount` | Your 30% on the net, or 0 if refunded |
+| `commission_amount` | Your 40% on the net, or 0 if refunded |
 
 ## Joining the two
 

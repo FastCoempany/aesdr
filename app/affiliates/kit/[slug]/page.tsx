@@ -7,7 +7,7 @@
  * in content/affiliate-kit/. The catalog (slug → file) is in lib/affiliate-kit.ts.
  *
  * Per founder direction 2026-05-07: kit content lives on-site, not as PDFs.
- * Per-affiliate items (lockup SVGs scoped to a affiliate mark, signed agreement,
+ * Per-affiliate items (lockup SVGs scoped to an affiliate mark, signed agreement,
  * tracking links scoped to a slug) arrive after signing and are not part
  * of this public surface.
  */
@@ -105,7 +105,7 @@ export default async function KitDocPage(
       />
 
       <div style={{ padding: "96px 24px 0" }}>
-        <HubCTA href="/affiliates/apply">Request a affiliate conversation →</HubCTA>
+        <HubCTA href="/affiliates/apply">Request an affiliate conversation →</HubCTA>
       </div>
 
       <CaveatLayer>

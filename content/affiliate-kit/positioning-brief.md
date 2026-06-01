@@ -5,7 +5,7 @@ AESDR is the operating manual, not the motivation engine.
 A 12-course sales survival program for first-1-to-2-year SDRs and AEs in
 startup SaaS — self-paced, interactive, one-time purchase with no
 subscription — built by people who carried bags and managed AEs and
-SDRs for a decade rather than by people who read about it.
+SDRs for 10+ years rather than by people who read about it.
 
 ## Who this is for
 
@@ -27,9 +27,9 @@ a pilot in week four with both sides disappointed.
 
 ## What's in the program
 
-12 courses with named substantial assets — the alignment contract, the
-ROI commission defense tracker, the I-don't-know framework, the
-time-reclaimed calculator, and the end-of-course strike plan. All
+12 courses and seven substantial assets you keep — among them the AE/SDR
+alignment contract, the ROI & commission defense tracker, the CRM survival
+guide, and the end-of-course 72-Hour Strike Plan. All
 delivered as interactive HTML exercises, not video lectures. One-time
 purchase; every future curriculum update is included at no additional
 cost. A private alumni room opens to buyers who finish all twelve
@@ -49,6 +49,6 @@ through affiliate tracking.
 
 ## Three things we'll always say
 
-1. 12 courses, named substantial assets, $249 SDR / $299 AE Individual, 14-day refund.
+1. 12 courses, seven substantial assets, $249 SDR / $299 AE Individual, 14-day refund.
 2. Operating manual, not motivation engine. We don't perform expertise; we install it.
 3. We say out loud who shouldn't buy. Honesty is not a tone here — it's a competitive position.

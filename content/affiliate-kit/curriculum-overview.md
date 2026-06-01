@@ -8,10 +8,10 @@ What affiliates need to know about what AESDR teaches — without enrolling.
 operating frameworks with one or more interactive worksheets the AE/SDR keeps.
 Seven substantial assets open across the program — the AE/SDR Alignment
 Contract, the ROI & Commission Defense Tracker, the CRM Survival Guide, and
-more — that AEs and SDRs keep using after the course ends, plus the 72-Hour
-Strike Plan as an end-of-course bonus.
+more — that AEs and SDRs keep using after the course ends, including the
+end-of-course 72-Hour Strike Plan as the seventh.
 
-The format is interactive HTML, not video lectures. A lesson takes 15–25
+The format is interactive HTML, not video lectures. A section takes 15–25
 minutes. You can do one on a commute, two on a slow Friday, the rest the
 weekend before quarter end.
 

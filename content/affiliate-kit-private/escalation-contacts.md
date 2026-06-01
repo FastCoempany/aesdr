@@ -1,6 +1,6 @@
 # Escalation Contacts
 
-Who to email for what during a pilot. Five legitimate reasons a affiliate
+Who to email for what during a pilot. Five legitimate reasons an affiliate
 contacts AESDR — match yours to the row, get a faster answer.
 
 > **Where this fits:** Each path playbook has its own "When to email
@@ -50,7 +50,7 @@ watching it.
 If you've emailed `affiliates@aesdr.com` and haven't heard back inside
 **72 business hours**, something's gone wrong on our side. Reply to the
 original thread with `RE: still no response` in the subject. If still
-no reply within 24 hours of that, the affiliateship agreement names a
+no reply within 24 hours of that, the affiliate agreement names a
 direct founder contact for exactly this case — use it.
 
 ## Things we'd rather hear once than have sit

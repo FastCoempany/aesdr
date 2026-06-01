@@ -29,9 +29,9 @@ for someone who hasn't done the work yet.
 
 These are factual and verifiable; phrase them however fits your voice:
 
-- 12 courses + named substantial assets (alignment contract,
-  I-don't-know framework, time-reclaimed calculator, ROI commission
-  defense tracker, plus the end-of-course strike-plan bonus)
+- 12 courses + seven substantial assets you keep (among them the AE/SDR
+  alignment contract, the ROI & commission defense tracker, the CRM
+  survival guide, and the end-of-course 72-Hour Strike Plan)
 - Interactive HTML format, not video lectures
 - Private alumni room opens to buyers who finish all twelve courses
   (post-completion only — not a pre-purchase community claim)

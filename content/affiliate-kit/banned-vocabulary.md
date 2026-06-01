@@ -87,13 +87,10 @@ If you're already writing in a register that wouldn't trigger any of
 these words naturally, this whole list is a no-op. You read it, nodded,
 moved on. That's already a strong fit signal both ways.
 
-## The full canon
+## Want the full ruleset?
 
-The eight active rules (R-G1 through R-G8) for the consumer brand voice
-live in the AESDR repository under
-`docs/canon-revisions/2026-05-19-language-patch-supplement.md`. This
-doc is the Affiliate-facing summary; the supplement covers the full
-ruleset including the three rhetorical tests (read-aloud, bar-test,
-and the rules around sentence rhythm and structural AI-tell patterns).
-Affiliates don't need to memorise that document, but if you want to
-write closer to the AESDR voice, that's where it's spelled out.
+This page is the short version — enough to keep your copy in our register.
+There's a longer internal style guide behind it (sentence rhythm, the
+read-aloud and bar tests, a few AI-tell patterns we screen for). You don't
+need to memorise any of it. If you want to write even closer to the AESDR
+voice, just ask us and we'll walk you through it.

@@ -343,8 +343,8 @@ is gated content.
 
 > *You know that running fight between the AE and the SDR — who owns what
 > when a deal stalls, who fumbled the handoff? AESDR has a one-pager both of
-> you actually sign that just... settles it. Boring on paper. Saves the
-> relationship in practice.*
+> you actually sign that just... settles it. Boring on paper. The kind of
+> boring that stops the finger-pointing when a deal goes sideways.*
 >
 > *That's one of seven substantial assets you walk away with. The rest is a 12-course
 > operating manual for AEs and SDRs in their first year or two — built by
@@ -443,7 +443,7 @@ email but didn't register. ~140 words.
 > friction — `[REGISTRATION_URL]` → drops you into the replay page
 > after a one-field signup.*
 >
-> *Worth 60 minutes if you're an SDR or AE 0–10 years in. Worth your
+> *Worth 60 minutes if you're an SDR or AE in your first year or two. Worth your
 > hour for nothing otherwise — save it for something that fits.*
 >
 > ***Replay (72h window) →*** `[REGISTRATION_URL]`

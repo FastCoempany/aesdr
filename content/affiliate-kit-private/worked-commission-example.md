@@ -6,7 +6,7 @@ dashboards show you.
 
 ## Headline terms
 
-- **Commission rate:** 30% of net revenue.
+- **Commission rate:** 40% of net revenue.
 - **Attribution window:** 30 days from first qualifying click on your
   affiliate-attributed registration URL.
 - **Refund window:** 14 days from purchase. Net revenue is calculated
@@ -22,7 +22,7 @@ Gross revenue minus:
 - Stripe / payment processor fees (~2.9% + $0.30 per transaction)
 - Sales tax collected and remitted
 
-Net revenue is what AESDR keeps. Your 30% commission is calculated off
+Net revenue is what AESDR keeps. Your 40% commission is calculated off
 that net number.
 
 ## Worked example — a 1,000-person audience send
@@ -45,16 +45,16 @@ that net number.
 - **Net revenue after refund + fees: $2,315**
 - *(Sales tax pass-through, varies by buyer state — assume zero net effect for this calc.)*
 
-**Commission:** 30% × $2,315 = **$694.50**
+**Commission:** 40% × $2,315 = **$926.00**
 
 ## What that means in operator terms
 
-Per registrant, your commission works out to roughly **$8.70 per
-registrant**. Per live attendee, roughly **$19**. These numbers are the
+Per registrant, your commission works out to roughly **$11.60 per
+registrant**. Per live attendee, roughly **$26**. These numbers are the
 right ones to plan on; chase them, not the gross.
 
-A 10,000-person send at the same rates produces ~$6,945 in commission.
-A 100-person send at the same rates produces ~$70. The unit economics
+A 10,000-person send at the same rates produces ~$9,260 in commission.
+A 100-person send at the same rates produces ~$93. The unit economics
 are linear in audience size and conversion quality — there's no break
 point that shifts the math.
 
@@ -72,7 +72,7 @@ sticker number on the invoice.
 
 ## Attribution mechanics
 
-Your registration URL contains a affiliate-specific reference code. Three
+Your registration URL contains an affiliate-specific reference code. Three
 things happen when someone clicks it:
 
 1. **Cookie set on their browser** with your affiliate code, scoped to a
@@ -123,9 +123,9 @@ in your commission line.
 
 Once the 30-day attribution window closes:
 - Final net revenue is calculated (refunds settled, fees deducted)
-- Commission is computed at 30% of net
+- Commission is computed at 40% of net
 - Payment is wired net-45 from that close date
-- Payment method is whatever you specified in the affiliateship agreement
+- Payment method is whatever you specified in the affiliate agreement
   (typically ACH, Wise, or PayPal — Stripe Connect affiliate payouts coming
   later)
 

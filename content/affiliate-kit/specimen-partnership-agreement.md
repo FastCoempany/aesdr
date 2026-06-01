@@ -68,13 +68,13 @@ executed agreement (the "Affiliate").
 
 ## 5. Commission
 
-- **Rate.** 30% of net revenue on every enrollment attributed to the Affiliate
+- **Rate.** 40% of net revenue on every enrollment attributed to the Affiliate
   during the attribution window.
 - **Net revenue.** Gross revenue minus (i) refunds issued within the 14-day
   buyer-refund window, (ii) payment-processor fees (Stripe at approximately
   2.9% + $0.30 per US-card transaction; international and ACH may differ),
   and (iii) any sales or use tax collected on the Company's behalf. Net is
-  what the Company actually keeps after those deductions. 30% of that goes
+  what the Company actually keeps after those deductions. 40% of that goes
   to the Affiliate.
 - **Attribution window.** 30 days from a visitor's first qualifying click
   on the Affiliate's tracked URL. First-touch attribution. A registered

@@ -8,7 +8,7 @@ delivery.
 
 ## What you'll receive
 
-After your affiliateship agreement is countersigned and your assets are
+After your affiliate agreement is countersigned and your assets are
 prepared (typically 3 business days), you'll receive five files:
 
 1. **Lockup — horizontal SVG.** For registration page header, email
