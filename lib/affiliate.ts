@@ -22,7 +22,7 @@ export const ATTRIBUTION_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
 export const REFUND_WINDOW_MS = 14 * 24 * 60 * 60 * 1000;
 
 /** Default commission rate on the consumer-side affiliate program. */
-export const DEFAULT_COMMISSION_RATE = 0.3;
+export const DEFAULT_COMMISSION_RATE = 0.4;
 
 /**
  * Cookie value format: `${link_id}.${click_id}`. Both UUIDs. Dot
