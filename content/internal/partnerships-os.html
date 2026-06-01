@@ -1197,6 +1197,52 @@ Worth fifteen minutes to scope one?
 — Antaeus, AESDR · affiliates@aesdr.com`}
 ];
 
+/* ─── WORKED DRAFTS — one personalized first-touch per motion (2026-06-01) ─── */
+/* Real, Dossier-cleared, canon-passed examples. Files live in            */
+/* content/partnerships/outreach/drafts/. Drafts only — never sent.       */
+const DRAFTS = [
+  {motion:'affiliate', mlabel:'Affiliate', name:'Stacy Tan', surface:'Weekly Roundtable · newsletter',
+   status:'Dossier-cleared (Head of Sales at a non-competing SaaS; newsletter is a side project). The rare genuinely-clean affiliate.',
+   subject:'after the New AE Starter Kit',
+   body:`Stacy — I read "The New AE Starter Kit," and the part about handing a new AE the one-page ICP, the CRM stage definitions, and the entry/exit criteria before day one is the exact gap AESDR is built for: first-1-to-2-year SDRs and AEs who got dropped into the seat and told to figure it out.
+
+It is a one-time course ($249 SDR / $299 AE), built by operators, no guru act. If you ever point readers at it, the affiliate terms are 40% commission on a 30-day attribution window — real money, paid through Stripe, no games.
+
+Not asking for a yes today. Want the partner kit, so you can see whether it fits your list?
+
+— Antaeus, AESDR · affiliates@aesdr.com`},
+  {motion:'coach_complement', mlabel:'Coach complement', name:'Neil Bhuiyan', surface:'SDR DiscoCall · podcast',
+   status:'Sells HappySelling course + coaches at MySalesCoach. AESDR is the foundation under his high-touch work; lead with function, never price.',
+   subject:'the foundation layer under your coaching',
+   body:`Neil — the SDR DiscoCall podcast is built for people one or two years in who want real, specific help: the same people you take through HappySelling and MySalesCoach. AESDR sits one layer under that — a self-paced course that handles the foundation a new SDR or AE would otherwise spend your coaching hours on, so your time stays on the one-to-one only you can do.
+
+It is operator-built, $249 SDR / $299 AE, one-time, and within reach of every client you work with. If you fold it into your offering, the affiliate terms are 40% on every seat, 30-day attribution window, paid through Stripe.
+
+Worth fifteen minutes to see how it slots in next to what you already run?
+
+— Antaeus, AESDR · affiliates@aesdr.com`},
+  {motion:'open_recruit', mlabel:'Open recruit', name:'Tajh Walker', surface:'Cold Calling Chronicles · newsletter',
+   status:'Affiliates for HigherLevels + sells his own course. Honest "the better-made product is here, run both" pitch. Small audience (~303) — a motion test, not a marquee bet.',
+   subject:'a straight comparison, your call',
+   body:`Tajh — I will be direct: I know you point Cold Calling Chronicles readers at HigherLevels, and that is fair — the deal is real and they asked first. But your readers are first-1-to-2-year SDRs and AEs in startup SaaS learning the dialer, and I think AESDR is the better-made product for that exact reader: self-paced, one-time $249/$299, built by operators, no recurring program to talk anyone into.
+
+The affiliate terms are 40% on a 30-day attribution window, paid through Stripe — and nothing stops you running both and recommending whichever one actually fits the SDR or AE in front of you.
+
+Want the partner kit to compare side by side?
+
+— Antaeus, AESDR · affiliates@aesdr.com`},
+  {motion:'co_marketing', mlabel:'Co-marketing', name:'Michael Gagliano', surface:'SDR Nation · paid community',
+   status:'Members already get a JB Sales curriculum free — a referral link would compete. Only audience-value works: a co-hosted members-only workshop. Verify Michael vs Charlie Locke owns partnerships before sending.',
+   subject:'something bigger than a referral link',
+   body:`Michael — SDR Nation is full of exactly who AESDR is built for, and I do not think a tracked link does that relationship justice — your members already have a curriculum through JB Sales. I would rather do something real together: a members-only workshop into SDR Nation, "Your first 90 days as an SDR, taught by operators not gurus" — fresh tactical content for your newest members, built by us and fronted with you. No product sale in the room.
+
+AESDR is a one-time, operator-built course for first-1-to-2-year SDRs and AEs. If a referral arrangement ever fits down the line, the terms are there — but the workshop is the real offer.
+
+Worth fifteen minutes to scope one?
+
+— Antaeus, AESDR · affiliates@aesdr.com`}
+];
+
 /* ─── PRE-CALL ASSET BUNDLE ─── send these BEFORE the 15-min call ─── */
 const PRECALL = [
   {n:1,asset:'Audience-sized earnings 1-pager',type:'per-candidate',builds:'Scribe + Ledger',
@@ -2476,6 +2522,18 @@ function buildContent(){
         <button class="copyBtn" style="border-color:var(--ink);color:var(--ink)" onclick="copyText(document.getElementById('tmpl${i}').innerText,this)">Copy</button></div>
       <div class="tmplBody" id="tmpl${i}">${t.body}</div>
     </div>`).join('')}
+    <h3 class="subH">Worked drafts — one per motion</h3>
+    <p class="body" style="font-size:14px;color:var(--muted)">Real candidates, Dossier-cleared and canon-passed (2026-06-01). Each shows the template filled for an actual person, and proves the motion model end-to-end: a clean affiliate, a coach complement, an open recruit, a co-marketing relationship. Drafts only — never sent. Files in <code>content/partnerships/outreach/drafts/</code>.</p>
+    ${DRAFTS.map((d,i)=>{
+      const M={affiliate:'hi',coach_complement:'mid',open_recruit:'mid',co_marketing:'mid'}[d.motion]||'lo';
+      return `<div class="tmpl">
+      <div class="tmplHead">
+        <span class="tmplName">${esc(d.name)} <span class="badge ${M}" style="vertical-align:middle">${esc(d.mlabel)}</span></span>
+        <span class="tmplMeta">${esc(d.surface)}</span>
+        <button class="copyBtn" style="border-color:var(--ink);color:var(--ink)" onclick="copyText(document.getElementById('draft${i}').innerText,this)">Copy</button></div>
+      <div style="padding:10px 16px 0;font-size:12px;color:var(--muted);font-style:italic">${esc(d.status)}</div>
+      <div class="tmplBody" id="draft${i}"><b>Subject:</b> ${esc(d.subject)}\n\n${esc(d.body)}</div>
+    </div>`;}).join('')}
   </section>`;
 
   /* PRE-CALL ASSET BUNDLE */
