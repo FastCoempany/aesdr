@@ -631,7 +631,7 @@ supabase db query "select count(*) from partner_pipeline;"`}],
   {id:'w1t6',title:'Day 4 — Build the discovery doctrine (write it down)',day:4,tags:[A('scout')],
    steps:[
     'The JD says "discovery process documented" by day 30. Do it on day 4 so the next three weeks execute against it instead of improvising.',
-    '<b>Create the doc:</b> macOS — <code>mkdir -p docs/partnerships && touch docs/partnerships/discovery-doctrine.md</code>; Windows — <code>New-Item docs\\partnerships -ItemType Directory -ea 0; New-Item docs\\partnerships\\discovery-doctrine.md -ItemType File</code>. Then open it (<code>code docs/partnerships/discovery-doctrine.md</code> if VS Code is installed) and write one page covering four things: (1) the sourcing rule — practitioner networks, never marketplaces, never LinkedIn; (2) the voice-fit bar — score 1–5, reject anything ≤2; (3) the archetype targets — creator / coach / alumni / community; (4) the disqualifiers — guru aesthetic, vendor-sponsored conflicts, audience under ~1k engaged.',
+    '<b>Create the doc:</b> macOS — <code>mkdir -p docs/partnerships && touch docs/partnerships/discovery-doctrine.md</code>; Windows — <code>New-Item docs\\partnerships -ItemType Directory -ea 0; New-Item docs\\partnerships\\discovery-doctrine.md -ItemType File</code>. Then open it (<code>code docs/partnerships/discovery-doctrine.md</code> if VS Code is installed). The doctrine is already written and at <b>v2.0</b> — your job here is to read it, not recreate it. It covers: (1) sourcing rule — practitioner networks, never marketplaces, never LinkedIn; (2) voice-fit bar 1–5; (3) archetype targets; (4) the narrow disqualifiers (only competitor employees, sub-1k audience, contradicting-vendor sponsorship, disclosure refusal); (5) §4.5 motion tags — affiliate / coach_complement / open_recruit / co_marketing; (6) the Dossier-before-Scribe rule.',
     '<b>Dispatch Scout</b> (line below) to run Sweep 1 against that doctrine: 15 candidates across Skool, Mighty Networks, and independent sales newsletters. Scout returns a scored table — it does not invent names.',
     '<b>Pipe survivors to Dossier:</b> for every Scout row scoring voice-fit ≥3, dispatch Dossier to enrich it (real audience size, cadence, conflicts, the non-LinkedIn contact path).',
     '<b>Write them in:</b> have Ledger insert each enriched candidate into <code>partner_pipeline</code> at status <code>enriched</code>. <b>Done when</b> <code>docs/partnerships/discovery-doctrine.md</code> is committed and Scout has returned its first 15.'
@@ -654,7 +654,7 @@ supabase db query "select count(*) from partner_pipeline;"`}],
  tasks:[
   {id:'w2t1',title:'Days 6–7 — Run the full discovery sweep (target: 50 scored rows)',day:6,tags:[A('scout'),A('dossier')],
    steps:[
-    '<b>Head start:</b> the first sweep is already run — open <span class="ui">Prospect Intel</span> in the sidebar for 10 named affiliate candidates (Neil Bhuiyan, Florin Tatulea, Stefan Conic, …) with voice-fit scores and contact paths, plus 3 hard-conflict do-not-approach names. Your job this week: verify those, then extend to 50.',
+    '<b>Head start:</b> the first sweep is already run — open <span class="ui">Prospect Intel</span> in the sidebar for 10 named affiliate candidates, each with a <b>motion tag</b> (affiliate / coach_complement / open_recruit / co_marketing) that routes the angle. Most are coach_complement, not clean affiliates — that is expected. <b>Dossier before Scribe, always</b> — the sweep flags are sourcing, not clearance (it cleared 3 of 4 wrongly on 2026-06-01). Your job this week: Dossier-verify the motion on each, then extend to 50.',
     '<b>Dispatch Scout three times</b> (the three lines below), scoped to three surfaces so results don\'t blur together. Run them as separate dispatches, not one:',
     '<b>Sweep 1 — paid communities</b> (copy line 1): Skool + Mighty Networks + Circle. The community OWNER is the candidate. Filter to sales / SDR / AE / revenue, 50–2,000 members.',
     '<b>Sweep 2 — newsletters + podcasts</b> (line 2): independent sales newsletters (Substack/Beehiiv) + operator-host podcasts. Contact path = reply-to address or guest-pitch form.',
@@ -676,7 +676,7 @@ values
    steps:[
     '<b>Run the ranking query</b> (block below) via Ledger or <code>supabase db query</code>. It scores every enriched row by the composite <b>voice-fit (×3) + audience-fit (×2) + reachability (×1)</b> and returns the top 25.',
     '<b>Why reachability is weighted:</b> you have no LinkedIn — a 5k newsletter with an open reply address beats a 50k audience locked behind a gatekeeper. The query already caps audience influence so a huge-but-unreachable name can\'t buy its way up.',
-    '<b>Apply two hard cuts by hand</b> on the ranked list: cut anyone voice-fit ≤2 regardless of audience; cut anyone sponsored by a competing sales-course or a sales-tool vendor whose lessons you\'d contradict (Prospect Intel already flags the 3 hard conflicts — keep them out).',
+    '<b>Apply the cuts that still apply</b> on the ranked list: cut anyone voice-fit ≤2 regardless of audience; cut only the genuine disqualifiers — a competitor\'s <em>employee</em>, sub-1k engaged audience, or a vendor sponsorship whose lessons you\'d contradict. <b>Do NOT cut competing-course owners</b> — under doctrine v2.0 they are coach_complement candidates, not cuts. Tag the motion instead of dropping the row.',
     '<b>Update statuses</b> (block): top 25 stay <code>enriched</code> and get a <code>next_action_date</code>; everyone else moves to <code>cold</code> — <u>not deleted</u>, they\'re your Phase-90 second wave. <b>Done when</b> the top 25 each have a <code>next_action_date</code> and the rest read <code>cold</code>.'
    ],
    code:[{label:'rank the pipeline',lang:'sql',body:`select name, surface, audience_est, voice_fit,
@@ -690,7 +690,7 @@ limit 25;`}]
   {id:'w2t3',title:'Day 10 — Pre-write the outreach library',day:10,tags:[A('scribe')],
    steps:[
     '<b>Dispatch Scribe</b> (line below) to draft the reusable scaffolding so every send is personalization-on-top-of-canon, not a blank page. The finished drafts already live in the <span class="ui">Outreach Library</span> section of this OS — Scribe regenerates/tunes them, you don\'t start cold.',
-    '<b>Generate five pieces:</b> first-touch × 3 variants (newsletter-writer, community-owner, podcast-host), follow-up 1 (+4 days, adds value), follow-up 2 (+9 days, honest close). The first two sentences are the only bespoke part; the rest is templated.',
+    '<b>Generate the templates:</b> the 5 base pieces (first-touch newsletter / community / podcast, follow-up 1 at +4d, follow-up 2 at +9d) PLUS the 3 motion templates (coach_complement, open_recruit, co_marketing) — all 8 already exist in <code>content/partnerships/outreach/</code>. The first two sentences are the only bespoke part; the rest is templated. Pick the template by the candidate\'s motion tag, not by guess.',
     '<b>Lock the disclosure block</b> (never edited per send): commission rate, 30-day attribution window, $249/$299 one-time product, paid via Stripe, reply-to <code>affiliates@aesdr.com</code>.',
     '<b>Save + check:</b> Scribe writes them to <code>content/partnerships/outreach/</code> (one file each). Run <code>node scripts/canon-check.mjs content/partnerships/outreach/</code> on the folder. <b>Done when</b> 5 templates are saved and each passes canon-check.'
    ],
@@ -1052,21 +1052,21 @@ const RESOURCES = {
 /* ─── PROSPECT INTEL (Run A: affiliate; Run B: channel) — researched May 2026 ─── */
 const PROSPECTS = {
   affiliate:[
-    {name:'Neil Bhuiyan',surface:'Podcast',handle:'happyselling.io/podcast',audience:'2k–5k listeners · 110+ eps',archetype:'creator',vf:5,why:'Podcast built specifically for brand-new SDRs (max 2 yrs in seat); every episode is a live discovery call with an early-career SDR — exact audience match.',contact:'X DM @HappySelling_io · linktr.ee/happyselling',conflict:'N'},
-    {name:'Florin Tatulea',surface:'Newsletter (Substack)',handle:'salesflo.substack.com',audience:'~13k confirmed subs',archetype:'creator',vf:5,why:'Head of Sales Dev at Common Room; writes tactical prospecting breakdowns for SDRs/AEs at real SaaS companies — operator voice, zero guru.',contact:'Newsletter reply · X DM @FlorinTatulea',conflict:'N'},
-    {name:'Elric Legloire',surface:'Newsletter + Podcast',handle:'newsletter.outbound.kitchen',audience:'~7k newsletter · ~3–5k podcast',archetype:'creator',vf:4,why:'4x top-SDR, led teams at Chili Piper; Outbound Kitchen is a practitioner frame with no hype.',contact:'X DM @elriclegloire · Substack chat open',conflict:'Soft — Sell Better speaker; no paid-course conflict confirmed'},
-    {name:'Jed Mahrle',surface:'Newsletter (Substack)',handle:'jed.substack.com / practicalprospecting.io',audience:'tens of thousands (multi-platform)',archetype:'creator/coach',vf:4,why:'Ex-PandaDoc AE; writes cold email and outbound frameworks weekly — peer voice, results-oriented.',contact:'Newsletter reply · X DM',conflict:'Soft — sells agency + team-oriented newsletter courses; not a direct consumer SDR course'},
-    {name:'Tom Slocum',surface:'Newsletter (Beehiiv)',handle:'thesdlab.beehiiv.com',audience:'est. 3k–8k',archetype:'creator/coach',vf:4,why:'18 yrs in sales; The SD Lab writes outbound tactics in a "trenches" tone — anti-guru, very operator.',contact:'X DM @Tommy_Slocum · thesdlab.com/press-media',conflict:'Soft — sells $29.99 team bootcamp; not a consumer SDR course'},
-    {name:'Stefan Conic',surface:'Skool + Podcast',handle:'skool.com/sdr-hire-community-1422',audience:'Skool community + podcast est. 1–3k listeners',archetype:'community/creator',vf:4,why:'Founder of SDR Hire; podcast breakdowns are "400 cold calls a day" style — operator pragmatist.',contact:'sdrhire.com email',conflict:'N — recruiting firm, not a competing course'},
-    {name:'Daniel Goerner',surface:'Skool community',handle:'skool.com/sdr-bdr-community',audience:'est. 200–500 members',archetype:'community/coach',vf:4,why:'Active SDR at Oxylabs running a peer-built community for SDRs and AEs wanting tactical help — practitioner, not guru.',contact:'Skool DM @daniel-goerner-4130',conflict:'N — complementary community, not a curriculum'},
-    {name:'Sam Nelson',surface:'Newsletter + Community',handle:'samnelson.substack.com · SDRLeader.com',audience:'~11k Substack subs',archetype:'creator/community',vf:3,why:'Founded SDRLeader.com after years at Outreach; writes for the SDR world — slightly senior audience but high credibility.',contact:'X DM @realSamNelson · newsletter reply',conflict:'N — SDRLeader.com is vendor-neutral'},
-    {name:'Collin Mitchell',surface:'Podcast (Sales Transformation)',handle:'@collinmitchell on X',audience:'est. 1k–4k',archetype:'creator',vf:3,why:'Chief Evangelist at Humantic AI; twice-weekly personalization tips for SDRs.',contact:'X DM',conflict:'Soft — vendor affiliated (Humantic AI); no competing course'},
-    {name:'Michael Gagliano',surface:'Community (SDR Nation)',handle:'sdrnation.com',audience:'est. 500–2k members',archetype:'community',vf:3,why:'Co-founder of the longest-running paid SDR community; credibility with serious early-career SDRs and AEs.',contact:'sdrnation.com/about',conflict:'Soft — SDR Nation sells $540/yr competing membership; review carefully before approaching'}
+    {name:'Neil Bhuiyan',surface:'Podcast',handle:'happyselling.io/podcast',audience:'2k–5k listeners · 120+ eps',archetype:'creator',vf:4,why:'Podcast built specifically for brand-new SDRs (max 2 yrs in seat); every episode is a live discovery call with an early-career SDR — exact audience match.',contact:'X DM @HappySelling_io · linktr.ee/happyselling',motion:'coach_complement',conflict:'Sells HappySelling SDR course + coaches at MySalesCoach (Dossier-confirmed 2026-06-01). Draft ready.'},
+    {name:'Florin Tatulea',surface:'Newsletter (Substack)',handle:'salesflo.substack.com',audience:'~13k confirmed subs',archetype:'creator',vf:5,why:'Head of Sales Dev at Common Room; writes tactical prospecting breakdowns for SDRs/AEs at real SaaS companies — operator voice, zero guru.',contact:'Newsletter reply · X DM @FlorinTatulea',motion:'affiliate',conflict:'Common Room employee (vendor, not a course) — soft, not a disqualifier. Dossier before send.'},
+    {name:'Elric Legloire',surface:'Newsletter + Podcast',handle:'newsletter.outbound.kitchen',audience:'~7k newsletter · ~3–5k podcast',archetype:'creator',vf:4,why:'4x top-SDR, led teams at Chili Piper; Outbound Kitchen is a practitioner frame with no hype.',contact:'X DM @elriclegloire · Substack chat open',motion:'coach_complement',conflict:'Sells paywalled Outbound Chef Kit (paid content). Dossier before send.'},
+    {name:'Jed Mahrle',surface:'Newsletter (Substack)',handle:'jed.substack.com / practicalprospecting.io',audience:'tens of thousands (multi-platform)',archetype:'creator/coach',vf:4,why:'Ex-PandaDoc AE; writes cold email and outbound frameworks weekly — peer voice, results-oriented.',contact:'Newsletter reply · X DM',motion:'coach_complement',conflict:'Runs done-for-you outbound agency + paid courses. Dossier before send.'},
+    {name:'Tom Slocum',surface:'Newsletter (Beehiiv)',handle:'thesdlab.beehiiv.com',audience:'est. 3k–8k',archetype:'creator/coach',vf:4,why:'18 yrs in sales; The SD Lab writes outbound tactics in a "trenches" tone — anti-guru, very operator.',contact:'X DM @Tommy_Slocum · thesdlab.com/press-media',motion:'coach_complement',conflict:'Sells Outbound Accelerator 8-12wk program. Dossier before send.'},
+    {name:'Stefan Conic',surface:'Skool + Podcast',handle:'skool.com/sdr-hire-community-1422',audience:'Skool community + podcast est. 1–3k listeners',archetype:'community/creator',vf:4,why:'Founder of SDR Hire; podcast breakdowns are "400 cold calls a day" style — operator pragmatist.',contact:'sdrhire.com email',motion:'coach_complement',conflict:'Paid Skool courses inside SDR Hire community. Dossier before send.'},
+    {name:'Daniel Goerner',surface:'Skool community',handle:'skool.com/sdr-bdr-community-7025',audience:'est. 200–500 members',archetype:'community/coach',vf:4,why:'Active SDR at Oxylabs running a peer-built community for SDRs and AEs wanting tactical help — practitioner, not guru.',contact:'Skool DM @daniel-goerner-4130',motion:'coach_complement',conflict:'Paid coaching + planned mastery courses. Dossier before send.'},
+    {name:'Sam Nelson',surface:'Newsletter + Community',handle:'samnelson.substack.com · agoge.xyz',audience:'~11k Substack subs',archetype:'creator/community',vf:4,why:'Founded the Agoge sequence after years at Outreach; writes for the SDR world — slightly senior audience but high credibility.',contact:'X DM @realSamNelson · newsletter reply',motion:'coach_complement',conflict:'Founder, Agoge Prospecting School (paid SDR training). Dossier before send.'},
+    {name:'Collin Mitchell',surface:'Podcast (Sales Transformation)',handle:'@collinmitchell on X',audience:'est. 1k–4k',archetype:'creator',vf:3,why:'Chief Evangelist at Humantic AI; twice-weekly personalization tips for SDRs.',contact:'X DM',motion:'co_marketing',conflict:'Humantic AI evangelist (vendor, no course). 2026 activity unverified — confirm still hosting.'},
+    {name:'Michael Gagliano',surface:'Community (SDR Nation)',handle:'sdrnation.com',audience:'est. 500–2k members',archetype:'community',vf:3,why:'Co-founder of the longest-running paid SDR community; credibility with serious early-career SDRs and AEs.',contact:'sdrnation.com/about',motion:'co_marketing',conflict:'SDR Nation community + JB Sales training partnership. Co-host angle fits better than a link.'}
   ],
   affiliateConflicts:[
-    {name:'Jason Bay',surface:'Podcast (Outbound Squad)',handle:'outboundsquad.com/podcast',audience:'est. 10k–30k',why:'Hard conflict: confirmed Sell Better speaker + 30MPC trainer. Do not approach.'},
-    {name:'Belal Batrawy',surface:'Newsletter (Substack)',handle:'deathtofluff.substack.com',audience:'tens of thousands',why:'Hard conflict: runs Death to Fluff Bootcamp (paid AE program via learntosell.io). Do not approach.'},
-    {name:'Morgan J Ingram',surface:'Podcast (SDR Chronicles)',handle:'SDR Chronicles podcast',audience:'est. 5k–15k',why:'Hard conflict: Director at JBarrows Sales Training. Do not approach.'}
+    {name:'Morgan J Ingram',surface:'Podcast (SDR Chronicles)',handle:'SDR Chronicles podcast',audience:'est. 5k–15k',kind:'disqualifier',why:'Disqualifier (stays out): Director — an EMPLOYEE — at JBarrows Sales Training. Cannot recommend a rival to his employer\'s audience. This is the one genuine cut.'},
+    {name:'Jason Bay',surface:'Podcast (Outbound Squad)',handle:'outboundsquad.com/podcast',audience:'est. 10k–30k',kind:'coach_complement',why:'Reclassified (doctrine v2.0): trains for 30MPC + runs Outbound Squad. Owns courses → coach_complement, not a cut. Approachable on the complement angle.'},
+    {name:'Belal Batrawy',surface:'Newsletter (Substack)',handle:'deathtofluff.substack.com',audience:'tens of thousands',kind:'coach_complement',why:'Reclassified (doctrine v2.0): runs Death to Fluff Bootcamp. Course owner → coach_complement. Approachable on the complement angle.'}
   ],
   channel:[
     {name:'Vendux',type:'Fractional VP-Sales network',url:'vendux.org',size:'10+ (1,000+ exec roster)',fit:'North America\'s largest pre-vetted fractional sales leader network — every exec placed at a startup confronts a ramp problem. AESDR gives them a tool to hand new SDRs/AEs from Day 1.',structure:'Referral fee or co-sell — Vendux adds AESDR to placement package',conflict:'N',contact:'vendux.org contact form'},
@@ -1163,6 +1163,36 @@ Door's open whenever. — Antaeus`},
 AESDR Enterprise fills exactly that — same curriculum, manager-rollout layer, a diagnostic. It complements what you sell rather than competing. A few ways we could structure it (referral, reseller margin, or co-delivery).
 
 Worth a call to see if it slots into your engagements?
+
+— Antaeus, AESDR · affiliates@aesdr.com`},
+  {name:'Coach complement · first-touch',meta:'motion: coach_complement · lead with function, never price',
+   body:`Subject: the foundation layer under your coaching
+
+<span class="var">[NAME]</span> — I have been through <span class="var">[SPECIFIC THING THEY MADE]</span>, and it is clearly built for people who want the depth you give them one-to-one. AESDR sits one layer under that: a one-time, self-paced course that handles the foundation work — <span class="var">[REAL DETAIL]</span> — so your hours stay on the coaching only you can do.
+
+It is operator-built, $249 SDR / $299 AE, one-time, and within reach of every client you work with. If you fold it into your offering, the affiliate terms are 40% on every seat, 30-day attribution window, paid through Stripe.
+
+Worth fifteen minutes to see how it slots in next to what you already run?
+
+— Antaeus, AESDR · affiliates@aesdr.com`},
+  {name:'Open recruit · first-touch',meta:'motion: open_recruit · honest, run-both, no trash-talk',
+   body:`Subject: a straight comparison, your call
+
+<span class="var">[NAME]</span> — I will be direct: I know you point your audience at <span class="var">[COMPETITOR]</span>, and that is fine — someone asked first and the deal was probably reasonable. I think AESDR is the better-made product for <span class="var">[REAL DETAIL ABOUT THEIR AUDIENCE]</span>, and I would rather you see it and decide for yourself than not know it is here.
+
+It is operator-built, $249 SDR / $299 AE, one-time. The affiliate terms are 40% on a 30-day attribution window, paid through Stripe — and nothing stops you running both and watching which one your audience actually keeps.
+
+Want the partner kit to compare side by side?
+
+— Antaeus, AESDR · affiliates@aesdr.com`},
+  {name:'Co-marketing · first-touch',meta:'motion: co_marketing · the collaboration is the offer',
+   body:`Subject: something bigger than a referral link
+
+<span class="var">[NAME]</span> — <span class="var">[SPECIFIC PIECE OR SHOW]</span> reaches exactly the people AESDR is built for, and I do not think a tracked link does that relationship justice. I would rather do something real together: a guest spot, a joint piece, or a co-hosted workshop into your audience — built by us, fronted with you.
+
+AESDR is a one-time, operator-built course for first-1-to-2-year SDRs and AEs ($249/$299). If a referral arrangement also makes sense, the terms are 40% on a 30-day window, paid through Stripe — but the workshop or the collaboration is the real offer here.
+
+Worth fifteen minutes to scope one?
 
 — Antaeus, AESDR · affiliates@aesdr.com`}
 ];
@@ -1361,14 +1391,14 @@ const DISPATCH = {
     'Use the dossier subagent to verify the 10 named affiliate prospects in Prospect Intel are still current (audience size, contact path, conflict flags) — start with Neil Bhuiyan, Florin Tatulea, Stefan Conic, Daniel Goerner, Elric Legloire.',
     'Use the scout subagent — Sweep 1 (extend the list): paid communities (Skool + Mighty Networks + Circle), sales/SDR/AE/revenue, 50–2,000 members. Skip anyone already in Prospect Intel. Return 15 fresh scored rows.',
     'Use the scout subagent — Sweep 2: independent sales newsletters (Substack/Beehiiv) + operator-host podcasts. Skip Prospect Intel duplicates. Return 15 scored rows with reply-to / guest-pitch contact paths.',
-    'Use the scout subagent — Sweep 3: practitioner-network figures (30MPC, Outbound Squad, RepVue, Modern Sales Pros, Apex BDR Club, Pavilion) with their OWN audience. Skip Prospect Intel duplicates + the 3 hard-conflict names (Jason Bay, Belal Batrawy, Morgan Ingram). Return 15 scored rows.',
+    'Use the scout subagent — Sweep 3: practitioner-network figures (30MPC, Outbound Squad, RepVue, Modern Sales Pros, Apex BDR Club, Pavilion) with their OWN audience. Skip Prospect Intel duplicates. Skip only Morgan Ingram (a competitor employee — the one true disqualifier); Jason Bay + Belal Batrawy ARE includable now as coach_complement candidates. Tag each row with a motion. Return 15 scored rows.',
     'Use the dossier subagent to enrich every new candidate scoring voice-fit ≥3, then have ledger write the survivors + the 10 verified Prospect Intel rows to partner_pipeline at status=enriched. Target: 50 enriched rows total. If the three sweeps net fewer than 50 after voice-fit cuts, run one more sweep on the weakest-covered surface — do not lower the bar to hit the number (30 great beats 50 mediocre).'
   ],
   w2t2:['Use Ledger subagent to run the ranking query and show me the top 25 by composite score; flag any ties for me to break on voice-fit.'],
-  w2t3:['Use the scribe subagent to draft the outreach library — first-touch (newsletter / community / podcast variants), follow-up 1 (+4d), follow-up 2 (+9d). Canon-check each and save to content/partnerships/outreach/.'],
+  w2t3:['Use the scribe subagent to draft/refresh the outreach library — the 5 base templates (newsletter / community / podcast first-touch, follow-up 1 +4d, follow-up 2 +9d) plus the 3 motion templates (coach_complement, open_recruit, co_marketing). Canon-check each and save to content/partnerships/outreach/. (All 8 already exist — refresh, do not duplicate.)'],
   w3t2:[
     'Use the scribe subagent to personalize the first-touch for <NAME> from their Dossier brief — keep the economics + ask templated: <paste brief>',
-    'Recommended send order Wave 1 (8/day, from Prospect Intel highest voice-fit): 1. Neil Bhuiyan (podcast — exact audience), 2. Florin Tatulea (newsletter — Common Room SDR lead), 3. Stefan Conic (Skool + podcast), 4. Daniel Goerner (Skool community), 5. Elric Legloire (Outbound Kitchen), 6. Tom Slocum (The SD Lab), 7. Jed Mahrle (Practical Prospecting), 8. Sam Nelson (SDRLeader.com).'
+    'Recommended Wave-1 order (revised after Dossier — send by motion, not by raw voice-fit): CLEAN AFFILIATE first (the rarest, easiest yes) — Stacy Tan (draft ready), Florin Tatulea (Dossier-confirm the vendor-employee read first). Then COACH_COMPLEMENT — Neil Bhuiyan (draft ready), then Elric / Jed / Tom / Stefan / Daniel / Sam via the coach_complement template. Then CO_MARKETING — Michael Gagliano, Collin Mitchell. Do NOT send the old "Neil #1 clean affiliate" list — he is coach_complement; the clean-affiliate pitch to him would have been an affiliate ask to a competitor.'
   ],
   w3t3:['Use the almanac subagent for my morning standup — who replied, who is due a follow-up, what to do first.'],
   w4t2:['Use Ledger subagent to implement the attribution decision: <extend custom schema | wire the Rewardful + Stripe webhook>.'],
@@ -1704,7 +1734,7 @@ The doctrine has four sections, ~5-10 lines each:
 (1) Sourcing rule — practitioner networks only, never marketplaces (Rakuten, CJ, ShareASale, Impact-as-marketplace), never LinkedIn. Founder direction, no exceptions.
 (2) Voice-fit bar — score 1-5 honestly. Reject anyone scoring ≤2. Guru-aesthetic creators (hype register, motivational clichés from the canon blocklist) are 1. Operators who teach real work are 5.
 (3) Archetype targets — creator, coach, alumni, community. Define what each looks like in 2 lines.
-(4) Disqualifiers — guru aesthetic, vendor-sponsored conflicts with competing courses, audience under ~1k engaged. Reference the 3 hard-conflict names from Prospect Intel (Jason Bay, Belal Batrawy, Morgan Ingram) as examples.
+(4) Disqualifiers (v2.0 — narrow): guru aesthetic, a competitor's EMPLOYEE (example: Morgan Ingram at JBarrows), audience under ~1k engaged, vendor sponsorship whose lessons we contradict. NOTE: selling your own course/coaching or affiliating for a competitor is NOT a disqualifier any more — those are motion tags (coach_complement / open_recruit). (5) Motion tags §4.5 — affiliate / coach_complement / open_recruit / co_marketing, each with its angle and deal. (6) The Dossier-before-Scribe rule — the sweep is sourcing, never clearance.
 
 Use 2-3 of the 10 named Prospect Intel candidates as concrete examples of "good" (Neil Bhuiyan and Florin Tatulea are the highest voice-fit at 5/5).
 
@@ -2355,28 +2385,33 @@ function buildContent(){
   html+=`<section class="section" id="sec-prospects">
     <div class="secEyebrow">Researched · May 2026 · no LinkedIn</div>
     <h1 class="secTitle">Prospect Intel.</h1>
-    <p class="secLede">Named candidates across affiliate and channel surfaces — researched against public presence. Audience sizes confirmed or estimated (noted). Conflict flags are live. Approach no-conflict, highest voice-fit first.</p>
+    <p class="secLede">Named candidates across affiliate and channel surfaces — researched against public presence. Each affiliate carries a <b>motion tag</b> (per discovery-doctrine v2.0) that routes the angle and the deal. Most are not the clean-affiliate case — and that is fine.</p>
     <div class="iris-line secDivider"></div>
+    <div class="callout"><div class="cTitle">The four motions · read first</div><b>affiliate</b> — clean, income from elsewhere; standard 40% / 30-day. · <b>coach_complement</b> — sells their own coaching/course; AESDR is the self-paced foundation under it, 40% on every seat, lead with function not price. · <b>open_recruit</b> — currently affiliates for a competitor; the honest "better-made product is here" pitch. · <b>co_marketing</b> — large aligned audience; guest swaps / joint content / co-hosted workshops, not a referral link. A candidate can carry more than one. Full rules in <code>docs/partnerships/discovery-doctrine.md</code> §4.5.</div>
+    <div class="callout" style="border-left-color:#a14400;background:rgba(161,68,0,.05)"><div class="cTitle" style="color:#a14400">Hard rule · Dossier before Scribe, always</div>The quick sweep is sourcing, not clearance. On 2026-06-01, Dossier-verifying four "clean" candidates found <b>3 of 4 were actually coach_complement or open_recruit</b> — the sweep missed the competing courses entirely. Never draft from a sweep flag; run Dossier first, then pick the motion template.</div>
     <h3 class="subH">Affiliate prospects — 10 candidates (Run A)</h3>
-    <p class="body" style="font-size:14px;color:var(--muted)">Sorted by voice-fit score. Priority outreach: Neil Bhuiyan → Florin Tatulea → Stefan Conic → Daniel Goerner → Elric Legloire. Hard conflicts listed separately below.</p>
+    <p class="body" style="font-size:14px;color:var(--muted)">Sorted by voice-fit. The motion tag tells you which template + deal to use. Clean-affiliate first sends are the rarest tag — the practitioner-creators with the right audience mostly monetize it already, so most route to coach_complement or co_marketing.</p>
     <div class="matrix"><table>
-      <thead><tr><th>Name</th><th>Surface</th><th>Handle / URL</th><th>Audience</th><th>Archetype</th><th>VF</th><th>Why fit</th><th>Contact path</th><th>Conflict</th></tr></thead>
-      <tbody>${PROSPECTS.affiliate.map(p=>`<tr>
+      <thead><tr><th>Name</th><th>Surface</th><th>Handle / URL</th><th>Audience</th><th>VF</th><th>Motion</th><th>Why fit + commercial note</th><th>Contact path</th></tr></thead>
+      <tbody>${PROSPECTS.affiliate.map(p=>{
+        const M={affiliate:['hi','Affiliate'],coach_complement:['mid','Coach complement'],open_recruit:['mid','Open recruit'],co_marketing:['mid','Co-marketing']}[p.motion]||['lo',p.motion||'—'];
+        return `<tr>
         <td><b>${esc(p.name)}</b></td>
         <td style="font-size:13px">${esc(p.surface)}</td>
         <td class="src">${esc(p.handle)}</td>
         <td style="font-size:12px">${esc(p.audience)}</td>
-        <td style="font-size:12px">${esc(p.archetype)}</td>
         <td style="font-family:var(--mono);font-size:14px;font-weight:700;color:${p.vf>=5?'var(--ok)':p.vf>=4?'var(--crimson)':'var(--muted)'}">${p.vf}/5</td>
-        <td style="font-size:13px">${esc(p.why)}</td>
+        <td><span class="badge ${M[0]}">${M[1]}</span></td>
+        <td style="font-size:12.5px">${esc(p.why)}<br><span style="font-size:11px;color:var(--crimson)">${esc(p.conflict)}</span></td>
         <td style="font-size:12px;font-family:var(--mono);color:var(--muted)">${esc(p.contact)}</td>
-        <td><span class="badge ${p.conflict==='N'?'hi':p.conflict.startsWith('Y')?'lo':'mid'}">${p.conflict==='N'?'Clean':p.conflict.startsWith('Y')?'Conflict':'Soft'}</span></td>
-      </tr>`).join('')}</tbody>
+      </tr>`;}).join('')}</tbody>
     </table></div>
-    <h3 class="subH">Hard conflicts — do not approach</h3>
+    <h3 class="subH">Reclassified + the one true disqualifier</h3>
     <div class="callout" style="border-left-color:#a14400;background:rgba(161,68,0,.05)">
-      <div class="cTitle" style="color:#a14400">Conflict flags</div>
-      ${PROSPECTS.affiliateConflicts.map(p=>`<div style="margin-bottom:10px;font-size:14px"><b>${esc(p.name)}</b> <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">${esc(p.surface)} · ${esc(p.audience)}</span><br><span style="font-size:13px;color:var(--muted)">${esc(p.why)}</span></div>`).join('')}
+      <div class="cTitle" style="color:#a14400">Old "do not approach" list, re-read under v2.0</div>
+      ${PROSPECTS.affiliateConflicts.map(p=>{
+        const tag=p.kind==='disqualifier'?'<span class="badge lo">Disqualifier</span>':'<span class="badge mid">Coach complement</span>';
+        return `<div style="margin-bottom:10px;font-size:14px">${tag} <b>${esc(p.name)}</b> <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">${esc(p.surface)} · ${esc(p.audience)}</span><br><span style="font-size:13px;color:var(--muted)">${esc(p.why)}</span></div>`;}).join('')}
     </div>
     <h3 class="subH">Channel prospects — 10 organizations (Run B)</h3>
     <p class="body" style="font-size:14px;color:var(--muted)">Recommended first outreach: Vendux → Martal Group → Skaled → RevOps Consulting → Revenue Operations Group. Conflict-flagged orgs require a carved-out ICP before approaching — do not drop them.</p>
@@ -2433,7 +2468,7 @@ function buildContent(){
   html+=`<section class="section" id="sec-templates">
     <div class="secEyebrow">Personalize the top. Never the disclosure.</div>
     <h1 class="secTitle">Outreach Library.</h1>
-    <p class="secLede">Scribe-drafted, canon-checked scaffolding. The first two sentences are bespoke per partner; the economics and the ask are templated and never edited — personal and compliant at scale. <span class="var" style="background:rgba(139,26,26,.1);color:var(--crimson);padding:0 4px;font-family:var(--mono);font-size:13px">[VARIABLES]</span> get filled per send.</p>
+    <p class="secLede">Scribe-drafted, canon-checked scaffolding — <b>eight templates</b>: the five base (newsletter / community / podcast first-touch + two follow-ups) and three by motion (coach_complement, open_recruit, co_marketing). Pick the template by the candidate's motion tag from Prospect Intel. The first two sentences are bespoke per partner; the economics and the ask are templated and never edited. <span class="var" style="background:rgba(139,26,26,.1);color:var(--crimson);padding:0 4px;font-family:var(--mono);font-size:13px">[VARIABLES]</span> get filled per send.</p>
     <div class="iris-line secDivider"></div>
     ${TEMPLATES.map((t,i)=>`<div class="tmpl">
       <div class="tmplHead"><span class="tmplName">${esc(t.name)}</span>
