@@ -37,15 +37,18 @@ export async function proxy(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   const isAdmin = isAdminEmail(user?.email);
 
-  // ── Affiliate-experience environment ──
-  // The isolated affiliate prospect experience lives under /x/*. It is OFF by
-  // default and only opens when AFFILIATE_EXPERIENCE=1 is set on the deployment
-  // (the dedicated preview). When enabled, these routes are fully exempt from
-  // the coming-soon gate and the production route allowlist — a prospect with a
-  // ?p= link must reach them with no auth. When the var is unset (production),
-  // /x/* falls through to the normal lock below and never surfaces.
-  if (process.env.AFFILIATE_EXPERIENCE === "1" && pathname.startsWith("/x/")) {
-    return supabaseResponse;
+  // ── Affiliate-experience environment (single-purpose) ──
+  // AFFILIATE_EXPERIENCE=1 is set ONLY on the dedicated affiliatekit deployment.
+  // There, the deployment serves ONLY the experience: /x/* is open to anonymous
+  // prospects (exempt from the coming-soon gate + the production allowlist), and
+  // every other path 404s — so affiliatekit.aesdr.com is the kit experience and
+  // nothing else. On production (var unset) this block is skipped entirely and
+  // the app behaves normally.
+  if (process.env.AFFILIATE_EXPERIENCE === "1") {
+    if (pathname.startsWith("/x/")) {
+      return supabaseResponse;
+    }
+    return new NextResponse("Not found", { status: 404 });
   }
 
   // ── URL-param bypass: `?bypass=<COMING_SOON_BYPASS_CODE>` ──

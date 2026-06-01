@@ -5,7 +5,9 @@
  * PostHog API key. For the things only PostHog renders (session replay, the
  * scroll heatmap) each prospect row deep-links to their PostHog person.
  */
+import { headers } from "next/headers";
 import { createAdminClient } from "@/utils/supabase/admin";
+import CopyField from "../../_components/CopyField";
 
 export const dynamic = "force-dynamic";
 
@@ -89,6 +91,9 @@ export default async function AffiliateAnalyticsPage() {
   const events = (rawEvents || []) as EventRow[];
   const prospects = (rawProspects || []) as ProspectRow[];
   const nameFor = new Map(prospects.map((p) => [p.slug, p.display_name]));
+
+  const host = (await headers()).get("host") || "affiliatekit.aesdr.com";
+  const baseUrl = `https://${host}`;
 
   // ── Aggregate per prospect ──
   type Agg = {
@@ -203,6 +208,66 @@ export default async function AffiliateAnalyticsPage() {
         {totalProspects} prospect{totalProspects === 1 ? "" : "s"} ·{" "}
         {events.length} events tracked · live from the experience
       </p>
+
+      {/* ── Create a prospect link ── */}
+      <H2>Create a prospect link</H2>
+      <form
+        action="/x/ops/new-prospect"
+        method="post"
+        style={{ display: "flex", gap: 10, maxWidth: 520 }}
+      >
+        <input
+          name="name"
+          placeholder="Prospect name (e.g. Stacy Tan)"
+          required
+          style={{
+            flex: 1,
+            fontFamily: mono,
+            fontSize: 13,
+            padding: "10px 12px",
+            border: `1px solid ${ink}`,
+            background: "transparent",
+            color: ink,
+          }}
+        />
+        <button
+          type="submit"
+          style={{
+            fontFamily: mono,
+            textTransform: "uppercase",
+            letterSpacing: ".1em",
+            fontSize: 12,
+            color: "#FAF7F2",
+            background: crimson,
+            border: "none",
+            padding: "10px 20px",
+            cursor: "pointer",
+          }}
+        >
+          Generate
+        </button>
+      </form>
+      <p style={{ fontFamily: mono, fontSize: 11, color: muted, marginTop: 8 }}>
+        Generates an opaque link — the prospect&rsquo;s name never appears in
+        the URL. Send them the link; everything they do shows up below.
+      </p>
+
+      {prospects.length > 0 && (
+        <>
+          <H2>Prospect links</H2>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {prospects.map((p) => (
+              <div key={p.slug}>
+                <div style={{ fontFamily: mono, fontSize: 12, marginBottom: 5 }}>
+                  <strong>{p.display_name || p.slug}</strong>{" "}
+                  <span style={{ color: muted }}>· {p.slug}</span>
+                </div>
+                <CopyField value={`${baseUrl}/x/welcome?p=${p.slug}`} />
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       {totalProspects === 0 && (
         <p
