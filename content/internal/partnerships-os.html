@@ -762,9 +762,10 @@ where name = any(array['<name1>','<name2>','<name3>']);`}]
    code:[{label:'if extending custom: schedule the affiliate cron (the one real remaining gap)',lang:'json',body:`// vercel.json — add this object to the existing "crons" array:
 {
   "path": "/api/cron/affiliate",
-  "schedule": "0 12 * * *"
+  "schedule": "0 8 * * *"
 }
-// noon UTC — outside the existing 13/14/15/16 UTC crons so load is staggered.
+// 08:00 UTC = 2:00 AM Central (CST anchor; fires 3am during summer/CDT).
+// Vercel crons are UTC-only — no timezone field; 0 8 is the Chicago 2am slot.
 // Confirm CRON_SECRET env var is set in Vercel (the existing 4 crons use it).
 // The cron promotes affiliate_attributions pending -> cleared once the 30-day
 // refund window has passed AND the underlying purchase is still active.
