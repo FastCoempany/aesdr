@@ -1,13 +1,13 @@
-# Specimen Partnership Agreement
+# Sample Partnership Agreement
 
 A plain-English read of the terms AESDR currently uses in its affiliate
 agreements. Provided so prospective affiliates can see the operating, economic,
 and legal commitments before applying.
 
-> **SPECIMEN — not for signature.** This document is a written representation
+> **SAMPLE — not for signature.** This document is a written representation
 > of the deal terms; it is not the executed agreement. The agreement of record
 > is a separate PDF reviewed by counsel and counter-signed by both parties
-> after affiliate approval. Where this specimen and the executed PDF differ,
+> after affiliate approval. Where this sample and the executed PDF differ,
 > the executed PDF controls. Nothing here is legal advice; affiliates are
 > encouraged to have their own counsel review the executed agreement before
 > signing.
@@ -234,11 +234,11 @@ executed agreement (the "Affiliate").
 
 ---
 
-## Signature block (specimen — do not sign)
+## Signature block (sample — do not sign)
 
 The executed agreement carries the parties' legal names, addresses,
 authorized signatories, date of execution, and the chosen payment
-method and tax-form selection. The specimen above is for review only.
+method and tax-form selection. The sample above is for review only.
 
 To request the executed agreement, complete the
 [affiliate application](/affiliates/apply). Approved applicants receive the

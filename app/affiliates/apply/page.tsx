@@ -68,7 +68,7 @@ export default function ApplyPage() {
         >
           Want to read the terms before you apply?{" "}
           <Link
-            href="/affiliates/kit/specimen-partnership-agreement"
+            href="/affiliates/kit/sample-partnership-agreement"
             style={{ color: "var(--ink)", textDecoration: "underline" }}
           >
             Specimen agreement →

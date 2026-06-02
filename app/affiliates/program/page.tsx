@@ -289,7 +289,7 @@ export default function ProgramPage() {
         >
           Want to read the deal first?{" "}
           <Link
-            href="/affiliates/kit/specimen-partnership-agreement"
+            href="/affiliates/kit/sample-partnership-agreement"
             style={{ color: "var(--ink)", textDecoration: "underline" }}
           >
             Specimen agreement →

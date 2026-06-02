@@ -104,12 +104,12 @@ export const KIT_ENTRIES: KitEntry[] = [
     source: "pilot-rhythm",
   },
   {
-    slug: "specimen-partnership-agreement",
-    title: "Specimen Partnership Agreement",
+    slug: "sample-partnership-agreement",
+    title: "Sample Partnership Agreement",
     description:
-      "Plain-English read of the deal terms — commission, attribution, payments, IP, indemnification. Specimen, not for signature; counsel-reviewed PDF ships at approval.",
+      "Plain-English read of the deal terms — commission, attribution, payments, IP, indemnification. A sample, not for signature; counsel-reviewed PDF ships at approval.",
     category: "How co-promotion works",
-    source: "specimen-partnership-agreement",
+    source: "sample-partnership-agreement",
   },
 ];
 

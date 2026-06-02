@@ -284,7 +284,7 @@ export default async function LandingPage() {
               <p className={styles.faqQ}>{item.q}</p>
               <div className={styles.faqAnswer}>
                 <p className={styles.faqBlur}>{item.a}</p>
-                <span className={styles.faqRedactLabel} aria-hidden="true">[classified &mdash; hover or focus to peek]</span>
+                <span className={styles.faqRedactLabel} aria-hidden="true">[classified &mdash; hover to reveal]</span>
               </div>
               <span className={styles.faqStamp} aria-hidden="true">Classified</span>
             </div>
@@ -297,10 +297,9 @@ export default async function LandingPage() {
       <section className={styles.finalCta}>
         <h2 className={styles.finalHeadline}>Stop ChatGPClaudeing. Start&nbsp;executing.</h2>
         <p className={styles.finalSub}>
-          12 courses, plus the substantial assets you keep — The Alignment Contract, The
-          ROI &amp; Commission Defense Tracker, the 72-Hour Strike Plan, and the
-          rest. Built for AEs and SDRs who want to get better at the actual
-          work rather than just feel better about the week ahead.
+          12 courses, plus some substantial assets you&rsquo;ll keep 💠 The Alignment Contract 💠 The ROI &amp; Commission Defense Tracker 💠 The 72-Hour Strike Plan and 5 more ridiculously valuable assets that&rsquo;ll level up your day-to-day, your AE/SDR dynamic, and your value to yourself in this business.
+          <br /><br />
+          <strong>We can&rsquo;t stress enough that this program is built for AEs and SDRs who want to get better at the actual work rather than just feel better about the week ahead.</strong>
         </p>
         <a href="#pricing" className={styles.ctaPrimary}>Get Access</a>
       </section>
