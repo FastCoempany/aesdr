@@ -92,3 +92,19 @@ export default function ValidationMarquee() {
     </section>
   );
 }
+
+/**
+ * The scrolling row only — same companies, same animation, no surrounding
+ * header or sectors line. Used in the affiliate-experience gate above the
+ * spinning Leponeus.
+ */
+export function ValidatorTicker() {
+  return (
+    <div className={styles.marqueeWrap} aria-label="Validators">
+      <div className={styles.marquee}>
+        <MarqueeRow />
+        <MarqueeRow ariaHidden />
+      </div>
+    </div>
+  );
+}

@@ -1,12 +1,13 @@
 "use client";
 
 /**
- * Step 1 gate. A slowly spinning Leponeus over three stacked lines that send
- * the prospect into the real landing experience. Editorial palette only
- * (cream / ink / crimson / iris) per AGENTS.md.
+ * Step 1 gate. The same scrolling validator ticker the buyer sees on the real
+ * landing, a short subtext, then a slowly spinning Leponeus over three stacked
+ * lines that send the prospect into the real landing experience. Editorial
+ * palette only (cream / ink / crimson / iris) per AGENTS.md.
  */
 import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
-import ValidatorFlash from "./ValidatorFlash";
+import { ValidatorTicker } from "@/components/ValidationMarquee";
 
 export default function LeponeusGate({ onBegin }: { onBegin: () => void }) {
   return (
@@ -19,12 +20,32 @@ export default function LeponeusGate({ onBegin }: { onBegin: () => void }) {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "flex-start",
         textAlign: "center",
-        padding: "48px 24px",
-        gap: 36,
+        padding: "32px 0 48px",
+        gap: 28,
       }}
     >
+      {/* Same scrolling ticker that runs on the real landing, full-bleed top */}
+      <div style={{ width: "100%" }}>
+        <ValidatorTicker />
+        <p
+          style={{
+            fontFamily: "var(--cond, 'Barlow Condensed', sans-serif)",
+            textTransform: "uppercase",
+            letterSpacing: ".18em",
+            fontSize: 12,
+            color: "var(--muted, #6B6B6B)",
+            margin: "14px auto 0",
+            maxWidth: 720,
+            padding: "0 24px",
+            lineHeight: 1.6,
+          }}
+        >
+          The GTM teams that vetted the lessons, the assets, and the voice. What
+          you&rsquo;re about to preview is what their AEs and SDRs see.
+        </p>
+      </div>
       <style>{`
         @keyframes leponeus-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .leponeus-gate-spin { animation: leponeus-spin 6s linear infinite; will-change: transform; }
@@ -83,8 +104,6 @@ export default function LeponeusGate({ onBegin }: { onBegin: () => void }) {
           Begin the experience →
         </button>
       </div>
-
-      <ValidatorFlash />
     </main>
   );
 }
