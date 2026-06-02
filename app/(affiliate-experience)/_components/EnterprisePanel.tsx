@@ -28,6 +28,15 @@ import Image from "next/image";
 import { EnterpriseLockup } from "@/components/brand/EnterpriseLockup";
 import { trackProspect } from "../_lib/track";
 
+/**
+ * Antaeus' Google Calendar Appointment Schedule. Public URL — drops the
+ * affiliate into a real booking flow on the same calendar that
+ * antaeus@aesdr.com books from. Surfaces in the success state after
+ * `kit_enterprise_intent_submitted` so the button label keeps its
+ * promise of "grab calendar time."
+ */
+const CALENDAR_URL = "https://calendar.app.google/W86mjCYeXR3Z57mf7";
+
 export default function EnterprisePanel() {
   const [open, setOpen] = useState(false);
   const [biggestDeal, setBiggestDeal] = useState("");
@@ -657,8 +666,7 @@ function SuccessState() {
           letterSpacing: "-0.005em",
         }}
       >
-        Noted. We&rsquo;ll review and reach back out — usually inside 48
-        hours.
+        Noted. Now grab a time — we&rsquo;ll come prepared.
       </p>
       <p
         style={{
@@ -669,30 +677,60 @@ function SuccessState() {
           margin: 0,
         }}
       >
-        While you wait, the enterprise hub is open for browsing. Same
-        brand, different surface — built for sales-org buyers.
+        Pick whatever slot works on Antaeus&rsquo; calendar below. The
+        invite drops straight to your inbox — and if any of the slots
+        don&rsquo;t fit, the enterprise hub is open for browsing in the
+        meantime.
       </p>
-      <a
-        href="/enterprise"
-        target="_blank"
-        rel="noopener noreferrer"
-        data-preview-allow="1"
-        style={{
-          fontFamily: "var(--cond, 'Barlow Condensed', sans-serif)",
-          textTransform: "uppercase",
-          letterSpacing: ".16em",
-          fontSize: 13,
-          color: "#FAF7F2",
-          background: "var(--crimson, #8B1A1A)",
-          padding: "13px 22px",
-          textDecoration: "none",
-          borderRadius: 2,
-          alignSelf: "flex-start",
-          fontWeight: 700,
-        }}
-      >
-        Open the enterprise hub ↗
-      </a>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+        <a
+          href={CALENDAR_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-preview-allow="1"
+          onClick={() => {
+            // Fire when the affiliate actually picks the calendar — gives /x/ops
+            // a clean "they opened a booking flow" signal separate from the
+            // initial submission.
+            void trackProspect("kit_enterprise_calendar_opened");
+          }}
+          style={{
+            fontFamily: "var(--cond, 'Barlow Condensed', sans-serif)",
+            textTransform: "uppercase",
+            letterSpacing: ".16em",
+            fontSize: 13,
+            color: "#FAF7F2",
+            background: "var(--crimson, #8B1A1A)",
+            padding: "13px 22px",
+            textDecoration: "none",
+            borderRadius: 2,
+            fontWeight: 700,
+          }}
+        >
+          Pick a time on Antaeus&rsquo; calendar ↗
+        </a>
+        <a
+          href="/enterprise"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-preview-allow="1"
+          style={{
+            fontFamily: "var(--cond, 'Barlow Condensed', sans-serif)",
+            textTransform: "uppercase",
+            letterSpacing: ".16em",
+            fontSize: 13,
+            color: "var(--ink, #1A1A1A)",
+            background: "transparent",
+            padding: "12px 22px",
+            textDecoration: "none",
+            borderRadius: 2,
+            fontWeight: 700,
+            border: "1.5px solid var(--ink, #1A1A1A)",
+          }}
+        >
+          Open the enterprise hub ↗
+        </a>
+      </div>
     </div>
   );
 }

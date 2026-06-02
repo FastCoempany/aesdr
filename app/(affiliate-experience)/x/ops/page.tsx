@@ -37,6 +37,7 @@ const STAGES = [
   "kit_viewed",
   "request_conversation_clicked",
   "kit_enterprise_intent_submitted",
+  "kit_enterprise_calendar_opened",
 ] as const;
 const STAGE_LABEL: Record<string, string> = {
   link_opened: "Opened link",
@@ -48,6 +49,7 @@ const STAGE_LABEL: Record<string, string> = {
   kit_viewed: "Viewed kit",
   request_conversation_clicked: "Requested conversation",
   kit_enterprise_intent_submitted: "Submitted enterprise track",
+  kit_enterprise_calendar_opened: "Opened calendar",
 };
 
 const ink = "var(--ink, #1A1A1A)";
