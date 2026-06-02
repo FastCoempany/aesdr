@@ -15,6 +15,11 @@
  */
 import { useEffect, useRef, useState } from "react";
 import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
+import {
+  CornerBracket,
+  GhostNumeral,
+  Wordmark,
+} from "@/components/brand/BrandAssets";
 
 export default function CourseFrameInteractive({ html }: { html: string }) {
   const [completed, setCompleted] = useState(false);
@@ -137,13 +142,57 @@ export default function CourseFrameInteractive({ html }: { html: string }) {
 
             <div
               style={{
+                position: "relative",
                 maxWidth: 720,
                 textAlign: "center",
                 display: "grid",
                 justifyItems: "center",
                 gap: 20,
+                padding: "24px",
               }}
             >
+              {/* Editorial corner brackets frame the reveal — quiet, ink at
+                  22% opacity, matches the kit hero treatment */}
+              <CornerBracket
+                position="tl"
+                size={28}
+                color="rgba(26,26,26,0.22)"
+                style={{ position: "absolute", top: 0, left: 0 }}
+              />
+              <CornerBracket
+                position="tr"
+                size={28}
+                color="rgba(26,26,26,0.22)"
+                style={{ position: "absolute", top: 0, right: 0 }}
+              />
+              <CornerBracket
+                position="bl"
+                size={28}
+                color="rgba(26,26,26,0.22)"
+                style={{ position: "absolute", bottom: 0, left: 0 }}
+              />
+              <CornerBracket
+                position="br"
+                size={28}
+                color="rgba(26,26,26,0.22)"
+                style={{ position: "absolute", bottom: 0, right: 0 }}
+              />
+
+              {/* Ghost ✓ behind the mascot — quiet completion sigil */}
+              <div
+                aria-hidden
+                style={{
+                  position: "absolute",
+                  top: 6,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  zIndex: 0,
+                  pointerEvents: "none",
+                }}
+              >
+                <GhostNumeral numeral="✓" size={220} />
+              </div>
+
               {/* iris stripe */}
               <div
                 style={{
@@ -153,10 +202,14 @@ export default function CourseFrameInteractive({ html }: { html: string }) {
                     "linear-gradient(90deg, var(--crimson, #8B1A1A), #b4455d, #8B5CF6)",
                   backgroundSize: "200% 100%",
                   animation: "kit-reveal-shimmer 4s linear infinite",
+                  position: "relative",
+                  zIndex: 1,
                 }}
               />
 
-              <Mascot pose="doctrine" size={MASCOT_SIZE.card} />
+              <div style={{ position: "relative", zIndex: 1 }}>
+                <Mascot pose="doctrine" size={MASCOT_SIZE.card} />
+              </div>
 
               <div
                 style={{
@@ -208,17 +261,17 @@ export default function CourseFrameInteractive({ html }: { html: string }) {
                 style={{
                   fontFamily: "var(--serif, 'Source Serif 4', Georgia, serif)",
                   fontStyle: "italic",
-                  fontSize: 16,
-                  lineHeight: 1.55,
-                  color: "var(--muted, #6B6B6B)",
+                  fontSize: 17,
+                  lineHeight: 1.6,
+                  color: "var(--ink, #1A1A1A)",
                   margin: 0,
-                  maxWidth: 520,
+                  maxWidth: 560,
                 }}
               >
-                Most sales programs film a video and call it a course. We
-                wrote, designed, and engineered a curriculum that asks you to{" "}
-                <em>do</em> the work in the lesson, not just watch it. Every
-                section is built like the one you just finished.
+                As you can see — we are not AI slop. We are not some
+                templatized &ldquo;built-in-3-days&rdquo; product. What you
+                just saw is a peek into the care and sophistication we put
+                into AESDR.
               </p>
 
               <p

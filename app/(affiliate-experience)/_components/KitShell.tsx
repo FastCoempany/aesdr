@@ -13,6 +13,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Mascot, type Pose, MASCOT_SIZE } from "@/components/brand/Mascot";
+import { Wordmark, GhostNumeral, CornerBracket } from "@/components/brand/BrandAssets";
 
 export type KitCategory =
   | "About AESDR"
@@ -90,6 +91,9 @@ export default function KitShell({
         </Link>
         <span
           style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 10,
             fontFamily: "var(--cond, 'Barlow Condensed', sans-serif)",
             textTransform: "uppercase",
             letterSpacing: ".22em",
@@ -97,7 +101,8 @@ export default function KitShell({
             color: "var(--ink, #1A1A1A)",
           }}
         >
-          AESDR <span style={{ color: "var(--crimson, #8B1A1A)" }}>×</span>{" "}
+          <Wordmark size={72} label="AESDR" />
+          <span style={{ color: "var(--crimson, #8B1A1A)" }}>×</span>
           Affiliate Kit
         </span>
       </header>
@@ -112,8 +117,21 @@ export default function KitShell({
           gridTemplateColumns: "1fr auto",
           gap: 32,
           alignItems: "start",
+          position: "relative",
         }}
       >
+        <CornerBracket
+          position="tl"
+          size={28}
+          color="rgba(26,26,26,0.20)"
+          style={{ position: "absolute", top: 28, left: 24 }}
+        />
+        <CornerBracket
+          position="tr"
+          size={28}
+          color="rgba(26,26,26,0.20)"
+          style={{ position: "absolute", top: 28, right: 24 }}
+        />
         <div>
           <div
             style={{

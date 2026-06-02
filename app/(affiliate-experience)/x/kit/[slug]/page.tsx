@@ -32,6 +32,10 @@ import KitDocWhatYouEarn from "../../../_components/KitDocWhatYouEarn";
 import KitDocBannedVocab from "../../../_components/KitDocBannedVocab";
 import KitDocApprovedClaims from "../../../_components/KitDocApprovedClaims";
 import KitDocCoPromoting from "../../../_components/KitDocCoPromoting";
+import KitDocPositioningBrief from "../../../_components/KitDocPositioningBrief";
+import KitDocDisclosurePack from "../../../_components/KitDocDisclosurePack";
+import KitDocLockupUsage from "../../../_components/KitDocLockupUsage";
+import KitDocSampleAgreement from "../../../_components/KitDocSampleAgreement";
 import PreviewOnlyWrap from "../../../_components/PreviewOnlyWrap";
 
 type Params = { slug: string };
@@ -120,6 +124,16 @@ function renderBody(slug: string, html: string) {
       return <KitDocApprovedClaims />;
     case "co-promoting-aesdr":
       return <KitDocCoPromoting />;
+    case "positioning-brief":
+      return <KitDocPositioningBrief />;
+    case "disclosure-language-pack":
+      return <KitDocDisclosurePack />;
+    case "lockup-usage":
+      return <KitDocLockupUsage />;
+    case "sample-partnership-agreement":
+      // Wraps the rendered markdown body in editorial framing; the legal
+      // language itself is the deliverable so we keep the prose verbatim.
+      return <KitDocSampleAgreement html={html} />;
     default:
       return <KitMarkdownBody html={html} />;
   }

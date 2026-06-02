@@ -1,5 +1,6 @@
 import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
 import { Icon, type IconName } from "@/components/brand/Icon";
+import { GhostNumeral, CornerBracket } from "@/components/brand/BrandAssets";
 
 /**
  * Custom branded view for /x/kit/pilot-rhythm. Reads like a one-pager promo
@@ -122,6 +123,7 @@ export default function KitDocPilotRhythm() {
                     : "none",
                 background: "var(--cream, #FAF7F2)",
                 position: "relative",
+                overflow: "hidden",
               }}
             >
               <div
@@ -134,6 +136,21 @@ export default function KitDocPilotRhythm() {
                   background: w.accent,
                 }}
               />
+              {/* Ghost week number watermark — quiet editorial mark */}
+              <div
+                aria-hidden
+                style={{
+                  position: "absolute",
+                  right: -16,
+                  bottom: -40,
+                  zIndex: 0,
+                  pointerEvents: "none",
+                  opacity: 0.6,
+                }}
+              >
+                <GhostNumeral numeral={`0${i}`} size={160} />
+              </div>
+              <div style={{ position: "relative", zIndex: 1 }}>
               <div
                 style={{
                   display: "flex",
@@ -176,6 +193,7 @@ export default function KitDocPilotRhythm() {
               >
                 {w.body}
               </p>
+              </div>
             </article>
           ))}
         </div>

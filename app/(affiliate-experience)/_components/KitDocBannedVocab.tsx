@@ -6,6 +6,11 @@
    semantically correct. */
 import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
 import { Icon, type IconName } from "@/components/brand/Icon";
+import {
+  ClassifiedStamp,
+  GhostNumeral,
+  WarningCircle,
+} from "@/components/brand/BrandAssets";
 
 /**
  * Custom branded view for /x/kit/banned-vocabulary.
@@ -51,15 +56,24 @@ export default function KitDocBannedVocab() {
           <div>
             <div
               style={{
-                fontFamily: "var(--cond, 'Barlow Condensed', sans-serif)",
-                textTransform: "uppercase",
-                letterSpacing: ".24em",
-                fontSize: 12,
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 12,
                 color: "var(--crimson, #8B1A1A)",
                 marginBottom: 14,
               }}
             >
-              The words that break the register
+              <ClassifiedStamp width={140} height={22} label="Banned" />
+              <span
+                style={{
+                  fontFamily: "var(--cond, 'Barlow Condensed', sans-serif)",
+                  textTransform: "uppercase",
+                  letterSpacing: ".24em",
+                  fontSize: 12,
+                }}
+              >
+                The words that break the register
+              </span>
             </div>
             <h2
               style={{

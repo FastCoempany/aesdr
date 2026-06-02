@@ -3,16 +3,18 @@
 /**
  * Client-side prospect tracking for the affiliate-experience flow.
  *
- * Two destinations:
- *  - our own DB (POST /x/track) — the source of truth for the /x/ops dashboard
- *  - PostHog identify() — so session replay + autocapture get attributed to
- *    the prospect slug (the "fun" analytics: replay, heatmap)
+ * Three destinations on every call:
+ *  - our own DB (POST /x/track) — source of truth for the /x/ops dashboard
+ *  - PostHog `capture()` — so the same event lands in the PostHog event
+ *    feed / explorer / dashboards alongside session replay
+ *  - PostHog `identify()` — runs once per session so replay + autocapture
+ *    + the captured events are all attributed to the prospect slug
  *
  * The prospect slug rides in on the unique link as ?p=<slug>. We persist it in
  * sessionStorage so it survives in-flow navigation (welcome -> kit) after the
  * query param drops off the URL. No slug = no tracking (nothing to attribute).
  */
-import { identify } from "@/lib/analytics";
+import { identify, captureRawEvent } from "@/lib/analytics";
 
 const SLUG_KEY = "aesdr_prospect_slug";
 const SESSION_KEY = "aesdr_prospect_session";
@@ -51,6 +53,20 @@ export async function trackProspect(
 ): Promise<void> {
   const slug = getProspectSlug();
   if (!slug) return;
+
+  // Fan out to both PostHog (event feed, dashboards) and our own DB
+  // (founder-facing /x/ops). Both are best-effort; failures must never
+  // break the prospect's UX.
+  void captureRawEvent(name, {
+    ...props,
+    prospect_slug: slug,
+    surface: "affiliate-experience",
+    path:
+      typeof window !== "undefined" ? window.location.pathname : undefined,
+  }).catch(() => {
+    /* no-op */
+  });
+
   try {
     await fetch("/x/track", {
       method: "POST",

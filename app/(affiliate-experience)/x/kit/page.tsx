@@ -8,6 +8,11 @@ import Link from "next/link";
 import { KIT_ENTRIES, KIT_CATEGORIES } from "@/lib/affiliate-kit";
 import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
 import { Icon, type IconName } from "@/components/brand/Icon";
+import {
+  Wordmark,
+  GhostNumeral,
+  CornerBracket,
+} from "@/components/brand/BrandAssets";
 import KitTracker from "../../_components/KitTracker";
 import KitNav from "../../_components/KitNav";
 
@@ -70,13 +75,15 @@ export default function KitIndexPage() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          gap: 10,
           fontFamily: "var(--cond, 'Barlow Condensed', sans-serif)",
           textTransform: "uppercase",
           letterSpacing: ".22em",
           fontSize: 11,
         }}
       >
-        AESDR <span style={{ color: "var(--crimson, #8B1A1A)", margin: "0 6px" }}>×</span>{" "}
+        <Wordmark size={72} label="AESDR" />
+        <span style={{ color: "var(--crimson, #8B1A1A)" }}>×</span>
         Affiliate Kit
       </header>
 
@@ -90,9 +97,37 @@ export default function KitIndexPage() {
           gridTemplateColumns: "1fr auto",
           gap: 36,
           alignItems: "center",
+          position: "relative",
         }}
       >
-        <div>
+        {/* Quiet editorial frame brackets on the hero — same registers as
+            the kit doc hero so the system reads consistently */}
+        <CornerBracket
+          position="tl"
+          size={32}
+          color="rgba(26,26,26,0.22)"
+          style={{ position: "absolute", top: 44, left: 24 }}
+        />
+        <CornerBracket
+          position="tr"
+          size={32}
+          color="rgba(26,26,26,0.22)"
+          style={{ position: "absolute", top: 44, right: 24 }}
+        />
+        {/* Ghost "AK" numeral as quiet background mark */}
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            top: 32,
+            right: 64,
+            zIndex: 0,
+            pointerEvents: "none",
+          }}
+        >
+          <GhostNumeral numeral="AK" size={260} />
+        </div>
+        <div style={{ position: "relative", zIndex: 1 }}>
           <div
             style={{
               fontFamily: "var(--cond, 'Barlow Condensed', sans-serif)",
@@ -134,7 +169,7 @@ export default function KitIndexPage() {
             us.
           </p>
         </div>
-        <div style={{ flexShrink: 0 }}>
+        <div style={{ flexShrink: 0, position: "relative", zIndex: 1 }}>
           <Mascot pose="doctrine" size={MASCOT_SIZE.panel} />
         </div>
       </section>
