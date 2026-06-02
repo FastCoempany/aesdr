@@ -1,4 +1,5 @@
 import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
+import { Icon, type IconName } from "@/components/brand/Icon";
 
 /**
  * Custom branded view for /x/kit/pilot-rhythm. Reads like a one-pager promo
@@ -93,7 +94,7 @@ export default function KitDocPilotRhythm() {
           style={{
             position: "relative",
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
             gap: 0,
             marginTop: 22,
             border: "1px solid var(--light, #E8E4DF)",
@@ -124,6 +125,9 @@ export default function KitDocPilotRhythm() {
               />
               <div
                 style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
                   fontFamily: "var(--mono, 'Space Mono', monospace)",
                   fontSize: 11,
                   letterSpacing: ".18em",
@@ -131,6 +135,11 @@ export default function KitDocPilotRhythm() {
                   textTransform: "uppercase",
                 }}
               >
+                <Icon
+                  name={w.icon}
+                  size={12}
+                  style={{ color: "var(--crimson, #8B1A1A)" }}
+                />
                 {w.label}
               </div>
               <h3
@@ -187,7 +196,7 @@ export default function KitDocPilotRhythm() {
           <SplitCard
             heading="You run"
             items={[
-              "Two pre-cleared sends to your audience",
+              "Two pre-cleared emails to your audience — newsletter sends, dedicated drops, whatever format you normally use to reach your list",
               "The 30-second intro at the top of the workshop",
               "Light customization inside the [PLACEHOLDER] tokens",
               "Decide cut / keep / pause at the four-week mark",
@@ -346,10 +355,17 @@ function SplitCard({
   );
 }
 
-const WEEKS = [
+const WEEKS: ReadonlyArray<{
+  label: string;
+  title: string;
+  body: string;
+  accent: string;
+  icon: IconName;
+}> = [
   {
     label: "Week 0",
     title: "Setup",
+    icon: "ledger",
     body:
       "We countersign, build your registration page, generate tracking URLs, render the AESDR × Affiliate lockup, and hand you the kit folder. Everything ready before the promo window opens.",
     accent: "var(--crimson, #8B1A1A)",
@@ -357,13 +373,15 @@ const WEEKS = [
   {
     label: "Week 1",
     title: "Promotion",
+    icon: "signal",
     body:
-      "Two pre-cleared sends on the agreed dates. We supply the copy; you customize the placeholders. Workshop registration is live. Mid-week, a short progress report from us.",
+      "Two pre-cleared emails to your audience on the agreed dates — standalone newsletter sends in whatever format you normally use. We supply the copy; you customize the placeholders. Workshop registration is live. Mid-week, a short progress report from us.",
     accent: "#b4455d",
   },
   {
     label: "Week 2",
     title: "Workshop",
+    icon: "team",
     body:
       "60-min live workshop hosted by AESDR into your audience + 10–15 of Q&A, capped at 75. You introduce; we deliver; the offer at the close is run by us. Replay opens for 72 hours.",
     accent: "#8B5CF6",
@@ -371,6 +389,7 @@ const WEEKS = [
   {
     label: "Week 3",
     title: "Nurture",
+    icon: "iteration",
     body:
       "We run the full follow-up sequence: same-day attendee, no-show replay, free-vs-structured objection, deadline window, checkout-abandon. High-intent DM where signals warrant. You're hands-off.",
     accent: "#5E3FBF",
@@ -378,6 +397,7 @@ const WEEKS = [
   {
     label: "Week 4",
     title: "Close",
+    icon: "hourglass",
     body:
       "Attribution window stays open 30 days from registration. At week four we file a cut/keep memo: did this work, is a second pilot worth running? Either way, clean close-out with net-45 commission accounting.",
     accent: "var(--ink, #1A1A1A)",
@@ -393,13 +413,13 @@ const ENDINGS = [
   },
   {
     k: "Cut",
-    v: "Close-out note within 48 hours, signed by the founder by name. The door stays open for a future revisit if either side wants to reopen the conversation later.",
+    v: "Close-out note within 48 hours — a real note from me, not a form. The door stays open if either of us wants to revisit later.",
     bg: "var(--cream, #FAF7F2)",
     fg: "var(--ink, #1A1A1A)",
   },
   {
     k: "Pause",
-    v: "If the data isn't conclusive, we extend by 14 days rather than guess.",
+    v: "If the data isn't conclusive, we extend by 14 days to give us a clearer read instead of making a call on partial information.",
     bg: "var(--cream, #FAF7F2)",
     fg: "var(--ink, #1A1A1A)",
   },

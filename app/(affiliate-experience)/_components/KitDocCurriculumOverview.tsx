@@ -146,17 +146,16 @@ export default function KitDocCurriculumOverview() {
       </Block>
 
       {/* ── The live preview ── */}
-      <Block label="See it live">
+      <Block label="Try one widget">
         <p style={para}>
           Below is{" "}
           <em>
-            actual Course 04 — Navigating Manager Madness, Section 1 — rendered
-            live
+            one interactive widget from Course 04 — Navigating Manager Madness,
+            rendered live
           </em>
-          . Scroll, click the gates, expand the redacted blocks, see the
-          iris-shimmer top bar and the bottom-right quote panel. This is what
-          a section of the curriculum looks like when an AE or SDR sits down to
-          do the work.
+          . Click a survival strategy to select it, then match it to the
+          manager archetype it&rsquo;s built for. Get all five right and
+          we&rsquo;ll tell you what you&rsquo;re actually looking at.
         </p>
         <CourseFramePreview />
       </Block>

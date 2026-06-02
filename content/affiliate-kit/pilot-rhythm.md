@@ -12,10 +12,11 @@ promotion window opens.
 
 ## Week 1 — Promotion
 
-Two pre-cleared sends to your audience on the agreed dates. We supply the
-copy; you customize within the bracketed placeholders. Workshop registration
-page is live. Mid-week, we send you a short progress report so you know
-what's tracking before the workshop date.
+Two pre-cleared emails to your audience on the agreed dates — standalone
+sends to your newsletter or list, in whatever format you normally use. We
+supply the copy; you customize within the bracketed placeholders. Workshop
+registration page is live. Mid-week, we send you a short progress report so
+you know what's tracking before the workshop date.
 
 ## Week 2 — Workshop
 
@@ -40,10 +41,10 @@ commission accounting, the actual numbers, and our honest read.
 ## What happens at the end
 
 - **Keep:** we run a second pilot under refreshed terms.
-- **Cut:** we send you a close-out note within 48 hours, signed by the
-  founder by name — the door stays open for a future revisit if either
-  side wants to reopen the conversation later.
-- **Pause:** if the data isn't conclusive, we extend by 14 days rather than
-  guess.
+- **Cut:** we send you a close-out note within 48 hours — a real note from
+  me, not a form. The door stays open if either of us wants to revisit
+  later.
+- **Pause:** if the data isn't conclusive, we extend by 14 days to give us a
+  clearer read instead of making a call on partial information.
 
 We part as adults regardless of which one it is.

@@ -1,144 +1,88 @@
 /**
- * Faux browser chrome containing the REAL Course 04 — Manager Madness page,
- * served via `<iframe srcdoc>`. Fully live, interactive, gated reveals work,
- * role-conditional content respects ?role=, every brand element of the
- * in-course design — the iris shimmer top bar, the bottom-right quote
- * panels, the gate boxes — renders authentically. Not a screenshot. The
- * actual course page.
+ * Server component — reads the Course 04 lesson HTML, injects a CSS+JS
+ * transform that:
+ *   1. Hides everything except the #s2 screen (the Sort-the-Survival-Strategies
+ *      widget). Topbar, sidebar, footer, every other screen — all gone.
+ *      The prospect sees ONE interactive exercise, not the whole section.
+ *   2. Re-skins the body so the visible widget sits centered on cream
+ *      without the sidebar grid pushing it.
+ *   3. Polls the in-page #siloCount element; when it reports "5", posts
+ *      a {type:"aesdr_silo_complete"} message to the parent window. The
+ *      parent (CourseFrameInteractive) listens and triggers the reveal.
  *
- * Reading the HTML at request time on the server (fs.readFileSync) keeps
- * the lesson content out of the client bundle; the iframe sandboxes the
- * script execution against the parent.
+ * Reading lesson HTML at request time is supported via outputFileTracingIncludes
+ * in next.config.ts — the file ships with the Vercel build.
  */
 import fs from "node:fs";
 import path from "node:path";
+import CourseFrameInteractive from "./CourseFrameInteractive";
 
 const LESSON_FILE = "content/lessons/html/lesson-04/aesdr_course04_1_v1.html";
+
+const INJECT = `
+<style>
+  /* Hide all course chrome — we only want the one widget visible */
+  .topbar, .sidebar, .bottomnav, .gn-wrap, .ghost-n { display: none !important; }
+
+  /* Hide all screens except #s2; force s2 visible regardless of .active state */
+  .screen { display: none !important; }
+  .screen#s2 { display: block !important; opacity: 1 !important; transform: none !important; }
+
+  /* Collapse the layout grid since the sidebar is gone */
+  .app { display: block !important; padding: 0 !important; }
+  .main {
+    grid-template-columns: 1fr !important;
+    padding: 24px 28px 48px !important;
+    max-width: 880px !important;
+    margin: 0 auto !important;
+  }
+  body { background: var(--white, #FFFFFF) !important; }
+
+  /* Tighten the widget so it presents at one-screen density */
+  #s2 .lh { padding-top: 12px !important; padding-bottom: 16px !important; }
+  #s2 .silo-wrap { margin-top: 8px !important; }
+</style>
+<script>
+  // Watch the widget's own counter; when the lesson's drop logic increments
+  // it to 5, the prospect has matched all archetypes. Post once to parent.
+  (function () {
+    var fired = false;
+    var t = setInterval(function () {
+      try {
+        var el = document.getElementById("siloCount");
+        if (!el) return;
+        var n = parseInt((el.textContent || "").trim(), 10);
+        if (!fired && n >= 5) {
+          fired = true;
+          clearInterval(t);
+          try { window.parent.postMessage({ type: "aesdr_silo_complete" }, "*"); } catch (e) {}
+        }
+      } catch (e) {}
+    }, 250);
+    // Stop polling after 30 minutes so a forgotten tab doesn't run forever
+    setTimeout(function () { clearInterval(t); }, 30 * 60 * 1000);
+  })();
+</script>
+`;
 
 function readLessonHtml(): string {
   try {
     return fs.readFileSync(path.join(process.cwd(), LESSON_FILE), "utf8");
   } catch {
-    return "<p>Preview unavailable.</p>";
+    return "<html><body><p>Preview unavailable.</p></body></html>";
   }
 }
 
+function injectIntoHead(html: string, injection: string): string {
+  const headCloseIdx = html.toLowerCase().indexOf("</head>");
+  if (headCloseIdx === -1) {
+    // No </head>? Prepend to <body> as a fallback.
+    return html.replace(/<body[^>]*>/i, (m) => m + injection);
+  }
+  return html.slice(0, headCloseIdx) + injection + html.slice(headCloseIdx);
+}
+
 export default function CourseFramePreview() {
-  const html = readLessonHtml();
-
-  return (
-    <figure
-      style={{
-        margin: "40px 0 0",
-        background: "var(--cream, #FAF7F2)",
-      }}
-    >
-      {/* Browser chrome */}
-      <div
-        style={{
-          background: "#1A1A1A",
-          padding: "10px 14px",
-          display: "flex",
-          alignItems: "center",
-          gap: 10,
-          borderRadius: "6px 6px 0 0",
-        }}
-      >
-        {/* Traffic lights */}
-        <span
-          style={{
-            width: 12,
-            height: 12,
-            borderRadius: "50%",
-            background: "#ff5f56",
-          }}
-        />
-        <span
-          style={{
-            width: 12,
-            height: 12,
-            borderRadius: "50%",
-            background: "#ffbd2e",
-          }}
-        />
-        <span
-          style={{
-            width: 12,
-            height: 12,
-            borderRadius: "50%",
-            background: "#27c93f",
-          }}
-        />
-        {/* Address bar */}
-        <div
-          style={{
-            flex: 1,
-            marginLeft: 12,
-            background: "rgba(250, 247, 242, 0.10)",
-            color: "rgba(250, 247, 242, 0.85)",
-            fontFamily: "var(--mono, 'Space Mono', monospace)",
-            fontSize: 12,
-            padding: "6px 12px",
-            borderRadius: 3,
-            letterSpacing: ".04em",
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-          }}
-        >
-          <span style={{ opacity: 0.55 }}>🔒</span>
-          aesdr.com / course / 04 — manager madness / 1
-        </div>
-        {/* Live label */}
-        <span
-          style={{
-            fontFamily: "var(--cond, 'Barlow Condensed', sans-serif)",
-            fontSize: 10,
-            letterSpacing: ".18em",
-            textTransform: "uppercase",
-            color: "#ffffff",
-            background: "var(--crimson, #8B1A1A)",
-            padding: "3px 10px",
-            borderRadius: 2,
-          }}
-        >
-          Live preview
-        </span>
-      </div>
-
-      {/* The actual course page */}
-      <iframe
-        title="Course 04 — Manager Madness · live preview"
-        srcDoc={html}
-        loading="lazy"
-        // sandbox lets in-page scripts + same-document forms run, blocks
-        // top-level navigation so a click can't escape the iframe.
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups-to-escape-sandbox"
-        style={{
-          width: "100%",
-          height: "720px",
-          border: "1px solid var(--ink, #1A1A1A)",
-          borderTop: "none",
-          borderRadius: "0 0 6px 6px",
-          display: "block",
-          background: "#ffffff",
-        }}
-      />
-
-      <figcaption
-        style={{
-          fontFamily: "var(--cond, 'Barlow Condensed', sans-serif)",
-          textTransform: "uppercase",
-          letterSpacing: ".18em",
-          fontSize: 11,
-          color: "var(--muted, #6B6B6B)",
-          marginTop: 14,
-          textAlign: "center",
-        }}
-      >
-        Course 04 · Navigating Manager Madness · scroll the frame, click the
-        gates, this is a live page from the actual curriculum.
-      </figcaption>
-    </figure>
-  );
+  const html = injectIntoHead(readLessonHtml(), INJECT);
+  return <CourseFrameInteractive html={html} />;
 }

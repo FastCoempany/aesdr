@@ -7,7 +7,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { KIT_ENTRIES, KIT_CATEGORIES } from "@/lib/affiliate-kit";
 import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
+import { Icon, type IconName } from "@/components/brand/Icon";
 import KitTracker from "../../_components/KitTracker";
+import KitNav from "../../_components/KitNav";
 
 export const metadata: Metadata = {
   title: "Affiliate Kit · AESDR",
@@ -25,6 +27,24 @@ const CATEGORY_ACCENT: Record<string, string> = {
   "How co-promotion works": "var(--ink, #1A1A1A)",
 };
 
+const CATEGORY_ICON: Record<string, IconName> = {
+  "About AESDR": "ledger",
+  "How co-promotion works": "weight",
+};
+
+const DOC_ICON: Record<string, IconName> = {
+  "positioning-brief": "ear",
+  "curriculum-overview": "mile",
+  "what-you-earn": "refund",
+  "pilot-rhythm": "hourglass",
+  "co-promoting-aesdr": "weight",
+  "approved-claims": "quill",
+  "disclosure-language-pack": "eye",
+  "banned-vocabulary": "warn",
+  "lockup-usage": "mile",
+  "sample-partnership-agreement": "ledger",
+};
+
 export default function KitIndexPage() {
   return (
     <main
@@ -35,6 +55,7 @@ export default function KitIndexPage() {
       }}
     >
       <KitTracker event="kit_viewed" props={{ view: "index" }} />
+      <KitNav />
 
       {/* ── Sticky brand bar ── */}
       <header
@@ -89,15 +110,14 @@ export default function KitIndexPage() {
               fontFamily: "var(--display, 'Playfair Display', Georgia, serif)",
               fontStyle: "italic",
               fontWeight: 700,
-              fontSize: "clamp(40px, 6vw, 64px)",
+              fontSize: "clamp(32px, 4.4vw, 52px)",
               lineHeight: 1.05,
               margin: 0,
               letterSpacing: "-0.015em",
+              whiteSpace: "nowrap",
             }}
           >
-            Most programs gate the kit.
-            <br />
-            We don&rsquo;t.
+            Most programs gate the kit. We don&rsquo;t.
           </h1>
           <p
             style={{
@@ -110,7 +130,8 @@ export default function KitIndexPage() {
             }}
           >
             Positioning, what you earn, claim limits, disclosure language, the
-            actual sample agreement — readable before you ever talk to us.
+            actual sample agreement — all readable before you decide to talk to
+            us.
           </p>
         </div>
         <div style={{ flexShrink: 0 }}>
@@ -118,7 +139,8 @@ export default function KitIndexPage() {
         </div>
       </section>
 
-      {/* ── Iris stripe ── */}
+      {/* ── Plain ink rule (replaces the prior iris shimmer; user wants the
+              hero quieter so the headline carries the page on its own). ── */}
       <div
         style={{
           maxWidth: 1080,
@@ -128,19 +150,11 @@ export default function KitIndexPage() {
       >
         <div
           style={{
-            height: 4,
-            background:
-              "linear-gradient(90deg, var(--crimson, #8B1A1A), #b4455d, #8B5CF6)",
-            backgroundSize: "200% 100%",
-            animation: "kit-hero-shimmer 6s linear infinite",
+            height: 1,
+            background: "var(--ink, #1A1A1A)",
+            opacity: 0.18,
           }}
         />
-        <style>{`
-          @keyframes kit-hero-shimmer {
-            0%   { background-position: 0% 0%; }
-            100% { background-position: -200% 0%; }
-          }
-        `}</style>
       </div>
 
       {/* ── Start-here banner ── */}
@@ -226,15 +240,11 @@ export default function KitIndexPage() {
       >
         {KIT_CATEGORIES.map((cat) => (
           <div key={cat.name} style={{ marginBottom: 56 }}>
-            <div style={{ display: "flex", alignItems: "baseline", gap: 14, marginBottom: 6 }}>
-              <span
-                style={{
-                  display: "inline-block",
-                  width: 14,
-                  height: 14,
-                  background: CATEGORY_ACCENT[cat.name] || "var(--ink, #1A1A1A)",
-                }}
-                aria-hidden
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 6 }}>
+              <Icon
+                name={CATEGORY_ICON[cat.name] || "ledger"}
+                size={22}
+                style={{ color: CATEGORY_ACCENT[cat.name] || "var(--ink, #1A1A1A)" }}
               />
               <h2
                 style={{
@@ -313,18 +323,32 @@ export default function KitIndexPage() {
                       Standout
                     </span>
                   )}
-                  <h3
+                  <div
                     style={{
-                      fontFamily:
-                        "var(--display, 'Playfair Display', Georgia, serif)",
-                      fontStyle: "italic",
-                      fontSize: 21,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 10,
                       margin: "6px 0 10px",
-                      letterSpacing: "-0.005em",
                     }}
                   >
-                    {e.title}
-                  </h3>
+                    <Icon
+                      name={DOC_ICON[e.slug] || "ledger"}
+                      size={18}
+                      style={{ color: CATEGORY_ACCENT[cat.name], flexShrink: 0 }}
+                    />
+                    <h3
+                      style={{
+                        fontFamily:
+                          "var(--display, 'Playfair Display', Georgia, serif)",
+                        fontStyle: "italic",
+                        fontSize: 21,
+                        margin: 0,
+                        letterSpacing: "-0.005em",
+                      }}
+                    >
+                      {e.title}
+                    </h3>
+                  </div>
                   <p
                     style={{
                       fontFamily:

@@ -20,6 +20,7 @@ import {
 } from "@/lib/affiliate-kit";
 import type { Pose } from "@/components/brand/Mascot";
 import KitTracker from "../../../_components/KitTracker";
+import KitNav from "../../../_components/KitNav";
 import KitCta from "../../../_components/KitCta";
 import KitShell, {
   type KitCategory,
@@ -28,6 +29,9 @@ import KitMarkdownBody from "../../../_components/KitMarkdownBody";
 import KitDocCurriculumOverview from "../../../_components/KitDocCurriculumOverview";
 import KitDocPilotRhythm from "../../../_components/KitDocPilotRhythm";
 import KitDocWhatYouEarn from "../../../_components/KitDocWhatYouEarn";
+import KitDocBannedVocab from "../../../_components/KitDocBannedVocab";
+import KitDocApprovedClaims from "../../../_components/KitDocApprovedClaims";
+import KitDocCoPromoting from "../../../_components/KitDocCoPromoting";
 import PreviewOnlyWrap from "../../../_components/PreviewOnlyWrap";
 
 type Params = { slug: string };
@@ -110,6 +114,12 @@ function renderBody(slug: string, html: string) {
       return <KitDocPilotRhythm />;
     case "what-you-earn":
       return <KitDocWhatYouEarn />;
+    case "banned-vocabulary":
+      return <KitDocBannedVocab />;
+    case "approved-claims":
+      return <KitDocApprovedClaims />;
+    case "co-promoting-aesdr":
+      return <KitDocCoPromoting />;
     default:
       return <KitMarkdownBody html={html} />;
   }
@@ -135,6 +145,7 @@ export default async function KitDocPage({
   return (
     <>
       <KitTracker event="kit_viewed" props={{ view: "doc", slug }} />
+      <KitNav />
       <KitShell
         title={entry.title}
         subtitle={SUBTITLE_FOR[slug] || entry.description}

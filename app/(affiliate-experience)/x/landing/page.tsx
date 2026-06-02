@@ -39,6 +39,30 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+/**
+ * Inline asset-list delimiter — replaces the 💠 emoji per the design-system
+ * canon (state0511-design-system.md, 1.6 px round-cap monoline; no emoji on
+ * buyer-facing surfaces). Pulls the canonical `mile` (milestone) glyph from
+ * components/brand/Icon.tsx — semantically right for "things you keep,"
+ * each substantial asset is a milestone the buyer earns and owns. The
+ * Leponeus shell motif is reserved for the mascot itself; not used as
+ * ornament.
+ */
+function AssetMile() {
+  return (
+    <Icon
+      name="mile"
+      size={14}
+      style={{
+        display: "inline-block",
+        verticalAlign: "-2px",
+        margin: "0 8px",
+        color: "var(--crimson, #8B1A1A)",
+      }}
+    />
+  );
+}
+
 const FAQ: { q: string; a: ReactNode; icon: IconName }[] = [
   { q: "Is this for me if I’m brand new to sales?",          a: "Yes, it’s actually inspired by you. The curriculum starts with the fundamentals and ends with harder material. If you’re in your first 18 months, you’ll skip years of painful trial-and-error.", icon: "eye"       },
   { q: "Is this just another motivational sales course?",   a: "Nope — no guru routines and no motivational performance built into the format; this is sober, fun, practical training built by people who carried bags and managed AEs and SDRs over the last 10+ years on real teams.",                                       icon: "warn"      },
@@ -301,9 +325,25 @@ export default function ExperienceLandingPage() {
       <section className={styles.finalCta}>
         <h2 className={styles.finalHeadline}>Stop ChatGPClaudeing. Start&nbsp;executing.</h2>
         <p className={styles.finalSub}>
-          12 courses, plus some substantial assets you&rsquo;ll keep 💠 The Alignment Contract 💠 The ROI &amp; Commission Defense Tracker 💠 The 72-Hour Strike Plan and 5 more ridiculously valuable assets that&rsquo;ll sweeten up your day-to-day, your AE/SDR dynamic, and your value to yourself in this business.
-          <br /><br />
-          <strong>We can&rsquo;t stress enough that this program is built for AEs and SDRs who want to get better at the actual work rather than just feel better about the week ahead.</strong>
+          12 courses, plus some substantial assets you&rsquo;ll keep <AssetMile /> The Alignment Contract <AssetMile /> The ROI &amp; Commission Defense Tracker <AssetMile /> The 72-Hour Strike Plan and 5 more ridiculously valuable assets that&rsquo;ll sweeten up your day-to-day, your AE/SDR dynamic, and your value to yourself in this business.
+        </p>
+        {/* Same Playfair italic display register as the headline above, kept at the
+            existing body-line font-size so it lands as an emphatic editorial pull,
+            not a second hero. */}
+        <p
+          style={{
+            fontFamily: "var(--display, 'Playfair Display', Georgia, serif)",
+            fontStyle: "italic",
+            fontWeight: 900,
+            fontSize: 18,
+            lineHeight: 1.45,
+            color: "var(--ink, #1A1A1A)",
+            maxWidth: 600,
+            margin: "0 auto 32px",
+            letterSpacing: "-0.005em",
+          }}
+        >
+          We can&rsquo;t stress enough that this program is built for AEs and SDRs who want to get better at the actual work rather than just feel better about the week ahead.
         </p>
         <a href="#pricing" className={styles.ctaPrimary}>Get Access</a>
       </section>
