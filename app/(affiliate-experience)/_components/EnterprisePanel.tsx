@@ -102,49 +102,68 @@ export default function EnterprisePanel() {
         }
       `}</style>
 
-      {/* ── 2-column grid: SDR/AE math (left) + Enterprise teaser (right) ── */}
+      {/* ── 2-column grid: SDR/AE math (left) + Enterprise track (right) ──
+              alignItems: start so columns don't stretch. The right column
+              is position:relative so the expansion panel can absolute-
+              position inside it — that way the expansion FLOATS over
+              content below on scroll instead of pushing the section
+              taller (which would create a white band beside the left
+              column). overflow: visible so the absolute child isn't
+              clipped at the section boundary. */}
       <div
         style={{
           marginTop: 28,
           display: "grid",
           gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)",
           gap: 16,
-          alignItems: "stretch",
+          alignItems: "start",
+          position: "relative",
+          overflow: "visible",
         }}
       >
         <ConsumerMathBlock />
-        <EnterpriseTeaser open={open} onToggle={handleToggle} />
-      </div>
 
-      {/* ── Full-width expansion BELOW the grid ── */}
-      {open && (
-        <div
-          style={{
-            marginTop: 22,
-            animation: "ent-reveal 420ms cubic-bezier(.22,1.1,.35,1)",
-          }}
-        >
-          <div className="ent-glow-wrap">
-            <div className="ent-glow-inner">
-              {submitted ? (
-                <SuccessState />
-              ) : (
-                <PanelContent
-                  biggestDeal={biggestDeal}
-                  setBiggestDeal={setBiggestDeal}
-                  cycle={cycle}
-                  setCycle={setCycle}
-                  verticals={verticals}
-                  setVerticals={setVerticals}
-                  canSubmit={canSubmit}
-                  onSubmit={handleSubmit}
-                />
-              )}
-              <BridgeFooter />
+        <div style={{ position: "relative", overflow: "visible" }}>
+          <EnterpriseTeaser open={open} onToggle={handleToggle} />
+
+          {/* Expansion lives INSIDE the right column, absolute-positioned
+              just below the teaser so it floats over content beneath on
+              scroll. Width tracks the right column (left:0, right:0). */}
+          {open && (
+            <div
+              style={{
+                position: "absolute",
+                top: "100%",
+                left: 0,
+                right: 0,
+                marginTop: 14,
+                zIndex: 20,
+                animation: "ent-reveal 420ms cubic-bezier(.22,1.1,.35,1)",
+              }}
+            >
+              <div className="ent-glow-wrap">
+                <div className="ent-glow-inner">
+                  {submitted ? (
+                    <SuccessState />
+                  ) : (
+                    <PanelContent
+                      biggestDeal={biggestDeal}
+                      setBiggestDeal={setBiggestDeal}
+                      cycle={cycle}
+                      setCycle={setCycle}
+                      verticals={verticals}
+                      setVerticals={setVerticals}
+                      canSubmit={canSubmit}
+                      onSubmit={handleSubmit}
+                    />
+                  )}
+                  <BridgeFooter />
+                </div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
-      )}
+      </div>
     </>
   );
 }
