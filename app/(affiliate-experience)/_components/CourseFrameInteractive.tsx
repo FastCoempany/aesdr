@@ -216,10 +216,9 @@ export default function CourseFrameInteractive({ html }: { html: string }) {
                 }}
               >
                 Most sales programs film a video and call it a course. We
-                wrote, designed, and engineered a curriculum that asks you
-                to <em>do</em> the work in the lesson, not just watch it.
-                It&rsquo;s honestly closer to an operating system than an
-                e-learning product.
+                wrote, designed, and engineered a curriculum that asks you to{" "}
+                <em>do</em> the work in the lesson, not just watch it. Every
+                section is built like the one you just finished.
               </p>
 
               <p
