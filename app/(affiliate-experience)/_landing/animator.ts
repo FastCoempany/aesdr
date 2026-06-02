@@ -432,24 +432,35 @@ export function runAnimator(refs: AnimatorRefs, opts: AnimatorOptions): () => vo
       const auxOpacity = pastZoom ? 0 : handoff;
 
       // Card animation: drive by overall scroll progress through scrollSpace.
-      // CARD_END tracks CTA_START exactly — no dead zone between the last card
-      // fading out and the AESDR CTA fading in. CTA tail extends to ~0.99 so
-      // we don't leave cream void between CTA fade-out and scrollSpace end.
+      // When hideAccessCta is OFF (production behavior), CARD_END=0.84 reserves
+      // the trailing 16% of scrollSpace for the CTA fade-in/out — production
+      // needs that budget to land the AESDR mark before the deck stack starts.
+      // When hideAccessCta is ON (affiliate experience), there's nothing
+      // visible to budget for, so CARD_END=1.0 lets cards animate across the
+      // FULL scrollSpace and the last card ends right where the next section
+      // begins — no cream gap between the final Michael line and the sneak-peek
+      // video below.
       const progress = maxScroll > 0 ? Math.min(1, Math.max(0, scrollY / maxScroll)) : 0;
       const total = opts.zoomCards.length;
-      const CARD_END = 0.84;
+      const CARD_END = opts.hideAccessCta ? 1.0 : 0.84;
       const cardProgress = Math.min(total, (progress / CARD_END) * total);
       const cardIndex = Math.min(Math.floor(cardProgress), total - 1);
       const cardFrac = cardProgress - cardIndex;
 
       // CTA: appears immediately as the last card fades out, lingers near
-      // the end of scrollSpace.
+      // the end of scrollSpace. Suppressed entirely when hideAccessCta is set
+      // — there's no overlay to fade and no budget to reserve.
       let ctaOpacity = 0;
       let ctaVisibleZone = false;
-      if (progress > 0.84 && progress < 0.99) {
+      if (!opts.hideAccessCta && progress > 0.84 && progress < 0.99) {
         const fadeIn = Math.min(1, (progress - 0.84) / 0.03);
         const fadeOut = progress > 0.96 ? 1 - Math.min(1, (progress - 0.96) / 0.03) : 1;
         ctaOpacity = fadeIn * fadeOut;
+        ctaVisibleZone = true;
+      }
+      // Past-the-zoom signal still needs to fire even with hideAccessCta so
+      // BottomTimer/end-of-flow callbacks work — derived from progress >= 1.0.
+      if (opts.hideAccessCta && progress >= 0.99) {
         ctaVisibleZone = true;
       }
 

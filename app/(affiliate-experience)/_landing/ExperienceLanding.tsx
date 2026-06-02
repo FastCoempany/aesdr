@@ -237,16 +237,7 @@ export default function ExperienceLanding({
           <div key={i} className={s.markerDot} />
         ))}
       </div>
-      <div
-        className={s.scrollSpace}
-        ref={scrollSpaceRef}
-        // When the final Get-Access CTA is hidden (this affiliate flow), the
-        // CTA's reserved scroll band (~84%→99% of scrollSpace) renders as a
-        // tall cream void between the last zoom card and whatever comes next.
-        // Shorten scrollSpace from 700vh to 588vh so it ends right where the
-        // cards finish; the sneak-peek video below then sits immediately under.
-        style={hideAccessCta ? { height: "588vh" } : undefined}
-      />
+      <div className={s.scrollSpace} ref={scrollSpaceRef} />
       <div className={s.viewport} ref={viewportRef}>
         {ZOOM_CARDS.map((card, i) => (
           <div key={i} className={s.zcard}>

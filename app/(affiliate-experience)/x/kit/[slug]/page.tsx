@@ -127,47 +127,50 @@ export default async function KitDocPage({
   const html = rewriteKitLinks(getKitEntryHtml(entry));
   const { prev, next } = neighbors(entry);
 
+  // PreviewOnlyWrap intercepts *every* button click inside its tree (so the
+  // pricing-section checkout buttons can't escape). The KitCta in the footer
+  // is also a <button>, so it must sit OUTSIDE the wrap or the popup hijacks
+  // the "Request affiliate conversation" click. Body goes inside the wrap so
+  // any stray off-host link in the rendered markdown still gets intercepted.
   return (
     <>
       <KitTracker event="kit_viewed" props={{ view: "doc", slug }} />
-      <PreviewOnlyWrap>
-        <KitShell
-          title={entry.title}
-          subtitle={SUBTITLE_FOR[slug] || entry.description}
-          category={entry.category as KitCategory}
-          pose={POSE_FOR[slug] || "doctrine"}
-          prev={prev}
-          next={next}
-          footerSlot={
-            <div
+      <KitShell
+        title={entry.title}
+        subtitle={SUBTITLE_FOR[slug] || entry.description}
+        category={entry.category as KitCategory}
+        pose={POSE_FOR[slug] || "doctrine"}
+        prev={prev}
+        next={next}
+        footerSlot={
+          <div
+            style={{
+              maxWidth: 1080,
+              margin: "0 auto",
+              padding: "8px 0 0",
+              borderTop: "1px solid var(--light, #E8E4DF)",
+              marginTop: 16,
+              paddingTop: 32,
+              textAlign: "center",
+            }}
+          >
+            <p
               style={{
-                maxWidth: 1080,
-                margin: "0 auto",
-                padding: "8px 0 0",
-                borderTop: "1px solid var(--light, #E8E4DF)",
-                marginTop: 16,
-                paddingTop: 32,
-                textAlign: "center",
+                fontFamily:
+                  "var(--display, 'Playfair Display', Georgia, serif)",
+                fontStyle: "italic",
+                fontSize: 22,
+                margin: "0 0 18px",
               }}
             >
-              <p
-                style={{
-                  fontFamily:
-                    "var(--display, 'Playfair Display', Georgia, serif)",
-                  fontStyle: "italic",
-                  fontSize: 22,
-                  margin: "0 0 18px",
-                }}
-              >
-                Ready to talk?
-              </p>
-              <KitCta />
-            </div>
-          }
-        >
-          {renderBody(slug, html)}
-        </KitShell>
-      </PreviewOnlyWrap>
+              Ready to talk?
+            </p>
+            <KitCta />
+          </div>
+        }
+      >
+        <PreviewOnlyWrap>{renderBody(slug, html)}</PreviewOnlyWrap>
+      </KitShell>
     </>
   );
 }

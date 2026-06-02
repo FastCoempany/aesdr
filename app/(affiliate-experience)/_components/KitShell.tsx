@@ -1,5 +1,3 @@
-"use client";
-
 /**
  * Universal branded shell for every /x/kit/* page. Editorial palette only —
  * cream/ink/crimson with iris gradient accents on the category stripe + key
@@ -8,6 +6,9 @@
  *
  * The body slot can be either the rendered-markdown HTML (default) for the
  * long-tail docs, or a fully custom JSX layout for the three priority docs.
+ *
+ * Server component — no client state, all interactivity lives in the slot
+ * children (KitCta etc.).
  */
 import Link from "next/link";
 import type { ReactNode } from "react";
