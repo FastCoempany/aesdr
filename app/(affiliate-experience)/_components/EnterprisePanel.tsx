@@ -31,12 +31,15 @@ import { trackProspect } from "../_lib/track";
 export default function EnterprisePanel() {
   const [open, setOpen] = useState(false);
   const [biggestDeal, setBiggestDeal] = useState("");
+  const [dealDate1, setDealDate1] = useState("");
+  const [dealDate2, setDealDate2] = useState("");
   const [cycle, setCycle] = useState("");
   const [verticals, setVerticals] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
   const canSubmit =
     biggestDeal.trim().length > 1 &&
+    (dealDate1.length > 0 || dealDate2.length > 0) &&
     cycle.trim().length > 1 &&
     verticals.trim().length > 1;
 
@@ -44,6 +47,8 @@ export default function EnterprisePanel() {
     if (!canSubmit) return;
     trackProspect("kit_enterprise_intent_submitted", {
       biggest_deal: biggestDeal.trim().slice(0, 300),
+      deal_date_1: dealDate1 || null,
+      deal_date_2: dealDate2 || null,
       sales_cycle: cycle.trim().slice(0, 300),
       verticals: verticals.trim().slice(0, 300),
     });
@@ -76,8 +81,8 @@ export default function EnterprisePanel() {
         }
         .ent-glow-wrap {
           position: relative;
-          border-radius: 14px;
-          padding: 6px;
+          border-radius: 12px;
+          padding: 2px;
           background:
             var(--iris) border-box,
             linear-gradient(var(--cream, #FAF7F2), var(--cream, #FAF7F2)) padding-box;
@@ -86,16 +91,16 @@ export default function EnterprisePanel() {
           animation:
             ent-glow-shimmer 8s linear infinite,
             ent-float 7s ease-in-out infinite;
-          border: 2px solid transparent;
+          border: 1px solid transparent;
           box-shadow:
-            0 0 22px rgba(255, 0, 110, 0.18),
-            0 0 44px rgba(139, 92, 246, 0.16),
-            0 28px 56px -22px rgba(26, 26, 26, 0.30),
-            0 12px 22px -10px rgba(139, 26, 26, 0.18);
+            0 0 18px rgba(255, 0, 110, 0.16),
+            0 0 36px rgba(139, 92, 246, 0.14),
+            0 24px 48px -20px rgba(26, 26, 26, 0.28),
+            0 10px 18px -8px rgba(139, 26, 26, 0.16);
         }
         .ent-glow-inner {
           background: var(--cream, #FAF7F2);
-          border-radius: 9px;
+          border-radius: 10px;
           padding: 32px clamp(22px, 4vw, 36px) 28px;
           color: var(--ink, #1A1A1A);
           position: relative;
@@ -418,22 +423,70 @@ function PanelContent({
             fontWeight: 700,
           }}
         >
-          Show us the wiring
+          Give us a few highlights for a quick fit-check
         </p>
+
+        {/* Partnership field — text description + 2 date inputs (≥1 required) */}
+        <label
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 5,
+            fontFamily: "var(--serif, 'Source Serif 4', Georgia, serif)",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "var(--cond, 'Barlow Condensed', sans-serif)",
+              textTransform: "uppercase",
+              letterSpacing: ".14em",
+              fontSize: 11,
+              color: "var(--ink, #1A1A1A)",
+              fontWeight: 700,
+            }}
+          >
+            Last 1&ndash;2 partnership-size licenses/partnerships you placed
+          </span>
+          <input
+            type="text"
+            value={biggestDeal}
+            onChange={(e) => setBiggestDeal(e.target.value)}
+            placeholder="e.g. 25 seats / $4K / mid-market SaaS"
+            maxLength={300}
+            data-preview-allow="1"
+            style={fieldInputStyle}
+            onFocus={fieldFocus}
+            onBlur={fieldBlur}
+          />
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 10,
+              marginTop: 6,
+            }}
+          >
+            <DateSubField
+              label="Date #1 (required)"
+              value={dealDate1}
+              onChange={setDealDate1}
+            />
+            <DateSubField
+              label="Date #2 (optional)"
+              value={dealDate2}
+              onChange={setDealDate2}
+            />
+          </div>
+        </label>
+
         <Field
-          label="Biggest team-license you&rsquo;ve placed"
-          placeholder="e.g. 25 seats / $4K / mid-market SaaS"
-          value={biggestDeal}
-          onChange={setBiggestDeal}
-        />
-        <Field
-          label="Typical enterprise sales cycle you operate in"
-          placeholder="e.g. 3–6 months from intro to signed"
+          label="Typical time you sign teams/enterprise affiliate partnerships"
+          placeholder="e.g. 3&ndash;6 months from intro to signed"
           value={cycle}
           onChange={setCycle}
         />
         <Field
-          label="Sectors or functions you sell into regularly"
+          label="Sectors or functions you sold into in the last 6 months"
           placeholder="e.g. RevOps + enablement at Series B/C SaaS"
           value={verticals}
           onChange={setVerticals}
@@ -473,13 +526,89 @@ function PanelContent({
             lineHeight: 1.55,
             color: "var(--muted, #6B6B6B)",
             margin: "2px 0 0",
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "baseline",
+            gap: 4,
           }}
         >
-          We read every submission. If the shape fits, we&rsquo;ll link
-          you to the enterprise hub directly.
+          <span>
+            We read every submission. If it makes sense, we&rsquo;ll link you to
+            the
+          </span>
+          <EnterpriseLockup
+            size="small"
+            style={{ transform: "translateY(2px)" }}
+          />
+          <span>hub directly.</span>
         </p>
       </div>
     </>
+  );
+}
+
+/* ─────────────────────────────────────────────────
+   Inline field helpers — re-used by the partnership field so its
+   text input matches the visual register of the generic Field.
+   ───────────────────────────────────────────────── */
+const fieldInputStyle: React.CSSProperties = {
+  fontFamily: "var(--serif, 'Source Serif 4', Georgia, serif)",
+  fontSize: 15,
+  padding: "11px 13px",
+  background: "rgba(139, 26, 26, 0.04)",
+  border: "1px solid rgba(139, 26, 26, 0.25)",
+  color: "var(--ink, #1A1A1A)",
+  borderRadius: 2,
+  outline: "none",
+  transition: "border-color 180ms ease, background 180ms ease",
+};
+
+function fieldFocus(e: React.FocusEvent<HTMLInputElement>) {
+  e.currentTarget.style.borderColor = "var(--crimson, #8B1A1A)";
+  e.currentTarget.style.background = "rgba(139, 26, 26, 0.07)";
+}
+function fieldBlur(e: React.FocusEvent<HTMLInputElement>) {
+  e.currentTarget.style.borderColor = "rgba(139, 26, 26, 0.25)";
+  e.currentTarget.style.background = "rgba(139, 26, 26, 0.04)";
+}
+
+function DateSubField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <label style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      <span
+        style={{
+          fontFamily: "var(--cond, 'Barlow Condensed', sans-serif)",
+          textTransform: "uppercase",
+          letterSpacing: ".14em",
+          fontSize: 10,
+          color: "var(--muted, #6B6B6B)",
+        }}
+      >
+        {label}
+      </span>
+      <input
+        type="date"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        data-preview-allow="1"
+        style={{
+          ...fieldInputStyle,
+          fontSize: 14,
+          padding: "9px 12px",
+          fontFamily: "var(--mono, 'Space Mono', monospace)",
+        }}
+        onFocus={fieldFocus}
+        onBlur={fieldBlur}
+      />
+    </label>
   );
 }
 
@@ -597,11 +726,11 @@ function BridgeFooter() {
           }}
         >
           AESDR / Enterprise is built on{" "}
+          {/* No data-preview-allow — PreviewOnlyWrap intercepts this and
+              shows the "no no no" popup. Prospects don't get to leave the
+              experience for the real site mid-evaluation. */}
           <a
             href="https://aesdr.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            data-preview-allow="1"
             style={{
               color: "var(--crimson, #8B1A1A)",
               textDecoration: "underline",
