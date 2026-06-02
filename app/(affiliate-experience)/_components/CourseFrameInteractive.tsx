@@ -349,8 +349,8 @@ export default function CourseFrameInteractive({ html }: { html: string }) {
           textAlign: "center",
         }}
       >
-        Course 04 · Section 01 · Sort the Survival Strategies — one widget,
-        live. Match all five and the curtain drops.
+        Course 04 · Section 01 · Sort the Survival Strategies — match each
+        strategy to the manager archetype it&rsquo;s built for.
       </figcaption>
     </figure>
   );
