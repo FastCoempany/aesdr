@@ -154,6 +154,10 @@ export default function EnterprisePanel() {
                     <PanelContent
                       biggestDeal={biggestDeal}
                       setBiggestDeal={setBiggestDeal}
+                      dealDate1={dealDate1}
+                      setDealDate1={setDealDate1}
+                      dealDate2={dealDate2}
+                      setDealDate2={setDealDate2}
                       cycle={cycle}
                       setCycle={setCycle}
                       verticals={verticals}
@@ -325,6 +329,10 @@ function EnterpriseTeaser({
 function PanelContent({
   biggestDeal,
   setBiggestDeal,
+  dealDate1,
+  setDealDate1,
+  dealDate2,
+  setDealDate2,
   cycle,
   setCycle,
   verticals,
@@ -334,6 +342,10 @@ function PanelContent({
 }: {
   biggestDeal: string;
   setBiggestDeal: (v: string) => void;
+  dealDate1: string;
+  setDealDate1: (v: string) => void;
+  dealDate2: string;
+  setDealDate2: (v: string) => void;
   cycle: string;
   setCycle: (v: string) => void;
   verticals: string;
