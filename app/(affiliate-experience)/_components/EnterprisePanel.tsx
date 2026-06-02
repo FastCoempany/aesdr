@@ -634,65 +634,66 @@ function DateSubField({
 }
 
 /* ─────────────────────────────────────────────────
-   Success state
+   Success state — qualifier submitted. Single CTA: book a time on
+   Antaeus' calendar. The enterprise-hub link is intentionally NOT
+   surfaced here; that route is reserved for prospects the founder
+   reviews and decides to admit, sent via Antaeus' direct reply.
    ───────────────────────────────────────────────── */
 function SuccessState() {
+  const [calOpen, setCalOpen] = useState(false);
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ marginBottom: 8 }}>
-        <EnterpriseLockup size="medium" />
-      </div>
-      <p
-        style={{
-          fontFamily: "var(--cond, 'Barlow Condensed', sans-serif)",
-          fontSize: 11,
-          letterSpacing: ".24em",
-          textTransform: "uppercase",
-          color: "var(--crimson, #8B1A1A)",
-          margin: 0,
-          fontWeight: 700,
-        }}
-      >
-        Submission received
-      </p>
-      <p
-        style={{
-          fontFamily: "var(--display, 'Playfair Display', Georgia, serif)",
-          fontStyle: "italic",
-          fontSize: 24,
-          lineHeight: 1.3,
-          color: "var(--ink, #1A1A1A)",
-          margin: 0,
-          letterSpacing: "-0.005em",
-        }}
-      >
-        Noted. Now grab a time — we&rsquo;ll come prepared.
-      </p>
-      <p
-        style={{
-          fontFamily: "var(--serif, 'Source Serif 4', Georgia, serif)",
-          fontSize: 16,
-          lineHeight: 1.6,
-          color: "var(--muted, #6B6B6B)",
-          margin: 0,
-        }}
-      >
-        Pick whatever slot works on Antaeus&rsquo; calendar below. The
-        invite drops straight to your inbox — and if any of the slots
-        don&rsquo;t fit, the enterprise hub is open for browsing in the
-        meantime.
-      </p>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-        <a
-          href={CALENDAR_URL}
-          target="_blank"
-          rel="noopener noreferrer"
+    <>
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div style={{ marginBottom: 8 }}>
+          <EnterpriseLockup size="medium" />
+        </div>
+        <p
+          style={{
+            fontFamily: "var(--cond, 'Barlow Condensed', sans-serif)",
+            fontSize: 11,
+            letterSpacing: ".24em",
+            textTransform: "uppercase",
+            color: "var(--crimson, #8B1A1A)",
+            margin: 0,
+            fontWeight: 700,
+          }}
+        >
+          Submission received
+        </p>
+        <p
+          style={{
+            fontFamily:
+              "var(--display, 'Playfair Display', Georgia, serif)",
+            fontStyle: "italic",
+            fontSize: 24,
+            lineHeight: 1.3,
+            color: "var(--ink, #1A1A1A)",
+            margin: 0,
+            letterSpacing: "-0.005em",
+          }}
+        >
+          Noted. Now grab a time — we&rsquo;ll come prepared.
+        </p>
+        <p
+          style={{
+            fontFamily: "var(--serif, 'Source Serif 4', Georgia, serif)",
+            fontSize: 16,
+            lineHeight: 1.6,
+            color: "var(--muted, #6B6B6B)",
+            margin: 0,
+          }}
+        >
+          Pick whatever slot works on Antaeus&rsquo; calendar — Google
+          will ask for your email at booking, the invite drops straight
+          to your inbox.
+        </p>
+        <button
+          type="button"
           data-preview-allow="1"
           onClick={() => {
-            // Fire when the affiliate actually picks the calendar — gives /x/ops
-            // a clean "they opened a booking flow" signal separate from the
-            // initial submission.
             void trackProspect("kit_enterprise_calendar_opened");
+            setCalOpen(true);
           }}
           style={{
             fontFamily: "var(--cond, 'Barlow Condensed', sans-serif)",
@@ -702,34 +703,181 @@ function SuccessState() {
             color: "#FAF7F2",
             background: "var(--crimson, #8B1A1A)",
             padding: "13px 22px",
-            textDecoration: "none",
+            border: "none",
             borderRadius: 2,
             fontWeight: 700,
+            cursor: "pointer",
+            alignSelf: "flex-start",
           }}
         >
           Pick a time on Antaeus&rsquo; calendar ↗
-        </a>
-        <a
-          href="/enterprise"
-          target="_blank"
-          rel="noopener noreferrer"
-          data-preview-allow="1"
+        </button>
+      </div>
+
+      {calOpen && <CalendarModal onClose={() => setCalOpen(false)} />}
+    </>
+  );
+}
+
+/* ─────────────────────────────────────────────────
+   Calendar modal — opens the Google Appointment Schedule INLINE
+   in an iframe overlay. If Google blocks the embed (X-Frame-Options),
+   the fallback link at the bottom keeps a real path open. Closes on
+   backdrop click + Esc + the close button. data-preview-allow on the
+   fallback anchor so PreviewOnlyWrap doesn't intercept the legit
+   booking-flow exit.
+   ───────────────────────────────────────────────── */
+function CalendarModal({ onClose }: { onClose: () => void }) {
+  // Esc to close — modal-standard a11y
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  if (typeof window !== "undefined") {
+    // Only attach once per mount; idempotent across re-renders
+  }
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Pick a time on Antaeus' calendar"
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 80,
+        background: "rgba(26, 26, 26, 0.72)",
+        backdropFilter: "blur(4px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 24,
+        animation: "ent-reveal 260ms ease-out",
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: "var(--cream, #FAF7F2)",
+          width: "100%",
+          maxWidth: 980,
+          height: "min(820px, 90vh)",
+          borderRadius: 6,
+          border: "1px solid var(--ink, #1A1A1A)",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+          boxShadow: "0 40px 80px -20px rgba(0, 0, 0, 0.55)",
+        }}
+      >
+        {/* Modal header */}
+        <div
           style={{
-            fontFamily: "var(--cond, 'Barlow Condensed', sans-serif)",
-            textTransform: "uppercase",
-            letterSpacing: ".16em",
-            fontSize: 13,
-            color: "var(--ink, #1A1A1A)",
-            background: "transparent",
-            padding: "12px 22px",
-            textDecoration: "none",
-            borderRadius: 2,
-            fontWeight: 700,
-            border: "1.5px solid var(--ink, #1A1A1A)",
+            background: "var(--ink, #1A1A1A)",
+            color: "#FAF7F2",
+            padding: "12px 18px",
+            display: "flex",
+            alignItems: "center",
+            gap: 14,
           }}
         >
-          Open the enterprise hub ↗
-        </a>
+          <EnterpriseLockup size="tiny" />
+          <span
+            style={{
+              flex: 1,
+              fontFamily: "var(--cond, 'Barlow Condensed', sans-serif)",
+              textTransform: "uppercase",
+              letterSpacing: ".16em",
+              fontSize: 12,
+              fontWeight: 700,
+            }}
+          >
+            Pick a time — Antaeus&rsquo; calendar
+          </span>
+          <button
+            type="button"
+            data-preview-allow="1"
+            onClick={onClose}
+            aria-label="Close calendar"
+            style={{
+              background: "transparent",
+              border: "1px solid rgba(250, 247, 242, 0.4)",
+              color: "#FAF7F2",
+              width: 32,
+              height: 32,
+              borderRadius: 2,
+              cursor: "pointer",
+              fontSize: 18,
+              lineHeight: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            ×
+          </button>
+        </div>
+
+        {/* The actual calendar iframe.
+            Google's appointment-schedule short link (calendar.app.google/...)
+            redirects to a long URL whose X-Frame-Options policy permits
+            embedding via the schedule's own embed path. If Google ever
+            blocks it, the iframe renders blank and the fallback CTA below
+            stays as the escape hatch. */}
+        <iframe
+          title="Antaeus' calendar"
+          src={CALENDAR_URL}
+          style={{
+            flex: 1,
+            width: "100%",
+            border: "none",
+            background: "#FFFFFF",
+          }}
+        />
+
+        {/* Fallback footer — in case the iframe loads blank or the user
+            wants a full-tab view instead. */}
+        <div
+          style={{
+            padding: "12px 18px",
+            background: "var(--cream, #FAF7F2)",
+            borderTop: "1px solid var(--light, #E8E4DF)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 14,
+            flexWrap: "wrap",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "var(--serif, 'Source Serif 4', Georgia, serif)",
+              fontStyle: "italic",
+              fontSize: 13,
+              color: "var(--muted, #6B6B6B)",
+            }}
+          >
+            Doesn&rsquo;t load? Open the full calendar in a new tab.
+          </span>
+          <a
+            href={CALENDAR_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-preview-allow="1"
+            style={{
+              fontFamily: "var(--cond, 'Barlow Condensed', sans-serif)",
+              textTransform: "uppercase",
+              letterSpacing: ".16em",
+              fontSize: 11,
+              color: "var(--ink, #1A1A1A)",
+              border: "1px solid var(--ink, #1A1A1A)",
+              padding: "8px 14px",
+              borderRadius: 2,
+              textDecoration: "none",
+              fontWeight: 700,
+            }}
+          >
+            Open in a new tab ↗
+          </a>
+        </div>
       </div>
     </div>
   );
