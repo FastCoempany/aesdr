@@ -92,15 +92,11 @@ export default function KitDocWhatYouEarn() {
         </div>
       </section>
 
-      {/* ── Net math + Enterprise sibling panel ──
-              Two columns side-by-side at >900px, stacked below. The math
-              on the LEFT is the canonical consumer-commission shape ($249
-              SDR / $299 AE × 40%). The Enterprise panel on the RIGHT sits
-              in the AESDR / Enterprise sub-brand register — different
-              palette (ink), different typography (Barlow Condensed body
-              instead of editorial serif), different voice (B2B/wired-for-
-              this rather than affiliate-pitch) — so the two reads as two
-              distinct paths, not one continuous offer. */}
+      {/* ── Net math (consumer SDR/AE track, full width) ──
+              The Enterprise sibling now lives in its own section below as a
+              collapsible track — the previous side-by-side grid left a
+              stretched empty band at the bottom of the consumer panel
+              whenever the form column ran taller. */}
       <section style={{ marginBottom: 64 }}>
         <SectionLabel>What &ldquo;net&rdquo; means</SectionLabel>
         <p style={para}>
@@ -110,53 +106,47 @@ export default function KitDocWhatYouEarn() {
         <div
           style={{
             marginTop: 28,
-            display: "grid",
-            gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)",
-            gap: 16,
-            alignItems: "stretch",
+            background: "var(--ink, #1A1A1A)",
+            color: "#FAF7F2",
+            padding: "26px 28px 28px",
+            fontFamily: "var(--mono, 'Space Mono', monospace)",
+            fontSize: 14,
+            lineHeight: 1.85,
+            borderLeft: "4px solid var(--crimson, #8B1A1A)",
+            overflowX: "auto",
           }}
         >
-          {/* LEFT — consumer SDR/AE math */}
-          <div
-            style={{
-              background: "var(--ink, #1A1A1A)",
-              color: "#FAF7F2",
-              padding: "26px 28px 28px",
-              fontFamily: "var(--mono, 'Space Mono', monospace)",
-              fontSize: 14,
-              lineHeight: 1.85,
-              borderLeft: "4px solid var(--crimson, #8B1A1A)",
-              overflowX: "auto",
-            }}
-          >
-            <div style={{ opacity: 0.55, marginBottom: 10 }}>
-              # SDR plan — $249
-            </div>
-            <div>$249.00 gross enrollment</div>
-            <div>&nbsp;&nbsp;− $&nbsp;&nbsp;7.47 processing fee (~3%)</div>
-            <div>&nbsp;&nbsp;− $&nbsp;&nbsp;0.00 refunds</div>
-            <div>&nbsp;&nbsp;= $241.53 net</div>
-            <div style={{ color: "#8B5CF6", marginTop: 6 }}>
-              &nbsp;&nbsp;×&nbsp;&nbsp;&nbsp;40% =
-              <strong>&nbsp;&nbsp;~$96.61 to you</strong>
-            </div>
-
-            <div style={{ opacity: 0.55, margin: "22px 0 10px" }}>
-              # AE plan — $299
-            </div>
-            <div>$299.00 gross enrollment</div>
-            <div>&nbsp;&nbsp;− $&nbsp;&nbsp;8.97 processing fee (~3%)</div>
-            <div>&nbsp;&nbsp;− $&nbsp;&nbsp;0.00 refunds</div>
-            <div>&nbsp;&nbsp;= $290.03 net</div>
-            <div style={{ color: "#8B5CF6", marginTop: 6 }}>
-              &nbsp;&nbsp;×&nbsp;&nbsp;&nbsp;40% =
-              <strong>&nbsp;&nbsp;~$116.01 to you</strong>
-            </div>
+          <div style={{ opacity: 0.55, marginBottom: 10 }}>
+            # SDR plan — $249
+          </div>
+          <div>$249.00 gross enrollment</div>
+          <div>&nbsp;&nbsp;− $&nbsp;&nbsp;7.47 processing fee (~3%)</div>
+          <div>&nbsp;&nbsp;− $&nbsp;&nbsp;0.00 refunds</div>
+          <div>&nbsp;&nbsp;= $241.53 net</div>
+          <div style={{ color: "#8B5CF6", marginTop: 6 }}>
+            &nbsp;&nbsp;×&nbsp;&nbsp;&nbsp;40% =
+            <strong>&nbsp;&nbsp;~$96.61 to you</strong>
           </div>
 
-          {/* RIGHT — Enterprise sibling panel (sub-brand register) */}
-          <EnterprisePanel />
+          <div style={{ opacity: 0.55, margin: "22px 0 10px" }}>
+            # AE plan — $299
+          </div>
+          <div>$299.00 gross enrollment</div>
+          <div>&nbsp;&nbsp;− $&nbsp;&nbsp;8.97 processing fee (~3%)</div>
+          <div>&nbsp;&nbsp;− $&nbsp;&nbsp;0.00 refunds</div>
+          <div>&nbsp;&nbsp;= $290.03 net</div>
+          <div style={{ color: "#8B5CF6", marginTop: 6 }}>
+            &nbsp;&nbsp;×&nbsp;&nbsp;&nbsp;40% =
+            <strong>&nbsp;&nbsp;~$116.01 to you</strong>
+          </div>
         </div>
+      </section>
+
+      {/* ── Enterprise sibling track ──
+              Header + collapsible button + floating cream/crimson panel
+              with iris-shimmer glow, per the sub-brand canon. */}
+      <section style={{ marginBottom: 64 }}>
+        <EnterprisePanel />
       </section>
 
       {/* ── A real send ── */}
