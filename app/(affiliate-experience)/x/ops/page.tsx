@@ -36,6 +36,7 @@ const STAGES = [
   "directed_to_kit",
   "kit_viewed",
   "request_conversation_clicked",
+  "kit_enterprise_intent_submitted",
 ] as const;
 const STAGE_LABEL: Record<string, string> = {
   link_opened: "Opened link",
@@ -46,6 +47,7 @@ const STAGE_LABEL: Record<string, string> = {
   directed_to_kit: "Sent to kit",
   kit_viewed: "Viewed kit",
   request_conversation_clicked: "Requested conversation",
+  kit_enterprise_intent_submitted: "Submitted enterprise track",
 };
 
 const ink = "var(--ink, #1A1A1A)";
@@ -105,6 +107,7 @@ export default async function AffiliateAnalyticsPage() {
     furthest: number; // STAGES index
     stoppedTimer: boolean;
     requestedConvo: boolean;
+    enterpriseSubmitted: boolean;
     country: string | null;
     device: string | null;
   };
@@ -127,6 +130,7 @@ export default async function AffiliateAnalyticsPage() {
         furthest: -1,
         stoppedTimer: false,
         requestedConvo: false,
+        enterpriseSubmitted: false,
         country: e.country,
         device: e.device,
       } as Agg);
@@ -145,6 +149,7 @@ export default async function AffiliateAnalyticsPage() {
         stoppedTimer.push(e.prospect_slug);
     }
     if (e.name === "request_conversation_clicked") a.requestedConvo = true;
+    if (e.name === "kit_enterprise_intent_submitted") a.enterpriseSubmitted = true;
     if (e.name === "role_picked") {
       const r = (e.props?.role as string) || null;
       if (r) {
@@ -354,8 +359,11 @@ export default async function AffiliateAnalyticsPage() {
                   {a.requestedConvo && (
                     <span style={{ color: crimson }}>★ requested convo<br /></span>
                   )}
+                  {a.enterpriseSubmitted && (
+                    <span style={{ color: crimson }}>◆ enterprise track<br /></span>
+                  )}
                   {a.stoppedTimer && <span>⏸ stopped timer (engaged)</span>}
-                  {!a.requestedConvo && !a.stoppedTimer && "—"}
+                  {!a.requestedConvo && !a.enterpriseSubmitted && !a.stoppedTimer && "—"}
                 </td>
                 <td style={cell}>
                   {a.country || "?"} · {a.device || "?"}

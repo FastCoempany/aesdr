@@ -8,7 +8,10 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/utils/supabase/admin";
-import { sendProspectConversationRequestEmail } from "@/lib/email";
+import {
+  sendProspectConversationRequestEmail,
+  sendProspectEnterpriseIntentEmail,
+} from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -65,6 +68,47 @@ export async function POST(req: NextRequest) {
 
   if (error) {
     return NextResponse.json({ ok: false }, { status: 500 });
+  }
+
+  // High-intent signal: enterprise-track submission from the /x/kit/what-you-earn
+  // qualifier panel. Same dedup-on-server pattern as the conversation-request
+  // notifier — only the first submission per slug fires the email.
+  if (name === "kit_enterprise_intent_submitted") {
+    const { count: subCount } = await supabase
+      .from("affiliate_prospect_events")
+      .select("*", { count: "exact", head: true })
+      .eq("prospect_slug", slug)
+      .eq("name", "kit_enterprise_intent_submitted");
+
+    if ((subCount ?? 0) <= 1) {
+      const { data: prospect } = await supabase
+        .from("affiliate_prospects")
+        .select("display_name")
+        .eq("slug", slug)
+        .single();
+
+      const props =
+        body.props && typeof body.props === "object" && !Array.isArray(body.props)
+          ? (body.props as Record<string, unknown>)
+          : {};
+      const biggestDeal = String(props.biggest_deal ?? "").slice(0, 300);
+      const salesCycle = String(props.sales_cycle ?? "").slice(0, 300);
+      const verticals = String(props.verticals ?? "").slice(0, 300);
+
+      sendProspectEnterpriseIntentEmail({
+        slug,
+        displayName: prospect?.display_name ?? null,
+        biggestDeal,
+        salesCycle,
+        verticals,
+        path: str(body.path, 256),
+        country: country ? country.slice(0, 8) : null,
+        device,
+        submittedAt: new Date().toISOString(),
+      }).catch((err) => {
+        console.error("[track] enterprise-intent email failed:", err);
+      });
+    }
   }
 
   // High-intent signal: fire a one-shot email notification to the founder

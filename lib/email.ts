@@ -792,6 +792,143 @@ function prospectConversationRequestHtml(
 </html>`;
 }
 
+// ─── Prospect Enterprise Intent (internal, to founder) ───
+// Fires the FIRST time a tracked prospect inside the /x/* affiliate-experience
+// submits the three-field "enterprise wiring" panel on /x/kit/what-you-earn.
+// Same dedup-on-server pattern as the conversation-request notifier: the
+// /x/track route counts existing events of this name before invoking.
+
+export type ProspectEnterpriseIntentPayload = {
+  slug: string;
+  displayName: string | null;
+  biggestDeal: string;
+  salesCycle: string;
+  verticals: string;
+  path: string | null;
+  country: string | null;
+  device: string | null;
+  submittedAt: string;
+};
+
+export async function sendProspectEnterpriseIntentEmail(
+  p: ProspectEnterpriseIntentPayload,
+): Promise<boolean> {
+  const recipient = process.env.EMAIL_RECIPIENT;
+  if (!recipient) {
+    console.warn(
+      "[email] EMAIL_RECIPIENT not set; skipping enterprise-intent notification.",
+    );
+    return false;
+  }
+  const from = process.env.EMAIL_FROM || FROM;
+  const label = p.displayName || p.slug;
+  const subject = `[/x/kit] ${label} submitted for the enterprise track`;
+  return safeSend(`prospect-enterprise-intent from ${label}`, () =>
+    getResend().emails.send({
+      from,
+      to: recipient,
+      replyTo: recipient,
+      subject,
+      html: prospectEnterpriseIntentHtml(p),
+      text: prospectEnterpriseIntentText(p),
+    }),
+  );
+}
+
+function prospectEnterpriseIntentText(
+  p: ProspectEnterpriseIntentPayload,
+): string {
+  return [
+    `Enterprise-track submission — ${p.displayName || p.slug}`,
+    "",
+    `Display name:   ${p.displayName || "(none — slug only)"}`,
+    `Slug:           ${p.slug}`,
+    "",
+    "── BIGGEST TEAM-LICENSE PLACED ──",
+    p.biggestDeal,
+    "",
+    "── TYPICAL ENTERPRISE SALES CYCLE ──",
+    p.salesCycle,
+    "",
+    "── SECTORS / FUNCTIONS ──",
+    p.verticals,
+    "",
+    `Submitted at:   ${p.submittedAt}`,
+    `Last page:      ${p.path || "(unknown)"}`,
+    `Device:         ${p.device || "(unknown)"}`,
+    `Country:        ${p.country || "(unknown)"}`,
+    "",
+    `Dashboard: ${SITE}/x/ops`,
+    `Enterprise hub: ${SITE}/enterprise`,
+  ].join("\n");
+}
+
+function prospectEnterpriseIntentHtml(
+  p: ProspectEnterpriseIntentPayload,
+): string {
+  const row = (label: string, value: string) => `
+    <tr>
+      <td style="padding:14px 0 4px;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#6B6B6B">${esc(label)}</td>
+    </tr>
+    <tr>
+      <td style="padding:0 0 12px;font-family:Georgia,'Source Serif 4',serif;font-size:15px;line-height:1.55;color:#1A1A1A;border-bottom:1px solid #E8E4DF">${esc(value)}</td>
+    </tr>`;
+
+  return `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Enterprise-track submission</title></head>
+<body style="margin:0;padding:0;background:#1A1A1A;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#1A1A1A;padding:32px 16px;">
+  <tr><td align="center">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="640" style="max-width:640px;width:100%;background:#FAF7F2;border:1px solid #1A1A1A;">
+      <tr><td style="height:4px;background:linear-gradient(90deg,#FF006E,#FF6B00,#F59E0B,#10B981,#38BDF8,#8B5CF6,#FF006E);font-size:0;line-height:0;">&nbsp;</td></tr>
+      <tr><td style="padding:28px 32px 8px 32px;">
+        <p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#8B1A1A;font-weight:700;">
+          AESDR &middot; Enterprise track &middot; Submission
+        </p>
+      </td></tr>
+      <tr><td style="padding:0 32px 8px 32px;">
+        <h1 style="margin:0;font-family:Georgia,'Playfair Display',serif;font-style:italic;font-weight:700;font-size:30px;line-height:1.15;color:#1A1A1A;">
+          ${esc(p.displayName || p.slug)} wants the enterprise track.
+        </h1>
+      </td></tr>
+      <tr><td style="padding:0 32px 16px 32px;">
+        <p style="margin:6px 0 0;font-family:Georgia,'Source Serif 4',serif;font-size:15px;line-height:1.55;color:#6B6B6B;font-style:italic;">
+          They filled the three-field qualifier on /x/kit/what-you-earn.
+          Read their answers below, then decide whether to link them into
+          the enterprise hub.
+        </p>
+      </td></tr>
+      <tr><td style="padding:0 32px 24px 32px;border-top:1px solid #E8E4DF;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-top:8px">
+          ${row("Biggest team-license placed", p.biggestDeal)}
+          ${row("Typical enterprise sales cycle", p.salesCycle)}
+          ${row("Sectors / functions", p.verticals)}
+        </table>
+      </td></tr>
+      <tr><td style="padding:0 32px 32px 32px;">
+        <a href="${SITE}/x/ops" style="display:inline-block;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#FFFFFF;background:#1A1A1A;padding:13px 24px;text-decoration:none;margin-right:8px;">
+          Open ops dashboard &rarr;
+        </a>
+        <a href="${SITE}/enterprise" style="display:inline-block;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#1A1A1A;background:transparent;border:1.5px solid #1A1A1A;padding:11.5px 24px;text-decoration:none;">
+          Enterprise hub &rarr;
+        </a>
+      </td></tr>
+      <tr><td style="padding:0 32px 28px 32px;">
+        <p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#6B6B6B;">
+          Slug: <code style="background:#FFFFFF;padding:1px 6px;font-size:12px;">${esc(p.slug)}</code>
+        </p>
+        <p style="margin:6px 0 0;font-family:Georgia,'Source Serif 4',serif;font-size:13px;line-height:1.55;color:#6B6B6B;font-style:italic;">
+          ${esc(p.path || "(unknown)")} &middot; ${esc(p.device || "(unknown)")} &middot; ${esc(p.country || "(unknown)")} &middot; ${esc(p.submittedAt)}
+        </p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>`;
+}
+
 // ─── Welcome Email (immediate after purchase) ───
 
 export async function sendWelcomeEmail(to: string, name: string, tempPassword: string | null) {

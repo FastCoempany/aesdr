@@ -16,6 +16,11 @@ export default function PreviewOnlyWrap({ children }: { children: ReactNode }) {
     const t = e.target as HTMLElement;
     const action = t.closest("button, a") as HTMLElement | null;
     if (!action) return;
+    // Explicit opt-out — in-experience interactive elements (forms,
+    // submission CTAs etc.) set data-preview-allow="1" so PreviewOnlyWrap
+    // doesn't hijack their click. Use sparingly — anything that would
+    // navigate the prospect off-host must NOT carry this attribute.
+    if (action.getAttribute("data-preview-allow") === "1") return;
     if (action.tagName === "A") {
       const href = (action as HTMLAnchorElement).getAttribute("href") || "";
       // Allow in-page anchors and any in-experience nav (/x/*). Block the rest.
