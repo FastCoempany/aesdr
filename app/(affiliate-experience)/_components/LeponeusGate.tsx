@@ -5,11 +5,40 @@
  * landing, a short subtext, then a slowly spinning Leponeus over three stacked
  * lines that send the prospect into the real landing experience. Editorial
  * palette only (cream / ink / crimson / iris) per AGENTS.md.
+ *
+ * Resets the prospect's persisted state on mount (role choice from a prior
+ * visit, any cinematic progress markers) so every visit to /x/welcome is a
+ * fresh first-time view — incognito and regular browser behave identically.
  */
+import { useEffect } from "react";
 import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
 import { ValidatorTicker } from "@/components/ValidationMarquee";
+import { clearRole } from "@/lib/role";
+
+function clearProspectState() {
+  if (typeof window === "undefined") return;
+  // Role: clearRole already dispatches the change event so any listening
+  // component (pricing tiers, cinematic) re-renders to the neutral default.
+  try { clearRole(); } catch { /* ignore */ }
+  // Belt-and-suspenders: drop every aesdr_* key from both storages so a
+  // prospect never inherits the previous prospect's UI state.
+  for (const storage of [window.localStorage, window.sessionStorage]) {
+    try {
+      const keys: string[] = [];
+      for (let i = 0; i < storage.length; i++) {
+        const k = storage.key(i);
+        if (k && k.startsWith("aesdr_")) keys.push(k);
+      }
+      keys.forEach((k) => storage.removeItem(k));
+    } catch { /* private mode etc. — accept */ }
+  }
+}
 
 export default function LeponeusGate({ onBegin }: { onBegin: () => void }) {
+  useEffect(() => {
+    clearProspectState();
+  }, []);
+
   return (
     <main
       style={{
