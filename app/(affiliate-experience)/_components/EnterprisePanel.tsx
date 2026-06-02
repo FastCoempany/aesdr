@@ -1,27 +1,27 @@
 "use client";
 
 /**
- * The Enterprise sibling track — sits below the consumer SDR/AE math on
- * /x/kit/what-you-earn, collapsed by default.
+ * The Net-math section of /x/kit/what-you-earn — owns both the consumer
+ * commission shape (LEFT) and the Enterprise sibling track (RIGHT), plus
+ * the floating expansion that opens BELOW the 2-column grid when the
+ * affiliate clicks "Tell Us More".
  *
- * Structure:
- *   1. Always-visible header: "Sell to teams and/or enterprises?"
- *   2. Always-visible toggle button — opens the panel
- *   3. On open: a floating, cream-on-crimson-accent panel with an iris
- *      shimmer glow around the perimeter (no black plate anymore). The
- *      panel subtly translates Y in place so it reads as detached from
- *      the page surface — institutional + premium, distinct from the
- *      consumer-side mono terminal.
+ * Architecture:
+ *   - LEFT column: the canonical SDR / AE commission math, ink terminal
+ *     block, mono. Unchanged content; just one column of a 2-col grid now.
+ *   - RIGHT column: the teaser — header ("Sell to teams and/or
+ *     enterprises?") + subhead + "Tell Us More" button. Stays the height
+ *     of the left column, no stretching.
+ *   - BELOW the grid (full-width): the iris-shimmer-glow cream panel
+ *     reveals when the teaser button fires. Floats subtly (translateY 3px
+ *     loop), iris-gradient animated border, illuminated drop shadow stack.
  *
- * Inside the panel:
- *   - AESDR / Enterprise lockup
- *   - Sample team tiers (modest)
- *   - Qualifier form (three short text fields, no "proof points" word)
- *   - Bridge footer per AESDR_ENTERPRISE_CANON §1.3 — the canonical
- *     "built on aesdr.com" line + small Leponeus diagnosis mark
+ * Lift state to this component so the toggle in the right column controls
+ * the full-width expansion below — keeps the grid heights balanced no
+ * matter the expansion's actual content height.
  *
  * Submit fires kit_enterprise_intent_submitted (PostHog + Supabase +
- * email; see /x/track route).
+ * founder email; see /x/track route).
  */
 import { useState } from "react";
 import Image from "next/image";
@@ -53,22 +53,18 @@ export default function EnterprisePanel() {
   function handleToggle() {
     setOpen((v) => {
       const next = !v;
-      if (next) {
-        // Fire once when expanded for the first time so /x/ops can see who
-        // is actually opening the enterprise track vs scrolling past it.
-        trackProspect("kit_enterprise_panel_opened");
-      }
+      if (next) trackProspect("kit_enterprise_panel_opened");
       return next;
     });
   }
 
   return (
-    <div style={{ marginTop: 8 }}>
-      {/* ── Local keyframes — float + glow shimmer + collapse reveal ── */}
+    <>
+      {/* Local keyframes (scoped via the .ent-* class prefix below) */}
       <style>{`
         @keyframes ent-glow-shimmer {
-          0%   { background-position:   0% 50%; }
-          100% { background-position: 300% 50%; }
+          0%   { background-position:   0% 50%, 0% 0%; }
+          100% { background-position: 300% 50%, 0% 0%; }
         }
         @keyframes ent-float {
           0%, 100% { transform: translateY(0); }
@@ -83,11 +79,10 @@ export default function EnterprisePanel() {
           border-radius: 14px;
           padding: 6px;
           background:
-            linear-gradient(var(--cream, #FAF7F2), var(--cream, #FAF7F2))
-            padding-box,
-            var(--iris) border-box;
-          background-size: 100% 100%, 300% 100%;
-          background-repeat: no-repeat;
+            var(--iris) border-box,
+            linear-gradient(var(--cream, #FAF7F2), var(--cream, #FAF7F2)) padding-box;
+          background-size: 300% 100%, 100% 100%;
+          background-repeat: no-repeat, no-repeat;
           animation:
             ent-glow-shimmer 8s linear infinite,
             ent-float 7s ease-in-out infinite;
@@ -107,80 +102,25 @@ export default function EnterprisePanel() {
         }
       `}</style>
 
-      {/* ── Always-visible header above the toggle ── */}
-      <h3
+      {/* ── 2-column grid: SDR/AE math (left) + Enterprise teaser (right) ── */}
+      <div
         style={{
-          fontFamily: "var(--display, 'Playfair Display', Georgia, serif)",
-          fontStyle: "italic",
-          fontWeight: 700,
-          fontSize: "clamp(24px, 3vw, 32px)",
-          lineHeight: 1.18,
-          margin: "0 0 8px",
-          letterSpacing: "-0.005em",
-          color: "var(--ink, #1A1A1A)",
+          marginTop: 28,
+          display: "grid",
+          gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)",
+          gap: 16,
+          alignItems: "stretch",
         }}
       >
-        Sell to teams and/or enterprises?
-      </h3>
-      <p
-        style={{
-          fontFamily: "var(--serif, 'Source Serif 4', Georgia, serif)",
-          fontStyle: "italic",
-          fontSize: 17,
-          lineHeight: 1.6,
-          color: "var(--muted, #6B6B6B)",
-          margin: "0 0 18px",
-          maxWidth: 640,
-        }}
-      >
-        We&rsquo;re wired for it. Different track, different conversation.
-      </p>
+        <ConsumerMathBlock />
+        <EnterpriseTeaser open={open} onToggle={handleToggle} />
+      </div>
 
-      {/* ── Toggle button ── */}
-      <button
-        type="button"
-        onClick={handleToggle}
-        data-preview-allow="1"
-        aria-expanded={open}
-        style={{
-          fontFamily: "var(--cond, 'Barlow Condensed', sans-serif)",
-          textTransform: "uppercase",
-          letterSpacing: ".16em",
-          fontSize: 13,
-          color: open ? "var(--ink, #1A1A1A)" : "#FAF7F2",
-          background: open ? "transparent" : "var(--ink, #1A1A1A)",
-          border: open
-            ? "1.5px solid var(--ink, #1A1A1A)"
-            : "1.5px solid var(--ink, #1A1A1A)",
-          borderRadius: 2,
-          padding: "12px 22px",
-          cursor: "pointer",
-          fontWeight: 700,
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 10,
-          transition: "background 200ms ease, color 200ms ease",
-        }}
-      >
-        {open ? "Hide the team track" : "Open the team track"}
-        <span
-          aria-hidden
-          style={{
-            display: "inline-block",
-            transition: "transform 260ms cubic-bezier(.22,1.1,.35,1)",
-            transform: open ? "rotate(180deg)" : "rotate(0deg)",
-            fontSize: 14,
-          }}
-        >
-          ▾
-        </span>
-      </button>
-
-      {/* ── The floating glow panel ── */}
+      {/* ── Full-width expansion BELOW the grid ── */}
       {open && (
         <div
           style={{
-            marginTop: 28,
+            marginTop: 22,
             animation: "ent-reveal 420ms cubic-bezier(.22,1.1,.35,1)",
           }}
         >
@@ -200,19 +140,158 @@ export default function EnterprisePanel() {
                   onSubmit={handleSubmit}
                 />
               )}
-
               <BridgeFooter />
             </div>
           </div>
         </div>
       )}
+    </>
+  );
+}
+
+/* ─────────────────────────────────────────────────
+   LEFT column — the consumer SDR/AE commission math
+   ───────────────────────────────────────────────── */
+function ConsumerMathBlock() {
+  return (
+    <div
+      style={{
+        background: "var(--ink, #1A1A1A)",
+        color: "#FAF7F2",
+        padding: "26px 28px 28px",
+        fontFamily: "var(--mono, 'Space Mono', monospace)",
+        fontSize: 14,
+        lineHeight: 1.85,
+        borderLeft: "4px solid var(--crimson, #8B1A1A)",
+        overflowX: "auto",
+      }}
+    >
+      <div style={{ opacity: 0.55, marginBottom: 10 }}># SDR plan — $249</div>
+      <div>$249.00 gross enrollment</div>
+      <div>&nbsp;&nbsp;− $&nbsp;&nbsp;7.47 processing fee (~3%)</div>
+      <div>&nbsp;&nbsp;− $&nbsp;&nbsp;0.00 refunds</div>
+      <div>&nbsp;&nbsp;= $241.53 net</div>
+      <div style={{ color: "#8B5CF6", marginTop: 6 }}>
+        &nbsp;&nbsp;×&nbsp;&nbsp;&nbsp;40% =
+        <strong>&nbsp;&nbsp;~$96.61 to you</strong>
+      </div>
+
+      <div style={{ opacity: 0.55, margin: "22px 0 10px" }}># AE plan — $299</div>
+      <div>$299.00 gross enrollment</div>
+      <div>&nbsp;&nbsp;− $&nbsp;&nbsp;8.97 processing fee (~3%)</div>
+      <div>&nbsp;&nbsp;− $&nbsp;&nbsp;0.00 refunds</div>
+      <div>&nbsp;&nbsp;= $290.03 net</div>
+      <div style={{ color: "#8B5CF6", marginTop: 6 }}>
+        &nbsp;&nbsp;×&nbsp;&nbsp;&nbsp;40% =
+        <strong>&nbsp;&nbsp;~$116.01 to you</strong>
+      </div>
     </div>
   );
 }
 
-/* ───────────────────────────────────────────────
-   Inner content of the floating panel (form state)
-   ─────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────
+   RIGHT column — the Enterprise teaser
+   Cream panel with crimson rail, A · E tiny mark in the corner,
+   subhead, and the "Tell Us More" CTA. Kept tight so the column
+   roughly matches the consumer math block's height.
+   ───────────────────────────────────────────────── */
+function EnterpriseTeaser({
+  open,
+  onToggle,
+}: {
+  open: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <div
+      style={{
+        background: "var(--cream, #FAF7F2)",
+        border: "1px solid var(--crimson, #8B1A1A)",
+        borderLeft: "4px solid var(--crimson, #8B1A1A)",
+        padding: "26px 28px 28px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 14,
+        justifyContent: "space-between",
+      }}
+    >
+      <div>
+        <div style={{ marginBottom: 14 }}>
+          <EnterpriseLockup size="tiny" />
+        </div>
+        <h3
+          style={{
+            fontFamily: "var(--display, 'Playfair Display', Georgia, serif)",
+            fontStyle: "italic",
+            fontWeight: 700,
+            fontSize: "clamp(22px, 2.6vw, 28px)",
+            lineHeight: 1.18,
+            margin: "0 0 10px",
+            letterSpacing: "-0.005em",
+            color: "var(--ink, #1A1A1A)",
+          }}
+        >
+          Sell to teams and/or enterprises?
+        </h3>
+        <p
+          style={{
+            fontFamily: "var(--serif, 'Source Serif 4', Georgia, serif)",
+            fontStyle: "italic",
+            fontSize: 16,
+            lineHeight: 1.6,
+            color: "var(--muted, #6B6B6B)",
+            margin: 0,
+          }}
+        >
+          We&rsquo;re wired for it. Different track, different conversation.
+          A modest team plan starts at 10 seats.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        onClick={onToggle}
+        data-preview-allow="1"
+        aria-expanded={open}
+        style={{
+          fontFamily: "var(--cond, 'Barlow Condensed', sans-serif)",
+          textTransform: "uppercase",
+          letterSpacing: ".16em",
+          fontSize: 13,
+          color: "#FAF7F2",
+          background: "var(--crimson, #8B1A1A)",
+          border: "none",
+          borderRadius: 2,
+          padding: "13px 22px",
+          cursor: "pointer",
+          fontWeight: 700,
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 10,
+          alignSelf: "flex-start",
+          transition: "background 200ms ease",
+        }}
+      >
+        {open ? "Close" : "Tell Us More"}
+        <span
+          aria-hidden
+          style={{
+            display: "inline-block",
+            transition: "transform 260ms cubic-bezier(.22,1.1,.35,1)",
+            transform: open ? "rotate(180deg)" : "rotate(0deg)",
+            fontSize: 14,
+          }}
+        >
+          ▾
+        </span>
+      </button>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────
+   Expanded panel content (form)
+   ───────────────────────────────────────────────── */
 function PanelContent({
   biggestDeal,
   setBiggestDeal,
@@ -234,7 +313,8 @@ function PanelContent({
 }) {
   return (
     <>
-      {/* Sub-brand lockup */}
+      {/* Lockup at the top of the expanded panel — full wordmark here, the
+          A·E tiny mark sat upstairs in the teaser column. */}
       <div style={{ marginBottom: 22 }}>
         <EnterpriseLockup size="medium" />
       </div>
@@ -358,7 +438,7 @@ function PanelContent({
             transition: "background 200ms ease",
           }}
         >
-          Submit for the enterprise track →
+          Submit and Grab Calendar Time →
         </button>
         <p
           style={{
@@ -378,9 +458,9 @@ function PanelContent({
   );
 }
 
-/* ───────────────────────────────────────────────
+/* ─────────────────────────────────────────────────
    Success state
-   ─────────────────────────────────────────────── */
+   ───────────────────────────────────────────────── */
 function SuccessState() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -451,12 +531,12 @@ function SuccessState() {
   );
 }
 
-/* ───────────────────────────────────────────────
-   Bridge footer — the canonical AESDR_ENTERPRISE_CANON §1.3 line.
-   Small diagnosis-pose Leponeus paired with the bridge copy so the
-   panel closes on its sub-brand register, not the affiliate kit's
-   editorial register.
-   ─────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────
+   Bridge footer — sits at the bottom of the expanded panel.
+   Diagnosis-pose Leponeus rendered large + the A·E tiny mark
+   (not the full wordmark — that's already up top in the panel)
+   + the canonical AESDR_ENTERPRISE_CANON §1.3 bridge line.
+   ───────────────────────────────────────────────── */
 function BridgeFooter() {
   return (
     <div
@@ -465,28 +545,28 @@ function BridgeFooter() {
         paddingTop: 22,
         borderTop: "1px solid rgba(139, 26, 26, 0.18)",
         display: "flex",
-        gap: 16,
-        alignItems: "flex-start",
+        gap: 22,
+        alignItems: "center",
       }}
     >
-      <div style={{ flexShrink: 0, marginTop: 2 }}>
+      <div style={{ flexShrink: 0 }}>
         <Image
           src="/mascot/leponeus-diagnosis.png"
           alt=""
-          width={40}
-          height={40}
-          style={{ display: "block", opacity: 0.92 }}
+          width={104}
+          height={104}
+          style={{ display: "block", opacity: 0.95 }}
         />
       </div>
       <div>
-        <div style={{ marginBottom: 6 }}>
-          <EnterpriseLockup size="small" />
+        <div style={{ marginBottom: 8 }}>
+          <EnterpriseLockup size="tiny" />
         </div>
         <p
           style={{
             fontFamily: "var(--serif, 'Source Serif 4', Georgia, serif)",
-            fontSize: 14,
-            lineHeight: 1.6,
+            fontSize: 14.5,
+            lineHeight: 1.65,
             margin: 0,
             color: "var(--muted, #6B6B6B)",
           }}
@@ -514,9 +594,9 @@ function BridgeFooter() {
   );
 }
 
-/* ───────────────────────────────────────────────
+/* ─────────────────────────────────────────────────
    Field (text input)
-   ─────────────────────────────────────────────── */
+   ───────────────────────────────────────────────── */
 function Field({
   label,
   placeholder,
