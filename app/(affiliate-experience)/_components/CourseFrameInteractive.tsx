@@ -350,7 +350,7 @@ export default function CourseFrameInteractive({ html }: { html: string }) {
         }}
       >
         Course 04 · Section 01 · Sort the Survival Strategies — match each
-        strategy to the manager archetype it&rsquo;s built for.
+        one to the manager archetype it answers.
       </figcaption>
     </figure>
   );
