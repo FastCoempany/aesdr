@@ -36,9 +36,21 @@ const LABEL: Record<Position, string> = {
   animation: "Back to animation ↻",
 };
 
+/**
+ * Route map for each knob position.
+ *
+ * "landing" — the scrollable landing page below the cinematic. Anchors to
+ *   #pricing so the browser instantly skips past the typing cinematic and
+ *   lands on the deck-stack / pricing / faq section where a returning
+ *   prospect can re-read the offer without sitting through the intro.
+ *
+ * "animation" — the full cinematic experience from the top of the welcome
+ *   gate. Reloads role state and replays "Here's the scenario..." typing
+ *   in full.
+ */
 const ROUTE: Record<Position, string | null> = {
   closed: null,
-  landing: "/x/landing",
+  landing: "/x/landing#pricing",
   animation: "/x/welcome",
 };
 

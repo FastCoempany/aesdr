@@ -29,8 +29,16 @@ function a11y(label?: string) {
 
 /**
  * The AESDR wordmark — Playfair display bold caps with the trailing period
- * the brand uses everywhere. Ink on cream by default; `tone` flips the
- * pairing for dark surfaces.
+ * the brand uses everywhere. Three tones:
+ *  • ink-on-cream (default) — solid #1A1A1A
+ *  • cream-on-ink — solid #FAF7F2 on a black plate
+ *  • iris — shimmering iris-gradient text (the brand's signature
+ *    treatment, used wherever we want the AESDR wordmark to read as the
+ *    showcase mark rather than a utility label)
+ *
+ * viewBox widened to 720×220 so the trailing period of "AESDR." doesn't
+ * clip at the right edge — the previous 600-wide viewBox was cropping
+ * the R + period at common render sizes.
  */
 export function Wordmark({
   size = 160,
@@ -38,27 +46,68 @@ export function Wordmark({
   className,
   style,
   label = "AESDR",
-}: Common & { tone?: "ink-on-cream" | "cream-on-ink" }) {
+}: Common & { tone?: "ink-on-cream" | "cream-on-ink" | "iris" }) {
   const bg = tone === "cream-on-ink" ? "#1A1A1A" : "transparent";
   const fg = tone === "cream-on-ink" ? "#FAF7F2" : "#1A1A1A";
+  const useIris = tone === "iris";
+  // Each instance gets a unique gradient id so multiple Wordmarks on a
+  // page don't share a single <linearGradient> definition and re-render
+  // out of sync.
+  const gradId = `aesdr-iris-${Math.abs(
+    (size * 73 + (tone?.length || 0) * 17 + label.length) | 0,
+  )}`;
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 600 220"
+      viewBox="0 0 720 220"
       width={size}
-      height={(size / 600) * 220}
+      height={(size / 720) * 220}
       className={className}
       style={style}
       {...a11y(label)}
     >
-      {bg !== "transparent" && <rect width="600" height="220" fill={bg} />}
+      {bg !== "transparent" && <rect width="720" height="220" fill={bg} />}
+      {useIris && (
+        <defs>
+          <linearGradient
+            id={gradId}
+            gradientUnits="userSpaceOnUse"
+            x1="0"
+            y1="0"
+            x2="720"
+            y2="0"
+          >
+            <stop offset="0%" stopColor="#FF006E" />
+            <stop offset="17%" stopColor="#FF6B00" />
+            <stop offset="34%" stopColor="#F59E0B" />
+            <stop offset="51%" stopColor="#10B981" />
+            <stop offset="68%" stopColor="#38BDF8" />
+            <stop offset="85%" stopColor="#8B5CF6" />
+            <stop offset="100%" stopColor="#FF006E" />
+            <animate
+              attributeName="x1"
+              from="-720"
+              to="0"
+              dur="6s"
+              repeatCount="indefinite"
+            />
+            <animate
+              attributeName="x2"
+              from="0"
+              to="720"
+              dur="6s"
+              repeatCount="indefinite"
+            />
+          </linearGradient>
+        </defs>
+      )}
       <text
-        x="40"
+        x="20"
         y="160"
         fontFamily="'Playfair Display', Georgia, serif"
         fontWeight={700}
         fontSize={180}
-        fill={fg}
+        fill={useIris ? `url(#${gradId})` : fg}
         letterSpacing={-2}
       >
         AESDR.

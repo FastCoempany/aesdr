@@ -42,7 +42,7 @@ commission accounting, the actual numbers, and our honest read.
 
 - **Keep:** we run a second pilot under refreshed terms.
 - **Cut:** we send you a close-out note within 48 hours — a real note from
-  me, not a form. The door stays open if either of us wants to revisit
+  us, not a form. The door stays open if either of us wants to revisit
   later.
 - **Pause:** if the data isn't conclusive, we extend by 14 days to give us a
   clearer read instead of making a call on partial information.

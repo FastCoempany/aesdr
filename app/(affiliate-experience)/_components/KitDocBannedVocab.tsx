@@ -272,11 +272,10 @@ export default function KitDocBannedVocab() {
               }}
             >
               The word <em>rep</em> is banned. Always write <strong>AE</strong>
-              , <strong>SDR</strong>, or <strong>AEs and SDRs</strong>. This
-              is founder direction:{" "}
+              , <strong>SDR</strong>, or <strong>AEs and SDRs</strong>.{" "}
               <em>
-                &ldquo;rep is a passive naming convention to me; we use AE
-                and/or SDR.&rdquo;
+                &ldquo;Rep&rdquo; reads as a passive naming convention — we
+                want active operators, named for what they actually do.
               </em>
             </p>
           </div>
@@ -305,8 +304,7 @@ export default function KitDocBannedVocab() {
         >
           Each phrase rewards saying-not-doing. Each suggests a
           feeling-state matters more than an operating-state. Each comes
-          loaded with context the audience has already filed under
-          &ldquo;performative.&rdquo;
+          loaded with context the audience knows is &ldquo;performative.&rdquo;
         </p>
         <p
           style={{
@@ -337,7 +335,8 @@ export default function KitDocBannedVocab() {
           If a piece of Affiliate copy uses any of the above and AESDR&rsquo;s
           mark is on it, we&rsquo;ll ask for an edit before publishing. Refusal
           is rare, but it does end pilots — Affiliate-fit and buyer-fit are the
-          same fit here, and the register is the canary.
+          same fit here. If the language doesn&rsquo;t land for one, it
+          won&rsquo;t land for the other.
         </p>
         <p
           style={{

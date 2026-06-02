@@ -442,7 +442,7 @@ const ENDINGS = [
   },
   {
     k: "Cut",
-    v: "Close-out note within 48 hours — a real note from me, not a form. The door stays open if either of us wants to revisit later.",
+    v: "Close-out note within 48 hours — a real note from us, not a form. The door stays open if either of us wants to revisit later.",
     bg: "var(--cream, #FAF7F2)",
     fg: "var(--ink, #1A1A1A)",
   },

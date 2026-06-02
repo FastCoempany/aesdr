@@ -101,7 +101,7 @@ export default function KitShell({
             color: "var(--ink, #1A1A1A)",
           }}
         >
-          <Wordmark size={72} label="AESDR" />
+          <Wordmark size={84} tone="iris" label="AESDR" />
           <span style={{ color: "var(--crimson, #8B1A1A)" }}>×</span>
           Affiliate Kit
         </span>

@@ -87,7 +87,7 @@ export default function KitDocPositioningBrief() {
                 letterSpacing: "-0.015em",
               }}
             >
-              AESDR is the operating manual, not the motivation engine.
+              We don&rsquo;t perform expertise. We install it.
             </h2>
             <p
               style={{
@@ -365,6 +365,6 @@ const NOT_FOR = [
 
 const ALWAYS_SAY = [
   "12 courses, seven substantial assets, $249 SDR / $299 AE Individual, 14-day refund.",
-  "Operating manual, not motivation engine. We don't perform expertise; we install it.",
+  "We don't perform expertise. We install it.",
   "We say out loud who shouldn't buy. Honesty is not a tone here — it's a competitive position.",
 ];

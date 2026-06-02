@@ -41,6 +41,19 @@ export default function CourseFrameInteractive({ html }: { html: string }) {
         margin: "40px 0 0",
         background: "var(--cream, #FAF7F2)",
         position: "relative",
+        // Break out of the kit doc's 1080px max-width and span the full
+        // viewport so the preview reads as a real browser window, not a
+        // narrow embed. Calc balances the centering so the figure stays
+        // centered on the viewport.
+        width: "100vw",
+        left: "50%",
+        right: "50%",
+        marginLeft: "-50vw",
+        marginRight: "-50vw",
+        paddingLeft: "max(24px, calc((100vw - 1200px) / 2))",
+        paddingRight: "max(24px, calc((100vw - 1200px) / 2))",
+        paddingTop: 8,
+        paddingBottom: 8,
       }}
     >
       {/* ── Browser chrome ── */}
@@ -102,7 +115,7 @@ export default function CourseFrameInteractive({ html }: { html: string }) {
           sandbox="allow-scripts allow-same-origin allow-forms"
           style={{
             width: "100%",
-            height: "640px",
+            height: "min(820px, 78vh)",
             border: "1px solid var(--ink, #1A1A1A)",
             borderTop: "none",
             borderRadius: "0 0 6px 6px",

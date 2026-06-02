@@ -364,7 +364,7 @@ const VERBATIM = [
   "AESDR is a 12-course sales survival program for first-1-to-2-year SDRs and AEs in startup SaaS — self-paced and interactive across the whole curriculum. One-time purchase, no subscription.",
   "Built by people who carried bags and managed AEs and SDRs for a decade — not by people who read about it.",
   "$249 SDR Individual, $299 AE Individual. Team licensing is quoted per team and isn't affiliate-attributable. 14-day, no-questions-asked refund.",
-  "The operating manual, not the motivation engine.",
+  "We don't perform expertise. We install it.",
   "AESDR doesn't issue certificates, badges, or hiring credentials. The evidence of learning is the operating judgment, not the paper.",
   "Same price every audience, every channel, every affiliate. No promotional codes, no affiliate-stack discounts.",
 ];

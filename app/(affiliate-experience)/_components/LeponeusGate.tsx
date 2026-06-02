@@ -102,14 +102,20 @@ export default function LeponeusGate({ onBegin }: { onBegin: () => void }) {
         <div
           style={{
             fontFamily: "var(--display, 'Playfair Display', Georgia, serif)",
-            fontSize: "clamp(22px, 3.4vw, 30px)",
+            fontSize: "clamp(20px, 3vw, 26px)",
             lineHeight: 1.4,
             fontStyle: "italic",
           }}
         >
-          <div>First, see what your audience would see.</div>
-          <div>Sit through the landing exactly as a buyer does.</div>
-          <div>Then we&rsquo;ll walk you into the kit.</div>
+          <div style={{ whiteSpace: "nowrap" }}>
+            First, see what your audience would see.
+          </div>
+          <div style={{ whiteSpace: "nowrap" }}>
+            Sit through the landing exactly as a buyer does.
+          </div>
+          <div style={{ whiteSpace: "nowrap" }}>
+            Then we&rsquo;ll walk you into the kit.
+          </div>
         </div>
 
         <button

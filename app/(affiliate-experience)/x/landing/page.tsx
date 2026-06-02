@@ -40,26 +40,61 @@ export const metadata: Metadata = {
 };
 
 /**
- * Inline asset-list delimiter — replaces the 💠 emoji per the design-system
- * canon (state0511-design-system.md, 1.6 px round-cap monoline; no emoji on
- * buyer-facing surfaces). Pulls the canonical `mile` (milestone) glyph from
- * components/brand/Icon.tsx — semantically right for "things you keep,"
- * each substantial asset is a milestone the buyer earns and owns. The
- * Leponeus shell motif is reserved for the mascot itself; not used as
- * ornament.
+ * The seven substantial assets — rendered as a vertical list so each name
+ * sits on its own line with a single bold milestone glyph as the bullet.
+ * Previously these were inline-separated and wrapped as a paragraph; per
+ * design direction each asset name now reads as its own callout.
+ *
+ * The `mile` glyph is from the canonical 18-icon set (no emoji on
+ * buyer-facing surfaces per the design-system canon). Size + crimson
+ * weight bumped so the bullets read as deliberate marks, not as commas.
  */
-function AssetMile() {
+function SubstantialAssetsList() {
+  const named = [
+    "The AE/SDR Alignment Contract",
+    "The ROI & Commission Defense Tracker",
+    "The 72-Hour Strike Plan",
+  ];
   return (
-    <Icon
-      name="mile"
-      size={14}
+    <ul
       style={{
-        display: "inline-block",
-        verticalAlign: "-2px",
-        margin: "0 8px",
-        color: "var(--crimson, #8B1A1A)",
+        listStyle: "none",
+        padding: 0,
+        margin: "20px auto 14px",
+        maxWidth: 600,
+        display: "flex",
+        flexDirection: "column",
+        gap: 8,
+        textAlign: "left",
       }}
-    />
+    >
+      {named.map((name) => (
+        <li
+          key={name}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 14,
+            fontStyle: "italic",
+            fontSize: 18,
+            lineHeight: 1.45,
+            color: "var(--ink, #1A1A1A)",
+            fontFamily: "var(--serif, 'Source Serif 4', Georgia, serif)",
+          }}
+        >
+          <Icon
+            name="mile"
+            size={20}
+            style={{
+              color: "var(--crimson, #8B1A1A)",
+              flexShrink: 0,
+              strokeWidth: 2,
+            }}
+          />
+          {name}
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -325,7 +360,13 @@ export default function ExperienceLandingPage() {
       <section className={styles.finalCta}>
         <h2 className={styles.finalHeadline}>Stop ChatGPClaudeing. Start&nbsp;executing.</h2>
         <p className={styles.finalSub}>
-          12 courses, plus some substantial assets you&rsquo;ll keep <AssetMile /> The Alignment Contract <AssetMile /> The ROI &amp; Commission Defense Tracker <AssetMile /> The 72-Hour Strike Plan and 5 more ridiculously valuable assets that&rsquo;ll sweeten up your day-to-day, your AE/SDR dynamic, and your value to yourself in this business.
+          12 courses, plus some substantial assets you&rsquo;ll keep:
+        </p>
+        <SubstantialAssetsList />
+        <p className={styles.finalSub} style={{ marginTop: 0 }}>
+          ... and 5 more ridiculously valuable assets that&rsquo;ll sweeten up
+          your day-to-day, your AE/SDR dynamic, and your value to yourself in
+          this business.
         </p>
         {/* Same Playfair italic display register as the headline above, kept at the
             existing body-line font-size so it lands as an emphatic editorial pull,

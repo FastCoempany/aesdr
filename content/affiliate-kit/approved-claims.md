@@ -17,7 +17,7 @@ for someone who hasn't done the work yet.
 > *"$249 SDR Individual, $299 AE Individual. Team licensing is quoted per team
 > and isn't affiliate-attributable. 14-day, no-questions-asked refund."*
 
-> *"The operating manual, not the motivation engine."*
+> *"We don't perform expertise. We install it."*
 
 > *"AESDR doesn't issue certificates, badges, or hiring credentials. The
 > evidence of learning is the operating judgment, not the paper."*

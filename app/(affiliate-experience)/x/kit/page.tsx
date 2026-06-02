@@ -82,7 +82,7 @@ export default function KitIndexPage() {
           fontSize: 11,
         }}
       >
-        <Wordmark size={72} label="AESDR" />
+        <Wordmark size={84} tone="iris" label="AESDR" />
         <span style={{ color: "var(--crimson, #8B1A1A)" }}>×</span>
         Affiliate Kit
       </header>

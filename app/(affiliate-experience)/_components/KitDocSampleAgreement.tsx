@@ -209,25 +209,151 @@ export default function KitDocSampleAgreement({ html }: { html: string }) {
         </ol>
       </section>
 
-      {/* ── The agreement itself — markdown body with ghost wordmark behind ── */}
-      <section style={{ position: "relative", overflow: "visible" }}>
+      {/* ── The agreement, rendered as a real document on the page ──
+              Paper-styled frame with its own internal scroll so the prospect
+              reads it like a contract, not an endless page-scroll. The kit
+              page itself stays short; the legal doc lives inside. */}
+      <section
+        style={{
+          position: "relative",
+          marginBottom: 40,
+        }}
+      >
+        {/* Document toolbar — looks like a doc-viewer header */}
         <div
-          aria-hidden
           style={{
-            position: "absolute",
-            top: 24,
-            right: -40,
-            opacity: 0.35,
-            pointerEvents: "none",
-            transform: "rotate(-8deg)",
-            zIndex: 0,
+            background: "var(--ink, #1A1A1A)",
+            color: "#FAF7F2",
+            padding: "10px 16px",
+            display: "flex",
+            alignItems: "center",
+            gap: 14,
+            borderRadius: "4px 4px 0 0",
+            fontFamily: "var(--mono, 'Space Mono', monospace)",
+            fontSize: 12,
+            letterSpacing: ".04em",
           }}
         >
-          <Wordmark size={180} />
+          <Icon name="ledger" size={14} style={{ color: "#FAF7F2" }} />
+          <span style={{ flex: 1 }}>
+            aesdr_affiliate_partnership_agreement_v1.pdf
+            <span
+              style={{
+                marginLeft: 12,
+                padding: "2px 8px",
+                background: "var(--crimson, #8B1A1A)",
+                color: "#FAF7F2",
+                fontSize: 10,
+                letterSpacing: ".18em",
+                textTransform: "uppercase",
+                borderRadius: 2,
+              }}
+            >
+              Sample
+            </span>
+          </span>
+          <span style={{ opacity: 0.55, fontSize: 11 }}>
+            15 sections · ~245 lines · scroll to read
+          </span>
         </div>
-        <div style={{ position: "relative", zIndex: 1 }}>
-          <KitMarkdownBody html={html} />
+
+        {/* The paper-styled scrollable doc body */}
+        <div
+          style={{
+            position: "relative",
+            background: "#FFFFFF",
+            border: "1px solid var(--ink, #1A1A1A)",
+            borderTop: "none",
+            borderRadius: "0 0 4px 4px",
+            maxHeight: "min(720px, 70vh)",
+            overflowY: "auto",
+            padding: "48px clamp(32px, 6vw, 72px) 56px",
+            boxShadow:
+              "inset 0 1px 0 rgba(0,0,0,0.04), 0 24px 48px -32px rgba(0,0,0,0.18)",
+          }}
+        >
+          {/* Ghost wordmark watermark, fixed inside the doc */}
+          <div
+            aria-hidden
+            style={{
+              position: "absolute",
+              top: "40%",
+              left: "50%",
+              transform: "translate(-50%, -50%) rotate(-22deg)",
+              opacity: 0.045,
+              pointerEvents: "none",
+              zIndex: 0,
+            }}
+          >
+            <Wordmark size={420} />
+          </div>
+
+          {/* Page-header band — gives the doc a real legal-document opening */}
+          <div
+            style={{
+              position: "relative",
+              zIndex: 1,
+              borderBottom: "2px solid var(--ink, #1A1A1A)",
+              paddingBottom: 18,
+              marginBottom: 28,
+              display: "flex",
+              alignItems: "flex-end",
+              justifyContent: "space-between",
+              gap: 24,
+            }}
+          >
+            <div>
+              <div
+                style={{
+                  fontFamily:
+                    "var(--mono, 'Space Mono', monospace)",
+                  fontSize: 10,
+                  letterSpacing: ".22em",
+                  textTransform: "uppercase",
+                  color: "var(--muted, #6B6B6B)",
+                  marginBottom: 6,
+                }}
+              >
+                AESDR · Affiliate Partnership Agreement
+              </div>
+              <h3
+                style={{
+                  fontFamily:
+                    "var(--display, 'Playfair Display', Georgia, serif)",
+                  fontStyle: "italic",
+                  fontWeight: 700,
+                  fontSize: 26,
+                  margin: 0,
+                  letterSpacing: "-0.005em",
+                  lineHeight: 1.1,
+                }}
+              >
+                Sample — not for signature
+              </h3>
+            </div>
+            <Wordmark size={84} label="AESDR" />
+          </div>
+
+          <div style={{ position: "relative", zIndex: 1 }}>
+            <KitMarkdownBody html={html} />
+          </div>
         </div>
+
+        {/* Foot hint */}
+        <p
+          style={{
+            marginTop: 12,
+            fontFamily: "var(--cond, 'Barlow Condensed', sans-serif)",
+            textTransform: "uppercase",
+            letterSpacing: ".18em",
+            fontSize: 11,
+            color: "var(--muted, #6B6B6B)",
+            textAlign: "center",
+          }}
+        >
+          The agreement of record is a separate PDF, counter-signed after
+          affiliate approval.
+        </p>
       </section>
     </div>
   );
