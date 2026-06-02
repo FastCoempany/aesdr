@@ -6,11 +6,13 @@
  * (cream / ink / crimson / iris) per AGENTS.md.
  */
 import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
+import ValidatorFlash from "./ValidatorFlash";
 
 export default function LeponeusGate({ onBegin }: { onBegin: () => void }) {
   return (
     <main
       style={{
+        position: "relative",
         minHeight: "100vh",
         background: "var(--cream, #FAF7F2)",
         color: "var(--ink, #1A1A1A)",
@@ -81,6 +83,8 @@ export default function LeponeusGate({ onBegin }: { onBegin: () => void }) {
           Begin the experience →
         </button>
       </div>
+
+      <ValidatorFlash />
     </main>
   );
 }

@@ -69,7 +69,7 @@ export default function CurriculumPage() {
             textTransform: "uppercase",
           }}
         >
-          12 courses · 36 lessons · ~144 sections. Same you — way, way better.
+          12 courses · 36 lessons · ~144 sections. Become the same you, just way, way better.
         </p>
       </div>
 

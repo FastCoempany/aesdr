@@ -28,11 +28,11 @@ import styles from "@/app/page.module.css";
 import TrackedCinematic from "../../_components/TrackedCinematic";
 import BottomTimer from "../../_components/BottomTimer";
 import KitTracker from "../../_components/KitTracker";
+import PreviewOnlyLink from "../../_components/PreviewOnlyLink";
+import PreviewOnlyWrap from "../../_components/PreviewOnlyWrap";
 
 const Testimonials = dynamic(() => import("@/components/Testimonials"));
 const DeckStack = dynamic(() => import("@/components/DeckStack"));
-
-const SITE = "https://aesdr.com";
 
 export const metadata: Metadata = {
   title: "AESDR",
@@ -49,7 +49,7 @@ const FAQ: { q: string; a: ReactNode; icon: IconName }[] = [
   { q: "Is there a community or is this self-paced only?",        a: "Self-paced. AESDR is the kind of thing you come back to in year three when the comp plan changes — not a live community you check into. There's an alumni room that opens when you finish all twelve courses — but it's a course bonus, not what you're paying for.",                                                icon: "hourglass" },
   { q: "I’ve been in sales for 5+ years. Is this too basic?", a: "Courses 1–5 cover fundamentals. Courses 6–12 work through prospecting strategy, pipeline math, financial resilience, and the relationships that pay off five years out. If you disagree, we refund.",                  icon: "signal"    },
   { q: "Can my company expense this?",                            a: "Of course. We provide a receipt and invoice on purchase. Most L&D budgets cover this easily — especially the Team plan.",                                                                                       icon: "ledger"    },
-  { q: "How is this different from Sales Assembly or Pavilion?", a: <>Different product entirely. Those are senior-AE peer networks &mdash; you&rsquo;re paying for the room and the people in it. AESDR is the lessons and the work, something you come back to in year three. If you want the network, those are excellent. If you want a framework you can hand to a new SDR on Monday morning, this one. Full breakdown <a href={`${SITE}/compare`} target="_blank" rel="noreferrer" style={{ color: "var(--crimson)", textDecoration: "underline" }}>here</a>.</>,                                                                                  icon: "team"      },
+  { q: "How is this different from Sales Assembly or Pavilion?", a: <>Different product entirely. Those are senior-AE peer networks &mdash; you&rsquo;re paying for the room and the people in it. AESDR is the lessons and the work, something you come back to in year three. If you want the network, those are excellent. If you want a framework you can hand to a new SDR on Monday morning, this one. Full breakdown <PreviewOnlyLink target="/compare" style={{ color: "var(--crimson)", textDecoration: "underline", cursor: "pointer" }}>here</PreviewOnlyLink>.</>,                                                                                  icon: "team"      },
   { q: "Why not just use Bravado, r/sales, or LinkedIn?",         a: "Those are good for the random thread when you have a specific live problem. AESDR is structured — Lesson 8 is the 30% rule, Lesson 10 is the comp-plan teardown, Lesson 12 is the relationship graph. You don’t have to phrase your problem correctly to find the answer; the curriculum sequences it. Plus role-conditional content across 18 of the 36 sub-lessons, which a community can’t deliver.", icon: "signal"    },
   { q: "I’ve been reading Sales Hacker and RepVue for a year. Different?", a: "Three differences. Structure — a reading list doesn’t sequence what compounds. Vendor independence — the free content is sponsored by tools, so the tools lessons are quietly compromised. AESDR isn’t sponsored by any of them, so nothing’s shaped to sell you software. And what you keep — you don’t take a Sales Hacker post into your 1:1 with a bad manager next week. You take the AE/SDR Alignment Contract.",         icon: "eye"       },
   { q: "Should I take Aspireship or Uvaro instead?",              a: "Different audience. Those are bootcamps for people trying to break into sales — they place you, coach you through ramp, sometimes share first-year commission. AESDR assumes the seat is already yours. If you’re three months from your first SDR interview, take a bootcamp. If you’re three months into the job and the ramp is harder than anyone warned you about, this one.",                                          icon: "warn"      },
@@ -235,14 +235,12 @@ export default function ExperienceLandingPage() {
         >
           Wondering how AESDR sits next to Sales Assembly, Bravado, Aspireship,
           Sales Hacker, or the rest?{" "}
-          <a
-            href={`${SITE}/compare`}
-            target="_blank"
-            rel="noreferrer"
-            style={{ color: "var(--crimson)", textDecoration: "underline" }}
+          <PreviewOnlyLink
+            target="/compare"
+            style={{ color: "var(--crimson)", textDecoration: "underline", cursor: "pointer" }}
           >
             We named each one →
-          </a>
+          </PreviewOnlyLink>
         </p>
       </section>
 
@@ -252,16 +250,18 @@ export default function ExperienceLandingPage() {
       {/* Validation */}
       <ValidationMarquee />
 
-      {/* ═══ PRICING ═══ */}
-      <section id="pricing" className={styles.pricingSection}>
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
-          <Mascot pose="verdict" size={MASCOT_SIZE.banner} />
-        </div>
-        <p className={styles.sectionLabel}>Pricing</p>
-        <h2 className={styles.sectionHeadline}>One price. Yours when you buy it.</h2>
-        <div className={styles.divider} />
-        <PricingTiers initialRole={null} />
-      </section>
+      {/* ═══ PRICING ═══ — wrapped to intercept the checkout buttons */}
+      <PreviewOnlyWrap>
+        <section id="pricing" className={styles.pricingSection}>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
+            <Mascot pose="verdict" size={MASCOT_SIZE.banner} />
+          </div>
+          <p className={styles.sectionLabel}>Pricing</p>
+          <h2 className={styles.sectionHeadline}>One price. Yours when you buy it.</h2>
+          <div className={styles.divider} />
+          <PricingTiers initialRole={null} />
+        </section>
+      </PreviewOnlyWrap>
 
       {/* ═══ FAQ ═══ */}
       <section className={styles.faqSection}>
@@ -288,7 +288,7 @@ export default function ExperienceLandingPage() {
               <p className={styles.faqQ}>{item.q}</p>
               <div className={styles.faqAnswer}>
                 <p className={styles.faqBlur}>{item.a}</p>
-                <span className={styles.faqRedactLabel} aria-hidden="true">[classified &mdash; hover or focus to peek]</span>
+                <span className={styles.faqRedactLabel} aria-hidden="true">[classified &mdash; hover to reveal]</span>
               </div>
               <span className={styles.faqStamp} aria-hidden="true">Classified</span>
             </div>
@@ -301,10 +301,9 @@ export default function ExperienceLandingPage() {
       <section className={styles.finalCta}>
         <h2 className={styles.finalHeadline}>Stop ChatGPClaudeing. Start&nbsp;executing.</h2>
         <p className={styles.finalSub}>
-          12 courses, plus the substantial assets you keep — The Alignment Contract, The
-          ROI &amp; Commission Defense Tracker, the 72-Hour Strike Plan, and the
-          rest. Built for AEs and SDRs who want to get better at the actual
-          work rather than just feel better about the week ahead.
+          12 courses, plus some substantial assets you&rsquo;ll keep 💠 The Alignment Contract 💠 The ROI &amp; Commission Defense Tracker 💠 The 72-Hour Strike Plan and 5 more ridiculously valuable assets that&rsquo;ll level up your day-to-day, your AE/SDR dynamic, and your value to yourself in this business.
+          <br /><br />
+          <strong>We can&rsquo;t stress enough that this program is built for AEs and SDRs who want to get better at the actual work rather than just feel better about the week ahead.</strong>
         </p>
         <a href="#pricing" className={styles.ctaPrimary}>Get Access</a>
       </section>
@@ -315,17 +314,17 @@ export default function ExperienceLandingPage() {
         Content Warning &mdash; This course contains uncomfortable truths about your pipeline, your apartment, your bar tab, your commission check, and your relationship status. &mdash; AESDR &mdash; 12 courses / at your own pace
       </div>
 
-      {/* Footer — deep links point at the real site so they work off this host */}
+      {/* Footer — all links intercepted, prospect never leaves the experience */}
       <footer className={styles.footer}>
         <span style={{ opacity: 0.5 }}>AESDR &copy; {new Date().getFullYear()}</span>
-        <a href={`${SITE}/terms`} target="_blank" rel="noreferrer">Terms</a>
-        <a href={`${SITE}/privacy`} target="_blank" rel="noreferrer">Privacy</a>
-        <a href={`${SITE}/refund-policy`} target="_blank" rel="noreferrer">Refunds</a>
-        <a href={`${SITE}/research`} target="_blank" rel="noreferrer">Research</a>
-        <a href={`${SITE}/compare`} target="_blank" rel="noreferrer">Compare</a>
-        <a href={`${SITE}/about`} target="_blank" rel="noreferrer">About</a>
-        <a href={`${SITE}/contact`} target="_blank" rel="noreferrer">Contact</a>
-        <a href={`${SITE}/enterprise`} target="_blank" rel="noreferrer" style={{ opacity: 0.7 }}>for sales orgs &rarr;</a>
+        <PreviewOnlyLink target="/terms">Terms</PreviewOnlyLink>
+        <PreviewOnlyLink target="/privacy">Privacy</PreviewOnlyLink>
+        <PreviewOnlyLink target="/refund-policy">Refunds</PreviewOnlyLink>
+        <PreviewOnlyLink target="/research">Research</PreviewOnlyLink>
+        <PreviewOnlyLink target="/compare">Compare</PreviewOnlyLink>
+        <PreviewOnlyLink target="/about">About</PreviewOnlyLink>
+        <PreviewOnlyLink target="/contact">Contact</PreviewOnlyLink>
+        <PreviewOnlyLink target="/enterprise" style={{ opacity: 0.7 }}>for sales orgs &rarr;</PreviewOnlyLink>
       </footer>
 
       {/* The bottom-of-page iris timer that directs to the kit */}

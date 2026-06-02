@@ -47,7 +47,7 @@ const VALIDATORS: Validator[] = [
 ];
 
 const SECTORS =
-  "Seed to Series E · Legal AI · SaaS · HealthTech · Fintech · Staffing · Manufacturing · DevTools";
+  "Legal AI · SaaS · HealthTech · Fintech · Staffing · Manufacturing · DevTools";
 
 function MarqueeRow({ ariaHidden = false }: { ariaHidden?: boolean }) {
   return (
@@ -76,8 +76,8 @@ export default function ValidationMarquee() {
           Validated by GTM teams at companies worth $20B+ combined
         </h2>
         <p className={styles.sub}>
-          {VALIDATORS.length}+ companies. Seed to Series E. Built with feedback
-          from the founders, sales leaders, and AEs and SDRs at every one.
+          {VALIDATORS.length}+ companies. Built with feedback from the founders,
+          sales leaders, and AEs and SDRs at every one.
         </p>
       </header>
 

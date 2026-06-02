@@ -10,6 +10,20 @@ import { notFound } from "next/navigation";
 import { KIT_ENTRIES, getKitEntry, getKitEntryHtml } from "@/lib/affiliate-kit";
 import KitTracker from "../../../_components/KitTracker";
 import KitCta from "../../../_components/KitCta";
+import PreviewOnlyWrap from "../../../_components/PreviewOnlyWrap";
+
+/**
+ * Rewrites kit-internal links so they stay inside the locked experience:
+ *   /affiliates/kit/<slug>  -> /x/kit/<slug>     (kit cross-links work)
+ *   /affiliates/apply       -> #                 (handled by PreviewOnlyWrap as the popup)
+ * Other off-host links (mailto, http, /research, etc.) are left as-is for
+ * PreviewOnlyWrap's onClickCapture to intercept.
+ */
+function rewriteKitLinks(html: string): string {
+  return html
+    .replace(/href="\/affiliates\/kit\//g, 'href="/x/kit/')
+    .replace(/href="\/affiliates\/apply"/g, 'href="/affiliates/apply"');
+}
 
 type Params = { slug: string };
 
@@ -39,7 +53,7 @@ export default async function KitDocPage({
   const entry = getKitEntry(slug);
   if (!entry) notFound();
 
-  const html = getKitEntryHtml(entry);
+  const html = rewriteKitLinks(getKitEntryHtml(entry));
 
   return (
     <main
@@ -65,15 +79,17 @@ export default async function KitDocPage({
         >
           ← All of the kit
         </Link>
-        <article
-          style={{
-            fontFamily: "var(--serif, 'Source Serif 4', Georgia, serif)",
-            fontSize: 17,
-            lineHeight: 1.75,
-            marginTop: 24,
-          }}
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
+        <PreviewOnlyWrap>
+          <article
+            style={{
+              fontFamily: "var(--serif, 'Source Serif 4', Georgia, serif)",
+              fontSize: 17,
+              lineHeight: 1.75,
+              marginTop: 24,
+            }}
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
+        </PreviewOnlyWrap>
         <div
           style={{
             marginTop: 56,

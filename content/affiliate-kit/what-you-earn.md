@@ -18,4 +18,4 @@ A 1,000-person send that converts like a healthy practitioner list — roughly 8
 
 Net-45 from the close of the attribution window — commission settles *after* the refund window closes, so nothing gets clawed back mid-stream. During a pilot you get a one-page report every Friday with the running math, so you're seeing the same numbers we are. No surprises at the close.
 
-That's the whole deal. No tiers to climb, no minimums, no games. When you're ready for the exact contractual terms, they're in the [Specimen Partnership Agreement](/affiliates/kit/specimen-partnership-agreement).
+That's the whole deal. No tiers to climb, no minimums, no games. When you're ready for the exact contractual terms, they're in the [Sample Partnership Agreement](/affiliates/kit/sample-partnership-agreement).

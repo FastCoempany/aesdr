@@ -156,7 +156,7 @@ const BUTTON_VARIANTS = [
       border: "none",
       cursor: "pointer",
     },
-    text: "Specimen agreement →",
+    text: "Sample agreement →",
   },
 ];
 
