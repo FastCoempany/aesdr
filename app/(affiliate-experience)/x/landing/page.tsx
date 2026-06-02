@@ -301,7 +301,7 @@ export default function ExperienceLandingPage() {
       <section className={styles.finalCta}>
         <h2 className={styles.finalHeadline}>Stop ChatGPClaudeing. Start&nbsp;executing.</h2>
         <p className={styles.finalSub}>
-          12 courses, plus some substantial assets you&rsquo;ll keep 💠 The Alignment Contract 💠 The ROI &amp; Commission Defense Tracker 💠 The 72-Hour Strike Plan and 5 more ridiculously valuable assets that&rsquo;ll level up your day-to-day, your AE/SDR dynamic, and your value to yourself in this business.
+          12 courses, plus some substantial assets you&rsquo;ll keep 💠 The Alignment Contract 💠 The ROI &amp; Commission Defense Tracker 💠 The 72-Hour Strike Plan and 5 more ridiculously valuable assets that&rsquo;ll sweeten up your day-to-day, your AE/SDR dynamic, and your value to yourself in this business.
           <br /><br />
           <strong>We can&rsquo;t stress enough that this program is built for AEs and SDRs who want to get better at the actual work rather than just feel better about the week ahead.</strong>
         </p>
