@@ -21,26 +21,38 @@ const LESSON_FILE = "content/lessons/html/lesson-04/aesdr_course04_1_v1.html";
 
 const INJECT = `
 <style>
-  /* Hide all course chrome — we only want the one widget visible */
-  .topbar, .sidebar, .bottomnav, .gn-wrap, .ghost-n { display: none !important; }
+  /* The PROSPECT sees the real course chrome — topbar with course progress
+     + the right-hand sidebar (Sections 01-04, iris-shimmer sidebar quote).
+     That context is what sells the curriculum's care. We only restrict the
+     content area to the single interactive widget and disable navigation
+     that would let them browse the rest of the section. */
 
-  /* Hide all screens except #s2; force s2 visible regardless of .active state */
+  /* Hide the bottom nav (no Next/Back escape) + ghost numerals that the
+     lesson layers on the page background */
+  .bottomnav, .gn-wrap, .ghost-n { display: none !important; }
+
+  /* Hide every screen except #s2 (Sort the Survival Strategies). Force s2
+     visible regardless of the .active class the lesson's own JS toggles. */
   .screen { display: none !important; }
-  .screen#s2 { display: block !important; opacity: 1 !important; transform: none !important; }
-
-  /* Collapse the layout grid since the sidebar is gone */
-  .app { display: block !important; padding: 0 !important; }
-  .main {
-    grid-template-columns: 1fr !important;
-    padding: 24px 28px 48px !important;
-    max-width: 880px !important;
-    margin: 0 auto !important;
+  .screen#s2 {
+    display: block !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
-  body { background: var(--white, #FFFFFF) !important; }
 
-  /* Tighten the widget so it presents at one-screen density */
-  #s2 .lh { padding-top: 12px !important; padding-bottom: 16px !important; }
-  #s2 .silo-wrap { margin-top: 8px !important; }
+  /* Lock the sidebar's section buttons so the prospect can SEE the four
+     sections (The Role, The Framework, Tools & Strategies, Homework) but
+     can't click away from the widget. Section 01 stays at full opacity
+     since it's where we are; the others read as "locked content ahead." */
+  .sidebar .sb-item {
+    pointer-events: none !important;
+    cursor: default !important;
+  }
+  .sidebar .sb-item:not(#nav1) {
+    opacity: 0.45 !important;
+  }
+  /* Also lock the topbar progress controls in case they're interactive */
+  .topbar a, .topbar button { pointer-events: none !important; }
 </style>
 <script>
   // Watch the widget's own counter; when the lesson's drop logic increments
