@@ -8,6 +8,7 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/utils/supabase/admin";
+import { sendProspectConversationRequestEmail } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -65,5 +66,45 @@ export async function POST(req: NextRequest) {
   if (error) {
     return NextResponse.json({ ok: false }, { status: 500 });
   }
+
+  // High-intent signal: fire a one-shot email notification to the founder
+  // the FIRST time this prospect clicks the Request-conversation CTA. Dedupe
+  // by counting existing rows of this event-name for this slug — if more than
+  // one (the one we just inserted), we've already notified; skip.
+  if (name === "request_conversation_clicked") {
+    const { count: convoCount } = await supabase
+      .from("affiliate_prospect_events")
+      .select("*", { count: "exact", head: true })
+      .eq("prospect_slug", slug)
+      .eq("name", "request_conversation_clicked");
+
+    if ((convoCount ?? 0) <= 1) {
+      const [{ data: prospect }, { count: totalEvents }] = await Promise.all([
+        supabase
+          .from("affiliate_prospects")
+          .select("display_name")
+          .eq("slug", slug)
+          .single(),
+        supabase
+          .from("affiliate_prospect_events")
+          .select("*", { count: "exact", head: true })
+          .eq("prospect_slug", slug),
+      ]);
+
+      // Best-effort: email failure must never break the prospect's UX.
+      sendProspectConversationRequestEmail({
+        slug,
+        displayName: prospect?.display_name ?? null,
+        path: str(body.path, 256),
+        country: country ? country.slice(0, 8) : null,
+        device,
+        totalEvents: totalEvents ?? 0,
+        submittedAt: new Date().toISOString(),
+      }).catch((err) => {
+        console.error("[track] conversation-request email failed:", err);
+      });
+    }
+  }
+
   return new NextResponse(null, { status: 204 });
 }

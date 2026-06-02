@@ -3,9 +3,15 @@ import { Resend } from 'resend';
 import { bridgeAfter } from '@/utils/progress/bridges';
 
 function getResend() {
-  const apiKey = process.env.RESEND_API_KEY;
+  // RESEND_API_KEY is the canonical name used by production aesdr.com.
+  // aesdr_email_api_key is the lowercase alias used by the affiliatekit
+  // preview Vercel project. Either resolves to the same Resend SDK init.
+  const apiKey =
+    process.env.RESEND_API_KEY || process.env.aesdr_email_api_key;
   if (!apiKey) {
-    throw new Error("RESEND_API_KEY environment variable is not set");
+    throw new Error(
+      "RESEND_API_KEY (or aesdr_email_api_key) environment variable is not set",
+    );
   }
   return new Resend(apiKey);
 }
@@ -649,6 +655,135 @@ function teamsInquiryHtml(p: TeamsInquiryPayload): string {
         <p style="margin:0;font-family:Georgia,'Source Serif 4',serif;font-size:13px;line-height:1.6;color:#6B6B6B;font-style:italic;">
           Reply directly to this email &mdash; Reply-To is set to ${emailHtml}.
         </p>
+      </td></tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>`;
+}
+
+// ─── Prospect Conversation Request (internal, to founder) ───
+// Fires the FIRST time a tracked prospect inside the /x/* affiliate-experience
+// clicks the "Request an affiliate conversation" KitCta. Dedup happens at the
+// call site (the /x/track route counts existing events for this slug before
+// invoking this function), so refreshes / multi-page clicks won't double-send.
+// Routed to EMAIL_RECIPIENT with replyTo set to the same address so a reply
+// just threads back to your own inbox.
+
+export type ProspectConversationRequestPayload = {
+  /** Opaque slug from the ?p= link */
+  slug: string;
+  /** Display name from affiliate_prospects (what YOU named them when minting) */
+  displayName: string | null;
+  /** Path on which the prospect was when they clicked the CTA */
+  path: string | null;
+  /** Country from Vercel IP header, two-letter code */
+  country: string | null;
+  /** "desktop" or "mobile" */
+  device: string | null;
+  /** Total events recorded for this prospect so far (engagement-depth signal) */
+  totalEvents: number;
+  /** Submitted-at ISO timestamp */
+  submittedAt: string;
+};
+
+export async function sendProspectConversationRequestEmail(
+  p: ProspectConversationRequestPayload,
+): Promise<boolean> {
+  const recipient = process.env.EMAIL_RECIPIENT;
+  if (!recipient) {
+    console.warn(
+      "[email] EMAIL_RECIPIENT not set; skipping prospect-conversation notification.",
+    );
+    return false;
+  }
+  const from = process.env.EMAIL_FROM || FROM;
+  const label = p.displayName || p.slug;
+  const subject = `[/x/kit] ${label} requested a conversation`;
+  return safeSend(`prospect-conversation from ${label}`, () =>
+    getResend().emails.send({
+      from,
+      to: recipient,
+      replyTo: recipient,
+      subject,
+      html: prospectConversationRequestHtml(p),
+      text: prospectConversationRequestText(p),
+    }),
+  );
+}
+
+function prospectConversationRequestText(
+  p: ProspectConversationRequestPayload,
+): string {
+  return [
+    `Prospect requested a conversation — ${p.displayName || p.slug}`,
+    "",
+    `Display name:   ${p.displayName || "(none — slug only)"}`,
+    `Slug:           ${p.slug}`,
+    `Last page:      ${p.path || "(unknown)"}`,
+    `Device:         ${p.device || "(unknown)"}`,
+    `Country:        ${p.country || "(unknown)"}`,
+    `Total events:   ${p.totalEvents}`,
+    `Clicked at:     ${p.submittedAt}`,
+    "",
+    `Open the dashboard: ${SITE}/x/ops`,
+    "",
+    `Reach back out using whatever channel you used to send them the link.`,
+  ].join("\n");
+}
+
+function prospectConversationRequestHtml(
+  p: ProspectConversationRequestPayload,
+): string {
+  const row = (label: string, value: string) => `
+    <tr>
+      <td style="padding:8px 16px 8px 0;font-family:'SF Mono',Consolas,monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#6B6B6B;vertical-align:top;width:170px">${esc(label)}</td>
+      <td style="padding:8px 0;font-family:Georgia,'Source Serif 4',serif;font-size:15px;color:#1A1A1A;vertical-align:top;line-height:1.6;word-break:break-word">${value}</td>
+    </tr>`;
+
+  const headline = p.displayName
+    ? `${esc(p.displayName)} wants to talk.`
+    : `Prospect <code style="font-family:'SF Mono',Consolas,monospace;font-size:24px;background:#FAF7F2;padding:1px 8px;">${esc(p.slug)}</code> wants to talk.`;
+
+  return `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Conversation requested</title></head>
+<body style="margin:0;padding:0;background:#FAF7F2;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FAF7F2;padding:32px 16px;">
+  <tr><td align="center">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="640" style="max-width:640px;width:100%;background:#FFFFFF;border:1px solid #E8E4DF;">
+      <tr><td style="height:4px;background:linear-gradient(90deg,#8B1A1A 0%,#b4455d 50%,#8B5CF6 100%);font-size:0;line-height:0;">&nbsp;</td></tr>
+      <tr><td style="padding:28px 32px 8px 32px;">
+        <p style="margin:0;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#8B1A1A;font-weight:700;">
+          AESDR &middot; Affiliate Kit &middot; Conversation requested
+        </p>
+      </td></tr>
+      <tr><td style="padding:0 32px 12px 32px;">
+        <h1 style="margin:0;font-family:Georgia,'Playfair Display',serif;font-style:italic;font-weight:700;font-size:30px;line-height:1.15;color:#1A1A1A;">
+          ${headline}
+        </h1>
+      </td></tr>
+      <tr><td style="padding:0 32px 24px 32px;">
+        <p style="margin:8px 0 0;font-family:Georgia,'Source Serif 4',serif;font-size:15px;line-height:1.65;color:#6B6B6B;font-style:italic;">
+          They clicked the kit&rsquo;s Request-conversation CTA. You named them when you minted their link — reach back out using whatever channel you used to send it.
+        </p>
+      </td></tr>
+      <tr><td style="padding:0 32px 24px 32px;border-top:1px solid #E8E4DF;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-top:8px">
+          ${row("Display name", esc(p.displayName || "(none — slug only)"))}
+          ${row("Slug", `<code style="font-family:'SF Mono',Consolas,monospace;font-size:13px;background:#FAF7F2;padding:1px 6px;">${esc(p.slug)}</code>`)}
+          ${row("Last page", esc(p.path || "(unknown)"))}
+          ${row("Device", esc(p.device || "(unknown)"))}
+          ${row("Country", esc(p.country || "(unknown)"))}
+          ${row("Total events", String(p.totalEvents))}
+          ${row("Clicked at", esc(p.submittedAt))}
+        </table>
+      </td></tr>
+      <tr><td style="padding:0 32px 32px 32px;">
+        <a href="${SITE}/x/ops" style="display:inline-block;font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#FFFFFF;background:#8B1A1A;padding:13px 24px;text-decoration:none;">
+          Open the ops dashboard &rarr;
+        </a>
       </td></tr>
     </table>
   </td></tr>
