@@ -92,6 +92,8 @@ export async function POST(req: NextRequest) {
           ? (body.props as Record<string, unknown>)
           : {};
       const biggestDeal = String(props.biggest_deal ?? "").slice(0, 300);
+      const dealDate1 = String(props.deal_date_1 ?? "").slice(0, 32) || null;
+      const dealDate2 = String(props.deal_date_2 ?? "").slice(0, 32) || null;
       const salesCycle = String(props.sales_cycle ?? "").slice(0, 300);
       const verticals = String(props.verticals ?? "").slice(0, 300);
 
@@ -99,6 +101,8 @@ export async function POST(req: NextRequest) {
         slug,
         displayName: prospect?.display_name ?? null,
         biggestDeal,
+        dealDate1,
+        dealDate2,
         salesCycle,
         verticals,
         path: str(body.path, 256),

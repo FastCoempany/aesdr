@@ -802,6 +802,8 @@ export type ProspectEnterpriseIntentPayload = {
   slug: string;
   displayName: string | null;
   biggestDeal: string;
+  dealDate1: string | null;
+  dealDate2: string | null;
   salesCycle: string;
   verticals: string;
   path: string | null;
@@ -838,19 +840,22 @@ export async function sendProspectEnterpriseIntentEmail(
 function prospectEnterpriseIntentText(
   p: ProspectEnterpriseIntentPayload,
 ): string {
+  const dateLine =
+    [p.dealDate1, p.dealDate2].filter(Boolean).join("  ·  ") || "(none)";
   return [
     `Enterprise-track submission — ${p.displayName || p.slug}`,
     "",
     `Display name:   ${p.displayName || "(none — slug only)"}`,
     `Slug:           ${p.slug}`,
     "",
-    "── BIGGEST TEAM-LICENSE PLACED ──",
+    "── LAST 1–2 PARTNERSHIPS PLACED ──",
     p.biggestDeal,
+    `When:           ${dateLine}`,
     "",
-    "── TYPICAL ENTERPRISE SALES CYCLE ──",
+    "── TYPICAL TIME TO SIGN TEAM/ENTERPRISE PARTNERSHIPS ──",
     p.salesCycle,
     "",
-    "── SECTORS / FUNCTIONS ──",
+    "── SECTORS / FUNCTIONS (LAST 6 MONTHS) ──",
     p.verticals,
     "",
     `Submitted at:   ${p.submittedAt}`,
@@ -874,6 +879,9 @@ function prospectEnterpriseIntentHtml(
       <td style="padding:0 0 12px;font-family:Georgia,'Source Serif 4',serif;font-size:15px;line-height:1.55;color:#1A1A1A;border-bottom:1px solid #E8E4DF">${esc(value)}</td>
     </tr>`;
 
+  const dateLine =
+    [p.dealDate1, p.dealDate2].filter(Boolean).join("  ·  ") || "(none)";
+
   return `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><title>Enterprise-track submission</title></head>
@@ -894,16 +902,17 @@ function prospectEnterpriseIntentHtml(
       </td></tr>
       <tr><td style="padding:0 32px 16px 32px;">
         <p style="margin:6px 0 0;font-family:Georgia,'Source Serif 4',serif;font-size:15px;line-height:1.55;color:#6B6B6B;font-style:italic;">
-          They filled the three-field qualifier on /x/kit/what-you-earn.
-          Read their answers below, then decide whether to link them into
-          the enterprise hub.
+          They filled the qualifier on /x/kit/what-you-earn. Read their
+          answers below, then decide whether to link them into the
+          enterprise hub.
         </p>
       </td></tr>
       <tr><td style="padding:0 32px 24px 32px;border-top:1px solid #E8E4DF;">
         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-top:8px">
-          ${row("Biggest team-license placed", p.biggestDeal)}
-          ${row("Typical enterprise sales cycle", p.salesCycle)}
-          ${row("Sectors / functions", p.verticals)}
+          ${row("Last 1–2 partnerships placed", p.biggestDeal)}
+          ${row("Dates (selected)", dateLine)}
+          ${row("Typical time to sign team/enterprise partnerships", p.salesCycle)}
+          ${row("Sectors / functions (last 6 months)", p.verticals)}
         </table>
       </td></tr>
       <tr><td style="padding:0 32px 32px 32px;">
