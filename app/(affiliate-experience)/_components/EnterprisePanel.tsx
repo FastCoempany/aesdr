@@ -236,7 +236,13 @@ function EnterpriseTeaser({
     >
       <div>
         <div style={{ marginBottom: 14 }}>
-          <EnterpriseLockup size="tiny" />
+          {/* Full AESDR / Enterprise lockup here — this is the teaser's
+              brand introduction, so we lead with the wordmark, not the
+              abbreviated A · E mark. The A · E tiny variant stays
+              reserved for the bridge footer in the expanded panel
+              below, where the full lockup already appears upstairs and
+              would otherwise duplicate. */}
+          <EnterpriseLockup size="small" />
         </div>
         <h3
           style={{
