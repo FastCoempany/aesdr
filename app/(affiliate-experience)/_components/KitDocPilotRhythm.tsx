@@ -64,8 +64,8 @@ export default function KitDocPilotRhythm() {
                 letterSpacing: "-0.005em",
               }}
             >
-              Two sends, one workshop, four weeks. We do the heavy lift; you
-              keep the relationship.
+              Two emails to your list, one workshop, four weeks. We do the
+              heavy lift; you keep the relationship.
             </h2>
             <p
               style={{
@@ -90,16 +90,27 @@ export default function KitDocPilotRhythm() {
       {/* ── Week-by-week timeline ── */}
       <section style={{ marginBottom: 64 }}>
         <SectionLabel>The rhythm</SectionLabel>
-        <div
-          style={{
-            position: "relative",
-            display: "grid",
-            gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
-            gap: 0,
-            marginTop: 22,
-            border: "1px solid var(--light, #E8E4DF)",
-          }}
-        >
+        <style>{`
+          .kit-pilot-rhythm-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 0;
+            margin-top: 22px;
+            border: 1px solid var(--light, #E8E4DF);
+          }
+          /* Below 760px the 5-card row gets unreadably narrow; stack to 2
+             columns and lift the last (Close) card to span the full width so
+             nothing looks orphaned. */
+          @media (max-width: 760px) {
+            .kit-pilot-rhythm-grid {
+              grid-template-columns: 1fr 1fr;
+            }
+            .kit-pilot-rhythm-grid > article:last-child {
+              grid-column: 1 / -1;
+            }
+          }
+        `}</style>
+        <div className="kit-pilot-rhythm-grid">
           {WEEKS.map((w, i) => (
             <article
               key={w.label}

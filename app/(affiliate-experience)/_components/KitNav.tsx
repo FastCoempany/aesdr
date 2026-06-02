@@ -66,7 +66,7 @@ export default function KitNav() {
       style={{
         position: "fixed",
         right: 24,
-        bottom: 92, // sits above where an a11y knob would land
+        bottom: 24,
         zIndex: 50,
         display: "flex",
         flexDirection: "column",
