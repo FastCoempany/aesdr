@@ -146,7 +146,6 @@
   font-weight: 600;
   letter-spacing: .01em;
   color: var(--crimson);
-  white-space: nowrap;
 }
 .notCard {
   background: #fff;
