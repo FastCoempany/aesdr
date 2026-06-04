@@ -61,6 +61,22 @@ export async function track<E extends EventName>(
   ph.capture(event, properties);
 }
 
+/**
+ * Untyped capture for events outside the production EventMap — currently
+ * used by the /x/* affiliate-experience flow (prospect tracking, kit
+ * navigation, request-conversation, etc.) so those events land in PostHog
+ * alongside the Supabase write. The production funnel keeps its typed
+ * `track()` surface; this is the escape hatch for preview-host events.
+ */
+export async function captureRawEvent(
+  event: string,
+  properties: Record<string, unknown> = {},
+): Promise<void> {
+  const ph = await getClient();
+  if (!ph) return;
+  ph.capture(event, properties);
+}
+
 export async function identify(
   distinctId: string,
   traits?: Record<string, string | number | boolean | null>,

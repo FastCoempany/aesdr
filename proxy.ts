@@ -37,6 +37,24 @@ export async function proxy(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   const isAdmin = isAdminEmail(user?.email);
 
+  // ── Affiliate-experience: /x/* always passes ──
+  // /x/* is the locked prospect experience. Let it through every gate
+  // (coming-soon, allowlist, anonymous lock) unconditionally so incognito
+  // visits work without any session cookie. On main, those routes don't
+  // exist on disk, so Next renders its own 404 — harmless.
+  if (pathname.startsWith("/x/")) {
+    return supabaseResponse;
+  }
+
+  // ── Affiliate-experience environment: lock everything else to 404 ──
+  // AFFILIATE_EXPERIENCE=1 is set ONLY on the dedicated affiliatekit
+  // deployment. There, every non-/x/* path 404s so affiliatekit.aesdr.com is
+  // the kit experience and nothing else. On production (var unset) this
+  // block is skipped entirely and the app behaves normally.
+  if (process.env.AFFILIATE_EXPERIENCE === "1") {
+    return new NextResponse("Not found", { status: 404 });
+  }
+
   // ── URL-param bypass: `?bypass=<COMING_SOON_BYPASS_CODE>` ──
   // Set the cookie at the edge and redirect to a clean URL on any path.
   // Replaces the previous client-side mechanism in /coming-soon (which

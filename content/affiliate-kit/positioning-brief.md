@@ -1,6 +1,6 @@
 # Positioning Brief
 
-AESDR is the operating manual, not the motivation engine.
+AESDR doesn't perform expertise — we install it.
 
 A 12-course sales survival program for first-1-to-2-year SDRs and AEs in
 startup SaaS — self-paced, interactive, one-time purchase with no
@@ -50,5 +50,5 @@ through affiliate tracking.
 ## Three things we'll always say
 
 1. 12 courses, seven substantial assets, $249 SDR / $299 AE Individual, 14-day refund.
-2. Operating manual, not motivation engine. We don't perform expertise; we install it.
+2. We don't perform expertise. We install it.
 3. We say out loud who shouldn't buy. Honesty is not a tone here — it's a competitive position.

@@ -59,15 +59,14 @@ Style markers:
 The "rep" rule:
 
 - The word *rep* is banned. Always write *AE*, *SDR*, or *AEs and SDRs*.
-  This is founder direction: "rep is a passive naming convention to me;
-  we use AE and/or SDR."
+  "Rep" reads as a passive naming convention — we want active operators,
+  named for what they actually do.
 
 ## Why each one is out
 
 The pattern under all of them: each phrase rewards saying-not-doing.
 Each suggests a feeling-state matters more than an operating-state.
-Each comes loaded with context the audience has already filed under
-"performative."
+Each comes loaded with context the audience knows is "performative."
 
 The brand AESDR is building wins by being plain, specific, and
 operationally true. Anything that performs expertise rather than
@@ -78,8 +77,8 @@ about us.
 
 If a piece of Affiliate copy uses any of the above and AESDR's mark is on
 it, we'll ask for an edit before publishing. Refusal is rare, but it
-does end pilots — Affiliate-fit and buyer-fit are the same fit here, and
-the register is the canary.
+does end pilots — Affiliate-fit and buyer-fit are the same fit here. If
+the language doesn't land for one, it won't land for the other.
 
 ## When this list is irrelevant to you
 

@@ -72,11 +72,18 @@
   opacity: 0;
   transition: opacity 0.4s ease;
 }
-/* Counter position differs by context */
+/* Counter position differs by context.
+   In .section mode the deck viewport is centered at top: 50% with height
+   min(380px, 55vh), so its bottom edge sits at 50% + min(190px, 27.5vh).
+   Anchor the counter just below that (≈18px gap) instead of pinning to
+   bottom: 32px of the 100vh section, which left a tall empty band the
+   eye reads as a disconnected widget. */
 .section .cardCounter {
   position: absolute;
-  bottom: 32px; left: 50%;
+  top: calc(50% + min(208px, 30vh));
+  left: 50%;
   transform: translateX(-50%);
+  bottom: auto;
   color: rgba(107, 107, 107, 0.4);
 }
 .standalone .cardCounter {

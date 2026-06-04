@@ -17,7 +17,7 @@ placement; it's an operator credit.
 ## Color
 
 - AESDR mark in `--ink` (`#1A1A1A`).
-- Affiliate mark in your canonical color. AESDR has no opinion on yours.
+- Affiliate mark in your brand color. AESDR has no opinion on yours.
 - The `×` separator in `--ink` at matched x-height.
 
 ## Spacing
@@ -39,6 +39,17 @@ shrink the lockup before you shrink the clearspace.
 
 ## What you'll receive after signing
 
-Three lockup files: horizontal, stacked, and an on-cream version sized for
-PDF / print use. Plus a one-page affiliate-specific composition guide so the
-mark sits right on your registration page out of the gate.
+Three lockup files:
+
+- **Horizontal** — AESDR and your mark side-by-side on one line, with the
+  `×` separator. Used at top-center of the registration page and the
+  workshop deck slide template.
+- **Stacked** — AESDR above your mark, two lines, separator centered.
+  Used in tight-aspect placements like email footers, social profile
+  squares, and small-format print.
+- **On-cream** — same horizontal composition, optimized for printing or
+  embedding into PDFs and slide decks with light backgrounds.
+
+Plus a one-page composition guide that shows you exactly where the mark
+sits on your registration page out of the gate, with the clearspace
+already worked out.

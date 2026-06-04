@@ -101,9 +101,9 @@ export default async function PlaybooksIndexPage({
 
       <section className="playbooks-intro">
         <p className="playbooks-eyebrow">Dashboard · Playbooks</p>
-        <h1>Pick the path that matches how you'll show up.</h1>
+        <h1>Pick the path that matches how you&rsquo;ll show up.</h1>
         <p className="playbooks-lead">
-          You're approved. Now you choose how to run it. Different affiliates have wildly different leverage — a newsletter writer has a very different first move than a 1:1 coach or a community host. Each playbook below is a path through the program for a specific format, with the same six sections so the structure stays predictable.
+          You&rsquo;re approved. Now you choose how to run it. Different affiliates have wildly different leverage — a newsletter writer has a very different first move than a 1:1 coach or a community host. Each playbook below is a path through the program for a specific format, with the same six sections so the structure stays predictable.
         </p>
         <p className="playbooks-lead">
           Pick one to start. Layering a second path later is fine; running two in parallel from week one is not. Start where your highest-leverage channel already is.
@@ -114,7 +114,7 @@ export default async function PlaybooksIndexPage({
         <section className="playbooks-admin-preview">
           <p className="playbooks-admin-preview-label">Admin preview</p>
           <p className="playbooks-admin-preview-help">
-            Cycle through each archetype's &ldquo;Start here&rdquo; callout:
+            Cycle through each archetype&rsquo;s &ldquo;Start here&rdquo; callout:
           </p>
           <div className="playbooks-admin-preview-tabs">
             <Link
@@ -190,11 +190,11 @@ export default async function PlaybooksIndexPage({
       <section className="playbooks-footnote">
         <h3>None of these fit?</h3>
         <p>
-          The seven paths cover most affiliate formats but not all of them. If your audience or channel doesn't match any of the above — or you run multiple formats and aren't sure which to start with — email{" "}
+          The seven paths cover most affiliate formats but not all of them. If your audience or channel doesn&rsquo;t match any of the above — or you run multiple formats and aren&rsquo;t sure which to start with — email{" "}
           <a href="mailto:affiliates@aesdr.com?subject=Playbook fit — &lt;your slug&gt;">
             affiliates@aesdr.com
           </a>
-          {" "}with a one-paragraph description of your channel and your audience size. We'll write you a playbook directly inside 5 business days, and the patterns that show up across multiple affiliates become new ready playbooks here.
+          {" "}with a one-paragraph description of your channel and your audience size. We&rsquo;ll write you a playbook directly inside 5 business days, and the patterns that show up across multiple affiliates become new ready playbooks here.
         </p>
       </section>
     </main>
