@@ -188,10 +188,10 @@ export function LandingShell({ variant = "default" }: { variant?: LandingVariant
       <DeckStack />
 
       {/* What this is NOT */}
-      <VariantSectionAnchor variant={variant} numeral="01" label="Honesty" />
+      <VariantSectionAnchor variant={variant} numeral="01" label="Honesty" icon="eye" />
       <section className={styles.notSection} style={{ position: "relative" }}>
         <VariantSectionBackdrop variant={variant} numeral="01" />
-        <p className={styles.sectionLabel}>Honesty</p>
+        {variant === "default" && <p className={styles.sectionLabel}>Honesty</p>}
         <h2 className={styles.notHeadline}>What this is <em>not</em>.</h2>
         <div className={styles.notGrid}>
           <div className={styles.notCard}>
@@ -239,8 +239,9 @@ export function LandingShell({ variant = "default" }: { variant?: LandingVariant
       </section>
 
       {/* Comparison */}
+      <VariantSectionAnchor variant={variant} numeral="02" label="How this compares" icon="weight" />
       <section className={styles.compareSection}>
-        <p className={styles.sectionLabel}>How this compares</p>
+        {variant === "default" && <p className={styles.sectionLabel}>How this compares</p>}
         <h2 className={styles.compareHeadline}>
           Four shapes of sales training. <em>Pick the one that fits.</em>
         </h2>
@@ -351,12 +352,13 @@ export function LandingShell({ variant = "default" }: { variant?: LandingVariant
       <ValidationMarquee />
 
       {/* ═══ PRICING ═══ — wrapped to intercept the checkout buttons */}
+      <VariantSectionAnchor variant={variant} numeral="03" label="Pricing" icon="refund" />
       <PreviewOnlyWrap>
         <section id="pricing" className={styles.pricingSection}>
           <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
             <Mascot pose="verdict" size={MASCOT_SIZE.banner} />
           </div>
-          <p className={styles.sectionLabel}>Pricing</p>
+          {variant === "default" && <p className={styles.sectionLabel}>Pricing</p>}
           <h2 className={styles.sectionHeadline}>One price. Yours when you buy it.</h2>
           <div className={styles.divider} />
           <PricingTiers initialRole={null} />
@@ -364,13 +366,15 @@ export function LandingShell({ variant = "default" }: { variant?: LandingVariant
       </PreviewOnlyWrap>
 
       {/* ═══ FAQ ═══ */}
-      <VariantSectionAnchor variant={variant} numeral="04" label="Questions" />
+      <VariantSectionAnchor variant={variant} numeral="04" label="Questions" icon="warn" />
       <section className={styles.faqSection}>
         <div className={styles.faqHeader}>
-          <p className={styles.faqLabel}>
-            <span className={styles.faqLabelIcon}>!</span>
-            Questions
-          </p>
+          {variant === "default" && (
+            <p className={styles.faqLabel}>
+              <span className={styles.faqLabelIcon}>!</span>
+              Questions
+            </p>
+          )}
           <h2 className={styles.faqHeadline}>Frequently Asked</h2>
         </div>
         <div className={styles.faqGrid}>
@@ -399,7 +403,7 @@ export function LandingShell({ variant = "default" }: { variant?: LandingVariant
       </section>
 
       {/* ═══ FINAL CTA ═══ */}
-      <VariantSectionAnchor variant={variant} numeral="05" label="Begin" />
+      <VariantSectionAnchor variant={variant} numeral="05" label="Begin" icon="mile" />
       <section
         className={styles.finalCta}
         style={
@@ -630,64 +634,10 @@ function VariantIntroBand({ variant }: { variant: LandingVariant }) {
     );
   }
   if (variant === "v3") {
-    /* V3 — Bracketed + Iris: animated iris-gradient bar across the
-       full width directly under the nav. Sets the high-design
-       tonal direction for everything below. */
-    return (
-      <div
-        style={{
-          position: "relative",
-          padding: 0,
-        }}
-      >
-        <div
-          style={{
-            height: 6,
-            background: "var(--iris)",
-            backgroundSize: "300% 100%",
-            animation: "shimmer 5s linear infinite",
-          }}
-        />
-        <div
-          style={{
-            padding: "18px 5vw 12px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 14,
-          }}
-        >
-          <Wordmark size={64} tone="iris" />
-          <span
-            style={{
-              fontFamily: "var(--cond)",
-              textTransform: "uppercase",
-              letterSpacing: ".24em",
-              fontSize: 11,
-              color: "var(--crimson)",
-              fontWeight: 700,
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 10,
-            }}
-          >
-            <CornerBracket
-              position="tl"
-              size={14}
-              color="var(--crimson)"
-              thickness={1.5}
-            />
-            Survival Manual · Edition 12
-            <CornerBracket
-              position="tr"
-              size={14}
-              color="var(--crimson)"
-              thickness={1.5}
-            />
-          </span>
-        </div>
-      </div>
-    );
+    /* V3 — Bracketed + Iris: NO intro band. Per direction the iris
+       top-bar and the 'Survival Manual · Edition 12' chip are both
+       gone. The v3 register lives entirely in the section anchors. */
+    return null;
   }
   return null;
 }
@@ -696,10 +646,12 @@ function VariantSectionAnchor({
   variant,
   numeral,
   label,
+  icon,
 }: {
   variant: LandingVariant;
   numeral: string;
   label: string;
+  icon: IconName;
 }) {
   if (variant === "v1") {
     /* V1 — Editorial Marginalia: a substantial section header band.
@@ -732,15 +684,22 @@ function VariantSectionAnchor({
         <div>
           <span
             style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 10,
               fontFamily: "var(--mono)",
               fontSize: 10,
               letterSpacing: ".28em",
               textTransform: "uppercase",
               color: "var(--muted)",
-              display: "block",
               marginBottom: 6,
             }}
           >
+            <Icon
+              name={icon}
+              size={18}
+              style={{ color: "var(--crimson)", strokeWidth: 2 }}
+            />
             Chapter
           </span>
           <h3
@@ -801,6 +760,11 @@ function VariantSectionAnchor({
           >
             §{numeral}
           </span>
+          <Icon
+            name={icon}
+            size={20}
+            style={{ color: "#b4455d", strokeWidth: 2 }}
+          />
           <span
             style={{
               fontFamily: "var(--cond)",
@@ -889,6 +853,16 @@ function VariantSectionAnchor({
           >
             {numeral}
           </span>
+          <Icon
+            name={icon}
+            size={26}
+            style={{
+              color: "var(--crimson)",
+              strokeWidth: 2,
+              verticalAlign: "middle",
+              marginRight: 14,
+            }}
+          />
           <span
             style={{
               fontFamily: "var(--cond)",

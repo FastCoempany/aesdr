@@ -18,6 +18,11 @@ export default function BottomTimer() {
   const [showPill, setShowPill] = useState(false);
   const armed = useRef(true);
   const completedOnce = useRef(false);
+  // Once the prospect has clicked "Stop — still reading" and seen the pill,
+  // the timer must never fire again. Previously the scroll-up/scroll-back
+  // path re-armed `armed.current` and re-triggered setShow(true), popping
+  // the countdown a second time even with the pill already visible.
+  const pillShown = useRef(false);
 
   useEffect(() => {
     const onScroll = () => {
@@ -28,6 +33,10 @@ export default function BottomTimer() {
         armed.current = true;
         return;
       }
+      // Hard stop: once the pill has appeared, the timer is permanently
+      // retired for the rest of this session. The pill is the persistent
+      // affordance from this point on.
+      if (pillShown.current) return;
       if (nearBottom && armed.current) {
         armed.current = false;
         if (!completedOnce.current) {
@@ -54,6 +63,10 @@ export default function BottomTimer() {
           }}
           onStop={() => {
             trackProspect("timer_stopped");
+            // Retire the timer permanently for this session. The pill below
+            // replaces it as the persistent affordance; scrolling up + back
+            // down must NOT re-trigger the countdown.
+            pillShown.current = true;
             setShow(false);
             setShowPill(true);
           }}
