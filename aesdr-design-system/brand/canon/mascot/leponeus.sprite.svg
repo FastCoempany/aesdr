@@ -190,7 +190,6 @@
       <path d="M 114 143.5 L 120.1 147 L 120.1 154 L 114 157.5 L 107.9 154 L 107.9 147 Z"/>
       <path d="M 126 143.5 L 132.1 147 L 132.1 154 L 126 157.5 L 119.9 154 L 119.9 147 Z"/>
     </g>
-    <text x="120" y="148" text-anchor="middle" font-family="Playfair Display, serif" font-style="italic" font-weight="900" font-size="22" fill="#8B1A1A" stroke="none">A</text>
     <ellipse cx="68" cy="194" rx="10" ry="6" fill="#F1ECE3"/>
     <ellipse cx="172" cy="194" rx="10" ry="6" fill="#F1ECE3"/>
     <path d="M 63 199 l 0 2 M 68 200 l 0 2 M 73 199 l 0 2" stroke-opacity="0.5"/>
