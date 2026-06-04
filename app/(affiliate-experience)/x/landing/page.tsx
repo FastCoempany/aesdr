@@ -263,11 +263,23 @@ export function LandingShell({ variant = "default" }: { variant?: LandingVariant
             <ul className={styles.compareList}>
               <li>12 interactive courses &mdash; not videos you sit through</li>
               <li>
-                You keep{" "}
-                <span className={styles.artifactName}>The Alignment Contract</span>,{" "}
-                <span className={styles.artifactName}>The Manager Archetype Map</span>,{" "}
-                <span className={styles.artifactName}>The ROI &amp; Commission Defense Tracker</span>{" "}
-                &mdash; and four more like them
+                You get{" "}
+                <span
+                  style={{
+                    fontFamily: "var(--cond)",
+                    fontWeight: 700,
+                    background: "var(--iris)",
+                    backgroundSize: "300% 100%",
+                    WebkitBackgroundClip: "text",
+                    backgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    color: "transparent",
+                    animation: "shimmer 4s linear infinite",
+                  }}
+                >
+                  8
+                </span>{" "}
+                ridiculously valuable assets to take away with you
               </li>
               <li>Separate tracks for AEs and SDRs &mdash; the content forks to your seat</li>
               <li>14-day refund, no questions</li>
