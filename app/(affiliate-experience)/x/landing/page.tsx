@@ -277,7 +277,7 @@ export function LandingShell({ variant = "default" }: { variant?: LandingVariant
                     animation: "shimmer 4s linear infinite",
                   }}
                 >
-                  8
+                  7
                 </span>{" "}
                 ridiculously valuable assets to take away with you
               </li>
