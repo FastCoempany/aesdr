@@ -38,7 +38,10 @@ export default function KitDocApprovedClaims() {
           </p>
         </div>
         <div style={{ flexShrink: 0 }}>
-          <Mascot pose="doctrine" size={MASCOT_SIZE.card} />
+          {/* verdict pose carries the crimson ear-tip per canon — the
+              "approved/declined" register fits the pre-cleared claims
+              page better than the foundational doctrine. */}
+          <Mascot pose="verdict" size={MASCOT_SIZE.card} />
         </div>
       </section>
 

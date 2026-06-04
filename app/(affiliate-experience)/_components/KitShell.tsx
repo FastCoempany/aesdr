@@ -26,8 +26,10 @@ export type KitShellProps = {
   subtitle: string;
   /** Category badge — controls the color stripe + section group */
   category: KitCategory;
-  /** Leponeus pose, picked per doc to fit the tone */
-  pose: Pose;
+  /** Leponeus pose, picked per doc to fit the tone. Pass `null` (or
+   *  omit) on docs whose custom views already render their own larger
+   *  hero Mascot — keeps the shell from doubling up the mark. */
+  pose?: Pose | null;
   /** Prev/next doc, if any (links to /x/kit/<slug>) */
   prev?: { slug: string; title: string };
   next?: { slug: string; title: string };
@@ -171,14 +173,16 @@ export default function KitShell({
             {subtitle}
           </p>
         </div>
-        <div
-          style={{
-            opacity: 0.94,
-            flexShrink: 0,
-          }}
-        >
-          <Mascot pose={pose} size={MASCOT_SIZE.card} />
-        </div>
+        {pose && (
+          <div
+            style={{
+              opacity: 0.94,
+              flexShrink: 0,
+            }}
+          >
+            <Mascot pose={pose} size={MASCOT_SIZE.card} />
+          </div>
+        )}
       </section>
 
       {/* ── Iris-gradient category stripe ── */}

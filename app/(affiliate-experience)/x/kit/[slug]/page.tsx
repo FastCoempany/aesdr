@@ -57,18 +57,26 @@ export async function generateMetadata({
   };
 }
 
-/** Pose mapped per doc so Leponeus matches the tone of the page. */
-const POSE_FOR: Record<string, Pose> = {
-  "positioning-brief": "doctrine",
+/**
+ * Pose mapped per doc so Leponeus matches the tone of the page.
+ *
+ * `null` means the doc's custom view already renders a hero Mascot at full
+ * size — passing the shell a pose too would double up the mark. Those docs
+ * own the brand presence themselves; the shell hero stays Mascot-free.
+ */
+const POSE_FOR: Record<string, Pose | null> = {
+  // Custom views with their own hero Mascot — shell stays clean
+  "positioning-brief": null,
+  "co-promoting-aesdr": null,
+  "approved-claims": null,
+  "disclosure-language-pack": null,
+  "banned-vocabulary": null,
+  "pilot-rhythm": null,
+  "sample-partnership-agreement": null,
+  // Custom views that don't currently render a hero Mascot — shell carries the mark
   "curriculum-overview": "doctrine",
   "what-you-earn": "owner",
-  "co-promoting-aesdr": "verdict",
-  "approved-claims": "verdict",
-  "disclosure-language-pack": "verdict",
-  "banned-vocabulary": "diagnosis",
   "lockup-usage": "doctrine",
-  "pilot-rhythm": "sprint",
-  "sample-partnership-agreement": "verdict",
 };
 
 /** Editorial doc-level subtitles for the shell hero. Falls back to the
@@ -164,7 +172,7 @@ export default async function KitDocPage({
         title={entry.title}
         subtitle={SUBTITLE_FOR[slug] || entry.description}
         category={entry.category as KitCategory}
-        pose={POSE_FOR[slug] || "doctrine"}
+        pose={POSE_FOR[slug] === null ? null : POSE_FOR[slug] || "doctrine"}
         prev={prev}
         next={next}
         footerSlot={

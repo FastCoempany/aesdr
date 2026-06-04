@@ -39,18 +39,19 @@ const LABEL: Record<Position, string> = {
 /**
  * Route map for each knob position.
  *
- * "landing" — the scrollable landing page below the cinematic. Anchors to
- *   #pricing so the browser instantly skips past the typing cinematic and
- *   lands on the deck-stack / pricing / faq section where a returning
- *   prospect can re-read the offer without sitting through the intro.
+ * "landing" — the post-cinematic landing experience. Anchors to
+ *   #post-animation (the sneak-peek section right after the typing
+ *   animation finishes), so the browser scrolls past the cinematic
+ *   instead of replaying it. Returning prospects see the AESDR hero
+ *   reveal + sneak-peek + deck stack directly.
  *
- * "animation" — the full cinematic experience from the top of the welcome
- *   gate. Reloads role state and replays "Here's the scenario..." typing
- *   in full.
+ * "animation" — back to the welcome gate. Reloads role state and replays
+ *   the Leponeus Step 1 → cinematic typing → "Here's the scenario..."
+ *   sequence from the top.
  */
 const ROUTE: Record<Position, string | null> = {
   closed: null,
-  landing: "/x/landing#pricing",
+  landing: "/x/landing#post-animation",
   animation: "/x/welcome",
 };
 

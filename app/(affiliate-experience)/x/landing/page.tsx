@@ -23,6 +23,7 @@ import PricingTiers from "@/components/PricingTiers";
 import ValidationMarquee from "@/components/ValidationMarquee";
 import { Icon, type IconName } from "@/components/brand/Icon";
 import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
+import { CornerBracket } from "@/components/brand/BrandAssets";
 import styles from "@/app/page.module.css";
 
 import TrackedCinematic from "../../_components/TrackedCinematic";
@@ -40,14 +41,10 @@ export const metadata: Metadata = {
 };
 
 /**
- * The seven substantial assets — rendered as a vertical list so each name
- * sits on its own line with a single bold milestone glyph as the bullet.
- * Previously these were inline-separated and wrapped as a paragraph; per
- * design direction each asset name now reads as its own callout.
- *
- * The `mile` glyph is from the canonical 18-icon set (no emoji on
- * buyer-facing surfaces per the design-system canon). Size + crimson
- * weight bumped so the bullets read as deliberate marks, not as commas.
+ * The seven substantial assets — rendered as a centered framed block so it
+ * lands as a deliberate callout, not as a list inside body copy. Mile-glyph
+ * bullets to the left of each name, ink frame with quiet iris-edge glow so it
+ * stands off the cream surface.
  */
 function SubstantialAssetsList() {
   const named = [
@@ -56,45 +53,64 @@ function SubstantialAssetsList() {
     "The 72-Hour Strike Plan",
   ];
   return (
-    <ul
+    <div
       style={{
-        listStyle: "none",
-        padding: 0,
-        margin: "20px auto 14px",
-        maxWidth: 600,
-        display: "flex",
-        flexDirection: "column",
-        gap: 8,
-        textAlign: "left",
+        position: "relative",
+        maxWidth: 540,
+        margin: "26px auto 22px",
+        padding: 4,
+        borderRadius: 12,
+        background:
+          "linear-gradient(var(--cream, #FAF7F2), var(--cream, #FAF7F2)) padding-box, var(--iris) border-box",
+        backgroundSize: "100% 100%, 300% 100%",
+        border: "1px solid transparent",
+        boxShadow:
+          "0 0 18px rgba(255, 0, 110, 0.10), 0 0 36px rgba(139, 92, 246, 0.08), 0 24px 48px -22px rgba(26, 26, 26, 0.18)",
       }}
     >
-      {named.map((name) => (
-        <li
-          key={name}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 14,
-            fontStyle: "italic",
-            fontSize: 18,
-            lineHeight: 1.45,
-            color: "var(--ink, #1A1A1A)",
-            fontFamily: "var(--serif, 'Source Serif 4', Georgia, serif)",
-          }}
-        >
-          <Icon
-            name="mile"
-            size={20}
+      <ul
+        style={{
+          listStyle: "none",
+          padding: "20px 28px",
+          margin: 0,
+          background: "var(--cream, #FAF7F2)",
+          borderRadius: 10,
+          display: "inline-flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          gap: 12,
+          width: "100%",
+          boxSizing: "border-box",
+        }}
+      >
+        {named.map((name) => (
+          <li
+            key={name}
             style={{
-              color: "var(--crimson, #8B1A1A)",
-              flexShrink: 0,
-              strokeWidth: 2,
+              display: "flex",
+              alignItems: "center",
+              gap: 14,
+              fontStyle: "italic",
+              fontSize: 18,
+              lineHeight: 1.4,
+              color: "var(--ink, #1A1A1A)",
+              fontFamily: "var(--serif, 'Source Serif 4', Georgia, serif)",
             }}
-          />
-          {name}
-        </li>
-      ))}
-    </ul>
+          >
+            <Icon
+              name="mile"
+              size={20}
+              style={{
+                color: "var(--crimson, #8B1A1A)",
+                flexShrink: 0,
+                strokeWidth: 2,
+              }}
+            />
+            {name}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
@@ -130,8 +146,10 @@ export default function ExperienceLandingPage() {
       {/* Hero + Confession + Terminal + Zoom (forked, no skip, full typing) */}
       <TrackedCinematic />
 
-      {/* Sneak-peek video */}
-      <section className={styles.sneakPeekSection}>
+      {/* Sneak-peek video — id="post-animation" gives the kit's KitNav
+          knob a real anchor to land on, so 'back to landing' skips the
+          cinematic and drops the prospect into the post-typing experience. */}
+      <section id="post-animation" className={styles.sneakPeekSection}>
         <div className={styles.sneakPeekVideoWrap}>
           <video
             className={styles.sneakPeekVideo}
@@ -206,7 +224,7 @@ export default function ExperienceLandingPage() {
         <div className={styles.compareGrid}>
           <div className={styles.compareCol} aria-label="AESDR — this product">
             <p className={styles.compareLabel}>AESDR</p>
-            <p className={styles.comparePrice}>$249–$299 · one-time (team licensing on request)</p>
+            <p className={styles.comparePrice}>$249 &amp; $299 · one-time (team licensing on request)</p>
             <ul className={styles.compareList}>
               <li>12 interactive courses &mdash; not videos you sit through</li>
               <li>
@@ -222,7 +240,7 @@ export default function ExperienceLandingPage() {
               <li>Worked against your real accounts, pipeline, and comp plan &mdash; not &ldquo;imagine a prospect named Bob&rdquo;</li>
             </ul>
             <p className={styles.compareFitFor}>
-              <strong>Fits:</strong> AEs and SDRs in their first 2 years or so
+              <strong>Fits:</strong>&nbsp;AEs and SDRs in their first 2 years or so
               who want to get better at the actual work &mdash; not get hyped
               for the week.
             </p>
@@ -240,7 +258,7 @@ export default function ExperienceLandingPage() {
               <li>Often pairs with a paid coaching upsell</li>
             </ul>
             <p className={styles.compareFitFor}>
-              <strong>Fits:</strong> AEs and SDRs looking for emotional lift
+              <strong>Fits:</strong>&nbsp;AEs and SDRs looking for emotional lift
               before a big week — which isn&rsquo;t what we&rsquo;re selling here.
             </p>
           </div>
@@ -257,7 +275,7 @@ export default function ExperienceLandingPage() {
               <li>Calendar-heavy by design</li>
             </ul>
             <p className={styles.compareFitFor}>
-              <strong>Fits:</strong> AEs and SDRs whose schedules are open
+              <strong>Fits:</strong>&nbsp;AEs and SDRs whose schedules are open
               and who need cohort pressure to finish — a different motion
               than the one this product is designed around.
             </p>
@@ -275,7 +293,7 @@ export default function ExperienceLandingPage() {
               <li>Disappears when you leave the org</li>
             </ul>
             <p className={styles.compareFitFor}>
-              <strong>Fits:</strong> Nobody really chooses this one — you do
+              <strong>Fits:</strong>&nbsp;Nobody really chooses this one — you do
               it because you have to for HR, and then you come back here for
               the part the LMS skipped entirely.
             </p>
@@ -360,7 +378,7 @@ export default function ExperienceLandingPage() {
       <section className={styles.finalCta}>
         <h2 className={styles.finalHeadline}>Stop ChatGPClaudeing. Start&nbsp;executing.</h2>
         <p className={styles.finalSub}>
-          12 courses, plus some substantial assets you&rsquo;ll keep:
+          12 courses, plus a pack of substantial assets you&rsquo;ll keep:
         </p>
         <SubstantialAssetsList />
         <p className={styles.finalSub} style={{ marginTop: 0 }}>
@@ -368,24 +386,58 @@ export default function ExperienceLandingPage() {
           your day-to-day, your AE/SDR dynamic, and your value to yourself in
           this business.
         </p>
-        {/* Same Playfair italic display register as the headline above, kept at the
-            existing body-line font-size so it lands as an emphatic editorial pull,
-            not a second hero. */}
-        <p
+        {/* "We can't stress enough" wrapped in editorial corner brackets per the
+            design canon — same brackets used throughout the kit heroes. Quiet
+            ink at ~22% opacity so they frame the line without competing with
+            the Playfair display register. */}
+        <div
           style={{
-            fontFamily: "var(--display, 'Playfair Display', Georgia, serif)",
-            fontStyle: "italic",
-            fontWeight: 900,
-            fontSize: 18,
-            lineHeight: 1.45,
-            color: "var(--ink, #1A1A1A)",
-            maxWidth: 600,
+            position: "relative",
+            maxWidth: 660,
             margin: "0 auto 32px",
-            letterSpacing: "-0.005em",
+            padding: "26px 38px 8px",
           }}
         >
-          We can&rsquo;t stress enough that this program is built for AEs and SDRs who want to get better at the actual work rather than just feel better about the week ahead.
-        </p>
+          <CornerBracket
+            position="tl"
+            size={26}
+            color="rgba(26,26,26,0.22)"
+            style={{ position: "absolute", top: 4, left: 4 }}
+          />
+          <CornerBracket
+            position="tr"
+            size={26}
+            color="rgba(26,26,26,0.22)"
+            style={{ position: "absolute", top: 4, right: 4 }}
+          />
+          <CornerBracket
+            position="bl"
+            size={26}
+            color="rgba(26,26,26,0.22)"
+            style={{ position: "absolute", bottom: -8, left: 4 }}
+          />
+          <CornerBracket
+            position="br"
+            size={26}
+            color="rgba(26,26,26,0.22)"
+            style={{ position: "absolute", bottom: -8, right: 4 }}
+          />
+          <p
+            style={{
+              fontFamily: "var(--display, 'Playfair Display', Georgia, serif)",
+              fontStyle: "italic",
+              fontWeight: 900,
+              fontSize: 18,
+              lineHeight: 1.45,
+              color: "var(--ink, #1A1A1A)",
+              margin: 0,
+              letterSpacing: "-0.005em",
+              textAlign: "center",
+            }}
+          >
+            We can&rsquo;t stress enough that this program is built for AEs and SDRs who want to get better at the actual work rather than just feel better about the week ahead.
+          </p>
+        </div>
         <a href="#pricing" className={styles.ctaPrimary}>Get Access</a>
       </section>
 
