@@ -23,7 +23,13 @@ import PricingTiers from "@/components/PricingTiers";
 import ValidationMarquee from "@/components/ValidationMarquee";
 import { Icon, type IconName } from "@/components/brand/Icon";
 import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
-import { CornerBracket } from "@/components/brand/BrandAssets";
+import {
+  CornerBracket,
+  GhostNumeral,
+  ClassifiedStamp,
+  Wordmark,
+  TerminalDots,
+} from "@/components/brand/BrandAssets";
 import styles from "@/app/page.module.css";
 
 import TrackedCinematic from "../../_components/TrackedCinematic";
@@ -31,6 +37,11 @@ import BottomTimer from "../../_components/BottomTimer";
 import KitTracker from "../../_components/KitTracker";
 import PreviewOnlyLink from "../../_components/PreviewOnlyLink";
 import PreviewOnlyWrap from "../../_components/PreviewOnlyWrap";
+
+/** Three subtle design-system variants of the same landing shape.
+ * Pages at /x/landing/v1, /v2, /v3 each call <LandingShell variant="vX" />.
+ * The base /x/landing route renders the default (no variant) — unchanged. */
+export type LandingVariant = "default" | "v1" | "v2" | "v3";
 
 const Testimonials = dynamic(() => import("@/components/Testimonials"));
 const DeckStack = dynamic(() => import("@/components/DeckStack"));
@@ -130,10 +141,10 @@ const FAQ: { q: string; a: ReactNode; icon: IconName }[] = [
   { q: "Should I take Aspireship or Uvaro instead?",              a: "Different audience. Those are bootcamps for people trying to break into sales — they place you, coach you through ramp, sometimes share first-year commission. AESDR assumes the seat is already yours. If you’re three months from your first SDR interview, take a bootcamp. If you’re three months into the job and the ramp is harder than anyone warned you about, this one.",                                          icon: "warn"      },
 ];
 
-export default function ExperienceLandingPage() {
+export function LandingShell({ variant = "default" }: { variant?: LandingVariant }) {
   return (
     <main className={styles.page}>
-      <KitTracker event="landing_viewed" />
+      <KitTracker event="landing_viewed" props={{ variant }} />
 
       {/* ─── NAV ─── */}
       <header className={styles.nav}>
@@ -142,6 +153,10 @@ export default function ExperienceLandingPage() {
           <a href="#pricing" className={styles.navCta}>Get Access</a>
         </div>
       </header>
+
+      {/* ─── Variant intro band (subtle brand-system reinforcement directly
+              under the nav). Default renders nothing. ─── */}
+      <VariantIntroBand variant={variant} />
 
       {/* Hero + Confession + Terminal + Zoom (forked, no skip, full typing) */}
       <TrackedCinematic />
@@ -167,7 +182,9 @@ export default function ExperienceLandingPage() {
       <DeckStack />
 
       {/* What this is NOT */}
-      <section className={styles.notSection}>
+      <VariantSectionAnchor variant={variant} numeral="01" label="Honesty" />
+      <section className={styles.notSection} style={{ position: "relative" }}>
+        <VariantSectionBackdrop variant={variant} numeral="01" />
         <p className={styles.sectionLabel}>Honesty</p>
         <h2 className={styles.notHeadline}>What this is <em>not</em>.</h2>
         <div className={styles.notGrid}>
@@ -341,6 +358,7 @@ export default function ExperienceLandingPage() {
       </PreviewOnlyWrap>
 
       {/* ═══ FAQ ═══ */}
+      <VariantSectionAnchor variant={variant} numeral="04" label="Questions" />
       <section className={styles.faqSection}>
         <div className={styles.faqHeader}>
           <p className={styles.faqLabel}>
@@ -375,7 +393,20 @@ export default function ExperienceLandingPage() {
       </section>
 
       {/* ═══ FINAL CTA ═══ */}
-      <section className={styles.finalCta}>
+      <VariantSectionAnchor variant={variant} numeral="05" label="Begin" />
+      <section
+        className={styles.finalCta}
+        style={
+          variant === "v3"
+            ? {
+                position: "relative",
+                border: "1px solid rgba(139, 26, 26, 0.18)",
+                margin: "0 5vw",
+                borderRadius: 6,
+              }
+            : { position: "relative" }
+        }
+      >
         <h2 className={styles.finalHeadline}>Stop ChatGPClaudeing. Start&nbsp;executing.</h2>
         <p className={styles.finalSub}>
           12 courses, plus a pack of substantial assets you&rsquo;ll keep:
@@ -464,4 +495,252 @@ export default function ExperienceLandingPage() {
       <BottomTimer />
     </main>
   );
+}
+
+/**
+ * Thin wrapper for the default /x/landing route. Renders LandingShell with
+ * no variant. The three variant pages (v1/v2/v3) each render LandingShell
+ * with their own variant prop.
+ */
+export default function ExperienceLandingPage() {
+  return <LandingShell />;
+}
+
+/* ─────────────────────────────────────────────────
+   Variant decoration helpers — each conditionally renders only when its
+   variant is active. Default returns null so the base /x/landing stays
+   pixel-identical to the existing build.
+   ───────────────────────────────────────────────── */
+
+function VariantIntroBand({ variant }: { variant: LandingVariant }) {
+  if (variant === "v1") {
+    // Editorial marginalia: a single thin iris hairline + a centered
+    // ghost "AESDR" wordmark watermark drifts behind the rest of the
+    // landing. Quiet, magazine-cover register.
+    return (
+      <div
+        style={{
+          position: "relative",
+          textAlign: "center",
+          padding: "8px 0 0",
+        }}
+      >
+        <div
+          style={{
+            height: 1,
+            background:
+              "linear-gradient(90deg, transparent, rgba(139,26,26,0.22), transparent)",
+            margin: "0 5vw",
+          }}
+        />
+      </div>
+    );
+  }
+  if (variant === "v2") {
+    // Stamped documentary: a thin Barlow Condensed band under the nav
+    // with the canon classified register — DOSSIER OPEN / AESDR
+    // COURSE PROSPECTUS / V. CURRENT / TerminalDots punctuation.
+    return (
+      <div
+        style={{
+          padding: "6px 5vw",
+          borderTop: "1px solid var(--light)",
+          borderBottom: "1px solid var(--light)",
+          background: "var(--cream)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 14,
+          fontFamily: "var(--mono)",
+          fontSize: 10,
+          letterSpacing: ".22em",
+          textTransform: "uppercase",
+          color: "var(--muted)",
+        }}
+      >
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
+          <TerminalDots size={6} color="var(--crimson)" />
+          Dossier — AESDR Course Prospectus
+        </span>
+        <span style={{ color: "var(--crimson)" }}>
+          <ClassifiedStamp width={84} height={18} label="Sample" />
+        </span>
+      </div>
+    );
+  }
+  if (variant === "v3") {
+    // Bracketed + iris-bordered: a centered iris-shimmer Wordmark
+    // floating between the nav and the cinematic, framed by quiet
+    // corner brackets. Sets the iris register for everything below.
+    return (
+      <div
+        style={{
+          position: "relative",
+          padding: "32px 0 16px",
+          textAlign: "center",
+        }}
+      >
+        <CornerBracket
+          position="tl"
+          size={24}
+          color="rgba(26,26,26,0.18)"
+          style={{ position: "absolute", top: 16, left: "5vw" }}
+        />
+        <CornerBracket
+          position="tr"
+          size={24}
+          color="rgba(26,26,26,0.18)"
+          style={{ position: "absolute", top: 16, right: "5vw" }}
+        />
+        <Wordmark size={140} tone="iris" />
+      </div>
+    );
+  }
+  return null;
+}
+
+function VariantSectionAnchor({
+  variant,
+  numeral,
+  label,
+}: {
+  variant: LandingVariant;
+  numeral: string;
+  label: string;
+}) {
+  if (variant === "v1") {
+    // Editorial marginalia: a thin centered marker — small TerminalDots
+    // before a mono-caps section number, then iris hairline. Quiet.
+    return (
+      <div
+        style={{
+          textAlign: "center",
+          padding: "16px 0 0",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 14,
+        }}
+      >
+        <span
+          style={{
+            display: "inline-block",
+            width: 56,
+            height: 1,
+            background: "var(--light)",
+          }}
+        />
+        <span
+          style={{
+            fontFamily: "var(--mono)",
+            fontSize: 10,
+            letterSpacing: ".28em",
+            textTransform: "uppercase",
+            color: "var(--muted)",
+          }}
+        >
+          § {numeral} · {label}
+        </span>
+        <span
+          style={{
+            display: "inline-block",
+            width: 56,
+            height: 1,
+            background: "var(--light)",
+          }}
+        />
+      </div>
+    );
+  }
+  if (variant === "v2") {
+    // Stamped documentary: ClassifiedStamp band with the section label
+    // inside it — reads as a chapter marker in a dossier.
+    return (
+      <div
+        style={{
+          textAlign: "center",
+          padding: "20px 0 0",
+        }}
+      >
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 12,
+            border: "1.5px solid var(--ink)",
+            padding: "6px 16px",
+            fontFamily: "var(--cond)",
+            textTransform: "uppercase",
+            letterSpacing: ".22em",
+            fontSize: 11,
+            color: "var(--ink)",
+            fontWeight: 700,
+          }}
+        >
+          <TerminalDots size={5} color="var(--crimson)" />
+          §{numeral} · {label}
+        </span>
+      </div>
+    );
+  }
+  if (variant === "v3") {
+    // Bracketed + iris-bordered: an iris-gradient hairline bar with the
+    // section label centered above it.
+    return (
+      <div style={{ padding: "20px 5vw 0", textAlign: "center" }}>
+        <p
+          style={{
+            fontFamily: "var(--cond)",
+            textTransform: "uppercase",
+            letterSpacing: ".24em",
+            fontSize: 11,
+            color: "var(--crimson)",
+            fontWeight: 700,
+            margin: "0 0 8px",
+          }}
+        >
+          {numeral} · {label}
+        </p>
+        <div
+          style={{
+            height: 2,
+            background: "var(--iris)",
+            backgroundSize: "300% 100%",
+            animation: "shimmer 6s linear infinite",
+            margin: "0 auto",
+            maxWidth: 320,
+          }}
+        />
+      </div>
+    );
+  }
+  return null;
+}
+
+function VariantSectionBackdrop({
+  variant,
+  numeral,
+}: {
+  variant: LandingVariant;
+  numeral: string;
+}) {
+  if (variant === "v3") {
+    // Bracketed + iris-bordered: huge ghost numeral floats behind the
+    // .notSection at low opacity — magazine-spread register.
+    return (
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          top: -20,
+          right: "5vw",
+          pointerEvents: "none",
+          zIndex: 0,
+        }}
+      >
+        <GhostNumeral numeral={numeral} size={420} />
+      </div>
+    );
+  }
+  return null;
 }
