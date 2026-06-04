@@ -33,6 +33,7 @@ import {
 import styles from "@/app/page.module.css";
 
 import TrackedCinematic from "../../_components/TrackedCinematic";
+import StaticLeponeusHero from "../../_components/StaticLeponeusHero";
 import BottomTimer from "../../_components/BottomTimer";
 import KitTracker from "../../_components/KitTracker";
 import PreviewOnlyLink from "../../_components/PreviewOnlyLink";
@@ -158,8 +159,13 @@ export function LandingShell({ variant = "default" }: { variant?: LandingVariant
               under the nav). Default renders nothing. ─── */}
       <VariantIntroBand variant={variant} />
 
-      {/* Hero + Confession + Terminal + Zoom (forked, no skip, full typing) */}
-      <TrackedCinematic />
+      {/* Variant indicator badge — only on the variant pages, top-right
+          so the reviewer always knows which one they're looking at. */}
+      <VariantBadge variant={variant} />
+
+      {/* Default route: full cinematic. Variants: static hero (skips the
+          typing playback so design review isn't disrupted). */}
+      {variant === "default" ? <TrackedCinematic /> : <StaticLeponeusHero />}
 
       {/* Sneak-peek video — id="post-animation" gives the kit's KitNav
           knob a real anchor to land on, so 'back to landing' skips the
@@ -512,87 +518,174 @@ export default function ExperienceLandingPage() {
    pixel-identical to the existing build.
    ───────────────────────────────────────────────── */
 
+function VariantBadge({ variant }: { variant: LandingVariant }) {
+  if (variant === "default") return null;
+  const label = {
+    v1: "V1 · Editorial Marginalia",
+    v2: "V2 · Stamped Documentary",
+    v3: "V3 · Bracketed + Iris",
+  }[variant];
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: 14,
+        right: 14,
+        zIndex: 60,
+        background: "var(--ink)",
+        color: "#FAF7F2",
+        padding: "8px 14px",
+        fontFamily: "var(--cond)",
+        textTransform: "uppercase",
+        letterSpacing: ".2em",
+        fontSize: 10,
+        fontWeight: 700,
+        borderRadius: 2,
+        boxShadow: "0 8px 18px rgba(0,0,0,0.22)",
+        borderLeft: "3px solid var(--crimson)",
+      }}
+    >
+      {label}
+    </div>
+  );
+}
+
 function VariantIntroBand({ variant }: { variant: LandingVariant }) {
   if (variant === "v1") {
-    // Editorial marginalia: a single thin iris hairline + a centered
-    // ghost "AESDR" wordmark watermark drifts behind the rest of the
-    // landing. Quiet, magazine-cover register.
+    /* V1 — Editorial Marginalia: dossier-style top band with a thin
+       iris hairline, a centered Playfair italic dateline, and a
+       quiet "field notes" register that runs as a thin masthead
+       under the nav. */
     return (
       <div
         style={{
-          position: "relative",
-          textAlign: "center",
-          padding: "8px 0 0",
+          padding: "14px 5vw 10px",
+          background: "var(--cream)",
+          borderBottom: "1px solid var(--light)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 16,
         }}
       >
-        <div
+        <span
           style={{
-            height: 1,
-            background:
-              "linear-gradient(90deg, transparent, rgba(139,26,26,0.22), transparent)",
-            margin: "0 5vw",
+            fontFamily: "var(--display)",
+            fontStyle: "italic",
+            fontSize: 14,
+            color: "var(--ink)",
+            display: "inline-flex",
+            alignItems: "baseline",
+            gap: 10,
           }}
-        />
+        >
+          <em style={{ color: "var(--crimson)" }}>Volume I.</em>
+          <span style={{ color: "var(--muted)" }}>Field Notes for First-Year Sellers</span>
+        </span>
+        <span
+          style={{
+            fontFamily: "var(--mono)",
+            fontSize: 10,
+            letterSpacing: ".24em",
+            textTransform: "uppercase",
+            color: "var(--muted)",
+          }}
+        >
+          §§ 01 — 05
+        </span>
       </div>
     );
   }
   if (variant === "v2") {
-    // Stamped documentary: a thin Barlow Condensed band under the nav
-    // with the canon classified register — DOSSIER OPEN / AESDR
-    // COURSE PROSPECTUS / V. CURRENT / TerminalDots punctuation.
+    /* V2 — Stamped Documentary: heavy ink dossier band. Black plate,
+       cream text, TerminalDots punctuation, ClassifiedStamp on the
+       right. Reads as a case-file cover. */
     return (
       <div
         style={{
-          padding: "6px 5vw",
-          borderTop: "1px solid var(--light)",
-          borderBottom: "1px solid var(--light)",
-          background: "var(--cream)",
+          padding: "12px 5vw",
+          background: "var(--ink)",
+          color: "#FAF7F2",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           gap: 14,
           fontFamily: "var(--mono)",
-          fontSize: 10,
-          letterSpacing: ".22em",
+          fontSize: 11,
+          letterSpacing: ".24em",
           textTransform: "uppercase",
-          color: "var(--muted)",
         }}
       >
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
-          <TerminalDots size={6} color="var(--crimson)" />
-          Dossier — AESDR Course Prospectus
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 12 }}>
+          <TerminalDots size={6} color="#FAF7F2" />
+          File: AESDR / Course Prospectus / Vol. 01
         </span>
-        <span style={{ color: "var(--crimson)" }}>
-          <ClassifiedStamp width={84} height={18} label="Sample" />
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
+          <span style={{ color: "#b4455d" }}>Cleared</span>
+          <span style={{ color: "#FAF7F2" }}>
+            <ClassifiedStamp width={96} height={20} label="Sample" />
+          </span>
         </span>
       </div>
     );
   }
   if (variant === "v3") {
-    // Bracketed + iris-bordered: a centered iris-shimmer Wordmark
-    // floating between the nav and the cinematic, framed by quiet
-    // corner brackets. Sets the iris register for everything below.
+    /* V3 — Bracketed + Iris: animated iris-gradient bar across the
+       full width directly under the nav. Sets the high-design
+       tonal direction for everything below. */
     return (
       <div
         style={{
           position: "relative",
-          padding: "32px 0 16px",
-          textAlign: "center",
+          padding: 0,
         }}
       >
-        <CornerBracket
-          position="tl"
-          size={24}
-          color="rgba(26,26,26,0.18)"
-          style={{ position: "absolute", top: 16, left: "5vw" }}
+        <div
+          style={{
+            height: 6,
+            background: "var(--iris)",
+            backgroundSize: "300% 100%",
+            animation: "shimmer 5s linear infinite",
+          }}
         />
-        <CornerBracket
-          position="tr"
-          size={24}
-          color="rgba(26,26,26,0.18)"
-          style={{ position: "absolute", top: 16, right: "5vw" }}
-        />
-        <Wordmark size={140} tone="iris" />
+        <div
+          style={{
+            padding: "18px 5vw 12px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 14,
+          }}
+        >
+          <Wordmark size={64} tone="iris" />
+          <span
+            style={{
+              fontFamily: "var(--cond)",
+              textTransform: "uppercase",
+              letterSpacing: ".24em",
+              fontSize: 11,
+              color: "var(--crimson)",
+              fontWeight: 700,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 10,
+            }}
+          >
+            <CornerBracket
+              position="tl"
+              size={14}
+              color="var(--crimson)"
+              thickness={1.5}
+            />
+            Survival Manual · Edition 12
+            <CornerBracket
+              position="tr"
+              size={14}
+              color="var(--crimson)"
+              thickness={1.5}
+            />
+          </span>
+        </div>
       </div>
     );
   }
@@ -609,106 +702,215 @@ function VariantSectionAnchor({
   label: string;
 }) {
   if (variant === "v1") {
-    // Editorial marginalia: a thin centered marker — small TerminalDots
-    // before a mono-caps section number, then iris hairline. Quiet.
+    /* V1 — Editorial Marginalia: a substantial section header band.
+       Big Playfair italic numeral on the left, section label in display
+       italic centered, iris hairline beneath the whole band. Reads as
+       a magazine chapter opener. */
     return (
       <div
         style={{
-          textAlign: "center",
-          padding: "16px 0 0",
-          display: "flex",
+          padding: "56px 5vw 0",
+          display: "grid",
+          gridTemplateColumns: "auto 1fr auto",
           alignItems: "center",
-          justifyContent: "center",
-          gap: 14,
+          gap: 24,
         }}
       >
         <span
           style={{
-            display: "inline-block",
-            width: 56,
-            height: 1,
-            background: "var(--light)",
-          }}
-        />
-        <span
-          style={{
-            fontFamily: "var(--mono)",
-            fontSize: 10,
-            letterSpacing: ".28em",
-            textTransform: "uppercase",
-            color: "var(--muted)",
+            fontFamily: "var(--display)",
+            fontStyle: "italic",
+            fontWeight: 900,
+            fontSize: 80,
+            lineHeight: 0.9,
+            color: "var(--crimson)",
+            letterSpacing: "-0.02em",
           }}
         >
-          § {numeral} · {label}
+          {numeral}
         </span>
-        <span
+        <div>
+          <span
+            style={{
+              fontFamily: "var(--mono)",
+              fontSize: 10,
+              letterSpacing: ".28em",
+              textTransform: "uppercase",
+              color: "var(--muted)",
+              display: "block",
+              marginBottom: 6,
+            }}
+          >
+            Chapter
+          </span>
+          <h3
+            style={{
+              fontFamily: "var(--display)",
+              fontStyle: "italic",
+              fontWeight: 700,
+              fontSize: 36,
+              margin: 0,
+              color: "var(--ink)",
+              letterSpacing: "-0.005em",
+              lineHeight: 1.1,
+            }}
+          >
+            {label}.
+          </h3>
+        </div>
+        <div
           style={{
-            display: "inline-block",
-            width: 56,
+            width: 80,
             height: 1,
-            background: "var(--light)",
+            background:
+              "linear-gradient(90deg, transparent, var(--crimson), transparent)",
           }}
         />
       </div>
     );
   }
   if (variant === "v2") {
-    // Stamped documentary: ClassifiedStamp band with the section label
-    // inside it — reads as a chapter marker in a dossier.
+    /* V2 — Stamped Documentary: heavy ClassifiedStamp + ink-plate
+       chapter divider. Black bar with cream text, TerminalDots,
+       stamp marker. Reads as a case-file divider. */
     return (
       <div
         style={{
-          textAlign: "center",
-          padding: "20px 0 0",
+          margin: "48px 5vw 0",
+          background: "var(--ink)",
+          color: "#FAF7F2",
+          padding: "16px 22px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 14,
+          borderLeft: "6px solid var(--crimson)",
         }}
       >
-        <span
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 12,
-            border: "1.5px solid var(--ink)",
-            padding: "6px 16px",
-            fontFamily: "var(--cond)",
-            textTransform: "uppercase",
-            letterSpacing: ".22em",
-            fontSize: 11,
-            color: "var(--ink)",
-            fontWeight: 700,
-          }}
-        >
-          <TerminalDots size={5} color="var(--crimson)" />
-          §{numeral} · {label}
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 14 }}>
+          <TerminalDots size={7} color="#FAF7F2" />
+          <span
+            style={{
+              fontFamily: "var(--cond)",
+              textTransform: "uppercase",
+              letterSpacing: ".24em",
+              fontSize: 11,
+              fontWeight: 700,
+              color: "rgba(250,247,242,0.65)",
+            }}
+          >
+            §{numeral}
+          </span>
+          <span
+            style={{
+              fontFamily: "var(--cond)",
+              textTransform: "uppercase",
+              letterSpacing: ".18em",
+              fontSize: 18,
+              fontWeight: 700,
+              color: "#FAF7F2",
+            }}
+          >
+            {label}
+          </span>
+        </span>
+        <span style={{ color: "#FAF7F2" }}>
+          <ClassifiedStamp width={120} height={22} label="On File" />
         </span>
       </div>
     );
   }
   if (variant === "v3") {
-    // Bracketed + iris-bordered: an iris-gradient hairline bar with the
-    // section label centered above it.
+    /* V3 — Bracketed + Iris: full-width iris-gradient bar, big iris
+       section number, corner brackets framing the label. High design
+       register. */
     return (
-      <div style={{ padding: "20px 5vw 0", textAlign: "center" }}>
-        <p
+      <div
+        style={{
+          position: "relative",
+          padding: "56px 5vw 0",
+          textAlign: "center",
+        }}
+      >
+        <div
           style={{
-            fontFamily: "var(--cond)",
-            textTransform: "uppercase",
-            letterSpacing: ".24em",
-            fontSize: 11,
-            color: "var(--crimson)",
-            fontWeight: 700,
-            margin: "0 0 8px",
+            position: "relative",
+            padding: "24px 36px",
+            display: "inline-block",
           }}
         >
-          {numeral} · {label}
-        </p>
+          <CornerBracket
+            position="tl"
+            size={28}
+            color="var(--crimson)"
+            thickness={1.5}
+            style={{ position: "absolute", top: 0, left: 0 }}
+          />
+          <CornerBracket
+            position="tr"
+            size={28}
+            color="var(--crimson)"
+            thickness={1.5}
+            style={{ position: "absolute", top: 0, right: 0 }}
+          />
+          <CornerBracket
+            position="bl"
+            size={28}
+            color="var(--crimson)"
+            thickness={1.5}
+            style={{ position: "absolute", bottom: 0, left: 0 }}
+          />
+          <CornerBracket
+            position="br"
+            size={28}
+            color="var(--crimson)"
+            thickness={1.5}
+            style={{ position: "absolute", bottom: 0, right: 0 }}
+          />
+          <span
+            style={{
+              fontFamily: "var(--display)",
+              fontStyle: "italic",
+              fontWeight: 900,
+              fontSize: 56,
+              lineHeight: 1,
+              letterSpacing: "-0.02em",
+              background: "var(--iris)",
+              backgroundSize: "300% 100%",
+              WebkitBackgroundClip: "text",
+              backgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              color: "transparent",
+              animation: "shimmer 5s linear infinite",
+              display: "inline-block",
+              marginRight: 18,
+              verticalAlign: "middle",
+            }}
+          >
+            {numeral}
+          </span>
+          <span
+            style={{
+              fontFamily: "var(--cond)",
+              textTransform: "uppercase",
+              letterSpacing: ".22em",
+              fontSize: 18,
+              fontWeight: 700,
+              color: "var(--ink)",
+              verticalAlign: "middle",
+            }}
+          >
+            {label}
+          </span>
+        </div>
         <div
           style={{
             height: 2,
             background: "var(--iris)",
             backgroundSize: "300% 100%",
             animation: "shimmer 6s linear infinite",
-            margin: "0 auto",
-            maxWidth: 320,
+            margin: "12px auto 0",
+            maxWidth: 480,
           }}
         />
       </div>
