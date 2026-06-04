@@ -250,7 +250,8 @@ export function LandingShell({ variant = "default" }: { variant?: LandingVariant
 
       {/* Comparison */}
       <VariantSectionAnchor variant={variant} numeral="02" label="How this compares" icon="weight" />
-      <section className={styles.compareSection}>
+      <section className={styles.compareSection} style={{ position: "relative" }}>
+        <VariantSectionBackdrop variant={variant} numeral="02" />
         {variant === "default" && <p className={styles.sectionLabel}>How this compares</p>}
         <h2 className={styles.compareHeadline}>
           Four shapes of sales training. <em>Pick the one that fits.</em>
@@ -364,7 +365,8 @@ export function LandingShell({ variant = "default" }: { variant?: LandingVariant
       {/* ═══ PRICING ═══ — wrapped to intercept the checkout buttons */}
       <VariantSectionAnchor variant={variant} numeral="03" label="Pricing" icon="refund" />
       <PreviewOnlyWrap>
-        <section id="pricing" className={styles.pricingSection}>
+        <section id="pricing" className={styles.pricingSection} style={{ position: "relative" }}>
+          <VariantSectionBackdrop variant={variant} numeral="03" />
           <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
             <Mascot pose="verdict" size={MASCOT_SIZE.banner} />
           </div>
@@ -377,7 +379,8 @@ export function LandingShell({ variant = "default" }: { variant?: LandingVariant
 
       {/* ═══ FAQ ═══ */}
       <VariantSectionAnchor variant={variant} numeral="04" label="Questions" icon="warn" />
-      <section className={styles.faqSection}>
+      <section className={styles.faqSection} style={{ position: "relative" }}>
+        <VariantSectionBackdrop variant={variant} numeral="04" />
         <div className={styles.faqHeader}>
           {variant === "default" && (
             <p className={styles.faqLabel}>
@@ -427,6 +430,7 @@ export function LandingShell({ variant = "default" }: { variant?: LandingVariant
             : { position: "relative" }
         }
       >
+        <VariantSectionBackdrop variant={variant} numeral="05" />
         <h2 className={styles.finalHeadline}>Stop ChatGPClaudeing. Start&nbsp;executing.</h2>
         <p className={styles.finalSub}>
           12 courses, plus a pack of substantial assets you&rsquo;ll keep:
