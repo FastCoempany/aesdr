@@ -82,7 +82,7 @@ export default async function PlaybookDetailPage(
 
       <section className="playbooks-footnote">
         <p>
-          Stuck on something this playbook didn't cover? Email{" "}
+          Stuck on something this playbook didn&rsquo;t cover? Email{" "}
           <a href={`mailto:affiliates@aesdr.com?subject=Playbook question — ${entry.title}`}>
             affiliates@aesdr.com
           </a>
