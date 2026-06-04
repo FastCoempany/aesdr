@@ -189,8 +189,20 @@ export default function ExperienceLanding({
           <button
             type="button"
             className={`${s.half} ${s.halfAe}`}
-            data-role="ae"
-            aria-label={`Choose the Account Executive track. ${FORK_HALVES.ae.body.strong}${FORK_HALVES.ae.body.rest}`}
+            // data-role intentionally omitted — the animator's
+            // querySelectorAll("[data-role]") click target collection
+            // skips this element entirely, so clicks register as inert.
+            // Visually presented as a grayed-out future track so the
+            // prospect knows the AE path exists but isn't open today.
+            aria-disabled="true"
+            aria-label="Account Executive track — not currently available for this preview"
+            disabled
+            style={{
+              opacity: 0.35,
+              pointerEvents: "none",
+              filter: "saturate(0.4)",
+              cursor: "not-allowed",
+            }}
           >
             <span className={`${s.halfCorner} ${s.cornerTLh}`} />
             <span className={`${s.halfCorner} ${s.cornerTRh}`} />
