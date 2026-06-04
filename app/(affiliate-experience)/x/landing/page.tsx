@@ -41,8 +41,18 @@ import PreviewOnlyWrap from "../../_components/PreviewOnlyWrap";
 
 /** Three subtle design-system variants of the same landing shape.
  * Pages at /x/landing/v1, /v2, /v3 each call <LandingShell variant="vX" />.
- * The base /x/landing route renders the default (no variant) — unchanged. */
-export type LandingVariant = "default" | "v1" | "v2" | "v3";
+ * The base /x/landing route renders the default (no variant) — unchanged.
+ *
+ * v3 explorations: v3a (Saturated Iris), v3b (Architectural Bracket),
+ * v3c (Editorial Iris) — three directional variants of the v3 register. */
+export type LandingVariant =
+  | "default"
+  | "v1"
+  | "v2"
+  | "v3"
+  | "v3a"
+  | "v3b"
+  | "v3c";
 
 const Testimonials = dynamic(() => import("@/components/Testimonials"));
 const DeckStack = dynamic(() => import("@/components/DeckStack"));
@@ -528,6 +538,9 @@ function VariantBadge({ variant }: { variant: LandingVariant }) {
     v1: "V1 · Editorial Marginalia",
     v2: "V2 · Stamped Documentary",
     v3: "V3 · Bracketed + Iris",
+    v3a: "V3a · Saturated Iris",
+    v3b: "V3b · Architectural Bracket",
+    v3c: "V3c · Editorial Iris",
   }[variant];
   return (
     <div
@@ -784,6 +797,282 @@ function VariantSectionAnchor({
       </div>
     );
   }
+  if (variant === "v3a") {
+    /* V3a — Saturated Iris: iris-gradient PLATE behind the entire
+       section header. Iris everywhere; the bracket is iris-tinted ink
+       at low opacity to keep the frame readable on the gradient. */
+    return (
+      <div
+        style={{
+          position: "relative",
+          padding: "44px 5vw 0",
+          textAlign: "center",
+        }}
+      >
+        <div
+          style={{
+            position: "relative",
+            padding: "32px 48px",
+            display: "inline-block",
+            background: "var(--iris)",
+            backgroundSize: "300% 100%",
+            animation: "shimmer 5s linear infinite",
+            borderRadius: 8,
+            boxShadow:
+              "0 0 28px rgba(255,0,110,0.22), 0 0 56px rgba(139,92,246,0.18), 0 24px 48px -20px rgba(26,26,26,0.32)",
+          }}
+        >
+          <CornerBracket
+            position="tl"
+            size={26}
+            color="rgba(26,26,26,0.45)"
+            thickness={1.5}
+            style={{ position: "absolute", top: 8, left: 8 }}
+          />
+          <CornerBracket
+            position="tr"
+            size={26}
+            color="rgba(26,26,26,0.45)"
+            thickness={1.5}
+            style={{ position: "absolute", top: 8, right: 8 }}
+          />
+          <CornerBracket
+            position="bl"
+            size={26}
+            color="rgba(26,26,26,0.45)"
+            thickness={1.5}
+            style={{ position: "absolute", bottom: 8, left: 8 }}
+          />
+          <CornerBracket
+            position="br"
+            size={26}
+            color="rgba(26,26,26,0.45)"
+            thickness={1.5}
+            style={{ position: "absolute", bottom: 8, right: 8 }}
+          />
+          <span
+            style={{
+              fontFamily: "var(--display)",
+              fontStyle: "italic",
+              fontWeight: 900,
+              fontSize: 64,
+              lineHeight: 1,
+              letterSpacing: "-0.02em",
+              color: "#FAF7F2",
+              display: "inline-block",
+              marginRight: 18,
+              verticalAlign: "middle",
+              textShadow: "0 2px 8px rgba(0,0,0,0.18)",
+            }}
+          >
+            {numeral}
+          </span>
+          <Icon
+            name={icon}
+            size={28}
+            style={{
+              color: "#FAF7F2",
+              strokeWidth: 2,
+              verticalAlign: "middle",
+              marginRight: 14,
+            }}
+          />
+          <span
+            style={{
+              fontFamily: "var(--cond)",
+              textTransform: "uppercase",
+              letterSpacing: ".24em",
+              fontSize: 20,
+              fontWeight: 700,
+              color: "#FAF7F2",
+              verticalAlign: "middle",
+              textShadow: "0 1px 4px rgba(0,0,0,0.18)",
+            }}
+          >
+            {label}
+          </span>
+        </div>
+      </div>
+    );
+  }
+  if (variant === "v3b") {
+    /* V3b — Architectural Bracket: lean into the bracket motif. Big
+       corner brackets frame the whole header band (40px). Iris reduced
+       to JUST the numeral. Everything else is ink/crimson. More
+       negative space, more architectural. */
+    return (
+      <div
+        style={{
+          padding: "64px 5vw 0",
+        }}
+      >
+        <div
+          style={{
+            position: "relative",
+            padding: "40px 60px",
+            margin: "0 auto",
+            maxWidth: 720,
+            display: "grid",
+            gridTemplateColumns: "auto auto auto",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 28,
+          }}
+        >
+          <CornerBracket
+            position="tl"
+            size={40}
+            color="var(--ink)"
+            thickness={1.5}
+            style={{ position: "absolute", top: 0, left: 0 }}
+          />
+          <CornerBracket
+            position="tr"
+            size={40}
+            color="var(--ink)"
+            thickness={1.5}
+            style={{ position: "absolute", top: 0, right: 0 }}
+          />
+          <CornerBracket
+            position="bl"
+            size={40}
+            color="var(--ink)"
+            thickness={1.5}
+            style={{ position: "absolute", bottom: 0, left: 0 }}
+          />
+          <CornerBracket
+            position="br"
+            size={40}
+            color="var(--ink)"
+            thickness={1.5}
+            style={{ position: "absolute", bottom: 0, right: 0 }}
+          />
+          <span
+            style={{
+              fontFamily: "var(--display)",
+              fontStyle: "italic",
+              fontWeight: 900,
+              fontSize: 72,
+              lineHeight: 1,
+              letterSpacing: "-0.02em",
+              background: "var(--iris)",
+              backgroundSize: "300% 100%",
+              WebkitBackgroundClip: "text",
+              backgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              color: "transparent",
+              animation: "shimmer 5s linear infinite",
+            }}
+          >
+            {numeral}
+          </span>
+          <Icon
+            name={icon}
+            size={32}
+            style={{
+              color: "var(--crimson)",
+              strokeWidth: 2,
+            }}
+          />
+          <span
+            style={{
+              fontFamily: "var(--cond)",
+              textTransform: "uppercase",
+              letterSpacing: ".22em",
+              fontSize: 22,
+              fontWeight: 700,
+              color: "var(--ink)",
+            }}
+          >
+            {label}
+          </span>
+        </div>
+      </div>
+    );
+  }
+  if (variant === "v3c") {
+    /* V3c — Editorial Iris: v1-style chapter-opener layout with iris
+       accents. Big iris numeral on the left (instead of crimson),
+       'Chapter' mono eyebrow + display-italic label centered, iris
+       hairline trailing on the right. Magazine register meets iris. */
+    return (
+      <div
+        style={{
+          padding: "56px 5vw 0",
+          display: "grid",
+          gridTemplateColumns: "auto 1fr auto",
+          alignItems: "center",
+          gap: 28,
+        }}
+      >
+        <span
+          style={{
+            fontFamily: "var(--display)",
+            fontStyle: "italic",
+            fontWeight: 900,
+            fontSize: 88,
+            lineHeight: 0.85,
+            letterSpacing: "-0.02em",
+            background: "var(--iris)",
+            backgroundSize: "300% 100%",
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            color: "transparent",
+            animation: "shimmer 5s linear infinite",
+            display: "inline-block",
+          }}
+        >
+          {numeral}
+        </span>
+        <div>
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 10,
+              fontFamily: "var(--mono)",
+              fontSize: 10,
+              letterSpacing: ".28em",
+              textTransform: "uppercase",
+              color: "var(--muted)",
+              marginBottom: 6,
+            }}
+          >
+            <Icon
+              name={icon}
+              size={18}
+              style={{ color: "var(--crimson)", strokeWidth: 2 }}
+            />
+            Chapter
+          </span>
+          <h3
+            style={{
+              fontFamily: "var(--display)",
+              fontStyle: "italic",
+              fontWeight: 700,
+              fontSize: 36,
+              margin: 0,
+              color: "var(--ink)",
+              letterSpacing: "-0.005em",
+              lineHeight: 1.1,
+            }}
+          >
+            {label}.
+          </h3>
+        </div>
+        <div
+          style={{
+            width: 120,
+            height: 2,
+            background: "var(--iris)",
+            backgroundSize: "300% 100%",
+            animation: "shimmer 6s linear infinite",
+          }}
+        />
+      </div>
+    );
+  }
   if (variant === "v3") {
     /* V3 — Bracketed + Iris: full-width iris-gradient bar, big iris
        section number, corner brackets framing the label. High design
@@ -900,9 +1189,10 @@ function VariantSectionBackdrop({
   variant: LandingVariant;
   numeral: string;
 }) {
-  if (variant === "v3") {
-    // Bracketed + iris-bordered: huge ghost numeral floats behind the
-    // .notSection at low opacity — magazine-spread register.
+  if (variant === "v3" || variant === "v3a" || variant === "v3c") {
+    // V3 family — ghost numeral magazine watermark behind the
+    // .notSection. v3a + v3c inherit the same backdrop register so the
+    // marginalia feel carries across the variants.
     return (
       <div
         aria-hidden
@@ -917,6 +1207,11 @@ function VariantSectionBackdrop({
         <GhostNumeral numeral={numeral} size={420} />
       </div>
     );
+  }
+  if (variant === "v3b") {
+    // v3b — architectural register. Skip the ghost numeral; the bracket
+    // motif carries the section identity instead.
+    return null;
   }
   return null;
 }
