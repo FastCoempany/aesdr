@@ -216,8 +216,8 @@ function PreviewOnlyModal({ onClose }: { onClose: () => void }) {
             }}
           >
             We&rsquo;re showing you the same landing your audience would see —
-            with the off-host links sealed. Browse it like a buyer; we&rsquo;ll
-            talk about the partnership separately.
+            you&rsquo;ll be redirected to the affiliate kit shortly, or when
+            you&rsquo;re ready by clicking the button at the bottom right.
           </p>
           <button
             type="button"
