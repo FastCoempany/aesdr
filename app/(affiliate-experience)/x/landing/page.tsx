@@ -27,7 +27,6 @@ import {
   CornerBracket,
   GhostNumeral,
   ClassifiedStamp,
-  Wordmark,
   TerminalDots,
 } from "@/components/brand/BrandAssets";
 import styles from "@/app/page.module.css";
@@ -152,7 +151,17 @@ const FAQ: { q: string; a: ReactNode; icon: IconName }[] = [
   { q: "Should I take Aspireship or Uvaro instead?",              a: "Different audience. Those are bootcamps for people trying to break into sales — they place you, coach you through ramp, sometimes share first-year commission. AESDR assumes the seat is already yours. If you’re three months from your first SDR interview, take a bootcamp. If you’re three months into the job and the ramp is harder than anyone warned you about, this one.",                                          icon: "warn"      },
 ];
 
-export function LandingShell({ variant = "default" }: { variant?: LandingVariant }) {
+export function LandingShell({
+  variant = "default",
+  review = false,
+}: {
+  variant?: LandingVariant;
+  /** Review mode: static Leponeus hero (no cinematic playback) + the
+   *  top-right variant badge. Used by the throwaway /v* compare routes.
+   *  The LIVE kit landing leaves this false so prospects get the full
+   *  cinematic + no badge. */
+  review?: boolean;
+}) {
   return (
     <main className={styles.page}>
       <KitTracker event="landing_viewed" props={{ variant }} />
@@ -166,16 +175,15 @@ export function LandingShell({ variant = "default" }: { variant?: LandingVariant
       </header>
 
       {/* ─── Variant intro band (subtle brand-system reinforcement directly
-              under the nav). Default renders nothing. ─── */}
+              under the nav). Default + v3c render nothing here. ─── */}
       <VariantIntroBand variant={variant} />
 
-      {/* Variant indicator badge — only on the variant pages, top-right
-          so the reviewer always knows which one they're looking at. */}
-      <VariantBadge variant={variant} />
+      {/* Variant indicator badge — review routes only, top-right. */}
+      {review && <VariantBadge variant={variant} />}
 
-      {/* Default route: full cinematic. Variants: static hero (skips the
+      {/* Live route: full cinematic. Review routes: static hero (skips the
           typing playback so design review isn't disrupted). */}
-      {variant === "default" ? <TrackedCinematic /> : <StaticLeponeusHero />}
+      {review ? <StaticLeponeusHero /> : <TrackedCinematic />}
 
       {/* Sneak-peek video — id="post-animation" gives the kit's KitNav
           knob a real anchor to land on, so 'back to landing' skips the
@@ -534,12 +542,13 @@ export function LandingShell({ variant = "default" }: { variant?: LandingVariant
 }
 
 /**
- * Thin wrapper for the default /x/landing route. Renders LandingShell with
- * no variant. The three variant pages (v1/v2/v3) each render LandingShell
- * with their own variant prop.
+ * The live affiliate-prospect landing. Uses the v3c "Editorial Iris"
+ * treatment chosen 2026-06 — big iris-gradient chapter numerals, the
+ * 'Chapter' eyebrows with section icons, ghost numerals peeking behind
+ * every section — with the full cinematic intro preserved (review=false).
  */
 export default function ExperienceLandingPage() {
-  return <LandingShell />;
+  return <LandingShell variant="v3c" />;
 }
 
 /* ─────────────────────────────────────────────────
