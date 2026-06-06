@@ -1,0 +1,162 @@
+export const dynamic = "force-dynamic";
+
+import { NextResponse } from "next/server";
+import { Resend } from "resend";
+
+import { verifyCronAuth } from "@/lib/cron-auth";
+import { createAdminClient } from "@/utils/supabase/admin";
+
+/**
+ * Courier — the outbound send executor. Runs every 5 min and is the ONLY
+ * sender in the roster. It never composes and never edits: it transmits rows
+ * that are already status='approved' and due (send_after <= now()), then
+ * writes an immutable line to partner_sent_log.
+ *
+ * The approval IS the human trigger-pull. Transactional rows (workshop
+ * reminders, replies to people who wrote first) are written pre-approved by
+ * usher; cold/sequenced rows reach 'approved' only when the operator presses
+ * the button in /tower. Courier doesn't care which — it sends what's approved.
+ *
+ * At-most-once: Vercel never overlaps invocations of the same cron, so each
+ * 'approved' row is seen once per tick. Before sending we check
+ * partner_sent_log for the idempotency_key (a re-approved 'failed' row that
+ * actually went out the first time is reconciled, not re-sent), and the unique
+ * index on idempotency_key is the hard backstop. A send failure flips the row
+ * to 'failed' with the error; the operator can re-approve.
+ */
+
+const BATCH = 25;
+const FROM = process.env.EMAIL_FROM || "AESDR Partnerships <hello@aesdr.com>";
+const UNSUB = {
+  "List-Unsubscribe": "<mailto:hello@aesdr.com?subject=UNSUBSCRIBE>",
+  "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+};
+
+function getResend() {
+  const apiKey = process.env.RESEND_API_KEY || process.env.aesdr_email_api_key;
+  if (!apiKey) throw new Error("RESEND_API_KEY is not set");
+  return new Resend(apiKey);
+}
+
+function esc(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+/** Plain-text body → a deliverability-safe HTML alternative, on the cream board. */
+function bodyToHtml(text: string): string {
+  const paras = esc(text)
+    .split(/\n{2,}/)
+    .map(
+      (p) =>
+        `<p style="margin:0 0 16px;font-family:Georgia,'Source Serif 4',serif;font-size:15px;line-height:1.7;color:#1A1A1A;">${p.replace(/\n/g, "<br>")}</p>`,
+    )
+    .join("");
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;background:#FAF7F2;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#FAF7F2;padding:32px 16px;">
+  <tr><td align="center">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;width:100%;background:#FFFFFF;border:1px solid #E8E4DF;">
+      <tr><td style="padding:32px;">${paras}</td></tr>
+    </table>
+  </td></tr>
+</table>
+</body></html>`;
+}
+
+export async function GET(request: Request) {
+  const authErr = verifyCronAuth(request);
+  if (authErr) return authErr;
+
+  const supabase = createAdminClient();
+  const nowIso = new Date().toISOString();
+
+  const { data: due, error: queryErr } = await supabase
+    .from("partner_outbound_queue")
+    .select("id, to_addr, subject, body, tier, idempotency_key")
+    .eq("status", "approved")
+    .lte("send_after", nowIso)
+    .order("send_after", { ascending: true })
+    .limit(BATCH);
+
+  if (queryErr) {
+    return NextResponse.json({ error: queryErr.message }, { status: 500 });
+  }
+
+  let sent = 0;
+  let reconciled = 0;
+  let failed = 0;
+
+  for (const row of due ?? []) {
+    // Reconcile: if this idempotency_key already has a sent-log line, the mail
+    // already went out — flip the queue row to sent without re-sending.
+    const { data: prior } = await supabase
+      .from("partner_sent_log")
+      .select("id, resend_id")
+      .eq("idempotency_key", row.idempotency_key)
+      .maybeSingle();
+
+    if (prior) {
+      await supabase
+        .from("partner_outbound_queue")
+        .update({ status: "sent", sent_at: nowIso, resend_id: prior.resend_id })
+        .eq("id", row.id)
+        .eq("status", "approved");
+      reconciled++;
+      continue;
+    }
+
+    // Send.
+    let resendId: string | null = null;
+    try {
+      const result = await getResend().emails.send({
+        from: FROM,
+        to: row.to_addr,
+        replyTo: process.env.EMAIL_RECIPIENT || "hello@aesdr.com",
+        subject: row.subject,
+        html: bodyToHtml(row.body),
+        text: row.body,
+        headers: UNSUB,
+      });
+      if (result.error) throw new Error(result.error.message || "resend error");
+      resendId = result.data?.id ?? null;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      await supabase
+        .from("partner_outbound_queue")
+        .update({ status: "failed", error: msg.slice(0, 500) })
+        .eq("id", row.id)
+        .eq("status", "approved");
+      failed++;
+      continue;
+    }
+
+    // Append the immutable audit line, then mark the queue row sent. The
+    // unique idempotency_key index is the hard double-send backstop.
+    await supabase.from("partner_sent_log").insert({
+      queue_id: row.id,
+      to_addr: row.to_addr,
+      subject: row.subject,
+      tier: row.tier,
+      idempotency_key: row.idempotency_key,
+      resend_id: resendId,
+      sent_at: nowIso,
+    });
+    await supabase
+      .from("partner_outbound_queue")
+      .update({ status: "sent", sent_at: nowIso, resend_id: resendId })
+      .eq("id", row.id)
+      .eq("status", "approved");
+    sent++;
+  }
+
+  return NextResponse.json({
+    examined: due?.length ?? 0,
+    sent,
+    reconciled,
+    failed,
+  });
+}
