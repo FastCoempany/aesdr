@@ -51,7 +51,16 @@ export async function proxy(request: NextRequest) {
   // deployment. There, every non-/x/* path 404s so affiliatekit.aesdr.com is
   // the kit experience and nothing else. On production (var unset) this
   // block is skipped entirely and the app behaves normally.
+  //
+  // Carve-out: the affiliates@ inbound-email webhook must reach this
+  // deployment because the Cloudflare Email Worker POSTs to the host that
+  // serves the affiliate experience. The route is secret-gated
+  // (INBOUND_EMAIL_SECRET) and stores plain text only, so exposing the
+  // path is the intended posture for a webhook endpoint.
   if (process.env.AFFILIATE_EXPERIENCE === "1") {
+    if (pathname === "/api/webhooks/inbound-email") {
+      return supabaseResponse;
+    }
     return new NextResponse("Not found", { status: 404 });
   }
 
