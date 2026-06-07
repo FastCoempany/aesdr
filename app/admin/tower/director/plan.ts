@@ -1027,3 +1027,112 @@ export const REFERENCE: RefSection[] = [
 <p class="d-what">Database work goes through ${FILE(".claude/agents/ledger.md", "ledger")} (which shows you SQL before any write) or directly in ${L(SBTBL, "the Supabase editor")} — you rarely need raw <span class="d-code">psql</span>. The full automated-job schedule is ${FILE("docs/partnerships/cron-schedule.md", "docs/partnerships/cron-schedule.md")}.</p>`,
   },
 ];
+
+// ════════════════════════════════ THE MANUAL ════════════════════════════════
+// Plain-language reference: what the master switch governs, what every agent
+// does and when, the order things run in, and the one-time go-live steps.
+export const MANUAL: RefSection[] = [
+  {
+    id: "ref-wiki",
+    title: "How it all runs",
+    subtitle: "The switch, the agents, the order — in plain language",
+    bodyHtml: `
+<p class="d-what">Nothing in the partnerships system runs on its own until <strong>you</strong> turn it on. There's one master switch, and each agent has its own lever. This card is the whole picture: what's wired to the switch, what each piece does, and the order things happen in.</p>
+
+<p class="d-sub">The master switch (what I installed)</p>
+<p class="d-what">There's a table, ${TBL("agent_switches")}, with one row per agent and an on/off flag. Every automated agent checks it before doing anything and <strong>fails safe to OFF</strong> — if the table is missing, the row is missing, the flag is false, or anything errors, the agent does nothing and returns "disabled." You control all of it from one place: the <strong>Agent Controls</strong> panel at the top of ${L("/admin/tower", "the tower")}, where each agent has a <span class="d-ui">Start</span> / <span class="d-ui">Pause</span> button. Starting one asks you to confirm first.</p>
+
+<p class="d-sub">The 6 agents ON the switch (these are the ones that run on a clock)</p>
+<table class="d-table">
+  <tr><th>Agent</th><th>When it would run</th><th>What it does</th><th>When paused</th></tr>
+  <tr><td><strong>sentinel</strong></td><td>every 10 min</td><td>Reads new replies in ${TBL("partner_inbound_email")}, sorts them (interested / polite-no / unsubscribe / noise), and emails you about the interested ones.</td><td>No reading, no pings. Nothing happens to inbound mail.</td></tr>
+  <tr><td><strong>scribe</strong> (drafter)</td><td>every 15 min</td><td>Turns enriched candidates in ${TBL("partner_pipeline")} into ready first-touch <em>drafts</em> in the tower. <strong>Never sends.</strong></td><td>No drafts are created. Your pipeline sits untouched.</td></tr>
+  <tr><td><strong>courier</strong></td><td>every 5 min</td><td>Sends the drafts <em>you approved</em> and logs them to ${TBL("partner_sent_log")}. Only touches <span class="d-code">approved</span> rows.</td><td>Nothing is sent, even approved rows. They wait.</td></tr>
+  <tr><td><strong>followup</strong></td><td>hourly</td><td>Drafts the +4-day / +9-day follow-ups for contacted-but-silent candidates; halts the instant they reply. <strong>Drafts only.</strong></td><td>No follow-ups are drafted. Contacted candidates just sit.</td></tr>
+  <tr><td><strong>usher</strong></td><td>every 30 min</td><td>Runs workshop logistics (reminders, replay window) for workshops in ${TBL("partner_workshop")}.</td><td>No workshop reminders go out.</td></tr>
+  <tr><td><strong>almanac</strong></td><td>daily 7am ET</td><td>Emails you the morning standup digest of what's waiting in the tower.</td><td>No digest email.</td></tr>
+</table>
+<p class="d-what" style="color:#2E7D32;"><strong>The safety guarantee:</strong> even when ON, the two drafting agents (scribe, followup) only ever <em>create drafts</em>. Nothing leaves the building without you pressing <span class="d-ui">Send</span> (or <span class="d-ui">Pay</span>) yourself. The switch controls whether they <em>prepare</em>; your click controls whether anything <em>happens</em>.</p>
+
+<p class="d-sub">NOT on this switch (so you know the full picture)</p>
+<table class="d-table">
+  <tr><th>Thing</th><th>Why it's not on the switch</th></tr>
+  <tr><td><strong>scout, dossier, scribe (chat), warden, ledger, herald</strong></td><td>These never run on their own — they only do something the moment you type them into Claude Code. There's nothing to pause; they're inert until dispatched. Specs: ${L(`${GHT}/.claude/agents`, ".claude/agents/")}.</td></tr>
+  <tr><td><strong>Payouts</strong></td><td>Money never moves automatically. The tower's Payouts card shows what's owed; the transfer only runs when you press <span class="d-ui">Pay</span> and confirm.</td></tr>
+  <tr><td><strong>The older course crons</strong> (drip, abandonment, dropoff, review, retention)</td><td>Pre-existing course-side email automations, unrelated to partnerships. Untouched by this work; they've run all along.</td></tr>
+  <tr><td><strong>The affiliate-clearing cron</strong> (${FILE("app/api/cron/affiliate/route.ts", "/api/cron/affiliate")})</td><td>Daily job that flips a commission from "pending" to "cleared" after its 30-day refund window. Benign — it moves no money and sends nothing; it just marks rows ready for a payout you still run by hand. Pre-existing; not on the partnership switch.</td></tr>
+</table>
+
+<p class="d-sub">The order things run in (the whole loop)</p>
+<table class="d-table">
+  <tr><th>#</th><th>Step</th><th>Who</th><th>Your part</th></tr>
+  <tr><td>1</td><td>Find candidates → ${TBL("partner_pipeline")} at <span class="d-code">enriched</span></td><td>you + scout/dossier (chat)</td><td>You dispatch them</td></tr>
+  <tr><td>2</td><td>Enriched candidate → a first-touch <em>draft</em> in the tower</td><td>scribe (auto, if ON)</td><td>none — it just appears</td></tr>
+  <tr><td>3</td><td>Draft → sent email</td><td>courier (auto, if ON)</td><td><strong>you press Send</strong></td></tr>
+  <tr><td>4</td><td>Sent → candidate marked <span class="d-code">contacted</span>, ladder clock starts</td><td>courier</td><td>none</td></tr>
+  <tr><td>5</td><td>No reply at +4d / +9d → follow-up <em>drafts</em> appear</td><td>followup (auto, if ON)</td><td><strong>you press Send</strong></td></tr>
+  <tr><td>6</td><td>A reply lands → sorted, you get pinged, ladder halts</td><td>sentinel (auto, if ON)</td><td>you reply + mark handled</td></tr>
+  <tr><td>7</td><td>Sale attributed → commission <span class="d-code">pending</span> → <span class="d-code">cleared</span> at +30d</td><td>affiliate cron</td><td>none</td></tr>
+  <tr><td>8</td><td>Cleared commission → Payouts card</td><td>the tower</td><td><strong>you press Pay</strong></td></tr>
+</table>
+<p class="d-what">Read it as: <strong>the agents prepare; you decide.</strong> Steps 2, 5, 6, 7 happen on their own (only if you've started those levers). Steps 3, 5, 8 wait on your click. Nothing reaches a real person or moves real money without you.</p>
+<div class="d-refs"><b>Control panel</b>${L("/admin/tower", "/admin/tower → Agent Controls")} · <b>Switch table</b>${TBL("agent_switches")} · <b>Schedule</b>${FILE("docs/partnerships/cron-schedule.md", "cron-schedule.md")} · <b>Gate code</b>${FILE("lib/partnerships/agent-switch.ts", "agent-switch.ts")}</div>`,
+  },
+  {
+    id: "ref-golive",
+    title: "Go-live",
+    subtitle: "The one-time setup, in order",
+    bodyHtml: `
+<p class="d-what">Do this once to turn the system on. The order matters: the OFF switch deploys first (so nothing can auto-start), then you add the database columns, then you start the levers you want — by hand. Each dark block below is click-to-copy.</p>
+
+<p class="d-sub">Step 1 — Confirm the OFF switch is deployed</p>
+<p class="d-what">In ${L("https://vercel.com", "Vercel")} → the <strong>aesdr</strong> project → <span class="d-ui">Deployments</span>, confirm the latest deploy is <strong>Ready</strong>. From this deploy on, every agent is paused by default — even if a database column exists, the agent won't act until you start its lever. (This is the safety net: do this before Step 2.)</p>
+
+<p class="d-sub">Step 2 — Apply the four migrations</p>
+<p class="d-what">Open the ${L("https://supabase.com/dashboard/project/jwhjysjvehqslzcfpehl/sql/new", "Supabase SQL editor")} and run these. They're additive and idempotent — safe to paste all four into one window and run once. None of them start anything.</p>
+
+<p class="d-what"><strong>20260606 — the signal board</strong></p>
+<span class="d-cmd">alter table partner_signals add column if not exists handled_at timestamptz;
+alter table partner_signals add column if not exists handled_by text;
+create index if not exists partner_signals_unhandled_idx
+  on partner_signals (created_at desc) where handled_at is null;</span>
+
+<p class="d-what"><strong>20260607 — outbound send-channel</strong></p>
+<span class="d-cmd">alter table partner_outbound_queue
+  add column if not exists send_channel text not null default 'email'
+    check (send_channel in ('email','manual'));
+alter table partner_outbound_queue
+  add column if not exists draft_source text;
+alter table partner_outbound_queue
+  add column if not exists personalization_note text;</span>
+
+<p class="d-what"><strong>20260608 — follow-up ladder</strong></p>
+<span class="d-cmd">alter table partner_pipeline add column if not exists first_touch_at timestamptz;
+alter table partner_pipeline add column if not exists ladder_step int not null default 0;
+alter table partner_pipeline add column if not exists last_ladder_at timestamptz;
+create index if not exists pp_ladder_idx
+  on partner_pipeline (first_touch_at)
+  where status = 'contacted' and first_touch_at is not null;</span>
+
+<p class="d-what"><strong>20260609 — the master switch</strong></p>
+<span class="d-cmd">create table if not exists agent_switches (
+  agent       text primary key,
+  enabled     boolean not null default false,
+  updated_at  timestamptz not null default now(),
+  updated_by  text
+);
+alter table agent_switches enable row level security;</span>
+
+<p class="d-sub">Step 3 — Start the levers you want, by hand</p>
+<p class="d-what">Go to ${L("/admin/tower", "/admin/tower")} → <strong>Agent Controls</strong>. Everything reads <em>paused</em>. Start them one at a time as you're ready — a sensible first-time order:</p>
+<ol class="d-steps">
+  <li class="d-step"><strong>almanac</strong> first — it just emails you a morning digest. Harmless, and it confirms the plumbing works.</li>
+  <li class="d-step"><strong>sentinel</strong> next — so inbound replies get sorted and you get pinged. Still nothing outbound.</li>
+  <li class="d-step"><strong>scribe</strong> when you're ready to see drafts — it will start turning your enriched candidates into first-touch drafts in the tower (drafts only; you approve each).</li>
+  <li class="d-step"><strong>courier</strong> only when you actually want approved drafts to send. Until courier is on, even an approved draft just waits.</li>
+  <li class="d-step"><strong>followup</strong> + <strong>usher</strong> later, once outreach and workshops are in motion.</li>
+</ol>
+<div class="d-callout d-callout-note"><div class="d-callout-title">You can pause any of them, any time</div><p>Pausing is instant and needs no confirm. If anything ever looks off, hit <span class="d-ui">Pause</span> on that agent and it stops on its next tick — nothing in flight, nothing sent without your approval anyway.</p></div>
+<div class="d-end"><b>That's the whole setup.</b> After this, day-to-day is just: open the tower, clear the Decisions lane, done.</div>`,
+  },
+];

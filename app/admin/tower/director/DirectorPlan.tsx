@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 
 import styles from "./director.module.css";
-import { PHASES, WEEKS, REFERENCE, type Tag } from "./plan";
+import { PHASES, WEEKS, REFERENCE, MANUAL, type Tag } from "./plan";
 
 /**
  * Interactive renderer for the Director plan. Collapsible weeks + tasks,
@@ -131,6 +131,18 @@ export default function DirectorPlan() {
           Reset progress
         </button>
 
+        <div className={styles.navGroup}>The manual</div>
+        {MANUAL.map((r) => (
+          <a
+            key={r.id}
+            href={`#${r.id}`}
+            className={styles.navItem}
+            onClick={() => openTask(r.id)}
+          >
+            {r.title}
+          </a>
+        ))}
+
         <div className={styles.navGroup}>The 90 days</div>
         <a href="#overview" className={styles.navItem}>
           <span className={styles.navNum}>00</span>Overview
@@ -191,6 +203,33 @@ export default function DirectorPlan() {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* ─── The Manual (read-me-first: switch, agents, go-live) ─── */}
+        <section id="manual">
+          <div className={styles.phaseHead}>
+            <p className={styles.secEyebrow}>The manual · read me first</p>
+            <h2 className={styles.secTitle}>How it runs, and how to turn it on.</h2>
+          </div>
+          {MANUAL.map((r) => {
+            const open = !!state.openTasks[r.id];
+            return (
+              <div key={r.id} id={r.id} className={styles.weekAcc}>
+                <div className={styles.weekBar} onClick={() => toggleTask(r.id)} role="button" tabIndex={0}>
+                  <span className={`${styles.weekCaret} ${open ? styles.weekCaretOpen : ""}`}>▾</span>
+                  <span className={styles.weekBarTitle}>{r.title}</span>
+                  <span className={styles.weekCount}>{r.subtitle}</span>
+                </div>
+                {open && (
+                  <div
+                    className={styles.weekBody}
+                    style={{ paddingTop: 14 }}
+                    dangerouslySetInnerHTML={{ __html: r.bodyHtml }}
+                  />
+                )}
+              </div>
+            );
+          })}
         </section>
 
         {/* Phases → weeks → tasks */}
