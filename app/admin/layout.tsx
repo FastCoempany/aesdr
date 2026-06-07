@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { requireAdmin } from "@/lib/admin";
 
+import directorStyles from "./tower/director/director.module.css";
+
 export const metadata: Metadata = {
   title: "Admin | AESDR",
   robots: { index: false, follow: false },
@@ -54,7 +56,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         >
           AESDR Admin
         </Link>
-        <div style={{ display: "flex", gap: "24px" }}>
+        <div style={{ display: "flex", gap: "24px", alignItems: "center" }}>
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.href}
@@ -71,6 +73,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               {item.label}
             </Link>
           ))}
+          {/* Director — intentional outlier with iris-shimmer underline. The
+              strategic 90-day playbook embedded inside the Control Tower. */}
+          <Link
+            href="/admin/tower/director"
+            className={directorStyles.directorTab}
+          >
+            Director
+          </Link>
         </div>
         <div style={{ marginLeft: "auto" }}>
           <Link
