@@ -92,20 +92,22 @@ export const WEEKS: Week[] = [
     tasks: [
       {
         id: "w1t1",
-        title: "Day 1, 9:00am — Walk the tower (everything that runs without you)",
+        title: "Day 1, 9:00am — Walk the tower (the four sections, top to bottom)",
         tags: ["you"],
         bodyHtml: `
-<p class="d-what">The Control Tower is your home base for the next 90 days — the screen where the system shows you the few things that need a human decision and hides everything it already handled. Before you do any real work, learn its layout cold so you can read it at a glance.</p>
+<p class="d-what">The Control Tower is your home base for the next 90 days — the screen where the system shows you the few things that need a human decision. Before you do any real work, learn the layout cold so you can read it at a glance. <strong>Heads-up:</strong> until you start the levers in <strong>Agent Controls</strong> (your next task), nothing runs on its own — that's the safety-by-default design.</p>
 <p class="d-h">Click by click</p>
 <ol class="d-steps">
   <li class="d-step"><strong>Open the cockpit.</strong> In your browser go to ${L("/admin/tower", "aesdr.com/admin/tower")}. If you're asked to sign in, use your founder email — you're a permanent admin, so you land straight in.</li>
   <li class="d-step"><strong>Read the one line at the top.</strong> It says either "All clear" or "N waiting on you." That number is the entire job for the day. If it's 0, you can close the tab.</li>
-  <li class="d-step"><strong>Find the two halves.</strong> The top half is <strong>DECISIONS</strong> — drafts ready to send, and bright signals (people who replied with interest). The bottom half is <strong>BOARD</strong> — read-only situational awareness: your pipeline by stage, recent sends, and quiet "soft" signals.</li>
-  <li class="d-step"><strong>Look at the "sentinel last swept" stamp</strong> (top-right). The system checks for new replies every 10 minutes; this stamp shows when it last ran. If it ever reads more than ~30 minutes, something stopped — tell me and I'll look.</li>
+  <li class="d-step"><strong>Section 1 — Agent Controls (the levers).</strong> The top panel lists every cron-style agent with a Start / Pause button. On Day 1 they're all <em>paused</em> — green dot = running, grey dot = paused. This is where you turn the machine on, one agent at a time, on your schedule. See <a class="d-link" href="#ref-wiki">"How it all runs"</a> in the Manual for the full agent rundown.</li>
+  <li class="d-step"><strong>Section 2 — Scout &amp; Enrich.</strong> Three sweep buttons (Paid communities / Newsletters + podcasts / Practitioner figures) that call Claude server-side to find candidate partners. Below them: any <em>sourced</em> candidates awaiting your Promote / Reject decision. You'll use this Week 2.</li>
+  <li class="d-step"><strong>Section 3 — Decisions.</strong> The few things needing a human gesture: drafts ready to send (<em>warden ✓</em> = canon-clean), bright signals (people who replied with interest), and the Payouts card (cleared-but-unpaid commission per affiliate). Each item is one click to act on.</li>
+  <li class="d-step"><strong>Section 4 — Board.</strong> Read-only situational awareness: your pipeline by stage, courier's recent sends, soft signals (polite no, unsubscribes), and the "sentinel last swept" stamp at the top right (it'll read "—" until you start sentinel; once started, &gt;30 min between sweeps means something's stuck).</li>
   <li class="d-step"><strong>Bookmark it.</strong> Press <span class="d-ui">⌘/Ctrl + D</span>. The tower is your default tab now.</li>
 </ol>
-<div class="d-end"><b>When you're done:</b> you can describe the tower's two halves without looking. You'll find it any time at ${L("/admin/tower", "/admin/tower")}, or via the <strong>Control Tower</strong> item in the admin nav, or the <strong>admin-mode menu</strong> (the floating button, bottom-right).</div>
-<div class="d-refs"><b>Links in this task</b>${L("/admin/tower", "/admin/tower — the cockpit")}</div>`,
+<div class="d-end"><b>When you're done:</b> you can name the four sections in order. You can reach the tower from the <strong>Control Tower</strong> item in the admin nav, the iris-shimmer <strong>Director</strong> tab (this page), or the <strong>admin-mode menu</strong> (floating button, bottom-right).</div>
+<div class="d-refs"><b>Links in this task</b>${L("/admin/tower", "/admin/tower — the cockpit")} · <a class="d-link" href="#ref-wiki">How it all runs (manual)</a></div>`,
       },
       {
         id: "w1t2",
@@ -119,7 +121,7 @@ export const WEEKS: Week[] = [
   <li class="d-step"><strong>To send alerts somewhere else,</strong> open the Vercel dashboard at ${L("https://vercel.com", "vercel.com")} → the <strong>aesdr</strong> project → <span class="d-ui">Settings</span> → <span class="d-ui">Environment Variables</span>.</li>
   <li class="d-step"><strong>Add a variable</strong> named <span class="d-code">PARTNER_ALERT_EMAIL</span>, value = the address you want, environment = <strong>Production</strong>. Click <span class="d-ui">Save</span>.</li>
   <li class="d-step"><strong>Redeploy</strong> so the new value takes effect: Vercel → <span class="d-ui">Deployments</span> → the top row → <span class="d-ui">⋯</span> → <span class="d-ui">Redeploy</span>.</li>
-  <li class="d-step"><strong>Wait for tomorrow's 7am digest</strong> to confirm it arrives (subject line "Tower: all clear" on a quiet day — that's proof the whole system is alive).</li>
+  <li class="d-step"><strong>Confirm by waiting for the next 7am digest</strong> — but only after you've started the <strong>almanac</strong> lever in Agent Controls. Until almanac is started, no digest mails (the OFF-by-default safety). If almanac is on, the next morning's digest (subject "Tower: all clear" on a quiet day) is proof the chain works.</li>
 </ol>
 <div class="d-callout">
   <div class="d-callout-title">Where these emails are built</div>
@@ -534,13 +536,15 @@ export const WEEKS: Week[] = [
     tasks: [
       {
         id: "w7done1",
-        title: "Already running — the daily standup digest",
-        tags: ["done", "auto"],
+        title: "Wired and ready — the daily standup digest (start the lever to use it)",
+        tags: ["auto"],
+        automatable: true,
         bodyHtml: `
-<p class="d-what">The old plan had you build a "Friday ritual" by hand. The daily standup is automatic now.</p>
-<p class="d-h">What's running</p>
+<p class="d-what">The old plan had you build a "Friday ritual" by hand. The daily standup is built and waits behind one lever.</p>
+<p class="d-h">What runs once you start it</p>
 <ol class="d-steps">
-  <li class="d-step">${FILE("app/api/cron/almanac/route.ts", "The almanac cron")} emails you a digest every morning at 7am ET — bright signals waiting, drafts in the house, workshops due. On a quiet day it says "all clear" (proof it's alive). The weekly deep pull below is what you add on top.</li>
+  <li class="d-step">${FILE("app/api/cron/almanac/route.ts", "The almanac cron")} fires every morning at 11:00 UTC (≈7am ET) — <em>only when the <span class="d-ui">Almanac</span> lever is started in <strong>Agent Controls</strong></em>. It counts bright signals waiting, drafts in the house, workshops due, and payouts ready, and mails you the digest (subject "Tower: all clear" on a quiet day). Until you start the lever, no digest mails.</li>
+  <li class="d-step">The weekly deep pull below is what you add on top — that one stays a chat dispatch.</li>
 </ol>
 <div class="d-end"><b>Nothing to build.</b> Just read the morning email.</div>`,
       },
@@ -649,9 +653,7 @@ export const WEEKS: Week[] = [
   <li class="d-step"><strong>Find the pattern.</strong> Paste:
     <span class="d-cmd">use the almanac subagent: for each of these top 3, tell me WHY they converted — format (newsletter / community / podcast), message angle, audience. I want the repeatable pattern, not praise.</span></li>
   <li class="d-step"><strong>Overinvest, three moves:</strong> (1) co-create a second piece with each; (2) run a <strong>workshop</strong> — create the workshop row and ${FILE("app/api/cron/usher/route.ts", "usher")} runs every reminder, the replay window, and the nurture touches automatically; you just host the live hour; (3) bump a proven performer to <span class="d-code">proven</span> tier in ${L("/admin/affiliates", "/admin/affiliates")} so their copy-gate drops to 1 piece.</li>
-  <li class="d-step"><strong>Clone the pattern.</strong> Paste:
-    <span class="d-cmd">use the scout subagent: find 10 more partners who look like these top 3 — same surface, same archetype.</span>
-    They flow into ${TBL("partner_pipeline")}, get enriched, and the auto-drafter queues their first-touch in the tower without you writing it.</li>
+  <li class="d-step"><strong>Clone the pattern.</strong> In the tower's <strong>Scout &amp; Enrich</strong> panel, press whichever of the three sweep buttons matches your top-3's surface — usually <span class="d-ui">Sweep 1 · Paid communities</span> or <span class="d-ui">Sweep 2 · Newsletters + podcasts</span>. New candidates appear at <span class="d-code">sourced</span>; promote the ones that resemble your top 3. The auto-drafter queues each promoted row's first-touch in the tower without you writing it.</li>
 </ol>
 <div class="d-callout d-callout-note"><div class="d-callout-title">Usher carries the workshop</div><p>Once a workshop row exists in ${TBL("partner_workshop")}, ${FILE("app/api/cron/usher/route.ts", "usher")} advances it through scheduled → reminded → live → replay-open → closed and queues every registrant touch pre-approved. You host; the logistics run themselves.</p></div>
 <div class="d-end"><b>When you're done:</b> the top 3 are identified, each has a second piece or a workshop in motion, and scout is finding lookalikes.</div>

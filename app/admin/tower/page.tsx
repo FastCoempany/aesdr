@@ -16,8 +16,11 @@ import { promoteSourced, rejectSourced } from "./actions";
 import { PARTNER_AGENTS } from "@/lib/partnerships/agent-switch";
 
 /**
- * The decision board. Top half is DECISIONS — the few things waiting on one
- * gesture from the operator. Bottom half is the BOARD — read-only situational
+ * The decision board. Four sections, top to bottom:
+ *   1. Agent Controls (the levers — Start/Pause each cron-style agent)
+ *   2. Scout & Enrich (Option-2 buttons + sourced-row review)
+ *   3. Decisions — the few things waiting on one gesture from the operator
+ *   4. Board — read-only situational
  * awareness so the cockpit shows live state, not just an inbox.
  *
  * Reads degrade gracefully: if the 20260606 migration (partner_signals.
