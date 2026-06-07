@@ -322,6 +322,24 @@ ${DISPATCH_EXPLAINER}
 <div class="d-refs"><b>Touches</b>${L("/admin/tower", "/admin/tower")} · ${FILE("app/api/cron/courier/route.ts", "courier")} · ${TBL("partner_outbound_queue")} · ${TBL("partner_sent_log")}</div>`,
       },
       {
+        id: "w3tLadder",
+        title: "Days 15+ — The follow-up ladder drafts itself",
+        tags: ["auto", "tower"],
+        automatable: true,
+        bodyHtml: `
+<p class="d-what">A "ladder" is the fixed sequence of polite follow-ups to someone who got your first email and didn't reply. The cadence: <strong>first-touch (day 0) → +4 days: follow-up 1 → +9 days: follow-up 2 → +13 days: parked as cold.</strong> "+4 / +9" just means days <em>after</em> the first-touch. You used to track this by hand; now a cron does the watching and drafting.</p>
+<p class="d-h">What runs on its own</p>
+<ol class="d-steps">
+  <li class="d-step"><strong>The clock starts when the first-touch sends.</strong> The moment courier sends a cold email (or you Mark-sent a manual one), that candidate's <code>first_touch_at</code> is stamped and they move to <span class="d-code">contacted</span> in ${TBL("partner_pipeline")}.</li>
+  <li class="d-step"><strong>+4 days, no reply → follow-up 1 is drafted for you.</strong> The ${FILE("app/api/cron/followup/route.ts", "follow-up cron")} (hourly) renders ${FILE("content/partnerships/outreach/follow-up-1.md", "follow-up-1")} (adds a useful resource, not a nag) into the tower as a <span class="d-code">ready</span> draft. You finish the one bespoke line (the resource) and approve — same as a first-touch.</li>
+  <li class="d-step"><strong>+9 days, still no reply → follow-up 2 is drafted.</strong> ${FILE("content/partnerships/outreach/follow-up-2.md", "follow-up-2")} — the honest close. Same review-and-approve.</li>
+  <li class="d-step"><strong>+13 days, still nothing → the candidate is set to <span class="d-code">cold</span></strong> automatically (your second-wave list, not deleted).</li>
+</ol>
+<div class="d-callout d-callout-note"><div class="d-callout-title">It halts the instant they reply</div><p>A ladder that keeps firing after someone answered is the fastest way to look like a bot. Two halts stop it cold: (a) you move them off <span class="d-code">contacted</span> when you work the reply, and (b) the cron itself checks for an inbound email from their address since the first-touch — either one stops all further follow-ups and flips them to <span class="d-code">replied</span>.</p></div>
+<div class="d-end"><b>Your part:</b> just approve (or hold) the follow-up drafts as they appear in the tower's draft house. The detection, timing, and drafting are automatic.</div>
+<div class="d-refs"><b>Touches</b>${FILE("app/api/cron/followup/route.ts", "follow-up cron")} · ${TBL("partner_pipeline")} · ${TBL("partner_outbound_queue")} · ${L("/admin/tower", "/admin/tower")}</div>`,
+      },
+      {
         id: "w3t2",
         title: "Days 14–15 — Work the replies the tower surfaces",
         tags: ["you", "auto"],
@@ -571,18 +589,17 @@ ${DISPATCH_EXPLAINER}
         title: "Days 49–51 — First payout dry-run (founder-approved)",
         tags: ["you"],
         bodyHtml: `
-<p class="d-what">By now your earliest commissions are clearing the 30-day window. Before any real money moves, you run a "dry-run" — a report of who is owed what — and walk the founder through it. Real money is the one place the "under 10 minutes" rule bends: take as long as you need to review it. The actual transfer happens in the admin UI with founder sign-off.</p>
+<p class="d-what">By now your earliest commissions are clearing the 30-day window. The tower's <strong>Payouts card</strong> shows the dry-run automatically — who's owed what — and each affiliate has a <strong>Pay</strong> button that runs the real Stripe Connect transfer. Money review is the one place the "under 10 minutes" rule bends: take as long as you need to read the numbers; the commit is one click.</p>
 <p class="d-h">Click by click</p>
 <ol class="d-steps">
-  <li class="d-step"><strong>Run the dry-run.</strong> Paste:
-    <span class="d-cmd">use the ledger subagent: list every cleared-but-unpaid commission, totaled per affiliate (status='cleared' and not yet paid). Flag anything unusual — a refund rate over 15%, or one affiliate making up more than 60% of volume. Report only; do not pay anything.</span>
-    Ledger reports; it never moves money.</li>
-  <li class="d-step"><strong>Walk the founder through the numbers</strong> before any transfer — per-affiliate totals, the grand total, anything ledger flagged. This first run is a founder-approved decision, not a solo call.</li>
-  <li class="d-step"><strong>Run the real transfer in the UI.</strong> With approval, go to <span class="d-where">/admin/affiliates/[slug]</span> (click the affiliate in ${L("/admin/affiliates", "/admin/affiliates")}) → the payout helper → confirm the amount → execute. This sends a Stripe Connect transfer and writes ${TBL("affiliate_payouts")}.</li>
+  <li class="d-step"><strong>Open the tower:</strong> ${L("/admin/tower", "/admin/tower")}. In DECISIONS, the <strong>Payouts ready</strong> block lists every affiliate with cleared-but-unpaid commission, the per-affiliate total, and the grand total — that <em>is</em> the dry-run, computed live from ${TBL("affiliate_attributions")} (status cleared, not yet paid).</li>
+  <li class="d-step"><strong>Review the numbers</strong> — per-affiliate totals + the grand total. For the very first run, walk the founder through it; it's a founder-approved decision, not a solo call.</li>
+  <li class="d-step"><strong>Press <span class="d-ui">Pay $X</span>.</strong> It asks you to confirm (it moves real money), then runs the production payout: aggregates that affiliate's cleared commission, inserts the payout record, sends a Stripe Connect transfer, marks everything paid, and emails the affiliate. One click, end to end.</li>
+  <li class="d-step"><strong>If a card says "Stripe not connected,"</strong> that affiliate hasn't finished Stripe onboarding — the transfer would be rejected. Have them complete onboarding from their ${L("/affiliates/dashboard", "dashboard")} first; then the Pay button enables.</li>
 </ol>
-<div class="d-callout d-callout-warn"><div class="d-callout-title">Coming to the tower</div><p>A <strong>Payouts</strong> card in the cockpit — the cleared-but-unpaid run as a one-review, one-commit money gate. Until it ships, payouts run via the ledger dry-run + the admin UI above.</p></div>
-<div class="d-end"><b>When you're done:</b> Stripe shows the transfer, the affiliate's dashboard reads "paid," and ${TBL("affiliate_payouts")} has the record.</div>
-<div class="d-refs"><b>Touches</b>${FILE(".claude/agents/ledger.md", "ledger")} · ${L("/admin/affiliates", "/admin/affiliates")} · ${TBL("affiliate_attributions")} · ${TBL("affiliate_payouts")}</div>`,
+<div class="d-callout d-callout-note"><div class="d-callout-title">Want a deeper pre-check first?</div><p>You can still dispatch ledger for an itemized audit before pressing Pay: <span class="d-cmd">use the ledger subagent: list every cleared-but-unpaid commission per affiliate and flag a refund rate over 15% or one affiliate over 60% of volume. Report only; do not pay.</span></p></div>
+<div class="d-end"><b>When you're done:</b> Stripe shows the transfer, the affiliate's dashboard reads "paid," and ${TBL("affiliate_payouts")} has the record. The Payouts card empties as each is paid.</div>
+<div class="d-refs"><b>Touches</b>${L("/admin/tower", "/admin/tower — Payouts card")} · ${FILE("app/admin/tower/PayoutButton.tsx", "PayoutButton")} · ${FILE("app/actions/affiliate.ts", "runAffiliatePayoutBatch")} · ${TBL("affiliate_attributions")} · ${TBL("affiliate_payouts")}</div>`,
       },
     ],
   },
@@ -696,7 +713,7 @@ ${DISPATCH_EXPLAINER}
 <ol class="d-steps">
   <li class="d-step"><strong>Create the doc.</strong> In your terminal: <span class="d-code">touch docs/partnerships/operating-cadence.md</span>, then open it. (It'll live at ${FUTURE("docs/partnerships/operating-cadence.md", "docs/partnerships/operating-cadence.md")} once committed.)</li>
   <li class="d-step"><strong>Write the daily rhythm:</strong> the 7am almanac digest lands → you open ${L("/admin/tower", "/admin/tower")}, clear the DECISIONS lane (approve drafts, handle bright signals), close the tab. That's the standup.</li>
-  <li class="d-step"><strong>Write down what's continuous and automatic,</strong> citing the schedule in ${FILE("docs/partnerships/cron-schedule.md", "cron-schedule.md")}: ${FILE("app/api/cron/sentinel/route.ts", "sentinel")} every 10 min, ${FILE("app/api/cron/scribe/route.ts", "scribe drafter")} every 15, ${FILE("app/api/cron/courier/route.ts", "courier")} every 5, ${FILE("app/api/cron/usher/route.ts", "usher")} every 30, ${FILE("app/api/cron/almanac/route.ts", "almanac")} daily.</li>
+  <li class="d-step"><strong>Write down what's continuous and automatic,</strong> citing the schedule in ${FILE("docs/partnerships/cron-schedule.md", "cron-schedule.md")}: ${FILE("app/api/cron/sentinel/route.ts", "sentinel")} every 10 min, ${FILE("app/api/cron/scribe/route.ts", "scribe drafter")} every 15, ${FILE("app/api/cron/followup/route.ts", "follow-up ladder")} hourly, ${FILE("app/api/cron/courier/route.ts", "courier")} every 5, ${FILE("app/api/cron/usher/route.ts", "usher")} every 30, ${FILE("app/api/cron/almanac/route.ts", "almanac")} daily.</li>
   <li class="d-step"><strong>Write the weekly rhythm:</strong> Friday — dispatch ledger for the report, almanac for the founder note. Paste the actual dispatch commands so they're copy-runnable.</li>
 </ol>
 <div class="d-end"><b>When you're done:</b> ${FUTURE("docs/partnerships/operating-cadence.md", "operating-cadence.md")} is committed and a stranger could run your week from it plus the tower. This is the role's real success deliverable — the function runs without founder day-to-day involvement.</div>`,
@@ -738,7 +755,7 @@ ${DISPATCH_EXPLAINER}
   <li class="d-step"><strong>Check the run-rate.</strong> Paste:
     <span class="d-cmd">use the ledger subagent: show booked commission (pending plus cleared) this month versus the $3k target.</span>
     If close-but-under, your lever is the Week-9 top 3 — push one more piece from each, don't chase cold partners this late.</li>
-  <li class="d-step"><strong>Run the month-end payout.</strong> Ledger dry-run → review → the payout helper at <span class="d-where">/admin/affiliates/[slug]</span> → execute. Verify every dashboard reads "paid" and Stripe reconciles; records land in ${TBL("affiliate_payouts")}.</li>
+  <li class="d-step"><strong>Run the month-end payout.</strong> Open the tower's <strong>Payouts card</strong> (${L("/admin/tower", "/admin/tower")}), review the per-affiliate totals, press <span class="d-ui">Pay</span> on each. Verify every dashboard reads "paid" and Stripe reconciles; records land in ${TBL("affiliate_payouts")}.</li>
   <li class="d-step"><strong>Run the health check.</strong> Paste:
     <span class="d-cmd">use the ledger subagent: show the refund rate per affiliate. Flag anyone over 15%.</span>
     Over 15% is a partner over-promising — book a warden review + a debrief call; it's a copy problem, not a payout problem. Suspend only at 20%.</li>
@@ -932,7 +949,7 @@ export const REFERENCE: RefSection[] = [
   <tr><td><strong>Reframe the gate as co-writing</strong></td><td>"Your first 3 posts, we draft together on a call." The most-objected-to part becomes a feature.</td></tr>
   <tr><td><strong>Founder Friday note CC'd to affiliates</strong></td><td>They feel like operators inside the company, not vendors. Retention lever.</td></tr>
   <tr><td><strong>Quarterly transparency report</strong></td><td>GMV / payouts / refund / NPS public PDF. Every affiliate forwards it to recruit the next 10.</td></tr>
-  <tr><td><strong>Audience-sized earnings calculator</strong></td><td>Public page: prospect enters list size, gets the scenario table. Highest conversion lift per build dollar.</td></tr>
+  <tr><td><strong>Audience-sized earnings calculator</strong> <span class="d-badge cron">live</span></td><td>Built — a prospect enters their list size and gets the scenario table at ${L("/affiliates/calculator", "/affiliates/calculator")}. Drop it in outreach and the kit.</td></tr>
 </table>`,
   },
   {

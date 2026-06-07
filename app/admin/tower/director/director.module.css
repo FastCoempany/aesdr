@@ -753,6 +753,20 @@
   border-left: 3px solid #8B1A1A;
 }
 :global(.d-cmd .c) { color: #b8b3aa; } /* comment / annotation inside a command */
+/* click-to-copy affordance (handler is in DirectorPlan) */
+:global(.d-cmd) { position: relative; cursor: pointer; padding-top: 26px; }
+:global(.d-cmd)::after {
+  content: "⧉ click to copy";
+  position: absolute;
+  top: 6px; right: 10px;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #8f8a80;
+}
+:global(.d-cmd:hover)::after { color: #fff; }
+:global(.d-cmd--copied)::after { content: "copied ✓"; color: #4ade80; }
 :global(.d-end) {
   margin: 14px 0 2px;
   padding: 12px 14px;

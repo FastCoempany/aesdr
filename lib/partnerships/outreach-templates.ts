@@ -22,6 +22,7 @@ type Template = { id: OutreachTemplateId; subject: string; body: string };
 
 const BOOKING = "https://calendar.app.google/wFRpSWG2ehvNhgd4A";
 const SIGNOFF = "— Antaeus, AESDR · affiliates@aesdr.com";
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com";
 
 const TEMPLATES: Record<OutreachTemplateId, Template> = {
   newsletter: {
@@ -124,4 +125,36 @@ export function extractEmail(contactPath: string | null): string | null {
   if (!contactPath) return null;
   const m = contactPath.match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/);
   return m ? m[0] : null;
+}
+
+// ── Follow-up ladder (ported verbatim from content/partnerships/outreach/
+//    follow-up-{1,2}.md). Sent on the same thread; subject reuses the
+//    first-touch subject (no new subject line). ──
+
+/** Follow-up 1 (+4 days): adds value, not a nag. [SPECIFIC RESOURCE…] is left
+ *  for the operator to fill — the resource must genuinely fit their audience. */
+export function renderFollowUp1(row: { name: string }): RenderedDraft {
+  const firstName = row.name.trim().split(/\s+/)[0] || row.name;
+  const body = `${firstName} — quick follow-up, with something useful either way: [SPECIFIC RESOURCE OR LESSON ANGLE RELEVANT TO THEIR AUDIENCE].
+
+If the affiliate thing is not for you, no problem — keep the resource. If it is, the kit is here: ${SITE}/affiliates/kit. Same terms as before: 40% commission, 30-day attribution window, $249/$299 one-time, paid through Stripe.
+
+${SIGNOFF}`;
+  const unfilled = Array.from(new Set(body.match(/\[[A-Z][A-Z0-9 /]+\]/g) || []));
+  return { templateId: "newsletter", subject: "Re: (follow-up)", body, unfilled };
+}
+
+/** Follow-up 2 (+9 days): the honest close. [THEIR AUDIENCE] names their people. */
+export function renderFollowUp2(row: { name: string; why_fit?: string | null }): RenderedDraft {
+  const firstName = row.name.trim().split(/\s+/)[0] || row.name;
+  // Best-effort fill of [THEIR AUDIENCE] from the Dossier why-fit; if absent,
+  // leave the placeholder so the operator names them.
+  const audience = row.why_fit?.trim()
+    ? row.why_fit.trim().replace(/\.$/, "")
+    : "[THEIR AUDIENCE]";
+  const body = `${firstName} — last note from me, no hard feelings if it is a no. I think AESDR genuinely fits ${audience}, and the terms are real — 40% commission, 30-day attribution window, $249/$299 one-time, paid through Stripe — but I would rather leave you alone than send a fourth email.
+
+Door is open whenever. ${SIGNOFF}`;
+  const unfilled = Array.from(new Set(body.match(/\[[A-Z][A-Z0-9 /]+\]/g) || []));
+  return { templateId: "newsletter", subject: "Re: (follow-up)", body, unfilled };
 }

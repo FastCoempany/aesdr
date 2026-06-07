@@ -158,6 +158,17 @@ export async function GET(request: Request) {
       .update({ status: "sent", sent_at: nowIso, resend_id: resendId })
       .eq("id", row.id)
       .eq("status", "approved");
+
+    // Start the follow-up ladder clock: the first cold send to a pipeline
+    // contact stamps first_touch_at + moves them to 'contacted'. Guarded so
+    // follow-up sends (also cold, also to a pipeline contact) never reset it.
+    if (row.tier === "cold" && row.related_pipeline_id) {
+      await supabase
+        .from("partner_pipeline")
+        .update({ first_touch_at: nowIso, status: "contacted", updated_at: nowIso })
+        .eq("id", row.related_pipeline_id)
+        .is("first_touch_at", null);
+    }
     sent++;
   }
 

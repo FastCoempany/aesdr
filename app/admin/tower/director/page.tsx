@@ -37,8 +37,8 @@ export default function DirectorPage() {
           you act inside <Link href="/admin/tower" style={{ color: "#8B1A1A", textDecoration: "underline" }}>the cockpit</Link>;{" "}
           <span className={`${styles.tag} ${styles.auto}`}>AUTO</span> means a cron handles it;
           and <span className={styles.tag}>DONE</span> means it was Week-1 setup, now permanent.
-          A <span className={styles.autoChip}>Can be fully automated</span> chip marks a whole task the machine can run end-to-end.
-          Check off tasks as you go — progress saves in this browser. Every file, table, doc, and page named below is a link.
+          A <span className={styles.autoChip}>Can be fully automated</span> chip means it&rsquo;s already wired and running on a clock — a cron does it; you just watch the board.
+          Check off tasks as you go — progress saves in this browser. Every file, table, doc, and page named below is a link, and every dark command block is click-to-copy.
         </p>
       </div>
 

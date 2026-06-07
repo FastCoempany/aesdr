@@ -40,6 +40,7 @@ const QUICK_LINKS: QuickEntry[] = [
   { label: "Program", href: "/affiliates/program", note: "Program overview" },
   { label: "How We Work", href: "/affiliates/how-we-work", note: "Working relationship + cadence" },
   { label: "Economics", href: "/affiliates/economics", note: "Commission + payout math" },
+  { label: "Earnings Calculator", href: "/affiliates/calculator", note: "Audience-sized earnings estimator" },
   { label: "FAQ", href: "/affiliates/faq", note: "Affiliate-side FAQ" },
   { label: "Timeline", href: "/affiliates/timeline", note: "First 90 days arc" },
   { label: "Curriculum (for affiliates)", href: "/affiliates/curriculum", note: "Curriculum overview the affiliate sees" },

@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { canonCheck } from "@/lib/partnerships/canon-mechanical";
+import { runAffiliatePayoutBatch } from "@/app/actions/affiliate";
 
 /**
  * The tower's trigger-pulls. Every action here is the human gesture at an
@@ -147,6 +148,16 @@ export async function markManualSent(formData: FormData) {
     .in("status", ["ready", "approved"]);
   if (error) throw new Error(error.message);
 
+  // Start the follow-up ladder clock for a manual cold first-touch, same as
+  // courier does for email sends. Guarded so follow-ups never reset it.
+  if (row.tier === "cold" && row.related_pipeline_id) {
+    await supabase
+      .from("partner_pipeline")
+      .update({ first_touch_at: nowIso, status: "contacted", updated_at: nowIso })
+      .eq("id", row.related_pipeline_id)
+      .is("first_touch_at", null);
+  }
+
   revalidatePath("/admin/tower");
 }
 
@@ -164,6 +175,22 @@ export async function holdDraft(formData: FormData) {
     .in("status", ["ready", "approved"]);
   if (error) throw new Error(error.message);
 
+  revalidatePath("/admin/tower");
+}
+
+/**
+ * Run a real payout for one affiliate from the tower's Payouts card. Thin
+ * wrapper over the production batch processor (aggregates cleared-unpaid
+ * attributions → inserts the payout row → Stripe Connect transfer → marks
+ * paid → emails the affiliate). The processor is admin-gated and only pays an
+ * affiliate whose Stripe account is enabled; we just re-revalidate the tower.
+ *
+ * This is the one money gate — the click is real. The card shows the dry-run
+ * total before you press it, and PayoutButton makes you confirm.
+ */
+export async function executePayout(formData: FormData) {
+  await requireAdmin();
+  await runAffiliatePayoutBatch(formData);
   revalidatePath("/admin/tower");
 }
 

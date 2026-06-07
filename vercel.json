@@ -29,6 +29,10 @@
       "schedule": "*/15 * * * *"
     },
     {
+      "path": "/api/cron/followup",
+      "schedule": "17 * * * *"
+    },
+    {
       "path": "/api/cron/courier",
       "schedule": "*/5 * * * *"
     },

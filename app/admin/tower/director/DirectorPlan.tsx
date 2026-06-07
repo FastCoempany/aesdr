@@ -84,6 +84,23 @@ export default function DirectorPlan() {
     }
   };
 
+  // Click-to-copy on any command block (.d-cmd) inside the injected HTML.
+  // Strips the inline "// ..." annotations (.c) so you paste a clean command.
+  const handleCopy = (e: React.MouseEvent<HTMLElement>) => {
+    const el = (e.target as HTMLElement).closest?.(".d-cmd") as HTMLElement | null;
+    if (!el) return;
+    const clone = el.cloneNode(true) as HTMLElement;
+    clone.querySelectorAll(".c").forEach((n) => n.remove());
+    const text = (clone.textContent || "").trim();
+    navigator.clipboard?.writeText(text).then(
+      () => {
+        el.classList.add("d-cmd--copied");
+        setTimeout(() => el.classList.remove("d-cmd--copied"), 1400);
+      },
+      () => {},
+    );
+  };
+
   const doneCount = loaded
     ? ACTIONABLE_IDS.filter((id) => state.checked[id]).length
     : 0;
@@ -160,7 +177,7 @@ export default function DirectorPlan() {
       </aside>
 
       {/* ─── Main column ─── */}
-      <main className={styles.main}>
+      <main className={styles.main} onClick={handleCopy}>
         {/* Overview ribbon */}
         <section id="overview" className={styles.section}>
           <p className={styles.secEyebrow}>Overview · the arc</p>

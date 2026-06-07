@@ -18,7 +18,7 @@ export async function GET(request: Request) {
 
   const supabase = createAdminClient();
 
-  const [bright, drafts, workshopsDue] = await Promise.all([
+  const [bright, drafts, workshopsDue, clearedUnpaid] = await Promise.all([
     supabase
       .from("partner_signals")
       .select("id", { count: "exact", head: true })
@@ -36,14 +36,23 @@ export async function GET(request: Request) {
         "scheduled_at",
         new Date(Date.now() + 48 * 3600000).toISOString(),
       ),
+    supabase
+      .from("affiliate_attributions")
+      .select("affiliate_slug")
+      .eq("status", "cleared")
+      .is("paid_at", null),
   ]);
+
+  // payoutsReady = number of affiliates with cleared-but-unpaid commission.
+  const payoutSlugs = new Set(
+    (clearedUnpaid.data ?? []).map((r) => r.affiliate_slug as string),
+  );
 
   const counts = {
     brightSignals: bright.count ?? 0,
     draftsAwaiting: drafts.count ?? 0,
     workshopsDue: workshopsDue.count ?? 0,
-    // Payouts UI not built yet — reserved for the ledger wiring step.
-    payoutsReady: 0,
+    payoutsReady: payoutSlugs.size,
   };
 
   const sent = await sendTowerDigest(counts);

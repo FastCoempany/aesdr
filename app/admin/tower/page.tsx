@@ -9,6 +9,7 @@ import {
   editDraft,
   markManualSent,
 } from "./actions";
+import PayoutButton from "./PayoutButton";
 
 /**
  * The decision board. Top half is DECISIONS — the few things waiting on one
@@ -106,6 +107,46 @@ export default async function TowerPage() {
     (d) => (d.send_channel ?? "email") === "email",
   ).length;
 
+  // ── Payouts (the money gate): cleared-but-unpaid commission per affiliate. ──
+  const { data: clearedAttr } = await supabase
+    .from("affiliate_attributions")
+    .select("affiliate_slug, commission_amount_cents")
+    .eq("status", "cleared")
+    .is("paid_at", null);
+  const payoutAgg: Record<string, { cents: number; count: number }> = {};
+  for (const a of clearedAttr ?? []) {
+    const slug = a.affiliate_slug as string;
+    if (!payoutAgg[slug]) payoutAgg[slug] = { cents: 0, count: 0 };
+    payoutAgg[slug].cents += a.commission_amount_cents ?? 0;
+    payoutAgg[slug].count += 1;
+  }
+  const payoutSlugs = Object.keys(payoutAgg);
+  let payoutAffiliates: Array<{
+    id: string;
+    slug: string;
+    display_name: string;
+    stripe_account_status: string | null;
+    cents: number;
+    count: number;
+  }> = [];
+  if (payoutSlugs.length > 0) {
+    const { data: affRows } = await supabase
+      .from("affiliates")
+      .select("id, slug, display_name, stripe_account_status")
+      .in("slug", payoutSlugs);
+    payoutAffiliates = (affRows ?? []).map((a) => ({
+      id: a.id as string,
+      slug: a.slug as string,
+      display_name: (a.display_name as string) ?? (a.slug as string),
+      stripe_account_status: (a.stripe_account_status as string) ?? null,
+      cents: payoutAgg[a.slug as string]?.cents ?? 0,
+      count: payoutAgg[a.slug as string]?.count ?? 0,
+    })).sort((x, y) => y.cents - x.cents);
+  }
+  const payoutTotalCents = payoutAffiliates.reduce((s, a) => s + a.cents, 0);
+  const usd = (cents: number) =>
+    `$${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
   // ── Board (situational) ──
   const { data: pipelineRows } = await supabase
     .from("partner_pipeline")
@@ -127,7 +168,8 @@ export default async function TowerPage() {
     .eq("stream", "prospect_events")
     .maybeSingle();
 
-  const decisionCount = brightSignals.length + drafts.length;
+  const decisionCount =
+    brightSignals.length + drafts.length + payoutAffiliates.length;
 
   // ── Styles ──
   const sectionLabel: React.CSSProperties = {
@@ -378,6 +420,41 @@ export default async function TowerPage() {
                 </form>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Payouts — the money gate */}
+        {payoutAffiliates.length > 0 && (
+          <div style={{ marginBottom: "8px" }}>
+            <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: INK, display: "block", marginBottom: "4px" }}>
+              Payouts ready · {usd(payoutTotalCents)} cleared &amp; unpaid
+            </span>
+            <p style={{ fontFamily: SERIF, fontSize: "13px", color: MUTED, fontStyle: "italic", margin: "0 0 10px" }}>
+              This is the dry-run. Review the numbers — money review has no clock.
+              Each <strong>Pay</strong> runs a real Stripe Connect transfer and
+              emails the affiliate.
+            </p>
+            {payoutAffiliates.map((a) => {
+              const enabled = a.stripe_account_status === "enabled";
+              return (
+                <div key={a.id} style={{ ...card, borderLeft: `3px solid #2E7D32` }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+                    <span style={{ fontFamily: SERIF, fontSize: "16px", fontWeight: 600, color: INK }}>
+                      {a.display_name}
+                    </span>
+                    <span style={{ fontFamily: MONO, fontSize: "12px", color: MUTED }}>
+                      {a.count} cleared item{a.count > 1 ? "s" : ""}
+                    </span>
+                    <span style={{ fontFamily: MONO, fontSize: "16px", fontWeight: 700, color: "#2E7D32", marginLeft: "auto" }}>
+                      {usd(a.cents)}
+                    </span>
+                  </div>
+                  <div style={{ marginTop: "12px" }}>
+                    <PayoutButton affiliateId={a.id} amountLabel={usd(a.cents)} enabled={enabled} />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
 
