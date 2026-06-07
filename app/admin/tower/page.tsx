@@ -6,6 +6,8 @@ import {
   approveAllReady,
   holdDraft,
   handleSignal,
+  editDraft,
+  markManualSent,
 } from "./actions";
 
 /**
@@ -82,11 +84,27 @@ export default async function TowerPage() {
 
   const { data: readyDrafts } = await supabase
     .from("partner_outbound_queue")
-    .select("id, to_addr, subject, body, tier, warden_cleared, send_after, drafted_by")
+    .select("*")
     .eq("status", "ready")
     .order("send_after", { ascending: true })
     .limit(50);
-  const drafts = readyDrafts ?? [];
+  // Defensive shape so the page renders before/after the 20260607 migration
+  // (send_channel / personalization_note default sensibly when absent).
+  type DraftRow = {
+    id: string;
+    to_addr: string;
+    subject: string;
+    body: string;
+    tier: string;
+    warden_cleared: boolean;
+    drafted_by: string | null;
+    send_channel?: string | null;
+    personalization_note?: string | null;
+  };
+  const drafts: DraftRow[] = (readyDrafts ?? []) as DraftRow[];
+  const emailDraftCount = drafts.filter(
+    (d) => (d.send_channel ?? "email") === "email",
+  ).length;
 
   // ── Board (situational) ──
   const { data: pipelineRows } = await supabase
@@ -235,7 +253,7 @@ export default async function TowerPage() {
           <span style={{ flex: 1, height: 1, background: LIGHT }} />
         </p>
 
-        {/* Drafts ready to send */}
+        {/* Drafts ready to send — the draft house */}
         {drafts.length > 0 && (
           <div style={{ marginBottom: "28px" }}>
             <div
@@ -247,47 +265,92 @@ export default async function TowerPage() {
               }}
             >
               <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: INK }}>
-                {drafts.length} draft{drafts.length > 1 ? "s" : ""} ready to send
+                {drafts.length} draft{drafts.length > 1 ? "s" : ""} in the house
               </span>
-              {drafts.length > 1 && (
+              {emailDraftCount > 1 && (
                 <form action={approveAllReady}>
                   <button type="submit" style={btnPrimary}>
-                    Send all {drafts.length}
+                    Send all {emailDraftCount} email
                   </button>
                 </form>
               )}
             </div>
-            {drafts.map((d) => (
-              <div key={d.id} style={card}>
-                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "6px" }}>
-                  <span style={tierChip(d.tier)}>{d.tier}</span>
-                  {d.warden_cleared && (
-                    <span style={{ ...tierChip("ok"), color: "#2E7D32", borderColor: "#CDE7CE" }}>
-                      warden ✓
+            {drafts.map((d) => {
+              const channel = d.send_channel ?? "email";
+              const isManual = channel === "manual";
+              return (
+                <div key={d.id} style={card}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px", flexWrap: "wrap" }}>
+                    <span style={tierChip(d.tier)}>{d.tier}</span>
+                    <span style={{ ...tierChip(isManual ? "cold" : "ok"), color: isManual ? "#a14400" : MUTED, borderColor: isManual ? "#e6c9a8" : LIGHT }}>
+                      {isManual ? "manual send" : "email"}
                     </span>
+                    {d.warden_cleared ? (
+                      <span style={{ ...tierChip("ok"), color: "#2E7D32", borderColor: "#CDE7CE" }}>warden ✓</span>
+                    ) : (
+                      <span style={{ ...tierChip("cold"), color: "#a14400", borderColor: "#e6c9a8" }}>needs eye</span>
+                    )}
+                    <span style={{ fontFamily: MONO, fontSize: "12px", color: MUTED, marginLeft: "auto" }}>
+                      → {d.to_addr}
+                    </span>
+                  </div>
+                  <p style={{ fontFamily: SERIF, fontSize: "16px", fontWeight: 600, margin: "0 0 6px", color: INK }}>
+                    {d.subject}
+                  </p>
+                  <p style={{ fontFamily: SERIF, fontSize: "14px", lineHeight: 1.6, color: MUTED, margin: "0 0 10px", whiteSpace: "pre-wrap" }}>
+                    {d.body.length > 360 ? d.body.slice(0, 360) + "…" : d.body}
+                  </p>
+
+                  {d.personalization_note && (
+                    <p style={{ fontFamily: MONO, fontSize: "11px", lineHeight: 1.5, color: "#a14400", background: "rgba(161,68,0,.06)", borderLeft: "2px solid #a14400", padding: "8px 10px", margin: "0 0 12px" }}>
+                      {d.personalization_note}
+                    </p>
                   )}
-                  <span style={{ fontFamily: MONO, fontSize: "12px", color: MUTED, marginLeft: "auto" }}>
-                    → {d.to_addr}
-                  </span>
+
+                  <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                    {isManual ? (
+                      <form action={markManualSent}>
+                        <input type="hidden" name="id" value={d.id} />
+                        <button type="submit" style={btnPrimary}>Mark sent</button>
+                      </form>
+                    ) : (
+                      <form action={approveDraft}>
+                        <input type="hidden" name="id" value={d.id} />
+                        <button type="submit" style={btnPrimary}>Send</button>
+                      </form>
+                    )}
+                    <form action={holdDraft}>
+                      <input type="hidden" name="id" value={d.id} />
+                      <button type="submit" style={btnGhost}>Hold</button>
+                    </form>
+                  </div>
+
+                  {/* Inline editor — the tower as draft house */}
+                  <details style={{ marginTop: "10px" }}>
+                    <summary style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".14em", textTransform: "uppercase", color: MUTED, cursor: "pointer" }}>
+                      Edit draft
+                    </summary>
+                    <form action={editDraft} style={{ marginTop: "10px" }}>
+                      <input type="hidden" name="id" value={d.id} />
+                      <input
+                        name="subject"
+                        defaultValue={d.subject}
+                        style={{ width: "100%", fontFamily: SERIF, fontSize: "14px", padding: "8px 10px", border: `1px solid ${LIGHT}`, marginBottom: "8px", color: INK, background: "#fff" }}
+                      />
+                      <textarea
+                        name="body"
+                        defaultValue={d.body}
+                        rows={10}
+                        style={{ width: "100%", fontFamily: SERIF, fontSize: "14px", lineHeight: 1.6, padding: "10px", border: `1px solid ${LIGHT}`, color: INK, background: "#fff", resize: "vertical" }}
+                      />
+                      <button type="submit" style={{ ...btnGhost, marginTop: "8px" }}>
+                        Save &amp; re-check canon
+                      </button>
+                    </form>
+                  </details>
                 </div>
-                <p style={{ fontFamily: SERIF, fontSize: "16px", fontWeight: 600, margin: "0 0 6px", color: INK }}>
-                  {d.subject}
-                </p>
-                <p style={{ fontFamily: SERIF, fontSize: "14px", lineHeight: 1.6, color: MUTED, margin: "0 0 14px", whiteSpace: "pre-wrap" }}>
-                  {d.body.length > 280 ? d.body.slice(0, 280) + "…" : d.body}
-                </p>
-                <div style={{ display: "flex", gap: "8px" }}>
-                  <form action={approveDraft}>
-                    <input type="hidden" name="id" value={d.id} />
-                    <button type="submit" style={btnPrimary}>Send</button>
-                  </form>
-                  <form action={holdDraft}>
-                    <input type="hidden" name="id" value={d.id} />
-                    <button type="submit" style={btnGhost}>Hold</button>
-                  </form>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 

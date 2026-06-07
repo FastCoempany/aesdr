@@ -76,7 +76,7 @@ export async function GET(request: Request) {
 
   const { data: due, error: queryErr } = await supabase
     .from("partner_outbound_queue")
-    .select("id, to_addr, subject, body, tier, idempotency_key")
+    .select("*")
     .eq("status", "approved")
     .lte("send_after", nowIso)
     .order("send_after", { ascending: true })
@@ -86,11 +86,19 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: queryErr.message }, { status: 500 });
   }
 
+  // Only transmit email-channel rows. 'manual' rows (a DM handle / a contact
+  // form — no address) are sent by hand from the tower and never touch courier.
+  // Read send_channel defensively so this works before/after the 20260607
+  // migration (absent column → treat as 'email', the pre-channel default).
+  const sendable = (due ?? []).filter(
+    (row) => (row.send_channel ?? "email") === "email",
+  );
+
   let sent = 0;
   let reconciled = 0;
   let failed = 0;
 
-  for (const row of due ?? []) {
+  for (const row of sendable) {
     // Reconcile: if this idempotency_key already has a sent-log line, the mail
     // already went out — flip the queue row to sent without re-sending.
     const { data: prior } = await supabase
@@ -154,7 +162,7 @@ export async function GET(request: Request) {
   }
 
   return NextResponse.json({
-    examined: due?.length ?? 0,
+    examined: sendable.length,
     sent,
     reconciled,
     failed,
