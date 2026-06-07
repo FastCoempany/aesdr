@@ -7,6 +7,16 @@ import { createAdminClient } from "@/utils/supabase/admin";
 import { canonCheck } from "@/lib/partnerships/canon-mechanical";
 import { runAffiliatePayoutBatch } from "@/app/actions/affiliate";
 import { PARTNER_AGENTS } from "@/lib/partnerships/agent-switch";
+import {
+  runScoutSweep,
+  type ScoutSweepId,
+} from "@/lib/partnerships/anthropic-agents";
+
+const VALID_SWEEPS: readonly ScoutSweepId[] = [
+  "communities",
+  "newsletters_podcasts",
+  "practitioners",
+];
 
 /**
  * The tower's trigger-pulls. Every action here is the human gesture at an
@@ -217,6 +227,93 @@ export async function setAgentSwitch(formData: FormData) {
     },
     { onConflict: "agent" },
   );
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/tower");
+}
+
+/**
+ * Run one scout sweep on demand from the tower button. Inserts whatever Claude
+ * returns as `sourced` rows in partner_pipeline — NOT enriched. The founder
+ * reviews each row and either promotes it (to `enriched`) or rejects it (to
+ * `passed`). This is the safety pattern for LLM-sourced data: the model writes,
+ * the human approves.
+ *
+ * Costs real Anthropic API tokens per click.
+ */
+export async function runScoutSweepAction(formData: FormData) {
+  const user = await requireAdmin();
+  const sweep = String(formData.get("sweep") ?? "") as ScoutSweepId;
+  if (!VALID_SWEEPS.includes(sweep)) throw new Error("Unknown sweep.");
+
+  const rows = await runScoutSweep(sweep);
+  if (rows.length === 0) {
+    // Nothing to insert; bail without an error so the UI can show "no rows".
+    revalidatePath("/admin/tower");
+    return;
+  }
+
+  const supabase = createAdminClient();
+  // De-dupe against existing names (case-insensitive). Anything that already
+  // exists in the pipeline is skipped — scout will surface dupes occasionally.
+  const names = rows.map((r) => r.name);
+  const { data: existing } = await supabase
+    .from("partner_pipeline")
+    .select("name")
+    .in("name", names);
+  const have = new Set(
+    (existing ?? []).map((e) => (e.name as string).toLowerCase()),
+  );
+
+  const inserts = rows
+    .filter((r) => !have.has(r.name.toLowerCase()))
+    .map((r) => ({
+      name: r.name,
+      surface: r.surface,
+      handle: r.handle,
+      motion: "affiliate",
+      archetype: r.archetype,
+      audience_est: r.audience_est,
+      voice_fit: r.voice_fit,
+      status: "sourced", // human review before promotion to 'enriched'
+      contact_path: r.contact_path,
+      why_fit: `${r.why_fit} [scout/${sweep}, ${user.email}]`,
+      source_agent: `scout-tower:${sweep}`,
+      next_action: "Review and promote, or reject",
+    }));
+
+  if (inserts.length > 0) {
+    const { error } = await supabase.from("partner_pipeline").insert(inserts);
+    if (error) throw new Error(error.message);
+  }
+  revalidatePath("/admin/tower");
+}
+
+/** Promote one sourced row to `enriched` — the operator's seal of approval. */
+export async function promoteSourced(formData: FormData) {
+  await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) throw new Error("Missing id.");
+  const supabase = createAdminClient();
+  const { error } = await supabase
+    .from("partner_pipeline")
+    .update({ status: "enriched", updated_at: new Date().toISOString() })
+    .eq("id", id)
+    .eq("status", "sourced");
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/tower");
+}
+
+/** Reject one sourced row — moves to `passed`, not deleted. */
+export async function rejectSourced(formData: FormData) {
+  await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) throw new Error("Missing id.");
+  const supabase = createAdminClient();
+  const { error } = await supabase
+    .from("partner_pipeline")
+    .update({ status: "passed", updated_at: new Date().toISOString() })
+    .eq("id", id)
+    .eq("status", "sourced");
   if (error) throw new Error(error.message);
   revalidatePath("/admin/tower");
 }

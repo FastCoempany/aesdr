@@ -80,20 +80,6 @@ export const PHASES: Phase[] = [
   },
 ];
 
-// Reusable explainer (first time the plan tells you to dispatch an agent).
-const DISPATCH_EXPLAINER = `
-<div class="d-callout d-callout-note">
-  <div class="d-callout-title">First time? What "dispatch an agent" actually means</div>
-  <p>Your agents are saved roles that live as files in ${L(`${GHT}/.claude/agents`, ".claude/agents/")} — ${FILE(".claude/agents/scout.md", "scout.md")}, ${FILE(".claude/agents/dossier.md", "dossier.md")}, ${FILE(".claude/agents/scribe.md", "scribe.md")}, ${FILE(".claude/agents/warden.md", "warden.md")}, ${FILE(".claude/agents/ledger.md", "ledger.md")}, ${FILE(".claude/agents/herald.md", "herald.md")}, ${FILE(".claude/agents/almanac.md", "almanac.md")}. To use one:</p>
-  <ol class="d-steps">
-    <li class="d-step"><strong>Open your terminal</strong> (macOS: <span class="d-ui">⌘ + Space</span> → type <span class="d-code">Terminal</span>; Windows: <span class="d-ui">⊞ Win</span> → <span class="d-code">PowerShell</span>).</li>
-    <li class="d-step"><strong>Go into the repo:</strong> type <span class="d-code">cd ~/code/aesdr</span> and press Enter. (If you haven't cloned it yet, that's a one-time setup — ask in chat and I'll walk you through it.)</li>
-    <li class="d-step"><strong>Start Claude Code:</strong> type <span class="d-code">claude</span> and press Enter. You now have a prompt.</li>
-    <li class="d-step"><strong>Type the instruction in plain English</strong>, starting with "use the [name] subagent:". The exact text to paste is in the dark boxes below each step. The agent reads the repo, does the work, and prints a result you can copy.</li>
-  </ol>
-  <p>That's it. "Dispatch scout" just means "type the scout instruction into Claude Code." You'll do this a handful of times a week.</p>
-</div>`;
-
 export const WEEKS: Week[] = [
   // ══════════════════════════════ PHASE 30 ══════════════════════════════
   {
@@ -212,30 +198,24 @@ export const WEEKS: Week[] = [
     tasks: [
       {
         id: "w2t1",
-        title: "Days 6–7 — Run three discovery sweeps (target: 50 scored candidates)",
-        tags: ["you"],
+        title: "Days 6–7 — Run three discovery sweeps from the tower (target: ~45 scored candidates)",
+        tags: ["tower", "auto"],
+        automatable: true,
         bodyHtml: `
-<p class="d-what">A "sweep" is when you send the scout agent out to find candidate partners on a specific kind of platform and return them as a scored list — not a raw dump. You run three sweeps so the results don't blur together, then have dossier deepen each promising one, then save them to your pipeline. End result: ~50 real, scored candidates sitting in the database, ready to rank.</p>
-${DISPATCH_EXPLAINER}
+<p class="d-what">A "sweep" is one click in the tower that asks Claude to find ~15 candidate partners on a specific kind of platform and drop them into your pipeline as scored rows for you to review. You run three sweeps so the results don't blur. Then dossier (a separate agent) deepens each one you accept. End result: ~45 reviewed, enriched candidates ready to rank.</p>
+<div class="d-callout d-callout-note"><div class="d-callout-title">What changed</div><p>Until recently this task meant opening a terminal and typing scout/dossier dispatch commands. As of the Scout &amp; Enrich panel, you press <strong>three buttons</strong> in the tower instead. Click costs are real (Claude API tokens: ~$0.30–$1.50 per sweep), so each button asks you to confirm.</p></div>
 <p class="d-h">Click by click</p>
 <ol class="d-steps">
-  <li class="d-step"><strong>You already have a head start.</strong> A prior sweep seeded the pipeline — open ${L(SBTBL, "the Supabase table editor")}, choose the ${TBL("partner_pipeline")} table, and you'll see the existing candidates (also documented in ${FILE("docs/partnerships/seed-partner-pipeline-2026-06-01.sql", "the seed file")}). Your job: verify them and extend toward 50.</li>
-  <li class="d-step"><strong>Sweep 1 — paid communities.</strong> In Claude Code, paste:
-    <span class="d-cmd">use the scout subagent to find 15 sales/SDR/AE community owners on Skool, Mighty Networks, and Circle (50–2,000 members each). Score voice-fit 1–5. Contact path must NOT be LinkedIn.</span>
-    It prints a table of names with scores. Copy it somewhere (a note, a doc).</li>
-  <li class="d-step"><strong>Sweep 2 — newsletters + podcasts.</strong> Paste:
-    <span class="d-cmd">use the scout subagent to find 15 independent sales newsletters (Substack/Beehiiv) and operator-host podcasts for first-2-year SDRs/AEs. Contact path = reply-to email or guest-pitch form, never LinkedIn.</span></li>
-  <li class="d-step"><strong>Sweep 3 — practitioner figures.</strong> Paste:
-    <span class="d-cmd">use the scout subagent to find 15 active contributors in 30MPC, Outbound Squad, RepVue, Modern Sales Pros, Apex BDR Club, Pavilion who have their OWN audience (not just members).</span></li>
-  <li class="d-step"><strong>Deepen the good ones with dossier.</strong> For every candidate scoring 3 or higher, paste (one at a time):
-    <span class="d-cmd">use the dossier subagent on [paste the name]: build the pre-outreach brief — real audience size, posting cadence, voice-fit verdict against canon, any conflicts, and the non-LinkedIn contact path.</span>
-    Dossier returns a one-screen brief per person. This is what turns a name into a decision.</li>
-  <li class="d-step"><strong>Save the survivors to the database.</strong> Paste:
-    <span class="d-cmd">use the ledger subagent: insert these enriched candidates into partner_pipeline at status='enriched'. Here are the rows: [paste dossier's output]. <span class="c">// ledger will show you the exact SQL it's about to run and wait for your OK before writing anything — that's its safety default.</span></span>
-    In plain terms: this writes each person as a row in your ${TBL("partner_pipeline")} CRM with a status of "enriched" (meaning: researched, not yet contacted).</li>
+  <li class="d-step"><strong>You already have a head start.</strong> A prior manual sweep seeded the pipeline — open ${TBL("partner_pipeline")} and you'll see existing candidates (also documented in ${FILE("docs/partnerships/seed-partner-pipeline-2026-06-01.sql", "the seed file")}). Your job: verify them and extend with three fresh sweeps.</li>
+  <li class="d-step"><strong>Open the tower:</strong> ${L("/admin/tower", "/admin/tower")} → the <strong>Scout &amp; Enrich</strong> section (right above DECISIONS).</li>
+  <li class="d-step"><strong>Run the three sweeps,</strong> one at a time. Press <span class="d-ui">Sweep 1 · Paid communities</span> → confirm → wait 10–30 seconds → ~15 candidates appear below as cards. Then <span class="d-ui">Sweep 2 · Newsletters + podcasts</span>. Then <span class="d-ui">Sweep 3 · Practitioner figures</span>.</li>
+  <li class="d-step"><strong>Review each card.</strong> Each candidate has <code>status=&apos;sourced&apos;</code> — researched by Claude but not yet trusted into your pipeline. Read the name, surface, voice-fit (1–5), and the why-fit. Sanity-check anything suspicious (Claude can occasionally invent a plausible-sounding name; verify the surface exists).</li>
+  <li class="d-step"><strong>Promote or reject.</strong> Click <span class="d-ui">Promote → enriched</span> on the keepers (status flips to <span class="d-code">enriched</span> — the trigger the drafter watches), or <span class="d-ui">Reject</span> on the duds (they move to <span class="d-code">passed</span>, not deleted — your second-wave list).</li>
+  <li class="d-step"><strong>Dossier auto-enrich (optional but recommended).</strong> Go to <strong>Agent Controls</strong>, find <span class="d-ui">Dossier auto-enrich</span>, click <span class="d-ui">Start</span>. On its next hourly tick it picks up every newly-enriched row and fills in the dossier brief (audience size estimate, voice-fit rationale, conflict flag, contact path). Costs ~$0.10–$0.30 per row.</li>
+  <li class="d-step"><strong>If you'd rather keep dossier off,</strong> you can still get briefs by dispatching the dossier subagent in Claude Code one-at-a-time — spec at ${FILE(".claude/agents/dossier.md", "dossier.md")}. Either flow works; the auto-enrich one just means no terminal.</li>
 </ol>
-<div class="d-end"><b>When you're done:</b> ~50 rows at status <span class="d-code">enriched</span> in ${TBL("partner_pipeline")}. Verify by reloading the tower's <strong>Pipeline</strong> board (${L("/admin/tower", "/admin/tower")}) — the "enriched" count should jump.</div>
-<div class="d-refs"><b>Touches</b>${TBL("partner_pipeline")} · ${FILE("docs/partnerships/seed-partner-pipeline-2026-06-01.sql", "seed file")} · ${FILE(".claude/agents/scout.md", "scout")} · ${FILE(".claude/agents/dossier.md", "dossier")} · ${FILE(".claude/agents/ledger.md", "ledger")} · ${FILE("docs/partnerships/discovery-doctrine.md", "doctrine")}</div>`,
+<div class="d-end"><b>When you're done:</b> 30–45 rows at <span class="d-code">status='enriched'</span> in ${TBL("partner_pipeline")}, each with a dossier brief in their <code>why_fit</code> (look for "[dossier]" at the end). Reload the tower's <strong>Pipeline</strong> board — the "enriched" count should reflect this.</div>
+<div class="d-refs"><b>Touches</b>${L("/admin/tower", "/admin/tower → Scout &amp; Enrich")} · ${L("/admin/tower", "/admin/tower → Agent Controls → Dossier auto-enrich")} · ${TBL("partner_pipeline")} · ${FILE("lib/partnerships/anthropic-agents.ts", "anthropic-agents.ts")} · ${FILE("app/api/cron/dossier-enrich/route.ts", "dossier-enrich cron")} · ${FILE(".claude/agents/scout.md", "scout spec")} · ${FILE(".claude/agents/dossier.md", "dossier spec")} · ${FILE("docs/partnerships/discovery-doctrine.md", "doctrine")}</div>`,
       },
       {
         id: "w2t2",
@@ -1042,7 +1022,7 @@ export const MANUAL: RefSection[] = [
 <p class="d-sub">The master switch (what I installed)</p>
 <p class="d-what">There's a table, ${TBL("agent_switches")}, with one row per agent and an on/off flag. Every automated agent checks it before doing anything and <strong>fails safe to OFF</strong> — if the table is missing, the row is missing, the flag is false, or anything errors, the agent does nothing and returns "disabled." You control all of it from one place: the <strong>Agent Controls</strong> panel at the top of ${L("/admin/tower", "the tower")}, where each agent has a <span class="d-ui">Start</span> / <span class="d-ui">Pause</span> button. Starting one asks you to confirm first.</p>
 
-<p class="d-sub">The 6 agents ON the switch (these are the ones that run on a clock)</p>
+<p class="d-sub">The 7 agents ON the switch (these are the ones that run on a clock)</p>
 <table class="d-table">
   <tr><th>Agent</th><th>When it would run</th><th>What it does</th><th>When paused</th></tr>
   <tr><td><strong>sentinel</strong></td><td>every 10 min</td><td>Reads new replies in ${TBL("partner_inbound_email")}, sorts them (interested / polite-no / unsubscribe / noise), and emails you about the interested ones.</td><td>No reading, no pings. Nothing happens to inbound mail.</td></tr>
@@ -1051,13 +1031,15 @@ export const MANUAL: RefSection[] = [
   <tr><td><strong>followup</strong></td><td>hourly</td><td>Drafts the +4-day / +9-day follow-ups for contacted-but-silent candidates; halts the instant they reply. <strong>Drafts only.</strong></td><td>No follow-ups are drafted. Contacted candidates just sit.</td></tr>
   <tr><td><strong>usher</strong></td><td>every 30 min</td><td>Runs workshop logistics (reminders, replay window) for workshops in ${TBL("partner_workshop")}.</td><td>No workshop reminders go out.</td></tr>
   <tr><td><strong>almanac</strong></td><td>daily 7am ET</td><td>Emails you the morning standup digest of what's waiting in the tower.</td><td>No digest email.</td></tr>
+  <tr><td><strong>dossier-enrich</strong> <span class="d-badge warn">spends API tokens</span></td><td>hourly (5 rows/tick)</td><td>Takes newly-promoted enriched rows and fills in the dossier brief via Claude (audience size, voice-fit rationale, conflict, contact path). Costs ~$0.10–$0.30 per row.</td><td>Enriched rows still get the deterministic first-touch drafter; no auto-brief is added.</td></tr>
 </table>
 <p class="d-what" style="color:#2E7D32;"><strong>The safety guarantee:</strong> even when ON, the two drafting agents (scribe, followup) only ever <em>create drafts</em>. Nothing leaves the building without you pressing <span class="d-ui">Send</span> (or <span class="d-ui">Pay</span>) yourself. The switch controls whether they <em>prepare</em>; your click controls whether anything <em>happens</em>.</p>
 
 <p class="d-sub">NOT on this switch (so you know the full picture)</p>
 <table class="d-table">
   <tr><th>Thing</th><th>Why it's not on the switch</th></tr>
-  <tr><td><strong>scout, dossier, scribe (chat), warden, ledger, herald</strong></td><td>These never run on their own — they only do something the moment you type them into Claude Code. There's nothing to pause; they're inert until dispatched. Specs: ${L(`${GHT}/.claude/agents`, ".claude/agents/")}.</td></tr>
+  <tr><td><strong>scribe (chat), warden, ledger, herald</strong></td><td>These never run on their own — they only do something the moment you type them into Claude Code. There's nothing to pause; they're inert until dispatched. Specs: ${L(`${GHT}/.claude/agents`, ".claude/agents/")}.</td></tr>
+  <tr><td><strong>scout (button), dossier (button + cron)</strong></td><td>Scout fires only when <em>you click a sweep button</em> in the tower's Scout &amp; Enrich panel (no clock). Dossier has two modes: chat-invoked (you dispatch) and the <em>dossier-enrich</em> cron above. Specs: ${FILE(".claude/agents/scout.md", "scout.md")}, ${FILE(".claude/agents/dossier.md", "dossier.md")}. Server-side wrappers: ${FILE("lib/partnerships/anthropic-agents.ts", "anthropic-agents.ts")}.</td></tr>
   <tr><td><strong>Payouts</strong></td><td>Money never moves automatically. The tower's Payouts card shows what's owed; the transfer only runs when you press <span class="d-ui">Pay</span> and confirm.</td></tr>
   <tr><td><strong>The older course crons</strong> (drip, abandonment, dropoff, review, retention)</td><td>Pre-existing course-side email automations, unrelated to partnerships. Untouched by this work; they've run all along.</td></tr>
   <tr><td><strong>The affiliate-clearing cron</strong> (${FILE("app/api/cron/affiliate/route.ts", "/api/cron/affiliate")})</td><td>Daily job that flips a commission from "pending" to "cleared" after its 30-day refund window. Benign — it moves no money and sends nothing; it just marks rows ready for a payout you still run by hand. Pre-existing; not on the partnership switch.</td></tr>

@@ -11,6 +11,8 @@ import {
 } from "./actions";
 import PayoutButton from "./PayoutButton";
 import AgentLever from "./AgentLever";
+import ScoutSweepButton from "./ScoutSweepButton";
+import { promoteSourced, rejectSourced } from "./actions";
 import { PARTNER_AGENTS } from "@/lib/partnerships/agent-switch";
 
 /**
@@ -149,6 +151,16 @@ export default async function TowerPage() {
   const usd = (cents: number) =>
     `$${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
+  // ── Sourced rows awaiting promotion (scout output sitting for review). ──
+  const { data: sourcedRows } = await supabase
+    .from("partner_pipeline")
+    .select("id, name, surface, handle, voice_fit, why_fit, contact_path, source_agent")
+    .eq("status", "sourced")
+    .eq("motion", "affiliate")
+    .order("created_at", { ascending: false })
+    .limit(50);
+  const sourced = sourcedRows ?? [];
+
   // ── Board (situational) ──
   const { data: pipelineRows } = await supabase
     .from("partner_pipeline")
@@ -215,6 +227,12 @@ export default async function TowerPage() {
       cadence: "daily 7am ET",
       desc: "Emails you the morning standup digest of what's waiting in the tower.",
       confirm: "Start Almanac? It will email you a daily standup digest.",
+    },
+    "dossier-enrich": {
+      label: "Dossier auto-enrich",
+      cadence: "hourly (5 rows/tick)",
+      desc: "Costs Anthropic tokens per row. Hourly, takes promoted candidates and fills in the dossier brief (audience, voice-fit, conflicts, contact path).",
+      confirm: "Start Dossier auto-enrich? It will spend Anthropic tokens (~$0.10-0.30 per candidate) and update enriched rows in the pipeline.",
     },
   };
 
@@ -371,6 +389,64 @@ export default async function TowerPage() {
                 />
               );
             })}
+          </div>
+        )}
+      </section>
+
+      {/* ════ SCOUT & ENRICH (Option-2 buttons + sourced-row review) ════ */}
+      <section style={{ marginBottom: "52px" }}>
+        <p style={sectionLabel}>
+          <span>Scout &amp; Enrich</span>
+          <span style={{ flex: 1, height: 1, background: LIGHT }} />
+        </p>
+        <div style={{ ...card, marginBottom: "16px" }}>
+          <p style={{ fontFamily: SERIF, fontSize: "14px", color: INK, margin: "0 0 4px" }}>
+            <strong>Run a sweep.</strong> Each press calls Claude server-side and drops ~12–15 candidates into the pipeline at <code>status=&apos;sourced&apos;</code> for you to review. Spends API tokens (~$0.30–$1.50 per sweep).
+          </p>
+          <p style={{ fontFamily: SERIF, fontSize: "13px", color: MUTED, fontStyle: "italic", margin: "0 0 14px" }}>
+            Nothing reaches enriched (the auto-drafter only acts on enriched) until you click <strong>Promote</strong> on each row.
+          </p>
+          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+            <ScoutSweepButton sweep="communities" label="Sweep 1 · Paid communities" />
+            <ScoutSweepButton sweep="newsletters_podcasts" label="Sweep 2 · Newsletters + podcasts" />
+            <ScoutSweepButton sweep="practitioners" label="Sweep 3 · Practitioner figures" />
+          </div>
+        </div>
+
+        {sourced.length > 0 && (
+          <div>
+            <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: INK, display: "block", marginBottom: "10px" }}>
+              {sourced.length} candidate{sourced.length > 1 ? "s" : ""} awaiting review
+            </span>
+            {sourced.map((s) => (
+              <div key={s.id} style={card}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: "10px", flexWrap: "wrap", marginBottom: "4px" }}>
+                  <span style={{ fontFamily: SERIF, fontSize: "16px", fontWeight: 600, color: INK }}>{s.name}</span>
+                  <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED }}>{s.surface ?? ""}</span>
+                  <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED }}>vf {s.voice_fit ?? "—"}</span>
+                  <span style={{ fontFamily: MONO, fontSize: "10px", color: MUTED, marginLeft: "auto" }}>{s.source_agent}</span>
+                </div>
+                {s.handle && (
+                  <p style={{ fontFamily: MONO, fontSize: "12px", color: MUTED, margin: "0 0 4px" }}>{s.handle}</p>
+                )}
+                {s.why_fit && (
+                  <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.55, color: INK, margin: "0 0 6px" }}>{s.why_fit}</p>
+                )}
+                {s.contact_path && (
+                  <p style={{ fontFamily: MONO, fontSize: "11.5px", color: "#8B1A1A", margin: "0 0 10px" }}>{s.contact_path}</p>
+                )}
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <form action={promoteSourced}>
+                    <input type="hidden" name="id" value={s.id} />
+                    <button type="submit" style={btnPrimary}>Promote → enriched</button>
+                  </form>
+                  <form action={rejectSourced}>
+                    <input type="hidden" name="id" value={s.id} />
+                    <button type="submit" style={btnGhost}>Reject</button>
+                  </form>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </section>

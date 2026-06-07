@@ -18,6 +18,7 @@ export const PARTNER_AGENTS = [
   "usher",
   "almanac",
   "followup",
+  "dossier-enrich",
 ] as const;
 export type PartnerAgent = (typeof PARTNER_AGENTS)[number];
 

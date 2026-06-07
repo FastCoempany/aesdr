@@ -33,6 +33,10 @@
       "schedule": "17 * * * *"
     },
     {
+      "path": "/api/cron/dossier-enrich",
+      "schedule": "33 * * * *"
+    },
+    {
       "path": "/api/cron/courier",
       "schedule": "*/5 * * * *"
     },
