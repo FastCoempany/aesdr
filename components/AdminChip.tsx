@@ -59,6 +59,10 @@ const QUICK_LINKS: QuickEntry[] = [
   { label: "Playbooks", href: "/affiliates/dashboard/playbooks", note: "7 path playbooks (4 ready, 3 draft)" },
 
   // ── Admin (operational surfaces) ─────────────────────────────────
+  { divider: true, label: "Partnerships · Control Tower" },
+  { label: "Control Tower", href: "/admin/tower", note: "Decisions board + draft house + situational board" },
+  { label: "Director (90-day playbook)", href: "/admin/tower/director", note: "Phase-by-phase operator playbook, click-by-click" },
+
   { divider: true, label: "Admin" },
   { label: "Admin · Dashboard", href: "/admin", note: "Cohort + revenue stats" },
   { label: "Admin · Users", href: "/admin/users", note: "All buyers, roles, refunds" },
