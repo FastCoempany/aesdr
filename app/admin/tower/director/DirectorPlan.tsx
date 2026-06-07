@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 
 import styles from "./director.module.css";
-import { PHASES, WEEKS, type Tag } from "./plan";
+import { PHASES, WEEKS, REFERENCE, type Tag } from "./plan";
 
 /**
  * Interactive renderer for the Director plan. Collapsible weeks + tasks,
@@ -75,6 +75,8 @@ export default function DirectorPlan() {
     persist({ ...state, openWeeks: { ...state.openWeeks, [id]: true } });
   const toggleTask = (id: string) =>
     persist({ ...state, openTasks: { ...state.openTasks, [id]: !state.openTasks[id] } });
+  const openTask = (id: string) =>
+    persist({ ...state, openTasks: { ...state.openTasks, [id]: true } });
 
   const reset = () => {
     if (confirm("Reset all checkboxes and collapse everything?")) {
@@ -134,6 +136,18 @@ export default function DirectorPlan() {
               </a>
             ))}
           </div>
+        ))}
+
+        <div className={styles.navGroup}>The toolkit</div>
+        {REFERENCE.map((r) => (
+          <a
+            key={r.id}
+            href={`#${r.id}`}
+            className={styles.navItem}
+            onClick={() => openTask(r.id)}
+          >
+            {r.title}
+          </a>
         ))}
 
         <div className={styles.navGroup}>The board</div>
@@ -261,6 +275,33 @@ export default function DirectorPlan() {
             })}
           </section>
         ))}
+
+        {/* ─── Toolkit (reference shelf) ─── */}
+        <section id="toolkit">
+          <div className={styles.phaseHead}>
+            <p className={styles.secEyebrow}>The toolkit · reference shelf</p>
+            <h2 className={styles.secTitle}>Everything the plan points at, in one place.</h2>
+          </div>
+          {REFERENCE.map((r) => {
+            const open = !!state.openTasks[r.id];
+            return (
+              <div key={r.id} id={r.id} className={styles.weekAcc}>
+                <div className={styles.weekBar} onClick={() => toggleTask(r.id)} role="button" tabIndex={0}>
+                  <span className={`${styles.weekCaret} ${open ? styles.weekCaretOpen : ""}`}>▾</span>
+                  <span className={styles.weekBarTitle}>{r.title}</span>
+                  <span className={styles.weekCount}>{r.subtitle}</span>
+                </div>
+                {open && (
+                  <div
+                    className={styles.weekBody}
+                    style={{ paddingTop: 14 }}
+                    dangerouslySetInnerHTML={{ __html: r.bodyHtml }}
+                  />
+                )}
+              </div>
+            );
+          })}
+        </section>
 
         <div className={styles.irisBar} style={{ marginTop: 60 }} />
         <p

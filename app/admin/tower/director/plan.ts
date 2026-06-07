@@ -33,8 +33,13 @@ const L = (href: string, label: string) =>
 
 /** A Supabase table reference → links to the table editor. */
 const TBL = (name: string) => L(SBTBL, name);
-/** A repo file reference → links to the file on GitHub. */
+/** A repo file reference → links to the file on GitHub (main branch). */
 const FILE = (path: string, label?: string) => L(`${GH}/${path}`, label || path);
+/** A file that lives on the affiliatekit branch (the gated kit deployment), not main. */
+const AFF = (path: string, label?: string) =>
+  L(`https://github.com/fastcoempany/aesdr/blob/affiliatekit/${path}`, label || path);
+/** A file the operator CREATES later in the plan — link the folder so it never 404s pre-creation. */
+const FUTURE = (_path: string, label: string) => L(`${GHT}/docs/partnerships`, label);
 
 export type Tag = "you" | "tower" | "auto" | "done";
 export type Task = {
@@ -293,7 +298,7 @@ ${DISPATCH_EXPLAINER}
 <p class="d-what">The old plan made you manually verify that mail to <span class="d-code">affiliates@aesdr.com</span> gets caught and routed before sending to 25 real people. That whole pipe is live and was tested end-to-end.</p>
 <p class="d-h">What's running</p>
 <ol class="d-steps">
-  <li class="d-step">A Cloudflare Email Worker (source in ${L(`${GHT}/infra/cloudflare`, "infra/cloudflare/")}) catches every inbound message, forwards a copy to your personal inbox, and posts the raw message to ${FILE("app/api/webhooks/inbound-email/route.ts", "the inbound webhook")}, which stores it in ${TBL("partner_inbound_email")}.</li>
+  <li class="d-step">A Cloudflare Email Worker (source in ${L(`https://github.com/fastcoempany/aesdr/tree/affiliatekit/infra/cloudflare`, "infra/cloudflare/")}) catches every inbound message, forwards a copy to your personal inbox, and posts the raw message to ${AFF("app/api/webhooks/inbound-email/route.ts", "the inbound webhook")}, which stores it in ${TBL("partner_inbound_email")}.</li>
   <li class="d-step">${FILE("app/api/cron/sentinel/route.ts", "Sentinel")} reads that table every 10 minutes, decides whether each reply is interested ("bright"), polite-no ("soft"), an unsubscribe, or noise, and surfaces the bright ones to you.</li>
 </ol>
 <div class="d-end"><b>Nothing to do.</b> Replies to your outreach will arrive in your inbox <em>and</em> on the tower.</div>`,
@@ -352,7 +357,7 @@ ${DISPATCH_EXPLAINER}
 <p class="d-what">These are 15-minute fit-check calls, not hard sells. You send a prep bundle beforehand so the call itself is short and mutual. The goal of each call is a clear yes/maybe/no, logged.</p>
 <p class="d-h">Click by click</p>
 <ol class="d-steps">
-  <li class="d-step"><strong>Send the Pre-Call Bundle 24–48h before each call:</strong> the audience-sized one-pager, the founder video, the course preview, the kit, and the transparency page. These assets live in ${L(`${GHT}/content/partnerships/precall`, "content/partnerships/precall/")} (and the kit is at ${L("/affiliates/kit", "/affiliates/kit")}). The bundle does the convincing so the call is a conversation.</li>
+  <li class="d-step"><strong>Send the Pre-Call Bundle 24–48h before each call:</strong> the audience-sized earnings one-pager, a 90-second founder video, the course preview, the kit, and the transparency page. The full bundle — what each asset is, who builds it, and the exact dispatch line — is in the <a class="d-link" href="#ref-precall">Pre-Call Bundle card in the Toolkit below</a>; the always-live piece is the kit at ${L("/affiliates/kit", "/affiliates/kit")}. The bundle does the convincing so the call is a conversation.</li>
   <li class="d-step"><strong>Two minutes before the call,</strong> reopen that candidate's dossier brief and the one specific piece of theirs you referenced in outreach, so your opening line names something real they made.</li>
   <li class="d-step"><strong>Hit four beats:</strong> (1) why you reached out to <em>them</em> specifically; (2) the mechanics — 40% / 30-day window / tracked link + kit; (3) the brand-fit gate, framed as protecting <em>their</em> audience's trust ("we read your first few posts so they sound like you, not an ad — then you post freely"); (4) their questions — let this be most of the call.</li>
   <li class="d-step"><strong>Close on a binary:</strong> "I send the kit today and we talk again [day], OR I set your link up this week — which is easier?" Never end on "let me think."</li>
@@ -360,7 +365,7 @@ ${DISPATCH_EXPLAINER}
     <span class="d-cmd">use the ledger subagent: set [name] in partner_pipeline to status 'negotiating' <span class="c">// a yes or maybe</span> — or 'passed' if it was a no.</span></li>
 </ol>
 <div class="d-end"><b>When you're done:</b> 8–10 calls done, each candidate moved to <span class="d-code">negotiating</span> or <span class="d-code">passed</span> in ${TBL("partner_pipeline")}.</div>
-<div class="d-refs"><b>Touches</b>${L(`${GHT}/content/partnerships/precall`, "precall bundle")} · ${L("/affiliates/kit", "kit")} · ${TBL("partner_pipeline")} · ${FILE(".claude/agents/ledger.md", "ledger")}</div>`,
+<div class="d-refs"><b>Touches</b><a class="d-link" href="#ref-precall">Pre-Call Bundle (toolkit)</a> · ${L("/affiliates/kit", "kit")} · ${TBL("partner_pipeline")} · ${FILE(".claude/agents/ledger.md", "ledger")}</div>`,
       },
       {
         id: "w4t2",
@@ -372,10 +377,10 @@ ${DISPATCH_EXPLAINER}
 <ol class="d-steps">
   <li class="d-step"><strong>Re-read the audit:</strong> ${FILE("docs/partnerships/attribution-build-cost.md", "attribution-build-cost.md")}.</li>
   <li class="d-step"><strong>Make the call.</strong> The likely answer: keep the custom Supabase+Stripe system ($0) for now, and switch to <strong>Rewardful</strong> ($49/mo) the moment partner self-serve dashboards become the bottleneck. Name the exact trigger condition that would flip you.</li>
-  <li class="d-step"><strong>Write the memo.</strong> Create ${FILE("docs/partnerships/attribution-decision.md", "docs/partnerships/attribution-decision.md")} (in your terminal: <span class="d-code">touch docs/partnerships/attribution-decision.md</span>, then open it in your editor). One page: what you chose, the gaps it closes, the trigger that flips you to Rewardful, the cost both ways.</li>
+  <li class="d-step"><strong>Write the memo.</strong> Create ${FUTURE("docs/partnerships/attribution-decision.md", "docs/partnerships/attribution-decision.md")} (in your terminal: <span class="d-code">touch docs/partnerships/attribution-decision.md</span>, then open it in your editor). One page: what you chose, the gaps it closes, the trigger that flips you to Rewardful, the cost both ways.</li>
   <li class="d-step"><strong>Send it to the founder</strong> by email — this is a founder-aligned strategic call, not just a commit.</li>
 </ol>
-<div class="d-end"><b>When you're done:</b> the memo exists at ${FILE("docs/partnerships/attribution-decision.md", "attribution-decision.md")} and is in the founder's inbox. The clearing automation is already live (${FILE("app/api/cron/affiliate/route.ts", "affiliate cron")}), so there's no plumbing to add if you stay custom.</div>`,
+<div class="d-end"><b>When you're done:</b> the memo exists at ${FUTURE("docs/partnerships/attribution-decision.md", "attribution-decision.md")} and is in the founder's inbox. The clearing automation is already live (${FILE("app/api/cron/affiliate/route.ts", "affiliate cron")}), so there's no plumbing to add if you stay custom.</div>`,
       },
     ],
   },
@@ -415,13 +420,13 @@ ${DISPATCH_EXPLAINER}
 <ol class="d-steps">
   <li class="d-step"><strong>Pull the numbers.</strong> Paste:
     <span class="d-cmd">use the ledger subagent: for a phase-30 review, return these counts — total affiliate candidates in partner_pipeline, how many at status 'contacted', how many at 'call_booked' or 'negotiating', how many affiliates are 'active', and total rows in affiliate_attributions.</span></li>
-  <li class="d-step"><strong>Check each milestone against an artifact:</strong> discovery documented → ${FILE("docs/partnerships/discovery-doctrine.md", "discovery-doctrine.md")} exists; 25 candidates → ${TBL("partner_pipeline")} count ≥ 25; outreach started → "recent sends" on ${L("/admin/tower", "/admin/tower")}; platform chosen → ${FILE("docs/partnerships/attribution-decision.md", "attribution-decision.md")} sent. If any is short, that's the lead of the memo, not something to hide.</li>
+  <li class="d-step"><strong>Check each milestone against an artifact:</strong> discovery documented → ${FILE("docs/partnerships/discovery-doctrine.md", "discovery-doctrine.md")} exists; 25 candidates → ${TBL("partner_pipeline")} count ≥ 25; outreach started → "recent sends" on ${L("/admin/tower", "/admin/tower")}; platform chosen → ${FUTURE("docs/partnerships/attribution-decision.md", "attribution-decision.md")} sent. If any is short, that's the lead of the memo, not something to hide.</li>
   <li class="d-step"><strong>Draft the memo.</strong> Paste:
     <span class="d-cmd">use the almanac subagent: write the 30-day founder memo from ledger's numbers. Cover numbers vs each milestone, what converted, what didn't, and the one change for Phase 60. Eight lines, not a report.</span></li>
   <li class="d-step"><strong>Send it</strong> to the founder.</li>
 </ol>
 <div class="d-end"><b>When you're done:</b> a four-milestone-evidenced memo is in the founder's inbox.</div>
-<div class="d-refs"><b>Touches</b>${FILE(".claude/agents/ledger.md", "ledger")} · ${FILE(".claude/agents/almanac.md", "almanac")} · ${TBL("partner_pipeline")} · ${FILE("docs/partnerships/discovery-doctrine.md", "doctrine")} · ${FILE("docs/partnerships/attribution-decision.md", "decision memo")}</div>`,
+<div class="d-refs"><b>Touches</b>${FILE(".claude/agents/ledger.md", "ledger")} · ${FILE(".claude/agents/almanac.md", "almanac")} · ${TBL("partner_pipeline")} · ${FILE("docs/partnerships/discovery-doctrine.md", "doctrine")} · ${FUTURE("docs/partnerships/attribution-decision.md", "decision memo")}</div>`,
       },
     ],
   },
@@ -689,12 +694,12 @@ ${DISPATCH_EXPLAINER}
 <p class="d-what">Write down the weekly rhythm so a stranger (or a future hire) could run it. The honest version of this deliverable is now short, because the cadence <em>is</em> the tower plus a few weekly dispatches.</p>
 <p class="d-h">Click by click</p>
 <ol class="d-steps">
-  <li class="d-step"><strong>Create the doc.</strong> In your terminal: <span class="d-code">touch docs/partnerships/operating-cadence.md</span>, then open it. (It'll live at ${FILE("docs/partnerships/operating-cadence.md", "docs/partnerships/operating-cadence.md")} once committed.)</li>
+  <li class="d-step"><strong>Create the doc.</strong> In your terminal: <span class="d-code">touch docs/partnerships/operating-cadence.md</span>, then open it. (It'll live at ${FUTURE("docs/partnerships/operating-cadence.md", "docs/partnerships/operating-cadence.md")} once committed.)</li>
   <li class="d-step"><strong>Write the daily rhythm:</strong> the 7am almanac digest lands → you open ${L("/admin/tower", "/admin/tower")}, clear the DECISIONS lane (approve drafts, handle bright signals), close the tab. That's the standup.</li>
   <li class="d-step"><strong>Write down what's continuous and automatic,</strong> citing the schedule in ${FILE("docs/partnerships/cron-schedule.md", "cron-schedule.md")}: ${FILE("app/api/cron/sentinel/route.ts", "sentinel")} every 10 min, ${FILE("app/api/cron/scribe/route.ts", "scribe drafter")} every 15, ${FILE("app/api/cron/courier/route.ts", "courier")} every 5, ${FILE("app/api/cron/usher/route.ts", "usher")} every 30, ${FILE("app/api/cron/almanac/route.ts", "almanac")} daily.</li>
   <li class="d-step"><strong>Write the weekly rhythm:</strong> Friday — dispatch ledger for the report, almanac for the founder note. Paste the actual dispatch commands so they're copy-runnable.</li>
 </ol>
-<div class="d-end"><b>When you're done:</b> ${FILE("docs/partnerships/operating-cadence.md", "operating-cadence.md")} is committed and a stranger could run your week from it plus the tower. This is the role's real success deliverable — the function runs without founder day-to-day involvement.</div>`,
+<div class="d-end"><b>When you're done:</b> ${FUTURE("docs/partnerships/operating-cadence.md", "operating-cadence.md")} is committed and a stranger could run your week from it plus the tower. This is the role's real success deliverable — the function runs without founder day-to-day involvement.</div>`,
       },
       {
         id: "w1011t2",
@@ -754,11 +759,254 @@ ${DISPATCH_EXPLAINER}
     Then: <span class="d-cmd">use the almanac subagent: write it up as the 90-day proof, evidencing each milestone with a number or an artifact.</span></li>
   <li class="d-step"><strong>Evidence all three milestones:</strong> affiliates on a $3k/mo trajectory (run-rate); one channel deal signed or close (the terms doc); both motions running (active affiliate count in ${TBL("affiliates")} + channel rows in ${TBL("partner_pipeline")}).</li>
   <li class="d-step"><strong>Show the tower as the proof of "runs without heroics"</strong> — the schedule in ${FILE("docs/partnerships/cron-schedule.md", "cron-schedule.md")}, the daily digest, and a DECISIONS lane that's usually already empty. That's the real success definition.</li>
-  <li class="d-step"><strong>Present the next-quarter plan:</strong> the second-wave pipeline, the channel deals in flight, the top-performer pattern to clone, and the one tool the data now justifies (e.g. Rewardful at the dashboard-bottleneck trigger from your ${FILE("docs/partnerships/attribution-decision.md", "attribution memo")}).</li>
+  <li class="d-step"><strong>Present the next-quarter plan:</strong> the second-wave pipeline, the channel deals in flight, the top-performer pattern to clone, and the one tool the data now justifies (e.g. Rewardful at the dashboard-bottleneck trigger from your ${FUTURE("docs/partnerships/attribution-decision.md", "attribution memo")}).</li>
 </ol>
 <div class="d-callout d-callout-note"><div class="d-callout-title">What "overachieve" looks like here</div><p>Not 10 affiliates — 15. Not "3 conversations" — one signed channel deal plus 3 more open. Not "reporting live" — a founder who hasn't had to ask for a number in a month because it's in front of him every Friday. The bar is making the milestones look conservative.</p></div>
 <div class="d-end"><b>When you're done:</b> the 90-day proof is delivered, three milestones evidenced, next-quarter plan presented.</div>`,
       },
     ],
+  },
+];
+
+// ════════════════════════════════ TOOLKIT ════════════════════════════════
+// The reference shelf — ported from the legacy partnerships-os doc. Static
+// reference, not day-by-day tasks. Agent specs + outreach templates link to
+// their canonical files (single source of truth); data that only lives here
+// (prospects, levers, benchmarks, attribution, metrics) is rendered inline.
+export type RefSection = { id: string; title: string; subtitle: string; bodyHtml: string };
+
+export const REFERENCE: RefSection[] = [
+  {
+    id: "ref-agents",
+    title: "Agent Roster",
+    subtitle: "Who does what, on what cadence",
+    bodyHtml: `
+<p class="d-what">Ten agents run the function. Four are <strong>autonomous crons</strong> — they run on a clock and fill the tower; you never invoke them. Six are <strong>chat-invoked</strong> — saved roles you dispatch in Claude Code when judgment is needed. Each name below links to its spec.</p>
+<p class="d-sub">Autonomous (run on a schedule)</p>
+<table class="d-table">
+  <tr><th>Agent</th><th>Runs</th><th>What it does</th><th>Spec</th></tr>
+  <tr><td><strong>sentinel</strong> <span class="d-badge cron">cron</span></td><td>every 10 min</td><td>Reads inbound replies, classifies bright / soft / unsubscribe / noise, pings you for bright ones, mirrors prospect-intent events to the board.</td><td>${FILE("app/api/cron/sentinel/route.ts", "sentinel")}</td></tr>
+  <tr><td><strong>courier</strong> <span class="d-badge cron">cron</span></td><td>every 5 min</td><td>The only sender. Transmits approved outbound rows, writes the immutable sent-log, hard-blocks double sends.</td><td>${FILE("app/api/cron/courier/route.ts", "courier")}</td></tr>
+  <tr><td><strong>scribe (drafter)</strong> <span class="d-badge cron">cron</span></td><td>every 15 min</td><td>Turns enriched candidates into ready first-touch drafts in the tower (template-fill + mechanical canon gate).</td><td>${FILE("app/api/cron/scribe/route.ts", "scribe cron")}</td></tr>
+  <tr><td><strong>usher</strong> <span class="d-badge cron">cron</span></td><td>every 30 min</td><td>Runs workshop logistics — reminders, the replay window, nurture touches — pre-approved at the transactional tier.</td><td>${FILE("app/api/cron/usher/route.ts", "usher")}</td></tr>
+  <tr><td><strong>almanac</strong> <span class="d-badge cron">cron</span></td><td>daily 7am ET</td><td>The standup digest. Also a chat role for writing the Friday + milestone memos.</td><td>${FILE("app/api/cron/almanac/route.ts", "almanac cron")} · ${FILE(".claude/agents/almanac.md", "spec")}</td></tr>
+</table>
+<p class="d-sub">Chat-invoked (you dispatch when judgment is needed)</p>
+<table class="d-table">
+  <tr><th>Agent</th><th>Role</th><th>What it does</th><th>Spec</th></tr>
+  <tr><td><strong>scout</strong> <span class="d-badge chat">chat</span></td><td>Discovery</td><td>Sweeps practitioner networks + paid communities, returns scored candidate rows (never a raw dump).</td><td>${FILE(".claude/agents/scout.md", "scout")}</td></tr>
+  <tr><td><strong>dossier</strong> <span class="d-badge chat">chat</span></td><td>Enrichment</td><td>Takes one name, builds the pre-outreach brief: audience, cadence, voice-fit verdict, conflicts, the non-LinkedIn contact path.</td><td>${FILE(".claude/agents/dossier.md", "dossier")}</td></tr>
+  <tr><td><strong>scribe</strong> <span class="d-badge chat">chat</span></td><td>Copy</td><td>The judgment version of drafting — bespoke outreach for the coach_complement / open_recruit / co_marketing motions, canon-checked.</td><td>${FILE(".claude/agents/scribe.md", "scribe")}</td></tr>
+  <tr><td><strong>warden</strong> <span class="d-badge chat">chat</span></td><td>Brand-fit</td><td>Judges affiliate copy + outreach against canon. Verdict: APPROVE / EDITS / DECLINE.</td><td>${FILE(".claude/agents/warden.md", "warden")}</td></tr>
+  <tr><td><strong>ledger</strong> <span class="d-badge chat">chat</span></td><td>Attribution &amp; ops</td><td>Runs Supabase queries, builds reports, reconciles payouts, extends the schema. Read-only by default; shows SQL before any write.</td><td>${FILE(".claude/agents/ledger.md", "ledger")}</td></tr>
+  <tr><td><strong>herald</strong> <span class="d-badge chat">chat</span></td><td>Channel / enterprise</td><td>The enterprise counterpart to scout — researches channel partners and drafts partnership structures.</td><td>${FILE(".claude/agents/herald.md", "herald")}</td></tr>
+</table>
+<div class="d-refs"><b>All specs</b>${L(`${GHT}/.claude/agents`, ".claude/agents/")}</div>`,
+  },
+  {
+    id: "ref-prospects",
+    title: "Prospect Intel",
+    subtitle: "Named candidates, researched — affiliate + channel",
+    bodyHtml: `
+<p class="d-what">The named starting list a prior sweep produced. The <em>live</em> version (with current status) is always in ${TBL("partner_pipeline")}; this is the researched snapshot with conflict flags. "Motion" sets the angle — most are coach_complement (they run their own paid thing), which is a different pitch, not a cut.</p>
+<p class="d-sub">Affiliate candidates</p>
+<table class="d-table">
+  <tr><th>Name</th><th>Surface</th><th>VF</th><th>Motion</th><th>Conflict</th></tr>
+  <tr><td>Neil Bhuiyan</td><td><a class="d-link" href="https://happyselling.io/podcast" target="_blank" rel="noopener">SDR DiscoCall podcast</a></td><td>4</td><td>coach_complement</td><td class="warn">HappySelling course + MySalesCoach</td></tr>
+  <tr><td>Florin Tatulea</td><td><a class="d-link" href="https://salesflo.substack.com" target="_blank" rel="noopener">salesflo.substack.com</a></td><td class="hi">5</td><td>affiliate</td><td>soft — Common Room employee (vendor, not a course)</td></tr>
+  <tr><td>Jed Mahrle</td><td><a class="d-link" href="https://practicalprospecting.io" target="_blank" rel="noopener">practicalprospecting.io</a></td><td class="hi">5</td><td>coach_complement</td><td>soft — done-for-you outbound agency</td></tr>
+  <tr><td>Elric Legloire</td><td><a class="d-link" href="https://newsletter.outbound.kitchen" target="_blank" rel="noopener">Outbound Kitchen</a></td><td>4</td><td>coach_complement</td><td>soft — paywalled Outbound Chef Kit</td></tr>
+  <tr><td>Tom Slocum</td><td><a class="d-link" href="https://thesdlab.beehiiv.com" target="_blank" rel="noopener">The SD Lab</a></td><td>4</td><td>coach_complement</td><td class="warn">hard — Outbound Accelerator program</td></tr>
+  <tr><td>Sam Nelson</td><td><a class="d-link" href="https://samnelson.substack.com" target="_blank" rel="noopener">samnelson.substack.com</a></td><td>4</td><td>coach_complement</td><td class="warn">hard — Agoge Prospecting School</td></tr>
+  <tr><td>Stefan Conic</td><td><a class="d-link" href="https://www.skool.com/sdr-hire-community-1422" target="_blank" rel="noopener">SDR Hire (Skool)</a></td><td>4</td><td>coach_complement</td><td>soft — paid Skool courses</td></tr>
+  <tr><td>Daniel Goerner</td><td><a class="d-link" href="https://www.skool.com/sdr-bdr-community-7025" target="_blank" rel="noopener">SDR/BDR community (Skool)</a></td><td>4</td><td>coach_complement</td><td>soft — paid coaching</td></tr>
+  <tr><td>Collin Mitchell</td><td>Sales Transformation podcast</td><td>3</td><td>co_marketing</td><td>soft — Humantic AI evangelist (no course)</td></tr>
+  <tr><td>Michael Gagliano</td><td><a class="d-link" href="https://sdrnation.com" target="_blank" rel="noopener">SDR Nation</a></td><td>3</td><td>co_marketing</td><td class="warn">SDR Nation × JB Sales partnership</td></tr>
+</table>
+<p class="d-sub">Reclassified / disqualified</p>
+<table class="d-table">
+  <tr><th>Name</th><th>Verdict</th></tr>
+  <tr><td>Morgan J Ingram</td><td class="warn">Disqualifier (the one true cut) — Director at JBarrows, a competitor's employee.</td></tr>
+  <tr><td>Jason Bay (Outbound Squad)</td><td>coach_complement — runs courses; approachable on the complement angle.</td></tr>
+  <tr><td>Belal Batrawy</td><td>coach_complement — runs Death to Fluff Bootcamp; approachable on the complement angle.</td></tr>
+</table>
+<p class="d-sub">Channel candidates (motion = channel)</p>
+<table class="d-table">
+  <tr><th>Org</th><th>Type</th><th>Proposed structure</th><th>Conflict</th></tr>
+  <tr><td><a class="d-link" href="https://vendux.org" target="_blank" rel="noopener">Vendux</a></td><td>Fractional VP-Sales network</td><td>Referral / co-sell</td><td>N</td></tr>
+  <tr><td><a class="d-link" href="https://martal.ca" target="_blank" rel="noopener">Martal Group</a></td><td>SDR outsourcing</td><td>White-label ramp module</td><td>N</td></tr>
+  <tr><td><a class="d-link" href="https://skaled.com" target="_blank" rel="noopener">Skaled</a></td><td>Sales-enablement consultancy</td><td>Content bundle in engagements</td><td>N</td></tr>
+  <tr><td><a class="d-link" href="https://revopsconsulting.io" target="_blank" rel="noopener">RevOps Consulting</a></td><td>RevOps consultancy</td><td>Bundle w/ CRM implementation</td><td>N</td></tr>
+  <tr><td><a class="d-link" href="https://revopsgroup.com" target="_blank" rel="noopener">The Revenue Operations Group</a></td><td>RevOps consultancy</td><td>Referral fee</td><td>N</td></tr>
+  <tr><td><a class="d-link" href="https://activatedscale.com" target="_blank" rel="noopener">Activated Scale</a></td><td>Fractional RevOps/sales</td><td>Referral fee</td><td>N</td></tr>
+  <tr><td><a class="d-link" href="https://belkins.io" target="_blank" rel="noopener">Belkins</a></td><td>SDR outsourcing</td><td>Content bundle</td><td>N</td></tr>
+  <tr><td><a class="d-link" href="https://salesassembly.com" target="_blank" rel="noopener">Sales Assembly</a></td><td>Training firm / community</td><td>Referral for individual SDRs/AEs</td><td class="warn">Moderate</td></tr>
+  <tr><td><a class="d-link" href="https://factor8.com" target="_blank" rel="noopener">Factor 8</a></td><td>Sales training firm</td><td>Bundle, startup ICP only</td><td class="warn">Y — competing curriculum</td></tr>
+  <tr><td><a class="d-link" href="https://winningbydesign.com" target="_blank" rel="noopener">Winning by Design</a></td><td>Sales training firm</td><td>Co-sell sub-$10M ARR segment</td><td class="warn">Y — sells SDR/AE courses</td></tr>
+</table>
+<div class="d-refs"><b>Live data</b>${TBL("partner_pipeline")} · <b>Seed</b>${FILE("docs/partnerships/seed-partner-pipeline-2026-06-01.sql", "seed-partner-pipeline-2026-06-01.sql")}</div>`,
+  },
+  {
+    id: "ref-resources",
+    title: "Resource Vault",
+    subtitle: "Where the partners live (no LinkedIn)",
+    bodyHtml: `
+<p class="d-sub">Paid communities (owner = the candidate)</p>
+<p class="d-what">${L("https://www.skool.com/discovery", "Skool discovery")} · ${L("https://www.mightynetworks.com", "Mighty Networks")} · ${L("https://circle.so", "Circle")} · ${L("https://www.geneva.com", "Geneva")} · Apex BDR Club (warm) · ${L("https://modernsalespros.com", "Modern Sales Pros")} · ${L("https://www.joinpavilion.com", "Pavilion")} · ${L("https://salesconfidence.com", "Sales Confidence (UK)")}.</p>
+<p class="d-sub">Voices — newsletters, podcasts, networks</p>
+<p class="d-what">${L("https://30mpc.com", "30 Minutes to President's Club")} · ${L("https://outboundsquad.com", "Outbound Squad")} · ${L("https://repvue.com", "RepVue")} · independent Substack/Beehiiv operator newsletters · operator-host podcasts (find via ${L("https://www.listennotes.com", "Listen Notes")}) · ${L("https://www.reddit.com/r/sales", "r/sales")} heavy contributors.</p>
+<p class="d-sub">Discovery tools</p>
+<p class="d-what">${L("https://www.commonroom.io", "Common Room")} (community intelligence — $1k/mo min, revisit at 50+ partners) · ${L("https://www.clay.com", "Clay")} (enrichment + list-building) · Apollo / Listen Notes / Podchaser · the Skool + Mighty directories (free, highest brand-fit signal).</p>
+<p class="d-sub">Explicitly avoid</p>
+<p class="d-what" style="color:#a14400;">Rakuten, CJ (Commission Junction), ShareASale, Impact-as-a-marketplace (fine as attribution infra, never for discovery), and <strong>LinkedIn</strong> — per founder direction, not a channel for this role, no exceptions.</p>`,
+  },
+  {
+    id: "ref-templates",
+    title: "Outreach Library",
+    subtitle: "The 8 canon templates + 4 worked drafts",
+    bodyHtml: `
+<p class="d-what">Each template lives as a file in ${L(`${GHT}/content/partnerships/outreach`, "content/partnerships/outreach/")} — that file is the single source of truth (the auto-drafter and the chat scribe both use them). The first two sentences are the only bespoke part; the economics + ask are locked.</p>
+<p class="d-sub">First-touch templates</p>
+<table class="d-table">
+  <tr><th>Template</th><th>When</th><th>File</th></tr>
+  <tr><td>Newsletter writer</td><td>cold, newsletter operator</td><td>${FILE("content/partnerships/outreach/first-touch-newsletter.md", "first-touch-newsletter.md")}</td></tr>
+  <tr><td>Community owner</td><td>cold, paid community</td><td>${FILE("content/partnerships/outreach/first-touch-community.md", "first-touch-community.md")}</td></tr>
+  <tr><td>Podcast host</td><td>cold, operator-host show</td><td>${FILE("content/partnerships/outreach/first-touch-podcast.md", "first-touch-podcast.md")}</td></tr>
+  <tr><td>Coach complement</td><td>they run their own paid offer</td><td>${FILE("content/partnerships/outreach/first-touch-coach-complement.md", "first-touch-coach-complement.md")}</td></tr>
+  <tr><td>Open recruit</td><td>they promote a competitor</td><td>${FILE("content/partnerships/outreach/first-touch-open-recruit.md", "first-touch-open-recruit.md")}</td></tr>
+  <tr><td>Co-marketing</td><td>collaboration &gt; a link</td><td>${FILE("content/partnerships/outreach/first-touch-co-marketing.md", "first-touch-co-marketing.md")}</td></tr>
+</table>
+<p class="d-sub">Follow-up ladder</p>
+<table class="d-table">
+  <tr><th>Step</th><th>When</th><th>File</th></tr>
+  <tr><td>Follow-up 1 (value, not a nag)</td><td>+4 days, no reply</td><td>${FILE("content/partnerships/outreach/follow-up-1.md", "follow-up-1.md")}</td></tr>
+  <tr><td>Follow-up 2 (honest close)</td><td>+9 days, then mark cold</td><td>${FILE("content/partnerships/outreach/follow-up-2.md", "follow-up-2.md")}</td></tr>
+</table>
+<p class="d-sub">Worked drafts (real, dossier-cleared, canon-passed examples)</p>
+<p class="d-what">One personalized first-touch per motion — Stacy Tan (affiliate), Neil Bhuiyan (coach_complement), Tajh Walker (open_recruit), Michael Gagliano (co_marketing). They live in ${L(`${GHT}/content/partnerships/outreach/drafts`, "content/partnerships/outreach/drafts/")}. Drafts only — never sent.</p>`,
+  },
+  {
+    id: "ref-precall",
+    title: "Pre-Call Bundle",
+    subtitle: "Send these before the 15-minute call",
+    bodyHtml: `
+<p class="d-what">The bundle does the convincing so the call is a fit-check, not a pitch. Send 24–48h before. Per-candidate pieces are built fresh; build-once pieces are reusable.</p>
+<table class="d-table">
+  <tr><th>#</th><th>Asset</th><th>Type</th><th>Who builds it / where</th><th>Why</th></tr>
+  <tr><td>1</td><td>Audience-sized earnings 1-pager</td><td>per-candidate</td><td>scribe + ledger (their list size × the benchmark scenarios × 40%)</td><td>Personalized math lifts call-conversion ~2×.</td></tr>
+  <tr><td>2</td><td>90-second founder video</td><td>per-candidate</td><td>you, recorded fresh on ${L("https://loom.com", "loom")}</td><td>Face + name beats a deck; reply rate lifts 3–5×.</td></tr>
+  <tr><td>3</td><td>Course preview / sample lesson</td><td>build-once</td><td>${L("/affiliates/kit", "/affiliates/kit")} (or a /affiliates/preview if you add one)</td><td>They can't recommend what they haven't tasted.</td></tr>
+  <tr><td>4</td><td>Public kit URL</td><td>live</td><td>${L("/affiliates/kit", "/affiliates/kit")}</td><td>The kit IS the demo; self-qualification cuts dead calls.</td></tr>
+  <tr><td>5</td><td>Refund + completion stats page</td><td>build-once</td><td>ledger query → a /affiliates/transparency page</td><td>Answers the silent objection: "will this hurt my audience's trust?"</td></tr>
+  <tr><td>6</td><td>One real affiliate's anonymized earnings</td><td>build-once</td><td>ledger query → a proof-point card in the kit</td><td>One real number beats a benchmark table.</td></tr>
+  <tr><td>7</td><td>Pre-written call framing</td><td>live</td><td>already in the ${L("https://calendar.app.google/wFRpSWG2ehvNhgd4A", "booking-schedule description")}</td><td>Reframes the call as a fit-check, not a pitch.</td></tr>
+  <tr><td>8</td><td>Draft post in their voice</td><td>per-candidate</td><td>scribe (anchor on a recent piece of theirs)</td><td>Removes the "what would I even say?" friction.</td></tr>
+</table>`,
+  },
+  {
+    id: "ref-levers",
+    title: "Conversion Levers",
+    subtitle: "14 moves, ranked by phase and leverage",
+    bodyHtml: `
+<p class="d-sub">Phase 30</p>
+<table class="d-table">
+  <tr><th>Move</th><th>Why it works</th></tr>
+  <tr><td><strong>Charter cohort (first 10)</strong></td><td>Locked 40% + a charter badge + first crack at workshops. The 10 recruit your next 10 free.</td></tr>
+  <tr><td><strong>Founder-led every onboarding call</strong></td><td>Not a CSM — you. The moat against "managed" programs. Don't scale past ~50.</td></tr>
+  <tr><td><strong>The "honest no" guarantee</strong></td><td>"If your audience isn't a fit I'll tell you." Reverses social pressure; you only sign fits.</td></tr>
+  <tr><td><strong>Single-page e-signable contract</strong></td><td>No 12-page legal doc. Faster signature at the moment of yes.</td></tr>
+</table>
+<p class="d-sub">Phase 60</p>
+<table class="d-table">
+  <tr><th>Move</th><th>Why it works</th></tr>
+  <tr><td><strong>Custom landing page per affiliate</strong> (/[slug]/welcome)</td><td>Their name on a page that talks to their people. Same pattern as the existing /[slug]/workshop route.</td></tr>
+  <tr><td><strong>Public earnings transparency page</strong></td><td>Anonymized payouts + refund rate. A trust signal a SaaS tool can't manufacture.</td></tr>
+  <tr><td><strong>Kit-first ask in every first-touch</strong></td><td>Default to "want the kit?" not "want a call?" Self-qualification clears 80% of dead calls.</td></tr>
+  <tr><td><strong>Workshop co-host as the close</strong></td><td>Propose a co-hosted live workshop, not "post about us." 3–5× a link drop. System already built.</td></tr>
+  <tr><td><strong>Stripe dashboard tour mid-call</strong></td><td>Show the real interface with a pending balance. Concrete defeats every dollar objection.</td></tr>
+  <tr><td><strong>Performance ladders</strong></td><td>3 sales = feature; 10 = workshop slot; 25 = tier bump to proven. Affiliates run on micro-wins.</td></tr>
+</table>
+<p class="d-sub">Phase 90+</p>
+<table class="d-table">
+  <tr><th>Move</th><th>Why it works</th></tr>
+  <tr><td><strong>Reframe the gate as co-writing</strong></td><td>"Your first 3 posts, we draft together on a call." The most-objected-to part becomes a feature.</td></tr>
+  <tr><td><strong>Founder Friday note CC'd to affiliates</strong></td><td>They feel like operators inside the company, not vendors. Retention lever.</td></tr>
+  <tr><td><strong>Quarterly transparency report</strong></td><td>GMV / payouts / refund / NPS public PDF. Every affiliate forwards it to recruit the next 10.</td></tr>
+  <tr><td><strong>Audience-sized earnings calculator</strong></td><td>Public page: prospect enters list size, gets the scenario table. Highest conversion lift per build dollar.</td></tr>
+</table>`,
+  },
+  {
+    id: "ref-benchmarks",
+    title: "Benchmarks",
+    subtitle: "Commission, conversion math, refund thresholds",
+    bodyHtml: `
+<p class="d-sub">Commission rate vs. market</p>
+<table class="d-table">
+  <tr><th>Program</th><th>Rate</th><th>Product</th></tr>
+  <tr><td>HigherLevels (SDR/AE career courses)</td><td>40%</td><td>$997–$2,000+ one-time — closest direct comparable</td></tr>
+  <tr><td>General digital / info product</td><td>20–50%</td><td>wide range</td></tr>
+  <tr><td>B2B SaaS (subscription)</td><td>15–30% recurring</td><td>recurring inflates perceived value</td></tr>
+  <tr><td class="hi">AESDR</td><td class="hi">40%</td><td class="hi">$249/$299 one-time — top of market on rate</td></tr>
+</table>
+<p class="d-sub">Per-affiliate monthly trajectory (5k audience unless noted)</p>
+<table class="d-table">
+  <tr><th>Scenario</th><th>Click %</th><th>Conv %</th><th>Sales/mo</th><th>Affiliate earns</th></tr>
+  <tr><td>Conservative</td><td>1.0%</td><td>1.0%</td><td>0.5</td><td>$50</td></tr>
+  <tr><td>Mid</td><td>2.0%</td><td>1.5%</td><td>1.5</td><td>$150</td></tr>
+  <tr><td>Optimistic</td><td>2.5%</td><td>2.5%</td><td>3.1</td><td>$308</td></tr>
+  <tr><td>Strong endorsement</td><td>3.5%</td><td>3.0%</td><td>5.25</td><td>$523</td></tr>
+  <tr><td class="hi">$3k GMV target (15k aud, 2× sends)</td><td>2.5%</td><td>2.0%</td><td>7.5</td><td>$1,200+</td></tr>
+</table>
+<p class="d-sub">Refund-rate health</p>
+<table class="d-table">
+  <tr><th>Tier</th><th>Rate</th><th>Note</th></tr>
+  <tr><td>Well-structured professional dev</td><td>3–5%</td><td>typical for quality career content</td></tr>
+  <tr><td class="hi">AESDR target</td><td class="hi">&lt;5%</td><td class="hi">flag an affiliate at 15%, suspend at 20%</td></tr>
+</table>`,
+  },
+  {
+    id: "ref-attribution",
+    title: "Attribution Decision",
+    subtitle: "Four contenders, verified May 2026",
+    bodyHtml: `
+<table class="d-table">
+  <tr><th>&nbsp;</th><th>Custom (Supabase+Stripe)</th><th>Rewardful</th><th>PartnerStack</th><th>Impact</th></tr>
+  <tr><td>Fit for one-time product</td><td class="hi">Native — already built</td><td>Excellent (Stripe-native)</td><td>Built for SaaS recurring</td><td>Enterprise; overkill</td></tr>
+  <tr><td>Monthly cost</td><td class="hi">~$0</td><td>$49–$99/mo</td><td>~$800+/mo + surcharge</td><td>$30/mo or 3% + 2.5% network tax</td></tr>
+  <tr><td>Setup time</td><td class="hi">~0 (working today)</td><td>~1 day</td><td>~1 week</td><td>weeks</td></tr>
+  <tr><td>Best when</td><td class="hi">≤25 partners, you control the stack</td><td>self-serve dashboards become the bottleneck</td><td>you need a full PRM</td><td>large channel program, later</td></tr>
+</table>
+<div class="d-callout"><div class="d-callout-title">Verdict</div><p>Per the ${FILE("docs/partnerships/attribution-build-cost.md", "May-2026 build-cost audit")}, the custom system is not a "build" option — it's functional end-to-end in production today (partner dashboard, payout pipeline, link-click tracking all built). <strong>Stay on custom</strong> through at least Phase 30. Adopt <strong>Rewardful at $49/mo</strong> only when a trigger fires: active affiliates &gt;25 with a polish backlog, "where's my dashboard?" inquiries &gt;2/week, or a Stripe edge case the custom code can't handle. Skip PartnerStack and Impact until a full PRM is needed.</p></div>`,
+  },
+  {
+    id: "ref-metrics",
+    title: "Milestone Tracker",
+    subtitle: "The 30 / 60 / 90 targets",
+    bodyHtml: `
+<table class="d-table">
+  <tr><th>By Day 30</th><th>By Day 60</th><th>By Day 90</th></tr>
+  <tr>
+    <td>Discovery documented · 25 candidates in the pipeline · cold outreach started · attribution decision made.</td>
+    <td>10 affiliates active · 3 channel conversations open · weekly reporting live · first payout run clean.</td>
+    <td>Top affiliates on a $3k/mo trajectory · one channel deal signed or close · both motions running without daily founder involvement.</td>
+  </tr>
+</table>
+<p class="d-what">Check these against artifacts, not vibes — pipeline counts in ${TBL("partner_pipeline")}, active affiliates in ${TBL("affiliates")}, commission in ${TBL("affiliate_attributions")}, payouts in ${TBL("affiliate_payouts")}, and the live counts on ${L("/admin/tower", "the tower's Board")}.</p>`,
+  },
+  {
+    id: "ref-cli",
+    title: "CLI Vault",
+    subtitle: "The handful of terminal commands you'll actually use",
+    bodyHtml: `
+<p class="d-what">Most work is now agents-in-chat or buttons-in-the-tower. These are the few raw commands worth knowing.</p>
+<table class="d-table">
+  <tr><th>Do this</th><th>Command</th></tr>
+  <tr><td>Open Claude Code in the repo</td><td><span class="d-code">cd ~/code/aesdr &amp;&amp; claude</span></td></tr>
+  <tr><td>Get the latest code</td><td><span class="d-code">git pull</span></td></tr>
+  <tr><td>Create a new doc (e.g. a memo)</td><td><span class="d-code">touch docs/partnerships/your-file.md</span></td></tr>
+  <tr><td>Run the brand-voice checker</td><td><span class="d-code">node scripts/canon-check.mjs --soft</span></td></tr>
+  <tr><td>Save &amp; publish a change</td><td><span class="d-code">git add -A &amp;&amp; git commit -m "msg" &amp;&amp; git push</span></td></tr>
+</table>
+<p class="d-what">Database work goes through ${FILE(".claude/agents/ledger.md", "ledger")} (which shows you SQL before any write) or directly in ${L(SBTBL, "the Supabase editor")} — you rarely need raw <span class="d-code">psql</span>. The full automated-job schedule is ${FILE("docs/partnerships/cron-schedule.md", "docs/partnerships/cron-schedule.md")}.</p>`,
   },
 ];
