@@ -81,7 +81,9 @@
   display: grid;
   grid-template-columns: 260px 1fr;
   gap: 36px;
-  margin-top: -20px;
+  /* Clear the intro block. A negative top-margin here pulled the sticky
+     sidebar up over the lede's last line — give it positive separation. */
+  margin-top: 28px;
 }
 @media (max-width: 900px) {
   .frame { grid-template-columns: 1fr; gap: 12px; }
