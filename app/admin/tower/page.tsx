@@ -10,6 +10,8 @@ import {
   markManualSent,
 } from "./actions";
 import PayoutButton from "./PayoutButton";
+import AgentLever from "./AgentLever";
+import { PARTNER_AGENTS } from "@/lib/partnerships/agent-switch";
 
 /**
  * The decision board. Top half is DECISIONS — the few things waiting on one
@@ -168,6 +170,54 @@ export default async function TowerPage() {
     .eq("stream", "prospect_events")
     .maybeSingle();
 
+  // ── Agent master switches (the levers). Missing table → all OFF. ──
+  const { data: switchRows, error: switchErr } = await supabase
+    .from("agent_switches")
+    .select("agent, enabled");
+  const switchesMissing = !!switchErr;
+  const switchMap: Record<string, boolean> = {};
+  for (const s of switchRows ?? []) switchMap[s.agent as string] = s.enabled === true;
+  const anyAgentOn = PARTNER_AGENTS.some((a) => switchMap[a]);
+
+  const AGENT_META: Record<string, { label: string; cadence: string; desc: string; confirm: string }> = {
+    sentinel: {
+      label: "Sentinel",
+      cadence: "every 10 min",
+      desc: "Reads inbound replies, classifies them, and pings you for the interested ones. Sends email when it finds a bright signal.",
+      confirm: "Start Sentinel? It will read affiliates@ inbound and may email you about bright replies.",
+    },
+    scribe: {
+      label: "Scribe (drafter)",
+      cadence: "every 15 min",
+      desc: "Turns enriched candidates into ready first-touch drafts in the tower. Drafts only — never sends. You still approve every one.",
+      confirm: "Start Scribe? It will begin drafting first-touch outreach to your enriched candidates (drafts only — nothing sends without your approval).",
+    },
+    courier: {
+      label: "Courier",
+      cadence: "every 5 min",
+      desc: "Sends the drafts you've APPROVED, and logs them. Does nothing to unapproved drafts.",
+      confirm: "Start Courier? It will send any outbound rows you have already approved.",
+    },
+    followup: {
+      label: "Follow-up ladder",
+      cadence: "hourly",
+      desc: "Drafts +4d / +9d follow-ups for contacted-but-silent candidates; halts on reply. Drafts only — you approve.",
+      confirm: "Start the follow-up ladder? It will draft follow-ups for contacted candidates (drafts only — you approve each).",
+    },
+    usher: {
+      label: "Usher",
+      cadence: "every 30 min",
+      desc: "Runs workshop logistics — reminders and the replay window — for workshops you've scheduled.",
+      confirm: "Start Usher? It will run logistics for any scheduled workshops.",
+    },
+    almanac: {
+      label: "Almanac",
+      cadence: "daily 7am ET",
+      desc: "Emails you the morning standup digest of what's waiting in the tower.",
+      confirm: "Start Almanac? It will email you a daily standup digest.",
+    },
+  };
+
   const decisionCount =
     brightSignals.length + drafts.length + payoutAffiliates.length;
 
@@ -287,6 +337,43 @@ export default async function TowerPage() {
           to enable the signal board (partner_signals.handled_at).
         </div>
       )}
+
+      {/* ════ AGENT CONTROLS (the levers) ════ */}
+      <section style={{ marginBottom: "52px" }}>
+        <p style={sectionLabel}>
+          <span>Agent Controls</span>
+          <span style={{ flex: 1, height: 1, background: LIGHT }} />
+        </p>
+        {switchesMissing ? (
+          <div style={{ ...card, borderColor: CRIMSON, background: "#FBF3F3", fontFamily: SERIF, fontSize: "14px" }}>
+            <strong style={{ color: CRIMSON }}>Controls not active yet.</strong> Apply{" "}
+            <code style={{ fontFamily: MONO, fontSize: "12px" }}>supabase/migrations/20260609_agent_switches.sql</code>{" "}
+            to turn on the levers. Until then every agent is <strong>paused</strong> (the crons fail safe to OFF), so nothing is running.
+          </div>
+        ) : (
+          <div style={{ ...card }}>
+            <p style={{ fontFamily: SERIF, fontSize: "14px", color: anyAgentOn ? INK : MUTED, margin: "0 0 12px", fontStyle: anyAgentOn ? "normal" : "italic" }}>
+              {anyAgentOn
+                ? "Some agents are running. Each does only what its line says; pause any one instantly."
+                : "Everything is paused. Nothing runs until you Start a lever — and the drafting agents only ever produce drafts you approve."}
+            </p>
+            {PARTNER_AGENTS.map((a) => {
+              const m = AGENT_META[a];
+              return (
+                <AgentLever
+                  key={a}
+                  agent={a}
+                  label={m.label}
+                  cadence={m.cadence}
+                  desc={m.desc}
+                  enabled={!!switchMap[a]}
+                  startConfirm={m.confirm}
+                />
+              );
+            })}
+          </div>
+        )}
+      </section>
 
       {/* ════ DECISIONS ════ */}
       <section style={{ marginBottom: "52px" }}>

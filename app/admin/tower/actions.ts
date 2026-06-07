@@ -6,6 +6,7 @@ import { requireAdmin } from "@/lib/admin";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { canonCheck } from "@/lib/partnerships/canon-mechanical";
 import { runAffiliatePayoutBatch } from "@/app/actions/affiliate";
+import { PARTNER_AGENTS } from "@/lib/partnerships/agent-switch";
 
 /**
  * The tower's trigger-pulls. Every action here is the human gesture at an
@@ -191,6 +192,32 @@ export async function holdDraft(formData: FormData) {
 export async function executePayout(formData: FormData) {
   await requireAdmin();
   await runAffiliatePayoutBatch(formData);
+  revalidatePath("/admin/tower");
+}
+
+/**
+ * Flip an agent's master switch on or off. This is the start/pause lever —
+ * a cron does nothing on its scheduled tick unless its switch is enabled here.
+ * OFF is the default for every agent; the operator turns each on deliberately.
+ */
+export async function setAgentSwitch(formData: FormData) {
+  const user = await requireAdmin();
+  const agent = String(formData.get("agent") ?? "");
+  const enabled = String(formData.get("enabled") ?? "") === "true";
+  if (!(PARTNER_AGENTS as readonly string[]).includes(agent)) {
+    throw new Error("Unknown agent.");
+  }
+  const supabase = createAdminClient();
+  const { error } = await supabase.from("agent_switches").upsert(
+    {
+      agent,
+      enabled,
+      updated_at: new Date().toISOString(),
+      updated_by: user.email,
+    },
+    { onConflict: "agent" },
+  );
+  if (error) throw new Error(error.message);
   revalidatePath("/admin/tower");
 }
 

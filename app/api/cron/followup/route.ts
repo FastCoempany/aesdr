@@ -4,6 +4,7 @@ import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 
 import { verifyCronAuth } from "@/lib/cron-auth";
+import { isAgentEnabled } from "@/lib/partnerships/agent-switch";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { canonCheck } from "@/lib/partnerships/canon-mechanical";
 import {
@@ -53,6 +54,11 @@ function idemKey(pipelineId: string, step: number): string {
 export async function GET(request: Request) {
   const authErr = verifyCronAuth(request);
   if (authErr) return authErr;
+
+  // Master switch — OFF by default. Nothing runs until enabled in the tower.
+  if (!(await isAgentEnabled("followup"))) {
+    return NextResponse.json({ disabled: true });
+  }
 
   const supabase = createAdminClient();
   const now = Date.now();

@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
 import { verifyCronAuth } from "@/lib/cron-auth";
+import { isAgentEnabled } from "@/lib/partnerships/agent-switch";
 import { createAdminClient } from "@/utils/supabase/admin";
 
 /**
@@ -70,6 +71,11 @@ function bodyToHtml(text: string): string {
 export async function GET(request: Request) {
   const authErr = verifyCronAuth(request);
   if (authErr) return authErr;
+
+  // Master switch — OFF by default. Nothing runs until enabled in the tower.
+  if (!(await isAgentEnabled("courier"))) {
+    return NextResponse.json({ disabled: true });
+  }
 
   const supabase = createAdminClient();
   const nowIso = new Date().toISOString();
