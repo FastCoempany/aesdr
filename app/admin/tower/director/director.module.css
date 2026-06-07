@@ -5,6 +5,18 @@
 .shell {
   font-family: 'Source Serif 4', Georgia, serif;
   color: #1A1A1A;
+  /* Full-bleed escape from the admin layout's max-width:1100px container.
+     The Director's playbook is a wide reading surface — sidebar + body need
+     more horizontal room than the standard admin pages. Mirrors the parent's
+     5% padding so the content stops where the page edge logically begins. */
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  padding: 0 5%;
+  box-sizing: border-box;
 }
 
 /* ─── Iris shimmer utilities (uses the @keyframes iris already in globals.css) ─── */
