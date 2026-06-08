@@ -13,7 +13,11 @@ import Anthropic from "@anthropic-ai/sdk";
  * (degraded sweep — the founder reviews each `sourced` row before promotion).
  */
 
-const MODEL = "claude-sonnet-4-6";
+// Per-agent model is now resolved by the caller (via lib/partnerships/
+// agent-switch.getAgentModel) and passed in. We keep these as safe fallbacks
+// in case a caller forgets to pass one.
+const DEFAULT_SCOUT_MODEL = "claude-sonnet-4-6";
+const DEFAULT_DOSSIER_MODEL = "claude-opus-4-6";
 
 function client() {
   return new Anthropic(); // reads ANTHROPIC_API_KEY from env
@@ -68,9 +72,12 @@ export type ScoutRow = {
 const JSON_SCHEMA_HINT = `Return STRICT JSON: { "rows": [ { "name": str, "surface": str, "handle": str, "audience_est": int|null, "archetype": "creator"|"coach"|"alumni"|"community", "voice_fit": 1-5, "why_fit": str (1 line), "contact_path": str (NOT LinkedIn) } ] }. No prose, no markdown fences — JSON only.`;
 
 /** Run one scout sweep. Returns scored rows for the operator to review. */
-export async function runScoutSweep(sweepId: ScoutSweepId): Promise<ScoutRow[]> {
+export async function runScoutSweep(
+  sweepId: ScoutSweepId,
+  model: string = DEFAULT_SCOUT_MODEL,
+): Promise<ScoutRow[]> {
   const r = await client().messages.create({
-    model: MODEL,
+    model,
     max_tokens: 4096,
     system: SCOUT_SYSTEM,
     messages: [
@@ -122,14 +129,17 @@ export type DossierBrief = {
 const DOSSIER_SCHEMA_HINT = `Return STRICT JSON: { "audience_est": int|null, "cadence_note": str (1 line), "voice_fit": 1-5, "voice_fit_rationale": str (1 line), "conflict": "none"|"soft"|"hard"|"unknown", "conflict_note": str (1 line), "contact_path": str (NOT LinkedIn), "first_touch_angle": str (1 sentence), "verdict": "reach_out"|"skip"|"needs_research" }. No prose, no markdown fences.`;
 
 /** Enrich one candidate. */
-export async function runDossier(args: {
-  name: string;
-  surface: string | null;
-  handle: string | null;
-  existingWhyFit: string | null;
-}): Promise<DossierBrief | null> {
+export async function runDossier(
+  args: {
+    name: string;
+    surface: string | null;
+    handle: string | null;
+    existingWhyFit: string | null;
+  },
+  model: string = DEFAULT_DOSSIER_MODEL,
+): Promise<DossierBrief | null> {
   const r = await client().messages.create({
-    model: MODEL,
+    model,
     max_tokens: 1024,
     system: DOSSIER_SYSTEM,
     messages: [

@@ -6,7 +6,11 @@ import { requireAdmin } from "@/lib/admin";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { canonCheck } from "@/lib/partnerships/canon-mechanical";
 import { runAffiliatePayoutBatch } from "@/app/actions/affiliate";
-import { PARTNER_AGENTS } from "@/lib/partnerships/agent-switch";
+import {
+  PARTNER_AGENTS,
+  SUPPORTED_MODELS,
+  getAgentModel,
+} from "@/lib/partnerships/agent-switch";
 import {
   runScoutSweep,
   type ScoutSweepId,
@@ -232,6 +236,33 @@ export async function setAgentSwitch(formData: FormData) {
 }
 
 /**
+ * Set the model an LLM agent should use. Currently only scout + dossier-enrich
+ * read this (the deterministic agents don't call an LLM). Stored in
+ * agent_switches.model alongside the on/off flag.
+ */
+export async function setAgentModel(formData: FormData) {
+  const user = await requireAdmin();
+  const agent = String(formData.get("agent") ?? "");
+  const model = String(formData.get("model") ?? "");
+  if (!agent) throw new Error("Missing agent.");
+  if (!(SUPPORTED_MODELS as readonly string[]).includes(model)) {
+    throw new Error("Unknown model.");
+  }
+  const supabase = createAdminClient();
+  const { error } = await supabase.from("agent_switches").upsert(
+    {
+      agent,
+      model,
+      updated_at: new Date().toISOString(),
+      updated_by: user.email,
+    },
+    { onConflict: "agent" },
+  );
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/tower");
+}
+
+/**
  * Run one scout sweep on demand from the tower button. Inserts whatever Claude
  * returns as `sourced` rows in partner_pipeline — NOT enriched. The founder
  * reviews each row and either promotes it (to `enriched`) or rejects it (to
@@ -245,7 +276,8 @@ export async function runScoutSweepAction(formData: FormData) {
   const sweep = String(formData.get("sweep") ?? "") as ScoutSweepId;
   if (!VALID_SWEEPS.includes(sweep)) throw new Error("Unknown sweep.");
 
-  const rows = await runScoutSweep(sweep);
+  const model = await getAgentModel("scout");
+  const rows = await runScoutSweep(sweep, model);
   if (rows.length === 0) {
     // Nothing to insert; bail without an error so the UI can show "no rows".
     revalidatePath("/admin/tower");

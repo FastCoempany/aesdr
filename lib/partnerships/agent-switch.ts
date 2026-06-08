@@ -36,3 +36,40 @@ export async function isAgentEnabled(agent: PartnerAgent): Promise<boolean> {
     return false;
   }
 }
+
+// ── Per-agent model preference ──
+// Only LLM-calling agents (scout, dossier-enrich) read this. The model lives
+// in agent_switches.model; null/missing = use the default for that agent.
+// SDK 0.88 supports these four IDs — Opus 4.7/4.8 are not in this SDK yet.
+export const SUPPORTED_MODELS = [
+  "claude-opus-4-6",
+  "claude-opus-4-5",
+  "claude-opus-4-1",
+  "claude-sonnet-4-6",
+] as const;
+export type ModelId = (typeof SUPPORTED_MODELS)[number];
+
+export const AGENT_MODEL_DEFAULTS: Record<string, ModelId> = {
+  // Judgment work — defaults to Opus 4.6 (sharper voice-fit verdicts).
+  "dossier-enrich": "claude-opus-4-6",
+  // Volume list-building — defaults to Sonnet 4.6 (5x cheaper).
+  scout: "claude-sonnet-4-6",
+};
+
+export async function getAgentModel(agent: string): Promise<ModelId> {
+  const fallback = AGENT_MODEL_DEFAULTS[agent] ?? "claude-sonnet-4-6";
+  try {
+    const supabase = createAdminClient();
+    const { data, error } = await supabase
+      .from("agent_switches")
+      .select("model")
+      .eq("agent", agent)
+      .maybeSingle();
+    if (error) return fallback;
+    const m = (data?.model ?? null) as string | null;
+    if (m && (SUPPORTED_MODELS as readonly string[]).includes(m)) return m as ModelId;
+    return fallback;
+  } catch {
+    return fallback;
+  }
+}

@@ -1036,6 +1036,14 @@ export const MANUAL: RefSection[] = [
   <tr><td><strong>dossier-enrich</strong> <span class="d-badge warn">spends API tokens</span></td><td>hourly (5 rows/tick)</td><td>Takes newly-promoted enriched rows and fills in the dossier brief via Claude (audience size, voice-fit rationale, conflict, contact path). Costs ~$0.10–$0.30 per row.</td><td>Enriched rows still get the deterministic first-touch drafter; no auto-brief is added.</td></tr>
 </table>
 <p class="d-what" style="color:#2E7D32;"><strong>The safety guarantee:</strong> even when ON, the two drafting agents (scribe, followup) only ever <em>create drafts</em>. Nothing leaves the building without you pressing <span class="d-ui">Send</span> (or <span class="d-ui">Pay</span>) yourself. The switch controls whether they <em>prepare</em>; your click controls whether anything <em>happens</em>.</p>
+<p class="d-sub">Which Claude model each LLM agent uses</p>
+<p class="d-what">Only two agents call an LLM — <strong>scout</strong> (sweep buttons) and <strong>dossier-enrich</strong> (the cron lever). The deterministic ones don't use a model. Both have a small dropdown in the tower:</p>
+<table class="d-table">
+  <tr><th>Agent</th><th>Default model</th><th>Why</th><th>Selector lives at</th></tr>
+  <tr><td><strong>scout</strong></td><td>Sonnet 4.6</td><td>Volume list-building. 5× cheaper per sweep than Opus.</td><td>${L("/admin/tower", "/admin/tower → Scout &amp; Enrich")} (top of the panel)</td></tr>
+  <tr><td><strong>dossier-enrich</strong></td><td>Opus 4.6</td><td>Judgment work — sharper voice-fit verdicts and conflict reads.</td><td>${L("/admin/tower", "/admin/tower → Agent Controls")} (under the Dossier lever)</td></tr>
+</table>
+<p class="d-what">Available models in this SDK version: Opus 4.6 (newest), Opus 4.5, Opus 4.1, Sonnet 4.6. Opus 4.7/4.8 aren't in this SDK yet. Changes take effect on the next sweep button press or the next dossier-enrich cron tick.</p>
 
 <p class="d-sub">NOT on this switch (so you know the full picture)</p>
 <table class="d-table">
@@ -1072,8 +1080,8 @@ export const MANUAL: RefSection[] = [
 <p class="d-sub">Step 1 — Confirm the OFF switch is deployed</p>
 <p class="d-what">In ${L("https://vercel.com", "Vercel")} → the <strong>aesdr</strong> project → <span class="d-ui">Deployments</span>, confirm the latest deploy is <strong>Ready</strong>. From this deploy on, every agent is paused by default — even if a database column exists, the agent won't act until you start its lever. (This is the safety net: do this before Step 2.)</p>
 
-<p class="d-sub">Step 2 — Apply the four migrations</p>
-<p class="d-what">Open the ${L("https://supabase.com/dashboard/project/jwhjysjvehqslzcfpehl/sql/new", "Supabase SQL editor")} and run these. They're additive and idempotent — safe to paste all four into one window and run once. None of them start anything.</p>
+<p class="d-sub">Step 2 — Apply the five migrations</p>
+<p class="d-what">Open the ${L("https://supabase.com/dashboard/project/jwhjysjvehqslzcfpehl/sql/new", "Supabase SQL editor")} and run these. They're additive and idempotent — safe to paste all five into one window and run once. None of them start anything.</p>
 
 <p class="d-what"><strong>20260606 — the signal board</strong></p>
 <span class="d-cmd">alter table partner_signals add column if not exists handled_at timestamptz;
@@ -1106,6 +1114,9 @@ create index if not exists pp_ladder_idx
   updated_by  text
 );
 alter table agent_switches enable row level security;</span>
+
+<p class="d-what"><strong>20260610 — per-agent model preference</strong></p>
+<span class="d-cmd">alter table agent_switches add column if not exists model text;</span>
 
 <p class="d-sub">Step 3 — Start the levers you want, by hand</p>
 <p class="d-what">Go to ${L("/admin/tower", "/admin/tower")} → <strong>Agent Controls</strong>. Everything reads <em>paused</em>. Start them one at a time as you're ready — a sensible first-time order:</p>

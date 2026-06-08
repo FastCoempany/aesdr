@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 
 import { verifyCronAuth } from "@/lib/cron-auth";
-import { isAgentEnabled } from "@/lib/partnerships/agent-switch";
+import { isAgentEnabled, getAgentModel } from "@/lib/partnerships/agent-switch";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { runDossier } from "@/lib/partnerships/anthropic-agents";
 
@@ -33,6 +33,7 @@ export async function GET(request: Request) {
   }
 
   const supabase = createAdminClient();
+  const model = await getAgentModel("dossier-enrich");
   const { data: rows, error } = await supabase
     .from("partner_pipeline")
     .select("id, name, surface, handle, why_fit, voice_fit, audience_est, contact_path")
@@ -50,12 +51,15 @@ export async function GET(request: Request) {
   let failed = 0;
 
   for (const r of rows ?? []) {
-    const brief = await runDossier({
-      name: r.name as string,
-      surface: r.surface as string | null,
-      handle: r.handle as string | null,
-      existingWhyFit: r.why_fit as string | null,
-    });
+    const brief = await runDossier(
+      {
+        name: r.name as string,
+        surface: r.surface as string | null,
+        handle: r.handle as string | null,
+        existingWhyFit: r.why_fit as string | null,
+      },
+      model,
+    );
     if (!brief) {
       failed++;
       continue;

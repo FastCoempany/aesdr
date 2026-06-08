@@ -1,10 +1,13 @@
 "use client";
 
 import { setAgentSwitch } from "./actions";
+import ModelSelector from "./ModelSelector";
 
 /**
  * One agent's start/pause lever. Off by default. Starting an agent confirms
  * first (so nothing begins running by accident); pausing is immediate.
+ * For LLM-calling agents (currently only dossier-enrich among levered ones),
+ * pass `currentModel` and the model selector renders inline.
  */
 export default function AgentLever({
   agent,
@@ -13,6 +16,7 @@ export default function AgentLever({
   desc,
   enabled,
   startConfirm,
+  currentModel,
 }: {
   agent: string;
   label: string;
@@ -20,6 +24,7 @@ export default function AgentLever({
   desc: string;
   enabled: boolean;
   startConfirm: string;
+  currentModel?: string;
 }) {
   return (
     <div
@@ -64,6 +69,11 @@ export default function AgentLever({
         <div style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: "13px", color: "#6B6B6B", lineHeight: 1.5, marginTop: "3px" }}>
           {desc}
         </div>
+        {currentModel && (
+          <div style={{ marginTop: "8px" }}>
+            <ModelSelector agent={agent} current={currentModel} />
+          </div>
+        )}
       </div>
       <form
         action={setAgentSwitch}

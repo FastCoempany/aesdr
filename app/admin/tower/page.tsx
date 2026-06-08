@@ -12,8 +12,12 @@ import {
 import PayoutButton from "./PayoutButton";
 import AgentLever from "./AgentLever";
 import ScoutSweepButton from "./ScoutSweepButton";
+import ModelSelector from "./ModelSelector";
 import { promoteSourced, rejectSourced } from "./actions";
-import { PARTNER_AGENTS } from "@/lib/partnerships/agent-switch";
+import {
+  PARTNER_AGENTS,
+  AGENT_MODEL_DEFAULTS,
+} from "@/lib/partnerships/agent-switch";
 
 /**
  * The decision board. Four sections, top to bottom:
@@ -188,11 +192,20 @@ export default async function TowerPage() {
   // ── Agent master switches (the levers). Missing table → all OFF. ──
   const { data: switchRows, error: switchErr } = await supabase
     .from("agent_switches")
-    .select("agent, enabled");
+    .select("agent, enabled, model");
   const switchesMissing = !!switchErr;
   const switchMap: Record<string, boolean> = {};
-  for (const s of switchRows ?? []) switchMap[s.agent as string] = s.enabled === true;
+  const modelMap: Record<string, string | null> = {};
+  for (const s of switchRows ?? []) {
+    switchMap[s.agent as string] = s.enabled === true;
+    modelMap[s.agent as string] = (s.model as string | null) ?? null;
+  }
   const anyAgentOn = PARTNER_AGENTS.some((a) => switchMap[a]);
+  // Resolve effective model (stored value, or per-agent default).
+  const modelFor = (agent: string): string =>
+    modelMap[agent] ?? AGENT_MODEL_DEFAULTS[agent] ?? "claude-sonnet-4-6";
+  const scoutModel = modelFor("scout");
+  const dossierModel = modelFor("dossier-enrich");
 
   const AGENT_META: Record<string, { label: string; cadence: string; desc: string; confirm: string }> = {
     sentinel: {
@@ -389,6 +402,7 @@ export default async function TowerPage() {
                   desc={m.desc}
                   enabled={!!switchMap[a]}
                   startConfirm={m.confirm}
+                  currentModel={a === "dossier-enrich" ? dossierModel : undefined}
                 />
               );
             })}
@@ -404,11 +418,14 @@ export default async function TowerPage() {
         </p>
         <div style={{ ...card, marginBottom: "16px" }}>
           <p style={{ fontFamily: SERIF, fontSize: "14px", color: INK, margin: "0 0 4px" }}>
-            <strong>Run a sweep.</strong> Each press calls Claude server-side and drops ~12–15 candidates into the pipeline at <code>status=&apos;sourced&apos;</code> for you to review. Spends API tokens (~$0.30–$1.50 per sweep).
+            <strong>Run a sweep.</strong> Each press calls Claude server-side and drops ~12–15 candidates into the pipeline at <code>status=&apos;sourced&apos;</code> for you to review. Spends API tokens (~$0.30–$1.50 per sweep on Sonnet 4.6).
           </p>
           <p style={{ fontFamily: SERIF, fontSize: "13px", color: MUTED, fontStyle: "italic", margin: "0 0 14px" }}>
             Nothing reaches enriched (the auto-drafter only acts on enriched) until you click <strong>Promote</strong> on each row.
           </p>
+          <div style={{ marginBottom: "12px" }}>
+            <ModelSelector agent="scout" current={scoutModel} />
+          </div>
           <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
             <ScoutSweepButton sweep="communities" label="Sweep 1 · Paid communities" />
             <ScoutSweepButton sweep="newsletters_podcasts" label="Sweep 2 · Newsletters + podcasts" />
