@@ -19,7 +19,22 @@ import {
   type ScoutSweepId,
 } from "@/lib/partnerships/anthropic-agents";
 import { logPartnerEvent, logPartnerEvents } from "@/lib/partnerships/events";
-import { attemptEmailFind, emailFinderConfigured } from "@/lib/partnerships/email-finder";
+import {
+  attemptEmailFind,
+  emailFinderConfigured,
+  sanitizeDomainInput,
+} from "@/lib/partnerships/email-finder";
+
+/** Best-effort sanitize of a model-reported domain — bad output becomes null,
+ *  never an error. */
+function safeDomain(input: string | null | undefined): string | null {
+  if (!input) return null;
+  try {
+    return sanitizeDomainInput(input);
+  } catch {
+    return null;
+  }
+}
 import {
   renderFirstTouch,
   extractEmail,
@@ -633,6 +648,7 @@ export async function runDossierNow(formData: FormData) {
           contactPath: brief.contact_path,
           handle: row.handle as string | null,
           extraText: updated_why_fit,
+          domainOverride: safeDomain(brief.own_domain),
           via: "dossier",
           actor: "dossier",
         });
@@ -760,12 +776,17 @@ export async function findEmailNow(formData: FormData) {
     if (error) throw new Error(error.message);
     if (!row) throw new Error("Candidate not found.");
 
+    // Operator-pasted domain wins; a bad paste throws with a clear message.
+    const pasted = String(formData.get("domain") ?? "").trim();
+    const domainOverride = pasted ? sanitizeDomainInput(pasted) : null;
+
     const result = await attemptEmailFind({
       pipelineId: id,
       name: row.name as string,
       contactPath: row.contact_path as string | null,
       handle: row.handle as string | null,
       extraText: row.why_fit as string | null,
+      domainOverride,
       via: "find-now",
       actor: user.email,
     });
@@ -774,7 +795,7 @@ export async function findEmailNow(formData: FormData) {
     }
     if (result.skipped === "no_domain") {
       throw new Error(
-        "No personal site/domain on their record to search against. Run (or re-run) the brief — it usually surfaces their site — then try again.",
+        "Their record only has platform links (Skool, Substack, …) — no personal site to search against. If you know their site, paste it in the box next to Find email; otherwise the DM path on the contact line is the move.",
       );
     }
     okParam = !result.found ? "email_none" : result.applied ? "email" : "email_risky";

@@ -75,6 +75,44 @@ ${SIGNOFF}`,
   },
 };
 
+// Words kept lowercase when title-casing a community slug.
+const SLUG_STOPWORDS = new Set(["the", "and", "for", "of", "in", "on", "to", "a", "with"]);
+
+/**
+ * "[COMMUNITY]" must read like the community's name, not its URL — an email
+ * that says "skool.com/b2b-sales-university-5171 is full of exactly who…"
+ * fails the read-aloud test. Turn a platform URL/slug into words
+ * ("B2B Sales University"); anything already name-like passes through.
+ */
+export function humanizeCommunityName(raw: string): string {
+  let v = raw.trim();
+  try {
+    if (/^https?:\/\//i.test(v)) {
+      v = new URL(v).pathname.split("/").filter(Boolean).pop() ?? v;
+    }
+  } catch {
+    /* not a parseable URL — keep going with the raw string */
+  }
+  // Bare "skool.com/some-slug" without protocol.
+  if (/^[a-z0-9.-]+\.[a-z]{2,}\//i.test(v)) {
+    v = v.split("/").filter(Boolean).pop() ?? v;
+  }
+  if (/^[a-z0-9-]+$/i.test(v) && v.includes("-")) {
+    v = v
+      .replace(/-\d+$/, "") // platform ID suffixes like -5171
+      .split("-")
+      .map((w) =>
+        SLUG_STOPWORDS.has(w.toLowerCase())
+          ? w.toLowerCase()
+          : /^[a-z]\d|^\d/.test(w.toLowerCase())
+            ? w.toUpperCase() // b2b → B2B, 30mpc → 30MPC
+            : w.charAt(0).toUpperCase() + w.slice(1),
+      )
+      .join(" ");
+  }
+  return v;
+}
+
 /** Pick the template from the pipeline row's surface. Defaults to newsletter. */
 export function pickTemplate(surface: string | null): OutreachTemplateId {
   const s = (surface || "").toLowerCase();
@@ -107,7 +145,9 @@ export function renderFirstTouch(row: {
   const t = TEMPLATES[templateId];
 
   const firstName = row.name.trim().split(/\s+/)[0] || row.name;
-  const communityName = row.handle?.trim() || row.surface?.trim() || row.name;
+  const communityName = humanizeCommunityName(
+    row.handle?.trim() || row.surface?.trim() || row.name,
+  );
 
   const replacements: Record<string, string> = {
     "[NAME]": firstName,

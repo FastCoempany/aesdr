@@ -12,7 +12,21 @@ import { isAgentEnabled, getAgentModel } from "@/lib/partnerships/agent-switch";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { runDossier, verdictNextAction } from "@/lib/partnerships/anthropic-agents";
 import { logPartnerEvent } from "@/lib/partnerships/events";
-import { attemptEmailFind, emailFinderConfigured } from "@/lib/partnerships/email-finder";
+import {
+  attemptEmailFind,
+  emailFinderConfigured,
+  sanitizeDomainInput,
+} from "@/lib/partnerships/email-finder";
+
+/** Model-reported domain → bare host, or null if it isn't one. */
+function safeDomain(input: string | null | undefined): string | null {
+  if (!input) return null;
+  try {
+    return sanitizeDomainInput(input);
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Dossier auto-enrich. Runs hourly when the dossier-enrich switch is ON. Takes
@@ -105,6 +119,7 @@ export async function GET(request: Request) {
           contactPath: brief.contact_path,
           handle: r.handle as string | null,
           extraText: updated_why_fit,
+          domainOverride: safeDomain(brief.own_domain),
           via: "dossier",
           actor: "dossier",
         });

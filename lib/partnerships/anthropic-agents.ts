@@ -124,11 +124,14 @@ export type DossierBrief = {
   contact_path: string;
   first_touch_angle: string;
   verdict: "reach_out" | "skip" | "needs_research";
+  /** Their own website domain, if the research found one — the email
+   *  finder's primary input. */
+  own_domain?: string | null;
   /** Set by the email-finder pass after the brief, never by the model. */
   found_email?: { email: string; status: string; verified: boolean } | null;
 };
 
-const DOSSIER_SCHEMA_HINT = `Return STRICT JSON: { "audience_est": int|null, "cadence_note": str (1 line), "voice_fit": 1-5, "voice_fit_rationale": str (1 line), "conflict": "none"|"soft"|"hard"|"unknown", "conflict_note": str (1 line), "contact_path": str (NOT LinkedIn), "first_touch_angle": str (1 sentence), "verdict": "reach_out"|"skip"|"needs_research" }. No prose, no markdown fences.`;
+const DOSSIER_SCHEMA_HINT = `Return STRICT JSON: { "audience_est": int|null, "cadence_note": str (1 line), "voice_fit": 1-5, "voice_fit_rationale": str (1 line), "conflict": "none"|"soft"|"hard"|"unknown", "conflict_note": str (1 line), "contact_path": str (NOT LinkedIn), "own_domain": str|null (their personal or company website domain, e.g. "janedoe.com" — their OWN site only, never a platform like skool/substack/circle/linkedin/youtube; null if they don't have one), "first_touch_angle": str (1 sentence), "verdict": "reach_out"|"skip"|"needs_research" }. No prose, no markdown fences.`;
 
 /** The pipeline next_action line each dossier verdict maps to — shared by the
  *  hourly cron and the room's Run-brief-now action. */
