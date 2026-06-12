@@ -8,6 +8,7 @@ import { notFound } from "next/navigation";
 
 import { createAdminClient } from "@/utils/supabase/admin";
 import type { DossierBrief } from "@/lib/partnerships/anthropic-agents";
+import { inboxSearchUrl } from "@/lib/partnerships/inbox-link";
 import TowerButton from "../../TowerButton";
 import twr from "../../tower.module.css";
 import {
@@ -200,7 +201,7 @@ export default async function CandidateRoomPage({
     if (hasReadyDraft) next = "A draft is in the house — approve or hold it below.";
     else if (hasApprovedDraft) next = `Approved draft queued — courier sends it on its next tick${levers["courier"] ? "" : " once its lever is started"}.`;
     else if (!brief && !hasLegacyBrief)
-      next = `Waiting on a research brief — ${levers["dossier-enrich"] ? "dossier-enrich runs hourly" : "dossier-enrich is paused"}, or press Run brief now.`;
+      next = `Waiting on a research brief — ${levers["dossier-enrich"] ? "dossier-enrich runs hourly (:33 UTC)" : "dossier-enrich is paused"}, or press Run brief now. Waiting is fine; pressing is faster.`;
     else if ((vf ?? 0) >= 4)
       next = `Brief done — ${levers["scribe"] ? "scribe drafts on its next tick (≤15 min)" : "scribe is paused"}, or press Draft now.`;
     else
@@ -313,6 +314,12 @@ export default async function CandidateRoomPage({
           </form>
         )}
       </div>
+      {(status === "sourced" || status === "enriched") && (
+        <p style={{ fontFamily: MONO, fontSize: "10px", lineHeight: 1.6, color: MUTED, margin: "0 0 8px" }}>
+          Run brief = one Anthropic research call (small spend, confirmed first). Draft now = free template fill.
+          Neither sends anything — every email still waits for your approve in Decisions.
+        </p>
+      )}
 
       {/* ── The research brief ── */}
       <p style={sectionLabel}>Research brief</p>
@@ -441,7 +448,9 @@ export default async function CandidateRoomPage({
       {replies.length === 0 ? (
         <div style={card}>
           <p style={{ fontFamily: SERIF, fontSize: "13.5px", fontStyle: "italic", color: MUTED, margin: 0 }}>
-            Nothing yet. When they write back, sentinel matches the email to this room.
+            Nothing yet. When they write back, sentinel (checks every 10 minutes) matches the email to this room,
+            files a bright signal in the tower&apos;s Decisions, and emails you a ping. The snippet lands here;
+            the full thread stays in your inbox, one click away.
           </p>
         </div>
       ) : (
@@ -454,9 +463,18 @@ export default async function CandidateRoomPage({
                 {r.from_addr as string} · {timeAgo(r.received_at as string)}
               </span>
             </div>
-            <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.6, color: INK, margin: 0, whiteSpace: "pre-wrap" }}>
+            <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.6, color: INK, margin: "0 0 10px", whiteSpace: "pre-wrap" }}>
               {((r.text_body as string | null) ?? "").slice(0, 600) || "(empty body)"}
             </p>
+            <a
+              href={inboxSearchUrl(r.from_addr as string)}
+              target="_blank"
+              rel="noreferrer"
+              className={twr.lnk}
+              style={{ fontFamily: MONO, fontSize: "11px", color: CRIMSON }}
+            >
+              open the thread in your inbox ↗
+            </a>
           </div>
         ))
       )}

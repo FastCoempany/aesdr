@@ -22,7 +22,9 @@ import AgentLever from "./AgentLever";
 import ScoutSweepButton from "./ScoutSweepButton";
 import ModelSelector from "./ModelSelector";
 import TowerButton from "./TowerButton";
+import Hint from "./Hint";
 import twr from "./tower.module.css";
+import { inboxSearchUrl, looksLikeEmail } from "@/lib/partnerships/inbox-link";
 import { promoteSourced, rejectSourced } from "./actions";
 import {
   PARTNER_AGENTS,
@@ -382,6 +384,7 @@ export default async function TowerPage({
       <section style={{ marginBottom: "52px" }}>
         <p style={sectionLabel}>
           <span>Agent Controls</span>
+          <Hint tip="Each lever starts or pauses one agent's scheduled run. Sensible first order: almanac (a digest email to you), then sentinel (sorts replies), then scribe (drafts), then courier (sends approved drafts). Pausing is instant and always safe." />
           <span style={{ flex: 1, height: 1, background: LIGHT }} />
         </p>
         {switchesMissing ? (
@@ -420,6 +423,7 @@ export default async function TowerPage({
       <section style={{ marginBottom: "52px" }}>
         <p style={sectionLabel}>
           <span>Scout &amp; Enrich</span>
+          <Hint tip="Start here when the pipeline is thin. Run a sweep, review each card below, Promote the good ones. A promoted candidate moves to the map's Enriched column and gets a room — research and drafting happen there or on the levers' schedule. Then your next stop is Decisions, once drafts appear." />
           <span style={{ flex: 1, height: 1, background: LIGHT }} />
           <Link href="/admin/tower/pipeline" className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", color: CRIMSON }}>
             open the map →
@@ -548,6 +552,7 @@ export default async function TowerPage({
       <section style={{ marginBottom: "52px" }}>
         <p style={sectionLabel}>
           <span>Decisions</span>
+          <Hint tip="The only place anything leaves the building. Send approves an email for courier's next run (within 5 minutes while its lever is on); Hold pulls it back; manual rows you send yourself and then Mark sent. Empty lane means nothing needs you — wait, the agents are working." />
           <span style={{ flex: 1, height: 1, background: LIGHT }} />
         </p>
 
@@ -675,10 +680,17 @@ export default async function TowerPage({
                 <p style={{ fontFamily: SERIF, fontSize: "15px", lineHeight: 1.5, color: INK, margin: "0 0 14px" }}>
                   {s.summary || "(signal)"}
                 </p>
-                <form action={handleSignal}>
-                  <input type="hidden" name="id" value={s.id} />
-                  <TowerButton variant="ghost" pendingLabel="Clearing…">Mark handled</TowerButton>
-                </form>
+                <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
+                  <form action={handleSignal}>
+                    <input type="hidden" name="id" value={s.id} />
+                    <TowerButton variant="ghost" pendingLabel="Clearing…">Mark handled</TowerButton>
+                  </form>
+                  {looksLikeEmail(s.source) && (
+                    <a href={inboxSearchUrl(s.source)} target="_blank" rel="noreferrer" className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", color: CRIMSON }}>
+                      open in your inbox ↗
+                    </a>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -731,6 +743,7 @@ export default async function TowerPage({
       <section>
         <p style={sectionLabel}>
           <span>Board</span>
+          <Hint tip="Read-only situational awareness — nothing here needs a click. Each pipeline stage is a door: click it to open the map at that column." />
           <span style={{ flex: 1, height: 1, background: LIGHT }} />
         </p>
 
