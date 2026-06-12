@@ -19,6 +19,8 @@ import PayoutButton from "./PayoutButton";
 import AgentLever from "./AgentLever";
 import ScoutSweepButton from "./ScoutSweepButton";
 import ModelSelector from "./ModelSelector";
+import TowerButton from "./TowerButton";
+import twr from "./tower.module.css";
 import { promoteSourced, rejectSourced } from "./actions";
 import {
   PARTNER_AGENTS,
@@ -290,30 +292,6 @@ export default async function TowerPage({
     padding: "18px 20px",
     marginBottom: "12px",
   };
-  const btnPrimary: React.CSSProperties = {
-    fontFamily: "'Barlow Condensed', sans-serif",
-    fontSize: "13px",
-    fontWeight: 700,
-    letterSpacing: ".14em",
-    textTransform: "uppercase",
-    color: "#FFFFFF",
-    background: CRIMSON,
-    border: "none",
-    padding: "9px 18px",
-    cursor: "pointer",
-  };
-  const btnGhost: React.CSSProperties = {
-    fontFamily: "'Barlow Condensed', sans-serif",
-    fontSize: "13px",
-    fontWeight: 700,
-    letterSpacing: ".14em",
-    textTransform: "uppercase",
-    color: MUTED,
-    background: "transparent",
-    border: `1px solid ${LIGHT}`,
-    padding: "8px 16px",
-    cursor: "pointer",
-  };
   const tierChip = (tier: string): React.CSSProperties => ({
     fontFamily: MONO,
     fontSize: "9px",
@@ -460,6 +438,28 @@ export default async function TowerPage({
             </p>
           </div>
         )}
+        {/* The candidate path — what each button in this section actually moves. */}
+        <div style={{ ...card, marginBottom: "16px" }}>
+          <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".18em", textTransform: "uppercase", color: MUTED, display: "block", marginBottom: "10px" }}>
+            The path a candidate takes
+          </span>
+          <div className={twr.flow}>
+            <span className={twr.flowStatus}>sourced</span>
+            <span className={twr.flowMove}>→ <b className={twr.flowYou}>you: Promote</b> →</span>
+            <span className={twr.flowStatus}>enriched</span>
+            <span className={twr.flowMove}>→ dossier-enrich (hourly lever): research brief →</span>
+            <span className={twr.flowMove}>scribe (15-min lever, voice-fit ≥ 4): drafts the first-touch →</span>
+            <span className={twr.flowStatus}>ready</span>
+            <span className={twr.flowMove}>→ <b className={twr.flowYou}>you: Send</b> →</span>
+            <span className={twr.flowStatus}>approved</span>
+            <span className={twr.flowMove}>→ courier (5-min lever): emails it →</span>
+            <span className={twr.flowStatus}>contacted</span>
+            <span className={twr.flowMove}>→ replies land → sentinel files them as signals on this board</span>
+          </div>
+          <p style={{ fontFamily: SERIF, fontSize: "12.5px", fontStyle: "italic", color: MUTED, margin: "10px 0 0" }}>
+            Each chip is a value in the row&apos;s <code>status</code> column. Lever-gated steps run only while that agent reads <strong>running</strong> in Agent Controls — paused means the candidate waits at its current chip. Your two gestures, <strong>Promote</strong> and <strong>Send</strong>, are the only ones that commit anything.
+          </p>
+        </div>
         <div style={{ ...card, marginBottom: "16px" }}>
           <p style={{ fontFamily: SERIF, fontSize: "14px", color: INK, margin: "0 0 4px" }}>
             <strong>Run a sweep.</strong> Each press calls Claude server-side and drops ~12–15 candidates into the pipeline at <code>status=&apos;sourced&apos;</code> for you to review. Spends API tokens (~$0.30–$1.50 per sweep on Sonnet 4.6).
@@ -479,9 +479,12 @@ export default async function TowerPage({
 
         {sourced.length > 0 && (
           <div>
-            <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: INK, display: "block", marginBottom: "10px" }}>
+            <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: INK, display: "block", marginBottom: "6px" }}>
               {sourced.length} candidate{sourced.length > 1 ? "s" : ""} awaiting review
             </span>
+            <p style={{ fontFamily: SERIF, fontSize: "12.5px", fontStyle: "italic", color: MUTED, margin: "0 0 10px" }}>
+              Promote changes one database cell — the row&apos;s status, <code>sourced → enriched</code> — which is the queue dossier-enrich and scribe read from. Reject parks the row at <code>passed</code>; nothing is deleted.
+            </p>
             {sourced.map((s) => (
               <div key={s.id} style={card}>
                 <div style={{ display: "flex", alignItems: "baseline", gap: "10px", flexWrap: "wrap", marginBottom: "4px" }}>
@@ -502,11 +505,11 @@ export default async function TowerPage({
                 <div style={{ display: "flex", gap: "8px" }}>
                   <form action={promoteSourced}>
                     <input type="hidden" name="id" value={s.id} />
-                    <button type="submit" style={btnPrimary}>Promote → enriched</button>
+                    <TowerButton pendingLabel="Promoting…">Promote → enriched</TowerButton>
                   </form>
                   <form action={rejectSourced}>
                     <input type="hidden" name="id" value={s.id} />
-                    <button type="submit" style={btnGhost}>Reject</button>
+                    <TowerButton variant="ghost" pendingLabel="Rejecting…">Reject</TowerButton>
                   </form>
                 </div>
               </div>
@@ -538,9 +541,9 @@ export default async function TowerPage({
               </span>
               {emailDraftCount > 1 && (
                 <form action={approveAllReady}>
-                  <button type="submit" style={btnPrimary}>
+                  <TowerButton pendingLabel="Approving all…">
                     Send all {emailDraftCount} email
-                  </button>
+                  </TowerButton>
                 </form>
               )}
             </div>
@@ -580,17 +583,17 @@ export default async function TowerPage({
                     {isManual ? (
                       <form action={markManualSent}>
                         <input type="hidden" name="id" value={d.id} />
-                        <button type="submit" style={btnPrimary}>Mark sent</button>
+                        <TowerButton pendingLabel="Marking…">Mark sent</TowerButton>
                       </form>
                     ) : (
                       <form action={approveDraft}>
                         <input type="hidden" name="id" value={d.id} />
-                        <button type="submit" style={btnPrimary}>Send</button>
+                        <TowerButton pendingLabel="Approving…">Send</TowerButton>
                       </form>
                     )}
                     <form action={holdDraft}>
                       <input type="hidden" name="id" value={d.id} />
-                      <button type="submit" style={btnGhost}>Hold</button>
+                      <TowerButton variant="ghost" pendingLabel="Holding…">Hold</TowerButton>
                     </form>
                   </div>
 
@@ -612,9 +615,9 @@ export default async function TowerPage({
                         rows={10}
                         style={{ width: "100%", fontFamily: SERIF, fontSize: "14px", lineHeight: 1.6, padding: "10px", border: `1px solid ${LIGHT}`, color: INK, background: "#fff", resize: "vertical" }}
                       />
-                      <button type="submit" style={{ ...btnGhost, marginTop: "8px" }}>
+                      <TowerButton variant="ghost" pendingLabel="Checking…" style={{ marginTop: "8px" }}>
                         Save &amp; re-check canon
-                      </button>
+                      </TowerButton>
                     </form>
                   </details>
                 </div>
@@ -643,7 +646,7 @@ export default async function TowerPage({
                 </p>
                 <form action={handleSignal}>
                   <input type="hidden" name="id" value={s.id} />
-                  <button type="submit" style={btnGhost}>Mark handled</button>
+                  <TowerButton variant="ghost" pendingLabel="Clearing…">Mark handled</TowerButton>
                 </form>
               </div>
             ))}

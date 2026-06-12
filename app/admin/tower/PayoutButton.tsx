@@ -1,6 +1,7 @@
 "use client";
 
 import { executePayout } from "./actions";
+import TowerButton from "./TowerButton";
 
 /**
  * The money gate. A real Stripe Connect transfer runs on click, so it asks for
@@ -30,32 +31,14 @@ export default function PayoutButton({
     );
   }
   return (
-    <form
-      action={executePayout}
-      onSubmit={(e) => {
-        if (!confirm(`Send ${amountLabel} to this affiliate via Stripe now? This moves real money.`)) {
-          e.preventDefault();
-        }
-      }}
-    >
+    <form action={executePayout}>
       <input type="hidden" name="affiliateId" value={affiliateId} />
-      <button
-        type="submit"
-        style={{
-          fontFamily: "'Barlow Condensed', sans-serif",
-          fontSize: "13px",
-          fontWeight: 700,
-          letterSpacing: ".14em",
-          textTransform: "uppercase",
-          color: "#FFFFFF",
-          background: "#8B1A1A",
-          border: "none",
-          padding: "9px 18px",
-          cursor: "pointer",
-        }}
+      <TowerButton
+        pendingLabel="Sending…"
+        confirmMessage={`Send ${amountLabel} to this affiliate via Stripe now? This moves real money.`}
       >
         Pay {amountLabel}
-      </button>
+      </TowerButton>
     </form>
   );
 }

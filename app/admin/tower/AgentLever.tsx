@@ -2,6 +2,7 @@
 
 import { setAgentSwitch } from "./actions";
 import ModelSelector from "./ModelSelector";
+import TowerButton from "./TowerButton";
 
 /**
  * One agent's start/pause lever. Off by default. Starting an agent confirms
@@ -75,32 +76,16 @@ export default function AgentLever({
           </div>
         )}
       </div>
-      <form
-        action={setAgentSwitch}
-        onSubmit={(e) => {
-          if (!enabled && !confirm(startConfirm)) e.preventDefault();
-        }}
-      >
+      <form action={setAgentSwitch}>
         <input type="hidden" name="agent" value={agent} />
         <input type="hidden" name="enabled" value={enabled ? "false" : "true"} />
-        <button
-          type="submit"
-          style={{
-            fontFamily: "'Barlow Condensed', sans-serif",
-            fontSize: "12px",
-            fontWeight: 700,
-            letterSpacing: ".14em",
-            textTransform: "uppercase",
-            color: enabled ? "#6B6B6B" : "#FFFFFF",
-            background: enabled ? "transparent" : "#2E7D32",
-            border: enabled ? "1px solid #E8E4DF" : "none",
-            padding: "8px 16px",
-            cursor: "pointer",
-            whiteSpace: "nowrap",
-          }}
+        <TowerButton
+          variant={enabled ? "ghost" : "start"}
+          confirmMessage={enabled ? undefined : startConfirm}
+          pendingLabel={enabled ? "Pausing…" : "Starting…"}
         >
           {enabled ? "Pause" : "Start"}
-        </button>
+        </TowerButton>
       </form>
     </div>
   );
