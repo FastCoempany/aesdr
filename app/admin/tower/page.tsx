@@ -13,6 +13,7 @@ import {
   approveDraft,
   approveAllReady,
   holdDraft,
+  releaseDraft,
   handleSignal,
   editDraft,
   markManualSent,
@@ -150,6 +151,24 @@ export default async function TowerPage({
     (d) => (d.send_channel ?? "email") === "email",
   ).length;
 
+  // The shelf — drafts that exist but aren't in the ready lane: approved rows
+  // waiting on courier's next tick, held rows you pulled back, failed sends.
+  // Without this they're invisible outside their candidate's room.
+  const { data: shelfRows } = await supabase
+    .from("partner_outbound_queue")
+    .select("id, to_addr, subject, status, error, related_pipeline_id")
+    .in("status", ["approved", "held", "failed"])
+    .order("created_at", { ascending: true })
+    .limit(30);
+  const shelf = (shelfRows ?? []) as Array<{
+    id: string;
+    to_addr: string;
+    subject: string;
+    status: string;
+    error: string | null;
+    related_pipeline_id: string | null;
+  }>;
+
   // ── Payouts (the money gate): cleared-but-unpaid commission per affiliate. ──
   const { data: clearedAttr } = await supabase
     .from("affiliate_attributions")
@@ -284,8 +303,13 @@ export default async function TowerPage({
     },
   };
 
+  // Failed sends count as waiting-on-you (Release → re-approve fixes them);
+  // held and queued rows don't — held is deliberate, queued is in flight.
   const decisionCount =
-    brightSignals.length + drafts.length + payoutAffiliates.length;
+    brightSignals.length +
+    drafts.length +
+    payoutAffiliates.length +
+    shelf.filter((s) => s.status === "failed").length;
 
   // ── Styles ──
   const sectionLabel: React.CSSProperties = {
@@ -659,6 +683,47 @@ export default async function TowerPage({
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {/* The shelf — approved (queued), held, and failed drafts. Nothing on
+            it needs composing; it's where drafts wait, by state. */}
+        {shelf.length > 0 && (
+          <div style={{ marginBottom: "28px" }}>
+            <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: INK, display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
+              On the shelf · {shelf.length}
+              <Hint tip="Drafts that exist but aren't asking for a decision. Queued = approved, courier sends on its next run (≤5 min while its lever is on). Held = you pulled it back; Release puts it back in the lane above. Failed = the send errored; Release re-readies it for another approve." />
+            </span>
+            {shelf.map((s) => (
+              <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap", padding: "8px 0", borderBottom: `1px solid ${LIGHT}` }}>
+                <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".1em", textTransform: "uppercase", color: s.status === "failed" ? CRIMSON : s.status === "held" ? "#a14400" : MUTED, border: `1px solid currentcolor`, padding: "1px 7px", whiteSpace: "nowrap" }}>
+                  {s.status === "approved" ? "queued" : s.status}
+                </span>
+                <span style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "320px" }}>
+                  {s.subject}
+                </span>
+                <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED }}>→ {s.to_addr}</span>
+                {s.status === "failed" && s.error && (
+                  <span style={{ fontFamily: MONO, fontSize: "10.5px", color: CRIMSON }}>{s.error.slice(0, 80)}</span>
+                )}
+                <span style={{ marginLeft: "auto", display: "flex", gap: "10px", alignItems: "center" }}>
+                  {s.related_pipeline_id && (
+                    <Link href={`/admin/tower/candidate/${s.related_pipeline_id}`} className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", color: CRIMSON }}>
+                      their room →
+                    </Link>
+                  )}
+                  {(s.status === "held" || s.status === "failed") && (
+                    <form action={releaseDraft}>
+                      <input type="hidden" name="id" value={s.id} />
+                      <TowerButton variant="ghost" pendingLabel="Releasing…">Release</TowerButton>
+                    </form>
+                  )}
+                  {s.status === "approved" && (
+                    <span style={{ fontFamily: MONO, fontSize: "10.5px", color: MUTED }}>courier sends ≤5 min</span>
+                  )}
+                </span>
+              </div>
+            ))}
           </div>
         )}
 
