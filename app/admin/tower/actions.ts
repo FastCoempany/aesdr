@@ -19,6 +19,7 @@ import {
   type ScoutSweepId,
 } from "@/lib/partnerships/anthropic-agents";
 import { logPartnerEvent, logPartnerEvents } from "@/lib/partnerships/events";
+import { attemptEmailFind, emailFinderConfigured } from "@/lib/partnerships/email-finder";
 import {
   renderFirstTouch,
   extractEmail,
@@ -620,6 +621,25 @@ export async function runDossierNow(formData: FormData) {
       kind: "brief_written",
       detail: { model, verdict: brief.verdict, triggered_by: user.email },
     });
+
+    // Finder pass rides the brief: if it named their own site but no email,
+    // look one up. A finder hiccup never fails the brief — the room has its
+    // own Find email button for retries.
+    if (emailFinderConfigured()) {
+      try {
+        await attemptEmailFind({
+          pipelineId: id,
+          name: row.name as string,
+          contactPath: brief.contact_path,
+          handle: row.handle as string | null,
+          extraText: updated_why_fit,
+          via: "dossier",
+          actor: "dossier",
+        });
+      } catch {
+        /* surfaced via the room's Find email button instead */
+      }
+    }
   } catch (e) {
     failure = e instanceof Error ? e.message : String(e);
   }
@@ -715,6 +735,100 @@ export async function draftNow(formData: FormData) {
     redirect(`/admin/tower/candidate/${id}?err=${encodeURIComponent(failure.slice(0, 300))}`);
   }
   redirect(`/admin/tower/candidate/${id}?ok=draft`);
+}
+
+/**
+ * Look up an email for ONE candidate from their room — one Prospeo credit,
+ * only charged on a hit. Verified results go straight into the contact path
+ * (drafts then route as real email sends); unverified results wait on the
+ * brief card for an explicit "use anyway".
+ */
+export async function findEmailNow(formData: FormData) {
+  const user = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) throw new Error("Missing id.");
+
+  let failure: string | null = null;
+  let okParam = "email";
+  try {
+    const supabase = createAdminClient();
+    const { data: row, error } = await supabase
+      .from("partner_pipeline")
+      .select("id, name, contact_path, handle, why_fit")
+      .eq("id", id)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!row) throw new Error("Candidate not found.");
+
+    const result = await attemptEmailFind({
+      pipelineId: id,
+      name: row.name as string,
+      contactPath: row.contact_path as string | null,
+      handle: row.handle as string | null,
+      extraText: row.why_fit as string | null,
+      via: "find-now",
+      actor: user.email,
+    });
+    if (result.skipped === "has_email") {
+      throw new Error("The contact path already has an email — nothing to find.");
+    }
+    if (result.skipped === "no_domain") {
+      throw new Error(
+        "No personal site/domain on their record to search against. Run (or re-run) the brief — it usually surfaces their site — then try again.",
+      );
+    }
+    okParam = !result.found ? "email_none" : result.applied ? "email" : "email_risky";
+  } catch (e) {
+    failure = e instanceof Error ? e.message : String(e);
+  }
+
+  revalidateCandidate(id);
+  if (failure !== null) {
+    redirect(`/admin/tower/candidate/${id}?err=${encodeURIComponent(failure.slice(0, 300))}`);
+  }
+  redirect(`/admin/tower/candidate/${id}?ok=${okParam}`);
+}
+
+/**
+ * Operator override: take the unverified (catch-all/unknown) email the finder
+ * surfaced and put it on the contact path anyway — labeled so the risk stays
+ * visible all the way to the draft.
+ */
+export async function useFoundEmail(formData: FormData) {
+  const user = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) throw new Error("Missing id.");
+
+  const supabase = createAdminClient();
+  const { data: row, error } = await supabase
+    .from("partner_pipeline")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!row) throw new Error("Candidate not found.");
+
+  const fe = (row.dossier_brief as { found_email?: { email: string; status: string } } | null)
+    ?.found_email;
+  if (!fe?.email) throw new Error("No found email on file for this candidate.");
+
+  const { error: upErr } = await supabase
+    .from("partner_pipeline")
+    .update({
+      contact_path: `${fe.email} (unverified ${fe.status.toLowerCase()} — verify before send) · ${(row.contact_path as string | null) ?? ""}`.replace(/ · $/, ""),
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id);
+  if (upErr) throw new Error(upErr.message);
+
+  await logPartnerEvent({
+    pipelineId: id,
+    actor: user.email,
+    kind: "email_used",
+    detail: { email: fe.email, status: fe.status },
+  });
+  revalidateCandidate(id);
+  redirect(`/admin/tower/candidate/${id}?ok=email`);
 }
 
 /** Clear a signal off the decision board. */

@@ -12,6 +12,7 @@ import { isAgentEnabled, getAgentModel } from "@/lib/partnerships/agent-switch";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { runDossier, verdictNextAction } from "@/lib/partnerships/anthropic-agents";
 import { logPartnerEvent } from "@/lib/partnerships/events";
+import { attemptEmailFind, emailFinderConfigured } from "@/lib/partnerships/email-finder";
 
 /**
  * Dossier auto-enrich. Runs hourly when the dossier-enrich switch is ON. Takes
@@ -93,6 +94,24 @@ export async function GET(request: Request) {
       kind: "brief_written",
       detail: { model, verdict: brief.verdict },
     });
+
+    // Finder pass rides the brief (one Prospeo credit, only on a hit). A
+    // finder hiccup never fails the enrich tick.
+    if (emailFinderConfigured()) {
+      try {
+        await attemptEmailFind({
+          pipelineId: r.id as string,
+          name: r.name as string,
+          contactPath: brief.contact_path,
+          handle: r.handle as string | null,
+          extraText: updated_why_fit,
+          via: "dossier",
+          actor: "dossier",
+        });
+      } catch {
+        /* retry by hand from the room's Find email button */
+      }
+    }
     enriched++;
   }
 
