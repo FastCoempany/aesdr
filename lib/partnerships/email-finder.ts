@@ -64,6 +64,28 @@ export function extractOwnDomain(
   return null;
 }
 
+/**
+ * Normalize a pasted or model-reported domain ("https://www.janedoe.com/about",
+ * "janedoe.com") to a bare host. Throws on non-domains and on platform hosts —
+ * an email lookup against skool.com would only return junk.
+ */
+export function sanitizeDomainInput(input: string): string {
+  let host = input.trim().toLowerCase();
+  try {
+    if (/^https?:\/\//.test(host)) host = new URL(host).hostname;
+  } catch {
+    /* fall through to bare-string handling */
+  }
+  host = host.replace(/^www\./, "").split("/")[0].split("?")[0];
+  if (!/^(?:[a-z0-9-]+\.)+[a-z]{2,}$/.test(host)) {
+    throw new Error(`"${input}" doesn't look like a domain (expected something like janedoe.com).`);
+  }
+  if (PLATFORM_HOSTS.test(host)) {
+    throw new Error(`${host} is a platform, not their own site — an email lookup there would return junk. Their personal/company domain is what works.`);
+  }
+  return host;
+}
+
 /** Recursively pull the first email-looking value and status-looking value
  *  out of whatever shape Prospeo returns. */
 function scan(node: unknown, out: { email?: string; status?: string }): void {
@@ -163,13 +185,17 @@ export async function attemptEmailFind(args: {
   contactPath: string | null;
   handle?: string | null;
   extraText?: string | null;
+  /** A known-good domain (operator-pasted or the brief's own_domain) —
+   *  takes precedence over extraction from the record. */
+  domainOverride?: string | null;
   via: "dossier" | "find-now";
   actor: string | undefined;
 }): Promise<EmailFindResult> {
   if (extractEmail(args.contactPath)) {
     return { skipped: "has_email", found: null, applied: false };
   }
-  const domain = extractOwnDomain(args.contactPath, args.handle, args.extraText);
+  const domain =
+    args.domainOverride ?? extractOwnDomain(args.contactPath, args.handle, args.extraText);
   if (!domain) {
     return { skipped: "no_domain", found: null, applied: false };
   }

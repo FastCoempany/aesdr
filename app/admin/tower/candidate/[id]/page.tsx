@@ -370,8 +370,22 @@ export default async function CandidateRoomPage({
           </form>
         )}
         {(status === "sourced" || status === "enriched") && !hasEmail && emailFinderConfigured() && (
-          <form action={findEmailNow}>
+          <form action={findEmailNow} style={{ display: "flex", gap: "8px", alignItems: "stretch" }}>
             <input type="hidden" name="id" value={id} />
+            <input
+              type="text"
+              name="domain"
+              placeholder="their site, if you know it — e.g. janedoe.com"
+              style={{
+                fontFamily: MONO,
+                fontSize: "11px",
+                color: INK,
+                background: "#FFFFFF",
+                border: `1px solid ${LIGHT}`,
+                padding: "0 10px",
+                width: "240px",
+              }}
+            />
             <TowerButton
               variant="outline"
               pendingLabel="Searching… (a few seconds)"
@@ -512,8 +526,8 @@ export default async function CandidateRoomPage({
                 </p>
               )}
               <p style={{ fontFamily: SERIF, fontSize: "15px", fontWeight: 600, color: INK, margin: "0 0 6px" }}>{d.subject as string}</p>
-              <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.6, color: MUTED, margin: "0 0 10px", whiteSpace: "pre-wrap" }}>
-                {(d.body as string).length > 360 ? (d.body as string).slice(0, 360) + "…" : (d.body as string)}
+              <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.6, color: INK, margin: "0 0 10px", whiteSpace: "pre-wrap" }}>
+                {d.body as string}
               </p>
               {d.personalization_note && (
                 <p style={{ fontFamily: MONO, fontSize: "11px", lineHeight: 1.5, color: AMBERISH, background: "rgba(161,68,0,.06)", borderLeft: `2px solid ${AMBERISH}`, padding: "8px 10px", margin: "0 0 10px" }}>
