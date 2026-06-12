@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 import { requireAdmin } from "@/lib/admin";
 import { createAdminClient } from "@/utils/supabase/admin";
@@ -276,48 +277,63 @@ export async function runScoutSweepAction(formData: FormData) {
   const sweep = String(formData.get("sweep") ?? "") as ScoutSweepId;
   if (!VALID_SWEEPS.includes(sweep)) throw new Error("Unknown sweep.");
 
-  const model = await getAgentModel("scout");
-  const rows = await runScoutSweep(sweep, model);
-  if (rows.length === 0) {
-    // Nothing to insert; bail without an error so the UI can show "no rows".
-    revalidatePath("/admin/tower");
-    return;
+  // Failures here land as an inline banner on the tower, not the masked
+  // production error page — the operator needs the real message (missing env
+  // var, API refusal, constraint violation) to act on it.
+  let inserted = 0;
+  let returned = 0;
+  let failure: string | null = null;
+  try {
+    const model = await getAgentModel("scout");
+    const rows = await runScoutSweep(sweep, model);
+    returned = rows.length;
+
+    if (rows.length > 0) {
+      const supabase = createAdminClient();
+      // De-dupe against existing names (case-insensitive). Anything that already
+      // exists in the pipeline is skipped — scout will surface dupes occasionally.
+      const names = rows.map((r) => r.name);
+      const { data: existing } = await supabase
+        .from("partner_pipeline")
+        .select("name")
+        .in("name", names);
+      const have = new Set(
+        (existing ?? []).map((e) => (e.name as string).toLowerCase()),
+      );
+
+      const inserts = rows
+        .filter((r) => !have.has(r.name.toLowerCase()))
+        .map((r) => ({
+          name: r.name,
+          surface: r.surface,
+          handle: r.handle,
+          motion: "affiliate",
+          archetype: r.archetype,
+          audience_est: r.audience_est,
+          voice_fit: r.voice_fit,
+          status: "sourced", // human review before promotion to 'enriched'
+          contact_path: r.contact_path,
+          why_fit: `${r.why_fit} [scout/${sweep}, ${user.email}]`,
+          source_agent: `scout-tower:${sweep}`,
+          next_action: "Review and promote, or reject",
+        }));
+
+      if (inserts.length > 0) {
+        const { error } = await supabase.from("partner_pipeline").insert(inserts);
+        if (error) throw new Error(error.message);
+      }
+      inserted = inserts.length;
+    }
+  } catch (e) {
+    failure = e instanceof Error ? e.message : String(e);
   }
 
-  const supabase = createAdminClient();
-  // De-dupe against existing names (case-insensitive). Anything that already
-  // exists in the pipeline is skipped — scout will surface dupes occasionally.
-  const names = rows.map((r) => r.name);
-  const { data: existing } = await supabase
-    .from("partner_pipeline")
-    .select("name")
-    .in("name", names);
-  const have = new Set(
-    (existing ?? []).map((e) => (e.name as string).toLowerCase()),
-  );
-
-  const inserts = rows
-    .filter((r) => !have.has(r.name.toLowerCase()))
-    .map((r) => ({
-      name: r.name,
-      surface: r.surface,
-      handle: r.handle,
-      motion: "affiliate",
-      archetype: r.archetype,
-      audience_est: r.audience_est,
-      voice_fit: r.voice_fit,
-      status: "sourced", // human review before promotion to 'enriched'
-      contact_path: r.contact_path,
-      why_fit: `${r.why_fit} [scout/${sweep}, ${user.email}]`,
-      source_agent: `scout-tower:${sweep}`,
-      next_action: "Review and promote, or reject",
-    }));
-
-  if (inserts.length > 0) {
-    const { error } = await supabase.from("partner_pipeline").insert(inserts);
-    if (error) throw new Error(error.message);
-  }
   revalidatePath("/admin/tower");
+  // redirect() throws internally, so it must stay outside the try block.
+  if (failure !== null) {
+    redirect(`/admin/tower?sweep_error=${encodeURIComponent(failure.slice(0, 300))}`);
+  }
+  redirect(`/admin/tower?sweep_ok=${inserted}&sweep_seen=${returned}`);
 }
 
 /** Promote one sourced row to `enriched` — the operator's seal of approval. */

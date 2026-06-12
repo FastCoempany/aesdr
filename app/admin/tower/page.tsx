@@ -1,4 +1,10 @@
 export const dynamic = "force-dynamic";
+// Scout sweeps post to this page and hold the function open through a 20–60s
+// Anthropic call (Opus especially). 60 is the largest value valid on every
+// Vercel plan; without it, legacy non-Fluid defaults (10–15s) kill the sweep
+// mid-call. If the project has Fluid Compute on, this caps the default 300s —
+// still comfortably above a sweep.
+export const maxDuration = 60;
 
 import { createAdminClient } from "@/utils/supabase/admin";
 import {
@@ -52,7 +58,18 @@ function timeAgo(iso: string | null): string {
   return `${Math.round(h / 24)}d ago`;
 }
 
-export default async function TowerPage() {
+export default async function TowerPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ sweep_ok?: string; sweep_seen?: string; sweep_error?: string }>;
+}) {
+  // Sweep outcome, set by runScoutSweepAction's redirect. Render-once feedback:
+  // it lives in the URL, so a reload or navigation clears it naturally.
+  const sp = await searchParams;
+  const sweepError = sp.sweep_error ?? null;
+  const sweepOk = sp.sweep_ok != null ? Number(sp.sweep_ok) : null;
+  const sweepSeen = sp.sweep_seen != null ? Number(sp.sweep_seen) : 0;
+
   const supabase = createAdminClient();
 
   // ── Decisions ──
@@ -416,6 +433,33 @@ export default async function TowerPage() {
           <span>Scout &amp; Enrich</span>
           <span style={{ flex: 1, height: 1, background: LIGHT }} />
         </p>
+        {sweepError && (
+          <div style={{ ...card, borderLeft: `3px solid ${CRIMSON}`, marginBottom: "16px" }}>
+            <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: CRIMSON, display: "block", marginBottom: "6px" }}>
+              Sweep failed
+            </span>
+            <p style={{ fontFamily: MONO, fontSize: "12.5px", lineHeight: 1.6, color: INK, margin: "0 0 6px", wordBreak: "break-word" }}>
+              {sweepError}
+            </p>
+            <p style={{ fontFamily: SERIF, fontSize: "13px", fontStyle: "italic", color: MUTED, margin: 0 }}>
+              Nothing was inserted. Fix the cause above, then run the sweep again.
+            </p>
+          </div>
+        )}
+        {sweepOk !== null && (
+          <div style={{ ...card, borderLeft: `3px solid ${INK}`, marginBottom: "16px" }}>
+            <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: INK, display: "block", marginBottom: "6px" }}>
+              Sweep complete
+            </span>
+            <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.55, color: INK, margin: 0 }}>
+              {sweepOk > 0
+                ? `${sweepOk} new candidate${sweepOk > 1 ? "s" : ""} at 'sourced' — review below.${sweepSeen > sweepOk ? ` ${sweepSeen - sweepOk} already in the pipeline, skipped.` : ""}`
+                : sweepSeen > 0
+                  ? `All ${sweepSeen} candidates were already in the pipeline — nothing new to review.`
+                  : "The reply didn't parse into candidates. Run the sweep again — this is usually a one-off."}
+            </p>
+          </div>
+        )}
         <div style={{ ...card, marginBottom: "16px" }}>
           <p style={{ fontFamily: SERIF, fontSize: "14px", color: INK, margin: "0 0 4px" }}>
             <strong>Run a sweep.</strong> Each press calls Claude server-side and drops ~12–15 candidates into the pipeline at <code>status=&apos;sourced&apos;</code> for you to review. Spends API tokens (~$0.30–$1.50 per sweep on Sonnet 4.6).

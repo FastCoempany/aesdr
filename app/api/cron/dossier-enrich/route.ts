@@ -1,4 +1,9 @@
 export const dynamic = "force-dynamic";
+// A full batch is up to 5 sequential Opus calls (~10-20s each) — far past the
+// legacy 10-15s function default. 60 is valid on every Vercel plan; if a tick
+// still gets cut short mid-batch, it's harmless: rows update one at a time and
+// the next tick's not-ilike-[dossier] filter resumes where this one stopped.
+export const maxDuration = 60;
 
 import { NextResponse } from "next/server";
 
