@@ -14,7 +14,9 @@ import { logPartnerEvent } from "./events";
 import { extractEmail } from "./outreach-templates";
 
 const API = "https://api.prospeo.io";
-const ENDPOINTS = ["/enrich-person", "/email-finder"];
+// The only live endpoint — /email-finder is removed ("DEPRECATED" tombstone,
+// confirmed by a live response 2026-06-12).
+const ENDPOINT = "/enrich-person";
 const EMAIL_RE = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
 export type FoundEmail = {
@@ -91,10 +93,13 @@ export function sanitizeDomainInput(input: string): string {
 function scan(node: unknown, out: { email?: string; status?: string }): void {
   if (!node || typeof node !== "object") return;
   for (const [k, v] of Object.entries(node as Record<string, unknown>)) {
+    const key = k.toLowerCase();
     if (typeof v === "string") {
-      if (!out.email && k.toLowerCase() === "email" && EMAIL_RE.test(v)) {
+      if (!out.email && key === "email" && EMAIL_RE.test(v)) {
         out.email = v;
-      } else if (!out.status && /status|verification/i.test(k) && v.length < 40) {
+      } else if (key === "email_status") {
+        out.status = v; // the canonical field always wins
+      } else if (!out.status && key !== "req_status" && /status|verification/i.test(key) && v.length < 40) {
         out.status = v;
       }
     } else if (typeof v === "object") {
@@ -121,67 +126,61 @@ export async function findEmail(args: {
   const first_name = parts[0] ?? args.name;
   const last_name = parts.length > 1 ? parts.slice(1).join(" ") : parts[0];
 
-  // Per-endpoint request shapes. /enrich-person (current) nests the person
-  // under `data` with `company_website`; /email-finder (legacy, being
-  // removed) was flat. only_verified_email stays false — catch-all results
-  // are wanted too, surfaced as the room's "use it anyway" path.
-  const bodies: Record<string, unknown> = {
-    "/enrich-person": {
-      only_verified_email: false,
-      enrich_mobile: false,
-      data: { first_name, last_name, company_website: args.domain },
-    },
-    "/email-finder": { first_name, last_name, company: args.domain },
+  // Documented /enrich-person shape: person nested under `data`, domain key
+  // is `company_website`. only_verified_email stays false — catch-all
+  // results are wanted too, surfaced as the room's "use it anyway" path.
+  const body = {
+    only_verified_email: false,
+    enrich_mobile: false,
+    data: { first_name, last_name, company_website: args.domain },
   };
 
-  let lastErr = "no response";
-  for (const ep of ENDPOINTS) {
-    let json: Record<string, unknown> | null = null;
-    let raw = "";
-    let httpStatus = 0;
+  let raw = "";
+  let httpStatus = 0;
+  let json: Record<string, unknown> | null = null;
+  try {
+    const res = await fetch(API + ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-KEY": key },
+      body: JSON.stringify(body),
+    });
+    httpStatus = res.status;
+    raw = await res.text();
     try {
-      const res = await fetch(API + ep, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-KEY": key },
-        body: JSON.stringify(bodies[ep]),
-      });
-      httpStatus = res.status;
-      raw = await res.text();
-      try {
-        json = JSON.parse(raw) as Record<string, unknown>;
-      } catch {
-        json = null;
-      }
-    } catch (e) {
-      lastErr = e instanceof Error ? e.message : String(e);
-      continue;
+      json = JSON.parse(raw) as Record<string, unknown>;
+    } catch {
+      json = null;
     }
-
-    // Prospeo's "nothing found" is a clean no, not an error.
-    const msg = json
-      ? String((json.message as string | undefined) ?? (json.error_message as string | undefined) ?? "")
-      : "";
-    if (json && json.error === true && /no.?(result|email|found)|not.?found|no.?match/i.test(msg)) {
-      return null;
-    }
-    if (!json || json.error === true || httpStatus >= 400) {
-      // Carry Prospeo's own words so the room banner self-diagnoses.
-      lastErr = msg || `HTTP ${httpStatus} from ${ep} — ${raw.slice(0, 180) || "(empty body)"}`;
-      continue;
-    }
-
-    const out: { email?: string; status?: string } = {};
-    scan((json.response as unknown) ?? json, out);
-    if (!out.email) return null;
-    const status = (out.status ?? "UNKNOWN").toUpperCase();
-    return {
-      email: out.email,
-      status,
-      verified: /^(VALID|DELIVERABLE|VERIFIED|SAFE)$/.test(status),
-      endpoint: ep,
-    };
+  } catch (e) {
+    throw new Error(`Prospeo unreachable: ${e instanceof Error ? e.message : String(e)}`);
   }
-  throw new Error(`Prospeo lookup failed: ${lastErr}`);
+
+  // Prospeo's error dialect (seen live): { req_status: false, error_code,
+  // error_toast }. "Nothing found" is a clean no, not an error.
+  const code = String((json?.error_code as string | undefined) ?? "");
+  const toast = String(
+    (json?.error_toast as string | undefined) ??
+      (json?.message as string | undefined) ??
+      (json?.error_message as string | undefined) ??
+      "",
+  );
+  if (!json || json.req_status === false || json.error === true || httpStatus >= 400) {
+    if (/no.?(result|match|email)|not.?found/i.test(`${code} ${toast}`)) return null;
+    throw new Error(
+      `Prospeo ${ENDPOINT}: ${toast || code || `HTTP ${httpStatus} — ${raw.slice(0, 180) || "(empty body)"}`}`,
+    );
+  }
+
+  const out: { email?: string; status?: string } = {};
+  scan((json.response as unknown) ?? json, out);
+  if (!out.email) return null;
+  const status = (out.status ?? "UNKNOWN").toUpperCase();
+  return {
+    email: out.email,
+    status,
+    verified: /^(VALID|DELIVERABLE|VERIFIED|SAFE)$/.test(status),
+    endpoint: ENDPOINT,
+  };
 }
 
 export type EmailFindResult = {
