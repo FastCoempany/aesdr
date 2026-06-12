@@ -128,6 +128,16 @@ export type DossierBrief = {
 
 const DOSSIER_SCHEMA_HINT = `Return STRICT JSON: { "audience_est": int|null, "cadence_note": str (1 line), "voice_fit": 1-5, "voice_fit_rationale": str (1 line), "conflict": "none"|"soft"|"hard"|"unknown", "conflict_note": str (1 line), "contact_path": str (NOT LinkedIn), "first_touch_angle": str (1 sentence), "verdict": "reach_out"|"skip"|"needs_research" }. No prose, no markdown fences.`;
 
+/** The pipeline next_action line each dossier verdict maps to — shared by the
+ *  hourly cron and the room's Run-brief-now action. */
+export function verdictNextAction(verdict: DossierBrief["verdict"]): string {
+  return verdict === "reach_out"
+    ? "Send to scribe (auto-drafter picks this up)"
+    : verdict === "skip"
+      ? "Skip — see why_fit"
+      : "Needs more research";
+}
+
 /** Enrich one candidate. */
 export async function runDossier(
   args: {

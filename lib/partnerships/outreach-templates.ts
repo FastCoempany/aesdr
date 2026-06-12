@@ -16,7 +16,22 @@
  * KEEP IN SYNC with content/partnerships/outreach/*.md if the canon copy moves.
  */
 
+import crypto from "node:crypto";
+
 export type OutreachTemplateId = "newsletter" | "community" | "podcast";
+
+/**
+ * Deterministic first-touch draft key — shared by the scribe cron and the
+ * room's Draft-now action so neither can ever double-draft a candidate
+ * (the unique index on idempotency_key is the hard backstop).
+ */
+export function firstTouchIdemKey(pipelineId: string): string {
+  return crypto
+    .createHash("sha256")
+    .update(`draft:${pipelineId}:first-touch`)
+    .digest("hex")
+    .slice(0, 32);
+}
 
 type Template = { id: OutreachTemplateId; subject: string; body: string };
 

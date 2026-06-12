@@ -108,3 +108,36 @@
   color: #8B1A1A;
   font-weight: 700;
 }
+
+/* ── The map (/admin/tower/pipeline) ── */
+.mapWrap {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding-bottom: 12px;
+}
+.mapCol {
+  flex: 0 0 250px;
+  min-width: 250px;
+}
+.mapCard {
+  display: block;
+  background: #FFFFFF;
+  border: 1px solid #E8E4DF;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  text-decoration: none;
+  transition: border-color .12s ease, transform .05s ease;
+}
+.mapCard:hover { border-color: #1A1A1A; }
+.mapCard:active { transform: translateY(1px); }
+
+/* Inline candidate-name link — anywhere a name appears, it's a door. */
+.lnk {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color .12s ease, border-color .12s ease;
+}
+.lnk:hover { color: #8B1A1A; border-bottom-color: #8B1A1A; }

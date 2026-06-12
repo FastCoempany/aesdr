@@ -6,6 +6,7 @@ import { Resend } from "resend";
 import { verifyCronAuth } from "@/lib/cron-auth";
 import { isAgentEnabled } from "@/lib/partnerships/agent-switch";
 import { createAdminClient } from "@/utils/supabase/admin";
+import { logPartnerEvent } from "@/lib/partnerships/events";
 
 /**
  * Courier — the outbound send executor. Runs every 5 min and is the ONLY
@@ -144,6 +145,14 @@ export async function GET(request: Request) {
         .update({ status: "failed", error: msg.slice(0, 500) })
         .eq("id", row.id)
         .eq("status", "approved");
+      if (row.related_pipeline_id) {
+        await logPartnerEvent({
+          pipelineId: row.related_pipeline_id,
+          actor: "courier",
+          kind: "send_failed",
+          detail: { subject: row.subject, error: msg.slice(0, 200) },
+        });
+      }
       failed++;
       continue;
     }
@@ -165,15 +174,34 @@ export async function GET(request: Request) {
       .eq("id", row.id)
       .eq("status", "approved");
 
+    if (row.related_pipeline_id) {
+      await logPartnerEvent({
+        pipelineId: row.related_pipeline_id,
+        actor: "courier",
+        kind: "sent",
+        detail: { subject: row.subject, to: row.to_addr },
+      });
+    }
+
     // Start the follow-up ladder clock: the first cold send to a pipeline
     // contact stamps first_touch_at + moves them to 'contacted'. Guarded so
     // follow-up sends (also cold, also to a pipeline contact) never reset it.
     if (row.tier === "cold" && row.related_pipeline_id) {
-      await supabase
+      const { data: stamped } = await supabase
         .from("partner_pipeline")
         .update({ first_touch_at: nowIso, status: "contacted", updated_at: nowIso })
         .eq("id", row.related_pipeline_id)
-        .is("first_touch_at", null);
+        .is("first_touch_at", null)
+        .select("id")
+        .maybeSingle();
+      if (stamped) {
+        await logPartnerEvent({
+          pipelineId: row.related_pipeline_id,
+          actor: "courier",
+          kind: "contacted",
+          detail: { via: "first cold send" },
+        });
+      }
     }
     sent++;
   }

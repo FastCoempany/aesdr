@@ -6,6 +6,8 @@ export const dynamic = "force-dynamic";
 // still comfortably above a sweep.
 export const maxDuration = 60;
 
+import Link from "next/link";
+
 import { createAdminClient } from "@/utils/supabase/admin";
 import {
   approveDraft,
@@ -63,14 +65,22 @@ function timeAgo(iso: string | null): string {
 export default async function TowerPage({
   searchParams,
 }: {
-  searchParams: Promise<{ sweep_ok?: string; sweep_seen?: string; sweep_error?: string }>;
+  searchParams: Promise<{
+    sweep_ok?: string;
+    sweep_seen?: string;
+    sweep_error?: string;
+    promoted?: string;
+    promoted_name?: string;
+  }>;
 }) {
-  // Sweep outcome, set by runScoutSweepAction's redirect. Render-once feedback:
-  // it lives in the URL, so a reload or navigation clears it naturally.
+  // Sweep + promote outcomes, set by the actions' redirects. Render-once
+  // feedback: it lives in the URL, so a reload or navigation clears it.
   const sp = await searchParams;
   const sweepError = sp.sweep_error ?? null;
   const sweepOk = sp.sweep_ok != null ? Number(sp.sweep_ok) : null;
   const sweepSeen = sp.sweep_seen != null ? Number(sp.sweep_seen) : 0;
+  const promotedId = sp.promoted ?? null;
+  const promotedName = sp.promoted_name ?? null;
 
   const supabase = createAdminClient();
 
@@ -131,6 +141,7 @@ export default async function TowerPage({
     drafted_by: string | null;
     send_channel?: string | null;
     personalization_note?: string | null;
+    related_pipeline_id?: string | null;
   };
   const drafts: DraftRow[] = (readyDrafts ?? []) as DraftRow[];
   const emailDraftCount = drafts.filter(
@@ -410,7 +421,20 @@ export default async function TowerPage({
         <p style={sectionLabel}>
           <span>Scout &amp; Enrich</span>
           <span style={{ flex: 1, height: 1, background: LIGHT }} />
+          <Link href="/admin/tower/pipeline" className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", color: CRIMSON }}>
+            open the map →
+          </Link>
         </p>
+        {promotedId && (
+          <div style={{ ...card, borderLeft: `3px solid ${INK}`, marginBottom: "16px" }}>
+            <p style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, margin: 0 }}>
+              <strong>{promotedName || "Candidate"}</strong> moved to Research —{" "}
+              <Link href={`/admin/tower/candidate/${promotedId}`} className={twr.lnk} style={{ color: CRIMSON }}>
+                open their room →
+              </Link>
+            </p>
+          </div>
+        )}
         {sweepError && (
           <div style={{ ...card, borderLeft: `3px solid ${CRIMSON}`, marginBottom: "16px" }}>
             <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: CRIMSON, display: "block", marginBottom: "6px" }}>
@@ -488,7 +512,9 @@ export default async function TowerPage({
             {sourced.map((s) => (
               <div key={s.id} style={card}>
                 <div style={{ display: "flex", alignItems: "baseline", gap: "10px", flexWrap: "wrap", marginBottom: "4px" }}>
-                  <span style={{ fontFamily: SERIF, fontSize: "16px", fontWeight: 600, color: INK }}>{s.name}</span>
+                  <Link href={`/admin/tower/candidate/${s.id}`} className={twr.lnk} style={{ fontFamily: SERIF, fontSize: "16px", fontWeight: 600, color: INK }}>
+                    {s.name}
+                  </Link>
                   <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED }}>{s.surface ?? ""}</span>
                   <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED }}>vf {s.voice_fit ?? "—"}</span>
                   <span style={{ fontFamily: MONO, fontSize: "10px", color: MUTED, marginLeft: "auto" }}>{s.source_agent}</span>
@@ -565,6 +591,11 @@ export default async function TowerPage({
                     <span style={{ fontFamily: MONO, fontSize: "12px", color: MUTED, marginLeft: "auto" }}>
                       → {d.to_addr}
                     </span>
+                    {d.related_pipeline_id && (
+                      <Link href={`/admin/tower/candidate/${d.related_pipeline_id}`} className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", color: CRIMSON }}>
+                        their room →
+                      </Link>
+                    )}
                   </div>
                   <p style={{ fontFamily: SERIF, fontSize: "16px", fontWeight: 600, margin: "0 0 6px", color: INK }}>
                     {d.subject}
@@ -718,7 +749,9 @@ export default async function TowerPage({
                 .filter((st) => pipeCounts[st])
                 .map((st) => (
                   <div key={st} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", borderBottom: `1px solid ${LIGHT}` }}>
-                    <span style={{ fontFamily: MONO, fontSize: "12px", color: INK }}>{st.replace(/_/g, " ")}</span>
+                    <Link href={`/admin/tower/pipeline#${st}`} className={twr.lnk} style={{ fontFamily: MONO, fontSize: "12px", color: INK }}>
+                      {st.replace(/_/g, " ")}
+                    </Link>
                     <span style={{ fontFamily: MONO, fontSize: "12px", fontWeight: 700, color: CRIMSON }}>{pipeCounts[st]}</span>
                   </div>
                 ))

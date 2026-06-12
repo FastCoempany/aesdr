@@ -1,15 +1,16 @@
 export const dynamic = "force-dynamic";
 
-import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 
 import { verifyCronAuth } from "@/lib/cron-auth";
 import { isAgentEnabled } from "@/lib/partnerships/agent-switch";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { canonCheck } from "@/lib/partnerships/canon-mechanical";
+import { logPartnerEvent } from "@/lib/partnerships/events";
 import {
   renderFirstTouch,
   extractEmail,
+  firstTouchIdemKey,
 } from "@/lib/partnerships/outreach-templates";
 
 /**
@@ -44,13 +45,9 @@ import {
 const BATCH = 10;
 const MIN_FIT = Number(process.env.SCRIBE_MIN_VOICE_FIT || 4);
 
-function idemKey(pipelineId: string): string {
-  return crypto
-    .createHash("sha256")
-    .update(`draft:${pipelineId}:first-touch`)
-    .digest("hex")
-    .slice(0, 32);
-}
+// Draft key lives in outreach-templates (shared with the room's Draft-now
+// action) so the two paths can never double-draft the same candidate.
+const idemKey = firstTouchIdemKey;
 
 export async function GET(request: Request) {
   const authErr = verifyCronAuth(request);
@@ -139,7 +136,15 @@ export async function GET(request: Request) {
         personalization_note: personalizationNote,
       });
 
-    if (!insErr) made++;
+    if (!insErr) {
+      made++;
+      await logPartnerEvent({
+        pipelineId: c.id as string,
+        actor: "scribe",
+        kind: "drafted",
+        detail: { template: rendered.templateId, warden_cleared: wardenCleared },
+      });
+    }
   }
 
   return NextResponse.json({
