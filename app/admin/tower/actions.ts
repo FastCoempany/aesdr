@@ -14,8 +14,23 @@ import {
 } from "@/lib/partnerships/agent-switch";
 import {
   runScoutSweep,
+  runDossier,
+  verdictNextAction,
   type ScoutSweepId,
 } from "@/lib/partnerships/anthropic-agents";
+import { logPartnerEvent, logPartnerEvents } from "@/lib/partnerships/events";
+import {
+  renderFirstTouch,
+  extractEmail,
+  firstTouchIdemKey,
+} from "@/lib/partnerships/outreach-templates";
+
+/** Re-render the tower and a candidate's room after a state change. */
+function revalidateCandidate(pipelineId: string | null | undefined) {
+  revalidatePath("/admin/tower");
+  revalidatePath("/admin/tower/pipeline");
+  if (pipelineId) revalidatePath(`/admin/tower/candidate/${pipelineId}`);
+}
 
 const VALID_SWEEPS: readonly ScoutSweepId[] = [
   "communities",
@@ -44,7 +59,7 @@ export async function approveDraft(formData: FormData) {
   const supabase = createAdminClient();
   // Only a row that's actually 'ready' (drafted + warden-cleared) can be
   // approved — guards against approving something mid-edit or already sent.
-  const { error } = await supabase
+  const { data: row, error } = await supabase
     .from("partner_outbound_queue")
     .update({
       status: "approved",
@@ -52,10 +67,20 @@ export async function approveDraft(formData: FormData) {
       approved_at: new Date().toISOString(),
     })
     .eq("id", id)
-    .eq("status", "ready");
+    .eq("status", "ready")
+    .select("related_pipeline_id, subject")
+    .maybeSingle();
   if (error) throw new Error(error.message);
 
-  revalidatePath("/admin/tower");
+  if (row?.related_pipeline_id) {
+    await logPartnerEvent({
+      pipelineId: row.related_pipeline_id,
+      actor: user.email,
+      kind: "approved",
+      detail: { subject: row.subject },
+    });
+  }
+  revalidateCandidate(row?.related_pipeline_id);
 }
 
 /**
@@ -101,7 +126,7 @@ export async function approveAllReady() {
  * personalization note (the operator has now taken responsibility for the copy).
  */
 export async function editDraft(formData: FormData) {
-  await requireAdmin();
+  const user = await requireAdmin();
   const id = String(formData.get("id") ?? "");
   const subject = String(formData.get("subject") ?? "").trim();
   const body = String(formData.get("body") ?? "").trim();
@@ -111,7 +136,7 @@ export async function editDraft(formData: FormData) {
   const { clean } = canonCheck(`${subject}\n${body}`);
 
   const supabase = createAdminClient();
-  const { error } = await supabase
+  const { data: row, error } = await supabase
     .from("partner_outbound_queue")
     .update({
       subject,
@@ -120,10 +145,20 @@ export async function editDraft(formData: FormData) {
       personalization_note: clean ? null : "Canon flags remain — review before sending.",
     })
     .eq("id", id)
-    .eq("status", "ready");
+    .eq("status", "ready")
+    .select("related_pipeline_id")
+    .maybeSingle();
   if (error) throw new Error(error.message);
 
-  revalidatePath("/admin/tower");
+  if (row?.related_pipeline_id) {
+    await logPartnerEvent({
+      pipelineId: row.related_pipeline_id,
+      actor: user.email,
+      kind: "draft_edited",
+      detail: { warden_cleared: clean },
+    });
+  }
+  revalidateCandidate(row?.related_pipeline_id);
 }
 
 /**
@@ -133,7 +168,7 @@ export async function editDraft(formData: FormData) {
  * completes them.
  */
 export async function markManualSent(formData: FormData) {
-  await requireAdmin();
+  const user = await requireAdmin();
   const id = String(formData.get("id") ?? "");
   if (!id) throw new Error("Missing id.");
 
@@ -164,34 +199,92 @@ export async function markManualSent(formData: FormData) {
     .in("status", ["ready", "approved"]);
   if (error) throw new Error(error.message);
 
+  if (row.related_pipeline_id) {
+    await logPartnerEvent({
+      pipelineId: row.related_pipeline_id,
+      actor: user.email,
+      kind: "sent",
+      detail: { channel: "manual", subject: row.subject },
+    });
+  }
+
   // Start the follow-up ladder clock for a manual cold first-touch, same as
   // courier does for email sends. Guarded so follow-ups never reset it.
   if (row.tier === "cold" && row.related_pipeline_id) {
-    await supabase
+    const { data: stamped } = await supabase
       .from("partner_pipeline")
       .update({ first_touch_at: nowIso, status: "contacted", updated_at: nowIso })
       .eq("id", row.related_pipeline_id)
-      .is("first_touch_at", null);
+      .is("first_touch_at", null)
+      .select("id")
+      .maybeSingle();
+    if (stamped) {
+      await logPartnerEvent({
+        pipelineId: row.related_pipeline_id,
+        actor: user.email,
+        kind: "contacted",
+        detail: { via: "manual first touch" },
+      });
+    }
   }
 
-  revalidatePath("/admin/tower");
+  revalidateCandidate(row.related_pipeline_id);
 }
 
 /** Hold a draft — pull it back off the send path. */
 export async function holdDraft(formData: FormData) {
-  await requireAdmin();
+  const user = await requireAdmin();
   const id = String(formData.get("id") ?? "");
   if (!id) throw new Error("Missing id.");
 
   const supabase = createAdminClient();
-  const { error } = await supabase
+  const { data: row, error } = await supabase
     .from("partner_outbound_queue")
     .update({ status: "held" })
     .eq("id", id)
-    .in("status", ["ready", "approved"]);
+    .in("status", ["ready", "approved"])
+    .select("related_pipeline_id")
+    .maybeSingle();
   if (error) throw new Error(error.message);
 
-  revalidatePath("/admin/tower");
+  if (row?.related_pipeline_id) {
+    await logPartnerEvent({
+      pipelineId: row.related_pipeline_id,
+      actor: user.email,
+      kind: "held",
+    });
+  }
+  revalidateCandidate(row?.related_pipeline_id);
+}
+
+/**
+ * Put a held or failed draft back on the path: status → 'ready', so it
+ * reappears in the draft house for a fresh approve. This is the release valve
+ * Hold never had — without it a held/failed draft was a dead-end.
+ */
+export async function releaseDraft(formData: FormData) {
+  const user = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) throw new Error("Missing id.");
+
+  const supabase = createAdminClient();
+  const { data: row, error } = await supabase
+    .from("partner_outbound_queue")
+    .update({ status: "ready", error: null })
+    .eq("id", id)
+    .in("status", ["held", "failed"])
+    .select("related_pipeline_id")
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+
+  if (row?.related_pipeline_id) {
+    await logPartnerEvent({
+      pipelineId: row.related_pipeline_id,
+      actor: user.email,
+      kind: "released",
+    });
+  }
+  revalidateCandidate(row?.related_pipeline_id);
 }
 
 /**
@@ -319,8 +412,19 @@ export async function runScoutSweepAction(formData: FormData) {
         }));
 
       if (inserts.length > 0) {
-        const { error } = await supabase.from("partner_pipeline").insert(inserts);
+        const { data: created, error } = await supabase
+          .from("partner_pipeline")
+          .insert(inserts)
+          .select("id");
         if (error) throw new Error(error.message);
+        await logPartnerEvents(
+          (created ?? []).map((c) => ({
+            pipelineId: c.id as string,
+            actor: "scout",
+            kind: "sourced",
+            detail: { sweep, model, triggered_by: user.email },
+          })),
+        );
       }
       inserted = inserts.length;
     }
@@ -336,34 +440,233 @@ export async function runScoutSweepAction(formData: FormData) {
   redirect(`/admin/tower?sweep_ok=${inserted}&sweep_seen=${returned}`);
 }
 
-/** Promote one sourced row to `enriched` — the operator's seal of approval. */
+/** Resolve the optional return_to field to a safe in-tower path. */
+function towerReturnPath(formData: FormData): string | null {
+  const raw = String(formData.get("return_to") ?? "");
+  return raw.startsWith("/admin/tower") ? raw : null;
+}
+
+/**
+ * Promote one sourced row to `enriched` — the operator's seal of approval.
+ * From the review queue this redirects back with the door banner ("moved to
+ * Research — open their room"); from the candidate's room it returns there.
+ */
 export async function promoteSourced(formData: FormData) {
-  await requireAdmin();
+  const user = await requireAdmin();
   const id = String(formData.get("id") ?? "");
   if (!id) throw new Error("Missing id.");
   const supabase = createAdminClient();
-  const { error } = await supabase
+  const { data: updated, error } = await supabase
     .from("partner_pipeline")
     .update({ status: "enriched", updated_at: new Date().toISOString() })
     .eq("id", id)
-    .eq("status", "sourced");
+    .eq("status", "sourced")
+    .select("name")
+    .maybeSingle();
   if (error) throw new Error(error.message);
-  revalidatePath("/admin/tower");
+
+  if (updated) {
+    await logPartnerEvent({
+      pipelineId: id,
+      actor: user.email,
+      kind: "promoted",
+      detail: { to: "enriched" },
+    });
+  }
+  revalidateCandidate(id);
+
+  const returnTo = towerReturnPath(formData);
+  if (returnTo) redirect(returnTo);
+  if (updated) {
+    redirect(
+      `/admin/tower?promoted=${id}&promoted_name=${encodeURIComponent(updated.name as string)}`,
+    );
+  }
+  redirect("/admin/tower");
 }
 
 /** Reject one sourced row — moves to `passed`, not deleted. */
 export async function rejectSourced(formData: FormData) {
-  await requireAdmin();
+  const user = await requireAdmin();
   const id = String(formData.get("id") ?? "");
   if (!id) throw new Error("Missing id.");
   const supabase = createAdminClient();
-  const { error } = await supabase
+  const { data: updated, error } = await supabase
     .from("partner_pipeline")
     .update({ status: "passed", updated_at: new Date().toISOString() })
     .eq("id", id)
-    .eq("status", "sourced");
+    .eq("status", "sourced")
+    .select("id")
+    .maybeSingle();
   if (error) throw new Error(error.message);
-  revalidatePath("/admin/tower");
+
+  if (updated) {
+    await logPartnerEvent({
+      pipelineId: id,
+      actor: user.email,
+      kind: "rejected",
+      detail: { to: "passed" },
+    });
+  }
+  revalidateCandidate(id);
+  const returnTo = towerReturnPath(formData);
+  redirect(returnTo ?? "/admin/tower");
+}
+
+/**
+ * Run the dossier research call for ONE candidate, from their room. Same merge
+ * the hourly cron does, plus the structured brief (dossier_brief jsonb, best-
+ * effort until the 20260612 migration). Costs real Anthropic tokens per press;
+ * the room's button confirms first. Failures come back as an inline banner.
+ */
+export async function runDossierNow(formData: FormData) {
+  const user = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) throw new Error("Missing id.");
+
+  let failure: string | null = null;
+  try {
+    const supabase = createAdminClient();
+    const { data: row, error } = await supabase
+      .from("partner_pipeline")
+      .select("id, name, surface, handle, why_fit, audience_est")
+      .eq("id", id)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!row) throw new Error("Candidate not found.");
+
+    const model = await getAgentModel("dossier-enrich");
+    const brief = await runDossier(
+      {
+        name: row.name as string,
+        surface: row.surface as string | null,
+        handle: row.handle as string | null,
+        existingWhyFit: row.why_fit as string | null,
+      },
+      model,
+    );
+    if (!brief) throw new Error("The brief reply didn't parse — run it again.");
+
+    const nowIso = new Date().toISOString();
+    const updated_why_fit = `${row.why_fit ?? ""} | ${brief.first_touch_angle} (conflict: ${brief.conflict_note || brief.conflict}, verdict: ${brief.verdict}) [dossier]`;
+    const { error: upErr } = await supabase
+      .from("partner_pipeline")
+      .update({
+        audience_est: brief.audience_est ?? (row.audience_est as number | null),
+        voice_fit: brief.voice_fit,
+        contact_path: brief.contact_path,
+        why_fit: updated_why_fit,
+        next_action: verdictNextAction(brief.verdict),
+        updated_at: nowIso,
+      })
+      .eq("id", id);
+    if (upErr) throw new Error(upErr.message);
+
+    // Structured copy for the room — separate write so a pre-migration
+    // database (no dossier_brief column) doesn't fail the whole run.
+    await supabase.from("partner_pipeline").update({ dossier_brief: brief }).eq("id", id);
+
+    await logPartnerEvent({
+      pipelineId: id,
+      actor: "dossier",
+      kind: "brief_written",
+      detail: { model, verdict: brief.verdict, triggered_by: user.email },
+    });
+  } catch (e) {
+    failure = e instanceof Error ? e.message : String(e);
+  }
+
+  revalidateCandidate(id);
+  if (failure !== null) {
+    redirect(`/admin/tower/candidate/${id}?err=${encodeURIComponent(failure.slice(0, 300))}`);
+  }
+  redirect(`/admin/tower/candidate/${id}?ok=brief`);
+}
+
+/**
+ * Draft the first-touch for ONE enriched candidate, from their room — the same
+ * deterministic template-fill scribe runs, minus scribe's voice-fit ≥ 4 bar
+ * (pressing this IS the operator's override). The shared idempotency key means
+ * scribe and this button can never double-draft. No LLM call; costs nothing.
+ */
+export async function draftNow(formData: FormData) {
+  const user = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) throw new Error("Missing id.");
+
+  let failure: string | null = null;
+  try {
+    const supabase = createAdminClient();
+    const { data: row, error } = await supabase
+      .from("partner_pipeline")
+      .select("id, name, surface, handle, contact_path, why_fit, status")
+      .eq("id", id)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!row) throw new Error("Candidate not found.");
+    if (row.status !== "enriched") {
+      throw new Error("Draft now applies to a candidate at 'enriched' — promote them first.");
+    }
+
+    const key = firstTouchIdemKey(id);
+    const { data: existing } = await supabase
+      .from("partner_outbound_queue")
+      .select("id, status")
+      .eq("idempotency_key", key)
+      .maybeSingle();
+    if (existing) {
+      throw new Error(`A first-touch draft already exists (status '${existing.status}') — see Drafts below.`);
+    }
+
+    const rendered = renderFirstTouch({
+      name: row.name as string,
+      surface: row.surface as string | null,
+      handle: row.handle as string | null,
+      why_fit: row.why_fit as string | null,
+    });
+    const { clean, hits } = canonCheck(`${rendered.subject}\n${rendered.body}`);
+    const email = extractEmail(row.contact_path as string | null);
+    const wardenCleared = clean && rendered.unfilled.length === 0;
+    const noteParts: string[] = [];
+    if (rendered.unfilled.length > 0) {
+      noteParts.push(`Fill before sending: ${rendered.unfilled.join(", ")}`);
+    }
+    if (!clean) {
+      noteParts.push(`Canon flags: ${hits.map((h) => `"${h.term}" (${h.hint})`).join("; ")}`);
+    }
+
+    const { error: insErr } = await supabase.from("partner_outbound_queue").insert({
+      to_addr: email || (row.contact_path as string | null) || (row.handle as string | null) || "(no contact path)",
+      subject: rendered.subject,
+      body: rendered.body,
+      tier: "cold",
+      status: "ready",
+      warden_cleared: wardenCleared,
+      send_after: new Date().toISOString(),
+      idempotency_key: key,
+      related_pipeline_id: id,
+      drafted_by: `draft-now:${user.email}`,
+      draft_source: `tower-draft-now:${rendered.templateId}`,
+      send_channel: email ? "email" : "manual",
+      personalization_note: noteParts.join(" · ") || null,
+    });
+    if (insErr) throw new Error(insErr.message);
+
+    await logPartnerEvent({
+      pipelineId: id,
+      actor: user.email,
+      kind: "drafted",
+      detail: { via: "draft-now", template: rendered.templateId, warden_cleared: wardenCleared },
+    });
+  } catch (e) {
+    failure = e instanceof Error ? e.message : String(e);
+  }
+
+  revalidateCandidate(id);
+  if (failure !== null) {
+    redirect(`/admin/tower/candidate/${id}?err=${encodeURIComponent(failure.slice(0, 300))}`);
+  }
+  redirect(`/admin/tower/candidate/${id}?ok=draft`);
 }
 
 /** Clear a signal off the decision board. */

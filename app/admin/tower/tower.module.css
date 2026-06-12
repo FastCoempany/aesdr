@@ -108,3 +108,90 @@
   color: #8B1A1A;
   font-weight: 700;
 }
+
+/* ── The map (/admin/tower/pipeline) ── */
+.mapWrap {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding-bottom: 12px;
+}
+.mapCol {
+  flex: 0 0 250px;
+  min-width: 250px;
+}
+.mapCard {
+  display: block;
+  background: #FFFFFF;
+  border: 1px solid #E8E4DF;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  text-decoration: none;
+  transition: border-color .12s ease, transform .05s ease;
+}
+.mapCard:hover { border-color: #1A1A1A; }
+.mapCard:active { transform: translateY(1px); }
+
+/* Inline candidate-name link — anywhere a name appears, it's a door. */
+.lnk {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color .12s ease, border-color .12s ease;
+}
+.lnk:hover { color: #8B1A1A; border-bottom-color: #8B1A1A; }
+
+/* CSS-only tooltip — hover or keyboard-focus the ? chip. Ink-on-cream inverse
+   at label scale (the retired dark surfaces stay retired). */
+.hint {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  border: 1px solid #6B6B6B;
+  border-radius: 50%;
+  color: #6B6B6B;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  cursor: help;
+  letter-spacing: 0;
+  text-transform: none;
+  flex: 0 0 auto;
+}
+.hint:hover,
+.hint:focus-visible {
+  border-color: #8B1A1A;
+  color: #8B1A1A;
+  outline: none;
+}
+.hint::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 270px;
+  background: #1A1A1A;
+  color: #FAF7F2;
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: 0;
+  text-transform: none;
+  text-align: left;
+  white-space: normal;
+  padding: 10px 12px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .12s ease;
+  z-index: 50;
+}
+.hint:hover::after,
+.hint:focus-visible::after {
+  opacity: 1;
+}

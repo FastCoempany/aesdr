@@ -6,11 +6,14 @@ export const dynamic = "force-dynamic";
 // still comfortably above a sweep.
 export const maxDuration = 60;
 
+import Link from "next/link";
+
 import { createAdminClient } from "@/utils/supabase/admin";
 import {
   approveDraft,
   approveAllReady,
   holdDraft,
+  releaseDraft,
   handleSignal,
   editDraft,
   markManualSent,
@@ -20,7 +23,9 @@ import AgentLever from "./AgentLever";
 import ScoutSweepButton from "./ScoutSweepButton";
 import ModelSelector from "./ModelSelector";
 import TowerButton from "./TowerButton";
+import Hint from "./Hint";
 import twr from "./tower.module.css";
+import { inboxSearchUrl, looksLikeEmail } from "@/lib/partnerships/inbox-link";
 import { promoteSourced, rejectSourced } from "./actions";
 import {
   PARTNER_AGENTS,
@@ -63,14 +68,22 @@ function timeAgo(iso: string | null): string {
 export default async function TowerPage({
   searchParams,
 }: {
-  searchParams: Promise<{ sweep_ok?: string; sweep_seen?: string; sweep_error?: string }>;
+  searchParams: Promise<{
+    sweep_ok?: string;
+    sweep_seen?: string;
+    sweep_error?: string;
+    promoted?: string;
+    promoted_name?: string;
+  }>;
 }) {
-  // Sweep outcome, set by runScoutSweepAction's redirect. Render-once feedback:
-  // it lives in the URL, so a reload or navigation clears it naturally.
+  // Sweep + promote outcomes, set by the actions' redirects. Render-once
+  // feedback: it lives in the URL, so a reload or navigation clears it.
   const sp = await searchParams;
   const sweepError = sp.sweep_error ?? null;
   const sweepOk = sp.sweep_ok != null ? Number(sp.sweep_ok) : null;
   const sweepSeen = sp.sweep_seen != null ? Number(sp.sweep_seen) : 0;
+  const promotedId = sp.promoted ?? null;
+  const promotedName = sp.promoted_name ?? null;
 
   const supabase = createAdminClient();
 
@@ -131,11 +144,30 @@ export default async function TowerPage({
     drafted_by: string | null;
     send_channel?: string | null;
     personalization_note?: string | null;
+    related_pipeline_id?: string | null;
   };
   const drafts: DraftRow[] = (readyDrafts ?? []) as DraftRow[];
   const emailDraftCount = drafts.filter(
     (d) => (d.send_channel ?? "email") === "email",
   ).length;
+
+  // The shelf — drafts that exist but aren't in the ready lane: approved rows
+  // waiting on courier's next tick, held rows you pulled back, failed sends.
+  // Without this they're invisible outside their candidate's room.
+  const { data: shelfRows } = await supabase
+    .from("partner_outbound_queue")
+    .select("id, to_addr, subject, status, error, related_pipeline_id")
+    .in("status", ["approved", "held", "failed"])
+    .order("created_at", { ascending: true })
+    .limit(30);
+  const shelf = (shelfRows ?? []) as Array<{
+    id: string;
+    to_addr: string;
+    subject: string;
+    status: string;
+    error: string | null;
+    related_pipeline_id: string | null;
+  }>;
 
   // ── Payouts (the money gate): cleared-but-unpaid commission per affiliate. ──
   const { data: clearedAttr } = await supabase
@@ -271,8 +303,13 @@ export default async function TowerPage({
     },
   };
 
+  // Failed sends count as waiting-on-you (Release → re-approve fixes them);
+  // held and queued rows don't — held is deliberate, queued is in flight.
   const decisionCount =
-    brightSignals.length + drafts.length + payoutAffiliates.length;
+    brightSignals.length +
+    drafts.length +
+    payoutAffiliates.length +
+    shelf.filter((s) => s.status === "failed").length;
 
   // ── Styles ──
   const sectionLabel: React.CSSProperties = {
@@ -371,6 +408,7 @@ export default async function TowerPage({
       <section style={{ marginBottom: "52px" }}>
         <p style={sectionLabel}>
           <span>Agent Controls</span>
+          <Hint tip="Each lever starts or pauses one agent's scheduled run. Sensible first order: almanac (a digest email to you), then sentinel (sorts replies), then scribe (drafts), then courier (sends approved drafts). Pausing is instant and always safe." />
           <span style={{ flex: 1, height: 1, background: LIGHT }} />
         </p>
         {switchesMissing ? (
@@ -409,8 +447,22 @@ export default async function TowerPage({
       <section style={{ marginBottom: "52px" }}>
         <p style={sectionLabel}>
           <span>Scout &amp; Enrich</span>
+          <Hint tip="Start here when the pipeline is thin. Run a sweep, review each card below, Promote the good ones. A promoted candidate moves to the map's Enriched column and gets a room — research and drafting happen there or on the levers' schedule. Then your next stop is Decisions, once drafts appear." />
           <span style={{ flex: 1, height: 1, background: LIGHT }} />
+          <Link href="/admin/tower/pipeline" className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", color: CRIMSON }}>
+            open the map →
+          </Link>
         </p>
+        {promotedId && (
+          <div style={{ ...card, borderLeft: `3px solid ${INK}`, marginBottom: "16px" }}>
+            <p style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, margin: 0 }}>
+              <strong>{promotedName || "Candidate"}</strong> moved to Research —{" "}
+              <Link href={`/admin/tower/candidate/${promotedId}`} className={twr.lnk} style={{ color: CRIMSON }}>
+                open their room →
+              </Link>
+            </p>
+          </div>
+        )}
         {sweepError && (
           <div style={{ ...card, borderLeft: `3px solid ${CRIMSON}`, marginBottom: "16px" }}>
             <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: CRIMSON, display: "block", marginBottom: "6px" }}>
@@ -488,7 +540,9 @@ export default async function TowerPage({
             {sourced.map((s) => (
               <div key={s.id} style={card}>
                 <div style={{ display: "flex", alignItems: "baseline", gap: "10px", flexWrap: "wrap", marginBottom: "4px" }}>
-                  <span style={{ fontFamily: SERIF, fontSize: "16px", fontWeight: 600, color: INK }}>{s.name}</span>
+                  <Link href={`/admin/tower/candidate/${s.id}`} className={twr.lnk} style={{ fontFamily: SERIF, fontSize: "16px", fontWeight: 600, color: INK }}>
+                    {s.name}
+                  </Link>
                   <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED }}>{s.surface ?? ""}</span>
                   <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED }}>vf {s.voice_fit ?? "—"}</span>
                   <span style={{ fontFamily: MONO, fontSize: "10px", color: MUTED, marginLeft: "auto" }}>{s.source_agent}</span>
@@ -522,6 +576,7 @@ export default async function TowerPage({
       <section style={{ marginBottom: "52px" }}>
         <p style={sectionLabel}>
           <span>Decisions</span>
+          <Hint tip="The only place anything leaves the building. Send approves an email for courier's next run (within 5 minutes while its lever is on); Hold pulls it back; manual rows you send yourself and then Mark sent. Empty lane means nothing needs you — wait, the agents are working." />
           <span style={{ flex: 1, height: 1, background: LIGHT }} />
         </p>
 
@@ -565,6 +620,11 @@ export default async function TowerPage({
                     <span style={{ fontFamily: MONO, fontSize: "12px", color: MUTED, marginLeft: "auto" }}>
                       → {d.to_addr}
                     </span>
+                    {d.related_pipeline_id && (
+                      <Link href={`/admin/tower/candidate/${d.related_pipeline_id}`} className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", color: CRIMSON }}>
+                        their room →
+                      </Link>
+                    )}
                   </div>
                   <p style={{ fontFamily: SERIF, fontSize: "16px", fontWeight: 600, margin: "0 0 6px", color: INK }}>
                     {d.subject}
@@ -626,6 +686,47 @@ export default async function TowerPage({
           </div>
         )}
 
+        {/* The shelf — approved (queued), held, and failed drafts. Nothing on
+            it needs composing; it's where drafts wait, by state. */}
+        {shelf.length > 0 && (
+          <div style={{ marginBottom: "28px" }}>
+            <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: INK, display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
+              On the shelf · {shelf.length}
+              <Hint tip="Drafts that exist but aren't asking for a decision. Queued = approved, courier sends on its next run (≤5 min while its lever is on). Held = you pulled it back; Release puts it back in the lane above. Failed = the send errored; Release re-readies it for another approve." />
+            </span>
+            {shelf.map((s) => (
+              <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap", padding: "8px 0", borderBottom: `1px solid ${LIGHT}` }}>
+                <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".1em", textTransform: "uppercase", color: s.status === "failed" ? CRIMSON : s.status === "held" ? "#a14400" : MUTED, border: `1px solid currentcolor`, padding: "1px 7px", whiteSpace: "nowrap" }}>
+                  {s.status === "approved" ? "queued" : s.status}
+                </span>
+                <span style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "320px" }}>
+                  {s.subject}
+                </span>
+                <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED }}>→ {s.to_addr}</span>
+                {s.status === "failed" && s.error && (
+                  <span style={{ fontFamily: MONO, fontSize: "10.5px", color: CRIMSON }}>{s.error.slice(0, 80)}</span>
+                )}
+                <span style={{ marginLeft: "auto", display: "flex", gap: "10px", alignItems: "center" }}>
+                  {s.related_pipeline_id && (
+                    <Link href={`/admin/tower/candidate/${s.related_pipeline_id}`} className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", color: CRIMSON }}>
+                      their room →
+                    </Link>
+                  )}
+                  {(s.status === "held" || s.status === "failed") && (
+                    <form action={releaseDraft}>
+                      <input type="hidden" name="id" value={s.id} />
+                      <TowerButton variant="ghost" pendingLabel="Releasing…">Release</TowerButton>
+                    </form>
+                  )}
+                  {s.status === "approved" && (
+                    <span style={{ fontFamily: MONO, fontSize: "10.5px", color: MUTED }}>courier sends ≤5 min</span>
+                  )}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Bright signals */}
         {brightSignals.length > 0 && (
           <div style={{ marginBottom: "8px" }}>
@@ -644,10 +745,17 @@ export default async function TowerPage({
                 <p style={{ fontFamily: SERIF, fontSize: "15px", lineHeight: 1.5, color: INK, margin: "0 0 14px" }}>
                   {s.summary || "(signal)"}
                 </p>
-                <form action={handleSignal}>
-                  <input type="hidden" name="id" value={s.id} />
-                  <TowerButton variant="ghost" pendingLabel="Clearing…">Mark handled</TowerButton>
-                </form>
+                <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
+                  <form action={handleSignal}>
+                    <input type="hidden" name="id" value={s.id} />
+                    <TowerButton variant="ghost" pendingLabel="Clearing…">Mark handled</TowerButton>
+                  </form>
+                  {looksLikeEmail(s.source) && (
+                    <a href={inboxSearchUrl(s.source)} target="_blank" rel="noreferrer" className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", color: CRIMSON }}>
+                      open in your inbox ↗
+                    </a>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -700,6 +808,7 @@ export default async function TowerPage({
       <section>
         <p style={sectionLabel}>
           <span>Board</span>
+          <Hint tip="Read-only situational awareness — nothing here needs a click. Each pipeline stage is a door: click it to open the map at that column." />
           <span style={{ flex: 1, height: 1, background: LIGHT }} />
         </p>
 
@@ -718,7 +827,9 @@ export default async function TowerPage({
                 .filter((st) => pipeCounts[st])
                 .map((st) => (
                   <div key={st} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", borderBottom: `1px solid ${LIGHT}` }}>
-                    <span style={{ fontFamily: MONO, fontSize: "12px", color: INK }}>{st.replace(/_/g, " ")}</span>
+                    <Link href={`/admin/tower/pipeline#${st}`} className={twr.lnk} style={{ fontFamily: MONO, fontSize: "12px", color: INK }}>
+                      {st.replace(/_/g, " ")}
+                    </Link>
                     <span style={{ fontFamily: MONO, fontSize: "12px", fontWeight: 700, color: CRIMSON }}>{pipeCounts[st]}</span>
                   </div>
                 ))

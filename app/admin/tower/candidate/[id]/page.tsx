@@ -1,0 +1,495 @@
+export const dynamic = "force-dynamic";
+// Run-brief-now calls the Anthropic API from this page's actions — same
+// budget reasoning as the tower page.
+export const maxDuration = 60;
+
+import Link from "next/link";
+import { notFound } from "next/navigation";
+
+import { createAdminClient } from "@/utils/supabase/admin";
+import type { DossierBrief } from "@/lib/partnerships/anthropic-agents";
+import { inboxSearchUrl } from "@/lib/partnerships/inbox-link";
+import TowerButton from "../../TowerButton";
+import twr from "../../tower.module.css";
+import {
+  promoteSourced,
+  rejectSourced,
+  runDossierNow,
+  draftNow,
+  approveDraft,
+  holdDraft,
+  releaseDraft,
+  markManualSent,
+} from "../../actions";
+
+/**
+ * The room — one page per candidate, the place every name links to. Their
+ * brief rendered as a document, their drafts with live actions, their replies,
+ * and the timeline of everything that happened, who did it, and when.
+ *
+ * Reads degrade gracefully: before the 20260612 migration, the structured
+ * brief and the event log are absent — the room falls back to the why_fit
+ * trail and a timeline synthesized from the tables that do exist.
+ */
+
+const INK = "#1A1A1A";
+const CRIMSON = "#8B1A1A";
+const MUTED = "#6B6B6B";
+const LIGHT = "#E8E4DF";
+const GREEN = "#2E7D32";
+const AMBERISH = "#a14400";
+const MONO = "'Space Mono', monospace";
+const DISPLAY = "'Playfair Display', Georgia, serif";
+const SERIF = "'Source Serif 4', Georgia, serif";
+
+const card: React.CSSProperties = {
+  border: `1px solid ${LIGHT}`,
+  background: "#FFFFFF",
+  padding: "18px 20px",
+  marginBottom: "14px",
+};
+const sectionLabel: React.CSSProperties = {
+  fontFamily: MONO,
+  fontSize: "11px",
+  letterSpacing: ".26em",
+  textTransform: "uppercase",
+  color: MUTED,
+  margin: "28px 0 12px",
+};
+const chip = (color: string): React.CSSProperties => ({
+  fontFamily: MONO,
+  fontSize: "10px",
+  letterSpacing: ".12em",
+  textTransform: "uppercase",
+  color,
+  border: `1px solid ${color}`,
+  padding: "2px 8px",
+  whiteSpace: "nowrap",
+});
+
+function timeAgo(iso: string | null): string {
+  if (!iso) return "—";
+  const ms = Date.now() - new Date(iso).getTime();
+  const m = Math.round(ms / 60000);
+  if (m < 1) return "just now";
+  if (m < 60) return `${m}m ago`;
+  const h = Math.round(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.round(h / 24)}d ago`;
+}
+
+function fmt(iso: string): string {
+  return new Date(iso).toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+type TimelineRow = { at: string; actor: string; label: string };
+
+export default async function CandidateRoomPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ ok?: string; err?: string }>;
+}) {
+  const { id } = await params;
+  const sp = await searchParams;
+
+  const supabase = createAdminClient();
+  const { data: c } = await supabase
+    .from("partner_pipeline")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  if (!c) notFound();
+
+  const brief = (c.dossier_brief ?? null) as DossierBrief | null;
+  const hasLegacyBrief = !brief && ((c.why_fit as string | null) ?? "").includes("[dossier]");
+
+  // Their drafts — every status, not just ready.
+  const { data: draftRows } = await supabase
+    .from("partner_outbound_queue")
+    .select("*")
+    .eq("related_pipeline_id", id)
+    .order("created_at", { ascending: true });
+  const drafts = draftRows ?? [];
+
+  // Their replies.
+  const { data: replyRows } = await supabase
+    .from("partner_inbound_email")
+    .select("from_addr, subject, text_body, classification, received_at")
+    .eq("matched_pipeline_id", id)
+    .order("received_at", { ascending: true })
+    .limit(20);
+  const replies = replyRows ?? [];
+
+  // Lever states make the "what happens next" line truthful.
+  const levers: Record<string, boolean> = {};
+  {
+    const { data: sw } = await supabase
+      .from("agent_switches")
+      .select("agent, enabled")
+      .in("agent", ["dossier-enrich", "scribe", "courier"]);
+    for (const s of sw ?? []) levers[s.agent as string] = s.enabled === true;
+  }
+
+  // The event log (post-migration), merged with rows synthesized from the
+  // tables that always exist — so the timeline never renders empty-wrong.
+  const timeline: TimelineRow[] = [];
+  {
+    const { data: events, error: evErr } = await supabase
+      .from("partner_events")
+      .select("at, actor, kind, detail")
+      .eq("pipeline_id", id)
+      .order("at", { ascending: true })
+      .limit(200);
+    if (!evErr) {
+      const SHOWN = new Set(["promoted", "rejected", "brief_written", "released", "draft_edited", "held"]);
+      for (const e of events ?? []) {
+        if (!SHOWN.has(e.kind as string)) continue;
+        const d = (e.detail ?? {}) as Record<string, unknown>;
+        const label =
+          e.kind === "promoted" ? "promoted → enriched"
+          : e.kind === "rejected" ? "rejected → passed"
+          : e.kind === "brief_written" ? `research brief written (${String(d.verdict ?? "—")})`
+          : e.kind === "released" ? "draft released back to ready"
+          : e.kind === "held" ? "draft held"
+          : "draft edited";
+        timeline.push({ at: e.at as string, actor: e.actor as string, label });
+      }
+    }
+  }
+  timeline.push({
+    at: c.created_at as string,
+    actor: (c.source_agent as string | null) ?? "scout",
+    label: "entered the pipeline",
+  });
+  for (const d of drafts) {
+    timeline.push({
+      at: d.created_at as string,
+      actor: (d.drafted_by as string | null) ?? "scribe",
+      label: `first-touch drafted — "${d.subject}"`,
+    });
+    if (d.approved_at) {
+      timeline.push({ at: d.approved_at as string, actor: (d.approved_by as string | null) ?? "you", label: "draft approved for send" });
+    }
+    if (d.sent_at) {
+      timeline.push({ at: d.sent_at as string, actor: d.send_channel === "manual" ? "you (by hand)" : "courier", label: `sent → ${d.to_addr}` });
+    }
+  }
+  for (const r of replies) {
+    timeline.push({ at: r.received_at as string, actor: "them", label: `replied — "${r.subject ?? "(no subject)"}"` });
+  }
+  if (c.first_touch_at && !drafts.some((d) => d.sent_at)) {
+    timeline.push({ at: c.first_touch_at as string, actor: "courier", label: "first touch sent" });
+  }
+  timeline.sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime());
+
+  // What happens next — derived from stage + brief + drafts + levers.
+  const status = c.status as string;
+  const vf = (c.voice_fit as number | null) ?? null;
+  const hasReadyDraft = drafts.some((d) => d.status === "ready");
+  const hasApprovedDraft = drafts.some((d) => d.status === "approved");
+  let next = "";
+  if (status === "sourced") {
+    next = "Waiting on you — Promote or Reject below.";
+  } else if (status === "enriched") {
+    if (hasReadyDraft) next = "A draft is in the house — approve or hold it below.";
+    else if (hasApprovedDraft) next = `Approved draft queued — courier sends it on its next tick${levers["courier"] ? "" : " once its lever is started"}.`;
+    else if (!brief && !hasLegacyBrief)
+      next = `Waiting on a research brief — ${levers["dossier-enrich"] ? "dossier-enrich runs hourly (:33 UTC)" : "dossier-enrich is paused"}, or press Run brief now. Waiting is fine; pressing is faster.`;
+    else if ((vf ?? 0) >= 4)
+      next = `Brief done — ${levers["scribe"] ? "scribe drafts on its next tick (≤15 min)" : "scribe is paused"}, or press Draft now.`;
+    else
+      next = `Brief done, but voice-fit ${vf ?? "—"} is below scribe's bar (4) — scribe will skip them. Draft now overrides, Reject parks them.`;
+  } else if (status === "contacted") {
+    next = `First touch out ${timeAgo(c.first_touch_at as string | null)} — follow-up ladder is at step ${c.ladder_step ?? 0}. Replies land here.`;
+  } else if (status === "replied") {
+    next = "They wrote back — read the reply below; your move.";
+  } else if (status === "activated") {
+    next = "Live affiliate — their numbers are in /admin/affiliates.";
+  } else if (status === "passed" || status === "cold") {
+    next = "Parked. Kept for reconsideration — nothing is ever deleted.";
+  } else {
+    next = (c.next_action as string | null) ?? "—";
+  }
+
+  const verdictColor = (v: string) =>
+    v === "reach_out" ? GREEN : v === "skip" ? AMBERISH : MUTED;
+
+  return (
+    <main style={{ padding: "8px 0 48px", maxWidth: "860px" }}>
+      <p style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".22em", textTransform: "uppercase", color: MUTED, margin: "0 0 6px" }}>
+        <Link href="/admin/tower" className={twr.lnk}>← Control Tower</Link>
+        {"  ·  "}
+        <Link href="/admin/tower/pipeline" className={twr.lnk}>The map</Link>
+      </p>
+
+      {sp.err && (
+        <div style={{ ...card, borderLeft: `3px solid ${CRIMSON}` }}>
+          <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: CRIMSON, display: "block", marginBottom: "6px" }}>
+            That didn&apos;t work
+          </span>
+          <p style={{ fontFamily: MONO, fontSize: "12.5px", lineHeight: 1.6, color: INK, margin: 0, wordBreak: "break-word" }}>{sp.err}</p>
+        </div>
+      )}
+      {sp.ok === "brief" && (
+        <div style={{ ...card, borderLeft: `3px solid ${INK}` }}>
+          <p style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, margin: 0 }}>Research brief written — it&apos;s below.</p>
+        </div>
+      )}
+      {sp.ok === "draft" && (
+        <div style={{ ...card, borderLeft: `3px solid ${INK}` }}>
+          <p style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, margin: 0 }}>First-touch drafted — it&apos;s in Drafts below, waiting on your approve.</p>
+        </div>
+      )}
+
+      {/* ── Header: who they are + where they stand ── */}
+      <div style={{ display: "flex", alignItems: "baseline", gap: "14px", flexWrap: "wrap", marginBottom: "4px" }}>
+        <h1 style={{ fontFamily: DISPLAY, fontStyle: "italic", fontWeight: 700, fontSize: "34px", color: INK, margin: 0 }}>
+          {c.name as string}
+        </h1>
+        <span style={chip(status === "activated" ? GREEN : status === "passed" || status === "cold" ? MUTED : CRIMSON)}>
+          {status.replace(/_/g, " ")}
+        </span>
+      </div>
+      <p style={{ fontFamily: MONO, fontSize: "11.5px", color: MUTED, margin: "0 0 4px" }}>
+        {(c.surface as string | null) ?? "—"} · {(c.handle as string | null) ?? "no handle"} · {(c.archetype as string | null) ?? "—"} · audience est. {(c.audience_est as number | null)?.toLocaleString() ?? "unknown"} · vf {vf ?? "—"}
+      </p>
+      {c.contact_path && (
+        <p style={{ fontFamily: MONO, fontSize: "11.5px", color: CRIMSON, margin: "0 0 14px" }}>
+          {c.contact_path as string}
+        </p>
+      )}
+      <div style={{ ...card, borderLeft: `3px solid ${INK}` }}>
+        <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".18em", textTransform: "uppercase", color: MUTED, display: "block", marginBottom: "6px" }}>
+          What happens next
+        </span>
+        <p style={{ fontFamily: SERIF, fontSize: "14.5px", lineHeight: 1.6, color: INK, margin: 0 }}>{next}</p>
+      </div>
+
+      {/* ── Stage actions ── */}
+      <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "8px" }}>
+        {status === "sourced" && (
+          <>
+            <form action={promoteSourced}>
+              <input type="hidden" name="id" value={id} />
+              <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
+              <TowerButton pendingLabel="Promoting…">Promote → enriched</TowerButton>
+            </form>
+            <form action={rejectSourced}>
+              <input type="hidden" name="id" value={id} />
+              <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
+              <TowerButton variant="ghost" pendingLabel="Rejecting…">Reject</TowerButton>
+            </form>
+          </>
+        )}
+        {(status === "sourced" || status === "enriched") && (
+          <form action={runDossierNow}>
+            <input type="hidden" name="id" value={id} />
+            <TowerButton
+              variant="outline"
+              pendingLabel="Researching… (10–30s)"
+              confirmMessage={`Run the research brief for ${c.name}? This calls the Anthropic API (small spend, ~$0.05–$0.15).`}
+            >
+              {brief || hasLegacyBrief ? "Re-run brief" : "Run brief now"}
+            </TowerButton>
+          </form>
+        )}
+        {status === "enriched" && !drafts.some((d) => ["ready", "approved", "sent"].includes(d.status as string)) && (
+          <form action={draftNow}>
+            <input type="hidden" name="id" value={id} />
+            <TowerButton variant="outline" pendingLabel="Drafting…">Draft now</TowerButton>
+          </form>
+        )}
+        {status === "enriched" && (
+          <form action={rejectSourced}>
+            <input type="hidden" name="id" value={id} />
+            <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
+            <TowerButton variant="ghost" pendingLabel="Parking…">Pass on them</TowerButton>
+          </form>
+        )}
+      </div>
+      {(status === "sourced" || status === "enriched") && (
+        <p style={{ fontFamily: MONO, fontSize: "10px", lineHeight: 1.6, color: MUTED, margin: "0 0 8px" }}>
+          Run brief = one Anthropic research call (small spend, confirmed first). Draft now = free template fill.
+          Neither sends anything — every email still waits for your approve in Decisions.
+        </p>
+      )}
+
+      {/* ── The research brief ── */}
+      <p style={sectionLabel}>Research brief</p>
+      {brief ? (
+        <div style={card}>
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "12px" }}>
+            <span style={chip(verdictColor(brief.verdict))}>verdict: {brief.verdict.replace(/_/g, " ")}</span>
+            <span style={chip(brief.conflict === "none" ? GREEN : brief.conflict === "hard" ? CRIMSON : AMBERISH)}>
+              conflict: {brief.conflict}
+            </span>
+            <span style={chip(INK)}>voice-fit {brief.voice_fit}/5</span>
+          </div>
+          <table style={{ borderCollapse: "collapse", width: "100%" }}>
+            <tbody>
+              {[
+                ["Voice fit", brief.voice_fit_rationale],
+                ["Conflict", brief.conflict_note || "—"],
+                ["Cadence", brief.cadence_note],
+                ["Audience", brief.audience_est ? `est. ${brief.audience_est.toLocaleString()}` : "couldn't verify"],
+                ["Contact path", brief.contact_path],
+                ["First-touch angle", brief.first_touch_angle],
+              ].map(([k, v]) => (
+                <tr key={k as string}>
+                  <td style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".12em", textTransform: "uppercase", color: MUTED, padding: "6px 14px 6px 0", verticalAlign: "top", whiteSpace: "nowrap" }}>{k}</td>
+                  <td style={{ fontFamily: SERIF, fontSize: "14px", lineHeight: 1.55, color: INK, padding: "6px 0", borderBottom: `1px solid ${LIGHT}` }}>{v}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div style={card}>
+          <p style={{ fontFamily: SERIF, fontSize: "13.5px", fontStyle: "italic", color: MUTED, margin: 0 }}>
+            {hasLegacyBrief
+              ? "A brief was written before structured storage existed — the raw trail below has it. Re-run brief to render it properly here."
+              : "No brief yet. Press Run brief now above, or start the dossier-enrich lever and it happens on the hour."}
+          </p>
+        </div>
+      )}
+      {/* The raw trail — scout's note + every dossier verdict line, verbatim. */}
+      {c.why_fit && (
+        <div style={{ ...card, background: "rgba(139, 26, 26, 0.03)" }}>
+          <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".18em", textTransform: "uppercase", color: MUTED, display: "block", marginBottom: "6px" }}>
+            Raw trail (why_fit)
+          </span>
+          <p style={{ fontFamily: MONO, fontSize: "12px", lineHeight: 1.6, color: INK, margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+            {c.why_fit as string}
+          </p>
+        </div>
+      )}
+
+      {/* ── Drafts — every status, with the action that fits ── */}
+      <p style={sectionLabel}>Drafts &amp; sends</p>
+      {drafts.length === 0 ? (
+        <div style={card}>
+          <p style={{ fontFamily: SERIF, fontSize: "13.5px", fontStyle: "italic", color: MUTED, margin: 0 }}>
+            Nothing drafted yet{status === "enriched" ? " — Draft now above writes the first-touch, or scribe does it on its tick (voice-fit ≥ 4)." : "."}
+          </p>
+        </div>
+      ) : (
+        drafts.map((d) => {
+          const st = d.status as string;
+          const isManual = (d.send_channel ?? "email") === "manual";
+          return (
+            <div key={d.id as string} style={card}>
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center", marginBottom: "8px" }}>
+                <span style={chip(st === "sent" ? GREEN : st === "failed" ? CRIMSON : st === "held" ? AMBERISH : INK)}>{st}</span>
+                <span style={chip(MUTED)}>{isManual ? "manual send" : "email"}</span>
+                {d.warden_cleared ? <span style={chip(GREEN)}>warden ✓</span> : <span style={chip(AMBERISH)}>needs eye</span>}
+                <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED, marginLeft: "auto" }}>→ {d.to_addr as string}</span>
+              </div>
+              <p style={{ fontFamily: SERIF, fontSize: "15px", fontWeight: 600, color: INK, margin: "0 0 6px" }}>{d.subject as string}</p>
+              <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.6, color: MUTED, margin: "0 0 10px", whiteSpace: "pre-wrap" }}>
+                {(d.body as string).length > 360 ? (d.body as string).slice(0, 360) + "…" : (d.body as string)}
+              </p>
+              {d.personalization_note && (
+                <p style={{ fontFamily: MONO, fontSize: "11px", lineHeight: 1.5, color: AMBERISH, background: "rgba(161,68,0,.06)", borderLeft: `2px solid ${AMBERISH}`, padding: "8px 10px", margin: "0 0 10px" }}>
+                  {d.personalization_note as string}
+                </p>
+              )}
+              {st === "failed" && d.error && (
+                <p style={{ fontFamily: MONO, fontSize: "11px", color: CRIMSON, margin: "0 0 10px" }}>send failed: {d.error as string}</p>
+              )}
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                {st === "ready" && (
+                  <>
+                    {isManual ? (
+                      <form action={markManualSent}>
+                        <input type="hidden" name="id" value={d.id as string} />
+                        <TowerButton pendingLabel="Marking…">Mark sent</TowerButton>
+                      </form>
+                    ) : (
+                      <form action={approveDraft}>
+                        <input type="hidden" name="id" value={d.id as string} />
+                        <TowerButton pendingLabel="Approving…">Send</TowerButton>
+                      </form>
+                    )}
+                    <form action={holdDraft}>
+                      <input type="hidden" name="id" value={d.id as string} />
+                      <TowerButton variant="ghost" pendingLabel="Holding…">Hold</TowerButton>
+                    </form>
+                  </>
+                )}
+                {(st === "held" || st === "failed") && (
+                  <form action={releaseDraft}>
+                    <input type="hidden" name="id" value={d.id as string} />
+                    <TowerButton variant="ghost" pendingLabel="Releasing…">Release → ready</TowerButton>
+                  </form>
+                )}
+                {st === "approved" && (
+                  <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED }}>
+                    queued — courier sends on its next tick{levers["courier"] ? " (≤5 min)" : " once its lever is started"}
+                  </span>
+                )}
+                {st === "sent" && d.sent_at && (
+                  <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED }}>sent {timeAgo(d.sent_at as string)}</span>
+                )}
+              </div>
+            </div>
+          );
+        })
+      )}
+
+      {/* ── Replies ── */}
+      <p style={sectionLabel}>Replies</p>
+      {replies.length === 0 ? (
+        <div style={card}>
+          <p style={{ fontFamily: SERIF, fontSize: "13.5px", fontStyle: "italic", color: MUTED, margin: 0 }}>
+            Nothing yet. When they write back, sentinel (checks every 10 minutes) matches the email to this room,
+            files a bright signal in the tower&apos;s Decisions, and emails you a ping. The snippet lands here;
+            the full thread stays in your inbox, one click away.
+          </p>
+        </div>
+      ) : (
+        replies.map((r, i) => (
+          <div key={i} style={{ ...card, borderLeft: `3px solid ${CRIMSON}` }}>
+            <div style={{ display: "flex", gap: "10px", alignItems: "baseline", flexWrap: "wrap", marginBottom: "6px" }}>
+              <span style={{ fontFamily: SERIF, fontSize: "14.5px", fontWeight: 600, color: INK }}>{r.subject ?? "(no subject)"}</span>
+              {r.classification && <span style={chip(MUTED)}>{r.classification as string}</span>}
+              <span style={{ fontFamily: MONO, fontSize: "10.5px", color: MUTED, marginLeft: "auto" }}>
+                {r.from_addr as string} · {timeAgo(r.received_at as string)}
+              </span>
+            </div>
+            <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.6, color: INK, margin: "0 0 10px", whiteSpace: "pre-wrap" }}>
+              {((r.text_body as string | null) ?? "").slice(0, 600) || "(empty body)"}
+            </p>
+            <a
+              href={inboxSearchUrl(r.from_addr as string)}
+              target="_blank"
+              rel="noreferrer"
+              className={twr.lnk}
+              style={{ fontFamily: MONO, fontSize: "11px", color: CRIMSON }}
+            >
+              open the thread in your inbox ↗
+            </a>
+          </div>
+        ))
+      )}
+
+      {/* ── Timeline ── */}
+      <p style={sectionLabel}>Timeline</p>
+      <div style={card}>
+        {timeline.map((t, i) => (
+          <div key={i} style={{ display: "flex", gap: "12px", padding: "7px 0", borderBottom: i < timeline.length - 1 ? `1px solid ${LIGHT}` : "none" }}>
+            <span style={{ fontFamily: MONO, fontSize: "10.5px", color: MUTED, whiteSpace: "nowrap", minWidth: "110px" }}>{fmt(t.at)}</span>
+            <span style={{ fontFamily: MONO, fontSize: "10.5px", color: CRIMSON, whiteSpace: "nowrap", minWidth: "150px", overflow: "hidden", textOverflow: "ellipsis" }}>{t.actor}</span>
+            <span style={{ fontFamily: SERIF, fontSize: "13px", color: INK, lineHeight: 1.5 }}>{t.label}</span>
+          </div>
+        ))}
+      </div>
+    </main>
+  );
+}

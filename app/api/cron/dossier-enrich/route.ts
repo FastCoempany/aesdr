@@ -10,7 +10,8 @@ import { NextResponse } from "next/server";
 import { verifyCronAuth } from "@/lib/cron-auth";
 import { isAgentEnabled, getAgentModel } from "@/lib/partnerships/agent-switch";
 import { createAdminClient } from "@/utils/supabase/admin";
-import { runDossier } from "@/lib/partnerships/anthropic-agents";
+import { runDossier, verdictNextAction } from "@/lib/partnerships/anthropic-agents";
+import { logPartnerEvent } from "@/lib/partnerships/events";
 
 /**
  * Dossier auto-enrich. Runs hourly when the dossier-enrich switch is ON. Takes
@@ -79,15 +80,19 @@ export async function GET(request: Request) {
         voice_fit: brief.voice_fit,
         contact_path: brief.contact_path,
         why_fit: updated_why_fit,
-        next_action:
-          brief.verdict === "reach_out"
-            ? "Send to scribe (auto-drafter picks this up)"
-            : brief.verdict === "skip"
-              ? "Skip — see why_fit"
-              : "Needs more research",
+        next_action: verdictNextAction(brief.verdict),
         updated_at: new Date().toISOString(),
       })
       .eq("id", r.id);
+    // Structured copy for the room — separate write so a pre-migration
+    // database (no dossier_brief column) doesn't fail the merge above.
+    await supabase.from("partner_pipeline").update({ dossier_brief: brief }).eq("id", r.id);
+    await logPartnerEvent({
+      pipelineId: r.id as string,
+      actor: "dossier",
+      kind: "brief_written",
+      detail: { model, verdict: brief.verdict },
+    });
     enriched++;
   }
 
