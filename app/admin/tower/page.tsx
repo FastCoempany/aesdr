@@ -452,6 +452,9 @@ export default async function TowerPage({
           <Link href="/admin/tower/pipeline" className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", color: CRIMSON }}>
             open the map →
           </Link>
+          <Link href="/admin/tower/pipeline#passed" className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", color: MUTED, marginLeft: "12px" }}>
+            the bin · {(pipeCounts["passed"] ?? 0) + (pipeCounts["cold"] ?? 0)} →
+          </Link>
         </p>
         {promotedId && (
           <div style={{ ...card, borderLeft: `3px solid ${INK}`, marginBottom: "16px" }}>

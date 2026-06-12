@@ -82,6 +82,11 @@ const STAGES: Array<{ id: string; label: string; caption: string; empty: string 
 
 const PARKED = ["passed", "cold"] as const;
 
+function daysAgo(iso: string): string {
+  const d = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+  return d < 1 ? "· today" : `· ${d}d`;
+}
+
 function waitingOn(r: Row): string {
   if (r.status === "sourced") return "waiting on your review";
   if (r.status === "enriched") {
@@ -162,25 +167,30 @@ export default async function PipelineMapPage() {
         })}
       </div>
 
-      {/* Parked shelf — rejected and gone-cold candidates, kept, never deleted. */}
-      <div style={{ marginTop: "36px", borderTop: `1px solid ${LIGHT}`, paddingTop: "16px" }}>
-        <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: MUTED }}>
-          Parked — passed / cold ({parked.length})
+      {/* The bin — passed and gone-cold candidates. A recycle bin that never
+          empties itself: everything stays, restorable from the room. */}
+      <div id="passed" style={{ marginTop: "36px", border: `1px solid ${INK}`, padding: "16px 18px" }}>
+        <span id="cold" style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: INK, fontWeight: 700 }}>
+          The bin — passed &amp; cold · {parked.length}
         </span>
+        <p style={{ fontFamily: SERIF, fontSize: "12.5px", fontStyle: "italic", color: MUTED, margin: "6px 0 0" }}>
+          Nothing in here expires or gets deleted. Open anyone&apos;s room to Reconsider — research is kept,
+          so restoring costs nothing.
+        </p>
         {parked.length === 0 ? (
-          <p style={{ fontFamily: SERIF, fontSize: "12.5px", fontStyle: "italic", color: MUTED, margin: "8px 0 0" }}>
-            Empty. Reject keeps a candidate here instead of deleting them.
+          <p style={{ fontFamily: SERIF, fontSize: "12.5px", fontStyle: "italic", color: MUTED, margin: "10px 0 0" }}>
+            Empty. Pass or Reject moves a candidate here.
           </p>
         ) : (
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "10px" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "12px" }}>
             {parked.map((r) => (
               <Link
                 key={r.id}
                 href={`/admin/tower/candidate/${r.id}`}
                 className={twr.lnk}
-                style={{ fontFamily: MONO, fontSize: "11px", color: MUTED, border: `1px solid ${LIGHT}`, padding: "4px 10px" }}
+                style={{ fontFamily: MONO, fontSize: "11px", color: INK, border: `1px solid ${LIGHT}`, padding: "4px 10px", background: "rgba(107,107,107,.06)" }}
               >
-                {r.name} · {r.status}
+                {r.name} · {r.status} {daysAgo(r.updated_at)}
               </Link>
             ))}
           </div>

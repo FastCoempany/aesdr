@@ -485,7 +485,10 @@ export async function promoteSourced(formData: FormData) {
   redirect("/admin/tower");
 }
 
-/** Reject one sourced row — moves to `passed`, not deleted. */
+/**
+ * Pass on a not-yet-contacted candidate — sourced or enriched — into the bin
+ * (status 'passed'). Never deleted; Reconsider pulls them back out.
+ */
 export async function rejectSourced(formData: FormData) {
   const user = await requireAdmin();
   const id = String(formData.get("id") ?? "");
@@ -495,7 +498,7 @@ export async function rejectSourced(formData: FormData) {
     .from("partner_pipeline")
     .update({ status: "passed", updated_at: new Date().toISOString() })
     .eq("id", id)
-    .eq("status", "sourced")
+    .in("status", ["sourced", "enriched"])
     .select("id")
     .maybeSingle();
   if (error) throw new Error(error.message);
@@ -511,6 +514,51 @@ export async function rejectSourced(formData: FormData) {
   revalidateCandidate(id);
   const returnTo = towerReturnPath(formData);
   redirect(returnTo ?? "/admin/tower");
+}
+
+/**
+ * Pull a candidate back out of the bin. If research already exists they
+ * return to 'enriched' (the brief is kept, nothing is redone); otherwise back
+ * to 'sourced', re-entering the review queue.
+ */
+export async function reconsiderPassed(formData: FormData) {
+  const user = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) throw new Error("Missing id.");
+  const supabase = createAdminClient();
+
+  const { data: row, error: readErr } = await supabase
+    .from("partner_pipeline")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  if (readErr) throw new Error(readErr.message);
+  if (!row) throw new Error("Candidate not found.");
+  const hasBrief =
+    row.dossier_brief != null ||
+    (((row.why_fit as string | null) ?? "").includes("[dossier]"));
+  const dest = hasBrief ? "enriched" : "sourced";
+
+  const { data: updated, error } = await supabase
+    .from("partner_pipeline")
+    .update({ status: dest, updated_at: new Date().toISOString() })
+    .eq("id", id)
+    .in("status", ["passed", "cold"])
+    .select("id")
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+
+  if (updated) {
+    await logPartnerEvent({
+      pipelineId: id,
+      actor: user.email,
+      kind: "reconsidered",
+      detail: { to: dest },
+    });
+  }
+  revalidateCandidate(id);
+  const returnTo = towerReturnPath(formData);
+  redirect(returnTo ?? `/admin/tower/candidate/${id}`);
 }
 
 /**
