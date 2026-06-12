@@ -24,6 +24,7 @@ import ScoutSweepButton from "./ScoutSweepButton";
 import ModelSelector from "./ModelSelector";
 import TowerButton from "./TowerButton";
 import Hint from "./Hint";
+import ContactLinks from "./ContactLinks";
 import twr from "./tower.module.css";
 import { inboxSearchUrl, looksLikeEmail } from "@/lib/partnerships/inbox-link";
 import { promoteSourced, rejectSourced } from "./actions";
@@ -452,6 +453,9 @@ export default async function TowerPage({
           <Link href="/admin/tower/pipeline" className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", color: CRIMSON }}>
             open the map →
           </Link>
+          <Link href="/admin/tower/pipeline#passed" className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", color: MUTED, marginLeft: "12px" }}>
+            the bin · {(pipeCounts["passed"] ?? 0) + (pipeCounts["cold"] ?? 0)} →
+          </Link>
         </p>
         {promotedId && (
           <div style={{ ...card, borderLeft: `3px solid ${INK}`, marginBottom: "16px" }}>
@@ -554,7 +558,10 @@ export default async function TowerPage({
                   <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.55, color: INK, margin: "0 0 6px" }}>{s.why_fit}</p>
                 )}
                 {s.contact_path && (
-                  <p style={{ fontFamily: MONO, fontSize: "11.5px", color: "#8B1A1A", margin: "0 0 10px" }}>{s.contact_path}</p>
+                  <p style={{ fontFamily: MONO, fontSize: "11.5px", color: "#8B1A1A", margin: "0 0 10px" }}>
+                    {s.contact_path}{" "}
+                    <ContactLinks text={s.contact_path} searchHint={`${s.name} ${s.surface ?? ""}`} />
+                  </p>
                 )}
                 <div style={{ display: "flex", gap: "8px" }}>
                   <form action={promoteSourced}>
@@ -626,6 +633,12 @@ export default async function TowerPage({
                       </Link>
                     )}
                   </div>
+                  {(d.send_channel ?? "email") === "manual" && (
+                    <p style={{ fontFamily: MONO, fontSize: "11px", color: MUTED, margin: "0 0 8px" }}>
+                      deliver it yourself, then Mark sent:{" "}
+                      <ContactLinks text={d.to_addr} />
+                    </p>
+                  )}
                   <p style={{ fontFamily: SERIF, fontSize: "16px", fontWeight: 600, margin: "0 0 6px", color: INK }}>
                     {d.subject}
                   </p>

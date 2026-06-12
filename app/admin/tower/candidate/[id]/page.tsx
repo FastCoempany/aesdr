@@ -9,11 +9,13 @@ import { notFound } from "next/navigation";
 import { createAdminClient } from "@/utils/supabase/admin";
 import type { DossierBrief } from "@/lib/partnerships/anthropic-agents";
 import { inboxSearchUrl } from "@/lib/partnerships/inbox-link";
+import ContactLinks from "../../ContactLinks";
 import TowerButton from "../../TowerButton";
 import twr from "../../tower.module.css";
 import {
   promoteSourced,
   rejectSourced,
+  reconsiderPassed,
   runDossierNow,
   draftNow,
   approveDraft,
@@ -148,13 +150,14 @@ export default async function CandidateRoomPage({
       .order("at", { ascending: true })
       .limit(200);
     if (!evErr) {
-      const SHOWN = new Set(["promoted", "rejected", "brief_written", "released", "draft_edited", "held"]);
+      const SHOWN = new Set(["promoted", "rejected", "reconsidered", "brief_written", "released", "draft_edited", "held"]);
       for (const e of events ?? []) {
         if (!SHOWN.has(e.kind as string)) continue;
         const d = (e.detail ?? {}) as Record<string, unknown>;
         const label =
           e.kind === "promoted" ? "promoted → enriched"
-          : e.kind === "rejected" ? "rejected → passed"
+          : e.kind === "rejected" ? "passed → into the bin"
+          : e.kind === "reconsidered" ? `reconsidered → back to ${String(d.to ?? "the pipeline")}`
           : e.kind === "brief_written" ? `research brief written (${String(d.verdict ?? "—")})`
           : e.kind === "released" ? "draft released back to ready"
           : e.kind === "held" ? "draft held"
@@ -213,7 +216,7 @@ export default async function CandidateRoomPage({
   } else if (status === "activated") {
     next = "Live affiliate — their numbers are in /admin/affiliates.";
   } else if (status === "passed" || status === "cold") {
-    next = "Parked. Kept for reconsideration — nothing is ever deleted.";
+    next = "In the bin — kept exactly as researched, never deleted. Reconsider puts them back.";
   } else {
     next = (c.next_action as string | null) ?? "—";
   }
@@ -253,24 +256,52 @@ export default async function CandidateRoomPage({
         <h1 style={{ fontFamily: DISPLAY, fontStyle: "italic", fontWeight: 700, fontSize: "34px", color: INK, margin: 0 }}>
           {c.name as string}
         </h1>
-        <span style={chip(status === "activated" ? GREEN : status === "passed" || status === "cold" ? MUTED : CRIMSON)}>
-          {status.replace(/_/g, " ")}
-        </span>
+        {status === "passed" || status === "cold" ? (
+          <span style={{ ...chip("#FAF7F2"), background: INK, borderColor: INK }}>
+            {status} — in the bin
+          </span>
+        ) : (
+          <span style={chip(status === "activated" ? GREEN : CRIMSON)}>
+            {status.replace(/_/g, " ")}
+          </span>
+        )}
       </div>
       <p style={{ fontFamily: MONO, fontSize: "11.5px", color: MUTED, margin: "0 0 4px" }}>
         {(c.surface as string | null) ?? "—"} · {(c.handle as string | null) ?? "no handle"} · {(c.archetype as string | null) ?? "—"} · audience est. {(c.audience_est as number | null)?.toLocaleString() ?? "unknown"} · vf {vf ?? "—"}
       </p>
       {c.contact_path && (
         <p style={{ fontFamily: MONO, fontSize: "11.5px", color: CRIMSON, margin: "0 0 14px" }}>
-          {c.contact_path as string}
+          {c.contact_path as string}{" "}
+          <ContactLinks
+            text={c.contact_path as string}
+            searchHint={`${c.name as string} ${(c.surface as string | null) ?? ""}`}
+          />
         </p>
       )}
-      <div style={{ ...card, borderLeft: `3px solid ${INK}` }}>
-        <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".18em", textTransform: "uppercase", color: MUTED, display: "block", marginBottom: "6px" }}>
-          What happens next
-        </span>
-        <p style={{ fontFamily: SERIF, fontSize: "14.5px", lineHeight: 1.6, color: INK, margin: 0 }}>{next}</p>
-      </div>
+      {status === "passed" || status === "cold" ? (
+        <div style={{ ...card, borderLeft: `3px solid ${INK}`, background: "rgba(107,107,107,.05)" }}>
+          <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".18em", textTransform: "uppercase", color: INK, display: "block", marginBottom: "6px" }}>
+            In the bin
+          </span>
+          <p style={{ fontFamily: SERIF, fontSize: "14.5px", lineHeight: 1.6, color: INK, margin: "0 0 12px" }}>
+            You passed on {c.name as string} {timeAgo(c.updated_at as string | null)}. The bin never expires —
+            everything here is kept exactly as researched. Reconsider puts them back{" "}
+            {brief || hasLegacyBrief ? "into Enriched (the brief is kept)" : "into the review queue"}.
+          </p>
+          <form action={reconsiderPassed}>
+            <input type="hidden" name="id" value={id} />
+            <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
+            <TowerButton variant="outline" pendingLabel="Restoring…">Reconsider — put them back</TowerButton>
+          </form>
+        </div>
+      ) : (
+        <div style={{ ...card, borderLeft: `3px solid ${INK}` }}>
+          <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".18em", textTransform: "uppercase", color: MUTED, display: "block", marginBottom: "6px" }}>
+            What happens next
+          </span>
+          <p style={{ fontFamily: SERIF, fontSize: "14.5px", lineHeight: 1.6, color: INK, margin: 0 }}>{next}</p>
+        </div>
+      )}
 
       {/* ── Stage actions ── */}
       <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "8px" }}>
@@ -344,7 +375,18 @@ export default async function CandidateRoomPage({
               ].map(([k, v]) => (
                 <tr key={k as string}>
                   <td style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".12em", textTransform: "uppercase", color: MUTED, padding: "6px 14px 6px 0", verticalAlign: "top", whiteSpace: "nowrap" }}>{k}</td>
-                  <td style={{ fontFamily: SERIF, fontSize: "14px", lineHeight: 1.55, color: INK, padding: "6px 0", borderBottom: `1px solid ${LIGHT}` }}>{v}</td>
+                  <td style={{ fontFamily: SERIF, fontSize: "14px", lineHeight: 1.55, color: INK, padding: "6px 0", borderBottom: `1px solid ${LIGHT}` }}>
+                    {v}
+                    {k === "Contact path" && (
+                      <>
+                        {" "}
+                        <ContactLinks
+                          text={v as string}
+                          searchHint={`${c.name as string} ${(c.surface as string | null) ?? ""}`}
+                        />
+                      </>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -391,6 +433,15 @@ export default async function CandidateRoomPage({
                 {d.warden_cleared ? <span style={chip(GREEN)}>warden ✓</span> : <span style={chip(AMBERISH)}>needs eye</span>}
                 <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED, marginLeft: "auto" }}>→ {d.to_addr as string}</span>
               </div>
+              {isManual && st !== "sent" && (
+                <p style={{ fontFamily: MONO, fontSize: "11px", color: MUTED, margin: "0 0 8px" }}>
+                  deliver it yourself, then Mark sent:{" "}
+                  <ContactLinks
+                    text={(d.to_addr as string) + " " + ((c.contact_path as string | null) ?? "")}
+                    searchHint={`${c.name as string} ${(c.surface as string | null) ?? ""}`}
+                  />
+                </p>
+              )}
               <p style={{ fontFamily: SERIF, fontSize: "15px", fontWeight: 600, color: INK, margin: "0 0 6px" }}>{d.subject as string}</p>
               <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.6, color: MUTED, margin: "0 0 10px", whiteSpace: "pre-wrap" }}>
                 {(d.body as string).length > 360 ? (d.body as string).slice(0, 360) + "…" : (d.body as string)}
