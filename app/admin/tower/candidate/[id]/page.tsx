@@ -9,6 +9,7 @@ import { notFound } from "next/navigation";
 import { createAdminClient } from "@/utils/supabase/admin";
 import type { DossierBrief } from "@/lib/partnerships/anthropic-agents";
 import { inboxSearchUrl } from "@/lib/partnerships/inbox-link";
+import ContactLinks from "../../ContactLinks";
 import TowerButton from "../../TowerButton";
 import twr from "../../tower.module.css";
 import {
@@ -270,7 +271,11 @@ export default async function CandidateRoomPage({
       </p>
       {c.contact_path && (
         <p style={{ fontFamily: MONO, fontSize: "11.5px", color: CRIMSON, margin: "0 0 14px" }}>
-          {c.contact_path as string}
+          {c.contact_path as string}{" "}
+          <ContactLinks
+            text={c.contact_path as string}
+            searchHint={`${c.name as string} ${(c.surface as string | null) ?? ""}`}
+          />
         </p>
       )}
       {status === "passed" || status === "cold" ? (
@@ -370,7 +375,18 @@ export default async function CandidateRoomPage({
               ].map(([k, v]) => (
                 <tr key={k as string}>
                   <td style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".12em", textTransform: "uppercase", color: MUTED, padding: "6px 14px 6px 0", verticalAlign: "top", whiteSpace: "nowrap" }}>{k}</td>
-                  <td style={{ fontFamily: SERIF, fontSize: "14px", lineHeight: 1.55, color: INK, padding: "6px 0", borderBottom: `1px solid ${LIGHT}` }}>{v}</td>
+                  <td style={{ fontFamily: SERIF, fontSize: "14px", lineHeight: 1.55, color: INK, padding: "6px 0", borderBottom: `1px solid ${LIGHT}` }}>
+                    {v}
+                    {k === "Contact path" && (
+                      <>
+                        {" "}
+                        <ContactLinks
+                          text={v as string}
+                          searchHint={`${c.name as string} ${(c.surface as string | null) ?? ""}`}
+                        />
+                      </>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -417,6 +433,15 @@ export default async function CandidateRoomPage({
                 {d.warden_cleared ? <span style={chip(GREEN)}>warden ✓</span> : <span style={chip(AMBERISH)}>needs eye</span>}
                 <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED, marginLeft: "auto" }}>→ {d.to_addr as string}</span>
               </div>
+              {isManual && st !== "sent" && (
+                <p style={{ fontFamily: MONO, fontSize: "11px", color: MUTED, margin: "0 0 8px" }}>
+                  deliver it yourself, then Mark sent:{" "}
+                  <ContactLinks
+                    text={(d.to_addr as string) + " " + ((c.contact_path as string | null) ?? "")}
+                    searchHint={`${c.name as string} ${(c.surface as string | null) ?? ""}`}
+                  />
+                </p>
+              )}
               <p style={{ fontFamily: SERIF, fontSize: "15px", fontWeight: 600, color: INK, margin: "0 0 6px" }}>{d.subject as string}</p>
               <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.6, color: MUTED, margin: "0 0 10px", whiteSpace: "pre-wrap" }}>
                 {(d.body as string).length > 360 ? (d.body as string).slice(0, 360) + "…" : (d.body as string)}

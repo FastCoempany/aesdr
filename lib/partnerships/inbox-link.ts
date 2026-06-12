@@ -11,6 +11,15 @@ export function inboxSearchUrl(fromAddr: string): string {
   return `${base}${encodeURIComponent(`from:(${fromAddr})`)}`;
 }
 
+/** Compose window for an address — same no-API posture: a plain Gmail compose
+ *  URL, overridable with NEXT_PUBLIC_INBOX_COMPOSE_BASE. */
+export function composeUrl(toAddr: string): string {
+  const base =
+    process.env.NEXT_PUBLIC_INBOX_COMPOSE_BASE ||
+    "https://mail.google.com/mail/?view=cm&fs=1&to=";
+  return `${base}${encodeURIComponent(toAddr)}`;
+}
+
 export function looksLikeEmail(s: string | null | undefined): boolean {
   return !!s && /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(s.trim());
 }
