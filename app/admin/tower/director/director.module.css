@@ -871,3 +871,13 @@
   color: #8B1A1A;
   margin: 18px 0 6px;
 }
+
+/* ── Press feedback ──
+   Every clickable element acknowledges the press: hover was already here,
+   :active is the impression. Matches tower.module.css's button feel. */
+.resetBtn:active { transform: translateY(1px); }
+.towerBtn:active { transform: translateY(1px); box-shadow: inset 0 2px 4px rgba(0, 0, 0, .3); }
+.navItem:active { transform: translateY(1px); }
+.weekBar:active { background: rgba(139, 26, 26, .05); }
+.taskBar:active { background: rgba(139, 26, 26, .045); }
+:global(.d-cmd:active) { transform: translateY(1px); }

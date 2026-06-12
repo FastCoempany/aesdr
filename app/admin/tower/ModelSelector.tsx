@@ -1,6 +1,9 @@
 "use client";
 
+import { useFormStatus } from "react-dom";
+
 import { setAgentModel } from "./actions";
+import styles from "./tower.module.css";
 
 const MODELS = [
   { id: "claude-opus-4-6", label: "Opus 4.6 (newest)" },
@@ -36,19 +39,23 @@ export default function ModelSelector({
       >
         Model:
       </label>
+      <ModelSelect current={current} />
+    </form>
+  );
+}
+
+/* Separate child so useFormStatus can read the parent form's in-flight state:
+   the select locks while the change is saving, with a "saving…" tell. */
+function ModelSelect({ current }: { current: string }) {
+  const { pending } = useFormStatus();
+  return (
+    <>
       <select
         name="model"
         defaultValue={current}
+        disabled={pending}
         onChange={(e) => e.currentTarget.form?.requestSubmit()}
-        style={{
-          fontFamily: "'Space Mono', monospace",
-          fontSize: "11px",
-          padding: "3px 6px",
-          border: "1px solid #E8E4DF",
-          background: "#fff",
-          color: "#1A1A1A",
-          cursor: "pointer",
-        }}
+        className={styles.select}
       >
         {MODELS.map((m) => (
           <option key={m.id} value={m.id}>
@@ -56,6 +63,7 @@ export default function ModelSelector({
           </option>
         ))}
       </select>
-    </form>
+      {pending && <span className={styles.saving}>saving…</span>}
+    </>
   );
 }
