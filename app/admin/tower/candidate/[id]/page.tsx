@@ -9,6 +9,8 @@ import { notFound } from "next/navigation";
 import { createAdminClient } from "@/utils/supabase/admin";
 import type { DossierBrief } from "@/lib/partnerships/anthropic-agents";
 import { inboxSearchUrl } from "@/lib/partnerships/inbox-link";
+import { emailFinderConfigured } from "@/lib/partnerships/email-finder";
+import { extractEmail } from "@/lib/partnerships/outreach-templates";
 import ContactLinks from "../../ContactLinks";
 import TowerButton from "../../TowerButton";
 import twr from "../../tower.module.css";
@@ -18,6 +20,8 @@ import {
   reconsiderPassed,
   runDossierNow,
   draftNow,
+  findEmailNow,
+  useFoundEmail,
   approveDraft,
   holdDraft,
   releaseDraft,
@@ -109,8 +113,13 @@ export default async function CandidateRoomPage({
     .maybeSingle();
   if (!c) notFound();
 
-  const brief = (c.dossier_brief ?? null) as DossierBrief | null;
+  // dossier_brief can hold a finder result before any brief exists — only
+  // treat it as a brief when the model's verdict is present.
+  const briefRaw = (c.dossier_brief ?? null) as DossierBrief | null;
+  const brief = briefRaw?.verdict ? briefRaw : null;
+  const foundEmail = briefRaw?.found_email ?? null;
   const hasLegacyBrief = !brief && ((c.why_fit as string | null) ?? "").includes("[dossier]");
+  const hasEmail = Boolean(extractEmail(c.contact_path as string | null));
 
   // Their drafts — every status, not just ready.
   const { data: draftRows } = await supabase
@@ -150,7 +159,7 @@ export default async function CandidateRoomPage({
       .order("at", { ascending: true })
       .limit(200);
     if (!evErr) {
-      const SHOWN = new Set(["promoted", "rejected", "reconsidered", "brief_written", "released", "draft_edited", "held"]);
+      const SHOWN = new Set(["promoted", "rejected", "reconsidered", "brief_written", "released", "draft_edited", "held", "email_found", "email_used"]);
       for (const e of events ?? []) {
         if (!SHOWN.has(e.kind as string)) continue;
         const d = (e.detail ?? {}) as Record<string, unknown>;
@@ -159,6 +168,8 @@ export default async function CandidateRoomPage({
           : e.kind === "rejected" ? "passed → into the bin"
           : e.kind === "reconsidered" ? `reconsidered → back to ${String(d.to ?? "the pipeline")}`
           : e.kind === "brief_written" ? `research brief written (${String(d.verdict ?? "—")})`
+          : e.kind === "email_found" ? (d.email ? `email found — ${String(d.email)} (${String(d.status ?? "?").toLowerCase()}${d.applied ? "" : ", not auto-used"})` : `email lookup on ${String(d.domain ?? "their domain")} — nothing found`)
+          : e.kind === "email_used" ? `unverified email accepted — ${String(d.email)}`
           : e.kind === "released" ? "draft released back to ready"
           : e.kind === "held" ? "draft held"
           : "draft edited";
@@ -250,6 +261,27 @@ export default async function CandidateRoomPage({
           <p style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, margin: 0 }}>First-touch drafted — it&apos;s in Drafts below, waiting on your approve.</p>
         </div>
       )}
+      {sp.ok === "email" && (
+        <div style={{ ...card, borderLeft: `3px solid ${INK}` }}>
+          <p style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, margin: 0 }}>
+            Email added to the contact path — their drafts now go out as real email sends instead of manual delivery.
+          </p>
+        </div>
+      )}
+      {sp.ok === "email_risky" && (
+        <div style={{ ...card, borderLeft: `3px solid ${AMBERISH}` }}>
+          <p style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, margin: 0 }}>
+            Prospeo found an address but couldn&apos;t fully verify it — see the finder result below the brief. Use it only if you trust it.
+          </p>
+        </div>
+      )}
+      {sp.ok === "email_none" && (
+        <div style={{ ...card, borderLeft: `3px solid ${MUTED}` }}>
+          <p style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, margin: 0 }}>
+            Prospeo came up empty for that domain — no credit spent. The manual path stands, or re-run the brief to hunt a different site.
+          </p>
+        </div>
+      )}
 
       {/* ── Header: who they are + where they stand ── */}
       <div style={{ display: "flex", alignItems: "baseline", gap: "14px", flexWrap: "wrap", marginBottom: "4px" }}>
@@ -337,6 +369,18 @@ export default async function CandidateRoomPage({
             <TowerButton variant="outline" pendingLabel="Drafting…">Draft now</TowerButton>
           </form>
         )}
+        {(status === "sourced" || status === "enriched") && !hasEmail && emailFinderConfigured() && (
+          <form action={findEmailNow}>
+            <input type="hidden" name="id" value={id} />
+            <TowerButton
+              variant="outline"
+              pendingLabel="Searching… (a few seconds)"
+              confirmMessage={`Look up a verified email for ${c.name}? One Prospeo credit, charged only on a hit (free tier: 75/month).`}
+            >
+              Find email
+            </TowerButton>
+          </form>
+        )}
         {status === "enriched" && (
           <form action={rejectSourced}>
             <input type="hidden" name="id" value={id} />
@@ -401,6 +445,31 @@ export default async function CandidateRoomPage({
           </p>
         </div>
       )}
+      {/* Finder result — what Prospeo turned up, and whether it was trusted. */}
+      {foundEmail && (
+        <div style={{ ...card, borderLeft: `3px solid ${foundEmail.verified ? GREEN : AMBERISH}` }}>
+          <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".18em", textTransform: "uppercase", color: MUTED, display: "block", marginBottom: "6px" }}>
+            Email finder result
+          </span>
+          <p style={{ fontFamily: SERIF, fontSize: "14px", lineHeight: 1.6, color: INK, margin: "0 0 10px" }}>
+            <strong style={{ fontFamily: MONO, fontSize: "13px" }}>{foundEmail.email}</strong>{" "}
+            <span style={chip(foundEmail.verified ? GREEN : AMBERISH)}>{foundEmail.status.toLowerCase()}</span>
+            {"  "}
+            {foundEmail.verified
+              ? "— verified, already on the contact path."
+              : hasEmail
+                ? "— superseded by the email now on the contact path."
+                : "— a catch-all/unverified address: it may deliver or silently bounce. Your call."}
+          </p>
+          {!foundEmail.verified && !hasEmail && (
+            <form action={useFoundEmail}>
+              <input type="hidden" name="id" value={id} />
+              <TowerButton variant="ghost" pendingLabel="Adding…">Use it anyway</TowerButton>
+            </form>
+          )}
+        </div>
+      )}
+
       {/* The raw trail — scout's note + every dossier verdict line, verbatim. */}
       {c.why_fit && (
         <div style={{ ...card, background: "rgba(139, 26, 26, 0.03)" }}>

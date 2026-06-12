@@ -124,6 +124,8 @@ export type DossierBrief = {
   contact_path: string;
   first_touch_angle: string;
   verdict: "reach_out" | "skip" | "needs_research";
+  /** Set by the email-finder pass after the brief, never by the model. */
+  found_email?: { email: string; status: string; verified: boolean } | null;
 };
 
 const DOSSIER_SCHEMA_HINT = `Return STRICT JSON: { "audience_est": int|null, "cadence_note": str (1 line), "voice_fit": 1-5, "voice_fit_rationale": str (1 line), "conflict": "none"|"soft"|"hard"|"unknown", "conflict_note": str (1 line), "contact_path": str (NOT LinkedIn), "first_touch_angle": str (1 sentence), "verdict": "reach_out"|"skip"|"needs_research" }. No prose, no markdown fences.`;
