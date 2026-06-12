@@ -121,18 +121,37 @@ export async function findEmail(args: {
   const first_name = parts[0] ?? args.name;
   const last_name = parts.length > 1 ? parts.slice(1).join(" ") : parts[0];
 
+  // Per-endpoint request shapes. /enrich-person (current) nests the person
+  // under `data` with `company_website`; /email-finder (legacy, being
+  // removed) was flat. only_verified_email stays false — catch-all results
+  // are wanted too, surfaced as the room's "use it anyway" path.
+  const bodies: Record<string, unknown> = {
+    "/enrich-person": {
+      only_verified_email: false,
+      enrich_mobile: false,
+      data: { first_name, last_name, company_website: args.domain },
+    },
+    "/email-finder": { first_name, last_name, company: args.domain },
+  };
+
   let lastErr = "no response";
   for (const ep of ENDPOINTS) {
     let json: Record<string, unknown> | null = null;
+    let raw = "";
     let httpStatus = 0;
     try {
       const res = await fetch(API + ep, {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-KEY": key },
-        body: JSON.stringify({ first_name, last_name, company: args.domain }),
+        body: JSON.stringify(bodies[ep]),
       });
       httpStatus = res.status;
-      json = (await res.json().catch(() => null)) as Record<string, unknown> | null;
+      raw = await res.text();
+      try {
+        json = JSON.parse(raw) as Record<string, unknown>;
+      } catch {
+        json = null;
+      }
     } catch (e) {
       lastErr = e instanceof Error ? e.message : String(e);
       continue;
@@ -142,11 +161,12 @@ export async function findEmail(args: {
     const msg = json
       ? String((json.message as string | undefined) ?? (json.error_message as string | undefined) ?? "")
       : "";
-    if (json && json.error === true && /no.*(found|result|email)/i.test(msg)) {
+    if (json && json.error === true && /no.?(result|email|found)|not.?found|no.?match/i.test(msg)) {
       return null;
     }
     if (!json || json.error === true || httpStatus >= 400) {
-      lastErr = msg || `HTTP ${httpStatus} from ${ep}`;
+      // Carry Prospeo's own words so the room banner self-diagnoses.
+      lastErr = msg || `HTTP ${httpStatus} from ${ep} — ${raw.slice(0, 180) || "(empty body)"}`;
       continue;
     }
 
