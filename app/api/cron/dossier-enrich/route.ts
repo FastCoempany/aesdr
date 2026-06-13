@@ -1,8 +1,10 @@
 export const dynamic = "force-dynamic";
-// A full batch is up to 5 sequential Opus calls (~10-20s each) — far past the
-// legacy 10-15s function default. 60 is valid on every Vercel plan; if a tick
-// still gets cut short mid-batch, it's harmless: rows update one at a time and
-// the next tick's not-ilike-[dossier] filter resumes where this one stopped.
+// Each brief now runs a server-side web_search + web_fetch loop (~20-40s),
+// so the batch is small — 2 sequential calls fit inside 60s (valid on every
+// Vercel plan). If a tick still gets cut short, it's harmless: rows update one
+// at a time and the next tick's not-ilike-[dossier] filter resumes where this
+// one stopped. The founder's per-candidate "Run brief now" button is the fast
+// path; this cron just grinds the backlog hourly.
 export const maxDuration = 60;
 
 import { NextResponse } from "next/server";
@@ -42,7 +44,7 @@ function safeDomain(input: string | null | undefined): string | null {
  * cost bounded by the human's promote-rate.
  */
 
-const BATCH = 5;
+const BATCH = 2;
 
 export async function GET(request: Request) {
   const authErr = verifyCronAuth(request);
