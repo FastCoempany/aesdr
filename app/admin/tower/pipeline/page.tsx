@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import Link from "next/link";
 
 import { createAdminClient } from "@/utils/supabase/admin";
+import { extractAllDomains } from "@/lib/partnerships/email-finder";
 import twr from "../tower.module.css";
 
 /**
@@ -33,7 +34,22 @@ type Row = {
   why_fit: string | null;
   next_action: string | null;
   updated_at: string;
+  contact_path?: string | null;
+  found_email?: string | null;
+  email_checked_at?: string | null;
 };
+
+const GREEN = "#2E7D32";
+
+/** The email-find chip for a card: what we know about reaching them. */
+function emailChip(r: Row): { label: string; color: string } | null {
+  if (r.found_email) return { label: "✉ email found", color: GREEN };
+  if (r.email_checked_at) return { label: "no email found", color: MUTED };
+  const hasDomain = extractAllDomains(r.contact_path, r.handle, r.why_fit).length > 0;
+  if (!hasDomain) return { label: "no site to search", color: MUTED };
+  if (r.status === "sourced") return null; // finding happens at promote
+  return { label: "finding email…", color: MUTED };
+}
 
 const STAGES: Array<{ id: string; label: string; caption: string; empty: string }> = [
   {
@@ -104,7 +120,9 @@ export default async function PipelineMapPage() {
   const supabase = createAdminClient();
   const { data } = await supabase
     .from("partner_pipeline")
-    .select("id, name, surface, handle, voice_fit, status, motion, why_fit, next_action, updated_at")
+    // select('*') so the new found_email / email_checked_at columns read
+    // safely whether or not the 20260613 migration has been applied.
+    .select("*")
     .order("updated_at", { ascending: false })
     .limit(500);
   const rows = (data ?? []) as Row[];
@@ -148,19 +166,27 @@ export default async function PipelineMapPage() {
                   {st.empty}
                 </p>
               ) : (
-                cards.map((r) => (
-                  <Link key={r.id} href={`/admin/tower/candidate/${r.id}`} className={twr.mapCard}>
-                    <span style={{ fontFamily: SERIF, fontSize: "14px", fontWeight: 600, color: INK, display: "block" }}>
-                      {r.name}
-                    </span>
-                    <span style={{ fontFamily: MONO, fontSize: "10px", color: MUTED, display: "block", margin: "2px 0 4px" }}>
-                      {r.surface ?? "—"} · vf {r.voice_fit ?? "—"} · {r.motion}
-                    </span>
-                    <span style={{ fontFamily: MONO, fontSize: "9.5px", lineHeight: 1.45, color: CRIMSON, display: "block" }}>
-                      {waitingOn(r)}
-                    </span>
-                  </Link>
-                ))
+                cards.map((r) => {
+                  const chip = emailChip(r);
+                  return (
+                    <Link key={r.id} href={`/admin/tower/candidate/${r.id}`} className={twr.mapCard}>
+                      <span style={{ fontFamily: SERIF, fontSize: "14px", fontWeight: 600, color: INK, display: "block" }}>
+                        {r.name}
+                      </span>
+                      <span style={{ fontFamily: MONO, fontSize: "10px", color: MUTED, display: "block", margin: "2px 0 4px" }}>
+                        {r.surface ?? "—"} · vf {r.voice_fit ?? "—"} · {r.motion}
+                      </span>
+                      {chip && (
+                        <span style={{ fontFamily: MONO, fontSize: "9px", letterSpacing: ".04em", color: chip.color, border: `1px solid ${chip.color}`, padding: "1px 5px", display: "inline-block", marginBottom: "4px" }}>
+                          {chip.label}
+                        </span>
+                      )}
+                      <span style={{ fontFamily: MONO, fontSize: "9.5px", lineHeight: 1.45, color: CRIMSON, display: "block" }}>
+                        {waitingOn(r)}
+                      </span>
+                    </Link>
+                  );
+                })
               )}
             </div>
           );

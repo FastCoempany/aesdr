@@ -303,6 +303,22 @@ export default async function CandidateRoomPage({
       <p style={{ fontFamily: MONO, fontSize: "11.5px", color: MUTED, margin: "0 0 4px" }}>
         {(c.surface as string | null) ?? "—"} · {(c.handle as string | null) ?? "no handle"} · {(c.archetype as string | null) ?? "—"} · audience est. {(c.audience_est as number | null)?.toLocaleString() ?? "unknown"} · vf {vf ?? "—"}
       </p>
+      {/* Email, prominent — the first thing you want when reaching out. */}
+      {(c.found_email as string | null) ? (
+        <p style={{ fontFamily: MONO, fontSize: "14px", fontWeight: 700, color: INK, margin: "8px 0 12px", display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+          <span>✉ {c.found_email as string}</span>
+          <span style={chip((c.found_email_status as string | null) === "deliverable" ? GREEN : AMBERISH)}>
+            {((c.found_email_status as string | null) ?? "found").replace(/_/g, " ")}
+          </span>
+          <a href={inboxSearchUrl(c.found_email as string)} target="_blank" rel="noreferrer" className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", color: CRIMSON, fontWeight: 400 }}>
+            open in inbox ↗
+          </a>
+        </p>
+      ) : (c.email_checked_at as string | null) ? (
+        <p style={{ fontFamily: MONO, fontSize: "11.5px", color: MUTED, margin: "8px 0 12px" }}>
+          ✉ no email found — BetterContact came up empty; use the contact path below.
+        </p>
+      ) : null}
       {c.contact_path && (
         <p style={{ fontFamily: MONO, fontSize: "11.5px", color: CRIMSON, margin: "0 0 14px" }}>
           {c.contact_path as string}{" "}
