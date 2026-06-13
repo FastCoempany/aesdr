@@ -4,7 +4,9 @@ export const dynamic = "force-dynamic";
 // Vercel plan; without it, legacy non-Fluid defaults (10–15s) kill the sweep
 // mid-call. If the project has Fluid Compute on, this caps the default 300s —
 // still comfortably above a sweep.
-export const maxDuration = 60;
+// Scout sweeps run a live web_search loop from this page's action; Pro allows
+// up to 300s, so give it room (the loop self-caps well under this).
+export const maxDuration = 100;
 
 import Link from "next/link";
 

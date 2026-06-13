@@ -1,11 +1,11 @@
 export const dynamic = "force-dynamic";
-// Each brief now runs a server-side web_search + web_fetch loop (~20-40s),
-// so the batch is small — 2 sequential calls fit inside 60s (valid on every
-// Vercel plan). If a tick still gets cut short, it's harmless: rows update one
-// at a time and the next tick's not-ilike-[dossier] filter resumes where this
-// one stopped. The founder's per-candidate "Run brief now" button is the fast
-// path; this cron just grinds the backlog hourly.
-export const maxDuration = 60;
+// Each brief runs a server-side web_search + web_fetch loop (self-capped at
+// RESEARCH_BUDGET_MS ~80s). BATCH=2 sequential calls fit inside 180s (valid on
+// Pro; ceiling is 300s). If a tick still gets cut short, it's harmless: rows
+// update one at a time and the next tick's not-ilike-[dossier] filter resumes
+// where this one stopped. The founder's per-candidate "Run brief now" button
+// is the fast path; this cron just grinds the backlog hourly.
+export const maxDuration = 180;
 
 import { NextResponse } from "next/server";
 
