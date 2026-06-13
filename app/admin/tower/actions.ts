@@ -766,6 +766,7 @@ export async function findEmailNow(formData: FormData) {
 
   let failure: string | null = null;
   let okParam = "email";
+  let triedN = 0;
   try {
     const supabase = createAdminClient();
     const { data: row, error } = await supabase
@@ -790,12 +791,13 @@ export async function findEmailNow(formData: FormData) {
       via: "find-now",
       actor: user.email,
     });
+    triedN = result.tried.length;
     if (result.skipped === "has_email") {
       throw new Error("The contact path already has an email — nothing to find.");
     }
     if (result.skipped === "no_domain") {
       throw new Error(
-        "Their record only has platform links (Skool, Substack, …) — no personal site to search against. If you know their site, paste it in the box next to Find email; otherwise the DM path on the contact line is the move.",
+        "Couldn't form a single domain to search — their record has only platform links and their name didn't yield a guessable domain. Paste their site in the box next to Find email.",
       );
     }
     okParam = !result.found ? "email_none" : result.applied ? "email" : "email_risky";
@@ -807,7 +809,9 @@ export async function findEmailNow(formData: FormData) {
   if (failure !== null) {
     redirect(`/admin/tower/candidate/${id}?err=${encodeURIComponent(failure.slice(0, 300))}`);
   }
-  redirect(`/admin/tower/candidate/${id}?ok=${okParam}`);
+  redirect(
+    `/admin/tower/candidate/${id}?ok=${okParam}${okParam === "email_none" ? `&tried=${triedN}` : ""}`,
+  );
 }
 
 /**

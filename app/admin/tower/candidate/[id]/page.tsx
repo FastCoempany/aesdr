@@ -101,7 +101,7 @@ export default async function CandidateRoomPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ ok?: string; err?: string }>;
+  searchParams: Promise<{ ok?: string; err?: string; tried?: string }>;
 }) {
   const { id } = await params;
   const sp = await searchParams;
@@ -169,7 +169,7 @@ export default async function CandidateRoomPage({
           : e.kind === "rejected" ? "passed → into the bin"
           : e.kind === "reconsidered" ? `reconsidered → back to ${String(d.to ?? "the pipeline")}`
           : e.kind === "brief_written" ? `research brief written (${String(d.verdict ?? "—")})`
-          : e.kind === "email_found" ? (d.email ? `email found — ${String(d.email)} (${String(d.status ?? "?").toLowerCase()}${d.applied ? "" : ", not auto-used"})` : `email lookup on ${String(d.domain ?? "their domain")} — nothing found`)
+          : e.kind === "email_found" ? (d.email ? `email found — ${String(d.email)} via ${String(d.domain ?? "?")} (${String(d.status ?? "?").toLowerCase()}${d.applied ? "" : ", not auto-used"})` : `email lookup — nothing across ${Array.isArray(d.tried) ? d.tried.length : "all"} domain(s)`)
           : e.kind === "email_used" ? `unverified email accepted — ${String(d.email)}`
           : e.kind === "released" ? "draft released back to ready"
           : e.kind === "held" ? "draft held"
@@ -279,7 +279,9 @@ export default async function CandidateRoomPage({
       {sp.ok === "email_none" && (
         <div style={{ ...card, borderLeft: `3px solid ${MUTED}` }}>
           <p style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, margin: 0 }}>
-            Prospeo came up empty for that domain — no credit spent. The manual path stands, or re-run the brief to hunt a different site.
+            Prospeo came up empty across {sp.tried ?? "all"} domain{sp.tried === "1" ? "" : "s"} we could
+            associate with them — no credit spent. That usually means their address just isn&apos;t in Prospeo&apos;s
+            data, not that the search failed. Paste a different site if you know one, or take the manual path.
           </p>
         </div>
       )}
@@ -469,6 +471,9 @@ export default async function CandidateRoomPage({
           <p style={{ fontFamily: SERIF, fontSize: "14px", lineHeight: 1.6, color: INK, margin: "0 0 10px" }}>
             <strong style={{ fontFamily: MONO, fontSize: "13px" }}>{foundEmail.email}</strong>{" "}
             <span style={chip(foundEmail.verified ? GREEN : AMBERISH)}>{foundEmail.status.toLowerCase()}</span>
+            {foundEmail.domain ? (
+              <span style={{ fontFamily: MONO, fontSize: "10.5px", color: MUTED }}>{"  "}via {foundEmail.domain}</span>
+            ) : null}
             {"  "}
             {foundEmail.verified
               ? "— verified, already on the contact path."
