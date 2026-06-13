@@ -109,7 +109,7 @@ export function sanitizeDomainInput(input: string): string {
 }
 
 /** A non-platform brand name from a handle, used only when we have no domain. */
-function companyFromHandle(handle: string | null | undefined): string | undefined {
+export function companyFromHandle(handle: string | null | undefined): string | undefined {
   if (!handle) return undefined;
   const h = handle.trim().replace(/^@+/, "").replace(/^https?:\/\//, "").split(/[/\s]/)[0];
   if (!h || h.includes(".")) return undefined; // a domain/url, not a brand name
