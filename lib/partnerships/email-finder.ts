@@ -137,18 +137,28 @@ type BCContact = {
   company?: string;
 };
 
-async function bcFetch(path: string, init: RequestInit): Promise<Record<string, unknown>> {
+function bcKey(): string {
   const key = process.env.EMAIL_FINDER_API_KEY;
   if (!key) throw new Error("EMAIL_FINDER_API_KEY is not set in this environment.");
+  return key;
+}
+
+/** Enqueue the waterfall — expects 2xx + JSON carrying a request id. */
+async function bcEnqueue(contacts: BCContact[]): Promise<string> {
+  const key = bcKey();
   let res: Response;
   try {
-    res = await fetch(BASE + path, {
-      ...init,
-      headers: { "Content-Type": "application/json", "X-API-Key": key, ...(init.headers ?? {}) },
+    res = await fetch(`${BASE}/async`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-API-Key": key },
+      body: JSON.stringify({ data: contacts, enrich_email_address: true, enrich_phone_number: false }),
       signal: AbortSignal.timeout(CALL_TIMEOUT_MS),
     });
   } catch (e) {
     throw new Error(`BetterContact unreachable: ${e instanceof Error ? e.message : String(e)}`);
+  }
+  if (res.status === 401 || res.status === 403) {
+    throw new Error("BetterContact rejected the API key (401/403) — check EMAIL_FINDER_API_KEY holds a valid BetterContact key.");
   }
   const raw = await res.text();
   let json: Record<string, unknown> | null = null;
@@ -157,14 +167,49 @@ async function bcFetch(path: string, init: RequestInit): Promise<Record<string, 
   } catch {
     json = null;
   }
-  if (res.status === 401 || res.status === 403) {
-    throw new Error("BetterContact rejected the API key (401/403) — check EMAIL_FINDER_API_KEY holds a valid BetterContact key.");
-  }
   if (!res.ok || !json) {
     const msg = json ? String(json.message ?? json.error ?? "") : raw.slice(0, 180);
-    throw new Error(`BetterContact ${path}: ${msg || `HTTP ${res.status}`}`);
+    throw new Error(`BetterContact enqueue failed: ${msg || `HTTP ${res.status}`}`);
   }
-  return json;
+  const id = String(json.id ?? json.request_id ?? "");
+  if (!id) throw new Error(`BetterContact enqueue returned no request id: ${raw.slice(0, 180)}`);
+  return id;
+}
+
+/**
+ * Poll once. While the waterfall runs, BetterContact answers HTTP 202 (empty
+ * body) or 200 with status "not_started"/"in_progress" — those are PENDING,
+ * not errors (the original bug threw on the empty 202 and killed the run).
+ * Only a 200 with status "terminated" yields the result.
+ */
+async function bcPoll(id: string): Promise<"pending" | { done: FoundEmail | null }> {
+  const key = bcKey();
+  let res: Response;
+  try {
+    res = await fetch(`${BASE}/async/${id}`, {
+      method: "GET",
+      headers: { "X-API-Key": key },
+      signal: AbortSignal.timeout(CALL_TIMEOUT_MS),
+    });
+  } catch (e) {
+    throw new Error(`BetterContact unreachable: ${e instanceof Error ? e.message : String(e)}`);
+  }
+  if (res.status === 401 || res.status === 403) {
+    throw new Error("BetterContact rejected the API key (401/403) on poll.");
+  }
+  if (res.status === 202) return "pending"; // accepted, still processing, no body
+  const raw = await res.text();
+  if (res.status >= 400) {
+    throw new Error(`BetterContact poll failed: HTTP ${res.status} ${raw.slice(0, 180)}`);
+  }
+  let json: Record<string, unknown> | null = null;
+  try {
+    json = JSON.parse(raw) as Record<string, unknown>;
+  } catch {
+    json = null;
+  }
+  if (!json || String(json.status ?? "").toLowerCase() !== "terminated") return "pending";
+  return { done: pickBest(json.data) };
 }
 
 /** Pick the best emailed entry from a terminated response's data[]. */
@@ -202,24 +247,12 @@ function pickBest(data: unknown): FoundEmail | null {
  * throws with BetterContact's own words on key/API/network errors.
  */
 async function runWaterfall(contacts: BCContact[]): Promise<FoundEmail | null> {
-  const created = await bcFetch("/async", {
-    method: "POST",
-    body: JSON.stringify({
-      data: contacts,
-      enrich_email_address: true,
-      enrich_phone_number: false,
-    }),
-  });
-  const id = String(created.id ?? "");
-  if (!id) throw new Error(`BetterContact /async returned no request id: ${JSON.stringify(created).slice(0, 180)}`);
-
+  const id = await bcEnqueue(contacts);
   const deadline = Date.now() + TOTAL_BUDGET_MS;
   while (Date.now() < deadline) {
     await new Promise((r) => setTimeout(r, POLL_EVERY_MS));
-    const poll = await bcFetch(`/async/${id}`, { method: "GET" });
-    if (String(poll.status ?? "").toLowerCase() === "terminated") {
-      return pickBest(poll.data);
-    }
+    const r = await bcPoll(id);
+    if (r !== "pending") return r.done; // terminated → FoundEmail or null
   }
   throw new Error("BetterContact's waterfall didn't finish in time — try Find email again in a moment.");
 }
