@@ -50,9 +50,13 @@ export const SUPPORTED_MODELS = [
 export type ModelId = (typeof SUPPORTED_MODELS)[number];
 
 export const AGENT_MODEL_DEFAULTS: Record<string, ModelId> = {
-  // Judgment work — defaults to Opus 4.6 (sharper voice-fit verdicts).
-  "dossier-enrich": "claude-opus-4-6",
-  // Volume list-building — defaults to Sonnet 4.6 (5x cheaper).
+  // Both now run a live web_search/web_fetch loop and must finish inside the
+  // 60s function limit, so the default is the fast model. Sonnet 4.6 reads
+  // pages and fills the brief JSON well, and it's ~5x cheaper. Override to an
+  // Opus in Agent Controls if you want sharper voice-fit verdicts and can
+  // accept the slower (timeout-prone) call.
+  "dossier-enrich": "claude-sonnet-4-6",
+  // Volume list-building — Sonnet 4.6 (fast + cheap).
   scout: "claude-sonnet-4-6",
 };
 
