@@ -19,9 +19,11 @@ import {
   type ScoutSweepId,
 } from "@/lib/partnerships/anthropic-agents";
 import { logPartnerEvent, logPartnerEvents } from "@/lib/partnerships/events";
+import { after } from "next/server";
 import {
   attemptEmailFind,
   emailFinderConfigured,
+  findEmailForCandidateId,
   sanitizeDomainInput,
 } from "@/lib/partnerships/email-finder";
 
@@ -488,6 +490,15 @@ export async function promoteSourced(formData: FormData) {
       kind: "promoted",
       detail: { to: "enriched" },
     });
+    // Find their email in the background — the operator's choice was "at
+    // promote, only candidates I keep". after() runs once the redirect is
+    // flushed, so the promote returns instantly; the chip fills in ~30s later.
+    if (emailFinderConfigured()) {
+      const actor = user.email;
+      after(async () => {
+        await findEmailForCandidateId(id, { actor, via: "promote", force: false });
+      });
+    }
   }
   revalidateCandidate(id);
 
@@ -790,6 +801,7 @@ export async function findEmailNow(formData: FormData) {
       domainOverride,
       via: "find-now",
       actor: user.email,
+      force: true,
     });
     triedN = result.tried.length;
     if (result.skipped === "has_email") {

@@ -258,7 +258,7 @@ async function runWaterfall(contacts: BCContact[]): Promise<FoundEmail | null> {
 }
 
 export type EmailFindResult = {
-  skipped?: "has_email" | "no_domain";
+  skipped?: "has_email" | "no_domain" | "already_checked";
   found: FoundEmail | null;
   /** Signals submitted to the waterfall (domains/company) — for the room's
    *  empty-state line and the timeline. */
@@ -284,11 +284,42 @@ export async function attemptEmailFind(args: {
   /** A known-good domain (operator-pasted or the brief's own_domain) — tried
    *  ahead of anything extracted from the record. */
   domainOverride?: string | null;
-  via: "dossier" | "find-now";
+  via: "dossier" | "find-now" | "promote";
   actor: string | undefined;
+  /** Re-run even if this candidate was already checked. The Find-email button
+   *  forces; the automatic passes (promote / brief / cron) don't, so a
+   *  candidate is billed at most once. */
+  force?: boolean;
 }): Promise<EmailFindResult> {
   if (extractEmail(args.contactPath)) {
     return { skipped: "has_email", found: null, tried: [], applied: false };
+  }
+
+  // Find-once guard: if a real lookup already ran for this candidate, don't
+  // spend another credit (the button overrides with force). Best-effort — a
+  // pre-migration DB has no email_checked_at column, so we just proceed.
+  if (!args.force) {
+    try {
+      const sb = createAdminClient();
+      const { data } = await sb
+        .from("partner_pipeline")
+        .select("email_checked_at, found_email")
+        .eq("id", args.pipelineId)
+        .maybeSingle();
+      if (data?.email_checked_at) {
+        const fe = (data.found_email as string | null) ?? null;
+        return {
+          skipped: "already_checked",
+          found: fe
+            ? { email: fe, status: "stored", verified: true, domain: fe.split("@")[1] ?? "" }
+            : null,
+          tried: [],
+          applied: false,
+        };
+      }
+    } catch {
+      /* pre-migration: column missing → no guard, proceed */
+    }
   }
 
   const parts = args.name.trim().split(/\s+/);
@@ -321,6 +352,25 @@ export async function attemptEmailFind(args: {
   }
 
   const found = await runWaterfall(contacts);
+  const supabase = createAdminClient();
+  const nowIso = new Date().toISOString();
+
+  // Record the lookup outcome on the candidate so the map chips it and the room
+  // shows it — both found and not-found, so the chip resolves either way.
+  // Best-effort: pre-migration these columns don't exist yet.
+  try {
+    await supabase
+      .from("partner_pipeline")
+      .update({
+        found_email: found?.email ?? null,
+        found_email_status: found?.status ?? null,
+        email_checked_at: nowIso,
+      })
+      .eq("id", args.pipelineId);
+  } catch {
+    /* pre-migration — contact_path write below still carries verified hits */
+  }
+
   if (!found) {
     await logPartnerEvent({
       pipelineId: args.pipelineId,
@@ -330,9 +380,6 @@ export async function attemptEmailFind(args: {
     });
     return { found: null, tried, applied: false };
   }
-
-  const supabase = createAdminClient();
-  const nowIso = new Date().toISOString();
 
   if (found.verified) {
     await supabase
@@ -390,4 +437,45 @@ export async function attemptEmailFind(args: {
   });
 
   return { found, tried, applied: found.verified };
+}
+
+/**
+ * Find an email for a candidate by id — the entry point for the background pass
+ * (promote → after()). Loads the row, prefers the brief's own_domain, and runs
+ * the finder. Fire-and-forget: returns void and swallows everything, since it
+ * runs after the response is already sent.
+ */
+export async function findEmailForCandidateId(
+  id: string,
+  opts: { actor: string | undefined; via: "promote" | "dossier" | "find-now"; force?: boolean },
+): Promise<void> {
+  try {
+    const supabase = createAdminClient();
+    const { data: row } = await supabase
+      .from("partner_pipeline")
+      .select("id, name, contact_path, handle, why_fit, dossier_brief")
+      .eq("id", id)
+      .maybeSingle();
+    if (!row) return;
+    let ownDomain: string | null = null;
+    try {
+      const od = (row.dossier_brief as { own_domain?: string } | null)?.own_domain;
+      if (od) ownDomain = sanitizeDomainInput(od);
+    } catch {
+      /* not a usable domain */
+    }
+    await attemptEmailFind({
+      pipelineId: id,
+      name: row.name as string,
+      contactPath: row.contact_path as string | null,
+      handle: row.handle as string | null,
+      extraText: row.why_fit as string | null,
+      domainOverride: ownDomain,
+      via: opts.via,
+      actor: opts.actor,
+      force: opts.force,
+    });
+  } catch {
+    /* background best-effort — surfaced later via the room's Find email button */
+  }
 }

@@ -53,6 +53,10 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const status = url.searchParams.get("status") || "enriched";
   const limit = Math.min(Number(url.searchParams.get("limit") || 25), 50);
+  // ?apply=1 writes the results to the candidates (found_email columns +
+  // verified hits onto contact_path) — the one-time backfill, using the data
+  // this batch already paid for. Without it, read-only.
+  const apply = url.searchParams.get("apply") === "1";
 
   const supabase = createAdminClient();
   const { data, error } = await supabase
@@ -165,6 +169,29 @@ export async function GET(request: Request) {
     else if (Array.isArray(cf)) uuid = (cf.find((x) => (x as { uuid?: string })?.uuid) as { uuid?: string } | undefined)?.uuid;
     const cand = uuid ? byId.get(uuid) : undefined;
     const name = cand?.name ?? String(e.contact_full_name ?? `${e.contact_first_name ?? ""} ${e.contact_last_name ?? ""}`).trim();
+    const email = String(e.contact_email_address ?? "");
+    const st = String(e.contact_email_address_status ?? "");
+    let applied = false;
+    if (apply && uuid) {
+      const has = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
+      const s = st.toLowerCase();
+      const dead = s.includes("undeliverable") || s.includes("not_found") || s.includes("invalid");
+      const verified = has && !dead && !s.includes("not_safe") && (s.includes("deliverable") || s.includes("valid") || s.includes("safe"));
+      const update: Record<string, unknown> = {
+        found_email: has && !dead ? email : null,
+        found_email_status: has ? st : null,
+        email_checked_at: new Date().toISOString(),
+      };
+      if (verified) {
+        update.contact_path = `${email} (${st} · bettercontact) · ${cand?.contact_path ?? ""}`.replace(/ · $/, "");
+        applied = true;
+      }
+      try {
+        await supabase.from("partner_pipeline").update(update).eq("id", uuid);
+      } catch {
+        /* pre-migration columns missing — skip */
+      }
+    }
     results.push({
       name,
       submitted: uuid ? submittedById.get(uuid) ?? null : null,
@@ -172,12 +199,15 @@ export async function GET(request: Request) {
       status: e.contact_email_address_status ?? null,
       provider: e.contact_email_address_provider ?? e.email_provider ?? null,
       enriched: e.enriched ?? false,
+      ...(apply ? { applied } : {}),
     });
   }
   results.sort((a, b) => (a.email ? 0 : 1) - (b.email ? 0 : 1));
 
   return NextResponse.json({
-    note: "Each row is BetterContact's verbatim verdict. 'email' present = provider found+verified it (a credit was spent); null = waterfall found nothing. Read-only — nothing written to the pipeline.",
+    note: apply
+      ? "Applied: found_email columns written; verified hits added to contact_path. Each row is BetterContact's verbatim verdict."
+      : "Each row is BetterContact's verbatim verdict. 'email' present = provider found+verified it (a credit was spent); null = waterfall found nothing. Read-only — nothing written.",
     audited: contacts.length,
     found: results.filter((r) => r.email).length,
     credits_consumed: summary.total ?? final.credits_consumed ?? null,
