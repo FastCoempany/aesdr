@@ -37,10 +37,10 @@ const SEARCH_AND_FETCH: Anthropic.Messages.ToolUnion[] = [
 ];
 
 // Hard wall-clock budget for one research turn. The tower routes that invoke
-// this cap at maxDuration=60; a platform hard-kill at 60s is uncatchable and
-// surfaces as the global error page, so we self-impose a smaller deadline and
-// turn an overrun into a normal thrown error the caller can show inline.
-const RESEARCH_BUDGET_MS = 42_000;
+// this run on Vercel Pro (300s ceiling) and set maxDuration to 100-180; we keep
+// the research itself under ~80s so an overrun surfaces as a normal thrown
+// error the caller shows inline — never an uncatchable platform hard-kill.
+const RESEARCH_BUDGET_MS = 80_000;
 
 /** Pull the outermost JSON object/array out of a reply that may wrap it in
  *  prose or fences — likelier once the model has been narrating its search. */

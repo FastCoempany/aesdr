@@ -1,7 +1,8 @@
 export const dynamic = "force-dynamic";
-// Run-brief-now calls the Anthropic API from this page's actions — same
-// budget reasoning as the tower page.
-export const maxDuration = 60;
+// Run-brief-now runs a live web_search/web_fetch research loop from this page's
+// action. On Vercel Pro the function ceiling is 300s, so we give research real
+// room (the loop self-caps at RESEARCH_BUDGET_MS well under this).
+export const maxDuration = 100;
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -356,7 +357,7 @@ export default async function CandidateRoomPage({
             <input type="hidden" name="id" value={id} />
             <TowerButton
               variant="outline"
-              pendingLabel="Researching… (20–40s)"
+              pendingLabel="Searching the web… (up to ~80s)"
               confirmMessage={`Run the research brief for ${c.name}? Claude searches the live web and reads their pages, then writes the brief (~$0.10–$0.50).`}
             >
               {brief || hasLegacyBrief ? "Re-run brief" : "Run brief now"}
