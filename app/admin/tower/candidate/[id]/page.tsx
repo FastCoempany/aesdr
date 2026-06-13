@@ -356,8 +356,8 @@ export default async function CandidateRoomPage({
             <input type="hidden" name="id" value={id} />
             <TowerButton
               variant="outline"
-              pendingLabel="Researching… (10–30s)"
-              confirmMessage={`Run the research brief for ${c.name}? This calls the Anthropic API (small spend, ~$0.05–$0.15).`}
+              pendingLabel="Researching… (20–40s)"
+              confirmMessage={`Run the research brief for ${c.name}? Claude searches the live web and reads their pages, then writes the brief (~$0.10–$0.50).`}
             >
               {brief || hasLegacyBrief ? "Re-run brief" : "Run brief now"}
             </TowerButton>
@@ -405,7 +405,7 @@ export default async function CandidateRoomPage({
       </div>
       {(status === "sourced" || status === "enriched") && (
         <p style={{ fontFamily: MONO, fontSize: "10px", lineHeight: 1.6, color: MUTED, margin: "0 0 8px" }}>
-          Run brief = one Anthropic research call (small spend, confirmed first). Draft now = free template fill.
+          Run brief = a live web-search research call (confirmed first, ~$0.10–$0.50). Draft now = free template fill.
           Neither sends anything — every email still waits for your approve in Decisions.
         </p>
       )}

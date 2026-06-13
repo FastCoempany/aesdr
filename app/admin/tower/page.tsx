@@ -298,9 +298,9 @@ export default async function TowerPage({
     },
     "dossier-enrich": {
       label: "Dossier auto-enrich",
-      cadence: "hourly (5 rows/tick)",
-      desc: "Costs Anthropic tokens per row. Hourly, takes promoted candidates and fills in the dossier brief (audience, voice-fit, conflicts, contact path).",
-      confirm: "Start Dossier auto-enrich? It will spend Anthropic tokens (~$0.10-0.30 per candidate) and update enriched rows in the pipeline.",
+      cadence: "hourly (2 rows/tick)",
+      desc: "Searches the live web (web_search + web_fetch) for each promoted candidate, then writes the brief — audience, voice-fit, conflicts, contact path, and their own domain for the email finder. Costs Anthropic tokens per row.",
+      confirm: "Start Dossier auto-enrich? Each candidate runs live web search + fetch (~$0.10-0.50 per candidate) and updates enriched rows in the pipeline.",
     },
   };
 
@@ -518,7 +518,7 @@ export default async function TowerPage({
         </div>
         <div style={{ ...card, marginBottom: "16px" }}>
           <p style={{ fontFamily: SERIF, fontSize: "14px", color: INK, margin: "0 0 4px" }}>
-            <strong>Run a sweep.</strong> Each press calls Claude server-side and drops ~12–15 candidates into the pipeline at <code>status=&apos;sourced&apos;</code> for you to review. Spends API tokens (~$0.30–$1.50 per sweep on Sonnet 4.6).
+            <strong>Run a sweep.</strong> Each press has Claude search the live web and drop ~12–15 verified candidates into the pipeline at <code>status=&apos;sourced&apos;</code> for you to review. Spends API tokens + web searches (~$0.50–$2.50 per sweep on Sonnet 4.6).
           </p>
           <p style={{ fontFamily: SERIF, fontSize: "13px", color: MUTED, fontStyle: "italic", margin: "0 0 14px" }}>
             Nothing reaches enriched (the auto-drafter only acts on enriched) until you click <strong>Promote</strong> on each row.
