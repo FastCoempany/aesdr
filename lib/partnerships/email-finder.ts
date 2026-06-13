@@ -1,43 +1,42 @@
 /**
- * Prospeo email finder — name-anchored, multi-domain. The person's NAME is the
- * constant; we waterfall it across every domain that could plausibly be theirs
- * (the ones named in their record, then name-based guesses like janedoe.com)
- * and return the first hit. A single domain coming up empty no longer ends the
- * search — that was the whole problem. No SDK; POST /enrich-person with an
- * X-KEY header per domain. Prospeo charges one credit only on a hit, so the
- * empty tries in the waterfall are free (free tier: 75 hits/mo).
+ * BetterContact email finder — a waterfall provider that chains 20+ data
+ * sources behind one API. We hand it the person's name + the best domain we
+ * have (or a company name when we have none) and it runs its own waterfall;
+ * we no longer fan out across domains ourselves — that's BetterContact's job.
  *
- * If the waterfall still comes up empty across real domains, the limit is
- * Prospeo's dataset, not the query — swapping to a waterfall PROVIDER
- * (FullEnrich/BetterContact chain 15-20 sources) is a rewrite of this file
- * only; callers see { email, status, verified, domain } or null.
+ * It's asynchronous: POST /async enqueues and returns a request id; we poll
+ * GET /async/{id} until `status: "terminated"`, then read
+ * data[].contact_email_address. Auth is the `X-API-Key` header, value from
+ * EMAIL_FINDER_API_KEY (same env var as before, now a BetterContact key).
+ *
+ * Callers see the same { email, status, verified, domain } / null surface, so
+ * swapping providers stays a single-file change.
  */
 
 import { createAdminClient } from "@/utils/supabase/admin";
 import { logPartnerEvent } from "./events";
 import { extractEmail } from "./outreach-templates";
 
-const API = "https://api.prospeo.io";
-// The only live endpoint — /email-finder is removed ("DEPRECATED" tombstone,
-// confirmed by a live response 2026-06-12).
-const ENDPOINT = "/enrich-person";
+const BASE = "https://app.bettercontact.rocks/api/v2";
 const EMAIL_RE = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 const DOMAIN_RE = /^(?:[a-z0-9-]+\.)+[a-z]{2,}$/;
-// Per-lookup network timeout + overall waterfall budget. Both well under the
-// route's function ceiling so a slow/hung Prospeo can't 504 the page.
-const CALL_TIMEOUT_MS = 8_000;
-const WATERFALL_BUDGET_MS = 40_000;
-const MAX_DOMAINS = 6;
+// Bounds: the waterfall is async and can take tens of seconds; these keep the
+// whole enqueue+poll well under the route's 100s function ceiling.
+const CALL_TIMEOUT_MS = 10_000;
+const POLL_EVERY_MS = 3_000;
+const TOTAL_BUDGET_MS = 85_000;
+const MAX_DOMAINS = 2;
 
 export type FoundEmail = {
   email: string;
-  /** Prospeo's verification status, e.g. VALID / ACCEPT_ALL / UNKNOWN. */
+  /** BetterContact's deliverability status, e.g. deliverable / catch_all. */
   status: string;
   /** True only for statuses safe to send to without a second look. */
   verified: boolean;
-  /** Which domain produced the hit. */
+  /** The email's own domain (after the @). */
   domain: string;
-  endpoint: string;
+  /** Which waterfall source found it, when BetterContact reports it. */
+  source?: string;
 };
 
 export function emailFinderConfigured(): boolean {
@@ -88,19 +87,6 @@ export function extractOwnDomain(
 }
 
 /**
- * Name-based personal-domain guesses (janedoe.com / .co / .io). Low-yield but
- * free to try in the waterfall — Prospeo only bills a hit — and these catch the
- * common case of a creator whose email lives on a personal site we never saw.
- */
-export function nameDomainGuesses(name: string): string[] {
-  const parts = name.toLowerCase().replace(/[^a-z\s-]/g, "").trim().split(/\s+/);
-  if (parts.length < 2) return [];
-  const base = `${parts[0]}${parts[parts.length - 1]}`;
-  if (base.length < 4) return [];
-  return [`${base}.com`, `${base}.co`, `${base}.io`];
-}
-
-/**
  * Normalize a pasted or model-reported domain ("https://www.janedoe.com/about",
  * "janedoe.com") to a bare host. Throws on non-domains and on platform hosts —
  * an email lookup against skool.com would only return junk.
@@ -122,144 +108,127 @@ export function sanitizeDomainInput(input: string): string {
   return host;
 }
 
-/** Recursively pull the first email-looking value and status-looking value
- *  out of whatever shape Prospeo returns. */
-function scan(node: unknown, out: { email?: string; status?: string }): void {
-  if (!node || typeof node !== "object") return;
-  for (const [k, v] of Object.entries(node as Record<string, unknown>)) {
-    const key = k.toLowerCase();
-    if (typeof v === "string") {
-      if (!out.email && key === "email" && EMAIL_RE.test(v)) {
-        out.email = v;
-      } else if (key === "email_status") {
-        out.status = v; // the canonical field always wins
-      } else if (!out.status && key !== "req_status" && /status|verification/i.test(key) && v.length < 40) {
-        out.status = v;
-      }
-    } else if (typeof v === "object") {
-      scan(v, out);
-    }
-  }
+/** A non-platform brand name from a handle, used only when we have no domain. */
+function companyFromHandle(handle: string | null | undefined): string | undefined {
+  if (!handle) return undefined;
+  const h = handle.trim().replace(/^@+/, "").replace(/^https?:\/\//, "").split(/[/\s]/)[0];
+  if (!h || h.includes(".")) return undefined; // a domain/url, not a brand name
+  const words = h.replace(/[_-]+/g, " ").replace(/([a-z])([A-Z])/g, "$1 $2").trim();
+  return words.length >= 2 ? words : undefined;
 }
 
-/**
- * Look up an email for a person at ONE domain. Returns null when Prospeo
- * genuinely has nothing; throws with Prospeo's own message on config/API/
- * network errors so the caller can show it.
- */
-export async function findEmail(args: {
-  name: string;
-  domain: string;
-}): Promise<FoundEmail | null> {
-  const key = process.env.EMAIL_FINDER_API_KEY;
-  if (!key) {
-    throw new Error("EMAIL_FINDER_API_KEY is not set in this environment.");
+/** Map BetterContact's deliverability status to our verified/unverified/none.
+ *  Order matters: undeliverable contains "deliverable"; not_safe contains
+ *  "safe" — the negative checks run first. */
+function classify(statusRaw: string): "verified" | "unverified" | "none" {
+  const s = (statusRaw || "").toLowerCase();
+  if (s.includes("undeliverable") || s.includes("invalid") || s.includes("not_found")) return "none";
+  if (s.includes("not_safe") || s.includes("risky") || s === "catch_all" || s === "unknown" || s.includes("accept")) {
+    return "unverified";
   }
-
-  const parts = args.name.trim().split(/\s+/);
-  const first_name = parts[0] ?? args.name;
-  const last_name = parts.length > 1 ? parts.slice(1).join(" ") : parts[0];
-
-  // Documented /enrich-person shape: person nested under `data`, domain key
-  // is `company_website`. only_verified_email stays false — catch-all
-  // results are wanted too, surfaced as the room's "use it anyway" path.
-  const body = {
-    only_verified_email: false,
-    enrich_mobile: false,
-    data: { first_name, last_name, company_website: args.domain },
-  };
-
-  let raw = "";
-  let httpStatus = 0;
-  let json: Record<string, unknown> | null = null;
-  try {
-    const res = await fetch(API + ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-KEY": key },
-      body: JSON.stringify(body),
-      signal: AbortSignal.timeout(CALL_TIMEOUT_MS),
-    });
-    httpStatus = res.status;
-    raw = await res.text();
-    try {
-      json = JSON.parse(raw) as Record<string, unknown>;
-    } catch {
-      json = null;
-    }
-  } catch (e) {
-    throw new Error(`Prospeo unreachable: ${e instanceof Error ? e.message : String(e)}`);
-  }
-
-  // Prospeo's error dialect (seen live): { req_status: false, error_code,
-  // error_toast }. "Nothing found" is a clean no, not an error.
-  const code = String((json?.error_code as string | undefined) ?? "");
-  const toast = String(
-    (json?.error_toast as string | undefined) ??
-      (json?.message as string | undefined) ??
-      (json?.error_message as string | undefined) ??
-      "",
-  );
-  if (!json || json.req_status === false || json.error === true || httpStatus >= 400) {
-    if (/no.?(result|match|email)|not.?found|empt/i.test(`${code} ${toast}`)) return null;
-    throw new Error(
-      `Prospeo ${ENDPOINT}: ${toast || code || `HTTP ${httpStatus} — ${raw.slice(0, 180) || "(empty body)"}`}`,
-    );
-  }
-
-  const out: { email?: string; status?: string } = {};
-  scan((json.response as unknown) ?? json, out);
-  if (!out.email) return null;
-  const status = (out.status ?? "UNKNOWN").toUpperCase();
-  return {
-    email: out.email,
-    status,
-    verified: /^(VALID|DELIVERABLE|VERIFIED|SAFE)$/.test(status),
-    domain: args.domain,
-    endpoint: ENDPOINT,
-  };
+  if (s.includes("deliverable") || s.includes("valid") || s.includes("safe")) return "verified";
+  return "unverified"; // an email with an unfamiliar status → surface as use-anyway
 }
 
-export type WaterfallResult = {
-  found: FoundEmail | null;
-  /** Domains actually queried, in order — for the "tried N, all empty" report. */
-  tried: string[];
+type BCContact = {
+  first_name: string;
+  last_name: string;
+  company_domain?: string;
+  company?: string;
 };
 
-/**
- * Waterfall the name across an ordered domain list. First hit wins. A domain
- * that returns a clean empty is recorded and we move on; a domain that errors
- * (network/Prospeo) is held — if EVERY domain errored and none answered
- * cleanly, we throw that error (a real Prospeo problem). If at least one
- * answered cleanly, an all-miss is an honest "no result", not an error.
- */
-export async function findEmailWaterfall(
-  name: string,
-  domains: string[],
-): Promise<WaterfallResult> {
-  const tried: string[] = [];
-  const deadline = Date.now() + WATERFALL_BUDGET_MS;
-  let firstError: Error | null = null;
-  let anyClean = false;
+async function bcFetch(path: string, init: RequestInit): Promise<Record<string, unknown>> {
+  const key = process.env.EMAIL_FINDER_API_KEY;
+  if (!key) throw new Error("EMAIL_FINDER_API_KEY is not set in this environment.");
+  let res: Response;
+  try {
+    res = await fetch(BASE + path, {
+      ...init,
+      headers: { "Content-Type": "application/json", "X-API-Key": key, ...(init.headers ?? {}) },
+      signal: AbortSignal.timeout(CALL_TIMEOUT_MS),
+    });
+  } catch (e) {
+    throw new Error(`BetterContact unreachable: ${e instanceof Error ? e.message : String(e)}`);
+  }
+  const raw = await res.text();
+  let json: Record<string, unknown> | null = null;
+  try {
+    json = JSON.parse(raw) as Record<string, unknown>;
+  } catch {
+    json = null;
+  }
+  if (res.status === 401 || res.status === 403) {
+    throw new Error("BetterContact rejected the API key (401/403) — check EMAIL_FINDER_API_KEY holds a valid BetterContact key.");
+  }
+  if (!res.ok || !json) {
+    const msg = json ? String(json.message ?? json.error ?? "") : raw.slice(0, 180);
+    throw new Error(`BetterContact ${path}: ${msg || `HTTP ${res.status}`}`);
+  }
+  return json;
+}
 
-  for (const domain of domains) {
-    if (Date.now() > deadline) break;
-    tried.push(domain);
-    try {
-      const found = await findEmail({ name, domain });
-      if (found) return { found, tried };
-      anyClean = true;
-    } catch (e) {
-      if (!firstError) firstError = e instanceof Error ? e : new Error(String(e));
+/** Pick the best emailed entry from a terminated response's data[]. */
+function pickBest(data: unknown): FoundEmail | null {
+  if (!Array.isArray(data)) return null;
+  let best: FoundEmail | null = null;
+  let bestRank = 99;
+  for (const entry of data) {
+    if (!entry || typeof entry !== "object") continue;
+    const e = entry as Record<string, unknown>;
+    const email = String(e.contact_email_address ?? "");
+    if (!EMAIL_RE.test(email)) continue;
+    const status = String(e.contact_email_address_status ?? "unknown");
+    const klass = classify(status);
+    if (klass === "none") continue;
+    const rank = klass === "verified" ? 0 : 1;
+    if (rank < bestRank) {
+      bestRank = rank;
+      best = {
+        email,
+        status,
+        verified: klass === "verified",
+        domain: email.split("@")[1] ?? "",
+        source: e.email_provider ? String(e.email_provider) : undefined,
+      };
+      if (rank === 0) break; // can't beat a verified hit
     }
   }
-  if (!anyClean && firstError) throw firstError;
-  return { found: null, tried };
+  return best;
+}
+
+/**
+ * Run one BetterContact waterfall: enqueue the contact(s), poll until the
+ * request terminates, return the best hit. Returns null on a clean no-result;
+ * throws with BetterContact's own words on key/API/network errors.
+ */
+async function runWaterfall(contacts: BCContact[]): Promise<FoundEmail | null> {
+  const created = await bcFetch("/async", {
+    method: "POST",
+    body: JSON.stringify({
+      data: contacts,
+      enrich_email_address: true,
+      enrich_phone_number: false,
+    }),
+  });
+  const id = String(created.id ?? "");
+  if (!id) throw new Error(`BetterContact /async returned no request id: ${JSON.stringify(created).slice(0, 180)}`);
+
+  const deadline = Date.now() + TOTAL_BUDGET_MS;
+  while (Date.now() < deadline) {
+    await new Promise((r) => setTimeout(r, POLL_EVERY_MS));
+    const poll = await bcFetch(`/async/${id}`, { method: "GET" });
+    if (String(poll.status ?? "").toLowerCase() === "terminated") {
+      return pickBest(poll.data);
+    }
+  }
+  throw new Error("BetterContact's waterfall didn't finish in time — try Find email again in a moment.");
 }
 
 export type EmailFindResult = {
   skipped?: "has_email" | "no_domain";
   found: FoundEmail | null;
-  /** Domains the waterfall tried — surfaced in the room's empty-state banner. */
+  /** Signals submitted to the waterfall (domains/company) — for the room's
+   *  empty-state line and the timeline. */
   tried: string[];
   /** True when a verified hit was written into contact_path (drafts will now
    *  route as real email sends). Unverified hits sit on the brief instead,
@@ -268,11 +237,10 @@ export type EmailFindResult = {
 };
 
 /**
- * Finder pass for one candidate — name-anchored across every domain we can
- * associate with them. Builds the domain list (operator override + brief
- * domain → all domains in the record → name guesses), waterfalls the name
- * across it, applies a verified hit to contact_path. Throws only on real
- * Prospeo/config errors so callers can surface them.
+ * Finder pass for one candidate. Builds the BetterContact contact(s) — the
+ * best domain(s) we have, or a company name when we have none — runs the
+ * waterfall, and applies a verified hit to contact_path. Throws only on real
+ * BetterContact/config errors so callers can surface them.
  */
 export async function attemptEmailFind(args: {
   pipelineId: string;
@@ -281,7 +249,7 @@ export async function attemptEmailFind(args: {
   handle?: string | null;
   extraText?: string | null;
   /** A known-good domain (operator-pasted or the brief's own_domain) — tried
-   *  first, ahead of extraction + guesses. */
+   *  ahead of anything extracted from the record. */
   domainOverride?: string | null;
   via: "dossier" | "find-now";
   actor: string | undefined;
@@ -290,22 +258,36 @@ export async function attemptEmailFind(args: {
     return { skipped: "has_email", found: null, tried: [], applied: false };
   }
 
-  // Build the ordered, deduped domain candidate list: the known-good domain
-  // first, then anything in their record, then name-based guesses.
-  const ordered: string[] = [];
+  const parts = args.name.trim().split(/\s+/);
+  const first_name = parts[0] ?? args.name;
+  const last_name = parts.length > 1 ? parts.slice(1).join(" ") : parts[0];
+
+  // Prefer domains (strong, unambiguous signal); fall back to a company name
+  // only when we have no domain at all.
+  const domains: string[] = [];
   const push = (d: string | null | undefined) => {
-    if (d && !ordered.includes(d)) ordered.push(d);
+    if (d && !domains.includes(d)) domains.push(d);
   };
   push(args.domainOverride);
   for (const d of extractAllDomains(args.contactPath, args.handle, args.extraText)) push(d);
-  for (const d of nameDomainGuesses(args.name)) push(d);
-  const domains = ordered.slice(0, MAX_DOMAINS);
 
-  if (domains.length === 0) {
+  const contacts: BCContact[] = domains
+    .slice(0, MAX_DOMAINS)
+    .map((company_domain) => ({ first_name, last_name, company_domain }));
+  const tried = [...domains.slice(0, MAX_DOMAINS)];
+
+  if (contacts.length === 0) {
+    const company = companyFromHandle(args.handle);
+    if (company) {
+      contacts.push({ first_name, last_name, company });
+      tried.push(company);
+    }
+  }
+  if (contacts.length === 0) {
     return { skipped: "no_domain", found: null, tried: [], applied: false };
   }
 
-  const { found, tried } = await findEmailWaterfall(args.name, domains);
+  const found = await runWaterfall(contacts);
   if (!found) {
     await logPartnerEvent({
       pipelineId: args.pipelineId,
@@ -323,7 +305,7 @@ export async function attemptEmailFind(args: {
     await supabase
       .from("partner_pipeline")
       .update({
-        contact_path: `${found.email} (verified · prospeo · ${found.domain}) · ${args.contactPath ?? ""}`.replace(/ · $/, ""),
+        contact_path: `${found.email} (${found.status} · bettercontact) · ${args.contactPath ?? ""}`.replace(/ · $/, ""),
         updated_at: nowIso,
       })
       .eq("id", args.pipelineId);
@@ -367,6 +349,7 @@ export async function attemptEmailFind(args: {
       status: found.status,
       verified: found.verified,
       domain: found.domain,
+      source: found.source ?? null,
       tried,
       via: args.via,
       applied: found.verified,

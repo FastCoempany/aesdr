@@ -272,16 +272,15 @@ export default async function CandidateRoomPage({
       {sp.ok === "email_risky" && (
         <div style={{ ...card, borderLeft: `3px solid ${AMBERISH}` }}>
           <p style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, margin: 0 }}>
-            Prospeo found an address but couldn&apos;t fully verify it — see the finder result below the brief. Use it only if you trust it.
+            BetterContact found an address but flagged it catch-all / not-verified — see the finder result below the brief. Use it only if you trust it.
           </p>
         </div>
       )}
       {sp.ok === "email_none" && (
         <div style={{ ...card, borderLeft: `3px solid ${MUTED}` }}>
           <p style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, margin: 0 }}>
-            Prospeo came up empty across {sp.tried ?? "all"} domain{sp.tried === "1" ? "" : "s"} we could
-            associate with them — no credit spent. That usually means their address just isn&apos;t in Prospeo&apos;s
-            data, not that the search failed. Paste a different site if you know one, or take the manual path.
+            BetterContact ran its full waterfall (20+ sources) and found nothing deliverable — no credit spent. That&apos;s a
+            strong signal this person has no discoverable business email. Paste a different site if you know one, or take the manual path.
           </p>
         </div>
       )}
@@ -391,8 +390,8 @@ export default async function CandidateRoomPage({
             />
             <TowerButton
               variant="outline"
-              pendingLabel="Searching… (a few seconds)"
-              confirmMessage={`Look up a verified email for ${c.name}? One Prospeo credit, charged only on a hit (free tier: 75/month).`}
+              pendingLabel="Running waterfall… (up to ~80s)"
+              confirmMessage={`Find an email for ${c.name}? Runs BetterContact's waterfall across 20+ sources (one credit, charged only on a found email).`}
             >
               Find email
             </TowerButton>
@@ -462,7 +461,7 @@ export default async function CandidateRoomPage({
           </p>
         </div>
       )}
-      {/* Finder result — what Prospeo turned up, and whether it was trusted. */}
+      {/* Finder result — what BetterContact turned up, and whether it was trusted. */}
       {foundEmail && (
         <div style={{ ...card, borderLeft: `3px solid ${foundEmail.verified ? GREEN : AMBERISH}` }}>
           <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".18em", textTransform: "uppercase", color: MUTED, display: "block", marginBottom: "6px" }}>

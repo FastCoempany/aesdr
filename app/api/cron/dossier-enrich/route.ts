@@ -111,7 +111,7 @@ export async function GET(request: Request) {
       detail: { model, verdict: brief.verdict },
     });
 
-    // Finder pass rides the brief (one Prospeo credit, only on a hit). A
+    // Finder pass rides the brief (BetterContact waterfall, one credit only on a hit). A
     // finder hiccup never fails the enrich tick.
     if (emailFinderConfigured()) {
       try {
