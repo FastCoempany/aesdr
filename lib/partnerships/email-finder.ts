@@ -1,12 +1,16 @@
 /**
- * Prospeo email finder — name + the person's own domain in, verified email
- * out. No SDK; two POSTs with an X-KEY header. Prospeo is mid-migration from
- * /email-finder to /enrich-person (their docs are bot-walled), so we try the
- * new endpoint first and fall back, and parse the response defensively. A
- * lookup costs one credit only when something is found (free tier: 75/mo).
+ * Prospeo email finder — name-anchored, multi-domain. The person's NAME is the
+ * constant; we waterfall it across every domain that could plausibly be theirs
+ * (the ones named in their record, then name-based guesses like janedoe.com)
+ * and return the first hit. A single domain coming up empty no longer ends the
+ * search — that was the whole problem. No SDK; POST /enrich-person with an
+ * X-KEY header per domain. Prospeo charges one credit only on a hit, so the
+ * empty tries in the waterfall are free (free tier: 75 hits/mo).
  *
- * Swapping providers later (e.g. a FullEnrich waterfall) means rewriting this
- * file only — callers see { email, status, verified } or null.
+ * If the waterfall still comes up empty across real domains, the limit is
+ * Prospeo's dataset, not the query — swapping to a waterfall PROVIDER
+ * (FullEnrich/BetterContact chain 15-20 sources) is a rewrite of this file
+ * only; callers see { email, status, verified, domain } or null.
  */
 
 import { createAdminClient } from "@/utils/supabase/admin";
@@ -18,6 +22,12 @@ const API = "https://api.prospeo.io";
 // confirmed by a live response 2026-06-12).
 const ENDPOINT = "/enrich-person";
 const EMAIL_RE = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+const DOMAIN_RE = /^(?:[a-z0-9-]+\.)+[a-z]{2,}$/;
+// Per-lookup network timeout + overall waterfall budget. Both well under the
+// route's function ceiling so a slow/hung Prospeo can't 504 the page.
+const CALL_TIMEOUT_MS = 8_000;
+const WATERFALL_BUDGET_MS = 40_000;
+const MAX_DOMAINS = 6;
 
 export type FoundEmail = {
   email: string;
@@ -25,6 +35,8 @@ export type FoundEmail = {
   status: string;
   /** True only for statuses safe to send to without a second look. */
   verified: boolean;
+  /** Which domain produced the hit. */
+  domain: string;
   endpoint: string;
 };
 
@@ -38,12 +50,13 @@ const PLATFORM_HOSTS =
   /(^|\.)(skool\.com|circle\.so|substack\.com|beehiiv\.com|kit\.com|convertkit\.com|youtube\.com|youtu\.be|twitter\.com|x\.com|linkedin\.com|lnkd\.in|facebook\.com|instagram\.com|tiktok\.com|spotify\.com|apple\.com|podcasts\.apple\.com|gmail\.com|google\.com|calendly\.com|linktr\.ee|mailchi\.mp|medium\.com|patreon\.com|gumroad\.com)$/i;
 
 /**
- * Pull the person's own domain out of free text (contact path, handle, the
- * why_fit trail): first URL or bare domain whose host isn't a big platform.
+ * Pull EVERY plausible own-domain out of free text (contact path, handle, the
+ * why_fit trail) — URLs and bare domains whose host isn't a big platform, in
+ * first-seen order, deduped.
  */
-export function extractOwnDomain(
+export function extractAllDomains(
   ...texts: Array<string | null | undefined>
-): string | null {
+): string[] {
   const candidates: string[] = [];
   for (const t of texts) {
     if (!t) continue;
@@ -58,12 +71,33 @@ export function extractOwnDomain(
       candidates.push(m);
     }
   }
+  const out: string[] = [];
   for (const raw of candidates) {
-    const host = raw.toLowerCase().replace(/^www\./, "");
-    if (host.includes("@")) continue;
-    if (!PLATFORM_HOSTS.test(host)) return host;
+    const host = raw.toLowerCase().replace(/^www\./, "").split("/")[0].split("?")[0];
+    if (host.includes("@") || PLATFORM_HOSTS.test(host) || !DOMAIN_RE.test(host)) continue;
+    if (!out.includes(host)) out.push(host);
   }
-  return null;
+  return out;
+}
+
+/** First plausible own-domain, or null — back-compat for single-domain callers. */
+export function extractOwnDomain(
+  ...texts: Array<string | null | undefined>
+): string | null {
+  return extractAllDomains(...texts)[0] ?? null;
+}
+
+/**
+ * Name-based personal-domain guesses (janedoe.com / .co / .io). Low-yield but
+ * free to try in the waterfall — Prospeo only bills a hit — and these catch the
+ * common case of a creator whose email lives on a personal site we never saw.
+ */
+export function nameDomainGuesses(name: string): string[] {
+  const parts = name.toLowerCase().replace(/[^a-z\s-]/g, "").trim().split(/\s+/);
+  if (parts.length < 2) return [];
+  const base = `${parts[0]}${parts[parts.length - 1]}`;
+  if (base.length < 4) return [];
+  return [`${base}.com`, `${base}.co`, `${base}.io`];
 }
 
 /**
@@ -79,7 +113,7 @@ export function sanitizeDomainInput(input: string): string {
     /* fall through to bare-string handling */
   }
   host = host.replace(/^www\./, "").split("/")[0].split("?")[0];
-  if (!/^(?:[a-z0-9-]+\.)+[a-z]{2,}$/.test(host)) {
+  if (!DOMAIN_RE.test(host)) {
     throw new Error(`"${input}" doesn't look like a domain (expected something like janedoe.com).`);
   }
   if (PLATFORM_HOSTS.test(host)) {
@@ -109,9 +143,9 @@ function scan(node: unknown, out: { email?: string; status?: string }): void {
 }
 
 /**
- * Look up an email for a person. Returns null when Prospeo genuinely has
- * nothing; throws with Prospeo's own message on config/API errors so the
- * caller can show it.
+ * Look up an email for a person at ONE domain. Returns null when Prospeo
+ * genuinely has nothing; throws with Prospeo's own message on config/API/
+ * network errors so the caller can show it.
  */
 export async function findEmail(args: {
   name: string;
@@ -143,6 +177,7 @@ export async function findEmail(args: {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-KEY": key },
       body: JSON.stringify(body),
+      signal: AbortSignal.timeout(CALL_TIMEOUT_MS),
     });
     httpStatus = res.status;
     raw = await res.text();
@@ -165,7 +200,7 @@ export async function findEmail(args: {
       "",
   );
   if (!json || json.req_status === false || json.error === true || httpStatus >= 400) {
-    if (/no.?(result|match|email)|not.?found/i.test(`${code} ${toast}`)) return null;
+    if (/no.?(result|match|email)|not.?found|empt/i.test(`${code} ${toast}`)) return null;
     throw new Error(
       `Prospeo ${ENDPOINT}: ${toast || code || `HTTP ${httpStatus} — ${raw.slice(0, 180) || "(empty body)"}`}`,
     );
@@ -179,13 +214,53 @@ export async function findEmail(args: {
     email: out.email,
     status,
     verified: /^(VALID|DELIVERABLE|VERIFIED|SAFE)$/.test(status),
+    domain: args.domain,
     endpoint: ENDPOINT,
   };
+}
+
+export type WaterfallResult = {
+  found: FoundEmail | null;
+  /** Domains actually queried, in order — for the "tried N, all empty" report. */
+  tried: string[];
+};
+
+/**
+ * Waterfall the name across an ordered domain list. First hit wins. A domain
+ * that returns a clean empty is recorded and we move on; a domain that errors
+ * (network/Prospeo) is held — if EVERY domain errored and none answered
+ * cleanly, we throw that error (a real Prospeo problem). If at least one
+ * answered cleanly, an all-miss is an honest "no result", not an error.
+ */
+export async function findEmailWaterfall(
+  name: string,
+  domains: string[],
+): Promise<WaterfallResult> {
+  const tried: string[] = [];
+  const deadline = Date.now() + WATERFALL_BUDGET_MS;
+  let firstError: Error | null = null;
+  let anyClean = false;
+
+  for (const domain of domains) {
+    if (Date.now() > deadline) break;
+    tried.push(domain);
+    try {
+      const found = await findEmail({ name, domain });
+      if (found) return { found, tried };
+      anyClean = true;
+    } catch (e) {
+      if (!firstError) firstError = e instanceof Error ? e : new Error(String(e));
+    }
+  }
+  if (!anyClean && firstError) throw firstError;
+  return { found: null, tried };
 }
 
 export type EmailFindResult = {
   skipped?: "has_email" | "no_domain";
   found: FoundEmail | null;
+  /** Domains the waterfall tried — surfaced in the room's empty-state banner. */
+  tried: string[];
   /** True when a verified hit was written into contact_path (drafts will now
    *  route as real email sends). Unverified hits sit on the brief instead,
    *  waiting for the operator's explicit "use anyway". */
@@ -193,10 +268,11 @@ export type EmailFindResult = {
 };
 
 /**
- * Post-brief finder pass for one candidate. Decides whether a lookup makes
- * sense (no email yet + their own domain is named somewhere), runs it, and
- * applies the result. Throws only on API/config errors — callers decide
- * whether to surface (room button) or swallow (cron).
+ * Finder pass for one candidate — name-anchored across every domain we can
+ * associate with them. Builds the domain list (operator override + brief
+ * domain → all domains in the record → name guesses), waterfalls the name
+ * across it, applies a verified hit to contact_path. Throws only on real
+ * Prospeo/config errors so callers can surface them.
  */
 export async function attemptEmailFind(args: {
   pipelineId: string;
@@ -204,30 +280,40 @@ export async function attemptEmailFind(args: {
   contactPath: string | null;
   handle?: string | null;
   extraText?: string | null;
-  /** A known-good domain (operator-pasted or the brief's own_domain) —
-   *  takes precedence over extraction from the record. */
+  /** A known-good domain (operator-pasted or the brief's own_domain) — tried
+   *  first, ahead of extraction + guesses. */
   domainOverride?: string | null;
   via: "dossier" | "find-now";
   actor: string | undefined;
 }): Promise<EmailFindResult> {
   if (extractEmail(args.contactPath)) {
-    return { skipped: "has_email", found: null, applied: false };
-  }
-  const domain =
-    args.domainOverride ?? extractOwnDomain(args.contactPath, args.handle, args.extraText);
-  if (!domain) {
-    return { skipped: "no_domain", found: null, applied: false };
+    return { skipped: "has_email", found: null, tried: [], applied: false };
   }
 
-  const found = await findEmail({ name: args.name, domain });
+  // Build the ordered, deduped domain candidate list: the known-good domain
+  // first, then anything in their record, then name-based guesses.
+  const ordered: string[] = [];
+  const push = (d: string | null | undefined) => {
+    if (d && !ordered.includes(d)) ordered.push(d);
+  };
+  push(args.domainOverride);
+  for (const d of extractAllDomains(args.contactPath, args.handle, args.extraText)) push(d);
+  for (const d of nameDomainGuesses(args.name)) push(d);
+  const domains = ordered.slice(0, MAX_DOMAINS);
+
+  if (domains.length === 0) {
+    return { skipped: "no_domain", found: null, tried: [], applied: false };
+  }
+
+  const { found, tried } = await findEmailWaterfall(args.name, domains);
   if (!found) {
     await logPartnerEvent({
       pipelineId: args.pipelineId,
       actor: args.actor,
       kind: "email_found",
-      detail: { email: null, domain, via: args.via, applied: false },
+      detail: { email: null, tried, via: args.via, applied: false },
     });
-    return { found: null, applied: false };
+    return { found: null, tried, applied: false };
   }
 
   const supabase = createAdminClient();
@@ -237,7 +323,7 @@ export async function attemptEmailFind(args: {
     await supabase
       .from("partner_pipeline")
       .update({
-        contact_path: `${found.email} (verified · prospeo) · ${args.contactPath ?? ""}`.replace(/ · $/, ""),
+        contact_path: `${found.email} (verified · prospeo · ${found.domain}) · ${args.contactPath ?? ""}`.replace(/ · $/, ""),
         updated_at: nowIso,
       })
       .eq("id", args.pipelineId);
@@ -258,7 +344,12 @@ export async function attemptEmailFind(args: {
         .update({
           dossier_brief: {
             ...existing,
-            found_email: { email: found.email, status: found.status, verified: found.verified },
+            found_email: {
+              email: found.email,
+              status: found.status,
+              verified: found.verified,
+              domain: found.domain,
+            },
           },
         })
         .eq("id", args.pipelineId);
@@ -275,11 +366,12 @@ export async function attemptEmailFind(args: {
       email: found.email,
       status: found.status,
       verified: found.verified,
-      domain,
+      domain: found.domain,
+      tried,
       via: args.via,
       applied: found.verified,
     },
   });
 
-  return { found, applied: found.verified };
+  return { found, tried, applied: found.verified };
 }
