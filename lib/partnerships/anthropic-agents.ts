@@ -28,12 +28,16 @@ function client() {
 // filtering, so no beta header and no separate code_execution tool. max_uses
 // is kept tight: every search/fetch is a server round-trip, and the whole call
 // has to finish inside the 60s function limit (see runResearchAgent's deadline).
+// Each use is a sequential server-side round-trip inside one messages.create,
+// and that whole call has to return before the function's ceiling. Logs showed
+// 3 search + 2 fetch ≈ 60s — right at the old 60s wall. Kept deliberately lean:
+// 2 searches + 1 page fetch lands a brief in ~25-35s with real margin.
 const SEARCH_ONLY: Anthropic.Messages.ToolUnion[] = [
-  { type: "web_search_20260209", name: "web_search", max_uses: 4 },
+  { type: "web_search_20260209", name: "web_search", max_uses: 3 },
 ];
 const SEARCH_AND_FETCH: Anthropic.Messages.ToolUnion[] = [
-  { type: "web_search_20260209", name: "web_search", max_uses: 3 },
-  { type: "web_fetch_20260209", name: "web_fetch", max_uses: 2 },
+  { type: "web_search_20260209", name: "web_search", max_uses: 2 },
+  { type: "web_fetch_20260209", name: "web_fetch", max_uses: 1 },
 ];
 
 // Hard wall-clock budget for one research turn. The tower routes that invoke
