@@ -754,8 +754,8 @@ export async function draftNow(formData: FormData) {
 }
 
 /**
- * Look up an email for ONE candidate from their room — one Prospeo credit,
- * only charged on a hit. Verified results go straight into the contact path
+ * Look up an email for ONE candidate from their room — runs BetterContact's
+ * waterfall, one credit only on a found email. Verified results go straight into the contact path
  * (drafts then route as real email sends); unverified results wait on the
  * brief card for an explicit "use anyway".
  */
