@@ -26,14 +26,21 @@ function client() {
 
 // Anthropic-hosted research tools — GA versions with built-in dynamic
 // filtering, so no beta header and no separate code_execution tool. max_uses
-// bounds latency + cost so a single sweep/brief stays inside the 60s budget.
+// is kept tight: every search/fetch is a server round-trip, and the whole call
+// has to finish inside the 60s function limit (see runResearchAgent's deadline).
 const SEARCH_ONLY: Anthropic.Messages.ToolUnion[] = [
-  { type: "web_search_20260209", name: "web_search", max_uses: 6 },
+  { type: "web_search_20260209", name: "web_search", max_uses: 4 },
 ];
 const SEARCH_AND_FETCH: Anthropic.Messages.ToolUnion[] = [
-  { type: "web_search_20260209", name: "web_search", max_uses: 5 },
-  { type: "web_fetch_20260209", name: "web_fetch", max_uses: 3 },
+  { type: "web_search_20260209", name: "web_search", max_uses: 3 },
+  { type: "web_fetch_20260209", name: "web_fetch", max_uses: 2 },
 ];
+
+// Hard wall-clock budget for one research turn. The tower routes that invoke
+// this cap at maxDuration=60; a platform hard-kill at 60s is uncatchable and
+// surfaces as the global error page, so we self-impose a smaller deadline and
+// turn an overrun into a normal thrown error the caller can show inline.
+const RESEARCH_BUDGET_MS = 42_000;
 
 /** Pull the outermost JSON object/array out of a reply that may wrap it in
  *  prose or fences — likelier once the model has been narrating its search. */
@@ -50,6 +57,11 @@ function extractJson(text: string): string {
  * web tools attached, draining pause_turn (the server tool loop hitting its
  * iteration cap) until the model finishes, then returning the final response's
  * text — where the JSON lives.
+ *
+ * Bounded on purpose. Each create is given the remaining budget as its timeout
+ * with retries off, and the loop refuses to start a round it can't finish, so
+ * a slow search surfaces as a caught "timed out" error (inline banner) rather
+ * than a platform hard-kill (the turtle).
  */
 async function runResearchAgent(opts: {
   model: string;
@@ -59,17 +71,27 @@ async function runResearchAgent(opts: {
   maxTokens: number;
 }): Promise<string> {
   const c = client();
+  const deadline = Date.now() + RESEARCH_BUDGET_MS;
   const messages: Anthropic.MessageParam[] = [
     { role: "user", content: opts.prompt },
   ];
-  for (let i = 0; i < 8; i++) {
-    const r = await c.messages.create({
-      model: opts.model,
-      max_tokens: opts.maxTokens,
-      system: opts.system,
-      tools: opts.tools,
-      messages,
-    });
+  for (let i = 0; i < 4; i++) {
+    const remaining = deadline - Date.now();
+    if (remaining < 6_000) {
+      throw new Error(
+        "Research ran long and was stopped before finishing — try again, or set dossier to a faster model in Agent Controls.",
+      );
+    }
+    const r = await c.messages.create(
+      {
+        model: opts.model,
+        max_tokens: opts.maxTokens,
+        system: opts.system,
+        tools: opts.tools,
+        messages,
+      },
+      { timeout: remaining, maxRetries: 0 },
+    );
     if (r.stop_reason === "pause_turn") {
       // Server tool loop paused at its cap — append + resume (no new user turn).
       messages.push({ role: "assistant", content: r.content });
@@ -77,7 +99,7 @@ async function runResearchAgent(opts: {
     }
     return r.content.map((b) => (b.type === "text" ? b.text : "")).join("");
   }
-  return "";
+  throw new Error("Research kept searching without returning a brief — try again.");
 }
 
 // ── Scout sweeps ──
