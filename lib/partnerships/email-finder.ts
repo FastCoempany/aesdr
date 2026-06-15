@@ -497,14 +497,11 @@ export type BatchRow = {
   dossier_brief: unknown;
 };
 
-/** Read the candidate uuid back out of a BetterContact result entry. */
-function entryUuid(e: Record<string, unknown>): string | undefined {
-  const cf = e.custom_fields;
-  if (cf && typeof cf === "object" && !Array.isArray(cf)) return (cf as { uuid?: string }).uuid;
-  if (Array.isArray(cf)) {
-    return (cf.find((x) => (x as { uuid?: string })?.uuid) as { uuid?: string } | undefined)?.uuid;
-  }
-  return undefined;
+/** Normalize a name for matching BetterContact results back to candidates.
+ *  BetterContact doesn't reliably echo custom_fields (the audit's submitted:null
+ *  proved it), so name is the join key. */
+function normName(s: string): string {
+  return s.toLowerCase().replace(/\s+/g, " ").trim();
 }
 
 /**
@@ -522,7 +519,7 @@ export async function batchFindAndSave(
   const now = () => new Date().toISOString();
 
   const contacts: BCContact[] = [];
-  const contactPathById = new Map<string, string | null>();
+  const byName = new Map<string, { id: string; contactPath: string | null }>();
   const noDomainIds: string[] = [];
 
   for (const r of rows) {
@@ -541,8 +538,8 @@ export async function batchFindAndSave(
       noDomainIds.push(r.id);
       continue;
     }
-    contacts.push({ first_name, last_name, company_domain: domain, custom_fields: { uuid: r.id } });
-    contactPathById.set(r.id, r.contact_path);
+    contacts.push({ first_name, last_name, company_domain: domain });
+    byName.set(normName(r.name), { id: r.id, contactPath: r.contact_path });
   }
 
   // Mark no-domain candidates checked so future ticks skip them (cheap, and the
@@ -561,10 +558,13 @@ export async function batchFindAndSave(
   const data = await bcEnqueueAndWait(contacts);
   let found = 0;
   let applied = 0;
+  const matchedIds = new Set<string>();
   for (const entry of data) {
     const e = (entry ?? {}) as Record<string, unknown>;
-    const uuid = entryUuid(e);
-    if (!uuid) continue;
+    const full = String(e.contact_full_name ?? `${e.contact_first_name ?? ""} ${e.contact_last_name ?? ""}`);
+    const cand = byName.get(normName(full));
+    if (!cand) continue;
+    matchedIds.add(cand.id);
     const email = String(e.contact_email_address ?? "");
     const status = String(e.contact_email_address_status ?? "");
     const has = EMAIL_RE.test(email);
@@ -576,20 +576,31 @@ export async function batchFindAndSave(
     };
     if (klass !== "none") found++;
     if (klass === "verified") {
-      update.contact_path = `${email} (${status} · bettercontact) · ${contactPathById.get(uuid) ?? ""}`.replace(/ · $/, "");
+      update.contact_path = `${email} (${status} · bettercontact) · ${cand.contactPath ?? ""}`.replace(/ · $/, "");
       applied++;
     }
     try {
-      await supabase.from("partner_pipeline").update(update).eq("id", uuid);
+      await supabase.from("partner_pipeline").update(update).eq("id", cand.id);
     } catch {
       /* pre-migration */
     }
     await logPartnerEvent({
-      pipelineId: uuid,
+      pipelineId: cand.id,
       actor,
       kind: "email_found",
       detail: { email: klass === "none" ? null : email, status: has ? status : null, verified: klass === "verified", via: "cron", applied: klass === "verified" },
     });
+  }
+
+  // Mark any submitted candidate the results didn't name-match as checked, so a
+  // rare name mismatch doesn't make the cron re-charge them every tick.
+  const unmatched = [...byName.values()].map((v) => v.id).filter((id) => !matchedIds.has(id));
+  if (unmatched.length > 0) {
+    try {
+      await supabase.from("partner_pipeline").update({ email_checked_at: now() }).in("id", unmatched);
+    } catch {
+      /* pre-migration */
+    }
   }
   return { submitted: contacts.length, found, applied, no_domain: noDomainIds.length };
 }
