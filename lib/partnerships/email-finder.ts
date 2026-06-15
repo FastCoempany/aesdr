@@ -24,7 +24,11 @@ const DOMAIN_RE = /^(?:[a-z0-9-]+\.)+[a-z]{2,}$/;
 // whole enqueue+poll well under the route's 100s function ceiling.
 const CALL_TIMEOUT_MS = 10_000;
 const POLL_EVERY_MS = 3_000;
-const TOTAL_BUDGET_MS = 85_000;
+// Single lookups (Find-email button, candidate route maxDuration 100) get a
+// tighter budget; batches (find-now / cron, maxDuration 180-200) get longer,
+// because BetterContact's per-batch time scales and varies.
+const SINGLE_BUDGET_MS = 80_000;
+const BATCH_BUDGET_MS = 150_000;
 const MAX_DOMAINS = 2;
 
 export type FoundEmail = {
@@ -216,9 +220,9 @@ async function bcPoll(id: string): Promise<"pending" | { data: unknown[] }> {
 
 /** Enqueue contacts and poll until BetterContact terminates; returns the raw
  *  data[] (one entry per submitted contact). Throws on timeout/API errors. */
-async function bcEnqueueAndWait(contacts: BCContact[]): Promise<unknown[]> {
+async function bcEnqueueAndWait(contacts: BCContact[], budgetMs: number): Promise<unknown[]> {
   const id = await bcEnqueue(contacts);
-  const deadline = Date.now() + TOTAL_BUDGET_MS;
+  const deadline = Date.now() + budgetMs;
   while (Date.now() < deadline) {
     await new Promise((r) => setTimeout(r, POLL_EVERY_MS));
     const r = await bcPoll(id);
@@ -262,7 +266,7 @@ function pickBest(data: unknown): FoundEmail | null {
  * throws with BetterContact's own words on key/API/network errors.
  */
 async function runWaterfall(contacts: BCContact[]): Promise<FoundEmail | null> {
-  return pickBest(await bcEnqueueAndWait(contacts));
+  return pickBest(await bcEnqueueAndWait(contacts, SINGLE_BUDGET_MS));
 }
 
 export type EmailFindResult = {
@@ -555,7 +559,7 @@ export async function batchFindAndSave(
     return { submitted: 0, found: 0, applied: 0, no_domain: noDomainIds.length };
   }
 
-  const data = await bcEnqueueAndWait(contacts);
+  const data = await bcEnqueueAndWait(contacts, BATCH_BUDGET_MS);
   let found = 0;
   let applied = 0;
   const matchedIds = new Set<string>();
