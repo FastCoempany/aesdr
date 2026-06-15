@@ -45,12 +45,16 @@ const GREEN = "#2E7D32";
  *  definitive states get a chip — a freshly-promoted card shows none for the
  *  ~30s the background find runs, then resolves. No misleading "finding…" on
  *  the pre-existing backlog, which nothing is actively searching. */
-function emailChip(r: Row): { label: string; color: string } | null {
+function emailChip(r: Row, finderOn: boolean): { label: string; color: string } | null {
   if (r.found_email) return { label: "✉ email found", color: GREEN };
-  if (r.email_checked_at) return { label: "no email found", color: MUTED };
+  // Domain check first, so a no-domain candidate marked checked still reads
+  // "no site to search" rather than the blunter "no email found".
   const hasDomain = extractAllDomains(r.contact_path, r.handle, r.why_fit).length > 0;
   if (!hasDomain) return { label: "no site to search", color: MUTED };
-  return null; // has a site but not searched yet — chip appears once a find runs
+  if (r.email_checked_at) return { label: "no email found", color: MUTED };
+  // Has a site, not searched yet — only call it "finding…" when the cron is on.
+  if (finderOn && r.status === "enriched") return { label: "finding email…", color: MUTED };
+  return null;
 }
 
 const STAGES: Array<{ id: string; label: string; caption: string; empty: string }> = [
@@ -129,6 +133,18 @@ export default async function PipelineMapPage() {
     .limit(500);
   const rows = (data ?? []) as Row[];
 
+  // Is the contact-finder running? Drives whether unsearched enriched cards say
+  // "finding email…" (honest only while the cron is actually working them).
+  let finderOn = false;
+  {
+    const { data: sw } = await supabase
+      .from("agent_switches")
+      .select("enabled")
+      .eq("agent", "contact-finder")
+      .maybeSingle();
+    finderOn = sw?.enabled === true;
+  }
+
   const byStage: Record<string, Row[]> = {};
   for (const r of rows) {
     (byStage[r.status] ??= []).push(r);
@@ -169,7 +185,7 @@ export default async function PipelineMapPage() {
                 </p>
               ) : (
                 cards.map((r) => {
-                  const chip = emailChip(r);
+                  const chip = emailChip(r, finderOn);
                   return (
                     <Link key={r.id} href={`/admin/tower/candidate/${r.id}`} className={twr.mapCard}>
                       <span style={{ fontFamily: SERIF, fontSize: "14px", fontWeight: 600, color: INK, display: "block" }}>
