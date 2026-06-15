@@ -11,6 +11,7 @@ import {
   PARTNER_AGENTS,
   SUPPORTED_MODELS,
   getAgentModel,
+  isAgentEnabled,
 } from "@/lib/partnerships/agent-switch";
 import {
   runScoutSweep,
@@ -22,6 +23,7 @@ import { logPartnerEvent, logPartnerEvents } from "@/lib/partnerships/events";
 import {
   attemptEmailFind,
   emailFinderConfigured,
+  findEmailForCandidateId,
   sanitizeDomainInput,
 } from "@/lib/partnerships/email-finder";
 
@@ -488,9 +490,15 @@ export async function promoteSourced(formData: FormData) {
       kind: "promoted",
       detail: { to: "enriched" },
     });
-    // Email is found by the contact-finder cron (every 5 min) once they're
-    // enriched — reliable, batched, and credit-gated by its lever. (The old
-    // per-promote after() trigger didn't fire reliably on serverless+redirect.)
+    // Find their email INLINE here, gated by the contact-finder lever. Vercel
+    // crons don't fire on this project, and after() didn't fire reliably on
+    // serverless+redirect — a synchronous await is the one approach that always
+    // runs. It adds ~30-60s to the promote, but the email is there when the
+    // candidate lands in Enriched. Best-effort: findEmailForCandidateId swallows
+    // its own errors, so a slow/failed lookup never blocks the promote.
+    if (emailFinderConfigured() && (await isAgentEnabled("contact-finder"))) {
+      await findEmailForCandidateId(id, { actor: user.email, via: "promote", force: false });
+    }
   }
   revalidateCandidate(id);
 

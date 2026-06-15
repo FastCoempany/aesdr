@@ -360,7 +360,7 @@ export default async function CandidateRoomPage({
             <form action={promoteSourced}>
               <input type="hidden" name="id" value={id} />
               <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
-              <TowerButton pendingLabel="Promoting…">Promote → enriched</TowerButton>
+              <TowerButton pendingLabel="Promoting + finding email…">Promote → enriched</TowerButton>
             </form>
             <form action={rejectSourced}>
               <input type="hidden" name="id" value={id} />
