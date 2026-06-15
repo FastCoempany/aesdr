@@ -41,14 +41,16 @@ type Row = {
 
 const GREEN = "#2E7D32";
 
-/** The email-find chip for a card: what we know about reaching them. */
+/** The email-find chip for a card: what we know about reaching them. Only
+ *  definitive states get a chip — a freshly-promoted card shows none for the
+ *  ~30s the background find runs, then resolves. No misleading "finding…" on
+ *  the pre-existing backlog, which nothing is actively searching. */
 function emailChip(r: Row): { label: string; color: string } | null {
   if (r.found_email) return { label: "✉ email found", color: GREEN };
   if (r.email_checked_at) return { label: "no email found", color: MUTED };
   const hasDomain = extractAllDomains(r.contact_path, r.handle, r.why_fit).length > 0;
   if (!hasDomain) return { label: "no site to search", color: MUTED };
-  if (r.status === "sourced") return null; // finding happens at promote
-  return { label: "finding email…", color: MUTED };
+  return null; // has a site but not searched yet — chip appears once a find runs
 }
 
 const STAGES: Array<{ id: string; label: string; caption: string; empty: string }> = [
