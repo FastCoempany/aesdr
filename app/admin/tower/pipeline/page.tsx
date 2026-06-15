@@ -41,19 +41,20 @@ type Row = {
 
 const GREEN = "#2E7D32";
 
-/** The email-find chip for a card: what we know about reaching them. Only
- *  definitive states get a chip — a freshly-promoted card shows none for the
- *  ~30s the background find runs, then resolves. No misleading "finding…" on
- *  the pre-existing backlog, which nothing is actively searching. */
-function emailChip(r: Row, finderOn: boolean): { label: string; color: string } | null {
-  if (r.found_email) return { label: "✉ email found", color: GREEN };
-  // Domain check first, so a no-domain candidate marked checked still reads
-  // "no site to search" rather than the blunter "no email found".
+/** The email-find chip — a traffic light. GREEN = email found, RED = searched
+ *  and none found (or no site to search at all). A candidate the finder hasn't
+ *  reached yet shows a quiet "finding…" only while the finder lever is on,
+ *  then resolves to green or red. */
+function emailChip(r: Row, finderOn: boolean): { label: string; color: string; bg: string } | null {
+  if (r.found_email) return { label: "✉ email", color: GREEN, bg: "rgba(46,125,50,.10)" };
   const hasDomain = extractAllDomains(r.contact_path, r.handle, r.why_fit).length > 0;
-  if (!hasDomain) return { label: "no site to search", color: MUTED };
-  if (r.email_checked_at) return { label: "no email found", color: MUTED };
-  // Has a site, not searched yet — only call it "finding…" when the cron is on.
-  if (finderOn && r.status === "enriched") return { label: "finding email…", color: MUTED };
+  // Not found — either we searched and got nothing, or there's no site to
+  // search against. Either way the answer is "no email": red.
+  if (r.email_checked_at || !hasDomain) {
+    return { label: "no email", color: CRIMSON, bg: "rgba(139,26,26,.08)" };
+  }
+  // Has a site, not searched yet — quiet pending state while the cron works it.
+  if (finderOn && r.status === "enriched") return { label: "finding email…", color: MUTED, bg: "transparent" };
   return null;
 }
 
@@ -195,7 +196,7 @@ export default async function PipelineMapPage() {
                         {r.surface ?? "—"} · vf {r.voice_fit ?? "—"} · {r.motion}
                       </span>
                       {chip && (
-                        <span style={{ fontFamily: MONO, fontSize: "9px", letterSpacing: ".04em", color: chip.color, border: `1px solid ${chip.color}`, padding: "1px 5px", display: "inline-block", marginBottom: "4px" }}>
+                        <span style={{ fontFamily: MONO, fontSize: "9px", fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", color: chip.color, background: chip.bg, border: `1px solid ${chip.color}`, padding: "2px 6px", display: "inline-block", marginBottom: "4px" }}>
                           {chip.label}
                         </span>
                       )}
