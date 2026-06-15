@@ -98,7 +98,12 @@ export async function proxy(request: NextRequest) {
   // ghost-button bypass anyway). Admins bypass entirely.
   const comingSoon = process.env.COMING_SOON === "true";
   const hasCsBypass = !!request.cookies.get("aesdr_cs_bypass");
-  if (comingSoon && !hasCsBypass && !isAdmin && pathname !== "/coming-soon" && pathname !== "/mobile") {
+  // API routes must never hit the human holding-page gate — they're called
+  // programmatically (Vercel crons, webhooks, admin tools) with no session
+  // cookie, so a 302 to /coming-soon silently breaks them. They carry their
+  // own auth (verifyCronAuth / requireAdmin / etc.). This was eating every
+  // cron invocation as a 302.
+  if (comingSoon && !hasCsBypass && !isAdmin && !pathname.startsWith("/api/") && pathname !== "/coming-soon" && pathname !== "/mobile") {
     const ua = request.headers.get("user-agent") || "";
     const isMobile = /Mobi|Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(ua);
     const url = request.nextUrl.clone();
