@@ -135,6 +135,8 @@ type BCContact = {
   last_name: string;
   company_domain?: string;
   company?: string;
+  /** Echoed back in the result so a batch can be mapped to candidate ids. */
+  custom_fields?: { uuid: string };
 };
 
 function bcKey(): string {
@@ -182,7 +184,7 @@ async function bcEnqueue(contacts: BCContact[]): Promise<string> {
  * not errors (the original bug threw on the empty 202 and killed the run).
  * Only a 200 with status "terminated" yields the result.
  */
-async function bcPoll(id: string): Promise<"pending" | { done: FoundEmail | null }> {
+async function bcPoll(id: string): Promise<"pending" | { data: unknown[] }> {
   const key = bcKey();
   let res: Response;
   try {
@@ -209,7 +211,20 @@ async function bcPoll(id: string): Promise<"pending" | { done: FoundEmail | null
     json = null;
   }
   if (!json || String(json.status ?? "").toLowerCase() !== "terminated") return "pending";
-  return { done: pickBest(json.data) };
+  return { data: (json.data as unknown[]) ?? [] };
+}
+
+/** Enqueue contacts and poll until BetterContact terminates; returns the raw
+ *  data[] (one entry per submitted contact). Throws on timeout/API errors. */
+async function bcEnqueueAndWait(contacts: BCContact[]): Promise<unknown[]> {
+  const id = await bcEnqueue(contacts);
+  const deadline = Date.now() + TOTAL_BUDGET_MS;
+  while (Date.now() < deadline) {
+    await new Promise((r) => setTimeout(r, POLL_EVERY_MS));
+    const r = await bcPoll(id);
+    if (r !== "pending") return r.data;
+  }
+  throw new Error("BetterContact's waterfall didn't finish in time — try Find email again in a moment.");
 }
 
 /** Pick the best emailed entry from a terminated response's data[]. */
@@ -247,14 +262,7 @@ function pickBest(data: unknown): FoundEmail | null {
  * throws with BetterContact's own words on key/API/network errors.
  */
 async function runWaterfall(contacts: BCContact[]): Promise<FoundEmail | null> {
-  const id = await bcEnqueue(contacts);
-  const deadline = Date.now() + TOTAL_BUDGET_MS;
-  while (Date.now() < deadline) {
-    await new Promise((r) => setTimeout(r, POLL_EVERY_MS));
-    const r = await bcPoll(id);
-    if (r !== "pending") return r.done; // terminated → FoundEmail or null
-  }
-  throw new Error("BetterContact's waterfall didn't finish in time — try Find email again in a moment.");
+  return pickBest(await bcEnqueueAndWait(contacts));
 }
 
 export type EmailFindResult = {
@@ -478,4 +486,110 @@ export async function findEmailForCandidateId(
   } catch {
     /* background best-effort — surfaced later via the room's Find email button */
   }
+}
+
+export type BatchRow = {
+  id: string;
+  name: string;
+  contact_path: string | null;
+  handle: string | null;
+  why_fit: string | null;
+  dossier_brief: unknown;
+};
+
+/** Read the candidate uuid back out of a BetterContact result entry. */
+function entryUuid(e: Record<string, unknown>): string | undefined {
+  const cf = e.custom_fields;
+  if (cf && typeof cf === "object" && !Array.isArray(cf)) return (cf as { uuid?: string }).uuid;
+  if (Array.isArray(cf)) {
+    return (cf.find((x) => (x as { uuid?: string })?.uuid) as { uuid?: string } | undefined)?.uuid;
+  }
+  return undefined;
+}
+
+/**
+ * Batch finder for the contact-finder cron — one BetterContact request for many
+ * candidates, processed in parallel. Writes found_email columns (and verified
+ * hits onto contact_path) for every candidate it could submit; marks no-domain
+ * candidates checked too so the cron stops re-fetching them (their chip still
+ * reads "no site to search", which is computed from the absent domain).
+ */
+export async function batchFindAndSave(
+  rows: BatchRow[],
+  actor: string | undefined,
+): Promise<{ submitted: number; found: number; applied: number; no_domain: number }> {
+  const supabase = createAdminClient();
+  const now = () => new Date().toISOString();
+
+  const contacts: BCContact[] = [];
+  const contactPathById = new Map<string, string | null>();
+  const noDomainIds: string[] = [];
+
+  for (const r of rows) {
+    const parts = r.name.trim().split(/\s+/);
+    const first_name = parts[0] ?? r.name;
+    const last_name = parts.length > 1 ? parts.slice(1).join(" ") : parts[0];
+    let domain: string | null = null;
+    try {
+      const od = (r.dossier_brief as { own_domain?: string } | null)?.own_domain;
+      if (od) domain = sanitizeDomainInput(od);
+    } catch {
+      /* not a usable domain */
+    }
+    if (!domain) domain = extractAllDomains(r.contact_path, r.handle, r.why_fit)[0] ?? null;
+    if (!domain) {
+      noDomainIds.push(r.id);
+      continue;
+    }
+    contacts.push({ first_name, last_name, company_domain: domain, custom_fields: { uuid: r.id } });
+    contactPathById.set(r.id, r.contact_path);
+  }
+
+  // Mark no-domain candidates checked so future ticks skip them (cheap, and the
+  // chip still shows "no site to search" off the missing domain).
+  if (noDomainIds.length > 0) {
+    try {
+      await supabase.from("partner_pipeline").update({ email_checked_at: now() }).in("id", noDomainIds);
+    } catch {
+      /* pre-migration */
+    }
+  }
+  if (contacts.length === 0) {
+    return { submitted: 0, found: 0, applied: 0, no_domain: noDomainIds.length };
+  }
+
+  const data = await bcEnqueueAndWait(contacts);
+  let found = 0;
+  let applied = 0;
+  for (const entry of data) {
+    const e = (entry ?? {}) as Record<string, unknown>;
+    const uuid = entryUuid(e);
+    if (!uuid) continue;
+    const email = String(e.contact_email_address ?? "");
+    const status = String(e.contact_email_address_status ?? "");
+    const has = EMAIL_RE.test(email);
+    const klass = has ? classify(status) : "none";
+    const update: Record<string, unknown> = {
+      found_email: klass === "none" ? null : email,
+      found_email_status: has ? status : null,
+      email_checked_at: now(),
+    };
+    if (klass !== "none") found++;
+    if (klass === "verified") {
+      update.contact_path = `${email} (${status} · bettercontact) · ${contactPathById.get(uuid) ?? ""}`.replace(/ · $/, "");
+      applied++;
+    }
+    try {
+      await supabase.from("partner_pipeline").update(update).eq("id", uuid);
+    } catch {
+      /* pre-migration */
+    }
+    await logPartnerEvent({
+      pipelineId: uuid,
+      actor,
+      kind: "email_found",
+      detail: { email: klass === "none" ? null : email, status: has ? status : null, verified: klass === "verified", via: "cron", applied: klass === "verified" },
+    });
+  }
+  return { submitted: contacts.length, found, applied, no_domain: noDomainIds.length };
 }

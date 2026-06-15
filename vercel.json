@@ -37,6 +37,10 @@
       "schedule": "33 * * * *"
     },
     {
+      "path": "/api/cron/contact-finder",
+      "schedule": "*/5 * * * *"
+    },
+    {
       "path": "/api/cron/courier",
       "schedule": "*/5 * * * *"
     },

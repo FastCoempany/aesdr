@@ -304,6 +304,12 @@ export default async function TowerPage({
       desc: "Searches the live web (web_search + web_fetch) for each promoted candidate, then writes the brief — audience, voice-fit, conflicts, contact path, and their own domain for the email finder. Costs Anthropic tokens per row.",
       confirm: "Start Dossier auto-enrich? Each candidate runs live web search + fetch (~$0.10-0.50 per candidate) and updates enriched rows in the pipeline.",
     },
+    "contact-finder": {
+      label: "Contact finder",
+      cadence: "every 5 min (8 rows/tick)",
+      desc: "Runs enriched candidates through BetterContact's waterfall to find their email, chips the map, and adds verified addresses to the contact path. Clears the backlog and every new promote on its own — no per-person clicks. BetterContact bills per found email.",
+      confirm: "Start Contact finder? It spends ~1 BetterContact credit per email found (not per attempt) across your enriched candidates. Turn it off anytime to stop spending.",
+    },
   };
 
   // Failed sends count as waiting-on-you (Release → re-approve fixes them);
