@@ -70,6 +70,10 @@ function extractJson(text: string): string {
  * was the old all-or-nothing failure mode (messages.create with a client
  * timeout drops the entire body if the round-trip runs long).
  *
+ * The one case we DON'T swallow: a stop with nothing captured at all. That's
+ * not a clean empty result — the call ended before returning anything — so it
+ * surfaces as a retry, never as a false "0 found".
+ *
  * pause_turn (the server tool loop hitting its iteration cap) is drained the
  * same way — append the paused turn and resume — bounded by both the budget and
  * a hard iteration cap so it can't loop forever.
@@ -124,12 +128,16 @@ async function runResearchAgent(opts: {
       return turnText || captured;
     } catch (err) {
       clearTimeout(stop);
-      // A budget stop (we called abort) or a drop after useful text already
-      // streamed in: hand back what we have and let the parser salvage it.
-      // A genuine API error before any output — bad key, rate limit, refusal —
-      // has nothing to salvage, so surface the real message instead of a silent
-      // "0 found". The operator needs to see it to act.
-      if (stream.aborted || captured.trim().length > 0) break;
+      // Anything already streamed in is real work — hand it back and let the
+      // parser salvage complete rows from it, however the call ended.
+      if (captured.trim().length > 0) break;
+      // Nothing was captured. A budget stop with no output is NOT a clean empty
+      // result — the call ended before returning anything, so surface it as a
+      // retry rather than letting it parse as a false "0 found". A genuine API
+      // error (bad key, rate limit, refusal) carries its own message.
+      if (stream.aborted) {
+        throw new Error("Research stopped before returning anything — run it again.");
+      }
       throw err;
     }
   }
