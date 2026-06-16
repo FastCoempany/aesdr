@@ -1,12 +1,9 @@
 export const dynamic = "force-dynamic";
-// Scout sweeps post to this page and hold the function open through a 20–60s
-// Anthropic call (Opus especially). 60 is the largest value valid on every
-// Vercel plan; without it, legacy non-Fluid defaults (10–15s) kill the sweep
-// mid-call. If the project has Fluid Compute on, this caps the default 300s —
-// still comfortably above a sweep.
-// Scout sweeps run a live web_search loop from this page's action; Pro allows
-// up to 300s, so give it room (the loop self-caps well under this).
-export const maxDuration = 100;
+// Scout sweeps post to this page and run a live web_search loop that emits
+// 12-15 candidates — it self-caps at SCOUT_BUDGET_MS (150s), so the route
+// needs headroom above that. Pro allows up to 300s; 180 sits comfortably above
+// the sweep's budget so an overrun is a caught "timed out", not a hard kill.
+export const maxDuration = 180;
 
 import Link from "next/link";
 
