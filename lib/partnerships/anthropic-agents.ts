@@ -40,11 +40,13 @@ const SEARCH_AND_FETCH: Anthropic.Messages.ToolUnion[] = [
   { type: "web_fetch_20260209", name: "web_fetch", max_uses: 1 },
 ];
 
-// Hard wall-clock budget for one research turn. The tower routes that invoke
-// this run on Vercel Pro (300s ceiling) and set maxDuration to 100-180; we keep
-// the research itself under ~80s so an overrun surfaces as a normal thrown
-// error the caller shows inline — never an uncatchable platform hard-kill.
-const RESEARCH_BUDGET_MS = 80_000;
+// Hard wall-clock budget for one research turn, per caller. A scout sweep has
+// to search around and emit 12-15 candidates, so it needs much more time than a
+// single-candidate dossier brief. Each must stay under its route's maxDuration
+// (tower 180, candidate 100, cron 180) so an overrun surfaces as a caught
+// "timed out" error, never an uncatchable platform hard-kill.
+const SCOUT_BUDGET_MS = 150_000;
+const DOSSIER_BUDGET_MS = 80_000;
 
 /** Pull the outermost JSON object/array out of a reply that may wrap it in
  *  prose or fences — likelier once the model has been narrating its search. */
@@ -73,9 +75,10 @@ async function runResearchAgent(opts: {
   prompt: string;
   tools: Anthropic.Messages.ToolUnion[];
   maxTokens: number;
+  budgetMs: number;
 }): Promise<string> {
   const c = client();
-  const deadline = Date.now() + RESEARCH_BUDGET_MS;
+  const deadline = Date.now() + opts.budgetMs;
   const messages: Anthropic.MessageParam[] = [
     { role: "user", content: opts.prompt },
   ];
@@ -170,6 +173,7 @@ export async function runScoutSweep(
     prompt: `${SCOUT_PROMPTS[sweepId]}\n\nSearch first, then ${JSON_SCHEMA_HINT}`,
     tools: SEARCH_ONLY,
     maxTokens: 8000,
+    budgetMs: SCOUT_BUDGET_MS,
   });
   return parseRows(text);
 }
@@ -248,6 +252,7 @@ export async function runDossier(
     prompt: `Candidate: ${args.name}\nSurface: ${args.surface ?? "(unknown)"}\nHandle: ${args.handle ?? "(unknown)"}\nWhat we know: ${args.existingWhyFit ?? "(nothing yet)"}\n\nResearch them with your tools, then ${DOSSIER_SCHEMA_HINT}`,
     tools: SEARCH_AND_FETCH,
     maxTokens: 2048,
+    budgetMs: DOSSIER_BUDGET_MS,
   });
   try {
     return JSON.parse(extractJson(text)) as DossierBrief;
