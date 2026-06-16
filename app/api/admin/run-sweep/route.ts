@@ -1,23 +1,29 @@
 export const dynamic = "force-dynamic";
-// One scout sweep: a live-web research call (graceful-stops at ~150s) plus the
-// de-dupe/insert. Runs on a route handler with a generous ceiling so the long
-// call can never be killed mid-flight the way a blocking Server Action could —
-// that platform kill is what surfaced to the client as the turtle page.
+// The background research can run the full ~150s; maxDuration is the ceiling on
+// the after() work (waitUntil keeps the invocation alive up to here), NOT on the
+// request, which returns in well under a second.
 export const maxDuration = 300;
 
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 
 import { requireAdmin } from "@/lib/admin";
 import { runSweepAndInsert, isValidSweep } from "@/lib/partnerships/sweep";
 
 /**
- * The sweep trigger. The tower's Sweep buttons POST here (a client fetch), wait
- * for the JSON, and refresh — instead of submitting a Server Action whose POST
- * the platform can hard-kill into an unparseable "unexpected response" error.
+ * The sweep trigger — fire-and-forget. A scout sweep is a ~150s live-web
+ * research call, and the platform won't hold a client request open that long:
+ * the connection drops around ~90–120s and the in-flight function is torn down
+ * before it can write anything (whether it's a Server Action — the turtle — or
+ * a route handler awaiting inline — "didn't complete").
+ *
+ * So we don't make the request wait. We schedule the research with after(),
+ * which on Vercel rides waitUntil to keep the invocation alive up to maxDuration
+ * AFTER the response is sent, and return immediately. The candidates land in the
+ * pipeline when the background work finishes (~1–2 min); the tower reveals them
+ * on its next refresh.
  *
  *   POST /api/admin/run-sweep?sweep=communities|newsletters_podcasts|practitioners
- *
- * Always returns JSON: { ok: true, inserted, seen } or { ok: false, error }.
+ *   → { ok: true, started: true }   (instant)
  */
 export async function POST(request: Request) {
   const user = await requireAdmin();
@@ -27,16 +33,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "Unknown sweep." }, { status: 400 });
   }
 
-  try {
-    const { inserted, seen } = await runSweepAndInsert(sweep, user.email ?? "admin");
-    return NextResponse.json({ ok: true, inserted, seen });
-  } catch (e) {
-    // App-level failure (API refusal, empty research, constraint) — hand back a
-    // real message with 200 so the client always parses cleanly and shows it
-    // inline. Never a thrown 500 that the fetch can't read.
-    return NextResponse.json(
-      { ok: false, error: e instanceof Error ? e.message : String(e) },
-      { status: 200 },
-    );
-  }
+  // Read the actor now (request scope), then hand the long work to after().
+  const actor = user.email ?? "admin";
+  after(async () => {
+    try {
+      await runSweepAndInsert(sweep, actor);
+    } catch (e) {
+      // Surfaces in the function logs; the operator sees "no new candidates"
+      // and re-runs. (A status row could make this visible in-UI later.)
+      console.error(
+        `[run-sweep] ${sweep} failed:`,
+        e instanceof Error ? e.message : String(e),
+      );
+    }
+  });
+
+  return NextResponse.json({ ok: true, started: true });
 }
