@@ -48,7 +48,7 @@ export async function GET(request: Request) {
   try {
     const result = await batchFindAndSave(rows as BatchRow[], user.email);
     return NextResponse.json({
-      note: "Ran the finder now. Re-run /api/admin/state to see found_email populate, or hard-refresh the map.",
+      note: "Ran the finder now. Hard-refresh the pipeline map to see found_email populate.",
       examined: rows.length,
       ...result,
     });
