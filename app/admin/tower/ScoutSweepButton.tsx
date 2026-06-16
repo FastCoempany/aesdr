@@ -1,20 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import styles from "./tower.module.css";
 
 /**
- * One scout-sweep button. It POSTs to /api/admin/run-sweep (a route handler with
- * a long maxDuration) and waits for the JSON, rather than submitting a Server
- * Action. A Server Action's POST gets killed by the platform when the Anthropic
- * call runs long, and the client surfaces that as the "unexpected response"
- * turtle. A plain fetch to a route handler holds the request open for the whole
- * call and always comes back as readable JSON — slow or failed, never the turtle.
- *
- * Confirms first (it spends API tokens), shows its own pending + result state,
- * and refreshes the tower so new `sourced` rows appear in place.
+ * One scout-sweep button. A sweep is a ~150s live-web research call, and the
+ * platform won't hold a request open that long — the connection drops and the
+ * function is torn down before it writes anything (the turtle, or "didn't
+ * complete"). So this fires the sweep and returns immediately: POST to
+ * /api/admin/run-sweep, which schedules the research with after()/waitUntil and
+ * responds in well under a second. The candidates land in the background; we
+ * refresh the tower a few times across the ~2-minute window to reveal them as
+ * they arrive (and they persist in the pipeline regardless, on any later load).
  */
 export default function ScoutSweepButton({
   sweep,
@@ -24,49 +23,60 @@ export default function ScoutSweepButton({
   label: string;
 }) {
   const router = useRouter();
-  const [pending, setPending] = useState(false);
+  const [running, setRunning] = useState(false);
   const [result, setResult] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  // Clear any pending refresh timers on unmount.
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
 
   async function run() {
     if (
       !confirm(
-        `Run "${label}"? This calls the Anthropic API and may take up to ~2 minutes. New candidates land at status='sourced' for you to review.`,
+        `Run "${label}"? This calls the Anthropic API. It runs in the background (~1–2 min) and new candidates appear here when it's done.`,
       )
     ) {
       return;
     }
-    setPending(true);
     setResult(null);
+    setRunning(true);
     try {
       const res = await fetch(`/api/admin/run-sweep?sweep=${encodeURIComponent(sweep)}`, {
         method: "POST",
       });
       const data = (await res.json().catch(() => null)) as
-        | { ok: boolean; inserted?: number; seen?: number; error?: string }
+        | { ok?: boolean; started?: boolean; error?: string }
         | null;
 
-      if (data?.ok) {
-        const inserted = data.inserted ?? 0;
-        const seen = data.seen ?? 0;
-        setResult({
-          kind: "ok",
-          text:
-            inserted > 0
-              ? `Added ${inserted} new candidate${inserted === 1 ? "" : "s"} (surfaced ${seen}).`
-              : seen > 0
-                ? `Surfaced ${seen}, all already in the pipeline.`
-                : "Nothing surfaced this time — run it again.",
-        });
-        router.refresh();
-      } else {
-        setResult({ kind: "err", text: data?.error || "Sweep didn't complete — run it again." });
+      if (!data?.ok) {
+        setResult({ kind: "err", text: data?.error || "Couldn't start the sweep — run it again." });
+        setRunning(false);
+        return;
       }
+
+      setResult({
+        kind: "ok",
+        text: "Sweep running in the background — new candidates appear here within ~2 min. You can keep working.",
+      });
+      // Reveal candidates as the background job writes them; they persist in the
+      // pipeline either way, so a missed refresh just means reload to see them.
+      timers.current.forEach(clearTimeout);
+      timers.current = [
+        setTimeout(() => router.refresh(), 60_000),
+        setTimeout(() => router.refresh(), 120_000),
+        setTimeout(() => router.refresh(), 165_000),
+        setTimeout(() => {
+          router.refresh();
+          setRunning(false);
+          setResult({
+            kind: "ok",
+            text: "Done. If no new candidates appeared above, run it again.",
+          });
+        }, 175_000),
+      ];
     } catch {
-      // Network drop or the request never returned cleanly — retryable, and
-      // honest about it rather than a generic failure page.
-      setResult({ kind: "err", text: "Sweep didn't complete — run it again." });
-    } finally {
-      setPending(false);
+      setResult({ kind: "err", text: "Couldn't start the sweep — run it again." });
+      setRunning(false);
     }
   }
 
@@ -75,11 +85,11 @@ export default function ScoutSweepButton({
       <button
         type="button"
         className={`${styles.btn} ${styles.outline}`}
-        disabled={pending}
-        aria-busy={pending}
+        disabled={running}
+        aria-busy={running}
         onClick={run}
       >
-        {pending ? "Running… (up to ~2 min)" : label}
+        {running ? "Running in background…" : label}
       </button>
       {result && (
         <span

@@ -130,7 +130,7 @@ async function runResearchAgent(opts: {
       clearTimeout(stop);
       // Anything already streamed in is real work — hand it back and let the
       // parser salvage complete rows from it, however the call ended.
-      if (captured.trim().length > 0) break;
+      if (captured.trim().length > 0) return captured;
       // Nothing was captured. A budget stop with no output is NOT a clean empty
       // result — the call ended before returning anything, so surface it as a
       // retry rather than letting it parse as a false "0 found". A genuine API
@@ -141,7 +141,13 @@ async function runResearchAgent(opts: {
       throw err;
     }
   }
-  return captured;
+  // Reached only by exhausting the pause_turn iterations (or the budget between
+  // turns) WITHOUT ever getting a clean final answer — the model kept resuming
+  // its tool loop and never returned the JSON. Any mid-stream partial was
+  // already returned from the catch above; what's left here is narration, not an
+  // answer. Surface it as a retry so an exhausted loop never reads as a clean
+  // zero-row sweep (which, on the background route, would log no failure at all).
+  throw new Error("Research kept searching but never returned an answer — run it again.");
 }
 
 // ── Scout sweeps ──
