@@ -96,7 +96,7 @@ export default function SubmitCopyForm() {
           A human reviews this within 48 hours.
         </p>
         <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, opacity: 0.8 }}>
-          You&rsquo;ll get an email with the verdict — approved, edit requests,
+          You&rsquo;ll get an email with the call — approved, edit requests,
           or declined with a reason. Submission appears in your queue below.
         </p>
         <button

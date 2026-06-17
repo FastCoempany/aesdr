@@ -138,7 +138,7 @@
     <div class="step">
       <div class="badge">B</div>
       <h2>They weigh it up.</h2>
-      <p class="what">Reads the syllabus — what's actually inside, who it's for. <span class="q">Maybe grabs the free Archetype Map first (see side doors).</span></p>
+      <p class="what">Reads the syllabus — what's actually inside, who it's for.</p>
       <div class="fires">
         <span class="lbl">fires</span>
         <span class="chip">— nothing —</span>
@@ -237,7 +237,7 @@
           <div class="mv"><b>They unlock the Programme / Manuscript</b><div class="d">the end-of-course artifact — their "keeper." The <code>/reveal</code> page works.</div></div>
           <div class="mv alt">
             <span class="chip dormant" tabindex="0"><span class="ico">✉</span> "Choose your keeper" <span class="tag-dormant">NOT FIRING</span><span class="rb"><b>sendRevealUnlockedEmail</b><br><span class="src">⚠ defined, no call site — dormant</span></span></span>
-            <span class="chip dormant" tabindex="0"><span class="ico">✉</span> Lesson-12 + Discord invite <span class="tag-dormant">NOT FIRING</span><span class="rb"><b>sendLessonCompleteEmail</b><br>the ONLY place the Discord invite lives<br><span class="src">⚠ defined, never sent — dormant</span></span></span>
+            <span class="chip dormant" tabindex="0"><span class="ico">✉</span> Lesson-12 + Discord invite <span class="tag-dormant">NOT FIRING</span><span class="rb"><b>sendLessonCompleteEmail</b><br>carries the Discord invite — which also lives on /alumni<br><span class="src">⚠ defined, never sent — dormant</span></span></span>
             <div class="d">both built, neither wired — see the flags below.</div>
           </div>
         </div>
@@ -262,7 +262,6 @@
   <!-- side doors -->
   <div class="doors">
     <h3>Side doors — other ways onto the path</h3>
-    <div class="door"><div class="dt">Free Archetype Map</div><div class="dd">Drops their email on <code>/free/manager-archetype-map</code> → <b>✉ instant delivery</b> (one-shot, no sequence) → nudges them toward <b>Buy</b>.</div></div>
     <div class="door"><div class="dt">Team invite</div><div class="dd">A Team-plan buyer adds a teammate → <b>✉ instant invite</b>. The buyer acts, not us.</div></div>
     <div class="door"><div class="dt">Workshop (via an affiliate)</div><div class="dd">Registers on an affiliate's workshop page → <b>✉ confirmation</b>, then <b>✉ T-48h · T-1h · replay</b> reminders (usher → courier).</div></div>
   </div>
@@ -272,7 +271,7 @@
     <h3>⚠ What this map already surfaced</h3>
     <ol>
       <li>The <b>retention cron has no schedule</b> — so the lesson-done nudge, Sunday framing, win-back, and both alumni emails are <b>silently dormant in production.</b></li>
-      <li>Four emails are <b>built but never wired</b> — including the <b>lesson-12 email that's the only place the Discord invite lives.</b></li>
+      <li>Four emails are <b>built but never wired</b> — including the <b>lesson-12 email that would carry the Discord invite</b> (the invite still shows on <code>/alumni</code> — it's just never emailed).</li>
       <li>Workshop reminders currently go to a <b>placeholder address</b>, not each registrant.</li>
       <li><b>No SMS</b> fires anywhere, despite the opt-in columns.</li>
     </ol>
