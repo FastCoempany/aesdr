@@ -153,9 +153,12 @@ export function renderFirstTouch(row: {
     "[NAME]": firstName,
     "[COMMUNITY]": communityName,
   };
-  // why_fit is a real, specific Dossier sentence — use it for [REAL DETAIL].
-  if (row.why_fit && row.why_fit.trim()) {
-    replacements["[REAL DETAIL]"] = row.why_fit.trim().replace(/\.$/, "");
+  // why_fit is the operator's internal note — it can carry annotations like
+  // [scout/…], a ⚠ unverified flag, a conflict tag, or (historically) the
+  // admin's email. Strip all that before it becomes partner-facing copy.
+  const detail = cleanWhyFit(row.why_fit);
+  if (detail) {
+    replacements["[REAL DETAIL]"] = detail;
   }
 
   const fill = (s: string) =>
@@ -173,6 +176,23 @@ export function renderFirstTouch(row: {
   );
 
   return { templateId, subject, body, unfilled };
+}
+
+/** Strip internal annotations from a why_fit note before it becomes partner-
+ *  facing copy: bracketed tags ([scout/…], [⚠ …], [dossier]), a trailing
+ *  "— conflict: …", the dossier "| …" tail, and any leftover email. Keeps the
+ *  clean lead sentence. Belt-and-suspenders against internal data in outreach. */
+function cleanWhyFit(s: string | null | undefined): string {
+  if (!s) return "";
+  let out = s;
+  const cut = out.search(/\s\[|\s[—–-]\s*conflict:|\s\|\s|\s\(conflict:/i);
+  if (cut !== -1) out = out.slice(0, cut);
+  return out
+    .replace(/\[[^\]]*\]/g, "") // any stray bracketed tag
+    .replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, "") // any stray email
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/\.$/, "");
 }
 
 /** Pull the first email address out of a contact_path, if any. */
@@ -202,11 +222,9 @@ ${SIGNOFF}`;
 /** Follow-up 2 (+9 days): the honest close. [THEIR AUDIENCE] names their people. */
 export function renderFollowUp2(row: { name: string; why_fit?: string | null }): RenderedDraft {
   const firstName = row.name.trim().split(/\s+/)[0] || row.name;
-  // Best-effort fill of [THEIR AUDIENCE] from the Dossier why-fit; if absent,
-  // leave the placeholder so the operator names them.
-  const audience = row.why_fit?.trim()
-    ? row.why_fit.trim().replace(/\.$/, "")
-    : "[THEIR AUDIENCE]";
+  // Best-effort fill of [THEIR AUDIENCE] from the why-fit, sanitized of any
+  // internal annotations; if absent, leave the placeholder for the operator.
+  const audience = cleanWhyFit(row.why_fit) || "[THEIR AUDIENCE]";
   const body = `${firstName} — last note from me, no hard feelings if it is a no. I think AESDR genuinely fits ${audience}, and the terms are real — 40% commission, 30-day attribution window, $249/$299 one-time, paid through Stripe — but I would rather leave you alone than send a fourth email.
 
 Door is open whenever. ${SIGNOFF}`;
