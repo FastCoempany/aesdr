@@ -195,3 +195,30 @@
 .hint:focus-visible::after {
   opacity: 1;
 }
+
+/* Live progress readout while a sweep is researching. */
+.sweepLive {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  max-width: 250px;
+  line-height: 1.4;
+}
+/* Sweep success — the iris shimmer (reserved accent), shown ONLY when real
+   clean candidates land. --iris collapses to solid crimson under
+   reduced-motion / forced-colors (globals.css), so it degrades cleanly. */
+.sweepShimmer {
+  display: inline-block;
+  background: var(--iris);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: iris 4s linear infinite;
+  font-family: var(--cond);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  max-width: 250px;
+}
