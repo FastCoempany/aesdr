@@ -14,12 +14,12 @@ import { emailFinderConfigured } from "@/lib/partnerships/email-finder";
 import { extractEmail } from "@/lib/partnerships/outreach-templates";
 import ContactLinks from "../../ContactLinks";
 import TowerButton from "../../TowerButton";
+import RunBriefButton from "./RunBriefButton";
 import twr from "../../tower.module.css";
 import {
   promoteSourced,
   rejectSourced,
   reconsiderPassed,
-  runDossierNow,
   draftNow,
   findEmailNow,
   useFoundEmail,
@@ -370,16 +370,10 @@ export default async function CandidateRoomPage({
           </>
         )}
         {(status === "sourced" || status === "enriched") && (
-          <form action={runDossierNow}>
-            <input type="hidden" name="id" value={id} />
-            <TowerButton
-              variant="outline"
-              pendingLabel="Searching the web… (up to ~80s)"
-              confirmMessage={`Run the research brief for ${c.name}? Claude searches the live web and reads their pages, then writes the brief (~$0.10–$0.50).`}
-            >
-              {brief || hasLegacyBrief ? "Re-run brief" : "Run brief now"}
-            </TowerButton>
-          </form>
+          <RunBriefButton
+            candidateId={id}
+            label={brief || hasLegacyBrief ? "Re-run brief" : "Run brief now"}
+          />
         )}
         {status === "enriched" && !drafts.some((d) => ["ready", "approved", "sent"].includes(d.status as string)) && (
           <form action={draftNow}>
