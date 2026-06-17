@@ -31,7 +31,7 @@ const EMIT_BUDGET_MS = 35_000;
 const MAX_TURNS = 12;
 const PROGRESS_THROTTLE_MS = 1_500;
 
-const EMIT_INSTRUCTION = `Stop researching now. Based on everything you found above, output the brief as STRICT JSON — ${DOSSIER_SCHEMA_HINT} JSON only, no prose, no markdown fences.`;
+const EMIT_INSTRUCTION = `Stop researching now and output the brief. Reply with ONLY a single JSON object — start your reply with { and end it with } — no prose before or after, no markdown fences. You MUST produce it even if your research was thin: in that case set "verdict":"needs_research" and note what's missing in the rationale fields, but still fill EVERY key. ${DOSSIER_SCHEMA_HINT}`;
 
 function phaseFor(searches: number, pagesRead: number): string {
   if (searches === 0 && pagesRead === 0) return "Starting the search…";
@@ -39,17 +39,49 @@ function phaseFor(searches: number, pagesRead: number): string {
   return `Reading their site to verify… (${searches} searches, ${pagesRead} read)`;
 }
 
-/** Pull the outermost JSON object out of the reply and coerce it to a brief. */
+/** Pull the first complete, brace-balanced JSON object out of a reply — robust
+ *  to prose or markdown wrapped around it, and to braces inside string values
+ *  (it tracks string state). Returns null if there's no balanced object. */
+function firstBalancedObject(s: string): string | null {
+  const start = s.indexOf("{");
+  if (start === -1) return null;
+  let depth = 0;
+  let inStr = false;
+  let esc = false;
+  for (let i = start; i < s.length; i++) {
+    const ch = s[i];
+    if (inStr) {
+      if (esc) esc = false;
+      else if (ch === "\\") esc = true;
+      else if (ch === '"') inStr = false;
+    } else if (ch === '"') {
+      inStr = true;
+    } else if (ch === "{") {
+      depth++;
+    } else if (ch === "}") {
+      depth--;
+      if (depth === 0) return s.slice(start, i + 1);
+    }
+  }
+  return null;
+}
+
+/** Pull the JSON object out of the reply and coerce it to a brief — tolerant of
+ *  prose wrapping, markdown fences, and trailing commas. */
 function extractBrief(text: string): DossierBrief | null {
   const noFences = text.replace(/```(?:json)?/gi, "");
-  const start = noFences.indexOf("{");
-  const end = noFences.lastIndexOf("}");
-  if (start === -1 || end < start) return null;
+  const raw = firstBalancedObject(noFences);
+  if (!raw) return null;
   let obj: Record<string, unknown>;
   try {
-    obj = JSON.parse(noFences.slice(start, end + 1)) as Record<string, unknown>;
+    obj = JSON.parse(raw) as Record<string, unknown>;
   } catch {
-    return null;
+    try {
+      // Last-ditch: strip trailing commas the model sometimes leaves.
+      obj = JSON.parse(raw.replace(/,(\s*[}\]])/g, "$1")) as Record<string, unknown>;
+    } catch {
+      return null;
+    }
   }
   const str = (v: unknown, d = "") => (typeof v === "string" ? v : d);
   const conflict = (["none", "soft", "hard", "unknown"] as const).includes(obj.conflict as never)
