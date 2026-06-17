@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Channel Partner — AESDR Internal Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=Barlow+Condensed:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root{--cream:#FAF7F2;--ink:#1A1A1A;--crimson:#8B1A1A;--muted:#6B6B6B;--light:#E8E4DF;--paper:#FFFFFF;
+    --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+    --display:'Playfair Display',Georgia,serif;--serif:'Source Serif 4',Georgia,serif;--cond:'Barlow Condensed',sans-serif;--mono:'Space Mono',monospace}
+  *{box-sizing:border-box}html,body{margin:0;background:var(--cream);color:var(--ink)}
+  body{font-family:var(--serif);line-height:1.55;-webkit-font-smoothing:antialiased;padding:0 0 120px}
+  ::selection{background:#8B1A1A22}.wrap{max-width:920px;margin:0 auto;padding:0 28px}
+  header{padding:64px 0 30px;border-bottom:1px solid var(--light);margin-bottom:46px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--crimson);margin:0 0 18px}
+  h1{font-family:var(--display);font-weight:600;font-size:clamp(38px,6.5vw,64px);line-height:1.03;margin:0 0 14px;letter-spacing:-.01em}
+  .sub{font-size:18px;color:var(--muted);max-width:62ch;margin:0}
+  .role{font-family:var(--display);font-style:italic;font-weight:600;background:var(--iris);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:iris 5s linear infinite}
+  @keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 26px;margin:26px 0 0;font-family:var(--cond);font-size:14px;color:var(--muted)}
+  .legend b{color:var(--ink);font-weight:600}.legend .k{display:inline-flex;align-items:center;gap:7px}.dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+  .spine{position:relative;margin-top:10px}
+  .spine::before{content:"";position:absolute;left:21px;top:14px;bottom:30px;width:2px;background:linear-gradient(var(--crimson),var(--light))}
+  .step{position:relative;padding:0 0 38px 70px;min-height:46px}
+  .badge{position:absolute;left:0;top:0;width:44px;height:44px;border-radius:9px;background:var(--paper);border:2px solid var(--crimson);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:17px;color:var(--crimson);z-index:2}
+  .badge.you{background:var(--crimson);color:#fff}.badge.hand{border-style:dashed;color:var(--muted);border-color:var(--muted)}
+  .step h2{font-family:var(--display);font-weight:600;font-size:25px;margin:4px 0 3px;letter-spacing:-.01em}
+  .what{font-size:16px;color:var(--ink);margin:0 0 12px;max-width:62ch}.what .q{color:var(--muted)}
+  .fires{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin:0 0 6px}
+  .fires .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-right:2px}
+  .chip{position:relative;display:inline-flex;align-items:center;gap:6px;font-family:var(--cond);font-weight:500;font-size:14.5px;letter-spacing:.015em;background:var(--paper);border:1px solid var(--light);color:var(--ink);padding:5px 11px;border-radius:999px;cursor:help;transition:border-color .15s,background .15s}
+  .chip:hover,.chip:focus-visible{border-color:var(--crimson);background:#fff;outline:none}.chip .ico{color:var(--crimson);font-size:13px}
+  .chip.gate{border-color:var(--crimson);background:#F7ECEC;font-weight:600}.chip.manual{border-style:dashed;color:var(--muted)}.chip.manual .ico{color:var(--muted)}
+  .rb{position:absolute;left:0;bottom:calc(100% + 9px);width:max-content;max-width:300px;background:var(--ink);color:#F4F1EC;font-family:var(--mono);font-size:11px;line-height:1.5;padding:9px 12px;border-radius:8px;opacity:0;pointer-events:none;transform:translateY(4px);transition:opacity .14s,transform .14s;z-index:20;box-shadow:0 10px 26px rgba(26,26,26,.22)}
+  .rb b{color:#fff;font-weight:700}.rb .src{color:#C7A6A6}.rb::after{content:"";position:absolute;left:18px;top:100%;border:6px solid transparent;border-top-color:var(--ink)}
+  .chip:hover .rb,.chip:focus-visible .rb{opacity:1;transform:translateY(0)}
+  .doors{margin-top:18px;padding:24px 26px;background:var(--paper);border:1px solid var(--light);border-radius:14px}
+  .doors h3{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--crimson);margin:0 0 14px}
+  .door{display:flex;gap:12px;align-items:baseline;padding:9px 0;border-top:1px dashed var(--light)}.door:first-of-type{border-top:none}
+  .door .dt{font-family:var(--display);font-weight:600;font-size:16px;min-width:170px}.door .dd{font-size:14.5px;color:var(--muted);flex:1}
+  .flags{margin-top:34px;padding:24px 26px;border:1.5px solid #C99A2E;background:#FCF6E8;border-radius:14px}
+  .flags h3{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#9A6A12;margin:0 0 12px}.flags ol{margin:0;padding-left:20px;font-size:14.5px}.flags li{margin:7px 0}.flags b{color:var(--crimson)}
+  footer{margin-top:44px;padding-top:22px;border-top:1px solid var(--light);font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  code{font-family:var(--mono);font-size:.85em;background:#EEE9E2;padding:1px 5px;border-radius:4px}
+  em.hand{font-family:var(--display);font-style:italic;color:var(--crimson)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">AESDR · Internal Flow · 05 of 06</p>
+    <h1>The Channel<br>Partner.</h1>
+    <p class="sub">The B2B subsidiary's motion — a <span class="role">consultant · RevOps shop · training firm</span> who'd resell or co-sell AESDR. Deliberately the most <em class="hand">hand-built</em> path: today it's a single inbound form and you, by hand.</p>
+    <div class="legend">
+      <span class="k"><b>How to read:</b></span>
+      <span class="k"><span class="ico" style="color:var(--crimson)">✉</span> hover an email for its runbook</span>
+      <span class="k"><span class="dot" style="background:var(--crimson)"></span> <b>you, by hand</b></span>
+      <span class="k"><span class="dot" style="border:1.5px dashed var(--muted);background:transparent"></span> not yet automated</span>
+    </div>
+  </header>
+
+  <div class="spine">
+    <div class="step"><div class="badge">A</div>
+      <h2>They find the channel.</h2>
+      <p class="what">A sales-enablement consultant, RevOps shop, fractional VP-Sales network, or training firm lands on <code>/enterprise</code> → <code>/enterprise/channel</code>. <span class="q">"Channel partners," never bare "partner."</span></p>
+      <div class="fires"><span class="lbl">fires</span><span class="chip">— nothing —</span></div>
+    </div>
+
+    <div class="step"><div class="badge">B</div>
+      <h2>They raise a hand.</h2>
+      <p class="what">Submits the enterprise contact form. The only thing that fires is a ping to <b>you</b> — reply-to is set to them, so you answer straight from your inbox.</p>
+      <div class="fires"><span class="lbl">fires</span>
+        <span class="chip" tabindex="0"><span class="ico">✉</span> → your inbox: "enterprise inquiry"<span class="rb"><b>/enterprise/contact form submit</b><br>instant · reply-to = the prospect<br><span class="src">sendTeamsInquiryNotification</span></span></span>
+        <span class="chip gate"><span class="ico">●</span> Your gate: follow up by hand</span>
+      </div>
+    </div>
+
+    <div class="step you"><div class="badge you">C</div>
+      <h2>You work it — manually.</h2>
+      <p class="what">You reach back, qualify, and shape a partnership structure by hand. <b>There is no automated outbound here</b> — Herald (the channel-research/draft agent) is a chat tool you invoke, not wired into the app.</p>
+      <div class="fires"><span class="lbl">acts</span>
+        <span class="chip manual" tabindex="0"><span class="ico">✎</span> You, in your own inbox<span class="rb"><b>No app automation</b> · founder-driven<br><span class="src">Herald = chat subagent, not an email sender</span></span></span>
+      </div>
+    </div>
+
+    <div class="step you"><div class="badge you">D</div>
+      <h2>You strike the deal.</h2>
+      <p class="what">Partnership structure agreed → onboard. Today this lives in your head and your inbox, not the system — which is exactly what this chart is for: showing where the rails don't exist yet.</p>
+      <div class="fires"><span class="lbl">acts</span><span class="chip manual"><span class="ico">✎</span> Manual / off-system</span></div>
+    </div>
+  </div>
+
+  <div class="doors">
+    <h3>Side door — the kit experience feeds here</h3>
+    <div class="door"><div class="dt">/x/ kit → enterprise track</div><div class="dd">A tracked prospect inside the locked affiliate-kit experience submits the enterprise-intent panel → <b>✉ ping to your inbox</b> ("submitted for the enterprise track," first time only). You decide whether to pull them into the enterprise hub.</div></div>
+  </div>
+
+  <div class="flags">
+    <h3>⚠ Where the rails stop</h3>
+    <ol>
+      <li><b>No automated outbound to channel partners.</b> The whole motion is one inbound form + you. (Compare to the affiliate machine, which has a full relay.)</li>
+      <li><b>Herald isn't wired into the app</b> — it can research and draft channel-partner approaches in chat, but nothing connects it to a queue or a sender yet.</li>
+      <li>Steps C–D are <b>off-system</b> — the biggest opportunity if you ever want this to scale like the affiliate side.</li>
+    </ol>
+  </div>
+  <footer><span>AESDR — Internal Flowchart</span><span>The Channel Partner · 05 / 06 · grounded in code, not memory</span></footer>
+</div>
+</body>
+</html>

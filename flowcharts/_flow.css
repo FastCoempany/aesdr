@@ -1,0 +1,9 @@
+/* AESDR internal flow charts — shared design system (inlined into each chart too,
+   so a standalone file still renders; this copy is for editing in one place). */
+:root{
+  --cream:#FAF7F2; --ink:#1A1A1A; --crimson:#8B1A1A; --muted:#6B6B6B; --light:#E8E4DF;
+  --paper:#FFFFFF;
+  --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+  --display:'Playfair Display',Georgia,serif; --serif:'Source Serif 4',Georgia,serif;
+  --cond:'Barlow Condensed',sans-serif; --mono:'Space Mono',monospace;
+}

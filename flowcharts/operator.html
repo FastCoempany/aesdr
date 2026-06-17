@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Operator — AESDR Internal Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=Barlow+Condensed:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root{--cream:#FAF7F2;--ink:#1A1A1A;--crimson:#8B1A1A;--muted:#6B6B6B;--light:#E8E4DF;--paper:#FFFFFF;
+    --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+    --display:'Playfair Display',Georgia,serif;--serif:'Source Serif 4',Georgia,serif;--cond:'Barlow Condensed',sans-serif;--mono:'Space Mono',monospace}
+  *{box-sizing:border-box}html,body{margin:0;background:var(--cream);color:var(--ink)}
+  body{font-family:var(--serif);line-height:1.55;-webkit-font-smoothing:antialiased;padding:0 0 120px}
+  ::selection{background:#8B1A1A22}.wrap{max-width:920px;margin:0 auto;padding:0 28px}
+  header{padding:64px 0 30px;border-bottom:1px solid var(--light);margin-bottom:46px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--crimson);margin:0 0 18px}
+  h1{font-family:var(--display);font-weight:600;font-size:clamp(40px,7vw,68px);line-height:1.02;margin:0 0 14px;letter-spacing:-.01em}
+  .sub{font-size:18px;color:var(--muted);max-width:62ch;margin:0}
+  .role{font-family:var(--display);font-style:italic;font-weight:600;background:var(--iris);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:iris 5s linear infinite}
+  @keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 26px;margin:26px 0 0;font-family:var(--cond);font-size:14px;color:var(--muted);letter-spacing:.02em}
+  .legend b{color:var(--ink);font-weight:600}.legend .k{display:inline-flex;align-items:center;gap:7px}.dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+  .spine{position:relative;margin-top:10px}
+  .spine::before{content:"";position:absolute;left:21px;top:14px;bottom:30px;width:2px;background:linear-gradient(var(--crimson),var(--light))}
+  .step{position:relative;padding:0 0 38px 70px;min-height:46px}
+  .badge{position:absolute;left:0;top:0;width:44px;height:44px;border-radius:9px;background:var(--paper);border:2px solid var(--crimson);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:17px;color:var(--crimson);z-index:2}
+  .badge.you{background:var(--crimson);color:#fff}
+  .step h2{font-family:var(--display);font-weight:600;font-size:25px;margin:4px 0 3px;letter-spacing:-.01em}
+  .chipstage{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border:1px solid var(--light);border-radius:5px;padding:2px 6px;margin-left:8px;vertical-align:middle}
+  .what{font-size:16px;color:var(--ink);margin:0 0 12px;max-width:62ch}.what .q{color:var(--muted)}
+  .fires{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin:0 0 6px}
+  .fires .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-right:2px}
+  .chip{position:relative;display:inline-flex;align-items:center;gap:6px;font-family:var(--cond);font-weight:500;font-size:14.5px;letter-spacing:.015em;background:var(--paper);border:1px solid var(--light);color:var(--ink);padding:5px 11px;border-radius:999px;cursor:help;transition:border-color .15s,background .15s}
+  .chip:hover,.chip:focus-visible{border-color:var(--crimson);background:#fff;outline:none}.chip .ico{color:var(--crimson);font-size:13px}
+  .chip.bot .ico{color:var(--muted)}
+  .chip.gate{border-color:var(--crimson);background:#F7ECEC;font-weight:600}.chip.gate .ico{opacity:1}
+  .rb{position:absolute;left:0;bottom:calc(100% + 9px);width:max-content;max-width:300px;background:var(--ink);color:#F4F1EC;font-family:var(--mono);font-size:11px;line-height:1.5;padding:9px 12px;border-radius:8px;opacity:0;pointer-events:none;transform:translateY(4px);transition:opacity .14s,transform .14s;z-index:20;box-shadow:0 10px 26px rgba(26,26,26,.22)}
+  .rb b{color:#fff;font-weight:700}.rb .src{color:#C7A6A6}.rb::after{content:"";position:absolute;left:18px;top:100%;border:6px solid transparent;border-top-color:var(--ink)}
+  .chip:hover .rb,.chip:focus-visible .rb{opacity:1;transform:translateY(0)}
+  details.sub{margin:8px 0 2px}details.sub>summary{list-style:none;cursor:pointer;font-family:var(--cond);font-weight:600;font-size:14px;letter-spacing:.04em;text-transform:uppercase;color:var(--crimson);display:inline-flex;align-items:center;gap:8px;padding:3px 0;user-select:none}
+  details.sub>summary::-webkit-details-marker{display:none}details.sub>summary .tw{transition:transform .18s;display:inline-block}details.sub[open]>summary .tw{transform:rotate(90deg)}
+  .subflow{margin:12px 0 4px;padding:0 0 0 18px;position:relative}.subflow::before{content:"";position:absolute;left:5px;top:6px;bottom:8px;width:2px;background:var(--light)}
+  .mv{position:relative;padding:0 0 14px 22px}.mv::before{content:"";position:absolute;left:-1px;top:7px;width:12px;height:12px;border-radius:50%;background:var(--cream);border:2px solid var(--crimson)}
+  .mv b{font-family:var(--serif);font-weight:600;font-size:15px}.mv .d{font-size:14px;color:var(--muted)}.mv.alt::before{border-color:var(--muted)}
+  .pull{margin-top:30px;padding:22px 26px;background:var(--paper);border:1px solid var(--light);border-radius:14px}
+  .pull h3{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--crimson);margin:0 0 10px}
+  .pull p{margin:0;font-size:16px}.pull b{color:var(--crimson)}
+  footer{margin-top:44px;padding-top:22px;border-top:1px solid var(--light);font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  code{font-family:var(--mono);font-size:.85em;background:#EEE9E2;padding:1px 5px;border-radius:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">AESDR · Internal Flow · 03 of 06</p>
+    <h1>The Operator.</h1>
+    <p class="sub">The Control-Tower loop <span class="role">you</span> run to recruit affiliates — find them, vet them, reach out, manage the replies, pay them. The agents do the grind; you make exactly <b>two</b> commitments: <b>Promote</b> and <b>Send</b>.</p>
+    <div class="legend">
+      <span class="k"><b>How to read:</b></span>
+      <span class="k"><span class="ico" style="color:var(--muted)">⚙</span> an agent acts on its own (lever-gated)</span>
+      <span class="k"><span class="dot" style="background:var(--crimson)"></span> <b>your gesture</b> — the only clicks that commit anything</span>
+      <span class="k"><b>▸</b> open a step's inner flow</span>
+    </div>
+  </header>
+
+  <div class="spine">
+    <div class="step"><div class="badge">A</div>
+      <h2>You run a sweep.<span class="chipstage">→ sourced</span></h2>
+      <p class="what">Press <b>Sweep</b> — Scout researches the live web for affiliate candidates and drops them in the pipeline for review.</p>
+      <div class="fires"><span class="lbl">acts</span><span class="chip bot" tabindex="0"><span class="ico">⚙</span> Scout (on press)<span class="rb"><b>Two-phase research, in the background</b><br>search + read pages → write up · ~2-4 min<br><span class="src">/api/admin/run-sweep · after()</span></span></span></div>
+      <details class="sub"><summary><span class="tw">▸</span> what Scout does in there</summary>
+        <div class="subflow">
+          <div class="mv"><b>Searches + opens pages</b> to verify a real, non-LinkedIn contact <span class="d">(live readout: "reading their sites…")</span></div>
+          <div class="mv"><b>Writes up everything it found</b> <span class="d">— lands as <code>sourced</code> rows, verified ones clean, the rest flagged.</span></div>
+        </div>
+      </details>
+    </div>
+
+    <div class="step"><div class="badge you">B</div>
+      <h2>You promote — or reject.<span class="chipstage">sourced → enriched</span></h2>
+      <p class="what">Eyeball each candidate. <b>Promote</b> moves them to <code>enriched</code> (the only thing the auto-drafter acts on); <b>Reject</b> bins them (recoverable).</p>
+      <div class="fires"><span class="lbl">gesture</span><span class="chip gate"><span class="ico">●</span> Promote → enriched</span><span class="chip"><span class="ico">×</span> Reject → bin</span></div>
+    </div>
+
+    <div class="step"><div class="badge">C</div>
+      <h2>The brief gets written.</h2>
+      <p class="what">Dossier researches the one candidate — audience, voice-fit, conflicts, a non-LinkedIn contact, a first-touch angle, a verdict. You can press <b>Run brief</b> or let the hourly lever do it.</p>
+      <div class="fires"><span class="lbl">acts</span>
+        <span class="chip bot" tabindex="0"><span class="ico">⚙</span> Dossier<span class="rb"><b>Two-phase research, background</b> · same engine, button or cron<br><span class="src">/api/admin/run-brief · cron/dossier-enrich :33</span></span></span>
+        <span class="chip bot" tabindex="0"><span class="ico">⚙</span> Contact-finder<span class="rb"><b>BetterContact waterfall</b> · every 5 min · finds the email<br><span class="src">cron/contact-finder</span></span></span>
+      </div>
+    </div>
+
+    <div class="step"><div class="badge">D</div>
+      <h2>A draft appears.<span class="chipstage">→ ready</span></h2>
+      <p class="what">Scribe writes the first-touch in AESDR voice (canon-checked by Warden) and parks it in the draft house as <code>ready</code>. Nothing has sent.</p>
+      <div class="fires"><span class="lbl">acts</span><span class="chip bot" tabindex="0"><span class="ico">⚙</span> Scribe<span class="rb"><b>Every 15 min</b> · drafts for enriched, voice-fit ≥ bar<br><span class="src">cron/scribe</span></span></span><span class="chip bot" tabindex="0"><span class="ico">⚙</span> Warden<span class="rb"><b>Canon check</b> · flags banned terms before you see it<br><span class="src">canon gate</span></span></span></div>
+    </div>
+
+    <div class="step"><div class="badge you">E</div>
+      <h2>You approve the send.<span class="chipstage">ready → contacted</span></h2>
+      <p class="what">Read the draft, edit if needed, <b>Approve</b>. Courier transmits it on its next tick — and the follow-up clock starts.</p>
+      <div class="fires"><span class="lbl">gesture → then fires</span>
+        <span class="chip gate"><span class="ico">●</span> Approve (Send)</span>
+        <span class="chip" tabindex="0"><span class="ico">✉</span> First-touch<span class="rb"><b>Courier — the only sender</b> · every 5 min, sends approved<br><span class="src">cron/courier</span></span></span>
+      </div>
+    </div>
+
+    <div class="step"><div class="badge">F</div>
+      <h2>The ladder follows up.</h2>
+      <p class="what">No reply? Follow-up drafts a <code>+4d</code> then <code>+9d</code> note — <b>you approve each</b>, courier sends. At <code>+13d</code> with silence, they're parked cold.</p>
+      <div class="fires"><span class="lbl">acts</span>
+        <span class="chip bot" tabindex="0"><span class="ico">⚙</span> Follow-up<span class="rb"><b>Hourly at :17</b> · drafts FU1 (+4d), FU2 (+9d); cold at +13d<br><span class="src">cron/followup · drafts only</span></span></span>
+        <span class="chip gate"><span class="ico">●</span> You approve each send</span>
+      </div>
+      <details class="sub"><summary><span class="tw">▸</span> the halt</summary><div class="subflow"><div class="mv alt"><b>Any real reply stops the ladder cold</b> <span class="d">— an inbound from their address flips them to <code>replied</code>; no more drafts.</span></div></div></details>
+    </div>
+
+    <div class="step"><div class="badge">G</div>
+      <h2>A reply lands.</h2>
+      <p class="what">Sentinel reads inbound mail, classifies it, and pings you the moment one's <b>bright</b> ("interested", "let's chat").</p>
+      <div class="fires"><span class="lbl">fires</span><span class="chip" tabindex="0"><span class="ico">✉</span> → your inbox: "Bright signal"<span class="rb"><b>Sentinel · every 10 min</b> · first bright reply only<br><span class="src">cron/sentinel → PARTNER_ALERT_EMAIL</span></span></span></div>
+    </div>
+
+    <div class="step"><div class="badge you">H</div>
+      <h2>You work the signal.</h2>
+      <p class="what">The ping points you back into the tower — you reply, book, or move them along. The daily <b>Tower digest</b> (Almanac) keeps the standup honest.</p>
+      <div class="fires"><span class="lbl">fires</span><span class="chip" tabindex="0"><span class="ico">✉</span> → your inbox: daily digest<span class="rb"><b>Almanac · daily ~07:00 ET</b> · "N waiting on you"<br><span class="src">cron/almanac</span></span></span><span class="chip gate"><span class="ico">●</span> You act</span></div>
+    </div>
+
+    <div class="step"><div class="badge you">I</div>
+      <h2>You pay them.</h2>
+      <p class="what">When they convert buyers and commission clears, the money gate is one button — and it hands off to <b>The Affiliate</b> chart (chart 02, step&nbsp;I).</p>
+      <div class="fires"><span class="lbl">gesture</span><span class="chip gate"><span class="ico">●</span> Run payout → Stripe</span></div>
+    </div>
+  </div>
+
+  <div class="pull">
+    <h3>The whole point</h3>
+    <p>Everything in grey is a machine working a backlog on a timer. The only two things that ever <b>commit</b> — spend a token-budget reach-out, send a real email to a real person — are <b>Promote</b> and <b>Approve&nbsp;(Send)</b>. That's where you live. <br><br><b>Heads-up:</b> every partner-side agent here is <b>OFF by default</b> — each has a master switch in the tower. Nothing sends until you turn it on.</p>
+  </div>
+  <footer><span>AESDR — Internal Flowchart</span><span>The Operator · 03 / 06 · grounded in code, not memory</span></footer>
+</div>
+</body>
+</html>
