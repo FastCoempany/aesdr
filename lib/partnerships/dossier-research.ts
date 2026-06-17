@@ -1,0 +1,181 @@
+import Anthropic from "@anthropic-ai/sdk";
+
+import {
+  DOSSIER_SYSTEM,
+  DOSSIER_SCHEMA_HINT,
+  type DossierBrief,
+} from "./anthropic-agents";
+import type { ResearchProgress } from "./scout-research";
+
+/**
+ * The rebuilt "Run brief" engine — the same two-phase shape as the sweep:
+ *
+ *   Phase 1 (research, with tools): search for the person, OPEN their site /
+ *     About / contact page (web_fetch) to verify a real non-LinkedIn contact,
+ *     audience, voice, and conflicts. Accumulates the transcript.
+ *   Phase 2 (write-up, NO tools): a separate fast call that emits the brief JSON
+ *     from everything gathered — so a long research run never gets cut off
+ *     mid-emit and lost (the old single-call dossier returned null on a slow
+ *     run; this always writes up what it found).
+ *
+ * Runs in the background (after()); streams so the room sees live progress.
+ */
+
+const TOOLS: Anthropic.Messages.ToolUnion[] = [
+  { type: "web_search_20260209", name: "web_search", max_uses: 6 },
+  { type: "web_fetch_20260209", name: "web_fetch", max_uses: 4 },
+];
+
+const RESEARCH_BUDGET_MS = 110_000;
+const EMIT_BUDGET_MS = 35_000;
+const MAX_TURNS = 12;
+const PROGRESS_THROTTLE_MS = 1_500;
+
+const EMIT_INSTRUCTION = `Stop researching now. Based on everything you found above, output the brief as STRICT JSON — ${DOSSIER_SCHEMA_HINT} JSON only, no prose, no markdown fences.`;
+
+function phaseFor(searches: number, pagesRead: number): string {
+  if (searches === 0 && pagesRead === 0) return "Starting the search…";
+  if (pagesRead === 0) return `Searching for them… (${searches} ${searches === 1 ? "search" : "searches"})`;
+  return `Reading their site to verify… (${searches} searches, ${pagesRead} read)`;
+}
+
+/** Pull the outermost JSON object out of the reply and coerce it to a brief. */
+function extractBrief(text: string): DossierBrief | null {
+  const noFences = text.replace(/```(?:json)?/gi, "");
+  const start = noFences.indexOf("{");
+  const end = noFences.lastIndexOf("}");
+  if (start === -1 || end < start) return null;
+  let obj: Record<string, unknown>;
+  try {
+    obj = JSON.parse(noFences.slice(start, end + 1)) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+  const str = (v: unknown, d = "") => (typeof v === "string" ? v : d);
+  const conflict = (["none", "soft", "hard", "unknown"] as const).includes(obj.conflict as never)
+    ? (obj.conflict as DossierBrief["conflict"])
+    : "unknown";
+  const verdict = (["reach_out", "skip", "needs_research"] as const).includes(obj.verdict as never)
+    ? (obj.verdict as DossierBrief["verdict"])
+    : "needs_research";
+  return {
+    audience_est: typeof obj.audience_est === "number" ? obj.audience_est : null,
+    cadence_note: str(obj.cadence_note),
+    voice_fit: typeof obj.voice_fit === "number" ? obj.voice_fit : 3,
+    voice_fit_rationale: str(obj.voice_fit_rationale),
+    conflict,
+    conflict_note: str(obj.conflict_note),
+    contact_path: str(obj.contact_path),
+    first_touch_angle: str(obj.first_touch_angle),
+    verdict,
+    own_domain: typeof obj.own_domain === "string" ? obj.own_domain : null,
+  };
+}
+
+/**
+ * Research ONE candidate and write up the brief. Streams; reports live progress
+ * via onProgress (throttled). Returns the brief, or null if it couldn't produce
+ * one even from the write-up pass (caller marks the run failed).
+ */
+export async function runDossierResearch(
+  args: {
+    name: string;
+    surface: string | null;
+    handle: string | null;
+    existingWhyFit: string | null;
+  },
+  model: string,
+  onProgress?: (p: ResearchProgress) => void,
+): Promise<DossierBrief | null> {
+  const c = new Anthropic();
+  const messages: Anthropic.MessageParam[] = [
+    {
+      role: "user",
+      content: `Candidate: ${args.name}\nSurface: ${args.surface ?? "(unknown)"}\nHandle: ${args.handle ?? "(unknown)"}\nWhat we know: ${args.existingWhyFit ?? "(nothing yet)"}\n\nResearch them with your tools — search, then OPEN their site / About / contact page to verify.`,
+    },
+  ];
+
+  let searches = 0;
+  let pagesRead = 0;
+  let lastEmit = 0;
+  const report = (phase: string) => onProgress?.({ phase, searches, pagesRead });
+  const throttled = () => {
+    const now = Date.now();
+    if (now - lastEmit < PROGRESS_THROTTLE_MS) return;
+    lastEmit = now;
+    report(phaseFor(searches, pagesRead));
+  };
+
+  // ── Phase 1: research with tools ──
+  const researchDeadline = Date.now() + RESEARCH_BUDGET_MS;
+  let naturalText = "";
+  for (let i = 0; i < MAX_TURNS; i++) {
+    const remaining = researchDeadline - Date.now();
+    if (remaining <= 0) break;
+
+    const stream = c.messages.stream({
+      model,
+      max_tokens: 2048,
+      system: DOSSIER_SYSTEM,
+      tools: TOOLS,
+      messages,
+    });
+    const stop = setTimeout(() => stream.abort(), remaining);
+    stream.on("streamEvent", (event) => {
+      try {
+        if (event.type === "content_block_start" && event.content_block.type === "server_tool_use") {
+          const name = event.content_block.name;
+          if (name === "web_search") searches++;
+          else if (name === "web_fetch") pagesRead++;
+          throttled();
+        }
+      } catch {
+        /* progress is best-effort */
+      }
+    });
+    let turnText = "";
+    stream.on("text", (delta) => {
+      turnText += delta;
+    });
+
+    try {
+      const final = await stream.finalMessage();
+      clearTimeout(stop);
+      messages.push({ role: "assistant", content: final.content });
+      if (final.stop_reason === "pause_turn") {
+        throttled();
+        continue;
+      }
+      naturalText = turnText;
+      break;
+    } catch {
+      clearTimeout(stop);
+      break; // research deadline — proceed to the forced write-up
+    }
+  }
+
+  if (naturalText) {
+    const fromNatural = extractBrief(naturalText);
+    if (fromNatural) return fromNatural;
+  }
+
+  // ── Phase 2: forced write-up (NO tools) ──
+  report(`Writing up the brief… (${searches} searches, ${pagesRead} read)`);
+  messages.push({ role: "user", content: EMIT_INSTRUCTION });
+  let emitText = "";
+  try {
+    const emitStream = c.messages.stream({ model, max_tokens: 2048, system: DOSSIER_SYSTEM, messages });
+    const emitStop = setTimeout(() => emitStream.abort(), EMIT_BUDGET_MS);
+    emitStream.on("text", (delta) => {
+      emitText += delta;
+    });
+    try {
+      await emitStream.finalMessage();
+    } finally {
+      clearTimeout(emitStop);
+    }
+  } catch {
+    /* salvage whatever it wrote */
+  }
+  return extractBrief(emitText);
+}
