@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Buyer — AESDR Internal Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=Barlow+Condensed:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --cream:#FAF7F2; --ink:#1A1A1A; --crimson:#8B1A1A; --muted:#6B6B6B; --light:#E8E4DF;
+    --paper:#FFFFFF; --form-border:#928C84;
+    --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+    --display:'Playfair Display',Georgia,serif; --serif:'Source Serif 4',Georgia,serif;
+    --cond:'Barlow Condensed',sans-serif; --mono:'Space Mono',monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--cream);color:var(--ink)}
+  body{font-family:var(--serif);line-height:1.55;-webkit-font-smoothing:antialiased;padding:0 0 120px}
+  ::selection{background:#8B1A1A22}
+  .wrap{max-width:920px;margin:0 auto;padding:0 28px}
+
+  /* ── Masthead ── */
+  header{padding:64px 0 30px;border-bottom:1px solid var(--light);margin-bottom:46px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--crimson);margin:0 0 18px}
+  .wordmark{font-family:var(--display);font-weight:700;font-style:italic;font-size:15px;letter-spacing:.01em;
+    background:var(--iris);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:iris 5s linear infinite}
+  h1{font-family:var(--display);font-weight:600;font-size:clamp(40px,7vw,68px);line-height:1.02;margin:0 0 14px;letter-spacing:-.01em}
+  .sub{font-size:18px;color:var(--muted);max-width:60ch;margin:0}
+  .role{font-family:var(--display);font-style:italic;font-weight:600;
+    background:var(--iris);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:iris 5s linear infinite}
+  @keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+
+  /* ── Legend ── */
+  .legend{display:flex;flex-wrap:wrap;gap:10px 26px;margin:26px 0 0;font-family:var(--cond);font-size:14px;color:var(--muted);letter-spacing:.02em}
+  .legend b{color:var(--ink);font-weight:600}
+  .legend .k{display:inline-flex;align-items:center;gap:7px}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+  /* ── Spine ── */
+  .spine{position:relative;margin-top:10px}
+  .spine::before{content:"";position:absolute;left:21px;top:14px;bottom:30px;width:2px;background:linear-gradient(var(--crimson),var(--light))}
+  .step{position:relative;padding:0 0 38px 70px;min-height:46px}
+  .badge{position:absolute;left:0;top:0;width:44px;height:44px;border-radius:9px;background:var(--paper);border:2px solid var(--crimson);
+    display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:17px;color:var(--crimson);z-index:2}
+  .step h2{font-family:var(--display);font-weight:600;font-size:25px;margin:4px 0 3px;letter-spacing:-.01em}
+  .what{font-size:16px;color:var(--ink);margin:0 0 12px;max-width:62ch}
+  .what .q{color:var(--muted)}
+
+  /* fires row + chips */
+  .fires{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin:0 0 6px}
+  .fires .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-right:2px}
+  .chip{position:relative;display:inline-flex;align-items:center;gap:6px;font-family:var(--cond);font-weight:500;font-size:14.5px;letter-spacing:.015em;
+    background:var(--paper);border:1px solid var(--light);color:var(--ink);padding:5px 11px;border-radius:999px;cursor:help;transition:border-color .15s,background .15s}
+  .chip:hover,.chip:focus-visible{border-color:var(--crimson);background:#fff;outline:none}
+  .chip .ico{color:var(--crimson);font-size:13px}
+  .chip.team{cursor:help}
+  .chip.team .ico{filter:grayscale(1);opacity:.7}
+  .chip.team.act{border-color:#C99A2E;background:#FBF4E2}
+  .chip.team.act .ico{filter:none;opacity:1}
+  .chip.dormant{opacity:.5;border-style:dashed;text-decoration:line-through;text-decoration-color:#bbb}
+  .tag-dormant{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;background:#EEE9E2;color:#9A8F82;padding:2px 5px;border-radius:4px;text-decoration:none;display:inline-block;vertical-align:middle}
+
+  /* runbook tooltip */
+  .rb{position:absolute;left:0;bottom:calc(100% + 9px);width:max-content;max-width:280px;
+    background:var(--ink);color:#F4F1EC;font-family:var(--mono);font-size:11px;line-height:1.5;letter-spacing:.01em;
+    padding:9px 12px;border-radius:8px;opacity:0;pointer-events:none;transform:translateY(4px);transition:opacity .14s,transform .14s;z-index:20;box-shadow:0 10px 26px rgba(26,26,26,.22)}
+  .rb b{color:#fff;font-weight:700}
+  .rb .src{color:#C7A6A6}
+  .rb::after{content:"";position:absolute;left:18px;top:100%;border:6px solid transparent;border-top-color:var(--ink)}
+  .chip:hover .rb,.chip:focus-visible .rb{opacity:1;transform:translateY(0)}
+
+  /* drill-down sub-flow */
+  details.sub{margin:8px 0 2px;border-left:2px solid var(--light);padding-left:0}
+  details.sub>summary{list-style:none;cursor:pointer;font-family:var(--cond);font-weight:600;font-size:14px;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--crimson);display:inline-flex;align-items:center;gap:8px;padding:3px 0;user-select:none}
+  details.sub>summary::-webkit-details-marker{display:none}
+  details.sub>summary .tw{transition:transform .18s;display:inline-block}
+  details.sub[open]>summary .tw{transform:rotate(90deg)}
+  .subflow{margin:12px 0 4px;padding:0 0 0 18px;position:relative}
+  .subflow::before{content:"";position:absolute;left:5px;top:6px;bottom:8px;width:2px;background:var(--light)}
+  .mv{position:relative;padding:0 0 14px 22px}
+  .mv::before{content:"";position:absolute;left:-1px;top:7px;width:12px;height:12px;border-radius:50%;background:var(--cream);border:2px solid var(--crimson)}
+  .mv b{font-family:var(--serif);font-weight:600;font-size:15px;color:var(--ink)}
+  .mv .d{font-size:14px;color:var(--muted)}
+  .mv.alt::before{border-color:var(--muted);background:var(--cream)}
+
+  /* side doors */
+  .doors{margin-top:18px;padding:26px 28px;background:var(--paper);border:1px solid var(--light);border-radius:14px}
+  .doors h3{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--crimson);margin:0 0 16px}
+  .door{display:flex;gap:12px;align-items:baseline;padding:9px 0;border-top:1px dashed var(--light)}
+  .door:first-of-type{border-top:none}
+  .door .dt{font-family:var(--display);font-weight:600;font-size:16px;min-width:150px}
+  .door .dd{font-size:14.5px;color:var(--muted);flex:1}
+
+  /* flags note */
+  .flags{margin-top:34px;padding:24px 26px;border:1.5px solid #C99A2E;background:#FCF6E8;border-radius:14px}
+  .flags h3{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#9A6A12;margin:0 0 12px}
+  .flags ol{margin:0;padding-left:20px;font-size:14.5px;color:var(--ink)}
+  .flags li{margin:7px 0}
+  .flags b{color:var(--crimson)}
+
+  footer{margin-top:44px;padding-top:22px;border-top:1px solid var(--light);font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">AESDR · Internal Flow · 01 of 06</p>
+    <h1>The Buyer.</h1>
+    <p class="sub">One unbroken path — from the moment an <span class="role">early-career SDR · AE</span> finds AESDR to the day, months later, we reach back out. Every email we send and every place the team steps in sits on the line, in order.</p>
+    <div class="legend">
+      <span class="k"><b>How to read:</b></span>
+      <span class="k"><span class="ico" style="color:var(--crimson)">✉</span> hover any email for its runbook — what fires it, when, from where</span>
+      <span class="k"><b>▸</b> click to open a step's inner flow</span>
+      <span class="k"><span class="dot" style="background:#C99A2E"></span> team may need to act</span>
+      <span class="k"><span class="dot" style="background:#bbb"></span> built but <b>not firing</b> (dormant)</span>
+    </div>
+  </header>
+
+  <div class="spine">
+
+    <!-- A -->
+    <div class="step">
+      <div class="badge">A</div>
+      <h2>They find AESDR.</h2>
+      <p class="what">An SDR or AE a year or two in — drowning, ramping harder than anyone warned them — lands on the site. <span class="q">Organic, an affiliate's link, a free asset, or a workshop invite.</span></p>
+      <div class="fires">
+        <span class="lbl">fires</span>
+        <span class="chip">— nothing yet —</span>
+        <span class="chip team"><span class="ico">👁</span> Team: no</span>
+      </div>
+    </div>
+
+    <!-- B -->
+    <div class="step">
+      <div class="badge">B</div>
+      <h2>They weigh it up.</h2>
+      <p class="what">Reads the syllabus — what's actually inside, who it's for. <span class="q">Maybe grabs the free Archetype Map first (see side doors).</span></p>
+      <div class="fires">
+        <span class="lbl">fires</span>
+        <span class="chip">— nothing —</span>
+        <span class="chip team"><span class="ico">👁</span> Team: no</span>
+      </div>
+    </div>
+
+    <!-- C -->
+    <div class="step">
+      <div class="badge">C</div>
+      <h2>They buy.</h2>
+      <p class="what">$249 SDR / $299 AE, one-time, through Stripe.</p>
+      <div class="fires">
+        <span class="lbl">fires</span>
+        <span class="chip team"><span class="ico">👁</span> Team: no — unless a dispute lands later</span>
+      </div>
+      <details class="sub">
+        <summary><span class="tw">▸</span> if the card fails</summary>
+        <div class="subflow">
+          <div class="mv"><b>Card declines / checkout abandoned</b><div class="d">they don't get in — yet.</div></div>
+          <div class="mv alt">
+            <span class="chip" style="margin:0 0 4px" tabindex="0"><span class="ico">✉</span> Recovery nudge
+              <span class="rb"><b>Abandonment cron</b><br>daily 13:00 UTC · catches stalled checkouts<br><span class="src">cron/abandonment</span></span>
+            </span>
+            <div class="d">a gentle "you didn't finish" — fires on its own.</div>
+          </div>
+          <div class="mv"><b>They come back &amp; pay → rejoin at D</b><span class="d"> · or drop off entirely.</span></div>
+        </div>
+      </details>
+    </div>
+
+    <!-- D -->
+    <div class="step">
+      <div class="badge">D</div>
+      <h2>They're in.</h2>
+      <p class="what">Payment clears and access opens — straight into the course home.</p>
+      <div class="fires">
+        <span class="lbl">fires now</span>
+        <span class="chip" tabindex="0"><span class="ico">✉</span> Welcome + access
+          <span class="rb"><b>Stripe payment succeeds</b><br>instant · credentials + link into Course 1<br><span class="src">webhooks/stripe · sendWelcomeEmail</span></span>
+        </span>
+        <span class="chip" tabindex="0"><span class="ico">✉</span> Receipt
+          <span class="rb"><b>Same Stripe event</b><br>instant · plan, amount, 14-day refund window<br><span class="src">webhooks/stripe · sendReceiptEmail</span></span>
+        </span>
+        <span class="chip team"><span class="ico">👁</span> Team: no</span>
+      </div>
+    </div>
+
+    <!-- E -->
+    <div class="step">
+      <div class="badge">E</div>
+      <h2>They work through it.</h2>
+      <p class="what">Twelve lessons. This is where most of the life of the relationship happens — and where almost every nudge is triggered by what they <em>do</em> (or don't).</p>
+
+      <details class="sub" open>
+        <summary><span class="tw">▸</span> while they're in here</summary>
+        <div class="subflow">
+          <div class="mv"><b>Opens a lesson</b> <span class="d">→ works it → progress saves as they go (auto, no save button).</span></div>
+          <div class="mv"><b>Completes a lesson ✓</b><div class="d">logged as an event — this is the heartbeat the nudges &amp; the review ask key off. Points them to the next.</div></div>
+          <div class="mv alt"><b>Leaves / closes the tab</b><div class="d">saved at their spot → <b>comes back</b> → resumes from the course home. No email — this is normal.</div></div>
+          <div class="mv alt"><b>Goes quiet instead</b> <span class="d">— the system notices the silence and reaches out:</span>
+            <div class="fires" style="margin-top:8px">
+              <span class="chip" tabindex="0"><span class="ico">✉</span> 5 days quiet<span class="rb"><b>Drop-off cron</b><br>5d no lesson activity · "your next lesson is ready"<br><span class="src">cron/dropoff · daily 15:00 UTC</span></span></span>
+              <span class="chip" tabindex="0"><span class="ico">✉</span> 10 days<span class="rb"><b>Drop-off cron</b><br>10d quiet · "the Friday five-line"<br><span class="src">cron/dropoff</span></span></span>
+              <span class="chip" tabindex="0"><span class="ico">✉</span> 21 days<span class="rb"><b>Drop-off cron</b><br>21d quiet · "last check-in" (invites a REFUND reply)<br><span class="src">cron/dropoff</span></span></span>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <div class="fires" style="margin-top:14px">
+        <span class="lbl">along the way</span>
+        <span class="chip" tabindex="0"><span class="ico">✉</span> Day-3 check-in<span class="rb"><b>Drip cron</b><br>~3 days after purchase · "how's Course 1?"<br><span class="src">cron/drip · daily 14:00 UTC</span></span></span>
+        <span class="chip" tabindex="0"><span class="ico">✉</span> Day-7 check-in<span class="rb"><b>Drip cron</b><br>~7 days after purchase · "Course 3 builds the one-pager"<br><span class="src">cron/drip</span></span></span>
+        <span class="chip dormant" tabindex="0"><span class="ico">✉</span> Lesson-done nudge <span class="tag-dormant">NOT FIRING</span><span class="rb"><b>Retention cron · ~24h after a completion</b><br><span class="src">⚠ retention cron has no schedule in vercel.json</span></span></span>
+        <span class="chip dormant" tabindex="0"><span class="ico">✉</span> Sunday framing <span class="tag-dormant">NOT FIRING</span><span class="rb"><b>Retention cron · weekly, Sundays</b><br><span class="src">⚠ retention cron unscheduled</span></span></span>
+        <span class="chip dormant" tabindex="0"><span class="ico">✉</span> 45-day win-back <span class="tag-dormant">NOT FIRING</span><span class="rb"><b>Retention cron · ≥45d, low engagement</b><br><span class="src">⚠ retention cron unscheduled</span></span></span>
+        <span class="chip team"><span class="ico">👁</span> Team: no — unless they reply to one</span>
+      </div>
+    </div>
+
+    <!-- F -->
+    <div class="step">
+      <div class="badge">F</div>
+      <h2>They finish all 12.</h2>
+      <p class="what">Course-complete is logged — the moment that anchors the review ask, the keepers, and (eventually) the alumni touches.</p>
+      <div class="fires">
+        <span class="lbl">fires</span>
+        <span class="chip" tabindex="0"><span class="ico">✉</span> "You finished all 12" — review ask<span class="rb"><b>Review cron</b><br>+2 days after finishing · asks for a review<br><span class="src">cron/review · daily 16:00 UTC</span></span></span>
+        <span class="chip" tabindex="0"><span class="ico">✉</span> +4-day nudge<span class="rb"><b>Review cron</b><br>4 days after the ask, if no review yet<br><span class="src">cron/review</span></span></span>
+        <span class="chip team act"><span class="ico">👁</span> Team: maybe — a testimonial / a celebrate</span>
+      </div>
+      <details class="sub">
+        <summary><span class="tw">▸</span> their keeper (the artifacts)</summary>
+        <div class="subflow">
+          <div class="mv"><b>They unlock the Programme / Manuscript</b><div class="d">the end-of-course artifact — their "keeper." The <code>/reveal</code> page works.</div></div>
+          <div class="mv alt">
+            <span class="chip dormant" tabindex="0"><span class="ico">✉</span> "Choose your keeper" <span class="tag-dormant">NOT FIRING</span><span class="rb"><b>sendRevealUnlockedEmail</b><br><span class="src">⚠ defined, no call site — dormant</span></span></span>
+            <span class="chip dormant" tabindex="0"><span class="ico">✉</span> Lesson-12 + Discord invite <span class="tag-dormant">NOT FIRING</span><span class="rb"><b>sendLessonCompleteEmail</b><br>the ONLY place the Discord invite lives<br><span class="src">⚠ defined, never sent — dormant</span></span></span>
+            <div class="d">both built, neither wired — see the flags below.</div>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <!-- G -->
+    <div class="step">
+      <div class="badge">G</div>
+      <h2>Months later.</h2>
+      <p class="what">Long after they're done, the relationship is meant to keep breathing.</p>
+      <div class="fires">
+        <span class="lbl">fires</span>
+        <span class="chip dormant" tabindex="0"><span class="ico">✉</span> 6-month alumni <span class="tag-dormant">NOT FIRING</span><span class="rb"><b>Retention cron · 180d after finishing</b><br><span class="src">⚠ retention cron unscheduled</span></span></span>
+        <span class="chip dormant" tabindex="0"><span class="ico">✉</span> 12-month alumni <span class="tag-dormant">NOT FIRING</span><span class="rb"><b>Retention cron · 365d after finishing</b><br><span class="src">⚠ retention cron unscheduled</span></span></span>
+        <span class="chip team"><span class="ico">👁</span> Team: no</span>
+      </div>
+    </div>
+
+  </div><!-- /spine -->
+
+  <!-- side doors -->
+  <div class="doors">
+    <h3>Side doors — other ways onto the path</h3>
+    <div class="door"><div class="dt">Free Archetype Map</div><div class="dd">Drops their email on <code>/free/manager-archetype-map</code> → <b>✉ instant delivery</b> (one-shot, no sequence) → nudges them toward <b>Buy</b>.</div></div>
+    <div class="door"><div class="dt">Team invite</div><div class="dd">A Team-plan buyer adds a teammate → <b>✉ instant invite</b>. The buyer acts, not us.</div></div>
+    <div class="door"><div class="dt">Workshop (via an affiliate)</div><div class="dd">Registers on an affiliate's workshop page → <b>✉ confirmation</b>, then <b>✉ T-48h · T-1h · replay</b> reminders (usher → courier).</div></div>
+  </div>
+
+  <!-- flags -->
+  <div class="flags">
+    <h3>⚠ What this map already surfaced</h3>
+    <ol>
+      <li>The <b>retention cron has no schedule</b> — so the lesson-done nudge, Sunday framing, win-back, and both alumni emails are <b>silently dormant in production.</b></li>
+      <li>Four emails are <b>built but never wired</b> — including the <b>lesson-12 email that's the only place the Discord invite lives.</b></li>
+      <li>Workshop reminders currently go to a <b>placeholder address</b>, not each registrant.</li>
+      <li><b>No SMS</b> fires anywhere, despite the opt-in columns.</li>
+    </ol>
+  </div>
+
+  <footer>
+    <span>AESDR — Internal Flowchart</span>
+    <span>The Buyer · 01 / 06 · grounded in code, not memory</span>
+  </footer>
+
+</div>
+</body>
+</html>
