@@ -129,7 +129,7 @@ export async function runSweepAndInsert(
       voice_fit: c.voice_fit,
       status: "sourced",
       contact_path: c.contact_path,
-      why_fit: `${c.why_fit}${c.conflict ? ` — conflict: ${c.conflict}` : ""}${isVerified(c) ? "" : " [⚠ contact unverified — confirm before outreach]"} [scout/${sweep}, ${actor}]`,
+      why_fit: `${c.why_fit}${c.conflict ? ` — conflict: ${c.conflict}` : ""}${isVerified(c) ? "" : " [⚠ contact unverified — confirm before outreach]"}`,
       source_agent: `scout-tower:${sweep}`,
       next_action: "Review and promote, or reject",
     }));
