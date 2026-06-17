@@ -7,10 +7,10 @@ import { logPartnerEvents } from "@/lib/partnerships/events";
 
 /**
  * The canonical scout-sweep runner: run the agentic research loop (search +
- * fetch, many steps, live progress), keep only the CLEAN candidates (verified,
- * non-LinkedIn contact path), de-dupe against the pipeline, insert them as
- * `sourced`, and stamp the run row throughout — including a diagnostic `log`
- * trail so any failure or empty result is one click from its real reason.
+ * fetch, two-phase, live progress), de-dupe against the pipeline, and insert
+ * EVERY candidate it surfaced as `sourced` — flagging the ones whose contact
+ * path it couldn't verify rather than dropping them (max data, the operator
+ * decides). Stamps the run row + a diagnostic `log` on every terminal path.
  *
  * The model writes, the human approves: everything lands at `status='sourced'`
  * for review; nothing reaches `enriched` until the operator promotes it.
@@ -27,7 +27,8 @@ export function isValidSweep(s: string): s is ScoutSweepId {
 }
 
 /** A contact path we'd actually act on: present, not LinkedIn, not a "couldn't
- *  find one" placeholder. Paired with the model's contact_verified flag. */
+ *  find one" placeholder. Paired with the model's contact_verified flag — used
+ *  to FLAG rows, not to drop them. */
 function isUsableContact(path: string): boolean {
   const p = path.trim().toLowerCase();
   if (!p) return false;
@@ -38,8 +39,8 @@ function isUsableContact(path: string): boolean {
   return true;
 }
 
-function isClean(c: ResearchCandidate): boolean {
-  return c.name.trim().length > 0 && c.contact_verified && isUsableContact(c.contact_path);
+function isVerified(c: ResearchCandidate): boolean {
+  return c.contact_verified && isUsableContact(c.contact_path);
 }
 
 export type SweepOutcome = {
@@ -50,8 +51,8 @@ export type SweepOutcome = {
 
 /**
  * Run one sweep end to end, updating its status row (and diagnostic log) as it
- * goes. Always closes the run (done / empty / failed) — never leaves it hanging.
- * Safe to call from inside after().
+ * goes. Always closes the run (done / empty / failed). Safe to call from
+ * inside after().
  */
 export async function runSweepAndInsert(
   sweep: ScoutSweepId,
@@ -76,44 +77,36 @@ export async function runSweepAndInsert(
         }),
     });
 
-    const seen = candidates.length;
+    // Keep every named candidate — flag the unverified, don't drop them.
+    const named = candidates.filter((c) => c.name.trim().length > 0);
+    const seen = named.length;
+    const verified = named.filter(isVerified).length;
     await updateSweepRun(runId, { phase: "Scoring and de-duping…", seen });
+    stamp(`research surfaced ${seen} candidate${seen === 1 ? "" : "s"}; ${verified} with a verified non-LinkedIn contact`);
 
-    const clean = candidates.filter(isClean);
-    const unclean = candidates.filter((c) => !isClean(c));
-    stamp(`research returned ${seen} candidate${seen === 1 ? "" : "s"}; ${clean.length} clean (verified, non-LinkedIn contact)`);
-    if (unclean.length > 0) {
-      stamp(
-        `dropped ${unclean.length} without a usable contact: ${unclean
-          .slice(0, 4)
-          .map((c) => c.name)
-          .join(", ")}${unclean.length > 4 ? "…" : ""}`,
-      );
-    }
-
-    if (clean.length === 0) {
-      stamp("nothing clean to insert");
+    if (seen === 0) {
+      stamp("nothing surfaced");
       await finishSweepRun(runId, {
         status: "empty",
         candidates_found: 0,
         seen,
         log: diag,
-        phase: seen > 0 ? `Surfaced ${seen}, none with a usable contact` : "Nothing surfaced",
+        phase: "Nothing surfaced",
       });
       return { status: "empty", inserted: 0, seen };
     }
 
     const supabase = createAdminClient();
     // De-dupe against existing names (case-insensitive).
-    const names = clean.map((c) => c.name);
+    const lookupNames = named.map((c) => c.name);
     const { data: existing } = await supabase
       .from("partner_pipeline")
       .select("name")
-      .in("name", names);
+      .in("name", lookupNames);
     const have = new Set((existing ?? []).map((e) => (e.name as string).toLowerCase()));
-    const fresh = clean.filter((c) => !have.has(c.name.toLowerCase()));
-    const dupes = clean.length - fresh.length;
-    if (dupes > 0) stamp(`${dupes} clean candidate${dupes === 1 ? "" : "s"} already in the pipeline`);
+    const fresh = named.filter((c) => !have.has(c.name.toLowerCase()));
+    const dupes = seen - fresh.length;
+    if (dupes > 0) stamp(`${dupes} already in the pipeline`);
 
     if (fresh.length === 0) {
       await finishSweepRun(runId, {
@@ -121,7 +114,7 @@ export async function runSweepAndInsert(
         candidates_found: 0,
         seen,
         log: diag,
-        phase: `Found ${clean.length}, all already in the pipeline`,
+        phase: `Found ${seen}, all already in the pipeline`,
       });
       return { status: "empty", inserted: 0, seen };
     }
@@ -136,7 +129,7 @@ export async function runSweepAndInsert(
       voice_fit: c.voice_fit,
       status: "sourced",
       contact_path: c.contact_path,
-      why_fit: `${c.why_fit}${c.conflict ? ` — conflict: ${c.conflict}` : ""} [scout/${sweep}, ${actor}]`,
+      why_fit: `${c.why_fit}${c.conflict ? ` — conflict: ${c.conflict}` : ""}${isVerified(c) ? "" : " [⚠ contact unverified — confirm before outreach]"} [scout/${sweep}, ${actor}]`,
       source_agent: `scout-tower:${sweep}`,
       next_action: "Review and promote, or reject",
     }));
@@ -155,7 +148,8 @@ export async function runSweepAndInsert(
         detail: { sweep, model, triggered_by: actor },
       })),
     );
-    stamp(`inserted ${inserts.length} new sourced row${inserts.length === 1 ? "" : "s"}`);
+    const freshVerified = fresh.filter(isVerified).length;
+    stamp(`inserted ${inserts.length} new (${freshVerified} with a verified contact)`);
 
     await finishSweepRun(runId, {
       status: "done",
