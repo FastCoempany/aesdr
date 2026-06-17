@@ -1,29 +1,24 @@
 export const dynamic = "force-dynamic";
-// The background research can run the full ~150s; maxDuration is the ceiling on
-// the after() work (waitUntil keeps the invocation alive up to here), NOT on the
-// request, which returns in well under a second.
+// The agentic research loop (search + fetch, many steps) runs in after(); this
+// is the ceiling on that background work. The POST itself returns in <1s.
 export const maxDuration = 300;
 
 import { NextResponse, after } from "next/server";
 
 import { requireAdmin } from "@/lib/admin";
 import { runSweepAndInsert, isValidSweep } from "@/lib/partnerships/sweep";
+import { createSweepRun, getSweepRun } from "@/lib/partnerships/sweep-run";
 
 /**
- * The sweep trigger — fire-and-forget. A scout sweep is a ~150s live-web
- * research call, and the platform won't hold a client request open that long:
- * the connection drops around ~90–120s and the in-flight function is torn down
- * before it can write anything (whether it's a Server Action — the turtle — or
- * a route handler awaiting inline — "didn't complete").
+ * Sweep trigger + status.
  *
- * So we don't make the request wait. We schedule the research with after(),
- * which on Vercel rides waitUntil to keep the invocation alive up to maxDuration
- * AFTER the response is sent, and return immediately. The candidates land in the
- * pipeline when the background work finishes (~1–2 min); the tower reveals them
- * on its next refresh.
+ *   POST /api/admin/run-sweep?sweep=…   → opens a run row, kicks the research
+ *                                          off in the background, returns { runId }
+ *   GET  /api/admin/run-sweep?runId=…   → that run's live status (button polls)
  *
- *   POST /api/admin/run-sweep?sweep=communities|newsletters_podcasts|practitioners
- *   → { ok: true, started: true }   (instant)
+ * The research is a ~4-minute loop, so we never make the request wait for it:
+ * after() rides waitUntil to keep the function alive while it works, and the
+ * run row carries the live phase + counts the button shows.
  */
 export async function POST(request: Request) {
   const user = await requireAdmin();
@@ -33,20 +28,32 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "Unknown sweep." }, { status: 400 });
   }
 
-  // Read the actor now (request scope), then hand the long work to after().
   const actor = user.email ?? "admin";
+  const runId = await createSweepRun(sweep, actor);
+
   after(async () => {
+    // runSweepAndInsert closes the run row itself (done/empty/failed); this
+    // catch is a backstop so a thrown error never leaves it stuck on "running".
     try {
-      await runSweepAndInsert(sweep, actor);
+      await runSweepAndInsert(sweep, actor, runId);
     } catch (e) {
-      // Surfaces in the function logs; the operator sees "no new candidates"
-      // and re-runs. (A status row could make this visible in-UI later.)
-      console.error(
-        `[run-sweep] ${sweep} failed:`,
-        e instanceof Error ? e.message : String(e),
-      );
+      console.error(`[run-sweep] ${sweep} crashed:`, e instanceof Error ? e.message : String(e));
     }
   });
 
-  return NextResponse.json({ ok: true, started: true });
+  return NextResponse.json({ ok: true, runId, started: true });
+}
+
+export async function GET(request: Request) {
+  await requireAdmin();
+  const runId = new URL(request.url).searchParams.get("runId") || "";
+  if (!runId) {
+    return NextResponse.json({ ok: false, error: "Missing runId." }, { status: 400 });
+  }
+  const run = await getSweepRun(runId);
+  if (!run) {
+    // Pre-migration or unknown id — tell the button to stop polling gracefully.
+    return NextResponse.json({ ok: true, run: null });
+  }
+  return NextResponse.json({ ok: true, run });
 }
