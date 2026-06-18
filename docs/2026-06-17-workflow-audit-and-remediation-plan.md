@@ -2,7 +2,7 @@
 *Adversarial audit, 2026-06-17. Grounded in code, not memory.*
 
 ## What this is
-A consolidated punch-list of everything three independent adversarial audit passes (buyer/payments · affiliate/operator/money · enterprise/security/systemic) found across every workflow, plus the gaps the flow-chart exercise surfaced. Each item is evidence-backed (`file:line`), severity-ranked, and phased so it can be run methodically. **The money- and deploy-breaking items were re-verified against the source by hand** (marked ✅).
+A consolidated punch-list of everything **two rounds** of adversarial auditing found across every workflow, plus the gaps the flow-chart exercise surfaced. Round 1 ran three passes (buyer/payments · affiliate/operator/money · enterprise/security/systemic). Round 2 ran a second, broader sweep across the workflows *and* the rest of the app for gaps, broken promises, and unfinished wiring — and it surfaced the heaviest findings in the doc: the **product-delivery layer** (curriculum depth + end-of-course artifacts) is wired but never invoked, and the **affiliate commission rate is misrepresented** to the people the system pays. Each item is evidence-backed (`file:line`), severity-ranked, and phased so it can be run methodically. **The money-, deploy-, and delivery-breaking items were re-verified against the source by hand** (marked ✅).
 
 ## How to use it
 Work top-down by phase. Each item has a `[ ]` you tick when its **Done-when** is met. Don't start a later phase before its blockers (noted in **Depends**) are closed. Effort: **S** ≈ <½ day · **M** ≈ ½–2 days · **L** ≈ multi-day.
@@ -10,16 +10,52 @@ Work top-down by phase. Each item has a `[ ]` you tick when its **Done-when** is
 ## Scoreboard
 | Severity | Count | Meaning |
 |---|---|---|
-| 🔴 Critical | 4 | Loses money, charges without access, or breaks a fresh deploy. Do first. |
-| 🟠 High | 15 | A real workflow is broken or a user-/founder-facing wire is dead. |
-| 🟡 Medium | 16 | Degraded, silent-failure, or correctness gaps with limited blast radius. |
-| ⚪ Low | 8 | Cleanup, cosmetics, hardening. |
+| 🔴 Critical | 8 | Loses money, charges without delivering, or breaks a fresh deploy. Do first. |
+| 🟠 High | 19 | A real workflow is broken or a user-/founder-facing wire is dead. |
+| 🟡 Medium | 22 | Degraded, silent-failure, or correctness gaps with limited blast radius. |
+| ⚪ Low | 10 | Cleanup, cosmetics, hardening. |
 
-> **Cross-cutting theme the audit kept hitting:** the partnership/agent subsystem is built to *fail silently by design* — fail-safe-OFF switches, best-effort `try/catch` swallows, console-only logging, and some schema created out-of-band. Safe for "don't send bad outreach," but it means broken infrastructure (unapplied migrations, a missing webhook, an unscheduled cron) is **invisible at runtime.** Several fixes below are really about making failure *loud*.
+> **Cross-cutting theme #1 (Round 1):** the partnership/agent subsystem is built to *fail silently by design* — fail-safe-OFF switches, best-effort `try/catch` swallows, console-only logging, and some schema created out-of-band. Safe for "don't send bad outreach," but it means broken infrastructure (unapplied migrations, a missing webhook, an unscheduled cron) is **invisible at runtime.** Several fixes below are really about making failure *loud*.
+>
+> **Cross-cutting theme #2 (Round 2):** the **delivery layer is built but not connected.** The artifact engine, the three-units-per-lesson structure, and the $40 unlock all exist as code and schema — but nothing *invokes* them: no caller generates the artifacts, no navigation reaches units 2 & 3, and the commission number the code uses isn't the one every buyer-facing surface promises. These aren't bugs in a feature; they're features that were wired and never plugged in. The buyer pays for the whole thing and reaches the end to find the last third missing.
 
 ---
 
-## PHASE 0 — Critical: money, data integrity, deploy
+## PHASE 0 — Critical: money, data integrity, delivery, deploy
+
+> **Run order (Round-2 reframing):** start with **Part A** — the four product-integrity Criticals. They're the difference between "the buyer gets what they paid for" and "they don't," and three of them are pure broken-wiring (cheap relative to blast radius). Then **Part B** — the money/deploy Criticals (P0-1…P0-4). The Part-B IDs and their downstream `Depends` chains (P1-1, P0-3, P2-6, P2-9) are unchanged; only the physical order moved.
+
+### Part A — Product-integrity Criticals · *the buyer paid; does the product deliver?*
+
+### [ ] P0-5 · The end-of-course artifacts never generate — nothing triggers generation  🔴 ✅verified
+- **Where:** `generateArtifacts` (`lib/artifacts/generate.ts:56`) has exactly one caller — `POST /api/artifacts` (`app/api/artifacts/route.ts:67`) — and **nothing in the app ever POSTs `/api/artifacts`** (grep: zero `fetch` to it). The reveal pick (`app/reveal/RevealView.tsx:55`) POSTs `/api/reveal`, which only writes `reveal_picks` and redirects (`app/api/reveal/route.ts:34-54`) — no generation. The artifact pages read `GET /api/artifacts` → `getCachedArtifact` → 404 "Artifact not ready yet."
+- **Wrong:** generation is fully built but never invoked; the cache the pages read is never populated.
+- **Impact:** the entire end-of-course payoff — **Diagnostic / Playbill / Redline** (the "substantial assets") — resolves to "not ready yet" for every buyer. The reward the whole course climbs toward, and the thing the $40 unlock sells (P1-16), does not exist at runtime.
+- **Fix:** invoke `POST /api/artifacts` at the right moment — on course-completion and/or first artifact-page load — gated on completion (P1-8), with a generating state and a backfill on the reveal pick.
+- **Done when:** finishing the course produces a real Diagnostic/Playbill/Redline the artifact page renders. **Effort:** M · **Depends:** P0-6 (constraint blocks the write), P1-8 (completion gate)
+
+### [ ] P0-6 · `generated_artifacts` CHECK constraint rejects the real artifact types  🔴 ✅verified
+- **Where:** `supabase/migrations/20260413_generated_artifacts.sql:7` — `CHECK (artifact_type IN ('diagnostic','playbook','mirror'))`. The code writes/reads `diagnostic` / **`playbill`** / **`redline`** (`app/api/artifacts/route.ts:31`, `lib/artifacts/*`). The artifacts were renamed Playbook→Playbill, Mirror→Redline; the constraint was never migrated.
+- **Wrong:** inserting a `playbill` or `redline` row violates the CHECK — generation throws even after P0-5 is fixed.
+- **Impact:** a hidden second floor under P0-5. Wiring the trigger alone still 500s on every non-diagnostic artifact.
+- **Fix:** dated migration to set the constraint to `('diagnostic','playbill','redline')`. **Verify the live column first** — like `course_progress` (P0-4), this table may have been altered out-of-band, in which case prod already accepts the new types and only `migrations/` is stale.
+- **Done when:** a `playbill`/`redline` row inserts cleanly *and* `migrations/` matches prod. **Effort:** S · **Depends:** — *(do before/with P0-5)*
+
+### [ ] P0-7 · Units 2 & 3 are stranded — the lesson "completes" after one-third  🔴 ✅verified-structural
+- **Where:** `app/course/[lessonId]/page.tsx:99-114` selects exactly one unit (`?unit=` → saved `stateData.unit` → `units[0]`) and renders a single iframe with **no unit-navigation UI.** `?unit=` is set nowhere in the product — only in `tests/e2e/full-journey.spec.ts:73`. The unit-1 file fires `aesdr:complete` for the **whole lesson** at its last screen (`content/lessons/html/lesson-03/aesdr_course03_1_v1.html:2044`) and its terminal CTA navigates to `/dashboard` (`:1603`). No lesson HTML or component links to `?unit=2`/`units/2` (grep returned only the test).
+- **Wrong:** the player loads only unit 1 of each lesson, marks the lesson complete at the end of unit 1, and exits to the dashboard. Units 2 & 3 (`aesdr_courseXX_2_v1.html` / `_3_v1.html`) load only by hand-typing `?unit=2`.
+- **Impact:** the product is sold as **36 units / "three sub-units per lesson"** (`app/artifacts/redline/RedlineView.tsx:236` "12 courses · 36 lessons"; `AESDR_ENTERPRISE_CANON.md:581` "12 courses / 36 sub-lessons"; partner-hub spec "36 units total"; the D30 host-read script "twelve lessons, thirty-six units"). In product, **24 of 36 units never load**, and "course complete" — which gates the reveal, the artifacts, and the alumni track — is satisfied after one-third of each lesson.
+- **Fix:** add unit-to-unit navigation (advance `?unit=`/`stateData.unit` on unit completion; move `aesdr:complete` to the final unit only; render a unit list / next-unit control). **Verify the other 11 unit-1 files share this terminal behavior** before sizing.
+- **Done when:** a buyer reaches units 2 & 3 in-product and "complete" requires all three. **Effort:** L · **Depends:** — *(interacts with P1-4 completion-event unification)*
+
+### [ ] P0-8 · Affiliates are promised 40% but the code pays 30% — in the kit, the contract, and the emails the system sends  🔴 ✅verified
+- **Where:** code pays **30%** — `lib/affiliate.ts:25` `DEFAULT_COMMISSION_RATE = 0.3`, applied in the webhook (`app/api/webhooks/stripe/route.ts:283`, stored `:292`). Surfaces promise **40%** — the public calculator `app/affiliates/calculator/Calculator.tsx:13` (`const COMMISSION = 0.4`; copy `:64,171`) + `app/affiliates/calculator/page.tsx:8`; the kit (`KitDocWhatYouEarn.tsx`, `KitDocSampleAgreement.tsx`); the contract-styled `content/affiliate-kit/sample-partnership-agreement.md`; and **the outreach emails the system sends** — `lib/partnerships/outreach-templates.ts:48,59,70,215,228` ("40% commission on a 30-day attribution window, paid clean through Stripe"). 30% also appears in `app/affiliates/program/page.tsx` + `economics/page.tsx` (so the site contradicts itself, too).
+- **Wrong:** a 10-point gap between what affiliates are told — including a "sample partnership agreement" and cold first-touch emails — and what they're actually paid.
+- **Impact:** every affiliate who does the math off the calculator/kit/agreement is underpaid by a quarter against the promise. The outreach templates make it a **written misrepresentation to people the system cold-mailed.**
+- **Fix:** pick the real number and make `lib/affiliate.ts` the single source the calculator + kit import. If 40%, set the constant to `0.4` and re-check payout math + Stripe-fee handling; if 30%, sweep every 40% surface incl. outreach-templates + the agreement md. Decide net-vs-gross-of-Stripe-fees and state it once (see P2-16).
+- **Done when:** one rate, asserted in a test, shown identically everywhere including the sent emails. **Effort:** M · **Depends:** —
+
+### Part B — Money & deploy Criticals
 
 ### [ ] P0-1 · Payout batch can double-transfer real money  🔴 ✅verified
 - **Where:** `lib/stripe-connect.ts:124-132`, `app/actions/affiliate.ts:503-587`
@@ -137,6 +173,24 @@ Work top-down by phase. Each item has a `[ ]` you tick when its **Done-when** is
 - **Fix:** count only strikes since last reactivation; define intended behavior for non-active states.
 - **Done when:** a reactivated affiliate gets a fresh 3-strike window. **Effort:** M · **Depends:** —
 
+### [ ] P1-15 · Diagnostic category scores are always 0% (key mismatch)  🟠 ✅verified
+- **Where:** `lib/artifacts/extract.ts:157` reads `extra.exerciseScores` and `:165` `extra.quizScore`; the lessons write a different key — `AESDR.setExtra('exercises', scores)` (`content/lessons/html/lesson-03/aesdr_course03_1_v1.html:1885`).
+- **Impact:** the per-category breakdown in the Diagnostic sums keys that never exist → **every category resolves to 0%.** Masked today by P0-5, but it surfaces the instant artifacts generate — an authoritative-looking scoreboard that's uniformly, confidently wrong.
+- **Fix:** align the keys (read `exercises`/`quiz`, or have lessons write `exerciseScores`/`quizScore`); add a fixture test built from a real saved `state_data` row so it can't silently drift again.
+- **Done when:** a completed course yields non-zero, correct category percentages. **Effort:** S · **Depends:** P0-5
+
+### [ ] P1-16 · The $40 artifact unlock grants access to an artifact that's never produced  🟠 ✅verified
+- **Where:** `components/UnlockArtifactTile.tsx:26` → `/api/checkout` `tier:'artifact_unlock'` (`app/api/checkout/route.ts:17,52,64`) → webhook writes an `artifact_unlocks` row (`app/api/webhooks/stripe/route.ts:85-94`). The unlocked artifact is never generated (P0-5).
+- **Impact:** a buyer can be charged $40 to "unlock" the second artifact and receive a grant row pointing at content that doesn't exist. (Also: if `STRIPE_PRICE_ID_ARTIFACT_UNLOCK` is unset, checkout 400s "Invalid tier" — verify it's configured.)
+- **Fix:** downstream of P0-5 — guarantee the unlock triggers generation of the purchased type; until P0-5 lands, hide the unlock CTA rather than sell a no-op.
+- **Done when:** paying for the unlock yields the artifact. **Effort:** M · **Depends:** P0-5
+
+### [ ] P1-17 · The success page strands the buyer after 30s; `/signup` recovery is unverified  🟠 ✅verified-behavior
+- **Where:** `app/success/page.tsx:69-77` polls `/api/purchase-status` every 2s and **gives up at 30s** → "Purchase processing"; the only recovery offered is "create an account manually" → `/signup` (`:363-366`). Credentials + welcome email are webhook-driven.
+- **Impact:** if the webhook lags or fails, the buyer is charged, sees "processing," gets no credentials or email, and is handed `/signup` — which only helps if signup links an existing purchase by email. If it doesn't, that's **paid-with-no-access and no self-serve recovery.**
+- **Fix:** verify (or build) the `/signup`→existing-purchase linkage; lengthen/retry the poll; add an explicit "charged but not provisioned" reconcile + a real support escalation.
+- **Done when:** a delayed/failed webhook still lands the buyer in the course, or shows a real recovery (not a dead `/signup`). **Effort:** M · **Depends:** P1-10 *(idempotency is adjacent)*
+
 ---
 
 ## PHASE 2 — Disconnected funnels, dormant rewards, robustness
@@ -192,6 +246,26 @@ Work top-down by phase. Each item has a `[ ]` you tick when its **Done-when** is
 - **Where:** `EMAIL_RECIPIENT` silently falls back on the enterprise path but silently *drops* three other notifications (`lib/email.ts:165-169,694-700,818-824`); `PARTNER_ALERT_EMAIL`/`WORKSHOP_REGISTRANT_GROUP_ADDR` hardcoded fallbacks.
 - **Fix:** a startup/health check for required notification env vars; prefer fail-loud over silent drop. **Effort:** S · **Depends:** —
 
+### [ ] P2-13 · The 14-day refund window is unenforced  🟡
+- **Where:** the refund policy promises a 14-day window (`/refund-policy`); the admin refund path (P0-3) applies **no time check**; there is no self-serve refund route.
+- **Impact:** the window exists only as copy — honored at manual founder discretion, with nothing enforcing it either way. A day-1 request and a day-40 request look identical to the system.
+- **Fix:** when the refund button becomes real (P0-3), check purchase age against the window; decide self-serve vs manual-only and align the copy. **Effort:** S · **Depends:** P0-3
+
+### [ ] P2-14 · Free manager-archetype-map: delivery vs promise  🟡 *(verify copy/asset)*
+- **Where:** `app/api/free/manager-archetype-map/route.ts` + the capture-form copy (`app/free/manager-archetype-map/EmailCaptureForm.tsx`). Confirm what's promised (a PDF? five archetypes?) against the single asset actually emailed.
+- **Impact:** a broken promise on the top-of-funnel freebie erodes trust *before* purchase. Pairs with P2-3 (the capture is also a dead end).
+- **Fix:** reconcile the asset to the promise (or soften the promise to the asset). **Effort:** S · **Depends:** — *(read exact copy + sent asset)*
+
+### [ ] P2-15 · Weekly-nudge opt-in is collected but never acted on  🟡 ✅verified-ish
+- **Where:** the weekly-nudge / Sunday-framing opt-in's only sender is the **unscheduled** `retention` cron (P1-5) / its dormant framing branch.
+- **Impact:** users who opt into a weekly nudge get nothing — another consent-collected-channel-dead pattern (cf. P2-8 SMS).
+- **Fix:** falls out of P1-5 (schedule retention); confirm the opt-in flag is actually read by the sender. **Effort:** S · **Depends:** P1-5
+
+### [ ] P2-16 · Money-copy inconsistencies: net-vs-gross + minimum payout  🟡
+- **Where:** commission is described without a consistent net-vs-gross-of-Stripe-fees statement — `app/affiliates/payments/page.tsx:65` names the Stripe fee, while outreach says "paid clean through Stripe" (`outreach-templates.ts`); plus any "$50 minimum payout" claim vs the batch's actual threshold.
+- **Impact:** affiliates can't reconcile expected vs received. Small, but it's money copy, and it compounds P0-8.
+- **Fix:** state net-vs-gross once and the real minimum once, sourced from the same constants as P0-8. **Effort:** S · **Depends:** P0-8
+
 ---
 
 ## PHASE 3 — Consistency, dead code, hardening
@@ -206,10 +280,31 @@ Work top-down by phase. Each item has a `[ ]` you tick when its **Done-when** is
 - [ ] **P3-8 · Env-var edge cases** ⚪✅ — `IP_HASH_SALT` predictable + inconsistent across two call sites; `SCRIBE_MIN_VOICE_FIT` → `NaN` on a non-numeric value silently breaks the draft filter. **S**
 - [ ] **P3-9 · `affiliate_attributions.click_id` — use or drop** ⚪✅ — written (`webhooks/stripe:288`) from the click cookie, never read; either build click→purchase dedup/fraud or remove the machinery. **S**
 - [ ] **P3-10 · The `verdict` field rename (optional)** ⚪ — the live UI now reads "the call," but the DB column / JSON property / `dossier_runs.verdict` are still `verdict` (consistent, no drift). Rename the plumbing only if you want it tidy. **S**
+- [ ] **P3-11 · Reference-only `design-canon/**` mirrors live components** ⚪ — `design-canon/05-app-pages/*` + `design-canon/04-components/*` duplicate live files (`reveal--RevealView.tsx`, `UnlockArtifactTile.tsx`, …) and can silently drift from the real ones. Confirm `design-canon/**` is not imported/routable, label it "reference only," and remove or clearly mark stale copies. **S**
 
 ---
 
 ## Security: verify, don't assume
+
+### Security — Round 2 (actionable)
+### [ ] SEC-2 · `mintAction` / `revokeAction` don't call `requireAdmin()`  🟠 ✅verified
+- **Where:** `app/admin/affiliate-kit/page.tsx:37-72` — both Server Actions import `mintToken`/`signToken` and write tokens (`revokeAction` sets `revoked_at`) but **neither calls `requireAdmin()`** (unlike every `/api/admin/*` route handler, which does).
+- **Impact:** private-kit tokens could be minted/revoked without an admin auth check if these page-level actions are invocable by a non-admin.
+- **Fix:** `await requireAdmin()` at the top of both actions (and any sibling page actions). **Done when:** a non-admin invocation is rejected. **Effort:** S
+### [ ] SEC-3 · `/x/track` is an unauthenticated, service-role write endpoint  🟡 ✅verified
+- **Where:** `app/(affiliate-experience)/x/track/route.ts:10,48` uses `createAdminClient()` (service-role) with **no `verifyCronAuth` / `requireAdmin` / `rateLimit` / origin check.**
+- **Impact:** an open, service-role-backed writer (analytics/intent events that feed the tower board — see P1-3) is spoofable and floodable.
+- **Fix:** validate origin + rate-limit + schema-validate the body; don't hand an unauthenticated route the service-role client — scope a least-privilege insert. **Effort:** S
+### [ ] SEC-4 · `/x/*` bypasses every gate on prod, and the "doesn't exist on disk" comment is false  🟡 ✅verified
+- **Where:** `proxy.ts:45-47` early-returns for `/x/*` past coming-soon + the lock; the inline comment claims "on main, those routes don't exist on disk." They **do** — `app/(affiliate-experience)/x/**` is in-repo, so they're served on the main deploy.
+- **Impact:** the locked prospect experience and the unauth `/x/track` (SEC-3) are reachable on production even behind the coming-soon gate.
+- **Fix:** gate `/x/*` behind `AFFILIATE_EXPERIENCE` (or an allowlist), or consciously accept it and correct the comment so the next reader isn't misled. **Effort:** S
+### [ ] SEC-5 · `COMING_SOON` fails open + a bypass code is committed  ⚪ ✅verified
+- **Where:** `proxy.ts:99` `process.env.COMING_SOON === "true"` (unset/typo ⇒ gate OFF); `.env.local.example:39` ships the literal `Bypass code 741407`.
+- **Impact:** the holding-page gate fails open on misconfig (the bottom-of-proxy lock still catches non-allowlisted paths, but allowlisted surfaces go public). The example file documents a real-looking bypass code — the current mechanism is server-side, so it's *not* a live bundle leak, but it should be rotated + scrubbed.
+- **Fix:** fail-loud if the gate var is malformed in a pre-launch env; rotate `COMING_SOON_BYPASS_CODE` and replace the literal in the example with a placeholder. **Effort:** S
+
+### Round-1 security posture (verify, don't assume)
 - [ ] **SEC-1 · Trace where `aesdr_bypass` is minted.** ✅ It's *read* as a paywall + reveal + artifacts + dashboard + course + tools bypass (8 sites + `proxy.ts:137`), but **no in-app setter showed up in grep** — meaning it's likely set by hand (founder devtools), which is safe. Confirm there is **no unauthenticated endpoint that sets it.** **S**
 - ✅ **Confirmed sound (no action):** all 14 crons use timing-safe `verifyCronAuth`; all `/api/admin/*` use `requireAdmin`; `proxy.ts:106` excludes `/api/` from the *holding-page* redirect only (not auth) and is correctly scoped; the old no-auth `/api/admin/state` dump is removed; public routes (`checkout`, `purchase-status`, `workshop-register`, `affiliates/apply`, `kit-private/auth`) are legitimately public; RLS is service-role-only on all partner/affiliate tables.
 
@@ -218,6 +313,11 @@ Work top-down by phase. Each item has a `[ ]` you tick when its **Done-when** is
 - [ ] Does the **external inbound-email worker** exist and write `partner_inbound_email`? (P1-2)
 - [ ] Do the **model IDs** `claude-opus-4-6` / `claude-sonnet-4-6` resolve at the API? If not, scout/dossier silently fail into the caught error banner. (SDK is `@anthropic-ai/sdk@0.88.0`.)
 - [ ] Is `WORKSHOP_REGISTRANT_GROUP_ADDR` a real list, or the `hello@` placeholder? (P1-9)
+- [ ] Does the live `generated_artifacts` constraint already allow `playbill`/`redline` (altered out-of-band), or only `migrations/` is stale? (P0-6)
+- [ ] Do the other **11 unit-1 lesson files** all fire `aesdr:complete` + exit to `/dashboard` like `lesson-03`'s? (P0-7 — confirms the blast radius is all 12, not one.)
+- [ ] Does **`/signup` link an existing purchase by email** and grant course access, or just create an orphan account? (P1-17)
+- [ ] Is **`STRIPE_PRICE_ID_ARTIFACT_UNLOCK`** set in prod? If not, the $40 unlock 400s before it can even be a no-op. (P1-16)
+- [ ] What does the free **manager-archetype-map** email actually deliver vs what the capture form promises? (P2-14)
 
 ---
 
