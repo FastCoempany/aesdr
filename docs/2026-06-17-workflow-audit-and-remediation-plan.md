@@ -2,33 +2,35 @@
 *Adversarial audit, 2026-06-17. Grounded in code, not memory.*
 
 ## What this is
-A consolidated punch-list of everything **three rounds** of adversarial auditing found across every workflow, plus the gaps the flow-chart exercise surfaced. Round 1 ran three passes (buyer/payments · affiliate/operator/money · enterprise/security/systemic). Round 2 ran a second, broader sweep across the workflows *and* the rest of the app for gaps, broken promises, and unfinished wiring — surfacing the **product-delivery layer** (curriculum depth + end-of-course artifacts) wired-but-never-invoked, and the **affiliate commission misrepresentation**. Round 3 ran **twelve domain-specialist passes** (auth/team · email/compliance · curriculum · infra/config · enterprise/workshop · admin · agent-crons · affiliate experience · data/RLS · deep security · frontend/brand/a11y · build/CI/tests) — ~74 further findings, including the worst security and access issues in the whole document: **affiliate-payout account takeover**, the **team tier being paid-but-unusable**, **affiliate links that never attribute**, and a **CAN-SPAM exposure** across every lifecycle email. Each item is evidence-backed (`file:line`), severity-ranked, and tagged **[M]echanical** (I can patch it with no decision) or **[D]ecision-needed** (the exact question is in the [decision list](#what-i-need-from-you--the-decision-list)). **The money-, deploy-, delivery-, and access-breaking items were re-verified against the source by hand** (marked ✅).
+A consolidated punch-list of everything **four rounds** of adversarial auditing found across every workflow, plus the gaps the flow-chart exercise surfaced. Round 1 ran three passes (buyer/payments · affiliate/operator/money · enterprise/security/systemic). Round 2 ran a second, broader sweep across the workflows *and* the rest of the app for gaps, broken promises, and unfinished wiring — surfacing the **product-delivery layer** (curriculum depth + end-of-course artifacts) wired-but-never-invoked, and the **affiliate commission misrepresentation**. Round 3 ran **twelve domain-specialist passes** (auth/team · email/compliance · curriculum · infra/config · enterprise/workshop · admin · agent-crons · affiliate experience · data/RLS · deep security · frontend/brand/a11y · build/CI/tests) — ~74 further findings, including the worst security and access issues in the whole document: **affiliate-payout account takeover**, the **team tier being paid-but-unusable**, **affiliate links that never attribute**, and a **CAN-SPAM exposure** across every lifecycle email. Round 4 ran **seven specialist lenses** (state-machines/lifecycles · money-reconciliation · legal/tax/FTC · timezone/date math · performance/scale/cost · a line-by-line read of the Stripe webhook + `lib/email.ts` · lesson-HTML interaction logic) — ~64 further findings at the seams the component passes missed: a **paying buyer who can be permanently locked out**, an **affiliate-tax (1099/W-9) compliance gap**, a **materially false privacy policy**, a **78MB auto-playing landing video**, and uncapped LLM spend. Each item is evidence-backed (`file:line`), severity-ranked, and tagged **[M]echanical** (I can patch it with no decision) or **[D]ecision-needed** (the exact question is in the [decision list](#what-i-need-from-you--the-decision-list)). **The money-, deploy-, delivery-, and access-breaking items were re-verified against the source by hand** (marked ✅).
 
 ## How to use it
 Work top-down by phase. Each item has a `[ ]` you tick when its **Done-when** is met. Don't start a later phase before its blockers (noted in **Depends**) are closed. Effort: **S** ≈ <½ day · **M** ≈ ½–2 days · **L** ≈ multi-day.
 
 ## Scoreboard
-*(Phases 0–3 + Security = the original 59. Round 3 adds ~74 more, catalogued in the [Round 3](#round-3--twelve-domain-deep-sweep) section by domain; the four new Criticals are promoted into Phase 0 as P0-9…P0-12. Counts below are the combined totals.)*
+*(Phases 0–3 + Security = the original 59. Round 3 adds ~74 ([Round 3](#round-3--twelve-domain-deep-sweep) section). Round 4 adds ~64 ([Round 4](#round-4--seven-specialist-lenses) section). The eight new Criticals from Rounds 3–4 are promoted into Phase 0 as P0-9…P0-16. Counts below are combined totals.)*
 
 | Severity | Count | Meaning |
 |---|---|---|
-| 🔴 Critical | 12 | Loses money, charges without delivering, hands over an account, or breaks a fresh deploy. Do first. |
-| 🟠 High | ~49 | A real workflow is broken or a user-/founder-facing wire is dead. |
-| 🟡 Medium | ~52 | Degraded, silent-failure, or correctness gaps with limited blast radius. |
-| ⚪ Low | ~28 | Cleanup, cosmetics, hardening. |
-| **Total** | **~141** | |
+| 🔴 Critical | 16 | Loses money, charges without delivering, hands over an account, strands a paid buyer, creates legal exposure, or breaks a fresh deploy. Do first. |
+| 🟠 High | ~73 | A real workflow is broken or a user-/founder-facing wire is dead. |
+| 🟡 Medium | ~74 | Degraded, silent-failure, or correctness gaps with limited blast radius. |
+| ⚪ Low | ~45 | Cleanup, cosmetics, hardening. |
+| **Total** | **~208** | |
 
 > **Cross-cutting theme #1 (Round 1):** the partnership/agent subsystem is built to *fail silently by design* — fail-safe-OFF switches, best-effort `try/catch` swallows, console-only logging, and some schema created out-of-band. Safe for "don't send bad outreach," but it means broken infrastructure (unapplied migrations, a missing webhook, an unscheduled cron) is **invisible at runtime.** Several fixes below are really about making failure *loud*.
 >
 > **Cross-cutting theme #2 (Round 2):** the **delivery layer is built but not connected.** The artifact engine, the three-units-per-lesson structure, and the $40 unlock all exist as code and schema — but nothing *invokes* them: no caller generates the artifacts, no navigation reaches units 2 & 3, and the commission number the code uses isn't the one every buyer-facing surface promises. These aren't bugs in a feature; they're features that were wired and never plugged in. The buyer pays for the whole thing and reaches the end to find the last third missing.
 >
 > **Cross-cutting theme #3 (Round 3):** **identity and gating are trusted from the wrong side, and nothing in CI would catch any of it.** Affiliate identity reads from client-writable `user_metadata`; the team tier's access depends on RLS that denies the very members it's for; completion is a string the client asserts; the proxy allowlist silently swallows whole routes (`/r/*`, `/team`). Underneath all of it, **CI runs no tests** and the lint/canon gates are non-blocking — so every bug in this document shipped green. Many Round-3 fixes are one-liners; the reason there are so many is that there was no net.
+>
+> **Cross-cutting theme #4 (Round 4):** **the failure paths and the off-happy-path cases were never finished.** The Stripe webhook logs hard failures to Sentry and then returns **200**, so Stripe never retries and a paid buyer strands (no login, no team, no commission). Refunds assume "full"; disputes assume "lost"; restore assumes "same device"; the LLM agents assume "stop when the timer says so" with no token cap; the marketing copy and the legal pages each describe a *different* product than the code ships (commission base, 1099 handling, tracking, deletion). The happy path mostly works; almost every Round-4 finding is what happens when something deviates from it — a transient error, a partial refund, a won dispute, a new device, a non-USD price, an EU visitor, an audit.
 
 ---
 
 ## PHASE 0 — Critical: money, data integrity, delivery, deploy
 
-> **Run order:** **Part A** (product-integrity, P0-5…8) and **Part C** (Round-3 access/identity/legal, P0-9…12) co-lead — between them they're "the buyer/affiliate/team-member gets what they paid for, and no one can take over an account." Several are pure broken-wiring (cheap relative to blast radius). Then **Part B** — the money/deploy Criticals (P0-1…P0-4). All IDs and their downstream `Depends` chains (P1-1, P0-3, P2-6, P2-9) are unchanged; only the physical order moved.
+> **Run order:** **Part A** (product-integrity, P0-5…8), **Part C** (Round-3 access/identity/legal, P0-9…12), and **Part D** (Round-4 strandings/legal/cost, P0-13…16) co-lead — between them they're "the buyer/affiliate/team-member gets what they paid for, nobody can take over an account, we're not breaking tax/privacy law, and we're not bleeding cash." Several are pure broken-wiring (cheap relative to blast radius). Then **Part B** — the money/deploy Criticals (P0-1…P0-4). All IDs and their downstream `Depends` chains (P1-1, P0-3, P2-6, P2-9) are unchanged; only the physical order moved.
 
 ### Part A — Product-integrity Criticals · *the buyer paid; does the product deliver?*
 
@@ -59,6 +61,7 @@ Work top-down by phase. Each item has a `[ ]` you tick when its **Done-when** is
 - **Impact:** every affiliate who does the math off the calculator/kit/agreement is underpaid by a quarter against the promise. The outreach templates make it a **written misrepresentation to people the system cold-mailed.**
 - **Fix:** pick the real number and make `lib/affiliate.ts` the single source the calculator + kit import. If 40%, set the constant to `0.4` and re-check payout math + Stripe-fee handling; if 30%, sweep every 40% surface incl. outreach-templates + the agreement md. Decide net-vs-gross-of-Stripe-fees and state it once (see P2-16).
 - **Done when:** one rate, asserted in a test, shown identically everywhere including the sent emails. **Effort:** M · **Depends:** —
+- **Round-4 expansion (the commission picture is worse than a rate mismatch):** (1) **R4-MON-2 ✅** — `affiliates.commission_pct` exists but the webhook never reads it (hardcodes `DEFAULT_COMMISSION_RATE`), so even setting the column to 40 changes nothing; this is *why* 40% can't take effect. (2) **R4-MON-1 / R4-LEG-1** — the program page and the **binding D22 agreement** define commission as "30% of **net** (gross − refunds − fees − tax)," but the code pays 30% of **gross** and the calculator shows 40% of gross — three different formulas. (3) **R4-MON-5/6/7/8** — gross-vs-net interacts with who-eats-Stripe-fees, no currency guard, uncollected tax, and per-row rounding that won't reconcile. The real fix is **one `computeCommission()` function** (rate from the column, base + fee + tax + rounding decided once) that the webhook, calculator, kit, and D22 all derive from.
 
 ### Part C — Round-3 Criticals · *access, identity, legal (co-lead with Part A)*
 
@@ -89,6 +92,36 @@ Work top-down by phase. Each item has a `[ ]` you tick when its **Done-when** is
 - **Impact:** a flat CAN-SPAM (physical-address + honor-opt-out) and CASL violation on all non-transactional mail — statutory per-email exposure, and opt-outs are silently ignored forever. The `List-Unsubscribe-Post: One-Click` paired with a `mailto:` is also malformed per RFC 8058 (Gmail/Yahoo bulk-sender risk).
 - **Fix:** add a real physical mailing address to both footers; build an unsubscribe route + suppression flag; gate every lifecycle cron on it; serve an HTTPS one-click `List-Unsubscribe`. The **only** decision is the address; the rest is mechanical.
 - **Done when:** every marketing email carries an address and a working unsubscribe that suppresses future sends. **Effort:** M · **Depends:** —
+
+### Part D — Round-4 Criticals · *failure-path strandings, legal exposure, runaway cost*
+
+### [ ] P0-13 · A paying first-time buyer can be permanently locked out  🔴 ✅verified · [M]
+- **Where:** `app/api/webhooks/stripe/route.ts:116-159`. `createUser` failing for *any* reason hits the `else if (createError)` branch (`:128`) that assumes "email already exists" — it nulls `tempPassword` (`:132`), can't find the brand-new user, leaves `userId = null`. The purchase is written `user_id: null` (`:176`), the welcome email takes the no-password path ("use your existing password"), and the handler returns **200** so Stripe never retries.
+- **Wrong:** a transient Supabase 429 / 5xx / network blip on `createUser` is indistinguishable from a real "exists," with no `createError.code`/`status` check.
+- **Impact:** a paying customer ends with no auth account, a userless purchase, and an email telling them to use a password they never received — they **cannot log in, ever**, and it never self-heals. The same null-`userId` path strands team buyers (no team created), and the sibling pattern at `:185` (purchase upsert error logged, execution continues) silently drops affiliate attribution while still emailing "you're in."
+- **Fix:** branch on `createError.code`/`status` — only `email_exists`/422 means exists; for anything else, `Sentry.captureException` + **return 500** so Stripe retries. Likewise return 500 on `purchaseError` before any email/team/attribution runs.
+- **Done when:** a transient provisioning error produces a Stripe retry, not a stranded paid customer. **Effort:** M · **Depends:** —
+
+### [ ] P0-14 · Affiliate payouts have no 1099-NEC / W-9 tax handling — and the dashboard says the opposite  🔴 · [D]
+- **Where:** `lib/stripe-connect.ts:1-10` (header claims "Standard accounts… handle 1099-K on Stripe's side") + `:114-133` (pays via the **Transfers API**); `app/actions/affiliate.ts:503-608` (payout gates only on `stripe_account_status`); the `affiliates` table has no W-9/TIN/threshold columns; `app/affiliates/dashboard/payments/page.tsx:117` tells affiliates "Stripe handles 1099-K reporting."
+- **Wrong:** platform→affiliate **Transfers are AESDR's own payments for promotional services**, so the **1099-NEC + W-9 obligation is AESDR's** (Stripe's 1099-K covers a connected account's *own* processing volume, not platform transfers). No W-9 is collected, no TIN stored, no $600 threshold tracked, no NEC issued — and the public copy asserts the reverse.
+- **Impact:** IRS exposure (IRC §6721/§6722 per-form penalties) plus **24% backup-withholding liability** on every payout made without a TIN on file; compounds per-affiliate, per-year. A real, scaling tax-compliance gap, not a cosmetic one.
+- **Fix:** collect W-9/W-8BEN before the first transfer (Stripe 1099 tax-form collection, or self-file); add `tax_form_status`/`tin_last4`/`country` columns; gate `runAffiliatePayoutBatch` on `tax_form_status` the way it gates on Stripe-enabled; track cumulative yearly payout per affiliate; fix the false copy. **Genuine legal review on the NEC-vs-K determination + backup withholding.**
+- **Done when:** no affiliate is paid before a W-9 is on file, and NECs can be issued. **Effort:** L · **Depends:** — *(needs the tax-filing-strategy decision)*
+
+### [ ] P0-15 · The privacy policy is materially false (claims "no third-party tracking" while running an ad pixel + emailing PII to PostHog)  🔴 · [D]
+- **Where:** `app/privacy/page.tsx:47-55` ("we do not share your data with advertisers") and `:65-71` ("**No third-party tracking cookies are used**") — contradicted by `components/RedditPixel.tsx` (Reddit ads pixel, hardcoded init, mounted site-wide at `app/layout.tsx:102`), `app/success/page.tsx:56` (`rdt('track','Purchase')`), `components/PostHogClient.tsx` (`identify(user.id, { email, role })`), and Vercel Analytics. No processor (Reddit, PostHog, Vercel, Stripe, Resend, Anthropic, BetterContact) is disclosed.
+- **Wrong:** the policy affirmatively denies third-party tracking and advertiser-sharing while a Reddit advertising pixel fires on every page and PostHog receives the user's **email** tied to a stable id.
+- **Impact:** an **affirmative misrepresentation** — FTC §5 deceptive-practices + state UDAP/CCPA (cross-context behavioral-ad sharing without notice/opt-out) + GDPR/ePrivacy. A false statement is a stronger enforcement hook than silence; this is the single sharpest legal exposure in the audit. (Pairs with R4-LEG-2: those trackers also fire for EU/UK visitors with no consent gate.)
+- **Fix:** rewrite the policy to name every processor and disclose the pixel/analytics purpose — **or** remove the Reddit pixel + PostHog `identify` to make the current text true (decision). Add a consent gate for EU/UK.
+- **Done when:** the policy matches what actually runs (and trackers gate on consent for EU/UK). **Effort:** M (copy) + the consent build · **Depends:** —
+
+### [ ] P0-16 · A 78MB video auto-plays on the landing page (~780GB/mo egress at 10k views)  🔴 ✅verified · [M]
+- **Where:** `app/page.tsx:76-77` `autoPlay`s `public/leponeus-sneak-peek.mp4` (**78MB**, verified by `ls`) with no `poster`/lazy-load; also `public/reveal/*.png` (4–7MB ×6 ≈ 34MB), `public/turtle.png` (3.2MB), and 8 mascots (~1.5–2MB) served raw — no `next/image`, no `images` config in `next.config.ts`.
+- **Wrong:** the primary marketing page force-downloads ~78MB of video (plus heavy PNGs) on first paint.
+- **Impact:** ~**780GB/month** of Vercel egress at 10k landing views — a real bandwidth bill — and a brutal LCP / mobile-data hit on the highest-traffic, first-impression page.
+- **Fix:** transcode the video to ~2–5MB + a `poster` + serve from Blob/Mux (or load behind a click); re-compress the PNGs and route them through `next/image` with `images.formats`.
+- **Done when:** the landing page transfers a few MB, not ~100MB. **Effort:** M · **Depends:** —
 
 ### Part B — Money & deploy Criticals
 
@@ -429,6 +462,85 @@ Work top-down by phase. Each item has a `[ ]` you tick when its **Done-when** is
 
 ---
 
+## ROUND 4 — Seven specialist lenses
+*Aimed at the seams and the off-happy-path cases. The four Criticals are promoted to Phase 0 (P0-13…P0-16); the rest are below, grouped by lens, tagged severity + **[M]**/**[D]**. ✅ = I hand-verified it this round. Several extend an existing item (cross-referenced inline).*
+
+### Money & accounting
+- [ ] **R4-MON-1** · Commission base is **gross**, but the program page *and* the binding D22 agreement say "30% of **net** (gross − refunds − fees − tax)" — 🟠 **[D]** — `webhooks/stripe:283` vs `affiliates/program/page.tsx:202`, `docs/affiliate/D22-pilot-agreement.md:70`. (Third data point in the commission cluster — see P0-8.)
+- [ ] **R4-MON-2** · `affiliates.commission_pct` is a **dead column** — the webhook hardcodes `DEFAULT_COMMISSION_RATE` and never reads it, so the founder setting it to 40 (per the runbook) does nothing — 🟠 **[M]** ✅ — `webhooks/stripe:283,292`, `20260522_affiliates_entity.sql:47`. **This is the mechanism under P0-8.**
+- [ ] **R4-MON-3** · Team sales **are** affiliate-attributed despite the public "team isn't attributable" promise — 🟠 **[M]** ✅ — `webhooks/stripe:266` (no tier guard) vs `affiliates/faq/page.tsx:133`; pays 30% of the large team ticket.
+- [ ] **R4-MON-4** · Partial refunds revoke the **whole** purchase + 100% of commission — 🟠 **[D]** — `webhooks/stripe:325-356` never reads `amount_refunded`; the refund policy explicitly allows case-by-case partials.
+- [ ] **R4-MON-5** · Connect pays commission on gross while the platform also absorbs the Stripe fee → true channel cost ~33% of gross, not 30% — 🟡 **[D]** — `stripe-connect.ts:114` (no `application_fee_amount`).
+- [ ] **R4-MON-6** · No currency validation — `amount_total` assumed USD-cents, transfer hardcoded `usd`; a zero-decimal (JPY) sale is wrong by 100× — 🟡 **[M]** — `webhooks/stripe:65`, `stripe-connect.ts:126`.
+- [ ] **R4-MON-7** · Sales tax / VAT never collected (`automatic_tax` off); if ever enabled, commission would be paid on collected tax — 🟡 **[D]** — `checkout/route.ts:79`.
+- [ ] **R4-MON-8** · Per-row rounded commissions don't reconcile to the rounded total + `affiliate_payouts.attribution_ids` is a bare `uuid[]` (danglers when a purchase is deleted) — 🟡 **[M]/[D]** — `webhooks/stripe:283`, `20260519_affiliate_backend.sql:93`.
+- [ ] **R4-MON-9** · The $40 artifact unlock has no refund handling — a refunded unlock leaves the grant + access permanent — ⚪ **[M]** — `webhooks/stripe:325` looks up only `purchases`; unlocks write `artifact_unlocks`.
+
+### State machines & lifecycle
+- [ ] **R4-SM-1** · No `partner_workshop` **creation** path — nothing inserts a row, so the whole usher state machine can never run — 🟠 **[D]** — upstream of P1-9 / R3-ENT-1.
+- [ ] **R4-SM-2** · Dispute **won** → buyer locked out forever (no `charge.dispute.closed` handler restores `active`) — 🟠 **[M]** — `webhooks/stripe:391`.
+- [ ] **R4-SM-3** · Team buyer charged but stranded with no team when the webhook can't resolve a user id — 🟠 **[D]** ✅ — `webhooks/stripe:190` (gated on `userId && isNewPurchase`; userless purchase never retries). Same root as P0-13.
+- [ ] **R4-SM-4** · Promoting an application to affiliate never advances `affiliate_applications.status` → the review queue never drains — ⚪ **[M]** — `affiliate.ts:655`.
+- [ ] **R4-SM-5** · Followup "halt on reply" is blind to manual-channel contacts (no email to match) → the ladder advances on the timer alone — ⚪ **[D]** — `cron/followup:90`. *(Payout-stuck-in-`processing` after a crash = P1-1; cleared-attribution-on-disputed-purchase = the dispute half of P0-2 — both noted there.)*
+
+### Timezone & date math
+- [ ] **R4-TZ-1** · The 1-hour abandonment email reaches **~1/24 of carts** — a daily cron samples a 1-hour window — 🟠 **[D]** — `vercel.json` (`0 13 * * *`) vs `cron/abandonment` `[now-2h, now-1h]`.
+- [ ] **R4-TZ-2** · Workshop reminders show the time in **UTC** while the confirmation + page use the affiliate's tz — registrant sees two different times — 🟡 **[M]** — `cron/usher:43` (`toUTCString()`) vs `formatWorkshopDateForDisplay`.
+- [ ] **R4-TZ-3** · The "7am ET" almanac arrives **6am ET for ~4 winter months** (hardcoded `0 11 * * *` UTC drifts with DST) — ⚪ **[D]** — `vercel.json` vs the "7am ET" copy. *(Good news: drip/dropoff/review/retention/refund-window/attribution-window/followup/invite-expiry date math is all correctly UTC-anchored — verified clean.)*
+
+### Stripe webhook + `lib/email.ts` (line-by-line)
+- [ ] **R4-DR-2** · Purchase-upsert failure logged but execution continues → team made with `purchase_id:null`, attribution silently skipped, "you're in" email still sent for an uncommitted purchase — 🟠 **[M]** ✅ — `webhooks/stripe:185`. (Folded into P0-13's fix.)
+- [ ] **R4-DR-3** · Team created only when `isNewPurchase` → a first-attempt team-creation failure never retries (the `existingTeam` guard already makes the flag redundant + harmful) — 🟡 **[M]** ✅ — `webhooks/stripe:190`.
+- [ ] **R4-DR-4** · `team.max_seats: 10` hardcode, unrelated to what was purchased (no quantity/seat selection exists) — 🟡 **[D]** — `webhooks/stripe:210`.
+- [ ] **R4-DR-5** · `account.updated` may be delivered to a *separate* Connect endpoint (then affiliate Stripe status never updates) + `mapAccountStatus` masks unknown shapes as `restricted` — 🟡 **[D]** — `webhooks/stripe:364`, `stripe-connect.ts:90`.
+- [ ] **R4-DR-6** · `sendWorkshopRegistrationConfirmation` double-escapes `firstName` ("Mac & Co" → "Mac &amp;amp; Co") — 🟡 **[M]** — `email.ts:2401` + `:233`.
+- [ ] **R4-DR-7** · `name === 'there'` is an overloaded sentinel duplicated across two files; a buyer named "there"/"There" is mishandled — ⚪ **[M]** — `webhooks/stripe:121`, `email.ts:960`.
+- [ ] **R4-DR-8** · `'ae'` tier is mislabeled "Individual" on the receipt (the only record of what they bought) — ⚪ **[M]** — `email.ts:1157`.
+- [ ] **R4-DR-9** · `htmlToText` drops the URL for links whose label has nested tags → plain-text links with no destination — ⚪ **[M]** — `email.ts:54`.
+- [ ] **R4-DR-10** · Receipt number + "Member No." are generated at render time (non-reproducible across resends); `$NaN` if a non-number ever reaches the receipt — ⚪ **[M]** — `email.ts:1006,1159`.
+- [ ] **R4-DR-11** · `safeSend` returns `false` (not throw) on a Resend API error; the webhook only catches throws → a failed welcome/receipt is invisible even to Sentry — ⚪ **[M]** — `email.ts:127` ↔ `webhooks/stripe:246`.
+- [ ] **R4-DR-12** · `weeklyFraming` divides by `total` (a zero-lesson learner is told they're in the "final third") + dangling clause when `completed===total` — ⚪ **[M]** — `email.ts:1456`.
+
+### Legal / tax / FTC / privacy
+- [ ] **R4-LEG-1** · 40% (marketing/calculator) vs "30% of net" (the binding D22 affiliate agreement) — contract-vs-marketing conflict — 🟠 **[D]** — `D22-pilot-agreement.md:70` vs `Calculator.tsx:13`. (Commission cluster; see P0-8.)
+- [ ] **R4-LEG-2** · Reddit pixel + PostHog + a 1-year visitor cookie fire for EU/UK with **no consent banner and no geo-gating** (ePrivacy/GDPR prior-consent) — 🟠 **[D]** — `layout.tsx:99`, `lib/analytics.ts`, `r/[slug]:104`; no consent infra exists.
+- [ ] **R4-LEG-3** · Privacy policy promises access/erasure ("permanently removed") with no DSAR path — the legal-page **contradiction** (distinct from R3-AUTH-5, the missing feature) — 🟠 **[D]** — `privacy/page.tsx:73`.
+- [ ] **R4-LEG-4** · No FTC earnings-claim substantiation/typicality disclaimer on the calculator's "$X/yr" projections ("real benchmarks" uncited; disclaimer not prominent) — 🟡 **[M]/[D]** — `Calculator.tsx:53,170`.
+- [ ] **R4-LEG-5** · FTC affiliate disclosure (16 CFR 255) is taught well but **not enforced** — `submitAffiliateCopy`/`canon-check` never check for a disclosure; warden is an optional LLM, not a gate — 🟡 **[M]** — `affiliate.ts:157`, `canon-mechanical.ts`.
+- [ ] **R4-LEG-6** · ToS has no governing-law / dispute-resolution / arbitration and no affiliate terms; D22 ships an unfilled `[GOVERNING_LAW_STATE]` — 🟡 **[D]** — `terms/page.tsx`, `D22:182`. *(Genuine legal review warranted.)*
+- [ ] **R4-LEG-7** · Indirect collection of non-consenting individuals' PII (scraped + Anthropic-enriched prospects) with no GDPR Art. 14 basis/notice — 🟡 **[D]** — `partner_pipeline`, `email-finder.ts`, `dossier-research.ts`.
+
+### Performance / scale / cost
+- [ ] **R4-PERF-1** · Scout `researchSweep` has **no per-run token cap** (≤400 searches + 240 fetches; the full transcript is re-billed each of 20 turns) — 🟠 **[D]** — `scout-research.ts:45,189`. The single largest LLM-spend surface; Critical when run.
+- [ ] **R4-PERF-2** · dossier-enrich per-row research is uncapped (6+4 tools × 12 turns, ≤48 briefs/day); `BATCH` caps rows, not tokens — 🟠 **[D]** — `dossier-research.ts:24`.
+- [ ] **R4-PERF-3** · The lean LLM caps live in the **dead** `anthropic-agents.ts`; the live engines are the expensive ones — 🟠 **[M]** — extends P3-1.
+- [ ] **R4-PERF-4** · Admin dashboard reads **all** `course_progress` + **all** active `purchases` on every load and aggregates in JS — 🟠 **[D]** — `admin/page.tsx:7,9`; push to a SQL aggregate/RPC.
+- [ ] **R4-PERF-5** · retention cron does N+1 per-candidate `course_progress` reads with no index on `is_completed`/`completed_at`/`updated_at` — 🟠 **[M]** — `cron/retention:184,242`; the `dropoff` cron's `.in()` batch is the reference fix.
+- [ ] **R4-PERF-6** · `partner_pipeline` hot crons (contact-finder/scribe/followup, every 5–15 min) have **no covering composite index** — index-scan-on-status + heap-filter, degrading as scout fills the table — 🟠 **[M]** — `20260531…partner_pipeline.sql:25`.
+- [ ] **R4-PERF-7** · Email crons fire `Promise.all` over the whole batch into Resend (≈2 req/s limit); `safeSend` has no 429 retry → silent drops once a cohort exceeds a few dozen — 🟠 **[M]** — `drip`/`review`/`dropoff`, `email.ts:127`.
+- [ ] **R4-PERF-8** · Lesson content is read from disk on **every** request, **twice** per view, with no cache — 🟠 **[M]** — `catalog.ts:79,119`, `units/[unitId]/route.ts`.
+- [ ] **R4-PERF-9** · Oversized raw assets beyond the landing video: `reveal/*.png` 4–7MB ×6, `turtle.png` 3.2MB, mascots ~1.5–2MB ×8 — no `next/image`/`images` config — 🟠 **[M]** — `public/`, `next.config.ts`. (With P0-16.)
+- [ ] **R4-PERF-10** · `affiliate_prospect_events` is unbounded + `/x/track` runs 2–3 `count(exact)` per high-intent event with no `(prospect_slug, name)` index — 🟡 **[M]** — `x/track:77`.
+- [ ] **R4-PERF-11** · Admin affiliates page pulls the **entire** `affiliate_clicks` table (unfiltered `select`) to count per-slug in JS — 🟡 **[D]** — `admin/affiliates/page.tsx:26`.
+- [ ] **R4-PERF-12** · `events` append-log has no TTL/partition/retention — grows fastest of all tables, forever — 🟡 **[D]** — `20260519_events.sql`.
+- [ ] **R4-PERF-13** · A stale model id 404s and the engines re-issue the emit call on a non-timeout error (double failed round-trip) — 🟡 **[D]** — extends R3-AG-6.
+- [ ] **R4-PERF-14** · contact-finder/courier `maxDuration` vs batch size can overrun + half-write if `BATCH` is raised to clear a backlog — 🟡 **[M]** — `cron/contact-finder:24`.
+- [ ] **R4-PERF-15** · Every email builds its HTML **twice** per send (html + a full `htmlToText` rebuild, ×22 sites) — ⚪ **[M]** — `email.ts` (e.g. `:2111`).
+- [ ] **R4-PERF-16** · `tools/page` is `force-dynamic` for a static array; `CourseFramePreview` does an uncached `readFileSync` of a 125KB lesson — ⚪ **[M]** — `tools/page.tsx:15`.
+
+### Lesson-HTML interaction logic *(systemic across all 36 unless noted)*
+- [ ] **R4-LH-1** · Cross-device restore loses **all** exercise/quiz/timeline progress and lands the learner on screen 0 (restore re-applies only gate text; no lesson reads the `?screen` the host sends) — 🟠 **[D]** — `restoreFromParent` + `page.tsx:110`.
+- [ ] **R4-LH-2** · Quiz score never reaches the extractor (`_extra.quiz {ans,submitted,passed}` vs `extract.ts` `quizScore {correct,total}`) — 🟠 **[M]** — extends P1-15 (the quiz half; shape differs too, so a rename alone won't fix it).
+- [ ] **R4-LH-3** · A garbage/mis-cased `?role` renders **both** AE+SDR variants stacked while the JS silently builds SDR; an AE who loses the param becomes an SDR — 🟠 **[M]** — head role script, no normalization/whitelist.
+- [ ] **R4-LH-4** · Role-fork localStorage keys omit `role` → answers and `completed` flags leak across the two forks of a unit — 🟡 **[D]** — `_storageKey` derived from pathname only.
+- [ ] **R4-LH-5** · `aesdr:restore` (fixed 1.5s timeout, no ready-handshake) clobbers a textarea mid-type and silently no-ops if the iframe listener isn't ready yet — 🟡 **[D]** — `ProgressSaver.tsx:144`.
+- [ ] **R4-LH-6** · restoreFromParent overwrites `_lessonExtra` wholesale then re-persists → can regress fresher localStorage (split-brain on next reload) — ⚪ **[M]**.
+- [ ] **R4-LH-7** · Resuming directly onto the completion screen never re-fires `aesdr:complete` — ⚪ **[M]** — adjacent to P1-4.
+- [ ] **R4-LH-8** · lesson-01 unit 1 uses a divergent `_extra.lesson` shape the extractor can't read (template outlier) — ⚪ **[M]** — file-specific.
+- [ ] **R4-LH-9** · The lesson HTML uses the **retired** fonts (Inter/Abril/DM-Mono) + dark palette (`--black/--amber/--cobalt`) across all 36 — brand-canon drift — ⚪ **[D]**. *(Verified sound, don't re-chase: the gate engine has no stuck/skippable gates, no mismarked answers, consistent pass thresholds, and no `eval`/XSS.)*
+
+---
+
 ## Security: verify, don't assume
 
 ### Security — Round 2 (actionable)
@@ -495,6 +607,36 @@ Work top-down by phase. Each item has a `[ ]` you tick when its **Done-when** is
 25. Canon CI (R3-CI-3) → default **escalate R-G4 hard-bans to `error` now**, leave the legacy backlog as `warn`.
 26. Channel/enterprise motion (P3-6, still open) → default **document as unsupported** for now.
 
+### A2 · Round-4 decisions (defaults in **bold**)
+**Money & tax**
+27. Commission base — code pays 30%-of-**gross**, the **D22 contract** says 30%-of-**net** (gross − refunds − fees − tax), the calculator says 40% (P0-8, R4-MON-1/5) → default **honor the contract: 30% of net**, build one `computeCommission()`, fix the calculator + every "40%" string. *(Supersedes decision #1's bare "30%": net is the contractual base.)*
+28. Partial refunds (R4-MON-4) → default **keep access, reduce commission pro-rata** (vs all-or-nothing).
+29. Currency (R4-MON-6) → default **assert USD-only** (reject/alert otherwise).
+30. Sales tax / VAT (R4-MON-7) → **your call** on nexus; if you collect, I switch the commission base to `amount_subtotal` at the same time.
+31. Rounding + payout ledger (R4-MON-8) → default **round at payout + a `payout_attributions` join table** (FKs, no danglers).
+37. **Affiliate 1099/W-9 (P0-14)** → **your call (+ legal review):** Stripe files the NECs (Connect tax-reporting; likely Express/Custom) vs AESDR collects W-9s and self-files — and hard-block payouts until a W-9 is on file (recommended).
+
+**Webhook / lifecycle**
+33. Webhook hard-failure policy (P0-13, R4-SM-3, R4-DR-2) → default **return 500 on any non-`email_exists` provisioning error and on purchase-upsert error** so Stripe retries (P1-10 idempotency covers the duplicate-email risk).
+32. `partner_workshop` creation (R4-SM-1) → default **an admin "create workshop" action** (vs auto-create from `affiliates.workshop_*`).
+34. Team seats (R4-DR-4) → default **fixed 10-seat SKU, hoisted to a named constant** (no quantity selector exists today).
+35. Abandonment 1h email (R4-TZ-1) → default **run the cron hourly** so the 1-hour window tiles the day.
+36. Almanac "7am ET" (R4-TZ-3) → default **an in-handler ET-hour gate** (mail only in the 7-o'clock ET hour).
+
+**Legal / privacy**
+38. Tracking vs policy (P0-15, R4-LEG-2) → default **keep the Reddit pixel + PostHog, disclose every processor, add a geo-gated EU/UK consent banner** (vs remove the trackers to match the current text).
+39. DSAR (R4-LEG-3) → default **align the policy copy to current capability now, build the erasure/export pipeline next** (with R3-AUTH-5).
+40. Earnings-claim basis (R4-LEG-4) → **need the source** for the 1–3.5% click/conv benchmarks (or I relabel them "illustrative" + add a typicality disclaimer).
+41. Governing law (R4-LEG-6) → **your call (+ legal review):** state of incorporation + whether to mandate arbitration / class-waiver.
+42. Scraped-prospect data (R4-LEG-7) → **your call:** lawful basis (legitimate interest) + retention window + an Art. 14 notice line in EU outreach.
+
+**Cost / performance / content**
+43. LLM cost ceiling (R4-PERF-1/2) → **a number, please:** acceptable $ per scout sweep / per dossier brief (drives the token + `max_uses` caps); default meanwhile is a hard token-sum break + lower caps on the unattended cron path.
+44. Landing video (P0-16) → default **re-encode to ~3MB + poster + lazy-load** (vs move to Mux/Blob).
+45. `events` retention (R4-PERF-12) → default **archive/delete > 180 days for high-volume event types** (vs partition).
+46. Lesson restore contract (R4-LH-1) → **your call:** are exercises local-only (cross-device restores gates only), or should the exercise blob persist to Supabase for true cross-device? The `?screen`-resume half is mechanical either way.
+47. Lesson re-skin (R4-LH-9) → **your call:** re-font/re-palette all 36 lessons to the active brand now (large effort), or leave the legacy course styling.
+
 ### B · Access / credentials I don't have (these unblock autonomous DB work + verification)
 - **`DATABASE_URL`** (direct connection, port 5432) set in the **Claude Code web environment config** (not Vercel) → I run all the DB migrations myself (the `course_progress` CREATE, the artifact `CHECK`, the RLS/constraint/cascade fixes). Needs a fresh session after you set it. Without it, every DB fix is me writing SQL for **you** to paste in the Supabase SQL editor.
 - **Live schema of the out-of-band tables** — paste `\d course_progress`, `\d generated_artifacts`, `\d affiliates` (or grant read) so migrations match prod and I know whether the artifact `CHECK` was already altered.
@@ -523,6 +665,9 @@ Migrations are applied by hand in the Supabase SQL editor today, so until `DATAB
 - [ ] What does the free **manager-archetype-map** email actually deliver vs what the capture form promises? (P2-14)
 - [ ] Are any **affiliates already backfilled with `user_id`** in prod, or is the client-writable JWT-slug fallback the *only* live identity path? (P0-9 blast radius)
 - [ ] Is the **PostgREST anon endpoint** reachable such that `testimonials?select=email` actually returns data in prod? (R3-DATA-1)
+- [ ] Which webhook endpoint receives Stripe **`account.updated`** — this `/api/webhooks/stripe`, or a separate Connect endpoint? (R4-DR-5 — determines whether affiliate Stripe status ever updates)
+- [ ] Is **`automatic_tax`** actually disabled in the live Stripe config, and does AESDR have sales-tax/VAT **nexus**? (R4-MON-7)
+- [ ] Does **BetterContact** bill at enqueue or at result-read? (R4-PERF / R3-AG-9 — determines the re-bill fix)
 
 ---
 
