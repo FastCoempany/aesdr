@@ -2,21 +2,21 @@
 *Adversarial audit, 2026-06-17. Grounded in code, not memory.*
 
 ## What this is
-A consolidated punch-list of everything **four rounds** of adversarial auditing found across every workflow, plus the gaps the flow-chart exercise surfaced. Round 1 ran three passes (buyer/payments · affiliate/operator/money · enterprise/security/systemic). Round 2 ran a second, broader sweep across the workflows *and* the rest of the app for gaps, broken promises, and unfinished wiring — surfacing the **product-delivery layer** (curriculum depth + end-of-course artifacts) wired-but-never-invoked, and the **affiliate commission misrepresentation**. Round 3 ran **twelve domain-specialist passes** (auth/team · email/compliance · curriculum · infra/config · enterprise/workshop · admin · agent-crons · affiliate experience · data/RLS · deep security · frontend/brand/a11y · build/CI/tests) — ~74 further findings, including the worst security and access issues in the whole document: **affiliate-payout account takeover**, the **team tier being paid-but-unusable**, **affiliate links that never attribute**, and a **CAN-SPAM exposure** across every lifecycle email. Round 4 ran **seven specialist lenses** (state-machines/lifecycles · money-reconciliation · legal/tax/FTC · timezone/date math · performance/scale/cost · a line-by-line read of the Stripe webhook + `lib/email.ts` · lesson-HTML interaction logic) — ~64 further findings at the seams the component passes missed: a **paying buyer who can be permanently locked out**, an **affiliate-tax (1099/W-9) compliance gap**, a **materially false privacy policy**, a **78MB auto-playing landing video**, and uncapped LLM spend. Each item is evidence-backed (`file:line`), severity-ranked, and tagged **[M]echanical** (I can patch it with no decision) or **[D]ecision-needed** (the exact question is in the [decision list](#what-i-need-from-you--the-decision-list)). **The money-, deploy-, delivery-, and access-breaking items were re-verified against the source by hand** (marked ✅).
+A consolidated punch-list of everything **five rounds** of adversarial auditing found across every workflow, plus the gaps the flow-chart exercise surfaced. Round 1 ran three passes (buyer/payments · affiliate/operator/money · enterprise/security/systemic). Round 2 ran a second, broader sweep across the workflows *and* the rest of the app for gaps, broken promises, and unfinished wiring — surfacing the **product-delivery layer** (curriculum depth + end-of-course artifacts) wired-but-never-invoked, and the **affiliate commission misrepresentation**. Round 3 ran **twelve domain-specialist passes** (auth/team · email/compliance · curriculum · infra/config · enterprise/workshop · admin · agent-crons · affiliate experience · data/RLS · deep security · frontend/brand/a11y · build/CI/tests) — ~74 further findings, including the worst security and access issues in the whole document: **affiliate-payout account takeover**, the **team tier being paid-but-unusable**, **affiliate links that never attribute**, and a **CAN-SPAM exposure** across every lifecycle email. Round 4 ran **seven specialist lenses** (state-machines/lifecycles · money-reconciliation · legal/tax/FTC · timezone/date math · performance/scale/cost · a line-by-line read of the Stripe webhook + `lib/email.ts` · lesson-HTML interaction logic) — ~64 further findings at the seams the component passes missed: a **paying buyer who can be permanently locked out**, an **affiliate-tax (1099/W-9) compliance gap**, a **materially false privacy policy**, a **78MB auto-playing landing video**, and uncapped LLM spend. Round 5 ran **seven UX/ops/copy/config lenses** (onboarding/first-run · email deliverability · integration config · naming/brand separation · empty-loading-error states · brand-voice canon · PII data-flow) — ~59 further findings (no new Criticals, mostly High/Medium): silent money-failure swallows, no admin error boundary, a single root sending-domain that risks spamming the welcome+receipt, free-text PII flowing to PostHog/Sentry/Anthropic unmasked, and the canon's own banned terms shipping where the linter can't reach. Each item is evidence-backed (`file:line`), severity-ranked, and tagged **[M]echanical** (I can patch it with no decision) or **[D]ecision-needed** (the exact question is in the [decision list](#what-i-need-from-you--the-decision-list)). **The money-, deploy-, delivery-, and access-breaking items were re-verified against the source by hand** (marked ✅).
 
 ## How to use it
 Work top-down by phase. Each item has a `[ ]` you tick when its **Done-when** is met. Don't start a later phase before its blockers (noted in **Depends**) are closed. Effort: **S** ≈ <½ day · **M** ≈ ½–2 days · **L** ≈ multi-day.
 
 ## Scoreboard
-*(Phases 0–3 + Security = the original 59. Round 3 adds ~74 ([Round 3](#round-3--twelve-domain-deep-sweep) section). Round 4 adds ~64 ([Round 4](#round-4--seven-specialist-lenses) section). The eight new Criticals from Rounds 3–4 are promoted into Phase 0 as P0-9…P0-16. Counts below are combined totals.)*
+*(Phases 0–3 + Security = the original 59. Round 3 adds ~74 ([Round 3](#round-3--twelve-domain-deep-sweep)). Round 4 adds ~64 ([Round 4](#round-4--seven-specialist-lenses)). Round 5 adds ~61 ([Round 5](#round-5--seven-uxopscopyconfig-lenses)). The eight new Criticals from Rounds 3–4 are promoted into Phase 0 as P0-9…P0-16; Round 5 added no new Criticals. Counts below are combined totals.)*
 
 | Severity | Count | Meaning |
 |---|---|---|
 | 🔴 Critical | 16 | Loses money, charges without delivering, hands over an account, strands a paid buyer, creates legal exposure, or breaks a fresh deploy. Do first. |
-| 🟠 High | ~73 | A real workflow is broken or a user-/founder-facing wire is dead. |
-| 🟡 Medium | ~74 | Degraded, silent-failure, or correctness gaps with limited blast radius. |
-| ⚪ Low | ~45 | Cleanup, cosmetics, hardening. |
-| **Total** | **~208** | |
+| 🟠 High | ~93 | A real workflow is broken or a user-/founder-facing wire is dead. |
+| 🟡 Medium | ~104 | Degraded, silent-failure, or correctness gaps with limited blast radius. |
+| ⚪ Low | ~56 | Cleanup, cosmetics, hardening. |
+| **Total** | **~269** | |
 
 > **Cross-cutting theme #1 (Round 1):** the partnership/agent subsystem is built to *fail silently by design* — fail-safe-OFF switches, best-effort `try/catch` swallows, console-only logging, and some schema created out-of-band. Safe for "don't send bad outreach," but it means broken infrastructure (unapplied migrations, a missing webhook, an unscheduled cron) is **invisible at runtime.** Several fixes below are really about making failure *loud*.
 >
@@ -25,6 +25,8 @@ Work top-down by phase. Each item has a `[ ]` you tick when its **Done-when** is
 > **Cross-cutting theme #3 (Round 3):** **identity and gating are trusted from the wrong side, and nothing in CI would catch any of it.** Affiliate identity reads from client-writable `user_metadata`; the team tier's access depends on RLS that denies the very members it's for; completion is a string the client asserts; the proxy allowlist silently swallows whole routes (`/r/*`, `/team`). Underneath all of it, **CI runs no tests** and the lint/canon gates are non-blocking — so every bug in this document shipped green. Many Round-3 fixes are one-liners; the reason there are so many is that there was no net.
 >
 > **Cross-cutting theme #4 (Round 4):** **the failure paths and the off-happy-path cases were never finished.** The Stripe webhook logs hard failures to Sentry and then returns **200**, so Stripe never retries and a paid buyer strands (no login, no team, no commission). Refunds assume "full"; disputes assume "lost"; restore assumes "same device"; the LLM agents assume "stop when the timer says so" with no token cap; the marketing copy and the legal pages each describe a *different* product than the code ships (commission base, 1099 handling, tracking, deletion). The happy path mostly works; almost every Round-4 finding is what happens when something deviates from it — a transient error, a partial refund, a won dispute, a new device, a non-USD price, an EU visitor, an audit.
+>
+> **Cross-cutting theme #5 (Round 5):** **the surfaces the founder doesn't look at got none of the care the happy path did.** What the user sees when a request *fails* (silent swallows, "All clear" over a broken query, a $40 button that does nothing), what leaves to third parties (deal free-text to PostHog, reflections to Anthropic, unmasked session replays), how the mail is *sent* (one root domain for everything, no bounce handling), and what the copy literally *says* (the canon's own banned words, where the linter can't reach) — all of it is a tier less finished than the core logic. None of it is a new Critical; all of it is the difference between "works in the demo" and "holds up in production with real users, real failures, and a regulator reading the privacy policy."
 
 ---
 
@@ -436,7 +438,7 @@ Work top-down by phase. Each item has a `[ ]` you tick when its **Done-when** is
 - [ ] **R3-INFRA-2** · Pre-launch index leak on `/free/manager-archetype-map` — 🟠 **[D]** — `page.tsx:11` hardcodes `index:true`, ungated on launch mode, public during coming-soon.
 - [ ] **R3-INFRA-3** · `EMAIL_FINDER_API_KEY` undocumented → contact-finder silently no-ops — 🟡 **[M]** — add to `.env.local.example`.
 - [ ] **R3-INFRA-4** · 8 more env vars read-but-undocumented — 🟡 **[M]** — `COMING_SOON_BYPASS_CODE`, `ADMIN_EMAILS`, `AFFILIATE_OPS_PASSWORD`, `PARTNER_ALERT_EMAIL`, `WORKSHOP_REGISTRANT_GROUP_ADDR`, `SCRIBE_MIN_VOICE_FIT`, `NEXT_PUBLIC_INBOX_COMPOSE_BASE`/`_SEARCH_BASE`.
-- [ ] **R3-INFRA-5** · `ANTHROPIC_API_KEY` in the example but never read — ⚪ **[D]** — where does the LLM client actually get its key?
+- [x] **R3-INFRA-5** · ~~`ANTHROPIC_API_KEY` never read~~ — **RESOLVED (Round 5):** it *is* read — `new Anthropic()` resolves `ANTHROPIC_API_KEY` from env by default, and the key is set in Vercel. No action; the example entry is correct.
 - [ ] **R3-INFRA-6** · sitemap vs robots `allow`-list drift — ⚪ **[M]** — `sitemap.ts:39` lists URLs absent from `robots.ts:18`.
 - [ ] **R3-INFRA-7** · `IP_HASH_SALT` committed default defeats IP pseudonymization — ⚪ **[D]** — `app/api/free/manager-archetype-map/route.ts:18`, `lib/affiliate.ts:58`.
 
@@ -541,6 +543,80 @@ Work top-down by phase. Each item has a `[ ]` you tick when its **Done-when** is
 
 ---
 
+## ROUND 5 — Seven UX/ops/copy/config lenses
+*UX, operations, copy, and config — the surfaces the code-correctness passes didn't grade. No new Criticals; mostly High/Medium and overwhelmingly `[M]`. Grouped by lens. Several reconciliations/resolutions are folded back into earlier sections (R3-INFRA-5 closed; model IDs confirmed).*
+
+### Onboarding & first-run UX
+- [ ] **R5-OB-1** · Temp-password login lands on a `/welcome` marketing splash with a **dismissable** password overlay, across **three** different password routes (set-password / change-password / the overlay) — 🟠 **[D]** — `login:47`, `welcome`, `PasswordOverlay`, `account/change-password`.
+- [ ] **R5-OB-2** · Success page + welcome email promise "**no onboarding checklist** — straight into Course 1," then the app forces 3 gates (set-password → select-role → a "pick your 25-min window" onboarding form) — 🟠 **[M]** — `success:257`, `email.ts:1023` vs `dashboard:49-74`.
+- [ ] **R5-OB-3** · No "step N of M" across the forced setup gates (each looks terminal; inconsistent labels) — 🟡 **[M]** — `account/*`.
+- [ ] **R5-OB-4** · The welcome email passes `?email=` but the login form ignores it → the buyer retypes the email they just bought with — 🟡 **[M]** — `email.ts:944` vs `login:14`.
+- [ ] **R5-OB-5** · The empty dashboard assumes progress; no first-run orientation (what a lesson is, that progress saves) — 🟡 **[M]** — `dashboard:393`.
+- [ ] **R5-OB-6** · "Save & Exit" performs no synchronous save and shows no confirmation before the fade-to-black — 🟡 **[D]** — `SaveExitButton:14`, `ProgressSaver:44`. *(The "Resume reloads Unit 1" loop = the UX face of P0-7; signup copy-lie = R3-AUTH-8; member-number mismatch = R4-DR-10. The role-gate "oversell" guess was **refuted** — R4 verified the fork is real.)*
+
+### Email deliverability & sender reputation
+- [ ] **R5-DV-1** · One root domain (`aesdr.com`) carries transactional **and** bulk marketing **and** the founder's mailbox — no subdomain split (the internal ops doc flags this as unbuilt) — 🟠 **[D]/live** — `email.ts:28`, `courier:31`.
+- [ ] **R5-DV-2** · No Resend bounce/complaint webhook → hard-bounced/complained addresses are never suppressed; every cron re-sends to them — 🟠 **[D]** — missing `app/api/webhooks/resend/`.
+- [ ] **R5-DV-3** · "Reply UNSUBSCRIBE" + all replies depend on human triage of a forwarded Gmail; no programmatic consumer-inbound processing — 🟡 **[D]** — `email.ts:2010` (`hello@`→founder Gmail; *not* a black hole, but unactioned).
+- [ ] **R5-DV-4** · Bulk/marketing sent to unconfirmed addresses (abandonment → never-completed checkout emails; free-lead single-opt-in); no double-opt-in anywhere — 🟡 **[D]** — `cron/abandonment:21`.
+- [ ] **R5-DV-5** · No `List-Id` / `Precedence: bulk` / Message-ID threading on bulk mail — 🟡 **[M]** — `email.ts:30`.
+- [ ] **R5-DV-6** · SPF/DKIM/DMARC + root-domain mixing (Resend **and** Google Workspace both send as `@aesdr.com`) — a DMARC-alignment gap could **silently spam the welcome + receipt** — 🟠 **[live-check]** — `dig` the records. *(Burst-send 429 drops = R4-PERF-7; mailto-only one-click = P0-12/R3-EMAIL-3.)*
+
+### Integration config (Stripe / Supabase / Resend / Anthropic)
+- [ ] **R5-IC-1** · No `allow_promotion_codes` → a launch / affiliate-recovery discount is impossible without a code change — 🟠 **[D]** — `checkout:79`.
+- [ ] **R5-IC-2** · The Stripe client pins **no `apiVersion`** + caret `^22.0.0` → a rebuild can silently shift the payments API version under a green build — 🟠 **[D]** — `checkout:13`, `webhooks/stripe:20`.
+- [ ] **R5-IC-3** · `customer_creation` unset → no reusable Stripe Customer; repeat-buyer + receipt linkage is email-string-based — 🟡 **[D]** — `checkout:79`.
+- [ ] **R5-IC-4** · `email_confirm: true` auto-verifies an unproven email → account squatting + the temp-password lands in an inbox the payer may not control — 🟡 **[D]** — `webhooks/stripe:116`.
+- [ ] **R5-IC-5** · Temp-password generator is modulo-biased + no server-enforced strength (`minLength=6`, relies on Supabase defaults) + no temp-password expiry — 🟡 **[M]/[D]** — `webhooks/stripe:23`, `set-password:129`.
+- [ ] **R5-IC-6** · Auth-callback redirect allowlist omits `/welcome`, `/affiliates`, `/enterprise` → magic-link `next=` is bounced to `/dashboard` — 🟡 **[M]** — `auth/callback:7`.
+- [ ] **R5-IC-7** · Resend sends carry no `idempotencyKey` (cron retries can double-send — the config backstop the DB-flag-after-send pattern lacks) and no `tags` (zero send-analytics) — 🟡 **[M]/[D]** — `email.ts:127`.
+- [ ] **R5-IC-8** · Anthropic clients set no `timeout`/`maxRetries` → the SDK's 10-min timeout + 2 retries fight the 60s artifact route ceiling and eat the streaming budget — 🟡 **[M]** — `llm.ts`, `scout-research.ts:167`.
+- [ ] **R5-IC-9** · `anthropic-agents.ts` defaults bypass `getAgentModel`; deprecated `claude-opus-4-1` sits in `SUPPORTED_MODELS` (retires 2026-08-05); a comment falsely claims the SDK gates model IDs — ⚪ **[M]** — `anthropic-agents.ts:20`, `agent-switch.ts:44`.
+- [ ] **R5-IC-10** · `listUsers({perPage:50})` provisioning fallback fails **silently past 50 users** → userless purchase at scale (compounds P0-13) — ⚪ **[D]** — `webhooks/stripe:150`.
+
+### Naming & brand separation
+- [ ] **R5-NM-1** · Affiliate-kit description constants say "partners" (`lib/affiliate-kit.ts`, `affiliate-kit-private.ts`) — rendered on `/affiliates/kit` + `/x/kit` — 🟠 **[M]**.
+- [ ] **R5-NM-2** · "partner hub" in the shared `HubChrome` (footer + 2 aria-labels) on **every** `/affiliates` page — 🟠 **[M]** — `HubChrome:108,46,56`.
+- [ ] **R5-NM-3** · `EconomicsCalculator` says "partners" while the same sentence on `/affiliates/page` says "affiliates" — 🟡 **[M]** — `EconomicsCalculator:139`.
+- [ ] **R5-NM-4** · The application form's UTM source is `partners-page` — 🟡 **[D]** — `ApplicationForm:42` (check if a report keys on the literal first).
+- [ ] **R5-NM-5** · Bare "Partner" without the "channel" prefix on a few `/enterprise` labels — ⚪ **[M]** — `enterprise/integrations:33`, `channel-one-pager`. *(Clean negative: **no** enterprise↔consumer brand bleed; the rename is structurally done — this is residue in plumbing strings.)*
+
+### Empty / loading / error states
+- [ ] **R5-EE-1** · The $40 artifact-unlock tile silently swallows a failed checkout (no error; sale lost) — 🟠 **[M]** — `UnlockArtifactTile:40`.
+- [ ] **R5-EE-2** · The reveal "choose your keeper" CTA swallows a 500 at the course's emotional climax — 🟠 **[M]** — `RevealView:70`.
+- [ ] **R5-EE-3** · **No error boundary anywhere under `app/admin/`** → ~15 server-action failures full-page-crash with raw Postgres text — 🟠 **[M]** — add `app/admin/error.tsx`.
+- [ ] **R5-EE-4** · The affiliate-detail "Pay out via Stripe Connect" button has no confirm/pending/error (double-submit on real money — a **second** unguarded payout trigger) — 🟠 **[M]** — `[affiliateSlug]:413`. Reinforces P0-1 / R3-AD-1.
+- [ ] **R5-EE-5** · Affiliate Submissions renders the new-user empty state on a DB error (real submissions vanish, "start over") — 🟠 **[M]** — `submissions:74`.
+- [ ] **R5-EE-6** · The tower reads "All clear." while sub-panels silently failed to load — 🟡 **[M]** — `tower:129`.
+- [ ] **R5-EE-7** · The admin dashboard shows a fabricated `$0` / `0` on a failed aggregate query — 🟡 **[M]** — `admin/page.tsx:6`.
+- [ ] **R5-EE-8** · No `loading.tsx` for the tower / candidate room (long live-research routes show a frozen page) — 🟡 **[M]**.
+- [ ] **R5-EE-9** · Stripe post-onboarding refresh strands the affiliate on stale "Not connected" with no feedback → re-click loop — 🟡 **[M]** — `PaymentsControls:49`.
+- [ ] **R5-EE-10** · The calculator shows sub-1 fractional sales ("0.5 sales → $50/mo") — 🟡 **[D]** — `Calculator:136`.
+- [ ] **R5-EE-11** · `ReviewActions` success gives no confirmation → double-submit risk (flips an affiliate's gate) — 🟡 **[D]** — `ReviewActions:84`.
+- [ ] **R5-EE-12** · Cluster of admin zero-data/`$NaN`/`"null"`-key gaps: Users table blank-when-empty + `$NaN` amount; `[affiliateSlug]` Links/Attributions blank; tower payout buckets null slug under `"null"`; playbooks "archetype: undefined"; static status forms (no pending) — ⚪ **[M]** — `admin/users`, `affiliates`, `tower:179`, `playbooks:147`. *(Buyer dashboard, artifact pages, and the tower `PayoutButton` are exemplary — don't regress them.)*
+
+### Brand-voice canon (live copy)
+- [ ] **R5-CN-1** · "**operating system**" (R-G4 banned) is the Manager-Archetype metaphor on 3 buyer surfaces (free magnet, tools, enterprise) — and it's in **neither** enforcer — 🟠 **[M]** — `free/manager-archetype-map:165`, `tools:45`, `enterprise/implementation:186`.
+- [ ] **R5-CN-2** · "**takeaway artifacts**" (retired for "substantial assets" in v1.5; "takeaway" founder-banned) ships in 4 emails — `lib/email.ts` is outside the ESLint scope — 🟠 **[M]** — `email.ts:1372,1564,2072`.
+- [ ] **R5-CN-3** · "**leverage**" (R-G4 banned) ×3 — affiliate playbooks ×2 + lesson-09 — 🟡 **[M]** — `playbooks:106,109`, `aesdr_course09_2_v1.html:1601`.
+- [ ] **R5-CN-4** · R-G7 "isn't X — it's Y" pivot opening **6** sidebar mottos / callouts across lessons 03–07 — 🟡 **[M]** — `aesdr_course06_2:1596`, `07_3:1685`, `04_2:1674,1384`, `03_2:1663`, `05_3:1661`.
+- [ ] **R5-CN-5** · "**deep dive / deep-dive**" (R-G4 banned) ×4 as task headings + body — 🟡 **[M]** — `aesdr_course10_1:1571,1578,1730`, `06_3:1463`.
+- [ ] **R5-CN-6** · British "recognise" on `/about` (canon §5 = American spelling) — ⚪ **[M]** — `about:24`. *(Enforcement-coverage gap behind all of these: the ESLint blocklist is `warn`-only **and** scoped to `app`/`components` `.ts/.tsx` only — it never sees `lib/email.ts` or `content/lessons/**`; "operating system" is in neither enforcer. Extends R3-CI-3. The lesson **prose is otherwise unusually clean** — no banned vocab, no R-G3 cadence; "verdict"/"reps"/"blueprint"/"mindset" uses are all the allowed carve-outs.)*
+
+### PII data-flow & privacy-by-design
+- [ ] **R5-PI-1** · The affiliate's confidential deal/pipeline free-text is sent to **PostHog** as event props — 🟠 **[M]** — `EnterprisePanel:57`→`track.ts:60`.
+- [ ] **R5-PI-2** · Sentry + PostHog **session replay** record buyer free-text unmasked (`replaysOnErrorSampleRate:1.0`, no `maskAllInputs`) — 🟠 **[M]/[D]** — `sentry.client.config.ts:6`, `analytics.ts:38`.
+- [ ] **R5-PI-3** · Buyer name + free-text reflections are sent to **Anthropic** in artifact prompts, unredacted — 🟠 **[M]/[D]** — `llm.ts:418,588`.
+- [ ] **R5-PI-4** · Scraped-prospect identity is chained to **Anthropic** then **BetterContact** with no consent gate + persisted indefinitely — 🟠 **[D]** — `dossier-research.ts:123`→`email-finder.ts:153`.
+- [ ] **R5-PI-5** · Full Supabase/Resend error **objects** logged to console on PII inserts (email echoes in `details`) — 🟡 **[M]** — `free/...:82`, `apply:109`, +5 sites; log `.message` only.
+- [ ] **R5-PI-6** · An inbound prospect's raw email is interpolated into a console log **label** — 🟡 **[M]** — `partner-alerts.ts:55`.
+- [ ] **R5-PI-7** · PostHog `$pageview` captures the full URL incl. the prospect slug (`?p=`) + attribution params — 🟡 **[M]** — `PostHogClient:14`.
+- [ ] **R5-PI-8** · `ip_hash` has **three no-salt call sites** (`req-meta.ts:5`, `apply:70`, `enterprise/contact:55`) + 4 inconsistent implementations → brute-forceable, defeats de-dup, and the hash leaves the DB into founder emails — 🟡 **[M]** — consolidate to one HMAC helper.
+- [ ] **R5-PI-9** · **No retention/TTL anywhere** → ~15 PII-bearing tables (events, clicks, prospect events, inbound bodies, phone, leads) grow forever — 🟡 **[D]** — (broadens R4-PERF-12).
+- [ ] **R5-PI-10** · Over-collection: full `user_agent` + `referrer` stored on every telemetry row, never read for the stated triage purpose — ⚪ **[M]**. *(testimonials anon-email = R3-DATA-1. **Erasure reachability:** PostHog / Sentry / BetterContact / Anthropic / Resend / Vercel-logs are all unreachable today — reinforces R4-LEG-3.)*
+
+---
+
 ## Security: verify, don't assume
 
 ### Security — Round 2 (actionable)
@@ -637,6 +713,30 @@ Work top-down by phase. Each item has a `[ ]` you tick when its **Done-when** is
 46. Lesson restore contract (R4-LH-1) → **your call:** are exercises local-only (cross-device restores gates only), or should the exercise blob persist to Supabase for true cross-device? The `?screen`-resume half is mechanical either way.
 47. Lesson re-skin (R4-LH-9) → **your call:** re-font/re-palette all 36 lessons to the active brand now (large effort), or leave the legacy course styling.
 
+### A3 · Round-5 decisions (defaults in **bold**)
+**Onboarding / email-sending**
+48. Onboarding flow (R5-OB-1/2) → default **collapse to one password route, drop the `/welcome` splash, and soften the "no checklist" copy** (keep the 3 setup steps; stop promising there are none).
+49. Save-on-exit (R5-OB-6) → default **synchronous save + a brief "Saved" before the exit fade**.
+50. Sender-subdomain split (R5-DV-1/6) → default **bulk on `news.aesdr.com`, transactional on root, cold-outreach on its own subdomain**, each DMARC-aligned (your DNS to apply).
+51. Bounce/complaint handling (R5-DV-2) → default **build `app/api/webhooks/resend` + an `email_suppressions` table checked in `safeSend`**.
+52. Double-opt-in (R5-DV-4) → default **suppress abandonment sends to bounced addresses; no DOI on the self-requested free asset**.
+
+**Stripe / Supabase / Resend / Anthropic config**
+53. Promo codes (R5-IC-1) → default **`allow_promotion_codes: true` on sdr/ae only**; decide whether a coupon should also shrink affiliate commission (it's computed off `amount_total`, which a coupon reduces).
+54. Stripe `apiVersion` (R5-IC-2) → **tell me the version live in your Dashboard**; I pin it + exact-pin `stripe`.
+55. Receipts (R5-IC-3) → default **keep Resend receipts**, set `customer_creation:'always'`, store the Customer id as the repeat-buyer join key.
+56. `email_confirm` (R5-IC-4/5) → default **accept asserted-by-payment** + make the temp password one-time + short-lived; turn on Supabase leaked-password protection + a min-length floor (your Auth dashboard).
+57. Resend idempotency scheme (R5-IC-7) → default **`<type>:<sessionId|userId>`** per send + `tags`.
+58. `listUsers` fix (R5-IC-10) → default **`getUserByEmail` if the pinned Supabase-JS supports it, else paginate** + Sentry-alert on a null fallback.
+
+**Naming / UX / PII**
+59. UTM rename (R5-NM-4) → **`partners-page` → `affiliates-page`** unless a report keys on the literal (tell me).
+60. Calculator fractional sales (R5-EE-10) → default **render sub-1 as "~1 every N months"** + floor the dollars to match.
+61. Admin error UX (R5-EE-3/11) → default **add `app/admin/error.tsx`** (catches the ~15 crash sites) + a success state on `ReviewActions`.
+62. Session-replay masking (R5-PI-2) → default **mask all inputs/text + block media (Sentry & PostHog); disable replay on `/course`, `/artifacts`, `/x/*`**.
+63. Anthropic PII (R5-PI-3) → default **drop the buyer name from the artifact prompt** (render it client-side) + add Anthropic to the sub-processor list (with P0-15).
+64. PII retention windows (R5-PI-9) → **per-table windows, please** (default: telemetry deleted > 180d; prospect/lead PII pruned by a real retention cron).
+
 ### B · Access / credentials I don't have (these unblock autonomous DB work + verification)
 - **`DATABASE_URL`** (direct connection, port 5432) set in the **Claude Code web environment config** (not Vercel) → I run all the DB migrations myself (the `course_progress` CREATE, the artifact `CHECK`, the RLS/constraint/cascade fixes). Needs a fresh session after you set it. Without it, every DB fix is me writing SQL for **you** to paste in the Supabase SQL editor.
 - **Live schema of the out-of-band tables** — paste `\d course_progress`, `\d generated_artifacts`, `\d affiliates` (or grant read) so migrations match prod and I know whether the artifact `CHECK` was already altered.
@@ -656,7 +756,7 @@ Migrations are applied by hand in the Supabase SQL editor today, so until `DATAB
 ## Could-not-verify-from-code (needs a live check)
 - [ ] Are **all migrations actually applied** in production? (Several backstops are only as real as their unique indexes + the out-of-band tables.)
 - [ ] Does the **external inbound-email worker** exist and write `partner_inbound_email`? (P1-2)
-- [ ] Do the **model IDs** `claude-opus-4-6` / `claude-sonnet-4-6` resolve at the API? If not, scout/dossier silently fail into the caught error banner. (SDK is `@anthropic-ai/sdk@0.88.0`.)
+- [x] ~~Do the **model IDs** resolve at the API?~~ — **RESOLVED (Round 5):** `claude-sonnet-4-6` / `claude-opus-4-6` / `-4-5` / `-4-1` are all valid; `claude-opus-4-1` is **deprecated, retiring 2026-08-05** — drop it from `SUPPORTED_MODELS` (R5-IC-9).
 - [ ] Is `WORKSHOP_REGISTRANT_GROUP_ADDR` a real list, or the `hello@` placeholder? (P1-9)
 - [ ] Does the live `generated_artifacts` constraint already allow `playbill`/`redline` (altered out-of-band), or only `migrations/` is stale? (P0-6)
 - [ ] Do the other **11 unit-1 lesson files** all fire `aesdr:complete` + exit to `/dashboard` like `lesson-03`'s? (P0-7 — confirms the blast radius is all 12, not one.)
