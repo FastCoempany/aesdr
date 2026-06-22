@@ -130,6 +130,7 @@ export async function POST(request: Request) {
     primaryChannel: data.primaryChannel,
     audienceSize: data.audienceSize,
     linkUrl: data.linkUrl,
+    applicantEmail: data.applicantEmail,
     utmSource: data.utmSource ?? null,
     utmMedium: data.utmMedium ?? null,
     utmCampaign: data.utmCampaign ?? null,

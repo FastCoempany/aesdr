@@ -9,6 +9,7 @@ import { logEvent } from '@/lib/events';
 import {
   ATTRIBUTION_WINDOW_MS,
   REFUND_WINDOW_MS,
+  isSelfReferral,
 } from '@/lib/affiliate';
 // AUDIT (R4-MON-2/#1/#27): commission math now lives in one place and derives
 // the rate from the affiliate's own commission_pct column.
@@ -279,13 +280,13 @@ export async function POST(request: Request) {
     // Send emails only on first processing (skip on Stripe retries)
     if (email && isNewPurchase) {
       try {
-        await sendWelcomeEmail(email, name, tempPassword);
+        await sendWelcomeEmail(email, name, tempPassword, session.id);
       } catch (err) {
         Sentry.captureException(err, { extra: { handler: 'stripe-webhook', step: 'welcome_email' } });
       }
 
       try {
-        await sendReceiptEmail(email, name, tier, amountCents);
+        await sendReceiptEmail(email, name, tier, amountCents, session.id);
       } catch (err) {
         Sentry.captureException(err, { extra: { handler: 'stripe-webhook', step: 'receipt_email' } });
       }
@@ -385,6 +386,10 @@ export async function POST(request: Request) {
             }
 
             const commissionCents = computeCommissionCents(baseCents, commissionRate);
+            // AUDIT (R3-AF-3/#3): self-referral (buyer email == affiliate's own)
+            // is recorded but excluded from payout. Needs the widened status
+            // CHECK (20260622_attribution_status_and_applicant_email.sql).
+            const selfRef = await isSelfReferral(linkRow.affiliate_slug, email);
             const { error: attrErr } = await supabase.from('affiliate_attributions').upsert(
               {
                 link_id: linkRow.id,
@@ -396,7 +401,7 @@ export async function POST(request: Request) {
                 // AUDIT (R4-MON-2): store the actual rate used, not a constant.
                 commission_rate: commissionRate,
                 commission_amount_cents: commissionCents,
-                status: 'pending',
+                status: selfRef ? 'self_referral' : 'pending',
                 attribution_window_closes_at: new Date(
                   purchasedAt.getTime() + ATTRIBUTION_WINDOW_MS
                 ).toISOString(),

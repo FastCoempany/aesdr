@@ -221,6 +221,7 @@ export type AffiliateApplicationPayload = {
   utmContent?: string | null;
   ipHash?: string | null;
   userAgent?: string | null;
+  applicantEmail?: string | null;
   submittedAt: string;
 };
 
@@ -236,7 +237,10 @@ export async function sendAffiliateApplicationNotification(payload: AffiliateApp
     getResend().emails.send({
       from,
       to: recipient,
-      replyTo: recipient,
+      // AUDIT (P1-7): reply goes to the applicant so the founder can send the
+      // promised yes/no decision directly. (An applicant auto-acknowledgement
+      // email is a follow-up.)
+      replyTo: payload.applicantEmail || recipient,
       subject,
       html: affiliateApplicationHtml(payload),
       text: affiliateApplicationText(payload),

@@ -50,6 +50,8 @@ export default function ProgressSaver({
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const savedHideRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const failCountRef = useRef(0);
+  // True between an aesdr:complete and the final-screen progress flush (P0-7).
+  const completePendingRef = useRef(false);
   const [sessionExpired, setSessionExpired] = useState(false);
   const [navigating, setNavigating] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
@@ -109,6 +111,50 @@ export default function ProgressSaver({
   );
 
   useEffect(() => {
+    // P0-7 / decision #10: the completion endpoint requires server-side
+    // evidence that the unit's final screen was reached. The lesson engine
+    // fires aesdr:complete *then* aesdr:progress (final screen) in the same
+    // tick, and our normal save is debounced 1.5s — so a naive complete POST
+    // can race ahead of the evidence. We flag the pending completion, then on
+    // the immediately-following final-screen progress event we flush it to the
+    // server synchronously *before* firing the completion POST.
+    const fireComplete = () => {
+      if (!isAuthenticated) return;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      fetch("/api/progress/complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lessonId, unitId, unitCount }),
+        signal: controller.signal,
+      })
+        .then(() => clearTimeout(timeoutId))
+        .catch(() => clearTimeout(timeoutId));
+      // Only the *whole-lesson* completion flips the local is_completed flag;
+      // an intermediate unit completion does not.
+      if (!nextUnitId) {
+        saveProgressLocally(lessonId, { is_completed: true });
+      }
+    };
+
+    const flushSave = (screen: number, stateData: Record<string, unknown>) => {
+      const stamped: Record<string, unknown> = {
+        ...stateData,
+        ...(unitId ? { unit: unitId } : {}),
+        _screen: screen,
+      };
+      saveProgressLocally(lessonId, { last_screen: screen, state_data: stamped });
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      if (!isAuthenticated) return Promise.resolve();
+      return fetch("/api/progress", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lessonId, lastScreen: screen, stateData: stamped }),
+      })
+        .then(() => undefined)
+        .catch(() => undefined);
+    };
+
     function handleMessage(event: MessageEvent) {
       // Only accept messages from our own origin (iframe security)
       if (event.origin !== window.location.origin) return;
@@ -125,30 +171,30 @@ export default function ProgressSaver({
 
         if (screen === null || !stateData) return;
         failCountRef.current = 0;
-        save(screen, stateData);
+
+        // If a completion is pending, flush this (final-screen) progress to the
+        // server first so the evidence is in place, then fire completion.
+        if (completePendingRef.current) {
+          completePendingRef.current = false;
+          flushSave(screen, stateData).then(fireComplete);
+        } else {
+          save(screen, stateData);
+        }
       }
 
       if (type === "aesdr:complete") {
-        if (isAuthenticated) {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 10000);
-          // P0-7: tell the server WHICH unit completed + how many units the
-          // lesson has, so the lesson is only marked complete once every unit
-          // is done (not after unit 1).
-          fetch("/api/progress/complete", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ lessonId, unitId, unitCount }),
-            signal: controller.signal,
-          })
-            .then(() => clearTimeout(timeoutId))
-            .catch(() => clearTimeout(timeoutId));
-          // Only the *whole-lesson* completion flips the local is_completed
-          // flag; an intermediate unit completion does not.
-          if (!nextUnitId) {
-            saveProgressLocally(lessonId, { is_completed: true });
+        // Defer the actual POST to the accompanying final-screen progress
+        // event (see above). If no progress event follows within a short
+        // window (e.g. the learner resumed directly onto the completion
+        // screen, where init() re-fires complete without a fresh save), fire
+        // it anyway — the server falls back to the row's last_screen.
+        completePendingRef.current = true;
+        setTimeout(() => {
+          if (completePendingRef.current) {
+            completePendingRef.current = false;
+            fireComplete();
           }
-        }
+        }, 800);
       }
 
       if (type === "aesdr:navigate") {
