@@ -42,6 +42,9 @@ async function getClient(): Promise<PostHog | null> {
         capture_pageview: false, // we fire pageviews manually on route change
         capture_pageleave: true,
         person_profiles: "identified_only",
+        // Never record raw input values in session replays — buyer/affiliate
+        // free-text would otherwise be captured verbatim (R5-PI-2).
+        session_recording: { maskAllInputs: true },
         loaded: (ph) => {
           if (process.env.NODE_ENV === "development") ph.debug(false);
         },

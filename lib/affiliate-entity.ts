@@ -114,40 +114,42 @@ export function hasExitedGate(affiliate: AffiliateRecord): boolean {
 export const STRIKE_THRESHOLD = 3;
 
 /**
- * Resolve the canonical affiliate row for an authenticated user. Looks up by
- * `user_id` first (the future state where every affiliate is wired to an
- * auth.users row), then falls back to the JWT user_metadata claim
- * (`affiliate_slug`, with `partner_slug` as a backwards-compat fallback for
- * sessions minted before the rename).
+ * Resolve the canonical affiliate row for an authenticated user.
  *
- * Returns null if no affiliate row exists yet. The caller decides whether
- * to render the no-access notice, redirect to /affiliates/apply, etc.
+ * AUDIT (P0-9 / decision #5): identity is resolved ONLY by an
+ * `affiliates.user_id` match — a server-trusted column the client cannot
+ * write. The former fallback to the JWT `user_metadata.affiliate_slug` /
+ * `partner_slug` claim has been REMOVED: `user_metadata` is client-writable
+ * via `supabase.auth.updateUser({ data })`, so any signed-up user could pin
+ * a victim's slug and resolve to their affiliate row (payout/bank/dashboard
+ * takeover). Affiliates are now wired to an auth.users row at activation
+ * (R3-AF-2 — see createAffiliate in app/actions/affiliate.ts), so the
+ * user_id path is the only legitimate one.
+ *
+ * Returns null if no affiliate row is linked to this user. The caller
+ * decides whether to render the no-access notice, redirect to
+ * /affiliates/apply, etc.
  */
 export async function getAffiliateForUser(args: {
   userId: string;
+  // AUDIT (P0-9): these are accepted but DELIBERATELY IGNORED. They remain in
+  // the signature only so existing call sites that still pass the JWT
+  // user_metadata claim keep compiling during the migration; the slug is
+  // never used to resolve an affiliate. Remove these params (and the args at
+  // every call site) in a follow-up sweep once all callers are updated.
   jwtAffiliateSlug?: string | null;
   jwtPartnerSlug?: string | null;
 }): Promise<AffiliateRecord | null> {
   const admin = createAdminClient();
 
+  // AUDIT (P0-9): resolve by server-trusted user_id ONLY. No slug fallback.
   const byUserId = await admin
     .from("affiliates")
     .select("*")
     .eq("user_id", args.userId)
     .maybeSingle();
 
-  if (byUserId.data) return byUserId.data as AffiliateRecord;
-
-  const slug = args.jwtAffiliateSlug || args.jwtPartnerSlug;
-  if (!slug) return null;
-
-  const bySlug = await admin
-    .from("affiliates")
-    .select("*")
-    .eq("slug", slug)
-    .maybeSingle();
-
-  return (bySlug.data as AffiliateRecord) ?? null;
+  return (byUserId.data as AffiliateRecord) ?? null;
 }
 
 /**

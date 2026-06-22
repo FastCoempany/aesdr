@@ -7,18 +7,18 @@ import { createAdminClient } from '@/utils/supabase/admin';
 import { sendWelcomeEmail, sendReceiptEmail } from '@/lib/email';
 import { logEvent } from '@/lib/events';
 import {
-  DEFAULT_COMMISSION_RATE,
   ATTRIBUTION_WINDOW_MS,
   REFUND_WINDOW_MS,
 } from '@/lib/affiliate';
-import { mapAccountStatus } from '@/lib/stripe-connect';
+// AUDIT (R4-MON-2/#1/#27): commission math now lives in one place and derives
+// the rate from the affiliate's own commission_pct column.
+import { computeCommissionCents, resolveCommissionRate } from '@/lib/commission';
+// AUDIT (IC-2/#54): centralized, apiVersion-pinned Stripe client.
+import { mapAccountStatus, getStripe } from '@/lib/stripe-connect';
 import { rateLimit, getClientIP } from '@/lib/rate-limit';
 
-function getStripe() {
-  const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) throw new Error("STRIPE_SECRET_KEY environment variable is not set");
-  return new Stripe(key);
-}
+// AUDIT (R4-DR-4/#34): team is a fixed-seat SKU; no quantity selector exists.
+const TEAM_MAX_SEATS = 10;
 
 function generatePassword(): string {
   const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
@@ -126,6 +126,29 @@ export async function POST(request: Request) {
       if (newUser?.user) {
         userId = newUser.user.id;
       } else if (createError) {
+        // AUDIT (P0-13/R4-DR-2/R4-DR-3): a createUser failure is NOT always
+        // "email already exists". A transient Supabase 429/5xx/network blip
+        // hits this same branch — the old code blindly assumed "exists",
+        // nulled the password, found no user, and returned 200, permanently
+        // stranding a paying buyer (no auth account, userless purchase, an
+        // email telling them to use a password they never got). Only a real
+        // email_exists (status 422) means the user is already there; for
+        // anything else, surface it and return 500 so Stripe retries.
+        const isEmailExists =
+          createError.code === 'email_exists' || createError.status === 422;
+        if (!isEmailExists) {
+          Sentry.captureException(createError, {
+            extra: {
+              handler: 'stripe-webhook',
+              step: 'create_user',
+              sessionId: session.id,
+              code: createError.code,
+              status: createError.status,
+            },
+          });
+          return NextResponse.json({ error: 'User provisioning failed' }, { status: 500 });
+        }
+
         // User already exists — look up by querying the purchases table
         // for a previous record with this email, or fall back to a
         // bounded admin user list

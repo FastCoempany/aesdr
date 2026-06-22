@@ -132,7 +132,10 @@ export async function logEvent<E extends EventType>(
       user_agent: opts.userAgent ?? null,
     });
   } catch (err) {
-    // Operational telemetry should never break the user's request.
-    console.warn("[events] insert failed", type, err);
+    // Operational telemetry should never break the user's request. Log only
+    // message/code — the event row carries `email`, and a full Supabase error
+    // object can echo it back in `details`/`hint` (R5-PI-5).
+    const e = err as { message?: string; code?: string };
+    console.warn("[events] insert failed", type, e?.message, e?.code);
   }
 }

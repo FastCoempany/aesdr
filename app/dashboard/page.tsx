@@ -361,6 +361,49 @@ export default async function Dashboard() {
           </aside>
         )}
 
+        {/* First-run orientation (R5-OB-5) — the empty dashboard otherwise
+            assumes progress. One quiet editorial note for brand-new buyers
+            (nothing completed yet): what a lesson is, and that it saves. */}
+        {completedCount === 0 && (
+          <aside
+            aria-label="How this works"
+            style={{
+              marginBottom: 24,
+              padding: "18px 22px",
+              background: "#fff",
+              border: "1px solid #E8E4DF",
+              borderLeft: "3px solid #8B1A1A",
+            }}
+          >
+            <p
+              style={{
+                fontFamily: "'Space Mono',monospace",
+                fontSize: 10,
+                letterSpacing: ".32em",
+                textTransform: "uppercase",
+                color: "#8B1A1A",
+                marginBottom: 6,
+              }}
+            >
+              First time here
+            </p>
+            <p
+              style={{
+                fontFamily: "'Source Serif 4', Georgia, serif",
+                fontSize: 15,
+                lineHeight: 1.6,
+                color: "#1A1A1A",
+                margin: 0,
+              }}
+            >
+              Each course is a 22&ndash;32 minute interactive lesson you work
+              through, not a video you watch. Your place saves automatically, so
+              you can hit <em>Save &amp; Exit</em> any time and pick up exactly
+              where you left off. Start with Course 1 below.
+            </p>
+          </aside>
+        )}
+
         {/* Resume CTA — where the user actually left off. Shows for everyone
             mid-course; replaced by a completion celebration + LinkedIn
             share when all 12 are done. */}

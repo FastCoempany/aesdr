@@ -17,6 +17,10 @@
       "schedule": "0 16 * * *"
     },
     {
+      "path": "/api/cron/retention",
+      "schedule": "0 17 * * *"
+    },
+    {
       "path": "/api/cron/affiliate",
       "schedule": "0 8 * * *"
     },

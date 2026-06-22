@@ -7,11 +7,22 @@ import { useState } from "react";
 
 import { createClient } from "@/utils/supabase/client";
 
+// Only honor relative same-app redirect targets so `?next=` can't open-redirect.
+function safeNext(raw: string | null): string | null {
+  if (!raw) return null;
+  if (!raw.startsWith("/") || raw.startsWith("//")) return null;
+  return raw;
+}
+
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const reason = searchParams.get("reason");
-  const [email, setEmail] = useState("");
+  // The welcome email (and the team-invite round-trip) pass the address as
+  // `?email=` — prefill it so the buyer doesn't retype what they just bought
+  // with. `next` carries any post-login destination (e.g. /team/accept).
+  const next = safeNext(searchParams.get("next"));
+  const [email, setEmail] = useState(searchParams.get("email") ?? "");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -44,10 +55,14 @@ function LoginForm() {
       return;
     }
 
+    // Temp-password buyers get routed straight to the single canonical
+    // set-a-permanent-password route (R5-OB-1: one password route, no
+    // /welcome marketing-splash detour and no skippable overlay). Everyone
+    // else goes to their requested `next` (invite round-trip) or the dashboard.
     if (data.user?.user_metadata?.needs_password_change) {
-      router.push("/welcome");
+      router.push("/account/set-password");
     } else {
-      router.push("/dashboard");
+      router.push(next ?? "/dashboard");
     }
     router.refresh();
   }

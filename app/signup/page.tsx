@@ -1,15 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import { clearRole, getRole } from "@/lib/role";
 import { createClient } from "@/utils/supabase/client";
 
-export default function SignupPage() {
+// Only honor relative, same-app redirect targets — never an absolute URL — so
+// `?next=` can't be turned into an open-redirect off the signup form.
+function safeNext(raw: string | null): string | null {
+  if (!raw) return null;
+  if (!raw.startsWith("/") || raw.startsWith("//")) return null;
+  return raw;
+}
+
+function SignupForm() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const searchParams = useSearchParams();
+  // Team invites (and any gated flow) round-trip through here: they pass the
+  // page to return to in `next` and prefill the invited address with `email`.
+  const next = safeNext(searchParams.get("next"));
+  const [email, setEmail] = useState(searchParams.get("email") ?? "");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -42,8 +55,11 @@ export default function SignupPage() {
     setSuccess(true);
     setLoading(false);
 
+    // Honor the round-trip target (e.g. /team/accept?token=…) so an invite
+    // isn't dropped; otherwise fall back to sign-in.
+    const destination = next ?? "/login";
     setTimeout(() => {
-      router.push("/login");
+      router.push(destination);
       router.refresh();
     }, 1500);
   }
@@ -104,7 +120,9 @@ export default function SignupPage() {
                 color: "var(--crimson)",
               }}
             >
-              Account created. Redirecting to your dashboard...
+              {next
+                ? "Account created. Taking you back to finish up..."
+                : "Account created. Taking you to sign in..."}
             </p>
           </div>
         ) : (
@@ -220,7 +238,14 @@ export default function SignupPage() {
               }}
             >
               Already have an account?{" "}
-              <Link href="/login" style={{ color: "var(--crimson)" }}>
+              <Link
+                href={
+                  next
+                    ? `/login?next=${encodeURIComponent(next)}${email ? `&email=${encodeURIComponent(email)}` : ""}`
+                    : "/login"
+                }
+                style={{ color: "var(--crimson)" }}
+              >
                 Sign in
               </Link>
             </p>
@@ -228,5 +253,14 @@ export default function SignupPage() {
         )}
       </div>
     </main>
+  );
+}
+
+export default function SignupPage() {
+  // useSearchParams (for next/email round-trip) requires a Suspense boundary.
+  return (
+    <Suspense>
+      <SignupForm />
+    </Suspense>
   );
 }

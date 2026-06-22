@@ -11,10 +11,19 @@ export default function PostHogClient() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const url =
-      window.location.origin +
-      pathname +
-      (searchParams?.toString() ? `?${searchParams.toString()}` : "");
+    // Strip identifying / attribution query params before the pageview leaves
+    // for PostHog: the prospect slug (?p=) and the UTM + attribution params
+    // are PII / tracking metadata that shouldn't be persisted on $current_url
+    // (R5-PI-7). Everything else (e.g. ?unit=) is kept for funnel context.
+    const params = new URLSearchParams(searchParams?.toString() ?? "");
+    for (const key of [...params.keys()]) {
+      const k = key.toLowerCase();
+      if (k === "p" || k.startsWith("utm_") || k === "ref" || k === "via") {
+        params.delete(key);
+      }
+    }
+    const qs = params.toString();
+    const url = window.location.origin + pathname + (qs ? `?${qs}` : "");
     capturePageview(url);
   }, [pathname, searchParams]);
 

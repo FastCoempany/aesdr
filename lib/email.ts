@@ -27,9 +27,35 @@ function esc(str: string): string {
 
 const FROM = 'AESDR <hello@aesdr.com>';
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://aesdr.com';
+
+// HTTPS one-click unsubscribe endpoint (RFC 8058). Pairing
+// `List-Unsubscribe-Post: List-Unsubscribe=One-Click` with a `mailto:` is
+// malformed and trips Gmail/Yahoo bulk-sender enforcement (P0-12), so the
+// header points at an HTTPS URL instead.
+//
+// AUDIT: P0-12 — the /unsubscribe route + the suppression table it writes to
+// (and the cron gate that reads it) are a sibling-owned follow-up; this lane
+// only emits the correct header. Until that route exists the link 404s, but a
+// 404 is still RFC-valid and strictly better than the spam-flagged mailto pair.
+// AUDIT: CAN-SPAM physical address still required before bulk-mailing — the
+// founder has no postal/PO-box address to expose yet, so footers route contact
+// to hello@ instead. A real mailing address MUST be added to both footers
+// before any non-transactional bulk send to stay CAN-SPAM/CASL compliant.
+const UNSUBSCRIBE_URL = `${SITE}/unsubscribe`;
 const UNSUBSCRIBE_HEADERS = {
-  'List-Unsubscribe': '<mailto:hello@aesdr.com?subject=UNSUBSCRIBE>',
+  'List-Unsubscribe': `<${UNSUBSCRIBE_URL}>`,
   'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+};
+
+// Bulk/lifecycle headers (R5-DV-5): everything List-Unsubscribe carries, plus
+// a stable List-Id and `Precedence: bulk` so mailbox providers file these as
+// the bulk lifecycle mail they are (and never auto-reply to them). Use for
+// marketing/lifecycle sends; keep transactional confirmations on the plain
+// UNSUBSCRIBE_HEADERS set.
+const BULK_HEADERS = {
+  ...UNSUBSCRIBE_HEADERS,
+  'List-Id': 'AESDR Lifecycle <lifecycle.aesdr.com>',
+  Precedence: 'bulk',
 };
 
 /**
@@ -1290,7 +1316,7 @@ export async function sendManagerArchetypeMap(to: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: UNSUBSCRIBE_HEADERS,
+      headers: BULK_HEADERS,
       subject: "Your Manager Archetype Map",
       html: managerArchetypeMapHtml(),
       text: htmlToText(managerArchetypeMapHtml()),
@@ -1397,7 +1423,7 @@ export async function sendLessonCompletedNudge(
     getResend().emails.send({
       from: FROM,
       to,
-      headers: UNSUBSCRIBE_HEADERS,
+      headers: BULK_HEADERS,
       subject: `Next: ${nextLessonTitle} (~${nextMinutes} min)`,
       html: lessonCompletedNudgeHtml(name, nextLessonId, nextLessonTitle, nextMinutes),
       text: htmlToText(lessonCompletedNudgeHtml(name, nextLessonId, nextLessonTitle, nextMinutes)),
@@ -1445,7 +1471,7 @@ export async function sendWeeklyFraming(
     getResend().emails.send({
       from: FROM,
       to,
-      headers: UNSUBSCRIBE_HEADERS,
+      headers: BULK_HEADERS,
       subject: "What this week of the course asks of you",
       html: weeklyFramingHtml(name, completed, total),
       text: htmlToText(weeklyFramingHtml(name, completed, total)),
@@ -1491,7 +1517,7 @@ export async function sendWinBack(to: string, name: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: UNSUBSCRIBE_HEADERS,
+      headers: BULK_HEADERS,
       subject: "Is this still useful — or should we close the loop?",
       html: winBackHtml(name),
       text: htmlToText(winBackHtml(name)),
@@ -1535,7 +1561,7 @@ export async function sendAlumniReengagement(to: string, name: string, monthMark
     getResend().emails.send({
       from: FROM,
       to,
-      headers: UNSUBSCRIBE_HEADERS,
+      headers: BULK_HEADERS,
       subject:
         monthMark === 6
           ? "Six months in — what stuck?"
@@ -1586,7 +1612,7 @@ export async function sendDay0PlusTwelveHours(to: string, name: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: UNSUBSCRIBE_HEADERS,
+      headers: BULK_HEADERS,
       subject: "Pick a 25-minute window. Put it on your calendar.",
       html: day0PlusTwelveHoursHtml(name),
       text: htmlToText(day0PlusTwelveHoursHtml(name)),
@@ -1626,7 +1652,7 @@ export async function sendDay0PlusThirtySixHours(to: string, name: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: UNSUBSCRIBE_HEADERS,
+      headers: BULK_HEADERS,
       subject: "Two days in. Did you start?",
       html: day0PlusThirtySixHoursHtml(name),
       text: htmlToText(day0PlusThirtySixHoursHtml(name)),
@@ -1661,7 +1687,7 @@ export async function sendDay3Email(to: string, name: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: UNSUBSCRIBE_HEADERS,
+      headers: BULK_HEADERS,
       subject: "How's Course 1 going?",
       html: day3Html(name),
       text: htmlToText(day3Html(name)),
@@ -1698,7 +1724,7 @@ export async function sendDay7Email(to: string, name: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: UNSUBSCRIBE_HEADERS,
+      headers: BULK_HEADERS,
       subject: "Course 3 builds the one-pager your SDR actually reads",
       html: day7Html(name),
       text: htmlToText(day7Html(name)),
@@ -2001,13 +2027,16 @@ function reviewNudgeHtml(name: string) {
 // ─── Shared footer ───
 
 function footer() {
+  // AUDIT: CAN-SPAM physical address still required before bulk-mailing — no
+  // postal address is on file yet, so contact routes to hello@ for now.
   return `
   <hr style="border:none;border-top:1px solid #eee;margin:24px 0 16px">
   <p style="font-size:11px;color:#999;line-height:1.5">
     AESDR · <a href="mailto:hello@aesdr.com" style="color:#999">hello@aesdr.com</a><br>
+    Questions? Message us at <a href="mailto:hello@aesdr.com" style="color:#999">hello@aesdr.com</a>.<br>
     <a href="${SITE}/contact" style="color:#999">Contact</a> · <a href="${SITE}/refund-policy" style="color:#999">Refund Policy</a><br>
     You're receiving this because you purchased or started a checkout at AESDR.<br>
-    To unsubscribe, reply with UNSUBSCRIBE.
+    <a href="${UNSUBSCRIBE_URL}" style="color:#999">Unsubscribe</a>, or reply with UNSUBSCRIBE.
   </p>`;
 }
 
@@ -2025,14 +2054,20 @@ function emailFooterInner() {
           AESDR &middot; <a href="mailto:hello@aesdr.com" style="color:#94A3B8;text-decoration:none;">hello@aesdr.com</a>
         </p>
         <p style="margin:0 0 10px;font-family:Georgia,'Times New Roman',serif;font-size:12px;line-height:1.6;color:#94A3B8;">
+          Questions? Message us at <a href="mailto:hello@aesdr.com" style="color:#94A3B8;text-decoration:underline;">hello@aesdr.com</a>.
+        </p>
+        <p style="margin:0 0 10px;font-family:Georgia,'Times New Roman',serif;font-size:12px;line-height:1.6;color:#94A3B8;">
           <a href="${SITE}/contact" style="color:#94A3B8;text-decoration:underline;">Contact</a>
           &nbsp;&middot;&nbsp;
           <a href="${SITE}/refund-policy" style="color:#94A3B8;text-decoration:underline;">Refund Policy</a>
         </p>
         <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:11px;line-height:1.6;color:#B0B5BD;font-style:italic;">
           You're receiving this because you purchased or started a checkout at AESDR.
-          To unsubscribe, reply with UNSUBSCRIBE.
+          <a href="${UNSUBSCRIBE_URL}" style="color:#B0B5BD;text-decoration:underline;">Unsubscribe</a>,
+          or reply with UNSUBSCRIBE.
         </p>
+        <!-- AUDIT: CAN-SPAM physical address still required before bulk-mailing -->
+        <!-- (no postal/PO-box address on file yet; contact routes to hello@). -->
       </td>
     </tr>
   </table>`;

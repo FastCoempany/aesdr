@@ -1,5 +1,6 @@
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { isAdminEmail } from "@/lib/admin";
+import { createAdminClient } from "@/utils/supabase/admin";
 
 /**
  * Verify a user has active paid access — either through their own purchase,
@@ -31,8 +32,18 @@ export async function verifyPaidAccess(
 
   if (directPurchase) return true;
 
-  // No direct purchase — check team membership with a joined query
-  const { data: teamMembership } = await supabase
+  // No direct purchase — check team membership. AUDIT (P0-10 / A1): the
+  // owner's team `purchases` row (and the `teams` row that points to it) is
+  // invisible to the member under their own anon JWT — `purchases` RLS only
+  // returns the caller's own auth.uid()/auth.email() rows. Resolving the team
+  // chain under the member's client therefore always came back null, so an
+  // accepted member was bounced to /login?reason=no_purchase. We resolve the
+  // membership → team → purchase chain with the service-role admin client so
+  // the seat actually grants access. Membership is still keyed on the
+  // *member's own* user_id, so this only ever sees teams they truly belong to.
+  const admin = createAdminClient();
+
+  const { data: teamMembership } = await admin
     .from("team_members")
     .select("teams!inner(purchase_id, id)")
     .eq("user_id", user.id)
@@ -48,7 +59,7 @@ export async function verifyPaidAccess(
   } | null;
   if (!team?.purchase_id) return false;
 
-  const { data: teamPurchase } = await supabase
+  const { data: teamPurchase } = await admin
     .from("purchases")
     .select("id")
     .eq("id", team.purchase_id)

@@ -35,11 +35,12 @@ export function ApplicationForm() {
     const fd = new FormData(e.currentTarget);
     const payload = {
       applicantName: String(fd.get("applicantName") || ""),
+      applicantEmail: String(fd.get("applicantEmail") || ""),
       audienceDescriptor: String(fd.get("audienceDescriptor") || ""),
       primaryChannel: String(fd.get("primaryChannel") || ""),
       audienceSize: String(fd.get("audienceSize") || ""),
       linkUrl: String(fd.get("linkUrl") || ""),
-      utmSource: "partners-page",
+      utmSource: "affiliates-page",
       utmMedium: "application-form",
     };
 
@@ -88,6 +89,13 @@ export function ApplicationForm() {
         <h2 style={formHeadStyle}>Tell us about your audience.</h2>
         <form onSubmit={onSubmit} noValidate>
           <Field label="Your name" name="applicantName" required />
+          <Field
+            label="Email"
+            name="applicantEmail"
+            required
+            type="email"
+            placeholder="you@example.com"
+          />
           <Field
             label="Who is your audience"
             name="audienceDescriptor"

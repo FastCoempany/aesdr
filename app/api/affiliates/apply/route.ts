@@ -11,12 +11,17 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { sendAffiliateApplicationNotification } from "@/lib/email";
-import crypto from "node:crypto";
+import { hashIp } from "@/lib/hash-ip";
 
 export const runtime = "nodejs";
 
+// Loose RFC-5322-ish check; Resend does the real validation. We only reject
+// obvious garbage so we capture a usable reply address for the decision email.
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
 type ApplyBody = {
   applicantName: string;
+  applicantEmail: string;
   audienceDescriptor: string;
   primaryChannel: "newsletter" | "podcast" | "community" | "course";
   audienceSize: string;
@@ -31,7 +36,7 @@ function validate(body: unknown): { ok: true; data: ApplyBody } | { ok: false; e
   if (!body || typeof body !== "object") return { ok: false, error: "Invalid body" };
   const b = body as Record<string, unknown>;
 
-  const required = ["applicantName", "audienceDescriptor", "primaryChannel", "audienceSize", "linkUrl"] as const;
+  const required = ["applicantName", "applicantEmail", "audienceDescriptor", "primaryChannel", "audienceSize", "linkUrl"] as const;
   for (const k of required) {
     if (typeof b[k] !== "string" || (b[k] as string).trim().length === 0) {
       return { ok: false, error: `Missing field: ${k}` };
@@ -41,6 +46,11 @@ function validate(body: unknown): { ok: true; data: ApplyBody } | { ok: false; e
   const channel = b.primaryChannel as string;
   if (!["newsletter", "podcast", "community", "course"].includes(channel)) {
     return { ok: false, error: "Invalid primaryChannel" };
+  }
+
+  const email = (b.applicantEmail as string).trim().toLowerCase();
+  if (email.length > 254 || !EMAIL_RE.test(email)) {
+    return { ok: false, error: "Invalid applicantEmail" };
   }
 
   // Length caps to prevent abuse
@@ -53,6 +63,7 @@ function validate(body: unknown): { ok: true; data: ApplyBody } | { ok: false; e
     ok: true,
     data: {
       applicantName: (b.applicantName as string).trim(),
+      applicantEmail: email,
       audienceDescriptor: (b.audienceDescriptor as string).trim(),
       primaryChannel: channel as ApplyBody["primaryChannel"],
       audienceSize: (b.audienceSize as string).trim(),
@@ -63,11 +74,6 @@ function validate(body: unknown): { ok: true; data: ApplyBody } | { ok: false; e
       utmContent: typeof b.utmContent === "string" ? (b.utmContent as string).slice(0, 100) : undefined,
     },
   };
-}
-
-function hashIp(ip: string | null): string | null {
-  if (!ip) return null;
-  return crypto.createHash("sha256").update(ip).digest("hex").slice(0, 16);
 }
 
 export async function POST(request: Request) {
@@ -93,6 +99,7 @@ export async function POST(request: Request) {
     .from("affiliate_applications")
     .insert({
       applicant_name: data.applicantName,
+      applicant_email: data.applicantEmail,
       audience_descriptor: data.audienceDescriptor,
       primary_channel: data.primaryChannel,
       audience_size: data.audienceSize,
@@ -106,7 +113,9 @@ export async function POST(request: Request) {
     });
 
   if (insertError) {
-    console.error("[partners/apply] Insert failed:", insertError);
+    // Log only message/code — the full Supabase error object can echo the
+    // submitted email back in `details`/`hint` (R5-PI-5).
+    console.error("[affiliates/apply] Insert failed:", insertError.message, insertError.code);
     return NextResponse.json(
       { error: "Application could not be saved. Please try again." },
       { status: 500 },

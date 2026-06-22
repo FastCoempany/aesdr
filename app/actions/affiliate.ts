@@ -26,20 +26,54 @@ import { createAdminClient } from "@/utils/supabase/admin";
 type Result = { ok: true; data?: Record<string, unknown> } | { ok: false; error: string };
 
 /**
- * Create a new affiliate link for the calling user. The user must have
- * `is_affiliate: true` and `affiliate_slug` pinned on user_metadata. Slug
- * is generated server-side; affiliate names the label only.
+ * Allowed channel / format values for copy submissions. Kept in lockstep with
+ * the SubmitCopyForm option lists (app/affiliates/dashboard/submissions/
+ * SubmitCopyForm.tsx). Server-validated (R3-AF-8) so a hand-crafted POST
+ * can't store an arbitrary string.
+ */
+const SUBMISSION_CHANNELS = new Set([
+  "newsletter",
+  "podcast",
+  "twitter",
+  "linkedin",
+  "youtube",
+  "tiktok",
+  "instagram",
+  "community",
+  "course",
+  "blog",
+  "other",
+]);
+const SUBMISSION_FORMATS = new Set([
+  "post",
+  "email",
+  "script",
+  "thread",
+  "video",
+  "audio",
+  "long_form",
+  "other",
+]);
+
+/**
+ * Create a new affiliate link for the calling user. The user must be linked
+ * to a real `affiliates` row (via affiliates.user_id). Slug is taken from
+ * that server-trusted row; affiliate names the label only.
  */
 export async function createAffiliateLink(formData: FormData): Promise<Result> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "Sign in to manage links." };
 
-  const isAffiliate = user.user_metadata?.is_affiliate === true;
-  const affiliateSlug = user.user_metadata?.affiliate_slug as string | undefined;
-  if (!isAffiliate || !affiliateSlug) {
+  // AUDIT (P0-9): authorize off the server-trusted affiliates row, NOT
+  // client-writable user_metadata.is_affiliate / affiliate_slug. A user
+  // could set those via supabase.auth.updateUser({ data }) and mint links
+  // under any slug. The slug now comes from the matched row.
+  const affiliate = await getAffiliateForUser({ userId: user.id });
+  if (!affiliate) {
     return { ok: false, error: "Your account isn't set up for the Affiliate Program. Email hello@aesdr.com." };
   }
+  const affiliateSlug = affiliate.slug;
 
   const destination =
     String(formData.get("destination") ?? "https://aesdr.com/").trim() ||
@@ -159,11 +193,8 @@ export async function submitAffiliateCopy(formData: FormData): Promise<Result> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "Sign in to submit copy." };
 
-  const affiliate = await getAffiliateForUser({
-    userId: user.id,
-    jwtAffiliateSlug: user.user_metadata?.affiliate_slug as string | undefined,
-    jwtPartnerSlug: user.user_metadata?.partner_slug as string | undefined,
-  });
+  // AUDIT (P0-9): resolve by server-trusted user_id only (no JWT slug claim).
+  const affiliate = await getAffiliateForUser({ userId: user.id });
   if (!affiliate) {
     return { ok: false, error: "Your affiliate account isn't active yet." };
   }
@@ -174,18 +205,43 @@ export async function submitAffiliateCopy(formData: FormData): Promise<Result> {
   const channel = String(formData.get("channel") ?? "").trim();
   const format = String(formData.get("format") ?? "").trim();
   const draftBody = String(formData.get("draft_body") ?? "").trim();
-  const draftUrl = String(formData.get("draft_url") ?? "").trim() || null;
+  const draftUrlRaw = String(formData.get("draft_url") ?? "").trim();
   const scheduledRaw = String(formData.get("scheduled_publish_at") ?? "").trim();
   const scheduledAt = scheduledRaw ? new Date(scheduledRaw).toISOString() : null;
 
   if (!channel || !format) {
     return { ok: false, error: "Channel and format are required." };
   }
+  // AUDIT (R3-AF-8): validate channel/format against the known enums so a
+  // hand-crafted POST can't store arbitrary strings the review UI then renders.
+  if (!SUBMISSION_CHANNELS.has(channel)) {
+    return { ok: false, error: "Unknown channel." };
+  }
+  if (!SUBMISSION_FORMATS.has(format)) {
+    return { ok: false, error: "Unknown format." };
+  }
   if (draftBody.length < 40) {
     return { ok: false, error: "Paste the full draft — at least a few sentences." };
   }
   if (draftBody.length > 20000) {
     return { ok: false, error: "Draft is too long (20k chars max)." };
+  }
+
+  // AUDIT (R3-AF-8): the draft URL is rendered as a clickable link in the
+  // founder's review queue. Reject anything that isn't a well-formed https URL
+  // (blocks javascript:/data:/http: scheme injection) before storing.
+  let draftUrl: string | null = null;
+  if (draftUrlRaw) {
+    let parsed: URL;
+    try {
+      parsed = new URL(draftUrlRaw);
+    } catch {
+      return { ok: false, error: "Draft URL must be a valid URL." };
+    }
+    if (parsed.protocol !== "https:") {
+      return { ok: false, error: "Draft URL must start with https://." };
+    }
+    draftUrl = parsed.toString();
   }
 
   const admin = createAdminClient();
@@ -418,8 +474,18 @@ export async function declineAffiliateCopy(formData: FormData): Promise<void> {
     reviewer_email: reviewerEmail,
   };
   const updatedLog = [...affiliate.strike_log, newStrike];
+  // AUDIT (P1-14): count only strikes recorded since the affiliate's last
+  // reactivation. A reactivated affiliate (activated_at bumped) gets a fresh
+  // 3-strike window — previously the lifetime same-category count meant the
+  // very next same-category decline re-paused them. activated_at is null for
+  // affiliates that never activated, in which case the full log counts.
+  const windowStartMs = affiliate.activated_at
+    ? new Date(affiliate.activated_at).getTime()
+    : 0;
   const sameCategoryCount = updatedLog.filter(
-    (s) => s.category === declineCategory
+    (s) =>
+      s.category === declineCategory &&
+      new Date(s.recorded_at).getTime() >= windowStartMs
   ).length;
   const shouldPause =
     sameCategoryCount >= STRIKE_THRESHOLD && affiliate.status === "active";
@@ -514,21 +580,73 @@ export async function runAffiliatePayoutBatch(formData: FormData): Promise<void>
   }
 
   const admin = createAdminClient();
-  const { data: cleared, error: clearedErr } = await admin
+
+  // AUDIT (P0-1 / P2-9): atomically CLAIM the cleared attributions before we
+  // compute or transfer anything. The UPDATE ... WHERE status='cleared'
+  // RETURNING id transitions rows to 'processing' and returns only the rows
+  // THIS invocation actually flipped — so two concurrent batch runs (the two
+  // payout buttons, a Server-Action retry, or a batch racing markPayoutPaid)
+  // can never both grab the same row: the loser's UPDATE matches zero of them.
+  // We operate strictly on the ids we claimed, never on a stale pre-read set.
+  //
+  // SCHEMA DEPENDENCY (UNSAFE TO AUTO-APPLY): the affiliate_attributions
+  // status CHECK in 20260519_affiliate_backend.sql is currently
+  // ('pending','cleared','paid','refunded') and must be widened to include
+  // 'processing' (a coordinating migration, owned by the migrations/ledger
+  // surface — not in this agent's file set). Until that migration lands these
+  // claim writes will violate the CHECK and the payout will abort safely
+  // (no money moves), which is the correct fail-direction.
+  const { data: claimed, error: claimErr } = await admin
     .from("affiliate_attributions")
-    .select("id, commission_amount_cents, attributed_at")
+    .update({ status: "processing" })
     .eq("affiliate_slug", affiliate.slug)
     .eq("status", "cleared")
-    .order("attributed_at", { ascending: true });
-  if (clearedErr) throw new Error(clearedErr.message);
-  if (!cleared || cleared.length === 0) {
+    .select("id, commission_amount_cents, attributed_at");
+  if (claimErr) throw new Error(claimErr.message);
+  if (!claimed || claimed.length === 0) {
     throw new Error("No cleared attributions to pay out.");
   }
 
-  const total = cleared.reduce((s, a) => s + (a.commission_amount_cents ?? 0), 0);
-  if (total <= 0) throw new Error("Total payout is zero.");
-  const ids = cleared.map((a) => a.id);
-  const dates = cleared.map((a) => new Date(a.attributed_at).getTime());
+  const ids = claimed.map((a) => a.id);
+
+  // Helper: release the claim (back to 'cleared') so a later run retries.
+  const releaseClaim = async () => {
+    await admin
+      .from("affiliate_attributions")
+      .update({ status: "cleared" })
+      .in("id", ids)
+      .eq("status", "processing");
+  };
+
+  // AUDIT (P0-1 / P2-9): refuse if any of these attributions are already
+  // attached to a payout that isn't 'failed' — defends against a torn prior
+  // run (markPayoutPaid / an interrupted batch) having already taken them.
+  const { data: priorPayouts, error: priorErr } = await admin
+    .from("affiliate_payouts")
+    .select("id, status, attribution_ids")
+    .eq("affiliate_slug", affiliate.slug)
+    .neq("status", "failed");
+  if (priorErr) {
+    await releaseClaim();
+    throw new Error(priorErr.message);
+  }
+  const claimedSet = new Set(ids);
+  const alreadyCovered = (priorPayouts ?? []).some((p) =>
+    (p.attribution_ids ?? []).some((aid: string) => claimedSet.has(aid))
+  );
+  if (alreadyCovered) {
+    await releaseClaim();
+    throw new Error(
+      "Some of these attributions are already on an existing payout. Aborting to avoid a double payout."
+    );
+  }
+
+  const total = claimed.reduce((s, a) => s + (a.commission_amount_cents ?? 0), 0);
+  if (total <= 0) {
+    await releaseClaim();
+    throw new Error("Total payout is zero.");
+  }
+  const dates = claimed.map((a) => new Date(a.attributed_at).getTime());
   const periodStart = new Date(Math.min(...dates)).toISOString().slice(0, 10);
   const periodEnd = new Date(Math.max(...dates)).toISOString().slice(0, 10);
 
@@ -545,7 +663,10 @@ export async function runAffiliatePayoutBatch(formData: FormData): Promise<void>
     })
     .select("id")
     .single();
-  if (insErr || !payout) throw new Error(insErr?.message ?? "Could not insert payout.");
+  if (insErr || !payout) {
+    await releaseClaim();
+    throw new Error(insErr?.message ?? "Could not insert payout.");
+  }
 
   // Lazy-import Stripe to keep the action import surface small.
   const { transferToAffiliate } = await import("@/lib/stripe-connect");
@@ -568,6 +689,12 @@ export async function runAffiliatePayoutBatch(formData: FormData): Promise<void>
         note: err instanceof Error ? err.message : "Stripe transfer failed.",
       })
       .eq("id", payout.id);
+    // AUDIT (P0-1): release the claimed attributions back to 'cleared' so the
+    // next run can re-attempt them. The transfer is idempotency-keyed on
+    // payout.id (lib/stripe-connect.ts), so a retry that re-creates the
+    // payout row cannot double-send for THIS payout; releasing only restores
+    // the rows to a payable state.
+    await releaseClaim();
     throw err;
   }
 
@@ -581,6 +708,7 @@ export async function runAffiliatePayoutBatch(formData: FormData): Promise<void>
       payment_reference: transferId,
     })
     .eq("id", payout.id);
+  // Transition the claimed rows processing → paid.
   await admin
     .from("affiliate_attributions")
     .update({ status: "paid", paid_at: nowIso })

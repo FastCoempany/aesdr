@@ -18,11 +18,22 @@ import type {
 
 let stripeClient: Stripe | null = null;
 
-function getStripe(): Stripe {
+// AUDIT (IC-2/#54): pin an explicit apiVersion so a Stripe-side default bump
+// can't silently change request/response shapes. This is the version
+// stripe@22 ships against; confirm it matches the Dashboard's API version.
+// AUDIT: confirm matches Dashboard.
+export const STRIPE_API_VERSION = "2026-03-25.dahlia" as const;
+
+/**
+ * Shared Stripe client (cached singleton). Exported so the checkout +
+ * webhook routes use the same pinned apiVersion instead of each
+ * constructing their own `new Stripe(...)`. (IC-2/#54 centralization.)
+ */
+export function getStripe(): Stripe {
   if (stripeClient) return stripeClient;
   const key = process.env.STRIPE_SECRET_KEY;
   if (!key) throw new Error("STRIPE_SECRET_KEY environment variable is not set");
-  stripeClient = new Stripe(key);
+  stripeClient = new Stripe(key, { apiVersion: STRIPE_API_VERSION });
   return stripeClient;
 }
 
@@ -81,7 +92,16 @@ export async function createOnboardingLink(args: {
 export function mapAccountStatus(
   account: Stripe.Account
 ): StripeAccountStatus {
-  if (account.charges_enabled && account.payouts_enabled && account.details_submitted) {
+  // AUDIT (P0-1/R4-AF-7): a Standard account can have charges/payouts enabled
+  // yet lack the `transfers` capability — it then passes this gate and 400s on
+  // transfers.create. Require transfers === 'active' before calling it enabled.
+  const transfersActive = account.capabilities?.transfers === "active";
+  if (
+    account.charges_enabled &&
+    account.payouts_enabled &&
+    account.details_submitted &&
+    transfersActive
+  ) {
     return "enabled";
   }
   if (account.requirements?.disabled_reason) return "disabled";
@@ -116,18 +136,29 @@ export async function transferToAffiliate(args: {
   amountCents: number;
   payoutId: string;
   affiliateSlug: string;
+  /** AUDIT (R4-MON-6): currency must flow through, not be hardcoded usd. */
+  currency?: string;
 }): Promise<Stripe.Transfer> {
   const stripe = getStripe();
   if (args.amountCents <= 0) {
     throw new Error("Transfer amount must be positive.");
   }
-  return stripe.transfers.create({
-    amount: args.amountCents,
-    currency: "usd",
-    destination: args.accountId,
-    metadata: {
-      payout_id: args.payoutId,
-      affiliate_slug: args.affiliateSlug,
+  return stripe.transfers.create(
+    {
+      amount: args.amountCents,
+      // AUDIT (R4-MON-6): default to usd but accept a passed-through currency
+      // so a non-USD payout isn't silently sent as dollars.
+      currency: (args.currency || "usd").toLowerCase(),
+      destination: args.accountId,
+      metadata: {
+        payout_id: args.payoutId,
+        affiliate_slug: args.affiliateSlug,
+      },
     },
-  });
+    {
+      // AUDIT (P0-1): idempotency-key the transfer so a re-clicked payout,
+      // a Server-Action retry, or two concurrent runs can't double-pay.
+      idempotencyKey: `payout:${args.payoutId}`,
+    }
+  );
 }

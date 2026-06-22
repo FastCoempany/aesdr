@@ -1,17 +1,13 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse, type NextRequest } from 'next/server';
-import Stripe from 'stripe';
 import { z } from 'zod';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { ATTRIBUTION_COOKIE, parseAttributionCookie } from '@/lib/affiliate';
 import { rateLimit, getClientIP } from '@/lib/rate-limit';
-
-function getStripe() {
-  const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) throw new Error("STRIPE_SECRET_KEY environment variable is not set");
-  return new Stripe(key);
-}
+// AUDIT (IC-2/#54): use the centralized, apiVersion-pinned Stripe client
+// instead of constructing a bare `new Stripe(key)` here.
+import { getStripe } from '@/lib/stripe-connect';
 
 const checkoutSchema = z.object({
   tier: z.enum(['sdr', 'ae', 'team', 'artifact_unlock']),
@@ -82,6 +78,12 @@ export async function POST(request: NextRequest) {
       success_url: successUrl,
       cancel_url: cancelUrl,
       customer_email: email || undefined,
+      // AUDIT (IC-3/#55): always create a Stripe Customer so repeat buyers
+      // join on a stable Customer id.
+      customer_creation: 'always',
+      // AUDIT (IC-1/#53): allow promo codes on the two individual course
+      // tiers only (sdr/ae). Not on team or artifact_unlock.
+      ...((tier === 'sdr' || tier === 'ae') ? { allow_promotion_codes: true } : {}),
       metadata: {
         tier,
         ...(artifact_type ? { artifact_type } : {}),
