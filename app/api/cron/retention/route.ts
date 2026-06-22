@@ -11,6 +11,7 @@ import {
 } from "@/lib/email";
 import { TIMING, TOTAL_LESSONS } from "@/lib/config";
 import { verifyCronAuth } from "@/lib/cron-auth";
+import { isPausedUser } from "@/app/actions/pause";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { LESSONS } from "@/utils/progress/types";
 
@@ -63,17 +64,18 @@ export async function GET(request: Request) {
 
   /**
    * Check whether a user_id is currently paused (paused_until > now).
-   * Pulls from auth.users metadata via the admin client. Cached per-run
-   * to avoid hammering auth.users in the inner loop.
+   * Delegates to the shared isPausedUser helper (P1-6, app/actions/pause.ts)
+   * so every cron uses one definition of "paused"; memoized per-run here so
+   * the inner loops don't re-hit auth.users for the same user_id.
    */
-  const pausedCache = new Map<string, boolean>();
-  async function isPaused(userId: string): Promise<boolean> {
-    if (pausedCache.has(userId)) return pausedCache.get(userId)!;
-    const { data } = await supabase.auth.admin.getUserById(userId);
-    const until = data?.user?.user_metadata?.paused_until as string | undefined;
-    const paused = !!until && new Date(until).getTime() > now.getTime();
-    pausedCache.set(userId, paused);
-    return paused;
+  const nowMs = now.getTime();
+  const pausedCache = new Map<string, Promise<boolean>>();
+  function isPaused(userId: string): Promise<boolean> {
+    const hit = pausedCache.get(userId);
+    if (hit) return hit;
+    const p = isPausedUser(userId, nowMs);
+    pausedCache.set(userId, p);
+    return p;
   }
 
   // ── 1. Lesson-completion nudges ──────────────────────────────────────

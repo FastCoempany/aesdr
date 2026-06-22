@@ -323,10 +323,12 @@ export async function runDossier(
     handle: string | null;
     existingWhyFit: string | null;
   },
-  model: string = DEFAULT_DOSSIER_MODEL,
+  model?: string,
 ): Promise<DossierBrief | null> {
+  // Resolve via agent-switch instead of a hardcoded default (R5-IC-9).
+  const resolvedModel = model ?? (await getAgentModel("dossier-enrich"));
   const text = await runResearchAgent({
-    model,
+    model: resolvedModel,
     system: DOSSIER_SYSTEM,
     prompt: `Candidate: ${args.name}\nSurface: ${args.surface ?? "(unknown)"}\nHandle: ${args.handle ?? "(unknown)"}\nWhat we know: ${args.existingWhyFit ?? "(nothing yet)"}\n\nResearch them with your tools, then ${DOSSIER_SCHEMA_HINT}`,
     tools: SEARCH_AND_FETCH,

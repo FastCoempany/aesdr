@@ -559,6 +559,17 @@ export async function batchFindAndSave(
     return { submitted: 0, found: 0, applied: 0, no_domain: noDomainIds.length };
   }
 
+  // Mark every submitted candidate checked BEFORE we wait on the waterfall
+  // (R4-AG-9). Submitting is what BetterContact bills for, so if the wait then
+  // times out, the next cron tick must not re-submit and re-charge these. The
+  // per-result updates below overwrite this with the real found_email/status.
+  const submittedIds = [...byName.values()].map((v) => v.id);
+  try {
+    await supabase.from("partner_pipeline").update({ email_checked_at: now() }).in("id", submittedIds);
+  } catch {
+    /* pre-migration: column missing → no guard, proceed */
+  }
+
   const data = await bcEnqueueAndWait(contacts, BATCH_BUDGET_MS);
   let found = 0;
   let applied = 0;
