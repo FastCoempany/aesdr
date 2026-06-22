@@ -60,7 +60,11 @@ function LoginForm() {
     // /welcome marketing-splash detour and no skippable overlay). Everyone
     // else goes to their requested `next` (invite round-trip) or the dashboard.
     if (data.user?.user_metadata?.needs_password_change) {
-      router.push("/account/set-password");
+      // Carry any post-login destination through the one mandatory step so an
+      // invite (or other gated flow) still round-trips after they set a password.
+      router.push(
+        next ? `/account/set-password?next=${encodeURIComponent(next)}` : "/account/set-password",
+      );
     } else {
       router.push(next ?? "/dashboard");
     }
