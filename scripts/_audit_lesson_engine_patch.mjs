@@ -108,7 +108,7 @@ for (const file of files) {
   //    (lesson-01 unit 1) has no quiz vars → render-only hydrator. ──
   const hasQuiz = src.includes("var _qExtra=AESDR.getExtra('quiz')");
   const T8_ANCHOR = "init();\n</script>";
-  if (src.includes(T8_ANCHOR) && !src.includes("window.__aesdrHydrate =")) {
+  if (src.includes(T8_ANCHOR) && !src.includes("window.__aesdrHydrate = function")) {
     const hydrator = hasQuiz
       ? "/* R4-LH-1: re-hydrate quiz + exercise UI from restored state. */\n" +
         "window.__aesdrHydrate = function(){\n" +
@@ -131,6 +131,18 @@ for (const file of files) {
     src = src.replace(T8_ANCHOR, hydrator + T8_ANCHOR);
     applied.push("define-hydrator");
   }
+
+  // ── T9 (P1-15 / R4-LH-2): emit quizScore {correct,total} alongside the
+  //    quiz blob so the artifact extractor (which reads `quizScore`) gets a
+  //    real per-unit quiz accuracy instead of 0. Computed from the QUIZ answer
+  //    key + qAns. 35 quiz-bearing files (the lesson-01 unit-1 outlier has no
+  //    quiz). ──
+  const T9_FROM =
+    "function _saveQuizState(){AESDR.setExtra('quiz',{ans:qAns,submitted:qSubmitted,passed:qPassed});}";
+  const T9_TO =
+    "function _saveQuizState(){AESDR.setExtra('quiz',{ans:qAns,submitted:qSubmitted,passed:qPassed});" +
+    "try{var _qc=0,_qt=(typeof QUIZ!=='undefined'&&QUIZ.length)||0;if(_qt){for(var _i=0;_i<QUIZ.length;_i++){if(qAns[_i]===QUIZ[_i].ans)_qc++;}AESDR.setExtra('quizScore',{correct:_qc,total:_qt});}}catch(e){}}";
+  if (src.includes(T9_FROM)) { src = src.replace(T9_FROM, T9_TO); applied.push("emit-quizScore"); }
 
   if (src !== original) {
     writeFileSync(file, src, "utf-8");

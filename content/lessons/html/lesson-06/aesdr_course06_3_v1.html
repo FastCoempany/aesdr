@@ -1463,7 +1463,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
       <ul class="kp">
         <li><span class="kp-n">01</span><strong>Know Just Enough to Keep it Real:</strong> Learn 3-5 key pain points your prospects have, common objections to the first meeting, and 2-3 product capabilities that address those problems. That's all you need to earn the conversation.</li>
         <li><span class="kp-n">02</span><strong>Handle Unknowns With Confidence:</strong> Prospects don't expect you to know everything, but they do expect confidence. Use the "I Don't Know" Framework — acknowledge it, tell them your AE will cover it, and keep the conversation moving.</li>
-        <li><span class="kp-n">03</span><strong>Be a People Expert, Not a Product Expert:</strong> Focus on the prospect's people-problems. Ask smart questions that uncover what's slowing their team down. Connect with genuine empathy to whatever they tell you. You're booking a meeting for the AE — not delivering a product lecture. Leave the platform deep-dive for the demo call.</li>
+        <li><span class="kp-n">03</span><strong>Be a People Expert, Not a Product Expert:</strong> Focus on the prospect's people-problems. Ask smart questions that uncover what's slowing their team down. Connect with genuine empathy to whatever they tell you. You're booking a meeting for the AE — not delivering a product lecture. Leave the detailed platform walkthrough for the demo call.</li>
         <li><span class="kp-n">04</span><strong>The Power of Selective Knowledge:</strong> Learn 3 key trends about the industry your prospects live in. Dropping one relevant insight in a cold call opener is worth more than memorizing 50 features.</li>
       </ul>
       <div class="lie">
@@ -1759,7 +1759,7 @@ let blameState={}, blameCount=0;
 let seqSel=null, seqDone={};
 let clsSel=null, clsDone={}, clsCount=0;
 let qAns={}, qSubmitted=false, qPassed=false;
-function _saveQuizState(){AESDR.setExtra('quiz',{ans:qAns,submitted:qSubmitted,passed:qPassed});}
+function _saveQuizState(){AESDR.setExtra('quiz',{ans:qAns,submitted:qSubmitted,passed:qPassed});try{var _qc=0,_qt=(typeof QUIZ!=='undefined'&&QUIZ.length)||0;if(_qt){for(var _i=0;_i<QUIZ.length;_i++){if(qAns[_i]===QUIZ[_i].ans)_qc++;}AESDR.setExtra('quizScore',{correct:_qc,total:_qt});}}catch(e){}}
 function _saveExerciseScores(){
   var scores = {};
   if(typeof siloCount!=='undefined'&&typeof SILO_CARDS!=='undefined') scores.silo={correct:siloCount,total:SILO_CARDS.length};
@@ -2326,6 +2326,22 @@ document.addEventListener('click',function(e){
   }
 });
 
+/* R4-LH-1: re-hydrate quiz + exercise UI from restored state. */
+window.__aesdrHydrate = function(){
+  try {
+    var _q = (window.AESDR && AESDR.getExtra) ? (AESDR.getExtra('quiz') || {}) : {};
+    if (_q.ans) qAns = _q.ans;
+    if (_q.submitted) qSubmitted = _q.submitted;
+    if (_q.passed) qPassed = _q.passed;
+    if (Object.keys(qAns).length > 0) {
+      var _ws = qSubmitted; qSubmitted = false;
+      for (var _qi in qAns) { try { var _el = document.getElementById('qo'+_qi+'_'+qAns[_qi]); if (_el) _el.classList.add('chosen'); } catch(e) {} }
+      if (_ws) { try { submitQuiz(); } catch(e) {} }
+    }
+    try { _restoreExerciseState(); } catch(e) {}
+  } catch(e) {}
+  try { render(); } catch(e) {}
+};
 init();
 </script>
 </body>

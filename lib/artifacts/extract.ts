@@ -12,8 +12,19 @@ interface GateEntry {
   completedAt?: string;
 }
 
-/** Shape of the _extra field within each unit's state_data */
+/** Shape of the _extra field within each unit's state_data.
+ *
+ * AUDIT (P1-15 / R4-LH-2): the lessons write `exercises` (a map of
+ * per-exercise {correct,total}) and — after the matching lesson-side patch —
+ * `quizScore {correct,total}`. The extractor previously read
+ * `exerciseScores` / `quizScore`, of which only the latter key matched, and
+ * even then the lessons emitted `quiz {ans,submitted,passed}` (no correct/
+ * total), so every category resolved to 0%. We now read the keys the lessons
+ * actually write. `exerciseScores` is kept as a fallback for any legacy rows.
+ */
 interface ExtraData {
+  exercises?: Record<string, { correct: number; total: number }>;
+  /** Legacy alias — older rows may carry this key. */
   exerciseScores?: Record<string, { correct: number; total: number }>;
   quizScore?: { correct: number; total: number };
 }
@@ -116,8 +127,10 @@ function extractGatesFromUnit(
  * Aggregate exercise and quiz accuracy by category.
  *
  * The _extra field in each unit's state_data contains:
- *   _extra.exerciseScores: { "silo": { correct: 4, total: 6 }, "blame": { correct: 3, total: 4 }, ... }
- *   _extra.quizScore: { correct: 3, total: 4 }
+ *   _extra.exercises:  { "silo": { correct: 4, total: 6 }, "blame": { correct: 3, total: 4 }, ... }
+ *   _extra.quizScore:  { correct: 3, total: 4 }
+ *
+ * (Older rows may instead carry `exerciseScores`; we read either.)
  *
  * We sum correct/total across all units within each category.
  */
@@ -153,15 +166,17 @@ export function extractCategoryScores(rows: ProgressRow[]): CategoryScore[] {
 
       const bucket = buckets[mapping.category];
 
-      // Sum exercise scores
-      if (extra.exerciseScores) {
-        for (const score of Object.values(extra.exerciseScores)) {
+      // Sum exercise scores. Prefer the live `exercises` key the lessons
+      // write; fall back to the legacy `exerciseScores` key.
+      const exerciseMap = extra.exercises ?? extra.exerciseScores;
+      if (exerciseMap) {
+        for (const score of Object.values(exerciseMap)) {
           bucket.correct += score.correct ?? 0;
           bucket.total += score.total ?? 0;
         }
       }
 
-      // Sum quiz scores
+      // Sum quiz scores (lessons emit quizScore {correct,total}).
       if (extra.quizScore) {
         bucket.correct += extra.quizScore.correct ?? 0;
         bucket.total += extra.quizScore.total ?? 0;

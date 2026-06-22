@@ -129,19 +129,25 @@ export async function GET(request: Request) {
     });
 
     if (claimErr) {
-      // Unique-violation (or any insert error) → treat as already-claimed and
-      // reconcile the queue row to sent rather than risk a second send.
-      const { data: prior } = await supabase
-        .from("partner_sent_log")
-        .select("resend_id")
-        .eq("idempotency_key", row.idempotency_key)
-        .maybeSingle();
-      await supabase
-        .from("partner_outbound_queue")
-        .update({ status: "sent", sent_at: nowIso, resend_id: prior?.resend_id ?? null })
-        .eq("id", row.id)
-        .eq("status", "approved");
-      reconciled++;
+      // Only a UNIQUE violation (23505) means the slot is already claimed/sent
+      // — reconcile the queue row to 'sent' without re-sending. Any OTHER
+      // insert error is transient: leave the row 'approved' so the next tick
+      // retries, and do NOT mark it sent (which would drop the mail silently).
+      if (claimErr.code === "23505") {
+        const { data: prior } = await supabase
+          .from("partner_sent_log")
+          .select("resend_id")
+          .eq("idempotency_key", row.idempotency_key)
+          .maybeSingle();
+        await supabase
+          .from("partner_outbound_queue")
+          .update({ status: "sent", sent_at: nowIso, resend_id: prior?.resend_id ?? null })
+          .eq("id", row.id)
+          .eq("status", "approved");
+        reconciled++;
+      } else {
+        failed++;
+      }
       continue;
     }
 
