@@ -106,25 +106,46 @@ export async function GET(request: Request) {
   let failed = 0;
 
   for (const row of sendable) {
-    // Reconcile: if this idempotency_key already has a sent-log line, the mail
-    // already went out — flip the queue row to sent without re-sending.
-    const { data: prior } = await supabase
-      .from("partner_sent_log")
-      .select("id, resend_id")
-      .eq("idempotency_key", row.idempotency_key)
-      .maybeSingle();
+    // R3-AG-1 (claim-before-send): CLAIM the slot by inserting the
+    // partner_sent_log row BEFORE the Resend call. The unique index on
+    // idempotency_key makes this the atomic at-most-once guard — it closes the
+    // crash window where the old order (send → then log) could re-send if the
+    // process died between a successful send and writing the log.
+    //
+    //   - Claim insert succeeds  → we own this send; transmit, then fill in the
+    //     resend_id and flip the queue row to 'sent'.
+    //   - Claim insert conflicts → someone already claimed/sent this key; the
+    //     mail is out (or in flight). Reconcile the queue row, never re-send.
+    //   - Send fails after a fresh claim → DELETE the claim so a re-approval
+    //     can genuinely retry, and mark the queue row 'failed'.
+    const { error: claimErr } = await supabase.from("partner_sent_log").insert({
+      queue_id: row.id,
+      to_addr: row.to_addr,
+      subject: row.subject,
+      tier: row.tier,
+      idempotency_key: row.idempotency_key,
+      resend_id: null,
+      sent_at: nowIso,
+    });
 
-    if (prior) {
+    if (claimErr) {
+      // Unique-violation (or any insert error) → treat as already-claimed and
+      // reconcile the queue row to sent rather than risk a second send.
+      const { data: prior } = await supabase
+        .from("partner_sent_log")
+        .select("resend_id")
+        .eq("idempotency_key", row.idempotency_key)
+        .maybeSingle();
       await supabase
         .from("partner_outbound_queue")
-        .update({ status: "sent", sent_at: nowIso, resend_id: prior.resend_id })
+        .update({ status: "sent", sent_at: nowIso, resend_id: prior?.resend_id ?? null })
         .eq("id", row.id)
         .eq("status", "approved");
       reconciled++;
       continue;
     }
 
-    // Send.
+    // Send (we hold the claim now).
     let resendId: string | null = null;
     try {
       const result = await getResend().emails.send({
@@ -140,6 +161,11 @@ export async function GET(request: Request) {
       resendId = result.data?.id ?? null;
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
+      // Release the claim so a re-approval can retry this row.
+      await supabase
+        .from("partner_sent_log")
+        .delete()
+        .eq("idempotency_key", row.idempotency_key);
       await supabase
         .from("partner_outbound_queue")
         .update({ status: "failed", error: msg.slice(0, 500) })
@@ -157,17 +183,13 @@ export async function GET(request: Request) {
       continue;
     }
 
-    // Append the immutable audit line, then mark the queue row sent. The
-    // unique idempotency_key index is the hard double-send backstop.
-    await supabase.from("partner_sent_log").insert({
-      queue_id: row.id,
-      to_addr: row.to_addr,
-      subject: row.subject,
-      tier: row.tier,
-      idempotency_key: row.idempotency_key,
-      resend_id: resendId,
-      sent_at: nowIso,
-    });
+    // Sent: reconcile the claim row with the resend_id, then mark the queue
+    // row sent. (A crash between here and the queue update leaves the claim in
+    // place, so the next tick reconciles to 'sent' without re-sending.)
+    await supabase
+      .from("partner_sent_log")
+      .update({ resend_id: resendId })
+      .eq("idempotency_key", row.idempotency_key);
     await supabase
       .from("partner_outbound_queue")
       .update({ status: "sent", sent_at: nowIso, resend_id: resendId })

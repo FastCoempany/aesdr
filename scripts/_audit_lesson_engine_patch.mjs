@@ -82,58 +82,52 @@ for (const file of files) {
     "  try{localStorage.setItem('aesdr_screen_'+(document.documentElement.getAttribute('data-role')||'sdr')+'_'+location.pathname.replace(/[^a-z0-9]/gi,'_'),n)}catch(e){}";
   if (src.includes(T4B_FROM)) { src = src.replace(T4B_FROM, T4B_TO); applied.push("screen-key-role-write"); }
 
-  // ── T7 (R4-LH-1 + R4-LH-7): in init(), (a) read ?screen as a fallback when
-  //    localStorage has none, (b) fire aesdr:complete if resuming directly
-  //    onto the completion screen, and (c) expose a window-scoped hydrator the
-  //    restore listener (T6) re-invokes so cross-device restore re-applies
-  //    quiz/exercise/screen state, not just gate text. ──
-  const T7_FROM =
-    "  try { _savedScreen = parseInt(localStorage.getItem('aesdr_screen_' + (document.documentElement.getAttribute('data-role')||'sdr') + '_' + location.pathname.replace(/[^a-z0-9]/gi, '_'))) || 0; } catch(e) {}\n" +
-    "\n" +
-    "\n" +
-    "  if (_savedScreen > 0 && _savedScreen < TOTAL) { cur = _savedScreen; document.getElementById('s0').classList.remove('active'); document.getElementById('s'+cur).classList.add('active'); }\n" +
-    "  if(_savedScreen>maxReached)maxReached=_savedScreen;";
-  const T7_TO =
-    "  try { _savedScreen = parseInt(localStorage.getItem('aesdr_screen_' + (document.documentElement.getAttribute('data-role')||'sdr') + '_' + location.pathname.replace(/[^a-z0-9]/gi, '_'))) || 0; } catch(e) {}\n" +
-    "  // R4-LH-1: fall back to the ?screen the host sends (cross-device restore\n" +
-    "  // lands the learner where they left off instead of on screen 0).\n" +
-    "  if (_savedScreen <= 0) { try { var _qsScreen = parseInt(new URLSearchParams(location.search).get('screen')); if (_qsScreen > 0) _savedScreen = _qsScreen; } catch(e) {} }\n" +
-    "\n" +
-    "  if (_savedScreen > 0 && _savedScreen < TOTAL) { cur = _savedScreen; document.getElementById('s0').classList.remove('active'); document.getElementById('s'+cur).classList.add('active'); }\n" +
-    "  if (_savedScreen >= TOTAL - 1) { cur = TOTAL - 1; document.getElementById('s0').classList.remove('active'); var _sc = document.getElementById('s'+cur); if (_sc) _sc.classList.add('active'); }\n" +
-    "  if(_savedScreen>maxReached)maxReached=_savedScreen;\n" +
-    "  // R4-LH-7: if we resumed directly onto the completion screen, the\n" +
-    "  // host never saw aesdr:complete fire from go() — re-fire it now.\n" +
-    "  if (cur === TOTAL - 1 && window.parent !== window) { try { window.parent.postMessage({type:'aesdr:complete'},'*'); } catch(e) {} }";
-  if (src.includes(T7_FROM)) { src = src.replace(T7_FROM, T7_TO); applied.push("init-screen-fallback+complete"); }
+  // ── T7 (R4-LH-1 + R4-LH-7): after the screen-restore block, (a) read the
+  //    ?screen the host sends as a fallback when localStorage had none, and
+  //    (b) re-fire aesdr:complete if we landed directly on the completion
+  //    screen. Anchored on the universal `maxReached=_savedScreen;` line so it
+  //    is whitespace-variant proof. ──
+  const T7_ANCHOR = "  if(_savedScreen>maxReached)maxReached=_savedScreen;";
+  if (src.includes(T7_ANCHOR) && !src.includes("R4-LH-1: ?screen fallback")) {
+    const T7_INSERT =
+      "\n" +
+      "  // R4-LH-1: ?screen fallback (host-driven cross-device resume) +\n" +
+      "  // R4-LH-7: re-fire aesdr:complete when resuming onto the final screen.\n" +
+      "  (function(){\n" +
+      "    if (cur <= 0) { try { var _qs = parseInt(new URLSearchParams(location.search).get('screen')); if (_qs > 0 && _qs < TOTAL) { var _c0 = document.getElementById('s'+cur); if (_c0) _c0.classList.remove('active'); cur = _qs; var _cn = document.getElementById('s'+cur); if (_cn) _cn.classList.add('active'); if (cur > maxReached) maxReached = cur; } } catch(e) {} }\n" +
+      "    if (cur === TOTAL - 1 && window.parent !== window) { try { window.parent.postMessage({type:'aesdr:complete'},'*'); } catch(e) {} }\n" +
+      "  })();";
+    src = src.replace(T7_ANCHOR, T7_ANCHOR + T7_INSERT);
+    applied.push("init-screen-fallback+complete");
+  }
 
-  // ── T8 (R4-LH-1): define the window-scoped re-hydrator. Inserted right
-  //    before the final `render();` in init(). Re-reads quiz from _lessonExtra,
-  //    re-applies the chosen-option classes, re-runs the bespoke exercise
-  //    restore, then renders. Only the 35 quiz-bearing files have the quiz
-  //    vars; the outlier (lesson-01 unit 1) gets a render-only hydrator. ──
+  // ── T8 (R4-LH-1): define the window-scoped re-hydrator the restore listener
+  //    (T6) re-invokes. Inserted right before the final `init();` call. It
+  //    re-reads quiz from _lessonExtra, re-applies the chosen-option classes,
+  //    re-runs the bespoke exercise restore, then renders. The outlier
+  //    (lesson-01 unit 1) has no quiz vars → render-only hydrator. ──
   const hasQuiz = src.includes("var _qExtra=AESDR.getExtra('quiz')");
-  const T8_ANCHOR = "  render();\n}\nfunction goSafe(n)";
+  const T8_ANCHOR = "init();\n</script>";
   if (src.includes(T8_ANCHOR) && !src.includes("window.__aesdrHydrate =")) {
     const hydrator = hasQuiz
-      ? "  // R4-LH-1: re-hydrate quiz + exercise UI from restored state.\n" +
-        "  window.__aesdrHydrate = function(){\n" +
-        "    try {\n" +
-        "      var _q = AESDR.getExtra('quiz') || {};\n" +
-        "      if (_q.ans) qAns = _q.ans;\n" +
-        "      if (_q.submitted) qSubmitted = _q.submitted;\n" +
-        "      if (_q.passed) qPassed = _q.passed;\n" +
-        "      if (Object.keys(qAns).length > 0) {\n" +
-        "        var _ws = qSubmitted; qSubmitted = false;\n" +
-        "        for (var _qi in qAns) { try { var _el = document.getElementById('qo'+_qi+'_'+qAns[_qi]); if (_el) _el.classList.add('chosen'); } catch(e) {} }\n" +
-        "        if (_ws) { try { submitQuiz(); } catch(e) {} }\n" +
-        "      }\n" +
-        "      try { _restoreExerciseState(); } catch(e) {}\n" +
-        "    } catch(e) {}\n" +
-        "    try { render(); } catch(e) {}\n" +
-        "  };\n"
-      : "  // R4-LH-1: this unit has no quiz/exercise UI; re-render on restore.\n" +
-        "  window.__aesdrHydrate = function(){ try { render(); } catch(e) {} };\n";
+      ? "/* R4-LH-1: re-hydrate quiz + exercise UI from restored state. */\n" +
+        "window.__aesdrHydrate = function(){\n" +
+        "  try {\n" +
+        "    var _q = (window.AESDR && AESDR.getExtra) ? (AESDR.getExtra('quiz') || {}) : {};\n" +
+        "    if (_q.ans) qAns = _q.ans;\n" +
+        "    if (_q.submitted) qSubmitted = _q.submitted;\n" +
+        "    if (_q.passed) qPassed = _q.passed;\n" +
+        "    if (Object.keys(qAns).length > 0) {\n" +
+        "      var _ws = qSubmitted; qSubmitted = false;\n" +
+        "      for (var _qi in qAns) { try { var _el = document.getElementById('qo'+_qi+'_'+qAns[_qi]); if (_el) _el.classList.add('chosen'); } catch(e) {} }\n" +
+        "      if (_ws) { try { submitQuiz(); } catch(e) {} }\n" +
+        "    }\n" +
+        "    try { _restoreExerciseState(); } catch(e) {}\n" +
+        "  } catch(e) {}\n" +
+        "  try { render(); } catch(e) {}\n" +
+        "};\n"
+      : "/* R4-LH-1: this unit has no quiz/exercise UI; re-render on restore. */\n" +
+        "window.__aesdrHydrate = function(){ try { render(); } catch(e) {} };\n";
     src = src.replace(T8_ANCHOR, hydrator + T8_ANCHOR);
     applied.push("define-hydrator");
   }

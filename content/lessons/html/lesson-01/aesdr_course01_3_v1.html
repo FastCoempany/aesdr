@@ -6,7 +6,8 @@
 <script>
 (function(){
   var p = new URLSearchParams(window.location.search);
-  var role = p.get('role') || 'sdr';
+  var role = (p.get('role') || 'sdr').toLowerCase();
+  if (role !== 'ae' && role !== 'sdr') role = 'sdr';
   document.documentElement.setAttribute('data-role', role);
 })();
 </script>
@@ -451,7 +452,8 @@ window.AESDR = window.AESDR || {};
   var _lessonExtra = {}; // arbitrary lesson-specific state (persisted alongside gates)
 
   /* ── localStorage persistence ── */
-  var _storageKey = 'aesdr_gate_' + location.pathname.replace(/[^a-z0-9]/gi, '_');
+  var _roleKey = (document.documentElement.getAttribute('data-role') || 'sdr');
+  var _storageKey = 'aesdr_gate_' + _roleKey + '_' + location.pathname.replace(/[^a-z0-9]/gi, '_');
 
   function _persistState() {
     try {
@@ -1029,7 +1031,7 @@ window.AESDR = window.AESDR || {};
   /* ── Restore state from parent-provided data (cross-device / cleared localStorage) ── */
   A.restoreFromParent = function(data) {
     if (!data || typeof data !== 'object') return;
-    if (data._extra) _lessonExtra = data._extra;
+    if (data._extra) { for (var _ek in data._extra) { _lessonExtra[_ek] = data._extra[_ek]; } }
     for (var k in data) {
       if (k === '_extra') continue;
       var screenNum = k.replace('gate_', '');
@@ -1051,7 +1053,8 @@ window.AESDR = window.AESDR || {};
   window.addEventListener('message', function(e) {
     if (e.data && e.data.type === 'aesdr:restore' && e.data.stateData) {
       A.restoreFromParent(e.data.stateData);
-      if (typeof window.render === 'function') window.render();
+      if (typeof window.__aesdrHydrate === 'function') window.__aesdrHydrate();
+      else if (typeof window.render === 'function') window.render();
     }
   });
 
@@ -1764,7 +1767,7 @@ function _saveExerciseScores(){
 }
 
 /* ── Exercise state persistence (bespoke) ── */
-function _exStateKey(){return 'aesdr_exercise_state_' + location.pathname.replace(/[^a-z0-9]/gi,'_');}
+function _exStateKey(){return 'aesdr_exercise_state_' + (document.documentElement.getAttribute('data-role')||'sdr') + '_' + location.pathname.replace(/[^a-z0-9]/gi,'_');}
 function _saveExerciseState(){
   try {
     var st = {};
@@ -1895,11 +1898,17 @@ function init(){
   var _savedScreen = 0;
 
 
-  try { _savedScreen = parseInt(localStorage.getItem('aesdr_screen_' + location.pathname.replace(/[^a-z0-9]/gi, '_'))) || 0; } catch(e) {}
+  try { _savedScreen = parseInt(localStorage.getItem('aesdr_screen_' + (document.documentElement.getAttribute('data-role')||'sdr') + '_' + location.pathname.replace(/[^a-z0-9]/gi, '_'))) || 0; } catch(e) {}
 
 
   if (_savedScreen > 0 && _savedScreen < TOTAL) { cur = _savedScreen; document.getElementById('s0').classList.remove('active'); document.getElementById('s'+cur).classList.add('active'); }
   if(_savedScreen>maxReached)maxReached=_savedScreen;
+  // R4-LH-1: ?screen fallback (host-driven cross-device resume) +
+  // R4-LH-7: re-fire aesdr:complete when resuming onto the final screen.
+  (function(){
+    if (cur <= 0) { try { var _qs = parseInt(new URLSearchParams(location.search).get('screen')); if (_qs > 0 && _qs < TOTAL) { var _c0 = document.getElementById('s'+cur); if (_c0) _c0.classList.remove('active'); cur = _qs; var _cn = document.getElementById('s'+cur); if (_cn) _cn.classList.add('active'); if (cur > maxReached) maxReached = cur; } } catch(e) {} }
+    if (cur === TOTAL - 1 && window.parent !== window) { try { window.parent.postMessage({type:'aesdr:complete'},'*'); } catch(e) {} }
+  })();
 
 
 
@@ -1909,7 +1918,7 @@ function init(){
 function goSafe(n){if(n>maxReached)return;go(n);}
 function go(n){
   if(n>maxReached)maxReached=n;
-  try{localStorage.setItem('aesdr_screen_'+location.pathname.replace(/[^a-z0-9]/gi,'_'),n)}catch(e){}
+  try{localStorage.setItem('aesdr_screen_'+(document.documentElement.getAttribute('data-role')||'sdr')+'_'+location.pathname.replace(/[^a-z0-9]/gi,'_'),n)}catch(e){}
   if(window.AESDR&&AESDR.persistNow) AESDR.persistNow();
   if(n===TOTAL-1&&window.parent!==window){try{window.parent.postMessage({type:"aesdr:complete"},"*")}catch(e){}}
   if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.fullState?AESDR.fullState():{})},"*")}catch(e){}}
