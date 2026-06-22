@@ -6,6 +6,32 @@ import { sendAbandon1hr, sendAbandon24hr } from '@/lib/email';
 import { TIMING } from '@/lib/config';
 import { verifyCronAuth } from '@/lib/cron-auth';
 
+// R4-PERF-7: bounded send pool to respect Resend's ~2 req/s limit; only a TRUE
+// send returns the session id, so a false/429 never sets the abandon_*_sent
+// timestamp. (No pause check here — abandonment is pre-purchase, keyed on
+// checkout_sessions, so there's no buyer user_id to consult.)
+const SEND_CONCURRENCY = 5;
+
+async function runPool<T>(
+  items: T[],
+  limit: number,
+  worker: (item: T) => Promise<string | null>,
+): Promise<string[]> {
+  const successes: string[] = [];
+  let cursor = 0;
+  async function lane(): Promise<void> {
+    while (cursor < items.length) {
+      const idx = cursor++;
+      const ok = await worker(items[idx]);
+      if (ok) successes.push(ok);
+    }
+  }
+  await Promise.all(
+    Array.from({ length: Math.min(limit, items.length) }, () => lane()),
+  );
+  return successes;
+}
+
 export async function GET(request: Request) {
   const authErr = verifyCronAuth(request);
   if (authErr) return authErr;
@@ -29,15 +55,16 @@ export async function GET(request: Request) {
 
   if (q1Err) errors.push(`1hr query: ${q1Err.message}`);
 
-  const hr1Successes: string[] = [];
+  let hr1Successes: string[] = [];
   if (abandon1hr && abandon1hr.length > 0) {
-    await Promise.all(
-      abandon1hr.map(async (row) => {
-        const sent = await sendAbandon1hr(row.user_email);
-        if (sent) hr1Successes.push(row.session_id);
-        else errors.push('1hr email failed');
-      })
-    );
+    hr1Successes = await runPool(abandon1hr, SEND_CONCURRENCY, async (row) => {
+      const sent = await sendAbandon1hr(row.user_email);
+      if (!sent) {
+        errors.push('1hr email failed');
+        return null;
+      }
+      return row.session_id;
+    });
     if (hr1Successes.length > 0) {
       const { error: updateErr } = await supabase
         .from('checkout_sessions')
@@ -63,15 +90,16 @@ export async function GET(request: Request) {
 
   if (q24Err) errors.push(`24hr query: ${q24Err.message}`);
 
-  const hr24Successes: string[] = [];
+  let hr24Successes: string[] = [];
   if (abandon24hr && abandon24hr.length > 0) {
-    await Promise.all(
-      abandon24hr.map(async (row) => {
-        const sent = await sendAbandon24hr(row.user_email);
-        if (sent) hr24Successes.push(row.session_id);
-        else errors.push('24hr email failed');
-      })
-    );
+    hr24Successes = await runPool(abandon24hr, SEND_CONCURRENCY, async (row) => {
+      const sent = await sendAbandon24hr(row.user_email);
+      if (!sent) {
+        errors.push('24hr email failed');
+        return null;
+      }
+      return row.session_id;
+    });
     if (hr24Successes.length > 0) {
       const { error: updateErr } = await supabase
         .from('checkout_sessions')

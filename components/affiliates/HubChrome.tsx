@@ -43,7 +43,7 @@ export function LockupHeader() {
           textDecoration: "none",
           letterSpacing: "0.01em",
         }}
-        aria-label="AESDR — back to partner hub"
+        aria-label="AESDR — back to affiliate hub"
       >
         AESDR
       </Link>
@@ -53,7 +53,7 @@ export function LockupHeader() {
           gap: 24,
           alignItems: "center",
         }}
-        aria-label="Partner hub navigation"
+        aria-label="Affiliate hub navigation"
       >
         {NAV_ITEMS.map((item) => (
           <Link
@@ -105,7 +105,7 @@ export function Footer() {
         >
           AESDR · How the job works, not how to feel about it.
           <br />
-          This is the partner hub. Buyers go to{" "}
+          This is the affiliate hub. Buyers go to{" "}
           <Link href="/" style={{ color: "var(--muted)", textDecoration: "underline" }}>
             aesdr.com
           </Link>

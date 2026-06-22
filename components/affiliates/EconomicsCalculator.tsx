@@ -136,7 +136,7 @@ export function EconomicsCalculator() {
           marginTop: 16,
         }}
       >
-        Cohort 1 partners we invite directly add a one-time $500 sign-on bonus on top of the projected commission.
+        Cohort 1 affiliates we invite directly add a one-time $500 sign-on bonus on top of the projected commission.
       </p>
     </div>
   );
