@@ -41,11 +41,11 @@ export async function isAgentEnabled(agent: PartnerAgent): Promise<boolean> {
 // ── Per-agent model preference ──
 // Only LLM-calling agents (scout, dossier-enrich) read this. The model lives
 // in agent_switches.model; null/missing = use the default for that agent.
-// SDK 0.88 supports these four IDs — Opus 4.7/4.8 are not in this SDK yet.
+// claude-opus-4-1 dropped — it's deprecated and retires 2026-08-05 (R5-IC-9);
+// leaving it selectable would let an operator pin a model that 404s after that.
 export const SUPPORTED_MODELS = [
   "claude-opus-4-6",
   "claude-opus-4-5",
-  "claude-opus-4-1",
   "claude-sonnet-4-6",
 ] as const;
 export type ModelId = (typeof SUPPORTED_MODELS)[number];

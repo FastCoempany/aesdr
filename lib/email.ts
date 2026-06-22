@@ -1,3 +1,6 @@
+import crypto from 'node:crypto';
+
+import * as Sentry from '@sentry/nextjs';
 import { Resend } from 'resend';
 
 import { bridgeAfter } from '@/utils/progress/bridges';
@@ -77,7 +80,15 @@ const BULK_HEADERS = {
  */
 function htmlToText(html: string): string {
   return html
-    .replace(/<a\s+[^>]*href=["']([^"']+)["'][^>]*>([^<]*)<\/a>/gi, "$2 ($1)")
+    // R4-DR-6: allow nested tags inside the anchor (e.g.
+    // <a ...><strong>X</strong></a>) so the URL survives — the old
+    // `([^<]*)` label capture stopped at the first inner `<` and dropped the
+    // whole link, losing the href. Capture lazily across tags, then strip any
+    // inner tags from the visible label.
+    .replace(
+      /<a\s+[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi,
+      (_m, href, label) => `${String(label).replace(/<[^>]+>/g, "").trim()} (${href})`,
+    )
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<\/(p|div|h1|h2|h3|h4|h5|h6|li|tr|blockquote)>/gi, "\n\n")
     .replace(/<li[^>]*>/gi, "- ")
@@ -135,13 +146,27 @@ function mascotUrl(pose: Pose): string {
   return `${SITE}/mascot/leponeus-${pose}.png`;
 }
 
+// R3-EMAIL-7: the mascot carries the email's emotional content, so it needs a
+// meaningful alt for image-off / screen-reader recipients — not alt="".
+const POSE_ALT: Record<Pose, string> = {
+  doctrine: "Leponeus the tortoise, standing at attention",
+  diagnosis: "Leponeus the tortoise, looking things over",
+  sprint: "Leponeus the tortoise, mid-stride at a run",
+  fall: "Leponeus the tortoise, knocked onto his shell",
+  recovery: "Leponeus the tortoise, getting back to his feet",
+  rest: "Leponeus the tortoise, resting",
+  verdict: "Leponeus the tortoise, delivering a verdict",
+  owner: "Leponeus the tortoise, standing tall as an owner",
+};
+
 /** Centered Leponeus image table-row, drops into any email card layout. */
 function mascotRow(pose: Pose, size = 180): string {
   const url = mascotUrl(pose);
+  const alt = esc(POSE_ALT[pose] ?? "Leponeus the tortoise");
   return `
         <tr>
           <td align="center" style="padding:32px 48px 0 48px;">
-            <img src="${url}" width="${size}" height="${size}" alt="" style="display:block;border:0;width:${size}px;height:${size}px;max-width:100%;" />
+            <img src="${url}" width="${size}" height="${size}" alt="${alt}" style="display:block;border:0;width:${size}px;height:${size}px;max-width:100%;" />
           </td>
         </tr>`;
 }
@@ -149,6 +174,13 @@ function mascotRow(pose: Pose, size = 180): string {
 /**
  * Wrapper that sends an email and logs failures.
  * Returns true on success, false on failure (never throws).
+ *
+ * R4-DR-11: a Resend API error (`result.error`) returns `false` rather than
+ * throwing, so callers that only `try/catch` (e.g. the Stripe webhook) would
+ * otherwise never see it — not even in Sentry. We capture BOTH the
+ * `result.error` path and the thrown path here, so a failed send is always
+ * visible centrally regardless of how the caller treats the boolean. Callers
+ * should still check the return and avoid setting any `*_sent` flag on `false`.
  */
 async function safeSend(
   label: string,
@@ -158,11 +190,16 @@ async function safeSend(
     const result = await sendFn();
     if (result.error) {
       console.error(`[email] ${label} failed:`, result.error);
+      Sentry.captureMessage(`[email] ${label} failed`, {
+        level: 'error',
+        extra: { resendError: result.error },
+      });
       return false;
     }
     return true;
   } catch (err) {
     console.error(`[email] ${label} threw:`, err);
+    Sentry.captureException(err, { extra: { emailLabel: label } });
     return false;
   }
 }
@@ -966,17 +1003,32 @@ function prospectEnterpriseIntentHtml(
 
 // ─── Welcome Email (immediate after purchase) ───
 
-export async function sendWelcomeEmail(to: string, name: string, tempPassword: string | null) {
+// R4-IC-7: `sessionId` is optional for backward-compat, but the webhook should
+// pass the Stripe checkout session id so concurrent Stripe retries de-dupe on
+// `welcome:<sessionId>` at Resend instead of double-sending the welcome.
+// AUDIT: R4-IC-7 — the sibling-owned Stripe webhook caller
+// (app/api/webhooks/stripe/route.ts:247) should pass `session.id` here.
+export async function sendWelcomeEmail(
+  to: string,
+  name: string,
+  tempPassword: string | null,
+  sessionId?: string,
+) {
   const loginUrl = `${SITE}/login?email=${encodeURIComponent(to)}`;
+  const html = welcomeHtml(name, to, loginUrl, tempPassword);
   return safeSend(`welcome to ${to}`, () =>
-    getResend().emails.send({
-      from: FROM,
-      to,
-      headers: UNSUBSCRIBE_HEADERS,
-      subject: "You're in. Start here.",
-      html: welcomeHtml(name, to, loginUrl, tempPassword),
-      text: htmlToText(welcomeHtml(name, to, loginUrl, tempPassword)),
-    })
+    getResend().emails.send(
+      {
+        from: FROM,
+        to,
+        headers: UNSUBSCRIBE_HEADERS,
+        subject: "You're in. Start here.",
+        html,
+        text: htmlToText(html),
+        tags: [{ name: 'kind', value: 'welcome' }],
+      },
+      sessionId ? { idempotencyKey: `welcome:${sessionId}` } : undefined,
+    )
   );
 }
 
@@ -1119,7 +1171,7 @@ function welcomeHtml(name: string, email: string, loginUrl: string, tempPassword
               </tr>
               <tr>
                 <td style="padding:10px 0;border-top:1px solid #E8E3D8;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.6;color:#334155;">
-                  <strong style="color:#1A1A1A;">Seven take-home artifacts come with the course</strong> — the ROI &amp; Commission Defense Tracker, the AE/SDR Alignment Contract, and the CRM Survival Guide among them. Each one is yours the moment you finish the lesson that builds it — plus the 72-Hour Strike Plan, which opens when you finish all twelve courses.
+                  <strong style="color:#1A1A1A;">Seven substantial assets come with the course</strong> — the ROI &amp; Commission Defense Tracker, the AE/SDR Alignment Contract, and the CRM Survival Guide among them. Each one is yours the moment you finish the lesson that builds it — plus the 72-Hour Strike Plan, which opens when you finish all twelve courses.
                 </td>
               </tr>
             </table>
@@ -1164,25 +1216,67 @@ function welcomeHtml(name: string, email: string, loginUrl: string, tempPassword
 
 // ─── Purchase Receipt Email ───
 
-export async function sendReceiptEmail(to: string, name: string, tier: string, amountCents: number) {
+// R4-IC-7 / R4-DR-10: `sessionId` (the Stripe checkout session id) is optional
+// for backward-compat but should be passed by the webhook so (a) the receipt
+// number is STABLE across Stripe retries / resends, and (b) the Resend send
+// carries a deterministic idempotencyKey. When absent we fall back to a
+// render-time number (non-reproducible — the pre-fix behavior).
+// AUDIT: R4-IC-7 — the sibling-owned Stripe webhook caller
+// (app/api/webhooks/stripe/route.ts:253) should pass `session.id` here.
+export async function sendReceiptEmail(
+  to: string,
+  name: string,
+  tier: string,
+  amountCents: number,
+  sessionId?: string,
+) {
+  const html = receiptHtml(name, tier, amountCents, sessionId);
   return safeSend(`receipt to ${to}`, () =>
-    getResend().emails.send({
-      from: FROM,
-      to,
-      headers: UNSUBSCRIBE_HEADERS,
-      subject: 'Your AESDR receipt — keep this for your records',
-      html: receiptHtml(name, tier, amountCents),
-      text: htmlToText(receiptHtml(name, tier, amountCents)),
-    })
+    getResend().emails.send(
+      {
+        from: FROM,
+        to,
+        headers: UNSUBSCRIBE_HEADERS,
+        subject: 'Your AESDR receipt — keep this for your records',
+        html,
+        text: htmlToText(html),
+        tags: [{ name: 'kind', value: 'receipt' }],
+      },
+      // idempotencyKey is a request option (2nd arg), not a payload field.
+      sessionId ? { idempotencyKey: `receipt:${sessionId}` } : undefined,
+    )
   );
 }
 
-function receiptHtml(name: string, tier: string, amountCents: number) {
+/** Stable, reproducible receipt number derived from the Stripe session id. */
+function receiptNumberFor(sessionId?: string): string {
+  if (sessionId) {
+    // Deterministic short token from the session id — same input, same number,
+    // so a resend / Stripe retry shows the buyer one receipt number, not two.
+    const hash = crypto.createHash('sha256').update(sessionId).digest('hex');
+    return `AESDR-${hash.toUpperCase().slice(0, 8)}`;
+  }
+  return `AESDR-${Date.now().toString(36).toUpperCase().slice(-8)}`;
+}
+
+// R4-DR-8: the receipt is the only record of WHAT the buyer bought, so the
+// 'ae'/'sdr' tracks must be named — not both flattened to "Individual".
+function receiptPlanLabel(tier: string): string {
+  switch (tier) {
+    case 'team': return 'Team';
+    case 'ae': return 'AE Track';
+    case 'sdr': return 'SDR Track';
+    default: return 'Individual';
+  }
+}
+
+function receiptHtml(name: string, tier: string, amountCents: number, sessionId?: string) {
   const safeName = esc(name);
-  const amount = (amountCents / 100).toFixed(2);
-  const planLabel = tier === 'team' ? 'Team' : 'Individual';
+  // R4-DR-10: coerce defensively so a non-number never renders "$NaN".
+  const amount = ((Number(amountCents) || 0) / 100).toFixed(2);
+  const planLabel = receiptPlanLabel(tier);
   const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  const receiptNo = `AESDR-${Date.now().toString(36).toUpperCase().slice(-8)}`;
+  const receiptNo = receiptNumberFor(sessionId);
   return `<!DOCTYPE html>
 <html>
 <head>
@@ -1395,7 +1489,7 @@ function managerArchetypeMapHtml() {
     Optional · One pointer · Then I'm out of your inbox
   </p>
   <p style="margin:0 0 12px">
-    This is one artifact from Course 3 of the full program — eleven more courses and seven takeaway artifacts come with it, all backed by a 14-day refund if it doesn't deliver. One-time purchase, no subscription.
+    This is one asset from Course 3 of the full program — eleven more courses and seven substantial assets come with it, all backed by a 14-day refund if it doesn't deliver. One-time purchase, no subscription.
   </p>
   <p style="margin:0 0 24px">
     <a href="${SITE}/#pricing" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">See the full course →</a>
@@ -1481,22 +1575,29 @@ export async function sendWeeklyFraming(
 
 function weeklyFramingHtml(name: string, completed: number, total: number) {
   const safeName = esc(name);
-  const remaining = total - completed;
+  // R4-DR-12: guard the thirds math. A non-positive `total` (bad/empty data)
+  // would otherwise divide by zero and mislabel a zero-lesson learner as being
+  // in the "final third"; clamp so completion/remaining never go negative.
+  const safeTotal = Number.isFinite(total) && total > 0 ? total : 1;
+  const safeCompleted = Math.max(0, Math.min(Number(completed) || 0, safeTotal));
+  const remaining = Math.max(0, safeTotal - safeCompleted);
   const stage =
-    completed === 0
-      ? "Week one is foundational — camaraderie, silos, how the team you're on actually works (and where it doesn't)."
-      : completed < total / 3
-        ? "You're in the foundation half. Expect short lessons that re-wire how you read your own pipeline and your own manager."
-        : completed < (total * 2) / 3
-          ? "Middle third — the harder lessons: prospecting math, the 30% rule, the CRM as a friend or witness. Heavier at-bats."
-          : "Final third. Compensation realities, sober selling, the relationship-graph lesson nobody else teaches. Hardest of the three, because you'll recognize yourself in it.";
+    safeCompleted >= safeTotal
+      ? "You've reached the end of the program — the last third is behind you. This week is about consolidating what stuck, not starting something new."
+      : safeCompleted === 0
+        ? "Week one is foundational — camaraderie, silos, how the team you're on actually works (and where it doesn't)."
+        : safeCompleted < safeTotal / 3
+          ? "You're in the foundation half. Expect short lessons that re-wire how you read your own pipeline and your own manager."
+          : safeCompleted < (safeTotal * 2) / 3
+            ? "Middle third — the harder lessons: prospecting math, the 30% rule, the CRM as a friend or witness. Heavier at-bats."
+            : "Final third. Compensation realities, sober selling, the relationship-graph lesson nobody else teaches. Hardest of the three, because you'll recognize yourself in it.";
   return `
 <div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
   <p style="margin:0 0 14px;font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
     AESDR · Sunday framing
   </p>
   <p>Hey ${safeName},</p>
-  <p>You're ${completed} of ${total} in. ${remaining > 0 ? `${remaining} to go.` : ""}</p>
+  <p>You're ${safeCompleted} of ${safeTotal} in. ${remaining > 0 ? `${remaining} to go.` : ""}</p>
   <p>${stage}</p>
   <p>You don't have to do all of it this week — one lesson is the whole assignment, and the calendar window you blocked when you signed up is enough to clear it.</p>
   <p style="margin:20px 0">
@@ -1587,7 +1688,7 @@ function alumniReengagementHtml(name: string, monthMark: 6 | 12) {
   <p>${lede}</p>
   <p>Three things, briefly:</p>
   <ol style="line-height:1.8;padding-left:22px;margin:8px 0 16px">
-    <li>The takeaway artifacts are re-downloadable any time at <a href="${SITE}/alumni" style="color:#8B1A1A;text-decoration:underline">${SITE}/alumni</a>. Most alumni grab the 72-hour strike plan again around their next bad quarter.</li>
+    <li>The substantial assets are re-downloadable any time at <a href="${SITE}/alumni" style="color:#8B1A1A;text-decoration:underline">${SITE}/alumni</a>. Most alumni grab the 72-hour strike plan again around their next bad quarter.</li>
     <li>If something from the course actually helped this year, one sentence to <a href="${SITE}/account/review" style="color:#8B1A1A;text-decoration:underline">${SITE}/account/review</a> would be genuinely useful.</li>
     <li>If you know an AE or SDR in their first eighteen months who could use the course — share the free Manager Archetype Map at <a href="${SITE}/free/manager-archetype-map" style="color:#8B1A1A;text-decoration:underline">${SITE}/free/manager-archetype-map</a>. Cheaper than asking them to buy something.</li>
   </ol>
@@ -1760,7 +1861,7 @@ export async function sendAbandon1hr(to: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: UNSUBSCRIBE_HEADERS,
+      headers: BULK_HEADERS,
       subject: "Still thinking it over?",
       html: abandon1hrHtml(),
       text: htmlToText(abandon1hrHtml()),
@@ -1780,7 +1881,7 @@ function abandon1hrHtml() {
   <p style="margin:14px 0 6px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:18px">What you're actually getting</p>
   <ul style="line-height:1.8;padding-left:22px;margin:0 0 14px">
     <li>Twelve interactive courses (not video lectures you'll never finish)</li>
-    <li>Seven take-home artifacts you'll actually use — the ROI &amp; Commission Defense Tracker, the AE/SDR Alignment Contract, the CRM Survival Guide, and more</li>
+    <li>Seven substantial assets you'll actually use — the ROI &amp; Commission Defense Tracker, the AE/SDR Alignment Contract, the CRM Survival Guide, and more</li>
     <li>A curriculum built by someone who carried a quota for nine years, not someone who read about it</li>
   </ul>
   <p style="margin:14px 0 6px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:18px">What you're not getting</p>
@@ -1806,7 +1907,7 @@ export async function sendAbandon24hr(to: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: UNSUBSCRIBE_HEADERS,
+      headers: BULK_HEADERS,
       subject: "Quick question before I stop following up",
       html: abandon24hrHtml(),
       text: htmlToText(abandon24hrHtml()),
@@ -1845,7 +1946,7 @@ export async function sendDropoff5d(to: string, name: string, lessonId: string, 
     getResend().emails.send({
       from: FROM,
       to,
-      headers: UNSUBSCRIBE_HEADERS,
+      headers: BULK_HEADERS,
       subject: "No rush — but your next lesson is ready",
       html: dropoff5dHtml(name, lessonId, lessonTitle),
       text: htmlToText(dropoff5dHtml(name, lessonId, lessonTitle)),
@@ -1879,7 +1980,7 @@ export async function sendDropoff10d(to: string, name: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: UNSUBSCRIBE_HEADERS,
+      headers: BULK_HEADERS,
       subject: "The Friday five-line — eight minutes, no login needed",
       html: dropoff10dHtml(name),
       text: htmlToText(dropoff10dHtml(name)),
@@ -1920,7 +2021,7 @@ export async function sendDropoff21d(to: string, name: string, lessonId: string)
     getResend().emails.send({
       from: FROM,
       to,
-      headers: UNSUBSCRIBE_HEADERS,
+      headers: BULK_HEADERS,
       subject: "Last check-in from us",
       html: dropoff21dHtml(name, lessonId),
       text: htmlToText(dropoff21dHtml(name, lessonId)),
@@ -1964,7 +2065,7 @@ export async function sendReviewRequest(to: string, name: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: UNSUBSCRIBE_HEADERS,
+      headers: BULK_HEADERS,
       subject: "You finished all 12. How was it?",
       html: reviewRequestHtml(name),
       text: htmlToText(reviewRequestHtml(name)),
@@ -1998,7 +2099,7 @@ export async function sendReviewNudge(to: string, name: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: UNSUBSCRIBE_HEADERS,
+      headers: BULK_HEADERS,
       subject: "30 seconds — that's all I need",
       html: reviewNudgeHtml(name),
       text: htmlToText(reviewNudgeHtml(name)),
@@ -2103,8 +2204,8 @@ function teamInviteHtml(inviterName: string, token: string) {
     <p style="margin:0 0 8px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:700;font-size:16px;color:#1A1A1A">What you get</p>
     <ul style="margin:0;padding-left:20px;line-height:1.75">
       <li>All twelve courses with interactive exercises</li>
-      <li>Seven take-home artifacts (ROI &amp; Commission Defense Tracker, AE/SDR Alignment Contract, CRM Survival Guide, and more)</li>
-      <li>Your own progress tracking and personalized takeaway artifacts</li>
+      <li>Seven substantial assets (ROI &amp; Commission Defense Tracker, AE/SDR Alignment Contract, CRM Survival Guide, and more)</li>
+      <li>Your own progress tracking and personalized substantial assets</li>
     </ul>
   </div>
   <p style="margin:24px 0">
@@ -2141,7 +2242,7 @@ export async function sendLessonCompleteEmail(
     getResend().emails.send({
       from: FROM,
       to,
-      headers: UNSUBSCRIBE_HEADERS,
+      headers: BULK_HEADERS,
       subject,
       html: lessonCompleteHtml(name, lessonId, lessonTitle),
       text: htmlToText(lessonCompleteHtml(name, lessonId, lessonTitle)),
@@ -2306,7 +2407,7 @@ export async function sendRevealUnlockedEmail(to: string, name: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: UNSUBSCRIBE_HEADERS,
+      headers: BULK_HEADERS,
       subject: "Choose your keeper.",
       html: revealUnlockedHtml(name),
       text: htmlToText(revealUnlockedHtml(name)),
@@ -2433,7 +2534,9 @@ export async function sendWorkshopRegistrationConfirmation(
   `;
   const html = affiliateShellHtml({
     eyebrow: "AESDR · Workshop · Registered",
-    headline: `You're in, ${esc(p.firstName)}.`,
+    // R4-DR-6: pass the RAW name — affiliateShellHtml runs esc() on headline,
+    // so esc()-ing here too double-escapes ("Mac & Co" → "Mac &amp;amp; Co").
+    headline: `You're in, ${p.firstName}.`,
     body,
     ctaUrl: `${SITE}/${p.affiliateSlug}/workshop`,
     ctaLabel: "Workshop details",

@@ -8,6 +8,7 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/utils/supabase/admin";
+import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import {
   sendProspectConversationRequestEmail,
   sendProspectEnterpriseIntentEmail,
@@ -28,6 +29,22 @@ const str = (v: unknown, max: number): string | null =>
   typeof v === "string" && v.length > 0 ? v.slice(0, max) : null;
 
 export async function POST(req: NextRequest) {
+  // AUDIT (R3-SEC-3 / R3-AF-10): this route writes with the service-role
+  // client and can trigger founder emails, but had no auth, no origin check,
+  // and no rate limit. Add a same-origin guard so it can't be driven
+  // cross-site, and an IP-keyed rate limit so it can't be flooded.
+  const origin = req.headers.get("origin");
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com";
+  if (origin && new URL(siteUrl).origin !== origin) {
+    return NextResponse.json({ ok: false }, { status: 403 });
+  }
+
+  const ip = getClientIP(req);
+  const rl = await rateLimit(`x-track:${ip}`, { max: 60, windowMs: 60 * 1000 });
+  if (!rl.success) {
+    return NextResponse.json({ ok: false }, { status: 429 });
+  }
+
   let body: Body;
   try {
     body = (await req.json()) as Body;
@@ -47,10 +64,19 @@ export async function POST(req: NextRequest) {
 
   const supabase = createAdminClient();
 
-  // Auto-register unknown slugs so the dashboard roster fills itself in.
-  await supabase
+  // AUDIT (R3-AF-10 / decision #20): REJECT events for unknown slugs rather
+  // than auto-registering them. The previous auto-upsert let any attacker mint
+  // arbitrary affiliate_prospects rows (and downstream founder emails) just by
+  // POSTing a made-up slug. A prospect slug must already exist (created by the
+  // admin roster flow) before we accept telemetry for it.
+  const { data: known } = await supabase
     .from("affiliate_prospects")
-    .upsert({ slug }, { onConflict: "slug", ignoreDuplicates: true });
+    .select("slug")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (!known) {
+    return NextResponse.json({ ok: false }, { status: 404 });
+  }
 
   const { error } = await supabase.from("affiliate_prospect_events").insert({
     prospect_slug: slug,
@@ -97,6 +123,11 @@ export async function POST(req: NextRequest) {
       const salesCycle = String(props.sales_cycle ?? "").slice(0, 300);
       const verticals = String(props.verticals ?? "").slice(0, 300);
 
+      // AUDIT (R3-AF-10): these props are now prospect-authored, not
+      // attacker-arbitrary — the route is same-origin-gated, IP-rate-limited,
+      // and only fires for a slug that already exists in affiliate_prospects.
+      // Values are length-capped here and HTML-escaped (esc()) in lib/email.ts
+      // before reaching the founder's inbox, so no markup/payload fans through.
       sendProspectEnterpriseIntentEmail({
         slug,
         displayName: prospect?.display_name ?? null,

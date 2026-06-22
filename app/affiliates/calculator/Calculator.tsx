@@ -136,6 +136,14 @@ export default function Calculator() {
           {SCENARIOS.map((s) => {
             const sales = audience * s.click * s.conv;
             const monthly = sales * PRICE * COMMISSION;
+            // R5-EE-10: a fractional "0.5 sales → $50/mo" reads as nonsense.
+            // Below one sale/mo, express it as a cadence ("~1 every N months")
+            // and floor the dollars to that same whole sale so the row is
+            // internally consistent rather than implying half a payout.
+            const subOne = sales > 0 && sales < 1;
+            const everyN = subOne ? Math.round(1 / sales) : 0;
+            const salesLabel = subOne ? `~1 / ${everyN} mo` : Math.round(sales).toString();
+            const monthlyShown = subOne ? (PRICE * COMMISSION) / everyN : monthly;
             return (
               <tr key={s.name}>
                 <td style={{ padding: "12px 14px", borderBottom: "1px solid #E8E4DF" }}>
@@ -143,13 +151,13 @@ export default function Calculator() {
                   <div style={{ fontSize: 12.5, color: "#6B6B6B", fontStyle: "italic" }}>{s.note}</div>
                 </td>
                 <td style={{ padding: "12px 14px", borderBottom: "1px solid #E8E4DF", textAlign: "right", fontFamily: "'Space Mono', monospace", fontSize: 13, color: "#1A1A1A" }}>
-                  {sales < 1 ? sales.toFixed(1) : Math.round(sales)}
+                  {salesLabel}
                 </td>
                 <td style={{ padding: "12px 14px", borderBottom: "1px solid #E8E4DF", textAlign: "right", fontFamily: "'Space Mono', monospace", fontSize: 14, fontWeight: 700, color: "#8B1A1A" }}>
-                  {fmt(monthly)}
+                  {fmt(monthlyShown)}{subOne ? " avg" : ""}
                 </td>
                 <td style={{ padding: "12px 14px", borderBottom: "1px solid #E8E4DF", textAlign: "right", fontFamily: "'Space Mono', monospace", fontSize: 13, color: "#1A1A1A" }}>
-                  {fmt(monthly * 12)}
+                  {fmt(monthlyShown * 12)}
                 </td>
               </tr>
             );

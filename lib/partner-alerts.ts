@@ -115,7 +115,10 @@ export async function sendBrightSignalAlert(args: {
           <td style="padding:6px 0;font-size:15px;color:#1A1A1A;">${esc(subj)}</td></tr>
     </table>
     ${excerpt ? `<p style="margin:14px 0 0;padding:12px 14px;background:#FAF7F2;border-left:2px solid #8B1A1A;font-family:'SF Mono',Consolas,monospace;font-size:13px;line-height:1.6;color:#1A1A1A;white-space:pre-wrap;">${esc(excerpt)}</p>` : ""}`;
-  return safeSend(`bright-signal from ${args.fromAddr}`, () =>
+  // Label must not carry the raw inbound address — it flows into a console
+  // log (R5-PI-6). The address still appears in the email body/subject, which
+  // only the operator sees.
+  return safeSend("bright-signal", () =>
     getResend().emails.send({
       from: FROM,
       to: ALERT_TO,

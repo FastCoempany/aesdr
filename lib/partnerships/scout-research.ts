@@ -54,6 +54,18 @@ const EMIT_BUDGET_MS = 80_000;
 const MAX_TURNS = 20; // pause_turn drains across many tool uses
 const PROGRESS_THROTTLE_MS = 1_500;
 
+// Hard cap on total tokens billed per sweep (R4-PERF-1). The full transcript
+// (every search result + fetched page) is re-billed on each of up to 20 turns,
+// so without a ceiling one runaway run can search ≤400 times and re-bill the
+// whole context each turn. When cumulative usage crosses this, we stop
+// researching and go straight to the write-up with what we have.
+const MAX_RUN_TOKENS = 1_500_000;
+
+// The SDK default is a 10-min timeout + 2 retries, which fights our own budget
+// and silently triples the bill on a stuck call. One try per call, and a
+// per-request ceiling that comfortably covers the research budget (R5-IC-8).
+const ANTHROPIC_OPTS = { maxRetries: 1, timeout: RESEARCH_BUDGET_MS } as const;
+
 const SCHEMA = `Each object has EXACTLY these keys: { "name": str, "surface": str (e.g. "Substack newsletter" / "Podcast"), "handle": str (their URL or @handle), "audience_est": int|null, "archetype": "creator"|"coach"|"alumni"|"community", "voice_fit": 1-5, "why_fit": str (one line), "contact_path": str (NOT LinkedIn), "contact_verified": true|false, "conflict": str ("" if none) }`;
 
 const SYSTEM = `You are Scout, AESDR's partner-discovery researcher.
@@ -164,7 +176,7 @@ export async function researchSweep(opts: {
   model: string;
   onProgress?: (p: ResearchProgress) => void;
 }): Promise<ResearchCandidate[]> {
-  const c = new Anthropic();
+  const c = new Anthropic(ANTHROPIC_OPTS);
   const messages: Anthropic.MessageParam[] = [
     {
       role: "user",
@@ -174,6 +186,7 @@ export async function researchSweep(opts: {
 
   let searches = 0;
   let pagesRead = 0;
+  let tokensUsed = 0;
   let lastEmit = 0;
   const report = (phase: string) => opts.onProgress?.({ phase, searches, pagesRead });
   const throttled = () => {
@@ -189,6 +202,9 @@ export async function researchSweep(opts: {
   for (let i = 0; i < MAX_TURNS; i++) {
     const remaining = researchDeadline - Date.now();
     if (remaining <= 0) break;
+    // Token budget break — stop researching and write up what we have once
+    // cumulative spend crosses the cap (R4-PERF-1).
+    if (tokensUsed >= MAX_RUN_TOKENS) break;
 
     const stream = c.messages.stream({
       model: opts.model,
@@ -218,6 +234,8 @@ export async function researchSweep(opts: {
     try {
       const final = await stream.finalMessage();
       clearTimeout(stop);
+      tokensUsed +=
+        (final.usage?.input_tokens ?? 0) + (final.usage?.output_tokens ?? 0);
       messages.push({ role: "assistant", content: final.content });
       if (final.stop_reason === "pause_turn") {
         throttled();

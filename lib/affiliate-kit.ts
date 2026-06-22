@@ -41,7 +41,7 @@ export const KIT_ENTRIES: KitEntry[] = [
     slug: "curriculum-overview",
     title: "Curriculum Overview",
     description:
-      "12 courses, four arcs, seven artifacts. What partners need to know without enrolling.",
+      "12 courses, four arcs, seven artifacts. What affiliates need to know without enrolling.",
     category: "About AESDR",
     source: "curriculum-overview",
   },
@@ -67,7 +67,7 @@ export const KIT_ENTRIES: KitEntry[] = [
     slug: "approved-claims",
     title: "Approved Claims",
     description:
-      "What partners can say verbatim. What gets walked back. What gets declined.",
+      "What affiliates can say verbatim. What gets walked back. What gets declined.",
     category: "How co-promotion works",
     source: "approved-claims",
   },
@@ -83,7 +83,7 @@ export const KIT_ENTRIES: KitEntry[] = [
     slug: "banned-vocabulary",
     title: "Banned Vocabulary",
     description:
-      "The words AESDR doesn't use, and asks partners not to use in copy bearing the mark.",
+      "The words AESDR doesn't use, and asks affiliates not to use in copy bearing the mark.",
     category: "How co-promotion works",
     source: "banned-vocabulary",
   },
@@ -122,7 +122,7 @@ export const KIT_CATEGORIES: { name: KitCategory; blurb: string }[] = [
   {
     name: "How co-promotion works",
     blurb:
-      "Rules and language for partners who promote AESDR. Lift what's pre-cleared; ask before reworking.",
+      "Rules and language for affiliates who promote AESDR. Lift what's pre-cleared; ask before reworking.",
   },
 ];
 

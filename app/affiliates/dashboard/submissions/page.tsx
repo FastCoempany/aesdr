@@ -71,7 +71,7 @@ export default async function AffiliateSubmissionsPage() {
   }
 
   const admin = createAdminClient();
-  const { data: submissionsData } = await admin
+  const { data: submissionsData, error: submissionsError } = await admin
     .from("affiliate_copy_submissions")
     .select(
       "id, channel, format, status, draft_url, edit_requests, decline_reason, reviewer_notes, counted_toward_gate, submitted_at, reviewed_at"
@@ -80,7 +80,11 @@ export default async function AffiliateSubmissionsPage() {
     .order("submitted_at", { ascending: false })
     .limit(50);
 
+  // R5-EE-5: distinguish "no submissions yet" from "the query failed." Falling
+  // back to [] on an error rendered the new-user "paste your first draft" empty
+  // state over a real history — telling an affiliate their work vanished.
   const submissions = (submissionsData ?? []) as SubmissionRow[];
+  const loadFailed = !!submissionsError;
   const gateRequirement = gateRequirementFor(affiliate.sophistication_tier);
   const gateCleared = hasExitedGate(affiliate);
   const piecesRemaining = Math.max(
@@ -180,7 +184,22 @@ export default async function AffiliateSubmissionsPage() {
         >
           Your submissions
         </p>
-        {submissions.length === 0 ? (
+        {loadFailed ? (
+          <p
+            role="alert"
+            style={{
+              fontSize: 15,
+              color: "var(--crimson)",
+              borderLeft: "3px solid var(--crimson)",
+              paddingLeft: 14,
+              lineHeight: 1.6,
+            }}
+          >
+            We couldn&rsquo;t load your submissions right now. Your history is
+            safe &mdash; this is a loading error, not a reset. Reload the page to
+            try again.
+          </p>
+        ) : submissions.length === 0 ? (
           <p style={{ fontSize: 15, color: "var(--muted)" }}>
             No submissions yet. Paste your first draft above.
           </p>

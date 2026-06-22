@@ -139,6 +139,13 @@ export default async function AdminUsers({
             </tr>
           </thead>
           <tbody>
+            {rows.length === 0 && (
+              <tr>
+                <td colSpan={9} style={{ padding: "20px 0", color: "#6B6B6B", fontStyle: "italic", fontFamily: "'Source Serif 4', Georgia, serif" }}>
+                  {q || planFilter ? "No users match this filter." : "No purchases yet."}
+                </td>
+              </tr>
+            )}
             {rows.map((row) => {
               const prog = row.user_id ? progressMap[row.user_id] : null;
               const lastActive = prog?.lastActive
@@ -169,7 +176,7 @@ export default async function AdminUsers({
                     </span>
                   </td>
                   <td style={{ padding: "12px 12px 12px 0", fontFamily: "'Space Mono', monospace", fontSize: "13px" }}>
-                    ${(row.amount_cents / 100).toFixed(0)}
+                    ${(Number.isFinite(row.amount_cents) ? row.amount_cents / 100 : 0).toFixed(0)}
                   </td>
                   <td style={{ padding: "12px 12px 12px 0" }}>
                     <span

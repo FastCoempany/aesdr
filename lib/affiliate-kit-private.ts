@@ -46,7 +46,7 @@ export const PRIVATE_KIT_ENTRIES: PrivateKitEntry[] = [
     slug: "pre-workshop-checklist",
     title: "Pre-Workshop Checklist",
     description:
-      "Three short lists for the windows partners get most nervous on: 24h before, day-of, the 72h replay window.",
+      "Three short lists for the windows affiliates get most nervous on: 24h before, day-of, the 72h replay window.",
     category: "Run your pilot",
     source: "pre-workshop-checklist",
   },
@@ -80,7 +80,7 @@ export const PRIVATE_KIT_ENTRIES: PrivateKitEntry[] = [
     slug: "escalation-contacts",
     title: "Escalation Contacts",
     description:
-      "Five legitimate reasons a partner emails AESDR during a pilot — match yours to the row, get a faster answer.",
+      "Five legitimate reasons an affiliate emails AESDR during a pilot — match yours to the row, get a faster answer.",
     category: "Working with AESDR",
     source: "escalation-contacts",
   },
@@ -88,7 +88,7 @@ export const PRIVATE_KIT_ENTRIES: PrivateKitEntry[] = [
     slug: "tracking-and-utms",
     title: "Tracking URL & UTM Cheat-Sheet",
     description:
-      "Your partner-attributed URL, the UTM scheme that maps to the Friday report, and a self-test before your first send.",
+      "Your affiliate-attributed URL, the UTM scheme that maps to the Friday report, and a self-test before your first send.",
     category: "Run your pilot",
     source: "tracking-and-utms",
   },

@@ -183,8 +183,8 @@ export default function ImplementationPage() {
               triggers, mutual commitments. From Course 3.
             </li>
             <li>
-              <strong>Manager Archetype Map.</strong> The operating systems your
-              manager runs on, what reads to them as competence vs. threat, and the
+              <strong>Manager Archetype Map.</strong> How each manager runs,
+              what reads to them as competence vs. threat, and the
               weekly move that manages each one up. From Course 4.1.
             </li>
             <li>

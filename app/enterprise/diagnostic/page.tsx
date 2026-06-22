@@ -214,7 +214,7 @@ export default function DiagnosticPage() {
             <Link href="/enterprise/downloads/diagnostic-instrument" style={{ color: "var(--ink)", textDecoration: "underline" }}>
               /enterprise/downloads/diagnostic-instrument
             </Link>{" "}
-            — all 32 prompts with 1–5 scales, ready to print or save as PDF.
+            — 24 prompts per respondent (32 total) with 1–5 scales, ready to print or save as PDF.
           </p>
         </div>
       </section>

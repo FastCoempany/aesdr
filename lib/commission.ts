@@ -11,6 +11,9 @@
  * to gross when it isn't (see computeCommissionCents).
  */
 
+// AUDIT (R4-MON-2/#1/#27): single source of truth for the commission rate +
+// base. Default rate is 30%; the webhook overrides per-affiliate from
+// affiliates.commission_pct.
 /** Default commission rate when an affiliate row has no usable commission_pct. */
 export const DEFAULT_COMMISSION_RATE = 0.3;
 

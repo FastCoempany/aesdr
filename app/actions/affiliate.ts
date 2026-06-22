@@ -775,6 +775,68 @@ export async function setAffiliateStatus(formData: FormData): Promise<void> {
 /* ─── new-affiliate creation (admin side) ─── */
 
 /**
+ * AUDIT (P0-9 / R3-AF-2): provision a server-trusted identity for a newly
+ * created affiliate. Looks up (or creates) the Supabase auth user by email,
+ * then stamps `is_affiliate` + `affiliate_slug` onto **app_metadata** — which
+ * clients CANNOT write (unlike user_metadata). Returns the user id so the
+ * caller can pin it onto affiliates.user_id, the only field
+ * getAffiliateForUser now trusts.
+ *
+ * Create-then-find mirrors the Stripe webhook's pattern: createUser fails if
+ * the email already exists, in which case we resolve the existing user and
+ * merge claims onto their app_metadata.
+ */
+async function provisionAffiliateIdentity(args: {
+  email: string;
+  slug: string;
+  displayName: string;
+}): Promise<string | null> {
+  const admin = createAdminClient();
+  const email = args.email.toLowerCase();
+  const claims = { is_affiliate: true, affiliate_slug: args.slug };
+
+  // Try to create first.
+  const { data: created, error: createErr } = await admin.auth.admin.createUser({
+    email,
+    email_confirm: true,
+    app_metadata: claims,
+    user_metadata: { full_name: args.displayName || undefined },
+  });
+  if (created?.user) {
+    return created.user.id;
+  }
+
+  // Already exists (or transient create failure): resolve the existing user
+  // and merge the affiliate claims onto their app_metadata.
+  if (createErr) {
+    // Prefer a direct purchases-table lookup (cheap), else a bounded list scan.
+    const { data: existingPurchase } = await admin
+      .from("purchases")
+      .select("user_id")
+      .eq("user_email", email)
+      .not("user_id", "is", null)
+      .limit(1)
+      .maybeSingle();
+
+    let userId: string | null = existingPurchase?.user_id ?? null;
+    if (!userId) {
+      const { data: userList } = await admin.auth.admin.listUsers({ perPage: 200 });
+      userId =
+        userList?.users?.find((u) => u.email?.toLowerCase() === email)?.id ?? null;
+    }
+
+    if (userId) {
+      await admin.auth.admin.updateUserById(userId, {
+        app_metadata: claims,
+      });
+    }
+    return userId;
+  }
+
+  return null;
+}
+
+/**
  * Create a new affiliate row from scratch (or promote an application).
  * Founder-only. Fields mirror the affiliates table; status defaults to
  * 'vetting' so the founder explicitly activates after the welcome
@@ -803,6 +865,14 @@ export async function createAffiliate(formData: FormData): Promise<void> {
   }
 
   const admin = createAdminClient();
+
+  // AUDIT (P0-9 / R3-AF-2): provision the auth identity BEFORE inserting the
+  // affiliate row so we can pin user_id on insert. Without this the affiliate
+  // can never resolve their own dashboard/links/Stripe (getAffiliateForUser
+  // trusts only user_id), and the old client-writable user_metadata path is
+  // gone.
+  const userId = await provisionAffiliateIdentity({ email, slug, displayName: display_name });
+
   const { error } = await admin.from("affiliates").insert({
     slug,
     display_name,
@@ -810,9 +880,23 @@ export async function createAffiliate(formData: FormData): Promise<void> {
     archetype,
     sophistication_tier,
     application_id,
+    user_id: userId, // AUDIT (R3-AF-2): server-trusted identity link.
     status: "vetting",
   });
   if (error) throw new Error(error.message);
+
+  // AUDIT (R4-SM-4): when promoting an application, advance it out of the
+  // review queue so the queue actually drains. 'passed-vetting' is the
+  // terminal "became an affiliate" state in the affiliate_applications enum.
+  if (application_id) {
+    const { error: appErr } = await admin
+      .from("affiliate_applications")
+      .update({ status: "passed-vetting" })
+      .eq("id", application_id);
+    if (appErr) {
+      console.error("[affiliate] application status advance failed", appErr);
+    }
+  }
 
   await logEvent("affiliate_status_changed", { affiliate_id: slug, status: "vetting" });
 

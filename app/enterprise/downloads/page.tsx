@@ -46,7 +46,7 @@ const ARTIFACTS = [
     eyebrow: "ARTIFACT 04 · DIAGNOSTIC",
     title: "AE/SDR diagnostic instrument",
     description:
-      "Fully digital. 32 prompts across 8 dimensions with 1–5 response scales. AEs and SDRs fill it in on screen and download responses as a CSV. Administer at week 0 / week 8 and compare deltas.",
+      "Fully digital. 24 prompts per respondent (32 total) across 8 dimensions with 1–5 response scales. AEs and SDRs fill it in on screen and download responses as a CSV. Administer at week 0 / week 8 and compare deltas.",
     pages: "Digital · download CSV",
   },
 ];

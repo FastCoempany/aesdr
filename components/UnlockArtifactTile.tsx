@@ -109,5 +109,23 @@ export default function UnlockArtifactTile({
         {label} &middot; Buy
       </div>
     </button>
+      {error && (
+        <p
+          role="alert"
+          style={{
+            margin: 0,
+            maxWidth: 200,
+            fontFamily: "'Space Mono', monospace",
+            fontSize: 10,
+            lineHeight: 1.5,
+            letterSpacing: ".04em",
+            textAlign: "center",
+            color: "#8B1A1A",
+          }}
+        >
+          {error}
+        </p>
+      )}
+    </div>
   );
 }

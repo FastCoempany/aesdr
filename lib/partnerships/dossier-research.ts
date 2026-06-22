@@ -31,6 +31,16 @@ const EMIT_BUDGET_MS = 35_000;
 const MAX_TURNS = 12;
 const PROGRESS_THROTTLE_MS = 1_500;
 
+// Per-candidate token ceiling (R4-PERF-2). 6 searches + 4 fetches over up to 12
+// turns re-bills the whole transcript each turn; BATCH caps rows, not tokens.
+// When cumulative usage crosses this, stop and write up what we have.
+const MAX_RUN_TOKENS = 400_000;
+
+// One try per call + a per-request timeout that covers the research budget,
+// instead of the SDK's 10-min / 2-retry default that fights our own budget and
+// can triple the bill on a stuck call (R5-IC-8).
+const ANTHROPIC_OPTS = { maxRetries: 1, timeout: RESEARCH_BUDGET_MS } as const;
+
 const EMIT_INSTRUCTION = `Stop researching now and output the brief. Reply with ONLY a single JSON object — start your reply with { and end it with } — no prose before or after, no markdown fences. You MUST produce it even if your research was thin: in that case set "verdict":"needs_research" and note what's missing in the rationale fields, but still fill EVERY key. ${DOSSIER_SCHEMA_HINT}`;
 
 function phaseFor(searches: number, pagesRead: number): string {
@@ -119,7 +129,7 @@ export async function runDossierResearch(
   model: string,
   onProgress?: (p: ResearchProgress) => void,
 ): Promise<DossierBrief | null> {
-  const c = new Anthropic();
+  const c = new Anthropic(ANTHROPIC_OPTS);
   const messages: Anthropic.MessageParam[] = [
     {
       role: "user",
@@ -129,6 +139,7 @@ export async function runDossierResearch(
 
   let searches = 0;
   let pagesRead = 0;
+  let tokensUsed = 0;
   let lastEmit = 0;
   const report = (phase: string) => onProgress?.({ phase, searches, pagesRead });
   const throttled = () => {
@@ -144,6 +155,9 @@ export async function runDossierResearch(
   for (let i = 0; i < MAX_TURNS; i++) {
     const remaining = researchDeadline - Date.now();
     if (remaining <= 0) break;
+    // Token budget break — stop and write up once cumulative spend crosses the
+    // cap (R4-PERF-2).
+    if (tokensUsed >= MAX_RUN_TOKENS) break;
 
     const stream = c.messages.stream({
       model,
@@ -173,6 +187,8 @@ export async function runDossierResearch(
     try {
       const final = await stream.finalMessage();
       clearTimeout(stop);
+      tokensUsed +=
+        (final.usage?.input_tokens ?? 0) + (final.usage?.output_tokens ?? 0);
       messages.push({ role: "assistant", content: final.content });
       if (final.stop_reason === "pause_turn") {
         throttled();

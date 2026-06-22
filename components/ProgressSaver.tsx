@@ -10,6 +10,17 @@ interface ProgressSaverProps {
   isAuthenticated: boolean;
   /** Saved state_data from Supabase, sent to iframe for cross-device restoration */
   savedStateData?: Record<string, unknown>;
+  /**
+   * The unit currently rendered in the iframe. The lesson HTML is
+   * unit-agnostic (it never sets state_data.unit), so the parent stamps it —
+   * otherwise the merge_lesson_progress RPC defaults every unit's save to
+   * `_units["1"]` and units 2 & 3 overwrite unit 1's slot (P0-7).
+   */
+  unitId?: string;
+  /** Total units in this lesson. Used to decide unit-to-unit navigation. */
+  unitCount?: number;
+  /** The unitId to advance to when this unit's terminal CTA fires (P0-7). */
+  nextUnitId?: string | null;
 }
 
 /**
@@ -32,6 +43,9 @@ export default function ProgressSaver({
   lessonId,
   isAuthenticated,
   savedStateData,
+  unitId,
+  unitCount,
+  nextUnitId,
 }: ProgressSaverProps) {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const savedHideRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -49,10 +63,20 @@ export default function ProgressSaver({
 
   const save = useCallback(
     (screen: number, stateData: Record<string, unknown>) => {
+      // Stamp the current unit + screen into the state so the
+      // merge_lesson_progress RPC files it under the right _units[unitId]
+      // slot (the iframe is unit-agnostic) and the completion endpoint has
+      // per-unit screen evidence (P0-7 / decision #10).
+      const stamped: Record<string, unknown> = {
+        ...stateData,
+        ...(unitId ? { unit: unitId } : {}),
+        _screen: screen,
+      };
+
       // Always save to localStorage immediately
       saveProgressLocally(lessonId, {
         last_screen: screen,
-        state_data: stateData,
+        state_data: stamped,
       });
 
       // Debounce the server save to avoid spamming on rapid navigation
@@ -64,7 +88,7 @@ export default function ProgressSaver({
           fetch("/api/progress", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ lessonId, lastScreen: screen, stateData }),
+            body: JSON.stringify({ lessonId, lastScreen: screen, stateData: stamped }),
             signal: controller.signal,
           }).then((res) => {
             clearTimeout(timeoutId);
@@ -81,7 +105,7 @@ export default function ProgressSaver({
         }
       }, TIMING.progress.debounceMs);
     },
-    [lessonId, isAuthenticated, flashSaved]
+    [lessonId, isAuthenticated, flashSaved, unitId]
   );
 
   useEffect(() => {
@@ -108,23 +132,48 @@ export default function ProgressSaver({
         if (isAuthenticated) {
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 10000);
+          // P0-7: tell the server WHICH unit completed + how many units the
+          // lesson has, so the lesson is only marked complete once every unit
+          // is done (not after unit 1).
           fetch("/api/progress/complete", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ lessonId }),
+            body: JSON.stringify({ lessonId, unitId, unitCount }),
             signal: controller.signal,
           })
             .then(() => clearTimeout(timeoutId))
             .catch(() => clearTimeout(timeoutId));
-          saveProgressLocally(lessonId, { is_completed: true });
+          // Only the *whole-lesson* completion flips the local is_completed
+          // flag; an intermediate unit completion does not.
+          if (!nextUnitId) {
+            saveProgressLocally(lessonId, { is_completed: true });
+          }
         }
       }
 
       if (type === "aesdr:navigate") {
         const href = event.data?.href;
-        if (typeof href === "string" && href.startsWith("/")) {
+        // R3-SEC-5: only same-origin absolute paths. `startsWith("/")` alone
+        // lets "//evil.com" through (protocol-relative) — also reject "//".
+        const isSafePath =
+          typeof href === "string" &&
+          href.startsWith("/") &&
+          !href.startsWith("//");
+
+        // P0-7: the lesson HTML's terminal CTA always targets /dashboard. If
+        // there's a next unit in this lesson, advance to it instead so units 2
+        // & 3 are actually reached. The final unit keeps the original target.
+        if (isSafePath && href === "/dashboard" && nextUnitId) {
           setNavigating(true);
-          setTimeout(() => { window.location.href = href; }, 300);
+          setTimeout(() => {
+            window.location.href = `/course/${lessonId}?unit=${nextUnitId}`;
+          }, 300);
+          return;
+        }
+
+        if (isSafePath) {
+          setNavigating(true);
+          setTimeout(() => { window.location.href = href as string; }, 300);
         }
       }
     }
@@ -135,7 +184,7 @@ export default function ProgressSaver({
       if (debounceRef.current) clearTimeout(debounceRef.current);
       if (savedHideRef.current) clearTimeout(savedHideRef.current);
     };
-  }, [save, lessonId, isAuthenticated]);
+  }, [save, lessonId, isAuthenticated, unitId, unitCount, nextUnitId]);
 
   // Send saved state to iframe for cross-device restoration
   useEffect(() => {
