@@ -40,8 +40,11 @@ export async function proxy(request: NextRequest) {
   // ── Affiliate-experience: /x/* always passes ──
   // /x/* is the locked prospect experience. Let it through every gate
   // (coming-soon, allowlist, anonymous lock) unconditionally so incognito
-  // visits work without any session cookie. On main, those routes don't
-  // exist on disk, so Next renders its own 404 — harmless.
+  // visits work without any session cookie. NOTE: these routes DO exist on
+  // disk (app/(affiliate-experience)/x/**), so on the main production deploy
+  // they are served and bypass every gate. That's intended for the kit, but
+  // it means each /x/* route must carry its own auth/validation — see
+  // /x/track and /x/ops, which are guarded at the route level.
   if (pathname.startsWith("/x/")) {
     return supabaseResponse;
   }
@@ -103,7 +106,7 @@ export async function proxy(request: NextRequest) {
   // cookie, so a 302 to /coming-soon silently breaks them. They carry their
   // own auth (verifyCronAuth / requireAdmin / etc.). This was eating every
   // cron invocation as a 302.
-  if (comingSoon && !hasCsBypass && !isAdmin && !pathname.startsWith("/api/") && pathname !== "/coming-soon" && pathname !== "/mobile") {
+  if (comingSoon && !hasCsBypass && !isAdmin && !pathname.startsWith("/api/") && !pathname.startsWith("/r/") && pathname !== "/coming-soon" && pathname !== "/mobile") {
     const ua = request.headers.get("user-agent") || "";
     const isMobile = /Mobi|Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(ua);
     const url = request.nextUrl.clone();
@@ -118,12 +121,14 @@ export async function proxy(request: NextRequest) {
   }
 
   // Let API routes, dashboard, course, tools, account, auth pages, the
-  // partner hub, admin pages, and artifact previews through. Partner hub
-  // is partner-facing public surface (no auth required, like /syllabus).
-  // Artifact pages handle their own auth gates internally and accept
-  // ?preview=1 for partner-side previews of the end-of-course
-  // Programme/Manuscript artifacts.
-  if (pathname.startsWith("/api/") || pathname.startsWith("/dashboard") || pathname.startsWith("/course") || pathname.startsWith("/tools/") || pathname.startsWith("/account") || pathname.startsWith("/auth/") || pathname.startsWith("/affiliates") || pathname.startsWith("/admin") || pathname.startsWith("/artifacts/") || pathname === "/welcome") {
+  // affiliate hub, admin pages, artifact previews, affiliate click links
+  // (/r/), and team management through. The affiliate hub is public-facing
+  // (no auth required, like /syllabus). Artifact pages handle their own auth
+  // gates internally and accept ?preview=1 for partner-side previews of the
+  // end-of-course Programme/Manuscript artifacts. /r/<slug> is the affiliate
+  // click endpoint — it MUST pass so the attribution cookie gets set before
+  // the redirect (it 404s unknown slugs itself). /team manages team seats.
+  if (pathname.startsWith("/api/") || pathname.startsWith("/dashboard") || pathname.startsWith("/course") || pathname.startsWith("/tools/") || pathname.startsWith("/account") || pathname.startsWith("/auth/") || pathname.startsWith("/affiliates") || pathname.startsWith("/admin") || pathname.startsWith("/artifacts/") || pathname.startsWith("/r/") || pathname.startsWith("/team") || pathname === "/welcome") {
     return supabaseResponse;
   }
 
