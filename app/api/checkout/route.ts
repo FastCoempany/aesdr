@@ -82,6 +82,9 @@ export async function POST(request: NextRequest) {
       // address when this is on, and your products fall back to Stripe's default
       // tax code unless you set one per product.
       automatic_tax: { enabled: true },
+      // Guarantee a calculable address for Stripe Tax (don't rely on card
+      // country alone, which Stripe treats as low-confidence for digital goods).
+      billing_address_collection: 'required',
       success_url: successUrl,
       cancel_url: cancelUrl,
       customer_email: email || undefined,

@@ -1,13 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
-import { Analytics } from "@vercel/analytics/react";
 import A11yToggle from "@/components/A11yToggle";
 import AdminChip from "@/components/AdminChip";
 import AffiliateDisclosureFooter from "@/components/AffiliateDisclosureFooter";
 import MobileGate from "@/components/MobileGate";
 import ConsentBanner from "@/components/ConsentBanner";
+import ConsentedTrackers from "@/components/ConsentedTrackers";
 import PostHogClient from "@/components/PostHogClient";
-import RedditPixel from "@/components/RedditPixel";
 import { getAdminContext } from "@/lib/admin";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
@@ -99,10 +98,10 @@ export default async function RootLayout({
         <A11yToggle />
 
         {/* Analytics & Tracking */}
-        <Analytics />
-        <Suspense fallback={null}>
-          <RedditPixel />
-        </Suspense>
+        {/* Vercel Analytics + Reddit Pixel: gated on consent (they don't
+            self-gate). PostHog self-gates in lib/analytics, so it stays
+            separate. See ConsentedTrackers + ConsentBanner. */}
+        <ConsentedTrackers />
         <Suspense fallback={null}>
           <PostHogClient />
         </Suspense>

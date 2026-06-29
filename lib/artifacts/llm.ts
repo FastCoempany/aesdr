@@ -352,7 +352,6 @@ export async function extractPlaybill(
     gatesByCategory,
     scoresByCategory,
     role,
-    studentName
   );
 
   let response: Anthropic.Message;
@@ -411,11 +410,13 @@ function buildPlaybillPrompt(
   gatesByCategory: Record<ArtifactCategory, GateResponse[]>,
   scoresByCategory: Record<string, CategoryScore>,
   role: "ae" | "sdr",
-  studentName: string
 ): string {
   const roleLabel = role === "ae" ? "Account Executive" : "SDR";
 
-  let prompt = `# Subject of the Playbill — ${studentName}, ${roleLabel}\n\n`;
+  // AUDIT (R5-PI-3, adversarial pass): the buyer's real billing name is NOT sent
+  // to Claude — the model only needs role + scores; the name is attached to the
+  // returned object for rendering, never the prompt.
+  let prompt = `# Subject of the Playbill — ${roleLabel}\n\n`;
 
   prompt += `## Exercise & Quiz Scores by Category\n`;
   for (const [cat, score] of Object.entries(scoresByCategory)) {
@@ -522,7 +523,6 @@ export async function extractRedline(
     gatesByCategory,
     scoresByCategory,
     role,
-    studentName
   );
 
   let response: Anthropic.Message;
@@ -581,11 +581,11 @@ function buildRedlinePrompt(
   gatesByCategory: Record<ArtifactCategory, GateResponse[]>,
   scoresByCategory: Record<string, CategoryScore>,
   role: "ae" | "sdr",
-  studentName: string
 ): string {
   const roleLabel = role === "ae" ? "Account Executive" : "SDR";
 
-  let prompt = `# Draft Submitted — ${studentName}, ${roleLabel}\n\n`;
+  // AUDIT (R5-PI-3, adversarial pass): buyer's real name not sent to Claude.
+  let prompt = `# Draft Submitted — ${roleLabel}\n\n`;
 
   prompt += `## Exercise & Quiz Scores by Category\n`;
   for (const [cat, score] of Object.entries(scoresByCategory)) {

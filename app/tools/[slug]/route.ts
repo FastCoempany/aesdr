@@ -139,7 +139,9 @@ export async function GET(
   return new Response(html, {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
-      "Cache-Control": "private, max-age=3600",
+      // AUDIT (adversarial pass): was `max-age=3600`, which served the gated
+      // asset for up to an hour after access was revoked (refund/dispute).
+      "Cache-Control": "private, no-store",
     },
   });
 }

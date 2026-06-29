@@ -14,6 +14,7 @@ import AesdrBrand from "@/components/AesdrBrand";
 import SignOutButton from "@/components/SignOutButton";
 import { createClient } from "@/utils/supabase/server";
 import { getPlaybook, getPlaybookHtml } from "@/lib/affiliate-playbooks";
+import { getAffiliateForUser } from "@/lib/affiliate-entity";
 import { isAdminEmail } from "@/lib/admin";
 import "../playbooks.css";
 
@@ -41,8 +42,11 @@ export default async function PlaybookDetailPage(
   if (!user) redirect(`/login?next=/affiliates/dashboard/playbooks/${path}`);
 
   // Admin bypass (matches lib/affiliate-kit-session.ts pattern).
+  // Gate on the server-trusted affiliate row, not client-writable
+  // user_metadata.
   const isAdmin = isAdminEmail(user.email);
-  const isAffiliate = user.user_metadata?.is_affiliate === true;
+  const affiliate = await getAffiliateForUser({ userId: user.id });
+  const isAffiliate = affiliate?.status === "active";
   if (!isAffiliate && !isAdmin) redirect("/affiliates/dashboard");
 
   const entry = getPlaybook(path);

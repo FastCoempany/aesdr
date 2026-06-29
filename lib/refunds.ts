@@ -87,22 +87,28 @@ export async function applyRefundToCharge(
   ): Promise<number> => {
     if (rows.length === 0) return 0;
     const ids = rows.map((a) => a.id);
+    // Read existing refund AND dispute clawbacks for these attributions. The
+    // refund amount uses GREATEST(existing refund, pro-rata target) for
+    // idempotency, then is capped so refund + any existing dispute clawback can
+    // never exceed the commission (#5 — a sale that's both refunded and disputed
+    // must be clawed back at most once; the dispute handler caps the reciprocal).
     const { data: existing } = await supabase
       .from('commission_clawbacks')
-      .select('attribution_id, amount_cents')
-      .eq('reason', 'refund')
+      .select('attribution_id, amount_cents, reason')
+      .in('reason', ['refund', 'dispute'])
       .in('attribution_id', ids);
-    const existingMap = new Map(
-      (existing ?? []).map((r) => [r.attribution_id, r.amount_cents ?? 0]),
-    );
+    const refundMap = new Map<string, number>();
+    const disputeMap = new Map<string, number>();
+    for (const r of existing ?? []) {
+      if (r.reason === 'refund') refundMap.set(r.attribution_id, r.amount_cents ?? 0);
+      else if (r.reason === 'dispute') disputeMap.set(r.attribution_id, r.amount_cents ?? 0);
+    }
     const upsertRows = rows
       .map((a) => {
-        const target = proRataClawbackCents(
-          a.commission_amount_cents ?? 0,
-          refundedCents,
-          capturedCents,
-        );
-        const amount = Math.max(existingMap.get(a.id) ?? 0, target);
+        const commission = a.commission_amount_cents ?? 0;
+        const target = proRataClawbackCents(commission, refundedCents, capturedCents);
+        const greatest = Math.max(refundMap.get(a.id) ?? 0, target);
+        const amount = Math.min(greatest, Math.max(0, commission - (disputeMap.get(a.id) ?? 0)));
         return {
           affiliate_slug: a.affiliate_slug,
           attribution_id: a.id,

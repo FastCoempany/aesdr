@@ -378,6 +378,19 @@ export async function deleteMyAccount(confirmText: string): Promise<DeleteResult
     admin.from("affiliates").delete().eq("user_id", id)
   );
 
+  // AUDIT (#6, adversarial pass): teams.owner_id and team_members.user_id are FK
+  // RESTRICT (no ON DELETE), so deleteUser below would abort for any team buyer
+  // or member — leaving a half-erased, broken account. Clear those references
+  // first. Removing a team the user OWNS cascades its team_members (ON DELETE
+  // CASCADE): a team can't exist without its owner, so the seats it granted end
+  // with the owner's account.
+  await deleteStep("Remove team memberships", () =>
+    admin.from("team_members").delete().eq("user_id", id)
+  );
+  await deleteStep("Delete owned teams (and their seats)", () =>
+    admin.from("teams").delete().eq("owner_id", id)
+  );
+
   /* ── 3. Delete the auth user LAST ── */
   // After this the session is dead. The client signs out + redirects home.
   try {
