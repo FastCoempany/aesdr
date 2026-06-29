@@ -535,7 +535,7 @@ export async function sendAffiliateGateClearedEmail(args: {
         <p style="margin:0 0 24px;">Post freely from here on. You can still send a draft for a sanity check before a big push, but it's not required.</p>
         <p style="margin:0 0 12px;font-family:'SF Mono',Consolas,monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#6B6B6B;">How the money works now</p>
         <ul style="margin:0;padding:0 0 0 20px;font-family:Georgia,'Source Serif 4',serif;font-size:15px;line-height:1.7;color:#1A1A1A;">
-          <li style="margin-bottom:6px;">30% of net revenue on any enrolment attributed to your link</li>
+          <li style="margin-bottom:6px;">40% of net revenue on any enrolment attributed to your link</li>
           <li style="margin-bottom:6px;">30-day attribution window from a visitor's first click</li>
           <li style="margin-bottom:0;">14-day refund window — commission clears the moment it closes, then ships in the next payout batch</li>
         </ul>
@@ -558,7 +558,7 @@ export async function sendAffiliateGateClearedEmail(args: {
         `Post freely from here on. You can still send a draft for a sanity check before a big push, but it's not required.`,
         ``,
         `How the money works now:`,
-        `  - 30% of net revenue on any enrolment attributed to your link`,
+        `  - 40% of net revenue on any enrolment attributed to your link`,
         `  - 30-day attribution window from a visitor's first click`,
         `  - 14-day refund window — commission clears the moment it closes, then ships in the next payout batch`,
         ``,

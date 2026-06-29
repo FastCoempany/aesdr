@@ -105,7 +105,7 @@ export default function HowWeWorkPage() {
 
         <h2 style={h2Style}>5. What this means for affiliates.</h2>
         <p style={pStyle}>
-          You&rsquo;re partnering with a brand that publishes its operating doctrine instead of hiding it. That includes the partnership terms, the curriculum, the disqualification list (we publish who we decline), the pricing doctrine (list price, 30% commission, never discount), and how we handle founder visibility (visible to you in conversation; invisible to your audience).
+          You&rsquo;re partnering with a brand that publishes its operating doctrine instead of hiding it. That includes the partnership terms, the curriculum, the disqualification list (we publish who we decline), the pricing doctrine (list price, 40% commission, never discount), and how we handle founder visibility (visible to you in conversation; invisible to your audience).
         </p>
         <p style={pStyle}>
           If any of this is the kind of operating model you want a affiliate to bring you, apply. If it isn&rsquo;t, decline cleanly — we&rsquo;d rather you decline now than end a pilot in week four.

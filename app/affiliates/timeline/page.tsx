@@ -79,7 +79,7 @@ const STEPS = [
     when: "Week 8",
     title: "Attribution window closes.",
     you: "Nothing required.",
-    us: "Final net revenue calculated. Commission computed at 30% of net. Net-45 payment clock starts.",
+    us: "Final net revenue calculated. Commission computed at 40% of net. Net-45 payment clock starts.",
   },
   {
     when: "Week ~13",

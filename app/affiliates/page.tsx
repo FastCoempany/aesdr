@@ -39,7 +39,7 @@ import {
 export const metadata: Metadata = {
   title: "AESDR · Affiliates",
   description:
-    "Pilot Cohort 1 is open. We're looking for a small number of affiliates whose audiences are SaaS AEs and SDRs — first-year through ten-year veterans doing a fundamentals reset. One workshop, two emails, 30% commission, $500 sign-on for invited affiliates.",
+    "Pilot Cohort 1 is open. We're looking for a small number of affiliates whose audiences are SaaS AEs and SDRs — first-year through ten-year veterans doing a fundamentals reset. One workshop, two emails, 40% commission, $500 sign-on for invited affiliates.",
 };
 
 export default function AffiliatesHomePage() {
@@ -62,7 +62,7 @@ export default function AffiliatesHomePage() {
         }
         leftBody={
           <>
-            AESDR&rsquo;s first affiliate cohort is forming, and we&rsquo;re looking for a small number of affiliates &mdash; community operators, course creators, agency owners, coaches &mdash; whose audiences are SaaS AEs and SDRs across the career arc: first-year hires trying to ramp, third-year ramp veterans, and ten-year veterans doing a fundamentals reset. The shape of the pilot is deliberately simple &mdash; one live workshop into your audience, two emails over the attribution window, a 30-day attribution window, and a 30% commission rate &mdash; and there&rsquo;s nothing else hidden in the agreement beyond that.
+            AESDR&rsquo;s first affiliate cohort is forming, and we&rsquo;re looking for a small number of affiliates &mdash; community operators, course creators, agency owners, coaches &mdash; whose audiences are SaaS AEs and SDRs across the career arc: first-year hires trying to ramp, third-year ramp veterans, and ten-year veterans doing a fundamentals reset. The shape of the pilot is deliberately simple &mdash; one live workshop into your audience, two emails over the attribution window, a 30-day attribution window, and a 40% commission rate &mdash; and there&rsquo;s nothing else hidden in the agreement beyond that.
           </>
         }
         rightLabel="WHERE WE ARE"

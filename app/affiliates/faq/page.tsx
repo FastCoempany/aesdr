@@ -38,7 +38,7 @@ const FAQ_ITEMS = [
     q: "What's the commission rate?",
     a: (
       <p>
-        30% of net revenue (gross minus refunds, payment fees, sales tax). Net is calculated after the 14-day refund window closes. Payment is net-45 from close of the 30-day attribution window.
+        40% of net revenue (gross minus refunds, payment fees, sales tax). Net is calculated after the 14-day refund window closes. Payment is net-45 from close of the 30-day attribution window.
       </p>
     ),
   },

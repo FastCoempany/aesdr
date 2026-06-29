@@ -59,8 +59,8 @@ export default function EconomicsPage() {
       <section style={section}>
         <h2 style={h2Style}>The terms.</h2>
         <ul style={listStyle}>
-          <li><strong>Commission:</strong> 30% of net revenue on every sale you bring in.</li>
-          <li><strong>Net revenue:</strong> Gross minus refunds (within the 14-day window), payment processor fees (~2.9% + $0.30 per transaction), and any sales tax. It&rsquo;s what AESDR actually keeps. 30% of that goes to you.</li>
+          <li><strong>Commission:</strong> 40% of net revenue on every sale you bring in.</li>
+          <li><strong>Net revenue:</strong> Gross minus refunds (within the 14-day window), payment processor fees (~2.9% + $0.30 per transaction), and any sales tax. It&rsquo;s what AESDR actually keeps. 40% of that goes to you.</li>
           <li><strong>Attribution window:</strong> 30 days from the first time someone clicks your affiliate-attributed link. If they come back later via Google or directly within those 30 days and enroll, you&rsquo;re still the attributed affiliate.</li>
           <li><strong>Refund window:</strong> 14 days from purchase, no questions asked. Net revenue is calculated <em>after</em> the refund window closes &mdash; we don&rsquo;t pay commission on something that gets refunded.</li>
           <li><strong>Payment:</strong> Net-45 from the close of the 30-day attribution window. So roughly 75 days from your first promotion send, you see the money.</li>
@@ -93,10 +93,10 @@ export default function EconomicsPage() {
           <Row k="Less refunds (1 in 14-day window)" v="−$249" />
           <Row k="Less Stripe fees (3.2% effective)" v="−$76" />
           <Row k="Net revenue" v="$2,315" highlight />
-          <Row k="Your 30% commission" v="$694.50" highlight />
+          <Row k="Your 40% commission" v="$926.00" highlight />
         </div>
         <p style={smallNote}>
-          That&rsquo;s ~$8.70 per registrant, ~$19 per live attendee. Numbers scale linearly with audience size at the same conversion rates &mdash; no break-point that shifts the math.
+          That&rsquo;s ~$11.60 per registrant, ~$26 per live attendee. Numbers scale linearly with audience size at the same conversion rates &mdash; no break-point that shifts the math.
         </p>
       </section>
 
@@ -129,7 +129,7 @@ export default function EconomicsPage() {
       </div>
 
       <CaveatLayer>
-        PS &mdash; A 10,000-person send at the same rates produces ~$6,945 in commission. A 100-person send produces ~$70. The math is the math. Audience quality and fit matter more than size.
+        PS &mdash; A 10,000-person send at the same rates produces ~$9,260 in commission. A 100-person send produces ~$93. The math is the math. Audience quality and fit matter more than size.
       </CaveatLayer>
     </HubPage>
   );

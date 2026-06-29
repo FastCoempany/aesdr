@@ -15,7 +15,7 @@ import { MonoEyebrow, HubCTA, CaveatLayer } from "@/components/affiliates/HubEle
 export const metadata: Metadata = {
   title: "Affiliate Program · AESDR",
   description:
-    "Time-boxed and non-exclusive affiliate program centered on a live workshop into your audience, with the same pricing every retail buyer gets and a flat 30% commission on net revenue.",
+    "Time-boxed and non-exclusive affiliate program centered on a live workshop into your audience, with the same pricing every retail buyer gets and a flat 40% commission on net revenue.",
 };
 
 const SECTIONS = [
@@ -36,7 +36,7 @@ const SECTIONS = [
       "Building a registration page just for your audience with tracking baked in. URL ready within 24 hours of signing.",
       "Running the live 60-minute workshop. We host, present, and handle Q&A. Replay stays live for 72 hours.",
       "Handling every email after registration — confirmations, reminders, replay link, the follow-ups, the soft DMs to people who clicked but didn't enroll. You don't lift a finger after the workshop ends.",
-      "Paying 30% commission on net revenue. Net-45 from the close of the 30-day attribution window. ACH, Wise, or PayPal — your pick.",
+      "Paying 40% commission on net revenue. Net-45 from the close of the 30-day attribution window. ACH, Wise, or PayPal — your pick.",
       "Sending you a one-page Friday report every Friday during the pilot. Same numbers we're looking at. No surprises at the close.",
       "Cohort 1 affiliates we invite directly: a $500 sign-on bonus paid on agreement signing. Small money, real money — the point is skin in the game from day one.",
     ],
@@ -188,7 +188,7 @@ export default function ProgramPage() {
               marginBottom: 16,
             }}
           >
-            One price for everyone. 30% to you.
+            One price for everyone. 40% to you.
           </h2>
           <p
             style={{
@@ -199,7 +199,7 @@ export default function ProgramPage() {
               marginBottom: 16,
             }}
           >
-            Your audience pays the same price every other AESDR buyer pays: <strong>$249 SDR Individual</strong>, <strong>$299 AE Individual</strong>. Team licensing is quoted per team through enterprise contact and isn&rsquo;t affiliate-attributable. No affiliate codes, no discount stacking, no pilot pricing. Your commission is 30% of net revenue on every Individual sale you bring in, every time.
+            Your audience pays the same price every other AESDR buyer pays: <strong>$249 SDR Individual</strong>, <strong>$299 AE Individual</strong>. Team licensing is quoted per team through enterprise contact and isn&rsquo;t affiliate-attributable. No affiliate codes, no discount stacking, no pilot pricing. Your commission is 40% of net revenue on every Individual sale you bring in, every time.
           </p>
           <p
             style={{
