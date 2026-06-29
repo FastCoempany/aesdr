@@ -61,7 +61,7 @@ A consolidated punch-list of everything **five rounds** of adversarial auditing 
 | R4-PERF-12 | How long should the `events` log be kept before auto-purge? | **Yes** — once you give the window. |
 | R5-DV-1 | Do you want marketing mail split onto a subdomain, separate from transactional? | **Partly** — the DNS is yours; I update the from-addresses after. |
 | R5-DV-6 | Have you set SPF/DKIM/DMARC for the sending domain? | **No** — DNS is yours; I'll hand you the exact records. |
-| R5-DV-7 | BIMI logo not in inboxes | 👤 | Needs a VMC cert + `default._bimi` DNS + a square SVG-PS mark |
+| R5-DV-7 | BIMI logo not in inboxes | 👤 | **Deferred** — a later branding upgrade (DMARC already enforcing); guide: `docs/2026-06-29-bimi-setup.md` |
 | R5-PI-4 | Do you want consent + a retention limit on scraped prospect data, or to stop persisting it? | **Yes (implement)** — the decision is yours. |
 | R5-PI-9 | What retention window should each table keep before auto-purge? | **Yes** — once you give the windows. |
 
@@ -846,7 +846,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 ## 📋 Master status table (all findings)
 *Legend: ✅ done (in code on main) · 🟡 partial · ⬜ not started/deferred · 👤 on you (decision/infra/external). "Done" = patched + builds + (money math) unit-tested, not individually load-tested.*
 
-**Tally — ✅ 275 done · 🟡 0 partial · ⬜ 1 not-started · 👤 2 on you · 278 total.** (2026-06-29 batch 4: **sales tax wired** — `automatic_tax: {enabled:true}` on the checkout (R4-MON-7 ✅, Stripe Tax enabled by founder); **BIMI** split out as its own item R5-DV-7 👤 — DMARC is enforcing but the logo-in-inbox needs a VMC cert + `default._bimi` DNS + a square SVG-PS mark, see `docs/2026-06-29-bimi-setup.md`; P3-10 clarified — `verdict` is the Redline book-review motif + a mascot pose, recommend keep. Batch 3 had set commission → 40% / attribution → 30-day across the board, Delaware confirmed, R5-DV-6 (DMARC) resolved, and the scraped-prospect retention purge. tsc/lint/build green, 48 unit tests.) **The 3 remaining:** P3-10 (⬜ — `verdict`, recommend keep); R4-LEG-4 (👤 — no product earnings claims; source the `/about` stats if you want); R5-DV-7 (👤 — BIMI: VMC + DNS + square mark, guide written, I can draft the SVG).
+**Tally — ✅ 275 done · 🟡 0 partial · ⬜ 1 not-started · 👤 2 on you · 278 total.** (2026-06-29 batch 4: **sales tax wired** — `automatic_tax: {enabled:true}` on the checkout (R4-MON-7 ✅, Stripe Tax enabled by founder); **BIMI** split out as its own item R5-DV-7 👤 — DMARC is enforcing but the logo-in-inbox needs a VMC cert + `default._bimi` DNS + a square SVG-PS mark, see `docs/2026-06-29-bimi-setup.md`; P3-10 clarified — `verdict` is the Redline book-review motif + a mascot pose, recommend keep. Batch 3 had set commission → 40% / attribution → 30-day across the board, Delaware confirmed, R5-DV-6 (DMARC) resolved, and the scraped-prospect retention purge. tsc/lint/build green, 48 unit tests.) **The 3 remaining:** P3-10 (⬜ — `verdict`, recommend keep); R4-LEG-4 (👤 — no product earnings claims; source the `/about` stats if you want); R5-DV-7 (👤 — BIMI **deferred** as a later branding upgrade; guide saved for when you want it).
 
 ### Phase 0
 
@@ -1107,7 +1107,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 | R5-DV-4 | Bulk to unconfirmed addresses | ✅ | Suppress bounced |
 | R5-DV-5 | No List-Id/Precedence on bulk | ✅ | Bulk headers added |
 | R5-DV-6 | SPF/DKIM/DMARC root mixing | ✅ | DMARC published + quarantine/reject enforced; BIMI optional |
-| R5-DV-7 | BIMI logo not in inboxes | 👤 | Needs a VMC cert + `default._bimi` DNS + a square SVG-PS mark |
+| R5-DV-7 | BIMI logo not in inboxes | 👤 | **Deferred** — a later branding upgrade (DMARC already enforcing); guide: `docs/2026-06-29-bimi-setup.md` |
 | R5-IC-1 | No `allow_promotion_codes` | ✅ | Enabled on sdr/ae |
 | R5-IC-2 | Stripe pins no `apiVersion` | ✅ | Pinned via central client |
 | R5-IC-3 | No reusable Stripe Customer | ✅ | `customer_creation:'always'` |
