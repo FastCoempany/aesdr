@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin";
 import { generateSlug } from "@/lib/affiliate";
 import { applyClawbacks } from "@/lib/payout-math";
+import { findUserIdByEmail } from "@/lib/auth-users";
 import {
   getAffiliateById,
   getAffiliateForUser,
@@ -148,13 +149,60 @@ export async function markPayoutPaid(formData: FormData): Promise<void> {
   const admin = createAdminClient();
   const { data: payout, error: getErr } = await admin
     .from("affiliate_payouts")
-    .select("id, affiliate_slug, total_commission_cents, attribution_ids, status")
+    .select("id, affiliate_slug, total_commission_cents, net_paid_cents, attribution_ids, status")
     .eq("id", payoutId)
     .maybeSingle();
   if (getErr || !payout) throw new Error("Payout not found.");
   if (payout.status === "paid") throw new Error("Already marked paid.");
 
   const nowIso = new Date().toISOString();
+
+  // AUDIT (§11): a payout created by runAffiliatePayoutBatch already netted open
+  // clawbacks (it stamps net_paid_cents). A payout finalized through this MANUAL
+  // path historically did not — so the affiliate kept commission on a refunded /
+  // disputed sale. Net any open clawbacks here too, recording the real net and
+  // consuming the clawbacks so they can't double-apply. Guard on net_paid_cents
+  // being unset so a batch payout (whose money already moved) is never re-netted.
+  let nettingNote: string | null = null;
+  if (payout.net_paid_cents == null) {
+    const { data: openClawbacks } = await admin
+      .from("commission_clawbacks")
+      .select("id, amount_cents")
+      .eq("affiliate_slug", payout.affiliate_slug)
+      .is("applied_payout_id", null)
+      .order("created_at", { ascending: true });
+    const gross = payout.total_commission_cents ?? 0;
+    const { netCents, clawbackTotal, applications } = applyClawbacks(gross, openClawbacks ?? []);
+    const { error: netErr } = await admin
+      .from("affiliate_payouts")
+      .update({ net_paid_cents: netCents })
+      .eq("id", payoutId);
+    if (netErr) throw new Error(netErr.message);
+    // Mirror the batch: full → close the row; partial → decrement the remainder.
+    for (const cb of applications) {
+      const { error: cbErr } = cb.full
+        ? await admin
+            .from("commission_clawbacks")
+            .update({ applied_payout_id: payoutId, applied_at: nowIso })
+            .eq("id", cb.id)
+        : await admin
+            .from("commission_clawbacks")
+            .update({ amount_cents: cb.remaining })
+            .eq("id", cb.id);
+      if (cbErr) {
+        // Surface — a silent failure would re-net the same clawback next time.
+        console.error("[markPayoutPaid] clawback apply failed", {
+          clawbackId: cb.id,
+          payoutId,
+          error: cbErr.message,
+        });
+      }
+    }
+    if (clawbackTotal > 0) {
+      nettingNote = `netted ${clawbackTotal}¢ clawback; pay net ${netCents}¢ of ${gross}¢ gross`;
+    }
+  }
+
   const { error: updErr } = await admin
     .from("affiliate_payouts")
     .update({
@@ -162,6 +210,7 @@ export async function markPayoutPaid(formData: FormData): Promise<void> {
       paid_at: nowIso,
       payment_method: paymentMethod,
       payment_reference: paymentReference,
+      ...(nettingNote ? { note: nettingNote } : {}),
     })
     .eq("id", payoutId);
   if (updErr) throw new Error(updErr.message);
@@ -878,9 +927,8 @@ async function provisionAffiliateIdentity(args: {
 
     let userId: string | null = existingPurchase?.user_id ?? null;
     if (!userId) {
-      const { data: userList } = await admin.auth.admin.listUsers({ perPage: 200 });
-      userId =
-        userList?.users?.find((u) => u.email?.toLowerCase() === email)?.id ?? null;
+      // §7: paginate all users instead of silently capping at the first 200.
+      userId = await findUserIdByEmail(admin, email);
     }
 
     if (userId) {

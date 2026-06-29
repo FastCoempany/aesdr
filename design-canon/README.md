@@ -8,6 +8,8 @@ This folder is a **copy** of every document, component, page, mockup, and asset 
 
 These are copies. Originals are still in their canonical locations and remain the source of truth — when canon changes, the originals update first and this folder gets re-snapped. Treat this folder as a reference library you can browse without hunting across the repo.
 
+> ⚠️ **Reference only — do not edit, import, or route to anything in this folder (audit P3-11).** The component/page copies under `04-components/` and `05-app-pages/` are a dated snapshot and **may have drifted** from the live originals. Always change the canonical file in its real location; nothing in the app imports from here, and the lint + canon-check scanners deliberately skip this tree.
+
 ---
 
 ## How to use this folder

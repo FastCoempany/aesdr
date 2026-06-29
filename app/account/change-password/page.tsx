@@ -7,6 +7,7 @@ import { createClient } from "@/utils/supabase/client";
 
 export default function ChangePasswordPage() {
   const router = useRouter();
+  const [currentPassword, setCurrentPassword] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,13 +19,47 @@ export default function ChangePasswordPage() {
     e.preventDefault();
     setError(null);
 
+    if (!currentPassword) {
+      setError("Enter your current password.");
+      return;
+    }
+
     if (password !== confirm) {
       setError("Passwords don't match.");
       return;
     }
 
+    if (password === currentPassword) {
+      setError("Your new password must be different from your current one.");
+      return;
+    }
+
     setLoading(true);
     const supabase = createClient();
+
+    // Confirm a live session and grab the email to re-authenticate against.
+    const { data: userData } = await supabase.auth.getUser();
+    const email = userData.user?.email;
+
+    if (!email) {
+      setError("You're not signed in. Please sign in again to change your password.");
+      setLoading(false);
+      return;
+    }
+
+    // Re-authenticate with the current password before allowing the change.
+    // This blocks a walk-up takeover or hijacked session from silently
+    // resetting the key.
+    const { error: reauthError } = await supabase.auth.signInWithPassword({
+      email,
+      password: currentPassword,
+    });
+
+    if (reauthError) {
+      setError("Your current password is incorrect.");
+      setLoading(false);
+      return;
+    }
 
     const { error: updateError } = await supabase.auth.updateUser({
       password,
@@ -95,7 +130,7 @@ export default function ChangePasswordPage() {
                 fontStyle: "italic",
               }}
             >
-              Create Your Password
+              Change Your Password
             </h1>
             <p
               style={{
@@ -107,7 +142,7 @@ export default function ChangePasswordPage() {
                 margin: 0,
               }}
             >
-              Initiation <span style={{ opacity: 0.6 }}>·</span> Step Two
+              Account <span style={{ opacity: 0.6 }}>·</span> Security
             </p>
             <p
               style={{
@@ -120,7 +155,7 @@ export default function ChangePasswordPage() {
                 fontStyle: "italic",
               }}
             >
-              You&apos;ve been initiated. Now pick your own key.
+              Enter your current password, then choose a new one.
             </p>
           </div>
 
@@ -134,11 +169,28 @@ export default function ChangePasswordPage() {
               }}
             >
               <p style={{ fontFamily: "var(--serif)", fontSize: "16px", color: "var(--crimson)" }}>
-                Password set. Welcome to AESDR.
+                Password updated.
               </p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="space-y-2">
+                <label htmlFor="current-password" style={labelStyle}>
+                  Current Password
+                </label>
+                <input
+                  id="current-password"
+                  type="password"
+                  required
+                  autoComplete="current-password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  className="w-full px-4 py-3 outline-none transition"
+                  style={inputStyle}
+                  placeholder="Your existing password"
+                />
+              </div>
+
               <div className="space-y-2">
                 <label htmlFor="password" style={labelStyle}>
                   New Password
@@ -200,7 +252,7 @@ export default function ChangePasswordPage() {
                 style={primaryButtonStyle(submitHover)}
               >
                 <span style={{ position: "relative", zIndex: 1 }}>
-                  {loading ? "Setting Password…" : "Set Password & Continue"}
+                  {loading ? "Updating…" : "Update Password"}
                 </span>
               </button>
             </form>
