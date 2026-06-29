@@ -58,22 +58,16 @@ export default async function PlaybooksIndexPage({
   // cycle through every archetype's "Start here" callout via the
   // ?preview= query param (?preview=creator|coach|community|alumni|hybrid).
   const isAdmin = isAdminEmail(user.email);
-  const isAffiliate = user.user_metadata?.is_affiliate === true;
+
+  // Gate on the server-trusted affiliate row, not client-writable
+  // user_metadata (which any signed-in user can set via
+  // supabase.auth.updateUser({ data })).
+  const affiliate = await getAffiliateForUser({ userId: user.id });
+  const isAffiliate = affiliate?.status === "active";
   if (!isAffiliate && !isAdmin) redirect("/affiliates/dashboard");
 
   const { preview } = await searchParams;
   const previewArchetype = isAdmin && isArchetype(preview ?? null) ? preview as AffiliateArchetype : null;
-
-  // Load the affiliate record so we can surface an archetype-matched
-  // "Start here" callout above the grid. Skipped for admin preview
-  // mode (we use the previewArchetype directly instead).
-  const affiliate = !previewArchetype && isAffiliate
-    ? await getAffiliateForUser({
-        userId: user.id,
-        jwtAffiliateSlug: user.user_metadata?.affiliate_slug,
-        jwtPartnerSlug: user.user_metadata?.partner_slug,
-      })
-    : null;
 
   const archetypeForCallout = previewArchetype ?? affiliate?.archetype ?? null;
   const recommendation = archetypeForCallout

@@ -36,6 +36,11 @@ export default function ConsentBanner() {
     setShow(false);
     // On accept, the next tracked event / route change starts analytics
     // (lib/analytics re-checks consent on every call). On decline, nothing loads.
+    if (value === "granted") {
+      // Tell the non-self-gating trackers (Vercel Analytics + Reddit Pixel via
+      // ConsentedTrackers) to mount now, without waiting for a reload.
+      window.dispatchEvent(new Event("aesdr:consent-granted"));
+    }
   }
 
   if (!show) return null;

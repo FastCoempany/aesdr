@@ -68,6 +68,13 @@ export async function POST(request: Request) {
     const name = session.customer_details?.name || 'there';
     const tierRaw = session.metadata?.tier;
     const amountCents = session.amount_total || 0;
+    // AUDIT (R4-MON-7, adversarial pass 2026-06-29): once automatic_tax is on,
+    // amount_total is tax-INCLUSIVE. Commission ("40% of net revenue") must NOT be
+    // paid on sales tax we merely collect for the state, so the commission base +
+    // gross_amount_cents strip the tax. amount_total stays the purchase record +
+    // receipt total (what the buyer actually paid).
+    const taxCents = session.total_details?.amount_tax ?? 0;
+    const commissionBaseGrossCents = Math.max(0, amountCents - taxCents);
 
     const supabase = createAdminClient();
 
@@ -377,7 +384,7 @@ export async function POST(request: Request) {
             // AUDIT: fee may not be settled at webhook time for some payment
             // methods — gross fallback keeps this defensive, never overpaying
             // beyond the configured rate-of-gross worst case.
-            let baseCents = amountCents;
+            let baseCents = commissionBaseGrossCents;
             try {
               const piId =
                 typeof session.payment_intent === 'string'
@@ -406,8 +413,8 @@ export async function POST(request: Request) {
                     bt.currency === 'usd'
                       ? bt.fee
                       : null;
-                  if (feeCents != null && feeCents >= 0 && feeCents < amountCents) {
-                    baseCents = amountCents - feeCents;
+                  if (feeCents != null && feeCents >= 0 && feeCents < commissionBaseGrossCents) {
+                    baseCents = commissionBaseGrossCents - feeCents;
                   }
                 }
               }
@@ -431,7 +438,7 @@ export async function POST(request: Request) {
                 click_id: affiliateClickId || null,
                 purchase_id: purchaseRow.id,
                 user_email: email,
-                gross_amount_cents: amountCents,
+                gross_amount_cents: commissionBaseGrossCents,
                 // AUDIT (R4-MON-2): store the actual rate used, not a constant.
                 commission_rate: commissionRate,
                 commission_amount_cents: commissionCents,
@@ -533,27 +540,53 @@ export async function POST(request: Request) {
         // the CHECK constraint allows). If the dispute is later WON, the
         // charge.dispute.closed handler below re-clears it.
         if (disputedPurchase?.id) {
-          const { data: paidAttrs } = await supabase
+          // AUDIT (#9, adversarial pass): include 'processing' (mid-payout) like
+          // the refund handler, or a dispute that lands while a payout batch is
+          // in flight is never clawed back.
+          const { data: clawableAttrs } = await supabase
             .from('affiliate_attributions')
             .select('id, affiliate_slug, commission_amount_cents')
             .eq('purchase_id', disputedPurchase.id)
-            .eq('status', 'paid');
-          if (paidAttrs && paidAttrs.length > 0) {
+            .in('status', ['paid', 'processing']);
+          const clawable = (clawableAttrs ?? []).filter(
+            (a) => (a.commission_amount_cents ?? 0) > 0,
+          );
+          if (clawable.length > 0) {
             // AUDIT (P0-2): commission already paid out on a now-disputed sale —
             // write a clawback ledger row; the next payout nets it out.
-            const clawbackRows = paidAttrs
-              .filter((a) => (a.commission_amount_cents ?? 0) > 0)
-              .map((a) => ({
-                affiliate_slug: a.affiliate_slug,
-                attribution_id: a.id,
-                purchase_id: disputedPurchase.id,
-                amount_cents: a.commission_amount_cents,
-                reason: 'dispute',
-              }));
+            // AUDIT (#5, adversarial pass): a sale can be BOTH disputed AND
+            // refunded. The commission must be clawed back at most ONCE, so cap
+            // the dispute clawback at commission MINUS any existing 'refund'
+            // clawback for the same attribution (the refund handler caps the
+            // reciprocal way), and upsert idempotently instead of insert.
+            const ids = clawable.map((a) => a.id);
+            const { data: existingRefunds } = await supabase
+              .from('commission_clawbacks')
+              .select('attribution_id, amount_cents')
+              .eq('reason', 'refund')
+              .in('attribution_id', ids);
+            const refundMap = new Map(
+              (existingRefunds ?? []).map((r) => [r.attribution_id, r.amount_cents ?? 0]),
+            );
+            const clawbackRows = clawable
+              .map((a) => {
+                const commission = a.commission_amount_cents ?? 0;
+                const alreadyClawed = refundMap.get(a.id) ?? 0;
+                return {
+                  affiliate_slug: a.affiliate_slug,
+                  attribution_id: a.id,
+                  purchase_id: disputedPurchase.id,
+                  amount_cents: Math.max(0, commission - alreadyClawed),
+                  reason: 'dispute',
+                };
+              })
+              .filter((r) => r.amount_cents > 0);
             if (clawbackRows.length > 0) {
-              const { error: cbErr } = await supabase.from('commission_clawbacks').insert(clawbackRows);
+              const { error: cbErr } = await supabase
+                .from('commission_clawbacks')
+                .upsert(clawbackRows, { onConflict: 'attribution_id,reason', ignoreDuplicates: true });
               if (cbErr) {
-                Sentry.captureMessage('[webhook] clawback ledger insert failed (dispute)', {
+                Sentry.captureMessage('[webhook] clawback ledger upsert failed (dispute)', {
                   level: 'error',
                   extra: { sessionId, purchaseId: disputedPurchase.id, error: cbErr.message },
                 });

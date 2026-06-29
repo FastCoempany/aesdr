@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import AesdrBrand from "@/components/AesdrBrand";
 import SignOutButton from "@/components/SignOutButton";
 import { createClient } from "@/utils/supabase/server";
+import { getAffiliateForUser } from "@/lib/affiliate-entity";
 import LinkForm from "./LinkForm";
 
 export const metadata: Metadata = {
@@ -16,8 +17,10 @@ export default async function CreateLinkPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/affiliates/dashboard/links");
 
-  const isAffiliate = user.user_metadata?.is_affiliate === true;
-  if (!isAffiliate) redirect("/affiliates/dashboard");
+  // Gate on the server-trusted affiliate row, not client-writable
+  // user_metadata. An active affiliate is required to create links.
+  const affiliate = await getAffiliateForUser({ userId: user.id });
+  if (!affiliate || affiliate.status !== "active") redirect("/affiliates/dashboard");
 
   return (
     <main

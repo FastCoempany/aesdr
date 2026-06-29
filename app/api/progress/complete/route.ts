@@ -136,7 +136,16 @@ export async function POST(request: NextRequest) {
     completedAt: new Date().toISOString(),
   };
 
-  const completedUnitCount = unitIds.filter((id) => unitsComplete[id]).length;
+  // AUDIT (adversarial pass 2026-06-29): the merge_lesson_progress RPC rebuilds
+  // state_data from the incoming unit only, so top-level `_unitsComplete` is wiped
+  // on the next /api/progress save — a prior unit's flag is gone by the time the
+  // next unit completes, and no multi-unit lesson could ever finish. The per-unit
+  // `_units[id].unitComplete` flag survives the merge, so count completion from
+  // EITHER source. (The RPC is also hardened to carry top-level keys forward — see
+  // 20260629_merge_lesson_progress_preserve_toplevel.sql.)
+  const completedUnitCount = unitIds.filter(
+    (id) => unitsComplete[id] === true || nextUnitsBlob[id]?.unitComplete === true,
+  ).length;
   const lessonComplete = completedUnitCount >= totalUnits;
 
   const nextStateData: Record<string, unknown> = {

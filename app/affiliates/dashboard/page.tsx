@@ -6,6 +6,7 @@ import AesdrBrand from "@/components/AesdrBrand";
 import SignOutButton from "@/components/SignOutButton";
 import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
+import { getAffiliateForUser } from "@/lib/affiliate-entity";
 import { getSiteUrl } from "@/lib/site-url";
 import StatTile from "./_components/StatTile";
 
@@ -60,13 +61,16 @@ export default async function AffiliatesDashboardPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/affiliates/dashboard");
 
-  const affiliateSlug = user.user_metadata?.affiliate_slug as string | undefined;
-  const isAffiliate = user.user_metadata?.is_affiliate === true;
-  if (!isAffiliate || !affiliateSlug) {
+  // Resolve the affiliate from the server-trusted `affiliates.user_id`
+  // row — never from client-writable `user_metadata`, which any signed-in
+  // user can set via supabase.auth.updateUser({ data }) to a victim's slug.
+  const affiliate = await getAffiliateForUser({ userId: user.id });
+  if (!affiliate || affiliate.status !== "active") {
     return (
       <NoAccessNotice />
     );
   }
+  const affiliateSlug = affiliate.slug;
 
   // Admin client for the aggregated queries — RLS would be fine here
   // too but we want consistent counts regardless of policy edge cases.
