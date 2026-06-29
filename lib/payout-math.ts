@@ -66,3 +66,27 @@ export function applyClawbacks(
     applications,
   };
 }
+
+/**
+ * Pro-rata commission clawback for a (possibly partial) refund — decision #28:
+ * a partial refund reduces the affiliate's commission in proportion to the
+ * refunded fraction; a full refund claws back the whole commission.
+ *
+ * `refundedCents` is Stripe's CUMULATIVE `amount_refunded` for the charge, so
+ * feeding each `charge.refunded` event through this is monotonic across
+ * incremental partial refunds — the caller takes GREATEST(existing, result) so
+ * a later/larger refund only ever raises the clawback, and a webhook redelivery
+ * is a no-op. Result is clamped to [0, commission] and never negative.
+ */
+export function proRataClawbackCents(
+  commissionCents: number,
+  refundedCents: number,
+  capturedCents: number,
+): number {
+  const commission = Math.max(0, Math.round(commissionCents));
+  const refunded = Math.max(0, Math.round(refundedCents));
+  const captured = Math.max(0, Math.round(capturedCents));
+  if (commission === 0 || captured === 0 || refunded === 0) return 0;
+  if (refunded >= captured) return commission; // full (or over-) refund
+  return Math.min(commission, Math.round((commission * refunded) / captured));
+}

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { applyClawbacks } from "@/lib/payout-math";
+import { applyClawbacks, proRataClawbackCents } from "@/lib/payout-math";
 
 // The clawback netting is where the worst money bugs hide (adversarial review
 // #1-#4). These lock the contract: oldest-first consumption, partial carry-
@@ -76,5 +76,49 @@ describe("applyClawbacks", () => {
     const r = applyClawbacks(100, [{ id: "a", amount_cents: 999999 }]);
     expect(r.netCents).toBe(0);
     expect(r.netCents).toBeGreaterThanOrEqual(0);
+  });
+});
+
+// R4-MON-4 / decision #28: a partial refund reduces commission pro-rata; a full
+// refund claws back all of it. refundedCents is Stripe's CUMULATIVE
+// amount_refunded, so the value is monotonic and the caller's GREATEST() makes
+// redelivery and incremental refunds safe.
+describe("proRataClawbackCents", () => {
+  it("no refund → 0", () => {
+    expect(proRataClawbackCents(7500, 0, 29900)).toBe(0);
+  });
+
+  it("full refund (refunded == captured) → whole commission", () => {
+    expect(proRataClawbackCents(7500, 29900, 29900)).toBe(7500);
+  });
+
+  it("over-refund (refunded > captured) → clamped to commission", () => {
+    expect(proRataClawbackCents(7500, 40000, 29900)).toBe(7500);
+  });
+
+  it("half refund → half commission", () => {
+    expect(proRataClawbackCents(8000, 15000, 30000)).toBe(4000);
+  });
+
+  it("partial refund rounds to the nearest cent", () => {
+    // 7500 * 1000 / 30000 = 250
+    expect(proRataClawbackCents(7500, 1000, 30000)).toBe(250);
+    // 7475 * 9973 / 29900 = 2493.4… → 2493
+    expect(proRataClawbackCents(7475, 9973, 29900)).toBe(2493);
+  });
+
+  it("is monotonic across incremental cumulative refunds", () => {
+    const a = proRataClawbackCents(9000, 6000, 30000); // 20% → 1800
+    const b = proRataClawbackCents(9000, 12000, 30000); // cumulative 40% → 3600
+    expect(b).toBeGreaterThan(a);
+    expect(a).toBe(1800);
+    expect(b).toBe(3600);
+  });
+
+  it("zero commission / zero captured / negatives → 0 (never negative)", () => {
+    expect(proRataClawbackCents(0, 10000, 30000)).toBe(0);
+    expect(proRataClawbackCents(7500, 10000, 0)).toBe(0);
+    expect(proRataClawbackCents(-100, 10000, 30000)).toBe(0);
+    expect(proRataClawbackCents(7500, -5, 30000)).toBe(0);
   });
 });
