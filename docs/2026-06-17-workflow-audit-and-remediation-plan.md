@@ -804,3 +804,332 @@ Migrations are applied by hand in the Supabase SQL editor today, so until `DATAB
 
 ## Verified working — *don't spend time here*
 Stripe signature verification · refund→access revocation (the `status='active'` gate) · the webhook `charge.refunded`→attribution flip (for pending/cleared) · drip/abandonment/dropoff/review crons are scheduled & double-send-guarded via `*_sent` flags · `reveal_picks` + team-owner creation use race-safe upserts · the `merge_lesson_progress` RPC fixes the two-tab progress race · cron-auth / admin-gating / RLS posture / the `/api` proxy exclusion.
+
+---
+
+## 📋 Master status table (all findings)
+*Legend: ✅ done (in code on main) · 🟡 partial · ⬜ not started/deferred · 👤 on you (decision/infra/external). "Done" = patched + builds + (money math) unit-tested, not individually load-tested.*
+
+**Tally — ✅ 241 done · 🟡 5 partial · ⬜ 17 not-started/deferred · 👤 14 on you · 277 total.** The three ⬜ env-guards (P1-12, P1-13, P2-12) are deliberately held back: they're "crash if a var is missing" guards, and the live site is already on `main`, so they must land *together with* you setting the matching Vercel env vars — adding them blind would take prod down.
+
+### Phase 0
+
+| ID | Finding | Status | Note |
+|---|---|---|---|
+| P0-1 | Payout can double-transfer | ✅ | Idempotency key + atomic claim |
+| P0-2 | Refund/chargeback no clawback | ✅ | Clawback ledger nets next payout |
+| P0-3 | Admin "refund" refunds nothing | ✅ | Calls Stripe + flips attribution |
+| P0-4 | `course_progress` no CREATE migration | ✅ | Dated CREATE TABLE committed |
+| P0-5 | Artifacts never generate | ✅ | Invoked on completion + backfill |
+| P0-6 | Artifact CHECK rejects real types | ✅ | Constraint migrated to playbill/redline |
+| P0-7 | Units 2 & 3 stranded | ✅ | Per-unit completion + nav |
+| P0-8 | Promised 40%, code pays 30% | ✅ | One source: `lib/commission.ts` |
+| P0-9 | Affiliate account takeover | ✅ | Server-trusted identity; fallback deleted |
+| P0-10 | Team tier paid-but-unusable | ✅ | Service-role check + signup round-trip |
+| P0-11 | Affiliate links never attribute | ✅ | `/r/` added to proxy allowlist |
+| P0-12 | CAN-SPAM across lifecycle email | 🟡 | Footer link lacks `?email=`; no bounce hook |
+| P0-13 | Paying buyer locked out | ✅ | Branches on createError; returns 500 |
+| P0-14 | No 1099/W-9 tax handling | ✅ | Stripe files NECs; copy corrected |
+| P0-15 | Privacy policy materially false | 👤 | Disclose processors or pull trackers |
+| P0-16 | 78MB video auto-plays | 👤 | Re-encode + serve from Blob/Mux |
+
+### Phase 1
+
+| ID | Finding | Status | Note |
+|---|---|---|---|
+| P1-1 | Payout in killable Server Action | ✅ | Route handler + maxDuration + claim |
+| P1-2 | Inbound-email webhook absent | ⬜ | External worker unconfirmed; not built |
+| P1-3 | Enterprise-intent event mismatch | ✅ | Event added to bright set |
+| P1-4 | Iframe path no `course_completed` | ✅ | Emitted from `/api/progress/complete` |
+| P1-5 | `retention` cron unscheduled | ✅ | Wired (schedule off for cost) |
+| P1-6 | "Pause me" doesn't pause crons | ✅ | `paused_until` filter across crons |
+| P1-7 | Apply form collects no email | 🟡 | Email field + reply-to; no ack send |
+| P1-8 | Artifacts API ungated | ✅ | All-12 completion check added |
+| P1-9 | Workshop reminders to placeholder | ✅ | Per-registrant fan-out |
+| P1-10 | Non-atomic webhook idempotency | ✅ | Atomic first-processing claim |
+| P1-11 | `partner_kit_*` column drift | ✅ | Code/migration column names agree |
+| P1-12 | `NEXT_PUBLIC_SITE_URL` defaults to prod | ⬜ | Still defaults at ~15 sites; guard must land *with* the Vercel env or it crashes prod |
+| P1-13 | Rate-limit evaporates without Upstash | ⬜ | Still fails open (`rate-limit.ts:121`); require-Upstash must land *with* `UPSTASH_*` set |
+| P1-14 | Strike counter re-pause trap | ✅ | Strikes since last reactivation |
+| P1-15 | Diagnostic scores always 0% | ✅ | Keys aligned + fixture test |
+| P1-16 | $40 unlock grants nonexistent artifact | ✅ | Downstream of P0-5 generation |
+| P1-17 | Success page strands at 30s | ✅ | Signup links existing purchase |
+
+### Phase 2
+
+| ID | Finding | Status | Note |
+|---|---|---|---|
+| P2-1 | Dormant completion emails | ✅ | Wired to completion events |
+| P2-2 | Day-0 +12h/+36h emails unwired | ✅ | Wired into drip cron |
+| P2-3 | Free-lead capture dead end | ✅ | Documented one-shot / nurture |
+| P2-4 | `checkout_sessions` not always written | ✅ | Always insert, backfill |
+| P2-5 | Team seat limit non-atomic | ✅ | Locked check on accept |
+| P2-6 | Failed-payment/dispute events unhandled | ✅ | New webhook event handlers |
+| P2-7 | Post-charge email failure silent | ✅ | Retry/backfill + Sentry |
+| P2-8 | SMS consent, no channel | ✅ | Copy softened / consent gated |
+| P2-9 | Payout reconciliation gaps | ✅ | Claim + live Stripe re-check |
+| P2-10 | No paused-affiliate recovery | ✅ | Reactivate path + email |
+| P2-11 | No agent-pipeline monitoring | ✅ | Sentry across cron catches |
+| P2-12 | Env-var missing behavior split | ⬜ | No central required-env check; only ad-hoc throws (Stripe, email-finder) |
+| P2-13 | 14-day refund window unenforced | ✅ | Age check on refund path |
+| P2-14 | Free archetype-map delivery vs promise | ✅ | Asset reconciled to copy |
+| P2-15 | Weekly-nudge opt-in never acted | ✅ | Falls out of retention schedule |
+| P2-16 | Net-vs-gross + minimum copy | ✅ | Sourced from commission constants |
+
+### Phase 3
+
+| ID | Finding | Status | Note |
+|---|---|---|---|
+| P3-1 | Dead inline-LLM Server Actions | ✅ | Orphaned actions deleted |
+| P3-2 | Dead lib exports | ✅ | Removed |
+| P3-3 | Phantom `lesson_nudge_last_id` | ✅ | Dropped |
+| P3-4 | Review-nudge real name | ✅ | `customer_name` selected |
+| P3-5 | Migration hygiene | ✅ | State-tracking + stale bundle removed |
+| P3-6 | Channel motion undocumented | ✅ | Documented as unsupported |
+| P3-7 | `affiliates` self-update RLS loose | ✅ | `WITH CHECK` column-restricted |
+| P3-8 | Env-var edge cases | ✅ | Salt + `SCRIBE_MIN_VOICE_FIT` guarded |
+| P3-9 | `click_id` written never read | ✅ | Validated (superseded by R3-AF-4) |
+| P3-10 | `verdict` field rename | ⬜ | Optional cosmetic; left as-is |
+| P3-11 | `design-canon/**` mirrors live | ⬜ | Reference-only; not relabeled |
+
+### Security
+
+| ID | Finding | Status | Note |
+|---|---|---|---|
+| SEC-1 | Trace `aesdr_bypass` minting | ✅ | No unauth setter; founder-only |
+| SEC-2 | `mintAction`/`revokeAction` no admin check | ✅ | `requireAdmin()` added |
+| SEC-3 | `/x/track` unauth service-role write | ✅ | Origin + rate-limit + schema |
+| SEC-4 | `/x/*` bypasses gates on prod | ✅ | Gated + comment corrected |
+| SEC-5 | `COMING_SOON` fails open; bypass committed | ✅ | Fail-loud + code scrubbed |
+
+### Round 3
+
+| ID | Finding | Status | Note |
+|---|---|---|---|
+| R3-AUTH-3 | `/team` unreachable for owners | ✅ | Added to proxy allowlist |
+| R3-AUTH-4 | Password change not recovery-gated | ⬜ | Current-password re-auth not built |
+| R3-AUTH-5 | No account deletion/export | ⬜ | DSAR pipeline deferred |
+| R3-AUTH-6 | Welcome bypasses password overlay | ✅ | Overlay enforced |
+| R3-AUTH-7 | PasswordOverlay retired palette | ✅ | Uses `var(--iris)` |
+| R3-AUTH-8 | Signup success copy lies | ✅ | Copy corrected |
+| R3-AUTH-9 | Team owner forced role gate | ✅ | Owners skip SDR/AE gate |
+| R3-EMAIL-3 | One-click + mailto invalid | ✅ | HTTPS one-click unsubscribe |
+| R3-EMAIL-4 | Retired rainbow bar in emails | ✅ | Solid crimson bar |
+| R3-EMAIL-5 | `sendReviewNudge` hardcodes 'there' | ✅ | `customer_name` selected |
+| R3-EMAIL-6 | Dropoff shows "Lesson 3" not title | ✅ | Resolved from LESSONS |
+| R3-EMAIL-7 | `mascotRow` images `alt=""` | ✅ | Alt text added |
+| R3-EMAIL-8 | Refund-window copy contradiction | ✅ | Firm 14 days reconciled |
+| R3-AF-2 | Activation no `user_id`/claims | ✅ | Provisioned at activation |
+| R3-AF-3 | No self-referral protection | ✅ | `self_referral` flag + exclude |
+| R3-AF-4 | Attribution spoofable, window unenforced | ✅ | Click/window validated |
+| R3-AF-5 | Cleared-unpayable accrues forever | ✅ | Forfeiture window + reminders |
+| R3-AF-6 | Stale payout-status cache | ✅ | Live `retrieveAccount` before pay |
+| R3-AF-7 | `transfers` capability unchecked | ✅ | Capability gate added |
+| R3-AF-8 | Unvalidated channel + raw `draft_url` | ✅ | URL/scheme validated |
+| R3-AF-9 | `markPayoutPaid`/batch double-settle | ✅ | Mutual-exclusion on states |
+| R3-AF-10 | `/x/track` auto-registers slugs | ✅ | Reject unknown + rate-limit |
+| R3-AF-11 | Ops login non-constant-time | ✅ | `timingSafeEqual` |
+| R3-AF-12 | Inactive links mislabeled "Refunded" | ✅ | Label fixed |
+| R3-AG-1 | Courier double-sends on crash | ✅ | Claim-before-send (lever off) |
+| R3-AG-2 | `verifyCronAuth` 500s not 401 | ✅ | Compare on byteLength |
+| R3-AG-3 | Scout has no lever gate | ✅ | Added to gated set |
+| R3-AG-4 | `after()` run stuck `running` | ✅ | Stale-run reaper |
+| R3-AG-5 | Prompt-injection into outreach | ✅ | Never auto-promote; suggested |
+| R3-AG-6 | Model-404 swallowed, retry loop | ✅ | Inspect error, surface model |
+| R3-AG-8 | Followup advances on missing table | ✅ | Fail-closed on query error |
+| R3-AG-9 | Contact-finder re-bills on timeout | ✅ | Mark-checked at enqueue |
+| R3-AG-10 | Sentinel cursor skips unprocessed | ✅ | Advance only past written |
+| R3-AG-11 | Single-call engine brace-parse bug | ✅ | Moot (dead engine deleted) |
+| R3-AG-12 | drip/dropoff/review double-send dupes | ✅ | Dedupe by email/user_id |
+| R3-AG-13 | usher T-1h fires past-due | ✅ | Window tightened |
+| R3-DATA-1 | `testimonials` leaks emails to anon | ✅ | Column-safe view/admin-client |
+| R3-DATA-2 | `course_completed` idempotency defeated | ✅ | Service-role events read |
+| R3-DATA-3 | Purchase delete cascades ledger | ✅ | Restrict/set-null |
+| R3-DATA-4 | `affiliate_metrics` view bypasses RLS | ✅ | `security_invoker=true` |
+| R3-DATA-5 | Progress unique constraint bare ALTER | ✅ | Folded into CREATE TABLE |
+| R3-CURR-1 | Tools completion-gate bypassable | ✅ | Full per-lesson gate map |
+| R3-CURR-2 | Completion falsely claimable | ✅ | `{1..12}` validation |
+| R3-CURR-3 | Preview promises wrong asset | ✅ | Relabeled Course 4 |
+| R3-CURR-4 | Enterprise names wrong course | ✅ | Corrected to Course 3 |
+| R3-CURR-5 | Course titles disagree | ✅ | Sourced from dashboard LESSONS |
+| R3-CURR-6 | `merge_lesson_progress` clobbers screen | ✅ | `GREATEST` on last_screen |
+| R3-ENT-1 | Workshop replay undeliverable | ✅ | Per-registrant from registrants |
+| R3-ENT-2 | Reminders reference missing invite | ✅ | `.ics`/join_url generated |
+| R3-ENT-3 | Enterprise CTA attribution dead | ✅ | Real slugs in VALID_SOURCES |
+| R3-ENT-4 | "Five-dimension" vs 8 diagnostic | ✅ | Corrected to 8 |
+| R3-ENT-5 | "32 prompts"; respondent sees 24 | ✅ | Copy corrected |
+| R3-ENT-6 | Success page hardcodes iris | ✅ | Uses `var(--iris)` |
+| R3-AD-1 | Two buttons fire payout batch | ✅ | Atomic claim covers all paths |
+| R3-AD-2 | `RefundButton` swallows failure | ✅ | Error state added |
+| R3-AD-3 | "Waiting on you" counts disabled | ✅ | Filtered on enabled Stripe |
+| R3-AD-4 | `markManualSent` swallows audit error | ✅ | Throws on non-23505 |
+| R3-SEC-3 | Contact-path injection routes sends | ✅ | Validated before send |
+| R3-SEC-4 | Markdown `javascript:` href XSS | ✅ | Href escaped + scheme-checked |
+| R3-SEC-5 | Open redirect via `//host` | ✅ | `!startsWith("//")` guard |
+| R3-SEC-6 | Team invite not email-bound | ✅ | Token bound to invited email |
+| R3-SEC-7 | Rate-limit gaps | ✅ | Limiter on apply/stripe routes |
+| R3-INFRA-1 | `CRON_SECRET` undocumented | ✅ | Added to `.env.local.example` |
+| R3-INFRA-2 | Pre-launch index leak on magnet | ✅ | Gated on launch mode |
+| R3-INFRA-3 | `EMAIL_FINDER_API_KEY` undocumented | ✅ | Documented |
+| R3-INFRA-4 | 8 more env vars undocumented | ✅ | Documented |
+| R3-INFRA-5 | `ANTHROPIC_API_KEY` never read | ✅ | Resolved — it is read (no-op) |
+| R3-INFRA-6 | sitemap/robots allow-list drift | ✅ | Lists aligned |
+| R3-INFRA-7 | `IP_HASH_SALT` committed default | ✅ | No-fallback HMAC; null if unset |
+| R3-FE-1 | Mobile gate walls funnel | ✅ | Coursework-only deny-list |
+| R3-FE-2 | Retired palette as live surfaces | ✅ | Active-palette swaps |
+| R3-FE-3 | `--light` text invisible | ✅ | Contrast fixed |
+| R3-FE-4 | Ops password field no label | ✅ | Accessible label added |
+| R3-FE-5 | DirectorPlan not keyboard-operable | ✅ | `onKeyDown` handlers |
+| R3-FE-6 | `admin/design` names retired hex | ✅ | Allowlisted for canon-CI |
+| R3-FE-7 | ~10 unlabeled form controls | ✅ | `aria-label` per control |
+| R3-CI-1 | CI runs no tests | ✅ | vitest unit tests in CI |
+| R3-CI-2 | e2e is screenshot script | ✅ | Auth-free specs added |
+| R3-CI-3 | Canon enforcement non-blocking | ✅ | R-G4 hard-bans escalated |
+| R3-CI-4 | Money/auth zero coverage | ✅ | Pure-function tests added |
+| R3-CI-5 | `tsc` before build skips route types | ✅ | Steps reordered |
+| R3-CI-6 | Spec asserts wrong status | ✅ | Expectation corrected |
+| R3-CI-7 | Deps caret-ranged | ✅ | Runtime deps pinned |
+
+### Round 4
+
+| ID | Finding | Status | Note |
+|---|---|---|---|
+| R4-MON-1 | Gross vs "30% of net" contract | ✅ | One computeCommission (net) |
+| R4-MON-2 | `commission_pct` dead column | ✅ | Webhook reads the column |
+| R4-MON-3 | Team sales wrongly attributed | ✅ | `tier !== 'team'` guard |
+| R4-MON-4 | Partial refunds revoke 100% | 🟡 | Full handled; no proration yet |
+| R4-MON-5 | Commission on gross + fee absorbed | ✅ | Base net of Stripe fee |
+| R4-MON-6 | No currency validation | ✅ | USD asserted, else skip+alert |
+| R4-MON-7 | Sales tax / VAT never collected | 👤 | Nexus decision is yours |
+| R4-MON-8 | Per-row rounding won't reconcile | ✅ | Round at payout + join table |
+| R4-MON-9 | $40 unlock no refund handling | ✅ | Unlock refund handled |
+| R4-SM-1 | No `partner_workshop` creation | ✅ | Admin create-workshop action |
+| R4-SM-2 | Dispute won → locked out forever | ✅ | `dispute.closed` restores access |
+| R4-SM-3 | Team buyer stranded, no retry | ✅ | Returns 500 (same as P0-13) |
+| R4-SM-4 | Application status never advances | ✅ | Status advanced on promote |
+| R4-SM-5 | Followup blind to manual contacts | ✅ | Fail-closed on no-email |
+| R4-TZ-1 | 1h abandonment hits ~1/24 | ✅ | Hourly schedule (off for cost) |
+| R4-TZ-2 | Workshop reminders UTC vs tz | ✅ | Affiliate tz formatting |
+| R4-TZ-3 | Almanac "7am ET" drifts with DST | ✅ | In-handler ET-hour gate |
+| R4-DR-2 | Purchase-upsert failure continues | ✅ | Returns 500 before side-effects |
+| R4-DR-3 | Team only on `isNewPurchase` | ✅ | Guard removed |
+| R4-DR-4 | `max_seats:10` hardcode | ✅ | Named constant SKU |
+| R4-DR-5 | `account.updated` endpoint/mask | ✅ | Unknown shapes handled |
+| R4-DR-6 | `firstName` double-escaped | ✅ | Single escape |
+| R4-DR-7 | `name==='there'` sentinel | ✅ | Disambiguated |
+| R4-DR-8 | `'ae'` mislabeled "Individual" | ✅ | Receipt label fixed |
+| R4-DR-9 | `htmlToText` drops nested-tag URLs | ✅ | URL preserved |
+| R4-DR-10 | Receipt/member no. non-reproducible | ✅ | Stable + NaN-guarded |
+| R4-DR-11 | `safeSend` false not throw | ✅ | Send failure surfaced |
+| R4-DR-12 | `weeklyFraming` divide-by-total | ✅ | Zero-lesson guarded |
+| R4-LEG-1 | 40% vs "30% net" contract | ✅ | Honors contract; calculator fixed |
+| R4-LEG-2 | Trackers fire EU/UK no consent | 👤 | Consent banner is yours to add |
+| R4-LEG-3 | Policy promises erasure, no DSAR | ✅ | Copy aligned to capability |
+| R4-LEG-4 | No FTC earnings substantiation | 👤 | Need benchmark source |
+| R4-LEG-5 | FTC disclosure not enforced | ⬜ | Still warden-only, not gated |
+| R4-LEG-6 | ToS no governing-law/arbitration | 👤 | Legal review warranted |
+| R4-LEG-7 | Scraped-PII no GDPR Art.14 basis | 👤 | Lawful-basis decision yours |
+| R4-PERF-1 | Scout sweep no token cap | 👤 | Needs a $-per-sweep number |
+| R4-PERF-2 | dossier-enrich uncapped | 👤 | Needs a $-per-brief number |
+| R4-PERF-3 | Lean caps in dead module | ✅ | Caps moved to live engines |
+| R4-PERF-4 | Admin reads all rows in JS | ✅ | SQL aggregate/RPC |
+| R4-PERF-5 | Retention N+1 reads, no index | ✅ | Batched + indexed |
+| R4-PERF-6 | Hot crons no composite index | ✅ | Covering index added |
+| R4-PERF-7 | Email crons no 429 retry | ✅ | Throttle + retry |
+| R4-PERF-8 | Lesson read from disk each request | ✅ | Cached |
+| R4-PERF-9 | Oversized raw PNG/mascot assets | ✅ | `next/image` + formats |
+| R4-PERF-10 | `prospect_events` unbounded + count | ✅ | Indexed |
+| R4-PERF-11 | Admin pulls whole clicks table | ✅ | Aggregate in SQL |
+| R4-PERF-12 | `events` log no TTL | 👤 | Retention window is yours |
+| R4-PERF-13 | Stale model re-issues emit | ✅ | Error inspected |
+| R4-PERF-14 | maxDuration vs batch overrun | ✅ | Sized / resumable |
+| R4-PERF-15 | HTML built twice per send | ✅ | Single build |
+| R4-PERF-16 | `tools` force-dynamic + uncached read | ✅ | Static + cached |
+| R4-LH-1 | Cross-device restore loses progress | ✅ | `?screen` resume honored |
+| R4-LH-2 | Quiz score never reaches extractor | ✅ | Shape aligned |
+| R4-LH-3 | Bad `?role` stacks both variants | ✅ | Normalized/whitelisted |
+| R4-LH-4 | Role-fork keys leak across forks | ✅ | `role` in storage key |
+| R4-LH-5 | `aesdr:restore` clobbers textarea | ✅ | Ready-handshake |
+| R4-LH-6 | restore overwrites `_lessonExtra` | ✅ | Merge not clobber |
+| R4-LH-7 | Resume on completion no re-fire | ✅ | Re-fires `aesdr:complete` |
+| R4-LH-8 | lesson-01 u1 divergent shape | 🟡 | One-file outlier remains |
+| R4-LH-9 | Lessons use retired fonts/palette | ✅ | Re-skinned to active brand |
+
+### Round 5
+
+| ID | Finding | Status | Note |
+|---|---|---|---|
+| R5-OB-1 | Three password routes + splash | ✅ | Collapsed to one route |
+| R5-OB-2 | "No checklist" promise vs 3 gates | ✅ | Copy softened |
+| R5-OB-3 | No "step N of M" in setup | ✅ | Step indicator added |
+| R5-OB-4 | Login ignores `?email=` | ✅ | Email prefilled |
+| R5-OB-5 | Empty dashboard no orientation | ✅ | First-run orientation |
+| R5-OB-6 | Save & Exit no synchronous save | ✅ | Sync save + "Saved" |
+| R5-DV-1 | One root sending domain | 👤 | Subdomain split is your DNS |
+| R5-DV-2 | No Resend bounce webhook | 🟡 | Suppression table; webhook absent |
+| R5-DV-3 | Replies depend on human triage | ✅ | Suppression path built |
+| R5-DV-4 | Bulk to unconfirmed addresses | ✅ | Suppress bounced |
+| R5-DV-5 | No List-Id/Precedence on bulk | ✅ | Bulk headers added |
+| R5-DV-6 | SPF/DKIM/DMARC root mixing | 👤 | DNS/DMARC live-check is yours |
+| R5-IC-1 | No `allow_promotion_codes` | ✅ | Enabled on sdr/ae |
+| R5-IC-2 | Stripe pins no `apiVersion` | ✅ | Pinned via central client |
+| R5-IC-3 | No reusable Stripe Customer | ✅ | `customer_creation:'always'` |
+| R5-IC-4 | `email_confirm:true` auto-verifies | ✅ | Accept asserted-by-payment |
+| R5-IC-5 | Temp-password biased/no expiry | ✅ | Strong + one-time + short-lived |
+| R5-IC-6 | Callback allowlist omits routes | ✅ | `/welcome`/`/affiliates` added |
+| R5-IC-7 | Resend sends no idempotencyKey | ✅ | Per-send key + tags |
+| R5-IC-8 | Anthropic no timeout/maxRetries | ✅ | Set against route ceiling |
+| R5-IC-9 | Deprecated `claude-opus-4-1` listed | ✅ | Dropped from SUPPORTED_MODELS |
+| R5-IC-10 | `listUsers(50)` fails past 50 | ✅ | getUserByEmail/paginate |
+| R5-NM-1 | Kit constants say "partners" | ✅ | Renamed to affiliates |
+| R5-NM-2 | "partner hub" in HubChrome | ✅ | Renamed |
+| R5-NM-3 | EconomicsCalculator "partners" | ✅ | Renamed |
+| R5-NM-4 | UTM source `partners-page` | ✅ | Renamed `affiliates-page` |
+| R5-NM-5 | Bare "Partner" on enterprise | ✅ | "channel" prefix added |
+| R5-EE-1 | $40 tile swallows failed checkout | ✅ | Error state added |
+| R5-EE-2 | Reveal CTA swallows 500 | ✅ | `role=alert` error shown |
+| R5-EE-3 | No error boundary under admin | ✅ | `app/admin/error.tsx` |
+| R5-EE-4 | Pay-out button no confirm/pending | ✅ | Guarded (with P0-1) |
+| R5-EE-5 | Submissions empty-state on DB error | ✅ | Distinguishes error |
+| R5-EE-6 | Tower "All clear" over failure | ✅ | Surfaces sub-panel failures |
+| R5-EE-7 | Admin shows fabricated $0 | ✅ | Distinguishes failed query |
+| R5-EE-8 | No `loading.tsx` for tower | ✅ | Loading states added |
+| R5-EE-9 | Stripe refresh strands on stale | ✅ | Feedback on refresh |
+| R5-EE-10 | Calculator shows fractional sales | ✅ | "~1 every N months" |
+| R5-EE-11 | `ReviewActions` no confirmation | ✅ | Success state added |
+| R5-EE-12 | Admin zero-data/`$NaN`/null-key gaps | ✅ | Empty/NaN guards |
+| R5-CN-1 | "operating system" on 3 surfaces | ✅ | Replaced; in enforcer now |
+| R5-CN-2 | "takeaway artifacts" in 4 emails | ✅ | → "substantial assets" |
+| R5-CN-3 | "leverage" ×3 | ✅ | Replaced |
+| R5-CN-4 | R-G7 "isn't X — it's Y" ×6 | ✅ | Rewritten |
+| R5-CN-5 | "deep dive" ×4 | ✅ | Replaced |
+| R5-CN-6 | British "recognise" on /about | ✅ | Americanized |
+| R5-PI-1 | Deal free-text to PostHog | ✅ | Not sent as props |
+| R5-PI-2 | Session replay unmasked | ✅ | maskAll inputs/text + media |
+| R5-PI-3 | Buyer name to Anthropic | ✅ | Name dropped from prompt |
+| R5-PI-4 | Scraped PII chained, persisted | 👤 | Consent/retention decision |
+| R5-PI-5 | Full error objects logged | ✅ | Log `.message` only |
+| R5-PI-6 | Raw email in console label | ✅ | Removed |
+| R5-PI-7 | PostHog captures full URL | ✅ | Slug/params scrubbed |
+| R5-PI-8 | `ip_hash` three no-salt sites | ✅ | One HMAC helper |
+| R5-PI-9 | No retention/TTL anywhere | 👤 | Per-table windows are yours |
+| R5-PI-10 | Over-collection UA/referrer | ✅ | Trimmed to triage need |
+
+### Adversarial review
+
+| ID | Finding | Status | Note |
+|---|---|---|---|
+| §1 | Duplicate clawbacks on re-delivery | ✅ | Unique index + idempotent upsert |
+| §2 | Gross-vs-net reporting | ✅ | `net_paid_cents` |
+| §3 | Clawback concurrency + error checks | ✅ | Serialized (3a) + checks (3b) |
+| §4 | Null/`full` netting edge | ✅ | Extracted + unit-tested |
+| §5 | Dropped-final-refund | ⬜ | Needs reconciliation cron |
+| §6 | Fee-currency guard | ✅ | Guarded |
+| §7 | `listUsers(200)` scale ceiling | ⬜ | Tracked |
+| §8 | Self-referral gmail-alias bypass | ⬜ | Tracked |
+| §9 | Refund racing mid-payout attribution | ⬜ | Tracked |
+| §10 | Refund matches first session per PI | ⬜ | Tracked |
+| §11 | `markPayoutPaid` doesn't net clawbacks | ⬜ | Tracked |
+| §12 | Dropped `isNewPurchase` lost attribution | ✅ | Gate removed |
+| §13 | `attribution_window_closes_at` unused | ⬜ | Written-never-read |
+| §14 | `resolveCommissionRate` sub-1% ambiguity | ⬜ | Tracked |
