@@ -1,8 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
-import { cookies } from "next/headers";
-
+import { isAdminEmail } from "@/lib/admin";
 import { createClient } from "@/utils/supabase/server";
 import { ALLOWED_TOOL_SLUGS, evaluateToolGate } from "@/utils/content/catalog";
 
@@ -66,8 +65,8 @@ async function userHasAccess(
  * URL: /api/tools/:slug
  *
  * Gated: user must be authenticated AND have an active purchase (or be an
- * accepted team member on a team with an active purchase, or have the
- * founder bypass cookie).
+ * accepted team member on a team with an active purchase, or be an admin —
+ * founder-level access, server-trusted against the JWT email).
  *
  * Sends `Content-Disposition: attachment` so the browser saves the file
  * instead of rendering it in-tab. Filename matches the slug + ".html".
@@ -83,22 +82,22 @@ export async function GET(
   }
 
   // Auth + purchase gate
-  const cookieStore = await cookies();
-  const hasBypass = cookieStore.get("aesdr_bypass")?.value === "1";
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!hasBypass) {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  if (!user) {
+    return Response.redirect(
+      new URL("/login?reason=no_purchase", request.url),
+      302
+    );
+  }
 
-    if (!user) {
-      return Response.redirect(
-        new URL("/login?reason=no_purchase", request.url),
-        302
-      );
-    }
+  // Admin bypass — founder-level access, server-trusted against the JWT email.
+  const isAdmin = isAdminEmail(user.email);
 
+  if (!isAdmin) {
     const ok = await userHasAccess(user.id, user.email);
     if (!ok) {
       return Response.redirect(

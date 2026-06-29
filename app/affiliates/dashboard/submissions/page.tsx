@@ -66,7 +66,7 @@ export default async function AffiliateSubmissionsPage() {
     jwtPartnerSlug: user.user_metadata?.partner_slug as string | undefined,
   });
 
-  if (!affiliate) {
+  if (!affiliate || affiliate.status !== "active") {
     redirect("/affiliates/dashboard");
   }
 

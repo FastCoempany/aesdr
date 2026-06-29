@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
       if (!user) {
         return NextResponse.json({ error: 'Sign in to unlock this artifact.' }, { status: 401 });
       }
-      if (!(await userHasCompletedCourse(sb, user.id))) {
+      if (!(await userHasCompletedCourse(sb, user))) {
         return NextResponse.json({ error: 'Finish the course to unlock this artifact.' }, { status: 403 });
       }
     }

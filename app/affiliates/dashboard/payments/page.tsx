@@ -34,7 +34,7 @@ export default async function AffiliatePaymentsPage() {
     jwtAffiliateSlug: user.user_metadata?.affiliate_slug as string | undefined,
     jwtPartnerSlug: user.user_metadata?.partner_slug as string | undefined,
   });
-  if (!affiliate) redirect("/affiliates/dashboard");
+  if (!affiliate || affiliate.status !== "active") redirect("/affiliates/dashboard");
 
   const admin = createAdminClient();
   const { data: payouts } = await admin

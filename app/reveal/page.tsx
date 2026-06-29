@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
 
+import { isAdminEmail } from "@/lib/admin";
 import { createClient } from "@/utils/supabase/server";
 import { LESSONS } from "@/utils/progress/types";
 import RevealView from "./RevealView";
@@ -46,11 +46,10 @@ export default async function RevealPage() {
     (r) => r.is_completed
   ).length;
 
-  // Founder bypass
-  const cookieStore = await cookies();
-  const hasBypass = cookieStore.get("aesdr_bypass")?.value === "1";
+  // Admin bypass — founder-level access, server-trusted against the JWT email.
+  const isAdmin = isAdminEmail(user.email);
 
-  if (completedCount < LESSONS.length && !hasBypass) {
+  if (completedCount < LESSONS.length && !isAdmin) {
     redirect("/dashboard");
   }
 

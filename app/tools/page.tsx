@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import SignOutButton from "@/components/SignOutButton";
+import { isAdminEmail } from "@/lib/admin";
 import { createClient } from "@/utils/supabase/server";
 
 export const metadata: Metadata = {
@@ -158,11 +158,10 @@ export default async function ToolsPage() {
 
   if (!user) redirect("/login?reason=no_purchase");
 
-  // Founder bypass — same cookie the rest of the gated pages honor.
-  const cookieStore = await cookies();
-  const hasBypass = cookieStore.get("aesdr_bypass")?.value === "1";
+  // Admin bypass — founder-level access, server-trusted against the JWT email.
+  const isAdmin = isAdminEmail(user.email);
 
-  if (!hasBypass) {
+  if (!isAdmin) {
     const ok = await userHasAccess(user.id, user.email);
     if (!ok) redirect("/login?reason=no_purchase");
   }

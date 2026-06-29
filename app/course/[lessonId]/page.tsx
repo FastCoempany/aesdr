@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import ProgressSaver from "@/components/ProgressSaver";
@@ -8,6 +7,7 @@ import SaveExitButton from "@/components/SaveExitButton";
 import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
 import { listLessonUnits, getToolAssetsForLesson } from "@/utils/content/catalog";
 import { LESSONS } from "@/utils/progress/types";
+import { isAdminEmail } from "@/lib/admin";
 import { createClient } from "@/utils/supabase/server";
 import { verifyPaidAccess } from "@/utils/access/verifyAccess";
 
@@ -62,13 +62,12 @@ export default async function LessonPage({
 
   const userRole: string = user.user_metadata.role;
 
-  // Purchase gate — bypass for founder (GhostButton cookie)
-  const cookieStore = await cookies();
-  const hasBypass = cookieStore.get("aesdr_bypass")?.value === "1";
+  // Purchase gate — bypass for admins (founder-level access, server-trusted).
+  const isAdmin = isAdminEmail(user.email);
 
   // Parallelize: access check + progress fetch both depend on user.id only.
   const [hasAccess, progressResult] = await Promise.all([
-    hasBypass ? Promise.resolve(true) : verifyPaidAccess(supabase, user),
+    isAdmin ? Promise.resolve(true) : verifyPaidAccess(supabase, user),
     supabase
       .from("course_progress")
       .select("is_completed, last_screen, state_data")

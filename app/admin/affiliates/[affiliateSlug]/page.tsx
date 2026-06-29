@@ -48,7 +48,7 @@ export default async function AffiliateDetailPage({
       .order("attributed_at", { ascending: false }),
     supabase
       .from("affiliate_payouts")
-      .select("id, period_start, period_end, total_commission_cents, status, payment_method, payment_reference, paid_at, created_at")
+      .select("id, period_start, period_end, total_commission_cents, net_paid_cents, status, payment_method, payment_reference, paid_at, created_at")
       .eq("affiliate_slug", affiliateSlug)
       .order("created_at", { ascending: false }),
   ]);
@@ -525,9 +525,29 @@ export default async function AffiliateDetailPage({
                     {p.status}
                   </span>
                 </div>
-                <p style={{ fontFamily: "'Playfair Display',Georgia,serif", fontStyle: "italic", fontWeight: 900, fontSize: 24, margin: "0 0 12px" }}>
-                  {dollars(p.total_commission_cents)}
-                </p>
+                {p.net_paid_cents != null ? (
+                  <>
+                    <p style={{ fontFamily: "'Playfair Display',Georgia,serif", fontStyle: "italic", fontWeight: 900, fontSize: 24, margin: "0 0 2px" }}>
+                      {dollars(p.net_paid_cents)}{" "}
+                      <span style={{ fontFamily: "'Space Mono',monospace", fontSize: 11, fontStyle: "normal", fontWeight: 400, textTransform: "uppercase", letterSpacing: ".18em", color: "#6B6B6B" }}>
+                        net paid
+                      </span>
+                    </p>
+                    <p style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, color: "#6B6B6B", margin: "0 0 12px" }}>
+                      {dollars(p.total_commission_cents)} gross commission earned
+                      {p.net_paid_cents !== p.total_commission_cents
+                        ? ` · ${dollars(p.total_commission_cents - p.net_paid_cents)} netted as clawback`
+                        : ""}
+                    </p>
+                  </>
+                ) : (
+                  <p style={{ fontFamily: "'Playfair Display',Georgia,serif", fontStyle: "italic", fontWeight: 900, fontSize: 24, margin: "0 0 12px" }}>
+                    {dollars(p.total_commission_cents)}{" "}
+                    <span style={{ fontFamily: "'Space Mono',monospace", fontSize: 11, fontStyle: "normal", fontWeight: 400, textTransform: "uppercase", letterSpacing: ".18em", color: "#6B6B6B" }}>
+                      gross commission earned
+                    </span>
+                  </p>
+                )}
                 {p.status === "paid" ? (
                   <p style={{ color: "#6B6B6B", fontSize: 13 }}>
                     Paid {dateShort(p.paid_at)} via {p.payment_method || "?"}
