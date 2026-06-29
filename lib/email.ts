@@ -1342,9 +1342,10 @@ export async function sendReceiptEmail(
   name: string,
   tier: string,
   amountCents: number,
+  taxCents: number,
   sessionId?: string,
 ) {
-  const html = receiptHtml(name, tier, amountCents, sessionId, to);
+  const html = receiptHtml(name, tier, amountCents, taxCents, sessionId, to);
   return safeSend(`receipt to ${to}`, () =>
     getResend().emails.send(
       {
@@ -1384,10 +1385,28 @@ function receiptPlanLabel(tier: string): string {
   }
 }
 
-function receiptHtml(name: string, tier: string, amountCents: number, sessionId?: string, email?: string) {
+function receiptHtml(name: string, tier: string, amountCents: number, taxCents: number, sessionId?: string, email?: string) {
   const safeName = esc(name);
   // R4-DR-10: coerce defensively so a non-number never renders "$NaN".
-  const amount = ((Number(amountCents) || 0) / 100).toFixed(2);
+  const totalCents = Number(amountCents) || 0;
+  // Tax arrives inclusive in amount_total, so subtotal is the remainder.
+  const taxOnly = Math.max(0, Number(taxCents) || 0);
+  const amount = (totalCents / 100).toFixed(2);
+  const subtotal = ((totalCents - taxOnly) / 100).toFixed(2);
+  const tax = (taxOnly / 100).toFixed(2);
+  // Only show the split when tax was actually collected; otherwise the receipt
+  // keeps its single Total line, no empty $0.00 tax row.
+  const breakdownRows = taxOnly > 0
+    ? `<tr>
+                      <td style="padding:10px 0;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#64748B;vertical-align:top">Subtotal</td>
+                      <td style="padding:10px 0;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#1A1A1A;vertical-align:top">$${subtotal}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:10px 0;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#64748B;vertical-align:top">Tax</td>
+                      <td style="padding:10px 0;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#1A1A1A;vertical-align:top">$${tax}</td>
+                    </tr>
+                    `
+    : '';
   const planLabel = receiptPlanLabel(tier);
   const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   const receiptNo = receiptNumberFor(sessionId);
@@ -1469,7 +1488,7 @@ function receiptHtml(name: string, tier: string, amountCents: number, sessionId?
                       <td style="padding:10px 0;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#64748B;vertical-align:top">Refund window</td>
                       <td style="padding:10px 0;border-bottom:1px solid #E8E3D8;font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#1A1A1A;vertical-align:top">14 days from purchase</td>
                     </tr>
-                    <tr>
+                    ${breakdownRows}<tr>
                       <td style="padding:16px 0 6px;font-family:'SF Mono',Consolas,monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#1A1A1A;font-weight:700;vertical-align:top">Amount paid</td>
                       <td style="padding:16px 0 6px;font-family:Georgia,'Times New Roman',serif;font-size:28px;line-height:1;color:#1A1A1A;vertical-align:top;font-weight:400">$${amount}</td>
                     </tr>

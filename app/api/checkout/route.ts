@@ -3,6 +3,8 @@ export const dynamic = 'force-dynamic';
 import { NextResponse, type NextRequest } from 'next/server';
 import { z } from 'zod';
 import { createAdminClient } from '@/utils/supabase/admin';
+import { createClient } from '@/utils/supabase/server';
+import { userHasCompletedCourse } from '@/utils/access/courseComplete';
 import { ATTRIBUTION_COOKIE, parseAttributionCookie } from '@/lib/affiliate';
 import { rateLimit, getClientIP } from '@/lib/rate-limit';
 import { getSiteUrl } from '@/lib/site-url';
@@ -54,8 +56,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid tier' }, { status: 400 });
     }
 
-    if (tier === 'artifact_unlock' && !artifact_type) {
-      return NextResponse.json({ error: 'Artifact required for unlock' }, { status: 400 });
+    if (tier === 'artifact_unlock') {
+      if (!artifact_type) {
+        return NextResponse.json({ error: 'Artifact required for unlock' }, { status: 400 });
+      }
+      // AUDIT (#1 / P1-16, adversarial pass): gate the $40 unlock on auth +
+      // course completion. Without this a buyer could pay $40 for an artifact
+      // they never earned — which was therefore never generated — and land on an
+      // empty page. If they finished the course, the artifact exists.
+      const sb = await createClient();
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) {
+        return NextResponse.json({ error: 'Sign in to unlock this artifact.' }, { status: 401 });
+      }
+      if (!(await userHasCompletedCourse(sb, user.id))) {
+        return NextResponse.json({ error: 'Finish the course to unlock this artifact.' }, { status: 403 });
+      }
     }
 
     const isUnlock = tier === 'artifact_unlock';

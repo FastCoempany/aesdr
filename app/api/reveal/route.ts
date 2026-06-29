@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { rateLimit } from "@/lib/rate-limit";
+import { userHasCompletedCourse } from "@/utils/access/courseComplete";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,16 @@ export async function POST(request: NextRequest) {
   const rl = await rateLimit(`reveal:${user.id}`, { max: 10, windowMs: 60 * 1000 });
   if (!rl.success) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
+  // AUDIT (#2, adversarial pass): gate the pick on course completion. The row is
+  // insert-only (ignoreDuplicates), so an early pick is PERMANENT — without this
+  // a student could lock in their keeper before finishing, with no way to change.
+  if (!(await userHasCompletedCourse(supabase, user.id))) {
+    return NextResponse.json(
+      { error: "Finish the course to choose your keeper." },
+      { status: 403 }
+    );
   }
 
   const body = await request.json().catch(() => ({}));
