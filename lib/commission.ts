@@ -12,10 +12,10 @@
  */
 
 // AUDIT (R4-MON-2/#1/#27): single source of truth for the commission rate +
-// base. Default rate is 30%; the webhook overrides per-affiliate from
-// affiliates.commission_pct.
+// base. Default rate is 40% (founder set 2026-06-29, matching the affiliate-kit
+// terms); the webhook overrides per-affiliate from affiliates.commission_pct.
 /** Default commission rate when an affiliate row has no usable commission_pct. */
-export const DEFAULT_COMMISSION_RATE = 0.3;
+export const DEFAULT_COMMISSION_RATE = 0.4;
 
 /**
  * Resolve the commission rate to use for an attribution.

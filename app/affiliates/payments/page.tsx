@@ -52,7 +52,7 @@ export default function PaymentsPage() {
       <section style={section}>
         <Block label="The headline">
           <p style={pStyle}>
-            <strong>30% of net revenue on every enrollment you bring in.</strong> Net-45 from the close of your 30-day attribution window &mdash; in practice, about 75 days from the day you send your first promotion.
+            <strong>40% of net revenue on every enrollment you bring in.</strong> Net-45 from the close of your 30-day attribution window &mdash; in practice, about 75 days from the day you send your first promotion.
           </p>
         </Block>
 
@@ -66,7 +66,7 @@ export default function PaymentsPage() {
             <li>Sales tax we collected and remitted to states.</li>
           </ul>
           <p style={pStyle}>
-            Your 30% is calculated off that net number. We don&rsquo;t skim &mdash; the formula is published and the Friday report shows the math on every line.
+            Your 40% is calculated off that net number. We don&rsquo;t skim &mdash; the formula is published and the Friday report shows the math on every line.
           </p>
         </Block>
 

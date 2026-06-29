@@ -11,13 +11,13 @@ A consolidated punch-list of everything **five rounds** of adversarial auditing 
 **Everything is on `main` (production branch).** Cost: all cron schedules disabled + agent levers off → nothing auto-spends. **6 DB migrations applied + verified** in prod: attribution-status (re-enables payouts), generated_artifacts CHECK, course_progress, email_suppressions, commission_clawbacks, **+ clawback-unique/net_paid** (this last one ⬜ — from the review below; **run it before any payout**).
 
 ### ✅ Fixed (the large majority)
-- **Phase 0 Criticals:** P0-1 (payout double-pay) · P0-2 (clawback ledger, hardened) · P0-3 (real admin refund) · P0-4 (course_progress) · P0-5 (artifacts generate) · P0-6 (artifact CHECK) · P0-7 (units 2&3) · P0-8 (commission rate+base — **30% of net**) · P0-9 (account-takeover) · P0-10 (team tier) · P0-11 (affiliate links) · P0-12 (CAN-SPAM unsubscribe — see 🟡) · P0-13 (buyer lockout).
+- **Phase 0 Criticals:** P0-1 (payout double-pay) · P0-2 (clawback ledger, hardened) · P0-3 (real admin refund) · P0-4 (course_progress) · P0-5 (artifacts generate) · P0-6 (artifact CHECK) · P0-7 (units 2&3) · P0-8 (commission rate+base — **40% of net**, founder set 2026-06-29) · P0-9 (account-takeover) · P0-10 (team tier) · P0-11 (affiliate links) · P0-12 (CAN-SPAM unsubscribe — see 🟡) · P0-13 (buyer lockout).
 - **Phases 1–3 + Rounds 3/4/5:** the bulk of the `[M]` items + every `[D]` whose default you accepted — proxy/auth, webhook hardening, the email overhaul (unsubscribe + per-recipient one-click + cron suppression across all 5 crons), tools gate, identity, PII/log/replay hardening, `ip_hash` HMAC, markdown XSS, naming + canon copy, env docs, empty/error states, the silent-money-button fixes.
 - **Test net:** `tests/unit/` (commission · clawback netting · hash-ip · markdown XSS) wired into CI — closes R3-CI-1/4.
 
 ### ⬜ Decisions resolved → applied in code
 - **P0-14 (tax):** Stripe files the 1099-NECs → dashboard/lib copy corrected. ✅
-- **P0-8 / commission:** 30% of net, one source of truth (`lib/commission.ts`). ✅
+- **P0-8 / commission:** 40% of net (founder reversed decision #27 on 2026-06-29 — keep the kit's 40% / 30-day across the board), one source of truth (`lib/commission.ts`). ✅
 
 ### ⬜ On you — still open
 - **Decisions / legal:** P0-15 privacy-vs-trackers · CAN-SPAM physical mailing address (you chose none → P0-12 stays partial) · R4-LEG-6 ToS governing-law/arbitration · R4-LEG-7/R5-PI-4 scraped-prospect GDPR basis · R4-LEG-4 earnings-claim substantiation.
@@ -858,7 +858,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 | P0-5 | Artifacts never generate | ✅ | Invoked on completion + backfill |
 | P0-6 | Artifact CHECK rejects real types | ✅ | Constraint migrated to playbill/redline |
 | P0-7 | Units 2 & 3 stranded | ✅ | Per-unit completion + nav |
-| P0-8 | Promised 40%, code pays 30% | ✅ | One source: `lib/commission.ts` |
+| P0-8 | Promised 40%, code pays 30% | ✅ | One source (lib/commission.ts); 40% of net (founder set 2026-06-29) |
 | P0-9 | Affiliate account takeover | ✅ | Server-trusted identity; fallback deleted |
 | P0-10 | Team tier paid-but-unusable | ✅ | Service-role check + signup round-trip |
 | P0-11 | Affiliate links never attribute | ✅ | `/r/` added to proxy allowlist |
@@ -1105,7 +1105,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 | R5-DV-3 | Replies depend on human triage | ✅ | Suppression path built |
 | R5-DV-4 | Bulk to unconfirmed addresses | ✅ | Suppress bounced |
 | R5-DV-5 | No List-Id/Precedence on bulk | ✅ | Bulk headers added |
-| R5-DV-6 | SPF/DKIM/DMARC root mixing | 👤 | DNS/DMARC live-check is yours |
+| R5-DV-6 | SPF/DKIM/DMARC root mixing | ✅ | DMARC published + quarantine/reject enforced; BIMI optional |
 | R5-IC-1 | No `allow_promotion_codes` | ✅ | Enabled on sdr/ae |
 | R5-IC-2 | Stripe pins no `apiVersion` | ✅ | Pinned via central client |
 | R5-IC-3 | No reusable Stripe Customer | ✅ | `customer_creation:'always'` |
@@ -1166,5 +1166,5 @@ Stripe signature verification · refund→access revocation (the `status='active
 | §10 | Refund matches first session per PI | ✅ | Matches the session that has a purchase across the PI |
 | §11 | `markPayoutPaid` doesn't net clawbacks | ✅ | Nets clawbacks when `net_paid_cents` unset |
 | §12 | Dropped `isNewPurchase` lost attribution | ✅ | Gate removed |
-| §13 | `attribution_window_closes_at` unused | ✅ | 14-day window enforced at credit time |
+| §13 | `attribution_window_closes_at` unused | ✅ | 30-day window enforced at credit time |
 | §14 | `resolveCommissionRate` sub-1% ambiguity | ✅ | Rejects ≤1% / ≥100% resolved rate |

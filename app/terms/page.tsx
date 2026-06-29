@@ -83,7 +83,7 @@ export default function TermsPage() {
         </p>
       </Section>
 
-      {/* R4-LEG-6: defaulted to Delaware — founder must confirm this matches the operating entity's state and change if not. */}
+      {/* R4-LEG-6: Delaware confirmed by founder 2026-06-29. */}
       <Section title="9. Governing Law">
         <p>
           This agreement is governed by the laws of the State of Delaware,

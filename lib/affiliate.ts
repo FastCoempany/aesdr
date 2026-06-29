@@ -18,18 +18,19 @@ export const ATTRIBUTION_COOKIE = "aesdr_attribution";
 export const VISITOR_COOKIE = "aesdr_visitor";
 
 /**
- * Attribution window from first click (founder decision 2026-06-29: 14 days).
- * Drives BOTH the attribution-cookie TTL (app/r/[slug]/route.ts) and the
- * server-side credit-time check in the Stripe webhook (§13) — a purchase only
- * credits the affiliate if it lands within this window of the click.
+ * Attribution window from first click (founder decision 2026-06-29: 30 days,
+ * matching the affiliate-kit terms). Drives BOTH the attribution-cookie TTL
+ * (app/r/[slug]/route.ts) and the server-side credit-time check in the Stripe
+ * webhook (§13) — a purchase only credits the affiliate if it lands within this
+ * window of the click.
  */
-export const ATTRIBUTION_WINDOW_MS = 14 * 24 * 60 * 60 * 1000;
+export const ATTRIBUTION_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
 
 /** Refund window after purchase (matches /affiliates/payments copy). */
 export const REFUND_WINDOW_MS = 14 * 24 * 60 * 60 * 1000;
 
-/** Default commission rate on the consumer-side affiliate program. */
-export const DEFAULT_COMMISSION_RATE = 0.3;
+/** Default commission rate on the consumer-side affiliate program (40%). */
+export const DEFAULT_COMMISSION_RATE = 0.4;
 
 /**
  * Cookie value format: `${link_id}.${click_id}`. Both UUIDs. Dot

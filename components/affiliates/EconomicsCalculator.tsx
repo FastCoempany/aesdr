@@ -14,7 +14,7 @@ import { useMemo, useState } from "react";
 const STRIPE_RATE = 0.029;
 const STRIPE_FIXED = 0.30;
 const REFUND_RATE = 0.10; // 10% refund within the 14-day window
-const COMMISSION = 0.30;
+const COMMISSION = 0.40;
 
 const PLAN_SDR = 249;
 const PLAN_AE = 299;
@@ -120,7 +120,7 @@ export function EconomicsCalculator() {
         <Line k="Less Stripe fees" v={`−$${results.stripeFees.toLocaleString()}`} />
         <Line k="Net revenue" v={`$${results.net.toLocaleString()}`} />
         <Line
-          k="Your 30% commission"
+          k="Your 40% commission"
           v={`$${results.commission.toLocaleString()}`}
           highlight
         />
