@@ -1170,3 +1170,29 @@ Stripe signature verification · refund→access revocation (the `status='active
 | §12 | Dropped `isNewPurchase` lost attribution | ✅ | Gate removed |
 | §13 | `attribution_window_closes_at` unused | ✅ | 30-day window enforced at credit time |
 | §14 | `resolveCommissionRate` sub-1% ambiguity | ✅ | Rejects ≤1% / ≥100% resolved rate |
+
+### Final adversarial pass (2026-06-29) — 5 finders, full consumer journey re-swept
+
+All fixed. Gate: `tsc` 0 errors · 56 unit tests (8 new) · `lint` 0 errors · `build` ✅. Two new migrations to apply (listed below).
+
+| ID | Sev | Finding | Status | Fix |
+|---|---|---|---|---|
+| F-1 | CRITICAL | Tool **download** route gated on course completion only, not purchase — a refunded/disputed buyer (or a free signup who forged completion) could pull paid tools | ✅ | `verifyPaidAccess` gate (`app/tools/[slug]/download/route.ts`) |
+| F-2 | CRITICAL | `/api/progress` + `/api/progress/complete` were auth-only — a free signup could forge completion state (and trip paid LLM artifact generation) | ✅ | `verifyPaidAccess` gate on both write endpoints |
+| F-3 | HIGH | Clawback **re-inflation**: `amount_cents` was overloaded as both the recognized target and the open remainder, so a webhook redelivery / reconcile re-run re-raised an already-netted remainder to full → double-claw | ✅ | New `original_amount_cents` high-water column + pure `mergeRecognizedClawback` (8 unit tests); refund + dispute handlers cap on the high-water |
+| F-4 | HIGH | Artifact pages' empty state never called the existing `/api/artifacts` backfill — a failed end-of-course generation stranded the finished buyer permanently | ✅ | `ArtifactBackfill` island auto-retries + `router.refresh()` (playbill + redline) |
+| F-5 | HIGH | Retention cron pushed raw buyer **emails** into Sentry-shipped error strings (no central beforeSend scrubber) | ✅ | Error strings keyed by user_id, never email |
+| F-6 | MEDIUM | Affiliate `/payments` page showed **gross** commission, not net paid (admin twin was already fixed) | ✅ | Shows `net_paid_cents` + "less clawback" note |
+| F-7 | MEDIUM | Team-invite seat cap was count-then-insert — concurrent invites overflow `max_seats` | ✅ | `enforce_team_seat_cap` BEFORE INSERT trigger (advisory-lock + recount) + unique (team_id, email) |
+| F-8 | MEDIUM | Drip cron double-emailed a buyer with >1 active purchase (cohort keyed by purchase row) | ✅ | Cohort deduped by email |
+| F-9 | MEDIUM | PostHog `$current_url`/`$referrer` carried `?email=` (welcome/unsubscribe) and `?token=` (team-join bearer) on autocapture/`$pageleave` | ✅ | `email`/`token` added to client strip-list + `sanitize_properties` scrubs every URL prop |
+| F-10 | MEDIUM | Reflected XSS on `/unsubscribe?email=` (loose validator + raw interpolation) | ✅ | `esc()` on output + validator excludes HTML metachars |
+| F-11 | MEDIUM | `safeSend` logged the full Resend error (whose `message` can echo the recipient) to Sentry/stdout | ✅ | Logs `error.name` only |
+| F-12 | LOW | `markManualSent` audit-log insert error was unchecked (row flipped to sent with no audit line) | ✅ | Throws on any non-duplicate insert error |
+| F-13 | LOW | Prompt-injection telemetry shipped 200 chars of raw student free-text to Sentry | ✅ | Dropped `textPreview` (kept matched pattern + userId) |
+
+**Migrations to apply (Supabase SQL editor):**
+- `20260629_clawback_original_amount.sql` — high-water column (apply **before** the deploy; the handlers now write it)
+- `20260629_team_seat_cap_trigger.sql` — seat-cap trigger + unique index
+
+**Verified clean (not findings):** fail-closed suppression, permanent-only bounce handling, CAN-SPAM footer, receipt tax breakdown, consent gating of analytics, retention-purge FK safety, Stripe webhook idempotency under redelivery, and student name kept out of the LLM prompts.

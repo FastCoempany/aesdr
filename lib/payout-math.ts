@@ -90,3 +90,43 @@ export function proRataClawbackCents(
   if (refunded >= captured) return commission; // full (or over-) refund
   return Math.min(commission, Math.round((commission * refunded) / captured));
 }
+
+/**
+ * Merge a freshly-computed clawback TARGET into an existing ledger row without
+ * re-inflating an already-netted remainder (AUDIT, final pass — HIGH money bug).
+ *
+ * A clawback row carries two quantities:
+ *   • `amount_cents`          — the OPEN (un-netted) balance; a partial payout
+ *                               decrements it (applyClawbacks → affiliate.ts).
+ *   • `original_amount_cents` — the high-water mark of total clawback ever
+ *                               recognized for that (attribution, reason).
+ *
+ * On a webhook redelivery or a reconcile re-run the target is recomputed
+ * identically, so overwriting the open balance with GREATEST(remainder, target)
+ * — what the old code did with the single `amount_cents` field — resurrects the
+ * portion a payout already consumed and double-claws the affiliate. Instead we
+ * raise the high-water mark monotonically (capped so refund + dispute together
+ * never exceed the commission) and add only the GROWTH to the open balance.
+ *
+ * @returns the {amountCents (open), originalCents (high-water)} to upsert, or
+ *          null when there is no open clawback to write.
+ */
+export function mergeRecognizedClawback(
+  prevOriginalCents: number,
+  prevRemainderCents: number,
+  targetCents: number,
+  capCents: number,
+): { amountCents: number; originalCents: number } | null {
+  const prevOriginal = Math.max(0, Math.round(prevOriginalCents));
+  const prevRemain = Math.max(0, Math.round(prevRemainderCents));
+  const cap = Math.max(0, Math.round(capCents));
+  const target = Math.max(0, Math.round(targetCents));
+
+  const recognizedTarget = Math.min(target, cap);
+  const newOriginal = Math.max(prevOriginal, recognizedTarget); // monotonic up only
+  const delta = newOriginal - prevOriginal; // ≥ 0 (growth in recognized clawback)
+  const newRemain = prevRemain + delta;
+
+  if (newRemain <= 0) return null;
+  return { amountCents: newRemain, originalCents: newOriginal };
+}

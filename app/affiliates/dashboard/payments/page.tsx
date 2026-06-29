@@ -39,7 +39,7 @@ export default async function AffiliatePaymentsPage() {
   const admin = createAdminClient();
   const { data: payouts } = await admin
     .from("affiliate_payouts")
-    .select("id, period_start, period_end, total_commission_cents, status, payment_method, payment_reference, paid_at, created_at")
+    .select("id, period_start, period_end, total_commission_cents, net_paid_cents, status, payment_method, payment_reference, paid_at, created_at")
     .eq("affiliate_slug", affiliate.slug)
     .order("created_at", { ascending: false })
     .limit(20);
@@ -177,7 +177,24 @@ export default async function AffiliatePaymentsPage() {
                       {dateShort(p.period_start)} → {dateShort(p.period_end)}
                     </td>
                     <td style={{ padding: "12px 14px", fontWeight: 700 }}>
-                      {dollars(p.total_commission_cents)}
+                      {/* AUDIT (final pass): show what actually transferred
+                          (net_paid_cents) — gross overstates a payout that had a
+                          refund/dispute clawback netted out. Falls back to gross
+                          for a payout that hasn't been netted yet (net null). */}
+                      {dollars(p.net_paid_cents ?? p.total_commission_cents)}
+                      {p.net_paid_cents != null &&
+                        p.net_paid_cents !== p.total_commission_cents && (
+                          <span
+                            style={{
+                              display: "block",
+                              fontWeight: 400,
+                              fontSize: 11,
+                              color: "var(--muted)",
+                            }}
+                          >
+                            {dollars(p.total_commission_cents)} earned, less clawback
+                          </span>
+                        )}
                     </td>
                     <td style={{ padding: "12px 14px", fontFamily: "var(--mono)", fontSize: 11, color: p.status === "paid" ? "var(--ink)" : "var(--muted)" }}>
                       {p.status}

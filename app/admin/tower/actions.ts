@@ -198,8 +198,12 @@ export async function markManualSent(formData: FormData) {
   if (!row) throw new Error("Draft not found.");
 
   const nowIso = new Date().toISOString();
-  // Append the audit line (idempotency_key unique-indexed — a double-mark no-ops).
-  await supabase.from("partner_sent_log").insert({
+  // Append the audit line. This is the whole point of the function (a complete
+  // sent-log across both channels), so a failed write must NOT be ignored — only
+  // a genuine double-mark (23505 on the unique idempotency_key) is safe to pass.
+  // AUDIT (final pass): the error was previously unchecked, so a real insert
+  // failure would still flip the row to 'sent' with no audit trail.
+  const { error: logErr } = await supabase.from("partner_sent_log").insert({
     queue_id: row.id,
     to_addr: row.to_addr,
     subject: row.subject,
@@ -208,6 +212,9 @@ export async function markManualSent(formData: FormData) {
     model: "manual",
     sent_at: nowIso,
   });
+  if (logErr && logErr.code !== "23505") {
+    throw new Error(`Failed to write sent-log: ${logErr.message}`);
+  }
   const { error } = await supabase
     .from("partner_outbound_queue")
     .update({ status: "sent", sent_at: nowIso })

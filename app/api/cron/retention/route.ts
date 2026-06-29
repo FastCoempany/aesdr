@@ -152,7 +152,7 @@ export async function GET(request: Request) {
       minutes
     );
     if (!ok) {
-      errors.push(`lesson-nudge send failed for ${purchase.user_email}`);
+      errors.push(`lesson-nudge send failed for user ${c.user_id}`);
       continue;
     }
     await supabase.from("events").insert({
@@ -217,7 +217,7 @@ export async function GET(request: Request) {
         TOTAL_LESSONS
       );
       if (!ok) {
-        errors.push(`weekly send failed for ${p.user_email}`);
+        errors.push(`weekly send failed for user ${p.user_id}`);
         continue;
       }
       await supabase.from("events").insert({
@@ -276,7 +276,7 @@ export async function GET(request: Request) {
     if (await isSuppressed(p.user_email)) continue;
     const ok = await sendWinBack(p.user_email, p.customer_name || "there");
     if (!ok) {
-      errors.push(`win-back send failed for ${p.user_email}`);
+      errors.push(`win-back send failed for user ${p.user_id}`);
       continue;
     }
     await supabase.from("events").insert({
@@ -331,7 +331,7 @@ export async function GET(request: Request) {
         m.mark
       );
       if (!ok) {
-        errors.push(`alumni-${m.mark}m send failed for ${c.email}`);
+        errors.push(`alumni-${m.mark}m send failed for user ${c.user_id}`);
         continue;
       }
       await supabase.from("events").insert({
@@ -346,6 +346,9 @@ export async function GET(request: Request) {
   }
 
   if (errors.length > 0) {
+    // AUDIT (final pass): `errors` must stay PII-free — it ships to Sentry (a
+    // third party) and there is no central beforeSend email scrubber. Identify
+    // failed sends by user_id / count, never user_email.
     Sentry.captureMessage("[cron/retention] Errors", { level: "error", extra: { errors } });
   }
   return NextResponse.json({

@@ -118,9 +118,12 @@ const INJECTION_PATTERNS = [
 function detectInjectionAttempt(text: string, userId?: string): boolean {
   for (const pattern of INJECTION_PATTERNS) {
     if (pattern.test(text)) {
+      // AUDIT (final pass): don't ship a preview of the student's raw free-text
+      // to Sentry (it can carry a self-typed name/employer). The matched pattern
+      // + userId are enough to investigate.
       Sentry.captureMessage("Possible prompt injection attempt", {
         level: "warning",
-        extra: { userId, matchedPattern: pattern.source, textPreview: text.slice(0, 200) },
+        extra: { userId, matchedPattern: pattern.source },
       });
       return true;
     }

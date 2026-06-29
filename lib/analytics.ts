@@ -61,6 +61,38 @@ async function getClient(): Promise<PostHog | null> {
         // Never record raw input values in session replays — buyer/affiliate
         // free-text would otherwise be captured verbatim (R5-PI-2).
         session_recording: { maskAllInputs: true },
+        // AUDIT (final pass): the manual pageview URL is scrubbed in
+        // PostHogClient, but autocapture clicks + $pageleave attach the RAW
+        // window.location to $current_url/$referrer, bypassing it. Scrub every
+        // URL-valued property here so ?email= (welcome/unsubscribe links) and
+        // ?token= (team-join bearer credential) never reach PostHog.
+        sanitize_properties: (props) => {
+          const SENSITIVE = new Set(["email", "token", "p", "ref", "via"]);
+          const scrubUrl = (val: unknown): unknown => {
+            if (typeof val !== "string") return val;
+            try {
+              const u = new URL(val);
+              for (const key of [...u.searchParams.keys()]) {
+                const k = key.toLowerCase();
+                if (SENSITIVE.has(k) || k.startsWith("utm_")) {
+                  u.searchParams.delete(key);
+                }
+              }
+              return u.toString();
+            } catch {
+              return val; // non-URL props ($direct referrer, paths) pass through
+            }
+          };
+          for (const key of [
+            "$current_url",
+            "$referrer",
+            "$initial_referrer",
+            "$initial_current_url",
+          ]) {
+            if (key in props) props[key] = scrubUrl(props[key]);
+          }
+          return props;
+        },
         loaded: (ph) => {
           if (process.env.NODE_ENV === "development") ph.debug(false);
         },

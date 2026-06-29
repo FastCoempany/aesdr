@@ -567,21 +567,31 @@ export async function POST(request: Request) {
             const ids = clawable.map((a) => a.id);
             const { data: existingRefunds } = await supabase
               .from('commission_clawbacks')
-              .select('attribution_id, amount_cents')
+              .select('attribution_id, amount_cents, original_amount_cents')
               .eq('reason', 'refund')
               .in('attribution_id', ids);
+            // Cap against the refund's HIGH-WATER (original_amount_cents), not its
+            // live amount_cents — that field is decremented as payouts net it, so
+            // capping on it would let dispute + refund exceed the commission once a
+            // refund has been partially paid out (AUDIT final pass, HIGH).
             const refundMap = new Map(
-              (existingRefunds ?? []).map((r) => [r.attribution_id, r.amount_cents ?? 0]),
+              (existingRefunds ?? []).map((r) => [
+                r.attribution_id,
+                (r.original_amount_cents ?? r.amount_cents) ?? 0,
+              ]),
             );
             const clawbackRows = clawable
               .map((a) => {
                 const commission = a.commission_amount_cents ?? 0;
                 const alreadyClawed = refundMap.get(a.id) ?? 0;
+                const amount = Math.max(0, commission - alreadyClawed);
+                // One-shot row (ignoreDuplicates) → original == amount at write.
                 return {
                   affiliate_slug: a.affiliate_slug,
                   attribution_id: a.id,
                   purchase_id: disputedPurchase.id,
-                  amount_cents: Math.max(0, commission - alreadyClawed),
+                  amount_cents: amount,
+                  original_amount_cents: amount,
                   reason: 'dispute',
                 };
               })
