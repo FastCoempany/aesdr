@@ -2,9 +2,42 @@ export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/utils/supabase/admin';
-import { sendDropoff5d, sendDropoff10d, sendDropoff21d } from '@/lib/email';
+import { sendDropoff5d, sendDropoff10d, sendDropoff21d, getSuppressedEmails } from '@/lib/email';
 import { TIMING, TOTAL_LESSONS } from '@/lib/config';
 import { verifyCronAuth } from '@/lib/cron-auth';
+import { isPausedUser } from '@/app/actions/pause';
+import { LESSONS } from '@/utils/progress/types';
+
+// R4-PERF-7: bounded send pool to respect Resend's ~2 req/s limit; only a TRUE
+// send returns the email, so a false/429 never sets the *_sent flag.
+const SEND_CONCURRENCY = 5;
+
+async function runPool<T>(
+  items: T[],
+  limit: number,
+  worker: (item: T) => Promise<string | null>,
+): Promise<string[]> {
+  const successes: string[] = [];
+  let cursor = 0;
+  async function lane(): Promise<void> {
+    while (cursor < items.length) {
+      const idx = cursor++;
+      const ok = await worker(items[idx]);
+      if (ok) successes.push(ok);
+    }
+  }
+  await Promise.all(
+    Array.from({ length: Math.min(limit, items.length) }, () => lane()),
+  );
+  return successes;
+}
+
+// Lesson id → human title (R4-DR-…): the drop-off emails should name the
+// lesson the buyer stopped at, not "Lesson 7".
+const LESSON_TITLE = new Map(LESSONS.map((l) => [l.id, l.title]));
+function lessonTitleFor(lessonId: string): string {
+  return LESSON_TITLE.get(lessonId) ?? `Lesson ${lessonId}`;
+}
 
 export async function GET(request: Request) {
   const authErr = verifyCronAuth(request);
@@ -12,7 +45,19 @@ export async function GET(request: Request) {
 
   const supabase = createAdminClient();
   const now = new Date();
+  const nowMs = now.getTime();
   const errors: string[] = [];
+
+  // P1-6: per-run pause cache so a paused buyer receives nothing.
+  const pauseCache = new Map<string, Promise<boolean>>();
+  const isPaused = (userId: string | null): Promise<boolean> => {
+    if (!userId) return Promise.resolve(false);
+    const hit = pauseCache.get(userId);
+    if (hit) return hit;
+    const p = isPausedUser(userId, nowMs);
+    pauseCache.set(userId, p);
+    return p;
+  };
 
   const fiveDaysAgo = new Date(now.getTime() - TIMING.dropoff.d5).toISOString();
 
@@ -73,6 +118,7 @@ export async function GET(request: Request) {
 
   for (const user of allDropoffCandidates) {
     if (!user.user_id) continue;
+    if (await isPaused(user.user_id)) continue; // P1-6
     const { lastActivity, lastLesson, completedAll } = getUserActivity(user.user_id);
     if (completedAll) continue;
 
@@ -96,26 +142,26 @@ export async function GET(request: Request) {
     }
   }
 
-  const [d5Successes, d10Successes, d21Successes] = await Promise.all([
-    Promise.all(
-      tier5.map(async (t) => {
-        const ok = await sendDropoff5d(t.email, t.name, t.lesson, `Lesson ${t.lesson}`);
-        return ok ? t.email : null;
-      })
-    ).then((r) => r.filter((x): x is string => !!x)),
-    Promise.all(
-      tier10.map(async (t) => {
-        const ok = await sendDropoff10d(t.email, t.name);
-        return ok ? t.email : null;
-      })
-    ).then((r) => r.filter((x): x is string => !!x)),
-    Promise.all(
-      tier21.map(async (t) => {
-        const ok = await sendDropoff21d(t.email, t.name, t.lesson);
-        return ok ? t.email : null;
-      })
-    ).then((r) => r.filter((x): x is string => !!x)),
-  ]);
+  // Sequential across tiers + bounded within each tier, so the total Resend
+  // request rate stays under the limit (R4-PERF-7). A false send returns null
+  // and never marks the tier flag.
+  // P0-12: don't bulk-mail unsubscribed addresses.
+  const suppressed = await getSuppressedEmails([...tier5, ...tier10, ...tier21].map((t) => t.email));
+  const d5Successes = await runPool(tier5, SEND_CONCURRENCY, async (t) => {
+    if (suppressed.has((t.email || '').toLowerCase())) return null;
+    const ok = await sendDropoff5d(t.email, t.name, t.lesson, lessonTitleFor(t.lesson));
+    return ok ? t.email : null;
+  });
+  const d10Successes = await runPool(tier10, SEND_CONCURRENCY, async (t) => {
+    if (suppressed.has((t.email || '').toLowerCase())) return null;
+    const ok = await sendDropoff10d(t.email, t.name);
+    return ok ? t.email : null;
+  });
+  const d21Successes = await runPool(tier21, SEND_CONCURRENCY, async (t) => {
+    if (suppressed.has((t.email || '').toLowerCase())) return null;
+    const ok = await sendDropoff21d(t.email, t.name, t.lesson);
+    return ok ? t.email : null;
+  });
 
   // One batched update per tier.
   await Promise.all([

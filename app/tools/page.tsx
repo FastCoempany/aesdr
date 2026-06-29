@@ -42,7 +42,7 @@ const TOOLS: ReadonlyArray<{
     name: "Manager Archetype Map",
     title: "4.1 — Manager Archetype Map",
     description:
-      "Which operating system your manager runs on, what reads to them as competence, and the weekly move that manages each one up.",
+      "How your manager runs, what reads to them as competence, and the weekly move that manages each one up.",
   },
   {
     slug: "4.3-async-cadence-template",

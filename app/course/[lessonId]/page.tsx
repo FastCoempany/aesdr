@@ -92,17 +92,47 @@ export default async function LessonPage({
   const savedUnitId =
     typeof stateData.unit === "string" ? stateData.unit : undefined;
 
+  // Per-unit completion bookkeeping written by /api/progress/complete (P0-7).
+  const unitsComplete =
+    (stateData._unitsComplete as Record<string, boolean> | undefined) ?? {};
+
   const lesson = LESSONS.find((entry) => entry.id === lessonId);
   const units = await listLessonUnits(lessonId);
   const tools = getToolAssetsForLesson(lessonId);
 
+  // Unit selection: explicit ?unit= wins; else resume the last-saved unit;
+  // else the first unfinished unit; else unit 1.
+  const firstUnfinished = units.find((u) => !unitsComplete[u.unitId]);
   const selectedUnit =
     units.find((entry) => entry.unitId === requestedUnitId) ??
     units.find((entry) => entry.unitId === savedUnitId) ??
+    firstUnfinished ??
     units[0];
 
+  const selectedIndex = selectedUnit
+    ? units.findIndex((u) => u.unitId === selectedUnit.unitId)
+    : -1;
+  // The unit to advance to when this unit's terminal CTA fires. Null on the
+  // last unit (the CTA then keeps its original /dashboard target).
+  const nextUnit =
+    selectedIndex >= 0 && selectedIndex < units.length - 1
+      ? units[selectedIndex + 1]
+      : null;
+
+  // Per-unit restore screen: read from the unit's own blob (_units[id]._screen)
+  // when available, else the row-level last_screen if this is the saved unit.
+  const unitBlob =
+    (stateData._units as Record<string, Record<string, unknown>> | undefined)?.[
+      selectedUnit?.unitId ?? ""
+    ];
+  const unitScreen =
+    typeof unitBlob?._screen === "number" ? (unitBlob._screen as number) : 0;
   const restoreScreen =
-    selectedUnit && savedUnitId === selectedUnit.unitId ? lastScreen : 0;
+    unitScreen > 0
+      ? unitScreen
+      : selectedUnit && savedUnitId === selectedUnit.unitId
+        ? lastScreen
+        : 0;
 
   const iframeSrc = selectedUnit
     ? (() => {
@@ -116,7 +146,14 @@ export default async function LessonPage({
 
   return (
     <>
-      <ProgressSaver lessonId={lessonId} isAuthenticated={true} savedStateData={stateData} />
+      <ProgressSaver
+        lessonId={lessonId}
+        isAuthenticated={true}
+        savedStateData={stateData}
+        unitId={selectedUnit?.unitId}
+        unitCount={units.length}
+        nextUnitId={nextUnit?.unitId ?? null}
+      />
 
       {/* Full-screen iframe — course content owns the entire viewport */}
       {iframeSrc ? (
@@ -227,6 +264,96 @@ export default async function LessonPage({
           AESDR
         </span>
       </div>
+
+      {/* Unit stepper — AUDIT (P0-7). The product is sold as three sub-units
+          per lesson, but the player loaded only one and marked the lesson
+          complete after it. This makes units 2 & 3 reachable and shows which
+          are done. A unit is openable once the previous one is complete (or
+          it's already complete, or the lesson is). Pinned bottom-center, clear
+          of Save&Exit (top-left), the wordmark (top-center) and the tool
+          downloads (top-right). */}
+      {units.length > 1 && selectedUnit && (
+        <nav
+          aria-label="Lesson units"
+          style={{
+            position: "fixed",
+            bottom: 14,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            padding: "6px 10px",
+            background: "rgba(250,247,242,0.92)",
+            border: "1px solid rgba(0,0,0,0.08)",
+            backdropFilter: "blur(8px)",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "var(--mono)",
+              fontSize: 9,
+              letterSpacing: ".18em",
+              textTransform: "uppercase",
+              color: "var(--muted)",
+              marginRight: 4,
+            }}
+          >
+            Units
+          </span>
+          {units.map((u, i) => {
+            const done = !!unitsComplete[u.unitId] || isCompleted;
+            const prevDone = i === 0 || !!unitsComplete[units[i - 1].unitId];
+            const isSelected = u.unitId === selectedUnit.unitId;
+            // Openable: already done, currently selected, the first unit, the
+            // unit right after a completed one, or the whole lesson is done.
+            const openable = isCompleted || done || isSelected || prevDone;
+            const label = `${i + 1}`;
+
+            const sharedStyle: React.CSSProperties = {
+              fontFamily: "var(--cond)",
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: ".06em",
+              width: 30,
+              height: 30,
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: isSelected
+                ? "2px solid var(--crimson)"
+                : done
+                  ? "1px solid var(--crimson)"
+                  : "1px solid var(--light)",
+              background: done ? "var(--crimson)" : "transparent",
+              color: done ? "#fff" : isSelected ? "var(--crimson)" : "var(--muted)",
+              textDecoration: "none",
+            };
+
+            return openable ? (
+              <Link
+                key={u.unitId}
+                href={`/course/${lessonId}?unit=${u.unitId}`}
+                aria-current={isSelected ? "step" : undefined}
+                title={`Unit ${u.unitId}: ${u.title}`}
+                style={sharedStyle}
+              >
+                {done ? "✓" : label}
+              </Link>
+            ) : (
+              <span
+                key={u.unitId}
+                aria-disabled="true"
+                title={`Unit ${u.unitId} — finish the previous unit first`}
+                style={{ ...sharedStyle, opacity: 0.45, cursor: "not-allowed" }}
+              >
+                {label}
+              </span>
+            );
+          })}
+        </nav>
+      )}
 
       {/* Tool downloads — only on completed lessons. Pinned to the
           right, below the lesson's topbar (which carries the

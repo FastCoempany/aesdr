@@ -27,7 +27,7 @@ export default function DiagnosticInstrumentPage() {
           AE/SDR behavior diagnostic.
         </h1>
         <p className={styles.heroSubhead}>
-          32 prompts across 8 dimensions of early-career AE/SDR behavior. Each item rates on a
+          24 prompts per respondent (32 total) across 8 dimensions of early-career AE/SDR behavior. Each item rates on a
           1–5 scale: <strong style={{ color: "var(--ink)" }}>1 = strongly disagree</strong>,{" "}
           <strong style={{ color: "var(--ink)" }}>3 = neutral</strong>,{" "}
           <strong style={{ color: "var(--ink)" }}>5 = strongly agree</strong>. Some items are

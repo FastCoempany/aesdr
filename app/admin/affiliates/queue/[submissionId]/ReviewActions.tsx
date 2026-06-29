@@ -47,6 +47,37 @@ export default function ReviewActions({ submissionId }: { submissionId: string }
   const [mode, setMode] = useState<Mode>("approve");
   const [working, setWorking] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // R5-EE-11: confirm success so the reviewer doesn't re-submit (each submit
+  // flips an affiliate's gate / strike count). Once an action lands we lock the
+  // panel and show what happened instead of leaving live buttons.
+  const [done, setDone] = useState<Mode | null>(null);
+
+  if (done) {
+    const doneCopy =
+      done === "approve"
+        ? "Approved — the affiliate has been notified."
+        : done === "edits"
+          ? "Edit requests sent — the affiliate has been notified."
+          : "Declined — the affiliate has been notified.";
+    return (
+      <div
+        role="status"
+        style={{
+          background: "#fff",
+          border: "1px solid #E8E4DF",
+          borderLeft: "3px solid #1A1A1A",
+          padding: "20px 24px",
+        }}
+      >
+        <p style={{ margin: 0, fontFamily: "'Space Mono',monospace", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", color: "#8B1A1A", marginBottom: 8 }}>
+          Done
+        </p>
+        <p style={{ margin: 0, fontFamily: "'Source Serif 4', Georgia, serif", fontSize: 15, color: "#1A1A1A" }}>
+          {doneCopy}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div style={{ background: "#fff", border: "1px solid #E8E4DF" }}>
@@ -88,6 +119,7 @@ export default function ReviewActions({ submissionId }: { submissionId: string }
               try {
                 formData.set("submissionId", submissionId);
                 await approveAffiliateCopy(formData);
+                setDone("approve");
               } catch (err) {
                 setError(err instanceof Error ? err.message : "Failed.");
               } finally {
@@ -143,6 +175,7 @@ export default function ReviewActions({ submissionId }: { submissionId: string }
               try {
                 formData.set("submissionId", submissionId);
                 await requestAffiliateCopyEdits(formData);
+                setDone("edits");
               } catch (err) {
                 setError(err instanceof Error ? err.message : "Failed.");
               } finally {
@@ -199,6 +232,7 @@ export default function ReviewActions({ submissionId }: { submissionId: string }
               try {
                 formData.set("submissionId", submissionId);
                 await declineAffiliateCopy(formData);
+                setDone("decline");
               } catch (err) {
                 setError(err instanceof Error ? err.message : "Failed.");
               } finally {

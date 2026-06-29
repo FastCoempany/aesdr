@@ -27,15 +27,43 @@ function esc(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
+/**
+ * Allow only safe link schemes. Anything else (javascript:, data:, vbscript:,
+ * etc.) is dropped to "#" so a crafted markdown link can't execute script
+ * (R3-SEC-4 XSS). Relative URLs, fragments, and protocol-relative `//host`
+ * are permitted; absolute URLs must be http(s) or mailto.
+ */
+function safeHref(rawUrl: string): string {
+  const url = rawUrl.trim();
+  // Browsers strip ASCII control chars + whitespace when parsing a scheme, so
+  // `java\tscript:` becomes `javascript:`. Strip those (0x00-0x20 and 0x7f)
+  // before testing so that bypass can't slip a banned scheme past the check.
+  // eslint-disable-next-line no-control-regex
+  const probe = url.replace(/[\u0000-\u0020\u007f]/g, "");
+  // A scheme is letters/digits/+/-/. up to the first ':'. No scheme → it's a
+  // relative path or fragment → allow.
+  const schemeMatch = /^([a-z][a-z0-9+.-]*):/i.exec(probe);
+  if (schemeMatch) {
+    const scheme = schemeMatch[1].toLowerCase();
+    if (scheme !== "http" && scheme !== "https" && scheme !== "mailto") {
+      return "#";
+    }
+  }
+  return url;
+}
+
 /** Apply inline transforms: code, bold, italic, links. Operates on already-escaped text. */
 function inline(s: string): string {
   // Inline code first (so its contents aren't bolded/italicized)
   s = s.replace(/`([^`]+?)`/g, (_, code: string) => `<code>${code}</code>`);
-  // Links [text](url)
+  // Links [text](url) — `s` is already HTML-escaped (esc runs before inline),
+  // so a literal quote in the URL is already &quot; and can't break out of
+  // href="…". The remaining hole is the SCHEME (javascript:/data: contain no
+  // escapable chars), which safeHref rejects.
   s = s.replace(
     /\[([^\]]+)\]\(([^)]+)\)/g,
     (_, text: string, url: string) =>
-      `<a href="${url}" rel="noopener">${text}</a>`,
+      `<a href="${safeHref(url)}" rel="noopener">${text}</a>`,
   );
   // Bold **text**
   s = s.replace(/\*\*([^*]+?)\*\*/g, "<strong>$1</strong>");

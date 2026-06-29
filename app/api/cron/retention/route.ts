@@ -8,9 +8,11 @@ import {
   sendLessonCompletedNudge,
   sendWeeklyFraming,
   sendWinBack,
+  getSuppressedEmails,
 } from "@/lib/email";
 import { TIMING, TOTAL_LESSONS } from "@/lib/config";
 import { verifyCronAuth } from "@/lib/cron-auth";
+import { isPausedUser } from "@/app/actions/pause";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { LESSONS } from "@/utils/progress/types";
 
@@ -63,17 +65,31 @@ export async function GET(request: Request) {
 
   /**
    * Check whether a user_id is currently paused (paused_until > now).
-   * Pulls from auth.users metadata via the admin client. Cached per-run
-   * to avoid hammering auth.users in the inner loop.
+   * Delegates to the shared isPausedUser helper (P1-6, app/actions/pause.ts)
+   * so every cron uses one definition of "paused"; memoized per-run here so
+   * the inner loops don't re-hit auth.users for the same user_id.
    */
-  const pausedCache = new Map<string, boolean>();
-  async function isPaused(userId: string): Promise<boolean> {
-    if (pausedCache.has(userId)) return pausedCache.get(userId)!;
-    const { data } = await supabase.auth.admin.getUserById(userId);
-    const until = data?.user?.user_metadata?.paused_until as string | undefined;
-    const paused = !!until && new Date(until).getTime() > now.getTime();
-    pausedCache.set(userId, paused);
-    return paused;
+  const nowMs = now.getTime();
+  const pausedCache = new Map<string, Promise<boolean>>();
+  function isPaused(userId: string): Promise<boolean> {
+    const hit = pausedCache.get(userId);
+    if (hit) return hit;
+    const p = isPausedUser(userId, nowMs);
+    pausedCache.set(userId, p);
+    return p;
+  }
+
+  // P0-12: memoized suppression check (one query per unique address per run) so
+  // unsubscribed people aren't bulk-mailed by any of the branches below.
+  const suppressedCache = new Map<string, Promise<boolean>>();
+  function isSuppressed(email: string | null | undefined): Promise<boolean> {
+    const e = (email || "").toLowerCase();
+    if (!e) return Promise.resolve(false);
+    const hit = suppressedCache.get(e);
+    if (hit) return hit;
+    const p = getSuppressedEmails([e]).then((s) => s.has(e));
+    suppressedCache.set(e, p);
+    return p;
   }
 
   // ── 1. Lesson-completion nudges ──────────────────────────────────────
@@ -127,6 +143,7 @@ export async function GET(request: Request) {
       continue;
     }
     const minutes = DURATION_BY_ID.get(nextLesson.id) ?? 25;
+    if (await isSuppressed(purchase.user_email)) continue;
     const ok = await sendLessonCompletedNudge(
       purchase.user_email,
       purchase.customer_name || "there",
@@ -192,6 +209,7 @@ export async function GET(request: Request) {
         weekly++;
         continue;
       }
+      if (await isSuppressed(p.user_email)) continue;
       const ok = await sendWeeklyFraming(
         p.user_email,
         p.customer_name || "there",
@@ -255,6 +273,7 @@ export async function GET(request: Request) {
       winBack++;
       continue;
     }
+    if (await isSuppressed(p.user_email)) continue;
     const ok = await sendWinBack(p.user_email, p.customer_name || "there");
     if (!ok) {
       errors.push(`win-back send failed for ${p.user_email}`);
@@ -305,6 +324,7 @@ export async function GET(request: Request) {
         .select("customer_name")
         .eq("user_id", c.user_id)
         .maybeSingle();
+      if (await isSuppressed(c.email)) continue;
       const ok = await sendAlumniReengagement(
         c.email,
         purchase?.customer_name || "there",

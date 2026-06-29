@@ -21,7 +21,7 @@ export default function AboutPage() {
         <p>
           Built with people who lived the same job. The validation set
           includes SDRs, AEs, and sales leaders from companies whose names
-          you&rsquo;d recognise &mdash; their pushback shaped the curriculum more
+          you&rsquo;d recognize &mdash; their pushback shaped the curriculum more
           than anything I could have written alone.
         </p>
       </Section>

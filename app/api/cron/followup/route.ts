@@ -80,6 +80,7 @@ export async function GET(request: Request) {
   let drafted = 0;
   let halted = 0;
   let coldened = 0;
+  const errors: string[] = [];
 
   for (const r of rows ?? []) {
     if (drafted >= BATCH) break;
@@ -89,12 +90,20 @@ export async function GET(request: Request) {
     // ── Halt (b): a real reply landed from this contact's address. ──
     const email = extractEmail(r.contact_path);
     if (email) {
-      const { data: replies } = await supabase
+      const { data: replies, error: replyErr } = await supabase
         .from("partner_inbound_email")
         .select("id")
         .ilike("from_addr", `%${email}%`)
         .gt("received_at", r.first_touch_at as string)
         .limit(1);
+      // R3-AG-8: fail CLOSED. If the inbound query errors (e.g. the table
+      // isn't there yet), we cannot confirm "no reply" — and advancing the
+      // ladder on an unconfirmed no-reply is exactly the "kept emailing after
+      // they answered" failure. Skip this candidate until the read works.
+      if (replyErr) {
+        errors.push(`inbound check failed for ${r.id}: ${replyErr.message}`);
+        continue;
+      }
       if (replies && replies.length > 0) {
         await supabase
           .from("partner_pipeline")
@@ -143,6 +152,7 @@ export async function GET(request: Request) {
     drafted,
     halted,
     coldened,
+    errors: errors.length > 0 ? errors : undefined,
   });
 }
 

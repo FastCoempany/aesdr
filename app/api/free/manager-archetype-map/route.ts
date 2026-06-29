@@ -1,10 +1,10 @@
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
-import crypto from "node:crypto";
 
 import { sendManagerArchetypeMap } from "@/lib/email";
 import { logEvent } from "@/lib/events";
+import { hashIp } from "@/lib/hash-ip";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
 import { createAdminClient } from "@/utils/supabase/admin";
 
@@ -13,11 +13,6 @@ const SOURCE = "manager-archetype-map";
 // Loose RFC-5322-ish check — Resend will do the real validation. We only
 // reject the obvious garbage here so we don't burn a Resend call.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
-function hashIP(ip: string) {
-  const salt = process.env.IP_HASH_SALT || "aesdr-free-leads";
-  return crypto.createHash("sha256").update(`${salt}:${ip}`).digest("hex").slice(0, 32);
-}
 
 export async function POST(request: Request) {
   const ip = getClientIP(request);
@@ -52,7 +47,7 @@ export async function POST(request: Request) {
     body.role === "ae" || body.role === "sdr" ? body.role : null;
 
   const supabase = createAdminClient();
-  const ipHash = hashIP(ip);
+  const ipHash = hashIp(ip);
   const ua = request.headers.get("user-agent")?.slice(0, 300) ?? null;
   const referrer = request.headers.get("referer")?.slice(0, 500) ?? null;
 
@@ -79,7 +74,9 @@ export async function POST(request: Request) {
       .select("id")
       .single();
     if (insertErr) {
-      console.error("[free-lead] insert failed", insertErr);
+      // message/code only — the full error object can echo the email in
+      // `details`/`hint` (R5-PI-5).
+      console.error("[free-lead] insert failed", insertErr.message, insertErr.code);
       return NextResponse.json(
         { error: "Couldn't save that. Try again in a minute." },
         { status: 500 }

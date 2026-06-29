@@ -199,30 +199,43 @@ export async function GET(request: Request) {
     .order("created_at", { ascending: true })
     .limit(EVENT_BATCH);
 
+  // R3-AG-10: advance the cursor ONLY past events we actually finished.
+  // Events are ordered ascending, so we walk them in order and move maxTs to
+  // each event we've safely handled — a non-bright event (nothing to write) or
+  // a bright event whose upsert did NOT error. If a bright upsert errors, we
+  // STOP advancing (break) so that event is re-scanned next run instead of
+  // being silently skipped forever. (ignoreDuplicates makes a re-scan of an
+  // already-written row a harmless no-op via the unique constraint.)
   let maxTs = since;
   for (const ev of events ?? []) {
+    if (BRIGHT_EVENTS.has(ev.name)) {
+      const { data: inserted, error: upsertErr } = await supabase
+        .from("partner_signals")
+        .upsert(
+          {
+            signal_type: "prospect_intent",
+            source: "x/kit",
+            ref_id: ev.id,
+            prospect_slug: ev.prospect_slug,
+            severity: "bright",
+            summary: `${ev.name.replace(/_/g, " ")} — ${ev.prospect_slug}`,
+            // Pre-marked alerted: the /x/track call site already emailed this.
+            alerted_at: nowIso,
+            alert_channel: "callsite",
+            created_at: nowIso,
+          },
+          { onConflict: "signal_type,ref_id", ignoreDuplicates: true },
+        )
+        .select("id")
+        .maybeSingle();
+      if (upsertErr) {
+        // Couldn't write this signal — leave the cursor before it and retry.
+        break;
+      }
+      if (inserted) signalsWritten++;
+    }
+    // Safely handled (written or nothing-to-write): the cursor may pass it.
     if (ev.created_at > maxTs) maxTs = ev.created_at;
-    if (!BRIGHT_EVENTS.has(ev.name)) continue;
-    const { data: inserted } = await supabase
-      .from("partner_signals")
-      .upsert(
-        {
-          signal_type: "prospect_intent",
-          source: "x/kit",
-          ref_id: ev.id,
-          prospect_slug: ev.prospect_slug,
-          severity: "bright",
-          summary: `${ev.name.replace(/_/g, " ")} — ${ev.prospect_slug}`,
-          // Pre-marked alerted: the /x/track call site already emailed this.
-          alerted_at: nowIso,
-          alert_channel: "callsite",
-          created_at: nowIso,
-        },
-        { onConflict: "signal_type,ref_id", ignoreDuplicates: true },
-      )
-      .select("id")
-      .maybeSingle();
-    if (inserted) signalsWritten++;
   }
 
   if ((events?.length ?? 0) > 0 && maxTs !== since) {

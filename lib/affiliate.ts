@@ -9,6 +9,8 @@
 
 import crypto from "node:crypto";
 
+import { hashIp } from "@/lib/hash-ip";
+
 /** Cookie name pinned in canon. 30-day TTL. */
 export const ATTRIBUTION_COOKIE = "aesdr_attribution";
 
@@ -50,17 +52,18 @@ function isUuid(s: string): boolean {
 }
 
 /**
- * Hash an IP for storage. Salt is the IP_HASH_SALT env var so two
- * different deployments can't cross-correlate. 32 chars of hex is
- * enough collision resistance for de-dup at the click level.
+ * Hash an IP for storage.
+ *
+ * AUDIT (R5-PI-8 / instruction #11): delegates to the single HMAC source of
+ * truth in `@/lib/hash-ip`. The previous local implementation used a plain
+ * sha256 with a committed default salt ("aesdr-affiliate") — guessable, and
+ * inconsistent with the other ip_hash call sites, so the same visitor hashed
+ * to different values across tables (de-dup broke). Returns null when
+ * IP_HASH_SALT is unset rather than persisting a brute-forceable hash; callers
+ * already store ip_hash as nullable.
  */
-export function hashIP(ip: string): string {
-  const salt = process.env.IP_HASH_SALT || "aesdr-affiliate";
-  return crypto
-    .createHash("sha256")
-    .update(`${salt}:${ip}`)
-    .digest("hex")
-    .slice(0, 32);
+export function hashIP(ip: string): string | null {
+  return hashIp(ip);
 }
 
 /**
@@ -115,4 +118,43 @@ export function buildRedirectUrl(
     }
   }
   return url.toString();
+}
+
+/**
+ * AUDIT (R3-AF-3 / decision #3): self-referral guard.
+ *
+ * True when the buyer's email matches the affiliate's OWN email — i.e. the
+ * affiliate bought through their own link. Per decision #3 the attribution for
+ * such a sale must be flagged `self_referral` and EXCLUDED FROM PAYOUT
+ * (reviewable; not a silent drop, not a hard block on the purchase itself).
+ *
+ * NOTE: the attribution row is written by the Stripe webhook
+ * (app/api/webhooks/stripe/route.ts), which this agent does not own. That
+ * handler should call this helper and, when it returns true, set the
+ * attribution status to 'self_referral' (a status value that must be added to
+ * the affiliate_attributions CHECK constraint via a coordinating migration)
+ * instead of 'pending' so it never clears into a payout. This helper is the
+ * single reusable decision point so the webhook, the daily clearing cron, and
+ * any admin tooling agree on what counts as a self-referral.
+ *
+ * Comparison is case-insensitive and trimmed. Returns false (fail-open on the
+ * guard → the sale is treated as a normal referral) only when we genuinely
+ * can't resolve the affiliate's email; callers that need to be strict should
+ * treat a missing affiliate as an error upstream.
+ */
+export async function isSelfReferral(
+  affiliateSlug: string,
+  buyerEmail: string | null | undefined
+): Promise<boolean> {
+  if (!buyerEmail) return false;
+  const { createAdminClient } = await import("@/utils/supabase/admin");
+  const admin = createAdminClient();
+  const { data } = await admin
+    .from("affiliates")
+    .select("email")
+    .eq("slug", affiliateSlug)
+    .maybeSingle();
+  const affiliateEmail = (data?.email as string | undefined) ?? null;
+  if (!affiliateEmail) return false;
+  return affiliateEmail.trim().toLowerCase() === buyerEmail.trim().toLowerCase();
 }

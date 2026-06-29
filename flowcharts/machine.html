@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Machine — AESDR Internal Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&family=Barlow+Condensed:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root{--cream:#FAF7F2;--ink:#1A1A1A;--crimson:#8B1A1A;--muted:#6B6B6B;--light:#E8E4DF;--paper:#FFFFFF;
+    --iris:linear-gradient(90deg,#FF006E 0%,#FF6B00 17%,#F59E0B 34%,#10B981 51%,#38BDF8 68%,#8B5CF6 85%,#FF006E 100%);
+    --display:'Playfair Display',Georgia,serif;--serif:'Source Serif 4',Georgia,serif;--cond:'Barlow Condensed',sans-serif;--mono:'Space Mono',monospace}
+  *{box-sizing:border-box}html,body{margin:0;background:var(--cream);color:var(--ink)}
+  body{font-family:var(--serif);line-height:1.55;-webkit-font-smoothing:antialiased;padding:0 0 120px}
+  ::selection{background:#8B1A1A22}.wrap{max-width:920px;margin:0 auto;padding:0 28px}
+  header{padding:64px 0 30px;border-bottom:1px solid var(--light);margin-bottom:46px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--crimson);margin:0 0 18px}
+  h1{font-family:var(--display);font-weight:600;font-size:clamp(40px,7vw,68px);line-height:1.02;margin:0 0 14px;letter-spacing:-.01em}
+  .sub{font-size:18px;color:var(--muted);max-width:62ch;margin:0}
+  .role{font-family:var(--display);font-style:italic;font-weight:600;background:var(--iris);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:iris 5s linear infinite}
+  @keyframes iris{from{background-position:0% 50%}to{background-position:200% 50%}}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 26px;margin:26px 0 0;font-family:var(--cond);font-size:14px;color:var(--muted)}
+  .legend b{color:var(--ink);font-weight:600}.legend .k{display:inline-flex;align-items:center;gap:7px}.dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+  h3.sec{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--crimson);margin:8px 0 22px;display:flex;align-items:center;gap:12px}
+  h3.sec::after{content:"";flex:1;height:1px;background:var(--light)}
+  .spine{position:relative;margin:0 0 20px}
+  .spine::before{content:"";position:absolute;left:21px;top:14px;bottom:18px;width:2px;background:linear-gradient(var(--crimson),var(--light))}
+  .step{position:relative;padding:0 0 26px 70px;min-height:46px}
+  .badge{position:absolute;left:0;top:0;width:44px;height:44px;border-radius:9px;background:var(--paper);border:2px solid var(--muted);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:15px;color:var(--muted);z-index:2}
+  .step.gate .badge{background:var(--crimson);border-color:var(--crimson);color:#fff;border-radius:50%}
+  .step.send .badge{border-color:var(--crimson);color:var(--crimson)}
+  .row{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .step h2{font-family:var(--display);font-weight:600;font-size:22px;margin:6px 0 2px;letter-spacing:-.01em}
+  .cad{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--crimson);background:#F7ECEC;padding:2px 8px;border-radius:5px;white-space:nowrap}
+  .cad.off{color:var(--muted);background:#EEE9E2}
+  .role-d{font-size:15px;color:var(--ink);margin:3px 0 0;max-width:60ch}.role-d .q{color:var(--muted)}
+  .gateband{margin:2px 0 26px 70px;padding:10px 16px;border-left:3px solid var(--crimson);background:#F7ECEC;border-radius:0 8px 8px 0;font-family:var(--cond);font-weight:600;font-size:15px;letter-spacing:.02em;color:var(--crimson)}
+  .gateband .ico{margin-right:6px}
+  .engine{margin-top:8px;padding:24px 26px;background:var(--paper);border:1px solid var(--light);border-radius:14px}
+  .eng-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:4px}
+  .ec{border:1px solid var(--light);border-radius:10px;padding:12px 14px;background:var(--cream)}
+  .ec .nm{font-family:var(--display);font-weight:600;font-size:16px}
+  .ec .c{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--crimson);display:block;margin:3px 0 5px}
+  .ec .c.off{color:#B9542E}
+  .ec .w{font-size:13.5px;color:var(--muted);line-height:1.45}
+  .ec.dead{border-style:dashed;opacity:.7}.ec.dead .c{color:#9A8F82}
+  footer{margin-top:44px;padding-top:22px;border-top:1px solid var(--light);font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  code{font-family:var(--mono);font-size:.85em;background:#EEE9E2;padding:1px 5px;border-radius:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">AESDR · Internal Flow · 04 of 06</p>
+    <h1>The Machine.</h1>
+    <p class="sub">Every robot, what it does, how often it wakes, and the <span class="role">two</span> places a human has to touch it. The recruiting relay runs left-to-right below; the buyer engine hums on its own underneath.</p>
+    <div class="legend">
+      <span class="k"><span class="dot" style="background:var(--muted)"></span> agent (lever-gated — <b>OFF by default</b>)</span>
+      <span class="k"><span class="dot" style="background:var(--crimson)"></span> <b>your gate</b></span>
+      <span class="k">hover a cadence for source</span>
+    </div>
+  </header>
+
+  <h3 class="sec">The recruiting relay — partner side</h3>
+  <div class="spine">
+
+    <div class="step"><div class="badge">1</div>
+      <div class="row"><h2>Scout</h2><span class="cad">on press</span></div>
+      <p class="role-d">Researches the live web for affiliate candidates → drops them <code>sourced</code>. <span class="q">Two-phase, background.</span></p>
+    </div>
+    <div class="gateband"><span class="ico">●</span> YOUR GATE — Promote (or reject) each candidate → <code>enriched</code></div>
+
+    <div class="step"><div class="badge">2</div>
+      <div class="row"><h2>Dossier-enrich</h2><span class="cad">hourly :33</span></div>
+      <p class="role-d">Writes the pre-outreach brief on each enriched candidate — audience, voice-fit, conflicts, contact, and the call.</p>
+    </div>
+    <div class="step"><div class="badge">3</div>
+      <div class="row"><h2>Contact-finder</h2><span class="cad">every 5 min</span></div>
+      <p class="role-d">Runs the BetterContact waterfall to find a real email. Writes data, sends nothing.</p>
+    </div>
+    <div class="step"><div class="badge">4</div>
+      <div class="row"><h2>Scribe <span style="font-weight:400;font-size:15px;color:var(--muted)">+ Warden</span></h2><span class="cad">every 15 min</span></div>
+      <p class="role-d">Drafts the first-touch in AESDR voice; Warden runs the canon check before you ever see it. Lands <code>ready</code>.</p>
+    </div>
+    <div class="gateband"><span class="ico">●</span> YOUR GATE — Approve the draft → <code>contacted</code> (the only send a human authorizes)</div>
+
+    <div class="step send"><div class="badge">5</div>
+      <div class="row"><h2>Courier</h2><span class="cad">every 5 min</span></div>
+      <p class="role-d"><b>The only thing that sends partner mail.</b> Transmits approved drafts; stamps the follow-up clock.</p>
+    </div>
+    <div class="step"><div class="badge">6</div>
+      <div class="row"><h2>Follow-up</h2><span class="cad">hourly :17</span></div>
+      <p class="role-d">Drafts the ladder — <code>+4d</code>, <code>+9d</code>, cold at <code>+13d</code>. <span class="q">Drafts only; each send still needs your approval. Any reply halts it.</span></p>
+    </div>
+    <div class="step"><div class="badge">7</div>
+      <div class="row"><h2>Sentinel</h2><span class="cad">every 10 min</span></div>
+      <p class="role-d">Reads inbound replies, classifies them, pings you on the first <b>bright</b> one.</p>
+    </div>
+    <div class="step"><div class="badge">8</div>
+      <div class="row"><h2>Usher</h2><span class="cad">every 30 min</span></div>
+      <p class="role-d">Drives the workshop state machine — T-48h / T-1h / replay reminders (sent via Courier).</p>
+    </div>
+    <div class="step"><div class="badge">9</div>
+      <div class="row"><h2>Almanac</h2><span class="cad">daily ~7am ET</span></div>
+      <p class="role-d">Your morning standup — "N waiting on you." Points at the buttons; never acts.</p>
+    </div>
+  </div>
+
+  <h3 class="sec">The buyer engine — always on, no lever</h3>
+  <div class="engine">
+    <div class="eng-grid">
+      <div class="ec"><span class="nm">Drip</span><span class="c">daily 14:00 UTC</span><span class="w">Day-3 &amp; Day-7 onboarding check-ins.</span></div>
+      <div class="ec"><span class="nm">Abandonment</span><span class="c">daily 13:00 UTC</span><span class="w">Recovery nudge on a stalled checkout.</span></div>
+      <div class="ec"><span class="nm">Drop-off</span><span class="c">daily 15:00 UTC</span><span class="w">5 / 10 / 21-day "you went quiet" nudges.</span></div>
+      <div class="ec"><span class="nm">Review</span><span class="c">daily 16:00 UTC</span><span class="w">Post-completion review ask + nudge.</span></div>
+      <div class="ec"><span class="nm">Affiliate</span><span class="c">daily 08:00 UTC</span><span class="w">Clears commission after 14d. Sends nothing.</span></div>
+      <div class="ec dead"><span class="nm">Retention</span><span class="c off">⚠ no schedule</span><span class="w">Lesson nudge, Sunday framing, win-back, alumni — <b>defined but not firing.</b></span></div>
+    </div>
+  </div>
+  <footer><span>AESDR — Internal Flowchart</span><span>The Machine · 04 / 06 · grounded in code, not memory</span></footer>
+</div>
+</body>
+</html>

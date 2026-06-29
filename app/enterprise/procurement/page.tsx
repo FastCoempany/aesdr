@@ -128,7 +128,7 @@ const LD: Item[] = [
     title: "Completion tracking",
     state: "Live",
     body:
-      "Per-learner: lesson opens, lesson completions, last-activity timestamp, and a five-dimension diagnostic (administered at start). Manager-tier admins see this aggregated for their roster; individual learners see only their own data.",
+      "Per-learner: lesson opens, lesson completions, last-activity timestamp, and an eight-dimension diagnostic (administered at start). Manager-tier admins see this aggregated for their roster; individual learners see only their own data.",
   },
   {
     number: "15",
@@ -142,7 +142,7 @@ const LD: Item[] = [
     title: "Custom diagnostic / org-specific tracking",
     state: "Available on request",
     body:
-      "For Team / Custom Enterprise: we'll add up to two custom dimensions to the diagnostic (e.g., your sales methodology's named stages) within the existing five-dimension framework. Adds 1 week to provisioning.",
+      "For Team / Custom Enterprise: we'll add up to two custom dimensions to the diagnostic (e.g., your sales methodology's named stages) within the existing eight-dimension framework. Adds 1 week to provisioning.",
   },
   {
     number: "17",

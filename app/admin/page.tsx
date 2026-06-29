@@ -11,6 +11,11 @@ export default async function AdminDashboard() {
     supabase.from("generated_artifacts").select("id", { count: "exact" }),
   ]);
 
+  // R5-EE-7: a failed aggregate query used to fabricate a confident "$0 / 0"
+  // that's indistinguishable from "genuinely no data." If the core
+  // revenue/customer query erred, say so instead of showing fake zeros.
+  const loadError = purchasesRes.error;
+
   const purchases = purchasesRes.data ?? [];
   const totalCustomers = purchasesRes.count ?? 0;
   const totalRevenue = purchases.reduce((sum, p) => sum + (p.amount_cents ?? 0), 0);
@@ -54,6 +59,28 @@ export default async function AdminDashboard() {
           Dashboard
         </h1>
       </header>
+
+      {loadError && (
+        <div
+          role="alert"
+          style={{
+            background: "#fff",
+            border: "1px solid #E8E4DF",
+            borderLeft: "3px solid #8B1A1A",
+            padding: "16px 20px",
+            marginBottom: "24px",
+          }}
+        >
+          <p style={{ fontFamily: "'Space Mono', monospace", fontSize: "10px", letterSpacing: ".2em", textTransform: "uppercase", color: "#8B1A1A", marginBottom: "6px" }}>
+            Couldn&rsquo;t load
+          </p>
+          <p style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: "15px", color: "#1A1A1A", margin: 0 }}>
+            The revenue and customer figures failed to load, so the numbers
+            below may be incomplete or wrong. This is a load error, not real
+            zeros — reload to retry.
+          </p>
+        </div>
+      )}
 
       <div
         style={{

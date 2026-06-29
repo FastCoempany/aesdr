@@ -1,12 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 
-export default function SetPasswordPage() {
+function safeNext(raw: string | null): string | null {
+  if (!raw) return null;
+  if (!raw.startsWith("/") || raw.startsWith("//")) return null;
+  return raw;
+}
+
+function SetPasswordForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  // If the buyer was mid-invite when sent here, round-trip back afterward.
+  const next = safeNext(searchParams.get("next"));
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
@@ -39,7 +49,7 @@ export default function SetPasswordPage() {
 
     setSuccess(true);
     setTimeout(() => {
-      router.push("/dashboard");
+      router.push(next ?? "/dashboard");
       router.refresh();
     }, 1500);
   }
@@ -213,5 +223,14 @@ export default function SetPasswordPage() {
         )}
       </div>
     </main>
+  );
+}
+
+export default function SetPasswordPage() {
+  // useSearchParams (for the optional `next` round-trip) needs Suspense.
+  return (
+    <Suspense>
+      <SetPasswordForm />
+    </Suspense>
   );
 }

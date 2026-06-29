@@ -16,10 +16,12 @@ export default function UnlockArtifactTile({
   label: string;
 }) {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleUnlock() {
     if (loading) return;
     setLoading(true);
+    setError(null);
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000);
     try {
@@ -35,15 +37,20 @@ export default function UnlockArtifactTile({
       if (data.url && (urlHost === "stripe.com" || urlHost.endsWith(".stripe.com"))) {
         window.location.href = data.url;
       } else {
+        // R5-EE-1: a failed checkout used to vanish silently and lose the sale.
+        // Surface it so the buyer knows to retry rather than assuming it broke.
+        setError("Couldn't open checkout. Please try again.");
         setLoading(false);
       }
     } catch {
       clearTimeout(timeoutId);
+      setError("Checkout timed out. Please try again.");
       setLoading(false);
     }
   }
 
   return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
     <button
       onClick={handleUnlock}
       disabled={loading}
@@ -102,5 +109,23 @@ export default function UnlockArtifactTile({
         {label} &middot; Buy
       </div>
     </button>
+      {error && (
+        <p
+          role="alert"
+          style={{
+            margin: 0,
+            maxWidth: 200,
+            fontFamily: "'Space Mono', monospace",
+            fontSize: 10,
+            lineHeight: 1.5,
+            letterSpacing: ".04em",
+            textAlign: "center",
+            color: "#8B1A1A",
+          }}
+        >
+          {error}
+        </p>
+      )}
+    </div>
   );
 }

@@ -427,7 +427,7 @@ export default async function CandidateRoomPage({
       {brief ? (
         <div style={card}>
           <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "12px" }}>
-            <span style={chip(verdictColor(brief.verdict))}>verdict: {brief.verdict.replace(/_/g, " ")}</span>
+            <span style={chip(verdictColor(brief.verdict))}>the call: {brief.verdict.replace(/_/g, " ")}</span>
             <span style={chip(brief.conflict === "none" ? GREEN : brief.conflict === "hard" ? CRIMSON : AMBERISH)}>
               conflict: {brief.conflict}
             </span>

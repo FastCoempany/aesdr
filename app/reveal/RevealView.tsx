@@ -18,6 +18,7 @@ export default function RevealView({ studentName, role }: RevealViewProps) {
   const [active, setActive] = useState<Artifact>("programme");
   const [animating, setAnimating] = useState(false);
   const [picking, setPicking] = useState(false);
+  const [pickError, setPickError] = useState<string | null>(null);
   const [exitClass, setExitClass] = useState<string | null>(null);
   const [enterClass, setEnterClass] = useState<string | null>(null);
   const incomingRef = useRef<HTMLDivElement>(null);
@@ -48,6 +49,7 @@ export default function RevealView({ studentName, role }: RevealViewProps) {
   const pick = useCallback(async () => {
     if (picking) return;
     setPicking(true);
+    setPickError(null);
 
     const chosen = active === "programme" ? "playbill" : "redline";
 
@@ -57,20 +59,25 @@ export default function RevealView({ studentName, role }: RevealViewProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ artifact: chosen }),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
 
       if (res.ok && data.redirect) {
         router.push(data.redirect);
       } else if (res.status === 409 && data.chosen) {
+        // Already chosen — not an error; send them to the keeper they picked.
         router.push(
           data.chosen === "playbill"
             ? "/artifacts/playbill"
             : "/artifacts/redline"
         );
       } else {
+        // R5-EE-2: a 500 at the course's emotional climax used to swallow
+        // silently — the button just re-enabled with no explanation. Tell them.
+        setPickError("Something went wrong saving your pick. Please try again.");
         setPicking(false);
       }
     } catch {
+      setPickError("Couldn't reach the server. Check your connection and try again.");
       setPicking(false);
     }
   }, [active, picking, router]);
@@ -208,6 +215,11 @@ export default function RevealView({ studentName, role }: RevealViewProps) {
               ? "Take the Programme"
               : "Take the Manuscript"}
         </button>
+        {pickError && (
+          <p role="alert" style={styles.pickError}>
+            {pickError}
+          </p>
+        )}
       </div>
 
       {/* FOOTER */}
@@ -461,6 +473,10 @@ const styles: Record<string, React.CSSProperties> = {
   },
   ctaManuscript: {
     background: "#1A1A1A", color: "#FAF7F2",
+  },
+  pickError: {
+    fontFamily: "'Space Mono', monospace", fontSize: 12, color: "#8B1A1A",
+    margin: "16px auto 0", maxWidth: 420, lineHeight: 1.5,
   },
 
   // Footer

@@ -4,11 +4,17 @@ import Link from "next/link";
 import AesdrBrand from "@/components/AesdrBrand";
 import EmailCaptureForm from "./EmailCaptureForm";
 
+// Only invite indexing once the site is launched — pre-launch this page is
+// reachable, and hardcoding index:true leaks it to search before go-live
+// (R3-INFRA-2). Pre-launch we emit noindex; the global robots.ts disallow
+// stays the primary guard.
+const LAUNCHED = process.env.NEXT_PUBLIC_LAUNCH_MODE === "true";
+
 export const metadata: Metadata = {
   title: "The Manager Archetype Map — Free | AESDR",
   description:
-    "A free one-page diagnostic for AEs and SDRs: figure out which OS your manager runs on, before you spend a quarter mis-reading them.",
-  robots: { index: true, follow: true },
+    "A free one-page diagnostic for AEs and SDRs: figure out how your manager runs, before you spend a quarter mis-reading them.",
+  robots: LAUNCHED ? { index: true, follow: true } : { index: false, follow: false },
 };
 
 const ARCHETYPES = [
@@ -162,7 +168,7 @@ export default function ManagerArchetypeMapPage() {
             marginBottom: 16,
           }}
         >
-          Five manager operating systems. What each one reads as competence,
+          Five kinds of manager. What each one reads as competence,
           what each reads as threat, and the one move that works on them this
           week.
         </p>

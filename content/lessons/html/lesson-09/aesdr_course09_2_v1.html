@@ -6,7 +6,8 @@
 <script>
 (function(){
   var p = new URLSearchParams(window.location.search);
-  var role = p.get('role') || 'sdr';
+  var role = (p.get('role') || 'sdr').toLowerCase();
+  if (role !== 'ae' && role !== 'sdr') role = 'sdr';
   document.documentElement.setAttribute('data-role', role);
 })();
 </script>
@@ -451,7 +452,8 @@ window.AESDR = window.AESDR || {};
   var _lessonExtra = {}; // arbitrary lesson-specific state (persisted alongside gates)
 
   /* ── localStorage persistence ── */
-  var _storageKey = 'aesdr_gate_' + location.pathname.replace(/[^a-z0-9]/gi, '_');
+  var _roleKey = (document.documentElement.getAttribute('data-role') || 'sdr');
+  var _storageKey = 'aesdr_gate_' + _roleKey + '_' + location.pathname.replace(/[^a-z0-9]/gi, '_');
 
   function _persistState() {
     try {
@@ -1029,7 +1031,7 @@ window.AESDR = window.AESDR || {};
   /* ── Restore state from parent-provided data (cross-device / cleared localStorage) ── */
   A.restoreFromParent = function(data) {
     if (!data || typeof data !== 'object') return;
-    if (data._extra) _lessonExtra = data._extra;
+    if (data._extra) { for (var _ek in data._extra) { _lessonExtra[_ek] = data._extra[_ek]; } }
     for (var k in data) {
       if (k === '_extra') continue;
       var screenNum = k.replace('gate_', '');
@@ -1051,7 +1053,8 @@ window.AESDR = window.AESDR || {};
   window.addEventListener('message', function(e) {
     if (e.data && e.data.type === 'aesdr:restore' && e.data.stateData) {
       A.restoreFromParent(e.data.stateData);
-      if (typeof window.render === 'function') window.render();
+      if (typeof window.__aesdrHydrate === 'function') window.__aesdrHydrate();
+      else if (typeof window.render === 'function') window.render();
     }
   });
 
@@ -1598,7 +1601,7 @@ html,body{height:100%;background:var(--white);color:var(--black);font-family:var
         <div class="t-head">Task 2 & 3: Boundaries and Messages</div>
         <ul class="hw-list">
           <li><div class="hw-box"></div>Set your Slack status to "In Deal Prep" or "Do Not Disturb" during proposal writing and demo prep.</li>
-          <li><div class="hw-box"></div>Create Slack-Free Zones for your highest-leverage activities (e.g., 9-11 AM for follow-ups, post-lunch for demos).</li>
+          <li><div class="hw-box"></div>Create Slack-Free Zones for your highest-value activities (e.g., 9-11 AM for follow-ups, post-lunch for demos).</li>
           <li><div class="hw-box"></div>Be direct in every Slack message. Instead of "Let's circle back," use "Need pricing for Deal X by 3 PM today."</li>
         </ul>
       </div>
@@ -1780,7 +1783,7 @@ let blameState={}, blameCount=0;
 let seqSel=null, seqDone={};
 let clsSel=null, clsDone={}, clsCount=0;
 let qAns={}, qSubmitted=false, qPassed=false;
-function _saveQuizState(){AESDR.setExtra('quiz',{ans:qAns,submitted:qSubmitted,passed:qPassed});}
+function _saveQuizState(){AESDR.setExtra('quiz',{ans:qAns,submitted:qSubmitted,passed:qPassed});try{var _qc=0,_qt=(typeof QUIZ!=='undefined'&&QUIZ.length)||0;if(_qt){for(var _i=0;_i<QUIZ.length;_i++){if(qAns[_i]===QUIZ[_i].ans)_qc++;}AESDR.setExtra('quizScore',{correct:_qc,total:_qt});}}catch(e){}}
 function _saveExerciseScores(){
   var scores = {};
   if(typeof siloCount!=='undefined'&&typeof SILO_CARDS!=='undefined') scores.silo={correct:siloCount,total:SILO_CARDS.length};
@@ -1792,7 +1795,7 @@ function _saveExerciseScores(){
 }
 
 /* ── Exercise state persistence (silo/blame/seq/cls) ── */
-function _exStateKey(){return 'aesdr_exercise_state_' + location.pathname.replace(/[^a-z0-9]/gi,'_');}
+function _exStateKey(){return 'aesdr_exercise_state_' + (document.documentElement.getAttribute('data-role')||'sdr') + '_' + location.pathname.replace(/[^a-z0-9]/gi,'_');}
 function _saveExerciseState(){
   try {
     var st = {};
@@ -1985,11 +1988,17 @@ function init(){
   var _savedScreen = 0;
 
 
-  try { _savedScreen = parseInt(localStorage.getItem('aesdr_screen_' + location.pathname.replace(/[^a-z0-9]/gi, '_'))) || 0; } catch(e) {}
+  try { _savedScreen = parseInt(localStorage.getItem('aesdr_screen_' + (document.documentElement.getAttribute('data-role')||'sdr') + '_' + location.pathname.replace(/[^a-z0-9]/gi, '_'))) || 0; } catch(e) {}
 
 
   if (_savedScreen > 0 && _savedScreen < TOTAL) { cur = _savedScreen; document.getElementById('s0').classList.remove('active'); document.getElementById('s'+cur).classList.add('active'); }
   if(_savedScreen>maxReached)maxReached=_savedScreen;
+  // R4-LH-1: ?screen fallback (host-driven cross-device resume) +
+  // R4-LH-7: re-fire aesdr:complete when resuming onto the final screen.
+  (function(){
+    if (cur <= 0) { try { var _qs = parseInt(new URLSearchParams(location.search).get('screen')); if (_qs > 0 && _qs < TOTAL) { var _c0 = document.getElementById('s'+cur); if (_c0) _c0.classList.remove('active'); cur = _qs; var _cn = document.getElementById('s'+cur); if (_cn) _cn.classList.add('active'); if (cur > maxReached) maxReached = cur; } } catch(e) {} }
+    if (cur === TOTAL - 1 && window.parent !== window) { try { window.parent.postMessage({type:'aesdr:complete'},'*'); } catch(e) {} }
+  })();
 
 
 
@@ -1998,7 +2007,7 @@ function init(){
 function goSafe(n){if(n>maxReached)return;go(n);}
 function go(n){
   if(n>maxReached)maxReached=n;
-  try{localStorage.setItem('aesdr_screen_'+location.pathname.replace(/[^a-z0-9]/gi,'_'),n)}catch(e){}
+  try{localStorage.setItem('aesdr_screen_'+(document.documentElement.getAttribute('data-role')||'sdr')+'_'+location.pathname.replace(/[^a-z0-9]/gi,'_'),n)}catch(e){}
   if(window.AESDR&&AESDR.persistNow) AESDR.persistNow();
   if(n===TOTAL-1&&window.parent!==window){try{window.parent.postMessage({type:"aesdr:complete"},"*")}catch(e){}}
   if(window.parent!==window){try{window.parent.postMessage({type:"aesdr:progress",screen:n,stateData:(window.AESDR&&AESDR.fullState?AESDR.fullState():{})},"*")}catch(e){}}
@@ -2327,6 +2336,22 @@ document.addEventListener('click',function(e){
   }
 });
 
+/* R4-LH-1: re-hydrate quiz + exercise UI from restored state. */
+window.__aesdrHydrate = function(){
+  try {
+    var _q = (window.AESDR && AESDR.getExtra) ? (AESDR.getExtra('quiz') || {}) : {};
+    if (_q.ans) qAns = _q.ans;
+    if (_q.submitted) qSubmitted = _q.submitted;
+    if (_q.passed) qPassed = _q.passed;
+    if (Object.keys(qAns).length > 0) {
+      var _ws = qSubmitted; qSubmitted = false;
+      for (var _qi in qAns) { try { var _el = document.getElementById('qo'+_qi+'_'+qAns[_qi]); if (_el) _el.classList.add('chosen'); } catch(e) {} }
+      if (_ws) { try { submitQuiz(); } catch(e) {} }
+    }
+    try { _restoreExerciseState(); } catch(e) {}
+  } catch(e) {}
+  try { render(); } catch(e) {}
+};
 init();
 </script>
 </body>

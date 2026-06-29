@@ -4,20 +4,9 @@ import path from "node:path";
 import { cookies } from "next/headers";
 
 import { createClient } from "@/utils/supabase/server";
+import { ALLOWED_TOOL_SLUGS, evaluateToolGate } from "@/utils/content/catalog";
 
 const TOOLS_ROOT = path.join(process.cwd(), "tools", "standalone-html");
-
-// Whitelist of valid tool slugs (prevents path traversal)
-const ALLOWED_SLUGS = new Set([
-  "3.3-aesdr-alignment-contract",
-  "4.1-manager-archetype-map",
-  "4.3-async-cadence-template",
-  "6.3-idk-framework",
-  "9.1-crm-survival-guide",
-  "9.2-time-reclaimed-calculator",
-  "10.1-ROI-commission-defense-tracker",
-  "bonus-72-hr-strike-plan",
-]);
 
 async function userHasAccess(
   userId: string,
@@ -89,7 +78,7 @@ export async function GET(
 ) {
   const { slug } = await params;
 
-  if (!ALLOWED_SLUGS.has(slug)) {
+  if (!ALLOWED_TOOL_SLUGS.has(slug)) {
     return new Response("Tool not found", { status: 404 });
   }
 
@@ -114,6 +103,24 @@ export async function GET(
     if (!ok) {
       return Response.redirect(
         new URL("/login?reason=no_purchase", request.url),
+        302
+      );
+    }
+
+    // AUDIT (R3-CURR-1 / decision #9): enforce the per-lesson / "all twelve"
+    // completion gate on the attachment-download route too, not purchase
+    // alone.
+    const { data: rows } = await supabase
+      .from("course_progress")
+      .select("lesson_id, is_completed")
+      .eq("user_id", user.id)
+      .eq("is_completed", true);
+
+    const completedSet = new Set((rows ?? []).map((r) => r.lesson_id));
+    const gate = evaluateToolGate(slug, completedSet);
+    if (!gate.ok) {
+      return Response.redirect(
+        new URL("/dashboard?tool=locked", request.url),
         302
       );
     }

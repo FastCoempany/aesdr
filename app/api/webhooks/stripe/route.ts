@@ -7,18 +7,19 @@ import { createAdminClient } from '@/utils/supabase/admin';
 import { sendWelcomeEmail, sendReceiptEmail } from '@/lib/email';
 import { logEvent } from '@/lib/events';
 import {
-  DEFAULT_COMMISSION_RATE,
   ATTRIBUTION_WINDOW_MS,
   REFUND_WINDOW_MS,
+  isSelfReferral,
 } from '@/lib/affiliate';
-import { mapAccountStatus } from '@/lib/stripe-connect';
+// AUDIT (R4-MON-2/#1/#27): commission math now lives in one place and derives
+// the rate from the affiliate's own commission_pct column.
+import { computeCommissionCents, resolveCommissionRate } from '@/lib/commission';
+// AUDIT (IC-2/#54): centralized, apiVersion-pinned Stripe client.
+import { mapAccountStatus, getStripe } from '@/lib/stripe-connect';
 import { rateLimit, getClientIP } from '@/lib/rate-limit';
 
-function getStripe() {
-  const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) throw new Error("STRIPE_SECRET_KEY environment variable is not set");
-  return new Stripe(key);
-}
+// AUDIT (R4-DR-4/#34): team is a fixed-seat SKU; no quantity selector exists.
+const TEAM_MAX_SEATS = 10;
 
 function generatePassword(): string {
   const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
@@ -126,6 +127,29 @@ export async function POST(request: Request) {
       if (newUser?.user) {
         userId = newUser.user.id;
       } else if (createError) {
+        // AUDIT (P0-13/R4-DR-2/R4-DR-3): a createUser failure is NOT always
+        // "email already exists". A transient Supabase 429/5xx/network blip
+        // hits this same branch — the old code blindly assumed "exists",
+        // nulled the password, found no user, and returned 200, permanently
+        // stranding a paying buyer (no auth account, userless purchase, an
+        // email telling them to use a password they never got). Only a real
+        // email_exists (status 422) means the user is already there; for
+        // anything else, surface it and return 500 so Stripe retries.
+        const isEmailExists =
+          createError.code === 'email_exists' || createError.status === 422;
+        if (!isEmailExists) {
+          Sentry.captureException(createError, {
+            extra: {
+              handler: 'stripe-webhook',
+              step: 'create_user',
+              sessionId: session.id,
+              code: createError.code,
+              status: createError.status,
+            },
+          });
+          return NextResponse.json({ error: 'User provisioning failed' }, { status: 500 });
+        }
+
         // User already exists — look up by querying the purchases table
         // for a previous record with this email, or fall back to a
         // bounded admin user list
@@ -183,11 +207,22 @@ export async function POST(request: Request) {
       { onConflict: 'stripe_session_id' }
     );
     if (purchaseError) {
-      Sentry.captureMessage('Purchase upsert failed', { level: 'error', extra: { error: purchaseError.message, sessionId: session.id } });
+      // AUDIT (P0-13/R4-DR-2): the purchase row is the source of truth that
+      // gates team creation, attribution, and the "you're in" emails. If it
+      // failed to write, do NOT continue (which previously made a team with
+      // purchase_id:null, silently dropped attribution, and still emailed the
+      // buyer for an uncommitted purchase). Return 500 so Stripe retries.
+      Sentry.captureException(new Error(`Purchase upsert failed: ${purchaseError.message}`), {
+        extra: { handler: 'stripe-webhook', step: 'purchase_upsert', sessionId: session.id },
+      });
+      return NextResponse.json({ error: 'Purchase persistence failed' }, { status: 500 });
     }
 
-    // If team plan, create team + add owner as admin member
-    if (tier === 'team' && userId && isNewPurchase) {
+    // If team plan, create team + add owner as admin member.
+    // AUDIT (R4-DR-3): dropped the `&& isNewPurchase` guard — it made a
+    // first-attempt team-creation failure never retry. The existingTeam check
+    // below already makes this idempotent, so the flag was redundant + harmful.
+    if (tier === 'team' && userId) {
       const { data: existingTeam } = await supabase
         .from('teams')
         .select('id')
@@ -207,7 +242,8 @@ export async function POST(request: Request) {
             name: name !== 'there' ? `${name}'s Team` : 'My Team',
             owner_id: userId,
             purchase_id: purchaseRow?.id ?? null,
-            max_seats: 10,
+            // AUDIT (R4-DR-4/#34): fixed-seat SKU, hoisted to a named const.
+            max_seats: TEAM_MAX_SEATS,
           })
           .select('id')
           .single();
@@ -244,13 +280,13 @@ export async function POST(request: Request) {
     // Send emails only on first processing (skip on Stripe retries)
     if (email && isNewPurchase) {
       try {
-        await sendWelcomeEmail(email, name, tempPassword);
+        await sendWelcomeEmail(email, name, tempPassword, session.id);
       } catch (err) {
         Sentry.captureException(err, { extra: { handler: 'stripe-webhook', step: 'welcome_email' } });
       }
 
       try {
-        await sendReceiptEmail(email, name, tier, amountCents);
+        await sendReceiptEmail(email, name, tier, amountCents, session.id);
       } catch (err) {
         Sentry.captureException(err, { extra: { handler: 'stripe-webhook', step: 'receipt_email' } });
       }
@@ -261,9 +297,24 @@ export async function POST(request: Request) {
     // /api/checkout reading the aesdr_attribution cookie), write an
     // affiliate_attributions row. Idempotent via the unique index on
     // purchase_id — Stripe webhook retries won't double-attribute.
+    //
+    // AUDIT (R4-MON-6/#7): assert USD. amount_total is interpreted as
+    // USD-cents everywhere downstream; a non-USD (esp. zero-decimal, e.g. JPY)
+    // sale would be wrong by up to 100×. If it's not USD, Sentry + skip
+    // attribution entirely (access is still provisioned above).
+    const currencyOk = (session.currency || '').toLowerCase() === 'usd';
+    if (!currencyOk) {
+      Sentry.captureMessage('[webhook] Non-USD checkout — skipping attribution', {
+        level: 'warning',
+        extra: { sessionId: session.id, currency: session.currency },
+      });
+    }
+
+    // AUDIT (R4-MON-3/#2): team sales are non-attributable per the public
+    // promise (affiliates/faq). Never write an attribution for tier 'team'.
     const affiliateLinkId = session.metadata?.affiliate_link_id;
     const affiliateClickId = session.metadata?.affiliate_click_id;
-    if (affiliateLinkId && email && isNewPurchase) {
+    if (affiliateLinkId && email && isNewPurchase && currencyOk && tier !== 'team') {
       try {
         const { data: linkRow } = await supabase
           .from('affiliate_links')
@@ -280,7 +331,65 @@ export async function POST(request: Request) {
 
           if (purchaseRow) {
             const purchasedAt = new Date(purchaseRow.purchased_at);
-            const commissionCents = Math.round(amountCents * DEFAULT_COMMISSION_RATE);
+
+            // AUDIT (R4-MON-2/#1/#27): rate comes from the affiliate's own
+            // commission_pct column (the previously-dead column), not a
+            // hardcoded constant. Falls back to 30% when the row/column is
+            // missing. The actual rate used is stored on the attribution row.
+            const { data: affiliateRow } = await supabase
+              .from('affiliates')
+              .select('commission_pct')
+              .eq('slug', linkRow.affiliate_slug)
+              .maybeSingle();
+            const commissionRate = resolveCommissionRate(affiliateRow?.commission_pct);
+
+            // AUDIT (R4-MON-5/#27): commission base is NET of Stripe processing
+            // fees where the fee is resolvable. Fetch the charge's
+            // balance_transaction.fee via the PaymentIntent's latest charge;
+            // base = gross - fee. If the fee can't be resolved (no PI, expand
+            // fails, balance_transaction not yet available), fall back to gross.
+            // AUDIT: fee may not be settled at webhook time for some payment
+            // methods — gross fallback keeps this defensive, never overpaying
+            // beyond the configured rate-of-gross worst case.
+            let baseCents = amountCents;
+            try {
+              const piId =
+                typeof session.payment_intent === 'string'
+                  ? session.payment_intent
+                  : session.payment_intent?.id ?? null;
+              if (piId) {
+                const stripe = getStripe();
+                const pi = await stripe.paymentIntents.retrieve(piId);
+                const chargeId =
+                  typeof pi.latest_charge === 'string'
+                    ? pi.latest_charge
+                    : pi.latest_charge?.id ?? null;
+                if (chargeId) {
+                  const charge = await stripe.charges.retrieve(chargeId, {
+                    expand: ['balance_transaction'],
+                  });
+                  const bt = charge.balance_transaction;
+                  const feeCents =
+                    bt && typeof bt !== 'string' && typeof bt.fee === 'number'
+                      ? bt.fee
+                      : null;
+                  if (feeCents != null && feeCents >= 0 && feeCents < amountCents) {
+                    baseCents = amountCents - feeCents;
+                  }
+                }
+              }
+            } catch (feeErr) {
+              // Non-fatal: leave baseCents = gross.
+              Sentry.captureException(feeErr, {
+                extra: { handler: 'stripe-webhook', step: 'commission_fee_lookup', sessionId: session.id },
+              });
+            }
+
+            const commissionCents = computeCommissionCents(baseCents, commissionRate);
+            // AUDIT (R3-AF-3/#3): self-referral (buyer email == affiliate's own)
+            // is recorded but excluded from payout. Needs the widened status
+            // CHECK (20260622_attribution_status_and_applicant_email.sql).
+            const selfRef = await isSelfReferral(linkRow.affiliate_slug, email);
             const { error: attrErr } = await supabase.from('affiliate_attributions').upsert(
               {
                 link_id: linkRow.id,
@@ -289,9 +398,10 @@ export async function POST(request: Request) {
                 purchase_id: purchaseRow.id,
                 user_email: email,
                 gross_amount_cents: amountCents,
-                commission_rate: DEFAULT_COMMISSION_RATE,
+                // AUDIT (R4-MON-2): store the actual rate used, not a constant.
+                commission_rate: commissionRate,
                 commission_amount_cents: commissionCents,
-                status: 'pending',
+                status: selfRef ? 'self_referral' : 'pending',
                 attribution_window_closes_at: new Date(
                   purchasedAt.getTime() + ATTRIBUTION_WINDOW_MS
                 ).toISOString(),
@@ -334,24 +444,75 @@ export async function POST(request: Request) {
       });
       const sessionId = sessions.data[0]?.id;
       if (sessionId) {
-        const { data: refundedPurchase, error } = await supabase
-          .from('purchases')
-          .update({ status: 'refunded' })
-          .eq('stripe_session_id', sessionId)
-          .select('id')
-          .maybeSingle();
-        if (error) console.error('[webhook] Refund status update failed:', error.message);
+        // AUDIT (R4-MON-4/#4): distinguish a FULL refund from a PARTIAL one.
+        // The old code always revoked the whole purchase and 100% of the
+        // commission regardless of how much was refunded. Only a full refund
+        // (amount_refunded >= the captured/charged amount) should revoke
+        // access + flip attribution. On a partial refund we keep access and
+        // leave commission alone (no proration here — see note below).
+        const capturedCents = charge.amount_captured || charge.amount || 0;
+        const refundedCents = charge.amount_refunded || 0;
+        const isFullRefund = capturedCents > 0 && refundedCents >= capturedCents;
 
-        // Flip any matching affiliate attribution to refunded too.
-        if (refundedPurchase?.id) {
-          await supabase
-            .from('affiliate_attributions')
-            .update({
-              status: 'refunded',
-              refunded_at: new Date().toISOString(),
-            })
-            .eq('purchase_id', refundedPurchase.id)
-            .in('status', ['pending', 'cleared']);
+        if (!isFullRefund) {
+          // AUDIT (R4-MON-4): partial refund — access + commission deliberately
+          // untouched. Proration of commission against a partial refund is a
+          // money decision (decision #28) and is intentionally NOT done here;
+          // do not over-engineer it in the webhook.
+          Sentry.captureMessage('[webhook] Partial refund — access + commission left intact', {
+            level: 'info',
+            extra: { sessionId, refundedCents, capturedCents },
+          });
+        } else {
+          const { data: refundedPurchase, error } = await supabase
+            .from('purchases')
+            .update({ status: 'refunded' })
+            .eq('stripe_session_id', sessionId)
+            .select('id')
+            .maybeSingle();
+          if (error) console.error('[webhook] Refund status update failed:', error.message);
+
+          if (refundedPurchase?.id) {
+            // AUDIT (P0-2): if an attribution was already 'paid', the money has
+            // gone out the door — flipping its status here does NOT recover it.
+            // Write a clawback ledger row (20260622_commission_clawbacks.sql);
+            // runAffiliatePayoutBatch nets it against the affiliate's next payout.
+            const { data: paidAttrs } = await supabase
+              .from('affiliate_attributions')
+              .select('id, affiliate_slug, commission_amount_cents')
+              .eq('purchase_id', refundedPurchase.id)
+              .eq('status', 'paid');
+            if (paidAttrs && paidAttrs.length > 0) {
+              const clawbackRows = paidAttrs
+                .filter((a) => (a.commission_amount_cents ?? 0) > 0)
+                .map((a) => ({
+                  affiliate_slug: a.affiliate_slug,
+                  attribution_id: a.id,
+                  purchase_id: refundedPurchase.id,
+                  amount_cents: a.commission_amount_cents,
+                  reason: 'refund',
+                }));
+              if (clawbackRows.length > 0) {
+                const { error: cbErr } = await supabase.from('commission_clawbacks').insert(clawbackRows);
+                if (cbErr) {
+                  Sentry.captureMessage('[webhook] clawback ledger insert failed (refund)', {
+                    level: 'error',
+                    extra: { sessionId, purchaseId: refundedPurchase.id, error: cbErr.message },
+                  });
+                }
+              }
+            }
+
+            // Flip any not-yet-paid matching attribution to refunded.
+            await supabase
+              .from('affiliate_attributions')
+              .update({
+                status: 'refunded',
+                refunded_at: new Date().toISOString(),
+              })
+              .eq('purchase_id', refundedPurchase.id)
+              .in('status', ['pending', 'cleared']);
+          }
         }
       }
     }
@@ -400,13 +561,102 @@ export async function POST(request: Request) {
       });
       const sessionId = sessions.data[0]?.id;
       if (sessionId) {
-        const { error } = await supabase
+        const { data: disputedPurchase, error } = await supabase
           .from('purchases')
           .update({ status: 'disputed' })
-          .eq('stripe_session_id', sessionId);
+          .eq('stripe_session_id', sessionId)
+          .select('id')
+          .maybeSingle();
         if (error) console.error('[webhook] Dispute status update failed:', error.message);
+
+        // AUDIT (P0-2): a dispute previously touched purchases only and left
+        // affiliate_attributions untouched — so we kept paying 30% commission
+        // on revenue we were losing to a chargeback. Flip any not-yet-paid
+        // attribution out of pending/cleared to 'refunded' (the closest status
+        // the CHECK constraint allows). If the dispute is later WON, the
+        // charge.dispute.closed handler below re-clears it.
+        if (disputedPurchase?.id) {
+          const { data: paidAttrs } = await supabase
+            .from('affiliate_attributions')
+            .select('id, affiliate_slug, commission_amount_cents')
+            .eq('purchase_id', disputedPurchase.id)
+            .eq('status', 'paid');
+          if (paidAttrs && paidAttrs.length > 0) {
+            // AUDIT (P0-2): commission already paid out on a now-disputed sale —
+            // write a clawback ledger row; the next payout nets it out.
+            const clawbackRows = paidAttrs
+              .filter((a) => (a.commission_amount_cents ?? 0) > 0)
+              .map((a) => ({
+                affiliate_slug: a.affiliate_slug,
+                attribution_id: a.id,
+                purchase_id: disputedPurchase.id,
+                amount_cents: a.commission_amount_cents,
+                reason: 'dispute',
+              }));
+            if (clawbackRows.length > 0) {
+              const { error: cbErr } = await supabase.from('commission_clawbacks').insert(clawbackRows);
+              if (cbErr) {
+                Sentry.captureMessage('[webhook] clawback ledger insert failed (dispute)', {
+                  level: 'error',
+                  extra: { sessionId, purchaseId: disputedPurchase.id, error: cbErr.message },
+                });
+              }
+            }
+          }
+
+          await supabase
+            .from('affiliate_attributions')
+            .update({
+              status: 'refunded',
+              refunded_at: new Date().toISOString(),
+            })
+            .eq('purchase_id', disputedPurchase.id)
+            .in('status', ['pending', 'cleared']);
+        }
       }
     }
+  }
+
+  // AUDIT (R4-SM-2/#5): a WON dispute previously left the buyer locked out of a
+  // purchase they legitimately keep (no handler restored 'active'). On
+  // charge.dispute.closed, restore access on a win and re-clear the attribution
+  // we flipped on dispute.created; on a loss, leave it 'disputed'/'refunded'.
+  if (event.type === 'charge.dispute.closed') {
+    const dispute = event.data.object as Stripe.Dispute;
+    const supabase = createAdminClient();
+
+    if (dispute.payment_intent && dispute.status === 'won') {
+      const stripe = getStripe();
+      const sessions = await stripe.checkout.sessions.list({
+        payment_intent: dispute.payment_intent as string,
+        limit: 1,
+      });
+      const sessionId = sessions.data[0]?.id;
+      if (sessionId) {
+        // Only restore rows we put into 'disputed' (don't resurrect a genuine
+        // refund that happened to share a payment intent).
+        const { data: restoredPurchase, error } = await supabase
+          .from('purchases')
+          .update({ status: 'active' })
+          .eq('stripe_session_id', sessionId)
+          .eq('status', 'disputed')
+          .select('id')
+          .maybeSingle();
+        if (error) console.error('[webhook] Dispute-won restore failed:', error.message);
+
+        // Re-clear the attribution we flipped to 'refunded' on dispute.created.
+        // Back to 'pending' so the normal clear/payout cron picks it up again.
+        if (restoredPurchase?.id) {
+          await supabase
+            .from('affiliate_attributions')
+            .update({ status: 'pending', refunded_at: null })
+            .eq('purchase_id', restoredPurchase.id)
+            .eq('status', 'refunded');
+        }
+      }
+    }
+    // AUDIT (R4-SM-2): status === 'lost' (or warning_closed) — leave the
+    // purchase 'disputed' and the attribution 'refunded' as-is.
   }
 
   return NextResponse.json({ received: true });

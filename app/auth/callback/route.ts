@@ -3,8 +3,10 @@ import * as Sentry from '@sentry/nextjs';
 import { createClient } from '@/utils/supabase/server';
 import { rateLimit, getClientIP } from '@/lib/rate-limit';
 
-// Allowed redirect paths after authentication (prevent open redirect)
-const ALLOWED_PREFIXES = ['/dashboard', '/account', '/course', '/tools'];
+// Allowed redirect paths after authentication (prevent open redirect).
+// Includes /welcome (post-signup splash), /affiliates, and /enterprise so a
+// magic-link `next=` to those surfaces isn't bounced to /dashboard (R5-IC-6).
+const ALLOWED_PREFIXES = ['/dashboard', '/account', '/course', '/tools', '/welcome', '/affiliates', '/enterprise'];
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);

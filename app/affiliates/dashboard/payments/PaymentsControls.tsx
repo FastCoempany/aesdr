@@ -43,6 +43,9 @@ export default function PaymentsControls({
   const searchParams = useSearchParams();
   const [working, setWorking] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // R5-EE-9: surface the post-onboarding refresh instead of failing silently to
+  // a stale "Not connected" (which sent affiliates into a re-click loop).
+  const [refreshing, setRefreshing] = useState(searchParams.get("status") === "done");
 
   // After returning from Stripe-hosted onboarding, refresh the account
   // status server-side so the dashboard reflects reality.
@@ -52,10 +55,20 @@ export default function PaymentsControls({
     (async () => {
       try {
         const res = await fetch("/api/affiliates/stripe/refresh", { method: "POST" });
-        if (!res.ok) return;
+        if (!res.ok) {
+          if (!cancelled) {
+            setError("We couldn't confirm your Stripe status just yet. Reload in a moment — Stripe can take a little while to finish.");
+            setRefreshing(false);
+          }
+          return;
+        }
         if (!cancelled) router.replace("/affiliates/dashboard/payments");
       } catch {
-        // Best-effort; the next page load will reconcile.
+        // Best-effort; tell them rather than leaving a stale status sitting.
+        if (!cancelled) {
+          setError("We couldn't reach Stripe to confirm your status. Reload to try again.");
+          setRefreshing(false);
+        }
       }
     })();
     return () => {
@@ -131,7 +144,7 @@ export default function PaymentsControls({
             color: enabled ? "var(--muted)" : "var(--crimson)",
           }}
         >
-          Stripe Connect · {copy.label}
+          Stripe Connect · {refreshing ? "Confirming…" : copy.label}
         </p>
         {stripeAccountId && (
           <code

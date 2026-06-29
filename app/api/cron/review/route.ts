@@ -2,9 +2,34 @@ export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/utils/supabase/admin';
-import { sendReviewRequest, sendReviewNudge } from '@/lib/email';
+import { sendReviewRequest, sendReviewNudge, getSuppressedEmails } from '@/lib/email';
 import { TIMING, TOTAL_LESSONS } from '@/lib/config';
 import { verifyCronAuth } from '@/lib/cron-auth';
+import { isPausedUser } from '@/app/actions/pause';
+
+// R4-PERF-7: bounded send pool to respect Resend's ~2 req/s limit; only a TRUE
+// send returns the email, so a false/429 never sets the review/nudge flag.
+const SEND_CONCURRENCY = 5;
+
+async function runPool<T>(
+  items: T[],
+  limit: number,
+  worker: (item: T) => Promise<string | null>,
+): Promise<string[]> {
+  const successes: string[] = [];
+  let cursor = 0;
+  async function lane(): Promise<void> {
+    while (cursor < items.length) {
+      const idx = cursor++;
+      const ok = await worker(items[idx]);
+      if (ok) successes.push(ok);
+    }
+  }
+  await Promise.all(
+    Array.from({ length: Math.min(limit, items.length) }, () => lane()),
+  );
+  return successes;
+}
 
 export async function GET(request: Request) {
   const authErr = verifyCronAuth(request);
@@ -12,7 +37,19 @@ export async function GET(request: Request) {
 
   const supabase = createAdminClient();
   const now = new Date();
+  const nowMs = now.getTime();
   const errors: string[] = [];
+
+  // P1-6: per-run pause cache so a paused buyer receives nothing.
+  const pauseCache = new Map<string, Promise<boolean>>();
+  const isPaused = (userId: string | null): Promise<boolean> => {
+    if (!userId) return Promise.resolve(false);
+    const hit = pauseCache.get(userId);
+    if (hit) return hit;
+    const p = isPausedUser(userId, nowMs);
+    pauseCache.set(userId, p);
+    return p;
+  };
 
   // ── Review request: 2 days after completing all 12 courses ──
   const { data: completedUsers, error: qErr } = await supabase
@@ -53,13 +90,18 @@ export async function GET(request: Request) {
       return now >= twoDaysAfter;
     });
 
-    await Promise.all(
-      eligible.map(async (user) => {
-        const sent = await sendReviewRequest(user.user_email, user.customer_name || 'there');
-        if (sent) reviewSuccesses.push(user.user_email);
-        else errors.push('review email failed');
-      })
-    );
+    const suppressed = await getSuppressedEmails(eligible.map((u) => u.user_email));
+    const reqSuccesses = await runPool(eligible, SEND_CONCURRENCY, async (user) => {
+      if (suppressed.has((user.user_email || '').toLowerCase())) return null;
+      if (await isPaused(user.user_id)) return null; // P1-6
+      const sent = await sendReviewRequest(user.user_email, user.customer_name || 'there');
+      if (!sent) {
+        errors.push('review email failed');
+        return null;
+      }
+      return user.user_email;
+    });
+    reviewSuccesses.push(...reqSuccesses);
     if (reviewSuccesses.length > 0) {
       const { error: uErr } = await supabase
         .from('purchases')
@@ -74,7 +116,7 @@ export async function GET(request: Request) {
 
   const { data: nudgeUsers, error: nqErr } = await supabase
     .from('purchases')
-    .select('user_email')
+    .select('user_email, user_id, customer_name')
     .eq('review_requested', true)
     .eq('review_nudge_sent', false)
     .lte('review_requested_at', fourDaysAgo)
@@ -84,13 +126,19 @@ export async function GET(request: Request) {
 
   const nudgeSuccesses: string[] = [];
   if (nudgeUsers && nudgeUsers.length > 0) {
-    await Promise.all(
-      nudgeUsers.map(async (user) => {
-        const sent = await sendReviewNudge(user.user_email, 'there');
-        if (sent) nudgeSuccesses.push(user.user_email);
-        else errors.push('nudge email failed');
-      })
-    );
+    const suppressed = await getSuppressedEmails(nudgeUsers.map((u) => u.user_email));
+    const nSuccesses = await runPool(nudgeUsers, SEND_CONCURRENCY, async (user) => {
+      if (suppressed.has((user.user_email || '').toLowerCase())) return null;
+      if (await isPaused(user.user_id)) return null; // P1-6
+      // P3-4 / R3-EMAIL-5: send the real first name, not the 'there' sentinel.
+      const sent = await sendReviewNudge(user.user_email, user.customer_name || 'there');
+      if (!sent) {
+        errors.push('nudge email failed');
+        return null;
+      }
+      return user.user_email;
+    });
+    nudgeSuccesses.push(...nSuccesses);
     if (nudgeSuccesses.length > 0) {
       const { error: nuErr } = await supabase
         .from('purchases')

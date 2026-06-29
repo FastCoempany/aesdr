@@ -3,7 +3,7 @@
 import { headers } from "next/headers";
 import { rateLimit } from "@/lib/rate-limit";
 import { sendTeamsInquiryNotification } from "@/lib/email";
-import { createHash } from "node:crypto";
+import { hashIp } from "@/lib/hash-ip";
 
 /**
  * Server action for /enterprise/contact form submissions.
@@ -35,25 +35,39 @@ const VALID_TEAM_SIZES = new Set([
   "100+ AEs and SDRs",
 ]);
 
+// Every `?source=` value actually emitted by an enterprise CTA. Keep in sync
+// with the `/enterprise/contact?source=…` links across app/enterprise/** — an
+// unlisted source silently collapses to "direct", losing the attribution
+// (R5-ENT-3).
 const VALID_SOURCES = new Set([
+  // hero / nav / footer
   "hero",
   "hero-enterprise",
   "hero-whitelabel",
   "footer-cta",
   "nav",
-  "partners",
+  "team-card",
+  // pricing
+  "pricing-team",
   "pricing-custom",
   "pricing-wl",
+  "pricing-faq",
+  // content pages
+  "diagnostic",
+  "curriculum",
+  "integrations",
+  "procurement",
+  "implementation",
+  "champion-kit",
+  "channel",
+  // legacy / fallback
+  "partners",
   "direct",
 ]);
 
 type Success = { ok: true };
 type Failure = { ok: false; error: string };
 export type TeamsInquiryResult = Success | Failure;
-
-function hashIp(ip: string): string {
-  return createHash("sha256").update(ip).digest("hex").slice(0, 16);
-}
 
 export async function submitTeamsInquiry(formData: FormData): Promise<TeamsInquiryResult> {
   const headersList = await headers();

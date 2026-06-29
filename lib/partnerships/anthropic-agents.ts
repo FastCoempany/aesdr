@@ -1,5 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 
+import { getAgentModel } from "./agent-switch";
+
 /**
  * Server-side scout + dossier — the two judgment agents wired into the tower
  * as buttons + crons. Sentinel/courier/scribe are deterministic (zero LLM
@@ -13,12 +15,6 @@ import Anthropic from "@anthropic-ai/sdk";
  * contact path, and own-domain are real versus guessed. The model runs a
  * server-side tool loop; we drain any pause_turn, then parse the final JSON.
  */
-
-// Per-agent model is resolved by the caller (via agent-switch.getAgentModel)
-// and passed in; these are safe fallbacks. Both support web_search_20260209
-// with dynamic filtering (no beta header).
-const DEFAULT_SCOUT_MODEL = "claude-sonnet-4-6";
-const DEFAULT_DOSSIER_MODEL = "claude-opus-4-6";
 
 function client() {
   return new Anthropic(); // reads ANTHROPIC_API_KEY from env
@@ -206,10 +202,13 @@ const JSON_SCHEMA_HINT = `Return STRICT JSON: { "rows": [ { "name": str, "surfac
 /** Run one scout sweep. Returns scored rows for the operator to review. */
 export async function runScoutSweep(
   sweepId: ScoutSweepId,
-  model: string = DEFAULT_SCOUT_MODEL,
+  model?: string,
 ): Promise<ScoutRow[]> {
+  // Resolve the operator-configured model (agent_switches.model) the same way
+  // the live engine does, instead of a hardcoded default (R5-IC-9).
+  const resolvedModel = model ?? (await getAgentModel("scout"));
   const text = await runResearchAgent({
-    model,
+    model: resolvedModel,
     system: SCOUT_SYSTEM,
     prompt: `${SCOUT_PROMPTS[sweepId]}\n\nSearch first, then ${JSON_SCHEMA_HINT}`,
     tools: SEARCH_ONLY,
@@ -324,10 +323,12 @@ export async function runDossier(
     handle: string | null;
     existingWhyFit: string | null;
   },
-  model: string = DEFAULT_DOSSIER_MODEL,
+  model?: string,
 ): Promise<DossierBrief | null> {
+  // Resolve via agent-switch instead of a hardcoded default (R5-IC-9).
+  const resolvedModel = model ?? (await getAgentModel("dossier-enrich"));
   const text = await runResearchAgent({
-    model,
+    model: resolvedModel,
     system: DOSSIER_SYSTEM,
     prompt: `Candidate: ${args.name}\nSurface: ${args.surface ?? "(unknown)"}\nHandle: ${args.handle ?? "(unknown)"}\nWhat we know: ${args.existingWhyFit ?? "(nothing yet)"}\n\nResearch them with your tools, then ${DOSSIER_SCHEMA_HINT}`,
     tools: SEARCH_AND_FETCH,

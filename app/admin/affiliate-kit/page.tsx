@@ -10,6 +10,7 @@
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { mintToken, signToken } from "@/lib/affiliate-kit-tokens";
+import { requireAdmin } from "@/lib/admin";
 
 type TokenRow = {
   id: string;
@@ -36,6 +37,10 @@ type AccessRow = {
 
 async function mintAction(formData: FormData) {
   "use server";
+  // AUDIT (R3-SEC-2): Server Actions are independently POST-able endpoints —
+  // the parent layout's requireAdmin() does NOT gate them. Re-assert admin
+  // here so a non-admin can't mint a private-kit token (an access grant).
+  await requireAdmin();
   const slug = String(formData.get("affiliateSlug") || "").trim();
   const label = String(formData.get("partnerLabel") || "").trim();
   const notes = String(formData.get("notes") || "").trim();
@@ -58,6 +63,8 @@ async function mintAction(formData: FormData) {
 
 async function revokeAction(formData: FormData) {
   "use server";
+  // AUDIT (R3-SEC-2): re-assert admin — see mintAction.
+  await requireAdmin();
   const id = String(formData.get("id") || "");
   const reason = String(formData.get("reason") || "manually revoked");
   if (!id) throw new Error("Token id required");

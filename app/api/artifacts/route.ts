@@ -2,11 +2,60 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60; // LLM call can take up to ~30s
 
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import * as Sentry from "@sentry/nextjs";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/server";
 import { generateArtifacts, getCachedArtifact } from "@/lib/artifacts/generate";
 import type { ArtifactType } from "@/lib/artifacts/types";
 import { rateLimit } from "@/lib/rate-limit";
+import { LESSONS } from "@/utils/progress/types";
+
+/**
+ * P1-8: the artifact API must be gated on course completion, like /reveal —
+ * otherwise any logged-in buyer can generate/pull their end-of-course keeper
+ * without finishing. Returns true if all twelve lessons are complete or the
+ * founder-bypass cookie is set.
+ */
+async function hasCompletedCourse(
+  supabase: SupabaseClient,
+  user: User
+): Promise<boolean> {
+  const cookieStore = await cookies();
+  if (cookieStore.get("aesdr_bypass")?.value === "1") return true;
+
+  const { data: progress } = await supabase
+    .from("course_progress")
+    .select("lesson_id, is_completed")
+    .eq("user_id", user.id);
+
+  const completedCount = (progress ?? []).filter((r) => r.is_completed).length;
+  return completedCount >= LESSONS.length;
+}
+
+/**
+ * Resolve the student name + role for generation (shared by POST and the
+ * GET-on-empty backfill).
+ */
+async function resolveProfile(supabase: SupabaseClient, user: User) {
+  const { data: purchase, error: purchaseErr } = await supabase
+    .from("purchases")
+    .select("customer_name")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (purchaseErr) {
+    console.error("[artifacts] Purchase lookup failed:", purchaseErr.message);
+  }
+
+  const role = (user.user_metadata?.role as "ae" | "sdr") ?? "sdr";
+  const name =
+    (typeof purchase?.customer_name === "string" ? purchase.customer_name : null) ??
+    (user.user_metadata?.full_name as string | undefined) ??
+    user.email?.split("@")[0] ??
+    "Student";
+
+  return { name, role, cohort: "01" as const };
+}
 
 /**
  * GET /api/artifacts?type=diagnostic|playbill|redline
@@ -25,6 +74,14 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // P1-8: gate on course completion.
+    if (!(await hasCompletedCourse(supabase, user))) {
+      return NextResponse.json(
+        { error: "Finish all twelve courses to unlock your artifacts." },
+        { status: 403 }
+      );
+    }
+
     const url = new URL(request.url);
     const type = url.searchParams.get("type") as ArtifactType | null;
 
@@ -35,7 +92,29 @@ export async function GET(request: Request) {
       );
     }
 
-    const artifact = await getCachedArtifact(user.id, type);
+    let artifact = await getCachedArtifact(user.id, type);
+
+    // P0-5: nothing in the app POSTed /api/artifacts, so the cache the pages
+    // read was never populated. Now that we've confirmed the course is
+    // complete, generate on first read if the artifact is missing, then
+    // re-fetch. Rate-limited so a hammered page can't spin up generations.
+    if (!artifact) {
+      const rl = await rateLimit(`artifacts-gen:${user.id}`, {
+        max: 3,
+        windowMs: 60 * 60 * 1000,
+      });
+      if (rl.success) {
+        try {
+          const profile = await resolveProfile(supabase, user);
+          await generateArtifacts({ id: user.id, ...profile });
+          artifact = await getCachedArtifact(user.id, type);
+        } catch (genErr) {
+          Sentry.captureException(genErr, {
+            extra: { handler: "GET /api/artifacts", phase: "backfill-generate" },
+          });
+        }
+      }
+    }
 
     if (!artifact) {
       return NextResponse.json(
@@ -76,38 +155,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // P1-8: gate on course completion (mirror /reveal + the GET above).
+    if (!(await hasCompletedCourse(supabase, user))) {
+      return NextResponse.json(
+        { error: "Finish all twelve courses to unlock your artifacts." },
+        { status: 403 }
+      );
+    }
+
     // Rate limit: 3 artifact generations per user per hour
     const rl = await rateLimit(`artifacts:${user.id}`, { max: 3, windowMs: 60 * 60 * 1000 });
     if (!rl.success) {
       return NextResponse.json({ error: "Too many requests. Try again later." }, { status: 429 });
     }
 
-    // Get user profile for name and role
-    const { data: purchase, error: purchaseErr } = await supabase
-      .from("purchases")
-      .select("customer_name")
-      .eq("user_id", user.id)
-      .maybeSingle();
-    if (purchaseErr) {
-      console.error("[artifacts] Purchase lookup failed:", purchaseErr.message);
-    }
-
-    // Get role from user metadata
-    const role =
-      (user.user_metadata?.role as "ae" | "sdr") ?? "sdr";
-
-    const studentName =
-      (typeof purchase?.customer_name === "string" ? purchase.customer_name : null) ??
-      user.user_metadata?.full_name ??
-      user.email?.split("@")[0] ??
-      "Student";
-
-    const result = await generateArtifacts({
-      id: user.id,
-      name: studentName,
-      role,
-      cohort: "01", // TODO: derive from purchase date or cohort table
-    });
+    const profile = await resolveProfile(supabase, user);
+    const result = await generateArtifacts({ id: user.id, ...profile });
 
     return NextResponse.json({
       cached: result.cached,

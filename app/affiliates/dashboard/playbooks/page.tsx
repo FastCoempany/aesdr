@@ -145,7 +145,11 @@ export default async function PlaybooksIndexPage({
             <div className="playbook-recommended-header">
               <span className="playbook-recommended-label">Start here</span>
               <span className="playbook-recommended-archetype">
-                {previewArchetype ? `Preview: ${previewArchetype}` : `Your archetype: ${affiliate?.archetype}`}
+                {previewArchetype
+                  ? `Preview: ${previewArchetype}`
+                  : affiliate?.archetype
+                    ? `Your archetype: ${affiliate.archetype}`
+                    : "Recommended for you"}
               </span>
             </div>
             <h2>{recommendation.primary.title}</h2>

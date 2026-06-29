@@ -3,18 +3,20 @@ import { notFound } from "next/navigation";
 
 import {
   markPayoutPaid,
-  runAffiliatePayoutBatch,
   setAffiliateSophisticationTier,
   setAffiliateStatus,
   setAffiliateWorkshop,
 } from "@/app/actions/affiliate";
 import { getAffiliateBySlug } from "@/lib/affiliate-entity";
 import { createAdminClient } from "@/utils/supabase/admin";
+import PayoutConfirmButton from "./PayoutConfirmButton";
 
 export const dynamic = "force-dynamic";
 
-function dollars(cents: number): string {
-  return `$${(cents / 100).toLocaleString("en-US")}`;
+function dollars(cents: number | null | undefined): string {
+  // Guard a null/NaN amount so a missing column renders "$0", not "$NaN".
+  const safe = Number.isFinite(cents) ? (cents as number) : 0;
+  return `$${(safe / 100).toLocaleString("en-US")}`;
 }
 
 function dateShort(iso: string | null | undefined): string {
@@ -411,26 +413,10 @@ export default async function AffiliateDetailPage({
               : "Stripe Connect isn't enabled for this affiliate yet. They need to finish onboarding before automatic payout works. Use the legacy manual mark-paid flow until then."}
           </p>
           {affiliate?.stripe_account_status === "enabled" && (
-            <form action={runAffiliatePayoutBatch}>
-              <input type="hidden" name="affiliateId" value={affiliate.id} />
-              <button
-                type="submit"
-                style={{
-                  fontFamily: "'Barlow Condensed',sans-serif",
-                  fontWeight: 700,
-                  fontSize: 13,
-                  letterSpacing: ".18em",
-                  textTransform: "uppercase",
-                  color: "#1A1A1A",
-                  background: "#FAF7F2",
-                  border: "none",
-                  padding: "10px 22px",
-                  cursor: "pointer",
-                }}
-              >
-                Pay out via Stripe Connect →
-              </button>
-            </form>
+            <PayoutConfirmButton
+              affiliateId={affiliate.id}
+              amountLabel={dollars(cleared.reduce((s, a) => s + (a.commission_amount_cents ?? 0), 0))}
+            />
           )}
         </div>
       )}
@@ -452,6 +438,13 @@ export default async function AffiliateDetailPage({
               </tr>
             </thead>
             <tbody>
+              {links.length === 0 && (
+                <tr>
+                  <td colSpan={5} style={{ padding: "16px 14px", color: "#6B6B6B", fontStyle: "italic" }}>
+                    No links minted yet.
+                  </td>
+                </tr>
+              )}
               {links.map((l) => (
                 <tr key={l.id} style={{ borderBottom: "1px solid #E8E4DF" }}>
                   <td style={{ padding: "12px 14px", fontFamily: "'Space Mono',monospace" }}>{l.slug}</td>
@@ -483,6 +476,13 @@ export default async function AffiliateDetailPage({
               </tr>
             </thead>
             <tbody>
+              {attributions.length === 0 && (
+                <tr>
+                  <td colSpan={6} style={{ padding: "16px 14px", color: "#6B6B6B", fontStyle: "italic" }}>
+                    No attributions yet — no tracked sales for this affiliate.
+                  </td>
+                </tr>
+              )}
               {attributions.map((a) => (
                 <tr key={a.id} style={{ borderBottom: "1px solid #E8E4DF" }}>
                   <td style={{ padding: "12px 14px", color: "#6B6B6B" }}>{dateShort(a.attributed_at)}</td>

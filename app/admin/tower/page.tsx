@@ -126,12 +126,18 @@ export default async function TowerPage({
     softSignals = data ?? [];
   }
 
-  const { data: readyDrafts } = await supabase
+  // R5-EE-6: track whether any decision-feeding query failed. If one did, the
+  // "All clear." headline would be a lie (the counts it's built from are
+  // partial). We surface a banner and suppress the all-clear copy instead.
+  let decisionLoadFailed = false;
+
+  const { data: readyDrafts, error: readyDraftsError } = await supabase
     .from("partner_outbound_queue")
     .select("*")
     .eq("status", "ready")
     .order("send_after", { ascending: true })
     .limit(50);
+  if (readyDraftsError) decisionLoadFailed = true;
   // Defensive shape so the page renders before/after the 20260607 migration
   // (send_channel / personalization_note default sensibly when absent).
   type DraftRow = {
@@ -170,14 +176,18 @@ export default async function TowerPage({
   }>;
 
   // ── Payouts (the money gate): cleared-but-unpaid commission per affiliate. ──
-  const { data: clearedAttr } = await supabase
+  const { data: clearedAttr, error: clearedAttrError } = await supabase
     .from("affiliate_attributions")
     .select("affiliate_slug, commission_amount_cents")
     .eq("status", "cleared")
     .is("paid_at", null);
+  if (clearedAttrError) decisionLoadFailed = true;
   const payoutAgg: Record<string, { cents: number; count: number }> = {};
   for (const a of clearedAttr ?? []) {
-    const slug = a.affiliate_slug as string;
+    const slug = a.affiliate_slug as string | null;
+    // EE-12: skip rows with a null slug rather than bucketing them under "null"
+    // and then minting a payout row keyed on a non-existent affiliate.
+    if (!slug) continue;
     if (!payoutAgg[slug]) payoutAgg[slug] = { cents: 0, count: 0 };
     payoutAgg[slug].cents += a.commission_amount_cents ?? 0;
     payoutAgg[slug].count += 1;
@@ -382,9 +392,11 @@ export default async function TowerPage({
             color: INK,
           }}
         >
-          {decisionCount === 0
-            ? "All clear."
-            : `${decisionCount} waiting on you.`}
+          {decisionLoadFailed
+            ? "Some panels didn't load."
+            : decisionCount === 0
+              ? "All clear."
+              : `${decisionCount} waiting on you.`}
         </h1>
         <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED }}>
           sentinel last swept {timeAgo(sentinelCursor?.updated_at ?? null)}
@@ -407,6 +419,24 @@ export default async function TowerPage({
             supabase/migrations/20260606_tower_signal_handling.sql
           </code>{" "}
           to enable the signal board (partner_signals.handled_at).
+        </div>
+      )}
+
+      {decisionLoadFailed && (
+        <div
+          style={{
+            ...card,
+            borderColor: CRIMSON,
+            background: "#FBF3F3",
+            fontFamily: SERIF,
+            fontSize: "14px",
+            color: INK,
+          }}
+        >
+          <strong style={{ color: CRIMSON }}>Some panels didn&rsquo;t load.</strong>{" "}
+          A draft- or payout-queue query errored, so the &ldquo;waiting on
+          you&rdquo; count below is incomplete &mdash; treat it as partial, not
+          empty, and reload to retry.
         </div>
       )}
 

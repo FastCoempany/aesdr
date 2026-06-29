@@ -15,7 +15,21 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
-      allow: ["/", "/about", "/terms", "/privacy", "/refund-policy", "/contact", "/syllabus"],
+      // Keep in sync with sitemap.ts — every URL the sitemap publishes should
+      // be crawlable here, or robots silently blocks an indexed page
+      // (R3-INFRA-6). /affiliates covers the affiliate-hub sub-paths by prefix.
+      allow: [
+        "/",
+        "/about",
+        "/terms",
+        "/privacy",
+        "/refund-policy",
+        "/contact",
+        "/syllabus",
+        "/compare",
+        "/research",
+        "/affiliates",
+      ],
       disallow: ["/dashboard", "/course", "/login", "/api", "/account", "/tools", "/artifacts", "/reveal", "/admin", "/team"],
     },
     sitemap: `${baseUrl}/sitemap.xml`,
