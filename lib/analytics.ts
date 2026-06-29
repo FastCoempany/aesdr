@@ -24,10 +24,26 @@ type EventName = keyof EventMap;
 
 let clientPromise: Promise<PostHog | null> | null = null;
 
+/**
+ * Consent gate (R4-LEG-2): analytics stay OFF until the visitor grants consent
+ * via the banner. Opt-in for everyone — the GDPR default, and it also covers US
+ * / CCPA. Until consent is granted getClient() returns null, so PostHog never
+ * even loads (no init, no network, no cookies).
+ */
+export function hasAnalyticsConsent(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.localStorage.getItem("aesdr_analytics_consent") === "granted";
+  } catch {
+    return false;
+  }
+}
+
 function isEnabled() {
   return (
     typeof window !== "undefined" &&
-    !!process.env.NEXT_PUBLIC_POSTHOG_KEY
+    !!process.env.NEXT_PUBLIC_POSTHOG_KEY &&
+    hasAnalyticsConsent()
   );
 }
 

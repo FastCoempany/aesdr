@@ -6,6 +6,7 @@ import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { sendTeamInviteEmail } from "@/lib/email";
 import { rateLimit } from "@/lib/rate-limit";
+import { getSiteUrl } from "@/lib/site-url";
 
 const InviteSchema = z.object({
   email: z.string().email().max(320),
@@ -14,7 +15,7 @@ const InviteSchema = z.object({
 export async function POST(request: Request) {
   try {
     const origin = request.headers.get("origin");
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com";
+    const siteUrl = getSiteUrl();
     if (origin && new URL(siteUrl).origin !== origin) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }

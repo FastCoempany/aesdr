@@ -35,8 +35,12 @@ export function resolveCommissionRate(
   }
   // Stored as a percent (30.00) → fraction (0.30). Already-fractional passes through.
   const rate = commissionPct > 1 ? commissionPct / 100 : commissionPct;
-  // Guard against absurd configured rates.
-  if (rate > 1) return DEFAULT_COMMISSION_RATE;
+  // AUDIT (§14): real commission rates are never ≤1% and never ≥100% for anyone,
+  // so a value resolving into that band is a misconfiguration — e.g. a stored `1`
+  // is ambiguous (1%? 100%?) and used to slip through as 100%. Fall back to the
+  // default instead of paying an absurd amount. Real rates (0.20–0.40 / 20–40)
+  // resolve cleanly into (0.01, 1).
+  if (rate <= 0.01 || rate >= 1) return DEFAULT_COMMISSION_RATE;
   return rate;
 }
 

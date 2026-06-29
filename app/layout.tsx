@@ -5,15 +5,17 @@ import A11yToggle from "@/components/A11yToggle";
 import AdminChip from "@/components/AdminChip";
 import AffiliateDisclosureFooter from "@/components/AffiliateDisclosureFooter";
 import MobileGate from "@/components/MobileGate";
+import ConsentBanner from "@/components/ConsentBanner";
 import PostHogClient from "@/components/PostHogClient";
 import RedditPixel from "@/components/RedditPixel";
 import { getAdminContext } from "@/lib/admin";
+import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 const LAUNCHED = process.env.NEXT_PUBLIC_LAUNCH_MODE === "true";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com"),
+  metadataBase: new URL(getSiteUrl()),
   title: "AESDR",
   description: "Become the same you, just way, way better.",
   robots: {
@@ -104,6 +106,7 @@ export default async function RootLayout({
         <Suspense fallback={null}>
           <PostHogClient />
         </Suspense>
+        <ConsentBanner />
       </body>
     </html>
   );

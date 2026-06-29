@@ -13,6 +13,7 @@
 
 import Stripe from "stripe";
 
+import { getSiteUrl } from "@/lib/site-url";
 import type {
   AffiliateRecord,
   StripeAccountStatus,
@@ -40,11 +41,12 @@ export function getStripe(): Stripe {
 }
 
 /**
- * Site origin for account-link return/refresh URLs. Falls back to
- * NEXT_PUBLIC_SITE_URL → aesdr.com.
+ * Site origin for account-link return/refresh URLs. Resolved via getSiteUrl(),
+ * which fails loud if NEXT_PUBLIC_SITE_URL is missing in production rather than
+ * defaulting to a hardcoded host.
  */
 function siteOrigin(): string {
-  return process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com";
+  return getSiteUrl();
 }
 
 /**

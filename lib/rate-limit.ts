@@ -9,6 +9,8 @@
 import { Redis } from "@upstash/redis";
 import { Ratelimit } from "@upstash/ratelimit";
 
+import { isProduction } from "@/lib/env";
+
 interface RateLimitConfig {
   /** Maximum requests allowed in the window */
   max: number;
@@ -106,6 +108,17 @@ export async function rateLimit(
 ): Promise<RateLimitResult> {
   const redis = getUpstash();
   if (!redis) {
+    // P1-13: a MISSING Upstash configuration in production must fail loud, not
+    // fail open. Without distributed Redis, the in-memory limiter is per-
+    // instance — useless across a serverless fleet — so a prod deploy that
+    // lost its UPSTASH_* vars would silently stop rate-limiting. Refuse it.
+    // (A transient runtime Upstash error is handled in the catch below, where
+    // we DO fall back to in-memory so an outage can't deny all requests.)
+    if (isProduction()) {
+      throw new Error(
+        "Rate limiting requires Upstash in production (set UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN) — refusing to fail open.",
+      );
+    }
     return memRateLimit(key, config);
   }
 

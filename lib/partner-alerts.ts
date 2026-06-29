@@ -1,5 +1,7 @@
 import { Resend } from "resend";
 
+import { getSiteUrl } from "@/lib/site-url";
+
 /**
  * Partnerships control-tower alerting.
  *
@@ -30,7 +32,7 @@ function getResend() {
 }
 
 const FROM = process.env.EMAIL_FROM || "AESDR Partnerships <hello@aesdr.com>";
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com";
+const SITE = getSiteUrl();
 const ALERT_TO =
   process.env.PARTNER_ALERT_EMAIL ||
   process.env.EMAIL_RECIPIENT ||

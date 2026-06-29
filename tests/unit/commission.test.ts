@@ -26,6 +26,22 @@ describe("resolveCommissionRate", () => {
   it("rejects an absurd configured rate (>100%)", () => {
     expect(resolveCommissionRate(150)).toBe(DEFAULT_COMMISSION_RATE); // 1.5 → default
   });
+
+  it("§14: rejects a value that resolves to ≥100% (incl. the ambiguous `1` and `100`)", () => {
+    expect(resolveCommissionRate(1)).toBe(DEFAULT_COMMISSION_RATE); // was the 100% bug
+    expect(resolveCommissionRate(100)).toBe(DEFAULT_COMMISSION_RATE); // 100/100 = 1.0 → default
+  });
+
+  it("§14: rejects a sub-1% rate (never a real rate for anyone)", () => {
+    expect(resolveCommissionRate(0.01)).toBe(DEFAULT_COMMISSION_RATE); // 1% → default
+    expect(resolveCommissionRate(0.005)).toBe(DEFAULT_COMMISSION_RATE); // 0.5% → default
+  });
+
+  it("§14: real rates in (0.01, 1) pass through cleanly", () => {
+    expect(resolveCommissionRate(20)).toBeCloseTo(0.2); // 20% percent form
+    expect(resolveCommissionRate(0.5)).toBeCloseTo(0.5); // 50% fractional form
+    expect(resolveCommissionRate(0.4)).toBeCloseTo(0.4);
+  });
 });
 
 describe("computeCommissionCents", () => {

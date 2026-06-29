@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import { createClient } from "@/utils/supabase/client";
+import { getSiteUrl } from "@/lib/site-url";
 
 // Only honor relative same-app redirect targets so `?next=` can't open-redirect.
 function safeNext(raw: string | null): string | null {
@@ -79,7 +80,7 @@ function LoginForm() {
     setResetLoading(true);
     setError(null);
     const supabase = createClient();
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com";
+    const siteUrl = getSiteUrl();
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${siteUrl}/auth/callback?next=/account/reset-password`,
     });

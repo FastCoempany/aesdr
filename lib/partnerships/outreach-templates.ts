@@ -18,6 +18,8 @@
 
 import crypto from "node:crypto";
 
+import { getSiteUrl } from "@/lib/site-url";
+
 export type OutreachTemplateId = "newsletter" | "community" | "podcast";
 
 /**
@@ -37,7 +39,7 @@ type Template = { id: OutreachTemplateId; subject: string; body: string };
 
 const BOOKING = "https://calendar.app.google/wFRpSWG2ehvNhgd4A";
 const SIGNOFF = "— Antaeus, AESDR · affiliates@aesdr.com";
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com";
+const SITE = getSiteUrl();
 
 const TEMPLATES: Record<OutreachTemplateId, Template> = {
   newsletter: {

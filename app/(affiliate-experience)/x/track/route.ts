@@ -9,6 +9,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
+import { getSiteUrl } from "@/lib/site-url";
 import {
   sendProspectConversationRequestEmail,
   sendProspectEnterpriseIntentEmail,
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest) {
   // and no rate limit. Add a same-origin guard so it can't be driven
   // cross-site, and an IP-keyed rate limit so it can't be flooded.
   const origin = req.headers.get("origin");
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com";
+  const siteUrl = getSiteUrl();
   if (origin && new URL(siteUrl).origin !== origin) {
     return NextResponse.json({ ok: false }, { status: 403 });
   }
