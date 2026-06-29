@@ -1,9 +1,11 @@
 /**
  * Stripe Connect Standard helpers for the affiliate payout pipeline.
  *
- * Standard accounts give affiliates a full Stripe dashboard, handle 1099-K
- * reporting on Stripe's side once thresholds trip, and let us send payouts
- * via the Transfers API. The Account Links flow (introduced 2022) replaces
+ * Standard accounts give affiliates a full Stripe dashboard and let us send
+ * payouts via the Transfers API. 1099-NEC filing is handled by Stripe Connect
+ * tax reporting (enabled platform-side; Stripe collects the W-9/W-8 at
+ * onboarding) -- NOT 1099-K, which only covers an account's own processing
+ * volume, not our platform transfers. The Account Links flow (introduced 2022) replaces
  * the older OAuth dance and works for both Standard and Express.
  *
  * Per docs/canon-revisions/2026-05-22-affiliate-hub-plan.md (step 8).
