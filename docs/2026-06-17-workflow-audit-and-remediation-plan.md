@@ -845,7 +845,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 ## 📋 Master status table (all findings)
 *Legend: ✅ done (in code on main) · 🟡 partial · ⬜ not started/deferred · 👤 on you (decision/infra/external). "Done" = patched + builds + (money math) unit-tested, not individually load-tested.*
 
-**Tally — ✅ 270 done · 🟡 2 partial · ⬜ 1 not-started · 👤 4 on you · 277 total.** (2026-06-29 batch 2, on your decisions: env guards P1-12/P1-13/P2-12 now that the Vercel vars are confirmed set; P1-2 dropped — inbound email is handled externally; R3-AUTH-5 export/delete-account flow at `/account/data`; R4-LEG-5 FTC disclosure hard-gate; R4-LEG-6 ToS governing-law + arbitration; P0-15 privacy + 8 subprocessors; R4-LEG-2 cookie-consent banner; §13 14-day attribution enforced; §14 commission-rate guard; R4-PERF-1/2 $10/run cap; P0-16 video click-to-play; R4-PERF-12 events kept indefinitely + R5-DV-1 no subdomain split, both per your call. tsc/lint/build green, 48 unit tests.) **The 7 remaining:** P3-10 (⬜ — rename internal `verdict`, your call); R4-LEG-7 + R5-PI-4 (🟡 — scraped-prospect retention, recommendation given, your call); R4-MON-7 (sales tax — your nexus call); R4-LEG-4 (earnings substantiation — no product claims found; `/about` industry stats want a source); R5-DV-6 (SPF/DKIM/DMARC — verify in your DNS; I can't reach DNS from the sandbox); R5-PI-9 (per-table retention — recommendation given).
+**Tally — ✅ 274 done · 🟡 0 partial · ⬜ 1 not-started · 👤 2 on you · 277 total.** (2026-06-29 batch 3, on your calls: commission → **40% across the board** + attribution → **30-day** (reverses the morning's 14-day/30% per founder); ToS **Delaware confirmed**; **R5-DV-6 resolved** — your mxtoolbox check shows DMARC published + quarantine/reject enforced (BIMI optional); scraped-prospect **retention purge built** (partner_pipeline 90d/30d) → closes R4-LEG-7/R5-PI-4/R5-PI-9. Batch 2 had shipped: env guards P1-12/13/P2-12, delete/export flow, FTC hard-gate, consent banner, ToS arbitration, privacy + 8 subprocessors, $10 agent cap, click-to-play video, and dropped P1-2. tsc/lint/build green, 48 unit tests.) **The 3 remaining:** P3-10 (⬜ — rename internal `verdict`, your call); R4-MON-7 (👤 — sales tax: enable Stripe Tax + register nexus, then I wire `automatic_tax` in one line); R4-LEG-4 (👤 — no product earnings claims exist; just source the `/about` industry stats if you want them airtight).
 
 ### Phase 0
 
@@ -1063,7 +1063,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 | R4-LEG-4 | No FTC earnings substantiation | 👤 | Need benchmark source |
 | R4-LEG-5 | FTC disclosure not enforced | ✅ | FTC disclosure hard-blocks copy submission |
 | R4-LEG-6 | ToS no governing-law/arbitration | ✅ | Delaware* + AAA arbitration + class waiver |
-| R4-LEG-7 | Scraped-PII no GDPR Art.14 basis | 🟡 | App-user basis written; scraped-prospect call pending |
+| R4-LEG-7 | Scraped-PII no GDPR Art.14 basis | ✅ | Legitimate-interest basis + retention purge built |
 | R4-PERF-1 | Scout sweep no token cap | ✅ | $10/run ceiling |
 | R4-PERF-2 | dossier-enrich uncapped | ✅ | $10/run ceiling |
 | R4-PERF-3 | Lean caps in dead module | ✅ | Caps moved to live engines |
@@ -1142,12 +1142,12 @@ Stripe signature verification · refund→access revocation (the `status='active
 | R5-PI-1 | Deal free-text to PostHog | ✅ | Not sent as props |
 | R5-PI-2 | Session replay unmasked | ✅ | maskAll inputs/text + media |
 | R5-PI-3 | Buyer name to Anthropic | ✅ | Name dropped from prompt |
-| R5-PI-4 | Scraped PII chained, persisted | 🟡 | Retention call pending (advised) |
+| R5-PI-4 | Scraped PII chained, persisted | ✅ | Retention purge (90d/30d) live; clicks low-PII left as-is |
 | R5-PI-5 | Full error objects logged | ✅ | Log `.message` only |
 | R5-PI-6 | Raw email in console label | ✅ | Removed |
 | R5-PI-7 | PostHog captures full URL | ✅ | Slug/params scrubbed |
 | R5-PI-8 | `ip_hash` three no-salt sites | ✅ | One HMAC helper |
-| R5-PI-9 | No retention/TTL anywhere | 👤 | Per-table windows are yours |
+| R5-PI-9 | No retention/TTL anywhere | ✅ | Policy set; partner_pipeline purge built (others keep-by-decision) |
 | R5-PI-10 | Over-collection UA/referrer | ✅ | Trimmed to triage need |
 
 ### Adversarial review
