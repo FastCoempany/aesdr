@@ -30,6 +30,40 @@ A consolidated punch-list of everything **five rounds** of adversarial auditing 
 - Partial-refund commission proration — pro-rata clawback for full **and** partial, unit-tested, idempotent on redelivery (R4-MON-4 / decision #28).
 - `lesson-01` u1 — confirmed it already emits the standard `quizScore` the artifact extractor reads (12 call sites); the leftover `_extra.lesson` is intentional resume state. No change needed (R4-LH-8).
 
+## ❓ What I need from you — every open item as a question (2026-06-29)
+*The 23 items not yet ✅, each as a one-sentence question + whether I can do the work once you answer. Pattern: I can build almost all of it; what I need is a decision, a number, an env var, or a DNS/legal action only you can take.*
+
+### The 9 ⬜ (not started — each needs one thing from you)
+| ID | Question | Can I do it? |
+|---|---|---|
+| P1-2 | Do you want inbound email (replies parsed back into the app), and through which provider? | **Yes** — I build it once you name the provider. |
+| P1-12 | Have you set `NEXT_PUBLIC_SITE_URL` in Vercel so I can switch on the crash-if-missing guard? | **Yes (code)** — only you can set the Vercel var. |
+| P1-13 | Have you added the `UPSTASH_*` keys in Vercel so rate-limiting can fail closed in prod? | **Yes (code)** — only you can set the var. |
+| P2-12 | Once those vars exist, want one startup check that refuses to boot if a required var is missing? | **Yes** — after the vars are set. |
+| P3-10 | Want me to rename the internal `verdict` field to "call" for tidiness (zero user-facing impact)? | **Yes** — just say the word. |
+| R3-AUTH-5 | Do you want a "delete my account / export my data" flow now (GDPR/CCPA), or defer it? | **Yes** — I build it once you say go. |
+| R4-LEG-5 | Should affiliate copy be hard-blocked without an FTC disclosure, or stay a soft warning? | **Yes** — once you pick which. |
+| §13 | Want the attribution window enforced at credit time (the anti-fraud R3-AF-4 change this rolls into)? | **Yes** — once you greenlight R3-AF-4. |
+| §14 | Can a commission rate ever be below 1% — if never I clamp it, if yes what should sub-1% mean? | **Yes** — once you answer. |
+
+### The 14 👤 (on you — decision / number / DNS / legal)
+| ID | Question | Can I do it? |
+|---|---|---|
+| P0-15 | Should the privacy policy disclose your processors (Stripe/Supabase/Resend/PostHog/Anthropic), or should we pull the trackers? | **Yes** — I write it once you pick which. |
+| P0-16 | Do you want the 78 MB auto-playing video re-encoded and served from Blob/Mux? | **Partly** — I wire the player; the re-encode + upload is yours. |
+| R4-MON-7 | Do you want to collect sales tax/VAT (turn on Stripe Tax) given your nexus? | **Yes (wiring)** — the nexus/registration call is yours. |
+| R4-LEG-2 | Do you want a cookie-consent banner gating analytics for EU/UK visitors? | **Yes** — once you say add it. |
+| R4-LEG-4 | Do you have a real source to back any earnings/results claims, or should we cut them? | **Yes (copy)** — I can't invent the data; you give the source or the call. |
+| R4-LEG-6 | What governing-law + arbitration terms should the ToS state? | **No** — needs your lawyer's text; I'll paste it in. |
+| R4-LEG-7 | What's your lawful basis for storing scraped prospect PII, or should we stop storing it? | **Yes (implement)** — the legal basis is your call. |
+| R4-PERF-1 | What dollar cap per Scout sweep should I enforce? | **Yes** — once you give the number. |
+| R4-PERF-2 | What dollar cap per dossier brief should I enforce? | **Yes** — once you give the number. |
+| R4-PERF-12 | How long should the `events` log be kept before auto-purge? | **Yes** — once you give the window. |
+| R5-DV-1 | Do you want marketing mail split onto a subdomain, separate from transactional? | **Partly** — the DNS is yours; I update the from-addresses after. |
+| R5-DV-6 | Have you set SPF/DKIM/DMARC for the sending domain? | **No** — DNS is yours; I'll hand you the exact records. |
+| R5-PI-4 | Do you want consent + a retention limit on scraped prospect data, or to stop persisting it? | **Yes (implement)** — the decision is yours. |
+| R5-PI-9 | What retention window should each table keep before auto-purge? | **Yes** — once you give the windows. |
+
 ### 🔎 Adversarial review of the money/auth diffs — 14 findings
 - **Fixed:** §1 duplicate clawbacks on Stripe re-delivery (unique index + idempotent upsert) · §2 gross-vs-net reporting (`net_paid_cents`) · §3b missing clawback-update error checks · §4 null/`full` netting edge (extracted + unit-tested `applyClawbacks`) · §6 fee-currency guard · §12 dropped the `isNewPurchase` gate that lost attribution on retry.
 - **Fixed 2026-06-29:** §5 refund-reconciliation cron (idempotent replay of dropped `charge.refunded`) · §7 paginated `findUserIdByEmail` (no 50/200 ceiling) · §8 self-referral gmail dot/+alias normalization (unit-tested) · §9 a refund now claws back `processing` (mid-payout) attributions too · §10 refund matches the session that actually has a purchase across the PI · §11 `markPayoutPaid` nets open clawbacks (guarded so a batch payout isn't double-netted). Refund logic centralized in `lib/refunds.ts`, shared by the webhook + the cron.
