@@ -114,9 +114,9 @@ export default async function AffiliatePaymentsPage() {
         </h1>
         <p style={{ fontSize: 16, lineHeight: 1.7, color: "var(--muted)", marginBottom: 0 }}>
           Payouts run through Stripe Connect. You keep a full Stripe
-          dashboard, Stripe handles 1099-K reporting once you trip the
-          federal threshold, and money lands in your bank account on the
-          schedule you set.
+          dashboard, Stripe collects your tax details during onboarding and
+          files your 1099 at year-end, and money lands in your bank account on
+          the schedule you set.
         </p>
       </section>
 

@@ -4,6 +4,37 @@
 ## What this is
 A consolidated punch-list of everything **five rounds** of adversarial auditing found across every workflow, plus the gaps the flow-chart exercise surfaced. Round 1 ran three passes (buyer/payments · affiliate/operator/money · enterprise/security/systemic). Round 2 ran a second, broader sweep across the workflows *and* the rest of the app for gaps, broken promises, and unfinished wiring — surfacing the **product-delivery layer** (curriculum depth + end-of-course artifacts) wired-but-never-invoked, and the **affiliate commission misrepresentation**. Round 3 ran **twelve domain-specialist passes** (auth/team · email/compliance · curriculum · infra/config · enterprise/workshop · admin · agent-crons · affiliate experience · data/RLS · deep security · frontend/brand/a11y · build/CI/tests) — ~74 further findings, including the worst security and access issues in the whole document: **affiliate-payout account takeover**, the **team tier being paid-but-unusable**, **affiliate links that never attribute**, and a **CAN-SPAM exposure** across every lifecycle email. Round 4 ran **seven specialist lenses** (state-machines/lifecycles · money-reconciliation · legal/tax/FTC · timezone/date math · performance/scale/cost · a line-by-line read of the Stripe webhook + `lib/email.ts` · lesson-HTML interaction logic) — ~64 further findings at the seams the component passes missed: a **paying buyer who can be permanently locked out**, an **affiliate-tax (1099/W-9) compliance gap**, a **materially false privacy policy**, a **78MB auto-playing landing video**, and uncapped LLM spend. Round 5 ran **seven UX/ops/copy/config lenses** (onboarding/first-run · email deliverability · integration config · naming/brand separation · empty-loading-error states · brand-voice canon · PII data-flow) — ~59 further findings (no new Criticals, mostly High/Medium): silent money-failure swallows, no admin error boundary, a single root sending-domain that risks spamming the welcome+receipt, free-text PII flowing to PostHog/Sentry/Anthropic unmasked, and the canon's own banned terms shipping where the linter can't reach. Each item is evidence-backed (`file:line`), severity-ranked, and tagged **[M]echanical** (I can patch it with no decision) or **[D]ecision-needed** (the exact question is in the [decision list](#what-i-need-from-you--the-decision-list)). **The money-, deploy-, delivery-, and access-breaking items were re-verified against the source by hand** (marked ✅).
 
+## ✅ STATUS — patch run + adversarial review (2026-06-22)
+*Where every finding actually stands after the remediation pass. Legend: ✅ fixed in code (on `main`, builds + the money math is unit-tested) · 🟡 loose (a sliver remains) · ⬜ on you (decision, infra, or external).*
+**Caveat:** "fixed" = code-complete + `tsc`/lint/`build` green + unit tests on the commission/clawback math. It is **not** load-tested end-to-end — review + a staging pass before flipping `COMING_SOON` off.
+
+**Everything is on `main` (production branch).** Cost: all cron schedules disabled + agent levers off → nothing auto-spends. **6 DB migrations applied + verified** in prod: attribution-status (re-enables payouts), generated_artifacts CHECK, course_progress, email_suppressions, commission_clawbacks, **+ clawback-unique/net_paid** (this last one ⬜ — from the review below; **run it before any payout**).
+
+### ✅ Fixed (the large majority)
+- **Phase 0 Criticals:** P0-1 (payout double-pay) · P0-2 (clawback ledger, hardened) · P0-3 (real admin refund) · P0-4 (course_progress) · P0-5 (artifacts generate) · P0-6 (artifact CHECK) · P0-7 (units 2&3) · P0-8 (commission rate+base — **30% of net**) · P0-9 (account-takeover) · P0-10 (team tier) · P0-11 (affiliate links) · P0-12 (CAN-SPAM unsubscribe — see 🟡) · P0-13 (buyer lockout).
+- **Phases 1–3 + Rounds 3/4/5:** the bulk of the `[M]` items + every `[D]` whose default you accepted — proxy/auth, webhook hardening, the email overhaul (unsubscribe + per-recipient one-click + cron suppression across all 5 crons), tools gate, identity, PII/log/replay hardening, `ip_hash` HMAC, markdown XSS, naming + canon copy, env docs, empty/error states, the silent-money-button fixes.
+- **Test net:** `tests/unit/` (commission · clawback netting · hash-ip · markdown XSS) wired into CI — closes R3-CI-1/4.
+
+### ⬜ Decisions resolved → applied in code
+- **P0-14 (tax):** Stripe files the 1099-NECs → dashboard/lib copy corrected. ✅
+- **P0-8 / commission:** 30% of net, one source of truth (`lib/commission.ts`). ✅
+
+### ⬜ On you — still open
+- **Decisions / legal:** P0-15 privacy-vs-trackers · CAN-SPAM physical mailing address (you chose none → P0-12 stays partial) · R4-LEG-6 ToS governing-law/arbitration · R4-LEG-7/R5-PI-4 scraped-prospect GDPR basis · R4-LEG-4 earnings-claim substantiation.
+- **Infra:** apply the **clawback-unique/net_paid migration** · set **Vercel env vars** · email-domain **DNS split** · **re-encode the 78 MB video** (P0-16) · keep `COMING_SOON=true`/levers off · **rotate the DB password** · at launch restore crons + flip COMING_SOON.
+- **Only you:** a **staging/QA pass** against real Stripe-test + Supabase data.
+
+### 🟡 Loose (slivers I can still close)
+- Unsubscribe: visible footer link lacks `?email=` (the header has it); no Resend bounce/complaint webhook yet (P0-12 / R5-DV-2).
+- Applicant "we got it" auto-acknowledgement (founder reply-to is wired — P1-7).
+- Partial-refund commission proration (full refunds handled — R4-MON-4).
+- `lesson-01` u1 exercise-score outlier (R4-LH-8).
+
+### 🔎 Adversarial review of the money/auth diffs — 14 findings
+- **Fixed:** §1 duplicate clawbacks on Stripe re-delivery (unique index + idempotent upsert) · §2 gross-vs-net reporting (`net_paid_cents`) · §3b missing clawback-update error checks · §4 null/`full` netting edge (extracted + unit-tested `applyClawbacks`) · §6 fee-currency guard · §12 dropped the `isNewPurchase` gate that lost attribution on retry.
+- **Verified already-safe:** §3a clawback concurrency (the attribution claim serializes payout batches per affiliate first).
+- **Open / lower-frequency (tracked):** §5 dropped-final-refund needs a reconciliation cron · §7 `provisionAffiliateIdentity` `listUsers(200)` scale ceiling · §8 self-referral gmail-alias bypass · §9 refund racing a mid-payout `processing` attribution · §10 refund matches first session for a PI · §11 `markPayoutPaid` doesn't net clawbacks · §13 `attribution_window_closes_at` written-never-read · §14 `resolveCommissionRate` sub-1% ambiguity.
+
 ## How to use it
 Work top-down by phase. Each item has a `[ ]` you tick when its **Done-when** is met. Don't start a later phase before its blockers (noted in **Depends**) are closed. Effort: **S** ≈ <½ day · **M** ≈ ½–2 days · **L** ≈ multi-day.
 

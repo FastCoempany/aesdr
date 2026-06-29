@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/admin";
 import { generateSlug } from "@/lib/affiliate";
+import { applyClawbacks } from "@/lib/payout-math";
 import {
   getAffiliateById,
   getAffiliateForUser,
@@ -660,19 +661,15 @@ export async function runAffiliatePayoutBatch(formData: FormData): Promise<void>
     .eq("affiliate_slug", affiliate.slug)
     .is("applied_payout_id", null)
     .order("created_at", { ascending: true });
-  let netTotal = total;
-  const clawbackApplications: { id: string; full: boolean; remaining: number }[] = [];
-  for (const cb of openClawbacks ?? []) {
-    if (netTotal <= 0) break;
-    const apply = Math.min(netTotal, cb.amount_cents ?? 0);
-    netTotal -= apply;
-    clawbackApplications.push({
-      id: cb.id,
-      full: apply === cb.amount_cents,
-      remaining: (cb.amount_cents ?? 0) - apply,
-    });
-  }
-  const clawbackTotal = total - netTotal;
+  // AUDIT (review #4): netting extracted to the pure, unit-tested applyClawbacks
+  // (coerces null/zero amounts and computes the full-vs-partial remainder
+  // correctly — the old inline `full: apply === cb.amount_cents` mis-marked a
+  // null amount and could write amount_cents=0, violating the >0 CHECK after the
+  // transfer had already gone out). Concurrency is already covered upstream: the
+  // attribution claim serializes payout batches per affiliate, so a losing batch
+  // aborts at "No cleared attributions" before ever reaching this netting.
+  const { netCents: netTotal, clawbackTotal, applications: clawbackApplications } =
+    applyClawbacks(total, openClawbacks ?? []);
 
   const { data: payout, error: insErr } = await admin
     .from("affiliate_payouts")
@@ -682,6 +679,10 @@ export async function runAffiliatePayoutBatch(formData: FormData): Promise<void>
       period_start: periodStart,
       period_end: periodEnd,
       total_commission_cents: total,
+      // AUDIT (review #2): gross is total_commission_cents; what actually
+      // transferred after clawback netting is net_paid_cents, so the dashboard +
+      // 1099 reconciliation read the real paid amount (needs the new migration).
+      net_paid_cents: netTotal,
       attribution_ids: ids,
       status: "processing",
       note:
@@ -751,16 +752,23 @@ export async function runAffiliatePayoutBatch(formData: FormData): Promise<void>
   // close (applied_payout_id); a partially-applied row keeps its remainder open
   // for the next payout.
   for (const cb of clawbackApplications) {
-    if (cb.full) {
-      await admin
-        .from("commission_clawbacks")
-        .update({ applied_payout_id: payout.id, applied_at: nowIso })
-        .eq("id", cb.id);
-    } else {
-      await admin
-        .from("commission_clawbacks")
-        .update({ amount_cents: cb.remaining })
-        .eq("id", cb.id);
+    const { error: cbErr } = cb.full
+      ? await admin
+          .from("commission_clawbacks")
+          .update({ applied_payout_id: payout.id, applied_at: nowIso })
+          .eq("id", cb.id)
+      : await admin
+          .from("commission_clawbacks")
+          .update({ amount_cents: cb.remaining })
+          .eq("id", cb.id);
+    // AUDIT (review #3b): a silently-failed update would re-net the same
+    // clawback on the next payout (double-claw). Surface it.
+    if (cbErr) {
+      console.error("[payout] clawback apply failed after transfer", {
+        clawbackId: cb.id,
+        payoutId: payout.id,
+        error: cbErr.message,
+      });
     }
   }
 

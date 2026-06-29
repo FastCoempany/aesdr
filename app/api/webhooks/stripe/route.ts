@@ -314,7 +314,11 @@ export async function POST(request: Request) {
     // promise (affiliates/faq). Never write an attribution for tier 'team'.
     const affiliateLinkId = session.metadata?.affiliate_link_id;
     const affiliateClickId = session.metadata?.affiliate_click_id;
-    if (affiliateLinkId && email && isNewPurchase && currencyOk && tier !== 'team') {
+    // AUDIT (review #12): NOT gated on isNewPurchase. The attribution upsert is
+    // idempotent on purchase_id, and gating on isNewPurchase meant a first
+    // delivery that upserted the purchase then 500'd before this block would
+    // permanently lose the commission on the Stripe retry (isNewPurchase=false).
+    if (affiliateLinkId && email && currencyOk && tier !== 'team') {
       try {
         const { data: linkRow } = await supabase
           .from('affiliate_links')
@@ -370,7 +374,14 @@ export async function POST(request: Request) {
                   });
                   const bt = charge.balance_transaction;
                   const feeCents =
-                    bt && typeof bt !== 'string' && typeof bt.fee === 'number'
+                    bt &&
+                    typeof bt !== 'string' &&
+                    typeof bt.fee === 'number' &&
+                    // AUDIT (review #6): balance_transaction.fee is in the Stripe
+                    // SETTLEMENT currency, which may differ from the USD charge on
+                    // a non-USD-settling account. Only net it off a USD gross when
+                    // the fee itself is USD; otherwise fall back to gross.
+                    bt.currency === 'usd'
                       ? bt.fee
                       : null;
                   if (feeCents != null && feeCents >= 0 && feeCents < amountCents) {
@@ -493,7 +504,12 @@ export async function POST(request: Request) {
                   reason: 'refund',
                 }));
               if (clawbackRows.length > 0) {
-                const { error: cbErr } = await supabase.from('commission_clawbacks').insert(clawbackRows);
+                const { error: cbErr } = await supabase
+                  .from('commission_clawbacks')
+                  // AUDIT (review #1): upsert on (attribution_id, reason) so a
+                  // Stripe re-delivery of the refund/dispute event is a no-op
+                  // instead of inserting a duplicate clawback (over-clawing N×).
+                  .upsert(clawbackRows, { onConflict: 'attribution_id,reason', ignoreDuplicates: true });
                 if (cbErr) {
                   Sentry.captureMessage('[webhook] clawback ledger insert failed (refund)', {
                     level: 'error',

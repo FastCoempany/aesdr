@@ -90,7 +90,7 @@ export default function PaymentsPage() {
 
         <Block label="Tax forms">
           <p style={pStyle}>
-            US affiliates: we&rsquo;ll send a W-9 to fill out at signing. 1099-NEC issued in January for the prior tax year if total commissions cross $600.
+            US affiliates: Stripe collects your W-9 during payout onboarding and files your 1099-NEC in January for the prior tax year if total commissions cross $600.
           </p>
           <p style={pStyle}>
             Non-US affiliates: W-8BEN at signing. No US tax withholding applies for most non-US individuals on commission income; we&rsquo;ll handle the paperwork either way.

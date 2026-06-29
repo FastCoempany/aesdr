@@ -31,6 +31,12 @@ jobs:
       - name: Type check
         run: npx tsc --noEmit
 
+      # AUDIT (R3-CI-1/4): CI previously ran NO tests, so every runtime bug in
+      # the workflow audit shipped green. Unit-tests the money math (commission,
+      # clawback netting), the IP hash, and the markdown XSS guard.
+      - name: Unit tests
+        run: npm run test:unit
+
       # Soft mode — surfaces canon-violation counts in CI logs without
       # failing the build. Will be promoted to strict once the language
       # sweep (batches 3-8 in docs/canon-revisions/2026-05-19-language-
