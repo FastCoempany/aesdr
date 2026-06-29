@@ -4,6 +4,7 @@ import * as Sentry from '@sentry/nextjs';
 import { Resend } from 'resend';
 
 import { bridgeAfter } from '@/utils/progress/bridges';
+import { createAdminClient } from '@/utils/supabase/admin';
 
 function getResend() {
   // RESEND_API_KEY is the canonical name used by production aesdr.com.
@@ -50,16 +51,44 @@ const UNSUBSCRIBE_HEADERS = {
   'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
 };
 
-// Bulk/lifecycle headers (R5-DV-5): everything List-Unsubscribe carries, plus
-// a stable List-Id and `Precedence: bulk` so mailbox providers file these as
-// the bulk lifecycle mail they are (and never auto-reply to them). Use for
-// marketing/lifecycle sends; keep transactional confirmations on the plain
-// UNSUBSCRIBE_HEADERS set.
-const BULK_HEADERS = {
-  ...UNSUBSCRIBE_HEADERS,
-  'List-Id': 'AESDR Lifecycle <lifecycle.aesdr.com>',
-  Precedence: 'bulk',
-};
+// Bulk/lifecycle headers (R5-DV-5 / P0-12): per-RECIPIENT one-click unsubscribe.
+// The List-Unsubscribe URL carries ?email=<recipient> so the /unsubscribe route
+// (and a mail client's one-click POST) knows exactly which address to suppress —
+// without this the header can't identify anyone. Plus a stable List-Id and
+// `Precedence: bulk`. Use for marketing/lifecycle sends; keep transactional
+// confirmations on the plain UNSUBSCRIBE_HEADERS set.
+function bulkHeaders(to: string) {
+  return {
+    'List-Unsubscribe': `<${UNSUBSCRIBE_URL}?email=${encodeURIComponent(to)}>`,
+    'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+    'List-Id': 'AESDR Lifecycle <lifecycle.aesdr.com>',
+    Precedence: 'bulk',
+  };
+}
+
+/**
+ * AUDIT (P0-12 / R5-DV-2): the suppression gate the lifecycle crons call before
+ * sending. Returns the lowercased set of addresses (from email_suppressions —
+ * written by /unsubscribe and a future bounce/complaint webhook) that must NOT
+ * be bulk-mailed. Fail-open on a read error so a transient blip can't drop a
+ * whole cohort.
+ */
+export async function getSuppressedEmails(
+  emails: Array<string | null | undefined>,
+): Promise<Set<string>> {
+  const lower = [...new Set(emails.map((e) => (e || '').toLowerCase()).filter(Boolean))];
+  if (lower.length === 0) return new Set();
+  try {
+    const admin = createAdminClient();
+    const { data } = await admin
+      .from('email_suppressions')
+      .select('email')
+      .in('email', lower);
+    return new Set((data ?? []).map((r) => String(r.email).toLowerCase()));
+  } catch {
+    return new Set();
+  }
+}
 
 /**
  * Strip HTML to plain-text for the multipart/alternative `text:` body.
@@ -548,6 +577,37 @@ export async function sendAffiliatePayoutNotificationEmail(args: {
         ctaLabel: "View the dashboard",
       }),
       text: `${args.displayName} — payout sent.\nAmount: ${amount}\nPeriod: ${args.periodStart} → ${args.periodEnd}${args.paymentMethod ? `\nMethod: ${args.paymentMethod}` : ""}${args.reference ? `\nReference: ${args.reference}` : ""}`,
+    })
+  );
+}
+
+/**
+ * AUDIT (R3-AF-2): a newly-provisioned affiliate has server-trusted app_metadata
+ * claims + email_confirm but NO password, so they can't sign in. This sends the
+ * recovery / set-password link so they can first access their dashboard.
+ */
+export async function sendAffiliateActivationEmail(args: {
+  to: string;
+  displayName: string;
+  actionLink: string;
+}): Promise<boolean> {
+  const body = `
+        <p style="margin:0 0 16px;">${esc(args.displayName)} — your AESDR affiliate account is set up. Set a password to sign in to your dashboard, grab your tracking links, and start.</p>
+        <p style="margin:0;color:#6B6B6B;">This link sets your password and signs you in. If it has expired, use "Forgot password" on the sign-in page with this same email.</p>
+  `;
+  return safeSend(`affiliate-activation to ${args.to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to: args.to,
+      subject: "Set your password — your AESDR affiliate account is ready",
+      html: affiliateShellHtml({
+        eyebrow: "AESDR · Affiliates",
+        headline: "Set your password.",
+        body,
+        ctaUrl: args.actionLink,
+        ctaLabel: "Set password & sign in",
+      }),
+      text: `${args.displayName} — your AESDR affiliate account is set up.\n\nSet your password and sign in:\n${args.actionLink}\n\nIf the link has expired, use "Forgot password" at ${SITE}/login with this email.`,
     })
   );
 }
@@ -1414,7 +1474,7 @@ export async function sendManagerArchetypeMap(to: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: BULK_HEADERS,
+      headers: bulkHeaders(to),
       subject: "Your Manager Archetype Map",
       html: managerArchetypeMapHtml(),
       text: htmlToText(managerArchetypeMapHtml()),
@@ -1521,7 +1581,7 @@ export async function sendLessonCompletedNudge(
     getResend().emails.send({
       from: FROM,
       to,
-      headers: BULK_HEADERS,
+      headers: bulkHeaders(to),
       subject: `Next: ${nextLessonTitle} (~${nextMinutes} min)`,
       html: lessonCompletedNudgeHtml(name, nextLessonId, nextLessonTitle, nextMinutes),
       text: htmlToText(lessonCompletedNudgeHtml(name, nextLessonId, nextLessonTitle, nextMinutes)),
@@ -1569,7 +1629,7 @@ export async function sendWeeklyFraming(
     getResend().emails.send({
       from: FROM,
       to,
-      headers: BULK_HEADERS,
+      headers: bulkHeaders(to),
       subject: "What this week of the course asks of you",
       html: weeklyFramingHtml(name, completed, total),
       text: htmlToText(weeklyFramingHtml(name, completed, total)),
@@ -1622,7 +1682,7 @@ export async function sendWinBack(to: string, name: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: BULK_HEADERS,
+      headers: bulkHeaders(to),
       subject: "Is this still useful — or should we close the loop?",
       html: winBackHtml(name),
       text: htmlToText(winBackHtml(name)),
@@ -1666,7 +1726,7 @@ export async function sendAlumniReengagement(to: string, name: string, monthMark
     getResend().emails.send({
       from: FROM,
       to,
-      headers: BULK_HEADERS,
+      headers: bulkHeaders(to),
       subject:
         monthMark === 6
           ? "Six months in — what stuck?"
@@ -1717,7 +1777,7 @@ export async function sendDay0PlusTwelveHours(to: string, name: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: BULK_HEADERS,
+      headers: bulkHeaders(to),
       subject: "Pick a 25-minute window. Put it on your calendar.",
       html: day0PlusTwelveHoursHtml(name),
       text: htmlToText(day0PlusTwelveHoursHtml(name)),
@@ -1757,7 +1817,7 @@ export async function sendDay0PlusThirtySixHours(to: string, name: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: BULK_HEADERS,
+      headers: bulkHeaders(to),
       subject: "Two days in. Did you start?",
       html: day0PlusThirtySixHoursHtml(name),
       text: htmlToText(day0PlusThirtySixHoursHtml(name)),
@@ -1792,7 +1852,7 @@ export async function sendDay3Email(to: string, name: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: BULK_HEADERS,
+      headers: bulkHeaders(to),
       subject: "How's Course 1 going?",
       html: day3Html(name),
       text: htmlToText(day3Html(name)),
@@ -1829,7 +1889,7 @@ export async function sendDay7Email(to: string, name: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: BULK_HEADERS,
+      headers: bulkHeaders(to),
       subject: "Course 3 builds the one-pager your SDR actually reads",
       html: day7Html(name),
       text: htmlToText(day7Html(name)),
@@ -1865,7 +1925,7 @@ export async function sendAbandon1hr(to: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: BULK_HEADERS,
+      headers: bulkHeaders(to),
       subject: "Still thinking it over?",
       html: abandon1hrHtml(),
       text: htmlToText(abandon1hrHtml()),
@@ -1911,7 +1971,7 @@ export async function sendAbandon24hr(to: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: BULK_HEADERS,
+      headers: bulkHeaders(to),
       subject: "Quick question before I stop following up",
       html: abandon24hrHtml(),
       text: htmlToText(abandon24hrHtml()),
@@ -1950,7 +2010,7 @@ export async function sendDropoff5d(to: string, name: string, lessonId: string, 
     getResend().emails.send({
       from: FROM,
       to,
-      headers: BULK_HEADERS,
+      headers: bulkHeaders(to),
       subject: "No rush — but your next lesson is ready",
       html: dropoff5dHtml(name, lessonId, lessonTitle),
       text: htmlToText(dropoff5dHtml(name, lessonId, lessonTitle)),
@@ -1984,7 +2044,7 @@ export async function sendDropoff10d(to: string, name: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: BULK_HEADERS,
+      headers: bulkHeaders(to),
       subject: "The Friday five-line — eight minutes, no login needed",
       html: dropoff10dHtml(name),
       text: htmlToText(dropoff10dHtml(name)),
@@ -2025,7 +2085,7 @@ export async function sendDropoff21d(to: string, name: string, lessonId: string)
     getResend().emails.send({
       from: FROM,
       to,
-      headers: BULK_HEADERS,
+      headers: bulkHeaders(to),
       subject: "Last check-in from us",
       html: dropoff21dHtml(name, lessonId),
       text: htmlToText(dropoff21dHtml(name, lessonId)),
@@ -2069,7 +2129,7 @@ export async function sendReviewRequest(to: string, name: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: BULK_HEADERS,
+      headers: bulkHeaders(to),
       subject: "You finished all 12. How was it?",
       html: reviewRequestHtml(name),
       text: htmlToText(reviewRequestHtml(name)),
@@ -2103,7 +2163,7 @@ export async function sendReviewNudge(to: string, name: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: BULK_HEADERS,
+      headers: bulkHeaders(to),
       subject: "30 seconds — that's all I need",
       html: reviewNudgeHtml(name),
       text: htmlToText(reviewNudgeHtml(name)),
@@ -2246,7 +2306,7 @@ export async function sendLessonCompleteEmail(
     getResend().emails.send({
       from: FROM,
       to,
-      headers: BULK_HEADERS,
+      headers: bulkHeaders(to),
       subject,
       html: lessonCompleteHtml(name, lessonId, lessonTitle),
       text: htmlToText(lessonCompleteHtml(name, lessonId, lessonTitle)),
@@ -2411,7 +2471,7 @@ export async function sendRevealUnlockedEmail(to: string, name: string) {
     getResend().emails.send({
       from: FROM,
       to,
-      headers: BULK_HEADERS,
+      headers: bulkHeaders(to),
       subject: "Choose your keeper.",
       html: revealUnlockedHtml(name),
       text: htmlToText(revealUnlockedHtml(name)),

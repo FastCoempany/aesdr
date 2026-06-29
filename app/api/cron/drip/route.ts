@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import * as Sentry from '@sentry/nextjs';
 import { createAdminClient } from '@/utils/supabase/admin';
-import { sendDay3Email, sendDay7Email } from '@/lib/email';
+import { sendDay3Email, sendDay7Email, getSuppressedEmails } from '@/lib/email';
 import { TIMING } from '@/lib/config';
 import { verifyCronAuth } from '@/lib/cron-auth';
 import { isPausedUser } from '@/app/actions/pause';
@@ -73,7 +73,9 @@ export async function GET(request: Request) {
   if (day3Err) {
     errors.push(`day3 query: ${day3Err.message}`);
   } else if (day3Users && day3Users.length > 0) {
+    const suppressed = await getSuppressedEmails(day3Users.map((u) => u.user_email));
     const day3Successes = await runPool(day3Users, SEND_CONCURRENCY, async (user) => {
+      if (suppressed.has((user.user_email || '').toLowerCase())) return null;
       if (await isPaused(user.user_id)) return null;
       const sent = await sendDay3Email(user.user_email, user.customer_name || 'there');
       if (!sent) {
@@ -108,7 +110,9 @@ export async function GET(request: Request) {
   if (day7Err) {
     errors.push(`day7 query: ${day7Err.message}`);
   } else if (day7Users && day7Users.length > 0) {
+    const suppressed = await getSuppressedEmails(day7Users.map((u) => u.user_email));
     const day7Successes = await runPool(day7Users, SEND_CONCURRENCY, async (user) => {
+      if (suppressed.has((user.user_email || '').toLowerCase())) return null;
       if (await isPaused(user.user_id)) return null;
       const sent = await sendDay7Email(user.user_email, user.customer_name || 'there');
       if (!sent) {

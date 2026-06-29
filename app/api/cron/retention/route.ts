@@ -8,6 +8,7 @@ import {
   sendLessonCompletedNudge,
   sendWeeklyFraming,
   sendWinBack,
+  getSuppressedEmails,
 } from "@/lib/email";
 import { TIMING, TOTAL_LESSONS } from "@/lib/config";
 import { verifyCronAuth } from "@/lib/cron-auth";
@@ -78,6 +79,19 @@ export async function GET(request: Request) {
     return p;
   }
 
+  // P0-12: memoized suppression check (one query per unique address per run) so
+  // unsubscribed people aren't bulk-mailed by any of the branches below.
+  const suppressedCache = new Map<string, Promise<boolean>>();
+  function isSuppressed(email: string | null | undefined): Promise<boolean> {
+    const e = (email || "").toLowerCase();
+    if (!e) return Promise.resolve(false);
+    const hit = suppressedCache.get(e);
+    if (hit) return hit;
+    const p = getSuppressedEmails([e]).then((s) => s.has(e));
+    suppressedCache.set(e, p);
+    return p;
+  }
+
   // ── 1. Lesson-completion nudges ──────────────────────────────────────
   const nudgeStart = new Date(now.getTime() - TIMING.lessonNudge.after - TIMING.lessonNudge.window);
   const nudgeEnd = new Date(now.getTime() - TIMING.lessonNudge.after);
@@ -129,6 +143,7 @@ export async function GET(request: Request) {
       continue;
     }
     const minutes = DURATION_BY_ID.get(nextLesson.id) ?? 25;
+    if (await isSuppressed(purchase.user_email)) continue;
     const ok = await sendLessonCompletedNudge(
       purchase.user_email,
       purchase.customer_name || "there",
@@ -194,6 +209,7 @@ export async function GET(request: Request) {
         weekly++;
         continue;
       }
+      if (await isSuppressed(p.user_email)) continue;
       const ok = await sendWeeklyFraming(
         p.user_email,
         p.customer_name || "there",
@@ -257,6 +273,7 @@ export async function GET(request: Request) {
       winBack++;
       continue;
     }
+    if (await isSuppressed(p.user_email)) continue;
     const ok = await sendWinBack(p.user_email, p.customer_name || "there");
     if (!ok) {
       errors.push(`win-back send failed for ${p.user_email}`);
@@ -307,6 +324,7 @@ export async function GET(request: Request) {
         .select("customer_name")
         .eq("user_id", c.user_id)
         .maybeSingle();
+      if (await isSuppressed(c.email)) continue;
       const ok = await sendAlumniReengagement(
         c.email,
         purchase?.customer_name || "there",

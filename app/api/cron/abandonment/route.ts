@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/utils/supabase/admin';
-import { sendAbandon1hr, sendAbandon24hr } from '@/lib/email';
+import { sendAbandon1hr, sendAbandon24hr, getSuppressedEmails } from '@/lib/email';
 import { TIMING } from '@/lib/config';
 import { verifyCronAuth } from '@/lib/cron-auth';
 
@@ -57,7 +57,9 @@ export async function GET(request: Request) {
 
   let hr1Successes: string[] = [];
   if (abandon1hr && abandon1hr.length > 0) {
+    const suppressed = await getSuppressedEmails(abandon1hr.map((r) => r.user_email));
     hr1Successes = await runPool(abandon1hr, SEND_CONCURRENCY, async (row) => {
+      if (suppressed.has((row.user_email || '').toLowerCase())) return null;
       const sent = await sendAbandon1hr(row.user_email);
       if (!sent) {
         errors.push('1hr email failed');
@@ -92,7 +94,9 @@ export async function GET(request: Request) {
 
   let hr24Successes: string[] = [];
   if (abandon24hr && abandon24hr.length > 0) {
+    const suppressed = await getSuppressedEmails(abandon24hr.map((r) => r.user_email));
     hr24Successes = await runPool(abandon24hr, SEND_CONCURRENCY, async (row) => {
+      if (suppressed.has((row.user_email || '').toLowerCase())) return null;
       const sent = await sendAbandon24hr(row.user_email);
       if (!sent) {
         errors.push('24hr email failed');

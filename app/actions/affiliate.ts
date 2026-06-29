@@ -650,6 +650,30 @@ export async function runAffiliatePayoutBatch(formData: FormData): Promise<void>
   const periodStart = new Date(Math.min(...dates)).toISOString().slice(0, 10);
   const periodEnd = new Date(Math.max(...dates)).toISOString().slice(0, 10);
 
+  // AUDIT (P0-2 / #31): net any open clawbacks (refunds/disputes on commission
+  // that was already paid out) against this payout, oldest first. A clawback
+  // larger than this period's total is applied partially; the remainder carries
+  // to the next payout. Needs 20260622_commission_clawbacks.sql applied.
+  const { data: openClawbacks } = await admin
+    .from("commission_clawbacks")
+    .select("id, amount_cents")
+    .eq("affiliate_slug", affiliate.slug)
+    .is("applied_payout_id", null)
+    .order("created_at", { ascending: true });
+  let netTotal = total;
+  const clawbackApplications: { id: string; full: boolean; remaining: number }[] = [];
+  for (const cb of openClawbacks ?? []) {
+    if (netTotal <= 0) break;
+    const apply = Math.min(netTotal, cb.amount_cents ?? 0);
+    netTotal -= apply;
+    clawbackApplications.push({
+      id: cb.id,
+      full: apply === cb.amount_cents,
+      remaining: (cb.amount_cents ?? 0) - apply,
+    });
+  }
+  const clawbackTotal = total - netTotal;
+
   const { data: payout, error: insErr } = await admin
     .from("affiliate_payouts")
     .insert({
@@ -660,6 +684,10 @@ export async function runAffiliatePayoutBatch(formData: FormData): Promise<void>
       total_commission_cents: total,
       attribution_ids: ids,
       status: "processing",
+      note:
+        clawbackTotal > 0
+          ? `netted ${clawbackTotal}¢ clawback; transferred ${netTotal}¢ of ${total}¢ gross`
+          : null,
     })
     .select("id")
     .single();
@@ -673,10 +701,15 @@ export async function runAffiliatePayoutBatch(formData: FormData): Promise<void>
   const { sendAffiliatePayoutNotificationEmail } = await import("@/lib/email");
 
   let transferId: string;
-  try {
+  if (netTotal <= 0) {
+    // AUDIT (P0-2): clawbacks fully consumed this period's commission — there is
+    // nothing to transfer. The payout row records the gross + the netting note;
+    // the clawbacks are marked applied below.
+    transferId = "clawback-netted-zero";
+  } else try {
     const transfer = await transferToAffiliate({
       accountId: affiliate.stripe_account_id,
-      amountCents: total,
+      amountCents: netTotal,
       payoutId: payout.id,
       affiliateSlug: affiliate.slug,
     });
@@ -714,10 +747,27 @@ export async function runAffiliatePayoutBatch(formData: FormData): Promise<void>
     .update({ status: "paid", paid_at: nowIso })
     .in("id", ids);
 
+  // AUDIT (P0-2): mark the clawbacks consumed by this payout. Fully-applied rows
+  // close (applied_payout_id); a partially-applied row keeps its remainder open
+  // for the next payout.
+  for (const cb of clawbackApplications) {
+    if (cb.full) {
+      await admin
+        .from("commission_clawbacks")
+        .update({ applied_payout_id: payout.id, applied_at: nowIso })
+        .eq("id", cb.id);
+    } else {
+      await admin
+        .from("commission_clawbacks")
+        .update({ amount_cents: cb.remaining })
+        .eq("id", cb.id);
+    }
+  }
+
   await sendAffiliatePayoutNotificationEmail({
     to: affiliate.email,
     displayName: affiliate.display_name,
-    amountCents: total,
+    amountCents: netTotal,
     periodStart,
     periodEnd,
     paymentMethod: "Stripe Connect",
@@ -895,6 +945,25 @@ export async function createAffiliate(formData: FormData): Promise<void> {
       .eq("id", application_id);
     if (appErr) {
       console.error("[affiliate] application status advance failed", appErr);
+    }
+  }
+
+  // AUDIT (R3-AF-2): the account was provisioned with app_metadata claims +
+  // email_confirm but no password, so send a set-password link the affiliate
+  // uses to first sign in to their dashboard. Best-effort — never block setup.
+  if (userId) {
+    try {
+      const { data: linkData } = await admin.auth.admin.generateLink({
+        type: "recovery",
+        email,
+      });
+      const actionLink = linkData?.properties?.action_link;
+      if (actionLink) {
+        const { sendAffiliateActivationEmail } = await import("@/lib/email");
+        await sendAffiliateActivationEmail({ to: email, displayName: display_name, actionLink });
+      }
+    } catch (e) {
+      console.error("[affiliate] activation email failed", e);
     }
   }
 

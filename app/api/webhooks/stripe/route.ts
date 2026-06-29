@@ -475,19 +475,32 @@ export async function POST(request: Request) {
           if (refundedPurchase?.id) {
             // AUDIT (P0-2): if an attribution was already 'paid', the money has
             // gone out the door — flipping its status here does NOT recover it.
-            // A clawback ledger row (negative entry netted against the next
-            // payout) is required. We detect + flag it; the ledger itself is
-            // out of scope (decision #31 — payout_attributions join table).
+            // Write a clawback ledger row (20260622_commission_clawbacks.sql);
+            // runAffiliatePayoutBatch nets it against the affiliate's next payout.
             const { data: paidAttrs } = await supabase
               .from('affiliate_attributions')
               .select('id, affiliate_slug, commission_amount_cents')
               .eq('purchase_id', refundedPurchase.id)
               .eq('status', 'paid');
             if (paidAttrs && paidAttrs.length > 0) {
-              Sentry.captureMessage('[webhook] Refund on already-paid commission — clawback ledger row needed', {
-                level: 'warning',
-                extra: { sessionId, purchaseId: refundedPurchase.id, paidAttrs },
-              });
+              const clawbackRows = paidAttrs
+                .filter((a) => (a.commission_amount_cents ?? 0) > 0)
+                .map((a) => ({
+                  affiliate_slug: a.affiliate_slug,
+                  attribution_id: a.id,
+                  purchase_id: refundedPurchase.id,
+                  amount_cents: a.commission_amount_cents,
+                  reason: 'refund',
+                }));
+              if (clawbackRows.length > 0) {
+                const { error: cbErr } = await supabase.from('commission_clawbacks').insert(clawbackRows);
+                if (cbErr) {
+                  Sentry.captureMessage('[webhook] clawback ledger insert failed (refund)', {
+                    level: 'error',
+                    extra: { sessionId, purchaseId: refundedPurchase.id, error: cbErr.message },
+                  });
+                }
+              }
             }
 
             // Flip any not-yet-paid matching attribution to refunded.
@@ -570,11 +583,25 @@ export async function POST(request: Request) {
             .eq('status', 'paid');
           if (paidAttrs && paidAttrs.length > 0) {
             // AUDIT (P0-2): commission already paid out on a now-disputed sale —
-            // a clawback ledger row is needed (out of scope here; decision #31).
-            Sentry.captureMessage('[webhook] Dispute on already-paid commission — clawback ledger row needed', {
-              level: 'warning',
-              extra: { sessionId, purchaseId: disputedPurchase.id, paidAttrs },
-            });
+            // write a clawback ledger row; the next payout nets it out.
+            const clawbackRows = paidAttrs
+              .filter((a) => (a.commission_amount_cents ?? 0) > 0)
+              .map((a) => ({
+                affiliate_slug: a.affiliate_slug,
+                attribution_id: a.id,
+                purchase_id: disputedPurchase.id,
+                amount_cents: a.commission_amount_cents,
+                reason: 'dispute',
+              }));
+            if (clawbackRows.length > 0) {
+              const { error: cbErr } = await supabase.from('commission_clawbacks').insert(clawbackRows);
+              if (cbErr) {
+                Sentry.captureMessage('[webhook] clawback ledger insert failed (dispute)', {
+                  level: 'error',
+                  extra: { sessionId, purchaseId: disputedPurchase.id, error: cbErr.message },
+                });
+              }
+            }
           }
 
           await supabase

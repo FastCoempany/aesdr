@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/utils/supabase/admin';
-import { sendDropoff5d, sendDropoff10d, sendDropoff21d } from '@/lib/email';
+import { sendDropoff5d, sendDropoff10d, sendDropoff21d, getSuppressedEmails } from '@/lib/email';
 import { TIMING, TOTAL_LESSONS } from '@/lib/config';
 import { verifyCronAuth } from '@/lib/cron-auth';
 import { isPausedUser } from '@/app/actions/pause';
@@ -145,15 +145,20 @@ export async function GET(request: Request) {
   // Sequential across tiers + bounded within each tier, so the total Resend
   // request rate stays under the limit (R4-PERF-7). A false send returns null
   // and never marks the tier flag.
+  // P0-12: don't bulk-mail unsubscribed addresses.
+  const suppressed = await getSuppressedEmails([...tier5, ...tier10, ...tier21].map((t) => t.email));
   const d5Successes = await runPool(tier5, SEND_CONCURRENCY, async (t) => {
+    if (suppressed.has((t.email || '').toLowerCase())) return null;
     const ok = await sendDropoff5d(t.email, t.name, t.lesson, lessonTitleFor(t.lesson));
     return ok ? t.email : null;
   });
   const d10Successes = await runPool(tier10, SEND_CONCURRENCY, async (t) => {
+    if (suppressed.has((t.email || '').toLowerCase())) return null;
     const ok = await sendDropoff10d(t.email, t.name);
     return ok ? t.email : null;
   });
   const d21Successes = await runPool(tier21, SEND_CONCURRENCY, async (t) => {
+    if (suppressed.has((t.email || '').toLowerCase())) return null;
     const ok = await sendDropoff21d(t.email, t.name, t.lesson);
     return ok ? t.email : null;
   });

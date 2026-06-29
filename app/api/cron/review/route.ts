@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/utils/supabase/admin';
-import { sendReviewRequest, sendReviewNudge } from '@/lib/email';
+import { sendReviewRequest, sendReviewNudge, getSuppressedEmails } from '@/lib/email';
 import { TIMING, TOTAL_LESSONS } from '@/lib/config';
 import { verifyCronAuth } from '@/lib/cron-auth';
 import { isPausedUser } from '@/app/actions/pause';
@@ -90,7 +90,9 @@ export async function GET(request: Request) {
       return now >= twoDaysAfter;
     });
 
+    const suppressed = await getSuppressedEmails(eligible.map((u) => u.user_email));
     const reqSuccesses = await runPool(eligible, SEND_CONCURRENCY, async (user) => {
+      if (suppressed.has((user.user_email || '').toLowerCase())) return null;
       if (await isPaused(user.user_id)) return null; // P1-6
       const sent = await sendReviewRequest(user.user_email, user.customer_name || 'there');
       if (!sent) {
@@ -124,7 +126,9 @@ export async function GET(request: Request) {
 
   const nudgeSuccesses: string[] = [];
   if (nudgeUsers && nudgeUsers.length > 0) {
+    const suppressed = await getSuppressedEmails(nudgeUsers.map((u) => u.user_email));
     const nSuccesses = await runPool(nudgeUsers, SEND_CONCURRENCY, async (user) => {
+      if (suppressed.has((user.user_email || '').toLowerCase())) return null;
       if (await isPaused(user.user_id)) return null; // P1-6
       // P3-4 / R3-EMAIL-5: send the real first name, not the 'there' sentinel.
       const sent = await sendReviewNudge(user.user_email, user.customer_name || 'there');
