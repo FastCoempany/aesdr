@@ -52,6 +52,9 @@ export default function ProgressSaver({
   const failCountRef = useRef(0);
   // True between an aesdr:complete and the final-screen progress flush (P0-7).
   const completePendingRef = useRef(false);
+  // Set once /api/progress/complete reports the whole course is done, so the
+  // terminal CTA routes to /reveal ("choose your keeper") instead of /dashboard.
+  const courseCompleteRef = useRef(false);
   const [sessionExpired, setSessionExpired] = useState(false);
   const [navigating, setNavigating] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
@@ -128,7 +131,15 @@ export default function ProgressSaver({
         body: JSON.stringify({ lessonId, unitId, unitCount }),
         signal: controller.signal,
       })
-        .then(() => clearTimeout(timeoutId))
+        .then(async (res) => {
+          clearTimeout(timeoutId);
+          // When the endpoint reports the whole course is done, remember it so
+          // the terminal CTA routes to /reveal instead of /dashboard.
+          if (res.ok) {
+            const data = await res.json().catch(() => null);
+            if (data?.courseComplete === true) courseCompleteRef.current = true;
+          }
+        })
         .catch(() => clearTimeout(timeoutId));
       // Only the *whole-lesson* completion flips the local is_completed flag;
       // an intermediate unit completion does not.
@@ -205,6 +216,17 @@ export default function ProgressSaver({
           typeof href === "string" &&
           href.startsWith("/") &&
           !href.startsWith("//");
+
+        // Finishing the LAST unit of the LAST lesson: the complete endpoint
+        // reported courseComplete, so hand off to /reveal ("choose your
+        // keeper") instead of the lesson HTML's default /dashboard target.
+        if (isSafePath && href === "/dashboard" && courseCompleteRef.current) {
+          setNavigating(true);
+          setTimeout(() => {
+            window.location.href = "/reveal";
+          }, 300);
+          return;
+        }
 
         // P0-7: the lesson HTML's terminal CTA always targets /dashboard. If
         // there's a next unit in this lesson, advance to it instead so units 2

@@ -107,9 +107,9 @@ export async function POST(request: NextRequest) {
       // AUDIT (IC-3/#55): always create a Stripe Customer so repeat buyers
       // join on a stable Customer id.
       customer_creation: 'always',
-      // AUDIT (IC-1/#53): allow promo codes on the two individual course
-      // tiers only (sdr/ae). Not on team or artifact_unlock.
-      ...((tier === 'sdr' || tier === 'ae') ? { allow_promotion_codes: true } : {}),
+      // Founder decision 2026-06-29: NO coupons, ever. Affiliates are paid on
+      // list price, so promotion codes are disabled across every tier.
+      allow_promotion_codes: false,
       metadata: {
         tier,
         ...(artifact_type ? { artifact_type } : {}),

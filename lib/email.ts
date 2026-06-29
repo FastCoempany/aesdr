@@ -82,9 +82,13 @@ function bulkHeaders(to: string) {
 /**
  * AUDIT (P0-12 / R5-DV-2): the suppression gate the lifecycle crons call before
  * sending. Returns the lowercased set of addresses (from email_suppressions —
- * written by /unsubscribe and a future bounce/complaint webhook) that must NOT
- * be bulk-mailed. Fail-open on a read error so a transient blip can't drop a
- * whole cohort.
+ * written by /unsubscribe and the bounce/complaint webhook) that must NOT be
+ * bulk-mailed.
+ *
+ * AUDIT (adversarial pass): FAILS CLOSED. If the suppression list can't be read,
+ * we must not risk mailing someone who unsubscribed or bounced — so every
+ * candidate is treated as suppressed and the send is skipped (the *_sent flags
+ * aren't set, so the cohort is simply retried on the next cron run).
  */
 export async function getSuppressedEmails(
   emails: Array<string | null | undefined>,
@@ -93,13 +97,18 @@ export async function getSuppressedEmails(
   if (lower.length === 0) return new Set();
   try {
     const admin = createAdminClient();
-    const { data } = await admin
+    const { data, error } = await admin
       .from('email_suppressions')
       .select('email')
       .in('email', lower);
+    if (error) throw error;
     return new Set((data ?? []).map((r) => String(r.email).toLowerCase()));
-  } catch {
-    return new Set();
+  } catch (err) {
+    Sentry.captureMessage('[email] suppression read failed — failing closed (no send this batch)', {
+      level: 'error',
+      extra: { error: err instanceof Error ? err.message : String(err), count: lower.length },
+    });
+    return new Set(lower); // treat everyone as suppressed → this batch sends nothing
   }
 }
 
@@ -2261,13 +2270,23 @@ function reviewNudgeHtml(name: string, email?: string) {
 
 // ─── Shared footer ───
 
+// CAN-SPAM requires a physical postal address in commercial email. Set
+// AESDR_MAILING_ADDRESS (a street address, a registered USPS PO box, or a CMRA)
+// before any bulk/marketing send — transactional receipts/confirmations are
+// exempt, but lifecycle/marketing sends are NOT. Until it's set, the line is
+// omitted (and bulk sends remain non-compliant).
+function mailingAddress(): string {
+  const addr = process.env.AESDR_MAILING_ADDRESS?.trim();
+  return addr ? esc(addr) : '';
+}
+
 function footer(email?: string) {
-  // AUDIT: CAN-SPAM physical address still required before bulk-mailing — no
-  // postal address is on file yet, so contact routes to hello@ for now.
+  const addr = mailingAddress();
   return `
   <hr style="border:none;border-top:1px solid #eee;margin:24px 0 16px">
   <p style="font-size:11px;color:#999;line-height:1.5">
     AESDR · <a href="mailto:hello@aesdr.com" style="color:#999">hello@aesdr.com</a><br>
+    ${addr ? `${addr}<br>` : ''}
     Questions? Message us at <a href="mailto:hello@aesdr.com" style="color:#999">hello@aesdr.com</a>.<br>
     <a href="${SITE}/contact" style="color:#999">Contact</a> · <a href="${SITE}/refund-policy" style="color:#999">Refund Policy</a><br>
     You're receiving this because you purchased or started a checkout at AESDR.<br>
@@ -2288,6 +2307,7 @@ function emailFooterInner(email?: string) {
         <p style="margin:0 0 10px;font-family:'SF Mono',Consolas,monospace;font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:#94A3B8;">
           AESDR &middot; <a href="mailto:hello@aesdr.com" style="color:#94A3B8;text-decoration:none;">hello@aesdr.com</a>
         </p>
+        ${mailingAddress() ? `<p style="margin:0 0 10px;font-family:Georgia,'Times New Roman',serif;font-size:11px;line-height:1.6;color:#94A3B8;">${mailingAddress()}</p>` : ''}
         <p style="margin:0 0 10px;font-family:Georgia,'Times New Roman',serif;font-size:12px;line-height:1.6;color:#94A3B8;">
           Questions? Message us at <a href="mailto:hello@aesdr.com" style="color:#94A3B8;text-decoration:underline;">hello@aesdr.com</a>.
         </p>

@@ -70,7 +70,15 @@ export function runAnimator(refs: AnimatorRefs, opts: AnimatorOptions): () => vo
     const id = setTimeout(() => {
       timers.delete(id);
       if (paused) return;
-      fn();
+      // A throw inside a scheduled step is an uncaught async error React's
+      // error boundary can't catch — and lockScroll() would never be undone,
+      // freezing the page until the 60s safety timer. On ANY error, degrade
+      // immediately to the static, scrollable hero (the skip end-state).
+      try {
+        fn();
+      } catch {
+        if (!scrollUnlocked) unlockScroll(role);
+      }
     }, delay);
     timers.add(id);
     return id;

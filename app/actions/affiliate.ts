@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import * as Sentry from "@sentry/nextjs";
 
 import { requireAdmin } from "@/lib/admin";
 import { generateSlug } from "@/lib/affiliate";
@@ -877,6 +878,28 @@ export async function setAffiliateStatus(formData: FormData): Promise<void> {
   if (status === "paused") patch.paused_at = nowIso;
   if (status === "sunset") patch.sunset_at = nowIso;
   await admin.from("affiliates").update(patch).eq("id", affiliateId);
+
+  // AUDIT (adversarial pass): a sunset/cut affiliate won't receive future
+  // payouts, so any OPEN clawback against them can never be netted automatically.
+  // Surface it so it's recovered (or written off) by hand instead of lingering
+  // silently — there is no negative-payout path.
+  if (status === "sunset" || status === "cut") {
+    const { data: openCbs } = await admin
+      .from("commission_clawbacks")
+      .select("amount_cents")
+      .eq("affiliate_slug", previous.slug)
+      .is("applied_payout_id", null);
+    const owedCents = (openCbs ?? []).reduce((s, c) => s + (c.amount_cents ?? 0), 0);
+    if (owedCents > 0) {
+      Sentry.captureMessage(
+        "[affiliate] sunset/cut with unrecovered clawbacks — manual recovery needed",
+        {
+          level: "warning",
+          extra: { affiliateSlug: previous.slug, status, owedCents, openCount: openCbs?.length ?? 0 },
+        },
+      );
+    }
+  }
 
   // Fire onboarding email on first activation (vetting → active).
   if (previous.status === "vetting" && status === "active") {

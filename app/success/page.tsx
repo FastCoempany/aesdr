@@ -10,14 +10,20 @@ interface PurchaseInfo {
   plan?: string;
 }
 
-const IRIS_GRADIENT =
-  'linear-gradient(90deg, #FF006E 0%, #FF6B00 17%, #F59E0B 34%, #10B981 51%, #38BDF8 68%, #8B5CF6 85%, #FF006E 100%)';
+// Reserved iris shimmer token (app/globals.css). Using the CSS var instead of
+// a hardcoded gradient keeps this on the active editorial palette and inherits
+// the accessibility fallback (collapses to --crimson under prefers-contrast /
+// forced-colors). Do not reintroduce the retired dark-palette hexes here.
+const IRIS_GRADIENT = 'var(--iris)';
 
 function SuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const [purchase, setPurchase] = useState<PurchaseInfo | null>(null);
   const [polling, setPolling] = useState(true);
+  // True once we've stopped polling WITHOUT a confirmation — drives the
+  // reassuring terminal state instead of a frozen "processing" spinner.
+  const [gaveUp, setGaveUp] = useState(false);
 
   // Derive a stable 3-digit "member number" from useId — same value on
   // server and client, unique per page render, no Math.random impurity.
@@ -30,10 +36,12 @@ function SuccessContent() {
     return String(100 + (hash % 900)).padStart(3, '0');
   })();
 
-  const checkPurchase = useCallback(async () => {
+  // Returns true once the purchase is confirmed so the poll loop can stop.
+  const checkPurchase = useCallback(async (): Promise<boolean> => {
     if (!sessionId) {
       setPolling(false);
-      return;
+      setGaveUp(true);
+      return false;
     }
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
@@ -46,11 +54,13 @@ function SuccessContent() {
       if (data.confirmed) {
         setPurchase(data);
         setPolling(false);
+        return true;
       }
     } catch {
       clearTimeout(timeoutId);
-      // Retry on next interval
+      // Swallow and let the loop try again on the next tick.
     }
+    return false;
   }, [sessionId]);
 
   useEffect(() => {
@@ -62,25 +72,40 @@ function SuccessContent() {
       w.rdt('track', 'Purchase');
     }
 
-    // Initial check (fire-and-forget; setState happens after network IO)
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- async work; state set after await
-    void checkPurchase();
+    // The webhook that confirms a paid order can lag well past 30s (Stripe
+    // retries, synchronous fee lookups). Poll for ~90s with light backoff so a
+    // buyer who actually paid isn't dropped onto a dead screen, then settle
+    // into an explicit, reassuring terminal state.
+    const MAX_WINDOW_MS = 90_000;
+    const startedAt = Date.now();
+    let timerId: ReturnType<typeof setTimeout> | undefined;
+    let cancelled = false;
+    // 2s, 3s, 4s, 5s, then steady 6s — a gentle backoff that eases server load.
+    let attempt = 0;
+    const nextDelay = () => Math.min(2000 + attempt * 1000, 6000);
 
-    // Poll every 2s until confirmed (max 30s)
-    const interval = setInterval(() => {
-      if (polling) checkPurchase();
-    }, 2000);
+    const tick = async () => {
+      const confirmed = await checkPurchase();
+      if (cancelled || confirmed) return;
+      attempt += 1;
+      if (Date.now() - startedAt >= MAX_WINDOW_MS) {
+        // Out of time without confirmation — show the terminal "you're set,
+        // it's still finalizing" message rather than a frozen spinner.
+        setPolling(false);
+        setGaveUp(true);
+        return;
+      }
+      timerId = setTimeout(tick, nextDelay());
+    };
 
-    const timeout = setTimeout(() => {
-      setPolling(false);
-      clearInterval(interval);
-    }, 30000);
+    // Initial check fires immediately; any setState happens after network IO.
+    void tick();
 
     return () => {
-      clearInterval(interval);
-      clearTimeout(timeout);
+      cancelled = true;
+      if (timerId) clearTimeout(timerId);
     };
-  }, [checkPurchase, polling]);
+  }, [checkPurchase]);
 
   const displayName = purchase?.name || null;
   const confirmed = purchase?.confirmed ?? false;
@@ -171,7 +196,20 @@ function SuccessContent() {
                 Confirming your purchase...
               </>
             ) : (
-              'Purchase processing'
+              <>
+                <span
+                  aria-hidden
+                  style={{
+                    display: 'inline-block',
+                    width: 6,
+                    height: 6,
+                    borderRadius: '50%',
+                    background: 'var(--crimson)',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                  }}
+                />
+                Payment received
+              </>
             )}
           </p>
 
@@ -189,6 +227,60 @@ function SuccessContent() {
             {memberNo ? `Member No. ${memberNo}` : ' '}
           </p>
         </div>
+
+        {/* Charged-but-still-finalizing notice — shown only when polling has
+            given up without a confirmation. Reassures the buyer their payment
+            went through and tells them exactly what to do next, instead of
+            leaving them on a frozen spinner. */}
+        {gaveUp && !confirmed && (
+          <div
+            role="status"
+            style={{
+              padding: '18px 22px',
+              background: '#fff',
+              border: '1px solid var(--light)',
+              borderLeft: '2px solid var(--crimson)',
+              marginBottom: '32px',
+            }}
+          >
+            <p
+              style={{
+                fontFamily: 'var(--cond)',
+                fontSize: '13px',
+                fontWeight: 700,
+                letterSpacing: '.06em',
+                textTransform: 'uppercase',
+                color: 'var(--crimson)',
+                margin: '0 0 8px',
+              }}
+            >
+              You&apos;re all set
+            </p>
+            <p
+              style={{
+                fontFamily: 'var(--serif)',
+                fontSize: '15px',
+                lineHeight: 1.7,
+                color: 'var(--ink)',
+                margin: 0,
+              }}
+            >
+              Your payment went through. Setting up your account can take a
+              couple of minutes to finalize on our end &mdash; nothing more for
+              you to do right now. Your receipt and login details are headed to
+              the email you purchased with; check your inbox (and spam) in a few
+              minutes, or refresh this page. If it still hasn&apos;t arrived,
+              email{' '}
+              <a
+                href="mailto:hello@aesdr.com"
+                style={{ color: 'var(--crimson)' }}
+              >
+                hello@aesdr.com
+              </a>{' '}
+              and we&apos;ll sort it out.
+            </p>
+          </div>
+        )}
 
         {/* Editorial overline */}
         <p
