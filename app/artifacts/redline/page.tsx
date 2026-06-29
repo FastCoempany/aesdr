@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
 
 import { createClient } from "@/utils/supabase/server";
+import { isAdminEmail } from "@/lib/admin";
 import { getCachedArtifact } from "@/lib/artifacts/generate";
 import type { RedlineData } from "@/lib/artifacts/types";
 import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
@@ -35,11 +35,10 @@ export default async function RedlinePage({
 
   if (!user) redirect("/login");
 
-  // Access gate: user must have picked this artifact OR purchased it OR have bypass
-  const cookieStore = await cookies();
-  const hasBypass = cookieStore.get("aesdr_bypass")?.value === "1";
+  // Access gate: user must have picked this artifact OR purchased it OR be an admin
+  const isAdmin = isAdminEmail(user?.email);
 
-  if (!hasBypass) {
+  if (!isAdmin) {
     const { data: pick } = await supabase
       .from("reveal_picks")
       .select("chosen_artifact")

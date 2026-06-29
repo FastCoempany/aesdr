@@ -19,17 +19,26 @@ export async function findUserIdByEmail(
   admin: SupabaseClient,
   email: string,
 ): Promise<string | null> {
-  const target = normalizeEmailForComparison(email);
-  if (!target) return null;
+  const targetLower = email.trim().toLowerCase();
+  if (!targetLower) return null;
+  const targetNorm = normalizeEmailForComparison(email);
   const perPage = 1000; // GoTrue clamps to its own max; the loop covers the rest.
+  // AUDIT (re-audit): prefer an EXACT (literal, lowercased) match; fall back to
+  // the inbox-normalized match only if no literal match exists anywhere — so two
+  // distinct accounts that merely normalize to the same string aren't confused.
+  let normalizedFallback: string | null = null;
   for (let page = 1; page <= 200; page++) {
     const { data, error } = await admin.auth.admin.listUsers({ page, perPage });
     const users = data?.users ?? [];
     if (error || users.length === 0) break;
-    const match = users.find(
-      (u) => u.email && normalizeEmailForComparison(u.email) === target,
-    );
-    if (match) return match.id;
+    for (const u of users) {
+      const ue = u.email?.toLowerCase();
+      if (!ue) continue;
+      if (ue === targetLower) return u.id;
+      if (normalizedFallback === null && normalizeEmailForComparison(u.email!) === targetNorm) {
+        normalizedFallback = u.id;
+      }
+    }
   }
-  return null;
+  return normalizedFallback;
 }

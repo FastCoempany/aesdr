@@ -125,6 +125,7 @@ export async function proxy(request: NextRequest) {
   if (
     needsPw &&
     pathname !== "/account/set-password" &&
+    pathname !== "/account/reset-password" &&
     !pathname.startsWith("/api/") &&
     !pathname.startsWith("/auth/") &&
     (pathname.startsWith("/dashboard") ||

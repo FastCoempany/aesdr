@@ -1,7 +1,5 @@
 import fs from "node:fs/promises";
 
-import { cookies } from "next/headers";
-
 import { getUnitFilePath } from "@/utils/content/catalog";
 import { createClient } from "@/utils/supabase/server";
 import { verifyPaidAccess } from "@/utils/access/verifyAccess";
@@ -21,20 +19,19 @@ export async function GET(
   _request: Request,
   { params }: { params: Promise<{ lessonId: string; unitId: string }> }
 ) {
-  const cookieStore = await cookies();
-  const hasBypass = cookieStore.get("aesdr_bypass")?.value === "1";
-  if (!hasBypass) {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return new Response("Sign in to view this lesson.", { status: 401 });
-    }
-    const ok = await verifyPaidAccess(supabase, user);
-    if (!ok) {
-      return new Response("This lesson requires an active purchase.", { status: 403 });
-    }
+  // AUDIT (adversarial re-audit 2026-06-29): gate on server-trusted access only.
+  // The old aesdr_bypass cookie was client-forgeable (document.cookie, === "1"),
+  // which would have re-opened this very paywall; admins bypass via isAdminEmail
+  // inside verifyPaidAccess, so no cookie is needed.
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return new Response("Sign in to view this lesson.", { status: 401 });
+  }
+  if (!(await verifyPaidAccess(supabase, user))) {
+    return new Response("This lesson requires an active purchase.", { status: 403 });
   }
 
   const { lessonId, unitId } = await params;

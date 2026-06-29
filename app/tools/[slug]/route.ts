@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 import { createClient } from "@/utils/supabase/server";
-import { cookies } from "next/headers";
+import { isAdminEmail } from "@/lib/admin";
 import { ALLOWED_TOOL_SLUGS, evaluateToolGate } from "@/utils/content/catalog";
 
 const TOOLS_ROOT = path.join(process.cwd(), "tools", "standalone-html");
@@ -82,23 +82,23 @@ export async function GET(
     return new Response("Tool not found", { status: 404 });
   }
 
-  // Auth + purchase gate
-  const cookieStore = await cookies();
-  const hasBypass = cookieStore.get("aesdr_bypass")?.value === "1";
+  // Auth + access gate. AUDIT (adversarial re-audit 2026-06-29): admins bypass
+  // via server-trusted isAdminEmail — the old aesdr_bypass cookie was
+  // client-forgeable (document.cookie, === "1") and would have opened this gate
+  // to anyone.
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!hasBypass) {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  if (!user) {
+    return Response.redirect(
+      new URL("/login?reason=no_purchase", _request.url),
+      302
+    );
+  }
 
-    if (!user) {
-      return Response.redirect(
-        new URL("/login?reason=no_purchase", _request.url),
-        302
-      );
-    }
-
+  if (!isAdminEmail(user.email)) {
     const ok = await userHasAccess(user.id, user.email);
     if (!ok) {
       return Response.redirect(
@@ -107,10 +107,8 @@ export async function GET(
       );
     }
 
-    // AUDIT (R3-CURR-1 / decision #9): the OPEN route previously gated on
-    // purchase only, so the /tools page opened the per-lesson + "finish all
-    // twelve" bonus tools immediately. Enforce the same completion gate the
-    // download route uses.
+    // AUDIT (R3-CURR-1 / decision #9): enforce the same completion gate the
+    // download route uses (the OPEN route previously gated on purchase only).
     const { data: rows } = await supabase
       .from("course_progress")
       .select("lesson_id, is_completed")

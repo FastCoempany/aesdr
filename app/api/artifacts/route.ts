@@ -2,10 +2,10 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60; // LLM call can take up to ~30s
 
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import * as Sentry from "@sentry/nextjs";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/server";
+import { isAdminEmail } from "@/lib/admin";
 import { generateArtifacts, getCachedArtifact } from "@/lib/artifacts/generate";
 import type { ArtifactType } from "@/lib/artifacts/types";
 import { rateLimit } from "@/lib/rate-limit";
@@ -21,8 +21,7 @@ async function hasCompletedCourse(
   supabase: SupabaseClient,
   user: User
 ): Promise<boolean> {
-  const cookieStore = await cookies();
-  if (cookieStore.get("aesdr_bypass")?.value === "1") return true;
+  if (isAdminEmail(user.email)) return true;
 
   const { data: progress } = await supabase
     .from("course_progress")

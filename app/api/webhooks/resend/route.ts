@@ -76,6 +76,15 @@ export async function POST(request: Request) {
 
   let reason: "bounce" | "complaint";
   if (evt.type === "email.bounced") {
+    // AUDIT (re-audit): only suppress on a PERMANENT (hard) bounce. A transient/
+    // soft bounce (full mailbox, greylisting, vacation throttle) or an
+    // undetermined one must NOT permanently kill a buyer's lifecycle email.
+    const bounceType = (
+      (evt.data as unknown as { bounce?: { type?: string } })?.bounce?.type ?? ""
+    ).toLowerCase();
+    if (bounceType === "transient" || bounceType === "undetermined") {
+      return NextResponse.json({ ignored: true, bounceType });
+    }
     reason = "bounce";
   } else if (evt.type === "email.complained") {
     reason = "complaint";

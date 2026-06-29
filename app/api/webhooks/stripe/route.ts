@@ -647,6 +647,17 @@ export async function POST(request: Request) {
             .update({ status: 'pending', refunded_at: null })
             .eq('purchase_id', restoredPurchase.id)
             .eq('status', 'refunded');
+
+          // AUDIT (re-audit): the dispute was WON, so the commission is owed —
+          // remove the OPEN 'dispute' clawback written on dispute.created so it
+          // doesn't net (under-pay) the affiliate's next payout. Only un-applied
+          // rows; an already-netted dispute would need a manual credit.
+          await supabase
+            .from('commission_clawbacks')
+            .delete()
+            .eq('purchase_id', restoredPurchase.id)
+            .eq('reason', 'dispute')
+            .is('applied_payout_id', null);
         }
       }
     }

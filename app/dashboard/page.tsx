@@ -55,20 +55,22 @@ export default async function Dashboard() {
     redirect("/account/select-role");
   }
 
-  // Purchase gate — bypass for founder (GhostButton cookie)
+  // Purchase gate — bypass for admins (founder-level access, server-trusted).
+  // Admins also bypass the sequential-lesson gate below (every lesson visible
+  // and clickable) for QA + content review.
+  const isAdmin = isAdminEmail(user?.email);
   const cookieStore = await cookies();
-  const hasBypass = cookieStore.get("aesdr_bypass")?.value === "1";
 
   // First-visit-after-purchase: route through onboarding so we capture the
   // implementation-intention study window. Dismissable via "Skip for now"
   // on the onboarding screen, which sets aesdr_onboarding_skipped. We keep
-  // the bypass cookie on the same allowlist — founder previews shouldn't
-  // get pushed into onboarding.
+  // admins on the same allowlist — founder previews shouldn't get pushed
+  // into onboarding.
   if (
     user &&
     !user.user_metadata?.onboarding_completed &&
     !cookieStore.get("aesdr_onboarding_skipped") &&
-    !hasBypass
+    !isAdmin
   ) {
     redirect("/account/onboarding");
   }
@@ -76,7 +78,7 @@ export default async function Dashboard() {
   // Parallelize purchase-access check, course progress, and reveal pick.
   // These are independent queries that all depend only on user.id.
   const [hasAccess, progressRes, pickRes] = await Promise.all([
-    user && !hasBypass ? verifyPaidAccess(supabase, user) : Promise.resolve(true),
+    user && !isAdmin ? verifyPaidAccess(supabase, user) : Promise.resolve(true),
     user
       ? supabase
           .from("course_progress")
@@ -97,9 +99,6 @@ export default async function Dashboard() {
   }
 
   const userRole = user?.user_metadata?.role as string | undefined;
-  // Admins bypass the sequential-lesson gate — every lesson is visible
-  // and clickable. Founder-level access for QA + content review.
-  const isAdmin = isAdminEmail(user?.email);
 
   const progressMap: Record<string, LessonProgressSummary> = {};
   if (progressRes.data) {
