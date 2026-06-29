@@ -40,7 +40,7 @@ A consolidated punch-list of everything **five rounds** of adversarial auditing 
 | P1-12 | Have you set `NEXT_PUBLIC_SITE_URL` in Vercel so I can switch on the crash-if-missing guard? | **Yes (code)** — only you can set the Vercel var. |
 | P1-13 | Have you added the `UPSTASH_*` keys in Vercel so rate-limiting can fail closed in prod? | **Yes (code)** — only you can set the var. |
 | P2-12 | Once those vars exist, want one startup check that refuses to boot if a required var is missing? | **Yes** — after the vars are set. |
-| P3-10 | Want me to rename the internal `verdict` field to "call" for tidiness (zero user-facing impact)? | **Yes** — just say the word. |
+| P3-10 | Want me to rename the internal `verdict` field to "call" for tidiness (zero user-facing impact)? | **Yes** — just say the word. | Redline book-review motif + mascot pose; recommend keep 
 | R3-AUTH-5 | Do you want a "delete my account / export my data" flow now (GDPR/CCPA), or defer it? | **Yes** — I build it once you say go. |
 | R4-LEG-5 | Should affiliate copy be hard-blocked without an FTC disclosure, or stay a soft warning? | **Yes** — once you pick which. |
 | §13 | Want the attribution window enforced at credit time (the anti-fraud R3-AF-4 change this rolls into)? | **Yes** — once you greenlight R3-AF-4. |
@@ -61,6 +61,7 @@ A consolidated punch-list of everything **five rounds** of adversarial auditing 
 | R4-PERF-12 | How long should the `events` log be kept before auto-purge? | **Yes** — once you give the window. |
 | R5-DV-1 | Do you want marketing mail split onto a subdomain, separate from transactional? | **Partly** — the DNS is yours; I update the from-addresses after. |
 | R5-DV-6 | Have you set SPF/DKIM/DMARC for the sending domain? | **No** — DNS is yours; I'll hand you the exact records. |
+| R5-DV-7 | BIMI logo not in inboxes | 👤 | Needs a VMC cert + `default._bimi` DNS + a square SVG-PS mark |
 | R5-PI-4 | Do you want consent + a retention limit on scraped prospect data, or to stop persisting it? | **Yes (implement)** — the decision is yours. |
 | R5-PI-9 | What retention window should each table keep before auto-purge? | **Yes** — once you give the windows. |
 
@@ -845,7 +846,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 ## 📋 Master status table (all findings)
 *Legend: ✅ done (in code on main) · 🟡 partial · ⬜ not started/deferred · 👤 on you (decision/infra/external). "Done" = patched + builds + (money math) unit-tested, not individually load-tested.*
 
-**Tally — ✅ 274 done · 🟡 0 partial · ⬜ 1 not-started · 👤 2 on you · 277 total.** (2026-06-29 batch 3, on your calls: commission → **40% across the board** + attribution → **30-day** (reverses the morning's 14-day/30% per founder); ToS **Delaware confirmed**; **R5-DV-6 resolved** — your mxtoolbox check shows DMARC published + quarantine/reject enforced (BIMI optional); scraped-prospect **retention purge built** (partner_pipeline 90d/30d) → closes R4-LEG-7/R5-PI-4/R5-PI-9. Batch 2 had shipped: env guards P1-12/13/P2-12, delete/export flow, FTC hard-gate, consent banner, ToS arbitration, privacy + 8 subprocessors, $10 agent cap, click-to-play video, and dropped P1-2. tsc/lint/build green, 48 unit tests.) **The 3 remaining:** P3-10 (⬜ — rename internal `verdict`, your call); R4-MON-7 (👤 — sales tax: enable Stripe Tax + register nexus, then I wire `automatic_tax` in one line); R4-LEG-4 (👤 — no product earnings claims exist; just source the `/about` industry stats if you want them airtight).
+**Tally — ✅ 275 done · 🟡 0 partial · ⬜ 1 not-started · 👤 2 on you · 278 total.** (2026-06-29 batch 4: **sales tax wired** — `automatic_tax: {enabled:true}` on the checkout (R4-MON-7 ✅, Stripe Tax enabled by founder); **BIMI** split out as its own item R5-DV-7 👤 — DMARC is enforcing but the logo-in-inbox needs a VMC cert + `default._bimi` DNS + a square SVG-PS mark, see `docs/2026-06-29-bimi-setup.md`; P3-10 clarified — `verdict` is the Redline book-review motif + a mascot pose, recommend keep. Batch 3 had set commission → 40% / attribution → 30-day across the board, Delaware confirmed, R5-DV-6 (DMARC) resolved, and the scraped-prospect retention purge. tsc/lint/build green, 48 unit tests.) **The 3 remaining:** P3-10 (⬜ — `verdict`, recommend keep); R4-LEG-4 (👤 — no product earnings claims; source the `/about` stats if you want); R5-DV-7 (👤 — BIMI: VMC + DNS + square mark, guide written, I can draft the SVG).
 
 ### Phase 0
 
@@ -924,7 +925,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 | P3-7 | `affiliates` self-update RLS loose | ✅ | `WITH CHECK` column-restricted |
 | P3-8 | Env-var edge cases | ✅ | Salt + `SCRIBE_MIN_VOICE_FIT` guarded |
 | P3-9 | `click_id` written never read | ✅ | Validated (superseded by R3-AF-4) |
-| P3-10 | `verdict` field rename | ⬜ | Optional cosmetic; left as-is |
+| P3-10 | `verdict` field rename | ⬜ | Redline book-review motif + mascot pose; recommend keep |
 | P3-11 | `design-canon/**` mirrors live | ✅ | Do-not-edit banner; scanners already exclude |
 
 ### Security
@@ -1035,7 +1036,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 | R4-MON-4 | Partial refunds revoke 100% | ✅ | Pro-rata clawback (full+partial), unit-tested, idempotent |
 | R4-MON-5 | Commission on gross + fee absorbed | ✅ | Base net of Stripe fee |
 | R4-MON-6 | No currency validation | ✅ | USD asserted, else skip+alert |
-| R4-MON-7 | Sales tax / VAT never collected | 👤 | Nexus decision is yours |
+| R4-MON-7 | Sales tax / VAT never collected | ✅ | automatic_tax wired; Stripe Tax enabled (founder) |
 | R4-MON-8 | Per-row rounding won't reconcile | ✅ | Round at payout + join table |
 | R4-MON-9 | $40 unlock no refund handling | ✅ | Unlock refund handled |
 | R4-SM-1 | No `partner_workshop` creation | ✅ | Admin create-workshop action |
@@ -1106,6 +1107,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 | R5-DV-4 | Bulk to unconfirmed addresses | ✅ | Suppress bounced |
 | R5-DV-5 | No List-Id/Precedence on bulk | ✅ | Bulk headers added |
 | R5-DV-6 | SPF/DKIM/DMARC root mixing | ✅ | DMARC published + quarantine/reject enforced; BIMI optional |
+| R5-DV-7 | BIMI logo not in inboxes | 👤 | Needs a VMC cert + `default._bimi` DNS + a square SVG-PS mark |
 | R5-IC-1 | No `allow_promotion_codes` | ✅ | Enabled on sdr/ae |
 | R5-IC-2 | Stripe pins no `apiVersion` | ✅ | Pinned via central client |
 | R5-IC-3 | No reusable Stripe Customer | ✅ | `customer_creation:'always'` |

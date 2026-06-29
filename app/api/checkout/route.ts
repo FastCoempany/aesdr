@@ -76,6 +76,12 @@ export async function POST(request: NextRequest) {
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: priceId, quantity: 1 }],
       mode: 'payment',
+      // R4-MON-7: Stripe Tax calculates + collects sales tax/VAT at checkout from
+      // the buyer's location and your registered jurisdictions. Requires Stripe
+      // Tax enabled in the dashboard (it is). Checkout auto-collects the billing
+      // address when this is on, and your products fall back to Stripe's default
+      // tax code unless you set one per product.
+      automatic_tax: { enabled: true },
       success_url: successUrl,
       cancel_url: cancelUrl,
       customer_email: email || undefined,
