@@ -142,6 +142,27 @@ export function buildRedirectUrl(
  * can't resolve the affiliate's email; callers that need to be strict should
  * treat a missing affiliate as an error upstream.
  */
+/**
+ * Normalize an email so two addresses that reach the SAME inbox compare equal
+ * (audit §8). Strips plus-addressing for every domain and dots in the local part
+ * for Gmail/Googlemail (which ignores them). Without this, an affiliate
+ * `johndoe@gmail.com` could self-buy as `john.doe+x@gmail.com` and collect their
+ * own commission — a raw lowercase compare would miss it.
+ */
+export function normalizeEmailForComparison(email: string): string {
+  const trimmed = email.trim().toLowerCase();
+  const at = trimmed.lastIndexOf("@");
+  if (at <= 0) return trimmed;
+  let local = trimmed.slice(0, at);
+  const domain = trimmed.slice(at + 1);
+  const plus = local.indexOf("+");
+  if (plus >= 0) local = local.slice(0, plus);
+  if (domain === "gmail.com" || domain === "googlemail.com") {
+    local = local.replace(/\./g, "");
+  }
+  return `${local}@${domain}`;
+}
+
 export async function isSelfReferral(
   affiliateSlug: string,
   buyerEmail: string | null | undefined
@@ -156,5 +177,10 @@ export async function isSelfReferral(
     .maybeSingle();
   const affiliateEmail = (data?.email as string | undefined) ?? null;
   if (!affiliateEmail) return false;
-  return affiliateEmail.trim().toLowerCase() === buyerEmail.trim().toLowerCase();
+  // §8: compare inbox-normalized forms, not raw strings, to catch gmail
+  // dot/plus-alias self-referrals.
+  return (
+    normalizeEmailForComparison(affiliateEmail) ===
+    normalizeEmailForComparison(buyerEmail)
+  );
 }

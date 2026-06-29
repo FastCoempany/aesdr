@@ -32,8 +32,9 @@ A consolidated punch-list of everything **five rounds** of adversarial auditing 
 
 ### 🔎 Adversarial review of the money/auth diffs — 14 findings
 - **Fixed:** §1 duplicate clawbacks on Stripe re-delivery (unique index + idempotent upsert) · §2 gross-vs-net reporting (`net_paid_cents`) · §3b missing clawback-update error checks · §4 null/`full` netting edge (extracted + unit-tested `applyClawbacks`) · §6 fee-currency guard · §12 dropped the `isNewPurchase` gate that lost attribution on retry.
+- **Fixed 2026-06-29:** §5 refund-reconciliation cron (idempotent replay of dropped `charge.refunded`) · §7 paginated `findUserIdByEmail` (no 50/200 ceiling) · §8 self-referral gmail dot/+alias normalization (unit-tested) · §9 a refund now claws back `processing` (mid-payout) attributions too · §10 refund matches the session that actually has a purchase across the PI · §11 `markPayoutPaid` nets open clawbacks (guarded so a batch payout isn't double-netted). Refund logic centralized in `lib/refunds.ts`, shared by the webhook + the cron.
 - **Verified already-safe:** §3a clawback concurrency (the attribution claim serializes payout batches per affiliate first).
-- **Open / lower-frequency (tracked):** §5 dropped-final-refund needs a reconciliation cron · §7 `provisionAffiliateIdentity` `listUsers(200)` scale ceiling · §8 self-referral gmail-alias bypass · §9 refund racing a mid-payout `processing` attribution · §10 refund matches first session for a PI · §11 `markPayoutPaid` doesn't net clawbacks · §13 `attribution_window_closes_at` written-never-read · §14 `resolveCommissionRate` sub-1% ambiguity.
+- **Open / lower-frequency:** §13 `attribution_window_closes_at` written-never-read — its real fix is **R3-AF-4** (attribution-window enforcement at credit time), so it's folded there rather than given a fake read · §14 `resolveCommissionRate` sub-1% ambiguity (awaits your call on whether a <1% rate is ever real).
 
 ## How to use it
 Work top-down by phase. Each item has a `[ ]` you tick when its **Done-when** is met. Don't start a later phase before its blockers (noted in **Depends**) are closed. Effort: **S** ≈ <½ day · **M** ≈ ½–2 days · **L** ≈ multi-day.
@@ -810,7 +811,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 ## 📋 Master status table (all findings)
 *Legend: ✅ done (in code on main) · 🟡 partial · ⬜ not started/deferred · 👤 on you (decision/infra/external). "Done" = patched + builds + (money math) unit-tested, not individually load-tested.*
 
-**Tally — ✅ 246 done · 🟡 0 partial · ⬜ 17 not-started/deferred · 👤 14 on you · 277 total.** (2026-06-29: the 5 partials — P0-12, P1-7, R4-MON-4, R4-LH-8, R5-DV-2 — are now closed; tsc/lint/build green, 31 unit tests pass.) The three ⬜ env-guards (P1-12, P1-13, P2-12) are deliberately held back: they're "crash if a var is missing" guards, and the live site is already on `main`, so they must land *together with* you setting the matching Vercel env vars — adding them blind would take prod down.
+**Tally — ✅ 254 done · 🟡 0 partial · ⬜ 9 not-started/deferred · 👤 14 on you · 277 total.** (2026-06-29: closed the 5 partials — P0-12, P1-7, R4-MON-4, R4-LH-8, R5-DV-2 — then the 8 no-input "just-do-it" ⬜s — §5, §7, §8, §9, §10, §11, R3-AUTH-4, P3-11; tsc/lint/build green, 40 unit tests pass.) The remaining 9 ⬜: three env-guards (P1-12, P1-13, P2-12) held back until you set the matching Vercel vars — they crash on a missing var, and the site is live; P1-2 (inbound-email) needs your provider call; §13 folds into R3-AF-4 (attribution-window enforcement, a separate [M]); P3-10/§14/R3-AUTH-5/R4-LEG-5 await your decision.
 
 ### Phase 0
 
@@ -890,7 +891,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 | P3-8 | Env-var edge cases | ✅ | Salt + `SCRIBE_MIN_VOICE_FIT` guarded |
 | P3-9 | `click_id` written never read | ✅ | Validated (superseded by R3-AF-4) |
 | P3-10 | `verdict` field rename | ⬜ | Optional cosmetic; left as-is |
-| P3-11 | `design-canon/**` mirrors live | ⬜ | Reference-only; not relabeled |
+| P3-11 | `design-canon/**` mirrors live | ✅ | Do-not-edit banner; scanners already exclude |
 
 ### Security
 
@@ -907,7 +908,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 | ID | Finding | Status | Note |
 |---|---|---|---|
 | R3-AUTH-3 | `/team` unreachable for owners | ✅ | Added to proxy allowlist |
-| R3-AUTH-4 | Password change not recovery-gated | ⬜ | Current-password re-auth not built |
+| R3-AUTH-4 | Password change not recovery-gated | ✅ | Current-password re-auth before change |
 | R3-AUTH-5 | No account deletion/export | ⬜ | DSAR pipeline deferred |
 | R3-AUTH-6 | Welcome bypasses password overlay | ✅ | Overlay enforced |
 | R3-AUTH-7 | PasswordOverlay retired palette | ✅ | Uses `var(--iris)` |
@@ -1123,13 +1124,13 @@ Stripe signature verification · refund→access revocation (the `status='active
 | §2 | Gross-vs-net reporting | ✅ | `net_paid_cents` |
 | §3 | Clawback concurrency + error checks | ✅ | Serialized (3a) + checks (3b) |
 | §4 | Null/`full` netting edge | ✅ | Extracted + unit-tested |
-| §5 | Dropped-final-refund | ⬜ | Needs reconciliation cron |
+| §5 | Dropped-final-refund | ✅ | Idempotent reconcile cron replays dropped refunds |
 | §6 | Fee-currency guard | ✅ | Guarded |
-| §7 | `listUsers(200)` scale ceiling | ⬜ | Tracked |
-| §8 | Self-referral gmail-alias bypass | ⬜ | Tracked |
-| §9 | Refund racing mid-payout attribution | ⬜ | Tracked |
-| §10 | Refund matches first session per PI | ⬜ | Tracked |
-| §11 | `markPayoutPaid` doesn't net clawbacks | ⬜ | Tracked |
+| §7 | `listUsers(200)` scale ceiling | ✅ | Paginated `findUserIdByEmail` (both call sites) |
+| §8 | Self-referral gmail-alias bypass | ✅ | Inbox-normalized compare (dots/+alias), unit-tested |
+| §9 | Refund racing mid-payout attribution | ✅ | `processing` attributions clawed back too |
+| §10 | Refund matches first session per PI | ✅ | Matches the session that has a purchase across the PI |
+| §11 | `markPayoutPaid` doesn't net clawbacks | ✅ | Nets clawbacks when `net_paid_cents` unset |
 | §12 | Dropped `isNewPurchase` lost attribution | ✅ | Gate removed |
-| §13 | `attribution_window_closes_at` unused | ⬜ | Written-never-read |
+| §13 | `attribution_window_closes_at` unused | ⬜ | Fix = R3-AF-4 window enforcement (folded there) |
 | §14 | `resolveCommissionRate` sub-1% ambiguity | ⬜ | Tracked |
