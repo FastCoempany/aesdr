@@ -845,7 +845,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 ## 📋 Master status table (all findings)
 *Legend: ✅ done (in code on main) · 🟡 partial · ⬜ not started/deferred · 👤 on you (decision/infra/external). "Done" = patched + builds + (money math) unit-tested, not individually load-tested.*
 
-**Tally — ✅ 254 done · 🟡 0 partial · ⬜ 9 not-started/deferred · 👤 14 on you · 277 total.** (2026-06-29: closed the 5 partials — P0-12, P1-7, R4-MON-4, R4-LH-8, R5-DV-2 — then the 8 no-input "just-do-it" ⬜s — §5, §7, §8, §9, §10, §11, R3-AUTH-4, P3-11; tsc/lint/build green, 40 unit tests pass.) The remaining 9 ⬜: three env-guards (P1-12, P1-13, P2-12) held back until you set the matching Vercel vars — they crash on a missing var, and the site is live; P1-2 (inbound-email) needs your provider call; §13 folds into R3-AF-4 (attribution-window enforcement, a separate [M]); P3-10/§14/R3-AUTH-5/R4-LEG-5 await your decision.
+**Tally — ✅ 270 done · 🟡 2 partial · ⬜ 1 not-started · 👤 4 on you · 277 total.** (2026-06-29 batch 2, on your decisions: env guards P1-12/P1-13/P2-12 now that the Vercel vars are confirmed set; P1-2 dropped — inbound email is handled externally; R3-AUTH-5 export/delete-account flow at `/account/data`; R4-LEG-5 FTC disclosure hard-gate; R4-LEG-6 ToS governing-law + arbitration; P0-15 privacy + 8 subprocessors; R4-LEG-2 cookie-consent banner; §13 14-day attribution enforced; §14 commission-rate guard; R4-PERF-1/2 $10/run cap; P0-16 video click-to-play; R4-PERF-12 events kept indefinitely + R5-DV-1 no subdomain split, both per your call. tsc/lint/build green, 48 unit tests.) **The 7 remaining:** P3-10 (⬜ — rename internal `verdict`, your call); R4-LEG-7 + R5-PI-4 (🟡 — scraped-prospect retention, recommendation given, your call); R4-MON-7 (sales tax — your nexus call); R4-LEG-4 (earnings substantiation — no product claims found; `/about` industry stats want a source); R5-DV-6 (SPF/DKIM/DMARC — verify in your DNS; I can't reach DNS from the sandbox); R5-PI-9 (per-table retention — recommendation given).
 
 ### Phase 0
 
@@ -865,15 +865,15 @@ Stripe signature verification · refund→access revocation (the `status='active
 | P0-12 | CAN-SPAM across lifecycle email | ✅ | Footer link carries `?email=`; Resend bounce webhook live |
 | P0-13 | Paying buyer locked out | ✅ | Branches on createError; returns 500 |
 | P0-14 | No 1099/W-9 tax handling | ✅ | Stripe files NECs; copy corrected |
-| P0-15 | Privacy policy materially false | 👤 | Disclose processors or pull trackers |
-| P0-16 | 78MB video auto-plays | 👤 | Re-encode + serve from Blob/Mux |
+| P0-15 | Privacy policy materially false | ✅ | 8 subprocessors + lawful basis disclosed |
+| P0-16 | 78MB video auto-plays | ✅ | Click-to-play (autoplay removed); re-encode optional |
 
 ### Phase 1
 
 | ID | Finding | Status | Note |
 |---|---|---|---|
 | P1-1 | Payout in killable Server Action | ✅ | Route handler + maxDuration + claim |
-| P1-2 | Inbound-email webhook absent | ⬜ | External worker unconfirmed; not built |
+| P1-2 | Inbound-email webhook absent | ✅ | Handled externally (Antaeus gmail); not needed in-app |
 | P1-3 | Enterprise-intent event mismatch | ✅ | Event added to bright set |
 | P1-4 | Iframe path no `course_completed` | ✅ | Emitted from `/api/progress/complete` |
 | P1-5 | `retention` cron unscheduled | ✅ | Wired (schedule off for cost) |
@@ -883,8 +883,8 @@ Stripe signature verification · refund→access revocation (the `status='active
 | P1-9 | Workshop reminders to placeholder | ✅ | Per-registrant fan-out |
 | P1-10 | Non-atomic webhook idempotency | ✅ | Atomic first-processing claim |
 | P1-11 | `partner_kit_*` column drift | ✅ | Code/migration column names agree |
-| P1-12 | `NEXT_PUBLIC_SITE_URL` defaults to prod | ⬜ | Still defaults at ~15 sites; guard must land *with* the Vercel env or it crashes prod |
-| P1-13 | Rate-limit evaporates without Upstash | ⬜ | Still fails open (`rate-limit.ts:121`); require-Upstash must land *with* `UPSTASH_*` set |
+| P1-12 | `NEXT_PUBLIC_SITE_URL` defaults to prod | ✅ | getSiteUrl() guard; throws on a misconfigured deploy |
+| P1-13 | Rate-limit evaporates without Upstash | ✅ | Require Upstash in prod; in-memory only as outage fallback |
 | P1-14 | Strike counter re-pause trap | ✅ | Strikes since last reactivation |
 | P1-15 | Diagnostic scores always 0% | ✅ | Keys aligned + fixture test |
 | P1-16 | $40 unlock grants nonexistent artifact | ✅ | Downstream of P0-5 generation |
@@ -905,7 +905,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 | P2-9 | Payout reconciliation gaps | ✅ | Claim + live Stripe re-check |
 | P2-10 | No paused-affiliate recovery | ✅ | Reactivate path + email |
 | P2-11 | No agent-pipeline monitoring | ✅ | Sentry across cron catches |
-| P2-12 | Env-var missing behavior split | ⬜ | No central required-env check; only ad-hoc throws (Stripe, email-finder) |
+| P2-12 | Env-var missing behavior split | ✅ | lib/env requireEnv() — one fail-loud path |
 | P2-13 | 14-day refund window unenforced | ✅ | Age check on refund path |
 | P2-14 | Free archetype-map delivery vs promise | ✅ | Asset reconciled to copy |
 | P2-15 | Weekly-nudge opt-in never acted | ✅ | Falls out of retention schedule |
@@ -943,7 +943,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 |---|---|---|---|
 | R3-AUTH-3 | `/team` unreachable for owners | ✅ | Added to proxy allowlist |
 | R3-AUTH-4 | Password change not recovery-gated | ✅ | Current-password re-auth before change |
-| R3-AUTH-5 | No account deletion/export | ⬜ | DSAR pipeline deferred |
+| R3-AUTH-5 | No account deletion/export | ✅ | Export + delete account at /account/data |
 | R3-AUTH-6 | Welcome bypasses password overlay | ✅ | Overlay enforced |
 | R3-AUTH-7 | PasswordOverlay retired palette | ✅ | Uses `var(--iris)` |
 | R3-AUTH-8 | Signup success copy lies | ✅ | Copy corrected |
@@ -1058,14 +1058,14 @@ Stripe signature verification · refund→access revocation (the `status='active
 | R4-DR-11 | `safeSend` false not throw | ✅ | Send failure surfaced |
 | R4-DR-12 | `weeklyFraming` divide-by-total | ✅ | Zero-lesson guarded |
 | R4-LEG-1 | 40% vs "30% net" contract | ✅ | Honors contract; calculator fixed |
-| R4-LEG-2 | Trackers fire EU/UK no consent | 👤 | Consent banner is yours to add |
+| R4-LEG-2 | Trackers fire EU/UK no consent | ✅ | Consent banner; analytics opt-in for all |
 | R4-LEG-3 | Policy promises erasure, no DSAR | ✅ | Copy aligned to capability |
 | R4-LEG-4 | No FTC earnings substantiation | 👤 | Need benchmark source |
-| R4-LEG-5 | FTC disclosure not enforced | ⬜ | Still warden-only, not gated |
-| R4-LEG-6 | ToS no governing-law/arbitration | 👤 | Legal review warranted |
-| R4-LEG-7 | Scraped-PII no GDPR Art.14 basis | 👤 | Lawful-basis decision yours |
-| R4-PERF-1 | Scout sweep no token cap | 👤 | Needs a $-per-sweep number |
-| R4-PERF-2 | dossier-enrich uncapped | 👤 | Needs a $-per-brief number |
+| R4-LEG-5 | FTC disclosure not enforced | ✅ | FTC disclosure hard-blocks copy submission |
+| R4-LEG-6 | ToS no governing-law/arbitration | ✅ | Delaware* + AAA arbitration + class waiver |
+| R4-LEG-7 | Scraped-PII no GDPR Art.14 basis | 🟡 | App-user basis written; scraped-prospect call pending |
+| R4-PERF-1 | Scout sweep no token cap | ✅ | $10/run ceiling |
+| R4-PERF-2 | dossier-enrich uncapped | ✅ | $10/run ceiling |
 | R4-PERF-3 | Lean caps in dead module | ✅ | Caps moved to live engines |
 | R4-PERF-4 | Admin reads all rows in JS | ✅ | SQL aggregate/RPC |
 | R4-PERF-5 | Retention N+1 reads, no index | ✅ | Batched + indexed |
@@ -1075,7 +1075,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 | R4-PERF-9 | Oversized raw PNG/mascot assets | ✅ | `next/image` + formats |
 | R4-PERF-10 | `prospect_events` unbounded + count | ✅ | Indexed |
 | R4-PERF-11 | Admin pulls whole clicks table | ✅ | Aggregate in SQL |
-| R4-PERF-12 | `events` log no TTL | 👤 | Retention window is yours |
+| R4-PERF-12 | `events` log no TTL | ✅ | Indefinite (founder decision) |
 | R4-PERF-13 | Stale model re-issues emit | ✅ | Error inspected |
 | R4-PERF-14 | maxDuration vs batch overrun | ✅ | Sized / resumable |
 | R4-PERF-15 | HTML built twice per send | ✅ | Single build |
@@ -1100,7 +1100,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 | R5-OB-4 | Login ignores `?email=` | ✅ | Email prefilled |
 | R5-OB-5 | Empty dashboard no orientation | ✅ | First-run orientation |
 | R5-OB-6 | Save & Exit no synchronous save | ✅ | Sync save + "Saved" |
-| R5-DV-1 | One root sending domain | 👤 | Subdomain split is your DNS |
+| R5-DV-1 | One root sending domain | ✅ | No split now (founder decision) |
 | R5-DV-2 | No Resend bounce webhook | ✅ | `/api/webhooks/resend` svix-verified → suppressions |
 | R5-DV-3 | Replies depend on human triage | ✅ | Suppression path built |
 | R5-DV-4 | Bulk to unconfirmed addresses | ✅ | Suppress bounced |
@@ -1142,7 +1142,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 | R5-PI-1 | Deal free-text to PostHog | ✅ | Not sent as props |
 | R5-PI-2 | Session replay unmasked | ✅ | maskAll inputs/text + media |
 | R5-PI-3 | Buyer name to Anthropic | ✅ | Name dropped from prompt |
-| R5-PI-4 | Scraped PII chained, persisted | 👤 | Consent/retention decision |
+| R5-PI-4 | Scraped PII chained, persisted | 🟡 | Retention call pending (advised) |
 | R5-PI-5 | Full error objects logged | ✅ | Log `.message` only |
 | R5-PI-6 | Raw email in console label | ✅ | Removed |
 | R5-PI-7 | PostHog captures full URL | ✅ | Slug/params scrubbed |
@@ -1166,5 +1166,5 @@ Stripe signature verification · refund→access revocation (the `status='active
 | §10 | Refund matches first session per PI | ✅ | Matches the session that has a purchase across the PI |
 | §11 | `markPayoutPaid` doesn't net clawbacks | ✅ | Nets clawbacks when `net_paid_cents` unset |
 | §12 | Dropped `isNewPurchase` lost attribution | ✅ | Gate removed |
-| §13 | `attribution_window_closes_at` unused | ⬜ | Fix = R3-AF-4 window enforcement (folded there) |
-| §14 | `resolveCommissionRate` sub-1% ambiguity | ⬜ | Tracked |
+| §13 | `attribution_window_closes_at` unused | ✅ | 14-day window enforced at credit time |
+| §14 | `resolveCommissionRate` sub-1% ambiguity | ✅ | Rejects ≤1% / ≥100% resolved rate |
