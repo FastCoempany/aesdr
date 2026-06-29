@@ -291,7 +291,7 @@ export async function POST(request: Request) {
       }
 
       try {
-        await sendReceiptEmail(email, name, tier, amountCents, session.id);
+        await sendReceiptEmail(email, name, tier, amountCents, taxCents, session.id);
       } catch (err) {
         Sentry.captureException(err, { extra: { handler: 'stripe-webhook', step: 'receipt_email' } });
       }

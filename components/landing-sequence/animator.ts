@@ -620,6 +620,37 @@ export function runAnimator(refs: AnimatorRefs, opts: AnimatorOptions): () => vo
   /* ─────────── Boot ─────────── */
 
   setHeroDescriptor(role);
+
+  // Reduced-motion short-circuit. Two independent signals, OR'd:
+  //   1. OS-level `(prefers-reduced-motion: reduce)` — the global CSS rule in
+  //      app/globals.css honors this for CSS animations, but this JS-driven
+  //      typewriter (and its scroll lock) is invisible to CSS, so we must
+  //      check it here too.
+  //   2. The in-product A11yToggle, which sets `data-reduce-motion="true"` on
+  //      <html> (see components/A11yToggle.tsx). Honors users without an
+  //      OS-level setting.
+  // When either is on, skip the typewriter + scroll lock entirely and jump
+  // straight to the static hero — exactly the skip-button end state. Note we
+  // never call lockScroll() on this path, so the page stays scrollable.
+  const reduceMotion =
+    (typeof window !== "undefined" &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches) ||
+    (typeof document !== "undefined" &&
+      document.documentElement.getAttribute("data-reduce-motion") === "true");
+
+  if (reduceMotion) {
+    opts.onSkip();
+    unlockScroll(role);
+    return () => {
+      paused = true;
+      clearTimers();
+      for (const off of listeners) off();
+      listeners.length = 0;
+      restoreScroll();
+    };
+  }
+
   lockScroll();
 
   // 60-second safety: if anything truly stalls, jump to hero. Cancelled

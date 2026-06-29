@@ -115,6 +115,33 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url, 302);
   }
 
+  // AUDIT (#5, adversarial pass): a temp-password user must set a real password
+  // before using the app. Per-page checks missed /account, /account/data,
+  // /reveal, and the tool routes — enforce it once here across the authenticated
+  // app areas (post-launch; pre-launch the coming-soon gate above already holds
+  // everything). /account/set-password, /auth/*, and /api/* are exempt so the
+  // set-password flow itself and programmatic routes aren't redirect-looped.
+  const needsPw = user?.user_metadata?.needs_password_change === true;
+  if (
+    needsPw &&
+    pathname !== "/account/set-password" &&
+    !pathname.startsWith("/api/") &&
+    !pathname.startsWith("/auth/") &&
+    (pathname.startsWith("/dashboard") ||
+      pathname.startsWith("/course") ||
+      pathname.startsWith("/tools") ||
+      pathname.startsWith("/artifacts") ||
+      pathname.startsWith("/reveal") ||
+      pathname.startsWith("/team") ||
+      pathname.startsWith("/account") ||
+      pathname.startsWith("/affiliates"))
+  ) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/account/set-password";
+    url.search = "";
+    return NextResponse.redirect(url, 302);
+  }
+
   // --- Route access control ---
   if (PUBLIC_PATHS.includes(pathname)) {
     return supabaseResponse;
