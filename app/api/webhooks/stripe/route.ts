@@ -14,6 +14,8 @@ import {
 // AUDIT (R4-MON-2/#1/#27): commission math now lives in one place and derives
 // the rate from the affiliate's own commission_pct column.
 import { computeCommissionCents, resolveCommissionRate } from '@/lib/commission';
+// AUDIT (R4-MON-4 / decision #28): pure, unit-tested pro-rata refund math.
+import { proRataClawbackCents } from '@/lib/payout-math';
 // AUDIT (IC-2/#54): centralized, apiVersion-pinned Stripe client.
 import { mapAccountStatus, getStripe } from '@/lib/stripe-connect';
 import { rateLimit, getClientIP } from '@/lib/rate-limit';
@@ -455,79 +457,119 @@ export async function POST(request: Request) {
       });
       const sessionId = sessions.data[0]?.id;
       if (sessionId) {
-        // AUDIT (R4-MON-4/#4): distinguish a FULL refund from a PARTIAL one.
-        // The old code always revoked the whole purchase and 100% of the
-        // commission regardless of how much was refunded. Only a full refund
-        // (amount_refunded >= the captured/charged amount) should revoke
-        // access + flip attribution. On a partial refund we keep access and
-        // leave commission alone (no proration here — see note below).
+        // AUDIT (R4-MON-4 / decision #28): reduce commission PRO-RATA on a
+        // refund. A full refund (amount_refunded >= captured) also revokes
+        // access; a partial refund keeps access but still claws back the
+        // refunded proportion of the affiliate's commission. amount_refunded is
+        // CUMULATIVE, so proRataClawbackCents + GREATEST(existing, target) makes
+        // incremental refunds monotonic and a webhook redelivery a no-op.
         const capturedCents = charge.amount_captured || charge.amount || 0;
         const refundedCents = charge.amount_refunded || 0;
         const isFullRefund = capturedCents > 0 && refundedCents >= capturedCents;
 
-        if (!isFullRefund) {
-          // AUDIT (R4-MON-4): partial refund — access + commission deliberately
-          // untouched. Proration of commission against a partial refund is a
-          // money decision (decision #28) and is intentionally NOT done here;
-          // do not over-engineer it in the webhook.
-          Sentry.captureMessage('[webhook] Partial refund — access + commission left intact', {
-            level: 'info',
-            extra: { sessionId, refundedCents, capturedCents },
-          });
-        } else {
-          const { data: refundedPurchase, error } = await supabase
-            .from('purchases')
-            .update({ status: 'refunded' })
-            .eq('stripe_session_id', sessionId)
-            .select('id')
-            .maybeSingle();
-          if (error) console.error('[webhook] Refund status update failed:', error.message);
+        const { data: purchase } = await supabase
+          .from('purchases')
+          .select('id')
+          .eq('stripe_session_id', sessionId)
+          .maybeSingle();
 
-          if (refundedPurchase?.id) {
-            // AUDIT (P0-2): if an attribution was already 'paid', the money has
-            // gone out the door — flipping its status here does NOT recover it.
-            // Write a clawback ledger row (20260622_commission_clawbacks.sql);
-            // runAffiliatePayoutBatch nets it against the affiliate's next payout.
-            const { data: paidAttrs } = await supabase
-              .from('affiliate_attributions')
-              .select('id, affiliate_slug, commission_amount_cents')
-              .eq('purchase_id', refundedPurchase.id)
-              .eq('status', 'paid');
-            if (paidAttrs && paidAttrs.length > 0) {
-              const clawbackRows = paidAttrs
-                .filter((a) => (a.commission_amount_cents ?? 0) > 0)
-                .map((a) => ({
+        if (purchase?.id) {
+          const purchaseId = purchase.id;
+          const { data: attrs } = await supabase
+            .from('affiliate_attributions')
+            .select('id, affiliate_slug, commission_amount_cents, status')
+            .eq('purchase_id', purchaseId);
+          const paidAttrs = (attrs ?? []).filter(
+            (a) => a.status === 'paid' && (a.commission_amount_cents ?? 0) > 0,
+          );
+          const unpaidAttrs = (attrs ?? []).filter(
+            (a) => a.status === 'pending' || a.status === 'cleared',
+          );
+
+          // Read-then-GREATEST-then-upsert a pro-rata 'refund' clawback for a set
+          // of attributions. Overwrites to max(existing, target) so a redelivery
+          // or a smaller out-of-order event never LOWERS an existing clawback.
+          // (Concurrency note: two refund webhooks for the same charge could
+          // interleave this read/write; partial refunds are rare enough that the
+          // tiny race is acceptable — the unique index still prevents dup rows.)
+          const writeProRataClawbacks = async (
+            rows: { id: string; affiliate_slug: string | null; commission_amount_cents: number | null }[],
+            label: string,
+          ) => {
+            if (rows.length === 0) return;
+            const ids = rows.map((a) => a.id);
+            const { data: existing } = await supabase
+              .from('commission_clawbacks')
+              .select('attribution_id, amount_cents')
+              .eq('reason', 'refund')
+              .in('attribution_id', ids);
+            const existingMap = new Map(
+              (existing ?? []).map((r) => [r.attribution_id, r.amount_cents ?? 0]),
+            );
+            const upsertRows = rows
+              .map((a) => {
+                const target = proRataClawbackCents(
+                  a.commission_amount_cents ?? 0,
+                  refundedCents,
+                  capturedCents,
+                );
+                const amount = Math.max(existingMap.get(a.id) ?? 0, target);
+                return {
                   affiliate_slug: a.affiliate_slug,
                   attribution_id: a.id,
-                  purchase_id: refundedPurchase.id,
-                  amount_cents: a.commission_amount_cents,
+                  purchase_id: purchaseId,
+                  amount_cents: amount,
                   reason: 'refund',
-                }));
-              if (clawbackRows.length > 0) {
-                const { error: cbErr } = await supabase
-                  .from('commission_clawbacks')
-                  // AUDIT (review #1): upsert on (attribution_id, reason) so a
-                  // Stripe re-delivery of the refund/dispute event is a no-op
-                  // instead of inserting a duplicate clawback (over-clawing N×).
-                  .upsert(clawbackRows, { onConflict: 'attribution_id,reason', ignoreDuplicates: true });
-                if (cbErr) {
-                  Sentry.captureMessage('[webhook] clawback ledger insert failed (refund)', {
-                    level: 'error',
-                    extra: { sessionId, purchaseId: refundedPurchase.id, error: cbErr.message },
-                  });
-                }
-              }
-            }
-
-            // Flip any not-yet-paid matching attribution to refunded.
-            await supabase
-              .from('affiliate_attributions')
-              .update({
-                status: 'refunded',
-                refunded_at: new Date().toISOString(),
+                };
               })
-              .eq('purchase_id', refundedPurchase.id)
-              .in('status', ['pending', 'cleared']);
+              .filter((r) => r.amount_cents > 0);
+            if (upsertRows.length === 0) return;
+            const { error: cbErr } = await supabase
+              .from('commission_clawbacks')
+              .upsert(upsertRows, { onConflict: 'attribution_id,reason' });
+            if (cbErr) {
+              Sentry.captureMessage(`[webhook] clawback ledger upsert failed (${label})`, {
+                level: 'error',
+                extra: { sessionId, purchaseId, error: cbErr.message },
+              });
+            }
+          };
+
+          // PAID attributions: the money is out the door — claw back the
+          // refunded proportion (full refund → fraction 1.0 → whole commission).
+          await writeProRataClawbacks(paidAttrs, 'refund, paid');
+
+          if (isFullRefund) {
+            const { error: pErr } = await supabase
+              .from('purchases')
+              .update({ status: 'refunded' })
+              .eq('id', purchaseId);
+            if (pErr) console.error('[webhook] Refund status update failed:', pErr.message);
+
+            if (unpaidAttrs.length > 0) {
+              const unpaidIds = unpaidAttrs.map((a) => a.id);
+              // Not-yet-paid commission is simply withdrawn, not clawed back.
+              await supabase
+                .from('affiliate_attributions')
+                .update({ status: 'refunded', refunded_at: new Date().toISOString() })
+                .in('id', unpaidIds);
+              // An excluded (refunded + unpaid) attribution must NOT carry a
+              // clawback — it would net against the affiliate's OTHER payouts.
+              // Drop any pro-rata clawback written while this was still partial.
+              await supabase
+                .from('commission_clawbacks')
+                .delete()
+                .eq('reason', 'refund')
+                .in('attribution_id', unpaidIds);
+            }
+          } else {
+            // PARTIAL refund: keep access; reduce not-yet-paid commission
+            // pro-rata via the same ledger so the next payout nets it.
+            await writeProRataClawbacks(unpaidAttrs, 'refund, partial unpaid');
+            Sentry.captureMessage('[webhook] Partial refund — access kept, commission reduced pro-rata', {
+              level: 'info',
+              extra: { sessionId, refundedCents, capturedCents },
+            });
           }
         }
       }

@@ -10,7 +10,10 @@
 
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/utils/supabase/admin";
-import { sendAffiliateApplicationNotification } from "@/lib/email";
+import {
+  sendAffiliateApplicationNotification,
+  sendAffiliateApplicationReceivedEmail,
+} from "@/lib/email";
 import { hashIp } from "@/lib/hash-ip";
 
 export const runtime = "nodejs";
@@ -139,6 +142,11 @@ export async function POST(request: Request) {
     ipHash,
     submittedAt: new Date().toISOString(),
   });
+
+  // Fire-and-forget acknowledgement to the applicant (P1-7). Same contract as
+  // the founder notification above: safeSend swallows any failure, and we don't
+  // await it into the response path — a send error never fails the application.
+  void sendAffiliateApplicationReceivedEmail(data.applicantEmail, data.applicantName);
 
   return NextResponse.json({ ok: true });
 }

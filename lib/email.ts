@@ -46,6 +46,18 @@ const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://aesdr.com';
 // to hello@ instead. A real mailing address MUST be added to both footers
 // before any non-transactional bulk send to stay CAN-SPAM/CASL compliant.
 const UNSUBSCRIBE_URL = `${SITE}/unsubscribe`;
+
+// P0-12: the VISIBLE footer "Unsubscribe" link must carry ?email=<recipient> so
+// a human clicking it lands on /unsubscribe pre-identified — same per-recipient
+// shape as the List-Unsubscribe header in bulkHeaders(). When no recipient is in
+// scope (transactional sends with no single addressee) we fall back to the bare
+// URL, which still resolves.
+function unsubscribeLink(email?: string) {
+  return email
+    ? `${UNSUBSCRIBE_URL}?email=${encodeURIComponent(email)}`
+    : UNSUBSCRIBE_URL;
+}
+
 const UNSUBSCRIBE_HEADERS = {
   'List-Unsubscribe': `<${UNSUBSCRIBE_URL}>`,
   'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
@@ -299,6 +311,43 @@ function affiliateApplicationText(p: AffiliateApplicationPayload): string {
     "",
     `Review in Supabase: affiliate_applications table.`,
   ].join("\n");
+}
+
+// ─── Affiliate Application Acknowledgement (to the applicant) ───
+// AUDIT (P1-7): closes the loop the moment an application lands. The founder
+// notification (above) goes to EMAIL_RECIPIENT; this one reassures the applicant
+// that a human will read it and follow up. Fire-and-forget from the apply route.
+export async function sendAffiliateApplicationReceivedEmail(
+  to: string,
+  name?: string,
+): Promise<boolean> {
+  const html = affiliateApplicationReceivedHtml(to, name);
+  return safeSend(`affiliate-application-received to ${to}`, () =>
+    getResend().emails.send({
+      from: FROM,
+      to,
+      headers: UNSUBSCRIBE_HEADERS,
+      subject: "We've got your AESDR Affiliate Program application",
+      html,
+      text: htmlToText(html),
+    })
+  );
+}
+
+function affiliateApplicationReceivedHtml(email: string, name?: string): string {
+  const greeting = name && name.trim() ? `Hey ${esc(name.trim())},` : "Hey,";
+  return `
+<div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
+  <p style="margin:0 0 14px;font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
+    AESDR · Affiliate Program · Application received
+  </p>
+  <p>${greeting}</p>
+  <p>Your application to the AESDR Affiliate Program landed — thank you. This is just the confirmation that it's in.</p>
+  <p>A real person reads every one, so it takes a little time rather than a few seconds. Once yours has had that read, we'll follow up by email either way.</p>
+  <p>Nothing you need to do in the meantime. If you want to add anything to your application, just reply to this email — it reaches a person.</p>
+  <p style="margin-top:24px">— Antaeus</p>
+  ${footer(email)}
+</div>`;
 }
 
 // ─── Affiliate hub lifecycle emails ───
@@ -1266,7 +1315,7 @@ function welcomeHtml(name: string, email: string, loginUrl: string, tempPassword
         <!-- Footer -->
         <tr>
           <td style="padding:0 48px 32px 48px;">
-            ${emailFooterInner()}
+            ${emailFooterInner(email)}
           </td>
         </tr>
 
@@ -1294,7 +1343,7 @@ export async function sendReceiptEmail(
   amountCents: number,
   sessionId?: string,
 ) {
-  const html = receiptHtml(name, tier, amountCents, sessionId);
+  const html = receiptHtml(name, tier, amountCents, sessionId, to);
   return safeSend(`receipt to ${to}`, () =>
     getResend().emails.send(
       {
@@ -1334,7 +1383,7 @@ function receiptPlanLabel(tier: string): string {
   }
 }
 
-function receiptHtml(name: string, tier: string, amountCents: number, sessionId?: string) {
+function receiptHtml(name: string, tier: string, amountCents: number, sessionId?: string, email?: string) {
   const safeName = esc(name);
   // R4-DR-10: coerce defensively so a non-number never renders "$NaN".
   const amount = ((Number(amountCents) || 0) / 100).toFixed(2);
@@ -1451,7 +1500,7 @@ function receiptHtml(name: string, tier: string, amountCents: number, sessionId?
         <!-- Footer -->
         <tr>
           <td style="padding:0 48px 32px 48px;">
-            ${emailFooterInner()}
+            ${emailFooterInner(email)}
           </td>
         </tr>
 
@@ -1476,13 +1525,13 @@ export async function sendManagerArchetypeMap(to: string) {
       to,
       headers: bulkHeaders(to),
       subject: "Your Manager Archetype Map",
-      html: managerArchetypeMapHtml(),
-      text: htmlToText(managerArchetypeMapHtml()),
+      html: managerArchetypeMapHtml(to),
+      text: htmlToText(managerArchetypeMapHtml(to)),
     })
   );
 }
 
-function managerArchetypeMapHtml() {
+function managerArchetypeMapHtml(email?: string) {
   const archetypes = [
     {
       name: "The Coach",
@@ -1561,7 +1610,7 @@ function managerArchetypeMapHtml() {
   <p style="margin:0;color:#6B6B6B;font-size:14px">
     — Antaeus
   </p>
-  ${footer()}
+  ${footer(email)}
 </div>`;
 }
 
@@ -1583,8 +1632,8 @@ export async function sendLessonCompletedNudge(
       to,
       headers: bulkHeaders(to),
       subject: `Next: ${nextLessonTitle} (~${nextMinutes} min)`,
-      html: lessonCompletedNudgeHtml(name, nextLessonId, nextLessonTitle, nextMinutes),
-      text: htmlToText(lessonCompletedNudgeHtml(name, nextLessonId, nextLessonTitle, nextMinutes)),
+      html: lessonCompletedNudgeHtml(name, nextLessonId, nextLessonTitle, nextMinutes, to),
+      text: htmlToText(lessonCompletedNudgeHtml(name, nextLessonId, nextLessonTitle, nextMinutes, to)),
     })
   );
 }
@@ -1593,7 +1642,8 @@ function lessonCompletedNudgeHtml(
   name: string,
   nextLessonId: string,
   nextLessonTitle: string,
-  nextMinutes: number
+  nextMinutes: number,
+  email?: string
 ) {
   const safeName = esc(name);
   const safeTitle = esc(nextLessonTitle);
@@ -1610,7 +1660,7 @@ function lessonCompletedNudgeHtml(
     <a href="${SITE}/course/${safeLesson}" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">Open ${safeTitle} →</a>
   </p>
   <p style="margin-top:24px">— Antaeus</p>
-  ${footer()}
+  ${footer(email)}
 </div>`;
 }
 
@@ -1631,13 +1681,13 @@ export async function sendWeeklyFraming(
       to,
       headers: bulkHeaders(to),
       subject: "What this week of the course asks of you",
-      html: weeklyFramingHtml(name, completed, total),
-      text: htmlToText(weeklyFramingHtml(name, completed, total)),
+      html: weeklyFramingHtml(name, completed, total, to),
+      text: htmlToText(weeklyFramingHtml(name, completed, total, to)),
     })
   );
 }
 
-function weeklyFramingHtml(name: string, completed: number, total: number) {
+function weeklyFramingHtml(name: string, completed: number, total: number, email?: string) {
   const safeName = esc(name);
   // R4-DR-12: guard the thirds math. A non-positive `total` (bad/empty data)
   // would otherwise divide by zero and mislabel a zero-lesson learner as being
@@ -1668,7 +1718,7 @@ function weeklyFramingHtml(name: string, completed: number, total: number) {
     <a href="${SITE}/dashboard" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">Open the dashboard →</a>
   </p>
   <p style="margin-top:24px">— Antaeus</p>
-  ${footer()}
+  ${footer(email)}
 </div>`;
 }
 
@@ -1684,13 +1734,13 @@ export async function sendWinBack(to: string, name: string) {
       to,
       headers: bulkHeaders(to),
       subject: "Is this still useful — or should we close the loop?",
-      html: winBackHtml(name),
-      text: htmlToText(winBackHtml(name)),
+      html: winBackHtml(name, to),
+      text: htmlToText(winBackHtml(name, to)),
     })
   );
 }
 
-function winBackHtml(name: string) {
+function winBackHtml(name: string, email?: string) {
   const safeName = esc(name);
   return `
 <div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
@@ -1713,7 +1763,7 @@ function winBackHtml(name: string) {
   </p>
   <p style="font-size:14px;color:#6B6B6B">If none of those land, no further emails on this — promise. The course is yours; it'll be here if and when you come back.</p>
   <p style="margin-top:24px">— Antaeus</p>
-  ${footer()}
+  ${footer(email)}
 </div>`;
 }
 
@@ -1731,13 +1781,13 @@ export async function sendAlumniReengagement(to: string, name: string, monthMark
         monthMark === 6
           ? "Six months in — what stuck?"
           : "A year of being AESDR-trained",
-      html: alumniReengagementHtml(name, monthMark),
-      text: htmlToText(alumniReengagementHtml(name, monthMark)),
+      html: alumniReengagementHtml(name, monthMark, to),
+      text: htmlToText(alumniReengagementHtml(name, monthMark, to)),
     })
   );
 }
 
-function alumniReengagementHtml(name: string, monthMark: 6 | 12) {
+function alumniReengagementHtml(name: string, monthMark: 6 | 12, email?: string) {
   const safeName = esc(name);
   const lede =
     monthMark === 6
@@ -1760,7 +1810,7 @@ function alumniReengagementHtml(name: string, monthMark: 6 | 12) {
     <a href="${SITE}/alumni" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">Open alumni surface →</a>
   </p>
   <p style="margin-top:24px">— Antaeus</p>
-  ${footer()}
+  ${footer(email)}
 </div>`;
 }
 
@@ -1779,13 +1829,13 @@ export async function sendDay0PlusTwelveHours(to: string, name: string) {
       to,
       headers: bulkHeaders(to),
       subject: "Pick a 25-minute window. Put it on your calendar.",
-      html: day0PlusTwelveHoursHtml(name),
-      text: htmlToText(day0PlusTwelveHoursHtml(name)),
+      html: day0PlusTwelveHoursHtml(name, to),
+      text: htmlToText(day0PlusTwelveHoursHtml(name, to)),
     })
   );
 }
 
-function day0PlusTwelveHoursHtml(name: string) {
+function day0PlusTwelveHoursHtml(name: string, email?: string) {
   const safeName = esc(name);
   return `
 <div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
@@ -1803,7 +1853,7 @@ function day0PlusTwelveHoursHtml(name: string) {
   <p><a href="${SITE}/dashboard" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px;margin:8px 0">Go to Course 1.1 →</a></p>
   <p>Reply to this email if anything's broken. Real person, real inbox.</p>
   <p style="margin-top:24px">— Antaeus</p>
-  ${footer()}
+  ${footer(email)}
 </div>`;
 }
 
@@ -1825,7 +1875,7 @@ export async function sendDay0PlusThirtySixHours(to: string, name: string) {
   );
 }
 
-function day0PlusThirtySixHoursHtml(name: string) {
+function day0PlusThirtySixHoursHtml(name: string, email?: string) {
   const safeName = esc(name);
   return `
 <div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
@@ -1843,7 +1893,7 @@ function day0PlusThirtySixHoursHtml(name: string) {
   <p>If you want to talk through anything — the role you bought (SDR / AE), where to start, whether it fits your situation — reply to this email. Real reply, real human.</p>
   <p><a href="${SITE}/dashboard" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px;margin:8px 0">Open Course 1.1 →</a></p>
   <p style="margin-top:24px">— Antaeus</p>
-  ${footer()}
+  ${footer(email)}
 </div>`;
 }
 
@@ -1854,13 +1904,13 @@ export async function sendDay3Email(to: string, name: string) {
       to,
       headers: bulkHeaders(to),
       subject: "How's Course 1 going?",
-      html: day3Html(name),
-      text: htmlToText(day3Html(name)),
+      html: day3Html(name, to),
+      text: htmlToText(day3Html(name, to)),
     })
   );
 }
 
-function day3Html(name: string) {
+function day3Html(name: string, email?: string) {
   const safeName = esc(name);
   return `
 <div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
@@ -1878,7 +1928,7 @@ function day3Html(name: string) {
     <a href="${SITE}/dashboard" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px">Continue where you left off →</a>
   </p>
   <p style="margin-top:24px">— Antaeus</p>
-  ${footer()}
+  ${footer(email)}
 </div>`;
 }
 
@@ -1891,13 +1941,13 @@ export async function sendDay7Email(to: string, name: string) {
       to,
       headers: bulkHeaders(to),
       subject: "Course 3 builds the one-pager your SDR actually reads",
-      html: day7Html(name),
-      text: htmlToText(day7Html(name)),
+      html: day7Html(name, to),
+      text: htmlToText(day7Html(name, to)),
     })
   );
 }
 
-function day7Html(name: string) {
+function day7Html(name: string, email?: string) {
   const safeName = esc(name);
   return `
 <div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
@@ -1914,7 +1964,7 @@ function day7Html(name: string) {
   </p>
   <p style="margin-top:24px">— Antaeus</p>
   <p style="margin-top:18px;font-size:13px;color:#6B6B6B"><em>P.S. — If something about the course isn't working for you, reply and tell me. I'd rather fix it than have you quietly disengage.</em></p>
-  ${footer()}
+  ${footer(email)}
 </div>`;
 }
 
@@ -1927,13 +1977,13 @@ export async function sendAbandon1hr(to: string) {
       to,
       headers: bulkHeaders(to),
       subject: "Still thinking it over?",
-      html: abandon1hrHtml(),
-      text: htmlToText(abandon1hrHtml()),
+      html: abandon1hrHtml(to),
+      text: htmlToText(abandon1hrHtml(to)),
     })
   );
 }
 
-function abandon1hrHtml() {
+function abandon1hrHtml(email?: string) {
   return `
 <div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
   <p style="margin:0 0 14px;font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
@@ -1960,7 +2010,7 @@ function abandon1hrHtml() {
   </p>
   <p style="margin-top:24px">— Antaeus</p>
   <p style="margin-top:18px;font-size:13px;color:#6B6B6B"><em>P.S. — Course 1 covers your first 90 days in the seat: the manager types that make or break new AEs and SDRs inside the first quarter. If that's not where you are right now, save your money. If it is, you already know.</em></p>
-  ${footer()}
+  ${footer(email)}
 </div>`;
 }
 
@@ -1973,13 +2023,13 @@ export async function sendAbandon24hr(to: string) {
       to,
       headers: bulkHeaders(to),
       subject: "Quick question before I stop following up",
-      html: abandon24hrHtml(),
-      text: htmlToText(abandon24hrHtml()),
+      html: abandon24hrHtml(to),
+      text: htmlToText(abandon24hrHtml(to)),
     })
   );
 }
 
-function abandon24hrHtml() {
+function abandon24hrHtml(email?: string) {
   return `
 <div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
   <p style="margin:0 0 14px;font-family:'SF Mono',monospace;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:#6B6B6B;">
@@ -1999,7 +2049,7 @@ function abandon24hrHtml() {
   </p>
   <p>14 days to try it. Full refund if it's not for you.</p>
   <p style="margin-top:24px">— Antaeus</p>
-  ${footer()}
+  ${footer(email)}
 </div>`;
 }
 
@@ -2012,13 +2062,13 @@ export async function sendDropoff5d(to: string, name: string, lessonId: string, 
       to,
       headers: bulkHeaders(to),
       subject: "No rush — but your next lesson is ready",
-      html: dropoff5dHtml(name, lessonId, lessonTitle),
-      text: htmlToText(dropoff5dHtml(name, lessonId, lessonTitle)),
+      html: dropoff5dHtml(name, lessonId, lessonTitle, to),
+      text: htmlToText(dropoff5dHtml(name, lessonId, lessonTitle, to)),
     })
   );
 }
 
-function dropoff5dHtml(name: string, lessonId: string, lessonTitle: string) {
+function dropoff5dHtml(name: string, lessonId: string, lessonTitle: string, email?: string) {
   const safeName = esc(name);
   const safeTitle = esc(lessonTitle);
   const safeLesson = esc(lessonId);
@@ -2033,7 +2083,7 @@ function dropoff5dHtml(name: string, lessonId: string, lessonTitle: string) {
   <p><a href="${SITE}/course/${safeLesson}" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px;margin:8px 0">Continue ${safeTitle} →</a></p>
   <p>If something in the lesson felt off — boring, wrong, hard to follow — reply to this email and tell me. I'd rather fix the curriculum than have you fade out.</p>
   <p style="margin-top:24px">— Antaeus</p>
-  ${footer()}
+  ${footer(email)}
 </div>`;
 }
 
@@ -2046,13 +2096,13 @@ export async function sendDropoff10d(to: string, name: string) {
       to,
       headers: bulkHeaders(to),
       subject: "The Friday five-line — eight minutes, no login needed",
-      html: dropoff10dHtml(name),
-      text: htmlToText(dropoff10dHtml(name)),
+      html: dropoff10dHtml(name, to),
+      text: htmlToText(dropoff10dHtml(name, to)),
     })
   );
 }
 
-function dropoff10dHtml(name: string) {
+function dropoff10dHtml(name: string, email?: string) {
   const safeName = esc(name);
   return `
 <div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
@@ -2074,7 +2124,7 @@ function dropoff10dHtml(name: string) {
   <p>That's one artifact from the managing your 'manager' course. The other 35 lessons each hand you something you can use the same week.</p>
   <p><a href="${SITE}/dashboard" style="display:inline-block;background:#8B1A1A;color:#FFFFFF;text-decoration:none;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:13px;margin:8px 0">Pick it back up →</a></p>
   <p style="margin-top:24px">— Antaeus</p>
-  ${footer()}
+  ${footer(email)}
 </div>`;
 }
 
@@ -2087,13 +2137,13 @@ export async function sendDropoff21d(to: string, name: string, lessonId: string)
       to,
       headers: bulkHeaders(to),
       subject: "Last check-in from us",
-      html: dropoff21dHtml(name, lessonId),
-      text: htmlToText(dropoff21dHtml(name, lessonId)),
+      html: dropoff21dHtml(name, lessonId, to),
+      text: htmlToText(dropoff21dHtml(name, lessonId, to)),
     })
   );
 }
 
-function dropoff21dHtml(name: string, lessonId: string) {
+function dropoff21dHtml(name: string, lessonId: string, email?: string) {
   const safeName = esc(name);
   const safeLesson = esc(lessonId);
   return `
@@ -2118,7 +2168,7 @@ function dropoff21dHtml(name: string, lessonId: string) {
   </p>
   <p>If you want to pick up where you stopped: <a href="${SITE}/course/${safeLesson}" style="color:#8B1A1A;text-decoration:underline">continue here</a>.</p>
   <p style="margin-top:24px">— Antaeus</p>
-  ${footer()}
+  ${footer(email)}
 </div>`;
 }
 
@@ -2131,13 +2181,13 @@ export async function sendReviewRequest(to: string, name: string) {
       to,
       headers: bulkHeaders(to),
       subject: "You finished all 12. How was it?",
-      html: reviewRequestHtml(name),
-      text: htmlToText(reviewRequestHtml(name)),
+      html: reviewRequestHtml(name, to),
+      text: htmlToText(reviewRequestHtml(name, to)),
     })
   );
 }
 
-function reviewRequestHtml(name: string) {
+function reviewRequestHtml(name: string, email?: string) {
   const safeName = esc(name);
   return `
 <div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
@@ -2152,7 +2202,7 @@ function reviewRequestHtml(name: string) {
   </p>
   <p style="font-size:14px;color:#6B6B6B">Or just reply to this email if you'd rather type into your inbox. Both go to me.</p>
   <p style="margin-top:24px">— Antaeus</p>
-  ${footer()}
+  ${footer(email)}
 </div>`;
 }
 
@@ -2165,13 +2215,13 @@ export async function sendReviewNudge(to: string, name: string) {
       to,
       headers: bulkHeaders(to),
       subject: "30 seconds — that's all I need",
-      html: reviewNudgeHtml(name),
-      text: htmlToText(reviewNudgeHtml(name)),
+      html: reviewNudgeHtml(name, to),
+      text: htmlToText(reviewNudgeHtml(name, to)),
     })
   );
 }
 
-function reviewNudgeHtml(name: string) {
+function reviewNudgeHtml(name: string, email?: string) {
   const safeName = esc(name);
   return `
 <div style="font-family:Georgia,'Source Serif 4',serif;color:#1A1A1A;max-width:560px;margin:0 auto;padding:24px;line-height:1.65;background:#FAF7F2">
@@ -2185,13 +2235,13 @@ function reviewNudgeHtml(name: string) {
   </p>
   <p style="font-size:14px;color:#6B6B6B">Or reply with one of: a number 1–5, a sentence to publish (first name + role only), or what to fix. Any of the three is genuinely useful.</p>
   <p style="margin-top:24px">— Antaeus</p>
-  ${footer()}
+  ${footer(email)}
 </div>`;
 }
 
 // ─── Shared footer ───
 
-function footer() {
+function footer(email?: string) {
   // AUDIT: CAN-SPAM physical address still required before bulk-mailing — no
   // postal address is on file yet, so contact routes to hello@ for now.
   return `
@@ -2201,7 +2251,7 @@ function footer() {
     Questions? Message us at <a href="mailto:hello@aesdr.com" style="color:#999">hello@aesdr.com</a>.<br>
     <a href="${SITE}/contact" style="color:#999">Contact</a> · <a href="${SITE}/refund-policy" style="color:#999">Refund Policy</a><br>
     You're receiving this because you purchased or started a checkout at AESDR.<br>
-    <a href="${UNSUBSCRIBE_URL}" style="color:#999">Unsubscribe</a>, or reply with UNSUBSCRIBE.
+    <a href="${unsubscribeLink(email)}" style="color:#999">Unsubscribe</a>, or reply with UNSUBSCRIBE.
   </p>`;
 }
 
@@ -2210,7 +2260,7 @@ function footer() {
  * Designed to sit inside the 600px white card; uses Georgia/SF Mono
  * and the warm stone palette rather than the old grey utilitarian footer.
  */
-function emailFooterInner() {
+function emailFooterInner(email?: string) {
   return `
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
     <tr>
@@ -2228,7 +2278,7 @@ function emailFooterInner() {
         </p>
         <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:11px;line-height:1.6;color:#B0B5BD;font-style:italic;">
           You're receiving this because you purchased or started a checkout at AESDR.
-          <a href="${UNSUBSCRIBE_URL}" style="color:#B0B5BD;text-decoration:underline;">Unsubscribe</a>,
+          <a href="${unsubscribeLink(email)}" style="color:#B0B5BD;text-decoration:underline;">Unsubscribe</a>,
           or reply with UNSUBSCRIBE.
         </p>
         <!-- AUDIT: CAN-SPAM physical address still required before bulk-mailing -->
@@ -2247,13 +2297,13 @@ export async function sendTeamInviteEmail(to: string, inviterName: string, token
       to,
       headers: UNSUBSCRIBE_HEADERS,
       subject: `${esc(inviterName)} invited you to AESDR`,
-      html: teamInviteHtml(inviterName, token),
-      text: htmlToText(teamInviteHtml(inviterName, token)),
+      html: teamInviteHtml(inviterName, token, to),
+      text: htmlToText(teamInviteHtml(inviterName, token, to)),
     })
   );
 }
 
-function teamInviteHtml(inviterName: string, token: string) {
+function teamInviteHtml(inviterName: string, token: string, email?: string) {
   const safeName = esc(inviterName);
   const acceptUrl = `${SITE}/team/accept?token=${encodeURIComponent(token)}`;
   return `
@@ -2277,7 +2327,7 @@ function teamInviteHtml(inviterName: string, token: string) {
   </p>
   <p>This invite is tied to your email address. Click the link above to create your account, or sign in if you already have one.</p>
   <p style="margin-top:24px">— Antaeus</p>
-  ${footer()}
+  ${footer(email)}
 </div>`;
 }
 
@@ -2308,13 +2358,13 @@ export async function sendLessonCompleteEmail(
       to,
       headers: bulkHeaders(to),
       subject,
-      html: lessonCompleteHtml(name, lessonId, lessonTitle),
-      text: htmlToText(lessonCompleteHtml(name, lessonId, lessonTitle)),
+      html: lessonCompleteHtml(name, lessonId, lessonTitle, to),
+      text: htmlToText(lessonCompleteHtml(name, lessonId, lessonTitle, to)),
     })
   );
 }
 
-function lessonCompleteHtml(name: string, lessonId: string, lessonTitle: string): string {
+function lessonCompleteHtml(name: string, lessonId: string, lessonTitle: string, email?: string): string {
   const safeName = esc(name);
   const safeLessonId = esc(lessonId);
   const safeTitle = esc(lessonTitle);
@@ -2448,7 +2498,7 @@ function lessonCompleteHtml(name: string, lessonId: string, lessonTitle: string)
         <!-- Footer -->
         <tr>
           <td style="padding:0 48px 32px 48px;">
-            ${emailFooterInner()}
+            ${emailFooterInner(email)}
           </td>
         </tr>
 
@@ -2473,13 +2523,13 @@ export async function sendRevealUnlockedEmail(to: string, name: string) {
       to,
       headers: bulkHeaders(to),
       subject: "Choose your keeper.",
-      html: revealUnlockedHtml(name),
-      text: htmlToText(revealUnlockedHtml(name)),
+      html: revealUnlockedHtml(name, to),
+      text: htmlToText(revealUnlockedHtml(name, to)),
     })
   );
 }
 
-function revealUnlockedHtml(name: string): string {
+function revealUnlockedHtml(name: string, email?: string): string {
   const safeName = esc(name);
   return `<!DOCTYPE html>
 <html>
@@ -2556,7 +2606,7 @@ function revealUnlockedHtml(name: string): string {
         <!-- Footer -->
         <tr>
           <td style="padding:0 48px 32px 48px;">
-            ${emailFooterInner()}
+            ${emailFooterInner(email)}
           </td>
         </tr>
 

@@ -21,14 +21,14 @@ A consolidated punch-list of everything **five rounds** of adversarial auditing 
 
 ### ⬜ On you — still open
 - **Decisions / legal:** P0-15 privacy-vs-trackers · CAN-SPAM physical mailing address (you chose none → P0-12 stays partial) · R4-LEG-6 ToS governing-law/arbitration · R4-LEG-7/R5-PI-4 scraped-prospect GDPR basis · R4-LEG-4 earnings-claim substantiation.
-- **Infra:** apply the **clawback-unique/net_paid migration** · set **Vercel env vars** · email-domain **DNS split** · **re-encode the 78 MB video** (P0-16) · keep `COMING_SOON=true`/levers off · **rotate the DB password** · at launch restore crons + flip COMING_SOON.
+- **Infra:** set **Vercel env vars** (incl. new `RESEND_WEBHOOK_SECRET`) · email-domain **DNS split** · **re-encode the 78 MB video** (P0-16) · keep `COMING_SOON=true`/levers off · at launch restore crons + flip COMING_SOON.
 - **Only you:** a **staging/QA pass** against real Stripe-test + Supabase data.
 
-### 🟡 Loose (slivers I can still close)
-- Unsubscribe: visible footer link lacks `?email=` (the header has it); no Resend bounce/complaint webhook yet (P0-12 / R5-DV-2).
-- Applicant "we got it" auto-acknowledgement (founder reply-to is wired — P1-7).
-- Partial-refund commission proration (full refunds handled — R4-MON-4).
-- `lesson-01` u1 exercise-score outlier (R4-LH-8).
+### ✅ Loose slivers — now closed (2026-06-29 pass)
+- Unsubscribe: visible footer link now carries `?email=`; Resend bounce/complaint webhook live at `/api/webhooks/resend` (svix-verified) → suppressions (P0-12 / R5-DV-2).
+- Applicant "we got it" acknowledgement email now sends on submit (P1-7).
+- Partial-refund commission proration — pro-rata clawback for full **and** partial, unit-tested, idempotent on redelivery (R4-MON-4 / decision #28).
+- `lesson-01` u1 — confirmed it already emits the standard `quizScore` the artifact extractor reads (12 call sites); the leftover `_extra.lesson` is intentional resume state. No change needed (R4-LH-8).
 
 ### 🔎 Adversarial review of the money/auth diffs — 14 findings
 - **Fixed:** §1 duplicate clawbacks on Stripe re-delivery (unique index + idempotent upsert) · §2 gross-vs-net reporting (`net_paid_cents`) · §3b missing clawback-update error checks · §4 null/`full` netting edge (extracted + unit-tested `applyClawbacks`) · §6 fee-currency guard · §12 dropped the `isNewPurchase` gate that lost attribution on retry.
@@ -810,7 +810,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 ## 📋 Master status table (all findings)
 *Legend: ✅ done (in code on main) · 🟡 partial · ⬜ not started/deferred · 👤 on you (decision/infra/external). "Done" = patched + builds + (money math) unit-tested, not individually load-tested.*
 
-**Tally — ✅ 241 done · 🟡 5 partial · ⬜ 17 not-started/deferred · 👤 14 on you · 277 total.** The three ⬜ env-guards (P1-12, P1-13, P2-12) are deliberately held back: they're "crash if a var is missing" guards, and the live site is already on `main`, so they must land *together with* you setting the matching Vercel env vars — adding them blind would take prod down.
+**Tally — ✅ 246 done · 🟡 0 partial · ⬜ 17 not-started/deferred · 👤 14 on you · 277 total.** (2026-06-29: the 5 partials — P0-12, P1-7, R4-MON-4, R4-LH-8, R5-DV-2 — are now closed; tsc/lint/build green, 31 unit tests pass.) The three ⬜ env-guards (P1-12, P1-13, P2-12) are deliberately held back: they're "crash if a var is missing" guards, and the live site is already on `main`, so they must land *together with* you setting the matching Vercel env vars — adding them blind would take prod down.
 
 ### Phase 0
 
@@ -827,7 +827,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 | P0-9 | Affiliate account takeover | ✅ | Server-trusted identity; fallback deleted |
 | P0-10 | Team tier paid-but-unusable | ✅ | Service-role check + signup round-trip |
 | P0-11 | Affiliate links never attribute | ✅ | `/r/` added to proxy allowlist |
-| P0-12 | CAN-SPAM across lifecycle email | 🟡 | Footer link lacks `?email=`; no bounce hook |
+| P0-12 | CAN-SPAM across lifecycle email | ✅ | Footer link carries `?email=`; Resend bounce webhook live |
 | P0-13 | Paying buyer locked out | ✅ | Branches on createError; returns 500 |
 | P0-14 | No 1099/W-9 tax handling | ✅ | Stripe files NECs; copy corrected |
 | P0-15 | Privacy policy materially false | 👤 | Disclose processors or pull trackers |
@@ -843,7 +843,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 | P1-4 | Iframe path no `course_completed` | ✅ | Emitted from `/api/progress/complete` |
 | P1-5 | `retention` cron unscheduled | ✅ | Wired (schedule off for cost) |
 | P1-6 | "Pause me" doesn't pause crons | ✅ | `paused_until` filter across crons |
-| P1-7 | Apply form collects no email | 🟡 | Email field + reply-to; no ack send |
+| P1-7 | Apply form collects no email | ✅ | Applicant acknowledgement email sent on submit |
 | P1-8 | Artifacts API ungated | ✅ | All-12 completion check added |
 | P1-9 | Workshop reminders to placeholder | ✅ | Per-registrant fan-out |
 | P1-10 | Non-atomic webhook idempotency | ✅ | Atomic first-processing claim |
@@ -997,7 +997,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 | R4-MON-1 | Gross vs "30% of net" contract | ✅ | One computeCommission (net) |
 | R4-MON-2 | `commission_pct` dead column | ✅ | Webhook reads the column |
 | R4-MON-3 | Team sales wrongly attributed | ✅ | `tier !== 'team'` guard |
-| R4-MON-4 | Partial refunds revoke 100% | 🟡 | Full handled; no proration yet |
+| R4-MON-4 | Partial refunds revoke 100% | ✅ | Pro-rata clawback (full+partial), unit-tested, idempotent |
 | R4-MON-5 | Commission on gross + fee absorbed | ✅ | Base net of Stripe fee |
 | R4-MON-6 | No currency validation | ✅ | USD asserted, else skip+alert |
 | R4-MON-7 | Sales tax / VAT never collected | 👤 | Nexus decision is yours |
@@ -1052,7 +1052,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 | R4-LH-5 | `aesdr:restore` clobbers textarea | ✅ | Ready-handshake |
 | R4-LH-6 | restore overwrites `_lessonExtra` | ✅ | Merge not clobber |
 | R4-LH-7 | Resume on completion no re-fire | ✅ | Re-fires `aesdr:complete` |
-| R4-LH-8 | lesson-01 u1 divergent shape | 🟡 | One-file outlier remains |
+| R4-LH-8 | lesson-01 u1 divergent shape | ✅ | Unit-1 emits standard `quizScore`; extractor reads it |
 | R4-LH-9 | Lessons use retired fonts/palette | ✅ | Re-skinned to active brand |
 
 ### Round 5
@@ -1066,7 +1066,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 | R5-OB-5 | Empty dashboard no orientation | ✅ | First-run orientation |
 | R5-OB-6 | Save & Exit no synchronous save | ✅ | Sync save + "Saved" |
 | R5-DV-1 | One root sending domain | 👤 | Subdomain split is your DNS |
-| R5-DV-2 | No Resend bounce webhook | 🟡 | Suppression table; webhook absent |
+| R5-DV-2 | No Resend bounce webhook | ✅ | `/api/webhooks/resend` svix-verified → suppressions |
 | R5-DV-3 | Replies depend on human triage | ✅ | Suppression path built |
 | R5-DV-4 | Bulk to unconfirmed addresses | ✅ | Suppress bounced |
 | R5-DV-5 | No List-Id/Precedence on bulk | ✅ | Bulk headers added |
