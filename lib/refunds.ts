@@ -2,7 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type Stripe from 'stripe';
 import * as Sentry from '@sentry/nextjs';
 
-import { proRataClawbackCents } from '@/lib/payout-math';
+import { proRataClawbackCents, mergeRecognizedClawback } from '@/lib/payout-math';
 
 export interface RefundOutcome {
   purchaseId: string | null;
@@ -88,36 +88,54 @@ export async function applyRefundToCharge(
     if (rows.length === 0) return 0;
     const ids = rows.map((a) => a.id);
     // Read existing refund AND dispute clawbacks for these attributions. The
-    // refund amount uses GREATEST(existing refund, pro-rata target) for
-    // idempotency, then is capped so refund + any existing dispute clawback can
-    // never exceed the commission (#5 — a sale that's both refunded and disputed
-    // must be clawed back at most once; the dispute handler caps the reciprocal).
+    // refund clawback is merged via mergeRecognizedClawback: it raises the
+    // high-water `original_amount_cents` monotonically and adds only the GROWTH
+    // to the open `amount_cents`, so a redelivery / reconcile re-run never
+    // re-inflates a remainder a payout already netted (AUDIT final pass, HIGH).
+    // The cap (commission − existing dispute high-water) keeps refund + dispute
+    // from ever exceeding the commission (#5 — clawed back at most once; the
+    // dispute handler caps the reciprocal way).
     const { data: existing } = await supabase
       .from('commission_clawbacks')
-      .select('attribution_id, amount_cents, reason')
+      .select('attribution_id, amount_cents, original_amount_cents, reason')
       .in('reason', ['refund', 'dispute'])
       .in('attribution_id', ids);
-    const refundMap = new Map<string, number>();
-    const disputeMap = new Map<string, number>();
+    const refundRemainMap = new Map<string, number>(); // open balance (amount_cents)
+    const refundOrigMap = new Map<string, number>();   // high-water (original_amount_cents)
+    const disputeOrigMap = new Map<string, number>();  // dispute high-water (for the cap)
     for (const r of existing ?? []) {
-      if (r.reason === 'refund') refundMap.set(r.attribution_id, r.amount_cents ?? 0);
-      else if (r.reason === 'dispute') disputeMap.set(r.attribution_id, r.amount_cents ?? 0);
+      // Pre-migration rows have no original_amount_cents → fall back to amount_cents.
+      const orig = (r.original_amount_cents ?? r.amount_cents) ?? 0;
+      if (r.reason === 'refund') {
+        refundRemainMap.set(r.attribution_id, r.amount_cents ?? 0);
+        refundOrigMap.set(r.attribution_id, orig);
+      } else if (r.reason === 'dispute') {
+        disputeOrigMap.set(r.attribution_id, orig);
+      }
     }
     const upsertRows = rows
       .map((a) => {
         const commission = a.commission_amount_cents ?? 0;
         const target = proRataClawbackCents(commission, refundedCents, capturedCents);
-        const greatest = Math.max(refundMap.get(a.id) ?? 0, target);
-        const amount = Math.min(greatest, Math.max(0, commission - (disputeMap.get(a.id) ?? 0)));
-        return {
-          affiliate_slug: a.affiliate_slug,
-          attribution_id: a.id,
-          purchase_id: pid,
-          amount_cents: amount,
-          reason: 'refund',
-        };
+        const cap = Math.max(0, commission - (disputeOrigMap.get(a.id) ?? 0));
+        const merged = mergeRecognizedClawback(
+          refundOrigMap.get(a.id) ?? 0,
+          refundRemainMap.get(a.id) ?? 0,
+          target,
+          cap,
+        );
+        return merged
+          ? {
+              affiliate_slug: a.affiliate_slug,
+              attribution_id: a.id,
+              purchase_id: pid,
+              amount_cents: merged.amountCents,
+              original_amount_cents: merged.originalCents,
+              reason: 'refund' as const,
+            }
+          : null;
       })
-      .filter((r) => r.amount_cents > 0);
+      .filter((r): r is NonNullable<typeof r> => r !== null);
     if (upsertRows.length === 0) return 0;
     const { error: cbErr } = await supabase
       .from('commission_clawbacks')

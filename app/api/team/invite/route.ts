@@ -52,7 +52,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No team found" }, { status: 403 });
     }
 
-    // Check seat count
+    // Fast-path seat check for UX (the real, race-free enforcement is the
+    // enforce_team_seat_cap BEFORE INSERT trigger — see
+    // 20260629_team_seat_cap_trigger.sql. App-level count-then-insert can't be
+    // atomic across concurrent invites, so two requests could both pass this and
+    // overflow max_seats; the trigger rejects the loser at insert time.)
     const { count: memberCount } = await admin
       .from("team_members")
       .select("id", { count: "exact", head: true })
@@ -87,7 +91,17 @@ export async function POST(request: Request) {
       });
 
     if (insertErr) {
-      console.error("[team-invite] Insert failed:", insertErr.message);
+      // The seat-cap trigger rejects an over-cap insert with 'team_seats_full';
+      // a duplicate (team_id, email) trips the unique index. Map both to clean
+      // client errors instead of a generic 500.
+      const msg = insertErr.message ?? "";
+      if (msg.includes("team_seats_full")) {
+        return NextResponse.json({ error: "All seats are filled" }, { status: 400 });
+      }
+      if (insertErr.code === "23505") {
+        return NextResponse.json({ error: "Already invited" }, { status: 409 });
+      }
+      console.error("[team-invite] Insert failed:", msg);
       return NextResponse.json({ error: "Failed to create invite" }, { status: 500 });
     }
 

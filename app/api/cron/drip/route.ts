@@ -15,6 +15,23 @@ import { isPausedUser } from '@/app/actions/pause';
 // only on a TRUE send so a false/429 never sets the *_sent flag.
 const SEND_CONCURRENCY = 5;
 
+// AUDIT (final pass): a buyer with >1 active purchase (e.g. bought SDR then AE)
+// has multiple `purchases` rows, all with day3_sent=false — the cohort query
+// returns BOTH, so the same address gets emailed once per purchase in a single
+// run. Dedupe by email before sending; the *_sent batch update already keys on
+// user_email, so it still flags every row for that address.
+function dedupeByEmail<T extends { user_email: string | null }>(rows: T[]): T[] {
+  const seen = new Set<string>();
+  const out: T[] = [];
+  for (const r of rows) {
+    const key = (r.user_email || "").toLowerCase();
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push(r);
+  }
+  return out;
+}
+
 async function runPool<T>(
   items: T[],
   limit: number,
@@ -73,8 +90,9 @@ export async function GET(request: Request) {
   if (day3Err) {
     errors.push(`day3 query: ${day3Err.message}`);
   } else if (day3Users && day3Users.length > 0) {
-    const suppressed = await getSuppressedEmails(day3Users.map((u) => u.user_email));
-    const day3Successes = await runPool(day3Users, SEND_CONCURRENCY, async (user) => {
+    const day3Cohort = dedupeByEmail(day3Users);
+    const suppressed = await getSuppressedEmails(day3Cohort.map((u) => u.user_email));
+    const day3Successes = await runPool(day3Cohort, SEND_CONCURRENCY, async (user) => {
       if (suppressed.has((user.user_email || '').toLowerCase())) return null;
       if (await isPaused(user.user_id)) return null;
       const sent = await sendDay3Email(user.user_email, user.customer_name || 'there');
@@ -110,8 +128,9 @@ export async function GET(request: Request) {
   if (day7Err) {
     errors.push(`day7 query: ${day7Err.message}`);
   } else if (day7Users && day7Users.length > 0) {
-    const suppressed = await getSuppressedEmails(day7Users.map((u) => u.user_email));
-    const day7Successes = await runPool(day7Users, SEND_CONCURRENCY, async (user) => {
+    const day7Cohort = dedupeByEmail(day7Users);
+    const suppressed = await getSuppressedEmails(day7Cohort.map((u) => u.user_email));
+    const day7Successes = await runPool(day7Cohort, SEND_CONCURRENCY, async (user) => {
       if (suppressed.has((user.user_email || '').toLowerCase())) return null;
       if (await isPaused(user.user_id)) return null;
       const sent = await sendDay7Email(user.user_email, user.customer_name || 'there');

@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 import { createClient } from "@/utils/supabase/server";
+import { verifyPaidAccess } from "@/utils/access/verifyAccess";
 import { TOOL_LESSON_GATE, evaluateToolGate } from "@/utils/content/catalog";
 
 const TOOLS_ROOT = path.join(process.cwd(), "tools", "standalone-html");
@@ -33,6 +34,18 @@ export async function GET(
   if (!user) {
     return new Response(
       gatePage("Sign in to download this tool.", false),
+      { headers: { "Content-Type": "text/html; charset=utf-8" } }
+    );
+  }
+
+  // AUDIT (final pass): gate on PURCHASE, not just completion. This download
+  // route (the one the dashboard + alumni "Download" links hit) checked only
+  // course_progress, so a refunded/disputed buyer — or a free signup who forged
+  // completion via the auth-only /api/progress endpoints — could pull paid tools.
+  // verifyPaidAccess admin-bypasses and checks active purchase / team seat.
+  if (!(await verifyPaidAccess(supabase, user))) {
+    return new Response(
+      gatePage("This download requires an active purchase.", false),
       { headers: { "Content-Type": "text/html; charset=utf-8" } }
     );
   }

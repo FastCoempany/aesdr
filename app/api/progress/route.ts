@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { verifyPaidAccess } from "@/utils/access/verifyAccess";
 import { rateLimit } from "@/lib/rate-limit";
 
 // Cap state_data payload size to prevent a malicious or buggy client from
@@ -16,6 +17,13 @@ export async function POST(request: NextRequest) {
 
   if (authError || !user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // AUDIT (final pass): only paid users (or team members / admins) may write
+  // progress — otherwise a free signup could forge completion state and reach
+  // completion-gated surfaces (artifacts, the tool download route).
+  if (!(await verifyPaidAccess(supabase, user))) {
+    return NextResponse.json({ error: "Active purchase required." }, { status: 403 });
   }
 
   // 120 writes/min/user — comfortably above the 1.5s debounced client saves.

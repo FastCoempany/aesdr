@@ -240,10 +240,14 @@ async function safeSend(
   try {
     const result = await sendFn();
     if (result.error) {
-      console.error(`[email] ${label} failed:`, result.error);
+      // AUDIT (final pass): log the Resend error NAME (a stable code, e.g.
+      // 'validation_error'), not the full error object — its `message` can echo
+      // the recipient address, which would then ride into Sentry/stdout. `label`
+      // already identifies the send site.
+      console.error(`[email] ${label} failed:`, result.error.name);
       Sentry.captureMessage(`[email] ${label} failed`, {
         level: 'error',
-        extra: { resendError: result.error },
+        extra: { resendErrorName: result.error.name },
       });
       return false;
     }

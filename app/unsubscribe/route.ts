@@ -27,10 +27,26 @@ ${body}
   );
 }
 
+// AUDIT (final pass): HTML-escape the address before it goes into the response.
+// `email` was interpolated raw into both result pages; the loose validator below
+// (which excludes only whitespace and @) let `"><script>…@x.yz` through, giving a
+// reflected XSS on this no-auth public route.
+function esc(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function normalizeEmail(raw: string | null | undefined): string | null {
   if (!raw) return null;
   const e = raw.trim().toLowerCase();
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) ? e : null;
+  // Exclude HTML metachars (< > " ' &) from every segment in addition to
+  // whitespace/@ — a real address never contains them, and it closes the
+  // reflection vector at the source (esc() below is the second layer).
+  return /^[^\s@<>"'&]+@[^\s@<>"'&]+\.[^\s@<>"'&]+$/.test(e) ? e : null;
 }
 
 async function suppress(email: string): Promise<boolean> {
@@ -68,7 +84,7 @@ export async function POST(request: NextRequest) {
   return page(
     ok ? "You're unsubscribed" : "Something went wrong",
     ok
-      ? `<p style="font-size:16px;color:#6B6B6B;line-height:1.6">${email} won't receive lifecycle emails from us. Course access and receipts are unaffected.</p>`
+      ? `<p style="font-size:16px;color:#6B6B6B;line-height:1.6">${esc(email)} won't receive lifecycle emails from us. Course access and receipts are unaffected.</p>`
       : `<p style="font-size:16px;color:#6B6B6B;line-height:1.6">We couldn't process that just now. Reply to any AESDR email with UNSUBSCRIBE and a human will handle it.</p>`
   );
 }
@@ -81,7 +97,7 @@ export async function GET(request: NextRequest) {
   }
   return page(
     "Unsubscribe",
-    `<p style="font-size:16px;color:#6B6B6B;line-height:1.6;margin-bottom:22px">Stop lifecycle emails to <strong style="color:#1A1A1A">${email}</strong>? (Receipts and course access are unaffected.)</p>
+    `<p style="font-size:16px;color:#6B6B6B;line-height:1.6;margin-bottom:22px">Stop lifecycle emails to <strong style="color:#1A1A1A">${esc(email)}</strong>? (Receipts and course access are unaffected.)</p>
 <form method="POST" action="/unsubscribe?email=${encodeURIComponent(email)}">
 <button type="submit" style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#fff;background:#8B1A1A;border:none;padding:14px 28px;cursor:pointer">Unsubscribe</button>
 </form>`

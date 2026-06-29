@@ -18,7 +18,14 @@ export default function PostHogClient() {
     const params = new URLSearchParams(searchParams?.toString() ?? "");
     for (const key of [...params.keys()]) {
       const k = key.toLowerCase();
-      if (k === "p" || k.startsWith("utm_") || k === "ref" || k === "via") {
+      if (
+        k === "p" ||
+        k === "email" || // welcome links land on /login?email= and /unsubscribe?email=
+        k === "token" || // /team/accept?token= is a bearer credential
+        k.startsWith("utm_") ||
+        k === "ref" ||
+        k === "via"
+      ) {
         params.delete(key);
       }
     }

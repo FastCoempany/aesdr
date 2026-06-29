@@ -4,6 +4,7 @@ import * as Sentry from "@sentry/nextjs";
 
 import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
+import { verifyPaidAccess } from "@/utils/access/verifyAccess";
 import { rateLimit } from "@/lib/rate-limit";
 import {
   ALL_LESSON_IDS,
@@ -48,6 +49,16 @@ export async function POST(request: NextRequest) {
 
   if (authError || !user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // AUDIT (final pass): gate completion on PURCHASE. This route both flips
+  // is_completed (which unlocks the completion-gated artifact/reveal/tool
+  // surfaces) AND fires paid LLM artifact generation on the all-twelve
+  // completion. An auth-only free signup could forge completion here to reach
+  // gated content and burn LLM spend. verifyPaidAccess admin-bypasses + checks
+  // active purchase / team seat. (Twin of the /api/progress gate.)
+  if (!(await verifyPaidAccess(supabase, user))) {
+    return NextResponse.json({ error: "Active purchase required." }, { status: 403 });
   }
 
   const rl = await rateLimit(`progress-complete:${user.id}`, {
