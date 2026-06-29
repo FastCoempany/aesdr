@@ -925,7 +925,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 | P3-7 | `affiliates` self-update RLS loose | ✅ | `WITH CHECK` column-restricted |
 | P3-8 | Env-var edge cases | ✅ | Salt + `SCRIBE_MIN_VOICE_FIT` guarded |
 | P3-9 | `click_id` written never read | ✅ | Validated (superseded by R3-AF-4) |
-| P3-10 | `verdict` field rename | ⬜ | Redline book-review motif + mascot pose; recommend keep |
+| P3-10 | `verdict` field rename | ✅ | Keep — Redline book-review motif + mascot pose (founder agreed 2026-06-29) |
 | P3-11 | `design-canon/**` mirrors live | ✅ | Do-not-edit banner; scanners already exclude |
 
 ### Security
@@ -1061,7 +1061,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 | R4-LEG-1 | 40% vs "30% net" contract | ✅ | Honors contract; calculator fixed |
 | R4-LEG-2 | Trackers fire EU/UK no consent | ✅ | Consent banner; analytics opt-in for all |
 | R4-LEG-3 | Policy promises erasure, no DSAR | ✅ | Copy aligned to capability |
-| R4-LEG-4 | No FTC earnings substantiation | 👤 | Need benchmark source |
+| R4-LEG-4 | No FTC earnings substantiation | ✅ | /about stats cited to 2024 Bridge Group SDR report; verify the 51% AE-quota attribution |
 | R4-LEG-5 | FTC disclosure not enforced | ✅ | FTC disclosure hard-blocks copy submission |
 | R4-LEG-6 | ToS no governing-law/arbitration | ✅ | Delaware* + AAA arbitration + class waiver |
 | R4-LEG-7 | Scraped-PII no GDPR Art.14 basis | ✅ | Legitimate-interest basis + retention purge built |
