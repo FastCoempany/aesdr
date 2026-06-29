@@ -361,6 +361,48 @@ export default async function AccountPage() {
           <ChangePasswordForm />
         </section>
 
+        {/* Data & privacy */}
+        <section className="mb-10">
+          <h2
+            style={{
+              fontFamily: "var(--mono)",
+              fontSize: "10px",
+              letterSpacing: ".2em",
+              textTransform: "uppercase" as const,
+              color: "var(--muted)",
+              marginBottom: "8px",
+            }}
+          >
+            Your Data &amp; Privacy
+          </h2>
+          <div
+            style={{
+              padding: "16px 20px",
+              background: "#fff",
+              border: "1px solid var(--light)",
+            }}
+          >
+            <p style={{ fontFamily: "var(--serif)", fontSize: "14px", color: "var(--muted)", marginBottom: "12px" }}>
+              Export everything we hold about you, or close your account for
+              good.
+            </p>
+            <Link
+              href="/account/data"
+              style={{
+                fontFamily: "var(--cond)",
+                fontSize: "12px",
+                fontWeight: 700,
+                letterSpacing: ".12em",
+                textTransform: "uppercase" as const,
+                color: "var(--crimson)",
+                textDecoration: "none",
+              }}
+            >
+              Manage your data &rarr;
+            </Link>
+          </div>
+        </section>
+
         {/* Support */}
         <section
           style={{

@@ -74,6 +74,41 @@ function extractJson(text: string): string {
  * same way — append the paused turn and resume — bounded by both the budget and
  * a hard iteration cap so it can't loop forever.
  */
+// AUDIT (R4-PERF-1 / R4-PERF-2): per-run cost ceiling so a runaway Scout sweep or
+// Dossier brief can't rack up unbounded Anthropic spend. Rough per-model prices
+// ($/Mtok) + Anthropic web search ($0.01/request). Cost is summed across the tool
+// loop; once the ceiling is hit we stop and return what was gathered (the same
+// graceful-stop path as the time budget). Founder decision 2026-06-29: $10.
+const MODEL_PRICE_PER_MTOK: Record<string, { in: number; out: number }> = {
+  opus: { in: 15, out: 75 },
+  sonnet: { in: 3, out: 15 },
+  haiku: { in: 0.8, out: 4 },
+};
+const WEB_SEARCH_USD_PER_REQUEST = 0.01;
+const DEFAULT_MAX_COST_USD = 10;
+
+function turnCostUsd(model: string, usageRaw: unknown): number {
+  const usage = (usageRaw ?? {}) as {
+    input_tokens?: number;
+    output_tokens?: number;
+    cache_creation_input_tokens?: number;
+    cache_read_input_tokens?: number;
+    server_tool_use?: { web_search_requests?: number } | null;
+  };
+  const p = model.includes("opus")
+    ? MODEL_PRICE_PER_MTOK.opus
+    : model.includes("haiku")
+      ? MODEL_PRICE_PER_MTOK.haiku
+      : MODEL_PRICE_PER_MTOK.sonnet;
+  const inTok =
+    (usage.input_tokens ?? 0) +
+    (usage.cache_creation_input_tokens ?? 0) +
+    (usage.cache_read_input_tokens ?? 0);
+  const outTok = usage.output_tokens ?? 0;
+  const searches = usage.server_tool_use?.web_search_requests ?? 0;
+  return (inTok / 1e6) * p.in + (outTok / 1e6) * p.out + searches * WEB_SEARCH_USD_PER_REQUEST;
+}
+
 async function runResearchAgent(opts: {
   model: string;
   system: string;
@@ -81,6 +116,7 @@ async function runResearchAgent(opts: {
   tools: Anthropic.Messages.ToolUnion[];
   maxTokens: number;
   budgetMs: number;
+  maxCostUsd?: number;
 }): Promise<string> {
   const c = client();
   const deadline = Date.now() + opts.budgetMs;
@@ -90,10 +126,13 @@ async function runResearchAgent(opts: {
   // Everything the model has streamed, across every turn. This is what we hand
   // back no matter how the call ends — clean finish, budget stop, or drop.
   let captured = "";
+  let costUsd = 0;
+  const maxCostUsd = opts.maxCostUsd ?? DEFAULT_MAX_COST_USD;
 
   for (let i = 0; i < 4; i++) {
     const remaining = deadline - Date.now();
     if (remaining <= 0) break;
+    if (costUsd >= maxCostUsd) break; // R4-PERF: cost ceiling hit between turns
 
     const stream = c.messages.stream({
       model: opts.model,
@@ -115,9 +154,12 @@ async function runResearchAgent(opts: {
     try {
       const final = await stream.finalMessage();
       clearTimeout(stop);
+      costUsd += turnCostUsd(opts.model, final.usage);
       if (final.stop_reason === "pause_turn") {
         // Server tool loop paused at its cap — append + resume (no new user turn).
         messages.push({ role: "assistant", content: final.content });
+        // R4-PERF: stop resuming the tool loop once the $ ceiling is reached.
+        if (costUsd >= maxCostUsd) return captured || turnText;
         continue;
       }
       // Clean finish: the final turn's text is the JSON answer.

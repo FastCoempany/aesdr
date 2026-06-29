@@ -6,6 +6,7 @@ import AesdrBrand from "@/components/AesdrBrand";
 import SignOutButton from "@/components/SignOutButton";
 import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
+import { getSiteUrl } from "@/lib/site-url";
 import StatTile from "./_components/StatTile";
 
 export const metadata: Metadata = {
@@ -116,7 +117,7 @@ export default async function AffiliatesDashboardPage() {
   const clearedCents = cleared.reduce((s, a) => s + (a.commission_amount_cents ?? 0), 0);
   const paidCents = paid.reduce((s, a) => s + (a.commission_amount_cents ?? 0), 0);
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com";
+  const siteUrl = getSiteUrl();
 
   return (
     <main

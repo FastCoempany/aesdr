@@ -14,6 +14,7 @@
 
 import "dotenv/config";
 import { mintToken } from "../lib/affiliate-kit-tokens";
+import { getSiteUrl } from "../lib/site-url";
 
 function arg(name: string, fallback?: string): string | undefined {
   const idx = process.argv.indexOf(`--${name}`);
@@ -45,7 +46,7 @@ async function main() {
     process.exit(1);
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com";
+  const baseUrl = getSiteUrl();
   const result = await mintToken({
     affiliateSlug: slug,
     partnerLabel: label,

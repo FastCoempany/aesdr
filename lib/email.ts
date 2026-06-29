@@ -5,6 +5,7 @@ import { Resend } from 'resend';
 
 import { bridgeAfter } from '@/utils/progress/bridges';
 import { createAdminClient } from '@/utils/supabase/admin';
+import { getSiteUrl } from '@/lib/site-url';
 
 function getResend() {
   // RESEND_API_KEY is the canonical name used by production aesdr.com.
@@ -30,7 +31,7 @@ function esc(str: string): string {
 }
 
 const FROM = 'AESDR <hello@aesdr.com>';
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://aesdr.com';
+const SITE = getSiteUrl();
 
 // HTTPS one-click unsubscribe endpoint (RFC 8058). Pairing
 // `List-Unsubscribe-Post: List-Unsubscribe=One-Click` with a `mailto:` is

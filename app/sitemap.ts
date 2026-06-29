@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { KIT_ENTRIES } from "@/lib/affiliate-kit";
+import { getSiteUrl } from "@/lib/site-url";
 
 /**
  * Pre-launch gating: when NEXT_PUBLIC_LAUNCH_MODE !== "true", return an
@@ -18,7 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     return [];
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com";
+  const baseUrl = getSiteUrl();
   const now = new Date();
 
   const kitDocUrls = KIT_ENTRIES.map((e) => ({

@@ -193,11 +193,12 @@ export function LandingShell({
           <video
             className={styles.sneakPeekVideo}
             src="/leponeus-sneak-peek.mp4"
-            autoPlay
+            controls
             muted
             loop
             playsInline
-            preload="metadata"
+            preload="none"
+            poster="/ceramic-bunny-mask-cutout.png"
             aria-label="AESDR curriculum sneak peek"
           />
         </div>

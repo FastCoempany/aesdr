@@ -334,6 +334,30 @@ export async function POST(request: Request) {
           if (purchaseRow) {
             const purchasedAt = new Date(purchaseRow.purchased_at);
 
+            // AUDIT (§13 / decision 2026-06-29): enforce the 14-day attribution
+            // window server-side. The cookie TTL already gates this, but a forged
+            // session-metadata affiliate_click_id would bypass the cookie — so
+            // re-check the real click's age and skip crediting if the purchase
+            // landed outside ATTRIBUTION_WINDOW_MS of it.
+            let attributionExpired = false;
+            if (affiliateClickId) {
+              const { data: clickRow } = await supabase
+                .from('affiliate_clicks')
+                .select('clicked_at')
+                .eq('id', affiliateClickId)
+                .maybeSingle();
+              const clickedAt = clickRow?.clicked_at
+                ? new Date(clickRow.clicked_at).getTime()
+                : null;
+              if (clickedAt != null && purchasedAt.getTime() - clickedAt > ATTRIBUTION_WINDOW_MS) {
+                attributionExpired = true;
+                Sentry.captureMessage('[webhook] attribution skipped — click older than the 14-day window', {
+                  level: 'info',
+                  extra: { sessionId: session.id, affiliateClickId },
+                });
+              }
+            }
+
             // AUDIT (R4-MON-2/#1/#27): rate comes from the affiliate's own
             // commission_pct column (the previously-dead column), not a
             // hardcoded constant. Falls back to 30% when the row/column is
@@ -399,6 +423,7 @@ export async function POST(request: Request) {
             // is recorded but excluded from payout. Needs the widened status
             // CHECK (20260622_attribution_status_and_applicant_email.sql).
             const selfRef = await isSelfReferral(linkRow.affiliate_slug, email);
+            if (!attributionExpired) {
             const { error: attrErr } = await supabase.from('affiliate_attributions').upsert(
               {
                 link_id: linkRow.id,
@@ -432,6 +457,7 @@ export async function POST(request: Request) {
                 purchase_id: purchaseRow.id,
                 commission_cents: commissionCents,
               }, { userId, email });
+            }
             }
           }
         }

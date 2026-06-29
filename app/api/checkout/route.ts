@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { ATTRIBUTION_COOKIE, parseAttributionCookie } from '@/lib/affiliate';
 import { rateLimit, getClientIP } from '@/lib/rate-limit';
+import { getSiteUrl } from '@/lib/site-url';
 // AUDIT (IC-2/#54): use the centralized, apiVersion-pinned Stripe client
 // instead of constructing a bare `new Stripe(key)` here.
 import { getStripe } from '@/lib/stripe-connect';
@@ -26,7 +27,7 @@ export async function POST(request: NextRequest) {
 
     // Validate origin to prevent cross-site form submission
     const origin = request.headers.get('origin');
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aesdr.com';
+    const siteUrl = getSiteUrl();
     if (origin && new URL(siteUrl).origin !== origin) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }

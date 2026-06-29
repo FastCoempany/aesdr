@@ -11,6 +11,7 @@ import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { mintToken, signToken } from "@/lib/affiliate-kit-tokens";
 import { requireAdmin } from "@/lib/admin";
+import { getSiteUrl } from "@/lib/site-url";
 
 type TokenRow = {
   id: string;
@@ -105,7 +106,7 @@ export default async function AdminPartnerKit() {
     }
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com";
+  const baseUrl = getSiteUrl();
   // eslint-disable-next-line react-hooks/purity -- async server component, runs per-request
   const nowMs = Date.now();
 

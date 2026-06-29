@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
 import { rateLimit, getClientIP } from "@/lib/rate-limit";
+import { getSiteUrl } from "@/lib/site-url";
 
 /**
  * Coming-soon bypass — server-side code verification.
@@ -21,7 +22,7 @@ import { rateLimit, getClientIP } from "@/lib/rate-limit";
 export async function POST(request: Request) {
   // Same-origin guard — only accept POSTs from the site itself.
   const origin = request.headers.get("origin");
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com";
+  const siteUrl = getSiteUrl();
   if (origin && new URL(siteUrl).origin !== origin) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }

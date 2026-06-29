@@ -5,13 +5,14 @@ import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { rateLimit } from "@/lib/rate-limit";
 import { isAdminEmail } from "@/lib/admin";
+import { getSiteUrl } from "@/lib/site-url";
 // AUDIT (IC-2/#54): centralized, apiVersion-pinned Stripe client.
 import { getStripe } from "@/lib/stripe-connect";
 
 export async function POST(request: Request) {
   try {
     const origin = request.headers.get("origin");
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aesdr.com";
+    const siteUrl = getSiteUrl();
     if (origin && new URL(siteUrl).origin !== origin) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }

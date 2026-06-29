@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/admin";
 import { generateSlug } from "@/lib/affiliate";
+import { hasFtcDisclosure } from "@/lib/ftc-disclosure";
 import { applyClawbacks } from "@/lib/payout-math";
 import { findUserIdByEmail } from "@/lib/auth-users";
 import {
@@ -275,6 +276,19 @@ export async function submitAffiliateCopy(formData: FormData): Promise<Result> {
   }
   if (draftBody.length > 20000) {
     return { ok: false, error: "Draft is too long (20k chars max)." };
+  }
+
+  // AUDIT (R4-LEG-5): the FTC Endorsement Guides (16 CFR Part 255) require an
+  // affiliate to clearly disclose their material connection — that they earn a
+  // commission — whenever they promote AESDR. Block (don't just advise) any
+  // submission with no recognizable disclosure marker so unlabeled copy never
+  // enters the review queue.
+  if (!hasFtcDisclosure(draftBody)) {
+    return {
+      ok: false,
+      error:
+        "Add an FTC disclosure before submitting — e.g. '#ad', 'affiliate link', or 'I earn a commission if you buy.' This is required by law when you promote AESDR for a commission.",
+    };
   }
 
   // AUDIT (R3-AF-8): the draft URL is rendered as a clickable link in the
