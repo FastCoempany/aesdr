@@ -74,7 +74,12 @@ export async function POST(request: Request) {
     // gross_amount_cents strip the tax. amount_total stays the purchase record +
     // receipt total (what the buyer actually paid).
     const taxCents = session.total_details?.amount_tax ?? 0;
-    const commissionBaseGrossCents = Math.max(0, amountCents - taxCents);
+    // AUDIT (founder decision 2026-06-29): affiliates are paid on the LIST price.
+    // No coupons exist (allow_promotion_codes removed in checkout), and
+    // amount_subtotal is the pre-discount, pre-tax list total — so commission
+    // never tracks tax OR any discount. amount_total stays the purchase record +
+    // receipt total (what the buyer actually paid).
+    const commissionBaseGrossCents = session.amount_subtotal ?? Math.max(0, amountCents - taxCents);
 
     const supabase = createAdminClient();
 
