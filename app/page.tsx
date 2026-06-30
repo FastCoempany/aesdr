@@ -78,8 +78,7 @@ export default async function LandingPage() {
             muted
             loop
             playsInline
-            preload="none"
-            poster="/ceramic-bunny-mask-cutout.png"
+            preload="metadata"
             aria-label="AESDR curriculum sneak peek"
           />
         </div>
