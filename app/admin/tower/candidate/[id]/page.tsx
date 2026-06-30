@@ -580,8 +580,10 @@ export default async function CandidateRoomPage({
                   {d.personalization_note as string}
                 </p>
               )}
-              {st === "failed" && d.error && (
-                <p style={{ fontFamily: MONO, fontSize: "11px", color: CRIMSON, margin: "0 0 10px" }}>send failed: {d.error as string}</p>
+              {st === "failed" && (
+                <div style={{ fontFamily: MONO, fontSize: "12px", lineHeight: 1.5, color: CRIMSON, background: "rgba(139,26,26,.06)", border: `1px solid ${CRIMSON}`, padding: "8px 10px", margin: "0 0 10px" }}>
+                  <strong>✗ Didn&apos;t send.</strong> {(d.error as string) || "Unknown error."} — fix it and hit Send again, or check Resend → Emails.
+                </div>
               )}
               <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                 {st === "ready" && (
@@ -626,8 +628,10 @@ export default async function CandidateRoomPage({
                     </form>
                   </>
                 )}
-                {st === "sent" && d.sent_at && (
-                  <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED }}>sent {timeAgo(d.sent_at as string)}</span>
+                {st === "sent" && (
+                  <span style={{ fontFamily: MONO, fontSize: "12px", fontWeight: 700, color: GREEN, background: "rgba(46,125,50,.08)", border: `1px solid ${GREEN}`, padding: "6px 10px" }}>
+                    ✓ Sent to {d.to_addr as string}{d.sent_at ? ` · ${timeAgo(d.sent_at as string)}` : ""}
+                  </span>
                 )}
               </div>
             </div>
