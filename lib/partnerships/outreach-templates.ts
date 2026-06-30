@@ -61,7 +61,7 @@ ${SIGNOFF}`,
   },
   community: {
     id: "community",
-    subject: "something for the early AE/SDR [COMMUNITY] family",
+    subject: "something for the early AE/SDR crowd in [COMMUNITY]",
     body: `[NAME] — [COMMUNITY] is full of exactly who AESDR.com is built for: SDRs and AEs a year or two in, ramping harder than anyone said they would have to. It is a one-time course built by operators like us, not by course-people.
 
 If it fits your members, the affiliate terms are 40% commission on a 30-day attribution window, paid clean through Stripe. We read your first couple of posts so they sound like you and not like an ad or ai-crap. That's because we're prioritizing protecting your members' trust, and then you'll post on your own after we vet the first couple pieces of outreach you do.
@@ -133,6 +133,23 @@ export function humanizeCommunityName(raw: string): string {
   return v;
 }
 
+/**
+ * Guard the [COMMUNITY] slot against dropping a bare handle into "X is full
+ * of…": a real community reads as words (has a space) or is already cased
+ * ("B2B Sales University"). A bare all-lowercase token ("joshbraun") is a
+ * handle for a personal brand, not a community name — say "your community"
+ * instead, which reads naturally in both the subject and the body.
+ */
+export function presentableCommunity(humanized: string, firstName: string): string {
+  const v = humanized.trim();
+  if (!v) return "your community";
+  const isBareHandle = !/\s/.test(v) && v === v.toLowerCase();
+  if (isBareHandle || v.toLowerCase() === firstName.trim().toLowerCase()) {
+    return "your community";
+  }
+  return v;
+}
+
 /** Pick the template from the pipeline row's surface. Defaults to newsletter. */
 export function pickTemplate(surface: string | null): OutreachTemplateId {
   const s = (surface || "").toLowerCase();
@@ -170,8 +187,9 @@ export function renderFirstTouch(row: {
   const t = TEMPLATES[templateId];
 
   const firstName = row.name.trim().split(/\s+/)[0] || row.name;
-  const communityName = humanizeCommunityName(
-    row.handle?.trim() || row.surface?.trim() || row.name,
+  const communityName = presentableCommunity(
+    humanizeCommunityName(row.handle?.trim() || row.surface?.trim() || row.name),
+    firstName,
   );
 
   // [ANGLE]: the researched specific when a brief exists, else a warm fallback
