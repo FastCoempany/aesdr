@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import styles from "../../tower.module.css";
+import { useConfirm } from "@/components/ConfirmDialog";
 
 /**
  * "Run brief" — fires the rebuilt dossier research in the background, then POLLS
@@ -33,6 +34,7 @@ export default function RunBriefButton({
   label: string;
 }) {
   const router = useRouter();
+  const [confirm, confirmModal] = useConfirm();
   const [busy, setBusy] = useState(false);
   const [live, setLive] = useState<string | null>(null);
   const [note, setNote] = useState<Note | null>(null);
@@ -106,9 +108,10 @@ export default function RunBriefButton({
 
   async function start() {
     if (
-      !confirm(
+      !(await confirm(
         `${label}? It runs a live web-search research call in the background (~1–2 min, ~$0.10–$0.50) and shows progress here.`,
-      )
+        { confirmLabel: "Run brief" },
+      ))
     ) {
       return;
     }
@@ -140,6 +143,7 @@ export default function RunBriefButton({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+      {confirmModal}
       <button
         type="button"
         className={`${styles.btn} ${styles.outline}`}
