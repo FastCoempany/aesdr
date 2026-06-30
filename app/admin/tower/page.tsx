@@ -10,6 +10,7 @@ import Link from "next/link";
 import { createAdminClient } from "@/utils/supabase/admin";
 import {
   approveDraft,
+  sendNow,
   approveAllReady,
   holdDraft,
   releaseDraft,
@@ -131,10 +132,13 @@ export default async function TowerPage({
   // partial). We surface a banner and suppress the all-clear copy instead.
   let decisionLoadFailed = false;
 
+  // Both 'ready' (awaiting your review) and 'approved' (armed — you pressed
+  // Ready) stay in the house so the whole gesture lives on one card: Ready
+  // arms it, then Send fires it.
   const { data: readyDrafts, error: readyDraftsError } = await supabase
     .from("partner_outbound_queue")
     .select("*")
-    .eq("status", "ready")
+    .in("status", ["ready", "approved"])
     .order("send_after", { ascending: true })
     .limit(50);
   if (readyDraftsError) decisionLoadFailed = true;
@@ -146,6 +150,7 @@ export default async function TowerPage({
     subject: string;
     body: string;
     tier: string;
+    status: string;
     warden_cleared: boolean;
     drafted_by: string | null;
     send_channel?: string | null;
@@ -153,17 +158,19 @@ export default async function TowerPage({
     related_pipeline_id?: string | null;
   };
   const drafts: DraftRow[] = (readyDrafts ?? []) as DraftRow[];
-  const emailDraftCount = drafts.filter(
-    (d) => (d.send_channel ?? "email") === "email",
+  // The "Ready all" batch only arms rows still awaiting review; already-armed
+  // ('approved') rows are sent individually with their own confirm.
+  const emailReadyCount = drafts.filter(
+    (d) => (d.send_channel ?? "email") === "email" && d.status === "ready",
   ).length;
 
-  // The shelf — drafts that exist but aren't in the ready lane: approved rows
-  // waiting on courier's next tick, held rows you pulled back, failed sends.
-  // Without this they're invisible outside their candidate's room.
+  // The shelf — drafts parked OFF the send path: held rows you pulled back and
+  // failed sends. Armed ('approved') rows now stay in the house with a Send
+  // button, so nothing waits on a cron here.
   const { data: shelfRows } = await supabase
     .from("partner_outbound_queue")
     .select("id, to_addr, subject, status, error, related_pipeline_id")
-    .in("status", ["approved", "held", "failed"])
+    .in("status", ["held", "failed"])
     .order("created_at", { ascending: true })
     .limit(30);
   const shelf = (shelfRows ?? []) as Array<{
@@ -618,7 +625,7 @@ export default async function TowerPage({
       <section style={{ marginBottom: "52px" }}>
         <p style={sectionLabel}>
           <span>Decisions</span>
-          <Hint tip="The only place anything leaves the building. Send approves an email for courier's next run (within 5 minutes while its lever is on); Hold pulls it back; manual rows you send yourself and then Mark sent. Empty lane means nothing needs you — wait, the agents are working." />
+          <Hint tip="The only place anything leaves the building. Ready arms a reviewed draft (it lights green); Send then emails it immediately — no cron needed. Hold pulls it back; manual rows you deliver yourself and then Mark sent. Empty lane means nothing needs you." />
           <span style={{ flex: 1, height: 1, background: LIGHT }} />
         </p>
 
@@ -636,10 +643,10 @@ export default async function TowerPage({
               <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: INK }}>
                 {drafts.length} draft{drafts.length > 1 ? "s" : ""} in the house
               </span>
-              {emailDraftCount > 1 && (
+              {emailReadyCount > 1 && (
                 <form action={approveAllReady}>
-                  <TowerButton pendingLabel="Approving all…">
-                    Send all {emailDraftCount} email
+                  <TowerButton pendingLabel="Arming all…">
+                    Ready all {emailReadyCount} email
                   </TowerButton>
                 </form>
               )}
@@ -647,8 +654,12 @@ export default async function TowerPage({
             {drafts.map((d) => {
               const channel = d.send_channel ?? "email";
               const isManual = channel === "manual";
+              const isArmed = !isManual && d.status === "approved";
               return (
-                <div key={d.id} style={card}>
+                <div
+                  key={d.id}
+                  style={isArmed ? { ...card, borderLeft: "3px solid #2E7D32" } : card}
+                >
                   <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px", flexWrap: "wrap" }}>
                     <span style={tierChip(d.tier)}>{d.tier}</span>
                     <span style={{ ...tierChip(isManual ? "cold" : "ok"), color: isManual ? "#a14400" : MUTED, borderColor: isManual ? "#e6c9a8" : LIGHT }}>
@@ -658,6 +669,11 @@ export default async function TowerPage({
                       <span style={{ ...tierChip("ok"), color: "#2E7D32", borderColor: "#CDE7CE" }}>warden ✓</span>
                     ) : (
                       <span style={{ ...tierChip("cold"), color: "#a14400", borderColor: "#e6c9a8" }}>needs eye</span>
+                    )}
+                    {isArmed && (
+                      <span style={{ ...tierChip("ok"), color: "#2E7D32", borderColor: "#2E7D32", fontWeight: 700 }}>
+                        ● armed
+                      </span>
                     )}
                     <span style={{ fontFamily: MONO, fontSize: "12px", color: MUTED, marginLeft: "auto" }}>
                       → {d.to_addr}
@@ -693,10 +709,20 @@ export default async function TowerPage({
                         <input type="hidden" name="id" value={d.id} />
                         <TowerButton pendingLabel="Marking…">Mark sent</TowerButton>
                       </form>
+                    ) : isArmed ? (
+                      <form action={sendNow}>
+                        <input type="hidden" name="id" value={d.id} />
+                        <TowerButton
+                          pendingLabel="Sending…"
+                          confirmMessage={`Send this email to ${d.to_addr} now? It goes out immediately and can't be undone.`}
+                        >
+                          Send now
+                        </TowerButton>
+                      </form>
                     ) : (
                       <form action={approveDraft}>
                         <input type="hidden" name="id" value={d.id} />
-                        <TowerButton pendingLabel="Approving…">Send</TowerButton>
+                        <TowerButton pendingLabel="Marking ready…">Ready</TowerButton>
                       </form>
                     )}
                     <form action={holdDraft}>
@@ -740,12 +766,12 @@ export default async function TowerPage({
           <div style={{ marginBottom: "28px" }}>
             <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: INK, display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
               On the shelf · {shelf.length}
-              <Hint tip="Drafts that exist but aren't asking for a decision. Queued = approved, courier sends on its next run (≤5 min while its lever is on). Held = you pulled it back; Release puts it back in the lane above. Failed = the send errored; Release re-readies it for another approve." />
+              <Hint tip="Drafts parked off the send path. Held = you pulled it back; Release returns it to the house. Failed = the send errored; Release re-readies it for another Ready + Send." />
             </span>
             {shelf.map((s) => (
               <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap", padding: "8px 0", borderBottom: `1px solid ${LIGHT}` }}>
                 <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".1em", textTransform: "uppercase", color: s.status === "failed" ? CRIMSON : s.status === "held" ? "#a14400" : MUTED, border: `1px solid currentcolor`, padding: "1px 7px", whiteSpace: "nowrap" }}>
-                  {s.status === "approved" ? "queued" : s.status}
+                  {s.status}
                 </span>
                 <span style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "320px" }}>
                   {s.subject}
@@ -765,9 +791,6 @@ export default async function TowerPage({
                       <input type="hidden" name="id" value={s.id} />
                       <TowerButton variant="ghost" pendingLabel="Releasing…">Release</TowerButton>
                     </form>
-                  )}
-                  {s.status === "approved" && (
-                    <span style={{ fontFamily: MONO, fontSize: "10.5px", color: MUTED }}>courier sends ≤5 min</span>
                   )}
                 </span>
               </div>
