@@ -55,7 +55,7 @@ export async function proxy(request: NextRequest) {
   // the HOST (not only the env var) lets the clean domain live on the main,
   // always-from-main project instead of a separate one that silently drifts out
   // of date. The kit lives entirely under /x/* (which passed above); the bare
-  // domain rewrites to the landing, everything else 404s, so the kit domain is
+  // domain rewrites to the welcome gate, everything else 404s, so the kit domain is
   // the kit and nothing else. aesdr.com (host isn't affiliatekit*, var unset)
   // skips this block and behaves normally.
   const affiliateHost = (request.headers.get("host") ?? "").toLowerCase();
@@ -63,12 +63,13 @@ export async function proxy(request: NextRequest) {
     process.env.AFFILIATE_EXPERIENCE === "1" ||
     affiliateHost.startsWith("affiliatekit.");
   if (isAffiliateExperience) {
-    // The bare domain IS the prospect's home: serve the full landing there.
-    // A REWRITE (not a redirect) so the URL stays affiliatekit.aesdr.com/ with
-    // no /x/landing in the address bar. Everything else outside /x/* still 404s.
+    // The bare domain IS the prospect's home: serve the Step-1 welcome gate
+    // there (the proper first screen — "Begin" then carries them into the full
+    // /x/landing experience). A REWRITE (not a redirect) so the URL stays
+    // affiliatekit.aesdr.com/ clean. Everything else outside /x/* still 404s.
     if (pathname === "/" || pathname === "/x") {
       const url = request.nextUrl.clone();
-      url.pathname = "/x/landing";
+      url.pathname = "/x/welcome";
       return NextResponse.rewrite(url);
     }
     return new NextResponse("Not found", { status: 404 });
