@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { useFormStatus } from "react-dom";
 
 import { runAffiliatePayoutBatch } from "@/app/actions/affiliate";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 
 /**
  * The affiliate-detail "Pay out via Stripe Connect" button (R5-EE-4).
@@ -13,36 +15,41 @@ import { runAffiliatePayoutBatch } from "@/app/actions/affiliate";
  */
 function SubmitButton({ amountLabel }: { amountLabel: string }) {
   const { pending } = useFormStatus();
+  const [asking, setAsking] = useState(false);
   return (
-    <button
-      type="submit"
-      disabled={pending}
-      aria-busy={pending}
-      onClick={(e) => {
-        if (
-          !confirm(
-            `Pay out ${amountLabel} to this affiliate via Stripe now? This moves real money.`,
-          )
-        ) {
-          e.preventDefault();
-        }
-      }}
-      style={{
-        fontFamily: "'Barlow Condensed',sans-serif",
-        fontWeight: 700,
-        fontSize: 13,
-        letterSpacing: ".18em",
-        textTransform: "uppercase",
-        color: "#1A1A1A",
-        background: "#FAF7F2",
-        border: "none",
-        padding: "10px 22px",
-        cursor: pending ? "wait" : "pointer",
-        opacity: pending ? 0.7 : 1,
-      }}
-    >
-      {pending ? "Sending…" : "Pay out via Stripe Connect →"}
-    </button>
+    <>
+      <button
+        type="button"
+        disabled={pending}
+        aria-busy={pending}
+        onClick={() => setAsking(true)}
+        style={{
+          fontFamily: "'Barlow Condensed',sans-serif",
+          fontWeight: 700,
+          fontSize: 13,
+          letterSpacing: ".18em",
+          textTransform: "uppercase",
+          color: "#1A1A1A",
+          background: "#FAF7F2",
+          border: "none",
+          padding: "10px 22px",
+          cursor: pending ? "wait" : "pointer",
+          opacity: pending ? 0.7 : 1,
+        }}
+      >
+        {pending ? "Sending…" : "Pay out via Stripe Connect →"}
+      </button>
+      {asking && (
+        <ConfirmDialog
+          eyebrow="Move real money"
+          message={`Pay out ${amountLabel} to this affiliate via Stripe now? This moves real money.`}
+          confirmLabel="Pay out"
+          confirmType="submit"
+          onConfirm={() => setAsking(false)}
+          onCancel={() => setAsking(false)}
+        />
+      )}
+    </>
   );
 }
 

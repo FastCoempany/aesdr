@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import styles from "../../enterprise.module.css";
+import { useConfirm } from "@/components/ConfirmDialog";
 
 /**
  * Interactive AE/SDR behavior diagnostic instrument.
@@ -166,6 +167,7 @@ export default function DiagnosticInstrument() {
   // already-answered responses around — useful if the AE/SDR mis-clicks
   // and switches back. But responses for hidden dimensions don't count
   // toward "filled" or affect the averages until the role flips back.
+  const [confirm, confirmModal] = useConfirm();
   const visibleDimensions = useMemo(() => dimensionsForRole(role), [role]);
   const visibleItemCodes = useMemo(
     () => new Set(visibleDimensions.flatMap((d) => d.items.map((i) => i.code))),
@@ -234,14 +236,15 @@ export default function DiagnosticInstrument() {
     downloadCsv(rows, filename);
   }
 
-  function handleReset() {
-    if (filled === 0 || confirm("Clear all responses and start over?")) {
+  async function handleReset() {
+    if (filled === 0 || (await confirm("Clear all responses and start over?", { confirmLabel: "Clear" }))) {
       setResponses({});
     }
   }
 
   return (
     <>
+      {confirmModal}
       {/* Header — actual editable inputs */}
       <div className={styles.diagHeader}>
         <div className={styles.diagHeaderGrid}>

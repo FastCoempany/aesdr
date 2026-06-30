@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import styles from "./tower.module.css";
+import { useConfirm } from "@/components/ConfirmDialog";
 
 /**
  * One scout-sweep button. Fires the rebuilt agentic sweep, then POLLS its run
@@ -35,6 +36,7 @@ export default function ScoutSweepButton({
   label: string;
 }) {
   const router = useRouter();
+  const [confirm, confirmModal] = useConfirm();
   const [busy, setBusy] = useState(false);
   const [live, setLive] = useState<string | null>(null);
   const [note, setNote] = useState<Note | null>(null);
@@ -122,9 +124,10 @@ export default function ScoutSweepButton({
 
   async function start() {
     if (
-      !confirm(
+      !(await confirm(
         `Run "${label}"? It runs a live web search in the background (~2–4 min) and shows progress here as it goes.`,
-      )
+        { confirmLabel: "Run sweep" },
+      ))
     ) {
       return;
     }
@@ -158,6 +161,7 @@ export default function ScoutSweepButton({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+      {confirmModal}
       <button
         type="button"
         className={`${styles.btn} ${styles.outline}`}

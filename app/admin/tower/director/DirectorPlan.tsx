@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 
 import styles from "./director.module.css";
 import { PHASES, WEEKS, REFERENCE, MANUAL, type Tag } from "./plan";
+import { useConfirm } from "@/components/ConfirmDialog";
 
 /**
  * Interactive renderer for the Director plan. Collapsible weeks + tasks,
@@ -78,8 +79,9 @@ export default function DirectorPlan() {
   const openTask = (id: string) =>
     persist({ ...state, openTasks: { ...state.openTasks, [id]: true } });
 
-  const reset = () => {
-    if (confirm("Reset all checkboxes and collapse everything?")) {
+  const [confirm, confirmModal] = useConfirm();
+  const reset = async () => {
+    if (await confirm("Reset all checkboxes and collapse everything?", { confirmLabel: "Reset" })) {
       persist({ checked: {}, openWeeks: {}, openTasks: {} });
     }
   };
@@ -111,6 +113,7 @@ export default function DirectorPlan() {
 
   return (
     <div className={styles.frame}>
+      {confirmModal}
       {/* ─── Sidebar ─── */}
       <aside className={styles.sidebar}>
         <div className={styles.sidebarHead}>
