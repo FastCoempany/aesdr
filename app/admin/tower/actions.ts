@@ -168,15 +168,11 @@ export async function sendNow(formData: FormData) {
     throw new Error("Press Ready before sending.");
   }
 
-  const outcome = await sendOutboundRow(
-    supabase,
-    row,
-    new Date().toISOString(),
-    user.email,
-  );
-  if (outcome.result === "failed") {
-    throw new Error(`Send failed: ${outcome.error ?? "unknown error"}`);
-  }
+  await sendOutboundRow(supabase, row, new Date().toISOString(), user.email);
+  // Don't throw on a send failure — sendOutboundRow already flipped the row to
+  // 'failed' with the error, so the card shows a clear red "didn't send" badge
+  // instead of a jarring full-page error. Either way (sent ✓ or failed ✗) the
+  // revalidate renders the result right where the operator clicked.
   revalidateCandidate(row.related_pipeline_id);
 }
 
