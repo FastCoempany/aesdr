@@ -733,8 +733,8 @@ export default async function TowerPage({
 
                   {/* Inline editor — the tower as draft house */}
                   <details style={{ marginTop: "10px" }}>
-                    <summary style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".14em", textTransform: "uppercase", color: MUTED, cursor: "pointer" }}>
-                      Edit draft
+                    <summary style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".14em", textTransform: "uppercase", color: CRIMSON, cursor: "pointer" }}>
+                      ✎ Edit subject &amp; body
                     </summary>
                     <form action={editDraft} style={{ marginTop: "10px" }}>
                       <input type="hidden" name="id" value={d.id} />
