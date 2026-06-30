@@ -40,6 +40,7 @@ import {
   extractEmail,
   firstTouchIdemKey,
 } from "@/lib/partnerships/outreach-templates";
+import { sendOutboundRow } from "@/lib/partnerships/courier-send";
 
 /** Re-render the tower and a candidate's room after a state change. */
 function revalidateCandidate(pipelineId: string | null | undefined) {
@@ -134,6 +135,49 @@ export async function approveAllReady() {
   if (error) throw new Error(error.message);
 
   revalidatePath("/admin/tower");
+}
+
+/**
+ * Send one ARMED (status='approved') email row immediately — the tower's manual
+ * click-to-send. Reuses the courier's exact send path (sendOutboundRow), so the
+ * claim-before-send idempotency holds even if a courier tick races this click,
+ * and a double-click can't double-send. No cron required: the mail is gone by
+ * the time this action returns.
+ *
+ * Guard chain: admin-gated · email-channel only (manual rows go by hand) · must
+ * already be 'approved' (you pressed Ready first), so an unreviewed draft can't
+ * fire. The Send button also carries a confirm dialog — see page.tsx.
+ */
+export async function sendNow(formData: FormData) {
+  const user = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) throw new Error("Missing id.");
+
+  const supabase = createAdminClient();
+  const { data: row, error } = await supabase
+    .from("partner_outbound_queue")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!row) throw new Error("Draft not found.");
+  if ((row.send_channel ?? "email") !== "email") {
+    throw new Error("Manual rows are delivered by hand — use Mark sent.");
+  }
+  if (row.status !== "approved") {
+    throw new Error("Press Ready before sending.");
+  }
+
+  const outcome = await sendOutboundRow(
+    supabase,
+    row,
+    new Date().toISOString(),
+    user.email,
+  );
+  if (outcome.result === "failed") {
+    throw new Error(`Send failed: ${outcome.error ?? "unknown error"}`);
+  }
+  revalidateCandidate(row.related_pipeline_id);
 }
 
 /**
