@@ -49,12 +49,20 @@ export async function proxy(request: NextRequest) {
     return supabaseResponse;
   }
 
-  // ── Affiliate-experience environment: lock everything else to 404 ──
-  // AFFILIATE_EXPERIENCE=1 is set ONLY on the dedicated affiliatekit
-  // deployment. The kit lives entirely under /x/* (which passed above); every
-  // other path 404s so affiliatekit.aesdr.com is the kit experience and nothing
-  // else. On production (var unset) this block is skipped entirely.
-  if (process.env.AFFILIATE_EXPERIENCE === "1") {
+  // ── Affiliate-kit experience ──
+  // Served two ways: a dedicated AFFILIATE_EXPERIENCE=1 deployment, OR — the
+  // robust one — the affiliatekit.* hostname on the MAIN deployment. Gating on
+  // the HOST (not only the env var) lets the clean domain live on the main,
+  // always-from-main project instead of a separate one that silently drifts out
+  // of date. The kit lives entirely under /x/* (which passed above); the bare
+  // domain rewrites to the landing, everything else 404s, so the kit domain is
+  // the kit and nothing else. aesdr.com (host isn't affiliatekit*, var unset)
+  // skips this block and behaves normally.
+  const affiliateHost = (request.headers.get("host") ?? "").toLowerCase();
+  const isAffiliateExperience =
+    process.env.AFFILIATE_EXPERIENCE === "1" ||
+    affiliateHost.startsWith("affiliatekit.");
+  if (isAffiliateExperience) {
     // The bare domain IS the prospect's home: serve the full landing there.
     // A REWRITE (not a redirect) so the URL stays affiliatekit.aesdr.com/ with
     // no /x/landing in the address bar. Everything else outside /x/* still 404s.
