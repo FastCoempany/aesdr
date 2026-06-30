@@ -24,6 +24,7 @@ import {
   findEmailNow,
   useFoundEmail,
   approveDraft,
+  sendNow,
   holdDraft,
   releaseDraft,
   markManualSent,
@@ -213,8 +214,8 @@ export default async function CandidateRoomPage({
   if (status === "sourced") {
     next = "Waiting on you — Promote or Reject below.";
   } else if (status === "enriched") {
-    if (hasReadyDraft) next = "A draft is in the house — approve or hold it below.";
-    else if (hasApprovedDraft) next = `Approved draft queued — courier sends it on its next tick${levers["courier"] ? "" : " once its lever is started"}.`;
+    if (hasReadyDraft) next = "A draft is in the house — press Ready, then Send it below.";
+    else if (hasApprovedDraft) next = "Draft is armed — press Send now to email it (no cron needed).";
     else if (!brief && !hasLegacyBrief)
       next = `Waiting on a research brief — ${levers["dossier-enrich"] ? "dossier-enrich runs hourly (:33 UTC)" : "dossier-enrich is paused"}, or press Run brief now. Waiting is fine; pressing is faster.`;
     else if ((vf ?? 0) >= 4)
@@ -523,12 +524,17 @@ export default async function CandidateRoomPage({
         drafts.map((d) => {
           const st = d.status as string;
           const isManual = (d.send_channel ?? "email") === "manual";
+          const isArmed = !isManual && st === "approved";
           return (
-            <div key={d.id as string} style={card}>
+            <div
+              key={d.id as string}
+              style={isArmed ? { ...card, borderLeft: `3px solid ${GREEN}` } : card}
+            >
               <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center", marginBottom: "8px" }}>
                 <span style={chip(st === "sent" ? GREEN : st === "failed" ? CRIMSON : st === "held" ? AMBERISH : INK)}>{st}</span>
                 <span style={chip(MUTED)}>{isManual ? "manual send" : "email"}</span>
                 {d.warden_cleared ? <span style={chip(GREEN)}>warden ✓</span> : <span style={chip(AMBERISH)}>needs eye</span>}
+                {isArmed && <span style={{ ...chip(GREEN), fontWeight: 700 }}>● armed</span>}
                 <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED, marginLeft: "auto" }}>→ {d.to_addr as string}</span>
               </div>
               {isManual && st !== "sent" && (
@@ -563,7 +569,7 @@ export default async function CandidateRoomPage({
                     ) : (
                       <form action={approveDraft}>
                         <input type="hidden" name="id" value={d.id as string} />
-                        <TowerButton pendingLabel="Approving…">Send</TowerButton>
+                        <TowerButton pendingLabel="Marking ready…">Ready</TowerButton>
                       </form>
                     )}
                     <form action={holdDraft}>
@@ -579,9 +585,21 @@ export default async function CandidateRoomPage({
                   </form>
                 )}
                 {st === "approved" && (
-                  <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED }}>
-                    queued — courier sends on its next tick{levers["courier"] ? " (≤5 min)" : " once its lever is started"}
-                  </span>
+                  <>
+                    <form action={sendNow}>
+                      <input type="hidden" name="id" value={d.id as string} />
+                      <TowerButton
+                        pendingLabel="Sending…"
+                        confirmMessage={`Send this email to ${d.to_addr as string} now? It goes out immediately and can't be undone.`}
+                      >
+                        Send now
+                      </TowerButton>
+                    </form>
+                    <form action={holdDraft}>
+                      <input type="hidden" name="id" value={d.id as string} />
+                      <TowerButton variant="ghost" pendingLabel="Holding…">Hold</TowerButton>
+                    </form>
+                  </>
                 )}
                 {st === "sent" && d.sent_at && (
                   <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED }}>sent {timeAgo(d.sent_at as string)}</span>
