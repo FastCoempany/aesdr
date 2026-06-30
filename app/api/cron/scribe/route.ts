@@ -64,7 +64,7 @@ export async function GET(request: Request) {
   // Candidates worth a first-touch.
   const { data: candidates, error: candErr } = await supabase
     .from("partner_pipeline")
-    .select("id, name, surface, handle, contact_path, why_fit, voice_fit")
+    .select("id, name, surface, handle, contact_path, why_fit, voice_fit, dossier_brief")
     .eq("status", "enriched")
     .eq("motion", "affiliate")
     .gte("voice_fit", MIN_FIT)
@@ -97,7 +97,14 @@ export async function GET(request: Request) {
       continue;
     }
 
-    const rendered = renderFirstTouch(c);
+    const rendered = renderFirstTouch({
+      name: c.name,
+      surface: c.surface,
+      handle: c.handle,
+      why_fit: c.why_fit,
+      first_touch_angle:
+        (c.dossier_brief as { first_touch_angle?: string | null } | null)?.first_touch_angle ?? null,
+    });
     const { clean, hits } = canonCheck(`${rendered.subject}\n${rendered.body}`);
 
     const email = extractEmail(c.contact_path);

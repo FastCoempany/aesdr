@@ -44,34 +44,52 @@ const SITE = getSiteUrl();
 const TEMPLATES: Record<OutreachTemplateId, Template> = {
   newsletter: {
     id: "newsletter",
-    subject: "the part of the job your readers are mid-struggle with",
-    body: `[NAME] — I read [SPECIFIC PIECE], and the bit about [REAL DETAIL] is the exact gap AESDR is built for: first-1-to-2-year SDRs and AEs who got dropped into the seat and told to figure it out.
+    subject: "something for the early AE/SDR readers on your list",
+    body: `[NAME] — your list is full of exactly who AESDR.com is built for: SDRs and AEs a year or two in, ramping harder than anyone said they would have to. It is a one-time course built by operators like us, not by course-people.
 
-It is a one-time course ($249 SDR / $299 AE), built by operators, no guru act. If you ever point readers at it, the affiliate terms are 40% commission on a 30-day attribution window — real money, paid through Stripe, no games.
+If it fits your readers, the affiliate terms are 40% commission on a 30-day attribution window, paid clean through Stripe. We read your first couple of sends so they sound like you and not like an ad or ai-crap. That's because we're prioritizing protecting your readers' trust, and then you'll send on your own after we vet the first couple.
 
-Not asking for a yes today. Want the partner kit, so you can see whether it fits your list?
+[ANGLE]
+
+Worth fifteen minutes to see if it fits?
+
+It'll be the most refreshing few minutes you've had in a while.
+
+${BOOKING}
 
 ${SIGNOFF}`,
   },
   community: {
     id: "community",
-    subject: "something for the first-two-years crowd in [COMMUNITY]",
-    body: `[NAME] — [COMMUNITY] is full of exactly who AESDR is for: SDRs and AEs a year or two in, ramping harder than anyone warned them. It is a one-time course built by operators, not by course-people.
+    subject: "something for the early AE/SDR [COMMUNITY] family",
+    body: `[NAME] — [COMMUNITY] is full of exactly who AESDR.com is built for: SDRs and AEs a year or two in, ramping harder than anyone said they would have to. It is a one-time course built by operators like us, not by course-people.
 
-If it fits your members, the affiliate terms are 40% commission on a 30-day attribution window, paid clean through Stripe. We read your first couple of posts so they sound like you and not like an ad — that protects your members' trust, and then you post on your own.
+If it fits your members, the affiliate terms are 40% commission on a 30-day attribution window, paid clean through Stripe. We read your first couple of posts so they sound like you and not like an ad or ai-crap. That's because we're prioritizing protecting your members' trust, and then you'll post on your own after we vet the first couple pieces of outreach you do.
 
-Worth fifteen minutes to see if it fits? ${BOOKING}
+[ANGLE]
+
+Worth fifteen minutes to see if it fits?
+
+It'll be the most refreshing few minutes you've had in a while.
+
+${BOOKING}
 
 ${SIGNOFF}`,
   },
   podcast: {
     id: "podcast",
     subject: "a guest angle your listeners are living right now",
-    body: `[NAME] — [SPECIFIC EPISODE OR SHOW THEME] lines up with what AESDR teaches: the first-1-to-2-year SDR and AE problem — dropped into the seat, handed a quota, left to guess. Your show already talks to exactly those listeners.
+    body: `[NAME] — your show speaks to exactly who AESDR.com is built for: SDRs and AEs a year or two in, ramping harder than anyone said they would have to. It is a one-time course built by operators like us, not by course-people.
 
-It is a one-time course ($249 SDR / $299 AE), built by operators. If you mention it — host-read or a guest spot — the affiliate terms are 40% commission on a 30-day attribution window, paid through Stripe.
+If it fits your listeners, the affiliate terms are 40% commission on a 30-day attribution window, paid clean through Stripe — host-read or a guest spot. We make sure any mention sounds like you and not like an ad or ai-crap, so your listeners' trust stays intact.
 
-Happy to come on and earn it, or just take the partner kit first. Fifteen minutes if that is easier: ${BOOKING}
+[ANGLE]
+
+Happy to come on and earn it, or just take the partner kit first. Worth fifteen minutes to see if it fits?
+
+It'll be the most refreshing few minutes you've had in a while.
+
+${BOOKING}
 
 ${SIGNOFF}`,
   },
@@ -132,16 +150,21 @@ export type RenderedDraft = {
 };
 
 /**
- * Render a first-touch draft from a pipeline row. Fills the placeholders we can
- * confidently fill ([NAME], [COMMUNITY]) and substitutes the Dossier why-fit for
- * [REAL DETAIL] when present. Any placeholder still in the text after fill is
- * returned in `unfilled` so the caller can mark the row needs-personalization.
+ * Render a first-touch draft from a pipeline row. Fills [NAME] and [COMMUNITY]
+ * from pipeline fields, and [ANGLE] — the one personal line — from the Dossier's
+ * researched first_touch_angle when a brief has run, falling back to a warm,
+ * no-research-needed line otherwise. The point: a first-touch draft NEVER ships
+ * with a bracket the operator has to go hunt down and fill by hand.
  */
 export function renderFirstTouch(row: {
   name: string;
   surface: string | null;
   handle: string | null;
   why_fit: string | null;
+  /** The Dossier's researched, sendable first-touch line (from
+   *  partner_pipeline.dossier_brief.first_touch_angle), when a brief has run.
+   *  Fills [ANGLE]; absent → the warm fallback below. */
+  first_touch_angle?: string | null;
 }): RenderedDraft {
   const templateId = pickTemplate(row.surface);
   const t = TEMPLATES[templateId];
@@ -151,17 +174,17 @@ export function renderFirstTouch(row: {
     row.handle?.trim() || row.surface?.trim() || row.name,
   );
 
+  // [ANGLE]: the researched specific when a brief exists, else a warm fallback
+  // that needs no research and is always sendable. Either way: no hand-fill.
+  const angle =
+    cleanAngle(row.first_touch_angle) ||
+    `I know your work, ${firstName}. I'm not worried about it.`;
+
   const replacements: Record<string, string> = {
     "[NAME]": firstName,
     "[COMMUNITY]": communityName,
+    "[ANGLE]": angle,
   };
-  // why_fit is the operator's internal note — it can carry annotations like
-  // [scout/…], a ⚠ unverified flag, a conflict tag, or (historically) the
-  // admin's email. Strip all that before it becomes partner-facing copy.
-  const detail = cleanWhyFit(row.why_fit);
-  if (detail) {
-    replacements["[REAL DETAIL]"] = detail;
-  }
 
   const fill = (s: string) =>
     Object.entries(replacements).reduce(
@@ -172,12 +195,21 @@ export function renderFirstTouch(row: {
   const subject = fill(t.subject);
   const body = fill(t.body);
 
-  // Anything left like [SPECIFIC PIECE] / [SPECIFIC EPISODE OR SHOW THEME].
+  // With [NAME]/[COMMUNITY]/[ANGLE] resolved nothing should remain, but keep the
+  // guard so any future template bracket still gets flagged "needs your sentence".
   const unfilled = Array.from(
     new Set((subject + "\n" + body).match(/\[[A-Z][A-Z0-9 /]+\]/g) || []),
   );
 
   return { templateId, subject, body, unfilled };
+}
+
+/** Lightly sanitize the Dossier's first-touch angle before it becomes the
+ *  partner-facing [ANGLE] line: drop any stray bracketed tag and collapse
+ *  whitespace. Empty → "" so the caller uses the warm fallback. */
+function cleanAngle(s: string | null | undefined): string {
+  if (!s) return "";
+  return s.replace(/\[[^\]]*\]/g, "").replace(/\s+/g, " ").trim();
 }
 
 /** Strip internal annotations from a why_fit note before it becomes partner-
@@ -212,9 +244,9 @@ export function extractEmail(contactPath: string | null): string | null {
  *  for the operator to fill — the resource must genuinely fit their audience. */
 export function renderFollowUp1(row: { name: string }): RenderedDraft {
   const firstName = row.name.trim().split(/\s+/)[0] || row.name;
-  const body = `${firstName} — quick follow-up, with something useful either way: [SPECIFIC RESOURCE OR LESSON ANGLE RELEVANT TO THEIR AUDIENCE].
+  const body = `${firstName} — quick follow-up, with something useful either way: a copy of The Manager Archetype Map from the course. It helps a first-2-year rep read a new manager in the first couple of weeks — yours to keep no matter what.
 
-If the affiliate thing is not for you, no problem — keep the resource. If it is, the kit is here: ${SITE}/affiliates/kit. Same terms as before: 40% commission, 30-day attribution window, $249/$299 one-time, paid through Stripe.
+If the affiliate thing is not for you, no problem — keep the map. If it is, the kit is here: ${SITE}/affiliates/kit. Same terms as before: 40% commission, 30-day attribution window, paid through Stripe.
 
 ${SIGNOFF}`;
   const unfilled = Array.from(new Set(body.match(/\[[A-Z][A-Z0-9 /]+\]/g) || []));
@@ -226,8 +258,8 @@ export function renderFollowUp2(row: { name: string; why_fit?: string | null }):
   const firstName = row.name.trim().split(/\s+/)[0] || row.name;
   // Best-effort fill of [THEIR AUDIENCE] from the why-fit, sanitized of any
   // internal annotations; if absent, leave the placeholder for the operator.
-  const audience = cleanWhyFit(row.why_fit) || "[THEIR AUDIENCE]";
-  const body = `${firstName} — last note from me, no hard feelings if it is a no. I think AESDR genuinely fits ${audience}, and the terms are real — 40% commission, 30-day attribution window, $249/$299 one-time, paid through Stripe — but I would rather leave you alone than send a fourth email.
+  const audience = cleanWhyFit(row.why_fit) || "early-career AEs and SDRs";
+  const body = `${firstName} — last note from me, no hard feelings if it is a no. I think AESDR genuinely fits ${audience}, and the terms are real — 40% commission, 30-day attribution window, one-time, paid through Stripe — but I would rather leave you alone than send a fourth email.
 
 Door is open whenever. ${SIGNOFF}`;
   const unfilled = Array.from(new Set(body.match(/\[[A-Z][A-Z0-9 /]+\]/g) || []));

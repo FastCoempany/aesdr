@@ -738,7 +738,7 @@ export async function draftNow(formData: FormData) {
     const supabase = createAdminClient();
     const { data: row, error } = await supabase
       .from("partner_pipeline")
-      .select("id, name, surface, handle, contact_path, why_fit, status")
+      .select("id, name, surface, handle, contact_path, why_fit, status, dossier_brief")
       .eq("id", id)
       .maybeSingle();
     if (error) throw new Error(error.message);
@@ -762,6 +762,9 @@ export async function draftNow(formData: FormData) {
       surface: row.surface as string | null,
       handle: row.handle as string | null,
       why_fit: row.why_fit as string | null,
+      first_touch_angle:
+        (row.dossier_brief as { first_touch_angle?: string | null } | null)
+          ?.first_touch_angle ?? null,
     });
     const { clean, hits } = canonCheck(`${rendered.subject}\n${rendered.body}`);
     const email = extractEmail(row.contact_path as string | null);
