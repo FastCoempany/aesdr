@@ -55,14 +55,13 @@ export async function proxy(request: NextRequest) {
   // other path 404s so affiliatekit.aesdr.com is the kit experience and nothing
   // else. On production (var unset) this block is skipped entirely.
   if (process.env.AFFILIATE_EXPERIENCE === "1") {
-    // ...except the bare domain (and a stray "/x"): a prospect who types
-    // affiliatekit.aesdr.com should land ON the experience, not a dead 404.
-    // Send them to the full prospect landing instead.
+    // The bare domain IS the prospect's home: serve the full landing there.
+    // A REWRITE (not a redirect) so the URL stays affiliatekit.aesdr.com/ with
+    // no /x/landing in the address bar. Everything else outside /x/* still 404s.
     if (pathname === "/" || pathname === "/x") {
       const url = request.nextUrl.clone();
       url.pathname = "/x/landing";
-      url.search = "";
-      return NextResponse.redirect(url, 307);
+      return NextResponse.rewrite(url);
     }
     return new NextResponse("Not found", { status: 404 });
   }
