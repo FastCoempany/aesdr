@@ -51,10 +51,19 @@ export async function proxy(request: NextRequest) {
 
   // ── Affiliate-experience environment: lock everything else to 404 ──
   // AFFILIATE_EXPERIENCE=1 is set ONLY on the dedicated affiliatekit
-  // deployment. There, every non-/x/* path 404s so affiliatekit.aesdr.com is
-  // the kit experience and nothing else. On production (var unset) this
-  // block is skipped entirely and the app behaves normally.
+  // deployment. The kit lives entirely under /x/* (which passed above); every
+  // other path 404s so affiliatekit.aesdr.com is the kit experience and nothing
+  // else. On production (var unset) this block is skipped entirely.
   if (process.env.AFFILIATE_EXPERIENCE === "1") {
+    // ...except the bare domain (and a stray "/x"): a prospect who types
+    // affiliatekit.aesdr.com should land ON the experience, not a dead 404.
+    // Send them to the full prospect landing instead.
+    if (pathname === "/" || pathname === "/x") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/x/landing";
+      url.search = "";
+      return NextResponse.redirect(url, 307);
+    }
     return new NextResponse("Not found", { status: 404 });
   }
 
