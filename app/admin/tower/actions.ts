@@ -205,7 +205,7 @@ export async function editDraft(formData: FormData) {
       personalization_note: clean ? null : "Canon flags remain — review before sending.",
     })
     .eq("id", id)
-    .eq("status", "ready")
+    .in("status", ["ready", "approved"])
     .select("related_pipeline_id")
     .maybeSingle();
   if (error) throw new Error(error.message);

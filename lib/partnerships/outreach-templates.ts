@@ -19,6 +19,7 @@
 import crypto from "node:crypto";
 
 import { getSiteUrl } from "@/lib/site-url";
+import { canonCheck } from "@/lib/partnerships/canon-mechanical";
 
 export type OutreachTemplateId = "newsletter" | "community" | "podcast";
 
@@ -192,11 +193,15 @@ export function renderFirstTouch(row: {
     firstName,
   );
 
-  // [ANGLE]: the researched specific when a brief exists, else a warm fallback
-  // that needs no research and is always sendable. Either way: no hand-fill.
-  const angle =
-    cleanAngle(row.first_touch_angle) ||
-    `I know your work, ${firstName}. I'm not worried about it.`;
+  // [ANGLE]: the researched specific when a brief exists AND it passes the
+  // guard (short, second-person, canon-clean); otherwise the warm fallback. The
+  // guard is what stops a third-person research note ("Neil's show… his
+  // audience", "the exact reps") from ever reaching the wire — worst case you
+  // get the warm line, and you can still paste a sharper one in the editor.
+  const rawAngle = cleanAngle(row.first_touch_angle);
+  const angle = isUsableAngle(rawAngle, firstName)
+    ? rawAngle
+    : `I know your work, ${firstName}. I'm not worried about it.`;
 
   const replacements: Record<string, string> = {
     "[NAME]": firstName,
@@ -228,6 +233,32 @@ export function renderFirstTouch(row: {
 function cleanAngle(s: string | null | undefined): string {
   if (!s) return "";
   return s.replace(/\[[^\]]*\]/g, "").replace(/\s+/g, " ").trim();
+}
+
+function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * Gate the Dossier's first-touch angle before it becomes sendable copy. The
+ * angle is LLM output; even with a tightened prompt it can come back as a
+ * third-person note ("Neil's show… his audience"), carry a canon-banned term
+ * ("reps"), or run paragraph-long like an analysis. Any of those → don't use it;
+ * the caller falls back to the warm line. So a bad angle can never reach the
+ * wire — and the operator can still paste a sharper one in the inline editor.
+ */
+function isUsableAngle(angle: string, firstName: string): boolean {
+  if (!angle) return false;
+  // A real one-line opener is short; a paragraph-length blob is a note/analysis.
+  if (angle.length > 240) return false;
+  const lower = angle.toLowerCase();
+  const fn = firstName.trim().toLowerCase();
+  // A line written TO them never names them, nor refers to them in third person.
+  if (fn && new RegExp(`\\b${escapeRegExp(fn)}('s)?\\b`).test(lower)) return false;
+  if (/\b(he|she|his|her|hers|him)\b/.test(lower)) return false;
+  // Mechanical canon: drop anything with a blocklisted term (reps, etc.).
+  if (!canonCheck(angle).clean) return false;
+  return true;
 }
 
 /** Strip internal annotations from a why_fit note before it becomes partner-

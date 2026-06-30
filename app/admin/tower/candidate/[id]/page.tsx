@@ -28,6 +28,7 @@ import {
   holdDraft,
   releaseDraft,
   markManualSent,
+  editDraft,
 } from "../../actions";
 
 /**
@@ -546,10 +547,34 @@ export default async function CandidateRoomPage({
                   />
                 </p>
               )}
-              <p style={{ fontFamily: SERIF, fontSize: "15px", fontWeight: 600, color: INK, margin: "0 0 6px" }}>{d.subject as string}</p>
-              <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.6, color: INK, margin: "0 0 10px", whiteSpace: "pre-wrap" }}>
-                {d.body as string}
-              </p>
+              {st === "ready" || st === "approved" ? (
+                // Inline editor — edit subject + body right on screen, then Save
+                // re-runs the canon gate. (editDraft accepts ready + approved.)
+                <form action={editDraft} style={{ margin: "0 0 10px" }}>
+                  <input type="hidden" name="id" value={d.id as string} />
+                  <input
+                    name="subject"
+                    defaultValue={d.subject as string}
+                    style={{ width: "100%", boxSizing: "border-box", fontFamily: SERIF, fontSize: "15px", fontWeight: 600, padding: "8px 10px", border: `1px solid ${LIGHT}`, color: INK, background: "#fff", marginBottom: "8px" }}
+                  />
+                  <textarea
+                    name="body"
+                    defaultValue={d.body as string}
+                    rows={12}
+                    style={{ width: "100%", boxSizing: "border-box", fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.6, padding: "10px", border: `1px solid ${LIGHT}`, color: INK, background: "#fff", resize: "vertical" }}
+                  />
+                  <div style={{ marginTop: "8px" }}>
+                    <TowerButton variant="ghost" pendingLabel="Saving…">Save &amp; re-check canon</TowerButton>
+                  </div>
+                </form>
+              ) : (
+                <>
+                  <p style={{ fontFamily: SERIF, fontSize: "15px", fontWeight: 600, color: INK, margin: "0 0 6px" }}>{d.subject as string}</p>
+                  <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.6, color: INK, margin: "0 0 10px", whiteSpace: "pre-wrap" }}>
+                    {d.body as string}
+                  </p>
+                </>
+              )}
               {d.personalization_note && (
                 <p style={{ fontFamily: MONO, fontSize: "11px", lineHeight: 1.5, color: AMBERISH, background: "rgba(161,68,0,.06)", borderLeft: `2px solid ${AMBERISH}`, padding: "8px 10px", margin: "0 0 10px" }}>
                   {d.personalization_note as string}
