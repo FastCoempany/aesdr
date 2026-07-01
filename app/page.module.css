@@ -304,6 +304,11 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  /* Browsers render <video> a touch darker than page pixels (limited color
+     range), so the recording reads dimmer than the cream page around it. Nudge
+     it back up to match. Tunable — raise toward 1.12 for brighter, drop toward
+     1.04 for subtler. */
+  filter: brightness(1.08);
 }
 
 .pricingSection {
