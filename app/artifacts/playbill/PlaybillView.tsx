@@ -155,7 +155,7 @@ export default function PlaybillView({ data }: { data: PlaybillData }) {
                 they agree completely.&rdquo;
               </div>
               <div className="rv-intro-sub">
-                — {data.reviews.length} notices, {data.reviews.length} verdicts
+                — {data.reviews.length} notices, one consensus
               </div>
             </div>
 

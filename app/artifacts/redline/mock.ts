@@ -7,7 +7,11 @@ export const MOCK_REDLINE: RedlineData = {
   assessment: {
     readersReport:
       "The upper chapters earn their place. The lower chapters read as rushed and, in two cases, dishonest — the draft contradicts itself against its own notes. Marks below. Redlines in the next folio.",
-    overallGrade: "C+",
+    // NOTE: letter grades (this field and each chapter's `grade`) are no longer
+    // read for display — RedlineView derives every grade from `pct` so the
+    // percentage and the letter always agree, and the overall is the honest
+    // mean of the chapter pcts (here ≈67% → D+). Kept only to satisfy the type.
+    overallGrade: "D+",
     overallVerdict:
       "A draft with a strong spine and a broken middle. Two chapters must be rewritten before the manuscript can be accepted. See Folio II for the redlines, Folio III for the corrected final.",
     chapters: [
