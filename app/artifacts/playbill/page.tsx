@@ -38,6 +38,14 @@ export default async function PlaybillPage({
   // Access gate: user must have picked this artifact OR purchased it OR be an admin
   const isAdmin = isAdminEmail(user?.email);
 
+  // Admins always land on the fully-baked sample so the founder can demo the
+  // artifact to affiliates without a completed course — no more getting stuck
+  // on the "Composing…" state. `?real=1` escapes to the real cached artifact;
+  // `?preview=1` (above) is the same sample with no auth, for a shareable link.
+  if (isAdmin && sp.real !== "1") {
+    return <PlaybillView data={MOCK_PLAYBILL} />;
+  }
+
   if (!isAdmin) {
     const { data: pick } = await supabase
       .from("reveal_picks")

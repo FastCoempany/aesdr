@@ -25,15 +25,44 @@ function scoreOk(pct: number): boolean {
   return pct >= 70;
 }
 
+/**
+ * Letter grade derived deterministically from a percentage — standard US
+ * scale, using the − (U+2212) minus to match the manuscript styling. Every
+ * grade on the page (each chapter AND the overall) comes from this one
+ * function so the percentage and the letter can never disagree, and the
+ * overall is the honest average of the chapters — not an LLM's guess. (The
+ * stored assessment.grade / overallGrade fields are ignored for display.)
+ */
+function gradeFromPct(pct: number): string {
+  const p = Math.round(pct);
+  if (p >= 93) return "A";
+  if (p >= 90) return "A−";
+  if (p >= 87) return "B+";
+  if (p >= 83) return "B";
+  if (p >= 80) return "B−";
+  if (p >= 77) return "C+";
+  if (p >= 73) return "C";
+  if (p >= 70) return "C−";
+  if (p >= 67) return "D+";
+  if (p >= 63) return "D";
+  if (p >= 60) return "D−";
+  return "F";
+}
+
 export default function RedlineView({ data }: { data: RedlineData }) {
   const [folio, setFolio] = useState<Folio>("assessment");
   const roleLabel = data.role === "ae" ? "AE" : "SDR";
   const dateLabel = fmtDate(data.generatedAt);
-  const initials = data.studentName
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .slice(0, 2);
+
+  // The overall is the honest mean of the chapter percentages, with its
+  // letter derived from the same scale as every chapter row — so "six 100%
+  // chapters and one 0%" reads as the ~86% (a B) it actually is, never a
+  // guessed C+.
+  const chapterPcts = data.assessment.chapters.map((c) => c.pct);
+  const overallPct = chapterPcts.length
+    ? Math.round(chapterPcts.reduce((a, b) => a + b, 0) / chapterPcts.length)
+    : 0;
+  const overallGrade = gradeFromPct(overallPct);
 
   return (
     <main className="redline">
@@ -110,31 +139,36 @@ export default function RedlineView({ data }: { data: RedlineData }) {
               <p className="en-text">{data.assessment.readersReport}</p>
             </div>
 
-            {data.assessment.chapters.map((ch) => (
-              <div key={ch.category} className="assess-row">
-                <div className="ar-ch">Ch. {ch.chapter}</div>
-                <div>
-                  <div className="ar-cat">{ch.categoryName}</div>
+            {data.assessment.chapters.map((ch) => {
+              const chGrade = gradeFromPct(ch.pct);
+              return (
+                <div key={ch.category} className="assess-row">
+                  <div className="ar-ch">Ch. {ch.chapter}</div>
+                  <div>
+                    <div className="ar-cat">{ch.categoryName}</div>
+                  </div>
+                  <div className="ar-verdict">&ldquo;{ch.verdict}&rdquo;</div>
+                  <div className={`ar-score ${scoreOk(ch.pct) ? "ok" : ""}`}>
+                    {Math.round(ch.pct)}%
+                  </div>
+                  <div className={`ar-grade ${gradeOk(chGrade) ? "ok" : ""}`}>
+                    {chGrade}
+                  </div>
                 </div>
-                <div className="ar-verdict">&ldquo;{ch.verdict}&rdquo;</div>
-                <div className={`ar-score ${scoreOk(ch.pct) ? "ok" : ""}`}>
-                  {Math.round(ch.pct)}%
-                </div>
-                <div className={`ar-grade ${gradeOk(ch.grade) ? "ok" : ""}`}>
-                  {ch.grade}
-                </div>
-              </div>
-            ))}
+              );
+            })}
 
             <div className="overall">
-              <div className="ov-stamp">Overall Verdict</div>
-              <div className="ov-grade">{data.assessment.overallGrade}</div>
+              <div className="ov-stamp">The Editor&apos;s Call</div>
+              <div className="ov-grade">
+                {overallPct}% <span className="ov-grade-sep">·</span> {overallGrade}
+              </div>
               <p className="ov-text">&ldquo;{data.assessment.overallVerdict}&rdquo;</p>
             </div>
 
             <div className="curtain">
               <div className="curtain-t">
-                &ldquo;The grade is not the verdict. The rewrite is.&rdquo;
+                &ldquo;The grade is not the point. The rewrite is.&rdquo;
               </div>
               <div className="curtain-m">
                 {data.assessment.chapters.length} chapters · Editor&apos;s desk ·{" "}
@@ -229,9 +263,8 @@ export default function RedlineView({ data }: { data: RedlineData }) {
                 you actually are. The accepted manuscript is who you&apos;re
                 choosing to become.
               </p>
-              <div className="ch-sig">
-                — {initials.toUpperCase()}.
-              </div>
+              <div className="ch-sig">— Leponeus</div>
+              <div className="ch-role">Your editor, AESDR</div>
               <div className="ch-meta">
                 12 courses · 36 lessons · Your words, fact-checked
               </div>
@@ -296,6 +329,7 @@ const CSS = `
 .redline .overall { margin-top: 32px; padding: 28px; background: rgba(197,48,48,0.08); border: 2px solid #C53030; text-align: center; }
 .redline .ov-stamp { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 800; letter-spacing: .25em; text-transform: uppercase; color: #C53030; margin-bottom: 10px; }
 .redline .ov-grade { font-family: 'Playfair Display', Georgia, serif; font-size: 56px; font-style: italic; color: #C53030; line-height: 1; }
+.redline .ov-grade-sep { opacity: .4; font-weight: 400; }
 .redline .ov-text { font-family: 'Source Serif 4', Georgia, serif; font-size: 16px; font-style: italic; margin-top: 12px; line-height: 1.55; max-width: 520px; margin-left: auto; margin-right: auto; }
 
 .redline .curtain { text-align: center; margin-top: 48px; padding-top: 28px; border-top: 2px solid #1A1A1A; }
@@ -330,6 +364,7 @@ const CSS = `
 .redline .closing-hand { text-align: center; margin-top: 48px; }
 .redline .ch-text { font-family: 'Caveat', cursive; font-size: 22px; color: #C53030; line-height: 1.4; max-width: 560px; margin: 0 auto; font-style: normal; }
 .redline .ch-sig { font-family: 'Caveat', cursive; font-size: 28px; color: #1A1A1A; margin-top: 16px; }
+.redline .ch-role { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: #6B6B6B; margin-top: 4px; }
 .redline .ch-meta { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: #6B6B6B; margin-top: 14px; }
 
 /* Responsive */
