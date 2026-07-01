@@ -89,6 +89,19 @@ export default function KitDocWhatYouEarn() {
             <strong>$299 AE</strong> — so it&rsquo;s a clean 40% per sale, not
             a recurring trickle you have to babysit.
           </p>
+          <p
+            style={{
+              fontFamily: "var(--serif, 'Source Serif 4', Georgia, serif)",
+              fontSize: 15,
+              lineHeight: 1.6,
+              margin: "12px 0 0",
+              color: "var(--muted, #6B6B6B)",
+            }}
+          >
+            That 40% is the consumer course — the $249 and $299 enrollments.
+            Teams and enterprise run on a separate channel track with its own
+            terms, worked out just below.
+          </p>
         </div>
       </section>
 

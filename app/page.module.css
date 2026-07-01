@@ -357,6 +357,65 @@
   font-size: 14px;
 }
 
+/* Enterprise doorway — a signpost to the B2B arm below the consumer tiers.
+   Full-width band, distinct from the buy-now cards, links to /enterprise. */
+.enterpriseBand {
+  grid-column: 1 / -1;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  flex-wrap: wrap;
+  padding: 22px 28px;
+  border: 1px solid var(--light);
+  border-left: 3px solid var(--crimson);
+  background: var(--cream);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+.enterpriseBand:hover {
+  border-color: var(--crimson);
+  box-shadow: 0 8px 28px rgba(139, 26, 26, 0.08);
+  transform: translateY(-1px);
+}
+.enterpriseBandLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: var(--crimson);
+  margin: 0 0 6px;
+}
+.enterpriseBandTitle {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 21px;
+  line-height: 1.2;
+  color: var(--ink);
+  margin: 0 0 6px;
+}
+.enterpriseBandSub {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--muted);
+  margin: 0;
+  max-width: 660px;
+}
+.enterpriseBandCta {
+  font-family: var(--cond);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--crimson);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 .priceCard {
   position: relative;
   background: var(--cream);
