@@ -72,7 +72,7 @@ export default function LeponeusGate({ onBegin }: { onBegin: () => void }) {
           }}
         >
           The GTM teams that vetted the lessons, the assets, and the voice. What
-          you&rsquo;re about to preview is what their people have seen.
+          you&rsquo;re about to preview, is what their people have seen.
         </p>
       </div>
       <style>{`
