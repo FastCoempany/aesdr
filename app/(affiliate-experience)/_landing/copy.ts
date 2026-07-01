@@ -24,8 +24,8 @@ export const SHARED_SCENES: Seg[][] = [
 export const BRANCHED_SCENES: Record<Role, string[]> = {
   sdr: [
     "You've been doing this for 9 months. They said “you'll get the AE promotion at 12 months.” Nobody's mentioned it since.",
-    "You set your alarm for 6am on Sunday to “prep so I'm locked in this week.” By Tuesday you'd stopped pretending.",
-    "You have a degree. From a university. With a campus. And your job is to get hung up on 97 times a day.",
+    "You set your alarm for 6am on Sunday to “prep so I'm locked in this week.” By Tuesday, the plan was already dead.",
+    "You're ambitious. You're coachable. You chose this on purpose. And your job is to get hung up on 97 times a day.",
   ],
   ae: [
     "Your pipeline says $740K. You'd bet your rent on maybe $180K of it.",
@@ -58,7 +58,7 @@ export const TERMINAL_WHISPER = "Keep scrolling. The picture gets worse before i
 
 export const HERO_DESCRIPTOR: Record<"default" | Role, string> = {
   default: "12-course sales survival program — for early-career AEs and SDRs.",
-  sdr: "The 12-course survival program for SDRs who want out alive.",
+  sdr: "The 12-course program for SDRs done winging it for the first two years. You actually want it all to pay off.",
   ae: "The 12-course survival program for AEs who want their forecast to mean something.",
 };
 
