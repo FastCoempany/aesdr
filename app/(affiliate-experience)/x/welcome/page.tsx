@@ -11,7 +11,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { EXPERIENCE_COOKIE, EXPERIENCE_GRANT } from "@/lib/experience-gate";
+import { EXPERIENCE_COOKIE, verifyExperienceToken } from "@/lib/experience-gate";
 import ExperienceGate from "../../_components/ExperienceGate";
 import ExperienceWall from "../../_components/ExperienceWall";
 
@@ -27,7 +27,9 @@ export default async function WelcomePage({
 }) {
   const sp = await searchParams;
   const jar = await cookies();
-  const invited = jar.get(EXPERIENCE_COOKIE)?.value === EXPERIENCE_GRANT;
+  const invited = !!(await verifyExperienceToken(
+    jar.get(EXPERIENCE_COOKIE)?.value,
+  ));
 
   if (invited) return <ExperienceGate />;
 

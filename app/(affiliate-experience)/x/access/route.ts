@@ -15,8 +15,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import {
   EXPERIENCE_COOKIE,
-  EXPERIENCE_GRANT,
   EXPERIENCE_MAX_AGE,
+  signExperienceToken,
 } from "@/lib/experience-gate";
 import { isOpsAuthed } from "../../_lib/ops-auth";
 
@@ -27,7 +27,9 @@ export async function GET(req: NextRequest) {
   const slug = (req.nextUrl.searchParams.get("p") || "").slice(0, 128).trim();
   const key = req.nextUrl.searchParams.get("k") || "";
 
-  let granted = false;
+  // The token's subject records HOW access was granted: a real prospect slug, an
+  // authenticated ops session, or the founder preview key.
+  let subject: string | null = null;
 
   // 1) A real prospect slug from the /x/ops roster.
   if (slug) {
@@ -37,22 +39,25 @@ export async function GET(req: NextRequest) {
       .select("slug")
       .eq("slug", slug)
       .maybeSingle();
-    if (data) granted = true;
+    if (data) subject = slug;
   }
 
   // 2) Founder paths — an authenticated ops session, or the coming-soon bypass
   //    code as a preview key, so the founder can preview without minting a row.
-  if (!granted && (await isOpsAuthed())) granted = true;
+  if (!subject && (await isOpsAuthed())) subject = "ops";
   if (
-    !granted &&
+    !subject &&
     key &&
     process.env.COMING_SOON_BYPASS_CODE &&
     key === process.env.COMING_SOON_BYPASS_CODE
   ) {
-    granted = true;
+    subject = "preview";
   }
 
-  if (!granted) {
+  // Sign the grant. `signExperienceToken` returns null when the gate secret
+  // isn't configured — fail-closed, so an unset secret walls everyone.
+  const token = subject ? await signExperienceToken(subject) : null;
+  if (!token) {
     return NextResponse.redirect(`${origin}/x/welcome?locked=1`, {
       status: 303,
     });
@@ -62,7 +67,7 @@ export async function GET(req: NextRequest) {
     ? `${origin}/x/welcome?p=${encodeURIComponent(slug)}`
     : `${origin}/x/welcome`;
   const res = NextResponse.redirect(dest, { status: 303 });
-  res.cookies.set(EXPERIENCE_COOKIE, EXPERIENCE_GRANT, {
+  res.cookies.set(EXPERIENCE_COOKIE, token, {
     httpOnly: true,
     secure: true,
     sameSite: "lax",
