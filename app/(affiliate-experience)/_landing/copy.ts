@@ -57,9 +57,9 @@ export const TERMINAL_FINAL =
 export const TERMINAL_WHISPER = "Keep scrolling. The picture gets worse before it gets better.";
 
 export const HERO_DESCRIPTOR: Record<"default" | Role, string> = {
-  default: "12-course sales survival program — for early-career AEs and SDRs.",
+  default: "12-course sales come-up — for early-career AEs and SDRs.",
   sdr: "The 12-course program for SDRs done winging it for the first two years. You actually want it all to pay off.",
-  ae: "The 12-course survival program for AEs who want their forecast to mean something.",
+  ae: "The 12-course sales come-up for AEs who want their forecast to mean something.",
 };
 
 export const FORK_PICK_HEADER = "which one are you";
