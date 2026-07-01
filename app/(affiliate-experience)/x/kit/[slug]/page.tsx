@@ -37,6 +37,8 @@ import KitDocDisclosurePack from "../../../_components/KitDocDisclosurePack";
 import KitDocLockupUsage from "../../../_components/KitDocLockupUsage";
 import KitDocSampleAgreement from "../../../_components/KitDocSampleAgreement";
 import PreviewOnlyWrap from "../../../_components/PreviewOnlyWrap";
+import ExperienceWall from "../../../_components/ExperienceWall";
+import { resolveExperienceAccess } from "@/lib/experience-access-server";
 
 type Params = { slug: string };
 
@@ -153,6 +155,7 @@ export default async function KitDocPage({
   params: Promise<Params>;
 }) {
   const { slug } = await params;
+  if (!(await resolveExperienceAccess())) return <ExperienceWall />;
   const entry = getKitEntry(slug);
   if (!entry) notFound();
 

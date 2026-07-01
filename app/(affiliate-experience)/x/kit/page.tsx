@@ -17,6 +17,8 @@ import {
 } from "@/components/brand/BrandAssets";
 import KitTracker from "../../_components/KitTracker";
 import KitNav from "../../_components/KitNav";
+import ExperienceWall from "../../_components/ExperienceWall";
+import { resolveExperienceAccess } from "@/lib/experience-access-server";
 
 export const metadata: Metadata = {
   title: "Affiliate Kit · AESDR",
@@ -56,7 +58,8 @@ const DOC_ICON: Record<string, IconName> = {
   "sample-partnership-agreement": "ledger",
 };
 
-export default function KitIndexPage() {
+export default async function KitIndexPage() {
+  if (!(await resolveExperienceAccess())) return <ExperienceWall />;
   return (
     <main
       style={{

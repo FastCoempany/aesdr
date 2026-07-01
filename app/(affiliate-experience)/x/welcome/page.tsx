@@ -1,17 +1,16 @@
 /**
  * /x/welcome — the prospect entry point AND the invite wall.
  *
- * Invited (has the experience cookie) → the Leponeus "Step 1" gate; "Begin"
+ * Invited (valid, non-revoked token) → the Leponeus "Step 1" gate; "Begin"
  * carries them to /x/landing. Arriving on a ?p= link but not yet invited → hand
- * off to /x/access to validate the slug and grant. Bare / un-invited → the
- * "private preview" wall. ProspectTracker (in the group layout) records the
+ * off to /x/access to validate the slug and grant. Bare / un-invited / revoked →
+ * the "private preview" wall. ProspectTracker (in the group layout) records the
  * open + identifies them off the ?p= tag once they're through.
  */
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { EXPERIENCE_COOKIE, verifyExperienceToken } from "@/lib/experience-gate";
+import { resolveExperienceAccess } from "@/lib/experience-access-server";
 import ExperienceGate from "../../_components/ExperienceGate";
 import ExperienceWall from "../../_components/ExperienceWall";
 
@@ -26,10 +25,7 @@ export default async function WelcomePage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const sp = await searchParams;
-  const jar = await cookies();
-  const invited = !!(await verifyExperienceToken(
-    jar.get(EXPERIENCE_COOKIE)?.value,
-  ));
+  const invited = !!(await resolveExperienceAccess());
 
   if (invited) return <ExperienceGate />;
 
@@ -38,6 +34,6 @@ export default async function WelcomePage({
     typeof sp.p === "string" ? sp.p : Array.isArray(sp.p) ? sp.p[0] : undefined;
   if (p) redirect(`/x/access?p=${encodeURIComponent(p)}`);
 
-  // Bare domain / un-invited deep link → the wall.
+  // Bare domain / un-invited / revoked → the wall.
   return <ExperienceWall />;
 }

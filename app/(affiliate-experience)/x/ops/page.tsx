@@ -8,6 +8,7 @@
 import { headers } from "next/headers";
 import { createAdminClient } from "@/utils/supabase/admin";
 import CopyField from "../../_components/CopyField";
+import RevokeButton from "./RevokeButton";
 
 export const dynamic = "force-dynamic";
 
@@ -112,6 +113,8 @@ export default async function AffiliateAnalyticsPage() {
     enterpriseSubmitted: boolean;
     country: string | null;
     device: string | null;
+    grants: number; // access_granted redemptions of the invite link
+    grantGeo: Set<string>; // distinct countries those grants came from
   };
   const byProspect = new Map<string, Agg>();
   const sessions = new Map<string, Set<string>>();
@@ -135,6 +138,8 @@ export default async function AffiliateAnalyticsPage() {
         enterpriseSubmitted: false,
         country: e.country,
         device: e.device,
+        grants: 0,
+        grantGeo: new Set<string>(),
       } as Agg);
 
     if (e.created_at > a.lastSeen) a.lastSeen = e.created_at;
@@ -152,6 +157,10 @@ export default async function AffiliateAnalyticsPage() {
     }
     if (e.name === "request_conversation_clicked") a.requestedConvo = true;
     if (e.name === "kit_enterprise_intent_submitted") a.enterpriseSubmitted = true;
+    if (e.name === "access_granted") {
+      a.grants += 1;
+      if (e.country) a.grantGeo.add(e.country);
+    }
     if (e.name === "role_picked") {
       const r = (e.props?.role as string) || null;
       if (r) {
@@ -337,11 +346,13 @@ export default async function AffiliateAnalyticsPage() {
               <th style={th}>Prospect</th>
               <th style={th}>Last seen</th>
               <th style={th}>Visits</th>
+              <th style={th}>Grants</th>
               <th style={th}>Role</th>
               <th style={th}>Furthest stage</th>
               <th style={th}>Signals</th>
               <th style={th}>Where</th>
               <th style={th}>PostHog</th>
+              <th style={th}>Revoke</th>
             </tr>
           </thead>
           <tbody>
@@ -353,6 +364,18 @@ export default async function AffiliateAnalyticsPage() {
                 </td>
                 <td style={cell}>{new Date(a.lastSeen).toLocaleString()}</td>
                 <td style={cell}>{a.visits || 1}</td>
+                <td style={cell}>
+                  {a.grants || 0}
+                  {(a.grants > 3 || a.grantGeo.size > 1) && (
+                    <span
+                      title={`${a.grants} link redemptions from ${a.grantGeo.size} countr${a.grantGeo.size === 1 ? "y" : "ies"} — possible link sharing`}
+                      style={{ color: crimson, fontWeight: 700 }}
+                    >
+                      {" "}
+                      ⚠
+                    </span>
+                  )}
+                </td>
                 <td style={cell}>{a.role ? a.role.toUpperCase() : "—"}</td>
                 <td style={cell}>
                   {a.furthest >= 0 ? STAGE_LABEL[STAGES[a.furthest]] : "—"}
@@ -380,11 +403,33 @@ export default async function AffiliateAnalyticsPage() {
                     replay →
                   </a>
                 </td>
+                <td style={cell}>
+                  <RevokeButton
+                    slug={a.slug}
+                    name={nameFor.get(a.slug) || a.slug}
+                  />
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      <p
+        style={{
+          fontFamily: mono,
+          fontSize: 11,
+          color: muted,
+          marginTop: 10,
+          lineHeight: 1.7,
+        }}
+      >
+        <strong>Grants</strong> = times the invite link was redeemed (a new
+        browser passing the gate). A real prospect is 1&ndash;2; a{" "}
+        <span style={{ color: crimson }}>⚠</span> flags many redemptions or
+        several countries &mdash; possible link sharing.{" "}
+        <strong>Revoke</strong> cuts them off: their link dies on the next page
+        load, every copy at once.
+      </p>
 
       {/* ── Most engaged ── */}
       <H2>Most engaged</H2>
