@@ -126,6 +126,25 @@ export default function PricingTiers({ initialRole = null }: Props) {
           <span aria-hidden="true">$</span> Receipt + invoice on purchase
         </span>
       </div>
+
+      {/* Enterprise doorway — signpost to the B2B arm. Deliberately NOT a
+          fourth price card: it's a different sell (channel-partner motion,
+          procurement, white-label) and shouldn't read as co-equal with the
+          consumer tiers above. */}
+      <a href="/enterprise?source=pricing" className={styles.enterpriseBand}>
+        <div>
+          <p className={styles.enterpriseBandLabel}>Teams &amp; Enterprise</p>
+          <p className={styles.enterpriseBandTitle}>
+            Rolling this out across a department or a whole org?
+          </p>
+          <p className={styles.enterpriseBandSub}>
+            AESDR Enterprise — custom curriculum, white-label, SSO,
+            procurement-ready invoicing, and channel partnerships. A different
+            conversation than the cards above.
+          </p>
+        </div>
+        <span className={styles.enterpriseBandCta}>See the enterprise offering →</span>
+      </a>
     </div>
   );
 }
