@@ -63,6 +63,32 @@ export async function GET(req: NextRequest) {
     });
   }
 
+  // Redemption log: every grant of a real prospect slug records an
+  // access_granted event (coarse geo/device) into affiliate_prospect_events, so
+  // a forwarded/leaked link becomes VISIBLE in /x/ops — many grants, or grants
+  // from several countries, on one slug reads as sharing. Best-effort; a logging
+  // failure must never block the grant.
+  if (subject === slug) {
+    const country = req.headers.get("x-vercel-ip-country");
+    const ua = req.headers.get("user-agent") || "";
+    const device = /mobi|android|iphone|ipad/i.test(ua) ? "mobile" : "desktop";
+    try {
+      await createAdminClient()
+        .from("affiliate_prospect_events")
+        .insert({
+          prospect_slug: slug,
+          session_id: null,
+          name: "access_granted",
+          props: { via: "link" },
+          path: "/x/access",
+          country: country ? country.slice(0, 8) : null,
+          device,
+        });
+    } catch {
+      /* logging is best-effort */
+    }
+  }
+
   const dest = slug
     ? `${origin}/x/welcome?p=${encodeURIComponent(slug)}`
     : `${origin}/x/welcome`;

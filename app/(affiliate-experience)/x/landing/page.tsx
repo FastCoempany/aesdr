@@ -20,6 +20,7 @@ import dynamic from "next/dynamic";
 
 import AesdrBrand from "@/components/AesdrBrand";
 import PricingTiers from "@/components/PricingTiers";
+import { resolveExperienceAccess } from "@/lib/experience-access-server";
 import ValidationMarquee from "@/components/ValidationMarquee";
 import { Icon, type IconName } from "@/components/brand/Icon";
 import { Mascot, MASCOT_SIZE } from "@/components/brand/Mascot";
@@ -37,6 +38,7 @@ import BottomTimer from "../../_components/BottomTimer";
 import KitTracker from "../../_components/KitTracker";
 import PreviewOnlyLink from "../../_components/PreviewOnlyLink";
 import PreviewOnlyWrap from "../../_components/PreviewOnlyWrap";
+import ExperienceWall from "../../_components/ExperienceWall";
 
 /** Three subtle design-system variants of the same landing shape.
  * Pages at /x/landing/v1, /v2, /v3 each call <LandingShell variant="vX" />.
@@ -547,7 +549,8 @@ export function LandingShell({
  * 'Chapter' eyebrows with section icons, ghost numerals peeking behind
  * every section — with the full cinematic intro preserved (review=false).
  */
-export default function ExperienceLandingPage() {
+export default async function ExperienceLandingPage() {
+  if (!(await resolveExperienceAccess())) return <ExperienceWall />;
   return <LandingShell variant="v3c" />;
 }
 
