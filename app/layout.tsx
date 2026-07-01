@@ -31,20 +31,15 @@ export const metadata: Metadata = {
     description: "Become the same you, just way, way better.",
     siteName: "AESDR",
     url: "https://aesdr.com",
-    images: [
-      {
-        url: "/ceramic-bunny-mask-cutout.png",
-        width: 858,
-        height: 1024,
-        alt: "Ceramic humanoid bunny holding a mask",
-      },
-    ],
+    // No static og:image — falls through to the dynamic app/opengraph-image.tsx
+    // (cream card, doctrine-pose mascot, wordmark + tagline). The old ceramic-
+    // mask image is archived and no longer referenced anywhere.
   },
   twitter: {
     card: "summary_large_image",
     title: "AESDR",
     description: "Become the same you, just way, way better.",
-    images: ["/ceramic-bunny-mask-cutout.png"],
+    // Falls through to the sibling app/twitter-image.tsx (same card).
   },
 };
 
