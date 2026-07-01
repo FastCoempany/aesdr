@@ -269,7 +269,7 @@ export default async function AffiliateAnalyticsPage() {
                   <strong>{p.display_name || p.slug}</strong>{" "}
                   <span style={{ color: muted }}>· {p.slug}</span>
                 </div>
-                <CopyField value={`${baseUrl}/x/welcome?p=${p.slug}`} />
+                <CopyField value={`${baseUrl}/x/access?p=${p.slug}`} />
               </div>
             ))}
           </div>
@@ -285,9 +285,9 @@ export default async function AffiliateAnalyticsPage() {
             marginTop: 24,
           }}
         >
-          No prospects yet. Send someone a link like{" "}
-          <code>/x/welcome?p=their-name</code> and they&rsquo;ll appear here the
-          moment they open it.
+          No prospects yet. Generate one above and send the{" "}
+          <code>/x/access?p=…</code> link it gives you — that link is what opens
+          the gated kit, and they&rsquo;ll appear here the moment they use it.
         </p>
       )}
 

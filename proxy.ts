@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { isAdminEmail } from "@/lib/admin";
+import { EXPERIENCE_COOKIE, EXPERIENCE_GRANT } from "@/lib/experience-gate";
 
 const PUBLIC_PATHS = ["/", "/terms", "/privacy", "/refund-policy", "/about", "/contact", "/success", "/purchase/cancel", "/login", "/signup", "/syllabus", "/coming-soon", "/mobile", "/preview", "/free/manager-archetype-map", "/unsubscribe"];
 
@@ -46,6 +47,32 @@ export async function proxy(request: NextRequest) {
   // it means each /x/* route must carry its own auth/validation — see
   // /x/track and /x/ops, which are guarded at the route level.
   if (pathname.startsWith("/x/")) {
+    // Invite gate for the prospect EXPERIENCE. The kit is not an open URL:
+    // access is granted only by /x/access (after it validates a roster slug /
+    // ops session / founder key) which drops the EXPERIENCE_COOKIE. Here we
+    // enforce it on the content routes (landing, kit). Kept open:
+    //   - /x/welcome  — the wall/entry itself (renders its own gate)
+    //   - /x/access   — the grant route that SETS the cookie
+    //   - /x/track    — telemetry POST (own same-origin + rate guards)
+    //   - /x/ops*     — founder console (own password gate)
+    // No cookie on a content route ⇒ bounce to the welcome wall, preserving
+    // ?p= so it can still be validated + granted at /x/access.
+    const infra =
+      pathname.startsWith("/x/track") ||
+      pathname.startsWith("/x/ops") ||
+      pathname.startsWith("/x/access");
+    const entry = pathname === "/x/welcome";
+    if (!infra && !entry) {
+      const invited =
+        request.cookies.get(EXPERIENCE_COOKIE)?.value === EXPERIENCE_GRANT;
+      if (!invited) {
+        const url = request.nextUrl.clone();
+        url.pathname = "/x/welcome";
+        const p = request.nextUrl.searchParams.get("p");
+        url.search = p ? `?p=${encodeURIComponent(p)}` : "";
+        return NextResponse.redirect(url, 302);
+      }
+    }
     return supabaseResponse;
   }
 
