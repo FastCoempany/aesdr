@@ -23,9 +23,9 @@ export const SHARED_SCENES: Seg[][] = [
 
 export const BRANCHED_SCENES: Record<Role, string[]> = {
   sdr: [
-    "You've been doing this for 9 months. They said “AE in 12.” Nobody's mentioned it since.",
-    "You set your alarm for 6am on Sunday to “lock in” this week. By Tuesday you'd stopped pretending.",
-    "You have a degree. From a university. With a campus. And your job is to get hung up on 97 times a day.",
+    "You've been doing this for 9 months. They said “you'll get the AE promotion at 12 months.” Nobody's mentioned it since.",
+    "You set your alarm for 6am on Sunday to “prep so I'm locked in this week.” By Tuesday, the plan was already dead.",
+    "You're ambitious. You're coachable. You chose this on purpose. And your job is to get hung up on 97 times a day.",
   ],
   ae: [
     "Your pipeline says $740K. You'd bet your rent on maybe $180K of it.",
@@ -38,9 +38,9 @@ export const BRANCHED_TERM_LINES: Record<Role, string[]> = {
   sdr: [
     "> scanning your daily activity...",
     "> found: 47 dials. 3 connects. 1 “send me an email.” 0 meetings booked.",
-    "> LinkedIn requests sent: 94. Accepted: 11. Replies: “thanks for reaching out!”",
+    "> LinkedIn requests sent: 94. Accepted: 11. Replies: “I'm not the right person for this” at best.",
     "> CRM notes: “VM” “VM” “VM” “gatekeeper” “VM” “wrong number” “VM”",
-    "> diagnosis: I am a human spam filter with a quota and a dream.",
+    "> diagnosis: my job is to be a human spam filter with a quota and a dream I can't articulate.",
   ],
   ae: [
     "> scanning your pipeline...",
@@ -52,14 +52,14 @@ export const BRANCHED_TERM_LINES: Record<Role, string[]> = {
 };
 
 export const TERMINAL_FINAL =
-  "This program will change your life a few times across the twelve courses. Afterward, you’ll never make the same money again.";
+  "This program will change your life a few times throughout your journey in the 12 courses. Afterward, it’s highly unlikely that you’ll ever make the same money again.";
 
 export const TERMINAL_WHISPER = "Keep scrolling. The picture gets worse before it gets better.";
 
 export const HERO_DESCRIPTOR: Record<"default" | Role, string> = {
-  default: "12-course sales survival program — for early-career AEs and SDRs.",
-  sdr: "The 12-course survival program for SDRs who want out alive.",
-  ae: "The 12-course survival program for AEs who want their forecast to mean something.",
+  default: "12-course sales come-up — for early-career AEs and SDRs.",
+  sdr: "The 12-course program for SDRs done winging it for the first two years. You actually want it all to pay off.",
+  ae: "The 12-course sales come-up for AEs who want their forecast to mean something.",
 };
 
 export const FORK_PICK_HEADER = "which one are you";
@@ -71,7 +71,7 @@ export const FORK_HALVES = {
     ghostNum: "01",
     body: {
       strong: "You book the meetings.",
-      rest: " You take the no’s. You’re the front line of every pipeline you’ll never get credit for.",
+      rest: " You take the no’s. You’re the front line of every pipeline. You’ll never get credit for it.",
     },
     cta: "Pick SDR →",
   },
