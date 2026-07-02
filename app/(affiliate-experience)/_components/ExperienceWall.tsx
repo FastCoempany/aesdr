@@ -4,6 +4,8 @@
  * deliberately plain and on-brand (cream / crimson / editorial): it should read
  * as "this is private and intentional," not as an error.
  */
+import FounderBypass from "./FounderBypass";
+
 const cream = "var(--cream, #FAF7F2)";
 const ink = "var(--ink, #1A1A1A)";
 const crimson = "var(--crimson, #8B1A1A)";
@@ -86,6 +88,9 @@ export default function ExperienceWall() {
             hello@aesdr.com
           </a>
         </p>
+
+        {/* Founder's hidden way in — a faint dot; click, type the bypass code. */}
+        <FounderBypass />
       </div>
     </main>
   );
