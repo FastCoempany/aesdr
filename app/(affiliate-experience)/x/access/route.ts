@@ -16,6 +16,8 @@ import { createAdminClient } from "@/utils/supabase/admin";
 import {
   EXPERIENCE_COOKIE,
   EXPERIENCE_MAX_AGE,
+  FOUNDER_COOKIE,
+  founderPassValue,
   signExperienceToken,
 } from "@/lib/experience-gate";
 import { isOpsAuthed } from "../../_lib/ops-auth";
@@ -27,8 +29,31 @@ export async function GET(req: NextRequest) {
   const slug = (req.nextUrl.searchParams.get("p") || "").slice(0, 128).trim();
   const key = req.nextUrl.searchParams.get("k") || "";
 
-  // The token's subject records HOW access was granted: a real prospect slug, an
-  // authenticated ops session, or the founder preview key.
+  // Founder bypass — the ?k=<COMING_SOON_BYPASS_CODE> door. Drops the founder
+  // cookie, which the gate accepts INDEPENDENT of EXPERIENCE_GATE_SECRET, so the
+  // founder is never walled out of their own site (even before the gate secret
+  // is set). Checked first, short-circuits.
+  if (
+    key &&
+    process.env.COMING_SOON_BYPASS_CODE &&
+    key === process.env.COMING_SOON_BYPASS_CODE
+  ) {
+    const pass = await founderPassValue();
+    if (pass) {
+      const res = NextResponse.redirect(`${origin}/x/welcome`, { status: 303 });
+      res.cookies.set(FOUNDER_COOKIE, pass, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "lax",
+        path: "/",
+        maxAge: EXPERIENCE_MAX_AGE,
+      });
+      return res;
+    }
+  }
+
+  // The token's subject records HOW access was granted: a real prospect slug or
+  // an authenticated ops session.
   let subject: string | null = null;
 
   // 1) A real prospect slug from the /x/ops roster.
@@ -42,17 +67,9 @@ export async function GET(req: NextRequest) {
     if (data) subject = slug;
   }
 
-  // 2) Founder paths — an authenticated ops session, or the coming-soon bypass
-  //    code as a preview key, so the founder can preview without minting a row.
+  // 2) Founder path — an authenticated ops session (the ?k= key door is handled
+  //    up top and doesn't need the gate secret).
   if (!subject && (await isOpsAuthed())) subject = "ops";
-  if (
-    !subject &&
-    key &&
-    process.env.COMING_SOON_BYPASS_CODE &&
-    key === process.env.COMING_SOON_BYPASS_CODE
-  ) {
-    subject = "preview";
-  }
 
   // Sign the grant. `signExperienceToken` returns null when the gate secret
   // isn't configured — fail-closed, so an unset secret walls everyone.

@@ -3,7 +3,12 @@ import "server-only";
 import { cookies } from "next/headers";
 
 import { createAdminClient } from "@/utils/supabase/admin";
-import { EXPERIENCE_COOKIE, verifyExperienceToken } from "@/lib/experience-gate";
+import {
+  EXPERIENCE_COOKIE,
+  FOUNDER_COOKIE,
+  isFounderPass,
+  verifyExperienceToken,
+} from "@/lib/experience-gate";
 
 /**
  * Node-side access check for the experience PAGES (welcome / landing / kit).
@@ -22,11 +27,16 @@ import { EXPERIENCE_COOKIE, verifyExperienceToken } from "@/lib/experience-gate"
  */
 export async function resolveExperienceAccess(): Promise<string | null> {
   const jar = await cookies();
+
+  // Founder bypass — accepted independent of the HMAC gate secret, so the
+  // founder is never walled out even before EXPERIENCE_GATE_SECRET is set.
+  if (await isFounderPass(jar.get(FOUNDER_COOKIE)?.value)) return "founder";
+
   const subject = await verifyExperienceToken(
     jar.get(EXPERIENCE_COOKIE)?.value,
   );
   if (!subject) return null;
-  if (subject === "ops" || subject === "preview") return subject;
+  if (subject === "ops") return subject;
 
   // Prospect slug — must still exist in the roster (instant revocation on delete).
   const supabase = createAdminClient();

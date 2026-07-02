@@ -1,7 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { isAdminEmail } from "@/lib/admin";
-import { EXPERIENCE_COOKIE, verifyExperienceToken } from "@/lib/experience-gate";
+import {
+  EXPERIENCE_COOKIE,
+  FOUNDER_COOKIE,
+  isFounderPass,
+  verifyExperienceToken,
+} from "@/lib/experience-gate";
 
 const PUBLIC_PATHS = ["/", "/terms", "/privacy", "/refund-policy", "/about", "/contact", "/success", "/purchase/cancel", "/login", "/signup", "/syllabus", "/coming-soon", "/mobile", "/preview", "/free/manager-archetype-map", "/unsubscribe"];
 
@@ -63,9 +68,11 @@ export async function proxy(request: NextRequest) {
       pathname.startsWith("/x/access");
     const entry = pathname === "/x/welcome";
     if (!infra && !entry) {
-      const invited = !!(await verifyExperienceToken(
-        request.cookies.get(EXPERIENCE_COOKIE)?.value,
-      ));
+      const invited =
+        !!(await verifyExperienceToken(
+          request.cookies.get(EXPERIENCE_COOKIE)?.value,
+        )) ||
+        (await isFounderPass(request.cookies.get(FOUNDER_COOKIE)?.value));
       if (!invited) {
         const url = request.nextUrl.clone();
         url.pathname = "/x/welcome";

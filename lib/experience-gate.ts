@@ -25,6 +25,22 @@
 export const EXPERIENCE_COOKIE = "aesdr_x";
 export const EXPERIENCE_MAX_AGE = 60 * 60 * 24 * 30; // 30 days — matches the attribution window
 
+// Founder bypass cookie — a private "let me in" door, separate from the prospect
+// HMAC gate. Set by /x/access?k=<COMING_SOON_BYPASS_CODE> and accepted by the
+// gate INDEPENDENT of EXPERIENCE_GATE_SECRET, so the founder is never locked out
+// of their own site (even before the gate secret is configured).
+export const FOUNDER_COOKIE = "aesdr_xf";
+
+/**
+ * The gate ARMS only when EXPERIENCE_GATE_SECRET is set. Unset ⇒ the experience
+ * is open (no wall) — so a missing secret never locks the founder out of their
+ * own site; it just means "not gated yet." Set the secret to lock down to
+ * invite-only. (Edge-safe: pure env read, no imports.)
+ */
+export function isGateArmed(): boolean {
+  return !!process.env.EXPERIENCE_GATE_SECRET;
+}
+
 function toB64url(bytes: Uint8Array): string {
   let bin = "";
   for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
@@ -112,4 +128,32 @@ export async function verifyExperienceToken(
   const exp = Number(decoded.slice(sep + 1));
   if (!Number.isFinite(exp) || exp < Date.now()) return null;
   return subject || null;
+}
+
+/**
+ * The expected founder-pass cookie value: a stable SHA-256 of the bypass code
+ * (COMING_SOON_BYPASS_CODE). Non-forgeable without the code (you can't invert
+ * the hash), and the code is an env var that never ships in the bundle. Returns
+ * null if no code is configured. Independent of EXPERIENCE_GATE_SECRET.
+ */
+export async function founderPassValue(): Promise<string | null> {
+  const code = process.env.COMING_SOON_BYPASS_CODE;
+  if (!code) return null;
+  const digest = new Uint8Array(
+    await crypto.subtle.digest("SHA-256", enc(`aesdr-founder:${code}`)),
+  );
+  let hex = "";
+  for (let i = 0; i < digest.length; i++) {
+    hex += digest[i].toString(16).padStart(2, "0");
+  }
+  return hex;
+}
+
+/** True when a cookie value is a valid founder pass. */
+export async function isFounderPass(
+  cookieValue: string | undefined | null,
+): Promise<boolean> {
+  if (!cookieValue) return false;
+  const expected = await founderPassValue();
+  return !!expected && cookieValue === expected;
 }
