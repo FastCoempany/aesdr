@@ -346,7 +346,7 @@ export async function POST(request: Request) {
           if (purchaseRow) {
             const purchasedAt = new Date(purchaseRow.purchased_at);
 
-            // AUDIT (§13 / decision 2026-06-29): enforce the 14-day attribution
+            // AUDIT (§13 / decision 2026-06-29): enforce the 30-day attribution
             // window server-side. The cookie TTL already gates this, but a forged
             // session-metadata affiliate_click_id would bypass the cookie — so
             // re-check the real click's age and skip crediting if the purchase
@@ -363,7 +363,7 @@ export async function POST(request: Request) {
                 : null;
               if (clickedAt != null && purchasedAt.getTime() - clickedAt > ATTRIBUTION_WINDOW_MS) {
                 attributionExpired = true;
-                Sentry.captureMessage('[webhook] attribution skipped — click older than the 14-day window', {
+                Sentry.captureMessage('[webhook] attribution skipped — click older than the 30-day window', {
                   level: 'info',
                   extra: { sessionId: session.id, affiliateClickId },
                 });
