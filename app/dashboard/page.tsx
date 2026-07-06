@@ -43,7 +43,15 @@ export default async function Dashboard() {
   const supabase = await createClient();
   const {
     data: { user },
+    error: authError,
   } = await supabase.auth.getUser();
+
+  // QA 2026-07-06: anonymous visitors used to fall into the admin branch of
+  // the hasAccess ternary below (user=null → hasAccess=true) and got the
+  // dashboard shell instead of the login page. Guard like /course does.
+  if (authError || !user) {
+    redirect("/login");
+  }
 
   // Force password change for users with temp passwords
   if (user?.user_metadata?.needs_password_change) {

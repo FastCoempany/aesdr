@@ -46,3 +46,4 @@ www.aesdr.com-*.html
 
 # design source files (MJ exports, drafts)
 /design/
+test-results/

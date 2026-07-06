@@ -19,6 +19,9 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const reason = searchParams.get("reason");
+  // /auth/callback bounces here with ?error=rate-limit when its per-IP
+  // limiter trips — without this the user lands with no explanation.
+  const urlError = searchParams.get("error");
   // The welcome email (and the team-invite round-trip) pass the address as
   // `?email=` — prefill it so the buyer doesn't retype what they just bought
   // with. `next` carries any post-login destination (e.g. /team/accept).
@@ -171,6 +174,23 @@ function LoginForm() {
             We don&rsquo;t have a purchase on file for that email.{" "}
             <Link href="/" style={{ color: "#1A1A1A", textDecoration: "underline" }}>Buy access here</Link>{" "}
             or <a href="mailto:hello@aesdr.com" style={{ color: "#1A1A1A", textDecoration: "underline" }}>email hello@aesdr.com</a> if you think this is wrong.
+          </div>
+        )}
+
+        {urlError === "rate-limit" && (
+          <div
+            role="alert"
+            className="px-4 py-3"
+            style={{
+              fontFamily: "var(--serif)",
+              fontSize: "14px",
+              borderLeft: "3px solid #8B1A1A",
+              background: "rgba(139,26,26,0.06)",
+              color: "#8B1A1A",
+            }}
+          >
+            Too many attempts from your connection. Wait a minute, then try
+            again.
           </div>
         )}
 

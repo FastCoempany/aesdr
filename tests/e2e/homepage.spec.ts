@@ -4,14 +4,17 @@ test.describe("Homepage", () => {
   test("loads with key content", async ({ page }) => {
     await page.goto("/");
     await expect(page).toHaveTitle(/AESDR/);
-    await expect(page.locator("text=Stop Surviving")).toBeVisible();
-    await expect(page.locator("text=GET ACCESS").first()).toBeVisible();
+    // Hero tagline from the 2026-06 founder copy pass.
+    await expect(
+      page.locator("text=Become the same you").first()
+    ).toBeVisible();
+    await expect(page.locator("text=Get Access").first()).toBeVisible();
   });
 
   test("pricing section shows both plans", async ({ page }) => {
     await page.goto("/#pricing");
-    await expect(page.locator("text=Individual")).toBeVisible();
-    await expect(page.locator("text=Team")).toBeVisible();
+    await expect(page.locator("text=Individual").first()).toBeVisible();
+    await expect(page.locator("text=Team").first()).toBeVisible();
   });
 
   test("sign in link navigates to login", async ({ page }) => {

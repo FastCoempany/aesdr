@@ -66,9 +66,13 @@ test.describe("Stripe webhook", () => {
 });
 
 test.describe("Purchase status API", () => {
-  test("rejects missing session_id", async ({ request }) => {
+  test("missing session_id yields unconfirmed, not an error", async ({ request }) => {
+    // Hardened design (PII-harvest guard): a missing/malformed session_id
+    // returns 200 {confirmed:false} rather than a 4xx.
     const res = await request.get("/api/purchase-status");
-    expect(res.status()).toBeGreaterThanOrEqual(400);
+    expect(res.status()).toBe(200);
+    const body = await res.json();
+    expect(body.confirmed).toBe(false);
   });
 });
 
@@ -80,6 +84,6 @@ test.describe("Team accept page", () => {
 
   test("shows invalid invite for bad token", async ({ page }) => {
     await page.goto("/team/accept?token=fake-token-12345");
-    await expect(page.locator("text=/invalid/i")).toBeVisible();
+    await expect(page.locator("text=/invalid/i").first()).toBeVisible();
   });
 });

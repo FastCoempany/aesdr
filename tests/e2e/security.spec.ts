@@ -9,8 +9,11 @@ test.describe("XSS prevention", () => {
 
   test("login page escapes injection in reason param", async ({ page }) => {
     await page.goto('/login?reason=<img+onerror=alert(1)+src=x>');
-    const content = await page.content();
-    expect(content).not.toContain("onerror=alert");
+    // The raw param legitimately appears escaped inside the Next.js RSC
+    // flight payload, so a raw-source substring check false-positives.
+    // What matters is that it never becomes a live element in the DOM.
+    await expect(page.locator("img[onerror]")).toHaveCount(0);
+    await expect(page.locator("img[src='x']")).toHaveCount(0);
   });
 });
 
