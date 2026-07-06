@@ -867,7 +867,7 @@ Stripe signature verification · refund→access revocation (the `status='active
 | P0-13 | Paying buyer locked out | ✅ | Branches on createError; returns 500 |
 | P0-14 | No 1099/W-9 tax handling | ✅ | Stripe files NECs; copy corrected |
 | P0-15 | Privacy policy materially false | ✅ | 8 subprocessors + lawful basis disclosed |
-| P0-16 | 78MB video auto-plays | ✅ | Click-to-play (autoplay removed); re-encode optional |
+| P0-16 | 78MB video auto-plays | ✅ | Click-to-play (autoplay removed); re-encoded 2026-07-06 to 6 MB (libx264 CRF 23, no visible quality loss) |
 
 ### Phase 1
 
