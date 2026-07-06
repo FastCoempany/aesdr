@@ -53,6 +53,7 @@ export default function SubmitCopyForm() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [ftcWarning, setFtcWarning] = useState(false);
   const [channel, setChannel] = useState("newsletter");
   const [format, setFormat] = useState("post");
   const [draftBody, setDraftBody] = useState("");
@@ -99,10 +100,30 @@ export default function SubmitCopyForm() {
           You&rsquo;ll get an email with the call — approved, edit requests,
           or declined with a reason. Submission appears in your queue below.
         </p>
+        {ftcWarning && (
+          <p
+            role="alert"
+            style={{
+              margin: "16px 0 0",
+              padding: "12px 16px",
+              background: "rgba(250,247,242,0.08)",
+              border: "1px solid rgba(250,247,242,0.35)",
+              fontSize: 14,
+              lineHeight: 1.6,
+            }}
+          >
+            <strong>Heads up — no FTC disclosure found in this draft.</strong>{" "}
+            The law (16 CFR Part 255) requires you to disclose that you earn a
+            commission — e.g. &ldquo;#ad&rdquo;, &ldquo;affiliate link&rdquo;,
+            or &ldquo;I earn a commission if you buy.&rdquo; Add one before the
+            piece goes live; the reviewer will flag it otherwise.
+          </p>
+        )}
         <button
           type="button"
           onClick={() => {
             setSuccess(false);
+            setFtcWarning(false);
             setDraftBody("");
             setDraftUrl("");
             setScheduledAt("");
@@ -139,6 +160,7 @@ export default function SubmitCopyForm() {
           setSubmitting(false);
           return;
         }
+        setFtcWarning(Boolean(res.data?.missing_ftc_disclosure));
         setSuccess(true);
         setSubmitting(false);
       }}

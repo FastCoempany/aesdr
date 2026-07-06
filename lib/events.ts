@@ -65,6 +65,8 @@ export type EventMap = {
     submission_id: string;
     channel: string;
     format: string;
+    /** R4-LEG-5 soft warning: draft carried no recognizable FTC disclosure marker. */
+    missing_ftc_disclosure: boolean;
   };
   /** Admin approved a copy submission. */
   affiliate_copy_approved: {

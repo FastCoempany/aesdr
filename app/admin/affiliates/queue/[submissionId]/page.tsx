@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { hasFtcDisclosure } from "@/lib/ftc-disclosure";
 import { createAdminClient } from "@/utils/supabase/admin";
 import ReviewActions from "./ReviewActions";
 
@@ -44,6 +45,10 @@ export default async function AdminSubmissionReviewPage({
   const affiliate = submission.affiliates;
 
   const reviewable = submission.status === "submitted" || submission.status === "reviewing";
+  // AUDIT (R4-LEG-5, revised 2026-07-06): submission no longer hard-blocks on a
+  // missing FTC disclosure — the reviewer is the enforcement point, so flag it
+  // loudly here.
+  const missingFtcDisclosure = !hasFtcDisclosure(submission.draft_body);
 
   return (
     <div>
@@ -129,6 +134,37 @@ export default async function AdminSubmissionReviewPage({
               </p>
             </div>
           ))}
+        </div>
+      )}
+
+      {missingFtcDisclosure && (
+        <div
+          style={{
+            background: "#fff",
+            border: "2px solid #8B1A1A",
+            padding: "14px 18px",
+            marginBottom: 24,
+          }}
+        >
+          <p
+            style={{
+              margin: 0,
+              fontFamily: "'Space Mono',monospace",
+              fontSize: 10,
+              letterSpacing: ".28em",
+              textTransform: "uppercase",
+              color: "#8B1A1A",
+              marginBottom: 6,
+            }}
+          >
+            No FTC disclosure detected
+          </p>
+          <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6 }}>
+            The draft carries no recognizable material-connection disclosure
+            (16 CFR Part 255). Don&rsquo;t approve as-is — request edits that add
+            one (&ldquo;#ad&rdquo;, &ldquo;affiliate link&rdquo;, a commission
+            statement) unless the disclosure lives outside the pasted text.
+          </p>
         </div>
       )}
 

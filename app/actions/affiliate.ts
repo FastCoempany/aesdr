@@ -279,18 +279,13 @@ export async function submitAffiliateCopy(formData: FormData): Promise<Result> {
     return { ok: false, error: "Draft is too long (20k chars max)." };
   }
 
-  // AUDIT (R4-LEG-5): the FTC Endorsement Guides (16 CFR Part 255) require an
-  // affiliate to clearly disclose their material connection — that they earn a
-  // commission — whenever they promote AESDR. Block (don't just advise) any
-  // submission with no recognizable disclosure marker so unlabeled copy never
-  // enters the review queue.
-  if (!hasFtcDisclosure(draftBody)) {
-    return {
-      ok: false,
-      error:
-        "Add an FTC disclosure before submitting — e.g. '#ad', 'affiliate link', or 'I earn a commission if you buy.' This is required by law when you promote AESDR for a commission.",
-    };
-  }
+  // AUDIT (R4-LEG-5, revised 2026-07-06): the FTC Endorsement Guides
+  // (16 CFR Part 255) require an affiliate to clearly disclose their material
+  // connection — that they earn a commission — whenever they promote AESDR.
+  // Founder call 2026-07-06: soft warning, not a hard block. The submission
+  // still goes through; the affiliate gets a warning back and the review page
+  // re-runs the detector so the human reviewer catches it before approval.
+  const missingFtcDisclosure = !hasFtcDisclosure(draftBody);
 
   // AUDIT (R3-AF-8): the draft URL is rendered as a clickable link in the
   // founder's review queue. Reject anything that isn't a well-formed https URL
@@ -334,11 +329,15 @@ export async function submitAffiliateCopy(formData: FormData): Promise<Result> {
     submission_id: data.id,
     channel,
     format,
+    missing_ftc_disclosure: missingFtcDisclosure,
   });
 
   revalidatePath("/affiliates/dashboard/submissions");
   revalidatePath("/admin/affiliates/queue");
-  return { ok: true, data: { submission_id: data.id } };
+  return {
+    ok: true,
+    data: { submission_id: data.id, missing_ftc_disclosure: missingFtcDisclosure },
+  };
 }
 
 /* ─── copy submission review (admin side) ─── */

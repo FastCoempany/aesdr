@@ -5,13 +5,16 @@
  * clearly and conspicuously disclose any material connection to the product
  * they promote — for an affiliate, the fact that they earn a commission on
  * sales. AESDR affiliates must include such a disclosure in any promotional
- * copy they submit, so this is a hard gate, not advice.
+ * copy they submit. Founder call 2026-07-06: this is a soft warning, not a
+ * hard gate — a submission without a marker still goes through, the affiliate
+ * is warned on submit, and the admin review page flags it so the human
+ * reviewer enforces the disclosure before approval.
  *
  * `hasFtcDisclosure` is a deliberately narrow allow-list of well-understood
  * disclosure markers (the same ones the FTC's own guidance calls out: "#ad",
  * "affiliate", "paid partnership", "sponsored", a clear commission statement,
  * "material connection"). It is NOT an NLP judge of disclosure adequacy — a
- * human still reviews placement/conspicuousness. Its only job is to block a
+ * human still reviews placement/conspicuousness. Its only job is to surface a
  * submission that carries no recognizable disclosure marker at all.
  */
 

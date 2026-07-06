@@ -29,11 +29,12 @@ export default function AboutPage() {
       <Section title="Why it exists">
         <p style={{ marginBottom: 14 }}>
           The first eighteen months of a SaaS sales career are an expensive
-          accident. The 2024 Bridge Group state-of-the-SDR report puts
-          tenure at <strong>1.9 years</strong>; only <strong>16%</strong> of
-          SDRs get promoted in any given year; only <strong>51%</strong> of
-          AEs hit quota. The training most orgs ship into that gap is
-          generic, motivational, or pitched at the wrong altitude.
+          accident. Bridge Group&rsquo;s SDR Metrics research puts tenure at{" "}
+          <strong>1.9 years</strong>, with only <strong>16%</strong> of SDRs
+          promoted in any given year; their 2024 SaaS AE report found only{" "}
+          <strong>51%</strong> of AEs hit quota. The training most orgs ship
+          into that gap is generic, motivational, or pitched at the wrong
+          altitude.
         </p>
         <p>
           AESDR covers the part of the job that

@@ -1061,8 +1061,8 @@ Stripe signature verification · refund→access revocation (the `status='active
 | R4-LEG-1 | 40% vs "30% net" contract | ✅ | Honors contract; calculator fixed |
 | R4-LEG-2 | Trackers fire EU/UK no consent | ✅ | Consent banner; analytics opt-in for all |
 | R4-LEG-3 | Policy promises erasure, no DSAR | ✅ | Copy aligned to capability |
-| R4-LEG-4 | No FTC earnings substantiation | ✅ | /about stats cited to 2024 Bridge Group SDR report; verify the 51% AE-quota attribution |
-| R4-LEG-5 | FTC disclosure not enforced | ✅ | FTC disclosure hard-blocks copy submission |
+| R4-LEG-4 | No FTC earnings substantiation | ✅ | 51% verified 2026-07-06: Bridge Group 2024 SaaS **AE** Metrics report (not the SDR report) — /about attribution corrected; /enterprise + /research already cited it right |
+| R4-LEG-5 | FTC disclosure not enforced | ✅ | Soft warning (founder 2026-07-06, reversing the 06-29 hard block): submission goes through, affiliate warned on submit, admin review page flags the missing disclosure |
 | R4-LEG-6 | ToS no governing-law/arbitration | ✅ | Delaware* + AAA arbitration + class waiver |
 | R4-LEG-7 | Scraped-PII no GDPR Art.14 basis | ✅ | Legitimate-interest basis + retention purge built |
 | R4-PERF-1 | Scout sweep no token cap | ✅ | $10/run ceiling |
