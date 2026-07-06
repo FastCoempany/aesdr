@@ -62,20 +62,20 @@ const STAGES: Array<{ id: string; label: string; caption: string; empty: string 
   {
     id: "sourced",
     label: "Sourced",
-    caption: "scout found them — your Promote or Reject moves each card",
+    caption: "scout found them — your Accept or Reject moves each card",
     empty: "Fills when a scout sweep runs (tower → Scout & Enrich).",
   },
   {
     id: "enriched",
     label: "Enriched · the research room",
-    caption: "dossier-enrich writes the brief (hourly lever); scribe drafts at voice-fit ≥ 4 (15-min lever) — or use the room's buttons",
-    empty: "Fills when you press Promote on a sourced candidate.",
+    caption: "your research queue — Run brief, then Scribe draft, from each candidate's room",
+    empty: "Fills when you press Accept on a sourced candidate.",
   },
   {
     id: "contacted",
     label: "Contacted",
-    caption: "first touch sent — the follow-up ladder climbs on its own (+4d, +9d)",
-    empty: "Fills when courier sends an approved draft (or you mark a manual send).",
+    caption: "first touch sent — the follow-up ladder drafts +4d/+9d nudges for your approve",
+    empty: "Fills when you press Send now on an approved draft (or mark a manual send).",
   },
   {
     id: "replied",

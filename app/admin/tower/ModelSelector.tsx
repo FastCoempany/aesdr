@@ -14,16 +14,18 @@ const MODELS = [
 
 /**
  * Per-agent model picker. Submits on change so there's no "Save" button —
- * the next cron tick (or next scout sweep) picks up the new value.
- * Only LLM-calling agents have one (scout + dossier-enrich); deterministic
+ * the next run of that agent's button picks up the new value.
+ * Only LLM-calling work has one (scout sweeps + dossier briefs); deterministic
  * agents don't render this.
  */
 export default function ModelSelector({
   agent,
   current,
+  label = "Model:",
 }: {
   agent: string;
   current: string;
+  label?: string;
 }) {
   return (
     <form action={setAgentModel} style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
@@ -37,7 +39,7 @@ export default function ModelSelector({
           color: "#6B6B6B",
         }}
       >
-        Model:
+        {label}
       </label>
       <ModelSelect current={current} />
     </form>

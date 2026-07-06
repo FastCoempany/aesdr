@@ -11,14 +11,15 @@ import { createAdminClient } from "@/utils/supabase/admin";
  * until the operator flips a lever in the tower's Agent Controls.
  */
 
+// Founder decision 2026-07-06: sentinel, scribe, courier, and dossier-enrich
+// are no longer scheduled agents — their cron routes are deleted and the tower
+// shows no levers for them. The same work runs manual-only from the candidate
+// room: Run brief (dossier), Scribe draft (scribe), Send now (courier).
+// Inbound replies are handled directly in the operator's inbox.
 export const PARTNER_AGENTS = [
-  "sentinel",
-  "scribe",
-  "courier",
   "usher",
   "almanac",
   "followup",
-  "dossier-enrich",
   "contact-finder",
 ] as const;
 export type PartnerAgent = (typeof PARTNER_AGENTS)[number];

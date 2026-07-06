@@ -141,16 +141,6 @@ export default async function CandidateRoomPage({
     .limit(20);
   const replies = replyRows ?? [];
 
-  // Lever states make the "what happens next" line truthful.
-  const levers: Record<string, boolean> = {};
-  {
-    const { data: sw } = await supabase
-      .from("agent_switches")
-      .select("agent, enabled")
-      .in("agent", ["dossier-enrich", "scribe", "courier"]);
-    for (const s of sw ?? []) levers[s.agent as string] = s.enabled === true;
-  }
-
   // The event log (post-migration), merged with rows synthesized from the
   // tables that always exist — so the timeline never renders empty-wrong.
   const timeline: TimelineRow[] = [];
@@ -167,7 +157,7 @@ export default async function CandidateRoomPage({
         if (!SHOWN.has(e.kind as string)) continue;
         const d = (e.detail ?? {}) as Record<string, unknown>;
         const label =
-          e.kind === "promoted" ? "promoted → enriched"
+          e.kind === "promoted" ? "accepted → research queue"
           : e.kind === "rejected" ? "passed → into the bin"
           : e.kind === "reconsidered" ? `reconsidered → back to ${String(d.to ?? "the pipeline")}`
           : e.kind === "brief_written" ? `research brief written (${String(d.verdict ?? "—")})`
@@ -195,34 +185,34 @@ export default async function CandidateRoomPage({
       timeline.push({ at: d.approved_at as string, actor: (d.approved_by as string | null) ?? "you", label: "draft approved for send" });
     }
     if (d.sent_at) {
-      timeline.push({ at: d.sent_at as string, actor: d.send_channel === "manual" ? "you (by hand)" : "courier", label: `sent → ${d.to_addr}` });
+      timeline.push({ at: d.sent_at as string, actor: d.send_channel === "manual" ? "you (by hand)" : "you (Send now)", label: `sent → ${d.to_addr}` });
     }
   }
   for (const r of replies) {
     timeline.push({ at: r.received_at as string, actor: "them", label: `replied — "${r.subject ?? "(no subject)"}"` });
   }
   if (c.first_touch_at && !drafts.some((d) => d.sent_at)) {
-    timeline.push({ at: c.first_touch_at as string, actor: "courier", label: "first touch sent" });
+    timeline.push({ at: c.first_touch_at as string, actor: "you", label: "first touch sent" });
   }
   timeline.sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime());
 
-  // What happens next — derived from stage + brief + drafts + levers.
+  // What happens next — derived from stage + brief + drafts.
   const status = c.status as string;
   const vf = (c.voice_fit as number | null) ?? null;
   const hasReadyDraft = drafts.some((d) => d.status === "ready");
   const hasApprovedDraft = drafts.some((d) => d.status === "approved");
   let next = "";
   if (status === "sourced") {
-    next = "Waiting on you — Promote or Reject below.";
+    next = "Waiting on you — Accept or Reject below.";
   } else if (status === "enriched") {
     if (hasReadyDraft) next = "A draft is in the house — press Ready, then Send it below.";
-    else if (hasApprovedDraft) next = "Draft is armed — press Send now to email it (no cron needed).";
+    else if (hasApprovedDraft) next = "Draft is armed — press Send now to email it.";
     else if (!brief && !hasLegacyBrief)
-      next = `Waiting on a research brief — ${levers["dossier-enrich"] ? "dossier-enrich runs hourly (:33 UTC)" : "dossier-enrich is paused"}, or press Run brief now. Waiting is fine; pressing is faster.`;
+      next = "Waiting on a research brief — press Run brief now.";
     else if ((vf ?? 0) >= 4)
-      next = `Brief done — ${levers["scribe"] ? "scribe drafts on its next tick (≤15 min)" : "scribe is paused"}, or press Draft now.`;
+      next = "Brief done — press Scribe draft to write the first-touch.";
     else
-      next = `Brief done, but voice-fit ${vf ?? "—"} is below scribe's bar (4) — scribe will skip them. Draft now overrides, Reject parks them.`;
+      next = `Brief done, but voice-fit ${vf ?? "—"} is below the drafting bar (4) — Scribe draft overrides, Reject parks them.`;
   } else if (status === "contacted") {
     next = `First touch out ${timeAgo(c.first_touch_at as string | null)} — follow-up ladder is at step ${c.ladder_step ?? 0}. Replies land here.`;
   } else if (status === "replied") {
@@ -362,7 +352,7 @@ export default async function CandidateRoomPage({
             <form action={promoteSourced}>
               <input type="hidden" name="id" value={id} />
               <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
-              <TowerButton pendingLabel="Promoting…">Promote → enriched</TowerButton>
+              <TowerButton pendingLabel="Accepting…">Accept → research queue</TowerButton>
             </form>
             <form action={rejectSourced}>
               <input type="hidden" name="id" value={id} />
@@ -380,7 +370,7 @@ export default async function CandidateRoomPage({
         {status === "enriched" && !drafts.some((d) => ["ready", "approved", "sent"].includes(d.status as string)) && (
           <form action={draftNow}>
             <input type="hidden" name="id" value={id} />
-            <TowerButton variant="outline" pendingLabel="Drafting…">Draft now</TowerButton>
+            <TowerButton variant="outline" pendingLabel="Drafting…">Scribe draft</TowerButton>
           </form>
         )}
         {(status === "sourced" || status === "enriched") && !hasEmail && emailFinderConfigured() && (
@@ -419,7 +409,7 @@ export default async function CandidateRoomPage({
       </div>
       {(status === "sourced" || status === "enriched") && (
         <p style={{ fontFamily: MONO, fontSize: "10px", lineHeight: 1.6, color: MUTED, margin: "0 0 8px" }}>
-          Run brief = a live web-search research call (confirmed first, ~$0.10–$0.50). Draft now = free template fill.
+          Run brief = a live web-search research call (confirmed first, ~$0.10–$0.50). Scribe draft = free template fill.
           Neither sends anything — every email still waits for your approve in Decisions.
         </p>
       )}
@@ -518,7 +508,7 @@ export default async function CandidateRoomPage({
       {drafts.length === 0 ? (
         <div style={card}>
           <p style={{ fontFamily: SERIF, fontSize: "13.5px", fontStyle: "italic", color: MUTED, margin: 0 }}>
-            Nothing drafted yet{status === "enriched" ? " — Draft now above writes the first-touch, or scribe does it on its tick (voice-fit ≥ 4)." : "."}
+            Nothing drafted yet{status === "enriched" ? " — Scribe draft above writes the first-touch." : "."}
           </p>
         </div>
       ) : (
@@ -644,9 +634,9 @@ export default async function CandidateRoomPage({
       {replies.length === 0 ? (
         <div style={card}>
           <p style={{ fontFamily: SERIF, fontSize: "13.5px", fontStyle: "italic", color: MUTED, margin: 0 }}>
-            Nothing yet. When they write back, sentinel (checks every 10 minutes) matches the email to this room,
-            files a bright signal in the tower&apos;s Decisions, and emails you a ping. The snippet lands here;
-            the full thread stays in your inbox, one click away.
+            Nothing yet. Replies land in your inbox (the outbound&apos;s reply-to address) — the search link
+            in Contact paths above jumps straight to their thread. When they write back, work it from
+            there and move this card&apos;s status yourself (it also halts the follow-up ladder).
           </p>
         </div>
       ) : (

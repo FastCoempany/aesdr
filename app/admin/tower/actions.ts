@@ -61,13 +61,13 @@ const VALID_SWEEPS: readonly ScoutSweepId[] = [
  * draft, marking a hand-sent message done, or clearing a signal off the board.
  * Each is admin-gated and each is one gesture.
  *
- * Courier (the cron) does the actual email sending; these only flip state.
- * Approving an email row sets status='approved' and courier transmits it on its
- * next tick. Manual rows (a DM handle / a form) never touch courier — the
- * operator sends by hand and marks them sent here.
+ * sendOutboundRow (behind the Send now button) does the actual email sending;
+ * these only flip state. Approving an email row sets status='approved' — armed,
+ * waiting for the operator's Send now click. Manual rows (a DM handle / a form)
+ * the operator sends by hand and marks sent here.
  */
 
-/** Approve one drafted outbound row → courier sends it next tick. */
+/** Approve one drafted outbound row → armed for the Send now button. */
 export async function approveDraft(formData: FormData) {
   const user = await requireAdmin();
   const id = String(formData.get("id") ?? "");
@@ -471,7 +471,7 @@ export async function runScoutSweepAction(formData: FormData) {
           contact_path: r.contact_path,
           why_fit: `${r.why_fit} [scout/${sweep}, ${user.email}]`,
           source_agent: `scout-tower:${sweep}`,
-          next_action: "Review and promote, or reject",
+          next_action: "Review and accept, or reject",
         }));
 
       if (inserts.length > 0) {
@@ -740,7 +740,7 @@ export async function draftNow(formData: FormData) {
     if (error) throw new Error(error.message);
     if (!row) throw new Error("Candidate not found.");
     if (row.status !== "enriched") {
-      throw new Error("Draft now applies to a candidate at 'enriched' — promote them first.");
+      throw new Error("Scribe draft applies to a candidate at 'enriched' — accept them first.");
     }
 
     const key = firstTouchIdemKey(id);

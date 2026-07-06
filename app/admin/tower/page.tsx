@@ -250,13 +250,6 @@ export default async function TowerPage({
     .order("sent_at", { ascending: false })
     .limit(8);
 
-  const { data: sentinelCursor } = await supabase
-    .from("agent_cursors")
-    .select("updated_at")
-    .eq("agent", "sentinel")
-    .eq("stream", "prospect_events")
-    .maybeSingle();
-
   // ── Agent master switches (the levers). Missing table → all OFF. ──
   const { data: switchRows, error: switchErr } = await supabase
     .from("agent_switches")
@@ -276,28 +269,10 @@ export default async function TowerPage({
   const dossierModel = modelFor("dossier-enrich");
 
   const AGENT_META: Record<string, { label: string; cadence: string; desc: string; confirm: string }> = {
-    sentinel: {
-      label: "Sentinel",
-      cadence: "every 10 min",
-      desc: "Reads inbound replies, classifies them, and pings you for the interested ones. Sends email when it finds a bright signal.",
-      confirm: "Start Sentinel? It will read affiliates@ inbound and may email you about bright replies.",
-    },
-    scribe: {
-      label: "Scribe (drafter)",
-      cadence: "every 15 min",
-      desc: "Turns enriched candidates into ready first-touch drafts in the tower. Drafts only — never sends. You still approve every one.",
-      confirm: "Start Scribe? It will begin drafting first-touch outreach to your enriched candidates (drafts only — nothing sends without your approval).",
-    },
-    courier: {
-      label: "Courier",
-      cadence: "every 5 min",
-      desc: "Sends the drafts you've APPROVED, and logs them. Does nothing to unapproved drafts.",
-      confirm: "Start Courier? It will send any outbound rows you have already approved.",
-    },
     followup: {
       label: "Follow-up ladder",
       cadence: "hourly",
-      desc: "Drafts +4d / +9d follow-ups for contacted-but-silent candidates; halts on reply. Drafts only — you approve.",
+      desc: "Drafts +4d / +9d follow-ups for contacted-but-silent candidates. Halts when you move a candidate off 'contacted' — do that when they reply. Drafts only — you approve.",
       confirm: "Start the follow-up ladder? It will draft follow-ups for contacted candidates (drafts only — you approve each).",
     },
     usher: {
@@ -312,16 +287,10 @@ export default async function TowerPage({
       desc: "Emails you the morning standup digest of what's waiting in the tower.",
       confirm: "Start Almanac? It will email you a daily standup digest.",
     },
-    "dossier-enrich": {
-      label: "Dossier auto-enrich",
-      cadence: "hourly (2 rows/tick)",
-      desc: "Searches the live web (web_search + web_fetch) for each promoted candidate, then writes the brief — audience, voice-fit, conflicts, contact path, and their own domain for the email finder. Costs Anthropic tokens per row.",
-      confirm: "Start Dossier auto-enrich? Each candidate runs live web search + fetch (~$0.10-0.50 per candidate) and updates enriched rows in the pipeline.",
-    },
     "contact-finder": {
       label: "Contact finder",
       cadence: "every 5 min (8 rows/tick)",
-      desc: "Runs enriched candidates through BetterContact's waterfall to find their email, chips the map, and adds verified addresses to the contact path. Promotes stay instant — the email fills in within ~5 min. BetterContact bills per email found.",
+      desc: "Runs enriched candidates through BetterContact's waterfall to find their email, chips the map, and adds verified addresses to the contact path. Accepts stay instant — the email fills in within ~5 min. BetterContact bills per email found.",
       confirm: "Start Contact finder? It spends ~1 BetterContact credit per email found (not per attempt) across your enriched candidates. Turn it off anytime to stop spending.",
     },
   };
@@ -405,9 +374,6 @@ export default async function TowerPage({
               ? "All clear."
               : `${decisionCount} waiting on you.`}
         </h1>
-        <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED }}>
-          sentinel last swept {timeAgo(sentinelCursor?.updated_at ?? null)}
-        </span>
       </div>
 
       {migrationMissing && (
@@ -451,7 +417,7 @@ export default async function TowerPage({
       <section style={{ marginBottom: "52px" }}>
         <p style={sectionLabel}>
           <span>Agent Controls</span>
-          <Hint tip="Each lever starts or pauses one agent's scheduled run. Sensible first order: almanac (a digest email to you), then sentinel (sorts replies), then scribe (drafts), then courier (sends approved drafts). Pausing is instant and always safe." />
+          <Hint tip="Each lever starts or pauses one agent's scheduled run. Research, drafting, and sending are manual-only — the buttons in each candidate's room. These levers cover the support agents: almanac (a digest email to you), follow-up ladder (drafts nudges), contact finder (emails), usher (workshop logistics). Pausing is instant and always safe." />
           <span style={{ flex: 1, height: 1, background: LIGHT }} />
         </p>
         {switchesMissing ? (
@@ -478,7 +444,6 @@ export default async function TowerPage({
                   desc={m.desc}
                   enabled={!!switchMap[a]}
                   startConfirm={m.confirm}
-                  currentModel={a === "dossier-enrich" ? dossierModel : undefined}
                 />
               );
             })}
@@ -490,7 +455,7 @@ export default async function TowerPage({
       <section style={{ marginBottom: "52px" }}>
         <p style={sectionLabel}>
           <span>Scout &amp; Enrich</span>
-          <Hint tip="Start here when the pipeline is thin. Run a sweep, review each card below, Promote the good ones. A promoted candidate moves to the map's Enriched column and gets a room — research and drafting happen there or on the levers' schedule. Then your next stop is Decisions, once drafts appear." />
+          <Hint tip="Start here when the pipeline is thin. Run a sweep, review each card below, Accept the good ones. An accepted candidate moves to the map's Enriched column and gets a room — Run brief and Scribe draft live there. Then your next stop is Decisions, once drafts appear." />
           <span style={{ flex: 1, height: 1, background: LIGHT }} />
           <Link href="/admin/tower/pipeline" className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", color: CRIMSON }}>
             open the map →
@@ -543,19 +508,18 @@ export default async function TowerPage({
           </span>
           <div className={twr.flow}>
             <span className={twr.flowStatus}>sourced</span>
-            <span className={twr.flowMove}>→ <b className={twr.flowYou}>you: Promote</b> →</span>
+            <span className={twr.flowMove}>→ <b className={twr.flowYou}>you: Accept</b> →</span>
             <span className={twr.flowStatus}>enriched</span>
-            <span className={twr.flowMove}>→ dossier-enrich (hourly lever): research brief →</span>
-            <span className={twr.flowMove}>scribe (15-min lever, voice-fit ≥ 4): drafts the first-touch →</span>
+            <span className={twr.flowMove}>→ <b className={twr.flowYou}>you: Run brief</b> (research) → <b className={twr.flowYou}>you: Scribe draft</b> →</span>
             <span className={twr.flowStatus}>ready</span>
-            <span className={twr.flowMove}>→ <b className={twr.flowYou}>you: Send</b> →</span>
+            <span className={twr.flowMove}>→ <b className={twr.flowYou}>you: Ready</b> →</span>
             <span className={twr.flowStatus}>approved</span>
-            <span className={twr.flowMove}>→ courier (5-min lever): emails it →</span>
+            <span className={twr.flowMove}>→ <b className={twr.flowYou}>you: Send now</b> →</span>
             <span className={twr.flowStatus}>contacted</span>
-            <span className={twr.flowMove}>→ replies land → sentinel files them as signals on this board</span>
+            <span className={twr.flowMove}>→ replies land in your inbox — work them from the candidate&apos;s room</span>
           </div>
           <p style={{ fontFamily: SERIF, fontSize: "12.5px", fontStyle: "italic", color: MUTED, margin: "10px 0 0" }}>
-            Each chip is a value in the row&apos;s <code>status</code> column. Lever-gated steps run only while that agent reads <strong>running</strong> in Agent Controls — paused means the candidate waits at its current chip. Your two gestures, <strong>Promote</strong> and <strong>Send</strong>, are the only ones that commit anything.
+            Each chip is a value in the row&apos;s <code>status</code> column. Every step is a button you press — nothing researches, drafts, or sends on a schedule. The follow-up ladder (a lever above) is the one auto-drafter left: it queues +4d/+9d nudge drafts for contacted-but-silent candidates, and even those wait for your approve.
           </p>
         </div>
         <div style={{ ...card, marginBottom: "16px" }}>
@@ -563,10 +527,11 @@ export default async function TowerPage({
             <strong>Run a sweep.</strong> Each press has Claude search the live web and drop ~12–15 verified candidates into the pipeline at <code>status=&apos;sourced&apos;</code> for you to review. Spends API tokens + web searches (~$0.50–$2.50 per sweep on Sonnet 4.6).
           </p>
           <p style={{ fontFamily: SERIF, fontSize: "13px", color: MUTED, fontStyle: "italic", margin: "0 0 14px" }}>
-            Nothing reaches enriched (the auto-drafter only acts on enriched) until you click <strong>Promote</strong> on each row.
+            Nothing moves past sourced until you click <strong>Accept</strong> on each row.
           </p>
-          <div style={{ marginBottom: "12px" }}>
-            <ModelSelector agent="scout" current={scoutModel} />
+          <div style={{ marginBottom: "12px", display: "flex", gap: "16px", flexWrap: "wrap" }}>
+            <ModelSelector agent="scout" current={scoutModel} label="Sweep model:" />
+            <ModelSelector agent="dossier-enrich" current={dossierModel} label="Brief model:" />
           </div>
           <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
             <ScoutSweepButton sweep="communities" label="Sweep 1 · Paid communities" />
@@ -581,7 +546,7 @@ export default async function TowerPage({
               {sourced.length} candidate{sourced.length > 1 ? "s" : ""} awaiting review
             </span>
             <p style={{ fontFamily: SERIF, fontSize: "12.5px", fontStyle: "italic", color: MUTED, margin: "0 0 10px" }}>
-              Promote changes one database cell — the row&apos;s status, <code>sourced → enriched</code> — which is the queue dossier-enrich and scribe read from. Reject parks the row at <code>passed</code>; nothing is deleted.
+              Accept changes one database cell — the row&apos;s status, <code>sourced → enriched</code> — which is the research queue that Run brief and Scribe draft work from. Reject parks the row at <code>passed</code>; nothing is deleted.
             </p>
             {sourced.map((s) => (
               <div key={s.id} style={card}>
@@ -608,7 +573,7 @@ export default async function TowerPage({
                 <div style={{ display: "flex", gap: "8px" }}>
                   <form action={promoteSourced}>
                     <input type="hidden" name="id" value={s.id} />
-                    <TowerButton pendingLabel="Promoting…">Promote → enriched</TowerButton>
+                    <TowerButton pendingLabel="Accepting…">Accept → research queue</TowerButton>
                   </form>
                   <form action={rejectSourced}>
                     <input type="hidden" name="id" value={s.id} />

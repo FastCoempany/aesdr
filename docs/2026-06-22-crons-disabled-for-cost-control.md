@@ -1,5 +1,12 @@
 # Crons disabled for cost control (2026-06-22)
 
+> **Update 2026-07-06 (founder decision):** sentinel, scribe, courier, and
+> dossier-enrich are **removed entirely** — cron routes deleted, tower levers
+> gone. Their work is manual-only from each candidate's room: **Run brief**
+> (dossier), **Scribe draft** (first-touch), **Send now** (the only sender).
+> Inbound replies are worked directly in the operator's inbox. The restore
+> array below reflects the surviving crons only.
+
 Per the founder's instruction ("nothing should be running that's costing me
 money"), **all Vercel cron schedules were removed** from `vercel.json` when the
 audit branch was merged to `main`. The cron *routes* still exist and can be
@@ -9,9 +16,10 @@ longer scheduled, so nothing fires — and nothing spends — automatically.
 ## What this stops
 - **Consumer lifecycle emails** (drip / abandonment / dropoff / review /
   retention) — Resend sends.
-- **Partner-agent pipeline** (sentinel / scribe / followup / dossier-enrich /
-  contact-finder / courier / usher / almanac) — Anthropic tokens + BetterContact
-  (per-result billing). NOTE: these were *already* lever-gated OFF by default
+- **Partner-agent pipeline** (followup / contact-finder / usher / almanac —
+  sentinel, scribe, courier, and dossier-enrich were deleted 2026-07-06, see
+  the update note above) — Anthropic tokens + BetterContact (per-result
+  billing). NOTE: these were *already* lever-gated OFF by default
   (`agent_switches.enabled` defaults false), so they no-op'd anyway; removing the
   schedule makes it certain.
 - **Affiliate commission clearing** (`affiliate`) — no spend, but also paused.
@@ -35,12 +43,8 @@ Restore this `crons` array into `vercel.json` and redeploy:
     { "path": "/api/cron/review",         "schedule": "0 16 * * *" },
     { "path": "/api/cron/retention",      "schedule": "0 17 * * *" },
     { "path": "/api/cron/affiliate",      "schedule": "0 8 * * *" },
-    { "path": "/api/cron/sentinel",       "schedule": "*/10 * * * *" },
-    { "path": "/api/cron/scribe",         "schedule": "*/15 * * * *" },
     { "path": "/api/cron/followup",       "schedule": "17 * * * *" },
-    { "path": "/api/cron/dossier-enrich", "schedule": "33 * * * *" },
     { "path": "/api/cron/contact-finder", "schedule": "*/5 * * * *" },
-    { "path": "/api/cron/courier",        "schedule": "*/5 * * * *" },
     { "path": "/api/cron/usher",          "schedule": "*/30 * * * *" },
     { "path": "/api/cron/almanac",        "schedule": "0 11 * * *" }
   ]
