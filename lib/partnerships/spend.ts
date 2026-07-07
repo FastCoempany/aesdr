@@ -41,7 +41,17 @@ export async function getTodaySpendUsd(): Promise<number> {
     .eq("event_type", "agent_spend")
     .gte("occurred_at", utcMidnightIso())
     .limit(1000);
-  if (error) throw new Error(`spend ledger read failed: ${error.message}`);
+  if (error) {
+    // 42P01 = relation does not exist — the ledger lives in the `events`
+    // table (20260519_events.sql), which is hand-applied like every
+    // migration here. Name the exact fix instead of a vague failure.
+    if (error.code === "42P01") {
+      throw new Error(
+        "The events table is missing in this database — run supabase/migrations/20260519_events.sql in the Supabase SQL editor, then retry.",
+      );
+    }
+    throw new Error(`spend ledger read failed: ${error.message}`);
+  }
   let total = 0;
   for (const row of data ?? []) {
     const usd = (row.props as { usd?: unknown } | null)?.usd;
@@ -76,9 +86,13 @@ export async function assertUnderDailyWall(): Promise<void> {
   let spent: number;
   try {
     spent = await getTodaySpendUsd();
-  } catch {
+  } catch (e) {
+    // Fail closed, but say WHY — a hidden cause turns a one-SQL fix into a
+    // mystery. (First field sighting 2026-07-07: the events table itself was
+    // never applied in prod.)
+    const why = e instanceof Error ? e.message : String(e);
     throw new Error(
-      "Couldn't read the spend ledger — refusing to spend until it's readable (fail-closed).",
+      `Refusing to spend — the ledger couldn't be read (fail-closed). ${why.slice(0, 220)}`,
     );
   }
   if (spent >= DAILY_WALL_USD) {
