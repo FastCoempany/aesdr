@@ -34,6 +34,7 @@ export default function RunBriefButton({
   confirmLabel,
   busyLabel = "Researching…",
   variant = "outline",
+  roomHref,
 }: {
   candidateId: string;
   label: string;
@@ -44,6 +45,10 @@ export default function RunBriefButton({
   confirmLabel?: string;
   busyLabel?: string;
   variant?: "outline" | "primary";
+  /** When set (tower cards), completion keeps the card in place and presents
+   *  this door instead of refreshing it away — the operator clicks straight
+   *  into the room for the fit call. */
+  roomHref?: string;
 }) {
   const router = useRouter();
   const [confirm, confirmModal] = useConfirm();
@@ -107,7 +112,7 @@ export default function RunBriefButton({
         return;
       }
       if (run.status === "done") {
-        router.refresh();
+        if (!roomHref) router.refresh();
         settle({ kind: "shimmer", text: run.phase || "Brief ready" });
         return;
       }
@@ -173,6 +178,22 @@ export default function RunBriefButton({
         {busy ? busyLabel : label}
       </button>
       {live && <span className={styles.sweepLive}>{live}</span>}
+      {roomHref && (busy || note) && (
+        <a
+          href={roomHref}
+          style={{
+            fontFamily: "'Barlow Condensed', sans-serif",
+            fontSize: "13px",
+            fontWeight: 700,
+            letterSpacing: ".12em",
+            textTransform: "uppercase",
+            color: "#8B1A1A",
+            textDecoration: "underline",
+          }}
+        >
+          {note && note.kind === "shimmer" ? "Open their room — make the fit call →" : "their room →"}
+        </a>
+      )}
       {note &&
         (note.kind === "shimmer" ? (
           <span className={styles.sweepShimmer}>{note.text}</span>

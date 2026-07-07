@@ -222,3 +222,42 @@
   text-transform: uppercase;
   max-width: 250px;
 }
+
+/* ── Side rail (founder 2026-07-07): the map + bin doors, pinned in the white
+   space right of the 1100px content column so they're reachable from any
+   scroll depth. Hidden when the viewport has no white space to sit in. */
+.sideRail {
+  position: fixed;
+  top: 140px;
+  right: max(16px, calc((100vw - 1100px) / 2 - 150px));
+  width: 128px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 40;
+}
+@media (max-width: 1330px) {
+  .sideRail { display: none; }
+}
+.sideRailLink {
+  display: block;
+  background: #FFFFFF;
+  border: 1px solid #E8E4DF;
+  padding: 10px 12px;
+  text-decoration: none;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: #1A1A1A;
+  transition: border-color .12s ease;
+}
+.sideRailLink:hover { border-color: #8B1A1A; color: #8B1A1A; }
+.sideRailCount {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #8B1A1A;
+  letter-spacing: .04em;
+}

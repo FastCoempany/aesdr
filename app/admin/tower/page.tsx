@@ -399,6 +399,26 @@ export default async function TowerPage({
 
       {/* ── The blaring signal: today's spend vs the $10 wall ── */}
       <SpendMeter spentUsd={spentUsd} emailCredits={emailCredits} ledgerBroken={ledgerBroken} />
+
+      {/* ── Side rail: the two doors that used to hide in a section header,
+            now reachable from any scroll depth (founder 2026-07-07). ── */}
+      <nav className={twr.sideRail} aria-label="Tower shortcuts">
+        <Link href="/admin/tower/pipeline" className={twr.sideRailLink}>
+          The map
+          <span className={twr.sideRailCount}>
+            {Object.entries(pipeCounts)
+              .filter(([k]) => k !== "passed" && k !== "cold")
+              .reduce((s, [, n]) => s + n, 0)}{" "}
+            active
+          </span>
+        </Link>
+        <Link href="/admin/tower/pipeline#passed" className={twr.sideRailLink}>
+          The bin
+          <span className={twr.sideRailCount}>
+            {(pipeCounts["passed"] ?? 0) + (pipeCounts["cold"] ?? 0)} parked
+          </span>
+        </Link>
+      </nav>
       <div
         style={{
           display: "flex",
@@ -633,6 +653,7 @@ export default async function TowerPage({
                     confirmLabel="Accept & prepare"
                     busyLabel="Preparing…"
                     variant="primary"
+                    roomHref={`/admin/tower/candidate/${s.id}`}
                   />
                   <form action={rejectSourced}>
                     <input type="hidden" name="id" value={s.id} />

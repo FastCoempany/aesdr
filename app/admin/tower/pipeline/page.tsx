@@ -82,8 +82,8 @@ const STAGES: Array<{ id: string; label: string; caption: string; empty: string 
   {
     id: "replied",
     label: "In conversation · hands off",
-    caption: "they wrote back — no drafts, no nudges, until you move them. Work the thread from your inbox.",
-    empty: "Fills when you press “They replied — hands off” on a contacted candidate.",
+    caption: "they wrote back. The machine won't draft or nudge anyone in this column — work the thread from your inbox, move them when it resolves.",
+    empty: "Fills when you mark a contacted candidate replied (the hands-off button in their room).",
   },
   {
     id: "call_booked",
@@ -183,12 +183,14 @@ export default async function PipelineMapPage() {
                 }
                 {...(st.id === "replied" ? { "data-surface": "dark" } : {})}
               >
-                <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: st.id === "replied" ? "#FAF7F2" : INK, fontWeight: 700 }}>
-                  {st.label}
-                </span>
-                <span style={{ fontFamily: MONO, fontSize: "11px", color: st.id === "replied" ? "#FAF7F2" : CRIMSON, fontWeight: 700, float: "right" }}>
-                  {cards.length}
-                </span>
+                <div style={{ display: "flex", alignItems: "baseline", gap: "8px" }}>
+                  <span style={{ flex: 1, fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: st.id === "replied" ? "#FAF7F2" : INK, fontWeight: 700 }}>
+                    {st.label}
+                  </span>
+                  <span style={{ fontFamily: MONO, fontSize: "11px", color: st.id === "replied" ? "#FAF7F2" : CRIMSON, fontWeight: 700 }}>
+                    {cards.length}
+                  </span>
+                </div>
                 <p style={{ fontFamily: MONO, fontSize: "9.5px", lineHeight: 1.5, color: st.id === "replied" ? "rgba(250,247,242,0.65)" : MUTED, margin: "6px 0 0" }}>
                   {st.caption}
                 </p>
