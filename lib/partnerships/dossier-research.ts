@@ -3,6 +3,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import {
   DOSSIER_SYSTEM,
   DOSSIER_SCHEMA_HINT,
+  turnCostUsd,
   type DossierBrief,
 } from "./anthropic-agents";
 import type { ResearchProgress } from "./scout-research";
@@ -128,6 +129,9 @@ export async function runDossierResearch(
   },
   model: string,
   onProgress?: (p: ResearchProgress) => void,
+  /** Fires exactly once, however the run ends, with the run's total $ cost —
+   *  the spend-ledger hook (tower meter + daily wall). */
+  onCostUsd?: (usd: number) => void,
 ): Promise<DossierBrief | null> {
   const c = new Anthropic(ANTHROPIC_OPTS);
   const messages: Anthropic.MessageParam[] = [
@@ -140,6 +144,7 @@ export async function runDossierResearch(
   let searches = 0;
   let pagesRead = 0;
   let tokensUsed = 0;
+  let costUsd = 0;
   let lastEmit = 0;
   const report = (phase: string) => onProgress?.({ phase, searches, pagesRead });
   const throttled = () => {
@@ -152,6 +157,7 @@ export async function runDossierResearch(
   // ── Phase 1: research with tools ──
   const researchDeadline = Date.now() + RESEARCH_BUDGET_MS;
   let naturalText = "";
+  try {
   for (let i = 0; i < MAX_TURNS; i++) {
     const remaining = researchDeadline - Date.now();
     if (remaining <= 0) break;
@@ -189,6 +195,7 @@ export async function runDossierResearch(
       clearTimeout(stop);
       tokensUsed +=
         (final.usage?.input_tokens ?? 0) + (final.usage?.output_tokens ?? 0);
+      costUsd += turnCostUsd(model, final.usage);
       messages.push({ role: "assistant", content: final.content });
       if (final.stop_reason === "pause_turn") {
         throttled();
@@ -218,7 +225,8 @@ export async function runDossierResearch(
       emitText += delta;
     });
     try {
-      await emitStream.finalMessage();
+      const emitFinal = await emitStream.finalMessage();
+      costUsd += turnCostUsd(model, emitFinal.usage);
     } finally {
       clearTimeout(emitStop);
     }
@@ -226,4 +234,8 @@ export async function runDossierResearch(
     /* salvage whatever it wrote */
   }
   return extractBrief(emitText);
+  } finally {
+    // Ledger hook — exactly once, whatever path the run took. Billed either way.
+    onCostUsd?.(costUsd);
+  }
 }

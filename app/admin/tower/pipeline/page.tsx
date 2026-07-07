@@ -37,6 +37,8 @@ type Row = {
   contact_path?: string | null;
   found_email?: string | null;
   email_checked_at?: string | null;
+  first_touch_at?: string | null;
+  ladder_step?: number | null;
 };
 
 const GREEN = "#2E7D32";
@@ -79,9 +81,9 @@ const STAGES: Array<{ id: string; label: string; caption: string; empty: string 
   },
   {
     id: "replied",
-    label: "Replied",
-    caption: "they wrote back — sentinel filed it; your move, in their room",
-    empty: "Fills when sentinel matches an inbound reply to a candidate.",
+    label: "In conversation · hands off",
+    caption: "they wrote back — no drafts, no nudges, until you move them. Work the thread from your inbox.",
+    empty: "Fills when you press “They replied — hands off” on a contacted candidate.",
   },
   {
     id: "call_booked",
@@ -114,12 +116,14 @@ function waitingOn(r: Row): string {
   if (r.status === "sourced") return "waiting on your review";
   if (r.status === "enriched") {
     const hasBrief = (r.why_fit ?? "").includes("[dossier]");
-    if (!hasBrief) return "waiting on a research brief";
-    if ((r.voice_fit ?? 0) >= 4) return "brief ✓ — waiting on a draft (scribe)";
-    return `brief ✓ — below scribe's bar (vf ${r.voice_fit ?? "—"}); draft from the room`;
+    if (!hasBrief) return "waiting on a research brief — Run brief in the room";
+    return `brief ✓ scored ${r.voice_fit ?? "—"}/5 — waiting on your fit call`;
   }
-  if (r.status === "contacted") return "waiting on a reply — ladder climbing";
-  if (r.status === "replied") return "waiting on you";
+  if (r.status === "contacted") {
+    const last = r.first_touch_at ? daysAgo(r.first_touch_at).replace("· ", "") : null;
+    return `last touch ${last ?? "—"} · ladder step ${r.ladder_step ?? 0} — mark them replied the moment they answer`;
+  }
+  if (r.status === "replied") return "in conversation — your move, from your inbox";
   return r.next_action ?? "";
 }
 
@@ -169,14 +173,23 @@ export default async function PipelineMapPage() {
           const cards = byStage[st.id] ?? [];
           return (
             <div key={st.id} id={st.id} className={twr.mapCol}>
-              <div style={{ borderBottom: `2px solid ${INK}`, paddingBottom: "6px", marginBottom: "10px" }}>
-                <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: INK, fontWeight: 700 }}>
+              {/* The hands-off column reads as a different kind of place — solid
+                  ink, because the machine doesn't operate in there. */}
+              <div
+                style={
+                  st.id === "replied"
+                    ? { background: INK, padding: "8px 10px 10px", marginBottom: "10px" }
+                    : { borderBottom: `2px solid ${INK}`, paddingBottom: "6px", marginBottom: "10px" }
+                }
+                {...(st.id === "replied" ? { "data-surface": "dark" } : {})}
+              >
+                <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: st.id === "replied" ? "#FAF7F2" : INK, fontWeight: 700 }}>
                   {st.label}
                 </span>
-                <span style={{ fontFamily: MONO, fontSize: "11px", color: CRIMSON, fontWeight: 700, float: "right" }}>
+                <span style={{ fontFamily: MONO, fontSize: "11px", color: st.id === "replied" ? "#FAF7F2" : CRIMSON, fontWeight: 700, float: "right" }}>
                   {cards.length}
                 </span>
-                <p style={{ fontFamily: MONO, fontSize: "9.5px", lineHeight: 1.5, color: MUTED, margin: "6px 0 0" }}>
+                <p style={{ fontFamily: MONO, fontSize: "9.5px", lineHeight: 1.5, color: st.id === "replied" ? "rgba(250,247,242,0.65)" : MUTED, margin: "6px 0 0" }}>
                   {st.caption}
                 </p>
               </div>

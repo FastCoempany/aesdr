@@ -87,7 +87,7 @@ const MODEL_PRICE_PER_MTOK: Record<string, { in: number; out: number }> = {
 const WEB_SEARCH_USD_PER_REQUEST = 0.01;
 const DEFAULT_MAX_COST_USD = 10;
 
-function turnCostUsd(model: string, usageRaw: unknown): number {
+export function turnCostUsd(model: string, usageRaw: unknown): number {
   const usage = (usageRaw ?? {}) as {
     input_tokens?: number;
     output_tokens?: number;
@@ -117,6 +117,9 @@ async function runResearchAgent(opts: {
   maxTokens: number;
   budgetMs: number;
   maxCostUsd?: number;
+  /** Called exactly once, however the run ends, with the run's total $ cost —
+   *  the spend-ledger hook (tower meter + daily wall). */
+  onCostUsd?: (usd: number) => void;
 }): Promise<string> {
   const c = client();
   const deadline = Date.now() + opts.budgetMs;
@@ -129,6 +132,7 @@ async function runResearchAgent(opts: {
   let costUsd = 0;
   const maxCostUsd = opts.maxCostUsd ?? DEFAULT_MAX_COST_USD;
 
+  try {
   for (let i = 0; i < 4; i++) {
     const remaining = deadline - Date.now();
     if (remaining <= 0) break;
@@ -186,6 +190,11 @@ async function runResearchAgent(opts: {
   // answer. Surface it as a retry so an exhausted loop never reads as a clean
   // zero-row sweep (which, on the background route, would log no failure at all).
   throw new Error("Research kept searching but never returned an answer — run it again.");
+  } finally {
+    // The ledger hook fires exactly once with the real total — clean finish,
+    // budget stop, or throw. Tokens were billed either way.
+    opts.onCostUsd?.(costUsd);
+  }
 }
 
 // ── Scout sweeps ──
@@ -245,6 +254,7 @@ const JSON_SCHEMA_HINT = `Return STRICT JSON: { "rows": [ { "name": str, "surfac
 export async function runScoutSweep(
   sweepId: ScoutSweepId,
   model?: string,
+  onCostUsd?: (usd: number) => void,
 ): Promise<ScoutRow[]> {
   // Resolve the operator-configured model (agent_switches.model) the same way
   // the live engine does, instead of a hardcoded default (R5-IC-9).
@@ -256,6 +266,7 @@ export async function runScoutSweep(
     tools: SEARCH_ONLY,
     maxTokens: 8000,
     budgetMs: SCOUT_BUDGET_MS,
+    onCostUsd,
   });
   return parseRows(text);
 }

@@ -29,9 +29,21 @@ type Note = { kind: "shimmer" | "err"; text: string };
 export default function RunBriefButton({
   candidateId,
   label,
+  postPath = "/api/admin/run-brief",
+  confirmText,
+  confirmLabel,
+  busyLabel = "Researching…",
+  variant = "outline",
 }: {
   candidateId: string;
   label: string;
+  /** POST target that returns { ok, runId } — status polling always reads
+   *  /api/admin/run-brief?runId=…. Accept & prepare posts its own route. */
+  postPath?: string;
+  confirmText?: string;
+  confirmLabel?: string;
+  busyLabel?: string;
+  variant?: "outline" | "primary";
 }) {
   const router = useRouter();
   const [confirm, confirmModal] = useConfirm();
@@ -109,8 +121,9 @@ export default function RunBriefButton({
   async function start() {
     if (
       !(await confirm(
-        `${label}? It runs a live web-search research call in the background (~1–2 min, ~$0.10–$0.50) and shows progress here.`,
-        { confirmLabel: "Run brief" },
+        confirmText ??
+          `${label}? It runs a live web-search research call in the background (~1–2 min, ~$0.10–$0.50) and shows progress here.`,
+        { confirmLabel: confirmLabel ?? "Run brief" },
       ))
     ) {
       return;
@@ -123,18 +136,24 @@ export default function RunBriefButton({
     setLive("Starting…");
     setBusy(true);
     try {
-      const res = await fetch(`/api/admin/run-brief?id=${encodeURIComponent(candidateId)}`, {
+      const res = await fetch(`${postPath}?id=${encodeURIComponent(candidateId)}`, {
         method: "POST",
       });
-      const data = (await res.json().catch(() => null)) as { ok?: boolean; runId?: string | null } | null;
+      const data = (await res.json().catch(() => null)) as {
+        ok?: boolean;
+        runId?: string | null;
+        error?: string | null;
+      } | null;
       if (!data?.ok) {
-        settle({ kind: "err", text: "Couldn't start the brief — run it again." });
+        // A 409 carries a real reason — the $10 wall, a wrong-status card —
+        // show it verbatim instead of a generic retry line.
+        settle({ kind: "err", text: data?.error || "Couldn't start — run it again." });
         return;
       }
       if (!data.runId) return fallback();
       poll(data.runId, 0, 0);
     } catch {
-      settle({ kind: "err", text: "Couldn't start the brief — run it again." });
+      settle({ kind: "err", text: "Couldn't start — run it again." });
     }
   }
 
@@ -146,12 +165,12 @@ export default function RunBriefButton({
       {confirmModal}
       <button
         type="button"
-        className={`${styles.btn} ${styles.outline}`}
+        className={variant === "primary" ? `${styles.btn} ${styles.primary}` : `${styles.btn} ${styles.outline}`}
         disabled={busy}
         aria-busy={busy}
         onClick={start}
       >
-        {busy ? "Researching…" : label}
+        {busy ? busyLabel : label}
       </button>
       {live && <span className={styles.sweepLive}>{live}</span>}
       {note &&

@@ -8,6 +8,7 @@ import { NextResponse, after } from "next/server";
 import { requireAdmin } from "@/lib/admin";
 import { runBriefAndSave } from "@/lib/partnerships/brief";
 import { createDossierRun, getDossierRun } from "@/lib/partnerships/dossier-run";
+import { assertUnderDailyWall } from "@/lib/partnerships/spend";
 
 /**
  * "Run brief" trigger + status.
@@ -27,6 +28,16 @@ export async function POST(request: Request) {
   const id = new URL(request.url).searchParams.get("id") || "";
   if (!id) {
     return NextResponse.json({ ok: false, error: "Missing candidate id." }, { status: 400 });
+  }
+
+  // The $10/day wall — refuse to start a paid run once today's ledger is full.
+  try {
+    await assertUnderDailyWall();
+  } catch (e) {
+    return NextResponse.json(
+      { ok: false, error: e instanceof Error ? e.message : String(e) },
+      { status: 409 },
+    );
   }
 
   const actor = user.email ?? "admin";

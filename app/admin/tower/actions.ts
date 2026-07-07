@@ -41,6 +41,8 @@ import {
   firstTouchIdemKey,
 } from "@/lib/partnerships/outreach-templates";
 import { sendOutboundRow } from "@/lib/partnerships/courier-send";
+import { assertUnderDailyWall, logAgentSpend } from "@/lib/partnerships/spend";
+import { getSuppressedEmails } from "@/lib/email";
 
 /** Re-render the tower and a candidate's room after a state change. */
 function revalidateCandidate(pipelineId: string | null | undefined) {
@@ -440,8 +442,12 @@ export async function runScoutSweepAction(formData: FormData) {
   let returned = 0;
   let failure: string | null = null;
   try {
+    // The $10/day wall — refuse to start a paid run once today's ledger is full.
+    await assertUnderDailyWall();
     const model = await getAgentModel("scout");
-    const rows = await runScoutSweep(sweep, model);
+    const rows = await runScoutSweep(sweep, model, (usd) => {
+      void logAgentSpend({ agent: "scout", usd });
+    });
     returned = rows.length;
 
     if (rows.length > 0) {
@@ -553,6 +559,72 @@ export async function promoteSourced(formData: FormData) {
 }
 
 /**
+ * "They replied — hands off." Moves a candidate to `replied`, the
+ * do-not-interrupt state (founder 2026-07-07): the follow-up ladder halts on
+ * it, and nothing drafts or nudges them until you move them again. Replies
+ * themselves live in your inbox — this status flip is what keeps the machine
+ * out of a live conversation.
+ */
+export async function markReplied(formData: FormData) {
+  const user = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) throw new Error("Missing id.");
+  const supabase = createAdminClient();
+  const { data: updated, error } = await supabase
+    .from("partner_pipeline")
+    .update({ status: "replied", updated_at: new Date().toISOString() })
+    .eq("id", id)
+    .in("status", ["contacted", "enriched"])
+    .select("id")
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+
+  if (updated) {
+    await logPartnerEvent({
+      pipelineId: id,
+      actor: user.email,
+      kind: "replied_marked",
+      detail: { to: "replied" },
+    });
+  }
+  revalidateCandidate(id);
+  const returnTo = towerReturnPath(formData);
+  redirect(returnTo || `/admin/tower/candidate/${id}`);
+}
+
+/**
+ * The way back out of hands-off: the conversation ran its course without a
+ * deal, so outreach may resume. replied → contacted (the ladder's halt (a)
+ * releases; last-touch age still shows on the card).
+ */
+export async function resumeOutreach(formData: FormData) {
+  const user = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) throw new Error("Missing id.");
+  const supabase = createAdminClient();
+  const { data: updated, error } = await supabase
+    .from("partner_pipeline")
+    .update({ status: "contacted", updated_at: new Date().toISOString() })
+    .eq("id", id)
+    .eq("status", "replied")
+    .select("id")
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+
+  if (updated) {
+    await logPartnerEvent({
+      pipelineId: id,
+      actor: user.email,
+      kind: "reconsidered",
+      detail: { to: "contacted", from: "replied" },
+    });
+  }
+  revalidateCandidate(id);
+  const returnTo = towerReturnPath(formData);
+  redirect(returnTo || `/admin/tower/candidate/${id}`);
+}
+
+/**
  * Pass on a not-yet-contacted candidate — sourced or enriched — into the bin
  * (status 'passed'). Never deleted; Reconsider pulls them back out.
  */
@@ -641,6 +713,8 @@ export async function runDossierNow(formData: FormData) {
 
   let failure: string | null = null;
   try {
+    // The $10/day wall — refuse to start a paid run once today's ledger is full.
+    await assertUnderDailyWall();
     const supabase = createAdminClient();
     const { data: row, error } = await supabase
       .from("partner_pipeline")
@@ -764,6 +838,16 @@ export async function draftNow(formData: FormData) {
     });
     const { clean, hits } = canonCheck(`${rendered.subject}\n${rendered.body}`);
     const email = extractEmail(row.contact_path as string | null);
+    // Suppression gate (founder 2026-07-07): never draft to an address that
+    // bounced, complained, or unsubscribed. Fails closed like the send-side gate.
+    if (email) {
+      const suppressed = await getSuppressedEmails([email]);
+      if (suppressed.has(email.toLowerCase())) {
+        throw new Error(
+          `${email} is on the suppression list (bounce / complaint / unsubscribe) — not drafting. Use a different contact path if you have one.`,
+        );
+      }
+    }
     const wardenCleared = clean && rendered.unfilled.length === 0;
     const noteParts: string[] = [];
     if (rendered.unfilled.length > 0) {

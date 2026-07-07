@@ -9,6 +9,7 @@ import {
   emailFinderConfigured,
   sanitizeDomainInput,
 } from "@/lib/partnerships/email-finder";
+import { logAgentSpend } from "@/lib/partnerships/spend";
 
 /**
  * Research + save ONE candidate's brief, updating its run row (and diagnostic
@@ -63,6 +64,12 @@ export async function runBriefAndSave(
           searches: p.searches,
           pages_read: p.pagesRead,
         }),
+      // Spend ledger — feeds the tower meter and the $10/day wall. Fire-and-
+      // forget; a ledger hiccup never fails the brief.
+      (usd) => {
+        stamp(`spend · $${usd.toFixed(2)}`);
+        void logAgentSpend({ agent: "dossier", usd, pipelineId });
+      },
     );
 
     if (!brief) {

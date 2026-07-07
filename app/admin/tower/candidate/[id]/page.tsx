@@ -17,7 +17,6 @@ import TowerButton from "../../TowerButton";
 import RunBriefButton from "./RunBriefButton";
 import twr from "../../tower.module.css";
 import {
-  promoteSourced,
   rejectSourced,
   reconsiderPassed,
   draftNow,
@@ -28,6 +27,8 @@ import {
   holdDraft,
   releaseDraft,
   markManualSent,
+  markReplied,
+  resumeOutreach,
   editDraft,
 } from "../../actions";
 
@@ -209,10 +210,8 @@ export default async function CandidateRoomPage({
     else if (hasApprovedDraft) next = "Draft is armed — press Send now to email it.";
     else if (!brief && !hasLegacyBrief)
       next = "Waiting on a research brief — press Run brief now.";
-    else if ((vf ?? 0) >= 4)
-      next = "Brief done — press Scribe draft to write the first-touch.";
     else
-      next = `Brief done, but voice-fit ${vf ?? "—"} is below the drafting bar (4) — Scribe draft overrides, Reject parks them.`;
+      next = "Brief done — make the fit call above. The score is advisory; you decide who fits.";
   } else if (status === "contacted") {
     next = `First touch out ${timeAgo(c.first_touch_at as string | null)} — follow-up ladder is at step ${c.ladder_step ?? 0}. Replies land here.`;
   } else if (status === "replied") {
@@ -345,15 +344,71 @@ export default async function CandidateRoomPage({
         </div>
       )}
 
+      {/* ── The fit call (founder 2026-07-07): the machine scored, you decide.
+            Standout by design — nothing drafts until one of these is pressed. ── */}
+      {status === "enriched" &&
+        (brief || hasLegacyBrief) &&
+        !drafts.some((d) => ["ready", "approved", "sent"].includes(d.status as string)) && (
+          <div style={{ ...card, border: `2px solid ${CRIMSON}` }}>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "12px", flexWrap: "wrap", marginBottom: "8px" }}>
+              <span style={{ fontFamily: DISPLAY, fontStyle: "italic", fontWeight: 900, fontSize: "34px", lineHeight: 1, color: INK }}>
+                {vf ?? "—"}
+              </span>
+              <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".14em", textTransform: "uppercase", color: MUTED }}>
+                / 5 · machine score — advisory only. Your call decides.
+              </span>
+              {!hasEmail && (
+                <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".12em", textTransform: "uppercase", color: "#FFFFFF", background: CRIMSON, padding: "4px 8px" }}>
+                  no email — drafts to manual channel (DM / form)
+                </span>
+              )}
+            </div>
+            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+              <form action={draftNow}>
+                <input type="hidden" name="id" value={id} />
+                <TowerButton pendingLabel="Drafting…">Fits — draft them</TowerButton>
+              </form>
+              <form action={rejectSourced}>
+                <input type="hidden" name="id" value={id} />
+                <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
+                <TowerButton variant="ghost" pendingLabel="Binning…">Doesn&rsquo;t fit — bin</TowerButton>
+              </form>
+            </div>
+          </div>
+        )}
+
+      {/* ── Hands-off state (founder 2026-07-07): they replied — the machine
+            stays out until you move them. ── */}
+      {status === "replied" && (
+        <div data-surface="dark" style={{ background: INK, color: "#FAF7F2", padding: "16px 18px", marginBottom: "16px" }}>
+          <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".22em", textTransform: "uppercase", display: "block", marginBottom: "6px" }}>
+            In conversation · hands off
+          </span>
+          <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.6, margin: "0 0 12px", opacity: 0.85 }}>
+            No drafts, no nudges, no ladder while they&rsquo;re talking to you. Work the thread from your
+            inbox; if the conversation ends without a deal, resume outreach below.
+          </p>
+          <form action={resumeOutreach}>
+            <input type="hidden" name="id" value={id} />
+            <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
+            <TowerButton variant="outline" pendingLabel="Resuming…">Conversation over — resume outreach</TowerButton>
+          </form>
+        </div>
+      )}
+
       {/* ── Stage actions ── */}
       <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "8px" }}>
         {status === "sourced" && (
           <>
-            <form action={promoteSourced}>
-              <input type="hidden" name="id" value={id} />
-              <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
-              <TowerButton pendingLabel="Accepting…">Accept → research queue</TowerButton>
-            </form>
+            <RunBriefButton
+              candidateId={id}
+              label="Accept & prepare · ~$0.60"
+              postPath="/api/admin/accept-and-prepare"
+              confirmText={`Accept ${c.name} and prepare them? Research brief + email hunt run in the background (~2 min, ~$0.15–$0.60 + 1 email credit if an address is found). Drafting waits for your fit call.`}
+              confirmLabel="Accept & prepare"
+              busyLabel="Preparing…"
+              variant="primary"
+            />
             <form action={rejectSourced}>
               <input type="hidden" name="id" value={id} />
               <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
@@ -367,10 +422,20 @@ export default async function CandidateRoomPage({
             label={brief || hasLegacyBrief ? "Re-run brief" : "Run brief now"}
           />
         )}
-        {status === "enriched" && !drafts.some((d) => ["ready", "approved", "sent"].includes(d.status as string)) && (
+        {status === "enriched" &&
+          !brief &&
+          !hasLegacyBrief &&
+          !drafts.some((d) => ["ready", "approved", "sent"].includes(d.status as string)) && (
           <form action={draftNow}>
             <input type="hidden" name="id" value={id} />
-            <TowerButton variant="outline" pendingLabel="Drafting…">Scribe draft</TowerButton>
+            <TowerButton variant="outline" pendingLabel="Drafting…">Scribe draft (skip research)</TowerButton>
+          </form>
+        )}
+        {status === "contacted" && (
+          <form action={markReplied}>
+            <input type="hidden" name="id" value={id} />
+            <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
+            <TowerButton pendingLabel="Marking…">They replied — hands off</TowerButton>
           </form>
         )}
         {(status === "sourced" || status === "enriched") && !hasEmail && emailFinderConfigured() && (

@@ -58,6 +58,13 @@ export type EventMap = {
     payout_id: string;
     total_cents: number;
   };
+  /** One LLM agent run's dollar cost (scout sweep / dossier brief). Feeds the
+   *  tower's daily spend meter and the $10/day wall. */
+  agent_spend: {
+    agent: string;
+    usd: number;
+    pipeline_id: string | null;
+  };
   /** Affiliate submitted a draft copy piece for brand-conformance review. */
   affiliate_copy_submitted: {
     affiliate_id: string;

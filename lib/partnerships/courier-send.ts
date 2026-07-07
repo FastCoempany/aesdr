@@ -2,6 +2,7 @@ import { Resend } from "resend";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { logPartnerEvent } from "@/lib/partnerships/events";
+import { getSuppressedEmails } from "@/lib/email";
 
 /**
  * The outbound send executor — claim-before-send, transmit via Resend, flip the
@@ -99,6 +100,32 @@ export async function sendOutboundRow(
   nowIso: string,
   actor = "courier",
 ): Promise<SendOutcome> {
+  // Suppression gate at the moment of send (founder 2026-07-07): the draft-side
+  // check can go stale — someone can bounce or unsubscribe between draft and
+  // send — so re-check here. getSuppressedEmails fails closed; a suppressed (or
+  // unreadable) address holds the row instead of sending.
+  const suppressed = await getSuppressedEmails([row.to_addr]);
+  if (suppressed.has(row.to_addr.toLowerCase())) {
+    await supabase
+      .from("partner_outbound_queue")
+      .update({ status: "held" })
+      .eq("id", row.id)
+      .eq("status", "approved");
+    if (row.related_pipeline_id) {
+      await logPartnerEvent({
+        pipelineId: row.related_pipeline_id,
+        actor,
+        kind: "held",
+        detail: { reason: "suppressed", to: row.to_addr },
+      });
+    }
+    return {
+      result: "failed",
+      resendId: null,
+      error: `${row.to_addr} is on the suppression list (bounce / complaint / unsubscribe) — held, not sent.`,
+    };
+  }
+
   const { error: claimErr } = await supabase.from("partner_sent_log").insert({
     queue_id: row.id,
     to_addr: row.to_addr,

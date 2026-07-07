@@ -27,11 +27,16 @@ import Hint from "./Hint";
 import ContactLinks from "./ContactLinks";
 import twr from "./tower.module.css";
 import { inboxSearchUrl, looksLikeEmail } from "@/lib/partnerships/inbox-link";
-import { promoteSourced, rejectSourced } from "./actions";
+import { rejectSourced, draftNow } from "./actions";
 import {
   PARTNER_AGENTS,
   AGENT_MODEL_DEFAULTS,
 } from "@/lib/partnerships/agent-switch";
+import { getTodaySpendUsd, getTodayEmailCredits } from "@/lib/partnerships/spend";
+import { extractEmail } from "@/lib/partnerships/outreach-templates";
+import { getSuppressedEmails } from "@/lib/email";
+import SpendMeter from "./SpendMeter";
+import AcceptPrepareButton from "./candidate/[id]/RunBriefButton";
 
 /**
  * The decision board. Four sections, top to bottom:
@@ -236,6 +241,50 @@ export default async function TowerPage({
     .limit(50);
   const sourced = sourcedRows ?? [];
 
+  // ── The spend meter (founder 2026-07-07): today's ledger vs the $10 wall. ──
+  let spentUsd = 0;
+  let ledgerBroken = false;
+  try {
+    spentUsd = await getTodaySpendUsd();
+  } catch {
+    ledgerBroken = true; // paid runs fail closed; say so instead of showing $0
+  }
+  const emailCredits = await getTodayEmailCredits();
+
+  // ── Fit calls: brief done, no draft yet — the machine scored, you decide. ──
+  const { data: fitRowsRaw } = await supabase
+    .from("partner_pipeline")
+    .select("id, name, surface, voice_fit, contact_path, dossier_brief, updated_at")
+    .eq("status", "enriched")
+    .eq("motion", "affiliate")
+    .ilike("why_fit", "%[dossier]%")
+    .order("updated_at", { ascending: false })
+    .limit(30);
+  type FitRow = {
+    id: string;
+    name: string;
+    surface: string | null;
+    voice_fit: number | null;
+    contact_path: string | null;
+    dossier_brief: { verdict?: string | null; first_touch_angle?: string | null } | null;
+    updated_at: string;
+  };
+  let fitCalls: FitRow[] = (fitRowsRaw ?? []) as FitRow[];
+  if (fitCalls.length > 0) {
+    const { data: drafted } = await supabase
+      .from("partner_outbound_queue")
+      .select("related_pipeline_id")
+      .in("related_pipeline_id", fitCalls.map((r) => r.id));
+    const hasDraft = new Set((drafted ?? []).map((d) => d.related_pipeline_id as string));
+    fitCalls = fitCalls.filter((r) => !hasDraft.has(r.id));
+  }
+
+  // ── Suppression chips for the draft house (send-side gate is in the code
+  //    path; this is the visible warning before you press anything). ──
+  const suppressedSet = await getSuppressedEmails(
+    drafts.filter((d) => (d.send_channel ?? "email") === "email").map((d) => d.to_addr),
+  );
+
   // ── Board (situational) ──
   const { data: pipelineRows } = await supabase
     .from("partner_pipeline")
@@ -300,6 +349,7 @@ export default async function TowerPage({
   const decisionCount =
     brightSignals.length +
     drafts.length +
+    fitCalls.length +
     payoutAffiliates.length +
     shelf.filter((s) => s.status === "failed").length;
 
@@ -346,6 +396,9 @@ export default async function TowerPage({
       >
         Control Tower · Partnerships · Live
       </p>
+
+      {/* ── The blaring signal: today's spend vs the $10 wall ── */}
+      <SpendMeter spentUsd={spentUsd} emailCredits={emailCredits} ledgerBroken={ledgerBroken} />
       <div
         style={{
           display: "flex",
@@ -508,18 +561,19 @@ export default async function TowerPage({
           </span>
           <div className={twr.flow}>
             <span className={twr.flowStatus}>sourced</span>
-            <span className={twr.flowMove}>→ <b className={twr.flowYou}>you: Accept</b> →</span>
+            <span className={twr.flowMove}>→ <b className={twr.flowYou}>you: Accept &amp; prepare</b> (brief + email hunt run for you) →</span>
             <span className={twr.flowStatus}>enriched</span>
-            <span className={twr.flowMove}>→ <b className={twr.flowYou}>you: Run brief</b> (research) → <b className={twr.flowYou}>you: Scribe draft</b> →</span>
+            <span className={twr.flowMove}>→ <b className={twr.flowYou}>you: fit call</b> (the score is advisory — Fits drafts them, Doesn&rsquo;t fit bins them) →</span>
             <span className={twr.flowStatus}>ready</span>
-            <span className={twr.flowMove}>→ <b className={twr.flowYou}>you: Ready</b> →</span>
+            <span className={twr.flowMove}>→ <b className={twr.flowYou}>you: edit + Ready</b> →</span>
             <span className={twr.flowStatus}>approved</span>
             <span className={twr.flowMove}>→ <b className={twr.flowYou}>you: Send now</b> →</span>
             <span className={twr.flowStatus}>contacted</span>
-            <span className={twr.flowMove}>→ replies land in your inbox — work them from the candidate&apos;s room</span>
+            <span className={twr.flowMove}>→ they answer → <b className={twr.flowYou}>you: hands off</b> →</span>
+            <span className={twr.flowStatus}>replied</span>
           </div>
           <p style={{ fontFamily: SERIF, fontSize: "12.5px", fontStyle: "italic", color: MUTED, margin: "10px 0 0" }}>
-            Each chip is a value in the row&apos;s <code>status</code> column. Every step is a button you press — nothing researches, drafts, or sends on a schedule. The follow-up ladder (a lever above) is the one auto-drafter left: it queues +4d/+9d nudge drafts for contacted-but-silent candidates, and even those wait for your approve.
+            Each chip is a value in the row&apos;s <code>status</code> column. One big button does the machine work (capped by the $10 wall above); every judgment — fit, edit, send — is yours. The follow-up ladder (a lever above) queues +4d/+9d nudge drafts for contacted-but-silent candidates and halts the moment you mark them replied; even its drafts wait for your approve.
           </p>
         </div>
         <div style={{ ...card, marginBottom: "16px" }}>
@@ -570,11 +624,16 @@ export default async function TowerPage({
                     <ContactLinks text={s.contact_path} searchHint={`${s.name} ${s.surface ?? ""}`} />
                   </p>
                 )}
-                <div style={{ display: "flex", gap: "8px" }}>
-                  <form action={promoteSourced}>
-                    <input type="hidden" name="id" value={s.id} />
-                    <TowerButton pendingLabel="Accepting…">Accept → research queue</TowerButton>
-                  </form>
+                <div style={{ display: "flex", gap: "8px", alignItems: "flex-start", flexWrap: "wrap" }}>
+                  <AcceptPrepareButton
+                    candidateId={s.id as string}
+                    label="Accept & prepare · ~$0.60"
+                    postPath="/api/admin/accept-and-prepare"
+                    confirmText={`Accept ${s.name} and prepare them? Research brief + email hunt run in the background (~2 min, ~$0.15–$0.60 + 1 email credit if an address is found). Drafting waits for your fit call.`}
+                    confirmLabel="Accept & prepare"
+                    busyLabel="Preparing…"
+                    variant="primary"
+                  />
                   <form action={rejectSourced}>
                     <input type="hidden" name="id" value={s.id} />
                     <TowerButton variant="ghost" pendingLabel="Rejecting…">Reject</TowerButton>
@@ -590,9 +649,64 @@ export default async function TowerPage({
       <section style={{ marginBottom: "52px" }}>
         <p style={sectionLabel}>
           <span>Decisions</span>
-          <Hint tip="The only place anything leaves the building. Ready arms a reviewed draft (it lights green); Send then emails it immediately — no cron needed. Hold pulls it back; manual rows you deliver yourself and then Mark sent. Empty lane means nothing needs you." />
+          <Hint tip="The only place anything leaves the building. Fit calls come first — the machine scored, you decide who gets drafted. Then the draft house: Ready arms a reviewed draft (it lights green); Send then emails it immediately. Hold pulls it back; manual rows you deliver yourself and then Mark sent. Empty lane means nothing needs you." />
           <span style={{ flex: 1, height: 1, background: LIGHT }} />
         </p>
+
+        {/* Fit calls — research done, drafting waits on you (founder 2026-07-07:
+            the machine scores voice-fit; the human decides who fits). */}
+        {fitCalls.length > 0 && (
+          <div style={{ marginBottom: "28px" }}>
+            <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: INK, display: "block", marginBottom: "10px" }}>
+              {fitCalls.length} fit call{fitCalls.length > 1 ? "s" : ""} — you decide who gets drafted
+            </span>
+            {fitCalls.map((f) => (
+              <div key={f.id} style={{ ...card, border: `2px solid ${CRIMSON}` }}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: "12px", flexWrap: "wrap", marginBottom: "6px" }}>
+                  <span style={{ fontFamily: DISPLAY, fontStyle: "italic", fontWeight: 900, fontSize: "30px", lineHeight: 1, color: INK }}>
+                    {f.voice_fit ?? "—"}
+                  </span>
+                  <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".14em", textTransform: "uppercase", color: MUTED }}>
+                    / 5 · machine score — advisory only
+                  </span>
+                  <Link href={`/admin/tower/candidate/${f.id}`} className={twr.lnk} style={{ fontFamily: SERIF, fontSize: "16px", fontWeight: 600, color: INK, marginLeft: "auto" }}>
+                    {f.name}
+                  </Link>
+                  <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED }}>{f.surface ?? ""}</span>
+                  {!extractEmail(f.contact_path) && (
+                    <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".12em", textTransform: "uppercase", color: "#FFFFFF", background: CRIMSON, padding: "4px 8px" }}>
+                      no email — drafts to manual channel
+                    </span>
+                  )}
+                </div>
+                {f.dossier_brief?.first_touch_angle && (
+                  <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.5, color: MUTED, margin: "0 0 10px" }}>
+                    {f.dossier_brief.first_touch_angle}
+                    {f.dossier_brief.verdict && (
+                      <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".1em", color: CRIMSON }}>
+                        {" "}· the call: {String(f.dossier_brief.verdict).replace(/_/g, " ")}
+                      </span>
+                    )}
+                  </p>
+                )}
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                  <form action={draftNow}>
+                    <input type="hidden" name="id" value={f.id} />
+                    <TowerButton pendingLabel="Drafting…">Fits — draft them</TowerButton>
+                  </form>
+                  <form action={rejectSourced}>
+                    <input type="hidden" name="id" value={f.id} />
+                    <input type="hidden" name="return_to" value="/admin/tower" />
+                    <TowerButton variant="ghost" pendingLabel="Binning…">Doesn&rsquo;t fit — bin</TowerButton>
+                  </form>
+                  <Link href={`/admin/tower/candidate/${f.id}`} className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", color: CRIMSON, alignSelf: "center" }}>
+                    read the brief →
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Drafts ready to send — the draft house */}
         {drafts.length > 0 && (
@@ -631,9 +745,14 @@ export default async function TowerPage({
                       {isManual ? "manual send" : "email"}
                     </span>
                     {d.warden_cleared ? (
-                      <span style={{ ...tierChip("ok"), color: "#2E7D32", borderColor: "#CDE7CE" }}>warden ✓</span>
+                      <span style={{ ...tierChip("ok"), color: "#2E7D32", borderColor: "#CDE7CE" }}>clean — skim &amp; send</span>
                     ) : (
-                      <span style={{ ...tierChip("cold"), color: "#a14400", borderColor: "#e6c9a8" }}>needs eye</span>
+                      <span style={{ ...tierChip("cold"), color: "#a14400", borderColor: "#a14400", fontWeight: 700 }}>needs your edit</span>
+                    )}
+                    {!isManual && suppressedSet.has(d.to_addr.toLowerCase()) && (
+                      <span style={{ ...tierChip("cold"), color: "#FFFFFF", background: CRIMSON, borderColor: CRIMSON, fontWeight: 700 }}>
+                        suppressed — will never send
+                      </span>
                     )}
                     {isArmed && (
                       <span style={{ ...tierChip("ok"), color: "#2E7D32", borderColor: "#2E7D32", fontWeight: 700 }}>
