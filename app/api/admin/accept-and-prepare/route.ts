@@ -72,7 +72,7 @@ export async function POST(request: Request) {
     // Not sourced — only continue if they're already in the research queue.
     const { data: row } = await supabase
       .from("partner_pipeline")
-      .select("status")
+      .select("status, why_fit")
       .eq("id", id)
       .maybeSingle();
     if (!row) {
@@ -81,6 +81,16 @@ export async function POST(request: Request) {
     if (row.status !== "enriched") {
       return NextResponse.json(
         { ok: false, error: `Accept & prepare applies to a sourced candidate — this one is '${row.status}'.` },
+        { status: 409 },
+      );
+    }
+    // Already researched — refuse the second paid run. A stale card (the tower
+    // keeps it in place after completion so the room door stays clickable) must
+    // not be able to double-bill; deliberate re-research is the room's
+    // "Re-run brief" button.
+    if (((row.why_fit as string | null) ?? "").includes("[dossier]")) {
+      return NextResponse.json(
+        { ok: false, error: "Already prepared — open their room to make the fit call. (Re-run brief lives in the room if you really want a fresh one.)" },
         { status: 409 },
       );
     }

@@ -232,7 +232,7 @@ export default async function CandidateRoomPage({
       <p style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".22em", textTransform: "uppercase", color: MUTED, margin: "0 0 6px" }}>
         <Link href="/admin/tower" className={twr.lnk}>← Control Tower</Link>
         {"  ·  "}
-        <Link href="/admin/tower/pipeline" className={twr.lnk}>The map</Link>
+        <Link href="/admin/tower/pipeline" className={twr.lnk}>The roster</Link>
       </p>
 
       {sp.err && (

@@ -339,7 +339,7 @@ export default async function TowerPage({
     "contact-finder": {
       label: "Contact finder",
       cadence: "every 5 min (8 rows/tick)",
-      desc: "Runs enriched candidates through BetterContact's waterfall to find their email, chips the map, and adds verified addresses to the contact path. Accepts stay instant — the email fills in within ~5 min. BetterContact bills per email found.",
+      desc: "Runs enriched candidates through BetterContact's waterfall to find their email, chips the roster, and adds verified addresses to the contact path. Accepts stay instant — the email fills in within ~5 min. BetterContact bills per email found.",
       confirm: "Start Contact finder? It spends ~1 BetterContact credit per email found (not per attempt) across your enriched candidates. Turn it off anytime to stop spending.",
     },
   };
@@ -404,7 +404,7 @@ export default async function TowerPage({
             now reachable from any scroll depth (founder 2026-07-07). ── */}
       <nav className={twr.sideRail} aria-label="Tower shortcuts">
         <Link href="/admin/tower/pipeline" className={twr.sideRailLink}>
-          The map
+          The roster
           <span className={twr.sideRailCount}>
             {Object.entries(pipeCounts)
               .filter(([k]) => k !== "passed" && k !== "cold")
@@ -528,10 +528,10 @@ export default async function TowerPage({
       <section style={{ marginBottom: "52px" }}>
         <p style={sectionLabel}>
           <span>Scout &amp; Enrich</span>
-          <Hint tip="Start here when the pipeline is thin. Run a sweep, review each card below, Accept the good ones. An accepted candidate moves to the map's Enriched column and gets a room — Run brief and Scribe draft live there. Then your next stop is Decisions, once drafts appear." />
+          <Hint tip="Start here when the pipeline is thin. Run a sweep, review each card below, Accept the good ones. An accepted candidate moves to the roster's Enriched column and gets a room — Run brief and Scribe draft live there. Then your next stop is Decisions, once drafts appear." />
           <span style={{ flex: 1, height: 1, background: LIGHT }} />
           <Link href="/admin/tower/pipeline" className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", color: CRIMSON }}>
-            open the map →
+            open the roster →
           </Link>
           <Link href="/admin/tower/pipeline#passed" className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", color: MUTED, marginLeft: "12px" }}>
             the bin · {(pipeCounts["passed"] ?? 0) + (pipeCounts["cold"] ?? 0)} →
@@ -984,7 +984,7 @@ export default async function TowerPage({
       <section>
         <p style={sectionLabel}>
           <span>Board</span>
-          <Hint tip="Read-only situational awareness — nothing here needs a click. Each pipeline stage is a door: click it to open the map at that column." />
+          <Hint tip="Read-only situational awareness — nothing here needs a click. Each pipeline stage is a door: click it to open the roster at that column." />
           <span style={{ flex: 1, height: 1, background: LIGHT }} />
         </p>
 

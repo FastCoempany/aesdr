@@ -7,12 +7,12 @@ import { extractAllDomains } from "@/lib/partnerships/email-finder";
 import twr from "../tower.module.css";
 
 /**
- * The map — every candidate in the pipeline as a card in its stage column.
+ * The roster — every candidate in the pipeline as a card in its stage column.
  * This is where a candidate *is*; their room (/admin/tower/candidate/[id]) is
  * where their whole story lives. The tower stays the what-needs-me cockpit.
  *
  * Each column header says what moves a card out of it. Empty columns say what
- * fills them — the map is also the explanation of the machine.
+ * fills them — the roster is also the explanation of the machine.
  */
 
 const INK = "#1A1A1A";
@@ -162,7 +162,7 @@ export default async function PipelineMapPage() {
         <Link href="/admin/tower" className={twr.lnk}>← Control Tower</Link>
       </p>
       <h1 style={{ fontFamily: DISPLAY, fontStyle: "italic", fontWeight: 700, fontSize: "34px", color: INK, margin: "0 0 6px" }}>
-        The map
+        The roster
       </h1>
       <p style={{ fontFamily: SERIF, fontSize: "15px", fontStyle: "italic", color: MUTED, margin: "0 0 28px", maxWidth: "640px" }}>
         Every candidate, in the column they actually sit in. Click a name to open their room — brief, drafts, replies, and the full timeline live there.
