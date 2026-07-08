@@ -12,10 +12,7 @@ import {
   approveDraft,
   sendNow,
   approveAllReady,
-  holdDraft,
   releaseDraft,
-  handleSignal,
-  editDraft,
   markManualSent,
 } from "./actions";
 import PayoutButton from "./PayoutButton";
@@ -24,10 +21,8 @@ import ScoutSweepButton from "./ScoutSweepButton";
 import ModelSelector from "./ModelSelector";
 import TowerButton from "./TowerButton";
 import Hint from "./Hint";
-import ContactLinks from "./ContactLinks";
 import twr from "./tower.module.css";
-import { inboxSearchUrl, looksLikeEmail } from "@/lib/partnerships/inbox-link";
-import { rejectSourced, draftNow } from "./actions";
+import { rejectSourced, draftNow, markReplied, resumeOutreach } from "./actions";
 import {
   PARTNER_AGENTS,
   AGENT_MODEL_DEFAULTS,
@@ -39,16 +34,17 @@ import SpendMeter from "./SpendMeter";
 import AcceptPrepareButton from "./candidate/[id]/RunBriefButton";
 
 /**
- * The decision board. Four sections, top to bottom:
- *   1. Agent Controls (the levers — Start/Pause each cron-style agent)
- *   2. Scout & Enrich (Option-2 buttons + sourced-row review)
- *   3. Decisions — the few things waiting on one gesture from the operator
- *   4. Board — read-only situational
- * awareness so the cockpit shows live state, not just an inbox.
+ * The ledger (founder pick 2026-07-07, second-pass triptych): the tower is ONE
+ * thin table of every working candidate, sorted so rows whose next move is
+ * YOURS float to the top and rows waiting on the world sink. Stage is a
+ * column, not a section. Everything that used to be a section is now either a
+ * row group, a conditional block (payouts / shelf, only when nonempty), or a
+ * line in the machinery drawer at the bottom.
  *
- * Reads degrade gracefully: if the 20260606 migration (partner_signals.
- * handled_at) hasn't been applied yet, the signal queries fail soft and a
- * banner says so rather than crashing the page.
+ * Deliberately gone (same founder pass): the signal lanes (nothing writes
+ * partner_signals since sentinel was deleted — bright alerts arrive by email),
+ * the Board (the side rail carries the counts), the flow diagram, the
+ * agent-controls essay, and the in-header roster/bin links.
  */
 
 // ── Palette (literal hex, matching app/admin/layout.tsx) ──
@@ -60,15 +56,14 @@ const MONO = "'Space Mono', monospace";
 const DISPLAY = "'Playfair Display', Georgia, serif";
 const SERIF = "'Source Serif 4', Georgia, serif";
 
-function timeAgo(iso: string | null): string {
+// Thin-row button sizing — the ledger's rows are ~30px; the default .btn
+// padding would double that.
+const THIN: React.CSSProperties = { padding: "3px 10px", fontSize: "11px", letterSpacing: ".1em" };
+
+function daysAgo(iso: string | null): string {
   if (!iso) return "—";
-  const ms = Date.now() - new Date(iso).getTime();
-  const m = Math.round(ms / 60000);
-  if (m < 1) return "just now";
-  if (m < 60) return `${m}m ago`;
-  const h = Math.round(m / 60);
-  if (h < 24) return `${h}h ago`;
-  return `${Math.round(h / 24)}d ago`;
+  const d = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+  return d < 1 ? "today" : `${d}d`;
 }
 
 export default async function TowerPage({
@@ -78,107 +73,79 @@ export default async function TowerPage({
     sweep_ok?: string;
     sweep_seen?: string;
     sweep_error?: string;
-    promoted?: string;
-    promoted_name?: string;
   }>;
 }) {
-  // Sweep + promote outcomes, set by the actions' redirects. Render-once
-  // feedback: it lives in the URL, so a reload or navigation clears it.
+  // Sweep outcome, set by the action's redirect. Render-once feedback: it
+  // lives in the URL, so a reload or navigation clears it.
   const sp = await searchParams;
   const sweepError = sp.sweep_error ?? null;
   const sweepOk = sp.sweep_ok != null ? Number(sp.sweep_ok) : null;
   const sweepSeen = sp.sweep_seen != null ? Number(sp.sweep_seen) : 0;
-  const promotedId = sp.promoted ?? null;
-  const promotedName = sp.promoted_name ?? null;
 
   const supabase = createAdminClient();
 
-  // ── Decisions ──
-  let migrationMissing = false;
-  let brightSignals: Array<{
-    id: string;
-    signal_type: string;
-    source: string;
-    summary: string | null;
-    prospect_slug: string | null;
-    created_at: string;
-  }> = [];
-  let softSignals: Array<{
-    id: string;
-    summary: string | null;
-    signal_type: string;
-    created_at: string;
-  }> = [];
-
-  {
-    const { data, error } = await supabase
-      .from("partner_signals")
-      .select("id, signal_type, source, summary, prospect_slug, created_at")
-      .eq("severity", "bright")
-      .is("handled_at", null)
-      .order("created_at", { ascending: false })
-      .limit(50);
-    if (error) migrationMissing = true;
-    else brightSignals = data ?? [];
-  }
-  if (!migrationMissing) {
-    const { data } = await supabase
-      .from("partner_signals")
-      .select("id, summary, signal_type, created_at")
-      .eq("severity", "soft")
-      .is("handled_at", null)
-      .order("created_at", { ascending: false })
-      .limit(12);
-    softSignals = data ?? [];
-  }
-
-  // R5-EE-6: track whether any decision-feeding query failed. If one did, the
-  // "All clear." headline would be a lie (the counts it's built from are
-  // partial). We surface a banner and suppress the all-clear copy instead.
+  // R5-EE-6: if a decision-feeding query fails, the "All clear." headline
+  // would be a lie — surface a banner and suppress the all-clear copy instead.
   let decisionLoadFailed = false;
 
-  // Both 'ready' (awaiting your review) and 'approved' (armed — you pressed
-  // Ready) stay in the house so the whole gesture lives on one card: Ready
-  // arms it, then Send fires it.
-  const { data: readyDrafts, error: readyDraftsError } = await supabase
+  // ── Every working candidate (the ledger's rows) ──
+  const { data: pipeRows, error: pipeErr } = await supabase
+    .from("partner_pipeline")
+    .select("id, name, surface, voice_fit, status, why_fit, contact_path, first_touch_at, ladder_step, updated_at")
+    .in("status", ["sourced", "enriched", "contacted", "replied"])
+    .eq("motion", "affiliate")
+    .order("updated_at", { ascending: true })
+    .limit(200);
+  if (pipeErr) decisionLoadFailed = true;
+  type PipeRow = {
+    id: string;
+    name: string;
+    surface: string | null;
+    voice_fit: number | null;
+    status: string;
+    why_fit: string | null;
+    contact_path: string | null;
+    first_touch_at: string | null;
+    ladder_step: number | null;
+    updated_at: string;
+  };
+  const people = (pipeRows ?? []) as PipeRow[];
+  const byId = new Map(people.map((p) => [p.id, p]));
+
+  // ── Live drafts (ready/approved) — they turn their candidate's row into a
+  //    draft-stage row with Ready / Send now / Mark sent inline. ──
+  const { data: draftRows, error: draftErr } = await supabase
     .from("partner_outbound_queue")
     .select("*")
     .in("status", ["ready", "approved"])
     .order("send_after", { ascending: true })
     .limit(50);
-  if (readyDraftsError) decisionLoadFailed = true;
-  // Defensive shape so the page renders before/after the 20260607 migration
-  // (send_channel / personalization_note default sensibly when absent).
+  if (draftErr) decisionLoadFailed = true;
   type DraftRow = {
     id: string;
     to_addr: string;
     subject: string;
-    body: string;
-    tier: string;
     status: string;
     warden_cleared: boolean;
-    drafted_by: string | null;
     send_channel?: string | null;
     personalization_note?: string | null;
     related_pipeline_id?: string | null;
   };
-  // Email drafts first, manual-channel rows after — the founder wants a hard
-  // visual split between people we can email and people we reach by hand
-  // (2026-07-07). Stable within each group (send_after order from the query).
-  const drafts: DraftRow[] = [
-    ...((readyDrafts ?? []) as DraftRow[]).filter((d) => (d.send_channel ?? "email") === "email"),
-    ...((readyDrafts ?? []) as DraftRow[]).filter((d) => (d.send_channel ?? "email") === "manual"),
-  ];
-  const firstManualId = drafts.find((d) => (d.send_channel ?? "email") === "manual")?.id ?? null;
-  // The "Ready all" batch only arms rows still awaiting review; already-armed
-  // ('approved') rows are sent individually with their own confirm.
+  const drafts = (draftRows ?? []) as DraftRow[];
+  const draftByPipeline = new Map<string, DraftRow>();
+  for (const d of drafts) {
+    if (d.related_pipeline_id && !draftByPipeline.has(d.related_pipeline_id)) {
+      draftByPipeline.set(d.related_pipeline_id, d);
+    }
+  }
   const emailReadyCount = drafts.filter(
     (d) => (d.send_channel ?? "email") === "email" && d.status === "ready",
   ).length;
+  const suppressedSet = await getSuppressedEmails(
+    drafts.filter((d) => (d.send_channel ?? "email") === "email").map((d) => d.to_addr),
+  );
 
-  // The shelf — drafts parked OFF the send path: held rows you pulled back and
-  // failed sends. Armed ('approved') rows now stay in the house with a Send
-  // button, so nothing waits on a cron here.
+  // ── The shelf: held + failed sends (visible only when nonempty). ──
   const { data: shelfRows } = await supabase
     .from("partner_outbound_queue")
     .select("id, to_addr, subject, status, error, related_pipeline_id")
@@ -194,7 +161,7 @@ export default async function TowerPage({
     related_pipeline_id: string | null;
   }>;
 
-  // ── Payouts (the money gate): cleared-but-unpaid commission per affiliate. ──
+  // ── Payouts (the money gate) — visible only when money is owed. ──
   const { data: clearedAttr, error: clearedAttrError } = await supabase
     .from("affiliate_attributions")
     .select("affiliate_slug, commission_amount_cents")
@@ -204,9 +171,7 @@ export default async function TowerPage({
   const payoutAgg: Record<string, { cents: number; count: number }> = {};
   for (const a of clearedAttr ?? []) {
     const slug = a.affiliate_slug as string | null;
-    // EE-12: skip rows with a null slug rather than bucketing them under "null"
-    // and then minting a payout row keyed on a non-existent affiliate.
-    if (!slug) continue;
+    if (!slug) continue; // EE-12: never bucket null slugs
     if (!payoutAgg[slug]) payoutAgg[slug] = { cents: 0, count: 0 };
     payoutAgg[slug].cents += a.commission_amount_cents ?? 0;
     payoutAgg[slug].count += 1;
@@ -234,79 +199,20 @@ export default async function TowerPage({
       count: payoutAgg[a.slug as string]?.count ?? 0,
     })).sort((x, y) => y.cents - x.cents);
   }
-  const payoutTotalCents = payoutAffiliates.reduce((s, a) => s + a.cents, 0);
   const usd = (cents: number) =>
     `$${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-  // ── Sourced rows awaiting promotion (scout output sitting for review). ──
-  const { data: sourcedRows } = await supabase
-    .from("partner_pipeline")
-    .select("id, name, surface, handle, voice_fit, why_fit, contact_path, source_agent")
-    .eq("status", "sourced")
-    .eq("motion", "affiliate")
-    .order("created_at", { ascending: false })
-    .limit(50);
-  const sourced = sourcedRows ?? [];
-
-  // ── The spend meter (founder 2026-07-07): today's ledger vs the $10 wall. ──
-  let spentUsd = 0;
-  let ledgerBroken = false;
-  try {
-    spentUsd = await getTodaySpendUsd();
-  } catch {
-    ledgerBroken = true; // paid runs fail closed; say so instead of showing $0
-  }
-  const emailCredits = await getTodayEmailCredits();
-
-  // ── Fit calls: brief done, no draft yet — the machine scored, you decide. ──
-  const { data: fitRowsRaw } = await supabase
-    .from("partner_pipeline")
-    .select("id, name, surface, voice_fit, contact_path, dossier_brief, updated_at")
-    .eq("status", "enriched")
-    .eq("motion", "affiliate")
-    .ilike("why_fit", "%[dossier]%")
-    .order("updated_at", { ascending: false })
-    .limit(30);
-  type FitRow = {
-    id: string;
-    name: string;
-    surface: string | null;
-    voice_fit: number | null;
-    contact_path: string | null;
-    dossier_brief: { verdict?: string | null; first_touch_angle?: string | null } | null;
-    updated_at: string;
-  };
-  let fitCalls: FitRow[] = (fitRowsRaw ?? []) as FitRow[];
-  if (fitCalls.length > 0) {
-    const { data: drafted } = await supabase
-      .from("partner_outbound_queue")
-      .select("related_pipeline_id")
-      .in("related_pipeline_id", fitCalls.map((r) => r.id));
-    const hasDraft = new Set((drafted ?? []).map((d) => d.related_pipeline_id as string));
-    fitCalls = fitCalls.filter((r) => !hasDraft.has(r.id));
-  }
-
-  // ── Suppression chips for the draft house (send-side gate is in the code
-  //    path; this is the visible warning before you press anything). ──
-  const suppressedSet = await getSuppressedEmails(
-    drafts.filter((d) => (d.send_channel ?? "email") === "email").map((d) => d.to_addr),
-  );
-
-  // ── Board (situational) ──
-  const { data: pipelineRows } = await supabase
-    .from("partner_pipeline")
-    .select("status");
-  const pipeCounts: Record<string, number> = {};
-  for (const r of pipelineRows ?? [])
-    pipeCounts[r.status] = (pipeCounts[r.status] ?? 0) + 1;
-
+  // ── Sent log (drawer) + roster/bin counts (side rail) ──
   const { data: recentSent } = await supabase
     .from("partner_sent_log")
     .select("to_addr, subject, tier, sent_at")
     .order("sent_at", { ascending: false })
     .limit(8);
+  const { data: allStatusRows } = await supabase.from("partner_pipeline").select("status");
+  const pipeCounts: Record<string, number> = {};
+  for (const r of allStatusRows ?? []) pipeCounts[r.status] = (pipeCounts[r.status] ?? 0) + 1;
 
-  // ── Agent master switches (the levers). Missing table → all OFF. ──
+  // ── Agent switches (drawer levers) + models (sweep row pickers) ──
   const { data: switchRows, error: switchErr } = await supabase
     .from("agent_switches")
     .select("agent, enabled, model");
@@ -317,12 +223,8 @@ export default async function TowerPage({
     switchMap[s.agent as string] = s.enabled === true;
     modelMap[s.agent as string] = (s.model as string | null) ?? null;
   }
-  const anyAgentOn = PARTNER_AGENTS.some((a) => switchMap[a]);
-  // Resolve effective model (stored value, or per-agent default).
   const modelFor = (agent: string): string =>
     modelMap[agent] ?? AGENT_MODEL_DEFAULTS[agent] ?? "claude-sonnet-4-6";
-  const scoutModel = modelFor("scout");
-  const dossierModel = modelFor("dossier-enrich");
 
   const AGENT_META: Record<string, { label: string; cadence: string; desc: string; confirm: string }> = {
     followup: {
@@ -351,64 +253,90 @@ export default async function TowerPage({
     },
   };
 
-  // Failed sends count as waiting-on-you (Release → re-approve fixes them);
-  // held and queued rows don't — held is deliberate, queued is in flight.
+  // ── The spend meter ──
+  let spentUsd = 0;
+  let ledgerBroken = false;
+  try {
+    spentUsd = await getTodaySpendUsd();
+  } catch {
+    ledgerBroken = true; // paid runs fail closed; say so instead of showing $0
+  }
+  const emailCredits = await getTodayEmailCredits();
+
+  // ── Assemble the ledger's row groups (needs-you first, then the world) ──
+  const hasBrief = (p: PipeRow) => (p.why_fit ?? "").includes("[dossier]");
+  const hasAddr = (p: PipeRow) => Boolean(extractEmail(p.contact_path));
+
+  const fitCalls = people.filter(
+    (p) => p.status === "enriched" && hasBrief(p) && !draftByPipeline.has(p.id),
+  );
+  const draftPeople = people.filter((p) => draftByPipeline.has(p.id));
+  const orphanDrafts = drafts.filter(
+    (d) => !d.related_pipeline_id || !byId.has(d.related_pipeline_id),
+  );
+  const briefPending = people.filter(
+    (p) => p.status === "enriched" && !hasBrief(p) && !draftByPipeline.has(p.id),
+  );
+  const sourced = people.filter((p) => p.status === "sourced");
+  const contacted = people.filter((p) => p.status === "contacted");
+  const inConvo = people.filter((p) => p.status === "replied");
+
+  const needsYouCount =
+    fitCalls.length + draftPeople.length + orphanDrafts.length + briefPending.length + sourced.length;
+  const worldCount = contacted.length + inConvo.length;
   const decisionCount =
-    brightSignals.length +
-    drafts.length +
     fitCalls.length +
+    drafts.length +
     payoutAffiliates.length +
     shelf.filter((s) => s.status === "failed").length;
 
-  // ── Styles ──
+  // Shared cell fragments
+  const roomLink = (p: { id: string; name: string; why_fit?: string | null }) => (
+    <Link
+      href={`/admin/tower/candidate/${p.id}`}
+      className={twr.lnk}
+      title={(p.why_fit ?? "").slice(0, 300)}
+    >
+      {p.name}
+    </Link>
+  );
+  const mailCell = (p: PipeRow) =>
+    p.status === "sourced" && !hasAddr(p) ? (
+      <span className={twr.tinychip}>?</span>
+    ) : hasAddr(p) ? (
+      <span className={`${twr.tinychip} ${twr.ok}`}>✉</span>
+    ) : (
+      <span className={`${twr.tinychip} ${twr.inkc}`}>DM</span>
+    );
+
   const sectionLabel: React.CSSProperties = {
     fontFamily: MONO,
     fontSize: "11px",
     letterSpacing: ".26em",
     textTransform: "uppercase",
     color: MUTED,
-    margin: "0 0 16px",
     display: "flex",
     alignItems: "center",
     gap: "12px",
+    margin: "34px 0 12px",
   };
   const card: React.CSSProperties = {
     border: `1px solid ${LIGHT}`,
     background: "#FFFFFF",
-    padding: "18px 20px",
+    padding: "14px 16px",
     marginBottom: "12px",
   };
-  const tierChip = (tier: string): React.CSSProperties => ({
-    fontFamily: MONO,
-    fontSize: "9px",
-    letterSpacing: ".18em",
-    textTransform: "uppercase",
-    padding: "2px 7px",
-    color: tier === "cold" ? CRIMSON : MUTED,
-    border: `1px solid ${tier === "cold" ? CRIMSON : LIGHT}`,
-  });
 
   return (
     <div>
-      {/* ── Identity + status strip ── */}
-      <p
-        style={{
-          fontFamily: MONO,
-          fontSize: "10px",
-          letterSpacing: ".3em",
-          textTransform: "uppercase",
-          color: CRIMSON,
-          margin: "0 0 6px",
-        }}
-      >
+      {/* ── Identity strip ── */}
+      <p style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".3em", textTransform: "uppercase", color: CRIMSON, margin: "0 0 6px" }}>
         Control Tower · Partnerships · Live
       </p>
 
-      {/* ── The blaring signal: today's spend vs the $10 wall ── */}
       <SpendMeter spentUsd={spentUsd} emailCredits={emailCredits} ledgerBroken={ledgerBroken} />
 
-      {/* ── Side rail: the two doors that used to hide in a section header,
-            now reachable from any scroll depth (founder 2026-07-07). ── */}
+      {/* ── Side rail: the doors, reachable at any scroll depth ── */}
       <nav className={twr.sideRail} aria-label="Tower shortcuts">
         <Link href="/admin/tower/pipeline" className={twr.sideRailLink}>
           The roster
@@ -426,678 +354,403 @@ export default async function TowerPage({
           </span>
         </Link>
       </nav>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "baseline",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: "12px",
-          marginBottom: "32px",
-          paddingBottom: "20px",
-          borderBottom: `1px solid ${LIGHT}`,
-        }}
-      >
-        <h1
-          style={{
-            fontFamily: DISPLAY,
-            fontSize: "32px",
-            fontStyle: "italic",
-            fontWeight: 700,
-            margin: 0,
-            color: INK,
-          }}
-        >
+
+      <div style={{ display: "flex", alignItems: "baseline", gap: "14px", flexWrap: "wrap", marginBottom: "22px", paddingBottom: "14px", borderBottom: `1px solid ${LIGHT}` }}>
+        <h1 style={{ fontFamily: DISPLAY, fontSize: "30px", fontStyle: "italic", fontWeight: 700, margin: 0, color: INK }}>
           {decisionLoadFailed
-            ? "Some panels didn't load."
+            ? "Some rows didn't load."
             : decisionCount === 0
               ? "All clear."
               : `${decisionCount} waiting on you.`}
         </h1>
+        <Hint tip="One table, every working candidate. Rows where the next move is yours are on top; rows waiting on the world sink. Names are doors to their rooms (hover a name for the why-fit). Accept & prepare runs research + email hunt (~$0.15–0.60); drafting waits for your fit call; Send now is the only sender." />
+        {decisionLoadFailed && (
+          <span style={{ fontFamily: SERIF, fontSize: "13px", color: CRIMSON }}>
+            A query errored — treat the table as partial and reload.
+          </span>
+        )}
       </div>
 
-      {migrationMissing && (
-        <div
-          style={{
-            ...card,
-            borderColor: CRIMSON,
-            background: "#FBF3F3",
-            fontFamily: SERIF,
-            fontSize: "14px",
-            color: INK,
-          }}
-        >
-          <strong style={{ color: CRIMSON }}>Migration pending.</strong> Apply{" "}
-          <code style={{ fontFamily: MONO, fontSize: "12px" }}>
-            supabase/migrations/20260606_tower_signal_handling.sql
-          </code>{" "}
-          to enable the signal board (partner_signals.handled_at).
+      {sweepError && (
+        <div style={{ ...card, borderColor: CRIMSON, background: "#FBF3F3", fontFamily: SERIF, fontSize: "13.5px" }}>
+          <strong style={{ color: CRIMSON }}>Sweep failed.</strong> {sweepError}
         </div>
       )}
-
-      {decisionLoadFailed && (
-        <div
-          style={{
-            ...card,
-            borderColor: CRIMSON,
-            background: "#FBF3F3",
-            fontFamily: SERIF,
-            fontSize: "14px",
-            color: INK,
-          }}
-        >
-          <strong style={{ color: CRIMSON }}>Some panels didn&rsquo;t load.</strong>{" "}
-          A draft- or payout-queue query errored, so the &ldquo;waiting on
-          you&rdquo; count below is incomplete &mdash; treat it as partial, not
-          empty, and reload to retry.
-        </div>
+      {sweepOk != null && !sweepError && (
+        <p style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, margin: "0 0 14px" }}>
+          {sweepOk > 0
+            ? `${sweepOk} new candidate${sweepOk > 1 ? "s" : ""} landed at the bottom of the ledger.${sweepSeen > sweepOk ? ` ${sweepSeen - sweepOk} already known, skipped.` : ""}`
+            : "Sweep finished — nothing new that isn't already in the pipeline."}
+        </p>
       )}
 
-      {/* ════ AGENT CONTROLS (the levers) ════ */}
-      <section style={{ marginBottom: "52px" }}>
-        <p style={sectionLabel}>
-          <span>Agent Controls</span>
-          <Hint tip="Each lever starts or pauses one agent's scheduled run. Research, drafting, and sending are manual-only — the buttons in each candidate's room. These levers cover the support agents: almanac (a digest email to you), follow-up ladder (drafts nudges), contact finder (emails), usher (workshop logistics). Pausing is instant and always safe." />
-          <span style={{ flex: 1, height: 1, background: LIGHT }} />
+      {/* ════ THE LEDGER ════ */}
+      {needsYouCount + worldCount === 0 ? (
+        <p style={{ ...card, fontFamily: SERIF, fontSize: "14px", color: MUTED, fontStyle: "italic" }}>
+          The ledger is empty — run a sweep below to fill it.
         </p>
-        {switchesMissing ? (
-          <div style={{ ...card, borderColor: CRIMSON, background: "#FBF3F3", fontFamily: SERIF, fontSize: "14px" }}>
-            <strong style={{ color: CRIMSON }}>Controls not active yet.</strong> Apply{" "}
-            <code style={{ fontFamily: MONO, fontSize: "12px" }}>supabase/migrations/20260609_agent_switches.sql</code>{" "}
-            to turn on the levers. Until then every agent is <strong>paused</strong> (the crons fail safe to OFF), so nothing is running.
-          </div>
-        ) : (
-          <div style={{ ...card }}>
-            <p style={{ fontFamily: SERIF, fontSize: "14px", color: anyAgentOn ? INK : MUTED, margin: "0 0 12px", fontStyle: anyAgentOn ? "normal" : "italic" }}>
-              {anyAgentOn
-                ? "Some agents are running. Each does only what its line says; pause any one instantly."
-                : "Everything is paused. Nothing runs until you Start a lever — and the drafting agents only ever produce drafts you approve."}
-            </p>
-            {PARTNER_AGENTS.map((a) => {
-              const m = AGENT_META[a];
-              return (
-                <AgentLever
-                  key={a}
-                  agent={a}
-                  label={m.label}
-                  cadence={m.cadence}
-                  desc={m.desc}
-                  enabled={!!switchMap[a]}
-                  startConfirm={m.confirm}
-                />
-              );
-            })}
-          </div>
-        )}
-      </section>
-
-      {/* ════ SCOUT & ENRICH (Option-2 buttons + sourced-row review) ════ */}
-      <section style={{ marginBottom: "52px" }}>
-        <p style={sectionLabel}>
-          <span>Scout &amp; Enrich</span>
-          <Hint tip="Start here when the pipeline is thin. Run a sweep, review each card below, Accept the good ones. An accepted candidate moves to the roster's Enriched column and gets a room — Run brief and Scribe draft live there. Then your next stop is Decisions, once drafts appear." />
-          <span style={{ flex: 1, height: 1, background: LIGHT }} />
-          <Link href="/admin/tower/pipeline" className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", color: CRIMSON }}>
-            open the roster →
-          </Link>
-          <Link href="/admin/tower/pipeline#passed" className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", color: MUTED, marginLeft: "12px" }}>
-            the bin · {(pipeCounts["passed"] ?? 0) + (pipeCounts["cold"] ?? 0)} →
-          </Link>
-        </p>
-        {promotedId && (
-          <div style={{ ...card, borderLeft: `3px solid ${INK}`, marginBottom: "16px" }}>
-            <p style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, margin: 0 }}>
-              <strong>{promotedName || "Candidate"}</strong> moved to Research —{" "}
-              <Link href={`/admin/tower/candidate/${promotedId}`} className={twr.lnk} style={{ color: CRIMSON }}>
-                open their room →
-              </Link>
-            </p>
-          </div>
-        )}
-        {sweepError && (
-          <div style={{ ...card, borderLeft: `3px solid ${CRIMSON}`, marginBottom: "16px" }}>
-            <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: CRIMSON, display: "block", marginBottom: "6px" }}>
-              Sweep failed
-            </span>
-            <p style={{ fontFamily: MONO, fontSize: "12.5px", lineHeight: 1.6, color: INK, margin: "0 0 6px", wordBreak: "break-word" }}>
-              {sweepError}
-            </p>
-            <p style={{ fontFamily: SERIF, fontSize: "13px", fontStyle: "italic", color: MUTED, margin: 0 }}>
-              Nothing was inserted. Fix the cause above, then run the sweep again.
-            </p>
-          </div>
-        )}
-        {sweepOk !== null && (
-          <div style={{ ...card, borderLeft: `3px solid ${INK}`, marginBottom: "16px" }}>
-            <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: INK, display: "block", marginBottom: "6px" }}>
-              Sweep complete
-            </span>
-            <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.55, color: INK, margin: 0 }}>
-              {sweepOk > 0
-                ? `${sweepOk} new candidate${sweepOk > 1 ? "s" : ""} at 'sourced' — review below.${sweepSeen > sweepOk ? ` ${sweepSeen - sweepOk} already in the pipeline, skipped.` : ""}`
-                : sweepSeen > 0
-                  ? `All ${sweepSeen} candidates were already in the pipeline — nothing new to review.`
-                  : "The reply didn't parse into candidates. Run the sweep again — this is usually a one-off."}
-            </p>
-          </div>
-        )}
-        {/* The candidate path — what each button in this section actually moves. */}
-        <div style={{ ...card, marginBottom: "16px" }}>
-          <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".18em", textTransform: "uppercase", color: MUTED, display: "block", marginBottom: "10px" }}>
-            The path a candidate takes
-          </span>
-          <div className={twr.flow}>
-            <span className={twr.flowStatus}>sourced</span>
-            <span className={twr.flowMove}>→ <b className={twr.flowYou}>you: Accept &amp; prepare</b> (brief + email hunt run for you) →</span>
-            <span className={twr.flowStatus}>enriched</span>
-            <span className={twr.flowMove}>→ <b className={twr.flowYou}>you: fit call</b> (the score is advisory — Fits drafts them, Doesn&rsquo;t fit bins them) →</span>
-            <span className={twr.flowStatus}>ready</span>
-            <span className={twr.flowMove}>→ <b className={twr.flowYou}>you: edit + Ready</b> →</span>
-            <span className={twr.flowStatus}>approved</span>
-            <span className={twr.flowMove}>→ <b className={twr.flowYou}>you: Send now</b> →</span>
-            <span className={twr.flowStatus}>contacted</span>
-            <span className={twr.flowMove}>→ they answer → <b className={twr.flowYou}>you: hands off</b> →</span>
-            <span className={twr.flowStatus}>replied</span>
-          </div>
-          <p style={{ fontFamily: SERIF, fontSize: "12.5px", fontStyle: "italic", color: MUTED, margin: "10px 0 0" }}>
-            Each chip is a value in the row&apos;s <code>status</code> column. One big button does the machine work (capped by the $10 wall above); every judgment — fit, edit, send — is yours. The follow-up ladder (a lever above) queues +4d/+9d nudge drafts for contacted-but-silent candidates and halts the moment you mark them replied; even its drafts wait for your approve.
-          </p>
-        </div>
-        <div style={{ ...card, marginBottom: "16px" }}>
-          <p style={{ fontFamily: SERIF, fontSize: "14px", color: INK, margin: "0 0 4px" }}>
-            <strong>Run a sweep.</strong> Each press has Claude search the live web and drop ~12–15 verified candidates into the pipeline at <code>status=&apos;sourced&apos;</code> for you to review. Spends API tokens + web searches (~$0.50–$2.50 per sweep on Sonnet 4.6).
-          </p>
-          <p style={{ fontFamily: SERIF, fontSize: "13px", color: MUTED, fontStyle: "italic", margin: "0 0 14px" }}>
-            Nothing moves past sourced until you click <strong>Accept</strong> on each row.
-          </p>
-          <div style={{ marginBottom: "12px", display: "flex", gap: "16px", flexWrap: "wrap" }}>
-            <ModelSelector agent="scout" current={scoutModel} label="Sweep model:" />
-            <ModelSelector agent="dossier-enrich" current={dossierModel} label="Brief model:" />
-          </div>
-          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-            <ScoutSweepButton sweep="communities" label="Sweep 1 · Paid communities" />
-            <ScoutSweepButton sweep="newsletters_podcasts" label="Sweep 2 · Newsletters + podcasts" />
-            <ScoutSweepButton sweep="practitioners" label="Sweep 3 · Practitioner figures" />
-          </div>
-        </div>
-
-        {sourced.length > 0 && (
-          <div>
-            <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: INK, display: "block", marginBottom: "6px" }}>
-              {sourced.length} candidate{sourced.length > 1 ? "s" : ""} awaiting review
-            </span>
-            <p style={{ fontFamily: SERIF, fontSize: "12.5px", fontStyle: "italic", color: MUTED, margin: "0 0 10px" }}>
-              Accept changes one database cell — the row&apos;s status, <code>sourced → enriched</code> — which is the research queue that Run brief and Scribe draft work from. Reject parks the row at <code>passed</code>; nothing is deleted.
-            </p>
-            {sourced.map((s) => (
-              <div key={s.id} style={card}>
-                <div style={{ display: "flex", alignItems: "baseline", gap: "10px", flexWrap: "wrap", marginBottom: "4px" }}>
-                  <Link href={`/admin/tower/candidate/${s.id}`} className={twr.lnk} style={{ fontFamily: SERIF, fontSize: "16px", fontWeight: 600, color: INK }}>
-                    {s.name}
-                  </Link>
-                  <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED }}>{s.surface ?? ""}</span>
-                  <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED }}>vf {s.voice_fit ?? "—"}</span>
-                  <span style={{ fontFamily: MONO, fontSize: "10px", color: MUTED, marginLeft: "auto" }}>{s.source_agent}</span>
-                </div>
-                {s.handle && (
-                  <p style={{ fontFamily: MONO, fontSize: "12px", color: MUTED, margin: "0 0 4px" }}>{s.handle}</p>
-                )}
-                {s.why_fit && (
-                  <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.55, color: INK, margin: "0 0 6px" }}>{s.why_fit}</p>
-                )}
-                {s.contact_path && (
-                  <p style={{ fontFamily: MONO, fontSize: "11.5px", color: "#8B1A1A", margin: "0 0 10px" }}>
-                    {s.contact_path}{" "}
-                    <ContactLinks text={s.contact_path} searchHint={`${s.name} ${s.surface ?? ""}`} />
-                  </p>
-                )}
-                <div style={{ display: "flex", gap: "8px", alignItems: "flex-start", flexWrap: "wrap" }}>
-                  <AcceptPrepareButton
-                    candidateId={s.id as string}
-                    label="Accept & prepare · ~$0.60"
-                    postPath="/api/admin/accept-and-prepare"
-                    confirmText={`Accept ${s.name} and prepare them? Research brief + email hunt run in the background (~2 min, ~$0.15–$0.60 + 1 email credit if an address is found). Drafting waits for your fit call.`}
-                    confirmLabel="Accept & prepare"
-                    busyLabel="Preparing…"
-                    variant="primary"
-                    roomHref={`/admin/tower/candidate/${s.id}`}
-                  />
-                  <form action={rejectSourced}>
-                    <input type="hidden" name="id" value={s.id} />
-                    <TowerButton variant="ghost" pendingLabel="Rejecting…">Reject</TowerButton>
-                  </form>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* ════ DECISIONS ════ */}
-      <section style={{ marginBottom: "52px" }}>
-        <p style={sectionLabel}>
-          <span>Decisions</span>
-          <Hint tip="The only place anything leaves the building. Fit calls come first — the machine scored, you decide who gets drafted. Then the draft house: Ready arms a reviewed draft (it lights green); Send then emails it immediately. Hold pulls it back; manual rows you deliver yourself and then Mark sent. Empty lane means nothing needs you." />
-          <span style={{ flex: 1, height: 1, background: LIGHT }} />
-        </p>
-
-        {/* Fit calls — research done, drafting waits on you (founder 2026-07-07:
-            the machine scores voice-fit; the human decides who fits). Split
-            hard by contactability (founder 2026-07-07): email-in-hand people
-            are one decision from a send; no-email people are a different kind
-            of work (a DM or a form, delivered by hand). */}
-        {fitCalls.length > 0 &&
-          (() => {
-            const withEmail = fitCalls.filter((f) => extractEmail(f.contact_path));
-            const noEmail = fitCalls.filter((f) => !extractEmail(f.contact_path));
-            const fitCard = (f: FitRow, manual: boolean) => (
-              <div key={f.id} style={{ ...card, border: `2px solid ${manual ? INK : CRIMSON}` }}>
-                <div style={{ display: "flex", alignItems: "baseline", gap: "12px", flexWrap: "wrap", marginBottom: "6px" }}>
-                  <span style={{ fontFamily: DISPLAY, fontStyle: "italic", fontWeight: 900, fontSize: "30px", lineHeight: 1, color: INK }}>
-                    {f.voice_fit ?? "—"}
-                  </span>
-                  <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".14em", textTransform: "uppercase", color: MUTED }}>
-                    / 5 · machine score — advisory only
-                  </span>
-                  <Link href={`/admin/tower/candidate/${f.id}`} className={twr.lnk} style={{ fontFamily: SERIF, fontSize: "16px", fontWeight: 600, color: INK, marginLeft: "auto" }}>
-                    {f.name}
-                  </Link>
-                  <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED }}>{f.surface ?? ""}</span>
-                  {manual ? (
-                    <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".12em", textTransform: "uppercase", color: "#FFFFFF", background: INK, padding: "4px 8px" }}>
-                      no email — DM / form, by hand
-                    </span>
-                  ) : (
-                    <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".12em", textTransform: "uppercase", color: "#2E7D32", border: "1px solid #CDE7CE", padding: "3px 8px" }}>
-                      ✉ email in hand
-                    </span>
-                  )}
-                </div>
-                {f.dossier_brief?.first_touch_angle && (
-                  <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.5, color: MUTED, margin: "0 0 10px" }}>
-                    {f.dossier_brief.first_touch_angle}
-                    {f.dossier_brief.verdict && (
-                      <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".1em", color: CRIMSON }}>
-                        {" "}· the call: {String(f.dossier_brief.verdict).replace(/_/g, " ")}
-                      </span>
-                    )}
-                  </p>
-                )}
-                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                  <form action={draftNow}>
-                    <input type="hidden" name="id" value={f.id} />
-                    <TowerButton pendingLabel="Drafting…">Fits — draft them</TowerButton>
-                  </form>
-                  <form action={rejectSourced}>
-                    <input type="hidden" name="id" value={f.id} />
-                    <input type="hidden" name="return_to" value="/admin/tower" />
-                    <TowerButton variant="ghost" pendingLabel="Binning…">Doesn&rsquo;t fit — bin</TowerButton>
-                  </form>
-                  <Link href={`/admin/tower/candidate/${f.id}`} className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", color: CRIMSON, alignSelf: "center" }}>
-                    read the brief →
-                  </Link>
-                </div>
-              </div>
-            );
-            return (
-              <div style={{ marginBottom: "28px" }}>
-                {withEmail.length > 0 && (
-                  <>
-                    <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: INK, display: "block", marginBottom: "10px" }}>
-                      {withEmail.length} fit call{withEmail.length > 1 ? "s" : ""} · ✉ email in hand — one decision from a send
-                    </span>
-                    {withEmail.map((f) => fitCard(f, false))}
-                  </>
-                )}
-                {noEmail.length > 0 && (
-                  <>
-                    <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: MUTED, display: "block", margin: "18px 0 10px" }}>
-                      {noEmail.length} fit call{noEmail.length > 1 ? "s" : ""} · no email — manual channel (DM / form, delivered by hand)
-                    </span>
-                    {noEmail.map((f) => fitCard(f, true))}
-                  </>
-                )}
-              </div>
-            );
-          })()}
-
-        {/* Drafts ready to send — the draft house */}
-        {drafts.length > 0 && (
-          <div style={{ marginBottom: "28px" }}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                marginBottom: "10px",
-              }}
-            >
-              <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: INK }}>
-                {drafts.length} draft{drafts.length > 1 ? "s" : ""} in the house
-              </span>
-              {emailReadyCount > 1 && (
-                <form action={approveAllReady}>
-                  <TowerButton pendingLabel="Arming all…">
-                    Ready all {emailReadyCount} email
-                  </TowerButton>
-                </form>
-              )}
+      ) : (
+        <div style={{ overflowX: "auto" }}>
+          {emailReadyCount > 1 && (
+            <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "8px" }}>
+              <form action={approveAllReady}>
+                <TowerButton pendingLabel="Arming all…" style={THIN}>
+                  Ready all {emailReadyCount} email drafts
+                </TowerButton>
+              </form>
             </div>
-            {firstManualId && drafts[0] && (drafts[0].send_channel ?? "email") === "email" && (
-              <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: "#2E7D32", display: "block", marginBottom: "10px" }}>
-                ✉ email — Ready arms, Send now fires
-              </span>
-            )}
-            {drafts.map((d) => {
-              const channel = d.send_channel ?? "email";
-              const isManual = channel === "manual";
-              const isArmed = !isManual && d.status === "approved";
-              return (
-                <div key={d.id}>
-                {d.id === firstManualId && (
-                  <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: MUTED, display: "block", margin: "18px 0 10px" }}>
-                    manual channel — no email; you deliver these by hand (DM / form), then Mark sent
-                  </span>
-                )}
-                <div
-                  style={isArmed ? { ...card, borderLeft: "3px solid #2E7D32" } : isManual ? { ...card, borderLeft: `3px solid ${INK}` } : card}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px", flexWrap: "wrap" }}>
-                    <span style={tierChip(d.tier)}>{d.tier}</span>
-                    <span style={{ ...tierChip(isManual ? "cold" : "ok"), color: isManual ? "#a14400" : MUTED, borderColor: isManual ? "#e6c9a8" : LIGHT }}>
-                      {isManual ? "manual send" : "email"}
+          )}
+          <table className={twr.ledger}>
+            <thead>
+              <tr>
+                <th>candidate</th>
+                <th>stage</th>
+                <th>vf</th>
+                <th>✉</th>
+                <th>last touch</th>
+                <th>waiting on</th>
+                <th style={{ textAlign: "right" }}>act</th>
+              </tr>
+            </thead>
+            <tbody>
+              {needsYouCount > 0 && (
+                <tr className={twr.sect}><td colSpan={7}>needs you · {needsYouCount}</td></tr>
+              )}
+
+              {/* 1 — fit calls */}
+              {fitCalls.map((p) => (
+                <tr key={p.id}>
+                  <td className={twr.nm}>{roomLink(p)}</td>
+                  <td className={twr.mo}>fit call</td>
+                  <td className={twr.num}>{p.voice_fit ?? "—"}/5</td>
+                  <td>{mailCell(p)}</td>
+                  <td className={twr.num}>—</td>
+                  <td className={twr.mo}>your fit call — score is advisory</td>
+                  <td className={twr.act}>
+                    <span style={{ display: "inline-flex", gap: "6px" }}>
+                      <form action={draftNow} style={{ display: "inline" }}>
+                        <input type="hidden" name="id" value={p.id} />
+                        <TowerButton pendingLabel="Drafting…" style={THIN}>Fits</TowerButton>
+                      </form>
+                      <form action={rejectSourced} style={{ display: "inline" }}>
+                        <input type="hidden" name="id" value={p.id} />
+                        <input type="hidden" name="return_to" value="/admin/tower" />
+                        <TowerButton variant="ghost" pendingLabel="Binning…" style={THIN}>Bin</TowerButton>
+                      </form>
                     </span>
-                    {d.warden_cleared ? (
-                      <span style={{ ...tierChip("ok"), color: "#2E7D32", borderColor: "#CDE7CE" }}>clean — skim &amp; send</span>
-                    ) : (
-                      <span style={{ ...tierChip("cold"), color: "#a14400", borderColor: "#a14400", fontWeight: 700 }}>needs your edit</span>
-                    )}
-                    {!isManual && suppressedSet.has(d.to_addr.toLowerCase()) && (
-                      <span style={{ ...tierChip("cold"), color: "#FFFFFF", background: CRIMSON, borderColor: CRIMSON, fontWeight: 700 }}>
-                        suppressed — will never send
+                  </td>
+                </tr>
+              ))}
+
+              {/* 2 — drafts in the house */}
+              {draftPeople.map((p) => {
+                const d = draftByPipeline.get(p.id)!;
+                const isManual = (d.send_channel ?? "email") === "manual";
+                const isSuppressed = !isManual && suppressedSet.has(d.to_addr.toLowerCase());
+                return (
+                  <tr key={p.id}>
+                    <td className={twr.nm}>{roomLink(p)}</td>
+                    <td className={twr.mo}>draft</td>
+                    <td className={twr.num}>{p.voice_fit ?? "—"}/5</td>
+                    <td>{isManual ? <span className={`${twr.tinychip} ${twr.inkc}`}>DM</span> : <span className={`${twr.tinychip} ${twr.ok}`}>✉</span>}</td>
+                    <td className={twr.num}>—</td>
+                    <td className={twr.mo} title={d.personalization_note ?? undefined}>
+                      {isSuppressed ? (
+                        <span className={`${twr.tinychip} ${twr.warn}`}>suppressed — will never send</span>
+                      ) : d.warden_cleared ? (
+                        <span className={`${twr.tinychip} ${twr.ok}`}>clean — skim &amp; send</span>
+                      ) : (
+                        <span className={`${twr.tinychip} ${twr.warn}`}>needs your edit</span>
+                      )}
+                      {" "}
+                      <span style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: "12px", color: MUTED }}>
+                        “{d.subject.length > 44 ? d.subject.slice(0, 44) + "…" : d.subject}”
                       </span>
-                    )}
-                    {isArmed && (
-                      <span style={{ ...tierChip("ok"), color: "#2E7D32", borderColor: "#2E7D32", fontWeight: 700 }}>
-                        ● armed
+                    </td>
+                    <td className={twr.act}>
+                      <span style={{ display: "inline-flex", gap: "6px" }}>
+                        {!d.warden_cleared && (
+                          <Link href={`/admin/tower/candidate/${p.id}`} className={twr.lnk} style={{ fontFamily: MONO, fontSize: "10px", color: CRIMSON, alignSelf: "center" }}>
+                            edit →
+                          </Link>
+                        )}
+                        {isManual ? (
+                          <form action={markManualSent} style={{ display: "inline" }}>
+                            <input type="hidden" name="id" value={d.id} />
+                            <TowerButton pendingLabel="Marking…" style={THIN}>Mark sent</TowerButton>
+                          </form>
+                        ) : d.status === "approved" ? (
+                          <form action={sendNow} style={{ display: "inline" }}>
+                            <input type="hidden" name="id" value={d.id} />
+                            <TowerButton
+                              pendingLabel="Sending…"
+                              style={THIN}
+                              confirmMessage={`Send this email to ${d.to_addr} now? It goes out immediately and can't be undone.`}
+                            >
+                              Send now
+                            </TowerButton>
+                          </form>
+                        ) : (
+                          <form action={approveDraft} style={{ display: "inline" }}>
+                            <input type="hidden" name="id" value={d.id} />
+                            <TowerButton pendingLabel="Arming…" style={THIN}>Ready</TowerButton>
+                          </form>
+                        )}
                       </span>
-                    )}
-                    <span style={{ fontFamily: MONO, fontSize: "12px", color: MUTED, marginLeft: "auto" }}>
-                      → {d.to_addr}
-                    </span>
-                    {d.related_pipeline_id && (
-                      <Link href={`/admin/tower/candidate/${d.related_pipeline_id}`} className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", color: CRIMSON }}>
-                        their room →
-                      </Link>
-                    )}
-                  </div>
-                  {(d.send_channel ?? "email") === "manual" && (
-                    <p style={{ fontFamily: MONO, fontSize: "11px", color: MUTED, margin: "0 0 8px" }}>
-                      deliver it yourself, then Mark sent:{" "}
-                      <ContactLinks text={d.to_addr} />
-                    </p>
-                  )}
-                  <p style={{ fontFamily: SERIF, fontSize: "16px", fontWeight: 600, margin: "0 0 6px", color: INK }}>
-                    {d.subject}
-                  </p>
-                  <p style={{ fontFamily: SERIF, fontSize: "14px", lineHeight: 1.6, color: MUTED, margin: "0 0 10px", whiteSpace: "pre-wrap" }}>
-                    {d.body.length > 360 ? d.body.slice(0, 360) + "…" : d.body}
-                  </p>
-
-                  {d.personalization_note && (
-                    <p style={{ fontFamily: MONO, fontSize: "11px", lineHeight: 1.5, color: "#a14400", background: "rgba(161,68,0,.06)", borderLeft: "2px solid #a14400", padding: "8px 10px", margin: "0 0 12px" }}>
-                      {d.personalization_note}
-                    </p>
-                  )}
-
-                  <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                    {isManual ? (
-                      <form action={markManualSent}>
+                    </td>
+                  </tr>
+                );
+              })}
+              {orphanDrafts.map((d) => (
+                <tr key={d.id}>
+                  <td className={twr.nm}>{d.to_addr}</td>
+                  <td className={twr.mo}>draft</td>
+                  <td className={twr.num}>—</td>
+                  <td><span className={`${twr.tinychip} ${twr.ok}`}>✉</span></td>
+                  <td className={twr.num}>—</td>
+                  <td className={twr.mo}>{d.warden_cleared ? "clean" : "needs your edit"}</td>
+                  <td className={twr.act}>
+                    {d.status === "approved" ? (
+                      <form action={sendNow} style={{ display: "inline" }}>
                         <input type="hidden" name="id" value={d.id} />
-                        <TowerButton pendingLabel="Marking…">Mark sent</TowerButton>
-                      </form>
-                    ) : isArmed ? (
-                      <form action={sendNow}>
-                        <input type="hidden" name="id" value={d.id} />
-                        <TowerButton
-                          pendingLabel="Sending…"
-                          confirmMessage={`Send this email to ${d.to_addr} now? It goes out immediately and can't be undone.`}
-                        >
-                          Send now
-                        </TowerButton>
+                        <TowerButton pendingLabel="Sending…" style={THIN} confirmMessage={`Send to ${d.to_addr} now?`}>Send now</TowerButton>
                       </form>
                     ) : (
-                      <form action={approveDraft}>
+                      <form action={approveDraft} style={{ display: "inline" }}>
                         <input type="hidden" name="id" value={d.id} />
-                        <TowerButton pendingLabel="Marking ready…">Ready</TowerButton>
+                        <TowerButton pendingLabel="Arming…" style={THIN}>Ready</TowerButton>
                       </form>
                     )}
-                    <form action={holdDraft}>
-                      <input type="hidden" name="id" value={d.id} />
-                      <TowerButton variant="ghost" pendingLabel="Holding…">Hold</TowerButton>
-                    </form>
-                  </div>
+                  </td>
+                </tr>
+              ))}
 
-                  {/* Inline editor — the tower as draft house */}
-                  <details style={{ marginTop: "10px" }}>
-                    <summary style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".14em", textTransform: "uppercase", color: CRIMSON, cursor: "pointer" }}>
-                      ✎ Edit subject &amp; body
-                    </summary>
-                    <form action={editDraft} style={{ marginTop: "10px" }}>
-                      <input type="hidden" name="id" value={d.id} />
-                      <input
-                        name="subject"
-                        defaultValue={d.subject}
-                        style={{ width: "100%", fontFamily: SERIF, fontSize: "14px", padding: "8px 10px", border: `1px solid ${LIGHT}`, marginBottom: "8px", color: INK, background: "#fff" }}
-                      />
-                      <textarea
-                        name="body"
-                        defaultValue={d.body}
-                        rows={10}
-                        style={{ width: "100%", fontFamily: SERIF, fontSize: "14px", lineHeight: 1.6, padding: "10px", border: `1px solid ${LIGHT}`, color: INK, background: "#fff", resize: "vertical" }}
-                      />
-                      <TowerButton variant="ghost" pendingLabel="Checking…" style={{ marginTop: "8px" }}>
-                        Save &amp; re-check canon
-                      </TowerButton>
-                    </form>
-                  </details>
-                </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {/* The shelf — approved (queued), held, and failed drafts. Nothing on
-            it needs composing; it's where drafts wait, by state. */}
-        {shelf.length > 0 && (
-          <div style={{ marginBottom: "28px" }}>
-            <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: INK, display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
-              On the shelf · {shelf.length}
-              <Hint tip="Drafts parked off the send path. Held = you pulled it back; Release returns it to the house. Failed = the send errored; Release re-readies it for another Ready + Send." />
-            </span>
-            {shelf.map((s) => (
-              <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap", padding: "8px 0", borderBottom: `1px solid ${LIGHT}` }}>
-                <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".1em", textTransform: "uppercase", color: s.status === "failed" ? CRIMSON : s.status === "held" ? "#a14400" : MUTED, border: `1px solid currentcolor`, padding: "1px 7px", whiteSpace: "nowrap" }}>
-                  {s.status}
-                </span>
-                <span style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "320px" }}>
-                  {s.subject}
-                </span>
-                <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED }}>→ {s.to_addr}</span>
-                {s.status === "failed" && s.error && (
-                  <span style={{ fontFamily: MONO, fontSize: "10.5px", color: CRIMSON }}>{s.error.slice(0, 80)}</span>
-                )}
-                <span style={{ marginLeft: "auto", display: "flex", gap: "10px", alignItems: "center" }}>
-                  {s.related_pipeline_id && (
-                    <Link href={`/admin/tower/candidate/${s.related_pipeline_id}`} className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", color: CRIMSON }}>
-                      their room →
+              {/* 3 — accepted but the brief never landed */}
+              {briefPending.map((p) => (
+                <tr key={p.id}>
+                  <td className={twr.nm}>{roomLink(p)}</td>
+                  <td className={twr.mo}>research</td>
+                  <td className={twr.num}>{p.voice_fit ?? "—"}/5</td>
+                  <td>{mailCell(p)}</td>
+                  <td className={twr.num}>—</td>
+                  <td className={twr.mo}>a brief — run it from their room</td>
+                  <td className={twr.act}>
+                    <Link href={`/admin/tower/candidate/${p.id}`} className={twr.lnk} style={{ fontFamily: MONO, fontSize: "10px", color: CRIMSON }}>
+                      run brief →
                     </Link>
-                  )}
-                  {(s.status === "held" || s.status === "failed") && (
-                    <form action={releaseDraft}>
-                      <input type="hidden" name="id" value={s.id} />
-                      <TowerButton variant="ghost" pendingLabel="Releasing…">Release</TowerButton>
+                  </td>
+                </tr>
+              ))}
+
+              {/* 4 — sourced, your review */}
+              {sourced.map((p) => (
+                <tr key={p.id}>
+                  <td className={twr.nm}>{roomLink(p)}</td>
+                  <td className={twr.mo}>sourced</td>
+                  <td className={twr.num}>{p.voice_fit ?? "—"}/5</td>
+                  <td>{mailCell(p)}</td>
+                  <td className={twr.num}>—</td>
+                  <td className={twr.mo}>{(p.surface ?? "").slice(0, 34) || "your review"}</td>
+                  <td className={twr.act}>
+                    <span style={{ display: "inline-flex", gap: "6px", alignItems: "flex-start" }}>
+                      <AcceptPrepareButton
+                        candidateId={p.id}
+                        label="Accept & prep · ~$0.60"
+                        postPath="/api/admin/accept-and-prepare"
+                        confirmText={`Accept ${p.name} and prepare them? Research brief + email hunt run in the background (~2 min, ~$0.15–$0.60 + 1 email credit if an address is found). Drafting waits for your fit call.`}
+                        confirmLabel="Accept & prepare"
+                        busyLabel="Preparing…"
+                        variant="primary"
+                        roomHref={`/admin/tower/candidate/${p.id}`}
+                        thin
+                      />
+                      <form action={rejectSourced} style={{ display: "inline" }}>
+                        <input type="hidden" name="id" value={p.id} />
+                        <TowerButton variant="ghost" pendingLabel="Rejecting…" style={THIN}>Reject</TowerButton>
+                      </form>
+                    </span>
+                  </td>
+                </tr>
+              ))}
+
+              {/* — waiting on the world — */}
+              {worldCount > 0 && (
+                <tr className={twr.sect}><td colSpan={7}>waiting on the world · {worldCount}</td></tr>
+              )}
+              {contacted.map((p) => (
+                <tr key={p.id}>
+                  <td className={twr.nm}>{roomLink(p)}</td>
+                  <td className={twr.mo}>contacted</td>
+                  <td className={twr.num}>{p.voice_fit ?? "—"}/5</td>
+                  <td>{mailCell(p)}</td>
+                  <td className={twr.num}>{daysAgo(p.first_touch_at)}</td>
+                  <td className={twr.mo}>their reply · ladder {p.ladder_step ?? 0}</td>
+                  <td className={twr.act}>
+                    <form action={markReplied} style={{ display: "inline" }}>
+                      <input type="hidden" name="id" value={p.id} />
+                      <input type="hidden" name="return_to" value="/admin/tower" />
+                      <TowerButton variant="ghost" pendingLabel="Marking…" style={THIN}>Replied</TowerButton>
                     </form>
-                  )}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
+                  </td>
+                </tr>
+              ))}
+              {inConvo.map((p) => (
+                <tr key={p.id}>
+                  <td className={twr.nm}>{roomLink(p)}</td>
+                  <td><span className={`${twr.tinychip} ${twr.inkc}`}>in convo</span></td>
+                  <td className={twr.num}>{p.voice_fit ?? "—"}/5</td>
+                  <td>{mailCell(p)}</td>
+                  <td className={twr.num}>{daysAgo(p.updated_at)}</td>
+                  <td className={twr.mo}>them — hands off</td>
+                  <td className={twr.act}>
+                    <form action={resumeOutreach} style={{ display: "inline" }}>
+                      <input type="hidden" name="id" value={p.id} />
+                      <input type="hidden" name="return_to" value="/admin/tower" />
+                      <TowerButton variant="ghost" pendingLabel="Resuming…" style={THIN}>Resume</TowerButton>
+                    </form>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-        {/* Bright signals */}
-        {brightSignals.length > 0 && (
-          <div style={{ marginBottom: "8px" }}>
-            <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: INK, display: "block", marginBottom: "10px" }}>
-              {brightSignals.length} bright signal{brightSignals.length > 1 ? "s" : ""}
-            </span>
-            {brightSignals.map((s) => (
-              <div key={s.id} style={{ ...card, borderLeft: `3px solid ${CRIMSON}` }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "6px" }}>
-                  <span style={{ ...tierChip("cold") }}>{s.signal_type.replace(/_/g, " ")}</span>
-                  <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED }}>{s.source}</span>
-                  <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED, marginLeft: "auto" }}>
-                    {timeAgo(s.created_at)}
-                  </span>
-                </div>
-                <p style={{ fontFamily: SERIF, fontSize: "15px", lineHeight: 1.5, color: INK, margin: "0 0 14px" }}>
-                  {s.summary || "(signal)"}
-                </p>
-                <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
-                  <form action={handleSignal}>
-                    <input type="hidden" name="id" value={s.id} />
-                    <TowerButton variant="ghost" pendingLabel="Clearing…">Mark handled</TowerButton>
-                  </form>
-                  {looksLikeEmail(s.source) && (
-                    <a href={inboxSearchUrl(s.source)} target="_blank" rel="noreferrer" className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", color: CRIMSON }}>
-                      open in your inbox ↗
-                    </a>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Payouts — the money gate */}
-        {payoutAffiliates.length > 0 && (
-          <div style={{ marginBottom: "8px" }}>
-            <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: INK, display: "block", marginBottom: "4px" }}>
-              Payouts ready · {usd(payoutTotalCents)} cleared &amp; unpaid
-            </span>
-            <p style={{ fontFamily: SERIF, fontSize: "13px", color: MUTED, fontStyle: "italic", margin: "0 0 10px" }}>
-              This is the dry-run. Review the numbers — money review has no clock.
-              Each <strong>Pay</strong> runs a real Stripe Connect transfer and
-              emails the affiliate.
-            </p>
-            {payoutAffiliates.map((a) => {
-              const enabled = a.stripe_account_status === "enabled";
-              return (
-                <div key={a.id} style={{ ...card, borderLeft: `3px solid #2E7D32` }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
-                    <span style={{ fontFamily: SERIF, fontSize: "16px", fontWeight: 600, color: INK }}>
-                      {a.display_name}
-                    </span>
-                    <span style={{ fontFamily: MONO, fontSize: "12px", color: MUTED }}>
-                      {a.count} cleared item{a.count > 1 ? "s" : ""}
-                    </span>
-                    <span style={{ fontFamily: MONO, fontSize: "16px", fontWeight: 700, color: "#2E7D32", marginLeft: "auto" }}>
-                      {usd(a.cents)}
-                    </span>
-                  </div>
-                  <div style={{ marginTop: "12px" }}>
-                    <PayoutButton affiliateId={a.id} amountLabel={usd(a.cents)} enabled={enabled} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {decisionCount === 0 && !migrationMissing && (
-          <p style={{ fontFamily: SERIF, fontSize: "15px", color: MUTED, fontStyle: "italic", margin: 0 }}>
-            Nothing waiting on you. The tower handled everything that was safe to
-            handle.
+      {/* ════ PAYOUTS — only when money is owed ════ */}
+      {payoutAffiliates.length > 0 && (
+        <section>
+          <p style={sectionLabel}>
+            <span>Payouts waiting · {usd(payoutAffiliates.reduce((s, a) => s + a.cents, 0))}</span>
+            <Hint tip="Cleared, unpaid commission. Mark paid runs a real Stripe Connect transfer — it confirms first." />
+            <span style={{ flex: 1, height: 1, background: LIGHT }} />
           </p>
-        )}
-      </section>
+          <table className={twr.ledger}>
+            <tbody>
+              {payoutAffiliates.map((a) => (
+                <tr key={a.id}>
+                  <td className={twr.nm}>{a.display_name}</td>
+                  <td className={twr.mo}>{a.slug}</td>
+                  <td className={twr.num}>{usd(a.cents)}</td>
+                  <td className={twr.mo}>{a.count} sale{a.count === 1 ? "" : "s"}</td>
+                  <td className={twr.act}>
+                    <PayoutButton
+                      affiliateId={a.id}
+                      amountLabel={usd(a.cents)}
+                      enabled={a.stripe_account_status === "active"}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      )}
 
-      {/* ════ BOARD ════ */}
+      {/* ════ THE SHELF — only when something is held or failed ════ */}
+      {shelf.length > 0 && (
+        <section>
+          <p style={sectionLabel}>
+            <span>On the shelf · {shelf.length}</span>
+            <Hint tip="Drafts parked off the send path. Held = you pulled it back (or the suppression gate did); Release returns it to the ledger. Failed = the send errored; Release re-readies it." />
+            <span style={{ flex: 1, height: 1, background: LIGHT }} />
+          </p>
+          <table className={twr.ledger}>
+            <tbody>
+              {shelf.map((s) => (
+                <tr key={s.id}>
+                  <td>
+                    <span className={`${twr.tinychip} ${s.status === "failed" ? twr.warn : ""}`}>{s.status}</span>
+                  </td>
+                  <td className={twr.nm} style={{ maxWidth: "300px", overflow: "hidden", textOverflow: "ellipsis" }}>{s.subject}</td>
+                  <td className={twr.mo}>→ {s.to_addr}</td>
+                  <td className={twr.mo} style={{ color: CRIMSON }}>{s.error ? s.error.slice(0, 60) : ""}</td>
+                  <td className={twr.act}>
+                    <span style={{ display: "inline-flex", gap: "8px", alignItems: "center" }}>
+                      {s.related_pipeline_id && (
+                        <Link href={`/admin/tower/candidate/${s.related_pipeline_id}`} className={twr.lnk} style={{ fontFamily: MONO, fontSize: "10px", color: CRIMSON }}>
+                          room →
+                        </Link>
+                      )}
+                      <form action={releaseDraft} style={{ display: "inline" }}>
+                        <input type="hidden" name="id" value={s.id} />
+                        <TowerButton variant="ghost" pendingLabel="Releasing…" style={THIN}>Release</TowerButton>
+                      </form>
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      )}
+
+      {/* ════ SWEEPS — one compact row ════ */}
       <section>
         <p style={sectionLabel}>
-          <span>Board</span>
-          <Hint tip="Read-only situational awareness — nothing here needs a click. Each pipeline stage is a door: click it to open the roster at that column." />
+          <span>Sweeps</span>
+          <Hint tip="Each press has Claude search the live web and drop ~12–15 verified candidates into the ledger at 'sourced' (~$0.50–$2.50 per sweep, counted by the $10 wall). Nothing moves past sourced until you Accept a row." />
           <span style={{ flex: 1, height: 1, background: LIGHT }} />
         </p>
+        <div style={{ ...card, display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center" }}>
+          <ScoutSweepButton sweep="communities" label="Communities" />
+          <ScoutSweepButton sweep="newsletters_podcasts" label="Newsletters + podcasts" />
+          <ScoutSweepButton sweep="practitioners" label="Practitioners" />
+          <span style={{ flex: 1 }} />
+          <ModelSelector agent="scout" current={modelFor("scout")} label="Sweep model:" />
+          <ModelSelector agent="dossier-enrich" current={modelFor("dossier-enrich")} label="Brief model:" />
+        </div>
+      </section>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" }}>
-          {/* Pipeline by stage */}
+      {/* ════ MACHINERY — collapsed drawer ════ */}
+      <details style={{ marginTop: "30px", borderTop: `1px solid ${LIGHT}`, paddingTop: "10px" }}>
+        <summary style={{ cursor: "pointer", fontFamily: MONO, fontSize: "10px", letterSpacing: ".2em", textTransform: "uppercase", color: MUTED }}>
+          ▸ machinery — {PARTNER_AGENTS.length} levers · sent log
+        </summary>
+        <div style={{ marginTop: "14px" }}>
+          {switchesMissing ? (
+            <div style={{ ...card, borderColor: CRIMSON, background: "#FBF3F3", fontFamily: SERIF, fontSize: "13.5px" }}>
+              <strong style={{ color: CRIMSON }}>Controls not active yet.</strong> Apply{" "}
+              <code style={{ fontFamily: MONO, fontSize: "12px" }}>supabase/migrations/20260609_agent_switches.sql</code>{" "}
+              to turn on the levers. Until then every agent is paused (the crons fail safe to OFF).
+            </div>
+          ) : (
+            <div style={card}>
+              {PARTNER_AGENTS.map((a) => {
+                const m = AGENT_META[a];
+                return (
+                  <AgentLever
+                    key={a}
+                    agent={a}
+                    label={m.label}
+                    cadence={m.cadence}
+                    desc={m.desc}
+                    enabled={!!switchMap[a]}
+                    startConfirm={m.confirm}
+                  />
+                );
+              })}
+            </div>
+          )}
           <div style={card}>
-            <p style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".2em", textTransform: "uppercase", color: MUTED, margin: "0 0 14px" }}>
-              Pipeline
-            </p>
-            {Object.keys(pipeCounts).length === 0 ? (
-              <p style={{ fontFamily: SERIF, fontSize: "14px", color: MUTED, fontStyle: "italic", margin: 0 }}>
-                No candidates yet — run scout.
-              </p>
-            ) : (
-              ["sourced", "enriched", "contacted", "replied", "call_booked", "negotiating", "activated", "passed", "cold"]
-                .filter((st) => pipeCounts[st])
-                .map((st) => (
-                  <div key={st} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0", borderBottom: `1px solid ${LIGHT}` }}>
-                    <Link href={`/admin/tower/pipeline#${st}`} className={twr.lnk} style={{ fontFamily: MONO, fontSize: "12px", color: INK }}>
-                      {st.replace(/_/g, " ")}
-                    </Link>
-                    <span style={{ fontFamily: MONO, fontSize: "12px", fontWeight: 700, color: CRIMSON }}>{pipeCounts[st]}</span>
-                  </div>
-                ))
-            )}
-          </div>
-
-          {/* Recent sends */}
-          <div style={card}>
-            <p style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".2em", textTransform: "uppercase", color: MUTED, margin: "0 0 14px" }}>
-              Courier — recent sends
-            </p>
+            <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".18em", textTransform: "uppercase", color: MUTED, display: "block", marginBottom: "8px" }}>
+              Sent log — last {recentSent?.length ?? 0}
+            </span>
             {(recentSent ?? []).length === 0 ? (
-              <p style={{ fontFamily: SERIF, fontSize: "14px", color: MUTED, fontStyle: "italic", margin: 0 }}>
+              <p style={{ fontFamily: SERIF, fontSize: "13px", fontStyle: "italic", color: MUTED, margin: 0 }}>
                 Nothing sent yet.
               </p>
             ) : (
               (recentSent ?? []).map((s, i) => (
-                <div key={i} style={{ padding: "5px 0", borderBottom: `1px solid ${LIGHT}` }}>
-                  <div style={{ fontFamily: SERIF, fontSize: "13px", color: INK, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {s.subject}
-                  </div>
-                  <div style={{ fontFamily: MONO, fontSize: "10px", color: MUTED }}>
-                    {s.to_addr} · {timeAgo(s.sent_at)}
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-
-          {/* Soft signals (noise-adjacent, no action required) */}
-          <div style={card}>
-            <p style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".2em", textTransform: "uppercase", color: MUTED, margin: "0 0 14px" }}>
-              Soft signals
-            </p>
-            {softSignals.length === 0 ? (
-              <p style={{ fontFamily: SERIF, fontSize: "14px", color: MUTED, fontStyle: "italic", margin: 0 }}>
-                Quiet.
-              </p>
-            ) : (
-              softSignals.map((s) => (
-                <div key={s.id} style={{ padding: "6px 0", borderBottom: `1px solid ${LIGHT}` }}>
-                  <span style={{ fontFamily: SERIF, fontSize: "13px", color: INK }}>{s.summary}</span>
-                  <span style={{ fontFamily: MONO, fontSize: "10px", color: MUTED, display: "block" }}>{timeAgo(s.created_at)}</span>
-                </div>
+                <p key={i} style={{ fontFamily: MONO, fontSize: "11px", color: INK, margin: "0 0 4px" }}>
+                  <span style={{ color: MUTED }}>{new Date(s.sent_at as string).toISOString().slice(0, 10)}</span>
+                  {" · "}{s.to_addr}{" · "}
+                  <span style={{ color: MUTED }}>{(s.subject as string).slice(0, 56)}</span>
+                </p>
               ))
             )}
           </div>
         </div>
-      </section>
+      </details>
     </div>
   );
 }

@@ -267,3 +267,35 @@
   color: #8B1A1A;
   letter-spacing: .04em;
 }
+
+/* ── The ledger (founder pick 2026-07-07): the tower as one thin table ── */
+.ledger { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.ledger th {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; letter-spacing: .18em; text-transform: uppercase;
+  color: #6B6B6B; font-weight: 400; text-align: left;
+  padding: 4px 12px 6px 0; border-bottom: 2px solid #1A1A1A; white-space: nowrap;
+}
+.ledger td {
+  padding: 5px 12px 5px 0; border-bottom: 1px solid #E8E4DF;
+  font-size: 13px; vertical-align: middle;
+}
+.ledger td.nm { font-weight: 700; white-space: nowrap; }
+.ledger td.mo { font-family: 'Space Mono', monospace; font-size: 10px; color: #6B6B6B; white-space: nowrap; }
+.ledger td.num { font-family: 'Space Mono', monospace; font-size: 11.5px; white-space: nowrap; }
+.ledger td.act { text-align: right; white-space: nowrap; }
+.ledger tr.sect td {
+  background: #1A1A1A; color: #FAF7F2;
+  font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: .2em;
+  text-transform: uppercase; padding: 4px 10px; border-bottom: none;
+}
+.ledger tr:hover td { background: #FFFFFF; }
+.ledger tr.sect:hover td { background: #1A1A1A; }
+.tinychip {
+  display: inline-block; font-family: 'Space Mono', monospace;
+  font-size: 9px; letter-spacing: .1em; text-transform: uppercase;
+  padding: 1px 7px; border: 1px solid #E8E4DF; color: #6B6B6B; white-space: nowrap;
+}
+.tinychip.ok { border-color: #9BB39B; color: #2E7D32; }
+.tinychip.warn { border-color: #8B1A1A; color: #8B1A1A; }
+.tinychip.inkc { background: #1A1A1A; color: #FAF7F2; border-color: #1A1A1A; }

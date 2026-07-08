@@ -35,6 +35,7 @@ export default function RunBriefButton({
   busyLabel = "Researching…",
   variant = "outline",
   roomHref,
+  thin = false,
 }: {
   candidateId: string;
   label: string;
@@ -49,6 +50,8 @@ export default function RunBriefButton({
    *  this door instead of refreshing it away — the operator clicks straight
    *  into the room for the fit call. */
   roomHref?: string;
+  /** Ledger rows are ~30px — thin shrinks the button to row scale. */
+  thin?: boolean;
 }) {
   const router = useRouter();
   const [confirm, confirmModal] = useConfirm();
@@ -171,6 +174,7 @@ export default function RunBriefButton({
       <button
         type="button"
         className={variant === "primary" ? `${styles.btn} ${styles.primary}` : `${styles.btn} ${styles.outline}`}
+        style={thin ? { padding: "3px 10px", fontSize: "11px", letterSpacing: ".1em" } : undefined}
         disabled={busy}
         aria-busy={busy}
         onClick={start}
