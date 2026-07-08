@@ -109,17 +109,23 @@
   font-weight: 700;
 }
 
-/* ── The map (/admin/tower/pipeline) ── */
+/* ── The roster (/admin/tower/pipeline) ──
+   Columns WRAP instead of scrolling sideways (founder 2026-07-07): seven
+   fixed columns in an 1100px page meant a hidden horizontal scroll that
+   clipped whichever column straddled the edge mid-word — it read as broken
+   text. Wrapped, every stage is on screen at once (4 + 3 on a full-width
+   page, stacking as the viewport narrows). */
 .mapWrap {
   display: flex;
+  flex-wrap: wrap;
   gap: 16px;
   align-items: flex-start;
-  overflow-x: auto;
   padding-bottom: 12px;
 }
 .mapCol {
-  flex: 0 0 250px;
+  flex: 1 1 250px;
   min-width: 250px;
+  max-width: 340px;
 }
 .mapCard {
   display: block;
