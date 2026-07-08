@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { createAdminClient } from "@/utils/supabase/admin";
 import { extractAllDomains } from "@/lib/partnerships/email-finder";
+import { extractEmail } from "@/lib/partnerships/outreach-templates";
 import twr from "../tower.module.css";
 
 /**
@@ -200,25 +201,47 @@ export default async function PipelineMapPage() {
                   {st.empty}
                 </p>
               ) : (
-                cards.map((r) => {
+                // Research column splits hard by contactability (founder
+                // 2026-07-07): email-in-hand cards first, then a divider, then
+                // the manual-channel (no email) cards. Other columns keep
+                // their natural order — the distinction is settled by then.
+                (st.id === "enriched"
+                  ? [
+                      ...cards.filter((r) => r.found_email || extractEmail(r.contact_path ?? null)),
+                      ...cards.filter((r) => !(r.found_email || extractEmail(r.contact_path ?? null))),
+                    ]
+                  : cards
+                ).map((r, i, ordered) => {
                   const chip = emailChip(r, finderOn);
+                  const hasAddr = Boolean(r.found_email || extractEmail(r.contact_path ?? null));
+                  const firstManual =
+                    st.id === "enriched" &&
+                    !hasAddr &&
+                    (i === 0 || Boolean(ordered[i - 1].found_email || extractEmail(ordered[i - 1].contact_path ?? null)));
                   return (
-                    <Link key={r.id} href={`/admin/tower/candidate/${r.id}`} className={twr.mapCard}>
-                      <span style={{ fontFamily: SERIF, fontSize: "14px", fontWeight: 600, color: INK, display: "block" }}>
-                        {r.name}
-                      </span>
-                      <span style={{ fontFamily: MONO, fontSize: "10px", color: MUTED, display: "block", margin: "2px 0 4px" }}>
-                        {r.surface ?? "—"} · vf {r.voice_fit ?? "—"} · {r.motion}
-                      </span>
-                      {chip && (
-                        <span style={{ fontFamily: MONO, fontSize: "9px", fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", color: chip.color, background: chip.bg, border: `1px solid ${chip.color}`, padding: "2px 6px", display: "inline-block", marginBottom: "4px" }}>
-                          {chip.label}
+                    <div key={r.id}>
+                      {firstManual && (
+                        <span style={{ fontFamily: MONO, fontSize: "9px", fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "#FAF7F2", background: INK, display: "block", padding: "4px 8px", margin: "10px 0 8px" }}>
+                          no email · manual channel
                         </span>
                       )}
-                      <span style={{ fontFamily: MONO, fontSize: "9.5px", lineHeight: 1.45, color: CRIMSON, display: "block" }}>
-                        {waitingOn(r)}
-                      </span>
-                    </Link>
+                      <Link href={`/admin/tower/candidate/${r.id}`} className={twr.mapCard}>
+                        <span style={{ fontFamily: SERIF, fontSize: "14px", fontWeight: 600, color: INK, display: "block" }}>
+                          {r.name}
+                        </span>
+                        <span style={{ fontFamily: MONO, fontSize: "10px", color: MUTED, display: "block", margin: "2px 0 4px" }}>
+                          {r.surface ?? "—"} · vf {r.voice_fit ?? "—"} · {r.motion}
+                        </span>
+                        {chip && (
+                          <span style={{ fontFamily: MONO, fontSize: "9px", fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", color: chip.color, background: chip.bg, border: `1px solid ${chip.color}`, padding: "2px 6px", display: "inline-block", marginBottom: "4px" }}>
+                            {chip.label}
+                          </span>
+                        )}
+                        <span style={{ fontFamily: MONO, fontSize: "9.5px", lineHeight: 1.45, color: CRIMSON, display: "block" }}>
+                          {waitingOn(r)}
+                        </span>
+                      </Link>
+                    </div>
                   );
                 })
               )}

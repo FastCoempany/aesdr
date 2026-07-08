@@ -162,7 +162,14 @@ export default async function TowerPage({
     personalization_note?: string | null;
     related_pipeline_id?: string | null;
   };
-  const drafts: DraftRow[] = (readyDrafts ?? []) as DraftRow[];
+  // Email drafts first, manual-channel rows after — the founder wants a hard
+  // visual split between people we can email and people we reach by hand
+  // (2026-07-07). Stable within each group (send_after order from the query).
+  const drafts: DraftRow[] = [
+    ...((readyDrafts ?? []) as DraftRow[]).filter((d) => (d.send_channel ?? "email") === "email"),
+    ...((readyDrafts ?? []) as DraftRow[]).filter((d) => (d.send_channel ?? "email") === "manual"),
+  ];
+  const firstManualId = drafts.find((d) => (d.send_channel ?? "email") === "manual")?.id ?? null;
   // The "Ready all" batch only arms rows still awaiting review; already-armed
   // ('approved') rows are sent individually with their own confirm.
   const emailReadyCount = drafts.filter(
@@ -675,14 +682,16 @@ export default async function TowerPage({
         </p>
 
         {/* Fit calls — research done, drafting waits on you (founder 2026-07-07:
-            the machine scores voice-fit; the human decides who fits). */}
-        {fitCalls.length > 0 && (
-          <div style={{ marginBottom: "28px" }}>
-            <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: INK, display: "block", marginBottom: "10px" }}>
-              {fitCalls.length} fit call{fitCalls.length > 1 ? "s" : ""} — you decide who gets drafted
-            </span>
-            {fitCalls.map((f) => (
-              <div key={f.id} style={{ ...card, border: `2px solid ${CRIMSON}` }}>
+            the machine scores voice-fit; the human decides who fits). Split
+            hard by contactability (founder 2026-07-07): email-in-hand people
+            are one decision from a send; no-email people are a different kind
+            of work (a DM or a form, delivered by hand). */}
+        {fitCalls.length > 0 &&
+          (() => {
+            const withEmail = fitCalls.filter((f) => extractEmail(f.contact_path));
+            const noEmail = fitCalls.filter((f) => !extractEmail(f.contact_path));
+            const fitCard = (f: FitRow, manual: boolean) => (
+              <div key={f.id} style={{ ...card, border: `2px solid ${manual ? INK : CRIMSON}` }}>
                 <div style={{ display: "flex", alignItems: "baseline", gap: "12px", flexWrap: "wrap", marginBottom: "6px" }}>
                   <span style={{ fontFamily: DISPLAY, fontStyle: "italic", fontWeight: 900, fontSize: "30px", lineHeight: 1, color: INK }}>
                     {f.voice_fit ?? "—"}
@@ -694,9 +703,13 @@ export default async function TowerPage({
                     {f.name}
                   </Link>
                   <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED }}>{f.surface ?? ""}</span>
-                  {!extractEmail(f.contact_path) && (
-                    <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".12em", textTransform: "uppercase", color: "#FFFFFF", background: CRIMSON, padding: "4px 8px" }}>
-                      no email — drafts to manual channel
+                  {manual ? (
+                    <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".12em", textTransform: "uppercase", color: "#FFFFFF", background: INK, padding: "4px 8px" }}>
+                      no email — DM / form, by hand
+                    </span>
+                  ) : (
+                    <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".12em", textTransform: "uppercase", color: "#2E7D32", border: "1px solid #CDE7CE", padding: "3px 8px" }}>
+                      ✉ email in hand
                     </span>
                   )}
                 </div>
@@ -725,9 +738,28 @@ export default async function TowerPage({
                   </Link>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+            );
+            return (
+              <div style={{ marginBottom: "28px" }}>
+                {withEmail.length > 0 && (
+                  <>
+                    <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: INK, display: "block", marginBottom: "10px" }}>
+                      {withEmail.length} fit call{withEmail.length > 1 ? "s" : ""} · ✉ email in hand — one decision from a send
+                    </span>
+                    {withEmail.map((f) => fitCard(f, false))}
+                  </>
+                )}
+                {noEmail.length > 0 && (
+                  <>
+                    <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: MUTED, display: "block", margin: "18px 0 10px" }}>
+                      {noEmail.length} fit call{noEmail.length > 1 ? "s" : ""} · no email — manual channel (DM / form, delivered by hand)
+                    </span>
+                    {noEmail.map((f) => fitCard(f, true))}
+                  </>
+                )}
+              </div>
+            );
+          })()}
 
         {/* Drafts ready to send — the draft house */}
         {drafts.length > 0 && (
@@ -751,14 +783,24 @@ export default async function TowerPage({
                 </form>
               )}
             </div>
+            {firstManualId && drafts[0] && (drafts[0].send_channel ?? "email") === "email" && (
+              <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: "#2E7D32", display: "block", marginBottom: "10px" }}>
+                ✉ email — Ready arms, Send now fires
+              </span>
+            )}
             {drafts.map((d) => {
               const channel = d.send_channel ?? "email";
               const isManual = channel === "manual";
               const isArmed = !isManual && d.status === "approved";
               return (
+                <div key={d.id}>
+                {d.id === firstManualId && (
+                  <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: MUTED, display: "block", margin: "18px 0 10px" }}>
+                    manual channel — no email; you deliver these by hand (DM / form), then Mark sent
+                  </span>
+                )}
                 <div
-                  key={d.id}
-                  style={isArmed ? { ...card, borderLeft: "3px solid #2E7D32" } : card}
+                  style={isArmed ? { ...card, borderLeft: "3px solid #2E7D32" } : isManual ? { ...card, borderLeft: `3px solid ${INK}` } : card}
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px", flexWrap: "wrap" }}>
                     <span style={tierChip(d.tier)}>{d.tier}</span>
@@ -859,6 +901,7 @@ export default async function TowerPage({
                       </TowerButton>
                     </form>
                   </details>
+                </div>
                 </div>
               );
             })}
