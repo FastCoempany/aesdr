@@ -91,7 +91,7 @@ export default async function TowerPage({
   // ── Every working candidate (the ledger's rows) ──
   const { data: pipeRows, error: pipeErr } = await supabase
     .from("partner_pipeline")
-    .select("id, name, surface, voice_fit, status, why_fit, contact_path, first_touch_at, ladder_step, updated_at")
+    .select("id, name, surface, voice_fit, status, why_fit, contact_path, first_touch_at, ladder_step, updated_at, dossier_brief")
     .in("status", ["sourced", "enriched", "contacted", "replied"])
     .eq("motion", "affiliate")
     .order("updated_at", { ascending: true })
@@ -108,6 +108,7 @@ export default async function TowerPage({
     first_touch_at: string | null;
     ladder_step: number | null;
     updated_at: string;
+    dossier_brief: { verdict?: string | null; conflict?: string | null } | null;
   };
   const people = (pipeRows ?? []) as PipeRow[];
   const byId = new Map(people.map((p) => [p.id, p]));
@@ -417,15 +418,27 @@ export default async function TowerPage({
                 <tr className={twr.sect}><td colSpan={7}>needs you · {needsYouCount}</td></tr>
               )}
 
-              {/* 1 — fit calls */}
-              {fitCalls.map((p) => (
+              {/* 1 — fit calls. The "waiting on" cell leads with THE CALL
+                  (the machine's verdict), not the voice-fit number — a 5/5
+                  voice with a hard conflict is still a skip. */}
+              {fitCalls.map((p) => {
+                const v = p.dossier_brief?.verdict ?? null;
+                const cf = p.dossier_brief?.conflict ?? null;
+                const callWord = v === "reach_out" ? "reach out" : v === "skip" ? "SKIP" : v === "needs_research" ? "needs research" : "—";
+                const callColor = v === "reach_out" ? "#2E7D32" : v === "skip" ? CRIMSON : MUTED;
+                return (
                 <tr key={p.id}>
                   <td className={twr.nm}>{roomLink(p)}</td>
                   <td className={twr.mo}>fit call</td>
                   <td className={twr.num}>{p.voice_fit ?? "—"}/5</td>
                   <td>{mailCell(p)}</td>
                   <td className={twr.num}>—</td>
-                  <td className={twr.mo}>your fit call — score is advisory</td>
+                  <td className={twr.mo}>
+                    <span style={{ color: callColor, fontWeight: 700 }}>{callWord}</span>
+                    {(cf === "hard" || cf === "soft") && (
+                      <span className={`${twr.tinychip} ${twr.warn}`} style={{ marginLeft: "6px" }}>conflict: {cf}</span>
+                    )}
+                  </td>
                   <td className={twr.act}>
                     <span style={{ display: "inline-flex", gap: "6px" }}>
                       <form action={draftNow} style={{ display: "inline" }}>
@@ -440,7 +453,8 @@ export default async function TowerPage({
                     </span>
                   </td>
                 </tr>
-              ))}
+                );
+              })}
 
               {/* 2 — drafts in the house */}
               {draftPeople.map((p) => {

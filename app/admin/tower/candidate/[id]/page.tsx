@@ -344,38 +344,74 @@ export default async function CandidateRoomPage({
         </div>
       )}
 
-      {/* ── The fit call (founder 2026-07-07): the machine scored, you decide.
-            Standout by design — nothing drafts until one of these is pressed. ── */}
+      {/* ── The fit call (founder 2026-07-07, revised: lead with THE CALL, not
+            the voice-fit score). Voice-fit measures only whether they SOUND
+            like AESDR — it is not overall fit. The machine's actual
+            recommendation is the verdict, which weighs the conflict; a 5/5
+            voice with a hard conflict is still a SKIP. Surface the call big,
+            the score and conflict as sub-signals. You still decide. ── */}
       {status === "enriched" &&
         (brief || hasLegacyBrief) &&
-        !drafts.some((d) => ["ready", "approved", "sent"].includes(d.status as string)) && (
-          <div style={{ ...card, border: `2px solid ${CRIMSON}` }}>
-            <div style={{ display: "flex", alignItems: "baseline", gap: "12px", flexWrap: "wrap", marginBottom: "8px" }}>
-              <span style={{ fontFamily: DISPLAY, fontStyle: "italic", fontWeight: 900, fontSize: "34px", lineHeight: 1, color: INK }}>
-                {vf ?? "—"}
-              </span>
-              <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".14em", textTransform: "uppercase", color: MUTED }}>
-                / 5 · machine score — advisory only. Your call decides.
-              </span>
-              {!hasEmail && (
-                <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".12em", textTransform: "uppercase", color: "#FFFFFF", background: CRIMSON, padding: "4px 8px" }}>
-                  no email — drafts to manual channel (DM / form)
+        !drafts.some((d) => ["ready", "approved", "sent"].includes(d.status as string)) &&
+        (() => {
+          const verdict = brief?.verdict ?? null;
+          const conflict = (brief?.conflict as string | null) ?? null;
+          const callColor = verdict === "reach_out" ? GREEN : verdict === "skip" ? CRIMSON : MUTED;
+          const callWord =
+            verdict === "reach_out" ? "Reach out"
+            : verdict === "skip" ? "Skip"
+            : verdict === "needs_research" ? "Needs more research"
+            : "No structured call";
+          const conflictHot = conflict === "hard" || conflict === "soft";
+          return (
+            <div style={{ ...card, border: `2px solid ${callColor}` }}>
+              {/* THE CALL — the machine's actual recommendation, dominant. */}
+              <div style={{ display: "flex", alignItems: "baseline", gap: "12px", flexWrap: "wrap", marginBottom: "10px" }}>
+                <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".2em", textTransform: "uppercase", color: MUTED }}>
+                  the machine says
                 </span>
+                <span style={{ fontFamily: DISPLAY, fontStyle: "italic", fontWeight: 900, fontSize: "30px", lineHeight: 1, color: callColor }}>
+                  {callWord}
+                </span>
+              </div>
+              {/* Sub-signals: voice-fit (voice match ONLY) + conflict + email. */}
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "12px" }}>
+                <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".08em", color: MUTED }}>
+                  voice match <strong style={{ color: INK, fontSize: "12px" }}>{vf ?? "—"}/5</strong> <span style={{ color: MUTED }}>(sounds like AESDR — not overall fit)</span>
+                </span>
+                {conflict && (
+                  <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".08em", textTransform: "uppercase", color: conflictHot ? "#FFFFFF" : MUTED, background: conflictHot ? CRIMSON : "transparent", border: conflictHot ? "none" : `1px solid ${LIGHT}`, padding: "3px 8px" }}>
+                    conflict: {conflict}
+                  </span>
+                )}
+                {!hasEmail && (
+                  <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".12em", textTransform: "uppercase", color: "#FAF7F2", background: INK, padding: "3px 8px" }}>
+                    no email — DM / form
+                  </span>
+                )}
+              </div>
+              {brief?.conflict_note && conflictHot && (
+                <p style={{ fontFamily: SERIF, fontSize: "13px", lineHeight: 1.5, color: INK, margin: "0 0 12px", borderLeft: `2px solid ${CRIMSON}`, paddingLeft: "10px" }}>
+                  {brief.conflict_note}
+                </p>
               )}
+              <p style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".06em", color: MUTED, margin: "0 0 10px" }}>
+                Advisory only — your call decides. Draft them anyway, or bin them.
+              </p>
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                <form action={draftNow}>
+                  <input type="hidden" name="id" value={id} />
+                  <TowerButton pendingLabel="Drafting…">Draft them</TowerButton>
+                </form>
+                <form action={rejectSourced}>
+                  <input type="hidden" name="id" value={id} />
+                  <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
+                  <TowerButton variant="ghost" pendingLabel="Binning…">Bin them</TowerButton>
+                </form>
+              </div>
             </div>
-            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-              <form action={draftNow}>
-                <input type="hidden" name="id" value={id} />
-                <TowerButton pendingLabel="Drafting…">Fits — draft them</TowerButton>
-              </form>
-              <form action={rejectSourced}>
-                <input type="hidden" name="id" value={id} />
-                <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
-                <TowerButton variant="ghost" pendingLabel="Binning…">Doesn&rsquo;t fit — bin</TowerButton>
-              </form>
-            </div>
-          </div>
-        )}
+          );
+        })()}
 
       {/* ── Hands-off state (founder 2026-07-07): they replied — the machine
             stays out until you move them. ── */}
