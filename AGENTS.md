@@ -55,6 +55,31 @@ Naming separation:
   channel partners only.
 <!-- END:consumer-brand-voice-canon -->
 
+<!-- BEGIN:mockup-direction-canon -->
+# Mockup direction canon (ratified by founder 2026-07-14)
+
+Applies to every design mockup / triptych produced for any AESDR surface,
+from this date forward:
+
+- **Forbidden mockup styles** — rejected by the founder; never propose again:
+  `classified` / intelligence-file, `dossier`, `ledger` / blotter, `editorial` /
+  magazine-feature, `scouting` / player card, `split` / two-pane, `decision card`
+  — plus any other stock register an LLM reaches for by default (dashboard
+  tiles, kanban cards, court docket, cockpit, tabs-as-stations,
+  receipt/ticket, generic "clean SaaS admin").
+- **Prospective only.** Surfaces already approved and built in one of these
+  styles (e.g. the tower home's thin table) stay as built — this rule bans
+  *proposing* the style again, not the shipped work.
+- **Derive new directions from AESDR's own world**, not generic object
+  metaphors: the iris accent, Playfair display, Space Mono taxonomy, the
+  Caveat margin-note voice, the agent personae (scout / dossier / warden),
+  the landing zoom-sequence, the mascot. If a direction could be pitched to
+  any other company unchanged, it isn't an AESDR direction.
+- **Delivery format**: every mockup set ships BOTH as a hosted artifact link
+  AND a downloadable browser-openable HTML file, with real brand fonts
+  (public/fonts) inlined where feasible and the iris rendered live.
+<!-- END:mockup-direction-canon -->
+
 <!-- BEGIN:brand-palette -->
 # Brand palette — RETIRED vs ACTIVE
 
