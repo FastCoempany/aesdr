@@ -133,6 +133,26 @@ export default async function CandidateRoomPage({
     .order("created_at", { ascending: true });
   const drafts = draftRows ?? [];
 
+  // Delivery stamps for their sent drafts (partner_sent_log, fed by the Resend
+  // webhook). Selected defensively: pre-migration the columns don't exist and
+  // the proof strip simply shows "delivery pending".
+  const deliveryByQueue = new Map<string, { status: string | null; at: string | null }>();
+  {
+    const sentIds = drafts.filter((d) => d.status === "sent").map((d) => d.id as string);
+    if (sentIds.length > 0) {
+      const { data: logRows } = await supabase
+        .from("partner_sent_log")
+        .select("queue_id, delivery_status, delivered_at")
+        .in("queue_id", sentIds);
+      for (const l of logRows ?? []) {
+        deliveryByQueue.set(l.queue_id as string, {
+          status: (l.delivery_status as string | null) ?? null,
+          at: (l.delivered_at as string | null) ?? null,
+        });
+      }
+    }
+  }
+
   // Their replies.
   const { data: replyRows } = await supabase
     .from("partner_inbound_email")
@@ -727,6 +747,21 @@ export default async function CandidateRoomPage({
                     <strong style={{ color: GREEN }}>sent ✓</strong>{" "}
                     {d.sent_at ? `${new Date(d.sent_at as string).toUTCString().slice(17, 22)} UTC · ${timeAgo(d.sent_at as string)}` : ""} → {d.to_addr as string}
                     {d.resend_id ? <><br />resend id {d.resend_id as string}</> : null}
+                    <br />
+                    {(() => {
+                      const del = deliveryByQueue.get(d.id as string);
+                      if (del?.status === "delivered") {
+                        return (
+                          <strong style={{ color: GREEN }}>
+                            delivered ✓{del.at ? ` ${new Date(del.at).toUTCString().slice(17, 22)} UTC` : ""}
+                          </strong>
+                        );
+                      }
+                      if (del?.status === "bounced" || del?.status === "complained") {
+                        return <strong style={{ color: CRIMSON }}>{del.status} — address suppressed, don&apos;t resend</strong>;
+                      }
+                      return <span style={{ color: MUTED }}>delivery pending — stamps when Resend confirms</span>;
+                    })()}
                     <br />
                     copy BCC&apos;d to your inbox · in the sent record
                   </div>

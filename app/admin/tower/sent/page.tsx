@@ -30,11 +30,30 @@ function fmt(ts: string): string {
 export default async function SentRecordPage() {
   const supabase = createAdminClient();
 
-  const { data: lines, error } = await supabase
-    .from("partner_sent_log")
-    .select("queue_id, to_addr, subject, tier, resend_id, sent_at")
-    .order("sent_at", { ascending: false })
-    .limit(300);
+  // delivery_status/delivered_at need 20260715_sent_log_delivery.sql — fall
+  // back to the pre-migration shape so the page never breaks on 42703.
+  let deliveryLive = true;
+  let lines: Array<Record<string, unknown>> | null = null;
+  let error: { message: string } | null = null;
+  {
+    const res = await supabase
+      .from("partner_sent_log")
+      .select("queue_id, to_addr, subject, tier, resend_id, sent_at, delivery_status, delivered_at")
+      .order("sent_at", { ascending: false })
+      .limit(300);
+    lines = res.data;
+    error = res.error;
+  }
+  if (error) {
+    deliveryLive = false;
+    const res = await supabase
+      .from("partner_sent_log")
+      .select("queue_id, to_addr, subject, tier, resend_id, sent_at")
+      .order("sent_at", { ascending: false })
+      .limit(300);
+    lines = res.data;
+    error = res.error;
+  }
   if (error) throw new Error(error.message);
   const rows = lines ?? [];
 
@@ -90,7 +109,7 @@ export default async function SentRecordPage() {
           <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: MONO, fontSize: "11.5px" }}>
             <thead>
               <tr>
-                {["sent", "to", "who", "subject", "tier", "resend id"].map((h) => (
+                {["sent", "to", "who", "subject", "delivery", "tier", "resend id"].map((h) => (
                   <th
                     key={h}
                     style={{
@@ -134,6 +153,17 @@ export default async function SentRecordPage() {
                     <td style={{ padding: "8px 12px", borderBottom: `1px solid ${LIGHT}`, maxWidth: "340px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       &ldquo;{r.subject as string}&rdquo;
                     </td>
+                    <td style={{ padding: "8px 12px", borderBottom: `1px solid ${LIGHT}`, whiteSpace: "nowrap" }}>
+                      {r.delivery_status === "delivered" ? (
+                        <span style={{ color: GREEN, fontWeight: 700 }}>
+                          delivered ✓{r.delivered_at ? ` ${fmt(r.delivered_at as string).slice(-9)}` : ""}
+                        </span>
+                      ) : r.delivery_status === "bounced" || r.delivery_status === "complained" ? (
+                        <span style={{ color: CRIMSON, fontWeight: 700 }}>{r.delivery_status as string} — suppressed</span>
+                      ) : (
+                        <span style={{ color: MUTED }}>{deliveryLive ? "awaiting event" : "—"}</span>
+                      )}
+                    </td>
                     <td style={{ padding: "8px 12px", borderBottom: `1px solid ${LIGHT}`, color: MUTED, whiteSpace: "nowrap" }}>
                       {(r.tier as string | null) ?? "—"}
                     </td>
@@ -149,7 +179,9 @@ export default async function SentRecordPage() {
       )}
 
       <p style={{ fontFamily: MONO, fontSize: "10px", color: MUTED, letterSpacing: ".06em", margin: "14px 0 0", lineHeight: 1.8 }}>
-        when the delivery webhook ships, a &ldquo;delivered ✓ / bounced&rdquo; column joins this table.
+        {deliveryLive
+          ? "delivery stamps arrive from resend's webhook — make sure the email.delivered event is enabled on /api/webhooks/resend in the resend dashboard."
+          : "delivery column pending — run supabase/migrations/20260715_sent_log_delivery.sql in the supabase sql editor, then enable the email.delivered event on /api/webhooks/resend in the resend dashboard."}
       </p>
     </main>
   );

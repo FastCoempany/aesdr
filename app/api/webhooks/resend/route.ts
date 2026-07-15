@@ -63,15 +63,46 @@ export async function POST(request: Request) {
 
   // Svix signature verification against the raw (unparsed) body.
   const wh = new Webhook(secret);
-  let evt: { type: string; data: { to?: unknown; email?: unknown } };
+  let evt: { type: string; data: { to?: unknown; email?: unknown; email_id?: unknown } };
   try {
     evt = wh.verify(rawBody, {
       "svix-id": request.headers.get("svix-id") ?? "",
       "svix-timestamp": request.headers.get("svix-timestamp") ?? "",
       "svix-signature": request.headers.get("svix-signature") ?? "",
-    }) as { type: string; data: { to?: unknown; email?: unknown } };
+    }) as { type: string; data: { to?: unknown; email?: unknown; email_id?: unknown } };
   } catch {
     return new NextResponse("invalid signature", { status: 400 });
+  }
+
+  // ── The delivered stamp (founder 2026-07-15): proof level 2 for the
+  // one-press send. Any terminal event stamps the matching partner_sent_log
+  // line by Resend message id — lifecycle emails aren't in that table, so the
+  // update is a no-op for them. Best-effort by design: a stamp failure must
+  // never block the suppression write below.
+  const emailId = typeof evt.data?.email_id === "string" ? evt.data.email_id : null;
+  async function stampDelivery(status: "delivered" | "bounced" | "complained") {
+    if (!emailId) return;
+    try {
+      const admin = createAdminClient();
+      const patch: { delivery_status: string; delivered_at?: string } = { delivery_status: status };
+      if (status === "delivered") patch.delivered_at = new Date().toISOString();
+      const { error } = await admin.from("partner_sent_log").update(patch).eq("resend_id", emailId);
+      if (error) {
+        // 42703 = the migration (20260715_sent_log_delivery.sql) isn't applied
+        // yet — log once per event, still acknowledge.
+        console.error("[resend-webhook] delivery stamp failed:", error.message);
+      }
+    } catch (err) {
+      console.error(
+        "[resend-webhook] delivery stamp errored:",
+        err instanceof Error ? err.message : err,
+      );
+    }
+  }
+
+  if (evt.type === "email.delivered") {
+    await stampDelivery("delivered");
+    return NextResponse.json({ ok: true, stamped: emailId != null });
   }
 
   let reason: "bounce" | "complaint";
@@ -86,8 +117,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ ignored: true, bounceType });
     }
     reason = "bounce";
+    await stampDelivery("bounced");
   } else if (evt.type === "email.complained") {
     reason = "complaint";
+    await stampDelivery("complained");
   } else {
     // Acknowledge other event types so Resend stops retrying — no-op.
     return NextResponse.json({ ignored: true });
