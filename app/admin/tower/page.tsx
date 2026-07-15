@@ -1,9 +1,10 @@
 export const dynamic = "force-dynamic";
 // Scout sweeps post to this page and run a live web_search loop that emits
-// 12-15 candidates — it self-caps at SCOUT_BUDGET_MS (150s), so the route
-// needs headroom above that. Pro allows up to 300s; 180 sits comfortably above
-// the sweep's budget so an overrun is a caught "timed out", not a hard kill.
-export const maxDuration = 180;
+// 12-15 candidates (self-capped at SCOUT_BUDGET_MS, 150s) — and since the
+// warren consolidation, the same invocation continues in after() to run the
+// whole catch's briefs + email hunts in parallel (≈ one brief's duration,
+// 60–120s). 300 is Pro's ceiling and covers sweep + the after() batch.
+export const maxDuration = 300;
 
 import Link from "next/link";
 

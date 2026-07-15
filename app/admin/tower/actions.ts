@@ -2,8 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 
 import { requireAdmin } from "@/lib/admin";
+import { runBriefAndSave } from "@/lib/partnerships/brief";
+import { createDossierRun } from "@/lib/partnerships/dossier-run";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { canonCheck } from "@/lib/partnerships/canon-mechanical";
 import { runAffiliatePayoutBatch } from "@/app/actions/affiliate";
@@ -523,6 +526,12 @@ export async function runScoutSweepAction(formData: FormData) {
         (existing ?? []).map((e) => (e.name as string).toLowerCase()),
       );
 
+      // The warren consolidation (founder 2026-07-15): no fits/promote gate.
+      // Everyone the sweep finds is promoted automatically and the whole line
+      // runs behind the one click — fit call → research brief → email hunt —
+      // so what lands on the floor is a finished card. The human gate moves to
+      // where it belongs: the reach-out/skip verdict stays advisory, and
+      // nothing drafts or sends without a press in the room.
       const inserts = rows
         .filter((r) => !have.has(r.name.toLowerCase()))
         .map((r) => ({
@@ -533,29 +542,65 @@ export async function runScoutSweepAction(formData: FormData) {
           archetype: r.archetype,
           audience_est: r.audience_est,
           voice_fit: r.voice_fit,
-          status: "sourced", // human review before promotion to 'enriched'
+          status: "enriched", // auto-promoted; the brief runs next
           contact_path: r.contact_path,
           why_fit: `${r.why_fit} [scout/${sweep}, ${user.email}]`,
           source_agent: `scout-tower:${sweep}`,
-          next_action: "Review and accept, or reject",
+          next_action: "Preparing — fit call, brief & address hunt are running",
         }));
 
+      let createdIds: string[] = [];
       if (inserts.length > 0) {
         const { data: created, error } = await supabase
           .from("partner_pipeline")
           .insert(inserts)
           .select("id");
         if (error) throw new Error(error.message);
+        createdIds = (created ?? []).map((c) => c.id as string);
         await logPartnerEvents(
-          (created ?? []).map((c) => ({
-            pipelineId: c.id as string,
-            actor: "scout",
-            kind: "sourced",
-            detail: { sweep, model, triggered_by: user.email },
-          })),
+          createdIds.flatMap((pid) => [
+            { pipelineId: pid, actor: "scout", kind: "sourced", detail: { sweep, model, triggered_by: user.email } },
+            { pipelineId: pid, actor: "sweep-auto", kind: "promoted", detail: { to: "enriched", via: "sweep consolidation" } },
+          ]),
         );
       }
       inserted = inserts.length;
+
+      // Brief + email hunt for the whole catch, in the background. Runs in
+      // parallel so the batch fits the function window (one brief ≈ 60–120s;
+      // sequential wouldn't). Wall math: assertUnderDailyWall was checked
+      // before the sweep, so a batch can overshoot the $10 wall by at most its
+      // own briefs' cost — the wall is a day-scale brake, not an intra-batch
+      // one. Each candidate re-checks right before it starts, catching any
+      // spend that landed since.
+      if (createdIds.length > 0) {
+        const actor = user.email ?? "admin";
+        after(async () => {
+          const results = await Promise.allSettled(
+            createdIds.map(async (pid) => {
+              await assertUnderDailyWall();
+              const runId = await createDossierRun(pid, actor);
+              await runBriefAndSave(pid, actor, runId);
+            }),
+          );
+          const supabaseBg = createAdminClient();
+          await Promise.all(
+            results.map((res, i) => {
+              if (res.status === "fulfilled") return Promise.resolve();
+              const msg = res.reason instanceof Error ? res.reason.message : String(res.reason);
+              console.error(`[sweep-auto] brief for ${createdIds[i]} failed:`, msg);
+              return supabaseBg
+                .from("partner_pipeline")
+                .update({
+                  next_action: `Auto-prepare didn't finish (${msg.slice(0, 140)}) — run the brief from their room.`,
+                  updated_at: new Date().toISOString(),
+                })
+                .eq("id", createdIds[i])
+                .then(() => undefined);
+            }),
+          );
+        });
+      }
     }
   } catch (e) {
     failure = e instanceof Error ? e.message : String(e);
