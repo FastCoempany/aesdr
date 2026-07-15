@@ -31,9 +31,12 @@ type Note = { kind: "shimmer" | "ok" | "err"; text: string };
 export default function ScoutSweepButton({
   sweep,
   label,
+  sub,
 }: {
   sweep: string;
   label: string;
+  /** Rest-state sub-line, e.g. "last swept jul 02 · brought 6". */
+  sub?: string;
 }) {
   const router = useRouter();
   const [confirm, confirmModal] = useConfirm();
@@ -162,16 +165,20 @@ export default function ScoutSweepButton({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
       {confirmModal}
+      {/* The hunt lives in the button (founder direction I): while a sweep
+          runs, the button itself turns ink, fills with the iris tide, and its
+          sub-line carries the live phase — fit ✓ brief ✓ addresses… */}
       <button
         type="button"
-        className={`${styles.btn} ${styles.outline}`}
+        className={`${styles.sweepBtn} ${busy ? styles.sweepBtnRunning : ""}`}
         disabled={busy}
         aria-busy={busy}
         onClick={start}
       >
-        {busy ? "Searching…" : label}
+        {busy && <span className={styles.sweepFill} aria-hidden />}
+        <span className={styles.sweepNm}>{label}</span>
+        <span className={styles.sweepSub}>{busy ? (live ?? "out hunting…") : (sub ?? "")}</span>
       </button>
-      {live && <span className={styles.sweepLive}>{live}</span>}
       {note &&
         (note.kind === "shimmer" ? (
           <span className={styles.sweepShimmer}>{note.text}</span>

@@ -1,21 +1,13 @@
 export const dynamic = "force-dynamic";
-// Scout sweeps post to this page and run a live web_search loop that emits
-// 12-15 candidates (self-capped at SCOUT_BUDGET_MS, 150s) — and since the
-// warren consolidation, the same invocation continues in after() to run the
-// whole catch's briefs + email hunts in parallel (≈ one brief's duration,
-// 60–120s). 300 is Pro's ceiling and covers sweep + the after() batch.
-export const maxDuration = 300;
+// Sweeps moved to /api/admin/run-sweep (which carries its own 300s ceiling for
+// the search loop + the warren's prepare batch). This page still hosts slower
+// actions — runDossierNow runs a research brief inline — so it keeps headroom.
+export const maxDuration = 180;
 
 import Link from "next/link";
 
 import { createAdminClient } from "@/utils/supabase/admin";
-import {
-  approveDraft,
-  sendNow,
-  approveAllReady,
-  releaseDraft,
-  markManualSent,
-} from "./actions";
+import { releaseDraft } from "./actions";
 import PayoutButton from "./PayoutButton";
 import AgentLever from "./AgentLever";
 import ScoutSweepButton from "./ScoutSweepButton";
@@ -23,24 +15,24 @@ import ModelSelector from "./ModelSelector";
 import TowerButton from "./TowerButton";
 import Hint from "./Hint";
 import twr from "./tower.module.css";
-import { rejectSourced, draftNow, markReplied, resumeOutreach } from "./actions";
+import PostageStrip from "./PostageStrip";
+import WarrenBand, { type WarrenCard, type SweepRing } from "./WarrenBand";
 import {
   PARTNER_AGENTS,
   AGENT_MODEL_DEFAULTS,
 } from "@/lib/partnerships/agent-switch";
-import { getTodaySpendUsd, getTodayEmailCredits } from "@/lib/partnerships/spend";
+import { getTodaySpendUsd, getTodayEmailCredits, DAILY_WALL_USD } from "@/lib/partnerships/spend";
 import { extractEmail } from "@/lib/partnerships/outreach-templates";
 import { getSuppressedEmails } from "@/lib/email";
-import SpendMeter from "./SpendMeter";
-import AcceptPrepareButton from "./candidate/[id]/RunBriefButton";
 
 /**
- * The ledger (founder pick 2026-07-07, second-pass triptych): the tower is ONE
- * thin table of every working candidate, sorted so rows whose next move is
- * YOURS float to the top and rows waiting on the world sink. Stage is a
- * column, not a section. Everything that used to be a section is now either a
- * row group, a conditional block (payouts / shelf, only when nonempty), or a
- * line in the machinery drawer at the bottom.
+ * The warren (founder pick 2026-07-15, direction I revised): the tower is his
+ * floor. Three thin sweep buttons send Leponeus out — the running button IS
+ * the status, filling with the iris tide while fit → brief → address hunt run
+ * for the whole catch. What lands is finished cards in THE BAND, which flips
+ * in place between the strip (working depth) and the territory (pulled back).
+ * A card is a door; drafting and the ceramic one-press send live in the room.
+ * Postage (the $10 wall) sits in the masthead as stamps.
  *
  * Deliberately gone (same founder pass): the signal lanes (nothing writes
  * partner_signals since sentinel was deleted — bright alerts arrive by email),
@@ -92,7 +84,7 @@ export default async function TowerPage({
   // ── Every working candidate (the ledger's rows) ──
   const { data: pipeRows, error: pipeErr } = await supabase
     .from("partner_pipeline")
-    .select("id, name, surface, voice_fit, status, why_fit, contact_path, first_touch_at, ladder_step, updated_at, dossier_brief")
+    .select("id, name, surface, voice_fit, status, why_fit, contact_path, first_touch_at, ladder_step, updated_at, dossier_brief, source_agent, next_action")
     .in("status", ["sourced", "enriched", "contacted", "replied"])
     .eq("motion", "affiliate")
     .order("updated_at", { ascending: true })
@@ -110,6 +102,8 @@ export default async function TowerPage({
     ladder_step: number | null;
     updated_at: string;
     dossier_brief: { verdict?: string | null; conflict?: string | null } | null;
+    source_agent: string | null;
+    next_action: string | null;
   };
   const people = (pipeRows ?? []) as PipeRow[];
   const byId = new Map(people.map((p) => [p.id, p]));
@@ -140,9 +134,6 @@ export default async function TowerPage({
       draftByPipeline.set(d.related_pipeline_id, d);
     }
   }
-  const emailReadyCount = drafts.filter(
-    (d) => (d.send_channel ?? "email") === "email" && d.status === "ready",
-  ).length;
   const suppressedSet = await getSuppressedEmails(
     drafts.filter((d) => (d.send_channel ?? "email") === "email").map((d) => d.to_addr),
   );
@@ -258,7 +249,7 @@ export default async function TowerPage({
     },
   };
 
-  // ── The spend meter ──
+  // ── The spend meter (postage) ──
   let spentUsd = 0;
   let ledgerBroken = false;
   try {
@@ -267,6 +258,34 @@ export default async function TowerPage({
     ledgerBroken = true; // paid runs fail closed; say so instead of showing $0
   }
   const emailCredits = await getTodayEmailCredits();
+
+  // ── Sweep sub-lines + territory ring labels: last swept · brought N ──
+  const SWEEP_LABELS: Record<string, string> = {
+    communities: "communities",
+    newsletters_podcasts: "newsletters & podcasts",
+    practitioners: "practitioners",
+  };
+  const { data: sourcedEvents } = await supabase
+    .from("partner_events")
+    .select("detail, created_at")
+    .eq("kind", "sourced")
+    .order("created_at", { ascending: false })
+    .limit(400);
+  const sweepMeta: Record<string, { last: string; brought: number }> = {};
+  for (const ev of sourcedEvents ?? []) {
+    const sweepId = (ev.detail as { sweep?: string } | null)?.sweep;
+    if (!sweepId || !SWEEP_LABELS[sweepId]) continue;
+    const day = (ev.created_at as string).slice(0, 10);
+    if (!sweepMeta[sweepId]) sweepMeta[sweepId] = { last: day, brought: 1 };
+    else if (sweepMeta[sweepId].last === day) sweepMeta[sweepId].brought += 1;
+  }
+  const sweepSub = (id: string): string => {
+    const m = sweepMeta[id];
+    if (!m) return "never swept";
+    const d = new Date(m.last + "T00:00:00Z");
+    const nice = d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).toLowerCase();
+    return `last swept ${nice} · brought ${m.brought}`;
+  };
 
   // ── Assemble the ledger's row groups (needs-you first, then the world) ──
   const hasBrief = (p: PipeRow) => (p.why_fit ?? "").includes("[dossier]");
@@ -286,33 +305,96 @@ export default async function TowerPage({
   const contacted = people.filter((p) => p.status === "contacted");
   const inConvo = people.filter((p) => p.status === "replied");
 
-  const needsYouCount =
-    fitCalls.length + draftPeople.length + orphanDrafts.length + briefPending.length + sourced.length;
-  const worldCount = contacted.length + inConvo.length;
   const decisionCount =
     fitCalls.length +
     drafts.length +
     payoutAffiliates.length +
     shelf.filter((s) => s.status === "failed").length;
 
-  // Shared cell fragments
-  const roomLink = (p: { id: string; name: string; why_fit?: string | null }) => (
-    <Link
-      href={`/admin/tower/candidate/${p.id}`}
-      className={twr.lnk}
-      title={(p.why_fit ?? "").slice(0, 300)}
-    >
-      {p.name}
-    </Link>
-  );
-  const mailCell = (p: PipeRow) =>
-    p.status === "sourced" && !hasAddr(p) ? (
-      <span className={twr.tinychip}>?</span>
-    ) : hasAddr(p) ? (
-      <span className={`${twr.tinychip} ${twr.ok}`}>✉</span>
-    ) : (
-      <span className={`${twr.tinychip} ${twr.inkc}`}>DM</span>
-    );
+  // ── The band's cards — finished work first, skips sleep at the back ──
+  const originOf = (p: PipeRow & { source_agent?: string | null }): string | null => {
+    const src = (p as { source_agent?: string | null }).source_agent ?? null;
+    if (!src?.startsWith("scout-tower:")) return null;
+    return SWEEP_LABELS[src.slice("scout-tower:".length)] ?? null;
+  };
+  const cards: WarrenCard[] = [];
+  for (const p of draftPeople) {
+    const d = draftByPipeline.get(p.id)!;
+    const isManual = (d.send_channel ?? "email") === "manual";
+    const isSuppressed = !isManual && suppressedSet.has(d.to_addr.toLowerCase());
+    cards.push({
+      id: p.id,
+      name: p.name,
+      kind: "draft",
+      origin: originOf(p),
+      hasEmail: !isManual,
+      sub: isSuppressed
+        ? "suppressed — will never send"
+        : d.warden_cleared
+          ? `draft clean — “${d.subject.slice(0, 34)}${d.subject.length > 34 ? "…" : ""}” — one press in the room`
+          : "draft needs your edit first",
+    });
+  }
+  for (const d of orphanDrafts) {
+    cards.push({
+      id: d.related_pipeline_id ?? "",
+      name: d.to_addr,
+      kind: "draft",
+      origin: null,
+      hasEmail: (d.send_channel ?? "email") === "email",
+      sub: "orphan draft — no candidate row behind it",
+    });
+  }
+  const verdictOf = (p: PipeRow) => p.dossier_brief?.verdict ?? null;
+  for (const p of fitCalls.filter((p) => verdictOf(p) === "reach_out")) {
+    const cf = p.dossier_brief?.conflict ?? null;
+    cards.push({
+      id: p.id, name: p.name, kind: "reach_out", origin: originOf(p), hasEmail: hasAddr(p),
+      sub: `brief ✓ voice ${p.voice_fit ?? "—"}/5${cf && cf !== "none" ? ` · conflict: ${cf}` : " · no conflict"} — your call`,
+    });
+  }
+  for (const p of fitCalls.filter((p) => verdictOf(p) === "needs_research")) {
+    cards.push({
+      id: p.id, name: p.name, kind: "needs_research", origin: originOf(p), hasEmail: hasAddr(p),
+      sub: "the machine couldn't call it — read the brief",
+    });
+  }
+  for (const p of briefPending) {
+    cards.push({
+      id: p.id, name: p.name, kind: "preparing", origin: originOf(p), hasEmail: hasAddr(p),
+      sub: p.next_action ?? "brief & address hunt running",
+    });
+  }
+  for (const p of sourced) {
+    cards.push({
+      id: p.id, name: p.name, kind: "review", origin: originOf(p), hasEmail: hasAddr(p),
+      sub: "pre-consolidation row — accept & prepare in the room",
+    });
+  }
+  for (const p of contacted) {
+    cards.push({
+      id: p.id, name: p.name, kind: "contacted", origin: originOf(p), hasEmail: hasAddr(p),
+      sub: `last touch ${daysAgo(p.first_touch_at)} · ladder ${p.ladder_step ?? 0} · mark them replied in the room`,
+    });
+  }
+  for (const p of inConvo) {
+    cards.push({
+      id: p.id, name: p.name, kind: "replied", origin: originOf(p), hasEmail: hasAddr(p),
+      sub: "in conversation — hands off, work the thread",
+    });
+  }
+  for (const p of fitCalls.filter((p) => verdictOf(p) === "skip" || verdictOf(p) === null)) {
+    const cf = p.dossier_brief?.conflict ?? null;
+    cards.push({
+      id: p.id, name: p.name, kind: "skip", origin: originOf(p), hasEmail: hasAddr(p),
+      sub: `${cf === "hard" ? "hard conflict" : cf === "soft" ? "soft conflict" : "the machine says pass"} — override in the room`,
+    });
+  }
+  const rings: SweepRing[] = Object.entries(SWEEP_LABELS).map(([id, label]) => ({
+    label,
+    note: sweepMeta[id] ? sweepSub(id).replace("last swept ", "") : "never",
+  }));
+  const coverage = `${cards.length} on the floor · ${(pipeCounts["passed"] ?? 0) + (pipeCounts["cold"] ?? 0)} in the bin · ${sentCount ?? 0} sent all-time`;
 
   const sectionLabel: React.CSSProperties = {
     fontFamily: MONO,
@@ -334,12 +416,13 @@ export default async function TowerPage({
 
   return (
     <div>
-      {/* ── Identity strip ── */}
-      <p style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".3em", textTransform: "uppercase", color: CRIMSON, margin: "0 0 6px" }}>
-        Control Tower · Partnerships · Live
-      </p>
-
-      <SpendMeter spentUsd={spentUsd} emailCredits={emailCredits} ledgerBroken={ledgerBroken} />
+      {/* ── Masthead: the warren + postage ── */}
+      <PostageStrip
+        spentUsd={spentUsd}
+        wallUsd={DAILY_WALL_USD}
+        emailCredits={emailCredits}
+        ledgerBroken={ledgerBroken}
+      />
 
       {/* ── Side rail: the doors, reachable at any scroll depth ── */}
       <nav className={twr.sideRail} aria-label="Tower shortcuts">
@@ -372,7 +455,7 @@ export default async function TowerPage({
               ? "All clear."
               : `${decisionCount} waiting on you.`}
         </h1>
-        <Hint tip="One table, every working candidate. Rows where the next move is yours are on top; rows waiting on the world sink. Names are doors to their rooms (hover a name for the why-fit). Accept & prepare runs research + email hunt (~$0.15–0.60); drafting waits for your fit call; Send now is the only sender." />
+        <Hint tip="The warren: a sweep button runs the whole line — find, fit call, brief, address hunt — and finished cards land in the band below. The band flips between the strip (work the cards) and the territory (everyone as dots). A card is a door to its room, where the draft and the one-press ceramic send live." />
         {decisionLoadFailed && (
           <span style={{ fontFamily: SERIF, fontSize: "13px", color: CRIMSON }}>
             A query errored — treat the table as partial and reload.
@@ -388,255 +471,21 @@ export default async function TowerPage({
       {sweepOk != null && !sweepError && (
         <p style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, margin: "0 0 14px" }}>
           {sweepOk > 0
-            ? `${sweepOk} new candidate${sweepOk > 1 ? "s" : ""} landed at the bottom of the ledger.${sweepSeen > sweepOk ? ` ${sweepSeen - sweepOk} already known, skipped.` : ""}`
+            ? `${sweepOk} new card${sweepOk > 1 ? "s" : ""} landed in the band.${sweepSeen > sweepOk ? ` ${sweepSeen - sweepOk} already known, skipped.` : ""}`
             : "Sweep finished — nothing new that isn't already in the pipeline."}
         </p>
       )}
 
-      {/* ════ THE LEDGER ════ */}
-      {needsYouCount + worldCount === 0 ? (
-        <p style={{ ...card, fontFamily: SERIF, fontSize: "14px", color: MUTED, fontStyle: "italic" }}>
-          The ledger is empty — run a sweep below to fill it.
-        </p>
-      ) : (
-        <div style={{ overflowX: "auto" }}>
-          {emailReadyCount > 1 && (
-            <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "8px" }}>
-              <form action={approveAllReady}>
-                <TowerButton pendingLabel="Arming all…" style={THIN}>
-                  Ready all {emailReadyCount} email drafts
-                </TowerButton>
-              </form>
-            </div>
-          )}
-          <table className={twr.ledger}>
-            <thead>
-              <tr>
-                <th>candidate</th>
-                <th>stage</th>
-                <th>vf</th>
-                <th>✉</th>
-                <th>last touch</th>
-                <th>waiting on</th>
-                <th style={{ textAlign: "right" }}>act</th>
-              </tr>
-            </thead>
-            <tbody>
-              {needsYouCount > 0 && (
-                <tr className={twr.sect}><td colSpan={7}>needs you · {needsYouCount}</td></tr>
-              )}
+      {/* ════ SWEEPS — send him out; the hunt lives in the button ════ */}
+      <div className={twr.sweepRow}>
+        <ScoutSweepButton sweep="communities" label="Communities" sub={sweepSub("communities")} />
+        <ScoutSweepButton sweep="newsletters_podcasts" label="Newsletters & podcasts" sub={sweepSub("newsletters_podcasts")} />
+        <ScoutSweepButton sweep="practitioners" label="Practitioners" sub={sweepSub("practitioners")} />
+        <Hint tip="One press runs the whole line: Claude sweeps the live web (~2–4 min), then every new find is auto-promoted, briefed, verdict-called, and address-hunted before the run reports done (sweep ~$0.50–$2.50 + ~$0.15–0.60 per card, all counted by the postage wall). Nothing drafts or sends without your press in a room." />
+      </div>
 
-              {/* 1 — fit calls. The "waiting on" cell leads with THE CALL
-                  (the machine's verdict), not the voice-fit number — a 5/5
-                  voice with a hard conflict is still a skip. */}
-              {fitCalls.map((p) => {
-                const v = p.dossier_brief?.verdict ?? null;
-                const cf = p.dossier_brief?.conflict ?? null;
-                const callWord = v === "reach_out" ? "reach out" : v === "skip" ? "SKIP" : v === "needs_research" ? "needs research" : "—";
-                const callColor = v === "reach_out" ? "#2E7D32" : v === "skip" ? CRIMSON : MUTED;
-                return (
-                <tr key={p.id}>
-                  <td className={twr.nm}>{roomLink(p)}</td>
-                  <td className={twr.mo}>fit call</td>
-                  <td className={twr.num}>{p.voice_fit ?? "—"}/5</td>
-                  <td>{mailCell(p)}</td>
-                  <td className={twr.num}>—</td>
-                  <td className={twr.mo}>
-                    <span style={{ color: callColor, fontWeight: 700 }}>{callWord}</span>
-                    {(cf === "hard" || cf === "soft") && (
-                      <span className={`${twr.tinychip} ${twr.warn}`} style={{ marginLeft: "6px" }}>conflict: {cf}</span>
-                    )}
-                  </td>
-                  <td className={twr.act}>
-                    <span style={{ display: "inline-flex", gap: "6px" }}>
-                      <form action={draftNow} style={{ display: "inline" }}>
-                        <input type="hidden" name="id" value={p.id} />
-                        <TowerButton pendingLabel="Drafting…" style={THIN}>Fits</TowerButton>
-                      </form>
-                      <form action={rejectSourced} style={{ display: "inline" }}>
-                        <input type="hidden" name="id" value={p.id} />
-                        <input type="hidden" name="return_to" value="/admin/tower" />
-                        <TowerButton variant="ghost" pendingLabel="Binning…" style={THIN}>Bin</TowerButton>
-                      </form>
-                    </span>
-                  </td>
-                </tr>
-                );
-              })}
-
-              {/* 2 — drafts in the house */}
-              {draftPeople.map((p) => {
-                const d = draftByPipeline.get(p.id)!;
-                const isManual = (d.send_channel ?? "email") === "manual";
-                const isSuppressed = !isManual && suppressedSet.has(d.to_addr.toLowerCase());
-                return (
-                  <tr key={p.id}>
-                    <td className={twr.nm}>{roomLink(p)}</td>
-                    <td className={twr.mo}>draft</td>
-                    <td className={twr.num}>{p.voice_fit ?? "—"}/5</td>
-                    <td>{isManual ? <span className={`${twr.tinychip} ${twr.inkc}`}>DM</span> : <span className={`${twr.tinychip} ${twr.ok}`}>✉</span>}</td>
-                    <td className={twr.num}>—</td>
-                    <td className={twr.mo} title={d.personalization_note ?? undefined}>
-                      {isSuppressed ? (
-                        <span className={`${twr.tinychip} ${twr.warn}`}>suppressed — will never send</span>
-                      ) : d.warden_cleared ? (
-                        <span className={`${twr.tinychip} ${twr.ok}`}>clean — skim &amp; send</span>
-                      ) : (
-                        <span className={`${twr.tinychip} ${twr.warn}`}>needs your edit</span>
-                      )}
-                      {" "}
-                      <span style={{ fontFamily: SERIF, fontStyle: "italic", fontSize: "12px", color: MUTED }}>
-                        “{d.subject.length > 44 ? d.subject.slice(0, 44) + "…" : d.subject}”
-                      </span>
-                    </td>
-                    <td className={twr.act}>
-                      <span style={{ display: "inline-flex", gap: "6px" }}>
-                        {!d.warden_cleared && (
-                          <Link href={`/admin/tower/candidate/${p.id}`} className={twr.lnk} style={{ fontFamily: MONO, fontSize: "10px", color: CRIMSON, alignSelf: "center" }}>
-                            edit →
-                          </Link>
-                        )}
-                        {isManual ? (
-                          <form action={markManualSent} style={{ display: "inline" }}>
-                            <input type="hidden" name="id" value={d.id} />
-                            <TowerButton pendingLabel="Marking…" style={THIN}>Mark sent</TowerButton>
-                          </form>
-                        ) : d.status === "approved" ? (
-                          <form action={sendNow} style={{ display: "inline" }}>
-                            <input type="hidden" name="id" value={d.id} />
-                            <TowerButton
-                              pendingLabel="Sending…"
-                              style={THIN}
-                              confirmMessage={`Send this email to ${d.to_addr} now? It goes out immediately and can't be undone.`}
-                            >
-                              Send now
-                            </TowerButton>
-                          </form>
-                        ) : (
-                          <form action={approveDraft} style={{ display: "inline" }}>
-                            <input type="hidden" name="id" value={d.id} />
-                            <TowerButton pendingLabel="Arming…" style={THIN}>Ready</TowerButton>
-                          </form>
-                        )}
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
-              {orphanDrafts.map((d) => (
-                <tr key={d.id}>
-                  <td className={twr.nm}>{d.to_addr}</td>
-                  <td className={twr.mo}>draft</td>
-                  <td className={twr.num}>—</td>
-                  <td><span className={`${twr.tinychip} ${twr.ok}`}>✉</span></td>
-                  <td className={twr.num}>—</td>
-                  <td className={twr.mo}>{d.warden_cleared ? "clean" : "needs your edit"}</td>
-                  <td className={twr.act}>
-                    {d.status === "approved" ? (
-                      <form action={sendNow} style={{ display: "inline" }}>
-                        <input type="hidden" name="id" value={d.id} />
-                        <TowerButton pendingLabel="Sending…" style={THIN} confirmMessage={`Send to ${d.to_addr} now?`}>Send now</TowerButton>
-                      </form>
-                    ) : (
-                      <form action={approveDraft} style={{ display: "inline" }}>
-                        <input type="hidden" name="id" value={d.id} />
-                        <TowerButton pendingLabel="Arming…" style={THIN}>Ready</TowerButton>
-                      </form>
-                    )}
-                  </td>
-                </tr>
-              ))}
-
-              {/* 3 — accepted but the brief never landed */}
-              {briefPending.map((p) => (
-                <tr key={p.id}>
-                  <td className={twr.nm}>{roomLink(p)}</td>
-                  <td className={twr.mo}>research</td>
-                  <td className={twr.num}>{p.voice_fit ?? "—"}/5</td>
-                  <td>{mailCell(p)}</td>
-                  <td className={twr.num}>—</td>
-                  <td className={twr.mo}>a brief — run it from their room</td>
-                  <td className={twr.act}>
-                    <Link href={`/admin/tower/candidate/${p.id}`} className={twr.lnk} style={{ fontFamily: MONO, fontSize: "10px", color: CRIMSON }}>
-                      run brief →
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-
-              {/* 4 — sourced, your review */}
-              {sourced.map((p) => (
-                <tr key={p.id}>
-                  <td className={twr.nm}>{roomLink(p)}</td>
-                  <td className={twr.mo}>sourced</td>
-                  <td className={twr.num}>{p.voice_fit ?? "—"}/5</td>
-                  <td>{mailCell(p)}</td>
-                  <td className={twr.num}>—</td>
-                  <td className={twr.mo}>{(p.surface ?? "").slice(0, 34) || "your review"}</td>
-                  <td className={twr.act}>
-                    <span style={{ display: "inline-flex", gap: "6px", alignItems: "flex-start" }}>
-                      <AcceptPrepareButton
-                        candidateId={p.id}
-                        label="Accept & prep · ~$0.60"
-                        postPath="/api/admin/accept-and-prepare"
-                        confirmText={`Accept ${p.name} and prepare them? Research brief + email hunt run in the background (~2 min, ~$0.15–$0.60 + 1 email credit if an address is found). Drafting waits for your fit call.`}
-                        confirmLabel="Accept & prepare"
-                        busyLabel="Preparing…"
-                        variant="primary"
-                        roomHref={`/admin/tower/candidate/${p.id}`}
-                        thin
-                      />
-                      <form action={rejectSourced} style={{ display: "inline" }}>
-                        <input type="hidden" name="id" value={p.id} />
-                        <TowerButton variant="ghost" pendingLabel="Rejecting…" style={THIN}>Reject</TowerButton>
-                      </form>
-                    </span>
-                  </td>
-                </tr>
-              ))}
-
-              {/* — waiting on the world — */}
-              {worldCount > 0 && (
-                <tr className={twr.sect}><td colSpan={7}>waiting on the world · {worldCount}</td></tr>
-              )}
-              {contacted.map((p) => (
-                <tr key={p.id}>
-                  <td className={twr.nm}>{roomLink(p)}</td>
-                  <td className={twr.mo}>contacted</td>
-                  <td className={twr.num}>{p.voice_fit ?? "—"}/5</td>
-                  <td>{mailCell(p)}</td>
-                  <td className={twr.num}>{daysAgo(p.first_touch_at)}</td>
-                  <td className={twr.mo}>their reply · ladder {p.ladder_step ?? 0}</td>
-                  <td className={twr.act}>
-                    <form action={markReplied} style={{ display: "inline" }}>
-                      <input type="hidden" name="id" value={p.id} />
-                      <input type="hidden" name="return_to" value="/admin/tower" />
-                      <TowerButton variant="ghost" pendingLabel="Marking…" style={THIN}>Replied</TowerButton>
-                    </form>
-                  </td>
-                </tr>
-              ))}
-              {inConvo.map((p) => (
-                <tr key={p.id}>
-                  <td className={twr.nm}>{roomLink(p)}</td>
-                  <td><span className={`${twr.tinychip} ${twr.inkc}`}>in convo</span></td>
-                  <td className={twr.num}>{p.voice_fit ?? "—"}/5</td>
-                  <td>{mailCell(p)}</td>
-                  <td className={twr.num}>{daysAgo(p.updated_at)}</td>
-                  <td className={twr.mo}>them — hands off</td>
-                  <td className={twr.act}>
-                    <form action={resumeOutreach} style={{ display: "inline" }}>
-                      <input type="hidden" name="id" value={p.id} />
-                      <input type="hidden" name="return_to" value="/admin/tower" />
-                      <TowerButton variant="ghost" pendingLabel="Resuming…" style={THIN}>Resume</TowerButton>
-                    </form>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      {/* ════ THE BAND — the strip / the territory, flipped in place ════ */}
+      <WarrenBand cards={cards} rings={rings} coverage={coverage} />
 
       {/* ════ PAYOUTS — only when money is owed ════ */}
       {payoutAffiliates.length > 0 && (
@@ -673,7 +522,7 @@ export default async function TowerPage({
         <section>
           <p style={sectionLabel}>
             <span>On the shelf · {shelf.length}</span>
-            <Hint tip="Drafts parked off the send path. Held = you pulled it back (or the suppression gate did); Release returns it to the ledger. Failed = the send errored; Release re-readies it." />
+            <Hint tip="Drafts parked off the send path. Held = you pulled it back (or the suppression gate did); Release re-readies it in the room. Failed = the send errored; Release re-readies it." />
             <span style={{ flex: 1, height: 1, background: LIGHT }} />
           </p>
           <table className={twr.ledger}>
@@ -706,29 +555,16 @@ export default async function TowerPage({
         </section>
       )}
 
-      {/* ════ SWEEPS — one compact row ════ */}
-      <section>
-        <p style={sectionLabel}>
-          <span>Sweeps</span>
-          <Hint tip="Each press has Claude search the live web and drop ~12–15 verified candidates into the ledger at 'sourced' (~$0.50–$2.50 per sweep, counted by the $10 wall). Nothing moves past sourced until you Accept a row." />
-          <span style={{ flex: 1, height: 1, background: LIGHT }} />
-        </p>
-        <div style={{ ...card, display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center" }}>
-          <ScoutSweepButton sweep="communities" label="Communities" />
-          <ScoutSweepButton sweep="newsletters_podcasts" label="Newsletters + podcasts" />
-          <ScoutSweepButton sweep="practitioners" label="Practitioners" />
-          <span style={{ flex: 1 }} />
-          <ModelSelector agent="scout" current={modelFor("scout")} label="Sweep model:" />
-          <ModelSelector agent="dossier-enrich" current={modelFor("dossier-enrich")} label="Brief model:" />
-        </div>
-      </section>
-
       {/* ════ MACHINERY — collapsed drawer ════ */}
       <details style={{ marginTop: "30px", borderTop: `1px solid ${LIGHT}`, paddingTop: "10px" }}>
         <summary style={{ cursor: "pointer", fontFamily: MONO, fontSize: "10px", letterSpacing: ".2em", textTransform: "uppercase", color: MUTED }}>
           ▸ machinery — {PARTNER_AGENTS.length} levers · sent log
         </summary>
         <div style={{ marginTop: "14px" }}>
+          <div style={{ ...card, display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center" }}>
+            <ModelSelector agent="scout" current={modelFor("scout")} label="Sweep model:" />
+            <ModelSelector agent="dossier-enrich" current={modelFor("dossier-enrich")} label="Brief model:" />
+          </div>
           {switchesMissing ? (
             <div style={{ ...card, borderColor: CRIMSON, background: "#FBF3F3", fontFamily: SERIF, fontSize: "13.5px" }}>
               <strong style={{ color: CRIMSON }}>Controls not active yet.</strong> Apply{" "}

@@ -1,19 +1,25 @@
 import { createAdminClient } from "@/utils/supabase/admin";
 import { getAgentModel } from "@/lib/partnerships/agent-switch";
 import { type ScoutSweepId } from "@/lib/partnerships/anthropic-agents";
+import { runBriefAndSave } from "@/lib/partnerships/brief";
+import { createDossierRun } from "@/lib/partnerships/dossier-run";
 import { researchSweep, type ResearchCandidate } from "@/lib/partnerships/scout-research";
+import { assertUnderDailyWall } from "@/lib/partnerships/spend";
 import { updateSweepRun, finishSweepRun } from "@/lib/partnerships/sweep-run";
 import { logPartnerEvents } from "@/lib/partnerships/events";
 
 /**
  * The canonical scout-sweep runner: run the agentic research loop (search +
- * fetch, two-phase, live progress), de-dupe against the pipeline, and insert
- * EVERY candidate it surfaced as `sourced` — flagging the ones whose contact
- * path it couldn't verify rather than dropping them (max data, the operator
- * decides). Stamps the run row + a diagnostic `log` on every terminal path.
+ * fetch, two-phase, live progress), de-dupe against the pipeline, insert every
+ * candidate it surfaced — flagging the ones whose contact path it couldn't
+ * verify rather than dropping them — and then, since the warren consolidation
+ * (founder 2026-07-15), PREPARE the whole catch before the run closes: each
+ * new candidate is auto-promoted to `enriched` and gets its research brief +
+ * email hunt run in parallel, so what lands on the floor is a finished card.
  *
- * The model writes, the human approves: everything lands at `status='sourced'`
- * for review; nothing reaches `enriched` until the operator promotes it.
+ * The human gate moved, it didn't disappear: the brief's reach-out/skip
+ * verdict stays advisory, and nothing drafts or sends without a press in the
+ * candidate's room. Stamps the run row + diagnostic `log` on every path.
  */
 
 export const VALID_SWEEPS: readonly ScoutSweepId[] = [
@@ -127,11 +133,11 @@ export async function runSweepAndInsert(
       archetype: c.archetype,
       audience_est: c.audience_est,
       voice_fit: c.voice_fit,
-      status: "sourced",
+      status: "enriched", // auto-promoted — the warren consolidation
       contact_path: c.contact_path,
       why_fit: `${c.why_fit}${c.conflict ? ` — conflict: ${c.conflict}` : ""}${isVerified(c) ? "" : " [⚠ contact unverified — confirm before outreach]"}`,
       source_agent: `scout-tower:${sweep}`,
-      next_action: "Review and promote, or reject",
+      next_action: "Preparing — fit call, brief & address hunt are running",
     }));
 
     const { data: created, error } = await supabase
@@ -139,24 +145,70 @@ export async function runSweepAndInsert(
       .insert(inserts)
       .select("id");
     if (error) throw new Error(`pipeline insert failed: ${error.message}`);
+    const createdIds = (created ?? []).map((c) => c.id as string);
 
     await logPartnerEvents(
-      (created ?? []).map((c) => ({
-        pipelineId: c.id as string,
-        actor: "scout",
-        kind: "sourced",
-        detail: { sweep, model, triggered_by: actor },
-      })),
+      createdIds.flatMap((pid) => [
+        { pipelineId: pid, actor: "scout", kind: "sourced", detail: { sweep, model, triggered_by: actor } },
+        { pipelineId: pid, actor: "sweep-auto", kind: "promoted", detail: { to: "enriched", via: "sweep consolidation" } },
+      ]),
     );
     const freshVerified = fresh.filter(isVerified).length;
     stamp(`inserted ${inserts.length} new (${freshVerified} with a verified contact)`);
+
+    // Prepare the whole catch before closing the run: briefs + email hunts in
+    // parallel (sequential wouldn't fit the function window — one brief is
+    // 60–120s). Wall math: checked before the sweep started, re-checked per
+    // candidate here; a batch can overshoot the $10 wall by at most its own
+    // briefs' cost. runBriefAndSave reports failure by return value, so both
+    // rejections and returned failures are counted.
+    await updateSweepRun(runId, {
+      phase: `Preparing ${createdIds.length} card${createdIds.length === 1 ? "" : "s"} — briefs & address hunts…`,
+      seen,
+    });
+    const prep = await Promise.allSettled(
+      createdIds.map(async (pid) => {
+        await assertUnderDailyWall();
+        const briefRunId = await createDossierRun(pid, actor);
+        return runBriefAndSave(pid, actor, briefRunId);
+      }),
+    );
+    let prepFailed = 0;
+    await Promise.all(
+      prep.map((res, i) => {
+        const failedMsg =
+          res.status === "rejected"
+            ? res.reason instanceof Error
+              ? res.reason.message
+              : String(res.reason)
+            : res.value.status === "failed"
+              ? "brief run failed — see their room's research log"
+              : null;
+        if (!failedMsg) return Promise.resolve();
+        prepFailed += 1;
+        stamp(`prepare failed for ${createdIds[i]}: ${failedMsg.slice(0, 160)}`);
+        return supabase
+          .from("partner_pipeline")
+          .update({
+            next_action: `Auto-prepare didn't finish (${failedMsg.slice(0, 120)}) — run the brief from their room.`,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", createdIds[i])
+          .then(() => undefined);
+      }),
+    );
+    stamp(`prepared ${createdIds.length - prepFailed}/${createdIds.length} cards`);
 
     await finishSweepRun(runId, {
       status: "done",
       candidates_found: inserts.length,
       seen,
       log: diag,
-      phase: `Sweep complete · ${inserts.length} candidate${inserts.length === 1 ? "" : "s"} found`,
+      phase: `Sweep complete · ${inserts.length} card${inserts.length === 1 ? "" : "s"}${
+        prepFailed > 0
+          ? ` (${inserts.length - prepFailed} prepared, ${prepFailed} need a manual brief)`
+          : " prepared — verdicts called, addresses hunted"
+      }`,
     });
     return { status: "done", inserted: inserts.length, seen };
   } catch (e) {

@@ -299,3 +299,273 @@
 .tinychip.ok { border-color: #9BB39B; color: #2E7D32; }
 .tinychip.warn { border-color: #8B1A1A; color: #8B1A1A; }
 .tinychip.inkc { background: #1A1A1A; color: #FAF7F2; border-color: #1A1A1A; }
+
+/* ════ THE WARREN (founder direction I, revised — 2026-07-15) ════ */
+
+/* Postage — the $10/day wall as a strip of stamps in the masthead. */
+.postage {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 9px 0;
+  border-bottom: 1px solid #E8E4DF;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+.stampRow { display: inline-flex; gap: 3px; align-items: center; }
+.stamp { width: 13px; height: 16px; border: 1px dashed var(--muted); }
+.stampUsed {
+  border: 1px solid transparent;
+  background: var(--iris);
+  background-size: 200% auto;
+  animation: iris 4s linear infinite;
+}
+.stampPart { border-style: solid; }
+.postageWarn { color: #8B1A1A; font-weight: 700; }
+
+/* Sweep row — three thin horizontal buttons; the hunt lives in the button. */
+.sweepRow {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+.sweepBtn {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  border: 1px solid #1A1A1A;
+  background: #FFFFFF;
+  padding: 7px 14px;
+  cursor: pointer;
+  overflow: hidden;
+  text-align: left;
+}
+.sweepBtn:disabled { cursor: progress; }
+.sweepBtnRunning { border-color: transparent; background: #1A1A1A; }
+.sweepFill {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 62%;
+  background: var(--iris);
+  background-size: 200% auto;
+  animation: iris 4s linear infinite;
+  opacity: .32;
+  pointer-events: none;
+}
+.sweepNm {
+  position: relative;
+  font-family: var(--cond);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #1A1A1A;
+  white-space: nowrap;
+}
+.sweepBtnRunning .sweepNm { color: #FAF7F2; }
+.sweepSub {
+  position: relative;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .04em;
+  color: var(--muted);
+  white-space: nowrap;
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sweepBtnRunning .sweepSub { color: #D8D2C8; }
+
+/* The band toggle — "the strip" wears its iris rule on its own letters;
+   "the territory" carries a glyph of what it opens. */
+.togWrap {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin: 4px 0 12px;
+  flex-wrap: wrap;
+}
+.togWord {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 900;
+  font-size: 21px;
+  line-height: 1;
+  color: var(--muted);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+.togWordOn { color: #1A1A1A; cursor: default; }
+.togU { position: relative; display: inline-block; line-height: 1; }
+.togU i {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 3px;
+  display: none;
+}
+.togWordOn .togU i {
+  display: block;
+  background: var(--iris);
+  background-size: 200% auto;
+  animation: iris 4s linear infinite;
+}
+.terrGlyph {
+  position: relative;
+  width: 22px; height: 22px;
+  flex: 0 0 22px;
+  border: 1px dashed var(--muted);
+  border-radius: 50%;
+  display: inline-block;
+}
+.terrGlyph i {
+  position: absolute;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--muted);
+  display: block;
+}
+.terrGlyph .hotDot {
+  width: 6px; height: 6px;
+  background: var(--iris);
+  background-size: 200% auto;
+  animation: iris 4s linear infinite;
+  box-shadow: 0 0 6px rgba(139, 92, 246, .7);
+}
+.togNote {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* The strip — cards you flip through. */
+.strip {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 4px 2px 14px;
+  align-items: stretch;
+}
+.stripCard {
+  flex: 0 0 208px;
+  min-height: 168px;
+  border: 1px solid #E8E4DF;
+  background: #FFFEFB;
+  padding: 12px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: #1A1A1A;
+  line-height: 1.7;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: box-shadow .12s ease, transform .12s ease;
+}
+.stripCard:hover { box-shadow: 0 10px 24px rgba(26,26,26,.10); transform: translateY(-2px); }
+.stripHot::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  height: 3px;
+  background: var(--iris);
+  background-size: 200% auto;
+  animation: iris 4s linear infinite;
+}
+.stripDim { opacity: .45; }
+.stripDim:hover { opacity: .9; }
+.cardOrigin {
+  font-size: 8.5px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.cardWord {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 900;
+  font-size: 22px;
+  line-height: 1;
+  margin: 2px 0 6px;
+}
+.wordHotIris {
+  background: var(--iris);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: iris 4s linear infinite;
+}
+.cardName { font-weight: 700; font-size: 11px; }
+.cardSub { color: var(--muted); margin-top: auto; }
+
+/* The territory — the same band pulled back: every candidate a dot. */
+.terr {
+  position: relative;
+  height: 360px;
+  border: 1px solid #E8E4DF;
+  background: #FAF7F2;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.terrDot {
+  position: absolute;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--muted);
+  opacity: .55;
+  display: block;
+}
+.terrDot:hover { opacity: 1; transform: scale(1.6); }
+.dotHot {
+  background: var(--iris);
+  background-size: 200% auto;
+  animation: iris 4s linear infinite;
+  opacity: 1;
+  width: 10px; height: 10px;
+  box-shadow: 0 0 14px rgba(139, 92, 246, .65);
+}
+.dotSent { background: #8B1A1A; opacity: .9; }
+.dotYou { background: #2E7D32; opacity: .95; width: 9px; height: 9px; }
+.terrRing {
+  position: absolute;
+  border: 1px dashed #DCD5CA;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.terrLbl {
+  position: absolute;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: #FAF7F2;
+  padding: 0 6px;
+  pointer-events: none;
+}
+.terrNote {
+  position: absolute;
+  left: 14px; bottom: 12px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: .06em;
+  line-height: 1.9;
+  pointer-events: none;
+}
