@@ -179,6 +179,66 @@ export async function sendNow(formData: FormData) {
 }
 
 /**
+ * The one-press send (founder 2026-07-15, "the warren"): a single ceramic
+ * button replaces the Ready → Send now pair. If the row is still 'ready' the
+ * approve step is folded in (same guard, same audit event), then the mail goes
+ * out through sendOutboundRow — so every protection Ready+Send had survives:
+ * suppression re-check at send, claim-before-send idempotency (a double press
+ * can't double-send), failed-send release, first-touch stamp + ladder clock.
+ */
+export async function oneClickSend(formData: FormData) {
+  const user = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) throw new Error("Missing id.");
+
+  const supabase = createAdminClient();
+  const { data: row, error } = await supabase
+    .from("partner_outbound_queue")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!row) throw new Error("Draft not found.");
+  if ((row.send_channel ?? "email") !== "email") {
+    throw new Error("Manual rows are delivered by hand — use Mark sent.");
+  }
+
+  if (row.status === "ready") {
+    const { data: approved, error: apprErr } = await supabase
+      .from("partner_outbound_queue")
+      .update({
+        status: "approved",
+        approved_by: user.email,
+        approved_at: new Date().toISOString(),
+      })
+      .eq("id", id)
+      .eq("status", "ready")
+      .select("id")
+      .maybeSingle();
+    if (apprErr) throw new Error(apprErr.message);
+    if (!approved) throw new Error("Draft changed state mid-press — reload and look again.");
+    if (row.related_pipeline_id) {
+      await logPartnerEvent({
+        pipelineId: row.related_pipeline_id,
+        actor: user.email,
+        kind: "approved",
+        detail: { subject: row.subject, via: "one-press send" },
+      });
+    }
+    row.status = "approved";
+  }
+
+  if (row.status !== "approved") {
+    throw new Error(`This draft is '${row.status}' — only a ready or armed draft can send.`);
+  }
+
+  await sendOutboundRow(supabase, row, new Date().toISOString(), user.email);
+  // As with sendNow: no throw on failure — the row now carries sent/failed/held
+  // state and the revalidated card renders the outcome where the press happened.
+  revalidateCandidate(row.related_pipeline_id);
+}
+
+/**
  * Edit a draft in place — the tower as draft house. Re-runs the mechanical
  * canon gate on the new text and flips warden_cleared accordingly; clears the
  * personalization note (the operator has now taken responsibility for the copy).

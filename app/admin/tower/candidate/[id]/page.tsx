@@ -16,14 +16,14 @@ import ContactLinks from "../../ContactLinks";
 import TowerButton from "../../TowerButton";
 import RunBriefButton from "./RunBriefButton";
 import twr from "../../tower.module.css";
+import CeramicSendButton from "../../CeramicSendButton";
 import {
   rejectSourced,
   reconsiderPassed,
   draftNow,
   findEmailNow,
   useFoundEmail,
-  approveDraft,
-  sendNow,
+  oneClickSend,
   holdDraft,
   releaseDraft,
   markManualSent,
@@ -206,8 +206,7 @@ export default async function CandidateRoomPage({
   if (status === "sourced") {
     next = "Waiting on you — Accept or Reject below.";
   } else if (status === "enriched") {
-    if (hasReadyDraft) next = "A draft is in the house — press Ready, then Send it below.";
-    else if (hasApprovedDraft) next = "Draft is armed — press Send now to email it.";
+    if (hasReadyDraft || hasApprovedDraft) next = "A draft is in the house — edit it if it needs your hand, then one press of the button sends it.";
     else if (!brief && !hasLegacyBrief)
       next = "Waiting on a research brief — press Run brief now.";
     else
@@ -676,25 +675,36 @@ export default async function CandidateRoomPage({
                   <strong>✗ Didn&apos;t send.</strong> {(d.error as string) || "Unknown error."} — fix it and hit Send again, or check Resend → Emails.
                 </div>
               )}
-              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                {st === "ready" && (
+              <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}>
+                {st === "ready" && isManual && (
+                  <form action={markManualSent}>
+                    <input type="hidden" name="id" value={d.id as string} />
+                    <TowerButton pendingLabel="Marking…">Mark sent</TowerButton>
+                  </form>
+                )}
+                {(st === "ready" || st === "approved") && !isManual && (
+                  // The one-press send (founder-booked ceramic button): a single
+                  // press approves (if needed), re-checks suppression, sends via
+                  // Resend, logs the claim, and starts the follow-up clock.
                   <>
-                    {isManual ? (
-                      <form action={markManualSent}>
-                        <input type="hidden" name="id" value={d.id as string} />
-                        <TowerButton pendingLabel="Marking…">Mark sent</TowerButton>
-                      </form>
-                    ) : (
-                      <form action={approveDraft}>
-                        <input type="hidden" name="id" value={d.id as string} />
-                        <TowerButton pendingLabel="Marking ready…">Ready</TowerButton>
-                      </form>
-                    )}
-                    <form action={holdDraft}>
+                    <form action={oneClickSend}>
                       <input type="hidden" name="id" value={d.id as string} />
-                      <TowerButton variant="ghost" pendingLabel="Holding…">Hold</TowerButton>
+                      <CeramicSendButton
+                        label="SEND"
+                        title={`Send to ${d.to_addr as string}`}
+                        confirmMessage={`Send this email to ${d.to_addr as string} now? One press does everything — it goes out immediately and can't be undone.`}
+                      />
                     </form>
+                    <div style={{ fontFamily: MONO, fontSize: "10.5px", lineHeight: 1.8, color: MUTED, maxWidth: "36ch" }}>
+                      one press: suppression re-check → send → logged in the sent record → follow-up clock starts. pressing twice can&apos;t double-send.
+                    </div>
                   </>
+                )}
+                {(st === "ready" || st === "approved") && (
+                  <form action={holdDraft}>
+                    <input type="hidden" name="id" value={d.id as string} />
+                    <TowerButton variant="ghost" pendingLabel="Holding…">Hold</TowerButton>
+                  </form>
                 )}
                 {(st === "held" || st === "failed") && (
                   <form action={releaseDraft}>
@@ -702,27 +712,24 @@ export default async function CandidateRoomPage({
                     <TowerButton variant="ghost" pendingLabel="Releasing…">Release → ready</TowerButton>
                   </form>
                 )}
-                {st === "approved" && (
-                  <>
-                    <form action={sendNow}>
-                      <input type="hidden" name="id" value={d.id as string} />
-                      <TowerButton
-                        pendingLabel="Sending…"
-                        confirmMessage={`Send this email to ${d.to_addr as string} now? It goes out immediately and can't be undone.`}
-                      >
-                        Send now
-                      </TowerButton>
-                    </form>
-                    <form action={holdDraft}>
-                      <input type="hidden" name="id" value={d.id as string} />
-                      <TowerButton variant="ghost" pendingLabel="Holding…">Hold</TowerButton>
-                    </form>
-                  </>
-                )}
                 {st === "sent" && (
-                  <span style={{ fontFamily: MONO, fontSize: "12px", fontWeight: 700, color: GREEN, background: "rgba(46,125,50,.08)", border: `1px solid ${GREEN}`, padding: "6px 10px" }}>
-                    ✓ Sent to {d.to_addr as string}{d.sent_at ? ` · ${timeAgo(d.sent_at as string)}` : ""}
-                  </span>
+                  <div
+                    style={{
+                      fontFamily: MONO,
+                      fontSize: "11px",
+                      lineHeight: 1.9,
+                      color: INK,
+                      borderLeft: "3px solid",
+                      borderImage: "linear-gradient(180deg,#FF006E,#8B5CF6) 1",
+                      padding: "4px 0 4px 12px",
+                    }}
+                  >
+                    <strong style={{ color: GREEN }}>sent ✓</strong>{" "}
+                    {d.sent_at ? `${new Date(d.sent_at as string).toUTCString().slice(17, 22)} UTC · ${timeAgo(d.sent_at as string)}` : ""} → {d.to_addr as string}
+                    {d.resend_id ? <><br />resend id {d.resend_id as string}</> : null}
+                    <br />
+                    copy BCC&apos;d to your inbox · in the sent record
+                  </div>
                 )}
               </div>
             </div>

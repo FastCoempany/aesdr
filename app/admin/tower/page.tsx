@@ -209,6 +209,9 @@ export default async function TowerPage({
     .select("to_addr, subject, tier, sent_at")
     .order("sent_at", { ascending: false })
     .limit(8);
+  const { count: sentCount } = await supabase
+    .from("partner_sent_log")
+    .select("*", { count: "exact", head: true });
   const { data: allStatusRows } = await supabase.from("partner_pipeline").select("status");
   const pipeCounts: Record<string, number> = {};
   for (const r of allStatusRows ?? []) pipeCounts[r.status] = (pipeCounts[r.status] ?? 0) + 1;
@@ -353,6 +356,10 @@ export default async function TowerPage({
           <span className={twr.sideRailCount}>
             {(pipeCounts["passed"] ?? 0) + (pipeCounts["cold"] ?? 0)} parked
           </span>
+        </Link>
+        <Link href="/admin/tower/sent" className={twr.sideRailLink}>
+          The sent record
+          <span className={twr.sideRailCount}>{sentCount ?? 0} sent</span>
         </Link>
       </nav>
 
