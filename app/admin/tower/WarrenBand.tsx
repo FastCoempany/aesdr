@@ -16,18 +16,16 @@ import twr from "./tower.module.css";
  * The toggle flips in place — no navigation.
  */
 
+/**
+ * Six words, no more (founder 2026-07-16, "too many states"): a card leads
+ * with the verdict, and everything else — draft written, address missing,
+ * legacy review — lives in the sub-line. The room's takeover card carries
+ * the matching seat.
+ */
 export type WarrenCard = {
   id: string;
   name: string;
-  kind:
-    | "draft"
-    | "reach_out"
-    | "skip"
-    | "needs_research"
-    | "preparing"
-    | "review"
-    | "contacted"
-    | "replied";
+  kind: "reach_out" | "skip" | "your_call" | "preparing" | "waiting" | "talking";
   sub: string;
   origin: string | null;
   hasEmail: boolean;
@@ -36,14 +34,12 @@ export type WarrenCard = {
 export type SweepRing = { label: string; note: string };
 
 const WORD: Record<WarrenCard["kind"], { text: string; cls: "iris" | "ink" | "muted" | "green" | "crimson" }> = {
-  draft: { text: "send it.", cls: "iris" },
   reach_out: { text: "reach out.", cls: "iris" },
   skip: { text: "skip.", cls: "ink" },
-  needs_research: { text: "unclear.", cls: "muted" },
+  your_call: { text: "your call.", cls: "ink" },
   preparing: { text: "preparing…", cls: "muted" },
-  review: { text: "review.", cls: "ink" },
-  contacted: { text: "waiting.", cls: "muted" },
-  replied: { text: "talking.", cls: "green" },
+  waiting: { text: "waiting.", cls: "muted" },
+  talking: { text: "talking.", cls: "green" },
 };
 
 /** Deterministic 0..1 hash from an id — stable dot placement, no Math.random. */
@@ -67,7 +63,7 @@ export default function WarrenBand({
 }) {
   const [view, setView] = useState<"strip" | "territory">("strip");
 
-  const hot = (k: WarrenCard["kind"]) => k === "draft" || k === "reach_out";
+  const hot = (k: WarrenCard["kind"]) => k === "reach_out";
   const dim = (k: WarrenCard["kind"]) => k === "skip";
 
   return (
@@ -109,11 +105,7 @@ export default function WarrenBand({
         ) : (
           <div className={twr.strip}>
             {cards.map((c) => {
-              // A manual-channel draft isn't a send — don't promise one.
-              const w =
-                c.kind === "draft" && !c.hasEmail
-                  ? ({ text: "deliver it.", cls: "ink" } as const)
-                  : WORD[c.kind];
+              const w = WORD[c.kind];
               return (
                 <Link
                   key={c.id || c.name}
@@ -174,9 +166,9 @@ export default function WarrenBand({
             const x = 6 + hash01(c.id, 1) * 86;
             const y = 8 + hash01(c.id, 2) * 78;
             const cls =
-              c.kind === "replied"
+              c.kind === "talking"
                 ? twr.dotHot
-                : c.kind === "contacted"
+                : c.kind === "waiting"
                   ? twr.dotSent
                   : hot(c.kind)
                     ? twr.dotYou

@@ -380,23 +380,24 @@ export default async function CandidateRoomPage({
           const verdict = brief?.verdict ?? null;
           const conflict = (brief?.conflict as string | null) ?? null;
           const callColor = verdict === "reach_out" ? GREEN : verdict === "skip" ? CRIMSON : MUTED;
-          const callWord =
-            verdict === "reach_out" ? "Reach out"
-            : verdict === "skip" ? "Skip"
-            : verdict === "needs_research" ? "Needs more research"
-            : "No structured call";
           const conflictHot = conflict === "hard" || conflict === "soft";
           return (
             <div style={{ ...card, border: `2px solid ${callColor}` }}>
-              {/* THE CALL — the machine's actual recommendation, dominant. */}
-              <div style={{ display: "flex", alignItems: "baseline", gap: "12px", flexWrap: "wrap", marginBottom: "10px" }}>
+              {/* THE CALL — the machine's actual recommendation, dominant.
+                  Same takeover frame as the drafted card below it in the flow:
+                  one card, one verdict word, one seat. */}
+              <div style={{ display: "flex", alignItems: "baseline", gap: "12px", flexWrap: "wrap", marginBottom: "6px" }}>
                 <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".2em", textTransform: "uppercase", color: MUTED }}>
                   the machine says
                 </span>
-                <span style={{ fontFamily: DISPLAY, fontStyle: "italic", fontWeight: 900, fontSize: "30px", lineHeight: 1, color: callColor }}>
-                  {callWord}
-                </span>
               </div>
+              {verdict === "reach_out" ? (
+                <p className={twr.roomCallWord} style={{ margin: "0 0 10px" }}>reach out.</p>
+              ) : (
+                <p style={{ fontFamily: DISPLAY, fontStyle: "italic", fontWeight: 900, fontSize: "clamp(34px, 4.5vw, 48px)", lineHeight: 0.95, margin: "0 0 10px", color: verdict === "skip" ? INK : MUTED }}>
+                  {verdict === "skip" ? "skip." : "your call."}
+                </p>
+              )}
               {/* Sub-signals: voice-fit (voice match ONLY) + conflict + email. */}
               <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "12px" }}>
                 <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".08em", color: MUTED }}>
@@ -419,17 +420,19 @@ export default async function CandidateRoomPage({
                 </p>
               )}
               <p style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".06em", color: MUTED, margin: "0 0 10px" }}>
-                Advisory only — your call decides. Draft them anyway, or bin them.
+                Advisory only — your call decides. One press writes the draft; the send waits for you either way.
               </p>
               <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                 <form action={draftNow}>
                   <input type="hidden" name="id" value={id} />
-                  <TowerButton pendingLabel="Drafting…">Draft them</TowerButton>
+                  <TowerButton variant={verdict === "skip" ? "ghost" : "primary"} pendingLabel="Drafting…">
+                    {verdict === "skip" ? "Draft anyway" : "Write the draft"}
+                  </TowerButton>
                 </form>
                 <form action={rejectSourced}>
                   <input type="hidden" name="id" value={id} />
                   <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
-                  <TowerButton variant="ghost" pendingLabel="Binning…">Bin them</TowerButton>
+                  <TowerButton variant={verdict === "skip" ? "primary" : "ghost"} pendingLabel="Binning…">Bin them</TowerButton>
                 </form>
               </div>
             </div>
@@ -475,7 +478,7 @@ export default async function CandidateRoomPage({
             </form>
           </>
         )}
-        {(status === "sourced" || status === "enriched") && !hasLiveDraft && (
+        {(status === "sourced" || (status === "enriched" && !brief && !hasLegacyBrief)) && !hasLiveDraft && (
           <RunBriefButton
             candidateId={id}
             label={brief || hasLegacyBrief ? "Re-run brief" : "Run brief now"}
@@ -497,7 +500,7 @@ export default async function CandidateRoomPage({
             <TowerButton pendingLabel="Marking…">They replied — hands off</TowerButton>
           </form>
         )}
-        {(status === "sourced" || status === "enriched") && !hasEmail && !hasLiveDraft && emailFinderConfigured() && (
+        {(status === "sourced" || (status === "enriched" && !brief && !hasLegacyBrief)) && !hasEmail && !hasLiveDraft && emailFinderConfigured() && (
           <form action={findEmailNow} style={{ display: "flex", gap: "8px", alignItems: "stretch" }}>
             <input type="hidden" name="id" value={id} />
             <input
@@ -523,7 +526,7 @@ export default async function CandidateRoomPage({
             </TowerButton>
           </form>
         )}
-        {status === "enriched" && !hasLiveDraft && (
+        {status === "enriched" && !brief && !hasLegacyBrief && !hasLiveDraft && (
           <form action={rejectSourced}>
             <input type="hidden" name="id" value={id} />
             <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
@@ -531,11 +534,43 @@ export default async function CandidateRoomPage({
           </form>
         )}
       </div>
-      {(status === "sourced" || status === "enriched") && !hasLiveDraft && (
+      {(status === "sourced" || (status === "enriched" && !brief && !hasLegacyBrief)) && !hasLiveDraft && (
         <p style={{ fontFamily: MONO, fontSize: "10px", lineHeight: 1.6, color: MUTED, margin: "0 0 8px" }}>
           Run brief = a live web-search research call (confirmed first, ~$0.10–$0.50). Scribe draft = free template fill.
           Neither sends anything — nothing leaves without your press on the button.
         </p>
+      )}
+
+      {/* Machinery — post-brief the research controls collapse out of the way;
+          the takeover card above owns the flow (one card, one verdict, one
+          seat). */}
+      {status === "enriched" && (brief || hasLegacyBrief) && !hasLiveDraft && (
+        <details style={{ margin: "0 0 12px" }}>
+          <summary style={{ cursor: "pointer", fontFamily: MONO, fontSize: "10px", letterSpacing: ".18em", textTransform: "uppercase", color: MUTED }}>
+            ▸ machinery — re-run brief · find email
+          </summary>
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "stretch", margin: "10px 0 0" }}>
+            <RunBriefButton candidateId={id} label="Re-run brief" />
+            {!hasEmail && emailFinderConfigured() && (
+              <form action={findEmailNow} style={{ display: "flex", gap: "8px", alignItems: "stretch" }}>
+                <input type="hidden" name="id" value={id} />
+                <input
+                  type="text"
+                  name="domain"
+                  placeholder="their site, if you know it — e.g. janedoe.com"
+                  style={{ fontFamily: MONO, fontSize: "11px", color: INK, background: "#FFFFFF", border: `1px solid ${LIGHT}`, padding: "0 10px", width: "240px" }}
+                />
+                <TowerButton
+                  variant="outline"
+                  pendingLabel="Running waterfall… (up to ~80s)"
+                  confirmMessage={`Find an email for ${c.name}? Runs BetterContact's waterfall across 20+ sources (one credit, charged only on a found email).`}
+                >
+                  Find email
+                </TowerButton>
+              </form>
+            )}
+          </div>
+        </details>
       )}
 
       {/* ── Drafts — every status, with the action that fits ── */}

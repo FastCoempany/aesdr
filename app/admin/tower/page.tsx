@@ -318,6 +318,10 @@ export default async function TowerPage({
     return SWEEP_LABELS[src.slice("scout-tower:".length)] ?? null;
   };
   const cards: WarrenCard[] = [];
+  const verdictOf = (p: PipeRow) => p.dossier_brief?.verdict ?? null;
+  const kindOf = (p: PipeRow): WarrenCard["kind"] =>
+    verdictOf(p) === "reach_out" ? "reach_out" : verdictOf(p) === "skip" ? "skip" : "your_call";
+  // Drafted candidates lead with the verdict too — draft state lives in the sub.
   for (const p of draftPeople) {
     const d = draftByPipeline.get(p.id)!;
     const isManual = (d.send_channel ?? "email") === "manual";
@@ -325,38 +329,29 @@ export default async function TowerPage({
     cards.push({
       id: p.id,
       name: p.name,
-      kind: "draft",
+      kind: kindOf(p),
       origin: originOf(p),
       hasEmail: !isManual,
       sub: isSuppressed
         ? "suppressed — will never send"
-        : d.warden_cleared
-          ? `draft clean — “${d.subject.slice(0, 34)}${d.subject.length > 34 ? "…" : ""}” — one press in the room`
-          : "draft needs your edit first",
+        : isManual
+          ? "draft written — attach an address in their room, or deliver by hand"
+          : d.warden_cleared
+            ? "draft ready — one press in their room sends it"
+            : "draft needs your edit first",
     });
   }
-  for (const d of orphanDrafts) {
-    cards.push({
-      id: d.related_pipeline_id ?? "",
-      name: d.to_addr,
-      kind: "draft",
-      origin: null,
-      hasEmail: (d.send_channel ?? "email") === "email",
-      sub: "orphan draft — no candidate row behind it",
-    });
-  }
-  const verdictOf = (p: PipeRow) => p.dossier_brief?.verdict ?? null;
   for (const p of fitCalls.filter((p) => verdictOf(p) === "reach_out")) {
     const cf = p.dossier_brief?.conflict ?? null;
     cards.push({
       id: p.id, name: p.name, kind: "reach_out", origin: originOf(p), hasEmail: hasAddr(p),
-      sub: `brief ✓ voice ${p.voice_fit ?? "—"}/5${cf && cf !== "none" ? ` · conflict: ${cf}` : " · no conflict"} — your call`,
+      sub: `brief ✓ voice ${p.voice_fit ?? "—"}/5${cf && cf !== "none" ? ` · conflict: ${cf}` : " · no conflict"} — write the draft in their room`,
     });
   }
-  for (const p of fitCalls.filter((p) => verdictOf(p) === "needs_research")) {
+  for (const p of fitCalls.filter((p) => verdictOf(p) === "needs_research" || verdictOf(p) === null)) {
     cards.push({
-      id: p.id, name: p.name, kind: "needs_research", origin: originOf(p), hasEmail: hasAddr(p),
-      sub: "the machine couldn't call it — read the brief",
+      id: p.id, name: p.name, kind: "your_call", origin: originOf(p), hasEmail: hasAddr(p),
+      sub: "the machine couldn't call it — read the brief, you decide",
     });
   }
   for (const p of briefPending) {
@@ -367,27 +362,37 @@ export default async function TowerPage({
   }
   for (const p of sourced) {
     cards.push({
-      id: p.id, name: p.name, kind: "review", origin: originOf(p), hasEmail: hasAddr(p),
-      sub: "pre-consolidation row — accept & prepare in the room",
+      id: p.id, name: p.name, kind: "your_call", origin: originOf(p), hasEmail: hasAddr(p),
+      sub: "pre-consolidation row — accept & prepare in their room",
     });
   }
   for (const p of contacted) {
     cards.push({
-      id: p.id, name: p.name, kind: "contacted", origin: originOf(p), hasEmail: hasAddr(p),
-      sub: `last touch ${daysAgo(p.first_touch_at)} · ladder ${p.ladder_step ?? 0} · mark them replied in the room`,
+      id: p.id, name: p.name, kind: "waiting", origin: originOf(p), hasEmail: hasAddr(p),
+      sub: `last touch ${daysAgo(p.first_touch_at)} · ladder ${p.ladder_step ?? 0} · mark them replied in their room`,
     });
   }
   for (const p of inConvo) {
     cards.push({
-      id: p.id, name: p.name, kind: "replied", origin: originOf(p), hasEmail: hasAddr(p),
+      id: p.id, name: p.name, kind: "talking", origin: originOf(p), hasEmail: hasAddr(p),
       sub: "in conversation — hands off, work the thread",
     });
   }
-  for (const p of fitCalls.filter((p) => verdictOf(p) === "skip" || verdictOf(p) === null)) {
+  for (const p of fitCalls.filter((p) => verdictOf(p) === "skip")) {
     const cf = p.dossier_brief?.conflict ?? null;
     cards.push({
       id: p.id, name: p.name, kind: "skip", origin: originOf(p), hasEmail: hasAddr(p),
-      sub: `${cf === "hard" ? "hard conflict" : cf === "soft" ? "soft conflict" : "the machine says pass"} — override in the room`,
+      sub: `${cf === "hard" ? "hard conflict" : cf === "soft" ? "soft conflict" : "the machine says pass"} — override in their room`,
+    });
+  }
+  for (const d of orphanDrafts) {
+    cards.push({
+      id: d.related_pipeline_id ?? "",
+      name: d.to_addr,
+      kind: "your_call",
+      origin: null,
+      hasEmail: (d.send_channel ?? "email") === "email",
+      sub: "orphan draft — no candidate row behind it",
     });
   }
   const rings: SweepRing[] = Object.entries(SWEEP_LABELS).map(([id, label]) => ({
