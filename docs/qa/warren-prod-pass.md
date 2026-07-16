@@ -26,7 +26,13 @@ session whose container has the `QA_*` environment variables loaded.
 
 ## The pass — screenshot every step
 
-a. **Login** at `${QA_BASE_URL}/login` with the QA credentials. If it fails,
+a. **The coming-soon gate.** Production 302s anonymous traffic (including
+   `/login`) to `/coming-soon`. If the `QA_BYPASS_CODE` env var is set, open
+   `${QA_BASE_URL}/login?bypass=${QA_BYPASS_CODE}` first — the proxy sets the
+   `aesdr_cs_bypass` cookie and redirects to the clean URL. If the var is
+   missing and you land on `/coming-soon`, stop and report that the pass
+   needs `QA_BYPASS_CODE` (the value of `COMING_SOON_BYPASS_CODE` in Vercel).
+b. **Login** at `${QA_BASE_URL}/login` with the QA credentials. If it fails,
    report the exact on-screen error (rate-limit banner, bad credentials) and
    stop.
 b. **The warren** — `${QA_BASE_URL}/admin/tower`. Verify: the postage strip in
