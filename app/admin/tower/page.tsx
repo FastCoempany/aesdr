@@ -298,8 +298,21 @@ export default async function TowerPage({
   const orphanDrafts = drafts.filter(
     (d) => !d.related_pipeline_id || !byId.has(d.related_pipeline_id),
   );
-  const briefPending = people.filter(
+  // Enriched-with-no-brief splits two ways. A brief is a one-shot background
+  // job (the sweep's after() batch); it never runs for long. So a candidate
+  // whose row was touched recently is plausibly still researching, but one
+  // sitting untouched for a while means the brief never landed — it is NOT
+  // doing anything active, and mustn't wear the "researching…" label. That
+  // stalled pile becomes a real state: your call, needs a brief run.
+  const RESEARCH_STALE_MS = 15 * 60 * 1000;
+  const enrichedNoBrief = people.filter(
     (p) => p.status === "enriched" && !hasBrief(p) && !draftByPipeline.has(p.id),
+  );
+  const briefPending = enrichedNoBrief.filter(
+    (p) => Date.now() - new Date(p.updated_at).getTime() < RESEARCH_STALE_MS,
+  );
+  const briefStalled = enrichedNoBrief.filter(
+    (p) => Date.now() - new Date(p.updated_at).getTime() >= RESEARCH_STALE_MS,
   );
   const sourced = people.filter((p) => p.status === "sourced");
   const contacted = people.filter((p) => p.status === "contacted");
@@ -357,7 +370,14 @@ export default async function TowerPage({
   for (const p of briefPending) {
     cards.push({
       id: p.id, name: p.name, kind: "preparing", origin: originOf(p), hasEmail: hasAddr(p),
-      sub: p.next_action ?? "brief & address hunt running",
+      sub: "brief & address hunt still running — lands as a verdict when done",
+    });
+  }
+  // Stalled (brief never landed, nothing active): honest label, real action.
+  for (const p of briefStalled) {
+    cards.push({
+      id: p.id, name: p.name, kind: "your_call", origin: originOf(p), hasEmail: hasAddr(p),
+      sub: "brief didn't land — open their room to run it (nothing is running now)",
     });
   }
   for (const p of sourced) {

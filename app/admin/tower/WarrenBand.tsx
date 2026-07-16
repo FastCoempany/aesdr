@@ -37,7 +37,7 @@ const WORD: Record<WarrenCard["kind"], { text: string; cls: "iris" | "ink" | "mu
   reach_out: { text: "reach out.", cls: "iris" },
   skip: { text: "skip.", cls: "ink" },
   your_call: { text: "your call.", cls: "ink" },
-  preparing: { text: "preparing…", cls: "muted" },
+  preparing: { text: "researching…", cls: "muted" },
   waiting: { text: "waiting.", cls: "muted" },
   talking: { text: "talking.", cls: "green" },
 };
