@@ -634,3 +634,59 @@
 }
 @media (max-width: 1080px) { .roomLepCell { display: none; } }
 .roomLepCell img { width: 190px; max-width: 100%; display: block; position: relative; z-index: 1; }
+
+/* ── The chambers (founder pick 2026-07-16): verdict stacks you switch
+   between, replacing the single carousel. ── */
+.chambers {
+  display: flex;
+  gap: 0;
+  border: 1px solid #E8E4DF;
+  border-bottom: none;
+  flex-wrap: wrap;
+  background: #FAF7F2;
+}
+.chamber {
+  flex: 1 1 auto;
+  min-width: 110px;
+  border-right: 1px solid #E8E4DF;
+  padding: 11px 14px;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  position: relative;
+  font: inherit;
+}
+.chamber:last-child { border-right: none; }
+.chamber:hover { background: rgba(255,255,255,.5); }
+.chamberW {
+  display: block;
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 900;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--muted);
+}
+.chamberC {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.chamberOn { background: #FFFFFF; }
+.chamberOn::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 3px;
+  background: var(--iris);
+  background-size: 200% auto;
+  animation: iris 4s linear infinite;
+}
+.chamberOn .chamberW { color: var(--ink); }
+/* the strip that follows the chambers loses its own top gap */
+.chambers + .strip { border-top: none; padding-top: 14px; }
+@media (prefers-reduced-motion: reduce) { .chamberOn::after { animation: none; } }

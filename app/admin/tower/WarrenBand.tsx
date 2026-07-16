@@ -6,13 +6,13 @@ import { useState } from "react";
 import twr from "./tower.module.css";
 
 /**
- * The warren's band — one space, two distances (founder direction I, revised):
- *   · THE STRIP — working depth: finished cards you flip through, reach-outs
- *     first, skips dim at the back. A card is a door; everything happens in
- *     the room it opens (draft, edit, the ceramic send).
- *   · THE TERRITORY — the same band pulled back: every working candidate a
- *     dot, sweeps as rings, live conversations glowing. Click a dot, land in
- *     its room.
+ * The warren's band (founder pick 2026-07-16: "chambers"):
+ *   · THE CHAMBERS — the working depth is no longer one long carousel. Cards
+ *     are sorted into verdict CHAMBERS you switch between — reach out · your
+ *     call · waiting · talking · skip · researching — and you flip through one
+ *     stack at a time. A card is a door; everything happens in the room.
+ *   · THE TERRITORY — the same band pulled back: every candidate a dot, sweeps
+ *     as rings, live conversations glowing. Click a dot, land in its room.
  * The toggle flips in place — no navigation.
  */
 
@@ -42,6 +42,21 @@ const WORD: Record<WarrenCard["kind"], { text: string; cls: "iris" | "ink" | "mu
   talking: { text: "talking.", cls: "green" },
 };
 
+// Chamber order — needs-you first, world last. The chamber label drops the
+// trailing period the cards carry.
+const CHAMBERS: { key: WarrenCard["kind"]; label: string }[] = [
+  { key: "reach_out", label: "reach out" },
+  { key: "your_call", label: "your call" },
+  { key: "waiting", label: "waiting" },
+  { key: "talking", label: "talking" },
+  { key: "skip", label: "skip" },
+  { key: "preparing", label: "researching" },
+];
+
+function wordColor(cls: "iris" | "ink" | "muted" | "green" | "crimson"): string | undefined {
+  return cls === "green" ? "#2E7D32" : cls === "muted" ? "var(--muted)" : cls === "crimson" ? "#8B1A1A" : undefined;
+}
+
 /** Deterministic 0..1 hash from an id — stable dot placement, no Math.random. */
 function hash01(s: string, salt: number): number {
   let h = 2166136261 ^ salt;
@@ -65,6 +80,18 @@ export default function WarrenBand({
 
   const hot = (k: WarrenCard["kind"]) => k === "reach_out";
   const dim = (k: WarrenCard["kind"]) => k === "skip";
+
+  // Bucket the cards by verdict and keep only chambers that have someone in
+  // them. Default to the first non-empty chamber in the needs-you-first order.
+  const counts: Record<string, number> = {};
+  for (const c of cards) counts[c.kind] = (counts[c.kind] ?? 0) + 1;
+  const openChambers = CHAMBERS.filter((ch) => (counts[ch.key] ?? 0) > 0);
+  const [chamber, setChamber] = useState<WarrenCard["kind"] | null>(
+    openChambers[0]?.key ?? null,
+  );
+  // If the selected chamber emptied out (e.g. after a refresh), fall back.
+  const active = chamber && (counts[chamber] ?? 0) > 0 ? chamber : (openChambers[0]?.key ?? null);
+  const stack = active ? cards.filter((c) => c.kind === active) : [];
 
   return (
     <section>
@@ -92,7 +119,7 @@ export default function WarrenBand({
         </button>
         <span className={twr.togNote}>
           {view === "strip"
-            ? "— work the cards; a card is a door to its room"
+            ? "— pick a chamber, flip its stack; a card is a door to its room"
             : "— pulled back; click a dot to land in its room"}
         </span>
       </div>
@@ -103,8 +130,34 @@ export default function WarrenBand({
             The floor is empty — send him out above.
           </p>
         ) : (
+          <>
+            {/* The chambers — one per verdict, switch between the stacks. */}
+            <div className={twr.chambers} role="tablist" aria-label="verdict chambers">
+              {openChambers.map((ch) => {
+                const w = WORD[ch.key];
+                const on = ch.key === active;
+                return (
+                  <button
+                    key={ch.key}
+                    type="button"
+                    role="tab"
+                    aria-selected={on}
+                    className={`${twr.chamber} ${on ? twr.chamberOn : ""}`}
+                    onClick={() => setChamber(ch.key)}
+                  >
+                    <span
+                      className={`${twr.chamberW} ${w.cls === "iris" ? twr.wordHotIris : ""}`}
+                      style={wordColor(w.cls) ? { color: wordColor(w.cls) } : undefined}
+                    >
+                      {ch.label}
+                    </span>
+                    <span className={twr.chamberC}>{counts[ch.key]}</span>
+                  </button>
+                );
+              })}
+            </div>
           <div className={twr.strip}>
-            {cards.map((c) => {
+            {stack.map((c) => {
               const w = WORD[c.kind];
               return (
                 <Link
@@ -141,6 +194,7 @@ export default function WarrenBand({
               );
             })}
           </div>
+          </>
         )
       ) : (
         <div className={twr.terr}>
