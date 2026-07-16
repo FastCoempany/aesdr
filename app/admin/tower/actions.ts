@@ -2,11 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { after } from "next/server";
 
 import { requireAdmin } from "@/lib/admin";
-import { runBriefAndSave } from "@/lib/partnerships/brief";
-import { createDossierRun } from "@/lib/partnerships/dossier-run";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { canonCheck } from "@/lib/partnerships/canon-mechanical";
 import { runAffiliatePayoutBatch } from "@/app/actions/affiliate";
@@ -16,12 +13,10 @@ import {
   getAgentModel,
 } from "@/lib/partnerships/agent-switch";
 import {
-  runScoutSweep,
   runDossier,
   verdictNextAction,
-  type ScoutSweepId,
 } from "@/lib/partnerships/anthropic-agents";
-import { logPartnerEvent, logPartnerEvents } from "@/lib/partnerships/events";
+import { logPartnerEvent } from "@/lib/partnerships/events";
 import {
   attemptEmailFind,
   emailFinderConfigured,
@@ -44,7 +39,7 @@ import {
   firstTouchIdemKey,
 } from "@/lib/partnerships/outreach-templates";
 import { sendOutboundRow } from "@/lib/partnerships/courier-send";
-import { assertUnderDailyWall, logAgentSpend } from "@/lib/partnerships/spend";
+import { assertUnderDailyWall } from "@/lib/partnerships/spend";
 import { getSuppressedEmails } from "@/lib/email";
 
 /** Re-render the tower and a candidate's room after a state change. */
@@ -54,11 +49,6 @@ function revalidateCandidate(pipelineId: string | null | undefined) {
   if (pipelineId) revalidatePath(`/admin/tower/candidate/${pipelineId}`);
 }
 
-const VALID_SWEEPS: readonly ScoutSweepId[] = [
-  "communities",
-  "newsletters_podcasts",
-  "practitioners",
-];
 
 /**
  * The tower's trigger-pulls. Every action here is the human gesture at an
@@ -938,6 +928,55 @@ export async function findEmailNow(formData: FormData) {
  * surfaced and put it on the contact path anyway — labeled so the risk stays
  * visible all the way to the draft.
  */
+/**
+ * Attach an address you found yourself (founder spec: "for folks that don't
+ * have emails i want to be able to enter it, then 1-click send"). Prepends it
+ * to the contact path, and if a live manual-channel draft exists, converts it
+ * to a real email draft — so the ceramic button appears and one press sends.
+ */
+export async function attachEmail(formData: FormData) {
+  const user = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  if (!id) throw new Error("Missing id.");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error("That doesn't look like an email address.");
+
+  const supabase = createAdminClient();
+  const { data: row, error } = await supabase
+    .from("partner_pipeline")
+    .select("contact_path")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!row) throw new Error("Candidate not found.");
+
+  const { error: upErr } = await supabase
+    .from("partner_pipeline")
+    .update({
+      contact_path: `${email} · ${(row.contact_path as string | null) ?? ""}`.replace(/ · $/, ""),
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id);
+  if (upErr) throw new Error(upErr.message);
+
+  // Convert their live manual drafts into email drafts aimed at the new
+  // address — the ceramic press takes over from Mark sent.
+  await supabase
+    .from("partner_outbound_queue")
+    .update({ to_addr: email, send_channel: "email" })
+    .eq("related_pipeline_id", id)
+    .in("status", ["ready", "approved"])
+    .eq("send_channel", "manual");
+
+  await logPartnerEvent({
+    pipelineId: id,
+    actor: user.email,
+    kind: "email_attached",
+    detail: { email },
+  });
+  revalidateCandidate(id);
+}
+
 export async function useFoundEmail(formData: FormData) {
   const user = await requireAdmin();
   const id = String(formData.get("id") ?? "");

@@ -569,3 +569,68 @@
   line-height: 1.9;
   pointer-events: none;
 }
+
+/* ── The room takeover (founder 2026-07-16): the draft card carries the
+   verdict word, the ceramic press, the press-order column, and Leponeus
+   presenting on the right. ── */
+.roomCard { position: relative; }
+.roomLep {
+  position: absolute;
+  right: 10px;
+  bottom: 4px;
+  width: 200px;
+  pointer-events: none;
+}
+.roomLep img { width: 100%; display: block; position: relative; z-index: 1; }
+.roomHalo {
+  position: absolute;
+  right: -14px;
+  bottom: 0;
+  width: 230px;
+  height: 140px;
+  background: var(--iris);
+  background-size: 200% auto;
+  animation: iris 4s linear infinite;
+  filter: blur(48px);
+  opacity: .35;
+}
+@media (max-width: 1080px) { .roomLep { display: none; } }
+.roomCallWord {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 900;
+  font-size: clamp(38px, 5vw, 56px);
+  line-height: .95;
+  margin: 2px 0 10px;
+  background: var(--iris);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: iris 4s linear infinite;
+  display: inline-block;
+}
+.pressOrder {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  line-height: 1.9;
+  color: #1A1A1A;
+  border-left: 3px solid;
+  border-image: linear-gradient(180deg, #FF006E, #8B5CF6) 1;
+  padding: 4px 0 4px 12px;
+  max-width: 46ch;
+}
+.roomGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 210px;
+  gap: 10px;
+}
+@media (max-width: 1080px) { .roomGrid { grid-template-columns: 1fr; } }
+.roomLepCell {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+@media (max-width: 1080px) { .roomLepCell { display: none; } }
+.roomLepCell img { width: 190px; max-width: 100%; display: block; position: relative; z-index: 1; }

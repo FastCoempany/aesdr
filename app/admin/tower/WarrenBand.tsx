@@ -109,7 +109,11 @@ export default function WarrenBand({
         ) : (
           <div className={twr.strip}>
             {cards.map((c) => {
-              const w = WORD[c.kind];
+              // A manual-channel draft isn't a send — don't promise one.
+              const w =
+                c.kind === "draft" && !c.hasEmail
+                  ? ({ text: "deliver it.", cls: "ink" } as const)
+                  : WORD[c.kind];
               return (
                 <Link
                   key={c.id || c.name}

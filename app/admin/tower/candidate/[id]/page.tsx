@@ -24,6 +24,7 @@ import {
   findEmailNow,
   useFoundEmail,
   oneClickSend,
+  attachEmail,
   holdDraft,
   releaseDraft,
   markManualSent,
@@ -222,6 +223,9 @@ export default async function CandidateRoomPage({
   const vf = (c.voice_fit as number | null) ?? null;
   const hasReadyDraft = drafts.some((d) => d.status === "ready");
   const hasApprovedDraft = drafts.some((d) => d.status === "approved");
+  // A live draft moves the room's center of gravity to the takeover card —
+  // the research-stage controls step back so the button owns the floor.
+  const hasLiveDraft = hasReadyDraft || hasApprovedDraft;
   let next = "";
   if (status === "sourced") {
     next = "Waiting on you — Accept or Reject below.";
@@ -471,7 +475,7 @@ export default async function CandidateRoomPage({
             </form>
           </>
         )}
-        {(status === "sourced" || status === "enriched") && (
+        {(status === "sourced" || status === "enriched") && !hasLiveDraft && (
           <RunBriefButton
             candidateId={id}
             label={brief || hasLegacyBrief ? "Re-run brief" : "Run brief now"}
@@ -493,7 +497,7 @@ export default async function CandidateRoomPage({
             <TowerButton pendingLabel="Marking…">They replied — hands off</TowerButton>
           </form>
         )}
-        {(status === "sourced" || status === "enriched") && !hasEmail && emailFinderConfigured() && (
+        {(status === "sourced" || status === "enriched") && !hasEmail && !hasLiveDraft && emailFinderConfigured() && (
           <form action={findEmailNow} style={{ display: "flex", gap: "8px", alignItems: "stretch" }}>
             <input type="hidden" name="id" value={id} />
             <input
@@ -519,7 +523,7 @@ export default async function CandidateRoomPage({
             </TowerButton>
           </form>
         )}
-        {status === "enriched" && (
+        {status === "enriched" && !hasLiveDraft && (
           <form action={rejectSourced}>
             <input type="hidden" name="id" value={id} />
             <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
@@ -527,11 +531,197 @@ export default async function CandidateRoomPage({
           </form>
         )}
       </div>
-      {(status === "sourced" || status === "enriched") && (
+      {(status === "sourced" || status === "enriched") && !hasLiveDraft && (
         <p style={{ fontFamily: MONO, fontSize: "10px", lineHeight: 1.6, color: MUTED, margin: "0 0 8px" }}>
           Run brief = a live web-search research call (confirmed first, ~$0.10–$0.50). Scribe draft = free template fill.
-          Neither sends anything — every email still waits for your approve in Decisions.
+          Neither sends anything — nothing leaves without your press on the button.
         </p>
+      )}
+
+      {/* ── Drafts — every status, with the action that fits ── */}
+      <p style={sectionLabel}>Drafts &amp; sends</p>
+      {drafts.length === 0 ? (
+        <div style={card}>
+          <p style={{ fontFamily: SERIF, fontSize: "13.5px", fontStyle: "italic", color: MUTED, margin: 0 }}>
+            Nothing drafted yet{status === "enriched" ? " — Scribe draft above writes the first-touch." : "."}
+          </p>
+        </div>
+      ) : (
+        drafts.map((d) => {
+          const st = d.status as string;
+          const isManual = (d.send_channel ?? "email") === "manual";
+          const isArmed = !isManual && st === "approved";
+          // The takeover card (founder 2026-07-16): a live email draft carries
+          // the verdict word, the editor, the ceramic press with its
+          // press-order column — and Leponeus presenting on the right.
+          const isEmailLive = !isManual && (st === "ready" || st === "approved");
+          return (
+            <div
+              key={d.id as string}
+              className={twr.roomCard}
+              style={isArmed ? { ...card, borderLeft: `3px solid ${GREEN}` } : card}
+            >
+              <div className={isEmailLive ? twr.roomGrid : undefined}>
+              <div style={{ minWidth: 0 }}>
+              {isEmailLive && brief?.verdict === "reach_out" && (
+                <p className={twr.roomCallWord}>reach out.</p>
+              )}
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center", marginBottom: "8px" }}>
+                <span style={chip(st === "sent" ? GREEN : st === "failed" ? CRIMSON : st === "held" ? AMBERISH : INK)}>{st}</span>
+                <span style={chip(MUTED)}>{isManual ? "manual send" : "email"}</span>
+                {d.warden_cleared ? <span style={chip(GREEN)}>warden ✓</span> : <span style={chip(AMBERISH)}>needs eye</span>}
+                {isArmed && <span style={{ ...chip(GREEN), fontWeight: 700 }}>● armed</span>}
+                <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED, marginLeft: "auto" }}>→ {d.to_addr as string}</span>
+              </div>
+              {isManual && st !== "sent" && (
+                <>
+                  <p style={{ fontFamily: MONO, fontSize: "11px", color: MUTED, margin: "0 0 8px" }}>
+                    deliver it yourself, then Mark sent:{" "}
+                    <ContactLinks
+                      text={(d.to_addr as string) + " " + ((c.contact_path as string | null) ?? "")}
+                      searchHint={`${c.name as string} ${(c.surface as string | null) ?? ""}`}
+                    />
+                  </p>
+                  {/* Found an address yourself? Attach it and the manual draft
+                      becomes a real email draft — the ceramic press takes over. */}
+                  <form action={attachEmail} style={{ display: "flex", gap: "8px", alignItems: "stretch", flexWrap: "wrap", margin: "0 0 10px" }}>
+                    <input type="hidden" name="id" value={id} />
+                    <input
+                      name="email"
+                      type="email"
+                      placeholder="found their address? paste it…"
+                      style={{ fontFamily: MONO, fontSize: "11px", color: INK, background: "#FFFFFF", border: `1px solid ${LIGHT}`, padding: "0 10px", width: "240px" }}
+                    />
+                    <TowerButton variant="outline" pendingLabel="Attaching…">Attach email — the button takes over</TowerButton>
+                  </form>
+                </>
+              )}
+              {st === "ready" || st === "approved" ? (
+                // Inline editor — edit subject + body right on screen, then Save
+                // re-runs the canon gate. (editDraft accepts ready + approved.)
+                <form action={editDraft} style={{ margin: "0 0 10px" }}>
+                  <input type="hidden" name="id" value={d.id as string} />
+                  <input
+                    name="subject"
+                    defaultValue={d.subject as string}
+                    style={{ width: "100%", boxSizing: "border-box", fontFamily: SERIF, fontSize: "15px", fontWeight: 600, padding: "8px 10px", border: `1px solid ${LIGHT}`, color: INK, background: "#fff", marginBottom: "8px" }}
+                  />
+                  <textarea
+                    name="body"
+                    defaultValue={d.body as string}
+                    rows={12}
+                    style={{ width: "100%", boxSizing: "border-box", fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.6, padding: "10px", border: `1px solid ${LIGHT}`, color: INK, background: "#fff", resize: "vertical" }}
+                  />
+                  <div style={{ marginTop: "8px" }}>
+                    <TowerButton variant="ghost" pendingLabel="Saving…">Save &amp; re-check canon</TowerButton>
+                  </div>
+                </form>
+              ) : (
+                <>
+                  <p style={{ fontFamily: SERIF, fontSize: "15px", fontWeight: 600, color: INK, margin: "0 0 6px" }}>{d.subject as string}</p>
+                  <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.6, color: INK, margin: "0 0 10px", whiteSpace: "pre-wrap" }}>
+                    {d.body as string}
+                  </p>
+                </>
+              )}
+              {d.personalization_note && (
+                <p style={{ fontFamily: MONO, fontSize: "11px", lineHeight: 1.5, color: AMBERISH, background: "rgba(161,68,0,.06)", borderLeft: `2px solid ${AMBERISH}`, padding: "8px 10px", margin: "0 0 10px" }}>
+                  {d.personalization_note as string}
+                </p>
+              )}
+              {st === "failed" && (
+                <div style={{ fontFamily: MONO, fontSize: "12px", lineHeight: 1.5, color: CRIMSON, background: "rgba(139,26,26,.06)", border: `1px solid ${CRIMSON}`, padding: "8px 10px", margin: "0 0 10px" }}>
+                  <strong>✗ Didn&apos;t send.</strong> {(d.error as string) || "Unknown error."} — fix it and hit Send again, or check Resend → Emails.
+                </div>
+              )}
+              <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}>
+                {st === "ready" && isManual && (
+                  <form action={markManualSent}>
+                    <input type="hidden" name="id" value={d.id as string} />
+                    <TowerButton pendingLabel="Marking…">Mark sent</TowerButton>
+                  </form>
+                )}
+                {(st === "ready" || st === "approved") && !isManual && (
+                  // The one-press send (founder-booked ceramic button): a single
+                  // press approves (if needed), re-checks suppression, sends via
+                  // Resend, logs the claim, and starts the follow-up clock.
+                  <>
+                    <form action={oneClickSend}>
+                      <input type="hidden" name="id" value={d.id as string} />
+                      <CeramicSendButton
+                        label="START BUTTON"
+                        title={`Send to ${d.to_addr as string}`}
+                        confirmMessage={`Send this email to ${d.to_addr as string} now? One press does everything — it goes out immediately and can't be undone.`}
+                      />
+                    </form>
+                    <div className={twr.pressOrder}>
+                      <b>the press, in order —</b><br />
+                      1 · cap sinks · suppression list re-checked<br />
+                      2 · send claimed <span style={{ color: MUTED }}>(a second press can&apos;t double-send)</span><br />
+                      3 · resend transmits · copy BCC&apos;d to your inbox<br />
+                      <b>then the cap flips to SENT ✓, the proof prints below, and the row joins the sent record.</b>
+                    </div>
+                  </>
+                )}
+                {(st === "ready" || st === "approved") && (
+                  <form action={holdDraft}>
+                    <input type="hidden" name="id" value={d.id as string} />
+                    <TowerButton variant="ghost" pendingLabel="Holding…">Hold</TowerButton>
+                  </form>
+                )}
+                {(st === "held" || st === "failed") && (
+                  <form action={releaseDraft}>
+                    <input type="hidden" name="id" value={d.id as string} />
+                    <TowerButton variant="ghost" pendingLabel="Releasing…">Release → ready</TowerButton>
+                  </form>
+                )}
+                {st === "sent" && (
+                  <div
+                    style={{
+                      fontFamily: MONO,
+                      fontSize: "11px",
+                      lineHeight: 1.9,
+                      color: INK,
+                      borderLeft: "3px solid",
+                      borderImage: "linear-gradient(180deg,#FF006E,#8B5CF6) 1",
+                      padding: "4px 0 4px 12px",
+                    }}
+                  >
+                    <strong style={{ color: GREEN }}>sent ✓</strong>{" "}
+                    {d.sent_at ? `${new Date(d.sent_at as string).toUTCString().slice(17, 22)} UTC · ${timeAgo(d.sent_at as string)}` : ""} → {d.to_addr as string}
+                    {d.resend_id ? <><br />resend id {d.resend_id as string}</> : null}
+                    <br />
+                    {(() => {
+                      const del = deliveryByQueue.get(d.id as string);
+                      if (del?.status === "delivered") {
+                        return (
+                          <strong style={{ color: GREEN }}>
+                            delivered ✓{del.at ? ` ${new Date(del.at).toUTCString().slice(17, 22)} UTC` : ""}
+                          </strong>
+                        );
+                      }
+                      if (del?.status === "bounced" || del?.status === "complained") {
+                        return <strong style={{ color: CRIMSON }}>{del.status} — address suppressed, don&apos;t resend</strong>;
+                      }
+                      return <span style={{ color: MUTED }}>delivery pending — stamps when Resend confirms</span>;
+                    })()}
+                    <br />
+                    copy BCC&apos;d to your inbox · in the sent record
+                  </div>
+                )}
+              </div>
+              </div>
+              {isEmailLive && (
+                <div className={twr.roomLepCell} aria-hidden>
+                  <div className={twr.roomHalo} />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/mascot/leponeus-verdict-sm.png" alt="" />
+                </div>
+              )}
+              </div>
+            </div>
+          );
+        })
       )}
 
       {/* ── The research brief ── */}
@@ -621,155 +811,6 @@ export default async function CandidateRoomPage({
             {c.why_fit as string}
           </p>
         </div>
-      )}
-
-      {/* ── Drafts — every status, with the action that fits ── */}
-      <p style={sectionLabel}>Drafts &amp; sends</p>
-      {drafts.length === 0 ? (
-        <div style={card}>
-          <p style={{ fontFamily: SERIF, fontSize: "13.5px", fontStyle: "italic", color: MUTED, margin: 0 }}>
-            Nothing drafted yet{status === "enriched" ? " — Scribe draft above writes the first-touch." : "."}
-          </p>
-        </div>
-      ) : (
-        drafts.map((d) => {
-          const st = d.status as string;
-          const isManual = (d.send_channel ?? "email") === "manual";
-          const isArmed = !isManual && st === "approved";
-          return (
-            <div
-              key={d.id as string}
-              style={isArmed ? { ...card, borderLeft: `3px solid ${GREEN}` } : card}
-            >
-              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center", marginBottom: "8px" }}>
-                <span style={chip(st === "sent" ? GREEN : st === "failed" ? CRIMSON : st === "held" ? AMBERISH : INK)}>{st}</span>
-                <span style={chip(MUTED)}>{isManual ? "manual send" : "email"}</span>
-                {d.warden_cleared ? <span style={chip(GREEN)}>warden ✓</span> : <span style={chip(AMBERISH)}>needs eye</span>}
-                {isArmed && <span style={{ ...chip(GREEN), fontWeight: 700 }}>● armed</span>}
-                <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED, marginLeft: "auto" }}>→ {d.to_addr as string}</span>
-              </div>
-              {isManual && st !== "sent" && (
-                <p style={{ fontFamily: MONO, fontSize: "11px", color: MUTED, margin: "0 0 8px" }}>
-                  deliver it yourself, then Mark sent:{" "}
-                  <ContactLinks
-                    text={(d.to_addr as string) + " " + ((c.contact_path as string | null) ?? "")}
-                    searchHint={`${c.name as string} ${(c.surface as string | null) ?? ""}`}
-                  />
-                </p>
-              )}
-              {st === "ready" || st === "approved" ? (
-                // Inline editor — edit subject + body right on screen, then Save
-                // re-runs the canon gate. (editDraft accepts ready + approved.)
-                <form action={editDraft} style={{ margin: "0 0 10px" }}>
-                  <input type="hidden" name="id" value={d.id as string} />
-                  <input
-                    name="subject"
-                    defaultValue={d.subject as string}
-                    style={{ width: "100%", boxSizing: "border-box", fontFamily: SERIF, fontSize: "15px", fontWeight: 600, padding: "8px 10px", border: `1px solid ${LIGHT}`, color: INK, background: "#fff", marginBottom: "8px" }}
-                  />
-                  <textarea
-                    name="body"
-                    defaultValue={d.body as string}
-                    rows={12}
-                    style={{ width: "100%", boxSizing: "border-box", fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.6, padding: "10px", border: `1px solid ${LIGHT}`, color: INK, background: "#fff", resize: "vertical" }}
-                  />
-                  <div style={{ marginTop: "8px" }}>
-                    <TowerButton variant="ghost" pendingLabel="Saving…">Save &amp; re-check canon</TowerButton>
-                  </div>
-                </form>
-              ) : (
-                <>
-                  <p style={{ fontFamily: SERIF, fontSize: "15px", fontWeight: 600, color: INK, margin: "0 0 6px" }}>{d.subject as string}</p>
-                  <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.6, color: INK, margin: "0 0 10px", whiteSpace: "pre-wrap" }}>
-                    {d.body as string}
-                  </p>
-                </>
-              )}
-              {d.personalization_note && (
-                <p style={{ fontFamily: MONO, fontSize: "11px", lineHeight: 1.5, color: AMBERISH, background: "rgba(161,68,0,.06)", borderLeft: `2px solid ${AMBERISH}`, padding: "8px 10px", margin: "0 0 10px" }}>
-                  {d.personalization_note as string}
-                </p>
-              )}
-              {st === "failed" && (
-                <div style={{ fontFamily: MONO, fontSize: "12px", lineHeight: 1.5, color: CRIMSON, background: "rgba(139,26,26,.06)", border: `1px solid ${CRIMSON}`, padding: "8px 10px", margin: "0 0 10px" }}>
-                  <strong>✗ Didn&apos;t send.</strong> {(d.error as string) || "Unknown error."} — fix it and hit Send again, or check Resend → Emails.
-                </div>
-              )}
-              <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}>
-                {st === "ready" && isManual && (
-                  <form action={markManualSent}>
-                    <input type="hidden" name="id" value={d.id as string} />
-                    <TowerButton pendingLabel="Marking…">Mark sent</TowerButton>
-                  </form>
-                )}
-                {(st === "ready" || st === "approved") && !isManual && (
-                  // The one-press send (founder-booked ceramic button): a single
-                  // press approves (if needed), re-checks suppression, sends via
-                  // Resend, logs the claim, and starts the follow-up clock.
-                  <>
-                    <form action={oneClickSend}>
-                      <input type="hidden" name="id" value={d.id as string} />
-                      <CeramicSendButton
-                        label="START BUTTON"
-                        title={`Send to ${d.to_addr as string}`}
-                        confirmMessage={`Send this email to ${d.to_addr as string} now? One press does everything — it goes out immediately and can't be undone.`}
-                      />
-                    </form>
-                    <div style={{ fontFamily: MONO, fontSize: "10.5px", lineHeight: 1.8, color: MUTED, maxWidth: "36ch" }}>
-                      one press: suppression re-check → send → logged in the sent record → follow-up clock starts. pressing twice can&apos;t double-send.
-                    </div>
-                  </>
-                )}
-                {(st === "ready" || st === "approved") && (
-                  <form action={holdDraft}>
-                    <input type="hidden" name="id" value={d.id as string} />
-                    <TowerButton variant="ghost" pendingLabel="Holding…">Hold</TowerButton>
-                  </form>
-                )}
-                {(st === "held" || st === "failed") && (
-                  <form action={releaseDraft}>
-                    <input type="hidden" name="id" value={d.id as string} />
-                    <TowerButton variant="ghost" pendingLabel="Releasing…">Release → ready</TowerButton>
-                  </form>
-                )}
-                {st === "sent" && (
-                  <div
-                    style={{
-                      fontFamily: MONO,
-                      fontSize: "11px",
-                      lineHeight: 1.9,
-                      color: INK,
-                      borderLeft: "3px solid",
-                      borderImage: "linear-gradient(180deg,#FF006E,#8B5CF6) 1",
-                      padding: "4px 0 4px 12px",
-                    }}
-                  >
-                    <strong style={{ color: GREEN }}>sent ✓</strong>{" "}
-                    {d.sent_at ? `${new Date(d.sent_at as string).toUTCString().slice(17, 22)} UTC · ${timeAgo(d.sent_at as string)}` : ""} → {d.to_addr as string}
-                    {d.resend_id ? <><br />resend id {d.resend_id as string}</> : null}
-                    <br />
-                    {(() => {
-                      const del = deliveryByQueue.get(d.id as string);
-                      if (del?.status === "delivered") {
-                        return (
-                          <strong style={{ color: GREEN }}>
-                            delivered ✓{del.at ? ` ${new Date(del.at).toUTCString().slice(17, 22)} UTC` : ""}
-                          </strong>
-                        );
-                      }
-                      if (del?.status === "bounced" || del?.status === "complained") {
-                        return <strong style={{ color: CRIMSON }}>{del.status} — address suppressed, don&apos;t resend</strong>;
-                      }
-                      return <span style={{ color: MUTED }}>delivery pending — stamps when Resend confirms</span>;
-                    })()}
-                    <br />
-                    copy BCC&apos;d to your inbox · in the sent record
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })
       )}
 
       {/* ── Replies ── */}
