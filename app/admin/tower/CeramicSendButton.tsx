@@ -206,9 +206,21 @@ function makeMask(w: number, label: string): HTMLCanvasElement {
   x.textAlign = "center";
   x.textBaseline = "middle";
   try { (x as any).letterSpacing = "10px"; } catch { /* older engines */ }
-  x.font = "900 118px 'Arial Black', Arial, sans-serif";
   x.fillStyle = "#FFFFFF";
-  const draw = () => x.fillText(label, 6, 0);
+  // Multi-word labels stack like the booked design ("START" / "BUTTON");
+  // single-word states (SENT ✓, HELD, RETRY) fire large on one line.
+  const words = label.split(" ").filter(Boolean);
+  const draw =
+    words.length >= 2
+      ? () => {
+          x.font = "900 74px 'Arial Black', Arial, sans-serif";
+          x.fillText(words[0], 6, -44);
+          x.fillText(words.slice(1).join(" "), 6, 44);
+        }
+      : () => {
+          x.font = "900 118px 'Arial Black', Arial, sans-serif";
+          x.fillText(label, 6, 0);
+        };
   try {
     x.filter = "blur(4.5px)"; draw();
     x.filter = "blur(2.2px)"; draw();

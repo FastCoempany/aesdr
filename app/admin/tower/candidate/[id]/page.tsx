@@ -710,7 +710,7 @@ export default async function CandidateRoomPage({
                     <form action={oneClickSend}>
                       <input type="hidden" name="id" value={d.id as string} />
                       <CeramicSendButton
-                        label="SEND"
+                        label="START BUTTON"
                         title={`Send to ${d.to_addr as string}`}
                         confirmMessage={`Send this email to ${d.to_addr as string} now? One press does everything — it goes out immediately and can't be undone.`}
                       />
