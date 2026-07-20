@@ -690,3 +690,170 @@
 /* the strip that follows the chambers loses its own top gap */
 .chambers + .strip { border-top: none; padding-top: 14px; }
 @media (prefers-reduced-motion: reduce) { .chamberOn::after { animation: none; } }
+
+/* ════ THE LETTER (founder pick 2026-07-20): the room is correspondence.
+   Verdict as salutation, branded chips, the draft as the letter body, the
+   ceramic seal, everything else folded at the foot. ════ */
+.sheet {
+  position: relative;
+  background: #FFFEFB;
+  border: 1px solid #E8E4DF;
+  box-shadow: 0 18px 46px rgba(26, 26, 26, .10);
+  max-width: 720px;
+  padding: 30px 36px 26px;
+  margin: 10px 0 40px;
+}
+.sheetEyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  gap: 10px;
+  border-bottom: 1px solid #E8E4DF;
+  padding-bottom: 10px;
+  padding-right: 118px; /* room for the stamp */
+  flex-wrap: wrap;
+}
+.sheetTo { margin-left: auto; }
+.salut {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 900;
+  font-size: clamp(40px, 6vw, 58px);
+  line-height: .9;
+  margin: 16px 0 10px;
+}
+.lchips { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 12px; }
+.lchip {
+  font-family: var(--cond);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border: 1px solid #E8E4DF;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.lchipCall { border-color: transparent; color: #FAF7F2; background: var(--ink); position: relative; overflow: hidden; }
+.lchipCall::before {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
+  background: var(--iris); background-size: 200% auto; animation: iris 4s linear infinite;
+}
+.lchipG { color: #2E7D32; border-color: #2E7D32; }
+.lchipWarn { color: #8B1A1A; border-color: #8B1A1A; }
+.lbody {
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink);
+  border-left: 2px solid #E8E4DF;
+  padding-left: 14px;
+  margin: 14px 0;
+}
+.lseal {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-top: 1px dashed var(--muted);
+  padding-top: 14px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.lsealCap { font-family: var(--mono); font-size: 11px; line-height: 1.7; color: var(--ink); max-width: 46ch; }
+.lsealCap i { font-style: normal; color: var(--muted); }
+.lfold { margin-top: 14px; }
+.lsec { border-top: 1px solid #E8E4DF; }
+.lsec > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 9px 0;
+  font-family: var(--cond);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+.lsec > summary::-webkit-details-marker { display: none; }
+.lsec > summary::before { content: "▸"; color: var(--muted); font-size: 9px; }
+.lsec[open] > summary::before { content: "▾"; }
+.lsecHint {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: .08em;
+  text-transform: none;
+  color: var(--muted);
+  margin-left: auto;
+}
+.lsecBody { font-family: var(--mono); font-size: 11px; line-height: 1.75; color: var(--ink); padding: 0 0 10px; }
+.lsecBody :global(a) { color: #8B1A1A; }
+.lnotice {
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.6;
+  padding: 8px 12px;
+  border-left: 3px solid var(--ink);
+  background: #FFFFFF;
+  margin: 0 0 12px;
+  max-width: 720px;
+  word-break: break-word;
+}
+.lnoticeErr { border-left-color: #8B1A1A; color: #8B1A1A; }
+
+/* ── The postage stamp: Leponeus over a shimmering Chicago skyline, inside
+   the perforated borders. Hot = awake + skyline in iris; cold = asleep +
+   skyline in matte clay. ── */
+.pstamp {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  width: 96px;
+  height: 118px;
+  border: 2px dashed #8B1A1A;
+  background: #FFFEFB;
+  transform: rotate(2.2deg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  overflow: hidden;
+  z-index: 2;
+}
+.pstampSky {
+  position: absolute;
+  left: 3px; right: 3px; bottom: 16px;
+  height: 58px;
+  background: #C9C2B6;
+  -webkit-mask-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 190 90' preserveAspectRatio='none'%3E%3Cpath d='M0 90 V72 H8 V60 H14 V72 H20 V66 H26 V90 H30 V38 H33 V30 H35 V38 H38 V30 H40 V38 H43 V90 H48 V62 H56 V54 H62 V62 H68 V90 H74 V48 H80 V90 H86 V58 H92 V44 H98 V58 H104 V90 H110 V64 H118 V56 H126 V64 H132 V90 H138 L144 42 H146 V32 H148 V42 H152 V32 H154 V42 L160 90 H166 V68 H174 V60 H182 V68 H190 V90 Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 190 90' preserveAspectRatio='none'%3E%3Cpath d='M0 90 V72 H8 V60 H14 V72 H20 V66 H26 V90 H30 V38 H33 V30 H35 V38 H38 V30 H40 V38 H43 V90 H48 V62 H56 V54 H62 V62 H68 V90 H74 V48 H80 V90 H86 V58 H92 V44 H98 V58 H104 V90 H110 V64 H118 V56 H126 V64 H132 V90 H138 L144 42 H146 V32 H148 V42 H152 V32 H154 V42 L160 90 H166 V68 H174 V60 H182 V68 H190 V90 Z'/%3E%3C/svg%3E");
+  -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  opacity: .5;
+}
+.pstampHot .pstampSky {
+  background: var(--iris);
+  background-size: 200% auto;
+  animation: iris 4s linear infinite;
+  opacity: .9;
+}
+.pstampLep { width: 62px; display: block; position: relative; z-index: 1; margin-bottom: 2px; }
+.pstampCap {
+  font-family: var(--mono);
+  font-size: 7.5px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: #8B1A1A;
+  position: relative;
+  z-index: 1;
+  padding-bottom: 4px;
+}
+@media (prefers-reduced-motion: reduce) { .pstampHot .pstampSky, .lchipCall::before { animation: none; } }
+@media (max-width: 560px) { .pstamp { width: 78px; height: 98px; } .sheetEyebrow { padding-right: 92px; } }

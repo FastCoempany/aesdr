@@ -19,10 +19,14 @@ export default function CeramicSendButton({
   label,
   confirmMessage,
   title,
+  resting = false,
 }: {
   label: string;
   confirmMessage?: string;
   title?: string;
+  /** Cold states (skip / waiting / binned): the seal stays present but rests —
+   *  desaturated until the caption's one move actually applies. */
+  resting?: boolean;
 }) {
   const { pending } = useFormStatus();
   const [asking, setAsking] = useState(false);
@@ -48,7 +52,7 @@ export default function CeramicSendButton({
         height: "172px",
         display: "block",
         transform: pending ? "translateY(3px) scale(0.985)" : undefined,
-        filter: pending ? "brightness(0.94)" : undefined,
+        filter: pending ? "brightness(0.94)" : resting ? "saturate(0.35) opacity(0.62)" : undefined,
         transition: "transform 120ms ease, filter 120ms ease",
       }}
     />

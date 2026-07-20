@@ -50,33 +50,7 @@ const LIGHT = "#E8E4DF";
 const GREEN = "#2E7D32";
 const AMBERISH = "#a14400";
 const MONO = "'Space Mono', monospace";
-const DISPLAY = "'Playfair Display', Georgia, serif";
 const SERIF = "'Source Serif 4', Georgia, serif";
-
-const card: React.CSSProperties = {
-  border: `1px solid ${LIGHT}`,
-  background: "#FFFFFF",
-  padding: "18px 20px",
-  marginBottom: "14px",
-};
-const sectionLabel: React.CSSProperties = {
-  fontFamily: MONO,
-  fontSize: "11px",
-  letterSpacing: ".26em",
-  textTransform: "uppercase",
-  color: MUTED,
-  margin: "28px 0 12px",
-};
-const chip = (color: string): React.CSSProperties => ({
-  fontFamily: MONO,
-  fontSize: "10px",
-  letterSpacing: ".12em",
-  textTransform: "uppercase",
-  color,
-  border: `1px solid ${color}`,
-  padding: "2px 8px",
-  whiteSpace: "nowrap",
-});
 
 function timeAgo(iso: string | null): string {
   if (!iso) return "—";
@@ -223,9 +197,6 @@ export default async function CandidateRoomPage({
   const vf = (c.voice_fit as number | null) ?? null;
   const hasReadyDraft = drafts.some((d) => d.status === "ready");
   const hasApprovedDraft = drafts.some((d) => d.status === "approved");
-  // A live draft moves the room's center of gravity to the takeover card —
-  // the research-stage controls step back so the button owns the floor.
-  const hasLiveDraft = hasReadyDraft || hasApprovedDraft;
   let next = "";
   if (status === "sourced") {
     next = "Waiting on you — Accept or Reject below.";
@@ -247,653 +218,403 @@ export default async function CandidateRoomPage({
     next = (c.next_action as string | null) ?? "—";
   }
 
-  const verdictColor = (v: string) =>
-    v === "reach_out" ? GREEN : v === "skip" ? AMBERISH : MUTED;
+  // ── The letter's state (founder pick 2026-07-20: the room is
+  //    correspondence — verdict as salutation, draft as the body, the ceramic
+  //    seal, Leponeus franking the corner over a shimmering Chicago skyline).
+  const verdict = brief?.verdict ?? null;
+  const liveDraft = drafts.find((d) => d.status === "ready" || d.status === "approved") ?? null;
+  const liveManual = liveDraft ? ((liveDraft.send_channel as string | null) ?? "email") === "manual" : false;
+  const sentDrafts = drafts.filter((d) => d.status === "sent");
+  const parkedDrafts = drafts.filter((d) => d.status === "held" || d.status === "failed");
+  const lastSent = sentDrafts[sentDrafts.length - 1] ?? null;
+  const inBin = status === "passed" || status === "cold";
+  const stampHot = !inBin && verdict === "reach_out" && status === "enriched";
+
+  let salutText = "Your call.";
+  let salutColor: string = INK;
+  let salutIris = false;
+  if (inBin) salutText = "Binned.";
+  else if (status === "activated") { salutText = "Live."; salutColor = GREEN; }
+  else if (status === "replied") { salutText = "Talking."; salutColor = GREEN; }
+  else if (status === "contacted") { salutText = "Waiting."; salutColor = MUTED; }
+  else if (status === "enriched" && verdict === "reach_out") { salutText = "Reach out."; salutIris = true; }
+  else if (status === "enriched" && verdict === "skip") salutText = "Skip.";
+
+  const conflict = (brief?.conflict as string | null) ?? null;
+  const emailChip = (c.found_email as string | null)
+    ? { text: `✉ ${((c.found_email_status as string | null) ?? "found").replace(/_/g, " ")}`, cls: (c.found_email_status as string | null) === "deliverable" ? "g" : "warn" }
+    : hasEmail
+      ? { text: "✉ on file", cls: "g" }
+      : { text: "no address — dm / form", cls: "" };
+
+  const noticeMap: Record<string, string> = {
+    brief: "Research brief written — it's in the fold below.",
+    draft: "The letter is written — it's the body below, yours to edit; the seal sends it.",
+    email: "Email attached — the seal now sends for real.",
+    email_risky: "BetterContact found an address but flagged it catch-all — it's in the read below; use it only if you trust it.",
+    email_none: "BetterContact ran the full waterfall and found nothing deliverable (no credit spent). Paste a different site, or take the manual path.",
+  };
 
   return (
-    <main style={{ padding: "8px 0 48px", maxWidth: "860px" }}>
-      <p style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".22em", textTransform: "uppercase", color: MUTED, margin: "0 0 6px" }}>
-        <Link href="/admin/tower" className={twr.lnk}>← Control Tower</Link>
+    <main style={{ padding: "8px 0 48px", maxWidth: "760px" }}>
+      <p style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".22em", textTransform: "uppercase", color: MUTED, margin: "0 0 10px" }}>
+        <Link href="/admin/tower" className={twr.lnk}>← the warren</Link>
         {"  ·  "}
-        <Link href="/admin/tower/pipeline" className={twr.lnk}>The roster</Link>
+        <Link href="/admin/tower/pipeline" className={twr.lnk}>the roster</Link>
       </p>
 
-      {sp.err && (
-        <div style={{ ...card, borderLeft: `3px solid ${CRIMSON}` }}>
-          <span style={{ fontFamily: MONO, fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: CRIMSON, display: "block", marginBottom: "6px" }}>
-            That didn&apos;t work
-          </span>
-          <p style={{ fontFamily: MONO, fontSize: "12.5px", lineHeight: 1.6, color: INK, margin: 0, wordBreak: "break-word" }}>{sp.err}</p>
-        </div>
-      )}
-      {sp.ok === "brief" && (
-        <div style={{ ...card, borderLeft: `3px solid ${INK}` }}>
-          <p style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, margin: 0 }}>Research brief written — it&apos;s below.</p>
-        </div>
-      )}
-      {sp.ok === "draft" && (
-        <div style={{ ...card, borderLeft: `3px solid ${INK}` }}>
-          <p style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, margin: 0 }}>First-touch drafted — it&apos;s in Drafts below, waiting on your approve.</p>
-        </div>
-      )}
-      {sp.ok === "email" && (
-        <div style={{ ...card, borderLeft: `3px solid ${INK}` }}>
-          <p style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, margin: 0 }}>
-            Email added to the contact path — their drafts now go out as real email sends instead of manual delivery.
-          </p>
-        </div>
-      )}
-      {sp.ok === "email_risky" && (
-        <div style={{ ...card, borderLeft: `3px solid ${AMBERISH}` }}>
-          <p style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, margin: 0 }}>
-            BetterContact found an address but flagged it catch-all / not-verified — see the finder result below the brief. Use it only if you trust it.
-          </p>
-        </div>
-      )}
-      {sp.ok === "email_none" && (
-        <div style={{ ...card, borderLeft: `3px solid ${MUTED}` }}>
-          <p style={{ fontFamily: SERIF, fontSize: "13.5px", color: INK, margin: 0 }}>
-            BetterContact ran its full waterfall (20+ sources) and found nothing deliverable — no credit spent. That&apos;s a
-            strong signal this person has no discoverable business email. Paste a different site if you know one, or take the manual path.
-          </p>
-        </div>
-      )}
+      {sp.err && <p className={`${twr.lnotice} ${twr.lnoticeErr}`}>that didn&apos;t work — {sp.err}</p>}
+      {sp.ok && noticeMap[sp.ok] && <p className={twr.lnotice}>{noticeMap[sp.ok]}</p>}
 
-      {/* ── Header: who they are + where they stand ── */}
-      <div style={{ display: "flex", alignItems: "baseline", gap: "14px", flexWrap: "wrap", marginBottom: "4px" }}>
-        <h1 style={{ fontFamily: DISPLAY, fontStyle: "italic", fontWeight: 700, fontSize: "34px", color: INK, margin: 0 }}>
-          {c.name as string}
-        </h1>
-        {status === "passed" || status === "cold" ? (
-          <span style={{ ...chip("#FAF7F2"), background: INK, borderColor: INK }}>
-            {status} — in the bin
-          </span>
+      {/* ════ THE LETTER ════ */}
+      <div className={twr.sheet}>
+        {/* The stamp: Leponeus franks the mail. Awake over an iris-lit Chicago
+            skyline on a reach-out; asleep over matte clay otherwise. */}
+        <span className={`${twr.pstamp} ${stampHot ? twr.pstampHot : ""}`} aria-hidden>
+          <span className={twr.pstampSky} />
+          <img
+            className={twr.pstampLep}
+            src={stampHot ? "/mascot/leponeus-verdict-sm.png" : "/mascot/leponeus-rest-sm.png"}
+            alt=""
+          />
+          <span className={twr.pstampCap}>aesdr post</span>
+        </span>
+
+        <div className={twr.sheetEyebrow}>
+          <span>AESDR · the read</span>
+          <span className={twr.sheetTo}>to: {c.name as string} · {status.replace(/_/g, " ")}</span>
+        </div>
+
+        {salutIris ? (
+          <p className={`${twr.salut} ${twr.wordHotIris}`}>{salutText}</p>
         ) : (
-          <span style={chip(status === "activated" ? GREEN : CRIMSON)}>
-            {status.replace(/_/g, " ")}
-          </span>
+          <p className={twr.salut} style={{ color: salutColor }}>{salutText}</p>
         )}
-      </div>
-      <p style={{ fontFamily: MONO, fontSize: "11.5px", color: MUTED, margin: "0 0 4px" }}>
-        {(c.surface as string | null) ?? "—"} · {(c.handle as string | null) ?? "no handle"} · {(c.archetype as string | null) ?? "—"} · audience est. {(c.audience_est as number | null)?.toLocaleString() ?? "unknown"} · vf {vf ?? "—"}
-      </p>
-      {/* Email, prominent — the first thing you want when reaching out. */}
-      {(c.found_email as string | null) ? (
-        <p style={{ fontFamily: MONO, fontSize: "14px", fontWeight: 700, color: INK, margin: "8px 0 12px", display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
-          <span>✉ {c.found_email as string}</span>
-          <span style={chip((c.found_email_status as string | null) === "deliverable" ? GREEN : AMBERISH)}>
-            {((c.found_email_status as string | null) ?? "found").replace(/_/g, " ")}
-          </span>
-          <a href={inboxSearchUrl(c.found_email as string)} target="_blank" rel="noreferrer" className={twr.lnk} style={{ fontFamily: MONO, fontSize: "11px", color: CRIMSON, fontWeight: 400 }}>
-            open in inbox ↗
-          </a>
+
+        <p style={{ fontFamily: MONO, fontSize: "11px", color: MUTED, margin: "0 0 10px" }}>
+          {(c.surface as string | null) ?? "—"} · {(c.handle as string | null) ?? "no handle"} · {(c.archetype as string | null) ?? "—"} · aud est. {(c.audience_est as number | null)?.toLocaleString() ?? "unknown"}
         </p>
-      ) : (c.email_checked_at as string | null) ? (
-        <p style={{ fontFamily: MONO, fontSize: "11.5px", color: MUTED, margin: "8px 0 12px" }}>
-          ✉ no email found — BetterContact came up empty; use the contact path below.
-        </p>
-      ) : null}
-      {c.contact_path && (
-        <p style={{ fontFamily: MONO, fontSize: "11.5px", color: CRIMSON, margin: "0 0 14px" }}>
-          {c.contact_path as string}{" "}
-          <ContactLinks
-            text={c.contact_path as string}
-            searchHint={`${c.name as string} ${(c.surface as string | null) ?? ""}`}
-          />
-        </p>
-      )}
-      {status === "passed" || status === "cold" ? (
-        <div style={{ ...card, borderLeft: `3px solid ${INK}`, background: "rgba(107,107,107,.05)" }}>
-          <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".18em", textTransform: "uppercase", color: INK, display: "block", marginBottom: "6px" }}>
-            In the bin
-          </span>
-          <p style={{ fontFamily: SERIF, fontSize: "14.5px", lineHeight: 1.6, color: INK, margin: "0 0 12px" }}>
-            You passed on {c.name as string} {timeAgo(c.updated_at as string | null)}. The bin never expires —
-            everything here is kept exactly as researched. Reconsider puts them back{" "}
-            {brief || hasLegacyBrief ? "into Enriched (the brief is kept)" : "into the review queue"}.
+
+        <div className={twr.lchips}>
+          <span className={`${twr.lchip} ${twr.lchipCall}`}>the call · {verdict ? verdict.replace(/_/g, " ") : status.replace(/_/g, " ")}</span>
+          {conflict && (
+            <span className={`${twr.lchip} ${conflict === "none" ? twr.lchipG : twr.lchipWarn}`}>conflict · {conflict}</span>
+          )}
+          <span className={twr.lchip}>voice-fit · {vf ?? "—"}/5</span>
+          <span className={`${twr.lchip} ${emailChip.cls === "g" ? twr.lchipG : emailChip.cls === "warn" ? twr.lchipWarn : ""}`}>{emailChip.text}</span>
+        </div>
+
+        {conflict && conflict !== "none" && brief?.conflict_note && (
+          <p style={{ fontFamily: SERIF, fontSize: "13px", lineHeight: 1.5, color: INK, margin: "0 0 12px", borderLeft: `2px solid ${CRIMSON}`, paddingLeft: "10px" }}>
+            {brief.conflict_note}
           </p>
-          <form action={reconsiderPassed}>
-            <input type="hidden" name="id" value={id} />
-            <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
-            <TowerButton variant="outline" pendingLabel="Restoring…">Reconsider — put them back</TowerButton>
-          </form>
-        </div>
-      ) : (
-        <div style={{ ...card, borderLeft: `3px solid ${INK}` }}>
-          <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".18em", textTransform: "uppercase", color: MUTED, display: "block", marginBottom: "6px" }}>
-            What happens next
-          </span>
-          <p style={{ fontFamily: SERIF, fontSize: "14.5px", lineHeight: 1.6, color: INK, margin: 0 }}>{next}</p>
-        </div>
-      )}
+        )}
 
-      {/* ── The fit call (founder 2026-07-07, revised: lead with THE CALL, not
-            the voice-fit score). Voice-fit measures only whether they SOUND
-            like AESDR — it is not overall fit. The machine's actual
-            recommendation is the verdict, which weighs the conflict; a 5/5
-            voice with a hard conflict is still a SKIP. Surface the call big,
-            the score and conflict as sub-signals. You still decide. ── */}
-      {status === "enriched" &&
-        (brief || hasLegacyBrief) &&
-        !drafts.some((d) => ["ready", "approved", "sent"].includes(d.status as string)) &&
-        (() => {
-          const verdict = brief?.verdict ?? null;
-          const conflict = (brief?.conflict as string | null) ?? null;
-          const callColor = verdict === "reach_out" ? GREEN : verdict === "skip" ? CRIMSON : MUTED;
-          const conflictHot = conflict === "hard" || conflict === "soft";
-          return (
-            <div style={{ ...card, border: `2px solid ${callColor}` }}>
-              {/* THE CALL — the machine's actual recommendation, dominant.
-                  Same takeover frame as the drafted card below it in the flow:
-                  one card, one verdict word, one seat. */}
-              <div style={{ display: "flex", alignItems: "baseline", gap: "12px", flexWrap: "wrap", marginBottom: "6px" }}>
-                <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".2em", textTransform: "uppercase", color: MUTED }}>
-                  the machine says
-                </span>
-              </div>
-              {verdict === "reach_out" ? (
-                <p className={twr.roomCallWord} style={{ margin: "0 0 10px" }}>reach out.</p>
-              ) : (
-                <p style={{ fontFamily: DISPLAY, fontStyle: "italic", fontWeight: 900, fontSize: "clamp(34px, 4.5vw, 48px)", lineHeight: 0.95, margin: "0 0 10px", color: verdict === "skip" ? INK : MUTED }}>
-                  {verdict === "skip" ? "skip." : "your call."}
-                </p>
-              )}
-              {/* Sub-signals: voice-fit (voice match ONLY) + conflict + email. */}
-              <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "12px" }}>
-                <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".08em", color: MUTED }}>
-                  voice match <strong style={{ color: INK, fontSize: "12px" }}>{vf ?? "—"}/5</strong> <span style={{ color: MUTED }}>(sounds like AESDR — not overall fit)</span>
-                </span>
-                {conflict && (
-                  <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".08em", textTransform: "uppercase", color: conflictHot ? "#FFFFFF" : MUTED, background: conflictHot ? CRIMSON : "transparent", border: conflictHot ? "none" : `1px solid ${LIGHT}`, padding: "3px 8px" }}>
-                    conflict: {conflict}
-                  </span>
-                )}
-                {!hasEmail && (
-                  <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".12em", textTransform: "uppercase", color: "#FAF7F2", background: INK, padding: "3px 8px" }}>
-                    no email — DM / form
-                  </span>
-                )}
-              </div>
-              {brief?.conflict_note && conflictHot && (
-                <p style={{ fontFamily: SERIF, fontSize: "13px", lineHeight: 1.5, color: INK, margin: "0 0 12px", borderLeft: `2px solid ${CRIMSON}`, paddingLeft: "10px" }}>
-                  {brief.conflict_note}
-                </p>
-              )}
-              <p style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".06em", color: MUTED, margin: "0 0 10px" }}>
-                Advisory only — your call decides. One press writes the draft; the send waits for you either way.
-              </p>
-              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                <form action={draftNow}>
-                  <input type="hidden" name="id" value={id} />
-                  <TowerButton variant={verdict === "skip" ? "ghost" : "primary"} pendingLabel="Drafting…">
-                    {verdict === "skip" ? "Draft anyway" : "Write the draft"}
-                  </TowerButton>
-                </form>
-                <form action={rejectSourced}>
-                  <input type="hidden" name="id" value={id} />
-                  <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
-                  <TowerButton variant={verdict === "skip" ? "primary" : "ghost"} pendingLabel="Binning…">Bin them</TowerButton>
-                </form>
-              </div>
-            </div>
-          );
-        })()}
-
-      {/* ── Hands-off state (founder 2026-07-07): they replied — the machine
-            stays out until you move them. ── */}
-      {status === "replied" && (
-        <div data-surface="dark" style={{ background: INK, color: "#FAF7F2", padding: "16px 18px", marginBottom: "16px" }}>
-          <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".22em", textTransform: "uppercase", display: "block", marginBottom: "6px" }}>
-            In conversation · hands off
-          </span>
-          <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.6, margin: "0 0 12px", opacity: 0.85 }}>
-            No drafts, no nudges, no ladder while they&rsquo;re talking to you. Work the thread from your
-            inbox; if the conversation ends without a deal, resume outreach below.
-          </p>
-          <form action={resumeOutreach}>
-            <input type="hidden" name="id" value={id} />
-            <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
-            <TowerButton variant="outline" pendingLabel="Resuming…">Conversation over — resume outreach</TowerButton>
-          </form>
-        </div>
-      )}
-
-      {/* ── Stage actions ── */}
-      <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "8px" }}>
-        {status === "sourced" && (
+        {/* ── The body: the letter itself ── */}
+        {liveDraft ? (
           <>
-            <RunBriefButton
-              candidateId={id}
-              label="Accept & prepare · ~$0.60"
-              postPath="/api/admin/accept-and-prepare"
-              confirmText={`Accept ${c.name} and prepare them? Research brief + email hunt run in the background (~2 min, ~$0.15–$0.60 + 1 email credit if an address is found). Drafting waits for your fit call.`}
-              confirmLabel="Accept & prepare"
-              busyLabel="Preparing…"
-              variant="primary"
-            />
-            <form action={rejectSourced}>
-              <input type="hidden" name="id" value={id} />
-              <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
-              <TowerButton variant="ghost" pendingLabel="Rejecting…">Reject</TowerButton>
+            <form action={editDraft}>
+              <input type="hidden" name="id" value={liveDraft.id as string} />
+              <input
+                name="subject"
+                defaultValue={liveDraft.subject as string}
+                style={{ width: "100%", boxSizing: "border-box", fontFamily: SERIF, fontSize: "15px", fontWeight: 600, padding: "8px 10px", border: `1px solid ${LIGHT}`, color: INK, background: "#fff", marginBottom: "8px" }}
+              />
+              <textarea
+                name="body"
+                defaultValue={liveDraft.body as string}
+                rows={10}
+                style={{ width: "100%", boxSizing: "border-box", fontFamily: SERIF, fontSize: "14px", lineHeight: 1.65, padding: "10px 12px", border: `1px solid ${LIGHT}`, color: INK, background: "#fff", resize: "vertical" }}
+              />
+              <div style={{ display: "flex", gap: "10px", alignItems: "center", marginTop: "6px", flexWrap: "wrap" }}>
+                <TowerButton variant="ghost" pendingLabel="Saving…">Save &amp; re-check canon</TowerButton>
+                <span style={{ fontFamily: MONO, fontSize: "10px", color: MUTED }}>
+                  {liveDraft.warden_cleared ? "canon clean" : "canon flags — your edit clears them"} · to: {liveDraft.to_addr as string}
+                </span>
+              </div>
             </form>
+            {liveDraft.personalization_note && (
+              <p style={{ fontFamily: MONO, fontSize: "11px", lineHeight: 1.5, color: AMBERISH, background: "rgba(161,68,0,.06)", borderLeft: `2px solid ${AMBERISH}`, padding: "8px 10px", margin: "10px 0 0" }}>
+                {liveDraft.personalization_note as string}
+              </p>
+            )}
           </>
+        ) : lastSent ? (
+          <div className={twr.lbody}>
+            <p style={{ fontWeight: 600, margin: "0 0 6px" }}>{lastSent.subject as string}</p>
+            <p style={{ margin: 0, whiteSpace: "pre-wrap" }}>{lastSent.body as string}</p>
+          </div>
+        ) : inBin ? (
+          <p className={twr.lbody} style={{ fontStyle: "italic", color: MUTED }}>
+            Passed {timeAgo(c.updated_at as string | null)}. The bin never expires — everything here is kept exactly as researched.
+          </p>
+        ) : status === "sourced" ? (
+          <p className={twr.lbody} style={{ fontStyle: "italic" }}>
+            {((c.why_fit as string | null) ?? "A pre-consolidation row — accept &amp; prepare runs the brief and the address hunt.").slice(0, 280)}
+          </p>
+        ) : (
+          <p className={twr.lbody} style={{ fontStyle: "italic", color: MUTED }}>
+            The letter isn&apos;t written yet{verdict === "skip" ? " — and the machine says pass" : ""}. The seal below writes it in one press; nothing sends without another.
+          </p>
         )}
-        {(status === "sourced" || (status === "enriched" && !brief && !hasLegacyBrief)) && !hasLiveDraft && (
-          <RunBriefButton
-            candidateId={id}
-            label={brief || hasLegacyBrief ? "Re-run brief" : "Run brief now"}
-          />
-        )}
-        {status === "enriched" &&
-          !brief &&
-          !hasLegacyBrief &&
-          !drafts.some((d) => ["ready", "approved", "sent"].includes(d.status as string)) && (
-          <form action={draftNow}>
-            <input type="hidden" name="id" value={id} />
-            <TowerButton variant="outline" pendingLabel="Drafting…">Scribe draft (skip research)</TowerButton>
-          </form>
-        )}
-        {status === "contacted" && (
-          <form action={markReplied}>
-            <input type="hidden" name="id" value={id} />
-            <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
-            <TowerButton pendingLabel="Marking…">They replied — hands off</TowerButton>
-          </form>
-        )}
-        {(status === "sourced" || (status === "enriched" && !brief && !hasLegacyBrief)) && !hasEmail && !hasLiveDraft && emailFinderConfigured() && (
-          <form action={findEmailNow} style={{ display: "flex", gap: "8px", alignItems: "stretch" }}>
-            <input type="hidden" name="id" value={id} />
-            <input
-              type="text"
-              name="domain"
-              placeholder="their site, if you know it — e.g. janedoe.com"
-              style={{
-                fontFamily: MONO,
-                fontSize: "11px",
-                color: INK,
-                background: "#FFFFFF",
-                border: `1px solid ${LIGHT}`,
-                padding: "0 10px",
-                width: "240px",
-              }}
-            />
-            <TowerButton
-              variant="outline"
-              pendingLabel="Running waterfall… (up to ~80s)"
-              confirmMessage={`Find an email for ${c.name}? Runs BetterContact's waterfall across 20+ sources (one credit, charged only on a found email).`}
-            >
-              Find email
-            </TowerButton>
-          </form>
-        )}
-        {status === "enriched" && !brief && !hasLegacyBrief && !hasLiveDraft && (
-          <form action={rejectSourced}>
-            <input type="hidden" name="id" value={id} />
-            <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
-            <TowerButton variant="ghost" pendingLabel="Parking…">Pass on them</TowerButton>
-          </form>
-        )}
-      </div>
-      {(status === "sourced" || (status === "enriched" && !brief && !hasLegacyBrief)) && !hasLiveDraft && (
-        <p style={{ fontFamily: MONO, fontSize: "10px", lineHeight: 1.6, color: MUTED, margin: "0 0 8px" }}>
-          Run brief = a live web-search research call (confirmed first, ~$0.10–$0.50). Scribe draft = free template fill.
-          Neither sends anything — nothing leaves without your press on the button.
-        </p>
-      )}
 
-      {/* Machinery — post-brief the research controls collapse out of the way;
-          the takeover card above owns the flow (one card, one verdict, one
-          seat). */}
-      {status === "enriched" && (brief || hasLegacyBrief) && !hasLiveDraft && (
-        <details style={{ margin: "0 0 12px" }}>
-          <summary style={{ cursor: "pointer", fontFamily: MONO, fontSize: "10px", letterSpacing: ".18em", textTransform: "uppercase", color: MUTED }}>
-            ▸ machinery — re-run brief · find email
-          </summary>
-          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "stretch", margin: "10px 0 0" }}>
-            <RunBriefButton candidateId={id} label="Re-run brief" />
-            {!hasEmail && emailFinderConfigured() && (
-              <form action={findEmailNow} style={{ display: "flex", gap: "8px", alignItems: "stretch" }}>
+        {/* ── The seal: the one move, per state ── */}
+        <div className={twr.lseal}>
+          {inBin ? (
+            <>
+              <form action={reconsiderPassed}>
+                <input type="hidden" name="id" value={id} />
+                <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
+                <CeramicSendButton resting label="START BUTTON" title="Reconsider" confirmMessage={`Put ${c.name} back into the pipeline? The brief and history are kept.`} />
+              </form>
+              <p className={twr.lsealCap}>binned — press to reconsider; puts them back exactly as researched.</p>
+            </>
+          ) : status === "replied" ? (
+            <>
+              <form action={resumeOutreach}>
+                <input type="hidden" name="id" value={id} />
+                <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
+                <CeramicSendButton resting label="START BUTTON" title="Resume outreach" confirmMessage={`Conversation over? This resumes outreach for ${c.name} — the ladder can draft follow-ups again.`} />
+              </form>
+              <p className={twr.lsealCap}>
+                in conversation — hands off. <i>work the thread from your inbox; press only when it ends (resumes outreach).</i>
+              </p>
+            </>
+          ) : status === "contacted" ? (
+            <>
+              <form action={markReplied}>
+                <input type="hidden" name="id" value={id} />
+                <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
+                <CeramicSendButton resting label="START BUTTON" title="They replied" confirmMessage={`Mark ${c.name} as replied? Halts the follow-up ladder and flips them to hands-off.`} />
+              </form>
+              <p className={twr.lsealCap}>
+                sent {timeAgo(c.first_touch_at as string | null)} · ladder step {(c.ladder_step as number | null) ?? 0} · <i>press when they reply — logs it &amp; halts the ladder.</i>
+              </p>
+            </>
+          ) : status === "sourced" ? (
+            <>
+              <RunBriefButton
+                candidateId={id}
+                label="Accept & prepare · ~$0.60"
+                postPath="/api/admin/accept-and-prepare"
+                confirmText={`Accept ${c.name} and prepare them? Research brief + email hunt run in the background (~2 min, ~$0.15–$0.60). Drafting waits for you.`}
+                confirmLabel="Accept & prepare"
+                busyLabel="Preparing…"
+                variant="primary"
+              />
+              <form action={rejectSourced}>
+                <input type="hidden" name="id" value={id} />
+                <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
+                <TowerButton variant="ghost" pendingLabel="Binning…">Bin them</TowerButton>
+              </form>
+              <p className={twr.lsealCap}>a pre-consolidation row — accept &amp; prepare runs the whole line first.</p>
+            </>
+          ) : liveDraft && !liveManual ? (
+            <>
+              <form action={oneClickSend}>
+                <input type="hidden" name="id" value={liveDraft.id as string} />
+                <CeramicSendButton
+                  label="START BUTTON"
+                  title={`Send to ${liveDraft.to_addr as string}`}
+                  confirmMessage={`Send this letter to ${liveDraft.to_addr as string} now? One press does everything — it goes out immediately and can't be undone.`}
+                />
+              </form>
+              <p className={twr.lsealCap}>
+                press to send · sealed from partners@aesdr<br />
+                <i>suppression re-checked → sent → logged in the sent record → the clock starts. a second press can&apos;t double-send.</i>
+              </p>
+              <form action={holdDraft} style={{ marginLeft: "auto" }}>
+                <input type="hidden" name="id" value={liveDraft.id as string} />
+                <TowerButton variant="ghost" pendingLabel="Holding…">Hold</TowerButton>
+              </form>
+            </>
+          ) : liveDraft && liveManual ? (
+            <>
+              <form action={attachEmail} style={{ display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap" }}>
                 <input type="hidden" name="id" value={id} />
                 <input
                   type="text"
-                  name="domain"
-                  placeholder="their site, if you know it — e.g. janedoe.com"
-                  style={{ fontFamily: MONO, fontSize: "11px", color: INK, background: "#FFFFFF", border: `1px solid ${LIGHT}`, padding: "0 10px", width: "240px" }}
+                  name="email"
+                  placeholder="found their address? paste it…"
+                  style={{ fontFamily: MONO, fontSize: "12px", color: INK, background: "#fff", border: `1.5px solid ${INK}`, padding: "10px 12px", width: "240px" }}
                 />
-                <TowerButton
-                  variant="outline"
-                  pendingLabel="Running waterfall… (up to ~80s)"
-                  confirmMessage={`Find an email for ${c.name}? Runs BetterContact's waterfall across 20+ sources (one credit, charged only on a found email).`}
-                >
-                  Find email
-                </TowerButton>
+                <CeramicSendButton resting label="START BUTTON" title="Attach the address" confirmMessage="Attach this address? The letter converts to a real email send and the seal arms." />
               </form>
-            )}
-          </div>
-        </details>
-      )}
-
-      {/* ── Drafts — every status, with the action that fits ── */}
-      <p style={sectionLabel}>Drafts &amp; sends</p>
-      {drafts.length === 0 ? (
-        <div style={card}>
-          <p style={{ fontFamily: SERIF, fontSize: "13.5px", fontStyle: "italic", color: MUTED, margin: 0 }}>
-            Nothing drafted yet{status === "enriched" ? " — Scribe draft above writes the first-touch." : "."}
-          </p>
-        </div>
-      ) : (
-        drafts.map((d) => {
-          const st = d.status as string;
-          const isManual = (d.send_channel ?? "email") === "manual";
-          const isArmed = !isManual && st === "approved";
-          // The takeover card (founder 2026-07-16): a live email draft carries
-          // the verdict word, the editor, the ceramic press with its
-          // press-order column — and Leponeus presenting on the right.
-          const isEmailLive = !isManual && (st === "ready" || st === "approved");
-          return (
-            <div
-              key={d.id as string}
-              className={twr.roomCard}
-              style={isArmed ? { ...card, borderLeft: `3px solid ${GREEN}` } : card}
-            >
-              <div className={isEmailLive ? twr.roomGrid : undefined}>
-              <div style={{ minWidth: 0 }}>
-              {isEmailLive && brief?.verdict === "reach_out" && (
-                <p className={twr.roomCallWord}>reach out.</p>
-              )}
-              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center", marginBottom: "8px" }}>
-                <span style={chip(st === "sent" ? GREEN : st === "failed" ? CRIMSON : st === "held" ? AMBERISH : INK)}>{st}</span>
-                <span style={chip(MUTED)}>{isManual ? "manual send" : "email"}</span>
-                {d.warden_cleared ? <span style={chip(GREEN)}>warden ✓</span> : <span style={chip(AMBERISH)}>needs eye</span>}
-                {isArmed && <span style={{ ...chip(GREEN), fontWeight: 700 }}>● armed</span>}
-                <span style={{ fontFamily: MONO, fontSize: "11px", color: MUTED, marginLeft: "auto" }}>→ {d.to_addr as string}</span>
-              </div>
-              {isManual && st !== "sent" && (
-                <>
-                  <p style={{ fontFamily: MONO, fontSize: "11px", color: MUTED, margin: "0 0 8px" }}>
-                    deliver it yourself, then Mark sent:{" "}
-                    <ContactLinks
-                      text={(d.to_addr as string) + " " + ((c.contact_path as string | null) ?? "")}
-                      searchHint={`${c.name as string} ${(c.surface as string | null) ?? ""}`}
-                    />
-                  </p>
-                  {/* Found an address yourself? Attach it and the manual draft
-                      becomes a real email draft — the ceramic press takes over. */}
-                  <form action={attachEmail} style={{ display: "flex", gap: "8px", alignItems: "stretch", flexWrap: "wrap", margin: "0 0 10px" }}>
-                    <input type="hidden" name="id" value={id} />
-                    <input
-                      name="email"
-                      type="email"
-                      placeholder="found their address? paste it…"
-                      style={{ fontFamily: MONO, fontSize: "11px", color: INK, background: "#FFFFFF", border: `1px solid ${LIGHT}`, padding: "0 10px", width: "240px" }}
-                    />
-                    <TowerButton variant="outline" pendingLabel="Attaching…">Attach email — the button takes over</TowerButton>
-                  </form>
-                </>
-              )}
-              {st === "ready" || st === "approved" ? (
-                // Inline editor — edit subject + body right on screen, then Save
-                // re-runs the canon gate. (editDraft accepts ready + approved.)
-                <form action={editDraft} style={{ margin: "0 0 10px" }}>
-                  <input type="hidden" name="id" value={d.id as string} />
-                  <input
-                    name="subject"
-                    defaultValue={d.subject as string}
-                    style={{ width: "100%", boxSizing: "border-box", fontFamily: SERIF, fontSize: "15px", fontWeight: 600, padding: "8px 10px", border: `1px solid ${LIGHT}`, color: INK, background: "#fff", marginBottom: "8px" }}
-                  />
-                  <textarea
-                    name="body"
-                    defaultValue={d.body as string}
-                    rows={12}
-                    style={{ width: "100%", boxSizing: "border-box", fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.6, padding: "10px", border: `1px solid ${LIGHT}`, color: INK, background: "#fff", resize: "vertical" }}
-                  />
-                  <div style={{ marginTop: "8px" }}>
-                    <TowerButton variant="ghost" pendingLabel="Saving…">Save &amp; re-check canon</TowerButton>
-                  </div>
-                </form>
-              ) : (
-                <>
-                  <p style={{ fontFamily: SERIF, fontSize: "15px", fontWeight: 600, color: INK, margin: "0 0 6px" }}>{d.subject as string}</p>
-                  <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.6, color: INK, margin: "0 0 10px", whiteSpace: "pre-wrap" }}>
-                    {d.body as string}
-                  </p>
-                </>
-              )}
-              {d.personalization_note && (
-                <p style={{ fontFamily: MONO, fontSize: "11px", lineHeight: 1.5, color: AMBERISH, background: "rgba(161,68,0,.06)", borderLeft: `2px solid ${AMBERISH}`, padding: "8px 10px", margin: "0 0 10px" }}>
-                  {d.personalization_note as string}
-                </p>
-              )}
-              {st === "failed" && (
-                <div style={{ fontFamily: MONO, fontSize: "12px", lineHeight: 1.5, color: CRIMSON, background: "rgba(139,26,26,.06)", border: `1px solid ${CRIMSON}`, padding: "8px 10px", margin: "0 0 10px" }}>
-                  <strong>✗ Didn&apos;t send.</strong> {(d.error as string) || "Unknown error."} — fix it and hit Send again, or check Resend → Emails.
-                </div>
-              )}
-              <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}>
-                {st === "ready" && isManual && (
-                  <form action={markManualSent}>
-                    <input type="hidden" name="id" value={d.id as string} />
-                    <TowerButton pendingLabel="Marking…">Mark sent</TowerButton>
-                  </form>
-                )}
-                {(st === "ready" || st === "approved") && !isManual && (
-                  // The one-press send (founder-booked ceramic button): a single
-                  // press approves (if needed), re-checks suppression, sends via
-                  // Resend, logs the claim, and starts the follow-up clock.
-                  <>
-                    <form action={oneClickSend}>
-                      <input type="hidden" name="id" value={d.id as string} />
-                      <CeramicSendButton
-                        label="START BUTTON"
-                        title={`Send to ${d.to_addr as string}`}
-                        confirmMessage={`Send this email to ${d.to_addr as string} now? One press does everything — it goes out immediately and can't be undone.`}
-                      />
-                    </form>
-                    <div className={twr.pressOrder}>
-                      <b>the press, in order —</b><br />
-                      1 · cap sinks · suppression list re-checked<br />
-                      2 · send claimed <span style={{ color: MUTED }}>(a second press can&apos;t double-send)</span><br />
-                      3 · resend transmits · copy BCC&apos;d to your inbox<br />
-                      <b>then the cap flips to SENT ✓, the proof prints below, and the row joins the sent record.</b>
-                    </div>
-                  </>
-                )}
-                {(st === "ready" || st === "approved") && (
-                  <form action={holdDraft}>
-                    <input type="hidden" name="id" value={d.id as string} />
-                    <TowerButton variant="ghost" pendingLabel="Holding…">Hold</TowerButton>
-                  </form>
-                )}
-                {(st === "held" || st === "failed") && (
-                  <form action={releaseDraft}>
-                    <input type="hidden" name="id" value={d.id as string} />
-                    <TowerButton variant="ghost" pendingLabel="Releasing…">Release → ready</TowerButton>
-                  </form>
-                )}
-                {st === "sent" && (
-                  <div
-                    style={{
-                      fontFamily: MONO,
-                      fontSize: "11px",
-                      lineHeight: 1.9,
-                      color: INK,
-                      borderLeft: "3px solid",
-                      borderImage: "linear-gradient(180deg,#FF006E,#8B5CF6) 1",
-                      padding: "4px 0 4px 12px",
-                    }}
-                  >
-                    <strong style={{ color: GREEN }}>sent ✓</strong>{" "}
-                    {d.sent_at ? `${new Date(d.sent_at as string).toUTCString().slice(17, 22)} UTC · ${timeAgo(d.sent_at as string)}` : ""} → {d.to_addr as string}
-                    {d.resend_id ? <><br />resend id {d.resend_id as string}</> : null}
-                    <br />
-                    {(() => {
-                      const del = deliveryByQueue.get(d.id as string);
-                      if (del?.status === "delivered") {
-                        return (
-                          <strong style={{ color: GREEN }}>
-                            delivered ✓{del.at ? ` ${new Date(del.at).toUTCString().slice(17, 22)} UTC` : ""}
-                          </strong>
-                        );
-                      }
-                      if (del?.status === "bounced" || del?.status === "complained") {
-                        return <strong style={{ color: CRIMSON }}>{del.status} — address suppressed, don&apos;t resend</strong>;
-                      }
-                      return <span style={{ color: MUTED }}>delivery pending — stamps when Resend confirms</span>;
-                    })()}
-                    <br />
-                    copy BCC&apos;d to your inbox · in the sent record
-                  </div>
-                )}
-              </div>
-              </div>
-              {isEmailLive && (
-                <div className={twr.roomLepCell} aria-hidden>
-                  <div className={twr.roomHalo} />
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/mascot/leponeus-verdict-sm.png" alt="" />
-                </div>
-              )}
-              </div>
-            </div>
-          );
-        })
-      )}
-
-      {/* ── The research brief ── */}
-      <p style={sectionLabel}>Research brief</p>
-      {brief ? (
-        <div style={card}>
-          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "12px" }}>
-            <span style={chip(verdictColor(brief.verdict))}>the call: {brief.verdict.replace(/_/g, " ")}</span>
-            <span style={chip(brief.conflict === "none" ? GREEN : brief.conflict === "hard" ? CRIMSON : AMBERISH)}>
-              conflict: {brief.conflict}
-            </span>
-            <span style={chip(INK)}>voice-fit {brief.voice_fit}/5</span>
-          </div>
-          <table style={{ borderCollapse: "collapse", width: "100%" }}>
-            <tbody>
-              {[
-                ["Voice fit", brief.voice_fit_rationale],
-                ["Conflict", brief.conflict_note || "—"],
-                ["Cadence", brief.cadence_note],
-                ["Audience", brief.audience_est ? `est. ${brief.audience_est.toLocaleString()}` : "couldn't verify"],
-                ["Contact path", brief.contact_path],
-                ["First-touch angle", brief.first_touch_angle],
-              ].map(([k, v]) => (
-                <tr key={k as string}>
-                  <td style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".12em", textTransform: "uppercase", color: MUTED, padding: "6px 14px 6px 0", verticalAlign: "top", whiteSpace: "nowrap" }}>{k}</td>
-                  <td style={{ fontFamily: SERIF, fontSize: "14px", lineHeight: 1.55, color: INK, padding: "6px 0", borderBottom: `1px solid ${LIGHT}` }}>
-                    {v}
-                    {k === "Contact path" && (
-                      <>
-                        {" "}
-                        <ContactLinks
-                          text={v as string}
-                          searchHint={`${c.name as string} ${(c.surface as string | null) ?? ""}`}
-                        />
-                      </>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <div style={card}>
-          <p style={{ fontFamily: SERIF, fontSize: "13.5px", fontStyle: "italic", color: MUTED, margin: 0 }}>
-            {hasLegacyBrief
-              ? "A brief was written before structured storage existed — the raw trail below has it. Re-run brief to render it properly here."
-              : "No brief yet. Press Run brief now above, or start the dossier-enrich lever and it happens on the hour."}
-          </p>
-        </div>
-      )}
-      {/* Finder result — what BetterContact turned up, and whether it was trusted. */}
-      {foundEmail && (
-        <div style={{ ...card, borderLeft: `3px solid ${foundEmail.verified ? GREEN : AMBERISH}` }}>
-          <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".18em", textTransform: "uppercase", color: MUTED, display: "block", marginBottom: "6px" }}>
-            Email finder result
-          </span>
-          <p style={{ fontFamily: SERIF, fontSize: "14px", lineHeight: 1.6, color: INK, margin: "0 0 10px" }}>
-            <strong style={{ fontFamily: MONO, fontSize: "13px" }}>{foundEmail.email}</strong>{" "}
-            <span style={chip(foundEmail.verified ? GREEN : AMBERISH)}>{foundEmail.status.toLowerCase()}</span>
-            {foundEmail.domain ? (
-              <span style={{ fontFamily: MONO, fontSize: "10.5px", color: MUTED }}>{"  "}via {foundEmail.domain}</span>
-            ) : null}
-            {"  "}
-            {foundEmail.verified
-              ? "— verified, already on the contact path."
-              : hasEmail
-                ? "— superseded by the email now on the contact path."
-                : "— a catch-all/unverified address: it may deliver or silently bounce. Your call."}
-          </p>
-          {!foundEmail.verified && !hasEmail && (
-            <form action={useFoundEmail}>
-              <input type="hidden" name="id" value={id} />
-              <TowerButton variant="ghost" pendingLabel="Adding…">Use it anyway</TowerButton>
-            </form>
+              <p className={twr.lsealCap}>
+                no address yet — paste one and press; the seal arms for a real send.<br />
+                <i>or deliver by hand:</i>{" "}
+                <ContactLinks text={(liveDraft.to_addr as string) + " " + ((c.contact_path as string | null) ?? "")} searchHint={`${c.name as string} ${(c.surface as string | null) ?? ""}`} />
+              </p>
+              <form action={markManualSent} style={{ marginLeft: "auto" }}>
+                <input type="hidden" name="id" value={liveDraft.id as string} />
+                <TowerButton variant="ghost" pendingLabel="Marking…">Mark sent</TowerButton>
+              </form>
+            </>
+          ) : status === "enriched" && (brief || hasLegacyBrief) ? (
+            <>
+              <form action={draftNow}>
+                <input type="hidden" name="id" value={id} />
+                <CeramicSendButton
+                  resting={verdict === "skip"}
+                  label="START BUTTON"
+                  title="Write the draft"
+                  confirmMessage={
+                    verdict === "skip"
+                      ? `The machine says pass on ${c.name}. Write the letter anyway?`
+                      : `Write ${c.name}'s letter? One press drafts it in AESDR voice — nothing sends until you press again.`
+                  }
+                />
+              </form>
+              <p className={twr.lsealCap}>
+                {verdict === "skip"
+                  ? "the machine says pass — press only to override."
+                  : verdict === "reach_out"
+                    ? "one press writes their letter → then the same seal sends it."
+                    : "the machine couldn't call it — read the fold, then press to write it anyway."}
+              </p>
+              <form action={rejectSourced} style={{ marginLeft: "auto" }}>
+                <input type="hidden" name="id" value={id} />
+                <input type="hidden" name="return_to" value={`/admin/tower/candidate/${id}`} />
+                <TowerButton variant="ghost" pendingLabel="Binning…">Bin them</TowerButton>
+              </form>
+            </>
+          ) : status === "enriched" ? (
+            <>
+              <RunBriefButton candidateId={id} label="Run brief now" />
+              <form action={draftNow}>
+                <input type="hidden" name="id" value={id} />
+                <CeramicSendButton resting label="START BUTTON" title="Draft from template" confirmMessage={`No brief yet for ${c.name}. Write a template letter anyway?`} />
+              </form>
+              <p className={twr.lsealCap}>no brief landed — run it, or press to write from template.</p>
+            </>
+          ) : (
+            <p className={twr.lsealCap}>{next}</p>
           )}
         </div>
-      )}
 
-      {/* The raw trail — scout's note + every dossier verdict line, verbatim. */}
-      {c.why_fit && (
-        <div style={{ ...card, background: "rgba(139, 26, 26, 0.03)" }}>
-          <span style={{ fontFamily: MONO, fontSize: "10px", letterSpacing: ".18em", textTransform: "uppercase", color: MUTED, display: "block", marginBottom: "6px" }}>
-            Raw trail (why_fit)
-          </span>
-          <p style={{ fontFamily: MONO, fontSize: "12px", lineHeight: 1.6, color: INK, margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
-            {c.why_fit as string}
-          </p>
-        </div>
-      )}
+        {/* Sent proof, right on the sheet. */}
+        {lastSent && !liveDraft && (
+          <div style={{ fontFamily: MONO, fontSize: "11px", lineHeight: 1.9, color: INK, borderLeft: "3px solid", borderImage: "linear-gradient(180deg,#FF006E,#8B5CF6) 1", padding: "4px 0 4px 12px", marginTop: "12px" }}>
+            <strong style={{ color: GREEN }}>sent ✓</strong>{" "}
+            {lastSent.sent_at ? `${timeAgo(lastSent.sent_at as string)} → ` : "→ "}{lastSent.to_addr as string}
+            {lastSent.resend_id ? <><br />resend id {lastSent.resend_id as string}</> : null}
+            <br />
+            {(() => {
+              const del = deliveryByQueue.get(lastSent.id as string);
+              if (del?.status === "delivered") return <strong style={{ color: GREEN }}>delivered ✓{del.at ? ` ${timeAgo(del.at)}` : ""}</strong>;
+              if (del?.status === "bounced" || del?.status === "complained") return <strong style={{ color: CRIMSON }}>{del.status} — address suppressed, don&apos;t resend</strong>;
+              return <span style={{ color: MUTED }}>delivery pending — stamps when Resend confirms</span>;
+            })()}
+          </div>
+        )}
 
-      {/* ── Replies ── */}
-      <p style={sectionLabel}>Replies</p>
-      {replies.length === 0 ? (
-        <div style={card}>
-          <p style={{ fontFamily: SERIF, fontSize: "13.5px", fontStyle: "italic", color: MUTED, margin: 0 }}>
-            Nothing yet. Replies land in your inbox (the outbound&apos;s reply-to address) — the search link
-            in Contact paths above jumps straight to their thread. When they write back, work it from
-            there and move this card&apos;s status yourself (it also halts the follow-up ladder).
-          </p>
-        </div>
-      ) : (
-        replies.map((r, i) => (
-          <div key={i} style={{ ...card, borderLeft: `3px solid ${CRIMSON}` }}>
-            <div style={{ display: "flex", gap: "10px", alignItems: "baseline", flexWrap: "wrap", marginBottom: "6px" }}>
-              <span style={{ fontFamily: SERIF, fontSize: "14.5px", fontWeight: 600, color: INK }}>{r.subject ?? "(no subject)"}</span>
-              {r.classification && <span style={chip(MUTED)}>{r.classification as string}</span>}
-              <span style={{ fontFamily: MONO, fontSize: "10.5px", color: MUTED, marginLeft: "auto" }}>
-                {r.from_addr as string} · {timeAgo(r.received_at as string)}
-              </span>
+        {/* ════ THE FOLD ════ */}
+        <div className={twr.lfold}>
+          <details className={twr.lsec}>
+            <summary>the read <span className={twr.lsecHint}>voice · conflict · contact · audience</span></summary>
+            <div className={twr.lsecBody}>
+              <p style={{ margin: "0 0 4px" }}><b style={{ color: MUTED }}>voice fit</b> — {vf ?? "—"}/5, sounds like AESDR (not overall fit)</p>
+              <p style={{ margin: "0 0 4px" }}><b style={{ color: MUTED }}>conflict</b> — {conflict ?? "not assessed"}{brief?.conflict_note ? ` · ${brief.conflict_note}` : ""}</p>
+              <p style={{ margin: "0 0 4px", color: CRIMSON }}>
+                <b style={{ color: MUTED }}>contact</b> — {(c.contact_path as string | null) ?? "—"}{" "}
+                {c.contact_path ? <ContactLinks text={c.contact_path as string} searchHint={`${c.name as string} ${(c.surface as string | null) ?? ""}`} /> : null}
+              </p>
+              {(c.found_email as string | null) && (
+                <p style={{ margin: "0 0 4px" }}>
+                  <b style={{ color: MUTED }}>found email</b> — {c.found_email as string} ({((c.found_email_status as string | null) ?? "found").replace(/_/g, " ")}){" "}
+                  <a href={inboxSearchUrl(c.found_email as string)} target="_blank" rel="noreferrer" style={{ color: CRIMSON }}>inbox ↗</a>
+                </p>
+              )}
+              {foundEmail && !hasEmail && (
+                <form action={useFoundEmail} style={{ margin: "6px 0" }}>
+                  <input type="hidden" name="id" value={id} />
+                  <TowerButton variant="outline" pendingLabel="Applying…">Use {foundEmail.email} (unverified)</TowerButton>
+                </form>
+              )}
+              {!hasEmail && !liveDraft && emailFinderConfigured() && (status === "sourced" || status === "enriched") && (
+                <form action={findEmailNow} style={{ display: "flex", gap: "8px", alignItems: "stretch", margin: "6px 0" }}>
+                  <input type="hidden" name="id" value={id} />
+                  <input type="text" name="domain" placeholder="their site, if you know it" style={{ fontFamily: MONO, fontSize: "11px", color: INK, background: "#fff", border: `1px solid ${LIGHT}`, padding: "0 10px", width: "210px" }} />
+                  <TowerButton variant="outline" pendingLabel="Running waterfall… (~80s)" confirmMessage={`Find an email for ${c.name}? One BetterContact credit, charged only on a found address.`}>Find email</TowerButton>
+                </form>
+              )}
+              <p style={{ margin: 0 }}><b style={{ color: MUTED }}>audience</b> — est. {(c.audience_est as number | null)?.toLocaleString() ?? "unknown"} · {(c.archetype as string | null) ?? "—"}</p>
             </div>
-            <p style={{ fontFamily: SERIF, fontSize: "13.5px", lineHeight: 1.6, color: INK, margin: "0 0 10px", whiteSpace: "pre-wrap" }}>
-              {((r.text_body as string | null) ?? "").slice(0, 600) || "(empty body)"}
-            </p>
-            <a
-              href={inboxSearchUrl(r.from_addr as string)}
-              target="_blank"
-              rel="noreferrer"
-              className={twr.lnk}
-              style={{ fontFamily: MONO, fontSize: "11px", color: CRIMSON }}
-            >
-              open the thread in your inbox ↗
-            </a>
-          </div>
-        ))
-      )}
+          </details>
 
-      {/* ── Timeline ── */}
-      <p style={sectionLabel}>Timeline</p>
-      <div style={card}>
-        {timeline.map((t, i) => (
-          <div key={i} style={{ display: "flex", gap: "12px", padding: "7px 0", borderBottom: i < timeline.length - 1 ? `1px solid ${LIGHT}` : "none" }}>
-            <span style={{ fontFamily: MONO, fontSize: "10.5px", color: MUTED, whiteSpace: "nowrap", minWidth: "110px" }}>{fmt(t.at)}</span>
-            <span style={{ fontFamily: MONO, fontSize: "10.5px", color: CRIMSON, whiteSpace: "nowrap", minWidth: "150px", overflow: "hidden", textOverflow: "ellipsis" }}>{t.actor}</span>
-            <span style={{ fontFamily: SERIF, fontSize: "13px", color: INK, lineHeight: 1.5 }}>{t.label}</span>
-          </div>
-        ))}
+          <details className={twr.lsec}>
+            <summary>the scout&apos;s notes</summary>
+            <div className={twr.lsecBody}>
+              <p style={{ margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{(c.why_fit as string | null) ?? "—"}</p>
+              {c.next_action && <p style={{ margin: "6px 0 0", color: MUTED }}>next noted: {c.next_action as string}</p>}
+            </div>
+          </details>
+
+          {(sentDrafts.length > 0 || parkedDrafts.length > 0) && (
+            <details className={twr.lsec}>
+              <summary>sends &amp; parked <span className={twr.lsecHint}>{sentDrafts.length} sent{parkedDrafts.length > 0 ? ` · ${parkedDrafts.length} parked` : ""}</span></summary>
+              <div className={twr.lsecBody}>
+                {sentDrafts.map((d) => {
+                  const del = deliveryByQueue.get(d.id as string);
+                  return (
+                    <p key={d.id as string} style={{ margin: "0 0 6px" }}>
+                      <strong style={{ color: GREEN }}>sent ✓</strong> {d.sent_at ? timeAgo(d.sent_at as string) : ""} → {d.to_addr as string} · &ldquo;{(d.subject as string).slice(0, 44)}&rdquo;
+                      {del?.status === "delivered" ? <strong style={{ color: GREEN }}> · delivered ✓</strong> : del?.status ? <strong style={{ color: CRIMSON }}> · {del.status}</strong> : <span style={{ color: MUTED }}> · delivery pending</span>}
+                    </p>
+                  );
+                })}
+                {parkedDrafts.map((d) => (
+                  <div key={d.id as string} style={{ margin: "0 0 8px" }}>
+                    <p style={{ margin: "0 0 4px", color: CRIMSON }}>
+                      {d.status as string} — &ldquo;{(d.subject as string).slice(0, 44)}&rdquo; → {d.to_addr as string}
+                      {d.error ? ` · ${(d.error as string).slice(0, 80)}` : ""}
+                    </p>
+                    <form action={releaseDraft} style={{ display: "inline" }}>
+                      <input type="hidden" name="id" value={d.id as string} />
+                      <TowerButton variant="ghost" pendingLabel="Releasing…">Release → ready</TowerButton>
+                    </form>
+                  </div>
+                ))}
+              </div>
+            </details>
+          )}
+
+          <details className={twr.lsec}>
+            <summary>replies <span className={twr.lsecHint}>{replies.length} · inbox</span></summary>
+            <div className={twr.lsecBody}>
+              {replies.length === 0 ? (
+                <p style={{ margin: 0, color: MUTED }}>
+                  none yet — replies land in your inbox.{" "}
+                  {(c.found_email as string | null) && (
+                    <a href={inboxSearchUrl(c.found_email as string)} target="_blank" rel="noreferrer" style={{ color: CRIMSON }}>open in inbox ↗</a>
+                  )}{" "}
+                  when they write back, press the seal above — it logs the reply and halts the ladder.
+                </p>
+              ) : (
+                replies.map((r, i) => (
+                  <div key={i} style={{ margin: "0 0 8px" }}>
+                    <p style={{ margin: 0 }}>
+                      <strong>{r.from_addr as string}</strong> · {timeAgo(r.received_at as string)} · &ldquo;{(r.subject as string | null) ?? "(no subject)"}&rdquo;
+                      {r.classification ? <span style={{ color: MUTED }}> · {r.classification as string}</span> : null}
+                    </p>
+                    <p style={{ margin: "2px 0 0", color: MUTED, whiteSpace: "pre-wrap" }}>{((r.text_body as string | null) ?? "").slice(0, 240)}</p>
+                  </div>
+                ))
+              )}
+            </div>
+          </details>
+
+          <details className={twr.lsec}>
+            <summary>history <span className={twr.lsecHint}>{timeline.length} entries</span></summary>
+            <div className={twr.lsecBody}>
+              {timeline.map((t, i) => (
+                <p key={i} style={{ margin: "0 0 3px" }}>
+                  <span style={{ color: MUTED }}>{fmt(t.at)}</span> · <span style={{ color: CRIMSON }}>{t.actor}</span> · {t.label}
+                </p>
+              ))}
+            </div>
+          </details>
+        </div>
       </div>
     </main>
   );
