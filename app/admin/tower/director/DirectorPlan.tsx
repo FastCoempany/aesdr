@@ -80,6 +80,15 @@ const AUDIT_TALLY = WEEKS.flatMap((w) => w.tasks).reduce(
   { done: 0, partial: 0, open: 0 } as Record<Audit["state"], number>,
 );
 
+// Actionable tasks the audit verified done. These count as complete on the
+// progress bar and render a locked, filled checkbox — the audit IS progress;
+// your own ticks cover everything the audit left open.
+const AUDIT_DONE = new Set(
+  WEEKS.flatMap((w) => w.tasks)
+    .filter((t) => !isInfo(t.tags) && t.audit?.state === "done")
+    .map((t) => t.id),
+);
+
 export default function DirectorPlan() {
   const [state, setState] = useState<Persisted>({
     checked: {},
@@ -146,9 +155,9 @@ export default function DirectorPlan() {
     );
   };
 
-  const doneCount = loaded
-    ? ACTIONABLE_IDS.filter((id) => state.checked[id]).length
-    : 0;
+  const doneCount = ACTIONABLE_IDS.filter(
+    (id) => AUDIT_DONE.has(id) || (loaded && state.checked[id]),
+  ).length;
   const pct = TOTAL ? Math.round((doneCount / TOTAL) * 100) : 0;
 
   // Weeks grouped by phase, in order.
@@ -313,7 +322,9 @@ export default function DirectorPlan() {
             {weeksByPhase(p.id).map((w) => {
               const weekOpen = !!state.openWeeks[w.id];
               const weekActionable = w.tasks.filter((t) => !isInfo(t.tags));
-              const weekDone = weekActionable.filter((t) => state.checked[t.id]).length;
+              const weekDone = weekActionable.filter(
+                (t) => AUDIT_DONE.has(t.id) || state.checked[t.id],
+              ).length;
               const wa = weekAudit(w.tasks);
               return (
                 <div key={w.id} id={w.id} className={styles.weekAcc}>
@@ -339,26 +350,35 @@ export default function DirectorPlan() {
                       <p className={styles.weekIntroLine}>{w.intro}</p>
                       {w.tasks.map((t) => {
                         const info = isInfo(t.tags);
-                        const checked = !!state.checked[t.id];
+                        const verified = AUDIT_DONE.has(t.id);
+                        const checked = verified || !!state.checked[t.id];
                         const taskOpen = !!state.openTasks[t.id];
                         return (
                           <div
                             key={t.id}
-                            className={`${styles.taskAcc} ${checked ? styles.taskDone : ""} ${
+                            className={`${styles.taskAcc} ${checked && !verified ? styles.taskDone : ""} ${
                               t.audit?.state === "done" ? styles.rowDone : ""
                             }`}
                           >
                             <div className={styles.taskBar} onClick={() => toggleTask(t.id)}>
                               {!info && (
                                 <span
-                                  className={`${styles.checkbox} ${checked ? styles.checkboxOn : ""}`}
+                                  className={`${styles.checkbox} ${checked ? styles.checkboxOn : ""} ${
+                                    verified ? styles.checkboxVerified : ""
+                                  }`}
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    toggleCheck(t.id);
+                                    if (!verified) toggleCheck(t.id);
                                   }}
                                   role="checkbox"
                                   aria-checked={checked}
+                                  aria-disabled={verified}
                                   tabIndex={0}
+                                  title={
+                                    verified
+                                      ? "Verified done by the audit — already counted"
+                                      : undefined
+                                  }
                                 >
                                   {checked ? "✓" : ""}
                                 </span>

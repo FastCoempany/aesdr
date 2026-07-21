@@ -957,6 +957,13 @@
 }
 .rowDone .taskBar { background: transparent; }
 .rowDone .taskBar:hover { background: rgba(46, 125, 50, .06); }
+/* Audit-verified checkbox: filled, locked — the audit already counted it. */
+.checkboxVerified {
+  background: #2E7D32;
+  border-color: #2E7D32;
+  color: #FAF7F2;
+  cursor: default;
+}
 .wtDone { color: #2E7D32; font-weight: 700; }
 .wtPart { color: #a14400; font-weight: 700; }
 .wtOpen { color: #6B6B6B; font-weight: 400; }
