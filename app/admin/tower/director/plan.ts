@@ -42,11 +42,14 @@ const AFF = (path: string, label?: string) =>
 const FUTURE = (_path: string, label: string) => L(`${GHT}/docs/partnerships`, label);
 
 export type Tag = "you" | "tower" | "auto" | "done";
+/** Audit verdict stamped 2026-07-21 — what is actually done in the world/repo. */
+export type Audit = { state: "done" | "partial" | "open"; note?: string };
 export type Task = {
   id: string;
   title: string;
   tags: Tag[];
   automatable?: boolean;
+  audit?: Audit;
   bodyHtml: string;
 };
 export type Week = {
@@ -92,6 +95,7 @@ export const WEEKS: Week[] = [
     tasks: [
       {
         id: "w1t1",
+        audit: { state: "done", note: "You walk it daily. But the four-section layout below is the old tower — the live floor is the warren: the sweep row, the chambers, the strip/territory, and the machinery drawer." },
         title: "Day 1, 9:00am — Walk the tower (the four sections, top to bottom)",
         tags: ["you"],
         bodyHtml: `
@@ -111,6 +115,7 @@ export const WEEKS: Week[] = [
       },
       {
         id: "w1t2",
+        audit: { state: "partial", note: "Plumbing built (partner-alerts.ts, almanac lever). The real-time bright-signal ping retired with sentinel — today alerts = the almanac digest, and only while its lever is on." },
         title: "Day 1, 10:00am — Confirm where your alerts land",
         tags: ["you", "auto"],
         bodyHtml: `
@@ -131,6 +136,7 @@ export const WEEKS: Week[] = [
       },
       {
         id: "w1t3",
+        audit: { state: "done", note: "You ratified this canon; the R-G4 blocklist is enforced mechanically in ESLint + canon-check." },
         title: "Day 1, 2:00pm — Read the brand canon until you can hear it",
         tags: ["you"],
         bodyHtml: `
@@ -148,6 +154,7 @@ export const WEEKS: Week[] = [
       },
       {
         id: "w1done1",
+        audit: { state: "done", note: "Tables and the inbound pipe hold true. The cron roster has since shrunk: sentinel, scribe, courier and dossier-enrich were retired for the manual-only tower." },
         title: "Already done — the infrastructure the old plan built in Week 1",
         tags: ["done"],
         bodyHtml: `
@@ -162,6 +169,7 @@ export const WEEKS: Week[] = [
       },
       {
         id: "w1t4",
+        audit: { state: "done", note: "Doctrine v2.0 is in the repo, and its fit bar now runs automatically inside every sweep." },
         title: "Day 4 — Read the discovery doctrine (don't rewrite it)",
         tags: ["you"],
         bodyHtml: `
@@ -176,6 +184,7 @@ export const WEEKS: Week[] = [
       },
       {
         id: "w1t5",
+        audit: { state: "done", note: "Opened and answered — stay custom. The verdict is recorded in the Attribution Decision card in the toolkit; the memo file itself is still unwritten (Week 4)." },
         title: "Day 5 — Open the attribution-platform question (you decide by Day 25)",
         tags: ["you"],
         bodyHtml: `
@@ -200,6 +209,7 @@ export const WEEKS: Week[] = [
     tasks: [
       {
         id: "w2t1",
+        audit: { state: "done", note: "Absorbed into one press: a sweep now runs the fit call, the brief, and the address hunt, and lands finished cards. No Promote gate, no dossier-enrich lever. The pipeline is seeded." },
         title: "Days 6–7 — Run three discovery sweeps from the tower (target: ~45 scored candidates)",
         tags: ["tower", "auto"],
         automatable: true,
@@ -221,6 +231,7 @@ export const WEEKS: Week[] = [
       },
       {
         id: "w2t2",
+        audit: { state: "done", note: "A rank-and-cut ran 2026-06-01 (the SQL record sits in docs/partnerships). Re-run it whenever a fresh sweep swells the roster." },
         title: "Days 8–9 — Score, rank, and cut to the top 25",
         tags: ["you"],
         bodyHtml: `
@@ -241,6 +252,7 @@ export const WEEKS: Week[] = [
       },
       {
         id: "w2t3",
+        audit: { state: "partial", note: "The 15-minute drafting cron is retired — a draft is now one press inside each room, canon-checked on save. Nothing fills the tower by itself anymore, by design." },
         title: "Day 10 — Review the drafts that filled the tower by themselves",
         tags: ["auto", "tower"],
         automatable: true,
@@ -274,6 +286,7 @@ export const WEEKS: Week[] = [
     tasks: [
       {
         id: "w3done1",
+        audit: { state: "done", note: "Pipe still live. Sentinel's auto-classification retired — replies land in your inbox and in each room's replies fold; you make the call." },
         title: "Already done — confirm the affiliates@ inbox delivers",
         tags: ["done"],
         bodyHtml: `
@@ -287,6 +300,7 @@ export const WEEKS: Week[] = [
       },
       {
         id: "w3t1",
+        audit: { state: "partial", note: "The send path is live end-to-end (suppression re-check, no-double-send claim, delivery stamps) and first touches have gone out — but the 25-in-three-waves campaign hasn't run. A send is one ceramic press per room; there is no batch approve." },
         title: "Days 11–13 — Approve the first 25 cold sends (in three waves of ~8)",
         tags: ["you", "tower"],
         bodyHtml: `
@@ -305,6 +319,7 @@ export const WEEKS: Week[] = [
       },
       {
         id: "w3tLadder",
+        audit: { state: "partial", note: "Built and waiting: the followup lever sits in the machinery drawer, default off. First-touch sends already stamp the ladder clock. Start the lever when you want the +4/+9 drafts." },
         title: "Days 15+ — The follow-up ladder drafts itself",
         tags: ["auto", "tower"],
         automatable: true,
@@ -323,6 +338,7 @@ export const WEEKS: Week[] = [
       },
       {
         id: "w3t2",
+        audit: { state: "partial", note: "Mark-replied and the replies fold are live in every room; the auto-ping retired with sentinel, so watch the inbox. This one is ongoing work rather than a box to tick." },
         title: "Days 14–15 — Work the replies the tower surfaces",
         tags: ["you", "auto"],
         bodyHtml: `
@@ -351,6 +367,7 @@ export const WEEKS: Week[] = [
     tasks: [
       {
         id: "w4t1",
+        audit: { state: "open", note: "Not verifiable from the repo (no call log). The booking link is live." },
         title: "Days 16–19 — Run partner intro calls (target: 8–10)",
         tags: ["you"],
         bodyHtml: `
@@ -369,6 +386,7 @@ export const WEEKS: Week[] = [
       },
       {
         id: "w4t2",
+        audit: { state: "open", note: "docs/partnerships/attribution-decision.md does not exist. The call itself is made — stay custom, per the Attribution card — so the memo is a twenty-minute write." },
         title: "Days 20–22 — Decide the attribution platform & write the memo",
         tags: ["you"],
         bodyHtml: `
@@ -394,6 +412,7 @@ export const WEEKS: Week[] = [
     tasks: [
       {
         id: "w45t1",
+        audit: { state: "open", note: "No affiliates onboarded yet; /admin/affiliates/new and the review queue are built and waiting." },
         title: "Days 23–27 — Onboard the first 3–5 affiliates",
         tags: ["you", "tower"],
         bodyHtml: `
@@ -412,6 +431,7 @@ export const WEEKS: Week[] = [
       },
       {
         id: "w45t2",
+        audit: { state: "open", note: "The phase-30 memo has not been written." },
         title: "Days 28–30 — Phase-30 review + the founder memo",
         tags: ["you"],
         bodyHtml: `
@@ -442,6 +462,7 @@ export const WEEKS: Week[] = [
     tasks: [
       {
         id: "w5t1",
+        audit: { state: "open", note: "Waits on the first onboarded cohort; the queue and warden are ready." },
         title: "Days 31–34 — Drive the first cohort through the copy gate",
         tags: ["you", "tower"],
         bodyHtml: `
@@ -460,6 +481,7 @@ export const WEEKS: Week[] = [
       },
       {
         id: "w5t2",
+        audit: { state: "open", note: "The machine is fully built (tracked link → pending row → auto-clear cron); the hand test hasn't been run." },
         title: "Days 35–37 — Prove a click writes a commission",
         tags: ["you", "auto"],
         automatable: true,
@@ -490,6 +512,7 @@ export const WEEKS: Week[] = [
     tasks: [
       {
         id: "w6t1",
+        audit: { state: "open", note: "Untouched; herald and the ten named channel orgs in Prospect Intel are ready." },
         title: "Days 38–40 — Build the channel target list (herald)",
         tags: ["you"],
         bodyHtml: `
@@ -509,6 +532,7 @@ export const WEEKS: Week[] = [
       },
       {
         id: "w6t2",
+        audit: { state: "open", note: "No channel conversations opened." },
         title: "Days 41–44 — Open 3 channel conversations",
         tags: ["you", "tower"],
         bodyHtml: `
@@ -536,6 +560,7 @@ export const WEEKS: Week[] = [
     tasks: [
       {
         id: "w7done1",
+        audit: { state: "done", note: "The lever now lives in the machinery drawer at the bottom of the warren — there is no Agent Controls panel anymore." },
         title: "Wired and ready — the daily standup digest (start the lever to use it)",
         tags: ["auto"],
         automatable: true,
@@ -550,6 +575,7 @@ export const WEEKS: Week[] = [
       },
       {
         id: "w7t1",
+        audit: { state: "open", note: "The affiliate_weekly_report view has not been created." },
         title: "Days 45–48 — Stand up the weekly reporting pull",
         tags: ["you"],
         bodyHtml: `
@@ -570,6 +596,7 @@ export const WEEKS: Week[] = [
       },
       {
         id: "w7t2",
+        audit: { state: "open", note: "The Payouts block and its Pay button are live on the floor; no payout has run." },
         title: "Days 49–51 — First payout dry-run (founder-approved)",
         tags: ["you"],
         bodyHtml: `
@@ -597,6 +624,7 @@ export const WEEKS: Week[] = [
     tasks: [
       {
         id: "w8t1",
+        audit: { state: "open" },
         title: "Days 52–56 — Push to 10 active affiliates",
         tags: ["you", "tower"],
         bodyHtml: `
@@ -611,6 +639,7 @@ export const WEEKS: Week[] = [
       },
       {
         id: "w8t2",
+        audit: { state: "open" },
         title: "Days 57–60 — Phase-60 review + trajectory check",
         tags: ["you"],
         bodyHtml: `
@@ -641,6 +670,7 @@ export const WEEKS: Week[] = [
     tasks: [
       {
         id: "w9t1",
+        audit: { state: "open" },
         title: "Days 61–64 — Find your top 3 and overinvest",
         tags: ["you", "auto"],
         automatable: true,
@@ -661,6 +691,7 @@ export const WEEKS: Week[] = [
       },
       {
         id: "w9t2",
+        audit: { state: "open" },
         title: "Days 65–67 — Move the lead channel deal toward signature",
         tags: ["you"],
         bodyHtml: `
@@ -687,6 +718,7 @@ export const WEEKS: Week[] = [
     tasks: [
       {
         id: "w1011t1",
+        audit: { state: "open", note: "operating-cadence.md does not exist. When you write it, describe the warren and its four levers — not the cron fleet this task's body lists." },
         title: "Days 68–74 — Codify the operating cadence",
         tags: ["you"],
         bodyHtml: `
@@ -702,6 +734,7 @@ export const WEEKS: Week[] = [
       },
       {
         id: "w1011t2",
+        audit: { state: "open" },
         title: "Days 75–81 — Second affiliate wave + workshop pilot",
         tags: ["tower", "auto"],
         automatable: true,
@@ -728,6 +761,7 @@ export const WEEKS: Week[] = [
     tasks: [
       {
         id: "w1213t1",
+        audit: { state: "open" },
         title: "Days 82–86 — Hit the $3k/mo trajectory + run payouts clean",
         tags: ["you"],
         bodyHtml: `
@@ -747,6 +781,7 @@ export const WEEKS: Week[] = [
       },
       {
         id: "w1213t2",
+        audit: { state: "open" },
         title: "Days 87–90 — The 90-day proof + next-quarter plan",
         tags: ["you"],
         bodyHtml: `
@@ -772,11 +807,12 @@ export const WEEKS: Week[] = [
 // reference, not day-by-day tasks. Agent specs + outreach templates link to
 // their canonical files (single source of truth); data that only lives here
 // (prospects, levers, benchmarks, attribution, metrics) is rendered inline.
-export type RefSection = { id: string; title: string; subtitle: string; bodyHtml: string };
+export type RefSection = { id: string; title: string; subtitle: string; audit?: Audit; bodyHtml: string };
 
 export const REFERENCE: RefSection[] = [
   {
     id: "ref-agents",
+    audit: { state: "partial", note: "Stale roster: sentinel, courier, and the scribe drafting cron are retired. Live automation is four levers — followup, usher, almanac, contact-finder — and everything else is your press inside the room." },
     title: "Agent Roster",
     subtitle: "Who does what, on what cadence",
     bodyHtml: `
@@ -1016,6 +1052,7 @@ export const REFERENCE: RefSection[] = [
 export const MANUAL: RefSection[] = [
   {
     id: "ref-wiki",
+    audit: { state: "partial", note: "Partly stale: the seven-lever table is now four (followup, usher, almanac, contact-finder); scribe, courier, sentinel and dossier-enrich are retired, and one sweep press runs the fit call, the brief and the address hunt itself under the $10/day wall." },
     title: "How it all runs",
     subtitle: "The switch, the agents, the order — in plain language",
     bodyHtml: `
@@ -1072,6 +1109,7 @@ export const MANUAL: RefSection[] = [
   },
   {
     id: "ref-golive",
+    audit: { state: "done", note: "Go-live happened: the switch table and these migrations are live in production, and the newest one (20260715, delivery stamps) ran 2026-07-21." },
     title: "Go-live",
     subtitle: "The one-time setup, in order",
     bodyHtml: `

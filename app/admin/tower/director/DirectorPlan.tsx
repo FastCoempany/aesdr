@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 
 import styles from "./director.module.css";
-import { PHASES, WEEKS, REFERENCE, MANUAL, type Tag } from "./plan";
+import { PHASES, WEEKS, REFERENCE, MANUAL, type Tag, type Audit } from "./plan";
 import { useConfirm } from "@/components/ConfirmDialog";
 
 /**
@@ -36,6 +36,31 @@ const ACTIONABLE_IDS = WEEKS.flatMap((w) =>
   w.tasks.filter((t) => !isInfo(t.tags)).map((t) => t.id),
 );
 const TOTAL = ACTIONABLE_IDS.length;
+
+// ── The audit (stamped 2026-07-21): what's actually done in the world/repo,
+//    independent of the founder's own checkboxes. Rendered as a chip per line.
+const AUDIT_CHIP: Record<Audit["state"], { glyph: string; label: string; cls: string }> = {
+  done: { glyph: "✓", label: "done", cls: "auditDone" },
+  partial: { glyph: "◐", label: "in part", cls: "auditPart" },
+  open: { glyph: "○", label: "open", cls: "auditOpen" },
+};
+
+function AuditChip({ audit }: { audit: Audit }) {
+  const c = AUDIT_CHIP[audit.state];
+  return (
+    <span className={`${styles.auditChip} ${styles[c.cls]}`} title="audited 2026-07-21">
+      {c.glyph} {c.label}
+    </span>
+  );
+}
+
+const AUDIT_TALLY = WEEKS.flatMap((w) => w.tasks).reduce(
+  (acc, t) => {
+    if (t.audit) acc[t.audit.state] += 1;
+    return acc;
+  },
+  { done: 0, partial: 0, open: 0 } as Record<Audit["state"], number>,
+);
 
 export default function DirectorPlan() {
   const [state, setState] = useState<Persisted>({
@@ -134,6 +159,16 @@ export default function DirectorPlan() {
           Reset progress
         </button>
 
+        <div className={styles.auditTally}>
+          audited 2026-07-21
+          <br />
+          <span className={styles.auditDone}>✓ {AUDIT_TALLY.done} done</span>
+          {" · "}
+          <span className={styles.auditPart}>◐ {AUDIT_TALLY.partial} in part</span>
+          {" · "}
+          <span className={styles.auditOpen}>○ {AUDIT_TALLY.open} open</span>
+        </div>
+
         <div className={styles.navGroup}>The manual</div>
         {MANUAL.map((r) => (
           <a
@@ -221,14 +256,14 @@ export default function DirectorPlan() {
                 <div className={styles.weekBar} onClick={() => toggleTask(r.id)} role="button" tabIndex={0}>
                   <span className={`${styles.weekCaret} ${open ? styles.weekCaretOpen : ""}`}>▾</span>
                   <span className={styles.weekBarTitle}>{r.title}</span>
+                  {r.audit && <AuditChip audit={r.audit} />}
                   <span className={styles.weekCount}>{r.subtitle}</span>
                 </div>
                 {open && (
-                  <div
-                    className={styles.weekBody}
-                    style={{ paddingTop: 14 }}
-                    dangerouslySetInnerHTML={{ __html: r.bodyHtml }}
-                  />
+                  <div className={styles.weekBody} style={{ paddingTop: 14 }}>
+                    {r.audit?.note && <p className={styles.auditNote}>{r.audit.note}</p>}
+                    <div dangerouslySetInnerHTML={{ __html: r.bodyHtml }} />
+                  </div>
                 )}
               </div>
             );
@@ -293,7 +328,10 @@ export default function DirectorPlan() {
                                 </span>
                               )}
                               <div className={styles.taskBarMain}>
-                                <div className={styles.taskBarTitle}>{t.title}</div>
+                                <div className={styles.taskBarTitle}>
+                                  {t.title}
+                                  {t.audit && <AuditChip audit={t.audit} />}
+                                </div>
                                 <div className={styles.taskBarTags}>
                                   {t.tags.map((tag) => (
                                     <span
@@ -315,6 +353,9 @@ export default function DirectorPlan() {
                                     <span className={styles.autoChip}>Can be fully automated</span>
                                   )}
                                 </div>
+                                {t.audit?.note && (
+                                  <div className={styles.auditNote}>{t.audit.note}</div>
+                                )}
                               </div>
                               <span className={`${styles.taskCaret} ${taskOpen ? styles.taskCaretOpen : ""}`}>▾</span>
                             </div>
@@ -348,14 +389,14 @@ export default function DirectorPlan() {
                 <div className={styles.weekBar} onClick={() => toggleTask(r.id)} role="button" tabIndex={0}>
                   <span className={`${styles.weekCaret} ${open ? styles.weekCaretOpen : ""}`}>▾</span>
                   <span className={styles.weekBarTitle}>{r.title}</span>
+                  {r.audit && <AuditChip audit={r.audit} />}
                   <span className={styles.weekCount}>{r.subtitle}</span>
                 </div>
                 {open && (
-                  <div
-                    className={styles.weekBody}
-                    style={{ paddingTop: 14 }}
-                    dangerouslySetInnerHTML={{ __html: r.bodyHtml }}
-                  />
+                  <div className={styles.weekBody} style={{ paddingTop: 14 }}>
+                    {r.audit?.note && <p className={styles.auditNote}>{r.audit.note}</p>}
+                    <div dangerouslySetInnerHTML={{ __html: r.bodyHtml }} />
+                  </div>
                 )}
               </div>
             );
