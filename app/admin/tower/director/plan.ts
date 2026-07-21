@@ -95,23 +95,25 @@ export const WEEKS: Week[] = [
     tasks: [
       {
         id: "w1t1",
-        audit: { state: "done", note: "You walk it daily. But the four-section layout below is the old tower — the live floor is the warren: the sweep row, the chambers, the strip/territory, and the machinery drawer." },
-        title: "Day 1, 9:00am — Walk the tower (the four sections, top to bottom)",
+        audit: { state: "done", note: "You walk it daily. Brought current 2026-07-21 — the walkthrough below now describes the live warren floor." },
+        title: "Day 1, 9:00am — Walk the warren (the floor, top to bottom)",
         tags: ["you"],
         bodyHtml: `
-<p class="d-what">The Control Tower is your home base for the next 90 days — the screen where the system shows you the few things that need a human decision. Before you do any real work, learn the layout cold so you can read it at a glance. <strong>Heads-up:</strong> until you start the levers in <strong>Agent Controls</strong> (your next task), nothing runs on its own — that's the safety-by-default design.</p>
+<p class="d-what">The Control Tower is your home base for the next 90 days — one floor, called <strong>the warren</strong>, where a sweep hunts and finished cards land, and every card is a door to a room where the whole move happens. Learn the layout cold so you can read it at a glance. <strong>Heads-up:</strong> nothing drafts and nothing sends without your press inside a room — that's the safety-by-default design.</p>
 <p class="d-h">Click by click</p>
 <ol class="d-steps">
-  <li class="d-step"><strong>Open the cockpit.</strong> In your browser go to ${L("/admin/tower", "aesdr.com/admin/tower")}. If you're asked to sign in, use your founder email — you're a permanent admin, so you land straight in.</li>
-  <li class="d-step"><strong>Read the one line at the top.</strong> It says either "All clear" or "N waiting on you." That number is the entire job for the day. If it's 0, you can close the tab.</li>
-  <li class="d-step"><strong>Section 1 — Agent Controls (the levers).</strong> The top panel lists every cron-style agent with a Start / Pause button. On Day 1 they're all <em>paused</em> — green dot = running, grey dot = paused. This is where you turn the machine on, one agent at a time, on your schedule. See <a class="d-link" href="#ref-wiki">"How it all runs"</a> in the Manual for the full agent rundown.</li>
-  <li class="d-step"><strong>Section 2 — Scout &amp; Enrich.</strong> Three sweep buttons (Paid communities / Newsletters + podcasts / Practitioner figures) that call Claude server-side to find candidate partners. Below them: any <em>sourced</em> candidates awaiting your Promote / Reject decision. You'll use this Week 2.</li>
-  <li class="d-step"><strong>Section 3 — Decisions.</strong> The few things needing a human gesture: drafts ready to send (<em>warden ✓</em> = canon-clean), bright signals (people who replied with interest), and the Payouts card (cleared-but-unpaid commission per affiliate). Each item is one click to act on.</li>
-  <li class="d-step"><strong>Section 4 — Board.</strong> Read-only situational awareness: your pipeline by stage, courier's recent sends, soft signals (polite no, unsubscribes), and the "sentinel last swept" stamp at the top right (it'll read "—" until you start sentinel; once started, &gt;30 min between sweeps means something's stuck).</li>
-  <li class="d-step"><strong>Bookmark it.</strong> Press <span class="d-ui">⌘/Ctrl + D</span>. The tower is your default tab now.</li>
+  <li class="d-step"><strong>Open the floor.</strong> In your browser go to ${L("/admin/tower", "aesdr.com/admin/tower")}. If you're asked to sign in, use your founder email — you're a permanent admin, so you land straight in.</li>
+  <li class="d-step"><strong>The masthead — the postage strip.</strong> Today's Claude spend against the $10/day wall, plus email credits. Every sweep and brief is metered here, and the wall fails closed: when the postage runs out, the machine stops asking for more.</li>
+  <li class="d-step"><strong>The headline.</strong> It says either "All clear." or "N waiting on you." That number is the entire job for the day. If it's 0, you can close the tab.</li>
+  <li class="d-step"><strong>The sweep row.</strong> Three thin buttons — <span class="d-ui">Communities</span>, <span class="d-ui">Newsletters &amp; podcasts</span>, <span class="d-ui">Practitioners</span>. One press runs the whole line: Claude sweeps the live web (~2–4 min), and every new find is auto-promoted, briefed, verdict-called and address-hunted <em>before the run reports done</em>. There is no Promote/Reject gate — the sweep lands finished cards.</li>
+  <li class="d-step"><strong>The band — chambers and the strip.</strong> Cards sort into verdict chambers (<em>reach out · your call · waiting · talking · skip · researching</em>); pick a chamber, flip its stack. The <span class="d-ui">territory</span> toggle pulls the same band back to every candidate as a dot. A card is a door.</li>
+  <li class="d-step"><strong>The room — the letter.</strong> Click a card and it takes the screen: the verdict is the salutation, the draft is the body you edit in place, and one ceramic press sends. The read, the scout's notes, replies and history fold below the seal.</li>
+  <li class="d-step"><strong>Payouts, the shelf, the machinery.</strong> Below the band: <strong>Payouts waiting</strong> appears only when money is owed; <strong>On the shelf</strong> holds parked drafts; the collapsed <strong>machinery</strong> drawer at the bottom holds the four levers (followup, usher, almanac, contact-finder), the model pickers and the sent log.</li>
+  <li class="d-step"><strong>The side rail:</strong> <span class="d-ui">The roster</span>, <span class="d-ui">The bin</span>, <span class="d-ui">The sent record</span> — the doors, reachable at any scroll depth.</li>
+  <li class="d-step"><strong>Bookmark it.</strong> Press <span class="d-ui">⌘/Ctrl + D</span>. The warren is your default tab now.</li>
 </ol>
-<div class="d-end"><b>When you're done:</b> you can name the four sections in order. You can reach the tower from the <strong>Control Tower</strong> item in the admin nav, the iris-shimmer <strong>Director</strong> tab (this page), or the <strong>admin-mode menu</strong> (floating button, bottom-right).</div>
-<div class="d-refs"><b>Links in this task</b>${L("/admin/tower", "/admin/tower — the cockpit")} · <a class="d-link" href="#ref-wiki">How it all runs (manual)</a></div>`,
+<div class="d-end"><b>When you're done:</b> you can walk the floor top to bottom from memory — postage strip, headline, sweep row, the band, payouts &amp; shelf, machinery. You can reach it from the <strong>Control Tower</strong> item in the admin nav, the iris-shimmer <strong>Director</strong> tab (this page), or the <strong>admin-mode menu</strong> (floating button, bottom-right).</div>
+<div class="d-refs"><b>Links in this task</b>${L("/admin/tower", "/admin/tower — the warren")} · ${L("/admin/tower/sent", "/admin/tower/sent — the sent record")} · <a class="d-link" href="#ref-wiki">How it all runs (manual)</a></div>`,
       },
       {
         id: "w1t2",
@@ -119,14 +121,14 @@ export const WEEKS: Week[] = [
         title: "Day 1, 10:00am — Confirm where your alerts land",
         tags: ["you", "auto"],
         bodyHtml: `
-<p class="d-what">The system emails you in two situations: a real-time ping the moment someone replies with genuine interest (a "bright signal"), and a once-a-day standup digest at 7am ET. Both go to one address. This task is just confirming that address is one you actually read.</p>
+<p class="d-what">The system emails you one thing: the once-a-day standup digest at 7am ET (the almanac lever must be on). The old real-time "bright signal" ping retired with sentinel — replies land in your inbox and in each candidate's room. This task is just confirming the digest address is one you actually read.</p>
 <p class="d-h">Click by click</p>
 <ol class="d-steps">
   <li class="d-step"><strong>Default is <span class="d-code">antaeus.coe@gmail.com</span></strong> (your permanent-admin email). If that's the inbox you live in, you're done — skip to the last step.</li>
   <li class="d-step"><strong>To send alerts somewhere else,</strong> open the Vercel dashboard at ${L("https://vercel.com", "vercel.com")} → the <strong>aesdr</strong> project → <span class="d-ui">Settings</span> → <span class="d-ui">Environment Variables</span>.</li>
   <li class="d-step"><strong>Add a variable</strong> named <span class="d-code">PARTNER_ALERT_EMAIL</span>, value = the address you want, environment = <strong>Production</strong>. Click <span class="d-ui">Save</span>.</li>
   <li class="d-step"><strong>Redeploy</strong> so the new value takes effect: Vercel → <span class="d-ui">Deployments</span> → the top row → <span class="d-ui">⋯</span> → <span class="d-ui">Redeploy</span>.</li>
-  <li class="d-step"><strong>Confirm by waiting for the next 7am digest</strong> — but only after you've started the <strong>almanac</strong> lever in Agent Controls. Until almanac is started, no digest mails (the OFF-by-default safety). If almanac is on, the next morning's digest (subject "Tower: all clear" on a quiet day) is proof the chain works.</li>
+  <li class="d-step"><strong>Confirm by waiting for the next 7am digest</strong> — but only after you've started the <strong>almanac</strong> lever in the machinery drawer (bottom of the warren). Until almanac is started, no digest mails (the OFF-by-default safety). If almanac is on, the next morning's digest (subject "Tower: all clear" on a quiet day) is proof the chain works.</li>
 </ol>
 <div class="d-callout">
   <div class="d-callout-title">Where these emails are built</div>
@@ -161,9 +163,9 @@ export const WEEKS: Week[] = [
 <p class="d-what">The original 90-day plan spent Week 1 standing up systems by hand. All of it is permanently in place now, so you skip it. This card is just so you know what exists and where.</p>
 <p class="d-h">What's already built</p>
 <ol class="d-steps">
-  <li class="d-step"><strong>The agent roster.</strong> Four agents run automatically on a schedule — ${FILE("app/api/cron/sentinel/route.ts", "sentinel")} (watches replies), ${FILE("app/api/cron/courier/route.ts", "courier")} (sends approved mail), ${FILE("app/api/cron/usher/route.ts", "usher")} (workshop logistics), ${FILE("app/api/cron/almanac/route.ts", "almanac")} (daily digest). Six are saved roles you call in chat — ${FILE(".claude/agents/scout.md", "scout")}, ${FILE(".claude/agents/dossier.md", "dossier")}, ${FILE(".claude/agents/scribe.md", "scribe")}, ${FILE(".claude/agents/warden.md", "warden")}, ${FILE(".claude/agents/ledger.md", "ledger")}, ${FILE(".claude/agents/herald.md", "herald")}.</li>
+  <li class="d-step"><strong>The agent roster.</strong> Four levers can run on a schedule once you start them in the machinery drawer — ${FILE("app/api/cron/followup/route.ts", "followup")} (the +4/+9 ladder), ${FILE("app/api/cron/usher/route.ts", "usher")} (workshop logistics), ${FILE("app/api/cron/almanac/route.ts", "almanac")} (daily digest), ${FILE("app/api/cron/contact-finder/route.ts", "contact-finder")} (address hunts) — all OFF by default. The old sentinel / courier / scribe-drafter crons were retired for the manual-only tower: reading replies, drafting and sending are your presses now. Six are saved roles you call in chat — ${FILE(".claude/agents/scout.md", "scout")}, ${FILE(".claude/agents/dossier.md", "dossier")}, ${FILE(".claude/agents/scribe.md", "scribe")}, ${FILE(".claude/agents/warden.md", "warden")}, ${FILE(".claude/agents/ledger.md", "ledger")}, ${FILE(".claude/agents/herald.md", "herald")}.</li>
   <li class="d-step"><strong>The database.</strong> Your partner tables already exist: ${TBL("partner_pipeline")} (the candidate CRM), ${TBL("partner_inbound_email")}, ${TBL("partner_outbound_queue")} (the draft house), ${TBL("partner_sent_log")}, ${TBL("partner_signals")}, ${TBL("partner_workshop")} — plus the affiliate tables ${TBL("affiliates")}, ${TBL("affiliate_attributions")}, ${TBL("affiliate_payouts")}, ${TBL("affiliate_links")}, ${TBL("affiliate_applications")}.</li>
-  <li class="d-step"><strong>The inbound email pipe.</strong> Mail to <span class="d-code">affiliates@aesdr.com</span> is caught by a Cloudflare Worker, forwarded to your inbox, and dropped into ${TBL("partner_inbound_email")} for sentinel to read. The schedule of every automated job is documented in ${FILE("docs/partnerships/cron-schedule.md", "docs/partnerships/cron-schedule.md")}.</li>
+  <li class="d-step"><strong>The inbound email pipe.</strong> Mail to <span class="d-code">affiliates@aesdr.com</span> is caught by a Cloudflare Worker, forwarded to your inbox, and dropped into ${TBL("partner_inbound_email")} so each candidate's room keeps the thread's record in its replies fold.</li>
 </ol>
 <div class="d-end"><b>Nothing to do here.</b> You start Day 1 with a tower already breathing.</div>`,
       },
@@ -205,29 +207,27 @@ export const WEEKS: Week[] = [
     tag: "Week 2 · Days 6–10",
     title: "The list. Fifty names, scored.",
     intro:
-      "The highest-leverage week of the quarter. You live in scout and dossier (two chat-invoked agents) to build a tight, scored target list — then the drafting agent fills your tower automatically.",
+      "The highest-leverage week of the quarter. Three sweep presses build a tight, scored target list — finished cards, verdicts called — and then you write the letters.",
     tasks: [
       {
         id: "w2t1",
         audit: { state: "done", note: "Absorbed into one press: a sweep now runs the fit call, the brief, and the address hunt, and lands finished cards. No Promote gate, no dossier-enrich lever. The pipeline is seeded." },
-        title: "Days 6–7 — Run three discovery sweeps from the tower (target: ~45 scored candidates)",
+        title: "Days 6–7 — Run three sweeps from the warren (target: ~45 finished cards)",
         tags: ["tower", "auto"],
         automatable: true,
         bodyHtml: `
-<p class="d-what">A "sweep" is one click in the tower that asks Claude to find ~15 candidate partners on a specific kind of platform and drop them into your pipeline as scored rows for you to review. You run three sweeps so the results don't blur. Then dossier (a separate agent) deepens each one you accept. End result: ~45 reviewed, enriched candidates ready to rank.</p>
-<div class="d-callout d-callout-note"><div class="d-callout-title">What changed</div><p>Until recently this task meant opening a terminal and typing scout/dossier dispatch commands. As of the Scout &amp; Enrich panel, you press <strong>three buttons</strong> in the tower instead. Click costs are real (Claude API tokens: ~$0.30–$1.50 per sweep), so each button asks you to confirm.</p></div>
+<p class="d-what">A "sweep" is one press that asks Claude to find ~15 candidate partners on a specific kind of platform — and then finishes the job itself. Every new find is auto-promoted, briefed, fit-called and address-hunted before the run reports done. You run three sweeps so the results don't blur. End result: ~45 finished cards in the band, each already carrying a verdict.</p>
+<div class="d-callout d-callout-note"><div class="d-callout-title">What changed</div><p>Earlier versions of this task had a Promote/Reject gate and a separate dossier auto-enrich lever. Both are gone — the sweep is the whole line now. Costs are real (roughly $0.50–$2.50 per sweep plus ~$0.15–$0.60 per card for the briefs), metered by the postage wall, so each button asks you to confirm.</p></div>
 <p class="d-h">Click by click</p>
 <ol class="d-steps">
   <li class="d-step"><strong>You already have a head start.</strong> A prior manual sweep seeded the pipeline — open ${TBL("partner_pipeline")} and you'll see existing candidates (also documented in ${FILE("docs/partnerships/seed-partner-pipeline-2026-06-01.sql", "the seed file")}). Your job: verify them and extend with three fresh sweeps.</li>
-  <li class="d-step"><strong>Open the tower:</strong> ${L("/admin/tower", "/admin/tower")} → the <strong>Scout &amp; Enrich</strong> section (right above DECISIONS).</li>
-  <li class="d-step"><strong>Run the three sweeps,</strong> one at a time. Press <span class="d-ui">Sweep 1 · Paid communities</span> → confirm → wait 10–30 seconds → ~15 candidates appear below as cards. Then <span class="d-ui">Sweep 2 · Newsletters + podcasts</span>. Then <span class="d-ui">Sweep 3 · Practitioner figures</span>.</li>
-  <li class="d-step"><strong>Review each card.</strong> Each candidate has <code>status=&apos;sourced&apos;</code> — researched by Claude but not yet trusted into your pipeline. Read the name, surface, voice-fit (1–5), and the why-fit. Sanity-check anything suspicious (Claude can occasionally invent a plausible-sounding name; verify the surface exists).</li>
-  <li class="d-step"><strong>Promote or reject.</strong> Click <span class="d-ui">Promote → enriched</span> on the keepers (status flips to <span class="d-code">enriched</span> — the trigger the drafter watches), or <span class="d-ui">Reject</span> on the duds (they move to <span class="d-code">passed</span>, not deleted — your second-wave list).</li>
-  <li class="d-step"><strong>Dossier auto-enrich (optional but recommended).</strong> Go to <strong>Agent Controls</strong>, find <span class="d-ui">Dossier auto-enrich</span>, click <span class="d-ui">Start</span>. On its next hourly tick it picks up every newly-enriched row and fills in the dossier brief (audience size estimate, voice-fit rationale, conflict flag, contact path). Costs ~$0.10–$0.30 per row.</li>
-  <li class="d-step"><strong>If you'd rather keep dossier off,</strong> you can still get briefs by dispatching the dossier subagent in Claude Code one-at-a-time — spec at ${FILE(".claude/agents/dossier.md", "dossier.md")}. Either flow works; the auto-enrich one just means no terminal.</li>
+  <li class="d-step"><strong>Open the warren:</strong> ${L("/admin/tower", "/admin/tower")} → the sweep row under the headline.</li>
+  <li class="d-step"><strong>Run the three sweeps,</strong> one at a time. Press <span class="d-ui">Communities</span> → confirm → the button itself narrates the line (sweeping the web → preparing N cards). Then <span class="d-ui">Newsletters &amp; podcasts</span>. Then <span class="d-ui">Practitioners</span>.</li>
+  <li class="d-step"><strong>Work the chambers as cards land.</strong> <em>reach out.</em> cards are ready for a letter; <em>your call.</em> cards want your read (open the room, weigh the scout's notes, decide); <em>skip.</em> cards go to the bin from inside their room — parked, never deleted.</li>
+  <li class="d-step"><strong>Sanity-check anything suspicious.</strong> Claude can occasionally invent a plausible-sounding name — open the room and follow the brief's links to confirm the surface exists before you write.</li>
 </ol>
-<div class="d-end"><b>When you're done:</b> 30–45 rows at <span class="d-code">status='enriched'</span> in ${TBL("partner_pipeline")}, each with a dossier brief in their <code>why_fit</code> (look for "[dossier]" at the end). Reload the tower's <strong>Pipeline</strong> board — the "enriched" count should reflect this.</div>
-<div class="d-refs"><b>Touches</b>${L("/admin/tower", "/admin/tower → Scout &amp; Enrich")} · ${L("/admin/tower", "/admin/tower → Agent Controls → Dossier auto-enrich")} · ${TBL("partner_pipeline")} · ${FILE("lib/partnerships/anthropic-agents.ts", "anthropic-agents.ts")} · ${FILE("app/api/cron/dossier-enrich/route.ts", "dossier-enrich cron")} · ${FILE(".claude/agents/scout.md", "scout spec")} · ${FILE(".claude/agents/dossier.md", "dossier spec")} · ${FILE("docs/partnerships/discovery-doctrine.md", "doctrine")}</div>`,
+<div class="d-end"><b>When you're done:</b> 30–45 cards in the band, each with a verdict, a research brief, and (where the hunt landed) an address. The counts live in ${TBL("partner_pipeline")} and on ${L("/admin/tower/pipeline", "the roster")}.</div>
+<div class="d-refs"><b>Touches</b>${L("/admin/tower", "/admin/tower — the sweep row")} · ${TBL("partner_pipeline")} · ${FILE("lib/partnerships/sweep.ts", "sweep.ts — the whole line")} · ${FILE(".claude/agents/scout.md", "scout spec")} · ${FILE("docs/partnerships/discovery-doctrine.md", "doctrine")}</div>`,
       },
       {
         id: "w2t2",
@@ -253,26 +253,26 @@ export const WEEKS: Week[] = [
       {
         id: "w2t3",
         audit: { state: "partial", note: "The 15-minute drafting cron is retired — a draft is now one press inside each room, canon-checked on save. Nothing fills the tower by itself anymore, by design." },
-        title: "Day 10 — Review the drafts that filled the tower by themselves",
+        title: "Day 10 — Write the letters (one press per room)",
         tags: ["auto", "tower"],
         automatable: true,
         bodyHtml: `
-<p class="d-what">This is the step that used to take a day of writing and now mostly happens on its own. Every 15 minutes, a drafting job looks at your strongest enriched candidates and writes each one a first-touch email from the right canon template, runs it through the mechanical brand-check, and drops it into your tower as a ready-to-review draft. Your job shrinks to: read each one, add a personal sentence where asked, and approve.</p>
+<p class="d-what">Drafting used to be a background job; now it's deliberate. Each room has one press that writes the first-touch from the right canon template, runs the mechanical brand-check, and lays the result into the letter for your edit. Nothing fills the tower by itself anymore, by design — you choose who gets written, and the machine does the writing.</p>
 <p class="d-h">How it works (so it's not a black box)</p>
-<p class="d-what">The drafting job is ${FILE("app/api/cron/scribe/route.ts", "the scribe cron")}. It picks the template by the candidate's surface from ${L(`${GHT}/content/partnerships/outreach`, "content/partnerships/outreach/")} — ${FILE("content/partnerships/outreach/first-touch-newsletter.md", "newsletter")}, ${FILE("content/partnerships/outreach/first-touch-community.md", "community")}, or ${FILE("content/partnerships/outreach/first-touch-podcast.md", "podcast")} — fills in the name and the research detail, then checks it against the banned-word list in ${FILE("lib/partnerships/canon-mechanical.ts", "canon-mechanical.ts")}. It writes the result into ${TBL("partner_outbound_queue")} as a "ready" row.</p>
+<p class="d-what">The press picks the template by the candidate's surface from ${L(`${GHT}/content/partnerships/outreach`, "content/partnerships/outreach/")} — ${FILE("content/partnerships/outreach/first-touch-newsletter.md", "newsletter")}, ${FILE("content/partnerships/outreach/first-touch-community.md", "community")}, or ${FILE("content/partnerships/outreach/first-touch-podcast.md", "podcast")} — fills in the name and the research detail, then checks it against the banned-word list in ${FILE("lib/partnerships/canon-mechanical.ts", "canon-mechanical.ts")}. The draft becomes the letter's body, right there in the room.</p>
 <p class="d-h">Click by click</p>
 <ol class="d-steps">
-  <li class="d-step"><strong>Open the tower:</strong> ${L("/admin/tower", "/admin/tower")}. The DECISIONS section now reads "N drafts in the house."</li>
-  <li class="d-step"><strong>Read each card's two chips.</strong> <span class="d-ui">warden ✓</span> means it's brand-clean and fully written — ready to send as-is. <span class="d-ui">needs eye</span> means a personal sentence is still a placeholder (like <span class="d-code">[SPECIFIC PIECE]</span>) or a word tripped the check — the card tells you exactly what.</li>
-  <li class="d-step"><strong>Finish the "needs eye" ones right there.</strong> Click <span class="d-ui">Edit draft</span> on the card, replace the placeholder with one real, specific sentence (the actual piece of theirs you read, the real detail), then click <span class="d-ui">Save &amp; re-check canon</span>. It re-runs the check and flips to <span class="d-ui">warden ✓</span> if clean. <em>That one sentence per non-community candidate is the only writing you do.</em></li>
-  <li class="d-step"><strong>Check the channel chip.</strong> <span class="d-ui">email</span> = the system can send it for you once you approve. <span class="d-ui">manual send</span> = the only contact path is a DM or a web form, so you'll copy the text and send it yourself, then click <span class="d-ui">Mark sent</span> (that happens in Week 3).</li>
+  <li class="d-step"><strong>Open the <em>reach out</em> chamber</strong> on ${L("/admin/tower", "/admin/tower")} and enter a card.</li>
+  <li class="d-step"><strong>Press the button.</strong> The ceramic seal's caption carries the move — it writes the letter, and the room re-renders with the draft as the body.</li>
+  <li class="d-step"><strong>Finish the one bespoke line.</strong> If the body carries a placeholder (like <span class="d-code">[SPECIFIC PIECE]</span>), replace it with one real, specific sentence — the actual piece of theirs you read. Click <span class="d-ui">Save &amp; re-check canon</span>; it re-runs the check right there. <em>That one sentence per non-community candidate is the only writing you do.</em></li>
+  <li class="d-step"><strong>Check the address chip.</strong> An address on file means the seal will send it for you. No address: paste one into the attach form if you have it, or hand-deliver through their contact links and press <span class="d-ui">Mark sent</span> — same audit trail either way (that happens in Week 3).</li>
 </ol>
 <div class="d-callout">
   <div class="d-callout-title">What still needs a human writer</div>
-  <p>The drafting job only does clean affiliate first-touches. The relationship-heavy angles — coach_complement (needs the specific thing they made), open_recruit (names a competitor), co_marketing (proposes a real collaboration) — want your judgment, so for those dispatch the ${FILE(".claude/agents/scribe.md", "scribe")} agent in chat and paste its output into a new tower draft. The templates for those angles are ${FILE("content/partnerships/outreach/first-touch-coach-complement.md", "coach-complement")}, ${FILE("content/partnerships/outreach/first-touch-open-recruit.md", "open-recruit")}, ${FILE("content/partnerships/outreach/first-touch-co-marketing.md", "co-marketing")}.</p>
+  <p>The press only does clean affiliate first-touches. The relationship-heavy angles — coach_complement (needs the specific thing they made), open_recruit (names a competitor), co_marketing (proposes a real collaboration) — want your judgment, so for those dispatch the ${FILE(".claude/agents/scribe.md", "scribe")} agent in chat and paste its output into the room's draft. The templates for those angles are ${FILE("content/partnerships/outreach/first-touch-coach-complement.md", "coach-complement")}, ${FILE("content/partnerships/outreach/first-touch-open-recruit.md", "open-recruit")}, ${FILE("content/partnerships/outreach/first-touch-co-marketing.md", "co-marketing")}.</p>
 </div>
-<div class="d-end"><b>When you're done:</b> every draft in the house shows <span class="d-ui">warden ✓</span>. They live in ${TBL("partner_outbound_queue")} (status "ready") and on the tower's DECISIONS board.</div>
-<div class="d-refs"><b>Touches</b>${FILE("app/api/cron/scribe/route.ts", "scribe cron")} · ${TBL("partner_outbound_queue")} · ${L(`${GHT}/content/partnerships/outreach`, "outreach templates")} · ${FILE("lib/partnerships/canon-mechanical.ts", "canon check")} · ${L("/admin/tower", "/admin/tower")}</div>`,
+<div class="d-end"><b>When you're done:</b> every <em>reach out.</em> room holds a canon-clean letter waiting on your press. The drafts live in ${TBL("partner_outbound_queue")} (status "ready").</div>
+<div class="d-refs"><b>Touches</b>${L("/admin/tower", "/admin/tower — the chambers")} · ${TBL("partner_outbound_queue")} · ${L(`${GHT}/content/partnerships/outreach`, "outreach templates")} · ${FILE("lib/partnerships/canon-mechanical.ts", "canon check")}</div>`,
       },
     ],
   },
@@ -282,7 +282,7 @@ export const WEEKS: Week[] = [
     tag: "Week 3 · Days 11–15",
     title: "First contact — the trigger-pull.",
     intro:
-      "The cold-outreach gate happens this week. You stand at the tower with ~25 finished drafts and pull the trigger — one button at a time, or in batches. Then you work the replies the system surfaces.",
+      "The cold-outreach gate happens this week. You stand in the warren with ~25 letters written and pull the trigger — one ceramic press at a time. Then you work the replies.",
     tasks: [
       {
         id: "w3done1",
@@ -294,28 +294,28 @@ export const WEEKS: Week[] = [
 <p class="d-h">What's running</p>
 <ol class="d-steps">
   <li class="d-step">A Cloudflare Email Worker (source in ${L(`https://github.com/fastcoempany/aesdr/tree/affiliatekit/infra/cloudflare`, "infra/cloudflare/")}) catches every inbound message, forwards a copy to your personal inbox, and posts the raw message to ${AFF("app/api/webhooks/inbound-email/route.ts", "the inbound webhook")}, which stores it in ${TBL("partner_inbound_email")}.</li>
-  <li class="d-step">${FILE("app/api/cron/sentinel/route.ts", "Sentinel")} reads that table every 10 minutes, decides whether each reply is interested ("bright"), polite-no ("soft"), an unsubscribe, or noise, and surfaces the bright ones to you.</li>
+  <li class="d-step">Each message is kept whole in that table, so the candidate's room shows the thread in its replies fold. Classifying and answering are yours — the old sentinel auto-sorter was retired with the manual-only tower.</li>
 </ol>
-<div class="d-end"><b>Nothing to do.</b> Replies to your outreach will arrive in your inbox <em>and</em> on the tower.</div>`,
+<div class="d-end"><b>Nothing to do.</b> Replies to your outreach will arrive in your inbox <em>and</em> in each candidate's room.</div>`,
       },
       {
         id: "w3t1",
         audit: { state: "partial", note: "The send path is live end-to-end (suppression re-check, no-double-send claim, delivery stamps) and first touches have gone out — but the 25-in-three-waves campaign hasn't run. A send is one ceramic press per room; there is no batch approve." },
-        title: "Days 11–13 — Approve the first 25 cold sends (in three waves of ~8)",
+        title: "Days 11–13 — Send the first 25 (in three waves of ~8)",
         tags: ["you", "tower"],
         bodyHtml: `
-<p class="d-what">This is the moment outreach actually goes out. Every draft you approve is sent for you within ~5 minutes. You go in waves of about 8 (not all 25 at once) so you can watch the first replies and tweak the message before the next wave.</p>
+<p class="d-what">This is the moment outreach actually goes out. A send is one ceramic press inside a room — approve and transmit in a single motion, with the safeties underneath: a suppression re-check at the instant of send, a claim that makes a double-press physically unable to double-send, and a permanent line in the sent record that later upgrades to a <em>delivered ✓</em> stamp. You go in waves of about 8 (not all 25 at once) so you can watch the first replies and tweak the message before the next wave.</p>
 <p class="d-h">Click by click</p>
 <ol class="d-steps">
-  <li class="d-step"><strong>Open the tower:</strong> ${L("/admin/tower", "/admin/tower")} → the DECISIONS section, "N drafts in the house."</li>
-  <li class="d-step"><strong>Wave 1 (Day 11) — approve ~8.</strong> On the first 8 email-channel cards, read the preview and click <span class="d-ui">Send</span> (one click each). If something reads wrong, click <span class="d-ui">Hold</span> instead — it pulls that draft off the send path so you can fix it later. <em>Do not</em> click "Send all" yet.</li>
-  <li class="d-step"><strong>What "Send" actually does:</strong> it flips the row to "approved." The ${FILE("app/api/cron/courier/route.ts", "courier")} job picks up approved rows every 5 minutes, sends the email, and writes a permanent record so the same message can never go out twice. You'll see it appear under "Courier — recent sends" on the BOARD.</li>
-  <li class="d-step"><strong>Wave 2 (Day 12) — approve ~8 more, adjusted.</strong> If Wave 1 got replies to the "15-minute call" ask, leave it. If nobody bit, click <span class="d-ui">Edit draft</span> on the remaining cards to switch the ask to "want the kit?" then Send.</li>
-  <li class="d-step"><strong>Wave 3 (Day 13) — approve the final ~9.</strong> Same pattern. The point of waving is reaction time; don't blast all 25 in one hour.</li>
-  <li class="d-step"><strong>For "manual send" cards</strong> (DM/form only): click into the card, copy the body, send it through their channel yourself, then click <span class="d-ui">Mark sent</span> so it's logged in the same audit trail.</li>
+  <li class="d-step"><strong>Open the <em>reach out</em> chamber:</strong> ${L("/admin/tower", "/admin/tower")} — the stack is your queue.</li>
+  <li class="d-step"><strong>Wave 1 (Day 11) — send ~8.</strong> Enter each room, read the letter one last time, press the seal. It confirms, then sends; the proof strip under the letter shows <em>sent ✓</em> and upgrades to <em>delivered ✓</em> when the delivery event lands. If something reads wrong, edit the body in place (<span class="d-ui">Save &amp; re-check canon</span>) or <span class="d-ui">Hold</span> it to the shelf. There is no batch send, on purpose — every letter gets your eyes.</li>
+  <li class="d-step"><strong>Wave 2 (Day 12) — ~8 more, adjusted.</strong> If Wave 1 got replies to the "15-minute call" ask, leave it. If nobody bit, edit the remaining letters to switch the ask to "want the kit?" then press.</li>
+  <li class="d-step"><strong>Wave 3 (Day 13) — the final ~9.</strong> Same pattern. The point of waving is reaction time; don't blast all 25 in one sitting.</li>
+  <li class="d-step"><strong>Rooms with no address:</strong> paste an address into the attach form and the seal lights up — or copy the body, deliver it through their channel yourself, and press <span class="d-ui">Mark sent</span> so it's logged in the same audit trail.</li>
+  <li class="d-step"><strong>Watch the record.</strong> ${L("/admin/tower/sent", "/admin/tower/sent")} lists every transmission with its delivery status.</li>
 </ol>
-<div class="d-end"><b>When you're done:</b> ~25 messages sent or marked-sent. See them under "Courier — recent sends" on ${L("/admin/tower", "/admin/tower")}, and as rows in ${TBL("partner_sent_log")}. The pipeline rows move to <span class="d-code">contacted</span>.</div>
-<div class="d-refs"><b>Touches</b>${L("/admin/tower", "/admin/tower")} · ${FILE("app/api/cron/courier/route.ts", "courier")} · ${TBL("partner_outbound_queue")} · ${TBL("partner_sent_log")}</div>`,
+<div class="d-end"><b>When you're done:</b> ~25 messages sent or marked-sent — rows in ${TBL("partner_sent_log")}, cards moved to the <em>waiting</em> chamber, and the follow-up ladder clock stamped on each.</div>
+<div class="d-refs"><b>Touches</b>${L("/admin/tower", "/admin/tower")} · ${L("/admin/tower/sent", "the sent record")} · ${FILE("lib/partnerships/courier-send.ts", "the send path")} · ${TBL("partner_outbound_queue")} · ${TBL("partner_sent_log")}</div>`,
       },
       {
         id: "w3tLadder",
@@ -327,13 +327,13 @@ export const WEEKS: Week[] = [
 <p class="d-what">A "ladder" is the fixed sequence of polite follow-ups to someone who got your first email and didn't reply. The cadence: <strong>first-touch (day 0) → +4 days: follow-up 1 → +9 days: follow-up 2 → +13 days: parked as cold.</strong> "+4 / +9" just means days <em>after</em> the first-touch. You used to track this by hand; now a cron does the watching and drafting.</p>
 <p class="d-h">What runs on its own</p>
 <ol class="d-steps">
-  <li class="d-step"><strong>The clock starts when the first-touch sends.</strong> The moment courier sends a cold email (or you Mark-sent a manual one), that candidate's <code>first_touch_at</code> is stamped and they move to <span class="d-code">contacted</span> in ${TBL("partner_pipeline")}.</li>
-  <li class="d-step"><strong>+4 days, no reply → follow-up 1 is drafted for you.</strong> The ${FILE("app/api/cron/followup/route.ts", "follow-up cron")} (hourly) renders ${FILE("content/partnerships/outreach/follow-up-1.md", "follow-up-1")} (adds a useful resource, not a nag) into the tower as a <span class="d-code">ready</span> draft. You finish the one bespoke line (the resource) and approve — same as a first-touch.</li>
+  <li class="d-step"><strong>The clock starts when the first-touch sends.</strong> The moment a first-touch leaves a room (or you Mark-sent a manual one), that candidate's <code>first_touch_at</code> is stamped and they move to <span class="d-code">contacted</span> in ${TBL("partner_pipeline")}.</li>
+  <li class="d-step"><strong>+4 days, no reply → follow-up 1 is drafted for you.</strong> The ${FILE("app/api/cron/followup/route.ts", "follow-up cron")} (hourly) renders ${FILE("content/partnerships/outreach/follow-up-1.md", "follow-up-1")} (adds a useful resource, not a nag) into that candidate's room as the live letter. You finish the one bespoke line (the resource) and press the seal — same as a first-touch.</li>
   <li class="d-step"><strong>+9 days, still no reply → follow-up 2 is drafted.</strong> ${FILE("content/partnerships/outreach/follow-up-2.md", "follow-up-2")} — the honest close. Same review-and-approve.</li>
   <li class="d-step"><strong>+13 days, still nothing → the candidate is set to <span class="d-code">cold</span></strong> automatically (your second-wave list, not deleted).</li>
 </ol>
 <div class="d-callout d-callout-note"><div class="d-callout-title">It halts the instant they reply</div><p>A ladder that keeps firing after someone answered is the fastest way to look like a bot. Two halts stop it cold: (a) you move them off <span class="d-code">contacted</span> when you work the reply, and (b) the cron itself checks for an inbound email from their address since the first-touch — either one stops all further follow-ups and flips them to <span class="d-code">replied</span>.</p></div>
-<div class="d-end"><b>Your part:</b> just approve (or hold) the follow-up drafts as they appear in the tower's draft house. The detection, timing, and drafting are automatic.</div>
+<div class="d-end"><b>Your part:</b> just press (or hold) the follow-up letters as they appear in their rooms. The detection, timing, and drafting are automatic — once the <strong>followup</strong> lever in the machinery drawer is on.</div>
 <div class="d-refs"><b>Touches</b>${FILE("app/api/cron/followup/route.ts", "follow-up cron")} · ${TBL("partner_pipeline")} · ${TBL("partner_outbound_queue")} · ${L("/admin/tower", "/admin/tower")}</div>`,
       },
       {
@@ -342,18 +342,18 @@ export const WEEKS: Week[] = [
         title: "Days 14–15 — Work the replies the tower surfaces",
         tags: ["you", "auto"],
         bodyHtml: `
-<p class="d-what">As people reply, the system reads each one and pushes the genuinely interested ones to you in real time. Replying is human work — but you never have to watch an inbox; the bright ones come to you. Same-day replies are the whole game here.</p>
+<p class="d-what">As people reply, the thread lands in your inbox and in each candidate's room. Replying is human work — watch the inbox during send weeks; same-day replies are the whole game here.</p>
 <p class="d-h">Click by click</p>
 <ol class="d-steps">
-  <li class="d-step"><strong>When a bright signal lands,</strong> you get an email ping <em>and</em> a card appears in the tower's DECISIONS section. Open the card; the ping email also includes a short excerpt of what they said.</li>
+  <li class="d-step"><strong>When a reply lands,</strong> it arrives in your inbox and in the room's replies fold. Open the room — the fold keeps the thread's record next to everything you know about them.</li>
   <li class="d-step"><strong>Reply same day from your AESDR address.</strong> A warm reply that waits 48 hours goes cold.</li>
   <li class="d-step"><strong>For a "yes, tell me more":</strong> send them the kit at ${L("/affiliates/kit", "/affiliates/kit")} plus your booking link ${L(BOOKING, "(15-min AESDR partner intro)")}.</li>
   <li class="d-step"><strong>For "what's the commission?":</strong> the honest numbers — 40% commission, 30-day attribution window, $249/$299 one-time product, paid through Stripe. Transparency is the pitch; don't hedge.</li>
-  <li class="d-step"><strong>When you've replied, click <span class="d-ui">Mark handled</span></strong> on the card so it leaves the DECISIONS board.</li>
-  <li class="d-step"><strong>Silence is fine</strong> — those stay at <span class="d-code">contacted</span> and the follow-up ladder handles them later. Soft signals (polite no, auto-replies, unsubscribes) drop to the read-only BOARD with no action needed.</li>
+  <li class="d-step"><strong>When you've replied, press the seal</strong> in their room ("they wrote back") — the card moves to the <em>talking</em> chamber.</li>
+  <li class="d-step"><strong>Silence is fine</strong> — those stay in the <em>waiting</em> chamber and the follow-up ladder handles them later. A polite no goes to the bin from the room; hard bounces and complaints land on the suppression list automatically.</li>
 </ol>
-<div class="d-end"><b>When you're done:</b> every bright signal is replied to within 24h and marked handled. The booking calendar is ${L(BOOKING, "this Google Appointment link")} (cross-checks your personal calendars for conflicts).</div>
-<div class="d-refs"><b>Touches</b>${L("/admin/tower", "/admin/tower")} · ${FILE("app/api/cron/sentinel/route.ts", "sentinel")} · ${L("/affiliates/kit", "/affiliates/kit")} · ${L(BOOKING, "booking link")}</div>`,
+<div class="d-end"><b>When you're done:</b> every interested reply is answered within 24h and its room moved to <em>talking</em>. The booking calendar is ${L(BOOKING, "this Google Appointment link")} (cross-checks your personal calendars for conflicts).</div>
+<div class="d-refs"><b>Touches</b>${L("/admin/tower", "/admin/tower")} · ${L("/affiliates/kit", "/affiliates/kit")} · ${L(BOOKING, "booking link")}</div>`,
       },
     ],
   },
@@ -536,7 +536,7 @@ export const WEEKS: Week[] = [
         title: "Days 41–44 — Open 3 channel conversations",
         tags: ["you", "tower"],
         bodyHtml: `
-<p class="d-what">Channel outreach is written by hand (the auto-drafter only does consumer affiliate templates) because the pitch leads with the specific gap you fill in <em>their</em> practice, never with a commission rate. You still route the send through the tower so it's logged in the same audit trail.</p>
+<p class="d-what">Channel outreach is written by hand (the room's press only writes consumer affiliate templates) because the pitch leads with the specific gap you fill in <em>their</em> practice, never with a commission rate. You still route the send through the tower so it's logged in the same audit trail.</p>
 <p class="d-h">Click by click</p>
 <ol class="d-steps">
   <li class="d-step"><strong>Draft each first-touch with herald.</strong> Paste:
@@ -568,7 +568,7 @@ export const WEEKS: Week[] = [
 <p class="d-what">The old plan had you build a "Friday ritual" by hand. The daily standup is built and waits behind one lever.</p>
 <p class="d-h">What runs once you start it</p>
 <ol class="d-steps">
-  <li class="d-step">${FILE("app/api/cron/almanac/route.ts", "The almanac cron")} fires every morning at 11:00 UTC (≈7am ET) — <em>only when the <span class="d-ui">Almanac</span> lever is started in <strong>Agent Controls</strong></em>. It counts bright signals waiting, drafts in the house, workshops due, and payouts ready, and mails you the digest (subject "Tower: all clear" on a quiet day). Until you start the lever, no digest mails.</li>
+  <li class="d-step">${FILE("app/api/cron/almanac/route.ts", "The almanac cron")} fires every morning at 11:00 UTC (≈7am ET) — <em>only when the <span class="d-ui">Almanac</span> lever is started in the <strong>machinery drawer</strong> (bottom of the warren)</em>. It counts bright signals waiting, drafts in the house, workshops due, and payouts ready, and mails you the digest (subject "Tower: all clear" on a quiet day). Until you start the lever, no digest mails.</li>
   <li class="d-step">The weekly deep pull below is what you add on top — that one stays a chat dispatch.</li>
 </ol>
 <div class="d-end"><b>Nothing to build.</b> Just read the morning email.</div>`,
@@ -600,10 +600,10 @@ export const WEEKS: Week[] = [
         title: "Days 49–51 — First payout dry-run (founder-approved)",
         tags: ["you"],
         bodyHtml: `
-<p class="d-what">By now your earliest commissions are clearing the 30-day window. The tower's <strong>Payouts card</strong> shows the dry-run automatically — who's owed what — and each affiliate has a <strong>Pay</strong> button that runs the real Stripe Connect transfer. Money review is the one place the "under 10 minutes" rule bends: take as long as you need to read the numbers; the commit is one click.</p>
+<p class="d-what">By now your earliest commissions are clearing the 30-day window. The warren's <strong>Payouts waiting</strong> block shows the dry-run automatically — who's owed what — and each affiliate has a <strong>Pay</strong> button that runs the real Stripe Connect transfer. Money review is the one place the "under 10 minutes" rule bends: take as long as you need to read the numbers; the commit is one click.</p>
 <p class="d-h">Click by click</p>
 <ol class="d-steps">
-  <li class="d-step"><strong>Open the tower:</strong> ${L("/admin/tower", "/admin/tower")}. In DECISIONS, the <strong>Payouts ready</strong> block lists every affiliate with cleared-but-unpaid commission, the per-affiliate total, and the grand total — that <em>is</em> the dry-run, computed live from ${TBL("affiliate_attributions")} (status cleared, not yet paid).</li>
+  <li class="d-step"><strong>Open the warren:</strong> ${L("/admin/tower", "/admin/tower")}. The <strong>Payouts waiting</strong> block appears below the band whenever there's cleared-but-unpaid commission — per-affiliate totals and the grand total. That <em>is</em> the dry-run, computed live from ${TBL("affiliate_attributions")} (status cleared, not yet paid).</li>
   <li class="d-step"><strong>Review the numbers</strong> — per-affiliate totals + the grand total. For the very first run, walk the founder through it; it's a founder-approved decision, not a solo call.</li>
   <li class="d-step"><strong>Press <span class="d-ui">Pay $X</span>.</strong> It asks you to confirm (it moves real money), then runs the production payout: aggregates that affiliate's cleared commission, inserts the payout record, sends a Stripe Connect transfer, marks everything paid, and emails the affiliate. One click, end to end.</li>
   <li class="d-step"><strong>If a card says "Stripe not connected,"</strong> that affiliate hasn't finished Stripe onboarding — the transfer would be rejected. Have them complete onboarding from their ${L("/affiliates/dashboard", "dashboard")} first; then the Pay button enables.</li>
@@ -633,7 +633,7 @@ export const WEEKS: Week[] = [
 <ol class="d-steps">
   <li class="d-step"><strong>Work the warm middle first.</strong> On the tower's <strong>Pipeline</strong> board (${L("/admin/tower", "/admin/tower")}), the <span class="d-code">negotiating</span> count is your fastest path to active. Send each the onboarding follow-up and run them through the Day-23 create-affiliate flow as they say yes.</li>
   <li class="d-step"><strong>Unstick the gate-stalled.</strong> For any developing-tier affiliate sitting on an unfinished first piece, book a 15-minute co-writing call — you and warden draft their first approved post live. That revives a stalled partner faster than three rounds of async.</li>
-  <li class="d-step"><strong>Refill only if thinning.</strong> The auto-drafter keeps the cold lane fed from enriched candidates, so if the funnel is thin the move is a fresh ${FILE(".claude/agents/scout.md", "scout")} sweep (which feeds the drafter) — never lower the voice-fit bar to pad the count.</li>
+  <li class="d-step"><strong>Refill only if thinning.</strong> If the funnel is thin the move is a fresh sweep — finished cards land in the band and you write from their rooms. Never lower the voice-fit bar to pad the count.</li>
 </ol>
 <div class="d-end"><b>When you're done:</b> 10 rows at <span class="d-code">active</span> in ${TBL("affiliates")} with ≥1 approved piece each — or the founder has the honest lower number and why.</div>`,
       },
@@ -683,7 +683,7 @@ export const WEEKS: Week[] = [
   <li class="d-step"><strong>Find the pattern.</strong> Paste:
     <span class="d-cmd">use the almanac subagent: for each of these top 3, tell me WHY they converted — format (newsletter / community / podcast), message angle, audience. I want the repeatable pattern, not praise.</span></li>
   <li class="d-step"><strong>Overinvest, three moves:</strong> (1) co-create a second piece with each; (2) run a <strong>workshop</strong> — create the workshop row and ${FILE("app/api/cron/usher/route.ts", "usher")} runs every reminder, the replay window, and the nurture touches automatically; you just host the live hour; (3) bump a proven performer to <span class="d-code">proven</span> tier in ${L("/admin/affiliates", "/admin/affiliates")} so their copy-gate drops to 1 piece.</li>
-  <li class="d-step"><strong>Clone the pattern.</strong> In the tower's <strong>Scout &amp; Enrich</strong> panel, press whichever of the three sweep buttons matches your top-3's surface — usually <span class="d-ui">Sweep 1 · Paid communities</span> or <span class="d-ui">Sweep 2 · Newsletters + podcasts</span>. New candidates appear at <span class="d-code">sourced</span>; promote the ones that resemble your top 3. The auto-drafter queues each promoted row's first-touch in the tower without you writing it.</li>
+  <li class="d-step"><strong>Clone the pattern.</strong> Press whichever sweep button matches your top-3's surface — usually <span class="d-ui">Communities</span> or <span class="d-ui">Newsletters &amp; podcasts</span>. New cards land already briefed and verdict-called; write and send from the rooms that resemble your top 3.</li>
 </ol>
 <div class="d-callout d-callout-note"><div class="d-callout-title">Usher carries the workshop</div><p>Once a workshop row exists in ${TBL("partner_workshop")}, ${FILE("app/api/cron/usher/route.ts", "usher")} advances it through scheduled → reminded → live → replay-open → closed and queues every registrant touch pre-approved. You host; the logistics run themselves.</p></div>
 <div class="d-end"><b>When you're done:</b> the top 3 are identified, each has a second piece or a workshop in motion, and scout is finding lookalikes.</div>
@@ -726,8 +726,8 @@ export const WEEKS: Week[] = [
 <p class="d-h">Click by click</p>
 <ol class="d-steps">
   <li class="d-step"><strong>Create the doc.</strong> In your terminal: <span class="d-code">touch docs/partnerships/operating-cadence.md</span>, then open it. (It'll live at ${FUTURE("docs/partnerships/operating-cadence.md", "docs/partnerships/operating-cadence.md")} once committed.)</li>
-  <li class="d-step"><strong>Write the daily rhythm:</strong> the 7am almanac digest lands → you open ${L("/admin/tower", "/admin/tower")}, clear the DECISIONS lane (approve drafts, handle bright signals), close the tab. That's the standup.</li>
-  <li class="d-step"><strong>Write down what's continuous and automatic,</strong> citing the schedule in ${FILE("docs/partnerships/cron-schedule.md", "cron-schedule.md")}: ${FILE("app/api/cron/sentinel/route.ts", "sentinel")} every 10 min, ${FILE("app/api/cron/scribe/route.ts", "scribe drafter")} every 15, ${FILE("app/api/cron/followup/route.ts", "follow-up ladder")} hourly, ${FILE("app/api/cron/courier/route.ts", "courier")} every 5, ${FILE("app/api/cron/usher/route.ts", "usher")} every 30, ${FILE("app/api/cron/almanac/route.ts", "almanac")} daily.</li>
+  <li class="d-step"><strong>Write the daily rhythm:</strong> the 7am almanac digest lands → you open ${L("/admin/tower", "/admin/tower")}, clear the chambers that need you (<em>reach out</em>, <em>your call</em>), answer anything <em>talking</em>, close the tab. That's the standup.</li>
+  <li class="d-step"><strong>Write down what's continuous and automatic</strong> — the four levers in the machinery drawer, and only while started: ${FILE("app/api/cron/followup/route.ts", "followup")} hourly, ${FILE("app/api/cron/usher/route.ts", "usher")} every 30 min, ${FILE("app/api/cron/almanac/route.ts", "almanac")} daily, ${FILE("app/api/cron/contact-finder/route.ts", "contact-finder")} on its tick. Everything else is your press. (Refresh ${FILE("docs/partnerships/cron-schedule.md", "cron-schedule.md")} while you're in there — it predates the manual-only consolidation.)</li>
   <li class="d-step"><strong>Write the weekly rhythm:</strong> Friday — dispatch ledger for the report, almanac for the founder note. Paste the actual dispatch commands so they're copy-runnable.</li>
 </ol>
 <div class="d-end"><b>When you're done:</b> ${FUTURE("docs/partnerships/operating-cadence.md", "operating-cadence.md")} is committed and a stranger could run your week from it plus the tower. This is the role's real success deliverable — the function runs without founder day-to-day involvement.</div>`,
@@ -742,12 +742,12 @@ export const WEEKS: Week[] = [
 <p class="d-what">Run a second wave of outreach at scale — almost hands-free now that the machine works — and pilot a live workshop with your strongest affiliate.</p>
 <p class="d-h">Click by click</p>
 <ol class="d-steps">
-  <li class="d-step"><strong>Run the second wave.</strong> Dispatch ${FILE(".claude/agents/scout.md", "scout")}, let dossier + ledger enrich into ${TBL("partner_pipeline")}, and the ${FILE("app/api/cron/scribe/route.ts", "auto-drafter")} fills the tower with first-touches. You approve in batches at ${L("/admin/tower", "/admin/tower")}. Pull from the <span class="d-code">cold</span> rows you parked in Week 2 plus fresh scout results.</li>
+  <li class="d-step"><strong>Run the second wave.</strong> Press fresh sweeps — finished cards land in the band — and pull the <span class="d-code">cold</span> rows you parked in Week 2 back onto the floor with <span class="d-ui">Reconsider</span> from their rooms. Then write and send room by room at ${L("/admin/tower", "/admin/tower")}.</li>
   <li class="d-step"><strong>Pilot a workshop.</strong> Create a row in ${TBL("partner_workshop")} (a date in US Central business hours) — ${FILE("app/api/cron/usher/route.ts", "usher")} handles every reminder and the replay window. A live workshop converts 3–5× a link drop.</li>
   <li class="d-step"><strong>Keep the funnel deep</strong> so Day 90 isn't a cliff.</li>
 </ol>
 <div class="d-end"><b>When you're done:</b> 25 new candidates in the funnel and one workshop scheduled with your top affiliate.</div>
-<div class="d-refs"><b>Touches</b>${FILE(".claude/agents/scout.md", "scout")} · ${FILE("app/api/cron/scribe/route.ts", "scribe drafter")} · ${FILE("app/api/cron/usher/route.ts", "usher")} · ${TBL("partner_pipeline")} · ${TBL("partner_workshop")} · ${L("/admin/tower", "/admin/tower")}</div>`,
+<div class="d-refs"><b>Touches</b>${L("/admin/tower", "/admin/tower — the sweep row")} · ${FILE("app/api/cron/usher/route.ts", "usher")} · ${TBL("partner_pipeline")} · ${TBL("partner_workshop")}</div>`,
       },
     ],
   },
@@ -771,7 +771,7 @@ export const WEEKS: Week[] = [
   <li class="d-step"><strong>Check the run-rate.</strong> Paste:
     <span class="d-cmd">use the ledger subagent: show booked commission (pending plus cleared) this month versus the $3k target.</span>
     If close-but-under, your lever is the Week-9 top 3 — push one more piece from each, don't chase cold partners this late.</li>
-  <li class="d-step"><strong>Run the month-end payout.</strong> Open the tower's <strong>Payouts card</strong> (${L("/admin/tower", "/admin/tower")}), review the per-affiliate totals, press <span class="d-ui">Pay</span> on each. Verify every dashboard reads "paid" and Stripe reconciles; records land in ${TBL("affiliate_payouts")}.</li>
+  <li class="d-step"><strong>Run the month-end payout.</strong> Open the warren's <strong>Payouts waiting</strong> block (${L("/admin/tower", "/admin/tower")}), review the per-affiliate totals, press <span class="d-ui">Pay</span> on each. Verify every dashboard reads "paid" and Stripe reconciles; records land in ${TBL("affiliate_payouts")}.</li>
   <li class="d-step"><strong>Run the health check.</strong> Paste:
     <span class="d-cmd">use the ledger subagent: show the refund rate per affiliate. Flag anyone over 15%.</span>
     Over 15% is a partner over-promising — book a warden review + a debrief call; it's a copy problem, not a payout problem. Suspend only at 20%.</li>
@@ -792,7 +792,7 @@ export const WEEKS: Week[] = [
     <span class="d-cmd">use the ledger subagent: give me the full 90-day pull — candidates, active affiliates, attributions, commission booked, channel status.</span>
     Then: <span class="d-cmd">use the almanac subagent: write it up as the 90-day proof, evidencing each milestone with a number or an artifact.</span></li>
   <li class="d-step"><strong>Evidence all three milestones:</strong> affiliates on a $3k/mo trajectory (run-rate); one channel deal signed or close (the terms doc); both motions running (active affiliate count in ${TBL("affiliates")} + channel rows in ${TBL("partner_pipeline")}).</li>
-  <li class="d-step"><strong>Show the tower as the proof of "runs without heroics"</strong> — the schedule in ${FILE("docs/partnerships/cron-schedule.md", "cron-schedule.md")}, the daily digest, and a DECISIONS lane that's usually already empty. That's the real success definition.</li>
+  <li class="d-step"><strong>Show the tower as the proof of "runs without heroics"</strong> — the schedule in ${FILE("docs/partnerships/cron-schedule.md", "cron-schedule.md")}, the daily digest, and chambers that are usually already clear. That's the real success definition.</li>
   <li class="d-step"><strong>Present the next-quarter plan:</strong> the second-wave pipeline, the channel deals in flight, the top-performer pattern to clone, and the one tool the data now justifies (e.g. Rewardful at the dashboard-bottleneck trigger from your ${FUTURE("docs/partnerships/attribution-decision.md", "attribution memo")}).</li>
 </ol>
 <div class="d-callout d-callout-note"><div class="d-callout-title">What "overachieve" looks like here</div><p>Not 10 affiliates — 15. Not "3 conversations" — one signed channel deal plus 3 more open. Not "reporting live" — a founder who hasn't had to ask for a number in a month because it's in front of him every Friday. The bar is making the milestones look conservative.</p></div>
@@ -812,19 +812,18 @@ export type RefSection = { id: string; title: string; subtitle: string; audit?: 
 export const REFERENCE: RefSection[] = [
   {
     id: "ref-agents",
-    audit: { state: "partial", note: "Stale roster: sentinel, courier, and the scribe drafting cron are retired. Live automation is four levers — followup, usher, almanac, contact-finder — and everything else is your press inside the room." },
+    audit: { state: "done", note: "Brought current 2026-07-21 — describes the live machine: four levers plus your presses." },
     title: "Agent Roster",
     subtitle: "Who does what, on what cadence",
     bodyHtml: `
-<p class="d-what">Ten agents run the function. Four are <strong>autonomous crons</strong> — they run on a clock and fill the tower; you never invoke them. Six are <strong>chat-invoked</strong> — saved roles you dispatch in Claude Code when judgment is needed. Each name below links to its spec.</p>
-<p class="d-sub">Autonomous (run on a schedule)</p>
+<p class="d-what">The function runs on your presses plus a small crew. Four <strong>levers</strong> can run on a clock (all OFF until you start them in the machinery drawer); six <strong>chat-invoked</strong> roles wait to be dispatched in Claude Code; and the sweep buttons call Claude server-side on your press. The old always-on crons — sentinel, courier, the scribe drafter, dossier auto-enrich — were retired July 2026 for the manual-only tower.</p>
+<p class="d-sub">Levers (machinery drawer — run on a schedule only while started)</p>
 <table class="d-table">
-  <tr><th>Agent</th><th>Runs</th><th>What it does</th><th>Spec</th></tr>
-  <tr><td><strong>sentinel</strong> <span class="d-badge cron">cron</span></td><td>every 10 min</td><td>Reads inbound replies, classifies bright / soft / unsubscribe / noise, pings you for bright ones, mirrors prospect-intent events to the board.</td><td>${FILE("app/api/cron/sentinel/route.ts", "sentinel")}</td></tr>
-  <tr><td><strong>courier</strong> <span class="d-badge cron">cron</span></td><td>every 5 min</td><td>The only sender. Transmits approved outbound rows, writes the immutable sent-log, hard-blocks double sends.</td><td>${FILE("app/api/cron/courier/route.ts", "courier")}</td></tr>
-  <tr><td><strong>scribe (drafter)</strong> <span class="d-badge cron">cron</span></td><td>every 15 min</td><td>Turns enriched candidates into ready first-touch drafts in the tower (template-fill + mechanical canon gate).</td><td>${FILE("app/api/cron/scribe/route.ts", "scribe cron")}</td></tr>
-  <tr><td><strong>usher</strong> <span class="d-badge cron">cron</span></td><td>every 30 min</td><td>Runs workshop logistics — reminders, the replay window, nurture touches — pre-approved at the transactional tier.</td><td>${FILE("app/api/cron/usher/route.ts", "usher")}</td></tr>
-  <tr><td><strong>almanac</strong> <span class="d-badge cron">cron</span></td><td>daily 7am ET</td><td>The standup digest. Also a chat role for writing the Friday + milestone memos.</td><td>${FILE("app/api/cron/almanac/route.ts", "almanac cron")} · ${FILE(".claude/agents/almanac.md", "spec")}</td></tr>
+  <tr><th>Agent</th><th>Runs</th><th>What it does</th><th>Code</th></tr>
+  <tr><td><strong>followup</strong> <span class="d-badge cron">lever</span></td><td>hourly</td><td>Drafts the +4/+9 ladder for contacted-but-silent candidates; halts on reply. Drafts only — your press sends.</td><td>${FILE("app/api/cron/followup/route.ts", "followup")}</td></tr>
+  <tr><td><strong>usher</strong> <span class="d-badge cron">lever</span></td><td>every 30 min</td><td>Workshop logistics — reminders, the replay window, nurture touches.</td><td>${FILE("app/api/cron/usher/route.ts", "usher")}</td></tr>
+  <tr><td><strong>almanac</strong> <span class="d-badge cron">lever</span></td><td>daily 7am ET</td><td>The standup digest. Also a chat role for the Friday + milestone memos.</td><td>${FILE("app/api/cron/almanac/route.ts", "almanac cron")} · ${FILE(".claude/agents/almanac.md", "spec")}</td></tr>
+  <tr><td><strong>contact-finder</strong> <span class="d-badge cron">lever</span></td><td>on its tick</td><td>Hunts addresses for cards that landed without one, so their seal can light up.</td><td>${FILE("app/api/cron/contact-finder/route.ts", "contact-finder")}</td></tr>
 </table>
 <p class="d-sub">Chat-invoked (you dispatch when judgment is needed)</p>
 <table class="d-table">
@@ -836,6 +835,8 @@ export const REFERENCE: RefSection[] = [
   <tr><td><strong>ledger</strong> <span class="d-badge chat">chat</span></td><td>Attribution &amp; ops</td><td>Runs Supabase queries, builds reports, reconciles payouts, extends the schema. Read-only by default; shows SQL before any write.</td><td>${FILE(".claude/agents/ledger.md", "ledger")}</td></tr>
   <tr><td><strong>herald</strong> <span class="d-badge chat">chat</span></td><td>Channel / enterprise</td><td>The enterprise counterpart to scout — researches channel partners and drafts partnership structures.</td><td>${FILE(".claude/agents/herald.md", "herald")}</td></tr>
 </table>
+<p class="d-sub">And the presses</p>
+<p class="d-what">The sweep buttons run scout plus the dossier brief server-side in one line (${FILE("lib/partnerships/sweep.ts", "sweep.ts")}); the room's presses write, send, and file. Reading replies, drafting and sending have no cron anymore — they're yours.</p>
 <div class="d-refs"><b>All specs</b>${L(`${GHT}/.claude/agents`, ".claude/agents/")}</div>`,
   },
   {
@@ -900,7 +901,7 @@ export const REFERENCE: RefSection[] = [
     title: "Outreach Library",
     subtitle: "The 8 canon templates + 4 worked drafts",
     bodyHtml: `
-<p class="d-what">Each template lives as a file in ${L(`${GHT}/content/partnerships/outreach`, "content/partnerships/outreach/")} — that file is the single source of truth (the auto-drafter and the chat scribe both use them). The first two sentences are the only bespoke part; the economics + ask are locked.</p>
+<p class="d-what">Each template lives as a file in ${L(`${GHT}/content/partnerships/outreach`, "content/partnerships/outreach/")} — that file is the single source of truth (the room's press and the chat scribe both use them). The first two sentences are the only bespoke part; the economics + ask are locked.</p>
 <p class="d-sub">First-touch templates</p>
 <table class="d-table">
   <tr><th>Template</th><th>When</th><th>File</th></tr>
@@ -1052,60 +1053,68 @@ export const REFERENCE: RefSection[] = [
 export const MANUAL: RefSection[] = [
   {
     id: "ref-wiki",
-    audit: { state: "partial", note: "Partly stale: the seven-lever table is now four (followup, usher, almanac, contact-finder); scribe, courier, sentinel and dossier-enrich are retired, and one sweep press runs the fit call, the brief and the address hunt itself under the $10/day wall." },
+    audit: { state: "done", note: "Brought current 2026-07-21 — describes the live machine: the switch, the four levers, what was retired and what replaced it." },
     title: "How it all runs",
     subtitle: "The switch, the agents, the order — in plain language",
     bodyHtml: `
-<p class="d-what">Nothing in the partnerships system runs on its own until <strong>you</strong> turn it on. There's one master switch, and each agent has its own lever. This card is the whole picture: what's wired to the switch, what each piece does, and the order things happen in.</p>
+<p class="d-what">Nothing in the partnerships system runs on its own until <strong>you</strong> turn it on — and after the manual-only consolidation of July 2026, most of it doesn't run on its own at all. The machine prepares; your press decides. This card is the whole picture: the switch, the four levers, what was retired, and the order things happen in.</p>
 
-<p class="d-sub">The master switch (what I installed)</p>
-<p class="d-what">There's a table, ${TBL("agent_switches")}, with one row per agent and an on/off flag. Every automated agent checks it before doing anything and <strong>fails safe to OFF</strong> — if the table is missing, the row is missing, the flag is false, or anything errors, the agent does nothing and returns "disabled." You control all of it from one place: the <strong>Agent Controls</strong> panel at the top of ${L("/admin/tower", "the tower")}, where each agent has a <span class="d-ui">Start</span> / <span class="d-ui">Pause</span> button. Starting one asks you to confirm first.</p>
+<p class="d-sub">The master switch</p>
+<p class="d-what">There's a table, ${TBL("agent_switches")}, with one row per agent and an on/off flag. Every scheduled agent checks it before doing anything and <strong>fails safe to OFF</strong> — if the table is missing, the row is missing, the flag is false, or anything errors, the agent does nothing and returns "disabled." You control it from the <strong>machinery drawer</strong> at the bottom of ${L("/admin/tower", "the warren")}, where each lever has a <span class="d-ui">Start</span> / <span class="d-ui">Pause</span> button. Starting one asks you to confirm first.</p>
 
-<p class="d-sub">The 7 agents ON the switch (these are the ones that run on a clock)</p>
+<p class="d-sub">The 4 levers ON the switch (the only things that run on a clock)</p>
 <table class="d-table">
   <tr><th>Agent</th><th>When it would run</th><th>What it does</th><th>When paused</th></tr>
-  <tr><td><strong>sentinel</strong></td><td>every 10 min</td><td>Reads new replies in ${TBL("partner_inbound_email")}, sorts them (interested / polite-no / unsubscribe / noise), and emails you about the interested ones.</td><td>No reading, no pings. Nothing happens to inbound mail.</td></tr>
-  <tr><td><strong>scribe</strong> (drafter)</td><td>every 15 min</td><td>Turns enriched candidates in ${TBL("partner_pipeline")} into ready first-touch <em>drafts</em> in the tower. <strong>Never sends.</strong></td><td>No drafts are created. Your pipeline sits untouched.</td></tr>
-  <tr><td><strong>courier</strong></td><td>every 5 min</td><td>Sends the drafts <em>you approved</em> and logs them to ${TBL("partner_sent_log")}. Only touches <span class="d-code">approved</span> rows.</td><td>Nothing is sent, even approved rows. They wait.</td></tr>
-  <tr><td><strong>followup</strong></td><td>hourly</td><td>Drafts the +4-day / +9-day follow-ups for contacted-but-silent candidates; halts the instant they reply. <strong>Drafts only.</strong></td><td>No follow-ups are drafted. Contacted candidates just sit.</td></tr>
+  <tr><td><strong>followup</strong></td><td>hourly</td><td>Drafts the +4-day / +9-day follow-ups for contacted-but-silent candidates; halts the instant they reply. <strong>Drafts only</strong> — your press sends.</td><td>No follow-ups are drafted. Contacted candidates just sit.</td></tr>
   <tr><td><strong>usher</strong></td><td>every 30 min</td><td>Runs workshop logistics (reminders, replay window) for workshops in ${TBL("partner_workshop")}.</td><td>No workshop reminders go out.</td></tr>
-  <tr><td><strong>almanac</strong></td><td>daily 7am ET</td><td>Emails you the morning standup digest of what's waiting in the tower.</td><td>No digest email.</td></tr>
-  <tr><td><strong>dossier-enrich</strong> <span class="d-badge warn">spends API tokens</span></td><td>hourly (5 rows/tick)</td><td>Takes newly-promoted enriched rows and fills in the dossier brief via Claude (audience size, voice-fit rationale, conflict, contact path). Costs ~$0.10–$0.30 per row.</td><td>Enriched rows still get the deterministic first-touch drafter; no auto-brief is added.</td></tr>
+  <tr><td><strong>almanac</strong></td><td>daily 7am ET</td><td>Emails you the morning standup digest of what's waiting on the floor.</td><td>No digest email.</td></tr>
+  <tr><td><strong>contact-finder</strong> <span class="d-badge warn">spends API tokens</span></td><td>on its tick</td><td>Hunts addresses for cards that landed without one, so their seal can light up.</td><td>No hunts; attach addresses by hand in the room.</td></tr>
 </table>
-<p class="d-what" style="color:#2E7D32;"><strong>The safety guarantee:</strong> even when ON, the two drafting agents (scribe, followup) only ever <em>create drafts</em>. Nothing leaves the building without you pressing <span class="d-ui">Send</span> (or <span class="d-ui">Pay</span>) yourself. The switch controls whether they <em>prepare</em>; your click controls whether anything <em>happens</em>.</p>
-<p class="d-sub">Which Claude model each LLM agent uses</p>
-<p class="d-what">Only two agents call an LLM — <strong>scout</strong> (sweep buttons) and <strong>dossier-enrich</strong> (the cron lever). The deterministic ones don't use a model. Both have a small dropdown in the tower:</p>
-<table class="d-table">
-  <tr><th>Agent</th><th>Default model</th><th>Why</th><th>Selector lives at</th></tr>
-  <tr><td><strong>scout</strong></td><td>Sonnet 4.6</td><td>Volume list-building. 5× cheaper per sweep than Opus.</td><td>${L("/admin/tower", "/admin/tower → Scout &amp; Enrich")} (top of the panel)</td></tr>
-  <tr><td><strong>dossier-enrich</strong></td><td>Opus 4.6</td><td>Judgment work — sharper voice-fit verdicts and conflict reads.</td><td>${L("/admin/tower", "/admin/tower → Agent Controls")} (under the Dossier lever)</td></tr>
-</table>
-<p class="d-what">Available models in this SDK version: Opus 4.6 (newest), Opus 4.5, Opus 4.1, Sonnet 4.6. Opus 4.7/4.8 aren't in this SDK yet. Changes take effect on the next sweep button press or the next dossier-enrich cron tick.</p>
 
-<p class="d-sub">NOT on this switch (so you know the full picture)</p>
+<p class="d-sub">Retired (July 2026) — and what replaced each</p>
+<table class="d-table">
+  <tr><th>Was</th><th>Now</th></tr>
+  <tr><td><strong>scribe drafter</strong> (cron, every 15 min)</td><td>One press in the room writes the letter, canon-checked on save. Nothing fills the tower by itself.</td></tr>
+  <tr><td><strong>courier</strong> (cron, every 5 min)</td><td>The ceramic press sends instantly — suppression re-check at send, a claim that makes double-send impossible, the sent record + <em>delivered ✓</em> stamp.</td></tr>
+  <tr><td><strong>sentinel</strong> (cron, every 10 min)</td><td>Replies land in your inbox and in each room's replies fold; you make the call and press the seal.</td></tr>
+  <tr><td><strong>dossier auto-enrich</strong> (cron, hourly)</td><td>The brief runs inside the sweep itself — every new find is briefed and verdict-called before the run reports done.</td></tr>
+</table>
+<p class="d-what" style="color:#2E7D32;"><strong>The safety guarantee:</strong> nothing reaches a real person and no money moves without your press — and every Claude call (sweeps, briefs, hunts) is metered by the $10/day postage wall, which fails closed.</p>
+
+<p class="d-sub">Which Claude model the machine uses</p>
+<p class="d-what">Two calls use an LLM — the <strong>sweep</strong> (find + fit) and the <strong>brief</strong> that runs inside it. Both pickers live in the machinery drawer:</p>
+<table class="d-table">
+  <tr><th>Call</th><th>Default model</th><th>Why</th><th>Picker lives at</th></tr>
+  <tr><td><strong>Sweep model</strong> (scout)</td><td>Sonnet 4.6</td><td>Volume list-building. 5× cheaper per sweep than Opus.</td><td>${L("/admin/tower", "/admin/tower → machinery")}</td></tr>
+  <tr><td><strong>Brief model</strong> (dossier)</td><td>Opus 4.6</td><td>Judgment work — sharper voice-fit verdicts and conflict reads.</td><td>${L("/admin/tower", "/admin/tower → machinery")}</td></tr>
+</table>
+<p class="d-what">Available models in this SDK version: Opus 4.6 (newest), Opus 4.5, Opus 4.1, Sonnet 4.6. Changes take effect on the next sweep press.</p>
+
+<p class="d-sub">NOT on the switch (so you know the full picture)</p>
 <table class="d-table">
   <tr><th>Thing</th><th>Why it's not on the switch</th></tr>
-  <tr><td><strong>scribe (chat), warden, ledger, herald</strong></td><td>These never run on their own — they only do something the moment you type them into Claude Code. There's nothing to pause; they're inert until dispatched. Specs: ${L(`${GHT}/.claude/agents`, ".claude/agents/")}.</td></tr>
-  <tr><td><strong>scout (button), dossier (button + cron)</strong></td><td>Scout fires only when <em>you click a sweep button</em> in the tower's Scout &amp; Enrich panel (no clock). Dossier has two modes: chat-invoked (you dispatch) and the <em>dossier-enrich</em> cron above. Specs: ${FILE(".claude/agents/scout.md", "scout.md")}, ${FILE(".claude/agents/dossier.md", "dossier.md")}. Server-side wrappers: ${FILE("lib/partnerships/anthropic-agents.ts", "anthropic-agents.ts")}.</td></tr>
-  <tr><td><strong>Payouts</strong></td><td>Money never moves automatically. The tower's Payouts card shows what's owed; the transfer only runs when you press <span class="d-ui">Pay</span> and confirm.</td></tr>
-  <tr><td><strong>The older course crons</strong> (drip, abandonment, dropoff, review, retention)</td><td>Pre-existing course-side email automations, unrelated to partnerships. Untouched by this work; they've run all along.</td></tr>
-  <tr><td><strong>The affiliate-clearing cron</strong> (${FILE("app/api/cron/affiliate/route.ts", "/api/cron/affiliate")})</td><td>Daily job that flips a commission from "pending" to "cleared" after its 30-day refund window. Benign — it moves no money and sends nothing; it just marks rows ready for a payout you still run by hand. Pre-existing; not on the partnership switch.</td></tr>
+  <tr><td><strong>scout, dossier, scribe, warden, ledger, herald (chat)</strong></td><td>These never run on their own — they only do something the moment you type them into Claude Code. Inert until dispatched. Specs: ${L(`${GHT}/.claude/agents`, ".claude/agents/")}.</td></tr>
+  <tr><td><strong>The sweep buttons</strong></td><td>Fire only on your press, run the whole line, and report done. Server-side: ${FILE("lib/partnerships/sweep.ts", "sweep.ts")}, ${FILE("lib/partnerships/anthropic-agents.ts", "anthropic-agents.ts")}.</td></tr>
+  <tr><td><strong>Payouts</strong></td><td>Money never moves automatically. The Payouts block shows what's owed; the transfer runs only when you press <span class="d-ui">Pay</span> and confirm.</td></tr>
+  <tr><td><strong>The older course crons</strong> (drip, abandonment, dropoff, review, retention)</td><td>Pre-existing course-side email automations, unrelated to partnerships. They've run all along.</td></tr>
+  <tr><td><strong>The affiliate-clearing cron</strong> (${FILE("app/api/cron/affiliate/route.ts", "/api/cron/affiliate")})</td><td>Daily job that flips a commission from "pending" to "cleared" after its 30-day refund window. Benign — moves no money, sends nothing.</td></tr>
 </table>
 
 <p class="d-sub">The order things run in (the whole loop)</p>
 <table class="d-table">
   <tr><th>#</th><th>Step</th><th>Who</th><th>Your part</th></tr>
-  <tr><td>1</td><td>Find candidates → ${TBL("partner_pipeline")} at <span class="d-code">enriched</span></td><td>you + scout/dossier (chat)</td><td>You dispatch them</td></tr>
-  <tr><td>2</td><td>Enriched candidate → a first-touch <em>draft</em> in the tower</td><td>scribe (auto, if ON)</td><td>none — it just appears</td></tr>
-  <tr><td>3</td><td>Draft → sent email</td><td>courier (auto, if ON)</td><td><strong>you press Send</strong></td></tr>
-  <tr><td>4</td><td>Sent → candidate marked <span class="d-code">contacted</span>, ladder clock starts</td><td>courier</td><td>none</td></tr>
-  <tr><td>5</td><td>No reply at +4d / +9d → follow-up <em>drafts</em> appear</td><td>followup (auto, if ON)</td><td><strong>you press Send</strong></td></tr>
-  <tr><td>6</td><td>A reply lands → sorted, you get pinged, ladder halts</td><td>sentinel (auto, if ON)</td><td>you reply + mark handled</td></tr>
-  <tr><td>7</td><td>Sale attributed → commission <span class="d-code">pending</span> → <span class="d-code">cleared</span> at +30d</td><td>affiliate cron</td><td>none</td></tr>
-  <tr><td>8</td><td>Cleared commission → Payouts card</td><td>the tower</td><td><strong>you press Pay</strong></td></tr>
+  <tr><td>1</td><td>Sweep → finished cards (verdict + brief + address) land in the band</td><td>the sweep line</td><td><strong>you press Sweep</strong></td></tr>
+  <tr><td>2</td><td>Card → the letter written, canon-checked</td><td>the room</td><td><strong>you press "write the letter"</strong></td></tr>
+  <tr><td>3</td><td>Letter → sent (suppression re-check, no-double-send claim)</td><td>the send path</td><td><strong>you press the seal</strong></td></tr>
+  <tr><td>4</td><td>Sent → <span class="d-code">contacted</span>, ladder clock stamped, sent record written</td><td>automatic</td><td>none</td></tr>
+  <tr><td>5</td><td>Delivered → <em>delivered ✓</em> stamp on the sent record</td><td>the delivery webhook</td><td>none</td></tr>
+  <tr><td>6</td><td>No reply at +4d / +9d → follow-up letters appear in their rooms</td><td>followup (lever, if ON)</td><td><strong>you press the seal</strong></td></tr>
+  <tr><td>7</td><td>A reply lands → your inbox + the room's fold; ladder halts</td><td>the inbound pipe</td><td>you reply + press "they wrote back"</td></tr>
+  <tr><td>8</td><td>Sale attributed → commission <span class="d-code">pending</span> → <span class="d-code">cleared</span> at +30d</td><td>affiliate cron</td><td>none</td></tr>
+  <tr><td>9</td><td>Cleared commission → the Payouts block</td><td>the warren</td><td><strong>you press Pay</strong></td></tr>
 </table>
-<p class="d-what">Read it as: <strong>the agents prepare; you decide.</strong> Steps 2, 5, 6, 7 happen on their own (only if you've started those levers). Steps 3, 5, 8 wait on your click. Nothing reaches a real person or moves real money without you.</p>
-<div class="d-refs"><b>Control panel</b>${L("/admin/tower", "/admin/tower → Agent Controls")} · <b>Switch table</b>${TBL("agent_switches")} · <b>Schedule</b>${FILE("docs/partnerships/cron-schedule.md", "cron-schedule.md")} · <b>Gate code</b>${FILE("lib/partnerships/agent-switch.ts", "agent-switch.ts")}</div>`,
+<p class="d-what">Read it as: <strong>the machine prepares; you decide.</strong> Steps 4, 5, 7, 8 happen on their own. Everything a real person receives — the letter, the follow-up, the money — waits on your press.</p>
+<div class="d-refs"><b>Control panel</b>${L("/admin/tower", "/admin/tower → machinery")} · <b>Switch table</b>${TBL("agent_switches")} · <b>The line</b>${FILE("lib/partnerships/sweep.ts", "sweep.ts")} · <b>Send path</b>${FILE("lib/partnerships/courier-send.ts", "courier-send.ts")} · <b>Gate code</b>${FILE("lib/partnerships/agent-switch.ts", "agent-switch.ts")}</div>`,
   },
   {
     id: "ref-golive",
@@ -1113,7 +1122,7 @@ export const MANUAL: RefSection[] = [
     title: "Go-live",
     subtitle: "The one-time setup, in order",
     bodyHtml: `
-<p class="d-what">Do this once to turn the system on. The order matters: the OFF switch deploys first (so nothing can auto-start), then you add the database columns, then you start the levers you want — by hand. Each dark block below is click-to-copy.</p>
+<p class="d-what"><strong>This already ran</strong> — kept as the record of the one-time setup (all five migrations are live in production, plus the 20260715 delivery-stamp migration that followed). If you ever stand the system up again, this is the order: the OFF switch deploys first, then the database columns, then you start the levers by hand. Each dark block below is click-to-copy.</p>
 
 <p class="d-sub">Step 1 — Confirm the OFF switch is deployed</p>
 <p class="d-what">In ${L("https://vercel.com", "Vercel")} → the <strong>aesdr</strong> project → <span class="d-ui">Deployments</span>, confirm the latest deploy is <strong>Ready</strong>. From this deploy on, every agent is paused by default — even if a database column exists, the agent won't act until you start its lever. (This is the safety net: do this before Step 2.)</p>
@@ -1157,13 +1166,12 @@ alter table agent_switches enable row level security;</span>
 <span class="d-cmd">alter table agent_switches add column if not exists model text;</span>
 
 <p class="d-sub">Step 3 — Start the levers you want, by hand</p>
-<p class="d-what">Go to ${L("/admin/tower", "/admin/tower")} → <strong>Agent Controls</strong>. Everything reads <em>paused</em>. Start them one at a time as you're ready — a sensible first-time order:</p>
+<p class="d-what">Open ${L("/admin/tower", "/admin/tower")} → the <strong>machinery drawer</strong> at the bottom of the floor. Everything reads <em>paused</em>. Start them one at a time as you're ready — a sensible order:</p>
 <ol class="d-steps">
   <li class="d-step"><strong>almanac</strong> first — it just emails you a morning digest. Harmless, and it confirms the plumbing works.</li>
-  <li class="d-step"><strong>sentinel</strong> next — so inbound replies get sorted and you get pinged. Still nothing outbound.</li>
-  <li class="d-step"><strong>scribe</strong> when you're ready to see drafts — it will start turning your enriched candidates into first-touch drafts in the tower (drafts only; you approve each).</li>
-  <li class="d-step"><strong>courier</strong> only when you actually want approved drafts to send. Until courier is on, even an approved draft just waits.</li>
-  <li class="d-step"><strong>followup</strong> + <strong>usher</strong> later, once outreach and workshops are in motion.</li>
+  <li class="d-step"><strong>followup</strong> once first touches are out — it starts drafting the +4/+9 ladder into their rooms (drafts only; your press sends).</li>
+  <li class="d-step"><strong>contact-finder</strong> if cards keep landing without addresses.</li>
+  <li class="d-step"><strong>usher</strong> later, once workshops are in motion.</li>
 </ol>
 <div class="d-callout d-callout-note"><div class="d-callout-title">You can pause any of them, any time</div><p>Pausing is instant and needs no confirm. If anything ever looks off, hit <span class="d-ui">Pause</span> on that agent and it stops on its next tick — nothing in flight, nothing sent without your approval anyway.</p></div>
 <div class="d-end"><b>That's the whole setup.</b> After this, day-to-day is just: open the tower, clear the Decisions lane, done.</div>`,
