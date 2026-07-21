@@ -46,11 +46,29 @@ const AUDIT_CHIP: Record<Audit["state"], { glyph: string; label: string; cls: st
 };
 
 function AuditChip({ audit }: { audit: Audit }) {
+  if (audit.state === "done") {
+    return (
+      <span className={styles.doneStamp} title="audited 2026-07-21 — done in the world">
+        ✓ done
+      </span>
+    );
+  }
   const c = AUDIT_CHIP[audit.state];
   return (
     <span className={`${styles.auditChip} ${styles[c.cls]}`} title="audited 2026-07-21">
       {c.glyph} {c.label}
     </span>
+  );
+}
+
+/** Per-week audit counts, so done-ness reads with everything collapsed. */
+function weekAudit(tasks: (typeof WEEKS)[number]["tasks"]) {
+  return tasks.reduce(
+    (acc, t) => {
+      if (t.audit) acc[t.audit.state] += 1;
+      return acc;
+    },
+    { done: 0, partial: 0, open: 0 } as Record<Audit["state"], number>,
   );
 }
 
@@ -228,18 +246,32 @@ export default function DirectorPlan() {
 
       {/* ─── Main column ─── */}
       <main className={styles.main} onClick={handleCopy}>
-        {/* Overview ribbon */}
+        {/* Overview ribbon — collapsible like everything else */}
         <section id="overview" className={styles.section}>
-          <p className={styles.secEyebrow}>Overview · the arc</p>
-          <h2 className={styles.secTitle}>Three phases. One running machine at the end.</h2>
-          <div className={styles.ribbon}>
-            {PHASES.map((p) => (
-              <div key={p.id} className={styles.ribCard}>
-                <div className={styles.ribNum}>{p.num}</div>
-                <div className={styles.ribTitle}>{p.title}</div>
-                <div className={styles.ribGoal}>{p.goal}</div>
+          <div className={styles.weekAcc}>
+            <div
+              className={styles.weekBar}
+              onClick={() => toggleTask("overview-arc")}
+              role="button"
+              tabIndex={0}
+            >
+              <span className={`${styles.weekCaret} ${state.openTasks["overview-arc"] ? styles.weekCaretOpen : ""}`}>▾</span>
+              <span className={styles.weekBarTitle}>The arc — three phases, one running machine</span>
+              <span className={styles.weekCount}>overview</span>
+            </div>
+            {state.openTasks["overview-arc"] && (
+              <div className={styles.weekBody} style={{ paddingTop: 14 }}>
+                <div className={styles.ribbon} style={{ margin: 0 }}>
+                  {PHASES.map((p) => (
+                    <div key={p.id} className={styles.ribCard}>
+                      <div className={styles.ribNum}>{p.num}</div>
+                      <div className={styles.ribTitle}>{p.title}</div>
+                      <div className={styles.ribGoal}>{p.goal}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
+            )}
           </div>
         </section>
 
@@ -282,6 +314,7 @@ export default function DirectorPlan() {
               const weekOpen = !!state.openWeeks[w.id];
               const weekActionable = w.tasks.filter((t) => !isInfo(t.tags));
               const weekDone = weekActionable.filter((t) => state.checked[t.id]).length;
+              const wa = weekAudit(w.tasks);
               return (
                 <div key={w.id} id={w.id} className={styles.weekAcc}>
                   <div
@@ -294,9 +327,10 @@ export default function DirectorPlan() {
                     <span className={styles.weekBarTag}>{w.tag}</span>
                     <span className={styles.weekBarTitle}>{w.title}</span>
                     <span className={styles.weekCount}>
-                      {weekActionable.length > 0
-                        ? `${weekDone}/${weekActionable.length} done`
-                        : "reference"}
+                      {wa.done > 0 && <span className={styles.wtDone}>✓{wa.done}</span>}
+                      {wa.partial > 0 && <span className={styles.wtPart}> ◐{wa.partial}</span>}
+                      {wa.open > 0 && <span className={styles.wtOpen}> ○{wa.open}</span>}
+                      {weekActionable.length > 0 && ` · ${weekDone}/${weekActionable.length} ticked`}
                     </span>
                   </div>
 
@@ -310,7 +344,9 @@ export default function DirectorPlan() {
                         return (
                           <div
                             key={t.id}
-                            className={`${styles.taskAcc} ${checked ? styles.taskDone : ""}`}
+                            className={`${styles.taskAcc} ${checked ? styles.taskDone : ""} ${
+                              t.audit?.state === "done" ? styles.rowDone : ""
+                            }`}
                           >
                             <div className={styles.taskBar} onClick={() => toggleTask(t.id)}>
                               {!info && (
@@ -353,17 +389,16 @@ export default function DirectorPlan() {
                                     <span className={styles.autoChip}>Can be fully automated</span>
                                   )}
                                 </div>
-                                {t.audit?.note && (
-                                  <div className={styles.auditNote}>{t.audit.note}</div>
-                                )}
                               </div>
                               <span className={`${styles.taskCaret} ${taskOpen ? styles.taskCaretOpen : ""}`}>▾</span>
                             </div>
                             {taskOpen && (
-                              <div
-                                className={styles.taskBody}
-                                dangerouslySetInnerHTML={{ __html: t.bodyHtml }}
-                              />
+                              <div className={styles.taskBody}>
+                                {t.audit?.note && (
+                                  <p className={styles.auditNote}>{t.audit.note}</p>
+                                )}
+                                <div dangerouslySetInnerHTML={{ __html: t.bodyHtml }} />
+                              </div>
                             )}
                           </div>
                         );

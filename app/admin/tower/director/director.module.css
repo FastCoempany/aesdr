@@ -99,6 +99,13 @@
   border: 1px solid #E8E4DF;
   padding: 18px 0;
   font-family: 'Space Mono', monospace;
+  /* Taller than the viewport → it must scroll inside itself, or the bottom
+     entries are unreachable while stuck. */
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #C9C4BD transparent;
 }
 .sidebarHead {
   padding: 0 18px 16px;
@@ -920,7 +927,36 @@
   text-transform: uppercase;
   color: #6B6B6B;
   line-height: 1.9;
-  margin: 14px 0 4px;
+  margin: 14px 18px 4px;
   padding-top: 12px;
   border-top: 1px solid #E8E4DF;
 }
+
+/* ── Done, made outstanding ──
+   The audit's ✓ becomes a filled kiln-green stamp and the whole row carries
+   the verdict — a green rule and a faint wash — so the finished work reads
+   from across the room even with everything collapsed. */
+.doneStamp {
+  display: inline-block;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #FAF7F2;
+  background: #2E7D32;
+  padding: 2px 9px;
+  margin-left: 10px;
+  vertical-align: 2px;
+  transform: rotate(-2.5deg);
+  white-space: nowrap;
+}
+.rowDone {
+  border-left: 3px solid #2E7D32;
+  background: #F4F8F4;
+}
+.rowDone .taskBar { background: transparent; }
+.rowDone .taskBar:hover { background: rgba(46, 125, 50, .06); }
+.wtDone { color: #2E7D32; font-weight: 700; }
+.wtPart { color: #a14400; font-weight: 700; }
+.wtOpen { color: #6B6B6B; font-weight: 400; }
