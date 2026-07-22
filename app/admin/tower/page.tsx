@@ -279,12 +279,29 @@ export default async function TowerPage({
     if (!sweepMeta[sweepId]) sweepMeta[sweepId] = { last: day, brought: 1 };
     else if (sweepMeta[sweepId].last === day) sweepMeta[sweepId].brought += 1;
   }
+  // A run that brought nothing leaves no sourced events — without this, a
+  // sweep that genuinely ran (and came up empty or failed) still reads
+  // "never swept", which contradicts what the founder just watched happen.
+  const emptyRuns: Record<string, string> = {};
+  const { data: runRows } = await supabase
+    .from("scout_sweep_runs")
+    .select("sweep, created_at")
+    .order("created_at", { ascending: false })
+    .limit(30);
+  for (const r of runRows ?? []) {
+    const sweepId = r.sweep as string;
+    if (!SWEEP_LABELS[sweepId] || emptyRuns[sweepId]) continue;
+    emptyRuns[sweepId] = (r.created_at as string).slice(0, 10);
+  }
+  const niceDay = (day: string) =>
+    new Date(day + "T00:00:00Z")
+      .toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" })
+      .toLowerCase();
   const sweepSub = (id: string): string => {
     const m = sweepMeta[id];
-    if (!m) return "never swept";
-    const d = new Date(m.last + "T00:00:00Z");
-    const nice = d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).toLowerCase();
-    return `last swept ${nice} · brought ${m.brought}`;
+    if (m) return `last swept ${niceDay(m.last)} · brought ${m.brought}`;
+    if (emptyRuns[id]) return `last ran ${niceDay(emptyRuns[id])} · brought 0`;
+    return "never swept";
   };
 
   // ── Assemble the ledger's row groups (needs-you first, then the world) ──

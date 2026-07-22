@@ -255,16 +255,24 @@ export async function researchSweep(opts: {
     if (fromNatural.length > 0) return fromNatural;
   }
 
-  // ── Phase 2: forced write-up (NO tools) — always emits what it found ──
+  // ── Phase 2: forced write-up (no further tool use) — always emits what it
+  //    found. The transcript is full of server tool blocks, and the API
+  //    requires their tool declarations to be present on every request that
+  //    replays them — omitting `tools` here 400s instantly and a whole
+  //    research run reads as a false "nothing surfaced". Declare the same
+  //    tools and forbid another round with tool_choice "none".
   report(`Writing up what it found… (${searches} searches, ${pagesRead} read)`);
   messages.push({ role: "user", content: EMIT_INSTRUCTION });
 
   let emitText = "";
+  let emitError: string | null = null;
   try {
     const emitStream = c.messages.stream({
       model: opts.model,
       max_tokens: 8000,
       system: SYSTEM,
+      tools: RESEARCH_TOOLS,
+      tool_choice: { type: "none" },
       messages,
     });
     const emitStop = setTimeout(() => emitStream.abort(), EMIT_BUDGET_MS);
@@ -276,15 +284,25 @@ export async function researchSweep(opts: {
     } finally {
       clearTimeout(emitStop);
     }
-  } catch {
-    /* even the write-up was cut — salvage whatever it managed below */
+  } catch (e) {
+    // A budget abort still leaves salvageable partial JSON in emitText; any
+    // other failure is captured so an empty result can say WHY below instead
+    // of masquerading as a clean zero.
+    emitError = e instanceof Error ? e.message : String(e);
   }
 
   const candidates = extractCandidates(emitText);
-  if (candidates.length === 0 && searches === 0 && pagesRead === 0) {
-    throw new Error(
-      "The research made no searches before stopping — likely an API error (overloaded / rate-limited). Run it again.",
-    );
+  if (candidates.length === 0) {
+    if (searches === 0 && pagesRead === 0) {
+      throw new Error(
+        "The research made no searches before stopping — likely an API error (overloaded / rate-limited). Run it again.",
+      );
+    }
+    if (emitError) {
+      throw new Error(
+        `Research searched ${searches}× and read ${pagesRead} pages, but the write-up call failed: ${emitError} — run it again.`,
+      );
+    }
   }
   return candidates;
 }
