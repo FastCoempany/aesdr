@@ -75,6 +75,9 @@ from this date forward:
   Caveat margin-note voice, the agent personae (scout / dossier / warden),
   the landing zoom-sequence, the mascot. If a direction could be pitched to
   any other company unchanged, it isn't an AESDR direction.
+- **Leponeus is always present** (founder 2026-07-22): every mockup and
+  every direction includes the mascot somewhere in frame — a stamp, a
+  doorman, a margin companion. No Leponeus, no direction.
 - **Delivery format**: every mockup set ships BOTH as a hosted artifact link
   AND a downloadable browser-openable HTML file, with real brand fonts
   (public/fonts) inlined where feasible and the iris rendered live.
