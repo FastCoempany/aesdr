@@ -82,3 +82,68 @@ function timingSafeEqual(a: string, b: string): boolean {
   }
   return result === 0;
 }
+
+// ── The gate's waitlist ("No letter yet? Leave an address") ──
+// Rides the existing free_leads table (source-scoped, zero migration) and the
+// existing typed event ledger. Outcome comes back via ?w= so the gate stays a
+// server-rendered page that works without JS.
+
+const EMAIL_RE = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+const WAITLIST_SOURCE = "gate_waitlist";
+
+export async function joinWaitlistAction(formData: FormData): Promise<void> {
+  const email = String(formData.get("email") ?? "")
+    .trim()
+    .toLowerCase();
+  if (!email || email.length > 254 || !EMAIL_RE.test(email)) {
+    redirect("/coming-soon?w=invalid");
+  }
+
+  const headersList = await headers();
+  const ip =
+    headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    headersList.get("x-real-ip") ||
+    "unknown";
+  const rl = await rateLimit(`gate-waitlist:${ip}`, {
+    max: 6,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!rl.success) {
+    redirect("/coming-soon?w=later");
+  }
+
+  try {
+    const { createAdminClient } = await import("@/utils/supabase/admin");
+    const { hashIp } = await import("@/lib/hash-ip");
+    const supabase = createAdminClient();
+    const { data: existing } = await supabase
+      .from("free_leads")
+      .select("id")
+      .eq("email", email)
+      .eq("source", WAITLIST_SOURCE)
+      .maybeSingle();
+    if (!existing) {
+      const { error } = await supabase.from("free_leads").insert({
+        email,
+        source: WAITLIST_SOURCE,
+        ip_hash: hashIp(ip),
+        user_agent: headersList.get("user-agent")?.slice(0, 400) ?? null,
+        referrer: headersList.get("referer")?.slice(0, 400) ?? null,
+      });
+      if (error) {
+        // message/code only — the full error object can echo the email.
+        console.error("[gate-waitlist] insert failed", error.message, error.code);
+        redirect("/coming-soon?w=invalid");
+      }
+      const { logEvent } = await import("@/lib/events");
+      await logEvent("free_lead_captured", { source: WAITLIST_SOURCE });
+    }
+  } catch (e) {
+    // redirect() throws its control-flow signal — never swallow it.
+    if (e && typeof e === "object" && "digest" in e) throw e;
+    console.error("[gate-waitlist] failed", e instanceof Error ? e.message : String(e));
+    redirect("/coming-soon?w=invalid");
+  }
+
+  redirect("/coming-soon?w=ok");
+}
