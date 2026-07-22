@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 
-import type { ScoutSweepId } from "./anthropic-agents";
+import { turnCostUsd, type ScoutSweepId } from "./anthropic-agents";
 
 /**
  * The scout research engine — a real agentic loop in TWO phases so a long
@@ -175,8 +175,12 @@ export async function researchSweep(opts: {
   sweep: ScoutSweepId;
   model: string;
   onProgress?: (p: ResearchProgress) => void;
+  /** Fires exactly once with the run's real total (clean finish or throw). */
+  onCostUsd?: (usd: number) => void;
 }): Promise<ResearchCandidate[]> {
   const c = new Anthropic(ANTHROPIC_OPTS);
+  let costUsd = 0;
+  try {
   const messages: Anthropic.MessageParam[] = [
     {
       role: "user",
@@ -199,6 +203,7 @@ export async function researchSweep(opts: {
   // ── Phase 1: research with tools, accumulating the transcript ──
   const researchDeadline = Date.now() + RESEARCH_BUDGET_MS;
   let naturalText = "";
+  let phase1Error: string | null = null;
   for (let i = 0; i < MAX_TURNS; i++) {
     const remaining = researchDeadline - Date.now();
     if (remaining <= 0) break;
@@ -236,6 +241,7 @@ export async function researchSweep(opts: {
       clearTimeout(stop);
       tokensUsed +=
         (final.usage?.input_tokens ?? 0) + (final.usage?.output_tokens ?? 0);
+      costUsd += turnCostUsd(opts.model, final.usage);
       messages.push({ role: "assistant", content: final.content });
       if (final.stop_reason === "pause_turn") {
         throttled();
@@ -243,9 +249,13 @@ export async function researchSweep(opts: {
       }
       naturalText = turnText; // model decided it was done researching
       break;
-    } catch {
+    } catch (e) {
       clearTimeout(stop);
-      break; // research deadline hit — proceed to the forced write-up
+      // Deadline aborts land here too (expected) — but so do real API
+      // failures (rate limit, credit balance, bad request). Keep the first
+      // real message so a zero-search run can say WHY instead of guessing.
+      if (!phase1Error) phase1Error = e instanceof Error ? e.message : String(e);
+      break; // proceed to the forced write-up with whatever we have
     }
   }
 
@@ -280,7 +290,8 @@ export async function researchSweep(opts: {
       emitText += delta;
     });
     try {
-      await emitStream.finalMessage();
+      const emitFinal = await emitStream.finalMessage();
+      costUsd += turnCostUsd(opts.model, emitFinal.usage);
     } finally {
       clearTimeout(emitStop);
     }
@@ -294,8 +305,11 @@ export async function researchSweep(opts: {
   const candidates = extractCandidates(emitText);
   if (candidates.length === 0) {
     if (searches === 0 && pagesRead === 0) {
+      const why = phase1Error ?? emitError;
       throw new Error(
-        "The research made no searches before stopping — likely an API error (overloaded / rate-limited). Run it again.",
+        why
+          ? `The research made no searches — the API call failed: ${why}`
+          : "The research made no searches before stopping — likely an API error (overloaded / rate-limited). Run it again.",
       );
     }
     if (emitError) {
@@ -305,4 +319,8 @@ export async function researchSweep(opts: {
     }
   }
   return candidates;
+  } finally {
+    // Tokens were billed no matter how this ended — report the real total.
+    opts.onCostUsd?.(costUsd);
+  }
 }

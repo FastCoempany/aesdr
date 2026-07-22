@@ -4,7 +4,7 @@ import { type ScoutSweepId } from "@/lib/partnerships/anthropic-agents";
 import { runBriefAndSave } from "@/lib/partnerships/brief";
 import { createDossierRun } from "@/lib/partnerships/dossier-run";
 import { researchSweep, type ResearchCandidate } from "@/lib/partnerships/scout-research";
-import { assertUnderDailyWall } from "@/lib/partnerships/spend";
+import { assertUnderDailyWall, logAgentSpend } from "@/lib/partnerships/spend";
 import { updateSweepRun, finishSweepRun } from "@/lib/partnerships/sweep-run";
 import { logPartnerEvents } from "@/lib/partnerships/events";
 
@@ -69,6 +69,9 @@ export async function runSweepAndInsert(
   const stamp = (line: string) => diag.push(`${new Date().toISOString().slice(11, 19)}  ${line}`);
 
   try {
+    // The research itself is the sweep's biggest spender — gate it on the
+    // postage wall like every other Claude call, and meter what it burns.
+    await assertUnderDailyWall();
     const model = await getAgentModel("scout");
     stamp(`research start · sweep=${sweep} · model=${model}`);
 
@@ -81,6 +84,10 @@ export async function runSweepAndInsert(
           searches: p.searches,
           pages_read: p.pagesRead,
         }),
+      onCostUsd: (usd) => {
+        if (usd > 0) stamp(`research cost ~$${usd.toFixed(2)}`);
+        void logAgentSpend({ agent: "scout", usd });
+      },
     });
 
     // Keep every named candidate — flag the unverified, don't drop them.
