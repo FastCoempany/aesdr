@@ -3,7 +3,7 @@
 - **When:** first contact with a newsletter operator who has not heard from us before.
 - **Length:** keep it at or under 120 words.
 - **Personalize:** `[NAME]`, `[SPECIFIC PIECE]`, `[REAL DETAIL]` — the first two sentences only.
-- **Locked, never edit:** the economics line, the reply-to, the sign-off.
+- **Locked, never edit:** the economics line, the door line, the reply-to, the sign-off.
 - **Reply-to:** affiliates@aesdr.com
 
 ---
@@ -14,7 +14,7 @@
 
 It is a one-time course ($249 SDR / $299 AE), built by operators, no guru act. If you ever point readers at it, the affiliate terms are 40% commission on a 30-day attribution window — real money, paid through Stripe, no games.
 
-Not asking for a yes today. Want the partner kit, so you can see whether it fits your list?
+Not asking for a yes today. This is your private door into the whole affiliate side — the course itself, the partner kit, the numbers: [DOOR]. It was minted for you and stays open 30 days.
 
 — Antaeus, AESDR · affiliates@aesdr.com
 
@@ -24,4 +24,4 @@ Not asking for a yes today. Want the partner kit, so you can see whether it fits
 
 - **Free (first two sentences):** the reason THEY fit — the piece you read, the real detail. This is the whole job; make it specific or do not send.
 - **Locked (everything after):** the product line, the economics, the ask, the sign-off. Same words every send. That is how the disclosure stays accurate at 25-partner scale.
-- **The ask is the kit, not a call.** A newsletter writer self-qualifies faster from the kit than from a meeting. Save the call for when they ask.
+- **The ask is the door, not a call** (founder 2026-07-22). [DOOR] is the prospect's personal, activity-tracked link into the affiliate experience (/x/access?p=…), minted per candidate by the tower at draft time — never paste a generic URL. A writer self-qualifies faster from the experience than from a meeting; save the call for when they ask.

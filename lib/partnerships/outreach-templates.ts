@@ -38,25 +38,29 @@ export function firstTouchIdemKey(pipelineId: string): string {
 
 type Template = { id: OutreachTemplateId; subject: string; body: string };
 
-const BOOKING = "https://calendar.app.google/wFRpSWG2ehvNhgd4A";
 const SIGNOFF = "— Antaeus, AESDR · affiliates@aesdr.com";
 const SITE = getSiteUrl();
 
+// The ask changed 2026-07-22 (founder): no 15-minute call — the letter LEADS
+// with [DOOR], the prospect's personal, activity-tracked link into the
+// affiliate experience (minted per candidate by lib/partnerships/prospect-door
+// and filled in at render time). The experience does the convincing; the reply
+// is the ask.
 const TEMPLATES: Record<OutreachTemplateId, Template> = {
   newsletter: {
     id: "newsletter",
     subject: "something for the early AE/SDR readers on your list",
     body: `[NAME] — your list is full of exactly who AESDR.com is built for: SDRs and AEs a year or two in, ramping harder than anyone said they would have to. It is a one-time course built by operators like us, not by course-people.
 
+Rather than pitch you, I'll hand you the key. This is your private door into the whole affiliate side — the course itself, the partner kit, the numbers:
+
+[DOOR]
+
 If it fits your readers, the affiliate terms are 40% commission on a 30-day attribution window, paid clean through Stripe. We read your first couple of sends so they sound like you and not like an ad or ai-crap. That's because we're prioritizing protecting your readers' trust, and then you'll send on your own after we vet the first couple.
 
 [ANGLE]
 
-Worth fifteen minutes to see if it fits?
-
-It'll be the most refreshing few minutes you've had in a while.
-
-${BOOKING}
+The door was minted for you and stays open 30 days. If what's behind it fits, reply and I'll set you up.
 
 ${SIGNOFF}`,
   },
@@ -65,15 +69,15 @@ ${SIGNOFF}`,
     subject: "something for the early AE/SDR crowd in [COMMUNITY]",
     body: `[NAME] — [COMMUNITY] is full of exactly who AESDR.com is built for: SDRs and AEs a year or two in, ramping harder than anyone said they would have to. It is a one-time course built by operators like us, not by course-people.
 
+Rather than pitch you, I'll hand you the key. This is your private door into the whole affiliate side — the course itself, the partner kit, the numbers:
+
+[DOOR]
+
 If it fits your members, the affiliate terms are 40% commission on a 30-day attribution window, paid clean through Stripe. We read your first couple of posts so they sound like you and not like an ad or ai-crap. That's because we're prioritizing protecting your members' trust, and then you'll post on your own after we vet the first couple pieces of outreach you do.
 
 [ANGLE]
 
-Worth fifteen minutes to see if it fits?
-
-It'll be the most refreshing few minutes you've had in a while.
-
-${BOOKING}
+The door was minted for you and stays open 30 days. If what's behind it fits, reply and I'll set you up.
 
 ${SIGNOFF}`,
   },
@@ -82,15 +86,15 @@ ${SIGNOFF}`,
     subject: "a guest angle your listeners are living right now",
     body: `[NAME] — your show speaks to exactly who AESDR.com is built for: SDRs and AEs a year or two in, ramping harder than anyone said they would have to. It is a one-time course built by operators like us, not by course-people.
 
+Rather than pitch you, I'll hand you the key. This is your private door into the whole affiliate side — the course itself, the partner kit, the numbers:
+
+[DOOR]
+
 If it fits your listeners, the affiliate terms are 40% commission on a 30-day attribution window, paid clean through Stripe — host-read or a guest spot. We make sure any mention sounds like you and not like an ad or ai-crap, so your listeners' trust stays intact.
 
 [ANGLE]
 
-Happy to come on and earn it, or just take the partner kit first. Worth fifteen minutes to see if it fits?
-
-It'll be the most refreshing few minutes you've had in a while.
-
-${BOOKING}
+The door stays open 30 days. Happy to come on and earn it too — reply either way and I'll set you up.
 
 ${SIGNOFF}`,
   },
@@ -183,6 +187,10 @@ export function renderFirstTouch(row: {
    *  partner_pipeline.dossier_brief.first_touch_angle), when a brief has run.
    *  Fills [ANGLE]; absent → the warm fallback below. */
   first_touch_angle?: string | null;
+  /** The prospect's personal tracked door into the affiliate experience
+   *  (/x/access?p=<slug>, minted by ensureProspectDoor). Fills [DOOR];
+   *  absent → the public kit URL, and the caller flags the draft. */
+  door_url?: string | null;
 }): RenderedDraft {
   const templateId = pickTemplate(row.surface);
   const t = TEMPLATES[templateId];
@@ -207,6 +215,7 @@ export function renderFirstTouch(row: {
     "[NAME]": firstName,
     "[COMMUNITY]": communityName,
     "[ANGLE]": angle,
+    "[DOOR]": row.door_url || `${SITE}/affiliates/kit`,
   };
 
   const fill = (s: string) =>

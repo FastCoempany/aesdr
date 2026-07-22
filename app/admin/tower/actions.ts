@@ -17,6 +17,7 @@ import {
   verdictNextAction,
 } from "@/lib/partnerships/anthropic-agents";
 import { logPartnerEvent } from "@/lib/partnerships/events";
+import { ensureProspectDoor } from "@/lib/partnerships/prospect-door";
 import {
   attemptEmailFind,
   emailFinderConfigured,
@@ -797,6 +798,10 @@ export async function draftNow(formData: FormData) {
       throw new Error(`A first-touch draft already exists (status '${existing.status}') — see Drafts below.`);
     }
 
+    // Mint (or reuse) this candidate's personal tracked door into the
+    // affiliate experience — the letter leads with it (founder 2026-07-22).
+    const doorUrl = await ensureProspectDoor(id, row.name as string);
+
     const rendered = renderFirstTouch({
       name: row.name as string,
       surface: row.surface as string | null,
@@ -805,6 +810,7 @@ export async function draftNow(formData: FormData) {
       first_touch_angle:
         (row.dossier_brief as { first_touch_angle?: string | null } | null)
           ?.first_touch_angle ?? null,
+      door_url: doorUrl,
     });
     const { clean, hits } = canonCheck(`${rendered.subject}\n${rendered.body}`);
     const email = extractEmail(row.contact_path as string | null);
@@ -820,6 +826,11 @@ export async function draftNow(formData: FormData) {
     }
     const wardenCleared = clean && rendered.unfilled.length === 0;
     const noteParts: string[] = [];
+    if (!doorUrl) {
+      noteParts.push(
+        "Tracked door couldn't be minted — the letter links the public kit instead (mint one at /x/ops and paste it if you want their activity tracked)",
+      );
+    }
     if (rendered.unfilled.length > 0) {
       noteParts.push(`Fill before sending: ${rendered.unfilled.join(", ")}`);
     }
