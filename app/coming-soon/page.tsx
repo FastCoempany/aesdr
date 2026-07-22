@@ -165,15 +165,13 @@ export default async function ComingSoonPage({
           <span className={styles.wordmark}>
             AESDR<i className={styles.irisRule} />
           </span>
-          <span className={styles.railNote}>Chicago</span>
         </div>
 
         <div className={styles.mid}>
-          <p className={styles.kicker}>Private — opens by letter</p>
           <h1 className={styles.headline}>Invitation only.</h1>
           <p className={styles.lede}>
             AESDR is a sales curriculum built by operators, for SDRs and AEs in their
-            first two years — <em>the part of the job nobody trains you on.</em>
+            first two years — <em>the part of the job nobody trains&nbsp;you&nbsp;on.</em>
           </p>
           <div className={styles.keyrow}>
             <span className={styles.keylabel}>Have a key?</span>
@@ -181,9 +179,6 @@ export default async function ComingSoonPage({
               <input name="p" placeholder="paste your code" aria-label="invite code" maxLength={128} />
               <button type="submit">Unlock</button>
             </form>
-            <span className={styles.keynote}>
-              Your key is the link inside your letter — it already knows you.
-            </span>
           </div>
         </div>
 
@@ -194,7 +189,7 @@ export default async function ComingSoonPage({
             <img src="/mascot/leponeus-verdict-sm.png" alt="Leponeus, the AESDR sales mascot" draggable={false} />
             <ComingSoonInteractive />
           </div>
-          <span>hi, i&rsquo;m leponeus — your trusty sales mascot</span>
+          <span>hi, i&rsquo;m leponeus<br />your trusty sales mascot</span>
         </div>
 
         <div className={styles.foot}>
