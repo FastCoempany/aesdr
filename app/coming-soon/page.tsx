@@ -26,7 +26,7 @@ import styles from "./gate.module.css";
 export const metadata: Metadata = {
   title: "AESDR — Invitation only",
   description:
-    "AESDR is a sales curriculum built by operators, for SDRs and AEs in their first two years. We open by letter, not by launch.",
+    "AESDR is a sales curriculum built by operators, for SDRs and AEs in their first two years — the part of the job nobody trains you on.",
 };
 
 // The syllabus that ghosts by — the tease is the course itself.
@@ -173,8 +173,7 @@ export default async function ComingSoonPage({
           <h1 className={styles.headline}>Invitation only.</h1>
           <p className={styles.lede}>
             AESDR is a sales curriculum built by operators, for SDRs and AEs in their
-            first two years — <em>the part of the job nobody trains.</em> We open by
-            letter, not by launch.
+            first two years — <em>the part of the job nobody trains you on.</em>
           </p>
           <div className={styles.keyrow}>
             <span className={styles.keylabel}>Have a key?</span>
