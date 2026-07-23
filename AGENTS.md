@@ -84,6 +84,29 @@ from this date forward:
 <!-- END:mockup-direction-canon -->
 
 <!-- BEGIN:brand-palette -->
+# Director tab canon (founder 2026-07-22) — "clickomate"
+
+Applies to every rewrite of /admin/tower/director, and to any founder-facing
+operations surface built after this date:
+
+- **Plain speech everywhere.** Write so a nine-year-old understands without
+  interpreting. Not "engineering" — "the way this works." Not "stay on custom
+  through Phase 30" — "keep the tracking we built ourselves; it works and
+  costs nothing; only pay for a tool when partners keep asking for their own
+  dashboard." No shorthand, no choppy curt terminology.
+- **Clickomate.** Every noun in a row resolves to its object, inline or one
+  click away: a named list carries the actual list, "the weekly numbers"
+  shows the actual numbers live, conversation language is drafted and one
+  click-to-copy/send away, a test carries the link that runs it and the card
+  number that pays it. No row may name a thing without carrying it.
+- **Rows.** Do-now rows are substantial motions that make a real necessary
+  thing exist. Done rows lead with bold green marks (lights / boxes / heavy
+  checks in FRONT — never trailing badges). Waiting rows are live numbers fed
+  by the database, or they collapse into one footnote sentence.
+- **Details one click beneath.** Click-by-click instructions exist everywhere,
+  always — but always folded under the row ("how, exactly"), never on the
+  face of the page.
+
 # Brand palette — RETIRED vs ACTIVE
 
 **The dark palette is retired. Do not use it for anything new — not pages, not mockups, not prototypes, not internal scratch.** That includes any background near `#020617 / #0B0B0F / #0F172A / #1E293B`, any text on `#F8FAFC` over a dark surface, and the legacy accent set (`#10B981 --theme`, `#EF4444 --coral`, `#38BDF8 --cobalt`, `#F59E0B --amber`, `#8B5CF6 --violet`) used as primary surface colors.
