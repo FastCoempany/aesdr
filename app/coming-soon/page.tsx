@@ -209,6 +209,7 @@ export default async function ComingSoonPage({
           </form>
           {w === "ok" && <span className={styles.footNote}>Noted. One letter when the doors open.</span>}
           {w === "invalid" && <span className={styles.footErr}>That address didn&rsquo;t read — check it and try again.</span>}
+          {w === "save" && <span className={styles.footErr}>Our side hiccupped saving it — nothing wrong with your address. Try again in a minute.</span>}
           {w === "later" && <span className={styles.footErr}>Too many tries from here — come back in a bit.</span>}
         </div>
       </div>

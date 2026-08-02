@@ -133,7 +133,7 @@ export async function joinWaitlistAction(formData: FormData): Promise<void> {
       if (error) {
         // message/code only — the full error object can echo the email.
         console.error("[gate-waitlist] insert failed", error.message, error.code);
-        redirect("/coming-soon?w=invalid");
+        redirect("/coming-soon?w=save");
       }
       const { logEvent } = await import("@/lib/events");
       await logEvent("free_lead_captured", { source: WAITLIST_SOURCE });
@@ -142,7 +142,7 @@ export async function joinWaitlistAction(formData: FormData): Promise<void> {
     // redirect() throws its control-flow signal — never swallow it.
     if (e && typeof e === "object" && "digest" in e) throw e;
     console.error("[gate-waitlist] failed", e instanceof Error ? e.message : String(e));
-    redirect("/coming-soon?w=invalid");
+    redirect("/coming-soon?w=save");
   }
 
   redirect("/coming-soon?w=ok");
